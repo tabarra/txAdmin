@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>FXAdmin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body{
+        background-color: #f8f9fa;
+        margin-top: 64px;
+    }
+    .backEscuro{
+        background-color: #f33;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid horario-wrapper">
+        <div class="row">
+            <div class="col-12 text-center">
+                <!-- Só altere o nome do servidor aqui -->
+                <h1>FXServer Admin</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-center" id="horario">
+            </div>
+        </div>
+        <div class="card mx-auto border-danger" style="width: 28rem;">
+            <form action="/action" method="post">
+                <div class="card-body ">
+                        <div class="form-group row">
+                            <label for="action" class="col-sm-4 col-form-label">Action</label>
+                            <div class="col-sm-8">
+                                <select name="action" id="frm_action" class="form-control" required>
+                                    <option value="" disabled selected>> SELECT</option>
+                                    <option value="admin_say">Admin say</option>
+                                    <option value="restart_res">Restart script</option>
+                                    <option value="start_res">Start script</option>
+                                    <option value="stop_res">Stop script</option>
+                                    <option value="refresh_res">Refresh scripts</option>
+                                    <option value="" disabled>> DANGER ZONE:</option>
+                                    <option value="restart_sv">RESTART Server</option>
+                                    <option value="stop_sv">STOP Server</option>
+                                    <option value="start_sv">START Server</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="action" class="col-sm-4 col-form-label">Parameter</label>
+                            <div class="col-sm-8">
+                                <input type="text" name="parameter" id="frm_parameter" class="form-control" placeholder="xxxx" disabled required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="password" class="col-sm-4 col-form-label">Password</label>
+                            <div class="col-sm-8">
+                                <input value="aaa" type="password" name="password" id="frm_password" class="form-control" required>
+                            </div>
+                        </div>
+                </div>
+                <div class="card-footer text-center">
+                    <button type="submit" class="btn btn-outline-danger mx-auto">EXECUTE</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script>
+        let paramRequiredActions = [
+            'admin_say',
+            'restart_res',
+            'start_res',
+            'stop_res'
+        ]
+        $(document).ready(function() {  
+            $('#frm_action').change(function(){
+                var action = $("#frm_action").val();
+                if(paramRequiredActions.indexOf(action) != -1){
+                    $("#frm_parameter").prop('disabled', false);
+                }else{
+                    $("#frm_parameter").prop('disabled', true);
+                }      
+            });
+        });
+    </script>
+</body>
+
+</html>

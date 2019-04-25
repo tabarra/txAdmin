@@ -1,3 +1,7 @@
+## Custom:
+cache/
+
+## Github's default node gitignore
 # Logs
 logs
 *.log

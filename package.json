@@ -25,9 +25,9 @@
   },
   "homepage": "https://github.com/tabarra/fivem-fxadmin#readme",
   "dependencies": {
+    "axios": "^0.18.0",
     "chalk": "^2.4.2",
     "express": "^4.16.4",
-    "phin": "^3.3.0",
     "squirrelly": "^7.1.1"
   }
 }

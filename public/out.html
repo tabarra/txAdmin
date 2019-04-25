@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>FXAdmin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body{
+        background-color: #f8f9fa;
+        margin-top: 64px;
+    }
+    .backEscuro{
+        background-color: #f33;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid horario-wrapper">
+        <div class="row">
+            <div class="col-12 text-center">
+                <!-- Só altere o nome do servidor aqui -->
+                <h1>Output:</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 text-center" id="horario">
+            </div>
+        </div>
+        <div class="card mx-auto border-primary text-center" style="max-width: 64rem;">
+            <div class="card-body ">
+                    <pre>{{msg}}</pre>
+            </div>
+            <div class="card-footer text-center">
+                <a href="/" role="button" class="btn btn-outline-info">Back</a>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+
+</html>
