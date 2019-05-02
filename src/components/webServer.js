@@ -141,6 +141,8 @@ function sendPlayers(){
     let dataServer = globals.monitor.statusServer; //shorthand much!?
     let out = '<pre>';
 
+    if(!dataServer.players.length) return '<pre>No players Online</pre>';
+
     out += `<b>Ping\tNick</b>\n`;
     dataServer.players.forEach(player => {
         out += ` ${player.ping}\t`;
@@ -150,13 +152,12 @@ function sendPlayers(){
             out += `${player.name}\n`;
         }
     });
-
     out += '</pre>';
     return out;
 }
 
 function sendLog(){
-    return ':)';
+    return 'This is in the TODO list, I promise :)';
 }
 
 function sendOutput(res, msg){

@@ -2,7 +2,7 @@ module.exports = {
     monitor: {
         interval: 1000,
         timeout: 1000,
-        fxServerPort: 30120
+        fxServerPort: 30121
     },
     authenticator: {
         adminsFilePath: 'data/admins.json',
