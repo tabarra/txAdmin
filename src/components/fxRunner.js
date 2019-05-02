@@ -7,6 +7,7 @@ const context = 'FXRunner';
 
 module.exports = class FXRunner {
     constructor(config) {
+        logOk('::Started', context);
         this.config = config;
         this.fxChild = null;
         this.fxChildStatus = null;

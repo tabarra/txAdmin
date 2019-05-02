@@ -28,6 +28,9 @@ try {
 let global = {
     verbose: (configFile.global.verbose === 'true' || configFile.global.verbose === true),
 };
+let logger = {
+    logPath: configFile.logger.logPath || 'data/log.txt',
+};
 let monitor = {
     interval: parseInt(configFile.monitor.interval) || 1000,
     timeout: parseInt(configFile.monitor.timeout) || 1000,
@@ -35,7 +38,6 @@ let monitor = {
 };
 let authenticator = {
     adminsFilePath: configFile.authenticator.adminsFilePath || 'data/admins.json',
-    logPath: configFile.authenticator.logPath || 'data/log.txt',
     refreshInterval: parseInt(configFile.authenticator.refreshInterval) || 15000,
 };
 let webServer = {
@@ -53,6 +55,7 @@ let fxServer = {
 //Export AND FREEZE the settings
 module.exports = {
     global: Object.freeze(global),
+    logger: Object.freeze(logger),
     monitor: Object.freeze(monitor),
     authenticator: Object.freeze(authenticator),
     webServer: Object.freeze(webServer),

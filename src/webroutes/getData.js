@@ -13,9 +13,9 @@ const context = 'WebServer:getData';
  */
 module.exports = async function action(res, req) {
     res.send({
-        status: sendServerStatus(),
-        players: sendPlayers(),
-        log: sendLog()
+        status: await sendServerStatus(),
+        players: await sendPlayers(),
+        log: await sendLog()
     })
 };
 
@@ -68,6 +68,7 @@ function sendPlayers(){
     return out;
 }
 
-function sendLog(){
-    return 'This is in the TODO list, I promise :)';
+async function sendLog(){
+    let log = await globals.logger.get();
+    return `<pre>${xss(log)}</pre>`;
 }

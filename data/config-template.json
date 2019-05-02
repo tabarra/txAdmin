@@ -2,6 +2,9 @@
     "global": {
         "verbose": false
     },
+    "logger": {
+        "logPath": "data/log.txt"
+    },
     "monitor": {
         "interval": 1000,
         "timeout": 1000,
@@ -9,7 +12,6 @@
     },
     "authenticator": {
         "adminsFilePath": "data/admins.json",
-        "logPath": "data/log.txt",
         "refreshInterval": 15000
     },
     "webServer": {

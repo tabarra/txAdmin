@@ -8,8 +8,7 @@ const context = 'Monitor';
 
 module.exports = class Monitor {
     constructor(config) {
-        logOk('::Iniciado', context);
-        
+        logOk('::Started', context);
         this.config = config;
         this.statusProcess = false;
         this.statusServer = {

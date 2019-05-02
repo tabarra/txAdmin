@@ -7,7 +7,7 @@ const context = 'Authenticator';
 
 module.exports = class Authenticator {
     constructor(config) {
-        logOk('::Iniciado', context);
+        logOk('::Started', context);
         this.config = config;
         this.admins = [];
         this.refreshAdmins();

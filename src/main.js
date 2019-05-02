@@ -6,6 +6,7 @@ cleanTerminal()
 //FIXME: I should be using dependency injection or something
 globals = {
     monitor: null,
+    logger: null,
     authenticator: null,
     webServer: null,
     fxServer: null,
@@ -23,6 +24,9 @@ class FXAdmin {
             HandleFatalError(err);
         });
         this.startFXServer(localConfig.fxServer).catch((err) => {
+            HandleFatalError(err);
+        });
+        this.startLogger(localConfig.logger).catch((err) => {
             HandleFatalError(err);
         });
         this.startMonitor(localConfig.monitor).catch((err) => {
@@ -43,6 +47,12 @@ class FXAdmin {
     async startFXServer(config){
         const FXRunner = require('./components/fxRunner')
         globals.fxServer = new FXRunner(config);
+    }
+
+    //==============================================================
+    async startLogger(config){
+        const Logger = require('./components/logger')
+        globals.logger = new Logger(config);
     }
 
     //==============================================================

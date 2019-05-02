@@ -5,7 +5,7 @@ FiveM FXServer Admin - remotely manage your GTA5 FiveM Server
 - [ ] **Write a decent README.**
 - [ ] Get the correct PID through pidtree (should we get only the correct fxserver's pid, or summ all the processes? This code usually takes about 40MB so it might be significant enough to include)
 - [x] Put the configuration into a json and set default values
-- [ ] Write the admin log component (or part of another?)
+- [x] Write the admin log component (or part of another?)
 - [x] Separate the web routes
 - [ ] Add custom commands to the config file
 - [ ] Add a simple rate limiter and perhaps add *morgan*
@@ -18,3 +18,4 @@ And more...
 - [ ] Separate the DANGER ZONE commands into a separate tab with confirmation dialog?
 - [ ] We have data, we should plot it into a graph...
 - [ ] Add the config file to the arguments so we can run multiple servers in the same installation folder only be specifying it in runtime like `node src/main.js server01.json`
+- [ ] Protect the log with password. For now I will just disable IP logging.
