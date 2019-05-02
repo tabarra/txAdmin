@@ -1,4 +1,7 @@
 {
+    "global": {
+        "verbose": false
+    },
     "monitor": {
         "interval": 1000,
         "timeout": 1000,
@@ -14,7 +17,7 @@
         "bufferTime": 1500
     },
     "fxServer": {
-        "serverPath": "C:/Users/Admin/Documents/fivem_builds/1168",
+        "serverPath": "C:/Users/Admin/Documents/fxserver_builds/1168",
         "cfgPath": "server.cfg",
         "resPath": "C:/Users/Admin/Desktop/server01",
         "autostart": false

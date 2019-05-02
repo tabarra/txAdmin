@@ -8,51 +8,53 @@ globals = {
     monitor: null,
     authenticator: null,
     webServer: null,
-    fxServer: null
+    fxServer: null,
+    config: null
 }
 
 //==============================================================
 class FXAdmin {
     constructor(){
         log(">>Starting FXAdmin");
-        this.config = require('./extras/config'),
+        let localConfig = require('./extras/config');
+        globals.config = localConfig.global;
 
-        this.startMonitor().catch((err) => {
+        this.startAuthenticator(localConfig.authenticator).catch((err) => {
             HandleFatalError(err);
         });
-        this.startAuthenticator().catch((err) => {
+        this.startFXServer(localConfig.fxServer).catch((err) => {
             HandleFatalError(err);
         });
-        this.startWebServer().catch((err) => {
+        this.startMonitor(localConfig.monitor).catch((err) => {
             HandleFatalError(err);
         });
-        this.startFXServer().catch((err) => {
+        this.startWebServer(localConfig.webServer).catch((err) => {
             HandleFatalError(err);
         });
     }
 
     //==============================================================
-    async startAuthenticator(){
-        const Monitor = require('./components/monitor')
-        globals.monitor = new Monitor(this.config.monitor);
+    async startAuthenticator(config){
+        const Monitor = require('./components/authenticator')
+        globals.monitor = new Monitor(config);
     }
 
     //==============================================================
-    async startMonitor(){
-        const Authenticator = require('./components/authenticator')
-        globals.authenticator = new Authenticator(this.config.authenticator);
-    }
-
-    //==============================================================
-    async startWebServer(){
-        const WebServer = require('./components/webServer')
-        globals.webServer = new WebServer(this.config.webServer);
-    }
-
-    //==============================================================
-    async startFXServer(){
+    async startFXServer(config){
         const FXRunner = require('./components/fxRunner')
-        globals.fxServer = new FXRunner(this.config.fxServer);
+        globals.fxServer = new FXRunner(config);
+    }
+
+    //==============================================================
+    async startMonitor(config){
+        const Authenticator = require('./components/monitor')
+        globals.authenticator = new Authenticator(config);
+    }
+
+    //==============================================================
+    async startWebServer(config){
+        const WebServer = require('./components/webServer')
+        globals.webServer = new WebServer(config);
     }
 }
 

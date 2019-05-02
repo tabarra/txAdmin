@@ -24,6 +24,10 @@ try {
 
 
 //Set defaults
+//FIXME: the bool trick in global.verbose and fxServer.autostart won't work if we want the default to be true
+let global = {
+    verbose: (configFile.global.verbose === 'true' || configFile.global.verbose === true),
+};
 let monitor = {
     interval: parseInt(configFile.monitor.interval) || 1000,
     timeout: parseInt(configFile.monitor.timeout) || 1000,
@@ -42,12 +46,13 @@ let fxServer = {
     serverPath: configFile.fxServer.serverPath || fatalRequired('fxServer.serverPath'),
     cfgPath: configFile.fxServer.cfgPath || fatalRequired('fxServer.cfgPath'),
     resPath: configFile.fxServer.resPath || fatalRequired('fxServer.resPath'),
-    autostart: (configFile.fxServer.autostart === true) || false,
+    autostart: (configFile.fxServer.autostart === 'true' || configFile.fxServer.autostart === true),
 };
 
 
 //Export AND FREEZE the settings
 module.exports = {
+    global: Object.freeze(global),
     monitor: Object.freeze(monitor),
     authenticator: Object.freeze(authenticator),
     webServer: Object.freeze(webServer),

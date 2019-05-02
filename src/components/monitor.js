@@ -2,7 +2,7 @@
 const axios = require("axios");
 const pidusage = require('pidusage');
 const bigInt = require("big-integer");
-const { log, logOk, logWarn, logError } = require('../extras/console');
+const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 
 
 module.exports = class Monitor {
@@ -27,6 +27,10 @@ module.exports = class Monitor {
 
 
     //================================================================
+    /**
+     * Getter for the status object.
+     * @returns {object} object containing .process and .server
+     */
     getStatus(){
         return {
             process: this.statusProcess,
@@ -36,13 +40,16 @@ module.exports = class Monitor {
 
 
     //================================================================
+    /**
+     * Refreshes the Server Status.
+     */
     async refreshServerStatus(){
         //Setup do request e variáveis iniciais
         let timeStart = Date.now()
         let players = [];
         let requestOptions = {
-            url: `http://localhost:${this.config.fxServerPort}/players.json`,
-            // url: `http://wpg.gg:${this.config.fxServerPort}/players.json`,
+            // url: `http://localhost:${this.config.fxServerPort}/players.json`,
+            url: `http://wpg.gg:${this.config.fxServerPort}/players.json`,
             method: 'get',
             responseType: 'json',
             responseEncoding: 'utf8',
@@ -86,11 +93,14 @@ module.exports = class Monitor {
             ping: Date.now() - timeStart,
             players: players
         }
-        log(`Players online: ${players.length}`, this.context);
+        if(globals.config.verbose) log(`Players online: ${players.length}`, this.context);
     }
 
 
     //================================================================
+    /**
+     * Refreshes the Process Status.
+     */
     async refreshProcessStatus(){
         try {
             let pidData = await pidusage(globals.fxServer.fxChild.pid);

@@ -17,6 +17,9 @@ module.exports = class FXRunner {
 
     
     //================================================================
+    /**
+     * Spawns the FXServer and sets up all the event handlers
+     */
     async spawnServer(){
         this.fxChild = spawn(
             "cmd.exe", 
@@ -57,6 +60,9 @@ module.exports = class FXRunner {
 
 
     //================================================================
+    /**
+     * Restarts the FXServer
+     */
     async restartServer(){
         this.fxChild.kill();
         cleanTerminal();
@@ -66,6 +72,9 @@ module.exports = class FXRunner {
     
 
     //================================================================
+    /**
+     * Kills the FXServer
+     */
     killServer(){
         this.fxChild.kill();
         cleanTerminal();
@@ -73,13 +82,25 @@ module.exports = class FXRunner {
     
 
     //================================================================
+    /**
+     * Pipe a string into FXServer's stdin (aka executes a cfx's command)
+     * @param {string} command 
+     */
     srvCmd(command){
+        if(typeof command !== 'string') throw new Error('Expected String!');
         this.fxChild.stdin.write(command + "\n");
     }
     
 
     //================================================================
+    /**
+     * Pipe a string into FXServer's stdin (aka executes a cfx's command) and returns the stdout output.
+     * @param {*} command
+     * @param {*} bufferTime the size of the buffer in milliseconds
+     * @returns {string} buffer
+     */
     async srvCmdBuffer(command, bufferTime){
+        if(typeof command !== 'string') throw new Error('Expected String!');
         bufferTime = (bufferTime !== undefined)? bufferTime : 1500;
         this.outData = '';
         this.enableBuffer = true;

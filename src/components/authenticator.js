@@ -20,7 +20,11 @@ module.exports = class Authenticator {
 
 
     //================================================================
-    //return the userID if the password match, false if doesn't
+    /**
+     * Search the admins list and try to match the password. Returns the userid if there's a match, or false.
+     * @param {string} hash 
+     * @returns {(number|boolean)} userid or false
+     */
     checkAuth(hash){
         let admin = this.admins.find((user) => {return bcrypt.compareSync(hash, user.password)})
         return (admin)? admin.name : false;
@@ -28,7 +32,11 @@ module.exports = class Authenticator {
 
 
     //================================================================
-    //return the userID if the password match, false if doesn't
+    /**
+     * Hashes a string.
+     * @param {string} password 
+     * @returns {string} bcrypt hash
+     */
     hash(password){
         if(typeof password !== 'string') return false;
         return bcrypt.hashSync(password, 5);
@@ -36,6 +44,9 @@ module.exports = class Authenticator {
 
 
     //================================================================
+    /**
+     * Refreshes the admins list
+     */
     async refreshAdmins(){
         try {
             let raw = fs.readFileSync(this.config.adminsFilePath);  
