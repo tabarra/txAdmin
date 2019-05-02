@@ -5,8 +5,8 @@ const Sqrl = require("squirrelly");
 const xss = require("xss");
 const prettyBytes = require('pretty-bytes');
 const prettyMs = require('pretty-ms');
-const { log, logOk, logWarn, logError } = require('../extras/conLog');
-
+const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const Webroutes = require('../webroutes');
 
 module.exports = class WebServer {
     constructor(config) {
@@ -52,7 +52,7 @@ module.exports = class WebServer {
                 return sendOutput(res, 'Okay');
 
             }else if(action == 'restart_res'){
-                let toResp = await globals.fxServer.srvCmdBuffer('restart ' + parameter);
+                let toResp = await globals.fxServer.srvCmdBuffer('restart ' + parameter, this.config.bufferTime);
                 return sendOutput(res, toResp);
 
             }else if(action == 'start_res'){

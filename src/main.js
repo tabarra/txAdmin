@@ -1,9 +1,6 @@
-//Visual separation rocks
-console.log("\n\n\n\n\n\n\n\n");
-console.clear();
-
 //Requires
-const { log, logOk, logWarn, logError } = require('./extras/conLog');
+const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('./extras/console');
+cleanTerminal()
 
 //==============================================================
 //FIXME: I should be using dependency injection or something
@@ -17,7 +14,7 @@ globals = {
 //==============================================================
 class FXAdmin {
     constructor(){
-        log(">>Iniciando FXAdmin");
+        log(">>Starting FXAdmin");
         this.config = require('./extras/config'),
 
         this.startMonitor().catch((err) => {
@@ -72,7 +69,7 @@ process.on('unhandledRejection', (err) => {
     logError(err.stack)
 });
 process.on('exit', (code) => {
-    logWarn(">>Encerrando FXAdmin");
+    logWarn(">>Stopping FXAdmin");
 });
 
 //==============================================================

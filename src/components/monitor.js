@@ -2,7 +2,7 @@
 const axios = require("axios");
 const pidusage = require('pidusage');
 const bigInt = require("big-integer");
-const { log, logOk, logWarn, logError } = require('../extras/conLog');
+const { log, logOk, logWarn, logError } = require('../extras/console');
 
 
 module.exports = class Monitor {

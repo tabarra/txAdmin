@@ -2,7 +2,7 @@
 const { spawn } = require('child_process');
 const sleep = require('util').promisify(setTimeout)
 
-const { log, logOk, logWarn, logError } = require('../extras/conLog');
+const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 
 module.exports = class FXRunner {
     constructor(config) {
@@ -11,6 +11,7 @@ module.exports = class FXRunner {
         this.fxChild = null;
         this.fxChildStatus = null;
         this.outData = '';
+        this.enableBuffer = false;
         if(config.autostart) this.spawnServer();
     }
 
@@ -50,7 +51,7 @@ module.exports = class FXRunner {
         // });
         this.fxChild.stdout.on('data', (data) => {
             // process.stdout.write(data.toString());
-            this.outData += data;
+            if(this.enableBuffer) this.outData += data;
         });
     }//Final spawnServer()
 
@@ -79,18 +80,12 @@ module.exports = class FXRunner {
 
     //================================================================
     async srvCmdBuffer(command, bufferTime){
-        bufferTime = (bufferTime !== undefined)? bufferTime : 1000;
+        bufferTime = (bufferTime !== undefined)? bufferTime : 1500;
         this.outData = '';
+        this.enableBuffer = true;
         this.srvCmd(command);
         await sleep(bufferTime);
+        this.enableBuffer = false;
         return this.outData;
     }
 } //Fim FXRunner()
-
-
-
-function cleanTerminal(){
-    console.log("\n\n\n\n\n\n\n\n");
-    //console.clear();
-    console.log("================================");
-}

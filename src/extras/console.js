@@ -23,11 +23,20 @@ function logError(msg, context=null) {
     console.log(chalk.bold.bgRed(`[${tag}] ${msg} `));
 }
 
+function cleanTerminal(){
+    console.log("\n\n\n\n\n\n\n\n");
+}
+
+function dir(data){
+    console.dir(data);
+}
 
 //================================================================
 module.exports = {
     log,
     logOk,
     logWarn,
-    logError
+    logError,
+    cleanTerminal,
+    dir
 }
