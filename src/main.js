@@ -36,7 +36,7 @@ class FXAdmin {
     //==============================================================
     async startAuthenticator(config){
         const Monitor = require('./components/authenticator')
-        globals.monitor = new Monitor(config);
+        globals.authenticator = new Monitor(config);
     }
 
     //==============================================================
@@ -48,7 +48,7 @@ class FXAdmin {
     //==============================================================
     async startMonitor(config){
         const Authenticator = require('./components/monitor')
-        globals.authenticator = new Authenticator(config);
+        globals.monitor = new Authenticator(config);
     }
 
     //==============================================================

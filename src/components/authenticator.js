@@ -2,13 +2,13 @@
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const context = 'Authenticator';
 
 
 module.exports = class Authenticator {
     constructor(config) {
-        logOk('::Authenticator Iniciado');
+        logOk('::Iniciado', context);
         this.config = config;
-        this.context = 'Authenticator';
         this.admins = [];
         this.refreshAdmins();
        
@@ -51,9 +51,9 @@ module.exports = class Authenticator {
         try {
             let raw = fs.readFileSync(this.config.adminsFilePath);  
             this.admins = JSON.parse(raw);
-            log(`Admins file loaded. Found: ${this.admins.length}`, this.context)
+            log(`Admins file loaded. Found: ${this.admins.length}`, context)
         } catch (error) {
-            logError('Unnable to load admins.', this.context);
+            logError('Unnable to load admins.', context);
             this.admins = [];
         }
     }

@@ -3,14 +3,14 @@ const axios = require("axios");
 const pidusage = require('pidusage');
 const bigInt = require("big-integer");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const context = 'Monitor';
 
 
 module.exports = class Monitor {
     constructor(config) {
-        logOk('::Monitor Iniciado');
+        logOk('::Iniciado', context);
         
         this.config = config;
-        this.context = 'Monitor';
         this.statusProcess = false;
         this.statusServer = {
             online: false,
@@ -48,8 +48,8 @@ module.exports = class Monitor {
         let timeStart = Date.now()
         let players = [];
         let requestOptions = {
-            // url: `http://localhost:${this.config.fxServerPort}/players.json`,
-            url: `http://wpg.gg:${this.config.fxServerPort}/players.json`,
+            url: `http://localhost:${this.config.fxServerPort}/players.json`,
+            // url: `http://wpg.gg:${this.config.fxServerPort}/players.json`,
             method: 'get',
             responseType: 'json',
             responseEncoding: 'utf8',
@@ -63,7 +63,7 @@ module.exports = class Monitor {
             players = res.data;
             if(!Array.isArray(players)) throw new Error("not array")
         } catch (error) {
-            logError(`Server error: ${error.message}`, this.context);
+            logError(`Server error: ${error.message}`, context);
             this.statusServer = {
                 online: false,
                 ping: false,
@@ -93,7 +93,7 @@ module.exports = class Monitor {
             ping: Date.now() - timeStart,
             players: players
         }
-        if(globals.config.verbose) log(`Players online: ${players.length}`, this.context);
+        if(globals.config.verbose) log(`Players online: ${players.length}`, context);
     }
 
 

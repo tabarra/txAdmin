@@ -1,13 +1,13 @@
 //Requires
 const { spawn } = require('child_process');
 const sleep = require('util').promisify(setTimeout)
-
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const context = 'FXRunner';
+
 
 module.exports = class FXRunner {
     constructor(config) {
         this.config = config;
-        this.context = 'FXRunner';
         this.fxChild = null;
         this.fxChildStatus = null;
         this.outData = '';
@@ -26,7 +26,7 @@ module.exports = class FXRunner {
             ['/c', `${this.config.serverPath}/run.cmd +exec ${this.config.cfgPath}`],
             {cwd: this.config.resPath}
         );
-        logOk(`::FXRunner Iniciado com PID ${this.fxChild.pid}!`);
+        logOk(`::Iniciado com PID ${this.fxChild.pid}!`, context);
         this.fxChild.stdout.pipe(process.stdout);
         process.stdin.pipe(this.fxChild.stdin);
 
@@ -40,7 +40,7 @@ module.exports = class FXRunner {
             console.log('error ', err);
         });
         this.fxChild.on('exit', function (code, signal) {
-            logError('this.fxChild process exited with ' + `code ${code} and signal ${signal}`);
+            logError('this.fxChild process exited with ' + `code ${code} and signal ${signal}`, context);
             // console.log("==========================");
             // console.log(JSON.stringify(this.fxChild));
             // console.log("==========================");    
@@ -88,7 +88,11 @@ module.exports = class FXRunner {
      */
     srvCmd(command){
         if(typeof command !== 'string') throw new Error('Expected String!');
-        this.fxChild.stdin.write(command + "\n");
+        try {
+            return this.fxChild.stdin.write(command + "\n");
+        } catch (error) {
+            return false;
+        }
     }
     
 
@@ -104,7 +108,8 @@ module.exports = class FXRunner {
         bufferTime = (bufferTime !== undefined)? bufferTime : 1500;
         this.outData = '';
         this.enableBuffer = true;
-        this.srvCmd(command);
+        let result = this.srvCmd(command);
+        if(!result) return false;
         await sleep(bufferTime);
         this.enableBuffer = false;
         return this.outData;
