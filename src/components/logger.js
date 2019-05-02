@@ -18,8 +18,9 @@ module.exports = class Logger {
      * @returns {boolean} success
      */
     async append(data){
+        let timestamp = new Date().toLocaleString();
         try {
-            await fs.appendFileSync(this.config.logPath, data+"\n", 'utf8');
+            await fs.appendFileSync(this.config.logPath, `[${timestamp}]${data}\n`, 'utf8');
             return true;
         } catch (error) {
             return false;

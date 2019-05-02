@@ -1,6 +1,6 @@
 //Requires
 const axios = require("axios");
-const pidusage = require('pidusage');
+const pidusageTree = require('pidusage-tree')
 const bigInt = require("big-integer");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'Monitor';
@@ -11,6 +11,7 @@ module.exports = class Monitor {
         logOk('::Started', context);
         this.config = config;
         this.statusProcess = false;
+        this.statusAllProcess = false;
         this.statusServer = {
             online: false,
             players: []
@@ -33,7 +34,13 @@ module.exports = class Monitor {
     getStatus(){
         return {
             process: this.statusProcess,
-            server: this.statusServer
+            server: this.statusServer,
+            extra: {
+                allProcesses: this.statusAllProcess,
+                configs: {
+                    //TODO: todo?
+                }
+            }
         }
     }
 
@@ -48,7 +55,6 @@ module.exports = class Monitor {
         let players = [];
         let requestOptions = {
             url: `http://localhost:${this.config.fxServerPort}/players.json`,
-            // url: `http://wpg.gg:${this.config.fxServerPort}/players.json`,
             method: 'get',
             responseType: 'json',
             responseEncoding: 'utf8',
@@ -73,7 +79,7 @@ module.exports = class Monitor {
 
         //Remove identifiers and add steam profile link
         players.forEach(player => {
-            player.identifiers.forEach((identifier, index) => {
+            player.identifiers.forEach((identifier) => {
                 if(identifier.startsWith('steam:')){
                     try {
                         let decID = new bigInt(identifier.slice(6), 16).toString(); 
@@ -98,19 +104,44 @@ module.exports = class Monitor {
 
     //================================================================
     /**
-     * Refreshes the Process Status.
+     * Refreshes the Processes Statuses.
      */
     async refreshProcessStatus(){
         try {
-            let pidData = await pidusage(globals.fxServer.fxChild.pid);
-            this.statusProcess = {
-                cpu: pidData.cpu,
-                memory: pidData.memory,
-                uptime: pidData.elapsed,
-                ctime: pidData.ctime
+            var processes = await pidusageTree(process.pid);
+            let combined = {
+                count: 0,
+                cpu: 0,
+                memory: 0,
+                uptime: null,
+                ctime: 0
             }
+            let individual = {}
+
+            //Foreach PID
+            Object.keys(processes).forEach((pid) => {
+                var curr = processes[pid];
+
+                //combined
+                combined.count += 1;
+                combined.cpu += curr.cpu.toFixed(2);
+                combined.memory += curr.memory;
+                if(combined.uptime === null || combined.uptime > curr.elapsed) combined.uptime = curr.elapsed;
+                combined.ctime += curr.ctime;
+
+                //individual
+                individual[pid] = {
+                    cpu: curr.cpu.toFixed(2),
+                    memory: curr.memory,
+                    uptime: curr.elapsed,
+                    ctime: curr.ctime
+                }
+            });
+            this.statusProcess = combined;
+            this.statusAllProcess = individual;
         } catch (error) {
             this.statusProcess = false;
+            this.statusAllProcess = false;
         }
     }
 

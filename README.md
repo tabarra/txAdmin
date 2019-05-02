@@ -3,7 +3,7 @@ FiveM FXServer Admin - remotely manage your GTA5 FiveM Server
 
 ## TODO:
 - [ ] **Write a decent README.**
-- [ ] Get the correct PID through pidtree (should we get only the correct fxserver's pid, or summ all the processes? This code usually takes about 40MB so it might be significant enough to include)
+- [x] Get the correct PID through pidtree (should we get only the correct fxserver's pid, or summ all the processes? This code usually takes about 40MB so it might be significant enough to include)
 - [x] Put the configuration into a json and set default values
 - [x] Write the admin log component (or part of another?)
 - [x] Separate the web routes

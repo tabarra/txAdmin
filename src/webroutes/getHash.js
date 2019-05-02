@@ -2,6 +2,7 @@
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'WebServer:getHash';
 
+const pidusageTree = require('pidusage-tree')
 
 /**
  * Simple way to get a bcrypt hash to populate your admins.json

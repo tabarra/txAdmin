@@ -32,6 +32,7 @@
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "pidusage": "^2.0.17",
+    "pidusage-tree": "^2.0.5",
     "pretty-bytes": "^5.2.0",
     "pretty-ms": "^5.0.0",
     "squirrelly": "^7.1.1",
