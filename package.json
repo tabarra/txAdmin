@@ -26,8 +26,15 @@
   "homepage": "https://github.com/tabarra/fivem-fxadmin#readme",
   "dependencies": {
     "axios": "^0.18.0",
+    "bcrypt": "^3.0.6",
+    "big-integer": "^1.6.43",
     "chalk": "^2.4.2",
+    "cors": "^2.8.5",
     "express": "^4.16.4",
-    "squirrelly": "^7.1.1"
+    "pidusage": "^2.0.17",
+    "pretty-bytes": "^5.2.0",
+    "pretty-ms": "^5.0.0",
+    "squirrelly": "^7.1.1",
+    "xss": "^1.0.6"
   }
 }

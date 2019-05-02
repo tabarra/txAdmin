@@ -1,0 +1,10 @@
+[
+    {
+        "name": "tabarra",
+        "password": "$2b$05$RJnlYFHSegf4za1He/tQFO6oINPjDvsTUHcpIARK0tL91OQRZjHxK"
+    },
+    {
+        "name": "Example User",
+        "password": "bcrypt hash can be obtained by the url http://localhost:3000/getHash?pwd=examplePWD"
+    }
+]

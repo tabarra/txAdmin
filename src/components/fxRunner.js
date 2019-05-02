@@ -9,9 +9,9 @@ module.exports = class FXRunner {
         this.config = config;
         this.context = 'FXRunner';
         this.fxChild = null;
+        this.fxChildStatus = null;
         this.outData = '';
-        this.spawnServer()
-        
+        if(config.autostart) this.spawnServer();
     }
 
     
@@ -52,7 +52,7 @@ module.exports = class FXRunner {
             // process.stdout.write(data.toString());
             this.outData += data;
         });
-    }
+    }//Final spawnServer()
 
 
     //================================================================
@@ -85,8 +85,6 @@ module.exports = class FXRunner {
         await sleep(bufferTime);
         return this.outData;
     }
-
-
 } //Fim FXRunner()
 
 

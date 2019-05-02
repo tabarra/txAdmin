@@ -9,65 +9,101 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <style>
         body{
-        background-color: #f8f9fa;
-        margin-top: 64px;
-    }
-    .backEscuro{
-        background-color: #f33;
-    }
+            background-color: #f8f9fa;
+            margin-top: 32px;
+        }
+        .backEscuro{
+            background-color: #f33;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container-fluid horario-wrapper">
+    <div class="container">
         <div class="row">
             <div class="col-12 text-center">
                 <!-- Só altere o nome do servidor aqui -->
                 <h1>FXServer Admin</h1>
+                <br>
             </div>
         </div>
-        <div class="row">
-            <div class="col-12 text-center" id="horario">
+        <div class="row justify-content-center">
+            <!-- Cards principais -->
+            <div class="col-xs-5">
+                <div class="card border-danger" style="width: 28rem; min-height: 268px">
+                    <form action="/action" method="post">
+                        <div class="card-body">
+                                <div class="form-group row">
+                                    <label for="action" class="col-sm-4 col-form-label">Action</label>
+                                    <div class="col-sm-8">
+                                        <select name="action" id="frm_action" class="form-control" required>
+                                            <option value="" disabled selected>> DEFAULT:</option>
+                                            <option value="admin_say">Admin Message</option>
+                                            <option value="restart_res">Restart script</option>
+                                            <option value="start_res">Start script</option>
+                                            <option value="stop_res">Stop script</option>
+                                            <option value="refresh_res">Refresh scripts</option>
+                                            <option value="" disabled>> DANGER ZONE:</option>
+                                            <option value="restart_sv">RESTART Server</option>
+                                            <option value="stop_sv">STOP Server</option>
+                                            <option value="start_sv">START Server</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="action" class="col-sm-4 col-form-label">Parameter</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="parameter" id="frm_parameter" class="form-control" placeholder="xxxx" disabled required>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="password" class="col-sm-4 col-form-label">Password</label>
+                                    <div class="col-sm-8">
+                                        <input value="aaa" type="password" name="password" id="frm_password" class="form-control" required>
+                                    </div>
+                                </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <button type="submit" class="btn btn-outline-danger mx-auto">EXECUTE</button>
+                        </div>
+                    </form>
+                </div>
+                <br>
+                <div class="card border-info" style="width: 28rem; min-height: 238px">
+                    <div class="card-body" id="card-status">
+                        Carregando...
+                    </div>
+                </div>
+                <br>
+                <div class="container text-center text-muted" >
+                    <small>
+                        Fork me on GitHub:<br>
+                        <a href="https://github.com/tabarra/fivem-fxadmin" target="_blank" class="text-muted">https://github.com/tabarra/fivem-fxadmin</a>
+                    </small>
+                </div>
             </div>
-        </div>
-        <div class="card mx-auto border-danger" style="width: 28rem;">
-            <form action="/action" method="post">
-                <div class="card-body ">
-                        <div class="form-group row">
-                            <label for="action" class="col-sm-4 col-form-label">Action</label>
-                            <div class="col-sm-8">
-                                <select name="action" id="frm_action" class="form-control" required>
-                                    <option value="" disabled selected>> SELECT</option>
-                                    <option value="admin_say">Admin say</option>
-                                    <option value="restart_res">Restart script</option>
-                                    <option value="start_res">Start script</option>
-                                    <option value="stop_res">Stop script</option>
-                                    <option value="refresh_res">Refresh scripts</option>
-                                    <option value="" disabled>> DANGER ZONE:</option>
-                                    <option value="restart_sv">RESTART Server</option>
-                                    <option value="stop_sv">STOP Server</option>
-                                    <option value="start_sv">START Server</option>
-                                </select>
+            <!-- Fim Cards principais -->
+            <div class="col-xs-1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+            <!-- Card Secundário -->
+            <div class="col-xs-5">
+                <div class="card border-info" style="width: 28rem; min-height: 268px">
+                    <div class="card-body">
+                            <nav>
+                                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                                    <a class="nav-item nav-link active" id="nav-players-tab" data-toggle="tab" href="#nav-players" role="tab" aria-controls="nav-players" aria-selected="true">Players</a>
+                                    <a class="nav-item nav-link" id="nav-log-tab" data-toggle="tab" href="#nav-log" role="tab" aria-controls="nav-log" aria-selected="false">ADM Log</a>
+                                </div>
+                            </nav>
+                            <div class="tab-content" id="nav-tabContent" style="padding-top: 25px;">
+                                <div class="tab-pane fade show active" id="nav-players" role="tabpanel" aria-labelledby="nav-players-tab">Carregando...</div>
+                                <div class="tab-pane fade" id="nav-log" role="tabpanel" aria-labelledby="nav-log-tab">Carregando...</div>
                             </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="action" class="col-sm-4 col-form-label">Parameter</label>
-                            <div class="col-sm-8">
-                                <input type="text" name="parameter" id="frm_parameter" class="form-control" placeholder="xxxx" disabled required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="password" class="col-sm-4 col-form-label">Password</label>
-                            <div class="col-sm-8">
-                                <input value="aaa" type="password" name="password" id="frm_password" class="form-control" required>
-                            </div>
-                        </div>
+                    </div>
                 </div>
-                <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-outline-danger mx-auto">EXECUTE</button>
-                </div>
-            </form>
+            </div>
+            <!-- Fim Card Secundário -->
         </div>
+
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -79,6 +115,25 @@
             'start_res',
             'stop_res'
         ]
+        function refreshData(){
+            $.ajax({
+                url: "/getData",
+                type: "GET",
+                dataType: "json",
+                timeout: 500,
+                success: function(data) {
+                    $("#card-status").html( data.status );
+                    $("#nav-players").html( data.players );
+                    $("#nav-log").html( data.log );
+                },
+                error: function(xmlhttprequest, textstatus, message) {
+                    let out = `Request error: ${textstatus}\n<br>${message}`;
+                    $("#card-status").html(out);
+                    $("#nav-players").html(out);
+                    $("#nav-log").html(out);
+                }
+            });
+        };
         $(document).ready(function() {  
             $('#frm_action').change(function(){
                 var action = $("#frm_action").val();
@@ -88,6 +143,9 @@
                     $("#frm_parameter").prop('disabled', true);
                 }      
             });
+            setInterval(() => {
+                refreshData();
+            }, 1000);
         });
     </script>
 </body>

@@ -9,6 +9,7 @@ const { log, logOk, logWarn, logError } = require('./extras/conLog');
 //FIXME: I should be using dependency injection or something
 globals = {
     monitor: null,
+    authenticator: null,
     webServer: null,
     fxServer: null
 }
@@ -22,6 +23,9 @@ class FXAdmin {
         this.startMonitor().catch((err) => {
             HandleFatalError(err);
         });
+        this.startAuthenticator().catch((err) => {
+            HandleFatalError(err);
+        });
         this.startWebServer().catch((err) => {
             HandleFatalError(err);
         });
@@ -31,9 +35,15 @@ class FXAdmin {
     }
 
     //==============================================================
-    async startMonitor(){
+    async startAuthenticator(){
         const Monitor = require('./components/monitor')
         globals.monitor = new Monitor(this.config.monitor);
+    }
+
+    //==============================================================
+    async startMonitor(){
+        const Authenticator = require('./components/authenticator')
+        globals.authenticator = new Authenticator(this.config.authenticator);
     }
 
     //==============================================================
