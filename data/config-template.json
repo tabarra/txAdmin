@@ -22,6 +22,8 @@
         "serverPath": "C:/Users/Admin/Documents/fxserver_builds/1168",
         "cfgPath": "server.cfg",
         "resPath": "C:/Users/Admin/Desktop/server01",
+        "onesync": false,
+        "isLinux": false,
         "autostart": false
     }
 }

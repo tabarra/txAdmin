@@ -113,8 +113,7 @@ module.exports = class Monitor {
                 count: 0,
                 cpu: 0,
                 memory: 0,
-                uptime: null,
-                ctime: 0
+                uptime: null
             }
             let individual = {}
 
@@ -124,17 +123,15 @@ module.exports = class Monitor {
 
                 //combined
                 combined.count += 1;
-                combined.cpu += curr.cpu.toFixed(2);
+                combined.cpu += curr.cpu;
                 combined.memory += curr.memory;
                 if(combined.uptime === null || combined.uptime > curr.elapsed) combined.uptime = curr.elapsed;
-                combined.ctime += curr.ctime;
 
                 //individual
                 individual[pid] = {
-                    cpu: curr.cpu.toFixed(2),
+                    cpu: curr.cpu,
                     memory: curr.memory,
-                    uptime: curr.elapsed,
-                    ctime: curr.ctime
+                    uptime: curr.elapsed
                 }
             });
             this.statusProcess = combined;

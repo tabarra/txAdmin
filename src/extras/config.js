@@ -48,6 +48,8 @@ let fxServer = {
     serverPath: configFile.fxServer.serverPath || fatalRequired('fxServer.serverPath'),
     cfgPath: configFile.fxServer.cfgPath || fatalRequired('fxServer.cfgPath'),
     resPath: configFile.fxServer.resPath || fatalRequired('fxServer.resPath'),
+    onesync: (configFile.fxServer.onesync === 'true' || configFile.fxServer.onesync === true),
+    isLinux: (configFile.fxServer.isLinux === 'true' || configFile.fxServer.isLinux === true),
     autostart: (configFile.fxServer.autostart === 'true' || configFile.fxServer.autostart === true),
 };
 

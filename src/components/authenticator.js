@@ -51,7 +51,7 @@ module.exports = class Authenticator {
         try {
             let raw = fs.readFileSync(this.config.adminsFilePath);  
             this.admins = JSON.parse(raw);
-            log(`Admins file loaded. Found: ${this.admins.length}`, context)
+            if(globals.config.verbose) log(`Admins file loaded. Found: ${this.admins.length}`, context)
         } catch (error) {
             logError('Unnable to load admins.', context);
             this.admins = [];

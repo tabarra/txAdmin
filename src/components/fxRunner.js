@@ -22,9 +22,11 @@ module.exports = class FXRunner {
      * Spawns the FXServer and sets up all the event handlers
      */
     async spawnServer(){
+        let onesyncFlag = (this.config.onesync)? '+set onesync_enabled 1' : '';
+        //TODO: linux compatibility
         this.fxChild = spawn(
             "cmd.exe", 
-            ['/c', `${this.config.serverPath}/run.cmd +exec ${this.config.cfgPath}`],
+            ['/c', `${this.config.serverPath}/run.cmd ${onesyncFlag} +exec ${this.config.cfgPath}`],
             {cwd: this.config.resPath}
         );
         logOk(`::Iniciado com PID ${this.fxChild.pid}!`, context);

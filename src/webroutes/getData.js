@@ -36,15 +36,13 @@ function sendServerStatus(){
     out += `<hr>`;
 
     let count = (dataProcess && typeof dataProcess.count !== 'undefined')? dataProcess.count : '--' ;
-    let cpu = (dataProcess && typeof dataProcess.cpu !== 'undefined')? dataProcess.cpu+'%' : '--' ;
+    let cpu = (dataProcess && typeof dataProcess.cpu !== 'undefined')? dataProcess.cpu.toFixed(2)+'%' : '--' ;
     let memory = (dataProcess && typeof dataProcess.memory !== 'undefined')? prettyBytes(dataProcess.memory) : '--' ;
     let uptime = (dataProcess && typeof dataProcess.uptime !== 'undefined')? prettyMs(dataProcess.uptime) : '--' ;
-    let ctime = (dataProcess && typeof dataProcess.ctime !== 'undefined')? dataProcess.ctime+'ms' : '--' ;
     out += `<b>Processes:</b> ${count}\n`;
     out += `<b>CPU:</b> ${cpu}\n`;
     out += `<b>Memory:</b> ${memory}\n`;
     out += `<b>Uptime:</b> ${uptime}\n`;
-    out += `<b>CTime:</b> ${ctime}`;
     out += '</pre>';
     return out;
 }
