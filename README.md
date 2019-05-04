@@ -23,8 +23,10 @@ Do the same thing to your `admins-template.json`. To generate the hashed passwor
   
 To run FXAdmin:
 ```bash
-$ node src/main.js
+$ node src/main.js config.json
 ```
+
+To run multiple servers with the same base and FXAdmin installation, just duplicate your config.json and change the ports. Two instances of FXAdmin cannot be running in the same web server port.
 
 
 ## TODO
@@ -43,10 +45,11 @@ And more...
 - [ ] Check what happens when you stop or start a server thet is already running. Should this.fxServer be set to null?
 - [ ] Separate the DANGER ZONE commands into a separate tab with confirmation dialog?
 - [ ] We have data, we should plot it into a graph...
-- [ ] Add the config file to the arguments so we can run multiple servers in the same installation folder only be specifying it in runtime like `node src/main.js server01.json`
+- [x] Add the config file to the arguments so we can run multiple servers in the same installation folder only be specifying it in runtime like `node src/main.js server01.json`
 - [ ] Protect the log with password. For now I will just disable IP logging.
 - [ ] Write a simple `manage_admins.js` script to help with the process. The current `/getHash?pwd=xxx` is counterintuitive at best.
 - [ ] Get JSONC compatibility. Inline documentation for the configs would be great.
+- [ ] Add machine performance data to the panel. Or not, perhaps thats a little too much into Grafana's land.
 
 
 ## License & credits

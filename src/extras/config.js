@@ -2,22 +2,22 @@
 //Requires
 const fs = require('fs');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const context = 'Config Exporter';
 
 function fatalRequired(varName){
-    logError(`The following variable was not set and is required: '${varName}'`, 'Config Exporter');
+    logError(`The following variable was not set and is required: '${varName}'`, context);
     process.exit(0);
 }
 
 
 //Try to load configuration
-//TODO: get the configFilePath from the arguments
-let configFilePath = 'data/config.json';
+//TODO: create a lock file to prevent starting twice the same config file?
+let configFilePath = 'data/' + (process.argv[2] || fatalRequired('server config JSON file inside your data folder'));
 let configFile = null;
 try {
     let raw = fs.readFileSync(configFilePath);  
     configFile = JSON.parse(raw);
 } catch (error) {
-    dir(error)
     logError(`Unnable to load configuration file '${configFilePath}'`, 'Config Exporter');
     process.exit(0)
 }
