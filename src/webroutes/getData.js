@@ -13,15 +13,16 @@ const context = 'WebServer:getData';
  */
 module.exports = async function action(res, req) {
     res.send({
-        status: await sendServerStatus(),
-        players: await sendPlayers(),
+        meta: await prepareMeta(),
+        status: await prepareServerStatus(),
+        players: await preparePlayers(),
         log: await sendLog()
     })
 };
 
 
 //==============================================================
-function sendServerStatus(){
+function prepareServerStatus(){
     let dataServer = globals.monitor.statusServer; //shorthand much!?
     let dataProcess = globals.monitor.statusProcess; //shorthand much!?
 
@@ -49,7 +50,7 @@ function sendServerStatus(){
 
 
 //==============================================================
-function sendPlayers(){
+function preparePlayers(){
     let dataServer = globals.monitor.statusServer; //shorthand much!?
     let out = '<pre>';
 
@@ -68,7 +69,19 @@ function sendPlayers(){
     return out;
 }
 
+
+//==============================================================
 async function sendLog(){
     let log = await globals.logger.get();
     return `<pre>${xss(log)}</pre>`;
+}
+
+
+//==============================================================
+async function prepareMeta(){
+    let dataServer = globals.monitor.statusServer; //shorthand much!?
+    return {
+        favicon: (dataServer.online)? 'favicon_on' : 'favicon_off',
+        title: (dataServer.online)? `(${dataServer.players.length}) FXAdmin` : 'FXAdmin'
+    };
 }

@@ -10,7 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <!-- Favicon made by Freepik from www.flaticon.com is licensed by CC 3.0 BY -->
-    <link rel="shortcut icon" type="image/png" href="favicon_default.png" />
+    <link rel="shortcut icon" type="image/png" href="favicon_default.png" id="favicon"/>
     <title>FXAdmin</title>
     <style>
         body{
@@ -66,7 +66,7 @@
                                 <div class="form-group row">
                                     <label for="action" class="col-sm-4 col-form-label">Parameter</label>
                                     <div class="col-sm-8">
-                                        <input type="text" name="parameter" id="frm_parameter" class="form-control" placeholder="xxxx" disabled required>
+                                        <input type="text" name="parameter" id="frm_parameter" class="form-control" placeholder="" disabled required>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -127,7 +127,8 @@
             'restart_res',
             'start_res',
             'stop_res'
-        ]
+        ];
+
         function refreshData(){
             $.ajax({
                 url: "/getData",
@@ -138,15 +139,20 @@
                     $("#card-status").html( data.status );
                     $("#nav-players").html( data.players );
                     $("#nav-log").html( data.log );
+                    $("#favicon").attr("href", data.meta.favicon+".png");
+                    document.title = data.meta.title;
                 },
                 error: function(xmlhttprequest, textstatus, message) {
                     let out = `Request error: ${textstatus}\n<br>${message}`;
                     $("#card-status").html(out);
                     $("#nav-players").html(out);
                     $("#nav-log").html(out);
+                    $("#favicon").attr("href","favicon_off.png");
+                    document.title = 'ERROR - FXAdmin';
                 }
             });
         };
+
         $(document).ready(function() {  
             $('#frm_action').change(function(){
                 var action = $("#frm_action").val();
