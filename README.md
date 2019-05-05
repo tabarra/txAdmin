@@ -30,6 +30,7 @@ To run multiple servers with the same base and FXAdmin installation, just duplic
 
 
 ## TODO
+MUST before the release:
 - [ ] **Improve the README.**
 - [x] Get the correct PID through pidtree (should we get only the correct fxserver's pid, or sum all the processes? This code usually takes about 40MB so it might be significant enough to include)
 - [x] Put the configuration into a json and set default values
@@ -38,6 +39,7 @@ To run multiple servers with the same base and FXAdmin installation, just duplic
 - [ ] Add custom commands to the config file
 - [ ] Add a simple rate limiter and perhaps add *morgan*
 - [x] Write some documentation
+- [ ] Automatically check for updates. 
 
 And more...
 - [x] Console verbosity settings? (**WIP**)
@@ -50,6 +52,7 @@ And more...
 - [ ] Write a simple `manage_admins.js` script to help with the process. The current `/getHash?pwd=xxx` is counterintuitive at best.
 - [ ] Get JSONC compatibility. Inline documentation for the configs would be great.
 - [ ] Add machine performance data to the panel. Or not, perhaps thats a little too much into Grafana's land.
+
 
 
 ## License & credits
