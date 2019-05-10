@@ -9,7 +9,7 @@ One of the problems I noticed with the servers out there is that the "bases" are
 ## Installation
 First, make sure you have:
 - NodeJS v10+ (with npm)
-- FXServer (duh)
+- FXServer [(duh)](https://runtime.fivem.net/artifacts/fivem/)
 - One TCP listen port opened for the web server
 
 Then to install:
@@ -29,22 +29,24 @@ $ node src/main.js config.json
 To run multiple servers with the same base and FXAdmin installation, just duplicate your config.json and change the ports. Two instances of FXAdmin cannot be running in the same web server port.
 
 
-## TODO
-MUST before the release:
+## TODO:
 - [ ] **Improve the README.**
 - [x] Get the correct PID through pidtree (should we get only the correct fxserver's pid, or sum all the processes? This code usually takes about 40MB so it might be significant enough to include)
 - [x] Put the configuration into a json and set default values
 - [x] Write the admin log component (or part of another?)
 - [x] Separate the web routes
 - [ ] Add custom commands to the config file
-- [ ] Add a simple rate limiter and perhaps add *morgan*
+- [ ] **Add a simple rate limiter (MUST)**
 - [x] Write some documentation
-- [ ] Automatically check for updates. 
+- [ ] **Automatically check for updates (MUST)**
+- [ ] Add hitch detection
+- [ ] Auto restart on schedule (for the unstable servers out there)
+- [ ] Auto restart if the monitor fails X times in the last Y seconds 
 
 And more...
-- [x] Console verbosity settings? (**WIP**)
+- [x] Console verbosity settings?
 - [ ] Add a `more info` tab and include some config variables, and the complete PID breakdown
-- [ ] Check what happens when you stop or start a server thet is already running. Should this.fxServer be set to null?
+- [ ] Fix what happens when you stop or start a server that is already running.
 - [ ] Separate the DANGER ZONE commands into a separate tab with confirmation dialog?
 - [ ] We have data, we should plot it into a graph...
 - [x] Add the config file to the arguments so we can run multiple servers in the same installation folder only be specifying it in runtime like `node src/main.js server01.json`
@@ -52,6 +54,11 @@ And more...
 - [ ] Write a simple `manage_admins.js` script to help with the process. The current `/getHash?pwd=xxx` is counterintuitive at best.
 - [ ] Get JSONC compatibility. Inline documentation for the configs would be great.
 - [ ] Add machine performance data to the panel. Or not, perhaps thats a little too much into Grafana's land.
+- [ ] Average the CPU measure by the last 6 seconds or so?
+- [x] **Add discord integration**
+- [ ] Multiple server support? Technically easy, but would require massive rework of the interface.
+- [ ] FXServer artifact/build auto updater???
+- [ ] Automagically send messages in discord when starting/stopping/restarting the server
 
 
 

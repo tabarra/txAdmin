@@ -18,6 +18,13 @@
         "port": 40121,
         "bufferTime": 1500
     },
+    "discordBot": {
+        "enabled": false,
+        "token": "change-me",
+        "activity": "Running FXServer",
+        "trigger": "/status",
+        "publicIP": "change-me"
+    },
     "fxServer": {
         "serverPath": "C:/Users/Admin/Documents/fxserver_builds/1168",
         "cfgPath": "server.cfg",

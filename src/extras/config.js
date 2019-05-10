@@ -44,6 +44,13 @@ let webServer = {
     port: parseInt(configFile.webServer.port) || 40121,
     bufferTime: parseInt(configFile.webServer.bufferTime) || 1500,
 };
+let discordBot = {
+    enabled: (configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true),
+    token:  configFile.discordBot.token || ((configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true) && fatalRequired('discordBot.token')),
+    activity: configFile.discordBot.activity || "Running FXServer",
+    trigger: configFile.discordBot.trigger || "/status",
+    publicIP: configFile.discordBot.publicIP || "change-me",
+};
 let fxServer = {
     serverPath: configFile.fxServer.serverPath || fatalRequired('fxServer.serverPath'),
     cfgPath: configFile.fxServer.cfgPath || fatalRequired('fxServer.cfgPath'),
@@ -61,5 +68,6 @@ module.exports = {
     monitor: Object.freeze(monitor),
     authenticator: Object.freeze(authenticator),
     webServer: Object.freeze(webServer),
+    discordBot: Object.freeze(discordBot),
     fxServer: Object.freeze(fxServer),
 }

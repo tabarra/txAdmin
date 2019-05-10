@@ -7,6 +7,7 @@ cleanTerminal()
 globals = {
     monitor: null,
     logger: null,
+    discordBot: null,
     authenticator: null,
     webServer: null,
     fxServer: null,
@@ -21,6 +22,9 @@ class FXAdmin {
         globals.config = localConfig.global;
 
         this.startAuthenticator(localConfig.authenticator).catch((err) => {
+            HandleFatalError(err);
+        });
+        this.startDiscordBot(localConfig.discordBot).catch((err) => {
             HandleFatalError(err);
         });
         this.startFXServer(localConfig.fxServer).catch((err) => {
@@ -41,6 +45,12 @@ class FXAdmin {
     async startAuthenticator(config){
         const Monitor = require('./components/authenticator')
         globals.authenticator = new Monitor(config);
+    }
+
+    //==============================================================
+    async startDiscordBot(config){
+        const DiscordBot = require('./components/discordBot')
+        globals.discordBot = new DiscordBot(config);
     }
 
     //==============================================================

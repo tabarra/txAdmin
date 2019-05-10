@@ -47,7 +47,7 @@ module.exports = class WebServer {
 
     //================================================================
     handleRouteError(res, desc, error){
-        logError(desc, 'WebServer:route', context);
+        logError(desc, `${context}:route`);
         dir(error)
         res.status(500);
         res.send(desc);
