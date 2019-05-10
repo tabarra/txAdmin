@@ -87,13 +87,7 @@
                         Carregando...
                     </div>
                 </div>
-                <br>
-                <div class="container text-center text-muted" >
-                    <small>
-                        Fork me on GitHub:<br>
-                        <a href="https://github.com/tabarra/fivem-fxadmin" target="_blank" class="text-muted">https://github.com/tabarra/fivem-fxadmin</a>
-                    </small>
-                </div>
+                
             </div>
             <!-- Fim Cards principais -->
             <div class="col-xs-1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
@@ -115,8 +109,20 @@
                 </div>
             </div>
             <!-- Fim Card Secundário -->
+            
         </div>
-
+        <br>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="container text-center text-muted" >
+                    <small id="fork-me">
+                        Fork me on GitHub:<br>
+                        <a href="https://github.com/tabarra/fivem-fxadmin" target="_blank" class="text-muted">https://github.com/tabarra/fivem-fxadmin</a>
+                    </small>
+                    <div class="alert alert-warning d-none" role="alert" id="update-me">sdfsdf</div>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -153,15 +159,28 @@
             });
         };
 
-        $(document).ready(function() {  
-            $('#frm_action').change(function(){
-                var action = $("#frm_action").val();
-                if(paramRequiredActions.indexOf(action) != -1){
-                    $("#frm_parameter").prop('disabled', false);
-                }else{
-                    $("#frm_parameter").prop('disabled', true);
-                }      
+        function checkVersion(){
+            $.getJSON( "/checkVersion", function( data ) {
+                if(data.current !== data.latest){
+                    $("#fork-me").hide();
+                    let out = `<small><strong><a href="https://github.com/tabarra/fivem-fxadmin">Update available for FXAdmin (v${data.current} > v${data.latest})!</a><br>\n`;
+                    out += `Changelog:</strong> ${data.changelog}</small>\n`;
+                    $("#update-me").html(out);
+                    $("#update-me").removeClass('d-none');
+                }
             });
+        }
+
+        $('#frm_action').change(function(){
+            var action = $("#frm_action").val();
+            if(paramRequiredActions.indexOf(action) != -1){
+                $("#frm_parameter").prop('disabled', false);
+            }else{
+                $("#frm_parameter").prop('disabled', true);
+            }      
+        });
+        $(document).ready(function() { 
+            checkVersion();
             setInterval(() => {
                 refreshData();
             }, 1000);

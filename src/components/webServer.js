@@ -37,6 +37,9 @@ module.exports = class WebServer {
                 this.handleRouteError(res, "[getHash] Route Internal Error", err);
             });
         });
+        this.app.get('/checkVersion', async (req, res) => {
+            res.send(globals.version);
+        });
 
         //Catch all
         this.app.get('*', function(req, res){

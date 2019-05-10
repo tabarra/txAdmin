@@ -38,7 +38,7 @@ To run multiple servers with the same base and FXAdmin installation, just duplic
 - [ ] Add custom commands to the config file
 - [ ] **Add a simple rate limiter (MUST)**
 - [x] Write some documentation
-- [ ] **Automatically check for updates (MUST)**
+- [x] **Automatically check for updates (MUST)**
 - [ ] Add hitch detection
 - [ ] Auto restart on schedule (for the unstable servers out there)
 - [ ] Auto restart if the monitor fails X times in the last Y seconds 

@@ -11,7 +11,8 @@ globals = {
     authenticator: null,
     webServer: null,
     fxServer: null,
-    config: null
+    config: null,
+    version: null
 }
 
 //==============================================================
@@ -37,6 +38,9 @@ class FXAdmin {
             HandleFatalError(err);
         });
         this.startWebServer(localConfig.webServer).catch((err) => {
+            HandleFatalError(err);
+        });
+        this.checkForUpdates().catch((err) => {
             HandleFatalError(err);
         });
     }
@@ -76,6 +80,33 @@ class FXAdmin {
         const WebServer = require('./components/webServer')
         globals.webServer = new WebServer(config);
     }
+
+    //==============================================================
+    async checkForUpdates(){
+        const fs = require('fs');
+        const util = require('util');
+        const axios = require("axios");
+        const readFile = util.promisify(fs.readFile);
+
+        try {
+            let [localVersion, remoteVersion] = await Promise.all([
+                readFile('version.json'),
+                axios.get('https://raw.githubusercontent.com/tabarra/fivem-fxadmin/master/version.json')
+            ]);
+            localVersion = JSON.parse(localVersion);
+            remoteVersion = remoteVersion.data;
+            globals.version = {
+                current: localVersion.version,
+                latest: remoteVersion.version,
+                changelog: remoteVersion.changelog,
+            };
+            if(localVersion.version !== remoteVersion.version){
+                logWarn(`A new version is available for FXAdmin - https://github.com/tabarra/fivem-fxadmin`);
+            }
+        } catch (error) {
+            logError(`Error checking the current vs remote version.`);
+        }
+    }  
 }
 
 
