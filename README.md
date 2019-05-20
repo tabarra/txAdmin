@@ -42,6 +42,7 @@ To run multiple servers with the same base and FXAdmin installation, just duplic
 - [ ] Add hitch detection
 - [ ] Auto restart on schedule (for the unstable servers out there)
 - [ ] Auto restart if the monitor fails X times in the last Y seconds 
+- [ ] Better error handling for the discord module
 
 And more...
 - [x] Console verbosity settings?
@@ -59,7 +60,8 @@ And more...
 - [ ] Multiple server support? Technically easy, but would require massive rework of the interface.
 - [ ] FXServer artifact/build auto updater???
 - [ ] Automagically send messages in discord when starting/stopping/restarting the server
-
+- [ ] Configurable discord bot static responses. This should be a separate file like the admins one.
+- [ ] Discord bot extensions via required js files? Imagine typing `/whitelist @username` and the bot cross referencing the vRP id via the discord:xxx identifier. Or a `/me` giving back this users vRP stats like cars, wallet, bank, apartments & etc.
 
 
 ## License & credits
