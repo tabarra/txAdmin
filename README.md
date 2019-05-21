@@ -1,4 +1,6 @@
 # FiveM-FXAdmin
+Join our **Discord Server**: [![Discord](https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield)](https://discord.gg/f3TsfvD)
+
 This is a very simple tool to help you manage your FiveM server.  
 
 One of the problems I noticed with the servers out there is that the "bases" are usually very tightly coupled with the FXServer build, this tool helps you use or test multiple builds at the same time on the same resources folder.  
