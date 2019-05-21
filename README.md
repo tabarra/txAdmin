@@ -10,7 +10,7 @@ One of the problems I noticed with the servers out there is that the "bases" are
 
 ## Installation
 First, make sure you have:
-- NodeJS v10+ (with npm)
+- NodeJS v10 or v11 (with npm) (bcrypt module might have some wrrors with node v12)
 - FXServer [(duh)](https://runtime.fivem.net/artifacts/fivem/)
 - One TCP listen port opened for the web server
 
