@@ -9,6 +9,7 @@
     <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Convergence&display=swap" rel="stylesheet">
     <!-- Favicon made by Freepik from www.flaticon.com is licensed by CC 3.0 BY -->
     <link rel="shortcut icon" type="image/png" href="favicon_default.png" id="favicon"/>
     <title>FXAdmin</title>
@@ -27,6 +28,9 @@
             white-space: -pre-wrap;
             white-space: -o-pre-wrap;
             word-wrap: break-word;
+        }
+        h1{
+            font-family: 'Convergence', sans-serif;
         }
     </style>
 </head>
@@ -115,9 +119,10 @@
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="container text-center text-muted" >
-                    <small id="fork-me">
-                        Fork me on GitHub:<br>
-                        <a href="https://github.com/tabarra/fivem-fxadmin" target="_blank" class="text-muted">https://github.com/tabarra/fivem-fxadmin</a>
+                    <small id="bottom-links">
+                        <a href="https://github.com/tabarra/fivem-fxadmin" target="_blank">Fork me on GitHub</a>
+                        &nbsp;&nbsp;|&nbsp;&nbsp;
+                        <a href="https://discord.gg/f3TsfvD" target="_blank">Discuss me on Discord</a>
                     </small>
                     <div class="alert alert-warning d-none" role="alert" id="update-me">sdfsdf</div>
                 </div>
@@ -162,7 +167,7 @@
         function checkVersion(){
             $.getJSON( "/checkVersion", function( data ) {
                 if(data.current !== data.latest){
-                    $("#fork-me").hide();
+                    $("#bottom-links").hide();
                     let out = `<small><strong><a href="https://github.com/tabarra/fivem-fxadmin">Update available for FXAdmin (v${data.current} > v${data.latest})!</a><br>\n`;
                     out += `Changelog:</strong> ${data.changelog}</small>\n`;
                     $("#update-me").html(out);
