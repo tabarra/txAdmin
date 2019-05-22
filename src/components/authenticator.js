@@ -48,14 +48,39 @@ module.exports = class Authenticator {
      * Refreshes the admins list
      */
     async refreshAdmins(){
+        let raw = null;
+        let jsonData = null;
+
         try {
-            let raw = fs.readFileSync(this.config.adminsFilePath);  
-            this.admins = JSON.parse(raw);
-            if(globals.config.verbose) log(`Admins file loaded. Found: ${this.admins.length}`, context)
+            raw = fs.readFileSync(this.config.adminsFilePath);  
         } catch (error) {
-            logError('Unnable to load admins.', context);
+            logError('Unnable to load admins. (cannot read file)', context);
             this.admins = [];
+            return;
         }
+
+        try {
+            jsonData = JSON.parse(raw);
+        } catch (error) {
+            logError('Unnable to load admins. (json parse error)', context);
+            this.admins = [];
+            return;
+        }
+
+        let integrityFailed = jsonData.some((x) =>{
+            if(typeof x.name == 'undefined') return true;
+            if(typeof x.password_hash == 'undefined') return true;
+            if(!x.password_hash.startsWith('$2')) return true;
+            return false;
+        });
+        if(integrityFailed){
+            logError('Unnable to load admins. (Invalid data in the admins file)', context);
+            this.admins = [];
+            return;
+        }
+
+        this.admins = jsonData;
+        if(globals.config.verbose) log(`Admins file loaded. Found: ${this.admins.length}`, context);
     }
 
 } //Fim Authenticator()

@@ -4,7 +4,11 @@
         "password_hash": "the hash can be generated using https://passwordhashing.com/BCrypt"
     },
     {
-        "name": "another_user",
+        "name": "another_example_user",
         "password_hash": "the-hash-goes-between-the-double-quotes"
+    },
+    {
+        "name": "yet_another_example_user",
+        "password_hash": "$2b$10$AvKjBxfAx2Rma3UR754R/uAYScRwbfGRt1F4dfWgi6z9AD5w5nkbm"
     }
 ]
