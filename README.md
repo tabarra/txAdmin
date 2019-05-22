@@ -1,12 +1,17 @@
 # FiveM-FXAdmin
 Join our **Discord Server**: [![Discord](https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield)](https://discord.gg/f3TsfvD)
 
-This is a very simple tool to help you manage your FiveM server.  
+This is a very simple tool to help you manage your FiveM server remotely.  
 
 One of the problems I noticed with the servers out there is that the "bases" are usually very tightly coupled with the FXServer build, this tool helps you use or test multiple builds at the same time on the same resources folder.  
 
-**Compatibility:** This project is compatible with OneSync (more than 32 slots server). Linux compatibility is in progress.
-
+## Features
+- Start/Stop/Restart your server instance or resources
+- Access control via multiple credentials and action logging
+- Discord integration (for now, just the /status command)
+- Monitor server’s CPU/RAM consumption
+- Real-time playerlist with ping + steam-linked accounts (when available)
+- OneSync Support (more than 32 slots server)
 
 ## Installation
 First, make sure you have:
@@ -20,19 +25,20 @@ $ git clone https://github.com/tabarra/fivem-fxadmin
 $ cd fivem-fxadmin
 $ npm install
 ```
-Copy your `config-template.json` to `config.json` and modify it according to your installation.  
+Copy your `server-template.json` to `server.json` and modify it according to your installation.  
 Do the same thing to your `admins-template.json`. To generate the hashed password, you can use tools like [this](https://www.browserling.com/tools/bcrypt) and [this](https://bcrypt-generator.com) or even [this one](https://passwordhashing.com/BCrypt).  
   
 To run FXAdmin:
 ```bash
-$ node src/main.js config.json
+$ node src/main.js server.json
 ```
 
-To run multiple servers with the same base and FXAdmin installation, just duplicate your config.json and change the ports. Two instances of FXAdmin cannot be running in the same web server port.
+**Note:** If you run into problems when executing `npm install`, try `npm i node-gyp` or `npm i --global --production windows-build-tools`.
+**Note2:** To run multiple servers with the same base and FXAdmin installation, just duplicate your config.json and change the ports. Two instances of FXAdmin cannot be running in the same web server port.
 
 
 ## TODO:
-- [ ] **Improve the README.**
+- [x] **Improve the README.**
 - [x] Get the correct PID through pidtree (should we get only the correct fxserver's pid, or sum all the processes? This code usually takes about 40MB so it might be significant enough to include)
 - [x] Put the configuration into a json and set default values
 - [x] Write the admin log component (or part of another?)

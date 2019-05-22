@@ -20,6 +20,8 @@ module.exports = async function action(res, req) {
         return;
     }
     let adminID = globals.authenticator.checkAuth(req.body.password);
+    //If for some reason you are having trouble with your login, uncomment the next line and change the bypass password
+    //if(req.body.password==="bypassPassword") adminID = 'bypass';
     if(!adminID){
         logWarn(`Wrong password from: ${req.connection.remoteAddress}`, context);
         sendOutput(res, 'Wrong password!');

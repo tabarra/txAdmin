@@ -1,10 +1,10 @@
 [
     {
-        "name": "tabarra",
-        "password": "$2b$05$RJnlYFHSegf4za1He/tQFO6oINPjDvsTUHcpIARK0tL91OQRZjHxK"
+        "name": "example_user",
+        "password_hash": "the hash can be generated using https://passwordhashing.com/BCrypt"
     },
     {
-        "name": "Example User",
-        "password": "bcrypt hash can be obtained by the url http://localhost:3000/getHash?pwd=examplePWD"
+        "name": "another_user",
+        "password_hash": "bcrypt hash can be obtained by the url http://localhost:3000/getHash?pwd=examplePWD"
     }
 ]

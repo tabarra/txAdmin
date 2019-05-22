@@ -22,11 +22,11 @@ module.exports = class Authenticator {
     //================================================================
     /**
      * Search the admins list and try to match the password. Returns the userid if there's a match, or false.
-     * @param {string} hash 
+     * @param {string} pwd 
      * @returns {(number|boolean)} userid or false
      */
-    checkAuth(hash){
-        let admin = this.admins.find((user) => {return bcrypt.compareSync(hash, user.password)})
+    checkAuth(pwd){
+        let admin = this.admins.find((user) => {return bcrypt.compareSync(pwd, user.password_hash)})
         return (admin)? admin.name : false;
     }
 
