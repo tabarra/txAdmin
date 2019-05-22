@@ -49,7 +49,7 @@ module.exports = class DiscordBot {
         let title = (dataServer.online)? 'The server is currently **Online**!' : 'The server is currently **Offline**!';
         let players = (dataServer.online && typeof dataServer.players !== 'undefined')? dataServer.players.length : '--';
         let desc = '';
-        desc += `**IP:** ${this.config.publicIP}:${globals.monitor.config.fxServerPort}\n`;
+        desc += `**IP:** ${globals.config.publicIP}:${globals.monitor.config.fxServerPort}\n`;
         desc += `**Players:** ${players}\n`;
         
         //Send message

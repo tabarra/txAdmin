@@ -14,7 +14,7 @@ module.exports = class WebServer {
         this.app.use(express.static('public'))
         this.setupRoutes()
         this.app.listen(this.config.port, () => {
-            logOk(`::Started at http://localhost:${this.config.port}/`, context);
+            logOk(`::Started at http://${globals.config.publicIP}:${this.config.port}/`, context);
         })
     }
 

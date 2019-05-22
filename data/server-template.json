@@ -1,6 +1,7 @@
 {
     "global": {
-        "verbose": false
+        "verbose": false,
+        "publicIP": "change-me"
     },
     "logger": {
         "logPath": "data/log.txt"
@@ -22,8 +23,7 @@
         "enabled": false,
         "token": "change-me",
         "activity": "Running FXServer",
-        "trigger": "/status",
-        "publicIP": "change-me"
+        "trigger": "/status"
     },
     "fxServer": {
         "buildPath": "C:/Users/Admin/Documents/fxserver_builds/1168",

@@ -27,6 +27,7 @@ try {
 //FIXME: the bool trick in global.verbose and fxServer.autostart won't work if we want the default to be true
 let global = {
     verbose: (configFile.global.verbose === 'true' || configFile.global.verbose === true),
+    publicIP: configFile.discordBot.publicIP || "change-me",
 };
 let logger = {
     logPath: configFile.logger.logPath || 'data/log.txt',
@@ -49,7 +50,6 @@ let discordBot = {
     token:  configFile.discordBot.token || ((configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true) && fatalRequired('discordBot.token')),
     activity: configFile.discordBot.activity || "Running FXServer",
     trigger: configFile.discordBot.trigger || "/status",
-    publicIP: configFile.discordBot.publicIP || "change-me",
 };
 let fxServer = {
     buildPath: configFile.fxServer.buildPath || fatalRequired('fxServer.buildPath'),
