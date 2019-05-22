@@ -26,9 +26,9 @@
         "publicIP": "change-me"
     },
     "fxServer": {
-        "serverPath": "C:/Users/Admin/Documents/fxserver_builds/1168",
-        "cfgPath": "server.cfg",
-        "resPath": "C:/Users/Admin/Desktop/server01",
+        "buildPath": "C:/Users/Admin/Documents/fxserver_builds/1168",
+        "basePath": "C:/Users/Admin/Desktop/server01",
+        "cfgPath": "C:/Users/Admin/Desktop/server01/server.cfg",
         "onesync": false,
         "isLinux": false,
         "autostart": true

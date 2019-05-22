@@ -52,9 +52,9 @@ let discordBot = {
     publicIP: configFile.discordBot.publicIP || "change-me",
 };
 let fxServer = {
-    serverPath: configFile.fxServer.serverPath || fatalRequired('fxServer.serverPath'),
+    buildPath: configFile.fxServer.buildPath || fatalRequired('fxServer.buildPath'),
+    basePath: configFile.fxServer.basePath || fatalRequired('fxServer.basePath'),
     cfgPath: configFile.fxServer.cfgPath || fatalRequired('fxServer.cfgPath'),
-    resPath: configFile.fxServer.resPath || fatalRequired('fxServer.resPath'),
     onesync: (configFile.fxServer.onesync === 'true' || configFile.fxServer.onesync === true),
     isLinux: (configFile.fxServer.isLinux === 'true' || configFile.fxServer.isLinux === true),
     autostart: (configFile.fxServer.autostart === 'true' || configFile.fxServer.autostart === true),

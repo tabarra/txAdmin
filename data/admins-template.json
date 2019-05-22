@@ -5,6 +5,6 @@
     },
     {
         "name": "another_user",
-        "password_hash": "bcrypt hash can be obtained by the url http://localhost:3000/getHash?pwd=examplePWD"
+        "password_hash": "the-hash-goes-between-the-double-quotes"
     }
 ]

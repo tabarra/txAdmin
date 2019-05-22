@@ -26,8 +26,8 @@ module.exports = class FXRunner {
         //TODO: linux compatibility
         this.fxChild = spawn(
             "cmd.exe", 
-            ['/c', `${this.config.serverPath}/run.cmd ${onesyncFlag} +exec ${this.config.cfgPath}`],
-            {cwd: this.config.resPath}
+            ['/c', `${this.config.buildPath}/run.cmd ${onesyncFlag} +exec ${this.config.cfgPath}`],
+            {cwd: this.config.basePath}
         );
         logOk(`::Iniciado com PID ${this.fxChild.pid}!`, context);
         this.fxChild.stdout.pipe(process.stdout);
