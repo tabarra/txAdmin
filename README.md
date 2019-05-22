@@ -62,12 +62,12 @@ $ node src/main.js server.json
 - [ ] Add hitch detection
 - [ ] Auto restart on schedule (for the unstable servers out there)
 - [ ] Auto restart if the monitor fails X times in the last Y seconds 
-- [ ] Better error handling for the discord module
+- [x] Better error handling for the discord module
 
 And more...
 - [x] Console verbosity settings?
 - [ ] Add a `more info` tab and include some config variables, and the complete PID breakdown
-- [ ] Fix what happens when you stop or start a server that is already running.
+- [x] Fix what happens when you stop or start a server that is already running.
 - [ ] Separate the DANGER ZONE commands into a separate tab with confirmation dialog?
 - [ ] We have data, we should plot it into a graph...
 - [x] Add the config file to the arguments so we can run multiple servers in the same installation folder only be specifying it in runtime like `node src/main.js server01.json`
@@ -82,6 +82,7 @@ And more...
 - [ ] Automagically send messages in discord when starting/stopping/restarting the server
 - [ ] Configurable discord bot static responses. This should be a separate file like the admins one.
 - [ ] Discord bot extensions via required js files? Imagine typing `/whitelist @username` and the bot cross referencing the vRP id via the discord:xxx identifier. Or a `/me` giving back this users vRP stats like cars, wallet, bank, apartments & etc.
+- [ ] Improve fxRunner/actions responsed. Currently it's only 'Done'.
 
 
 ## License & credits

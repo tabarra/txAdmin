@@ -22,6 +22,9 @@ module.exports = class FXRunner {
      * Spawns the FXServer and sets up all the event handlers
      */
     async spawnServer(){
+        if(this.fxChild !== null) return false;
+
+        cleanTerminal();
         let onesyncFlag = (this.config.onesync)? '+set onesync_enabled 1' : '';
         //TODO: linux compatibility
         this.fxChild = spawn(
@@ -51,12 +54,7 @@ module.exports = class FXRunner {
         this.fxChild.stderr.on('data', (data) => {
             console.error(`==============================================:\n${data}\n==============================================`);
         });
-        // //The 'message' event is triggered when a this.fxChild process uses process.send() to send messages.
-        // this.fxChild.on('message', function (message, sendHandle) {
-        //     console.log(`Mensagem: ${message}`);
-        // });
         this.fxChild.stdout.on('data', (data) => {
-            // process.stdout.write(data.toString());
             if(this.enableBuffer) this.outData += data;
         });
     }//Final spawnServer()
@@ -67,8 +65,7 @@ module.exports = class FXRunner {
      * Restarts the FXServer
      */
     async restartServer(){
-        this.fxChild.kill();
-        cleanTerminal();
+        this.killServer();
         await sleep(1000);
         this.spawnServer();
     }
@@ -79,8 +76,13 @@ module.exports = class FXRunner {
      * Kills the FXServer
      */
     killServer(){
-        this.fxChild.kill();
-        cleanTerminal();
+        try {
+            this.fxChild.kill();
+            return true;
+        } catch (error) {
+            logWarn("Couldn't kill the server. Perhaps What Is Dead May Never Die.")
+            return false;
+        }
     }
     
 

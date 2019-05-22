@@ -27,6 +27,12 @@ module.exports = class DiscordBot {
             // chan.send('Hello, chat!');
         });
         this.client.on('message', this.handleMessage.bind(this));
+        this.client.on('error', (error) => {
+            logError(error.message, context);
+        });
+        this.client.on('resume', (error) => {
+            logOk('Connection resumed', context);
+        });
 
         //Start bot
         try {
