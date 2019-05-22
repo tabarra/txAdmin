@@ -15,7 +15,7 @@ One of the problems I noticed with the servers out there is that the "bases" are
 
 ## Installation
 First, make sure you have:
-- NodeJS v10 or v11 (with npm) (bcrypt module might have some wrrors with node v12)
+- NodeJS v10 or v11 (with npm) (bcrypt module might have some errors with node v12)
 - FXServer [(duh)](https://runtime.fivem.net/artifacts/fivem/)
 - One TCP listen port opened for the web server
 
@@ -33,7 +33,7 @@ To run FXAdmin:
 $ node src/main.js server.json
 ```
 
-**Note:** If you run into problems when executing `npm install`, try `npm i node-gyp` or `npm i --global --production windows-build-tools`.
+**Note:** If you run into problems when executing `npm install`, try `npm i node-gyp` or `npm i --global --production windows-build-tools`.  
 **Note2:** To run multiple servers with the same base and FXAdmin installation, just duplicate your config.json and change the ports. Two instances of FXAdmin cannot be running in the same web server port.
 
 
