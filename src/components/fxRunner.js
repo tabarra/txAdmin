@@ -23,16 +23,31 @@ module.exports = class FXRunner {
      */
     async spawnServer(){
         if(this.fxChild !== null) return false;
-
         cleanTerminal();
         let onesyncFlag = (this.config.onesync)? '+set onesync_enabled 1' : '';
-        //TODO: linux compatibility
-        this.fxChild = spawn(
-            "cmd.exe", 
-            ['/c', `${this.config.buildPath}/run.cmd ${onesyncFlag} +exec ${this.config.cfgPath}`],
-            {cwd: this.config.basePath}
-        );
-        logOk(`::Iniciado com PID ${this.fxChild.pid}!`, context);
+        let spawnShell = null;
+        let spawnCmdArgs = null;
+        if(this.config.isLinux){
+            spawnShell = '/bin/bash';
+            spawnCmdArgs = [`${this.config.buildPath}/run.sh`, `${onesyncFlag} +exec ${this.config.cfgPath}`];
+        }else{
+            spawnShell = 'cmd.exe';
+            spawnCmdArgs = ['/c', `${this.config.buildPath}/run.cmd ${onesyncFlag} +exec ${this.config.cfgPath}`];
+        }
+
+        try {
+            this.fxChild = spawn(
+                spawnShell, 
+                spawnCmdArgs,
+                {cwd: this.config.basePath}
+            );
+        } catch (error) {
+            logError('Failed to start FXServer with the following error:');
+            dir(error);
+            process.exit(0);
+        }
+        
+        logOk(`::Server started with PID ${this.fxChild.pid}!`, context);
         this.fxChild.stdout.pipe(process.stdout);
         process.stdin.pipe(this.fxChild.stdin);
 

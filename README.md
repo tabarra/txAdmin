@@ -13,6 +13,7 @@ One of the problems I noticed with the servers out there is that the "bases" are
 - Monitor server’s CPU/RAM consumption
 - Real-time playerlist with ping + steam-linked accounts (when available)
 - OneSync Support (more than 32 slots server)
+- Linux Support
 
 
 ## Installation
@@ -28,7 +29,7 @@ $ cd fivem-fxadmin
 $ npm install
 ```
 Copy your `server-template.json` to `server.json` and modify it according to your preferences.  
-- `buildPath` is the folder containing the files `run.cmd`, `fxserver.exe` and a bunch of DLLs.
+- `buildPath` is the folder containing the files `run.cmd`, `fxserver.exe` and a bunch of DLLs in case of Windows, and only `run.sh` in case of Linux.
 - `basePath` is the folder that **contains** the `resources` folder, usually it's here that you put your `server.cfg`.
 - `cfgPath` is the absolute or relative path of your `server.cfg`.
 

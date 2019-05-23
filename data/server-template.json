@@ -31,6 +31,6 @@
         "cfgPath": "C:/Users/Admin/Desktop/server01/server.cfg",
         "onesync": false,
         "isLinux": false,
-        "autostart": true
+        "autostart": false
     }
 }
