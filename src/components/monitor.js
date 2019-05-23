@@ -137,6 +137,10 @@ module.exports = class Monitor {
             this.statusProcess = combined;
             this.statusAllProcess = individual;
         } catch (error) {
+            if(globals.config.verbose){
+                logWarn('Error refreshing processes statuses', context);
+                dir(error);
+            }
             this.statusProcess = false;
             this.statusAllProcess = false;
         }
