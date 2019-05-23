@@ -74,7 +74,13 @@ module.exports = class Authenticator {
             return false;
         });
         if(integrityFailed){
-            logError('Unnable to load admins. (Invalid data in the admins file)', context);
+            logError('Unnable to load admins. (invalid data in the admins file)', context);
+            this.admins = [];
+            return;
+        }
+
+        if(!jsonData.length){
+            logError('Unnable to load admins. (no entries)', context);
             this.admins = [];
             return;
         }

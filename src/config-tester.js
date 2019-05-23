@@ -21,20 +21,22 @@ try {
 let cfg = configFile.fxServer;
 let currTest = '';
 
-/*
-    To test:
-        -buildPath is readable
-        -buildPath contains run.cmd
-        -buildPath contains fxserver.exe
-        -basePath is readable
-        -basePath contains the resources folder
-        -cfgPath file (as absolute) is readable
-        -cfgPath file (as relative to basePath) is readable
-        -spawn cmd
-        -spawn cmd /c ver
-        -spawn cmd with chdir to c:/
-        -spawn cmd with chdir to basePath
-*/
+
+Object.keys(configFile).forEach((root) => {
+    log(`Configs in ${root}:`, 'CFG');
+    Object.keys(configFile[root]).forEach((prop) => {
+        if(prop == 'token') configFile[root][prop] = '##redacted##';
+        log(`\t${prop}:\t'${configFile[root][prop]}'`, `CFG`);
+    });
+});
+
+
+if(cfg.isLinux){
+    log("Tests starting for LINUX");
+}else{
+    log("Tests starting for WINDOWS");
+}
+
 
 //Test: buildPath is readable
 currTest = 'buildPath is readable';
@@ -44,21 +46,38 @@ if(fs.existsSync(cfg.buildPath)){
     logError(currTest)
 }
 
-//Test: buildPath contains run.cmd
-currTest = 'buildPath contains run.cmd';
-if(fs.existsSync(`${cfg.buildPath}/run.cmd`)){
-    logOk(currTest, 'OK')
+if(cfg.isLinux){
+    //================================================================
+    //=================================================== LINUX
+    //================================================================
+    //Test: buildPath contains run.sh
+    currTest = 'buildPath contains run.sh';
+    if(fs.existsSync(`${cfg.buildPath}/run.sh`)){
+        logOk(currTest, 'OK')
+    }else{
+        logError(currTest, 'FAIL')
+    }
 }else{
-    logError(currTest, 'FAIL')
+    //================================================================
+    //=================================================== WINDOWS
+    //================================================================
+    //Test: buildPath contains run.cmd
+    currTest = 'buildPath contains run.cmd';
+    if(fs.existsSync(`${cfg.buildPath}/run.cmd`)){
+        logOk(currTest, 'OK')
+    }else{
+        logError(currTest, 'FAIL')
+    }
+
+    //Test: buildPath contains fxserver.exe
+    currTest = 'buildPath contains fxserver.exe';
+    if(fs.existsSync(`${cfg.buildPath}/fxserver.exe`)){
+        logOk(currTest, 'OK')
+    }else{
+        logError(currTest, 'FAIL')
+    }
 }
 
-//Test: buildPath contains fxserver.exe
-currTest = 'buildPath contains fxserver.exe';
-if(fs.existsSync(`${cfg.buildPath}/fxserver.exe`)){
-    logOk(currTest, 'OK')
-}else{
-    logError(currTest, 'FAIL')
-}
 
 //Test: basePath is readable
 currTest = 'basePath is readable';
@@ -76,110 +95,209 @@ if(fs.existsSync(`${cfg.basePath}/resources`)){
     logError(currTest, 'FAIL')
 }
 
-//Test: cfgPath file (as absolute) is readable
-currTest = 'cfgPath file (as absolute) is readable';
-if(fs.existsSync(cfg.cfgPath)){
-    logOk(currTest, 'OK')
+//Test: cfgPath file (as absolute or relative) is readable
+let cfgPathAbsoluteTest = fs.existsSync(cfg.cfgPath);
+let cfgPathRelativeTest = fs.existsSync(`${cfg.basePath}/${cfg.cfgPath}`);
+if(cfgPathAbsoluteTest || cfgPathRelativeTest){
+    let which = (cfgPathAbsoluteTest)? 'absolute' : 'relative to basePath';
+    logOk(`cfgPath file (as ${which}) is readable`, 'OK')
 }else{
-    logError(currTest, 'FAIL')
+    logError('cfgPath file (as absolute or relative) is readable', 'FAIL')
 }
 
-//Test: cfgPath file (as relative to basePath) is readable
-currTest = 'cfgPath file (as relative to basePath) is readable';
-if(fs.existsSync(`${cfg.basePath}/${cfg.cfgPath}`)){
-    logOk(currTest, 'OK')
+
+
+if(cfg.isLinux){
+    //================================================================
+    //=================================================== LINUX
+    //================================================================
+    //spawn bash
+    currTest = 'spawn bash';
+    try {
+        let spawn1 = spawnSync("/bin/bash");
+        if(spawn1.pid){
+            logOk(currTest, 'OK');
+        }else{
+            throw new Error('Process PID = '+spawn1.pid);
+        }
+    } catch (error) {
+        logError(currTest, 'FAIL');
+        dir(error);
+    }
+
+
+    //spawn bash -c id
+    currTest = 'spawn bash -c id';
+    try {
+        let child = spawnSync("/bin/bash",['-c', 'id && exit']);
+        if(child.stderr !== null && child.stdout !== null && child.pid){
+            logOk(currTest, 'OK');
+            console.log(`stderr: ${child.stderr.toString()}`);
+            console.log(`stdout: ${child.stdout.toString()}`);
+        }else{
+            throw new Error('Process PID = '+child.pid);
+        }
+    } catch (error) {
+        logError(currTest, 'FAIL');
+        dir(error);
+    }
+
+
+    //spawn bash with chdir to /
+    currTest = 'spawn bash with chdir to /';
+    try {
+        let child = spawnSync("/bin/bash",['-c', 'pwd && exit'],{cwd: '/'});
+        if(child.stderr !== null && child.stdout !== null){
+            logOk(currTest, 'OK');
+            console.log(`stderr: ${child.stderr.toString()}`);
+            console.log(`stdout: ${child.stdout.toString()}`);
+        }else{
+            logError(currTest, 'FAIL');
+            dir(child);
+        }
+    } catch (error) {
+        logError(currTest, 'FAIL');
+        dir(error);
+    }
+
+
+    //spawn bash with chdir to basePath
+    currTest = 'spawn bash with chdir to basePath';
+    try {
+        let child = spawnSync("/bin/bash",['-c', 'pwd && exit'],{cwd: cfg.basePath});
+        if(child.stderr !== null && child.stdout !== null){
+            logOk(currTest, 'OK');
+            console.log(`stderr: ${child.stderr.toString()}`);
+            console.log(`stdout: ${child.stdout.toString()}`);
+        }else{
+            logError(currTest, 'FAIL');
+            dir(child);
+        }
+    } catch (error) {
+        logError(currTest, 'FAIL');
+        dir(error);
+    }
+
+
+    //spawn full server
+    currTest = 'spawn full server';
+    try {
+        let child = spawnSync(
+            "/bin/bash", 
+            [`${cfg.buildPath}/run.sh`, `+exec ${cfg.cfgPath}`],
+            {cwd: cfg.basePath}
+        );
+        if(child.stderr !== null && child.stdout !== null){
+            logOk(currTest, 'OK');
+            console.log(`stderr: ${child.stderr.toString()}`);
+            console.log(`stdout: ${child.stdout.toString()}`);
+        }else{
+            logError(currTest, 'FAIL');
+            dir(child);
+        }
+    } catch (error) {
+        logError(currTest, 'FAIL');
+        dir(error);
+    }
+
 }else{
-    logError(currTest, 'FAIL')
-}
-
-
-//spawn cmd
-currTest = 'spawn cmd';
-try {
-    let spawn1 = spawnSync("cmd.exe");
-    if(spawn1.pid){
-        logOk(currTest, 'OK');
-    }else{
-        throw new Error('Process PID = '+spawn1.pid);
-    }
-} catch (error) {
-    logError(currTest, 'FAIL');
-    dir(error);
-}
-
-
-//spawn cmd /c ver
-currTest = 'spawn cmd /c ver';
-try {
-    let child = spawnSync("cmd.exe",['/c', 'ver']);
-    if(child.stderr !== null && child.stdout !== null && child.pid){
-        logOk(currTest, 'OK');
-        console.log(`stderr: ${child.stderr.toString()}`);
-        console.log(`stdout: ${child.stdout.toString()}`);
-    }else{
-        throw new Error('Process PID = '+child.pid);
-    }
-} catch (error) {
-    logError(currTest, 'FAIL');
-    dir(error);
-}
-
-
-//spawn cmd with chdir to c:/
-currTest = 'spawn cmd with chdir to c:/';
-try {
-    let child = spawnSync("cmd.exe",[''],{cwd: 'c:/'});
-    if(child.stderr !== null && child.stdout !== null && child.pid){
-        logOk(currTest, 'OK');
-        console.log(`stderr: ${child.stderr.toString()}`);
-        console.log(`stdout: ${child.stdout.toString()}`);
-    }else{
-        throw new Error('Process PID = '+child.pid);
-    }
-} catch (error) {
-    logError(currTest, 'FAIL');
-    dir(error);
-}
-
-
-//spawn cmd with chdir to basePath
-currTest = 'spawn cmd with chdir to basePath';
-try {
-    let child = spawnSync("cmd.exe",[''],{cwd: cfg.basePath});
-    if(child.stderr !== null && child.stdout !== null){
-        logOk(currTest, 'OK');
-        console.log(`stderr: ${child.stderr.toString()}`);
-        console.log(`stdout: ${child.stdout.toString()}`);
-    }else{
+    //================================================================
+    //=================================================== WINDOWS
+    //================================================================
+    //spawn cmd
+    currTest = 'spawn cmd';
+    try {
+        let spawn1 = spawnSync("cmd.exe");
+        if(spawn1.pid){
+            logOk(currTest, 'OK');
+        }else{
+            throw new Error('Process PID = '+spawn1.pid);
+        }
+    } catch (error) {
         logError(currTest, 'FAIL');
-        dir(child);
+        dir(error);
     }
-} catch (error) {
-    logError(currTest, 'FAIL');
-    dir(error);
-}
 
 
-//spawn full server
-currTest = 'spawn full server';
-try {
-    let child = spawnSync(
-        "cmd.exe", 
-        ['/c', `${cfg.buildPath}/run.cmd +exec ${cfg.cfgPath}`],
-        {cwd: cfg.basePath}
-    );
-    if(child.stderr !== null && child.stdout !== null){
-        logOk(currTest, 'OK');
-        console.log(`stderr: ${child.stderr.toString()}`);
-        console.log(`stdout: ${child.stdout.toString()}`);
-    }else{
+    //spawn cmd /c ver
+    currTest = 'spawn cmd /c ver';
+    try {
+        let child = spawnSync("cmd.exe",['/c', 'ver']);
+        if(child.stderr !== null && child.stdout !== null && child.pid){
+            logOk(currTest, 'OK');
+            console.log(`stderr: ${child.stderr.toString()}`);
+            console.log(`stdout: ${child.stdout.toString()}`);
+        }else{
+            throw new Error('Process PID = '+child.pid);
+        }
+    } catch (error) {
         logError(currTest, 'FAIL');
-        dir(child);
+        dir(error);
     }
-} catch (error) {
-    logError(currTest, 'FAIL');
-    dir(error);
+
+
+    //spawn cmd with chdir to c:/
+    currTest = 'spawn cmd with chdir to c:/';
+    try {
+        let child = spawnSync("cmd.exe",[''],{cwd: 'c:/'});
+        if(child.stderr !== null && child.stdout !== null && child.pid){
+            logOk(currTest, 'OK');
+            console.log(`stderr: ${child.stderr.toString()}`);
+            console.log(`stdout: ${child.stdout.toString()}`);
+        }else{
+            throw new Error('Process PID = '+child.pid);
+        }
+    } catch (error) {
+        logError(currTest, 'FAIL');
+        dir(error);
+    }
+
+
+    //spawn cmd with chdir to basePath
+    currTest = 'spawn cmd with chdir to basePath';
+    try {
+        let child = spawnSync("cmd.exe",[''],{cwd: cfg.basePath});
+        if(child.stderr !== null && child.stdout !== null){
+            logOk(currTest, 'OK');
+            console.log(`stderr: ${child.stderr.toString()}`);
+            console.log(`stdout: ${child.stdout.toString()}`);
+        }else{
+            logError(currTest, 'FAIL');
+            dir(child);
+        }
+    } catch (error) {
+        logError(currTest, 'FAIL');
+        dir(error);
+    }
+
+
+    //spawn full server
+    currTest = 'spawn full server';
+    try {
+        let child = spawnSync(
+            "cmd.exe", 
+            ['/c', `${cfg.buildPath}/run.cmd +exec ${cfg.cfgPath}`],
+            {cwd: cfg.basePath}
+        );
+        if(child.stderr !== null && child.stdout !== null){
+            logOk(currTest, 'OK');
+            console.log(`stderr: ${child.stderr.toString()}`);
+            console.log(`stdout: ${child.stdout.toString()}`);
+        }else{
+            logError(currTest, 'FAIL');
+            dir(child);
+        }
+    } catch (error) {
+        logError(currTest, 'FAIL');
+        dir(error);
+    }
 }
+
+
+
+
+
+
 
 
 log("End of tests");

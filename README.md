@@ -44,9 +44,10 @@ $ node src/main.js server.json
 
 
 ## Troubleshooting
+- If you are getting `Wrong password!` when executing an action, make sure you have your admins file configured correctly. If there is anything wrong with the file you should get an error when starting FXAdmin.
 - If you are getting `Server error: timeout of 1000ms exceeded` it means the fxserver is offline, start it in the web panel.
-- If you are having trouble starting the fxserver via fxadmin, run `node src/config-tester.js server.json` and see which test is failing. (*Note: there are two tests for the cfgPath, one must succeed*)
-- If you run into problems when executing `npm install`, try `npm i node-gyp` or `npm i --global --production windows-build-tools`.  
+- If you are having trouble starting the fxserver via fxadmin, run `node src/config-tester.js server.json` and see which test is failing.
+- If you run into problems when executing `npm install`, try `npm i node-gyp` or `npm i --global --production windows-build-tools` if you are on windows.  
 
 
 ## TODO:
