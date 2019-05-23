@@ -68,7 +68,7 @@ module.exports = class Monitor {
             players = res.data;
             if(!Array.isArray(players)) throw new Error("not array")
         } catch (error) {
-            logError(`Server error: ${error.message}`, context);
+            logWarn(`Server error: ${error.message}`, context);
             this.statusServer = {
                 online: false,
                 ping: false,

@@ -41,12 +41,12 @@ $ node src/main.js server.json
 ```
 
 **Note:** To configure your Discord bot, follow these two guides:  [Setting up a bot application](https://discordjs.guide/preparations/setting-up-a-bot-application.html) and [Adding your bot to servers](https://discordjs.guide/preparations/adding-your-bot-to-servers.html).  
-**Note2:** To run multiple servers with the same base and FXAdmin installation, just duplicate your config.json and change the ports. Two instances of FXAdmin cannot be running in the same web server port.
+**Note2:** To run multiple servers with the same base and FXAdmin installation, just duplicate your `server.json` and change the ports. Two instances of FXAdmin cannot be running in the same web server port.
 
 
 ## Troubleshooting
 - If you are getting `Wrong password!` when executing an action, make sure you have your admins file configured correctly. If there is anything wrong with the file you should get an error when starting FXAdmin.
-- If you are getting `Server error: timeout of 1000ms exceeded` it means the fxserver is offline, start it in the web panel.
+- If you are getting `[FXAdmin:Monitor] Server error: ` of timeout or connection refused, it means the fxserver is offline, start it in the web panel.
 - If you are having trouble starting the fxserver via fxadmin, run `node src/config-tester.js server.json` and see which test is failing.
 - If you run into problems when executing `npm install`, try `npm i node-gyp` or `npm i --global --production windows-build-tools` if you are on windows.  
 

@@ -11,10 +11,39 @@ module.exports = class FXRunner {
         this.config = config;
         this.fxChild = null;
         this.fxChildStatus = null;
+        this.spawnVariables = null;
         this.outData = '';
         this.enableBuffer = false;
-        if(config.autostart) this.spawnServer();
+        this.setupVariables();
+
+        //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
+        if(config.autostart){
+            setTimeout(() => {
+                this.spawnServer();
+            }, 1000);
+        }
     }
+
+
+    //================================================================
+    /**
+     * Setup the spawn variables
+     */
+    setupVariables(){
+        let onesyncFlag = (this.config.onesync)? '+set onesync_enabled 1' : '';
+        if(this.config.isLinux){
+            this.spawnVariables = {
+                shell: '/bin/bash',
+                cmdArgs: [`${this.config.buildPath}/run.sh`, `${onesyncFlag} +exec ${this.config.cfgPath}`]
+            };
+        }else{
+            this.spawnVariables = {
+                shell: 'cmd.exe',
+                cmdArgs: ['/c', `${this.config.buildPath}/run.cmd ${onesyncFlag} +exec ${this.config.cfgPath}`]
+            };
+        }
+
+    }//Final xxxx()
 
     
     //================================================================
@@ -22,52 +51,54 @@ module.exports = class FXRunner {
      * Spawns the FXServer and sets up all the event handlers
      */
     async spawnServer(){
-        if(this.fxChild !== null) return false;
-        cleanTerminal();
-        let onesyncFlag = (this.config.onesync)? '+set onesync_enabled 1' : '';
-        let spawnShell = null;
-        let spawnCmdArgs = null;
-        if(this.config.isLinux){
-            spawnShell = '/bin/bash';
-            spawnCmdArgs = [`${this.config.buildPath}/run.sh`, `${onesyncFlag} +exec ${this.config.cfgPath}`];
-        }else{
-            spawnShell = 'cmd.exe';
-            spawnCmdArgs = ['/c', `${this.config.buildPath}/run.cmd ${onesyncFlag} +exec ${this.config.cfgPath}`];
+        //Sanity Check
+        if(
+            this.spawnVariables == null || 
+            typeof this.spawnVariables.shell == 'undefined' || 
+            typeof this.spawnVariables.cmdArgs == 'undefined'
+        ){
+            logError('this.spawnVariables is not set.', context);
+            return false;
+        }
+        if(this.fxChild !== null){
+            logError('this.fxChild is not null.', context);
+            return false;
         }
 
+        //Starting server
         try {
             this.fxChild = spawn(
-                spawnShell, 
-                spawnCmdArgs,
+                this.spawnVariables.shell, 
+                this.spawnVariables.cmdArgs,
                 {cwd: this.config.basePath}
             );
+            logOk(`::Server started with PID ${this.fxChild.pid}!`, context);
         } catch (error) {
             logError('Failed to start FXServer with the following error:');
             dir(error);
             process.exit(0);
         }
         
-        logOk(`::Server started with PID ${this.fxChild.pid}!`, context);
+        //Pipping stdin and stdout
         this.fxChild.stdout.pipe(process.stdout);
         process.stdin.pipe(this.fxChild.stdin);
 
+        //Setting up event handlers
         this.fxChild.on('close', function (code, signal) {
-            console.log('close: ' + `code ${code} and signal ${signal}`);
+            logWarn('close: ' + `code ${code} and signal ${signal}`, context);
         });
         this.fxChild.on('disconnect', function () {
-            console.log('disconnect');
+            logWarn('fxChild disconnect event', context);
         });
         this.fxChild.on('error', function (err) {
-            console.log('error ', err);
+            logWarn('fxChild error event:', context);
+            dir(err)
         });
         this.fxChild.on('exit', function (code, signal) {
-            logError('this.fxChild process exited with ' + `code ${code} and signal ${signal}`, context);
-            // console.log("==========================");
-            // console.log(JSON.stringify(this.fxChild));
-            // console.log("==========================");    
+            logWarn('fxChild process exited with ' + `code ${code} and signal ${signal}`, context);
         });
         this.fxChild.stderr.on('data', (data) => {
-            console.error(`==============================================:\n${data}\n==============================================`);
+            logWarn(`========:\n${data}\n========`, context);
         });
         this.fxChild.stdout.on('data', (data) => {
             if(this.enableBuffer) this.outData += data;
@@ -93,9 +124,11 @@ module.exports = class FXRunner {
     killServer(){
         try {
             this.fxChild.kill();
+            this.fxChild = null;
             return true;
         } catch (error) {
-            logWarn("Couldn't kill the server. Perhaps What Is Dead May Never Die.")
+            logWarn("Couldn't kill the server. Perhaps What Is Dead May Never Die.");
+            this.fxChild = null;
             return false;
         }
     }
