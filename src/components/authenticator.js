@@ -33,18 +33,6 @@ module.exports = class Authenticator {
 
     //================================================================
     /**
-     * Hashes a string.
-     * @param {string} password 
-     * @returns {string} bcrypt hash
-     */
-    hash(password){
-        if(typeof password !== 'string') return false;
-        return bcrypt.hashSync(password, 5);
-    }
-
-
-    //================================================================
-    /**
      * Refreshes the admins list
      */
     async refreshAdmins(){
