@@ -1,4 +1,4 @@
 {
-    "version": "0.5.1",
-    "changelog": "Linux support, Config tester. Bug fix: server restart"
+    "version": "0.6.5",
+    "changelog": "Web Login and Live console."
 }
