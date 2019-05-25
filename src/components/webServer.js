@@ -1,6 +1,7 @@
 //Requires
 const fs = require('fs');
 const bcrypt = require('bcrypt');
+const httpServer  = require('http');
 const express = require('express');
 const session = require('express-session');
 const template = require('lodash.template');
@@ -13,21 +14,23 @@ const context = 'WebServer';
 module.exports = class WebServer {
     constructor(config) {
         this.config = config;
-        this.app = express()
-        this.app.use(cors());
-
-        this.app.use(session({
+        this.session = session({
             secret: 'fxAdmin'+bcrypt.genSaltSync(),
             resave: false,
             saveUninitialized: false
-        }));
+        });
 
+        this.app = express();
+        this.httpServer = httpServer.createServer(this.app);
+        this.app.use(cors());
+        this.app.use(this.session);
         this.app.use(express.urlencoded({extended: true}))
         this.app.use(express.static('public', {index: false}))
         this.setupRoutes()
         try {
-            this.app.listen(this.config.port, () => {
+            this.httpServer.listen(this.config.port, '0.0.0.0', () => {
                 logOk(`::Started at http://${globals.config.publicIP}:${this.config.port}/`, context);
+                globals.webConsole.startSocket(this.httpServer);
             })
         } catch (error) {
             logError('::Failed to start webserver with error:', context);
@@ -81,6 +84,9 @@ module.exports = class WebServer {
         });
         this.app.get('/checkVersion', async (req, res) => {
             res.send(globals.version);
+        });
+        this.app.get('/console', globals.authenticator.sessionCheckerWeb, (req, res) => {
+            res.sendFile(getWebRootPath('console.html')); 
         });
 
         //index

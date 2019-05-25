@@ -54,9 +54,10 @@ module.exports = class Authenticator {
         }  
     };
 
+    
     //================================================================
     /**
-     * [WEB] Checks session to make sure the credentials are valid and set the admin variable.
+     * [API] Checks session to make sure the credentials are valid and set the admin variable.
      * @param {object} req 
      * @param {object} res 
      * @param {function} next 
@@ -74,6 +75,32 @@ module.exports = class Authenticator {
             }
         }else{
             res.send({logout:true});
+        }  
+    };
+
+
+    //================================================================
+    /**
+     * [SOCKET] Checks session to make sure the credentials are valid and set the admin variable.
+     * @param {object} req 
+     * @param {object} res 
+     * @param {function} next 
+     */
+    sessionCheckerSocket(socket, next){
+        if(typeof socket.handshake.session.password !== 'undefined'){
+            //FIXME: using this.checkAuth() isnt working
+            let admin = globals.authenticator.checkAuth(socket.handshake.session.password);
+            if(!admin){
+                socket.handshake.session.destroy(); //a bit redundant but it wont hurt anyone
+                socket.disconnect(0);
+                next(new Error('Authentication error'));
+            }else{
+                socket.handshake.session.admin = admin;
+                next();
+            }
+        }else{
+            socket.disconnect(0);
+            next(new Error('Authentication error'));
         }  
     };
 

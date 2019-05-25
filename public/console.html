@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Convergence&display=swap" rel="stylesheet">
+    <!-- Favicon made by Freepik from www.flaticon.com is licensed by CC 3.0 BY -->
+    <link rel="shortcut icon" type="image/png" href="favicon_default.png" id="favicon" />
+    <title>FXAdmin Console</title>
+    <style>
+        h1{
+            font-family: 'Convergence', sans-serif;
+        }
+        #console{
+            overflow-x: auto;
+            white-space: pre-wrap;
+            white-space: -moz-pre-wrap;
+            white-space: -pre-wrap;
+            white-space: -o-pre-wrap;
+            word-wrap: break-word;
+            overflow-y: scroll;
+            height:70vh;
+        }
+
+        /* https://flatuicolors.com/palette/us */
+        mark{
+            background-color: #ffeaa7;
+        }
+
+        #console::-webkit-scrollbar-track{
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            border-radius: 10px;
+            background-color: #F5F5F5;
+        }
+
+        #console::-webkit-scrollbar{
+            width: 12px;
+            background-color: #F5F5F5;
+        }
+
+        #console::-webkit-scrollbar-thumb{
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+            background-color: #555;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h1>FXServer Console:</h1>
+            </div>
+        </div>
+        <div class="card mx-auto border-primary" style="max-width: 64rem;">
+            <div class="card-body">
+                <pre id="console"></pre>
+            </div>
+            <div class="card-footer text-center">
+                <form class="form-inline container-fluid" id="frmConsole">
+                    <div class="mx-auto">
+                        <div class="form-group mx-sm-3 mb-2">
+                            <label for="cmdInput">cfx &#x3E;&nbsp;</label>
+                            <input type="text" class="form-control form-control-sm" id="cmdInput" style="width: 32rem;"
+                                placeholder="Press enter to send">
+                        </div>
+                        <a role="button" href="/" class="btn btn-outline-info btn-sm mb-2">Go Back</a>
+                        <a role="button" href="#" id="clearConsole" class="btn btn-outline-info btn-sm mb-2">Clear Console</a>
+                        <a role="button" href="#" id="toggleAutoScroll" class="btn btn-outline-info btn-sm mb-2">Disable Scroll</a>
+                    </div>
+                </form>
+                <div class="container-fluid mx-auto">
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" type="text/javascript"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script>
+        //Socket
+        $(function () {
+            // var socket = io.connect('http://localhost:40120');
+            var socket = io();
+
+            //Events
+            socket.on('connect', () => {
+                $("#favicon").attr("href", "favicon_on.png");
+            });
+            socket.on('evntMessage', function (msg) {
+                $('#console').append(msg);
+                if (autoScroll) $("#console").scrollTop($("#console")[0].scrollHeight);
+            });
+
+            //Form
+            $("#frmConsole").submit(function(e){
+                e.preventDefault();
+                let cmd = $('#cmdInput').val();
+                socket.emit('evntMessage', cmd);
+                $('#cmdInput').val('');
+            });
+
+            //Status
+            setInterval(() => {
+                let status = (socket.connected)? 'on' : 'off';
+                $("#favicon").attr("href", "favicon_"+status+".png");
+            }, 1000);
+        });
+
+        //Buttons
+        let autoScroll = true;
+        $('#toggleAutoScroll').click(function () {
+            autoScroll = !autoScroll;
+            if (autoScroll) {
+                $('#toggleAutoScroll').text('Disable Scroll');
+            } else {
+                $('#toggleAutoScroll').text('Enable Scroll');
+            }
+        });
+
+        $('#clearConsole').click(function () {
+            $('#console').html('');
+        });
+
+        
+    </script>
+</body>
+
+</html>
