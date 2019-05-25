@@ -65,16 +65,16 @@ module.exports = class WebServer {
             res.redirect('/');
         });
 
-        this.app.get('/test', this.sessionChecker, async (req, res) => {
+        this.app.get('/test', globals.authenticator.sessionCheckerWeb, async (req, res) => {
             res.send('<pre>'+JSON.stringify(req.session, null, 2)+'</pre>'); 
         });
 
-        this.app.post('/action', async (req, res) => {
+        this.app.post('/action', globals.authenticator.sessionCheckerWeb, async (req, res) => {
             await Webroutes.action(res, req).catch((err) => {
                 this.handleRouteError(res, "[action] Route Internal Error", err);
             });
         });
-        this.app.get('/getData', async (req, res) => {
+        this.app.get('/getData', globals.authenticator.sessionCheckerAPI, async (req, res) => {
             await Webroutes.getData(res, req).catch((err) => {
                 this.handleRouteError(res, "[getData] Route Internal Error", err);
             });
@@ -84,7 +84,7 @@ module.exports = class WebServer {
         });
 
         //index
-        this.app.get('/', this.sessionChecker, (req, res) => {
+        this.app.get('/', globals.authenticator.sessionCheckerWeb, (req, res) => {
             res.sendFile(getWebRootPath('index.html')); 
         });
 
@@ -102,22 +102,6 @@ module.exports = class WebServer {
         res.status(500);
         res.send(desc);
     }
-
-    //================================================================
-    sessionChecker(req, res, next){
-        if(typeof req.session.password !== 'undefined'){
-            let admin = globals.authenticator.checkAuth(req.session.password);
-            if(!admin){
-                req.session.destroy();
-                res.redirect('/auth?logout');
-            }else{
-                req.session.admin = admin;
-                next();
-            }
-        }else{
-            res.redirect('/auth');
-        }  
-    };
 
 } //Fim WebServer()
 
