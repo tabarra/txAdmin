@@ -14,6 +14,7 @@ One of the problems I noticed with the servers out there is that the "bases" are
 - Real-time playerlist with ping + steam-linked accounts (when available)
 - OneSync Support (more than 32 slots server)
 - Linux Support
+- Live Console
 
 
 ## Installation
@@ -40,8 +41,16 @@ To run FXAdmin:
 $ node src/main.js server.json
 ```
 
+To UPDATE FXAdmin:
+```bash
+$ git fetch
+$ git pull
+$ npm i
+```
+
 **Note:** To configure your Discord bot, follow these two guides:  [Setting up a bot application](https://discordjs.guide/preparations/setting-up-a-bot-application.html) and [Adding your bot to servers](https://discordjs.guide/preparations/adding-your-bot-to-servers.html).  
-**Note2:** To run multiple servers with the same base and FXAdmin installation, just duplicate your `server.json` and change the ports. Two instances of FXAdmin cannot be running in the same web server port.
+**Note2:** To run multiple servers with the same base and FXAdmin installation, just duplicate your `server.json` and change the ports. Two instances of FXAdmin cannot be running in the same web server port.  
+**Note3:** When updating, make sure there's no differenct in the json templates. If there is, copy the template and edit again.
 
 
 ## Troubleshooting
@@ -73,7 +82,7 @@ And more...
 - [ ] Separate the DANGER ZONE commands into a separate tab with confirmation dialog?
 - [ ] We have data, we should plot it into a graph...
 - [x] Add the config file to the arguments so we can run multiple servers in the same installation folder only be specifying it in runtime like `node src/main.js server01.json`
-- [ ] Protect the log with password. For now I will just disable IP logging.
+- [x] Protect the log with password. For now I will just disable IP logging.
 - [ ] Write a simple `manage_admins.js` script to help with the process. The current `/getHash?pwd=xxx` is counterintuitive at best.
 - [ ] Get JSONC compatibility. Inline documentation for the configs would be great.
 - [ ] Add machine performance data to the panel. Or not, perhaps thats a little too much into Grafana's land.
