@@ -1,0 +1,15 @@
+body{
+    background-color: #f8f9fa;
+    margin-top: 32px;
+}
+pre {
+    overflow-x: auto;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+}
+h1{
+    font-family: 'Convergence', sans-serif;
+}
