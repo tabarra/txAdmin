@@ -33,14 +33,49 @@ module.exports = class Authenticator {
 
     //================================================================
     /**
-     * Hashes a string.
-     * @param {string} password 
-     * @returns {string} bcrypt hash
+     * [WEB] Checks session to make sure the credentials are valid and set the admin variable.
+     * @param {object} req 
+     * @param {object} res 
+     * @param {function} next 
      */
-    hash(password){
-        if(typeof password !== 'string') return false;
-        return bcrypt.hashSync(password, 5);
-    }
+    sessionCheckerWeb(req, res, next){
+        if(typeof req.session.password !== 'undefined'){
+            //FIXME: using this.checkAuth() isnt working
+            let admin = globals.authenticator.checkAuth(req.session.password);
+            if(!admin){
+                req.session.destroy(); //a bit redundant but it wont hurt anyone
+                res.redirect('/auth?logout');
+            }else{
+                req.session.admin = admin;
+                next();
+            }
+        }else{
+            res.redirect('/auth');
+        }  
+    };
+
+    //================================================================
+    /**
+     * [WEB] Checks session to make sure the credentials are valid and set the admin variable.
+     * @param {object} req 
+     * @param {object} res 
+     * @param {function} next 
+     */
+    sessionCheckerAPI(req, res, next){
+        if(typeof req.session.password !== 'undefined'){
+            //FIXME: using this.checkAuth() isnt working
+            let admin = globals.authenticator.checkAuth(req.session.password);
+            if(!admin){
+                req.session.destroy(); //a bit redundant but it wont hurt anyone
+                res.send({logout:true});
+            }else{
+                req.session.admin = admin;
+                next();
+            }
+        }else{
+            res.send({logout:true});
+        }  
+    };
 
 
     //================================================================
