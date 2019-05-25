@@ -1,4 +1,5 @@
 //Requires
+const httpServer  = require('http');
 const express = require('express');
 const cors = require('cors');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
@@ -8,14 +9,16 @@ const context = 'WebServer';
 module.exports = class WebServer {
     constructor(config) {
         this.config = config;
-        this.app = express()
+        this.app = express();
+        this.httpServer = httpServer.createServer(this.app);
         this.app.use(cors());
         this.app.use(express.urlencoded({ extended: true }))
         this.app.use(express.static('public'))
         this.setupRoutes()
         try {
-            this.app.listen(this.config.port, () => {
+            this.httpServer.listen(this.config.port, () => {
                 logOk(`::Started at http://${globals.config.publicIP}:${this.config.port}/`, context);
+                globals.webConsole.startSocket(this.httpServer);
             })
         } catch (error) {
             logError('::Failed to start webserver with error:', context);

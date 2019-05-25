@@ -36,6 +36,7 @@
     "pidusage-tree": "^2.0.5",
     "pretty-bytes": "^5.2.0",
     "pretty-ms": "^5.0.0",
+    "socket.io": "^2.2.0",
     "squirrelly": "^7.1.1",
     "xss": "^1.0.6"
   }

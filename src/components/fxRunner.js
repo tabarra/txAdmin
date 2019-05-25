@@ -81,6 +81,7 @@ module.exports = class FXRunner {
         
         //Pipping stdin and stdout
         this.fxChild.stdout.pipe(process.stdout);
+        //FIXME: might disable the stdin pipe when the live console is fully working
         process.stdin.pipe(this.fxChild.stdin);
 
         //Setting up event handlers
@@ -100,7 +101,11 @@ module.exports = class FXRunner {
         this.fxChild.stderr.on('data', (data) => {
             logWarn(`========:\n${data}\n========`, context);
         });
+        this.fxChild.stdin.on('data', (data) => {
+            logWarn(`========:\n${data}\n========`, context);
+        });
         this.fxChild.stdout.on('data', (data) => {
+            globals.webConsole.broadcast(data);
             if(this.enableBuffer) this.outData += data;
         });
     }//Final spawnServer()
@@ -142,7 +147,9 @@ module.exports = class FXRunner {
     srvCmd(command){
         if(typeof command !== 'string') throw new Error('Expected String!');
         try {
-            return this.fxChild.stdin.write(command + "\n");
+            let success = this.fxChild.stdin.write(command + "\n");
+            globals.webConsole.broadcast(command, true);
+            return success;
         } catch (error) {
             return false;
         }

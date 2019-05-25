@@ -10,6 +10,7 @@ globals = {
     discordBot: null,
     authenticator: null,
     webServer: null,
+    webConsole: null,
     fxServer: null,
     config: null,
     version: null
@@ -38,6 +39,9 @@ class FXAdmin {
             HandleFatalError(err);
         });
         this.startWebServer(localConfig.webServer).catch((err) => {
+            HandleFatalError(err);
+        });
+        this.startWebConsole(localConfig.webConsole).catch((err) => {
             HandleFatalError(err);
         });
         this.checkForUpdates().catch((err) => {
@@ -79,6 +83,12 @@ class FXAdmin {
     async startWebServer(config){
         const WebServer = require('./components/webServer')
         globals.webServer = new WebServer(config);
+    }
+
+    //==============================================================
+    async startWebConsole(config){
+        const WebConsole = require('./components/webConsole')
+        globals.webConsole = new WebConsole(config);
     }
 
     //==============================================================

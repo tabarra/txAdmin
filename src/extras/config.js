@@ -45,6 +45,9 @@ let webServer = {
     port: parseInt(configFile.webServer.port) || 40121,
     bufferTime: parseInt(configFile.webServer.bufferTime) || 1500,
 };
+let webConsole = {
+    //
+};
 let discordBot = {
     enabled: (configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true),
     token:  configFile.discordBot.token || ((configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true) && fatalRequired('discordBot.token')),
@@ -68,6 +71,7 @@ module.exports = {
     monitor: Object.freeze(monitor),
     authenticator: Object.freeze(authenticator),
     webServer: Object.freeze(webServer),
+    webConsole: Object.freeze(webConsole),
     discordBot: Object.freeze(discordBot),
     fxServer: Object.freeze(fxServer),
 }
