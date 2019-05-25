@@ -43,7 +43,7 @@ module.exports = class FXRunner {
             };
         }
 
-    }//Final xxxx()
+    }//Final setupVariables()
 
     
     //================================================================
