@@ -1,4 +1,4 @@
 {
-    "version": "0.6.6",
-    "changelog": "Small verbosity fix and renamed configuration property. You will need to change fxServer to fxRunner in your server.json"
+    "version": "0.8.0",
+    "changelog": "Schedule/Failure Auto Restarter. You will need to copy server-template.json again. Modified the start command."
 }

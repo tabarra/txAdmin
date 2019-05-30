@@ -12,7 +12,7 @@ module.exports = class Authenticator {
         this.admins = [];
         this.refreshAdmins();
        
-        //Função Cron
+        //Cron Function
         setInterval(() => {
             this.refreshAdmins();
         }, this.config.refreshInterval);

@@ -9,11 +9,6 @@ module.exports = class webConsole {
     constructor(config) {
         logOk('::Awaiting', context);
         this.io = null;
-
-        //debug only
-        setInterval(() => {
-            //this.broadcast(Math.random().toString().repeat(Math.random()*3));
-        }, 700);
     }
 
 

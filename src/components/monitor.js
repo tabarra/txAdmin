@@ -19,12 +19,16 @@ module.exports = class Monitor {
             players: []
         }
 
-        //Função Cron
+        //Cron functions
         setInterval(() => {
             this.refreshServerStatus();
             this.refreshProcessStatus();
-            // logError("Data:\n"+JSON.stringify(this.getStatus(), null, 2));
         }, this.config.interval);
+        if(Array.isArray(this.config.restarter.schedule)){
+            setInterval(() => {
+                this.checkRestartSchedule();
+            }, 1*1000);
+        }
     }
 
 
@@ -33,7 +37,11 @@ module.exports = class Monitor {
      * Check the restart schedule 
      */
     checkRestartSchedule(){
-
+        let now = new Date;
+        let currTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+        if(this.config.restarter.schedule.includes(currTime)){
+            this.restartFXServer(`Scheduled restart at ${currTime}`);
+        }
     }
 
 
@@ -113,7 +121,7 @@ module.exports = class Monitor {
         } catch (error) {
             this.failCounter++;
             logWarn(`(Counter: ${this.failCounter}/${this.config.restarter.failures}) HealthCheck request error: ${error.message}`, context);
-            if(this.failCounter >= this.config.restarter.failures) this.restartFXServer('Failure Count Above Limit');
+            if(this.config.restarter !== false && this.failCounter >= this.config.restarter.failures) this.restartFXServer('Failure Count Above Limit');
             this.statusServer = {
                 online: false,
                 ping: false,

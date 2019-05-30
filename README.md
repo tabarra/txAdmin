@@ -15,6 +15,8 @@ One of the problems I noticed with the servers out there is that the "bases" are
 - OneSync Support (more than 32 slots server)
 - Linux Support
 - Live Console
+- Auto Restart on failure detection
+- Auto Restart on schedule
 
 
 ## Installation
@@ -29,10 +31,11 @@ $ git clone https://github.com/tabarra/fivem-fxadmin
 $ cd fivem-fxadmin
 $ npm i
 ```
-Copy your `server-template.json` to `server.json` and modify it according to your preferences.  
-- `buildPath` is the folder containing the files `run.cmd`, `fxserver.exe` and a bunch of DLLs in case of Windows, and only `run.sh` in case of Linux.
-- `basePath` is the folder that **contains** the `resources` folder, usually it's here that you put your `server.cfg`.
-- `cfgPath` is the absolute or relative path of your `server.cfg`.
+Copy your `server-template.json` to `server.json` and modify it according to your preferences. The most important settings:  
+- `monitor.restarter.schedule` is the restart schedule. The time MUST be in the 24-hour format with two digits for hours as well as minutes (`HH:MM`). Leave the array empty or set it to false to disable the feature.
+- `fxRunner.buildPath` is the folder containing the files `run.cmd`, `fxserver.exe` and a bunch of DLLs in case of Windows, and only `run.sh` in case of Linux.
+- `fxRunner.basePath` is the folder that **contains** the `resources` folder, usually it's here that you put your `server.cfg`.
+- `fxRunner.cfgPath` is the absolute or relative path of your `server.cfg`.
 
 Do the same thing to your `admins-template.json`. To generate the hashed password, you can use tools like [this](https://www.browserling.com/tools/bcrypt) and [this](https://bcrypt-generator.com) or even [this one](https://passwordhashing.com/BCrypt).  
   
@@ -72,7 +75,7 @@ $ npm i
 - [x] Write some documentation
 - [x] **Automatically check for updates (MUST)**
 - [ ] Add hitch detection
-- [ ] Auto restart on schedule (for the unstable servers out there)
+- [x] Auto restart on schedule (for the unstable servers out there)
 - [x] Auto restart if the monitor fails X times in the last Y seconds 
 - [x] Better error handling for the discord module
 
