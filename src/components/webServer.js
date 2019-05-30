@@ -1,11 +1,12 @@
 //Requires
 const fs = require('fs');
+const path = require('path');
 const bcrypt = require('bcrypt');
 const httpServer  = require('http');
 const express = require('express');
 const session = require('express-session');
+const rateLimit = require("express-rate-limit");
 const template = require('lodash.template');
-const path = require('path');
 const cors = require('cors');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const Webroutes = require('../webroutes');
@@ -19,14 +20,19 @@ module.exports = class WebServer {
             resave: false,
             saveUninitialized: false
         });
-
+        this.authLimiter = rateLimit({
+            windowMs: this.config.limiterMinutes * 60 * 1000, // 15 minutes
+            max: this.config.limiterAttempts, // limit each IP to 5 requests per 15 minutes
+            message: render('login', {message:`Too many login attempts, enjoy your ${this.config.limiterMinutes} minutes of cooldown.`})
+        });
+        
         this.app = express();
-        this.httpServer = httpServer.createServer(this.app);
         this.app.use(cors());
         this.app.use(this.session);
         this.app.use(express.urlencoded({extended: true}))
         this.app.use(express.static('public', {index: false}))
         this.setupRoutes()
+        this.httpServer = httpServer.createServer(this.app);
         try {
             this.httpServer.listen(this.config.port, '0.0.0.0', () => {
                 logOk(`::Started at http://${globals.config.publicIP}:${this.config.port}/`, context);
@@ -52,7 +58,7 @@ module.exports = class WebServer {
                 res.send(render('login', {message:''}));
             }
         });
-        this.app.post('/auth', async (req, res) => {
+        this.app.post('/auth', this.authLimiter, async (req, res) => {
             if(typeof req.body.password == 'undefined'){
                 req.redirect('/');
                 return;
@@ -66,10 +72,6 @@ module.exports = class WebServer {
             req.session.password = req.body.password;
             log(`Admin ${admin} logged in from ${req.connection.remoteAddress}`, context);
             res.redirect('/');
-        });
-
-        this.app.get('/test', globals.authenticator.sessionCheckerWeb, async (req, res) => {
-            res.send('<pre>'+JSON.stringify(req.session, null, 2)+'</pre>'); 
         });
 
         this.app.post('/action', globals.authenticator.sessionCheckerWeb, async (req, res) => {

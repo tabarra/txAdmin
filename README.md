@@ -17,6 +17,7 @@ One of the problems I noticed with the servers out there is that the "bases" are
 - Live Console
 - Auto Restart on failure detection
 - Auto Restart on schedule
+- Password brute-force protection
 
 
 ## Installation
@@ -71,7 +72,7 @@ $ npm i
 - [x] Write the admin log component (or part of another?)
 - [x] Separate the web routes
 - [ ] Add custom commands to the config file
-- [ ] **Add a simple rate limiter (MUST)**
+- [x] **Add a simple rate limiter (MUST)**
 - [x] Write some documentation
 - [x] **Automatically check for updates (MUST)**
 - [ ] Add hitch detection

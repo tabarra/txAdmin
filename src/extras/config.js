@@ -74,6 +74,8 @@ try {
     cfg.webServer = {
         port: parseInt(configFile.webServer.port) || 40121,
         bufferTime: parseInt(configFile.webServer.bufferTime) || 1500, //removed from template - deprecate?
+        limiterMinutes: parseInt(configFile.webServer.limiterMinutes) || 15, //removed from template
+        limiterAttempts: parseInt(configFile.webServer.limiterAttempts) || 5, //removed from template
     };
     cfg.webConsole = {
         //nothing to configure
