@@ -1,10 +1,8 @@
 # FiveM-FXAdmin
-Join our **Discord Server**: [![Discord](https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield)](https://discord.gg/f3TsfvD)
+Join our **Discord Server**: [![Discord](https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield)](https://discord.gg/f3TsfvD)  
+FiveM Forum thread: https://forum.fivem.net/t/fxAdmin/530475  
 
 This is a very simple tool to help you manage your FiveM server remotely.  
-
-One of the problems I noticed with the servers out there is that the "bases" are usually very tightly coupled with the FXServer build, this tool helps you use or test multiple builds at the same time on the same resources folder.  
-
 
 ## Features
 - Start/Stop/Restart your server instance or resources
@@ -57,12 +55,10 @@ $ npm i
 
 
 ## Troubleshooting
-- If you are getting `Wrong password!` when executing an action, make sure you have your admins file configured correctly. If there is anything wrong with the file you should get an error when starting FXAdmin.
 - If you run into problems when executing `npm install`, try `npm i node-gyp` or `npm i --global --production windows-build-tools` if you are on Windows.
 - If you are getting `HealthCheck request error: ` it means the FXAdmin:Monitor could not connect to the FXServer. Check the two items below.
 - If the server is actually online but FXAdmin thinks it's offline, make sure your fxserver is configured to use the ip `0.0.0.0` in your `endpoint_add_*` directives instead of your public/private IP.
-- If you are having trouble starting the FXServer via FXAdmin, run `npm run test-config server.json` and see which test is failing.  
-
+- If you are having trouble starting the FXServer via FXAdmin, run `npm run test-config server.json` and see which test is failing.
 
 
 ## TODO:
