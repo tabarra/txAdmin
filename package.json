@@ -4,7 +4,8 @@
   "description": "FiveM FXServer Admin - remotely manage your GTA5 FiveM Server",
   "main": "src/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/main.js",
+    "test-config": "node src/config-tester.js"
   },
   "repository": {
     "type": "git",

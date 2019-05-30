@@ -19,15 +19,15 @@ One of the problems I noticed with the servers out there is that the "bases" are
 
 ## Installation
 First, make sure you have:
-- NodeJS v10 or v11 (with npm) (bcrypt module might have some errors with node v12)
+- NodeJS v10+ (with npm) (If you have problems with node-gyp try downgrading to node v10 LTS)
 - FXServer [(duh)](https://runtime.fivem.net/artifacts/fivem/)
 - One TCP listen port opened for the web server
 
-Then to install:
+To **INSTALL** FXAdmin execute:
 ```bash
 $ git clone https://github.com/tabarra/fivem-fxadmin
 $ cd fivem-fxadmin
-$ npm install
+$ npm i
 ```
 Copy your `server-template.json` to `server.json` and modify it according to your preferences.  
 - `buildPath` is the folder containing the files `run.cmd`, `fxserver.exe` and a bunch of DLLs in case of Windows, and only `run.sh` in case of Linux.
@@ -36,28 +36,28 @@ Copy your `server-template.json` to `server.json` and modify it according to you
 
 Do the same thing to your `admins-template.json`. To generate the hashed password, you can use tools like [this](https://www.browserling.com/tools/bcrypt) and [this](https://bcrypt-generator.com) or even [this one](https://passwordhashing.com/BCrypt).  
   
-To run FXAdmin:
+To **RUN** FXAdmin execute:
 ```bash
-$ node src/main.js server.json
+$ npm start server.json
 ```
 
-To UPDATE FXAdmin:
+To **UPDATE** FXAdmin execute:
 ```bash
-$ git fetch
 $ git pull
 $ npm i
 ```
 
 **Note:** To configure your Discord bot, follow these two guides:  [Setting up a bot application](https://discordjs.guide/preparations/setting-up-a-bot-application.html) and [Adding your bot to servers](https://discordjs.guide/preparations/adding-your-bot-to-servers.html).  
 **Note2:** To run multiple servers with the same base and FXAdmin installation, just duplicate your `server.json` and change the ports. Two instances of FXAdmin cannot be running in the same web server port.  
-**Note3:** When updating, make sure there's no differenct in the json templates. If there is, copy the template and edit again.
+**Note3:** When updating, make sure there's no differences in the json templates. If there is, copy the template and edit again.
 
 
 ## Troubleshooting
 - If you are getting `Wrong password!` when executing an action, make sure you have your admins file configured correctly. If there is anything wrong with the file you should get an error when starting FXAdmin.
 - If you are getting `[FXAdmin:Monitor] Server error: ` of timeout or connection refused, it means the fxserver is offline, start it in the web panel.
-- If you are having trouble starting the fxserver via fxadmin, run `node src/config-tester.js server.json` and see which test is failing.
-- If you run into problems when executing `npm install`, try `npm i node-gyp` or `npm i --global --production windows-build-tools` if you are on windows.  
+- If the server is actually online but FXAdmin thinks it's offline, make sure your fxserver is configured to use the ip `0.0.0.0` in your `endpoint_add_*` directives instead of your public/private IP.
+- If you are having trouble starting the fxserver via FXAdmin, run `npm test-config server.json` and see which test is failing.
+- If you run into problems when executing `npm install`, try `npm i node-gyp` or `npm i --global --production windows-build-tools` if you are on Windows.  
 
 
 ## TODO:
@@ -81,11 +81,11 @@ And more...
 - [x] Fix what happens when you stop or start a server that is already running.
 - [ ] Separate the DANGER ZONE commands into a separate tab with confirmation dialog?
 - [ ] We have data, we should plot it into a graph...
-- [x] Add the config file to the arguments so we can run multiple servers in the same installation folder only be specifying it in runtime like `node src/main.js server01.json`
+- [x] Add the config file to the arguments so we can run multiple servers in the same installation folder only be specifying it in runtime like `npm start server01.json`
 - [x] Protect the log with password. For now I will just disable IP logging.
 - [ ] Write a simple `manage_admins.js` script to help with the process. The current `/getHash?pwd=xxx` is counterintuitive at best.
 - [ ] Get JSONC compatibility. Inline documentation for the configs would be great.
-- [ ] Add machine performance data to the panel. Or not, perhaps thats a little too much into Grafana's land.
+- [ ] Add machine performance data to the panel. Or not, perhaps that's a little too much into Grafana's land.
 - [ ] Average the CPU measure by the last 6 seconds or so?
 - [x] **Add discord integration**
 - [ ] Multiple server support? Technically easy, but would require massive rework of the interface.
@@ -93,7 +93,7 @@ And more...
 - [ ] Automagically send messages in discord when starting/stopping/restarting the server
 - [ ] Configurable discord bot static responses. This should be a separate file like the admins one.
 - [ ] Discord bot extensions via required js files? Imagine typing `/whitelist @username` and the bot cross referencing the vRP id via the discord:xxx identifier. Or a `/me` giving back this users vRP stats like cars, wallet, bank, apartments & etc.
-- [ ] Improve fxRunner/actions responsed. Currently it's only 'Done'.
+- [ ] Improve fxRunner/actions responses. Currently it's only 'Done'.
 
 
 ## License & credits

@@ -12,13 +12,19 @@ function fatalRequired(varName){
 
 //Try to load configuration
 //TODO: create a lock file to prevent starting twice the same config file?
-let configFilePath = 'data/' + (process.argv[2] || fatalRequired('server config JSON file inside your data folder'));
+let configFilePath = null;
+if(process.argv[2]){
+    configFilePath = (process.argv[2].endsWith('.json'))? `data/${process.argv[2]}` : `data/${process.argv[2]}.json`
+}else{
+    logError('Server config file not set. You must start FXAdmin with the command "npm start example.json", with "example.json" being the name of the file containing your FXAdmin server configuration inside the data folder. This file should be based on the server-template.json file.', context);
+    process.exit(0);
+}
 let configFile = null;
 try {
     let raw = fs.readFileSync(configFilePath);  
     configFile = JSON.parse(raw);
 } catch (error) {
-    logError(`Unnable to load configuration file '${configFilePath}'`, 'Config Exporter');
+    logError(`Unnable to load configuration file '${configFilePath}'`, context);
     process.exit(0)
 }
 

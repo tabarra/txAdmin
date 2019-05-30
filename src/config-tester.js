@@ -4,12 +4,14 @@ const { spawnSync } = require('child_process');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('./extras/console');
 cleanTerminal()
 
-function fatalRequired(varName){
-    logError(`The following variable was not set and is required: '${varName}'`);
+
+let configFilePath = null;
+if(process.argv[2]){
+    configFilePath = (process.argv[2].endsWith('.json'))? `data/${process.argv[2]}` : `data/${process.argv[2]}.json`
+}else{
+    logError('Server config file not set. You must start FXAdmin with the command "npm start example.json", with "example.json" being the name of the file containing your FXAdmin server configuration inside the data folder. This file should be based on the server-template.json file.', 'Config Exporter');
     process.exit(0);
 }
-
-let configFilePath = 'data/' + (process.argv[2] || fatalRequired('server config JSON file inside your data folder'));
 let configFile = null;
 try {
     let raw = fs.readFileSync(configFilePath);  
