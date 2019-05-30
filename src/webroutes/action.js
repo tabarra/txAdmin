@@ -23,42 +23,42 @@ module.exports = async function action(res, req) {
 
     if(action == 'admin_say'){
         appendLog(req, `say ${parameter}`);
-        globals.fxServer.srvCmd('say ' + parameter);
+        globals.fxRunner.srvCmd('say ' + parameter);
         return sendOutput(res, 'Okay');
 
     }else if(action == 'restart_res'){
         appendLog(req, `restart ${parameter}`);
-        let toResp = await globals.fxServer.srvCmdBuffer('restart ' + parameter);
+        let toResp = await globals.fxRunner.srvCmdBuffer('restart ' + parameter);
         return sendOutput(res, toResp);
 
     }else if(action == 'start_res'){
         appendLog(req, `start ${parameter}`);
-        let toResp = await globals.fxServer.srvCmdBuffer('start ' + parameter);
+        let toResp = await globals.fxRunner.srvCmdBuffer('start ' + parameter);
         return sendOutput(res, toResp);
 
     }else if(action == 'stop_res'){
         appendLog(req, `stop ${parameter}`);
-        let toResp = await globals.fxServer.srvCmdBuffer('stop ' + parameter);
+        let toResp = await globals.fxRunner.srvCmdBuffer('stop ' + parameter);
         return sendOutput(res, toResp);
 
     }else if(action == 'refresh_res'){
         appendLog(req, `refresh`);
-        let toResp = await globals.fxServer.srvCmdBuffer('refresh');
+        let toResp = await globals.fxRunner.srvCmdBuffer('refresh');
         return sendOutput(res, toResp);
 
     }else if(action == 'restart_sv'){
         appendLog(req, `RESTART SERVER`);
-        await globals.fxServer.restartServer();
+        await globals.fxRunner.restartServer();
         return sendOutput(res, 'Done');
 
     }else if(action == 'stop_sv'){
         appendLog(req, `STOP SERVER`);
-        globals.fxServer.killServer();
+        globals.fxRunner.killServer();
         return sendOutput(res, 'Done');
 
     }else if(action == 'start_sv'){
         appendLog(req, `START SERVER`);
-        globals.fxServer.spawnServer();
+        globals.fxRunner.spawnServer();
         return sendOutput(res, 'Done');
 
     }else{

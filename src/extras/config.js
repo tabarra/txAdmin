@@ -28,56 +28,69 @@ try {
     process.exit(0)
 }
 
-
-//Set defaults
-//FIXME: the bool trick in global.verbose and fxServer.autostart won't work if we want the default to be true
-let global = {
-    verbose: (configFile.global.verbose === 'true' || configFile.global.verbose === true),
-    publicIP: configFile.global.publicIP || "change-me",
-};
-let logger = {
-    logPath: configFile.logger.logPath || 'data/log.txt',
-};
-let monitor = {
-    interval: parseInt(configFile.monitor.interval) || 1000,
-    timeout: parseInt(configFile.monitor.timeout) || 1000,
-    fxServerPort: parseInt(configFile.monitor.fxServerPort) || fatalRequired('monitor.fxServerPort'),
-};
-let authenticator = {
-    adminsFilePath: configFile.authenticator.adminsFilePath || 'data/admins.json',
-    refreshInterval: parseInt(configFile.authenticator.refreshInterval) || 15000,
-};
-let webServer = {
-    port: parseInt(configFile.webServer.port) || 40121,
-    bufferTime: parseInt(configFile.webServer.bufferTime) || 1500,
-};
-let webConsole = {
-    //
-};
-let discordBot = {
-    enabled: (configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true),
-    token:  configFile.discordBot.token || ((configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true) && fatalRequired('discordBot.token')),
-    activity: configFile.discordBot.activity || "Running FXServer",
-    trigger: configFile.discordBot.trigger || "/status",
-};
-let fxServer = {
-    buildPath: configFile.fxServer.buildPath || fatalRequired('fxServer.buildPath'),
-    basePath: configFile.fxServer.basePath || fatalRequired('fxServer.basePath'),
-    cfgPath: configFile.fxServer.cfgPath || fatalRequired('fxServer.cfgPath'),
-    onesync: (configFile.fxServer.onesync === 'true' || configFile.fxServer.onesync === true),
-    isLinux: (configFile.fxServer.isLinux === 'true' || configFile.fxServer.isLinux === true),
-    autostart: (configFile.fxServer.autostart === 'true' || configFile.fxServer.autostart === true),
-};
-
+let cfg = {
+    global: null,
+    logger: null,
+    monitor: null,
+    authenticator: null,
+    webServer: null,
+    webConsole: null,
+    discordBot: null,
+    fxRunner: null,
+}
+//Read config and Set defaults
+//FIXME: the bool trick in global.verbose and fxRunner.autostart won't work if we want the default to be true
+try {
+    cfg.global = {
+        verbose: (configFile.global.verbose === 'true' || configFile.global.verbose === true),
+        publicIP: configFile.global.publicIP || "change-me",
+    };
+    cfg.logger = {
+        logPath: configFile.logger.logPath || 'data/log.txt',
+    };
+    cfg.monitor = {
+        interval: parseInt(configFile.monitor.interval) || 1000,
+        timeout: parseInt(configFile.monitor.timeout) || 1000,
+        fxServerPort: parseInt(configFile.monitor.fxServerPort) || fatalRequired('monitor.fxServerPort'),
+    };
+    cfg.authenticator = {
+        adminsFilePath: configFile.authenticator.adminsFilePath || 'data/admins.json',
+        refreshInterval: parseInt(configFile.authenticator.refreshInterval) || 15000,
+    };
+    cfg.webServer = {
+        port: parseInt(configFile.webServer.port) || 40121,
+        bufferTime: parseInt(configFile.webServer.bufferTime) || 1500,
+    };
+    cfg.webConsole = {
+        //nothing yet
+    };
+    cfg.discordBot = {
+        enabled: (configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true),
+        token:  configFile.discordBot.token || ((configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true) && fatalRequired('discordBot.token')),
+        activity: configFile.discordBot.activity || "Running FXServer",
+        trigger: configFile.discordBot.trigger || "/status",
+    };
+    cfg.fxRunner = {
+        buildPath: configFile.fxRunner.buildPath || fatalRequired('fxRunner.buildPath'),
+        basePath: configFile.fxRunner.basePath || fatalRequired('fxRunner.basePath'),
+        cfgPath: configFile.fxRunner.cfgPath || fatalRequired('fxRunner.cfgPath'),
+        onesync: (configFile.fxRunner.onesync === 'true' || configFile.fxRunner.onesync === true),
+        isLinux: (configFile.fxRunner.isLinux === 'true' || configFile.fxRunner.isLinux === true),
+        autostart: (configFile.fxRunner.autostart === 'true' || configFile.fxRunner.autostart === true),
+    };
+} catch (error) {
+    logError('Malformed configuration file! Please copy server-template.json and try again.', context);
+    process.exit(0);
+}
 
 //Export AND FREEZE the settings
 module.exports = {
-    global: Object.freeze(global),
-    logger: Object.freeze(logger),
-    monitor: Object.freeze(monitor),
-    authenticator: Object.freeze(authenticator),
-    webServer: Object.freeze(webServer),
-    webConsole: Object.freeze(webConsole),
-    discordBot: Object.freeze(discordBot),
-    fxServer: Object.freeze(fxServer),
+    global: Object.freeze(cfg.global),
+    logger: Object.freeze(cfg.logger),
+    monitor: Object.freeze(cfg.monitor),
+    authenticator: Object.freeze(cfg.authenticator),
+    webServer: Object.freeze(cfg.webServer),
+    webConsole: Object.freeze(cfg.webConsole),
+    discordBot: Object.freeze(cfg.discordBot),
+    fxRunner: Object.freeze(cfg.fxRunner),
 }

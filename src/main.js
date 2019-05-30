@@ -11,7 +11,7 @@ globals = {
     authenticator: null,
     webServer: null,
     webConsole: null,
-    fxServer: null,
+    fxRunner: null,
     config: null,
     version: null
 }
@@ -29,7 +29,7 @@ class FXAdmin {
         this.startDiscordBot(localConfig.discordBot).catch((err) => {
             HandleFatalError(err);
         });
-        this.startFXServer(localConfig.fxServer).catch((err) => {
+        this.startFXServer(localConfig.fxRunner).catch((err) => {
             HandleFatalError(err);
         });
         this.startLogger(localConfig.logger).catch((err) => {
@@ -64,7 +64,7 @@ class FXAdmin {
     //==============================================================
     async startFXServer(config){
         const FXRunner = require('./components/fxRunner')
-        globals.fxServer = new FXRunner(config);
+        globals.fxRunner = new FXRunner(config);
     }
 
     //==============================================================

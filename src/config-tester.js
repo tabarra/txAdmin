@@ -20,7 +20,7 @@ try {
     logError(`Unnable to load configuration file '${configFilePath}'`, 'Config Exporter');
     process.exit(0)
 }
-let cfg = configFile.fxServer;
+let cfg = configFile.fxRunner;
 let currTest = '';
 
 

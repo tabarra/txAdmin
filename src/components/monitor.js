@@ -50,6 +50,16 @@ module.exports = class Monitor {
      * Refreshes the Server Status.
      */
     async refreshServerStatus(){
+        //Check if the server is supposed to be offline
+        if(globals.fxRunner.fxChild === null){
+            this.statusServer = {
+                online: false,
+                ping: false,
+                players: []
+            }
+            return;
+        }
+
         //Setup do request e variáveis iniciais
         let timeStart = Date.now()
         let players = [];
@@ -66,9 +76,9 @@ module.exports = class Monitor {
         try {
             const res = await axios(requestOptions);
             players = res.data;
-            if(!Array.isArray(players)) throw new Error("not array")
+            if(!Array.isArray(players)) throw new Error("FXServer's players endpoint didnt return a JSON array.")
         } catch (error) {
-            logWarn(`Server error: ${error.message}`, context);
+            logWarn(`HealthCheck request error: ${error.message}`, context);
             this.statusServer = {
                 online: false,
                 ping: false,

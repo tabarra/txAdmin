@@ -10,7 +10,6 @@ module.exports = class FXRunner {
         logOk('::Started', context);
         this.config = config;
         this.fxChild = null;
-        this.fxChildStatus = null;
         this.spawnVariables = null;
         this.outData = '';
         this.enableBuffer = false;

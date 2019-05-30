@@ -65,7 +65,7 @@ module.exports = class webConsole {
     runCFXCommand(cmd){
         //FIXME: add real authentication
         globals.logger.append(`[CONSOLE] ${cmd}`);
-        globals.fxServer.srvCmd(cmd);
+        globals.fxRunner.srvCmd(cmd);
     }
 
 } //Fim webConsole()

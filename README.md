@@ -54,10 +54,11 @@ $ npm i
 
 ## Troubleshooting
 - If you are getting `Wrong password!` when executing an action, make sure you have your admins file configured correctly. If there is anything wrong with the file you should get an error when starting FXAdmin.
-- If you are getting `[FXAdmin:Monitor] Server error: ` of timeout or connection refused, it means the fxserver is offline, start it in the web panel.
+- If you run into problems when executing `npm install`, try `npm i node-gyp` or `npm i --global --production windows-build-tools` if you are on Windows.
+- If you are getting `[FXAdmin:Monitor] HealthCheck request error: ` it means the FXAdmin:Monitor could not connect to the FXServer. Check the two items below.
 - If the server is actually online but FXAdmin thinks it's offline, make sure your fxserver is configured to use the ip `0.0.0.0` in your `endpoint_add_*` directives instead of your public/private IP.
-- If you are having trouble starting the fxserver via FXAdmin, run `npm test-config server.json` and see which test is failing.
-- If you run into problems when executing `npm install`, try `npm i node-gyp` or `npm i --global --production windows-build-tools` if you are on Windows.  
+- If you are having trouble starting the FXServer via FXAdmin, run `npm test-config server.json` and see which test is failing.  
+
 
 
 ## TODO:

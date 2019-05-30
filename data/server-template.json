@@ -25,7 +25,7 @@
         "activity": "Running FXServer",
         "trigger": "/status"
     },
-    "fxServer": {
+    "fxRunner": {
         "buildPath": "C:/Users/Admin/Documents/fxserver_builds/1168",
         "basePath": "C:/Users/Admin/Desktop/server01",
         "cfgPath": "C:/Users/Admin/Desktop/server01/server.cfg",
