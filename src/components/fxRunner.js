@@ -14,6 +14,7 @@ module.exports = class FXRunner {
         this.spawnVariables = null;
         this.outData = '';
         this.enableBuffer = false;
+        this.tsChildStarted = null;
         this.setupVariables();
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
@@ -77,6 +78,7 @@ module.exports = class FXRunner {
                 {cwd: this.config.basePath}
             );
             logOk(`::Server started with PID ${this.fxChild.pid}!`, context);
+            this.tsChildStarted = Math.round(Date.now()/1000);
         } catch (error) {
             logError('Failed to start FXServer with the following error:');
             dir(error);

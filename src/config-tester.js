@@ -54,6 +54,7 @@ try {
 Object.keys(configFile).forEach((root) => {
     log(`Configs in ${root}:`, 'CFG');
     Object.keys(configFile[root]).forEach((prop) => {
+        if(prop == 'restarter') return; //FIXME: skipping restarter settings
         if(prop == 'token') configFile[root][prop] = '##redacted##';
         log(`\t${prop}:\t'${configFile[root][prop]}'`, `CFG`);
     });

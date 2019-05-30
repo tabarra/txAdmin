@@ -12,6 +12,8 @@ module.exports = class Monitor {
         this.config = config;
         this.statusProcess = false;
         this.statusAllProcess = false;
+        this.lastAutoRestart = null;
+        this.failCounter = 0;
         this.statusServer = {
             online: false,
             players: []
@@ -23,6 +25,37 @@ module.exports = class Monitor {
             this.refreshProcessStatus();
             // logError("Data:\n"+JSON.stringify(this.getStatus(), null, 2));
         }, this.config.interval);
+    }
+
+
+    //================================================================
+    /**
+     * Check the restart schedule 
+     */
+    checkRestartSchedule(){
+
+    }
+
+
+    //================================================================
+    /**
+     * Check cooldown and Restart the FXServer
+     */
+    restartFXServer(reason){
+        let elapsed = Math.round(Date.now()/1000) - globals.fxRunner.tsChildStarted;
+        if(elapsed >= this.config.restarter.cooldown){
+            //sanity check
+            if(globals.fxRunner.fxChild === null){
+                logWarn('Server not started, no need to restart', context);
+                return false;
+            }
+            let message = `Restarting server (${reason}).`;
+            logWarn(message, context);
+            globals.fxRunner.srvCmd(`say ${message}`);
+            globals.fxRunner.restartServer();
+        }else{
+            if(globals.config.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) restartFXServer() awaiting restarter cooldown.`, context);
+        }
     }
 
 
@@ -72,13 +105,15 @@ module.exports = class Monitor {
             timeout: this.config.timeout
         }
 
-        //Fazer request
+        //Make request
         try {
             const res = await axios(requestOptions);
             players = res.data;
             if(!Array.isArray(players)) throw new Error("FXServer's players endpoint didnt return a JSON array.")
         } catch (error) {
-            logWarn(`HealthCheck request error: ${error.message}`, context);
+            this.failCounter++;
+            logWarn(`(Counter: ${this.failCounter}/${this.config.restarter.failures}) HealthCheck request error: ${error.message}`, context);
+            if(this.failCounter >= this.config.restarter.failures) this.restartFXServer('Failure Count Above Limit');
             this.statusServer = {
                 online: false,
                 ping: false,
@@ -86,6 +121,7 @@ module.exports = class Monitor {
             }
             return;
         }
+        this.failCounter = 0;
 
         //Remove identifiers and add steam profile link
         players.forEach(player => {

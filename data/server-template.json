@@ -6,7 +6,11 @@
     },
     "logger": {},
     "monitor": {
-        "timeout": 1000
+        "timeout": 1000,
+        "restarter": {
+            "failures": 15,
+            "schedule": ["05:00", "13:00"]
+        }
     },
     "authenticator": {
         "adminsFilePath": "data/admins.json"
@@ -21,7 +25,7 @@
         "trigger": "/status"
     },
     "fxRunner": {
-        "buildPath": "C:/Users/Admin/Documents/fxserver_builds/1168",
+        "buildPath": "C:/Users/Admin/Documents/fxserver_builds/1265",
         "basePath": "C:/Users/Admin/Desktop/server01",
         "cfgPath": "C:/Users/Admin/Desktop/server01/server.cfg",
         "onesync": false,
