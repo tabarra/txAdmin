@@ -10,27 +10,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Convergence&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
     <!-- Favicon made by Freepik from www.flaticon.com is licensed by CC 3.0 BY -->
     <link rel="shortcut icon" type="image/png" href="favicon_default.png" id="favicon" />
     <title>FXAdmin Console</title>
     <style>
-        h1{
-            font-family: 'Convergence', sans-serif;
-        }
         #console{
-            overflow-x: auto;
-            white-space: pre-wrap;
-            white-space: -moz-pre-wrap;
-            white-space: -pre-wrap;
-            white-space: -o-pre-wrap;
-            word-wrap: break-word;
             overflow-y: scroll;
             height:70vh;
-        }
-
-        /* https://flatuicolors.com/palette/us */
-        mark{
-            background-color: #ffeaa7;
         }
 
         #console::-webkit-scrollbar-track{
@@ -38,16 +25,20 @@
             border-radius: 10px;
             background-color: #F5F5F5;
         }
-
         #console::-webkit-scrollbar{
             width: 12px;
             background-color: #F5F5F5;
         }
-
         #console::-webkit-scrollbar-thumb{
             border-radius: 10px;
             -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
             background-color: #555;
+        }
+
+        
+        /* https://flatuicolors.com/palette/us */
+        mark{
+            background-color: #ffeaa7;
         }
     </style>
 </head>
@@ -56,7 +47,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12 text-center">
-                <h1>FXServer Console:</h1>
+                <h1>FXServer Console</h1>
             </div>
         </div>
         <div class="card mx-auto border-primary" style="max-width: 64rem;">
