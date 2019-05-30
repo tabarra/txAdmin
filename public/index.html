@@ -27,6 +27,7 @@
         </div>
         <div class="row justify-content-center">
             <!-- Cards principais -->
+            <div class="logoutButton"><a href="/auth?logout">Log out</a></div>
             <div class="col-xs-5">
                 <div class="card border-danger" style="width: 28rem; min-height: 211px">
                     <form action="/action" method="post">
@@ -35,16 +36,16 @@
                                 <label for="action" class="col-sm-4 col-form-label">Action</label>
                                 <div class="col-sm-8">
                                     <select name="action" id="frm_action" class="form-control" required>
-                                        <option value="" disabled selected>> DEFAULT:</option>
+                                        <option value="" disabled selected>Choose an option</option>
                                         <option value="admin_say">Admin Message</option>
                                         <option value="restart_res">Restart script</option>
                                         <option value="start_res">Start script</option>
                                         <option value="stop_res">Stop script</option>
                                         <option value="refresh_res">Refresh scripts</option>
-                                        <option value="" disabled>> DANGER ZONE:</option>
-                                        <option value="restart_sv">RESTART Server</option>
-                                        <option value="stop_sv">STOP Server</option>
-                                        <option value="start_sv">START Server</option>
+                                        <option value="" disabled>-------------------</option>
+                                        <option value="start_sv">Start Server</option>
+                                        <option value="restart_sv">Restart Server</option>
+                                        <option value="stop_sv">Stop Server</option>
                                     </select>
                                 </div>
                             </div>
@@ -56,40 +57,33 @@
                             </div>
                         </div>
                         <div class="card-footer text-center">
-                            <a href="/console" target="_blank" role="button" class="btn btn-outline-dark mx-auto">Open Console</a>
-                            <button type="submit" class="btn btn-outline-danger mx-auto">EXECUTE</button>
+                            <button type="submit" class="btn btn-outline-danger mx-auto">Execute</button>
+                            <a href="/console" role="button" class="btn btn-outline-dark mx-auto">Open Console</a>
                         </div>
                     </form>
                 </div>
                 <br>
-                <div class="card border-info" style="width: 28rem; max-height: 211px">
+                <div class="card border-info" style="width: 28rem; height: 211px; max-height: 211px">
                     <div class="card-body" id="card-status">
-                        Carregando...
+                        Loading...
                     </div>
                 </div>
-                
             </div>
-            <!-- Fim Cards principais -->
             <div class="col-xs-1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
-            <!-- Card Secundário -->
             <div class="col-xs-5">
-                <div class="card border-info" style="width: 28rem; min-height: 211px">
-                    <div class="card-body">
-                            <nav>
-                                <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                    <a class="nav-item nav-link active" id="nav-players-tab" data-toggle="tab" href="#nav-players" role="tab" aria-controls="nav-players" aria-selected="true">Players</a>
-                                    <a class="nav-item nav-link" id="nav-log-tab" data-toggle="tab" href="#nav-log" role="tab" aria-controls="nav-log" aria-selected="false">ADM Log</a>
-                                </div>
-                            </nav>
-                            <div class="tab-content" id="nav-tabContent" style="padding-top: 25px;">
-                                <div class="tab-pane fade show active" id="nav-players" role="tabpanel" aria-labelledby="nav-players-tab">Carregando...</div>
-                                <div class="tab-pane fade" id="nav-log" role="tabpanel" aria-labelledby="nav-log-tab">Carregando...</div>
-                            </div>
+                    <div class="card border-info" style="position:relative; width: 28rem; height: 211px; max-height: 211px; overflow: hidden;">
+                        <div class="card-body" id="nav-log" style="position:absolute; bottom: 0px; left: 0;">
+                            Loading...
+                        </div>
+                    </div>
+                    <br>
+                    <div class="card border-info" style="width: 28rem; height: 211px; max-height: 211px">
+                        <div class="card-body" id="nav-players">
+                            Loading...
+                        </div>
                     </div>
                 </div>
-            </div>
-            <!-- Fim Card Secundário -->
-            
+            <!-- Fim Cards principais -->   
         </div>
         <br>
         <div class="row justify-content-center">
@@ -123,10 +117,7 @@
                 dataType: "json",
                 timeout: 500,
                 success: function(data) {
-                    if(data.logout){
-                        window.location = '/auth?logout';
-                        return;
-                    }
+
                     $("#card-status").html( data.status );
                     $("#nav-players").html( data.players );
                     $("#nav-log").html( data.log );

@@ -56,7 +56,7 @@ function preparePlayers(){
 
     if(!dataServer.players.length) return '<pre>No players Online</pre>';
 
-    out += `<b>Ping\tNick</b>\n`;
+    out += `<b>Ping\tName</b>\n`;
     dataServer.players.forEach(player => {
         out += ` ${player.ping}\t`;
         if(player.steam){
@@ -73,6 +73,7 @@ function preparePlayers(){
 //==============================================================
 async function sendLog(){
     let log = await globals.logger.get();
+    if(!log.length) return '<pre>Log file is empty</pre>';
     return `<pre>${xss(log)}</pre>`;
 }
 

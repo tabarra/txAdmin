@@ -1,4 +1,7 @@
-body{
+* {
+    box-sizing: border-box;
+}
+body {
     background-color: #f8f9fa;
     margin-top: 32px;
 }
@@ -10,6 +13,27 @@ pre {
     white-space: -o-pre-wrap;
     word-wrap: break-word;
 }
-h1{
+h1 {
     font-family: 'Convergence', sans-serif;
+}
+.btn-outline-dark, .btn-outline-danger {
+    width: 125px;
+}
+.logoutButton {
+    width: 90px;
+    height: 35px;
+    margin-right: 5px;
+    background-color: #dc3545;
+    border-radius:4px;
+    text-align: center;
+    line-height: 32px;
+}
+.logoutButton a {
+    color: #fff;
+}
+.logoutButton a:hover {
+    text-decoration: none;
+}
+.card-body {
+    padding: 1rem;
 }

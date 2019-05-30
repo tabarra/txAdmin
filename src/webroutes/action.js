@@ -22,22 +22,22 @@ module.exports = async function action(res, req) {
     let parameter = req.body.parameter;
 
     if(action == 'admin_say'){
-        appendLog(req, `say ${parameter}`);
+        appendLog(req, `Message: ${parameter}`);
         globals.fxRunner.srvCmd('say ' + parameter);
-        return sendOutput(res, 'Okay');
+        return sendOutput(res, 'Message sent.');
 
     }else if(action == 'restart_res'){
-        appendLog(req, `restart ${parameter}`);
+        appendLog(req, `Restart ${parameter}`);
         let toResp = await globals.fxRunner.srvCmdBuffer('restart ' + parameter);
         return sendOutput(res, toResp);
 
     }else if(action == 'start_res'){
-        appendLog(req, `start ${parameter}`);
+        appendLog(req, `Start ${parameter}`);
         let toResp = await globals.fxRunner.srvCmdBuffer('start ' + parameter);
         return sendOutput(res, toResp);
 
     }else if(action == 'stop_res'){
-        appendLog(req, `stop ${parameter}`);
+        appendLog(req, `Stop ${parameter}`);
         let toResp = await globals.fxRunner.srvCmdBuffer('stop ' + parameter);
         return sendOutput(res, toResp);
 
@@ -47,20 +47,19 @@ module.exports = async function action(res, req) {
         return sendOutput(res, toResp);
 
     }else if(action == 'restart_sv'){
-        appendLog(req, `RESTART SERVER`);
+        appendLog(req, `Server restarted`);
         await globals.fxRunner.restartServer();
-        return sendOutput(res, 'Done');
+        return sendOutput(res, 'Server restarted');
 
     }else if(action == 'stop_sv'){
-        appendLog(req, `STOP SERVER`);
+        appendLog(req, `Server stopped`);
         globals.fxRunner.killServer();
-        return sendOutput(res, 'Done');
+        return sendOutput(res, 'Server stopped');
 
     }else if(action == 'start_sv'){
-        appendLog(req, `START SERVER`);
+        appendLog(req, `Server started`);
         globals.fxRunner.spawnServer();
-        return sendOutput(res, 'Done');
-
+        return sendOutput(res, 'Server started', 'Click here to see the server starting output');
     }else{
         appendLog(req, `unknown action`);
         return sendOutput(res, 'Unknown action!');
@@ -69,8 +68,11 @@ module.exports = async function action(res, req) {
 
 
 //==============================================================
-function sendOutput(res, msg){
-    let html = Sqrl.renderFile('public/out.html', {msg: msg});
+function sendOutput(res, msg, stMsg = ''){
+    let html = Sqrl.renderFile('public/out.html', {
+        msg: msg,
+        stMsg : stMsg
+    });
     return res.send(html);
 }
 
