@@ -64,7 +64,7 @@ module.exports = class Monitor {
         let timeStart = Date.now()
         let players = [];
         let requestOptions = {
-            url: `http://localhost:${this.config.fxServerPort}/players.json`,
+            url: `http://localhost:${globals.config.fxServerPort}/players.json`,
             method: 'get',
             responseType: 'json',
             responseEncoding: 'utf8',

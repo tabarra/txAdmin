@@ -1,29 +1,56 @@
 //Requires
+const os = require('os');
 const fs = require('fs');
 const { spawnSync } = require('child_process');
+const prettyBytes = require('pretty-bytes');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('./extras/console');
 cleanTerminal()
+const printDivider = () =>{log('='.repeat(64))};
+const context = 'Config Tester';
 
 
-let configFilePath = null;
-if(process.argv[2]){
-    configFilePath = (process.argv[2].endsWith('.json'))? `data/${process.argv[2]}` : `data/${process.argv[2]}.json`
-}else{
-    logError('Server config file not set. You must start FXAdmin with the command "npm start example.json", with "example.json" being the name of the file containing your FXAdmin server configuration inside the data folder. This file should be based on the server-template.json file.', 'Config Exporter');
+//Printing Environment information
+printDivider();
+log("Printing Environment information:");
+log("\tOS type: " + os.type());
+log("\tOS platform: " + os.platform());
+log("\tOS release: " + os.release());
+log("\tCPU count: " + os.cpus().length);
+log("\tFree Memory: " + prettyBytes(os.freemem()));
+log("\tTotal Memory: " + prettyBytes(os.totalmem()));
+printDivider();
+
+
+//Check  argv
+if(!process.argv[2]){
+    logError('Server config file not set. You must start FXAdmin with the command "npm start example.json", with "example.json" being the name of the file containing your FXAdmin server configuration inside the data folder. This file should be based on the server-template.json file.', context);
     process.exit(0);
 }
+
+
+//Get config name
+let configName = null;
+if(process.argv[2].endsWith('.json')){
+    configName = process.argv[2].substring(0, process.argv[2].length-5);
+}else{
+    configName = process.argv[2];
+}
+
+
+//Try to load configuration
 let configFile = null;
 try {
-    let raw = fs.readFileSync(configFilePath);  
+    let raw = fs.readFileSync(`data/${configName}.json`);  
     configFile = JSON.parse(raw);
+    log(`Loaded configuration file 'data/${configName}.json'.`);
+    printDivider();
 } catch (error) {
-    logError(`Unnable to load configuration file '${configFilePath}'`, 'Config Exporter');
+    logError(`Unnable to load configuration file 'data/${configName}.json'`, context);
     process.exit(0)
 }
-let cfg = configFile.fxRunner;
-let currTest = '';
 
 
+//Print configuration
 Object.keys(configFile).forEach((root) => {
     log(`Configs in ${root}:`, 'CFG');
     Object.keys(configFile[root]).forEach((prop) => {
@@ -31,13 +58,26 @@ Object.keys(configFile).forEach((root) => {
         log(`\t${prop}:\t'${configFile[root][prop]}'`, `CFG`);
     });
 });
+printDivider();
 
 
-if(cfg.isLinux){
+let osType = os.type();
+let isLinux = null;
+if(osType === 'Linux'){
     log("Tests starting for LINUX");
-}else{
+    isLinux = true;
+
+}else if(osType === 'Windows_NT'){
     log("Tests starting for WINDOWS");
+    isLinux = false;
+
+}else{
+    logError(`OS type not supported: ${osType}`, context);
+    process.exit(1);
 }
+printDivider();
+let cfg = configFile.fxRunner;
+let currTest = '';
 
 
 //Test: buildPath is readable
@@ -48,7 +88,7 @@ if(fs.existsSync(cfg.buildPath)){
     logError(currTest)
 }
 
-if(cfg.isLinux){
+if(isLinux){
     //================================================================
     //=================================================== LINUX
     //================================================================
@@ -109,7 +149,7 @@ if(cfgPathAbsoluteTest || cfgPathRelativeTest){
 
 
 
-if(cfg.isLinux){
+if(isLinux){
     //================================================================
     //=================================================== LINUX
     //================================================================

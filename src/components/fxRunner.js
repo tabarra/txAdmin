@@ -1,4 +1,5 @@
 //Requires
+const os = require('os');
 const { spawn } = require('child_process');
 const sleep = require('util').promisify(setTimeout)
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
@@ -29,17 +30,21 @@ module.exports = class FXRunner {
      * Setup the spawn variables
      */
     setupVariables(){
+        let osType = os.type();
         let onesyncFlag = (this.config.onesync)? '+set onesync_enabled 1' : '';
-        if(this.config.isLinux){
+        if(osType === 'Linux'){
             this.spawnVariables = {
                 shell: '/bin/bash',
                 cmdArgs: [`${this.config.buildPath}/run.sh`, `${onesyncFlag} +exec ${this.config.cfgPath}`]
             };
-        }else{
+        }else if(osType === 'Windows_NT'){
             this.spawnVariables = {
                 shell: 'cmd.exe',
                 cmdArgs: ['/c', `${this.config.buildPath}/run.cmd ${onesyncFlag} +exec ${this.config.cfgPath}`]
             };
+        }else{
+            logError(`OS type not supported: ${osType}`, context);
+            process.exit(1);
         }
 
     }//Final setupVariables()

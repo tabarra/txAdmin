@@ -57,7 +57,7 @@ $ npm i
 - If you run into problems when executing `npm install`, try `npm i node-gyp` or `npm i --global --production windows-build-tools` if you are on Windows.
 - If you are getting `[FXAdmin:Monitor] HealthCheck request error: ` it means the FXAdmin:Monitor could not connect to the FXServer. Check the two items below.
 - If the server is actually online but FXAdmin thinks it's offline, make sure your fxserver is configured to use the ip `0.0.0.0` in your `endpoint_add_*` directives instead of your public/private IP.
-- If you are having trouble starting the FXServer via FXAdmin, run `npm test-config server.json` and see which test is failing.  
+- If you are having trouble starting the FXServer via FXAdmin, run `npm run test-config server.json` and see which test is failing.  
 
 
 
