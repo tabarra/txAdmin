@@ -23,6 +23,7 @@ First, make sure you have:
 - NodeJS v10+ (with npm) (If you have problems with node-gyp try downgrading to node v10 LTS)
 - FXServer [(duh)](https://runtime.fivem.net/artifacts/fivem/)
 - One TCP listen port opened for the web server
+- Git (only for installs and updates)
 
 To **INSTALL** FXAdmin execute:
 ```bash
