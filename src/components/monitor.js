@@ -59,8 +59,7 @@ module.exports = class Monitor {
             }
             let message = `Restarting server (${reason}).`;
             logWarn(message, context);
-            globals.fxRunner.srvCmd(`say ${message}`);
-            globals.fxRunner.restartServer();
+            globals.fxRunner.restartServer(message);
         }else{
             if(globals.config.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) restartFXServer() awaiting restarter cooldown.`, context);
         }

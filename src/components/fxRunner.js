@@ -92,28 +92,33 @@ module.exports = class FXRunner {
 
         //Setting up event handlers
         this.fxChild.on('close', function (code, signal) {
-            logWarn('close: ' + `code ${code} and signal ${signal}`, context);
+            logWarn('>> fxChild close event: ' + `code ${code} and signal ${signal}`, context);
         });
         this.fxChild.on('disconnect', function () {
-            logWarn('fxChild disconnect event', context);
+            logWarn('>> fxChild disconnect event', context);
         });
         this.fxChild.on('error', function (err) {
-            logWarn('fxChild error event:', context);
+            logWarn('>> fxChild error event:', context);
             dir(err)
         });
         this.fxChild.on('exit', function (code, signal) {
-            logWarn('fxChild process exited with ' + `code ${code} and signal ${signal}`, context);
+            logWarn('>> fxChild process exited with ' + `code ${code} and signal ${signal}`, context);
         });
-        this.fxChild.stderr.on('data', (data) => {
-            logWarn(`========:\n${data}\n========`, context);
-        });
-        this.fxChild.stdin.on('data', (data) => {
-            logWarn(`========:\n${data}\n========`, context);
-        });
+
+        this.fxChild.stdin.on('error', (data) => {});
+        this.fxChild.stdin.on('data', (data) => {});
+
+        this.fxChild.stdout.on('error', (data) => {});
         this.fxChild.stdout.on('data', (data) => {
             globals.webConsole.broadcast(data);
             if(this.enableBuffer) this.outData += data;
         });
+
+        this.fxChild.stderr.on('error', (data) => {});
+        this.fxChild.stderr.on('data', (data) => {
+            logWarn(`========\n${data}\n========`, context);
+        });
+        
     }//Final spawnServer()
 
 
@@ -121,9 +126,13 @@ module.exports = class FXRunner {
     /**
      * Restarts the FXServer
      */
-    async restartServer(){
+    async restartServer(reason){
+        if(typeof reason === string){
+            this.srvCmd(`say Restarting server (${reason}).`);
+            await sleep(500);
+        }
         this.killServer();
-        await sleep(1000);
+        await sleep(750);
         this.spawnServer();
     }
     
