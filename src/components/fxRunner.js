@@ -133,7 +133,7 @@ module.exports = class FXRunner {
      * Restarts the FXServer
      */
     async restartServer(reason){
-        if(typeof reason === string){
+        if(typeof reason === 'string'){
             this.srvCmd(`say Restarting server (${reason}).`);
             await sleep(500);
         }

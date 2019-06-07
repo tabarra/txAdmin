@@ -48,7 +48,7 @@ module.exports = async function action(res, req) {
 
     }else if(action == 'restart_sv'){
         appendLog(req, `RESTART SERVER`);
-        await globals.fxRunner.restartServer();
+        await globals.fxRunner.restartServer('via FXAdmin Web Panel');
         return sendOutput(res, 'Done');
 
     }else if(action == 'stop_sv'){
