@@ -137,7 +137,7 @@ process.on('unhandledRejection', (err) => {
     logError(err.stack)
 });
 process.on('exit', (code) => {
-    logWarn(">>Stopping FXAdmin");
+    log(">>Stopping FXAdmin");
 });
 
 //==============================================================

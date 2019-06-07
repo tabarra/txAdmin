@@ -104,6 +104,12 @@ module.exports = class FXRunner {
         this.fxChild.on('exit', function (code, signal) {
             logWarn('>> fxChild process exited with ' + `code ${code} and signal ${signal}`, context);
         });
+        this.fxChild.stderr.on('data', (data) => {
+            logWarn(`\n========\n${data}\n========`, `${context}:stderr:data`);
+        });
+        this.fxChild.stdin.on('data', (data) => {
+            logWarn(`\n========\n${data}\n========`, `${context}:stdin:data`);
+        });
 
         this.fxChild.stdin.on('error', (data) => {});
         this.fxChild.stdin.on('data', (data) => {});
@@ -147,7 +153,8 @@ module.exports = class FXRunner {
             this.fxChild = null;
             return true;
         } catch (error) {
-            logWarn("Couldn't kill the server. Perhaps What Is Dead May Never Die.");
+            logWarn("Couldn't kill the server. Perhaps What Is Dead May Never Die.", context);
+            if(globals.config.verbose) dir(error);
             this.fxChild = null;
             return false;
         }
@@ -166,6 +173,10 @@ module.exports = class FXRunner {
             globals.webConsole.broadcast(command, true);
             return success;
         } catch (error) {
+            if(globals.config.verbose){
+                logError('Error writing to fxChild.stdin', context);
+                dir(error);
+            }
             return false;
         }
     }

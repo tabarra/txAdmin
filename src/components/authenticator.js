@@ -9,7 +9,7 @@ module.exports = class Authenticator {
     constructor(config) {
         logOk('::Started', context);
         this.config = config;
-        this.admins = [];
+        this.admins = null;
         this.refreshAdmins();
        
         //Cron Function
@@ -108,6 +108,9 @@ module.exports = class Authenticator {
     //================================================================
     /**
      * Refreshes the admins list
+     * NOTE: The verbosity here is driving me insane. 
+     *          But still seems not to be enough for people that don't read the README.
+     *          Will separate the hash integrity and stop there.
      */
     async refreshAdmins(){
         let raw = null;
@@ -116,7 +119,8 @@ module.exports = class Authenticator {
         try {
             raw = fs.readFileSync(this.config.adminsFilePath);  
         } catch (error) {
-            logError('Unnable to load admins. (cannot read file)', context);
+            logError('Unnable to load admins. (cannot read file, please read the documentation)', context);
+            if(this.admins === null) process.exit(1);
             this.admins = [];
             return;
         }
@@ -124,25 +128,38 @@ module.exports = class Authenticator {
         try {
             jsonData = JSON.parse(raw);
         } catch (error) {
-            logError('Unnable to load admins. (json parse error)', context);
+            logError('Unnable to load admins. (json parse error, please read the documentation)', context);
+            if(this.admins === null) process.exit(1);
             this.admins = [];
             return;
         }
 
-        let integrityFailed = jsonData.some((x) =>{
+        let structureIntegrityTest = jsonData.some((x) =>{
             if(typeof x.name == 'undefined') return true;
             if(typeof x.password_hash == 'undefined') return true;
+            return false;
+        });
+        if(structureIntegrityTest){
+            logError('Unnable to load admins. (invalid data in the admins file, please read the documentation)', context);
+            if(this.admins === null) process.exit(1);
+            this.admins = [];
+            return;
+        }
+
+        let hashIntegrityTest = jsonData.some((x) =>{
             if(!x.password_hash.startsWith('$2')) return true;
             return false;
         });
-        if(integrityFailed){
-            logError('Unnable to load admins. (invalid data in the admins file)', context);
+        if(hashIntegrityTest){
+            logError('Unnable to load admins. (invalid hash, please read the documentation)', context);
+            if(this.admins === null) process.exit(1);
             this.admins = [];
             return;
         }
 
         if(!jsonData.length){
-            logError('Unnable to load admins. (no entries)', context);
+            logError('Unnable to load admins. (no entries, please read the documentation)', context);
+            if(this.admins === null) process.exit(1);
             this.admins = [];
             return;
         }
