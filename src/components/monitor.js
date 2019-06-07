@@ -174,6 +174,9 @@ module.exports = class Monitor {
             Object.keys(processes).forEach((pid) => {
                 var curr = processes[pid];
 
+                //NOTE: Somehow this might happen in Linux
+                if(curr === null) return;
+
                 //combined
                 combined.count += 1;
                 combined.cpu += curr.cpu;
