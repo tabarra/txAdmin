@@ -1,4 +1,4 @@
 {
-    "version": "0.9.0",
-    "changelog": "Schedule/Failure Auto Restarter. You will need to copy server-template.json again. Modified the start command. Password brute-force protection."
+    "version": "0.9.5",
+    "changelog": "Fixed restart bug. Temporarily disabled process monitoring on Windows to fix performance issue one some setups."
 }

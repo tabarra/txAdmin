@@ -1,6 +1,6 @@
 {
   "name": "fivem-fxadmin",
-  "version": "0.1.0",
+  "version": "0.9.5",
   "description": "FiveM FXServer Admin - remotely manage your GTA5 FiveM Server",
   "main": "src/main.js",
   "scripts": {
