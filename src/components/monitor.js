@@ -162,11 +162,12 @@ module.exports = class Monitor {
     async refreshProcessStatus(){
         try {
             var processes = await pidusageTree(process.pid);
+            // let processes = {}
             let combined = {
                 count: 0,
                 cpu: 0,
                 memory: 0,
-                uptime: null
+                uptime: 0
             }
             let individual = {}
 
