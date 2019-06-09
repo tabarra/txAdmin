@@ -160,6 +160,9 @@ module.exports = class Monitor {
      * Refreshes the Processes Statuses.
      */
     async refreshProcessStatus(){
+        //HACK: temporarily disable feature on windows due to performance issues on WMIC
+        if(globals.config.osType === 'Windows_NT') return;
+
         try {
             var processes = await pidusageTree(process.pid);
             // let processes = {}

@@ -1,5 +1,6 @@
 
 //Requires
+const os = require('os');
 const fs = require('fs');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'Config Exporter';
@@ -54,6 +55,9 @@ try {
         publicIP: configFile.global.publicIP || "change-me",
         serverName: configFile.global.serverName || "change-me",
         fxServerPort: parseInt(configFile.global.fxServerPort) || fatalRequired('global.fxServerPort'),
+        
+        //Extras
+        osType: os.type() || 'unknown',
         configName: configName,
     };
     cfg.logger = {
