@@ -6,7 +6,7 @@ const context = 'Config Exporter';
 
 //Helper Functions
 function fatalRequired(varName){
-    logError(`The following variable was not set and is required: '${varName}'`, context);
+    logError(`The following configuration was not set and is required: '${varName}'`, context);
     process.exit(0);
 }
 
@@ -52,6 +52,7 @@ try {
     cfg.global = {
         verbose: (configFile.global.verbose === 'true' || configFile.global.verbose === true),
         publicIP: configFile.global.publicIP || "change-me",
+        serverName: configFile.global.serverName || "change-me",
         fxServerPort: parseInt(configFile.global.fxServerPort) || fatalRequired('global.fxServerPort'),
         configName: configName,
     };
@@ -83,7 +84,6 @@ try {
     cfg.discordBot = {
         enabled: (configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true),
         token:  configFile.discordBot.token || ((configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true) && fatalRequired('discordBot.token')),
-        activity: configFile.discordBot.activity || "Running FXServer",
         trigger: configFile.discordBot.trigger || "/status",
     };
     cfg.fxRunner = {
