@@ -119,7 +119,7 @@ module.exports = class Authenticator {
         try {
             raw = fs.readFileSync(this.config.adminsFilePath);  
         } catch (error) {
-            logError('Unnable to load admins. (cannot read file, please read the documentation)', context);
+            logError('Unable to load admins. (cannot read file, please read the documentation)', context);
             if(this.admins === null) process.exit(1);
             this.admins = [];
             return;
@@ -128,7 +128,7 @@ module.exports = class Authenticator {
         try {
             jsonData = JSON.parse(raw);
         } catch (error) {
-            logError('Unnable to load admins. (json parse error, please read the documentation)', context);
+            logError('Unable to load admins. (json parse error, please read the documentation)', context);
             if(this.admins === null) process.exit(1);
             this.admins = [];
             return;
@@ -140,7 +140,7 @@ module.exports = class Authenticator {
             return false;
         });
         if(structureIntegrityTest){
-            logError('Unnable to load admins. (invalid data in the admins file, please read the documentation)', context);
+            logError('Unable to load admins. (invalid data in the admins file, please read the documentation)', context);
             if(this.admins === null) process.exit(1);
             this.admins = [];
             return;
@@ -151,14 +151,14 @@ module.exports = class Authenticator {
             return false;
         });
         if(hashIntegrityTest){
-            logError('Unnable to load admins. (invalid hash, please read the documentation)', context);
+            logError('Unable to load admins. (invalid hash, please read the documentation)', context);
             if(this.admins === null) process.exit(1);
             this.admins = [];
             return;
         }
 
         if(!jsonData.length){
-            logError('Unnable to load admins. (no entries, please read the documentation)', context);
+            logError('Unable to load admins. (no entries, please read the documentation)', context);
             if(this.admins === null) process.exit(1);
             this.admins = [];
             return;
