@@ -22,7 +22,7 @@ module.exports = class DiscordBot {
         //Setup event listeners
         this.client.on('ready', () => {
             logOk(`::Started and logged in as '${this.client.user.tag}'`, context);
-            this.client.user.setActivity(this.config.activity);
+            this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
             // let chan = this.client.channels.find(u => u.name === 'general');
             // chan.send('Hello, chat!');
         });
@@ -52,7 +52,9 @@ module.exports = class DiscordBot {
         //Prepare message's data
         let dataServer = globals.monitor.statusServer; //shorthand much!?
         let color = (dataServer.online)? 0x00FF00 : 0xFF0000;
-        let title = (dataServer.online)? 'The server is currently **Online**!' : 'The server is currently **Offline**!';
+        let title = (dataServer.online)
+            ? `${globals.config.serverName} is currently **Online**!` 
+            : `${globals.config.serverName} is currently **Offline**!`;
         let players = (dataServer.online && typeof dataServer.players !== 'undefined')? dataServer.players.length : '--';
         let desc = '';
         desc += `**IP:** ${globals.config.publicIP}:${globals.config.fxServerPort}\n`;

@@ -24,28 +24,28 @@ class FXAdmin {
         globals.config = localConfig.global;
 
         this.startAuthenticator(localConfig.authenticator).catch((err) => {
-            HandleFatalError(err);
+            HandleFatalError(err, 'Authenticator');
         });
         this.startDiscordBot(localConfig.discordBot).catch((err) => {
-            HandleFatalError(err);
+            HandleFatalError(err, 'DiscordBot');
         });
         this.startFXServer(localConfig.fxRunner).catch((err) => {
-            HandleFatalError(err);
+            HandleFatalError(err, 'FXServer');
         });
         this.startLogger(localConfig.logger).catch((err) => {
-            HandleFatalError(err);
+            HandleFatalError(err, 'Logger');
         });
         this.startMonitor(localConfig.monitor).catch((err) => {
-            HandleFatalError(err);
+            HandleFatalError(err, 'Monitor');
         });
         this.startWebServer(localConfig.webServer).catch((err) => {
-            HandleFatalError(err);
+            HandleFatalError(err, 'WebServer');
         });
         this.startWebConsole(localConfig.webConsole).catch((err) => {
-            HandleFatalError(err);
+            HandleFatalError(err, 'WebConsole');
         });
         this.checkForUpdates().catch((err) => {
-            HandleFatalError(err);
+            HandleFatalError(err, 'Update Checker');
         });
     }
 
@@ -121,9 +121,14 @@ class FXAdmin {
 
 
 //==============================================================
-function HandleFatalError(err){
-    logError(err.message)
-    logError(err.stack)
+function HandleFatalError(err, context){
+    if(err.message.includes('Cannot find module')){
+        logError(`Error starting '${context}' module. Make sure you executed 'npm install'.`)
+    }else{
+        logError(`Error starting '${context}' module: ${err.message}`)
+        logError(err.stack, context)
+    }
+    
     process.exit(1);
 }
 process.on('unhandledRejection', (err) => {
@@ -132,7 +137,7 @@ process.on('unhandledRejection', (err) => {
     logError(err.stack)
 });
 process.on('exit', (code) => {
-    logWarn(">>Stopping FXAdmin");
+    log(">>Stopping FXAdmin");
 });
 
 //==============================================================

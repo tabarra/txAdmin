@@ -59,8 +59,7 @@ module.exports = class Monitor {
             }
             let message = `Restarting server (${reason}).`;
             logWarn(message, context);
-            globals.fxRunner.srvCmd(`say ${message}`);
-            globals.fxRunner.restartServer();
+            globals.fxRunner.restartServer(message);
         }else{
             if(globals.config.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) restartFXServer() awaiting restarter cooldown.`, context);
         }
@@ -161,19 +160,26 @@ module.exports = class Monitor {
      * Refreshes the Processes Statuses.
      */
     async refreshProcessStatus(){
+        //HACK: temporarily disable feature on windows due to performance issues on WMIC
+        if(globals.config.osType === 'Windows_NT') return;
+
         try {
             var processes = await pidusageTree(process.pid);
+            // let processes = {}
             let combined = {
                 count: 0,
                 cpu: 0,
                 memory: 0,
-                uptime: null
+                uptime: 0
             }
             let individual = {}
 
             //Foreach PID
             Object.keys(processes).forEach((pid) => {
                 var curr = processes[pid];
+
+                //NOTE: Somehow this might happen in Linux
+                if(curr === null) return;
 
                 //combined
                 combined.count += 1;

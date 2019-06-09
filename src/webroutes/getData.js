@@ -36,15 +36,21 @@ function prepareServerStatus(){
     out += `<b>Players:</b> ${players}\n`;
     out += `<hr>`;
 
-    let count = (dataProcess && typeof dataProcess.count !== 'undefined')? dataProcess.count : '--' ;
-    let cpu = (dataProcess && typeof dataProcess.cpu !== 'undefined')? dataProcess.cpu.toFixed(2)+'%' : '--' ;
-    let memory = (dataProcess && typeof dataProcess.memory !== 'undefined')? prettyBytes(dataProcess.memory) : '--' ;
-    let uptime = (dataProcess && typeof dataProcess.uptime !== 'undefined')? prettyMs(dataProcess.uptime) : '--' ;
-    out += `<b>Processes:</b> ${count}\n`;
-    out += `<b>CPU:</b> ${cpu}\n`;
-    out += `<b>Memory:</b> ${memory}\n`;
-    out += `<b>Uptime:</b> ${uptime}\n`;
+    if(globals.config.osType === 'Windows_NT'){
+        out += 'Process monitoring temporarily disabled on Windows.\n';
+        out += 'Follow the discussion on <a href="https://github.com/tabarra/fivem-fxadmin/issues/7" target="_blank">GitHub Issue #7</a>\n';
+    }else{
+        let count = (dataProcess && typeof dataProcess.count !== 'undefined')? dataProcess.count : '--' ;
+        let cpu = (dataProcess && typeof dataProcess.cpu !== 'undefined')? dataProcess.cpu.toFixed(2)+'%' : '--' ;
+        let memory = (dataProcess && typeof dataProcess.memory !== 'undefined')? prettyBytes(dataProcess.memory) : '--' ;
+        let uptime = (dataProcess && typeof dataProcess.uptime !== 'undefined')? prettyMs(dataProcess.uptime) : '--' ;
+        out += `<b>Processes:</b> ${count}\n`;
+        out += `<b>CPU:</b> ${cpu}\n`;
+        out += `<b>Memory:</b> ${memory}\n`;
+        out += `<b>Uptime:</b> ${uptime}\n`;
+    }
     out += '</pre>';
+
     return out;
 }
 

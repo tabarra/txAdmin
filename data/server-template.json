@@ -2,6 +2,7 @@
     "global": {
         "verbose": false,
         "publicIP": "change-me",
+        "serverName": "change-me",
         "fxServerPort": 30120
     },
     "logger": {},
@@ -21,7 +22,6 @@
     "discordBot": {
         "enabled": false,
         "token": "change-me",
-        "activity": "Running FXServer",
         "trigger": "/status"
     },
     "fxRunner": {

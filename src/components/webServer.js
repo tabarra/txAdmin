@@ -23,7 +23,12 @@ module.exports = class WebServer {
         this.authLimiter = rateLimit({
             windowMs: this.config.limiterMinutes * 60 * 1000, // 15 minutes
             max: this.config.limiterAttempts, // limit each IP to 5 requests per 15 minutes
-            message: render('login', {message:`Too many login attempts, enjoy your ${this.config.limiterMinutes} minutes of cooldown.`})
+            message: render('login', {
+                message:`Too many login attempts, enjoy your ${this.config.limiterMinutes} minutes of cooldown.`,
+                config: globals.config.configName,
+                port: globals.config.fxServerPort,
+                version: '--'
+            })
         });
         
         this.app = express();
@@ -50,12 +55,22 @@ module.exports = class WebServer {
     async setupRoutes(){
         //Default routes
         this.app.get('/auth', async (req, res) => {
-            // res.sendFile(getWebRootPath('login.html')); 
+            let renderData = {
+                message: '',
+                config: globals.config.configName,
+                port: globals.config.fxServerPort
+            }
+            if(globals.version && globals.version.current){
+                renderData.version = globals.version.current;
+            }else{
+                renderData.version = '--';
+            }
             if(typeof req.query.logout !== 'undefined'){
                 req.session.destroy();
-                res.send(render('login', {message:'Logged Out'}));
+                renderData.message = 'Logged Out';
+                res.send(render('login', renderData));
             }else{
-                res.send(render('login', {message:''}));
+                res.send(render('login', renderData));
             }
         });
         this.app.post('/auth', this.authLimiter, async (req, res) => {
@@ -66,7 +81,8 @@ module.exports = class WebServer {
             let admin = globals.authenticator.checkAuth(req.body.password);
             if(!admin){
                 logWarn(`Wrong password from: ${req.connection.remoteAddress}`, context);
-                res.send(render('login', {message:'Wrong Password'}));
+                renderData.message = 'Wrong Password!';
+                res.send(render('login', renderData));
                 return;
             }
             req.session.password = req.body.password;

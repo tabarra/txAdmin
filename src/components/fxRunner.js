@@ -1,5 +1,4 @@
 //Requires
-const os = require('os');
 const { spawn } = require('child_process');
 const sleep = require('util').promisify(setTimeout)
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
@@ -31,20 +30,19 @@ module.exports = class FXRunner {
      * Setup the spawn variables
      */
     setupVariables(){
-        let osType = os.type();
         let onesyncFlag = (this.config.onesync)? '+set onesync_enabled 1' : '';
-        if(osType === 'Linux'){
+        if(globals.config.osType === 'Linux'){
             this.spawnVariables = {
                 shell: '/bin/bash',
                 cmdArgs: [`${this.config.buildPath}/run.sh`, `${onesyncFlag} +exec ${this.config.cfgPath}`]
             };
-        }else if(osType === 'Windows_NT'){
+        }else if(globals.config.osType === 'Windows_NT'){
             this.spawnVariables = {
                 shell: 'cmd.exe',
                 cmdArgs: ['/c', `${this.config.buildPath}/run.cmd ${onesyncFlag} +exec ${this.config.cfgPath}`]
             };
         }else{
-            logError(`OS type not supported: ${osType}`, context);
+            logError(`OS type not supported: ${globals.config.osType}`, context);
             process.exit(1);
         }
 
@@ -92,28 +90,39 @@ module.exports = class FXRunner {
 
         //Setting up event handlers
         this.fxChild.on('close', function (code, signal) {
-            logWarn('close: ' + `code ${code} and signal ${signal}`, context);
+            logWarn('>> fxChild close event: ' + `code ${code} and signal ${signal}`, context);
         });
         this.fxChild.on('disconnect', function () {
-            logWarn('fxChild disconnect event', context);
+            logWarn('>> fxChild disconnect event', context);
         });
         this.fxChild.on('error', function (err) {
-            logWarn('fxChild error event:', context);
+            logWarn('>> fxChild error event:', context);
             dir(err)
         });
         this.fxChild.on('exit', function (code, signal) {
-            logWarn('fxChild process exited with ' + `code ${code} and signal ${signal}`, context);
+            logWarn('>> fxChild process exited with ' + `code ${code} and signal ${signal}`, context);
         });
         this.fxChild.stderr.on('data', (data) => {
-            logWarn(`========:\n${data}\n========`, context);
+            logWarn(`\n========\n${data}\n========`, `${context}:stderr:data`);
         });
         this.fxChild.stdin.on('data', (data) => {
-            logWarn(`========:\n${data}\n========`, context);
+            logWarn(`\n========\n${data}\n========`, `${context}:stdin:data`);
         });
+
+        this.fxChild.stdin.on('error', (data) => {});
+        this.fxChild.stdin.on('data', (data) => {});
+
+        this.fxChild.stdout.on('error', (data) => {});
         this.fxChild.stdout.on('data', (data) => {
             globals.webConsole.broadcast(data);
             if(this.enableBuffer) this.outData += data;
         });
+
+        this.fxChild.stderr.on('error', (data) => {});
+        this.fxChild.stderr.on('data', (data) => {
+            logWarn(`========\n${data}\n========`, context);
+        });
+        
     }//Final spawnServer()
 
 
@@ -121,9 +130,13 @@ module.exports = class FXRunner {
     /**
      * Restarts the FXServer
      */
-    async restartServer(){
+    async restartServer(reason){
+        if(typeof reason === 'string'){
+            this.srvCmd(`say Restarting server (${reason}).`);
+            await sleep(500);
+        }
         this.killServer();
-        await sleep(1000);
+        await sleep(750);
         this.spawnServer();
     }
     
@@ -138,7 +151,8 @@ module.exports = class FXRunner {
             this.fxChild = null;
             return true;
         } catch (error) {
-            logWarn("Couldn't kill the server. Perhaps What Is Dead May Never Die.");
+            logWarn("Couldn't kill the server. Perhaps What Is Dead May Never Die.", context);
+            if(globals.config.verbose) dir(error);
             this.fxChild = null;
             return false;
         }
@@ -157,6 +171,10 @@ module.exports = class FXRunner {
             globals.webConsole.broadcast(command, true);
             return success;
         } catch (error) {
+            if(globals.config.verbose){
+                logError('Error writing to fxChild.stdin', context);
+                dir(error);
+            }
             return false;
         }
     }
