@@ -1,4 +1,5 @@
 //Requires
+const fs = require('fs');
 const Discord = require('discord.js');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'DiscordBot';
@@ -12,8 +13,15 @@ module.exports = class DiscordBot {
             return;
         }    
         this.client = new Discord.Client({autoReconnect:true});
+        this.messages = [];
 
+        this.refreshStaticMessages();
         this.startBot();
+
+        //Cron Function
+        setInterval(() => {
+            this.refreshStaticMessages();
+        }, this.config.refreshInterval);
     }
 
 
@@ -47,37 +55,97 @@ module.exports = class DiscordBot {
     //================================================================
     async handleMessage(message){
         if(message.author.bot) return;
-        if (message.content !== this.config.trigger) return;
-        
-        //Prepare message's data
-        let dataServer = globals.monitor.statusServer; //shorthand much!?
-        let color = (dataServer.online)? 0x00FF00 : 0xFF0000;
-        let title = (dataServer.online)
-            ? `${globals.config.serverName} is currently **Online**!` 
-            : `${globals.config.serverName} is currently **Offline**!`;
-        let players = (dataServer.online && typeof dataServer.players !== 'undefined')? dataServer.players.length : '--';
-        let desc = '';
-        desc += `**IP:** ${globals.config.publicIP}:${globals.config.fxServerPort}\n`;
-        desc += `**Players:** ${players}\n`;
-        
-        //Send message
-        const embed = new Discord.RichEmbed();
-        embed.setTitle(title)
-        embed.setColor(color)
-        embed.setDescription(desc);
-        message.channel.send(embed);
+        let out = '';
+
+        //Checking if message is a command
+        if(message.content.startsWith(this.config.statusCommand)){
+            //Prepare message's data
+            let dataServer = globals.monitor.statusServer; //shorthand much!?
+            let color = (dataServer.online)? 0x74EE15 : 0xF000FF;
+            let title = (dataServer.online)
+                ? `${globals.config.serverName} is currently **Online**!` 
+                : `${globals.config.serverName} is currently **Offline**!`;
+            let players = (dataServer.online && typeof dataServer.players !== 'undefined')? dataServer.players.length : '--';
+            let desc = '';
+            desc += `**IP:** ${globals.config.publicIP}:${globals.config.fxServerPort}\n`;
+            desc += `**Players:** ${players}\n`;
+            
+            //Prepare object
+            out = new Discord.RichEmbed();
+            out.setTitle(title);
+            out.setColor(color);
+            out.setDescription(desc); 
+
+        }else if(message.content.startsWith('/fxadmin')){
+            let version = (globals.version && globals.version.current)? globals.version.current : '--';
+            
+            //Prepare object
+            out = new Discord.RichEmbed();
+            out.setTitle(`${globals.config.serverName} uses FXAdmin v${version}!`);
+            out.setColor(0x4DEEEA);
+            out.setDescription(`Checkout the project:\n Forum: https://forum.fivem.net/t/530475\n Discord: https://discord.gg/f3TsfvD`); 
+
+        }else{
+            let msg = this.messages.find((staticMessage) => {return message.content.startsWith(staticMessage.trigger)});
+            if(!msg) return;
+            out = msg.message;
+
+        }
+
+        //Sending message
+        try {
+            await message.channel.send(out);
+        } catch (error) {
+            logError(`Failed to send message with error: ${error.message}`, context);
+        }
         /*
             message.content
             message.author.username
             message.author.id
             message.guild.name //servername
             message.channel.name
+
             message.reply('pong'); //<<reply directly to the user mentioning him
             message.channel.send('Pong.');
         */
     }
 
 
+    //================================================================
+    async refreshStaticMessages(){
+        let raw = null;
+        let jsonData = null;
 
+        try {
+            raw = fs.readFileSync(this.config.messagesFilePath);  
+        } catch (error) {
+            logError('Unable to load discord messages. (cannot read file, please read the documentation)', context);
+            logError(error.message, context);
+            this.messages = [];
+            return;
+        }
+
+        try {
+            jsonData = JSON.parse(raw);
+        } catch (error) {
+            logError('Unable to load discord messages. (json parse error, please read the documentation)', context);
+            this.messages = [];
+            return;
+        }
+
+        let structureIntegrityTest = jsonData.some((x) =>{
+            if(typeof x.trigger === 'undefined' || typeof x.trigger !== 'string') return true;
+            if(typeof x.message === 'undefined' || typeof x.message !== 'string') return true;
+            return false;
+        });
+        if(structureIntegrityTest){
+            logError('Unable to load discord messages. (invalid data in the messages file, please read the documentation)', context);
+            this.messages = [];
+            return;
+        }
+
+        this.messages = jsonData;
+        if(globals.config.verbose) log(`Discord messages file loaded. Found: ${this.messages.length}`, context);
+    }
 
 } //Fim DiscordBot()

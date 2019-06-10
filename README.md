@@ -18,7 +18,7 @@
 ## Features
 - Start/Stop/Restart your server instance or resources
 - Access control via multiple credentials and action logging
-- Discord integration (for now, just the /status command)
+- Discord integration (/status and configurable commands)
 - Monitor server’s CPU/RAM consumption
 - Real-time playerlist with ping + steam-linked accounts (when available)
 - OneSync Support (more than 32 slots server)
@@ -77,12 +77,12 @@ Make sure there's no differences in the json templates. If there is, copy the ne
 ## TODO:
 - [ ] Add custom commands to the config file
 - [ ] Add hitch detection
-- [ ] Add fxadmin_version fxserver svar
+- [x] Add fxadmin_version fxserver svar
 - [ ] Config tester check for the modules inside `package.json` (require.resolve?)
 - [ ] Config tester kill spawned fxserver after 5 seconds
 - [ ] Investigate the "fxserver has stopped working" not disappearing when autorestarter kills the server (probably windows detaches it? in that case we would need to PID map and then kill them one by one?)
 
-And more...
+TODO Ideas...
 - [ ] Add a `more info` tab and include some config variables, and the complete PID breakdown
 - [ ] Separate the DANGER ZONE commands into a separate tab with confirmation dialog?
 - [ ] We have data, we should plot it into a graph...
@@ -93,7 +93,7 @@ And more...
 - [ ] Multiple server support? Technically easy, but would require massive rework of the interface.
 - [ ] FXServer artifact/build auto updater???
 - [ ] Automagically send messages in discord when starting/stopping/restarting the server
-- [ ] Configurable discord bot static responses. This should be a separate file like the admins one.
+- [x] Configurable discord bot static responses. This should be a separate file like the admins one.
 - [ ] Discord bot extensions via required js files? Imagine typing `/whitelist @username` and the bot cross referencing the vRP id via the discord:xxx identifier. Or a `/me` giving back this users vRP stats like cars, wallet, bank, apartments & etc.
 - [ ] Improve fxRunner/actions responses. Currently it's only 'Done'.
 - [ ] Add some sort of detection to see if there is a fxserver running outside fxadmin on the same port.

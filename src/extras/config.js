@@ -88,7 +88,9 @@ try {
     cfg.discordBot = {
         enabled: (configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true),
         token:  configFile.discordBot.token || ((configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true) && fatalRequired('discordBot.token')),
-        trigger: configFile.discordBot.trigger || "/status",
+        messagesFilePath: configFile.discordBot.messagesFilePath || 'data/messages.json',
+        refreshInterval: parseInt(configFile.discordBot.refreshInterval) || 15000, //removed from template
+        statusCommand: configFile.discordBot.statusCommand || "/status",
     };
     cfg.fxRunner = {
         buildPath: configFile.fxRunner.buildPath || fatalRequired('fxRunner.buildPath'),

@@ -22,7 +22,8 @@
     "discordBot": {
         "enabled": false,
         "token": "change-me",
-        "trigger": "/status"
+        "messagesFilePath": "data/messages.json",
+        "statusCommand": "/status"
     },
     "fxRunner": {
         "buildPath": "C:/Users/Admin/Documents/fxserver_builds/1265",

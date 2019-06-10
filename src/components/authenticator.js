@@ -26,7 +26,7 @@ module.exports = class Authenticator {
      * @returns {(number|boolean)} userid or false
      */
     checkAuth(pwd){
-        let admin = this.admins.find((user) => {return bcrypt.compareSync(pwd, user.password_hash)})
+        let admin = this.admins.find((user) => {return bcrypt.compareSync(pwd, user.password_hash)});
         return (admin)? admin.name : false;
     }
 
@@ -135,8 +135,8 @@ module.exports = class Authenticator {
         }
 
         let structureIntegrityTest = jsonData.some((x) =>{
-            if(typeof x.name == 'undefined') return true;
-            if(typeof x.password_hash == 'undefined') return true;
+            if(typeof x.name === 'undefined' || typeof x.name !== 'string') return true;
+            if(typeof x.password_hash === 'undefined' || typeof x.password_hash !== 'string') return true;
             return false;
         });
         if(structureIntegrityTest){
