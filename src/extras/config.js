@@ -94,6 +94,7 @@ try {
         buildPath: configFile.fxRunner.buildPath || fatalRequired('fxRunner.buildPath'),
         basePath: configFile.fxRunner.basePath || fatalRequired('fxRunner.basePath'),
         cfgPath: configFile.fxRunner.cfgPath || fatalRequired('fxRunner.cfgPath'),
+        setPriority: configFile.fxRunner.setPriority || "NORMAL",
         onesync: (configFile.fxRunner.onesync === 'true' || configFile.fxRunner.onesync === true),
         autostart: (configFile.fxRunner.autostart === 'true' || configFile.fxRunner.autostart === true),
     };

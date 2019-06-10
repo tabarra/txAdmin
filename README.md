@@ -59,6 +59,7 @@ $ npm start server.json
 
 **Note:** You should run FXServer **through** FXAdmin, and not in parallel (ie in another terminal).  
 **Note2:** To configure your Discord bot, follow these two guides:  [Setting up a bot application](https://discordjs.guide/preparations/setting-up-a-bot-application.html) and [Adding your bot to servers](https://discordjs.guide/preparations/adding-your-bot-to-servers.html).  
+**Note3:** Although **not recommended**, you can set FXServer processes priorities. To do so, change `fxRunner.setPriority` to one of the following: LOW, BELOW_NORMAL, NORMAL, ABOVE_NORMAL, HIGH, HIGHEST.
 
 
 ## Troubleshooting
@@ -99,6 +100,6 @@ And more...
 - [ ] `cwd` into the src dir on startup to make sure starting the server from another folder will also work (eg `node fxadmin/src/main server.json`)
 
 
-## License & credits
+## License & Credits
 - This project is licensed under the [MIT License](https://github.com/tabarra/fivem-fxadmin/blob/master/LICENSE).
 - Favicons made by Freepik from [www.flaticon.com](www.flaticon.com) are licensed under [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)

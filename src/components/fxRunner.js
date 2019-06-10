@@ -1,5 +1,7 @@
 //Requires
 const { spawn } = require('child_process');
+const os = require('os');
+const pidtree = require('pidtree');
 const sleep = require('util').promisify(setTimeout)
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'FXRunner';
@@ -123,21 +125,67 @@ module.exports = class FXRunner {
             logWarn(`========\n${data}\n========`, context);
         });
 
+        //Setting up process priority
+        setTimeout(() => {
+            this.setProcPriority();
+        }, 2500);
+
         //Setting FXServer variables
         //NOTE: executing this only once might not be as reliable
         setTimeout(async () => {
-            let delay = 150;
-            let version = (globals.version && globals.version.current)? globals.version.current : '--'
-            log('Saving vars', context)
-
-            this.srvCmd(`sets FXAdmin-version ${version}`); 
-            await sleep(delay);
-            this.srvCmd(`set FXAdmin-version ${version}`);
-            await sleep(delay);
-            this.srvCmd(`set FXAdmin-port ${globals.webServer.config.port}`);
+            this.setFXServerEnvVars();
         }, 5000);
         
     }//Final spawnServer()
+
+
+    //================================================================
+    /**
+     * Sets up FXServer scripting environment variables
+     */
+    async setFXServerEnvVars(){
+        log('Setting up FXServer scripting environment variables.', context);
+
+        let delay = 150;
+        let version = (globals.version && globals.version.current)? globals.version.current : '--';
+
+        this.srvCmd(`sets FXAdmin-version ${version}`); 
+        await sleep(delay);
+        this.srvCmd(`set FXAdmin-version ${version}`);
+        await sleep(delay);
+        this.srvCmd(`set FXAdmin-port ${globals.webServer.config.port}`);
+    }
+
+
+    //================================================================
+    /**
+     * Sets the process priority to all fxChild (cmd/bash) children (fxserver)
+     */
+    async setProcPriority(){
+        //Sanity check
+        if(this.config.setPriority === 'NORMAL') return;
+        let priorities = ['LOW', 'BELOW_NORMAL', 'NORMAL', 'ABOVE_NORMAL', 'HIGH', 'HIGHEST'];
+        if(!priorities.includes(this.config.setPriority)){
+            logWarn(`Couldn't set the processes priority. Invalid priority value. (Use one of these: ${priorities.join()})`, context);
+            return;
+        }
+        if(!this.fxChild.pid){
+            logWarn(`Couldn't set the processes priority. Unknown PID.`, context);
+            return;
+        }
+
+        //Get children and set priorities
+        try {
+            let pids = await pidtree(this.fxChild.pid);
+            pids.forEach(pid => {
+                os.setPriority(pid, os.constants.priority['PRIORITY_'+this.config.setPriority]);
+            });
+            log(`Priority set ${this.config.setPriority} for processes ${pids.join()}`, context)
+        } catch (error) {
+            logWarn("Couldn't set the processes priority.", context);
+            if(globals.config.verbose) dir(error);
+        }
+    }
 
 
     //================================================================
