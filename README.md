@@ -79,6 +79,7 @@ Make sure there's no differences in the json templates. If there is, copy the ne
 - [ ] Add fxadmin_version fxserver svar
 - [ ] Config tester check for the modules inside `package.json` (require.resolve?)
 - [ ] Config tester kill spawned fxserver after 5 seconds
+- [ ] Investigate the "fxserver has stopped working" not disappearing when autorestarter kills the server (probably windows detaches it? in that case we would need to PID map and then kill them one by one?)
 
 And more...
 - [ ] Add a `more info` tab and include some config variables, and the complete PID breakdown
@@ -95,6 +96,7 @@ And more...
 - [ ] Discord bot extensions via required js files? Imagine typing `/whitelist @username` and the bot cross referencing the vRP id via the discord:xxx identifier. Or a `/me` giving back this users vRP stats like cars, wallet, bank, apartments & etc.
 - [ ] Improve fxRunner/actions responses. Currently it's only 'Done'.
 - [ ] Add some sort of detection to see if there is a fxserver running outside fxadmin on the same port.
+- [ ] `cwd` into the src dir on startup to make sure starting the server from another folder will also work (eg `node fxadmin/src/main server.json`)
 
 
 ## License & credits

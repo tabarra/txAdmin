@@ -122,6 +122,20 @@ module.exports = class FXRunner {
         this.fxChild.stderr.on('data', (data) => {
             logWarn(`========\n${data}\n========`, context);
         });
+
+        //Setting FXServer variables
+        //NOTE: executing this only once might not be as reliable
+        setTimeout(async () => {
+            let delay = 150;
+            let version = (globals.version && globals.version.current)? globals.version.current : '--'
+            log('Saving vars', context)
+
+            this.srvCmd(`sets FXAdmin-version ${version}`); 
+            await sleep(delay);
+            this.srvCmd(`set FXAdmin-version ${version}`);
+            await sleep(delay);
+            this.srvCmd(`set FXAdmin-port ${globals.webServer.config.port}`);
+        }, 5000);
         
     }//Final spawnServer()
 

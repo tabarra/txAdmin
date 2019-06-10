@@ -1,8 +1,7 @@
 ## Custom:
 cache/*
 data/*
-!data/admins-template.json
-!data/server-template.json
+!data/*-template.json
 
 ## Github's default node gitignore
 # Logs

@@ -67,7 +67,7 @@ try {
         interval: parseInt(configFile.monitor.interval) || 1000, //removed from template
         timeout: parseInt(configFile.monitor.timeout) || 1000,
         restarter: {
-            cooldown: parseInt(configFile.monitor.restarter.cooldown) || 60, //removed from template
+            cooldown: parseInt(configFile.monitor.restarter.cooldown) || 120, //removed from template
             failures: parseInt(configFile.monitor.restarter.failures) || 15,
             schedule: configFile.monitor.restarter.schedule || []
         }

@@ -21,7 +21,7 @@ When executing FXAdmin, it might show you some errors. Example of an [error](htt
 ### [FXAdmin:Config Exporter] Unable to load configuration file 'data/server.json'
 You haven't created the `server.json` file inside your `data` folder.  
 Note1: If on Linux, make sure there is no permission issue (eg file owned by the root account).  
-Note2: This also apply for any other server configuration file. Using `server.json` as an example since it's the default one.
+Note2: This also applies for any other server configuration file. Using `server.json` as an example since it's the default one.
 
 
 ## Problems running FXServer 
