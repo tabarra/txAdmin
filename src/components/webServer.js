@@ -8,6 +8,7 @@ const session = require('express-session');
 const rateLimit = require("express-rate-limit");
 const template = require('lodash.template');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const Webroutes = require('../webroutes');
 const context = 'WebServer';
@@ -34,6 +35,7 @@ module.exports = class WebServer {
         this.app = express();
         this.app.use(cors());
         this.app.use(this.session);
+        this.app.use(bodyParser.json());
         this.app.use(express.urlencoded({extended: true}))
         this.app.use(express.static('public', {index: false}))
         this.setupRoutes()
@@ -90,9 +92,14 @@ module.exports = class WebServer {
             res.redirect('/');
         });
 
-        this.app.post('/action', globals.authenticator.sessionCheckerWeb, async (req, res) => {
-            await Webroutes.action(res, req).catch((err) => {
-                this.handleRouteError(res, "[action] Route Internal Error", err);
+        this.app.get('/fxControls/:action', globals.authenticator.sessionCheckerAPI, async (req, res) => {
+            await Webroutes.fxControls(res, req).catch((err) => {
+                this.handleRouteError(res, "[fxControls] Route Internal Error", err);
+            });
+        });
+        this.app.post('/fxCommands', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+            await Webroutes.fxCommands(res, req).catch((err) => {
+                this.handleRouteError(res, "[fxCommands] Route Internal Error", err);
             });
         });
         this.app.get('/getData', globals.authenticator.sessionCheckerAPI, async (req, res) => {
@@ -130,7 +137,9 @@ module.exports = class WebServer {
 } //Fim WebServer()
 
 
+
 //================================================================
+//FIXME: temporary functions
 function getWebRootPath(file){
     return path.join(__dirname, '../../public/', file);
 }
@@ -138,4 +147,13 @@ function getWebRootPath(file){
 function render(view, ctx = {}) {
     //https://lodash.com/docs/4.17.11#template
     return template(fs.readFileSync(getWebRootPath(view)+'.html'))(ctx)
+}
+
+const Sqrl = require("squirrelly");
+const util = require('util');
+const readFile = util.promisify(fs.readFile);
+
+async function renderTemplate(view, data){
+    let rawTemplate = await readFile(getWebRootPath(view)+'.html');
+    return Sqrl.Render(rawTemplate.toString(), data); 
 }
