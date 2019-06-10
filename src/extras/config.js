@@ -61,7 +61,7 @@ try {
         configName: configName,
     };
     cfg.logger = {
-        logPath: configFile.logger.logPath || `data/log_${configName}.txt`, //removed from template
+        logPath: configFile.logger.logPath || `data/${configName}.log`, //removed from template
     };
     cfg.monitor = {
         interval: parseInt(configFile.monitor.interval) || 1000, //removed from template
