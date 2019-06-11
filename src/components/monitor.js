@@ -13,11 +13,11 @@ module.exports = class Monitor {
         //Checking config
         if(this.config.interval < 1000){
             logError('The monitor.interval setting must be 1000 milliseconds or more.', context);
-            process.exit(1);
+            process.exit();
         }
         if(this.config.restarter.failures * this.config.interval < 15000){
             logError('The monitor.restarter.failures setting must be 15 seconds or more.', context);
-            process.exit(1);
+            process.exit();
         }
 
         //Setting up

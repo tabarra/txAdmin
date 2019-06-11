@@ -129,7 +129,7 @@ function HandleFatalError(err, context){
         logError(err.stack, context)
     }
     
-    process.exit(1);
+    process.exit();
 }
 process.on('unhandledRejection', (err) => {
     logError(">>Ohh nooooo - unhandledRejection")

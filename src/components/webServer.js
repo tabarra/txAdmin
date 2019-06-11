@@ -48,7 +48,7 @@ module.exports = class WebServer {
         } catch (error) {
             logError('::Failed to start webserver with error:', context);
             dir(error);
-            process.exit(1);
+            process.exit();
         }
     }
 

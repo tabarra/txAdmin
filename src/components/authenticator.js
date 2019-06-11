@@ -120,7 +120,7 @@ module.exports = class Authenticator {
             raw = fs.readFileSync(this.config.adminsFilePath);  
         } catch (error) {
             logError('Unable to load admins. (cannot read file, please read the documentation)', context);
-            if(this.admins === null) process.exit(1);
+            if(this.admins === null) process.exit();
             this.admins = [];
             return;
         }
@@ -129,7 +129,14 @@ module.exports = class Authenticator {
             jsonData = JSON.parse(raw);
         } catch (error) {
             logError('Unable to load admins. (json parse error, please read the documentation)', context);
-            if(this.admins === null) process.exit(1);
+            if(this.admins === null) process.exit();
+            this.admins = [];
+            return;
+        }
+
+        if(!Array.isArray(jsonData)){
+            logError('Unable to load admins. (not an array, please read the documentation)', context);
+            if(this.admins === null) process.exit(0);
             this.admins = [];
             return;
         }
@@ -141,7 +148,7 @@ module.exports = class Authenticator {
         });
         if(structureIntegrityTest){
             logError('Unable to load admins. (invalid data in the admins file, please read the documentation)', context);
-            if(this.admins === null) process.exit(1);
+            if(this.admins === null) process.exit();
             this.admins = [];
             return;
         }
@@ -152,14 +159,14 @@ module.exports = class Authenticator {
         });
         if(hashIntegrityTest){
             logError('Unable to load admins. (invalid hash, please read the documentation)', context);
-            if(this.admins === null) process.exit(1);
+            if(this.admins === null) process.exit();
             this.admins = [];
             return;
         }
 
         if(!jsonData.length){
             logError('Unable to load admins. (no entries, please read the documentation)', context);
-            if(this.admins === null) process.exit(1);
+            if(this.admins === null) process.exit();
             this.admins = [];
             return;
         }

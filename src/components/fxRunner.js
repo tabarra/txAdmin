@@ -45,7 +45,7 @@ module.exports = class FXRunner {
             };
         }else{
             logError(`OS type not supported: ${globals.config.osType}`, context);
-            process.exit(1);
+            process.exit();
         }
 
     }//Final setupVariables()

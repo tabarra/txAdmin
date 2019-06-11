@@ -47,7 +47,7 @@ module.exports = class DiscordBot {
             await this.client.login(this.config.token);
         } catch (error) {
             logError(error.message, context);
-            process.exit(1);
+            process.exit();
         }
     }
     
