@@ -6,9 +6,9 @@ const httpServer  = require('http');
 const express = require('express');
 const session = require('express-session');
 const rateLimit = require("express-rate-limit");
-const template = require('lodash.template');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const sqrl = require("squirrelly");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const Webroutes = require('../webroutes');
 const context = 'WebServer';
@@ -24,12 +24,7 @@ module.exports = class WebServer {
         this.authLimiter = rateLimit({
             windowMs: this.config.limiterMinutes * 60 * 1000, // 15 minutes
             max: this.config.limiterAttempts, // limit each IP to 5 requests per 15 minutes
-            message: render('login', {
-                message:`Too many login attempts, enjoy your ${this.config.limiterMinutes} minutes of cooldown.`,
-                config: globals.config.configName,
-                port: globals.config.fxServerPort,
-                version: '--'
-            })
+            message: `Too many login attempts, enjoy your ${this.config.limiterMinutes} minutes of cooldown.`
         });
         
         this.app = express();
@@ -60,41 +55,33 @@ module.exports = class WebServer {
             let renderData = {
                 message: '',
                 config: globals.config.configName,
-                port: globals.config.fxServerPort
-            }
-            if(globals.version && globals.version.current){
-                renderData.version = globals.version.current;
-            }else{
-                renderData.version = '--';
+                port: globals.config.fxServerPort,
+                version: (globals.version && globals.version.current)? globals.version.current : '--'
             }
             if(typeof req.query.logout !== 'undefined'){
                 req.session.destroy();
                 renderData.message = 'Logged Out';
-                res.send(render('login', renderData));
-            }else{
-                res.send(render('login', renderData));
             }
+            let html = await renderTemplate('login', renderData);
+            res.send(html);
         });
         this.app.post('/auth', this.authLimiter, async (req, res) => {
             if(typeof req.body.password == 'undefined'){
                 req.redirect('/');
                 return;
             }
-            let admin = globals.authenticator.checkAuth(req.body.password);
             let renderData = {
                 message: '',
                 config: globals.config.configName,
-                port: globals.config.fxServerPort
+                port: globals.config.fxServerPort,
+                version: (globals.version && globals.version.current)? globals.version.current : '--'
             }
-            if(globals.version && globals.version.current){
-                renderData.version = globals.version.current;
-            }else{
-                renderData.version = '--';
-            }
+            let admin = globals.authenticator.checkAuth(req.body.password);
             if(!admin){
                 logWarn(`Wrong password from: ${req.connection.remoteAddress}`, context);
                 renderData.message = 'Wrong Password!';
-                res.send(render('login', renderData));
+                let html = await renderTemplate('login', renderData);
+                res.send(html);
                 return;
             }
             req.session.password = req.body.password;
@@ -154,16 +141,8 @@ function getWebRootPath(file){
     return path.join(__dirname, '../../public/', file);
 }
 
-function render(view, ctx = {}) {
-    //https://lodash.com/docs/4.17.11#template
-    return template(fs.readFileSync(getWebRootPath(view)+'.html'))(ctx)
-}
-
-const Sqrl = require("squirrelly");
-const util = require('util');
-const readFile = util.promisify(fs.readFile);
-
 async function renderTemplate(view, data){
-    let rawTemplate = await readFile(getWebRootPath(view)+'.html');
-    return Sqrl.Render(rawTemplate.toString(), data); 
+    if(typeof data === 'undefined') data = {};
+    let rawTemplate = fs.readFileSync(getWebRootPath(view)+'.html', 'utf8');
+    return sqrl.Render(rawTemplate, data); 
 }

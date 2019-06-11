@@ -25,7 +25,7 @@
                         <h1>Login:</h1>
                     </div>
                     <div class="card-body">
-                        <span class="text-danger"><strong><%-message%></strong></span>
+                        <span class="text-danger"><strong>{{message}}</strong></span>
                         <div class="form-group">
                             <form action="/auth" method="post" id="loginForm">
                                 <input type="hidden" name="login" value="browserAutocompleteSux">
@@ -33,15 +33,15 @@
                             </form>
                         </div>
                         <div class="text-muted">
-                            <strong>Configuration File:</strong> <%-config%> <br>
-                            <strong>Server Port:</strong> <%-port%>
+                            <strong>Configuration File:</strong> {{config}} <br>
+                            <strong>Server Port:</strong> {{port}}
                         </div>
                     </div>
                     <div class="card-footer text-center">
                         <button type="submit" form="loginForm" class="btn btn-outline-info">Login</button>
                     </div>
                 </div>
-                <small class="text-muted"><strong>FXAdmin Version:</strong> <%-version%></small>
+                <small class="text-muted"><strong>FXAdmin Version:</strong> {{version}}</small>
             </div>
         </div>
     </div>
