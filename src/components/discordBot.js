@@ -117,7 +117,7 @@ module.exports = class DiscordBot {
         let jsonData = null;
 
         try {
-            raw = fs.readFileSync(this.config.messagesFilePath);  
+            raw = fs.readFileSync(this.config.messagesFilePath, 'utf8');  
         } catch (error) {
             logError('Unable to load discord messages. (cannot read file, please read the documentation)', context);
             logError(error.message, context);

@@ -117,7 +117,7 @@ module.exports = class Authenticator {
         let jsonData = null;
 
         try {
-            raw = fs.readFileSync(this.config.adminsFilePath);  
+            raw = fs.readFileSync(this.config.adminsFilePath, 'utf8');  
         } catch (error) {
             logError('Unable to load admins. (cannot read file, please read the documentation)', context);
             if(this.admins === null) process.exit();

@@ -40,7 +40,7 @@ if(process.argv[2].endsWith('.json')){
 //Try to load configuration
 let configFile = null;
 try {
-    let raw = fs.readFileSync(`data/${configName}.json`);  
+    let raw = fs.readFileSync(`data/${configName}.json`, 'utf8');  
     configFile = JSON.parse(raw);
     log(`Loaded configuration file 'data/${configName}.json'.`);
     printDivider();

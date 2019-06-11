@@ -2,7 +2,7 @@
 const { spawn } = require('child_process');
 const os = require('os');
 const pidtree = require('pidtree');
-const sleep = require('util').promisify(setTimeout)
+const sleep = require('util').promisify(setTimeout);
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'FXRunner';
 

@@ -88,12 +88,11 @@ Make sure there's no differences in the json templates. If there is, copy the ne
 
 TODO Ideas...
 - [ ] Add a `more info` tab and include some config variables, and the complete PID breakdown
-- [ ] Separate the DANGER ZONE commands into a separate tab with confirmation dialog?
+- [x] Separate the DANGER ZONE commands into a separate tab with confirmation dialog?
 - [ ] We have data, we should plot it into a graph...
-- [ ] Write a simple `manage_admins.js` script to help with the process. The current `/getHash?pwd=xxx` is counterintuitive at best.
+- [x] Write a simple `manage_admins.js` script to help with the process. The current `/getHash?pwd=xxx` is counterintuitive at best.
 - [ ] Get JSONC compatibility. Inline documentation for the configs would be great.
 - [ ] Add machine performance data to the panel. Or not, perhaps that's a little too much into Grafana's land.
-- [ ] Average the CPU measure by the last 6 seconds or so?
 - [ ] Multiple server support? Technically easy, but would require massive rework of the interface.
 - [ ] FXServer artifact/build auto updater???
 - [ ] Automagically send messages in discord when starting/stopping/restarting the server
@@ -101,8 +100,8 @@ TODO Ideas...
 - [ ] Discord bot extensions via required js files? Imagine typing `/whitelist @username` and the bot cross referencing the vRP id via the discord:xxx identifier. Or a `/me` giving back this users vRP stats like cars, wallet, bank, apartments & etc.
 - [ ] Improve fxRunner/actions responses. Currently it's only 'Done'.
 - [ ] Add some sort of detection to see if there is a fxserver running outside fxadmin on the same port.
-- [ ] `cwd` into the src dir on startup to make sure starting the server from another folder will also work (eg `node fxadmin/src/main server.json`)
 
+The old TODO can be found [here](docs/old_todo.md). 
 
 ## License & Credits
 - This project is licensed under the [MIT License](https://github.com/tabarra/fivem-fxadmin/blob/master/LICENSE).

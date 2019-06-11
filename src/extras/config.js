@@ -29,7 +29,7 @@ if(process.argv[2].endsWith('.json')){
 //TODO: create a lock file to prevent starting twice the same config file?
 let configFile = null;
 try {
-    let raw = fs.readFileSync(`data/${configName}.json`);  
+    let raw = fs.readFileSync(`data/${configName}.json`, 'utf8');  
     configFile = JSON.parse(raw);
 } catch (error) {
     logError(`Unnable to load configuration file 'data/${configName}.json'`, context);

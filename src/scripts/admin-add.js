@@ -171,7 +171,7 @@ printDivider();
     let rawFile = null;
     let admins = null;
     try {
-        rawFile = fs.readFileSync(filePath);  
+        rawFile = fs.readFileSync(filePath, 'utf8');  
     } catch (error) {
         log(`Unnable to load '${filePath}'. The file will be created for you`, context);
         admins = [];
