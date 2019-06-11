@@ -104,20 +104,34 @@ async function askForYN(question, defaultAnswer, persist){
 }
 
 //Ask question and get response
-async function askForString(question, minLength, persist){
+async function askForString(question, minLength, persist, regex){
     //Sanity check
     if(typeof question !== 'string') throw new Error('Expected string for question');
     if(typeof minLength === 'undefined') minLength = 0;
     if(typeof minLength !== 'number') throw new Error('Expected number for minLength');
     if(typeof persist === 'undefined') persist = false;
     if(typeof persist !== 'boolean') throw new Error('Expected boolean for persist');
+    if(typeof regex === 'undefined') regex = false;
+    if(typeof regex !== 'string' && typeof regex !== 'boolean') throw new Error('Expected string or boolean for regex');
 
     //Question loop
     while(true){
         let resp = await rl.questionAsync(`> ${question} `);
+        if(regex !== false){
+            regex = new RegExp(regex);
+        }
 
         if(resp.length >= minLength){
-            return resp; 
+            if(regex === false || regex.test(resp)){
+                return resp;
+            }else{
+                console.log(`The username must contain only numbers or letters.`);
+                if(persist){
+                    continue;
+                }else{
+                    return null;
+                }
+            }
         }else{
             console.log(`Minimum length is ${minLength}.`);
             if(persist){
@@ -196,7 +210,7 @@ printDivider();
 
 
     //Getting new admin
-    let login = (await askForString('Type the username for the new admin:', 6, true)).toLowerCase();
+    let login = (await askForString('Type the username for the new admin:', 6, true, '^[a-zA-Z0-9]+$')).toLowerCase();
     let passwd = await askForString('Type the password for the new admin:', 6, true);
     let hash = bcrypt.hashSync(passwd, 5);
     admins.push({
