@@ -36,23 +36,27 @@ First, make sure you have:
 - One TCP listen port opened for the web server
 - Git (only for installs and updates)
 
-To **INSTALL** FXAdmin execute:
+**1 -** To **INSTALL** FXAdmin execute:
 ```bash
 $ git clone https://github.com/tabarra/fivem-fxadmin
 $ cd fivem-fxadmin
 $ npm i
 ```
-Copy your `server-template.json` to `server.json` and modify it according to your preferences. The most important settings:  
+
+**2 -** Copy your `server-template.json` to `server.json` and modify it according to your preferences. The most important settings:  
 - `global.fxServerPort` is your fxServer port as configured in your `server.cfg`.
 - `monitor.restarter.schedule` is the restart schedule. The time MUST be in the 24-hour format with two digits for hours as well as minutes (`HH:MM`). Leave the array empty or set it to false to disable the feature.
 - `fxRunner.buildPath` is the folder containing the files `run.cmd`, `fxserver.exe` and a bunch of DLLs in case of Windows, and only `run.sh` in case of Linux.
 - `fxRunner.basePath` is the folder that **contains** the `resources` folder, usually it's here that you put your `server.cfg`.
 - `fxRunner.cfgPath` is the absolute or relative path of your `server.cfg`.
 
-Do the same thing to your `admins-template.json`.  
-To generate the hashed password, you can use tools like [this](https://www.browserling.com/tools/bcrypt) and [this](https://bcrypt-generator.com) or even [this one](https://passwordhashing.com/BCrypt).  
+**3 -** To add an admin execute:
+```bash
+$ npm run admin-add
+```
+If you want to manage existing admins you must edit the JSON file yourself. Make sure your admins file folow `admins-template.json`. To generate the hashed password, you can use tools like [this](https://www.browserling.com/tools/bcrypt) and [this](https://bcrypt-generator.com) or even [this one](https://passwordhashing.com/BCrypt).  
   
-To **RUN** FXAdmin execute:
+**4 -** To **RUN** FXAdmin execute:
 ```bash
 $ npm start server.json
 ```

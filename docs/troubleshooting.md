@@ -12,6 +12,7 @@ If that doesn't work, try `npm i node-gyp` or `npm i --global --production windo
 When executing FXAdmin, it might show you some errors. Example of an [error](https://i.imgur.com/2huiyBf.png), example of a [successful startup](https://i.imgur.com/QLCBZBm.png).
 
 ### [FXAdmin:Authenticator] Unable to load admins.
+If you haven't created the admins file yet, execute `npm run admin-add` to do so.  
 - `cannot read file`: the admin file specified in your `server.json` could not be loaded. If you didn't changed the default (`data/admins.json`) make sure to create it based on the `admins-template.json` file inside your `data` folder.  
 - `json parse error`: somehow you broke the file. Use [JSON Editor Online](https://jsoneditoronline.org) to validate and find the error. Also make sure you didn't used `\` instead of `/` in your configurations.
 - `invalid data in the admins file`: You edited or removed the object keys (`name` and `password_hash`). Start again based on the `admins-template.json`.
@@ -28,7 +29,7 @@ Note2: This also applies for any other server configuration file. Using `server.
 When you start FXAdmin, your server will not start automatically (by default). Open the web panel and start FXAdmin (actions > START Server). You can change this by enabling `fxRunner.autostart` on your server configuration file.  
 If you are getting `HealthCheck request error` it means the FXAdmin:Monitor could not connect to the FXServer. Check the two items below.
 - If the server is actually online but FXAdmin thinks it's offline, make sure your fxserver is configured to use the IP `0.0.0.0` in your `endpoint_add_*` directives instead of your public/private IP. Also check for your `global.fxServerPort` configuration, it must match the port configured in your `server.cfg`.
-- If you are having trouble starting the FXServer via FXAdmin, run `npm run test-config server.json` and see which test is failing.  
+- If you are having trouble starting the FXServer via FXAdmin, run `npm run config-tester server.json` and see which test is failing.  
 
 <hr>
 

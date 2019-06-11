@@ -2,6 +2,7 @@
 cache/*
 data/*
 !data/*-template.json
+*.ignore.*
 
 ## Github's default node gitignore
 # Logs

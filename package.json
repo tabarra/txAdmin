@@ -5,7 +5,8 @@
   "main": "src/main.js",
   "scripts": {
     "start": "node src/main.js",
-    "test-config": "node src/config-tester.js"
+    "config-tester": "node src/scripts/config-tester.js",
+    "admin-add": "node src/scripts/admin-add.js"
   },
   "repository": {
     "type": "git",
