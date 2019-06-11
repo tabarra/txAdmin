@@ -81,6 +81,16 @@ module.exports = class WebServer {
                 return;
             }
             let admin = globals.authenticator.checkAuth(req.body.password);
+            let renderData = {
+                message: '',
+                config: globals.config.configName,
+                port: globals.config.fxServerPort
+            }
+            if(globals.version && globals.version.current){
+                renderData.version = globals.version.current;
+            }else{
+                renderData.version = '--';
+            }
             if(!admin){
                 logWarn(`Wrong password from: ${req.connection.remoteAddress}`, context);
                 renderData.message = 'Wrong Password!';
