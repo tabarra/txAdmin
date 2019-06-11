@@ -145,13 +145,11 @@ module.exports = class FXRunner {
      */
     async setFXServerEnvVars(){
         log('Setting up FXServer scripting environment variables.', context);
-
+        
         let delay = 150;
-        let version = (globals.version && globals.version.current)? globals.version.current : '--';
-
-        this.srvCmd(`sets FXAdmin-version ${version}`); 
+        this.srvCmd(`sets FXAdmin-version ${globals.version.current}`); 
         await sleep(delay);
-        this.srvCmd(`set FXAdmin-version ${version}`);
+        this.srvCmd(`set FXAdmin-version ${globals.version.current}`);
         await sleep(delay);
         this.srvCmd(`set FXAdmin-port ${globals.webServer.config.port}`);
     }

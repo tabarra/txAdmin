@@ -188,8 +188,10 @@
             $.getJSON( "/checkVersion", function( data ) {
                 if(data.current !== data.latest){
                     $("#bottom-links").hide();
-                    let out = `<small><strong><a href="https://github.com/tabarra/fivem-fxadmin">Update available for FXAdmin (v${data.current} > v${data.latest})!</a><br>\n`;
-                    out += `Changelog:</strong> ${data.changelog}</small>\n`;
+                    let out = `<small><strong>\n`;
+                    out += `<a href="https://github.com/tabarra/fivem-fxadmin">Update available for FXAdmin (v${data.current} > v${data.latest})!</a>\n`;
+                    out += `</strong> <br/> \n`;
+                    out += `${data.changelog}</small>\n`;
                     $("#update-me").html(out);
                     $("#update-me").removeClass('d-none');
                 }

@@ -13,7 +13,11 @@ globals = {
     webConsole: null,
     fxRunner: null,
     config: null,
-    version: null
+    version: {
+        current: '--',
+        latest: '--',
+        changelog: '--',
+    }
 }
 
 //==============================================================

@@ -77,11 +77,9 @@ module.exports = class DiscordBot {
             out.setDescription(desc); 
 
         }else if(message.content.startsWith('/fxadmin')){
-            let version = (globals.version && globals.version.current)? globals.version.current : '--';
-            
             //Prepare object
             out = new Discord.RichEmbed();
-            out.setTitle(`${globals.config.serverName} uses FXAdmin v${version}!`);
+            out.setTitle(`${globals.config.serverName} uses FXAdmin v${globals.version.current}!`);
             out.setColor(0x4DEEEA);
             out.setDescription(`Checkout the project:\n Forum: https://forum.fivem.net/t/530475\n Discord: https://discord.gg/f3TsfvD`); 
 

@@ -56,7 +56,7 @@ module.exports = class WebServer {
                 message: '',
                 config: globals.config.configName,
                 port: globals.config.fxServerPort,
-                version: (globals.version && globals.version.current)? globals.version.current : '--'
+                version: globals.version.current
             }
             if(typeof req.query.logout !== 'undefined'){
                 req.session.destroy();
@@ -74,7 +74,7 @@ module.exports = class WebServer {
                 message: '',
                 config: globals.config.configName,
                 port: globals.config.fxServerPort,
-                version: (globals.version && globals.version.current)? globals.version.current : '--'
+                version: globals.version.current
             }
             let admin = globals.authenticator.checkAuth(req.body.password);
             if(!admin){
