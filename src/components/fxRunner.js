@@ -17,14 +17,6 @@ module.exports = class FXRunner {
         this.outData = '';
         this.enableBuffer = false;
         this.tsChildStarted = null;
-        this.hitchStreamProcessor = new StreamSnitch(
-            /hitch warning: frame time of (\d+) milliseconds/g,
-            (m) => {
-                try {
-                    globals.monitor.processFXServerHitch(m[1])
-                }catch(e){}
-            }
-        );
         this.setupVariables();
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
@@ -94,9 +86,17 @@ module.exports = class FXRunner {
             process.exit(0);
         }
         
-        //Pipping stdin and stdout
-        this.fxChild.stdout.pipe(this.hitchStreamProcessor);
+        //Setting up stream handlers
+        let hitchStreamProcessor = new StreamSnitch(
+            /hitch warning: frame time of (\d+) milliseconds/g,
+            (m) => {
+                try {
+                    globals.monitor.processFXServerHitch(m[1])
+                }catch(e){}
+            }
+        );
         if(!this.config.quiet) this.fxChild.stdout.pipe(process.stdout);
+        this.fxChild.stdout.pipe(hitchStreamProcessor);
         //FIXME: might disable the stdin pipe when the live console is fully working
         process.stdin.pipe(this.fxChild.stdin);
 
@@ -131,6 +131,8 @@ module.exports = class FXRunner {
         this.fxChild.stderr.on('data', (data) => {
             logWarn(`========\n${data}\n========`, context);
         });
+
+        hitchStreamProcessor.on('error', (data) => {});
 
         //Setting up process priority
         setTimeout(() => {
@@ -281,5 +283,5 @@ module.exports = class FXRunner {
         globals.webConsole.broadcast(data);
         if(this.enableBuffer) this.outData += data;
     }
-    
+
 } //Fim FXRunner()
