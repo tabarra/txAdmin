@@ -161,14 +161,17 @@ module.exports = class FXRunner {
      */
     async setProcPriority(){
         //Sanity check
-        if(this.config.setPriority === 'NORMAL') return;
-        let priorities = ['LOW', 'BELOW_NORMAL', 'NORMAL', 'ABOVE_NORMAL', 'HIGH', 'HIGHEST'];
-        if(!priorities.includes(this.config.setPriority)){
-            logWarn(`Couldn't set the processes priority. Invalid priority value. (Use one of these: ${priorities.join()})`, context);
+        if(typeof this.config.setPriority !== 'string') return;
+        let priority = this.config.setPriority.toUpperCase();
+
+        if(priority === 'NORMAL') return;
+        let validPriorities = ['LOW', 'BELOW_NORMAL', 'NORMAL', 'ABOVE_NORMAL', 'HIGH', 'HIGHEST'];
+        if(!validPriorities.includes(priority)){
+            logWarn(`Couldn't set the processes priority: Invalid priority value. (Use one of these: ${validPriorities.join()})`, context);
             return;
         }
         if(!this.fxChild.pid){
-            logWarn(`Couldn't set the processes priority. Unknown PID.`, context);
+            logWarn(`Couldn't set the processes priority: Unknown PID.`, context);
             return;
         }
 
@@ -176,9 +179,9 @@ module.exports = class FXRunner {
         try {
             let pids = await pidtree(this.fxChild.pid);
             pids.forEach(pid => {
-                os.setPriority(pid, os.constants.priority['PRIORITY_'+this.config.setPriority]);
+                os.setPriority(pid, os.constants.priority['PRIORITY_'+priority]);
             });
-            log(`Priority set ${this.config.setPriority} for processes ${pids.join()}`, context)
+            log(`Priority set ${priority} for processes ${pids.join()}`, context)
         } catch (error) {
             logWarn("Couldn't set the processes priority.", context);
             if(globals.config.verbose) dir(error);
