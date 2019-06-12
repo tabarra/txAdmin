@@ -24,32 +24,32 @@ module.exports = async function action(res, req) {
     let parameter = req.body.parameter;
 
     if(action == 'admin_say'){
-        webUtils.appendLog(req, `say ${parameter}`);
+        webUtils.appendLog(req, `say ${parameter}`, context);
         globals.fxRunner.srvCmd('say ' + parameter);
         return webUtils.sendOutput(res, 'Okay');
 
     }else if(action == 'restart_res'){
-        webUtils.appendLog(req, `restart ${parameter}`);
+        webUtils.appendLog(req, `restart ${parameter}`, context);
         let toResp = await globals.fxRunner.srvCmdBuffer('restart ' + parameter);
         return webUtils.sendOutput(res, toResp);
 
     }else if(action == 'start_res'){
-        webUtils.appendLog(req, `start ${parameter}`);
+        webUtils.appendLog(req, `start ${parameter}`, context);
         let toResp = await globals.fxRunner.srvCmdBuffer('start ' + parameter);
         return webUtils.sendOutput(res, toResp);
 
     }else if(action == 'stop_res'){
-        webUtils.appendLog(req, `stop ${parameter}`);
+        webUtils.appendLog(req, `stop ${parameter}`, context);
         let toResp = await globals.fxRunner.srvCmdBuffer('stop ' + parameter);
         return webUtils.sendOutput(res, toResp);
 
     }else if(action == 'refresh_res'){
-        webUtils.appendLog(req, `refresh`);
+        webUtils.appendLog(req, `refresh`, context);
         let toResp = await globals.fxRunner.srvCmdBuffer('refresh');
         return webUtils.sendOutput(res, toResp);
 
     }else{
-        webUtils.appendLog(req, `unknown action`);
+        webUtils.appendLog(req, `unknown action`, context);
         return webUtils.sendOutput(res, 'Unknown action!');
     }
 };

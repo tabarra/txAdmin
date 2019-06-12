@@ -18,8 +18,8 @@ function sendOutput(res, msg){
  * @param {object} req 
  * @param {string} data 
  */
-function appendLog(req, data){
-    log(`Executing ${data}`);
+function appendLog(req, data, context){
+    log(`Executing ${data}`, context);
     globals.logger.append(`[${req.connection.remoteAddress}][${req.session.admin}] ${data}`);
 }
 

@@ -18,19 +18,19 @@ module.exports = async function action(res, req) {
     let action = req.params.action;
 
     if(action == 'restart'){
-        webUtils.appendLog(req, `RESTART SERVER`);
+        webUtils.appendLog(req, `RESTART SERVER`, context);
         await globals.fxRunner.restartServer('via FXAdmin Web Panel');
         res.send({status: 'ok'});
         return;
 
     }else if(action == 'stop'){
-        webUtils.appendLog(req, `STOP SERVER`);
+        webUtils.appendLog(req, `STOP SERVER`, context);
         globals.fxRunner.killServer();
         res.send({status: 'ok'});
         return;
 
     }else if(action == 'start'){
-        webUtils.appendLog(req, `START SERVER`);
+        webUtils.appendLog(req, `START SERVER`, context);
         globals.fxRunner.spawnServer();
         res.send({status: 'ok'});
         return;

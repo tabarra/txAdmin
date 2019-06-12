@@ -86,7 +86,7 @@ module.exports = class FXRunner {
         }
         
         //Pipping stdin and stdout
-        this.fxChild.stdout.pipe(process.stdout);
+        if(!this.config.quiet) this.fxChild.stdout.pipe(process.stdout);
         //FIXME: might disable the stdin pipe when the live console is fully working
         process.stdin.pipe(this.fxChild.stdin);
 

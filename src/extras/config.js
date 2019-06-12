@@ -70,26 +70,26 @@ try {
         configName: configName,
     };
     cfg.logger = {
-        logPath: configFile.logger.logPath || `data/${configName}.log`, //removed from template
+        logPath: configFile.logger.logPath || `data/${configName}.log`, //not in template
     };
     cfg.monitor = {
-        interval: parseInt(configFile.monitor.interval) || 1000, //removed from template
+        interval: parseInt(configFile.monitor.interval) || 1000, //not in template
         timeout: parseInt(configFile.monitor.timeout) || 1000,
         restarter: {
-            cooldown: parseInt(configFile.monitor.restarter.cooldown) || 120, //removed from template
+            cooldown: parseInt(configFile.monitor.restarter.cooldown) || 120, //not in template
             failures: parseInt(configFile.monitor.restarter.failures) || 15,
             schedule: configFile.monitor.restarter.schedule || []
         }
     };
     cfg.authenticator = {
         adminsFilePath: configFile.authenticator.adminsFilePath || 'data/admins.json',
-        refreshInterval: parseInt(configFile.authenticator.refreshInterval) || 15000, //removed from template
+        refreshInterval: parseInt(configFile.authenticator.refreshInterval) || 15000, //not in template
     };
     cfg.webServer = {
         port: parseInt(configFile.webServer.port) || 40121,
-        bufferTime: parseInt(configFile.webServer.bufferTime) || 1500, //removed from template - deprecate?
-        limiterMinutes: parseInt(configFile.webServer.limiterMinutes) || 15, //removed from template
-        limiterAttempts: parseInt(configFile.webServer.limiterAttempts) || 5, //removed from template
+        bufferTime: parseInt(configFile.webServer.bufferTime) || 1500, //not in template - deprecate?
+        limiterMinutes: parseInt(configFile.webServer.limiterMinutes) || 15, //not in template
+        limiterAttempts: parseInt(configFile.webServer.limiterAttempts) || 5, //not in template
     };
     cfg.webConsole = {
         //nothing to configure
@@ -98,7 +98,7 @@ try {
         enabled: (configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true),
         token:  configFile.discordBot.token || ((configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true) && fatalRequired('discordBot.token')),
         messagesFilePath: configFile.discordBot.messagesFilePath || 'data/messages.json',
-        refreshInterval: parseInt(configFile.discordBot.refreshInterval) || 15000, //removed from template
+        refreshInterval: parseInt(configFile.discordBot.refreshInterval) || 15000, //not in template
         statusCommand: configFile.discordBot.statusCommand || "/status",
     };
     cfg.fxRunner = {
@@ -108,6 +108,7 @@ try {
         setPriority: configFile.fxRunner.setPriority || "NORMAL",
         onesync: (configFile.fxRunner.onesync === 'true' || configFile.fxRunner.onesync === true),
         autostart: (configFile.fxRunner.autostart === 'true' || configFile.fxRunner.autostart === true),
+        quiet: (configFile.fxRunner.quiet === 'true' || configFile.fxRunner.quiet === true), //not in template
     };
 } catch (error) {
     logError('Malformed configuration file! Please copy server-template.json and try again.', context);
