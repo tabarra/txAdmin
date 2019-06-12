@@ -27,14 +27,23 @@ if(process.argv[2].endsWith('.json')){
 
 //Try to load configuration
 //TODO: create a lock file to prevent starting twice the same config file?
-let configFile = null;
+let rawFile = null;
 try {
-    let raw = fs.readFileSync(`data/${configName}.json`, 'utf8');  
-    configFile = JSON.parse(raw);
+    rawFile = fs.readFileSync(`data/${configName}.json`, 'utf8');
 } catch (error) {
-    logError(`Unnable to load configuration file 'data/${configName}.json'`, context);
+    logError(`Unnable to load configuration file 'data/${configName}.json'. (cannot read file, please read the documentation)`, context);
     process.exit(0)
 }
+
+let configFile = null;
+try {
+    configFile = JSON.parse(rawFile);
+} catch (error) {
+    logError(`Unnable to load configuration file 'data/${configName}.json'. (json parse error, please read the documentation)`, context);
+    if(rawFile.includes('\\')) logError(`Note: your '${configName}.json' file contains '\\', make sure all your paths use only '/'.`, context)
+    process.exit(0)
+}
+
 
 let cfg = {
     global: null,
