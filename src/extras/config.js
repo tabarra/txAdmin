@@ -108,6 +108,7 @@ try {
         setPriority: configFile.fxRunner.setPriority || "NORMAL",
         onesync: (configFile.fxRunner.onesync === 'true' || configFile.fxRunner.onesync === true),
         autostart: (configFile.fxRunner.autostart === 'true' || configFile.fxRunner.autostart === true),
+        autostartDelay: parseInt(configFile.webServer.autostartDelay) || 3, //not in template
         quiet: (configFile.fxRunner.quiet === 'true' || configFile.fxRunner.quiet === true), //not in template
     };
 } catch (error) {

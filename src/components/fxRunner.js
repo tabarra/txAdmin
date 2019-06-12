@@ -2,6 +2,7 @@
 const { spawn } = require('child_process');
 const os = require('os');
 const pidtree = require('pidtree');
+const StreamSnitch = require('stream-snitch');
 const sleep = require('util').promisify(setTimeout);
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'FXRunner';
@@ -16,13 +17,21 @@ module.exports = class FXRunner {
         this.outData = '';
         this.enableBuffer = false;
         this.tsChildStarted = null;
+        this.hitchStreamProcessor = new StreamSnitch(
+            /hitch warning: frame time of (\d+) milliseconds/g,
+            (m) => {
+                try {
+                    globals.monitor.processFXServerHitch(m[1])
+                }catch(e){}
+            }
+        );
         this.setupVariables();
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
         if(config.autostart){
             setTimeout(() => {
                 this.spawnServer();
-            }, 1000);
+            }, config.autostartDelay * 1000);
         }
     }
 
@@ -86,6 +95,7 @@ module.exports = class FXRunner {
         }
         
         //Pipping stdin and stdout
+        this.fxChild.stdout.pipe(this.hitchStreamProcessor);
         if(!this.config.quiet) this.fxChild.stdout.pipe(process.stdout);
         //FIXME: might disable the stdin pipe when the live console is fully working
         process.stdin.pipe(this.fxChild.stdin);
@@ -115,10 +125,7 @@ module.exports = class FXRunner {
         this.fxChild.stdin.on('data', (data) => {});
 
         this.fxChild.stdout.on('error', (data) => {});
-        this.fxChild.stdout.on('data', (data) => {
-            globals.webConsole.broadcast(data);
-            if(this.enableBuffer) this.outData += data;
-        });
+        this.fxChild.stdout.on('data', this.fxserverOutputHandler);
 
         this.fxChild.stderr.on('error', (data) => {});
         this.fxChild.stderr.on('data', (data) => {
@@ -261,4 +268,18 @@ module.exports = class FXRunner {
         this.enableBuffer = false;
         return this.outData;
     }
+
+
+    //================================================================
+    /**
+     * FXServers output handler
+     * @param {string} data
+     */
+    async fxserverOutputHandler(data){
+        // const chalk = require('chalk');
+        // process.stdout.write(chalk.bold.red('|'));
+        globals.webConsole.broadcast(data);
+        if(this.enableBuffer) this.outData += data;
+    }
+    
 } //Fim FXRunner()

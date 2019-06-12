@@ -1,6 +1,6 @@
 //Requires
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('./extras/console');
-cleanTerminal()
+
 
 //==============================================================
 //FIXME: I should be using dependency injection or something
@@ -23,10 +23,20 @@ globals = {
 //==============================================================
 class FXAdmin {
     constructor(){
+        //Print MOTD
+        const figlet = require('figlet');
+        let ascii = figlet.textSync('FXAdmin');
+        let separator = '='.repeat(46);
+        let motd = `${separator}\n${ascii}\n${separator}`;
+        cleanTerminal();
+        console.log(motd);
         log(">>Starting FXAdmin");
+
+        //Prepare settings
         let localConfig = require('./extras/config');
         globals.config = localConfig.global;
 
+        //Start all modules
         this.startAuthenticator(localConfig.authenticator).catch((err) => {
             HandleFatalError(err, 'Authenticator');
         });

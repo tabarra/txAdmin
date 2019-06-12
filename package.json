@@ -38,6 +38,7 @@
     "express-rate-limit": "^4.0.4",
     "express-session": "^1.16.1",
     "express-socket.io-session": "^1.3.5",
+    "figlet": "^1.2.3",
     "pidtree": "^0.3.0",
     "pidusage": "^2.0.17",
     "pidusage-tree": "^2.0.5",
@@ -45,6 +46,7 @@
     "pretty-ms": "^5.0.0",
     "socket.io": "^2.2.0",
     "squirrelly": "^7.1.1",
+    "stream-snitch": "0.0.3",
     "xss": "^1.0.6"
   }
 }

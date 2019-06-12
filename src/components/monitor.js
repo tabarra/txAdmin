@@ -79,6 +79,12 @@ module.exports = class Monitor {
 
 
     //================================================================
+    processFXServerHitch(time){
+        dir(time);
+    }
+
+
+    //================================================================
     /**
      * Getter for the status object.
      * @returns {object} object containing .process and .server

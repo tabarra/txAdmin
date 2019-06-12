@@ -6,8 +6,20 @@ const context = 'Logger';
 
 module.exports = class Logger {
     constructor(config) {
-        logOk('::Started', context);
         this.config = config;
+
+        //Writing Log Header
+        let sep = '='.repeat(32);
+        let timestamp = new Date().toLocaleString();
+        let header = `\n${sep}${sep}\n======== FXAdmin starting - ${timestamp}\n${sep}${sep}\n`;
+        try {
+            fs.appendFileSync(this.config.logPath, header, 'utf8');
+            logOk('::Started', context);
+        } catch (error) {
+            logError(`::Failed to write to log file '${this.config.logPath}'`, context);
+            if(globals.config.verbose) dir(error);
+            process.exit();
+        }
     }
 
 
