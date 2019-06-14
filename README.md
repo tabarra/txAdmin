@@ -9,6 +9,14 @@
 	<p align="center">
 		FXAdmin is a <b>full featured</b> tool to help you Manage & Monitor your FiveM Server remotely.
 	</p>
+	<p align="center">
+		<b>
+		Important Notice (14/jun/2019): <br>
+		Due to a recent change in FiveM's ToS we MUST change this project name.<br>
+		Join our Discord Server for more information.<br>
+		This repository will be archived soon.
+		</b>
+	</p>
 </p>
 
 <br/>
@@ -27,6 +35,8 @@
 - Auto Restart on failure detection
 - Auto Restart on schedule
 - Password brute-force protection
+- Set FXServer process priority
+- Hitch Detection
 
 
 ## Installation
@@ -80,7 +90,7 @@ Make sure there's no differences in the json templates. If there is, copy the ne
 
 ## TODO:
 - [ ] Add custom commands to the config file
-- [ ] Add hitch detection
+- [x] Add hitch detection
 - [x] Add fxadmin_version fxserver svar
 - [ ] Config tester check for the modules inside `package.json` (require.resolve?)
 - [ ] Config tester kill spawned fxserver after 5 seconds
@@ -92,13 +102,13 @@ TODO Ideas...
 - [ ] We have data, we should plot it into a graph...
 - [x] Write a simple `manage_admins.js` script to help with the process. The current `/getHash?pwd=xxx` is counterintuitive at best.
 - [ ] Get JSONC compatibility. Inline documentation for the configs would be great.
-- [ ] Add machine performance data to the panel. Or not, perhaps that's a little too much into Grafana's land.
+- [x] Add machine performance data to the panel. Or not, perhaps that's a little too much into Grafana's land.
 - [ ] Multiple server support? Technically easy, but would require massive rework of the interface.
 - [ ] FXServer artifact/build auto updater???
 - [ ] Automagically send messages in discord when starting/stopping/restarting the server
 - [x] Configurable discord bot static responses. This should be a separate file like the admins one.
 - [ ] Discord bot extensions via required js files? Imagine typing `/whitelist @username` and the bot cross referencing the vRP id via the discord:xxx identifier. Or a `/me` giving back this users vRP stats like cars, wallet, bank, apartments & etc.
-- [ ] Improve fxRunner/actions responses. Currently it's only 'Done'.
+- [x] Improve fxRunner/actions responses. Currently it's only 'Done'.
 - [ ] Add some sort of detection to see if there is a fxserver running outside fxadmin on the same port.
 
 The old TODO can be found [here](docs/old_todo.md). 
