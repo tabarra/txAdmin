@@ -16,14 +16,14 @@ const context = 'WebServer:getFullReport';
 module.exports = async function action(res, req) {
     let timeStart = new Date();
     let out = '';
-    
+    let cpus;
     try {
         let giga = 1024 * 1024 * 1024;
         let memFree = (os.freemem() / giga).toFixed(2);
         let memTotal = (os.totalmem() / giga).toFixed(2);
         let memUsage = (((memTotal-memFree) / memTotal)*100).toFixed(0);
-        let cpus = os.cpus();
         let userInfo = os.userInfo()
+        cpus = os.cpus();
     
         out += `<b>OS Type:</b> ${os.type()} (${os.platform()})\n`;
         out += `<b>OS Release:</b> ${os.release()}\n`;
@@ -32,7 +32,7 @@ module.exports = async function action(res, req) {
         out += `<b>Host Memory:</b> ${memUsage}% (${memFree}/${memTotal} GB)\n`
         out += '\n<hr>';
     } catch (error) {
-        logWarn('Error getting Host data', context);
+        logError('Error getting Host data', context);
         if(globals.config.verbose) dir(error);
         out += `Failed to retrieve host data. Check the terminal for more information (if verbosity is enabled)\n<hr>`;
     }
@@ -40,10 +40,11 @@ module.exports = async function action(res, req) {
 
     let procList = await getProcessesData();
     procList.forEach(proc => {
+        let relativeCPU = (proc.cpu/cpus.length).toFixed(2);
         out += `<b>Process:</b> ${proc.name}\n`;
         // out += `<b>PID:</b> ${proc.pid}\n`;
         out += `<b>Memory:</b> ${prettyBytes(proc.memory)}\n`;
-        out += `<b>CPU:</b> ${proc.cpu.toFixed(2)}%\n`;
+        out += `<b>CPU:</b> ${relativeCPU}%\n`;
         out += '\n';
     });
 
@@ -107,7 +108,7 @@ async function getProcessesData(){
         });
 
     } catch (error) {
-        logWarn(`Error getting processes data.`, context);
+        logError(`Error getting processes data.`, context);
         if(globals.config.verbose) dir(error);
     }
 
