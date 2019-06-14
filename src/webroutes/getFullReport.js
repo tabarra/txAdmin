@@ -1,5 +1,5 @@
 //Requires
-const xss = require("xss");
+const os = require('os');
 const prettyBytes = require('pretty-bytes');
 const prettyMs = require('pretty-ms');
 const pidusageTree = require('pidusage-tree');
@@ -14,46 +14,58 @@ const context = 'WebServer:getFullReport';
  * @param {object} req
  */
 module.exports = async function action(res, req) {
-    let out = await getServerStatus();
-    return webUtils.sendOutput(res, out, {escape: false});
-};
-
-
-//==============================================================
-async function getServerStatus(){
-    let dataProcess = await refreshProcessStatus(); //shorthand much!?
-
+    let timeStart = new Date();
     let out = '';
-    let count = (dataProcess && typeof dataProcess.count !== 'undefined')? dataProcess.count : '--' ;
-    let cpu = (dataProcess && typeof dataProcess.cpu !== 'undefined')? dataProcess.cpu.toFixed(2)+'%' : '--' ;
-    let memory = (dataProcess && typeof dataProcess.memory !== 'undefined')? prettyBytes(dataProcess.memory) : '--' ;
-    let uptime = (dataProcess && typeof dataProcess.uptime !== 'undefined')? prettyMs(dataProcess.uptime) : '--' ;
-    out += `<b>Processes:</b> ${count}\n`;
-    out += `<b>CPU:</b> ${cpu}\n`;
-    out += `<b>Memory:</b> ${memory}\n`;
-    out += `<b>Uptime:</b> ${uptime}\n`;
-    out += '';
+    
+    try {
+        let giga = 1024 * 1024 * 1024;
+        let memFree = (os.freemem() / giga).toFixed(2);
+        let memTotal = (os.totalmem() / giga).toFixed(2);
+        let memUsage = (((memTotal-memFree) / memTotal)*100).toFixed(0);
+        let cpus = os.cpus();
+        let userInfo = os.userInfo()
+    
+        out += `<b>OS Type:</b> ${os.type()} (${os.platform()})\n`;
+        out += `<b>OS Release:</b> ${os.release()}\n`;
+        out += `<b>Username:</b> ${userInfo.username}\n`;
+        out += `<b>Host CPUs:</b> ${cpus.length}x ${cpus[0].speed} MHz\n`;
+        out += `<b>Host Memory:</b> ${memUsage}% (${memFree}/${memTotal} GB)\n`
+        out += '\n<hr>';
+    } catch (error) {
+        logWarn('Error getting Host data', context);
+        if(globals.config.verbose) dir(error);
+        out += `Failed to retrieve host data. Check the terminal for more information (if verbosity is enabled)\n<hr>`;
+    }
 
-    return out;
-}
+
+    let procList = await getProcessesData();
+    procList.forEach(proc => {
+        out += `<b>Process:</b> ${proc.name}\n`;
+        // out += `<b>PID:</b> ${proc.pid}\n`;
+        out += `<b>Memory:</b> ${prettyBytes(proc.memory)}\n`;
+        out += `<b>CPU:</b> ${proc.cpu.toFixed(2)}%\n`;
+        out += '\n';
+    });
+
+    let timeElapsed = new Date() - timeStart;
+    out += `\nExecuted in ${timeElapsed} ms`;
+    return webUtils.sendOutput(res, out, {escape: false, center:false});
+};
 
 
 //================================================================
 /**
- * Refreshes the Processes Statuses.
+ * Gets the Processes Data.
  */
-async function refreshProcessStatus(){
+async function getProcessesData(){
+    let procList = [];
     try {
         var processes = await pidusageTree(process.pid);
-        // let processes = {}
-        let combined = {
-            count: 0,
-            cpu: 0,
-            memory: 0,
-            uptime: 0
-        }
-        let individual = {}
 
+        let termPID = Object.keys(processes).find((pid) => { return processes[pid].ppid == process.pid});
+        let fxsvMainPID = Object.keys(processes).find((pid) => { return processes[pid].ppid == termPID});
+        let fxsvRepPID = Object.keys(processes).find((pid) => { return processes[pid].ppid == fxsvMainPID});
+       
         //Foreach PID
         Object.keys(processes).forEach((pid) => {
             var curr = processes[pid];
@@ -61,25 +73,54 @@ async function refreshProcessStatus(){
             //NOTE: Somehow this might happen in Linux
             if(curr === null) return;
 
-            //combined
-            combined.count += 1;
-            combined.cpu += curr.cpu;
-            combined.memory += curr.memory;
-            if(combined.uptime === null || combined.uptime > curr.elapsed) combined.uptime = curr.elapsed;
+            //Define name and order
+            let procName;
+            let order;
+            if(pid == process.pid){
+                procName = 'FXAdmin';
+                order = 0;
 
-            //individual
-            individual[pid] = {
+            }else if(pid == termPID){
+                procName = 'Terminal';
+                order = 1;
+
+            }else if(pid == fxsvMainPID){
+                procName = 'FXServer Main';
+                order = 2;
+
+            }else if(pid == fxsvRepPID){
+                procName = 'FXServer Dump';
+                order = 3;
+
+            }else{
+                procName = 'Unknown';
+                order = 9;
+            }
+            
+            procList.push({
+                pid: pid,
+                name: procName,
                 cpu: curr.cpu,
                 memory: curr.memory,
-                uptime: curr.elapsed
-            }
+                order: order
+            });
         });
-        return combined;
+
     } catch (error) {
-        if(globals.config.verbose || true){
-            logWarn('Error refreshing processes statuses', context);
-            dir(error);
-        }
-        return false;
+        logWarn(`Error getting processes data.`, context);
+        if(globals.config.verbose) dir(error);
     }
+
+    //Sort procList array
+    procList.sort(( a, b ) => {
+        if ( a.order < b.order ){
+            return -1;
+        }
+        if ( a.order > b.order ){
+            return 1;
+        }
+        return 0;
+    })
+
+    return procList;
 }

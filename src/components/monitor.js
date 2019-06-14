@@ -24,8 +24,6 @@ module.exports = class Monitor {
         //Setting up
         logOk('::Started', context);
         this.cpuStatusProvider = new hostCPUStatus();
-        this.statusProcess = false;
-        this.statusHost = {}
         this.lastAutoRestart = null;
         this.failCounter = 0;
         this.statusServer = {
