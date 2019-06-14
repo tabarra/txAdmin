@@ -284,4 +284,18 @@ module.exports = class FXRunner {
         if(this.enableBuffer) this.outData += data;
     }
 
+
+    //================================================================
+    /**
+     * Returns the number of child processes of cmd/bash
+     */
+    async getChildrenCount(){
+        try {
+            let pids = await pidtree(this.fxChild.pid);
+            return pids.length;
+        } catch (error) {
+            return false;
+        }
+    }
+
 } //Fim FXRunner()

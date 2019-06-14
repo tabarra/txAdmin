@@ -22,9 +22,8 @@ module.exports = async function action(res, req) {
 
 
 //==============================================================
-function prepareServerStatus(){
+async function prepareServerStatus(){
     let dataServer = globals.monitor.statusServer; //shorthand much!?
-    let dataProcess = globals.monitor.statusProcess; //shorthand much!?
 
     let out = '<pre>';
     let statusClass = (dataServer.online)? 'text-success bold' : 'text-danger';
@@ -36,20 +35,16 @@ function prepareServerStatus(){
     out += `<b>Players:</b> ${players}\n`;
     out += `<hr>`;
 
-    if(globals.config.osType === 'Windows_NT'){
-        out += 'Process monitoring temporarily disabled on Windows.\n';
-        out += 'Follow the discussion on <a href="https://github.com/tabarra/fivem-fxadmin/issues/7" target="_blank">GitHub Issue #7</a>\n';
-    }else{
-        let count = (dataProcess && typeof dataProcess.count !== 'undefined')? dataProcess.count : '--' ;
-        let cpu = (dataProcess && typeof dataProcess.cpu !== 'undefined')? dataProcess.cpu.toFixed(2)+'%' : '--' ;
-        let memory = (dataProcess && typeof dataProcess.memory !== 'undefined')? prettyBytes(dataProcess.memory) : '--' ;
-        let uptime = (dataProcess && typeof dataProcess.uptime !== 'undefined')? prettyMs(dataProcess.uptime) : '--' ;
-        out += `<b>Processes:</b> ${count}\n`;
-        out += `<b>CPU:</b> ${cpu}\n`;
-        out += `<b>Memory:</b> ${memory}\n`;
-        out += `<b>Uptime:</b> ${uptime}\n`;
-    }
-    out += '</pre>';
+    let dataHost = await globals.monitor.getHostStatus();
+    let children = (typeof dataHost.children !== 'undefined' && dataHost.children)? dataHost.children : '--';
+    let hitches = (typeof dataHost.hitches !== 'undefined' && dataHost.hitches)? dataHost.children+'ms/min' : '--';
+    let cpu = (typeof dataHost.cpu !== 'undefined' && dataHost.cpu)? dataHost.cpu+'%' : '--';
+    let memory = (typeof dataHost.memory !== 'undefined' && dataHost.memory)? dataHost.memory+'%' : '--';
+
+    out += `<b>Child Processes:</b> ${children}\n`;
+    out += `<b>Hitches:</b> ${hitches}\n`;
+    out += `<b>Host CPU:</b> ${cpu}\n`;
+    out += `<b>Host Memory:</b> ${memory}\n`;
 
     return out;
 }
