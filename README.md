@@ -87,6 +87,7 @@ $ git pull
 $ npm i
 ```
 Make sure there's no differences in the json templates. If there is, copy the new template and edit again.  
+If you have any problems with the `package-lock.json`, just delete it and try again.  
 
 ## TODO:
 - [ ] Add custom commands to the config file
