@@ -1,19 +1,32 @@
 //Requires
+const os = require('os');
 const axios = require("axios");
-const pidusageTree = require('pidusage-tree')
 const bigInt = require("big-integer");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const hostCPUStatus = require('../extras/hostCPUStatus');
 const context = 'Monitor';
 
 
 module.exports = class Monitor {
     constructor(config) {
-        logOk('::Started', context);
         this.config = config;
-        this.statusProcess = false;
-        this.statusAllProcess = false;
+
+        //Checking config
+        if(this.config.interval < 1000){
+            logError('The monitor.interval setting must be 1000 milliseconds or more.', context);
+            process.exit();
+        }
+        if(this.config.restarter.failures * this.config.interval < 15000){
+            logError('The monitor.restarter.failures setting must be 15 seconds or more.', context);
+            process.exit();
+        }
+
+        //Setting up
+        logOk('::Started', context);
+        this.cpuStatusProvider = new hostCPUStatus();
         this.lastAutoRestart = null;
         this.failCounter = 0;
+        this.fxServerHitches = [];
         this.statusServer = {
             online: false,
             players: []
@@ -22,7 +35,6 @@ module.exports = class Monitor {
         //Cron functions
         setInterval(() => {
             this.refreshServerStatus();
-            this.refreshProcessStatus();
         }, this.config.interval);
         if(Array.isArray(this.config.restarter.schedule)){
             setInterval(() => {
@@ -67,21 +79,15 @@ module.exports = class Monitor {
 
 
     //================================================================
-    /**
-     * Getter for the status object.
-     * @returns {object} object containing .process and .server
-     */
-    getStatus(){
-        return {
-            process: this.statusProcess,
-            server: this.statusServer,
-            extra: {
-                allProcesses: this.statusAllProcess,
-                configs: {
-                    //TODO: todo?
-                }
-            }
+    processFXServerHitch(hitchTime){
+        let hitch = {
+            ts: Math.round(Date.now()/1000),
+            hitchTime: parseInt(hitchTime)
         }
+        this.fxServerHitches.push(hitch);
+
+        //The minimum time for a hitch is 150ms. 60000/150=400
+        if (this.fxServerHitches>400) this.fxServerHitches.shift();
     }
 
 
@@ -155,54 +161,46 @@ module.exports = class Monitor {
     }
 
 
-    //================================================================
+     //================================================================
     /**
-     * Refreshes the Processes Statuses.
+     * Refreshes the Host Status data.
      */
-    async refreshProcessStatus(){
-        //HACK: temporarily disable feature on windows due to performance issues on WMIC
-        if(globals.config.osType === 'Windows_NT') return;
+    async getHostStatus(){
+        let giga = 1024 * 1024 * 1024;
 
         try {
-            var processes = await pidusageTree(process.pid);
-            // let processes = {}
-            let combined = {
-                count: 0,
-                cpu: 0,
-                memory: 0,
-                uptime: 0
-            }
-            let individual = {}
-
-            //Foreach PID
-            Object.keys(processes).forEach((pid) => {
-                var curr = processes[pid];
-
-                //NOTE: Somehow this might happen in Linux
-                if(curr === null) return;
-
-                //combined
-                combined.count += 1;
-                combined.cpu += curr.cpu;
-                combined.memory += curr.memory;
-                if(combined.uptime === null || combined.uptime > curr.elapsed) combined.uptime = curr.elapsed;
-
-                //individual
-                individual[pid] = {
-                    cpu: curr.cpu,
-                    memory: curr.memory,
-                    uptime: curr.elapsed
+            //processing host data
+            let memFree = (os.freemem() / giga).toFixed(2);
+            let memTotal = (os.totalmem() / giga).toFixed(2);
+            let memUsage = (((memTotal-memFree) / memTotal)*100).toFixed(0);
+            let cpuStatus = this.cpuStatusProvider.getUsageStats();
+    
+            //processing hitches
+            let now = (Date.now()/1000).toFixed();
+            let hitchTimeSum = 0;
+            this.fxServerHitches.forEach((hitch, key)=>{
+                if(now - hitch.ts < 60000){
+                    hitchTimeSum += hitch.hitchTime;
+                }else{
+                    delete(this.fxServerHitches[key]);
+                    process.stdout.write('.');
                 }
             });
-            this.statusProcess = combined;
-            this.statusAllProcess = individual;
+
+            //returning output output
+            return {
+                children: await globals.fxRunner.getChildrenCount(),
+                hitches: hitchTimeSum,
+                cpu: cpuStatus.last10 || cpuStatus.full,
+                memory: memUsage,
+            }
+            
         } catch (error) {
             if(globals.config.verbose){
-                logWarn('Error refreshing processes statuses', context);
+                logError('Failed to execute getHostStatus()', context);
                 dir(error);
             }
-            this.statusProcess = false;
-            this.statusAllProcess = false;
+            return false;
         }
     }
 

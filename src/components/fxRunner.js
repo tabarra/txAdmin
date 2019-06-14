@@ -1,6 +1,9 @@
 //Requires
 const { spawn } = require('child_process');
-const sleep = require('util').promisify(setTimeout)
+const os = require('os');
+const pidtree = require('pidtree');
+const StreamSnitch = require('stream-snitch');
+const sleep = require('util').promisify(setTimeout);
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'FXRunner';
 
@@ -20,7 +23,7 @@ module.exports = class FXRunner {
         if(config.autostart){
             setTimeout(() => {
                 this.spawnServer();
-            }, 1000);
+            }, config.autostartDelay * 1000);
         }
     }
 
@@ -43,7 +46,7 @@ module.exports = class FXRunner {
             };
         }else{
             logError(`OS type not supported: ${globals.config.osType}`, context);
-            process.exit(1);
+            process.exit();
         }
 
     }//Final setupVariables()
@@ -83,9 +86,18 @@ module.exports = class FXRunner {
             process.exit(0);
         }
         
-        //Pipping stdin and stdout
-        this.fxChild.stdout.pipe(process.stdout);
-        //FIXME: might disable the stdin pipe when the live console is fully working
+        //Setting up stream handlers
+        let hitchStreamProcessor = new StreamSnitch(
+            /hitch warning: frame time of (\d{3,5}) milliseconds/g,
+            (m) => {
+                try {
+                    globals.monitor.processFXServerHitch(m[1])
+                }catch(e){}
+            }
+        );
+        if(!this.config.quiet) this.fxChild.stdout.pipe(process.stdout);
+        this.fxChild.stdout.pipe(hitchStreamProcessor);
+        //NOTE: might disable the stdin pipe in the future, you should use the live console
         process.stdin.pipe(this.fxChild.stdin);
 
         //Setting up event handlers
@@ -113,17 +125,77 @@ module.exports = class FXRunner {
         this.fxChild.stdin.on('data', (data) => {});
 
         this.fxChild.stdout.on('error', (data) => {});
-        this.fxChild.stdout.on('data', (data) => {
-            globals.webConsole.broadcast(data);
-            if(this.enableBuffer) this.outData += data;
-        });
+        this.fxChild.stdout.on('data', this.fxserverOutputHandler.bind(this));
 
         this.fxChild.stderr.on('error', (data) => {});
         this.fxChild.stderr.on('data', (data) => {
             logWarn(`========\n${data}\n========`, context);
         });
+
+        hitchStreamProcessor.on('error', (data) => {});
+
+        //Setting up process priority
+        setTimeout(() => {
+            this.setProcPriority();
+        }, 2500);
+
+        //Setting FXServer variables
+        //NOTE: executing this only once might not be as reliable
+        setTimeout(async () => {
+            this.setFXServerEnvVars();
+        }, 5000);
         
     }//Final spawnServer()
+
+
+    //================================================================
+    /**
+     * Sets up FXServer scripting environment variables
+     */
+    async setFXServerEnvVars(){
+        log('Setting up FXServer scripting environment variables.', context);
+        
+        let delay = 150;
+        this.srvCmd(`sets FXAdmin-version ${globals.version.current}`); 
+        await sleep(delay);
+        this.srvCmd(`set FXAdmin-version ${globals.version.current}`);
+        await sleep(delay);
+        this.srvCmd(`set FXAdmin-port ${globals.webServer.config.port}`);
+    }
+
+
+    //================================================================
+    /**
+     * Sets the process priority to all fxChild (cmd/bash) children (fxserver)
+     */
+    async setProcPriority(){
+        //Sanity check
+        if(typeof this.config.setPriority !== 'string') return;
+        let priority = this.config.setPriority.toUpperCase();
+
+        if(priority === 'NORMAL') return;
+        let validPriorities = ['LOW', 'BELOW_NORMAL', 'NORMAL', 'ABOVE_NORMAL', 'HIGH', 'HIGHEST'];
+        if(!validPriorities.includes(priority)){
+            logWarn(`Couldn't set the processes priority: Invalid priority value. (Use one of these: ${validPriorities.join()})`, context);
+            return;
+        }
+        if(!this.fxChild.pid){
+            logWarn(`Couldn't set the processes priority: Unknown PID.`, context);
+            return;
+        }
+
+        //Get children and set priorities
+        try {
+            let pids = await pidtree(this.fxChild.pid);
+            pids.forEach(pid => {
+                os.setPriority(pid, os.constants.priority['PRIORITY_'+priority]);
+            });
+            log(`Priority set ${priority} for processes ${pids.join()}`, context)
+        } catch (error) {
+            logWarn("Couldn't set the processes priority.", context);
+            if(globals.config.verbose) dir(error);
+        }
+    }
 
 
     //================================================================
@@ -198,4 +270,33 @@ module.exports = class FXRunner {
         this.enableBuffer = false;
         return this.outData;
     }
+
+
+    //================================================================
+    /**
+     * FXServers output handler
+     * @param {string} data
+     */
+    async fxserverOutputHandler(data){
+        // const chalk = require('chalk');
+        // process.stdout.write(chalk.bold.red('|'));
+        data = data.toString();
+        globals.webConsole.broadcast(data);
+        if(this.enableBuffer) this.outData += data;
+    }
+
+
+    //================================================================
+    /**
+     * Returns the number of child processes of cmd/bash
+     */
+    async getChildrenCount(){
+        try {
+            let pids = await pidtree(this.fxChild.pid);
+            return pids.length;
+        } catch (error) {
+            return false;
+        }
+    }
+
 } //Fim FXRunner()

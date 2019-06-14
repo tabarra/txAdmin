@@ -27,14 +27,23 @@ if(process.argv[2].endsWith('.json')){
 
 //Try to load configuration
 //TODO: create a lock file to prevent starting twice the same config file?
-let configFile = null;
+let rawFile = null;
 try {
-    let raw = fs.readFileSync(`data/${configName}.json`);  
-    configFile = JSON.parse(raw);
+    rawFile = fs.readFileSync(`data/${configName}.json`, 'utf8');
 } catch (error) {
-    logError(`Unnable to load configuration file 'data/${configName}.json'`, context);
+    logError(`Unnable to load configuration file 'data/${configName}.json'. (cannot read file, please read the documentation)`, context);
     process.exit(0)
 }
+
+let configFile = null;
+try {
+    configFile = JSON.parse(rawFile);
+} catch (error) {
+    logError(`Unnable to load configuration file 'data/${configName}.json'. (json parse error, please read the documentation)`, context);
+    if(rawFile.includes('\\')) logError(`Note: your '${configName}.json' file contains '\\', make sure all your paths use only '/'.`, context)
+    process.exit(0)
+}
+
 
 let cfg = {
     global: null,
@@ -61,26 +70,26 @@ try {
         configName: configName,
     };
     cfg.logger = {
-        logPath: configFile.logger.logPath || `data/log_${configName}.txt`, //removed from template
+        logPath: configFile.logger.logPath || `data/${configName}.log`, //not in template
     };
     cfg.monitor = {
-        interval: parseInt(configFile.monitor.interval) || 1000, //removed from template
+        interval: parseInt(configFile.monitor.interval) || 1000, //not in template
         timeout: parseInt(configFile.monitor.timeout) || 1000,
         restarter: {
-            cooldown: parseInt(configFile.monitor.restarter.cooldown) || 60, //removed from template
+            cooldown: parseInt(configFile.monitor.restarter.cooldown) || 120, //not in template
             failures: parseInt(configFile.monitor.restarter.failures) || 15,
             schedule: configFile.monitor.restarter.schedule || []
         }
     };
     cfg.authenticator = {
         adminsFilePath: configFile.authenticator.adminsFilePath || 'data/admins.json',
-        refreshInterval: parseInt(configFile.authenticator.refreshInterval) || 15000, //removed from template
+        refreshInterval: parseInt(configFile.authenticator.refreshInterval) || 15000, //not in template
     };
     cfg.webServer = {
         port: parseInt(configFile.webServer.port) || 40121,
-        bufferTime: parseInt(configFile.webServer.bufferTime) || 1500, //removed from template - deprecate?
-        limiterMinutes: parseInt(configFile.webServer.limiterMinutes) || 15, //removed from template
-        limiterAttempts: parseInt(configFile.webServer.limiterAttempts) || 5, //removed from template
+        bufferTime: parseInt(configFile.webServer.bufferTime) || 1500, //not in template - deprecate?
+        limiterMinutes: parseInt(configFile.webServer.limiterMinutes) || 15, //not in template
+        limiterAttempts: parseInt(configFile.webServer.limiterAttempts) || 5, //not in template
     };
     cfg.webConsole = {
         //nothing to configure
@@ -88,14 +97,19 @@ try {
     cfg.discordBot = {
         enabled: (configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true),
         token:  configFile.discordBot.token || ((configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true) && fatalRequired('discordBot.token')),
-        trigger: configFile.discordBot.trigger || "/status",
+        messagesFilePath: configFile.discordBot.messagesFilePath || 'data/messages.json',
+        refreshInterval: parseInt(configFile.discordBot.refreshInterval) || 15000, //not in template
+        statusCommand: configFile.discordBot.statusCommand || "/status",
     };
     cfg.fxRunner = {
         buildPath: configFile.fxRunner.buildPath || fatalRequired('fxRunner.buildPath'),
         basePath: configFile.fxRunner.basePath || fatalRequired('fxRunner.basePath'),
         cfgPath: configFile.fxRunner.cfgPath || fatalRequired('fxRunner.cfgPath'),
+        setPriority: configFile.fxRunner.setPriority || "NORMAL",
         onesync: (configFile.fxRunner.onesync === 'true' || configFile.fxRunner.onesync === true),
         autostart: (configFile.fxRunner.autostart === 'true' || configFile.fxRunner.autostart === true),
+        autostartDelay: parseInt(configFile.webServer.autostartDelay) || 3, //not in template
+        quiet: (configFile.fxRunner.quiet === 'true' || configFile.fxRunner.quiet === true), //not in template
     };
 } catch (error) {
     logError('Malformed configuration file! Please copy server-template.json and try again.', context);

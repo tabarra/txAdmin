@@ -14,55 +14,82 @@
     <!-- Favicon made by Freepik from www.flaticon.com is licensed by CC 3.0 BY -->
     <link rel="shortcut icon" type="image/png" href="favicon_default.png" id="favicon"/>
     <title>FXAdmin</title>
+    <style>
+        .flag{
+            margin-top: -2px;
+            height: 20px;
+        }
+        .notice{
+            font-weight: 700;
+            font-size: 80%;
+        }
+    </style>
 </head>
 
 <body>
     <div class="container">
         <div class="row">
             <div class="col-12 text-center">
-                <!-- Só altere o nome do servidor aqui -->
-                <h1>FXServer Admin</h1>
-                <br>
+                <h1>FXAdmin*</h1>
+                <div class="notice">
+                    <span class="text-danger">Important Notice:</span> Due to a recent change in FiveM's ToS we MUST change this project name.<br>
+                    Join our <a href="https://discord.gg/f3TsfvD" target="_blank">Discord Server</a> for more information and to help choose a new name.<br>
+                    This will be the last release under this name.
+                </div>  
             </div>
         </div>
+        <br>
         <div class="row justify-content-center">
             <!-- Cards principais -->
             <div class="col-xs-5">
-                <div class="card border-danger" style="width: 28rem; min-height: 211px">
-                    <form action="/action" method="post">
+                
+                <!-- Card Controls-->
+                <div class="card border-danger" style="width: 28rem; min-height: 165px">
+                    <div class="card-body text-center">
+                        <h5>FXServer Control:</h5>
+                        <div style="margin: 12px">
+                            <a href="#" onclick="controlAction('start')" role="button" class="btn btn-outline-danger mx-auto" id="ctrl-start">START</a>
+                            <a href="#" onclick="controlAction('restart')" role="button" class="btn btn-outline-danger mx-auto" id="ctrl-restart">RESTART</a>
+                            <a href="#" onclick="controlAction('stop')" role="button" class="btn btn-outline-danger mx-auto" id="ctrl-stop">STOP</a>
+                        </div>
+                        <a href="/console" target="_blank" role="button" class="btn btn-outline-dark mx-auto">Open Console</a>
+                    </div>
+                </div>
+                <br>
+
+                <!-- Card Commands-->
+                <div class="card border-secondary" style="width: 28rem;">
+                    <form action="/fxCommands" method="post">
                         <div class="card-body">
                             <div class="form-group row">
-                                <label for="action" class="col-sm-4 col-form-label">Action</label>
+                                <label for="action" class="col-sm-4 col-form-label">Command</label>
                                 <div class="col-sm-8">
                                     <select name="action" id="frm_action" class="form-control" required>
-                                        <option value="" disabled selected>> DEFAULT:</option>
+                                        <option value="" disabled selected>&gt; SELECT</option>
                                         <option value="admin_say">Admin Message</option>
                                         <option value="restart_res">Restart script</option>
                                         <option value="start_res">Start script</option>
                                         <option value="stop_res">Stop script</option>
                                         <option value="refresh_res">Refresh scripts</option>
-                                        <option value="" disabled>> DANGER ZONE:</option>
-                                        <option value="restart_sv">RESTART Server</option>
-                                        <option value="stop_sv">STOP Server</option>
-                                        <option value="start_sv">START Server</option>
                                     </select>
                                 </div>
                             </div>
                             <div class="form-group row">
                                 <label for="action" class="col-sm-4 col-form-label">Parameter</label>
                                 <div class="col-sm-8">
-                                    <input type="text" name="parameter" id="frm_parameter" class="form-control" placeholder="" disabled required>
+                                    <input type="text" name="parameter" id="frm_parameter" class="form-control" placeholder="" readonly required>
                                 </div>
                             </div>
                         </div>
                         <div class="card-footer text-center">
-                            <a href="/console" target="_blank" role="button" class="btn btn-outline-dark mx-auto">Open Console</a>
-                            <button type="submit" class="btn btn-outline-danger mx-auto">EXECUTE</button>
+                            <button type="submit" class="btn btn-outline-secondary mx-auto">EXECUTE</button>
                         </div>
                     </form>
                 </div>
                 <br>
-                <div class="card border-info" style="width: 28rem; max-height: 211px">
+
+                <!-- Card Status-->
+                <div class="card border-secondary" style="width: 28rem; min-height: 196px">
                     <div class="card-body" id="card-status">
                         Loading...
                     </div>
@@ -73,22 +100,26 @@
             <div class="col-xs-1">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
             <!-- Card Secundário -->
             <div class="col-xs-5">
-                <div class="card border-info" style="width: 28rem; min-height: 211px">
+                <div class="card border-info" style="width: 28rem; min-height: 165px">
                     <div class="card-body">
-                            <nav>
-                                <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                    <a class="nav-item nav-link active" id="nav-players-tab" data-toggle="tab" href="#nav-players" role="tab" aria-controls="nav-players" aria-selected="true">Players</a>
-                                    <a class="nav-item nav-link" id="nav-log-tab" data-toggle="tab" href="#nav-log" role="tab" aria-controls="nav-log" aria-selected="false">ADM Log</a>
-                                </div>
-                            </nav>
-                            <div class="tab-content" id="nav-tabContent" style="padding-top: 25px;">
-                                <div class="tab-pane fade show active" id="nav-players" role="tabpanel" aria-labelledby="nav-players-tab">Loading...</div>
-                                <div class="tab-pane fade" id="nav-log" role="tabpanel" aria-labelledby="nav-log-tab">Loading...</div>
-                            </div>
+                        <div class="text-center">
+                            <h5>Playerlist:</h5>
+                        </div>
+                        <div id="playerlist">Loading...</div>
                     </div>
                 </div>
+
+                <br>
+                <div class="text-center">
+                        <div style="margin: 12px">
+                            <a href="/getFullReport" target="_blank" role="button" class="btn btn-outline-dark mx-auto">Full Status</a>
+                            <a href="/getAdminLog" target="_blank" role="button" class="btn btn-outline-dark mx-auto">Admin Log</a>
+                            <a href="/auth?logout" role="button" class="btn btn-outline-danger mx-auto">Logout</a>
+                        </div>
+                    </div>
             </div>
             <!-- Fim Card Secundário -->
+
             
         </div>
         <br>
@@ -99,6 +130,9 @@
                         <a href="https://github.com/tabarra/fivem-fxadmin" target="_blank">Fork me on GitHub</a>
                         &nbsp;&nbsp;|&nbsp;&nbsp;
                         <a href="https://discord.gg/f3TsfvD" target="_blank">Discuss me on Discord</a>
+                        <br>
+                        Built with &#x2764;&#xFE0F; from <img src="/flag_brazil.svg" class="flag"> 
+                    <!-- <strong>Brazil</strong> -->
                     </small>
                     <div class="alert alert-warning d-none" role="alert" id="update-me">loading...</div>
                 </div>
@@ -109,27 +143,48 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script>
-        let paramRequiredActions = [
-            'admin_say',
-            'restart_res',
-            'start_res',
-            'stop_res'
-        ];
+        function controlAction(action){
+            let actionURL = null;
+            if(action === 'start'){
+                actionURL = '/fxControls/'+action;
+            }else if(window.confirm('Are you sure you want to ' + action + ' the server?')){
+                actionURL = '/fxControls/'+action;
+            }
+
+            if(actionURL){
+                $.ajax({
+                    url: actionURL,
+                    type: "GET",
+                    dataType: "json",
+                    timeout: 2000,
+                    success: function(data) {
+                        if(data.logout){
+                            window.location = '/auth?logout';
+                            return;
+                        }
+                        console.log(data);
+                    },
+                    error: function(xmlhttprequest, textstatus, message) {
+                        alert('Error executing control action.');
+                        // alert(message);
+                    }
+                });
+            }
+        }
 
         function refreshData(){
             $.ajax({
                 url: "/getData",
                 type: "GET",
                 dataType: "json",
-                timeout: 500,
+                timeout: 1500,
                 success: function(data) {
                     if(data.logout){
                         window.location = '/auth?logout';
                         return;
                     }
                     $("#card-status").html( data.status );
-                    $("#nav-players").html( data.players );
-                    $("#nav-log").html( data.log );
+                    $("#playerlist").html( data.players );
                     $("#favicon").attr("href", data.meta.favicon+".png");
                     document.title = data.meta.title;
                 },
@@ -141,8 +196,7 @@
                         out = `Request error: ${textstatus}\n<br>${message}`;
                     }
                     $("#card-status").html(out);
-                    $("#nav-players").html(out);
-                    $("#nav-log").html(out);
+                    $("#playerlist").html(out);
                     $("#favicon").attr("href","favicon_off.png");
                     document.title = 'ERROR - FXAdmin';
                 }
@@ -153,22 +207,31 @@
             $.getJSON( "/checkVersion", function( data ) {
                 if(data.current !== data.latest){
                     $("#bottom-links").hide();
-                    let out = `<small><strong><a href="https://github.com/tabarra/fivem-fxadmin">Update available for FXAdmin (v${data.current} > v${data.latest})!</a><br>\n`;
-                    out += `Changelog:</strong> ${data.changelog}</small>\n`;
+                    let out = `<small><strong>\n`;
+                    out += `<a href="https://github.com/tabarra/fivem-fxadmin">Update available for FXAdmin (v${data.current} > v${data.latest})!</a>\n`;
+                    out += `</strong> <br/> \n`;
+                    out += `${data.changelog}</small>\n`;
                     $("#update-me").html(out);
                     $("#update-me").removeClass('d-none');
                 }
             });
         }
 
+        let paramRequiredCommands = [
+            'admin_say',
+            'restart_res',
+            'start_res',
+            'stop_res'
+        ];
         $('#frm_action').change(function(){
             var action = $("#frm_action").val();
-            if(paramRequiredActions.indexOf(action) != -1){
-                $("#frm_parameter").prop('disabled', false);
+            if(paramRequiredCommands.indexOf(action) != -1){
+                $("#frm_parameter").prop('readonly', false);
             }else{
-                $("#frm_parameter").prop('disabled', true);
+                $("#frm_parameter").prop('readonly', true);
             }      
         });
+
         $(document).ready(function() { 
             checkVersion();
             setInterval(() => {

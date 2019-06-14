@@ -1,15 +1,14 @@
 //Requires
-const fs = require('fs');
-const path = require('path');
 const bcrypt = require('bcrypt');
 const httpServer  = require('http');
 const express = require('express');
 const session = require('express-session');
 const rateLimit = require("express-rate-limit");
-const template = require('lodash.template');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const Webroutes = require('../webroutes');
+const webUtils = require('../webroutes/webUtils');
+const webRoutes = require('../webroutes');
 const context = 'WebServer';
 
 module.exports = class WebServer {
@@ -23,21 +22,22 @@ module.exports = class WebServer {
         this.authLimiter = rateLimit({
             windowMs: this.config.limiterMinutes * 60 * 1000, // 15 minutes
             max: this.config.limiterAttempts, // limit each IP to 5 requests per 15 minutes
-            message: render('login', {
-                message:`Too many login attempts, enjoy your ${this.config.limiterMinutes} minutes of cooldown.`,
-                config: globals.config.configName,
-                port: globals.config.fxServerPort,
-                version: '--'
-            })
+            message: `Too many login attempts, enjoy your ${this.config.limiterMinutes} minutes of cooldown.`
         });
         
         this.app = express();
         this.app.use(cors());
         this.app.use(this.session);
+        this.app.use(bodyParser.json());
         this.app.use(express.urlencoded({extended: true}))
         this.app.use(express.static('public', {index: false}))
         this.setupRoutes()
         this.httpServer = httpServer.createServer(this.app);
+        this.httpServer.on('error', (error)=>{
+            if(error.code !== 'EADDRINUSE') return;
+            logError(`Failed to start webserver, port ${error.port} already in use.`, context);
+            process.exit();
+        })
         try {
             this.httpServer.listen(this.config.port, '0.0.0.0', () => {
                 logOk(`::Started at http://${globals.config.publicIP}:${this.config.port}/`, context);
@@ -46,43 +46,45 @@ module.exports = class WebServer {
         } catch (error) {
             logError('::Failed to start webserver with error:', context);
             dir(error);
-            process.exit(1);
+            process.exit();
         }
     }
 
     
     //================================================================
     async setupRoutes(){
-        //Default routes
+        //Auth routes
         this.app.get('/auth', async (req, res) => {
             let renderData = {
                 message: '',
                 config: globals.config.configName,
-                port: globals.config.fxServerPort
-            }
-            if(globals.version && globals.version.current){
-                renderData.version = globals.version.current;
-            }else{
-                renderData.version = '--';
+                port: globals.config.fxServerPort,
+                version: globals.version.current
             }
             if(typeof req.query.logout !== 'undefined'){
                 req.session.destroy();
                 renderData.message = 'Logged Out';
-                res.send(render('login', renderData));
-            }else{
-                res.send(render('login', renderData));
             }
+            let html = webUtils.renderTemplate('login', renderData);
+            res.send(html);
         });
         this.app.post('/auth', this.authLimiter, async (req, res) => {
             if(typeof req.body.password == 'undefined'){
                 req.redirect('/');
                 return;
             }
+            let renderData = {
+                message: '',
+                config: globals.config.configName,
+                port: globals.config.fxServerPort,
+                version: globals.version.current
+            }
             let admin = globals.authenticator.checkAuth(req.body.password);
             if(!admin){
                 logWarn(`Wrong password from: ${req.connection.remoteAddress}`, context);
                 renderData.message = 'Wrong Password!';
-                res.send(render('login', renderData));
+                let html = webUtils.renderTemplate('login', renderData);
+                res.send(html);
                 return;
             }
             req.session.password = req.body.password;
@@ -90,26 +92,44 @@ module.exports = class WebServer {
             res.redirect('/');
         });
 
-        this.app.post('/action', globals.authenticator.sessionCheckerWeb, async (req, res) => {
-            await Webroutes.action(res, req).catch((err) => {
-                this.handleRouteError(res, "[action] Route Internal Error", err);
+        //Control routes
+        this.app.get('/fxControls/:action', globals.authenticator.sessionCheckerAPI, async (req, res) => {
+            await webRoutes.fxControls(res, req).catch((err) => {
+                this.handleRouteError(res, "[fxControls] Route Internal Error", err);
+            });
+        });
+        this.app.post('/fxCommands', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+            await webRoutes.fxCommands(res, req).catch((err) => {
+                this.handleRouteError(res, "[fxCommands] Route Internal Error", err);
+            });
+        });
+        this.app.get('/console', globals.authenticator.sessionCheckerWeb, (req, res) => {
+            res.sendFile(webUtils.getWebRootPath('console.html')); 
+        });
+
+        //Data routes
+        this.app.get('/getAdminLog', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+            await webRoutes.getAdminLog(res, req).catch((err) => {
+                this.handleRouteError(res, "[getAdminLog] Route Internal Error", err);
+            });
+        });
+        this.app.get('/getFullReport', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+            await webRoutes.getFullReport(res, req).catch((err) => {
+                this.handleRouteError(res, "[getFullReport] Route Internal Error", err);
             });
         });
         this.app.get('/getData', globals.authenticator.sessionCheckerAPI, async (req, res) => {
-            await Webroutes.getData(res, req).catch((err) => {
+            await webRoutes.getData(res, req).catch((err) => {
                 this.handleRouteError(res, "[getData] Route Internal Error", err);
             });
         });
         this.app.get('/checkVersion', async (req, res) => {
             res.send(globals.version);
         });
-        this.app.get('/console', globals.authenticator.sessionCheckerWeb, (req, res) => {
-            res.sendFile(getWebRootPath('console.html')); 
-        });
-
-        //index
+        
+        //Index
         this.app.get('/', globals.authenticator.sessionCheckerWeb, (req, res) => {
-            res.sendFile(getWebRootPath('index.html')); 
+            res.sendFile(webUtils.getWebRootPath('index.html')); 
         });
 
         //Catch all
@@ -128,14 +148,3 @@ module.exports = class WebServer {
     }
 
 } //Fim WebServer()
-
-
-//================================================================
-function getWebRootPath(file){
-    return path.join(__dirname, '../../public/', file);
-}
-
-function render(view, ctx = {}) {
-    //https://lodash.com/docs/4.17.11#template
-    return template(fs.readFileSync(getWebRootPath(view)+'.html'))(ctx)
-}

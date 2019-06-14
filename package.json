@@ -5,7 +5,8 @@
   "main": "src/main.js",
   "scripts": {
     "start": "node src/main.js",
-    "test-config": "node src/config-tester.js"
+    "config-tester": "node src/scripts/config-tester.js",
+    "admin-add": "node src/scripts/admin-add.js"
   },
   "repository": {
     "type": "git",
@@ -29,20 +30,23 @@
     "axios": "^0.19.0",
     "bcrypt": "^3.0.6",
     "big-integer": "^1.6.43",
+    "body-parser": "^1.19.0",
     "chalk": "^2.4.2",
     "cors": "^2.8.5",
     "discord.js": "^11.5.1",
     "express": "^4.17.1",
-    "express-rate-limit": "^4.0.3",
+    "express-rate-limit": "^4.0.4",
     "express-session": "^1.16.1",
     "express-socket.io-session": "^1.3.5",
-    "lodash.template": "^4.4.0",
+    "figlet": "^1.2.3",
+    "pidtree": "^0.3.0",
     "pidusage": "^2.0.17",
     "pidusage-tree": "^2.0.5",
     "pretty-bytes": "^5.2.0",
     "pretty-ms": "^5.0.0",
     "socket.io": "^2.2.0",
     "squirrelly": "^7.1.1",
+    "stream-snitch": "0.0.3",
     "xss": "^1.0.6"
   }
 }

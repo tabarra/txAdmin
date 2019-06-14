@@ -22,12 +22,14 @@
     "discordBot": {
         "enabled": false,
         "token": "change-me",
-        "trigger": "/status"
+        "messagesFilePath": "data/messages.json",
+        "statusCommand": "/status"
     },
     "fxRunner": {
         "buildPath": "C:/Users/Admin/Documents/fxserver_builds/1265",
         "basePath": "C:/Users/Admin/Desktop/server01",
         "cfgPath": "C:/Users/Admin/Desktop/server01/server.cfg",
+        "setPriority": false,
         "onesync": false,
         "autostart": false
     }

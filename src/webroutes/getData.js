@@ -1,7 +1,5 @@
 //Requires
 const xss = require("xss");
-const prettyBytes = require('pretty-bytes');
-const prettyMs = require('pretty-ms');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'WebServer:getData';
 
@@ -15,16 +13,14 @@ module.exports = async function action(res, req) {
     res.send({
         meta: await prepareMeta(),
         status: await prepareServerStatus(),
-        players: await preparePlayers(),
-        log: await sendLog()
+        players: await preparePlayers()
     })
 };
 
 
 //==============================================================
-function prepareServerStatus(){
+async function prepareServerStatus(){
     let dataServer = globals.monitor.statusServer; //shorthand much!?
-    let dataProcess = globals.monitor.statusProcess; //shorthand much!?
 
     let out = '<pre>';
     let statusClass = (dataServer.online)? 'text-success bold' : 'text-danger';
@@ -36,20 +32,26 @@ function prepareServerStatus(){
     out += `<b>Players:</b> ${players}\n`;
     out += `<hr>`;
 
-    if(globals.config.osType === 'Windows_NT'){
-        out += 'Process monitoring temporarily disabled on Windows.\n';
-        out += 'Follow the discussion on <a href="https://github.com/tabarra/fivem-fxadmin/issues/7" target="_blank">GitHub Issue #7</a>\n';
+    let dataHost = await globals.monitor.getHostStatus();
+    let children = (typeof dataHost.children !== 'undefined' && dataHost.children)? dataHost.children : '--';
+    let cpu = (typeof dataHost.cpu !== 'undefined' && dataHost.cpu)? dataHost.cpu+'%' : '--';
+    let memory = (typeof dataHost.memory !== 'undefined' && dataHost.memory)? dataHost.memory+'%' : '--';
+
+    let hitches;
+    if(typeof dataHost.hitches === 'undefined' || typeof dataHost.hitches !== 'number'){
+        hitches = '--';
+    }else if(dataHost.hitches > 10000){
+        let secs = (dataHost.hitches/1000).toFixed();
+        let pct = ((secs/60)*100).toFixed();
+        hitches = `${secs}s/min (${pct}%)`;
     }else{
-        let count = (dataProcess && typeof dataProcess.count !== 'undefined')? dataProcess.count : '--' ;
-        let cpu = (dataProcess && typeof dataProcess.cpu !== 'undefined')? dataProcess.cpu.toFixed(2)+'%' : '--' ;
-        let memory = (dataProcess && typeof dataProcess.memory !== 'undefined')? prettyBytes(dataProcess.memory) : '--' ;
-        let uptime = (dataProcess && typeof dataProcess.uptime !== 'undefined')? prettyMs(dataProcess.uptime) : '--' ;
-        out += `<b>Processes:</b> ${count}\n`;
-        out += `<b>CPU:</b> ${cpu}\n`;
-        out += `<b>Memory:</b> ${memory}\n`;
-        out += `<b>Uptime:</b> ${uptime}\n`;
+        hitches = dataHost.hitches+'ms/min';
     }
-    out += '</pre>';
+
+    out += `<b>Child Processes:</b> ${children}\n`;
+    out += `<b>Hitches:</b> ${hitches}\n`;
+    out += `<b>Host CPU:</b> ${cpu}\n`;
+    out += `<b>Host Memory:</b> ${memory}\n`;
 
     return out;
 }
@@ -73,13 +75,6 @@ function preparePlayers(){
     });
     out += '</pre>';
     return out;
-}
-
-
-//==============================================================
-async function sendLog(){
-    let log = await globals.logger.get();
-    return `<pre>${xss(log)}</pre>`;
 }
 
 

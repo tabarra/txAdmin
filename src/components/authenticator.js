@@ -26,7 +26,7 @@ module.exports = class Authenticator {
      * @returns {(number|boolean)} userid or false
      */
     checkAuth(pwd){
-        let admin = this.admins.find((user) => {return bcrypt.compareSync(pwd, user.password_hash)})
+        let admin = this.admins.find((user) => {return bcrypt.compareSync(pwd, user.password_hash)});
         return (admin)? admin.name : false;
     }
 
@@ -117,10 +117,10 @@ module.exports = class Authenticator {
         let jsonData = null;
 
         try {
-            raw = fs.readFileSync(this.config.adminsFilePath);  
+            raw = fs.readFileSync(this.config.adminsFilePath, 'utf8');  
         } catch (error) {
             logError('Unable to load admins. (cannot read file, please read the documentation)', context);
-            if(this.admins === null) process.exit(1);
+            if(this.admins === null) process.exit();
             this.admins = [];
             return;
         }
@@ -129,19 +129,26 @@ module.exports = class Authenticator {
             jsonData = JSON.parse(raw);
         } catch (error) {
             logError('Unable to load admins. (json parse error, please read the documentation)', context);
-            if(this.admins === null) process.exit(1);
+            if(this.admins === null) process.exit();
+            this.admins = [];
+            return;
+        }
+
+        if(!Array.isArray(jsonData)){
+            logError('Unable to load admins. (not an array, please read the documentation)', context);
+            if(this.admins === null) process.exit(0);
             this.admins = [];
             return;
         }
 
         let structureIntegrityTest = jsonData.some((x) =>{
-            if(typeof x.name == 'undefined') return true;
-            if(typeof x.password_hash == 'undefined') return true;
+            if(typeof x.name === 'undefined' || typeof x.name !== 'string') return true;
+            if(typeof x.password_hash === 'undefined' || typeof x.password_hash !== 'string') return true;
             return false;
         });
         if(structureIntegrityTest){
             logError('Unable to load admins. (invalid data in the admins file, please read the documentation)', context);
-            if(this.admins === null) process.exit(1);
+            if(this.admins === null) process.exit();
             this.admins = [];
             return;
         }
@@ -152,14 +159,14 @@ module.exports = class Authenticator {
         });
         if(hashIntegrityTest){
             logError('Unable to load admins. (invalid hash, please read the documentation)', context);
-            if(this.admins === null) process.exit(1);
+            if(this.admins === null) process.exit();
             this.admins = [];
             return;
         }
 
         if(!jsonData.length){
             logError('Unable to load admins. (no entries, please read the documentation)', context);
-            if(this.admins === null) process.exit(1);
+            if(this.admins === null) process.exit();
             this.admins = [];
             return;
         }

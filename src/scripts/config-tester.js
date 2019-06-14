@@ -3,7 +3,7 @@ const os = require('os');
 const fs = require('fs');
 const { spawnSync } = require('child_process');
 const prettyBytes = require('pretty-bytes');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('./extras/console');
+const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 cleanTerminal()
 const printDivider = () =>{log('='.repeat(64))};
 const context = 'Config Tester';
@@ -40,7 +40,7 @@ if(process.argv[2].endsWith('.json')){
 //Try to load configuration
 let configFile = null;
 try {
-    let raw = fs.readFileSync(`data/${configName}.json`);  
+    let raw = fs.readFileSync(`data/${configName}.json`, 'utf8');  
     configFile = JSON.parse(raw);
     log(`Loaded configuration file 'data/${configName}.json'.`);
     printDivider();
@@ -74,7 +74,7 @@ if(osType === 'Linux'){
 
 }else{
     logError(`OS type not supported: ${osType}`, context);
-    process.exit(1);
+    process.exit();
 }
 printDivider();
 let cfg = configFile.fxRunner;

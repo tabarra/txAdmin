@@ -1,6 +1,6 @@
 //Requires
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('./extras/console');
-cleanTerminal()
+
 
 //==============================================================
 //FIXME: I should be using dependency injection or something
@@ -13,16 +13,41 @@ globals = {
     webConsole: null,
     fxRunner: null,
     config: null,
-    version: null
+    version: {
+        current: '--',
+        latest: '--',
+        changelog: '--',
+    }
 }
 
 //==============================================================
 class FXAdmin {
     constructor(){
+        //Print MOTD
+        const figlet = require('figlet');
+        let ascii = figlet.textSync('FXAdmin');
+        let separator = '='.repeat(46);
+        let motd = `${separator}\n${ascii}\n${separator}`;
+        cleanTerminal();
+        console.log(motd);
         log(">>Starting FXAdmin");
+
+        //Prepare settings
         let localConfig = require('./extras/config');
         globals.config = localConfig.global;
 
+        //Get current version
+        try {
+            let versioData = require('../version.json');
+            if(!versioData || typeof versioData.version !== 'string') throw new Error('Invalid data in the version file.');
+            globals.version.current = versioData.version;
+        } catch (error) {
+            logError(`Error reading or parsing the 'version.json' file:`);
+            logError(error.message);
+            process.exit();
+        }
+
+        //Start all modules
         this.startAuthenticator(localConfig.authenticator).catch((err) => {
             HandleFatalError(err, 'Authenticator');
         });
@@ -44,9 +69,10 @@ class FXAdmin {
         this.startWebConsole(localConfig.webConsole).catch((err) => {
             HandleFatalError(err, 'WebConsole');
         });
-        this.checkForUpdates().catch((err) => {
-            HandleFatalError(err, 'Update Checker');
-        });
+
+        //Run Update Checker every 30 minutes
+        this.checkForUpdates();
+        setInterval(this.checkForUpdates, 30 * 60 * 1000);
     }
 
     //==============================================================
@@ -93,28 +119,19 @@ class FXAdmin {
 
     //==============================================================
     async checkForUpdates(){
-        const fs = require('fs');
-        const util = require('util');
         const axios = require("axios");
-        const readFile = util.promisify(fs.readFile);
 
         try {
-            let [localVersion, remoteVersion] = await Promise.all([
-                readFile('version.json'),
-                axios.get('https://raw.githubusercontent.com/tabarra/fivem-fxadmin/master/version.json')
-            ]);
-            localVersion = JSON.parse(localVersion);
-            remoteVersion = remoteVersion.data;
-            globals.version = {
-                current: localVersion.version,
-                latest: remoteVersion.version,
-                changelog: remoteVersion.changelog,
-            };
-            if(localVersion.version !== remoteVersion.version){
-                logWarn(`A new version is available for FXAdmin - https://github.com/tabarra/fivem-fxadmin`);
+            let rVer = await axios.get('https://raw.githubusercontent.com/tabarra/fivem-fxadmin/master/version.json');
+            rVer = rVer.data;
+            if(typeof rVer.version !== 'string' || typeof rVer.changelog !== 'string') throw new Error('Invalid remote version.json file');
+            globals.version.latest = rVer.version;
+            globals.version.changelog = rVer.changelog;
+            if(globals.version.current !== rVer.version){
+                logWarn(`A new version (v${rVer.version}) is available for FXAdmin - https://github.com/tabarra/fivem-fxadmin`, 'UpdateChecker');
             }
         } catch (error) {
-            logError(`Error checking the current vs remote version.`);
+            logError(`Error checking the current vs remote version. Go to the github repository to see if you need to update.`, 'UpdateChecker');
         }
     }  
 }
@@ -129,7 +146,7 @@ function HandleFatalError(err, context){
         logError(err.stack, context)
     }
     
-    process.exit(1);
+    process.exit();
 }
 process.on('unhandledRejection', (err) => {
     logError(">>Ohh nooooo - unhandledRejection")
