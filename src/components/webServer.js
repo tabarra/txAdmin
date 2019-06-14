@@ -35,6 +35,11 @@ module.exports = class WebServer {
         this.app.use(express.static('public', {index: false}))
         this.setupRoutes()
         this.httpServer = httpServer.createServer(this.app);
+        this.httpServer.on('error', (error)=>{
+            if(error.code !== 'EADDRINUSE') return;
+            logError(`Failed to start webserver, port ${error.port} already in use.`, context);
+            process.exit();
+        })
         try {
             this.httpServer.listen(this.config.port, '0.0.0.0', () => {
                 logOk(`::Started at http://${globals.config.publicIP}:${this.config.port}/`, context);

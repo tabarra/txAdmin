@@ -14,6 +14,12 @@
     <!-- Favicon made by Freepik from www.flaticon.com is licensed by CC 3.0 BY -->
     <link rel="shortcut icon" type="image/png" href="favicon_default.png" id="favicon"/>
     <title>FXAdmin</title>
+    <style>
+        .flag{
+            margin-top: -2px;
+            height: 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -112,6 +118,9 @@
                         <a href="https://github.com/tabarra/fivem-fxadmin" target="_blank">Fork me on GitHub</a>
                         &nbsp;&nbsp;|&nbsp;&nbsp;
                         <a href="https://discord.gg/f3TsfvD" target="_blank">Discuss me on Discord</a>
+                        <br>
+                        Built with &#x2764;&#xFE0F; from <img src="/flag_brazil.svg" class="flag"> 
+                    <!-- <strong>Brazil</strong> -->
                     </small>
                     <div class="alert alert-warning d-none" role="alert" id="update-me">loading...</div>
                 </div>
@@ -156,7 +165,7 @@
                 url: "/getData",
                 type: "GET",
                 dataType: "json",
-                timeout: 500,
+                timeout: 1500,
                 success: function(data) {
                     if(data.logout){
                         window.location = '/auth?logout';

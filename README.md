@@ -67,8 +67,8 @@ $ npm start server.json
 
 
 ## Troubleshooting
-### If you run into any problem, check our [Troubleshooting Guide](docs/troubleshooting.md). 
-
+### If you run into any problem, check our [Troubleshooting Guide](docs/troubleshooting.md).   
+If you are having trouble starting the FXServer via FXAdmin, run `npm run config-tester server.json` and see which test is failing.  
 
 ## Updating
 To **UPDATE** FXAdmin execute:
