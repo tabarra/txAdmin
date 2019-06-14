@@ -88,7 +88,7 @@ module.exports = class FXRunner {
         
         //Setting up stream handlers
         let hitchStreamProcessor = new StreamSnitch(
-            /hitch warning: frame time of (\d{1,5}) milliseconds/g,
+            /hitch warning: frame time of (\d{3,5}) milliseconds/g,
             (m) => {
                 try {
                     globals.monitor.processFXServerHitch(m[1])
@@ -125,7 +125,7 @@ module.exports = class FXRunner {
         this.fxChild.stdin.on('data', (data) => {});
 
         this.fxChild.stdout.on('error', (data) => {});
-        this.fxChild.stdout.on('data', this.fxserverOutputHandler);
+        this.fxChild.stdout.on('data', this.fxserverOutputHandler.bind(this));
 
         this.fxChild.stderr.on('error', (data) => {});
         this.fxChild.stderr.on('data', (data) => {
@@ -280,6 +280,7 @@ module.exports = class FXRunner {
     async fxserverOutputHandler(data){
         // const chalk = require('chalk');
         // process.stdout.write(chalk.bold.red('|'));
+        data = data.toString();
         globals.webConsole.broadcast(data);
         if(this.enableBuffer) this.outData += data;
     }
