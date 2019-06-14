@@ -26,6 +26,7 @@ module.exports = class Monitor {
         this.cpuStatusProvider = new hostCPUStatus();
         this.lastAutoRestart = null;
         this.failCounter = 0;
+        this.fxServerHitches = [];
         this.statusServer = {
             online: false,
             players: []
@@ -78,8 +79,15 @@ module.exports = class Monitor {
 
 
     //================================================================
-    processFXServerHitch(time){
-        dir(time);
+    processFXServerHitch(hitchTime){
+        let hitch = {
+            ts: Math.round(Date.now()/1000),
+            hitchTime: parseInt(hitchTime)
+        }
+        this.fxServerHitches.push(hitch);
+
+        //The minimum time for a hitch is 150ms. 60000/150=400
+        if (this.fxServerHitches>400) this.fxServerHitches.shift();
     }
 
 
@@ -160,18 +168,40 @@ module.exports = class Monitor {
     async getHostStatus(){
         let giga = 1024 * 1024 * 1024;
 
-        let memFree = (os.freemem() / giga).toFixed(2);
-        let memTotal = (os.totalmem() / giga).toFixed(2);
-        let memUsage = (((memTotal-memFree) / memTotal)*100).toFixed(0);
-        let cpuStatus = this.cpuStatusProvider.getUsageStats();
+        try {
+            //processing host data
+            let memFree = (os.freemem() / giga).toFixed(2);
+            let memTotal = (os.totalmem() / giga).toFixed(2);
+            let memUsage = (((memTotal-memFree) / memTotal)*100).toFixed(0);
+            let cpuStatus = this.cpuStatusProvider.getUsageStats();
+    
+            //processing hitches
+            let now = (Date.now()/1000).toFixed();
+            let hitchTimeSum = 0;
+            this.fxServerHitches.forEach((hitch, key)=>{
+                if(now - hitch.ts < 60000){
+                    hitchTimeSum += hitch.hitchTime;
+                }else{
+                    delete(this.fxServerHitches[key]);
+                    process.stdout.write('.');
+                }
+            });
 
-        let out = {
-            children: await globals.fxRunner.getChildrenCount(),
-            hitches: null,
-            cpu: cpuStatus.last10 || cpuStatus.full,
-            memory: memUsage,
+            //returning output output
+            return {
+                children: await globals.fxRunner.getChildrenCount(),
+                hitches: hitchTimeSum,
+                cpu: cpuStatus.last10 || cpuStatus.full,
+                memory: memUsage,
+            }
+            
+        } catch (error) {
+            if(globals.config.verbose){
+                logError('Failed to execute getHostStatus()', context);
+                dir(error);
+            }
+            return false;
         }
-        return out;
     }
 
 

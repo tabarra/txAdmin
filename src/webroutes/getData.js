@@ -34,9 +34,19 @@ async function prepareServerStatus(){
 
     let dataHost = await globals.monitor.getHostStatus();
     let children = (typeof dataHost.children !== 'undefined' && dataHost.children)? dataHost.children : '--';
-    let hitches = (typeof dataHost.hitches !== 'undefined' && dataHost.hitches)? dataHost.children+'ms/min' : '--';
     let cpu = (typeof dataHost.cpu !== 'undefined' && dataHost.cpu)? dataHost.cpu+'%' : '--';
     let memory = (typeof dataHost.memory !== 'undefined' && dataHost.memory)? dataHost.memory+'%' : '--';
+
+    let hitches;
+    if(typeof dataHost.hitches === 'undefined' || typeof dataHost.hitches !== 'number'){
+        hitches = '--';
+    }else if(dataHost.hitches > 10000){
+        let secs = (dataHost.hitches/1000).toFixed();
+        let pct = ((secs/60)*100).toFixed();
+        hitches = `${secs}s/min (${pct}%)`;
+    }else{
+        hitches = dataHost.hitches+'ms/min';
+    }
 
     out += `<b>Child Processes:</b> ${children}\n`;
     out += `<b>Hitches:</b> ${hitches}\n`;
