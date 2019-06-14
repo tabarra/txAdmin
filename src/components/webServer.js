@@ -1,6 +1,4 @@
 //Requires
-const fs = require('fs');
-const path = require('path');
 const bcrypt = require('bcrypt');
 const httpServer  = require('http');
 const express = require('express');
@@ -8,9 +6,9 @@ const session = require('express-session');
 const rateLimit = require("express-rate-limit");
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const sqrl = require("squirrelly");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const Webroutes = require('../webroutes');
+const webUtils = require('../webroutes/webUtils');
+const webRoutes = require('../webroutes');
 const context = 'WebServer';
 
 module.exports = class WebServer {
@@ -55,7 +53,7 @@ module.exports = class WebServer {
     
     //================================================================
     async setupRoutes(){
-        //Default routes
+        //Auth routes
         this.app.get('/auth', async (req, res) => {
             let renderData = {
                 message: '',
@@ -67,7 +65,7 @@ module.exports = class WebServer {
                 req.session.destroy();
                 renderData.message = 'Logged Out';
             }
-            let html = await renderTemplate('login', renderData);
+            let html = webUtils.renderTemplate('login', renderData);
             res.send(html);
         });
         this.app.post('/auth', this.authLimiter, async (req, res) => {
@@ -85,7 +83,7 @@ module.exports = class WebServer {
             if(!admin){
                 logWarn(`Wrong password from: ${req.connection.remoteAddress}`, context);
                 renderData.message = 'Wrong Password!';
-                let html = await renderTemplate('login', renderData);
+                let html = webUtils.renderTemplate('login', renderData);
                 res.send(html);
                 return;
             }
@@ -94,31 +92,44 @@ module.exports = class WebServer {
             res.redirect('/');
         });
 
+        //Control routes
         this.app.get('/fxControls/:action', globals.authenticator.sessionCheckerAPI, async (req, res) => {
-            await Webroutes.fxControls(res, req).catch((err) => {
+            await webRoutes.fxControls(res, req).catch((err) => {
                 this.handleRouteError(res, "[fxControls] Route Internal Error", err);
             });
         });
         this.app.post('/fxCommands', globals.authenticator.sessionCheckerWeb, async (req, res) => {
-            await Webroutes.fxCommands(res, req).catch((err) => {
+            await webRoutes.fxCommands(res, req).catch((err) => {
                 this.handleRouteError(res, "[fxCommands] Route Internal Error", err);
             });
         });
+        this.app.get('/console', globals.authenticator.sessionCheckerWeb, (req, res) => {
+            res.sendFile(webUtils.getWebRootPath('console.html')); 
+        });
+
+        //Data routes
+        this.app.get('/getAdminLog', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+            await webRoutes.getAdminLog(res, req).catch((err) => {
+                this.handleRouteError(res, "[getAdminLog] Route Internal Error", err);
+            });
+        });
+        this.app.get('/getFullReport', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+            await webRoutes.getFullReport(res, req).catch((err) => {
+                this.handleRouteError(res, "[getFullReport] Route Internal Error", err);
+            });
+        });
         this.app.get('/getData', globals.authenticator.sessionCheckerAPI, async (req, res) => {
-            await Webroutes.getData(res, req).catch((err) => {
+            await webRoutes.getData(res, req).catch((err) => {
                 this.handleRouteError(res, "[getData] Route Internal Error", err);
             });
         });
         this.app.get('/checkVersion', async (req, res) => {
             res.send(globals.version);
         });
-        this.app.get('/console', globals.authenticator.sessionCheckerWeb, (req, res) => {
-            res.sendFile(getWebRootPath('console.html')); 
-        });
-
-        //index
+        
+        //Index
         this.app.get('/', globals.authenticator.sessionCheckerWeb, (req, res) => {
-            res.sendFile(getWebRootPath('index.html')); 
+            res.sendFile(webUtils.getWebRootPath('index.html')); 
         });
 
         //Catch all
@@ -137,17 +148,3 @@ module.exports = class WebServer {
     }
 
 } //Fim WebServer()
-
-
-
-//================================================================
-//FIXME: temporary functions
-function getWebRootPath(file){
-    return path.join(__dirname, '../../public/', file);
-}
-
-async function renderTemplate(view, data){
-    if(typeof data === 'undefined') data = {};
-    let rawTemplate = fs.readFileSync(getWebRootPath(view)+'.html', 'utf8');
-    return sqrl.Render(rawTemplate, data); 
-}

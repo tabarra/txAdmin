@@ -1,7 +1,5 @@
 //Requires
 const xss = require("xss");
-const prettyBytes = require('pretty-bytes');
-const prettyMs = require('pretty-ms');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'WebServer:getData';
 
@@ -15,8 +13,7 @@ module.exports = async function action(res, req) {
     res.send({
         meta: await prepareMeta(),
         status: await prepareServerStatus(),
-        players: await preparePlayers(),
-        log: await sendLog()
+        players: await preparePlayers()
     })
 };
 
@@ -68,13 +65,6 @@ function preparePlayers(){
     });
     out += '</pre>';
     return out;
-}
-
-
-//==============================================================
-async function sendLog(){
-    let log = await globals.logger.get();
-    return `<pre>${xss(log)}</pre>`;
 }
 
 

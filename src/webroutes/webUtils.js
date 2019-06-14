@@ -1,5 +1,8 @@
 //Requires
-const Sqrl = require("squirrelly");
+const fs = require('fs');
+const path = require('path');
+const xss = require("xss");
+const sqrl = require("squirrelly");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 
 /**
@@ -8,10 +11,39 @@ const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras
  * @param {object} res 
  * @param {string} msg 
  */
-function sendOutput(res, msg){
-    let html = Sqrl.renderFile('public/out.html', {msg: msg});
+function sendOutput(res, msg, options){
+    if(typeof options === 'undefined'){
+        options = {
+            escape: true,
+            center: true
+        }
+    }
+    if(typeof options.escape === 'undefined' || typeof options.escape !== 'boolean'){
+        options.escape = true;
+    }
+    if(typeof options.center === 'undefined' || typeof options.center !== 'boolean'){
+        options.center = true;
+    }
+    
+    let toRender = {
+        msg: (options.escape)? xss(msg) : msg,
+        center: (options.center)? 'text-center' : ''
+    }
+    let html = renderTemplate('out', toRender);
     return res.send(html);
 }
+
+function getWebRootPath(file){
+    return path.join(__dirname, '../../public/', file);
+}
+
+//FIXME: devia usar read fily async
+function renderTemplate(view, data){
+    if(typeof data === 'undefined') data = {};
+    let rawTemplate = fs.readFileSync(getWebRootPath(view)+'.html', 'utf8');
+    return sqrl.Render(rawTemplate, data); 
+}
+
 
 /**
  * Append data to the log file
@@ -25,5 +57,7 @@ function appendLog(req, data, context){
 
 module.exports = {
     sendOutput,
+    getWebRootPath,
+    renderTemplate,
     appendLog,
 }

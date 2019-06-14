@@ -36,7 +36,6 @@ module.exports = class Monitor {
         //Cron functions
         setInterval(() => {
             this.refreshServerStatus();
-            // this.getHostStatus(); //FIXME:
         }, this.config.interval);
         if(Array.isArray(this.config.restarter.schedule)){
             setInterval(() => {

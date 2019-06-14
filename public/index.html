@@ -26,11 +26,10 @@
     <div class="container">
         <div class="row">
             <div class="col-12 text-center">
-                <!-- Só altere o nome do servidor aqui -->
                 <h1>FXAdmin</h1>
-                <br>
             </div>
         </div>
+        <br>
         <div class="row justify-content-center">
             <!-- Cards principais -->
             <div class="col-xs-5">
@@ -94,20 +93,24 @@
             <div class="col-xs-5">
                 <div class="card border-info" style="width: 28rem; min-height: 165px">
                     <div class="card-body">
-                            <nav>
-                                <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                                    <a class="nav-item nav-link active" id="nav-players-tab" data-toggle="tab" href="#nav-players" role="tab" aria-controls="nav-players" aria-selected="true">Players</a>
-                                    <a class="nav-item nav-link" id="nav-log-tab" data-toggle="tab" href="#nav-log" role="tab" aria-controls="nav-log" aria-selected="false">ADM Log</a>
-                                </div>
-                            </nav>
-                            <div class="tab-content" id="nav-tabContent" style="padding-top: 25px;">
-                                <div class="tab-pane fade show active" id="nav-players" role="tabpanel" aria-labelledby="nav-players-tab">Loading...</div>
-                                <div class="tab-pane fade" id="nav-log" role="tabpanel" aria-labelledby="nav-log-tab">Loading...</div>
-                            </div>
+                        <div class="text-center">
+                            <h5>Playerlist:</h5>
+                        </div>
+                        <div id="playerlist">Loading...</div>
                     </div>
                 </div>
+
+                <br>
+                <div class="text-center">
+                        <div style="margin: 12px">
+                            <a href="/getFullReport" target="_blank" role="button" class="btn btn-outline-dark mx-auto">Full Status</a>
+                            <a href="/getAdminLog" target="_blank" role="button" class="btn btn-outline-dark mx-auto">Admin Log</a>
+                            <a href="/auth?logout" role="button" class="btn btn-outline-danger mx-auto">Logout</a>
+                        </div>
+                    </div>
             </div>
             <!-- Fim Card Secundário -->
+
             
         </div>
         <br>
@@ -172,8 +175,7 @@
                         return;
                     }
                     $("#card-status").html( data.status );
-                    $("#nav-players").html( data.players );
-                    $("#nav-log").html( data.log );
+                    $("#playerlist").html( data.players );
                     $("#favicon").attr("href", data.meta.favicon+".png");
                     document.title = data.meta.title;
                 },
@@ -185,8 +187,7 @@
                         out = `Request error: ${textstatus}\n<br>${message}`;
                     }
                     $("#card-status").html(out);
-                    $("#nav-players").html(out);
-                    $("#nav-log").html(out);
+                    $("#playerlist").html(out);
                     $("#favicon").attr("href","favicon_off.png");
                     document.title = 'ERROR - FXAdmin';
                 }

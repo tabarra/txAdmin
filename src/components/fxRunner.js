@@ -88,7 +88,7 @@ module.exports = class FXRunner {
         
         //Setting up stream handlers
         let hitchStreamProcessor = new StreamSnitch(
-            /hitch warning: frame time of (\d+) milliseconds/g,
+            /hitch warning: frame time of (\d{1,5}) milliseconds/g,
             (m) => {
                 try {
                     globals.monitor.processFXServerHitch(m[1])
@@ -97,7 +97,7 @@ module.exports = class FXRunner {
         );
         if(!this.config.quiet) this.fxChild.stdout.pipe(process.stdout);
         this.fxChild.stdout.pipe(hitchStreamProcessor);
-        //FIXME: might disable the stdin pipe when the live console is fully working
+        //NOTE: might disable the stdin pipe in the future, you should use the live console
         process.stdin.pipe(this.fxChild.stdin);
 
         //Setting up event handlers
