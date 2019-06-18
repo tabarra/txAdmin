@@ -208,6 +208,7 @@ module.exports = class FXRunner {
             await sleep(500);
         }
         this.killServer();
+        globals.monitor.clearFXServerHitches()
         await sleep(750);
         this.spawnServer();
     }

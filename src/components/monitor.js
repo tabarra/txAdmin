@@ -92,6 +92,12 @@ module.exports = class Monitor {
 
 
     //================================================================
+    clearFXServerHitches(){
+        this.fxServerHitches = [];
+    }
+
+
+    //================================================================
     /**
      * Refreshes the Server Status.
      */
@@ -179,11 +185,10 @@ module.exports = class Monitor {
             let now = (Date.now()/1000).toFixed();
             let hitchTimeSum = 0;
             this.fxServerHitches.forEach((hitch, key)=>{
-                if(now - hitch.ts < 60000){
+                if(now - hitch.ts < 60){
                     hitchTimeSum += hitch.hitchTime;
                 }else{
                     delete(this.fxServerHitches[key]);
-                    process.stdout.write('.');
                 }
             });
 
