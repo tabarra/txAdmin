@@ -1,5 +1,6 @@
 //Requires
 const fs = require('fs');
+const dateFormat = require('dateformat');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'Logger';
 
@@ -30,7 +31,7 @@ module.exports = class Logger {
      * @returns {boolean} success
      */
     async append(data){
-        let timestamp = new Date().toLocaleString();
+        let timestamp = dateFormat(new Date(), 'HH:MM:ss');
         try {
             return fs.appendFileSync(this.config.logPath, `[${timestamp}]${data}\n`, 'utf8');
         } catch (error) {

@@ -4,6 +4,7 @@ const sharedsession = require("express-socket.io-session");
 const xss = require("xss");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'webConsole';
+const contextSocket = 'webConsole:SocketIO';
 
 module.exports = class webConsole {
     constructor(config) {
@@ -25,14 +26,14 @@ module.exports = class webConsole {
         this.io.use(sharedsession(globals.webServer.session));
         this.io.use(globals.authenticator.sessionCheckerSocket);
         this.io.on('connection', (socket) => {
-            log(`[SOCKET.IO] Connected: ${socket.id}`, context);
+            log(`Connected: ${socket.id}`, contextSocket);
             socket.on('disconnect', (reason) => {
-                log(`[SOCKET.IO] Client disconnected with reason: ${reason}`, context);
+                log(`Client disconnected with reason: ${reason}`, contextSocket);
             });
-            socket.on('evntMessage', (msg) => {
-                log(`[SOCKET.IO] Message '${msg}' from '${socket.id}'`);
-                this.runCFXCommand(msg);
+            socket.on('error', (error) => {
+                log(`Socket error with message: ${error.message}`, contextSocket);
             });
+            socket.on('evntMessage', this.handleSocketMessages.bind(this, socket));
         });
     }
 
@@ -54,13 +55,14 @@ module.exports = class webConsole {
 
     //================================================================
     /**
+     * Handle incoming messages.
      * Sends a command received to fxChild's stdin, logs it and broadcast the command to all other socket.io clients
      * @param {string} cmd 
      */
-    runCFXCommand(cmd){
-        //FIXME: add real authentication
-        globals.logger.append(`[CONSOLE] ${cmd}`);
-        globals.fxRunner.srvCmd(cmd);
+    handleSocketMessages(socket, msg){
+        log(`Executing: '${msg}'`, contextSocket);
+        globals.fxRunner.srvCmd(msg);
+        globals.logger.append(`[${socket.handshake.address}][${socket.handshake.session.admin}] ${msg}`);
     }
 
 } //Fim webConsole()
