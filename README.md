@@ -12,9 +12,9 @@
 	<p align="center">
 		<b>
 		Important Notice (14/jun/2019): <br>
-		Due to a recent change in FiveM's ToS we MUST change this project name.<br>
+		Due to a recent change in FiveM's ToS we had to rename this project to txAdmin.<br>
 		Join our Discord Server for more information.<br>
-		This repository will be archived soon.
+		This repository will be renamed soon.
 		</b>
 	</p>
 </p>

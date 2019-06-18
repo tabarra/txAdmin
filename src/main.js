@@ -132,6 +132,8 @@ class FXAdmin {
             }
         } catch (error) {
             logError(`Error checking the current vs remote version. Go to the github repository to see if you need to update.`, 'UpdateChecker');
+            globals.version.latest = 'PLEASE-UPDATE';
+            globals.version.changelog = 'Error checking the latest version, probably an update is required. <br> Check out our <a href="https://discord.gg/f3TsfvD" target="_blank">Discord Server</a> for more information';
         }
     }  
 }
