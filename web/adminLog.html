@@ -1,0 +1,28 @@
+{{include("header")/}}
+
+
+<style>
+    .admin-log-content{
+        height: calc(100vh - 251px);
+    }
+</style>
+
+
+<div class="text-center">
+    <h3>Admin Log</h3>
+</div>
+<div class="card border-primary">
+    <div class="card-body">
+        <pre id="console" class="pre-scroll admin-log-content">{{log}}</pre>
+    </div>
+</div>
+
+
+{{include("footer")/}}
+
+
+<script>
+$(document).ready(function () {
+    $("#console").scrollTop($("#console")[0].scrollHeight);
+});
+</script>

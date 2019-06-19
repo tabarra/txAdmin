@@ -1,0 +1,176 @@
+{{include("header")/}}
+
+
+<div class="text-center mb-4">
+    <h2>Server Dashboard</h2>
+</div>
+
+<div class="row justify-content-md-center">
+    <div class="col-lg-8 col-xl-4">
+
+        <!-- FXServer Control Card -->
+        <div class="card card-accent-danger" style="min-height: 160px;">
+            <div class="card-header font-weight-bold">FXServer Control:</div>
+            <div class="card-body text-center align-middle">
+                <button onclick="controlAction('start')" type="button" class="btn btn-outline-danger btn-lg mx-auto m-3"
+                    id="ctrl-start">START</button> &nbsp;
+                <button onclick="controlAction('restart')" type="button"
+                    class="btn btn-outline-danger btn-lg mx-auto m-3" id="ctrl-restart">RESTART</button> &nbsp;
+                <button onclick="controlAction('stop')" type="button" class="btn btn-outline-danger btn-lg mx-auto m-3"
+                    id="ctrl-stop">STOP</button>
+            </div>
+        </div>
+
+        <!-- Commands Card -->
+        <div class="card card-accent-danger">
+            <div class="card-header font-weight-bold">Commands:</div>
+            <form action="/fxCommands" method="post">
+                <div class="card-body">
+                    <div class="form-group row">
+                        <label for="action" class="col-sm-4 col-form-label">Command</label>
+                        <div class="col-sm-8">
+                            <select name="action" id="frm_action" class="form-control" required>
+                                <option value="" disabled selected>&gt; SELECT</option>
+                                <option value="admin_say">Admin Message</option>
+                                <option value="restart_res">Restart script</option>
+                                <option value="start_res">Start script</option>
+                                <option value="stop_res">Stop script</option>
+                                <option value="refresh_res">Refresh scripts</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="action" class="col-sm-4 col-form-label">Parameter</label>
+                        <div class="col-sm-8">
+                            <input type="text" name="parameter" id="frm_parameter" class="form-control" placeholder=""
+                                readonly required>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <button type="submit" class="btn btn-outline-secondary mx-auto">EXECUTE</button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+    <!-- /.col-->
+
+
+    <div class="col-lg-8 col-xl-4">
+
+        <!-- Card Chart-->
+        <div class="card text-white bg-primary">
+            <div class="card-body pb-0">
+                <div class="text-value">9.823</div>
+                <div>Players last 24h</div>
+            </div>
+            <div class="chart-wrapper mt-3 mx-3" style="height:70px;">
+                <div class="chartjs-size-monitor">
+                    <div class="chartjs-size-monitor-expand">
+                        <div class=""></div>
+                    </div>
+                    <div class="chartjs-size-monitor-shrink">
+                        <div class=""></div>
+                    </div>
+                </div>
+                <canvas class="chart chartjs-render-monitor" id="card-chart1" height="70"
+                    style="display: block; width: 355px; height: 70px;" width="355"></canvas>
+                <div id="card-chart1-tooltip" class="chartjs-tooltip top"
+                    style="opacity: 0; left: 194.39px; top: 93.2407px;">
+                    <div class="tooltip-header">
+                        <div class="tooltip-header-item">April</div>
+                    </div>
+                    <div class="tooltip-body">
+                        <div class="tooltip-body-item">
+                            <span class="tooltip-body-item-color" style="background-color: rgb(0, 165, 224);"></span>
+                            <span class="tooltip-body-item-label">My First dataset</span>
+                            <span class="tooltip-body-item-value">84</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card Info -->
+        <div class="card card-accent-primary" style="height:251px;">
+            <div class="card-header font-weight-bold">Info:</div>
+            <div class="card-body">
+                <strong>Status: <span class="badge badge-success">ONLINE</span> </strong><br>
+                <strong>Players:</strong> 18<br>
+                <hr>
+                <strong>Child Processes:</strong> 2<br>
+                <strong>Hitch Time:</strong> 1475ms/min (3%)<br>
+            </div>
+        </div>
+        <!-- / Card Info -->
+
+    </div>
+</div>
+
+
+{{include("footer")/}}
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+<script src="js/custom-tooltips.min.js"></script>
+<script>
+    // Disable the on-canvas tooltip
+    Chart.defaults.global.pointHitDetectionRadius = 1;
+    Chart.defaults.global.tooltips.enabled = false;
+    Chart.defaults.global.tooltips.mode = 'index';
+    Chart.defaults.global.tooltips.position = 'nearest';
+    Chart.defaults.global.tooltips.intersect = false;
+    Chart.defaults.global.tooltips.custom = CustomTooltips;
+
+    var cardChart1 = new Chart($('#card-chart1'), {
+        type: 'line',
+        data: {
+            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'January', 'February', 'March', 'April', 'May', 'June', 'July'],
+            datasets: [{
+                label: 'players',
+                backgroundColor: getStyle('--primary'),
+                borderColor: 'rgba(255,255,255,0.55)',
+                fill: false,
+                data: [65, 59, 84, 84, 51, 55, 40, 65, 59, 84, 84, 51, 55, 40]
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            legend: {
+                display: false
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    gridLines: {
+                        color: 'transparent',
+                        zeroLineColor: 'transparent'
+                    },
+                    ticks: {
+                        fontSize: 2,
+                        fontColor: 'transparent'
+                    }
+                }],
+                yAxes: [{
+                    display: false,
+                    ticks: {
+                        display: false,
+                        suggestedMin: 0,
+                        suggestedMax: 32
+                    }
+                }]
+            },
+            elements: {
+                line: {
+                    borderWidth: 2
+                },
+                point: {
+                    radius: 4,
+                    hitRadius: 10,
+                    hoverRadius: 8
+                }
+            }
+        }
+    });
+</script>

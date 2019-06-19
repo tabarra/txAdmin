@@ -1,0 +1,98 @@
+{{include("header")/}}
+
+<div class="text-center mb-4">
+    <h2>Full Status Report</h2>
+</div>
+
+
+<div class="row justify-content-md-center">
+    <div class="col-md-4 ">
+        <div class="alert alert-secondary text-center" role="alert">
+            {{message|safe}}
+        </div>
+    </div>
+</div>
+
+
+<div class="row justify-content-md-center">
+    <div class="col-lg-8 col-xl-5">
+
+        <!-- Host Machine Card -->
+        <div class="card card-accent-danger" style="min-height: 160px;">
+            <div class="card-header font-weight-bold">Host Machine:</div>
+            <div class="card-body">
+                {{if(options.host.error !== false)}}
+                    {{host.error|safe}}
+                {{#else}}
+                    <strong>OS Type:</strong> {{host.osType}} <br>
+                    <strong>OS Release:</strong> {{host.osRelease}} <br>
+                    <strong>Username:</strong> {{host.username}} <br>
+                    <strong>Host CPUs:</strong> {{host.cpus}} <br>
+                    <strong>Host Memory:</strong> {{host.memory}}
+                {{/if}}
+            </div>
+        </div>
+
+        <!-- txAdmin Config Card -->
+        <div class="card card-accent-danger" style="min-height: 160px;">
+            <div class="card-header font-weight-bold">txAdmin Config:</div>
+            <div class="card-body">
+                <h5>monitor:</h5>
+                <strong>timeout:</strong> <code>{{config.timeout}}</code> <br>
+                <strong>restarter.failures:</strong> <code>{{config.failures}}</code> <br>
+                <strong>restarter.schedule:</strong> <code>{{config.schedule}}</code> <br>
+                <hr>
+                <h5>fxRunner:</h5>
+                <strong>buildPath:</strong> <code>{{config.buildPath}}</code> <br>
+                <strong>basePath:</strong> <code>{{config.basePath}}</code><br>
+                <strong>cfgPath:</strong> <code>{{config.cfgPath}}</code>
+            </div>
+        </div>
+
+    </div>
+    <!-- /.col-->
+
+
+    <div class="col-lg-8 col-xl-5">
+
+        <!-- FXServer Info Card -->
+        <div class="card card-accent-info" style="min-height: 160px;">
+            <div class="card-header font-weight-bold">FXServer Info:</div>
+            <div class="card-body">
+                {{if(options.fxserver.error !== false)}}
+                    {{fxserver.error|safe}}
+                {{#else}}
+                    <strong>Status: <span class="badge badge-{{fxserver.statusColor}}">{{fxserver.status}}</span>
+                    </strong><br>
+                    <strong>Version:</strong> {{fxserver.version}} <br>
+                    <strong>Resources:</strong> {{fxserver.resources}} <br>
+                    <strong>OneSync:</strong> {{fxserver.onesync}} <br>
+                    <strong>Max Clients:</strong> {{fxserver.maxClients}} <br>
+                    <strong>Tags:</strong> <code>{{fxserver.tags}}</code>
+                {{/if}}
+            </div>
+        </div>
+
+        <!-- Proccesses Card -->
+        <div class="card card-accent-info">
+            <div class="card-header font-weight-bold">Proccesses:</div>
+            <div class="card-body">
+                {{if(!options.proccesses.length)}}
+                    Failed to retrieve proccesses data. <br>
+                    Check the terminal for more information (if verbosity is enabled)
+                {{#else}}
+                    {{foreach(options.proccesses)}}
+                    <strong>Process:</strong> {{@this.name}} <br>
+                    <strong>Memory:</strong> {{@this.memory}} <br>
+                    <strong>CPU:</strong> {{@this.cpu}} <br>
+                    <br>
+                    {{/foreach}}
+                {{/if}}
+            </div>
+        </div>
+
+    </div>
+    <!-- /.col-->
+</div>
+
+{{include("footer")/}}
