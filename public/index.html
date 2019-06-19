@@ -13,14 +13,14 @@
     <link rel="stylesheet" href="/style.css">
     <!-- Favicon made by Freepik from www.flaticon.com is licensed by CC 3.0 BY -->
     <link rel="shortcut icon" type="image/png" href="favicon_default.png" id="favicon"/>
-    <title>FXAdmin</title>
+    <title>txAdmin</title>
     <style>
         .flag{
             margin-top: -2px;
             height: 20px;
         }
         .notice{
-            font-weight: 700;
+            font-weight: 500;
             font-size: 80%;
         }
     </style>
@@ -30,11 +30,10 @@
     <div class="container">
         <div class="row">
             <div class="col-12 text-center">
-                <h1>txAdmin*</h1>
+                <h1><span class="text-secondary">tx</span>Admin</h1>
                 <div class="notice">
-                    <span class="text-danger">Important Notice:</span> Due to a recent change in FiveM's ToS we had to rename to txAdmin.<br>
-                    Join our <a href="https://discord.gg/f3TsfvD" target="_blank">Discord Server</a> for more information.<br>
-                    This will be the last release under this name.
+                    <span class="text-danger">Notice:</span> Due to a recent change in FiveM's ToS we had to rename to txAdmin.<br>
+                    Join our <a href="https://discord.gg/f3TsfvD" target="_blank">Discord Server</a> for more information.
                 </div>  
             </div>
         </div>
@@ -52,7 +51,7 @@
                             <a href="#" onclick="controlAction('restart')" role="button" class="btn btn-outline-danger mx-auto" id="ctrl-restart">RESTART</a>
                             <a href="#" onclick="controlAction('stop')" role="button" class="btn btn-outline-danger mx-auto" id="ctrl-stop">STOP</a>
                         </div>
-                        <a href="/console" target="_blank" role="button" class="btn btn-outline-dark mx-auto">Open Console</a>
+                        <a href="/console" role="button" class="btn btn-outline-dark mx-auto">Open Console</a>
                     </div>
                 </div>
                 <br>
@@ -198,7 +197,7 @@
                     $("#card-status").html(out);
                     $("#playerlist").html(out);
                     $("#favicon").attr("href","favicon_off.png");
-                    document.title = 'ERROR - FXAdmin';
+                    document.title = 'ERROR - txAdmin';
                 }
             });
         };
@@ -208,7 +207,7 @@
                 if(data.current !== data.latest){
                     $("#bottom-links").hide();
                     let out = `<small><strong>\n`;
-                    out += `<a href="https://github.com/tabarra/txAdmin">Update available for FXAdmin (v${data.current} > v${data.latest})!</a>\n`;
+                    out += `<a href="https://github.com/tabarra/txAdmin">Update available for txAdmin (v${data.current} > v${data.latest})!</a>\n`;
                     out += `</strong> <br/> \n`;
                     out += `${data.changelog}</small>\n`;
                     $("#update-me").html(out);
