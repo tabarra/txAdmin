@@ -1,5 +1,5 @@
 ### Cache Wiping  
-This feature was requested many times and in the end we decided against putting it into FXAdmin for the following reasons:
+This feature was requested many times and in the end we decided against putting it into txAdmin for the following reasons:
 - Its just not necessary with the newest builds of FiveM anymore.
 - It can be dangerous considering that not configuring it correctly might end up recursively wiping out important files.  
 
