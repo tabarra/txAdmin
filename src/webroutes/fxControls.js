@@ -19,7 +19,7 @@ module.exports = async function action(res, req) {
 
     if(action == 'restart'){
         webUtils.appendLog(req, `RESTART SERVER`, context);
-        await globals.fxRunner.restartServer('via FXAdmin Web Panel');
+        await globals.fxRunner.restartServer('via txAdmin Web Panel');
         res.send({status: 'ok'});
         return;
 

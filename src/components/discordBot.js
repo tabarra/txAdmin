@@ -76,10 +76,10 @@ module.exports = class DiscordBot {
             out.setColor(color);
             out.setDescription(desc); 
 
-        }else if(message.content.startsWith('/fxadmin')){
+        }else if(message.content.startsWith('/fxadmin') || message.content.startsWith('/txadmin')){
             //Prepare object
             out = new Discord.RichEmbed();
-            out.setTitle(`${globals.config.serverName} uses FXAdmin v${globals.version.current}!`);
+            out.setTitle(`${globals.config.serverName} uses txAdmin v${globals.version.current}!`);
             out.setColor(0x4DEEEA);
             out.setDescription(`Checkout the project:\n Forum: https://forum.fivem.net/t/530475\n Discord: https://discord.gg/f3TsfvD`); 
 

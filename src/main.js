@@ -21,16 +21,16 @@ globals = {
 }
 
 //==============================================================
-class FXAdmin {
+class txAdmin {
     constructor(){
         //Print MOTD
         const figlet = require('figlet');
-        let ascii = figlet.textSync('FXAdmin');
+        let ascii = figlet.textSync('txAdmin');
         let separator = '='.repeat(46);
         let motd = `${separator}\n${ascii}\n${separator}`;
         cleanTerminal();
         console.log(motd);
-        log(">>Starting FXAdmin");
+        log(">>Starting txAdmin");
 
         //Prepare settings
         let localConfig = require('./extras/config');
@@ -128,7 +128,7 @@ class FXAdmin {
             globals.version.latest = rVer.version;
             globals.version.changelog = rVer.changelog;
             if(globals.version.current !== rVer.version){
-                logWarn(`A new version (v${rVer.version}) is available for FXAdmin - https://github.com/tabarra/txAdmin`, 'UpdateChecker');
+                logWarn(`A new version (v${rVer.version}) is available for txAdmin - https://github.com/tabarra/txAdmin`, 'UpdateChecker');
             }
         } catch (error) {
             logError(`Error checking the current vs remote version. Go to the github repository to see if you need to update.`, 'UpdateChecker');
@@ -156,8 +156,8 @@ process.on('unhandledRejection', (err) => {
     logError(err.stack)
 });
 process.on('exit', (code) => {
-    log(">>Stopping FXAdmin");
+    log(">>Stopping txAdmin");
 });
 
 //==============================================================
-const server = new FXAdmin();
+const server = new txAdmin();

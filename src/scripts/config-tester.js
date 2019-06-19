@@ -23,7 +23,7 @@ printDivider();
 
 //Check  argv
 if(!process.argv[2]){
-    logError('Server config file not set. You must start FXAdmin with the command "npm start example.json", with "example.json" being the name of the file containing your FXAdmin server configuration inside the data folder. This file should be based on the server-template.json file.', context);
+    logError('Server config file not set. You must start txAdmin with the command "npm start example.json", with "example.json" being the name of the file containing your txAdmin server configuration inside the data folder. This file should be based on the server-template.json file.', context);
     process.exit(0);
 }
 

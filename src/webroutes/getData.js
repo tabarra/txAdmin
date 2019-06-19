@@ -83,6 +83,6 @@ async function prepareMeta(){
     let dataServer = globals.monitor.statusServer; //shorthand much!?
     return {
         favicon: (dataServer.online)? 'favicon_on' : 'favicon_off',
-        title: (dataServer.online)? `(${dataServer.players.length}) FXAdmin` : 'FXAdmin'
+        title: (dataServer.online)? `(${dataServer.players.length}) txAdmin` : 'txAdmin'
     };
 }

@@ -78,7 +78,7 @@ async function getProcessesData(){
             let procName;
             let order;
             if(pid == process.pid){
-                procName = 'FXAdmin';
+                procName = 'txAdmin';
                 order = 0;
 
             }else if(pid == termPID){

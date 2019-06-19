@@ -1,5 +1,5 @@
 const chalk = require('chalk');
-const header = 'FXAdmin';
+const header = 'txAdmin';
 
 
 //================================================================

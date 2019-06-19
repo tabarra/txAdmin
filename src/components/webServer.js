@@ -15,7 +15,7 @@ module.exports = class WebServer {
     constructor(config) {
         this.config = config;
         this.session = session({
-            secret: 'fxAdmin'+bcrypt.genSaltSync(),
+            secret: 'txAdmin'+bcrypt.genSaltSync(),
             resave: false,
             saveUninitialized: false
         });
