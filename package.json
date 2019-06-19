@@ -1,6 +1,6 @@
 {
-  "name": "txAdmin",
-  "version": "0-check-version.json",
+  "name": "txadmin",
+  "version": "0.0.0-check-version.json",
   "description": "FiveM FXServer Admin - remotely manage your GTA5 FiveM Server",
   "main": "src/main.js",
   "scripts": {
