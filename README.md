@@ -48,8 +48,8 @@ First, make sure you have:
 
 **1 -** To **INSTALL** FXAdmin execute:
 ```bash
-$ git clone https://github.com/tabarra/fivem-fxadmin
-$ cd fivem-fxadmin
+$ git clone https://github.com/tabarra/txAdmin
+$ cd txAdmin
 $ npm i
 ```
 
@@ -115,5 +115,5 @@ TODO Ideas...
 The old TODO can be found [here](docs/old_todo.md). 
 
 ## License & Credits
-- This project is licensed under the [MIT License](https://github.com/tabarra/fivem-fxadmin/blob/master/LICENSE).
+- This project is licensed under the [MIT License](https://github.com/tabarra/txAdmin/blob/master/LICENSE).
 - Favicons made by Freepik from [www.flaticon.com](www.flaticon.com) are licensed under [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)

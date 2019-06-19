@@ -122,13 +122,13 @@ class FXAdmin {
         const axios = require("axios");
 
         try {
-            let rVer = await axios.get('https://raw.githubusercontent.com/tabarra/fivem-fxadmin/master/version.json');
+            let rVer = await axios.get('https://raw.githubusercontent.com/tabarra/txAdmin/master/version.json');
             rVer = rVer.data;
             if(typeof rVer.version !== 'string' || typeof rVer.changelog !== 'string') throw new Error('Invalid remote version.json file');
             globals.version.latest = rVer.version;
             globals.version.changelog = rVer.changelog;
             if(globals.version.current !== rVer.version){
-                logWarn(`A new version (v${rVer.version}) is available for FXAdmin - https://github.com/tabarra/fivem-fxadmin`, 'UpdateChecker');
+                logWarn(`A new version (v${rVer.version}) is available for FXAdmin - https://github.com/tabarra/txAdmin`, 'UpdateChecker');
             }
         } catch (error) {
             logError(`Error checking the current vs remote version. Go to the github repository to see if you need to update.`, 'UpdateChecker');
