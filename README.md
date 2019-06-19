@@ -81,6 +81,26 @@ $ npm i
 Make sure there's no differences in the json templates. If there is, copy the new template and edit again.  
 If you have any problems with the `package-lock.json`, just delete it and try again.  
 
+
+## Interface Rework Progress:
+- [x] make 80% of all pages html/css (in php)
+- [x] remake webUtils templating
+- [x] port all pages to node
+- [x] Complete full status page
+- [x] Complete admin log page
+- [x] Complete live console page
+- [ ] Fix login page + add username
+- [ ] Clean webUtils
+- [ ] Adapt getStatus endpoint and integrate
+- [ ] Make dashboard funcionalities work
+- [ ] Player modal endpoints
+- [ ] Execute cmd buffer modal
+- [ ] Server restart/stop confirm modal with option to kickall
+- [ ] Update available notice box (and move the checkUpdates method)
+- [ ] Make player history chart work
+
+
+
 ## TODO:
 - [ ] Add custom commands to the config file
 - [ ] Config tester check for the modules inside `package.json` (require.resolve?)

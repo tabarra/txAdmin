@@ -1,11 +1,14 @@
 //Requires
 const os = require('os');
+const axios = require("axios");
 const prettyBytes = require('pretty-bytes');
-const prettyMs = require('pretty-ms');
 const pidusageTree = require('pidusage-tree');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('./webUtils.js');
+const Cache = require('../extras/dataCache');
 const context = 'WebServer:getFullReport';
+
+let cache = new Cache(10);
 
 
 /**
@@ -14,43 +17,44 @@ const context = 'WebServer:getFullReport';
  * @param {object} req
  */
 module.exports = async function action(res, req) {
-    let timeStart = new Date();
-    let out = '';
-    let cpus;
-    try {
-        let giga = 1024 * 1024 * 1024;
-        let memFree = (os.freemem() / giga).toFixed(2);
-        let memTotal = (os.totalmem() / giga).toFixed(2);
-        let memUsage = (((memTotal-memFree) / memTotal)*100).toFixed(0);
-        let userInfo = os.userInfo()
-        cpus = os.cpus();
-    
-        out += `<b>OS Type:</b> ${os.type()} (${os.platform()})\n`;
-        out += `<b>OS Release:</b> ${os.release()}\n`;
-        out += `<b>Username:</b> ${userInfo.username}\n`;
-        out += `<b>Host CPUs:</b> ${cpus.length}x ${cpus[0].speed} MHz\n`;
-        out += `<b>Host Memory:</b> ${memUsage}% (${memFree}/${memTotal} GB)\n`
-        out += '\n<hr>';
-    } catch (error) {
-        logError('Error getting Host data', context);
-        if(globals.config.verbose) dir(error);
-        out += `Failed to retrieve host data. Check the terminal for more information (if verbosity is enabled)\n<hr>`;
+    let cacheData = cache.get();
+    if(cacheData !== false){
+        cacheData.message = 'This page was cached in the last 10 seconds';
+        let out = await webUtils.renderMasterView('fullReport', cacheData);
+        return res.send(out);
     }
 
 
-    let procList = await getProcessesData();
-    procList.forEach(proc => {
-        let relativeCPU = (proc.cpu/cpus.length).toFixed(2);
-        out += `<b>Process:</b> ${proc.name}\n`;
-        // out += `<b>PID:</b> ${proc.pid}\n`;
-        out += `<b>Memory:</b> ${prettyBytes(proc.memory)}\n`;
-        out += `<b>CPU:</b> ${relativeCPU}%\n`;
-        out += '\n';
-    });
+    let timeStart = new Date();
+    let data = {
+        headerTitle: 'Full Report',
+        message: '',
+        host: {},
+        fxserver: {},
+        proccesses: [],
+        config: {
+            timeout: globals.monitor.config.timeout,
+            failures: globals.monitor.config.restarter.failures,
+            schedule: globals.monitor.config.restarter.schedule.join(', '),
+            buildPath: globals.fxRunner.config.buildPath,
+            basePath: globals.fxRunner.config.basePath,
+            cfgPath: globals.fxRunner.config.cfgPath,
+        }
+    };
 
+    [data.host, data.proccesses, data.fxserver] = await Promise.all([
+        getHostData(),
+        getProcessesData(),
+        getFXServerData()
+    ]);
+    
+    
     let timeElapsed = new Date() - timeStart;
-    out += `\nExecuted in ${timeElapsed} ms`;
-    return webUtils.sendOutput(res, out, {escape: false, center:false});
+    data.message = `Executed in ${timeElapsed} ms`;
+    
+    cache.set(data);
+    let out = await webUtils.renderMasterView('fullReport', data);
+    return res.send(out);
 };
 
 
@@ -61,6 +65,7 @@ module.exports = async function action(res, req) {
 async function getProcessesData(){
     let procList = [];
     try {
+        let cpus = os.cpus();
         var processes = await pidusageTree(process.pid);
 
         let termPID = Object.keys(processes).find((pid) => { return processes[pid].ppid == process.pid});
@@ -101,8 +106,8 @@ async function getProcessesData(){
             procList.push({
                 pid: pid,
                 name: procName,
-                cpu: curr.cpu,
-                memory: curr.memory,
+                cpu: (curr.cpu/cpus.length).toFixed(2) + '%',
+                memory: prettyBytes(curr.memory),
                 order: order
             });
         });
@@ -123,5 +128,74 @@ async function getProcessesData(){
         return 0;
     })
 
+
     return procList;
+}
+
+
+//================================================================
+/**
+ * Gets the FXServer Data.
+ */
+async function getFXServerData(){
+    let requestOptions = {
+        xurl: `http://localhost:${globals.config.fxServerPort}/info.json`,
+        url: 'http://wpg.gg:30120/info.json',
+        method: 'get',
+        responseType: 'json',
+        responseEncoding: 'utf8',
+        maxRedirects: 0,
+        timeout: globals.monitor.config.timeout
+    }
+
+    let fxData = {};
+    try {
+        let res = await axios(requestOptions);
+        let data = res.data;
+
+        fxData.statusColor = 'success';
+        fxData.status = 'ONLINE';
+        fxData.version = data.server;
+        fxData.resources = data.resources.length;
+        fxData.onesync = (data.vars && data.vars.onesync_enabled)? 'enabled' : 'disabled';
+        fxData.maxClients = (data.vars && data.vars.sv_maxClients)? data.vars.sv_maxClients : '--';
+        fxData.tags = (data.vars && data.vars.tags)? data.vars.tags : '--';
+        fxData.error = false;
+    } catch (error) {
+        logError('Error getting FXServer data', context);
+        if(globals.config.verbose) dir(error);
+        fxData.error = `Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)`;
+    }
+
+    return fxData;
+}
+
+
+//================================================================
+/**
+ * Gets the Host Data.
+ */
+async function getHostData(){
+    let hostData = {};
+    try {
+        let giga = 1024 * 1024 * 1024;
+        let memFree = (os.freemem() / giga).toFixed(2);
+        let memTotal = (os.totalmem() / giga).toFixed(2);
+        let memUsage = (((memTotal-memFree) / memTotal)*100).toFixed(0);
+        let userInfo = os.userInfo()
+        let cpus = os.cpus();
+
+        hostData.osType = `${os.type()} (${os.platform()})`;
+        hostData.osRelease = `${os.release()}`;
+        hostData.username = `${userInfo.username}`;
+        hostData.cpus = `${cpus.length}x ${cpus[0].speed} MHz`;
+        hostData.memory = `${memUsage}% (${memFree}/${memTotal} GB)`;
+        hostData.error  = false;
+    } catch (error) {
+        logError('Error getting Host data', context);
+        if(globals.config.verbose) dir(error);
+        hostData.error = `Failed to retrieve host data. <br>Check the terminal for more information (if verbosity is enabled)`;
+    }
+
+    return hostData;
 }

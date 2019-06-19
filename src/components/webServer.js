@@ -30,7 +30,7 @@ module.exports = class WebServer {
         this.app.use(this.session);
         this.app.use(bodyParser.json());
         this.app.use(express.urlencoded({extended: true}))
-        this.app.use(express.static('public', {index: false}))
+        this.app.use(express.static('web/public', {index: false}))
         this.setupRoutes()
         this.httpServer = httpServer.createServer(this.app);
         this.httpServer.on('error', (error)=>{
@@ -90,46 +90,50 @@ module.exports = class WebServer {
             req.session.password = req.body.password;
             log(`Admin ${admin} logged in from ${req.connection.remoteAddress}`, context);
             res.redirect('/');
-        });
+        });//TODO:
 
         //Control routes
         this.app.get('/fxControls/:action', globals.authenticator.sessionCheckerAPI, async (req, res) => {
             await webRoutes.fxControls(res, req).catch((err) => {
                 this.handleRouteError(res, "[fxControls] Route Internal Error", err);
-            });
+            });//TODO:
         });
         this.app.post('/fxCommands', globals.authenticator.sessionCheckerWeb, async (req, res) => {
             await webRoutes.fxCommands(res, req).catch((err) => {
                 this.handleRouteError(res, "[fxCommands] Route Internal Error", err);
-            });
+            });//TODO:
         });
-        this.app.get('/console', globals.authenticator.sessionCheckerWeb, (req, res) => {
-            res.sendFile(webUtils.getWebRootPath('console.html')); 
+        this.app.get('/console', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+            await webRoutes.getConsole(res, req).catch((err) => {
+                this.handleRouteError(res, "[getConsole] Route Internal Error", err);
+            });//DONE:
         });
 
         //Data routes
-        this.app.get('/getAdminLog', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+        this.app.get('/adminLog', globals.authenticator.sessionCheckerWeb, async (req, res) => {
             await webRoutes.getAdminLog(res, req).catch((err) => {
                 this.handleRouteError(res, "[getAdminLog] Route Internal Error", err);
-            });
+            });//DONE:
         });
-        this.app.get('/getFullReport', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+        this.app.get('/fullReport', globals.authenticator.sessionCheckerWeb, async (req, res) => {
             await webRoutes.getFullReport(res, req).catch((err) => {
                 this.handleRouteError(res, "[getFullReport] Route Internal Error", err);
-            });
+            });//DONE:
         });
         this.app.get('/getData', globals.authenticator.sessionCheckerAPI, async (req, res) => {
             await webRoutes.getData(res, req).catch((err) => {
                 this.handleRouteError(res, "[getData] Route Internal Error", err);
-            });
+            });//TODO:
         });
         this.app.get('/checkVersion', async (req, res) => {
             res.send(globals.version);
         });
         
         //Index
-        this.app.get('/', globals.authenticator.sessionCheckerWeb, (req, res) => {
-            res.sendFile(webUtils.getWebRootPath('index.html')); 
+        this.app.get('/', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+            await webRoutes.getDashboard(res, req).catch((err) => {
+                this.handleRouteError(res, "[getDashboard] Route Internal Error", err);
+            });//TODO:
         });
 
         //Catch all

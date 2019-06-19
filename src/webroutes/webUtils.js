@@ -2,8 +2,54 @@
 const fs = require('fs');
 const path = require('path');
 const xss = require("xss");
+const util = require('util');
 const sqrl = require("squirrelly");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const readFileAsync = util.promisify(fs.readFile);
+
+
+//TODO: Error handling
+async function renderMasterView(view, data){
+    if(typeof data === 'undefined') data = {};
+    data.headerTitle = (typeof data.headerTitle !== 'undefined')? `${data.headerTitle} - txAdmin` : 'txAdmin';
+
+    const [rawHeader, rawFooter, rawView] = await Promise.all([
+        readFileAsync(getWebViewPath('header'), 'utf8'),
+        readFileAsync(getWebViewPath('footer'), 'utf8'),
+        readFileAsync(getWebViewPath(view), 'utf8')
+    ]);
+    sqrl.definePartial("header", rawHeader);
+    sqrl.definePartial("footer", rawFooter);
+
+    return sqrl.Render(rawView, data);
+}
+
+function getWebViewPath(file){
+    return path.join(__dirname, '../../web/', file+'.html');
+}
+
+
+/**
+ * Append data to the log file
+ * @param {object} req 
+ * @param {string} data 
+ */
+function appendLog(req, data, context){
+    log(`Executing ${data}`, context);
+    globals.logger.append(`[${req.connection.remoteAddress}][${req.session.admin}] ${data}`);
+}
+
+
+
+
+
+
+
+//HACK deprecar daqui pra baixo
+function getWebRootPath(file){
+    return path.join(__dirname, '../../public/', file);
+}
+
 
 /**
  * Render the output page and send result
@@ -33,9 +79,7 @@ function sendOutput(res, msg, options){
     return res.send(html);
 }
 
-function getWebRootPath(file){
-    return path.join(__dirname, '../../public/', file);
-}
+
 
 //FIXME: devia usar read fily async
 function renderTemplate(view, data){
@@ -45,19 +89,13 @@ function renderTemplate(view, data){
 }
 
 
-/**
- * Append data to the log file
- * @param {object} req 
- * @param {string} data 
- */
-function appendLog(req, data, context){
-    log(`Executing ${data}`, context);
-    globals.logger.append(`[${req.connection.remoteAddress}][${req.session.admin}] ${data}`);
-}
+
 
 module.exports = {
-    sendOutput,
+    renderMasterView,
+    getWebViewPath,
     getWebRootPath,
-    renderTemplate,
     appendLog,
+    sendOutput,
+    renderTemplate,
 }
