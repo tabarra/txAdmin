@@ -1,5 +1,4 @@
 //Requires
-const os = require('os');
 const axios = require("axios");
 const bigInt = require("big-integer");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
@@ -29,6 +28,7 @@ module.exports = class Monitor {
         this.fxServerHitches = [];
         this.statusServer = {
             online: false,
+            ping: false,
             players: []
         }
 
@@ -143,7 +143,7 @@ module.exports = class Monitor {
         }
         this.failCounter = 0;
 
-        //Remove identifiers and add steam profile link
+        //Remove endpoint and add steam profile link
         players.forEach(player => {
             player.identifiers.forEach((identifier) => {
                 if(identifier.startsWith('steam:')){
@@ -153,9 +153,7 @@ module.exports = class Monitor {
                     } catch (error) {}
                 }
             });
-            delete player.identifiers;
             delete player.endpoint;
-            delete player.id; //Usefull if we are going to kick/ban player. Well, maybe...
         });
 
         //Save cache and print output
@@ -165,49 +163,6 @@ module.exports = class Monitor {
             players: players
         }
         if(globals.config.verbose) log(`Players online: ${players.length}`, context);
-    }
-
-
-     //================================================================
-    /**
-     * Refreshes the Host Status data.
-     */
-    async getHostStatus(){
-        let giga = 1024 * 1024 * 1024;
-
-        try {
-            //processing host data
-            let memFree = (os.freemem() / giga).toFixed(2);
-            let memTotal = (os.totalmem() / giga).toFixed(2);
-            let memUsage = (((memTotal-memFree) / memTotal)*100).toFixed(0);
-            let cpuStatus = this.cpuStatusProvider.getUsageStats();
-    
-            //processing hitches
-            let now = (Date.now()/1000).toFixed();
-            let hitchTimeSum = 0;
-            this.fxServerHitches.forEach((hitch, key)=>{
-                if(now - hitch.ts < 60){
-                    hitchTimeSum += hitch.hitchTime;
-                }else{
-                    delete(this.fxServerHitches[key]);
-                }
-            });
-
-            //returning output output
-            return {
-                children: await globals.fxRunner.getChildrenCount(),
-                hitches: hitchTimeSum,
-                cpu: cpuStatus.last10 || cpuStatus.full,
-                memory: memUsage,
-            }
-            
-        } catch (error) {
-            if(globals.config.verbose){
-                logError('Failed to execute getHostStatus()', context);
-                dir(error);
-            }
-            return false;
-        }
     }
 
 

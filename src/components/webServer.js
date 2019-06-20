@@ -114,10 +114,10 @@ module.exports = class WebServer {
                 this.handleRouteError(res, "[getFullReport] Route Internal Error", err);
             });//DONE:
         });
-        this.app.get('/getData', getAuthFunc('api'), async (req, res) => {
-            await webRoutes.getData(res, req).catch((err) => {
-                this.handleRouteError(res, "[getData] Route Internal Error", err);
-            });//TODO:
+        this.app.get('/getStatus', getAuthFunc('api'), async (req, res) => {
+            await webRoutes.getStatus(res, req).catch((err) => {
+                this.handleRouteError(res, "[getStatus] Route Internal Error", err);
+            });//DONE:
         });
         this.app.get('/checkVersion', async (req, res) => {
             res.send(globals.version);

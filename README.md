@@ -95,8 +95,8 @@ If you have any problems with the `package-lock.json`, just delete it and try ag
 - [x] Implement 500ms buffer for the live console broadcast
 - [x] Re-add login name to all logging functions
 - [x] Clean webUtils
-- [ ] Adapt getStatus endpoint and integrate
-- [ ] Make dashboard funcionalities work
+- [x] Adapt getStatus endpoint and integrate
+- [ ] Make dashboard functionalities work
 - [ ] Player modal endpoints
 - [ ] Execute cmd buffer modal
 - [ ] Code fxserver beta resource

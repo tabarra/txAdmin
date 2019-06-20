@@ -12,12 +12,12 @@
         <div class="card card-accent-danger" style="min-height: 160px;">
             <div class="card-header font-weight-bold">FXServer Control:</div>
             <div class="card-body text-center align-middle">
-                <button onclick="controlAction('start')" type="button" class="btn btn-outline-danger btn-lg mx-auto m-3"
-                    id="ctrl-start">START</button> &nbsp;
-                <button onclick="controlAction('restart')" type="button"
-                    class="btn btn-outline-danger btn-lg mx-auto m-3" id="ctrl-restart">RESTART</button> &nbsp;
-                <button onclick="controlAction('stop')" type="button" class="btn btn-outline-danger btn-lg mx-auto m-3"
-                    id="ctrl-stop">STOP</button>
+                <button onclick="controlAction('start')" class="btn btn-outline-danger btn-lg mx-auto m-2"
+                    type="button" id="ctrl-start">START</button> &nbsp;
+                <button onclick="controlAction('restart')" class="btn btn-outline-danger btn-lg mx-auto m-2" 
+                    type="button" id="ctrl-restart">RESTART</button> &nbsp;
+                <button onclick="controlAction('stop')" class="btn btn-outline-danger btn-lg mx-auto m-2"
+                    type="button" id="ctrl-stop">STOP</button>
             </div>
         </div>
 
@@ -60,7 +60,7 @@
     <div class="col-lg-8 col-xl-4">
 
         <!-- Card Chart-->
-        <div class="card text-white bg-primary">
+        <div class="card text-white bg-primary" style="min-height: 160px;">
             <div class="card-body pb-0">
                 <div class="text-value">9.823</div>
                 <div>Players last 24h</div>
@@ -95,12 +95,8 @@
         <!-- Card Info -->
         <div class="card card-accent-primary" style="height:251px;">
             <div class="card-header font-weight-bold">Info:</div>
-            <div class="card-body">
-                <strong>Status: <span class="badge badge-success">ONLINE</span> </strong><br>
-                <strong>Players:</strong> 18<br>
-                <hr>
-                <strong>Child Processes:</strong> 2<br>
-                <strong>Hitch Time:</strong> 1475ms/min (3%)<br>
+            <div class="card-body" id="status-card">
+                Loading...
             </div>
         </div>
         <!-- / Card Info -->

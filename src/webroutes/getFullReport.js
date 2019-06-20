@@ -139,8 +139,7 @@ async function getProcessesData(){
  */
 async function getFXServerData(){
     let requestOptions = {
-        xurl: `http://localhost:${globals.config.fxServerPort}/info.json`,
-        url: 'http://wpg.gg:30120/info.json',
+        url: `http://localhost:${globals.config.fxServerPort}/info.json`,
         method: 'get',
         responseType: 'json',
         responseEncoding: 'utf8',
@@ -181,7 +180,8 @@ async function getHostData(){
         let giga = 1024 * 1024 * 1024;
         let memFree = (os.freemem() / giga).toFixed(2);
         let memTotal = (os.totalmem() / giga).toFixed(2);
-        let memUsage = (((memTotal-memFree) / memTotal)*100).toFixed(0);
+        let memUsed = (memTotal-memFree).toFixed(2);;
+        let memUsage = ((memUsed / memTotal)*100).toFixed(0);
         let userInfo = os.userInfo()
         let cpus = os.cpus();
 
@@ -189,7 +189,7 @@ async function getHostData(){
         hostData.osRelease = `${os.release()}`;
         hostData.username = `${userInfo.username}`;
         hostData.cpus = `${cpus.length}x ${cpus[0].speed} MHz`;
-        hostData.memory = `${memUsage}% (${memFree}/${memTotal} GB)`;
+        hostData.memory = `${memUsage}% (${memUsed}/${memTotal} GB)`;
         hostData.error  = false;
     } catch (error) {
         logError('Error getting Host data', context);
