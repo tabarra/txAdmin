@@ -241,7 +241,7 @@ module.exports = class FXRunner {
         if(typeof command !== 'string') throw new Error('Expected String!');
         try {
             let success = this.fxChild.stdin.write(command + "\n");
-            globals.webConsole.broadcast(command, true);
+            globals.webConsole.bufferCommand(command);
             return success;
         } catch (error) {
             if(globals.config.verbose){
@@ -282,7 +282,7 @@ module.exports = class FXRunner {
         // const chalk = require('chalk');
         // process.stdout.write(chalk.bold.red('|'));
         data = data.toString();
-        globals.webConsole.broadcast(data);
+        globals.webConsole.buffer(data);
         if(this.enableBuffer) this.outData += data;
     }
 

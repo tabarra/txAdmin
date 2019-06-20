@@ -91,8 +91,8 @@ If you have any problems with the `package-lock.json`, just delete it and try ag
 - [x] Complete live console page
 - [x] Fix login page + add username
 - [x] Autenticate every console message
-- [ ] Fix xss from fxserver to browser
-- [ ] Implement 500ms buffer for the live console broadcast
+- [x] Fix xss from fxserver to browser
+- [x] Implement 500ms buffer for the live console broadcast
 - [x] Re-add login name to all logging functions
 - [ ] Clean webUtils
 - [ ] Adapt getStatus endpoint and integrate

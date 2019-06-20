@@ -49,7 +49,7 @@
             alert('Error: logged out');
             window.location = '/auth?logout';
         });
-        socket.on('evntMessage', function (msg) {
+        socket.on('consoleData', function (msg) {
             $('#console').append(msg);
             if (autoScroll) $("#console").scrollTop($("#console")[0].scrollHeight);
         });
@@ -58,7 +58,7 @@
         $("#frmConsole").submit(function (e) {
             e.preventDefault();
             let cmd = $('#cmdInput').val();
-            socket.emit('evntMessage', cmd);
+            socket.emit('consoleCommand', cmd);
             $('#cmdInput').val('');
         });
 

@@ -1,15 +1,27 @@
 //Requires
 const socketio = require('socket.io');
 const sharedsession = require("express-socket.io-session");
-const xss = require("xss");
+const xssClass = require("xss");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'webConsole';
 const contextSocket = 'webConsole:SocketIO';
+
+//Set custom xss rules
+const xss = new xssClass.FilterXSS({
+    whiteList: {
+        mark: ['class']
+    }
+});
+
+
 
 module.exports = class webConsole {
     constructor(config) {
         logOk('::Awaiting', context);
         this.io = null;
+        this.dataBuffer = '';
+
+        setInterval(this.flushBuffer.bind(this), 500);
     }
 
 
@@ -33,7 +45,7 @@ module.exports = class webConsole {
             socket.on('error', (error) => {
                 log(`Socket error with message: ${error.message}`, contextSocket);
             });
-            socket.on('evntMessage', this.handleSocketMessages.bind(this, socket));
+            socket.on('consoleCommand', this.handleSocketMessages.bind(this, socket));
         });
     }
 
@@ -103,15 +115,35 @@ module.exports = class webConsole {
 
     //================================================================
     /**
-     * Sends a message to all clients
-     * @param {string} msg 
+     * Add command to buffer
+     * @param {*} data 
      */
-    broadcast(data, isInput){
-        let msg = (isInput)? `\n<mark>${xss(data)}</mark>\n` : xss(data);
+    bufferCommand(data){
+        this.dataBuffer += `\n<mark>${data}</mark>\n`;
+    }
+
+    //================================================================
+    /**
+     * Adds data to the buffer
+     * @param {string} data 
+     */
+    buffer(data){
+        this.dataBuffer += data;
+    }
+
+
+    //================================================================
+    /**
+     * Flushes the data buffer
+     * @param {string} data 
+     */
+    flushBuffer(){
         try {
-            this.io.emit('evntMessage', msg);
+            this.io.emit('consoleData', xss.process(this.dataBuffer));
+            this.dataBuffer = '';
         } catch (error) {
             logWarn('Message not sent', context);
+            dir(error)
         }
     }
 
