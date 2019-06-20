@@ -15,7 +15,7 @@ When executing txAdmin, it might show you some errors. Example of an [error](htt
 If you haven't created the admins file yet, execute `npm run admin-add` to do so.  
 - `cannot read file`: the admin file specified in your `server.json` could not be loaded. If you didn't changed the default (`data/admins.json`) make sure to create it based on the `admins-template.json` file inside your `data` folder.  
 - `json parse error`: somehow you broke the file. Use [JSON Editor Online](https://jsoneditoronline.org) to validate and find the error. Also make sure you didn't used `\` instead of `/` in your configurations.
-- `invalid data in the admins file`: You edited or removed the object keys (`name` and `password_hash`). Start again based on the `admins-template.json`.
+- `invalid data in the admins file`: You edited or removed the object keys (`name`, `password_hash` and `permissions`). Start again based on the `admins-template.json`.
 - `invalid hash`: the `password_hash` must contain the hash of the password and not the password itself. To generate the hashed password, you can use tools like [this](https://www.browserling.com/tools/bcrypt) and [this](https://bcrypt-generator.com) or even [this one](https://passwordhashing.com/BCrypt). 
 - `no entries`: you must have at least one admin.
 

@@ -189,6 +189,7 @@ printDivider();
             let structureIntegrityTest = !jsonData.some((x) =>{
                 if(typeof x.name === 'undefined' || typeof x.name !== 'string') return true;
                 if(typeof x.password_hash === 'undefined' || typeof x.password_hash !== 'string') return true;
+                if(typeof x.permissions === 'undefined' || !Array.isArray(x.permissions)) return true;
                 if(!x.password_hash.startsWith('$2')) return true;
                 return false;
             });
@@ -215,7 +216,8 @@ printDivider();
     let hash = bcrypt.hashSync(passwd, 5);
     admins.push({
         name: login,
-        password_hash: hash
+        password_hash: hash,
+        permissions: []
     })
 
 

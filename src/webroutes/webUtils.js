@@ -24,6 +24,20 @@ async function renderMasterView(view, data){
     return sqrl.Render(rawView, data);
 }
 
+//TODO: Error handling
+async function renderLoginView(message){
+    let data = {
+        headerTitle: 'Login',
+        message: (typeof message !== 'undefined')? message : '',
+        config: globals.config.configName,
+        port: globals.config.fxServerPort,
+        version: globals.version.current
+    }
+
+    let rawView = await readFileAsync(getWebViewPath('login'), 'utf8');
+    return sqrl.Render(rawView, data);
+}
+
 function getWebViewPath(file){
     return path.join(__dirname, '../../web/', file+'.html');
 }
@@ -36,7 +50,7 @@ function getWebViewPath(file){
  */
 function appendLog(req, data, context){
     log(`Executing ${data}`, context);
-    globals.logger.append(`[${req.connection.remoteAddress}][${req.session.admin}] ${data}`);
+    globals.logger.append(`[${req.connection.remoteAddress}][${req.session.auth.username}] ${data}`);
 }
 
 
@@ -93,6 +107,7 @@ function renderTemplate(view, data){
 
 module.exports = {
     renderMasterView,
+    renderLoginView,
     getWebViewPath,
     getWebRootPath,
     appendLog,

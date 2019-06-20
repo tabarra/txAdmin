@@ -89,12 +89,17 @@ If you have any problems with the `package-lock.json`, just delete it and try ag
 - [x] Complete full status page
 - [x] Complete admin log page
 - [x] Complete live console page
-- [ ] Fix login page + add username
+- [x] Fix login page + add username
+- [x] Autenticate every console message
+- [ ] Fix xss from fxserver to browser
+- [ ] Implement 500ms buffer for the live console broadcast
+- [x] Re-add login name to all logging functions
 - [ ] Clean webUtils
 - [ ] Adapt getStatus endpoint and integrate
 - [ ] Make dashboard funcionalities work
 - [ ] Player modal endpoints
 - [ ] Execute cmd buffer modal
+- [ ] Code fxserver beta resource
 - [ ] Server restart/stop confirm modal with option to kickall
 - [ ] Update available notice box (and move the checkUpdates method)
 - [ ] Make player history chart work

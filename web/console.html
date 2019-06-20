@@ -45,6 +45,10 @@
         socket.on('connect', () => {
             $("#favicon").attr("href", "favicon_on.png");
         });
+        socket.on('logout', (error) => {
+            alert('Error: logged out');
+            window.location = '/auth?logout';
+        });
         socket.on('evntMessage', function (msg) {
             $('#console').append(msg);
             if (autoScroll) $("#console").scrollTop($("#console")[0].scrollHeight);
@@ -61,7 +65,7 @@
         //Status
         setInterval(() => {
             let status = (socket.connected) ? 'on' : 'off';
-            $("#favicon").attr("href", "favicon_" + status + ".png");
+            $("#favicon").attr("href", "img/favicon_" + status + ".png");
         }, 1000);
     });
 

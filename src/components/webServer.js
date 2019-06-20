@@ -55,72 +55,66 @@ module.exports = class WebServer {
     async setupRoutes(){
         //Auth routes
         this.app.get('/auth', async (req, res) => {
-            let renderData = {
-                message: '',
-                config: globals.config.configName,
-                port: globals.config.fxServerPort,
-                version: globals.version.current
-            }
+            let message = '';
             if(typeof req.query.logout !== 'undefined'){
                 req.session.destroy();
-                renderData.message = 'Logged Out';
+                message = 'Logged Out';
             }
-            let html = webUtils.renderTemplate('login', renderData);
-            res.send(html);
-        });
+            let out = await webUtils.renderLoginView(message);
+            return res.send(out);
+        });//DONE:
         this.app.post('/auth', this.authLimiter, async (req, res) => {
-            if(typeof req.body.password == 'undefined'){
+            if(typeof req.body.username === 'undefined' || typeof req.body.password === 'undefined'){
                 req.redirect('/');
                 return;
             }
-            let renderData = {
-                message: '',
-                config: globals.config.configName,
-                port: globals.config.fxServerPort,
-                version: globals.version.current
-            }
-            let admin = globals.authenticator.checkAuth(req.body.password);
+            let message = '';
+
+            let admin = globals.authenticator.checkAuth(req.body.username, req.body.password);
             if(!admin){
-                logWarn(`Wrong password from: ${req.connection.remoteAddress}`, context);
-                renderData.message = 'Wrong Password!';
-                let html = webUtils.renderTemplate('login', renderData);
-                res.send(html);
-                return;
+                logWarn(`Wrong password for from: ${req.connection.remoteAddress}`, context);
+                message = 'Wrong Password!';
+                let out = await webUtils.renderLoginView(message);
+                return res.send(out);
             }
-            req.session.password = req.body.password;
-            log(`Admin ${admin} logged in from ${req.connection.remoteAddress}`, context);
+            req.session.auth = {
+                username: req.body.username,
+                password: req.body.password,
+                permissions: admin.permissions
+            };
+            log(`Admin ${admin.name} logged in from ${req.connection.remoteAddress}`, context);
             res.redirect('/');
-        });//TODO:
+        });//DONE:
 
         //Control routes
-        this.app.get('/fxControls/:action', globals.authenticator.sessionCheckerAPI, async (req, res) => {
+        this.app.get('/fxControls/:action', getAuthFunc('api'), async (req, res) => {
             await webRoutes.fxControls(res, req).catch((err) => {
                 this.handleRouteError(res, "[fxControls] Route Internal Error", err);
             });//TODO:
         });
-        this.app.post('/fxCommands', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+        this.app.post('/fxCommands', getAuthFunc('web'), async (req, res) => {
             await webRoutes.fxCommands(res, req).catch((err) => {
                 this.handleRouteError(res, "[fxCommands] Route Internal Error", err);
             });//TODO:
         });
-        this.app.get('/console', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+        this.app.get('/console', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getConsole(res, req).catch((err) => {
                 this.handleRouteError(res, "[getConsole] Route Internal Error", err);
             });//DONE:
         });
 
         //Data routes
-        this.app.get('/adminLog', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+        this.app.get('/adminLog', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getAdminLog(res, req).catch((err) => {
                 this.handleRouteError(res, "[getAdminLog] Route Internal Error", err);
             });//DONE:
         });
-        this.app.get('/fullReport', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+        this.app.get('/fullReport', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getFullReport(res, req).catch((err) => {
                 this.handleRouteError(res, "[getFullReport] Route Internal Error", err);
             });//DONE:
         });
-        this.app.get('/getData', globals.authenticator.sessionCheckerAPI, async (req, res) => {
+        this.app.get('/getData', getAuthFunc('api'), async (req, res) => {
             await webRoutes.getData(res, req).catch((err) => {
                 this.handleRouteError(res, "[getData] Route Internal Error", err);
             });//TODO:
@@ -130,7 +124,7 @@ module.exports = class WebServer {
         });
         
         //Index
-        this.app.get('/', globals.authenticator.sessionCheckerWeb, async (req, res) => {
+        this.app.get('/', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getDashboard(res, req).catch((err) => {
                 this.handleRouteError(res, "[getDashboard] Route Internal Error", err);
             });//TODO:
@@ -138,7 +132,8 @@ module.exports = class WebServer {
 
         //Catch all
         this.app.get('*', (req, res) => {
-            res.redirect('/');
+            res.status(404);
+            res.sendFile(webUtils.getWebViewPath('404'));
         });
     }
 
@@ -152,3 +147,44 @@ module.exports = class WebServer {
     }
 
 } //Fim WebServer()
+
+
+
+//================================================================
+/**
+ * Returns a session authenticator function
+ * @param {*} type 
+ */
+function getAuthFunc(type){
+    return (req, res, next) =>{
+        let follow = false;
+        if(
+            typeof req.session.auth !== 'undefined' &&
+            typeof req.session.auth.username !== 'undefined' &&
+            typeof req.session.auth.password !== 'undefined'
+        ){
+            let admin = globals.authenticator.checkAuth(req.session.auth.username, req.session.auth.password);
+            if(admin){
+                req.session.auth = {
+                    username: req.session.auth.username,
+                    password: req.session.auth.password,
+                    permissions: admin.permissions
+                };
+                follow = true;
+            }
+        }  
+
+        if(!follow){
+            if(globals.config.verbose) logWarn('Invalid session auth.', context);
+            if(type === 'web'){
+                return res.redirect('/auth?logout');
+            }else if(type === 'api'){
+                return res.send({logout:true});
+            }else{
+                return () => {throw new Error('Unknown auth type')};
+            }
+        }else{
+            next();
+        }
+    }
+}
