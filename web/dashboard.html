@@ -24,33 +24,32 @@
         <!-- Commands Card -->
         <div class="card card-accent-danger">
             <div class="card-header font-weight-bold">Commands:</div>
-            <form action="/fxCommands" method="post">
-                <div class="card-body">
-                    <div class="form-group row">
-                        <label for="action" class="col-sm-4 col-form-label">Command</label>
-                        <div class="col-sm-8">
-                            <select name="action" id="frm_action" class="form-control" required>
-                                <option value="" disabled selected>&gt; SELECT</option>
-                                <option value="admin_say">Admin Message</option>
-                                <option value="restart_res">Restart script</option>
-                                <option value="start_res">Start script</option>
-                                <option value="stop_res">Stop script</option>
-                                <option value="refresh_res">Refresh scripts</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="action" class="col-sm-4 col-form-label">Parameter</label>
-                        <div class="col-sm-8">
-                            <input type="text" name="parameter" id="frm_parameter" class="form-control" placeholder=""
-                                readonly required>
-                        </div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <label for="action" class="col-sm-4 col-form-label">Command</label>
+                    <div class="col-sm-8">
+                        <select name="action" id="frm_action" class="form-control" required>
+                            <option value="" disabled selected>&gt; SELECT</option>
+                            <option value="admin_broadcast">Admin Message</option>
+                            <option value="restart_res">Restart script</option>
+                            <option value="start_res">Start script</option>
+                            <option value="stop_res">Stop script</option>
+                            <option value="refresh_res">Refresh scripts</option>
+                            <option value="kick_all">Kick all players</option>
+                        </select>
                     </div>
                 </div>
-                <div class="card-footer text-center">
-                    <button type="submit" class="btn btn-outline-secondary mx-auto">EXECUTE</button>
+                <div class="form-group row">
+                    <label for="action" class="col-sm-4 col-form-label">Parameter</label>
+                    <div class="col-sm-8">
+                        <input type="text" name="parameter" id="frm_parameter" class="form-control" placeholder=""
+                            readonly required>
+                    </div>
                 </div>
-            </form>
+            </div>
+            <div class="card-footer text-center">
+                <button type="button" id="frm_button" class="btn btn-outline-dark mx-auto">EXECUTE</button>
+            </div>
         </div>
 
     </div>
@@ -115,7 +114,6 @@
         if (action !== 'start' && !window.confirm('Are you sure you want to ' + action + ' the server?')) {
             return;
         }
-
         $.ajax({
             url: actionURL = '/fxControls/' + action,
             type: "GET",
@@ -134,19 +132,61 @@
         });
     }
 
-    //Commands
+    //Commands with parameter required
     let paramRequiredCommands = [
-        'admin_say',
+        'admin_broadcast',
         'restart_res',
         'start_res',
         'stop_res'
     ];
+
+    //EXECUTE button click handler
+    $('#frm_button').click(function () {
+        let data = {
+            action: $("#frm_action").val(),
+            parameter: $("#frm_parameter").val()
+        }
+        if (data.action === null) {
+            var notify = $.notify({ message: '<p class="text-center font-weight-bold">Please select an action first.</p>' }, { delay: 3000, type: 'danger' });
+            return;
+        }
+        if (paramRequiredCommands.indexOf(data.action) != -1 && !data.parameter.length) {
+            var notify = $.notify({ message: '<p class="text-center font-weight-bold">This action require a parameter.</p>' }, { delay: 3000, type: 'danger' });
+            return;
+        }
+        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        $.ajax({
+            type: "POST",
+            url: '/fxCommands',
+            timeout: 2000,
+            data: data,
+            success: function (data) {
+                notify.update('progress', 0);
+                notify.update('type', 'warning');
+                notify.update('message', data);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+        $("#frm_parameter").val('');
+    });
+
+    //Ensure the parameter input is only enabled when neccessary.
     $('#frm_action').change(function () {
         var action = $("#frm_action").val();
         if (paramRequiredCommands.indexOf(action) != -1) {
             $("#frm_parameter").prop('readonly', false);
         } else {
             $("#frm_parameter").prop('readonly', true);
+        }
+    });
+
+    $("#frm_parameter").on('keyup', function (e) {
+        if (e.keyCode == 13) {
+            $('#frm_button').click();
         }
     });
 </script>

@@ -131,7 +131,7 @@ function preparePlayersData() {
         } else {
             pingClass = 'danger';
         }
-        let paddedPing = player.ping.toString().padStart(3, 'x').replace('x', '&nbsp;');
+        let paddedPing = player.ping.toString().padStart(3, 'x').replace(/x/g, '&nbsp;');
         out += `<div class="clearfix mt-3 playerlist">
                     <span class="pping text-${pingClass}">${paddedPing}</span>
                     <span class="pname">${xss(player.name)}</span>

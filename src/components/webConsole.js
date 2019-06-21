@@ -138,6 +138,7 @@ module.exports = class webConsole {
      * @param {string} data 
      */
     flushBuffer(){
+        if(!this.dataBuffer.length) return;
         try {
             this.io.emit('consoleData', xss.process(this.dataBuffer));
             this.dataBuffer = '';

@@ -98,14 +98,21 @@ If you have any problems with the `package-lock.json`, just delete it and try ag
 - [x] Adapt getStatus endpoint and integrate
 - [x] Make dashboard functionalities work
 - [x] Player modal endpoints
-- [ ] Execute cmd buffer modal
-- [ ] Code fxserver beta resource
-- [ ] Server restart/stop confirm modal with option to kickall
+- [x] Execute cmd buffer modal
+- [x] Code fxserver beta resource
+- [x] Apply the new resource commands to the player modal
+- [ ] ~~Server restart/stop confirm modal with option to kickall~~
 - [ ] Update available notice box (and move the checkUpdates method)
 - [ ] Make player history chart work
-
-
-
+  
+More:
+- [x] escape message in txaBroadcast and txaSendDM
+- [ ] Rewrite readme with note about permission and the resource
+- [ ] Solve the FIXME: comments
+- [ ] trocar 'server' por 'server01
+- [x] ping padding only removing one 'x', fix the regex
+- [x] add version o the page footer (txAdmin vXXX build with...)
+  
 ## TODO:
 - [ ] Add custom commands to the config file
 - [ ] Config tester check for the modules inside `package.json` (require.resolve?)

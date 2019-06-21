@@ -161,6 +161,8 @@ module.exports = class FXRunner {
         this.srvCmd(`set txAdmin-version ${globals.version.current}`);
         await sleep(delay);
         this.srvCmd(`set txAdmin-port ${globals.webServer.config.port}`);
+        await sleep(delay);
+        this.srvCmd(`ensure txAdmin`);
     }
 
 
@@ -204,7 +206,8 @@ module.exports = class FXRunner {
      */
     async restartServer(reason){
         if(typeof reason === 'string'){
-            this.srvCmd(`say Restarting server (${reason}).`);
+            reason = reason.replace(/\"/g, '\\"');
+            this.srvCmd(`txaBroadcast "Restarting server (${reason})."`);
             await sleep(500);
         }
         this.killServer();

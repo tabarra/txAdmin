@@ -2,6 +2,7 @@
 //============================================== Dynamic Stats
 //================================================================
 function refreshData() {
+    // console.log('hellooo' + Math.random())
     $.ajax({
         url: "/getStatus",
         type: "GET",
@@ -74,12 +75,146 @@ function showPlayer(id) {
         }
     });
 }
+
+
+
 function messagePlayer(id) {
-    alert('not implemented yet')
+    $('#modPlayerInfo').modal('hide');
+    let message = prompt('Do something?');
+    if(!message || message.length === 0) return;
+
+    var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
+
+    let data = {
+        action: 'admin_dm',
+        parameter: [id, message]
+    }
+    $.ajax({
+        type: "POST",
+        url: '/fxCommands',
+        timeout: 2000,
+        data: data,
+        // dataType: 'json',
+        success: function (data) {
+            notify.update('progress', 0);
+            notify.update('type', 'warning');
+            notify.update('message', data);
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+            notify.update('progress', 0);
+            notify.update('type', 'danger');
+            notify.update('message', message);
+        }
+    });
 }
+
+
+
+
+
 function kickPlayer(id) {
-    alert('not implemented yet')
+    $('#modPlayerInfo').modal('hide');
+    var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
+
+    let data = {
+        action: 'kick_player',
+        parameter: id
+    }
+    $.ajax({
+        type: "POST",
+        url: '/fxCommands',
+        timeout: 2000,
+        data: data,
+        // dataType: 'json',
+        success: function (data) {
+            notify.update('progress', 0);
+            notify.update('type', 'warning');
+            notify.update('message', data);
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+            notify.update('progress', 0);
+            notify.update('type', 'danger');
+            notify.update('message', message);
+        }
+    });
 }
 
 
 
+//jogar pra dentro do doc ready
+$.notifyDefaults({
+    mouse_over: 'pause',
+    placement: {
+        align: 'center'
+    },
+    offset: {
+        y: 64
+    },
+});
+
+
+
+// setTimeout(() => {
+//     execThingmagoo()
+// }, 500);
+
+
+
+function execThingmagoo() {
+    var notify = $.notify({
+        // options
+        message: '<p class="text-center">Executing command...</p>'
+    }, {
+            // settings
+            // type: 'warning',
+            allow_dismiss: false,
+            delay: 0,
+            mouse_over: 'pause',
+            placement: {
+                from: 'bottom',
+                align: 'center'
+            },
+            offset: {
+                y: 64
+            },
+            animate: {
+                enter: 'animated fadeInUp',
+                exit: 'animated fadeOutDown'
+            },
+        }
+    );
+
+    setTimeout(() => {
+        notify.update('message', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
+        setTimeout(() => {
+            notify.close();
+        }, 5000);
+    }, 1000);
+}
+
+
+
+
+/*
+function checkVersion(){
+    $.getJSON( "/checkVersion", function( data ) {
+        if(data.current !== data.latest){
+            $("#bottom-links").hide();
+            let out = `<small><strong>\n`;
+            out += `<a href="https://github.com/tabarra/txAdmin">Update available for txAdmin (v${data.current} > v${data.latest})!</a>\n`;
+            out += `</strong> <br/> \n`;
+            out += `${data.changelog}</small>\n`;
+            $("#update-me").html(out);
+            $("#update-me").removeClass('d-none');
+        }
+    });
+}
+
+colocar os crons dentro do doc ready
+$(document).ready(function() {
+    checkVersion();
+    setInterval(() => {
+        refreshData();
+    }, 1000);
+});
+*/

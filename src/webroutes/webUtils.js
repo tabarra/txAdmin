@@ -18,6 +18,7 @@ const context = 'WebUtils';
 async function renderMasterView(view, data){
     if(typeof data === 'undefined') data = {};
     data.headerTitle = (typeof data.headerTitle !== 'undefined')? `${data.headerTitle} - txAdmin` : 'txAdmin';
+    data.txAdminVersion = globals.version.current;
 
     let out;
     try {

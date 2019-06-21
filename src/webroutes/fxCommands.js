@@ -4,6 +4,8 @@ const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras
 const webUtils = require('./webUtils.js');
 const context = 'WebServer:fxCommands';
 
+const escape = (x) => {return x.replace(/\"/g, '\\"');};
+
 
 /**
  * Handle all the server commands
@@ -17,40 +19,66 @@ module.exports = async function action(res, req) {
     ){
         dir(req.body)
         logWarn('Invalid request!', context);
-        res.send('Invalid request!');
-        return;
+        return sendAlertOutput(res, 'Invalid request!');;
     }
     let action = req.body.action;
     let parameter = req.body.parameter;
 
-    if(action == 'admin_say'){
-        webUtils.appendLog(req, `say ${parameter}`, context);
-        globals.fxRunner.srvCmd('say ' + parameter);
-        return sendOutput(res, 'Okay');
+    if(action == 'admin_broadcast'){
+        let cmd = `txaBroadcast "${escape(parameter)}"`;
+        webUtils.appendLog(req, cmd, context);
+        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+        return sendAlertOutput(res, toResp);
+
+    }else if(action == 'admin_dm'){
+        if(!Array.isArray(parameter) || parameter.length !== 2){
+            return sendAlertOutput(res, 'Invalid request');
+        }
+        let cmd = `txaSendDM ${parameter[0]} "${escape(parameter[1])}"`;
+        webUtils.appendLog(req, cmd, context);
+        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+        return sendAlertOutput(res, toResp);
+
+    }else if(action == 'kick_player'){
+        let cmd = `txaKickID ${parameter}`;
+        webUtils.appendLog(req, cmd, context);
+        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+        return sendAlertOutput(res, toResp);
+
+    }else if(action == 'kick_all'){
+        let cmd = `txaKickAll "kicked via txAdmin web panel"`;
+        webUtils.appendLog(req, cmd, context);
+        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+        return sendAlertOutput(res, toResp);
 
     }else if(action == 'restart_res'){
-        webUtils.appendLog(req, `restart ${parameter}`, context);
-        let toResp = await globals.fxRunner.srvCmdBuffer('restart ' + parameter);
-        return sendOutput(res, toResp);
+        let cmd = `restart ${parameter}`;
+        webUtils.appendLog(req, cmd, context);
+        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+        return sendAlertOutput(res, toResp);
 
     }else if(action == 'start_res'){
-        webUtils.appendLog(req, `start ${parameter}`, context);
-        let toResp = await globals.fxRunner.srvCmdBuffer('start ' + parameter);
-        return sendOutput(res, toResp);
+        let cmd = `start ${parameter}`;
+        webUtils.appendLog(req, cmd, context);
+        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+        return sendAlertOutput(res, toResp);
 
     }else if(action == 'stop_res'){
-        webUtils.appendLog(req, `stop ${parameter}`, context);
-        let toResp = await globals.fxRunner.srvCmdBuffer('stop ' + parameter);
-        return sendOutput(res, toResp);
+        let cmd = `stop ${parameter}`;
+        webUtils.appendLog(req, cmd, context);
+        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+        return sendAlertOutput(res, toResp);
 
     }else if(action == 'refresh_res'){
-        webUtils.appendLog(req, `refresh`, context);
-        let toResp = await globals.fxRunner.srvCmdBuffer('refresh');
-        return sendOutput(res, toResp);
+        let cmd = `refresh`;
+        webUtils.appendLog(req, cmd, context);
+        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+        return sendAlertOutput(res, toResp);
 
     }else{
-        webUtils.appendLog(req, `unknown action`, context);
-        return sendOutput(res, 'Unknown action!');
+        webUtils.appendLog(req, 'Unknown action!', context);
+        return sendAlertOutput(res, 'Unknown action!');
+
     }
 };
 
@@ -58,11 +86,23 @@ module.exports = async function action(res, req) {
 
 //================================================================
 /**
- * Wrapper function to render the generic view and send the output
+ * Wrapper function to render send the output to be shown inside an alert
  * @param {object} res 
  * @param {string} msg 
  */
-async function sendOutput(res, msg){
+async function sendAlertOutput(res, toResp){
+    toResp = (toResp.length)? xss(toResp) : 'no output';
+    return res.send(`<b>Output:<br> <pre>${toResp}</pre>`);
+} 
+
+
+//================================================================
+/**
+ * Wrapper function to render the generic view with the output
+ * @param {object} res 
+ * @param {string} msg 
+ */
+async function sendPageOutput(res, msg){
     let data = {
         headerTitle: 'Output', 
         message: `<pre>${xss(msg)}</pre>`
