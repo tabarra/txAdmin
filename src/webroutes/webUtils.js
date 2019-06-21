@@ -9,6 +9,7 @@ const readFileAsync = util.promisify(fs.readFile);
 const context = 'WebUtils';
 
 
+//================================================================
 /**
  * Renders the master page including header and footer
  * @param {string} view 
@@ -44,6 +45,7 @@ async function renderMasterView(view, data){
 }
 
 
+//================================================================
 /**
  * Renders the login page.
  * @param {string} message 
@@ -78,6 +80,7 @@ async function renderLoginView(message){
 }
 
 
+//================================================================
 /**
  * Return the path of the provided view
  * @param {string} view 
@@ -87,6 +90,7 @@ function getWebViewPath(view){
 }
 
 
+//================================================================
 /**
  * Append data to the log file
  * @param {object} req 

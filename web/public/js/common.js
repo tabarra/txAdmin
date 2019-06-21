@@ -55,7 +55,7 @@ function showPlayer(id) {
 
     $('#modPlayerInfo').modal('show')
     $.ajax({
-        url: "/getPlayerData/"+id,
+        url: "/getPlayerData/" + id,
         type: "GET",
         dataType: "json",
         timeout: 2000,

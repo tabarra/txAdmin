@@ -1,5 +1,5 @@
 //Requires
-const Sqrl = require("squirrelly");
+const xss = require("xss");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('./webUtils.js');
 const context = 'WebServer:fxCommands';
@@ -63,6 +63,10 @@ module.exports = async function action(res, req) {
  * @param {string} msg 
  */
 async function sendOutput(res, msg){
-    let out = await webUtils.renderMasterView('generic', {headerTitle: 'Output', message: msg});
+    let data = {
+        headerTitle: 'Output', 
+        message: `<pre>${xss(msg)}</pre>`
+    }
+    let out = await webUtils.renderMasterView('generic', data);
     return res.send(out);
-}   
+} 
