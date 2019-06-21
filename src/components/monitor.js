@@ -145,6 +145,7 @@ module.exports = class Monitor {
 
         //Remove endpoint and add steam profile link
         players.forEach(player => {
+            player.steam = false;
             player.identifiers.forEach((identifier) => {
                 if(identifier.startsWith('steam:')){
                     try {

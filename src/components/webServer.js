@@ -90,12 +90,12 @@ module.exports = class WebServer {
         this.app.get('/fxControls/:action', getAuthFunc('api'), async (req, res) => {
             await webRoutes.fxControls(res, req).catch((err) => {
                 this.handleRouteError(res, "[fxControls] Route Internal Error", err);
-            });//TODO:
+            });//DONE:
         });
         this.app.post('/fxCommands', getAuthFunc('web'), async (req, res) => {
             await webRoutes.fxCommands(res, req).catch((err) => {
                 this.handleRouteError(res, "[fxCommands] Route Internal Error", err);
-            });//TODO:
+            });//TODO: dar resp como modal
         });
         this.app.get('/console', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getConsole(res, req).catch((err) => {
@@ -119,6 +119,11 @@ module.exports = class WebServer {
                 this.handleRouteError(res, "[getStatus] Route Internal Error", err);
             });//DONE:
         });
+        this.app.get('/getPlayerData/:id', getAuthFunc('api'), async (req, res) => {
+            await webRoutes.getPlayerData(res, req).catch((err) => {
+                this.handleRouteError(res, "[getPlayerData] Route Internal Error", err);
+            });//DONE:
+        });
         this.app.get('/checkVersion', async (req, res) => {
             res.send(globals.version);
         });
@@ -127,7 +132,7 @@ module.exports = class WebServer {
         this.app.get('/', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getDashboard(res, req).catch((err) => {
                 this.handleRouteError(res, "[getDashboard] Route Internal Error", err);
-            });//TODO:
+            });//DONE:
         });
 
         //Catch all

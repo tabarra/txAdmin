@@ -97,7 +97,7 @@ If you have any problems with the `package-lock.json`, just delete it and try ag
 - [x] Clean webUtils
 - [x] Adapt getStatus endpoint and integrate
 - [x] Make dashboard functionalities work
-- [ ] Player modal endpoints
+- [x] Player modal endpoints
 - [ ] Execute cmd buffer modal
 - [ ] Code fxserver beta resource
 - [ ] Server restart/stop confirm modal with option to kickall

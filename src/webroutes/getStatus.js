@@ -123,6 +123,7 @@ function preparePlayersData() {
     let out = '';
     dataServer.players.forEach(player => {
         let pingClass;
+        player.ping = parseInt(player.ping);
         if (player.ping < 60) {
             pingClass = 'success';
         } else if (player.ping < 100) {
@@ -134,7 +135,7 @@ function preparePlayersData() {
         out += `<div class="clearfix mt-3 playerlist">
                     <span class="pping text-${pingClass}">${paddedPing}</span>
                     <span class="pname">${xss(player.name)}</span>
-                    <a onclick="showPlayer('${player.id}')"><span class="badge badge-primary float-right">MORE</span></a>
+                    <a onclick="showPlayer(${xss(player.id)})"><span class="badge badge-primary float-right">MORE</span></a>
                 </div>`;
 
     });

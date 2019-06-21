@@ -11,6 +11,10 @@
     background-color: #2b3136;
 }
 
+.button-spacer button, .button-spacer a {
+    margin: 0.2rem;
+}
+
 /* Playerlist */
 .playerlist>.pping {
     font-family: Consolas, monaco, monospace;

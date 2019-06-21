@@ -25,28 +25,20 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modPlayerInfoTitle">Fulano da Silva</h5>
+                <h5 class="modal-title" id="modPlayerInfoTitle">Loading...</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-
-                <code>
-                    "steam:110000234210ebe5", <br> 
-                    "license:0eb3453453d24efc7b6be6a975c11c26eb5050747", <br> 
-                    "xbl:253327494456454952", <br> 
-                    "live:9148002534569152", <br> 
-                    "discord:227826666200161281", <br> 
-                    "fivem:34334348"
+            <div class="modal-body text-center">
+                <code id="modPlayerInfoIdentifiers">
+                    Loading...
                 </code>
 
             </div>
-            <div class="modal-footer">
-                <div class="mx-auto">
-                    <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
-                    <button type="button" class="btn btn-secondary">Send Message</button>
-                    <button type="button" class="btn btn-danger">Kick</button>
+            <div class="modal-footer text-center">
+                <div class="mx-auto button-spacer" id="modPlayerInfoButtons">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

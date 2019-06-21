@@ -1,5 +1,6 @@
-
-
+//================================================================
+//============================================== Dynamic Stats
+//================================================================
 function refreshData() {
     $.ajax({
         url: "/getStatus",
@@ -27,24 +28,58 @@ function refreshData() {
             } else {
                 out = `Request error: ${textstatus}\n<br>${message}`;
             }
-            $("#card-status").html(out);
+            $('#hostusage-cpu-bar').attr('aria-valuenow', 0).css('width', 0);
+            $('#hostusage-cpu-text').html('error');
+            $('#hostusage-memory-bar').attr('aria-valuenow', 0).css('width', 0);
+            $('#hostusage-memory-text').html('error');
+            $("#status-card").html(out);
             $("#playerlist").html(out);
-            $("#favicon").attr("href", "favicon_off.png");
+            $("#favicon").attr("href", "img/favicon_off.png");
             document.title = 'ERROR - txAdmin';
         }
     });
 };
 
+//Cron
+setInterval(refreshData, 1000);
 
-function showPlayer(id){
-    alert(id)
-    // $.get("ajax/pinfo.php", function (data) {
-    //     // $("#modPlayerInfo").html(data);
-    //     $('#modPlayerInfo').modal('show')
-    // });
+
+
+//================================================================
+//============================================== Player Info Modal
+//================================================================
+function showPlayer(id) {
+    $("#modPlayerInfoTitle").html('loading...');
+    $("#modPlayerInfoIdentifiers").html('loading...');
+    $("#modPlayerInfoButtons").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>');
+
+    $('#modPlayerInfo').modal('show')
+    $.ajax({
+        url: "/getPlayerData/"+id,
+        type: "GET",
+        dataType: "json",
+        timeout: 2000,
+        success: function (data) {
+            if (data.logout) {
+                window.location = '/auth?logout';
+                return;
+            }
+            $("#modPlayerInfoTitle").html(data.name);
+            $("#modPlayerInfoIdentifiers").html(data.identifiers);
+            $("#modPlayerInfoButtons").html(data.buttons);
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+            $("#modPlayerInfoTitle").html('error');
+            $("#modPlayerInfoIdentifiers").html('error');
+        }
+    });
+}
+function messagePlayer(id) {
+    alert('not implemented yet')
+}
+function kickPlayer(id) {
+    alert('not implemented yet')
 }
 
 
-setInterval(() => {
-    refreshData();
-}, 1000);
+
