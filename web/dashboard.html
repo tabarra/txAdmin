@@ -12,12 +12,12 @@
         <div class="card card-accent-danger" style="min-height: 160px;">
             <div class="card-header font-weight-bold">FXServer Control:</div>
             <div class="card-body text-center align-middle">
-                <button onclick="controlAction('start')" class="btn btn-outline-danger btn-lg mx-auto m-2"
-                    type="button" id="ctrl-start">START</button> &nbsp;
-                <button onclick="controlAction('restart')" class="btn btn-outline-danger btn-lg mx-auto m-2" 
+                <button onclick="controlAction('start')" class="btn btn-outline-danger btn-lg mx-auto m-2" type="button"
+                    id="ctrl-start">START</button> &nbsp;
+                <button onclick="controlAction('restart')" class="btn btn-outline-danger btn-lg mx-auto m-2"
                     type="button" id="ctrl-restart">RESTART</button> &nbsp;
-                <button onclick="controlAction('stop')" class="btn btn-outline-danger btn-lg mx-auto m-2"
-                    type="button" id="ctrl-stop">STOP</button>
+                <button onclick="controlAction('stop')" class="btn btn-outline-danger btn-lg mx-auto m-2" type="button"
+                    id="ctrl-stop">STOP</button>
             </div>
         </div>
 
@@ -106,6 +106,52 @@
 
 
 {{include("footer")/}}
+
+
+
+<script>
+    // Control actions (start/restart/stop)
+    function controlAction(action) {
+        if (action !== 'start' && !window.confirm('Are you sure you want to ' + action + ' the server?')) {
+            return;
+        }
+
+        $.ajax({
+            url: actionURL = '/fxControls/' + action,
+            type: "GET",
+            dataType: "json",
+            timeout: 2000,
+            success: function (data) {
+                if (data.logout) {
+                    window.location = '/auth?logout';
+                    return;
+                }
+                console.log(data);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                alert('Error executing control action.');
+            }
+        });
+    }
+
+    //Commands
+    let paramRequiredCommands = [
+        'admin_say',
+        'restart_res',
+        'start_res',
+        'stop_res'
+    ];
+    $('#frm_action').change(function () {
+        var action = $("#frm_action").val();
+        if (paramRequiredCommands.indexOf(action) != -1) {
+            $("#frm_parameter").prop('readonly', false);
+        } else {
+            $("#frm_parameter").prop('readonly', true);
+        }
+    });
+</script>
+
+
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
