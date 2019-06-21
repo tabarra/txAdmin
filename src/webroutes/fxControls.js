@@ -1,4 +1,5 @@
 //Requires
+const sleep = require('util').promisify(setTimeout);
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('./webUtils.js');
 const context = 'WebServer:fxControls';
@@ -19,12 +20,16 @@ module.exports = async function action(res, req) {
 
     if(action == 'restart'){
         webUtils.appendLog(req, `RESTART SERVER`, context);
+        await globals.fxRunner.srvCmdBuffer(`txaKickAll "server restarting"`);
+        await sleep(1000);
         await globals.fxRunner.restartServer('via txAdmin Web Panel');
         res.send({status: 'ok'});
         return;
 
     }else if(action == 'stop'){
         webUtils.appendLog(req, `STOP SERVER`, context);
+        await globals.fxRunner.srvCmdBuffer(`txaKickAll "server shutting down"`);
+        await sleep(1000);
         globals.fxRunner.killServer();
         res.send({status: 'ok'});
         return;

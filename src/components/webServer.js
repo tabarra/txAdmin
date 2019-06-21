@@ -62,7 +62,7 @@ module.exports = class WebServer {
             }
             let out = await webUtils.renderLoginView(message);
             return res.send(out);
-        });//DONE:
+        });
         this.app.post('/auth', this.authLimiter, async (req, res) => {
             if(typeof req.body.username === 'undefined' || typeof req.body.password === 'undefined'){
                 req.redirect('/');
@@ -84,45 +84,45 @@ module.exports = class WebServer {
             };
             log(`Admin ${admin.name} logged in from ${req.connection.remoteAddress}`, context);
             res.redirect('/');
-        });//DONE:
+        });
 
         //Control routes
         this.app.get('/fxControls/:action', getAuthFunc('api'), async (req, res) => {
             await webRoutes.fxControls(res, req).catch((err) => {
                 this.handleRouteError(res, "[fxControls] Route Internal Error", err);
-            });//DONE:
+            });
         });
         this.app.post('/fxCommands', getAuthFunc('web'), async (req, res) => {
             await webRoutes.fxCommands(res, req).catch((err) => {
                 this.handleRouteError(res, "[fxCommands] Route Internal Error", err);
-            });//TODO: dar resp como modal
+            });
         });
         this.app.get('/console', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getConsole(res, req).catch((err) => {
                 this.handleRouteError(res, "[getConsole] Route Internal Error", err);
-            });//DONE:
+            });
         });
 
         //Data routes
         this.app.get('/adminLog', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getAdminLog(res, req).catch((err) => {
                 this.handleRouteError(res, "[getAdminLog] Route Internal Error", err);
-            });//DONE:
+            });
         });
         this.app.get('/fullReport', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getFullReport(res, req).catch((err) => {
                 this.handleRouteError(res, "[getFullReport] Route Internal Error", err);
-            });//DONE:
+            });
         });
         this.app.get('/getStatus', getAuthFunc('api'), async (req, res) => {
             await webRoutes.getStatus(res, req).catch((err) => {
                 this.handleRouteError(res, "[getStatus] Route Internal Error", err);
-            });//DONE:
+            });
         });
         this.app.get('/getPlayerData/:id', getAuthFunc('api'), async (req, res) => {
             await webRoutes.getPlayerData(res, req).catch((err) => {
                 this.handleRouteError(res, "[getPlayerData] Route Internal Error", err);
-            });//DONE:
+            });
         });
         this.app.get('/checkVersion', async (req, res) => {
             res.send(globals.version);
@@ -132,7 +132,7 @@ module.exports = class WebServer {
         this.app.get('/', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getDashboard(res, req).catch((err) => {
                 this.handleRouteError(res, "[getDashboard] Route Internal Error", err);
-            });//DONE:
+            });
         });
 
         //Catch all

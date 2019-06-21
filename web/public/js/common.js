@@ -41,9 +41,6 @@ function refreshData() {
     });
 };
 
-//Cron
-setInterval(refreshData, 1000);
-
 
 
 //================================================================
@@ -141,58 +138,21 @@ function kickPlayer(id) {
 
 
 
-//jogar pra dentro do doc ready
-$.notifyDefaults({
-    mouse_over: 'pause',
-    placement: {
-        align: 'center'
-    },
-    offset: {
-        y: 64
-    },
+$(document).ready(function() {
+    $.notifyDefaults({
+        mouse_over: 'pause',
+        placement: {
+            align: 'center'
+        },
+        offset: {
+            y: 64
+        },
+    });
+
+    
+    // checkVersion();
+    setInterval(refreshData, 1000);
 });
-
-
-
-// setTimeout(() => {
-//     execThingmagoo()
-// }, 500);
-
-
-
-function execThingmagoo() {
-    var notify = $.notify({
-        // options
-        message: '<p class="text-center">Executing command...</p>'
-    }, {
-            // settings
-            // type: 'warning',
-            allow_dismiss: false,
-            delay: 0,
-            mouse_over: 'pause',
-            placement: {
-                from: 'bottom',
-                align: 'center'
-            },
-            offset: {
-                y: 64
-            },
-            animate: {
-                enter: 'animated fadeInUp',
-                exit: 'animated fadeOutDown'
-            },
-        }
-    );
-
-    setTimeout(() => {
-        notify.update('message', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.');
-        setTimeout(() => {
-            notify.close();
-        }, 5000);
-    }, 1000);
-}
-
-
 
 
 /*
@@ -211,10 +171,5 @@ function checkVersion(){
 }
 
 colocar os crons dentro do doc ready
-$(document).ready(function() {
-    checkVersion();
-    setInterval(() => {
-        refreshData();
-    }, 1000);
-});
+
 */
