@@ -68,6 +68,11 @@ async function getProcessesData(){
         let cpus = os.cpus();
         var processes = await pidusageTree(process.pid);
 
+        //NOTE: Cleaning invalid proccesses that might show up in Linux
+        Object.keys(processes).forEach((pid) => {
+            if(processes[pid] === null) delete processes[pid];
+        });
+
         let termPID = Object.keys(processes).find((pid) => { return processes[pid].ppid == process.pid});
         let fxsvMainPID = Object.keys(processes).find((pid) => { return processes[pid].ppid == termPID});
         let fxsvRepPID = Object.keys(processes).find((pid) => { return processes[pid].ppid == fxsvMainPID});
@@ -75,9 +80,6 @@ async function getProcessesData(){
         //Foreach PID
         Object.keys(processes).forEach((pid) => {
             var curr = processes[pid];
-
-            //NOTE: Somehow this might happen in Linux
-            if(curr === null) return;
 
             //Define name and order
             let procName;

@@ -114,12 +114,6 @@ module.exports = class FXRunner {
         this.fxChild.on('exit', function (code, signal) {
             logWarn('>> fxChild process exited with ' + `code ${code} and signal ${signal}`, context);
         });
-        this.fxChild.stderr.on('data', (data) => {
-            logWarn(`\n========\n${data}\n========`, `${context}:stderr:data`);
-        });
-        this.fxChild.stdin.on('data', (data) => {
-            logWarn(`\n========\n${data}\n========`, `${context}:stdin:data`);
-        });
 
         this.fxChild.stdin.on('error', (data) => {});
         this.fxChild.stdin.on('data', (data) => {});
@@ -129,7 +123,7 @@ module.exports = class FXRunner {
 
         this.fxChild.stderr.on('error', (data) => {});
         this.fxChild.stderr.on('data', (data) => {
-            logWarn(`========\n${data}\n========`, context);
+            logWarn(`\n========\n${data}\n========`, `${context}:stderr:data`);
         });
 
         hitchStreamProcessor.on('error', (data) => {});
@@ -289,18 +283,5 @@ module.exports = class FXRunner {
         if(this.enableBuffer) this.outData += data;
     }
 
-
-    //================================================================
-    /**
-     * Returns the number of child processes of cmd/bash
-     */
-    async getChildrenCount(){
-        try {
-            let pids = await pidtree(this.fxChild.pid);
-            return pids.length;
-        } catch (error) {
-            return false;
-        }
-    }
 
 } //Fim FXRunner()
