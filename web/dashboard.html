@@ -6,7 +6,7 @@
 </div>
 
 <div class="row justify-content-md-center">
-    <div class="col-lg-8 col-xl-4">
+    <div class="col-lg-8 col-xl-5 dashboard-card">
 
         <!-- FXServer Control Card -->
         <div class="card card-accent-danger" style="min-height: 160px;">
@@ -56,13 +56,13 @@
     <!-- /.col-->
 
 
-    <div class="col-lg-8 col-xl-4">
+    <div class="col-lg-8 col-xl-5 dashboard-card">
 
         <!-- Card Chart-->
         <div class="card text-white bg-primary" style="min-height: 160px;">
             <div class="card-body pb-0">
-                <div class="text-value">9.823</div>
-                <div>Players last 24h</div>
+                <div class="text-value">Players</div>
+                <div>last 24h</div>
             </div>
             <div class="chart-wrapper mt-3 mx-3" style="height:70px;">
                 <div class="chartjs-size-monitor">
@@ -108,9 +108,10 @@
 <div class="row justify-content-md-center">
     <div class="col-md-6 ">
         <div class="alert alert-{{update.class}} border-{{update.class}}  text-center" role="alert">
-            <a href="" class="alert-link">Update available for txAdmin ({{update.currentVersion}} > {{update.latestVersion}})! </a> <br>
+            <a href="" class="alert-link">Update available for txAdmin ({{update.currentVersion}} >
+                {{update.latestVersion}})! </a> <br>
             {{foreach(options.update.changes)}}
-                <strong>v{{@this.version}}:</strong> {{@this.changelog|safe}} <br>
+            <strong>v{{@this.version}}:</strong> {{@this.changelog|safe}} <br>
             {{/foreach}}
         </div>
     </div>
@@ -207,7 +208,22 @@
 
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 <script src="js/custom-tooltips.min.js"></script>
 <script>
     // Disable the on-canvas tooltip
@@ -221,13 +237,12 @@
     var cardChart1 = new Chart($('#card-chart1'), {
         type: 'line',
         data: {
-            labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'January', 'February', 'March', 'April', 'May', 'June', 'July'],
             datasets: [{
                 label: 'players',
                 backgroundColor: getStyle('--primary'),
                 borderColor: 'rgba(255,255,255,0.55)',
                 fill: false,
-                data: [65, 59, 84, 84, 51, 55, 40, 65, 59, 84, 84, 51, 55, 40]
+                data: {{graphData|safe}}
             }]
         },
         options: {
@@ -237,6 +252,18 @@
             },
             scales: {
                 xAxes: [{
+                    type: 'time',
+                    distribution: 'series',
+                    ticks: {
+                        source: 'data',
+                        autoSkip: true
+                    }
+                }]
+            },
+            scales: {
+                xAxes: [{
+                    type: 'time',
+                    distribution: 'series',
                     display: true,
                     gridLines: {
                         color: 'transparent',
@@ -248,12 +275,18 @@
                     }
                 }],
                 yAxes: [{
-                    display: false,
+                    // display: false,
                     ticks: {
                         display: false,
-                        suggestedMin: 0,
-                        suggestedMax: 32
-                    }
+                        // suggestedMin: 0,
+                        // suggestedMax: 32
+                    },
+                    gridLines: {
+                        // color: '#83d0ec',
+                        // zeroLineColor: '#83d0ec',
+                        color: 'transparent',
+                        zeroLineColor: 'transparent'
+                    },
                 }]
             },
             elements: {
@@ -261,9 +294,9 @@
                     borderWidth: 2
                 },
                 point: {
-                    radius: 4,
-                    hitRadius: 10,
-                    hoverRadius: 8
+                    radius: 0,
+                    hitRadius: 4,
+                    hoverRadius: 4
                 }
             }
         }

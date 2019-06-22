@@ -132,9 +132,11 @@ function preparePlayersData() {
             pingClass = 'danger';
         }
         let paddedPing = player.ping.toString().padStart(3, 'x').replace(/x/g, '&nbsp;');
+        let maxNameSize = 22;
+        let name = (player.name.length > maxNameSize)? player.name.slice(0, maxNameSize-3)+'...' : player.name;
         out += `<div class="clearfix mt-3 playerlist">
                     <span class="pping text-${pingClass}">${paddedPing}</span>
-                    <span class="pname">${xss(player.name)}</span>
+                    <span class="pname">${xss(name)}</span>
                     <a onclick="showPlayer(${xss(player.id)})"><span class="badge badge-primary float-right">MORE</span></a>
                 </div>`;
 

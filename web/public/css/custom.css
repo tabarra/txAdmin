@@ -72,3 +72,11 @@
 mark {
     background-color: #ffeaa7;
 }
+
+
+/* Dashboard cards */
+@media (min-width: 1200px){
+    .dashboard-card{
+        max-width: 460px !important;
+    }
+}

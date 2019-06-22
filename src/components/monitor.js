@@ -3,6 +3,7 @@ const axios = require("axios");
 const bigInt = require("big-integer");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const hostCPUStatus = require('../extras/hostCPUStatus');
+const TimeSeries = require('../extras/TimeSeries');
 const context = 'Monitor';
 
 
@@ -23,6 +24,7 @@ module.exports = class Monitor {
         //Setting up
         logOk('::Started', context);
         this.cpuStatusProvider = new hostCPUStatus();
+        this.timeSeries = new TimeSeries(`data/${globals.config.configName}_players.log`, 10, 60*60*24);
         this.lastAutoRestart = null;
         this.failCounter = 0;
         this.fxServerHitches = [];
@@ -139,6 +141,7 @@ module.exports = class Monitor {
                 ping: false,
                 players: []
             }
+            this.timeSeries.add(0);
             return;
         }
         this.failCounter = 0;
@@ -163,6 +166,7 @@ module.exports = class Monitor {
             ping: Date.now() - timeStart,
             players: players
         }
+        this.timeSeries.add(players.length);
         if(globals.config.verbose) log(`Players online: ${players.length}`, context);
     }
 

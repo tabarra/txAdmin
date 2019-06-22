@@ -101,7 +101,7 @@ If you have any problems with the `package-lock.json`, just delete it and try ag
 - [x] Execute cmd buffer modal
 - [x] Code fxserver beta resource
 - [x] Apply the new resource commands to the player modal
-- [x] ~~Server restart/stop confirm modal with option to kickall~~
+- [x] Server restart/stop ~~confirm modal~~ with kickall
 - [x] Update available notice box (and move the checkUpdates method)
 - [ ] Make player history chart work
   
@@ -113,6 +113,8 @@ More:
 - [x] add version o the page footer (txAdmin vXXX build with...)
   
 ## TODO:
+- [ ] Write version bumper script
+- [ ] Write resource injector
 - [ ] Add custom commands to the config file
 - [ ] Config tester check for the modules inside `package.json` (require.resolve?)
 - [ ] Config tester kill spawned fxserver after 5 seconds
