@@ -124,9 +124,6 @@ module.exports = class WebServer {
                 this.handleRouteError(res, "[getPlayerData] Route Internal Error", err);
             });
         });
-        this.app.get('/checkVersion', async (req, res) => {
-            res.send(globals.version);
-        });
         
         //Index
         this.app.get('/', getAuthFunc('web'), async (req, res) => {

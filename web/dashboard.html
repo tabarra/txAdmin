@@ -104,8 +104,21 @@
 </div>
 
 
-{{include("footer")/}}
+{{if(options.update.currentVersion !== options.update.latestVersion)}}
+<div class="row justify-content-md-center">
+    <div class="col-md-6 ">
+        <div class="alert alert-{{update.class}} border-{{update.class}}  text-center" role="alert">
+            <a href="" class="alert-link">Update available for txAdmin ({{update.currentVersion}} > {{update.latestVersion}})! </a> <br>
+            {{foreach(options.update.changes)}}
+                <strong>v{{@this.version}}:</strong> {{@this.changelog|safe}} <br>
+            {{/foreach}}
+        </div>
+    </div>
+</div>
+{{/if}}
 
+
+{{include("footer")/}}
 
 
 <script>

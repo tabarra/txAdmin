@@ -153,23 +153,3 @@ $(document).ready(function() {
     // checkVersion();
     setInterval(refreshData, 1000);
 });
-
-
-/*
-function checkVersion(){
-    $.getJSON( "/checkVersion", function( data ) {
-        if(data.current !== data.latest){
-            $("#bottom-links").hide();
-            let out = `<small><strong>\n`;
-            out += `<a href="https://github.com/tabarra/txAdmin">Update available for txAdmin (v${data.current} > v${data.latest})!</a>\n`;
-            out += `</strong> <br/> \n`;
-            out += `${data.changelog}</small>\n`;
-            $("#update-me").html(out);
-            $("#update-me").removeClass('d-none');
-        }
-    });
-}
-
-colocar os crons dentro do doc ready
-
-*/

@@ -45,6 +45,7 @@
     "pidusage-tree": "^2.0.5",
     "pretty-bytes": "^5.2.0",
     "pretty-ms": "^5.0.0",
+    "semver": "^6.1.1",
     "socket.io": "^2.2.0",
     "squirrelly": "^7.1.1",
     "stream-snitch": "0.0.3",

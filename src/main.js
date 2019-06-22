@@ -71,8 +71,9 @@ class txAdmin {
         });
 
         //Run Update Checker every 30 minutes
-        this.checkForUpdates();
-        setInterval(this.checkForUpdates, 30 * 60 * 1000);
+        const updateChecker = require('./extras/updateChecker');
+        updateChecker();
+        setInterval(updateChecker, 30 * 60 * 1000);
     }
 
     //==============================================================
@@ -116,26 +117,6 @@ class txAdmin {
         const WebConsole = require('./components/webConsole')
         globals.webConsole = new WebConsole(config);
     }
-
-    //==============================================================
-    async checkForUpdates(){
-        const axios = require("axios");
-
-        try {
-            let rVer = await axios.get('https://raw.githubusercontent.com/tabarra/txAdmin/master/version.json');
-            rVer = rVer.data;
-            if(typeof rVer.version !== 'string' || typeof rVer.changelog !== 'string') throw new Error('Invalid remote version.json file');
-            globals.version.latest = rVer.version;
-            globals.version.changelog = rVer.changelog;
-            if(globals.version.current !== rVer.version){
-                logWarn(`A new version (v${rVer.version}) is available for txAdmin - https://github.com/tabarra/txAdmin`, 'UpdateChecker');
-            }
-        } catch (error) {
-            logError(`Error checking the current vs remote version. Go to the github repository to see if you need to update.`, 'UpdateChecker');
-            globals.version.latest = 'PLEASE-UPDATE';
-            globals.version.changelog = 'Error checking the latest version, probably an update is required. <br> Check out our <a href="https://discord.gg/f3TsfvD" target="_blank">Discord Server</a> for more information';
-        }
-    }  
 }
 
 
