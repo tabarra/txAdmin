@@ -95,6 +95,7 @@ module.exports = class FXRunner {
                 }catch(e){}
             }
         );
+        //NOTE: e se ao invés de pipe, eu der só um console log pra evitar os SIGINT?
         if(!this.config.quiet) this.fxChild.stdout.pipe(process.stdout);
         this.fxChild.stdout.pipe(hitchStreamProcessor);
         //NOTE: might disable the stdin pipe in the future, you should use the live console

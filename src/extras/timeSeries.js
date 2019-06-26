@@ -95,20 +95,8 @@ module.exports = class TimeSeries {
         this.log.filter((point) => {
             return (now - point.timestamp < this.window);
         });
-
-        let out = [];
-        let buffer = [0];
-        for (let i = 0; i < this.log.length; i++) {
-            if(i%6){
-                buffer.push(this.log[i]);
-            }else{
-                // out.push(buffer.reduce((p, c) => p += c));
-                out.push(this.log[i]);
-                buffer = [];
-            }
-        }
-        dir([this.log.length, out.length])
-        return [...out];
+        
+        return [...this.log];
     }
 
 

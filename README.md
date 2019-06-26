@@ -2,6 +2,9 @@
 	<h1 align="center">
 		txAdmin for FiveM
 	</h1>
+	<p align="center">
+		<img width="420" height="237" src="https://i.imgur.com/acV0dfO.png">
+	</p>
 	<h4 align="center">
 		FiveM Forum thread: &nbsp; <a href="https://forum.fivem.net/t/530475"><img src="https://img.shields.io/badge/dynamic/json.svg?color=green&label=txAdmin&query=views&suffix=%20views&url=https%3A%2F%2Fforum.fivem.net%2Ft%2F530475.json"></img></a>  <br/>
 		Join our Discord Server: &nbsp; <a href="https://discord.gg/f3TsfvD"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
@@ -24,14 +27,13 @@
 - OneSync Support (more than 32 slots server)
 - Linux Support
 - Live Console
-- Auto Restart on failure detection
-- Auto Restart on schedule
+- Auto Restart on failure detection or schedule
 - Password brute-force protection
-- Set FXServer process priority
+- FXServer process priority setter
 - Hitch Detection
 
 
-## Installation
+## Installing & Running
 First, make sure you have:
 - NodeJS v10+ (If you have problems with node-gyp/bcrypt/discord.js try downgrading to Node v10 LTS)
 - FXServer [(duh)](https://runtime.fivem.net/artifacts/fivem/)
@@ -103,14 +105,17 @@ If you have any problems with the `package-lock.json`, just delete it and try ag
 - [x] Apply the new resource commands to the player modal
 - [x] Server restart/stop ~~confirm modal~~ with kickall
 - [x] Update available notice box (and move the checkUpdates method)
-- [ ] Make player history chart work
+- [x] Make player history chart work
   
 More:
 - [x] escape message in txaBroadcast and txaSendDM
 - [x] Rewrite readme with note about permission and the resource & trocar 'server' por 'server01'
-- [ ] Solve the FIXME: comments
+- [x] Solve the FIXME: comments
 - [x] ping padding only removing one 'x', fix the regex
 - [x] add version o the page footer (txAdmin vXXX build with...)
+- [ ] write extensions 'soon' page
+- [ ] include the resource and related docs
+- [ ] bump version
   
 ## TODO:
 - [ ] Write version bumper script
@@ -121,9 +126,9 @@ More:
 - [ ] Investigate the "fxserver has stopped working" not disappearing when autorestarter kills the server (probably windows detaches it? in that case we would need to PID map and then kill them one by one?)
 
 TODO Ideas...
-- [ ] We have data, we should plot it into a graph...
+- [x] We have data, we should plot it into a graph...
 - [ ] Get JSONC compatibility. Inline documentation for the configs would be great.
-- [ ] Multiple server support? Technically easy, but would require massive rework of the interface.
+- [ ] ~~Multiple server support? Technically easy, but would require massive rework of the interface.~~ (This will be solved by linking multiple txAdmin instances via an master control extension)
 - [ ] FXServer artifact/build auto updater???
 - [ ] Automagically send messages in discord when starting/stopping/restarting the server
 - [ ] Discord bot extensions via required js files? Imagine typing `/whitelist @username` and the bot cross referencing the vRP id via the discord:xxx identifier. Or a `/me` giving back this users vRP stats like cars, wallet, bank, apartments & etc.

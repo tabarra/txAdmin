@@ -65,6 +65,11 @@
                 <div class="text-value">Players</div>
                 <div>last 24h</div>
             </div>
+            {{if(options.chartData === false)}}
+            <div class="text-center mb-4">
+                <h3 class="text-muted">Not enough data, yet...</h3>
+            </div>
+            {{#else}}
             <div class="chart-wrapper mt-3 mx-3" style="height:70px;">
                 <div class="chartjs-size-monitor">
                     <div class="chartjs-size-monitor-expand">
@@ -79,17 +84,18 @@
                 <div id="card-chart1-tooltip" class="chartjs-tooltip top"
                     style="opacity: 0; left: 194.39px; top: 93.2407px;">
                     <div class="tooltip-header">
-                        <div class="tooltip-header-item">April</div>
+                        <div class="tooltip-header-item">loading</div>
                     </div>
                     <div class="tooltip-body">
                         <div class="tooltip-body-item">
                             <span class="tooltip-body-item-color" style="background-color: rgb(0, 165, 224);"></span>
-                            <span class="tooltip-body-item-label">My First dataset</span>
-                            <span class="tooltip-body-item-value">84</span>
+                            <span class="tooltip-body-item-label">players</span>
+                            <span class="tooltip-body-item-value">loading</span>
                         </div>
                     </div>
                 </div>
             </div>
+            {{/if}}
         </div>
 
         <!-- Card Info -->
@@ -105,13 +111,13 @@
 </div>
 
 
-{{if(options.update.currentVersion !== options.update.latestVersion)}}
+{{if(options.updateData.currentVersion !== options.updateData.latestVersion)}}
 <div class="row justify-content-md-center">
     <div class="col-md-6 ">
-        <div class="alert alert-{{update.class}} border-{{update.class}}  text-center" role="alert">
-            <a href="" class="alert-link">Update available for txAdmin ({{update.currentVersion}} >
-                {{update.latestVersion}})! </a> <br>
-            {{foreach(options.update.changes)}}
+        <div class="alert alert-{{updateData.class}} border-{{updateData.class}}  text-center" role="alert">
+            <a href="" class="alert-link">Update available for txAdmin ({{updateData.currentVersion}} >
+                {{updateData.latestVersion}})! </a> <br>
+            {{foreach(options.updateData.changes)}}
             <strong>v{{@this.version}}:</strong> {{@this.changelog|safe}} <br>
             {{/foreach}}
         </div>
@@ -209,7 +215,7 @@
 
 
 
-
+{{if(options.chartData)}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 <script src="js/custom-tooltips.min.js"></script>
@@ -231,7 +237,7 @@
                 borderColor: 'rgba(255,255,255,0.55)',
                 fill: false,
                 //Change squirrelly tag: {{tags(--,--)/}}
-                data: --graphData|safe--
+                data: --chartData|safe--
                 //Changing it back: --tags({{,}})/--
             }]
         },
@@ -292,3 +298,4 @@
         }
     });
 </script>
+{{/if}}
