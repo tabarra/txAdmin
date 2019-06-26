@@ -60,7 +60,7 @@ If you want to manage existing admins you must edit the JSON file yourself. Make
   
 **4 -** To **RUN** txAdmin execute:
 ```bash
-$ npm start server.json
+$ node src server.json
 ```
 
 **Note:** You should run FXServer **through** txAdmin, and not in parallel (ie in another terminal).  
@@ -78,7 +78,7 @@ To **UPDATE** txAdmin execute:
 $ git pull
 $ npm i
 ```
-Make sure there's no differences in the json templates. If there is, copy the new template and edit again.  
+Make sure there are no differences in the json templates. If there is, copy the new template and edit again.  
 If you have any problems with the `package-lock.json`, just delete it and try again.  
 
 
