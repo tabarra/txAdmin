@@ -208,20 +208,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 <script src="js/custom-tooltips.min.js"></script>
@@ -242,7 +228,9 @@
                 backgroundColor: getStyle('--primary'),
                 borderColor: 'rgba(255,255,255,0.55)',
                 fill: false,
-                data: {{graphData|safe}}
+                //Change squirrelly tag: {{tags(--,--)/}}
+                data: --graphData|safe--
+                //Changing it back: --tags({{,}})/--
             }]
         },
         options: {
