@@ -65,36 +65,44 @@ function getChartData(series) {
  * Returns the update data
  */
 function getUpdateData() {
-    let diff;
-    try {
-        diff = semver.diff(globals.version.current, globals.version.latest);
-    } catch (error) {
-        diff = 'major';
-    }
     let updateData = {
         currentVersion: globals.version.current,
         latestVersion: globals.version.latest,
         changes: []
     }
-    if (diff == 'major') {
-        updateData.class = 'danger';
-    } else if (diff == 'minor') {
-        updateData.class = 'warning';
-    } else if (diff == 'patch') {
-        updateData.class = 'info';
-    } else {
-        updateData.class = 'dark';
+
+    try {
+        let diff;
+        try {
+            diff = semver.diff(globals.version.current, globals.version.latest);
+        } catch (error) {
+            diff = 'major';
+        }
+
+        if (diff == 'major') {
+            updateData.class = 'danger';
+        } else if (diff == 'minor') {
+            updateData.class = 'warning';
+        } else if (diff == 'patch') {
+            updateData.class = 'info';
+        } else {
+            updateData.class = 'dark';
+        }
+
+        //Processing the version history and only picking the new ones
+        globals.version.allVersions.forEach(version => {
+            try {
+                if (semver.gt(version.version, globals.version.current)) {
+                    updateData.changes.push(version);
+                }
+            } catch (error) { }
+        });
+        updateData.changes = updateData.changes.reverse();
+    } catch (error) {
+        logError(`Error while processing changelog. Enable verbosity for more information.`, context);
+        if(globals.config.verbose) dir(error);
     }
 
-    //Processing the version history and only picking the new ones
-    globals.version.allVersions.forEach(version => {
-        try {
-            if (semver.gt(version.version, globals.version.current)) {
-                updateData.changes.push(version);
-            }
-        } catch (error) { }
-    });
-    updateData.changes = updateData.changes.reverse();
 
     return updateData;
 }
