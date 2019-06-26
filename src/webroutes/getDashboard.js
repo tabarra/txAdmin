@@ -13,7 +13,6 @@ const context = 'WebServer:getDashboard';
 module.exports = async function action(res, req) {
     //Processing data for the update available alert
     let updateData = getUpdateData();
-    dir(updateData)
 
     //Player history
     let series = globals.monitor.timeSeries.get();
