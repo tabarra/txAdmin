@@ -17,7 +17,8 @@ globals = {
         current: '--',
         latest: '--',
         changelog: '--',
-    }
+    },
+    resourceNotFound: null //FIXME: temp hack
 }
 
 //==============================================================

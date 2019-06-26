@@ -5,6 +5,19 @@
     <h2>Server Dashboard</h2>
 </div>
 
+<!-- FIXME: temp missing resource detector -->
+{{if(options.resNotFound)}}
+<div class="row justify-content-md-center">
+    <div class="col-md-6 ">
+        <div class="alert alert-danger border-danger  text-center" role="alert">
+            <strong>Resource txAdminClient not found.</strong> <br>
+            To use the kick and send message capabilities of txAdmin you must copy the txAdminClient helper resource to your server's resource folder. <br>
+            The resource can be downloaded <a href="/txAdminClient.zip" class="alert-link">here</a>.
+        </div>
+    </div>
+</div>
+{{/if}}
+
 <div class="row justify-content-md-center">
     <div class="col-lg-8 col-xl-5 dashboard-card">
 

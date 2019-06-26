@@ -57,6 +57,7 @@ module.exports = class FXRunner {
      * Spawns the FXServer and sets up all the event handlers
      */
     async spawnServer(){
+        logWarn("Starting FXServer", context);
         //Sanity Check
         if(
             this.spawnVariables == null || 
@@ -95,9 +96,19 @@ module.exports = class FXRunner {
                 }catch(e){}
             }
         );
+        //FIXME: temp handler
+        let detectMissingResource = new StreamSnitch(
+            /Couldn't find resource txAdminClient./g,
+            (m) => {
+                try {
+                    globals.resourceNotFound = true;
+                }catch(e){}
+            }
+        );
         //NOTE: e se ao invés de pipe, eu der só um console log pra evitar os SIGINT?
         if(!this.config.quiet) this.fxChild.stdout.pipe(process.stdout);
         this.fxChild.stdout.pipe(hitchStreamProcessor);
+        this.fxChild.stdout.pipe(detectMissingResource);
         //NOTE: might disable the stdin pipe in the future, you should use the live console
         process.stdin.pipe(this.fxChild.stdin);
 
@@ -138,7 +149,7 @@ module.exports = class FXRunner {
         //NOTE: executing this only once might not be as reliable
         setTimeout(async () => {
             this.setFXServerEnvVars();
-        }, 5000);
+        }, 3000);
         
     }//Final spawnServer()
 
@@ -155,9 +166,9 @@ module.exports = class FXRunner {
         await sleep(delay);
         this.srvCmd(`set txAdmin-version ${globals.version.current}`);
         await sleep(delay);
-        this.srvCmd(`set txAdmin-port ${globals.webServer.config.port}`);
+        this.srvCmd(`set txAdmin-clientCompatVersion "1.0.0"`);
         await sleep(delay);
-        this.srvCmd(`ensure txAdmin`);
+        this.srvCmd(`ensure txAdminClient`);
     }
 
 

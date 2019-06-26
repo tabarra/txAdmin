@@ -60,7 +60,9 @@ $ npm run admin-add
 ```
 If you want to manage existing admins you must edit the JSON file yourself. Make sure your admins file folow `admins-template.json`. To generate the hashed password, you can use tools like [this](https://www.browserling.com/tools/bcrypt) and [this](https://bcrypt-generator.com) or even [this one](https://passwordhashing.com/BCrypt).  
   
-**4 -** To **RUN** txAdmin execute:
+**4 -** Copy the txAdminClient resource available inside `web/public/txAdminClient.zip` to your server's resource folder.  
+  
+**5 -** To **RUN** txAdmin execute:
 ```bash
 $ node src server01.json
 ```
@@ -114,7 +116,7 @@ More:
 - [x] ping padding only removing one 'x', fix the regex
 - [x] add version o the page footer (txAdmin vXXX build with...)
 - [ ] write extensions 'soon' page
-- [ ] include the resource and related docs
+- [x] include the resource and related docs
 - [ ] bump version
   
 ## TODO:

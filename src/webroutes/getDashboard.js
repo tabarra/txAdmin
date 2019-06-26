@@ -11,15 +11,16 @@ const context = 'WebServer:getDashboard';
  * @param {object} req
  */
 module.exports = async function action(res, req) {
-    //Processing data for the update available alert
-    let updateData = getUpdateData();
-
-    //Player history
-    let series = globals.monitor.timeSeries.get();
-    let chartData = getChartData(series)
+    //Preparing render data
+    let renderData = {
+        //FIXME: temp missing resource detector
+        resNotFound: globals.resourceNotFound,
+        updateData: getUpdateData(),
+        chartData: getChartData(globals.monitor.timeSeries.get())
+    }
 
     //Rendering the page
-    let out = await webUtils.renderMasterView('dashboard', { updateData: updateData, chartData: chartData });
+    let out = await webUtils.renderMasterView('dashboard', renderData);
     return res.send(out);
 };
 
