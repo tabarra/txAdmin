@@ -63,6 +63,12 @@ module.exports = async function action(res, req) {
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
+    }else if(action == 'ensure_res'){
+        let cmd = `ensure ${parameter}`;
+        webUtils.appendLog(req, cmd, context);
+        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+        return sendAlertOutput(res, toResp);
+
     }else if(action == 'stop_res'){
         let cmd = `stop ${parameter}`;
         webUtils.appendLog(req, cmd, context);

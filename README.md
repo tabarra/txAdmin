@@ -45,7 +45,7 @@ $ cd txAdmin
 $ npm i
 ```
 
-**2 -** Copy your `server-template.json` to `server.json` and modify it according to your preferences. The most important settings:  
+**2 -** Copy your `server01-template.json` to `server01.json` and modify it according to your preferences. The most important settings:  
 - `global.fxServerPort` is your fxServer port as configured in your `server.cfg`.
 - `monitor.restarter.schedule` is the restart schedule. The time MUST be in the 24-hour format with two digits for hours as well as minutes (`HH:MM`). Leave the array empty or set it to false to disable the feature.
 - `fxRunner.buildPath` is the folder containing the files `run.cmd`, `fxserver.exe` and a bunch of DLLs in case of Windows, and only `run.sh` in case of Linux.
@@ -60,7 +60,7 @@ If you want to manage existing admins you must edit the JSON file yourself. Make
   
 **4 -** To **RUN** txAdmin execute:
 ```bash
-$ node src server.json
+$ node src server01.json
 ```
 
 **Note:** You should run FXServer **through** txAdmin, and not in parallel (ie in another terminal).  
@@ -70,7 +70,7 @@ $ node src server.json
 
 ## Troubleshooting
 ### If you run into any problem, check our [Troubleshooting Guide](docs/troubleshooting.md).   
-If you are having trouble starting the FXServer via txAdmin, run `npm run config-tester server.json` and see which test is failing.  
+If you are having trouble starting the FXServer via txAdmin, run `npm run config-tester server01.json` and see which test is failing.  
 
 ## Updating
 To **UPDATE** txAdmin execute:
@@ -107,7 +107,7 @@ If you have any problems with the `package-lock.json`, just delete it and try ag
   
 More:
 - [x] escape message in txaBroadcast and txaSendDM
-- [ ] Rewrite readme with note about permission and the resource & trocar 'server' por 'server01
+- [x] Rewrite readme with note about permission and the resource & trocar 'server' por 'server01'
 - [ ] Solve the FIXME: comments
 - [x] ping padding only removing one 'x', fix the regex
 - [x] add version o the page footer (txAdmin vXXX build with...)

@@ -31,8 +31,9 @@
                         <select name="action" id="frm_action" class="form-control" required>
                             <option value="" disabled selected>&gt; SELECT</option>
                             <option value="admin_broadcast">Admin Message</option>
-                            <option value="restart_res">Restart script</option>
-                            <option value="start_res">Start script</option>
+                            <option value="ensure_res">Start/Restart script</option>
+                            <!-- <option value="restart_res">Restart script</option> -->
+                            <!-- <option value="start_res">Start script</option> -->
                             <option value="stop_res">Stop script</option>
                             <option value="refresh_res">Refresh scripts</option>
                             <option value="kick_all">Kick all players</option>
@@ -149,6 +150,7 @@
     //Commands with parameter required
     let paramRequiredCommands = [
         'admin_broadcast',
+        'ensure_res',
         'restart_res',
         'start_res',
         'stop_res'

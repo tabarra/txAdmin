@@ -56,7 +56,7 @@ let cfg = {
     fxRunner: null,
 }
 //Read config and Set defaults
-//FIXME: the bool trick in global.verbose and fxRunner.autostart won't work if we want the default to be true
+//NOTE: the bool trick in global.verbose and fxRunner.autostart won't work if we want the default to be true
 //NOTE: Some settings here were removed from the config template file to look less intimidating. Put them in the docs ASAP.
 try {
     cfg.global = {
