@@ -117,7 +117,7 @@ More:
 - [x] add version o the page footer (txAdmin vXXX build with...)
 - [x] write extensions 'soon' page
 - [x] include the resource and related docs
-- [ ] bump version
+- [x] bump version
   
 ## TODO:
 - [ ] Write version bumper script
