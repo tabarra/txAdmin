@@ -1,5 +1,10 @@
 {
-    "version": "0.9.12",
-    "changelog": "<b>v0.9.12</b> Fixed hitches reporting wrong number and improved logging. <br> FINAL UPDATE under this name.",
-    "allVersions": []
+    "version": "1.0.0",
+    "changelog": "New Interface and too many new features to list here. Please Update.",
+    "allVersions": [
+        {
+            "version": "1.0.0",
+            "changelog": "New Interface and too many new features to list here. Please Update."
+        }
+    ]
 }
