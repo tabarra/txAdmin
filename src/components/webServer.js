@@ -125,10 +125,15 @@ module.exports = class WebServer {
             });
         });
         
-        //Index
+        //Index & generic
         this.app.get('/', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getDashboard(res, req).catch((err) => {
                 this.handleRouteError(res, "[getDashboard] Route Internal Error", err);
+            });
+        });
+        this.app.get('/addExtension', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.getAddExtension(res, req).catch((err) => {
+                this.handleRouteError(res, "[getAddExtension] Route Internal Error", err);
             });
         });
 

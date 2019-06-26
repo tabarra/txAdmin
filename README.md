@@ -115,7 +115,7 @@ More:
 - [x] Solve the FIXME: comments
 - [x] ping padding only removing one 'x', fix the regex
 - [x] add version o the page footer (txAdmin vXXX build with...)
-- [ ] write extensions 'soon' page
+- [x] write extensions 'soon' page
 - [x] include the resource and related docs
 - [ ] bump version
   
