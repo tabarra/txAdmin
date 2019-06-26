@@ -1,7 +1,11 @@
 {
-    "version": "1.0.0",
+    "version": "1.0.1",
     "changelog": "New Interface and too many new features to list here. Please Update.",
     "allVersions": [
+        {
+            "version": "1.0.1",
+            "changelog": "Now working on linux. Minor bug fixes for windows/linux."
+        },
         {
             "version": "1.0.0",
             "changelog": "New Interface and too many new features to list here. Please Update."

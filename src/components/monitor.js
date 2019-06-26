@@ -3,7 +3,7 @@ const axios = require("axios");
 const bigInt = require("big-integer");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const hostCPUStatus = require('../extras/hostCPUStatus');
-const TimeSeries = require('../extras/TimeSeries');
+const TimeSeries = require('../extras/timeSeries');
 const context = 'Monitor';
 
 

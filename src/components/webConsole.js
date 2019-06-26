@@ -21,7 +21,7 @@ module.exports = class webConsole {
         this.io = null;
         this.dataBuffer = '';
 
-        setInterval(this.flushBuffer.bind(this), 500);
+        setInterval(this.flushBuffer.bind(this), 250);
     }
 
 

@@ -214,7 +214,7 @@ module.exports = class FXRunner {
         if(typeof reason === 'string'){
             reason = reason.replace(/\"/g, '\\"');
             this.srvCmd(`txaBroadcast "Restarting server (${reason})."`);
-            await sleep(500);
+            await sleep(250);
         }
         this.killServer();
         globals.monitor.clearFXServerHitches()

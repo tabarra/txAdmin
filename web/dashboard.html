@@ -152,7 +152,7 @@
             url: actionURL = '/fxControls/' + action,
             type: "GET",
             dataType: "json",
-            timeout: 2000,
+            timeout: 3000,
             success: function (data) {
                 if (data.logout) {
                     window.location = '/auth?logout';

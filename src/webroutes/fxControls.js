@@ -20,7 +20,7 @@ module.exports = async function action(res, req) {
 
     if(action == 'restart'){
         webUtils.appendLog(req, `RESTART SERVER`, context);
-        await globals.fxRunner.srvCmdBuffer(`txaKickAll "server restarting"`);
+        await globals.fxRunner.srvCmd(`txaKickAll "server restarting"`);
         await sleep(1000);
         await globals.fxRunner.restartServer('via txAdmin Web Panel');
         res.send({status: 'ok'});
@@ -28,7 +28,7 @@ module.exports = async function action(res, req) {
 
     }else if(action == 'stop'){
         webUtils.appendLog(req, `STOP SERVER`, context);
-        await globals.fxRunner.srvCmdBuffer(`txaKickAll "server shutting down"`);
+        await globals.fxRunner.srvCmd(`txaKickAll "server shutting down"`);
         await sleep(1000);
         globals.fxRunner.killServer();
         res.send({status: 'ok'});
