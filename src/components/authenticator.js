@@ -29,7 +29,7 @@ module.exports = class Authenticator {
     checkAuth(uname, pwd){
         let username = uname.toLowerCase();
         let admin = this.admins.find((user) => {
-            return (username === user.name && bcrypt.compareSync(pwd, user.password_hash))
+            return (username === user.name.toLowerCase() && bcrypt.compareSync(pwd, user.password_hash))
         });
         return (admin)? admin : false;
     }

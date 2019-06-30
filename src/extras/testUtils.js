@@ -36,7 +36,7 @@ function moduleInstallChecker() {
             }
         });
         if(missing.length){
-            errorOut = `The following packages are missing, make sure you executed 'npm i':\n` + missing.join(', ');
+            errorOut = `Make sure you executed 'npm i'. The following packages are missing:\n` + missing.join(', ');
         }
     } catch (error) {
         errorOut = `Error reading or parsing package.json: ${error.message}`;
