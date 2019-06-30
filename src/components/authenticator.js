@@ -27,8 +27,9 @@ module.exports = class Authenticator {
      * @returns {(object|boolean)} admin user or false
      */
     checkAuth(uname, pwd){
+        let username = uname.toLowerCase();
         let admin = this.admins.find((user) => {
-            return (uname === user.name && bcrypt.compareSync(pwd, user.password_hash))
+            return (username === user.name && bcrypt.compareSync(pwd, user.password_hash))
         });
         return (admin)? admin : false;
     }

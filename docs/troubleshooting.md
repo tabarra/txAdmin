@@ -28,7 +28,7 @@ Note2: This also applies for any other server configuration file. Using `server0
 ## Problems running FXServer 
 When you start txAdmin, your server will not start automatically (by default). Open the web panel and start txAdmin (actions > START Server). You can change this by enabling `fxRunner.autostart` on your server configuration file.  
 If you are getting `HealthCheck request error` it means the txAdmin:Monitor could not connect to the FXServer. Check the two items below.
-- If the server is actually online but txAdmin thinks it's offline, make sure your fxserver is configured to use the IP `0.0.0.0` in your `endpoint_add_*` directives instead of your public/private IP. Also check for your `global.fxServerPort` configuration, it must match the port configured in your `server.cfg`.
+- If the server is actually online (you can join the server) but txAdmin thinks it's offline, make sure your fxserver is configured to use the IP `0.0.0.0` in your `endpoint_add_*` directives instead of your public/private IP. Also check for your `global.fxServerPort` configuration, it must match the port configured in your `server.cfg`.
 - If you are having trouble starting the FXServer via txAdmin, run `npm run config-tester server01.json` and see which test is failing.  
 
 <hr>

@@ -40,7 +40,7 @@ module.exports = class WebServer {
         })
         try {
             this.httpServer.listen(this.config.port, '0.0.0.0', () => {
-                logOk(`::Started at http://${globals.config.publicIP}:${this.config.port}/`, context);
+                logOk(`::Started at http://localhost:${this.config.port}/`, context);
                 globals.webConsole.startSocket(this.httpServer);
             })
         } catch (error) {

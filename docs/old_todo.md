@@ -1,4 +1,40 @@
-## Old TODO:
+## Interface Rework TODO:
+- [x] make 80% of all pages html/css (in php)
+- [x] remake webUtils templating
+- [x] port all pages to node
+- [x] Complete full status page
+- [x] Complete admin log page
+- [x] Complete live console page
+- [x] Fix login page + add username
+- [x] Autenticate every console message
+- [x] Fix xss from fxserver to browser
+- [x] Implement 500ms buffer for the live console broadcast
+- [x] Re-add login name to all logging functions
+- [x] Clean webUtils
+- [x] Adapt getStatus endpoint and integrate
+- [x] Make dashboard functionalities work
+- [x] Player modal endpoints
+- [x] Execute cmd buffer modal
+- [x] Code fxserver beta resource
+- [x] Apply the new resource commands to the player modal
+- [x] Server restart/stop ~~confirm modal~~ with kickall
+- [x] Update available notice box (and move the checkUpdates method)
+- [x] Make player history chart work
+  
+More:
+- [x] escape message in txaBroadcast and txaSendDM
+- [x] Rewrite readme with note about permission and the resource & trocar 'server' por 'server01'
+- [x] Solve the FIXME: comments
+- [x] ping padding only removing one 'x', fix the regex
+- [x] add version o the page footer (txAdmin vXXX build with...)
+- [x] write extensions 'soon' page
+- [x] include the resource and related docs
+- [x] bump version
+
+---
+
+
+## Older TODO:
 - [x] **Improve the README.**
 - [x] Get the correct PID through pidtree (should we get only the correct fxserver's pid, or sum all the processes? This code usually takes about 40MB so it might be significant enough to include)
 - [x] Put the configuration into a json and set default values

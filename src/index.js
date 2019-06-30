@@ -1,6 +1,12 @@
 //Requires
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('./extras/console');
 
+//NOTE: temp node version checker
+if(!process.version.startsWith('v10.')){
+    cleanTerminal();
+    logError(`FATAL ERROR: txAdmin doesn't support NodeJS ${process.version}, please install NodeJS v10 LTS!`);
+    process.exit();
+}
 
 //==============================================================
 //FIXME: I should be using dependency injection or something
@@ -126,6 +132,7 @@ class txAdmin {
 function HandleFatalError(err, context){
     if(err.message.includes('Cannot find module')){
         logError(`Error starting '${context}' module. Make sure you executed 'npm install'.`)
+        if(globals.config.verbose) dir(error);
     }else{
         logError(`Error starting '${context}' module: ${err.message}`)
         logError(err.stack, context)
@@ -133,8 +140,16 @@ function HandleFatalError(err, context){
     
     process.exit();
 }
+process.stdin.on('error', (data) => {});
+process.stdout.on('error', (data) => {});
+process.stderr.on('error', (data) => {});
 process.on('unhandledRejection', (err) => {
     logError(">>Ohh nooooo - unhandledRejection")
+    logError(err.message)
+    logError(err.stack)
+});
+process.on('uncaughtException', function(err) {
+    logError(">>Ohh nooooo - uncaughtException")
     logError(err.message)
     logError(err.stack)
 });

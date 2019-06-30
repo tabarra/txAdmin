@@ -73,8 +73,8 @@ module.exports = class Monitor {
             }
             let message = `Restarting server (${reason}).`;
             logWarn(message, context);
-            globals.fxRunner.restartServer(message);
             globals.logger.append(`[MONITOR] ${message}`);
+            globals.fxRunner.restartServer(reason);
         }else{
             if(globals.config.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) restartFXServer() awaiting restarter cooldown.`, context);
         }
@@ -134,7 +134,9 @@ module.exports = class Monitor {
             if(!Array.isArray(players)) throw new Error("FXServer's players endpoint didnt return a JSON array.")
         } catch (error) {
             this.failCounter++;
-            logWarn(`(Counter: ${this.failCounter}/${this.config.restarter.failures}) HealthCheck request error: ${error.message}`, context);
+            if(globals.config.verbose || this.failCounter > 5){
+                logWarn(`(Counter: ${this.failCounter}/${this.config.restarter.failures}) HealthCheck request error: ${error.message}`, context);
+            }
             if(this.config.restarter !== false && this.failCounter >= this.config.restarter.failures) this.restartFXServer('Failure Count Above Limit');
             this.statusServer = {
                 online: false,

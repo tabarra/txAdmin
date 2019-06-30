@@ -249,9 +249,12 @@
                 backgroundColor: getStyle('--primary'),
                 borderColor: 'rgba(255,255,255,0.55)',
                 fill: false,
+                //NOTE: breaking multiple lines because squirrelly is not respecting LF as line endings.
                 //Change squirrelly tag: {{tags(--,--)/}}
+                //intentionally 'blank' line
                 data: --chartData|safe--
                 //Changing it back: --tags({{,}})/--
+                //intentionally 'blank' line
             }]
         },
         options: {

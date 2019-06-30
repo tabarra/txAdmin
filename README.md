@@ -35,9 +35,9 @@
 
 ## Installing & Running
 First, make sure you have:
-- NodeJS v10+ (If you have problems with node-gyp/bcrypt/discord.js try downgrading to Node v10 LTS)
+- NodeJS v10 LTS (Otherwise you WILL have problems with node-gyp/bcrypt/discord.js)
 - FXServer [(duh)](https://runtime.fivem.net/artifacts/fivem/)
-- One TCP listen port opened for the web server
+- One TCP listen port opened for the web server (default is 40120)
 - Git (only for installs and updates)
 
 **1 -** To **INSTALL** txAdmin execute:
@@ -67,6 +67,8 @@ If you want to manage existing admins you must edit the JSON file yourself. Make
 $ node src server01.json
 ```
 
+Then open `http://public-ip:40120/` in your browser and login with the credentials created in item 3.
+  
 **Note:** You should run FXServer **through** txAdmin, and not in parallel (ie in another terminal).  
 **Note2:** To configure your Discord bot, follow these two guides:  [Setting up a bot application](https://discordjs.guide/preparations/setting-up-a-bot-application.html) and [Adding your bot to servers](https://discordjs.guide/preparations/adding-your-bot-to-servers.html).  
 **Note3:** Although **not recommended**, you can set FXServer processes priorities. To do so, change `fxRunner.setPriority` to one of the following: LOW, BELOW_NORMAL, NORMAL, ABOVE_NORMAL, HIGH, HIGHEST.
@@ -86,38 +88,6 @@ Make sure there are no differences in the json templates. If there is, copy the 
 If you have any problems with `package-lock.json`, just delete it and try again.  
 
 
-## Interface Rework Progress:
-- [x] make 80% of all pages html/css (in php)
-- [x] remake webUtils templating
-- [x] port all pages to node
-- [x] Complete full status page
-- [x] Complete admin log page
-- [x] Complete live console page
-- [x] Fix login page + add username
-- [x] Autenticate every console message
-- [x] Fix xss from fxserver to browser
-- [x] Implement 500ms buffer for the live console broadcast
-- [x] Re-add login name to all logging functions
-- [x] Clean webUtils
-- [x] Adapt getStatus endpoint and integrate
-- [x] Make dashboard functionalities work
-- [x] Player modal endpoints
-- [x] Execute cmd buffer modal
-- [x] Code fxserver beta resource
-- [x] Apply the new resource commands to the player modal
-- [x] Server restart/stop ~~confirm modal~~ with kickall
-- [x] Update available notice box (and move the checkUpdates method)
-- [x] Make player history chart work
-  
-More:
-- [x] escape message in txaBroadcast and txaSendDM
-- [x] Rewrite readme with note about permission and the resource & trocar 'server' por 'server01'
-- [x] Solve the FIXME: comments
-- [x] ping padding only removing one 'x', fix the regex
-- [x] add version o the page footer (txAdmin vXXX build with...)
-- [x] write extensions 'soon' page
-- [x] include the resource and related docs
-- [x] bump version
   
 ## TODO:
 - [ ] Write version bumper script
