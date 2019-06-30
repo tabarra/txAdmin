@@ -8,14 +8,18 @@ const context = 'ConfigExporter';
 //Helper Functions
 function fatalRequired(varName){
     logError(`The following configuration was not set and is required: '${varName}'`, context);
-    process.exit(0);
+    process.exit();
 }
 
 
 //Check argv
 let serverProfile;
 if(process.argv[2]){
-    serverProfile = process.argv[2].trim();
+    serverProfile = process.argv[2].replace(/[^a-z0-9._-]/gi, "");
+    if(serverProfile === 'example'){
+        logError(`You can't use the example profile.`);
+        process.exit();
+    }
     log(`Server profile selected: '${serverProfile}'`, context);
 }else{
     serverProfile = 'default';

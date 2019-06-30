@@ -13,28 +13,21 @@ const context = 'ConfigTester';
 printDivider();
 logOk(`Usage: "node src/scripts/config-tester server-profile-name"`);
 logOk(`Usage: When the profile name is not specified, "default" will be used.`);
+printDivider();
 
 //Check node version and packages
 testUtils.nodeVersionChecker();
 testUtils.moduleInstallChecker();
 
-//Printing Environment information
-printDivider();
-log("Printing Environment information:");
-log("\tOS type: " + os.type());
-log("\tOS platform: " + os.platform());
-log("\tOS release: " + os.release());
-log("\tCPU count: " + os.cpus().length);
-log("\tCPU speed: " + os.cpus()[0].speed + "MHz");
-log("\tFree Memory: " + prettyBytes(os.freemem()));
-log("\tTotal Memory: " + prettyBytes(os.totalmem()));
-printDivider();
-
 
 //Check  argv
 let serverProfile;
 if(process.argv[2]){
-    serverProfile = process.argv[2].trim();
+    serverProfile = process.argv[2].replace(/[^a-z0-9._-]/gi, "");
+    if(serverProfile === 'example'){
+        logError(`You can't use the example profile.`);
+        process.exit();
+    }
     log(`Server profile selected: '${serverProfile}'`);
 }else{
     serverProfile = 'default';
@@ -52,6 +45,18 @@ try {
     logError(`Unnable to load configuration file 'data/${serverProfile}/config.json'`, context);
     process.exit(0)
 }
+
+
+//Printing Environment information
+printDivider();
+log("Printing Environment information:");
+log("\tOS type: " + os.type());
+log("\tOS platform: " + os.platform());
+log("\tOS release: " + os.release());
+log("\tCPU count: " + os.cpus().length);
+log("\tCPU speed: " + os.cpus()[0].speed + "MHz");
+log("\tFree Memory: " + prettyBytes(os.freemem()));
+log("\tTotal Memory: " + prettyBytes(os.totalmem()));
 
 
 //Filter out sensitive information and Print configuration
