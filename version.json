@@ -1,5 +1,5 @@
 {
-    "version": "1.0.3",
+    "version": "1.0.4",
     "changelog": "New Interface and too many new features to list here. Please Update.",
     "allVersions": [
         {
@@ -17,6 +17,10 @@
         {
             "version": "1.0.3",
             "changelog": "Fixed player chart, onesync detection, and minor stuff"
+        },
+        {
+            "version": "1.0.4",
+            "changelog": "Fixed crashing on fxserver restart."
         }
     ]
 }

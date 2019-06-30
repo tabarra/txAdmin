@@ -106,7 +106,8 @@ module.exports = class FXRunner {
             }
         );
         //NOTE: e se ao invés de pipe, eu der só um console log pra evitar os SIGINT?
-        if(!this.config.quiet) this.fxChild.stdout.pipe(process.stdout);
+        this.fxChild.stdout.setEncoding('utf8');
+        if(!this.config.quiet) this.fxChild.stdout.pipe(process.stdout, {end: false});
         this.fxChild.stdout.pipe(hitchStreamProcessor);
         this.fxChild.stdout.pipe(detectMissingResource);
         //NOTE: might disable the stdin pipe in the future, you should use the live console
@@ -290,6 +291,7 @@ module.exports = class FXRunner {
     async fxserverOutputHandler(data){
         // const chalk = require('chalk');
         // process.stdout.write(chalk.bold.red('|'));
+        // process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F]/g, ""));
         data = data.toString();
         globals.webConsole.buffer(data);
         if(this.enableBuffer) this.outData += data;
