@@ -58,7 +58,7 @@ async function renderLoginView(message){
         data = {
             headerTitle: 'Login',
             message: (typeof message !== 'undefined')? message : '',
-            config: globals.config.configName,
+            config: globals.config.serverProfile,
             port: globals.config.fxServerPort,
             version: globals.version.current
         }

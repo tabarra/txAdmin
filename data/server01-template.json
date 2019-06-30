@@ -13,16 +13,13 @@
             "schedule": ["05:00", "13:00"]
         }
     },
-    "authenticator": {
-        "adminsFilePath": "data/admins.json"
-    },
+    "authenticator": {},
     "webServer": {
         "port": 40120
     },
     "discordBot": {
         "enabled": false,
         "token": "change-me",
-        "messagesFilePath": "data/messages.json",
         "statusCommand": "/status"
     },
     "fxRunner": {

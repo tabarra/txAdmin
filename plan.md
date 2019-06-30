@@ -17,8 +17,8 @@ $ node src/index.js default
 
 ## TODO:
 - [x] adapt admin-add 
-- [ ] adapt config-tester
-- [ ] adapt main
+- [x] adapt config-tester
+- [x] adapt main
 - [ ] xxx
 - [ ] xxx
 

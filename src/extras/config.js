@@ -3,7 +3,7 @@
 const os = require('os');
 const fs = require('fs');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'Config Exporter';
+const context = 'ConfigExporter';
 
 //Helper Functions
 function fatalRequired(varName){
@@ -11,38 +11,61 @@ function fatalRequired(varName){
     process.exit(0);
 }
 
-//Check  argv
-if(!process.argv[2]){
-    logError('Server config file not set. You must start txAdmin with the command "npm start example.json", with "example.json" being the name of the file containing your txAdmin server configuration inside the data folder. This file should be based on the server-template.json file.', context);
-    process.exit(0);
-}
 
-//Get config name
-let configName = null;
-if(process.argv[2].endsWith('.json')){
-    configName = process.argv[2].substring(0, process.argv[2].length-5);
+//Check argv
+let serverProfile;
+if(process.argv[2]){
+    serverProfile = process.argv[2].trim();
+    log(`Server profile selected: '${serverProfile}'`, context);
 }else{
-    configName = process.argv[2];
+    serverProfile = 'default';
+    log(`Server profile not set, using default`, context);
 }
 
-//Try to load configuration
+//Try to load config file
 //TODO: create a lock file to prevent starting twice the same config file?
+let serverProfilePath = `data/${serverProfile}`;
+let configFilePath = `${serverProfilePath}/config.json`;
 let rawFile = null;
 try {
-    rawFile = fs.readFileSync(`data/${configName}.json`, 'utf8');
+    rawFile = fs.readFileSync(configFilePath, 'utf8');
 } catch (error) {
-    logError(`Unnable to load configuration file 'data/${configName}.json'. (cannot read file, please read the documentation)`, context);
+    logError(`Unnable to load configuration file '${configFilePath}'. (cannot read file, please read the documentation)`, context);
     process.exit(0)
 }
 
+//Try to parse config file
 let configFile = null;
 try {
     configFile = JSON.parse(rawFile);
 } catch (error) {
-    logError(`Unnable to load configuration file 'data/${configName}.json'. (json parse error, please read the documentation)`, context);
-    if(rawFile.includes('\\')) logError(`Note: your '${configName}.json' file contains '\\', make sure all your paths use only '/'.`, context)
-    process.exit(0)
+    logError(`Unnable to load configuration file '${configFilePath}'. (json parse error, please read the documentation)`, context);
+    if(rawFile.includes('\\')) logError(`Note: your '${serverProfile}.json' file contains '\\', make sure all your paths use only '/'.`, context)
+    process.exit();
 }
+
+//Create server folder structure if doesn't exist
+try {
+    let dataPath = `${serverProfilePath}/data/`;
+    if(!fs.existsSync(dataPath)){
+        fs.mkdirSync(dataPath);
+    }
+    
+    let messagesPath = `${serverProfilePath}/messages.json`;
+    if(!fs.existsSync(messagesPath)){
+        fs.writeFileSync(messagesPath, '[]');
+    }  
+    
+    let commandsPath = `${serverProfilePath}/commands.json`;
+    if(!fs.existsSync(commandsPath)){
+        fs.writeFileSync(commandsPath, '[]');
+    }  
+} catch (error) {
+    logError(`Error setting up folder structure in '${serverProfilePath}/'`, context);
+    logError(error);
+    process.exit();
+}
+
 
 
 let cfg = {
@@ -67,10 +90,11 @@ try {
         
         //Extras
         osType: os.type() || 'unknown',
-        configName: configName,
+        serverProfile: serverProfile,
+        serverProfilePath: serverProfilePath
     };
     cfg.logger = {
-        logPath: configFile.logger.logPath || `data/${configName}.log`, //not in template
+        logPath: configFile.logger.logPath || `${serverProfilePath}/data/admin.log`, //not in template 
     };
     cfg.monitor = {
         interval: parseInt(configFile.monitor.interval) || 1000, //not in template
@@ -82,7 +106,6 @@ try {
         }
     };
     cfg.authenticator = {
-        adminsFilePath: configFile.authenticator.adminsFilePath || 'data/admins.json',
         refreshInterval: parseInt(configFile.authenticator.refreshInterval) || 15000, //not in template
     };
     cfg.webServer = {
@@ -97,7 +120,7 @@ try {
     cfg.discordBot = {
         enabled: (configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true),
         token:  configFile.discordBot.token || ((configFile.discordBot.enabled === 'true' || configFile.discordBot.enabled === true) && fatalRequired('discordBot.token')),
-        messagesFilePath: configFile.discordBot.messagesFilePath || 'data/messages.json',
+        messagesFilePath: configFile.discordBot.messagesFilePath || `${serverProfilePath}/messages.json`, //not in template
         refreshInterval: parseInt(configFile.discordBot.refreshInterval) || 15000, //not in template
         statusCommand: configFile.discordBot.statusCommand || "/status",
     };
@@ -113,6 +136,7 @@ try {
     };
 } catch (error) {
     logError('Malformed configuration file! Please copy server-template.json and try again.', context);
+    dir(error);
     process.exit(0);
 }
 

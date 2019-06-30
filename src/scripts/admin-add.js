@@ -1,29 +1,23 @@
-/**
- * Admin adder script rough flow
- *      - Try to load file from argv or admins.json
- *      - If parse error, ask if should rewrite
- *      - If not found, warn that the file will be created
- *      - Prompt for username
- *      - Prompt for password
- *      - Add user to object
- *      - Print success info and list all admins
- *      - Save file
- */
-
 //Requires
 const fs = require('fs');
 const readline = require('readline');
 const bcrypt = require('bcrypt');
 const { promisify } = require('util');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const testUtils = require('../extras/testUtils');
 cleanTerminal()
 const context = 'AdminAddScript';
 const printDivider = () =>{log('='.repeat(64), context)};
 
 
+
 //================================================================
 //=================================================== Setup
 //================================================================
+//Check node version and packages
+testUtils.nodeVersionChecker();
+testUtils.moduleInstallChecker();
+
 //Setting up ReadLine
 const rl = readline.createInterface({input: process.stdin, output: process.stdout});
 readline.Interface.prototype.question[promisify.custom] = function(prompt) {
@@ -34,13 +28,6 @@ readline.Interface.prototype.question[promisify.custom] = function(prompt) {
 readline.Interface.prototype.questionAsync = promisify(
     readline.Interface.prototype.question,
 );
-
-
-
-
-
-
-
 
 
 
@@ -217,7 +204,7 @@ printDivider();
     admins.push({
         name: login,
         password_hash: hash,
-        permissions: []
+        permissions: ['all']
     })
 
 
