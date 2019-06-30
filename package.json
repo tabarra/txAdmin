@@ -4,7 +4,7 @@
   "description": "FiveM FXServer Admin - remotely manage your GTA5 FiveM Server",
   "main": "src/main.js",
   "scripts": {
-    "start": "node src/main.js",
+    "start": "node src/index.js",
     "config-tester": "node src/scripts/config-tester.js",
     "admin-add": "node src/scripts/admin-add.js"
   },

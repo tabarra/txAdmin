@@ -126,6 +126,7 @@ class txAdmin {
 function HandleFatalError(err, context){
     if(err.message.includes('Cannot find module')){
         logError(`Error starting '${context}' module. Make sure you executed 'npm install'.`)
+        if(globals.config.verbose) dir(error);
     }else{
         logError(`Error starting '${context}' module: ${err.message}`)
         logError(err.stack, context)

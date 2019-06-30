@@ -158,7 +158,7 @@ async function getFXServerData(){
         fxData.status = 'ONLINE';
         fxData.version = data.server;
         fxData.resources = data.resources.length;
-        fxData.onesync = (data.vars && data.vars.onesync_enabled)? 'enabled' : 'disabled';
+        fxData.onesync = (data.vars && data.vars.onesync_enabled === 'true')? 'enabled' : 'disabled';
         fxData.maxClients = (data.vars && data.vars.sv_maxClients)? data.vars.sv_maxClients : '--';
         fxData.tags = (data.vars && data.vars.tags)? data.vars.tags : '--';
         fxData.error = false;

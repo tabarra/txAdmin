@@ -79,7 +79,7 @@ module.exports = class FXRunner {
                 this.spawnVariables.cmdArgs,
                 {cwd: this.config.basePath}
             );
-            logOk(`::Server started with PID ${this.fxChild.pid}!`, context);
+            logOk(`::FXServer started with PID ${this.fxChild.pid}!`, context);
             this.tsChildStarted = Math.round(Date.now()/1000);
         } catch (error) {
             logError('Failed to start FXServer with the following error:');
@@ -214,7 +214,7 @@ module.exports = class FXRunner {
         if(typeof reason === 'string'){
             reason = reason.replace(/\"/g, '\\"');
             this.srvCmd(`txaBroadcast "Restarting server (${reason})."`);
-            await sleep(250);
+            await sleep(100);
         }
         this.killServer();
         globals.monitor.clearFXServerHitches()
