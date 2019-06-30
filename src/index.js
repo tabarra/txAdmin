@@ -1,12 +1,7 @@
 //Requires
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('./extras/console');
+const testUtils = require('./extras/testUtils');
 
-//NOTE: temp node version checker
-if(!process.version.startsWith('v10.')){
-    cleanTerminal();
-    logError(`FATAL ERROR: txAdmin doesn't support NodeJS ${process.version}, please install NodeJS v10 LTS!`);
-    process.exit();
-}
 
 //==============================================================
 //FIXME: I should be using dependency injection or something
@@ -28,6 +23,7 @@ globals = {
     resourceNotFound: null //FIXME: temp hack
 }
 
+
 //==============================================================
 class txAdmin {
     constructor(){
@@ -39,6 +35,10 @@ class txAdmin {
         cleanTerminal();
         console.log(motd);
         log(">>Starting txAdmin");
+
+        //Check node version and packages
+        testUtils.nodeVersionChecker();
+        testUtils.moduleInstallChecker();
 
         //Prepare settings
         let localConfig = require('./extras/config');
@@ -140,9 +140,11 @@ function HandleFatalError(err, context){
     
     process.exit();
 }
+
 process.stdin.on('error', (data) => {});
 process.stdout.on('error', (data) => {});
 process.stderr.on('error', (data) => {});
+
 process.on('unhandledRejection', (err) => {
     logError(">>Ohh nooooo - unhandledRejection")
     logError(err.message)

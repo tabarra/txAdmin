@@ -93,7 +93,7 @@ If you have any problems with `package-lock.json`, just delete it and try again.
 - [ ] Write version bumper script
 - [ ] Write resource injector
 - [ ] Add custom commands to the config file
-- [ ] Config tester check for the modules inside `package.json` (require.resolve?)
+- [x] Config tester check for the modules inside `package.json` (require.resolve?)
 - [ ] Config tester kill spawned fxserver after 5 seconds
 - [ ] Investigate the "fxserver has stopped working" not disappearing when autorestarter kills the server (probably windows detaches it? in that case we would need to PID map and then kill them one by one?)
 

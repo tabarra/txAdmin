@@ -1,35 +1,52 @@
 
+## Instructions
+```bash
+# Install
+$ git clone https://github.com/tabarra/txAdmin && cd txAdmin
+$ npm i
 
-//FIXME: change config.json name, cant be both named the same
+# Add admin
+$ node src/scripts/admin-add.js
 
-data/
-    config.json (web port, admins)
-    example/
-        config.json
-        messages.json
-        commands.json
-        data/
-            players.json
-            admin.log
-            FXServer.log
-            txAdmin_errors.log
-extensions/ ?
-setup.js
-start.js
-start.bat
+# Setup default server
+$ node src/scripts/setup.js default
+
+# Start default server
+$ node src/index.js default
+```
+
+## TODO:
+- [x] adapt admin-add 
+- [ ] adapt config-tester
+- [ ] adapt main
+- [ ] xxx
+- [ ] xxx
 
 
-setup.js:
-    checkup node version
-    check packages
+## Folder Structure
+    data/
+        admins.json
+        example/
+            config.json
+            messages.json
+            commands.json
+            data/
+                players.json
+                admin.log
+                FXServer.log
+                txAdmin_errors.log
+    extensions/ (?)
+    start_default.bat
+
+
+
+## setup.js
+    check node version & packages
+    check for existing settings and --overwrite
     start setup webpage asking for:
-        login/password
-        first server config (paths & etc)
+        basic server config (paths & etc)
     check if the configs are correct
     save data/config.json with password
     save the server config as data/default
 
-start.js:
-    checkup node version
-    check packages
-    start txadmin with the 'default' server config (or argv)
+
