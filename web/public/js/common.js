@@ -13,9 +13,9 @@ function refreshData() {
                 window.location = '/auth?logout';
                 return;
             }
-            $('#hostusage-cpu-bar').attr('aria-valuenow', data.host.cpu.pct).css('width', data.host.cpu.pct);
+            $('#hostusage-cpu-bar').attr('aria-valuenow', data.host.cpu.pct).css('width', data.host.cpu.pct+"%");
             $('#hostusage-cpu-text').html(data.host.cpu.text);
-            $('#hostusage-memory-bar').attr('aria-valuenow', data.host.memory.pct).css('width', data.host.memory.pct);
+            $('#hostusage-memory-bar').attr('aria-valuenow', data.host.memory.pct).css('width', data.host.memory.pct+"%");
             $('#hostusage-memory-text').html(data.host.memory.text);
             $("#status-card").html(data.status);
             $("#playerlist").html(data.players);
