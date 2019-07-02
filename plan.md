@@ -1,4 +1,3 @@
-
 ## Instructions
 ```bash
 # Install
@@ -19,8 +18,12 @@ $ node src/index.js default
 - [x] adapt admin-add 
 - [x] adapt config-tester
 - [x] adapt main
-- [ ] xxx
-- [ ] xxx
+- [x] write setup
+- [x] prevent starting with null as options
+- [ ] make settings page
+- [ ] settings page validate fxserver paths
+- [ ] fxrunner detect the endpoint ports
+- [ ] rewrite README, Troubleshooting Guide and Discord Macros
 
 
 ## Folder Structure
@@ -30,23 +33,11 @@ $ node src/index.js default
             config.json
             messages.json
             commands.json
-            data/
-                players.json
+            start.bat
+            logs/
                 admin.log
                 FXServer.log
                 txAdmin_errors.log
+            data/
+                players.json
     extensions/ (?)
-    start_default.bat
-
-
-
-## setup.js
-    check node version & packages
-    check for existing settings and --overwrite
-    start setup webpage asking for:
-        basic server config (paths & etc)
-    check if the configs are correct
-    save data/config.json with password
-    save the server config as data/default
-
-

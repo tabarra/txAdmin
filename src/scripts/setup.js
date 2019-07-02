@@ -205,6 +205,7 @@ if (osType === 'Linux') {
     try {
         let jsonConfig = JSON.stringify(configSkeletal, null, 2);
         fs.mkdirSync(profilePath);
+        fs.mkdirSync(`${profilePath}/logs/`);
         fs.mkdirSync(`${profilePath}/data/`);
         fs.writeFileSync(`${profilePath}/messages.json`, '[]');
         fs.writeFileSync(`${profilePath}/commands.json`, '[]');

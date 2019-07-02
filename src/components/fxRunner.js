@@ -67,6 +67,16 @@ module.exports = class FXRunner {
             logError('this.spawnVariables is not set.', context);
             return false;
         }
+        //If the any FXServer configuration is missing
+        if(
+            this.config.buildPath === null ||
+            this.config.basePath === null ||
+            this.config.cfgPath === null
+        ){
+            logError('Cannot start the server with missing configuration (buildPath || basePath || cfgPath).', context);
+            return false;
+        }
+        //If the server is already alive
         if(this.fxChild !== null){
             logError('this.fxChild is not null.', context);
             return false;
@@ -291,6 +301,7 @@ module.exports = class FXRunner {
     async fxserverOutputHandler(data){
         // const chalk = require('chalk');
         // process.stdout.write(chalk.bold.red('|'));
+        // data = data.replace(/\u2122/g, ""); //Ev3nflow™
         // process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F]/g, ""));
         data = data.toString();
         globals.webConsole.buffer(data);

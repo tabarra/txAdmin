@@ -10,6 +10,9 @@ function fatalRequired(varName){
     logError(`The following configuration was not set and is required: '${varName}'`, context);
     process.exit();
 }
+function toDefault(input, defValue){
+    return (typeof input === 'undefined')? input : defValue;
+}
 
 
 //Check argv
@@ -54,6 +57,11 @@ try {
     if(!fs.existsSync(dataPath)){
         fs.mkdirSync(dataPath);
     }
+
+    let logsPath = `${serverProfilePath}/logs/`;
+    if(!fs.existsSync(logsPath)){
+        fs.mkdirSync(logsPath);
+    }
     
     let messagesPath = `${serverProfilePath}/messages.json`;
     if(!fs.existsSync(messagesPath)){
@@ -90,7 +98,7 @@ try {
         verbose: (configFile.global.verbose === 'true' || configFile.global.verbose === true),
         publicIP: configFile.global.publicIP || "change-me",
         serverName: configFile.global.serverName || "change-me",
-        fxServerPort: parseInt(configFile.global.fxServerPort) || fatalRequired('global.fxServerPort'),
+        fxServerPort: toDefault(parseInt(configFile.global.fxServerPort), null),
         
         //Extras
         osType: os.type() || 'unknown',
@@ -98,7 +106,7 @@ try {
         serverProfilePath: serverProfilePath
     };
     cfg.logger = {
-        logPath: configFile.logger.logPath || `${serverProfilePath}/data/admin.log`, //not in template 
+        logPath: configFile.logger.logPath || `${serverProfilePath}/logs/admin.log`, //not in template 
     };
     cfg.monitor = {
         interval: parseInt(configFile.monitor.interval) || 1000, //not in template
@@ -129,9 +137,9 @@ try {
         statusCommand: configFile.discordBot.statusCommand || "/status",
     };
     cfg.fxRunner = {
-        buildPath: configFile.fxRunner.buildPath || fatalRequired('fxRunner.buildPath'),
-        basePath: configFile.fxRunner.basePath || fatalRequired('fxRunner.basePath'),
-        cfgPath: configFile.fxRunner.cfgPath || fatalRequired('fxRunner.cfgPath'),
+        buildPath: toDefault(configFile.fxRunner.buildPath, null),
+        basePath: toDefault(configFile.fxRunner.basePath, null),
+        cfgPath: toDefault(configFile.fxRunner.cfgPath, null),
         setPriority: configFile.fxRunner.setPriority || "NORMAL",
         onesync: (configFile.fxRunner.onesync === 'true' || configFile.fxRunner.onesync === true),
         autostart: (configFile.fxRunner.autostart === 'true' || configFile.fxRunner.autostart === true),
