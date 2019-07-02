@@ -113,7 +113,7 @@ try {
         refreshInterval: parseInt(configFile.authenticator.refreshInterval) || 15000, //not in template
     };
     cfg.webServer = {
-        port: parseInt(configFile.webServer.port) || 40121,
+        port: parseInt(configFile.webServer.port) || 40120,
         bufferTime: parseInt(configFile.webServer.bufferTime) || 1500, //not in template - deprecate?
         limiterMinutes: parseInt(configFile.webServer.limiterMinutes) || 15, //not in template
         limiterAttempts: parseInt(configFile.webServer.limiterAttempts) || 5, //not in template
@@ -136,7 +136,7 @@ try {
         onesync: (configFile.fxRunner.onesync === 'true' || configFile.fxRunner.onesync === true),
         autostart: (configFile.fxRunner.autostart === 'true' || configFile.fxRunner.autostart === true),
         autostartDelay: parseInt(configFile.webServer.autostartDelay) || 3, //not in template
-        quiet: (configFile.fxRunner.quiet === 'true' || configFile.fxRunner.quiet === true), //not in template
+        quiet: (configFile.fxRunner.quiet === 'true' || configFile.fxRunner.quiet === true),
     };
 } catch (error) {
     logError('Malformed configuration file! Please copy server-template.json and try again.', context);

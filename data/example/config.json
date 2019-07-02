@@ -28,6 +28,7 @@
         "cfgPath": "C:/Users/Admin/Desktop/server01/server.cfg",
         "setPriority": false,
         "onesync": false,
-        "autostart": false
+        "autostart": false,
+        "quiet": false
     }
 }
