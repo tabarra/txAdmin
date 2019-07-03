@@ -6,4 +6,5 @@ exports.getConsole = require('./getConsole.js');
 exports.getDashboard = require('./getDashboard.js');
 exports.getFullReport = require('./getFullReport.js');
 exports.getPlayerData = require('./getPlayerData.js');
+exports.getSettings = require('./getSettings.js');
 exports.getStatus = require('./getStatus.js');

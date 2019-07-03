@@ -11,13 +11,24 @@ const context = 'WebServer:getDashboard';
  * @param {object} req
  */
 module.exports = async function action(res, req) {
+    //If the any FXServer configuration is missing
+    dir(globals.fxRunner.config.buildPath)
+    if(
+        globals.fxRunner.config.buildPath === null ||
+        globals.fxRunner.config.basePath === null ||
+        globals.fxRunner.config.cfgPath === null
+    ){
+        // return res.redirect('/settings');
+    }
+
     //Preparing render data
     let renderData = {
         //FIXME: temp missing resource detector
-        resNotFound: globals.resourceNotFound,
+        errorMessage: globals.resourceNotFound,
         updateData: getUpdateData(),
         chartData: getChartData(globals.monitor.timeSeries.get())
     }
+    
 
     //Rendering the page
     let out = await webUtils.renderMasterView('dashboard', renderData);

@@ -131,6 +131,11 @@ module.exports = class WebServer {
                 this.handleRouteError(res, "[getDashboard] Route Internal Error", err);
             });
         });
+        this.app.get('/settings', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.getSettings(res, req).catch((err) => {
+                this.handleRouteError(res, "[getSettings] Route Internal Error", err);
+            });
+        });
         this.app.get('/addExtension', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getAddExtension(res, req).catch((err) => {
                 this.handleRouteError(res, "[getAddExtension] Route Internal Error", err);
