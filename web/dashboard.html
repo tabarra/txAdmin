@@ -43,6 +43,7 @@
                     <div class="col-sm-8">
                         <select name="action" id="frm_action" class="form-control" required>
                             <option value="" disabled selected>&gt; SELECT</option>
+                            <option value="admin_announce">Staff Announce</option>
                             <option value="admin_broadcast">Admin Message</option>
                             <option value="ensure_res">Start/Restart script</option>
                             <!-- <option value="restart_res">Restart script</option> -->
@@ -168,6 +169,7 @@
 
     //Commands with parameter required
     let paramRequiredCommands = [
+        'admin_announce',
         'admin_broadcast',
         'ensure_res',
         'restart_res',
