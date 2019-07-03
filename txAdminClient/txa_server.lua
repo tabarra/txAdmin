@@ -48,7 +48,7 @@ end, true)
 -- Broadcast admin message to all players
 RegisterCommand("txaBroadcast", function(source, args)
     if args[1] ~= nil then
-        print("[txAdminClient] LOS DEMONS Message : "..args[1])
+        print("[txAdminClient] Admin Broadcast: "..args[1])
         TriggerClientEvent("chat:addMessage", -1, {
             args = {
                 "Los Demons Administration ",
