@@ -29,6 +29,12 @@ module.exports = async function action(res, req) {
         webUtils.appendLog(req, cmd, context);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
+        
+    }else if(action == 'admin_announce'){
+        let cmd = `txaAnnounce "${escape(parameter)}"`;
+        webUtils.appendLog(req, cmd, context);
+        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+        return sendAlertOutput(res, toResp);
 
     }else if(action == 'admin_dm'){
         if(!Array.isArray(parameter) || parameter.length !== 2){
