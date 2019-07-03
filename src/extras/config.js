@@ -11,7 +11,7 @@ function fatalRequired(varName){
     process.exit();
 }
 function toDefault(input, defValue){
-    return (typeof input === 'undefined')? input : defValue;
+    return (typeof input === 'undefined')? defValue : input;
 }
 
 
