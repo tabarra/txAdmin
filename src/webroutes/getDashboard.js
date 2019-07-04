@@ -12,13 +12,12 @@ const context = 'WebServer:getDashboard';
  */
 module.exports = async function action(res, req) {
     //If the any FXServer configuration is missing
-    dir(globals.fxRunner.config.buildPath)
     if(
         globals.fxRunner.config.buildPath === null ||
         globals.fxRunner.config.basePath === null ||
         globals.fxRunner.config.cfgPath === null
     ){
-        // return res.redirect('/settings');
+        return res.redirect('/settings');
     }
 
     //Preparing render data

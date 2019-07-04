@@ -102,6 +102,11 @@ module.exports = class WebServer {
                 this.handleRouteError(res, "[getConsole] Route Internal Error", err);
             });
         });
+        this.app.post('/saveSettings/:scope', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.saveSettings(res, req).catch((err) => {
+                this.handleRouteError(res, "[saveSettings] Route Internal Error", err);
+            });
+        });
 
         //Data routes
         this.app.get('/adminLog', getAuthFunc('web'), async (req, res) => {

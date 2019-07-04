@@ -33,70 +33,78 @@
                 </ul>
             </div>
 
-            <div class="card-body">
+            <div class="card-body settings-card">
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-global" role="tabpanel"
                         aria-labelledby="nav-global-tab">
 
                         <!-- Global Card -->
                         <div class="form-group row">
-                            <label for="frmGlobal_serverName" class="col-sm-3 col-form-label">Server Name</label>
+                            <label for="frmGlobal-serverName" class="col-sm-3 col-form-label">
+                                Server Name
+                                <span class="text-danger">*</span>
+                            </label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmGlobal_serverName" value=""
-                                    maxlength="24">
-                                <small class="form-text text-muted">
+                                <input type="text" class="form-control" id="frmGlobal-serverName"
+                                    value="{{global.serverName}}" maxlength="24">
+                                <span class="form-text text-muted">
                                     A short server name to be used in the Discord messages.
-                                </small>
+                                </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmGlobal_publicIP" class="col-sm-3 col-form-label">Public IP</label>
+                            <label for="frmGlobal-publicIP" class="col-sm-3 col-form-label">
+                                Public IP 
+                                <span class="text-danger">*</span>
+                            </label>
                             <div class="col-sm-9">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="frmGlobal_publicIP" value="change-me"
-                                        maxlength="32" placeholder="123.123.123.123">
+                                    <input type="text" class="form-control" id="frmGlobal-publicIP"
+                                        value="{{global.publicIP}}" maxlength="32" placeholder="123.123.123.123">
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" id="frmGlobal_getIP"
+                                        <button class="btn btn-outline-secondary" id="frmGlobal-getIP"
                                             type="button">Auto Detect</button>
                                     </div>
                                 </div>
-                                <small class="form-text text-muted">
+                                <span class="form-text text-muted">
                                     You can set this to be your public IP or a domain name. <br>
-                                    Note: The autodetect feature might be blocked by ad-blockers.
-                                </small>
+                                    Note: The auto detect feature might be blocked by ad-blockers.
+                                </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmGlobal_forceFxPort" class="col-sm-3 col-form-label">Force FXServer
-                                Port</label>
+                            <label for="frmGlobal-forceFxPort" class="col-sm-3 col-form-label">
+                                Force FXServer Port
+                            </label>
                             <div class="col-sm-9">
-                                <input type="number" class="form-control" id="frmGlobal_forceFxPort" value="" min="1"
-                                    max=65535>
-                                <small class="form-text text-muted">
+                                <input type="number" class="form-control" id="frmGlobal-forceFxPort"
+                                    value="{{global.forceFxPort}}" min="1" max=65535>
+                                <span class="form-text text-muted">
                                     Leave this blank for <strong>txAdmin</strong> to automatically detect which port
                                     FXServer is using.
-                                </small>
+                                </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmGlobal_verbosity" class="col-sm-3 col-form-label">Verbosity</label>
+                            <label for="frmGlobal-verbose" class="col-sm-3 col-form-label">Verbose</label>
                             <div class="col-sm-9">
                                 <label class="switch switch-label switch-pill switch-success fix-pill-form">
-                                    <input class="switch-input" type="checkbox" id="frmGlobal_verbosity">
+                                    <input class="switch-input" type="checkbox" id="frmGlobal-verbose"
+                                        {{global.verbose}}>
                                     <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
                                 </label>
-                                <small class="form-text text-muted">
-                                    By enabling verbosity you will see more detailed information in the terminal. This
-                                    may help you troubleshoot some error.
-                                </small>
+                                <span class="form-text text-muted">
+                                    By enabling verbosity you will see more detailed information in the terminal. <br>
+                                    This may help you troubleshoot some error.
+                                </span>
                             </div>
                         </div>
 
                         <div class="text-center mt-4">
-                            <button class="btn btn-sm btn-primary" type="submit" id="frmGlobal_save">
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmGlobal-save">
                                 <i class="icons cui-check"></i> Save Global Settings
                             </button>
                         </div>
@@ -107,83 +115,86 @@
 
                         <!-- FXServer Card -->
                         <div class="form-group row">
-                            <label for="XXXXXXX" class="col-sm-3 col-form-label">Build Path</label>
+                            <label for="frmFXServer-buildPath" class="col-sm-3 col-form-label">Build Path
+                                <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="XXXXXXX" value=""
+                                <input type="text" class="form-control" id="frmFXServer-buildPath" value="{{fxserver.buildPath}}"
                                     placeholder="C:/Users/Admin/Documents/fxserver_builds/1380">
-                                <small class="form-text text-muted">
+                                <span class="form-text text-muted">
                                     The folder containing the files <code>run.cmd</code>, <code>fxserver.exe</code> and
                                     a bunch of DLLs in case of Windows, and only <code>run.sh</code> in case of Linux.
-                                </small>
+                                </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="XXXXXXX" class="col-sm-3 col-form-label">Base Path</label>
+                            <label for="frmFXServer-basePath" class="col-sm-3 col-form-label">Base Path
+                                <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="XXXXXXX" value=""
+                                <input type="text" class="form-control" id="frmFXServer-basePath" value="{{fxserver.basePath}}"
                                     placeholder="C:/Users/Admin/Desktop/server01">
-                                <small class="form-text text-muted">
+                                <span class="form-text text-muted">
                                     The folder that <strong>contains</strong> the <code>resources</code> and
                                     <code>cache</code> folders, usually it's here that you put your
                                     <code>server.cfg</code>.
-                                </small>
+                                </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="XXXXXXX" class="col-sm-3 col-form-label">CFG Path</label>
+                            <label for="frmFXServer-cfgPath" class="col-sm-3 col-form-label">CFG Path
+                                <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="XXXXXXX" value=""
+                                <input type="text" class="form-control" id="frmFXServer-cfgPath" value="{{fxserver.cfgPath}}"
                                     placeholder="C:/Users/Admin/Desktop/server01/server.cfg">
-                                <small class="form-text text-muted">
-                                    The absolute or relative path of your <code>server.cfg</code>.
-                                </small>
+                                <span class="form-text text-muted">
+                                    The absolute or relative (to the Base) path of your <code>server.cfg</code>.
+                                </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="XXXXXXX" class="col-sm-3 col-form-label">OneSync</label>
+                            <label for="frmFXServer-onesync" class="col-sm-3 col-form-label">OneSync</label>
                             <div class="col-sm-9">
                                 <label class="switch switch-label switch-pill switch-success fix-pill-form">
-                                    <input class="switch-input" type="checkbox">
+                                    <input class="switch-input" type="checkbox" id="frmFXServer-onesync" {{fxserver.onesync}}>
                                     <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
                                 </label>
-                                <small class="form-text text-muted">
+                                <span class="form-text text-muted">
                                     Required if you server has more than 32 slots.
-                                </small>
+                                </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="XXXXXXX" class="col-sm-3 col-form-label">Autostart</label>
+                            <label for="frmFXServer-autostart" class="col-sm-3 col-form-label">Autostart</label>
                             <div class="col-sm-9">
                                 <label class="switch switch-label switch-pill switch-success fix-pill-form">
-                                    <input class="switch-input" type="checkbox">
+                                    <input class="switch-input" type="checkbox" id="frmFXServer-autostart" {{fxserver.autostart}}>
                                     <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
                                 </label>
-                                <small class="form-text text-muted">
+                                <span class="form-text text-muted">
                                     Start the server automatically after <strong>txAdmin</strong> starts.
-                                </small>
+                                </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="XXXXXXX" class="col-sm-3 col-form-label">Quiet</label>
+                            <label for="frmFXServer-quiet" class="col-sm-3 col-form-label">Quiet</label>
                             <div class="col-sm-9">
                                 <label class="switch switch-label switch-pill switch-success fix-pill-form">
-                                    <input class="switch-input" type="checkbox">
+                                    <input class="switch-input" type="checkbox" id="frmFXServer-quiet" {{fxserver.quiet}}>
                                     <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
                                 </label>
-                                <small class="form-text text-muted">
+                                <span class="form-text text-muted">
                                     Do not print FXServer's output to the terminal. You will still be able to use the
                                     Live Console.
-                                </small>
+                                </span>
                             </div>
                         </div>
 
                         <div class="text-center mt-4">
-                            <button class="btn btn-sm btn-primary" type="submit">
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmFXServer-save">
                                 <i class="icons cui-check"></i> Save FXServer Settings
                             </button>
                         </div>
@@ -194,44 +205,49 @@
 
                         <!-- Monitor Card -->
                         <div class="form-group row">
-                            <label for="XXXXXXX" class="col-sm-3 col-form-label">Timeout</label>
+                            <label for="frmMonitor-timeout" class="col-sm-3 col-form-label">
+                                Timeout
+                                <span class="text-danger">*</span>
+                            </label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="XXXXXXX" value="" placeholder="1000" min="0"
-                                    max="5000">
-                                <small class="form-text text-muted">
+                                <input type="text" class="form-control" id="frmMonitor-timeout" value="{{monitor.timeout}}"
+                                    placeholder="1000" min="0" max="5000">
+                                <span class="form-text text-muted">
                                     The limit of <strong>milliseconds</strong> for the FXServer to respond before the
                                     Monitor considers it unresponsive. (Recommended: 1000-1250)
-                                </small>
+                                </span>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="XXXXXXX" class="col-sm-3 col-form-label">Max Failures</label>
+                            <label for="frmMonitor-failures" class="col-sm-3 col-form-label">
+                                Max Failures <span class="text-danger">*</span>
+                            </label>
                             <div class="col-sm-9">
-                                <input type="number" class="form-control" id="XXXXXXX" value="" placeholder="15" min="5"
-                                    max="120">
-                                <small class="form-text text-muted">
+                                <input type="number" class="form-control" id="frmMonitor-failures" value="{{monitor.failures}}"
+                                    placeholder="15" min="5" max="120">
+                                <span class="form-text text-muted">
                                     The number of timeouts before the Monitor attempts to restart FXServer (60s of
                                     cooldown may apply). <br>
                                     This should be equivalent of more than 15s when multiplied by the timeout.
-                                </small>
+                                </span>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="XXXXXXX" class="col-sm-3 col-form-label">Scheduled Restarts</label>
+                            <label for="frmMonitor-schedule" class="col-sm-3 col-form-label">Scheduled Restarts</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="XXXXXXX" value=""
+                                <input type="text" class="form-control" id="frmMonitor-schedule" value="{{monitor.schedule}}"
                                     placeholder="05:00, 13:00">
-                                <small class="form-text text-muted">
+                                <span class="form-text text-muted">
                                     At which times of day to restart the server. Leave it blank to disable this feature.
                                     <br>
                                     The time MUST be in the 24-hour format with two digits for hours as well as
                                     minutes (<code>HH:MM</code>) and the times should be separated by commas.
-                                </small>
+                                </span>
                             </div>
                         </div>
 
                         <div class="text-center mt-4">
-                            <button class="btn btn-sm btn-primary" type="submit">
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmMonitor-save">
                                 <i class="icons cui-check"></i> Save Monitor/Restarter Settings
                             </button>
                         </div>
@@ -240,47 +256,50 @@
                     </div>
                     <div class="tab-pane fade" id="nav-discord" role="tabpanel" aria-labelledby="nav-discord-tab">
 
-                        <!-- Global Card -->
+                        <!-- Discord Card -->
                         <div class="form-group row">
-                            <label for="XXXXXXX" class="col-sm-3 col-form-label">Enable Bot</label>
+                            <label for="frmDiscord-enable" class="col-sm-3 col-form-label">Enable Bot</label>
                             <div class="col-sm-9">
                                 <label class="switch switch-label switch-pill switch-success fix-pill-form">
-                                    <input class="switch-input" type="checkbox">
+                                    <input class="switch-input" type="checkbox" id="frmDiscord-enable" {{discord.enabled}}>
                                     <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
                                 </label>
-                                <small class="form-text text-muted">
+                                <span class="form-text text-muted">
                                     Enable Discord Integration.
-                                </small>
+                                </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="XXXXXXX" class="col-sm-3 col-form-label">Token</label>
+                            <label for="frmDiscord-token" class="col-sm-3 col-form-label">Token <span
+                                    class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="XXXXXXX" value="" maxlength="96">
-                                <small class="form-text text-muted">
+                                <input type="text" class="form-control" id="frmDiscord-token" value="{{discord.token}}" maxlength="96">
+                                <span class="form-text text-muted">
                                     To get a token and the bot to join your server, follow these two guides:
                                     <a href="https://discordjs.guide/preparations/setting-up-a-bot-application.html target="
                                         _blank" rel="noopener noreferrer">Setting up a bot application</a> and
                                     <a href="https://discordjs.guide/preparations/adding-your-bot-to-servers.html">Adding
                                         your bot to servers</a>.
-                                </small>
+                                </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="XXXXXXX" class="col-sm-3 col-form-label">Status Command</label>
+                            <label for="frmDiscord-statusCommand" class="col-sm-3 col-form-label">Status Command <span
+                                    class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="XXXXXXX" value="" placeholder="/status">
-                                <small class="form-text text-muted">
+                                <input type="text" class="form-control" id="frmDiscord-statusCommand" value="{{discord.statusCommand}}"
+                                    placeholder="/status">
+                                <span class="form-text text-muted">
                                     You can set this to be your public IP or a domain name.
-                                </small>
+                                </span>
                             </div>
                         </div>
 
 
                         <div class="text-center mt-4">
-                            <button class="btn btn-sm btn-primary" type="submit">
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmDiscord-save">
                                 <i class="icons cui-check"></i> Save Discord Settings
                             </button>
                         </div>
@@ -302,42 +321,160 @@
 
 <script>
     $(document).ready(function () {
-        //frmGlobal_publicIP
-        //frmGlobal_getIP
-        if($('#frmGlobal_publicIP').val() == 'change-me'){
-            $('#frmGlobal_getIP').click();
+        if ($('#frmGlobal-publicIP').val().trim() == 'change-me') {
+            $('#frmGlobal-getIP').click();
         }
     });
 
-    $('#frmGlobal_getIP').click(function () {
-        $('#frmGlobal_publicIP').val('retrieving...');
+    //============================================== Global Settings
+    $('#frmGlobal-getIP').click(function () {
+        $('#frmGlobal-publicIP').val('retrieving...');
         $.ajax({
             type: "GET",
             url: 'https://api.ipify.org?format=json',
-            timeout: 2000,
+            timeout: 3000,
             success: function (data) {
-                $('#frmGlobal_publicIP').val(data.ip);
+                $('#frmGlobal-publicIP').val(data.ip);
             },
             error: function (xmlhttprequest, textstatus, message) {
-                $('#frmGlobal_publicIP').val('error');
+                $('#frmGlobal-publicIP').val('error');
             }
         });
     });
 
-    $('#frmGlobal_save').click(function () {
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+    $('#frmGlobal-save').click(function () {
+        let data = {
+            serverName: $('#frmGlobal-serverName').val().trim(),
+            publicIP: $('#frmGlobal-publicIP').val().trim(),
+            forceFxPort: $('#frmGlobal-forceFxPort').val().trim(),
+            verbose: $('#frmGlobal-verbose').is(':checked')
+        }
+        if (!data.serverName.length || !data.serverName.length) {
+            var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
+            return;
+        }
+        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-        let data = {}
         $.ajax({
             type: "POST",
-            url: '/xxxxx',
+            url: '/saveSettings/global',
             timeout: 2000,
             data: data,
-            // dataType: 'json',
+            dataType: 'json',
             success: function (data) {
                 notify.update('progress', 0);
-                notify.update('type', 'warning');
-                notify.update('message', data);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    });
+
+
+    //============================================== FXServer Settings
+    $('#frmFXServer-save').click(function () {
+        let data = {
+            buildPath: $('#frmFXServer-buildPath').val().trim(),
+            basePath: $('#frmFXServer-basePath').val().trim(),
+            cfgPath: $('#frmFXServer-cfgPath').val().trim(),
+            onesync: $('#frmFXServer-onesync').is(':checked'),
+            autostart: $('#frmFXServer-autostart').is(':checked'),
+            quiet: $('#frmFXServer-quiet').is(':checked')
+        }
+        if (!data.buildPath.length || !data.basePath.length || !data.cfgPath.length) {
+            var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
+            return;
+        }
+        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+
+        $.ajax({
+            type: "POST",
+            url: '/saveSettings/fxserver',
+            timeout: 2000,
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    });
+
+
+    //============================================== Monitor Settings
+    $('#frmMonitor-save').click(function () {
+        let data = {
+            timeout: $('#frmMonitor-timeout').val(),
+            failures: $('#frmMonitor-failures').val(),
+            schedule: $('#frmMonitor-schedule').val().trim()
+        }
+        if (!data.timeout.length || !data.failures.length) {
+            var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
+            return;
+        }
+        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+
+        $.ajax({
+            type: "POST",
+            url: '/saveSettings/monitor',
+            timeout: 2000,
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    });
+
+
+    //============================================== Discord Settings
+    $('#frmDiscord-save').click(function () {
+        let enabled = ($('#frmDiscord-enable').is(':checked') === true);
+        let data;
+        if (enabled) {
+            data = {
+                enable: true,
+                token: $('#frmDiscord-token').val().trim(),
+                statusCommand: $('#frmDiscord-statusCommand').val().trim()
+            }
+            if (!data.token.length || !data.statusCommand.length) {
+                var notify = $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
+                return;
+            }
+        } else {
+            data = {
+                enabled: false
+            }
+        }
+        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+
+        $.ajax({
+            type: "POST",
+            url: '/saveSettings/discord',
+            timeout: 2000,
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);
