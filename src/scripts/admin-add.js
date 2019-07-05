@@ -1,10 +1,13 @@
+//Test environment conditions
+const testUtils = require('../extras/testUtils');
+testUtils.dependencyChecker();
+
 //Requires
 const fs = require('fs');
 const readline = require('readline');
 const bcrypt = require('bcrypt');
 const { promisify } = require('util');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const testUtils = require('../extras/testUtils');
 cleanTerminal()
 const context = 'AdminAddScript';
 const printDivider = () =>{log('='.repeat(64), context)};
@@ -14,10 +17,6 @@ const printDivider = () =>{log('='.repeat(64), context)};
 //================================================================
 //=================================================== Setup
 //================================================================
-//Check node version and packages
-testUtils.nodeVersionChecker();
-testUtils.moduleInstallChecker();
-
 //Setting up ReadLine
 const rl = readline.createInterface({input: process.stdin, output: process.stdout});
 readline.Interface.prototype.question[promisify.custom] = function(prompt) {

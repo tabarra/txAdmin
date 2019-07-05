@@ -1,3 +1,7 @@
+//Test environment conditions
+const testUtils = require('../extras/testUtils');
+testUtils.dependencyChecker();
+
 //Requires
 const os = require('os');
 const fs = require('fs');
@@ -6,8 +10,6 @@ const { promisify } = require('util');
 const del = require('del');
 const chalk = require('chalk');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const testUtils = require('../extras/testUtils');
-const webUtils = require('../webroutes/webUtils');
 cleanTerminal()
 const context = 'Setup';
 const printDivider = () => { log('='.repeat(64), context) };
@@ -17,10 +19,6 @@ const printDivider = () => { log('='.repeat(64), context) };
 //================================================================
 //=================================================== Setup
 //================================================================
-//Check node version and packages
-testUtils.nodeVersionChecker();
-testUtils.moduleInstallChecker();
-
 //Setting up ReadLine
 const rl = readline.createInterface({ input: process.stdin, output: process.stdout });
 readline.Interface.prototype.question[promisify.custom] = function (prompt) {

@@ -1,8 +1,5 @@
 //Requires
 const fs = require('fs');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('./console');
-const context = 'TestUtils';
-
 
 //================================================================
 /**
@@ -21,8 +18,7 @@ function nodeVersionChecker(){
 /**
  * Check if the packages in package.json were installed
  */
-function moduleInstallChecker() {
-    let errorOut;
+function dependencyChecker() {
     try {
         let rawFile = fs.readFileSync('package.json');
         let parsedFile = JSON.parse(rawFile);
@@ -36,14 +32,16 @@ function moduleInstallChecker() {
             }
         });
         if(missing.length){
-            errorOut = `Make sure you executed 'npm i'. The following packages are missing:\n` + missing.join(', ');
+            console.log(`[txAdmin:PreCheck] Cannot start txAdmin due to missing dependencies.`);
+            console.log(`[txAdmin:PreCheck] Make sure you executed 'npm i'.`);
+            console.log(`[txAdmin:PreCheck] The following packages are missing: ` + missing.join(', '));
+            if(!process.version.startsWith('v10.')){
+                console.log(`[txAdmin:PreCheck] Note: txAdmin doesn't support NodeJS ${process.version}, please install NodeJS v10 LTS!`);
+            }
+            process.exit();
         }
     } catch (error) {
-        errorOut = `Error reading or parsing package.json: ${error.message}`;
-    }
-
-    if(errorOut){
-        logError(errorOut, 'PackageChecker');
+        console.log(`[txAdmin:PreCheck] Error reading or parsing package.json: ${error.message}`);
         process.exit();
     }
 }
@@ -51,6 +49,5 @@ function moduleInstallChecker() {
 
 
 module.exports = {
-    nodeVersionChecker,
-    moduleInstallChecker,
+    dependencyChecker,
 }

@@ -1,10 +1,13 @@
+//Test environment conditions
+const testUtils = require('../extras/testUtils');
+testUtils.dependencyChecker();
+
 //Requires
 const os = require('os');
 const fs = require('fs');
 const { spawnSync } = require('child_process');
 const prettyBytes = require('pretty-bytes');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const testUtils = require('../extras/testUtils');
 cleanTerminal()
 const printDivider = () =>{log('='.repeat(64))};
 const context = 'ConfigTester';
@@ -14,11 +17,6 @@ printDivider();
 logOk(`Usage: "node src/scripts/config-tester server-profile-name"`);
 logOk(`Usage: When the profile name is not specified, "default" will be used.`);
 printDivider();
-
-//Check node version and packages
-testUtils.nodeVersionChecker();
-testUtils.moduleInstallChecker();
-
 
 //Check  argv
 let serverProfile;
