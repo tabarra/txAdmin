@@ -1,4 +1,4 @@
-## Instructions
+## New Instructions
 ```bash
 # Install
 $ git clone https://github.com/tabarra/txAdmin && cd txAdmin
@@ -20,7 +20,8 @@ $ node src/index.js default
 - [x] adapt main
 - [x] write setup
 - [x] prevent starting with null as options
-- [ ] make settings page
+- [x] make settings page
+- [x] create config vault component
 - [ ] settings page validate fxserver paths
 - [ ] fxrunner detect the endpoint ports
 - [ ] rewrite README, Troubleshooting Guide and Discord Macros
@@ -41,3 +42,15 @@ $ node src/index.js default
             data/
                 players.json
     extensions/ (?)
+
+
+## Global vs Individual Modules
+- Global
+    - authenticator
+    - discordBOT
+    - logger
+    - webconsole
+    - webserver
+- Individual
+    - monitor
+    - fxrunnder
