@@ -1,9 +1,10 @@
 //Requires
-const sleep = require('util').promisify(setTimeout);
+const fs = require('fs');
+const testUtils = require('../extras/testUtils');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const webUtils = require('./webUtils.js');
 const context = 'WebServer:saveSettings';
 
+const isUndefined = (x) => { return (typeof x === 'undefined') };
 
 /**
  * Handle all the server control actions
@@ -12,14 +13,12 @@ const context = 'WebServer:saveSettings';
  */
 module.exports = async function action(res, req) {
     //Sanity check
-    if(typeof req.params.scope === 'undefined'){
+    if(isUndefined(req.params.scope)){
         res.status(400);
-        res.send({status: 'error', error: "Invalid Request"});
-        return;
+        return res.send({type: 'danger', message: "Invalid Request"});
     }
     let scope = req.params.scope;
 
-    dir(req.body)
     //Delegate to the specific scope functions
     if(scope == 'global'){
         return handleGlobal(res, req);
@@ -32,7 +31,7 @@ module.exports = async function action(res, req) {
     }else{
         return res.send({
             type: 'danger',
-            message: 'Settings scope not found.'
+            message: 'Unknown settings scope.'
         });
     }
 };
@@ -47,7 +46,7 @@ module.exports = async function action(res, req) {
 function handleGlobal(res, req) {
     return res.send({
         type: 'info',
-        message: 'lalalalahandleGlobal'
+        message: 'lalalalahandle Global'
     });
 }
 
@@ -59,10 +58,80 @@ function handleGlobal(res, req) {
  * @param {object} req 
  */
 function handleFXServer(res, req) {
-    return res.send({
-        type: 'info',
-        message: 'lalalalahandleFXServer'
-    });
+    //Sanity check
+    if(
+        isUndefined(req.body.buildPath) ||
+        isUndefined(req.body.basePath) ||
+        isUndefined(req.body.cfgPath) ||
+        isUndefined(req.body.onesync) ||
+        isUndefined(req.body.autostart) ||
+        isUndefined(req.body.quiet)
+    ){
+        res.status(400);
+        return res.send({type: 'danger', message: "Invalid Request - missing parameters"});
+    }
+
+    //Prepare body input
+    let cfg = {
+        buildPath: req.body.buildPath,
+        basePath: req.body.basePath,
+        cfgPath: req.body.cfgPath,
+        onesync: (req.body.onesync === 'true'),
+        autostart: (req.body.autostart === 'true'),
+        quiet: (req.body.quiet === 'true'),
+    }
+
+    //Validating Build Path
+    try {
+        if(!fs.existsSync(cfg.buildPath)) throw new Error("Path doesn't exist or its unreadable.");
+        if(globals.config.osType === 'Linux'){
+            if(!fs.existsSync(`${cfg.buildPath}/run.sh`)) throw new Error("run.sh not found.");
+        }else if(globals.config.osType === 'Windows_NT'){
+            if(!fs.existsSync(`${cfg.buildPath}/run.cmd`)) throw new Error("run.cmd not found.");
+            if(!fs.existsSync(`${cfg.buildPath}/fxserver.exe`)) throw new Error("fxserver.exe not found.");
+        }else{
+            throw new Error("OS Type not supported");
+        }
+    } catch (error) {
+        return res.send({type: 'danger', message: `<strong>Build Path error:</strong> ${error.message}`});
+    }
+
+    //Validating Base Path
+    try {
+        if(!fs.existsSync(cfg.basePath)) throw new Error("Path doesn't exist or its unreadable.");
+    } catch (error) {
+        return res.send({type: 'danger', message: `<strong>Base Path error:</strong> ${error.message}`});
+    }
+
+    //Validating CFG Path
+    try {
+        let rawCfgFile = testUtils.getCFGFile(cfg.cfgPath, cfg.basePath);
+        let port = testUtils.getFXServerPort(rawCfgFile);
+    } catch (error) {
+        return res.send({type: 'danger', message: `<strong>CFG Path error:</strong> ${error.message}`});
+    }
+    
+    //Preparing & saving config
+    let newConfig = globals.configVault.getScoped('fxRunner');
+    newConfig.buildPath = cfg.buildPath;
+    newConfig.basePath = cfg.basePath;
+    newConfig.cfgPath = cfg.cfgPath;
+    newConfig.onesync = cfg.onesync;
+    newConfig.autostart = cfg.autostart;
+    newConfig.quiet = cfg.quiet;
+    let saveStatus = globals.configVault.saveProfile('fxRunner', newConfig);
+
+    //Sending output
+    if(saveStatus){
+        globals.fxRunner.refreshConfig(newConfig);
+        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing fxRunner settings.`;
+        logWarn(logMessage, context);
+        globals.logger.append(logMessage);
+        return res.send({type: 'success', message: `<strong>Configuration file saved!</strong>`});
+    }else{
+        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing fxRunner settings.`, context);
+        return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+    }
 }
 
 

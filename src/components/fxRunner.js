@@ -12,8 +12,8 @@ module.exports = class FXRunner {
     constructor(config) {
         logOk('::Started', context);
         this.config = config;
-        this.fxChild = null;
         this.spawnVariables = null;
+        this.fxChild = null;
         this.outData = '';
         this.enableBuffer = false;
         this.tsChildStarted = null;
@@ -26,6 +26,16 @@ module.exports = class FXRunner {
             }, config.autostartDelay * 1000);
         }
     }
+
+
+    //================================================================
+    /**
+     * Refresh fxRunner configurations
+     */
+    refreshConfig(newConfig){
+        this.config = newConfig;
+        this.setupVariables();
+    }//Final refreshConfig()
 
 
     //================================================================

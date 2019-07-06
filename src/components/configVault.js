@@ -165,6 +165,15 @@ module.exports = class ConfigVault {
 
     //================================================================
     /**
+     * Return configs for a specific scope (reconstructed and freezed)
+     */
+    getScoped(scope){
+        return {...this.config[scope]};
+    }
+
+
+    //================================================================
+    /**
      * Return all configs individually reconstructed and freezed
      */
     getAll(){
@@ -183,11 +192,23 @@ module.exports = class ConfigVault {
 
     //================================================================
     /**
-     * xxxxxxxxx
-     * @param {string} xxxx 
+     * Save the new scope to this context, then saves it to the configFile
+     * @param {string} scope 
+     * @param {string} newConfig 
      */
-    saveProfile(){
-        //xxxxxxx
+    saveProfile(scope, newConfig){
+        try {
+            this.config[scope] = newConfig;
+            let toSave = {...this.config};
+            delete toSave.global.osType;
+            delete toSave.global.serverProfile;
+            delete toSave.global.serverProfilePath;
+            fs.writeFileSync(this.configFilePath, JSON.stringify(toSave, null, 2), 'utf8');
+            return true;
+        } catch (error) {
+            dir(error)
+            return false;
+        }
     }
 
 

@@ -22,7 +22,10 @@ $ node src/index.js default
 - [x] prevent starting with null as options
 - [x] make settings page
 - [x] create config vault component
-- [ ] settings page validate fxserver paths
+- [x] settings page validate fxserver paths
+- [x] settings page save the new settings
+- [ ] settings page for the other scopes
+
 - [ ] fxrunner detect the endpoint ports
 - [ ] rewrite README, Troubleshooting Guide and Discord Macros
 

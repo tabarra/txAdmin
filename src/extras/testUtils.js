@@ -1,18 +1,6 @@
 //Requires
 const fs = require('fs');
 
-//================================================================
-/**
- * Check if running on NodeJS v10 LTS
- */
-function nodeVersionChecker(){
-    if(!process.version.startsWith('v10.')){
-        cleanTerminal();
-        logError(`FATAL ERROR: txAdmin doesn't support NodeJS ${process.version}, please install NodeJS v10 LTS!`, 'NodeVersionChecker');
-        process.exit();
-    }
-}
-
 
 //================================================================
 /**
@@ -47,7 +35,82 @@ function dependencyChecker() {
 }
 
 
+//================================================================
+/**
+ * Reads CFG Path and return the file contents, or throw error if:
+ *  - the path is not valid (absolute or relative)
+ *  - cannot read the file data
+ * @param {string} cfgPath 
+ * @param {string} basePath 
+ */
+function getCFGFile(cfgPath, basePath) {
+    let validCfgPath;
+    let rawCfgFile;
+    try {
+        let cfgPathAbsoluteTest = fs.existsSync(cfgPath);
+        let cfgPathRelativeTest = fs.existsSync(`${basePath}/${cfgPath}`);
+        if(cfgPathAbsoluteTest || cfgPathRelativeTest){
+            validCfgPath = (cfgPathAbsoluteTest)? cfgPath : `${basePath}/${cfgPath}`;
+        }else{
+            throw new Error("Path doesn't exist or its unreadable.");
+        }
+        rawCfgFile = fs.readFileSync(validCfgPath).toString();
+    } catch (error) {
+        throw new Error("Cannot read CFG Path file.");
+    }
+
+    return rawCfgFile;
+}
+
+
+//================================================================
+/**
+ * Processes cfgPath and returns the fxserver port or throw errors if:
+ *  - Regex Match Error
+ *  - no endpoints found
+ *  - endpoints that are not 0.0.0.0:xxx
+ *  - port mismatch
+ * @param {string} rawCfgFile 
+ */
+function getFXServerPort(rawCfgFile) {
+    let regex = /^\s*endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.?$/gim;
+    // let regex = /endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.?/gi;
+    let matches = [];
+    try {
+        let match;
+        while (match = regex.exec(rawCfgFile)) {
+            let matchData = {
+                line: match[0].trim(),
+                type: match[1],
+                interface: match[2],
+                port: match[3],
+            }
+            matches.push(matchData);
+        }
+    } catch (error) {
+        throw new Error("Regex Match Error");
+    }
+
+    if(!matches.length) throw new Error("No endpoints found");
+
+    let allInterfacesValid = matches.every((match) => {
+        return match.interface === '0.0.0.0'
+    })
+    if(!allInterfacesValid) throw new Error("All endpoints MUST use interface 0.0.0.0");
+
+    let port = matches.reduce((last, match) => {
+        if(last !== null && last.port !== match.port) throw new Error("All endpoints MUST have the same port");
+        return match;
+    }, null);
+
+    return port;
+}
+
+
+
 
 module.exports = {
     dependencyChecker,
+    getCFGFile,
+    getFXServerPort,
 }
