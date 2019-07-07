@@ -8,25 +8,44 @@ const context = 'DiscordBot';
 module.exports = class DiscordBot {
     constructor(config) {
         this.config = config;
+        this.client = null;
+        this.messages = [];
         if(!this.config.enabled){
             logOk('::Disabled by the config file.', context);
-            return;
-        }    
-        this.client = new Discord.Client({autoReconnect:true});
-        this.messages = [];
-
-        this.refreshStaticMessages();
-        this.startBot();
+        }else{
+            this.refreshStaticMessages();
+            this.startBot();
+        }
 
         //Cron Function
         setInterval(() => {
-            this.refreshStaticMessages();
+            if(this.config.enabled) this.refreshStaticMessages();
         }, this.config.refreshInterval);
     }
 
 
     //================================================================
+    /**
+     * Refresh discordBot configurations
+     */
+    refreshConfig(){
+        this.config = globals.configVault.getScoped('discordBot');
+        if(this.client !== null){
+            logWarn(`Stopping Discord Bot`, context);
+            this.client.destroy();
+            this.client = null;
+        }
+        if(this.config.enabled){
+            this.startBot();
+        }
+    }//Final refreshConfig()
+
+
+    //================================================================
     async startBot(){
+        //Setup client
+        this.client = new Discord.Client({autoReconnect:true});
+
         //Setup event listeners
         this.client.on('ready', () => {
             logOk(`::Started and logged in as '${this.client.user.tag}'`, context);
@@ -47,7 +66,7 @@ module.exports = class DiscordBot {
             await this.client.login(this.config.token);
         } catch (error) {
             logError(error.message, context);
-            process.exit();
+            //FIXME: colocar aqui mensagem de erro pra aparecer no dashboard
         }
     }
     

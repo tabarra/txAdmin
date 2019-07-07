@@ -258,10 +258,10 @@
 
                         <!-- Discord Card -->
                         <div class="form-group row">
-                            <label for="frmDiscord-enable" class="col-sm-3 col-form-label">Enable Bot</label>
+                            <label for="frmDiscord-enabled" class="col-sm-3 col-form-label">Enable Bot</label>
                             <div class="col-sm-9">
                                 <label class="switch switch-label switch-pill switch-success fix-pill-form">
-                                    <input class="switch-input" type="checkbox" id="frmDiscord-enable" {{discord.enabled}}>
+                                    <input class="switch-input" type="checkbox" id="frmDiscord-enabled" {{discord.enabled}}>
                                     <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
                                 </label>
                                 <span class="form-text text-muted">
@@ -277,8 +277,8 @@
                                 <input type="text" class="form-control" id="frmDiscord-token" value="{{discord.token}}" maxlength="96">
                                 <span class="form-text text-muted">
                                     To get a token and the bot to join your server, follow these two guides:
-                                    <a href="https://discordjs.guide/preparations/setting-up-a-bot-application.html target="
-                                        _blank" rel="noopener noreferrer">Setting up a bot application</a> and
+                                    <a href="https://discordjs.guide/preparations/setting-up-a-bot-application.html" 
+                                        target="_blank" rel="noopener noreferrer">Setting up a bot application</a> and
                                     <a href="https://discordjs.guide/preparations/adding-your-bot-to-servers.html">Adding
                                         your bot to servers</a>.
                                 </span>
@@ -446,22 +446,14 @@
 
     //============================================== Discord Settings
     $('#frmDiscord-save').click(function () {
-        let enabled = ($('#frmDiscord-enable').is(':checked') === true);
-        let data;
-        if (enabled) {
-            data = {
-                enable: true,
-                token: $('#frmDiscord-token').val().trim(),
-                statusCommand: $('#frmDiscord-statusCommand').val().trim()
-            }
-            if (!data.token.length || !data.statusCommand.length) {
-                var notify = $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
-                return;
-            }
-        } else {
-            data = {
-                enabled: false
-            }
+        let data = {
+            enabled: ($('#frmDiscord-enabled').is(':checked') === true),
+            token: $('#frmDiscord-token').val().trim(),
+            statusCommand: $('#frmDiscord-statusCommand').val().trim()
+        };
+        if (data.enabled && (!data.token.length || !data.statusCommand.length)) {
+            var notify = $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
+            return;
         }
         var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 

@@ -88,7 +88,7 @@ module.exports = class FXRunner {
         }
         //If the server is already alive
         if(this.fxChild !== null){
-            logError('this.fxChild is not null.', context);
+            logError('The server is already started.', context);
             return false;
         }
 

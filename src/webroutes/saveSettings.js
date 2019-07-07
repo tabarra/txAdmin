@@ -156,8 +156,39 @@ function handleMonitor(res, req) {
  * @param {object} req 
  */
 function handleDiscord(res, req) {
-    return res.send({
-        type: 'info',
-        message: 'lalalalaDiscord'
-    });
+    //Sanity check
+    if(
+        isUndefined(req.body.enabled) ||
+        isUndefined(req.body.token) ||
+        isUndefined(req.body.statusCommand)
+    ){
+        res.status(400);
+        return res.send({type: 'danger', message: "Invalid Request - missing parameters"});
+    }
+
+    //Prepare body input
+    let cfg = {
+        enabled: (req.body.enabled === 'true'),
+        token: req.body.token,
+        statusCommand: req.body.statusCommand
+    }
+
+    //Preparing & saving config
+    let newConfig = globals.configVault.getScopedStructure('discordBot');
+    newConfig.enabled = cfg.enabled;
+    newConfig.token = cfg.token;
+    newConfig.statusCommand = cfg.statusCommand;
+    let saveStatus = globals.configVault.saveProfile('discordBot', newConfig);
+
+    //Sending output
+    if(saveStatus){
+        globals.discordBot.refreshConfig();
+        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing discordBot settings.`;
+        logWarn(logMessage, context);
+        globals.logger.append(logMessage);
+        return res.send({type: 'success', message: `<strong>Configuration file saved!</strong>`});
+    }else{
+        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing discordBot settings.`, context);
+        return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+    }
 }
