@@ -142,10 +142,41 @@ function handleFXServer(res, req) {
  * @param {object} req 
  */
 function handleMonitor(res, req) {
-    return res.send({
-        type: 'info',
-        message: 'lalalalahandleMonitor'
-    });
+    //Sanity check
+    if(
+        isUndefined(req.body.timeout) ||
+        isUndefined(req.body.failures) ||
+        isUndefined(req.body.schedule)
+    ){
+        res.status(400);
+        return res.send({type: 'danger', message: "Invalid Request - missing parameters"});
+    }
+
+    //Prepare body input
+    let cfg = {
+        timeout: parseInt(req.body.timeout),
+        failures: parseInt(req.body.failures),
+        schedule: req.body.schedule.split(',').map((x) => {return x.trim()})
+    }
+
+    //Preparing & saving config
+    let newConfig = globals.configVault.getScopedStructure('monitor');
+    newConfig.timeout = cfg.timeout;
+    newConfig.restarter.failures = cfg.failures;
+    newConfig.restarter.schedule = cfg.schedule;
+    let saveStatus = globals.configVault.saveProfile('monitor', newConfig);
+
+    //Sending output
+    if(saveStatus){
+        globals.monitor.refreshConfig();
+        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing monitor settings.`;
+        logWarn(logMessage, context);
+        globals.logger.append(logMessage);
+        return res.send({type: 'success', message: `<strong>Configuration file saved!</strong>`});
+    }else{
+        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing monitor settings.`, context);
+        return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+    }
 }
 
 

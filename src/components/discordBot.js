@@ -9,18 +9,17 @@ module.exports = class DiscordBot {
     constructor(config) {
         this.config = config;
         this.client = null;
+        this.cronFunc = null;
         this.messages = [];
         if(!this.config.enabled){
             logOk('::Disabled by the config file.', context);
         }else{
             this.refreshStaticMessages();
+            this.cronFunc = setInterval(() => {
+                this.refreshStaticMessages();
+            }, this.config.refreshInterval);
             this.startBot();
         }
-
-        //Cron Function
-        setInterval(() => {
-            if(this.config.enabled) this.refreshStaticMessages();
-        }, this.config.refreshInterval);
     }
 
 
@@ -30,6 +29,7 @@ module.exports = class DiscordBot {
      */
     refreshConfig(){
         this.config = globals.configVault.getScoped('discordBot');
+        clearInterval(this.cronFunc);
         if(this.client !== null){
             logWarn(`Stopping Discord Bot`, context);
             this.client.destroy();
@@ -37,6 +37,9 @@ module.exports = class DiscordBot {
         }
         if(this.config.enabled){
             this.startBot();
+            this.cronFunc = setInterval(() => {
+                this.refreshStaticMessages();
+            }, this.config.refreshInterval);
         }
     }//Final refreshConfig()
 

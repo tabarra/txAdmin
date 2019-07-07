@@ -300,5 +300,4 @@ module.exports = class ConfigVault {
         }
     }
 
-
 } //Fim ConfigVault()

@@ -35,15 +35,30 @@ module.exports = class Monitor {
         }
 
         //Cron functions
-        setInterval(() => {
+        this.cronFunc = setInterval(() => {
             this.refreshServerStatus();
         }, this.config.interval);
-        if(Array.isArray(this.config.restarter.schedule)){
-            setInterval(() => {
+        setInterval(() => {
+            if(Array.isArray(this.config.restarter.schedule)){
                 this.checkRestartSchedule();
-            }, 1*1000);
-        }
+            }
+        }, 1*1000);
     }
+
+
+    //================================================================
+    /**
+     * Refresh fxRunner configurations
+     */
+    refreshConfig(){
+        this.config = globals.configVault.getScoped('monitor');
+
+        //Reset Cron functions
+        clearInterval(this.cronFunc);
+        this.cronFunc = setInterval(() => {
+            this.refreshServerStatus();
+        }, this.config.interval);
+    }//Final refreshConfig()
 
 
     //================================================================

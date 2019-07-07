@@ -33,6 +33,10 @@ function cleanRenderData(inputData){
             out[prop] = '';
         }else if(input[prop] === true){
             out[prop] = 'checked';
+        }else if(input[prop].constructor === Array){
+            out[prop] = input[prop].join(', ');
+        }else if(input[prop].constructor === Object){
+            out[prop] = cleanRenderData(input[prop]);
         }else{
             out[prop] = input[prop];
         }
