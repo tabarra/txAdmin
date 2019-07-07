@@ -157,14 +157,13 @@ module.exports = class ConfigVault {
      */
     setupConfigDefaults(cfgData){
         let cfg = clone(cfgData);
-
         //NOTE: the bool trick in global.verbose and fxRunner.autostart won't work if we want the default to be true
         try {
             //Global
             cfg.global.verbose = (cfg.global.verbose === 'true' || cfg.global.verbose === true);
             cfg.global.publicIP = cfg.global.publicIP || "change-me";
             cfg.global.serverName = cfg.global.serverName || "change-me";
-            cfg.global.forceFXServerPort = parseInt(cfg.global.forceFXServerPort);
+            cfg.global.forceFXServerPort = cfg.global.forceFXServerPort || null;
             
             //Global - Extras
             cfg.global.osType = os.type() || 'unknown';

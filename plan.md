@@ -24,7 +24,7 @@ $ node src/index.js default
 - [x] create config vault component
 - [x] settings page validate fxserver paths
 - [x] settings page save the new settings
-- [ ] settings page for the other scopes
+- [x] settings page for the other scopes
 - [x] fxrunner detect the endpoint ports
 - [ ] rewrite README, Troubleshooting Guide and Discord Macros
 

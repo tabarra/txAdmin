@@ -44,10 +44,43 @@ module.exports = async function action(res, req) {
  * @param {object} req 
  */
 function handleGlobal(res, req) {
-    return res.send({
-        type: 'info',
-        message: 'lalalalahandle Global'
-    });
+    //Sanity check
+    if(
+        isUndefined(req.body.serverName) ||
+        isUndefined(req.body.publicIP) ||
+        isUndefined(req.body.verbose)
+    ){
+        res.status(400);
+        return res.send({type: 'danger', message: "Invalid Request - missing parameters"});
+    }
+
+    //Prepare body input
+    let cfg = {
+        serverName: req.body.serverName.trim(),
+        publicIP: req.body.publicIP.trim(),
+        verbose: (req.body.verbose === 'true')
+    }
+
+    //Preparing & saving config
+    let newConfig = globals.configVault.getScopedStructure('global');
+    dir(newConfig)
+    newConfig.serverName = cfg.serverName;
+    newConfig.publicIP = cfg.publicIP;
+    newConfig.verbose = cfg.verbose;
+    let saveStatus = globals.configVault.saveProfile('global', newConfig);
+
+    //Sending output
+    if(saveStatus){
+        globals.config = globals.configVault.getScoped('global');
+        dir(globals.config)
+        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing global settings.`;
+        logWarn(logMessage, context);
+        globals.logger.append(logMessage);
+        return res.send({type: 'success', message: `<strong>Configuration file saved!</strong>`});
+    }else{
+        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing global settings.`, context);
+        return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+    }
 }
 
 
@@ -73,9 +106,9 @@ function handleFXServer(res, req) {
 
     //Prepare body input
     let cfg = {
-        buildPath: req.body.buildPath,
-        basePath: req.body.basePath,
-        cfgPath: req.body.cfgPath,
+        buildPath: req.body.buildPath.trim(),
+        basePath: req.body.basePath.trim(),
+        cfgPath: req.body.cfgPath.trim(),
         onesync: (req.body.onesync === 'true'),
         autostart: (req.body.autostart === 'true'),
         quiet: (req.body.quiet === 'true'),
@@ -200,8 +233,8 @@ function handleDiscord(res, req) {
     //Prepare body input
     let cfg = {
         enabled: (req.body.enabled === 'true'),
-        token: req.body.token,
-        statusCommand: req.body.statusCommand
+        token: req.body.token.trim(),
+        statusCommand: req.body.statusCommand.trim()
     }
 
     //Preparing & saving config

@@ -96,6 +96,7 @@ If you have any problems with `package-lock.json`, just delete it and try again.
 - [x] Config tester check for the modules inside `package.json` (require.resolve?)
 - [ ] Config tester kill spawned fxserver after 5 seconds
 - [ ] Investigate the "fxserver has stopped working" not disappearing when autorestarter kills the server (probably windows detaches it? in that case we would need to PID map and then kill them one by one?)
+- [ ] Remove `forceFXServerPort`, 10x more complicated than it should be for a feature that probably won't even be used
 
 TODO Ideas...
 - [x] We have data, we should plot it into a graph...
