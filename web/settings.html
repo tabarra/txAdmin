@@ -75,20 +75,6 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmGlobal-forceFxPort" class="col-sm-3 col-form-label">
-                                Force FXServer Port
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="number" class="form-control" id="frmGlobal-forceFxPort"
-                                    value="{{global.forceFxPort}}" min="1" max=65535>
-                                <span class="form-text text-muted">
-                                    Leave this blank for <strong>txAdmin</strong> to automatically detect which port
-                                    FXServer is using.
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
                             <label for="frmGlobal-verbose" class="col-sm-3 col-form-label">Verbose</label>
                             <div class="col-sm-9">
                                 <label class="switch switch-label switch-pill switch-success fix-pill-form">
@@ -346,7 +332,6 @@
         let data = {
             serverName: $('#frmGlobal-serverName').val().trim(),
             publicIP: $('#frmGlobal-publicIP').val().trim(),
-            forceFxPort: $('#frmGlobal-forceFxPort').val().trim(),
             verbose: $('#frmGlobal-verbose').is(':checked')
         }
         if (!data.serverName.length || !data.serverName.length) {

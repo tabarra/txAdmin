@@ -98,12 +98,11 @@ function getFXServerPort(rawCfgFile) {
     })
     if(!allInterfacesValid) throw new Error("All endpoints MUST use interface 0.0.0.0");
 
-    let port = matches.reduce((last, match) => {
-        if(last !== null && last.port !== match.port) throw new Error("All endpoints MUST have the same port");
-        return match;
-    }, null);
+    matches.forEach((m) => {
+        if(m.port !== matches[0].port) throw new Error("All endpoints MUST have the same port")
+    });
 
-    return port;
+    return matches[0].port;
 }
 
 

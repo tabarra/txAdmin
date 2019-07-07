@@ -25,8 +25,7 @@ $ node src/index.js default
 - [x] settings page validate fxserver paths
 - [x] settings page save the new settings
 - [ ] settings page for the other scopes
-
-- [ ] fxrunner detect the endpoint ports
+- [x] fxrunner detect the endpoint ports
 - [ ] rewrite README, Troubleshooting Guide and Discord Macros
 
 

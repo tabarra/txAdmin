@@ -140,8 +140,12 @@ async function getProcessesData(){
  * Gets the FXServer Data.
  */
 async function getFXServerData(){
+    if(!globals.config.forceFXServerPort && !globals.fxRunner.fxServerPort){
+        return {error: `Server Offline`}
+    }
+    let port = (globals.config.forceFXServerPort)? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
     let requestOptions = {
-        url: `http://localhost:${globals.config.fxServerPort}/info.json`,
+        url: `http://localhost:${port}/info.json`,
         method: 'get',
         responseType: 'json',
         responseEncoding: 'utf8',

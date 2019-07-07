@@ -35,7 +35,7 @@ let configSkeletal = {
         verbose: false,
         publicIP: "change-me",
         serverName: "change-me",
-        fxServerPort: null
+        forceFXServerPort: null
     },
     logger: {},
     monitor: {

@@ -89,8 +89,11 @@ module.exports = class DiscordBot {
                 : `${globals.config.serverName} is currently **Offline**!`;
             let players = (dataServer.online && typeof dataServer.players !== 'undefined')? dataServer.players.length : '--';
             let desc = '';
-            desc += `**IP:** ${globals.config.publicIP}:${globals.config.fxServerPort}\n`;
-            desc += `**Players:** ${players}\n`;
+            if(globals.config.forceFXServerPort || globals.fxRunner.fxServerPort){
+                let port = (globals.config.forceFXServerPort)? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
+                desc += `**IP:** ${globals.config.publicIP}:${port}\n`;
+                desc += `**Players:** ${players}\n`;
+            }
             
             //Prepare object
             out = new Discord.RichEmbed();

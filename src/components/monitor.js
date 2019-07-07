@@ -121,7 +121,7 @@ module.exports = class Monitor {
      */
     async refreshServerStatus(){
         //Check if the server is supposed to be offline
-        if(globals.fxRunner.fxChild === null){
+        if(globals.fxRunner.fxChild === null || globals.fxRunner.fxServerPort === null){
             this.statusServer = {
                 online: false,
                 ping: false,
@@ -134,7 +134,7 @@ module.exports = class Monitor {
         let timeStart = Date.now()
         let players = [];
         let requestOptions = {
-            url: `http://localhost:${globals.config.fxServerPort}/players.json`,
+            url: `http://localhost:${globals.fxRunner.fxServerPort}/players.json`,
             method: 'get',
             responseType: 'json',
             responseEncoding: 'utf8',
