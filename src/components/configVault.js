@@ -1,8 +1,22 @@
 //Requires
 const os = require('os');
 const fs = require('fs');
+const clone = require('clone');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'ConfigVault';
+
+//Helper functions
+const isUndefined = (x) => { return (typeof x === 'undefined') };
+const toDefault = (input, defVal) => { return (isUndefined(input))? defVal : input };
+function removeNulls(obj) {
+    var isArray = obj instanceof Array;
+    for (var k in obj) {
+        if (obj[k] === null) isArray ? obj.splice(k, 1) : delete obj[k];
+        else if (typeof obj[k] == "object") removeNulls(obj[k]);
+        if (isArray && obj.length == k) removeNulls(obj);
+    }
+    return obj;
+}
 
 
 module.exports = class ConfigVault {
@@ -10,21 +24,65 @@ module.exports = class ConfigVault {
         this.serverProfile = serverProfile;
         this.serverProfilePath = `data/${serverProfile}`;
         this.configFilePath = `${this.serverProfilePath}/config.json`;
+        this.configFile = null;
         this.config = null;
         
-        this.setupConfig();
+        this.setupVault();
         logOk('::Started', context);
     }
 
 
     //================================================================
     /**
-     * Setup the this.config variable based on the config file data
+     * Setup Vault
      */
-    setupConfig(){
-        let cfgData = this.getConfigFromFile();
-        this.setupFolderStructure();
+    setupVault(){
+        try {
+            let cfgData = this.getConfigFromFile();
+            this.configFile = this.setupConfigStructure(cfgData);
+            this.config = this.setupConfigDefaults(this.configFile);
+            this.setupFolderStructure();
+        } catch (error) {
+            logError(error.stack, context)
+            process.exit(0);
+        }
+    }
 
+
+    //================================================================
+    /**
+     * Returns the config file data
+     */
+    getConfigFromFile(){
+        //Try to load config file
+        //TODO: create a lock file to prevent starting twice the same config file?
+        let rawFile = null;
+        try {
+            rawFile = fs.readFileSync(this.configFilePath, 'utf8');
+        } catch (error) {
+            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. (cannot read file, please read the documentation)\nOriginal error: ${error.message}`, error.stack);
+        }
+
+        //Try to parse config file
+        let cfgData = null;
+        try {
+            cfgData = JSON.parse(rawFile);
+        } catch (error) {
+            if(rawFile.includes('\\')) logError(`Note: your '${this.serverProfile}.json' file contains '\\', make sure all your paths use only '/'.`, context);
+            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. (json parse error, please read the documentation)\nOriginal error: ${error.message}`, error.stack);
+        }
+
+        return cfgData;
+    }
+
+
+    //================================================================
+    /**
+     * Setup the this.config variable based on the config file data
+     * @param {object} cfgData 
+     */
+    setupConfigStructure(cfgData){
+        let cfg = clone(cfgData);
         let out = {
             global: null,
             logger: null,
@@ -36,99 +94,121 @@ module.exports = class ConfigVault {
             fxRunner: null,
         }
 
-        //NOTE: the bool trick in global.verbose and fxRunner.autostart won't work if we want the default to be true
-        //NOTE: Some settings here were removed from the config template file to look less intimidating. Put them in the docs ASAP.
         try {
             out.global = {
-                verbose: (cfgData.global.verbose === 'true' || cfgData.global.verbose === true),
-                publicIP: cfgData.global.publicIP || "change-me",
-                serverName: cfgData.global.serverName || "change-me",
-                fxServerPort: toDefault(parseInt(cfgData.global.fxServerPort), null),
-                
-                //Extras
-                osType: os.type() || 'unknown',
-                serverProfile: this.serverProfile,
-                serverProfilePath: this.serverProfilePath
+                verbose: toDefault(cfg.global.verbose, null),
+                publicIP:  toDefault(cfg.global.publicIP, null),
+                serverName:  toDefault(cfg.global.serverName, null),
+                fxServerPort:  toDefault(cfg.global.fxServerPort, null),
             };
             out.logger = {
-                logPath: cfgData.logger.logPath || `${this.serverProfilePath}/logs/admin.log`, //not in template 
+                logPath: toDefault(cfg.logger.logPath, null), //not in template 
             };
             out.monitor = {
-                interval: parseInt(cfgData.monitor.interval) || 1000, //not in template
-                timeout: parseInt(cfgData.monitor.timeout) || 1000,
+                interval: toDefault(cfg.monitor.interval, null), //not in template
+                timeout: toDefault(cfg.monitor.timeout, null),
                 restarter: {
-                    cooldown: parseInt(cfgData.monitor.restarter.cooldown) || 120, //not in template
-                    failures: parseInt(cfgData.monitor.restarter.failures) || 15,
-                    schedule: cfgData.monitor.restarter.schedule || []
+                    cooldown: toDefault(cfg.monitor.restarter.cooldown, null), //not in template
+                    failures: toDefault(cfg.monitor.restarter.failures, null),
+                    schedule: toDefault(cfg.monitor.restarter.schedule, null),
                 }
             };
             out.authenticator = {
-                refreshInterval: parseInt(cfgData.authenticator.refreshInterval) || 15000, //not in template
+                refreshInterval: toDefault(cfg.authenticator.refreshInterval, null), //not in template
             };
             out.webServer = {
-                port: parseInt(cfgData.webServer.port) || 40120,
-                bufferTime: parseInt(cfgData.webServer.bufferTime) || 1500, //not in template - deprecate?
-                limiterMinutes: parseInt(cfgData.webServer.limiterMinutes) || 15, //not in template
-                limiterAttempts: parseInt(cfgData.webServer.limiterAttempts) || 5, //not in template
+                port: toDefault(cfg.webServer.port, null),
+                bufferTime: toDefault(cfg.webServer.bufferTime, null), //not in template - deprecate?
+                limiterMinutes: toDefault(cfg.webServer.limiterMinutes, null), //not in template
+                limiterAttempts: toDefault(cfg.webServer.limiterAttempts, null), //not in template
             };
             out.webConsole = {
                 //nothing to configure
             };
             out.discordBot = {
-                enabled: (cfgData.discordBot.enabled === 'true' || cfgData.discordBot.enabled === true),
-                token:  cfgData.discordBot.token || ((cfgData.discordBot.enabled === 'true' || cfgData.discordBot.enabled === true) && fatalRequired('discordBot.token')),
-                messagesFilePath: cfgData.discordBot.messagesFilePath || `${this.serverProfilePath}/messages.json`, //not in template
-                refreshInterval: parseInt(cfgData.discordBot.refreshInterval) || 15000, //not in template
-                statusCommand: cfgData.discordBot.statusCommand || "/status",
+                enabled: toDefault(cfg.discordBot.enabled, null),
+                token:  toDefault(cfg.discordBot.token, null),
+                messagesFilePath: toDefault(cfg.discordBot.messagesFilePath, null), //not in template
+                refreshInterval: toDefault(cfg.discordBot.refreshInterval, null), //not in template
+                statusCommand: toDefault(cfg.discordBot.statusCommand, null),
             };
             out.fxRunner = {
-                buildPath: toDefault(cfgData.fxRunner.buildPath, null),
-                basePath: toDefault(cfgData.fxRunner.basePath, null),
-                cfgPath: toDefault(cfgData.fxRunner.cfgPath, null),
-                setPriority: cfgData.fxRunner.setPriority || "NORMAL",
-                onesync: (cfgData.fxRunner.onesync === 'true' || cfgData.fxRunner.onesync === true),
-                autostart: (cfgData.fxRunner.autostart === 'true' || cfgData.fxRunner.autostart === true),
-                autostartDelay: parseInt(cfgData.webServer.autostartDelay) || 3, //not in template
-                quiet: (cfgData.fxRunner.quiet === 'true' || cfgData.fxRunner.quiet === true),
+                buildPath: toDefault(cfg.fxRunner.buildPath, null),
+                basePath: toDefault(cfg.fxRunner.basePath, null),
+                cfgPath: toDefault(cfg.fxRunner.cfgPath, null),
+                setPriority: toDefault(cfg.fxRunner.setPriority, null),
+                onesync: toDefault(cfg.fxRunner.onesync, null),
+                autostart: toDefault(cfg.fxRunner.autostart, null),
+                autostartDelay: toDefault(cfg.webServer.autostartDelay, null), //not in template
+                quiet: toDefault(cfg.fxRunner.quiet, null),
             };
         } catch (error) {
-            logError('Malformed configuration file! Please copy server-template.json and try again.', context);
-            dir(error);
-            process.exit(0);
+            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`, error.stack);
         }
 
-        this.config = out;
+        return out;
     }
 
 
     //================================================================
     /**
-     * Returns the config file data
-     * @param {string} xxxx 
+     * Setup the this.config variable based on the config file data
+     * @param {object} cfgData 
      */
-    getConfigFromFile(){
-        //Try to load config file
-        //TODO: create a lock file to prevent starting twice the same config file?
-        let rawFile = null;
+    setupConfigDefaults(cfgData){
+        let cfg = clone(cfgData);
+
+        //NOTE: the bool trick in global.verbose and fxRunner.autostart won't work if we want the default to be true
         try {
-            rawFile = fs.readFileSync(this.configFilePath, 'utf8');
+            //Global
+            cfg.global.verbose = (cfg.global.verbose === 'true' || cfg.global.verbose === true);
+            cfg.global.publicIP = cfg.global.publicIP || "change-me";
+            cfg.global.serverName = cfg.global.serverName || "change-me";
+            cfg.global.fxServerPort = parseInt(cfg.global.fxServerPort);
+            
+            //Global - Extras
+            cfg.global.osType = os.type() || 'unknown';
+            cfg.global.serverProfile = this.serverProfile;
+            cfg.global.serverProfilePath = this.serverProfilePath;
+
+            //Logger
+            cfg.logger.logPath = cfg.logger.logPath || `${this.serverProfilePath}/logs/admin.log`; //not in template 
+
+            //Monitor
+            cfg.monitor.interval = parseInt(cfg.monitor.interval) || 1000; //not in template
+            cfg.monitor.timeout = parseInt(cfg.monitor.timeout) || 1000;
+            cfg.monitor.restarter.cooldown = parseInt(cfg.monitor.restarter.cooldown) || 120; //not in template
+            cfg.monitor.restarter.failures = parseInt(cfg.monitor.restarter.failures) || 15;
+            cfg.monitor.restarter.schedule = cfg.monitor.restarter.schedule || [];
+
+            //Authenticator
+            cfg.authenticator.refreshInterval = parseInt(cfg.authenticator.refreshInterval) || 15000; //not in template
+
+            //WebServer
+            cfg.webServer.port = parseInt(cfg.webServer.port) || 40120;
+            cfg.webServer.bufferTime = parseInt(cfg.webServer.bufferTime) || 1500; //not in template - deprecate?
+            cfg.webServer.limiterMinutes = parseInt(cfg.webServer.limiterMinutes) || 15; //not in template
+            cfg.webServer.limiterAttempts = parseInt(cfg.webServer.limiterAttempts) || 5; //not in template
+
+            //DiscordBot
+            cfg.discordBot.enabled = (cfg.discordBot.enabled === 'true' || cfg.discordBot.enabled === true);
+            cfg.discordBot.messagesFilePath = cfg.discordBot.messagesFilePath || `${this.serverProfilePath}/messages.json`; //not in template
+            cfg.discordBot.refreshInterval = parseInt(cfg.discordBot.refreshInterval) || 15000; //not in template
+            cfg.discordBot.statusCommand = cfg.discordBot.statusCommand || "/status";
+
+            //FXRunner
+            cfg.fxRunner.setPriority = cfg.fxRunner.setPriority || "NORMAL";
+            cfg.fxRunner.onesync = (cfg.fxRunner.onesync === 'true' || cfg.fxRunner.onesync === true);
+            cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
+            cfg.fxRunner.autostartDelay = parseInt(cfg.webServer.autostartDelay) || 3; //not in template
+            cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
         } catch (error) {
-            logError(`Unnable to load configuration file '${this.configFilePath}'. (cannot read file, please read the documentation)`, context);
-            process.exit(0)
+            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`, error.stack);
         }
 
-        //Try to parse config file
-        let cfgData = null;
-        try {
-            cfgData = JSON.parse(rawFile);
-        } catch (error) {
-            logError(`Unnable to load configuration file '${this.configFilePath}'. (json parse error, please read the documentation)`, context);
-            if(rawFile.includes('\\')) logError(`Note: your '${this.serverProfile}.json' file contains '\\', make sure all your paths use only '/'.`, context)
-            process.exit();
-        }
-
-        return cfgData;
+        return cfg;
     }
+
 
     //================================================================
     /**
@@ -168,7 +248,15 @@ module.exports = class ConfigVault {
      * Return configs for a specific scope (reconstructed and freezed)
      */
     getScoped(scope){
-        return {...this.config[scope]};
+        return clone(this.config[scope]);
+    }
+
+    //================================================================
+    /**
+     * Return configs for a specific scope (reconstructed and freezed)
+     */
+    getScopedStructure(scope){
+        return clone(this.configFile[scope]);
     }
 
 
@@ -177,15 +265,16 @@ module.exports = class ConfigVault {
      * Return all configs individually reconstructed and freezed
      */
     getAll(){
+        let cfg = clone(this.config);
         return {
-            global: Object.freeze({...this.config.global}),
-            logger: Object.freeze({...this.config.logger}),
-            monitor: Object.freeze({...this.config.monitor}),
-            authenticator: Object.freeze({...this.config.authenticator}),
-            webServer: Object.freeze({...this.config.webServer}),
-            webConsole: Object.freeze({...this.config.webConsole}),
-            discordBot: Object.freeze({...this.config.discordBot}),
-            fxRunner: Object.freeze({...this.config.fxRunner}),
+            global: Object.freeze(cfg.global),
+            logger: Object.freeze(cfg.logger),
+            monitor: Object.freeze(cfg.monitor),
+            authenticator: Object.freeze(cfg.authenticator),
+            webServer: Object.freeze(cfg.webServer),
+            webConsole: Object.freeze(cfg.webConsole),
+            discordBot: Object.freeze(cfg.discordBot),
+            fxRunner: Object.freeze(cfg.fxRunner),
         };
     }
 
@@ -198,12 +287,12 @@ module.exports = class ConfigVault {
      */
     saveProfile(scope, newConfig){
         try {
-            this.config[scope] = newConfig;
-            let toSave = {...this.config};
-            delete toSave.global.osType;
-            delete toSave.global.serverProfile;
-            delete toSave.global.serverProfilePath;
+            let toSave = clone(this.configFile);
+            toSave[scope] = newConfig;
+            toSave = removeNulls(toSave);
             fs.writeFileSync(this.configFilePath, JSON.stringify(toSave, null, 2), 'utf8');
+            this.configFile = toSave;
+            this.config = this.setupConfigDefaults(this.configFile);
             return true;
         } catch (error) {
             dir(error)
@@ -213,14 +302,3 @@ module.exports = class ConfigVault {
 
 
 } //Fim ConfigVault()
-
-
-//================================================================
-//Helper Functions
-function fatalRequired(varName){
-    logError(`The following configuration was not set and is required: '${varName}'`, context);
-    process.exit();
-}
-function toDefault(input, defValue){
-    return (typeof input === 'undefined')? defValue : input;
-}

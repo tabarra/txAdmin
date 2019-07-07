@@ -34,6 +34,7 @@
     "big-integer": "^1.6.43",
     "body-parser": "^1.19.0",
     "chalk": "^2.4.2",
+    "clone": "^2.1.2",
     "cors": "^2.8.5",
     "dateformat": "^3.0.3",
     "del": "^4.1.1",

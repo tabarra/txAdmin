@@ -1,9 +1,10 @@
 //Requires
 const fs = require('fs');
+const clone = require('clone');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'TimeSeries';
 
-const undefined = (x) => { return (typeof x === 'undefined') };
+const isUndefined = (x) => { return (typeof x === 'undefined') };
 const now = (x) => { return (new Date() / 1000).toFixed() };
 
 /**
@@ -15,7 +16,7 @@ const now = (x) => { return (new Date() / 1000).toFixed() };
  */
 module.exports = class TimeSeries {
     constructor(file, resolution, window) {
-        if (undefined(file) || undefined(resolution) || undefined(window)) {
+        if (isUndefined(file) || isUndefined(resolution) || isUndefined(window)) {
             throw new Error('All parameters must be defined');
         }
         this.file = file;
@@ -43,9 +44,9 @@ module.exports = class TimeSeries {
             oldData = JSON.parse(rawFile);
             oldData.filter((point) => {
                 return (
-                    !undefined(point.timestamp) &&
+                    !isUndefined(point.timestamp) &&
                     Number.isInteger(point.timestamp) &&
-                    !undefined(point.data) &&
+                    !isUndefined(point.data) &&
                     Number.isInteger(point.data) &&
                     now() - point.timestamp < window
                 );
@@ -96,7 +97,7 @@ module.exports = class TimeSeries {
             return (now - point.timestamp < this.window);
         });
         
-        return [...this.log];
+        return clone(this.log);
     }
 
 

@@ -32,8 +32,8 @@ module.exports = class FXRunner {
     /**
      * Refresh fxRunner configurations
      */
-    refreshConfig(newConfig){
-        this.config = newConfig;
+    refreshConfig(){
+        this.config = globals.configVault.getScoped('fxRunner');;
         this.setupVariables();
     }//Final refreshConfig()
 

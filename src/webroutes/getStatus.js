@@ -1,6 +1,7 @@
 //Requires
 const os = require('os');
 const xss = require("xss");
+const clone = require('clone');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'WebServer:getStatus';
 
@@ -25,8 +26,8 @@ module.exports = async function action(res, req) {
  * Returns the fxserver's data
  */
 function prepareServerStatus() {
-    let dataServer = {...globals.monitor.statusServer};
-    let fxServerHitches = [...globals.monitor.fxServerHitches];
+    let dataServer = clone(globals.monitor.statusServer);
+    let fxServerHitches = clone(globals.monitor.fxServerHitches);
 
     //processing hitches
     let now = (Date.now() / 1000).toFixed();
@@ -116,7 +117,7 @@ function prepareHostData() {
  * Returns the html playerlist
  */
 function preparePlayersData() {
-    let dataServer = {...globals.monitor.statusServer};
+    let dataServer = clone(globals.monitor.statusServer);
 
     if (!dataServer.players.length) return '<strong>No players Online.</strong>';
 
@@ -151,7 +152,7 @@ function preparePlayersData() {
  * Returns the page metadata (title and icon)
  */
 function prepareMetaData() {
-    let dataServer = {...globals.monitor.statusServer};
+    let dataServer = clone(globals.monitor.statusServer);
     return {
         favicon: (dataServer.online) ? 'favicon_on' : 'favicon_off',
         title: (dataServer.online) ? `(${dataServer.players.length}) txAdmin` : 'txAdmin'

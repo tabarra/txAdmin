@@ -1,5 +1,6 @@
 //Requires
 const xss = require("xss");
+const clone = require('clone');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('./webUtils.js');
 const context = 'WebServer:getPlayerData';
@@ -19,7 +20,7 @@ module.exports = async function action(res, req) {
     let id = parseInt(req.params.id);
     
     let out;
-    let players = [...globals.monitor.statusServer.players];
+    let players = clone(globals.monitor.statusServer.players);
     let player = players.find(player => player.id === id);
     if(player){
         out = {

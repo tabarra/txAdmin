@@ -112,7 +112,7 @@ function handleFXServer(res, req) {
     }
     
     //Preparing & saving config
-    let newConfig = globals.configVault.getScoped('fxRunner');
+    let newConfig = globals.configVault.getScopedStructure('fxRunner');
     newConfig.buildPath = cfg.buildPath;
     newConfig.basePath = cfg.basePath;
     newConfig.cfgPath = cfg.cfgPath;
@@ -123,7 +123,7 @@ function handleFXServer(res, req) {
 
     //Sending output
     if(saveStatus){
-        globals.fxRunner.refreshConfig(newConfig);
+        globals.fxRunner.refreshConfig();
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing fxRunner settings.`;
         logWarn(logMessage, context);
         globals.logger.append(logMessage);

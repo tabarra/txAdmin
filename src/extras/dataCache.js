@@ -1,3 +1,6 @@
+//Requires
+const clone = require('clone');
+
 module.exports = class Cache {
     constructor(cacheTime) {
         this.cacheTime = cacheTime;
@@ -24,7 +27,7 @@ module.exports = class Cache {
     get(){
         let now = (new Date()/1000).toFixed();
         if(now - this.dataTimestamp < this.cacheTime){
-            return {...this.data};
+            return clone(this.data);
         }else{
             return false;
         }

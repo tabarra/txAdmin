@@ -1,4 +1,5 @@
 //Requires
+const clone = require('clone');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('./webUtils.js');
 const context = 'WebServer:getSettings';
@@ -10,35 +11,13 @@ const context = 'WebServer:getSettings';
  * @param {object} req
  */
 module.exports = async function action(res, req) {
-
     let renderData = {
         headerTitle: 'settings',
-        global: cleanRenderData({
-            serverName: globals.config.serverName,
-            publicIP: globals.config.publicIP,
-            forceFxPort: globals.config.fxServerPort,
-            verbose: globals.config.verbose
-        }),
-        fxserver: cleanRenderData({
-            buildPath: globals.fxRunner.config.buildPath,
-            basePath: globals.fxRunner.config.basePath,
-            cfgPath: globals.fxRunner.config.cfgPath,
-            onesync: globals.fxRunner.config.onesync,
-            autostart: globals.fxRunner.config.autostart,
-            quiet: globals.fxRunner.config.quiet
-        }),
-        monitor: cleanRenderData({
-            timeout: globals.monitor.config.timeout,
-            failures: globals.monitor.config.restarter.failures,
-            schedule: globals.monitor.config.restarter.schedule.join(', '),
-        }),
-        discord: cleanRenderData({
-            enabled: globals.discordBot.config.enabled,
-            token: globals.discordBot.config.token,
-            statusCommand: globals.discordBot.config.statusCommand,
-        }),
+        global: cleanRenderData(globals.configVault.getScopedStructure('global')),
+        fxserver: cleanRenderData(globals.configVault.getScopedStructure('fxRunner')),
+        monitor: cleanRenderData(globals.configVault.getScopedStructure('monitor')),
+        discord: cleanRenderData(globals.configVault.getScopedStructure('discordBot')),
     }
-    dir(renderData)
 
     let out = await webUtils.renderMasterView('settings', renderData);
     return res.send(out);
@@ -46,8 +25,8 @@ module.exports = async function action(res, req) {
 
 
 //================================================================
-function cleanRenderData(input){
-    input = {...input};
+function cleanRenderData(inputData){
+    let input = clone(inputData);
     let out = {}
     Object.keys(input).forEach((prop) => {
         if(input[prop] === null || input[prop] === false){
