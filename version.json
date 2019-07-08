@@ -1,5 +1,5 @@
 {
-    "version": "1.0.5",
+    "version": "1.1.0",
     "changelog": "New Interface and too many new features to list here. Please Update.",
     "allVersions": [
         {
@@ -25,6 +25,10 @@
         {
             "version": "1.0.5",
             "changelog": "Hotfix for the login problems. Node version checker"
+        },
+        {
+            "version": "1.1.0",
+            "changelog": "New Settings Page and setup script. Changed how server profiles work. Please read new instructions before updating."
         }
     ]
 }

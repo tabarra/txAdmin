@@ -26,7 +26,9 @@ $ node src/index.js default
 - [x] settings page save the new settings
 - [x] settings page for the other scopes
 - [x] fxrunner detect the endpoint ports
-- [ ] rewrite README, Troubleshooting Guide and Discord Macros
+- [x] rewrite README, Troubleshooting Guide
+
+
 
 
 ## Folder Structure
