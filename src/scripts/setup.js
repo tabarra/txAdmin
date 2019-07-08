@@ -210,10 +210,7 @@ if (osType === 'Linux') {
         fs.writeFileSync(`${profilePath}/config.json`, jsonConfig);
 
         if(!isLinux){
-            let batch = `@echo off
-                        cd ../..
-                        node src ${serverProfile}
-                        pause`;
+            let batch = `@echo off\r\n cd ../..\r\n node src ${serverProfile}\r\n pause`;
             fs.writeFileSync(`${profilePath}/start.bat`, batch);
         }
     } catch (error) {
