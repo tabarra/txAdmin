@@ -5,7 +5,7 @@ const pidtree = require('pidtree');
 const StreamSnitch = require('stream-snitch');
 const sleep = require('util').promisify(setTimeout);
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const testUtils = require('../extras/testUtils');
+const helpers = require('../extras/helpers');
 const context = 'FXRunner';
 
 
@@ -96,8 +96,8 @@ module.exports = class FXRunner {
 
         //Detecting endpoint port
         try {
-            let rawCfgFile = testUtils.getCFGFile(this.config.cfgPath, this.config.basePath);
-            this.fxServerPort = testUtils.getFXServerPort(rawCfgFile);
+            let rawCfgFile = helpers.getCFGFile(this.config.cfgPath, this.config.basePath);
+            this.fxServerPort = helpers.getFXServerPort(rawCfgFile);
         } catch (error) {
             logError(`FXServer config error: ${error.message}`, context);
             //the IF below is only a way to disable the endpoint check

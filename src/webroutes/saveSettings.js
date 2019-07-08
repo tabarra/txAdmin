@@ -1,6 +1,6 @@
 //Requires
 const fs = require('fs');
-const testUtils = require('../extras/testUtils');
+const helpers = require('../extras/helpers');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'WebServer:saveSettings';
 
@@ -63,7 +63,6 @@ function handleGlobal(res, req) {
 
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('global');
-    dir(newConfig)
     newConfig.serverName = cfg.serverName;
     newConfig.publicIP = cfg.publicIP;
     newConfig.verbose = cfg.verbose;
@@ -138,8 +137,8 @@ function handleFXServer(res, req) {
 
     //Validating CFG Path
     try {
-        let rawCfgFile = testUtils.getCFGFile(cfg.cfgPath, cfg.basePath);
-        let port = testUtils.getFXServerPort(rawCfgFile);
+        let rawCfgFile = helpers.getCFGFile(cfg.cfgPath, cfg.basePath);
+        let port = helpers.getFXServerPort(rawCfgFile);
     } catch (error) {
         return res.send({type: 'danger', message: `<strong>CFG Path error:</strong> ${error.message}`});
     }
