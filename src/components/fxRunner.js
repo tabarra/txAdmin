@@ -2,9 +2,9 @@
 const { spawn } = require('child_process');
 const os = require('os');
 const pidtree = require('pidtree');
-const StreamSnitch = require('stream-snitch');
 const sleep = require('util').promisify(setTimeout);
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const ConsoleBuffer = require('../extras/consoleBuffer');
 const helpers = require('../extras/helpers');
 const context = 'FXRunner';
 
@@ -15,10 +15,9 @@ module.exports = class FXRunner {
         this.config = config;
         this.spawnVariables = null;
         this.fxChild = null;
-        this.outData = '';
-        this.enableBuffer = false;
         this.tsChildStarted = null;
         this.fxServerPort = null;
+        this.consoleBuffer = new ConsoleBuffer(this.config.logPath, 10);
         this.setupVariables();
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
@@ -108,6 +107,9 @@ module.exports = class FXRunner {
             }
         }
 
+        //Sending header to the console buffer
+        this.consoleBuffer.writeHeader();
+
         //Starting server
         try {
             this.fxChild = spawn(
@@ -124,34 +126,13 @@ module.exports = class FXRunner {
         }
         
         //Setting up stream handlers
-        let hitchStreamProcessor = new StreamSnitch(
-            /hitch warning: frame time of (\d{3,5}) milliseconds/g,
-            (m) => {
-                try {
-                    globals.monitor.processFXServerHitch(m[1])
-                }catch(e){}
-            }
-        );
-        //FIXME: temp handler
-        let detectMissingResource = new StreamSnitch(
-            /Couldn't find resource txAdminClient./g,
-            (m) => {
-                try {
-                    globals.resourceNotFound = true;
-                }catch(e){}
-            }
-        );
-        //NOTE: e se ao invés de pipe, eu der só um console log pra evitar os SIGINT?
         this.fxChild.stdout.setEncoding('utf8');
-        if(!this.config.quiet) this.fxChild.stdout.pipe(process.stdout, {end: false});
-        this.fxChild.stdout.pipe(hitchStreamProcessor);
-        this.fxChild.stdout.pipe(detectMissingResource);
-        //NOTE: might disable the stdin pipe in the future, you should use the live console
-        process.stdin.pipe(this.fxChild.stdin);
+        //if(!this.config.quiet) this.fxChild.stdout.pipe(process.stdout, {end: false});
+        //process.stdin.pipe(this.fxChild.stdin);
 
         //Setting up event handlers
         this.fxChild.on('close', function (code, signal) {
-            logWarn('>> fxChild close event: ' + `code ${code} and signal ${signal}`, context);
+            logWarn(`>> fxChild close event: code ${code} and signal ${signal}`, context);
         });
         this.fxChild.on('disconnect', function () {
             logWarn('>> fxChild disconnect event', context);
@@ -161,21 +142,20 @@ module.exports = class FXRunner {
             dir(err)
         });
         this.fxChild.on('exit', function (code, signal) {
-            logWarn('>> fxChild process exited with ' + `code ${code} and signal ${signal}`, context);
+            logWarn(`>> fxChild exit event: code ${code} and signal ${signal}`, context);
         });
 
         this.fxChild.stdin.on('error', (data) => {});
         this.fxChild.stdin.on('data', (data) => {});
 
         this.fxChild.stdout.on('error', (data) => {});
-        this.fxChild.stdout.on('data', this.fxserverOutputHandler.bind(this));
+        this.fxChild.stdout.on('data', this.consoleBuffer.write.bind(this.consoleBuffer));
 
         this.fxChild.stderr.on('error', (data) => {});
         this.fxChild.stderr.on('data', (data) => {
             logWarn(`\n========\n${data}\n========`, `${context}:stderr:data`);
         });
 
-        hitchStreamProcessor.on('error', (data) => {});
 
         //Setting up process priority
         setTimeout(() => {
@@ -309,30 +289,13 @@ module.exports = class FXRunner {
     async srvCmdBuffer(command, bufferTime){
         if(typeof command !== 'string') throw new Error('Expected String!');
         bufferTime = (bufferTime !== undefined)? bufferTime : 1500;
-        this.outData = '';
-        this.enableBuffer = true;
+        this.consoleBuffer.cmdBuffer = '';
+        this.consoleBuffer.enableCmdBuffer = true;
         let result = this.srvCmd(command);
         if(!result) return false;
         await sleep(bufferTime);
-        this.enableBuffer = false;
-        return this.outData;
+        this.consoleBuffer.enableCmdBuffer = false;
+        return this.consoleBuffer.cmdBuffer;
     }
-
-
-    //================================================================
-    /**
-     * FXServers output handler
-     * @param {string} data
-     */
-    async fxserverOutputHandler(data){
-        // const chalk = require('chalk');
-        // process.stdout.write(chalk.bold.red('|'));
-        // data = data.replace(/\u2122/g, ""); //Ev3nflow™
-        // process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F]/g, ""));
-        data = data.toString();
-        globals.webConsole.buffer(data);
-        if(this.enableBuffer) this.outData += data;
-    }
-
 
 } //Fim FXRunner()

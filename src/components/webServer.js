@@ -129,6 +129,11 @@ module.exports = class WebServer {
                 this.handleRouteError(res, "[getPlayerData] Route Internal Error", err);
             });
         });
+        this.app.get('/downloadLog', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.downloadLog(res, req).catch((err) => {
+                this.handleRouteError(res, "[downloadLog] Route Internal Error", err);
+            });
+        });
         
         //Index & generic
         this.app.get('/', getAuthFunc('web'), async (req, res) => {

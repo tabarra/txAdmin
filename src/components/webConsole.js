@@ -39,6 +39,7 @@ module.exports = class webConsole {
         this.io.use(this.authNewSession.bind(this));
         this.io.on('connection', (socket) => {
             log(`Connected: ${socket.id}`, contextSocket);
+            
             socket.on('disconnect', (reason) => {
                 log(`Client disconnected with reason: ${reason}`, contextSocket);
             });
@@ -46,6 +47,12 @@ module.exports = class webConsole {
                 log(`Socket error with message: ${error.message}`, contextSocket);
             });
             socket.on('consoleCommand', this.handleSocketMessages.bind(this, socket));
+
+            try {
+                socket.emit('consoleData', xss.process(globals.fxRunner.consoleBuffer.webConsoleBuffer));
+            } catch (error) {
+                if(globals.config.verbose) logWarn(`Error sending sending old buffer: ${error.message}`, context);
+            }
         });
     }
 

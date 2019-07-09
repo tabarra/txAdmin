@@ -14,7 +14,8 @@ $ node src/scripts/setup.js default
 $ node src/index.js default
 ```
 
-## TODO:
+## TODO/Roadmap:
+> v1.0.5
 - [x] adapt admin-add 
 - [x] adapt config-tester
 - [x] adapt main
@@ -27,6 +28,27 @@ $ node src/index.js default
 - [x] settings page for the other scopes
 - [x] fxrunner detect the endpoint ports
 - [x] rewrite README, Troubleshooting Guide
+> v1.1.0
+- [x] Make fxserver output buffer class and integrate
+- [x] download server log button/endpoint
+- [x] add buffer size to the dashboard
+> v1.2.0
+- [ ] parse the schedule times
+- [ ] send message to chat
+- [ ] guild/channel in discord config page
+- [ ] announce in discord autorestarts and when the server is started
+> v1.3.0
+- [ ] create admin page template
+- [ ] create functions to add/remove/edit admins
+- [ ] create endpoints/javascript for  the functions above
+- [ ] create method to register new permissions
+> v1.4.0
+- [ ] resource injection
+- [ ] temp intercom endpoint
+- [ ] make txAdminClient report it's alive
+- [ ] prevent auto restarter from killing a working server
+> v1.5.0
+- [ ] custom commands
 
 
 
@@ -41,7 +63,7 @@ $ node src/index.js default
             start.bat
             logs/
                 admin.log
-                FXServer.log
+                fxserver.log
                 txAdmin_errors.log
             data/
                 players.json
@@ -58,3 +80,10 @@ $ node src/index.js default
 - Individual
     - monitor
     - fxrunnder
+
+
+## Ideia pros buffers
+- todo output do fxchild (stdout+stderr) é escrito em um buffer, assim como mensagens de START server (igual os logs de admin)
+- a cada 10 segundos uma função cron vai dar uma slice (estilo tail) nesse buffer e pegar tudo novo e vai salvar no arquivo de log
+- ao abrir o webconsole, enviar o último 8k de dados a partir do primeiro \n
+- o buffer de cmd output é só pegar o length e depois dar slice (se for menor pegar tudo do zero pq truncou)

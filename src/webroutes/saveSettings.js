@@ -71,7 +71,6 @@ function handleGlobal(res, req) {
     //Sending output
     if(saveStatus){
         globals.config = globals.configVault.getScoped('global');
-        dir(globals.config)
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing global settings.`;
         logWarn(logMessage, context);
         globals.logger.append(logMessage);

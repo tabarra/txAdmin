@@ -2,7 +2,7 @@
 const axios = require("axios");
 const bigInt = require("big-integer");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const hostCPUStatus = require('../extras/hostCPUStatus');
+const HostCPUStatus = require('../extras/hostCPUStatus');
 const TimeSeries = require('../extras/timeSeries');
 const context = 'Monitor';
 
@@ -23,7 +23,7 @@ module.exports = class Monitor {
 
         //Setting up
         logOk('::Started', context);
-        this.cpuStatusProvider = new hostCPUStatus();
+        this.cpuStatusProvider = new HostCPUStatus();
         this.timeSeries = new TimeSeries(`${globals.config.serverProfilePath}/data/players.json`, 10, 60*60*24);
         this.lastAutoRestart = null;
         this.failCounter = 0;

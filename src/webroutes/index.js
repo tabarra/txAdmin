@@ -1,3 +1,4 @@
+exports.downloadLog = require('./downloadLog.js');
 exports.fxCommands = require('./fxCommands.js');
 exports.fxControls = require('./fxControls.js');
 exports.getAddExtension = require('./getAddExtension.js');
