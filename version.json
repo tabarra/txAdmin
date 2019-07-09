@@ -1,5 +1,5 @@
 {
-    "version": "1.1.0",
+    "version": "1.2.0",
     "changelog": "New Interface and too many new features to list here. Please Update.",
     "allVersions": [
         {
@@ -29,6 +29,10 @@
         {
             "version": "1.1.0",
             "changelog": "New Settings Page and setup script. Changed how server profiles work. Please read new instructions before updating."
+        },
+        {
+            "version": "1.2.0",
+            "changelog": "Now saving the server log and showing it when you open the Live Console. Added a button to download the log below the console."
         }
     ]
 }
