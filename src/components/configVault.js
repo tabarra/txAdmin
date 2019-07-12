@@ -128,6 +128,7 @@ module.exports = class ConfigVault {
             out.discordBot = {
                 enabled: toDefault(cfg.discordBot.enabled, null),
                 token:  toDefault(cfg.discordBot.token, null),
+                announceChannel:  toDefault(cfg.discordBot.announceChannel, null),
                 messagesFilePath: toDefault(cfg.discordBot.messagesFilePath, null), //not in template
                 refreshInterval: toDefault(cfg.discordBot.refreshInterval, null), //not in template
                 statusCommand: toDefault(cfg.discordBot.statusCommand, null),
@@ -154,6 +155,7 @@ module.exports = class ConfigVault {
     //================================================================
     /**
      * Setup the this.config variable based on the config file data
+     * FIXME: rename this function
      * @param {object} cfgData 
      */
     setupConfigDefaults(cfgData){
@@ -164,7 +166,6 @@ module.exports = class ConfigVault {
             cfg.global.verbose = (cfg.global.verbose === 'true' || cfg.global.verbose === true);
             cfg.global.publicIP = cfg.global.publicIP || "change-me";
             cfg.global.serverName = cfg.global.serverName || "change-me";
-            cfg.global.forceFXServerPort = cfg.global.forceFXServerPort || null;
             
             //Global - Extras
             cfg.global.osType = os.type() || 'unknown';

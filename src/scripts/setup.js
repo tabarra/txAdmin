@@ -52,6 +52,7 @@ let configSkeletal = {
     discordBot: {
         enabled: false,
         token: null,
+        announceChannel: null,
         statusCommand: '/status'
     },
     fxRunner: {

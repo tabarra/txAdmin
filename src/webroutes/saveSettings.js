@@ -240,6 +240,7 @@ function handleDiscord(res, req) {
     if(
         isUndefined(req.body.enabled) ||
         isUndefined(req.body.token) ||
+        isUndefined(req.body.announceChannel) ||
         isUndefined(req.body.statusCommand)
     ){
         res.status(400);
@@ -250,6 +251,7 @@ function handleDiscord(res, req) {
     let cfg = {
         enabled: (req.body.enabled === 'true'),
         token: req.body.token.trim(),
+        announceChannel: req.body.announceChannel.trim(),
         statusCommand: req.body.statusCommand.trim()
     }
 
@@ -257,6 +259,7 @@ function handleDiscord(res, req) {
     let newConfig = globals.configVault.getScopedStructure('discordBot');
     newConfig.enabled = cfg.enabled;
     newConfig.token = cfg.token;
+    newConfig.announceChannel = (cfg.announceChannel.length)? cfg.announceChannel : false;
     newConfig.statusCommand = cfg.statusCommand;
     let saveStatus = globals.configVault.saveProfile('discordBot', newConfig);
 

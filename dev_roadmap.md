@@ -35,8 +35,8 @@ $ node src/index.js default
 > v1.2.0
 - [x] parse the schedule times
 - [x] send message to chat
-- [ ] guild/channel in discord config page
-- [ ] announce in discord autorestarts and when the server is started
+- [x] announcements channel in discord config page
+- [ ] announce discord autorestarts and when the server is started/restarted
 > v1.3.0
 - [ ] create admin page template
 - [ ] create functions to add/remove/edit admins

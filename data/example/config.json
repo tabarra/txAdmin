@@ -3,7 +3,6 @@
         "verbose": false,
         "publicIP": "change-me",
         "serverName": "change-me",
-        "fxServerPort": 30120
     },
     "logger": {},
     "monitor": {

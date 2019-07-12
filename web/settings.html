@@ -272,8 +272,24 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmDiscord-statusCommand" class="col-sm-3 col-form-label">Status Command <span
-                                    class="text-danger">*</span></label>
+                            <label for="frmDiscord-announceChannel" class="col-sm-3 col-form-label">Announcements Channel ID</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" id="frmDiscord-announceChannel" value="{{discord.announceChannel}}">
+                                <span class="form-text text-muted">
+                                    The ID of the channel to send Announcements (eg server restarts). <br>
+                                    Leave it blank to disable this feature. <br>
+                                    To get the channel ID, go to Discord's settings and 
+                                    <a href="https://support.discordapp.com/hc/article_attachments/115002742731/mceclip0.png" 
+                                    target="_blank" > enable developer mode</a>, then right-click on the channel name and select "Copy ID".
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="frmDiscord-statusCommand" class="col-sm-3 col-form-label">
+                                Status Command 
+                                <span class="text-danger">*</span>
+                            </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmDiscord-statusCommand" value="{{discord.statusCommand}}"
                                     placeholder="/status">
@@ -434,6 +450,7 @@
         let data = {
             enabled: ($('#frmDiscord-enabled').is(':checked') === true),
             token: $('#frmDiscord-token').val().trim(),
+            announceChannel: $('#frmDiscord-announceChannel').val().trim(),
             statusCommand: $('#frmDiscord-statusCommand').val().trim()
         };
         if (data.enabled && (!data.token.length || !data.statusCommand.length)) {
