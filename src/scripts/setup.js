@@ -1,6 +1,6 @@
 //Test environment conditions
-const testUtils = require('../extras/testUtils');
-testUtils.dependencyChecker();
+const helpers = require('../extras/helpers');
+helpers.dependencyChecker();
 
 //Requires
 const os = require('os');
