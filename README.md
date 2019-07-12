@@ -100,7 +100,7 @@ TODO Ideas...
 - [ ] Get JSONC compatibility. Inline documentation for the configs would be great.
 - [ ] ~~Multiple server support? Technically easy, but would require massive rework of the interface.~~ (This will be solved by linking multiple txAdmin instances via an master control extension)
 - [ ] FXServer artifact/build auto updater???
-- [ ] Automagically send messages in discord when starting/stopping/restarting the server
+- [x] Automagically send messages in discord when starting/stopping/restarting the server
 - [ ] Discord bot extensions via required js files? Imagine typing `/whitelist @username` and the bot cross referencing the vRP id via the discord:xxx identifier. Or a `/me` giving back this users vRP stats like cars, wallet, bank, apartments & etc.
 - [ ] Add some sort of detection to see if there is a fxserver running outside txAdmin on the same port.
 

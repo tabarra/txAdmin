@@ -80,7 +80,7 @@ module.exports = class Monitor {
             return {
                 hour: date.getHours(),
                 minute: date.getMinutes(),
-                message: `This server is scheduled to restart in ${remaining}`
+                message: `${globals.config.serverName} is scheduled to restart in ${remaining}`
             }
         }
 
@@ -115,6 +115,8 @@ module.exports = class Monitor {
         if(!Array.isArray(this.schedule)) return;
         let now = new Date;
         try {
+            //FIXME: returns only the first result, not necessarily the most important
+            // eg, when a restart message comes before a restart command
             let action = this.schedule.find((time) => {
                 return (time.hour == now.getHours() && time.minute == now.getMinutes())
             });
@@ -122,8 +124,9 @@ module.exports = class Monitor {
             if(action.restart === true){
                 let currTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
                 log(`Scheduled restart: ${currTime}`);
-                this.restartFXServer(`Scheduled restart at ${currTime}`);
+                this.restartFXServer(`scheduled restart at ${currTime}`);
             }else if(typeof action.message === 'string'){
+                globals.discordBot.sendAnnouncement(action.message);
                 globals.fxRunner.srvCmd(`txaBroadcast "${action.message}"`);
             }
         } catch (error) {}
@@ -143,6 +146,7 @@ module.exports = class Monitor {
                 return false;
             }
             let message = `Restarting server (${reason}).`;
+            globals.discordBot.sendAnnouncement(`Restarting **${globals.config.serverName}** (${reason}).`);
             logWarn(message, context);
             globals.logger.append(`[MONITOR] ${message}`);
             globals.fxRunner.restartServer(reason);

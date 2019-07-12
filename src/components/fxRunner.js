@@ -24,6 +24,7 @@ module.exports = class FXRunner {
         if(config.autostart){
             setTimeout(() => {
                 this.spawnServer();
+                globals.discordBot.sendAnnouncement(`Starting server **${globals.config.serverName}**.`);
             }, config.autostartDelay * 1000);
         }
     }

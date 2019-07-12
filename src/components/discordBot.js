@@ -14,9 +14,9 @@ module.exports = class DiscordBot {
         if(!this.config.enabled){
             logOk('::Disabled by the config file.', context);
         }else{
-            this.refreshStaticMessages();
+            this.refreshStaticCommands();
             this.cronFunc = setInterval(() => {
-                this.refreshStaticMessages();
+                this.refreshStaticCommands();
             }, this.config.refreshInterval);
             this.startBot();
         }
@@ -38,13 +38,39 @@ module.exports = class DiscordBot {
         if(this.config.enabled){
             this.startBot();
             this.cronFunc = setInterval(() => {
-                this.refreshStaticMessages();
+                this.refreshStaticCommands();
             }, this.config.refreshInterval);
         }
     }//Final refreshConfig()
 
 
     //================================================================
+    /**
+     * Send an announcement to the configured channel
+     * @param {string} message 
+     */
+    sendAnnouncement(message){
+        if(
+            !this.config.announceChannel ||
+            !this.client ||
+            this.client.status
+        ){
+            return false;
+        }
+        
+        try {
+            let chan = this.client.channels.find(x => x.id === this.config.announceChannel);
+            chan.send(message);
+        } catch (error) {
+            logError(`Error sending Discord announcement: ${error.message}`);
+        }
+    }//Final sendAnnouncement()
+
+
+    //================================================================
+    /**
+     * Starts the discord client
+     */
     async startBot(){
         //Setup client
         this.client = new Discord.Client({autoReconnect:true});
@@ -53,8 +79,6 @@ module.exports = class DiscordBot {
         this.client.on('ready', () => {
             logOk(`::Started and logged in as '${this.client.user.tag}'`, context);
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
-            // let chan = this.client.channels.find(u => u.name === 'general');
-            // chan.send('Hello, chat!');
         });
         this.client.on('message', this.handleMessage.bind(this));
         this.client.on('error', (error) => {
@@ -135,7 +159,7 @@ module.exports = class DiscordBot {
 
 
     //================================================================
-    async refreshStaticMessages(){
+    async refreshStaticCommands(){
         let raw = null;
         let jsonData = null;
 

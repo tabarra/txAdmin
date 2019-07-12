@@ -20,6 +20,7 @@ module.exports = async function action(res, req) {
 
     if(action == 'restart'){
         webUtils.appendLog(req, `RESTART SERVER`, context);
+        globals.discordBot.sendAnnouncement(`Restarting server **${globals.config.serverName}**.`);
         await globals.fxRunner.srvCmd(`txaKickAll "server restarting"`);
         await sleep(1000);
         await globals.fxRunner.restartServer('via txAdmin Web Panel');
@@ -28,6 +29,7 @@ module.exports = async function action(res, req) {
 
     }else if(action == 'stop'){
         webUtils.appendLog(req, `STOP SERVER`, context);
+        globals.discordBot.sendAnnouncement(`Stopping server **${globals.config.serverName}**.`);
         await globals.fxRunner.srvCmd(`txaKickAll "server shutting down"`);
         await sleep(1000);
         globals.fxRunner.killServer();
@@ -36,6 +38,7 @@ module.exports = async function action(res, req) {
 
     }else if(action == 'start'){
         webUtils.appendLog(req, `START SERVER`, context);
+        globals.discordBot.sendAnnouncement(`Starting server **${globals.config.serverName}**.`);
         globals.fxRunner.spawnServer();
         res.send({status: 'ok'});
         return;
