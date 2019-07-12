@@ -1,6 +1,6 @@
 {
-    "version": "1.2.0",
-    "changelog": "New Interface and too many new features to list here. Please Update.",
+    "version": "1.3.0",
+    "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
             "version": "1.0.1",
@@ -33,6 +33,10 @@
         {
             "version": "1.2.0",
             "changelog": "Now saving the server log and showing it when you open the Live Console. Added a button to download the log below the console."
+        },
+        {
+            "version": "1.3.0",
+            "changelog": "Scheduled restarts announcements 15 minutes before. Discord announcements on server start/stop/restart."
         }
     ]
 }
