@@ -98,7 +98,7 @@ module.exports = class ConsoleBuffer {
     writeHeader() {
         let sep = '='.repeat(64);
         let timestamp = new Date().toLocaleString();
-        let header = `\n${sep}\n======== FXServer starting - ${timestamp}\n${sep}\n`;
+        let header = `\r\n${sep}\r\n======== FXServer starting - ${timestamp}\r\n${sep}\r\n`;
         this.write(header);
     }
 

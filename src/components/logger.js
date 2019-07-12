@@ -12,7 +12,7 @@ module.exports = class Logger {
         //Writing Log Header
         let sep = '='.repeat(64);
         let timestamp = new Date().toLocaleString();
-        let header = `\n${sep}\n======== txAdmin starting - ${timestamp}\n${sep}\n`;
+        let header = `\r\n${sep}\r\n======== txAdmin starting - ${timestamp}\r\n${sep}\r\n`;
         try {
             fs.appendFileSync(this.config.logPath, header, 'utf8');
             logOk('::Started', context);
