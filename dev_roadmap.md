@@ -33,8 +33,8 @@ $ node src/index.js default
 - [x] download server log button/endpoint
 - [x] add buffer size to the dashboard
 > v1.2.0
-- [ ] parse the schedule times
-- [ ] send message to chat
+- [x] parse the schedule times
+- [x] send message to chat
 - [ ] guild/channel in discord config page
 - [ ] announce in discord autorestarts and when the server is started
 > v1.3.0

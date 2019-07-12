@@ -2,6 +2,7 @@
 const axios = require("axios");
 const bigInt = require("big-integer");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const helpers = require('../extras/helpers');
 const HostCPUStatus = require('../extras/hostCPUStatus');
 const TimeSeries = require('../extras/timeSeries');
 const context = 'Monitor';
@@ -28,6 +29,7 @@ module.exports = class Monitor {
         this.lastAutoRestart = null;
         this.failCounter = 0;
         this.fxServerHitches = [];
+        this.schedule = this.buildSchedule();
         this.statusServer = {
             online: false,
             ping: false,
@@ -39,10 +41,8 @@ module.exports = class Monitor {
             this.refreshServerStatus();
         }, this.config.interval);
         setInterval(() => {
-            if(Array.isArray(this.config.restarter.schedule)){
-                this.checkRestartSchedule();
-            }
-        }, 1*1000);
+            this.checkRestartSchedule();
+        }, 59*1000); //Playing safe, right?
     }
 
 
@@ -52,6 +52,7 @@ module.exports = class Monitor {
      */
     refreshConfig(){
         this.config = globals.configVault.getScoped('monitor');
+        this.schedule = this.buildSchedule();
 
         //Reset Cron functions
         clearInterval(this.cronFunc);
@@ -63,14 +64,69 @@ module.exports = class Monitor {
 
     //================================================================
     /**
+     * Build schedule
+     */
+    buildSchedule(){
+        if(!Array.isArray(this.config.restarter.schedule) || !this.config.restarter.schedule.length){
+            return false;;
+        }
+        
+        let getScheduleObj = (hour, minute, sub) => {
+            var date = new Date();
+            date.setHours(hour);
+            date.setMinutes(minute - sub);
+
+            let remaining = (sub > 1)? `${sub} minutes.` : `${60} seconds. Please disconnect.`;
+            return {
+                hour: date.getHours(),
+                minute: date.getMinutes(),
+                message: `This server is scheduled to restart in ${remaining}`
+            }
+        }
+
+        let times = helpers.parseSchedule(this.config.restarter.schedule);
+        let schedule = [];
+        let announceMinutes = [15, 10, 5, 4, 3, 2, 1];
+        times.forEach((time)=>{
+            try {
+                announceMinutes.forEach((mins)=>{
+                    schedule.push(getScheduleObj(time.hour, time.minute, mins));
+                })
+                schedule.push({
+                    hour: time.hour,
+                    minute: time.minute,
+                    restart: true
+                });
+            } catch (error) {
+                let timeJSON = JSON.stringify(time);
+                if(globals.config.verbose) logWarn(`Error building restart schedule for time '${timeJSON}':\n ${error.message}`, context);
+            }
+        })
+
+        return (schedule.length)? schedule : false;
+    }
+
+
+    //================================================================
+    /**
      * Check the restart schedule 
      */
     checkRestartSchedule(){
+        if(!Array.isArray(this.schedule)) return;
         let now = new Date;
-        let currTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-        if(this.config.restarter.schedule.includes(currTime)){
-            this.restartFXServer(`Scheduled restart at ${currTime}`);
-        }
+        try {
+            let action = this.schedule.find((time) => {
+                return (time.hour == now.getHours() && time.minute == now.getMinutes())
+            });
+            if(!action) return;
+            if(action.restart === true){
+                let currTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+                log(`Scheduled restart: ${currTime}`);
+                this.restartFXServer(`Scheduled restart at ${currTime}`);
+            }else if(typeof action.message === 'string'){
+                globals.fxRunner.srvCmd(`txaBroadcast "${action.message}"`);
+            }
+        } catch (error) {}
     }
 
 

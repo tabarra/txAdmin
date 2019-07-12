@@ -190,11 +190,29 @@ function handleMonitor(res, req) {
         schedule: req.body.schedule.split(',').map((x) => {return x.trim()})
     }
 
+    //Validating times
+    let times = helpers.parseSchedule(cfg.schedule, false);
+    let invalidTimes = [];
+    let validTimes = [];
+    times.forEach((time) => {
+        if(typeof time === 'string'){
+            invalidTimes.push(`"${time}"`);
+        }else{
+            let cleanTime = time.hour.toString().padStart(2, '0') + ':' + time.minute.toString().padStart(2, '0');
+            validTimes.push(cleanTime);
+        }
+    });
+    if(invalidTimes.length){
+        let message = `<strong>The following entries were not recognized as valid 24h times:</strong><br>`;
+        message += invalidTimes.join('<br>\n');
+        return res.send({type: 'danger', message: message});
+    }
+
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('monitor');
     newConfig.timeout = cfg.timeout;
     newConfig.restarter.failures = cfg.failures;
-    newConfig.restarter.schedule = cfg.schedule;
+    newConfig.restarter.schedule = validTimes;
     let saveStatus = globals.configVault.saveProfile('monitor', newConfig);
 
     //Sending output

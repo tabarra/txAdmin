@@ -43,6 +43,37 @@ function dependencyChecker() {
  * @param {string} cfgPath 
  * @param {string} basePath 
  */
+function parseSchedule(schedule, filter) {
+    if(typeof filter === 'undefined') filter = true;
+    times = (typeof schedule === 'string')? schedule.split(',') : schedule;
+    let out = []
+    times.forEach((time) => {
+        if(!time.length) return;
+        const regex = /^$|^([01]?[0-9]|2[0-3]):([0-5][0-9])$/gm;
+        let m = regex.exec(time.trim())
+        if(m === null){
+            if(!filter) out.push(time);
+        }else{
+            out.push({
+                string: m[0],
+                hour: parseInt(m[1]),
+                minute: parseInt(m[2]),
+            });
+        }
+    });
+
+    return out;
+}
+
+
+//================================================================
+/**
+ * Reads CFG Path and return the file contents, or throw error if:
+ *  - the path is not valid (absolute or relative)
+ *  - cannot read the file data
+ * @param {string} cfgPath 
+ * @param {string} basePath 
+ */
 function getCFGFile(cfgPath, basePath) {
     let validCfgPath;
     let rawCfgFile;
@@ -110,6 +141,7 @@ function getFXServerPort(rawCfgFile) {
 
 module.exports = {
     dependencyChecker,
+    parseSchedule,
     getCFGFile,
     getFXServerPort,
 }
