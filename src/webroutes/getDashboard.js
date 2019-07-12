@@ -24,6 +24,7 @@ module.exports = async function action(res, req) {
     let renderData = {
         //FIXME: temp missing resource detector
         errorMessage: globals.resourceNotFound,
+        serverName: globals.config.serverName,
         updateData: getUpdateData(),
         chartData: getChartData(globals.monitor.timeSeries.get())
     }

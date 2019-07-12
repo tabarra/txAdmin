@@ -38,18 +38,22 @@ $ node src/index.js default
 - [x] announcements channel in discord config page
 - [x] announce discord autorestarts and when the server is started/restarted
 > v1.3.0
-- [ ] create admin page template
+- [x] create admin page template
 - [ ] create functions to add/remove/edit admins
-- [ ] create endpoints/javascript for  the functions above
-- [ ] create method to register new permissions
+- [ ] create endpoints/javascript for the functions above
 > v1.4.0
+- [ ] create method to register new permissions
+- [ ] create method to evaluate permission and apply to all endpoints
+- [ ] write doc text for the permissions
+> v1.5.0
 - [ ] resource injection
 - [ ] temp intercom endpoint
 - [ ] make txAdminClient report it's alive
 - [ ] prevent auto restarter from killing a working server
-> v1.5.0
+> v1.6.0
 - [ ] custom commands
-
+- [ ] ???
+> v1.7.0 BETA Release
 
 
 
@@ -82,8 +86,15 @@ $ node src/index.js default
     - fxrunnder
 
 
-## Ideia pros buffers
-- todo output do fxchild (stdout+stderr) é escrito em um buffer, assim como mensagens de START server (igual os logs de admin)
-- a cada 10 segundos uma função cron vai dar uma slice (estilo tail) nesse buffer e pegar tudo novo e vai salvar no arquivo de log
-- ao abrir o webconsole, enviar o último 8k de dados a partir do primeiro \n
-- o buffer de cmd output é só pegar o length e depois dar slice (se for menor pegar tudo do zero pq truncou)
+## Permissions
+all
+manage.admins
+settings.view
+settings.write
+control.server
+control.scripts
+commands.scripts
+commands.kick
+commands.message
+console.view
+console.write

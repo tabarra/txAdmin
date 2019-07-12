@@ -37,6 +37,17 @@ module.exports = class Authenticator {
 
     //================================================================
     /**
+     * Returns a list of admins and permissions
+     */
+    getAdmins(){
+        return this.admins.map((user) => {
+            return {name: user.name, permissions: user.permissions};
+        });
+    }
+
+
+    //================================================================
+    /**
      * Refreshes the admins list
      * NOTE: The verbosity here is driving me insane. 
      *       But still seems not to be enough for people that don't read the README.

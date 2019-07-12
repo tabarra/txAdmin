@@ -78,7 +78,7 @@ module.exports = class WebServer {
                 return res.send(out);
             }
             req.session.auth = {
-                username: req.body.username,
+                username: admin.name,
                 password: req.body.password,
                 permissions: admin.permissions
             };
@@ -105,6 +105,11 @@ module.exports = class WebServer {
         this.app.post('/saveSettings/:scope', getAuthFunc('web'), async (req, res) => {
             await webRoutes.saveSettings(res, req).catch((err) => {
                 this.handleRouteError(res, "[saveSettings] Route Internal Error", err);
+            });
+        });
+        this.app.post('/saveAdmins', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.saveAdmins(res, req).catch((err) => {
+                this.handleRouteError(res, "[saveAdmins] Route Internal Error", err);
             });
         });
 
@@ -144,6 +149,11 @@ module.exports = class WebServer {
         this.app.get('/settings', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getSettings(res, req).catch((err) => {
                 this.handleRouteError(res, "[getSettings] Route Internal Error", err);
+            });
+        });
+        this.app.get('/adminManager', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.getAdminManager(res, req).catch((err) => {
+                this.handleRouteError(res, "[getAdminManager] Route Internal Error", err);
             });
         });
         this.app.get('/addExtension', getAuthFunc('web'), async (req, res) => {

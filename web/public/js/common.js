@@ -51,7 +51,7 @@ function showPlayer(id) {
     $("#modPlayerInfoIdentifiers").html('loading...');
     $("#modPlayerInfoButtons").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>');
 
-    $('#modPlayerInfo').modal('show')
+    $('#modPlayerInfo').modal('show');
     $.ajax({
         url: "/getPlayerData/" + id,
         type: "GET",
