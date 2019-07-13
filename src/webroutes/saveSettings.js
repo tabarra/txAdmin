@@ -73,7 +73,7 @@ function handleGlobal(res, req) {
     if(saveStatus){
         globals.config = globals.configVault.getScoped('global');
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing global settings.`;
-        logWarn(logMessage, context);
+        logOk(logMessage, context);
         globals.logger.append(logMessage);
         return res.send({type: 'success', message: `<strong>Configuration file saved!</strong>`});
     }else{
@@ -157,7 +157,7 @@ function handleFXServer(res, req) {
     if(saveStatus){
         globals.fxRunner.refreshConfig();
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing fxRunner settings.`;
-        logWarn(logMessage, context);
+        logOk(logMessage, context);
         globals.logger.append(logMessage);
         return res.send({type: 'success', message: `<strong>Configuration file saved!</strong>`});
     }else{
@@ -220,7 +220,7 @@ function handleMonitor(res, req) {
     if(saveStatus){
         globals.monitor.refreshConfig();
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing monitor settings.`;
-        logWarn(logMessage, context);
+        logOk(logMessage, context);
         globals.logger.append(logMessage);
         return res.send({type: 'success', message: `<strong>Configuration file saved!</strong>`});
     }else{
@@ -268,7 +268,7 @@ function handleDiscord(res, req) {
     if(saveStatus){
         globals.discordBot.refreshConfig();
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing discordBot settings.`;
-        logWarn(logMessage, context);
+        logOk(logMessage, context);
         globals.logger.append(logMessage);
         return res.send({type: 'success', message: `<strong>Configuration file saved!</strong>`});
     }else{

@@ -75,7 +75,9 @@ function handleAdd(res, req) {
     //Add admin and give output
     try {
         globals.authenticator.addAdmin(name, password, permissions);
-        //HACK logging
+        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Adding user '${name}'.`;
+        logOk(logMessage, context);
+        globals.logger.append(logMessage);
         return res.send({type: 'success', message: `refresh`});
     } catch (error) {
         return res.send({type: 'danger', message: error.message});
@@ -123,7 +125,9 @@ function handleEdit(res, req) {
     //Add admin and give output
     try {
         globals.authenticator.editAdmin(name, password, permissions);
-        //HACK logging
+        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Editing user '${name}'.`;
+        logOk(logMessage, context);
+        globals.logger.append(logMessage);
         return res.send({type: 'success', message: `refresh`});
     } catch (error) {
         return res.send({type: 'danger', message: error.message});
@@ -146,16 +150,19 @@ function handleDelete(res, req) {
         res.status(400);
         return res.send({type: 'danger', message: "Invalid Request - missing parameters"});
     }
+    let name = req.body.name.trim();
 
     //Check permissions
-    if(req.session.auth.username.toLowerCase() === req.body.name.toLowerCase()){
+    if(req.session.auth.username.toLowerCase() === name.toLowerCase()){
         return res.send({type: 'danger', message: "You can't delete yourself."});
     }
 
     //Delete admin and give output
     try {
-        globals.authenticator.deleteAdmin(req.body.name);
-        //HACK logging
+        globals.authenticator.deleteAdmin(name);
+        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Deleting user '${name}'.`;
+        logOk(logMessage, context);
+        globals.logger.append(logMessage);
         return res.send({type: 'success', message: `refresh`});
     } catch (error) {
         return res.send({type: 'danger', message: error.message});
