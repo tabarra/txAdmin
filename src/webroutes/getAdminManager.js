@@ -28,6 +28,12 @@ module.exports = async function action(res, req) {
         }
     });
 
+    //Check permission
+    if(!webUtils.checkPermission(req, 'manage.admins', context)){
+        let out = await webUtils.renderMasterView('generic', {message: `You don't have permission to view this page.`});
+        return res.send(out);
+    }
+
     //Set render data
     let renderData = {
         headerTitle: 'Admin Manager',

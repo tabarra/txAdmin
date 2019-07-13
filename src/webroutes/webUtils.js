@@ -140,11 +140,11 @@ function checkPermission(req, perm, fromCtx){
         if(req.session.auth.permissions.includes('all') || req.session.auth.permissions.includes(perm)){
             return true;
         }else{
-            if(globals.config.verbose) log(`[${req.connection.remoteAddress}][${req.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
+            if(globals.config.verbose) logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
     } catch (error) {
-        if(globals.config.verbose) log(`Error validating permission '${perm}' denied.`, fromCtx);
+        if(globals.config.verbose) logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
     } 
 }
 

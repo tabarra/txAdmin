@@ -20,6 +20,14 @@ module.exports = async function action(res, req) {
     }
     let action = req.params.action;
 
+    //Check permissions
+    if(!webUtils.checkPermission(req, 'manage.admins', context)){
+        return res.send({
+            type: 'danger',
+            message: `You don't have permission to execute this action.`
+        });
+    }
+
     //Delegate to the specific scope functions
     if(action == 'add'){
         return handleAdd(res, req);
