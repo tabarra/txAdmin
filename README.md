@@ -10,7 +10,7 @@
 		Join our Discord Server: &nbsp; <a href="https://discord.gg/f3TsfvD"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
 	</h4>
 	<p align="center">
-		<b>txAdmin</b> (formerly known as FXAdmin) is a <b>full featured</b> tool to help you Manage & Monitor your FiveM Server remotely.
+		<b>txAdmin</b> (formerly known as FXAdmin) is a <b>full featured</b> tool to Manage & Monitor your FiveM Server remotely.
 	</p>
 </p>
 
@@ -32,6 +32,10 @@
 - FXServer process priority setter
 - Hitch Detection
 - New settings page
+- Save console to file
+- Restart warning announcements
+- Admin Management system
+- Permissions system ([more info](docs/permissions.md))
 
 
 ## Installing & Running
@@ -58,7 +62,7 @@ $ node src/scripts/setup.js default
 $ node src/index.js default
 ```
 
-**2 -** Then open `http://public-ip:40120/` in your browser and login with the credentials created and go to the settings page to configure the remaining settings.  
+**2 -** Then open `http://public-ip:40120/` in your browser and login with the credentials created and go to the settings page to configure the remaining settings.   
 If on Windows, you can start the server by executing `start.bat` in your server profile's folder (example `data/default/start.bat`).  
 
 **3 -** Copy the txAdminClient resource available inside `web/public/txAdminClient.zip` to your server's resource folder. DO NOT start it in your server.cfg.
@@ -77,8 +81,7 @@ To **UPDATE** txAdmin execute:
 ```bash
 $ git pull
 $ npm i
-```
-Make sure there are no differences in the json templates. If there is, copy the new template and edit again.  
+``` 
 If you have any problems with `package-lock.json`, just delete it and try again.  
 **Note:** This will only work if you downloaded txAdmin using the `git clone` command.  
 

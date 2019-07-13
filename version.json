@@ -1,5 +1,5 @@
 {
-    "version": "1.4.0",
+    "version": "1.5.0",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -41,6 +41,10 @@
         {
             "version": "1.4.0",
             "changelog": "Admin Accounts Manager page."
+        },
+        {
+            "version": "1.5.0",
+            "changelog": "Permissions System."
         }
     ]
 }

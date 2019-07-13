@@ -42,9 +42,8 @@ $ node src/index.js default
 - [x] use the admin data inside the template
 - [x] admin add/edit/delete html/js/endpoints
 > v1.4.0
-- [ ] create method to register new permissions
-- [ ] create method to evaluate permission and apply to all endpoints
-- [ ] write doc text for the permissions
+- [x] create methods to evaluate permission and apply to all endpoints
+- [x] write doc text for the permissions
 > v1.5.0
 - [ ] resource injection
 - [ ] temp intercom endpoint
@@ -84,22 +83,3 @@ $ node src/index.js default
 - Individual
     - monitor
     - fxrunnder
-
-
-## Permissions
-all
-manage.admins
-
-settings.view
-settings.write
-
-control.server
-control.scripts
-
-commands.message
-commands.kick
-commands.resources
-commands.custom
-
-console.view
-console.write
