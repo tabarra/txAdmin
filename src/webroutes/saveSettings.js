@@ -4,6 +4,7 @@ const helpers = require('../extras/helpers');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'WebServer:saveSettings';
 
+//Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 
 /**

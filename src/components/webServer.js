@@ -107,9 +107,9 @@ module.exports = class WebServer {
                 this.handleRouteError(res, "[saveSettings] Route Internal Error", err);
             });
         });
-        this.app.post('/saveAdmins', getAuthFunc('web'), async (req, res) => {
-            await webRoutes.saveAdmins(res, req).catch((err) => {
-                this.handleRouteError(res, "[saveAdmins] Route Internal Error", err);
+        this.app.post('/adminManager/:action', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.adminManagerActions(res, req).catch((err) => {
+                this.handleRouteError(res, "[adminManagerActions] Route Internal Error", err);
             });
         });
 

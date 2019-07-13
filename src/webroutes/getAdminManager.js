@@ -1,7 +1,7 @@
 //Requires
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('./webUtils.js');
-const context = 'WebServer:getAdmins';
+const context = 'WebServer:getAdminManager';
 
 
 /**
@@ -10,7 +10,6 @@ const context = 'WebServer:getAdmins';
  * @param {object} req
  */
 module.exports = async function action(res, req) {
-
     let allPermissions = [
         "all",
         "manage.admins",
@@ -25,6 +24,7 @@ module.exports = async function action(res, req) {
         "console.write",
     ];
 
+    //Prepare admin array
     let admins = globals.authenticator.getAdmins().map((admin)=>{
         let perms;
         if(admin.permissions.includes('all')){
@@ -41,12 +41,14 @@ module.exports = async function action(res, req) {
         }
     });
 
+    //Set render data
     let renderData = {
         headerTitle: 'Admin Manager',
         admins: admins,
         allPermissions: allPermissions
     }
 
+    //Give output
     let out = await webUtils.renderMasterView('adminManager', renderData);
     return res.send(out);
 };

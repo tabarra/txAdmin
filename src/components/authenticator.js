@@ -48,6 +48,39 @@ module.exports = class Authenticator {
 
     //================================================================
     /**
+     * Add a new admin to the admins file
+     * @param {*} name 
+     * @param {*} password 
+     * @param {*} permissions 
+     */
+    addAdmin(name, password, permissions){
+        //Check if username is already taken
+        let username = name.toLowerCase();
+        let existing = this.admins.find((user) => {
+            return (username === user.name.toLowerCase())
+        });
+        if(existing) throw new Error("Username already taken");
+
+        //Adding new admin
+        this.admins.push({
+            name: name,
+            password_hash: bcrypt.hashSync(password, 5),
+            permissions: permissions,
+        })
+
+        //Saving admin file
+        try {
+            fs.writeFileSync('data/admins.json', JSON.stringify(this.admins, null, 2), 'utf8');
+            return true;
+        } catch (error) {
+            if(globals.config.verbose) log(error, context);
+            throw new Error("Failed to save 'data/admins.json' file.");
+        }
+    }
+
+
+    //================================================================
+    /**
      * Refreshes the admins list
      * NOTE: The verbosity here is driving me insane. 
      *       But still seems not to be enough for people that don't read the README.

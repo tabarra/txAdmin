@@ -140,6 +140,7 @@ function kickPlayer(id) {
 
 $(document).ready(function() {
     $.notifyDefaults({
+        z_index: 2000,
         mouse_over: 'pause',
         placement: {
             align: 'center'

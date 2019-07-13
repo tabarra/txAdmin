@@ -1,3 +1,4 @@
+exports.adminManagerActions = require('./adminManagerActions.js');
 exports.downloadLog = require('./downloadLog.js');
 exports.fxCommands = require('./fxCommands.js');
 exports.fxControls = require('./fxControls.js');
@@ -10,5 +11,4 @@ exports.getFullReport = require('./getFullReport.js');
 exports.getPlayerData = require('./getPlayerData.js');
 exports.getSettings = require('./getSettings.js');
 exports.getStatus = require('./getStatus.js');
-exports.saveAdmins = require('./saveAdmins.js');
 exports.saveSettings = require('./saveSettings.js');
