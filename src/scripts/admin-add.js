@@ -135,7 +135,6 @@ async function askForString(question, minLength, persist, regex){
 //=================================================== Main
 //================================================================
 log("This script will add an admin to the specified admin file or to 'data/admins.json'.", context);
-log("If you want to edit/remove admins, you must modify the JSON file yourself.", context);
 printDivider();
 
 

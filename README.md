@@ -66,9 +66,7 @@ If on Windows, you can start the server by executing `start.bat` in your server 
 **Note:** You should run FXServer **through** txAdmin, and not in parallel (ie in another terminal).  
 **Note2:** To configure your Discord bot, follow these two guides:  [Setting up a bot application](https://discordjs.guide/preparations/setting-up-a-bot-application.html) and [Adding your bot to servers](https://discordjs.guide/preparations/adding-your-bot-to-servers.html).  
 **Note3:** Although **not recommended**, you can set FXServer processes priorities. To do so, change `fxRunner.setPriority` to one of the following: LOW, BELOW_NORMAL, NORMAL, ABOVE_NORMAL, HIGH, HIGHEST.  
-**Note4:** To add more admins execute `node src/scripts/admin-add.js`.  
-If you want to manage existing admins you must edit the JSON file yourself. To generate the hashed password, you can use tools like [this](https://www.browserling.com/tools/bcrypt) and [this](https://bcrypt-generator.com) or even [this one](https://passwordhashing.com/BCrypt).  
-**Note5:** To create more server profiles, execute `node src/scripts/setup.js <profile name>`.  
+**Note4:** To create more server profiles, execute `node src/scripts/setup.js <profile name>`.  
 
 ## Troubleshooting
 ### If you run into any problem, check our [Troubleshooting Guide](docs/troubleshooting.md).   
@@ -97,7 +95,6 @@ If you have any problems with `package-lock.json`, just delete it and try again.
 
 TODO Ideas...
 - [x] We have data, we should plot it into a graph...
-- [ ] Get JSONC compatibility. Inline documentation for the configs would be great.
 - [ ] ~~Multiple server support? Technically easy, but would require massive rework of the interface.~~ (This will be solved by linking multiple txAdmin instances via an master control extension)
 - [ ] FXServer artifact/build auto updater???
 - [x] Automagically send messages in discord when starting/stopping/restarting the server

@@ -40,7 +40,7 @@ $ node src/index.js default
 > v1.3.0
 - [x] create admin page template
 - [x] use the admin data inside the template
-- [ ] admin add/edit/delete html/js/endpoints
+- [x] admin add/edit/delete html/js/endpoints
 > v1.4.0
 - [ ] create method to register new permissions
 - [ ] create method to evaluate permission and apply to all endpoints
