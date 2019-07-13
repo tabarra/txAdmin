@@ -10,20 +10,6 @@ const context = 'WebServer:getAdminManager';
  * @param {object} req
  */
 module.exports = async function action(res, req) {
-    let allPermissions = [
-        "all",
-        "manage.admins",
-        "settings.view",
-        "settings.write",
-        "control.server",
-        "control.scripts",
-        "commands.scripts",
-        "commands.kick",
-        "commands.message",
-        "console.view",
-        "console.write",
-    ];
-
     //Prepare admin array
     let admins = globals.authenticator.getAdmins().map((admin)=>{
         let perms;
@@ -45,7 +31,7 @@ module.exports = async function action(res, req) {
     let renderData = {
         headerTitle: 'Admin Manager',
         admins: admins,
-        allPermissions: allPermissions
+        allPermissions: globals.authenticator.getPermissionsList()
     }
 
     //Give output

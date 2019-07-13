@@ -1,6 +1,7 @@
 //Requires
 const fs = require('fs');
 const bcrypt = require('bcrypt');
+const clone = require('clone');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'Authenticator';
 
@@ -10,6 +11,19 @@ module.exports = class Authenticator {
         logOk('::Started', context);
         this.config = config;
         this.admins = null;
+        this.registeredPermissions = [
+            "all",
+            "manage.admins",
+            "settings.view",
+            "settings.write",
+            "control.server",
+            "control.scripts",
+            "commands.scripts",
+            "commands.kick",
+            "commands.message",
+            "console.view",
+            "console.write",
+        ];
         this.refreshAdmins();
        
         //Cron Function
@@ -27,7 +41,7 @@ module.exports = class Authenticator {
      * @returns {(object|boolean)} admin user or false
      */
     checkAuth(uname, pwd){
-        let username = uname.toLowerCase();
+        let username = uname.trim().toLowerCase();
         let admin = this.admins.find((user) => {
             return (username === user.name.toLowerCase() && bcrypt.compareSync(pwd, user.password_hash))
         });
@@ -43,6 +57,28 @@ module.exports = class Authenticator {
         return this.admins.map((user) => {
             return {name: user.name, permissions: user.permissions};
         });
+    }
+
+
+    //================================================================
+    /**
+     * Returns all data from an admin or false
+     * @param {string} uname 
+     */
+    getAdminData(uname){
+        let username = uname.trim().toLowerCase();
+        let admin = this.admins.find((user) => {
+            return (username === user.name.toLowerCase())
+        });
+        return (admin)? admin : false;
+    }
+
+    //================================================================
+    /**
+     * Returns a list with all registered permissions
+     */
+    getPermissionsList(){
+        return clone(this.registeredPermissions);
     }
 
 
@@ -78,6 +114,35 @@ module.exports = class Authenticator {
         }
     }
 
+
+    //================================================================
+    /**
+     * Edit admin and save to the admins file
+     * @param {*} name 
+     * @param {*} password 
+     * @param {*} permissions 
+     */
+    editAdmin(name, password, permissions){
+        //Check if username is already taken
+        let username = name.toLowerCase();
+        let adminIndex = this.admins.findIndex((user) => {
+            return (username === user.name.toLowerCase())
+        });
+        if(adminIndex == -1) throw new Error("Admin not found");
+
+        //Editing admin
+        if(password) this.admins[adminIndex].password_hash = bcrypt.hashSync(password, 5);
+        this.admins[adminIndex].permissions = permissions
+
+        //Saving admin file
+        try {
+            fs.writeFileSync('data/admins.json', JSON.stringify(this.admins, null, 2), 'utf8');
+            return true;
+        } catch (error) {
+            if(globals.config.verbose) log(error, context);
+            throw new Error("Failed to save 'data/admins.json' file.");
+        }
+    }
 
     //================================================================
     /**

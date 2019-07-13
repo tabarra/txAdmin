@@ -82,6 +82,31 @@ async function renderLoginView(message){
 
 //================================================================
 /**
+ * Renders a solo view.
+ * NOTE: not used
+ * @param {string} view 
+ * @param {string} data 
+ */
+async function renderSoloView(view, data){
+    if(typeof data === 'undefined') data = {};
+    let out;
+    try {
+        let rawView = await readFileAsync(getWebViewPath(view), 'utf8');
+        out = sqrl.Render(rawView, data);
+    } catch (error) {
+        out = `<pre>\n`;
+        out += `Error rendering the requested page.\n`;
+        out += `The data provided was:\n`;
+        out += `================\n`;
+        out += JSON.stringify(data, null, 2);
+    }
+
+    return out;
+}
+
+
+//================================================================
+/**
  * Return the path of the provided view
  * @param {string} view 
  */
@@ -106,6 +131,7 @@ function appendLog(req, data, context){
 module.exports = {
     renderMasterView,
     renderLoginView,
+    renderSoloView,
     getWebViewPath,
     appendLog,
 }

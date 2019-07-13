@@ -39,8 +39,8 @@ $ node src/index.js default
 - [x] announce discord autorestarts and when the server is started/restarted
 > v1.3.0
 - [x] create admin page template
-- [ ] create functions to add/remove/edit admins
-- [ ] create endpoints/javascript for the functions above
+- [x] use the admin data inside the template
+- [ ] admin add/edit/delete html/js/endpoints
 > v1.4.0
 - [ ] create method to register new permissions
 - [ ] create method to evaluate permission and apply to all endpoints
