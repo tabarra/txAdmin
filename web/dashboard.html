@@ -25,12 +25,12 @@
         <div class="card card-accent-danger" style="min-height: 160px;">
             <div class="card-header font-weight-bold">FXServer Control:</div>
             <div class="card-body text-center align-middle">
-                <button onclick="controlAction('start')" class="btn btn-outline-danger btn-lg mx-auto m-2" type="button"
-                    id="ctrl-start">START</button> &nbsp;
-                <button onclick="controlAction('restart')" class="btn btn-outline-danger btn-lg mx-auto m-2"
-                    type="button" id="ctrl-restart">RESTART</button> &nbsp;
-                <button onclick="controlAction('stop')" class="btn btn-outline-danger btn-lg mx-auto m-2" type="button"
-                    id="ctrl-stop">STOP</button>
+                <button onclick="controlAction('start')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
+                    type="button" id="ctrl-start" {{perms.controls}}>START</button> &nbsp;
+                <button onclick="controlAction('restart')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
+                    type="button" id="ctrl-restart" {{perms.controls}}>RESTART</button> &nbsp;
+                <button onclick="controlAction('stop')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
+                    type="button" id="ctrl-stop" {{perms.controls}}>STOP</button>
             </div>
         </div>
 
@@ -43,13 +43,13 @@
                     <div class="col-sm-8">
                         <select name="action" id="frm_action" class="form-control" required>
                             <option value="" disabled selected>&gt; SELECT</option>
-                            <option value="admin_broadcast" {{disableActions.commandMessage}}>Admin Message</option>
-                            <option value="ensure_res" {{disableActions.commandResource}}>Start/Restart script</option>
-                            <!-- <option value="restart_res" {{disableActions.commandResource}}>Restart script</option> -->
-                            <!-- <option value="start_res" {{disableActions.commandResource}}>Start script</option> -->
-                            <option value="stop_res" {{disableActions.commandResource}}>Stop script</option>
-                            <option value="refresh_res" {{disableActions.commandResource}}>Refresh scripts</option>
-                            <option value="kick_all" {{disableActions.commandKick}}>Kick all players</option>
+                            <option value="admin_broadcast" {{perms.commandMessage}}>Admin Message</option>
+                            <option value="ensure_res" {{perms.commandResources}}>Start/Restart script</option>
+                            <!-- <option value="restart_res" {{perms.commandResources}}>Restart script</option> -->
+                            <!-- <option value="start_res" {{perms.commandResources}}>Start script</option> -->
+                            <option value="stop_res" {{perms.commandResources}}>Stop script</option>
+                            <option value="refresh_res" {{perms.commandResources}}>Refresh scripts</option>
+                            <option value="kick_all" {{perms.commandKick}}>Kick all players</option>
                         </select>
                     </div>
                 </div>
@@ -143,11 +143,12 @@
 
 
 <script>
-    // Control actions (start/restart/stop)
+    //============================================== Controls (start/restart/stop)
     function controlAction(action) {
         if (action !== 'start' && !window.confirm('Are you sure you want to ' + action + ' the server?')) {
             return;
         }
+        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
             url: actionURL = '/fxControls/' + action,
             type: "GET",
@@ -158,14 +159,20 @@
                     window.location = '/auth?logout';
                     return;
                 }
-                console.log(data);
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
             },
             error: function (xmlhttprequest, textstatus, message) {
-                alert('Error executing control action.');
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
             }
         });
     }
 
+
+    //============================================== Commands
     //Commands with parameter required
     let paramRequiredCommands = [
         'admin_broadcast',
@@ -175,7 +182,7 @@
         'stop_res'
     ];
 
-    //EXECUTE button click handler
+    //EXECUTE button handler
     $('#frm_button').click(function () {
         let data = {
             action: $("#frm_action").val(),

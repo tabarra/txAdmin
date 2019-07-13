@@ -32,10 +32,12 @@ module.exports = async function action(res, req) {
         serverName: globals.config.serverName,
         updateData: getUpdateData(),
         chartData: getChartData(globals.monitor.timeSeries.get()),
-        disableActions:{
+        perms:{
             commandMessage: getPermDisable('commands.message'),
             commandKick: getPermDisable('commands.kick'),
             commandResources: getPermDisable('commands.resources'),
+            controls: getPermDisable('control.server'),
+            controlsClass: (webUtils.checkPermission(req, 'control.server'))? 'danger' : 'secondary'
         }
     }
 

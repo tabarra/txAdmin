@@ -17,10 +17,10 @@ module.exports = class Authenticator {
             "settings.view",
             "settings.write",
             "control.server",
-            "control.scripts",
             "commands.scripts",
             "commands.kick",
             "commands.message",
+            "commands.custom",
             "console.view",
             "console.write",
         ];
