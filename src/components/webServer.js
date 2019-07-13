@@ -172,10 +172,12 @@ module.exports = class WebServer {
 
     //================================================================
     handleRouteError(res, desc, error){
-        logError(desc, `${context}:route`);
-        dir(error)
-        res.status(500);
-        res.send(desc);
+        try {
+            logError(desc, `${context}:route`);
+            dir(error)
+            res.status(500);
+            res.send(desc);
+        } catch (error) {}
     }
 
 } //Fim WebServer()

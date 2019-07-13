@@ -16,7 +16,7 @@ $ node src/index.js default
 
 ## TODO/Roadmap:
 > v1.0.5
-- [x] adapt admin-add 
+- [x] adapt admin-add
 - [x] adapt config-tester
 - [x] adapt main
 - [x] write setup
@@ -89,12 +89,17 @@ $ node src/index.js default
 ## Permissions
 all
 manage.admins
+
 settings.view
 settings.write
+
 control.server
 control.scripts
-commands.scripts
-commands.kick
+
 commands.message
+commands.kick
+commands.resources
+commands.custom
+
 console.view
 console.write

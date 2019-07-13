@@ -20,13 +20,23 @@ module.exports = async function action(res, req) {
         return res.redirect('/settings');
     }
 
+    //Shortcut function
+    let getPermDisable = (perm) => {
+        return (webUtils.checkPermission(req, perm))? '' : 'disabled'
+    }
+
     //Preparing render data
     let renderData = {
         //FIXME: temp missing resource detector
         errorMessage: globals.resourceNotFound,
         serverName: globals.config.serverName,
         updateData: getUpdateData(),
-        chartData: getChartData(globals.monitor.timeSeries.get())
+        chartData: getChartData(globals.monitor.timeSeries.get()),
+        disableActions:{
+            commandMessage: getPermDisable('commands.message'),
+            commandKick: getPermDisable('commands.kick'),
+            commandResources: getPermDisable('commands.resources'),
+        }
     }
 
 

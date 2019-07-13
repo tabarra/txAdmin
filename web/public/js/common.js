@@ -94,8 +94,8 @@ function messagePlayer(id) {
         // dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
-            notify.update('type', 'warning');
-            notify.update('message', data);
+            notify.update('type', data.type);
+            notify.update('message', data.message);
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
@@ -125,8 +125,8 @@ function kickPlayer(id) {
         // dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
-            notify.update('type', 'warning');
-            notify.update('message', data);
+            notify.update('type', data.type);
+            notify.update('message', data.message);
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
