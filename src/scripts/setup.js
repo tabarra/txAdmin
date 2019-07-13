@@ -191,7 +191,7 @@ if (osType === 'Linux') {
     if (fs.existsSync(profilePath)) {
         try {
             log('Wiping old profile data...', context);
-            const deletedFiles = await del(`${profilePath}`);
+            const deletedFiles = del.sync(`${profilePath}`);
             log(`Deleted ${deletedFiles.length} files from ${profilePath}.`, context);
         } catch (error) {
             logError(`Error while wiping cache: ${error.message}`, context);

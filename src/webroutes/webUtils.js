@@ -1,11 +1,8 @@
 //Requires
-const fs = require('fs');
+const fs = require('fs-extra');
 const path = require('path');
-const xss = require("xss");
-const util = require('util');
 const sqrl = require("squirrelly");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const readFileAsync = util.promisify(fs.readFile);
 const context = 'WebUtils';
 
 
@@ -23,9 +20,9 @@ async function renderMasterView(view, data){
     let out;
     try {
         const [rawHeader, rawFooter, rawView] = await Promise.all([
-            readFileAsync(getWebViewPath('header'), 'utf8'),
-            readFileAsync(getWebViewPath('footer'), 'utf8'),
-            readFileAsync(getWebViewPath(view), 'utf8')
+            fs.readFile(getWebViewPath('header'), 'utf8'),
+            fs.readFile(getWebViewPath('footer'), 'utf8'),
+            fs.readFile(getWebViewPath(view), 'utf8')
         ]);
         sqrl.definePartial("header", rawHeader);
         sqrl.definePartial("footer", rawFooter);
@@ -62,7 +59,7 @@ async function renderLoginView(message){
             version: globals.version.current
         }
 
-        let rawView = await readFileAsync(getWebViewPath('login'), 'utf8');
+        let rawView = await fs.readFile(getWebViewPath('login'), 'utf8');
         out = sqrl.Render(rawView, data);
     } catch (error) {
         if(globals.config.verbose) {
@@ -91,7 +88,7 @@ async function renderSoloView(view, data){
     if(typeof data === 'undefined') data = {};
     let out;
     try {
-        let rawView = await readFileAsync(getWebViewPath(view), 'utf8');
+        let rawView = await fs.readFile(getWebViewPath(view), 'utf8');
         out = sqrl.Render(rawView, data);
     } catch (error) {
         out = `<pre>\n`;
