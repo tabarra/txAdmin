@@ -75,6 +75,7 @@ function handleAdd(res, req) {
     //Add admin and give output
     try {
         globals.authenticator.addAdmin(name, password, permissions);
+        //HACK logging
         return res.send({type: 'success', message: `refresh`});
     } catch (error) {
         return res.send({type: 'danger', message: error.message});
@@ -114,9 +115,15 @@ function handleEdit(res, req) {
         return res.send({type: 'danger', message: "Invalid password"});
     }
 
+    //Check permissions
+    if(req.session.auth.username.toLowerCase() === name.toLowerCase()){
+        return res.send({type: 'danger', message: "You can't edit yourself."});
+    }
+
     //Add admin and give output
     try {
         globals.authenticator.editAdmin(name, password, permissions);
+        //HACK logging
         return res.send({type: 'success', message: `refresh`});
     } catch (error) {
         return res.send({type: 'danger', message: error.message});
@@ -132,13 +139,27 @@ function handleEdit(res, req) {
  */
 function handleDelete(res, req) {
     //Sanity check
-    if(isUndefined(req.body.serverName)){
+    if(
+        isUndefined(req.body.name) ||
+        typeof req.body.name !== 'string'
+    ){
         res.status(400);
         return res.send({type: 'danger', message: "Invalid Request - missing parameters"});
     }
 
+    //Check permissions
+    if(req.session.auth.username.toLowerCase() === req.body.name.toLowerCase()){
+        return res.send({type: 'danger', message: "You can't delete yourself."});
+    }
 
-    
+    //Delete admin and give output
+    try {
+        globals.authenticator.deleteAdmin(req.body.name);
+        //HACK logging
+        return res.send({type: 'success', message: `refresh`});
+    } catch (error) {
+        return res.send({type: 'danger', message: error.message});
+    }
 }
 
 

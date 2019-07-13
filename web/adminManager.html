@@ -34,11 +34,13 @@
                                 <td>{{@this.name}}</td>
                                 <td>{{@this.perms}}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="getEditModal('{{@this.name}}')">
+                                    <button class="btn btn-sm btn-outline-primary" 
+                                        onclick="getEditModal('{{@this.name}}')" {{@this.disableActions}}>
                                         <i class="icon-pencil"></i> Edit
                                     </button>
                                     &nbsp;
-                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteAdmin('{{@this.name}}')">
+                                    <button class="btn btn-sm btn-outline-danger" 
+                                        onclick="deleteAdmin('{{@this.name}}')" {{@this.disableActions}}>
                                         <i class="icon-trash"></i> Delete
                                     </button>
                                 </td>
@@ -165,18 +167,27 @@
 
     //============================================== Delete Admin
     function deleteAdmin(name){
-        alert(name); return;
+        if(!window.confirm('Are you sure you want to delete "' + name + '"?')){
+            return;
+        }
+
+        var notify = $.notify({ message: '<p class="text-center">Deleting...</p>' }, {});
         $.ajax({
             type: "POST",
-            url: '/adminManager/getModal',
+            url: '/adminManager/delete',
             timeout: 2000,
             data: {name: name},
             success: function (data) {
-                $('#modEditAdmin-body').html(data);
-                $('#modEditAdmin').modal('show');
+                if(data.message == 'refresh'){
+                    window.location = '/adminManager';
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
             },
             error: function (xmlhttprequest, textstatus, message) {
-                alert("Error getting user information.");
+                alert("Error processing request.");
             }
         });
     }

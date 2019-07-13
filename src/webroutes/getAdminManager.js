@@ -23,7 +23,8 @@ module.exports = async function action(res, req) {
 
         return {
             name: admin.name,
-            perms: perms
+            perms: perms,
+            disableActions: (req.session.auth.username.toLowerCase() === admin.name.toLowerCase())? 'disabled': ''
         }
     });
 

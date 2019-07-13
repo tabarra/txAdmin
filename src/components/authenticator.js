@@ -123,7 +123,7 @@ module.exports = class Authenticator {
      * @param {*} permissions 
      */
     editAdmin(name, password, permissions){
-        //Check if username is already taken
+        //Find admin index
         let username = name.toLowerCase();
         let adminIndex = this.admins.findIndex((user) => {
             return (username === user.name.toLowerCase())
@@ -133,6 +133,36 @@ module.exports = class Authenticator {
         //Editing admin
         if(password) this.admins[adminIndex].password_hash = bcrypt.hashSync(password, 5);
         this.admins[adminIndex].permissions = permissions
+
+        //Saving admin file
+        try {
+            fs.writeFileSync('data/admins.json', JSON.stringify(this.admins, null, 2), 'utf8');
+            return true;
+        } catch (error) {
+            if(globals.config.verbose) log(error, context);
+            throw new Error("Failed to save 'data/admins.json' file.");
+        }
+    }
+
+
+    //================================================================
+    /**
+     * Delete admin and save to the admins file
+     * @param {*} name 
+     */
+    deleteAdmin(name){
+        //Delete admin
+        let username = name.toLowerCase();
+        let found = false;
+        this.admins = this.admins.filter((user) => {
+            if(username !== user.name.toLowerCase()){
+                return true;
+            }else{
+                found = true;
+                return false;
+            }
+        });
+        if(!found) throw new Error("Admin not found");
 
         //Saving admin file
         try {
