@@ -18,7 +18,7 @@ module.exports = async function action(res, req) {
 
     let renderData = {
         headerTitle: 'Console',
-        disableWrite: ((req.session.auth.permissions.includes('all') || req.session.auth.permissions.includes('console.write')))? 'autofocus' : 'disabled'
+        disableWrite: (webUtils.checkPermission(req, 'console.write'))? 'autofocus' : 'disabled'
     }
 
     let out = await webUtils.renderMasterView('console', renderData);

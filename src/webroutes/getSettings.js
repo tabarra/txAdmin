@@ -11,12 +11,19 @@ const context = 'WebServer:getSettings';
  * @param {object} req
  */
 module.exports = async function action(res, req) {
+    //Check permissions
+    if(!webUtils.checkPermission(req, 'settings.view', context)){
+        let out = await webUtils.renderMasterView('generic', {message: `You don't have permission to view this page.`});
+        return res.send(out);
+    }
+
     let renderData = {
         headerTitle: 'settings',
         global: cleanRenderData(globals.configVault.getScopedStructure('global')),
         fxserver: cleanRenderData(globals.configVault.getScopedStructure('fxRunner')),
         monitor: cleanRenderData(globals.configVault.getScopedStructure('monitor')),
         discord: cleanRenderData(globals.configVault.getScopedStructure('discordBot')),
+        disableWrite: (webUtils.checkPermission(req, 'settings.write'))? '' : 'disabled'
     }
 
     let out = await webUtils.renderMasterView('settings', renderData);

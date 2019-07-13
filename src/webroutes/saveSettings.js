@@ -1,7 +1,8 @@
 //Requires
 const fs = require('fs');
-const helpers = require('../extras/helpers');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const helpers = require('../extras/helpers');
+const webUtils = require('./webUtils.js');
 const context = 'WebServer:saveSettings';
 
 //Helper functions
@@ -19,6 +20,14 @@ module.exports = async function action(res, req) {
         return res.send({type: 'danger', message: "Invalid Request"});
     }
     let scope = req.params.scope;
+
+    //Check permissions
+    if(!webUtils.checkPermission(req, 'settings.write', context)){
+        return res.send({
+            type: 'danger',
+            message: `You don't have permission to execute this action.`
+        });
+    }
 
     //Delegate to the specific scope functions
     if(scope == 'global'){
@@ -41,8 +50,8 @@ module.exports = async function action(res, req) {
 //================================================================
 /**
  * Handle Global settings
- * @param {object} res 
- * @param {object} req 
+ * @param {object} res
+ * @param {object} req
  */
 function handleGlobal(res, req) {
     //Sanity check
@@ -86,8 +95,8 @@ function handleGlobal(res, req) {
 //================================================================
 /**
  * Handle FXServer settings
- * @param {object} res 
- * @param {object} req 
+ * @param {object} res
+ * @param {object} req
  */
 function handleFXServer(res, req) {
     //Sanity check
@@ -142,7 +151,7 @@ function handleFXServer(res, req) {
     } catch (error) {
         return res.send({type: 'danger', message: `<strong>CFG Path error:</strong> ${error.message}`});
     }
-    
+
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('fxRunner');
     newConfig.buildPath = cfg.buildPath;
@@ -170,8 +179,8 @@ function handleFXServer(res, req) {
 //================================================================
 /**
  * Handle Monitor settings
- * @param {object} res 
- * @param {object} req 
+ * @param {object} res
+ * @param {object} req
  */
 function handleMonitor(res, req) {
     //Sanity check
@@ -233,8 +242,8 @@ function handleMonitor(res, req) {
 //================================================================
 /**
  * Handle Discord settings
- * @param {object} res 
- * @param {object} req 
+ * @param {object} res
+ * @param {object} req
  */
 function handleDiscord(res, req) {
     //Sanity check

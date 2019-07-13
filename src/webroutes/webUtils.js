@@ -12,8 +12,8 @@ const context = 'WebUtils';
 //================================================================
 /**
  * Renders the master page including header and footer
- * @param {string} view 
- * @param {string} data 
+ * @param {string} view
+ * @param {string} data
  */
 async function renderMasterView(view, data){
     if(typeof data === 'undefined') data = {};
@@ -49,7 +49,7 @@ async function renderMasterView(view, data){
 //================================================================
 /**
  * Renders the login page.
- * @param {string} message 
+ * @param {string} message
  */
 async function renderLoginView(message){
     let data;
@@ -84,8 +84,8 @@ async function renderLoginView(message){
 /**
  * Renders a solo view.
  * NOTE: not used
- * @param {string} view 
- * @param {string} data 
+ * @param {string} view
+ * @param {string} data
  */
 async function renderSoloView(view, data){
     if(typeof data === 'undefined') data = {};
@@ -108,7 +108,7 @@ async function renderSoloView(view, data){
 //================================================================
 /**
  * Return the path of the provided view
- * @param {string} view 
+ * @param {string} view
  */
 function getWebViewPath(view){
     return path.join(__dirname, '../../web/', view+'.html');
@@ -119,8 +119,8 @@ function getWebViewPath(view){
 /**
  * Append data to the log file
  * FIXME: edit consistency of this function and apply to all endpoints
- * @param {object} req 
- * @param {string} data 
+ * @param {object} req
+ * @param {string} data
  */
 function appendLog(req, data, context){
     log(`Executing ${data}`, context);
@@ -131,9 +131,9 @@ function appendLog(req, data, context){
 //================================================================
 /**
  * Check for a permission
- * @param {object} req 
- * @param {string} perm 
- * @param {string} fromCtx 
+ * @param {object} req
+ * @param {string} perm
+ * @param {string} fromCtx
  */
 function checkPermission(req, perm, fromCtx){
     try {
@@ -144,8 +144,8 @@ function checkPermission(req, perm, fromCtx){
             return false;
         }
     } catch (error) {
-        if(globals.config.verbose) logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
-    } 
+        if(globals.config.verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
+    }
 }
 
 
