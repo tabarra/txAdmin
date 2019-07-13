@@ -118,6 +118,7 @@ function getWebViewPath(view){
 //================================================================
 /**
  * Append data to the log file
+ * FIXME: edit consistency of this function and apply to all endpoints
  * @param {object} req 
  * @param {string} data 
  */
@@ -127,6 +128,26 @@ function appendLog(req, data, context){
 }
 
 
+//================================================================
+/**
+ * Check for a permission
+ * @param {object} req 
+ * @param {string} perm 
+ * @param {string} fromCtx 
+ */
+function checkPermission(req, perm, fromCtx){
+    try {
+        if(req.session.auth.permissions.includes('all') || req.session.auth.permissions.includes(perm)){
+            return true;
+        }else{
+            if(globals.config.verbose) log(`[${req.connection.remoteAddress}][${req.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
+            return false;
+        }
+    } catch (error) {
+        if(globals.config.verbose) log(`Error validating permission '${perm}' denied.`, fromCtx);
+    } 
+}
+
 
 module.exports = {
     renderMasterView,
@@ -134,4 +155,5 @@ module.exports = {
     renderSoloView,
     getWebViewPath,
     appendLog,
+    checkPermission,
 }

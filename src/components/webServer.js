@@ -207,7 +207,7 @@ function getAuthFunc(type){
         }  
 
         if(!follow){
-            if(globals.config.verbose) logWarn('Invalid session auth.', context);
+            if(globals.config.verbose) logWarn(`Invalid session auth: ${req.originalUrl}`, context);
             if(type === 'web'){
                 return res.redirect('/auth?logout');
             }else if(type === 'api'){

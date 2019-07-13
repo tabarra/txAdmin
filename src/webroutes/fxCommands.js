@@ -105,6 +105,7 @@ async function sendAlertOutput(res, toResp){
 //================================================================
 /**
  * Wrapper function to render the generic view with the output
+ * NOTE: not used
  * @param {object} res 
  * @param {string} msg 
  */

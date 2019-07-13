@@ -266,6 +266,7 @@ module.exports = class FXRunner {
      */
     srvCmd(command){
         if(typeof command !== 'string') throw new Error('Expected String!');
+        if(this.fxChild === null) return false;
         try {
             let success = this.fxChild.stdin.write(command + "\n");
             globals.webConsole.bufferCommand(command);
@@ -289,6 +290,7 @@ module.exports = class FXRunner {
      */
     async srvCmdBuffer(command, bufferTime){
         if(typeof command !== 'string') throw new Error('Expected String!');
+        if(this.fxChild === null) return false;
         bufferTime = (bufferTime !== undefined)? bufferTime : 1500;
         this.consoleBuffer.cmdBuffer = '';
         this.consoleBuffer.enableCmdBuffer = true;
