@@ -47,7 +47,7 @@ module.exports = class DiscordBot {
     //================================================================
     /**
      * Send an announcement to the configured channel
-     * @param {string} message 
+     * @param {string} message
      */
     sendAnnouncement(message){
         if(
@@ -57,7 +57,7 @@ module.exports = class DiscordBot {
         ){
             return false;
         }
-        
+
         try {
             let chan = this.client.channels.find(x => x.id === this.config.announceChannel);
             chan.send(message);
@@ -96,7 +96,7 @@ module.exports = class DiscordBot {
             //FIXME: colocar aqui mensagem de erro pra aparecer no dashboard
         }
     }
-    
+
 
     //================================================================
     async handleMessage(message){
@@ -109,7 +109,7 @@ module.exports = class DiscordBot {
             let dataServer = globals.monitor.statusServer; //shorthand much!?
             let color = (dataServer.online)? 0x74EE15 : 0xF000FF;
             let title = (dataServer.online)
-                ? `${globals.config.serverName} is currently **Online**!` 
+                ? `${globals.config.serverName} is currently **Online**!`
                 : `${globals.config.serverName} is currently **Offline**!`;
             let players = (dataServer.online && typeof dataServer.players !== 'undefined')? dataServer.players.length : '--';
             let desc = '';
@@ -118,19 +118,19 @@ module.exports = class DiscordBot {
                 desc += `**IP:** ${globals.config.publicIP}:${port}\n`;
                 desc += `**Players:** ${players}\n`;
             }
-            
+
             //Prepare object
             out = new Discord.RichEmbed();
             out.setTitle(title);
             out.setColor(color);
-            out.setDescription(desc); 
+            out.setDescription(desc);
 
         }else if(message.content.startsWith('/fxadmin') || message.content.startsWith('/txadmin')){
             //Prepare object
             out = new Discord.RichEmbed();
             out.setTitle(`${globals.config.serverName} uses txAdmin v${globals.version.current}!`);
             out.setColor(0x4DEEEA);
-            out.setDescription(`Checkout the project:\n Forum: https://forum.fivem.net/t/530475\n Discord: https://discord.gg/f3TsfvD`); 
+            out.setDescription(`Checkout the project:\n Forum: https://forum.fivem.net/t/530475\n Discord: https://discord.gg/f3TsfvD`);
 
         }else{
             let msg = this.messages.find((staticMessage) => {return message.content.startsWith(staticMessage.trigger)});
@@ -164,7 +164,7 @@ module.exports = class DiscordBot {
         let jsonData = null;
 
         try {
-            raw = fs.readFileSync(this.config.messagesFilePath, 'utf8');  
+            raw = fs.readFileSync(this.config.messagesFilePath, 'utf8');
         } catch (error) {
             logError('Unable to load discord messages. (cannot read file, please read the documentation)', context);
             logError(error.message, context);

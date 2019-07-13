@@ -7,10 +7,10 @@ const context = 'ConsoleBuffer';
 
 /**
  * FXServer output buffer helper.
- * 
+ *
  * FIXME: optimize this, we can have only one buffer using offset variables
- * @param {string} logPath 
- * @param {int} saveInterval 
+ * @param {string} logPath
+ * @param {int} saveInterval
  */
 module.exports = class ConsoleBuffer {
     constructor(logPath, saveInterval) {

@@ -25,7 +25,7 @@ module.exports = class Authenticator {
             "console.write",
         ];
         this.refreshAdmins();
-       
+
         //Cron Function
         setInterval(() => {
             this.refreshAdmins();
@@ -36,8 +36,8 @@ module.exports = class Authenticator {
     //================================================================
     /**
      * Search the admins list and try to match the password. Returns the user if there's a match, or false.
-     * @param {string} uname 
-     * @param {string} pwd 
+     * @param {string} uname
+     * @param {string} pwd
      * @returns {(object|boolean)} admin user or false
      */
     checkAuth(uname, pwd){
@@ -63,7 +63,7 @@ module.exports = class Authenticator {
     //================================================================
     /**
      * Returns all data from an admin or false
-     * @param {string} uname 
+     * @param {string} uname
      */
     getAdminData(uname){
         let username = uname.trim().toLowerCase();
@@ -85,9 +85,9 @@ module.exports = class Authenticator {
     //================================================================
     /**
      * Add a new admin to the admins file
-     * @param {*} name 
-     * @param {*} password 
-     * @param {*} permissions 
+     * @param {*} name
+     * @param {*} password
+     * @param {*} permissions
      */
     addAdmin(name, password, permissions){
         //Check if username is already taken
@@ -118,9 +118,9 @@ module.exports = class Authenticator {
     //================================================================
     /**
      * Edit admin and save to the admins file
-     * @param {*} name 
-     * @param {*} password 
-     * @param {*} permissions 
+     * @param {*} name
+     * @param {*} password
+     * @param {*} permissions
      */
     editAdmin(name, password, permissions){
         //Find admin index
@@ -148,7 +148,7 @@ module.exports = class Authenticator {
     //================================================================
     /**
      * Delete admin and save to the admins file
-     * @param {*} name 
+     * @param {*} name
      */
     deleteAdmin(name){
         //Delete admin
@@ -177,7 +177,7 @@ module.exports = class Authenticator {
     //================================================================
     /**
      * Refreshes the admins list
-     * NOTE: The verbosity here is driving me insane. 
+     * NOTE: The verbosity here is driving me insane.
      *       But still seems not to be enough for people that don't read the README.
      */
     async refreshAdmins(){
@@ -185,7 +185,7 @@ module.exports = class Authenticator {
         let jsonData = null;
 
         try {
-            raw = fs.readFileSync('data/admins.json', 'utf8');  
+            raw = fs.readFileSync('data/admins.json', 'utf8');
         } catch (error) {
             logError('Unable to load admins. (cannot read file, please read the documentation)', context);
             if(this.admins === null) process.exit();

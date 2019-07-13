@@ -26,7 +26,7 @@ module.exports = class ConfigVault {
         this.configFilePath = `${this.serverProfilePath}/config.json`;
         this.configFile = null;
         this.config = null;
-        
+
         this.setupVault();
         logOk('::Started', context);
     }
@@ -79,7 +79,7 @@ module.exports = class ConfigVault {
     //================================================================
     /**
      * Setup the this.config variable based on the config file data
-     * @param {object} cfgData 
+     * @param {object} cfgData
      */
     setupConfigStructure(cfgData){
         let cfg = clone(cfgData);
@@ -102,7 +102,7 @@ module.exports = class ConfigVault {
                 forceFXServerPort:  toDefault(cfg.global.forceFXServerPort, null),
             };
             out.logger = {
-                logPath: toDefault(cfg.logger.logPath, null), //not in template 
+                logPath: toDefault(cfg.logger.logPath, null), //not in template
             };
             out.monitor = {
                 interval: toDefault(cfg.monitor.interval, null), //not in template
@@ -156,7 +156,7 @@ module.exports = class ConfigVault {
     /**
      * Setup the this.config variable based on the config file data
      * FIXME: rename this function
-     * @param {object} cfgData 
+     * @param {object} cfgData
      */
     setupConfigDefaults(cfgData){
         let cfg = clone(cfgData);
@@ -166,14 +166,14 @@ module.exports = class ConfigVault {
             cfg.global.verbose = (cfg.global.verbose === 'true' || cfg.global.verbose === true);
             cfg.global.publicIP = cfg.global.publicIP || "change-me";
             cfg.global.serverName = cfg.global.serverName || "change-me";
-            
+
             //Global - Extras
             cfg.global.osType = os.type() || 'unknown';
             cfg.global.serverProfile = this.serverProfile;
             cfg.global.serverProfilePath = this.serverProfilePath;
 
             //Logger
-            cfg.logger.logPath = cfg.logger.logPath || `${this.serverProfilePath}/logs/admin.log`; //not in template 
+            cfg.logger.logPath = cfg.logger.logPath || `${this.serverProfilePath}/logs/admin.log`; //not in template
 
             //Monitor
             cfg.monitor.interval = parseInt(cfg.monitor.interval) || 1000; //not in template
@@ -198,7 +198,7 @@ module.exports = class ConfigVault {
             cfg.discordBot.statusCommand = cfg.discordBot.statusCommand || "/status";
 
             //FXRunner
-            cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template 
+            cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template
             cfg.fxRunner.setPriority = cfg.fxRunner.setPriority || "NORMAL";
             cfg.fxRunner.onesync = (cfg.fxRunner.onesync === 'true' || cfg.fxRunner.onesync === true);
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
@@ -222,21 +222,21 @@ module.exports = class ConfigVault {
             if(!fs.existsSync(dataPath)){
                 fs.mkdirSync(dataPath);
             }
-        
+
             let logsPath = `${this.serverProfilePath}/logs/`;
             if(!fs.existsSync(logsPath)){
                 fs.mkdirSync(logsPath);
             }
-            
+
             let messagesPath = `${this.serverProfilePath}/messages.json`;
             if(!fs.existsSync(messagesPath)){
                 fs.writeFileSync(messagesPath, '[]');
-            }  
-            
+            }
+
             let commandsPath = `${this.serverProfilePath}/commands.json`;
             if(!fs.existsSync(commandsPath)){
                 fs.writeFileSync(commandsPath, '[]');
-            }  
+            }
         } catch (error) {
             logError(`Error setting up folder structure in '${this.serverProfilePath}/'`, context);
             logError(error);
@@ -284,8 +284,8 @@ module.exports = class ConfigVault {
     //================================================================
     /**
      * Save the new scope to this context, then saves it to the configFile
-     * @param {string} scope 
-     * @param {string} newConfig 
+     * @param {string} scope
+     * @param {string} newConfig
      */
     saveProfile(scope, newConfig){
         try {

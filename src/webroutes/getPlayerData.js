@@ -18,7 +18,7 @@ module.exports = async function action(res, req) {
         return;
     }
     let id = parseInt(req.params.id);
-    
+
     let out;
     let players = clone(globals.monitor.statusServer.players);
     let player = players.find(player => player.id === id);

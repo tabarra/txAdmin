@@ -27,7 +27,7 @@ module.exports = class Logger {
     //================================================================
     /**
      * Save log entriy
-     * @param {string} data 
+     * @param {string} data
      * @returns {boolean} success
      */
     async append(data){

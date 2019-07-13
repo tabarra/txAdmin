@@ -113,6 +113,6 @@ function HandleFatalError(err, context){
         logError(`Error starting '${context}' module: ${err.message}`)
         logError(err.stack, context)
     }
-    
+
     process.exit();
 }

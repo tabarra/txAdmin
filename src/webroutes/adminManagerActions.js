@@ -49,8 +49,8 @@ module.exports = async function action(res, req) {
 //================================================================
 /**
  * Handle Add
- * @param {object} res 
- * @param {object} req 
+ * @param {object} res
+ * @param {object} req
  */
 function handleAdd(res, req) {
     //Sanity check
@@ -96,8 +96,8 @@ function handleAdd(res, req) {
 //================================================================
 /**
  * Handle Edit
- * @param {object} res 
- * @param {object} req 
+ * @param {object} res
+ * @param {object} req
  */
 function handleEdit(res, req) {
     //Sanity check
@@ -146,8 +146,8 @@ function handleEdit(res, req) {
 //================================================================
 /**
  * Handle Delete
- * @param {object} res 
- * @param {object} req 
+ * @param {object} res
+ * @param {object} req
  */
 function handleDelete(res, req) {
     //Sanity check
@@ -181,8 +181,8 @@ function handleDelete(res, req) {
 //================================================================
 /**
  * Handle Get Modal
- * @param {object} res 
- * @param {object} req 
+ * @param {object} res
+ * @param {object} req
  */
 async function handleGetModal(res, req) {
     //Sanity check

@@ -24,7 +24,7 @@ module.exports = class WebServer {
             max: this.config.limiterAttempts, // limit each IP to 5 requests per 15 minutes
             message: `Too many login attempts, enjoy your ${this.config.limiterMinutes} minutes of cooldown.`
         });
-        
+
         this.app = express();
         this.app.use(cors());
         this.app.use(this.session);
@@ -50,7 +50,7 @@ module.exports = class WebServer {
         }
     }
 
-    
+
     //================================================================
     async setupRoutes(){
         //Auth routes
@@ -139,7 +139,7 @@ module.exports = class WebServer {
                 this.handleRouteError(res, "[downloadLog] Route Internal Error", err);
             });
         });
-        
+
         //Index & generic
         this.app.get('/', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getDashboard(res, req).catch((err) => {
@@ -185,7 +185,7 @@ module.exports = class WebServer {
 //================================================================
 /**
  * Returns a session authenticator function
- * @param {*} type 
+ * @param {*} type
  */
 function getAuthFunc(type){
     return (req, res, next) =>{
@@ -204,7 +204,7 @@ function getAuthFunc(type){
                 };
                 follow = true;
             }
-        }  
+        }
 
         if(!follow){
             if(globals.config.verbose) logWarn(`Invalid session auth: ${req.originalUrl}`, context);

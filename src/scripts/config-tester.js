@@ -36,7 +36,7 @@ if(process.argv[2]){
 //Try to load configuration
 let configFile = null;
 try {
-    let raw = fs.readFileSync(`data/${serverProfile}/config.json`, 'utf8');  
+    let raw = fs.readFileSync(`data/${serverProfile}/config.json`, 'utf8');
     configFile = JSON.parse(raw);
     log(`Loaded configuration file 'data/${serverProfile}/config.json'.`);
 } catch (error) {
@@ -266,7 +266,7 @@ if(isLinux){
     currTest = 'spawn full server';
     try {
         let child = spawnSync(
-            "/bin/bash", 
+            "/bin/bash",
             [`${cfg.buildPath}/run.sh`, `+exec ${cfg.cfgPath}`],
             {cwd: cfg.basePath}
         );
@@ -358,7 +358,7 @@ if(isLinux){
     currTest = 'spawn full server';
     try {
         let child = spawnSync(
-            "cmd.exe", 
+            "cmd.exe",
             ['/c', `${cfg.buildPath}/run.cmd +exec ${cfg.cfgPath}`],
             {cwd: cfg.basePath}
         );

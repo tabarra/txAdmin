@@ -150,7 +150,7 @@ $(document).ready(function() {
         },
     });
 
-    
+
     // checkVersion();
     setInterval(refreshData, 1000);
 });

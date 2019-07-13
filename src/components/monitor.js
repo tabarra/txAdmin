@@ -70,7 +70,7 @@ module.exports = class Monitor {
         if(!Array.isArray(this.config.restarter.schedule) || !this.config.restarter.schedule.length){
             return false;;
         }
-        
+
         let getScheduleObj = (hour, minute, sub) => {
             var date = new Date();
             date.setHours(hour);
@@ -109,7 +109,7 @@ module.exports = class Monitor {
 
     //================================================================
     /**
-     * Check the restart schedule 
+     * Check the restart schedule
      */
     checkRestartSchedule(){
         if(!Array.isArray(this.schedule)) return;
@@ -229,7 +229,7 @@ module.exports = class Monitor {
             player.identifiers.forEach((identifier) => {
                 if(identifier.startsWith('steam:')){
                     try {
-                        let decID = new bigInt(identifier.slice(6), 16).toString(); 
+                        let decID = new bigInt(identifier.slice(6), 16).toString();
                         player.steam = `https://steamcommunity.com/profiles/${decID}`;
                     } catch (error) {}
                 }

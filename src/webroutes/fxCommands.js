@@ -93,27 +93,27 @@ module.exports = async function action(res, req) {
 //================================================================
 /**
  * Wrapper function to render send the output to be shown inside an alert
- * @param {object} res 
- * @param {string} msg 
+ * @param {object} res
+ * @param {string} msg
  */
 async function sendAlertOutput(res, toResp){
     toResp = (toResp.length)? xss(toResp) : 'no output';
     return res.send(`<b>Output:<br> <pre>${toResp}</pre>`);
-} 
+}
 
 
 //================================================================
 /**
  * Wrapper function to render the generic view with the output
  * NOTE: not used
- * @param {object} res 
- * @param {string} msg 
+ * @param {object} res
+ * @param {string} msg
  */
 async function sendPageOutput(res, msg){
     let data = {
-        headerTitle: 'Output', 
+        headerTitle: 'Output',
         message: `<pre>${xss(msg)}</pre>`
     }
     let out = await webUtils.renderMasterView('generic', data);
     return res.send(out);
-} 
+}

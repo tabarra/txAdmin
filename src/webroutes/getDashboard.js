@@ -28,7 +28,7 @@ module.exports = async function action(res, req) {
         updateData: getUpdateData(),
         chartData: getChartData(globals.monitor.timeSeries.get())
     }
-    
+
 
     //Rendering the page
     let out = await webUtils.renderMasterView('dashboard', renderData);
@@ -39,7 +39,7 @@ module.exports = async function action(res, req) {
 //================================================================
 /**
  * Process player history and returns the chart data or false
- * @param {array} series 
+ * @param {array} series
  */
 function getChartData(series) {
     if (series.length < 360) {

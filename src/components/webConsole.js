@@ -28,7 +28,7 @@ module.exports = class webConsole {
     //================================================================
     /**
      * Starts the Socket.IO server
-     * @param {object} httpServer 
+     * @param {object} httpServer
      */
     startSocket(httpServer){
         logOk('::Started', context);
@@ -39,7 +39,7 @@ module.exports = class webConsole {
         this.io.use(this.authNewSession.bind(this));
         this.io.on('connection', (socket) => {
             log(`Connected: ${socket.id}`, contextSocket);
-            
+
             socket.on('disconnect', (reason) => {
                 log(`Client disconnected with reason: ${reason}`, contextSocket);
             });
@@ -60,8 +60,8 @@ module.exports = class webConsole {
     //================================================================
     /**
      * Authenticates a new session to make sure the credentials are valid and set the admin variable.
-     * @param {object} socket 
-     * @param {function} next 
+     * @param {object} socket
+     * @param {function} next
      */
     authNewSession(socket, next){
         let isValidAuth = false;
@@ -97,7 +97,7 @@ module.exports = class webConsole {
     //================================================================
     /**
      * Authenticates a new session to make sure the credentials are valid and set the admin variable.
-     * @param {*} socket 
+     * @param {*} socket
      * @returns {boolean}
      */
     checkSessionAuth(socket){
@@ -125,7 +125,7 @@ module.exports = class webConsole {
     //================================================================
     /**
      * Add command to buffer
-     * @param {*} data 
+     * @param {*} data
      */
     bufferCommand(data){
         this.dataBuffer += `\n<mark>${data}</mark>\n`;
@@ -134,7 +134,7 @@ module.exports = class webConsole {
     //================================================================
     /**
      * Adds data to the buffer
-     * @param {string} data 
+     * @param {string} data
      */
     buffer(data){
         this.dataBuffer += data;
@@ -145,7 +145,7 @@ module.exports = class webConsole {
     /**
      * Flushes the data buffer
      * NOTE: this will also send data to users that no longer have the permission console.view
-     * @param {string} data 
+     * @param {string} data
      */
     flushBuffer(){
         if(!this.dataBuffer.length) return;
@@ -163,7 +163,7 @@ module.exports = class webConsole {
     /**
      * Handle incoming messages.
      * Sends a command received to fxChild's stdin, logs it and broadcast the command to all other socket.io clients
-     * @param {string} cmd 
+     * @param {string} cmd
      */
     handleSocketMessages(socket, msg){
         //Checking session
@@ -177,7 +177,7 @@ module.exports = class webConsole {
 
         //Check permissions
         if(
-            !socket.handshake.session.auth.permissions.includes('all') && 
+            !socket.handshake.session.auth.permissions.includes('all') &&
             !socket.handshake.session.auth.permissions.includes('console.write')
         ){
             let errorMessage = `Permission 'console.write' denied.`;
@@ -185,7 +185,7 @@ module.exports = class webConsole {
             socket.emit('consoleData', `\n<mark>${errorMessage}</mark>\n`);
             return;
         }
-        
+
         //Executing command
         log(`Executing: '${msg}'`, contextSocket);
         globals.fxRunner.srvCmd(msg);

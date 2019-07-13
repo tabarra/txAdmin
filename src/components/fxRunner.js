@@ -63,7 +63,7 @@ module.exports = class FXRunner {
 
     }//Final setupVariables()
 
-    
+
     //================================================================
     /**
      * Spawns the FXServer and sets up all the event handlers
@@ -72,8 +72,8 @@ module.exports = class FXRunner {
         logWarn("Starting FXServer", context);
         //Sanity Check
         if(
-            this.spawnVariables == null || 
-            typeof this.spawnVariables.shell == 'undefined' || 
+            this.spawnVariables == null ||
+            typeof this.spawnVariables.shell == 'undefined' ||
             typeof this.spawnVariables.cmdArgs == 'undefined'
         ){
             logError('this.spawnVariables is not set.', context);
@@ -114,7 +114,7 @@ module.exports = class FXRunner {
         //Starting server
         try {
             this.fxChild = spawn(
-                this.spawnVariables.shell, 
+                this.spawnVariables.shell,
                 this.spawnVariables.cmdArgs,
                 {cwd: this.config.basePath}
             );
@@ -125,7 +125,7 @@ module.exports = class FXRunner {
             dir(error);
             process.exit(0);
         }
-        
+
         //Setting up stream handlers
         this.fxChild.stdout.setEncoding('utf8');
         //if(!this.config.quiet) this.fxChild.stdout.pipe(process.stdout, {end: false});
@@ -168,7 +168,7 @@ module.exports = class FXRunner {
         setTimeout(async () => {
             this.setFXServerEnvVars();
         }, 3000);
-        
+
     }//Final spawnServer()
 
 
@@ -178,9 +178,9 @@ module.exports = class FXRunner {
      */
     async setFXServerEnvVars(){
         log('Setting up FXServer scripting environment variables.', context);
-        
+
         let delay = 150;
-        this.srvCmd(`sets txAdmin-version ${globals.version.current}`); 
+        this.srvCmd(`sets txAdmin-version ${globals.version.current}`);
         await sleep(delay);
         this.srvCmd(`set txAdmin-version ${globals.version.current}`);
         await sleep(delay);
@@ -239,7 +239,7 @@ module.exports = class FXRunner {
         await sleep(750);
         this.spawnServer();
     }
-    
+
 
     //================================================================
     /**
@@ -257,12 +257,12 @@ module.exports = class FXRunner {
             return false;
         }
     }
-    
+
 
     //================================================================
     /**
      * Pipe a string into FXServer's stdin (aka executes a cfx's command)
-     * @param {string} command 
+     * @param {string} command
      */
     srvCmd(command){
         if(typeof command !== 'string') throw new Error('Expected String!');
@@ -279,7 +279,7 @@ module.exports = class FXRunner {
             return false;
         }
     }
-    
+
 
     //================================================================
     /**

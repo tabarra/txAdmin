@@ -32,7 +32,7 @@ module.exports = class HostCPUStatus {
             if (cnt == 100)       result.last10  = (percent/cnt).toFixed();   //10 segundos
             else if (cnt == 300)  result.last30  = (percent/cnt).toFixed();  //30 segundos
         }
-        
+
         result.full = (cnt)? (percent/cnt).toFixed() : null;
         return result;
     }
@@ -48,9 +48,9 @@ module.exports = class HostCPUStatus {
             var prevCpu = this.prevCpus[i];
             var currCpu = currCpus[i];
             var deltas = {total:0};
-            for (var t in prevCpu.times) 
+            for (var t in prevCpu.times)
                 deltas.total += currCpu.times[t] - prevCpu.times[t];
-            for (var t in prevCpu.times) 
+            for (var t in prevCpu.times)
                 deltas[t] = currCpu.times[t] - prevCpu.times[t];
         }
         this.prevCpus = currCpus;

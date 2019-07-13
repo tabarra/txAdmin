@@ -10,7 +10,7 @@ const now = (x) => { return (new Date() / 1000).toFixed() };
 /**
  * Simple Integer Time Series class with json file persistence
  * It implements a minimum resolution and a max window for the data.
- * 
+ *
  * NOTE: Except for the constructor, this class will not return any errors,
  *       and should not be used to anything that requires data consistency.
  */
@@ -96,7 +96,7 @@ module.exports = class TimeSeries {
         this.log.filter((point) => {
             return (now - point.timestamp < this.window);
         });
-        
+
         return clone(this.log);
     }
 

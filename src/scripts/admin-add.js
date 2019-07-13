@@ -47,7 +47,7 @@ async function askForChoice(question, options, persist){
         for (let i = 0; i < options.length; i++) {
             console.log(`    ${i+1} - ${options[i]}`)
         }
-        
+
         let resp = await rl.questionAsync('Type answer: ');
         if(/^\d+$/.test(resp) && typeof options[resp-1] !== 'undefined') return options[resp-1];
         if(!persist) return false;
@@ -85,7 +85,7 @@ async function askForYN(question, defaultAnswer, persist){
             }
         }
 
-        return resp; 
+        return resp;
     }
 }
 
@@ -150,13 +150,13 @@ printDivider();
     }else{
         filePath += process.argv[2];
     }
-    
+
 
     //Try to load admin file
     let rawFile = null;
     let admins = null;
     try {
-        rawFile = fs.readFileSync(filePath, 'utf8');  
+        rawFile = fs.readFileSync(filePath, 'utf8');
     } catch (error) {
         log(`Unnable to load '${filePath}'. The file will be created for you`, context);
         admins = [];

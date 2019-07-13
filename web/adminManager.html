@@ -34,12 +34,12 @@
                                 <td>{{@this.name}}</td>
                                 <td>{{@this.perms}}</td>
                                 <td>
-                                    <button class="btn btn-sm btn-outline-primary" 
+                                    <button class="btn btn-sm btn-outline-primary"
                                         onclick="getEditModal('{{@this.name}}')" {{@this.disableActions}}>
                                         <i class="icon-pencil"></i> Edit
                                     </button>
                                     &nbsp;
-                                    <button class="btn btn-sm btn-outline-danger" 
+                                    <button class="btn btn-sm btn-outline-danger"
                                         onclick="deleteAdmin('{{@this.name}}')" {{@this.disableActions}}>
                                         <i class="icon-trash"></i> Delete
                                     </button>
@@ -142,10 +142,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body" id="modEditAdmin-body">
-                
-
-            </div>
+            <div class="modal-body" id="modEditAdmin-body"></div>
             <div class="modal-footer text-center">
                 <div class="mx-auto button-spacer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>

@@ -56,8 +56,8 @@ function prepareServerStatus() {
     let ping = (dataServer.online && typeof dataServer.ping !== 'undefined') ? dataServer.ping + 'ms' : '--';
     let players = (dataServer.online && typeof dataServer.players !== 'undefined') ? dataServer.players.length : '--';
     let logFileSize = (
-        globals.fxRunner && 
-        globals.fxRunner.consoleBuffer && 
+        globals.fxRunner &&
+        globals.fxRunner.consoleBuffer &&
         globals.fxRunner.consoleBuffer.logFileSize
     )? globals.fxRunner.consoleBuffer.logFileSize : '--';
     let out = `<strong>Status: <span class="badge badge-${statusClass}">${statusText}</span> </strong><br>
@@ -148,7 +148,7 @@ function preparePlayersData() {
                 </div>`;
 
     });
-    
+
     return out;
 }
 

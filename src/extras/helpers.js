@@ -40,8 +40,8 @@ function dependencyChecker() {
  * Reads CFG Path and return the file contents, or throw error if:
  *  - the path is not valid (absolute or relative)
  *  - cannot read the file data
- * @param {string} cfgPath 
- * @param {string} basePath 
+ * @param {string} cfgPath
+ * @param {string} basePath
  */
 function parseSchedule(schedule, filter) {
     if(typeof filter === 'undefined') filter = true;
@@ -71,8 +71,8 @@ function parseSchedule(schedule, filter) {
  * Reads CFG Path and return the file contents, or throw error if:
  *  - the path is not valid (absolute or relative)
  *  - cannot read the file data
- * @param {string} cfgPath 
- * @param {string} basePath 
+ * @param {string} cfgPath
+ * @param {string} basePath
  */
 function getCFGFile(cfgPath, basePath) {
     let validCfgPath;
@@ -101,7 +101,7 @@ function getCFGFile(cfgPath, basePath) {
  *  - no endpoints found
  *  - endpoints that are not 0.0.0.0:xxx
  *  - port mismatch
- * @param {string} rawCfgFile 
+ * @param {string} rawCfgFile
  */
 function getFXServerPort(rawCfgFile) {
     let regex = /^\s*endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.?$/gim;
