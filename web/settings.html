@@ -213,11 +213,11 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmMonitor-timeout" value="{{monitor.timeout}}"
+                                <input type="number" class="form-control" id="frmMonitor-timeout" value="{{monitor.timeout}}"
                                     placeholder="1000" min="0" max="5000" {{disableWrite}}>
                                 <span class="form-text text-muted">
                                     The limit of <strong>milliseconds</strong> for the FXServer to respond before the
-                                    Monitor considers it unresponsive. (Recommended: 1000-1250)
+                                    Monitor considers it unresponsive. (Recommended: 1000. Max: 5000)
                                 </span>
                             </div>
                         </div>

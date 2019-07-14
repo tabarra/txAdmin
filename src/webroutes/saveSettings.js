@@ -200,6 +200,10 @@ function handleMonitor(res, req) {
         schedule: req.body.schedule.split(',').map((x) => {return x.trim()})
     }
 
+    //Validating parameters
+    if(cfg.timeout > 5000) return res.send({type: 'danger', message: "The maximum timeout is 5000ms"});
+    if(cfg.failures > 120) return res.send({type: 'danger', message: "The maximum failures is 120"});
+
     //Validating times
     let times = helpers.parseSchedule(cfg.schedule, false);
     let invalidTimes = [];

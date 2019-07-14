@@ -17,7 +17,10 @@ module.exports = class Monitor {
             logError('The monitor.interval setting must be 1000 milliseconds or more.', context);
             process.exit();
         }
-        if(this.config.restarter.failures * this.config.interval < 15000){
+        if(
+            this.config.restarter.failures !== -1 &&
+            this.config.restarter.failures * this.config.interval < 15000
+        ){
             logError('The monitor.restarter.failures setting must be 15 seconds or more.', context);
             process.exit();
         }
@@ -220,12 +223,11 @@ module.exports = class Monitor {
             if(globals.config.verbose || this.failCounter > 5){
                 logWarn(`(Counter: ${this.failCounter}/${this.config.restarter.failures}) HealthCheck request error: ${error.message}`, context);
             }
-            //this.lastHeartBeat = Math.round(Date.now()/1000);
+
             //Check if it's time to restart the server
             let now = Math.round(Date.now()/1000)
-            dir(now - this.lastHeartBeat)
             if(
-                this.config.restarter !== false &&
+                this.config.restarter.failures !== -1 &&
                 this.failCounter >= this.config.restarter.failures &&
                 (now - this.lastHeartBeat) > 30
             ){
