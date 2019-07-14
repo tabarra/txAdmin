@@ -47,13 +47,13 @@ $ node src/index.js default
 > v1.5.0
 - [x] resource injection
 - [x] error handler to remove the old txAdminClient
+> v1.6.0
 - [ ] temp intercom endpoint
 - [ ] make txAdminClient report it's alive
 - [ ] prevent auto restarter from killing a working server
-> v1.6.0
+> v1.7.0 BETA Release
 - [ ] custom commands
 - [ ] ???
-> v1.7.0 BETA Release
 
 
 

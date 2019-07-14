@@ -1,5 +1,5 @@
 {
-    "version": "1.5.0",
+    "version": "1.6.0",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -45,6 +45,10 @@
         {
             "version": "1.5.0",
             "changelog": "Permissions System."
+        },
+        {
+            "version": "1.6.0",
+            "changelog": "Resource Injector."
         }
     ]
 }
