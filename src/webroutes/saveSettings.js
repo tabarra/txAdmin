@@ -1,5 +1,6 @@
 //Requires
 const fs = require('fs');
+const path = require('path');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const helpers = require('../extras/helpers');
 const webUtils = require('./webUtils.js');
@@ -114,9 +115,9 @@ function handleFXServer(res, req) {
 
     //Prepare body input
     let cfg = {
-        buildPath: req.body.buildPath.trim(),
-        basePath: req.body.basePath.trim(),
-        cfgPath: req.body.cfgPath.trim(),
+        buildPath: path.normalize(req.body.buildPath),
+        basePath: path.normalize(req.body.basePath),
+        cfgPath: path.normalize(req.body.cfgPath),
         onesync: (req.body.onesync === 'true'),
         autostart: (req.body.autostart === 'true'),
         quiet: (req.body.quiet === 'true'),

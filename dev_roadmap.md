@@ -51,7 +51,7 @@ $ node src/index.js default
 - [x] temp intercom endpoint
 - [x] make txAdminClient report it's alive
 - [x] prevent auto restarter from killing a working server
-- [ ] fix paths in windows using `\`
+- [x] normalize paths when saving the settings
 > v1.7.0 BETA Release
 - [ ] custom commands
 - [ ] ???

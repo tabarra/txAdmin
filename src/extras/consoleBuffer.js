@@ -53,7 +53,7 @@ module.exports = class ConsoleBuffer {
 
         this.detectMissingResource = new StreamSnitch(
             // /Couldn't find resource txAdminClient./g,
-            /\[txAdminClient\] Version 1\.0\.0 starting\.\.\./g,
+            /\[txAdminClient\] Version 1\.[^1]\.0 starting/g,
             (m) => {
                 try {
                     globals.resourceWrongVersion = true;
@@ -76,7 +76,7 @@ module.exports = class ConsoleBuffer {
             this.hitchStreamProcessor.write(data);
             this.detectMissingResource.write(data);
             globals.webConsole.buffer(data);
-            if(!globals.fxRunner.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122/]/g, ""));
+            if(!globals.fxRunner.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ""));
         } catch (error) {
             if(globals.config.verbose) logError(`Buffer write error: ${error.message}`, context)
         }

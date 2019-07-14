@@ -65,10 +65,13 @@ $ node src/index.js default
 **2 -** Then open `http://public-ip:40120/` in your browser and login with the credentials created and go to the settings page to configure the remaining settings.   
 If on Windows, you can start the server by executing `start.bat` in your server profile's folder (example `data/default/start.bat`).  
 
-**Note:** You should run FXServer **through** txAdmin, and not in parallel (ie in another terminal).  
-**Note2:** To configure your Discord bot, follow these two guides:  [Setting up a bot application](https://discordjs.guide/preparations/setting-up-a-bot-application.html) and [Adding your bot to servers](https://discordjs.guide/preparations/adding-your-bot-to-servers.html).  
-**Note3:** Although **not recommended**, you can set FXServer processes priorities. To do so, change `fxRunner.setPriority` to one of the following: LOW, BELOW_NORMAL, NORMAL, ABOVE_NORMAL, HIGH, HIGHEST.  
-**Note4:** To create more server profiles, execute `node src/scripts/setup.js <profile name>`.  
+> **Note:** You should run FXServer **through** txAdmin, and not in parallel (ie in another terminal).  
+
+> **Note2:** To configure your Discord bot, follow these two guides:  [Setting up a bot application](https://discordjs.guide/preparations/setting-up-a-bot-application.html) and [Adding your bot to servers](https://discordjs.guide/preparations/adding-your-bot-to-servers.html).  
+
+> **Note3:** Although **not recommended**, you can set FXServer processes priorities. To do so, change `fxRunner.setPriority` to one of the following: LOW, BELOW_NORMAL, NORMAL, ABOVE_NORMAL, HIGH, HIGHEST.  
+
+> **Note4:** To create more server profiles, execute `node src/scripts/setup.js <profile name>`.  
 
 ## Troubleshooting
 ### If you run into any problem, check our [Troubleshooting Guide](docs/troubleshooting.md).   
@@ -81,7 +84,7 @@ $ git pull
 $ npm i
 ``` 
 If you have any problems with `package-lock.json`, just delete it and try again.  
-**Note:** This will only work if you downloaded txAdmin using the `git clone` command.  
+> **Note:** This will only work if you downloaded txAdmin using the `git clone` command.  
 
 
   
