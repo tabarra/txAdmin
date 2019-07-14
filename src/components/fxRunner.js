@@ -5,6 +5,7 @@ const pidtree = require('pidtree');
 const sleep = require('util').promisify(setTimeout);
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const ConsoleBuffer = require('../extras/consoleBuffer');
+const resourceInjector = require('../extras/resourceInjector');
 const helpers = require('../extras/helpers');
 const context = 'FXRunner';
 
@@ -17,6 +18,7 @@ module.exports = class FXRunner {
         this.fxChild = null;
         this.tsChildStarted = null;
         this.fxServerPort = null;
+        this.extResources = [];
         this.consoleBuffer = new ConsoleBuffer(this.config.logPath, 10);
         this.setupVariables();
 
@@ -91,6 +93,16 @@ module.exports = class FXRunner {
         //If the server is already alive
         if(this.fxChild !== null){
             logError('The server is already started.', context);
+            return false;
+        }
+
+        //Refreshing cache
+        try {
+            let reset = resourceInjector.resetCacheFolder(this.config.basePath);
+            this.extResources = resourceInjector.getResourcesList(this.config.basePath);
+            let inject = await resourceInjector.inject(this.config.basePath, this.extResources);
+        } catch (error) {
+            logError(`ResourceInjector Error: ${error.message}`, context);
             return false;
         }
 
@@ -179,14 +191,16 @@ module.exports = class FXRunner {
     async setFXServerEnvVars(){
         log('Setting up FXServer scripting environment variables.', context);
 
-        let delay = 150;
-        this.srvCmd(`sets txAdmin-version ${globals.version.current}`);
+        let delay = 75;
+        this.srvCmd(`sets txAdmin-version "${globals.version.current}"`);
         await sleep(delay);
-        this.srvCmd(`set txAdmin-version ${globals.version.current}`);
+        this.srvCmd(`set txAdmin-version "${globals.version.current}"`);
         await sleep(delay);
-        this.srvCmd(`set txAdmin-clientCompatVersion "1.0.0"`);
-        await sleep(delay);
-        this.srvCmd(`ensure txAdminClient`);
+        this.srvCmd(`set txAdmin-clientCompatVersion "1.1.0"`);
+        this.extResources.forEach(async (res)=>{
+            await sleep(delay);
+            this.srvCmd(`ensure "${res}"`);
+        });
     }
 
 

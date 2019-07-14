@@ -88,6 +88,7 @@ If you have any problems with `package-lock.json`, just delete it and try again.
 
   
 ## TODO:
+- [ ] Reorganize all files/folders
 - [ ] Write version bumper script
 - [ ] Write resource injector
 - [ ] Add custom commands to the config file

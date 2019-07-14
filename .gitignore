@@ -2,6 +2,8 @@
 cache/*
 data/*
 !data/example/
+extensions/*
+!extensions/txAdminClient/
 *.ignore.*
 
 ## Github's default node gitignore
