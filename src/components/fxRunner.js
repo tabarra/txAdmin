@@ -71,6 +71,9 @@ module.exports = class FXRunner {
      * Spawns the FXServer and sets up all the event handlers
      */
     async spawnServer(){
+        //FIXME: remove this line
+        globals.resourceWrongVersion = null;
+
         logWarn("Starting FXServer", context);
         //Sanity Check
         if(

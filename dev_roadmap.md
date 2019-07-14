@@ -46,7 +46,7 @@ $ node src/index.js default
 - [x] write doc text for the permissions
 > v1.5.0
 - [x] resource injection
-- [ ] error handler to remove the old txAdminClient
+- [x] error handler to remove the old txAdminClient
 - [ ] temp intercom endpoint
 - [ ] make txAdminClient report it's alive
 - [ ] prevent auto restarter from killing a working server

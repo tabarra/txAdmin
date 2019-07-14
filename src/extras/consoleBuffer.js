@@ -52,10 +52,11 @@ module.exports = class ConsoleBuffer {
         this.hitchStreamProcessor.on('error', (data) => {});
 
         this.detectMissingResource = new StreamSnitch(
-            /Couldn't find resource txAdminClient./g,
+            // /Couldn't find resource txAdminClient./g,
+            /\[txAdminClient\] Version 1\.0\.0 starting\.\.\./g,
             (m) => {
                 try {
-                    globals.resourceNotFound = true;
+                    globals.resourceWrongVersion = true;
                 }catch(e){}
             }
         );

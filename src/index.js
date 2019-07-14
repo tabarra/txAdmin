@@ -25,7 +25,7 @@ globals = {
         changelog: '--',
         allVersions: []
     },
-    resourceNotFound: null //FIXME: temp hack
+    resourceWrongVersion: null //FIXME: temp hack
 }
 
 
