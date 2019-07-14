@@ -28,6 +28,7 @@ module.exports = class Monitor {
         this.timeSeries = new TimeSeries(`${globals.config.serverProfilePath}/data/players.json`, 10, 60*60*24);
         this.lastAutoRestart = null;
         this.failCounter = 0;
+        this.lastHeartBeat = 0;
         this.fxServerHitches = [];
         this.schedule = this.buildSchedule();
         this.statusServer = {
@@ -157,6 +158,13 @@ module.exports = class Monitor {
 
 
     //================================================================
+    //FIXME: temp
+    handleHeartBeat(body){
+        this.lastHeartBeat = Math.round(Date.now()/1000);
+    }
+
+
+    //================================================================
     processFXServerHitch(hitchTime){
         let hitch = {
             ts: Math.round(Date.now()/1000),
@@ -212,7 +220,17 @@ module.exports = class Monitor {
             if(globals.config.verbose || this.failCounter > 5){
                 logWarn(`(Counter: ${this.failCounter}/${this.config.restarter.failures}) HealthCheck request error: ${error.message}`, context);
             }
-            if(this.config.restarter !== false && this.failCounter >= this.config.restarter.failures) this.restartFXServer('Failure Count Above Limit');
+            //this.lastHeartBeat = Math.round(Date.now()/1000);
+            //Check if it's time to restart the server
+            let now = Math.round(Date.now()/1000)
+            dir(now - this.lastHeartBeat)
+            if(
+                this.config.restarter !== false &&
+                this.failCounter >= this.config.restarter.failures &&
+                (now - this.lastHeartBeat) > 30
+            ){
+                this.restartFXServer('Failure Count Above Limit');
+            }
             this.statusServer = {
                 online: false,
                 ping: false,

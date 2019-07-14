@@ -17,6 +17,29 @@ Citizen.CreateThread(function()
 end)
 
 
+-- FIXME: temp function
+Citizen.CreateThread(function()
+    local apiPort = GetConvar("txAdmin-apiPort", "invalid");
+    local apiToken = GetConvar("txAdmin-apiToken", "invalid");
+    local url = "http://localhost:"..apiPort.."/intercom/monitor"
+
+    while true do
+        local exData = {
+            txAdminToken = apiToken,
+            alive = true
+        }
+        PerformHttpRequest(url, function(httpCode, data, resultHeaders)
+            local resp = tostring(data)
+            if httpCode ~= 200 or resp ~= 'okay' then
+                print("[txAdminClient] HeartBeat failed with message: "..resp)
+            end
+        end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
+
+        Citizen.Wait(3000)
+    end
+end)
+
+
 -- Kick all players
 RegisterCommand("txaKickAll", function(source, args)
     if args[1] == nil then

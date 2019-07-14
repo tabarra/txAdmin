@@ -194,6 +194,20 @@
 
                         <!-- Monitor Card -->
                         <div class="form-group row">
+                            <label for="frmMonitor-conservative" class="col-sm-3 col-form-label">Conservative Mode</label>
+                            <div class="col-sm-9">
+                                <label class="switch switch-label switch-pill switch-success fix-pill-form">
+                                    <input class="switch-input" type="checkbox" id="frmMonitor-conservative"
+                                        checked disabled>
+                                    <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Try not to restart the server when it is still working. <br>
+                                    This feature is still in beta
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label for="frmMonitor-timeout" class="col-sm-3 col-form-label">
                                 Timeout
                                 <span class="text-danger">*</span>

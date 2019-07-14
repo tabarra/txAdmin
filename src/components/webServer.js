@@ -58,6 +58,7 @@ module.exports = class WebServer {
 
     //================================================================
     async setupRoutes(){
+        //FIXME: reorganize routes
         //Auth routes
         this.app.get('/auth', async (req, res) => {
             let message = '';
@@ -115,6 +116,11 @@ module.exports = class WebServer {
         this.app.post('/adminManager/:action', getAuthFunc('web'), async (req, res) => {
             await webRoutes.adminManagerActions(res, req).catch((err) => {
                 this.handleRouteError(res, "[adminManagerActions] Route Internal Error", err);
+            });
+        });
+        this.app.post('/intercom/:scope', getAuthFunc('intercom'), async (req, res) => {
+            await webRoutes.intercom(res, req).catch((err) => {
+                this.handleRouteError(res, "[intercom] Route Internal Error", err);
             });
         });
 
@@ -195,7 +201,20 @@ module.exports = class WebServer {
  * @param {*} type
  */
 function getAuthFunc(type){
-    return (req, res, next) =>{
+    //Intercom auth function
+    const intercomAuth = (req, res, next) => {
+        if(
+            typeof req.body.txAdminToken !== 'undefined' &&
+            req.body.txAdminToken === globals.webServer.intercomToken
+        ){
+            next();
+        }else{
+            res.send({error: 'invalid token'})
+        }
+    }
+
+    //Normal auth function
+    const normalAuth = (req, res, next) =>{
         let follow = false;
         if(
             typeof req.session.auth !== 'undefined' &&
@@ -225,5 +244,16 @@ function getAuthFunc(type){
         }else{
             next();
         }
+    }
+
+    //Return the appropriate function
+    if(type === 'intercom'){
+        return intercomAuth;
+    }else if(type === 'web'){
+        return normalAuth;
+    }else if(type === 'api'){
+        return normalAuth;
+    }else{
+        return () => {throw new Error('Unknown auth type')};
     }
 }
