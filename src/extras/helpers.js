@@ -124,10 +124,15 @@ function getFXServerPort(rawCfgFile) {
 
     if(!matches.length) throw new Error("No endpoints found");
 
-    let allInterfacesValid = matches.every((match) => {
-        return match.interface === '0.0.0.0'
+    let validTCPEndpoint = matches.find((match) => {
+        return (match.type.toLowerCase() === 'tcp' && match.interface === '0.0.0.0')
     })
-    if(!allInterfacesValid) throw new Error("All endpoints MUST use interface 0.0.0.0");
+    if(!validTCPEndpoint) throw new Error("You MUST have a TCP endpoint with interface 0.0.0.0");
+
+    let validUDPEndpoint = matches.find((match) => {
+        return (match.type.toLowerCase() === 'udp')
+    })
+    if(!validUDPEndpoint) throw new Error("You MUST have at least one UDP endpoint");
 
     matches.forEach((m) => {
         if(m.port !== matches[0].port) throw new Error("All endpoints MUST have the same port")
