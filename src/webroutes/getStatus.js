@@ -55,16 +55,25 @@ function prepareServerStatus() {
     let statusText = (dataServer.online) ? 'ONLINE' : 'OFFLINE';
     let ping = (dataServer.online && typeof dataServer.ping !== 'undefined') ? dataServer.ping + 'ms' : '--';
     let players = (dataServer.online && typeof dataServer.players !== 'undefined') ? dataServer.players.length : '--';
+
     let logFileSize = (
         globals.fxRunner &&
         globals.fxRunner.consoleBuffer &&
         globals.fxRunner.consoleBuffer.logFileSize
     )? globals.fxRunner.consoleBuffer.logFileSize : '--';
+
+    let injectedResources = (
+        globals.fxRunner &&
+        globals.fxRunner.extResources &&
+        Array.isArray(globals.fxRunner.extResources)
+    )? globals.fxRunner.extResources.length : '--';
+
     let out = `<strong>Status: <span class="badge badge-${statusClass}">${statusText}</span> </strong><br>
                 <strong>Ping (localhost):</strong> ${ping}<br>
                 <strong>Players:</strong> ${players}<br>
                 <strong>Hitch Time:</strong> ${hitches}<br>
-                <strong>Log Size:</strong> ${logFileSize}`;
+                <strong>Log Size:</strong> ${logFileSize}<br>
+                <strong>Resources Injected:</strong> ${injectedResources}`;
 
     return out;
 }
