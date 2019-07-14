@@ -180,6 +180,12 @@ module.exports = class DiscordBot {
             return;
         }
 
+        if(!Array.isArray(jsonData)){
+            logError('Unable to load discord messages. (not an array, please read the documentation)', context);
+            this.messages = [];
+            return;
+        }
+
         let structureIntegrityTest = jsonData.some((x) =>{
             if(typeof x.trigger === 'undefined' || typeof x.trigger !== 'string') return true;
             if(typeof x.message === 'undefined' || typeof x.message !== 'string') return true;

@@ -99,15 +99,8 @@ module.exports = class FXRunner {
             return false;
         }
 
-        //Refreshing cache
-        try {
-            let reset = resourceInjector.resetCacheFolder(this.config.basePath);
-            this.extResources = resourceInjector.getResourcesList(this.config.basePath);
-            let inject = await resourceInjector.inject(this.config.basePath, this.extResources);
-        } catch (error) {
-            logError(`ResourceInjector Error: ${error.message}`, context);
-            return false;
-        }
+        //Refresh resource cache
+        await this.injectResources();
 
         //Detecting endpoint port
         try {
@@ -181,7 +174,7 @@ module.exports = class FXRunner {
         //Setting FXServer variables
         //NOTE: executing this only once might not be as reliable
         setTimeout(async () => {
-            this.setFXServerEnvVars();
+            this.setFXServerEnv();
         }, 3000);
 
     }//Final spawnServer()
@@ -189,9 +182,25 @@ module.exports = class FXRunner {
 
     //================================================================
     /**
+     * Inject the txAdmin resources
+     */
+    async injectResources(){
+        try {
+            let reset = resourceInjector.resetCacheFolder(this.config.basePath);
+            this.extResources = resourceInjector.getResourcesList(this.config.basePath);
+            let inject = await resourceInjector.inject(this.config.basePath, this.extResources);
+        } catch (error) {
+            logError(`ResourceInjector Error: ${error.message}`, context);
+            return false;
+        }
+    }
+
+
+    //================================================================
+    /**
      * Sets up FXServer scripting environment variables
      */
-    async setFXServerEnvVars(){
+    async setFXServerEnv(){
         log('Setting up FXServer scripting environment variables.', context);
 
         //Defaults

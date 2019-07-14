@@ -100,6 +100,17 @@ module.exports = async function action(res, req) {
         return sendAlertOutput(res, toResp);
 
     //==============================================
+    }else if(action == 'reinject_res'){
+        if(!ensurePermission('commands.resources', res, req)) return false;
+        await globals.fxRunner.injectResources();
+        let toResp = await globals.fxRunner.srvCmdBuffer('refresh');
+        setTimeout(async () => {
+            globals.fxRunner.setFXServerEnv();
+        }, 1500);
+        webUtils.appendLog(req, 'Re-Injected txAdmin resources', context);
+        return sendAlertOutput(res, toResp);
+
+    //==============================================
     }else{
         webUtils.appendLog(req, 'Unknown action!', context);
         return res.send({
