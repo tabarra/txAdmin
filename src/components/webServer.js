@@ -4,8 +4,9 @@ const httpServer  = require('http');
 const express = require('express');
 const session = require('express-session');
 const rateLimit = require("express-rate-limit");
-const cors = require('cors');
 const bodyParser = require('body-parser');
+const cors = require('cors');
+const nanoid = require('nanoid');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('../webroutes/webUtils');
 const webRoutes = require('../webroutes');
@@ -14,10 +15,14 @@ const context = 'WebServer';
 module.exports = class WebServer {
     constructor(config) {
         this.config = config;
+        this.intercomToken = nanoid();
         this.session = session({
-            secret: 'txAdmin'+bcrypt.genSaltSync(),
+            secret: 'txAdmin'+nanoid(),
+            name: `txAdmin.${globals.config.serverProfile}.sid`,
             resave: false,
-            saveUninitialized: false
+            saveUninitialized: false,
+            rolling: true,
+            maxAge: 24*60*60*1000 //one day
         });
         this.authLimiter = rateLimit({
             windowMs: this.config.limiterMinutes * 60 * 1000, // 15 minutes

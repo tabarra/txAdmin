@@ -194,15 +194,24 @@ module.exports = class FXRunner {
     async setFXServerEnvVars(){
         log('Setting up FXServer scripting environment variables.', context);
 
-        let delay = 75;
-        this.srvCmd(`sets txAdmin-version "${globals.version.current}"`);
-        await sleep(delay);
-        this.srvCmd(`set txAdmin-version "${globals.version.current}"`);
-        await sleep(delay);
-        this.srvCmd(`set txAdmin-clientCompatVersion "1.1.0"`);
-        this.extResources.forEach(async (res)=>{
-            await sleep(delay);
-            this.srvCmd(`ensure "${res}"`);
+        //Defaults
+        let toExec = [
+            `sets txAdmin-version "${globals.version.current}"`,
+            `set txAdmin-version "${globals.version.current}"`,
+            `set txAdmin-apiPort "${globals.webServer.config.port}"`,
+            `set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
+            `set txAdmin-clientCompatVersion "1.1.0"`
+        ]
+
+        //Commands
+        this.extResources.forEach((res)=>{
+            toExec.push(`ensure "${res}"`);
+        });
+
+        //Execute
+        toExec.forEach(async (cmd)=>{
+            this.srvCmd(cmd);
+            await sleep(75);
         });
     }
 

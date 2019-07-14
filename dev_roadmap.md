@@ -71,7 +71,11 @@ $ node src/index.js default
                 txAdmin_errors.log
             data/
                 players.json
-    extensions/ (?)
+    extensions/
+        txAdminClient/
+            resource/
+                __resource.lua
+                ...
 
 
 ## Global vs Individual Modules
