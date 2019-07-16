@@ -13,9 +13,9 @@ function refreshData() {
                 window.location = '/auth?logout';
                 return;
             }
-            $('#hostusage-cpu-bar').attr('aria-valuenow', data.host.cpu.pct).css('width', data.host.cpu.pct);
+            $('#hostusage-cpu-bar').attr('aria-valuenow', data.host.cpu.pct).css('width', data.host.cpu.pct+"%");
             $('#hostusage-cpu-text').html(data.host.cpu.text);
-            $('#hostusage-memory-bar').attr('aria-valuenow', data.host.memory.pct).css('width', data.host.memory.pct);
+            $('#hostusage-memory-bar').attr('aria-valuenow', data.host.memory.pct).css('width', data.host.memory.pct+"%");
             $('#hostusage-memory-text').html(data.host.memory.text);
             $("#status-card").html(data.status);
             $("#playerlist").html(data.players);
@@ -51,7 +51,7 @@ function showPlayer(id) {
     $("#modPlayerInfoIdentifiers").html('loading...');
     $("#modPlayerInfoButtons").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>');
 
-    $('#modPlayerInfo').modal('show')
+    $('#modPlayerInfo').modal('show');
     $.ajax({
         url: "/getPlayerData/" + id,
         type: "GET",
@@ -94,8 +94,8 @@ function messagePlayer(id) {
         // dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
-            notify.update('type', 'warning');
-            notify.update('message', data);
+            notify.update('type', data.type);
+            notify.update('message', data.message);
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
@@ -125,8 +125,8 @@ function kickPlayer(id) {
         // dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
-            notify.update('type', 'warning');
-            notify.update('message', data);
+            notify.update('type', data.type);
+            notify.update('message', data.message);
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
@@ -140,6 +140,7 @@ function kickPlayer(id) {
 
 $(document).ready(function() {
     $.notifyDefaults({
+        z_index: 2000,
         mouse_over: 'pause',
         placement: {
             align: 'center'
@@ -149,7 +150,7 @@ $(document).ready(function() {
         },
     });
 
-    
+
     // checkVersion();
     setInterval(refreshData, 1000);
 });

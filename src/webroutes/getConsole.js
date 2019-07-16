@@ -10,6 +10,17 @@ const context = 'WebServer:getConsole';
  * @param {object} req
  */
 module.exports = async function action(res, req) {
-    let out = await webUtils.renderMasterView('console', {headerTitle: 'Console'});
+    //Check permissions
+    if(!webUtils.checkPermission(req, 'console.view', context)){
+        let out = await webUtils.renderMasterView('generic', {message: `You don't have permission to view this page.`});
+        return res.send(out);
+    }
+
+    let renderData = {
+        headerTitle: 'Console',
+        disableWrite: (webUtils.checkPermission(req, 'console.write'))? 'autofocus' : 'disabled'
+    }
+
+    let out = await webUtils.renderMasterView('console', renderData);
     return res.send(out);
 };

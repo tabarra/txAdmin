@@ -1,0 +1,293 @@
+{{include("header")/}}
+
+
+<div class="text-center mb-4">
+    <h2>Admin Manager</h2>
+</div>
+
+
+<div class="row justify-content-md-center">
+    <div class="col-md-7">
+
+        <!-- Global Card -->
+        <div class="card card-accent-primary">
+            <div class="card-header float-left">
+                <span style="font-size: large">All Admins</span>
+                <button class="btn btn-sm btn-success float-right" type="button" id="btnAddAdmin">
+                    <i class="icon-plus"></i> Add
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive text-center">
+
+                    <table class="table table-responsive-md table-striped">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Permissions</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{foreach(options.admins)}}
+                            <tr>
+                                <td>{{@this.name}}</td>
+                                <td>{{@this.perms}}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"
+                                        onclick="getEditModal('{{@this.name}}')" {{@this.disableActions}}>
+                                        <i class="icon-pencil"></i> Edit
+                                    </button>
+                                    &nbsp;
+                                    <button class="btn btn-sm btn-outline-danger"
+                                        onclick="deleteAdmin('{{@this.name}}')" {{@this.disableActions}}>
+                                        <i class="icon-trash"></i> Delete
+                                    </button>
+                                </td>
+                            </tr>
+                            {{/foreach}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+{{include("footer")/}}
+
+
+<!-- Add Admin Modal -->
+<div class="modal fade" id="modAddAdmin" tabindex="-1" role="dialog" aria-labelledby="modAddAdminTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modAddAdminTitle">Add Admin</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group row">
+                    <label for="modAddAdmin-name" class="col-sm-3 col-form-label">
+                        Username
+                        <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="modAddAdmin-name" maxlength="16"
+                                autocomplete="off" required>
+                        </div>
+                        <span class="form-text text-muted">
+                            Must have between 6 and 16 characters and contain only letters and numbers. Case
+                            insensitive.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="modAddAdmin-password" class="col-sm-3 col-form-label">
+                        Password
+                        <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="modAddAdmin-password" maxlength="16"
+                                autocomplete="off" required>
+                        </div>
+                        <span class="form-text text-muted">
+                            Must have between 6 and 16 characters.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-3 col-form-label">
+                        Permissions
+                    </label>
+                    <div class="col-sm-9">
+                        {{foreach(options.allPermissions)}}
+                        <div class="form-check checkbox">
+                            <input class="form-check-input" id="modAddAdmin-check{{@key}}" type="checkbox" name="modAddAdmin-permissions[]"
+                                value="{{@this}}">
+                            <label class="form-check-label" for="modAddAdmin-check{{@key}}">{{@this}} </label>
+                        </div>
+                        {{/foreach}}
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer text-center">
+                <div class="mx-auto button-spacer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="modAddAdmin-save">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Admin Modal -->
+<div class="modal fade" id="modEditAdmin" tabindex="-1" role="dialog" aria-labelledby="modEditAdminTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modEditAdminTitle">Edit Admin</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="modEditAdmin-body"></div>
+            <div class="modal-footer text-center">
+                <div class="mx-auto button-spacer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success" id="modEditAdmin-save">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    //============================================== Show Add Modal
+    $('#btnAddAdmin').click(function () {
+        $('#modAddAdmin').modal('show');
+    })
+
+
+    //============================================== Delete Admin
+    function deleteAdmin(name){
+        if(!window.confirm('Are you sure you want to delete "' + name + '"?')){
+            return;
+        }
+
+        var notify = $.notify({ message: '<p class="text-center">Deleting...</p>' }, {});
+        $.ajax({
+            type: "POST",
+            url: '/adminManager/delete',
+            timeout: 2000,
+            data: {name: name},
+            success: function (data) {
+                if(data.message == 'refresh'){
+                    window.location = '/adminManager';
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                alert("Error processing request.");
+            }
+        });
+    }
+
+
+    //============================================== Show Edit Modal
+    function getEditModal(name){
+        $.ajax({
+            type: "POST",
+            url: '/adminManager/getModal',
+            timeout: 2000,
+            data: {name: name},
+            success: function (data) {
+                $('#modEditAdmin-body').html(data);
+                $('#modEditAdmin').modal('show');
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                alert("Error getting user information.");
+            }
+        });
+    }
+
+
+    //============================================== Edit Admin
+    $('#modEditAdmin-save').click(function () {
+        var permissions = new Array();
+        $.each($("input[name='modEditAdmin-permissions[]']:checked"), function() {
+            permissions.push($(this).val());
+        });
+        if(!permissions.length) permissions = false;
+        let data = {
+            name: $('#modEditAdmin-name').val().trim(),
+            password: $('#modEditAdmin-password').val().trim(),
+            permissions: permissions
+        }
+        if (!data.name.length) {
+            var notify = $.notify({ message: 'Unnable to detect username.' }, { type: 'warning' });
+            return;
+        }
+        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+
+        $.ajax({
+            type: "POST",
+            url: '/adminManager/edit',
+            timeout: 2000,
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+                if(data.message == 'refresh'){
+                    window.location = '/adminManager';
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    });
+
+
+    //============================================== Add Admin
+    $('#modAddAdmin-save').click(function () {
+        var permissions = new Array();
+        $.each($("input[name='modAddAdmin-permissions[]']:checked"), function() {
+            permissions.push($(this).val());
+        });
+        if(!permissions.length) permissions = false;
+        let data = {
+            name: $('#modAddAdmin-name').val().trim(),
+            password: $('#modAddAdmin-password').val().trim(),
+            permissions: permissions
+        }
+        if (!data.name.length || !data.password.length) {
+            var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
+            return;
+        }
+        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+
+        $.ajax({
+            type: "POST",
+            url: '/adminManager/add',
+            timeout: 2000,
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+                if(data.message == 'refresh'){
+                    window.location = '/adminManager';
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    });
+</script>

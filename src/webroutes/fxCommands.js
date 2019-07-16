@@ -24,13 +24,17 @@ module.exports = async function action(res, req) {
     let action = req.body.action;
     let parameter = req.body.parameter;
 
+    //==============================================
     if(action == 'admin_broadcast'){
+        if(!ensurePermission('commands.message', res, req)) return false;
         let cmd = `txaBroadcast "${escape(parameter)}"`;
         webUtils.appendLog(req, cmd, context);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
+    //==============================================
     }else if(action == 'admin_dm'){
+        if(!ensurePermission('commands.message', res, req)) return false;
         if(!Array.isArray(parameter) || parameter.length !== 2){
             return sendAlertOutput(res, 'Invalid request');
         }
@@ -39,52 +43,80 @@ module.exports = async function action(res, req) {
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
+    //==============================================
     }else if(action == 'kick_player'){
+        if(!ensurePermission('commands.kick', res, req)) return false;
         let cmd = `txaKickID ${parameter}`;
         webUtils.appendLog(req, cmd, context);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
+    //==============================================
     }else if(action == 'kick_all'){
+        if(!ensurePermission('commands.kick', res, req)) return false;
         let cmd = `txaKickAll "kicked via txAdmin web panel"`;
         webUtils.appendLog(req, cmd, context);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
+    //==============================================
     }else if(action == 'restart_res'){
+        if(!ensurePermission('commands.resources', res, req)) return false;
         let cmd = `restart ${parameter}`;
         webUtils.appendLog(req, cmd, context);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
+    //==============================================
     }else if(action == 'start_res'){
+        if(!ensurePermission('commands.resources', res, req)) return false;
         let cmd = `start ${parameter}`;
         webUtils.appendLog(req, cmd, context);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
+    //==============================================
     }else if(action == 'ensure_res'){
+        if(!ensurePermission('commands.resources', res, req)) return false;
         let cmd = `ensure ${parameter}`;
         webUtils.appendLog(req, cmd, context);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
+    //==============================================
     }else if(action == 'stop_res'){
+        if(!ensurePermission('commands.resources', res, req)) return false;
         let cmd = `stop ${parameter}`;
         webUtils.appendLog(req, cmd, context);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
+    //==============================================
     }else if(action == 'refresh_res'){
+        if(!ensurePermission('commands.resources', res, req)) return false;
         let cmd = `refresh`;
         webUtils.appendLog(req, cmd, context);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
+    //==============================================
+    }else if(action == 'reinject_res'){
+        if(!ensurePermission('commands.resources', res, req)) return false;
+        await globals.fxRunner.injectResources();
+        let toResp = await globals.fxRunner.srvCmdBuffer('refresh');
+        setTimeout(async () => {
+            globals.fxRunner.setFXServerEnv();
+        }, 1500);
+        webUtils.appendLog(req, 'Re-Injected txAdmin resources', context);
+        return sendAlertOutput(res, toResp);
+
+    //==============================================
     }else{
         webUtils.appendLog(req, 'Unknown action!', context);
-        return sendAlertOutput(res, 'Unknown action!');
-
+        return res.send({
+            type: 'danger',
+            message: `Unknown Action.`
+        });
     }
 };
 
@@ -93,26 +125,33 @@ module.exports = async function action(res, req) {
 //================================================================
 /**
  * Wrapper function to render send the output to be shown inside an alert
- * @param {object} res 
- * @param {string} msg 
+ * @param {object} res
+ * @param {string} msg
  */
 async function sendAlertOutput(res, toResp){
     toResp = (toResp.length)? xss(toResp) : 'no output';
-    return res.send(`<b>Output:<br> <pre>${toResp}</pre>`);
-} 
+    return res.send({
+        type: 'warning',
+        message: `<b>Output:<br> <pre>${toResp}</pre>`
+    });
+}
 
 
 //================================================================
 /**
- * Wrapper function to render the generic view with the output
- * @param {object} res 
- * @param {string} msg 
+ * Wrapper function to check permission and give output if denied
+ * @param {string} perm
+ * @param {object} res
+ * @param {object} req
  */
-async function sendPageOutput(res, msg){
-    let data = {
-        headerTitle: 'Output', 
-        message: `<pre>${xss(msg)}</pre>`
+function ensurePermission(perm, res, req){
+    if(webUtils.checkPermission(req, perm, context)){
+        return true;
+    }else{
+        res.send({
+            type: 'danger',
+            message: `You don't have permission to execute this action.`
+        });
+        return false;
     }
-    let out = await webUtils.renderMasterView('generic', data);
-    return res.send(out);
-} 
+}

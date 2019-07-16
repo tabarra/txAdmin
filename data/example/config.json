@@ -3,7 +3,6 @@
         "verbose": false,
         "publicIP": "change-me",
         "serverName": "change-me",
-        "fxServerPort": 30120
     },
     "logger": {},
     "monitor": {
@@ -13,24 +12,22 @@
             "schedule": ["05:00", "13:00"]
         }
     },
-    "authenticator": {
-        "adminsFilePath": "data/admins.json"
-    },
+    "authenticator": {},
     "webServer": {
         "port": 40120
     },
     "discordBot": {
         "enabled": false,
         "token": "change-me",
-        "messagesFilePath": "data/messages.json",
         "statusCommand": "/status"
     },
     "fxRunner": {
-        "buildPath": "C:/Users/Admin/Documents/fxserver_builds/1265",
+        "buildPath": "C:/Users/Admin/Documents/fxserver_builds/1380",
         "basePath": "C:/Users/Admin/Desktop/server01",
         "cfgPath": "C:/Users/Admin/Desktop/server01/server.cfg",
         "setPriority": false,
         "onesync": false,
-        "autostart": false
+        "autostart": false,
+        "quiet": false
     }
 }

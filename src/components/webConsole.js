@@ -28,7 +28,7 @@ module.exports = class webConsole {
     //================================================================
     /**
      * Starts the Socket.IO server
-     * @param {object} httpServer 
+     * @param {object} httpServer
      */
     startSocket(httpServer){
         logOk('::Started', context);
@@ -38,7 +38,12 @@ module.exports = class webConsole {
         this.io.use(sharedsession(globals.webServer.session));
         this.io.use(this.authNewSession.bind(this));
         this.io.on('connection', (socket) => {
-            log(`Connected: ${socket.id}`, contextSocket);
+            try {
+                log(`Connected: ${socket.handshake.session.auth.username} from ${socket.handshake.address}`, contextSocket);
+            } catch (error) {
+                log(`Connected: unknown`, contextSocket);
+            }
+
             socket.on('disconnect', (reason) => {
                 log(`Client disconnected with reason: ${reason}`, contextSocket);
             });
@@ -46,6 +51,12 @@ module.exports = class webConsole {
                 log(`Socket error with message: ${error.message}`, contextSocket);
             });
             socket.on('consoleCommand', this.handleSocketMessages.bind(this, socket));
+
+            try {
+                socket.emit('consoleData', xss.process(globals.fxRunner.consoleBuffer.webConsoleBuffer));
+            } catch (error) {
+                if(globals.config.verbose) logWarn(`Error sending sending old buffer: ${error.message}`, context);
+            }
         });
     }
 
@@ -53,11 +64,12 @@ module.exports = class webConsole {
     //================================================================
     /**
      * Authenticates a new session to make sure the credentials are valid and set the admin variable.
-     * @param {object} socket 
-     * @param {function} next 
+     * @param {object} socket
+     * @param {function} next
      */
     authNewSession(socket, next){
-        let follow = false;
+        let isValidAuth = false;
+        let isValidPerm = false;
         if(
             typeof socket.handshake.session.auth !== 'undefined' &&
             typeof socket.handshake.session.auth.username !== 'undefined' &&
@@ -70,17 +82,18 @@ module.exports = class webConsole {
                     password: socket.handshake.session.auth.password,
                     permissions: admin.permissions
                 };
-                follow = true;
+                isValidAuth = true;
+                isValidPerm = (admin.permissions.includes('all') || admin.permissions.includes('console.view'));
             }
         }
 
-        if(!follow){
+        if(isValidAuth && isValidPerm){
+            next();
+        }else{
             socket.handshake.session.destroy(); //a bit redundant but it wont hurt anyone
             socket.disconnect(0);
-            if(globals.config.verbose) logWarn('Auth error when creating session', context);
-            next(new Error('Authentication Error'));
-        }else{
-            next();
+            if(globals.config.verbose) logWarn('Auth denied when creating session', context);
+            next(new Error('Authentication Denied'));
         }
     };
 
@@ -88,7 +101,7 @@ module.exports = class webConsole {
     //================================================================
     /**
      * Authenticates a new session to make sure the credentials are valid and set the admin variable.
-     * @param {*} socket 
+     * @param {*} socket
      * @returns {boolean}
      */
     checkSessionAuth(socket){
@@ -116,7 +129,7 @@ module.exports = class webConsole {
     //================================================================
     /**
      * Add command to buffer
-     * @param {*} data 
+     * @param {*} data
      */
     bufferCommand(data){
         this.dataBuffer += `\n<mark>${data}</mark>\n`;
@@ -125,7 +138,7 @@ module.exports = class webConsole {
     //================================================================
     /**
      * Adds data to the buffer
-     * @param {string} data 
+     * @param {string} data
      */
     buffer(data){
         this.dataBuffer += data;
@@ -135,7 +148,8 @@ module.exports = class webConsole {
     //================================================================
     /**
      * Flushes the data buffer
-     * @param {string} data 
+     * NOTE: this will also send data to users that no longer have the permission console.view
+     * @param {string} data
      */
     flushBuffer(){
         if(!this.dataBuffer.length) return;
@@ -153,9 +167,10 @@ module.exports = class webConsole {
     /**
      * Handle incoming messages.
      * Sends a command received to fxChild's stdin, logs it and broadcast the command to all other socket.io clients
-     * @param {string} cmd 
+     * @param {string} cmd
      */
     handleSocketMessages(socket, msg){
+        //Checking session
         let authCheck = this.checkSessionAuth(socket);
         if(!authCheck){
             socket.emit('logout');
@@ -163,7 +178,19 @@ module.exports = class webConsole {
             socket.disconnect(0);
             return;
         }
-        
+
+        //Check permissions
+        if(
+            !socket.handshake.session.auth.permissions.includes('all') &&
+            !socket.handshake.session.auth.permissions.includes('console.write')
+        ){
+            let errorMessage = `Permission 'console.write' denied.`;
+            if(globals.config.verbose) logWarn(`[${socket.handshake.address}][${socket.handshake.session.auth.username}] ${errorMessage}`, context);
+            socket.emit('consoleData', `\n<mark>${errorMessage}</mark>\n`);
+            return;
+        }
+
+        //Executing command
         log(`Executing: '${msg}'`, contextSocket);
         globals.fxRunner.srvCmd(msg);
         globals.logger.append(`[${socket.handshake.address}][${socket.handshake.session.auth.username}] ${msg}`);

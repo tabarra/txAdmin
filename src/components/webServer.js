@@ -4,8 +4,9 @@ const httpServer  = require('http');
 const express = require('express');
 const session = require('express-session');
 const rateLimit = require("express-rate-limit");
-const cors = require('cors');
 const bodyParser = require('body-parser');
+const cors = require('cors');
+const nanoid = require('nanoid');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('../webroutes/webUtils');
 const webRoutes = require('../webroutes');
@@ -14,17 +15,21 @@ const context = 'WebServer';
 module.exports = class WebServer {
     constructor(config) {
         this.config = config;
+        this.intercomToken = nanoid();
         this.session = session({
-            secret: 'txAdmin'+bcrypt.genSaltSync(),
+            secret: 'txAdmin'+nanoid(),
+            name: `txAdmin.${globals.config.serverProfile}.sid`,
             resave: false,
-            saveUninitialized: false
+            saveUninitialized: false,
+            rolling: true,
+            maxAge: 24*60*60*1000 //one day
         });
         this.authLimiter = rateLimit({
             windowMs: this.config.limiterMinutes * 60 * 1000, // 15 minutes
             max: this.config.limiterAttempts, // limit each IP to 5 requests per 15 minutes
             message: `Too many login attempts, enjoy your ${this.config.limiterMinutes} minutes of cooldown.`
         });
-        
+
         this.app = express();
         this.app.use(cors());
         this.app.use(this.session);
@@ -50,9 +55,10 @@ module.exports = class WebServer {
         }
     }
 
-    
+
     //================================================================
     async setupRoutes(){
+        //FIXME: reorganize routes
         //Auth routes
         this.app.get('/auth', async (req, res) => {
             let message = '';
@@ -78,7 +84,7 @@ module.exports = class WebServer {
                 return res.send(out);
             }
             req.session.auth = {
-                username: req.body.username,
+                username: admin.name,
                 password: req.body.password,
                 permissions: admin.permissions
             };
@@ -100,6 +106,21 @@ module.exports = class WebServer {
         this.app.get('/console', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getConsole(res, req).catch((err) => {
                 this.handleRouteError(res, "[getConsole] Route Internal Error", err);
+            });
+        });
+        this.app.post('/saveSettings/:scope', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.saveSettings(res, req).catch((err) => {
+                this.handleRouteError(res, "[saveSettings] Route Internal Error", err);
+            });
+        });
+        this.app.post('/adminManager/:action', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.adminManagerActions(res, req).catch((err) => {
+                this.handleRouteError(res, "[adminManagerActions] Route Internal Error", err);
+            });
+        });
+        this.app.post('/intercom/:scope', getAuthFunc('intercom'), async (req, res) => {
+            await webRoutes.intercom(res, req).catch((err) => {
+                this.handleRouteError(res, "[intercom] Route Internal Error", err);
             });
         });
 
@@ -124,11 +145,26 @@ module.exports = class WebServer {
                 this.handleRouteError(res, "[getPlayerData] Route Internal Error", err);
             });
         });
-        
+        this.app.get('/downloadLog', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.downloadLog(res, req).catch((err) => {
+                this.handleRouteError(res, "[downloadLog] Route Internal Error", err);
+            });
+        });
+
         //Index & generic
         this.app.get('/', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getDashboard(res, req).catch((err) => {
                 this.handleRouteError(res, "[getDashboard] Route Internal Error", err);
+            });
+        });
+        this.app.get('/settings', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.getSettings(res, req).catch((err) => {
+                this.handleRouteError(res, "[getSettings] Route Internal Error", err);
+            });
+        });
+        this.app.get('/adminManager', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.getAdminManager(res, req).catch((err) => {
+                this.handleRouteError(res, "[getAdminManager] Route Internal Error", err);
             });
         });
         this.app.get('/addExtension', getAuthFunc('web'), async (req, res) => {
@@ -147,10 +183,12 @@ module.exports = class WebServer {
 
     //================================================================
     handleRouteError(res, desc, error){
-        logError(desc, `${context}:route`);
-        dir(error)
-        res.status(500);
-        res.send(desc);
+        try {
+            logError(desc, `${context}:route`);
+            dir(error)
+            res.status(500);
+            res.send(desc);
+        } catch (error) {}
     }
 
 } //Fim WebServer()
@@ -160,10 +198,23 @@ module.exports = class WebServer {
 //================================================================
 /**
  * Returns a session authenticator function
- * @param {*} type 
+ * @param {*} type
  */
 function getAuthFunc(type){
-    return (req, res, next) =>{
+    //Intercom auth function
+    const intercomAuth = (req, res, next) => {
+        if(
+            typeof req.body.txAdminToken !== 'undefined' &&
+            req.body.txAdminToken === globals.webServer.intercomToken
+        ){
+            next();
+        }else{
+            res.send({error: 'invalid token'})
+        }
+    }
+
+    //Normal auth function
+    const normalAuth = (req, res, next) =>{
         let follow = false;
         if(
             typeof req.session.auth !== 'undefined' &&
@@ -179,10 +230,10 @@ function getAuthFunc(type){
                 };
                 follow = true;
             }
-        }  
+        }
 
         if(!follow){
-            if(globals.config.verbose) logWarn('Invalid session auth.', context);
+            if(globals.config.verbose) logWarn(`Invalid session auth: ${req.originalUrl}`, context);
             if(type === 'web'){
                 return res.redirect('/auth?logout');
             }else if(type === 'api'){
@@ -193,5 +244,16 @@ function getAuthFunc(type){
         }else{
             next();
         }
+    }
+
+    //Return the appropriate function
+    if(type === 'intercom'){
+        return intercomAuth;
+    }else if(type === 'web'){
+        return normalAuth;
+    }else if(type === 'api'){
+        return normalAuth;
+    }else{
+        return () => {throw new Error('Unknown auth type')};
     }
 }

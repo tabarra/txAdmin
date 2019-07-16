@@ -2,9 +2,11 @@
 const { spawn } = require('child_process');
 const os = require('os');
 const pidtree = require('pidtree');
-const StreamSnitch = require('stream-snitch');
 const sleep = require('util').promisify(setTimeout);
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const ConsoleBuffer = require('../extras/consoleBuffer');
+const resourceInjector = require('../extras/resourceInjector');
+const helpers = require('../extras/helpers');
 const context = 'FXRunner';
 
 
@@ -12,20 +14,32 @@ module.exports = class FXRunner {
     constructor(config) {
         logOk('::Started', context);
         this.config = config;
-        this.fxChild = null;
         this.spawnVariables = null;
-        this.outData = '';
-        this.enableBuffer = false;
+        this.fxChild = null;
         this.tsChildStarted = null;
+        this.fxServerPort = null;
+        this.extResources = [];
+        this.consoleBuffer = new ConsoleBuffer(this.config.logPath, 10);
         this.setupVariables();
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
         if(config.autostart){
             setTimeout(() => {
                 this.spawnServer();
+                globals.discordBot.sendAnnouncement(`Starting server **${globals.config.serverName}**.`);
             }, config.autostartDelay * 1000);
         }
     }
+
+
+    //================================================================
+    /**
+     * Refresh fxRunner configurations
+     */
+    refreshConfig(){
+        this.config = globals.configVault.getScoped('fxRunner');
+        this.setupVariables();
+    }//Final refreshConfig()
 
 
     //================================================================
@@ -51,31 +65,64 @@ module.exports = class FXRunner {
 
     }//Final setupVariables()
 
-    
+
     //================================================================
     /**
      * Spawns the FXServer and sets up all the event handlers
      */
     async spawnServer(){
+        //FIXME: remove this line
+        globals.resourceWrongVersion = null;
+
         logWarn("Starting FXServer", context);
         //Sanity Check
         if(
-            this.spawnVariables == null || 
-            typeof this.spawnVariables.shell == 'undefined' || 
+            this.spawnVariables == null ||
+            typeof this.spawnVariables.shell == 'undefined' ||
             typeof this.spawnVariables.cmdArgs == 'undefined'
         ){
             logError('this.spawnVariables is not set.', context);
             return false;
         }
-        if(this.fxChild !== null){
-            logError('this.fxChild is not null.', context);
+        //If the any FXServer configuration is missing
+        if(
+            this.config.buildPath === null ||
+            this.config.basePath === null ||
+            this.config.cfgPath === null
+        ){
+            logError('Cannot start the server with missing configuration (buildPath || basePath || cfgPath).', context);
             return false;
         }
+        //If the server is already alive
+        if(this.fxChild !== null){
+            logError('The server is already started.', context);
+            return false;
+        }
+
+        //Refresh resource cache
+        await this.injectResources();
+
+        //Detecting endpoint port
+        try {
+            let rawCfgFile = helpers.getCFGFile(this.config.cfgPath, this.config.basePath);
+            this.fxServerPort = helpers.getFXServerPort(rawCfgFile);
+        } catch (error) {
+            logError(`FXServer config error: ${error.message}`, context);
+            //the IF below is only a way to disable the endpoint check
+            if(globals.config.forceFXServerPort){
+                this.fxServerPort = globals.config.forceFXServerPort;
+            }else{
+                return false;
+            }
+        }
+
+        //Sending header to the console buffer
+        this.consoleBuffer.writeHeader();
 
         //Starting server
         try {
             this.fxChild = spawn(
-                this.spawnVariables.shell, 
+                this.spawnVariables.shell,
                 this.spawnVariables.cmdArgs,
                 {cwd: this.config.basePath}
             );
@@ -86,36 +133,15 @@ module.exports = class FXRunner {
             dir(error);
             process.exit(0);
         }
-        
+
         //Setting up stream handlers
-        let hitchStreamProcessor = new StreamSnitch(
-            /hitch warning: frame time of (\d{3,5}) milliseconds/g,
-            (m) => {
-                try {
-                    globals.monitor.processFXServerHitch(m[1])
-                }catch(e){}
-            }
-        );
-        //FIXME: temp handler
-        let detectMissingResource = new StreamSnitch(
-            /Couldn't find resource txAdminClient./g,
-            (m) => {
-                try {
-                    globals.resourceNotFound = true;
-                }catch(e){}
-            }
-        );
-        //NOTE: e se ao invés de pipe, eu der só um console log pra evitar os SIGINT?
         this.fxChild.stdout.setEncoding('utf8');
-        if(!this.config.quiet) this.fxChild.stdout.pipe(process.stdout, {end: false});
-        this.fxChild.stdout.pipe(hitchStreamProcessor);
-        this.fxChild.stdout.pipe(detectMissingResource);
-        //NOTE: might disable the stdin pipe in the future, you should use the live console
-        process.stdin.pipe(this.fxChild.stdin);
+        //if(!this.config.quiet) this.fxChild.stdout.pipe(process.stdout, {end: false});
+        //process.stdin.pipe(this.fxChild.stdin);
 
         //Setting up event handlers
         this.fxChild.on('close', function (code, signal) {
-            logWarn('>> fxChild close event: ' + `code ${code} and signal ${signal}`, context);
+            logWarn(`>> fxChild close event: code ${code} and signal ${signal}`, context);
         });
         this.fxChild.on('disconnect', function () {
             logWarn('>> fxChild disconnect event', context);
@@ -125,21 +151,20 @@ module.exports = class FXRunner {
             dir(err)
         });
         this.fxChild.on('exit', function (code, signal) {
-            logWarn('>> fxChild process exited with ' + `code ${code} and signal ${signal}`, context);
+            logWarn(`>> fxChild exit event: code ${code} and signal ${signal}`, context);
         });
 
         this.fxChild.stdin.on('error', (data) => {});
         this.fxChild.stdin.on('data', (data) => {});
 
         this.fxChild.stdout.on('error', (data) => {});
-        this.fxChild.stdout.on('data', this.fxserverOutputHandler.bind(this));
+        this.fxChild.stdout.on('data', this.consoleBuffer.write.bind(this.consoleBuffer));
 
         this.fxChild.stderr.on('error', (data) => {});
         this.fxChild.stderr.on('data', (data) => {
             logWarn(`\n========\n${data}\n========`, `${context}:stderr:data`);
         });
 
-        hitchStreamProcessor.on('error', (data) => {});
 
         //Setting up process priority
         setTimeout(() => {
@@ -149,27 +174,54 @@ module.exports = class FXRunner {
         //Setting FXServer variables
         //NOTE: executing this only once might not be as reliable
         setTimeout(async () => {
-            this.setFXServerEnvVars();
+            this.setFXServerEnv();
         }, 3000);
-        
+
     }//Final spawnServer()
+
+
+    //================================================================
+    /**
+     * Inject the txAdmin resources
+     */
+    async injectResources(){
+        try {
+            let reset = resourceInjector.resetCacheFolder(this.config.basePath);
+            this.extResources = resourceInjector.getResourcesList(this.config.basePath);
+            let inject = await resourceInjector.inject(this.config.basePath, this.extResources);
+        } catch (error) {
+            logError(`ResourceInjector Error: ${error.message}`, context);
+            return false;
+        }
+    }
 
 
     //================================================================
     /**
      * Sets up FXServer scripting environment variables
      */
-    async setFXServerEnvVars(){
+    async setFXServerEnv(){
         log('Setting up FXServer scripting environment variables.', context);
-        
-        let delay = 150;
-        this.srvCmd(`sets txAdmin-version ${globals.version.current}`); 
-        await sleep(delay);
-        this.srvCmd(`set txAdmin-version ${globals.version.current}`);
-        await sleep(delay);
-        this.srvCmd(`set txAdmin-clientCompatVersion "1.0.0"`);
-        await sleep(delay);
-        this.srvCmd(`ensure txAdminClient`);
+
+        //Defaults
+        let toExec = [
+            `sets txAdmin-version "${globals.version.current}"`,
+            `set txAdmin-version "${globals.version.current}"`,
+            `set txAdmin-apiPort "${globals.webServer.config.port}"`,
+            `set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
+            `set txAdmin-clientCompatVersion "1.1.0"`
+        ]
+
+        //Commands
+        this.extResources.forEach((res)=>{
+            toExec.push(`ensure "${res}"`);
+        });
+
+        //Execute
+        toExec.forEach(async (cmd)=>{
+            this.srvCmd(cmd);
+            await sleep(75);
+        });
     }
 
 
@@ -222,7 +274,7 @@ module.exports = class FXRunner {
         await sleep(750);
         this.spawnServer();
     }
-    
+
 
     //================================================================
     /**
@@ -240,15 +292,16 @@ module.exports = class FXRunner {
             return false;
         }
     }
-    
+
 
     //================================================================
     /**
      * Pipe a string into FXServer's stdin (aka executes a cfx's command)
-     * @param {string} command 
+     * @param {string} command
      */
     srvCmd(command){
         if(typeof command !== 'string') throw new Error('Expected String!');
+        if(this.fxChild === null) return false;
         try {
             let success = this.fxChild.stdin.write(command + "\n");
             globals.webConsole.bufferCommand(command);
@@ -261,7 +314,7 @@ module.exports = class FXRunner {
             return false;
         }
     }
-    
+
 
     //================================================================
     /**
@@ -272,30 +325,15 @@ module.exports = class FXRunner {
      */
     async srvCmdBuffer(command, bufferTime){
         if(typeof command !== 'string') throw new Error('Expected String!');
+        if(this.fxChild === null) return false;
         bufferTime = (bufferTime !== undefined)? bufferTime : 1500;
-        this.outData = '';
-        this.enableBuffer = true;
+        this.consoleBuffer.cmdBuffer = '';
+        this.consoleBuffer.enableCmdBuffer = true;
         let result = this.srvCmd(command);
         if(!result) return false;
         await sleep(bufferTime);
-        this.enableBuffer = false;
-        return this.outData;
+        this.consoleBuffer.enableCmdBuffer = false;
+        return this.consoleBuffer.cmdBuffer;
     }
-
-
-    //================================================================
-    /**
-     * FXServers output handler
-     * @param {string} data
-     */
-    async fxserverOutputHandler(data){
-        // const chalk = require('chalk');
-        // process.stdout.write(chalk.bold.red('|'));
-        // process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F]/g, ""));
-        data = data.toString();
-        globals.webConsole.buffer(data);
-        if(this.enableBuffer) this.outData += data;
-    }
-
 
 } //Fim FXRunner()

@@ -1,6 +1,7 @@
 //Requires
 const os = require('os');
 const xss = require("xss");
+const clone = require('clone');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'WebServer:getStatus';
 
@@ -25,8 +26,8 @@ module.exports = async function action(res, req) {
  * Returns the fxserver's data
  */
 function prepareServerStatus() {
-    let dataServer = {...globals.monitor.statusServer};
-    let fxServerHitches = [...globals.monitor.fxServerHitches];
+    let dataServer = clone(globals.monitor.statusServer);
+    let fxServerHitches = clone(globals.monitor.fxServerHitches);
 
     //processing hitches
     let now = (Date.now() / 1000).toFixed();
@@ -54,10 +55,25 @@ function prepareServerStatus() {
     let statusText = (dataServer.online) ? 'ONLINE' : 'OFFLINE';
     let ping = (dataServer.online && typeof dataServer.ping !== 'undefined') ? dataServer.ping + 'ms' : '--';
     let players = (dataServer.online && typeof dataServer.players !== 'undefined') ? dataServer.players.length : '--';
+
+    let logFileSize = (
+        globals.fxRunner &&
+        globals.fxRunner.consoleBuffer &&
+        globals.fxRunner.consoleBuffer.logFileSize
+    )? globals.fxRunner.consoleBuffer.logFileSize : '--';
+
+    let injectedResources = (
+        globals.fxRunner &&
+        globals.fxRunner.extResources &&
+        Array.isArray(globals.fxRunner.extResources)
+    )? globals.fxRunner.extResources.length : '--';
+
     let out = `<strong>Status: <span class="badge badge-${statusClass}">${statusText}</span> </strong><br>
                 <strong>Ping (localhost):</strong> ${ping}<br>
                 <strong>Players:</strong> ${players}<br>
-                <strong>Hitch Time:</strong> ${hitches}`;
+                <strong>Hitch Time:</strong> ${hitches}<br>
+                <strong>Log Size:</strong> ${logFileSize}<br>
+                <strong>Resources Injected:</strong> ${injectedResources}`;
 
     return out;
 }
@@ -116,7 +132,7 @@ function prepareHostData() {
  * Returns the html playerlist
  */
 function preparePlayersData() {
-    let dataServer = {...globals.monitor.statusServer};
+    let dataServer = clone(globals.monitor.statusServer);
 
     if (!dataServer.players.length) return '<strong>No players Online.</strong>';
 
@@ -141,7 +157,7 @@ function preparePlayersData() {
                 </div>`;
 
     });
-    
+
     return out;
 }
 
@@ -151,7 +167,7 @@ function preparePlayersData() {
  * Returns the page metadata (title and icon)
  */
 function prepareMetaData() {
-    let dataServer = {...globals.monitor.statusServer};
+    let dataServer = clone(globals.monitor.statusServer);
     return {
         favicon: (dataServer.online) ? 'favicon_on' : 'favicon_off',
         title: (dataServer.online) ? `(${dataServer.players.length}) txAdmin` : 'txAdmin'

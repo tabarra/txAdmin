@@ -21,11 +21,11 @@
                 <div class="form-group mx-sm-3 mb-2">
                     <label for="cmdInput">cfx &#x3E;&nbsp;</label>
                     <input type="text" class="form-control form-control-sm" id="cmdInput" style="width: 32rem;"
-                        placeholder="Press enter to send" autocomplete="off" autofocus>
+                        placeholder="Press enter to send" autocomplete="off" {{disableWrite}}>
                 </div>
-                <button type="button" id="clearConsole" class="btn btn-outline-info btn-sm mb-2">Clear Console</button>
-                <button type="button" id="toggleAutoScroll" class="btn btn-outline-info btn-sm mb-2">Disable
-                    Scroll</button>
+                <button type="button" id="clearConsole" class="btn btn-outline-dark btn-sm mb-2">Clear Console</button>
+                <button type="button" id="toggleAutoScroll" class="btn btn-outline-dark btn-sm mb-2">Disable Scroll</button>
+                <a href="/downloadLog" target="_blank" class="btn btn-outline-dark btn-sm mb-2">Download Log</a>
             </div>
         </form>
     </div>

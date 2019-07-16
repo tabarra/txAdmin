@@ -1,7 +1,9 @@
 ## Custom:
 cache/*
 data/*
-!data/*-template.json
+!data/example/
+extensions/*
+!extensions/txAdminClient/
 *.ignore.*
 
 ## Github's default node gitignore

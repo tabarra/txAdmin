@@ -11,8 +11,21 @@
     background-color: #2b3136;
 }
 
+.tab-content{
+    border: 0;
+}
+
+.fix-pill-form {
+    margin-top: 0.3rem;
+    margin-bottom: 0;
+}
+
 .button-spacer button, .button-spacer a {
     margin: 0.2rem;
+}
+
+option:disabled {
+    background-color: #f0f3f5;
 }
 
 /* Playerlist */

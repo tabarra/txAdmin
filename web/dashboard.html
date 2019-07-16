@@ -2,17 +2,17 @@
 
 
 <div class="text-center mb-4">
-    <h2>Server Dashboard</h2>
+    <h2>{{serverName}} Dashboard</h2>
 </div>
 
 <!-- FIXME: temp missing resource detector -->
-{{if(options.resNotFound)}}
+{{if(options.errorMessage)}}
 <div class="row justify-content-md-center">
     <div class="col-md-6 ">
         <div class="alert alert-danger border-danger  text-center" role="alert">
-            <strong>Resource txAdminClient not found.</strong> <br>
-            To use the kick and send message capabilities of txAdmin you must copy the txAdminClient helper resource to your server's resource folder. <br>
-            The resource can be downloaded <a href="/txAdminClient.zip" class="alert-link">here</a>.
+            <strong>Incompatible txAdminClient version.</strong> <br>
+            Please delete the txAdminClient resource from your server. <br>
+            Starting from v1.6.0 all <strong>txAdmin</strong> resources are injected automatically.
         </div>
     </div>
 </div>
@@ -25,12 +25,12 @@
         <div class="card card-accent-danger" style="min-height: 160px;">
             <div class="card-header font-weight-bold">FXServer Control:</div>
             <div class="card-body text-center align-middle">
-                <button onclick="controlAction('start')" class="btn btn-outline-danger btn-lg mx-auto m-2" type="button"
-                    id="ctrl-start">START</button> &nbsp;
-                <button onclick="controlAction('restart')" class="btn btn-outline-danger btn-lg mx-auto m-2"
-                    type="button" id="ctrl-restart">RESTART</button> &nbsp;
-                <button onclick="controlAction('stop')" class="btn btn-outline-danger btn-lg mx-auto m-2" type="button"
-                    id="ctrl-stop">STOP</button>
+                <button onclick="controlAction('start')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
+                    type="button" id="ctrl-start" {{perms.controls}}>START</button> &nbsp;
+                <button onclick="controlAction('restart')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
+                    type="button" id="ctrl-restart" {{perms.controls}}>RESTART</button> &nbsp;
+                <button onclick="controlAction('stop')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
+                    type="button" id="ctrl-stop" {{perms.controls}}>STOP</button>
             </div>
         </div>
 
@@ -43,13 +43,14 @@
                     <div class="col-sm-8">
                         <select name="action" id="frm_action" class="form-control" required>
                             <option value="" disabled selected>&gt; SELECT</option>
-                            <option value="admin_broadcast">Admin Message</option>
-                            <option value="ensure_res">Start/Restart script</option>
-                            <!-- <option value="restart_res">Restart script</option> -->
-                            <!-- <option value="start_res">Start script</option> -->
-                            <option value="stop_res">Stop script</option>
-                            <option value="refresh_res">Refresh scripts</option>
-                            <option value="kick_all">Kick all players</option>
+                            <option value="admin_broadcast" {{perms.commandMessage}}>Admin Message</option>
+                            <option value="ensure_res" {{perms.commandResources}}>Start/Restart script</option>
+                            <!-- <option value="restart_res" {{perms.commandResources}}>Restart script</option> -->
+                            <!-- <option value="start_res" {{perms.commandResources}}>Start script</option> -->
+                            <option value="stop_res" {{perms.commandResources}}>Stop script</option>
+                            <option value="refresh_res" {{perms.commandResources}}>Refresh scripts</option>
+                            <option value="reinject_res" {{perms.commandResources}}>Re-Inject txAdmin scripts</option>
+                            <option value="kick_all" {{perms.commandKick}}>Kick all players</option>
                         </select>
                     </div>
                 </div>
@@ -113,7 +114,7 @@
 
         <!-- Card Info -->
         <div class="card card-accent-primary" style="height:251px;">
-            <div class="card-header font-weight-bold">Info:</div>
+            <div class="card-header font-weight-bold">Status Info:</div>
             <div class="card-body" id="status-card">
                 Loading...
             </div>
@@ -143,11 +144,12 @@
 
 
 <script>
-    // Control actions (start/restart/stop)
+    //============================================== Controls (start/restart/stop)
     function controlAction(action) {
         if (action !== 'start' && !window.confirm('Are you sure you want to ' + action + ' the server?')) {
             return;
         }
+        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
             url: actionURL = '/fxControls/' + action,
             type: "GET",
@@ -158,14 +160,20 @@
                     window.location = '/auth?logout';
                     return;
                 }
-                console.log(data);
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
             },
             error: function (xmlhttprequest, textstatus, message) {
-                alert('Error executing control action.');
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
             }
         });
     }
 
+
+    //============================================== Commands
     //Commands with parameter required
     let paramRequiredCommands = [
         'admin_broadcast',
@@ -175,7 +183,7 @@
         'stop_res'
     ];
 
-    //EXECUTE button click handler
+    //EXECUTE button handler
     $('#frm_button').click(function () {
         let data = {
             action: $("#frm_action").val(),
@@ -197,8 +205,8 @@
             data: data,
             success: function (data) {
                 notify.update('progress', 0);
-                notify.update('type', 'warning');
-                notify.update('message', data);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);

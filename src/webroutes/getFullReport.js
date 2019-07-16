@@ -47,11 +47,11 @@ module.exports = async function action(res, req) {
         getProcessesData(),
         getFXServerData()
     ]);
-    
-    
+
+
     let timeElapsed = new Date() - timeStart;
     data.message = `Executed in ${timeElapsed} ms`;
-    
+
     cache.set(data);
     let out = await webUtils.renderMasterView('fullReport', data);
     return res.send(out);
@@ -76,7 +76,7 @@ async function getProcessesData(){
         let termPID = Object.keys(processes).find((pid) => { return processes[pid].ppid == process.pid});
         let fxsvMainPID = Object.keys(processes).find((pid) => { return processes[pid].ppid == termPID});
         let fxsvRepPID = Object.keys(processes).find((pid) => { return processes[pid].ppid == fxsvMainPID});
-       
+
         //Foreach PID
         Object.keys(processes).forEach((pid) => {
             var curr = processes[pid];
@@ -104,7 +104,7 @@ async function getProcessesData(){
                 procName = 'Unknown';
                 order = 9;
             }
-            
+
             procList.push({
                 pid: pid,
                 name: procName,
@@ -140,8 +140,12 @@ async function getProcessesData(){
  * Gets the FXServer Data.
  */
 async function getFXServerData(){
+    if(!globals.config.forceFXServerPort && !globals.fxRunner.fxServerPort){
+        return {error: `Server Offline`}
+    }
+    let port = (globals.config.forceFXServerPort)? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
     let requestOptions = {
-        url: `http://localhost:${globals.config.fxServerPort}/info.json`,
+        url: `http://localhost:${port}/info.json`,
         method: 'get',
         responseType: 'json',
         responseEncoding: 'utf8',

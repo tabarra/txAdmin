@@ -11,13 +11,36 @@ const context = 'WebServer:getDashboard';
  * @param {object} req
  */
 module.exports = async function action(res, req) {
+    //If the any FXServer configuration is missing
+    if(
+        globals.fxRunner.config.buildPath === null ||
+        globals.fxRunner.config.basePath === null ||
+        globals.fxRunner.config.cfgPath === null
+    ){
+        return res.redirect('/settings');
+    }
+
+    //Shortcut function
+    let getPermDisable = (perm) => {
+        return (webUtils.checkPermission(req, perm))? '' : 'disabled'
+    }
+
     //Preparing render data
     let renderData = {
         //FIXME: temp missing resource detector
-        resNotFound: globals.resourceNotFound,
+        errorMessage: globals.resourceWrongVersion,
+        serverName: globals.config.serverName,
         updateData: getUpdateData(),
-        chartData: getChartData(globals.monitor.timeSeries.get())
+        chartData: getChartData(globals.monitor.timeSeries.get()),
+        perms:{
+            commandMessage: getPermDisable('commands.message'),
+            commandKick: getPermDisable('commands.kick'),
+            commandResources: getPermDisable('commands.resources'),
+            controls: getPermDisable('control.server'),
+            controlsClass: (webUtils.checkPermission(req, 'control.server'))? 'danger' : 'secondary'
+        }
     }
+
 
     //Rendering the page
     let out = await webUtils.renderMasterView('dashboard', renderData);
@@ -28,7 +51,7 @@ module.exports = async function action(res, req) {
 //================================================================
 /**
  * Process player history and returns the chart data or false
- * @param {array} series 
+ * @param {array} series
  */
 function getChartData(series) {
     if (series.length < 360) {

@@ -1,14 +1,6 @@
-/**
- * Admin adder script rough flow
- *      - Try to load file from argv or admins.json
- *      - If parse error, ask if should rewrite
- *      - If not found, warn that the file will be created
- *      - Prompt for username
- *      - Prompt for password
- *      - Add user to object
- *      - Print success info and list all admins
- *      - Save file
- */
+//Test environment conditions
+const helpers = require('../extras/helpers');
+helpers.dependencyChecker();
 
 //Requires
 const fs = require('fs');
@@ -19,6 +11,7 @@ const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras
 cleanTerminal()
 const context = 'AdminAddScript';
 const printDivider = () =>{log('='.repeat(64), context)};
+
 
 
 //================================================================
@@ -34,13 +27,6 @@ readline.Interface.prototype.question[promisify.custom] = function(prompt) {
 readline.Interface.prototype.questionAsync = promisify(
     readline.Interface.prototype.question,
 );
-
-
-
-
-
-
-
 
 
 
@@ -61,7 +47,7 @@ async function askForChoice(question, options, persist){
         for (let i = 0; i < options.length; i++) {
             console.log(`    ${i+1} - ${options[i]}`)
         }
-        
+
         let resp = await rl.questionAsync('Type answer: ');
         if(/^\d+$/.test(resp) && typeof options[resp-1] !== 'undefined') return options[resp-1];
         if(!persist) return false;
@@ -99,7 +85,7 @@ async function askForYN(question, defaultAnswer, persist){
             }
         }
 
-        return resp; 
+        return resp;
     }
 }
 
@@ -149,7 +135,6 @@ async function askForString(question, minLength, persist, regex){
 //=================================================== Main
 //================================================================
 log("This script will add an admin to the specified admin file or to 'data/admins.json'.", context);
-log("If you want to edit/remove admins, you must modify the JSON file yourself.", context);
 printDivider();
 
 
@@ -165,13 +150,13 @@ printDivider();
     }else{
         filePath += process.argv[2];
     }
-    
+
 
     //Try to load admin file
     let rawFile = null;
     let admins = null;
     try {
-        rawFile = fs.readFileSync(filePath, 'utf8');  
+        rawFile = fs.readFileSync(filePath, 'utf8');
     } catch (error) {
         log(`Unnable to load '${filePath}'. The file will be created for you`, context);
         admins = [];
@@ -217,7 +202,7 @@ printDivider();
     admins.push({
         name: login,
         password_hash: hash,
-        permissions: []
+        permissions: ['all']
     })
 
 

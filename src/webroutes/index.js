@@ -1,9 +1,15 @@
+exports.adminManagerActions = require('./adminManagerActions.js');
+exports.downloadLog = require('./downloadLog.js');
 exports.fxCommands = require('./fxCommands.js');
 exports.fxControls = require('./fxControls.js');
 exports.getAddExtension = require('./getAddExtension.js');
 exports.getAdminLog = require('./getAdminLog.js');
+exports.getAdminManager = require('./getAdminManager.js');
 exports.getConsole = require('./getConsole.js');
 exports.getDashboard = require('./getDashboard.js');
 exports.getFullReport = require('./getFullReport.js');
 exports.getPlayerData = require('./getPlayerData.js');
+exports.getSettings = require('./getSettings.js');
 exports.getStatus = require('./getStatus.js');
+exports.intercom = require('./intercom.js');
+exports.saveSettings = require('./saveSettings.js');

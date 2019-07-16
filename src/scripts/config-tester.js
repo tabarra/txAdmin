@@ -1,3 +1,7 @@
+//Test environment conditions
+const testUtils = require('../extras/testUtils');
+testUtils.dependencyChecker();
+
 //Requires
 const os = require('os');
 const fs = require('fs');
@@ -6,7 +10,39 @@ const prettyBytes = require('pretty-bytes');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 cleanTerminal()
 const printDivider = () =>{log('='.repeat(64))};
-const context = 'Config Tester';
+const context = 'ConfigTester';
+
+//Print usage info
+printDivider();
+logOk(`Usage: "node src/scripts/config-tester server-profile-name"`);
+logOk(`Usage: When the profile name is not specified, "default" will be used.`);
+printDivider();
+
+//Check  argv
+let serverProfile;
+if(process.argv[2]){
+    serverProfile = process.argv[2].replace(/[^a-z0-9._-]/gi, "");
+    if(serverProfile === 'example'){
+        logError(`You can't use the example profile.`);
+        process.exit();
+    }
+    log(`Server profile selected: '${serverProfile}'`);
+}else{
+    serverProfile = 'default';
+    log(`Server profile not set, using default`);
+}
+
+
+//Try to load configuration
+let configFile = null;
+try {
+    let raw = fs.readFileSync(`data/${serverProfile}/config.json`, 'utf8');
+    configFile = JSON.parse(raw);
+    log(`Loaded configuration file 'data/${serverProfile}/config.json'.`);
+} catch (error) {
+    logError(`Unnable to load configuration file 'data/${serverProfile}/config.json'`, context);
+    process.exit(0)
+}
 
 
 //Printing Environment information
@@ -16,49 +52,19 @@ log("\tOS type: " + os.type());
 log("\tOS platform: " + os.platform());
 log("\tOS release: " + os.release());
 log("\tCPU count: " + os.cpus().length);
+log("\tCPU speed: " + os.cpus()[0].speed + "MHz");
 log("\tFree Memory: " + prettyBytes(os.freemem()));
 log("\tTotal Memory: " + prettyBytes(os.totalmem()));
-printDivider();
 
 
-//Check  argv
-if(!process.argv[2]){
-    logError('Server config file not set. You must start txAdmin with the command "npm start example.json", with "example.json" being the name of the file containing your txAdmin server configuration inside the data folder. This file should be based on the server-template.json file.', context);
-    process.exit(0);
-}
-
-
-//Get config name
-let configName = null;
-if(process.argv[2].endsWith('.json')){
-    configName = process.argv[2].substring(0, process.argv[2].length-5);
-}else{
-    configName = process.argv[2];
-}
-
-
-//Try to load configuration
-let configFile = null;
+//Filter out sensitive information and Print configuration
 try {
-    let raw = fs.readFileSync(`data/${configName}.json`, 'utf8');  
-    configFile = JSON.parse(raw);
-    log(`Loaded configuration file 'data/${configName}.json'.`);
-    printDivider();
-} catch (error) {
-    logError(`Unnable to load configuration file 'data/${configName}.json'`, context);
-    process.exit(0)
-}
-
-
-//Print configuration
-Object.keys(configFile).forEach((root) => {
-    log(`Configs in ${root}:`, 'CFG');
-    Object.keys(configFile[root]).forEach((prop) => {
-        if(prop == 'restarter') return; //FIXME: skipping restarter settings
-        if(prop == 'token') configFile[root][prop] = '##redacted##';
-        log(`\t${prop}:\t'${configFile[root][prop]}'`, `CFG`);
-    });
-});
+    configFile.global.publicIP = '##redacted##';
+    configFile.discordBot.token = '##redacted##';
+} catch (error) {}
+printDivider();
+let jsonConfig = JSON.stringify(configFile, null, 2);
+console.log(`\n${jsonConfig}`)
 printDivider();
 
 
@@ -141,13 +147,47 @@ if(fs.existsSync(`${cfg.basePath}/resources`)){
 //Test: cfgPath file (as absolute or relative) is readable
 let cfgPathAbsoluteTest = fs.existsSync(cfg.cfgPath);
 let cfgPathRelativeTest = fs.existsSync(`${cfg.basePath}/${cfg.cfgPath}`);
+let which;
 if(cfgPathAbsoluteTest || cfgPathRelativeTest){
-    let which = (cfgPathAbsoluteTest)? 'absolute' : 'relative to basePath';
+    which = (cfgPathAbsoluteTest)? 'absolute' : 'relative to basePath';
     logOk(`cfgPath file (as ${which}) is readable`, 'OK')
 }else{
     logError('cfgPath file (as absolute or relative) is readable', 'FAIL')
 }
 
+
+//Test: cfgPath file endpoints are valid
+currTest = 'cfgPath file endpoints are valid';
+function getMatches(string, regex) {
+    let matches = [];
+    let match;
+    while (match = regex.exec(string)) {
+        let matchData = {
+            line: match[0].trim(),
+            type: match[1],
+            interface: match[2],
+            port: match[3],
+        }
+        matches.push(matchData);
+    }
+    return matches;
+}
+let toOpen = (which == 'absolute')? cfg.cfgPath : `${cfg.basePath}/${cfg.cfgPath}`;
+let regex = /^\s*endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.?$/gim;
+// let regex = /endpoint_add_(\w+)\s+"?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})"?.?/gi;
+let matches;
+try {
+    let rawCfgFile = fs.readFileSync(toOpen).toString();
+    matches = getMatches(rawCfgFile, regex);
+    let allValid = matches.every((match) => {
+        return match.interface === '0.0.0.0'
+    })
+    if(!matches.length || !allValid) throw new Error();
+    logOk(currTest, 'OK');
+} catch (error) {
+    logError(currTest, 'FAIL');
+    console.log(JSON.stringify(matches,null,2))
+}
 
 
 if(isLinux){
@@ -226,7 +266,7 @@ if(isLinux){
     currTest = 'spawn full server';
     try {
         let child = spawnSync(
-            "/bin/bash", 
+            "/bin/bash",
             [`${cfg.buildPath}/run.sh`, `+exec ${cfg.cfgPath}`],
             {cwd: cfg.basePath}
         );
@@ -318,7 +358,7 @@ if(isLinux){
     currTest = 'spawn full server';
     try {
         let child = spawnSync(
-            "cmd.exe", 
+            "cmd.exe",
             ['/c', `${cfg.buildPath}/run.cmd +exec ${cfg.cfgPath}`],
             {cwd: cfg.basePath}
         );
