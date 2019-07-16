@@ -1,6 +1,7 @@
 //Requires
 const axios = require("axios");
 const bigInt = require("big-integer");
+const sleep = require('util').promisify(setTimeout);
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const helpers = require('../extras/helpers');
 const HostCPUStatus = require('../extras/hostCPUStatus');
@@ -46,7 +47,7 @@ module.exports = class Monitor {
         }, this.config.interval);
         setInterval(() => {
             this.checkRestartSchedule();
-        }, 59*1000); //Playing safe, right?
+        }, 60*1000);
     }
 
 
@@ -128,7 +129,7 @@ module.exports = class Monitor {
             if(action.restart === true){
                 let currTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
                 log(`Scheduled restart: ${currTime}`);
-                this.restartFXServer(`scheduled restart at ${currTime}`);
+                this.restartFXServer(`scheduled restart at ${currTime}`, 15);
             }else if(typeof action.message === 'string'){
                 globals.discordBot.sendAnnouncement(action.message);
                 globals.fxRunner.srvCmd(`txaBroadcast "${action.message}"`);
@@ -137,11 +138,12 @@ module.exports = class Monitor {
     }
 
 
+
     //================================================================
     /**
      * Check cooldown and Restart the FXServer
      */
-    restartFXServer(reason){
+    async restartFXServer(reason, kickTime){
         let elapsed = Math.round(Date.now()/1000) - globals.fxRunner.tsChildStarted;
         if(elapsed >= this.config.restarter.cooldown){
             //sanity check
@@ -150,9 +152,13 @@ module.exports = class Monitor {
                 return false;
             }
             let message = `Restarting server (${reason}).`;
-            globals.discordBot.sendAnnouncement(`Restarting **${globals.config.serverName}** (${reason}).`);
             logWarn(message, context);
+            globals.discordBot.sendAnnouncement(`Restarting **${globals.config.serverName}** (${reason}).`);
             globals.logger.append(`[MONITOR] ${message}`);
+            if(kickTime){
+                await globals.fxRunner.srvCmd(`txaKickAll "${message}"`);
+                await sleep(kickTime*1000);
+            }
             globals.fxRunner.restartServer(reason);
         }else{
             if(globals.config.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) restartFXServer() awaiting restarter cooldown.`, context);

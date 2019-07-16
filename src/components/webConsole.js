@@ -38,7 +38,11 @@ module.exports = class webConsole {
         this.io.use(sharedsession(globals.webServer.session));
         this.io.use(this.authNewSession.bind(this));
         this.io.on('connection', (socket) => {
-            log(`Connected: ${socket.id}`, contextSocket);
+            try {
+                log(`Connected: ${socket.handshake.session.auth.username} from ${socket.handshake.address}`, contextSocket);
+            } catch (error) {
+                log(`Connected: unknown`, contextSocket);
+            }
 
             socket.on('disconnect', (reason) => {
                 log(`Client disconnected with reason: ${reason}`, contextSocket);

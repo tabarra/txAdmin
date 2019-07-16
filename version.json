@@ -1,5 +1,5 @@
 {
-    "version": "1.7.0",
+    "version": "1.7.1",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -28,7 +28,7 @@
         },
         {
             "version": "1.1.0",
-            "changelog": "New Settings Page and setup script. Changed how server profiles work. Please read new instructions before updating."
+            "changelog": "New Settings Page and setup script. Changed how server profiles work. <br><h5><b>Please read update instructions on discord.</b></h5>"
         },
         {
             "version": "1.2.0",
@@ -53,6 +53,10 @@
         {
             "version": "1.7.0",
             "changelog": "Improved restarter behaviour. Minor bug fixes."
+        },
+        {
+            "version": "1.7.1",
+            "changelog": "Kicking players 15 seconds before scheduled restarts."
         }
     ]
 }
