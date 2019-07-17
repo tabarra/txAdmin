@@ -17,7 +17,7 @@ module.exports = class Authenticator {
             "settings.view",
             "settings.write",
             "control.server",
-            "commands.scripts",
+            "commands.resources",
             "commands.kick",
             "commands.message",
             "commands.custom",
