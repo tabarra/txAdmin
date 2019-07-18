@@ -77,14 +77,18 @@ function parseSchedule(schedule, filter) {
 function getCFGFile(cfgPath, basePath) {
     let validCfgPath;
     let rawCfgFile;
-    try {
-        let cfgPathAbsoluteTest = fs.existsSync(cfgPath);
-        let cfgPathRelativeTest = fs.existsSync(`${basePath}/${cfgPath}`);
-        if(cfgPathAbsoluteTest || cfgPathRelativeTest){
-            validCfgPath = (cfgPathAbsoluteTest)? cfgPath : `${basePath}/${cfgPath}`;
+    let cfgPathAbsoluteTest = fs.existsSync(cfgPath);
+    let cfgPathRelativeTest = fs.existsSync(`${basePath}/${cfgPath}`);
+    if(cfgPathAbsoluteTest || cfgPathRelativeTest){
+        validCfgPath = (cfgPathAbsoluteTest)? cfgPath : `${basePath}/${cfgPath}`;
+    }else{
+        if(cfgPath.includes('cfg')){
+            throw new Error("File doesn't exist or its unreadable.");
         }else{
-            throw new Error("Path doesn't exist or its unreadable.");
+            throw new Error("File doesn't exist or its unreadable. Make sure to include the CFG file in the path, and not just the directory that contains it.");
         }
+    }
+    try {
         rawCfgFile = fs.readFileSync(validCfgPath).toString();
     } catch (error) {
         throw new Error("Cannot read CFG Path file.");

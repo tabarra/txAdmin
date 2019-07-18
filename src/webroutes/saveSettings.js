@@ -85,7 +85,7 @@ function handleGlobal(res, req) {
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing global settings.`;
         logOk(logMessage, context);
         globals.logger.append(logMessage);
-        return res.send({type: 'success', message: `<strong>Configuration file saved!</strong>`});
+        return res.send({type: 'success', message: `<strong>Global configuration saved!</strong>`});
     }else{
         logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing global settings.`, context);
         return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
@@ -115,13 +115,14 @@ function handleFXServer(res, req) {
 
     //Prepare body input
     let cfg = {
-        buildPath: path.normalize(req.body.buildPath),
-        basePath: path.normalize(req.body.basePath),
+        buildPath: path.normalize(req.body.buildPath+'/'),
+        basePath: path.normalize(req.body.basePath+'/'),
         cfgPath: path.normalize(req.body.cfgPath),
         onesync: (req.body.onesync === 'true'),
         autostart: (req.body.autostart === 'true'),
         quiet: (req.body.quiet === 'true'),
     }
+    dir(cfg.buildPath)
 
     //Validating Build Path
     try {
@@ -140,7 +141,13 @@ function handleFXServer(res, req) {
 
     //Validating Base Path
     try {
-        if(!fs.existsSync(cfg.basePath)) throw new Error("Path doesn't exist or its unreadable.");
+        if(!fs.existsSync(path.join(cfg.basePath, 'resources'))){
+            if(cfg.basePath.includes('resources')){
+                throw new Error("The base must be the folder that contains the resources folder.");
+            }else{
+                throw new Error("Couldn't locate or read a resources folder inside of the base path.");
+            }
+        }
     } catch (error) {
         return res.send({type: 'danger', message: `<strong>Base Path error:</strong> ${error.message}`});
     }
@@ -169,7 +176,7 @@ function handleFXServer(res, req) {
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing fxRunner settings.`;
         logOk(logMessage, context);
         globals.logger.append(logMessage);
-        return res.send({type: 'success', message: `<strong>Configuration file saved!</strong>`});
+        return res.send({type: 'success', message: `<strong>FXServer configuration saved!</strong>`});
     }else{
         logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing fxRunner settings.`, context);
         return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
@@ -236,7 +243,7 @@ function handleMonitor(res, req) {
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing monitor settings.`;
         logOk(logMessage, context);
         globals.logger.append(logMessage);
-        return res.send({type: 'success', message: `<strong>Configuration file saved!</strong>`});
+        return res.send({type: 'success', message: `<strong>Monitor/Restarter configuration saved!</strong>`});
     }else{
         logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing monitor settings.`, context);
         return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
@@ -284,7 +291,7 @@ function handleDiscord(res, req) {
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing discordBot settings.`;
         logOk(logMessage, context);
         globals.logger.append(logMessage);
-        return res.send({type: 'success', message: `<strong>Configuration file saved!</strong>`});
+        return res.send({type: 'success', message: `<strong>Discord configuration saved!</strong>`});
     }else{
         logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing discordBot settings.`, context);
         return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
