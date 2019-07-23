@@ -13,9 +13,7 @@ const context = 'WebServer:fxControls';
 module.exports = async function action(res, req) {
     //Sanity check
     if(typeof req.params.action === 'undefined'){
-        res.status(400);
-        res.send({status: 'error', error: "Invalid Request"});
-        return;
+        return res.status(400).send({status: 'error', error: "Invalid Request"});
     }
     let action = req.params.action;
 
@@ -51,7 +49,6 @@ module.exports = async function action(res, req) {
 
     }else{
         logWarn(`Unknown control action '${action}'.`, context);
-        res.status(400);
-        return res.send({type: 'danger', message: 'Unknown Action'});
+        return res.status(400).send({type: 'danger', message: 'Unknown Action'});
     }
 };

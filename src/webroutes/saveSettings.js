@@ -17,8 +17,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
 module.exports = async function action(res, req) {
     //Sanity check
     if(isUndefined(req.params.scope)){
-        res.status(400);
-        return res.send({type: 'danger', message: "Invalid Request"});
+        return res.status(400).send({type: 'danger', message: "Invalid Request"});
     }
     let scope = req.params.scope;
 
@@ -61,8 +60,7 @@ function handleGlobal(res, req) {
         isUndefined(req.body.publicIP) ||
         isUndefined(req.body.verbose)
     ){
-        res.status(400);
-        return res.send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
     }
 
     //Prepare body input
@@ -109,8 +107,7 @@ function handleFXServer(res, req) {
         isUndefined(req.body.autostart) ||
         isUndefined(req.body.quiet)
     ){
-        res.status(400);
-        return res.send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
     }
 
     //Prepare body input
@@ -197,8 +194,7 @@ function handleMonitor(res, req) {
         isUndefined(req.body.failures) ||
         isUndefined(req.body.schedule)
     ){
-        res.status(400);
-        return res.send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
     }
 
     //Prepare body input
@@ -265,8 +261,7 @@ function handleDiscord(res, req) {
         isUndefined(req.body.announceChannel) ||
         isUndefined(req.body.statusCommand)
     ){
-        res.status(400);
-        return res.send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
     }
 
     //Prepare body input

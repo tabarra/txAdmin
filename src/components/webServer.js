@@ -175,8 +175,7 @@ module.exports = class WebServer {
 
         //Catch all
         this.app.get('*', (req, res) => {
-            res.status(404);
-            res.sendFile(webUtils.getWebViewPath('404'));
+            res.status(404).sendFile(webUtils.getWebViewPath('404'));
         });
     }
 
@@ -186,8 +185,7 @@ module.exports = class WebServer {
         try {
             logError(desc, `${context}:route`);
             dir(error)
-            res.status(500);
-            res.send(desc);
+            res.status(500).send(desc);
         } catch (error) {}
     }
 

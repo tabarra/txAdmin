@@ -14,8 +14,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
 module.exports = async function action(res, req) {
     //Sanity check
     if(isUndefined(req.params.action)){
-        res.status(400);
-        res.send({status: 'error', error: "Invalid Request"});
+        res.status(400).send({status: 'error', error: "Invalid Request"});
         return;
     }
     let action = req.params.action;
@@ -61,8 +60,7 @@ function handleAdd(res, req) {
         typeof req.body.password !== 'string' ||
         isUndefined(req.body.permissions)
     ){
-        res.status(400);
-        return res.send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
     }
 
     //Prepare and filter variables
@@ -108,8 +106,7 @@ function handleEdit(res, req) {
         typeof req.body.password !== 'string' ||
         isUndefined(req.body.permissions)
     ){
-        res.status(400);
-        return res.send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
     }
 
     //Prepare and filter variables
@@ -155,8 +152,7 @@ function handleDelete(res, req) {
         isUndefined(req.body.name) ||
         typeof req.body.name !== 'string'
     ){
-        res.status(400);
-        return res.send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
     }
     let name = req.body.name.trim();
 
@@ -190,8 +186,7 @@ async function handleGetModal(res, req) {
         isUndefined(req.body.name) ||
         typeof req.body.name !== 'string'
     ){
-        res.status(400);
-        return res.send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
     }
 
     //Get admin data
