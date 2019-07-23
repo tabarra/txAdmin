@@ -125,9 +125,9 @@ module.exports = class WebServer {
         });
 
         //Data routes
-        this.app.get('/adminLog', getAuthFunc('web'), async (req, res) => {
-            await webRoutes.getAdminLog(res, req).catch((err) => {
-                this.handleRouteError(res, "[getAdminLog] Route Internal Error", err);
+        this.app.get('/actionLog', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.getActionLog(res, req).catch((err) => {
+                this.handleRouteError(res, "[getActionLog] Route Internal Error", err);
             });
         });
         this.app.get('/fullReport', getAuthFunc('web'), async (req, res) => {

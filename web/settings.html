@@ -48,7 +48,7 @@
                                 <input type="text" class="form-control" id="frmGlobal-serverName"
                                     value="{{global.serverName}}" maxlength="24" {{disableWrite}}>
                                 <span class="form-text text-muted">
-                                    A short server name to be used in the Discord messages.
+                                    A <strong>short</strong> server name to be used in txAdmin interface and Chat/Discord messages.
                                 </span>
                             </div>
                         </div>
@@ -241,10 +241,10 @@
                                 <input type="text" class="form-control" id="frmMonitor-schedule" value="{{monitor.restarter.schedule}}"
                                     placeholder="05:00, 13:00" {{disableWrite}}>
                                 <span class="form-text text-muted">
-                                    At which times of day to restart the server. Leave it blank to disable this feature.
-                                    <br>
+                                    At which times of day to restart the server. Leave it blank to disable this feature. <br>
                                     The time MUST be in the 24-hour format with two digits for hours as well as
-                                    minutes (<code>HH:MM</code>) and the times should be separated by commas.
+                                    minutes (<code>HH:MM</code>) and the times should be separated by commas. <br>
+                                    Make sure your schedule matches your server time and not your own.
                                 </span>
                             </div>
                         </div>
