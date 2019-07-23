@@ -1,5 +1,5 @@
 {
-    "version": "1.7.2",
+    "version": "1.7.3",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -61,6 +61,10 @@
         {
             "version": "1.7.2",
             "changelog": "Fixed commands.resources permission with the wrong name."
+        },
+        {
+            "version": "1.7.3",
+            "changelog": "Minor bug fixes and improved some settings descriptions and error messages."
         }
     ]
 }

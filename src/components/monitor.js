@@ -81,7 +81,7 @@ module.exports = class Monitor {
             date.setHours(hour);
             date.setMinutes(minute - sub);
 
-            let remaining = (sub > 1)? `${sub} minutes.` : `${60} seconds. Please disconnect.`;
+            let remaining = (sub > 1)? `${sub} minutes.` : `60 seconds. Please disconnect.`;
             return {
                 hour: date.getHours(),
                 minute: date.getMinutes(),
