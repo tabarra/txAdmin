@@ -1,19 +1,3 @@
-## New Instructions
-```bash
-# Install
-$ git clone https://github.com/tabarra/txAdmin && cd txAdmin
-$ npm i
-
-# Add admin
-$ node src/scripts/admin-add.js
-
-# Setup default server
-$ node src/scripts/setup.js default
-
-# Start default server
-$ node src/index.js default
-```
-
 ## TODO/Roadmap:
 > v1.0.5
 - [x] adapt admin-add

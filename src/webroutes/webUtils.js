@@ -49,17 +49,20 @@ async function renderMasterView(view, data){
  * @param {string} message
  */
 async function renderLoginView(message){
+    const figlet = require('figlet');
+    let viewName = (Math.random() > 0.1)? 'login' : 'login-matrix';
     let data;
     let out;
     try {
         data = {
             headerTitle: 'Login',
+            ascii: figlet.textSync('txAdmin'),
             message: (typeof message !== 'undefined')? message : '',
             config: globals.config.serverProfile,
             version: globals.version.current
         }
 
-        let rawView = await fs.readFile(getWebViewPath('login'), 'utf8');
+        let rawView = await fs.readFile(getWebViewPath(viewName), 'utf8');
         out = sqrl.Render(rawView, data);
     } catch (error) {
         if(globals.config.verbose) {

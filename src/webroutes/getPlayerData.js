@@ -14,9 +14,7 @@ const context = 'WebServer:getPlayerData';
 module.exports = async function action(res, req) {
     //Sanity check
     if(typeof req.params.id === 'undefined'){
-        res.status(400);
-        res.send({status: 'error', error: "Invalid Request"});
-        return;
+        return res.status(400).send({status: 'error', error: "Invalid Request"});
     }
     let id = parseInt(req.params.id);
 
