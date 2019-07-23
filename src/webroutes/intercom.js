@@ -3,6 +3,8 @@ const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras
 const webUtils = require('./webUtils.js');
 const context = 'WebServer:Intercom';
 
+//Helper functions
+const isUndefined = (x) => { return (typeof x === 'undefined') };
 
 /**
  * Intercommunications endpoint
@@ -11,18 +13,25 @@ const context = 'WebServer:Intercom';
  */
 //FIXME: tmp function
 module.exports = async function action(res, req) {
-    if(
-        typeof req.params.scope === 'undefined' ||
-        req.params.scope !== 'monitor'
-    ){
-        res.status(400);
-        return res.send({error: "Invalid Request"});
+    //Sanity check
+    if(isUndefined(req.params.scope)){
+        return res.status(400).send({error: "Invalid Request"});
     }
-    // dir(req.params)
-    // dir(req.body)
-    try {
-        globals.monitor.handleHeartBeat(req.body);
-    } catch (error) {}
+    let scope = req.params.scope;
+
+    //Delegate to the specific scope functions
+    if(scope == 'monitor'){
+        try {
+            globals.monitor.handleHeartBeat(req.body);
+        } catch (error) {}
+    }else if(scope == 'resources'){
+        dir(req.body)
+    }else{
+        return res.send({
+            type: 'danger',
+            message: 'Unknown intercom scope.'
+        });
+    }
 
     return res.send('okay');
 };
