@@ -119,7 +119,6 @@ function handleFXServer(res, req) {
         autostart: (req.body.autostart === 'true'),
         quiet: (req.body.quiet === 'true'),
     }
-    dir(cfg.buildPath)
 
     //Validating Build Path
     try {
