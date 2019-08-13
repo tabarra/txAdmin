@@ -118,6 +118,8 @@ module.exports = class Monitor {
      */
     checkRestartSchedule(){
         if(!Array.isArray(this.schedule)) return;
+        if(globals.fxRunner.fxChild === null) return;
+
         let now = new Date;
         try {
             //FIXME: returns only the first result, not necessarily the most important
