@@ -91,7 +91,7 @@ module.exports = class Monitor {
 
         let times = helpers.parseSchedule(this.config.restarter.schedule);
         let schedule = [];
-        let announceMinutes = [15, 10, 5, 4, 3, 2, 1];
+        let announceMinutes = [30, 15, 10, 5, 4, 3, 2, 1];
         times.forEach((time)=>{
             try {
                 announceMinutes.forEach((mins)=>{

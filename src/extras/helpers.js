@@ -129,7 +129,7 @@ function getFXServerPort(rawCfgFile) {
     if(!matches.length) throw new Error("No endpoints found");
 
     let validTCPEndpoint = matches.find((match) => {
-        return (match.type.toLowerCase() === 'tcp' && match.interface === '0.0.0.0')
+        return (match.type.toLowerCase() === 'tcp' && (match.interface === '0.0.0.0' || match.interface === '127.0.0.1'))
     })
     if(!validTCPEndpoint) throw new Error("You MUST have a TCP endpoint with interface 0.0.0.0");
 
