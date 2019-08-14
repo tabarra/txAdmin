@@ -161,9 +161,7 @@ module.exports = class FXRunner {
         this.fxChild.stdout.on('data', this.consoleBuffer.write.bind(this.consoleBuffer));
 
         this.fxChild.stderr.on('error', (data) => {});
-        this.fxChild.stderr.on('data', (data) => {
-            logWarn(`\n========\n${data}\n========`, `${context}:stderr:data`);
-        });
+        this.fxChild.stderr.on('data', this.consoleBuffer.writeError.bind(this.consoleBuffer));
 
 
         //Setting up process priority
@@ -304,7 +302,7 @@ module.exports = class FXRunner {
         if(this.fxChild === null) return false;
         try {
             let success = this.fxChild.stdin.write(command + "\n");
-            globals.webConsole.bufferCommand(command);
+            globals.webConsole.buffer(command, 'command');
             return success;
         } catch (error) {
             if(globals.config.verbose){

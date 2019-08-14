@@ -137,20 +137,16 @@ module.exports = class webConsole {
 
     //================================================================
     /**
-     * Add command to buffer
-     * @param {*} data
-     */
-    bufferCommand(data){
-        this.dataBuffer += `\n<mark>${data}</mark>\n`;
-    }
-
-    //================================================================
-    /**
      * Adds data to the buffer
      * @param {string} data
+     * @param {string} markType
      */
-    buffer(data){
-        this.dataBuffer += data;
+    buffer(data, markType){
+        if(typeof markType === 'string'){
+            this.dataBuffer += `\n<mark class="consoleMark-${markType}">${data}</mark>\n`;
+        }else{
+            this.dataBuffer += data;
+        }
     }
 
 

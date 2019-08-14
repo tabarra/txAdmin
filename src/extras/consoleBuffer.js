@@ -1,5 +1,6 @@
 //Requires
 const fs = require('fs');
+const chalk = require('chalk');
 const StreamSnitch = require('stream-snitch');
 const prettyBytes = require('pretty-bytes');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
@@ -88,6 +89,23 @@ module.exports = class ConsoleBuffer {
         if(this.webConsoleBuffer.length > 16*1024){
             //TODO: use xxx.indexOf("\n")
             this.webConsoleBuffer = this.webConsoleBuffer.slice(-8*1024);
+        }
+    }
+
+
+    //================================================================
+    /**
+     * Print fxChild's stderr to the webconsole and to the terminal
+     * @param {string} data
+     */
+    writeError(data) {
+        //FIXME: this should be saving to a file, and should be persistent to the web console
+        data = data.toString();
+        try {
+            globals.webConsole.buffer(data, 'error');
+            if(!globals.fxRunner.quiet) process.stdout.write(chalk.red(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, "")));
+        } catch (error) {
+            if(globals.config.verbose) logError(`Buffer write error: ${error.message}`, context)
         }
     }
 
