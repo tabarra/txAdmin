@@ -36,6 +36,7 @@
 - Restart warning announcements
 - Admin Management system
 - Permissions system ([more info](docs/permissions.md))
+- SSL Support ([more info](docs/ssl_support.md))
 
 
 ## Installing & Running
