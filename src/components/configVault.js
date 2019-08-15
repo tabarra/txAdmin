@@ -99,7 +99,8 @@ module.exports = class ConfigVault {
                 verbose: toDefault(cfg.global.verbose, null),
                 publicIP:  toDefault(cfg.global.publicIP, null),
                 serverName:  toDefault(cfg.global.serverName, null),
-                forceFXServerPort:  toDefault(cfg.global.forceFXServerPort, null),
+                language:  toDefault(cfg.global.language, null),
+                forceFXServerPort:  toDefault(cfg.global.forceFXServerPort, null), //not in template
             };
             out.logger = {
                 logPath: toDefault(cfg.logger.logPath, null), //not in template
@@ -168,6 +169,7 @@ module.exports = class ConfigVault {
             cfg.global.verbose = (cfg.global.verbose === 'true' || cfg.global.verbose === true);
             cfg.global.publicIP = cfg.global.publicIP || "change-me";
             cfg.global.serverName = cfg.global.serverName || "change-me";
+            cfg.global.language = cfg.global.language || "en";
 
             //Global - Extras
             cfg.global.osType = os.type() || 'unknown';

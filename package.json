@@ -46,6 +46,7 @@
     "figlet": "^1.2.3",
     "fs-extra": "^8.1.0",
     "nanoid": "^2.0.3",
+    "node-polyglot": "^2.3.1",
     "pidtree": "^0.3.0",
     "pidusage": "^2.0.17",
     "pidusage-tree": "^2.0.5",

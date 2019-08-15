@@ -38,14 +38,17 @@ module.exports = class txAdmin {
         this.startDiscordBot(profileConfig.discordBot).catch((err) => {
             HandleFatalError(err, 'DiscordBot');
         });
-        this.startFXServer(profileConfig.fxRunner).catch((err) => {
-            HandleFatalError(err, 'FXServer');
+        this.startFXRunner(profileConfig.fxRunner).catch((err) => {
+            HandleFatalError(err, 'FXRunner');
         });
         this.startLogger(profileConfig.logger).catch((err) => {
             HandleFatalError(err, 'Logger');
         });
         this.startMonitor(profileConfig.monitor).catch((err) => {
             HandleFatalError(err, 'Monitor');
+        });
+        this.startTranslator().catch((err) => {
+            HandleFatalError(err, 'Translator');
         });
         this.startWebServer(profileConfig.webServer).catch((err) => {
             HandleFatalError(err, 'WebServer');
@@ -60,6 +63,7 @@ module.exports = class txAdmin {
         setInterval(updateChecker, 30 * 60 * 1000);
     }
 
+
     //==============================================================
     async startAuthenticator(config){
         const Monitor = require('./components/authenticator')
@@ -73,7 +77,7 @@ module.exports = class txAdmin {
     }
 
     //==============================================================
-    async startFXServer(config){
+    async startFXRunner(config){
         const FXRunner = require('./components/fxRunner')
         globals.fxRunner = new FXRunner(config);
     }
@@ -88,6 +92,12 @@ module.exports = class txAdmin {
     async startMonitor(config){
         const Authenticator = require('./components/monitor')
         globals.monitor = new Authenticator(config);
+    }
+
+    //==============================================================
+    async startTranslator(){
+        const Translator = require('./components/translator')
+        globals.translator = new Translator();
     }
 
     //==============================================================

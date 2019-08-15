@@ -70,6 +70,20 @@
                                 <span class="form-text text-muted">
                                     You can set this to be your public IP or a domain name. <br>
                                     Note: The auto detect feature might get blocked by ad-blockers.
+
+                        <div class="form-group row">
+                            <label for="frmGlobal-serverName" class="col-sm-3 col-form-label">
+                                Language
+                            </label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="frmGlobal-language" {{disableWrite}}>
+                                    <!-- TODO: make this list dynamic -->
+                                    <option value="en" {{global.language=='en'|isSelected}}>English</option>
+                                    <option value="custom" {{global.language=='custom'|isSelected}}>Custom (read the documentation)</option>
+                                </select>
+                                <span class="form-text text-muted">
+                                    The language to use on Chat/Discord messages. <br>
+                                    <b>Note:</b> For the Custom option, read the documentation.
                                 </span>
                             </div>
                         </div>
@@ -368,6 +382,7 @@
         let data = {
             serverName: $('#frmGlobal-serverName').val().trim(),
             publicIP: $('#frmGlobal-publicIP').val().trim(),
+            language: $('#frmGlobal-language').val(),
             verbose: $('#frmGlobal-verbose').is(':checked')
         }
         if (!data.serverName.length || !data.serverName.length) {

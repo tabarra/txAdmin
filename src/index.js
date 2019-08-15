@@ -11,13 +11,14 @@ const txAdmin = require('./txAdmin.js');
 //==============================================================
 //FIXME: I should be using dependency injection or something
 globals = {
-    monitor: null,
-    logger: null,
-    discordBot: null,
     authenticator: null,
-    webServer: null,
-    webConsole: null,
+    discordBot: null,
     fxRunner: null,
+    logger: null,
+    monitor: null,
+    translator: null,
+    webConsole: null,
+    webServer: null,
     config: null,
     version: {
         current: '--',
