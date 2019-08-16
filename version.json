@@ -1,5 +1,5 @@
 {
-    "version": "1.8.0",
+    "version": "1.8.1",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -73,6 +73,10 @@
         {
             "version": "1.8.0",
             "changelog": "Added translation support for Chat/Discord messages."
+        },
+        {
+            "version": "1.8.1",
+            "changelog": "Quickfix for Linux instances."
         }
     ]
 }
