@@ -1,0 +1,19 @@
+{
+    "restarter": {
+        "crash_detected": "pád detekován",
+        "schedule_reason": "plánovaný restart v %{time}",
+        "schedule_warn": "Tento server má naplánovaný restart za %{smart_count} minutu. Prosím odpojte se nyní. |||| Tento server má naplánovaný restart za %{smart_count} minut.",
+        "schedule_warn_discord": "**%{servername}** má naplánovabý restart za %{smart_count} minutu. |||| **%{servername}** má naplánovaný restart za %{smart_count} minut."
+    },
+    "server_actions": {
+        "restarting": "Restartování serveru (%{reason}).",
+        "restarting_discord": "**%{servername}** se restartuje (%{reason}).",
+        "stopping": "Server se vypíný (%{reason}).",
+        "stopping_discord": "**%{servername}** se vypíná (%{reason}).",
+        "spawning_discord": "**%{servername}** se spouští."
+    },
+    "discord": {
+        "status_online": "**%{servername}** je nyní **Online**!",
+        "status_offline": "**%{servername}** je nyní **Offline**!"
+    }
+}
