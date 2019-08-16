@@ -85,12 +85,13 @@ module.exports = class Translator {
 
         //NOTE: this "protection" is to incentivize users to modify the git-untracked `locale/custom.json` file.
         // since modifying any other file will result in the user not being able to update txAdmin just by typing `git pull`.
-        // This is being done just to the English translation file, add the others in the future? (write a script for generating a table).
-        if(lang == 'en'){
-            let hash = crypto.createHash('SHA1').update(raw).digest("hex");
-            if(hash.toUpperCase() !== '00ECDB2DD63EF2B2F69DB2D302754A5113231D1F'){
-                // HACK thrower('Please do not modify this file. Revert the changes and use the Custom language setting.')
-            }
+        let langHashes = {
+            en: '9A6C2232823295F9AE96BEB4C5ABA577A6F4B7D8',
+            pt_BR: '378F9B1954385A7981D0C2981E6A69811FEC2AD5',
+        }
+        if(langHashes.hasOwnProperty(lang)){
+            let hash = crypto.createHash('SHA1').update(raw).digest("hex").toUpperCase();
+            if(hash !== langHashes[lang]) thrower('Please do not modify this file. Revert the changes and use the Custom language setting.')
         }
 
         try {

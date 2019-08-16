@@ -6,7 +6,10 @@
         "schedule_warn_discord": "**%{servername}** is scheduled to restart in %{smart_count} minute. |||| **%{servername}** is scheduled to restart in %{smart_count} minutes."
     },
     "server_actions": {
-        "restarting": "Restarting Server (%{reason}).",
-        "restarting_discord": "Restarting **%{servername}** (%{reason})."
+        "restarting": "Server restarting (%{reason}).",
+        "restarting_discord": "**%{servername}** is restarting (%{reason}).",
+        "stopping": "Server shutting down (%{reason}).",
+        "stopping_discord": "**%{servername}** is shutting down (%{reason}).",
+        "spawning_discord": "**%{servername}** is starting."
     }
 }

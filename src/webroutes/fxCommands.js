@@ -65,7 +65,7 @@ module.exports = async function action(res, req) {
             reason = parameter.replace(/"/g,'\\"');
             cmd = `txaKickAll "${reason}"`;
         }else{
-            cmd = `txaKickAll "kicked via txAdmin web panel"`;
+            cmd = `txaKickAll "txAdmin Web Panel"`;
         }
         webUtils.appendLog(req, cmd, context);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);

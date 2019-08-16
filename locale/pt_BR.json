@@ -1,0 +1,15 @@
+{
+    "restarter": {
+        "crash_detected": "crash detectado",
+        "schedule_reason": "agendado para %{time}",
+        "schedule_warn": "Este servidor está agendado para reiniciar em %{smart_count} minuto. Por favor se disconecte agora. |||| Este servidor está agendado para reiniciar em %{smart_count} minutos.",
+        "schedule_warn_discord": "**%{servername}** está agendado para reiniciar em %{smart_count} minuto. |||| **%{servername}** está agendado para reiniciar em %{smart_count} minutos."
+    },
+    "server_actions": {
+        "restarting": "Servidor reiniciando (%{reason}).",
+        "restarting_discord": "**%{servername}** está reiniciando (%{reason}).",
+        "stopping": "Server desligando (%{reason}).",
+        "stopping_discord": "**%{servername}** está desligando (%{reason}).",
+        "spawning_discord": "**%{servername}** está iniciando."
+    }
+}

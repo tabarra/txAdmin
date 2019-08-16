@@ -120,8 +120,10 @@ module.exports = class FXRunner {
         this.consoleBuffer.writeHeader();
 
         //Announcing
-        announce = (announce === 'true' | announce === true);
-        if(announce) globals.discordBot.sendAnnouncement(`Starting server **${globals.config.serverName}**.`);
+        if(announce === 'true' | announce === true){
+            let discordMessage = globals.translator.t('server_actions.spawning_discord', {servername: globals.config.serverName});
+            globals.discordBot.sendAnnouncement(discordMessage);
+        }
 
         //Starting server
         try {
@@ -267,41 +269,59 @@ module.exports = class FXRunner {
      * @param {string} tReason
      */
     async restartServer(tReason){
-        //If a reason is provided, announce restart on discord, kick all players and wait 500ms
-        if(typeof tReason === 'string'){
-            let tOptions = {
-                servername: globals.config.serverName,
-                reason: tReason
+        try {
+            //If a reason is provided, announce restart on discord, kick all players and wait 500ms
+            if(typeof tReason === 'string'){
+                let tOptions = {
+                    servername: globals.config.serverName,
+                    reason: tReason
+                }
+                let discordMessage = globals.translator.t('server_actions.restarting_discord', tOptions);
+                globals.discordBot.sendAnnouncement(discordMessage);
+                let kickMessage = globals.translator.t('server_actions.restarting', tOptions).replace(/\"/g, '\\"');
+                this.srvCmd(`txaKickAll "${kickMessage}"`);
+                await sleep(500);
             }
-            let discordMessage = globals.translator.t('server_actions.restarting_discord', tOptions);
-            globals.discordBot.sendAnnouncement(discordMessage);
-            let kickMessage = globals.translator.t('server_actions.restarting', tOptions).replace(/\"/g, '\\"');
-            this.srvCmd(`txaKickAll "${kickMessage}"`);
-            await sleep(500);
-        }
 
-        //Restart server
-        this.killServer();
-        await sleep(750);
-        this.spawnServer();
-        globals.monitor.clearFXServerHitches()
+            //Restart server
+            this.killServer();
+            await sleep(750);
+            this.spawnServer();
+            globals.monitor.clearFXServerHitches()
+        } catch (error) {
+            logError("Couldn't restart the server.", context);
+            if(globals.config.verbose) dir(error);
+            return false;
+        }
     }
 
 
     //================================================================
     /**
      * Kills the FXServer
-     * @param {boolean} announce
+     * @param {string} tReason
      */
-    killServer(announce){
-        announce = (announce === 'true' | announce === true);
+    async killServer(tReason){
         try {
-            if(announce) globals.discordBot.sendAnnouncement(`Stopping server **${globals.config.serverName}**.`);
+            //If a reason is provided, announce restart on discord, kick all players and wait 500ms
+            if(typeof tReason === 'string'){
+                let tOptions = {
+                    servername: globals.config.serverName,
+                    reason: tReason
+                }
+                let discordMessage = globals.translator.t('server_actions.stopping_discord', tOptions);
+                globals.discordBot.sendAnnouncement(discordMessage);
+                let kickMessage = globals.translator.t('server_actions.stopping', tOptions).replace(/\"/g, '\\"');
+                this.srvCmd(`txaKickAll "${kickMessage}"`);
+                await sleep(500);
+            }
+
+            //Stopping server
             this.fxChild.kill();
             this.fxChild = null;
             return true;
         } catch (error) {
-            logWarn("Couldn't kill the server. Perhaps What Is Dead May Never Die.", context);
+            logError("Couldn't kill the server. Perhaps What Is Dead May Never Die.", context);
             if(globals.config.verbose) dir(error);
             this.fxChild = null;
             return false;
