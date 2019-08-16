@@ -182,7 +182,7 @@ module.exports = class ConfigVault {
             //Monitor
             cfg.monitor.interval = parseInt(cfg.monitor.interval) || 1000; //not in template
             cfg.monitor.timeout = parseInt(cfg.monitor.timeout) || 1000;
-            cfg.monitor.restarter.cooldown = parseInt(cfg.monitor.restarter.cooldown) || 120; //not in template
+            cfg.monitor.restarter.cooldown = parseInt(cfg.monitor.restarter.cooldown) || 60; //not in template
             cfg.monitor.restarter.failures = parseInt(cfg.monitor.restarter.failures) || 30;
             cfg.monitor.restarter.schedule = cfg.monitor.restarter.schedule || [];
 

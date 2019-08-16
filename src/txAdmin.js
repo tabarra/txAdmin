@@ -44,11 +44,11 @@ module.exports = class txAdmin {
         this.startLogger(profileConfig.logger).catch((err) => {
             HandleFatalError(err, 'Logger');
         });
-        this.startMonitor(profileConfig.monitor).catch((err) => {
-            HandleFatalError(err, 'Monitor');
-        });
         this.startTranslator().catch((err) => {
             HandleFatalError(err, 'Translator');
+        });
+        this.startMonitor(profileConfig.monitor).catch((err) => {
+            HandleFatalError(err, 'Monitor');
         });
         this.startWebServer(profileConfig.webServer).catch((err) => {
             HandleFatalError(err, 'WebServer');
@@ -56,6 +56,9 @@ module.exports = class txAdmin {
         this.startWebConsole(profileConfig.webConsole).catch((err) => {
             HandleFatalError(err, 'WebConsole');
         });
+        //FIXME: dependency order
+        //  - translator before monitor
+        //  - webserver before webconsole
 
         //Run Update Checker every 30 minutes
         const updateChecker = require('./extras/updateChecker');

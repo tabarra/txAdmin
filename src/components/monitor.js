@@ -14,6 +14,10 @@ module.exports = class Monitor {
         this.config = config;
 
         //Checking config
+        if(this.config.restarter.cooldown < 15){
+            logError('The monitor.restarter.cooldown setting must be 15 seconds or more.', context);
+            process.exit();
+        }
         if(this.config.interval < 1000){
             logError('The monitor.interval setting must be 1000 milliseconds or more.', context);
             process.exit();
@@ -81,11 +85,18 @@ module.exports = class Monitor {
             date.setHours(hour);
             date.setMinutes(minute - sub);
 
-            let remaining = (sub > 1)? `${sub} minutes.` : `60 seconds. Please disconnect.`;
+            let tOptions = {
+                smart_count: sub,
+                servername: globals.config.serverName
+            }
             return {
                 hour: date.getHours(),
                 minute: date.getMinutes(),
-                message: `${globals.config.serverName} is scheduled to restart in ${remaining}`
+                restart: false,
+                messages: {
+                    chat: globals.translator.t('restarter.schedule_warn', tOptions),
+                    discord: globals.translator.t('restarter.schedule_warn_discord', tOptions),
+                }
             }
         }
 
@@ -100,7 +111,8 @@ module.exports = class Monitor {
                 schedule.push({
                     hour: time.hour,
                     minute: time.minute,
-                    restart: true
+                    restart: true,
+                    messages: false
                 });
             } catch (error) {
                 let timeJSON = JSON.stringify(time);
@@ -120,21 +132,26 @@ module.exports = class Monitor {
         if(!Array.isArray(this.schedule)) return;
         if(globals.fxRunner.fxChild === null) return;
 
-        let now = new Date;
         try {
+            //Check schedule for current time
             //FIXME: returns only the first result, not necessarily the most important
             // eg, when a restart message comes before a restart command
+            let now = new Date;
             let action = this.schedule.find((time) => {
                 return (time.hour == now.getHours() && time.minute == now.getMinutes())
             });
             if(!action) return;
+
+            //Perform scheduled action
             if(action.restart === true){
                 let currTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-                log(`Scheduled restart: ${currTime}`);
-                this.restartFXServer(`scheduled restart at ${currTime}`, 15);
-            }else if(typeof action.message === 'string'){
-                globals.discordBot.sendAnnouncement(action.message);
-                globals.fxRunner.srvCmd(`txaBroadcast "${action.message}"`);
+                this.restartFXServer(
+                    `scheduled restart at ${currTime}`,
+                    globals.translator.t('restarter.schedule_reason', {time: currTime})
+                );
+            }else if(action.messages){
+                globals.discordBot.sendAnnouncement(action.messages.discord);
+                globals.fxRunner.srvCmd(`txaBroadcast "${action.messages.chat}"`);
             }
         } catch (error) {}
     }
@@ -144,27 +161,28 @@ module.exports = class Monitor {
     //================================================================
     /**
      * Check cooldown and Restart the FXServer
+     * @param {string} reason
+     * @param {string} reasonTranslated
      */
-    async restartFXServer(reason, kickTime){
-        let elapsed = Math.round(Date.now()/1000) - globals.fxRunner.tsChildStarted;
-        if(elapsed >= this.config.restarter.cooldown){
-            //sanity check
-            if(globals.fxRunner.fxChild === null){
-                logWarn('Server not started, no need to restart', context);
-                return false;
-            }
-            let message = `Restarting server (${reason}).`;
-            logWarn(message, context);
-            globals.discordBot.sendAnnouncement(`Restarting **${globals.config.serverName}** (${reason}).`);
-            globals.logger.append(`[MONITOR] ${message}`);
-            if(kickTime){
-                await globals.fxRunner.srvCmd(`txaKickAll "${message}"`);
-                await sleep(kickTime*1000);
-            }
-            globals.fxRunner.restartServer(reason);
-        }else{
-            if(globals.config.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) restartFXServer() awaiting restarter cooldown.`, context);
+    async restartFXServer(reason, reasonTranslated){
+        //sanity check
+        if(globals.fxRunner.fxChild === null){
+            logWarn('Server not started, no need to restart', context);
+            return false;
         }
+
+        //Cooldown check
+        let elapsed = Math.round(Date.now()/1000) - globals.fxRunner.tsChildStarted;
+        if(elapsed < this.config.restarter.cooldown){
+            if(globals.config.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) restartFXServer() awaiting restarter cooldown.`, context);
+            return false;
+        }
+
+        //Restart server
+        let message = `Restarting server (${reason}).`;
+        logWarn(message, context);
+        globals.logger.append(`[MONITOR] ${message}`);
+        globals.fxRunner.restartServer(reasonTranslated);
     }
 
 
@@ -172,6 +190,44 @@ module.exports = class Monitor {
     //FIXME: temp
     handleHeartBeat(body){
         this.lastHeartBeat = Math.round(Date.now()/1000);
+    }
+
+
+    //================================================================
+    handleFailure(errorMessage){
+        let now = Math.round(Date.now()/1000)
+        let elapsed = Math.round(Date.now()/1000) - globals.fxRunner.tsChildStarted;
+
+        //Check cooldown
+        if(elapsed < this.config.restarter.cooldown){
+            if(globals.config.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) Failed to connect to server. Still in cooldown.`, context);
+            return false;
+        }
+
+        //TODO: check if fxChild is closed, in this case no need to wait the failure count
+
+        //Count failure
+        this.failCounter++;
+        this.timeSeries.add(0);
+        if(globals.config.verbose || this.failCounter > 5){
+            logWarn(`(${this.failCounter}/${this.config.restarter.failures}) HealthCheck request error: ${errorMessage}`, context);
+        }
+
+        //Check if it's time to restart the server
+        if(
+            this.config.restarter.failures !== -1 &&
+            this.failCounter >= this.config.restarter.failures
+        ){
+            if((now - this.lastHeartBeat) > 30){
+                this.restartFXServer(
+                    'crash detected',
+                    globals.translator.t('restarter.crash_detected')
+                );
+            }else{
+                //TODO: restart anyway after 10 minutes?
+                if(globals.config.verbose) logWarn(`Above restarter limit for HealthCheck failures. Skipping restart since last HeartBeat was less than 30s ago.`);
+            }
+        }
     }
 
 
@@ -227,26 +283,12 @@ module.exports = class Monitor {
             players = res.data;
             if(!Array.isArray(players)) throw new Error("FXServer's players endpoint didnt return a JSON array.")
         } catch (error) {
-            this.failCounter++;
-            if(globals.config.verbose || this.failCounter > 5){
-                logWarn(`(Counter: ${this.failCounter}/${this.config.restarter.failures}) HealthCheck request error: ${error.message}`, context);
-            }
-
-            //Check if it's time to restart the server
-            let now = Math.round(Date.now()/1000)
-            if(
-                this.config.restarter.failures !== -1 &&
-                this.failCounter >= this.config.restarter.failures &&
-                (now - this.lastHeartBeat) > 30
-            ){
-                this.restartFXServer('Failure Count Above Limit');
-            }
+            this.handleFailure(error.message);
             this.statusServer = {
                 online: false,
                 ping: false,
                 players: []
             }
-            this.timeSeries.add(0);
             return;
         }
         this.failCounter = 0;
@@ -265,7 +307,7 @@ module.exports = class Monitor {
             delete player.endpoint;
         });
 
-        //Save cache and print output
+        //Save status cache and print output
         this.statusServer = {
             online: true,
             ping: Date.now() - timeStart,

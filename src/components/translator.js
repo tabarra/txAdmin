@@ -56,6 +56,11 @@ module.exports = class Translator {
             logError(error.message, context);
             process.exit();
         }
+
+        //Rebuild Monitor's schedule with new text
+        try {
+            globals.monitor.buildSchedule();
+        } catch (error) {}
     }
 
 

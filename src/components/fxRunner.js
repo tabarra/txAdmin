@@ -25,8 +25,7 @@ module.exports = class FXRunner {
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
         if(config.autostart){
             setTimeout(() => {
-                this.spawnServer();
-                globals.discordBot.sendAnnouncement(`Starting server **${globals.config.serverName}**.`);
+                this.spawnServer(true);
             }, config.autostartDelay * 1000);
         }
     }
@@ -69,8 +68,9 @@ module.exports = class FXRunner {
     //================================================================
     /**
      * Spawns the FXServer and sets up all the event handlers
+     * @param {boolean} announce
      */
-    async spawnServer(){
+    async spawnServer(announce){
         //FIXME: remove this line
         globals.resourceWrongVersion = null;
 
@@ -118,6 +118,10 @@ module.exports = class FXRunner {
 
         //Sending header to the console buffer
         this.consoleBuffer.writeHeader();
+
+        //Announcing
+        announce = (announce === 'true' | announce === true);
+        if(announce) globals.discordBot.sendAnnouncement(`Starting server **${globals.config.serverName}**.`);
 
         //Starting server
         try {
@@ -260,26 +264,39 @@ module.exports = class FXRunner {
     //================================================================
     /**
      * Restarts the FXServer
+     * @param {string} tReason
      */
-    async restartServer(reason){
-        if(typeof reason === 'string'){
-            reason = reason.replace(/\"/g, '\\"');
-            this.srvCmd(`txaBroadcast "Restarting server (${reason})."`);
-            await sleep(100);
+    async restartServer(tReason){
+        //If a reason is provided, announce restart on discord, kick all players and wait 500ms
+        if(typeof tReason === 'string'){
+            let tOptions = {
+                servername: globals.config.serverName,
+                reason: tReason
+            }
+            let discordMessage = globals.translator.t('server_actions.restarting_discord', tOptions);
+            globals.discordBot.sendAnnouncement(discordMessage);
+            let kickMessage = globals.translator.t('server_actions.restarting', tOptions).replace(/\"/g, '\\"');
+            this.srvCmd(`txaKickAll "${kickMessage}"`);
+            await sleep(500);
         }
+
+        //Restart server
         this.killServer();
-        globals.monitor.clearFXServerHitches()
         await sleep(750);
         this.spawnServer();
+        globals.monitor.clearFXServerHitches()
     }
 
 
     //================================================================
     /**
      * Kills the FXServer
+     * @param {boolean} announce
      */
-    killServer(){
+    killServer(announce){
+        announce = (announce === 'true' | announce === true);
         try {
+            if(announce) globals.discordBot.sendAnnouncement(`Stopping server **${globals.config.serverName}**.`);
             this.fxChild.kill();
             this.fxChild = null;
             return true;

@@ -1,3 +1,12 @@
 {
-    "hello": "hello, world!"
+    "restarter": {
+        "crash_detected": "crash detected",
+        "schedule_reason": "scheduled restart at %{time}",
+        "schedule_warn": "This server is scheduled to restart in %{smart_count} minute. Please disconnect now. |||| This server is scheduled to restart in %{smart_count} minutes.",
+        "schedule_warn_discord": "**%{servername}** is scheduled to restart in %{smart_count} minute. |||| **%{servername}** is scheduled to restart in %{smart_count} minutes."
+    },
+    "server_actions": {
+        "restarting": "Restarting Server (%{reason}).",
+        "restarting_discord": "Restarting **%{servername}** (%{reason})."
+    }
 }

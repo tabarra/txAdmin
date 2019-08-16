@@ -69,14 +69,16 @@ module.exports = class ConsoleBuffer {
     /**
      * Write data to all buffers
      * @param {string} data
+     * @param {string} markType
      */
-    write(data) {
+    write(data, markType) {
+        if(typeof markType === 'undefined') markType = false;
         //NOTE: not sure how this would throw any errors, but anyways...
         data = data.toString();
         try {
             this.hitchStreamProcessor.write(data);
             this.detectMissingResource.write(data);
-            globals.webConsole.buffer(data);
+            globals.webConsole.buffer(data, markType);
             if(!globals.fxRunner.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ""));
         } catch (error) {
             if(globals.config.verbose) logError(`Buffer write error: ${error.message}`, context)
@@ -118,7 +120,7 @@ module.exports = class ConsoleBuffer {
         let sep = '='.repeat(64);
         let timestamp = new Date().toLocaleString();
         let header = `\r\n${sep}\r\n======== FXServer starting - ${timestamp}\r\n${sep}\r\n`;
-        this.write(header);
+        this.write(header, 'info');
     }
 
 
