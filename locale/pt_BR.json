@@ -11,5 +11,9 @@
         "stopping": "Server desligando (%{reason}).",
         "stopping_discord": "**%{servername}** está desligando (%{reason}).",
         "spawning_discord": "**%{servername}** está iniciando."
+    },
+    "discord": {
+        "status_online": "**%{servername}** está **Online**!",
+        "status_offline": "**%{servername}** está **Offline**!"
     }
 }

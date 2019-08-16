@@ -11,5 +11,9 @@
         "stopping": "Server shutting down (%{reason}).",
         "stopping_discord": "**%{servername}** is shutting down (%{reason}).",
         "spawning_discord": "**%{servername}** is starting."
+    },
+    "discord": {
+        "status_online": "**%{servername}** is currently **Online**!",
+        "status_offline": "**%{servername}** is currently **Offline**!"
     }
 }
