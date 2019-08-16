@@ -26,6 +26,9 @@ async function renderMasterView(view, data){
         ]);
         sqrl.definePartial("header", rawHeader);
         sqrl.definePartial("footer", rawFooter);
+        sqrl.defineFilter("isSelected", (x)=>{
+            return (x==='true')? 'selected' : ''
+        });
         out = sqrl.Render(rawView, data);
     } catch (error) {
         if(globals.config.verbose) {

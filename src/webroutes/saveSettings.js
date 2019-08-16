@@ -58,6 +58,7 @@ function handleGlobal(res, req) {
     if(
         isUndefined(req.body.serverName) ||
         isUndefined(req.body.publicIP) ||
+        isUndefined(req.body.language) ||
         isUndefined(req.body.verbose)
     ){
         return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
@@ -67,18 +68,29 @@ function handleGlobal(res, req) {
     let cfg = {
         serverName: req.body.serverName.trim(),
         publicIP: req.body.publicIP.trim(),
+        language: req.body.language.trim(),
         verbose: (req.body.verbose === 'true')
+    }
+
+    //Trying to load language file
+    let langPhrases;
+    try {
+        langPhrases = globals.translator.getLanguagePhrases(cfg.language);
+    } catch (error) {
+        return res.send({type: 'danger', message: `<strong>Language error:</strong> ${error.message}`});
     }
 
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('global');
     newConfig.serverName = cfg.serverName;
     newConfig.publicIP = cfg.publicIP;
+    newConfig.language = cfg.language;
     newConfig.verbose = cfg.verbose;
     let saveStatus = globals.configVault.saveProfile('global', newConfig);
 
     //Sending output
     if(saveStatus){
+        globals.translator.refreshConfig(langPhrases);
         globals.config = globals.configVault.getScoped('global');
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing global settings.`;
         logOk(logMessage, context);
@@ -119,7 +131,6 @@ function handleFXServer(res, req) {
         autostart: (req.body.autostart === 'true'),
         quiet: (req.body.quiet === 'true'),
     }
-    dir(cfg.buildPath)
 
     //Validating Build Path
     try {

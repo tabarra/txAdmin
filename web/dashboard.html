@@ -180,7 +180,8 @@
         'ensure_res',
         'restart_res',
         'start_res',
-        'stop_res'
+        'stop_res',
+        'kick_all'
     ];
 
     //EXECUTE button handler
@@ -195,8 +196,13 @@
         }
         if (paramRequiredCommands.indexOf(data.action) != -1 && !data.parameter.length) {
             var notify = $.notify({ message: '<p class="text-center font-weight-bold">This action require a parameter.</p>' }, { delay: 3000, type: 'danger' });
+            $("#frm_parameter").addClass('is-invalid');
+            $("#frm_parameter").focus();
             return;
+        }else{
+            $("#frm_parameter").removeClass('is-invalid');
         }
+
         var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
             type: "POST",
@@ -214,11 +220,12 @@
                 notify.update('message', message);
             }
         });
-        $("#frm_parameter").val('');
     });
 
     //Ensure the parameter input is only enabled when neccessary.
     $('#frm_action').change(function () {
+        $("#frm_parameter").removeClass('is-invalid');
+        $("#frm_parameter").val('');
         var action = $("#frm_action").val();
         if (paramRequiredCommands.indexOf(action) != -1) {
             $("#frm_parameter").prop('readonly', false);

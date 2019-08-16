@@ -46,7 +46,13 @@ module.exports = async function action(res, req) {
     //==============================================
     }else if(action == 'kick_player'){
         if(!ensurePermission('commands.kick', res, req)) return false;
-        let cmd = `txaKickID ${parameter}`;
+        let cmd;
+        if(parameter[1].length){
+            reason = parameter[1].replace(/"/g,'\\"');
+            cmd = `txaKickID ${parameter[0]} "${reason}"`;
+        }else{
+            cmd = `txaKickID ${parameter[0]}`;
+        }
         webUtils.appendLog(req, cmd, context);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
@@ -54,7 +60,13 @@ module.exports = async function action(res, req) {
     //==============================================
     }else if(action == 'kick_all'){
         if(!ensurePermission('commands.kick', res, req)) return false;
-        let cmd = `txaKickAll "kicked via txAdmin web panel"`;
+        let cmd;
+        if(parameter.length){
+            reason = parameter.replace(/"/g,'\\"');
+            cmd = `txaKickAll "${reason}"`;
+        }else{
+            cmd = `txaKickAll "txAdmin Web Panel"`;
+        }
         webUtils.appendLog(req, cmd, context);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);

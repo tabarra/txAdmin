@@ -38,11 +38,14 @@ module.exports = class txAdmin {
         this.startDiscordBot(profileConfig.discordBot).catch((err) => {
             HandleFatalError(err, 'DiscordBot');
         });
-        this.startFXServer(profileConfig.fxRunner).catch((err) => {
-            HandleFatalError(err, 'FXServer');
+        this.startFXRunner(profileConfig.fxRunner).catch((err) => {
+            HandleFatalError(err, 'FXRunner');
         });
         this.startLogger(profileConfig.logger).catch((err) => {
             HandleFatalError(err, 'Logger');
+        });
+        this.startTranslator().catch((err) => {
+            HandleFatalError(err, 'Translator');
         });
         this.startMonitor(profileConfig.monitor).catch((err) => {
             HandleFatalError(err, 'Monitor');
@@ -53,12 +56,16 @@ module.exports = class txAdmin {
         this.startWebConsole(profileConfig.webConsole).catch((err) => {
             HandleFatalError(err, 'WebConsole');
         });
+        //FIXME: dependency order
+        //  - translator before monitor
+        //  - webserver before webconsole
 
         //Run Update Checker every 30 minutes
         const updateChecker = require('./extras/updateChecker');
         updateChecker();
         setInterval(updateChecker, 30 * 60 * 1000);
     }
+
 
     //==============================================================
     async startAuthenticator(config){
@@ -73,7 +80,7 @@ module.exports = class txAdmin {
     }
 
     //==============================================================
-    async startFXServer(config){
+    async startFXRunner(config){
         const FXRunner = require('./components/fxRunner')
         globals.fxRunner = new FXRunner(config);
     }
@@ -88,6 +95,12 @@ module.exports = class txAdmin {
     async startMonitor(config){
         const Authenticator = require('./components/monitor')
         globals.monitor = new Authenticator(config);
+    }
+
+    //==============================================================
+    async startTranslator(){
+        const Translator = require('./components/translator')
+        globals.translator = new Translator();
     }
 
     //==============================================================

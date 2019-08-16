@@ -1,5 +1,5 @@
 {
-    "version": "1.7.3",
+    "version": "1.8.0",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -65,6 +65,14 @@
         {
             "version": "1.7.3",
             "changelog": "Minor bug fixes and improved some settings descriptions and error messages."
+        },
+        {
+            "version": "1.7.4",
+            "changelog": "Added beta support for HTTPS/SSL. Added kick reason. Minor bug fixes."
+        },
+        {
+            "version": "1.8.0",
+            "changelog": "Added translation support for Chat/Discord messages."
         }
     ]
 }

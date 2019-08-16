@@ -1,5 +1,6 @@
 //Requires
 const fs = require('fs');
+const chalk = require('chalk');
 const StreamSnitch = require('stream-snitch');
 const prettyBytes = require('pretty-bytes');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
@@ -68,14 +69,16 @@ module.exports = class ConsoleBuffer {
     /**
      * Write data to all buffers
      * @param {string} data
+     * @param {string} markType
      */
-    write(data) {
+    write(data, markType) {
+        if(typeof markType === 'undefined') markType = false;
         //NOTE: not sure how this would throw any errors, but anyways...
         data = data.toString();
         try {
             this.hitchStreamProcessor.write(data);
             this.detectMissingResource.write(data);
-            globals.webConsole.buffer(data);
+            globals.webConsole.buffer(data, markType);
             if(!globals.fxRunner.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ""));
         } catch (error) {
             if(globals.config.verbose) logError(`Buffer write error: ${error.message}`, context)
@@ -94,13 +97,30 @@ module.exports = class ConsoleBuffer {
 
     //================================================================
     /**
+     * Print fxChild's stderr to the webconsole and to the terminal
+     * @param {string} data
+     */
+    writeError(data) {
+        //FIXME: this should be saving to a file, and should be persistent to the web console
+        data = data.toString();
+        try {
+            globals.webConsole.buffer(data, 'error');
+            if(!globals.fxRunner.quiet) process.stdout.write(chalk.red(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, "")));
+        } catch (error) {
+            if(globals.config.verbose) logError(`Buffer write error: ${error.message}`, context)
+        }
+    }
+
+
+    //================================================================
+    /**
      * Save the log file and clear buffer
      */
     writeHeader() {
         let sep = '='.repeat(64);
         let timestamp = new Date().toLocaleString();
         let header = `\r\n${sep}\r\n======== FXServer starting - ${timestamp}\r\n${sep}\r\n`;
-        this.write(header);
+        this.write(header, 'info');
     }
 
 

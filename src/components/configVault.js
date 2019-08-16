@@ -99,7 +99,8 @@ module.exports = class ConfigVault {
                 verbose: toDefault(cfg.global.verbose, null),
                 publicIP:  toDefault(cfg.global.publicIP, null),
                 serverName:  toDefault(cfg.global.serverName, null),
-                forceFXServerPort:  toDefault(cfg.global.forceFXServerPort, null),
+                language:  toDefault(cfg.global.language, null),
+                forceFXServerPort:  toDefault(cfg.global.forceFXServerPort, null), //not in template
             };
             out.logger = {
                 logPath: toDefault(cfg.logger.logPath, null), //not in template
@@ -121,6 +122,8 @@ module.exports = class ConfigVault {
                 bufferTime: toDefault(cfg.webServer.bufferTime, null), //not in template - deprecate?
                 limiterMinutes: toDefault(cfg.webServer.limiterMinutes, null), //not in template
                 limiterAttempts: toDefault(cfg.webServer.limiterAttempts, null), //not in template
+                enableHTTPS: toDefault(cfg.webServer.enableHTTPS, null), //not in template [BETA]
+                httpsPort: toDefault(cfg.webServer.httpsPort, null), //not in template [BETA]
             };
             out.webConsole = {
                 //nothing to configure
@@ -166,6 +169,7 @@ module.exports = class ConfigVault {
             cfg.global.verbose = (cfg.global.verbose === 'true' || cfg.global.verbose === true);
             cfg.global.publicIP = cfg.global.publicIP || "change-me";
             cfg.global.serverName = cfg.global.serverName || "change-me";
+            cfg.global.language = cfg.global.language || "en";
 
             //Global - Extras
             cfg.global.osType = os.type() || 'unknown';
@@ -178,7 +182,7 @@ module.exports = class ConfigVault {
             //Monitor
             cfg.monitor.interval = parseInt(cfg.monitor.interval) || 1000; //not in template
             cfg.monitor.timeout = parseInt(cfg.monitor.timeout) || 1000;
-            cfg.monitor.restarter.cooldown = parseInt(cfg.monitor.restarter.cooldown) || 120; //not in template
+            cfg.monitor.restarter.cooldown = parseInt(cfg.monitor.restarter.cooldown) || 60; //not in template
             cfg.monitor.restarter.failures = parseInt(cfg.monitor.restarter.failures) || 30;
             cfg.monitor.restarter.schedule = cfg.monitor.restarter.schedule || [];
 
@@ -190,6 +194,8 @@ module.exports = class ConfigVault {
             cfg.webServer.bufferTime = parseInt(cfg.webServer.bufferTime) || 1500; //not in template - deprecate?
             cfg.webServer.limiterMinutes = parseInt(cfg.webServer.limiterMinutes) || 15; //not in template
             cfg.webServer.limiterAttempts = parseInt(cfg.webServer.limiterAttempts) || 5; //not in template
+            cfg.webServer.enableHTTPS = (cfg.webServer.enableHTTPS === 'true' || cfg.webServer.enableHTTPS === true); //not in template [BETA]
+            cfg.webServer.httpsPort = parseInt(cfg.webServer.httpsPort) || 50120; //not in template [BETA]
 
             //DiscordBot
             cfg.discordBot.enabled = (cfg.discordBot.enabled === 'true' || cfg.discordBot.enabled === true);

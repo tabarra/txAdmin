@@ -77,7 +77,7 @@ function showPlayer(id) {
 
 function messagePlayer(id) {
     $('#modPlayerInfo').modal('hide');
-    let message = prompt('Do something?');
+    let message = prompt('Type your message');
     if(!message || message.length === 0) return;
 
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
@@ -111,11 +111,12 @@ function messagePlayer(id) {
 
 function kickPlayer(id) {
     $('#modPlayerInfo').modal('hide');
+    let reason = prompt('Type the kick reason or leave it blank (press enter)');
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
     let data = {
         action: 'kick_player',
-        parameter: id
+        parameter: [id, reason]
     }
     $.ajax({
         type: "POST",

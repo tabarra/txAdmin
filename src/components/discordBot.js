@@ -108,9 +108,8 @@ module.exports = class DiscordBot {
             //Prepare message's data
             let dataServer = globals.monitor.statusServer; //shorthand much!?
             let color = (dataServer.online)? 0x74EE15 : 0xF000FF;
-            let title = (dataServer.online)
-                ? `${globals.config.serverName} is currently **Online**!`
-                : `${globals.config.serverName} is currently **Offline**!`;
+            let titleKey = (dataServer.online)?  'discord.status_online' : 'discord.status_offline';
+            let title = globals.translator.t(titleKey, {servername: globals.config.serverName});
             let players = (dataServer.online && typeof dataServer.players !== 'undefined')? dataServer.players.length : '--';
             let desc = '';
             if(globals.config.forceFXServerPort || globals.fxRunner.fxServerPort){
@@ -125,7 +124,7 @@ module.exports = class DiscordBot {
             out.setColor(color);
             out.setDescription(desc);
 
-        }else if(message.content.startsWith('/fxadmin') || message.content.startsWith('/txadmin')){
+        }else if(message.content.startsWith('/txadmin')){
             //Prepare object
             out = new Discord.RichEmbed();
             out.setTitle(`${globals.config.serverName} uses txAdmin v${globals.version.current}!`);

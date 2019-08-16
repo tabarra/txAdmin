@@ -36,10 +36,15 @@
 - Restart warning announcements
 - Admin Management system
 - Permissions system ([more info](docs/permissions.md))
+- SSL Support ([more info](docs/ssl_support.md))
+- Translation Support ([more info](docs/translation.md))
 
 
 ## Installing & Running
-First, make sure you have:
+
+**Video tutorial:** https://youtu.be/S0tBq7Q8YaQ
+
+**Requirements**:
 - NodeJS v10 LTS (Otherwise you WILL have problems with node-gyp/bcrypt/discord.js)
 - FXServer [(duh)](https://runtime.fivem.net/artifacts/fivem/)
 - One TCP listen port opened for the web server (default is 40120)

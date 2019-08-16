@@ -1,0 +1,19 @@
+{
+    "restarter": {
+        "crash_detected": "crash detected",
+        "schedule_reason": "scheduled restart at %{time}",
+        "schedule_warn": "This server is scheduled to restart in %{smart_count} minute. Please disconnect now. |||| This server is scheduled to restart in %{smart_count} minutes.",
+        "schedule_warn_discord": "**%{servername}** is scheduled to restart in %{smart_count} minute. |||| **%{servername}** is scheduled to restart in %{smart_count} minutes."
+    },
+    "server_actions": {
+        "restarting": "Server restarting (%{reason}).",
+        "restarting_discord": "**%{servername}** is restarting (%{reason}).",
+        "stopping": "Server shutting down (%{reason}).",
+        "stopping_discord": "**%{servername}** is shutting down (%{reason}).",
+        "spawning_discord": "**%{servername}** is starting."
+    },
+    "discord": {
+        "status_online": "**%{servername}** is currently **Online**!",
+        "status_offline": "**%{servername}** is currently **Offline**!"
+    }
+}

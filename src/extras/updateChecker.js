@@ -18,7 +18,7 @@ module.exports = async () => {
     } catch (error) {
         logError(`Error checking for updates. Go to the github repository to see if you need one.`, 'UpdateChecker');
         let ver = '9.9.9';
-        let msg = 'Error checking for updates, if this error persists for more than two hours, <br> you probably need to update. <br> Check out our <a href="https://discord.gg/f3TsfvD" target="_blank" class="alert-link">Discord Server</a> for more information.';
+        let msg = 'Error checking for updates, if this error persists for more than 4 hours, <br> you probably need to update. <br> Check out our <a href="https://discord.gg/f3TsfvD" target="_blank" class="alert-link">Discord Server</a> for more information.';
         globals.version.latest = ver;
         globals.version.changelog = msg;
         globals.version.allVersions = [{version: ver, changelog: msg}];

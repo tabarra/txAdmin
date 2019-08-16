@@ -1,5 +1,5 @@
 //Requires
-const socketio = require('socket.io');
+const SocketIO = require('socket.io');
 const sharedsession = require("express-socket.io-session");
 const xssClass = require("xss");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
@@ -21,18 +21,8 @@ module.exports = class webConsole {
         this.io = null;
         this.dataBuffer = '';
 
-        setInterval(this.flushBuffer.bind(this), 250);
-    }
-
-
-    //================================================================
-    /**
-     * Starts the Socket.IO server
-     * @param {object} httpServer
-     */
-    startSocket(httpServer){
-        logOk('::Started', context);
-        this.io = socketio.listen(httpServer, {
+        //Start SocketIO
+        this.io = new SocketIO({
             pingInterval: 5000
         });
         this.io.use(sharedsession(globals.webServer.session));
@@ -58,6 +48,25 @@ module.exports = class webConsole {
                 if(globals.config.verbose) logWarn(`Error sending sending old buffer: ${error.message}`, context);
             }
         });
+
+        setInterval(this.flushBuffer.bind(this), 250);
+    }
+
+
+    //================================================================
+    /**
+     * Attach the Socket.IO to a http/https server
+     * @param {object} socketInterface
+     */
+    attachSocket(socketInterface){
+        try {
+            this.io.attach(socketInterface);
+            let port = socketInterface.address().port;
+            logOk(`::Listening on port ${port}.`, context);
+        } catch (error) {
+            logError('::Failed to attach to http/https interface with error:', context);
+            dir(error);
+        }
     }
 
 
@@ -128,20 +137,16 @@ module.exports = class webConsole {
 
     //================================================================
     /**
-     * Add command to buffer
-     * @param {*} data
-     */
-    bufferCommand(data){
-        this.dataBuffer += `\n<mark>${data}</mark>\n`;
-    }
-
-    //================================================================
-    /**
      * Adds data to the buffer
      * @param {string} data
+     * @param {string} markType
      */
-    buffer(data){
-        this.dataBuffer += data;
+    buffer(data, markType){
+        if(typeof markType === 'string'){
+            this.dataBuffer += `\n<mark class="consoleMark-${markType}">${data}</mark>\n`;
+        }else{
+            this.dataBuffer += data;
+        }
     }
 
 

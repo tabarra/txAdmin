@@ -1,6 +1,7 @@
 //Requires
-const bcrypt = require('bcrypt');
+const fs = require('fs')
 const httpServer  = require('http');
+const httpsServer  = require('https');
 const express = require('express');
 const session = require('express-session');
 const rateLimit = require("express-rate-limit");
@@ -37,21 +38,49 @@ module.exports = class WebServer {
         this.app.use(express.urlencoded({extended: true}))
         this.app.use(express.static('web/public', {index: false}))
         this.setupRoutes()
-        this.httpServer = httpServer.createServer(this.app);
-        this.httpServer.on('error', (error)=>{
-            if(error.code !== 'EADDRINUSE') return;
-            logError(`Failed to start webserver, port ${error.port} already in use.`, context);
-            process.exit();
-        })
+
+
+        //HTTP Server
         try {
+            this.httpServer = httpServer.createServer(this.app);
+            this.httpServer.on('error', (error)=>{
+                if(error.code !== 'EADDRINUSE') return;
+                logError(`Failed to start HTTP server, port ${error.port} already in use.`, context);
+                process.exit();
+            })
             this.httpServer.listen(this.config.port, '0.0.0.0', () => {
                 logOk(`::Started at http://localhost:${this.config.port}/`, context);
-                globals.webConsole.startSocket(this.httpServer);
+                globals.webConsole.attachSocket(this.httpServer);
             })
         } catch (error) {
-            logError('::Failed to start webserver with error:', context);
+            logError('::Failed to start HTTP server with error:', context);
             dir(error);
             process.exit();
+        }
+
+
+        //HTTPS Server
+        if(this.config.enableHTTPS){
+            try {
+                let httpsServerOptions = {
+                    key: fs.readFileSync('data/key.pem'),
+                    cert: fs.readFileSync('data/cert.pem'),
+                }
+                this.httpsServer = httpsServer.createServer(httpsServerOptions, this.app);
+                this.httpsServer.on('error', (error)=>{
+                    if(error.code !== 'EADDRINUSE') return;
+                    logError(`Failed to start HTTPS server, port ${error.port} already in use.`, context);
+                    process.exit();
+                })
+                this.httpsServer.listen(this.config.httpsPort, '0.0.0.0', () => {
+                    logOk(`::Started at https://localhost:${this.config.httpsPort}/`, context);
+                    globals.webConsole.attachSocket(this.httpsServer);
+                })
+            } catch (error) {
+                logError('::Failed to start HTTPS server with error:', context);
+                dir(error);
+                process.exit();
+            }
         }
     }
 
@@ -60,6 +89,7 @@ module.exports = class WebServer {
     async setupRoutes(){
         //FIXME: reorganize routes
         //Auth routes
+        //FIXME: send both login routes to one webroute, then remove the renderLoginView from the webutils
         this.app.get('/auth', async (req, res) => {
             let message = '';
             if(typeof req.query.logout !== 'undefined'){
