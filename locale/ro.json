@@ -1,0 +1,19 @@
+{
+    "restarter": {
+        "crash_detected": "crash detectat",
+        "schedule_reason": "restartare programata la %{time}",
+        "schedule_warn": "Acest server este programat sa se restarteze in %{smart_count} minute. Va rugam sa va deconctati. |||| Acest server este programat sa se restarteze in %{smart_count} minute.",
+        "schedule_warn_discord": "**%{servername}** este programat sa se restarteze in %{smart_count} minute. |||| **%{servername}** este programat sa se restarteze in %{smart_count} minute."
+    },
+    "server_actions": {
+        "restarting": "Serverul se restarteaza: (%{reason}).",
+        "restarting_discord": "**%{servername}** se restarteaza (%{reason}).",
+        "stopping": "Serverul a fost oprit: (%{reason}).",
+        "stopping_discord": "**%{servername}** a fost oprit: (%{reason}).",
+        "spawning_discord": "**%{servername}** a fost portnit."
+    },
+    "discord": {
+        "status_online": "**%{servername}** este momentan **Pornit**!",
+        "status_offline": "**%{servername}** este momentan **Oprit**!"
+    }
+}
