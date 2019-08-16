@@ -1,5 +1,6 @@
 ## TODO/Roadmap:
-- 
+- remove old resource deprecation message
+
 
 
 ## Folder Structure

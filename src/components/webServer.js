@@ -91,7 +91,6 @@ module.exports = class WebServer {
         //Auth routes
         //FIXME: send both login routes to one webroute, then remove the renderLoginView from the webutils
         this.app.get('/auth', async (req, res) => {
-            dir(req.secure)
             let message = '';
             if(typeof req.query.logout !== 'undefined'){
                 req.session.destroy();

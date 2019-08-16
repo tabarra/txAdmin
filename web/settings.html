@@ -64,12 +64,15 @@
                                         value="{{global.publicIP}}" maxlength="32" placeholder="123.123.123.123" {{disableWrite}}>
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary" id="frmGlobal-getIP"
-                                            type="button">Auto Detect</button>
+                                            type="button" {{disableWrite}}>Auto Detect</button>
                                     </div>
                                 </div>
                                 <span class="form-text text-muted">
                                     You can set this to be your public IP or a domain name. <br>
-                                    Note: The auto detect feature might get blocked by ad-blockers.
+                                    <b>Note:</b> The auto detect feature might get blocked by ad-blockers.
+                                </span>
+                            </div>
+                        </div>
 
                         <div class="form-group row">
                             <label for="frmGlobal-serverName" class="col-sm-3 col-form-label">
