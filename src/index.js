@@ -27,6 +27,7 @@ globals = {
         allVersions: []
     },
     resourceWrongVersion: null //FIXME: temp hack
+    intercomTempList: null, //FIXME: remove with the Extensions update
 }
 
 

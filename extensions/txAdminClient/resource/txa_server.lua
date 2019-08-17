@@ -1,7 +1,7 @@
 local apiPort = "invalid"
 local apiToken = "invalid"
 local serverCompatVersion = "invalid"
-local txAdminClientVersion = "1.1.0"
+local txAdminClientVersion = "1.2.0"
 print("[txAdminClient] Version "..txAdminClientVersion.." starting...")
 
 Citizen.CreateThread(function()
@@ -101,7 +101,7 @@ function txaBroadcast(source, args)
         print("[txAdminClient] Admin Broadcast: "..args[1])
         TriggerClientEvent("chat:addMessage", -1, {
             args = {
-                "Admin Broadcast",
+                "Admin",
                 args[1]
             },
             color = {255, 0, 0}
@@ -141,6 +141,9 @@ function txaReportResources(source, args)
         local currentRes = {
             name = resName,
             status = GetResourceState(resName),
+            author = GetResourceMetadata(resName, 'author'),
+            version = GetResourceMetadata(resName, 'version'),
+            description = GetResourceMetadata(resName, 'description'),
             path = GetResourcePath(resName)
         }
         table.insert(resources, currentRes)

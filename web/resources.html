@@ -1,0 +1,128 @@
+{{include("header")/}}
+
+
+<style>
+    .badge-status {
+        font-size: 100%;
+    }
+</style>
+
+<div class="text-center mb-4">
+    <h2>Resources List</h2>
+</div>
+
+
+<div class="row justify-content-md-center">
+    <div class="col-md-7">
+
+        <!-- Global Card -->
+        <div class="card card-accent-primary">
+            <div class="card-header float-left">
+                <span style="font-size: large">All Resources</span>
+                <button class="btn btn-sm btn-primary float-right" type="button" id="btnRefresh" {{disableActions}}>
+                    <i class="icon-refresh"></i> Reload & Refresh
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-responsive-md table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{foreach(options.resources)}}
+                            <tr>
+                                <td>
+                                    <strong>{{@this.name}}</strong>
+                                    <em>{{@this.version}} {{@this.author}}</em><br>
+                                    <!-- {{@this.description}}<br> -->
+                                    <span class="text-muted">{{@this.path}}</span>
+                                </td>
+                                <td class="align-middle text-center">
+                                    <span class="badge badge-status badge-{{@this.statusClass}}">{{@this.status}}</span>
+                                </td>
+                                <td  class="align-middle text-center">
+                                    {{if(@this.status!=='started')}}
+                                        <button class="btn btn-sm btn-outline-dark"
+                                            onclick="btnCommand('ensure_res', '{{@this.name}}')" {{disableActions}}>
+                                            START
+                                        </button>
+                                    {{#else}}
+                                        <button class="btn btn-sm btn-outline-dark"
+                                            onclick="btnCommand('ensure_res', '{{@this.name}}')" {{disableActions}}>
+                                            RESTART
+                                        </button>
+                                        &nbsp;
+                                        <button class="btn btn-sm btn-outline-dark"
+                                            onclick="btnCommand('stop_res', '{{@this.name}}')" {{disableActions}}>
+                                            STOP
+                                        </button>
+                                    {{/if}}
+                                </td>
+                            </tr>
+                            {{/foreach}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+{{include("footer")/}}
+
+
+
+
+<script>
+    //============================================== Refresh List
+    $('#btnRefresh').click(function () {
+        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        $.ajax({
+            type: "POST",
+            url: '/fxCommands',
+            timeout: 2000,
+            data: {action: 'refresh_res', parameter: ''},
+            success: function (data) {
+                window.location.reload(true);
+                // notify.update('progress', 0);
+                // notify.update('type', data.type);
+                // notify.update('message', data.message);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    })
+
+
+    //EXECUTE button handler
+    function btnCommand(action, parameter){
+        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        $.ajax({
+            type: "POST",
+            url: '/fxCommands',
+            timeout: 2000,
+            data: {action, parameter},
+            success: function (data) {
+                window.location.reload(true);
+                // notify.update('progress', 0);
+                // notify.update('type', data.type);
+                // notify.update('message', data.message);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    }
+</script>

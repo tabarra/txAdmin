@@ -25,7 +25,10 @@ module.exports = async function action(res, req) {
             globals.monitor.handleHeartBeat(req.body);
         } catch (error) {}
     }else if(scope == 'resources'){
-        dir(req.body)
+        globals.intercomTempList = {
+            timestamp: new Date(),
+            data: req.body.resources
+        }
     }else{
         return res.send({
             type: 'danger',
