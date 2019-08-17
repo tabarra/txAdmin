@@ -26,7 +26,7 @@ globals = {
         changelog: '--',
         allVersions: []
     },
-    resourceWrongVersion: null //FIXME: temp hack
+    dashboardErrorMessage: null,
     intercomTempList: null, //FIXME: remove with the Extensions update
 }
 

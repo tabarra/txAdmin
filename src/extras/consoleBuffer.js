@@ -16,7 +16,6 @@ const context = 'ConsoleBuffer';
 module.exports = class ConsoleBuffer {
     constructor(logPath, saveInterval) {
         this.hitchStreamProcessor = null;
-        this.detectMissingResource = null;
         this.logFileSize = null;
         this.logPath = logPath;
         this.enableCmdBuffer = false;
@@ -51,17 +50,6 @@ module.exports = class ConsoleBuffer {
             }
         );
         this.hitchStreamProcessor.on('error', (data) => {});
-
-        this.detectMissingResource = new StreamSnitch(
-            // /Couldn't find resource txAdminClient./g,
-            /\[txAdminClient\] Version 1\.[^1]\.0 starting/g,
-            (m) => {
-                try {
-                    globals.resourceWrongVersion = true;
-                }catch(e){}
-            }
-        );
-        this.detectMissingResource.on('error', (data) => {});
     }//Final setupStreamHandlers()
 
 
@@ -77,7 +65,6 @@ module.exports = class ConsoleBuffer {
         data = data.toString();
         try {
             this.hitchStreamProcessor.write(data);
-            this.detectMissingResource.write(data);
             globals.webConsole.buffer(data, markType);
             if(!globals.fxRunner.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ""));
         } catch (error) {
