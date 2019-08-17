@@ -90,6 +90,7 @@ module.exports = class Translator {
             pt_BR: 'a55fd4cf965097108502860204f5f5abc2ed6e7f',
             cs: 'b7e867715b628815e23d9dc0761e90301eb74d41', //czech
             ro: '77c2a2b46af30859cdc8113df8917a607dbe7f35', //romanian
+            de: '1fa7c2e73c6baf69ee35d2798a61e3c53a9877ea', //german
         }
         let hash = null;
         try {
