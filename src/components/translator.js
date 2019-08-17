@@ -88,18 +88,20 @@ module.exports = class Translator {
         let langHashes = {
             en: '1b514b088a5ee7015b0f0d0ae0319b7b2a6aff0d',
             pt_BR: 'a55fd4cf965097108502860204f5f5abc2ed6e7f',
+            cs: 'b7e867715b628815e23d9dc0761e90301eb74d41', //czech
+            ro: '77c2a2b46af30859cdc8113df8917a607dbe7f35', //romanian
         }
-        if(langHashes.hasOwnProperty(lang)){
-            let hash = null;
-            try {
-                //FIXME: quickfix for git changing the line endings
-                let toHash = JSON.stringify(JSON.parse(raw));
-                hash = crypto.createHash('SHA1').update(toHash).digest("hex");
-                if(globals.config.verbose) logOk(`Hash for ${lang} is ${hash}`, context);
-            } catch (error) {
-                if(globals.config.verbose) logError(error);
-            }
-            if(hash !== langHashes[lang] && hash !== null) thrower('Please do not modify this file. Revert the changes and use the Custom language setting.')
+        let hash = null;
+        try {
+            //FIXME: quickfix for git changing the line endings
+            let toHash = JSON.stringify(JSON.parse(raw));
+            hash = crypto.createHash('SHA1').update(toHash).digest("hex");
+            if(globals.config.verbose) logOk(`Hash for ${lang} is ${hash}`, context);
+        } catch (error) {
+            if(globals.config.verbose) logError(error);
+        }
+        if(langHashes.hasOwnProperty(lang) && hash !== null && hash !== langHashes[lang]){
+            thrower('Please do not modify this file. Revert the changes and use the Custom language setting.')
         }
 
         try {

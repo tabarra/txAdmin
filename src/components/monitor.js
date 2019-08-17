@@ -120,6 +120,7 @@ module.exports = class Monitor {
             }
         })
 
+        if(globals.config.verbose) schedule.forEach(el => { dir(el.messages) });
         return (schedule.length)? schedule : false;
     }
 
