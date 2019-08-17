@@ -7,13 +7,13 @@
     },
     "server_actions": {
         "restarting": "Server-Neustart (%{reason}).",
-        "restarting_discord": "**%{Servername}** wird neu gestartet (%{reason}).",
+        "restarting_discord": "**%{servername}** wird neu gestartet (%{reason}).",
         "stopping": "Server wird heruntergefahren (%{reason}).",
         "stopping_discord": "**%{servername}** wird heruntergefahren (%{reason}).",
-        "spawning_discord": "**%{Servername}** startet."
+        "spawning_discord": "**%{servername}** startet."
     },
     "discord": {
         "status_online": "**%{servername}** ist derzeit **Online**!",
-        "status_offline": "**%{Servername}** ist derzeit **Offline**!"
+        "status_offline": "**%{servername}** ist derzeit **Offline**!"
     }
 }
