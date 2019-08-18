@@ -49,15 +49,17 @@ module.exports = async function action(res, req) {
                 let out = await webUtils.renderMasterView('resources', renderData);
                 return res.send(out);
             }
-        } catch (error) {logError(error)}
+        } catch (error) {logError(error, context)}
 
         //Check execution limit of 1000ms
         cnt++;
         if(cnt > 10){
             clearInterval(intHandle);
             logWarn('the future is now, old man', context);
-            let out = await webUtils.renderMasterView('generic', {message: `Couldn't load the resources list. Make sure the server is online and txAdminClient is running.`});
-            return res.send(out);
+            try {
+                let out = await webUtils.renderMasterView('generic', {message: `Couldn't load the resources list. Make sure the server is online and txAdminClient is running.`});
+                return res.send(out);
+            } catch (error) {logError(error, context)}
         }
     }, 100);
 };

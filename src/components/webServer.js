@@ -32,6 +32,15 @@ module.exports = class WebServer {
         });
 
         this.app = express();
+        //Timeout Middleware
+        this.app.use(function(req, res, next){
+            res.setTimeout(5000, function(){
+                let desc = `Route timed out: ${req.originalUrl}`;
+                logError(desc, context);
+                return res.status(500).send(desc);
+            });
+            next();
+        });
         this.app.use(cors());
         this.app.use(this.session);
         this.app.use(bodyParser.json());
