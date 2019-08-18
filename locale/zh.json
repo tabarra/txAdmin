@@ -1,0 +1,19 @@
+{
+    "restarter": {
+        "crash_detected": "伺服器被檢測到已癱瘓",
+        "schedule_reason": "預定 %{time}重啟",
+        "schedule_warn": "此伺服器計劃 %{smart_count} 分鐘後重新啟動， 請立即斷開連接。 |||| 此伺服器計劃 %{smart_count} 分鐘後重新啟動。",
+        "schedule_warn_discord": "**%{servername}** 計劃 %{smart_count} 分鐘後重新啟動。 |||| **%{servername}** 計劃 %{smart_count} 分鐘後重新啟動。"
+    },
+    "server_actions": {
+        "restarting": "伺服器正在重啟 (%{reason})。",
+        "restarting_discord": "**%{servername}** 正在重新啟動 (%{reason})。",
+        "stopping": "伺服器正在關閉 (%{reason})。",
+        "stopping_discord": "**%{servername}** 正在關閉 (%{reason})。",
+        "spawning_discord": "**%{servername}** 正在重啟。"
+    },
+    "discord": {
+        "status_online": "**%{servername}** 目前 **在線**!",
+        "status_offline": "**%{servername}** 目前 **離線**!"
+    }
+}
