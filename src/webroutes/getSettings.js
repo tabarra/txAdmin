@@ -23,7 +23,8 @@ module.exports = async function action(res, req) {
         fxserver: cleanRenderData(globals.configVault.getScopedStructure('fxRunner')),
         monitor: cleanRenderData(globals.configVault.getScopedStructure('monitor')),
         discord: cleanRenderData(globals.configVault.getScopedStructure('discordBot')),
-        disableWrite: (webUtils.checkPermission(req, 'settings.write'))? '' : 'disabled'
+        disableWrite: (webUtils.checkPermission(req, 'settings.write'))? '' : 'disabled',
+        serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone
     }
 
     let out = await webUtils.renderMasterView('settings', renderData);
