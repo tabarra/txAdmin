@@ -1,5 +1,5 @@
 {
-    "version": "1.8.1",
+    "version": "1.9.0",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -77,6 +77,10 @@
         {
             "version": "1.8.1",
             "changelog": "Quickfix for Linux instances."
+        },
+        {
+            "version": "1.9.0",
+            "changelog": "Added a resources page. Added Czech, Romanian and German translations."
         }
     ]
 }
