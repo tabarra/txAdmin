@@ -2,8 +2,8 @@
     "restarter": {
         "crash_detected": "Crash geconstateerd",
         "schedule_reason": "Geplande restart om %{time}",
-        "schedule_warn": "De server staat gepland om over %{smart_count} minuten te herstarten. Verlaat de server. |||| De server staat gepland voor een restart over %{smart_count} minuten.",
-        "schedule_warn_discord": "**%{servername}** staat gepland om over %{smart_count} minuten te herstarten. |||| **%{servername}** staat gepland voor een restart over %{smart_count} minuten."
+        "schedule_warn": "De server staat gepland om over %{smart_count} minuut te herstarten. Verlaat de server. |||| De server staat gepland voor een restart over %{smart_count} minuten.",
+        "schedule_warn_discord": "**%{servername}** staat gepland om over %{smart_count} minuut te herstarten. |||| **%{servername}** staat gepland voor een restart over %{smart_count} minuten."
     },
     "server_actions": {
         "restarting": "Server wordt herstart (%{reason}).",
