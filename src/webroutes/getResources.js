@@ -55,7 +55,7 @@ module.exports = async function action(res, req) {
         cnt++;
         if(cnt > 10){
             clearInterval(intHandle);
-            logWarn('the future is now, old man');
+            logWarn('the future is now, old man', context);
             let out = await webUtils.renderMasterView('generic', {message: `Couldn't load the resources list. Make sure the server is online and txAdminClient is running.`});
             return res.send(out);
         }

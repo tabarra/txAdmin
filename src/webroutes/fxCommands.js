@@ -24,6 +24,8 @@ module.exports = async function action(res, req) {
     let action = req.body.action;
     let parameter = req.body.parameter;
 
+    //NOTE: protect from starting/ensuring/restarting 'runcode' ?
+
     //==============================================
     if(action == 'admin_broadcast'){
         if(!ensurePermission('commands.message', res, req)) return false;

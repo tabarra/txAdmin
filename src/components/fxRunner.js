@@ -46,6 +46,7 @@ module.exports = class FXRunner {
      * Setup the spawn variables
      */
     setupVariables(){
+        //TODO: add setup variables in a new +exec before the cfgpath
         let onesyncFlag = (this.config.onesync)? '+set onesync_enabled 1' : '';
         if(globals.config.osType === 'Linux'){
             this.spawnVariables = {
@@ -211,6 +212,7 @@ module.exports = class FXRunner {
             `set txAdmin-apiPort "${globals.webServer.config.port}"`,
             `set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
             `set txAdmin-clientCompatVersion "1.2.0"`
+            //FIXME: considerar o contexto. As vezes será necessário dar 'refresh' aqui.
         ]
 
         //Commands

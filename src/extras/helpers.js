@@ -138,6 +138,8 @@ function getFXServerPort(rawCfgFile) {
     })
     if(!validUDPEndpoint) throw new Error("You MUST have at least one UDP endpoint");
 
+    //FIXME: Think of something to make this work:
+    //  https://forum.fivem.net/t/release-txadmin-manager-discord-bot-live-console-playerlist-autorestarter/530475/348?u=tabarra
     matches.forEach((m) => {
         if(m.port !== matches[0].port) throw new Error("All endpoints MUST have the same port")
     });

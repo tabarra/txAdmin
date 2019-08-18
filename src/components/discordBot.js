@@ -60,6 +60,7 @@ module.exports = class DiscordBot {
 
         try {
             let chan = this.client.channels.find(x => x.id === this.config.announceChannel);
+            //FIXME: verbosidade caso o chan seja null ou algo assim
             chan.send(message);
         } catch (error) {
             logError(`Error sending Discord announcement: ${error.message}`);
