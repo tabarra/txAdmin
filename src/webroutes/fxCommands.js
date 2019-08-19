@@ -24,7 +24,15 @@ module.exports = async function action(res, req) {
     let action = req.body.action;
     let parameter = req.body.parameter;
 
-    //NOTE: protect from starting/ensuring/restarting 'runcode' ?
+    //Block starting/restarting the 'runcode' resource
+    let unsafeActions = ['restart_res', 'start_res', 'ensure_res'];
+    if(unsafeActions.includes(action) && parameter.includes('runcode')){
+        return res.send({
+            type: 'danger',
+            message: `<b>Error:</b> The resource "runcode" is unsafe. <br> If you know what you are doing, run it via the Live Console.`
+        });
+    }
+
 
     //==============================================
     if(action == 'admin_broadcast'){
