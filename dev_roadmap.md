@@ -1,6 +1,4 @@
 ## TODO/Roadmap:
-- remove old resource deprecation message
-
 - Check compiling libraries like pkg and nexe.
 - Check config management libraries (specially 'convict' by Mozilla and nconf)
 

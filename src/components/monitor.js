@@ -38,12 +38,13 @@ module.exports = class Monitor {
         this.failCounter = 0;
         this.lastHeartBeat = 0;
         this.fxServerHitches = [];
-        this.schedule = this.buildSchedule();
+        this.schedule = null;
         this.statusServer = {
             online: false,
             ping: false,
             players: []
         }
+        this.buildSchedule();
 
         //Cron functions
         this.cronFunc = setInterval(() => {
@@ -61,7 +62,7 @@ module.exports = class Monitor {
      */
     refreshConfig(){
         this.config = globals.configVault.getScoped('monitor');
-        this.schedule = this.buildSchedule();
+        this.buildSchedule();
 
         //Reset Cron functions
         clearInterval(this.cronFunc);
@@ -77,7 +78,8 @@ module.exports = class Monitor {
      */
     buildSchedule(){
         if(!Array.isArray(this.config.restarter.schedule) || !this.config.restarter.schedule.length){
-            return false;;
+            this.schedule = false;
+            return;
         }
 
         let getScheduleObj = (hour, minute, sub) => {
@@ -121,7 +123,7 @@ module.exports = class Monitor {
         })
 
         if(globals.config.verbose) schedule.forEach(el => { dir(el.messages) });
-        return (schedule.length)? schedule : false;
+        this.schedule = (schedule.length)? schedule : false;
     }
 
 
