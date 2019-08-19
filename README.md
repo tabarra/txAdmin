@@ -21,7 +21,10 @@
 ## Features
 - Start/Stop/Restart your server instance or resources
 - Access control via multiple credentials and action logging
-- Discord integration (/status and configurable commands)
+- Discord Integration:
+	- Server status command (`/status`)
+	- Custom static commands
+	- Command spam prevention
 - Monitor server’s CPU/RAM consumption
 - Real-time playerlist with ping + steam-linked accounts (when available)
 - OneSync Support (more than 32 slots server)

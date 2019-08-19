@@ -135,6 +135,7 @@ module.exports = class ConfigVault {
                 messagesFilePath: toDefault(cfg.discordBot.messagesFilePath, null), //not in template
                 refreshInterval: toDefault(cfg.discordBot.refreshInterval, null), //not in template
                 statusCommand: toDefault(cfg.discordBot.statusCommand, null),
+                commandCooldown: toDefault(cfg.discordBot.commandCooldown, null), //not in template
             };
             out.fxRunner = {
                 buildPath: toDefault(cfg.fxRunner.buildPath, null),
@@ -202,6 +203,7 @@ module.exports = class ConfigVault {
             cfg.discordBot.messagesFilePath = cfg.discordBot.messagesFilePath || `${this.serverProfilePath}/messages.json`; //not in template
             cfg.discordBot.refreshInterval = parseInt(cfg.discordBot.refreshInterval) || 15000; //not in template
             cfg.discordBot.statusCommand = cfg.discordBot.statusCommand || "/status";
+            cfg.discordBot.commandCooldown = parseInt(cfg.discordBot.commandCooldown) || 30; //not in template
 
             //FXRunner
             cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template

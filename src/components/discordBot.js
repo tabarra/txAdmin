@@ -11,6 +11,7 @@ module.exports = class DiscordBot {
         this.client = null;
         this.cronFunc = null;
         this.messages = [];
+        this.spamLimitCache = {}
         if(!this.config.enabled){
             logOk('::Disabled by the config file.', context);
         }else{
@@ -106,6 +107,13 @@ module.exports = class DiscordBot {
 
         //Checking if message is a command
         if(message.content.startsWith(this.config.statusCommand)){
+            //Check spam limiter
+            if(!this.spamLimitChecker(this.config.statusCommand, message.channel.id)){
+                if(globals.config.verbose) log(`Spam prevented for command "${this.config.statusCommand}" in channel "${message.channel.name}".`, context);
+                return;
+            }
+            this.spamLimitRegister(this.config.statusCommand, message.channel.id);
+
             //Prepare message's data
             let dataServer = globals.monitor.statusServer; //shorthand much!?
             let color = (dataServer.online)? 0x74EE15 : 0xF000FF;
@@ -133,9 +141,19 @@ module.exports = class DiscordBot {
             out.setDescription(`Checkout the project:\n Forum: https://forum.fivem.net/t/530475\n Discord: https://discord.gg/f3TsfvD`);
 
         }else{
-            let msg = this.messages.find((staticMessage) => {return message.content.startsWith(staticMessage.trigger)});
-            if(!msg) return;
-            out = msg.message;
+            //Finds the command
+            let cmd = this.messages.find((staticMessage) => {return message.content.startsWith(staticMessage.trigger)});
+            if(!cmd) return;
+
+            //Check spam limiter
+            if(!this.spamLimitChecker(cmd.trigger, message.channel.id)){
+                if(globals.config.verbose) log(`Spam prevented for command "${cmd.trigger}" in channel "${message.channel.name}".`, context);
+                return;
+            }
+            this.spamLimitRegister(cmd.trigger, message.channel.id);
+
+            //Sets static message
+            out = cmd.message;
 
         }
 
@@ -200,5 +218,29 @@ module.exports = class DiscordBot {
         this.messages = jsonData;
         if(globals.config.verbose) log(`Discord messages file loaded. Found: ${this.messages.length}`, context);
     }
+
+
+    //================================================================
+    /**
+     * Checks the spamLimitCache and returns false if its still in cooldown
+     * @param {string} cmd
+     * @param {string} chan
+     */
+    spamLimitChecker(cmd, chan){
+        let tag = `${chan}:${cmd}`;
+        let now = (Date.now() / 1000).toFixed();
+        return (typeof this.spamLimitCache[tag] === 'undefined' || (now - this.spamLimitCache[tag] > this.config.commandCooldown))
+    }//Final spamLimitChecker()
+
+
+    //================================================================
+    /**
+     * Registers a command execution in the spamLimitCache
+     * @param {string} cmd
+     * @param {string} chan
+     */
+    spamLimitRegister(cmd, chan){
+        this.spamLimitCache[`${chan}:${cmd}`] = (Date.now() / 1000).toFixed();
+    }//Final spamLimitRegister()
 
 } //Fim DiscordBot()
