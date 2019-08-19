@@ -68,7 +68,7 @@ module.exports = class ConfigVault {
         try {
             cfgData = JSON.parse(rawFile);
         } catch (error) {
-            if(rawFile.includes('\\')) logError(`Note: your '${this.serverProfile}.json' file contains '\\', make sure all your paths use only '/'.`, context);
+            if(rawFile.includes('\\')) logError(`Note: your 'data/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`, context);
             throw new Error(`Unnable to load configuration file '${this.configFilePath}'. (json parse error, please read the documentation)\nOriginal error: ${error.message}`, error.stack);
         }
 

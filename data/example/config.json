@@ -2,7 +2,7 @@
     "global": {
         "verbose": false,
         "publicIP": "change-me",
-        "serverName": "change-me",
+        "serverName": "change-me"
     },
     "logger": {},
     "monitor": {

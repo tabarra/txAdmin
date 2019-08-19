@@ -8,3 +8,10 @@ globals.intercomBus['txAdminClient'] = {
 And txAdminClient would post the data to `/intercom/txAdminClient` with `resourcesList` as a parameter so the intercom endpoint would know where to send this info.  
   
 For now I will use `globals.intercomTempList`
+
+
+-----
+
+Actually probably better just to have the intercom call a method inside the extension object.  
+Something like `globals.exts[extName].intercomHandler(req, res)`.
+In this case its not only easier for the data being stored (no bus, if someone wants a data from an ext, call their methos to retrieve it), but also the handler can give the resource an http response other than "okay".
