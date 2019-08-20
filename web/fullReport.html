@@ -2,7 +2,7 @@
 
 
 <div class="text-center mb-4">
-    <h2>Full Status Report</h2>
+    <h2 id="full" class="multilang">Full Status Report</h2>
 </div>
 
 <div class="row justify-content-md-center">
@@ -19,7 +19,7 @@
 
         <!-- Host Machine Card -->
         <div class="card card-accent-danger" style="min-height: 160px;">
-            <div class="card-header font-weight-bold">Host Machine:</div>
+            <div id="hostma" class="card-header font-weight-bold multilang">Host Machine:</div>
             <div class="card-body">
                 {{if(options.host.error !== false)}}
                     {{host.error|safe}}
@@ -75,15 +75,15 @@
 
         <!-- Proccesses Card -->
         <div class="card card-accent-info">
-            <div class="card-header font-weight-bold">Proccesses:</div>
+            <div id="mgr7" class="card-header font-weight-bold multilang">Proccesses:</div>
             <div class="card-body">
                 {{if(!options.proccesses.length)}}
                     Failed to retrieve proccesses data. <br>
                     Check the terminal for more information (if verbosity is enabled)
                 {{#else}}
                     {{foreach(options.proccesses)}}
-                    <strong>Process:</strong> {{@this.name}} <br>
-                    <strong>Memory:</strong> {{@this.memory}} <br>
+                    <strong id="proc3" class="multilang">Process:</strong> {{@this.name}} <br>
+                    <strong id="mem10" class="multilang">Memory:</strong> {{@this.memory}} <br>
                     <strong>CPU:</strong> {{@this.cpu}} <br>
                     <br>
                     {{/foreach}}
