@@ -2,7 +2,7 @@
 
 
 <div class="text-center mb-4">
-    <h2>Settings</h2>
+    <h2 id="settings" class="multilang">Settings</h2>
 </div>
 
 
@@ -15,7 +15,7 @@
             <div class="card-header font-weight-bold">
                 <ul class="nav nav-tabs card-header-tabs">
                     <li class="nav-item">
-                        <a class="nav-item nav-link active" id="nav-global-tab" data-toggle="tab" href="#nav-global"
+                        <a class="nav-item nav-link active multilang" id="nav-global-tab" data-toggle="tab" href="#nav-global"
                             role="tab" aria-controls="nav-global" aria-selected="true">Global</a>
                     </li>
                     <li class="nav-item">
@@ -23,7 +23,7 @@
                             role="tab" aria-controls="nav-fxserver" aria-selected="true">FXServer</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item nav-link " id="nav-monitor-tab" data-toggle="tab" href="#nav-monitor"
+                        <a class="nav-item nav-link multilang" id="nav-monitor-tab" data-toggle="tab" href="#nav-monitor"
                             role="tab" aria-controls="nav-monitor" aria-selected="true">Monitor/Restarter</a>
                     </li>
                     <li class="nav-item">
@@ -261,6 +261,7 @@
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmMonitor-schedule" value="{{monitor.restarter.schedule}}"
                                     placeholder="05:00, 13:00" {{disableWrite}}>
+                                <span class="form-text text-danger font-weight-boldx" id="frmMonitor-timezoneAlert"></span>
                                 <span class="form-text text-muted">
                                     At which times of day to restart the server. Leave it blank to disable this feature. <br>
                                     The time MUST be in the 24-hour format with two digits for hours as well as
@@ -361,8 +362,18 @@
 
 {{include("footer")/}}
 
-
 <script>
+    //============================================== General
+    let serverTimezone = "{{serverTimezone}}";
+    let browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if(serverTimezone !== browserTimezone){
+        let msg = `Your timezone: <b>${browserTimezone}</b> <br>
+            Server's timezone: <b>${serverTimezone}</b> <br>
+            Make sure to adjust the times to match your expectations.`;
+        $('#frmMonitor-timezoneAlert').html(msg);
+    }
+
+
     $(document).ready(function () {
         if ($('#frmGlobal-publicIP').val().trim() == 'change-me') {
             $('#frmGlobal-getIP').click();
