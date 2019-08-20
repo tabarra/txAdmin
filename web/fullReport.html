@@ -24,18 +24,18 @@
                 {{if(options.host.error !== false)}}
                     {{host.error|safe}}
                 {{#else}}
-                    <strong>OS Type:</strong> {{host.osType}} <br>
-                    <strong>OS Release:</strong> {{host.osRelease}} <br>
-                    <strong>Username:</strong> {{host.username}} <br>
-                    <strong>Host CPUs:</strong> {{host.cpus}} <br>
-                    <strong>Host Memory:</strong> {{host.memory}}
+                    <strong id="os" class="multilang">OS Type:</strong> {{host.osType}} <br>
+                    <strong id="os2" class="multilang">OS Release:</strong> {{host.osRelease}} <br>
+                    <strong id="usernum" class="multilang">Username:</strong> {{host.username}} <br>
+                    <strong id="hcpu" class="multilang">Host CPUs:</strong> {{host.cpus}} <br>
+                    <strong id="hmem" class="multilang">Host Memory:</strong> {{host.memory}}
                 {{/if}}
             </div>
         </div>
 
         <!-- txAdmin Config Card -->
         <div class="card card-accent-danger" style="min-height: 160px;">
-            <div class="card-header font-weight-bold">txAdmin Config:</div>
+            <div id="cfg" class="card-header font-weight-bold multilang">txAdmin Config:</div>
             <div class="card-body">
                 <h5>monitor:</h5>
                 <strong>timeout:</strong> <code>{{config.timeout}}</code> <br>
@@ -62,13 +62,13 @@
                 {{if(options.fxserver.error !== false)}}
                     {{fxserver.error|safe}}
                 {{#else}}
-                    <strong>Status: <span class="badge badge-{{fxserver.statusColor}}">{{fxserver.status}}</span>
+                    <strong><span id="status1" class="multilang">Status: </span><span class="badge badge-{{fxserver.statusColor}}">{{fxserver.status}}</span>
                     </strong><br>
-                    <strong>Version:</strong> {{fxserver.version}} <br>
-                    <strong>Resources:</strong> {{fxserver.resources}} <br>
+                    <strong id="ver" class="multilang"">Version:</strong> {{fxserver.version}} <br>
+                    <strong id="scrap" class="multilang">Resources:</strong> {{fxserver.resources}} <br>
                     <strong>OneSync:</strong> {{fxserver.onesync}} <br>
-                    <strong>Max Clients:</strong> {{fxserver.maxClients}} <br>
-                    <strong>Tags:</strong> <code>{{fxserver.tags}}</code>
+                    <strong id="maxc" class="multilang">Max Clients:</strong> {{fxserver.maxClients}} <br>
+                    <strong id="tag" class="multilang">Tags:</strong> <code>{{fxserver.tags}}</code>
                 {{/if}}
             </div>
         </div>
