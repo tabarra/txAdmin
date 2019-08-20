@@ -7,7 +7,11 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
   <meta name="description" content="txAdmin - remotely manage&monitor your GTA5 FiveM Server">
-  <meta name="author" content="André Tabarra">
+  <meta name="author" content="AndrĂ© Tabarra">
+  <script type="text/javascript" src="rjs/R.js"></script> <!-- multi language support lib R.js -->
+  <script type="text/javascript" src="locales/multilang.js"></script> <!-- R.js wrapper interface multilang.js -->
+  <script type="text/javascript" src="js/main.js"></script>
+  <script src="js/ga.js"></script>
   <title>{{headerTitle}}</title>
   <!-- Icons-->
   <link href="css/coreui-icons.min.css" rel="stylesheet">
@@ -21,7 +25,6 @@
 
   <link rel="stylesheet" href="css/custom.css">
 </head>
-
 <body class="app header-fixed sidebar-fixed aside-menu-fixed sidebar-lg-show aside-menu-lg-show">
   <header class="app-header navbar">
     <button class="navbar-toggler sidebar-toggler d-lg-none mr-auto" type="button" data-toggle="sidebar-show">
@@ -39,6 +42,7 @@
         <a class="nav-link text-danger" href="/auth?logout">
           <i class="fa fa-lock px-2 d-sm-down-none"></i> Logout
         </a>
+        <div class="form-select select"><select id="selectLanguage" onChange="selectedLanguageChanged();"></select></div>
       </li>
     </ul>
     <button class="navbar-toggler aside-menu-toggler d-lg-none" type="button" data-toggle="aside-menu-show">
@@ -49,54 +53,51 @@
     <div class="sidebar">
       <nav class="sidebar-nav">
         <ul class="nav">
-          <li class="nav-title">General</li>
+          <li id="gen6" class="nav-title multilang">General</li>
           <li class="nav-item">
             <a class="nav-link" href="/">
-              <i class="nav-icon icon-speedometer"></i> Dashboard
-            </a>
+              <i class="nav-icon icon-speedometer"></i><span id="dash" class="multilang"> Dashboard</span></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/console">
-              <i class="nav-icon icon-screen-desktop"></i> Live Console</a>
+              <i class="nav-icon icon-screen-desktop"></i><span id="lv" class="multilang"> Live Console</span></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/settings">
-              <i class="nav-icon icon-settings"></i> Settings</a>
+              <i class="nav-icon icon-settings"></i><span id="sets" class="multilang"> Settings</span></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/adminManager">
-              <i class="nav-icon icon-people"></i> Admin Manager</a>
+              <i class="nav-icon icon-people"></i><span id="amngr" class="multilang"> Admin Manager</span></a>
           </li>
-          <!-- <li class="nav-item">
             <a class="nav-link" href="discord.php">
-              <i class="nav-icon icon-bubbles"></i> Discord Bot <span class="badge badge-danger">NEW</span></a>
-          </li> -->
+              <i class="nav-icon icon-bubbles"></i> Discord Bot <span id="new" class="badge badge-danger multilang">NEW</span></a>
           <li class="nav-item">
             <a class="nav-link" href="/resources">
-              <i class="nav-icon icon-energy"></i> Resources <span class="badge badge-danger">NEW</span></a>
+              <i class="nav-icon icon-energy"></i><span id="script" class="multilang"> Resources </span><span id="new2" class="badge badge-danger multilang">NEW</span></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/actionLog">
-              <i class="nav-icon icon-eye"></i> Action Log</a>
+              <i class="nav-icon icon-eye"></i><span id="acts" class="multilang"> Action Log</span></a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/fullReport">
-              <i class="nav-icon icon-pie-chart"></i> Full Status Report</a>
+              <i class="nav-icon icon-pie-chart"></i><span id="report" class="multilang"> Full Status Report</span></a>
           </li>
 
           <li class="nav-divider"></li>
-          <li class="nav-title">Extensions</li>
+          <li id="exte" class="nav-title multilang">Extensions</li>
           <li class="nav-item">
             <a class="nav-link" href="/addExtension">
-              <i class="nav-icon icon-grid"></i> Add Extension</a>
+              <i class="nav-icon icon-grid"></i><span id="add3" class="multilang"> Add Extension</span></a>
           </li>
 
           <li class="nav-divider"></li>
-          <li class="nav-title mt-auto">Host System Usage</li>
+          <li id="host2" class="nav-title mt-auto multilang">Host System Usage</li>
           <li class="nav-item px-3 d-compact-none d-minimized-none">
-            <div class="text-uppercase mb-1">
+            <div id="dash" class="multilang text-uppercase mb-1">
               <small>
-                <b>CPU Usage</b>
+                <b id="cpu" class="multilang">CPU Usage</b>
               </small>
             </div>
             <div class="progress progress-xs">
@@ -108,7 +109,7 @@
           <li class="nav-item px-3 d-compact-none d-minimized-none">
             <div class="text-uppercase mb-1">
               <small>
-                <b>Memory Usage</b>
+                <b id="ram" class="multilang">Memory Usage</b>
               </small>
             </div>
             <div class="progress progress-xs">
@@ -126,3 +127,5 @@
     <main class="main">
       <div class="container-fluid main-top-spacer">
         <div class="animated fadeIn">
+
+
