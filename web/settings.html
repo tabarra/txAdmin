@@ -41,7 +41,7 @@
                         <!-- Global Card -->
                         <div class="form-group row">
                             <label for="frmGlobal-serverName" class="col-sm-3 col-form-label">
-                                Server Name
+                                <span id="servername" class="multilang">Server Name</span>
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
@@ -55,7 +55,7 @@
 
                         <div class="form-group row">
                             <label for="frmGlobal-publicIP" class="col-sm-3 col-form-label">
-                                Public IP
+                                 <span id="pubip" class="multilang">Public IP</span>
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
@@ -76,7 +76,7 @@
 
                         <div class="form-group row">
                             <label for="frmGlobal-serverName" class="col-sm-3 col-form-label">
-                                Language
+                                 <span id="language1" class="multilang">Language</span>
                             </label>
                             <div class="col-sm-9">
                                 <select class="form-control" id="frmGlobal-language" {{disableWrite}}>
@@ -112,7 +112,7 @@
 
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-primary" type="submit" id="frmGlobal-save" {{disableWrite}}>
-                                <i class="icons cui-check"></i> Save Global Settings
+                                <i class="icons cui-check"></i> <span id="savglob" class="multilang">Save Global Settings</span>
                             </button>
                         </div>
                         <!-- /Global Card -->
@@ -122,7 +122,7 @@
 
                         <!-- FXServer Card -->
                         <div class="form-group row">
-                            <label for="frmFXServer-buildPath" class="col-sm-3 col-form-label">Build Path
+                            <label for="frmFXServer-buildPath" class="col-sm-3 col-form-label"><span id="buildp" class="multilang">Build Path</span>
                                 <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmFXServer-buildPath" value="{{fxserver.buildPath}}"
@@ -135,7 +135,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmFXServer-basePath" class="col-sm-3 col-form-label">Base Path
+                            <label for="frmFXServer-basePath" class="col-sm-3 col-form-label"><span id="basep" class="multilang">Base Path</span>
                                 <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmFXServer-basePath" value="{{fxserver.basePath}}"
@@ -149,7 +149,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmFXServer-cfgPath" class="col-sm-3 col-form-label">CFG Path
+                            <label for="frmFXServer-cfgPath" class="col-sm-3 col-form-label"><span id="cfgp" class="multilang">CFG Path</span>
                                 <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmFXServer-cfgPath" value="{{fxserver.cfgPath}}"
@@ -169,13 +169,13 @@
                                     <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
                                 </label>
                                 <span class="form-text text-muted">
-                                    Required if you server has more than 32 slots.
+                                    <span id="required" class="multilang">Required if you server has more than 32 slots.</span>
                                 </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmFXServer-autostart" class="col-sm-3 col-form-label">Autostart</label>
+                            <label for="frmFXServer-autostart" id="autos" class="col-sm-3 col-form-label multilang">Autostart</label>
                             <div class="col-sm-9">
                                 <label class="switch switch-label switch-pill switch-success fix-pill-form">
                                     <input class="switch-input" type="checkbox" id="frmFXServer-autostart"
@@ -205,7 +205,7 @@
 
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-primary" type="submit" id="frmFXServer-save" {{disableWrite}}>
-                                <i class="icons cui-check"></i> Save FXServer Settings
+                                <i class="icons cui-check"></i> <span id="safer" class="multilang">Save FXServer Settings</span>
                             </button>
                         </div>
                         <!-- /FXServer Card -->
