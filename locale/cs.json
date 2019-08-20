@@ -8,7 +8,7 @@
     "server_actions": {
         "restarting": "Restartování serveru (%{reason}).",
         "restarting_discord": "**%{servername}** se restartuje (%{reason}).",
-        "stopping": "Server se vypíný (%{reason}).",
+        "stopping": "Server se vypíná (%{reason}).",
         "stopping_discord": "**%{servername}** se vypíná (%{reason}).",
         "spawning_discord": "**%{servername}** se spouští."
     },
