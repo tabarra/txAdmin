@@ -2,7 +2,7 @@
 
 
 <div class="text-center mb-4">
-    <h2>{{serverName}} Dashboard</h2>
+    <h2 id="title" class="multilang">{{serverName}} Dashboard</h2>
 </div>
 
 {{if(options.errorMessage)}}
@@ -20,39 +20,39 @@
 
         <!-- FXServer Control Card -->
         <div class="card card-accent-danger" style="min-height: 160px;">
-            <div class="card-header font-weight-bold">FXServer Control:</div>
+            <div id="control" class="card-header font-weight-bold multilang">FXServer Control:</div>
             <div class="card-body text-center align-middle">
-                <button onclick="controlAction('start')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
+                <button onclick="controlAction('start')" class="multilang btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
                     type="button" id="ctrl-start" {{perms.controls}}>START</button> &nbsp;
-                <button onclick="controlAction('restart')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
+                <button onclick="controlAction('restart')" class="multilang btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
                     type="button" id="ctrl-restart" {{perms.controls}}>RESTART</button> &nbsp;
-                <button onclick="controlAction('stop')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
+                <button onclick="controlAction('stop')" class="multilang btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
                     type="button" id="ctrl-stop" {{perms.controls}}>STOP</button>
             </div>
         </div>
 
         <!-- Commands Card -->
         <div class="card card-accent-danger">
-            <div class="card-header font-weight-bold">Commands:</div>
+            <div id="cmds" class="card-header font-weight-bold multilang">Commands:</div>
             <div class="card-body">
                 <div class="form-group row">
-                    <label for="action" class="col-sm-4 col-form-label">Command</label>
+                    <label id="cmd" for="action" class="col-sm-4 col-form-label multilang">Command</label>
                     <div class="col-sm-8">
                         <select name="action" id="frm_action" class="form-control" required>
-                            <option value="" disabled selected>&gt; SELECT</option>
-                            <option value="admin_broadcast" {{perms.commandMessage}}>Broadcast Admin Message</option>
-                            <option value="ensure_res" {{perms.commandResources}}>Start/Restart resource</option>
+                            <option id="sel" class="multilang" value="" disabled selected>&gt; SELECT</option>
+                            <option id="msg" class="multilang" value="admin_broadcast" {{perms.commandMessage}}>Broadcast Admin Message</option>
+                            <option id="restart" class="multilang" value="ensure_res" {{perms.commandResources}}>Start/Restart resource</option>
                             <!-- <option value="restart_res" {{perms.commandResources}}>Restart resource</option> -->
                             <!-- <option value="start_res" {{perms.commandResources}}>Start resource</option> -->
-                            <option value="stop_res" {{perms.commandResources}}>Stop resource</option>
-                            <option value="refresh_res" {{perms.commandResources}}>Refresh resources</option>
-                            <option value="reinject_res" {{perms.commandResources}}>Re-Inject txAdmin resources</option>
-                            <option value="kick_all" {{perms.commandKick}}>Kick all players</option>
+                            <option id="stop" class="multilang" value="stop_res" {{perms.commandResources}}>Stop resource</option>
+                            <option id="refresh" class="multilang" value="refresh_res" {{perms.commandResources}}>Refresh resources</option>
+                            <option id="inject" class="multilang" value="reinject_res" {{perms.commandResources}}>Re-Inject txAdmin resources</option>
+                            <option id="kick" class="multilang" value="kick_all" {{perms.commandKick}}>Kick all players</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="action" class="col-sm-4 col-form-label">Parameter</label>
+                    <label id="par" for="action" class="col-sm-4 col-form-label multilang">Parameter</label>
                     <div class="col-sm-8">
                         <input type="text" name="parameter" id="frm_parameter" class="form-control" placeholder=""
                             readonly required>
@@ -60,7 +60,7 @@
                 </div>
             </div>
             <div class="card-footer text-center">
-                <button type="button" id="frm_button" class="btn btn-outline-dark mx-auto">EXECUTE</button>
+                <button id="execute" type="button" id="frm_button" class="btn btn-outline-dark mx-auto multilang">EXECUTE</button>
             </div>
         </div>
 
@@ -73,12 +73,12 @@
         <!-- Card Chart-->
         <div class="card text-white bg-primary" style="min-height: 160px;">
             <div class="card-body pb-0">
-                <div class="text-value">Players</div>
-                <div>last 24h</div>
+                <div id="players" class="text-value multilang">Players</div>
+                <div ID="last" class="multilang">last 24h</div>
             </div>
             {{if(options.chartData === false)}}
             <div class="text-center mb-4">
-                <h3 class="text-muted">Not enough data, yet...</h3>
+                <h3 id="data" class="text-muted multilang">Not enough data, yet...</h3>
             </div>
             {{#else}}
             <div class="chart-wrapper mt-3 mx-3" style="height:70px;">
@@ -95,13 +95,13 @@
                 <div id="card-chart1-tooltip" class="chartjs-tooltip top"
                     style="opacity: 0; left: 194.39px; top: 93.2407px;">
                     <div class="tooltip-header">
-                        <div class="tooltip-header-item">loading</div>
+                        <div id="loading" class="tooltip-header-item multilang">loading</div>
                     </div>
                     <div class="tooltip-body">
                         <div class="tooltip-body-item">
                             <span class="tooltip-body-item-color" style="background-color: rgb(0, 165, 224);"></span>
-                            <span class="tooltip-body-item-label">players</span>
-                            <span class="tooltip-body-item-value">loading</span>
+                            <span id="players2" class="tooltip-body-item-label multilang">players</span>
+                            <span id="loading" class="tooltip-body-item-value multilang">loading</span>
                         </div>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
 
         <!-- Card Info -->
         <div class="card card-accent-primary" style="height:251px;">
-            <div class="card-header font-weight-bold">Status Info:</div>
+            <div id="info" class="card-header font-weight-bold multilang">Status Info:</div>
             <div class="card-body" id="status-card">
                 Loading...
             </div>
