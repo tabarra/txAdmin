@@ -2,7 +2,7 @@
 
 
 <div class="text-center mb-4">
-    <h2>Admin Manager</h2>
+    <h2 id="manager" class="multilang">Admin Manager</h2>
 </div>
 
 
@@ -12,7 +12,7 @@
         <!-- Global Card -->
         <div class="card card-accent-primary">
             <div class="card-header float-left">
-                <span style="font-size: large">All Admins</span>
+                <span id="all" class="multilang" style="font-size: large">All Admins</span>
                 <button class="btn btn-sm btn-success float-right" type="button" id="btnAddAdmin">
                     <i class="icon-plus"></i> Add
                 </button>
@@ -23,9 +23,9 @@
                     <table class="table table-responsive-md table-striped">
                         <thead>
                             <tr>
-                                <th>Username</th>
-                                <th>Permissions</th>
-                                <th>Actions</th>
+                                <th id="user" class="multilang">Username</th>
+                                <th id="per" class="multilang">Permissions</th>
+                                <th id="action" class="multilang">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -65,7 +65,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modAddAdminTitle">Add Admin</h5>
+                <h5 id="addmin" class="modal-title multilang" id="modAddAdminTitle">Add Admin</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -122,8 +122,8 @@
             </div>
             <div class="modal-footer text-center">
                 <div class="mx-auto button-spacer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" id="modAddAdmin-save">Save</button>
+                    <button id="cancel" type="button" class="btn btn-secondary multilang" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-success multilang" id="modAddAdmin-save">Save</button>
                 </div>
             </div>
         </div>
