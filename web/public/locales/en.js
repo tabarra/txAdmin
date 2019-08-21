@@ -1,6 +1,8 @@
 // English translation
 R.registerLocale('en', 
 {
+// Logout
+  'logut': "Logout",
 // Menu
   'dash': " Dashboard",
   'lv': " Live Console",
