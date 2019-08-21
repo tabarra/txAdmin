@@ -1,6 +1,8 @@
 // German translation
 R.registerLocale('cs', 
 {
+// Logout
+  'logut': "Odhlásit se",
 // Menu
   'dash': " Palubka",
   'lv': " Konzole",
