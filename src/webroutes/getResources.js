@@ -1,5 +1,6 @@
 //Requires
 const path = require('path');
+const slash = require('slash');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('./webUtils.js');
 const context = 'WebServer:getResources';
@@ -91,7 +92,7 @@ function processResources(resList){
             name: res.name,
             status: res.status,
             statusClass: (statusColors[res.status])? statusColors[res.status] : 'muted',
-            path: path.normalize(res.path),
+            path: slash(path.normalize(res.path)),
             version: (res.version)? `(${res.version})` : '',
             author: (res.author)? `by ${res.author}` : '',
             description: (res.description)? res.description : '',

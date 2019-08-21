@@ -1,5 +1,7 @@
 //Requires
 const fs = require('fs-extra');
+const path = require('path');
+const slash = require('slash');
 const del = require('del');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'ResourceInjector';
@@ -10,13 +12,13 @@ const context = 'ResourceInjector';
  * Reset the fxserver resources/[txAdmin-cache] folder.
  */
 function resetCacheFolder(basePath) {
-    if(!fs.existsSync(`${basePath}/resources/`)) throw new Error('[resetCacheFolder] Resources folder not found');
+    let resFolder = slash(path.normalize(`${basePath}/resources/`));
+    if(!fs.existsSync(resFolder)) throw new Error('[resetCacheFolder] Resources folder not found');
     try {
-        let cachePath = `${basePath}/resources/[txAdmin-cache]`;
-        if(fs.existsSync(cachePath)){
-            const deletedFiles = del.sync(`${cachePath}/*`, {force: true});
+        if(fs.existsSync(`${resFolder}/[txAdmin-cache]`)){
+            const deletedPaths = del.sync(`${resFolder}/\\[txAdmin-cache\\]/*`, {force: true});
             if(globals.config.verbose){
-                log(`Deleted ${deletedFiles.length} paths from [txAdmin-cache]: \n\t${deletedFiles.join('\n\t')}`, context);
+                log(`Deleted ${deletedPaths.length} paths from [txAdmin-cache]: \n\t${deletedPaths.join('\n\t')}`, context);
             }
         }else{
             fs.mkdirSync(cachePath);
