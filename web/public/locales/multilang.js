@@ -21,11 +21,11 @@
  */
  
 // >-- Translations to be loaded .. 
-var langfiles = ['en_GB', 'de_DE'];
+var langfiles = ['en', 'cs'];
 
 // >-- Initial setup ..
 var langdirectory = 'locales/';           // The translation files directory
-var defaultlang = 'en-GB';           // Initial language if local storrage is not set
+var defaultlang = 'en';           // Initial language if local storrage is not set
 var asfEnable = true;                // Set true to use R.js advanced string formating (asf)
 var loadCustomjs = asfEnable;        // Set false to manually load 'custom.js' later instead of now.
 var langSelectId = 'selectLanguage'; // Select element id to be used for language switching
