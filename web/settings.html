@@ -48,7 +48,7 @@
                                 <input type="text" class="form-control" id="frmGlobal-serverName"
                                     value="{{global.serverName}}" maxlength="24" {{disableWrite}}>
                                 <span class="form-text text-muted">
-                                    A <strong>short</strong> server name to be used in txAdmin interface and Chat/Discord messages.
+                                    <span id="id" class="multilang">A <strong>short</strong> server name to be used in txAdmin interface and Chat/Discord messages.</span>
                                 </span>
                             </div>
                         </div>
@@ -63,13 +63,13 @@
                                     <input type="text" class="form-control" id="frmGlobal-publicIP"
                                         value="{{global.publicIP}}" maxlength="32" placeholder="123.123.123.123" {{disableWrite}}>
                                     <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" id="frmGlobal-getIP"
+                                        <button class="btn btn-outline-secondary multilang" id="frmGlobal-getIP"
                                             type="button" {{disableWrite}}>Auto Detect</button>
                                     </div>
                                 </div>
                                 <span class="form-text text-muted">
-                                    You can set this to be your public IP or a domain name. <br>
-                                    <b>Note:</b> The auto detect feature might get blocked by ad-blockers.
+                                    <span id="sent3" class="multilang">You can set this to be your public IP or a domain name.</span> <br>
+                                    <span id="sent4" class="multilang"><b>Note:</b> The auto detect feature might get blocked by ad-blockers.</span>
                                 </span>
                             </div>
                         </div>
@@ -89,14 +89,14 @@
                                     <option value="custom" {{global.language=='custom'|isSelected}}>Custom (read the documentation)</option>
                                 </select>
                                 <span class="form-text text-muted">
-                                    The language to use on Chat/Discord messages. <br>
-                                    <b>Note:</b> For the Custom option, read the documentation.
+                                    <span id="sent5" class="multilang">The language to use on Chat/Discord messages.</span> <br>
+                                    <span id="sent6" class="multilang"><b>Note:</b> For the Custom option, read the documentation.</span>
                                 </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmGlobal-verbose" class="col-sm-3 col-form-label">Verbose</label>
+                            <label for="frmGlobal-verbose" id="verbose" class="col-sm-3 col-form-label multilang">Verbose</label>
                             <div class="col-sm-9">
                                 <label class="switch switch-label switch-pill switch-success fix-pill-form">
                                     <input class="switch-input" type="checkbox" id="frmGlobal-verbose"
@@ -104,8 +104,8 @@
                                     <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
                                 </label>
                                 <span class="form-text text-muted">
-                                    By enabling verbosity you will see more detailed information in the terminal. <br>
-                                    This may help you troubleshoot some errors.
+                                    <span id="sent7" class="multilang">By enabling verbosity you will see more detailed information in the terminal.</span> <br>
+                                    <span id="sent8" class="multilang">This may help you troubleshoot some errors.</span>
                                 </span>
                             </div>
                         </div>
@@ -128,8 +128,8 @@
                                 <input type="text" class="form-control" id="frmFXServer-buildPath" value="{{fxserver.buildPath}}"
                                     placeholder="C:/Users/Admin/Documents/fxserver_builds/1380" {{disableWrite}}>
                                 <span class="form-text text-muted">
-                                    The folder containing the files <code>run.cmd</code>, <code>fxserver.exe</code> and
-                                    a bunch of DLLs in case of Windows, and only <code>run.sh</code> in case of Linux.
+                                    <span id="sent9" class="multilang">The folder containing the files <code>run.cmd</code>, <code>fxserver.exe</code> and</span>
+                                    <span id="sent10" class="multilang">a bunch of DLLs in case of Windows, and only <code>run.sh</code> in case of Linux.</span>
                                 </span>
                             </div>
                         </div>
@@ -141,9 +141,9 @@
                                 <input type="text" class="form-control" id="frmFXServer-basePath" value="{{fxserver.basePath}}"
                                     placeholder="C:/Users/Admin/Desktop/server01" {{disableWrite}}>
                                 <span class="form-text text-muted">
-                                    The folder that <strong>contains</strong> the <code>resources</code> and
-                                    <code>cache</code> folders, usually it's here that you put your
-                                    <code>server.cfg</code>.
+                                    <span id="sent11" class="multilang">The folder that <strong>contains</strong> the <code>resources</code> and</span>
+                                    <span id="sent12" class="multilang"><code>cache</code> folders, usually it's here that you put your</span>
+                                    <span id="sent13" class="multilang"><code>server.cfg</code>.</span>
                                 </span>
                             </div>
                         </div>
@@ -155,7 +155,7 @@
                                 <input type="text" class="form-control" id="frmFXServer-cfgPath" value="{{fxserver.cfgPath}}"
                                     placeholder="C:/Users/Admin/Desktop/server01/server.cfg" {{disableWrite}}>
                                 <span class="form-text text-muted">
-                                    The absolute or relative (to the Base) path of your <code>server.cfg</code>.
+                                    <span id="sent14" class="multilang">The absolute or relative (to the Base) path of your <code>server.cfg</code>.</span>
                                 </span>
                             </div>
                         </div>
@@ -183,13 +183,13 @@
                                     <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
                                 </label>
                                 <span class="form-text text-muted">
-                                    Start the server automatically after <strong>txAdmin</strong> starts.
+                                    <span id="sent15" class="multilang">Start the server automatically after <strong>txAdmin</strong> starts.</span>
                                 </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmFXServer-quiet" class="col-sm-3 col-form-label">Quiet</label>
+                            <label for="frmFXServer-quiet" id="quiet" class="col-sm-3 col-form-label multilang">Quiet</label>
                             <div class="col-sm-9">
                                 <label class="switch switch-label switch-pill switch-success fix-pill-form">
                                     <input class="switch-input" type="checkbox" id="frmFXServer-quiet"
@@ -197,8 +197,8 @@
                                     <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
                                 </label>
                                 <span class="form-text text-muted">
-                                    Do not print FXServer's output to the terminal. You will still be able to use the
-                                    Live Console.
+                                    <span id="sent16" class="multilang">Do not print FXServer's output to the terminal. You will still be able to use the</span>
+                                    <span id="sent17" class="multilang">Live Console.</span>
                                 </span>
                             </div>
                         </div>
@@ -215,7 +215,7 @@
 
                         <!-- Monitor Card -->
                         <div class="form-group row">
-                            <label for="frmMonitor-conservative" class="col-sm-3 col-form-label">Conservative Mode</label>
+                            <label for="frmMonitor-conservative" id="conser" class="col-sm-3 col-form-label multilang">Conservative Mode</label>
                             <div class="col-sm-9">
                                 <label class="switch switch-label switch-pill switch-success fix-pill-form">
                                     <input class="switch-input" type="checkbox" id="frmMonitor-conservative"
@@ -223,57 +223,57 @@
                                     <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
                                 </label>
                                 <span class="form-text text-muted">
-                                    Try not to restart the server when it is still working. <br>
-                                    This feature is still in beta
+                                    <span id="sent18" class="multilang">Try not to restart the server when it is still working. <br></span>
+                                    <span id="sent19" class="multilang">This feature is still in beta</span>
                                 </span>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="frmMonitor-timeout" class="col-sm-3 col-form-label">
-                                Timeout
+                                <span id="time" class="multilang">Timeout</span>
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" id="frmMonitor-timeout" value="{{monitor.timeout}}"
                                     placeholder="1000" min="0" max="5000" {{disableWrite}}>
                                 <span class="form-text text-muted">
-                                    The limit of <strong>milliseconds</strong> for the FXServer to respond before the
-                                    Monitor considers it unresponsive. (Recommended: 1000. Max: 5000)
+                                    <span id="sent20" class="multilang">The limit of <strong>milliseconds</strong> for the FXServer to respond before the</span>
+                                    <span id="sent21" class="multilang">Monitor considers it unresponsive. (Recommended: 1000. Max: 5000)</span>
                                 </span>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="frmMonitor-failures" class="col-sm-3 col-form-label">
-                                Max Failures <span class="text-danger">*</span>
+                                <span id="maxf" class="multilang">Max Failures</span> <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" id="frmMonitor-failures" value="{{monitor.restarter.failures}}"
                                     placeholder="15" min="5" max="120" {{disableWrite}}>
                                 <span class="form-text text-muted">
-                                    The number of timeouts before the Monitor attempts to restart FXServer (60s of
-                                    cooldown may apply). <br>
-                                    This should be equivalent of more than 15s when multiplied by the timeout.
+                                    <span id="sent22" class="multilang">The number of timeouts before the Monitor attempts to restart FXServer (60s of</span>
+                                    <span id="sent23" class="multilang">cooldown may apply). <br></span>
+                                    <span id="sent24" class="multilang">This should be equivalent of more than 15s when multiplied by the timeout.</span>
                                 </span>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="frmMonitor-schedule" class="col-sm-3 col-form-label">Scheduled Restarts</label>
+                            <label for="frmMonitor-schedule" id="schr" class="col-sm-3 col-form-label multilang">Scheduled Restarts</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmMonitor-schedule" value="{{monitor.restarter.schedule}}"
                                     placeholder="05:00, 13:00" {{disableWrite}}>
                                 <span class="form-text text-danger font-weight-boldx" id="frmMonitor-timezoneAlert"></span>
                                 <span class="form-text text-muted">
-                                    At which times of day to restart the server. Leave it blank to disable this feature. <br>
-                                    The time MUST be in the 24-hour format with two digits for hours as well as
-                                    minutes (<code>HH:MM</code>) and the times should be separated by commas. <br>
-                                    <strong>Note:</strong> Make sure your schedule matches your server time and not your local time.
+                                    <span id="sent25" class="multilang">At which times of day to restart the server. Leave it blank to disable this feature. <br></span>
+                                    <span id="sent26" class="multilang">The time MUST be in the 24-hour format with two digits for hours as well as</span>
+                                    <span id="sent27" class="multilang">minutes (<code>HH:MM</code>) and the times should be separated by commas. <br></span>
+                                    <span id="sent28" class="multilang"><strong>Note:</strong> Make sure your schedule matches your server time and not your local time.</span>
                                 </span>
                             </div>
                         </div>
 
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-primary" type="submit" id="frmMonitor-save" {{disableWrite}}>
-                                <i class="icons cui-check"></i> Save Monitor/Restarter Settings
+                                <i class="icons cui-check"></i> <span id="sms" class="multilang">Save Monitor/Restarter Settings</span>
                             </button>
                         </div>
                         <!-- /Monitor Card -->
@@ -283,7 +283,7 @@
 
                         <!-- Discord Card -->
                         <div class="form-group row">
-                            <label for="frmDiscord-enabled" class="col-sm-3 col-form-label">Enable Bot</label>
+                            <label for="frmDiscord-enabled" id="enabot" class="col-sm-3 col-form-label multilang">Enable Bot</label>
                             <div class="col-sm-9">
                                 <label class="switch switch-label switch-pill switch-success fix-pill-form">
                                     <input class="switch-input" type="checkbox" id="frmDiscord-enabled"
@@ -291,52 +291,52 @@
                                     <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
                                 </label>
                                 <span class="form-text text-muted">
-                                    Enable Discord Integration.
+                                    <span id="enaint" class="multilang">Enable Discord Integration.</span>
                                 </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmDiscord-token" class="col-sm-3 col-form-label">Token <span
+                            <label for="frmDiscord-token" class="col-sm-3 col-form-label"><span id="tokn" class="multilang">Token</span> <span
                                     class="text-danger">*</span></label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmDiscord-token" value="{{discord.token}}"
                                     maxlength="96" {{disableWrite}}>
                                 <span class="form-text text-muted">
-                                    To get a token and the bot to join your server, follow these two guides:
+                                    <span id="sent29" class="multilang">To get a token and the bot to join your server, follow these two guides:</span>
                                     <a href="https://discordjs.guide/preparations/setting-up-a-bot-application.html"
-                                        target="_blank" rel="noopener noreferrer">Setting up a bot application</a> and
-                                    <a href="https://discordjs.guide/preparations/adding-your-bot-to-servers.html">Adding
-                                        your bot to servers</a>.
+                                        target="_blank" rel="noopener noreferrer"><span id="sent30" class="multilang">Setting up a bot application</span></a> <span id="and" class="multilang">and</span>
+                                    <a href="https://discordjs.guide/preparations/adding-your-bot-to-servers.html"><span id="sent31" class="multilang">Adding
+                                        your bot to servers</span></a>.
                                 </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmDiscord-announceChannel" class="col-sm-3 col-form-label">Announcements Channel ID</label>
+                            <label for="frmDiscord-announceChannel" id="ann11" class="col-sm-3 col-form-label multilang">Announcements Channel ID</label>
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" id="frmDiscord-announceChannel"
                                     value="{{discord.announceChannel}}" {{disableWrite}}>
                                 <span class="form-text text-muted">
-                                    The ID of the channel to send Announcements (eg server restarts). <br>
-                                    Leave it blank to disable this feature. <br>
-                                    To get the channel ID, go to Discord's settings and
+                                    <span id="sent32" class="multilang">The ID of the channel to send Announcements (eg server restarts).</span> <br>
+                                    <span id="sent33" class="multilang">Leave it blank to disable this feature.</span> <br>
+                                    <span id="sent34" class="multilang">To get the channel ID, go to Discord's settings and</span>
                                     <a href="https://support.discordapp.com/hc/article_attachments/115002742731/mceclip0.png"
-                                    target="_blank" > enable developer mode</a>, then right-click on the channel name and select "Copy ID".
+                                    target="_blank" ><span id="sent35" class="multilang">enable developer mode</span></a>, <span id="sent36" class="multilang">then right-click on the channel name and select "Copy ID".</span>
                                 </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label for="frmDiscord-statusCommand" class="col-sm-3 col-form-label">
-                                Status Command
+                                <span id="stutas" class="multilang">Status Command</span>
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmDiscord-statusCommand" value="{{discord.statusCommand}}"
                                     placeholder="/status" {{disableWrite}}>
                                 <span class="form-text text-muted">
-                                    The command that will trigger a status message from the bot.
+                                    <span id="sent37" class="multilang">The command that will trigger a status message from the bot.</span>
                                 </span>
                             </div>
                         </div>
@@ -344,7 +344,7 @@
 
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-primary" type="submit" id="frmDiscord-save" {{disableWrite}}>
-                                <i class="icons cui-check"></i> Save Discord Settings
+                                <i class="icons cui-check"></i> <span id="savedise" class="multilang">Save Discord Settings</span>
                             </button>
                         </div>
                         <!-- /Discord Card -->
