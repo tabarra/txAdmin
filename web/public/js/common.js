@@ -112,6 +112,8 @@ function messagePlayer(id) {
 function kickPlayer(id) {
     $('#modPlayerInfo').modal('hide');
     let reason = prompt('Type the kick reason or leave it blank (press enter)');
+    if(reason == null) return;
+
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
     let data = {
