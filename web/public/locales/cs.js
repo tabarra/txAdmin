@@ -1,4 +1,4 @@
-// German translation
+// Czech translation
 R.registerLocale('cs', 
 {
 // Logout
@@ -33,7 +33,7 @@ R.registerLocale('cs',
   'inject': "Znovu aplikovat txAdmin scripty",
   'kick': "Vykopnout všechny hráče",
   'par': "Parametr",
-  'execute': "ODESLAT",
+  'frm_button': "ODESLAT",
   'last': "za posledních 24h",
   'players': "Hráčů",
   'data': "Nedostatek dat, zatím...",
