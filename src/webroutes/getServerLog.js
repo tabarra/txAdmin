@@ -30,7 +30,6 @@ module.exports = async function action(res, req) {
  * @param {array} resList
  */
 function processLog(logArray){
-    dir(logArray)
     if(!logArray.length) return false;
 
     let out = [];
@@ -95,13 +94,19 @@ function processEventTypes(event){
         return `${authorTag}: ${text}`;
 
     }else if(event.action === 'DeathNotice'){
-        return `died`;
+        let cause = event.data.cause || 'unknown';
+        if(event.data.killer){
+            let killer = processPlayerData(event.data.killer)
+            return `died from ${cause} by ${killer}`;
+        }else{
+            return `died from ${cause}`;
+        }
 
     }else{
+        dir(event)
         return `${event.action}`;
     }
 }
-
 
 
 /*

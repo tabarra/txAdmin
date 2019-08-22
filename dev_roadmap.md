@@ -1,6 +1,9 @@
 ## TODO/Roadmap:
 - Check compiling libraries like pkg and nexe.
 - Check config management libraries (specially 'convict' by Mozilla and nconf)
+- Auto updater with simple-git/promise
+- Add "discord client id" in the admin settings, this would enable "/kick @user"
+- Do something in case fxserver's tcp/http endpoint dies for more than 5 minutes
 
 ## Folder Structure
     data/
