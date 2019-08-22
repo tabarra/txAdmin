@@ -10,6 +10,12 @@
         font-weight: 700 !important;
         text-decoration: none !important;
     }
+
+    /* Experimental */
+    .highlight-player{
+        background-color: #ffeaa7;
+        color: rgb(27, 27, 27) !important;
+    }
 </style>
 
 
@@ -38,5 +44,33 @@
 <script>
 $(document).ready(function () {
     $("#console").scrollTop($("#console")[0].scrollHeight);
+
+    //Player name click function
+    $('.event-source').click(function(e){
+        let ids = $(this).data('player-identifiers');
+        if(!ids) return;
+        let name = $(this).data('player-name') || 'unknown';
+
+        $("#modPlayerInfoTitle").html(name);
+        $("#modPlayerInfoIdentifiers").html(ids.split(';').join(', <br>\n'));
+        $("#modPlayerInfoButtons").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>');
+        $('#modPlayerInfo').modal('show');
+    });
+
+    //Player name hover highlight (NOTE: Experiment)
+    $('.event-source').mouseenter(function(e){
+        let ids = $(this).data('player-identifiers');
+        if(!ids) return;
+
+        $('.event-source').each(function(e){
+            if($(this).data('player-identifiers') !== ids) return;
+            $(this).addClass("highlight-player");
+        });
+    });
+    $('.event-source').mouseleave(function(e){
+        $('.event-source').each(function(e){
+            $(this).removeClass("highlight-player");
+        });
+    });
 });
 </script>
