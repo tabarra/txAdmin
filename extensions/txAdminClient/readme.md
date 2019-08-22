@@ -7,7 +7,7 @@ globals.intercomBus['txAdminClient'] = {
 ```  
 And txAdminClient would post the data to `/intercom/txAdminClient` with `resourcesList` as a parameter so the intercom endpoint would know where to send this info.  
   
-For now I will use `globals.intercomTempList`
+For now I will use `globals.intercomTempResList`
 
 
 -----

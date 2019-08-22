@@ -1,7 +1,7 @@
 local apiPort = "invalid"
 local apiToken = "invalid"
 local serverCompatVersion = "invalid"
-local txAdminClientVersion = "1.2.0"
+local txAdminClientVersion = GetResourceMetadata('txAdminClient', 'version')
 print("[txAdminClient] Version "..txAdminClientVersion.." starting...")
 
 Citizen.CreateThread(function()
@@ -106,6 +106,7 @@ function txaBroadcast(source, args)
             },
             color = {255, 0, 0}
         })
+        TriggerEvent('chatMessage', -1, 'txAdminClient', args[1])
     else
         print('[txAdminClient] invalid arguments for txaBroadcast')
     end
@@ -124,6 +125,7 @@ function txaSendDM(source, args)
             },
             color = {255, 0, 0}
         })
+        -- TODO: TriggerEvent chatMessage to log admin DMs
     else
         print('[txAdminClient] invalid arguments for txaSendDM')
     end

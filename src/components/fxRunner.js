@@ -72,7 +72,7 @@ module.exports = class FXRunner {
      * @param {boolean} announce
      */
     async spawnServer(announce){
-        logWarn("Starting FXServer", context);
+        log("Starting FXServer", context);
         //Sanity Check
         if(
             this.spawnVariables == null ||
@@ -211,7 +211,7 @@ module.exports = class FXRunner {
             `set txAdmin-version "${globals.version.current}"`,
             `set txAdmin-apiPort "${globals.webServer.config.port}"`,
             `set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
-            `set txAdmin-clientCompatVersion "1.2.0"`
+            `set txAdmin-clientCompatVersion "1.3.0"`
             //FIXME: considerar o contexto. As vezes será necessário dar 'refresh' aqui.
         ]
 
