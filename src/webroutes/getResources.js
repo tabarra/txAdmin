@@ -37,14 +37,14 @@ module.exports = async function action(res, req) {
         //Check if there is fresh data
         try {
             if(
-                globals.intercomTempList !== null &&
-                (new Date() - globals.intercomTempList.timestamp) <= 1000 &&
-                Array.isArray(globals.intercomTempList.data)
+                globals.intercomTempResList !== null &&
+                (new Date() - globals.intercomTempResList.timestamp) <= 1000 &&
+                Array.isArray(globals.intercomTempResList.data)
             ){
                 clearInterval(intHandle);
                 let renderData = {
                     headerTitle: 'Resources',
-                    resources: processResources(globals.intercomTempList.data),
+                    resources: processResources(globals.intercomTempResList.data),
                     disableActions: (webUtils.checkPermission(req, 'commands.resources'))? '' : 'disabled'
                 }
                 let out = await webUtils.renderMasterView('resources', renderData);

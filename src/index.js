@@ -27,7 +27,9 @@ globals = {
         allVersions: []
     },
     dashboardErrorMessage: null,
-    intercomTempList: null, //FIXME: remove with the Extensions update
+    //FIXME: remove with the Extensions update
+    intercomTempLog: [],
+    intercomTempResList: null,
 }
 
 

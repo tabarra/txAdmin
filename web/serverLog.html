@@ -1,0 +1,42 @@
+{{include("header")/}}
+
+
+<style>
+    .admin-log-content{
+        height: calc(100vh - 251px);
+    }
+
+    .event-source{
+        font-weight: 700 !important;
+        text-decoration: none !important;
+    }
+</style>
+
+
+<div class="text-center">
+    <h3>Server Log <span class="badge badge-light">BETA</span></h3>
+</div>
+<div class="card border-primary">
+    <div class="card-body">
+        {{if(options.log === false)}}
+            <div style="display:flex;justify-content:center;align-items:center;" class="admin-log-content">
+                <h1 class="text-muted">
+                    &lt; empty log &gt;
+                </h1>
+            </div>
+        </div>
+        {{#else}}
+        <pre id="console" class="pre-scroll admin-log-content">{{log|safe}}</pre>
+        {{/if}}
+    </div>
+</div>
+
+
+{{include("footer")/}}
+
+
+<script>
+$(document).ready(function () {
+    $("#console").scrollTop($("#console")[0].scrollHeight);
+});
+</script>

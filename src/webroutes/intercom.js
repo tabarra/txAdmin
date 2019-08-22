@@ -24,11 +24,22 @@ module.exports = async function action(res, req) {
         try {
             globals.monitor.handleHeartBeat(req.body);
         } catch (error) {}
+
     }else if(scope == 'resources'){
-        globals.intercomTempList = {
+        if(!Array.isArray(req.body.resources)){
+            return res.status(400).send({error: "Invalid Request"});
+        }
+        globals.intercomTempResList = {
             timestamp: new Date(),
             data: req.body.resources
         }
+
+    }else if(scope == 'logger'){
+        if(!Array.isArray(req.body.log)){
+            return res.status(400).send({error: "Invalid Request"});
+        }
+        globals.intercomTempLog = globals.intercomTempLog.concat(req.body.log)
+
     }else{
         return res.send({
             type: 'danger',

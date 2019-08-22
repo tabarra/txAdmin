@@ -7,6 +7,7 @@ exports.getAddExtension = require('./getAddExtension.js');
 exports.getAdminManager = require('./getAdminManager.js');
 exports.getConsole = require('./getConsole.js');
 exports.getDashboard = require('./getDashboard.js');
+exports.getServerLog = require('./getServerLog.js');
 exports.getFullReport = require('./getFullReport.js');
 exports.getPlayerData = require('./getPlayerData.js');
 exports.getResources = require('./getResources.js');

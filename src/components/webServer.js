@@ -169,6 +169,11 @@ module.exports = class WebServer {
                 this.handleRouteError(res, "[getActionLog] Route Internal Error", err);
             });
         });
+        this.app.get('/serverLog', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.getServerLog(res, req).catch((err) => {
+                this.handleRouteError(res, "[getServerLog] Route Internal Error", err);
+            });
+        });
         this.app.get('/fullReport', getAuthFunc('web'), async (req, res) => {
             await webRoutes.getFullReport(res, req).catch((err) => {
                 this.handleRouteError(res, "[getFullReport] Route Internal Error", err);
