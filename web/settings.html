@@ -62,14 +62,18 @@
                                 <div class="input-group">
                                     <input type="text" class="form-control" id="frmGlobal-publicIP"
                                         value="{{global.publicIP}}" maxlength="32" placeholder="123.123.123.123" {{disableWrite}}>
+                                    {{if(options.isLocalhost)}}
                                     <div class="input-group-append">
                                         <button class="btn btn-outline-secondary" id="frmGlobal-getIP"
                                             type="button" {{disableWrite}}>Auto Detect</button>
-                                    </div>
+                                        </div>
+                                    {{/if}}
                                 </div>
                                 <span class="form-text text-muted">
                                     You can set this to be your public IP or a domain name. <br>
+                                    {{if(options.isLocalhost)}}
                                     <b>Note:</b> The auto detect feature might get blocked by ad-blockers.
+                                    {{/if}}
                                 </span>
                             </div>
                         </div>
