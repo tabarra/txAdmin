@@ -1,0 +1,19 @@
+{
+    "restarter": {
+        "crash_detected": "crash észlelve",
+        "schedule_reason": "ütemezett újraindítás %{time}",
+        "schedule_warn": "A szerver ütemezett újrainditása lesz %{smart_count} perc múlva. Lépjetek le. |||| A szerver ütemezett újrainditása lesz %{smart_count} perc múlva.",
+        "schedule_warn_discord": "**%{servername}** szerver ütemezett újrainditása lesz %{smart_count} perc múlva. |||| **%{servername}** szerver ütemezett újrainditása lesz %{smart_count} perc múlva."
+    },
+    "server_actions": {
+        "restarting": "Szerver újraindítás (%{reason}).",
+        "restarting_discord": "**%{servername}** újraindul (%{reason}).",
+        "stopping": "Szerver leállítás (%{reason}).",
+        "stopping_discord": "**%{servername}** szervert leállítják (%{reason}).",
+        "spawning_discord": "**%{servername}** szerver indul."
+    },
+    "discord": {
+        "status_online": "**%{servername}** jelenleg **Elérhető**!",
+        "status_offline": "**%{servername}** jelenleg **Nem Elérhető**!"
+    }
+}
