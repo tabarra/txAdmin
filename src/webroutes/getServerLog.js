@@ -4,6 +4,9 @@ const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras
 const webUtils = require('./webUtils.js');
 const context = 'WebServer:getServerLog';
 
+//Helper functions
+const isUndefined = (x) => { return (typeof x === 'undefined') };
+
 
 /**
  * Returns the output page containing the admin log.
@@ -13,6 +16,7 @@ const context = 'WebServer:getServerLog';
 module.exports = async function action(res, req) {
     // dir(globals.intercomTempLog)
 
+    // // NOTE: dev testing only
     // const fs = require('fs')
     // // fs.writeFileSync('tmplog.json', JSON.stringify(logArray,null,2))
     // let tmpLog = JSON.parse(fs.readFileSync('tmplog.json'));
@@ -33,9 +37,16 @@ function processLog(logArray){
     if(!logArray.length) return false;
 
     let out = [];
-    //FIXME: validate event object
     logArray.forEach(event => {
-        let time = new Date(event.timestamp).toLocaleTimeString()
+        if(
+            isUndefined(event.timestamp) ||
+            isUndefined(event.action) ||
+            isUndefined(event.source) ||
+            isUndefined(event.data)
+        ){
+            return;
+        }
+        let time = new Date(parseInt(event.timestamp)*1000).toLocaleTimeString()
         let source = processPlayerData(event.source);
         let eventMessage = processEventTypes(event)
         out.push(`[${time}] ${source} ${eventMessage}`)
@@ -91,30 +102,22 @@ function processEventTypes(event){
         }
 
         let text = (typeof event.data.text === 'string')? event.data.text : 'unknownText';
-        return `${authorTag}: ${text}`;
+        return xss(`${authorTag}: ${text}`);
 
     }else if(event.action === 'DeathNotice'){
         let cause = event.data.cause || 'unknown';
         if(event.data.killer){
             let killer = processPlayerData(event.data.killer)
-            return `died from ${cause} by ${killer}`;
+            return `died from ${xss(cause)} by ${killer}`;
         }else{
-            return `died from ${cause}`;
+            return `died from ${xss(cause)}`;
         }
+
+    }else if(event.action === 'explosionEvent'){
+        return `caused an explosion`;
 
     }else{
         dir(event)
         return `${event.action}`;
     }
 }
-
-
-/*
-Exemplos:
-    13:37:02 <player> connected
-    13:37:02 <player> disconnected
-    13:37:02 <player> died from reason
-    13:37:02 <player> died from reason by <killer>
-    13:37:02 <player> <author>: <message>
-    13:37:02 console <author>: <message>
-*/

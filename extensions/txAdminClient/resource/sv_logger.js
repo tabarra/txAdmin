@@ -56,7 +56,12 @@ const txAdminToken = GetConvar("txAdmin-apiToken", "invalid")
 class Logger {
     constructor(){
         log('[txAdminClient] Logger started');
-        this.log = [];
+        this.log = [{
+            timestamp: (Date.now() / 1000).toFixed(),
+            action: "txAdminClient:Started",
+            source: false,
+            data: false
+        }];
 
         //Attempt to flush log to txAdmin
         setInterval(() => {
@@ -106,6 +111,14 @@ on('playerConnecting', (name, skr, d) => {
 on('playerDropped', (reason) => {
     try {
         logger.r(global.source, 'playerDropped');
+    } catch (error) {
+        logError(error)
+    }
+})
+
+on('explosionEvent', (source, ev) => {
+    try {
+        logger.r(source, 'explosionEvent', ev);
     } catch (error) {
         logError(error)
     }
