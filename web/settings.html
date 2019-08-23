@@ -82,13 +82,16 @@
                                 <select class="form-control" id="frmGlobal-language" {{disableWrite}}>
                                     <!-- TODO: make this list dynamic -->
                                     <option value="en" {{global.language=='en'|isSelected}}>English</option>
+
+                                    <option value="zh" {{global.language=='zh'|isSelected}}>Chinese</option>
                                     <option value="cs" {{global.language=='cs'|isSelected}}>Czech</option>
+                                    <option value="da" {{global.language=='da'|isSelected}}>Danish</option>
+                                    <option value="nl" {{global.language=='nl'|isSelected}}>Dutch</option>
+                                    <option value="fr" {{global.language=='fr'|isSelected}}>French</option>
                                     <option value="de" {{global.language=='de'|isSelected}}>German</option>
+                                    <option value="hu" {{global.language=='hu'|isSelected}}>Hungarian</option>
                                     <option value="pt_BR" {{global.language=='pt_BR'|isSelected}}>Portuguese (Brazil)</option>
                                     <option value="ro" {{global.language=='ro'|isSelected}}>Romanian</option>
-
-                                    <option value="da" {{global.language=='da'|isSelected}}>Danish</option>
-                                    <option value="fr" {{global.language=='fr'|isSelected}}>French</option>
                                     <option value="es" {{global.language=='es'|isSelected}}>Spanish</option>
 
                                     <option value="custom" {{global.language=='custom'|isSelected}}>Custom (read the documentation)</option>
