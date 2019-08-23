@@ -1,0 +1,19 @@
+{
+    "restarter": {
+        "crash_detected": "crash opdaget",
+        "schedule_reason": "planlagt genstart %{time}",
+        "schedule_warn": "Serveren genstarter om %{smart_count} minut. Vær venlig at disconnecte nu. |||| Serveren genstarter om %{smart_count} minutter.",
+        "schedule_warn_discord": "**%{servername}** genstarter om %{smart_count} minut. |||| **%{servername}** genstarter om %{smart_count} minutter."
+    },
+    "server_actions": {
+        "restarting": "Server genstarter: (%{reason}).",
+        "restarting_discord": "**%{servername}** genstarter: (%{reason}).",
+        "stopping": "Serveren er stoppet (%{reason}).",
+        "stopping_discord": "**%{servername}** er lukket ned: (%{reason}).",
+        "spawning_discord": "**%{servername}** starter."
+    },
+    "discord": {
+        "status_online": "**%{servername}** er **Online**!",
+        "status_offline": "**%{servername}** er **Offline**!"
+    }
+}

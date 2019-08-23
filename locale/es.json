@@ -1,0 +1,19 @@
+{
+    "restarter": {
+        "crash_detected": "Crash detectado",
+        "schedule_reason": "Reinicio programado a las %{time}",
+        "schedule_warn": "El servidor se va a reiniciar en %{smart_count} minuto. Porfavor desconectate. |||| El servidor se va a reiniciar en %{smart_count} minutos.",
+        "schedule_warn_discord": "**%{servername}** El servidor se va a reiniciar en %{smart_count} minuto. |||| **%{servername}** El servidor se va a reiniciar en %{smart_count} minutos."
+    },
+    "server_actions": {
+        "restarting": "Reiniciando Servidor (%{reason}).",
+        "restarting_discord": "**%{servername}** se está reiniciando (%{reason}).",
+        "stopping": "Apagando el servidor (%{reason}).",
+        "stopping_discord": "**%{servername}** se está apagando (%{reason}).",
+        "spawning_discord": "**%{servername}** está iniciandose."
+    },
+    "discord": {
+        "status_online": "**%{servername}** se encuentra **Online**!",
+        "status_offline": "**%{servername}** se encuentra **Offline**!"
+    }
+}
