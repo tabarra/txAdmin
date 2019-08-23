@@ -14,14 +14,6 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  * @param {object} req
  */
 module.exports = async function action(res, req) {
-    // dir(globals.intercomTempLog)
-
-    // // NOTE: dev testing only
-    // const fs = require('fs')
-    // // fs.writeFileSync('tmplog.json', JSON.stringify(logArray,null,2))
-    // let tmpLog = JSON.parse(fs.readFileSync('tmplog.json'));
-    // let log = processLog(tmpLog);
-
     let log = processLog(globals.intercomTempLog);
     let out = await webUtils.renderMasterView('serverLog', {headerTitle: 'Server Log', log});
     return res.send(out);
@@ -116,8 +108,14 @@ function processEventTypes(event){
     }else if(event.action === 'explosionEvent'){
         return `caused an explosion`;
 
+    }else if(event.action === 'txAdminClient:Started'){
+        return `txAdminClient Logger started`;
+
     }else{
-        dir(event)
+        if(globals.config.verbose){
+            logWarn(`Unrecognized event: ${event.action}`, context);
+            dir(event)
+        }
         return `${event.action}`;
     }
 }
