@@ -39,8 +39,9 @@
 - Restart warning announcements
 - Admin Management system
 - Permissions system ([more info](docs/permissions.md))
-- SSL Support ([more info](docs/ssl_support.md))
+- (BETA) SSL Support ([more info](docs/ssl_support.md))
 - Translation Support ([more info](docs/translation.md))
+- (BETA) Server Activity Log (connections/disconnections, kills, chat and explosions)
 
 
 ## Installing & Running

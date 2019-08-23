@@ -1,5 +1,5 @@
 {
-    "version": "1.9.0",
+    "version": "1.10.0",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -81,6 +81,10 @@
         {
             "version": "1.9.0",
             "changelog": "Added a resources page. Added Czech, Romanian and German translations."
+        },
+        {
+            "version": "1.10.0",
+            "changelog": "Added Server Activity Log (BETA). Added Discord command spam protection. Added more languages. Bug fixes."
         }
     ]
 }
