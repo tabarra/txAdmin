@@ -12,4 +12,5 @@ server_scripts {
 
 client_scripts {
 	"cl_logger.js"
+	"cl_scaleform.lia"
 }
