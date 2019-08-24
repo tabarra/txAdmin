@@ -113,6 +113,18 @@ function txaBroadcast(source, args)
     CancelEvent()
 end
 
+-- Announce message to all players
+RegisterCommand("txaAnnounce", function(source, args)
+    if args[1] ~= nil then
+        print("[txAdminClient] Admin Announce to everyone: "..args[1])
+        -- TriggerClientEvent("Scaleform:Announce", -1, 20, args[1])
+         TriggerClientEvent("Scaleform:Announce", -1, 3, args[1])
+    else
+        print('[txAdminClient] invalid arguments for txaAnnounce')
+    end
+    CancelEvent()
+end, true)
+
 
 -- Send admin direct message to specific player
 function txaSendDM(source, args)
