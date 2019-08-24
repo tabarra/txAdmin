@@ -21,7 +21,7 @@ function resetCacheFolder(basePath) {
                 log(`Deleted ${deletedPaths.length} paths from [txAdmin-cache]: \n\t${deletedPaths.join('\n\t')}`, context);
             }
         }else{
-            fs.mkdirSync(cachePath);
+            fs.mkdirSync(`${resFolder}/[txAdmin-cache]`);
         }
     } catch (error) {
         throw new Error(`[resetCacheFolder] Error resetting [txAdmin-cache] folder: ${error.message}`);

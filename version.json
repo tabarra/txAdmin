@@ -1,5 +1,5 @@
 {
-    "version": "1.10.0",
+    "version": "1.10.1",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -85,6 +85,10 @@
         {
             "version": "1.10.0",
             "changelog": "Added Server Activity Log (BETA). Added Discord command spam protection. Added more languages. Bug fixes."
+        },
+        {
+            "version": "1.10.1",
+            "changelog": "Fixed resource injection for new installations."
         }
     ]
 }
