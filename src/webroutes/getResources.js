@@ -7,6 +7,7 @@ const context = 'WebServer:getResources';
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
+const breakPath = (inPath) => {return slash(path.normalize(inPath)).split('/').filter(String)};
 const dynamicSort = (prop) => {
     var sortOrder = 1;
     if(prop[0] === "-") {
@@ -16,6 +17,26 @@ const dynamicSort = (prop) => {
     return function (a,b) {
         var result = (a[prop] < b[prop]) ? -1 : (a[prop] > b[prop]) ? 1 : 0;
         return result * sortOrder;
+    }
+}
+const getResourceSubPath = (resPath) => {
+    if(!path.isAbsolute(resPath)) return resPath;
+
+    let basePathArr = breakPath(`${globals.fxRunner.config.basePath}/resources`);
+    let resPathArr = breakPath(resPath);
+    for (let i = 0; i < basePathArr.length; i++) {
+        if(isUndefined(resPathArr[i])) break;
+        if(basePathArr[i].toLowerCase() == resPathArr[i].toLowerCase()){
+            delete resPathArr[i];
+        }
+    }
+    let resName = resPathArr.pop();
+    resPathArr = resPathArr.filter(String);
+
+    if(resPathArr.length){
+        return resPathArr.join('/');
+    }else{
+        return 'root';
     }
 }
 
@@ -42,12 +63,14 @@ module.exports = async function action(res, req) {
                 Array.isArray(globals.intercomTempResList.data)
             ){
                 clearInterval(intHandle);
+                let resGroups = processResources(globals.intercomTempResList.data);
                 let renderData = {
                     headerTitle: 'Resources',
-                    resources: processResources(globals.intercomTempResList.data),
+                    resGroupsJS: JSON.stringify(resGroups),
+                    resGroups,
                     disableActions: (webUtils.checkPermission(req, 'commands.resources'))? '' : 'disabled'
                 }
-                let out = await webUtils.renderMasterView('resources', renderData);
+                let out = await webUtils.renderMasterView('resources2', renderData);
                 return res.send(out);
             }
         } catch (error) {logError(error, context)}
@@ -72,33 +95,43 @@ module.exports = async function action(res, req) {
  * @param {array} resList
  */
 function processResources(resList){
-    let statusColors = {
-        missing: 'danger',
-        started: 'success',
-        starting: 'warning',
-        stopped: 'danger',
-        stopping: 'warning',
-        uninitialized: 'secondary',
-        unknown: 'muted',
-    }
-
-    //Clean & process list
-    resList.forEach((res, index)=>{
+    //Clean resource data and add it so an object separated by subpaths
+    let resGroupList = {}
+    resList.forEach(res =>{
         if(isUndefined(res.name) || isUndefined(res.status) || isUndefined(res.path) || res.path === ''){
-            delete resList[index];
             return;
         }
-        resList[index] = {
+        let subPath = getResourceSubPath(res.path);
+        let resData = {
             name: res.name,
             status: res.status,
-            statusClass: (statusColors[res.status])? statusColors[res.status] : 'muted',
-            path: slash(path.normalize(res.path)),
+            statusClass: (res.status === 'started')? 'success' : 'danger',
+            // path: slash(path.normalize(res.path)),
             version: (res.version)? `(${res.version})` : '',
             author: (res.author)? `by ${res.author}` : '',
             description: (res.description)? res.description : '',
         }
+
+        if(resGroupList.hasOwnProperty(subPath)){
+            resGroupList[subPath].push(resData)
+        }else{
+            resGroupList[subPath] = [resData]
+        }
     });
 
-    //Return it sorted by path
-    return resList.sort(dynamicSort('path'));
+    //Generate final array with subpaths and div ids
+    let finalList = []
+    Object.keys(resGroupList).forEach(subPath => {
+        let subPathData = {
+            subPath: subPath,
+            divName: subPath.replace(/\W/g, ''),
+            resources: resGroupList[subPath].sort(dynamicSort('name'))
+        }
+        finalList.push(subPathData)
+    });
+
+    // finalList = JSON.stringify(finalList, null, 2)
+    // console.log(finalList)
+    // return []
+    return finalList;
 }
