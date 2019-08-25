@@ -41,11 +41,15 @@ module.exports = class ConsoleBuffer {
      * Setup the stream handlers
      */
     setupStreamHandlers(){
+        // NOTE: detect these:
+        // server thread hitch warning: timer interval of %d milliseconds
+        // network thread hitch warning: timer interval of %d milliseconds
+        // hitch warning: frame time of %d milliseconds
         this.hitchStreamProcessor = new StreamSnitch(
-            /hitch warning: frame time of (\d{3,5}) milliseconds/g,
+            /hitch warning: (frame time|timer interval) of (\d{3,5}) milliseconds/g,
             (m) => {
                 try {
-                    globals.monitor.processFXServerHitch(m[1])
+                    globals.monitor.processFXServerHitch(m[2])
                 }catch(e){}
             }
         );
