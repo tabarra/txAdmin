@@ -43,7 +43,8 @@ module.exports = async function action(res, req) {
         return sendAlertOutput(res, toResp);
         
    //==============================================	
-	}else if(action == 'admin_announce'){
+     }else if(action == 'admin_announce'){
+        if(!ensurePermission('commands.message', res, req)) return false;
         let cmd = `txaAnnounce "${escape(parameter)}"`;
         webUtils.appendLog(req, cmd, context);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
