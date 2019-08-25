@@ -93,7 +93,7 @@ function processEventTypes(event){
             authorTag = '';
         }
 
-        let text = (typeof event.data.text === 'string')? event.data.text : 'unknownText';
+        let text = (typeof event.data.text === 'string')? event.data.text.replace(/\^([0-9])/g, '') : 'unknownText';
         return xss(`${authorTag}: ${text}`);
 
     }else if(event.action === 'DeathNotice'){
