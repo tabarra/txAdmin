@@ -1,12 +1,5 @@
 {{include("header")/}}
 
-
-<style>
-    .badge-status {
-        font-size: 100%;
-    }
-</style>
-
 <div class="text-center mb-4">
     <h2>Resources List</h2>
 </div>
@@ -14,64 +7,63 @@
 
 <div class="row justify-content-md-center">
     <div class="col-md-7">
-
-        <!-- Global Card -->
         <div class="card card-accent-primary">
             <div class="card-header float-left">
                 <span style="font-size: large">All Resources</span>
                 <button class="btn btn-sm btn-primary float-right" type="button" id="btnRefresh" {{disableActions}}>
                     <i class="icon-refresh"></i> Reload & Refresh
                 </button>
-            </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table table-responsive-md table-striped">
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{foreach(options.resources)}}
-                            <tr>
-                                <td>
-                                    <strong>{{@this.name}}</strong>
-                                    <em>{{@this.version}} {{@this.author}}</em><br>
-                                    <!-- {{@this.description}}<br> -->
-                                    <span class="text-muted">{{@this.path}}</span>
-                                </td>
-                                <td class="align-middle text-center">
-                                    <span class="badge badge-status badge-{{@this.statusClass}}">{{@this.status}}</span>
-                                </td>
-                                <td  class="align-middle text-center">
-                                    {{if(@this.status!=='started')}}
-                                        <button class="btn btn-sm btn-outline-dark"
-                                            onclick="btnCommand('ensure_res', '{{@this.name}}')" {{disableActions}}>
-                                            START
-                                        </button>
-                                    {{#else}}
-                                        <button class="btn btn-sm btn-outline-dark"
-                                            onclick="btnCommand('ensure_res', '{{@this.name}}')" {{disableActions}}>
-                                            RESTART
-                                        </button>
-                                        &nbsp;
-                                        <button class="btn btn-sm btn-outline-dark"
-                                            onclick="btnCommand('stop_res', '{{@this.name}}')" {{disableActions}}>
-                                            STOP
-                                        </button>
-                                    {{/if}}
-                                </td>
-                            </tr>
-                            {{/foreach}}
-                        </tbody>
-                    </table>
-                </div>
+                <input class="form-control" type="text" name="resource" id="resourceInput" onkeyup="findResource()"
+                    placeholder="Find resource by name..." style="margin-top: 1em;">
             </div>
         </div>
-
     </div>
+</div>
+<div class="row justify-content-md-center">
+    {{foreach(options.resGroups)}}
+    <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+        <div class="card card-accent-primary" id="{{@this.divName}}">
+            <div class="card-header" data-toggle="collapse" href="#resList-cardBody-{{@this.divName}}"
+                aria-expanded="true" aria-controls="resList-cardBody-{{@this.divName}}"
+                id="resList-cardHeader-{{@this.divName}}">
+                <span style="font-size: large">{{@this.subPath}}</span>
+                <i class="fa fa-chevron-down pull-right"></i>
+            </div>
+            <div class="card-body collapse show" id="resList-cardBody-{{@this.divName}}"
+                aria-labelledby="resList-cardHeader-{{@this.divName}}">
+                {{each(@this.resources)}}
+                <div class="callout callout-{{@this.statusClass}} b-t-1 b-r-1 b-b-1" id="{{@this.name}}" style="padding-top: 1em;">
+                    <strong class="h4" style="word-wrap: break-word;">{{@this.name}}</strong>
+                    {{if(@this.status=='started')}}
+                    <br>
+                    <button class="btn btn-sm btn-outline-dark float-right"
+                        onclick="btnCommand('ensure_res', '{{@this.name}}')" {{disableActions}}>
+                        RESTART
+                    </button>
+                    &nbsp;
+                    <button class="btn btn-sm btn-outline-dark float-right" style="margin-right: 0.5em;"
+                        onclick="btnCommand('stop_res', '{{@this.name}}')" {{disableActions}}>
+                        STOP
+                    </button>
+                    {{#else}}
+                    <button class="btn btn-sm btn-outline-dark float-right"
+                        onclick="btnCommand('ensure_res', '{{@this.name}}')" {{disableActions}}>
+                        START
+                    </button>
+                    {{/if}}
+                    {{if(@this.version=='')}}
+                    <br>
+                    <br>
+                    {{#else}}
+                    <br>
+                    <small class="text-muted">{{@this.version}} {{@this.author}}</small>
+                    {{/if}}
+                </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+    {{/foreach}}
 </div>
 
 
@@ -81,6 +73,14 @@
 
 
 <script>
+    //NOTE: breaking multiple lines because squirrelly is not respecting LF as line endings.
+    //Change squirrelly tag: {{tags(--,--)/}}
+    //intentionally 'blank' line
+    const resGroupsJS = --resGroupsJS | safe--
+    //Changing it back: --tags({{,}})/--
+    //intentionally 'blank' line
+
+
     //============================================== Refresh List
     $('#btnRefresh').click(function () {
         var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
@@ -122,6 +122,29 @@
                 notify.update('progress', 0);
                 notify.update('type', 'danger');
                 notify.update('message', message);
+            }
+        });
+    }
+
+    function findResource() {
+        var input, filter;
+        input = document.getElementById("resourceInput");
+        filter = input.value.toUpperCase();
+
+        resGroupsJS.forEach(folder => {
+            let hidden = 0;
+            folder.resources.forEach(res => {
+                if (res.name.toUpperCase().indexOf(filter) > -1) {
+                    $(`#${res.name}`).show();
+                } else {
+                    hidden++;
+                    $(`#${res.name}`).hide();
+                }
+            });
+            if (folder.resources.length == hidden) {
+                $(`#${folder.divName}`).hide();
+            } else {
+                $(`#${folder.divName}`).show();
             }
         });
     }

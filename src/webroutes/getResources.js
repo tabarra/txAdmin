@@ -70,7 +70,7 @@ module.exports = async function action(res, req) {
                     resGroups,
                     disableActions: (webUtils.checkPermission(req, 'commands.resources'))? '' : 'disabled'
                 }
-                let out = await webUtils.renderMasterView('resources2', renderData);
+                let out = await webUtils.renderMasterView('resources', renderData);
                 return res.send(out);
             }
         } catch (error) {logError(error, context)}
