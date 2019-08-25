@@ -140,7 +140,10 @@ function preparePlayersData() {
     dataServer.players.forEach(player => {
         let pingClass;
         player.ping = parseInt(player.ping);
-        if (player.ping < 60) {
+        if (player.ping < 0) {
+            pingClass = 'muted';
+            player.ping = '??';
+        } else if (player.ping < 60) {
             pingClass = 'success';
         } else if (player.ping < 100) {
             pingClass = 'warning';
