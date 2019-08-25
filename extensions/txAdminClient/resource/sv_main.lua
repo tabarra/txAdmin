@@ -36,6 +36,7 @@ Citizen.CreateThread(function()
     RegisterCommand("txaBroadcast", txaBroadcast, true)
     RegisterCommand("txaSendDM", txaSendDM, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
+    RegisterCommand("txaAnnounce", txaAnnounce, true)
     Citizen.CreateThread(function()
         while true do
             HeartBeat()
@@ -114,7 +115,7 @@ function txaBroadcast(source, args)
 end
 
 -- Announce message to all players
-RegisterCommand("txaAnnounce", function(source, args)
+function txaAnnounce(source, args)
     if args[1] ~= nil then
         print("[txAdminClient] Admin Announce to everyone: "..args[1])
         -- TriggerClientEvent("Scaleform:Announce", -1, 20, args[1])
