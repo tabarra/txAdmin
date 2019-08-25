@@ -4,6 +4,7 @@ const utils = require('./utils.js')
 //Helpers
 const log = (x)=>{console.log(x)}
 const dir = (x)=>{console.dir(x)}
+const isUndefined = (x) => { return (typeof x === 'undefined') };
 const logError = (err) => {
     console.log(`[txAdminClient] Error: ${err.message}`);
     try {
@@ -117,6 +118,20 @@ on('playerDropped', (reason) => {
 })
 
 on('explosionEvent', (source, ev) => {
+    //Helper function
+    const isInvalid = (prop, invValue) => {
+        return (typeof prop == 'undefined' || prop === invValue);
+    }
+    //Filtering out bad event calls
+    if(
+        isInvalid(ev.damageScale, 0) ||
+        isInvalid(ev.cameraShake, 0) ||
+        isInvalid(ev.isInvisible, true) ||
+        isInvalid(ev.isAudible, false)
+    ){
+        return;
+    }
+    //Adding logging data
     try {
         logger.r(source, 'explosionEvent', ev);
     } catch (error) {
