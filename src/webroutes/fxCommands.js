@@ -133,6 +133,23 @@ module.exports = async function action(res, req) {
         return sendAlertOutput(res, toResp);
 
     //==============================================
+    }else if(action == 'check_txaclient'){
+        let cmd = `txaPing`;
+        webUtils.appendLog(req, cmd, context);
+        let toResp = await globals.fxRunner.srvCmdBuffer(cmd, 512);
+        if(toResp.includes('Pong!')){
+            return res.send({
+                type: 'success',
+                message: `<b>txAdminClient is running!<br> <pre>${xss(toResp)}</pre>`
+            });
+        }else{
+            return res.send({
+                type: 'danger',
+                message: `<b>txAdminClient is not running!<br> <pre>${xss(toResp)}</pre>`
+            });
+        }
+
+    //==============================================
     }else{
         webUtils.appendLog(req, 'Unknown action!', context);
         return res.send({
