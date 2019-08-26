@@ -35,7 +35,8 @@
                 <div class="callout callout-{{@this.statusClass}} b-t-1 b-r-1 b-b-1" id="{{@this.name}}" style="padding-top: 1em;">
                     <strong class="h4" style="word-wrap: break-word;">{{@this.name}}</strong>
                     {{if(@this.status=='started')}}
-                    <br>
+                    <!-- FIXME: Quick wordaround for the padding problem: -->
+                    <span class="d-sm-none"><br></span>
                     <button class="btn btn-sm btn-outline-dark float-right"
                         onclick="btnCommand('ensure_res', '{{@this.name}}')" {{disableActions}}>
                         RESTART

@@ -107,9 +107,9 @@ function processResources(resList){
             status: res.status,
             statusClass: (res.status === 'started')? 'success' : 'danger',
             // path: slash(path.normalize(res.path)),
-            version: (res.version)? `(${res.version})` : '',
-            author: (res.author)? `by ${res.author}` : '',
-            description: (res.description)? res.description : '',
+            version: (res.version)? `(${res.version.trim()})` : '',
+            author: (res.author)? `by ${res.author.trim()}` : '',
+            description: (res.description)? res.description.trim() : '',
         }
 
         if(resGroupList.hasOwnProperty(subPath)){

@@ -6,14 +6,33 @@
         height: calc(100vh - 348px);
     }
 
-    .consoleMark-command{
+    .consoleMark-command {
         background-color: #ffeaa7;
     }
-    .consoleMark-error{
+
+    .consoleMark-error {
         background-color: #ffbfa7;
     }
-    .consoleMark-info{
+
+    .consoleMark-info {
         background-color: #a7d4ff;
+    }
+
+    .console-input {
+        width: 13rem !important;
+    }
+
+    @media only screen and (min-width: 768px) {
+        .console-input {
+            width: 32rem !important;
+            margin-bottom: 1em;
+        }
+    }
+
+    @media (min-width: 768px) and (max-width: 1024px) {
+        .console-input {
+            width: 20rem !important;
+        }
     }
 </style>
 
@@ -28,13 +47,14 @@
     <div class="card-footer text-center">
         <form class="form-inline container-fluid" id="frmConsole">
             <div class="mx-auto">
-                <div class="form-group mx-sm-3 mb-2">
+                <div class="form-group">
                     <label for="cmdInput">cfx &#x3E;&nbsp;</label>
-                    <input type="text" class="form-control form-control-sm" id="cmdInput" style="width: 32rem;"
+                    <input type="text" class="form-control console-input form-control-sm" id="cmdInput"
                         placeholder="Press enter to send" autocomplete="off" {{disableWrite}}>
                 </div>
                 <button type="button" id="clearConsole" class="btn btn-outline-dark btn-sm mb-2">Clear Console</button>
-                <button type="button" id="toggleAutoScroll" class="btn btn-outline-dark btn-sm mb-2">Disable Scroll</button>
+                <button type="button" id="toggleAutoScroll" class="btn btn-outline-dark btn-sm mb-2">Disable
+                    Scroll</button>
                 <a href="/downloadLog" target="_blank" class="btn btn-outline-dark btn-sm mb-2">Download Log</a>
             </div>
         </form>
