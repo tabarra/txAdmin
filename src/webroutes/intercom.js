@@ -47,5 +47,5 @@ module.exports = async function action(res, req) {
         });
     }
 
-    return res.send('okay');
+    return res.send({success: true});
 };

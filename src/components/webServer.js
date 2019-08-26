@@ -43,9 +43,17 @@ module.exports = class WebServer {
         });
         this.app.use(cors());
         this.app.use(this.session);
-        this.app.use(bodyParser.json());
+        this.app.use(bodyParser.json({limit: '16MB'}));
         this.app.use(express.urlencoded({extended: true}))
         this.app.use(express.static('web/public', {index: false}))
+        this.app.use((error, req, res, next)=>{
+            logError(`Middleware error on: ${req.originalUrl} : ${error.message}`)
+            if(error.type === 'entity.too.large'){
+                return res.status(413).send({error: 'request entity too large'});
+            }else{
+                return res.status(500).send({error: 'middleware error'});
+            }
+        });
         this.setupRoutes()
 
 

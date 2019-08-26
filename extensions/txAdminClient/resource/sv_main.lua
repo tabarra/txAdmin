@@ -12,7 +12,7 @@ Citizen.CreateThread(function()
             Citizen.Wait(1000)
         end
         if envAttempts >= 5 then
-            print("[txAdminClient] Waiting for environment setup...")
+            print("[txAdminClient] LUA awaiting for environment setup...")
         end
         envAttempts = envAttempts + 1
         apiPort = GetConvar("txAdmin-apiPort", "invalid")
@@ -54,7 +54,7 @@ function HeartBeat()
     }
     PerformHttpRequest(url, function(httpCode, data, resultHeaders)
         local resp = tostring(data)
-        if httpCode ~= 200 or resp ~= 'okay' then
+        if httpCode ~= 200 then
             print("[txAdminClient] HeartBeat failed with code "..httpCode.." and message: "..resp)
         end
     end, 'POST', json.encode(exData), {['Content-Type']='application/json'})

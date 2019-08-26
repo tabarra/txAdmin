@@ -19,16 +19,19 @@ exports.postJson = (targetURL, data) => {
             }
         }
         const request = lib.request(reqOptions, (res) => {
-            if (res.statusCode < 200 || res.statusCode > 299) {
-                reject(new Error('Failed to load page, status code: ' + res.statusCode));
-            }
             res.setEncoding('utf8');
             const body = [];
             res.on('data', (chunk) => body.push(chunk));
-            res.on('end', () => resolve(body.join('')));
+            res.on('end', () => resolve({statusCode: res.statusCode, body: body.join('')}));
         });
 
-        request.on('error', (err) => reject(err))
+        request.on('timeout', () => {
+            request.abort();
+            reject(new Error('request timed out'))
+        })
+        request.on('error', () => {
+            request.abort();
+        })
 
         request.write(data);
         request.end();

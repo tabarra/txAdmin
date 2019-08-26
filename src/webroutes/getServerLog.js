@@ -111,6 +111,10 @@ function processEventTypes(event){
     }else if(event.action === 'txAdminClient:Started'){
         return `txAdminClient Logger started`;
 
+    }else if(event.action === 'txAdminClient:DebugMessage'){
+        let message = event.data || 'unknown';
+        return `txAdminClient Debug Message: <span class="text-warning">${xss(message)}</span>`;
+
     }else{
         if(globals.config.verbose){
             logWarn(`Unrecognized event: ${event.action}`, context);

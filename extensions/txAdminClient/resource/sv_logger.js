@@ -46,10 +46,6 @@ const debugPrint = (data) => {
     log(`${sep}\n${json}\n${sep}`);
 }
 
-//Constants
-const txAdminPort = GetConvar("txAdmin-apiPort", "invalid")
-const txAdminToken = GetConvar("txAdmin-apiToken", "invalid")
-
 
 /**
  * Logger class
@@ -63,11 +59,27 @@ class Logger {
             source: false,
             data: false
         }];
+        this.txAdminPort = 'invalid';
+        this.txAdminToken = 'invalid';
+        this.setupVarsAttempts = 0;
+        this.setupVars();
 
         //Attempt to flush log to txAdmin
         setInterval(() => {
             this.flushLog();
         }, 2500);
+    }
+
+    //Attempt to set env vars
+    setupVars(){
+        if(this.txAdminPort === 'invalid' || this.txAdminToken === 'invalid'){
+            if(this.setupVarsAttempts > 5){
+                log('[txAdminClient] JS awaiting for environment setup...')
+            }
+            this.setupVarsAttempts++;
+            this.txAdminPort = GetConvar("txAdmin-apiPort", "invalid");
+            this.txAdminToken = GetConvar("txAdmin-apiToken", "invalid");
+        }
     }
 
     //Register log event
@@ -85,16 +97,34 @@ class Logger {
     //Flush Log
     flushLog(){
         if(!this.log.length) return;
+        if(this.txAdminPort === 'invalid' || this.txAdminToken === 'invalid'){
+            return this.setupVars();
+        }
 
         const postData = JSON.stringify({
-            txAdminToken,
+            txAdminToken: this.txAdminToken,
             log: this.log
         })
-        utils.postJson(`http://localhost:${txAdminPort}/intercom/logger`, postData)
+        utils.postJson(`http://localhost:${this.txAdminPort}/intercom/logger`, postData)
             .then((data) => {
-                if(data == 'okay') this.log = [];
+                if(data.statusCode === 413){
+                    log(`[txAdminClient] Logger upload failed with code 413 and body ${data.body}`);
+                    //TODO: introduce a buffer to re-upload the log in parts.
+                    this.log = [{
+                        timestamp: (Date.now() / 1000).toFixed(),
+                        action: "txAdminClient:DebugMessage",
+                        source: false,
+                        data: `wiped log with size ${postData.length} due to upload limit`
+                    }];
+                }else if(data.statusCode === 200){
+                    this.log = [];
+                }else{
+                    log(`[txAdminClient] Logger upload failed with code ${data.statusCode} and body ${data.body}`);
+                }
             })
-            .catch((err) => logError(err)); //NOTE: less verbosity maybe?
+            .catch((error) => {
+                log(`[txAdminClient] Logger upload failed with error: ${error.message}`);
+            });
     }
 }
 logger = new Logger();
