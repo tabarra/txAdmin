@@ -2,7 +2,7 @@
 const fs = require('fs');
 const chalk = require('chalk');
 const StreamSnitch = require('stream-snitch');
-const prettyBytes = require('pretty-bytes');
+const bytes = require('bytes');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'ConsoleBuffer';
 
@@ -132,7 +132,7 @@ module.exports = class ConsoleBuffer {
             if(err){
                 if(globals.config.verbose) logError(`Log File get stats error: ${error.message}`, context)
             }else{
-                this.logFileSize = prettyBytes(stats.size);
+                this.logFileSize = bytes(stats.size);
             }
         });
     }

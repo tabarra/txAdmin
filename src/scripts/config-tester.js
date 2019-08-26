@@ -6,7 +6,7 @@ helpers.dependencyChecker();
 const os = require('os');
 const fs = require('fs');
 const { spawnSync } = require('child_process');
-const prettyBytes = require('pretty-bytes');
+const bytes = require('bytes');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 cleanTerminal()
 const printDivider = () =>{log('='.repeat(64))};
@@ -53,8 +53,8 @@ log("\tOS platform: " + os.platform());
 log("\tOS release: " + os.release());
 log("\tCPU count: " + os.cpus().length);
 log("\tCPU speed: " + os.cpus()[0].speed + "MHz");
-log("\tFree Memory: " + prettyBytes(os.freemem()));
-log("\tTotal Memory: " + prettyBytes(os.totalmem()));
+log("\tFree Memory: " + bytes(os.freemem()));
+log("\tTotal Memory: " + bytes(os.totalmem()));
 
 
 //Filter out sensitive information and Print configuration

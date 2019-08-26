@@ -1,7 +1,7 @@
 //Requires
 const os = require('os');
 const axios = require("axios");
-const prettyBytes = require('pretty-bytes');
+const bytes = require('bytes');
 const pidusageTree = require('pidusage-tree');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('./webUtils.js');
@@ -109,7 +109,7 @@ async function getProcessesData(){
                 pid: pid,
                 name: procName,
                 cpu: (curr.cpu/cpus.length).toFixed(2) + '%',
-                memory: prettyBytes(curr.memory),
+                memory: bytes(curr.memory),
                 order: order
             });
         });
