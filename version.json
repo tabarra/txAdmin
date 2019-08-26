@@ -1,5 +1,5 @@
 {
-    "version": "1.10.1",
+    "version": "1.11.3",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -89,6 +89,10 @@
         {
             "version": "1.10.1",
             "changelog": "Fixed resource injection for new installations."
+        },
+        {
+            "version": "1.11.3",
+            "changelog": "Fixed error 413. Multiple bug fixes and improvements."
         }
     ]
 }
