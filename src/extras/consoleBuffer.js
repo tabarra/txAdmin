@@ -70,7 +70,7 @@ module.exports = class ConsoleBuffer {
         try {
             this.hitchStreamProcessor.write(data);
             globals.webConsole.buffer(data, markType);
-            if(!globals.fxRunner.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ""));
+            if(!globals.fxRunner.config.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ""));
         } catch (error) {
             if(globals.config.verbose) logError(`Buffer write error: ${error.message}`, context)
         }
@@ -96,7 +96,7 @@ module.exports = class ConsoleBuffer {
         data = data.toString();
         try {
             globals.webConsole.buffer(data, 'error');
-            if(!globals.fxRunner.quiet) process.stdout.write(chalk.red(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, "")));
+            if(!globals.fxRunner.config.quiet) process.stdout.write(chalk.red(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, "")));
         } catch (error) {
             if(globals.config.verbose) logError(`Buffer write error: ${error.message}`, context)
         }

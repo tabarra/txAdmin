@@ -317,7 +317,8 @@ module.exports = class Monitor {
             players: players
         }
         this.timeSeries.add(players.length);
-        if(globals.config.verbose) log(`Players online: ${players.length}`, context);
+        let verbosityWarning = (Math.random()<0.1)? `(Don't want to see this spam? Disable verbosity in the settings)` : '';
+        if(globals.config.verbose) log(`Players online: ${players.length} ${verbosityWarning}`, context);
     }
 
 
