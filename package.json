@@ -30,7 +30,7 @@
   "homepage": "https://github.com/tabarra/txAdmin#readme",
   "dependencies": {
     "axios": "^0.19.0",
-    "bcrypt": "^3.0.6",
+    "bcryptjs": "^2.4.3",
     "big-integer": "^1.6.44",
     "body-parser": "^1.19.0",
     "bytes": "^3.1.0",
