@@ -1,19 +1,19 @@
 {
     "restarter": {
-        "crash_detected": "Le serveur a plant",
-        "schedule_reason": "Redémarage prévu à %{time}",
-        "schedule_warn": "Le serveur redémarrera dans %{smart_count} minute. Merci de vous déconnectez. |||| Le serveur redémarrera dans %{smart_count} minutes.",
+        "crash_detected": "le serveur a planté",
+        "schedule_reason": "redémarage prévu à %{time}",
+        "schedule_warn": "Le serveur redémarrera dans %{smart_count} minute. Merci de vous déconnecter. |||| Le serveur redémarrera dans %{smart_count} minutes.",
         "schedule_warn_discord": "**%{servername}** redémarrera dans %{smart_count} minute. |||| **%{servername}** redémarrera dans %{smart_count} minutes."
     },
     "server_actions": {
-        "restarting": "Le serveur redémarrera (%{reason}).",
+        "restarting": "Le serveur redémarre (%{reason}).",
         "restarting_discord": "**%{servername}** redémarre (%{reason}).",
         "stopping": "Fermeture du serveur (%{reason}).",
         "stopping_discord": "**%{servername}** est en train de fermer (%{reason}).",
         "spawning_discord": "**%{servername}** redémarre."
     },
     "discord": {
-        "status_online": "**%{servername}** Est présentement **Ouvert**!",
-        "status_offline": "**%{servername}** Est présentement **Fermer**!"
+        "status_online": "**%{servername}** est actuellement **Ouvert**!",
+        "status_offline": "**%{servername}** est actuellement **Fermer**!"
     }
 }
