@@ -4,10 +4,9 @@ helpers.dependencyChecker();
 
 //Requires
 const os = require('os');
-const fs = require('fs');
+const fs = require('fs-extra');
 const readline = require('readline');
 const { promisify } = require('util');
-const del = require('del');
 const ac = require('ansi-colors');
 ac.enabled = require('color-support').hasBasic;
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
@@ -192,8 +191,7 @@ if (osType === 'Linux') {
     if (fs.existsSync(profilePath)) {
         try {
             log('Wiping old profile data...', context);
-            const deletedFiles = del.sync(`${profilePath}`);
-            log(`Deleted ${deletedFiles.length} files from ${profilePath}.`, context);
+            await fs.remove(profilePath);
         } catch (error) {
             logError(`Error while wiping cache: ${error.message}`, context);
             dir(error);

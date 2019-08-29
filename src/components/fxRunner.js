@@ -188,7 +188,7 @@ module.exports = class FXRunner {
      */
     async injectResources(){
         try {
-            let reset = resourceInjector.resetCacheFolder(this.config.basePath);
+            let reset = await resourceInjector.resetCacheFolder(this.config.basePath);
             this.extResources = resourceInjector.getResourcesList(this.config.basePath);
             let inject = await resourceInjector.inject(this.config.basePath, this.extResources);
         } catch (error) {
