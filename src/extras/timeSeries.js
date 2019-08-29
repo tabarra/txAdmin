@@ -92,12 +92,11 @@ module.exports = class TimeSeries {
      * Returns the series
      */
     get() {
-        let currTs = now();
-        this.log.filter((point) => {
-            return (now - point.timestamp < this.window);
+        let outList = this.log.filter((point) => {
+            return (now() - point.timestamp < this.window);
         });
 
-        return clone(this.log);
+        return outList;
     }
 
 
