@@ -8,7 +8,8 @@ const fs = require('fs');
 const readline = require('readline');
 const { promisify } = require('util');
 const del = require('del');
-const chalk = require('chalk');
+const ac = require('ansi-colors');
+ac.enabled = require('color-support').hasBasic;
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 cleanTerminal()
 const context = 'Setup';
@@ -223,10 +224,10 @@ if (osType === 'Linux') {
 
     //Printing goodbye :)
     logOk(`Server profile saved in '${profilePath}'`, context);
-    let cmd = chalk.inverse(` node src ${serverProfile} `);
+    let cmd = ac.inverse(` node src ${serverProfile} `);
     logOk(`To start txAdmin with this profile run: ${cmd}`, context);
     if(!isLinux){
-        let cmd2 = chalk.inverse(` ${profilePath}start.bat `);
+        let cmd2 = ac.inverse(` ${profilePath}start.bat `);
         logOk(`You can also execute: ${cmd2}`, context);
     }
     process.exit();

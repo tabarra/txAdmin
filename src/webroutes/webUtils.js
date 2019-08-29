@@ -2,6 +2,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const sqrl = require("squirrelly");
+const helpers = require('../extras/helpers');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'WebUtils';
 
@@ -52,14 +53,13 @@ async function renderMasterView(view, data){
  * @param {string} message
  */
 async function renderLoginView(message){
-    const figlet = require('figlet');
     let viewName = (Math.random() > 0.1)? 'login' : 'login-matrix';
     let data;
     let out;
     try {
         data = {
             headerTitle: 'Login',
-            ascii: figlet.textSync('txAdmin'),
+            ascii: helpers.txAdminASCII(),
             message: (typeof message !== 'undefined')? message : '',
             config: globals.config.serverProfile,
             version: globals.version.current

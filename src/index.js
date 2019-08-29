@@ -3,8 +3,7 @@ const helpers = require('./extras/helpers');
 helpers.dependencyChecker();
 
 //Requires
-const figlet = require('figlet');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('./extras/console');
+const { dir, log, logOk, logWarn, logError, cleanTerminal, setTTYTitle } = require('./extras/console');
 const txAdmin = require('./txAdmin.js');
 
 
@@ -35,10 +34,11 @@ globals = {
 
 //==============================================================
 //Print MOTD
-let ascii = figlet.textSync('txAdmin');
+let ascii = helpers.txAdminASCII()
 let separator = '='.repeat(46);
 let motd = `${separator}\n${ascii}\n${separator}`;
 cleanTerminal();
+setTTYTitle();
 console.log(motd);
 
 //Detect server profile
@@ -56,6 +56,7 @@ if(process.argv[2]){
 }
 
 //Start txAdmin
+setTTYTitle(serverProfile);
 const app = new txAdmin(serverProfile);
 
 
