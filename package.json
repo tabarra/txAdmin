@@ -52,7 +52,6 @@
     "pidtree": "^0.3.0",
     "pidusage": "^2.0.17",
     "pidusage-tree": "^2.0.5",
-    "pretty-ms": "^5.0.0",
     "semver": "^6.3.0",
     "slash": "^3.0.0",
     "socket.io": "^2.2.0",
