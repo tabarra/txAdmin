@@ -2,12 +2,6 @@
 
 First and foremost check if you are using the most recent version of txAdmin and that you followed the installation instructions.
 
-
-## Problems installing txAdmin  
-If you ran into problems while executing the `npm i` command related to node-gyp/bcrypt/discord.js try downgrading to Node v10 LTS.  
-If that doesn't work, try `npm i node-gyp` or `npm i --global --production windows-build-tools`.
-
-
 ## Problems running txAdmin  
 When executing txAdmin, it might show you some errors. Example of an [error](https://i.imgur.com/2huiyBf.png), example of a [successful startup](https://i.imgur.com/QLCBZBm.png).
 
@@ -28,7 +22,7 @@ Note2: If on Linux, make sure there is no permission issue (eg file owned by the
 ## Problems running FXServer 
 When you start txAdmin, your server will **not** start automatically (by default). Open the web panel and start txAdmin (actions > START Server). You can change this by enabling autostart in the settings page.  
 If you are getting `HealthCheck request error` it means the txAdmin:Monitor could not connect to the FXServer. Check the two items below.
-- If the server is actually online (you can join the server) but txAdmin thinks it's offline, make sure your fxserver is configured to use the IP `0.0.0.0` in your `endpoint_add_*` directives instead of your public/private IP. 
+- If the server is actually online (you can join the server) but txAdmin thinks it's offline, this is an issue with FXServer and not txAdmin. Nothing we can do.
 - If you are having trouble starting the FXServer via txAdmin, run `node src/scripts/config-tester.js default` and see which test is failing.  
 
 <hr>

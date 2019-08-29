@@ -5,6 +5,16 @@
 - Add "discord client id" in the admin settings, this would enable "/kick @user"
 - Do something in case fxserver's tcp/http endpoint dies for more than 5 minutes
 
+
+
+- Remove del in favour of fs-extra.emptyDir https://github.com/jprichardson/node-fs-extra/blob/master/docs/emptyDir.md
+- Remove figlet (also from the login page)
+- remove pretty-ms
+- 
+
+1) Put what user account / admin stopped and or started the server (http://prntscr.com/oz0ibi)
+2) Post the name of account / admin who privately messaged a user in-game chat
+
 ## Folder Structure
     data/
         admins.json
