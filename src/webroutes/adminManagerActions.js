@@ -29,11 +29,11 @@ module.exports = async function action(res, req) {
 
     //Delegate to the specific scope functions
     if(action == 'add'){
-        return handleAdd(res, req);
+        return await handleAdd(res, req);
     }else if(action == 'edit'){
-        return handleEdit(res, req);
+        return await handleEdit(res, req);
     }else if(action == 'delete'){
-        return handleDelete(res, req);
+        return await handleDelete(res, req);
     }else if(action == 'getModal'){
         return await handleGetModal(res, req);
     }else{
@@ -51,7 +51,7 @@ module.exports = async function action(res, req) {
  * @param {object} res
  * @param {object} req
  */
-function handleAdd(res, req) {
+async function handleAdd(res, req) {
     //Sanity check
     if(
         isUndefined(req.body.name) ||
@@ -80,7 +80,7 @@ function handleAdd(res, req) {
 
     //Add admin and give output
     try {
-        globals.authenticator.addAdmin(name, password, permissions);
+        await globals.authenticator.addAdmin(name, password, permissions);
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Adding user '${name}'.`;
         logOk(logMessage, context);
         globals.logger.append(logMessage);
@@ -97,7 +97,7 @@ function handleAdd(res, req) {
  * @param {object} res
  * @param {object} req
  */
-function handleEdit(res, req) {
+async function handleEdit(res, req) {
     //Sanity check
     if(
         isUndefined(req.body.name) ||
@@ -129,7 +129,7 @@ function handleEdit(res, req) {
 
     //Add admin and give output
     try {
-        globals.authenticator.editAdmin(name, password, permissions);
+        await globals.authenticator.editAdmin(name, password, permissions);
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Editing user '${name}'.`;
         logOk(logMessage, context);
         globals.logger.append(logMessage);
@@ -146,7 +146,7 @@ function handleEdit(res, req) {
  * @param {object} res
  * @param {object} req
  */
-function handleDelete(res, req) {
+async function handleDelete(res, req) {
     //Sanity check
     if(
         isUndefined(req.body.name) ||
@@ -163,7 +163,7 @@ function handleDelete(res, req) {
 
     //Delete admin and give output
     try {
-        globals.authenticator.deleteAdmin(name);
+        await globals.authenticator.deleteAdmin(name);
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Deleting user '${name}'.`;
         logOk(logMessage, context);
         globals.logger.append(logMessage);

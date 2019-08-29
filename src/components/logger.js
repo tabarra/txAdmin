@@ -1,5 +1,5 @@
 //Requires
-const fs = require('fs');
+const fs = require('fs-extra');
 const dateFormat = require('dateformat');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'Logger';
@@ -28,14 +28,13 @@ module.exports = class Logger {
     /**
      * Save log entriy
      * @param {string} data
-     * @returns {boolean} success
      */
     async append(data){
         let timestamp = dateFormat(new Date(), 'HH:MM:ss');
         try {
-            return fs.appendFileSync(this.config.logPath, `[${timestamp}]${data}\n`, 'utf8');
+            await fs.appendFile(this.config.logPath, `[${timestamp}]${data}\n`, 'utf8');
         } catch (error) {
-            return false;
+            logError(`::Failed to write to log file '${this.config.logPath}'`, context);
         }
     }
 
@@ -47,7 +46,7 @@ module.exports = class Logger {
      */
     async get(){
         try {
-            return await fs.readFileSync(this.config.logPath, 'utf8')
+            return await fs.readFile(this.config.logPath, 'utf8')
         } catch (error) {
             return false;
         }

@@ -1,6 +1,5 @@
 //Requires
-const fs = require('fs');
-const clone = require('clone');
+const fs = require('fs-extra');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'TimeSeries';
 
@@ -64,7 +63,7 @@ module.exports = class TimeSeries {
      * Adds a new datapoint
      * @param {string} data
      */
-    add(value) {
+    async add(value) {
         let currTs = now();
         if (
             !this.log.length ||
@@ -77,10 +76,9 @@ module.exports = class TimeSeries {
         }
 
         if (this.log.length > this.maxEntries) this.log.shift();
-        // dir(this.log)
 
         try {
-            fs.writeFile(this.file, JSON.stringify(this.log), () => { });
+            await fs.writeFile(this.file, JSON.stringify(this.log));
         } catch (error) {
             if (globals.config.verbose) logWarn('Error writing the player history log file.', context);
         }
