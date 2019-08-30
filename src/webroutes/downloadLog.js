@@ -12,7 +12,7 @@ const context = 'WebServer:downloadLog';
 module.exports = async function action(res, req) {
     //Check permissions
     if(!webUtils.checkPermission(req, 'console.view', context)){
-        let out = await webUtils.renderMasterView('generic', {message: `You don't have permission to download this log.`});
+        let out = await webUtils.renderMasterView('generic', req.session, {message: `You don't have permission to download this log.`});
         return res.send(out);
     }
 

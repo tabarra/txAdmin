@@ -13,10 +13,11 @@ const context = 'WebUtils';
  * @param {string} view
  * @param {string} data
  */
-async function renderMasterView(view, data){
+async function renderMasterView(view, reqSess, data){
     if(typeof data === 'undefined') data = {};
     data.headerTitle = (typeof data.headerTitle !== 'undefined')? `${data.headerTitle} - txAdmin` : 'txAdmin';
     data.txAdminVersion = globals.version.current;
+    data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username)? reqSess.auth.username : 'unknown user';
 
     let out;
     try {

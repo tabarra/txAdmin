@@ -30,7 +30,7 @@ module.exports = async function action(res, req) {
 
     //Check permission
     if(!webUtils.checkPermission(req, 'manage.admins', context)){
-        let out = await webUtils.renderMasterView('generic', {message: `You don't have permission to view this page.`});
+        let out = await webUtils.renderMasterView('generic', req.session, {message: `You don't have permission to view this page.`});
         return res.send(out);
     }
 
@@ -42,6 +42,6 @@ module.exports = async function action(res, req) {
     }
 
     //Give output
-    let out = await webUtils.renderMasterView('adminManager', renderData);
+    let out = await webUtils.renderMasterView('adminManager', req.session, renderData);
     return res.send(out);
 };

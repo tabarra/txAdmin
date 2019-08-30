@@ -13,7 +13,7 @@ const context = 'WebServer:getSettings';
 module.exports = async function action(res, req) {
     //Check permissions
     if(!webUtils.checkPermission(req, 'settings.view', context)){
-        let out = await webUtils.renderMasterView('generic', {message: `You don't have permission to view this page.`});
+        let out = await webUtils.renderMasterView('generic', req.session, {message: `You don't have permission to view this page.`});
         return res.send(out);
     }
 
@@ -28,7 +28,7 @@ module.exports = async function action(res, req) {
         serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone
     }
 
-    let out = await webUtils.renderMasterView('settings', renderData);
+    let out = await webUtils.renderMasterView('settings', req.session, renderData);
     return res.send(out);
 };
 

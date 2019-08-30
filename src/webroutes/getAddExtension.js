@@ -12,6 +12,6 @@ const context = 'WebServer:getAddExtension';
  */
 module.exports = async function action(res, req) {
     //Rendering the page
-    let out = await webUtils.renderMasterView('addExtension');
+    let out = await webUtils.renderMasterView('addExtension', req.session);
     return res.send(out);
 };

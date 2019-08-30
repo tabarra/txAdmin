@@ -15,7 +15,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  */
 module.exports = async function action(res, req) {
     let log = processLog(globals.intercomTempLog);
-    let out = await webUtils.renderMasterView('serverLog', {headerTitle: 'Server Log', log});
+    let out = await webUtils.renderMasterView('serverLog', req.session, {headerTitle: 'Server Log', log});
     return res.send(out);
 };
 

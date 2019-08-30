@@ -49,7 +49,7 @@ module.exports = async function action(res, req) {
     //Send command request
     let cmdSuccess = globals.fxRunner.srvCmd(`txaReportResources`);
     if(!cmdSuccess){
-        let out = await webUtils.renderMasterView('generic', {message: `Couldn't load the resources list. Make sure the server is online.`});
+        let out = await webUtils.renderMasterView('generic', req.session, {message: `Couldn't load the resources list. Make sure the server is online.`});
         return res.send(out);
     }
 
@@ -70,7 +70,7 @@ module.exports = async function action(res, req) {
                     resGroups,
                     disableActions: (webUtils.checkPermission(req, 'commands.resources'))? '' : 'disabled'
                 }
-                let out = await webUtils.renderMasterView('resources', renderData);
+                let out = await webUtils.renderMasterView('resources', req.session, renderData);
                 return res.send(out);
             }
         } catch (error) {logError(error, context)}
@@ -81,7 +81,7 @@ module.exports = async function action(res, req) {
             clearInterval(intHandle);
             logWarn('the future is now, old man', context);
             try {
-                let out = await webUtils.renderMasterView('generic', {message: `Couldn't load the resources list. Make sure the server is online and txAdminClient is running.`});
+                let out = await webUtils.renderMasterView('generic', req.session, {message: `Couldn't load the resources list. Make sure the server is online and txAdminClient is running.`});
                 return res.send(out);
             } catch (error) {logError(error, context)}
         }

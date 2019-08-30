@@ -43,7 +43,7 @@ module.exports = async function action(res, req) {
 
 
     //Rendering the page
-    let out = await webUtils.renderMasterView('dashboard', renderData);
+    let out = await webUtils.renderMasterView('dashboard', req.session, renderData);
     return res.send(out);
 };
 

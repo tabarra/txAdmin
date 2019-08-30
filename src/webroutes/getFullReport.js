@@ -20,7 +20,7 @@ module.exports = async function action(res, req) {
     let cacheData = cache.get();
     if(cacheData !== false){
         cacheData.message = 'This page was cached in the last 10 seconds';
-        let out = await webUtils.renderMasterView('fullReport', cacheData);
+        let out = await webUtils.renderMasterView('fullReport', req.session, cacheData);
         return res.send(out);
     }
 
@@ -53,7 +53,7 @@ module.exports = async function action(res, req) {
     data.message = `Executed in ${timeElapsed} ms`;
 
     cache.set(data);
-    let out = await webUtils.renderMasterView('fullReport', data);
+    let out = await webUtils.renderMasterView('fullReport', req.session, data);
     return res.send(out);
 };
 

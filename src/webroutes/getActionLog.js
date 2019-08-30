@@ -11,6 +11,6 @@ const context = 'WebServer:getActionLog';
  */
 module.exports = async function action(res, req) {
     let log = await globals.logger.get();
-    let out = await webUtils.renderMasterView('actionLog', {headerTitle: 'Action Log', log});
+    let out = await webUtils.renderMasterView('actionLog', req.session, {headerTitle: 'Action Log', log});
     return res.send(out);
 };
