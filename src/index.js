@@ -44,8 +44,11 @@ console.log(motd);
 //Detect server profile
 let serverProfile;
 if(process.argv[2]){
-    serverProfile = process.argv[2].replace(/[^a-z0-9._-]/gi, "");
-    if(serverProfile === 'example'){
+    serverProfile = process.argv[2].replace(/[^a-z0-9._-]/gi, "").trim();
+    if(!serverProfile.length){
+        logError(`Invalid server profile. Are you using Google Translator on the Github instructions page? Make sure there are no additional spaces in your command.`);
+        process.exit();
+    }else if(serverProfile === 'example'){
         logError(`You can't use the 'example' profile.`);
         process.exit();
     }

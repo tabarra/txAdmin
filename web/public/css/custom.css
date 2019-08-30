@@ -93,3 +93,13 @@ mark {
         max-width: 460px !important;
     }
 }
+
+/* Content width on mobile */
+@media (max-width: 560px){
+    .main .container-fluid {
+        padding: 0 5px;
+    }
+    .main-top-spacer {
+        margin-top: 0.5em;
+    }
+}

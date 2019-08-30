@@ -1,5 +1,5 @@
 {
-    "version": "1.11.3",
+    "version": "1.11.4",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -93,6 +93,10 @@
         {
             "version": "1.11.3",
             "changelog": "Fixed error 413. Multiple bug fixes and improvements."
+        },
+        {
+            "version": "1.11.4",
+            "changelog": "Optimized tAdmin (40% less dependecies). Improved some pages on Mobile."
         }
     ]
 }
