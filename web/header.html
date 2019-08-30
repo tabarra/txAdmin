@@ -11,7 +11,8 @@
   <title>{{headerTitle}}</title>
   <!-- Icons-->
   <link href="css/coreui-icons.min.css" rel="stylesheet">
-  <link href="css/font-awesome.min.css" rel="stylesheet">
+  <!-- NOTE: remove fontawesome? Not using for nothing -->
+  <!-- <link href="css/font-awesome.min.css" rel="stylesheet"> -->
   <link href="css/simple-line-icons.css" rel="stylesheet">
   <!-- Main styles for this application-->
   <link href="css/coreui.css" rel="stylesheet">
@@ -35,10 +36,21 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <ul class="nav navbar-nav ml-auto">
-      <li class="nav-item px-3">
-        <a class="nav-link text-danger" href="/auth?logout">
-          <i class="fa fa-lock px-2 d-sm-down-none"></i> Logout
+      <li class="nav-item px-3 dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+          <span class="d-sm-down-none">{{adminUsername}} </span>
+          <img class="img-avatar" src="img/default_avatar.png">
         </a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <div class="dropdown-header text-center">
+            <strong>Account</strong>
+          </div>
+          <a class="dropdown-item" href="" onclick="changeUserPassword(); return false;">
+            <i class="icons icon-key"></i> Change password
+          </a>
+          <a class="dropdown-item" href="/auth?logout">
+            <i class="icons icon-lock"></i> Logout</a>
+        </div>
       </li>
     </ul>
     <button class="navbar-toggler aside-menu-toggler d-lg-none" type="button" data-toggle="aside-menu-show">

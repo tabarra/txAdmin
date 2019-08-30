@@ -73,6 +73,10 @@ function showPlayer(id) {
     });
 }
 
+function changeUserPassword() {
+    $('#changePasswordModal').modal('show');
+}
+
 
 
 function messagePlayer(id) {
