@@ -50,7 +50,7 @@ module.exports = class FXRunner {
         let onesyncFlag = (this.config.onesync)? '+set onesync_enabled 1' : '';
         if(globals.config.osType === 'Linux'){
             this.spawnVariables = {
-                shell: '/bin/bash',
+                shell: '/bin/sh',
                 cmdArgs: [`${this.config.buildPath}/run.sh`, `${onesyncFlag} +exec ${this.config.cfgPath}`]
             };
         }else if(globals.config.osType === 'Windows_NT'){
