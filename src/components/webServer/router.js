@@ -47,6 +47,18 @@ module.exports = router = (config) =>{
         });
     });
 
+    //Admin Manager
+    router.get('/adminManager', requestAuth('web'), async (req, res) => {
+        await webRoutes.adminManager.get(res, req).catch((err) => {
+            handleRouteError(res, req, 'AdminManager-Get', err);
+        });
+    });
+    router.post('/adminManager/:action', requestAuth('web'), async (req, res) => {
+        await webRoutes.adminManager.actions(res, req).catch((err) => {
+            handleRouteError(res, req, 'AdminManager-Actions', err);
+        });
+    });
+
     //Control routes
     router.get('/fxControls/:action', requestAuth('api'), async (req, res) => {
         await webRoutes.fxControls(res, req).catch((err) => {
@@ -66,11 +78,6 @@ module.exports = router = (config) =>{
     router.post('/saveSettings/:scope', requestAuth('web'), async (req, res) => {
         await webRoutes.saveSettings(res, req).catch((err) => {
             handleRouteError(res, req, 'saveSettings', err);
-        });
-    });
-    router.post('/adminManager/:action', requestAuth('web'), async (req, res) => {
-        await webRoutes.adminManagerActions(res, req).catch((err) => {
-            handleRouteError(res, req, 'adminManagerActions', err);
         });
     });
     router.post('/intercom/:scope', requestAuth('intercom'), async (req, res) => {
@@ -122,11 +129,6 @@ module.exports = router = (config) =>{
     router.get('/settings', requestAuth('web'), async (req, res) => {
         await webRoutes.getSettings(res, req).catch((err) => {
             handleRouteError(res, req, 'getSettings', err);
-        });
-    });
-    router.get('/adminManager', requestAuth('web'), async (req, res) => {
-        await webRoutes.getAdminManager(res, req).catch((err) => {
-            handleRouteError(res, req, 'getAdminManager', err);
         });
     });
     router.get('/resources', requestAuth('web'), async (req, res) => {
