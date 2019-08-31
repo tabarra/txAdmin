@@ -1,7 +1,7 @@
 //Requires
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const webUtils = require('./webUtils.js');
-const context = 'WebServer:changePassword';
+const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
+const webUtils = require('./../webUtils.js');
+const context = 'WebServer:Auth-ChangePassword';
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };

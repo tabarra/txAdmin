@@ -1,5 +1,4 @@
 exports.adminManagerActions = require('./adminManagerActions.js');
-exports.changePassword = require('./changePassword.js');
 exports.downloadLog = require('./downloadLog.js');
 exports.fxCommands = require('./fxCommands.js');
 exports.fxControls = require('./fxControls.js');
@@ -16,3 +15,9 @@ exports.getSettings = require('./getSettings.js');
 exports.getStatus = require('./getStatus.js');
 exports.intercom = require('./intercom.js');
 exports.saveSettings = require('./saveSettings.js');
+
+exports.auth = {
+    get: require('./authentication/get'),
+    verify: require('./authentication/verify'),
+    changePassword: require('./authentication/changePassword'),
+}

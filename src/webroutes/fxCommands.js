@@ -4,6 +4,7 @@ const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras
 const webUtils = require('./webUtils.js');
 const context = 'WebServer:fxCommands';
 
+//Helper functions
 const escape = (x) => {return x.replace(/\"/g, '\\"');};
 
 

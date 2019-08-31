@@ -30,45 +30,24 @@ module.exports = router = (config) =>{
     });
 
 
-    //FIXME: send both login routes to one webroute, then remove the renderLoginView from the webutils
+    //Authentication
     router.get('/auth', async (req, res) => {
-        let message = '';
-        if(typeof req.query.logout !== 'undefined'){
-            req.session.destroy();
-            message = 'Logged Out';
-        }
-        let out = await webUtils.renderLoginView(message);
-        return res.send(out);
+        await webRoutes.auth.get(res, req).catch((err) => {
+            handleRouteError(res, req, 'Auth-Get', err);
+        });
     });
     router.post('/auth', authLimiter, async (req, res) => {
-        if(typeof req.body.username === 'undefined' || typeof req.body.password === 'undefined'){
-            req.redirect('/');
-            return;
-        }
-        let message = '';
-
-        let admin = globals.authenticator.checkAuth(req.body.username, req.body.password);
-        if(!admin){
-            logWarn(`Wrong password for from: ${req.connection.remoteAddress}`, context);
-            message = 'Wrong Password!';
-            let out = await webUtils.renderLoginView(message);
-            return res.send(out);
-        }
-        req.session.auth = {
-            username: admin.name,
-            password: req.body.password,
-            permissions: admin.permissions
-        };
-        log(`Admin ${admin.name} logged in from ${req.connection.remoteAddress}`, context);
-        res.redirect('/');
+        await webRoutes.auth.verify(res, req).catch((err) => {
+            handleRouteError(res, req, 'Auth-Verify', err);
+        });
+    });
+    router.post('/changePassword', requestAuth('web'), async (req, res) => {
+        await webRoutes.auth.changePassword(res, req).catch((err) => {
+            handleRouteError(res, req, 'Auth-ChangePassword', err);
+        });
     });
 
     //Control routes
-    router.post('/changePassword', requestAuth('web'), async (req, res) => {
-        await webRoutes.changePassword(res, req).catch((err) => {
-            handleRouteError(res, req, 'changePassword', err);
-        });
-    });
     router.get('/fxControls/:action', requestAuth('api'), async (req, res) => {
         await webRoutes.fxControls(res, req).catch((err) => {
             handleRouteError(res, req, 'fxControls', err);
