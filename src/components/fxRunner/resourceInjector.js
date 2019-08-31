@@ -2,7 +2,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const slash = require('slash');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const context = 'ResourceInjector';
 
 

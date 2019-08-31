@@ -3,10 +3,10 @@ const { spawn } = require('child_process');
 const os = require('os');
 const pidtree = require('pidtree');
 const sleep = require('util').promisify(setTimeout);
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const ConsoleBuffer = require('../extras/consoleBuffer');
-const resourceInjector = require('../extras/resourceInjector');
-const helpers = require('../extras/helpers');
+const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
+const helpers = require('../../extras/helpers');
+const resourceInjector = require('./resourceInjector');
+const ConsoleBuffer = require('./consoleBuffer');
 const context = 'FXRunner';
 
 

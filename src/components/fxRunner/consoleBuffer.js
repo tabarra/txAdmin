@@ -4,7 +4,7 @@ const ac = require('ansi-colors');
 ac.enabled = require('color-support').hasBasic;
 const StreamSnitch = require('stream-snitch');
 const bytes = require('bytes');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const context = 'ConsoleBuffer';
 
 /**

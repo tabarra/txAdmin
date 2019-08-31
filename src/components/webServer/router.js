@@ -161,13 +161,6 @@ module.exports = router = (config) =>{
         });
     });
 
-    // //Catch all
-    // router.get('*', (req, res) => {
-    //     if(globals.config.verbose) logWarn(`Request 404 error: ${req.originalUrl}`, context);
-    //     res.status(404).sendFile(webUtils.getWebViewPath('404'));
-    // });
-
-
     //Return router
     return router;
 };
