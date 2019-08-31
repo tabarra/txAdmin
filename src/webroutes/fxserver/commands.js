@@ -1,8 +1,8 @@
 //Requires
 const xss = require("xss");
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const webUtils = require('./webUtils.js');
-const context = 'WebServer:fxCommands';
+const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
+const webUtils = require('./../webUtils.js');
+const context = 'WebServer:FXServer-Commands';
 
 //Helper functions
 const escape = (x) => {return x.replace(/\"/g, '\\"');};
@@ -24,6 +24,14 @@ module.exports = async function action(res, req) {
     }
     let action = req.body.action;
     let parameter = req.body.parameter;
+
+    //Ignore commands when the server is offline
+    if(globals.fxRunner.fxChild === null){
+        return res.send({
+            type: 'danger',
+            message: `<b>Cannot execute this action with the server offline.</b>`
+        });
+    }
 
     //Block starting/restarting the 'runcode' resource
     let unsafeActions = ['restart_res', 'start_res', 'ensure_res'];
@@ -164,7 +172,7 @@ module.exports = async function action(res, req) {
 
 //================================================================
 /**
- * Wrapper function to render send the output to be shown inside an alert
+ * Wrapper function to send the output to be shown inside an alert
  * @param {object} res
  * @param {string} msg
  */

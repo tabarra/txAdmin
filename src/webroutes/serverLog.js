@@ -2,7 +2,7 @@
 const xss = require("xss");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('./webUtils.js');
-const context = 'WebServer:getServerLog';
+const context = 'WebServer:ServerLog';
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };

@@ -2,10 +2,10 @@
 const fs = require('fs');
 const slash = require('slash');
 const path = require('path');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const helpers = require('../extras/helpers');
-const webUtils = require('./webUtils.js');
-const context = 'WebServer:saveSettings';
+const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
+const helpers = require('../../extras/helpers');
+const webUtils = require('./../webUtils.js');
+const context = 'WebServer:Settings-Save';
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };

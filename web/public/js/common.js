@@ -2,9 +2,8 @@
 //============================================== Dynamic Stats
 //================================================================
 function refreshData() {
-    // console.log('hellooo' + Math.random())
     $.ajax({
-        url: "/getStatus",
+        url: "/status",
         type: "GET",
         dataType: "json",
         timeout: 1500,
@@ -87,7 +86,7 @@ function messagePlayer(id) {
     }
     $.ajax({
         type: "POST",
-        url: '/fxCommands',
+        url: '/fxserver/commands',
         timeout: 2000,
         data: data,
         // dataType: 'json',
@@ -118,7 +117,7 @@ function kickPlayer(id) {
     }
     $.ajax({
         type: "POST",
-        url: '/fxCommands',
+        url: '/fxserver/commands',
         timeout: 2000,
         data: data,
         // dataType: 'json',

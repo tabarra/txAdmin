@@ -149,7 +149,7 @@
         }
         var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
-            url: actionURL = '/fxControls/' + action,
+            url: actionURL = '/fxserver/controls/' + action,
             type: "GET",
             dataType: "json",
             timeout: 3000,
@@ -204,7 +204,7 @@
         var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
             type: "POST",
-            url: '/fxCommands',
+            url: '/fxserver/commands',
             timeout: 2000,
             data: data,
             success: function (data) {

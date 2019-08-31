@@ -1,8 +1,8 @@
 //Requires
 const clone = require('clone');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const webUtils = require('./webUtils.js');
-const context = 'WebServer:getSettings';
+const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
+const webUtils = require('./../webUtils.js');
+const context = 'WebServer:Settings-Get';
 
 
 /**

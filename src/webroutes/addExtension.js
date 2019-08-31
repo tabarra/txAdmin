@@ -2,7 +2,7 @@
 const semver = require('semver');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('./webUtils.js');
-const context = 'WebServer:getAddExtension';
+const context = 'WebServer:AddExtension';
 
 
 /**

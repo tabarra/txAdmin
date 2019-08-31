@@ -87,7 +87,7 @@
         var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
             type: "POST",
-            url: '/fxCommands',
+            url: '/fxserver/commands',
             timeout: 2000,
             data: {action: 'refresh_res', parameter: ''},
             success: function (data) {
@@ -110,7 +110,7 @@
         var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
             type: "POST",
-            url: '/fxCommands',
+            url: '/fxserver/commands',
             timeout: 2000,
             data: {action, parameter},
             success: function (data) {

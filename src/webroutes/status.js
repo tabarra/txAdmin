@@ -3,7 +3,7 @@ const os = require('os');
 const xss = require("xss");
 const clone = require('clone');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'WebServer:getStatus';
+const context = 'WebServer:GetStatus';
 
 
 /**

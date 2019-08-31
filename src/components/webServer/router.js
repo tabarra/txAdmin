@@ -59,25 +59,35 @@ module.exports = router = (config) =>{
         });
     });
 
-    //Control routes
-    router.get('/fxControls/:action', requestAuth('api'), async (req, res) => {
-        await webRoutes.fxControls(res, req).catch((err) => {
-            handleRouteError(res, req, 'fxControls', err);
-        });
-    });
-    router.post('/fxCommands', requestAuth('web'), async (req, res) => {
-        await webRoutes.fxCommands(res, req).catch((err) => {
-            handleRouteError(res, req, 'fxCommands', err);
-        });
-    });
-    router.get('/console', requestAuth('web'), async (req, res) => {
-        await webRoutes.getConsole(res, req).catch((err) => {
-            handleRouteError(res, req, 'getConsole', err);
+    //Settings
+    router.get('/settings', requestAuth('web'), async (req, res) => {
+        await webRoutes.settings.get(res, req).catch((err) => {
+            handleRouteError(res, req, 'Settings-Get', err);
         });
     });
     router.post('/saveSettings/:scope', requestAuth('web'), async (req, res) => {
-        await webRoutes.saveSettings(res, req).catch((err) => {
-            handleRouteError(res, req, 'saveSettings', err);
+        await webRoutes.settings.save(res, req).catch((err) => {
+            handleRouteError(res, req, 'Settings-Save', err);
+        });
+    });
+
+    //FXServer
+    router.get('/fxserver/controls/:action', requestAuth('api'), async (req, res) => {
+        await webRoutes.fxserver.controls(res, req).catch((err) => {
+            handleRouteError(res, req, 'FXServer-Controls', err);
+        });
+    });
+    router.post('/fxserver/commands', requestAuth('web'), async (req, res) => {
+        await webRoutes.fxserver.commands(res, req).catch((err) => {
+            handleRouteError(res, req, 'FXServer-Commands', err);
+        });
+    });
+
+
+    //Control routes
+    router.get('/console', requestAuth('web'), async (req, res) => {
+        await webRoutes.liveConsole(res, req).catch((err) => {
+            handleRouteError(res, req, 'liveConsole', err);
         });
     });
     router.post('/intercom/:scope', requestAuth('intercom'), async (req, res) => {
@@ -88,24 +98,24 @@ module.exports = router = (config) =>{
 
     //Data routes
     router.get('/actionLog', requestAuth('web'), async (req, res) => {
-        await webRoutes.getActionLog(res, req).catch((err) => {
-            handleRouteError(res, req, 'getActionLog', err);
+        await webRoutes.actionLog(res, req).catch((err) => {
+            handleRouteError(res, req, 'actionLog', err);
         });
     });
     router.get('/serverLog', requestAuth('web'), async (req, res) => {
-        await webRoutes.getServerLog(res, req).catch((err) => {
-            handleRouteError(res, req, 'getServerLog', err);
+        await webRoutes.serverLog(res, req).catch((err) => {
+            handleRouteError(res, req, 'serverLog', err);
         });
     });
     router.get('/fullReport', requestAuth('web'), async (req, res) => {
-        await webRoutes.getFullReport(res, req).catch((err) => {
-            handleRouteError(res, req, 'getFullReport', err);
+        await webRoutes.fullStatusReport(res, req).catch((err) => {
+            handleRouteError(res, req, 'fullStatusReport', err);
         });
     });
 
-    router.get('/getStatus', requestAuth('api'), async (req, res) => {
-        await webRoutes.getStatus(res, req).catch((err) => {
-            handleRouteError(res, req, 'getStatus', err);
+    router.get('/status', requestAuth('api'), async (req, res) => {
+        await webRoutes.status(res, req).catch((err) => {
+            handleRouteError(res, req, 'status', err);
         });
     });
 
@@ -114,21 +124,16 @@ module.exports = router = (config) =>{
             handleRouteError(res, req, 'getPlayerData', err);
         });
     });
-    router.get('/downloadLog', requestAuth('web'), async (req, res) => {
-        await webRoutes.downloadLog(res, req).catch((err) => {
-            handleRouteError(res, req, 'downloadLog', err);
+    router.get('/downFXServerLog', requestAuth('web'), async (req, res) => {
+        await webRoutes.downFXServerLog(res, req).catch((err) => {
+            handleRouteError(res, req, 'downFXServerLog', err);
         });
     });
 
     //Index & generic
     router.get('/', requestAuth('web'), async (req, res) => {
-        await webRoutes.getDashboard(res, req).catch((err) => {
-            handleRouteError(res, req, 'getDashboard', err);
-        });
-    });
-    router.get('/settings', requestAuth('web'), async (req, res) => {
-        await webRoutes.getSettings(res, req).catch((err) => {
-            handleRouteError(res, req, 'getSettings', err);
+        await webRoutes.dashboard(res, req).catch((err) => {
+            handleRouteError(res, req, 'dashboard', err);
         });
     });
     router.get('/resources', requestAuth('web'), async (req, res) => {
@@ -137,8 +142,8 @@ module.exports = router = (config) =>{
         });
     });
     router.get('/addExtension', requestAuth('web'), async (req, res) => {
-        await webRoutes.getAddExtension(res, req).catch((err) => {
-            handleRouteError(res, req, 'getAddExtension', err);
+        await webRoutes.addExtension(res, req).catch((err) => {
+            handleRouteError(res, req, 'addExtension', err);
         });
     });
 
