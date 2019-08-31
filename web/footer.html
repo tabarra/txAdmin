@@ -22,8 +22,7 @@
 <!-- Begin modals -->
 
 <!-- Player info modal -->
-<div class="modal fade" id="modPlayerInfo" tabindex="-1" role="dialog" aria-labelledby="modPlayerInfoTitle"
-    aria-hidden="true">
+<div class="modal fade" id="modPlayerInfo" tabindex="-1" role="dialog" aria-labelledby="modPlayerInfoTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -49,11 +48,11 @@
 
 
 <!-- Change password modal -->
-<div class="modal fade" id="changePasswordModal" tabindex="-1" role="dialog" aria-labelledby="changeUserPasswordTitle" aria-hidden="true">
+<div class="modal fade" id="modChangePassword" tabindex="-1" role="dialog" aria-labelledby="modChangePassword-title" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="changeUserPasswordTitle">Change your password</h5>
+                <h5 class="modal-title" id="modChangePassword-title">Change your password</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -61,41 +60,44 @@
             <div class="modal-body text-center">
                 <div class="form-group row ">
                     <div class="col-sm-8 mx-auto">
-                        <label for="user-oldPassword" class="col-sm-12 col-form-label">
+                        <label for="modChangePassword-oldPassword" class="col-sm-12 col-form-label">
                             Enter your <b>current</b> password
                         </label>
                         <div class="input-group">
-                            <input type="password" autocomplete="new-password" class="form-control text-center" id="user-oldPassword" maxlength="16">
+                            <input type="password" autocomplete="new-password" class="form-control text-center"
+                                id="modChangePassword-oldPassword" maxlength="64">
                         </div>
                     </div>
                     <div class="col-sm-12 main-top-spacer"></div>
                     <div class="col-sm-8 mx-auto">
-                        <label for="user-changePassword" class="col-sm-12 col-form-label">
+                        <label for="modChangePassword-newPassword" class="col-sm-12 col-form-label">
                             Enter a <b>new</b> password
                         </label>
                         <div class="input-group">
-                            <input type="password" autocomplete="new-password" class="form-control text-center" id="user-changePassword" maxlength="16">
+                            <input type="password" autocomplete="new-password" class="form-control text-center"
+                                id="modChangePassword-newPassword" maxlength="32">
                         </div>
                     </div>
                     <div class="col-sm-8 mx-auto">
-                        <label for="user-confirmPassword" class="col-sm-12 col-form-label">
+                        <label for="modChangePassword-confirmPassword" class="col-sm-12 col-form-label">
                             Confirm your <b>new</b> password
                         </label>
                         <div class="input-group">
-                            <input type="password" autocomplete="new-password" class="form-control text-center" id="user-confirmPassword" maxlength="16">
+                            <input type="password" autocomplete="new-password" class="form-control text-center"
+                                id="modChangePassword-confirmPassword" maxlength="32">
                         </div>
                     </div>
                     <div class="col-sm-12">
                         <span class="form-text text-muted text-center">
-                            The new password have between 6 and 16 characters.
+                            The new password have between 6 and 32 characters.
                         </span>
                     </div>
                 </div>
             </div>
             <div class="modal-footer text-center">
-                <div class="mx-auto button-spacer" id="modPlayerInfoButtons">
+                <div class="mx-auto button-spacer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" data-dismiss="modal">Save</button>
+                    <button type="button" class="btn btn-success" id="modChangePassword-save">Save</button>
                 </div>
             </div>
         </div>

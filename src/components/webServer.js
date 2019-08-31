@@ -140,6 +140,11 @@ module.exports = class WebServer {
         });
 
         //Control routes
+        this.app.post('/changePassword', getAuthFunc('web'), async (req, res) => {
+            await webRoutes.changePassword(res, req).catch((err) => {
+                this.handleRouteError(res, "[changePassword] Route Internal Error", err);
+            });
+        });
         this.app.get('/fxControls/:action', getAuthFunc('api'), async (req, res) => {
             await webRoutes.fxControls(res, req).catch((err) => {
                 this.handleRouteError(res, "[fxControls] Route Internal Error", err);

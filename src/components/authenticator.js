@@ -132,7 +132,7 @@ module.exports = class Authenticator {
 
         //Editing admin
         if(password) this.admins[adminIndex].password_hash = bcrypt.hashSync(password, 5);
-        this.admins[adminIndex].permissions = permissions
+        if(typeof permissions !== 'undefined') this.admins[adminIndex].permissions = permissions;
 
         //Saving admin file
         try {
