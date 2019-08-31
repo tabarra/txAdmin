@@ -1,8 +1,8 @@
 {
     "restarter": {
         "crash_detected": "Absturz erkannt",
-        "schedule_reason": "Geplanter Neustart in %{time}",
-        "schedule_warn": "Der Server wird in %{smart_count} Minuten neugestartet. Bitte trenne die Verbindung jetzt. |||| Der Server wird in %{smart_count} Minuten neu gestartet.",
+        "schedule_reason": "Geplanter Neustart um %{time}",
+        "schedule_warn": "Der Server wird in %{smart_count} Minute neugestartet. Bitte trenne die Verbindung jetzt. |||| Der Server wird in %{smart_count} Minuten neu gestartet.",
         "schedule_warn_discord": "**%{servername}** wird in %{smart_count} neugestartet. |||| **%{servername}** wird in %{smart_count} Minuten neu gestartet."
     },
     "server_actions": {
