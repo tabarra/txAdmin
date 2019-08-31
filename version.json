@@ -1,5 +1,5 @@
 {
-    "version": "1.11.5",
+    "version": "1.11.6",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -101,6 +101,10 @@
         {
             "version": "1.11.5",
             "changelog": "Added option to change own password."
+        },
+        {
+            "version": "1.11.6",
+            "changelog": "Reorganized some internal files."
         }
     ]
 }

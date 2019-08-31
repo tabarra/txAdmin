@@ -8,7 +8,7 @@ Major stuff:
 Medium stuff:
 - [ ] Add "discord client id" in the admin settings, this would enable "/kick @user"
 - [ ] Do something in case fxserver's tcp/http endpoint dies for more than 5 minutes
-- [ ] Let admins change their password
+- [x] Let admins change their password
 - [ ] Create a init.cfg for the fxserver to execute containing all txAdmin commands
 - [ ] Revert txadminclient cl_logger.js back into lua and fix the mismatch of killer ID
 
