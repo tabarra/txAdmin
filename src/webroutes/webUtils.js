@@ -6,6 +6,9 @@ const helpers = require('../extras/helpers');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'WebUtils';
 
+//Helper functions
+const isUndefined = (x) => { return (typeof x === 'undefined') };
+
 
 //================================================================
 /**
@@ -14,16 +17,16 @@ const context = 'WebUtils';
  * @param {string} data
  */
 async function renderMasterView(view, reqSess, data){
-    if(typeof data === 'undefined') data = {};
-    data.headerTitle = (typeof data.headerTitle !== 'undefined')? `${data.headerTitle} - txAdmin` : 'txAdmin';
+    if(isUndefined(data)) data = {};
+    data.headerTitle = (!isUndefined(data.headerTitle))? `${data.headerTitle} - txAdmin` : 'txAdmin';
     data.txAdminVersion = globals.version.current;
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username)? reqSess.auth.username : 'unknown user';
 
     let out;
     try {
         const [rawHeader, rawFooter, rawView] = await Promise.all([
-            fs.readFile(getWebViewPath('header'), 'utf8'),
-            fs.readFile(getWebViewPath('footer'), 'utf8'),
+            fs.readFile(getWebViewPath('basic/header'), 'utf8'),
+            fs.readFile(getWebViewPath('basic/footer'), 'utf8'),
             fs.readFile(getWebViewPath(view), 'utf8')
         ]);
         sqrl.definePartial("header", rawHeader);
@@ -61,12 +64,12 @@ async function renderLoginView(message){
         data = {
             headerTitle: 'Login',
             ascii: helpers.txAdminASCII(),
-            message: (typeof message !== 'undefined')? message : '',
+            message: (!isUndefined('message'))? message : '',
             config: globals.config.serverProfile,
             version: globals.version.current
         }
 
-        let rawView = await fs.readFile(getWebViewPath(viewName), 'utf8');
+        let rawView = await fs.readFile(getWebViewPath(`basic/${viewName}`), 'utf8');
         out = sqrl.Render(rawView, data);
     } catch (error) {
         if(globals.config.verbose) {
@@ -92,7 +95,7 @@ async function renderLoginView(message){
  * @param {string} data
  */
 async function renderSoloView(view, data){
-    if(typeof data === 'undefined') data = {};
+    if(isUndefined(data)) data = {};
     let out;
     try {
         let rawView = await fs.readFile(getWebViewPath(view), 'utf8');

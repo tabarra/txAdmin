@@ -13,7 +13,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  */
 module.exports = async function action(res, req) {
     let message = '';
-    if(isUndefined(req.query.logout)){
+    if(!isUndefined(req.query.logout)){
         req.session.destroy();
         message = 'Logged Out';
     }

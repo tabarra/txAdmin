@@ -62,7 +62,7 @@ module.exports = class WebServer {
         this.app.use(this.router);
         this.app.get('*', (req, res) => {
             if(globals.config.verbose) logWarn(`Request 404 error: ${req.originalUrl}`, context);
-            res.status(404).sendFile(webUtils.getWebViewPath('404'));
+            res.status(404).sendFile(webUtils.getWebViewPath('basic/404'));
         });
     }
 
