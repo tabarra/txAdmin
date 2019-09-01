@@ -11,6 +11,7 @@ Medium stuff:
 - [x] Let admins change their password
 - [ ] Create a init.cfg for the fxserver to execute containing all txAdmin commands
 - [ ] Revert txadminclient cl_logger.js back into lua and fix the mismatch of killer ID
+- [x] Improve server log page 
 
 Minor stuff:
 - [x] Remove del in favour of fs-extra.emptyDir https://github.com/jprichardson/node-fs-extra/blob/master/docs/emptyDir.md

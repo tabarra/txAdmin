@@ -14,9 +14,31 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  * @param {object} req
  */
 module.exports = async function action(res, req) {
-    let log = processLog(globals.intercomTempLog);
-    let out = await webUtils.renderMasterView('serverLog', req.session, {headerTitle: 'Server Log', log});
-    return res.send(out);
+    //If page
+    if(isUndefined(req.query.offset)){
+        let log = processLog(globals.intercomTempLog.slice(-100));
+        let renderData = {
+            headerTitle: 'Server Log',
+            offset: globals.intercomTempLog.length,
+            log
+        }
+        let out = await webUtils.renderMasterView('serverLog', req.session, renderData);
+        return res.send(out);
+
+    //If offset
+    }else if(parseInt(req.query.offset) !== NaN){
+        if(req.query.offset === globals.intercomTempLog.length){
+            return res.send({offset: globals.intercomTempLog.length, log : false});
+        }else{
+            let log = processLog(globals.intercomTempLog.slice(req.query.offset));
+            return res.send({offset: globals.intercomTempLog.length, log});
+        }
+
+    //If null
+    }else{
+        let log = processLog(globals.intercomTempLog.slice(-100));
+        return res.send({offset: globals.intercomTempLog.length, log});
+    }
 };
 
 
@@ -26,9 +48,7 @@ module.exports = async function action(res, req) {
  * @param {array} resList
  */
 function processLog(logArray){
-    if(!logArray.length) return false;
-
-    let out = [];
+    let out = '';
     logArray.forEach(event => {
         if(
             isUndefined(event.timestamp) ||
@@ -41,10 +61,10 @@ function processLog(logArray){
         let time = new Date(parseInt(event.timestamp)*1000).toLocaleTimeString()
         let source = processPlayerData(event.source);
         let eventMessage = processEventTypes(event)
-        out.push(`[${time}] ${source} ${eventMessage}`)
+        out += `[${time}] ${source} ${eventMessage}\n`;
     });
 
-    return out.join('\n');
+    return out;
 }
 
 

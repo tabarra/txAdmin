@@ -2,8 +2,9 @@
 
 
 <style>
-    .admin-log-content{
+    .pre-log-content{
         height: calc(100vh - 326px); /* -251px */
+        margin-bottom: 0;
     }
 
     .event-source{
@@ -27,16 +28,7 @@
 </div>
 <div class="card border-primary">
     <div class="card-body">
-        {{if(options.log === false)}}
-            <div style="display:flex;justify-content:center;align-items:center;" class="admin-log-content">
-                <h1 class="text-muted">
-                    &lt; empty log &gt;
-                </h1>
-            </div>
-        </div>
-        {{#else}}
-        <pre id="console" class="pre-scroll admin-log-content">{{log|safe}}</pre>
-        {{/if}}
+        <pre id="console" class="pre-scroll pre-log-content">{{log|safe}}</pre>
     </div>
 </div>
 
@@ -45,35 +37,51 @@
 
 
 <script>
-$(document).ready(function () {
-    $("#console").scrollTop($("#console")[0].scrollHeight);
+    $(document).ready(function () {
+        scrollToBottom();
+        setupHovers();
+    });
+
+    setInterval(getNewData, 5000);
+
+    var currOffset = '{{offset}}';
+    function getNewData(){
+        $.ajax({
+            type: "GET",
+            url: `/serverLog?offset=${currOffset}`,
+            timeout: 2000,
+            success: function (data) {
+                //FIXME: temporary before database
+                if(typeof data.offset !== 'undefined') currOffset = data.offset;
+                if(typeof data.log !== 'undefined' && data.log !== false && data.log.length){
+                    $("#console").append(data.log);
+                    scrollToBottom();
+                    setupHovers();
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                console.log(`Error refreshing server log: ${message}`)
+            }
+        });
+    }
+
+    function scrollToBottom(){
+        try {
+            $("#console").scrollTop($("#console")[0].scrollHeight);
+        } catch (error) {}
+    }
 
     //Player name click function
-    $('.event-source').click(function(e){
-        let ids = $(this).data('player-identifiers');
-        if(!ids) return;
-        let name = $(this).data('player-name') || 'unknown';
+    function setupHovers(){
+        $('.event-source').click(function(e){
+            let ids = $(this).data('player-identifiers');
+            if(!ids) return;
+            let name = $(this).data('player-name') || 'unknown';
 
-        $("#modPlayerInfoTitle").html(name);
-        $("#modPlayerInfoIdentifiers").html(ids.split(';').join(', <br>\n'));
-        $("#modPlayerInfoButtons").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>');
-        $('#modPlayerInfo').modal('show');
-    });
-
-    //Player name hover highlight (NOTE: Experiment)
-    $('.event-source').mouseenter(function(e){
-        let ids = $(this).data('player-identifiers');
-        if(!ids) return;
-
-        $('.event-source').each(function(e){
-            if($(this).data('player-identifiers') !== ids) return;
-            $(this).addClass("highlight-player");
+            $("#modPlayerInfoTitle").html(name);
+            $("#modPlayerInfoIdentifiers").html(ids.split(';').join(', <br>\n'));
+            $("#modPlayerInfoButtons").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>');
+            $('#modPlayerInfo').modal('show');
         });
-    });
-    $('.event-source').mouseleave(function(e){
-        $('.event-source').each(function(e){
-            $(this).removeClass("highlight-player");
-        });
-    });
-});
+    }
 </script>
