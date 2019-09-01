@@ -12,7 +12,7 @@ const ac = require('ansi-colors');
 ac.enabled = require('color-support').hasBasic;
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 cleanTerminal()
-const context = 'Setup';
+const context = 'SetupScript';
 const printDivider = () => { log('='.repeat(64), context) };
 
 

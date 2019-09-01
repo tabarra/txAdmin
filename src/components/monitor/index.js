@@ -18,14 +18,7 @@ module.exports = class Monitor {
             logError('The monitor.restarter.cooldown setting must be 15 seconds or more.', context);
             process.exit();
         }
-        if(this.config.interval < 1000){
-            logError('The monitor.interval setting must be 1000 milliseconds or more.', context);
-            process.exit();
-        }
-        if(
-            this.config.restarter.failures !== -1 &&
-            this.config.restarter.failures * this.config.interval < 15000
-        ){
+        if(this.config.restarter.failures < 15){
             logError('The monitor.restarter.failures setting must be 15 seconds or more.', context);
             process.exit();
         }
@@ -47,9 +40,9 @@ module.exports = class Monitor {
         this.buildSchedule();
 
         //Cron functions
-        this.cronFunc = setInterval(() => {
+        setInterval(() => {
             this.refreshServerStatus();
-        }, this.config.interval);
+        }, 1000);
         setInterval(() => {
             this.checkRestartSchedule();
         }, 60*1000);
@@ -63,12 +56,6 @@ module.exports = class Monitor {
     refreshConfig(){
         this.config = globals.configVault.getScoped('monitor');
         this.buildSchedule();
-
-        //Reset Cron functions
-        clearInterval(this.cronFunc);
-        this.cronFunc = setInterval(() => {
-            this.refreshServerStatus();
-        }, this.config.interval);
     }//Final refreshConfig()
 
 
@@ -226,8 +213,19 @@ module.exports = class Monitor {
                     'crash detected',
                     globals.translator.t('restarter.crash_detected')
                 );
+            }else if(this.failCounter === 60*2){ //after 4 minutes
+                let tOptions = {
+                    servername: globals.config.serverName
+                }
+                globals.discordBot.sendAnnouncement(globals.translator.t('restarter.partial_crash_warn_discord', tOptions));
+                let chatMsg = globals.translator.t('restarter.partial_crash_warn')
+                globals.fxRunner.srvCmd(`txaBroadcast "${chatMsg}"`);
+            }else if(this.failCounter === 60*3){ //after 5 minutes
+                this.restartFXServer(
+                    'partial crash detected',
+                    globals.translator.t('restarter.crash_detected')
+                );
             }else{
-                //TODO: restart anyway after 10 minutes?
                 if(globals.config.verbose) logWarn(`Above restarter limit for HealthCheck failures. Skipping restart since last HeartBeat was less than 30s ago.`);
             }
         }
@@ -284,7 +282,7 @@ module.exports = class Monitor {
         try {
             const res = await axios(requestOptions);
             players = res.data;
-            if(!Array.isArray(players)) throw new Error("FXServer's players endpoint didnt return a JSON array.")
+            if(!Array.isArray(players)) throw new Error("FXServer's players endpoint didnt return a JSON array.");
         } catch (error) {
             this.handleFailure(error.message);
             this.statusServer = {

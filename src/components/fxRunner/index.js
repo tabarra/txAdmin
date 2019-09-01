@@ -117,6 +117,9 @@ module.exports = class FXRunner {
         //Sending header to the console buffer
         this.consoleBuffer.writeHeader();
 
+        //Resseting hitch counter
+        globals.monitor.clearFXServerHitches();
+
         //Announcing
         if(announce === 'true' | announce === true){
             let discordMessage = globals.translator.t('server_actions.spawning_discord', {servername: globals.config.serverName});
@@ -166,7 +169,6 @@ module.exports = class FXRunner {
 
         this.fxChild.stderr.on('error', (data) => {});
         this.fxChild.stderr.on('data', this.consoleBuffer.writeError.bind(this.consoleBuffer));
-
 
         //Setting up process priority
         setTimeout(() => {
@@ -286,7 +288,6 @@ module.exports = class FXRunner {
             this.killServer();
             await sleep(750);
             this.spawnServer();
-            globals.monitor.clearFXServerHitches()
         } catch (error) {
             logError("Couldn't restart the server.", context);
             if(globals.config.verbose) dir(error);

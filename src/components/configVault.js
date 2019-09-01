@@ -106,7 +106,6 @@ module.exports = class ConfigVault {
                 logPath: toDefault(cfg.logger.logPath, null), //not in template
             };
             out.monitor = {
-                interval: toDefault(cfg.monitor.interval, null), //not in template
                 timeout: toDefault(cfg.monitor.timeout, null),
                 restarter: {
                     cooldown: toDefault(cfg.monitor.restarter.cooldown, null), //not in template
@@ -181,7 +180,6 @@ module.exports = class ConfigVault {
             cfg.logger.logPath = cfg.logger.logPath || `${this.serverProfilePath}/logs/admin.log`; //not in template
 
             //Monitor
-            cfg.monitor.interval = parseInt(cfg.monitor.interval) || 1000; //not in template
             cfg.monitor.timeout = parseInt(cfg.monitor.timeout) || 1000;
             cfg.monitor.restarter.cooldown = parseInt(cfg.monitor.restarter.cooldown) || 60; //not in template
             cfg.monitor.restarter.failures = parseInt(cfg.monitor.restarter.failures) || 30;
