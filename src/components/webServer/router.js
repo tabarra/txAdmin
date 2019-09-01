@@ -137,8 +137,8 @@ module.exports = router = (config) =>{
         });
     });
     router.get('/resources', requestAuth('web'), async (req, res) => {
-        await webRoutes.getResources(res, req).catch((err) => {
-            handleRouteError(res, req, 'getResources', err);
+        await webRoutes.resources(res, req).catch((err) => {
+            handleRouteError(res, req, 'resources', err);
         });
     });
     router.get('/addExtension', requestAuth('web'), async (req, res) => {

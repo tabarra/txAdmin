@@ -213,14 +213,14 @@ module.exports = class Monitor {
                     'crash detected',
                     globals.translator.t('restarter.crash_detected')
                 );
-            }else if(this.failCounter === 60*2){ //after 4 minutes
+            }else if(this.failCounter === 60*4){ //after 4 minutes
                 let tOptions = {
                     servername: globals.config.serverName
                 }
                 globals.discordBot.sendAnnouncement(globals.translator.t('restarter.partial_crash_warn_discord', tOptions));
                 let chatMsg = globals.translator.t('restarter.partial_crash_warn')
                 globals.fxRunner.srvCmd(`txaBroadcast "${chatMsg}"`);
-            }else if(this.failCounter === 60*3){ //after 5 minutes
+            }else if(this.failCounter === 60*5){ //after 5 minutes
                 this.restartFXServer(
                     'partial crash detected',
                     globals.translator.t('restarter.crash_detected')
