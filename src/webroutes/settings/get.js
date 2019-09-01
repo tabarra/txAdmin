@@ -19,7 +19,6 @@ module.exports = async function action(res, req) {
 
     let renderData = {
         headerTitle: 'settings',
-        isLocalhost: (req.connection.remoteAddress === '127.0.0.1'),
         global: cleanRenderData(globals.configVault.getScopedStructure('global')),
         fxserver: cleanRenderData(globals.configVault.getScopedStructure('fxRunner')),
         monitor: cleanRenderData(globals.configVault.getScopedStructure('monitor')),

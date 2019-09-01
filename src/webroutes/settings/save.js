@@ -202,8 +202,6 @@ function handleFXServer(res, req) {
 function handleMonitor(res, req) {
     //Sanity check
     if(
-        isUndefined(req.body.timeout) ||
-        isUndefined(req.body.failures) ||
         isUndefined(req.body.schedule)
     ){
         return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
@@ -211,14 +209,8 @@ function handleMonitor(res, req) {
 
     //Prepare body input
     let cfg = {
-        timeout: parseInt(req.body.timeout),
-        failures: parseInt(req.body.failures),
         schedule: req.body.schedule.split(',').map((x) => {return x.trim()})
     }
-
-    //Validating parameters
-    if(cfg.timeout > 5000) return res.send({type: 'danger', message: "The maximum timeout is 5000ms"});
-    if(cfg.failures > 120) return res.send({type: 'danger', message: "The maximum failures is 120"});
 
     //Validating times
     let times = helpers.parseSchedule(cfg.schedule, false);
@@ -240,8 +232,6 @@ function handleMonitor(res, req) {
 
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('monitor');
-    newConfig.timeout = cfg.timeout;
-    newConfig.restarter.failures = cfg.failures;
     newConfig.restarter.schedule = validTimes;
     let saveStatus = globals.configVault.saveProfile('monitor', newConfig);
 
