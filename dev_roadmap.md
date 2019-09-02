@@ -39,6 +39,41 @@ https://www.reddit.com/r/javascript/comments/91a3tp/why_is_there_no_small_sane_n
 DIV transition: https://tympanus.net/Tutorials/OriginalHoverEffects/index9.html
 
 
+## TODO Now
+- [x] freeze detector
+- [ ] inject via tmp file
+- [ ] database test
+- [ ] experiements dropdown menu
+- [ ] database module
+- [ ] functional ban page with ban add, list and export
+- [ ] ban feature at sv_main.lua
+
+
+## Databases:
+Discarted due to node-gyp: level, better-sqlite3, sqlite3
+
+- dblite
+    - 165/week  
+    - 0 deps  
+    - 6 months ago  
+    - spawn sqlite-shell  
+- lowdb
+    - 183k/week  
+    - 5 deps  
+    - 2 years ago  
+    - lodash front end, can query data  
+- sql.js
+    - 26k/week  
+    - 0 deps  
+    - 4 months ago  
+    - sqlite c into webassembly  
+
+
+## Ideas:
+Automatic event detection by regexing all .lua files in the resources folder?  
+`AddEventHandler\(["'](.+)["'].*`
+
+
 ## Folder Structure
     data/
         admins.json

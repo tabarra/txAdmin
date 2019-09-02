@@ -1,5 +1,5 @@
 {
-    "version": "1.11.6-mplus2",
+    "version": "1.12.0-dev",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -105,6 +105,10 @@
         {
             "version": "1.11.6",
             "changelog": "Reorganized some internal files."
+        },
+        {
+            "version": "1.11.7",
+            "changelog": "Process freeze detector."
         }
     ]
 }
