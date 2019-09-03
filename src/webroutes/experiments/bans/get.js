@@ -51,7 +51,7 @@ module.exports = async function action(res, req) {
 
     //Prepares the log
     let log = processLog(banList);
-    if(!log ) return await handleError(res, req, new Error('experiments.bans.banList is not an array'));
+    if(log === false) return await handleError(res, req, new Error('experiments.bans.banList is not an array'));
 
     let renderData = {
         headerTitle: 'Bans',
