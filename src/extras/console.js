@@ -25,7 +25,7 @@ function logError(msg, context=null) {
 }
 
 function cleanTerminal(){
-    process.stdout.write(`\x1B[2J\x1B[H`);
+    process.stdout.write(`.\n`.repeat(80) + `\x1B[2J\x1B[H`);
 }
 
 function setTTYTitle(title){

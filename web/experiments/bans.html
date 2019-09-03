@@ -37,7 +37,7 @@
 
 {{if(options.expEnabled)}}
 <div class="row justify-content-md-center">
-    <div class="col-lg-10 col-xl-5">
+    <div class="col-lg-10 col-xl-4">
         <div class="card card-accent-danger">
             <div class="card-header font-weight-bold">Add Ban:</div>
             <div class="card-body">
@@ -50,8 +50,7 @@
                         <input type="text" class="form-control" id="frmAddBan-identifier"
                             placeholder="steam:101010101010101">
                         <span class="form-text text-muted">
-                            Format: <code>type:number</code> <br>
-                            Identifier types: <code>steam, license, xbl, live, discord</code>
+                            Possible identifier types: <code>steam, license, xbl, live, discord</code>
                         </span>
                     </div>
                 </div>
@@ -84,14 +83,16 @@
     </div>
 
 
-    <div class="col-lg-10 col-xl-5">
+    <div class="col-lg-10 col-xl-6">
         <div class="card card-accent-info">
             <div class="card-header font-weight-bold">Ban List:</div>
             <div class="card-body">
-                <li>
-                    <a href="/experiments/bans#!" data-player-identifier="${identifiers}" class="text-primary unban-btn">[UNBAN]</a>
-                    <code>steam:101010101010101</code> - Reason blablabla
-                </li>
+
+                {{if(options.log.length === 0)}}
+                <li>Not bans recorded.</li>
+                {{#else}}
+                {{log|safe}}
+                {{/if}}
             </div>
         </div>
     </div>
@@ -114,6 +115,10 @@
 
     function unban(id){
         if(!id) return;
+        if(!window.confirm(`Are you sure you want to unban '${id}'?`)){
+            return;
+        }
+
         let data = {
             identifier: id
         }

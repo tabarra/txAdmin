@@ -33,7 +33,7 @@ module.exports = class Database {
             experiments: {
                 bans: {
                     enabled: false,
-                    banlist: []
+                    banList: []
                 }
             }
         }).write()
