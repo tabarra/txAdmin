@@ -82,9 +82,7 @@ function processLog(banList){
             return;
         }
         let time = new Date(parseInt(ban.timestamp)*1000).toLocaleTimeString()
-
-
-        out += `<li><a href="/experiments/bans#!" data-player-identifier="${xss(ban.identifier)}" class="text-primary unban-btn">[UNBAN]</a>
+        out += `<li><a href="/experiments/bans#!" data-player-identifier="${xss(ban.identifier)}" class="text-primary unban-btn">[unban]</a>
                     [${time}] <code>${xss(ban.identifier)}</code> - ${xss(ban.reason)} (${xss(ban.banned_by)})</li>\n`;
     });
 

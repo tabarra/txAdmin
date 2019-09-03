@@ -18,16 +18,16 @@
                 still want to proceed, click in the button "Enable Experiment".</span> <br>
             After enabling this experiment a server restart is required. <br>
             You can disable this anytime you want. <br>
-            <a href="/experiments/bans/action/enable" role="button" class="btn btn-outline-dark mt-3">Enable
+            <a href="/experiments/bans/actions/enable" role="button" class="btn btn-outline-dark mt-3">Enable
                 Experiment</a>
             {{#else}}
             This is an experiment to test the database engine required for a ban system. <br>
             We cannot guarantee neither its functionality nor the persistence of the database, that's why a ban list
             export feature is provided. <br>
-            <a href="/experiments/bans/action/disable" role="button" class="btn btn-outline-dark mt-3">
+            <a href="/experiments/bans/actions/disable" role="button" class="btn btn-outline-dark mt-3">
                 Disable Experiment</a>
             &nbsp;
-            <a href="/experiments/bans/action/export" role="button" class="btn btn-outline-dark mt-3">
+            <a href="/experiments/bans/actions/export" role="button" class="btn btn-outline-dark mt-3">
                 Export Bans</a>
             {{/if}}
         </div>
@@ -61,7 +61,8 @@
                         <span class="text-danger">*</span>
                     </label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="frmAddBan-reason" maxlength="64">
+                        <input type="text" class="form-control" id="frmAddBan-reason"
+                            maxlength="64" placeholder="doing bad things :(">
                     </div>
                 </div>
 
@@ -125,12 +126,18 @@
         var notify = $.notify({ message: '<p class="text-center">Unbanning...</p>' }, {});
         $.ajax({
             type: "POST",
-            url: '/experiments/bans/action/unban',
+            url: '/experiments/bans/actions/unban',
             timeout: 2000,
             data: data,
             dataType: 'json',
             success: function (data) {
-                window.location.reload(true);
+                if(data.refresh === true){
+                    window.location.reload(true);
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);
@@ -149,18 +156,26 @@
             var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
             return;
         }
+        if (data.reason.length < 8) {
+            var notify = $.notify({ message: 'The reason must be at least 8 characters.' }, { type: 'warning' });
+            return;
+        }
         var notify = $.notify({ message: '<p class="text-center">Banning...</p>' }, {});
 
         $.ajax({
             type: "POST",
-            url: '/experiments/bans/action/ban',
+            url: '/experiments/bans/actions/ban',
             timeout: 2000,
             data: data,
             dataType: 'json',
             success: function (data) {
-                notify.update('progress', 0);
-                notify.update('type', data.type);
-                notify.update('message', data.message);
+                if(data.refresh === true){
+                    window.location.reload(true);
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);

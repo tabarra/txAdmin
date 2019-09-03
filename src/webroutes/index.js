@@ -34,5 +34,6 @@ exports.fxserver = {
 exports.experiments = {
     bans: {
         get: require('./experiments/bans/get'),
+        actions: require('./experiments/bans/actions'),
     }
 }

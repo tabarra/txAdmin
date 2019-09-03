@@ -27,7 +27,7 @@ module.exports = async function action(res, req) {
         });
     }
 
-    //Delegate to the specific scope functions
+    //Delegate to the specific action handler
     if(action == 'add'){
         return await handleAdd(res, req);
     }else if(action == 'edit'){
