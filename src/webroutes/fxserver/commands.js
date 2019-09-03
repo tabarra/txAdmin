@@ -133,12 +133,12 @@ module.exports = async function action(res, req) {
     //==============================================
     }else if(action == 'reinject_res'){
         if(!ensurePermission('commands.resources', res, req)) return false;
-        await globals.fxRunner.injectResources();
-        let toResp = await globals.fxRunner.srvCmdBuffer('refresh');
-        setTimeout(async () => {
-            globals.fxRunner.setFXServerEnv();
-        }, 1500);
         webUtils.appendLog(req, 'Re-Injected txAdmin resources', context);
+        await globals.fxRunner.injectResources();
+        let exexFilePath = await globals.fxRunner.writeExecFile(true, false);
+        if(!exexFilePath) return sendAlertOutput(res, 'Failed to write exec.tmp.cfg');
+        let cmd = `exec "${exexFilePath}"`;
+        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
     //==============================================

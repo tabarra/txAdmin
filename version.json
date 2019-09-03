@@ -109,6 +109,10 @@
         {
             "version": "1.11.7",
             "changelog": "Process freeze detector."
+        },
+        {
+            "version": "1.11.8",
+            "changelog": "Scripting setup now via exec file instead of stdin.write."
         }
     ]
 }

@@ -41,7 +41,7 @@ DIV transition: https://tympanus.net/Tutorials/OriginalHoverEffects/index9.html
 
 ## TODO Now
 - [x] freeze detector
-- [ ] inject via tmp file
+- [x] inject via tmp file
 - [ ] database test
 - [ ] experiements dropdown menu
 - [ ] database module
