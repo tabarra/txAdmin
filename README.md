@@ -42,6 +42,7 @@
 - (BETA) SSL Support ([more info](docs/ssl_support.md))
 - Translation Support ([more info](docs/translation.md))
 - (BETA) Server Activity Log (connections/disconnections, kills, chat and explosions)
+- (BETA) Ban System
 
 
 ## Installing & Running
