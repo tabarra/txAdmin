@@ -1,5 +1,5 @@
 {
-    "version": "1.12.0-dev",
+    "version": "1.12.0",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -96,7 +96,7 @@
         },
         {
             "version": "1.11.4",
-            "changelog": "Optimized tAdmin (40% less dependecies). Improved some pages on Mobile."
+            "changelog": "Optimized txAdmin (40% less dependecies). Improved some pages on Mobile."
         },
         {
             "version": "1.11.5",
@@ -113,6 +113,10 @@
         {
             "version": "1.11.8",
             "changelog": "Scripting setup now via exec file instead of stdin.write."
+        },
+        {
+            "version": "1.12.0",
+            "changelog": "New Experimental Ban System!"
         }
     ]
 }
