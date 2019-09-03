@@ -18,6 +18,7 @@ globals = {
     translator: null,
     webConsole: null,
     webServer: null,
+    database: null,
     config: null,
     version: {
         current: '--',

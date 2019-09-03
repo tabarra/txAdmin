@@ -60,6 +60,10 @@ module.exports = class txAdmin {
         //  - translator before monitor
         //  - webserver before webconsole
 
+        this.startDatabase().catch((err) => {
+            HandleFatalError(err, 'Database');
+        });
+
         //Run Update Checker every 15 minutes
         const updateChecker = require('./extras/updateChecker');
         updateChecker();
@@ -113,6 +117,13 @@ module.exports = class txAdmin {
     async startWebConsole(config){
         const WebConsole = require('./components/webConsole')
         globals.webConsole = new WebConsole(config);
+    }
+
+    //==============================================================
+    //FIXME: experimental database
+    async startDatabase(){
+        const Database = require('./components/database')
+        globals.database = new Database();
     }
 }
 

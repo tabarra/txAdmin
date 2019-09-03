@@ -43,7 +43,7 @@ DIV transition: https://tympanus.net/Tutorials/OriginalHoverEffects/index9.html
 - [x] freeze detector
 - [x] inject via tmp file
 - [x] experiements dropdown menu + ban page html/js
-- [ ] database module
+- [x] database module
 - [ ] functional ban page with ban add, list and export
 - [ ] ban feature at sv_main.lua
 
