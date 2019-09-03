@@ -222,7 +222,7 @@ function handleConnections(name, skr, d)
                         end
                     elseif data == 'whitelist-block' then
                         if not isDone then
-                            d.done('[txAdmin] You are not whitelisted in this server.')
+                            d.done('[txAdmin] You were banned from this server.')
                             isDone = true
                         end
                     end

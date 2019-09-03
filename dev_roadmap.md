@@ -44,9 +44,10 @@ DIV transition: https://tympanus.net/Tutorials/OriginalHoverEffects/index9.html
 - [x] inject via tmp file
 - [x] experiements dropdown menu + ban page html/js
 - [x] database module
-- [ ] functional ban page with ban add, list and export
-- [ ] ban feature at sv_main.lua
-
+- [x] functional ban page with ban add, list and export
+- [x] ban feature at sv_main.lua
+- [x] tie everything correctly and push update
+- [ ] fix playerlist div name issue
 
 ## Databases:
 Discarted due to node-gyp: level, better-sqlite3, sqlite3

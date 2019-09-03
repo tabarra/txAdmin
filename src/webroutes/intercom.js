@@ -40,6 +40,23 @@ module.exports = async function action(res, req) {
         }
         globals.intercomTempLog = globals.intercomTempLog.concat(req.body.log)
 
+    }else if(scope == 'checkWhitelist'){
+        if(!Array.isArray(req.body.identifiers)){
+            return res.status(400).send({error: "Invalid Request"});
+        }
+        try {
+            let dbo = globals.database.getDB();
+            let usr = await dbo.get("experiments.bans.banList")
+                    .find(function(o) { return req.body.identifiers.includes(o.identifier); })
+                    .value()
+            let resp = (typeof usr === 'undefined')? 'whitelist-ok' : 'whitelist-block';
+            return res.send(resp);
+        } catch (error) {
+            logError(`[whitelistCheck] Database operation failed with error: ${error.message}`, context);
+            if(globals.config.verbose) dir(error);
+            return res.send('whitelist-error');
+        }
+
     }else{
         return res.send({
             type: 'danger',
