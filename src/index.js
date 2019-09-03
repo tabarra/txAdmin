@@ -3,8 +3,7 @@ const helpers = require('./extras/helpers');
 helpers.dependencyChecker();
 
 //Requires
-const figlet = require('figlet');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('./extras/console');
+const { dir, log, logOk, logWarn, logError, cleanTerminal, setTTYTitle } = require('./extras/console');
 const txAdmin = require('./txAdmin.js');
 
 
@@ -19,6 +18,7 @@ globals = {
     translator: null,
     webConsole: null,
     webServer: null,
+    database: null,
     config: null,
     version: {
         current: '--',
@@ -35,17 +35,21 @@ globals = {
 
 //==============================================================
 //Print MOTD
-let ascii = figlet.textSync('txAdmin');
+let ascii = helpers.txAdminASCII()
 let separator = '='.repeat(46);
 let motd = `${separator}\n${ascii}\n${separator}`;
 cleanTerminal();
+setTTYTitle();
 console.log(motd);
 
 //Detect server profile
 let serverProfile;
 if(process.argv[2]){
-    serverProfile = process.argv[2].replace(/[^a-z0-9._-]/gi, "");
-    if(serverProfile === 'example'){
+    serverProfile = process.argv[2].replace(/[^a-z0-9._-]/gi, "").trim();
+    if(!serverProfile.length){
+        logError(`Invalid server profile. Are you using Google Translator on the Github instructions page? Make sure there are no additional spaces in your command.`);
+        process.exit();
+    }else if(serverProfile === 'example'){
         logError(`You can't use the 'example' profile.`);
         process.exit();
     }
@@ -56,10 +60,30 @@ if(process.argv[2]){
 }
 
 //Start txAdmin
+setTTYTitle(serverProfile);
 const app = new txAdmin(serverProfile);
 
 
 //==============================================================
+//Freeze detector
+let hdTimer = Date.now();
+setInterval(() => {
+    let now = Date.now();
+    if(now - hdTimer > 1000){
+        if(process.env.os.toLowerCase().includes('windows')){
+            let sep = `=`.repeat(64);
+            logError(sep);
+            logError(`Major process freeze detected.`);
+            logError(`If using CMD or a 'start.bat' file, make sure to disable QuickEdit mode.`);
+            logError(`Join our discord and type '!quickedit' for instructions.`);
+            logError(sep);
+        }else{
+            logError('Major process freeze detected.')
+        }
+    }
+    hdTimer = now;
+}, 500);
+
 //Handle any stdio error
 process.stdin.on('error', (data) => {});
 process.stdout.on('error', (data) => {});

@@ -59,27 +59,17 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="frmGlobal-publicIP"
-                                        value="{{global.publicIP}}" maxlength="32" placeholder="123.123.123.123" {{disableWrite}}>
-                                    {{if(options.isLocalhost)}}
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" id="frmGlobal-getIP"
-                                            type="button" {{disableWrite}}>Auto Detect</button>
-                                        </div>
-                                    {{/if}}
-                                </div>
-                                <span class="form-text text-muted">
-                                    You can set this to be your public IP or a domain name. <br>
-                                    {{if(options.isLocalhost)}}
-                                    <b>Note:</b> The auto detect feature might get blocked by ad-blockers.
-                                    {{/if}}
-                                </span>
+                                <input type="text" class="form-control" id="frmGlobal-publicIP"
+                                    value="{{global.publicIP}}" maxlength="32" placeholder="123.123.123.123" {{disableWrite}}>
+                                    <span class="form-text text-muted">
+                                        You can set this to be your public IP or a domain name. <br>
+                                        This will only be used for discord messages.
+                                    </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmGlobal-serverName" class="col-sm-3 col-form-label">
+                            <label for="frmGlobal-language" class="col-sm-3 col-form-label">
                                 Language
                             </label>
                             <div class="col-sm-9">
@@ -141,7 +131,7 @@
                                 <input type="text" class="form-control" id="frmFXServer-buildPath" value="{{fxserver.buildPath}}"
                                     placeholder="C:/Users/Admin/Documents/fxserver_builds/1380" {{disableWrite}}>
                                 <span class="form-text text-muted">
-                                    The folder containing the files <code>run.cmd</code>, <code>fxserver.exe</code> and
+                                    The folder <strong>containing</strong> the files <code>run.cmd</code>, <code>fxserver.exe</code> and
                                     a bunch of DLLs in case of Windows, and only <code>run.sh</code> in case of Linux.
                                 </span>
                             </div>
@@ -228,48 +218,6 @@
 
                         <!-- Monitor Card -->
                         <div class="form-group row">
-                            <label for="frmMonitor-conservative" class="col-sm-3 col-form-label">Conservative Mode</label>
-                            <div class="col-sm-9">
-                                <label class="switch switch-label switch-pill switch-success fix-pill-form">
-                                    <input class="switch-input" type="checkbox" id="frmMonitor-conservative"
-                                        checked disabled>
-                                    <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
-                                </label>
-                                <span class="form-text text-muted">
-                                    Try not to restart the server when it is still working. <br>
-                                    This feature is still in beta
-                                </span>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="frmMonitor-timeout" class="col-sm-3 col-form-label">
-                                Timeout
-                                <span class="text-danger">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="number" class="form-control" id="frmMonitor-timeout" value="{{monitor.timeout}}"
-                                    placeholder="1000" min="0" max="5000" {{disableWrite}}>
-                                <span class="form-text text-muted">
-                                    The limit of <strong>milliseconds</strong> for the FXServer to respond before the
-                                    Monitor considers it unresponsive. (Recommended: 1000. Max: 5000)
-                                </span>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="frmMonitor-failures" class="col-sm-3 col-form-label">
-                                Max Failures <span class="text-danger">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="number" class="form-control" id="frmMonitor-failures" value="{{monitor.restarter.failures}}"
-                                    placeholder="15" min="5" max="120" {{disableWrite}}>
-                                <span class="form-text text-muted">
-                                    The number of timeouts before the Monitor attempts to restart FXServer (60s of
-                                    cooldown may apply). <br>
-                                    This should be equivalent of more than 15s when multiplied by the timeout.
-                                </span>
-                            </div>
-                        </div>
-                        <div class="form-group row">
                             <label for="frmMonitor-schedule" class="col-sm-3 col-form-label">Scheduled Restarts</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmMonitor-schedule" value="{{monitor.restarter.schedule}}"
@@ -280,6 +228,35 @@
                                     The time MUST be in the 24-hour format with two digits for hours as well as
                                     minutes (<code>HH:MM</code>) and the times should be separated by commas. <br>
                                     <strong>Note:</strong> Make sure your schedule matches your server time and not your local time.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="frmMonitor-conservative" class="col-sm-3 col-form-label">Conservative Mode</label>
+                            <div class="col-sm-9">
+                                <label class="switch switch-label switch-pill switch-success fix-pill-form">
+                                    <input class="switch-input" type="checkbox" id="frmMonitor-conservative"
+                                        checked disabled>
+                                    <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Try not to restart the server when it is still working (doesn't apply to partial crashes).
+                                </span>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="frmMonitor-detectPartial" class="col-sm-3 col-form-label">Detect Partial Crash</label>
+                            <div class="col-sm-9">
+                                <label class="switch switch-label switch-pill switch-success fix-pill-form">
+                                    <input class="switch-input" type="checkbox" id="frmMonitor-detectPartial"
+                                        checked disabled>
+                                    <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Detect when FXServer's HTTP endpoint dies and restart the server after 5 minutes. <br>
+                                    On a partial crash, new players won't be able to connect and your server will not
+                                    show in the server list even though players inside will still be able to play. <br>
+                                    This feature is still in beta
                                 </span>
                             </div>
                         </div>
@@ -387,28 +364,8 @@
         $('#frmMonitor-timezoneAlert').html(msg);
     }
 
-    $(document).ready(function () {
-        if ($('#frmGlobal-publicIP').val().trim() == 'change-me') {
-            $('#frmGlobal-getIP').click();
-        }
-    });
 
     //============================================== Global Settings
-    $('#frmGlobal-getIP').click(function () {
-        $('#frmGlobal-publicIP').val('retrieving...');
-        $.ajax({
-            type: "GET",
-            url: 'https://api.ipify.org?format=json',
-            timeout: 3000,
-            success: function (data) {
-                $('#frmGlobal-publicIP').val(data.ip);
-            },
-            error: function (xmlhttprequest, textstatus, message) {
-                $('#frmGlobal-publicIP').val('error');
-            }
-        });
-    });
-
     $('#frmGlobal-save').click(function () {
         let data = {
             serverName: $('#frmGlobal-serverName').val().trim(),
@@ -416,7 +373,7 @@
             language: $('#frmGlobal-language').val(),
             verbose: $('#frmGlobal-verbose').is(':checked')
         }
-        if (!data.serverName.length || !data.serverName.length) {
+        if (!data.serverName.length || !data.publicIP.length) {
             var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
             return;
         }
@@ -481,13 +438,7 @@
     //============================================== Monitor Settings
     $('#frmMonitor-save').click(function () {
         let data = {
-            timeout: $('#frmMonitor-timeout').val(),
-            failures: $('#frmMonitor-failures').val(),
             schedule: $('#frmMonitor-schedule').val().trim()
-        }
-        if (!data.timeout.length || !data.failures.length) {
-            var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
-            return;
         }
         var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 

@@ -86,18 +86,18 @@ module.exports = class Translator {
         //NOTE: this "protection" is to incentivize users to modify the git-untracked `locale/custom.json` file.
         // since modifying any other file will result in the user not being able to update txAdmin just by typing `git pull`.
         let langHashes = {
-            en: '1b514b088a5ee7015b0f0d0ae0319b7b2a6aff0d', //english
-            zh: '11857d2ba76952c488c3920d646f1e2ebd9d3537', //chinese
-            cs: 'b7e867715b628815e23d9dc0761e90301eb74d41', //czech
-            da: '98a2dad93e3cf19ab52f5b0aa17a9ea1c3c1cbcd', //danish
-            nl: 'ec074d2281f059b1280984776c0fe57cf480d0d4', //dutch
-            fr: 'eaa6f1250a483b03d0c9c698ea2700d113e81896', //french
-            de: 'c6754b76429df76dc9000912d72b77f385417f83', //german
-            hu: 'c28b5a084cbcad7be0a60c87c8f5b24b999752e2', //hungarian
-            pl: '522cc363a86fc089d04972f1194abed3926ffd98', //polish
-            pt_BR: 'a55fd4cf965097108502860204f5f5abc2ed6e7f', //portuguese
-            ro: '77c2a2b46af30859cdc8113df8917a607dbe7f35', //romanian
-            es: '73db20da35fc2b38f931dff57b2a9e8d47435b1a', //spanish
+            cs: 'bb9e29c2f813df128d2526aa4f3b41c509778b9a', //Czech
+            da: 'f4ed0196724d77e2b3e02a7f5fc5064e174939ff', //Danish
+            de: '0afd698733c22dbd78793c861f09faf7bde393b6', //German
+            en: '22aa51b1157b6f6fa7f712ddac5a78587084f43c', //English
+            es: '6703e2293338888fd485325e03c979325328d461', //Spanish
+            fr: '87e710bfc0cca31f7159a736b4c74d49c9c1f6f9', //French
+            hu: '0cc944270bc6ea924faa4900dccde33d2651bb7f', //Hungarian
+            nl: '4b3269c8b8644dad0f17ac3b5f1a8986590358c2', //Dutch
+            pl: '7b54962c37b3f8befc7dcfab10c5a5c93b9e505f', //Polish
+            pt_BR: '39136e5996e6ff4b6090c4e0a5759f21dc3c56d2', //Portuguese (Brazil)
+            ro: '7cb38638a83349485bb0c2389f35adc7ec168b24', //Romanian
+            zh: 'dd93a6fe7bfbbcdf99c2d239fc9be25b409a5a83', //Chinese
         }
         let hash = null;
         try {

@@ -1,5 +1,5 @@
 //Requires
-const fs = require('fs');
+const fs = require('fs-extra');
 const bcrypt = require('bcryptjs');
 const clone = require('clone');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
@@ -89,7 +89,7 @@ module.exports = class Authenticator {
      * @param {*} password
      * @param {*} permissions
      */
-    addAdmin(name, password, permissions){
+    async addAdmin(name, password, permissions){
         //Check if username is already taken
         let username = name.toLowerCase();
         let existing = this.admins.find((user) => {
@@ -106,7 +106,7 @@ module.exports = class Authenticator {
 
         //Saving admin file
         try {
-            fs.writeFileSync('data/admins.json', JSON.stringify(this.admins, null, 2), 'utf8');
+            await fs.writeFile('data/admins.json', JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
         } catch (error) {
             if(globals.config.verbose) log(error, context);
@@ -122,7 +122,7 @@ module.exports = class Authenticator {
      * @param {*} password
      * @param {*} permissions
      */
-    editAdmin(name, password, permissions){
+    async editAdmin(name, password, permissions){
         //Find admin index
         let username = name.toLowerCase();
         let adminIndex = this.admins.findIndex((user) => {
@@ -132,11 +132,11 @@ module.exports = class Authenticator {
 
         //Editing admin
         if(password) this.admins[adminIndex].password_hash = bcrypt.hashSync(password, 5);
-        this.admins[adminIndex].permissions = permissions
+        if(typeof permissions !== 'undefined') this.admins[adminIndex].permissions = permissions;
 
         //Saving admin file
         try {
-            fs.writeFileSync('data/admins.json', JSON.stringify(this.admins, null, 2), 'utf8');
+            await fs.writeFile('data/admins.json', JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
         } catch (error) {
             if(globals.config.verbose) log(error, context);
@@ -150,7 +150,7 @@ module.exports = class Authenticator {
      * Delete admin and save to the admins file
      * @param {*} name
      */
-    deleteAdmin(name){
+    async deleteAdmin(name){
         //Delete admin
         let username = name.toLowerCase();
         let found = false;
@@ -166,7 +166,7 @@ module.exports = class Authenticator {
 
         //Saving admin file
         try {
-            fs.writeFileSync('data/admins.json', JSON.stringify(this.admins, null, 2), 'utf8');
+            await fs.writeFile('data/admins.json', JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
         } catch (error) {
             if(globals.config.verbose) log(error, context);
@@ -185,7 +185,7 @@ module.exports = class Authenticator {
         let jsonData = null;
 
         try {
-            raw = fs.readFileSync('data/admins.json', 'utf8');
+            raw = await fs.readFile('data/admins.json', 'utf8');
         } catch (error) {
             logError('Unable to load admins. (cannot read file, please read the documentation)', context);
             if(this.admins === null) process.exit();

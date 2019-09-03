@@ -4,14 +4,15 @@ helpers.dependencyChecker();
 
 //Requires
 const os = require('os');
-const fs = require('fs');
+const fs = require('fs-extra');
 const readline = require('readline');
 const { promisify } = require('util');
-const del = require('del');
-const chalk = require('chalk');
+const axios = require("axios");
+const ac = require('ansi-colors');
+ac.enabled = require('color-support').hasBasic;
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 cleanTerminal()
-const context = 'Setup';
+const context = 'SetupScript';
 const printDivider = () => { log('='.repeat(64), context) };
 
 
@@ -191,12 +192,21 @@ if (osType === 'Linux') {
     if (fs.existsSync(profilePath)) {
         try {
             log('Wiping old profile data...', context);
-            const deletedFiles = del.sync(`${profilePath}`);
-            log(`Deleted ${deletedFiles.length} files from ${profilePath}.`, context);
+            await fs.remove(profilePath);
         } catch (error) {
             logError(`Error while wiping cache: ${error.message}`, context);
             dir(error);
         }
+    }
+
+    //Detecting WAN IP
+    try {
+        let wanIP = (await axios.get('https://api.ipify.org?format=json', {timeout: 1000})).data.ip;
+        if(!wanIP) throw new Error('public ip api error')
+        configSkeletal.global.publicIP = wanIP;
+        log(`Public IP detected as ${wanIP}. You can change that in the settings.`, context)
+    } catch (error) {
+        logWarn('Error detecting your public IP. You can change that in the settings.', context)
     }
 
     //Create new profile folder
@@ -223,10 +233,10 @@ if (osType === 'Linux') {
 
     //Printing goodbye :)
     logOk(`Server profile saved in '${profilePath}'`, context);
-    let cmd = chalk.inverse(` node src ${serverProfile} `);
+    let cmd = ac.inverse(` node src ${serverProfile} `);
     logOk(`To start txAdmin with this profile run: ${cmd}`, context);
     if(!isLinux){
-        let cmd2 = chalk.inverse(` ${profilePath}start.bat `);
+        let cmd2 = ac.inverse(` ${profilePath}start.bat `);
         logOk(`You can also execute: ${cmd2}`, context);
     }
     process.exit();

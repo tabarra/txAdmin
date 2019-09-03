@@ -1,5 +1,5 @@
 //Requires
-const fs = require('fs');
+const fs = require('fs-extra');
 const Discord = require('discord.js');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'DiscordBot';
@@ -61,10 +61,14 @@ module.exports = class DiscordBot {
 
         try {
             let chan = this.client.channels.find(x => x.id === this.config.announceChannel);
-            //FIXME: verbosidade caso o chan seja null ou algo assim
+            if(chan === null){
+                logError(`The announcements channel could not be found. Check the ID: ${this.config.announceChannel}`, context);
+                return;
+            }
+
             chan.send(message);
         } catch (error) {
-            logError(`Error sending Discord announcement: ${error.message}`);
+            logError(`Error sending Discord announcement: ${error.message}`, context);
         }
     }//Final sendAnnouncement()
 
@@ -126,6 +130,9 @@ module.exports = class DiscordBot {
                 desc += `**IP:** ${globals.config.publicIP}:${port}\n`;
                 desc += `**Players:** ${players}\n`;
             }
+            //TODO: humanize & localize
+            // let uptime = Math.round(Date.now()/1000) - globals.fxRunner.tsChildStarted;
+            // desc += `**Uptime:** ${uptime} seconds\n`;
 
             //Prepare object
             out = new Discord.RichEmbed();
@@ -182,7 +189,7 @@ module.exports = class DiscordBot {
         let jsonData = null;
 
         try {
-            raw = fs.readFileSync(this.config.messagesFilePath, 'utf8');
+            raw = await fs.readFile(this.config.messagesFilePath, 'utf8');
         } catch (error) {
             logError('Unable to load discord messages. (cannot read file, please read the documentation)', context);
             logError(error.message, context);
@@ -242,5 +249,17 @@ module.exports = class DiscordBot {
     spamLimitRegister(cmd, chan){
         this.spamLimitCache[`${chan}:${cmd}`] = (Date.now() / 1000).toFixed();
     }//Final spamLimitRegister()
+
+
+    //================================================================
+    /**
+     * TEST: fetch user data
+     * @param {string} uid
+     */
+    // async testFetchUser(uid){
+    //     let testUser = await this.client.fetchUser('272800190639898628');
+    //     dir(testUser)
+    //     dir(testUser.avatarURL)
+    // }
 
 } //Fim DiscordBot()

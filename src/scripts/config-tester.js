@@ -10,7 +10,7 @@ const bytes = require('bytes');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 cleanTerminal()
 const printDivider = () =>{log('='.repeat(64))};
-const context = 'ConfigTester';
+const context = 'ConfigTesterScript';
 
 //Print usage info
 printDivider();

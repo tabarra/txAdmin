@@ -1,5 +1,5 @@
 {
-    "version": "1.11.3",
+    "version": "1.12.0",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -93,6 +93,30 @@
         {
             "version": "1.11.3",
             "changelog": "Fixed error 413. Multiple bug fixes and improvements."
+        },
+        {
+            "version": "1.11.4",
+            "changelog": "Optimized txAdmin (40% less dependecies). Improved some pages on Mobile."
+        },
+        {
+            "version": "1.11.5",
+            "changelog": "Added option to change own password."
+        },
+        {
+            "version": "1.11.6",
+            "changelog": "Reorganized some internal files."
+        },
+        {
+            "version": "1.11.7",
+            "changelog": "Process freeze detector."
+        },
+        {
+            "version": "1.11.8",
+            "changelog": "Scripting setup now via exec file instead of stdin.write."
+        },
+        {
+            "version": "1.12.0",
+            "changelog": "New Experimental Ban System!"
         }
     ]
 }

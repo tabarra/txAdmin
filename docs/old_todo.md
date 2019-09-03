@@ -107,3 +107,6 @@ And more...
 - [x] Configurable discord bot static responses. This should be a separate file like the admins one.
 - [x] Improve fxRunner/actions responses. Currently it's only 'Done'.
 - [x] Add a `more info` tab and include some config variables, and the complete PID breakdown
+- [ ] FXServer artifact/build auto updater??? (rejected)
+- [x] Automagically send messages in discord when starting/stopping/restarting the server
+- [x] We have data, we should plot it into a graph...

@@ -1,30 +1,36 @@
-const chalk = require('chalk');
+const ac = require('ansi-colors');
+ac.enabled = require('color-support').hasBasic;
 const header = 'txAdmin';
 
 
 //================================================================
 function log(msg, context=null){
     let tag = (context !== null)? header+':'+context : header;
-    console.log(chalk.bold.bgBlue(`[${tag}]`)+' '+msg);
+    console.log(ac.bold.bgBlue(`[${tag}]`)+' '+msg);
 }
 
 function logOk(msg, context=null){
     let tag = (context !== null)? header+':'+context : header;
-    console.log(chalk.bold.bgGreen(`[${tag}]`)+' '+msg);
+    console.log(ac.bold.bgGreen(`[${tag}]`)+' '+msg);
 }
 
 function logWarn(msg, context=null) {
     let tag = (context !== null)? header+':'+context : header;
-    console.log(chalk.bold.bgYellow(`[${tag}]`)+' '+msg);
+    console.log(ac.bold.bgYellow(`[${tag}]`)+' '+msg);
 }
 
 function logError(msg, context=null) {
     let tag = (context !== null)? header+':'+context : header;
-    console.log(chalk.bold.bgRed(`[${tag}]`)+' '+msg);
+    console.log(ac.bold.bgRed(`[${tag}]`)+' '+msg);
 }
 
 function cleanTerminal(){
-    console.log("\n\n\n\n\n\n\n\n");
+    process.stdout.write(`.\n`.repeat(80) + `\x1B[2J\x1B[H`);
+}
+
+function setTTYTitle(title){
+    title = (title)? `txAdmin: ${title}` : 'txAdmin';
+    process.stdout.write(`\x1B]0;${title}\x07`);
 }
 
 function dir(data){
@@ -38,5 +44,6 @@ module.exports = {
     logWarn,
     logError,
     cleanTerminal,
+    setTTYTitle,
     dir
 }

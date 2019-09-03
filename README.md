@@ -42,6 +42,7 @@
 - (BETA) SSL Support ([more info](docs/ssl_support.md))
 - Translation Support ([more info](docs/translation.md))
 - (BETA) Server Activity Log (connections/disconnections, kills, chat and explosions)
+- (BETA) Ban System
 
 
 ## Installing & Running
@@ -49,8 +50,8 @@
 **Video tutorial:** https://youtu.be/S0tBq7Q8YaQ
 
 **Requirements**:
-- NodeJS v10 LTS (Otherwise you WILL have problems with node-gyp/bcrypt/discord.js)
-- FXServer [(duh)](https://runtime.fivem.net/artifacts/fivem/)
+- NodeJS v10 LTS (or v12)
+- FXServer build 1543+ [(duh)](https://runtime.fivem.net/artifacts/fivem/)
 - One TCP listen port opened for the web server (default is 40120)
 - Git (only for installs and updates)
 
@@ -98,25 +99,28 @@ If you have any problems with `package-lock.json`, just delete it and try again.
 
   
 ## TODO:
+The next major things:
+- [ ] Extension system
+- [ ] Multi-server support
+- [ ] Packaging txAdmin on a self-updating binary file
+- [ ] Ban/Whitelist feature
+
+Minor things:
 - [ ] Reorganize all files/folders
+- [ ] Write a page that is full of small How-To's and link them here.
 - [ ] Write version bumper script
-- [x] Write resource injector
-- [ ] Add custom commands to the config file
-- [x] Config tester check for the modules inside `package.json` (require.resolve?)
-- [ ] Config tester kill spawned fxserver after 5 seconds
-- [ ] Investigate the "fxserver has stopped working" not disappearing when autorestarter kills the server (probably windows detaches it? in that case we would need to PID map and then kill them one by one?)
+- [ ] Config tester kill spawned fxserver after 5 seconds (do people use the config tester?)
+- [ ] Investigate the "fxserver has stopped working" not disappearing when autorestarter kills the server (probably windows detaches it? in that case we would need to PID map and then kill them one by one?) (Note: when this happens, there is a close but not exit event. Or the other way around idk)
 - [ ] Remove `forceFXServerPort`, 10x more complicated than it should be for a feature that probably won't even be used
 
-TODO Ideas...
-- [x] We have data, we should plot it into a graph...
-- [ ] ~~Multiple server support? Technically easy, but would require massive rework of the interface.~~ (This will be solved by linking multiple txAdmin instances via an master control extension)
-- [ ] FXServer artifact/build auto updater???
-- [x] Automagically send messages in discord when starting/stopping/restarting the server
+Ideas:
 - [ ] Discord bot extensions via required js files? Imagine typing `/whitelist @username` and the bot cross referencing the vRP id via the discord:xxx identifier. Or a `/me` giving back this users vRP stats like cars, wallet, bank, apartments & etc.
 - [ ] Add some sort of detection to see if there is a fxserver running outside txAdmin on the same port.
 
 The old TODO can be found [here](docs/old_todo.md). 
+And a less organized TODO/Ideas file can be found [here](dev_roadmap.md). 
 
-## License & Credits
+## License, Credits and Thanks
 - This project is licensed under the [MIT License](https://github.com/tabarra/txAdmin/blob/master/LICENSE).
 - Favicons made by Freepik from [www.flaticon.com](www.flaticon.com) are licensed under [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)
+- Special thanks to everyone that contributed to this project.

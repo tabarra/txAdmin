@@ -106,7 +106,6 @@ module.exports = class ConfigVault {
                 logPath: toDefault(cfg.logger.logPath, null), //not in template
             };
             out.monitor = {
-                interval: toDefault(cfg.monitor.interval, null), //not in template
                 timeout: toDefault(cfg.monitor.timeout, null),
                 restarter: {
                     cooldown: toDefault(cfg.monitor.restarter.cooldown, null), //not in template
@@ -181,7 +180,6 @@ module.exports = class ConfigVault {
             cfg.logger.logPath = cfg.logger.logPath || `${this.serverProfilePath}/logs/admin.log`; //not in template
 
             //Monitor
-            cfg.monitor.interval = parseInt(cfg.monitor.interval) || 1000; //not in template
             cfg.monitor.timeout = parseInt(cfg.monitor.timeout) || 1000;
             cfg.monitor.restarter.cooldown = parseInt(cfg.monitor.restarter.cooldown) || 60; //not in template
             cfg.monitor.restarter.failures = parseInt(cfg.monitor.restarter.failures) || 30;
@@ -210,7 +208,7 @@ module.exports = class ConfigVault {
             cfg.fxRunner.setPriority = cfg.fxRunner.setPriority || "NORMAL";
             cfg.fxRunner.onesync = (cfg.fxRunner.onesync === 'true' || cfg.fxRunner.onesync === true);
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
-            cfg.fxRunner.autostartDelay = parseInt(cfg.webServer.autostartDelay) || 3; //not in template
+            cfg.fxRunner.autostartDelay = parseInt(cfg.webServer.autostartDelay) || 2; //not in template
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
         } catch (error) {
             throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`, error.stack);
