@@ -30,3 +30,9 @@ exports.fxserver = {
     commands: require('./fxserver/commands'),
     controls: require('./fxserver/controls'),
 }
+
+exports.experiments = {
+    bans: {
+        get: require('./experiments/bans/get'),
+    }
+}

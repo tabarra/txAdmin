@@ -83,6 +83,13 @@ module.exports = router = (config) =>{
         });
     });
 
+    //Experiments
+    router.get('/experiments/bans', requestAuth('web'), async (req, res) => {
+        await webRoutes.experiments.bans.get(res, req).catch((err) => {
+            handleRouteError(res, req, 'Experiments-Bans-Get', err);
+        });
+    });
+
 
     //Control routes
     router.get('/console', requestAuth('web'), async (req, res) => {
@@ -112,13 +119,11 @@ module.exports = router = (config) =>{
             handleRouteError(res, req, 'fullStatusReport', err);
         });
     });
-
     router.get('/status', requestAuth('api'), async (req, res) => {
         await webRoutes.status(res, req).catch((err) => {
             handleRouteError(res, req, 'status', err);
         });
     });
-
     router.get('/getPlayerData/:id', requestAuth('api'), async (req, res) => {
         await webRoutes.getPlayerData(res, req).catch((err) => {
             handleRouteError(res, req, 'getPlayerData', err);
