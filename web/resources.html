@@ -22,7 +22,7 @@
 <div class="row justify-content-md-center">
     {{foreach(options.resGroups)}}
     <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-        <div class="card card-accent-primary" id="{{@this.divName}}">
+        <div class="card card-accent-primary" id="resList-card-{{@this.divName}}">
             <div class="card-header" data-toggle="collapse" href="#resList-cardBody-{{@this.divName}}"
                 aria-expanded="true" aria-controls="resList-cardBody-{{@this.divName}}"
                 id="resList-cardHeader-{{@this.divName}}">
@@ -32,7 +32,7 @@
             <div class="card-body collapse show" id="resList-cardBody-{{@this.divName}}"
                 aria-labelledby="resList-cardHeader-{{@this.divName}}">
                 {{each(@this.resources)}}
-                <div class="callout callout-{{@this.statusClass}} b-t-1 b-r-1 b-b-1" id="{{@this.name}}" style="padding-top: 1em;">
+                <div class="callout callout-{{@this.statusClass}} b-t-1 b-r-1 b-b-1" id="res-{{@this.name}}" style="padding-top: 1em;">
                     <strong class="h4" style="word-wrap: break-word;">{{@this.name}}</strong>
                     {{if(@this.status=='started')}}
                     <!-- FIXME: Quick wordaround for the padding problem: -->
@@ -136,16 +136,16 @@
             let hidden = 0;
             folder.resources.forEach(res => {
                 if (res.name.toUpperCase().indexOf(filter) > -1) {
-                    $(`#${res.name}`).show();
+                    $(`#res-${res.name}`).show();
                 } else {
                     hidden++;
-                    $(`#${res.name}`).hide();
+                    $(`#res-${res.name}`).hide();
                 }
             });
             if (folder.resources.length == hidden) {
-                $(`#${folder.divName}`).hide();
+                $(`#resList-card-${folder.divName}`).hide();
             } else {
-                $(`#${folder.divName}`).show();
+                $(`#resList-card-${folder.divName}`).show();
             }
         });
     }
