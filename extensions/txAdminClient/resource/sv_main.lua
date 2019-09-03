@@ -33,6 +33,7 @@ Citizen.CreateThread(function()
     RegisterCommand("txaPing", txaPing, true)
     RegisterCommand("txaKickAll", txaKickAll, true)
     RegisterCommand("txaKickID", txaKickID, true)
+    RegisterCommand("txaKickIdentifier", txaKickIdentifier, true)
     RegisterCommand("txaBroadcast", txaBroadcast, true)
     RegisterCommand("txaSendDM", txaSendDM, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
@@ -42,6 +43,7 @@ Citizen.CreateThread(function()
             Citizen.Wait(3000)
         end
     end)
+    AddEventHandler('playerConnecting', handleConnections)
 end)
 
 
@@ -80,7 +82,7 @@ function txaKickAll(source, args)
 end
 
 
--- Kick specific player
+-- Kick specific player via server ID
 function txaKickID(source, args)
     if args[1] ~= nil then
         if args[2] == nil then
@@ -90,6 +92,29 @@ function txaKickID(source, args)
         DropPlayer(args[1], "Kicked for: " .. args[2])
     else
         print('[txAdminClient] invalid arguments for txaKickID')
+    end
+    CancelEvent()
+end
+
+
+-- Kick specific player via identifier
+function txaKickIdentifier(source, args)
+    if args[1] ~= nil then
+        if args[2] == nil then
+            args[2] = 'no reason provided'
+        end
+        print("[txAdminClient] Kicking "..args[1].." with reason: "..args[2])
+        for _,player in ipairs(GetPlayers()) do
+            local identifiers = GetPlayerIdentifiers(player)
+            for _,id in ipairs(identifiers) do
+                if id == args[1] then
+                    print('[txAdminClient] Player: ' .. GetPlayerName(player) .. ' (' .. id .. ') kicked')
+                    DropPlayer(player, "Kicked for: " .. args[2])
+                end
+            end
+        end
+    else
+        print('[txAdminClient] invalid arguments for txaKickIdentifier')
     end
     CancelEvent()
 end
@@ -164,4 +189,53 @@ function txaReportResources(source, args)
             print("[txAdminClient] ReportResources failed with code "..httpCode.." and message: "..resp)
         end
     end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
+end
+
+
+-- Player connecting handler
+function handleConnections(name, skr, d)
+    local isEnabled = GetConvar("txAdmin-expBanEnabled", "invalid")
+    if isEnabled == "true" then
+        d.defer()
+        local url = "http://localhost:"..apiPort.."/intercom/checkWhitelist"
+        local exData = {
+            txAdminToken = apiToken,
+            identifiers  = GetPlayerIdentifiers(source)
+        }
+
+        --Attempt to validate the user
+        Citizen.CreateThread(function()
+            local attempts = 0
+            local isDone = false;
+            --Do 5 attempts
+            while isDone == false and attempts < 5 do
+                attempts = attempts + 1
+                d.update("Checking whitelist... ("..attempts.."/5)")
+                PerformHttpRequest(url, function(httpCode, data, resultHeaders)
+                    local resp = tostring(data)
+                    if httpCode ~= 200 then
+                        print("[txAdminClient] Checking whitelist failed with code "..httpCode.." and message: "..resp)
+                    elseif data == 'whitelist-ok' then
+                        if not isDone then
+                            d.done()
+                            isDone = true
+                        end
+                    elseif data == 'whitelist-block' then
+                        if not isDone then
+                            d.done('[txAdmin] You are not whitelisted in this server.')
+                            isDone = true
+                        end
+                    end
+                end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
+                Citizen.Wait(2000)
+            end
+
+            --Block client if failed
+            if not isDone then
+                d.done('[txAdmin] Failed to validate your whitelist status. try again later.')
+                isDone = true
+            end
+        end)
+
+    end
 end

@@ -4,6 +4,7 @@ const webUtils = require('./../../webUtils.js');
 const context = 'WebServer:Experiments-Bans-Actions';
 
 //Helper functions
+const escape = (x) => {return x.replace(/\"/g, '\\"');};
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const handleError = async (res, req, error)=>{
     logError(`Database operation failed with error: ${error.message}`, context);
@@ -97,11 +98,12 @@ async function handleExport(res, req) {
  * @param {object} req
  */
 async function handleUnban(res, req) {
+    //Checking request
     if(isUndefined(req.body.identifier)){
         return res.send({type: 'danger', message: 'Invalid request.'});
     }
-
     let identifier = req.body.identifier.trim().toLowerCase();
+
     try {
         let dbo = globals.database.getDB();
         await dbo.get("experiments.bans.banList")
@@ -123,16 +125,17 @@ async function handleUnban(res, req) {
  * @param {object} req
  */
 async function handleBan(res, req) {
+    //Checking request
     if(
         isUndefined(req.body.identifier) ||
         isUndefined(req.body.reason)
     ){
         return res.send({type: 'danger', message: 'Invalid request.'});
     }
-
     let identifier = req.body.identifier.trim().toLowerCase();
     let reason = req.body.reason.trim();
 
+    //Validating ban
     let availableIdentifiers = ['steam', 'license', 'xbl', 'live', 'discord'];
     let isValidIdentifier = availableIdentifiers.some((idType)=>{
         let header = `${idType}:`;
@@ -141,6 +144,10 @@ async function handleBan(res, req) {
     if(!isValidIdentifier){
         return res.send({type: 'danger', message: 'Invalid identifier type.'});
     }
+
+    //Kicking player
+    let cmd = `txaKickIdentifier "${escape(identifier)}" "${escape(reason)}"`
+    await globals.fxRunner.srvCmdBuffer(cmd);
 
     let banData = {
         timestamp: (Date.now() / 1000).toFixed(),
