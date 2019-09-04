@@ -18,8 +18,9 @@
                 still want to proceed, click in the button "Enable Experiment".</span> <br>
             After enabling this experiment a server restart is required. <br>
             You can disable this anytime you want. <br>
-            <a href="/experiments/bans/actions/enable" role="button" class="btn btn-outline-dark mt-3">Enable
-                Experiment</a>
+            <a href="/experiments/bans/actions/enable" role="button" class="btn btn-outline-dark mt-3"
+                onclick="alert('WARNING: YOU MUST RESTART YOUR FXSERVER FOR THIS EXPERIMENT TO WORK!')">
+                Enable Experiment</a>
             {{#else}}
             This is an experiment to test the database engine required for a ban system. <br>
             We cannot guarantee neither its functionality nor the persistence of the database, that's why a ban list
