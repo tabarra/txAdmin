@@ -86,7 +86,7 @@ module.exports = class Translator {
         //NOTE: this "protection" is to incentivize users to modify the git-untracked `locale/custom.json` file.
         // since modifying any other file will result in the user not being able to update txAdmin just by typing `git pull`.
         let langHashes = {
-            cs: 'bb9e29c2f813df128d2526aa4f3b41c509778b9a', //Czech
+            cs: 'ac4c39180ba8d93ef5729be638f8226683abfec2', //Czech
             da: 'f4ed0196724d77e2b3e02a7f5fc5064e174939ff', //Danish
             de: '0afd698733c22dbd78793c861f09faf7bde393b6', //German
             en: '22aa51b1157b6f6fa7f712ddac5a78587084f43c', //English
