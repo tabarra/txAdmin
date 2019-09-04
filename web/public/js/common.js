@@ -161,8 +161,8 @@ $('#modChangePassword-save').click(function () {
     if(data.oldPassword === data.confirmPassword){
         errors.push(`The new password must be different than the old one.`);
     }
-    if(data.newPassword.length < 6 || data.newPassword.length > 32){
-        errors.push(`The new password have between 6 and 32 characters.`);
+    if(data.newPassword.length < 6 || data.newPassword.length > 16){
+        errors.push(`The new password have between 6 and 16 characters.`);
     }
     if(errors.length){
         var notify = $.notify({ message: '<b>Errors:</b><br> - ' + errors.join(' <br>\n - ') }, { type: 'warning' });
