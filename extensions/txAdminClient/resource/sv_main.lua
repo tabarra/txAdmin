@@ -232,7 +232,7 @@ function handleConnections(name, skr, d)
 
             --Block client if failed
             if not isDone then
-                d.done('[txAdmin] Failed to validate your whitelist status. try again later.')
+                d.done('[txAdmin] Failed to validate your whitelist status. Try again later.')
                 isDone = true
             end
         end)
