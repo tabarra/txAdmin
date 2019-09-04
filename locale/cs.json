@@ -2,16 +2,16 @@
     "$label": "Czech",
     "restarter": {
         "crash_detected": "pád detekován",
-        "partial_crash_warn": "Due to a partial crash, this server will restart in 1 minute. Please disconnect now.",
-        "partial_crash_warn_discord": "Due to a partial crash, **%{servername}** will restart in 1 minute.",
+        "partial_crash_warn": "Kvůli částečné havárii dr tento server restartuje za 1 minutu. Prosím odpoje se nyní.",
+        "partial_crash_warn_discord": "Kvůli částečné havárii se **%{servername}** restartuje za 1 minutu.",
         "schedule_reason": "plánovaný restart v %{time}",
         "schedule_warn": "Tento server má naplánovaný restart za %{smart_count} minutu. Prosím odpojte se nyní. |||| Tento server má naplánovaný restart za %{smart_count} minut.",
-        "schedule_warn_discord": "**%{servername}** má naplánovabý restart za %{smart_count} minutu. |||| **%{servername}** má naplánovaný restart za %{smart_count} minut."
+        "schedule_warn_discord": "**%{servername}** má naplánovaný restart za %{smart_count} minutu. |||| **%{servername}** má naplánovaný restart za %{smart_count} minut."
     },
     "server_actions": {
         "restarting": "Restartování serveru (%{reason}).",
         "restarting_discord": "**%{servername}** se restartuje (%{reason}).",
-        "stopping": "Server se vypíný (%{reason}).",
+        "stopping": "Server se vypíná (%{reason}).",
         "stopping_discord": "**%{servername}** se vypíná (%{reason}).",
         "spawning_discord": "**%{servername}** se spouští."
     },
