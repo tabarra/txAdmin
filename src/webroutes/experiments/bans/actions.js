@@ -142,7 +142,7 @@ async function handleBan(res, req) {
         return (identifier.startsWith(header) && identifier.length > header.length);
     })
     if(!isValidIdentifier){
-        return res.send({type: 'danger', message: 'Invalid identifier type.'});
+        return res.send({type: 'danger', message: 'Invalid identifier. Please use the formar "type:id" (example: steam:101010101010101)'});
     }
 
     //Kicking player
