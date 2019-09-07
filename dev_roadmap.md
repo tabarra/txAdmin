@@ -3,27 +3,13 @@ Major stuff:
 - [ ] Check compiling libraries like pkg and nexe.
 - [ ] Check config management libraries (specially 'convict' by Mozilla and nconf)
 - [ ] Auto updater with simple-git/promise
-- [ ] Make a FileWatcher module with chokidar (or something) and clear the `Players online` spam.
+- [ ] Make messages/commands.json via lowdb and remove the `Players online` and `File reloaded` spam.
 
 Medium stuff:
 - [ ] Add "discord client id" in the admin settings, this would enable "/kick @user"
-- [x] Do something in case fxserver's tcp/http endpoint dies for more than 5 minutes
-- [x] Let admins change their password
-- [x] Create a init.cfg for the fxserver to execute containing all txAdmin commands
-- [.] Revert txadminclient cl_logger.js back into lua and fix the mismatch of killer ID
-- [x] Improve server log page 
 
 Minor stuff:
-- [x] Remove del in favour of fs-extra.emptyDir https://github.com/jprichardson/node-fs-extra/blob/master/docs/emptyDir.md
-- [x] Remove figlet (also from the login page)
-- [x] Remove pretty-ms
-- [.] Restart reason add current admin name
-- [.] Add the name of the admin that sent the DMs
-- [.] Add localized uptime to the /status command and review the usage of the dateformat lib
-- [x] Improve CSS of the log pages on mobile, they look too tiny
-- [ ] xxxxxx
-- [ ] xxxxxx
-- [ ] xxxxxx
+- [ ] Hide the verbosity option. People don't fucking read and click on it anyway,
 - [ ] xxxxxx
 
 
@@ -33,6 +19,7 @@ Minor stuff:
     - [ ] Listen for the most common vRP and ESX server events and log them
     - [ ] Divide the interface vertically, and on the right add filter options (HTML/CSS Only)
     - [ ] Make the javascript for hiding events based on the `data-event-type` attribute
+    - [ ] Create a "load more" at the top of the log, for the admin too be able to see older entries.
 - [ ] When restarting the server, add the name of the admin to the chat/discord messages.
 - [ ] When sending a DM as admin, add the name of the admin
 - [ ] Add localized uptime to the /status command and review the usage of the dateformat lib

@@ -70,15 +70,23 @@ let hdTimer = Date.now();
 setInterval(() => {
     let now = Date.now();
     if(now - hdTimer > 1000){
+        let sep = `=`.repeat(64);
         if(process.env.os.toLowerCase().includes('windows')){
-            let sep = `=`.repeat(64);
-            logError(sep);
-            logError(`Major process freeze detected.`);
-            logError(`If using CMD or a 'start.bat' file, make sure to disable QuickEdit mode.`);
-            logError(`Join our discord and type '!quickedit' for instructions.`);
-            logError(sep);
+            let msgLines = [
+                `Major process freeze detected.`,
+                `If using CMD or a 'start.bat' file, make sure to disable QuickEdit mode.`,
+                `Join our Discord and type '!quickedit' for instructions.`,
+            ]
+            globals.dashboardErrorMessage = msgLines.join(`<br>\n`);
+            setTimeout(() => {
+                logError(sep);
+                msgLines.forEach(line => logError(line));
+                logError(sep);
+            }, 1000);
         }else{
-            logError('Major process freeze detected.')
+            logError(sep);
+            logError('Major process freeze detected.');
+            logError(sep);
         }
     }
     hdTimer = now;

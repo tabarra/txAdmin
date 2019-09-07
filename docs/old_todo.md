@@ -1,3 +1,14 @@
+## Around v1.12:
+- [x] Do something in case fxserver's tcp/http endpoint dies for more than 5 minutes
+- [x] Let admins change their password
+- [x] Create a init.cfg for the fxserver to execute containing all txAdmin commands
+- [x] Improve server log page 
+- [x] Remove del in favour of fs-extra.emptyDir https://github.com/jprichardson/node-fs-extra/blob/master/docs/emptyDir.md
+- [x] Remove figlet (also from the login page)
+- [x] Remove pretty-ms
+- [x] Improve CSS of the log pages on mobile, they look too tiny
+
+
 ## Settings Roadmap/TODO:
 > v1.0.5
 - [x] adapt admin-add
