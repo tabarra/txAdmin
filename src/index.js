@@ -69,7 +69,7 @@ const app = new txAdmin(serverProfile);
 let hdTimer = Date.now();
 setInterval(() => {
     let now = Date.now();
-    if(now - hdTimer > 1000){
+    if(now - hdTimer > 2000){
         let sep = `=`.repeat(64);
         if(process.env.os.toLowerCase().includes('windows')){
             let msgLines = [
