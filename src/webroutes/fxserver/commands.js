@@ -20,7 +20,7 @@ module.exports = async function action(res, req) {
     ){
         dir(req.body)
         logWarn('Invalid request!', context);
-        return sendAlertOutput(res, 'Invalid request!');;
+        return sendAlertOutput(res, 'Invalid request!');
     }
     let action = req.body.action;
     let parameter = req.body.parameter;
