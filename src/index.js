@@ -77,7 +77,7 @@ setInterval(() => {
                 `If using CMD or a 'start.bat' file, make sure to disable QuickEdit mode.`,
                 `Join our Discord and type '!quickedit' for instructions.`,
             ]
-            globals.dashboardErrorMessage = msgLines.join(`<br>\n`);
+            // globals.dashboardErrorMessage = msgLines.join(`<br>\n`);
             setTimeout(() => {
                 logError(sep);
                 msgLines.forEach(line => logError(line));

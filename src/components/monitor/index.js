@@ -199,7 +199,7 @@ module.exports = class Monitor {
         //Count failure
         this.failCounter++;
         this.timeSeries.add(0);
-        if(globals.config.verbose || this.failCounter > 5){
+        if(globals.config.verbose || this.failCounter > 10){
             logWarn(`(${this.failCounter}/${this.config.restarter.failures}) HealthCheck request error: ${errorMessage}`, context);
         }
 
