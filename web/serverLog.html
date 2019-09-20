@@ -2,18 +2,19 @@
 
 
 <style>
-    .pre-log-content{
-        height: calc(100vh - 326px); /* -251px */
+    .pre-log-content {
+        height: calc(100vh - 326px);
+        /* -251px */
         margin-bottom: 0;
     }
 
-    .event-source{
+    .event-source {
         font-weight: 700 !important;
         text-decoration: none !important;
     }
 
     /* Experimental */
-    .highlight-player{
+    .highlight-player {
         background-color: #ffeaa7;
         color: rgb(27, 27, 27) !important;
     }
@@ -22,12 +23,21 @@
 
 <div class="text-center" style="margin-bottom: 5px">
     <h3>Server Log <span class="badge badge-light">BETA</span></h3>
-    <span><strong>Note:</strong> This feature  is still in beta and works best on fxserver build 1543 or newer. <br>
+    <span><strong>Note:</strong> This feature is still in beta and works best on fxserver build 1543 or newer. <br>
         If you have any problems with it report it in out forum thread or discord server.</span> <br>
     <span><strong>Note2:</strong> Due to the way vRP works, the death reasons are not available.</span>
 </div>
-<div class="card border-primary">
-    <div class="card-body">
+<div class="card border-primary server-log">
+    <div class="card-body filters">
+        <select class="list-group" id="filterSelect" multiple>
+            <option selected="selected">Cras justo odio</option>
+            <option selected="selected">Dapibus ac facilisis in</option>
+            <option selected="selected">Morbi leo risus</option>
+            <option selected="selected">Porta ac consectetur ac</option>
+            <option selected="selected">Vestibulum at eros</option>
+        </select>
+    </div>
+    <div class="card-body console">
         <pre id="console" class="pre-scroll pre-log-content">{{log|safe}}</pre>
     </div>
 </div>
@@ -45,15 +55,15 @@
     setInterval(getNewData, 5000);
 
     var currOffset = '{{offset}}';
-    function getNewData(){
+    function getNewData() {
         $.ajax({
             type: "GET",
             url: `/serverLog?offset=${currOffset}`,
             timeout: 2000,
             success: function (data) {
                 //FIXME: temporary before database
-                if(typeof data.offset !== 'undefined') currOffset = data.offset;
-                if(typeof data.log !== 'undefined' && data.log !== false && data.log.length){
+                if (typeof data.offset !== 'undefined') currOffset = data.offset;
+                if (typeof data.log !== 'undefined' && data.log !== false && data.log.length) {
                     $("#console").append(data.log);
                     scrollToBottom();
                     setupHovers();
@@ -65,17 +75,17 @@
         });
     }
 
-    function scrollToBottom(){
+    function scrollToBottom() {
         try {
             $("#console").scrollTop($("#console")[0].scrollHeight);
-        } catch (error) {}
+        } catch (error) { }
     }
 
     //Player name click function
-    function setupHovers(){
-        $('.event-source').click(function(e){
+    function setupHovers() {
+        $('.event-source').click(function (e) {
             let ids = $(this).data('player-identifiers');
-            if(!ids) return;
+            if (!ids) return;
             let name = $(this).data('player-name') || 'unknown';
 
             $("#modPlayerInfoTitle").html(name);
