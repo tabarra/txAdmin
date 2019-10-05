@@ -1,10 +1,10 @@
 //Requires
 const { spawn } = require('child_process');
-const os = require('os');
 const fs = require('fs-extra');
+const os = require('os');
 const path = require('path');
-const pidtree = require('pidtree');
 const sleep = require('util').promisify(setTimeout);
+const pidtree = require('pidtree');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const helpers = require('../../extras/helpers');
 const resourceInjector = require('./resourceInjector');
@@ -73,6 +73,7 @@ module.exports = class FXRunner {
     /**
      * Spawns the FXServer and sets up all the event handlers
      * @param {boolean} announce
+     * @returns {string} null or error message
      */
     async spawnServer(announce){
         log("Starting FXServer", context);
@@ -82,8 +83,7 @@ module.exports = class FXRunner {
             typeof this.spawnVariables.shell == 'undefined' ||
             typeof this.spawnVariables.cmdArgs == 'undefined'
         ){
-            logError('this.spawnVariables is not set.', context);
-            return false;
+            return logError('this.spawnVariables is not set.', context);
         }
         //If the any FXServer configuration is missing
         if(
@@ -91,13 +91,11 @@ module.exports = class FXRunner {
             this.config.basePath === null ||
             this.config.cfgPath === null
         ){
-            logError('Cannot start the server with missing configuration (buildPath || basePath || cfgPath).', context);
-            return false;
+            return logError('Cannot start the server with missing configuration (buildPath || basePath || cfgPath).', context);
         }
         //If the server is already alive
         if(this.fxChild !== null){
-            logError('The server is already started.', context);
-            return false;
+            return logError('The server is already started.', context);
         }
 
         //Refresh resource cache
@@ -105,20 +103,32 @@ module.exports = class FXRunner {
 
         //Write tmp exec file
         let execFilePath = await this.writeExecFile(false, true);
-        if(!execFilePath) return false;
+        if(!execFilePath) return logError('Failed to write exec file. Check terminal.', context);
 
         //Detecting endpoint port
         try {
             let rawCfgFile = helpers.getCFGFile(this.config.cfgPath, this.config.basePath);
             this.fxServerPort = helpers.getFXServerPort(rawCfgFile);
         } catch (error) {
-            logError(`FXServer config error: ${error.message}`, context);
+            let errMsg =  logError(`FXServer config error: ${error.message}`, context);
             //the IF below is only a way to disable the endpoint check
             if(globals.config.forceFXServerPort){
                 this.fxServerPort = globals.config.forceFXServerPort;
             }else{
-                return false;
+                return errMsg;
             }
+        }
+
+        //Check if the port is not busy
+        try {
+            let portCheck = await helpers.isPortAvailable(this.fxServerPort, 150);
+            if(!portCheck){
+                return logError(`The port ${this.fxServerPort} is busy. Make sure there are no fxserver running outside txAdmin.`, context);
+            }
+        } catch (error) {
+            let errMsg = logError(`Failed to check port status, proceeding anyway.`, context);
+            if(globals.config.verbose) dir(error);
+            return errMsg;
         }
 
         //Sending header to the console buffer
@@ -180,6 +190,8 @@ module.exports = class FXRunner {
         setTimeout(() => {
             this.setProcPriority();
         }, 2500);
+
+        return null;
     }//Final spawnServer()
 
 
@@ -306,11 +318,11 @@ module.exports = class FXRunner {
             //Restart server
             this.killServer();
             await sleep(750);
-            this.spawnServer();
+            return this.spawnServer();
         } catch (error) {
-            logError("Couldn't restart the server.", context);
+            let errMsg = logError("Couldn't restart the server.", context);
             if(globals.config.verbose) dir(error);
-            return false;
+            return errMsg;
         }
     }
 

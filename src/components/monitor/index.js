@@ -1,7 +1,6 @@
 //Requires
 const axios = require("axios");
 const bigInt = require("big-integer");
-const sleep = require('util').promisify(setTimeout);
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const helpers = require('../../extras/helpers');
 const HostCPUStatus = require('./hostCPUStatus');
