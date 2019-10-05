@@ -21,6 +21,11 @@ exports.adminManager = {
     actions: require('./adminManager/actions'),
 }
 
+exports.cfgEditor = {
+    get: require('./cfgEditor/get'),
+    save: require('./cfgEditor/save'),
+}
+
 exports.settings = {
     get: require('./settings/get'),
     save: require('./settings/save'),

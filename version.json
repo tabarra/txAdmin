@@ -1,5 +1,5 @@
 {
-    "version": "1.12.1",
+    "version": "1.13.0-dev",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -121,6 +121,10 @@
         {
             "version": "1.12.1",
             "changelog": "Quickfix: solved empty list issue with ban system"
+        },
+        {
+            "version": "1.13.0-dev",
+            "changelog": "NOTE: to do"
         }
     ]
 }
