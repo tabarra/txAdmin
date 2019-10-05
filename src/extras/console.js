@@ -7,21 +7,25 @@ const header = 'txAdmin';
 function log(msg, context=null){
     let tag = (context !== null)? header+':'+context : header;
     console.log(ac.bold.bgBlue(`[${tag}]`)+' '+msg);
+    return `[INFO][${tag}] ${msg}`;
 }
 
 function logOk(msg, context=null){
     let tag = (context !== null)? header+':'+context : header;
     console.log(ac.bold.bgGreen(`[${tag}]`)+' '+msg);
+    return `[OK][${tag}] ${msg}`;
 }
 
 function logWarn(msg, context=null) {
     let tag = (context !== null)? header+':'+context : header;
     console.log(ac.bold.bgYellow(`[${tag}]`)+' '+msg);
+    return `[WARN][${tag}] ${msg}`;
 }
 
 function logError(msg, context=null) {
     let tag = (context !== null)? header+':'+context : header;
     console.log(ac.bold.bgRed(`[${tag}]`)+' '+msg);
+    return `[ERROR][${tag}] ${msg}`;
 }
 
 function cleanTerminal(){

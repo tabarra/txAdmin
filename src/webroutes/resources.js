@@ -49,7 +49,12 @@ module.exports = async function action(res, req) {
     //Send command request
     let cmdSuccess = globals.fxRunner.srvCmd(`txaReportResources`);
     if(!cmdSuccess){
-        let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `Couldn't load the resources list. Make sure the server is online.`});
+        let message = `Couldn't load the resources list. <br>
+        - Make sure the server is online. <br>
+        - Make sure your fxserver is build/artifact 1550 or above. <br>
+        - Make sure you are not running the fxserver outside txAdmin.`;
+
+        let out = await webUtils.renderMasterView('basic/generic', req.session, {message});
         return res.send(out);
     }
 
@@ -81,7 +86,12 @@ module.exports = async function action(res, req) {
             clearInterval(intHandle);
             logWarn('the future is now, old man', context);
             try {
-                let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `Couldn't load the resources list. Make sure the server is online and txAdminClient is running.`});
+                let message = `Couldn't load the resources list. <br>
+                    - Make sure the server is online. <br>
+                    - Make sure your fxserver is build/artifact 1550 or above. <br>
+                    - Make sure you are not running the fxserver outside txAdmin.`;
+
+                let out = await webUtils.renderMasterView('basic/generic', req.session, {message});
                 return res.send(out);
             } catch (error) {logError(error, context)}
         }

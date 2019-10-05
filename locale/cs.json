@@ -1,5 +1,8 @@
 {
-    "$label": "Czech",
+    "$meta": {
+        "label": "Czech",
+        "humanizer_language": "cs"
+    },
     "restarter": {
         "crash_detected": "pád detekován",
         "partial_crash_warn": "Kvůli částečné havárii dr tento server restartuje za 1 minutu. Prosím odpoje se nyní.",

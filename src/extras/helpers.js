@@ -1,5 +1,6 @@
 //Requires
 const fs = require('fs');
+const net = require('net');
 
 
 //================================================================
@@ -166,6 +167,33 @@ function getFXServerPort(rawCfgFile) {
 }
 
 
+//================================================================
+/**
+ * Checks if a localhost port is available
+ * @param {*} port
+ * @param {*} timeout
+ */
+function isPortAvailable(port, timeout) {
+    if(typeof timeout === 'undefined') timeout = 150;
+
+    return new Promise(function(resolve, reject) {
+        let timer = setTimeout(function() {
+            socket.end();
+            resolve(true);
+        }, timeout);
+        let socket = net.createConnection(port, '127.0.0.1', function() {
+            clearTimeout(timer);
+            socket.end();
+            resolve(false);
+        });
+        socket.on('error', function(err) {
+            clearTimeout(timer);
+            socket.end();
+            reject(err);
+        });
+    });
+}
+
 
 
 module.exports = {
@@ -174,4 +202,5 @@ module.exports = {
     parseSchedule,
     getCFGFile,
     getFXServerPort,
+    isPortAvailable,
 }

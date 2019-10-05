@@ -119,7 +119,7 @@ module.exports = router = (config) =>{
             handleRouteError(res, req, 'serverLog', err);
         });
     });
-    router.get('/fullReport', requestAuth('web'), async (req, res) => {
+    router.get('/diagnostics', requestAuth('web'), async (req, res) => {
         await webRoutes.fullStatusReport(res, req).catch((err) => {
             handleRouteError(res, req, 'fullStatusReport', err);
         });

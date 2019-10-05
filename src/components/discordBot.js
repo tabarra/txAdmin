@@ -3,6 +3,7 @@ const fs = require('fs-extra');
 const Discord = require('discord.js');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'DiscordBot';
+const humanizeDuration = require('humanize-duration');
 
 
 module.exports = class DiscordBot {
@@ -130,9 +131,15 @@ module.exports = class DiscordBot {
                 desc += `**IP:** ${globals.config.publicIP}:${port}\n`;
                 desc += `**Players:** ${players}\n`;
             }
-            //TODO: humanize & localize
-            // let uptime = Math.round(Date.now()/1000) - globals.fxRunner.tsChildStarted;
-            // desc += `**Uptime:** ${uptime} seconds\n`;
+            let elapsed = Math.round(Date.now()/1000) - globals.fxRunner.tsChildStarted; //seconds
+            let humanizeOptions = {
+                language: globals.translator.t('$meta.humanizer_language'),
+                round: true,
+                units: ['d', 'h', 'm', 's'],
+                fallbacks: ['en']
+            }
+            let uptime = humanizeDuration(elapsed*1000, humanizeOptions);
+            desc += `**Uptime:** ${uptime} \n`;
 
             //Prepare object
             out = new Discord.RichEmbed();
