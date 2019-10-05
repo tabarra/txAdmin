@@ -141,7 +141,7 @@ module.exports = class Monitor {
                 );
             }else if(action.messages){
                 globals.discordBot.sendAnnouncement(action.messages.discord);
-                globals.fxRunner.srvCmd(`txaBroadcast "${action.messages.chat}"`);
+                globals.fxRunner.srvCmd(`txaBroadcast "txAdmin" "${action.messages.chat}"`);
             }
         } catch (error) {}
     }
@@ -219,7 +219,7 @@ module.exports = class Monitor {
                 }
                 globals.discordBot.sendAnnouncement(globals.translator.t('restarter.partial_crash_warn_discord', tOptions));
                 let chatMsg = globals.translator.t('restarter.partial_crash_warn')
-                globals.fxRunner.srvCmd(`txaBroadcast "${chatMsg}"`);
+                globals.fxRunner.srvCmd(`txaBroadcast "txAdmin" "${chatMsg}"`);
             }else if(this.failCounter === 60*5){ //after 5 minutes
                 this.restartFXServer(
                     'partial crash detected',

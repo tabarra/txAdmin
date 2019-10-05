@@ -27,7 +27,7 @@ module.exports = async function action(res, req) {
 
     if(action == 'restart'){
         webUtils.appendLog(req, `RESTART SERVER`, context);
-        await globals.fxRunner.restartServer('admin');
+        await globals.fxRunner.restartServer(req.session.auth.username);
         return res.send({type: 'warning', message: 'Restarting server...'});
 
     }else if(action == 'stop'){
@@ -35,7 +35,7 @@ module.exports = async function action(res, req) {
             return res.send({type: 'danger', message: 'The server is already stopped.'});
         }
         webUtils.appendLog(req, `STOP SERVER`, context);
-        await globals.fxRunner.killServer('admin');
+        await globals.fxRunner.killServer(req.session.auth.username);
         return res.send({type: 'warning', message: 'Server stopped.'});
 
     }else if(action == 'start'){

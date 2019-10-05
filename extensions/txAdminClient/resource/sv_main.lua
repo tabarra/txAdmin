@@ -122,16 +122,16 @@ end
 
 -- Broadcast admin message to all players
 function txaBroadcast(source, args)
-    if args[1] ~= nil then
-        print("[txAdminClient] Admin Broadcast: "..args[1])
+    if args[1] ~= nil and args[2] ~= nil then
+        print("[txAdminClient] Admin Broadcast - "..args[1]..": "..args[2])
         TriggerClientEvent("chat:addMessage", -1, {
             args = {
-                "Admin",
-                args[1]
+                "(Broadcast) "..args[1],
+                args[2],
             },
             color = {255, 0, 0}
         })
-        TriggerEvent('chatMessage', -1, 'txAdminClient', args[1])
+        TriggerEvent('chatMessage', -1, "(Broadcast) "..args[1], args[2])
     else
         print('[txAdminClient] invalid arguments for txaBroadcast')
     end
@@ -141,16 +141,21 @@ end
 
 -- Send admin direct message to specific player
 function txaSendDM(source, args)
-    if args[1] ~= nil and args[2] ~= nil then
-        print("[txAdminClient] Admin DM to #"..args[1]..": "..args[2])
-        TriggerClientEvent("chat:addMessage", args[1], {
-            args = {
-                "Admin Direct Message",
-                args[2]
-            },
-            color = {255, 0, 0}
-        })
-        -- TODO: TriggerEvent chatMessage to log admin DMs
+    if args[1] ~= nil and args[2] ~= nil and args[3] ~= nil then
+        local pName = GetPlayerName(args[1])
+        if pName ~= nil then
+            print("[txAdminClient] Admin DM to "..pName.." from "..args[2]..": "..args[3])
+            TriggerClientEvent("chat:addMessage", args[1], {
+                args = {
+                    "(DM) "..args[2],
+                    args[3],
+                },
+                color = {255, 0, 0}
+            })
+            TriggerEvent('chatMessage', -1, "(DM) "..args[2], args[3])
+        else
+            print('[txAdminClient] txaSendDM: player not found')
+        end
     else
         print('[txAdminClient] invalid arguments for txaSendDM')
     end
