@@ -13,6 +13,7 @@ const context = 'WebServer:CFGEditor-Get';
  * @param {object} req
  */
 module.exports = async function action(res, req) {
+    //HACK add authentication here
     //Check if file is set
     if(globals.fxRunner.config.cfgPath === null){
         let message = `Your CFG Path is not set. Configure it in the settings page first.`
@@ -23,15 +24,13 @@ module.exports = async function action(res, req) {
     //Read cfg file
     let rawFile;
     try {
-        rawFile = helpers.getCFGFile(globals.fxRunner.config.cfgPath+'sdf', globals.fxRunner.config.basePath);
+        rawFile = helpers.getCFGFile(globals.fxRunner.config.cfgPath, globals.fxRunner.config.basePath);
     } catch (error) {
         let message = `Failed to read CFG File with error: ${error.message}`;
         let out = await webUtils.renderMasterView('basic/generic', req.session, {message});
         return res.send(out);
     }
-
-    //Give output
-    //TODO: Yannick, edit from here
-    let out = await webUtils.renderMasterView('basic/generic', req.session, {message : rawFile});
+    
+    let out = await webUtils.renderMasterView('cfgEditor', req.session, {rawFile});
     return res.send(out);
 };
