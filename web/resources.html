@@ -15,11 +15,16 @@
                 </button>
                 <input class="form-control" type="text" name="resource" id="resourceInput" onkeyup="findResource()"
                     placeholder="Find resource by name..." style="margin-top: 1em;">
-                <label class="switch switch-success">
-                    <input type="checkbox" id="defResCheckbox" class="switch-input">
-                    <span style="margin-top: 1em;" class="switch-slider"></span>
-                </label>
-                <label>Display default resources</label>
+                <div class="row justify-content-md-center">
+                    <span class="form-text text-muted" style="margin-top: calc(0.3rem + 3px)">
+                        Default resources:
+                    </span>
+                    &nbsp;&nbsp;
+                    <label class="switch switch-label switch-pill switch-success fix-pill-form">
+                        <input type="checkbox" id="defResCheckbox" class="switch-input">
+                        <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
+                    </label>
+                </div>
             </div>
         </div>
     </div>
@@ -138,7 +143,7 @@
     })
 
 
-    //EXECUTE button handler
+    //============================================== Refresh button
     function btnCommand(action, parameter) {
         var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
@@ -148,9 +153,6 @@
             data: { action, parameter },
             success: function (data) {
                 window.location.reload(true);
-                // notify.update('progress', 0);
-                // notify.update('type', data.type);
-                // notify.update('message', data.message);
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);
@@ -160,6 +162,7 @@
         });
     }
 
+    //============================================== Search function
     function findResource() {
         var input, filter;
         input = document.getElementById("resourceInput");
@@ -183,10 +186,7 @@
         });
     }
 
-    $(function () {
-        hideDefaultResources();
-    });
-
+    //============================================== Hide defaults
     $('#defResCheckbox').click(function () {
         hideDefaultResources();
     });
@@ -219,4 +219,8 @@
             }
         });
     }
+
+    $(function () {
+        hideDefaultResources();
+    });
 </script>
