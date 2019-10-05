@@ -87,19 +87,19 @@ module.exports = class Translator {
         // since modifying any other file will result in the user not being able to update txAdmin just by typing `git pull`.
         // Also, to generate this list run the handy dandy `src/scripts/hash-locale.js`
         let langHashes = {
-            cs: 'ac4c39180ba8d93ef5729be638f8226683abfec2', //Czech
-            da: 'f4ed0196724d77e2b3e02a7f5fc5064e174939ff', //Danish
-            de: '0afd698733c22dbd78793c861f09faf7bde393b6', //German
-            en: '22aa51b1157b6f6fa7f712ddac5a78587084f43c', //English
-            es: '6703e2293338888fd485325e03c979325328d461', //Spanish
-            fr: '87e710bfc0cca31f7159a736b4c74d49c9c1f6f9', //French
-            hu: '0cc944270bc6ea924faa4900dccde33d2651bb7f', //Hungarian
-            nl: '4b3269c8b8644dad0f17ac3b5f1a8986590358c2', //Dutch
-            pl: '7b54962c37b3f8befc7dcfab10c5a5c93b9e505f', //Polish
-            pt_BR: '39136e5996e6ff4b6090c4e0a5759f21dc3c56d2', //Portuguese (Brazil)
-            ro: '7cb38638a83349485bb0c2389f35adc7ec168b24', //Romanian
-            th: '063e85d6d494200cd287dc78965420df2057e5e1', //Thai
-            zh: 'dd93a6fe7bfbbcdf99c2d239fc9be25b409a5a83', //Chinese
+            cs: '7b8d67e0344fdeda521c6f61b4f941207b229a36', //Czech
+            da: '75d9dc164b34bf93348cdc88841b73a17b86f901', //Danish
+            de: 'd884dcf95e5af94b8132cb0ebb9f8b2dc4e23347', //German
+            en: '830a8fc8963c3144715e887d1e3b93ce9b7ca2c2', //English
+            es: 'eca44993f43dcdd265bfc476c5abc368f222e051', //Spanish
+            fr: 'eee8f40e27945125cb4684863546f2143f572d24', //French
+            hu: 'c7e3b779a88447e0db8ca08b64ec633368bc1196', //Hungarian
+            nl: '4be7a53b05922a2ec61faa1556ad1095957e9793', //Dutch
+            pl: 'a11082bc58b405302f4581dd472ddc9d0e4254ba', //Polish
+            pt_BR: 'c1f29814b2639e35c142f1e9417cb0216a6a6bac', //Portuguese (Brazil)
+            ro: 'b1563a06793ac3177391a3d35070f1a7d83e077a', //Romanian
+            th: '0c7b70ee1db9fc8eafbb73b2c2e30db0e181cf10', //Thai
+            zh: 'ce1d259f097bd047ad3ce5a2b5a1d675b5efe3d3', //Chinese
         }
         let hash = null;
         try {

@@ -20,7 +20,7 @@ const context = 'HashLocale';
             let langData = JSON.parse(raw);
             let toHash = JSON.stringify(langData);
             hash = crypto.createHash('SHA1').update(toHash).digest("hex");
-            label = (typeof langData['$label'] !== 'undefined')? langData['$label'] : fileName;
+            label = (typeof langData['$meta'].label !== 'undefined')? langData['$meta'].label: fileName;
             out.push(`${lang}: '${hash}', //${label}`);
         } catch (error) {
             logError(`Couldn't hash file ${fileName}`, context);

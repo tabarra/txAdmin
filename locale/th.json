@@ -1,5 +1,8 @@
 {
-    "$label": "Thai",
+    "$meta": {
+        "label": "Thai",
+        "humanizer_language": "th"
+    },
     "restarter": {
         "crash_detected": "ตรวจพบข้อผิดพลาด",
         "partial_crash_warn": "เนื่องจากความผิดพลาดบางส่วน เซิร์ฟเวอร์จะรีสตาร์ทใน 1 นาที โปรดยกเลิกการเชื่อมต่อทันที",
