@@ -132,8 +132,8 @@ module.exports = router = (config) =>{
         });
     });
     router.get('/diagnostics', requestAuth('web'), async (req, res) => {
-        await webRoutes.fullStatusReport(res, req).catch((err) => {
-            handleRouteError(res, req, 'fullStatusReport', err);
+        await webRoutes.diagnostics(res, req).catch((err) => {
+            handleRouteError(res, req, 'diagnostics', err);
         });
     });
     router.get('/status', requestAuth('api'), async (req, res) => {

@@ -6,7 +6,7 @@ const pidusageTree = require('pidusage-tree');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('./webUtils.js');
 const Cache = require('../extras/dataCache');
-const context = 'WebServer:FullStatusReport';
+const context = 'WebServer:Diagnostics';
 
 let cache = new Cache(10);
 
