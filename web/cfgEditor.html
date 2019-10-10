@@ -52,22 +52,23 @@
 
     //============================================== Save action
     $('#cfgEditor-save').click(function () {
+        let cfgData = window.editor_markdown.getValue();
+        if(cfgData.length < 1024){
+            var notify = $.notify({ message: `Your CFG file is too small, there is a good chance you deleted something you shouldn't.` }, { type: 'warning' });
+            return;
+        }
         var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
         $.ajax({
             type: "POST",
             url: '/cfgEditor/save',
             timeout: 2000,
-            data: window.editor_markdown.getValue(),
-            dataType: 'text',
+            data: {cfgData},
+            dataType: 'json',
             success: function (data) {
-                if (data.refresh === true) {
-                    window.location.reload(true);
-                } else {
-                    notify.update('progress', 0);
-                    notify.update('type', data.type);
-                    notify.update('message', data.message);
-                }
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);

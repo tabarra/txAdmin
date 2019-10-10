@@ -130,7 +130,7 @@ function getWebViewPath(view){
  * @param {string} data
  */
 function appendLog(req, data, context){
-    log(`Executing ${data}`, context);
+    log(`Executing "${data}"`, context);
     globals.logger.append(`[${req.connection.remoteAddress}][${req.session.auth.username}] ${data}`);
 }
 

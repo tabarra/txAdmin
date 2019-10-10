@@ -23,6 +23,7 @@ module.exports = class Authenticator {
             "commands.custom",
             "console.view",
             "console.write",
+            "server.cfg.editor",
         ];
         this.refreshAdmins();
 
