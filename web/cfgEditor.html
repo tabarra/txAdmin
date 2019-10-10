@@ -1,0 +1,61 @@
+{{include("header")/}}
+
+
+<div class="text-center mb-4">
+  <h2>Server Config File Editor</h2>
+</div>
+
+<div class="row justify-content-md-center">
+  <div class="col-lg-12 col-xl-10">
+    <textarea id="code-markdown" style="height: calc(100vh - 348px);" name="code">{{rawFile}}</textarea>
+  </div>
+</div>
+
+<div class="row justify-content-md-center" style="margin-top: 1em;">
+    <div class="mx-auto">
+      <button type="button" id="cfgEditor-save" class="btn btn-outline-dark btn-sm mb-2">Save config file</button>
+    </div>
+</div>
+
+{{include("footer")/}}
+
+<script>
+  window.onload = function () {
+    var te_markdown = document.getElementById("code-markdown");
+
+    window.editor_markdown = CodeMirror.fromTextArea(te_markdown, {
+      mode: "markdown",
+      lineNumbers: true,
+      lineWrapping: true,
+      extraKeys: { "Ctrl-Q": function (cm) { cm.foldCode(cm.getCursor()); } },
+      foldGutter: true,
+      gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+    });
+  };
+
+  $('#cfgEditor-save').click(function () {
+    var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+
+    $.ajax({
+      type: "POST",
+      url: '/cfgEditor/save',
+      timeout: 2000,
+      data: window.editor_markdown.getValue(),
+      dataType: 'text',
+      success: function (data) {
+        if (data.refresh === true) {
+          window.location.reload(true);
+        } else {
+          notify.update('progress', 0);
+          notify.update('type', data.type);
+          notify.update('message', data.message);
+        }
+      },
+      error: function (xmlhttprequest, textstatus, message) {
+        notify.update('progress', 0);
+        notify.update('type', 'danger');
+        notify.update('message', message);
+      }
+    });
+  });
+</script>
