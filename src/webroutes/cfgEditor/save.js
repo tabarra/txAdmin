@@ -2,8 +2,9 @@
 const fs = require('fs');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const webUtils = require('./../webUtils.js');
-const context = 'WebServer:CFGEditor-Save';
 const helpers = require('../../extras/helpers');
+const context = 'WebServer:CFGEditor-Save';
+
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
