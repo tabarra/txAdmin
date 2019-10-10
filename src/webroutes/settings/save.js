@@ -163,7 +163,8 @@ function handleFXServer(res, req) {
 
     //Validating CFG Path
     try {
-        let rawCfgFile = helpers.getCFGFile(cfg.cfgPath, cfg.basePath);
+        let cfgFilePath = helpers.resolveCFGFilePath(cfg.cfgPath, cfg.basePath);
+        let rawCfgFile = helpers.getCFGFileData(cfgFilePath);
         let port = helpers.getFXServerPort(rawCfgFile);
     } catch (error) {
         return res.send({type: 'danger', message: `<strong>CFG Path error:</strong> ${error.message}`});

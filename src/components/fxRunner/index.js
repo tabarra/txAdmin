@@ -107,7 +107,8 @@ module.exports = class FXRunner {
 
         //Detecting endpoint port
         try {
-            let rawCfgFile = helpers.getCFGFile(this.config.cfgPath, this.config.basePath);
+            let cfgFilePath = helpers.resolveCFGFilePath(this.config.cfgPath, this.config.basePath);
+            let rawCfgFile = helpers.getCFGFileData(cfgFilePath);
             this.fxServerPort = helpers.getFXServerPort(rawCfgFile);
         } catch (error) {
             let errMsg =  logError(`FXServer config error: ${error.message}`, context);

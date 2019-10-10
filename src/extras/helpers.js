@@ -1,6 +1,7 @@
 //Requires
 const fs = require('fs');
 const net = require('net');
+const path = require('path');
 
 
 //================================================================
@@ -88,32 +89,42 @@ function parseSchedule(schedule, filter) {
 //================================================================
 /**
  * Reads CFG Path and return the file contents, or throw error if:
- *  - the path is not valid (absolute or relative)
+ *  - the path is not valid (must be absolute)
  *  - cannot read the file data
- * @param {string} cfgPath
- * @param {string} basePath
+ * @param {string} cfgFullPath
  */
-function getCFGFile(cfgPath, basePath) {
-    let validCfgPath;
-    let rawCfgFile;
-    let cfgPathAbsoluteTest = fs.existsSync(cfgPath);
-    let cfgPathRelativeTest = fs.existsSync(`${basePath}/${cfgPath}`);
-    if(cfgPathAbsoluteTest || cfgPathRelativeTest){
-        validCfgPath = (cfgPathAbsoluteTest)? cfgPath : `${basePath}/${cfgPath}`;
-    }else{
+function getCFGFileData(cfgPath) {
+    //Validating if the path is absolute
+    if(!path.isAbsolute(cfgPath)){
+        throw new Error("File path must be absolute.");
+    }
+
+    //Validating file existence
+    if(!fs.existsSync(cfgPath)){
         if(cfgPath.includes('cfg')){
             throw new Error("File doesn't exist or its unreadable.");
         }else{
             throw new Error("File doesn't exist or its unreadable. Make sure to include the CFG file in the path, and not just the directory that contains it.");
         }
     }
+
+    //Reading file
     try {
-        rawCfgFile = fs.readFileSync(validCfgPath).toString();
+        return fs.readFileSync(cfgPath).toString();
     } catch (error) {
         throw new Error("Cannot read CFG Path file.");
     }
+}
 
-    return rawCfgFile;
+
+//================================================================
+/**
+ * Returns the absolute path of the given CFG Path
+ * @param {string} cfgPath
+ * @param {string} basePath
+ */
+function resolveCFGFilePath(cfgPath, basePath) {
+    return (path.isAbsolute(cfgPath))? cfgPath : path.resolve(basePath, cfgPath);
 }
 
 
@@ -200,7 +211,8 @@ module.exports = {
     txAdminASCII,
     dependencyChecker,
     parseSchedule,
-    getCFGFile,
+    getCFGFileData,
+    resolveCFGFilePath,
     getFXServerPort,
     isPortAvailable,
 }
