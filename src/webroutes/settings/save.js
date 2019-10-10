@@ -133,6 +133,15 @@ function handleFXServer(res, req) {
         quiet: (req.body.quiet === 'true'),
     }
 
+    //Validating path spaces
+    if(
+        cfg.buildPath.includes(' ') ||
+        cfg.basePath.includes(' ') ||
+        cfg.cfgPath.includes(' ')
+    ){
+        return res.send({type: 'danger', message: `The paths cannot contain spaces.`});
+    }
+
     //Validating Build Path
     try {
         if(!fs.existsSync(cfg.buildPath)) throw new Error("Path doesn't exist or its unreadable.");

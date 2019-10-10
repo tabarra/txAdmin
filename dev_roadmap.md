@@ -52,6 +52,7 @@ DIV transition: https://tympanus.net/Tutorials/OriginalHoverEffects/index9.html
 - [x] ban feature at sv_main.lua
 - [x] tie everything correctly and push update
 - [x] fix playerlist div name issue
+- [x] Fix paths with spaces (too hard, just block in the settings page)
 
 ## Databases:
 Discarted due to node-gyp: level, better-sqlite3, sqlite3
