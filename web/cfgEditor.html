@@ -1,38 +1,53 @@
 {{include("header")/}}
 
+<!-- Page CSS -->
+<link rel="stylesheet" href="css/codemirror.css">
+<link rel="stylesheet" href="css/codemirror_lucario.css">>
+<style>
+  .cm-s-lucario{
+    font-size: 1.05rem !important;
+  }
+</style>
 
+<!-- Title -->
 <div class="text-center mb-4">
   <h2>Server Config File Editor</h2>
 </div>
 
+<!-- CFG Editor -->
 <div class="row justify-content-md-center">
   <div class="col-lg-12 col-xl-10">
-    <textarea id="code-markdown" style="height: calc(100vh - 348px);" name="code">{{rawFile}}</textarea>
+    <textarea id="code-markdown" style="height: calc(100vh - 348px);"
+      class="cms-s-lucario" name="code">{{rawFile}}</textarea>
   </div>
 </div>
-
 <div class="row justify-content-md-center" style="margin-top: 1em;">
     <div class="mx-auto">
       <button type="button" id="cfgEditor-save" class="btn btn-outline-dark btn-sm mb-2">Save config file</button>
     </div>
 </div>
 
+
 {{include("footer")/}}
 
+
+<script src="js/codeEditor/codemirror.js"></script>
+<script src="js/codeEditor/mode/nginx.js"></script>
 <script>
+  //============================================== CodeMirror Setup
   window.onload = function () {
     var te_markdown = document.getElementById("code-markdown");
 
     window.editor_markdown = CodeMirror.fromTextArea(te_markdown, {
-      mode: "markdown",
+      mode: "text/x-nginx-conf",
       lineNumbers: true,
       lineWrapping: true,
-      extraKeys: { "Ctrl-Q": function (cm) { cm.foldCode(cm.getCursor()); } },
-      foldGutter: true,
-      gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+      theme: "lucario"
     });
   };
 
+
+  //============================================== Save action
   $('#cfgEditor-save').click(function () {
     var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
