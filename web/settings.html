@@ -88,6 +88,7 @@
                                     <option value="pt_BR" {{global.language=='pt_BR'|isSelected}}>Portuguese (Brazil)</option>
                                     <option value="ro" {{global.language=='ro'|isSelected}}>Romanian</option>
                                     <option value="es" {{global.language=='es'|isSelected}}>Spanish</option>
+                                    <option value="th" {{global.language=='th'|isSelected}}>Thai</option>
 
                                     <option value="custom" {{global.language=='custom'|isSelected}}>Custom (read the documentation)</option>
                                 </select>
@@ -381,7 +382,7 @@
 
         $.ajax({
             type: "POST",
-            url: '/saveSettings/global',
+            url: '/settings/save/global',
             timeout: 2000,
             data: data,
             dataType: 'json',
@@ -417,7 +418,7 @@
 
         $.ajax({
             type: "POST",
-            url: '/saveSettings/fxserver',
+            url: '/settings/save/fxserver',
             timeout: 2000,
             data: data,
             dataType: 'json',
@@ -444,7 +445,7 @@
 
         $.ajax({
             type: "POST",
-            url: '/saveSettings/monitor',
+            url: '/settings/save/monitor',
             timeout: 2000,
             data: data,
             dataType: 'json',
@@ -478,7 +479,7 @@
 
         $.ajax({
             type: "POST",
-            url: '/saveSettings/discord',
+            url: '/settings/save/discord',
             timeout: 2000,
             data: data,
             dataType: 'json',

@@ -1,5 +1,8 @@
 {
-    "$label": "Polish",
+    "$meta": {
+        "label": "Polish",
+        "humanizer_language": "pl"
+    },
     "restarter": {
         "crash_detected": "Wykryty Crash",
         "partial_crash_warn": "Due to a partial crash, this server will restart in 1 minute. Please disconnect now.",

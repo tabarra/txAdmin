@@ -65,7 +65,7 @@ module.exports = router = (config) =>{
             handleRouteError(res, req, 'Settings-Get', err);
         });
     });
-    router.post('/saveSettings/:scope', requestAuth('web'), async (req, res) => {
+    router.post('/settings/save/:scope', requestAuth('web'), async (req, res) => {
         await webRoutes.settings.save(res, req).catch((err) => {
             handleRouteError(res, req, 'Settings-Save', err);
         });
@@ -80,6 +80,18 @@ module.exports = router = (config) =>{
     router.post('/fxserver/commands', requestAuth('web'), async (req, res) => {
         await webRoutes.fxserver.commands(res, req).catch((err) => {
             handleRouteError(res, req, 'FXServer-Commands', err);
+        });
+    });
+
+    //CFG Editor
+    router.get('/cfgEditor', requestAuth('web'), async (req, res) => {
+        await webRoutes.cfgEditor.get(res, req).catch((err) => {
+            handleRouteError(res, req, 'CFGEditor-Get', err);
+        });
+    });
+    router.post('/cfgEditor/save', requestAuth('api'), async (req, res) => {
+        await webRoutes.cfgEditor.save(res, req).catch((err) => {
+            handleRouteError(res, req, 'CFGEditor-Save', err);
         });
     });
 
@@ -119,9 +131,9 @@ module.exports = router = (config) =>{
             handleRouteError(res, req, 'serverLog', err);
         });
     });
-    router.get('/fullReport', requestAuth('web'), async (req, res) => {
-        await webRoutes.fullStatusReport(res, req).catch((err) => {
-            handleRouteError(res, req, 'fullStatusReport', err);
+    router.get('/diagnostics', requestAuth('web'), async (req, res) => {
+        await webRoutes.diagnostics(res, req).catch((err) => {
+            handleRouteError(res, req, 'diagnostics', err);
         });
     });
     router.get('/status', requestAuth('api'), async (req, res) => {

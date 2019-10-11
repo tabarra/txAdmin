@@ -1,5 +1,8 @@
 {
-    "$label": "Dutch",
+    "$meta": {
+        "label": "Dutch",
+        "humanizer_language": "nl"
+    },
     "restarter": {
         "crash_detected": "Crash geconstateerd",
         "partial_crash_warn": "Due to a partial crash, this server will restart in 1 minute. Please disconnect now.",

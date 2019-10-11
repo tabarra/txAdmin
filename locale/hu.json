@@ -1,5 +1,8 @@
 {
-    "$label": "Hungarian",
+    "$meta": {
+        "label": "Hungarian",
+        "humanizer_language": "hu"
+    },
     "restarter": {
         "crash_detected": "crash észlelve",
         "partial_crash_warn": "Due to a partial crash, this server will restart in 1 minute. Please disconnect now.",

@@ -1,5 +1,8 @@
 {
-    "$label": "Portuguese (Brazil)",
+    "$meta": {
+        "label": "Portuguese (Brazil)",
+        "humanizer_language": "pt"
+    },
     "restarter": {
         "crash_detected": "crash detectado",
         "partial_crash_warn": "Devido a um crash parcial, este servidor será reiniciado em 1 minuto. Por favor se disconecte agora.",

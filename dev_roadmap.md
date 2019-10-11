@@ -15,16 +15,20 @@ Minor stuff:
 
 ### Feature tasks for collaborators:
 - Logger:
-    - [ ] Revert txAdminClient cl_logger.js back into lua and fix the mismatch of killer ID from client to server
+    - [-] Revert txAdminClient cl_logger.js back into lua and fix the mismatch of killer ID from client to server
     - [ ] Listen for the most common vRP and ESX server events and log them
-    - [ ] Divide the interface vertically, and on the right add filter options (HTML/CSS Only)
+    - [x] Divide the interface vertically, and on the right add filter options (HTML/CSS Only)
     - [ ] Make the javascript for hiding events based on the `data-event-type` attribute
-    - [ ] Create a "load more" at the top of the log, for the admin too be able to see older entries.
-- [ ] When restarting the server, add the name of the admin to the chat/discord messages.
-- [ ] When sending a DM as admin, add the name of the admin
-- [ ] Add localized uptime to the /status command and review the usage of the dateformat lib
-- [ ] Add to the resources page an option to see/hide the default cfx resources
+    - [.] Create a "load more" at the top of the log, for the admin too be able to see older entries.
+- [x] When restarting the server, add the name of the admin to the chat/discord messages.
+- [x] When sending a DM as admin, add the name of the admin
+- [x] Add localized uptime to the /status command and review the usage of the dateformat lib
+- [x] Add to the resources page an option to see/hide the default cfx resources
+- [ ] Dark Theme!
 
+x = done
+- = being worked on
+. = on hold
 
 
 ## Links
@@ -47,7 +51,8 @@ DIV transition: https://tympanus.net/Tutorials/OriginalHoverEffects/index9.html
 - [x] functional ban page with ban add, list and export
 - [x] ban feature at sv_main.lua
 - [x] tie everything correctly and push update
-- [ ] fix playerlist div name issue
+- [x] fix playerlist div name issue
+- [x] Fix paths with spaces (too hard, just block in the settings page)
 
 ## Databases:
 Discarted due to node-gyp: level, better-sqlite3, sqlite3

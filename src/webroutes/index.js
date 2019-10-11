@@ -1,6 +1,6 @@
 exports.actionLog = require('./actionLog.js');
 exports.downFXServerLog = require('./downFXServerLog.js');
-exports.fullStatusReport = require('./fullStatusReport.js');
+exports.diagnostics = require('./diagnostics.js');
 exports.addExtension = require('./addExtension.js');
 exports.dashboard = require('./dashboard.js');
 exports.getPlayerData = require('./getPlayerData.js');
@@ -19,6 +19,11 @@ exports.auth = {
 exports.adminManager = {
     get: require('./adminManager/get'),
     actions: require('./adminManager/actions'),
+}
+
+exports.cfgEditor = {
+    get: require('./cfgEditor/get'),
+    save: require('./cfgEditor/save'),
 }
 
 exports.settings = {

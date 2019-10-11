@@ -6,7 +6,7 @@ const pidusageTree = require('pidusage-tree');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('./webUtils.js');
 const Cache = require('../extras/dataCache');
-const context = 'WebServer:FullStatusReport';
+const context = 'WebServer:Diagnostics';
 
 let cache = new Cache(10);
 
@@ -20,7 +20,7 @@ module.exports = async function action(res, req) {
     let cacheData = cache.get();
     if(cacheData !== false){
         cacheData.message = 'This page was cached in the last 10 seconds';
-        let out = await webUtils.renderMasterView('fullReport', req.session, cacheData);
+        let out = await webUtils.renderMasterView('diagnostics', req.session, cacheData);
         return res.send(out);
     }
 
@@ -53,7 +53,7 @@ module.exports = async function action(res, req) {
     data.message = `Executed in ${timeElapsed} ms`;
 
     cache.set(data);
-    let out = await webUtils.renderMasterView('fullReport', req.session, data);
+    let out = await webUtils.renderMasterView('diagnostics', req.session, data);
     return res.send(out);
 };
 

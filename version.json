@@ -1,5 +1,5 @@
 {
-    "version": "1.12.1",
+    "version": "1.14.0",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -121,6 +121,14 @@
         {
             "version": "1.12.1",
             "changelog": "Quickfix: solved empty list issue with ban system"
+        },
+        {
+            "version": "1.13.0",
+            "changelog": "Added admin name to chat/discord messages. Hiding default resources. Uptime in /status. Spawn errors now shown in dashboard."
+        },
+        {
+            "version": "1.14.0",
+            "changelog": "Added Server CFG Editor"
         }
     ]
 }

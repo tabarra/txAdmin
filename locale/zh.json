@@ -1,5 +1,8 @@
 {
-    "$label": "Chinese",
+    "$meta": {
+        "label": "Chinese",
+        "humanizer_language": "zh_CN"
+    },
     "restarter": {
         "crash_detected": "伺服器被檢測到已癱瘓",
         "partial_crash_warn": "Due to a partial crash, this server will restart in 1 minute. Please disconnect now.",

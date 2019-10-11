@@ -1,0 +1,112 @@
+{{include("header")/}}
+
+<!-- Page CSS -->
+<link rel="stylesheet" href="css/codemirror.css">
+<link rel="stylesheet" href="css/codemirror_lucario.css">
+<style>
+    .cm-s-lucario{
+        font-size: 1.05rem !important;
+    }
+    .CodeMirror{
+        height: calc(100vh - 250px);
+    }
+</style>
+
+<!-- Title -->
+<div class="text-center mb-4">
+    <h3>Server Config File Editor</h3>
+</div>
+
+<!-- CFG Editor -->
+<div class="row justify-content-md-center">
+    <div class="col-lg-12 col-xl-10">
+        <textarea id="code-markdown" style="height: calc(100vh - 348px);"
+            class="cms-s-lucario" name="code">{{rawFile}}</textarea>
+    </div>
+</div>
+<div class="row justify-content-md-center" style="margin-top: 1em;">
+        <div class="mx-auto">
+            <button type="button" id="cfgEditor-save" class="btn btn-outline-dark btn-sm mb-2">Save File</button>
+        </div>
+</div>
+
+
+{{include("footer")/}}
+
+
+<script src="js/codeEditor/codemirror.js"></script>
+<script src="js/codeEditor/mode/simple.js"></script>
+<script>
+    //============================================== CodeMirror Syntax
+    CodeMirror.defineSimpleMode("fivem-cfg", {
+        // The start state contains the rules that are intially used
+        start: [
+            // The regex matches the token, the token property contains the type
+            {regex: /["'](?:[^\\]|\\.)*?(?:["']|$)/, token: "string"},
+
+            // Rules are matched in the order in which they appear, so there is
+            // no ambiguity between this one and the one above
+            {regex: /(?:ensure|refresh|restart|start|stop)\b/, token: "def"},
+            {regex: /(?:endpoint_add_tcp|endpoint_add_udp|load_server_icon|sv_authMaxVariance|sv_authMinTrust|sv_endpointPrivacy|sv_hostname|sv_licenseKey|sv_master1|sv_maxClients)\b/, token: "keyword"},
+            {regex: /(?:add_ace|add_principal|remove_ace|remove_principal|test_ace)\b/, token: "variable-2"},
+            {regex: /banner_connecting|banner_detail|locale|steam_webApiKey|tags/, token: "atom"},
+            {regex: /0x[a-f\d]+|[-+]?(?:\.\d+|\d+\.?\d*)(?:e[-+]?\d+)?/i, token: "number"},
+            {regex: /\/\/.*/, token: "comment"},
+            {regex: /#.*/, token: "comment"},
+            {regex: /\/(?:[^\\]|\\.)*?\//, token: "variable-3"},
+
+            // A next property will cause the mode to move to a different state
+            {regex: /\/\*/, token: "comment", next: "comment"},
+
+            {regex: /[a-z$][\w$]*/, token: "variable"},
+        ],
+
+        // The multi-line comment state.
+        comment: [
+            {regex: /.*?\*\//, token: "comment", next: "start"},
+            {regex: /.*/, token: "comment"}
+        ],
+    });
+
+
+    //============================================== CodeMirror Setup
+    window.onload = function () {
+        var te_markdown = document.getElementById("code-markdown");
+
+        window.editor_markdown = CodeMirror.fromTextArea(te_markdown, {
+            mode: "fivem-cfg",
+            lineNumbers: true,
+            lineWrapping: true,
+            theme: "lucario" //NOTE: I modified the theme a bit
+        });
+    };
+
+
+    //============================================== Save action
+    $('#cfgEditor-save').click(function () {
+        let cfgData = window.editor_markdown.getValue();
+        if(cfgData.length < 1024){
+            var notify = $.notify({ message: `Your CFG file is too small, there is a good chance you deleted something you shouldn't.` }, { type: 'warning' });
+            return;
+        }
+        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+
+        $.ajax({
+            type: "POST",
+            url: '/cfgEditor/save',
+            timeout: 2000,
+            data: {cfgData},
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    });
+</script>

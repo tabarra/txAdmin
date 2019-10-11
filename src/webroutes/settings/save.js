@@ -133,6 +133,15 @@ function handleFXServer(res, req) {
         quiet: (req.body.quiet === 'true'),
     }
 
+    //Validating path spaces
+    if(
+        cfg.buildPath.includes(' ') ||
+        cfg.basePath.includes(' ') ||
+        cfg.cfgPath.includes(' ')
+    ){
+        return res.send({type: 'danger', message: `The paths cannot contain spaces.`});
+    }
+
     //Validating Build Path
     try {
         if(!fs.existsSync(cfg.buildPath)) throw new Error("Path doesn't exist or its unreadable.");
@@ -163,7 +172,8 @@ function handleFXServer(res, req) {
 
     //Validating CFG Path
     try {
-        let rawCfgFile = helpers.getCFGFile(cfg.cfgPath, cfg.basePath);
+        let cfgFilePath = helpers.resolveCFGFilePath(cfg.cfgPath, cfg.basePath);
+        let rawCfgFile = helpers.getCFGFileData(cfgFilePath);
         let port = helpers.getFXServerPort(rawCfgFile);
     } catch (error) {
         return res.send({type: 'danger', message: `<strong>CFG Path error:</strong> ${error.message}`});
