@@ -10,7 +10,7 @@
 		Join our Discord Server: &nbsp; <a href="https://discord.gg/f3TsfvD"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
 	</h4>
 	<p align="center">
-		<b>txAdmin</b> (formerly known as FXAdmin) is a <b>full featured</b> tool to Manage & Monitor your FiveM Server remotely.
+		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM Server remotely.
 	</p>
 </p>
 
@@ -43,11 +43,13 @@
 - Translation Support ([more info](docs/translation.md))
 - (BETA) Server Activity Log (connections/disconnections, kills, chat and explosions)
 - (BETA) Ban System
+- FiveM's Server CFG editor
 
 
 ## Installing & Running
 
-**Video tutorial:** https://youtu.be/S0tBq7Q8YaQ
+**Video tutorial [ENGLISH]:** https://youtu.be/S0tBq7Q8YaQ
+**Video tutorial [PT_BR]:** https://youtu.be/vcM75_E6wmU
 
 **Requirements**:
 - NodeJS v10 LTS (or v12)

@@ -128,7 +128,6 @@ module.exports = class FXRunner {
         } catch (error) {
             let errMsg = logError(`Failed to check port status, proceeding anyway.`, context);
             if(globals.config.verbose) dir(error);
-            return errMsg;
         }
 
         //Sending header to the console buffer
