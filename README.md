@@ -48,8 +48,8 @@
 
 ## Installing & Running
 
-**Video tutorial [ENGLISH]:** https://youtu.be/S0tBq7Q8YaQ
-**Video tutorial [PT_BR]:** https://youtu.be/vcM75_E6wmU
+**Video Tutorial [ENGLISH]:** https://youtu.be/S0tBq7Q8YaQ  
+**Video Tutorial [PT_BR]:** https://youtu.be/vcM75_E6wmU
 
 **Requirements**:
 - NodeJS v10 LTS (or v12)
