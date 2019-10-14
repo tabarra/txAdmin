@@ -18,9 +18,7 @@ const xss = new xssClass.FilterXSS({
  */
 module.exports = async function action(res, req) {
     const logHistory = getLog();
-    dir(xss.whiteList)
-    logError('Soma random error <b>asdASD</b>' + Math.random())
-    logError('Soma random error <script>alert()</script>')
+
     let processedLog = [];
     logHistory.forEach(logData => {
         let ts = dateFormat(new Date(logData.ts*1000), 'HH:MM:ss');
