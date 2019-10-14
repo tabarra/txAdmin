@@ -53,6 +53,7 @@ DIV transition: https://tympanus.net/Tutorials/OriginalHoverEffects/index9.html
 - [x] tie everything correctly and push update
 - [x] fix playerlist div name issue
 - [x] Fix paths with spaces (too hard, just block in the settings page)
+- [ ] Apple xss whitelist [] to all xss() calls (vide src\webroutes\diagnostics-log.js)
 
 ## Databases:
 Discarted due to node-gyp: level, better-sqlite3, sqlite3
