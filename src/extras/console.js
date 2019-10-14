@@ -1,31 +1,40 @@
 const ac = require('ansi-colors');
 ac.enabled = require('color-support').hasBasic;
 const header = 'txAdmin';
+let logHistory = [];
+
+//Helpers
+const now = () => { return Math.round(new Date() / 1000) };
+const getCtx = (ctx) => { return (ctx !== null)? header+':'+ctx : header };
 
 
 //================================================================
 function log(msg, context=null){
-    let tag = (context !== null)? header+':'+context : header;
-    console.log(ac.bold.bgBlue(`[${tag}]`)+' '+msg);
-    return `[INFO][${tag}] ${msg}`;
+    let ctx = getCtx(context);
+    console.log(ac.bold.bgBlue(`[${ctx}]`)+' '+msg);
+    logHistory.push({ts: now(), type: 'INFO', ctx: context, msg});
+    return `[INFO][${ctx}] ${msg}`;
 }
 
 function logOk(msg, context=null){
-    let tag = (context !== null)? header+':'+context : header;
-    console.log(ac.bold.bgGreen(`[${tag}]`)+' '+msg);
-    return `[OK][${tag}] ${msg}`;
+    let ctx = getCtx(context);
+    console.log(ac.bold.bgGreen(`[${ctx}]`)+' '+msg);
+    logHistory.push({ts: now(), type: 'OK', ctx: context, msg});
+    return `[OK][${ctx}] ${msg}`;
 }
 
 function logWarn(msg, context=null) {
-    let tag = (context !== null)? header+':'+context : header;
-    console.log(ac.bold.bgYellow(`[${tag}]`)+' '+msg);
-    return `[WARN][${tag}] ${msg}`;
+    let ctx = getCtx(context);
+    console.log(ac.bold.bgYellow(`[${ctx}]`)+' '+msg);
+    logHistory.push({ts: now(), type: 'WARN', ctx: context, msg});
+    return `[WARN][${ctx}] ${msg}`;
 }
 
 function logError(msg, context=null) {
-    let tag = (context !== null)? header+':'+context : header;
-    console.log(ac.bold.bgRed(`[${tag}]`)+' '+msg);
-    return `[ERROR][${tag}] ${msg}`;
+    let ctx = getCtx(context);
+    console.log(ac.bold.bgRed(`[${ctx}]`)+' '+msg);
+    logHistory.push({ts: now(), type: 'ERROR', ctx: context, msg});
+    return `[ERROR][${ctx}] ${msg}`;
 }
 
 function cleanTerminal(){
@@ -41,6 +50,10 @@ function dir(data){
     console.dir(data);
 }
 
+function getLog(){
+    return logHistory;
+}
+
 //================================================================
 module.exports = {
     log,
@@ -49,5 +62,6 @@ module.exports = {
     logError,
     cleanTerminal,
     setTTYTitle,
-    dir
+    dir,
+    getLog,
 }
