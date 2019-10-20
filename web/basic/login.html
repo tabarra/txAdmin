@@ -33,7 +33,7 @@
             <div class="col-md-5">
                 <div class="card p-4">
                     <div class="card-body text-center">
-                        <h1>Login</h1>
+                        <h1>Giriş Yap</h1>
                         <span class="text-danger"><strong>{{message}}</strong></span>
                         <form action="/auth" method="post">
                             <div class="input-group mb-3">
@@ -42,7 +42,7 @@
                                         <i class="icon-user"></i>
                                     </span>
                                 </div>
-                                <input class="form-control" type="text" name="username" placeholder="Username">
+                                <input class="form-control" type="text" name="username" placeholder="Kullanıcı Adı">
                             </div>
                             <div class="input-group mb-4">
                                 <div class="input-group-prepend">
@@ -50,10 +50,10 @@
                                         <i class="icon-lock"></i>
                                     </span>
                                 </div>
-                                <input class="form-control" type="password" name="password" placeholder="Password">
+                                <input class="form-control" type="password" name="password" placeholder="Şifre">
                             </div>
                             <div class="row justify-content-md-center">
-                                <button class="btn btn-primary px-4" type="submit">Login</button>
+                                <button class="btn btn-primary px-4" type="submit">Giriş</button>
                             </div>
                         </form>
                     </div>
@@ -65,8 +65,9 @@
         <div class="row justify-content-md-center">
             <div class="col-md-4 ">
                 <div class="alert alert-secondary text-center small" role="alert">
-                    <strong>Server Profile:</strong> {{config}} <br>
-                    <strong>txAdmin Version:</strong> {{version}}
+                    <strong>Sunucu Profili:</strong> {{config}} <br>
+                    <strong>txAdmin sürümü:</strong> {{version}} <br>
+                    <strong>Türkçe Çevirici:</strong> C Y L E X
                 </div>
             </div>
         </div>
