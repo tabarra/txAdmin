@@ -2,7 +2,7 @@
 
 
 <div class="text-center mb-4">
-    <h2>{{serverName}} Dashboard</h2>
+    <h2>{{serverName}} Gösterge Paneli</h2>
 </div>
 
 {{if(options.errorMessage)}}
@@ -20,40 +20,40 @@
 
         <!-- FXServer Control Card -->
         <div class="card card-accent-danger" style="min-height: 160px;">
-            <div class="card-header font-weight-bold">FXServer Control:</div>
+            <div class="card-header font-weight-bold">Sunucu Kontrol:</div>
             <div class="card-body text-center align-middle">
                 <button onclick="controlAction('start')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
-                    type="button" id="ctrl-start" {{perms.controls}}>START</button> &nbsp;
+                    type="button" id="ctrl-start" {{perms.controls}}>BAŞLAT</button> &nbsp;
                 <button onclick="controlAction('restart')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
-                    type="button" id="ctrl-restart" {{perms.controls}}>RESTART</button> &nbsp;
+                    type="button" id="ctrl-restart" {{perms.controls}}>YENİDEN BAŞLAT</button> &nbsp;
                 <button onclick="controlAction('stop')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
-                    type="button" id="ctrl-stop" {{perms.controls}}>STOP</button>
+                    type="button" id="ctrl-stop" {{perms.controls}}>DURDUR</button>
             </div>
         </div>
 
         <!-- Commands Card -->
         <div class="card card-accent-danger">
-            <div class="card-header font-weight-bold">Commands:</div>
+            <div class="card-header font-weight-bold">Komutlar:</div>
             <div class="card-body">
                 <div class="form-group row">
-                    <label for="action" class="col-sm-4 col-form-label">Command</label>
+                    <label for="action" class="col-sm-4 col-form-label">Komut</label>
                     <div class="col-sm-8">
                         <select name="action" id="frm_action" class="form-control" required>
-                            <option value="" disabled selected>&gt; SELECT</option>
-                            <option value="admin_broadcast" {{perms.commandMessage}}>Broadcast Admin Message</option>
-                            <option value="ensure_res" {{perms.commandResources}}>Start/Restart resource</option>
+                            <option value="" disabled selected>&gt; SEÇ</option>
+                            <option value="admin_broadcast" {{perms.commandMessage}}>Admin Duyuru Mesajı</option>
+                            <option value="ensure_res" {{perms.commandResources}}>Eklentiyi Başlat/Yeniden başlat</option>
                             <!-- <option value="restart_res" {{perms.commandResources}}>Restart resource</option> -->
                             <!-- <option value="start_res" {{perms.commandResources}}>Start resource</option> -->
-                            <option value="stop_res" {{perms.commandResources}}>Stop resource</option>
-                            <option value="refresh_res" {{perms.commandResources}}>Refresh resources</option>
-                            <option value="reinject_res" {{perms.commandResources}}>Re-Inject txAdmin resources</option>
-                            <option value="check_txaclient" {{perms.commandResources}}>Check txAdminClient</option>
-                            <option value="kick_all" {{perms.commandKick}}>Kick all players</option>
+                            <option value="stop_res" {{perms.commandResources}}>Eklentiyi durdur</option>
+                            <option value="refresh_res" {{perms.commandResources}}>Eklentileri yenile</option>
+                            <option value="reinject_res" {{perms.commandResources}}>txAdmin eklentisini yenile</option>
+                            <option value="check_txaclient" {{perms.commandResources}}>txAdminClient'i kontrol et</option>
+                            <option value="kick_all" {{perms.commandKick}}>Tüm oyuncuları at</option>
                         </select>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="action" class="col-sm-4 col-form-label">Parameter</label>
+                    <label for="action" class="col-sm-4 col-form-label">Parametre</label>
                     <div class="col-sm-8">
                         <input type="text" name="parameter" id="frm_parameter" class="form-control" placeholder=""
                             readonly required>
@@ -61,7 +61,7 @@
                 </div>
             </div>
             <div class="card-footer text-center">
-                <button type="button" id="frm_button" class="btn btn-outline-dark mx-auto">EXECUTE</button>
+                <button type="button" id="frm_button" class="btn btn-outline-dark mx-auto">GERÇEKLEŞTİR</button>
             </div>
         </div>
 
@@ -74,12 +74,12 @@
         <!-- Card Chart-->
         <div class="card text-white bg-primary" style="min-height: 160px;">
             <div class="card-body pb-0">
-                <div class="text-value">Players</div>
-                <div>last 24h</div>
+                <div class="text-value">Oyuncular</div>
+                <div>son 24 saat</div>
             </div>
             {{if(options.chartData === false)}}
             <div class="text-center mb-4">
-                <h3 class="text-muted">Not enough data, yet...</h3>
+                <h3 class="text-muted">Data yeterli değil...</h3>
             </div>
             {{#else}}
             <div class="chart-wrapper mt-3 mx-3" style="height:70px;">
@@ -96,13 +96,13 @@
                 <div id="card-chart1-tooltip" class="chartjs-tooltip top"
                     style="opacity: 0; left: 194.39px; top: 93.2407px;">
                     <div class="tooltip-header">
-                        <div class="tooltip-header-item">loading</div>
+                        <div class="tooltip-header-item">yükleniyor</div>
                     </div>
                     <div class="tooltip-body">
                         <div class="tooltip-body-item">
                             <span class="tooltip-body-item-color" style="background-color: rgb(0, 165, 224);"></span>
-                            <span class="tooltip-body-item-label">players</span>
-                            <span class="tooltip-body-item-value">loading</span>
+                            <span class="tooltip-body-item-label">oyuncular</span>
+                            <span class="tooltip-body-item-value">yükleniyor</span>
                         </div>
                     </div>
                 </div>
@@ -112,9 +112,9 @@
 
         <!-- Card Info -->
         <div class="card card-accent-primary" style="height:251px;">
-            <div class="card-header font-weight-bold">Status Info:</div>
+            <div class="card-header font-weight-bold">Statü Bilgisi:</div>
             <div class="card-body" id="status-card">
-                Loading...
+                Yükleniyor...
             </div>
         </div>
         <!-- / Card Info -->
@@ -144,10 +144,10 @@
 <script>
     //============================================== Controls (start/restart/stop)
     function controlAction(action) {
-        if (action !== 'start' && !window.confirm('Are you sure you want to ' + action + ' the server?')) {
+        if (action !== 'start' && !window.confirm('Sunucunda ' + action + ' işlemini yapmak istediğine emin misin?')) {
             return;
         }
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        var notify = $.notify({ message: '<p class="text-center">Komut gerçekleştiriliyor...</p>' }, {});
         $.ajax({
             url: actionURL = '/fxserver/controls/' + action,
             type: "GET",
@@ -201,7 +201,7 @@
             $("#frm_parameter").removeClass('is-invalid');
         }
 
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        var notify = $.notify({ message: '<p class="text-center">Komut gerçekleştiriliyor...</p>' }, {});
         $.ajax({
             type: "POST",
             url: '/fxserver/commands',
@@ -258,7 +258,7 @@
         type: 'line',
         data: {
             datasets: [{
-                label: 'players',
+                label: 'oyuncular',
                 backgroundColor: getStyle('--primary'),
                 borderColor: 'rgba(255,255,255,0.55)',
                 fill: false,

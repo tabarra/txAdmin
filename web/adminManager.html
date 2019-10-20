@@ -2,7 +2,7 @@
 
 
 <div class="text-center mb-4">
-    <h2>Admin Manager</h2>
+    <h2>Adminleri Yönetme</h2>
 </div>
 
 
@@ -12,9 +12,9 @@
         <!-- Global Card -->
         <div class="card card-accent-primary">
             <div class="card-header float-left">
-                <span style="font-size: large">All Admins</span>
+                <span style="font-size: large">Tüm yetkililer</span>
                 <button class="btn btn-sm btn-success float-right" type="button" id="btnAddAdmin">
-                    <i class="icon-plus"></i> Add
+                    <i class="icon-plus"></i> Ekle
                 </button>
             </div>
             <div class="card-body">
@@ -23,9 +23,9 @@
                     <table class="table table-responsive-md table-striped">
                         <thead>
                             <tr>
-                                <th>Username</th>
-                                <th>Permissions</th>
-                                <th>Actions</th>
+                                <th>Kullanıcı Adı</th>
+                                <th>Yetkiler</th>
+                                <th>İşlemler</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -36,12 +36,12 @@
                                 <td>
                                     <button class="btn btn-sm btn-outline-primary"
                                         onclick="getEditModal('{{@this.name}}')" {{@this.disableActions}}>
-                                        <i class="icon-pencil"></i> Edit
+                                        <i class="icon-pencil"></i> Düzenle
                                     </button>
                                     &nbsp;
                                     <button class="btn btn-sm btn-outline-danger"
                                         onclick="deleteAdmin('{{@this.name}}')" {{@this.disableActions}}>
-                                        <i class="icon-trash"></i> Delete
+                                        <i class="icon-trash"></i> Sil
                                     </button>
                                 </td>
                             </tr>
@@ -65,7 +65,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modAddAdminTitle">Add Admin</h5>
+                <h5 class="modal-title" id="modAddAdminTitle">Yetkili Ekle</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -73,7 +73,7 @@
             <div class="modal-body">
                 <div class="form-group row">
                     <label for="modAddAdmin-name" class="col-sm-3 col-form-label">
-                        Username
+                        Kullanıcı Adı
                         <span class="text-danger">*</span>
                     </label>
                     <div class="col-sm-9">
@@ -82,15 +82,15 @@
                                 autocomplete="off" required>
                         </div>
                         <span class="form-text text-muted">
-                            Must have between 6 and 16 characters and contain only letters and numbers. Case
-                            insensitive.
+                            6 ile 16 karakter arasında olmalı ve yalnızca harf ve rakam içermeli(Küçük harfe duyarsızdır).
+                           
                         </span>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label for="modAddAdmin-password" class="col-sm-3 col-form-label">
-                        Password
+                        Şifre
                         <span class="text-danger">*</span>
                     </label>
                     <div class="col-sm-9">
@@ -99,14 +99,14 @@
                                 autocomplete="off" required>
                         </div>
                         <span class="form-text text-muted">
-                            Must have between 6 and 16 characters.
+                            6 ile 16 karakter arası olmalıdır.
                         </span>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label">
-                        Permissions
+                        Yetkiler
                     </label>
                     <div class="col-sm-9">
                         {{foreach(options.allPermissions)}}
@@ -122,8 +122,8 @@
             </div>
             <div class="modal-footer text-center">
                 <div class="mx-auto button-spacer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" id="modAddAdmin-save">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                    <button type="button" class="btn btn-success" id="modAddAdmin-save">Kaydet</button>
                 </div>
             </div>
         </div>
@@ -137,7 +137,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modEditAdminTitle">Edit Admin</h5>
+                <h5 class="modal-title" id="modEditAdminTitle">Yetki Düzenle</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -145,8 +145,8 @@
             <div class="modal-body" id="modEditAdmin-body"></div>
             <div class="modal-footer text-center">
                 <div class="mx-auto button-spacer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-success" id="modEditAdmin-save">Save</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">İptal Et</button>
+                    <button type="button" class="btn btn-success" id="modEditAdmin-save">Kaydet</button>
                 </div>
             </div>
         </div>
@@ -164,11 +164,11 @@
 
     //============================================== Delete Admin
     function deleteAdmin(name){
-        if(!window.confirm('Are you sure you want to delete "' + name + '"?')){
+        if(!window.confirm('Silmek istediğine emin misin "' + name + '"?')){
             return;
         }
 
-        var notify = $.notify({ message: '<p class="text-center">Deleting...</p>' }, {});
+        var notify = $.notify({ message: '<p class="text-center">Siliniyor...</p>' }, {});
         $.ajax({
             type: "POST",
             url: '/adminManager/delete',
@@ -221,10 +221,10 @@
             permissions: permissions
         }
         if (!data.name.length) {
-            var notify = $.notify({ message: 'Unnable to detect username.' }, { type: 'warning' });
+            var notify = $.notify({ message: 'Kullanıcı adı tespit edilemedi.' }, { type: 'warning' });
             return;
         }
-        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        var notify = $.notify({ message: '<p class="text-center">Kaydediliyor...</p>' }, {});
 
         $.ajax({
             type: "POST",
@@ -263,10 +263,10 @@
             permissions: permissions
         }
         if (!data.name.length || !data.password.length) {
-            var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
+            var notify = $.notify({ message: '"*" olan alanlar doldurulması zorunludur.' }, { type: 'warning' });
             return;
         }
-        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        var notify = $.notify({ message: '<p class="text-center">Kaydediliyor...</p>' }, {});
 
         $.ajax({
             type: "POST",

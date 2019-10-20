@@ -1,7 +1,7 @@
 {{include("header")/}}
 
 <div class="text-center mb-4">
-    <h2>Resources List</h2>
+    <h2>Eklenti Listeleri</h2>
 </div>
 
 
@@ -9,15 +9,15 @@
     <div class="col-md-7">
         <div class="card card-accent-primary">
             <div class="card-header float-left">
-                <span style="font-size: large">All Resources</span>
+                <span style="font-size: large">Tüm Eklentiler</span>
                 <button class="btn btn-sm btn-primary float-right" type="button" id="btnRefresh" {{disableActions}}>
-                    <i class="icon-refresh"></i> Reload & Refresh
+                    <i class="icon-refresh"></i> Tekrar Başlat & Yenile
                 </button>
                 <input class="form-control" type="text" name="resource" id="resourceInput" onkeyup="findResource()"
                     placeholder="Find resource by name..." style="margin-top: 1em;">
                 <div class="row justify-content-md-center">
                     <span class="form-text text-muted" style="margin-top: calc(0.3rem + 2px)">
-                        Default resources:
+                        Ana eklentiler:
                     </span>
                     &nbsp;&nbsp;
                     <label class="switch switch-label switch-pill switch-success fix-pill-form">
@@ -50,17 +50,17 @@
                     <span class="d-sm-none"><br></span>
                     <button class="btn btn-sm btn-outline-dark float-right"
                         onclick="btnCommand('ensure_res', '{{@this.name}}')" {{disableActions}}>
-                        RESTART
+                        YENİDEN BAŞLAT
                     </button>
                     &nbsp;
                     <button class="btn btn-sm btn-outline-dark float-right" style="margin-right: 0.5em;"
                         onclick="btnCommand('stop_res', '{{@this.name}}')" {{disableActions}}>
-                        STOP
+                        DURDUR
                     </button>
                     {{#else}}
                     <button class="btn btn-sm btn-outline-dark float-right"
                         onclick="btnCommand('ensure_res', '{{@this.name}}')" {{disableActions}}>
-                        START
+                        BAŞLAT
                     </button>
                     {{/if}}
                     {{if(@this.version=='')}}
