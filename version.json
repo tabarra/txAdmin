@@ -1,5 +1,5 @@
 {
-    "version": "1.14.0",
+    "version": "1.14.1",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -129,6 +129,10 @@
         {
             "version": "1.14.0",
             "changelog": "Added Server CFG Editor"
+        },
+        {
+            "version": "1.14.1",
+            "changelog": "Added console log to diagnostics page. Removed port checking on server start."
         }
     ]
 }

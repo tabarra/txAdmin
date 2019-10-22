@@ -8,7 +8,7 @@ const webUtils = require('./webUtils.js');
 const Cache = require('../extras/dataCache');
 const context = 'WebServer:Diagnostics';
 
-let cache = new Cache(10);
+let cache = new Cache(5);
 
 
 /**
@@ -19,7 +19,7 @@ let cache = new Cache(10);
 module.exports = async function action(res, req) {
     let cacheData = cache.get();
     if(cacheData !== false){
-        cacheData.message = 'This page was cached in the last 10 seconds';
+        cacheData.message = 'This page was cached in the last 5 seconds';
         let out = await webUtils.renderMasterView('diagnostics', req.session, cacheData);
         return res.send(out);
     }
