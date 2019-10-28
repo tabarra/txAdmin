@@ -119,17 +119,6 @@ module.exports = class FXRunner {
             }
         }
 
-        //Check if the port is not busy
-        try {
-            let portCheck = await helpers.isPortAvailable(this.fxServerPort, 150);
-            if(!portCheck){
-                return logError(`The port ${this.fxServerPort} is busy. Make sure there are no fxserver running outside txAdmin.`, context);
-            }
-        } catch (error) {
-            let errMsg = logError(`Failed to check port status, proceeding anyway.`, context);
-            if(globals.config.verbose) dir(error);
-        }
-
         //Sending header to the console buffer
         this.consoleBuffer.writeHeader();
 
@@ -238,7 +227,7 @@ module.exports = class FXRunner {
             `set txAdmin-version "${globals.version.current}"`,
             `set txAdmin-apiPort "${globals.webServer.config.port}"`,
             `set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
-            `set txAdmin-clientCompatVersion "1.4.0"`,
+            `set txAdmin-clientCompatVersion "1.5.0"`,
             `set txAdmin-expBanEnabled ${runExperiment}`
         ]
 

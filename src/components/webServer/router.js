@@ -120,6 +120,18 @@ module.exports = router = (config) =>{
         });
     });
 
+    //Diagnostic routes
+    router.get('/diagnostics', requestAuth('web'), async (req, res) => {
+        await webRoutes.diagnostics.get(res, req).catch((err) => {
+            handleRouteError(res, req, 'diagnostics', err);
+        });
+    });
+    router.get('/diagnostics/log', requestAuth('web'), async (req, res) => {
+        await webRoutes.diagnostics.getLog(res, req).catch((err) => {
+            handleRouteError(res, req, 'diagnostics-log', err);
+        });
+    });
+
     //Data routes
     router.get('/actionLog', requestAuth('web'), async (req, res) => {
         await webRoutes.actionLog(res, req).catch((err) => {
@@ -129,11 +141,6 @@ module.exports = router = (config) =>{
     router.get('/serverLog', requestAuth('web'), async (req, res) => {
         await webRoutes.serverLog(res, req).catch((err) => {
             handleRouteError(res, req, 'serverLog', err);
-        });
-    });
-    router.get('/diagnostics', requestAuth('web'), async (req, res) => {
-        await webRoutes.diagnostics(res, req).catch((err) => {
-            handleRouteError(res, req, 'diagnostics', err);
         });
     });
     router.get('/status', requestAuth('api'), async (req, res) => {
