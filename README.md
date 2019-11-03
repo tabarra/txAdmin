@@ -10,7 +10,10 @@
 		Discord Sunucum: &nbsp; <a href="https://discord.gg/KMJedT3"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
 	</h4>
 	<p align="center">
-		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM Server remotely.
+		<b>txAdmin, FiveM Sunucunuzu uzaktan yönetmek ve izlemek için <b>tam özellikli bir web panelidir.</b>
+	</h4>
+	<p align="center">
+		<b>C Y L E X tarafından türkçeye çevirilmiştir.</b>
 	</p>
 </p>
 
