@@ -1,13 +1,13 @@
 <p align="center">
 	<h1 align="center">
-		txAdmin for FiveM
+		Türkçeleştirilmiş txAdmin
 	</h1>
 	<p align="center">
 		<img width="420" height="237" src="https://i.imgur.com/acV0dfO.png">
 	</p>
 	<h4 align="center">
 		FiveM Forum thread: &nbsp; <a href="https://forum.fivem.net/t/530475"><img src="https://img.shields.io/badge/dynamic/json.svg?color=green&label=txAdmin&query=views&suffix=%20views&url=https%3A%2F%2Fforum.fivem.net%2Ft%2F530475.json"></img></a>  <br/>
-		Join our Discord Server: &nbsp; <a href="https://discord.gg/f3TsfvD"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
+		Discord Sunucum: &nbsp; <a href="https://discord.gg/KMJedT3"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
 	</h4>
 	<p align="center">
 		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM Server remotely.
@@ -18,40 +18,40 @@
 
 
 
-## Features
-- Start/Stop/Restart your server instance or resources
-- Access control via multiple credentials and action logging
-- Discord Integration:
-	- Server status command (`/status`)
-	- Custom static commands
-	- Command spam prevention
-- Monitor server’s CPU/RAM consumption
-- Real-time playerlist with ping + steam-linked accounts (when available)
-- OneSync Support (more than 32 slots server)
-- Linux Support
-- Live Console
-- Auto Restart on failure detection or schedule
-- Password brute-force protection
-- FXServer process priority setter
-- Hitch Detection
-- New settings page
-- Save console to file
-- Restart warning announcements
-- Admin Management system
-- Permissions system ([more info](docs/permissions.md))
-- (BETA) SSL Support ([more info](docs/ssl_support.md))
-- Translation Support ([more info](docs/translation.md))
-- (BETA) Server Activity Log (connections/disconnections, kills, chat and explosions)
-- (BETA) Ban System
-- FiveM's Server CFG editor
+## Özellikler
+- Sunucunuzu veya sunucu scriptlerini Başlatma/Durdurma/Yeniden Başlatma özelliği!
+- Kontrol paneli
+- Discord Entegrasyonu:
+	- Sunucu durum komutu (`/status`)
+	- Yeni komutlar
+	- Spam önleme komutu
+- Sunucunun anlık CPU/RAM tüketimini görme!
+- Gerçek zamanlı oyuncu listesi, oyuncuların steam adresini görme(eğer varsa)
+- OneSync Desteği(32 slot üzeri)
+- Linux Desteği
+- Canlı Konsol
+- Zamanlanabilir ve hataya karşı otomatik restart özelliği!
+- Brute-force korumalı şifre sistemi!
+- FXServer işlem önceliği ayarlı
+- Hitch algılama
+- Yeni ayarlar sayfaıs
+- Konsol loglarını kaydetme
+- Sunucuyu yeniden başlatırken otomatik uyarı
+- Admin ayarları
+- Yetki sistemi ([more info](docs/permissions.md))
+- (BETA) SSL Desteği ([more info](docs/ssl_support.md))
+- Çeviri Desteği ([more info](docs/translation.md))
+- (BETA) Sunucu Aktivite Logu (giriş/çıkış, öldürmeler, sohbet ve patlamalar)
+- (BETA) Ban Sistemi
+- FiveM Sunucu CFG editör
 
 
-## Installing & Running
+## Kurulum & Çalıştırma
 
-**Video Tutorial [ENGLISH]:** https://youtu.be/S0tBq7Q8YaQ  
+**Eğitim Video [ENGLISH]:** https://youtu.be/S0tBq7Q8YaQ  
 **Video Tutorial [PT_BR]:** https://youtu.be/vcM75_E6wmU
 
-**Requirements**:
+**Gerekenler**:
 - NodeJS v10 LTS (or v12)
 - FXServer build 1543+ [(duh)](https://runtime.fivem.net/artifacts/fivem/)
 - One TCP listen port opened for the web server (default is 40120)
