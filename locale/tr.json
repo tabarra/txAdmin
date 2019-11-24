@@ -1,0 +1,25 @@
+{
+    "$meta": {
+        "label": "Turkish",
+        "humanizer_language": "tr"
+    },
+    "restarter": {
+        "crash_detected": "Çökme tespit edildi",
+        "partial_crash_warn": "Kısmi bir çökme nedeniyle, sunucu 1 dakika içerisinde yeniden başlatılacaktır. Lütfen çıkış yapın.",
+        "partial_crash_warn_discord": "Kısmi bir çökme nedeniyle,  **%{servername}** 1 dakika içerisinde yeniden başlatılacaktır.",
+        "schedule_reason": "Zamanlanmış yeniden başlatma %{time}",
+        "schedule_warn": "Sunucu %{smart_count} dakika içerisinde zamanlanmış şekilde yeniden başlatılacaktır. Lütfen çıkış yapın. |||| Sunucu %{smart_count} dakika içerisinde zamanlamış şekilde yeniden başlatılacaktır.",
+        "schedule_warn_discord": "**%{servername}** sunucusu %{smart_count} dakika içerisinde yeniden başlatılmaya zamanlandı. |||| **%{servername}** sunucusu %{smart_count} dakika içerisinde yeniden başlatılmaya zamanlandı."
+    },
+    "server_actions": {
+        "restarting": "Sunucu yeniden başlatılıyor.(%{reason}).",
+        "restarting_discord": "**%{servername}** sunucusu yeniden başlatılıyor. (%{reason}).",
+        "stopping": "Sunucu kapatılıyor(%{reason}).",
+        "stopping_discord": "**%{servername}** sunucu kapatılıyor (%{reason}).",
+        "spawning_discord": "**%{servername}** sunucu başlatılıyor."
+    },
+    "discord": {
+        "status_online": "**%{servername}** şuan **AÇIK**!",
+        "status_offline": "**%{servername}** şuan **KAPALI**!"
+    }
+}
