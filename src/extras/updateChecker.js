@@ -16,9 +16,9 @@ module.exports = async () => {
             logWarn(`A new version (v${rVer.version}) is available for txAdmin - https://github.com/tabarra/txAdmin`, 'UpdateChecker');
         }
     } catch (error) {
-        logError(`Error checking for updates. Go to the github repository to see if you need one.`, 'UpdateChecker');
+        logError(`Error checking for updates. Go to the github repository to see if you need one. Its likely an issue with your internet.`, 'UpdateChecker');
         let ver = '9.9.9';
-        let msg = 'Error checking for updates, if this error persists for more than 4 hours, <br> you probably need to update. <br> Check out our <a href="https://discord.gg/f3TsfvD" target="_blank" class="alert-link">Discord Server</a> for more information.';
+        let msg = `Error checking for updates, if this error persists for more than 4 hours, <br> you probably need to update. <br> This is likely an issue with your server's internet or GitHub.  <br> Check out our <a href="https://discord.gg/f3TsfvD" target="_blank" class="alert-link">Discord Server</a> for more information.`;
         globals.version.latest = ver;
         globals.version.changelog = msg;
         globals.version.allVersions = [{version: ver, changelog: msg}];

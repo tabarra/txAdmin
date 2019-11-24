@@ -31,14 +31,14 @@ module.exports = class webConsole {
             try {
                 log(`Connected: ${socket.handshake.session.auth.username} from ${socket.handshake.address}`, contextSocket);
             } catch (error) {
-                log(`Connected: unknown`, contextSocket);
+                log(`Connected: new connection with unknown source`, contextSocket);
             }
 
             socket.on('disconnect', (reason) => {
-                log(`Client disconnected with reason: ${reason}`, contextSocket);
+                if(globals.config.verbose) log(`Client disconnected with reason: ${reason}`, contextSocket);
             });
             socket.on('error', (error) => {
-                log(`Socket error with message: ${error.message}`, contextSocket);
+                if(globals.config.verbose) log(`Socket error with message: ${error.message}`, contextSocket);
             });
             socket.on('consoleCommand', this.handleSocketMessages.bind(this, socket));
 

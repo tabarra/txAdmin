@@ -173,7 +173,12 @@ module.exports = class DiscordBot {
 
         //Sending message
         try {
-            await message.channel.send(out);
+            let outMsg = await message.channel.send(out);
+            //Example: if you want to delete the messages after a few seconds.
+            // setTimeout(() => {
+            //     outMsg.delete()
+            //     message.delete()
+            // }, 10*1000);
         } catch (error) {
             logError(`Failed to send message with error: ${error.message}`, context);
         }

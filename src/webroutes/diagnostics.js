@@ -191,7 +191,7 @@ async function getHostData(){
         let userInfo = os.userInfo()
         let cpus = os.cpus();
 
-        hostData.osType = `${os.type()} (${os.platform()})`;
+        hostData.osType = `${os.type()} (${os.platform()}/${process.arch})`;
         hostData.osRelease = `${os.release()}`;
         hostData.username = `${userInfo.username}`;
         hostData.cpus = `${cpus.length}x ${cpus[0].speed} MHz`;

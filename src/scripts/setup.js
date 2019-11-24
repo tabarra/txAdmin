@@ -206,7 +206,7 @@ if (osType === 'Linux') {
         configSkeletal.global.publicIP = wanIP;
         log(`Public IP detected as ${wanIP}. You can change that in the settings.`, context)
     } catch (error) {
-        logWarn('Error detecting your public IP. You can change that in the settings.', context)
+        logWarn('Failed to detect your public IP. You can change that in the settings.', context)
     }
 
     //Create new profile folder

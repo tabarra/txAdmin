@@ -132,13 +132,15 @@ module.exports = class FXRunner {
         }
 
         //Starting server
+        let pid;
         try {
             this.fxChild = spawn(
                 this.spawnVariables.shell,
                 this.spawnVariables.cmdArgs,
                 {cwd: this.config.basePath}
             );
-            logOk(`::FXServer started with PID ${this.fxChild.pid}!`, context);
+            pid = this.fxChild.pid.toString();
+            logOk(`:: [${pid}] FXServer Started!`, context);
             this.tsChildStarted = Math.round(Date.now()/1000);
         } catch (error) {
             logError('Failed to start FXServer with the following error:');
@@ -152,17 +154,17 @@ module.exports = class FXRunner {
 
         //Setting up event handlers
         this.fxChild.on('close', function (code, signal) {
-            logWarn(`>> fxChild close event: code ${code} and signal ${signal}`, context);
+            logWarn(`>> [${pid}] FXServer Closed. (code ${code})`, context);
         });
         this.fxChild.on('disconnect', function () {
-            logWarn('>> fxChild disconnect event', context);
+            logWarn(`>> [${pid}] FXServer Disconnected.`, context);
         });
         this.fxChild.on('error', function (err) {
-            logWarn('>> fxChild error event:', context);
+            logWarn(`>> [${pid}] FXServer Errored:`, context);
             dir(err)
         });
         this.fxChild.on('exit', function (code, signal) {
-            logWarn(`>> fxChild exit event: code ${code} and signal ${signal}`, context);
+            logWarn(`>> [${pid}] FXServer Exited.`, context);
         });
 
         this.fxChild.stdin.on('error', (data) => {});
@@ -305,7 +307,7 @@ module.exports = class FXRunner {
 
             //Restart server
             this.killServer();
-            await sleep(750);
+            await sleep(1250);
             return this.spawnServer();
         } catch (error) {
             let errMsg = logError("Couldn't restart the server.", context);
