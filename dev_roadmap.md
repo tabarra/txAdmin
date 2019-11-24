@@ -1,4 +1,10 @@
 ## TODO/Roadmap:
+- [x] Fix potential memory exhaustion DoS
+- [ ] Add Explosion type decoding
+- [ ] Add Custom logging method + docs
+- [ ] Try the dark theme scss
+- [ ] Make toggle button
+
 Major stuff:
 - [ ] Check compiling libraries like pkg and nexe.
 - [ ] Check config management libraries (specially 'convict' by Mozilla and nconf)

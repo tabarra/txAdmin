@@ -5,36 +5,48 @@ let logHistory = [];
 
 //Helpers
 const now = () => { return Math.round(new Date() / 1000) };
-const getCtx = (ctx) => { return (ctx !== null)? header+':'+ctx : header };
+const getConCtx = (ctx) => { return (ctx !== null)? header+':'+ctx : header };
+const getHistCtx = (ctx) => { return (ctx !== null)? ctx : header };
+const toHistory = (type, ctx, msg) =>{
+    if(logHistory.length > 4000){
+        let sliceMsg = {ts: now(), type: 'ERROR', ctx: 'ConsoleLog', msg: 'The log was sliced to prevent memory exhaustion.'};
+        logHistory = logHistory.slice(0,500).concat(sliceMsg, logHistory.slice(-500))
+    }
+    return logHistory.push({ts: now(), type, ctx, msg});
+}
 
 
 //================================================================
 function log(msg, context=null){
-    let ctx = getCtx(context);
-    console.log(ac.bold.bgBlue(`[${ctx}]`)+' '+msg);
-    logHistory.push({ts: now(), type: 'INFO', ctx: context, msg});
-    return `[INFO][${ctx}] ${msg}`;
+    let conCtx = getConCtx(context);
+    let histCtx = getHistCtx(context);
+    console.log(ac.bold.bgBlue(`[${conCtx}]`)+' '+msg);
+    toHistory('INFO', histCtx, msg);
+    return `[INFO][${conCtx}] ${msg}`;
 }
 
 function logOk(msg, context=null){
-    let ctx = getCtx(context);
-    console.log(ac.bold.bgGreen(`[${ctx}]`)+' '+msg);
-    logHistory.push({ts: now(), type: 'OK', ctx: context, msg});
-    return `[OK][${ctx}] ${msg}`;
+    let conCtx = getConCtx(context);
+    let histCtx = getHistCtx(context);
+    console.log(ac.bold.bgGreen(`[${conCtx}]`)+' '+msg);
+    toHistory('OK', histCtx, msg);
+    return `[OK][${conCtx}] ${msg}`;
 }
 
 function logWarn(msg, context=null) {
-    let ctx = getCtx(context);
-    console.log(ac.bold.bgYellow(`[${ctx}]`)+' '+msg);
-    logHistory.push({ts: now(), type: 'WARN', ctx: context, msg});
-    return `[WARN][${ctx}] ${msg}`;
+    let conCtx = getConCtx(context);
+    let histCtx = getHistCtx(context);
+    console.log(ac.bold.bgYellow(`[${conCtx}]`)+' '+msg);
+    toHistory('WARN', histCtx, msg);
+    return `[WARN][${conCtx}] ${msg}`;
 }
 
 function logError(msg, context=null) {
-    let ctx = getCtx(context);
-    console.log(ac.bold.bgRed(`[${ctx}]`)+' '+msg);
-    logHistory.push({ts: now(), type: 'ERROR', ctx: context, msg});
-    return `[ERROR][${ctx}] ${msg}`;
+    let conCtx = getConCtx(context);
+    let histCtx = getHistCtx(context);
+    console.log(ac.bold.bgRed(`[${conCtx}]`)+' '+msg);
+    toHistory('ERROR', histCtx, msg);
+    return `[ERROR][${conCtx}] ${msg}`;
 }
 
 function cleanTerminal(){
