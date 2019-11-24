@@ -70,24 +70,17 @@ let hdTimer = Date.now();
 setInterval(() => {
     let now = Date.now();
     if(now - hdTimer > 2000){
-        let sep = `=`.repeat(64);
-        if(process.env.os.toLowerCase().includes('windows')){
-            let msgLines = [
-                `Major process freeze detected.`,
-                `If using CMD or a 'start.bat' file, make sure to disable QuickEdit mode.`,
-                `Join our Discord and type '!quickedit' for instructions.`,
-            ]
-            // globals.dashboardErrorMessage = msgLines.join(`<br>\n`);
-            setTimeout(() => {
-                logError(sep);
-                msgLines.forEach(line => logError(line));
-                logError(sep);
-            }, 1000);
-        }else{
+        let sep = `=`.repeat(72);
+        setTimeout(() => {
             logError(sep);
             logError('Major process freeze detected.');
+            if(process.env.os.toLowerCase().includes('windows')){
+                logError(`If using CMD or a 'start.bat' file, make sure to disable QuickEdit mode.`);
+                logError(`Join our Discord and type '!quickedit' for instructions.`);
+            }
+            logError('THIS IS NOT AN ERROR CAUSED BY TXADMIN! Your VPS might be lagging out.');
             logError(sep);
-        }
+        }, 1000);
     }
     hdTimer = now;
 }, 500);

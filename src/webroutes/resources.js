@@ -46,15 +46,15 @@ const getResourceSubPath = (resPath) => {
  * @param {object} req
  */
 module.exports = async function action(res, req) {
+    let timeoutMessage = `<strong>Couldn't load the resources list.</strong> <br>
+    - Make sure the server is online (try to join it). <br>
+    - Make sure your fxserver is build/artifact 1550 or above. <br>
+    - Make sure you are not running the fxserver outside txAdmin.`;
+
     //Send command request
     let cmdSuccess = globals.fxRunner.srvCmd(`txaReportResources`);
     if(!cmdSuccess){
-        let message = `Couldn't load the resources list. <br>
-        - Make sure the server is online. <br>
-        - Make sure your fxserver is build/artifact 1550 or above. <br>
-        - Make sure you are not running the fxserver outside txAdmin.`;
-
-        let out = await webUtils.renderMasterView('basic/generic', req.session, {message});
+        let out = await webUtils.renderMasterView('basic/generic', req.session, {message: timeoutMessage});
         return res.send(out);
     }
 
@@ -86,12 +86,7 @@ module.exports = async function action(res, req) {
             clearInterval(intHandle);
             logWarn('the future is now, old man', context);
             try {
-                let message = `Couldn't load the resources list. <br>
-                    - Make sure the server is online. <br>
-                    - Make sure your fxserver is build/artifact 1550 or above. <br>
-                    - Make sure you are not running the fxserver outside txAdmin.`;
-
-                let out = await webUtils.renderMasterView('basic/generic', req.session, {message});
+                let out = await webUtils.renderMasterView('basic/generic', req.session, {message: timeoutMessage});
                 return res.send(out);
             } catch (error) {logError(error, context)}
         }

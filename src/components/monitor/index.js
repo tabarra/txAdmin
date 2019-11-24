@@ -199,7 +199,7 @@ module.exports = class Monitor {
         this.failCounter++;
         this.timeSeries.add(0);
         if(globals.config.verbose || this.failCounter > 10){
-            logWarn(`(${this.failCounter}/${this.config.restarter.failures}) HealthCheck failed: ${errorMessage}`, context);
+            logWarn(`(${this.failCounter}/${this.config.restarter.failures}) FXServer is not responding! (${errorMessage})`, context);
         }
 
         //Check if it's time to restart the server
