@@ -21,10 +21,10 @@ Note2: If on Linux, make sure there is no permission issue (eg file owned by the
 
 ## Problems running FXServer 
 When you start txAdmin, your server will **not** start automatically (by default). Open the web panel and start txAdmin (actions > START Server). You can change this by enabling autostart in the settings page.  
-If you are getting `HealthCheck request error` it means the txAdmin:Monitor could not connect to the FXServer. Check the two items below.
-- If the server is actually online (you can join the server) but txAdmin thinks it's offline, this is an issue with FXServer and not txAdmin. Nothing we can do.
+If you are getting `FXServer is not responding!` it means the txAdmin:Monitor could not connect to the FXServer. Check the two items below.
+- If the server is actually online and working properly (you can join the server) but txAdmin thinks it's offline, this is an issue with FXServer and not txAdmin. Nothing we can do.
 - If you are having trouble starting the FXServer via txAdmin, run `node src/scripts/config-tester.js default` and see which test is failing.  
 
 <hr>
 
-If this guide didn't help you, open an Issue or join our [Discord server](https://discord.gg/f3TsfvD).
+If this guide didn't help you, open an Issue or join our awesome [Discord server](https://discord.gg/f3TsfvD).
