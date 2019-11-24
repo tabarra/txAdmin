@@ -1,0 +1,25 @@
+{
+    "$meta": {
+        "label": "Finnish",
+        "humanizer_language": "fi"
+    },
+    "restarter": {
+        "crash_detected": "Kaatuminen havaittu",
+        "partial_crash_warn": "Osittaisen kaatumisen vuoksi, serveri käynnistyy uudelleen minuutin kuluttua. Poistukaa serveriltä nyt.",
+        "partial_crash_warn_discord": "Osittaisen kaatumisen vuoksi, **%{servername}** käynnistyy uudelleen minuutin kuluttua.",
+        "schedule_reason": "Ajoitettu restart %{time}",
+        "schedule_warn": "Tämä serveri uudelleenkäynnistyy ajassa %{smart_count} minuuttia. Poistukaa serveriltä nyt. |||| Tämä serveri uudelleenkäynnistyy ajassa %{smart_count} minuutissa.",
+        "schedule_warn_discord": "**%{servername}** käynnistyy uudestaan %{smart_count} minuutin kuluttua. |||| **%{servername}** uudelleenkäynnistyy %{smart_count} minuutin kuluttua."
+    },
+    "server_actions": {
+        "restarting": "Serveri uudelleenkäynnistyy (%{reason}).",
+        "restarting_discord": "**%{servername}** uudelleenkäynnistyy (%{reason}).",
+        "stopping": "Serveri sammuu (%{reason}).",
+        "stopping_discord": "**%{servername}** sammuu syystä (%{reason}).",
+        "spawning_discord": "**%{servername}** uudelleenkäynnistyy."
+    },
+    "discord": {
+        "status_online": "**%{servername}** on nyt **Online**!",
+        "status_offline": "**%{servername}** on nyt **Offline**!"
+    }
+}
