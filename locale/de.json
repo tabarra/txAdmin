@@ -5,11 +5,11 @@
     },
     "restarter": {
         "crash_detected": "Absturz erkannt",
-        "partial_crash_warn": "Due to a partial crash, this server will restart in 1 minute. Please disconnect now.",
-        "partial_crash_warn_discord": "Due to a partial crash, **%{servername}** will restart in 1 minute.",
+        "partial_crash_warn": "Aufgrund von Verbindungsproblemen startet dieser Server in 1 Minute neu. Bitte trenne die Verbindung jetzt.",
+        "partial_crash_warn_discord": "Aufgrund von Verbindungsproblemen, startet **%{servername}** in einer Minute neu.",
         "schedule_reason": "Geplanter Neustart um %{time}",
         "schedule_warn": "Der Server wird in %{smart_count} Minute neugestartet. Bitte trenne die Verbindung jetzt. |||| Der Server wird in %{smart_count} Minuten neu gestartet.",
-        "schedule_warn_discord": "**%{servername}** wird in %{smart_count} neugestartet. |||| **%{servername}** wird in %{smart_count} Minuten neu gestartet."
+        "schedule_warn_discord": "**%{servername}** wird in %{smart_count} Minute neugestartet. |||| **%{servername}** wird in %{smart_count} Minuten neu gestartet."
     },
     "server_actions": {
         "restarting": "Server-Neustart (%{reason}).",

@@ -89,7 +89,7 @@ module.exports = class Translator {
         let langHashes = {
             cs: '7b8d67e0344fdeda521c6f61b4f941207b229a36', //Czech
             da: '75d9dc164b34bf93348cdc88841b73a17b86f901', //Danish
-            de: 'd884dcf95e5af94b8132cb0ebb9f8b2dc4e23347', //German
+            de: '67e86da0d15f825758bda4bb1a398adfc9b56cf1', //German
             en: '830a8fc8963c3144715e887d1e3b93ce9b7ca2c2', //English
             es: 'eca44993f43dcdd265bfc476c5abc368f222e051', //Spanish
             fr: 'eee8f40e27945125cb4684863546f2143f572d24', //French
@@ -99,6 +99,7 @@ module.exports = class Translator {
             pt_BR: 'c1f29814b2639e35c142f1e9417cb0216a6a6bac', //Portuguese (Brazil)
             ro: 'b1563a06793ac3177391a3d35070f1a7d83e077a', //Romanian
             th: '0c7b70ee1db9fc8eafbb73b2c2e30db0e181cf10', //Thai
+            tr: 'c0016703741c008b7b961183304526e816723085', //Turkish
             zh: 'ce1d259f097bd047ad3ce5a2b5a1d675b5efe3d3', //Chinese
         }
         let hash = null;
