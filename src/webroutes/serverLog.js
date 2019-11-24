@@ -126,7 +126,8 @@ function processEventTypes(event){
         }
 
     }else if(event.action === 'explosionEvent'){
-        return `caused an explosion`;
+        let expType = event.data.explosionType || 'UNKNOWN';
+        return `caused an explosion (${expType})`;
 
     }else if(event.action === 'txAdminClient:Started'){
         return `txAdminClient Logger started`;
