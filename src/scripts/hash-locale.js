@@ -9,7 +9,8 @@ const context = 'HashLocale';
 (async()=>{
     let localeFolder = './locale/';
     var langFiles = await fs.readdir(localeFolder);
-    let out = [];
+    let hashes = [];
+    let options = [];
     langFiles.forEach((fileName)=>{
         let lang = fileName.replace(/\.json/g, '');
         if(lang === 'custom') return;
@@ -21,7 +22,8 @@ const context = 'HashLocale';
             let toHash = JSON.stringify(langData);
             hash = crypto.createHash('SHA1').update(toHash).digest("hex");
             label = (typeof langData['$meta'].label !== 'undefined')? langData['$meta'].label: fileName;
-            out.push(`${lang}: '${hash}', //${label}`);
+            hashes.push(`${lang}: '${hash}', //${label}`);
+            options.push(`<option value="${lang}" {{global.language=='${lang}'|isSelected}}>${label}</option>`);
         } catch (error) {
             logError(`Couldn't hash file ${fileName}`, context);
             dir(error)
@@ -29,5 +31,7 @@ const context = 'HashLocale';
     });
 
     log('Locale hashes:');
-    console.log(out.join("\n"));
+    console.log(hashes.join("\n"));
+    log('Locale options:');
+    console.log(options.join("\n"));
 })();

@@ -92,6 +92,7 @@ module.exports = class Translator {
             de: '67e86da0d15f825758bda4bb1a398adfc9b56cf1', //German
             en: '830a8fc8963c3144715e887d1e3b93ce9b7ca2c2', //English
             es: 'eca44993f43dcdd265bfc476c5abc368f222e051', //Spanish
+            fi: 'a4504009b10ba3f4bb776171ae708912bb20e1f7', //Finnish
             fr: 'eee8f40e27945125cb4684863546f2143f572d24', //French
             hu: 'c7e3b779a88447e0db8ca08b64ec633368bc1196', //Hungarian
             nl: '4be7a53b05922a2ec61faa1556ad1095957e9793', //Dutch
