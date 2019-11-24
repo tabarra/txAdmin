@@ -39,9 +39,9 @@
 - Restart warning announcements
 - Admin Management system
 - Permissions system ([more info](docs/permissions.md))
-- (BETA) SSL Support ([more info](docs/ssl_support.md))
+- SSL Support ([more info](docs/ssl_support.md))
 - Translation Support ([more info](docs/translation.md))
-- (BETA) Server Activity Log (connections/disconnections, kills, chat and explosions)
+- Server Activity Log (connections/disconnections, kills, chat, explosions and [custom commands](docs/extra_logging.md))
 - (BETA) Ban System
 - FiveM's Server CFG editor
 

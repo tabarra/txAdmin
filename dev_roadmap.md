@@ -1,7 +1,7 @@
 ## TODO/Roadmap:
 - [x] Fix potential memory exhaustion DoS
-- [ ] Add Explosion type decoding
-- [ ] Add Custom logging method + docs
+- [x] Add Explosion type decoding
+- [.] Add Custom logging method + docs
 - [ ] Try the dark theme scss
 - [ ] Make toggle button
 

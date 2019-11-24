@@ -112,7 +112,7 @@ class Logger {
                     //TODO: introduce a buffer to re-upload the log in parts.
                     this.log = [{
                         timestamp: (Date.now() / 1000).toFixed(),
-                        action: "txAdminClient:DebugMessage",
+                        action: "DebugMessage",
                         source: false,
                         data: `wiped log with size ${postData.length} due to upload limit`
                     }];
@@ -194,7 +194,23 @@ onNet('txaLogger:DeathNotice', (killer, cause) => {
     }
 });
 
-onNet('chatMessage', (src, author, text)=>{
+onNet('txaLogger:CommandExecuted', (data) => {
+    try {
+        logger.r(global.source, 'CommandExecuted', data);
+    } catch (error) {
+        logError(error)
+    }
+});
+
+onNet('txaLogger:DebugMessage', (data) => {
+    try {
+        logger.r(global.source, 'DebugMessage', data);
+    } catch (error) {
+        logError(error)
+    }
+});
+
+const logChatMessage = (src, author, text)=>{
     try {
         let toLogData = {
             author,
@@ -204,4 +220,6 @@ onNet('chatMessage', (src, author, text)=>{
     } catch (error) {
         logError(error)
     }
-})
+}
+onNet('chatMessage', logChatMessage);
+onNet('txaLogger:internalChatMessage', logChatMessage);

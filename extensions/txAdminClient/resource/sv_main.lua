@@ -131,7 +131,7 @@ function txaBroadcast(source, args)
             },
             color = {255, 0, 0}
         })
-        TriggerEvent('chatMessage', -1, "(Broadcast) "..args[1], args[2])
+        TriggerEvent('txaLogger:internalChatMessage', -1, "(Broadcast) "..args[1], args[2])
     else
         print('[txAdminClient] invalid arguments for txaBroadcast')
     end
@@ -152,7 +152,7 @@ function txaSendDM(source, args)
                 },
                 color = {255, 0, 0}
             })
-            TriggerEvent('chatMessage', -1, "(DM) "..args[2], args[3])
+            TriggerEvent('txaLogger:internalChatMessage', -1, "(DM) "..args[2], args[3])
         else
             print('[txAdminClient] txaSendDM: player not found')
         end
