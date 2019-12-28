@@ -1,7 +1,11 @@
 ## TODO/Roadmap:
 - [x] Fix potential memory exhaustion DoS
 - [x] Add Explosion type decoding
-- [.] Add Custom logging method + docs
+- [x] Add Custom logging method + docs
+- [.] Diagnostics Page:
+    - [x] Incompatible version warning
+    - [ ] Global crash counters + uptime
+    - [ ] If on Linux, correctly name the process as FXServer
 - [ ] Try the dark theme scss
 - [ ] Make toggle button
 

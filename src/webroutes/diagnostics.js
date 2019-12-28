@@ -140,9 +140,12 @@ async function getProcessesData(){
  * Gets the FXServer Data.
  */
 async function getFXServerData(){
+    //Sanity Check
     if(!globals.config.forceFXServerPort && !globals.fxRunner.fxServerPort){
         return {error: `Server Offline`}
     }
+
+    //Preparing request
     let port = (globals.config.forceFXServerPort)? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
     let requestOptions = {
         url: `http://localhost:${port}/info.json`,
@@ -152,27 +155,53 @@ async function getFXServerData(){
         maxRedirects: 0,
         timeout: globals.monitor.config.timeout
     }
+    let infoData;
 
-    let fxData = {};
+    //Making HTTP Request
     try {
         let res = await axios(requestOptions);
-        let data = res.data;
-
-        fxData.statusColor = 'success';
-        fxData.status = 'ONLINE';
-        fxData.version = data.server;
-        fxData.resources = data.resources.length;
-        fxData.onesync = (data.vars && data.vars.onesync_enabled === 'true')? 'enabled' : 'disabled';
-        fxData.maxClients = (data.vars && data.vars.sv_maxClients)? data.vars.sv_maxClients : '--';
-        fxData.tags = (data.vars && data.vars.tags)? data.vars.tags : '--';
-        fxData.error = false;
+        infoData = res.data;
     } catch (error) {
-        logError('Error getting FXServer data', context);
+        logWarn('Failed to get FXServer information.', context);
         if(globals.config.verbose) dir(error);
-        fxData.error = `Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)`;
+        return {error: `Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)`};
     }
 
-    return fxData;
+    //Helper function
+    const getBuild = (ver)=>{
+        try {
+            let regex = /v1\.0\.0\.(\d{4,5})\s*/;
+            let res = regex.exec(ver);
+            return parseInt(res[1]);
+        } catch (error) {
+            return 0;
+        }
+    }
+
+    //Processing result
+    try {
+        let versionWarning;
+        if(getBuild(infoData.server) < 1543){
+            versionWarning = `<span class="badge badge-danger"> INCOMPATIBLE </span>`;
+        }
+
+        let fxData = {
+            error: false,
+            statusColor: 'success',
+            status: ' ONLINE ',
+            version: infoData.server,
+            versionWarning: versionWarning || '',
+            resources: infoData.resources.length,
+            onesync: (infoData.vars && infoData.vars.onesync_enabled === 'true')? 'enabled' : 'disabled',
+            maxClients: (infoData.vars && infoData.vars.sv_maxClients)? infoData.vars.sv_maxClients : '--',
+        };
+
+        return fxData;
+    } catch (error) {
+        logWarn('Failed to process FXServer information.', context);
+        if(globals.config.verbose) dir(error);
+        return {error: `Failed to process FXServer data. <br>Check the terminal for more information (if verbosity is enabled)`};
+    }
 }
 
 

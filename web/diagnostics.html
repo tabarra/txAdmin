@@ -2,7 +2,7 @@
 
 
 <div class="text-center mb-4">
-    <h2>Full Status Report</h2>
+    <h2>Diagnostics Report</h2>
 </div>
 
 <div class="row justify-content-md-center">
@@ -66,13 +66,11 @@
                 {{if(options.fxserver.error !== false)}}
                     {{fxserver.error|safe}}
                 {{#else}}
-                    <strong>Status: <span class="badge badge-{{fxserver.statusColor}}">{{fxserver.status}}</span>
-                    </strong><br>
-                    <strong>Version:</strong> {{fxserver.version}} <br>
+                    <strong>Status: <span class="badge badge-{{fxserver.statusColor}}">{{fxserver.status}}</span></strong><br>
+                    <strong>Version:</strong> {{fxserver.versionWarning|safe}} {{fxserver.version}} <br>
                     <strong>Resources:</strong> {{fxserver.resources}} <br>
                     <strong>OneSync:</strong> {{fxserver.onesync}} <br>
                     <strong>Max Clients:</strong> {{fxserver.maxClients}} <br>
-                    <strong>Tags:</strong> <code>{{fxserver.tags}}</code>
                 {{/if}}
             </div>
         </div>
