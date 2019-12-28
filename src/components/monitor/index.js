@@ -29,7 +29,11 @@ module.exports = class Monitor {
         this.lastAutoRestart = null;
         this.failCounter = 0;
         this.lastHeartBeat = 0;
-        this.fxServerHitches = [];
+        this.globalCounters = {
+            hitches: [],
+            fullCrashes: 0,
+            partialCrashes: 0,
+        }
         this.schedule = null;
         this.statusServer = {
             online: false,
@@ -208,6 +212,7 @@ module.exports = class Monitor {
             this.failCounter >= this.config.restarter.failures
         ){
             if((now - this.lastHeartBeat) > 30){
+                this.globalCounters.fullCrashes++;
                 this.restartFXServer(
                     'server crash detected',
                     globals.translator.t('restarter.crash_detected')
@@ -220,6 +225,7 @@ module.exports = class Monitor {
                 let chatMsg = globals.translator.t('restarter.partial_crash_warn')
                 globals.fxRunner.srvCmd(`txaBroadcast "txAdmin" "${chatMsg}"`);
             }else if(this.failCounter === 60*5){ //after 5 minutes
+                this.globalCounters.partialCrashes++;
                 this.restartFXServer(
                     'server partial crash detected',
                     globals.translator.t('restarter.crash_detected')
@@ -237,16 +243,16 @@ module.exports = class Monitor {
             ts: Math.round(Date.now()/1000),
             hitchTime: parseInt(hitchTime)
         }
-        this.fxServerHitches.push(hitch);
+        this.globalCounters.hitches.push(hitch);
 
         //The minimum time for a hitch is 150ms. 60000/150=400
-        if (this.fxServerHitches>400) this.fxServerHitches.shift();
+        if (this.globalCounters.hitches>400) this.globalCounters.hitches.shift();
     }
 
 
     //================================================================
     clearFXServerHitches(){
-        this.fxServerHitches = [];
+        this.globalCounters.hitches = [];
     }
 
 

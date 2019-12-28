@@ -27,7 +27,7 @@ module.exports = async function action(res, req) {
  */
 function prepareServerStatus() {
     let dataServer = clone(globals.monitor.statusServer);
-    let fxServerHitches = clone(globals.monitor.fxServerHitches);
+    let fxServerHitches = clone(globals.monitor.globalCounters.hitches);
 
     //processing hitches
     let now = (Date.now() / 1000).toFixed();

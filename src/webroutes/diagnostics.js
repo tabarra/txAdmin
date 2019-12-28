@@ -3,6 +3,7 @@ const os = require('os');
 const axios = require("axios");
 const bytes = require('bytes');
 const pidusageTree = require('pidusage-tree');
+const humanizeDuration = require('humanize-duration');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const webUtils = require('./webUtils.js');
 const Cache = require('../extras/dataCache');
@@ -28,24 +29,14 @@ module.exports = async function action(res, req) {
     let timeStart = new Date();
     let data = {
         headerTitle: 'Full Report',
-        message: '',
-        host: {},
-        fxserver: {},
-        proccesses: [],
-        config: {
-            timeout: globals.monitor.config.timeout,
-            failures: globals.monitor.config.restarter.failures,
-            schedule: globals.monitor.config.restarter.schedule.join(', '),
-            buildPath: globals.fxRunner.config.buildPath,
-            basePath: globals.fxRunner.config.basePath,
-            cfgPath: globals.fxRunner.config.cfgPath,
-        }
+        message: ''
     };
 
-    [data.host, data.proccesses, data.fxserver] = await Promise.all([
+    [data.host, data.txadmin, data.fxserver, data.proccesses] = await Promise.all([
         getHostData(),
+        gettxAdminData(),
+        getFXServerData(),
         getProcessesData(),
-        getFXServerData()
     ]);
 
 
@@ -233,4 +224,32 @@ async function getHostData(){
     }
 
     return hostData;
+}
+
+
+//================================================================
+/**
+ * Gets txAdmin Data
+ */
+async function gettxAdminData(){
+    let humanizeOptions = {
+        language: globals.translator.t('$meta.humanizer_language'),
+        round: true,
+        units: ['d', 'h', 'm'],
+        fallbacks: ['en']
+    }
+
+    let txadminData = {
+        uptime: humanizeDuration(process.uptime()*1000, humanizeOptions),
+        fullCrashes: globals.monitor.globalCounters.fullCrashes,
+        partialCrashes: globals.monitor.globalCounters.partialCrashes,
+        timeout: globals.monitor.config.timeout,
+        failures: globals.monitor.config.restarter.failures,
+        schedule: globals.monitor.config.restarter.schedule.join(', '),
+        buildPath: globals.fxRunner.config.buildPath,
+        basePath: globals.fxRunner.config.basePath,
+        cfgPath: globals.fxRunner.config.cfgPath,
+    };
+
+    return txadminData;
 }

@@ -69,6 +69,7 @@
     $(function () {
         var socket = io();
         var ansi_up = new AnsiUp;
+        ansi_up.escape_for_html = false;
 
         //Events
         socket.on('connect', () => {
