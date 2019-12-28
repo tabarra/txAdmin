@@ -2,10 +2,10 @@
 - [x] Fix potential memory exhaustion DoS
 - [x] Add Explosion type decoding
 - [x] Add Custom logging method + docs
-- [.] Diagnostics Page:
+- [x] Diagnostics Page:
     - [x] Incompatible version warning
-    - [ ] Global crash counters + uptime
-    - [ ] If on Linux, correctly name the process as FXServer
+    - [x] Global crash counters + uptime
+    - [x] If on Linux, correctly name the process as FXServer
 - [ ] Try the dark theme scss
 - [ ] Make toggle button
 
