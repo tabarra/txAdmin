@@ -1,5 +1,5 @@
 {
-    "version": "1.14.1",
+    "version": "1.15.0-dev2",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -133,6 +133,10 @@
         {
             "version": "1.14.1",
             "changelog": "Added console log to diagnostics page. Removed port checking on server start."
+        },
+        {
+            "version": "1.15.0-dev2",
+            "changelog": "WIP"
         }
     ]
 }

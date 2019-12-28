@@ -217,7 +217,7 @@ if (osType === 'Linux') {
         fs.mkdirSync(`${profilePath}/logs/`);
         fs.mkdirSync(`${profilePath}/data/`);
         fs.writeFileSync(`${profilePath}/messages.json`, '[]');
-        fs.writeFileSync(`${profilePath}/commands.json`, '[]');
+        // fs.writeFileSync(`${profilePath}/commands.json`, '[]');
         fs.writeFileSync(`${profilePath}/config.json`, jsonConfig);
 
         if(!isLinux){

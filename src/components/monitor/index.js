@@ -209,7 +209,7 @@ module.exports = class Monitor {
         ){
             if((now - this.lastHeartBeat) > 30){
                 this.restartFXServer(
-                    'crash detected',
+                    'server crash detected',
                     globals.translator.t('restarter.crash_detected')
                 );
             }else if(this.failCounter === 60*4){ //after 4 minutes
@@ -221,7 +221,7 @@ module.exports = class Monitor {
                 globals.fxRunner.srvCmd(`txaBroadcast "txAdmin" "${chatMsg}"`);
             }else if(this.failCounter === 60*5){ //after 5 minutes
                 this.restartFXServer(
-                    'partial crash detected',
+                    'server partial crash detected',
                     globals.translator.t('restarter.crash_detected')
                 );
             }else{

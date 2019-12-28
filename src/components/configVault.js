@@ -239,10 +239,10 @@ module.exports = class ConfigVault {
                 fs.writeFileSync(messagesPath, '[]');
             }
 
-            let commandsPath = `${this.serverProfilePath}/commands.json`;
-            if(!fs.existsSync(commandsPath)){
-                fs.writeFileSync(commandsPath, '[]');
-            }
+            // let commandsPath = `${this.serverProfilePath}/commands.json`;
+            // if(!fs.existsSync(commandsPath)){
+            //     fs.writeFileSync(commandsPath, '[]');
+            // }
         } catch (error) {
             logError(`Error setting up folder structure in '${this.serverProfilePath}/'`, context);
             logError(error);

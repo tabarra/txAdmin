@@ -71,7 +71,11 @@ module.exports = class ConsoleBuffer {
         try {
             this.hitchStreamProcessor.write(data);
             globals.webConsole.buffer(data, markType);
-            if(!globals.fxRunner.config.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ""));
+            //NOTE: There used to be a rule "\x0B-\x1F" that was replaced with "x0B-\x1A\x1C-\x1F" to allow the \x1B terminal escape character.
+            //This is neccessary for the terminal to have color, but beware of side effects.
+            //This regex was done in the first place to prevent fxserver output to be interpreted as txAdmin output by the host terminal
+            //IIRC the issue was that one user with a TM on their nick was making txAdmin's console to close or freeze. I couldn't reproduce the issue.
+            if(!globals.fxRunner.config.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ""));
         } catch (error) {
             if(globals.config.verbose) logError(`Buffer write error: ${error.message}`, context)
         }

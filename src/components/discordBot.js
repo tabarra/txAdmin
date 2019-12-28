@@ -152,7 +152,7 @@ module.exports = class DiscordBot {
             out = new Discord.RichEmbed();
             out.setTitle(`${globals.config.serverName} uses txAdmin v${globals.version.current}!`);
             out.setColor(0x4DEEEA);
-            out.setDescription(`Checkout the project:\n Forum: https://forum.fivem.net/t/530475\n Discord: https://discord.gg/f3TsfvD`);
+            out.setDescription(`Checkout the project:\n GitHub: https://github.com/tabarra/txAdmin\n Discord: https://discord.gg/f3TsfvD`);
 
         }else{
             //Finds the command
