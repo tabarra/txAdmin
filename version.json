@@ -1,5 +1,5 @@
 {
-    "version": "1.15.0-dev2",
+    "version": "1.15.0",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -135,8 +135,8 @@
             "changelog": "Added console log to diagnostics page. Removed port checking on server start."
         },
         {
-            "version": "1.15.0-dev2",
-            "changelog": "WIP"
+            "version": "1.15.0",
+            "changelog": "Fixed console colors. Added custom command logging. Added explosion types to the server log. Added more information to the diagnostics page. Improved verbosity. Added Finnish and Turkish languages."
         }
     ]
 }

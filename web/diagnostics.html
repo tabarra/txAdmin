@@ -24,6 +24,7 @@
                 {{if(options.host.error !== false)}}
                     {{host.error|safe}}
                 {{#else}}
+                    <strong>Node Version:</strong> {{host.nodeVersion}} <br>
                     <strong>OS Type:</strong> {{host.osType}} <br>
                     <strong>OS Release:</strong> {{host.osRelease}} <br>
                     <strong>Username:</strong> {{host.username}} <br>

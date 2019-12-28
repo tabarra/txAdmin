@@ -215,6 +215,7 @@ async function getHostData(){
         let userInfo = os.userInfo()
         let cpus = os.cpus();
 
+        hostData.nodeVersion = process.version;
         hostData.osType = `${os.type()} (${os.platform()}/${process.arch})`;
         hostData.osRelease = `${os.release()}`;
         hostData.username = `${userInfo.username}`;
