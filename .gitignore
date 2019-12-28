@@ -6,6 +6,7 @@ locale/custom.json
 extensions/*
 !extensions/txAdminClient/
 *.ignore.*
+/start_*.bat
 
 ## Github's default node gitignore
 # Logs

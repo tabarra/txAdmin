@@ -221,8 +221,8 @@ if (osType === 'Linux') {
         fs.writeFileSync(`${profilePath}/config.json`, jsonConfig);
 
         if(!isLinux){
-            let batch = `@echo off\r\n cd ../..\r\n node src ${serverProfile}\r\n pause`;
-            fs.writeFileSync(`${profilePath}/start.bat`, batch);
+            let batch = `@echo off\r\n node src ${serverProfile}\r\n pause`;
+            fs.writeFileSync(`start_${serverProfile}.bat`, batch);
         }
     } catch (error) {
         logError(`Error setting up folder structure in '${profilePath}'`, context);
@@ -236,7 +236,7 @@ if (osType === 'Linux') {
     let cmd = ac.inverse(` node src ${serverProfile} `);
     logOk(`To start txAdmin with this profile run: ${cmd}`, context);
     if(!isLinux){
-        let cmd2 = ac.inverse(` ${profilePath}start.bat `);
+        let cmd2 = ac.inverse(` txAdmin/start_${serverProfile}.bat `);
         logOk(`You can also execute: ${cmd2}`, context);
     }
     process.exit();

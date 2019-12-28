@@ -6,6 +6,9 @@
     - [x] Incompatible version warning
     - [x] Global crash counters + uptime
     - [x] If on Linux, correctly name the process as FXServer
+- [x] Route Error Verbosity
+- [x] Detect failed server launch
+- [x] Move the start.bat file to the root dir
 - [ ] Try the dark theme scss
 - [ ] Make toggle button
 
@@ -96,8 +99,6 @@ Automatic event detection by regexing all .lua files in the resources folder?
         example/
             config.json
             messages.json
-            commands.json
-            start.bat
             logs/
                 admin.log
                 fxserver.log

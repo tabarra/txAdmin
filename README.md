@@ -72,9 +72,9 @@ node src/scripts/setup.js default
 # Start default server
 node src/index.js default
 ```
+**If on Windows, you can start txAdmin by executing `start_<profilename>.bat` in your txAdmin folder (ex `txAdmin/start_default.bat`).**  
 
 **2 -** Then open `http://public-ip:40120/` in your browser and login with the credentials created and go to the settings page to configure the remaining settings.   
-**If on Windows, you can start txAdmin by executing `start.bat` in your server profile's folder (example `data/default/start.bat`).**  
 
 **Important Notes:**  
 > **Note:** You MUST run FXServer **through** txAdmin, and not in parallel (ie in another terminal).  

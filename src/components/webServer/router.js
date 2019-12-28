@@ -2,7 +2,6 @@
 const express = require('express');
 const rateLimit = require("express-rate-limit");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const webUtils = require('../../webroutes/webUtils');
 const webRoutes = require('../../webroutes');
 const requestAuth = require('./requestAuthenticator');
 const context = 'WebServer:Router';
@@ -12,6 +11,7 @@ function handleRouteError(res, req, route, error){
     try {
         let desc = `Internal Error on: ${req.originalUrl}`;
         logError(desc, `${context}:${route}`);
+        dir(error) //NOTE: temporary to help troubleshoot the /auth error
         res.status(500).send(`[${route} Route Internal Error]`);
     } catch (error) {}
 }
