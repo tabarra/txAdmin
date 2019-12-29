@@ -86,31 +86,6 @@ module.exports = class WebServer {
             dir(error);
             process.exit();
         }
-
-
-        //HTTPS Server
-        if(this.config.enableHTTPS){
-            try {
-                let httpsServerOptions = {
-                    key: fs.readFileSync('data/key.pem'),
-                    cert: fs.readFileSync('data/cert.pem'),
-                }
-                this.httpsServer = httpsServer.createServer(httpsServerOptions, this.app);
-                this.httpsServer.on('error', (error)=>{
-                    if(error.code !== 'EADDRINUSE') return;
-                    logError(`Failed to start HTTPS server, port ${error.port} already in use.`, context);
-                    process.exit();
-                })
-                this.httpsServer.listen(this.config.httpsPort, '0.0.0.0', () => {
-                    logOk(`::Started at https://localhost:${this.config.httpsPort}/`, context);
-                    globals.webConsole.attachSocket(this.httpsServer);
-                })
-            } catch (error) {
-                logError('::Failed to start HTTPS server with error:', context);
-                dir(error);
-                process.exit();
-            }
-        }
     }
 
 } //Fim WebServer()
