@@ -1,0 +1,25 @@
+{
+    "$meta": {
+        "label": "Latvian",
+        "humanizer_language": "lv"
+    },
+    "restarter": {
+        "crash_detected": "konstatēta avārija",
+        "partial_crash_warn": "Daļējas avārijas dēļ, šis serveris tiks restartēts pēc 1 minūtes. Lūdzu pārtrauc savienojumu ar serveri tagad.",
+        "partial_crash_warn_discord": "Daļējas avārijas dēļ, **%{servername}** tiks restartēts pēc 1 minūtes.",
+        "schedule_reason": "ieplānotais restarts %{time}",
+        "schedule_warn": "Šī servera restartēšana ir ieplānota pēc %{smart_count} minūtes. Lūdzu atvienojies tagad. |||| Šī servera restartēšana ir ieplānota pēc %{smart_count} minūtēm.",
+        "schedule_warn_discord": "**%{servername}** ir ieplānots restarts pēc %{smart_count} minūtes. |||| **%{servername}** ir ieplānots restarts pēc %{smart_count} minūtēm."
+    },
+    "server_actions": {
+        "restarting": "Serveris tiek restartēts (%{reason}).",
+        "restarting_discord": "**%{servername}** tiek restartēts (%{reason}).",
+        "stopping": "Serveris tiek izslēgts (%{reason}).",
+        "stopping_discord": "**%{servername}** tiek izslēgts (%{reason}).",
+        "spawning_discord": "**%{servername}** tiek ieslēgts"
+    },
+    "discord": {
+        "status_online": "**%{servername}** ir pašlaik **Ieslēgts**!",
+        "status_offline": "**%{servername}** ir pašlaik **Izslēgts**!"
+    }
+}

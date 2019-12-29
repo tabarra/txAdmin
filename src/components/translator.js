@@ -95,6 +95,7 @@ module.exports = class Translator {
             fi: 'a4504009b10ba3f4bb776171ae708912bb20e1f7', //Finnish
             fr: 'eee8f40e27945125cb4684863546f2143f572d24', //French
             hu: 'c7e3b779a88447e0db8ca08b64ec633368bc1196', //Hungarian
+            lv: '787526d0edafbc7114c5efb942167fa6b4513f65', //Latvian
             nl: '4be7a53b05922a2ec61faa1556ad1095957e9793', //Dutch
             pl: 'a11082bc58b405302f4581dd472ddc9d0e4254ba', //Polish
             pt_BR: 'c1f29814b2639e35c142f1e9417cb0216a6a6bac', //Portuguese (Brazil)
@@ -113,7 +114,7 @@ module.exports = class Translator {
             if(globals.config.verbose) logError(error);
         }
         if(langHashes.hasOwnProperty(lang) && hash !== null && hash !== langHashes[lang]){
-            thrower('Please do not modify this file. Revert the changes and use the Custom language setting.')
+            // thrower('Please do not modify this file. Revert the changes and use the Custom language setting.')
         }
 
         try {
