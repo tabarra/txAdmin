@@ -59,9 +59,9 @@ function setTTYTitle(title){
 }
 
 function dir(data){
-    console.dir(data);
-    // let div = "=".repeat(32);
-    // console.log(ac.cyan([div, JSON.stringify(data, null, 2), div].join("\n")))
+    // console.dir(data);
+    let div = "=".repeat(32);
+    console.log(ac.cyan([div, JSON.stringify(data, null, 2), div].join("\n")))
 }
 
 function getLog(){

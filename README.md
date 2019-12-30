@@ -18,8 +18,24 @@
 
 
 ## This is the CONVERSION branch. 
-### Expect everything to be messy, and half of it to not work
+**Expect everything to be messy, and half of it to not work.**  
+If anybody want to try to run it, just download the latest artifact (1919, seriously wont work before that) then inside the folder execute:
+```bash
+# Replace old monitor and install dependencies
+cd citizen/system_resources
+mv monitor monitorOld
+git clone -b conversion https://github.com/tabarra/txAdmin monitor
+cd monitor
+npm i
 
+# Add admin
+node src/scripts/admin-add.js
+
+# Setup default server profile
+node src/scripts/setup.js default
+```
+Then to run it, just execute the `run.sh` or `run.cmd` without **any** arguments.
+  
 ## License, Credits and Thanks
 - This project is licensed under the [MIT License](https://github.com/tabarra/txAdmin/blob/master/LICENSE).
 - Favicons made by Freepik from [www.flaticon.com](www.flaticon.com) are licensed under [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)

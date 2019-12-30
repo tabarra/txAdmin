@@ -1,4 +1,4 @@
-let monitormode = GetConvar("monitormode", "false")
+let monitormode = GetConvar("monitorMode", "false")
 if(monitormode == "true"){
     require('./src/index.js')
 }else{
