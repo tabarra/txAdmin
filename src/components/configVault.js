@@ -1,6 +1,8 @@
 //Requires
-const os = require('os');
 const fs = require('fs');
+const os = require('os');
+const path = require('path');
+const slash = require('slash');
 const clone = require('clone');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'ConfigVault';
@@ -135,7 +137,6 @@ module.exports = class ConfigVault {
                 commandCooldown: toDefault(cfg.discordBot.commandCooldown, null), //not in template
             };
             out.fxRunner = {
-                buildPath: toDefault(cfg.fxRunner.buildPath, null),
                 basePath: toDefault(cfg.fxRunner.basePath, null),
                 cfgPath: toDefault(cfg.fxRunner.cfgPath, null),
                 logPath: toDefault(cfg.fxRunner.logPath, null), //not in template
@@ -200,6 +201,9 @@ module.exports = class ConfigVault {
             cfg.discordBot.commandCooldown = parseInt(cfg.discordBot.commandCooldown) || 30; //not in template
 
             //FXRunner
+            let buildPath = GetConvar("citizen_root", 'null');
+            if(buildPath == 'null') throw new Error('citizen_root convar not set')
+            cfg.fxRunner.buildPath = slash(path.normalize(buildPath+'/'));
             cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template
             cfg.fxRunner.setPriority = cfg.fxRunner.setPriority || "NORMAL";
             cfg.fxRunner.onesync = (cfg.fxRunner.onesync === 'true' || cfg.fxRunner.onesync === true);

@@ -113,7 +113,6 @@ function handleGlobal(res, req) {
 function handleFXServer(res, req) {
     //Sanity check
     if(
-        isUndefined(req.body.buildPath) ||
         isUndefined(req.body.basePath) ||
         isUndefined(req.body.cfgPath) ||
         isUndefined(req.body.onesync) ||
@@ -125,7 +124,6 @@ function handleFXServer(res, req) {
 
     //Prepare body input
     let cfg = {
-        buildPath: slash(path.normalize(req.body.buildPath+'/')),
         basePath: slash(path.normalize(req.body.basePath+'/')),
         cfgPath: slash(path.normalize(req.body.cfgPath)),
         onesync: (req.body.onesync === 'true'),
@@ -135,26 +133,10 @@ function handleFXServer(res, req) {
 
     //Validating path spaces
     if(
-        cfg.buildPath.includes(' ') ||
         cfg.basePath.includes(' ') ||
         cfg.cfgPath.includes(' ')
     ){
         return res.send({type: 'danger', message: `The paths cannot contain spaces.`});
-    }
-
-    //Validating Build Path
-    try {
-        if(!fs.existsSync(cfg.buildPath)) throw new Error("Path doesn't exist or its unreadable.");
-        if(globals.config.osType === 'Linux'){
-            if(!fs.existsSync(`${cfg.buildPath}/run.sh`)) throw new Error("run.sh not found.");
-        }else if(globals.config.osType === 'Windows_NT'){
-            if(!fs.existsSync(`${cfg.buildPath}/run.cmd`)) throw new Error("run.cmd not found.");
-            if(!fs.existsSync(`${cfg.buildPath}/fxserver.exe`)) throw new Error("fxserver.exe not found.");
-        }else{
-            throw new Error("OS Type not supported");
-        }
-    } catch (error) {
-        return res.send({type: 'danger', message: `<strong>Build Path error:</strong> ${error.message}`});
     }
 
     //Validating Base Path
@@ -181,7 +163,6 @@ function handleFXServer(res, req) {
 
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('fxRunner');
-    newConfig.buildPath = cfg.buildPath;
     newConfig.basePath = cfg.basePath;
     newConfig.cfgPath = cfg.cfgPath;
     newConfig.onesync = cfg.onesync;

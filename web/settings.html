@@ -128,19 +128,6 @@
 
                         <!-- FXServer Card -->
                         <div class="form-group row">
-                            <label for="frmFXServer-buildPath" class="col-sm-3 col-form-label">Build Path
-                                <span class="text-danger">*</span></label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmFXServer-buildPath" value="{{fxserver.buildPath}}"
-                                    placeholder="C:/Users/Admin/Documents/fxserver_builds/1380" {{disableWrite}}>
-                                <span class="form-text text-muted">
-                                    The folder <strong>containing</strong> the files <code>run.cmd</code>, <code>fxserver.exe</code> and
-                                    a bunch of DLLs in case of Windows, and only <code>run.sh</code> in case of Linux.
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
                             <label for="frmFXServer-basePath" class="col-sm-3 col-form-label">Base Path
                                 <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
@@ -405,14 +392,13 @@
     //============================================== FXServer Settings
     $('#frmFXServer-save').click(function () {
         let data = {
-            buildPath: $('#frmFXServer-buildPath').val().trim(),
             basePath: $('#frmFXServer-basePath').val().trim(),
             cfgPath: $('#frmFXServer-cfgPath').val().trim(),
             onesync: $('#frmFXServer-onesync').is(':checked'),
             autostart: $('#frmFXServer-autostart').is(':checked'),
             quiet: $('#frmFXServer-quiet').is(':checked')
         }
-        if (!data.buildPath.length || !data.basePath.length || !data.cfgPath.length) {
+        if (!data.basePath.length || !data.cfgPath.length) {
             var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
             return;
         }

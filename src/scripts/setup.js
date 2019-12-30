@@ -57,7 +57,6 @@ let configSkeletal = {
         statusCommand: '/status'
     },
     fxRunner: {
-        buildPath: null,
         basePath: null,
         cfgPath: null,
         setPriority: false,
