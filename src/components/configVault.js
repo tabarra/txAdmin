@@ -43,7 +43,7 @@ module.exports = class ConfigVault {
             this.config = this.setupConfigDefaults(this.configFile);
             this.setupFolderStructure();
         } catch (error) {
-            logError(error.stack, context)
+            logError(error.message, context)
             process.exit(0);
         }
     }
@@ -60,7 +60,7 @@ module.exports = class ConfigVault {
         try {
             rawFile = fs.readFileSync(this.configFilePath, 'utf8');
         } catch (error) {
-            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. (cannot read file, please read the documentation)\nOriginal error: ${error.message}`, error.stack);
+            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. (cannot read file, please read the documentation)\nOriginal error: ${error.message}`, context);
         }
 
         //Try to parse config file
@@ -69,7 +69,7 @@ module.exports = class ConfigVault {
             cfgData = JSON.parse(rawFile);
         } catch (error) {
             if(rawFile.includes('\\')) logError(`Note: your 'data/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`, context);
-            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. (json parse error, please read the documentation)\nOriginal error: ${error.message}`, error.stack);
+            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. \nOriginal error: ${error.message}`, context);
         }
 
         return cfgData;
@@ -146,7 +146,7 @@ module.exports = class ConfigVault {
                 quiet: toDefault(cfg.fxRunner.quiet, null),
             };
         } catch (error) {
-            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`, error.stack);
+            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`, context);
         }
 
         return out;
@@ -207,7 +207,7 @@ module.exports = class ConfigVault {
             cfg.fxRunner.autostartDelay = parseInt(cfg.webServer.autostartDelay) || 2; //not in template
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
         } catch (error) {
-            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`, error.stack);
+            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`, context);
         }
 
         return cfg;

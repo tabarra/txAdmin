@@ -9,7 +9,7 @@ const readline = require('readline');
 const { promisify } = require('util');
 const axios = require("axios");
 const ac = require('ansi-colors');
-ac.enabled = require('color-support').hasBasic;
+ac.enabled = true;
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 cleanTerminal()
 const context = 'SetupScript';

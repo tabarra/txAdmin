@@ -1,7 +1,7 @@
 //Requires
 const fs = require('fs');
 const ac = require('ansi-colors');
-ac.enabled = require('color-support').hasBasic;
+ac.enabled = true;
 const StreamSnitch = require('stream-snitch');
 const bytes = require('bytes');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');

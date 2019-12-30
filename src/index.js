@@ -1,3 +1,11 @@
+//HACKs
+process.chdir(__dirname+'/..')
+// process._exit = process.exit;
+// process.exit = ()=>{
+//     process.stdout.write(`\u001b[0m\n`);
+//     process._exit(0);
+// }
+
 //Test environment conditions
 const helpers = require('./extras/helpers');
 helpers.dependencyChecker();
@@ -38,7 +46,7 @@ globals = {
 let ascii = helpers.txAdminASCII()
 let separator = '='.repeat(46);
 let motd = `${separator}\n${ascii}\n${separator}`;
-cleanTerminal();
+// cleanTerminal();
 setTTYTitle();
 console.log(motd);
 
@@ -104,3 +112,9 @@ process.on('uncaughtException', function(err) {
 process.on('exit', (code) => {
     log(">>Stopping txAdmin");
 });
+
+//NOTE: if you need to debug larger stacks for deprecation warnings
+// Error.stackTraceLimit = Infinity;
+// process.on('warning', (warning) => {
+//     console.log(warning.stack);
+// });
