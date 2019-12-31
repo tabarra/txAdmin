@@ -122,10 +122,7 @@ module.exports = class FXRunner {
             }
         }
 
-        //Sending header to the console buffer
-        this.consoleBuffer.writeHeader();
-
-        //Resseting hitch counter
+        //Reseting hitch counter
         globals.monitor.clearFXServerHitches();
 
         //Announcing
@@ -145,6 +142,7 @@ module.exports = class FXRunner {
             );
             pid = this.fxChild.pid.toString();
             logOk(`:: [${pid}] FXServer Started!`, context);
+            this.consoleBuffer.writeHeader();
             this.tsChildStarted = tsStart;
         } catch (error) {
             logError('Failed to start FXServer with the following error:');

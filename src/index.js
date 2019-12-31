@@ -1,10 +1,5 @@
 //HACKs
 process.chdir(__dirname+'/..')
-// process._exit = process.exit;
-// process.exit = ()=>{
-//     process.stdout.write(`\u001b[0m\n`);
-//     process._exit(0);
-// }
 
 //Test environment conditions
 const helpers = require('./extras/helpers');
@@ -13,6 +8,7 @@ helpers.dependencyChecker();
 //Requires
 const { dir, log, logOk, logWarn, logError, cleanTerminal, setTTYTitle } = require('./extras/console');
 const txAdmin = require('./txAdmin.js');
+setTTYTitle();
 
 
 //==============================================================
@@ -42,14 +38,6 @@ globals = {
 
 
 //==============================================================
-//Print MOTD
-let ascii = helpers.txAdminASCII()
-let separator = '='.repeat(46);
-let motd = `${separator}\n${ascii}\n${separator}`;
-// cleanTerminal();
-setTTYTitle();
-console.log(motd);
-
 //Detect server profile
 let serverProfile;
 if(process.argv[2]){
