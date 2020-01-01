@@ -1,6 +1,30 @@
 //Requires
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('./extras/console');
 
+//FIXME: I should be using dependency injection or something
+globals = {
+    authenticator: null,
+    discordBot: null,
+    fxRunner: null,
+    logger: null,
+    monitor: null,
+    translator: null,
+    webConsole: null,
+    webServer: null,
+    database: null,
+    config: null,
+    version: {
+        current: '--',
+        latest: '--',
+        changelog: '--',
+        allVersions: []
+    },
+    dashboardErrorMessage: null,
+    //FIXME: remove with the Extensions update
+    intercomTempLog: [],
+    intercomTempResList: null,
+}
+
 
 /**
  * Main APP

@@ -1,6 +1,7 @@
-let monitormode = GetConvar("monitorMode", "false")
-if(monitormode == "true"){
-    require('./src/index.js')
+const monitorMode = GetConvar('monitorMode', 'false');
+
+if(monitorMode == 'true'){
+    require('./src/index.js');
 }else{
-    console.log(">is server")
+    console.log('>txAdmin in server mode.');
 }

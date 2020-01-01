@@ -1,63 +1,79 @@
-//HACKs
-process.chdir(__dirname+'/..')
-
 //Test environment conditions
+const osType = require('os').type();
+if (osType != 'Linux' && osType != 'Windows_NT') {
+    logError(`OS type not supported: ${osType}`, context);
+    process.exit();
+}
+process.chdir(__dirname+'/..');
 const helpers = require('./extras/helpers');
 helpers.dependencyChecker();
 
 //Requires
+const fs = require('fs');
+const path = require('path');
+const slash = require('slash');
 const { dir, log, logOk, logWarn, logError, cleanTerminal, setTTYTitle } = require('./extras/console');
-const txAdmin = require('./txAdmin.js');
-setTTYTitle();
+
+//Helpers
+const CleanPath = (x) => { return slash(path.normalize(x)) };
 
 
 //==============================================================
-//FIXME: I should be using dependency injection or something
-globals = {
-    authenticator: null,
-    discordBot: null,
-    fxRunner: null,
-    logger: null,
-    monitor: null,
-    translator: null,
-    webConsole: null,
-    webServer: null,
-    database: null,
-    config: null,
-    version: {
-        current: '--',
-        latest: '--',
-        changelog: '--',
-        allVersions: []
-    },
-    dashboardErrorMessage: null,
-    //FIXME: remove with the Extensions update
-    intercomTempLog: [],
-    intercomTempResList: null,
+//Get Server Root
+let serverRootConvar = GetConvar('serverRoot', 'false');
+if(serverRootConvar == 'false'){
+    logError(`serverRoot convar not set`);
+    process.exit();
+}
+const serverRoot = CleanPath(serverRootConvar);
+
+//Get profile name
+const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, "").trim();
+if(!serverProfile.length){
+    logError(`Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.`);
+    process.exit();
+}else if(serverProfile === 'example'){
+    logError(`You can't use the 'example' profile.`);
+    process.exit();
+}
+log(`Server profile selected: '${serverProfile}'`);
+
+//Checking data path
+const dataPath = CleanPath(serverRoot+'/txData');
+try {
+    if(!fs.existsSync(dataPath)) fs.mkdirSync(dataPath);
+} catch (error) {
+    logError(`Failed to check or create '${dataPath}' with error: ${error.message}`);
+    process.exit();
 }
 
-
-//==============================================================
-//Detect server profile
-let serverProfile;
-if(process.argv[2]){
-    serverProfile = process.argv[2].replace(/[^a-z0-9._-]/gi, "").trim();
-    if(!serverProfile.length){
-        logError(`Invalid server profile. Are you using Google Translator on the Github instructions page? Make sure there are no additional spaces in your command.`);
-        process.exit();
-    }else if(serverProfile === 'example'){
-        logError(`You can't use the 'example' profile.`);
+//Check if the profile exists and call setup if it doesn't
+const profilePath = CleanPath(path.join(dataPath, serverProfile));
+if(!fs.existsSync(profilePath)){
+    logWarn(`Profile not found in '${dataPath}', setting folder up...`);
+    try {
+        const SetupScript = require('./scripts/setup.js');
+        SetupScript(osType, serverRoot, serverProfile, profilePath);
+    } catch (error) {
+        logError(`Failed to create profile '${serverProfile}' with error: ${error.message}`);
         process.exit();
     }
-    log(`Server profile selected: '${serverProfile}'`);
-}else{
-    serverProfile = 'default';
-    log(`Server profile not set, using 'default'`);
 }
 
-//Start txAdmin
+//FIXME: remove when migrating to nucleus
+//Get Web Port
+let txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
+let digitRegex = /^\d+$/;
+if(!digitRegex.test(txAdminPortConvar)){
+    logError(`txAdminPort is not valid.`);
+    process.exit();
+}
+const txAdminPort = parseInt(txAdminPortConvar);
+
+//Starting txAdmin (have fun :p)
 setTTYTitle(serverProfile);
-const app = new txAdmin(serverProfile);
+const txAdmin = require('./txAdmin.js');
+const app = new txAdmin(serverProfile, txAdminPort);
 
 
 //==============================================================
@@ -70,11 +86,7 @@ setInterval(() => {
         setTimeout(() => {
             logError(sep);
             logError('Major process freeze detected.');
-            if(process.env.os.toLowerCase().includes('windows')){
-                logError(`If using CMD or a 'start.bat' file, make sure to disable QuickEdit mode.`);
-                logError(`Join our Discord and type '!quickedit' for instructions.`);
-            }
-            logError('THIS IS NOT AN ERROR CAUSED BY TXADMIN! Your VPS might be lagging out.');
+            logError('THIS IS NOT AN ERROR CAUSED BY TXADMIN! Your VPS is probably lagging out.');
             logError(sep);
         }, 1000);
     }
@@ -102,7 +114,7 @@ process.on('exit', (code) => {
 });
 
 //NOTE: if you need to debug larger stacks for deprecation warnings
-// Error.stackTraceLimit = Infinity;
+// Error.stackTraceLimit = 10;
 // process.on('warning', (warning) => {
 //     console.log(warning.stack);
 // });
