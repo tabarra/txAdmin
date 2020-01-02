@@ -25,7 +25,7 @@ module.exports = class FXRunner {
         this.fxServerPort = null;
         this.extResources = [];
         this.consoleBuffer = new ConsoleBuffer(this.config.logPath, 10);
-        this.tmpExecFile = path.normalize(process.cwd()+`/${globals.config.serverProfilePath}/data/exec.tmp.cfg`);
+        this.tmpExecFile = `${globals.config.serverProfilePath}/data/exec.tmp.cfg`;
         this.setupVariables();
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
