@@ -78,7 +78,7 @@ module.exports = async function action(res, req) {
                 let out = await webUtils.renderMasterView('resources', req.session, renderData);
                 return res.send(out);
             }
-        } catch (error) {logError(error, context)}
+        } catch (error) {logError(error.message, context)}
 
         //Check execution limit of 1000ms
         cnt++;
@@ -88,7 +88,7 @@ module.exports = async function action(res, req) {
             try {
                 let out = await webUtils.renderMasterView('basic/generic', req.session, {message: timeoutMessage});
                 return res.send(out);
-            } catch (error) {logError(error, context)}
+            } catch (error) {logError(error.message, context)}
         }
     }, 100);
 };

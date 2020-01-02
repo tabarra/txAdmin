@@ -30,7 +30,8 @@ globals = {
  * Main APP
  */
 module.exports = class txAdmin {
-    constructor(serverProfile, txAdminPort){
+    //NOTE: after adding support for multi-server, review parameter cascading
+    constructor(dataPath, profilePath, serverProfile, txAdminPort){
         log(">>Starting txAdmin");
 
         //Get current version
@@ -48,7 +49,7 @@ module.exports = class txAdmin {
         let profileConfig;
         try {
             const ConfigVault = require('./components/configVault')
-            globals.configVault = new ConfigVault(serverProfile);
+            globals.configVault = new ConfigVault(profilePath, serverProfile);
             profileConfig = globals.configVault.getAll();
             globals.config = profileConfig.global;
         } catch (err) {
@@ -56,7 +57,7 @@ module.exports = class txAdmin {
         }
 
         //Start all modules
-        this.startAuthenticator(profileConfig.authenticator).catch((err) => {
+        this.startAuthenticator(profileConfig.authenticator, dataPath).catch((err) => { //NOTE: temp parameter
             HandleFatalError(err, 'Authenticator');
         });
         this.startDiscordBot(profileConfig.discordBot).catch((err) => {
@@ -74,7 +75,7 @@ module.exports = class txAdmin {
         this.startMonitor(profileConfig.monitor).catch((err) => {
             HandleFatalError(err, 'Monitor');
         });
-        this.startWebServer(profileConfig.webServer, txAdminPort).catch((err) => {
+        this.startWebServer(profileConfig.webServer, txAdminPort).catch((err) => { //NOTE: temp parameter
             HandleFatalError(err, 'WebServer');
         });
         this.startWebConsole(profileConfig.webConsole).catch((err) => {
@@ -96,9 +97,9 @@ module.exports = class txAdmin {
 
 
     //==============================================================
-    async startAuthenticator(config){
+    async startAuthenticator(config, dataPath){
         const Monitor = require('./components/authenticator')
-        globals.authenticator = new Monitor(config);
+        globals.authenticator = new Monitor(config, dataPath);
     }
 
     //==============================================================

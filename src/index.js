@@ -75,7 +75,7 @@ const txAdminPort = parseInt(txAdminPortConvar);
 //Starting txAdmin (have fun :p)
 setTTYTitle(serverProfile);
 const txAdmin = require('./txAdmin.js');
-const app = new txAdmin(serverProfile, txAdminPort);
+const app = new txAdmin(dataPath, profilePath, serverProfile, txAdminPort);
 
 
 //==============================================================

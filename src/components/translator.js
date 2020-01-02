@@ -111,10 +111,10 @@ module.exports = class Translator {
             hash = crypto.createHash('SHA1').update(toHash).digest("hex");
             if(globals.config.verbose) logOk(`Hash for ${lang} is ${hash}`, context);
         } catch (error) {
-            if(globals.config.verbose) logError(error);
+            if(globals.config.verbose) logError(error.message);
         }
         if(langHashes.hasOwnProperty(lang) && hash !== null && hash !== langHashes[lang]){
-            // thrower('Please do not modify this file. Revert the changes and use the Custom language setting.')
+            thrower('Please do not modify this file. Revert the changes and use the Custom language setting.')
         }
 
         try {

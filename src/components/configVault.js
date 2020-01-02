@@ -22,9 +22,9 @@ function removeNulls(obj) {
 
 
 module.exports = class ConfigVault {
-    constructor(serverProfile) {
+    constructor(profilePath, serverProfile) {
         this.serverProfile = serverProfile;
-        this.serverProfilePath = `data/${serverProfile}`;
+        this.serverProfilePath = profilePath;
         this.configFilePath = `${this.serverProfilePath}/config.json`;
         this.configFile = null;
         this.config = null;
@@ -70,7 +70,7 @@ module.exports = class ConfigVault {
         try {
             cfgData = JSON.parse(rawFile);
         } catch (error) {
-            if(rawFile.includes('\\')) logError(`Note: your 'data/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`, context);
+            if(rawFile.includes('\\')) logError(`Note: your 'txData/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`, context);
             throw new Error(`Unnable to load configuration file '${this.configFilePath}'. \nOriginal error: ${error.message}`, context);
         }
 
@@ -242,8 +242,7 @@ module.exports = class ConfigVault {
             //     fs.writeFileSync(commandsPath, '[]');
             // }
         } catch (error) {
-            logError(`Error setting up folder structure in '${this.serverProfilePath}/'`, context);
-            logError(error);
+            logError(`Failed to set up folder structure in '${this.serverProfilePath}/' with error: ${error.message}`, context);
             process.exit();
         }
     }

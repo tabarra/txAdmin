@@ -12,6 +12,10 @@ cleanTerminal()
 const printDivider = () =>{log('='.repeat(64))};
 const context = 'ConfigTesterScript';
 
+//NOTE: just block the usage :(
+logError(`This script doesn't work anymore and would need to be adapted. Exiting.`)
+process.exit();
+
 //Print usage info
 printDivider();
 logOk(`Usage: "node src/scripts/config-tester server-profile-name"`);

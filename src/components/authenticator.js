@@ -7,9 +7,10 @@ const context = 'Authenticator';
 
 
 module.exports = class Authenticator {
-    constructor(config) {
+    constructor(config, dataPath) {
         logOk('::Started', context);
         this.config = config;
+        this.adminsFile = `${dataPath}/admins.json`; //NOTE: remove when adding support for multi-server
         this.admins = null;
         this.registeredPermissions = [
             "all",
@@ -107,11 +108,11 @@ module.exports = class Authenticator {
 
         //Saving admin file
         try {
-            await fs.writeFile('data/admins.json', JSON.stringify(this.admins, null, 2), 'utf8');
+            await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
         } catch (error) {
-            if(globals.config.verbose) log(error, context);
-            throw new Error("Failed to save 'data/admins.json' file.");
+            if(globals.config.verbose) log(error.message, context);
+            throw new Error(`Failed to save '${this.adminsFile}'`);
         }
     }
 
@@ -137,11 +138,11 @@ module.exports = class Authenticator {
 
         //Saving admin file
         try {
-            await fs.writeFile('data/admins.json', JSON.stringify(this.admins, null, 2), 'utf8');
+            await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
         } catch (error) {
-            if(globals.config.verbose) log(error, context);
-            throw new Error("Failed to save 'data/admins.json' file.");
+            if(globals.config.verbose) log(error.message, context);
+            throw new Error(`Failed to save '${this.adminsFile}'`);
         }
     }
 
@@ -167,11 +168,11 @@ module.exports = class Authenticator {
 
         //Saving admin file
         try {
-            await fs.writeFile('data/admins.json', JSON.stringify(this.admins, null, 2), 'utf8');
+            await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
         } catch (error) {
-            if(globals.config.verbose) log(error, context);
-            throw new Error("Failed to save 'data/admins.json' file.");
+            if(globals.config.verbose) log(error.message, context);
+            throw new Error(`Failed to save '${this.adminsFile}'`);
         }
     }
 
@@ -186,7 +187,7 @@ module.exports = class Authenticator {
         let jsonData = null;
 
         try {
-            raw = await fs.readFile('data/admins.json', 'utf8');
+            raw = await fs.readFile(this.adminsFile, 'utf8');
         } catch (error) {
             logError('Unable to load admins. (cannot read file, please read the documentation)', context);
             if(this.admins === null) process.exit();

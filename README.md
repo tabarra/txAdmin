@@ -41,7 +41,7 @@ Then to run it, just execute the `run.sh` or `run.cmd` without **any** `+exec` a
     - Defaults to 40120, creates an http server
 - **(Planned)** With Nucleus integration (single/multi server):
     - Grabs ConVar
-    - Defaults to null, don't create http server
+    - Defaults to null, don't create http server unless port is specified
 
 ## License, Credits and Thanks
 - This project is licensed under the [MIT License](https://github.com/tabarra/txAdmin/blob/master/LICENSE).
