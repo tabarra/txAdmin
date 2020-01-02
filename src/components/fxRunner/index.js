@@ -2,8 +2,7 @@
 const { spawn } = require('child_process');
 const fs = require('fs-extra');
 const os = require('os');
-const path = require('path');
-const sleep = require('util').promisify(setTimeout);
+const sleep = require('util').promisify((a, f) => setTimeout(f, a));
 const pidtree = require('pidtree');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const helpers = require('../../extras/helpers');
