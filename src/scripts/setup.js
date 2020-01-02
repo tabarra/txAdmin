@@ -15,6 +15,7 @@ let defaultConfig = {
         verbose: false,
         publicIP: "change-me",
         serverName: "change-me",
+        language: "en",
         forceFXServerPort: null
     },
     logger: {},
