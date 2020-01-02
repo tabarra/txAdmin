@@ -4,6 +4,7 @@ const path = require('path');
 const slash = require('slash');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const context = 'SetupScript';
+const osType = require('os').type();
 
 //Helpers
 const printDivider = () => { log('='.repeat(64), context) };
@@ -46,7 +47,7 @@ let defaultConfig = {
 
 
 //================================================================
-module.exports = (osType, serverRoot, serverProfile, profilePath) => {
+module.exports = (serverRoot, serverProfile, profilePath) => {
     printDivider();
     //Sanity check presence of profile
     if (fs.existsSync(profilePath)) {

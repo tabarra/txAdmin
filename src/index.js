@@ -1,16 +1,9 @@
-//Test environment conditions
-const osType = require('os').type();
-if (osType != 'Linux' && osType != 'Windows_NT') {
-    logError(`OS type not supported: ${osType}`, context);
-    process.exit();
-}
+//Environment and Requires
 process.chdir(__dirname+'/..');
-const helpers = require('./extras/helpers');
-helpers.dependencyChecker();
-
-//Requires
 const fs = require('fs');
 const path = require('path');
+const helpers = require('./extras/helpers');
+helpers.dependencyChecker();
 const slash = require('slash');
 const { dir, log, logOk, logWarn, logError, cleanTerminal, setTTYTitle } = require('./extras/console');
 
@@ -19,6 +12,13 @@ const CleanPath = (x) => { return slash(path.normalize(x)) };
 
 
 //==============================================================
+try {
+    if(!IsDuplicityVersion()) throw new Error();
+} catch (error) {
+    console.log(`txAdmin must be run inside fxserver in monitor mode.`);
+    process.exit();
+}
+
 //Get Server Root
 let serverRootConvar = GetConvar('serverRoot', 'false');
 if(serverRootConvar == 'false'){
@@ -53,7 +53,7 @@ if(!fs.existsSync(profilePath)){
     logWarn(`Profile not found in '${dataPath}', setting folder up...`);
     try {
         const SetupScript = require('./scripts/setup.js');
-        SetupScript(osType, serverRoot, serverProfile, profilePath);
+        SetupScript(serverRoot, serverProfile, profilePath);
     } catch (error) {
         logError(`Failed to create profile '${serverProfile}' with error: ${error.message}`);
         process.exit();
