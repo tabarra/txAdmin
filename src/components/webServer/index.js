@@ -12,8 +12,9 @@ const webUtils = require('../../webroutes/webUtils');
 const context = 'WebServer';
 
 module.exports = class WebServer {
-    constructor(config) {
+    constructor(config, httpPort) {
         this.config = config;
+        this.httpPort = httpPort; //NOTE: remove when adding support for multi-server
         this.intercomToken = nanoid();
 
         this.setupExpress();
@@ -77,8 +78,8 @@ module.exports = class WebServer {
                 logError(`Failed to start HTTP server, port ${error.port} already in use.`, context);
                 process.exit();
             })
-            this.httpServer.listen(this.config.port, '0.0.0.0', () => {
-                logOk(`::Started at http://localhost:${this.config.port}/`, context);
+            this.httpServer.listen(this.httpPort, '0.0.0.0', () => {
+                logOk(`::Started at http://localhost:${this.httpPort}/`, context);
                 globals.webConsole.attachSocket(this.httpServer);
             })
         } catch (error) {

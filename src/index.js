@@ -60,8 +60,8 @@ if(!fs.existsSync(profilePath)){
     }
 }
 
-//FIXME: remove when migrating to nucleus
 //Get Web Port
+//NOTE: Temporarily being passed down to txAdmin > webServer to make it easier to remove when adding support for multiple servers
 let txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
 let digitRegex = /^\d+$/;
 if(!digitRegex.test(txAdminPortConvar)){
@@ -70,6 +70,8 @@ if(!digitRegex.test(txAdminPortConvar)){
 }
 const txAdminPort = parseInt(txAdminPortConvar);
 
+
+//==============================================================
 //Starting txAdmin (have fun :p)
 setTTYTitle(serverProfile);
 const txAdmin = require('./txAdmin.js');

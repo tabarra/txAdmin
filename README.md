@@ -19,23 +19,30 @@
 
 ## This is the CONVERSION branch. 
 **Expect everything to be messy, and half of it to not work.**  
-If anybody want to try to run it, just download the latest artifact (1919, seriously wont work before that) then inside the folder execute:
+
+### Replace old monitor and install dependencies
 ```bash
-# Replace old monitor and install dependencies
+#Inside your fxserver folder, execute:
 cd citizen/system_resources
 mv monitor monitorOld
 git clone -b conversion https://github.com/tabarra/txAdmin monitor
 cd monitor
 npm i
-
-# Add admin
-node src/scripts/admin-add.js
-
-# Setup default server profile
-node src/scripts/setup.js default
 ```
-Then to run it, just execute the `run.sh` or `run.cmd` without **any** arguments.
-  
+Then to run it, just execute the `run.sh` or `run.cmd` without **any** `+exec` arguments.  
+
+### ConVars
+- **serverProfile:** The name of the server profile to start. Profiles are saved/loaded from the current directory inside the `txData` folder.
+- **txAdminPort:** The TCP port to use as HTTP Server.
+
+### Web Port Behaviour
+- **(Current)** Without Nucleus integration:
+    - From ConVar
+    - Defaults to 40120, creates an http server
+- **(Planned)** With Nucleus integration (single/multi server):
+    - Grabs ConVar
+    - Defaults to null, don't create http server
+
 ## License, Credits and Thanks
 - This project is licensed under the [MIT License](https://github.com/tabarra/txAdmin/blob/master/LICENSE).
 - Favicons made by Freepik from [www.flaticon.com](www.flaticon.com) are licensed under [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)

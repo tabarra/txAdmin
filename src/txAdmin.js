@@ -30,7 +30,7 @@ globals = {
  * Main APP
  */
 module.exports = class txAdmin {
-    constructor(serverProfile){
+    constructor(serverProfile, txAdminPort){
         log(">>Starting txAdmin");
 
         //Get current version
@@ -74,7 +74,7 @@ module.exports = class txAdmin {
         this.startMonitor(profileConfig.monitor).catch((err) => {
             HandleFatalError(err, 'Monitor');
         });
-        this.startWebServer(profileConfig.webServer).catch((err) => {
+        this.startWebServer(profileConfig.webServer, txAdminPort).catch((err) => {
             HandleFatalError(err, 'WebServer');
         });
         this.startWebConsole(profileConfig.webConsole).catch((err) => {
@@ -132,9 +132,9 @@ module.exports = class txAdmin {
     }
 
     //==============================================================
-    async startWebServer(config){
+    async startWebServer(config, txAdminPort){
         const WebServer = require('./components/webServer')
-        globals.webServer = new WebServer(config);
+        globals.webServer = new WebServer(config, txAdminPort);
     }
 
     //==============================================================

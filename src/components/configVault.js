@@ -119,7 +119,6 @@ module.exports = class ConfigVault {
                 refreshInterval: toDefault(cfg.authenticator.refreshInterval, null), //not in template
             };
             out.webServer = {
-                port: toDefault(cfg.webServer.port, null),
                 bufferTime: toDefault(cfg.webServer.bufferTime, null), //not in template - deprecate?
                 limiterMinutes: toDefault(cfg.webServer.limiterMinutes, null), //not in template
                 limiterAttempts: toDefault(cfg.webServer.limiterAttempts, null), //not in template
@@ -188,7 +187,6 @@ module.exports = class ConfigVault {
             cfg.authenticator.refreshInterval = parseInt(cfg.authenticator.refreshInterval) || 15000; //not in template
 
             //WebServer
-            cfg.webServer.port = parseInt(cfg.webServer.port) || 40120;
             cfg.webServer.bufferTime = parseInt(cfg.webServer.bufferTime) || 1500; //not in template - deprecate?
             cfg.webServer.limiterMinutes = parseInt(cfg.webServer.limiterMinutes) || 15; //not in template
             cfg.webServer.limiterAttempts = parseInt(cfg.webServer.limiterAttempts) || 5; //not in template
