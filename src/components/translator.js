@@ -114,7 +114,7 @@ module.exports = class Translator {
             if(globals.config.verbose) logError(error);
         }
         if(langHashes.hasOwnProperty(lang) && hash !== null && hash !== langHashes[lang]){
-            // thrower('Please do not modify this file. Revert the changes and use the Custom language setting.')
+            thrower('Please do not modify this file. Revert the changes and use the Custom language setting.')
         }
 
         try {
