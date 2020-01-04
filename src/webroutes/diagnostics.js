@@ -76,7 +76,7 @@ async function getProcessesData(){
             let procName;
             let order;
             if(pid == process.pid){
-                procName = 'txAdmin';
+                procName = 'FxMonitor + txAdmin';
                 order = 0;
 
             }else if(pid == termPID){
@@ -238,10 +238,8 @@ async function getHostData(){
  */
 async function gettxAdminData(){
     let humanizeOptions = {
-        language: globals.translator.t('$meta.humanizer_language'),
         round: true,
-        units: ['d', 'h', 'm'],
-        fallbacks: ['en']
+        units: ['d', 'h', 'm']
     }
 
     let txadminData = {

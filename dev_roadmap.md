@@ -26,6 +26,9 @@ Minor stuff:
 - [ ] xxxxxx
 
 
+/e/FiveM/builds/tmpRoot
+npx nodemon --watch "../1919/citizen/system_resources/monitor/src/*" --exec "../1919/run.cmd"
+
 ### Feature tasks for collaborators:
 - Logger:
     - [-] Revert txAdminClient cl_logger.js back into lua and fix the mismatch of killer ID from client to server
