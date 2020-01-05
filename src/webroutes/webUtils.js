@@ -56,16 +56,17 @@ async function renderMasterView(view, reqSess, data){
  * Renders the login page.
  * @param {string} message
  */
-async function renderLoginView(message){
-    let viewName = (Math.random() > 0.1)? 'login' : 'login-matrix';
-    viewName = 'login'
+async function renderLoginView(viewName, message){
+    viewName = 'login';
     let data;
     let out;
     try {
         data = {
             headerTitle: 'Login',
+            isMatrix: (Math.random() <= 0.1),
             ascii: helpers.txAdminASCII(),
             message: (!isUndefined('message'))? message : '',
+            // template: viewName,
             // template: 'noMaster',
             // template: 'callback',
             template: 'normal',
@@ -73,7 +74,7 @@ async function renderLoginView(message){
             version: globals.version.current
         }
 
-        let rawView = await fs.readFile(getWebViewPath(`basic/${viewName}`), 'utf8');
+        let rawView = await fs.readFile(getWebViewPath(`basic/login`), 'utf8');
         out = sqrl.Render(rawView, data);
     } catch (error) {
         if(globals.config.verbose) {

@@ -41,12 +41,12 @@
             margin-top: 1rem;
             margin-bottom: 1rem;
             border: 0;
-
+            color: #b1afaf;
         }
         .separator::before, .separator::after {
             content: '';
             flex: 1;
-            border-top: 1px solid rgba(0, 0, 0, 0.1);
+            border-top: 1px solid #e6e6e6;
         }
         .separator::before {
             margin-right: .25em;
@@ -55,6 +55,59 @@
             margin-left: .25em;
         }
     </style>
+    {{if(options.isMatrix)}}
+        <style>
+            * {
+                font-family: Consolas, monospace, serif;
+                color: lawngreen;
+            }
+            body{
+                background-color: #23282c;
+            }
+            pre{
+                margin-bottom: -15px;
+            }
+            .card{
+                background-color: #23282c;
+                border: 4px solid lawngreen;
+            }
+            .alert-secondary{
+                background-color: #23282c;
+                border: 2px solid lawngreen;
+            }
+            .btn-primary {
+                color: lawngreen;
+                border: 2px solid lawngreen;
+                background-color: transparent;
+            }
+            .btn-primary:hover {
+                border: 2px solid black;
+                color: black;
+                font-weight: 700;
+                background-color: lawngreen;
+            }
+            .separator::before, .separator::after {
+                border-top: 1px dashed lawngreen;
+            }
+            .separator{
+                color: lawngreen;
+            }
+
+            input,
+            .btn-stack-overflow,
+            .btn-linkedin,
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover,
+            input:-webkit-autofill:focus,
+            .input-group-text{
+                background-color: transparent !important;
+                border: 1px solid lawngreen !important;
+                -webkit-text-fill-color: #fff;
+                transition: background-color 5000s ease-in-out 0s;
+            }
+
+        </style>
+    {{/if}}
 </head>
 
 <body class="app flex-row align-items-center">
@@ -72,9 +125,13 @@
     <div class="container">
 
         <!-- Logo Row -->
-        <div class="row justify-content-md-center mb-4">
-            <img src="img/txadmin.png" alt="txAdmin Logo">
-        </div>
+        {{if(options.isMatrix)}}
+            <div class="row justify-content-md-center mb-4"><pre><b>{{ascii}}</b></pre></div>
+        {{#else}}
+            <div class="row justify-content-md-center mb-4">
+                <img src="img/txadmin.png" alt="txAdmin Logo">
+            </div>
+        {{/if}}
 
         <!-- Card Row -->
         <div class="row justify-content-center">
@@ -131,7 +188,7 @@
                                 <i class="logo-image"><svg><use xlink:href="#discord-icon"></use></svg></i>
                                 <span>Discord</span>
                             </a>
-                            <div class="separator text-muted">OR</div>
+                            <div class="separator">OR</div>
                             <form action="/auth" method="post">
                                 <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
                                     <div class="input-group-prepend">
@@ -173,6 +230,13 @@
                 </div>
             </div>
         </div>
+        {{if(options.isMatrix)}}
+            <div class="row justify-content-md-center">
+                <div class="col-md-4 text-center pt-3">
+                    <h4 class="matrix-text">The Matrix has you...</h4>
+                </div>
+            </div>
+        {{/if}}
 
 
     </div>
