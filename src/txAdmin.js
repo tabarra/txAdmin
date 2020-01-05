@@ -160,8 +160,7 @@ function HandleFatalError(err, context){
         if(globals.config.verbose) dir(err);
     }else{
         logError(`Error starting '${context}' module: ${err.message}`)
-        console.log(JSON.stringify(err.stack, null, 2))
-        logError(err.stack, context)
+        dir(err.stack, context)
     }
 
     process.exit();

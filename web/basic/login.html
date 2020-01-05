@@ -141,12 +141,12 @@
                         <!-- TODO: see if squirrelly already supports elseif -->
                         {{if(options.template != 'normal')}}
                             {{if(options.template == 'noMaster')}}
-                                <h3 class="mb-4">No <code>cfx.re</code> Account Linked</h3>
+                                <h3 class="mb-4">No <code>CitizenFX</code> Account Linked</h3>
                                 <div class="mx-auto">
                                     <h6>Type the PIN in your terminal and click "Link Account".</h6>
                                     <form action="#xxxxxx" method="post">
                                         <div class="input-group mx-auto" style="max-width: 140px;">
-                                            <input class="form-control form-control-lg text-center mb-3" type="text" name="username" placeholder="0000">
+                                            <input class="form-control form-control-lg text-center mb-3" type="text" maxlength="4" name="username" placeholder="0000" required>
                                         </div>
                                         <button class="btn btn-primary px-4" type="submit">Link Account</button>
                                     </form>
@@ -164,7 +164,7 @@
                                                 <i class="icon-lock"></i>
                                             </span>
                                         </div>
-                                        <input class="form-control" type="password" name="password" placeholder="Password">
+                                        <input class="form-control" type="password" name="password" placeholder="Password" required>
                                     </div>
                                     <div class="input-group mb-4 mx-auto" style="max-width: 280px;">
                                         <div class="input-group-prepend">
@@ -172,7 +172,7 @@
                                                 <i class="icon-lock"></i>
                                             </span>
                                         </div>
-                                        <input class="form-control" type="password" name="password2" placeholder="Repeat Password">
+                                        <input class="form-control" type="password" name="password2" placeholder="Repeat Password" required>
                                     </div>
                                     <button class="btn btn-primary px-4" type="submit">Save</button>
                                 </form>
@@ -181,7 +181,7 @@
                             <h1 class="mb-3">Login</h1>
                             <a class="btn btn-brand btn-stack-overflow" role="button" href="#">
                                 <i class="logo-image"><svg><use xlink:href="#fivem-icon"></use></svg></i>
-                                <span>FiveM</span>
+                                <span>CitizenFX</span>
                             </a>
                             &nbsp;
                             <a class="btn btn-brand btn-linkedin" role="button" href="#">
@@ -196,7 +196,7 @@
                                             <i class="icon-user"></i>
                                         </span>
                                     </div>
-                                    <input class="form-control" type="text" name="username" placeholder="Username">
+                                    <input class="form-control" type="text" name="username" placeholder="Username" required>
                                 </div>
                                 <div class="input-group mb-4 mx-auto" style="max-width: 280px;">
                                     <div class="input-group-prepend">
@@ -204,7 +204,7 @@
                                             <i class="icon-lock"></i>
                                         </span>
                                     </div>
-                                    <input class="form-control" type="password" name="password" placeholder="Password">
+                                    <input class="form-control" type="password" name="password" placeholder="Password" required>
                                 </div>
                                 <div class="row justify-content-md-center">
                                     <button class="btn btn-primary px-4" type="submit">Login</button>

@@ -104,12 +104,12 @@ process.stderr.on('error', (data) => {});
 process.on('unhandledRejection', (err) => {
     logError(">>Ohh nooooo - unhandledRejection")
     logError(err.message)
-    logError(err.stack)
+    dir(err.stack)
 });
 process.on('uncaughtException', function(err) {
     logError(">>Ohh nooooo - uncaughtException")
     logError(err.message)
-    logError(err.stack)
+    dir(err.stack)
 });
 process.on('exit', (code) => {
     log(">>Stopping txAdmin");
