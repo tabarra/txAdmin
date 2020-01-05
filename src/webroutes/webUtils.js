@@ -58,6 +58,7 @@ async function renderMasterView(view, reqSess, data){
  */
 async function renderLoginView(message){
     let viewName = (Math.random() > 0.1)? 'login' : 'login-matrix';
+    viewName = 'login'
     let data;
     let out;
     try {
@@ -65,6 +66,9 @@ async function renderLoginView(message){
             headerTitle: 'Login',
             ascii: helpers.txAdminASCII(),
             message: (!isUndefined('message'))? message : '',
+            // template: 'noMaster',
+            // template: 'callback',
+            template: 'normal',
             config: globals.config.serverProfile,
             version: globals.version.current
         }

@@ -18,9 +18,57 @@
     <link rel="shortcut icon" type="image/png" href="img/favicon_default.png" id="favicon" />
 
     <link rel="stylesheet" href="css/custom.css">
+    <style>
+        .img-avatar{
+            height: 100px;
+            -moz-box-shadow: 2px 4px 8px rgb(143, 143, 143);
+            -webkit-box-shadow: 2px 4px 8px rgb(143, 143, 143);
+            box-shadow: 2px 4px 8px rgb(143, 143, 143);
+        }
+
+        .logo-image svg{
+            height: 25px;
+            width: 25px;
+            transform: scale(-1, 1);
+            text-align: center;
+            fill: #fff;
+        }
+
+        .separator {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            border: 0;
+
+        }
+        .separator::before, .separator::after {
+            content: '';
+            flex: 1;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .separator::before {
+            margin-right: .25em;
+        }
+        .separator::after {
+            margin-left: .25em;
+        }
+    </style>
 </head>
 
 <body class="app flex-row align-items-center">
+    <svg style="display:none">
+        <symbol id="fivem-icon" viewBox="0 0 342 430">
+            <g transform="matrix(1,0,0,-1,-124.2,606.4)">
+                <path d="m 125.8,215.9 85.1,0 c 1.9,0 7.4,18.3 16.7,54.9 32.3,112.4 50.9,178.1 55.7,197.2 l -54.9,54.1 -1.6,0 C 219.4,499 185.2,397.2 124.2,216.7 l 1.6,-0.8 z m 163.8,275.2 0.8,0 c 1.1,4.5 1.6,7.2 1.6,8 l 0,1.6 c -15.9,16.7 -33.7,34.5 -53.3,53.3 -2.1,-3.2 -3.2,-5.8 -3.2,-8 l 0,-0.8 c 19.9,-20.5 37.9,-38.5 54.1,-54.1 z M 393,429 l 0.8,0 c -10.9,34.5 -17.5,52.2 -19.9,53.3 L 254.6,600.8 c -1.3,0 -4.2,-8.5 -8.7,-25.4 L 393,429 Z m -22.3,65.3 0.8,0 c -24.4,74 -37.4,111.3 -39,112.1 l -73.2,0 0,-0.8 C 286.4,578 323.5,540.9 370.7,494.3 Z m 43.8,-128.1 0.8,0 c -2.7,13 -9,23.1 -19.1,30.2 -31,31.8 -62,62.8 -93,93 l -0.8,0 c 1.9,-10.9 6.1,-19.1 12.7,-24.7 l 99.4,-98.5 z m 50.1,-150.3 1.6,0.8 c -22.8,67.9 -35,102.9 -36.6,105 l -109.8,108.9 0,-0.8 c 4.2,-16.7 24.7,-88 61.2,-213.9 l 83.6,0 z" />
+            </g>
+        </symbol>
+        <symbol id="discord-icon" viewBox="0 0 245 240">
+            <path d="M104.4 103.9c-5.7 0-10.2 5-10.2 11.1s4.6 11.1 10.2 11.1c5.7 0 10.2-5 10.2-11.1.1-6.1-4.5-11.1-10.2-11.1zM140.9 103.9c-5.7 0-10.2 5-10.2 11.1s4.6 11.1 10.2 11.1c5.7 0 10.2-5 10.2-11.1s-4.5-11.1-10.2-11.1z" />
+            <path d="M189.5 20h-134C44.2 20 35 29.2 35 40.6v135.2c0 11.4 9.2 20.6 20.5 20.6h113.4l-5.3-18.5 12.8 11.9 12.1 11.2 21.5 19V40.6c0-11.4-9.2-20.6-20.5-20.6zm-38.6 130.6s-3.6-4.3-6.6-8.1c13.1-3.7 18.1-11.9 18.1-11.9-4.1 2.7-8 4.6-11.5 5.9-5 2.1-9.8 3.5-14.5 4.3-9.6 1.8-18.4 1.3-25.9-.1-5.7-1.1-10.6-2.7-14.7-4.3-2.3-.9-4.8-2-7.3-3.4-.3-.2-.6-.3-.9-.5-.2-.1-.3-.2-.4-.3-1.8-1-2.8-1.7-2.8-1.7s4.8 8 17.5 11.8c-3 3.8-6.7 8.3-6.7 8.3-22.1-.7-30.5-15.2-30.5-15.2 0-32.2 14.4-58.3 14.4-58.3 14.4-10.8 28.1-10.5 28.1-10.5l1 1.2c-18 5.2-26.3 13.1-26.3 13.1s2.2-1.2 5.9-2.9c10.7-4.7 19.2-6 22.7-6.3.6-.1 1.1-.2 1.7-.2 6.1-.8 13-1 20.2-.2 9.5 1.1 19.7 3.9 30.1 9.6 0 0-7.9-7.5-24.9-12.7l1.4-1.6s13.7-.3 28.1 10.5c0 0 14.4 26.1 14.4 58.3 0 0-8.5 14.5-30.6 15.2z" />
+        </symbol>
+    </svg>
     <div class="container">
 
         <!-- Logo Row -->
@@ -31,32 +79,87 @@
         <!-- Card Row -->
         <div class="row justify-content-center">
             <div class="col-md-5">
-                <div class="card p-4">
-                    <div class="card-body text-center">
-                        <h1>Login</h1>
-                        <span class="text-danger"><strong>{{message}}</strong></span>
-                        <form action="/auth" method="post">
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="icon-user"></i>
-                                    </span>
+                <div class="card ">
+                    <div class="card-body text-center p-4">
+                        <!-- TODO: see if squirrelly already supports elseif -->
+                        {{if(options.template != 'normal')}}
+                            {{if(options.template == 'noMaster')}}
+                                <h3 class="mb-4">No <code>cfx.re</code> Account Linked</h3>
+                                <div class="mx-auto">
+                                    <h6>Type the PIN in your terminal and click "Link Account".</h6>
+                                    <form action="#xxxxxx" method="post">
+                                        <div class="input-group mx-auto" style="max-width: 140px;">
+                                            <input class="form-control form-control-lg text-center mb-3" type="text" name="username" placeholder="0000">
+                                        </div>
+                                        <button class="btn btn-primary px-4" type="submit">Link Account</button>
+                                    </form>
                                 </div>
-                                <input class="form-control" type="text" name="username" placeholder="Username">
-                            </div>
-                            <div class="input-group mb-4">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="icon-lock"></i>
-                                    </span>
+                            {{/if}}
+                            {{if(options.template == 'callback')}}
+                                <img class="img-avatar" src="https://forum.cfx.re/user_avatar/forum.cfx.re/tabarra/256/198232_2.png" alt="avatar">
+                                <h5 class="mt-2 mb-3 text-muted">tabarra</h5>
+
+                                <h6>Type in the backup password:</h6>
+                                <form action="#xxxxxx" method="post">
+                                    <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="icon-lock"></i>
+                                            </span>
+                                        </div>
+                                        <input class="form-control" type="password" name="password" placeholder="Password">
+                                    </div>
+                                    <div class="input-group mb-4 mx-auto" style="max-width: 280px;">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">
+                                                <i class="icon-lock"></i>
+                                            </span>
+                                        </div>
+                                        <input class="form-control" type="password" name="password2" placeholder="Repeat Password">
+                                    </div>
+                                    <button class="btn btn-primary px-4" type="submit">Save</button>
+                                </form>
+                            {{/if}}
+                        {{#else}}
+                            <h1 class="mb-3">Login</h1>
+                            <a class="btn btn-brand btn-stack-overflow" role="button" href="#">
+                                <i class="logo-image"><svg><use xlink:href="#fivem-icon"></use></svg></i>
+                                <span>FiveM</span>
+                            </a>
+                            &nbsp;
+                            <a class="btn btn-brand btn-linkedin" role="button" href="#">
+                                <i class="logo-image"><svg><use xlink:href="#discord-icon"></use></svg></i>
+                                <span>Discord</span>
+                            </a>
+                            <div class="separator text-muted">OR</div>
+                            <form action="/auth" method="post">
+                                <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="icon-user"></i>
+                                        </span>
+                                    </div>
+                                    <input class="form-control" type="text" name="username" placeholder="Username">
                                 </div>
-                                <input class="form-control" type="password" name="password" placeholder="Password">
-                            </div>
-                            <div class="row justify-content-md-center">
-                                <button class="btn btn-primary px-4" type="submit">Login</button>
-                            </div>
-                        </form>
+                                <div class="input-group mb-4 mx-auto" style="max-width: 280px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="icon-lock"></i>
+                                        </span>
+                                    </div>
+                                    <input class="form-control" type="password" name="password" placeholder="Password">
+                                </div>
+                                <div class="row justify-content-md-center">
+                                    <button class="btn btn-primary px-4" type="submit">Login</button>
+                                </div>
+                            </form>
+                        {{/if}}
                     </div>
+                    {{if(options.message)}}
+                    <div class="card-footer text-center text-danger">
+                        <strong>{{message}}</strong>
+                    </div>
+                    {{/if}}
                 </div>
             </div>
         </div>
