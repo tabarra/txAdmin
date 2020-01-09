@@ -129,6 +129,7 @@ function handleFXServer(res, req) {
         basePath: slash(path.normalize(req.body.basePath+'/')),
         cfgPath: slash(path.normalize(req.body.cfgPath)),
         onesync: (req.body.onesync === 'true'),
+        infinity: (req.body.infinity === 'true'),
         autostart: (req.body.autostart === 'true'),
         quiet: (req.body.quiet === 'true'),
     }

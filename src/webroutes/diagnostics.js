@@ -188,6 +188,7 @@ async function getFXServerData(){
             versionWarning: versionWarning || '',
             resources: infoData.resources.length,
             onesync: (infoData.vars && infoData.vars.onesync_enabled === 'true')? 'enabled' : 'disabled',
+            //infinity: (infoData.vars && infoData.vars.infinity_enabled === 'true')? 'enabled' : 'disabled',
             maxClients: (infoData.vars && infoData.vars.sv_maxClients)? infoData.vars.sv_maxClients : '--',
         };
 

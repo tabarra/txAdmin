@@ -181,6 +181,19 @@
                         </div>
 
                         <div class="form-group row">
+                            <label for="frmFXServer-infinity" class="col-sm-3 col-form-label">OneSync Infinity</label>
+                            <div class="col-sm-9">
+                                <label class="switch switch-label switch-pill switch-success fix-pill-form">
+                                    <input class="switch-input" type="checkbox" id="frmFXServer-infinity" {{fxserver.infinity}} {{disableWrite}}>
+                                    <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Required if you server has more than 128 slots.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label for="frmFXServer-autostart" class="col-sm-3 col-form-label">Autostart</label>
                             <div class="col-sm-9">
                                 <label class="switch switch-label switch-pill switch-success fix-pill-form">
@@ -409,6 +422,7 @@
             basePath: $('#frmFXServer-basePath').val().trim(),
             cfgPath: $('#frmFXServer-cfgPath').val().trim(),
             onesync: $('#frmFXServer-onesync').is(':checked'),
+            infinity: $('#frmFXServer-infinity').is(':checked'),
             autostart: $('#frmFXServer-autostart').is(':checked'),
             quiet: $('#frmFXServer-quiet').is(':checked')
         }

@@ -53,21 +53,21 @@ module.exports = class FXRunner {
      */
     setupVariables(){
         let onesyncFlag = (this.config.onesync)? '+set onesync_enabled 1' : '';
+        let infinityFlag = (this.config.infinity) ? '+set onesync_enableInfinity 1' : '';
         if(globals.config.osType === 'Linux'){
             this.spawnVariables = {
                 shell: '/bin/sh',
-                cmdArgs: [`${this.config.buildPath}/run.sh`, `${onesyncFlag} +exec "${this.tmpExecFile}"`]
+                cmdArgs: [`${this.config.buildPath}/run.sh`, `${onesyncFlag} ${infinityFlag} +exec "${this.tmpExecFile}"`]
             };
         }else if(globals.config.osType === 'Windows_NT'){
             this.spawnVariables = {
                 shell: 'cmd.exe',
-                cmdArgs: ['/c', `${this.config.buildPath}/run.cmd ${onesyncFlag} +exec "${this.tmpExecFile}"`]
+                cmdArgs: ['/c', `${this.config.buildPath}/run.cmd ${onesyncFlag} ${infinityFlag} +exec "${this.tmpExecFile}"`]
             };
         }else{
             logError(`OS type not supported: ${globals.config.osType}`, context);
             process.exit();
         }
-
     }//Final setupVariables()
 
 

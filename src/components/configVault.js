@@ -143,6 +143,7 @@ module.exports = class ConfigVault {
                 logPath: toDefault(cfg.fxRunner.logPath, null), //not in template
                 setPriority: toDefault(cfg.fxRunner.setPriority, null),
                 onesync: toDefault(cfg.fxRunner.onesync, null),
+                infinity: toDefault(cfg.fxRunner.infinity, null),
                 autostart: toDefault(cfg.fxRunner.autostart, null),
                 autostartDelay: toDefault(cfg.webServer.autostartDelay, null), //not in template
                 quiet: toDefault(cfg.fxRunner.quiet, null),
@@ -207,6 +208,7 @@ module.exports = class ConfigVault {
             cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template
             cfg.fxRunner.setPriority = cfg.fxRunner.setPriority || "NORMAL";
             cfg.fxRunner.onesync = (cfg.fxRunner.onesync === 'true' || cfg.fxRunner.onesync === true);
+            cfg.fxRunner.infinity = (cfg.fxRunner.infinity === 'true' || cfg.fxRunner.infinity === true);
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
             cfg.fxRunner.autostartDelay = parseInt(cfg.webServer.autostartDelay) || 2; //not in template
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);

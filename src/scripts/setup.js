@@ -62,6 +62,7 @@ let configSkeletal = {
         cfgPath: null,
         setPriority: false,
         onesync: false,
+        infinity: false,
         autostart: false,
         quiet: false
     }
