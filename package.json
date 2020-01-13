@@ -49,6 +49,7 @@
     "lowdb": "^1.0.0",
     "nanoid": "^2.1.8",
     "node-polyglot": "^2.4.0",
+    "openid-client": "^3.10.0",
     "pidtree": "^0.3.0",
     "pidusage": "^2.0.17",
     "pidusage-tree": "^2.0.5",

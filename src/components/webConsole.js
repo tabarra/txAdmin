@@ -55,7 +55,7 @@ module.exports = class webConsole {
 
     //================================================================
     /**
-     * Attach the Socket.IO to a http/https server
+     * Attach the Socket.IO to a http server
      * @param {object} socketInterface
      */
     attachSocket(socketInterface){
@@ -64,7 +64,7 @@ module.exports = class webConsole {
             let port = socketInterface.address().port;
             logOk(`::Listening on port ${port}.`, context);
         } catch (error) {
-            logError('::Failed to attach to http/https interface with error:', context);
+            logError('::Failed to attach to http interface with error:', context);
             dir(error);
         }
     }
@@ -92,7 +92,7 @@ module.exports = class webConsole {
                     permissions: admin.permissions
                 };
                 isValidAuth = true;
-                isValidPerm = (admin.permissions.includes('all') || admin.permissions.includes('console.view'));
+                isValidPerm = (admin.permissions.includes('all_permissions') || admin.permissions.includes('console.view'));
             }
         }
 
@@ -186,7 +186,8 @@ module.exports = class webConsole {
 
         //Check permissions
         if(
-            !socket.handshake.session.auth.permissions.includes('all') &&
+            !socket.handshake.session.auth.master === true &&
+            !socket.handshake.session.auth.permissions.includes('all_permissions') &&
             !socket.handshake.session.auth.permissions.includes('console.write')
         ){
             let errorMessage = `Permission 'console.write' denied.`;

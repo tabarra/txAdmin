@@ -98,8 +98,8 @@ module.exports = class txAdmin {
 
     //==============================================================
     async startAuthenticator(config, dataPath){
-        const Monitor = require('./components/authenticator')
-        globals.authenticator = new Monitor(config, dataPath);
+        const Authenticator = require('./components/authenticator')
+        globals.authenticator = new Authenticator(config, dataPath);
     }
 
     //==============================================================
@@ -160,7 +160,7 @@ function HandleFatalError(err, context){
         if(globals.config.verbose) dir(err);
     }else{
         logError(`Error starting '${context}' module: ${err.message}`)
-        dir(err.stack, context)
+        dir(err)
     }
 
     process.exit();

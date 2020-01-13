@@ -161,8 +161,8 @@ $('#modChangePassword-save').click(function () {
     if(data.oldPassword === data.confirmPassword){
         errors.push(`The new password must be different than the old one.`);
     }
-    if(data.newPassword.length < 6 || data.newPassword.length > 16){
-        errors.push(`The new password have between 6 and 16 characters.`);
+    if(data.newPassword.length < 6 || data.newPassword.length > 24){
+        errors.push(`The new password have between 6 and 24 characters.`);
     }
     if(errors.length){
         var notify = $.notify({ message: '<b>Errors:</b><br> - ' + errors.join(' <br>\n - ') }, { type: 'warning' });
@@ -194,8 +194,10 @@ $('#modChangePassword-save').click(function () {
 
 
 
-
-//========================================== Page load
+//================================================================
+//========================================== Extra stuff
+//================================================================
+//Page load
 $(document).ready(function() {
     $.notifyDefaults({
         z_index: 2000,
@@ -207,8 +209,12 @@ $(document).ready(function() {
             y: 64
         },
     });
-
-
-    // checkVersion();
     setInterval(refreshData, 1000);
+});
+
+//Handle profile picture load error
+$(".profile-pic").on("error", function() {
+    if($(this).attr('src') != 'img/default_avatar.png'){
+        $(this).attr('src', 'img/default_avatar.png');
+    }
 });

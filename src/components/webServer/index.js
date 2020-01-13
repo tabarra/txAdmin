@@ -28,7 +28,7 @@ module.exports = class WebServer {
             secret: 'txAdmin'+nanoid(),
             name: `txAdmin.${globals.config.serverProfile}.sid`,
             resave: false,
-            saveUninitialized: false,
+            saveUninitialized: true,
             rolling: true,
             maxAge: 24*60*60*1000 //one day
         });

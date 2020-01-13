@@ -22,7 +22,7 @@ const handleError = async (res, req, error)=>{
  */
 module.exports = async function action(res, req) {
     //Check permissions
-    if(!webUtils.checkPermission(req, 'all', context)){
+    if(!webUtils.checkPermission(req, 'all_permissions', context)){
         let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to view this page.`});
         return res.send(out);
     }

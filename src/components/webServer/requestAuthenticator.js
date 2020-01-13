@@ -24,16 +24,29 @@ module.exports = getRequestAuthFunc = (epType) => {
         if(
             typeof req.session.auth !== 'undefined' &&
             typeof req.session.auth.username !== 'undefined' &&
-            typeof req.session.auth.password !== 'undefined'
+            typeof req.session.auth.expires_at !== 'undefined'
         ){
-            let admin = globals.authenticator.checkAuth(req.session.auth.username, req.session.auth.password);
-            if(admin){
-                req.session.auth = {
-                    username: req.session.auth.username,
-                    password: req.session.auth.password,
-                    permissions: admin.permissions
-                };
-                follow = true;
+            let now = Math.round(Date.now()/1000);
+            if(req.session.auth.expires_at === false || now > req.session.auth.expires_at){
+                try {
+                    let admin = globals.authenticator.getAdminData(req.session.auth.username);
+                    if(admin){
+                        if(
+                            typeof req.session.auth.password_hash == 'string' &&
+                            typeof admin.password_hash == 'string' &&
+                            admin.password_hash == req.session.auth.password_hash
+                        ){
+                            follow = true;
+                        }else if(typeof req.session.auth.provider == 'string'){
+                            follow = true;
+                        }
+                    }
+                } catch (error) {
+                    if(globals.config.verbose) logError(`Error validating session data:`, context);
+                    if(globals.config.verbose) dir(error);
+                }
+            }else{
+                if(globals.config.verbose) logWarn(`Expired session from ${req.session.auth.username}`, context);
             }
         }
 

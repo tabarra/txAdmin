@@ -56,26 +56,24 @@ async function renderMasterView(view, reqSess, data){
  * Renders the login page.
  * @param {string} message
  */
-async function renderLoginView(viewName, message){
-    viewName = 'login';
-    let data;
+async function renderLoginView(renderData){
+    if(isUndefined(renderData)) renderData = {};
+    renderData.headerTitle = renderData.headerTitle || 'Login';
+    renderData.isMatrix = (Math.random() <= 0.1);
+    renderData.ascii = helpers.txAdminASCII();
+    renderData.message = renderData.message || '';
+    renderData.template = renderData.template || 'normal';
+    // renderData.template = 'noMaster';
+    // renderData.template = 'callback';
+    // renderData.template = 'normal';
+    // renderData.template = 'justMessage';
+    renderData.config = globals.config.serverProfile;
+    renderData.version = globals.version.current;
+
     let out;
     try {
-        data = {
-            headerTitle: 'Login',
-            isMatrix: (Math.random() <= 0.1),
-            ascii: helpers.txAdminASCII(),
-            message: (!isUndefined('message'))? message : '',
-            // template: viewName,
-            // template: 'noMaster',
-            // template: 'callback',
-            template: 'normal',
-            config: globals.config.serverProfile,
-            version: globals.version.current
-        }
-
         let rawView = await fs.readFile(getWebViewPath(`basic/login`), 'utf8');
-        out = sqrl.Render(rawView, data);
+        out = sqrl.Render(rawView, renderData);
     } catch (error) {
         if(globals.config.verbose) {
             logWarn(`Error rendering the login page.`, context);
@@ -149,7 +147,12 @@ function appendLog(req, data, context){
  */
 function checkPermission(req, perm, fromCtx){
     try {
-        if(req.session.auth.permissions.includes('all') || req.session.auth.permissions.includes(perm)){
+
+        if(
+            req.session.auth.master === true ||
+            req.session.auth.permissions.includes('all_permissions') ||
+            req.session.auth.permissions.includes(perm)
+        ){
             return true;
         }else{
             if(globals.config.verbose) logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Permission '${perm}' denied.`, fromCtx);

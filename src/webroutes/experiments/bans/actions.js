@@ -30,7 +30,7 @@ module.exports = async function action(res, req) {
 
 
     //Check permissions
-    if(!webUtils.checkPermission(req, 'all', context)){
+    if(!webUtils.checkPermission(req, 'all_permissions', context)){
         return res.send({
             type: 'danger',
             message: `You don't have permission to execute this action.`

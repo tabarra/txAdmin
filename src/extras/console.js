@@ -59,9 +59,20 @@ function setTTYTitle(title){
 }
 
 function dir(data){
-    // console.dir(data);
-    let div = "=".repeat(32);
-    console.log(ac.cyan([div, JSON.stringify(data, null, 2), div].join("\n")))
+    if(data instanceof Error){
+        try {
+            console.log(`${ac.redBright('[txAdmin Error]')} ${data.message}`);
+            data.stack.forEach(trace => {
+                console.log(`    ${ac.redBright('=>')} ${trace.file}:${trace.line} > ${ac.yellowBright(trace.name || 'anonym')}`)
+            });
+        } catch (error) {
+            console.log('Error stack unavailable.')
+        }
+        console.log()
+    }else{
+        let div = "=".repeat(32);
+        console.log(ac.cyan([div, JSON.stringify(data, null, 2), div].join("\n")));
+    }
 }
 
 function getLog(){

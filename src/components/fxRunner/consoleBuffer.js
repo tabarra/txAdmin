@@ -48,11 +48,7 @@ module.exports = class ConsoleBuffer {
         // hitch warning: frame time of %d milliseconds
         this.hitchStreamProcessor = new StreamSnitch(
             /hitch warning: (frame time|timer interval) of (\d{3,5}) milliseconds/g,
-            (m) => {
-                try {
-                    globals.monitor.processFXServerHitch(m[2])
-                }catch(e){}
-            }
+            (m) => { try{globals.monitor.processFXServerHitch(m[2])}catch(e){} }
         );
         this.hitchStreamProcessor.on('error', (data) => {});
     }//Final setupStreamHandlers()

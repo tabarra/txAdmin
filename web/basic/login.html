@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <base href="./">
+    <base href="/">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
@@ -19,12 +19,6 @@
 
     <link rel="stylesheet" href="css/custom.css">
     <style>
-        .img-avatar{
-            height: 100px;
-            -moz-box-shadow: 2px 4px 8px rgb(143, 143, 143);
-            -webkit-box-shadow: 2px 4px 8px rgb(143, 143, 143);
-            box-shadow: 2px 4px 8px rgb(143, 143, 143);
-        }
 
         .logo-image svg{
             height: 25px;
@@ -32,6 +26,13 @@
             transform: scale(-1, 1);
             text-align: center;
             fill: #fff;
+        }
+
+        .profile-pic{
+            height: 100px;
+            -moz-box-shadow: 2px 4px 8px rgb(143, 143, 143);
+            -webkit-box-shadow: 2px 4px 8px rgb(143, 143, 143);
+            box-shadow: 2px 4px 8px rgb(143, 143, 143);
         }
 
         .separator {
@@ -92,6 +93,7 @@
             .separator{
                 color: lawngreen;
             }
+            /* HACK fix panel footer message */
 
             input,
             .btn-stack-overflow,
@@ -139,45 +141,67 @@
                 <div class="card ">
                     <div class="card-body text-center p-4">
                         <!-- TODO: see if squirrelly already supports elseif -->
-                        {{if(options.template != 'normal')}}
-                            {{if(options.template == 'noMaster')}}
-                                <h3 class="mb-4">No <code>CitizenFX</code> Account Linked</h3>
-                                <div class="mx-auto">
-                                    <h6>Type the PIN in your terminal and click "Link Account".</h6>
-                                    <form action="#xxxxxx" method="post">
-                                        <div class="input-group mx-auto" style="max-width: 140px;">
-                                            <input class="form-control form-control-lg text-center mb-3" type="text" maxlength="4" name="username" placeholder="0000" required>
-                                        </div>
-                                        <button class="btn btn-primary px-4" type="submit">Link Account</button>
-                                    </form>
-                                </div>
-                            {{/if}}
-                            {{if(options.template == 'callback')}}
-                                <img class="img-avatar" src="https://forum.cfx.re/user_avatar/forum.cfx.re/tabarra/256/198232_2.png" alt="avatar">
-                                <h5 class="mt-2 mb-3 text-muted">tabarra</h5>
-
-                                <h6>Type in the backup password:</h6>
-                                <form action="#xxxxxx" method="post">
-                                    <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="icon-lock"></i>
-                                            </span>
-                                        </div>
-                                        <input class="form-control" type="password" name="password" placeholder="Password" required>
+                        {{if(options.template == 'justMessage')}}
+                            <h5 class="text-danger mb-3">{{message}}</h5>
+                            <a href="/auth" class="btn btn-primary px-4" role="submit">Back</a>
+                        {{/if}}
+                        {{if(options.template == 'noMaster')}}
+                            <h3 class="mb-4">No <code>CitizenFX</code> Account Linked</h3>
+                            <div class="mx-auto">
+                                <h6>Type the PIN in your terminal and click "Link Account".</h6>
+                                <form action="/auth/addMaster/pin" method="post">
+                                    <div class="input-group mx-auto" style="max-width: 140px;">
+                                        <input class="form-control form-control-lg text-center mb-3" type="text"
+                                        minlength="4" maxlength="4" name="pin" placeholder="0000" autocomplete="off" autofocus required>
                                     </div>
-                                    <div class="input-group mb-4 mx-auto" style="max-width: 280px;">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">
-                                                <i class="icon-lock"></i>
-                                            </span>
-                                        </div>
-                                        <input class="form-control" type="password" name="password2" placeholder="Repeat Password" required>
-                                    </div>
-                                    <button class="btn btn-primary px-4" type="submit">Save</button>
+                                    <button class="btn btn-primary px-4" type="submit">Link Account</button>
                                 </form>
-                            {{/if}}
-                        {{#else}}
+                            </div>
+                        {{/if}}
+                        {{if(options.template == 'callback')}}
+                            <img class="img-avatar profile-pic" src="{{addMaster_picture}}" alt="avatar">
+                            <h5 class="mt-2 mb-3 text-muted">{{addMaster_name}}</h5>
+
+                            <h6>Type in the backup password:</h6>
+                            <form action="/auth/addMaster/save" method="post">
+                                <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="icon-lock"></i>
+                                        </span>
+                                    </div>
+                                    <input class="form-control" type="password" name="password" id="password"
+                                        placeholder="Password" autocomplete="new-password" minlength="6" maxlength="24" autofocus required>
+                                </div>
+                                <div class="input-group mx-auto" style="max-width: 280px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="icon-lock"></i>
+                                        </span>
+                                    </div>
+                                    <input class="form-control" type="password" name="password2" id="password2"
+                                        placeholder="Confirm Password" autocomplete="new-password" required>
+                                </div>
+                                <span class="form-text text-muted mb-4">
+                                    Must have between 6 and 24 characters.
+                                </span>
+                                <button class="btn btn-primary px-4" type="submit">Save</button>
+                            </form>
+                            <script>
+                                let password = document.getElementById("password")
+                                let password2 = document.getElementById("password2");
+                                function validatePassword(){
+                                    if(password.value != password2.value) {
+                                        password2.setCustomValidity("Passwords Don't Match");
+                                    } else {
+                                        password2.setCustomValidity('');
+                                    }
+                                }
+                                password.onchange = validatePassword;
+                                password2.onkeyup = validatePassword;
+                            </script>
+                        {{/if}}
+                        {{if(options.template == 'normal')}}
                             <h1 class="mb-3">Login</h1>
                             <a class="btn btn-brand btn-stack-overflow" role="button" href="#">
                                 <i class="logo-image"><svg><use xlink:href="#fivem-icon"></use></svg></i>
@@ -189,7 +213,7 @@
                                 <span>Discord</span>
                             </a>
                             <div class="separator">OR</div>
-                            <form action="/auth" method="post">
+                            <form action="/auth/password" method="post">
                                 <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">
@@ -212,10 +236,10 @@
                             </form>
                         {{/if}}
                     </div>
-                    {{if(options.message)}}
-                    <div class="card-footer text-center text-danger">
-                        <strong>{{message}}</strong>
-                    </div>
+                    {{if(options.message && options.template != 'justMessage')}}
+                        <div class="card-footer text-center text-danger">
+                            <strong>{{message}}</strong>
+                        </div>
                     {{/if}}
                 </div>
             </div>
@@ -247,6 +271,14 @@
     <script src="js/pace.min.js"></script>
     <script src="js/perfect-scrollbar.min.js"></script>
     <script src="js/coreui.min.js"></script>
+
+    <script>
+        $(".profile-pic").on("error", function() {
+            if($(this).attr('src') != 'img/default_avatar.png'){
+                $(this).attr('src', 'img/default_avatar.png');
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -13,7 +13,7 @@ module.exports = async function action(res, req) {
     //Prepare admin array
     let admins = globals.authenticator.getAdmins().map((admin)=>{
         let perms;
-        if(admin.permissions.includes('all')){
+        if(admin.permissions.includes('all_permissions')){
             perms = "all permissions";
         }else if(admin.permissions.length !== 1){
             perms = `${admin.permissions.length} permissions`;

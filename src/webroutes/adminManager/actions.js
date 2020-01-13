@@ -68,7 +68,7 @@ async function handleAdd(res, req) {
     let password = req.body.password.trim();
     let permissions = (Array.isArray(req.body.permissions))? req.body.permissions : [];
     permissions = permissions.filter((x)=>{ return typeof x === 'string'});
-    if(permissions.includes('all')) permissions = ['all'];
+    if(permissions.includes('all_permissions')) permissions = ['all_permissions'];
 
     //Validate fields
     if(!/^[a-zA-Z0-9]{6,16}$/.test(name)){
@@ -115,7 +115,7 @@ async function handleEdit(res, req) {
     password = (password.length)? password : false;
     let permissions = (Array.isArray(req.body.permissions))? req.body.permissions : [];
     permissions = permissions.filter((x)=>{ return typeof x === 'string'});
-    if(permissions.includes('all')) permissions = ['all'];
+    if(permissions.includes('all_permissions')) permissions = ['all_permissions'];
 
     //Validate fields
     if(password && password.length < 6){

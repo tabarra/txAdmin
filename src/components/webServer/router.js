@@ -1,4 +1,5 @@
 //Requires
+const util = require('util');
 const express = require('express');
 const rateLimit = require("express-rate-limit");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
@@ -36,9 +37,20 @@ module.exports = router = (config) =>{
             handleRouteError(res, req, 'Auth-Get', err);
         });
     });
-    router.post('/auth', authLimiter, async (req, res) => {
-        await webRoutes.auth.verify(res, req).catch((err) => {
-            handleRouteError(res, req, 'Auth-Verify', err);
+    router.all('/auth/addMaster/:action', authLimiter, async (req, res) => {
+        await webRoutes.auth.addMaster(res, req).catch((err) => {
+            handleRouteError(res, req, 'Auth-AddMaster', err);
+        });
+    });
+
+    router.get('/auth/:provider/callback', authLimiter, async (req, res) => {
+        await webRoutes.auth.providerCallback(res, req).catch((err) => {
+            handleRouteError(res, req, 'Auth-ProviderCallback', err);
+        });
+    });
+    router.post('/auth/password', authLimiter, async (req, res) => {
+        await webRoutes.auth.verifyPassword(res, req).catch((err) => {
+            handleRouteError(res, req, 'Auth-VerifyPassword', err);
         });
     });
     router.post('/changePassword', requestAuth('web'), async (req, res) => {

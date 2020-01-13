@@ -116,7 +116,7 @@ process.on('exit', (code) => {
 });
 
 //NOTE: if you need to debug larger stacks for deprecation warnings
-// Error.stackTraceLimit = 10;
+// Error.stackTraceLimit = 20;
 // process.on('warning', (warning) => {
 //     console.log(warning.stack);
 // });

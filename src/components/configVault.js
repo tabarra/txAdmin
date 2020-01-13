@@ -189,7 +189,7 @@ module.exports = class ConfigVault {
             //WebServer
             cfg.webServer.bufferTime = parseInt(cfg.webServer.bufferTime) || 1500; //not in template - deprecate?
             cfg.webServer.limiterMinutes = parseInt(cfg.webServer.limiterMinutes) || 15; //not in template
-            cfg.webServer.limiterAttempts = parseInt(cfg.webServer.limiterAttempts) || 5; //not in template
+            cfg.webServer.limiterAttempts = parseInt(cfg.webServer.limiterAttempts) || 10; //not in template
 
             //DiscordBot
             cfg.discordBot.enabled = (cfg.discordBot.enabled === 'true' || cfg.discordBot.enabled === true);

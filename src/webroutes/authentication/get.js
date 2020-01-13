@@ -17,6 +17,7 @@ module.exports = async function action(res, req) {
         req.session.destroy();
         message = 'Logged Out';
     }
-    let out = await webUtils.renderLoginView(message);
+    let view = (globals.authenticator.admins === false)? 'noMaster' : 'normal';
+    let out = await webUtils.renderLoginView({template: view, message});
     return res.send(out);
 };
