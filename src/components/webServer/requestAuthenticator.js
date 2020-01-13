@@ -1,11 +1,14 @@
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const context = 'WebServer:RequestAuthenticator';
 
+const getCtx = (c) => { return `${context}:${c}`};
+
 /**
  * Returns a session authenticator function
- * @param {string} epType
+ * @param {string} epType type of consumer
+ * @param {string} context context for the error messages
  */
-module.exports = getRequestAuthFunc = (epType) => {
+const requestAuth = (epType) => {
     //Intercom auth function
     const intercomAuth = (req, res, next) => {
         if(
@@ -20,38 +23,10 @@ module.exports = getRequestAuthFunc = (epType) => {
 
     //Normal auth function
     const normalAuth = (req, res, next) =>{
-        let follow = false;
-        if(
-            typeof req.session.auth !== 'undefined' &&
-            typeof req.session.auth.username !== 'undefined' &&
-            typeof req.session.auth.expires_at !== 'undefined'
-        ){
-            let now = Math.round(Date.now()/1000);
-            if(req.session.auth.expires_at === false || now > req.session.auth.expires_at){
-                try {
-                    let admin = globals.authenticator.getAdminData(req.session.auth.username);
-                    if(admin){
-                        if(
-                            typeof req.session.auth.password_hash == 'string' &&
-                            typeof admin.password_hash == 'string' &&
-                            admin.password_hash == req.session.auth.password_hash
-                        ){
-                            follow = true;
-                        }else if(typeof req.session.auth.provider == 'string'){
-                            follow = true;
-                        }
-                    }
-                } catch (error) {
-                    if(globals.config.verbose) logError(`Error validating session data:`, context);
-                    if(globals.config.verbose) dir(error);
-                }
-            }else{
-                if(globals.config.verbose) logWarn(`Expired session from ${req.session.auth.username}`, context);
-            }
-        }
+        const {isValidAuth} = authLogic(req.session, true, getCtx(epType));
 
-        if(!follow){
-            if(globals.config.verbose) logWarn(`Invalid session auth: ${req.originalUrl}`, context);
+        if(!isValidAuth){
+            if(globals.config.verbose) logWarn(`Invalid session auth: ${req.originalUrl}`, getCtx(epType));
             if(epType === 'web'){
                 return res.redirect('/auth?logout');
             }else if(epType === 'api'){
@@ -64,6 +39,20 @@ module.exports = getRequestAuthFunc = (epType) => {
         }
     }
 
+    //Socket auth function
+    const socketAuth = (socket, next) =>{
+        const {isValidAuth, isValidPerm} = authLogic(socket.handshake.session, true, getCtx(epType));
+
+        if(isValidAuth && isValidPerm){
+            next();
+        }else{
+            socket.handshake.session.destroy(); //a bit redundant but it wont hurt anyone
+            socket.disconnect(0);
+            if(globals.config.verbose) logWarn('Auth denied when creating session', context);
+            next(new Error('Authentication Denied'));
+        }
+    }
+
     //Return the appropriate function
     if(epType === 'intercom'){
         return intercomAuth;
@@ -71,7 +60,75 @@ module.exports = getRequestAuthFunc = (epType) => {
         return normalAuth;
     }else if(epType === 'api'){
         return normalAuth;
+    }else if(epType === 'socket'){
+        return socketAuth;
     }else{
         return () => {throw new Error('Unknown auth type')};
     }
+}
+
+
+//================================================================
+//Auth Logic
+const authLogic = (sess, perm, ctx) => {
+    let isValidAuth = false;
+    let isValidPerm = false;
+    if(
+        typeof sess.auth !== 'undefined' &&
+        typeof sess.auth.username !== 'undefined' &&
+        typeof sess.auth.expires_at !== 'undefined'
+    ){
+        let now = Math.round(Date.now()/1000);
+        if(sess.auth.expires_at === false || now > sess.auth.expires_at){
+            try {
+                let admin = globals.authenticator.getAdminData(sess.auth.username);
+                if(admin){
+                    if(
+                        typeof sess.auth.password_hash == 'string' &&
+                        typeof admin.password_hash == 'string' &&
+                        admin.password_hash == sess.auth.password_hash
+                    ){
+                        isValidAuth = true;
+                    }else if(typeof sess.auth.provider == 'string'){
+                        isValidAuth = true;
+                    }
+
+                    sess.auth.master = admin.master;
+                    sess.auth.permissions = admin.permissions;
+
+                    isValidPerm = perm === true || (
+                        admin.master === true ||
+                        admin.permissions.includes('all_permissions') ||
+                        admin.permissions.includes(perm)
+                    );
+                }
+            } catch (error) {
+                if(globals.config.verbose) logError(`Error validating session data:`, getCtx(ctx));
+                if(globals.config.verbose) dir(error);
+            }
+        }else{
+            if(globals.config.verbose) logWarn(`Expired session from ${sess.auth.username}`, getCtx(ctx));
+        }
+    }
+
+    return {isValidAuth, isValidPerm};
+}
+
+
+/*
+//HACK
+
+Próximos passos:
+    -- beautify this document
+    -- testar melhor cenários de auth
+    -- comitar isso
+    -- Login normal via fivem
+    -- fix admin page
+    -- login via discord
+    -- login via link
+    -- Disable change password for admins without password
+*/
+module.exports = {
+    requestAuth,
+    authLogic
 }

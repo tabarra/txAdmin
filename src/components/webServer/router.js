@@ -4,7 +4,7 @@ const express = require('express');
 const rateLimit = require("express-rate-limit");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const webRoutes = require('../../webroutes');
-const requestAuth = require('./requestAuthenticator');
+const {requestAuth} = require('./requestAuthenticator');
 const context = 'WebServer:Router';
 
 //Helper function

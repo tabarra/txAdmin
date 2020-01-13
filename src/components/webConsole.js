@@ -3,6 +3,7 @@ const SocketIO = require('socket.io');
 const sharedsession = require("express-socket.io-session");
 const xssClass = require("xss");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const {requestAuth, authLogic} = require('./webServer/requestAuthenticator');
 const context = 'webConsole';
 const contextSocket = 'webConsole:SocketIO';
 
@@ -26,7 +27,7 @@ module.exports = class webConsole {
             pingInterval: 5000
         });
         this.io.use(sharedsession(globals.webServer.session));
-        this.io.use(this.authNewSession.bind(this));
+        this.io.use(requestAuth('socket').bind(this));
         this.io.on('connection', (socket) => {
             try {
                 log(`Connected: ${socket.handshake.session.auth.username} from ${socket.handshake.address}`, contextSocket);
@@ -72,71 +73,6 @@ module.exports = class webConsole {
 
     //================================================================
     /**
-     * Authenticates a new session to make sure the credentials are valid and set the admin variable.
-     * @param {object} socket
-     * @param {function} next
-     */
-    authNewSession(socket, next){
-        let isValidAuth = false;
-        let isValidPerm = false;
-        if(
-            typeof socket.handshake.session.auth !== 'undefined' &&
-            typeof socket.handshake.session.auth.username !== 'undefined' &&
-            typeof socket.handshake.session.auth.password !== 'undefined'
-        ){
-            let admin = globals.authenticator.checkAuth(socket.handshake.session.auth.username, socket.handshake.session.auth.password);
-            if(admin){
-                socket.handshake.session.auth = {
-                    username: socket.handshake.session.auth.username,
-                    password: socket.handshake.session.auth.password,
-                    permissions: admin.permissions
-                };
-                isValidAuth = true;
-                isValidPerm = (admin.permissions.includes('all_permissions') || admin.permissions.includes('console.view'));
-            }
-        }
-
-        if(isValidAuth && isValidPerm){
-            next();
-        }else{
-            socket.handshake.session.destroy(); //a bit redundant but it wont hurt anyone
-            socket.disconnect(0);
-            if(globals.config.verbose) logWarn('Auth denied when creating session', context);
-            next(new Error('Authentication Denied'));
-        }
-    };
-
-
-    //================================================================
-    /**
-     * Authenticates a new session to make sure the credentials are valid and set the admin variable.
-     * @param {*} socket
-     * @returns {boolean}
-     */
-    checkSessionAuth(socket){
-        let isValid = false;
-        if(
-            typeof socket.handshake.session.auth !== 'undefined' &&
-            typeof socket.handshake.session.auth.username !== 'undefined' &&
-            typeof socket.handshake.session.auth.password !== 'undefined'
-        ){
-            let admin = globals.authenticator.checkAuth(socket.handshake.session.auth.username, socket.handshake.session.auth.password);
-            if(admin){
-                socket.handshake.session.auth = {
-                    username: socket.handshake.session.auth.username,
-                    password: socket.handshake.session.auth.password,
-                    permissions: admin.permissions
-                };
-                isValid = true;
-            }
-        }
-
-        return isValid;
-    };
-
-
-    //================================================================
-    /**
      * Adds data to the buffer
      * @param {string} data
      * @param {string} markType
@@ -175,21 +111,19 @@ module.exports = class webConsole {
      * @param {string} cmd
      */
     handleSocketMessages(socket, msg){
-        //Checking session
-        let authCheck = this.checkSessionAuth(socket);
-        if(!authCheck){
+        //Getting session data
+        const {isValidAuth, isValidPerm} = authLogic(socket.handshake.session, 'console.write', context);
+
+        //Checking Auth
+        if(!isValidAuth){
             socket.emit('logout');
             socket.handshake.session.destroy(); //a bit redundant but it wont hurt anyone
             socket.disconnect(0);
             return;
         }
 
-        //Check permissions
-        if(
-            !socket.handshake.session.auth.master === true &&
-            !socket.handshake.session.auth.permissions.includes('all_permissions') &&
-            !socket.handshake.session.auth.permissions.includes('console.write')
-        ){
+        //Check Permissions
+        if(!isValidPerm){
             let errorMessage = `Permission 'console.write' denied.`;
             if(globals.config.verbose) logWarn(`[${socket.handshake.address}][${socket.handshake.session.auth.username}] ${errorMessage}`, context);
             socket.emit('consoleData', `\n<mark>${errorMessage}</mark>\n`);
