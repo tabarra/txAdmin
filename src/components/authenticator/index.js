@@ -1,6 +1,5 @@
 //Requires
 const fs = require('fs-extra');
-const bcrypt = require('bcryptjs');
 const clone = require('clone');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const CitizenFXProvider = require('./providers/CitizenFX');

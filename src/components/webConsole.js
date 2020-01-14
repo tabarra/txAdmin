@@ -117,7 +117,7 @@ module.exports = class webConsole {
         //Checking Auth
         if(!isValidAuth){
             socket.emit('logout');
-            socket.handshake.session.destroy(); //a bit redundant but it wont hurt anyone
+            socket.handshake.session.auth = {}; //a bit redundant but it wont hurt anyone
             socket.disconnect(0);
             return;
         }

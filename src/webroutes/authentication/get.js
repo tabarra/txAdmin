@@ -18,8 +18,8 @@ module.exports = async function action(res, req) {
     //Set template type
     let template = (globals.authenticator.admins === false)? 'noMaster' : 'normal';
 
-    //Destroy session?
-    if(!isUndefined(req.query.logout)) req.session.destroy();
+    //Destroy session? And start a new one
+    if(!isUndefined(req.query.logout)) req.session.auth = {};
 
     //Generatte CitizenFX provider Auth URL
     let urlCitizenFX;

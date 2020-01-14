@@ -201,7 +201,7 @@ async function handleSave(res, req) {
         delete req.session.tmpAddMasterTokenSet;
         delete req.session.tmpAddMasterUserInfo;
     } catch (error) {
-        req.session.destroy();
+        req.session.auth = {};
         let message = `Failed to login:<br> ${error.message}`;
         logError(message, context);
         let out = await webUtils.renderLoginView({template: 'justMessage', message});

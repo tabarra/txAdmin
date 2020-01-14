@@ -1,4 +1,5 @@
 //Requires
+const crypto  = require('crypto');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const webUtils = require('./../webUtils.js');
 const context = 'WebServer:ProviderCallback';
@@ -17,15 +18,26 @@ const returnJustMessage = async (res, message) => {
  */
 module.exports = async function action(res, req) {
     //Sanity check
-    if(isUndefined(req.params.provider)){
+    if(
+        isUndefined(req.params.provider) ||
+        isUndefined(req.query.state)
+    ){
         res.status(400).send({status: 'error', error: "Invalid Request"});
         return;
     }
     let provider = req.params.provider;
+    let reqState = req.query.state
 
     //FIXME: generalize this to any provider
     if(provider !== 'citizenfx'){
         return await returnJustMessage(res, 'Provider not implemented... yet');
+    }
+
+    //Check the state changed
+    let stateSeed = `txAdmin:${req.sessionID}`;
+    let stateExpected = crypto.createHash('SHA1').update(stateSeed).digest("hex");
+    if(reqState != stateExpected){
+        return await returnJustMessage(res, 'This link has expired.');
     }
 
     //Exchange code for access token
@@ -71,7 +83,7 @@ module.exports = async function action(res, req) {
     try {
         let admin = globals.authenticator.getAdminData(userInfo.name);
         if(!admin){
-            req.session.destroy();
+            req.session.auth = {};
             let message = `This account is not an admin.`;
             if(globals.config.verbose) logWarn(message, context);
             return await returnJustMessage(res, message);
@@ -86,7 +98,7 @@ module.exports = async function action(res, req) {
         log(`Admin ${admin.name} logged in from ${req.connection.remoteAddress}`, context);
         return res.redirect('/');
     } catch (error) {
-        req.session.destroy();
+        req.session.auth = {};
         let message = `Failed to login: ${error.message}`;
         if(globals.config.verbose) logError(message, context);
         return await returnJustMessage(res, message);

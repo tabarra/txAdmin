@@ -27,7 +27,7 @@ const requestAuth = (epType) => {
 
         if(!isValidAuth){
             if(globals.config.verbose) logWarn(`Invalid session auth: ${req.originalUrl}`, getCtx(epType));
-            req.session.destroy();
+            req.session.auth = {};
             if(epType === 'web'){
                 return res.redirect('/auth?logout');
             }else if(epType === 'api'){
@@ -47,7 +47,7 @@ const requestAuth = (epType) => {
         if(isValidAuth){
             next();
         }else{
-            socket.handshake.session.destroy(); //a bit redundant but it wont hurt anyone
+            socket.handshake.session.auth = {}; //a bit redundant but it wont hurt anyone
             socket.disconnect(0);
             if(globals.config.verbose) logWarn('Auth denied when creating session', context);
             next(new Error('Authentication Denied'));
