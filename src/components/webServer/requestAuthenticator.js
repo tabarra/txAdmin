@@ -1,7 +1,7 @@
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const context = 'WebServer:RequestAuthenticator';
-
 const getCtx = (c) => { return `${context}:${c}`};
+
 
 /**
  * Returns a session authenticator function
@@ -27,6 +27,7 @@ const requestAuth = (epType) => {
 
         if(!isValidAuth){
             if(globals.config.verbose) logWarn(`Invalid session auth: ${req.originalUrl}`, getCtx(epType));
+            req.session.destroy();
             if(epType === 'web'){
                 return res.redirect('/auth?logout');
             }else if(epType === 'api'){
@@ -41,9 +42,9 @@ const requestAuth = (epType) => {
 
     //Socket auth function
     const socketAuth = (socket, next) =>{
-        const {isValidAuth, isValidPerm} = authLogic(socket.handshake.session, true, getCtx(epType));
+        const {isValidAuth} = authLogic(socket.handshake.session, true, getCtx(epType));
 
-        if(isValidAuth && isValidPerm){
+        if(isValidAuth){
             next();
         }else{
             socket.handshake.session.destroy(); //a bit redundant but it wont hurt anyone
@@ -68,8 +69,12 @@ const requestAuth = (epType) => {
 }
 
 
-//================================================================
-//Auth Logic
+/**
+ * Autentication & authorization logic used in both websocket and webserver
+ * @param {*} sess
+ * @param {*} perm
+ * @param {*} ctx
+ */
 const authLogic = (sess, perm, ctx) => {
     let isValidAuth = false;
     let isValidPerm = false;
@@ -79,7 +84,7 @@ const authLogic = (sess, perm, ctx) => {
         typeof sess.auth.expires_at !== 'undefined'
     ){
         let now = Math.round(Date.now()/1000);
-        if(sess.auth.expires_at === false || now > sess.auth.expires_at){
+        if(sess.auth.expires_at === false || now < sess.auth.expires_at){
             try {
                 let admin = globals.authenticator.getAdminData(sess.auth.username);
                 if(admin){
@@ -96,11 +101,11 @@ const authLogic = (sess, perm, ctx) => {
                     sess.auth.master = admin.master;
                     sess.auth.permissions = admin.permissions;
 
-                    isValidPerm = perm === true || (
+                    isValidPerm = (perm === true || (
                         admin.master === true ||
                         admin.permissions.includes('all_permissions') ||
                         admin.permissions.includes(perm)
-                    );
+                    ));
                 }
             } catch (error) {
                 if(globals.config.verbose) logError(`Error validating session data:`, getCtx(ctx));
@@ -115,19 +120,7 @@ const authLogic = (sess, perm, ctx) => {
 }
 
 
-/*
-//HACK
-
-Próximos passos:
-    -- beautify this document
-    -- testar melhor cenários de auth
-    -- comitar isso
-    -- Login normal via fivem
-    -- fix admin page
-    -- login via discord
-    -- login via link
-    -- Disable change password for admins without password
-*/
+//================================================================
 module.exports = {
     requestAuth,
     authLogic

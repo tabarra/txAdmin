@@ -207,12 +207,14 @@
                         {{/if}}
                         {{if(options.template == 'normal')}}
                             <h1 class="mb-3">Login</h1>
-                            <a class="btn btn-brand btn-stack-overflow" role="button" href="#">
+                            <a class="btn btn-brand btn-stack-overflow {{urlCitizenFX == false|isDisabled}}"
+                                role="button" href="{{urlCitizenFX}}">
                                 <i class="logo-image"><svg><use xlink:href="#fivem-icon"></use></svg></i>
                                 <span>CitizenFX</span>
                             </a>
                             &nbsp;
-                            <a class="btn btn-brand btn-linkedin" role="button" href="#">
+                            <a class="btn btn-brand btn-linkedin {{urlDiscord == false|isDisabled}}"
+                            role="button" href="{{urlDiscord}}">
                                 <i class="logo-image"><svg><use xlink:href="#discord-icon"></use></svg></i>
                                 <span>Discord</span>
                             </a>

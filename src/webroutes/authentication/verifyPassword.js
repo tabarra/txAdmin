@@ -13,7 +13,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  */
 module.exports = async function action(res, req) {
     if(isUndefined(req.body.username) || isUndefined(req.body.password)){
-        req.redirect('/');
+        res.redirect('/');
         return;
     }
     let message = '';
@@ -60,5 +60,5 @@ module.exports = async function action(res, req) {
         return res.send(out);
     }
 
-    res.redirect('/');
+    return res.redirect('/');
 };

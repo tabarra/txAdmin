@@ -84,6 +84,8 @@ module.exports = class CitizenFXProvider {
         //Exchange code for token
         let tokenSet = await this.client.callback(redirectUri, params, {state: stateExpected});
         if(typeof tokenSet !== 'object') throw new Error('tokenSet is not an object');
+        if(typeof tokenSet.access_token == 'undefined') throw new Error('access_token not present');
+        if(typeof tokenSet.expires_at == 'undefined') throw new Error('expires_at not present');
         return tokenSet;
     }
 
@@ -100,6 +102,10 @@ module.exports = class CitizenFXProvider {
         //Perform introspection
         let userInfo = await this.client.userinfo(accessToken);
         if(typeof userInfo !== 'object') throw new Error('userInfo is not an object');
+        if(typeof userInfo.name != 'string' && !userInfo.name.length) throw new Error('name not present');
+        if(typeof userInfo.picture != 'string' && !userInfo.picture.length) throw new Error('picture not present');
+        if(typeof userInfo.profile != 'string' && !userInfo.profile.length) throw new Error('profile not present');
+        if(typeof userInfo.nameid != 'string' && !userInfo.nameid.length) throw new Error('nameid not present');
         return userInfo;
     }
 

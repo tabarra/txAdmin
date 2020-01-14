@@ -8,6 +8,12 @@ const context = 'WebUtils';
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
+sqrl.defineFilter("isSelected", (x)=>{
+    return (x==='true')? 'selected' : ''
+});
+sqrl.defineFilter("isDisabled", (x)=>{
+    return (x==='true')? 'disabled' : ''
+});
 
 
 //================================================================
@@ -21,6 +27,7 @@ async function renderMasterView(view, reqSess, data){
     data.headerTitle = (!isUndefined(data.headerTitle))? `${data.headerTitle} - txAdmin` : 'txAdmin';
     data.txAdminVersion = globals.version.current;
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username)? reqSess.auth.username : 'unknown user';
+    data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture)? reqSess.auth.picture : 'img/default_avatar.png';
 
     let out;
     try {
@@ -31,9 +38,6 @@ async function renderMasterView(view, reqSess, data){
         ]);
         sqrl.definePartial("header", rawHeader);
         sqrl.definePartial("footer", rawFooter);
-        sqrl.defineFilter("isSelected", (x)=>{
-            return (x==='true')? 'selected' : ''
-        });
         out = sqrl.Render(rawView, data);
     } catch (error) {
         if(globals.config.verbose) {
@@ -77,13 +81,13 @@ async function renderLoginView(renderData){
     } catch (error) {
         if(globals.config.verbose) {
             logWarn(`Error rendering the login page.`, context);
-            dir(error)
         }
+        dir(error)
         out = `<pre>\n`;
         out += `Error rendering the requested page.\n`;
         out += `The data provided was:\n`;
         out += `================\n`;
-        out += JSON.stringify(data, null, 2);
+        out += JSON.stringify(renderData, null, 2);
     }
 
     return out;

@@ -81,13 +81,13 @@ module.exports = class txAdmin {
         this.startWebConsole(profileConfig.webConsole).catch((err) => {
             HandleFatalError(err, 'WebConsole');
         });
+        // this.startDatabase().catch((err) => {
+        //     HandleFatalError(err, 'Database');
+        // });
+
         //FIXME: dependency order
         //  - translator before monitor
         //  - webserver before webconsole
-
-        this.startDatabase().catch((err) => {
-            HandleFatalError(err, 'Database');
-        });
 
         //Run Update Checker every 15 minutes
         const updateChecker = require('./extras/updateChecker');

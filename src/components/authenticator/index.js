@@ -11,7 +11,7 @@ module.exports = class Authenticator {
     constructor(config, dataPath) {
         logOk('::Started', context);
         this.config = config;
-        this.adminsFile = `${dataPath}/admins3.json`; //NOTE: remove when adding support for multi-server
+        this.adminsFile = `${dataPath}/admins.json`; //NOTE: remove when adding support for multi-server
         this.admins = null;
         this.registeredPermissions = [
             "all_permissions",
