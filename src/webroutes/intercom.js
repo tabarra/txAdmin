@@ -41,6 +41,9 @@ module.exports = async function action(res, req) {
         globals.intercomTempLog = globals.intercomTempLog.concat(req.body.log)
 
     }else if(scope == 'checkWhitelist'){
+        //FIXME: temporarily disabled
+        return res.status(403).send({error: "Feature temporariyl disabled."});
+
         if(!Array.isArray(req.body.identifiers)){
             return res.status(400).send({error: "Invalid Request"});
         }

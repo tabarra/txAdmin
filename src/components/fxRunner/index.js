@@ -222,15 +222,15 @@ module.exports = class FXRunner {
         log('Setting up FXServer temp exec file.', context);
 
         //FIXME: experiment
-        let isEnabled;
-        try {
-            let dbo = globals.database.getDB();
-            isEnabled = await dbo.get("experiments.bans.enabled").value();
-        } catch (error) {
-            logError(`[writeExecFile] Database operation failed with error: ${error.message}`, context);
-            if(globals.config.verbose) dir(error);
-        }
-        let runExperiment = (isEnabled)? 'true' : 'false';
+        // let isBanExpEnabled;
+        // try {
+        //     let dbo = globals.database.getDB();
+        //     isBanExpEnabled = await dbo.get("experiments.bans.enabled").value();
+        // } catch (error) {
+        //     logError(`[writeExecFile] Database operation failed with error: ${error.message}`, context);
+        //     if(globals.config.verbose) dir(error);
+        // }
+        // let runBanExperiment = (isBanExpEnabled)? 'true' : 'false';
 
         //Defaults
         let timestamp = new Date().toLocaleString();
@@ -240,7 +240,7 @@ module.exports = class FXRunner {
             `set txAdmin-apiPort "${globals.webServer.httpPort}"`,
             `set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
             `set txAdmin-clientCompatVersion "1.5.0"`,
-            `set txAdmin-expBanEnabled ${runExperiment}`
+            // `set txAdmin-expBanEnabled ${runBanExperiment}`
         ]
 
         //Commands

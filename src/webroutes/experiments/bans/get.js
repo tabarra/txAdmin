@@ -21,6 +21,9 @@ const handleError = async (res, req, error)=>{
  * @param {object} req
  */
 module.exports = async function action(res, req) {
+    //FIXME: temporarily disabled
+    return res.status(403).send({error: "Feature temporariyl disabled."});
+
     //Check permissions
     if(!webUtils.checkPermission(req, 'all_permissions', context)){
         let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to view this page.`});

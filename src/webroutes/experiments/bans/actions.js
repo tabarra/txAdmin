@@ -22,6 +22,9 @@ const handleError = async (res, req, error)=>{
  * @param {object} req
  */
 module.exports = async function action(res, req) {
+    //FIXME: temporarily disabled
+    return res.status(403).send({error: "Feature temporariyl disabled."});
+
     //Sanity check
     if(isUndefined(req.params.action)){
         return res.status(400).send({error: "Invalid Request"});
