@@ -13,7 +13,9 @@ module.exports = async function action(res, req) {
     //Prepare admin array
     let admins = globals.authenticator.getAdmins().map((admin)=>{
         let perms;
-        if(admin.permissions.includes('all_permissions')){
+        if(admin.permissions == true){
+            perms = "master account";
+        }else if(admin.permissions.includes('all_permissions')){
             perms = "all permissions";
         }else if(admin.permissions.length !== 1){
             perms = `${admin.permissions.length} permissions`;
@@ -22,6 +24,9 @@ module.exports = async function action(res, req) {
         }
 
         return {
+            hasCitizenFX: (admin.provider === 'citizenfx'),
+            hasDiscord: (admin.provider === 'discord'),
+            hasPassword: admin.password,
             name: admin.name,
             perms: perms,
             disableActions: (req.session.auth.username.toLowerCase() === admin.name.toLowerCase())? 'disabled': ''

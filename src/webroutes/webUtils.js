@@ -28,6 +28,7 @@ async function renderMasterView(view, reqSess, data){
     data.txAdminVersion = globals.version.current;
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username)? reqSess.auth.username : 'unknown user';
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture)? reqSess.auth.picture : 'img/default_avatar.png';
+    data.disablePasswordChange = (reqSess && reqSess.auth && reqSess.auth.hasPassword)? '' : 'disabled';
 
     let out;
     try {
@@ -148,8 +149,9 @@ function appendLog(req, data, context){
  * @param {object} req
  * @param {string} perm
  * @param {string} fromCtx
+ * @param {boolean} printWarn
  */
-function checkPermission(req, perm, fromCtx){
+function checkPermission(req, perm, fromCtx, printWarn = true){
     try {
 
         if(
@@ -159,7 +161,7 @@ function checkPermission(req, perm, fromCtx){
         ){
             return true;
         }else{
-            if(globals.config.verbose) logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
+            if(globals.config.verbose && printWarn) logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
     } catch (error) {

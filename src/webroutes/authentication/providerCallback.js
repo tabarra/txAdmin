@@ -91,9 +91,6 @@ module.exports = async function action(res, req) {
 
         //Setting session
         req.session.auth = await globals.authenticator.providers.citizenfx.getUserSession(tokenSet, userInfo);
-        req.session.auth.master = admin.master;
-        req.session.auth.permissions = admin.permissions;
-        dir(req.session.auth)
 
         log(`Admin ${admin.name} logged in from ${req.connection.remoteAddress}`, context);
         return res.redirect('/');

@@ -100,6 +100,7 @@ const authLogic = (sess, perm, ctx) => {
 
                     sess.auth.master = admin.master;
                     sess.auth.permissions = admin.permissions;
+                    sess.auth.hasPassword = (typeof admin.password_hash == 'string');
 
                     isValidPerm = (perm === true || (
                         admin.master === true ||

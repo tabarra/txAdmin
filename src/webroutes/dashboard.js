@@ -22,7 +22,7 @@ module.exports = async function action(res, req) {
 
     //Shortcut function
     let getPermDisable = (perm) => {
-        return (webUtils.checkPermission(req, perm))? '' : 'disabled'
+        return (webUtils.checkPermission(req, perm, context, false))? '' : 'disabled'
     }
 
     //Preparing render data
@@ -37,7 +37,7 @@ module.exports = async function action(res, req) {
             commandKick: getPermDisable('commands.kick'),
             commandResources: getPermDisable('commands.resources'),
             controls: getPermDisable('control.server'),
-            controlsClass: (webUtils.checkPermission(req, 'control.server'))? 'danger' : 'secondary'
+            controlsClass: (webUtils.checkPermission(req, 'control.server', context, false))? 'danger' : 'secondary'
         }
     }
 

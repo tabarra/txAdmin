@@ -10,9 +10,12 @@ const context = 'WebServer:Router';
 //Helper function
 function handleRouteError(res, req, route, error){
     try {
+        //Ignoring timeouts
+        if(typeof error.code == 'string' && error.code == 'ERR_HTTP_HEADERS_SENT') return;
+
         let desc = `Internal Error on: ${req.originalUrl}`;
         logError(desc, `${context}:${route}`);
-        dir(error) //NOTE: temporary to help troubleshoot the /auth error
+        if(globals.config.verbose) dir(error)
         res.status(500).send(`[${route} Route Internal Error]`);
     } catch (error) {}
 }

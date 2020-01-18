@@ -106,7 +106,14 @@ module.exports = class Authenticator {
     getAdmins(){
         if(this.admins == false) return [];
         return this.admins.map((user) => {
-            return {name: user.name, permissions: user.permissions};
+            let out = {
+                name: user.name,
+                master: user.master,
+                provider: user.provider,
+                permissions: user.permissions,
+                password: (typeof user.password_hash == 'string')
+            }
+            return out;
         });
     }
 
@@ -268,14 +275,22 @@ module.exports = class Authenticator {
 
         let structureIntegrityTest = jsonData.some((x) =>{
             if(typeof x.name !== 'string') return true;
-            if(typeof x.provider === 'object' || !Object.keys(this.providers).includes(x.provider)) return true;
-            if(typeof x.provider_data !== 'object') return true;
-            if(typeof x.master !== 'undefined' && x.master === true){
-                if(typeof x.password_hash !== 'string') return true;
-            }else{
-                if(typeof x.permissions === 'undefined' || !Array.isArray(x.permissions)) return true;
+            if(typeof x.master !== 'boolean') return true;
+            if(typeof x.provider !== 'string' && x.provider !== false) return true;
+            if(typeof x.provider_data !== 'object' && x.provider_data !== false) return true;
+            if(typeof x.password_hash !== 'string' && x.password_hash !== false) return true;
+            if(!Array.isArray(x.permissions) && x.permissions !== true) return true;
+            if(x.provider !== false){
+                if(!Object.keys(this.providers).includes(x.provider)) return true;
+                if(typeof x.provider_data !== 'object') return true;
             }
-            if(x.provider_id == 'password' && (typeof x.password_hash !== 'string'))  return true;
+            if(x.master || x.provider === false){
+                if(typeof x.password_hash !== 'string') return true;
+                if(!x.password_hash.startsWith('$2')) return true;
+            }
+            if(!x.master){
+                if(!Array.isArray(x.permissions)) return true;
+            }
             return false;
         });
         if(structureIntegrityTest){
@@ -285,13 +300,6 @@ module.exports = class Authenticator {
         let masterCount = jsonData.filter((x) => { return x.master }).length;
         if(masterCount !== 1){
             return callError('must have exactly 1 master account');
-        }
-
-        let hashIntegrityTest = jsonData.some((x) =>{
-            return (typeof x.password_hash === 'string' && !x.password_hash.startsWith('$2'));
-        });
-        if(hashIntegrityTest){
-            return callError('invalid hash');
         }
 
         if(!jsonData.length){

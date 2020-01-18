@@ -197,7 +197,6 @@ async function handleSave(res, req) {
             req.session.tmpAddMasterTokenSet,
             req.session.tmpAddMasterUserInfo
         );
-        req.session.auth.master = true;
         delete req.session.tmpAddMasterTokenSet;
         delete req.session.tmpAddMasterUserInfo;
     } catch (error) {

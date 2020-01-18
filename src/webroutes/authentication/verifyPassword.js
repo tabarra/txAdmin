@@ -47,11 +47,7 @@ module.exports = async function action(res, req) {
             password_hash: admin.password_hash,
             expires_at: false
         };
-        if(typeof admin.master !== 'undefined' && admin.master === true){
-            req.session.auth.master = true;
-        }else{
-            req.session.auth.permissions = admin.permissions;
-        }
+
         log(`Admin ${admin.name} logged in from ${req.connection.remoteAddress}`, context);
     } catch (error) {
         logWarn(`Failed to authenticate ${req.body.username} with error: ${error.message}`, context);
