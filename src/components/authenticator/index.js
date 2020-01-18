@@ -288,7 +288,7 @@ module.exports = class Authenticator {
         }
 
         let hashIntegrityTest = jsonData.some((x) =>{
-            return (typeof x.password_hash !== 'undefined' && !x.password_hash.startsWith('$2'));
+            return (typeof x.password_hash === 'string' && !x.password_hash.startsWith('$2'));
         });
         if(hashIntegrityTest){
             return callError('invalid hash');

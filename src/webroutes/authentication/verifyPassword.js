@@ -18,9 +18,8 @@ module.exports = async function action(res, req) {
     }
     let message = '';
 
-    let admin;
     try {
-        admin = globals.authenticator.getAdminData(req.body.username);
+        let admin = globals.authenticator.getAdminData(req.body.username);
         //Admin exists?
         if(!admin){
             logWarn(`Wrong username for from: ${req.connection.remoteAddress}`, context);
@@ -55,7 +54,7 @@ module.exports = async function action(res, req) {
         }
         log(`Admin ${admin.name} logged in from ${req.connection.remoteAddress}`, context);
     } catch (error) {
-        logWarn(`Error autenticating: ${admin.name}`, context);
+        logWarn(`Failed to authenticate ${req.body.username} with error: ${error.message}`, context);
         message = 'Error autenticating admin.';
         let out = await webUtils.renderLoginView({message});
         return res.send(out);
