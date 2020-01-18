@@ -243,66 +243,59 @@ module.exports = class Authenticator {
         let raw = null;
         let jsonData = null;
 
-        try {
-            raw = await fs.readFile(this.adminsFile, 'utf8');
-        } catch (error) {
-            logError('Unable to load admins. (cannot read file, please read the documentation)', context);
+        const callError = (x) => {
+            logError(`Unable to load admins. (${x}, please read the documentation)`, context);
             if(isFirstTime) process.exit();
             this.admins = [];
             return false;
+        }
+
+        try {
+            raw = await fs.readFile(this.adminsFile, 'utf8');
+        } catch (error) {
+            return callError('cannot read file');
         }
 
         try {
             jsonData = JSON.parse(raw);
         } catch (error) {
-            logError('Unable to load admins. (json parse error, please read the documentation)', context);
-            if(isFirstTime) process.exit();
-            this.admins = [];
-            return false;
+            return callError('json parse error');
         }
 
         if(!Array.isArray(jsonData)){
-            logError('Unable to load admins. (not an array, please read the documentation)', context);
-            if(isFirstTime) process.exit(0);
-            this.admins = [];
-            return false;
+            return callError('not an array');
         }
 
         let structureIntegrityTest = jsonData.some((x) =>{
-            if(typeof x.name === 'undefined' || typeof x.name !== 'string') return true;
-            if(typeof x.provider === 'undefined' || !Object.keys(this.providers).includes(x.provider)) return true;
-            if(typeof x.provider_data === 'undefined' || typeof x.provider_data !== 'object') return true;
-            if(typeof x.provider_data.picture === 'undefined' || typeof x.provider_data.picture !== 'string') return true;
+            if(typeof x.name !== 'string') return true;
+            if(typeof x.provider === 'object' || !Object.keys(this.providers).includes(x.provider)) return true;
+            if(typeof x.provider_data !== 'object') return true;
             if(typeof x.master !== 'undefined' && x.master === true){
-                if(typeof x.password_hash === 'undefined' || typeof x.password_hash !== 'string') return true;
+                if(typeof x.password_hash !== 'string') return true;
             }else{
                 if(typeof x.permissions === 'undefined' || !Array.isArray(x.permissions)) return true;
             }
-            if(x.provider_id == 'password' && (typeof x.password_hash === 'undefined' || typeof x.password_hash !== 'string'))  return true;
+            if(x.provider_id == 'password' && (typeof x.password_hash !== 'string'))  return true;
             return false;
         });
         if(structureIntegrityTest){
-            logError('Unable to load admins. (invalid data in the admins file, please read the documentation)', context);
-            if(isFirstTime) process.exit();
-            this.admins = [];
-            return false;
+            return callError('invalid data in the admins file');
+        }
+
+        let masterCount = jsonData.filter((x) => { return x.master }).length;
+        if(masterCount !== 1){
+            return callError('must have exactly 1 master account');
         }
 
         let hashIntegrityTest = jsonData.some((x) =>{
             return (typeof x.password_hash !== 'undefined' && !x.password_hash.startsWith('$2'));
         });
         if(hashIntegrityTest){
-            logError('Unable to load admins. (invalid hash, please read the documentation)', context);
-            if(isFirstTime) process.exit();
-            this.admins = [];
-            return false;
+            return callError('invalid hash');
         }
 
         if(!jsonData.length){
-            logError('Unable to load admins. (no entries, please read the documentation)', context);
-            if(isFirstTime) process.exit();
-            this.admins = [];
-            return false;
+            return callError('no entries');
         }
 
         this.admins = jsonData;
