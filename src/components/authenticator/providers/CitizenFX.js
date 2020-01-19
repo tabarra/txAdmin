@@ -119,8 +119,8 @@ module.exports = class CitizenFXProvider {
      */
     async getUserSession(tokenSet, userInfo){
         let auth = {
-            username: userInfo.name,
             provider: 'citizenfx',
+            provider_uid: userInfo.name,
             expires_at: tokenSet.expires_at,
             picture: userInfo.picture
         }

@@ -19,7 +19,7 @@ module.exports = async function action(res, req) {
     let message = '';
 
     try {
-        let admin = globals.authenticator.getAdminData(req.body.username);
+        let admin = globals.authenticator.getAdminByName(req.body.username);
         //Admin exists?
         if(!admin){
             logWarn(`Wrong username for from: ${req.connection.remoteAddress}`, context);

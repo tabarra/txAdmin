@@ -18,7 +18,7 @@
 
 
 ## This is the CONVERSION branch. 
-**Expect everything to be messy, and half of it to not work.**  
+**Expect everything to be messy, and 40% of it to not work.**  
 
 ### Replace old monitor and install dependencies
 ```bash
@@ -29,6 +29,10 @@ git clone -b conversion https://github.com/tabarra/txAdmin monitor
 cd monitor
 npm i
 ```
+Patch Discord.js library "bug":  
+Navigate to `node_modules\discord.js\src\client\Client.js` and around line 250 change the `window !== 'undefined';` to `process == 'undefined';`.
+> Well... the patch isn't working but I will investigate later 🤷
+
 Then to run it, just execute the `run.sh` or `run.cmd` without **any** `+exec` arguments.  
 
 ### ConVars

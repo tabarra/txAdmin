@@ -108,7 +108,7 @@ module.exports = class Authenticator {
     /**
      * Returns a list of admins and permissions
      */
-    getAdmins(){
+    getAdminsList(){
         if(this.admins == false) return [];
         return this.admins.map((user) => {
             let out = {
@@ -125,10 +125,27 @@ module.exports = class Authenticator {
 
     //================================================================
     /**
-     * Returns all data from an admin or false
+     * Returns all data from an admin by provider user id (ex discord id), or false
+     * @param {string} uid
+     */
+    getAdminByProviderUID(uid){
+        if(this.admins == false) return false;
+        let id = uid.trim().toLowerCase();
+        let admin = this.admins.find((user) => {
+            return Object.keys(user.providers).find((provider) => {
+                return (id === user.providers[provider].id.toLowerCase())
+            })
+        });
+        return (admin)? admin : false;
+    }
+
+
+    //================================================================
+    /**
+     * Returns all data from an admin by their name, or false
      * @param {string} uname
      */
-    getAdminData(uname){
+    getAdminByName(uname){
         if(this.admins == false) return false;
         let username = uname.trim().toLowerCase();
         let admin = this.admins.find((user) => {

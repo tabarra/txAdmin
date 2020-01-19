@@ -79,9 +79,11 @@ module.exports = async function action(res, req) {
     }
 */
 
+    //FIXME: check the sub claim?
+
     //Check & Login user
     try {
-        let admin = globals.authenticator.getAdminData(userInfo.name);
+        let admin = globals.authenticator.getAdminByProviderUID(userInfo.name);
         if(!admin){
             req.session.auth = {};
             let message = `This account is not an admin.`;
@@ -91,6 +93,9 @@ module.exports = async function action(res, req) {
 
         //Setting session
         req.session.auth = await globals.authenticator.providers.citizenfx.getUserSession(tokenSet, userInfo);
+        req.session.auth.username = admin.name;
+
+        //TODO: refresh the provider data on the admins file
 
         log(`Admin ${admin.name} logged in from ${req.connection.remoteAddress}`, context);
         return res.redirect('/');

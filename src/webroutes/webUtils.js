@@ -28,7 +28,7 @@ async function renderMasterView(view, reqSess, data){
     data.txAdminVersion = globals.version.current;
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username)? reqSess.auth.username : 'unknown user';
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture)? reqSess.auth.picture : 'img/default_avatar.png';
-    data.disablePasswordChange = (reqSess && reqSess.auth && reqSess.auth.hasPassword)? '' : 'disabled';
+    // data.disablePasswordChange = (reqSess && reqSess.auth && reqSess.auth.hasPassword)? '' : 'disabled';
 
     let out;
     try {

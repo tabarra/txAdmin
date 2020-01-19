@@ -190,7 +190,7 @@ async function handleGetModal(res, req) {
     }
 
     //Get admin data
-    let admin = globals.authenticator.getAdminData(req.body.name);
+    let admin = globals.authenticator.getAdminByName(req.body.name);
     if(!admin) return res.send('Admin not found');
 
     //Prepare permissions

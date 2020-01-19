@@ -11,7 +11,7 @@ const context = 'WebServer:AdminManager-Get';
  */
 module.exports = async function action(res, req) {
     //Prepare admin array
-    let admins = globals.authenticator.getAdmins().map((admin)=>{
+    let admins = globals.authenticator.getAdminsList().map((admin)=>{
         let perms;
         if(admin.permissions == true){
             perms = "master account";

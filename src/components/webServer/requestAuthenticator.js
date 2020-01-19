@@ -86,7 +86,7 @@ const authLogic = (sess, perm, ctx) => {
         let now = Math.round(Date.now()/1000);
         if(sess.auth.expires_at === false || now < sess.auth.expires_at){
             try {
-                let admin = globals.authenticator.getAdminData(sess.auth.username);
+                let admin = globals.authenticator.getAdminByName(sess.auth.username);
                 if(admin){
                     if(
                         typeof sess.auth.password_hash == 'string' &&
@@ -100,7 +100,7 @@ const authLogic = (sess, perm, ctx) => {
 
                     sess.auth.master = admin.master;
                     sess.auth.permissions = admin.permissions;
-                    sess.auth.hasPassword = (typeof admin.password_hash == 'string');
+                    sess.auth.isTempPassword = (typeof admin.password_temporary !== 'undefined');
 
                     isValidPerm = (perm === true || (
                         admin.master === true ||
