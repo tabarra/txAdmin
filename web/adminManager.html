@@ -10,7 +10,7 @@
 </style>
 
 <svg style="display:none">
-    <symbol id="fivem-icon" viewBox="0 0 342 430" style="fill: #F1AF86;">
+    <symbol id="fivem-icon" viewBox="0 0 342 430" style="fill: rgb(226, 144, 92);">
         <g transform="matrix(1,0,0,-1,-124.2,606.4)">
             <path d="m 125.8,215.9 85.1,0 c 1.9,0 7.4,18.3 16.7,54.9 32.3,112.4 50.9,178.1 55.7,197.2 l -54.9,54.1 -1.6,0 C 219.4,499 185.2,397.2 124.2,216.7 l 1.6,-0.8 z m 163.8,275.2 0.8,0 c 1.1,4.5 1.6,7.2 1.6,8 l 0,1.6 c -15.9,16.7 -33.7,34.5 -53.3,53.3 -2.1,-3.2 -3.2,-5.8 -3.2,-8 l 0,-0.8 c 19.9,-20.5 37.9,-38.5 54.1,-54.1 z M 393,429 l 0.8,0 c -10.9,34.5 -17.5,52.2 -19.9,53.3 L 254.6,600.8 c -1.3,0 -4.2,-8.5 -8.7,-25.4 L 393,429 Z m -22.3,65.3 0.8,0 c -24.4,74 -37.4,111.3 -39,112.1 l -73.2,0 0,-0.8 C 286.4,578 323.5,540.9 370.7,494.3 Z m 43.8,-128.1 0.8,0 c -2.7,13 -9,23.1 -19.1,30.2 -31,31.8 -62,62.8 -93,93 l -0.8,0 c 1.9,-10.9 6.1,-19.1 12.7,-24.7 l 99.4,-98.5 z m 50.1,-150.3 1.6,0.8 c -22.8,67.9 -35,102.9 -36.6,105 l -109.8,108.9 0,-0.8 c 4.2,-16.7 24.7,-88 61.2,-213.9 l 83.6,0 z" />
         </g>
@@ -108,18 +108,37 @@
             </div>
             <div class="modal-body">
                 <div class="form-group row">
-                    <label for="modAddAdmin-name" class="col-sm-3 col-form-label">
+                    <label for="modAddAdmin-type" class="col-sm-3 col-form-label">
+                        Account Type
+                        <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-9">
+                        <div class="input-group">
+                            <select class="form-control" id="modAddAdmin-type">
+                                <option value="citizenfx" selected>CitizenFX</option>
+                                <option value="discord" disabled>Discord</option>
+                                <option value="password">Password Only</option>
+                            </select>
+                        </div>
+                        <span class="form-text text-muted">
+                            How the admin will login into txAdmin.
+                        </span>
+                    </div>
+                </div>
+
+
+                <div class="form-group row">
+                    <label id="modAddAdmin-id-label" for="modAddAdmin-id" class="col-sm-3 col-form-label">
                         Username
                         <span class="text-danger">*</span>
                     </label>
                     <div class="col-sm-9">
                         <div class="input-group">
-                            <input type="text" class="form-control" id="modAddAdmin-name" maxlength="16"
+                            <input type="text" class="form-control" id="modAddAdmin-id" maxlength="16"
                                 autocomplete="off" required>
                         </div>
-                        <span class="form-text text-muted">
-                            Must have between 6 and 16 characters and contain only letters and numbers. Case
-                            insensitive.
+                        <span id="modAddAdmin-id-description" class="form-text text-muted">
+                            The admin's CitizenFX Forum username.
                         </span>
                     </div>
                 </div>
@@ -132,7 +151,7 @@
                     <div class="col-sm-9">
                         <div class="input-group">
                             <input type="password" class="form-control" id="modAddAdmin-password" maxlength="24"
-                                autocomplete="off" required>
+                                autocomplete="off" disabled>
                         </div>
                         <span class="form-text text-muted">
                             Must have between 6 and 24 characters.
@@ -286,6 +305,36 @@
     });
 
 
+    //============================================== Add Admin Select Changed
+    let specificText = {
+        citizenfx: {
+            idLabel: 'Username',
+            idDescription: `The admin's CitizenFX Forum username.`,
+            password: true
+        },
+        discord: {
+            idLabel: 'User ID',
+            idDescription: `The admin's Discord User ID. Follow <a href="https://support.discordapp.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID" target="_blank">this guide</a> if you don't know how to get the User ID.`,
+            password: true
+        },
+        password: {
+            idLabel: 'Username',
+            idDescription: `Must have between 6 and 16 characters and contain only letters and numbers. Case insensitive.`,
+            password: false
+        }
+    }
+    $("#modAddAdmin-type").change(function() {
+        try {
+            $('#modAddAdmin-password').val('');
+            $("#modAddAdmin-id-label").html(specificText[this.value].idLabel + '<span class="text-danger">*</span>');
+            $("#modAddAdmin-id-description").html(specificText[this.value].idDescription);
+            $("#modAddAdmin-password").prop('disabled', specificText[this.value].password);
+        } catch (error) {
+            console.log('#modAddAdmin-type: unknown type!');
+        }
+    });
+
+
     //============================================== Add Admin
     $('#modAddAdmin-save').click(function () {
         var permissions = new Array();
@@ -294,13 +343,19 @@
         });
         if(!permissions.length) permissions = false;
         let data = {
-            name: $('#modAddAdmin-name').val().trim(),
+            type: $('#modAddAdmin-type').val(),
+            id: $('#modAddAdmin-id').val().trim(),
             password: $('#modAddAdmin-password').val().trim(),
             permissions: permissions
         }
-        if (!data.name.length || !data.password.length) {
-            var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
-            return;
+        if(data.id.length < 4) {
+            return $.notify({ message: 'The Username/ID is not long enough.' }, { type: 'warning' });
+        }
+        if(!$("#modAddAdmin-password").prop('disabled') && !data.password.length){
+            return $.notify({ message: 'The password is required for this account type.' }, { type: 'warning' });
+        }
+        if(data.type == 'discord' && !/^\d+$/.test(data.id)){
+            return $.notify({ message: 'The Discord User ID must be a big number.' }, { type: 'warning' });
         }
         var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 

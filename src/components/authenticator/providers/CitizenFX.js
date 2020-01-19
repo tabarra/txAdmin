@@ -2,7 +2,7 @@
 const crypto  = require('crypto');
 const { Issuer, custom } = require('openid-client');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../../extras/console');
-const context = 'CitizenFXProvider';
+const context = 'Authenticator:CitizenFXProvider';
 
 
 module.exports = class CitizenFXProvider {
