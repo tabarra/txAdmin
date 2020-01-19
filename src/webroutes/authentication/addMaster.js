@@ -59,19 +59,17 @@ async function handlePin(res, req) {
     }
 
     //Checking the PIN
-    //HACK: enable this shit!!!!!!
-    // if(req.body.pin !== globals.authenticator.addMasterPin){
-    //     logWarn(`Wrong PIN for from: ${req.connection.remoteAddress}`, context);
-    //     let message = `Wrong PIN.`;
-    //     let out = await webUtils.renderLoginView({template: 'noMaster', message});
-    //     return res.send(out);
-    // }
+    if(req.body.pin !== globals.authenticator.addMasterPin){
+        logWarn(`Wrong PIN for from: ${req.connection.remoteAddress}`, context);
+        let message = `Wrong PIN.`;
+        let out = await webUtils.renderLoginView({template: 'noMaster', message});
+        return res.send(out);
+    }
 
     //Generate URL
     try {
         let callback = req.protocol + '://' + req.get('host') + `/auth/addMaster/callback`;
         let url = await globals.authenticator.providers.citizenfx.getAuthURL(callback, req.sessionID);
-        // return res.send(`<a href="${url}">${url}</a>`);
         return res.redirect(url);
     } catch (error) {
         let message = `Failed to generate Provider Auth URL with error: ${error.message}`;

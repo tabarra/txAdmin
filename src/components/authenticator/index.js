@@ -80,9 +80,14 @@ module.exports = class Authenticator {
         this.admins = [{
             name: username,
             master: true,
-            provider: 'citizenfx',
-            provider_data,
-            password_hash: GetPasswordHash(password)
+            password_hash: GetPasswordHash(password),
+            providers: {
+                citizenfx: {
+                    id: username,
+                    data: provider_data
+                }
+            },
+            permissions: []
         }];
         dir(this.admins)
 
@@ -273,24 +278,18 @@ module.exports = class Authenticator {
             return callError('not an array');
         }
 
-        let structureIntegrityTest = jsonData.some((x) =>{
-            if(typeof x.name !== 'string') return true;
+        let structureIntegrityTest = jsonData.some((x) => {
+            if(typeof x.name !== 'string' || x.name < 6) return true;
             if(typeof x.master !== 'boolean') return true;
-            if(typeof x.provider !== 'string' && x.provider !== false) return true;
-            if(typeof x.provider_data !== 'object' && x.provider_data !== false) return true;
-            if(typeof x.password_hash !== 'string' && x.password_hash !== false) return true;
-            if(!Array.isArray(x.permissions) && x.permissions !== true) return true;
-            if(x.provider !== false){
-                if(!Object.keys(this.providers).includes(x.provider)) return true;
-                if(typeof x.provider_data !== 'object') return true;
-            }
-            if(x.master || x.provider === false){
-                if(typeof x.password_hash !== 'string') return true;
-                if(!x.password_hash.startsWith('$2')) return true;
-            }
-            if(!x.master){
-                if(!Array.isArray(x.permissions)) return true;
-            }
+            if(typeof x.password_hash !== 'string' || !x.password_hash.startsWith('$2')) return true;
+            if(typeof x.providers !== 'object') return true;
+            let providersTest = Object.keys(x.providers).some((y) => {
+                if(!Object.keys(this.providers).includes(y)) return true;
+                if(typeof x.providers[y].id !== 'string' || x.providers[y].id.length < 4) return true;
+                if(typeof x.providers[y].data !== 'object') return true;
+            });
+            if(providersTest) return true;
+            if(!Array.isArray(x.permissions)) return true;
             return false;
         });
         if(structureIntegrityTest){
