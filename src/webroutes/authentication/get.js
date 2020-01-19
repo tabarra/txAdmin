@@ -5,9 +5,6 @@ const context = 'WebServer:Auth-Get';
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
-const genCallbackURL = (req, provider) => {
-    return req.protocol + '://' + req.get('host') + `/auth/${provider}/callback`
-}
 
 /**
  * Gets the login page and destroys session if /auth?logout is defined
@@ -21,21 +18,12 @@ module.exports = async function action(res, req) {
     //Destroy session? And start a new one
     if(!isUndefined(req.query.logout)) req.session.auth = {};
 
-    //Generatte CitizenFX provider Auth URL
-    let urlCitizenFX;
-    try {
-        urlCitizenFX =  await globals.authenticator.providers.citizenfx.getAuthURL(genCallbackURL(req, 'citizenfx'), req.sessionID);
-    } catch (error) {
-        if(globals.config.verbose) logWarn(`Failed to generate CitizenFX Auth URL with error: ${error.message}`, context);
-        urlCitizenFX = false;
-    }
-
     //Render page
     let renderData = {
         template,
         message: (!isUndefined(req.query.logout))? 'Logged Out' : '',
-        urlCitizenFX,
-        urlDiscord: false,
+        citizenfxDisabled: !globals.authenticator.providers.citizenfx.ready,
+        discordDisabled: true,
     }
     let out = await webUtils.renderLoginView(renderData);
     return res.send(out);

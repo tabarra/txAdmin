@@ -46,6 +46,11 @@ module.exports = router = (config) =>{
         });
     });
 
+    router.get('/auth/:provider/redirect', authLimiter, async (req, res) => {
+        await webRoutes.auth.providerRedirect(res, req).catch((err) => {
+            handleRouteError(res, req, 'Auth-ProviderRedirect', err);
+        });
+    });
     router.get('/auth/:provider/callback', authLimiter, async (req, res) => {
         await webRoutes.auth.providerCallback(res, req).catch((err) => {
             handleRouteError(res, req, 'Auth-ProviderCallback', err);

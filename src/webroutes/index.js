@@ -12,6 +12,7 @@ exports.status = require('./status.js');
 exports.auth = {
     get: require('./authentication/get'),
     addMaster: require('./authentication/addMaster'),
+    providerRedirect: require('./authentication/providerRedirect'),
     providerCallback: require('./authentication/providerCallback'),
     verifyPassword: require('./authentication/verifyPassword'),
     changePassword: require('./authentication/changePassword'),

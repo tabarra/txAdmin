@@ -9,10 +9,10 @@ const context = 'WebUtils';
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 sqrl.defineFilter("isSelected", (x)=>{
-    return (x==='true')? 'selected' : ''
+    return (x==='true')? 'selected' : '';
 });
 sqrl.defineFilter("isDisabled", (x)=>{
-    return (x==='true')? 'disabled' : ''
+    return (x==='true')? 'disabled' : '';
 });
 
 
