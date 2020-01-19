@@ -1,4 +1,5 @@
 //Requires
+const nanoid = require('nanoid');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const webUtils = require('./../webUtils.js');
 const context = 'WebServer:AdminManager-Actions';
@@ -54,10 +55,9 @@ module.exports = async function action(res, req) {
 async function handleAdd(res, req) {
     //Sanity check
     if(
-        isUndefined(req.body.name) ||
         typeof req.body.name !== 'string' ||
-        isUndefined(req.body.password) ||
-        typeof req.body.password !== 'string' ||
+        typeof req.body.citizenfxID !== 'string' ||
+        typeof req.body.discordID !== 'string' ||
         isUndefined(req.body.permissions)
     ){
         return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
@@ -65,7 +65,9 @@ async function handleAdd(res, req) {
 
     //Prepare and filter variables
     let name = req.body.name.trim();
-    let password = req.body.password.trim();
+    let password = nanoid(12);
+    let citizenfxID = req.body.citizenfxID.trim();
+    let discordID = req.body.discordID.trim();
     let permissions = (Array.isArray(req.body.permissions))? req.body.permissions : [];
     permissions = permissions.filter((x)=>{ return typeof x === 'string'});
     if(permissions.includes('all_permissions')) permissions = ['all_permissions'];
@@ -74,17 +76,20 @@ async function handleAdd(res, req) {
     if(!/^[a-zA-Z0-9]{6,16}$/.test(name)){
         return res.send({type: 'danger', message: "Invalid username"});
     }
-    if(password.length < 6){
-        return res.send({type: 'danger', message: "Invalid password"});
+    if(citizenfxID.length && !/^\w{4,20}$/.test(citizenfxID)){
+        return res.send({type: 'danger', message: "Invalid CitizenFX ID"});
+    }
+    if(discordID.length && !/^\d+$/.test(discordID)){
+        return res.send({type: 'danger', message: "Invalid Discord ID"});
     }
 
     //Add admin and give output
     try {
-        await globals.authenticator.addAdmin(name, password, permissions);
-        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Adding user '${name}'.`;
+        await globals.authenticator.addAdmin(name, citizenfxID, discordID, password, permissions);
+        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Adding admin '${name}'.`;
         logOk(logMessage, context);
         globals.logger.append(logMessage);
-        return res.send({type: 'success', message: `refresh`});
+        return res.send({type: 'modalrefresh', password});
     } catch (error) {
         return res.send({type: 'danger', message: error.message});
     }

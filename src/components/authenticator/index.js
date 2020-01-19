@@ -166,28 +166,50 @@ module.exports = class Authenticator {
     //================================================================
     /**
      * Add a new admin to the admins file
+     * NOTE: I'm fully aware this coud be optimized. Leaving this way to improve readability and error verbosity
      * @param {*} name
+     * @param {*} citizenfxID
+     * @param {*} discordID
      * @param {*} password
      * @param {*} permissions
      */
-    async addAdmin(name, password, permissions){
+    async addAdmin(name, citizenfxID, discordID, password, permissions){
         if(this.admins == false) throw new Error("Admins not set");
 
         //Check if username is already taken
-        let username = name.toLowerCase();
-        let existing = this.admins.find((user) => {
-            return (username === user.name.toLowerCase())
-        });
-        if(existing) throw new Error("Username already taken");
+        let existingUsername = this.getAdminByName(name)
+        if(existingUsername) throw new Error("Username already taken");
 
-        //Adding new admin
-        this.admins.push({
+        //Preparing admin
+        let admin = {
             name: name,
-            password_hash: bcrypt.hashSync(password, 5),
+            master: false,
+            password_hash: GetPasswordHash(password),
+            password_temporary: true,
+            providers: {},
             permissions: permissions,
-        })
+        }
+
+        //Check if provider uid already taken and inserting into admin object
+        if(citizenfxID.length){
+            let existingCitizenFX = this.getAdminByProviderUID(citizenfxID)
+            if(existingCitizenFX) throw new Error("CitizenFX ID already taken");
+            admin.providers.citizenfx = {
+                id: citizenfxID,
+                data: {}
+            }
+        }
+        if(discordID.length){
+            let existingDiscord = this.getAdminByProviderUID(discordID)
+            if(existingDiscord) throw new Error("Discord ID already taken");
+            admin.providers.discord = {
+                id: discordID,
+                data: {}
+            }
+        }
 
         //Saving admin file
+        this.admins.push(admin)
         try {
             await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
