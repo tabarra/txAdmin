@@ -27,12 +27,6 @@ module.exports = async function action(res, req) {
             let out = await webUtils.renderLoginView({message});
             return res.send(out);
         }
-        //Can use password?
-        if(typeof admin.password_hash !== 'string'){
-            message = `This admin doesn't have a password saved!`;
-            let out = await webUtils.renderLoginView({message});
-            return res.send(out);
-        }
         //Does password match?
         if(!VerifyPasswordHash(req.body.password, admin.password_hash)){
             logWarn(`Wrong password for from: ${req.connection.remoteAddress}`, context);

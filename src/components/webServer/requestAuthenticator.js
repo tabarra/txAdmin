@@ -90,7 +90,6 @@ const authLogic = (sess, perm, ctx) => {
                 if(admin){
                     if(
                         typeof sess.auth.password_hash == 'string' &&
-                        typeof admin.password_hash == 'string' &&
                         admin.password_hash == sess.auth.password_hash
                     ){
                         isValidAuth = true;

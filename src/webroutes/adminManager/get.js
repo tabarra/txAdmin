@@ -13,7 +13,7 @@ module.exports = async function action(res, req) {
     //Prepare admin array
     let admins = globals.authenticator.getAdminsList().map((admin)=>{
         let perms;
-        if(admin.permissions == true){
+        if(admin.master == true){
             perms = "master account";
         }else if(admin.permissions.includes('all_permissions')){
             perms = "all permissions";
@@ -24,12 +24,11 @@ module.exports = async function action(res, req) {
         }
 
         return {
-            hasCitizenFX: (admin.provider === 'citizenfx'),
-            hasDiscord: (admin.provider === 'discord'),
-            hasPassword: admin.password,
+            hasCitizenFX: (admin.providers.includes('citizenfx')),
+            hasDiscord: (admin.providers.includes('discord')),
             name: admin.name,
             perms: perms,
-            disableActions: (req.session.auth.username.toLowerCase() === admin.name.toLowerCase())? 'disabled': ''
+            disableActions: (req.session.auth.username.toLowerCase() === admin.name.toLowerCase())
         }
     });
 

@@ -114,9 +114,8 @@ module.exports = class Authenticator {
             let out = {
                 name: user.name,
                 master: user.master,
-                provider: user.provider,
-                permissions: user.permissions,
-                password: (typeof user.password_hash == 'string')
+                providers: Object.keys(user.providers),
+                permissions: user.permissions
             }
             return out;
         });
