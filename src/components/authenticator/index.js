@@ -177,7 +177,7 @@ module.exports = class Authenticator {
         if(this.admins == false) throw new Error("Admins not set");
 
         //Check if username is already taken
-        let existingUsername = this.getAdminByName(name)
+        let existingUsername = this.getAdminByName(name);
         if(existingUsername) throw new Error("Username already taken");
 
         //Preparing admin
@@ -238,13 +238,16 @@ module.exports = class Authenticator {
         if(adminIndex == -1) throw new Error("Admin not found");
 
         //Editing admin
-        if(password) this.admins[adminIndex].password_hash = bcrypt.hashSync(password, 5);
+        if(password !== null){
+            this.admins[adminIndex].password_hash = GetPasswordHash(password);
+            delete this.admins[adminIndex].password_temporary;
+        }
         if(typeof permissions !== 'undefined') this.admins[adminIndex].permissions = permissions;
 
         //Saving admin file
         try {
             await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
-            return true;
+            return (password !== null)? this.admins[adminIndex].password_hash : true;
         } catch (error) {
             if(globals.config.verbose) logError(error.message, context);
             throw new Error(`Failed to save '${this.adminsFile}'`);

@@ -28,7 +28,7 @@ async function renderMasterView(view, reqSess, data){
     data.txAdminVersion = globals.version.current;
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username)? reqSess.auth.username : 'unknown user';
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture)? reqSess.auth.picture : 'img/default_avatar.png';
-    // data.disablePasswordChange = (reqSess && reqSess.auth && reqSess.auth.hasPassword)? '' : 'disabled';
+    data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
 
     let out;
     try {
@@ -126,6 +126,7 @@ async function renderSoloView(view, data){
  * @param {string} view
  */
 function getWebViewPath(view){
+    if(view.includes('..')) throw new Error('Path Traversal?');
     return path.join(__dirname, '../../web/', view+'.html');
 }
 

@@ -145,21 +145,26 @@ function changeOwnPasswordModal() {
 
 $('#modChangePassword-save').click(function () {
     let data = {
-        oldPassword: $('#modChangePassword-oldPassword').val().trim(),
         newPassword: $('#modChangePassword-newPassword').val().trim(),
         confirmPassword: $('#modChangePassword-confirmPassword').val().trim()
     }
 
     //Validity Checking
     let errors = [];
-    if (!data.oldPassword.length || !data.newPassword.length || !data.confirmPassword.length) {
-        errors.push('All 3 fields are required.');
+    if (!data.newPassword.length || !data.confirmPassword.length) {
+        errors.push('The new password fields are required.');
     }
     if(data.newPassword !== data.confirmPassword){
         errors.push(`Your new password doesn't match the one typed in the confirmation input.`);
     }
-    if(data.oldPassword === data.confirmPassword){
-        errors.push(`The new password must be different than the old one.`);
+    if(typeof isTempPassword === 'undefined'){
+        data.oldPassword = $('#modChangePassword-oldPassword').val().trim();
+        if (!data.oldPassword.length) {
+            errors.push('The old password field is required.');
+        }
+        if(data.oldPassword === data.confirmPassword){
+            errors.push(`The new password must be different than the old one.`);
+        }
     }
     if(data.newPassword.length < 6 || data.newPassword.length > 24){
         errors.push(`The new password have between 6 and 24 characters.`);
@@ -181,7 +186,13 @@ $('#modChangePassword-save').click(function () {
             notify.update('progress', 0);
             notify.update('type', data.type);
             notify.update('message', data.message);
-            $('#modChangePassword').modal('hide');
+            if(data.type == 'success'){
+                $('#modChangePassword').modal('hide');
+                setTimeout(() => {
+                    $('#modChangePassword-save').hide()
+                    $('#modChangePassword-body').html('<h4 class="mx-auto" style="max-width: 350px">password already changed, please refresh this page</h4>');
+                }, 500);
+            }
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
@@ -210,6 +221,12 @@ $(document).ready(function() {
         },
     });
     setInterval(refreshData, 1000);
+
+    if(typeof isTempPassword !== 'undefined'){
+        $('#modChangePassword-oldPassword').attr('disabled', true);
+        $('#modChangePassword-oldPassword').attr('required', false);
+        $('#modChangePassword').modal('show');
+    }
 });
 
 //Handle profile picture load error

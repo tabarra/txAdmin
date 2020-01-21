@@ -1,6 +1,5 @@
 //Requires
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const webUtils = require('./../webUtils.js');
 const context = 'WebServer:Auth-ChangePassword';
 
 //Helper functions
@@ -13,25 +12,35 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  */
 module.exports = async function action(res, req) {
     //Sanity check
-    if(isUndefined(req.body.oldPassword) || isUndefined(req.body.newPassword)){
+    if(isUndefined(req.body.newPassword)){
         res.status(400).send({status: 'error', error: "Invalid Request"});
         return;
     }
 
-
-    //Validate fields
-    let oldPassword = req.body.oldPassword.trim();
-    let newPassword = req.body.newPassword.trim();
-    if(oldPassword !== req.session.auth.password){
-        return res.send({type: 'danger', message: "Wrong current password"});
+    //Check if temp password
+    if(!req.session.auth.isTempPassword && isUndefined(req.body.oldPassword)){
+        res.send({type: 'danger', message: "The permanent password was already set."});
+        return;
     }
-    if(oldPassword.length < 6 || oldPassword.length > 32){
+    Message
+    //Validate fields
+    let newPassword = req.body.newPassword.trim();
+    if(!req.session.auth.isTempPassword && !isUndefined(req.body.oldPassword)){
+        let admin = globals.authenticator.getAdminByName(req.session.auth.username);
+        if(!admin) throw new Error("Wait, what? Where is that admin?");
+        let oldPassword = req.body.oldPassword.trim();
+        if(!VerifyPasswordHash(oldPassword, admin.password_hash)){
+            return res.send({type: 'danger', message: "Wrong current password"});
+        }
+    }
+    if(newPassword.length < 6 || newPassword.length > 32){
         return res.send({type: 'danger', message: "Invalid new password"});
     }
 
     //Add admin and give output
     try {
-        await globals.authenticator.editAdmin(req.session.auth.username, newPassword);
+        let newHash = await globals.authenticator.editAdmin(req.session.auth.username, newPassword);
+        if(typeof req.session.auth.password_hash == 'string') req.session.auth.password_hash = newHash;
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing own password.`;
         logOk(logMessage, context);
         globals.logger.append(logMessage);

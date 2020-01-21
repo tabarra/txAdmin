@@ -57,18 +57,27 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body text-center">
-                <div class="form-group row ">
-                    <div class="col-sm-8 mx-auto">
-                        <label for="modChangePassword-oldPassword" class="col-sm-12 col-form-label">
-                            Enter your <b>current</b> password
-                        </label>
-                        <div class="input-group">
-                            <input type="password" autocomplete="new-password" class="form-control text-center"
-                                id="modChangePassword-oldPassword" maxlength="64">
+            <div class="modal-body text-center" id="modChangePassword-body">
+                <div class="form-group row">
+                    {{if(options.isTempPassword)}}
+                        <script>var isTempPassword = true;</script>
+                        <div class="col-sm-8 mx-auto">
+                            <h5 class="text-danger mx-auto">Your account has a temporary password that needs to be changed.</h5>
                         </div>
-                    </div>
-                    <div class="col-sm-12 main-top-spacer"></div>
+                    {{#else}}
+                        <div class="col-sm-8 mx-auto">
+                            <label for="modChangePassword-oldPassword" class="col-sm-12 col-form-label">
+                                Enter your <b>current</b> password
+                            </label>
+                            <div class="input-group">
+                                <input type="password" autocomplete="new-password" class="form-control text-center"
+                                    id="modChangePassword-oldPassword" maxlength="64">
+                            </div>
+                        </div>
+                        <div class="col-sm-12 main-top-spacer"></div>
+                    {{/if}}
+
+
                     <div class="col-sm-8 mx-auto">
                         <label for="modChangePassword-newPassword" class="col-sm-12 col-form-label">
                             Enter a <b>new</b> password
