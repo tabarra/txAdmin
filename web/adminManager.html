@@ -296,7 +296,8 @@
         if(!permissions.length) permissions = false;
         let data = {
             name: $('#modEditAdmin-name').val().trim(),
-            password: $('#modEditAdmin-password').val().trim(),
+            citizenfxID: $('#modEditAdmin-citizenfxID').val().trim(),
+            discordID: $('#modEditAdmin-discordID').val().trim(),
             permissions: permissions
         }
         if (!data.name.length) {

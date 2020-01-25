@@ -22,7 +22,7 @@ module.exports = async function action(res, req) {
         res.send({type: 'danger', message: "The permanent password was already set."});
         return;
     }
-    Message
+
     //Validate fields
     let newPassword = req.body.newPassword.trim();
     if(!req.session.auth.isTempPassword && !isUndefined(req.body.oldPassword)){

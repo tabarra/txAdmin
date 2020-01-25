@@ -1,11 +1,12 @@
 //Requires
-const nanoid = require('nanoid');
+const nanoidGen = require('nanoid/generate');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const webUtils = require('./../webUtils.js');
 const context = 'WebServer:AdminManager-Actions';
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
+const genNewPassword = () => { return nanoidGen('123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz', 12); };
 
 /**
  * Returns the output page containing the admins.
@@ -65,7 +66,7 @@ async function handleAdd(res, req) {
 
     //Prepare and filter variables
     let name = req.body.name.trim();
-    let password = nanoid(12);
+    let password = genNewPassword();
     let citizenfxID = req.body.citizenfxID.trim();
     let discordID = req.body.discordID.trim();
     let permissions = (Array.isArray(req.body.permissions))? req.body.permissions : [];
@@ -105,10 +106,9 @@ async function handleAdd(res, req) {
 async function handleEdit(res, req) {
     //Sanity check
     if(
-        isUndefined(req.body.name) ||
         typeof req.body.name !== 'string' ||
-        isUndefined(req.body.password) ||
-        typeof req.body.password !== 'string' ||
+        typeof req.body.citizenfxID !== 'string' ||
+        typeof req.body.discordID !== 'string' ||
         isUndefined(req.body.permissions)
     ){
         return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
@@ -116,15 +116,18 @@ async function handleEdit(res, req) {
 
     //Prepare and filter variables
     let name = req.body.name.trim();
-    let password = req.body.password.trim();
-    password = (password.length)? password : false;
+    let citizenfxID = req.body.citizenfxID.trim();
+    let discordID = req.body.discordID.trim();
     let permissions = (Array.isArray(req.body.permissions))? req.body.permissions : [];
     permissions = permissions.filter((x)=>{ return typeof x === 'string'});
     if(permissions.includes('all_permissions')) permissions = ['all_permissions'];
 
     //Validate fields
-    if(password && password.length < 6){
-        return res.send({type: 'danger', message: "Invalid password"});
+    if(citizenfxID.length && !/^\w{4,20}$/.test(citizenfxID)){
+        return res.send({type: 'danger', message: "Invalid CitizenFX ID"});
+    }
+    if(discordID.length && !/^\d+$/.test(discordID)){
+        return res.send({type: 'danger', message: "Invalid Discord ID"});
     }
 
     //Check permissions
@@ -134,7 +137,7 @@ async function handleEdit(res, req) {
 
     //Add admin and give output
     try {
-        await globals.authenticator.editAdmin(name, password, permissions);
+        await globals.authenticator.editAdmin(name, null, citizenfxID, discordID, permissions);
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Editing user '${name}'.`;
         logOk(logMessage, context);
         globals.logger.append(logMessage);
@@ -211,6 +214,8 @@ async function handleGetModal(res, req) {
     let renderData = {
         headerTitle: 'Admin Manager',
         username: admin.name,
+        citizenfx_id: (admin.providers.citizenfx)? admin.providers.citizenfx.id : '',
+        discord_id: (admin.providers.discord)? admin.providers.discord.id : '',
         permissions: permissions
     }
 

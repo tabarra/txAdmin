@@ -93,7 +93,11 @@ const authLogic = (sess, perm, ctx) => {
                         admin.password_hash == sess.auth.password_hash
                     ){
                         isValidAuth = true;
-                    }else if(typeof sess.auth.provider == 'string'){
+                    }else if(
+                        typeof sess.auth.provider == 'string' &&
+                        typeof admin.providers[sess.auth.provider] == 'object' &&
+                        sess.auth.provider_uid == admin.providers[sess.auth.provider].id
+                    ){
                         isValidAuth = true;
                     }
 

@@ -167,11 +167,11 @@ module.exports = class Authenticator {
     /**
      * Add a new admin to the admins file
      * NOTE: I'm fully aware this coud be optimized. Leaving this way to improve readability and error verbosity
-     * @param {*} name
-     * @param {*} citizenfxID
-     * @param {*} discordID
-     * @param {*} password
-     * @param {*} permissions
+     * @param {string} name
+     * @param {string} citizenfxID
+     * @param {string} discordID
+     * @param {string} password
+     * @param {array} permissions
      */
     async addAdmin(name, citizenfxID, discordID, password, permissions){
         if(this.admins == false) throw new Error("Admins not set");
@@ -223,11 +223,13 @@ module.exports = class Authenticator {
     //================================================================
     /**
      * Edit admin and save to the admins file
-     * @param {*} name
-     * @param {*} password
-     * @param {*} permissions
+     * @param {string} name
+     * @param {string} password
+     * @param {string} citizenfxID
+     * @param {string} discordID
+     * @param {array} permissions
      */
-    async editAdmin(name, password, permissions){
+    async editAdmin(name, password, citizenfxID, discordID, permissions){
         if(this.admins == false) throw new Error("Admins not set");
 
         //Find admin index
@@ -241,6 +243,26 @@ module.exports = class Authenticator {
         if(password !== null){
             this.admins[adminIndex].password_hash = GetPasswordHash(password);
             delete this.admins[adminIndex].password_temporary;
+        }
+        if(typeof citizenfxID !== 'undefined'){
+            if(citizenfxID == ''){
+                delete this.admins[adminIndex].providers.citizenfx;
+            }else{
+                this.admins[adminIndex].providers.citizenfx = {
+                    id: citizenfxID,
+                    data: {}
+                }
+            }
+        }
+        if(typeof discordID !== 'undefined'){
+            if(discordID == ''){
+                delete this.admins[adminIndex].providers.discord;
+            }else{
+                this.admins[adminIndex].providers.discord = {
+                    id: discordID,
+                    data: {}
+                }
+            }
         }
         if(typeof permissions !== 'undefined') this.admins[adminIndex].permissions = permissions;
 
@@ -258,7 +280,7 @@ module.exports = class Authenticator {
     //================================================================
     /**
      * Delete admin and save to the admins file
-     * @param {*} name
+     * @param {string} name
      */
     async deleteAdmin(name){
         if(this.admins == false) throw new Error("Admins not set");
