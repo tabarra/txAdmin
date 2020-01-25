@@ -100,11 +100,12 @@ function getCFGFileData(cfgPath) {
 
     //Validating file existence
     if(!fs.existsSync(cfgPath)){
-        if(cfgPath.includes('cfg')){
-            throw new Error("File doesn't exist or its unreadable.");
-        }else{
-            throw new Error("File doesn't exist or its unreadable. Make sure to include the CFG file in the path, and not just the directory that contains it.");
-        }
+        throw new Error("File doesn't exist or its unreadable.");
+    }
+
+    //Validating if its actually a file
+    if(!fs.lstatSync(cfgPath).isFile()){
+        throw new Error("File doesn't exist or its unreadable. Make sure to include the CFG file in the path, and not just the directory that contains it.");
     }
 
     //Reading file
