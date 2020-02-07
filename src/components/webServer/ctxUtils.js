@@ -1,0 +1,188 @@
+//Requires
+const fs = require('fs-extra');
+const path = require('path');
+const sqrl = require("squirrelly");
+const helpers = require('../../extras/helpers');
+const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
+const context = 'WebUtils';
+
+//Helper functions
+const isUndefined = (x) => { return (typeof x === 'undefined') };
+const getRenderErrorText = (view, error, data) => {
+    logError(`Error rendering ${view}.`, context);
+    if(globals.config.verbose) dir(error)
+    out = `<pre>\n`;
+    out += `Error rendering '${view}'.\n`;
+    out += `Message: ${error.message}\n`;
+    out += `The data provided was:\n`;
+    out += `================\n`;
+    out += JSON.stringify(data, null, 2);
+    out += `</pre>\n`;
+    return out;
+}
+function getWebViewPath(view){
+    if(view.includes('..')) throw new Error('Path Traversal?');
+    return path.join(__dirname, '../../../web/', view+'.html');
+}
+
+//Squirrelly Filters
+sqrl.defineFilter("isSelected", (x)=>{
+    return (x==='true')? 'selected' : '';
+});
+sqrl.defineFilter("isDisabled", (x)=>{
+    return (x==='true')? 'disabled' : '';
+});
+
+
+//================================================================
+/**
+ * Renders the master page including header and footer
+ * @param {string} view
+ * @param {string} data
+ */
+async function renderMasterView(view, reqSess, data){
+    if(isUndefined(data)) data = {};
+    data.headerTitle = (!isUndefined(data.headerTitle))? `${data.headerTitle} - txAdmin` : 'txAdmin';
+    data.txAdminVersion = globals.version.current;
+    data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username)? reqSess.auth.username : 'unknown user';
+    data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture)? reqSess.auth.picture : 'img/default_avatar.png';
+    data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
+
+    let out;
+    try {
+        const [rawHeader, rawFooter, rawView] = await Promise.all([
+            fs.readFile(getWebViewPath('basic/header'), 'utf8'),
+            fs.readFile(getWebViewPath('basic/footer'), 'utf8'),
+            fs.readFile(getWebViewPath(view), 'utf8')
+        ]);
+        sqrl.definePartial("header", rawHeader);
+        sqrl.definePartial("footer", rawFooter);
+        out = sqrl.Render(rawView, data);
+    } catch (error) {
+        out = getRenderErrorText(view, error, data);
+    }
+
+    return out;
+}
+
+
+//================================================================
+/**
+ * Renders the login page.
+ * @param {string} message
+ */
+async function renderLoginView(data){
+    if(isUndefined(data)) data = {};
+    data.headerTitle = data.headerTitle || 'Login';
+    data.isMatrix = (Math.random() <= 0.1);
+    data.ascii = helpers.txAdminASCII();
+    data.message = data.message || '';
+    data.template = data.template || 'normal';
+    // data.template = 'noMaster';
+    // data.template = 'callback';
+    // data.template = 'normal';
+    // data.template = 'justMessage';
+    data.config = globals.config.serverProfile;
+    data.version = globals.version.current;
+
+    let out;
+    try {
+        let rawView = await fs.readFile(getWebViewPath(`basic/login`), 'utf8');
+        out = sqrl.Render(rawView, data);
+    } catch (error) {
+        out = getRenderErrorText('Login', error, data);
+    }
+
+    return out;
+}
+
+
+//================================================================
+/**
+ * Renders a solo view.
+ * NOTE: not used
+ * @param {string} view
+ * @param {string} data
+ */
+async function renderSoloView(view, data){
+    if(isUndefined(data)) data = {};
+    let out;
+    try {
+        let rawView = await fs.readFile(getWebViewPath(view), 'utf8');
+        out = sqrl.Render(rawView, data);
+    } catch (error) {
+        out = getRenderErrorText(view, error, data);
+    }
+
+    return out;
+}
+
+
+
+//================================================================
+/**
+ * Append data to the log file
+ * FIXME: edit consistency of this function and apply to all endpoints
+ * @param {object} ctx
+ * @param {string} data
+ */
+function appendLog(ctx, data, context){
+    log(`Executing "${data}"`, context);
+    globals.logger.append(`[${ctx.ip}][${ctx.session.auth.username}] ${data}`);
+}
+
+
+//================================================================
+/**
+ * Check for a permission
+ * @param {object} ctx
+ * @param {string} perm
+ * @param {string} fromCtx
+ * @param {boolean} printWarn
+ */
+function checkPermission(ctx, perm, fromCtx, printWarn = true){
+    try {
+        if(
+            ctx.session.auth.master === true ||
+            ctx.session.auth.permissions.includes('all_permissions') ||
+            ctx.session.auth.permissions.includes(perm)
+        ){
+            return true;
+        }else{
+            if(globals.config.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
+            return false;
+        }
+    } catch (error) {
+        if(globals.config.verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
+    }
+}
+
+//================================================================
+//================================================================
+//================================================================
+module.exports = async function action(ctx, next){
+    ctx.utils = {};
+    //TODO: fix this atrocity
+    ctx.utils.render = async (view, viewData) => {
+        let soloViews = ['adminManager-editModal', 'basic/404'];
+        if(view == 'login'){
+            ctx.body = await renderLoginView(viewData);
+        }else if(soloViews.includes(view)){
+            ctx.body = await renderSoloView('basic/404', viewData);
+        }else{
+            ctx.body = await renderMasterView(view, ctx.session, viewData);
+        }
+        ctx.type = 'text/html';
+    }
+
+    //FIXME: test these functions
+    //TODO: use xxx.bind(ctx) and inside use this.abc?
+    ctx.utils.appendLog = async (data, context) => {
+        return appendLog(ctx, data, context);
+    }
+    ctx.utils.checkPermission = async (perm, fromCtx, printWarn) => {
+        return checkPermission(ctx, perm, fromCtx, printWarn);
+    }
+
+    return next();
+}

@@ -1,7 +1,7 @@
 //Requires
-const util = require('util');
-const express = require('express');
-const rateLimit = require("express-rate-limit");
+const Router = require('@koa/router');
+const KoaRateLimit = require('koa-ratelimit');
+
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const webRoutes = require('../../webroutes');
 const {requestAuth} = require('./requestAuthenticator');
@@ -10,8 +10,8 @@ const context = 'WebServer:Router';
 //Helper function
 function handleRouteError(res, req, route, error){
     try {
-        //Ignoring timeouts
-        if(typeof error.code == 'string' && error.code == 'ERR_HTTP_HEADERS_SENT') return;
+        //Ignoring (mostly) timeouts
+        if(error.code == 'ERR_HTTP_HEADERS_SENT') return;
 
         let desc = `Internal Error on: ${req.originalUrl}`;
         logError(desc, `${context}:${route}`);
@@ -26,14 +26,23 @@ function handleRouteError(res, req, route, error){
  * @param {object} config
  */
 module.exports = router = (config) =>{
-    const router = express.Router();
-    authLimiter = rateLimit({
-        windowMs: config.limiterMinutes * 60 * 1000, // 15 minutes
-        max: config.limiterAttempts, // limit each IP to 5 requests per 15 minutes
-        message: `Too many login attempts, enjoy your ${config.limiterMinutes} minutes of cooldown.`
+    const router = new Router();
+    authLimiter = KoaRateLimit({
+        driver: 'memory',
+        db: new Map(),
+        duration: config.limiterMinutes * 60 * 1000, // 15 minutes
+        errorMessage: `Too many attempts, enjoy your ${config.limiterMinutes} minutes of cooldown.`,
+        max: config.limiterAttempts,
+        disableHeader: true,
     });
 
 
+    //FIXME: test only
+    router.get('/', async (ctx) => {
+        return ctx.utils.render('login', {message: 'sdfsdfdfs'})
+    });
+
+/*
     //Authentication
     router.get('/auth', async (req, res) => {
         await webRoutes.auth.get(res, req).catch((err) => {
@@ -195,6 +204,7 @@ module.exports = router = (config) =>{
             handleRouteError(res, req, 'addExtension', err);
         });
     });
+    */
 
     //Return router
     return router;

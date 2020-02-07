@@ -1,6 +1,5 @@
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const context = 'WebServer:RequestAuthenticator';
-const getCtx = (c) => { return `${context}:${c}`};
 
 
 /**
@@ -9,6 +8,8 @@ const getCtx = (c) => { return `${context}:${c}`};
  * @param {string} context context for the error messages
  */
 const requestAuth = (epType) => {
+    let fromCtx = `${context}:${epType}`;
+
     //Intercom auth function
     const intercomAuth = (req, res, next) => {
         if(
@@ -23,10 +24,10 @@ const requestAuth = (epType) => {
 
     //Normal auth function
     const normalAuth = (req, res, next) =>{
-        const {isValidAuth} = authLogic(req.session, true, getCtx(epType));
+        const {isValidAuth} = authLogic(req.session, true, fromCtx);
 
         if(!isValidAuth){
-            if(globals.config.verbose) logWarn(`Invalid session auth: ${req.originalUrl}`, getCtx(epType));
+            if(globals.config.verbose) logWarn(`Invalid session auth: ${req.originalUrl}`, fromCtx);
             req.session.auth = {};
             if(epType === 'web'){
                 return res.redirect('/auth?logout');
@@ -42,7 +43,7 @@ const requestAuth = (epType) => {
 
     //Socket auth function
     const socketAuth = (socket, next) =>{
-        const {isValidAuth} = authLogic(socket.handshake.session, true, getCtx(epType));
+        const {isValidAuth} = authLogic(socket.handshake.session, true, fromCtx);
 
         if(isValidAuth){
             next();
@@ -75,7 +76,8 @@ const requestAuth = (epType) => {
  * @param {*} perm
  * @param {*} ctx
  */
-const authLogic = (sess, perm, ctx) => {
+const authLogic = (sess, perm, fromCtx) => {
+    fromCtx = `${context}:${fromCtx}`;
     let isValidAuth = false;
     let isValidPerm = false;
     if(
@@ -112,11 +114,11 @@ const authLogic = (sess, perm, ctx) => {
                     ));
                 }
             } catch (error) {
-                if(globals.config.verbose) logError(`Error validating session data:`, getCtx(ctx));
+                if(globals.config.verbose) logError(`Error validating session data:`, fromCtx);
                 if(globals.config.verbose) dir(error);
             }
         }else{
-            if(globals.config.verbose) logWarn(`Expired session from ${sess.auth.username}`, getCtx(ctx));
+            if(globals.config.verbose) logWarn(`Expired session from ${sess.auth.username}`, fromCtx);
         }
     }
 

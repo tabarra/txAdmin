@@ -16,7 +16,14 @@ if (osType != 'Linux' && osType != 'Windows_NT') {
 //Checking monitor mode and starting
 const monitorMode = GetConvar('monitorMode', 'false');
 if(monitorMode == 'true'){
-    require('./src/index.js');
+    try {
+        require('./src/index.js');
+    } catch (error) {
+        console.log('e'.repeat(80));
+        console.log(`Resource load error: ${error.message}`);
+        console.dir(error.stack);
+        console.log('e'.repeat(80));
+    }
 }else{
     console.log('>txAdmin in server mode.');
 }
