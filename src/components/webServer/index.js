@@ -7,8 +7,7 @@ const KoaServe = require('koa-static');
 const KoaSession = require('koa-session');
 const KoaSessionMemoryStoreClass = require('koa-session-memory');
 const nanoid = require('nanoid');
-// const { setHttpCallback } = require('@citizenfx/http-wrapper');
-const { setHttpCallback } = require('./wrapper.ignore.js'); //FIXME: REMOVE
+const { setHttpCallback } = require('@citizenfx/http-wrapper');
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const ctxUtils = require('./ctxUtils.js');
 

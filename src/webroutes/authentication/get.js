@@ -15,8 +15,6 @@ module.exports = async function AuthGet(ctx) {
     //Set template type
     let template = (globals.authenticator.admins === false)? 'noMaster' : 'normal';
 
-    throw new Error('surprised_pikachu.jpg');
-
     //Destroy session? And start a new one
     if(!isUndefined(req.query.logout)) req.session.auth = {};
 
