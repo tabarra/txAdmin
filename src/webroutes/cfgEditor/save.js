@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:CFGEditor-Save';
+const modulename = 'WebServer:CFGEditorSave';
 const fs = require('fs-extra');
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
@@ -13,7 +13,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function CFGEditorSave(ctx) {
     //Sanity check
     if(
         isUndefined(req.body.cfgData) ||

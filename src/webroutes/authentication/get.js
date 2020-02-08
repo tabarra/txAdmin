@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:Auth-Get';
+const modulename = 'WebServer:AuthGet';
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 
@@ -14,6 +14,8 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
 module.exports = async function AuthGet(ctx) {
     //Set template type
     let template = (globals.authenticator.admins === false)? 'noMaster' : 'normal';
+
+    throw new Error('surprised_pikachu.jpg');
 
     //Destroy session? And start a new one
     if(!isUndefined(req.query.logout)) req.session.auth = {};

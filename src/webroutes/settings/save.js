@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:Settings-Save';
+const modulename = 'WebServer:SettingsSave';
 const fs = require('fs');
 const slash = require('slash');
 const path = require('path');
@@ -14,7 +14,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function SettingsSave(ctx) {
     //Sanity check
     if(isUndefined(req.params.scope)){
         return res.status(400).send({type: 'danger', message: "Invalid Request"});

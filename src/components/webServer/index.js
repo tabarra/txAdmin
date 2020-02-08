@@ -61,19 +61,21 @@ module.exports = class WebServer {
                     return ctx.utils.render('basic/404');
                 }
             } catch (error) {
-                //TODO: add middleware name instead of using ctx.path for logging
                 //TODO: perhaps we should also have a koa-bodyparser generic error handler?
+                let methodName = (error.stack && error.stack[0] && error.stack[0].name)? error.stack[0].name : 'anonym';
                 if(error.type === 'entity.too.large'){
+                    let desc = `Entity too large for: ${ctx.path}`;
+                    if(globals.config.verbose) logError(desc, methodName);
                     ctx.status = 413;
-                    ctx.body = {error: 'request entity too large'};
+                    ctx.body = {error: desc};
                 }else if (ctx.state.timeout){
                     let desc = `Route timed out: ${ctx.path}`;
-                    logError(desc);
+                    logError(desc, methodName);
                     ctx.status = 408;
                     ctx.body = desc;
                 }else{
                     let desc = `Internal Error on: ${ctx.path}`;
-                    logError(desc);
+                    logError(desc, methodName);
                     if(globals.config.verbose) dir(error)
                     ctx.status = 500;
                     ctx.body = desc;

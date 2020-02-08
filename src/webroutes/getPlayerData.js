@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:getPlayerData';
+const modulename = 'WebServer:GetPlayerData';
 const xss = require("xss");
 const clone = require('clone');
 const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
@@ -10,7 +10,7 @@ const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modul
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function GetPlayerData(ctx) {
     //Sanity check
     if(typeof req.params.id === 'undefined'){
         return res.status(400).send({status: 'error', error: "Invalid Request"});

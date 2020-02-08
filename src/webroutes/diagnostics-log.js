@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:Diagnostics-Log';
+const modulename = 'WebServer:DiagnosticsLog';
 const dateFormat = require('dateformat');
 const xssClass = require("xss");
 const { dir, log, logOk, logWarn, logError, getLog } = require('../extras/console')(modulename);
@@ -15,7 +15,7 @@ const xss = new xssClass.FilterXSS({
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function DiagnosticsLog(ctx) {
     const logHistory = getLog();
 
     let processedLog = [];

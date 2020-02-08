@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:FXServer-Controls';
+const modulename = 'WebServer:FXServerControls';
 const sleep = require('util').promisify((a, f) => setTimeout(f, a));
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
@@ -9,7 +9,7 @@ const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(mo
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function FXServerControls(ctx) {
     //Sanity check
     if(typeof req.params.action === 'undefined'){
         return res.status(400).send({status: 'error', error: "Invalid Request"});

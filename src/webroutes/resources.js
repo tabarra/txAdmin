@@ -44,7 +44,7 @@ const getResourceSubPath = (resPath) => {
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function Resources(ctx) {
     let timeoutMessage = `<strong>Couldn't load the resources list.</strong> <br>
     - Make sure the server is online (try to join it). <br>
     - Make sure your fxserver is build/artifact 1550 or above. <br>

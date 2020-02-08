@@ -16,7 +16,7 @@ let cache = new Cache(5);
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function Diagnostics(ctx) {
     let cacheData = cache.get();
     if(cacheData !== false){
         cacheData.message = 'This page was cached in the last 5 seconds';

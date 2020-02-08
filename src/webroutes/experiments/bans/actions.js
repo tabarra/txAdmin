@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:Experiments-Bans-Actions';
+const modulename = 'WebServer:ExperimentsBansActions';
 const { dir, log, logOk, logWarn, logError} = require('../../../extras/console')(modulename);
 
 //Helper functions
@@ -20,7 +20,7 @@ const handleError = async (res, req, error)=>{
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function ExperimentsBansActions(ctx) {
     //FIXME: temporarily disabled
     return res.status(403).send({error: "Feature temporariyl disabled."});
 

@@ -12,7 +12,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function ServerLog(ctx) {
     //If page
     if(isUndefined(req.query.offset)){
         let log = processLog(globals.intercomTempLog.slice(-100));

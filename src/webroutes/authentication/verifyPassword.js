@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:Auth-Verify';
+const modulename = 'WebServer:AuthVerify';
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 //Helper functions
@@ -10,7 +10,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function AuthVerify(ctx) {
     if(isUndefined(req.body.username) || isUndefined(req.body.password)){
         res.redirect('/');
         return;

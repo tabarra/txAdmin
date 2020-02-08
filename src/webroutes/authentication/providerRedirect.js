@@ -17,7 +17,7 @@ const returnJustMessage = async (res, message) => {
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function ProviderRedirect(ctx) {
     //Sanity check
     if(isUndefined(req.params.provider)){
         res.status(400).send({status: 'error', error: "Invalid Request"});

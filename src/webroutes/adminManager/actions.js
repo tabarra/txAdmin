@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:AdminManager-Actions';
+const modulename = 'WebServer:AdminManagerActions';
 const nanoidGen = require('nanoid/generate');
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
@@ -12,7 +12,7 @@ const genNewPassword = () => { return nanoidGen('123456789ABCDEFGHJKLMNPQRSTUVWX
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function AdminManagerActions(ctx) {
     //Sanity check
     if(isUndefined(req.params.action)){
         res.status(400).send({status: 'error', error: "Invalid Request"});

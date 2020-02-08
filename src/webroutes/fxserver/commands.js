@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:FXServer-Commands';
+const modulename = 'WebServer:FXServerCommands';
 const xss = require("xss");
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
@@ -12,7 +12,7 @@ const escape = (x) => {return x.replace(/\"/g, '\\"');};
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function FXServerCommands(ctx) {
     if(
         typeof req.body.action === 'undefined' ||
         typeof req.body.parameter === 'undefined'

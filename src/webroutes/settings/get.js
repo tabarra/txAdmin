@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:Settings-Get';
+const modulename = 'WebServer:SettingsGet';
 const clone = require('clone');
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
@@ -9,7 +9,7 @@ const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(mo
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function SettingsGet(ctx) {
     //Check permissions
     if(!webUtils.checkPermission(req, 'settings.view', modulename)){
         let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to view this page.`});

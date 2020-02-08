@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:Auth-ChangePassword';
+const modulename = 'WebServer:AuthChangePassword';
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 //Helper functions
@@ -10,7 +10,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function AuthChangePassword(ctx) {
     //Sanity check
     if(isUndefined(req.body.newPassword)){
         res.status(400).send({status: 'error', error: "Invalid Request"});

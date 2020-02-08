@@ -160,7 +160,7 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true){
 //================================================================
 //================================================================
 //================================================================
-module.exports = async function action(ctx, next){
+module.exports = async function WebCtxUtils(ctx, next){
     ctx.utils = {};
     //TODO: fix this atrocity
     ctx.utils.render = async (view, viewData) => {

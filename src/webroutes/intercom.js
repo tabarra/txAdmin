@@ -11,7 +11,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  * @param {object} req
  */
 //FIXME: tmp function
-module.exports = async function action(res, req) {
+module.exports = async function Intercom(ctx) {
     //Sanity check
     if(isUndefined(req.params.scope)){
         return res.status(400).send({error: "Invalid Request"});

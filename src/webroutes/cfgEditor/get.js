@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:CFGEditor-Get';
+const modulename = 'WebServer:CFGEditorGet';
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
 
@@ -9,7 +9,7 @@ const helpers = require('../../extras/helpers');
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function CFGEditorGet(ctx) {
     //Check permissions
     if(!webUtils.checkPermission(req, 'server.cfg.editor', modulename)){
         let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to view this page.`});

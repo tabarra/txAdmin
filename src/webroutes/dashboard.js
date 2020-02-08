@@ -9,7 +9,7 @@ const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modul
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function Dashboard(ctx) {
     //If the any FXServer configuration is missing
     if(
         globals.fxRunner.config.buildPath === null ||

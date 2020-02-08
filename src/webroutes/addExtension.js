@@ -8,7 +8,7 @@ const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modul
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function AddExtension(ctx) {
     //Rendering the page
     let out = await webUtils.renderMasterView('addExtension', req.session);
     return res.send(out);

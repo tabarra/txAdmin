@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:AdminManager-Get';
+const modulename = 'WebServer:AdminManagerGet';
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 
@@ -8,7 +8,7 @@ const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(mo
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function AdminManagerGet(ctx) {
     //Prepare admin array
     let admins = globals.authenticator.getAdminsList().map((admin)=>{
         let perms;

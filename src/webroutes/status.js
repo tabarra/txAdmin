@@ -11,7 +11,7 @@ const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modul
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function GetStatus(res, req) {
     res.send({
         meta: prepareMetaData(),
         host: prepareHostData(),
