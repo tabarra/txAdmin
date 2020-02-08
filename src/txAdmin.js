@@ -91,7 +91,7 @@ module.exports = class txAdmin {
 
         //Run Update Checker every 15 minutes
         const updateChecker = require('./extras/updateChecker');
-        updateChecker();
+        // updateChecker();
         setInterval(updateChecker, 15 * 60 * 1000);
     }
 

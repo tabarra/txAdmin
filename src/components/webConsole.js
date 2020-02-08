@@ -1,6 +1,6 @@
 //Requires
 const SocketIO = require('socket.io');
-const sharedsession = require("express-socket.io-session");
+
 const xssClass = require("xss");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
 const {requestAuth, authLogic} = require('./webServer/requestAuthenticator');
