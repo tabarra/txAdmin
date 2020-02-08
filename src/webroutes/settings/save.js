@@ -4,7 +4,6 @@ const slash = require('slash');
 const path = require('path');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
 const helpers = require('../../extras/helpers');
-const webUtils = require('./../webUtils.js');
 const context = 'WebServer:Settings-Save';
 
 //Helper functions

@@ -1,7 +1,6 @@
 //Requires
 const fs = require('fs-extra');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const webUtils = require('./../webUtils.js');
 const helpers = require('../../extras/helpers');
 const context = 'WebServer:CFGEditor-Save';
 

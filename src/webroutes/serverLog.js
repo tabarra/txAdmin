@@ -1,7 +1,6 @@
 //Requires
 const xss = require("xss");
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const webUtils = require('./webUtils.js');
 const context = 'WebServer:ServerLog';
 
 //Helper functions

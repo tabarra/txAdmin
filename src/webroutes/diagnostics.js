@@ -5,7 +5,6 @@ const bytes = require('bytes');
 const pidusageTree = require('pidusage-tree');
 const humanizeDuration = require('humanize-duration');
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const webUtils = require('./webUtils.js');
 const Cache = require('../extras/dataCache');
 const context = 'WebServer:Diagnostics';
 

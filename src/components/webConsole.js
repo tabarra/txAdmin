@@ -21,6 +21,7 @@ module.exports = class webConsole {
         logOk('::Awaiting', context);
         this.io = null;
         this.dataBuffer = '';
+        return; //FIXME:
 
         //Start SocketIO
         this.io = new SocketIO({
@@ -60,6 +61,7 @@ module.exports = class webConsole {
      * @param {object} socketInterface
      */
     attachSocket(socketInterface){
+        return; //FIXME:
         try {
             this.io.attach(socketInterface);
             let port = socketInterface.address().port;

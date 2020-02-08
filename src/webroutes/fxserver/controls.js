@@ -1,7 +1,6 @@
 //Requires
 const sleep = require('util').promisify((a, f) => setTimeout(f, a));
 const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const webUtils = require('./../webUtils.js');
 const context = 'WebServer:FXServer-Controls';
 
 

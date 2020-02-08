@@ -2,7 +2,6 @@
 const dateFormat = require('dateformat');
 const xssClass = require("xss");
 const { dir, log, logOk, logWarn, logError, cleanTerminal, getLog } = require('../extras/console');
-const webUtils = require('./webUtils.js');
 const context = 'WebServer:Diagnostics-Log';
 
 //Set custom xss rules
