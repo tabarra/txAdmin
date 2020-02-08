@@ -1,13 +1,13 @@
 //Requires
+const modulename = 'SetupScript';
 const fs = require('fs-extra');
 const path = require('path');
 const slash = require('slash');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'SetupScript';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 const osType = require('os').type();
 
 //Helpers
-const printDivider = () => { log('='.repeat(64), context) };
+const printDivider = () => { log('='.repeat(64)) };
 const CleanPath = (x) => { return slash(path.normalize(x)) };
 
 //Default config structure
@@ -51,7 +51,7 @@ module.exports = (serverRoot, serverProfile, profilePath) => {
     printDivider();
     //Sanity check presence of profile
     if (fs.existsSync(profilePath)) {
-        logError(`There is already a profile named '${serverProfile}'.`, context);
+        logError(`There is already a profile named '${serverProfile}'.`);
         process.exit();
     }
 
@@ -63,7 +63,7 @@ module.exports = (serverRoot, serverProfile, profilePath) => {
     const citizenRoot = CleanPath(citizenRootConvar);
 
     //Create new profile folder
-    log('Creating new profile folder...', context);
+    log('Creating new profile folder...');
     try {
         let jsonConfig = JSON.stringify(defaultConfig, null, 2);
         fs.mkdirSync(profilePath);
@@ -73,10 +73,10 @@ module.exports = (serverRoot, serverProfile, profilePath) => {
         // fs.writeFileSync(`${profilePath}/commands.json`, '[]');
         fs.writeFileSync(`${profilePath}/config.json`, jsonConfig);
     } catch (error) {
-        logError(`Failed to set up folder structure in '${profilePath}' with error: ${error.message}`, context);
+        logError(`Failed to set up folder structure in '${profilePath}' with error: ${error.message}`);
         process.exit();
     }
-    logOk(`Server profile was saved in '${profilePath}'`, context);
+    logOk(`Server profile was saved in '${profilePath}'`);
 
     //Saving start.bat
     if(osType == 'Windows_NT'){
@@ -84,13 +84,13 @@ module.exports = (serverRoot, serverProfile, profilePath) => {
             let batch = `@echo off\r\n${citizenRoot}/run.cmd +set serverProfile "${serverProfile}"\r\npause`;
             fs.writeFileSync(`${serverRoot}/start_${serverProfile}.bat`, batch);
         } catch (error) {
-            logWarn(`Failed to create 'start_${serverProfile}.bat' in the current folder.`, context);
+            logWarn(`Failed to create 'start_${serverProfile}.bat' in the current folder.`);
         }
     }
 
-    logOk(`To start with this profile add the following argument: +set serverProfile "${serverProfile}"`, context);
+    logOk(`To start with this profile add the following argument: +set serverProfile "${serverProfile}"`);
     if(osType == 'Windows_NT'){
-        logOk(`You can also execute run 'start_${serverProfile}.bat' added to this folder.`, context);
+        logOk(`You can also execute run 'start_${serverProfile}.bat' added to this folder.`);
     }
     printDivider();
 }

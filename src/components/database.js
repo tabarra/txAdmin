@@ -1,8 +1,8 @@
 //Requires
+const modulename = 'Database';
 const low = require('lowdb')
 const FileAsync = require('lowdb/adapters/FileAsync')
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'Database';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 //FIXME: experimental database
 module.exports = class Database {
@@ -16,7 +16,7 @@ module.exports = class Database {
                 this.db = await low(adapterAsync);
                 this.setDefaults();
             } catch (error) {
-                logError(`::Failed to load database file '${globals.config.serverProfilePath}/data/experimentsDB'`, context);
+                logError(`::Failed to load database file '${globals.config.serverProfilePath}/data/experimentsDB'`);
                 if(globals.config.verbose) dir(error);
                 process.exit();
             }

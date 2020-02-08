@@ -1,8 +1,8 @@
 //Requires
+const modulename = 'WebServer:CFGEditor-Save';
 const fs = require('fs-extra');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
-const context = 'WebServer:CFGEditor-Save';
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -23,7 +23,7 @@ module.exports = async function action(res, req) {
     }
 
     //Check permissions
-    if(!webUtils.checkPermission(req, 'server.cfg.editor', context)){
+    if(!webUtils.checkPermission(req, 'server.cfg.editor', modulename)){
         return res.send({
             type: 'danger',
             message: `You don't have permission to execute this action.`
@@ -44,7 +44,7 @@ module.exports = async function action(res, req) {
         return res.send({type: 'success', message: 'File saved.'});
     } catch (error) {
         let message = `Failed to save CFG file with error: ${error.message}`;
-        if(globals.config.verbose) logWarn(message, context);
+        if(globals.config.verbose) logWarn(message);
         return res.send({type: 'danger', message});
     }
 };

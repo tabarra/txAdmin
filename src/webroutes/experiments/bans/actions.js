@@ -1,12 +1,12 @@
 //Requires
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../../extras/console');
-const context = 'WebServer:Experiments-Bans-Actions';
+const modulename = 'WebServer:Experiments-Bans-Actions';
+const { dir, log, logOk, logWarn, logError} = require('../../../extras/console')(modulename);
 
 //Helper functions
 const escape = (x) => {return x.replace(/\"/g, '\\"');};
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const handleError = async (res, req, error)=>{
-    logError(`Database operation failed with error: ${error.message}`, context);
+    logError(`Database operation failed with error: ${error.message}`);
     if(globals.config.verbose) dir(error);
     return res.send({
         type: 'danger',
@@ -32,7 +32,7 @@ module.exports = async function action(res, req) {
 
 
     //Check permissions
-    if(!webUtils.checkPermission(req, 'all_permissions', context)){
+    if(!webUtils.checkPermission(req, 'all_permissions', modulename)){
         return res.send({
             type: 'danger',
             message: `You don't have permission to execute this action.`

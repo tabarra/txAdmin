@@ -1,15 +1,12 @@
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'WebServer:RequestAuthenticator';
+const modulename = 'WebServer:RequestAuthenticator';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 
 /**
  * Returns a session authenticator function
  * @param {string} epType type of consumer
- * @param {string} context context for the error messages
  */
 const requestAuth = (epType) => {
-    let fromCtx = `${context}:${epType}`;
-
     //Intercom auth function
     const intercomAuth = (req, res, next) => {
         if(
@@ -24,10 +21,10 @@ const requestAuth = (epType) => {
 
     //Normal auth function
     const normalAuth = (req, res, next) =>{
-        const {isValidAuth} = authLogic(req.session, true, fromCtx);
+        const {isValidAuth} = authLogic(req.session, true, epType);
 
         if(!isValidAuth){
-            if(globals.config.verbose) logWarn(`Invalid session auth: ${req.originalUrl}`, fromCtx);
+            if(globals.config.verbose) logWarn(`Invalid session auth: ${req.originalUrl}`, epType);
             req.session.auth = {};
             if(epType === 'web'){
                 return res.redirect('/auth?logout');
@@ -43,14 +40,14 @@ const requestAuth = (epType) => {
 
     //Socket auth function
     const socketAuth = (socket, next) =>{
-        const {isValidAuth} = authLogic(socket.handshake.session, true, fromCtx);
+        const {isValidAuth} = authLogic(socket.handshake.session, true, epType);
 
         if(isValidAuth){
             next();
         }else{
             socket.handshake.session.auth = {}; //a bit redundant but it wont hurt anyone
             socket.disconnect(0);
-            if(globals.config.verbose) logWarn('Auth denied when creating session', context);
+            if(globals.config.verbose) logWarn('Auth denied when creating session');
             next(new Error('Authentication Denied'));
         }
     }
@@ -76,8 +73,7 @@ const requestAuth = (epType) => {
  * @param {*} perm
  * @param {*} ctx
  */
-const authLogic = (sess, perm, fromCtx) => {
-    fromCtx = `${context}:${fromCtx}`;
+const authLogic = (sess, perm, epType) => {
     let isValidAuth = false;
     let isValidPerm = false;
     if(
@@ -114,11 +110,11 @@ const authLogic = (sess, perm, fromCtx) => {
                     ));
                 }
             } catch (error) {
-                if(globals.config.verbose) logError(`Error validating session data:`, fromCtx);
+                if(globals.config.verbose) logError(`Error validating session data:`, epType);
                 if(globals.config.verbose) dir(error);
             }
         }else{
-            if(globals.config.verbose) logWarn(`Expired session from ${sess.auth.username}`, fromCtx);
+            if(globals.config.verbose) logWarn(`Expired session from ${sess.auth.username}`, epType);
         }
     }
 

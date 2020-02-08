@@ -1,15 +1,15 @@
 //Requires
+const modulename = 'WebCtxUtils';
 const fs = require('fs-extra');
 const path = require('path');
 const sqrl = require("squirrelly");
 const helpers = require('../../extras/helpers');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'WebUtils';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const getRenderErrorText = (view, error, data) => {
-    logError(`Error rendering ${view}.`, context);
+    logError(`Error rendering ${view}.`);
     if(globals.config.verbose) dir(error)
     out = `<pre>\n`;
     out += `Error rendering '${view}'.\n`;
@@ -126,8 +126,8 @@ async function renderSoloView(view, data){
  * @param {object} ctx
  * @param {string} data
  */
-function appendLog(ctx, data, context){
-    log(`Executing "${data}"`, context);
+function appendLog(ctx, data){
+    log(`Executing "${data}"`);
     globals.logger.append(`[${ctx.ip}][${ctx.session.auth.username}] ${data}`);
 }
 
@@ -177,8 +177,8 @@ module.exports = async function action(ctx, next){
 
     //FIXME: test these functions
     //TODO: use xxx.bind(ctx) and inside use this.abc?
-    ctx.utils.appendLog = async (data, context) => {
-        return appendLog(ctx, data, context);
+    ctx.utils.appendLog = async (data) => {
+        return appendLog(ctx, data);
     }
     ctx.utils.checkPermission = async (perm, fromCtx, printWarn) => {
         return checkPermission(ctx, perm, fromCtx, printWarn);

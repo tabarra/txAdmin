@@ -1,7 +1,6 @@
 //Requires
-const crypto  = require('crypto');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'WebServer:ProviderRedirect';
+const modulename = 'WebServer:ProviderRedirect';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -36,7 +35,7 @@ module.exports = async function action(res, req) {
         let urlCitizenFX =  await globals.authenticator.providers.citizenfx.getAuthURL(genCallbackURL(req, 'citizenfx'), req.sessionID);
         return res.redirect(urlCitizenFX);
     } catch (error) {
-        if(globals.config.verbose || true) logWarn(`Failed to generate CitizenFX Auth URL with error: ${error.message}`, context);
+        if(globals.config.verbose || true) logWarn(`Failed to generate CitizenFX Auth URL with error: ${error.message}`);
         return await returnJustMessage(res, 'Failed to generate CitizenFX Auth URL');
     }
 };

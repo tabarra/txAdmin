@@ -1,8 +1,8 @@
 //Requires
+const modulename = 'WebServer:Diagnostics-Log';
 const dateFormat = require('dateformat');
 const xssClass = require("xss");
-const { dir, log, logOk, logWarn, logError, cleanTerminal, getLog } = require('../extras/console');
-const context = 'WebServer:Diagnostics-Log';
+const { dir, log, logOk, logWarn, logError, getLog } = require('../extras/console')(modulename);
 
 //Set custom xss rules
 const xss = new xssClass.FilterXSS({

@@ -1,9 +1,9 @@
 //Requires
+const modulename = 'HashLocale';
 const fs = require('fs-extra');
 const crypto  = require('crypto');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const { dir, log, logOk, logWarn, logError, cleanTerminal} = require('../extras/console')(modulename);
 cleanTerminal()
-const context = 'HashLocale';
 
 
 (async()=>{
@@ -25,7 +25,7 @@ const context = 'HashLocale';
             hashes.push(`${lang}: '${hash}', //${label}`);
             options.push(`<option value="${lang}" {{global.language=='${lang}'|isSelected}}>${label}</option>`);
         } catch (error) {
-            logError(`Couldn't hash file ${fileName}`, context);
+            logError(`Couldn't hash file ${fileName}`);
             dir(error)
         }
     });

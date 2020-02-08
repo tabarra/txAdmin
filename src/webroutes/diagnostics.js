@@ -1,12 +1,12 @@
 //Requires
+const modulename = 'WebServer:Diagnostics';
 const os = require('os');
 const axios = require("axios");
 const bytes = require('bytes');
 const pidusageTree = require('pidusage-tree');
 const humanizeDuration = require('humanize-duration');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 const Cache = require('../extras/dataCache');
-const context = 'WebServer:Diagnostics';
 
 let cache = new Cache(5);
 
@@ -109,7 +109,7 @@ async function getProcessesData(){
         });
 
     } catch (error) {
-        logError(`Error getting processes data.`, context);
+        logError(`Error getting processes data.`);
         if(globals.config.verbose) dir(error);
     }
 
@@ -156,7 +156,7 @@ async function getFXServerData(){
         let res = await axios(requestOptions);
         infoData = res.data;
     } catch (error) {
-        logWarn('Failed to get FXServer information.', context);
+        logWarn('Failed to get FXServer information.');
         if(globals.config.verbose) dir(error);
         return {error: `Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)`};
     }
@@ -192,7 +192,7 @@ async function getFXServerData(){
 
         return fxData;
     } catch (error) {
-        logWarn('Failed to process FXServer information.', context);
+        logWarn('Failed to process FXServer information.');
         if(globals.config.verbose) dir(error);
         return {error: `Failed to process FXServer data. <br>Check the terminal for more information (if verbosity is enabled)`};
     }
@@ -222,7 +222,7 @@ async function getHostData(){
         hostData.memory = `${memUsage}% (${memUsed}/${memTotal} GB)`;
         hostData.error  = false;
     } catch (error) {
-        logError('Error getting Host data', context);
+        logError('Error getting Host data');
         if(globals.config.verbose) dir(error);
         hostData.error = `Failed to retrieve host data. <br>Check the terminal for more information (if verbosity is enabled)`;
     }

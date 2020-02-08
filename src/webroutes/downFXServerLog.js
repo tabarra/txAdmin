@@ -1,6 +1,6 @@
 //Requires
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'WebServer:DownFXServerLog';
+const modulename = 'WebServer:DownFXServerLog';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 /**
@@ -10,7 +10,7 @@ const context = 'WebServer:DownFXServerLog';
  */
 module.exports = async function action(res, req) {
     //Check permissions
-    if(!webUtils.checkPermission(req, 'console.view', context)){
+    if(!webUtils.checkPermission(req, 'console.view', modulename)){
         let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to download this log.`});
         return res.send(out);
     }

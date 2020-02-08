@@ -1,6 +1,6 @@
 //Requires
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'WebServer:ActionLog';
+const modulename = 'WebServer:ActionLog';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 /**

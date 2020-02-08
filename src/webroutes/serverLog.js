@@ -1,7 +1,7 @@
 //Requires
+const modulename = 'WebServer:ServerLog';
 const xss = require("xss");
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'WebServer:ServerLog';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -141,7 +141,7 @@ function processEventTypes(event){
 
     }else{
         if(globals.config.verbose){
-            logWarn(`Unrecognized event: ${event.action}`, context);
+            logWarn(`Unrecognized event: ${event.action}`);
             dir(event)
         }
         return `${event.action}`;

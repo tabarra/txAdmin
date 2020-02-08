@@ -1,7 +1,7 @@
 //Requires
+const modulename = 'WebServer:FXServer-Commands';
 const xss = require("xss");
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'WebServer:FXServer-Commands';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 //Helper functions
 const escape = (x) => {return x.replace(/\"/g, '\\"');};
@@ -18,7 +18,7 @@ module.exports = async function action(res, req) {
         typeof req.body.parameter === 'undefined'
     ){
         dir(req.body)
-        logWarn('Invalid request!', context);
+        logWarn('Invalid request!');
         return sendAlertOutput(res, 'Invalid request!');
     }
     let action = req.body.action;
@@ -46,7 +46,7 @@ module.exports = async function action(res, req) {
     if(action == 'admin_broadcast'){
         if(!ensurePermission('commands.message', res, req)) return false;
         let cmd = `txaBroadcast "${escape(req.session.auth.username)}" "${escape(parameter)}"`;
-        webUtils.appendLog(req, cmd, context);
+        webUtils.appendLog(req, cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
@@ -57,7 +57,7 @@ module.exports = async function action(res, req) {
             return sendAlertOutput(res, 'Invalid request');
         }
         let cmd = `txaSendDM ${parameter[0]} "${escape(req.session.auth.username)}" "${escape(parameter[1])}"`;
-        webUtils.appendLog(req, cmd, context);
+        webUtils.appendLog(req, cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
@@ -71,7 +71,7 @@ module.exports = async function action(res, req) {
         }else{
             cmd = `txaKickID ${parameter[0]}`;
         }
-        webUtils.appendLog(req, cmd, context);
+        webUtils.appendLog(req, cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
@@ -85,7 +85,7 @@ module.exports = async function action(res, req) {
         }else{
             cmd = `txaKickAll "txAdmin Web Panel"`;
         }
-        webUtils.appendLog(req, cmd, context);
+        webUtils.appendLog(req, cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
@@ -93,7 +93,7 @@ module.exports = async function action(res, req) {
     }else if(action == 'restart_res'){
         if(!ensurePermission('commands.resources', res, req)) return false;
         let cmd = `restart ${parameter}`;
-        webUtils.appendLog(req, cmd, context);
+        webUtils.appendLog(req, cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
@@ -101,7 +101,7 @@ module.exports = async function action(res, req) {
     }else if(action == 'start_res'){
         if(!ensurePermission('commands.resources', res, req)) return false;
         let cmd = `start ${parameter}`;
-        webUtils.appendLog(req, cmd, context);
+        webUtils.appendLog(req, cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
@@ -109,7 +109,7 @@ module.exports = async function action(res, req) {
     }else if(action == 'ensure_res'){
         if(!ensurePermission('commands.resources', res, req)) return false;
         let cmd = `ensure ${parameter}`;
-        webUtils.appendLog(req, cmd, context);
+        webUtils.appendLog(req, cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
@@ -117,7 +117,7 @@ module.exports = async function action(res, req) {
     }else if(action == 'stop_res'){
         if(!ensurePermission('commands.resources', res, req)) return false;
         let cmd = `stop ${parameter}`;
-        webUtils.appendLog(req, cmd, context);
+        webUtils.appendLog(req, cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
@@ -125,14 +125,14 @@ module.exports = async function action(res, req) {
     }else if(action == 'refresh_res'){
         if(!ensurePermission('commands.resources', res, req)) return false;
         let cmd = `refresh`;
-        webUtils.appendLog(req, cmd, context);
+        webUtils.appendLog(req, cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(res, toResp);
 
     //==============================================
     }else if(action == 'reinject_res'){
         if(!ensurePermission('commands.resources', res, req)) return false;
-        webUtils.appendLog(req, 'Re-Injected txAdmin resources', context);
+        webUtils.appendLog(req, 'Re-Injected txAdmin resources');
         await globals.fxRunner.injectResources();
         let exexFilePath = await globals.fxRunner.writeExecFile(true, false);
         if(!exexFilePath) return sendAlertOutput(res, 'Failed to write exec.tmp.cfg');
@@ -143,7 +143,7 @@ module.exports = async function action(res, req) {
     //==============================================
     }else if(action == 'check_txaclient'){
         let cmd = `txaPing`;
-        webUtils.appendLog(req, cmd, context);
+        webUtils.appendLog(req, cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd, 512);
         if(toResp.includes('Pong!')){
             return res.send({
@@ -159,7 +159,7 @@ module.exports = async function action(res, req) {
 
     //==============================================
     }else{
-        webUtils.appendLog(req, 'Unknown action!', context);
+        webUtils.appendLog(req, 'Unknown action!');
         return res.send({
             type: 'danger',
             message: `Unknown Action.`
@@ -192,7 +192,7 @@ async function sendAlertOutput(res, toResp){
  * @param {object} req
  */
 function ensurePermission(perm, res, req){
-    if(webUtils.checkPermission(req, perm, context)){
+    if(webUtils.checkPermission(req, perm, modulename)){
         return true;
     }else{
         res.send({

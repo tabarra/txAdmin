@@ -1,9 +1,9 @@
 //Requires
+const modulename = 'ResourceInjector';
 const fs = require('fs-extra');
 const path = require('path');
 const slash = require('slash');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'ResourceInjector';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 
 //================================================================

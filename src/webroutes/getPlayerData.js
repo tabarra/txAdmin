@@ -1,8 +1,8 @@
 //Requires
+const modulename = 'WebServer:getPlayerData';
 const xss = require("xss");
 const clone = require('clone');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'WebServer:getPlayerData';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 /**
@@ -19,7 +19,7 @@ module.exports = async function action(res, req) {
 
     //Shortcut function
     let getPermDisable = (perm) => {
-        return (webUtils.checkPermission(req, perm))? '' : 'disabled'
+        return (webUtils.checkPermission(req, perm, modulename))? '' : 'disabled'
     }
 
     //Preparing output

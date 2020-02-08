@@ -1,6 +1,6 @@
 //Requires
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'WebServer:LiveConsole';
+const modulename = 'WebServer:LiveConsole';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 /**
@@ -10,14 +10,14 @@ const context = 'WebServer:LiveConsole';
  */
 module.exports = async function action(res, req) {
     //Check permissions
-    if(!webUtils.checkPermission(req, 'console.view', context)){
+    if(!webUtils.checkPermission(req, 'console.view', modulename)){
         let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to view this page.`});
         return res.send(out);
     }
 
     let renderData = {
         headerTitle: 'Console',
-        disableWrite: (webUtils.checkPermission(req, 'console.write'))? 'autofocus' : 'disabled'
+        disableWrite: (webUtils.checkPermission(req, 'console.write', modulename))? 'autofocus' : 'disabled'
     }
 
     let out = await webUtils.renderMasterView('console', req.session, renderData);

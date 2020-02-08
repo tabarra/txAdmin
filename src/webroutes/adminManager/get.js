@@ -1,6 +1,6 @@
 //Requires
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'WebServer:AdminManager-Get';
+const modulename = 'WebServer:AdminManager-Get';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 
 /**
@@ -32,7 +32,7 @@ module.exports = async function action(res, req) {
     });
 
     //Check permission
-    if(!webUtils.checkPermission(req, 'manage.admins', context)){
+    if(!webUtils.checkPermission(req, 'manage.admins', modulename)){
         let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to view this page.`});
         return res.send(out);
     }

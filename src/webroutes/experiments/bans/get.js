@@ -1,12 +1,12 @@
 //Requires
+const modulename = 'WebServer:Experiments-Bans-Get';
 const xss = require("xss");
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../../extras/console');
-const context = 'WebServer:Experiments-Bans-Get';
+const { dir, log, logOk, logWarn, logError} = require('../../../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const handleError = async (res, req, error)=>{
-    logError(`Failed to read the bans from the database with error: ${error.message}`, context);
+    logError(`Failed to read the bans from the database with error: ${error.message}`);
     if(globals.config.verbose) dir(error);
     let message = `Error loading this experimental page, please copy the error on the terminal and report in the Discord Server.`;
     let out = await webUtils.renderMasterView('basic/generic', req.session, {message});
@@ -24,7 +24,7 @@ module.exports = async function action(res, req) {
     return res.status(403).send({error: "Feature temporariyl disabled."});
 
     //Check permissions
-    if(!webUtils.checkPermission(req, 'all_permissions', context)){
+    if(!webUtils.checkPermission(req, 'all_permissions', modulename)){
         let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to view this page.`});
         return res.send(out);
     }

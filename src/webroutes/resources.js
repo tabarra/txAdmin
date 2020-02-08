@@ -1,8 +1,8 @@
 //Requires
+const modulename = 'WebServer:Resources';
 const path = require('path');
 const slash = require('slash');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'WebServer:Resources';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -77,17 +77,17 @@ module.exports = async function action(res, req) {
                 let out = await webUtils.renderMasterView('resources', req.session, renderData);
                 return res.send(out);
             }
-        } catch (error) {logError(error.message, context)}
+        } catch (error) {logError(error.message)}
 
         //Check execution limit of 1000ms
         cnt++;
         if(cnt > 10){
             clearInterval(intHandle);
-            logWarn('the future is now, old man', context);
+            logWarn('the future is now, old man');
             try {
                 let out = await webUtils.renderMasterView('basic/generic', req.session, {message: timeoutMessage});
                 return res.send(out);
-            } catch (error) {logError(error.message, context)}
+            } catch (error) {logError(error.message)}
         }
     }, 100);
 };

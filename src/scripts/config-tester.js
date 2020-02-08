@@ -3,14 +3,14 @@ const helpers = require('../extras/helpers');
 helpers.dependencyChecker();
 
 //Requires
+const modulename = 'ConfigTesterScript';
 const os = require('os');
 const fs = require('fs');
 const { spawnSync } = require('child_process');
 const bytes = require('bytes');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const { dir, log, logOk, logWarn, logError, cleanTerminal} = require('../extras/console')(modulename);
 cleanTerminal()
 const printDivider = () =>{log('='.repeat(64))};
-const context = 'ConfigTesterScript';
 
 //NOTE: just block the usage :(
 logError(`This script doesn't work anymore and would need to be adapted. Exiting.`)
@@ -44,7 +44,7 @@ try {
     configFile = JSON.parse(raw);
     log(`Loaded configuration file 'data/${serverProfile}/config.json'.`);
 } catch (error) {
-    logError(`Unnable to load configuration file 'data/${serverProfile}/config.json'`, context);
+    logError(`Unnable to load configuration file 'data/${serverProfile}/config.json'`);
     process.exit(0)
 }
 
@@ -83,7 +83,7 @@ if(osType === 'Linux'){
     isLinux = false;
 
 }else{
-    logError(`OS type not supported: ${osType}`, context);
+    logError(`OS type not supported: ${osType}`);
     process.exit();
 }
 printDivider();

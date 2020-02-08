@@ -1,14 +1,14 @@
 //Requires
+const modulename = 'Authenticator';
 const fs = require('fs-extra');
 const clone = require('clone');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const CitizenFXProvider = require('./providers/CitizenFX');
-const context = 'Authenticator';
 
 
 module.exports = class Authenticator {
     constructor(config, dataPath) {
-        logOk('::Started', context);
+        logOk('::Started');
         this.config = config;
         this.adminsFile = `${dataPath}/admins.json`; //NOTE: remove when adding support for multi-server
         this.admins = null;
@@ -49,10 +49,10 @@ module.exports = class Authenticator {
         if (!adminFileExists) {
             this.addMasterPin = (Math.random()*10000).toFixed().padStart(4, '0');
             let sep = `=`.repeat(42);
-            log(sep, context);
-            log('==> Admins file not found.', context);
-            log(`==> PIN to add a master account: ${this.addMasterPin}`, context);
-            log(sep, context);
+            log(sep);
+            log('==> Admins file not found.');
+            log(`==> PIN to add a master account: ${this.addMasterPin}`);
+            log(sep);
             this.admins = false;
         }else{
             this.refreshAdmins(true);
@@ -98,7 +98,7 @@ module.exports = class Authenticator {
             return true;
         } catch (error) {
             let message = `Failed to create '${this.adminsFile}' with error: ${error.message}`;
-            if(globals.config.verbose) logError(message, context);
+            if(globals.config.verbose) logError(message);
             throw new Error(message);
         }
     }
@@ -214,7 +214,7 @@ module.exports = class Authenticator {
             await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
         } catch (error) {
-            if(globals.config.verbose) logError(error.message, context);
+            if(globals.config.verbose) logError(error.message);
             throw new Error(`Failed to save '${this.adminsFile}'`);
         }
     }
@@ -271,7 +271,7 @@ module.exports = class Authenticator {
             await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return (password !== null)? this.admins[adminIndex].password_hash : true;
         } catch (error) {
-            if(globals.config.verbose) logError(error.message, context);
+            if(globals.config.verbose) logError(error.message);
             throw new Error(`Failed to save '${this.adminsFile}'`);
         }
     }
@@ -303,7 +303,7 @@ module.exports = class Authenticator {
             await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
         } catch (error) {
-            if(globals.config.verbose) logError(error.message, context);
+            if(globals.config.verbose) logError(error.message);
             throw new Error(`Failed to save '${this.adminsFile}'`);
         }
     }
@@ -319,7 +319,7 @@ module.exports = class Authenticator {
         let jsonData = null;
 
         const callError = (x) => {
-            logError(`Unable to load admins. (${x}, please read the documentation)`, context);
+            logError(`Unable to load admins. (${x}, please read the documentation)`);
             if(isFirstTime) process.exit();
             this.admins = [];
             return false;
@@ -369,7 +369,7 @@ module.exports = class Authenticator {
         }
 
         this.admins = jsonData;
-        if(globals.config.verbose) log(`Admins file loaded. Found: ${this.admins.length}`, context);
+        if(globals.config.verbose) log(`Admins file loaded. Found: ${this.admins.length}`);
         return true;
     }
 

@@ -1,6 +1,6 @@
 //Requires
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'WebServer:Auth-ChangePassword';
+const modulename = 'WebServer:Auth-ChangePassword';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -42,7 +42,7 @@ module.exports = async function action(res, req) {
         let newHash = await globals.authenticator.editAdmin(req.session.auth.username, newPassword);
         if(typeof req.session.auth.password_hash == 'string') req.session.auth.password_hash = newHash;
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing own password.`;
-        logOk(logMessage, context);
+        logOk(logMessage);
         globals.logger.append(logMessage);
         req.session.auth.password = newPassword;
         return res.send({type: 'success', message: `Password changed successfully`});

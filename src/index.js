@@ -5,7 +5,7 @@ const path = require('path');
 const helpers = require('./extras/helpers');
 helpers.dependencyChecker();
 const slash = require('slash');
-const { dir, log, logOk, logWarn, logError, cleanTerminal, setTTYTitle } = require('./extras/console');
+const { dir, log, logOk, logWarn, logError, cleanTerminal, setTTYTitle } = require('./extras/console')();
 
 //Helpers
 const CleanPath = (x) => { return slash(path.normalize(x)) };

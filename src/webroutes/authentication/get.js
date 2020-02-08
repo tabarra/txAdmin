@@ -1,6 +1,7 @@
 //Requires
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'WebServer:Auth-Get';
+const modulename = 'WebServer:Auth-Get';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
+
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -10,7 +11,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  * @param {object} res
  * @param {object} req
  */
-module.exports = async function action(res, req) {
+module.exports = async function AuthGet(ctx) {
     //Set template type
     let template = (globals.authenticator.admins === false)? 'noMaster' : 'normal';
 

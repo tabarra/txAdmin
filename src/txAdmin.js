@@ -1,5 +1,5 @@
 //Requires
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('./extras/console');
+const { dir, log, logOk, logWarn, logError} = require('./extras/console')();
 
 //FIXME: I should be using dependency injection or something
 globals = {
@@ -154,12 +154,12 @@ module.exports = class txAdmin {
 
 
 //==============================================================
-function HandleFatalError(err, context){
+function HandleFatalError(err, componentName){
     if(err.message.includes('Cannot find module')){
-        logError(`Error starting '${context}' module. Make sure you executed 'npm install'.`)
+        logError(`Error starting '${componentName}' module. Make sure you executed 'npm install'.`)
         if(globals.config.verbose) dir(err);
     }else{
-        logError(`Error starting '${context}' module: ${err.message}`)
+        logError(`Error starting '${componentName}' module: ${err.message}`)
         dir(err)
     }
 

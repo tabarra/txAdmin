@@ -1,9 +1,9 @@
 //Requires
+const modulename = 'Translator';
 const fs = require('fs');
 const crypto  = require('crypto');
 const Polyglot = require('node-polyglot');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'Translator';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 /**
@@ -12,7 +12,7 @@ const context = 'Translator';
  */
 module.exports = class Translator {
     constructor() {
-        logOk('::Started', context);
+        logOk('::Started');
         this.language = globals.config.language;
         this.polyglot = null;
 
@@ -29,7 +29,7 @@ module.exports = class Translator {
             }
             this.polyglot = new Polyglot(polyglotOptions);
         } catch (error) {
-            logError(error.message, context);
+            logError(error.message);
             process.exit();
         }
     }
@@ -53,7 +53,7 @@ module.exports = class Translator {
             }
             this.polyglot = new Polyglot(polyglotOptions);
         } catch (error) {
-            logError(error.message, context);
+            logError(error.message);
             process.exit();
         }
 
@@ -109,7 +109,7 @@ module.exports = class Translator {
             //FIXME: quickfix for git changing the line endings
             let toHash = JSON.stringify(JSON.parse(raw));
             hash = crypto.createHash('SHA1').update(toHash).digest("hex");
-            if(globals.config.verbose) logOk(`Hash for ${lang} is ${hash}`, context);
+            if(globals.config.verbose) logOk(`Hash for ${lang} is ${hash}`);
         } catch (error) {
             if(globals.config.verbose) logError(error.message);
         }
@@ -142,7 +142,7 @@ module.exports = class Translator {
         try {
             return this.polyglot.t(key, options);
         } catch (error) {
-            logError(`Error performing a translation with key '${key}'`, context);
+            logError(`Error performing a translation with key '${key}'`);
             return key;
         }
     }

@@ -1,6 +1,6 @@
 //Requires
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'WebServer:AddMaster';
+const modulename = 'WebServer:AddMaster';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -59,7 +59,7 @@ async function handlePin(res, req) {
 
     //Checking the PIN
     if(req.body.pin !== globals.authenticator.addMasterPin){
-        logWarn(`Wrong PIN for from: ${req.connection.remoteAddress}`, context);
+        logWarn(`Wrong PIN for from: ${req.connection.remoteAddress}`);
         let message = `Wrong PIN.`;
         let out = await webUtils.renderLoginView({template: 'noMaster', message});
         return res.send(out);
@@ -97,7 +97,7 @@ async function handleCallback(res, req) {
         tokenSet = await globals.authenticator.providers.citizenfx.processCallback(req, currentURL, req.sessionID);
     } catch (error) {
         let message = `Code Exchange error: ${error.message}`;
-        logError(message, context);
+        logError(message);
         let out = await webUtils.renderLoginView({template: 'justMessage', message});
         return res.send(out);
     }
@@ -108,7 +108,7 @@ async function handleCallback(res, req) {
         userInfo = await globals.authenticator.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
         let message = `Get UserInfo error: ${error.message}`;
-        logError(message, context);
+        logError(message);
         let out = await webUtils.renderLoginView({template: 'justMessage', message});
         return res.send(out);
     }
@@ -199,11 +199,11 @@ async function handleSave(res, req) {
     } catch (error) {
         req.session.auth = {};
         let message = `Failed to login:<br> ${error.message}`;
-        logError(message, context);
+        logError(message);
         let out = await webUtils.renderLoginView({template: 'justMessage', message});
         return res.send(out);
     }
 
-    log('Admin file created! You can now login normally.', context);
+    log('Admin file created! You can now login normally.');
     return res.redirect('/');
 }

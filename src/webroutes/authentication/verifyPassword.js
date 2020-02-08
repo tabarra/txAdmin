@@ -1,6 +1,6 @@
 //Requires
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'WebServer:Auth-Verify';
+const modulename = 'WebServer:Auth-Verify';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -21,14 +21,14 @@ module.exports = async function action(res, req) {
         let admin = globals.authenticator.getAdminByName(req.body.username);
         //Admin exists?
         if(!admin){
-            logWarn(`Wrong username for from: ${req.connection.remoteAddress}`, context);
+            logWarn(`Wrong username for from: ${req.connection.remoteAddress}`);
             message = 'Wrong Password!';
             let out = await webUtils.renderLoginView({message});
             return res.send(out);
         }
         //Does password match?
         if(!VerifyPasswordHash(req.body.password, admin.password_hash)){
-            logWarn(`Wrong password for from: ${req.connection.remoteAddress}`, context);
+            logWarn(`Wrong password for from: ${req.connection.remoteAddress}`);
             message = 'Wrong Password!';
             let out = await webUtils.renderLoginView({message});
             return res.send(out);
@@ -41,9 +41,9 @@ module.exports = async function action(res, req) {
             expires_at: false
         };
 
-        log(`Admin ${admin.name} logged in from ${req.connection.remoteAddress}`, context);
+        log(`Admin ${admin.name} logged in from ${req.connection.remoteAddress}`);
     } catch (error) {
-        logWarn(`Failed to authenticate ${req.body.username} with error: ${error.message}`, context);
+        logWarn(`Failed to authenticate ${req.body.username} with error: ${error.message}`);
         message = 'Error autenticating admin.';
         let out = await webUtils.renderLoginView({message});
         return res.send(out);

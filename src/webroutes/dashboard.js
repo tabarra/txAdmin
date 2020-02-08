@@ -1,7 +1,7 @@
 //Requires
+const modulename = 'WebServer:Dashboard';
 const semver = require('semver');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'WebServer:Dashboard';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 /**
@@ -21,7 +21,7 @@ module.exports = async function action(res, req) {
 
     //Shortcut function
     let getPermDisable = (perm) => {
-        return (webUtils.checkPermission(req, perm, context, false))? '' : 'disabled'
+        return (webUtils.checkPermission(req, perm, modulename, false))? '' : 'disabled'
     }
 
     //Preparing render data
@@ -36,7 +36,7 @@ module.exports = async function action(res, req) {
             commandKick: getPermDisable('commands.kick'),
             commandResources: getPermDisable('commands.resources'),
             controls: getPermDisable('control.server'),
-            controlsClass: (webUtils.checkPermission(req, 'control.server', context, false))? 'danger' : 'secondary'
+            controlsClass: (webUtils.checkPermission(req, 'control.server', modulename, false))? 'danger' : 'secondary'
         }
     }
 
@@ -121,7 +121,7 @@ function getUpdateData() {
         });
         updateData.changes = updateData.changes.reverse();
     } catch (error) {
-        logError(`Error while processing changelog. Enable verbosity for more information.`, context);
+        logError(`Error while processing changelog. Enable verbosity for more information.`);
         if(globals.config.verbose) dir(error);
     }
 

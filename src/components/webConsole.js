@@ -1,11 +1,10 @@
 //Requires
+const modulename = 'webConsole';
 const SocketIO = require('socket.io');
 
 const xssClass = require("xss");
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 const {requestAuth, authLogic} = require('./webServer/requestAuthenticator');
-const context = 'webConsole';
-const contextSocket = 'webConsole:SocketIO';
 
 //Set custom xss rules
 const xss = new xssClass.FilterXSS({
@@ -18,7 +17,7 @@ const xss = new xssClass.FilterXSS({
 
 module.exports = class webConsole {
     constructor(config) {
-        logOk('::Awaiting', context);
+        logOk('::Awaiting');
         this.io = null;
         this.dataBuffer = '';
         return; //FIXME:
@@ -31,23 +30,23 @@ module.exports = class webConsole {
         this.io.use(requestAuth('socket').bind(this));
         this.io.on('connection', (socket) => {
             try {
-                log(`Connected: ${socket.handshake.session.auth.username} from ${socket.handshake.address}`, contextSocket);
+                log(`Connected: ${socket.handshake.session.auth.username} from ${socket.handshake.address}`, 'SocketIO');
             } catch (error) {
-                log(`Connected: new connection with unknown source`, contextSocket);
+                log(`Connected: new connection with unknown source`, 'SocketIO');
             }
 
             socket.on('disconnect', (reason) => {
-                if(globals.config.verbose) log(`Client disconnected with reason: ${reason}`, contextSocket);
+                if(globals.config.verbose) log(`Client disconnected with reason: ${reason}`, 'SocketIO');
             });
             socket.on('error', (error) => {
-                if(globals.config.verbose) log(`Socket error with message: ${error.message}`, contextSocket);
+                if(globals.config.verbose) log(`Socket error with message: ${error.message}`, 'SocketIO');
             });
             socket.on('consoleCommand', this.handleSocketMessages.bind(this, socket));
 
             try {
                 socket.emit('consoleData', xss.process(globals.fxRunner.consoleBuffer.webConsoleBuffer));
             } catch (error) {
-                if(globals.config.verbose) logWarn(`Error sending sending old buffer: ${error.message}`, context);
+                if(globals.config.verbose) logWarn(`Error sending sending old buffer: ${error.message}`);
             }
         });
 
@@ -65,9 +64,9 @@ module.exports = class webConsole {
         try {
             this.io.attach(socketInterface);
             let port = socketInterface.address().port;
-            logOk(`::Listening on port ${port}.`, context);
+            logOk(`::Listening on port ${port}.`);
         } catch (error) {
-            logError('::Failed to attach to http interface with error:', context);
+            logError('::Failed to attach to http interface with error:');
             dir(error);
         }
     }
@@ -100,7 +99,7 @@ module.exports = class webConsole {
             this.io.emit('consoleData', xss.process(this.dataBuffer));
             this.dataBuffer = '';
         } catch (error) {
-            logWarn('Message not sent', context);
+            logWarn('Message not sent');
             dir(error)
         }
     }
@@ -114,7 +113,7 @@ module.exports = class webConsole {
      */
     handleSocketMessages(socket, msg){
         //Getting session data
-        const {isValidAuth, isValidPerm} = authLogic(socket.handshake.session, 'console.write', context);
+        const {isValidAuth, isValidPerm} = authLogic(socket.handshake.session, 'console.write', 'socketMessage');
 
         //Checking Auth
         if(!isValidAuth){
@@ -127,13 +126,13 @@ module.exports = class webConsole {
         //Check Permissions
         if(!isValidPerm){
             let errorMessage = `Permission 'console.write' denied.`;
-            if(globals.config.verbose) logWarn(`[${socket.handshake.address}][${socket.handshake.session.auth.username}] ${errorMessage}`, context);
+            if(globals.config.verbose) logWarn(`[${socket.handshake.address}][${socket.handshake.session.auth.username}] ${errorMessage}`);
             socket.emit('consoleData', `\n<mark>${errorMessage}</mark>\n`);
             return;
         }
 
         //Executing command
-        log(`Executing: '${msg}'`, contextSocket);
+        log(`Executing: '${msg}'`, 'SocketIO');
         globals.fxRunner.srvCmd(msg);
         globals.logger.append(`[${socket.handshake.address}][${socket.handshake.session.auth.username}] ${msg}`);
     }

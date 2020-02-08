@@ -1,9 +1,9 @@
 //Requires
+const modulename = 'WebServer:GetStatus';
 const os = require('os');
 const xss = require("xss");
 const clone = require('clone');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'WebServer:GetStatus';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 /**
@@ -110,7 +110,7 @@ function prepareHostData() {
 
     } catch (error) {
         if (globals.config.verbose) {
-            logError('Failed to execute prepareHostData()', context);
+            logError('Failed to execute prepareHostData()');
             dir(error);
         }
         return {

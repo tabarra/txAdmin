@@ -1,4 +1,5 @@
 //Requires
+const modulename = 'WebServer';
 const HttpClass  = require('http');
 const Koa = require('koa');
 const KoaBodyParser = require('koa-bodyparser');
@@ -8,9 +9,8 @@ const KoaSessionMemoryStoreClass = require('koa-session-memory');
 const nanoid = require('nanoid');
 // const { setHttpCallback } = require('@citizenfx/http-wrapper');
 const { setHttpCallback } = require('./wrapper.ignore.js'); //FIXME: REMOVE
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const ctxUtils = require('./ctxUtils.js');
-const context = 'WebServer';
 
 module.exports = class WebServer {
     constructor(config, httpPort) {
@@ -57,7 +57,7 @@ module.exports = class WebServer {
                 await Promise.race([timeout, next()]);
                 clearTimeout(timer);
                 if (typeof ctx.status !== 'undefined' && ctx.status === 404) {
-                    if(globals.config.verbose) logWarn(`Request 404 error: ${ctx.path}`, context);
+                    if(globals.config.verbose) logWarn(`Request 404 error: ${ctx.path}`);
                     return ctx.utils.render('basic/404');
                 }
             } catch (error) {
@@ -68,12 +68,12 @@ module.exports = class WebServer {
                     ctx.body = {error: 'request entity too large'};
                 }else if (ctx.state.timeout){
                     let desc = `Route timed out: ${ctx.path}`;
-                    logError(desc, context);
+                    logError(desc);
                     ctx.status = 408;
                     ctx.body = desc;
                 }else{
                     let desc = `Internal Error on: ${ctx.path}`;
-                    logError(desc, context);
+                    logError(desc);
                     if(globals.config.verbose) dir(error)
                     ctx.status = 500;
                     ctx.body = desc;
@@ -100,7 +100,7 @@ module.exports = class WebServer {
             let run = ExecuteCommand("endpoint_add_tcp \"0.0.0.0:30120\"");
             setHttpCallback(this.app.callback());
         } catch (error) {
-            logError('::Failed to start CitizenFX Reverse Proxy Callback with error:', context);
+            logError('::Failed to start CitizenFX Reverse Proxy Callback with error:');
             dir(error);
         }
 
@@ -109,15 +109,15 @@ module.exports = class WebServer {
             this.httpServer = HttpClass.createServer(this.app.callback());
             this.httpServer.on('error', (error)=>{
                 if(error.code !== 'EADDRINUSE') return;
-                logError(`Failed to start HTTP server, port ${error.port} already in use.`, context);
+                logError(`Failed to start HTTP server, port ${error.port} already in use.`);
                 process.exit();
             });
             this.httpServer.listen(this.httpPort, '0.0.0.0', () => {
-                logOk(`::Started at http://localhost:${this.httpPort}/`, context);
+                logOk(`::Started at http://localhost:${this.httpPort}/`);
                 globals.webConsole.attachSocket(this.httpServer);
             });
         } catch (error) {
-            logError('::Failed to start HTTP server with error:', context);
+            logError('::Failed to start HTTP server with error:');
             dir(error);
             process.exit();
         }

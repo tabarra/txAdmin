@@ -1,7 +1,7 @@
 //Requires
+const modulename = 'WebServer:Settings-Get';
 const clone = require('clone');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'WebServer:Settings-Get';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 
 /**
@@ -11,7 +11,7 @@ const context = 'WebServer:Settings-Get';
  */
 module.exports = async function action(res, req) {
     //Check permissions
-    if(!webUtils.checkPermission(req, 'settings.view', context)){
+    if(!webUtils.checkPermission(req, 'settings.view', modulename)){
         let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to view this page.`});
         return res.send(out);
     }
@@ -22,7 +22,7 @@ module.exports = async function action(res, req) {
         fxserver: cleanRenderData(globals.configVault.getScopedStructure('fxRunner')),
         monitor: cleanRenderData(globals.configVault.getScopedStructure('monitor')),
         discord: cleanRenderData(globals.configVault.getScopedStructure('discordBot')),
-        disableWrite: (webUtils.checkPermission(req, 'settings.write'))? '' : 'disabled',
+        disableWrite: (webUtils.checkPermission(req, 'settings.write', modulename))? '' : 'disabled',
         serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone
     }
 

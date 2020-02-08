@@ -1,8 +1,8 @@
 //Requires
+const modulename = 'Authenticator:CitizenFXProvider';
 const crypto  = require('crypto');
 const { Issuer, custom } = require('openid-client');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../../extras/console');
-const context = 'Authenticator:CitizenFXProvider';
+const { dir, log, logOk, logWarn, logError} = require('../../../extras/console')(modulename);
 
 
 module.exports = class CitizenFXProvider {
@@ -31,10 +31,10 @@ module.exports = class CitizenFXProvider {
                 response_types: ['openid']
             });
             this.client[custom.clock_tolerance] = 15;
-            log('CitizenFX Provider configured.', context);
+            log('CitizenFX Provider configured.');
             this.ready = true;
         } catch (error) {
-            logError(`Failed to create client with error: ${error.message}`, context);
+            logError(`Failed to create client with error: ${error.message}`);
         }
     }
 
@@ -47,7 +47,7 @@ module.exports = class CitizenFXProvider {
      * @returns {(string)} the auth url or throws an error
      */
     async getAuthURL(redirectUri, stateKern){
-        if(!this.ready) throw new Error(`${context} is not ready`);
+        if(!this.ready) throw new Error(`${modulename} is not ready`);
 
         let stateSeed = `txAdmin:${stateKern}`;
         let state = crypto.createHash('SHA1').update(stateSeed).digest("hex");
@@ -71,7 +71,7 @@ module.exports = class CitizenFXProvider {
      * @returns {(object)} tokenSet or throws an error
      */
     async processCallback(req, redirectUri, stateKern){
-        if(!this.ready) throw new Error(`${context} is not ready`);
+        if(!this.ready) throw new Error(`${modulename} is not ready`);
 
         //Process the request
         let params = this.client.callbackParams(req);
@@ -97,7 +97,7 @@ module.exports = class CitizenFXProvider {
      * @returns {(string)} userInfo or throws an error
      */
     async getUserInfo(accessToken){
-        if(!this.ready) throw new Error(`${context} is not ready`);
+        if(!this.ready) throw new Error(`${modulename} is not ready`);
 
         //Perform introspection
         let userInfo = await this.client.userinfo(accessToken);

@@ -1,7 +1,6 @@
 //Requires
-const semver = require('semver');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'WebServer:AddExtension';
+const modulename = 'WebServer:AddExtension';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 /**

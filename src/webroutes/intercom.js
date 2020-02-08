@@ -1,6 +1,6 @@
 //Requires
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'WebServer:Intercom';
+const modulename = 'WebServer:Intercom';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -54,7 +54,7 @@ module.exports = async function action(res, req) {
             let resp = (typeof usr === 'undefined')? 'whitelist-ok' : 'whitelist-block';
             return res.send(resp);
         } catch (error) {
-            logError(`[whitelistCheck] Database operation failed with error: ${error.message}`, context);
+            logError(`[whitelistCheck] Database operation failed with error: ${error.message}`);
             if(globals.config.verbose) dir(error);
             return res.send('whitelist-error');
         }

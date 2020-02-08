@@ -1,11 +1,11 @@
 //Requires
+const modulename = 'WebServer:Router';
 const Router = require('@koa/router');
 const KoaRateLimit = require('koa-ratelimit');
 
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const webRoutes = require('../../webroutes');
 const {requestAuth} = require('./requestAuthenticator');
-const context = 'WebServer:Router';
 
 //Helper function
 function handleRouteError(res, req, route, error){
@@ -14,7 +14,7 @@ function handleRouteError(res, req, route, error){
         if(error.code == 'ERR_HTTP_HEADERS_SENT') return;
 
         let desc = `Internal Error on: ${req.originalUrl}`;
-        logError(desc, `${context}:${route}`);
+        logError(desc, `${modulename}:${route}`);
         if(globals.config.verbose) dir(error)
         res.status(500).send(`[${route} Route Internal Error]`);
     } catch (error) {}

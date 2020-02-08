@@ -1,7 +1,7 @@
 //Requires
+const modulename = 'WebServer:AdminManager-Actions';
 const nanoidGen = require('nanoid/generate');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'WebServer:AdminManager-Actions';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -21,7 +21,7 @@ module.exports = async function action(res, req) {
     let action = req.params.action;
 
     //Check permissions
-    if(!webUtils.checkPermission(req, 'manage.admins', context)){
+    if(!webUtils.checkPermission(req, 'manage.admins', modulename)){
         return res.send({
             type: 'danger',
             message: `You don't have permission to execute this action.`
@@ -87,7 +87,7 @@ async function handleAdd(res, req) {
     try {
         await globals.authenticator.addAdmin(name, citizenfxID, discordID, password, permissions);
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Adding admin '${name}'.`;
-        logOk(logMessage, context);
+        logOk(logMessage);
         globals.logger.append(logMessage);
         return res.send({type: 'modalrefresh', password});
     } catch (error) {
@@ -138,7 +138,7 @@ async function handleEdit(res, req) {
     try {
         await globals.authenticator.editAdmin(name, null, citizenfxID, discordID, permissions);
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Editing user '${name}'.`;
-        logOk(logMessage, context);
+        logOk(logMessage);
         globals.logger.append(logMessage);
         return res.send({type: 'success', message: `refresh`});
     } catch (error) {
@@ -172,7 +172,7 @@ async function handleDelete(res, req) {
     try {
         await globals.authenticator.deleteAdmin(name);
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Deleting user '${name}'.`;
-        logOk(logMessage, context);
+        logOk(logMessage);
         globals.logger.append(logMessage);
         return res.send({type: 'success', message: `refresh`});
     } catch (error) {

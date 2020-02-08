@@ -1,11 +1,12 @@
 //Requires
+const modulename = 'ConsoleBuffer';
 const fs = require('fs');
 const ac = require('ansi-colors');
 ac.enabled = true;
 const StreamSnitch = require('stream-snitch');
 const bytes = require('bytes');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'ConsoleBuffer';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
+
 
 /**
  * FXServer output buffer helper.
@@ -29,7 +30,7 @@ module.exports = class ConsoleBuffer {
         try {
             fs.writeFileSync(this.logPath, '');
         } catch (error) {
-            logError(`Failed to create log file '${this.logPath}' with error: ${error.message}`, context)
+            logError(`Failed to create log file '${this.logPath}' with error: ${error.message}`)
         }
 
         //Cron Function
@@ -73,7 +74,7 @@ module.exports = class ConsoleBuffer {
             //IIRC the issue was that one user with a TM on their nick was making txAdmin's console to close or freeze. I couldn't reproduce the issue.
             if(!globals.fxRunner.config.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ""));
         } catch (error) {
-            if(globals.config.verbose) logError(`Buffer write error: ${error.message}`, context)
+            if(globals.config.verbose) logError(`Buffer write error: ${error.message}`)
         }
 
         //Adding data to the buffers
@@ -99,7 +100,7 @@ module.exports = class ConsoleBuffer {
             globals.webConsole.buffer(data, 'error');
             if(!globals.fxRunner.config.quiet) process.stdout.write(ac.red(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, "")));
         } catch (error) {
-            if(globals.config.verbose) logError(`Buffer write error: ${error.message}`, context)
+            if(globals.config.verbose) logError(`Buffer write error: ${error.message}`)
         }
     }
 
@@ -124,14 +125,14 @@ module.exports = class ConsoleBuffer {
         if(!this.fileBuffer.length) return;
         fs.appendFile(this.logPath, this.fileBuffer, {encoding: 'utf8'}, (err)=>{
             if(err){
-                if(globals.config.verbose) logError(`File Write Buffer error: ${error.message}`, context)
+                if(globals.config.verbose) logError(`File Write Buffer error: ${error.message}`)
             }else{
                 this.fileBuffer = '';
             }
         });
         fs.stat(this.logPath, (err, stats)=>{
             if(err){
-                if(globals.config.verbose) logError(`Log File get stats error: ${error.message}`, context)
+                if(globals.config.verbose) logError(`Log File get stats error: ${error.message}`)
             }else{
                 this.logFileSize = bytes(stats.size);
             }

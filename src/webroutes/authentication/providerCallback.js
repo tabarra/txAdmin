@@ -1,7 +1,7 @@
 //Requires
+const modulename = 'WebServer:ProviderCallback';
 const crypto  = require('crypto');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'WebServer:ProviderCallback';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -46,7 +46,7 @@ module.exports = async function action(res, req) {
         tokenSet = await globals.authenticator.providers.citizenfx.processCallback(req, currentURL, req.sessionID);
     } catch (error) {
         let message = `Code Exchange error: ${error.message}`;
-        if(globals.config.verbose) logError(message, context);
+        if(globals.config.verbose) logError(message);
         return await returnJustMessage(res, message);
     }
 
@@ -56,7 +56,7 @@ module.exports = async function action(res, req) {
         userInfo = await globals.authenticator.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
         let message = `Get UserInfo error: ${error.message}`;
-        if(globals.config.verbose) logError(message, context);
+        if(globals.config.verbose) logError(message);
         return await returnJustMessage(res, message);
     }
 
@@ -86,7 +86,7 @@ module.exports = async function action(res, req) {
         if(!admin){
             req.session.auth = {};
             let message = `This account is not an admin.`;
-            if(globals.config.verbose) logWarn(message, context);
+            if(globals.config.verbose) logWarn(message);
             return await returnJustMessage(res, message);
         }
 
@@ -96,12 +96,12 @@ module.exports = async function action(res, req) {
 
         //TODO: refresh the provider data on the admins file
 
-        log(`Admin ${admin.name} logged in from ${req.connection.remoteAddress}`, context);
+        log(`Admin ${admin.name} logged in from ${req.connection.remoteAddress}`);
         return res.redirect('/');
     } catch (error) {
         req.session.auth = {};
         let message = `Failed to login: ${error.message}`;
-        if(globals.config.verbose) logError(message, context);
+        if(globals.config.verbose) logError(message);
         return await returnJustMessage(res, message);
     }
 };

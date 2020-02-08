@@ -1,10 +1,10 @@
 //Requires
+const modulename = 'WebServer:Settings-Save';
 const fs = require('fs');
 const slash = require('slash');
 const path = require('path');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
-const context = 'WebServer:Settings-Save';
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -22,7 +22,7 @@ module.exports = async function action(res, req) {
     let scope = req.params.scope;
 
     //Check permissions
-    if(!webUtils.checkPermission(req, 'settings.write', context)){
+    if(!webUtils.checkPermission(req, 'settings.write', modulename)){
         return res.send({
             type: 'danger',
             message: `You don't have permission to execute this action.`
@@ -93,11 +93,11 @@ function handleGlobal(res, req) {
         globals.translator.refreshConfig(langPhrases);
         globals.config = globals.configVault.getScoped('global');
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing global settings.`;
-        logOk(logMessage, context);
+        logOk(logMessage);
         globals.logger.append(logMessage);
         return res.send({type: 'success', message: `<strong>Global configuration saved!</strong>`});
     }else{
-        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing global settings.`, context);
+        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing global settings.`);
         return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }
 }
@@ -173,11 +173,11 @@ function handleFXServer(res, req) {
     if(saveStatus){
         globals.fxRunner.refreshConfig();
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing fxRunner settings.`;
-        logOk(logMessage, context);
+        logOk(logMessage);
         globals.logger.append(logMessage);
         return res.send({type: 'success', message: `<strong>FXServer configuration saved!</strong>`});
     }else{
-        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing fxRunner settings.`, context);
+        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing fxRunner settings.`);
         return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }
 }
@@ -229,11 +229,11 @@ function handleMonitor(res, req) {
     if(saveStatus){
         globals.monitor.refreshConfig();
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing monitor settings.`;
-        logOk(logMessage, context);
+        logOk(logMessage);
         globals.logger.append(logMessage);
         return res.send({type: 'success', message: `<strong>Monitor/Restarter configuration saved!</strong>`});
     }else{
-        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing monitor settings.`, context);
+        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing monitor settings.`);
         return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }
 }
@@ -276,11 +276,11 @@ function handleDiscord(res, req) {
     if(saveStatus){
         globals.discordBot.refreshConfig();
         let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing discordBot settings.`;
-        logOk(logMessage, context);
+        logOk(logMessage);
         globals.logger.append(logMessage);
         return res.send({type: 'success', message: `<strong>Discord configuration saved!</strong>`});
     }else{
-        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing discordBot settings.`, context);
+        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing discordBot settings.`);
         return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }
 }

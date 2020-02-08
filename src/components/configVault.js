@@ -1,11 +1,11 @@
 //Requires
+const modulename = 'ConfigVault';
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
 const slash = require('slash');
 const clone = require('clone');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'ConfigVault';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -30,7 +30,7 @@ module.exports = class ConfigVault {
         this.config = null;
 
         this.setupVault();
-        logOk('::Started', context);
+        logOk('::Started');
     }
 
 
@@ -45,7 +45,7 @@ module.exports = class ConfigVault {
             this.config = this.setupConfigDefaults(this.configFile);
             this.setupFolderStructure();
         } catch (error) {
-            logError(error.message, context)
+            logError(error.message)
             process.exit(0);
         }
     }
@@ -62,7 +62,7 @@ module.exports = class ConfigVault {
         try {
             rawFile = fs.readFileSync(this.configFilePath, 'utf8');
         } catch (error) {
-            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. (cannot read file, please read the documentation)\nOriginal error: ${error.message}`, context);
+            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. (cannot read file, please read the documentation)\nOriginal error: ${error.message}`);
         }
 
         //Try to parse config file
@@ -70,8 +70,8 @@ module.exports = class ConfigVault {
         try {
             cfgData = JSON.parse(rawFile);
         } catch (error) {
-            if(rawFile.includes('\\')) logError(`Note: your 'txData/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`, context);
-            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. \nOriginal error: ${error.message}`, context);
+            if(rawFile.includes('\\')) logError(`Note: your 'txData/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`);
+            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. \nOriginal error: ${error.message}`);
         }
 
         return cfgData;
@@ -146,7 +146,7 @@ module.exports = class ConfigVault {
                 quiet: toDefault(cfg.fxRunner.quiet, null),
             };
         } catch (error) {
-            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`, context);
+            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`);
         }
 
         return out;
@@ -209,7 +209,7 @@ module.exports = class ConfigVault {
             cfg.fxRunner.autostartDelay = parseInt(cfg.webServer.autostartDelay) || 2; //not in template
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
         } catch (error) {
-            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`, context);
+            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`);
         }
 
         return cfg;
@@ -242,7 +242,7 @@ module.exports = class ConfigVault {
             //     fs.writeFileSync(commandsPath, '[]');
             // }
         } catch (error) {
-            logError(`Failed to set up folder structure in '${this.serverProfilePath}/' with error: ${error.message}`, context);
+            logError(`Failed to set up folder structure in '${this.serverProfilePath}/' with error: ${error.message}`);
             process.exit();
         }
     }

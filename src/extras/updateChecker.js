@@ -1,7 +1,7 @@
 //Requires
+const modulename = 'WebServer:updateChecker';
 const axios = require("axios");
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'WebServer:updateChecker';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 module.exports = async () => {
