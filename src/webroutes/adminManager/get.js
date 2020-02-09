@@ -5,8 +5,7 @@ const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(mo
 
 /**
  * Returns the output page containing the admins.
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function AdminManagerGet(ctx) {
     //Prepare admin array
@@ -27,14 +26,13 @@ module.exports = async function AdminManagerGet(ctx) {
             hasDiscord: (admin.providers.includes('discord')),
             name: admin.name,
             perms: perms,
-            disableActions: (req.session.auth.username.toLowerCase() === admin.name.toLowerCase())
+            disableActions: (ctx.session.auth.username.toLowerCase() === admin.name.toLowerCase())
         }
     });
 
     //Check permission
-    if(!webUtils.checkPermission(req, 'manage.admins', modulename)){
-        let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to view this page.`});
-        return res.send(out);
+    if(!ctx.utils.checkPermission('manage.admins', modulename)){
+        return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
     }
 
     //Set render data
@@ -45,6 +43,5 @@ module.exports = async function AdminManagerGet(ctx) {
     }
 
     //Give output
-    let out = await webUtils.renderMasterView('adminManager', req.session, renderData);
-    return res.send(out);
+    return ctx.utils.render('adminManager', renderData);
 };

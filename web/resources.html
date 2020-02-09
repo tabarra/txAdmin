@@ -170,12 +170,12 @@
 
         resGroupsJS.forEach(folder => {
             let hidden = 0;
-            folder.resources.forEach(res => {
-                if (res.name.toUpperCase().indexOf(filter) > -1) {
-                    $(`#res-${res.name}`).show();
+            folder.resources.forEach(resource => {
+                if (resource.name.toUpperCase().indexOf(filter) > -1) {
+                    $(`#res-${resource.name}`).show();
                 } else {
                     hidden++;
-                    $(`#res-${res.name}`).hide();
+                    $(`#res-${resource.name}`).hide();
                 }
             });
             if (folder.resources.length == hidden) {
@@ -206,8 +206,8 @@
 
         resGroupsJS.forEach(folder => {
             let hidden = 0;
-            folder.resources.forEach(res => {
-                if ($(`#res-${res.name}`).hasClass("defaultRes")) {
+            folder.resources.forEach(resource => {
+                if ($(`#res-${resource.name}`).hasClass("defaultRes")) {
                     hidden++;
                 }
             });

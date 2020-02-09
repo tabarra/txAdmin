@@ -5,11 +5,9 @@ const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modul
 
 /**
  * Returns the output page containing the admin log.
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function ActionLog(ctx) {
     let log = await globals.logger.get();
-    let out = await webUtils.renderMasterView('actionLog', req.session, {headerTitle: 'Action Log', log});
-    return res.send(out);
+    return ctx.utils.render('actionLog', {headerTitle: 'Action Log', log});
 };

@@ -244,8 +244,8 @@ module.exports = class FXRunner {
         ]
 
         //Commands
-        this.extResources.forEach((res)=>{
-            toExec.push(`ensure "${res}"`);
+        this.extResources.forEach((resource)=>{
+            toExec.push(`ensure "${resource}"`);
         });
 
         if(refresh) toExec.push('refresh');

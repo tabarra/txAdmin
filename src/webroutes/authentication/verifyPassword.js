@@ -7,47 +7,42 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
 
 /**
  * Verify login
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function AuthVerify(ctx) {
-    if(isUndefined(req.body.username) || isUndefined(req.body.password)){
-        res.redirect('/');
-        return;
+    if(isUndefined(ctx.request.body.username) || isUndefined(ctx.request.body.password)){
+        return ctx.response.redirect('/');
     }
     let message = '';
 
     try {
-        let admin = globals.authenticator.getAdminByName(req.body.username);
+        let admin = globals.authenticator.getAdminByName(ctx.request.body.username);
         //Admin exists?
         if(!admin){
-            logWarn(`Wrong username for from: ${req.connection.remoteAddress}`);
+            logWarn(`Wrong username for from: ${ctx.ip}`);
             message = 'Wrong Password!';
-            let out = await webUtils.renderLoginView({message});
-            return res.send(out);
+            return ctx.utils.render('login', {message});
         }
         //Does password match?
-        if(!VerifyPasswordHash(req.body.password, admin.password_hash)){
-            logWarn(`Wrong password for from: ${req.connection.remoteAddress}`);
+        if(!VerifyPasswordHash(ctx.request.body.password, admin.password_hash)){
+            logWarn(`Wrong password for from: ${ctx.ip}`);
             message = 'Wrong Password!';
-            let out = await webUtils.renderLoginView({message});
-            return res.send(out);
+            return ctx.utils.render('login', {message});
         }
 
         //Setting up session
-        req.session.auth = {
+        ctx.session.auth = {
             username: admin.name,
             password_hash: admin.password_hash,
             expires_at: false
         };
 
-        log(`Admin ${admin.name} logged in from ${req.connection.remoteAddress}`);
+        log(`Admin ${admin.name} logged in from ${ctx.ip}`);
     } catch (error) {
-        logWarn(`Failed to authenticate ${req.body.username} with error: ${error.message}`);
+        logWarn(`Failed to authenticate ${ctx.request.body.username} with error: ${error.message}`);
         message = 'Error autenticating admin.';
-        let out = await webUtils.renderLoginView({message});
-        return res.send(out);
+        return ctx.utils.render('login', {message});
     }
 
-    return res.redirect('/');
+    return ctx.response.redirect('/');
 };

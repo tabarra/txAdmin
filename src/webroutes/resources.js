@@ -41,8 +41,7 @@ const getResourceSubPath = (resPath) => {
 
 /**
  * Returns the resources list
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function Resources(ctx) {
     let timeoutMessage = `<strong>Couldn't load the resources list.</strong> <br>
@@ -53,8 +52,7 @@ module.exports = async function Resources(ctx) {
     //Send command request
     let cmdSuccess = globals.fxRunner.srvCmd(`txaReportResources`);
     if(!cmdSuccess){
-        let out = await webUtils.renderMasterView('basic/generic', req.session, {message: timeoutMessage});
-        return res.send(out);
+        return ctx.utils.render('basic/generic', {message: timeoutMessage});
     }
 
     let cnt = 0;
@@ -72,10 +70,9 @@ module.exports = async function Resources(ctx) {
                     headerTitle: 'Resources',
                     resGroupsJS: JSON.stringify(resGroups),
                     resGroups,
-                    disableActions: (webUtils.checkPermission(req, 'commands.resources'))? '' : 'disabled'
+                    disableActions: (ctx.utils.checkPermission('commands.resources'))? '' : 'disabled'
                 }
-                let out = await webUtils.renderMasterView('resources', req.session, renderData);
-                return res.send(out);
+                return ctx.utils.render('resources', renderData);
             }
         } catch (error) {logError(error.message)}
 
@@ -85,8 +82,7 @@ module.exports = async function Resources(ctx) {
             clearInterval(intHandle);
             logWarn('the future is now, old man');
             try {
-                let out = await webUtils.renderMasterView('basic/generic', req.session, {message: timeoutMessage});
-                return res.send(out);
+                return ctx.utils.render('basic/generic', {message: timeoutMessage});
             } catch (error) {logError(error.message)}
         }
     }, 100);
@@ -101,19 +97,19 @@ module.exports = async function Resources(ctx) {
 function processResources(resList){
     //Clean resource data and add it so an object separated by subpaths
     let resGroupList = {}
-    resList.forEach(res =>{
-        if(isUndefined(res.name) || isUndefined(res.status) || isUndefined(res.path) || res.path === ''){
+    resList.forEach(resource =>{
+        if(isUndefined(resource.name) || isUndefined(resource.status) || isUndefined(resource.path) || resource.path === ''){
             return;
         }
-        let subPath = getResourceSubPath(res.path);
+        let subPath = getResourceSubPath(resource.path);
         let resData = {
-            name: res.name,
-            status: res.status,
-            statusClass: (res.status === 'started')? 'success' : 'danger',
-            // path: slash(path.normalize(res.path)),
-            version: (res.version)? `(${res.version.trim()})` : '',
-            author: (res.author)? `by ${res.author.trim()}` : '',
-            description: (res.description)? res.description.trim() : '',
+            name: resource.name,
+            status: resource.status,
+            statusClass: (resource.status === 'started')? 'success' : 'danger',
+            // path: slash(path.normalize(resource.path)),
+            version: (resource.version)? `(${resource.version.trim()})` : '',
+            author: (resource.author)? `by ${resource.author.trim()}` : '',
+            description: (resource.description)? resource.description.trim() : '',
         }
 
         if(resGroupList.hasOwnProperty(subPath)){

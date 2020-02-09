@@ -4,38 +4,35 @@ const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(mo
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
-const genCallbackURL = (req, provider) => {
-    return req.protocol + '://' + req.get('host') + `/auth/${provider}/callback`
+const genCallbackURL = (ctx, provider) => {
+    return ctx.protocol + '://' + ctx.get('host') + `/auth/${provider}/callback`
 }
-const returnJustMessage = async (res, message) => {
-    let out = await webUtils.renderLoginView({template: 'justMessage', message});
-    return res.send(out);
+const returnJustMessage = async (ctx, message) => {
+    return ctx.utils.render('login', {template: 'justMessage', message});
 };
 
 /**
  * Generates the provider auth url and redirects the user
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function ProviderRedirect(ctx) {
     //Sanity check
-    if(isUndefined(req.params.provider)){
-        res.status(400).send({status: 'error', error: "Invalid Request"});
-        return;
+    if(isUndefined(ctx.params.provider)){
+        return ctx.utils.error(400, 'Invalid Request');
     }
-    let provider = req.params.provider;
+    let provider = ctx.params.provider;
 
     //FIXME: generalize this to any provider
     if(provider !== 'citizenfx'){
-        return await returnJustMessage(res, 'Provider not implemented... yet');
+        return returnJustMessage(ctx, 'Provider not implemented... yet');
     }
 
     //Generatte CitizenFX provider Auth URL
     try {
-        let urlCitizenFX =  await globals.authenticator.providers.citizenfx.getAuthURL(genCallbackURL(req, 'citizenfx'), req.sessionID);
-        return res.redirect(urlCitizenFX);
+        let urlCitizenFX =  await globals.authenticator.providers.citizenfx.getAuthURL(genCallbackURL(ctx, 'citizenfx'), ctx.session._sessCtx.externalKey);
+        return ctx.response.redirect(urlCitizenFX);
     } catch (error) {
         if(globals.config.verbose || true) logWarn(`Failed to generate CitizenFX Auth URL with error: ${error.message}`);
-        return await returnJustMessage(res, 'Failed to generate CitizenFX Auth URL');
+        return returnJustMessage(ctx, 'Failed to generate CitizenFX Auth URL');
     }
 };

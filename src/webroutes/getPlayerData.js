@@ -7,19 +7,18 @@ const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modul
 
 /**
  * Returns the data for the player's modal
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function GetPlayerData(ctx) {
     //Sanity check
-    if(typeof req.params.id === 'undefined'){
-        return res.status(400).send({status: 'error', error: "Invalid Request"});
+    if(typeof ctx.params.id === 'undefined'){
+        return ctx.utils.error(400, 'Invalid Request');
     }
-    let id = parseInt(req.params.id);
+    let id = parseInt(ctx.params.id);
 
     //Shortcut function
     let getPermDisable = (perm) => {
-        return (webUtils.checkPermission(req, perm, modulename))? '' : 'disabled'
+        return (ctx.utils.checkPermission(perm, modulename))? '' : 'disabled'
     }
 
     //Preparing output
@@ -47,5 +46,5 @@ module.exports = async function GetPlayerData(ctx) {
         }
     }
 
-    return res.send(out);
+    return ctx.send(out);
 };

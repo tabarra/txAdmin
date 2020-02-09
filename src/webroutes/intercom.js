@@ -7,64 +7,63 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
 
 /**
  * Intercommunications endpoint
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 //FIXME: tmp function
 module.exports = async function Intercom(ctx) {
     //Sanity check
-    if(isUndefined(req.params.scope)){
-        return res.status(400).send({error: "Invalid Request"});
+    if(isUndefined(ctx.params.scope)){
+        return ctx.utils.error(400, 'Invalid Request');
     }
-    let scope = req.params.scope;
+    let scope = ctx.params.scope;
 
     //Delegate to the specific scope functions
     if(scope == 'monitor'){
         try {
-            globals.monitor.handleHeartBeat(req.body);
+            globals.monitor.handleHeartBeat(ctx.request.body);
         } catch (error) {}
 
     }else if(scope == 'resources'){
-        if(!Array.isArray(req.body.resources)){
-            return res.status(400).send({error: "Invalid Request"});
+        if(!Array.isArray(ctx.request.body.resources)){
+            return ctx.utils.error(400, 'Invalid Request');
         }
         globals.intercomTempResList = {
             timestamp: new Date(),
-            data: req.body.resources
+            data: ctx.request.body.resources
         }
 
     }else if(scope == 'logger'){
-        if(!Array.isArray(req.body.log)){
-            return res.status(400).send({error: "Invalid Request"});
+        if(!Array.isArray(ctx.request.body.log)){
+            return ctx.utils.error(400, 'Invalid Request');
         }
-        globals.intercomTempLog = globals.intercomTempLog.concat(req.body.log)
+        globals.intercomTempLog = globals.intercomTempLog.concat(ctx.request.body.log)
 
     }else if(scope == 'checkWhitelist'){
         //FIXME: temporarily disabled
-        return res.status(403).send({error: "Feature temporariyl disabled."});
+        return ctx.utils.error(403, 'Feature temporarily disabled.');
 
-        if(!Array.isArray(req.body.identifiers)){
-            return res.status(400).send({error: "Invalid Request"});
+        if(!Array.isArray(ctx.request.body.identifiers)){
+            return ctx.utils.error(400, 'Invalid Request');
         }
         try {
             let dbo = globals.database.getDB();
             let usr = await dbo.get("experiments.bans.banList")
-                    .find(function(o) { return req.body.identifiers.includes(o.identifier); })
+                    .find(function(o) { return ctx.request.body.identifiers.includes(o.identifier); })
                     .value()
             let resp = (typeof usr === 'undefined')? 'whitelist-ok' : 'whitelist-block';
-            return res.send(resp);
+            return ctx.send(resp);
         } catch (error) {
             logError(`[whitelistCheck] Database operation failed with error: ${error.message}`);
             if(globals.config.verbose) dir(error);
-            return res.send('whitelist-error');
+            return ctx.send('whitelist-error');
         }
 
     }else{
-        return res.send({
+        return ctx.send({
             type: 'danger',
             message: 'Unknown intercom scope.'
         });
     }
 
-    return res.send({success: true});
+    return ctx.send({success: true});
 };

@@ -5,21 +5,18 @@ const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modul
 
 /**
  * Returns the output page containing the live console
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function LiveConsole(ctx) {
     //Check permissions
-    if(!webUtils.checkPermission(req, 'console.view', modulename)){
-        let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to view this page.`});
-        return res.send(out);
+    if(!ctx.utils.checkPermission('console.view', modulename)){
+        return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
     }
 
     let renderData = {
         headerTitle: 'Console',
-        disableWrite: (webUtils.checkPermission(req, 'console.write', modulename))? 'autofocus' : 'disabled'
+        disableWrite: (ctx.utils.checkPermission('console.write', modulename))? 'autofocus' : 'disabled'
     }
 
-    let out = await webUtils.renderMasterView('console', req.session, renderData);
-    return res.send(out);
+    return ctx.utils.render('console', renderData);
 };

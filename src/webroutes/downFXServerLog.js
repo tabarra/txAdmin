@@ -5,17 +5,24 @@ const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modul
 
 /**
  * Returns the console log file
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function DownFXServerLog(ctx) {
     //Check permissions
-    if(!webUtils.checkPermission(req, 'console.view', modulename)){
-        let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to download this log.`});
-        return res.send(out);
+    if(!ctx.utils.checkPermission('console.view', modulename)){
+        return ctx.utils.render('basic/generic', {message: `You don't have permission to download this log.`});
     }
 
     let now = (new Date()/1000).toFixed();
-    log(`[${req.connection.remoteAddress}][${req.session.auth.username}] Downloading console log file.`);
-    return res.download(globals.fxRunner.config.logPath, `fxserver_${now}.log`);
+    let readFile;
+    try {
+        //NOTE: thy the fuck are errors from `createReadStream` not being caught? Well, using readFileSync for now...
+        // readFile = fs.createReadStream(globals.fxRunner.config.logPath);
+        readFile = fs.readFileSync(globals.fxRunner.config.logPath);
+    } catch (error) {
+        logError(`Could not read log file ${globals.fxRunner.config.logPath}.`);
+    }
+    ctx.attachment(`fxserver_${now}.log`)
+    ctx.body = readFile;
+    log(`[${ctx.ip}][${ctx.session.auth.username}] Downloading console log file.`);
 };

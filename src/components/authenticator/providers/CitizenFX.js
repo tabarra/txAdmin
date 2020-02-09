@@ -65,16 +65,16 @@ module.exports = class CitizenFXProvider {
     //================================================================
     /**
      * Processes the callback and returns the tokenSet
-     * @param {object} req
+     * @param {object} ctx
      * @param {string} redirectUri the redirect uri originally used
      * @param {string} stateKern
      * @returns {(object)} tokenSet or throws an error
      */
-    async processCallback(req, redirectUri, stateKern){
+    async processCallback(ctx, redirectUri, stateKern){
         if(!this.ready) throw new Error(`${modulename} is not ready`);
 
         //Process the request
-        let params = this.client.callbackParams(req);
+        let params = this.client.callbackParams(ctx);
         if(typeof params.code == 'undefined') throw new Error('code not present');
 
         //Check the state

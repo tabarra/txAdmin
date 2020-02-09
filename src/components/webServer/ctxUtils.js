@@ -161,9 +161,10 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true){
 //================================================================
 //================================================================
 module.exports = async function WebCtxUtils(ctx, next){
+    ctx.send = (data) => { ctx.body = data; };
     ctx.utils = {};
-    //TODO: fix this atrocity
     ctx.utils.render = async (view, viewData) => {
+        //TODO: fix this atrocity
         let soloViews = ['adminManager-editModal', 'basic/404'];
         if(view == 'login'){
             ctx.body = await renderLoginView(viewData);
@@ -171,8 +172,17 @@ module.exports = async function WebCtxUtils(ctx, next){
             ctx.body = await renderSoloView('basic/404', viewData);
         }else{
             ctx.body = await renderMasterView(view, ctx.session, viewData);
+            // dir(ctx.body)
         }
-        ctx.type = 'text/html';
+        // ctx.type = 'text/html';
+    }
+    ctx.utils.error = (httpStatus = 500, message = 'unknown error') => {
+        ctx.status = httpStatus;
+        ctx.body = {
+            status: 'error', 
+            code: parseInt(httpStatus),
+            message
+        };
     }
 
     //FIXME: test these functions

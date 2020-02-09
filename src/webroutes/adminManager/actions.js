@@ -9,20 +9,18 @@ const genNewPassword = () => { return nanoidGen('123456789ABCDEFGHJKLMNPQRSTUVWX
 
 /**
  * Returns the output page containing the admins.
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function AdminManagerActions(ctx) {
     //Sanity check
-    if(isUndefined(req.params.action)){
-        res.status(400).send({status: 'error', error: "Invalid Request"});
-        return;
+    if(isUndefined(ctx.params.action)){
+        return ctx.utils.error(400, 'Invalid Request');
     }
-    let action = req.params.action;
+    let action = ctx.params.action;
 
     //Check permissions
-    if(!webUtils.checkPermission(req, 'manage.admins', modulename)){
-        return res.send({
+    if(!ctx.utils.checkPermission('manage.admins', modulename)){
+        return ctx.send({
             type: 'danger',
             message: `You don't have permission to execute this action.`
         });
@@ -30,15 +28,15 @@ module.exports = async function AdminManagerActions(ctx) {
 
     //Delegate to the specific action handler
     if(action == 'add'){
-        return await handleAdd(res, req);
+        return await handleAdd(ctx);
     }else if(action == 'edit'){
-        return await handleEdit(res, req);
+        return await handleEdit(ctx);
     }else if(action == 'delete'){
-        return await handleDelete(res, req);
+        return await handleDelete(ctx);
     }else if(action == 'getModal'){
-        return await handleGetModal(res, req);
+        return await handleGetModal(ctx);
     }else{
-        return res.send({
+        return ctx.send({
             type: 'danger',
             message: 'Unknown action.'
         });
@@ -49,49 +47,48 @@ module.exports = async function AdminManagerActions(ctx) {
 //================================================================
 /**
  * Handle Add
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-async function handleAdd(res, req) {
+async function handleAdd(ctx) {
     //Sanity check
     if(
-        typeof req.body.name !== 'string' ||
-        typeof req.body.citizenfxID !== 'string' ||
-        typeof req.body.discordID !== 'string' ||
-        isUndefined(req.body.permissions)
+        typeof ctx.request.body.name !== 'string' ||
+        typeof ctx.request.body.citizenfxID !== 'string' ||
+        typeof ctx.request.body.discordID !== 'string' ||
+        isUndefined(ctx.request.body.permissions)
     ){
-        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
     //Prepare and filter variables
-    let name = req.body.name.trim();
+    let name = ctx.request.body.name.trim();
     let password = genNewPassword();
-    let citizenfxID = req.body.citizenfxID.trim();
-    let discordID = req.body.discordID.trim();
-    let permissions = (Array.isArray(req.body.permissions))? req.body.permissions : [];
+    let citizenfxID = ctx.request.body.citizenfxID.trim();
+    let discordID = ctx.request.body.discordID.trim();
+    let permissions = (Array.isArray(ctx.request.body.permissions))? ctx.request.body.permissions : [];
     permissions = permissions.filter((x)=>{ return typeof x === 'string'});
     if(permissions.includes('all_permissions')) permissions = ['all_permissions'];
 
     //Validate fields
     if(!/^[a-zA-Z0-9]{6,16}$/.test(name)){
-        return res.send({type: 'danger', message: "Invalid username"});
+        return ctx.send({type: 'danger', message: "Invalid username"});
     }
     if(citizenfxID.length && !/^\w{4,20}$/.test(citizenfxID)){
-        return res.send({type: 'danger', message: "Invalid CitizenFX ID"});
+        return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
     }
     if(discordID.length && !/^\d+$/.test(discordID)){
-        return res.send({type: 'danger', message: "Invalid Discord ID"});
+        return ctx.send({type: 'danger', message: "Invalid Discord ID"});
     }
 
     //Add admin and give output
     try {
         await globals.authenticator.addAdmin(name, citizenfxID, discordID, password, permissions);
-        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Adding admin '${name}'.`;
+        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Adding admin '${name}'.`;
         logOk(logMessage);
         globals.logger.append(logMessage);
-        return res.send({type: 'modalrefresh', password});
+        return ctx.send({type: 'modalrefresh', password});
     } catch (error) {
-        return res.send({type: 'danger', message: error.message});
+        return ctx.send({type: 'danger', message: error.message});
     }
 }
 
@@ -99,50 +96,49 @@ async function handleAdd(res, req) {
 //================================================================
 /**
  * Handle Edit
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-async function handleEdit(res, req) {
+async function handleEdit(ctx) {
     //Sanity check
     if(
-        typeof req.body.name !== 'string' ||
-        typeof req.body.citizenfxID !== 'string' ||
-        typeof req.body.discordID !== 'string' ||
-        isUndefined(req.body.permissions)
+        typeof ctx.request.body.name !== 'string' ||
+        typeof ctx.request.body.citizenfxID !== 'string' ||
+        typeof ctx.request.body.discordID !== 'string' ||
+        isUndefined(ctx.request.body.permissions)
     ){
-        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
     //Prepare and filter variables
-    let name = req.body.name.trim();
-    let citizenfxID = req.body.citizenfxID.trim();
-    let discordID = req.body.discordID.trim();
-    let permissions = (Array.isArray(req.body.permissions))? req.body.permissions : [];
+    let name = ctx.request.body.name.trim();
+    let citizenfxID = ctx.request.body.citizenfxID.trim();
+    let discordID = ctx.request.body.discordID.trim();
+    let permissions = (Array.isArray(ctx.request.body.permissions))? ctx.request.body.permissions : [];
     permissions = permissions.filter((x)=>{ return typeof x === 'string'});
     if(permissions.includes('all_permissions')) permissions = ['all_permissions'];
 
     //Validate fields
     if(citizenfxID.length && !/^\w{4,20}$/.test(citizenfxID)){
-        return res.send({type: 'danger', message: "Invalid CitizenFX ID"});
+        return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
     }
     if(discordID.length && !/^\d+$/.test(discordID)){
-        return res.send({type: 'danger', message: "Invalid Discord ID"});
+        return ctx.send({type: 'danger', message: "Invalid Discord ID"});
     }
 
     //Check permissions
-    if(req.session.auth.username.toLowerCase() === name.toLowerCase()){
-        return res.send({type: 'danger', message: "You can't edit yourself."});
+    if(ctx.session.auth.username.toLowerCase() === name.toLowerCase()){
+        return ctx.send({type: 'danger', message: "You can't edit yourself."});
     }
 
     //Add admin and give output
     try {
         await globals.authenticator.editAdmin(name, null, citizenfxID, discordID, permissions);
-        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Editing user '${name}'.`;
+        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Editing user '${name}'.`;
         logOk(logMessage);
         globals.logger.append(logMessage);
-        return res.send({type: 'success', message: `refresh`});
+        return ctx.send({type: 'success', message: `refresh`});
     } catch (error) {
-        return res.send({type: 'danger', message: error.message});
+        return ctx.send({type: 'danger', message: error.message});
     }
 }
 
@@ -150,33 +146,32 @@ async function handleEdit(res, req) {
 //================================================================
 /**
  * Handle Delete
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-async function handleDelete(res, req) {
+async function handleDelete(ctx) {
     //Sanity check
     if(
-        isUndefined(req.body.name) ||
-        typeof req.body.name !== 'string'
+        isUndefined(ctx.request.body.name) ||
+        typeof ctx.request.body.name !== 'string'
     ){
-        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
-    let name = req.body.name.trim();
+    let name = ctx.request.body.name.trim();
 
     //Check permissions
-    if(req.session.auth.username.toLowerCase() === name.toLowerCase()){
-        return res.send({type: 'danger', message: "You can't delete yourself."});
+    if(ctx.session.auth.username.toLowerCase() === name.toLowerCase()){
+        return ctx.send({type: 'danger', message: "You can't delete yourself."});
     }
 
     //Delete admin and give output
     try {
         await globals.authenticator.deleteAdmin(name);
-        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Deleting user '${name}'.`;
+        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Deleting user '${name}'.`;
         logOk(logMessage);
         globals.logger.append(logMessage);
-        return res.send({type: 'success', message: `refresh`});
+        return ctx.send({type: 'success', message: `refresh`});
     } catch (error) {
-        return res.send({type: 'danger', message: error.message});
+        return ctx.send({type: 'danger', message: error.message});
     }
 }
 
@@ -184,21 +179,20 @@ async function handleDelete(res, req) {
 //================================================================
 /**
  * Handle Get Modal
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-async function handleGetModal(res, req) {
+async function handleGetModal(ctx) {
     //Sanity check
     if(
-        isUndefined(req.body.name) ||
-        typeof req.body.name !== 'string'
+        isUndefined(ctx.request.body.name) ||
+        typeof ctx.request.body.name !== 'string'
     ){
-        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
     //Get admin data
-    let admin = globals.authenticator.getAdminByName(req.body.name);
-    if(!admin) return res.send('Admin not found');
+    let admin = globals.authenticator.getAdminByName(ctx.request.body.name);
+    if(!admin) return ctx.send('Admin not found');
 
     //Prepare permissions
     let allPermissions = globals.authenticator.getPermissionsList();
@@ -219,6 +213,5 @@ async function handleGetModal(res, req) {
     }
 
     //Give output
-    let out = await webUtils.renderSoloView('adminManager-editModal', renderData);
-    return res.send(out);
+    return ctx.utils.render('adminManager-editModal', renderData);
 }

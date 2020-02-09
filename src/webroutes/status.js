@@ -8,11 +8,10 @@ const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modul
 
 /**
  * Getter for all the log/server/process data
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-module.exports = async function GetStatus(res, req) {
-    res.send({
+module.exports = async function GetStatus(ctx) {
+    return ctx.send({
         meta: prepareMetaData(),
         host: prepareHostData(),
         status: prepareServerStatus(),

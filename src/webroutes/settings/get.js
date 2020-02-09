@@ -6,14 +6,12 @@ const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(mo
 
 /**
  * Returns the output page containing the live console
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function SettingsGet(ctx) {
     //Check permissions
-    if(!webUtils.checkPermission(req, 'settings.view', modulename)){
-        let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to view this page.`});
-        return res.send(out);
+    if(!ctx.utils.checkPermission('settings.view', modulename)){
+        return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
     }
 
     let renderData = {
@@ -22,12 +20,11 @@ module.exports = async function SettingsGet(ctx) {
         fxserver: cleanRenderData(globals.configVault.getScopedStructure('fxRunner')),
         monitor: cleanRenderData(globals.configVault.getScopedStructure('monitor')),
         discord: cleanRenderData(globals.configVault.getScopedStructure('discordBot')),
-        disableWrite: (webUtils.checkPermission(req, 'settings.write', modulename))? '' : 'disabled',
+        disableWrite: (ctx.utils.checkPermission('settings.write', modulename))? '' : 'disabled',
         serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone
     }
 
-    let out = await webUtils.renderMasterView('settings', req.session, renderData);
-    return res.send(out);
+    return ctx.utils.render('settings', renderData);
 };
 
 

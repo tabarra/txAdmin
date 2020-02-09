@@ -40,6 +40,10 @@ module.exports = class WebServer {
 
         //FIXME: text render middleware - PS: thefuck does that mean?
         this.app.use(ctxUtils);
+        this.app.on('error', (error, ctx) => {
+            logError(`Strange error on ${ctx.path}`);
+            dir(error)
+        });
         
         //Setting up timeout/error/404/413:
         let timeoutLimit = 5 * 1000;
@@ -98,7 +102,7 @@ module.exports = class WebServer {
         //CitizenFX Callback
         try {
             //FIXME: fix this part?
-            let run = ExecuteCommand("endpoint_add_tcp \"0.0.0.0:30120\"");
+            let run = ExecuteCommand("endpoint_add_tcp \"0.0.0.0:30110\"");
             setHttpCallback(this.app.callback());
         } catch (error) {
             logError('::Failed to start CitizenFX Reverse Proxy Callback with error:');

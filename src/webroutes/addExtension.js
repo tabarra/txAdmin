@@ -5,11 +5,9 @@ const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modul
 
 /**
  * Returns the Add Extension page
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function AddExtension(ctx) {
     //Rendering the page
-    let out = await webUtils.renderMasterView('addExtension', req.session);
-    return res.send(out);
+    return ctx.utils.render('addExtension', {});
 };

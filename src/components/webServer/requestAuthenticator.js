@@ -8,42 +8,42 @@ const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(mo
  */
 const requestAuth = (epType) => {
     //Intercom auth function
-    const intercomAuth = (req, res, next) => {
+    const intercomAuth = async (ctx, next) => {
         if(
-            typeof req.body.txAdminToken !== 'undefined' &&
-            req.body.txAdminToken === globals.webServer.intercomToken
+            typeof ctx.request.body.txAdminToken !== 'undefined' &&
+            ctx.request.body.txAdminToken === globals.webServer.intercomToken
         ){
-            next();
+            await next();
         }else{
-            res.send({error: 'invalid token'})
+            return ctx.send({error: 'invalid token'})
         }
     }
 
     //Normal auth function
-    const normalAuth = (req, res, next) =>{
-        const {isValidAuth} = authLogic(req.session, true, epType);
+    const normalAuth = async (ctx, next) =>{
+        const {isValidAuth} = authLogic(ctx.session, true, epType);
 
         if(!isValidAuth){
-            if(globals.config.verbose) logWarn(`Invalid session auth: ${req.originalUrl}`, epType);
-            req.session.auth = {};
+            if(globals.config.verbose) logWarn(`Invalid session auth: ${ctx.path}`, epType);
+            ctx.session.auth = {};
             if(epType === 'web'){
-                return res.redirect('/auth?logout');
+                return ctx.response.redirect('/auth?logout');
             }else if(epType === 'api'){
-                return res.send({logout:true});
+                return ctx.send({logout:true});
             }else{
                 return () => {throw new Error('Unknown auth type')};
             }
         }else{
-            next();
+            await next();
         }
     }
 
     //Socket auth function
-    const socketAuth = (socket, next) =>{
+    const socketAuth = async (socket, next) =>{
         const {isValidAuth} = authLogic(socket.handshake.session, true, epType);
 
         if(isValidAuth){
-            next();
+            await next();
         }else{
             socket.handshake.session.auth = {}; //a bit redundant but it wont hurt anyone
             socket.disconnect(0);

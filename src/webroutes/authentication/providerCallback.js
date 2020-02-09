@@ -5,49 +5,46 @@ const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(mo
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
-const returnJustMessage = async (res, message) => {
-    let out = await webUtils.renderLoginView({template: 'justMessage', message});
-    return res.send(out);
+const returnJustMessage = (ctx, message) => {
+    return ctx.utils.render('login', {template: 'justMessage', message});
 };
 
 /**
  * Handles the provider login callbacks
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function ProviderCallback(ctx) {
     //Sanity check
     if(
-        isUndefined(req.params.provider) ||
-        isUndefined(req.query.state)
+        isUndefined(ctx.params.provider) ||
+        isUndefined(ctx.query.state)
     ){
-        res.status(400).send({status: 'error', error: "Invalid Request"});
-        return;
+        return ctx.utils.error(400, 'Invalid Request');
     }
-    let provider = req.params.provider;
-    let reqState = req.query.state
+    let provider = ctx.params.provider;
+    let reqState = ctx.query.state
 
     //FIXME: generalize this to any provider
     if(provider !== 'citizenfx'){
-        return await returnJustMessage(res, 'Provider not implemented... yet');
+        return returnJustMessage(ctx, 'Provider not implemented... yet');
     }
 
     //Check the state changed
-    let stateSeed = `txAdmin:${req.sessionID}`;
+    let stateSeed = `txAdmin:${ctx.session._sessCtx.externalKey}`;
     let stateExpected = crypto.createHash('SHA1').update(stateSeed).digest("hex");
     if(reqState != stateExpected){
-        return await returnJustMessage(res, 'This link has expired.');
+        return returnJustMessage(ctx, 'This link has expired.');
     }
 
     //Exchange code for access token
     let tokenSet;
     try {
-        let currentURL = req.protocol + '://' + req.get('host') + `/auth/${provider}/callback`;
-        tokenSet = await globals.authenticator.providers.citizenfx.processCallback(req, currentURL, req.sessionID);
+        let currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/${provider}/callback`;
+        tokenSet = await globals.authenticator.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
         let message = `Code Exchange error: ${error.message}`;
         if(globals.config.verbose) logError(message);
-        return await returnJustMessage(res, message);
+        return returnJustMessage(ctx, message);
     }
 
     //Exchange code for access token
@@ -57,7 +54,7 @@ module.exports = async function ProviderCallback(ctx) {
     } catch (error) {
         let message = `Get UserInfo error: ${error.message}`;
         if(globals.config.verbose) logError(message);
-        return await returnJustMessage(res, message);
+        return returnJustMessage(ctx, message);
     }
 
 /*
@@ -84,24 +81,24 @@ module.exports = async function ProviderCallback(ctx) {
     try {
         let admin = globals.authenticator.getAdminByProviderUID(userInfo.name);
         if(!admin){
-            req.session.auth = {};
+            ctx.session.auth = {};
             let message = `This account is not an admin.`;
             if(globals.config.verbose) logWarn(message);
-            return await returnJustMessage(res, message);
+            return returnJustMessage(ctx, message);
         }
 
         //Setting session
-        req.session.auth = await globals.authenticator.providers.citizenfx.getUserSession(tokenSet, userInfo);
-        req.session.auth.username = admin.name;
+        ctx.session.auth = await globals.authenticator.providers.citizenfx.getUserSession(tokenSet, userInfo);
+        ctx.session.auth.username = admin.name;
 
         //TODO: refresh the provider data on the admins file
 
-        log(`Admin ${admin.name} logged in from ${req.connection.remoteAddress}`);
-        return res.redirect('/');
+        log(`Admin ${admin.name} logged in from ${ctx.ip}`);
+        return ctx.response.redirect('/');
     } catch (error) {
-        req.session.auth = {};
+        ctx.session.auth = {};
         let message = `Failed to login: ${error.message}`;
         if(globals.config.verbose) logError(message);
-        return await returnJustMessage(res, message);
+        return returnJustMessage(ctx, message);
     }
 };

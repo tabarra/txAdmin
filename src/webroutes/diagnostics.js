@@ -13,15 +13,13 @@ let cache = new Cache(5);
 
 /**
  * Returns the output page containing the full report
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function Diagnostics(ctx) {
-    let cacheData = cache.get();
-    if(cacheData !== false){
-        cacheData.message = 'This page was cached in the last 5 seconds';
-        let out = await webUtils.renderMasterView('diagnostics', req.session, cacheData);
-        return res.send(out);
+    let cachedData = cache.get();
+    if(cachedData !== false){
+        cachedData.message = 'This page was cached in the last 5 seconds';
+        return ctx.utils.render('diagnostics', cachedData);
     }
 
 
@@ -43,8 +41,7 @@ module.exports = async function Diagnostics(ctx) {
     data.message = `Executed in ${timeElapsed} ms`;
 
     cache.set(data);
-    let out = await webUtils.renderMasterView('diagnostics', req.session, data);
-    return res.send(out);
+    return ctx.utils.render('diagnostics', data);
 };
 
 

@@ -6,8 +6,7 @@ const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modul
 
 /**
  * Returns the output page containing the Dashboard (index)
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function Dashboard(ctx) {
     //If the any FXServer configuration is missing
@@ -16,12 +15,12 @@ module.exports = async function Dashboard(ctx) {
         globals.fxRunner.config.basePath === null ||
         globals.fxRunner.config.cfgPath === null
     ){
-        return res.redirect('/settings');
+        return ctx.response.redirect('/settings');
     }
 
     //Shortcut function
     let getPermDisable = (perm) => {
-        return (webUtils.checkPermission(req, perm, modulename, false))? '' : 'disabled'
+        return (ctx.utils.checkPermission(perm, modulename, false))? '' : 'disabled'
     }
 
     //Preparing render data
@@ -36,14 +35,14 @@ module.exports = async function Dashboard(ctx) {
             commandKick: getPermDisable('commands.kick'),
             commandResources: getPermDisable('commands.resources'),
             controls: getPermDisable('control.server'),
-            controlsClass: (webUtils.checkPermission(req, 'control.server', modulename, false))? 'danger' : 'secondary'
+            controlsClass: (ctx.utils.checkPermission('control.server', modulename, false))? 'danger' : 'secondary'
         }
     }
+    dir(renderData)
 
 
     //Rendering the page
-    let out = await webUtils.renderMasterView('dashboard', req.session, renderData);
-    return res.send(out);
+    return ctx.utils.render('dashboard', renderData);
 };
 
 

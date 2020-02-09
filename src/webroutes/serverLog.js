@@ -9,34 +9,32 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
 
 /**
  * Returns the output page containing the admin log.
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function ServerLog(ctx) {
     //If page
-    if(isUndefined(req.query.offset)){
+    if(isUndefined(ctx.query.offset)){
         let log = processLog(globals.intercomTempLog.slice(-100));
         let renderData = {
             headerTitle: 'Server Log',
             offset: globals.intercomTempLog.length,
             log
         }
-        let out = await webUtils.renderMasterView('serverLog', req.session, renderData);
-        return res.send(out);
+        return ctx.utils.render('serverLog', renderData);
 
     //If offset
-    }else if(parseInt(req.query.offset) !== NaN){
-        if(req.query.offset === globals.intercomTempLog.length){
-            return res.send({offset: globals.intercomTempLog.length, log : false});
+    }else if(parseInt(ctx.query.offset) !== NaN){
+        if(ctx.query.offset === globals.intercomTempLog.length){
+            return ctx.send({offset: globals.intercomTempLog.length, log : false});
         }else{
-            let log = processLog(globals.intercomTempLog.slice(req.query.offset));
-            return res.send({offset: globals.intercomTempLog.length, log});
+            let log = processLog(globals.intercomTempLog.slice(ctx.query.offset));
+            return ctx.send({offset: globals.intercomTempLog.length, log});
         }
 
     //If null
     }else{
         let log = processLog(globals.intercomTempLog.slice(-100));
-        return res.send({offset: globals.intercomTempLog.length, log});
+        return ctx.send({offset: globals.intercomTempLog.length, log});
     }
 };
 

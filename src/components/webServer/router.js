@@ -23,10 +23,18 @@ module.exports = router = (config) =>{
         disableHeader: true,
     });
 
-    // dir(webRoutes.auth.get.name)
-
     //FIXME: test only
-    // router.get('/', async (ctx) => {
+    // router.post('/', async (ctx) => {
+    //     // throw new Error('sdfsdf')
+    //     // ctx.attachment('hello.txt')
+    //     // dir(ctx._matchedRoute)
+    //     dir(ctx.params.xxx) // for route parameters
+    //     dir(ctx.query.xxx) // for query parameters
+    //     dir(ctx.request.body) // for body data (x-www-form-urlencoded / json)
+    //     ctx.body = {sdfsdf:'gggggggggggggg'};
+    //     return;
+    //     return ctx.utils.error(400, "Invalid Request");
+    //     return ctx.send({aaa:false})
     //     return ctx.utils.render('login', {message: 'sdfsdfdfs'})
     // });
 

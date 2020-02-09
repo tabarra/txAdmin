@@ -61,8 +61,8 @@ async function inject(basePath, resList) {
         let rootDir = './extensions/';
         let cachePath = `${basePath}/resources/[txAdmin-cache]`;
         let promises = []
-        resList.forEach((res) => {
-            promises.push(promFunc(rootDir+res+'/resource', cachePath+'/'+res));
+        resList.forEach((resource) => {
+            promises.push(promFunc(rootDir+resource+'/resource', cachePath+'/'+resource));
         });
         await Promise.all(promises);
         return true;

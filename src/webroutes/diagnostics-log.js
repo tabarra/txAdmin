@@ -12,8 +12,7 @@ const xss = new xssClass.FilterXSS({
 
 /**
  * Returns the output page containing the full report
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
 module.exports = async function DiagnosticsLog(ctx) {
     const logHistory = getLog();
@@ -24,6 +23,5 @@ module.exports = async function DiagnosticsLog(ctx) {
         let mark = `<mark class="consoleMark-${logData.type.toLowerCase()}">[${ts}][${logData.ctx}]</mark>`;
         processedLog.push(`${mark}  ${xss.process(logData.msg)}`);
     });
-    let out = await webUtils.renderMasterView('diagnostics-log', req.session, {log: processedLog.join('\n')});
-    return res.send(out);
+    return ctx.utils.render('diagnostics-log', {log: processedLog.join('\n')});
 };
