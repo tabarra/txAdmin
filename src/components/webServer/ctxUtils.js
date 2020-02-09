@@ -169,7 +169,7 @@ module.exports = async function WebCtxUtils(ctx, next){
         if(view == 'login'){
             ctx.body = await renderLoginView(viewData);
         }else if(soloViews.includes(view)){
-            ctx.body = await renderSoloView('basic/404', viewData);
+            ctx.body = await renderSoloView(view, viewData);
         }else{
             ctx.body = await renderMasterView(view, ctx.session, viewData);
             // dir(ctx.body)

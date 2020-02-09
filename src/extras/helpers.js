@@ -156,22 +156,22 @@ function getFXServerPort(rawCfgFile) {
         throw new Error("Regex Match Error");
     }
 
-    if(!matches.length) throw new Error("No endpoints found");
+    if(!matches.length) throw new Error("No <code>endpoint_add_*</code> found");
 
     let validTCPEndpoint = matches.find((match) => {
         return (match.type.toLowerCase() === 'tcp' && (match.interface === '0.0.0.0' || match.interface === '127.0.0.1'))
     })
-    if(!validTCPEndpoint) throw new Error("You MUST have a TCP endpoint with interface 0.0.0.0");
+    if(!validTCPEndpoint) throw new Error("You MUST have one <code>endpoint_add_tcp</code> with IP 0.0.0.0");
 
     let validUDPEndpoint = matches.find((match) => {
         return (match.type.toLowerCase() === 'udp')
     })
-    if(!validUDPEndpoint) throw new Error("You MUST have at least one UDP endpoint");
+    if(!validUDPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_udp</code>");
 
     //FIXME: Think of something to make this work:
     //  https://forum.fivem.net/t/release-txadmin-manager-discord-bot-live-console-playerlist-autorestarter/530475/348?u=tabarra
     matches.forEach((m) => {
-        if(m.port !== matches[0].port) throw new Error("All endpoints MUST have the same port")
+        if(m.port !== matches[0].port) throw new Error("All <code>endpoint_add_*</code> MUST have the same port")
     });
 
     return matches[0].port;
