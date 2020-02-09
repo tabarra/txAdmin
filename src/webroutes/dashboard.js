@@ -25,7 +25,6 @@ module.exports = async function Dashboard(ctx) {
 
     //Preparing render data
     let renderData = {
-        //FIXME: temp missing resource detector
         errorMessage: globals.dashboardErrorMessage,
         serverName: globals.config.serverName,
         updateData: getUpdateData(),
@@ -38,7 +37,6 @@ module.exports = async function Dashboard(ctx) {
             controlsClass: (ctx.utils.checkPermission('control.server', modulename, false))? 'danger' : 'secondary'
         }
     }
-    dir(renderData)
 
 
     //Rendering the page

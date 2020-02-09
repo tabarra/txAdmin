@@ -68,7 +68,7 @@ module.exports = router = (config) =>{
 
     //Control routes
     router.get('/console', requestAuth('web'), webRoutes.liveConsole);
-    router.post('intercom', requestAuth('intercom'), webRoutes.intercom);
+    router.post('/intercom/:scope', requestAuth('intercom'), webRoutes.intercom);
 
     //Diagnostic routes
     router.get('/diagnostics', requestAuth('web'), webRoutes.diagnostics.get);
@@ -85,6 +85,11 @@ module.exports = router = (config) =>{
     router.get('/resources', requestAuth('web'), webRoutes.resources);
     router.get('/addExtension', requestAuth('web'), webRoutes.addExtension);
     router.get('/', requestAuth('web'), webRoutes.dashboard);
+    router.all('*', async (ctx) =>{
+        ctx.status = 404;
+        if(globals.config.verbose) logWarn(`Request 404 error: ${ctx.path}`);
+        return ctx.utils.render('basic/404');
+    });
 
     //Return router
     return router;

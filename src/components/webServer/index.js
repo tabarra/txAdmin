@@ -38,14 +38,14 @@ module.exports = class WebServer {
         }, this.app);
 
 
-        //FIXME: text render middleware - PS: thefuck does that mean?
+        //Setting up app
         this.app.use(ctxUtils);
         this.app.on('error', (error, ctx) => {
             logError(`Strange error on ${ctx.path}`);
             dir(error)
         });
         
-        //Setting up timeout/error/404/413:
+        //Setting up timeout/error/no-output/413:
         let timeoutLimit = 5 * 1000;
         let jsonLimit = '16MB';
         this.app.use(async (ctx, next) => {
@@ -59,12 +59,13 @@ module.exports = class WebServer {
             try {
                 await Promise.race([timeout, next()]);
                 clearTimeout(timer);
-                if (typeof ctx.status !== 'undefined' && ctx.status === 404) {
-                    if(globals.config.verbose) logWarn(`Request 404 error: ${ctx.path}`);
-                    return ctx.utils.render('basic/404');
+                if (typeof ctx.body == 'undefined' || (typeof ctx.body == 'string' && !ctx.body.length)) {
+                    if(globals.config.verbose) logWarn(`Route without output: ${ctx.path}`);
+                    return ctx.body = '[no output from route]';
                 }
             } catch (error) {
                 //TODO: perhaps we should also have a koa-bodyparser generic error handler?
+                //FIXME: yes we should - sending broken json will cause internal server error even without the route being called
                 let methodName = (error.stack && error.stack[0] && error.stack[0].name)? error.stack[0].name : 'anonym';
                 if(error.type === 'entity.too.large'){
                     let desc = `Entity too large for: ${ctx.path}`;
@@ -86,7 +87,7 @@ module.exports = class WebServer {
             }
         });
         //Setting up additional middlewares:
-        this.app.use(KoaServe('web/public', {index: false}));
+        this.app.use(KoaServe('web/public', {index: false, defer: false}));
         this.app.use(this.sessionInstance);
         this.app.use(KoaBodyParser({jsonLimit}));
 

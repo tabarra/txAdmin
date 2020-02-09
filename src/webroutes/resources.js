@@ -55,16 +55,17 @@ module.exports = async function Resources(ctx) {
         return ctx.utils.render('basic/generic', {message: timeoutMessage});
     }
 
-    let cnt = 0;
-    let intHandle = setInterval(async () => {
-        //Check if there is fresh data
-        try {
+    //Timer fot list delivery
+    let tListTimer; 
+    let tErrorTimer;
+    const tList = new Promise((resolve, reject) => {
+        tListTimer = setInterval(() => {
             if(
                 globals.intercomTempResList !== null &&
                 (new Date() - globals.intercomTempResList.timestamp) <= 1000 &&
                 Array.isArray(globals.intercomTempResList.data)
             ){
-                clearInterval(intHandle);
+                clearTimeout(tErrorTimer);
                 let resGroups = processResources(globals.intercomTempResList.data);
                 let renderData = {
                     headerTitle: 'Resources',
@@ -72,20 +73,22 @@ module.exports = async function Resources(ctx) {
                     resGroups,
                     disableActions: (ctx.utils.checkPermission('commands.resources'))? '' : 'disabled'
                 }
-                return ctx.utils.render('resources', renderData);
+                resolve(['resources', renderData]);
             }
-        } catch (error) {logError(error.message)}
+        }, 100);
+    });
+    
+    //Timer for timing out
+    const tError = new Promise((resolve, reject) => {
+        tErrorTimer = setTimeout(() => {
+            clearTimeout(tListTimer);
+            resolve(['basic/generic', {message: timeoutMessage}]);
+        }, 1000);
+    });
 
-        //Check execution limit of 1000ms
-        cnt++;
-        if(cnt > 10){
-            clearInterval(intHandle);
-            logWarn('the future is now, old man');
-            try {
-                return ctx.utils.render('basic/generic', {message: timeoutMessage});
-            } catch (error) {logError(error.message)}
-        }
-    }, 100);
+    //Start race and give output
+    let [view, renderData] = await Promise.race([tList, tError]);
+    return ctx.utils.render(view, renderData);
 };
 
 

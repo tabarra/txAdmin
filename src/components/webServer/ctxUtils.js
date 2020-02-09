@@ -174,7 +174,7 @@ module.exports = async function WebCtxUtils(ctx, next){
             ctx.body = await renderMasterView(view, ctx.session, viewData);
             // dir(ctx.body)
         }
-        // ctx.type = 'text/html';
+        ctx.type = 'text/html';
     }
     ctx.utils.error = (httpStatus = 500, message = 'unknown error') => {
         ctx.status = httpStatus;
@@ -185,8 +185,6 @@ module.exports = async function WebCtxUtils(ctx, next){
         };
     }
 
-    //FIXME: test these functions
-    //TODO: use xxx.bind(ctx) and inside use this.abc?
     ctx.utils.appendLog = async (data) => {
         return appendLog(ctx, data);
     }

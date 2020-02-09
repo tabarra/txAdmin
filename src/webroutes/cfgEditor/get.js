@@ -30,5 +30,5 @@ module.exports = async function CFGEditorGet(ctx) {
         return ctx.utils.render('basic/generic', {message});
     }
 
-    return ctx.utils.render('basic/generic', {rawFile});
+    return ctx.utils.render('cfgEditor', {rawFile});
 };

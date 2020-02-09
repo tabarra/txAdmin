@@ -221,7 +221,7 @@ module.exports = class FXRunner {
     async writeExecFile(refresh = false, start = false){
         log('Setting up FXServer temp exec file.');
 
-        //FIXME: experiment
+        //NOTE: experiment
         // let isBanExpEnabled;
         // try {
         //     let dbo = globals.database.getDB();
