@@ -53,7 +53,7 @@ module.exports = class WebServer {
             const timeout = new Promise((_, reject) => {
                 timer = setTimeout(() => {
                     ctx.state.timeout = true;
-                    reject();
+                    reject(new Error());
                 }, timeoutLimit);
             });
             try {
@@ -92,9 +92,27 @@ module.exports = class WebServer {
         this.app.use(KoaBodyParser({jsonLimit}));
 
         //Setting up routes
-        this.router = require('./router')(this.config);
-        this.app.use(this.router.routes())
-        this.app.use(this.router.allowedMethods());
+        // this.router = require('./router')(this.config);
+        // this.app.use(this.router.routes())
+        // this.app.use(this.router.allowedMethods());
+        this.app.use(async (ctx, next) => {
+            ctx.body = Date.now()
+            // return async () => {
+            //     ctx.body = Date.now()
+            // }
+        });
+        this.koaCallback = this.app.callback();
+    }
+
+
+    //================================================================
+    httpCallbackHandler(req, res){
+        let prefix = '';
+        if(req.url.startsWith(prefix+'/socket.io')){
+            // return io.engine.handleRequest(req, res);
+        }else{
+            return this.koaCallback(req, res);
+        }
     }
 
 
@@ -104,7 +122,8 @@ module.exports = class WebServer {
         try {
             //FIXME: fix this part?
             let run = ExecuteCommand("endpoint_add_tcp \"0.0.0.0:30110\"");
-            setHttpCallback(this.app.callback());
+            // setHttpCallback(this.httpCallbackHandler.bind(this));
+            setHttpCallback(this.koaCallback);
         } catch (error) {
             logError('::Failed to start CitizenFX Reverse Proxy Callback with error:');
             dir(error);
@@ -112,7 +131,8 @@ module.exports = class WebServer {
 
         //HTTP Server
         try {
-            this.httpServer = HttpClass.createServer(this.app.callback());
+            this.httpServer = HttpClass.createServer(this.httpCallbackHandler.bind(this));
+            // this.httpServer = HttpClass.createServer(this.koaCallback);
             this.httpServer.on('error', (error)=>{
                 if(error.code !== 'EADDRINUSE') return;
                 logError(`Failed to start HTTP server, port ${error.port} already in use.`);

@@ -1,6 +1,7 @@
 ## Custom:
 cache/*
 data/*
+test/*
 !data/example/
 locale/custom.json
 extensions/*

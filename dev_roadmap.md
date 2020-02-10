@@ -111,7 +111,7 @@ Automatic event detection by regexing all .lua files in the resources folder?
     extensions/
         txAdminClient/
             resource/
-                __resource.lua
+                fxmanifest.lua
                 ...
 
 
