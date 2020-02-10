@@ -29,7 +29,6 @@ Citizen.CreateThread(function()
     end
 
     -- Setup threads and commands
-    print("[txAdminClient] setting up threads and commands...")
     RegisterCommand("txaPing", txaPing, true)
     RegisterCommand("txaKickAll", txaKickAll, true)
     RegisterCommand("txaKickID", txaKickID, true)
@@ -44,6 +43,7 @@ Citizen.CreateThread(function()
         end
     end)
     AddEventHandler('playerConnecting', handleConnections)
+    print("[txAdminClient] Threads and commands set up. All Ready.")
 end)
 
 

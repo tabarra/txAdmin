@@ -41,7 +41,29 @@ module.exports = async function FXServerCommands(ctx) {
 
 
     //==============================================
-    if(action == 'admin_broadcast'){
+    if(action == 'profile_monitor'){
+        //NOTE: undocumented feature... might come in handy
+        if(!ensurePermission(ctx, 'all_permissions')) return false;
+        ctx.utils.appendLog('Profiling txAdmin instance.');
+        
+        let profSeconds = 5;
+        let savePath = `${globals.config.serverProfilePath}/data/txProfile.bin`;
+        ExecuteCommand("profiler record start");
+        setTimeout(async ()=>{
+            ExecuteCommand("profiler record stop");
+            setTimeout(async ()=>{
+                ExecuteCommand(`profiler save "${escape(savePath)}"`);
+                setTimeout(async ()=>{
+                    logOk(`Profile saved to: ${savePath}`);
+                    let cmd = `profiler view "${escape(savePath)}"`;
+                    globals.fxRunner.srvCmdBuffer(cmd);
+                }, 150)
+            }, 150)
+        }, profSeconds * 1000);
+        return sendAlertOutput(ctx, 'Check your live console in a few seconds.');
+
+    //==============================================
+    }else if(action == 'admin_broadcast'){
         if(!ensurePermission(ctx, 'commands.message')) return false;
         let cmd = `txaBroadcast "${escape(ctx.session.auth.username)}" "${escape(parameter)}"`;
         ctx.utils.appendLog(cmd);
