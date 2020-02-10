@@ -27,7 +27,7 @@ Minor stuff:
 
 
 /e/FiveM/builds/tmpRoot
-npx nodemon --watch "../1919/citizen/system_resources/monitor/src/*" --exec "../1919/run.cmd"
+npx nodemon --watch "../2083/citizen/system_resources/monitor/src/*" --exec "../2083/run.cmd"
 
 ### Feature tasks for collaborators:
 - Logger:

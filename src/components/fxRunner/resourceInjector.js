@@ -35,7 +35,7 @@ function getResourcesList() {
         let resources = [];
         paths.forEach((path)=>{
             if(!fs.lstatSync(rootDir+path).isDirectory()) return;
-            if(fs.existsSync(rootDir+path+'/resource/__resource.lua')){
+            if(fs.existsSync(rootDir+path+'/resource/fxmanifest.lua')){
                 resources.push(path)
             }
         });
