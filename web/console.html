@@ -70,12 +70,17 @@
 <script>
     //Socket
     $(function () {
-        var socket = io();
+        let prefix = '';
+        var socket = io({path: prefix+'/socket.io', transports: ['polling'], upgrade: false});
         var ansi_up = new AnsiUp;
         ansi_up.escape_for_html = false;
-
+        
         //Events
+        // socket.on('changeBodyColor', (msg) => {
+        //     document.body.style.backgroundColor = msg;
+        // });
         socket.on('connect', () => {
+            console.log("Socket.io Connected!")
             $("#favicon").attr("href", "favicon_on.png");
         });
         socket.on('logout', (error) => {

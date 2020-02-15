@@ -46,6 +46,7 @@
     "koa-ratelimit": "^4.2.1",
     "koa-session": "^5.13.1",
     "koa-session-memory": "^1.0.2",
+    "koa-session-socketio": "^1.0.0",
     "koa-static": "^5.0.0",
     "lowdb": "^1.0.0",
     "nanoid": "^2.1.11",

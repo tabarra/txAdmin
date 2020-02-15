@@ -32,6 +32,7 @@ module.exports = router = (config) =>{
     //     dir(ctx.query.xxx) // for query parameters
     //     dir(ctx.request.body) // for body data (x-www-form-urlencoded / json)
     //     ctx.body = {sdfsdf:'gggggggggggggg'};
+        // ctx.body = 'ddd'
     //     return;
     //     return ctx.utils.error(400, "Invalid Request");
     //     return ctx.send({aaa:false})
@@ -52,11 +53,11 @@ module.exports = router = (config) =>{
 
     //Settings
     router.get('/settings', requestAuth('web'), webRoutes.settings.get);
-    router.post('/settings/save/:scope', requestAuth('web'), webRoutes.settings.save); //FIXME: não tinha que ser do tipo API?
+    router.post('/settings/save/:scope', requestAuth('web'), webRoutes.settings.save);
 
     //FXServer
     router.get('/fxserver/controls/:action', requestAuth('api'), webRoutes.fxserver.controls);
-    router.post('/fxserver/commands', requestAuth('web'), webRoutes.fxserver.commands); //FIXME: não tinha que ser do tipo API?
+    router.post('/fxserver/commands', requestAuth('web'), webRoutes.fxserver.commands);
 
     //CFG Editor
     router.get('/cfgEditor', requestAuth('web'), webRoutes.cfgEditor.get);

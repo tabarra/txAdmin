@@ -370,7 +370,7 @@ module.exports = class FXRunner {
         if(this.fxChild === null) return false;
         try {
             let success = this.fxChild.stdin.write(command + "\n");
-            globals.webConsole.buffer(command, 'command');
+            globals.webServer.webConsole.buffer(command, 'command');
             return success;
         } catch (error) {
             if(globals.config.verbose){

@@ -40,12 +40,12 @@ const requestAuth = (epType) => {
 
     //Socket auth function
     const socketAuth = async (socket, next) =>{
-        const {isValidAuth} = authLogic(socket.handshake.session, true, epType);
+        const {isValidAuth} = authLogic(socket.session, true, epType);
 
         if(isValidAuth){
             await next();
         }else{
-            socket.handshake.session.auth = {}; //a bit redundant but it wont hurt anyone
+            socket.session.auth = {}; //a bit redundant but it wont hurt anyone
             socket.disconnect(0);
             if(globals.config.verbose) logWarn('Auth denied when creating session');
             next(new Error('Authentication Denied'));

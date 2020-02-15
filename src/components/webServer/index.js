@@ -1,23 +1,34 @@
 //Requires
 const modulename = 'WebServer';
 const HttpClass  = require('http');
+
 const Koa = require('koa');
 const KoaBodyParser = require('koa-bodyparser');
 const KoaServe = require('koa-static');
 const KoaSession = require('koa-session');
 const KoaSessionMemoryStoreClass = require('koa-session-memory');
+
+const SocketIO = require('socket.io');
+const SessionIO = require('koa-session-socketio')
+const WebConsole = require('./webConsole')
+
 const nanoid = require('nanoid');
 const { setHttpCallback } = require('@citizenfx/http-wrapper');
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
+const {requestAuth} = require('./requestAuthenticator');
 const ctxUtils = require('./ctxUtils.js');
+
 
 module.exports = class WebServer {
     constructor(config, httpPort) {
         this.config = config;
         this.httpPort = httpPort; //NOTE: remove when adding support for multi-server
         this.intercomToken = nanoid();
+        this.koaSessionKey = `txAdmin:${globals.config.serverProfile}:sess`;
+        this.webConsole = null;
 
         this.setupKoa();
+        this.setupWebsocket();
         this.setupServerCallbacks();
     }
 
@@ -32,7 +43,7 @@ module.exports = class WebServer {
         this.koaSessionMemoryStore = new KoaSessionMemoryStoreClass();
         this.sessionInstance = KoaSession({
             store: this.koaSessionMemoryStore,
-            key: `txAdmin:${globals.config.serverProfile}:sess`,
+            key: this.koaSessionKey,
             rolling: true,
             maxAge: 24*60*60*1000 //one day
         }, this.app);
@@ -92,27 +103,49 @@ module.exports = class WebServer {
         this.app.use(KoaBodyParser({jsonLimit}));
 
         //Setting up routes
-        // this.router = require('./router')(this.config);
-        // this.app.use(this.router.routes())
-        // this.app.use(this.router.allowedMethods());
-        this.app.use(async (ctx, next) => {
-            ctx.body = Date.now()
-            // return async () => {
-            //     ctx.body = Date.now()
-            // }
-        });
+        this.router = require('./router')(this.config);
+        this.app.use(this.router.routes())
+        this.app.use(this.router.allowedMethods());
+        // this.app.use(async (ctx, next) => {
+        //     ctx.body = Date.now()
+        //     // return async () => {
+        //     //     ctx.body = Date.now()
+        //     // }
+        // });
         this.koaCallback = this.app.callback();
+    }
+
+
+    //================================================================
+    setupWebsocket(){
+        //Start SocketIO
+        this.io = SocketIO(HttpClass.createServer());
+        this.io.use(SessionIO(this.koaSessionKey, this.koaSessionMemoryStore))
+        this.io.use(requestAuth('socket'));
+
+        //Setting up WebConsole
+        this.webConsole = new WebConsole(this.io);
+        this.io.on('connection', this.webConsole.handleConnection.bind(this.webConsole));
+
+        //Debug only
+        // setInterval(() => {
+        //     try {
+        //         this.io.emit('changeBodyColor', '#'+(Math.random()*0xFFFFFF<<0).toString(16).toUpperCase());
+        //     } catch (error) {}
+        // }, 1000);
     }
 
 
     //================================================================
     httpCallbackHandler(req, res){
         let prefix = '';
-        if(req.url.startsWith(prefix+'/socket.io')){
-            // return io.engine.handleRequest(req, res);
-        }else{
-            return this.koaCallback(req, res);
-        }
+        try {
+            if(req.url.startsWith(prefix+'/socket.io')){
+                this.io.engine.handleRequest(req, res);
+            }else{
+                this.koaCallback(req, res);
+            }
+        } catch (error) {}
     }
 
 
@@ -120,7 +153,7 @@ module.exports = class WebServer {
     setupServerCallbacks(){
         //CitizenFX Callback
         try {
-            //FIXME: fix this part?
+            //FIXME: fix this part!
             let run = ExecuteCommand("endpoint_add_tcp \"0.0.0.0:30110\"");
             // setHttpCallback(this.httpCallbackHandler.bind(this));
             setHttpCallback(this.koaCallback);
@@ -132,7 +165,6 @@ module.exports = class WebServer {
         //HTTP Server
         try {
             this.httpServer = HttpClass.createServer(this.httpCallbackHandler.bind(this));
-            // this.httpServer = HttpClass.createServer(this.koaCallback);
             this.httpServer.on('error', (error)=>{
                 if(error.code !== 'EADDRINUSE') return;
                 logError(`Failed to start HTTP server, port ${error.port} already in use.`);
@@ -140,7 +172,6 @@ module.exports = class WebServer {
             });
             this.httpServer.listen(this.httpPort, '0.0.0.0', () => {
                 logOk(`::Started at http://localhost:${this.httpPort}/`);
-                globals.webConsole.attachSocket(this.httpServer);
             });
         } catch (error) {
             logError('::Failed to start HTTP server with error:');

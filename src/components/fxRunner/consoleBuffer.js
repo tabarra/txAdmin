@@ -67,7 +67,7 @@ module.exports = class ConsoleBuffer {
         data = data.toString();
         try {
             this.hitchStreamProcessor.write(data);
-            globals.webConsole.buffer(data, markType);
+            globals.webServer.webConsole.buffer(data, markType);
             //NOTE: There used to be a rule "\x0B-\x1F" that was replaced with "x0B-\x1A\x1C-\x1F" to allow the \x1B terminal escape character.
             //This is neccessary for the terminal to have color, but beware of side effects.
             //This regex was done in the first place to prevent fxserver output to be interpreted as txAdmin output by the host terminal
@@ -97,7 +97,7 @@ module.exports = class ConsoleBuffer {
         //FIXME: this should be saving to a file, and should be persistent to the web console
         data = data.toString();
         try {
-            globals.webConsole.buffer(data, 'error');
+            globals.webServer.webConsole.buffer(data, 'error');
             if(!globals.fxRunner.config.quiet) process.stdout.write(ac.red(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, "")));
         } catch (error) {
             if(globals.config.verbose) logError(`Buffer write error: ${error.message}`)

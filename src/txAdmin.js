@@ -78,9 +78,6 @@ module.exports = class txAdmin {
         this.startWebServer(profileConfig.webServer, txAdminPort).catch((err) => { //NOTE: temp parameter
             HandleFatalError(err, 'WebServer');
         });
-        this.startWebConsole(profileConfig.webConsole).catch((err) => {
-            HandleFatalError(err, 'WebConsole');
-        });
         // this.startDatabase().catch((err) => {
         //     HandleFatalError(err, 'Database');
         // });
@@ -92,7 +89,7 @@ module.exports = class txAdmin {
         //Run Update Checker every 15 minutes
         const updateChecker = require('./extras/updateChecker');
         // updateChecker();
-        setInterval(updateChecker, 15 * 60 * 1000);
+        // setInterval(updateChecker, 15 * 60 * 1000);
     }
 
 
@@ -136,12 +133,6 @@ module.exports = class txAdmin {
     async startWebServer(config, txAdminPort){
         const WebServer = require('./components/webServer')
         globals.webServer = new WebServer(config, txAdminPort);
-    }
-
-    //==============================================================
-    async startWebConsole(config){
-        const WebConsole = require('./components/webConsole')
-        globals.webConsole = new WebConsole(config);
     }
 
     //==============================================================
