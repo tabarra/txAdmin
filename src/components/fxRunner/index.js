@@ -24,8 +24,6 @@ module.exports = class FXRunner {
         this.fxServerPort = null;
         this.extResources = [];
         this.consoleBuffer = new ConsoleBuffer(this.config.logPath, 10);
-        this.tmpExecFile = `${globals.config.serverProfilePath}/data/exec.tmp.cfg`;
-        this.setupVariables();
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
         if(config.autostart){
@@ -42,7 +40,6 @@ module.exports = class FXRunner {
      */
     refreshConfig(){
         this.config = globals.configVault.getScoped('fxRunner');
-        this.setupVariables();
     }//Final refreshConfig()
 
 
@@ -51,16 +48,40 @@ module.exports = class FXRunner {
      * Setup the spawn variables
      */
     setupVariables(){
+        //Defaults
+        let toExec = [
+            `+sets txAdmin-version "${globals.version.current}"`,
+            `+set txAdmin-apiPort "${globals.webServer.httpPort}"`,
+            `+set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
+            `+set txAdmin-clientCompatVersion "${globals.version.current}"`,
+        ];
+
+        //Commands
+        this.extResources.forEach((resource)=>{
+            toExec.push(`+ensure "${resource}"`);
+        });
+
         let onesyncFlag = (this.config.onesync)? '+set onesync_enabled 1' : '';
+        const cliArgs = [
+            onesyncFlag,
+            `+set txAdminServerMode true`,
+            this.config.commandLine || '',
+            `+exec "${this.config.cfgPath}"`,
+        ];
+
+        cliArgs.push(...toExec);
+
+        const cliString = cliArgs.join(' ');
+
         if(globals.config.osType === 'Linux'){
             this.spawnVariables = {
                 shell: '/bin/sh',
-                cmdArgs: [`${this.config.buildPath}/run.sh`, `${onesyncFlag} +exec "${this.tmpExecFile}"`]
+                cmdArgs: [`${this.config.buildPath}/run.sh`, cliString]
             };
         }else if(globals.config.osType === 'Windows_NT'){
             this.spawnVariables = {
                 shell: 'cmd.exe',
-                cmdArgs: ['/c', `${this.config.buildPath}/run.cmd ${onesyncFlag} +exec "${this.tmpExecFile}"`]
+                cmdArgs: ['/c', `${this.config.buildPath}/run.cmd ${cliString}`]
             };
         }else{
             logError(`OS type not supported: ${globals.config.osType}`);
@@ -78,6 +99,8 @@ module.exports = class FXRunner {
      */
     async spawnServer(announce){
         log("Starting FXServer");
+        //Setup variables
+        this.setupVariables();
         //Sanity Check
         if(
             this.spawnVariables == null ||
@@ -101,10 +124,6 @@ module.exports = class FXRunner {
 
         //Refresh resource cache
         await this.injectResources();
-
-        //Write tmp exec file
-        let execFilePath = await this.writeExecFile(false, true);
-        if(!execFilePath) return logError('Failed to write exec file. Check terminal.');
 
         //Detecting endpoint port
         try {
@@ -169,11 +188,8 @@ module.exports = class FXRunner {
             logWarn(`>> [${pid}] FXServer Exited.`);
             if(now() - tsStart <= 5){
                 setTimeout(() => {
-                    if(globals.config.osType === 'Windows_NT'){
-                        logWarn(`FXServer didn't started. This is not an issue with txAdmin. Make sure you have Visual C++ 2019 installed.`)
-                    }else{
-                        logWarn(`FXServer didn't started. This is not an issue with txAdmin.`)
-                    }
+                    const platformComplaint = (globals.config.osType === 'Windows_NT') ? ' Make sure you have Visual C++ Redistributable 2019 installed.' : '';
+                    logWarn(`FXServer didn't start. This is not an issue with txAdmin.${platformComplaint}`)
                 }, 500);
             }
         });
@@ -207,55 +223,6 @@ module.exports = class FXRunner {
             let inject = await resourceInjector.inject(this.config.basePath, this.extResources);
         } catch (error) {
             logError(`ResourceInjector Error: ${error.message}`);
-            return false;
-        }
-    }
-
-
-    //================================================================
-    /**
-     * Writes the exec.tmp.cfg file
-     * @param {boolean} refresh
-     * @param {boolean} start
-     */
-    async writeExecFile(refresh = false, start = false){
-        log('Setting up FXServer temp exec file.');
-
-        //NOTE: experiment
-        // let isBanExpEnabled;
-        // try {
-        //     let dbo = globals.database.getDB();
-        //     isBanExpEnabled = await dbo.get("experiments.bans.enabled").value();
-        // } catch (error) {
-        //     logError(`[writeExecFile] Database operation failed with error: ${error.message}`);
-        //     if(globals.config.verbose) dir(error);
-        // }
-        // let runBanExperiment = (isBanExpEnabled)? 'true' : 'false';
-
-        //Defaults
-        let timestamp = new Date().toLocaleString();
-        let toExec = [
-            `# [${timestamp}] This file was auto-generated by txAdmin`,
-            `sets txAdmin-version "${globals.version.current}"`,
-            `set txAdmin-apiPort "${globals.webServer.httpPort}"`,
-            `set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
-            `set txAdmin-clientCompatVersion "1.5.0"`,
-            // `set txAdmin-expBanEnabled ${runBanExperiment}`
-        ]
-
-        //Commands
-        this.extResources.forEach((resource)=>{
-            toExec.push(`ensure "${resource}"`);
-        });
-
-        if(refresh) toExec.push('refresh');
-        if(start) toExec.push(`exec "${this.config.cfgPath}"`);
-
-        try {
-            await fs.writeFile(this.tmpExecFile, toExec.join('\n'), 'utf8');
-            return this.tmpExecFile;
-        } catch (error) {
-            logError(`Error while writing tmp exec file for the FXServer: ${error.message}`);
             return false;
         }
     }

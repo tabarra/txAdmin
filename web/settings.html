@@ -142,13 +142,25 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmFXServer-cfgPath" class="col-sm-3 col-form-label">CFG File Path
+                            <label for="frmFXServer-cfgPath" class="col-sm-3 col-form-label">Startup Script Path
                                 <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmFXServer-cfgPath" value="{{fxserver.cfgPath}}"
                                     placeholder="C:/Users/Admin/Desktop/server01/server.cfg" {{disableWrite}}>
                                 <span class="form-text text-muted">
                                     The absolute or relative (to the Base) path of your <code>server.cfg</code>.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="frmFXServer-commandLine" class="col-sm-3 col-form-label">Additional Arguments
+                                <span class="text-danger">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmFXServer-commandLine" value="{{fxserver.commandLine}}"
+                                    placeholder="+exec extra.cfg" {{disableWrite}}>
+                                <span class="form-text text-muted">
+                                    Additional command-line arguments to pass to the FXServer instance.
                                 </span>
                             </div>
                         </div>
@@ -394,6 +406,7 @@
         let data = {
             basePath: $('#frmFXServer-basePath').val().trim(),
             cfgPath: $('#frmFXServer-cfgPath').val().trim(),
+            commandLine: $('#frmFXServer-commandLine').val().trim(),
             onesync: $('#frmFXServer-onesync').is(':checked'),
             autostart: $('#frmFXServer-autostart').is(':checked'),
             quiet: $('#frmFXServer-quiet').is(':checked')

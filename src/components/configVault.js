@@ -138,6 +138,7 @@ module.exports = class ConfigVault {
             out.fxRunner = {
                 basePath: toDefault(cfg.fxRunner.basePath, null),
                 cfgPath: toDefault(cfg.fxRunner.cfgPath, null),
+                commandLine: toDefault(cfg.fxRunner.commandLine, null),
                 logPath: toDefault(cfg.fxRunner.logPath, null), //not in template
                 setPriority: toDefault(cfg.fxRunner.setPriority, null),
                 onesync: toDefault(cfg.fxRunner.onesync, null),
