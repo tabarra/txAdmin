@@ -19,6 +19,7 @@ const dynamicSort = (prop) => {
     }
 }
 const getResourceSubPath = (resPath) => {
+    if(resPath.indexOf('system_resources') >= 0) return `system_resources`;
     if(!path.isAbsolute(resPath)) return resPath;
 
     let basePathArr = breakPath(`${globals.fxRunner.config.basePath}/resources`);
