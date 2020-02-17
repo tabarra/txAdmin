@@ -8,6 +8,7 @@ extensions/*
 !extensions/txAdminClient/
 *.ignore.*
 /start_*.bat
+dist/
 
 ## Github's default node gitignore
 # Logs

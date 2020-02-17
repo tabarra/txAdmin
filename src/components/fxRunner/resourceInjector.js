@@ -30,7 +30,7 @@ async function resetCacheFolder(basePath) {
  */
 function getResourcesList() {
     try {
-        let rootDir = './extensions/';
+        let rootDir = GetResourcePath(GetCurrentResourceName()) + '/extensions/';
         var paths = fs.readdirSync(rootDir);
         let resources = [];
         paths.forEach((path)=>{

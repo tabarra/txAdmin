@@ -61,5 +61,10 @@
     "squirrelly": "^7.9.1",
     "stream-snitch": "0.0.3",
     "xss": "^1.0.6"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^5.1.1",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11"
   }
 }

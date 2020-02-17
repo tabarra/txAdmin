@@ -22,7 +22,7 @@ const getRenderErrorText = (view, error, data) => {
 }
 function getWebViewPath(view){
     if(view.includes('..')) throw new Error('Path Traversal?');
-    return path.join(__dirname, '../../../web/', view+'.html');
+    return path.join(GetResourcePath(GetCurrentResourceName()), 'web/', view+'.html');
 }
 
 //Squirrelly Filters

@@ -98,7 +98,7 @@ module.exports = class WebServer {
             }
         });
         //Setting up additional middlewares:
-        this.app.use(KoaServe('web/public', {index: false, defer: false}));
+        this.app.use(KoaServe(path.join(GetResourcePath(GetCurrentResourceName()), 'web/public'), {index: false, defer: false}));
         this.app.use(this.sessionInstance);
         this.app.use(KoaBodyParser({jsonLimit}));
 
@@ -119,7 +119,7 @@ module.exports = class WebServer {
     //================================================================
     setupWebsocket(){
         //Start SocketIO
-        this.io = SocketIO(HttpClass.createServer());
+        this.io = SocketIO(HttpClass.createServer(), { serveClient: false });
         this.io.use(SessionIO(this.koaSessionKey, this.koaSessionMemoryStore))
         this.io.use(requestAuth('socket'));
 
