@@ -110,3 +110,7 @@ mark {
         margin-top: 0.5em;
     }
 }
+
+.form-control::placeholder {
+    color: #A9B5C0;
+}
