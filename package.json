@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/tabarra/txAdmin#readme",
   "dependencies": {
-    "@citizenfx/http-wrapper": "^0.2.1",
+    "@citizenfx/http-wrapper": "^0.2.2",
     "@koa/router": "^8.0.7",
     "ansi-colors": "^4.1.1",
     "axios": "^0.19.2",
