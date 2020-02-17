@@ -108,11 +108,12 @@ function processResources(resList){
         let subPath = getResourceSubPath(resource.path);
         let resData = {
             name: resource.name,
+            divName: resource.name.replace(/%/g, ''),
             status: resource.status,
-            statusClass: (resource.status === 'started')? 'success' : 'danger',
+            statusClass: (resource.status === 'started')? 'info' : '',
             // path: slash(path.normalize(resource.path)),
             version: (resource.version)? `(${resource.version.trim()})` : '',
-            author: (resource.author)? `by ${resource.author.trim()}` : '',
+            author: (resource.author)? `${resource.author.trim()}` : '',
             description: (resource.description)? resource.description.trim() : '',
         }
 
@@ -128,7 +129,7 @@ function processResources(resList){
     Object.keys(resGroupList).forEach(subPath => {
         let subPathData = {
             subPath: subPath,
-            divName: subPath.replace(/\W/g, ''),
+            divName: subPath.replace(/[\W%]/g, ''),
             resources: resGroupList[subPath].sort(dynamicSort('name'))
         }
         finalList.push(subPathData)
