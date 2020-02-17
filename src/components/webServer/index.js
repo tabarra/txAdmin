@@ -153,10 +153,7 @@ module.exports = class WebServer {
     setupServerCallbacks(){
         //CitizenFX Callback
         try {
-            //FIXME: fix this part!
-            let run = ExecuteCommand("endpoint_add_tcp \"0.0.0.0:30110\"");
-            // setHttpCallback(this.httpCallbackHandler.bind(this));
-            setHttpCallback(this.koaCallback);
+            setHttpCallback(this.httpCallbackHandler.bind(this));
         } catch (error) {
             logError('::Failed to start CitizenFX Reverse Proxy Callback with error:');
             dir(error);
