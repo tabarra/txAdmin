@@ -22,7 +22,7 @@ const getRenderErrorText = (view, error, data) => {
 }
 function getWebViewPath(view){
     if(view.includes('..')) throw new Error('Path Traversal?');
-    return path.join(GetResourcePath(GetCurrentResourceName()), 'web/', view+'.html');
+    return path.join(globals.info.txAdminResourcePath, 'web/', view+'.html');
 }
 
 //Squirrelly Filters
@@ -84,7 +84,8 @@ async function renderLoginView(data){
     // data.template = 'normal';
     // data.template = 'justMessage';
     data.config = globals.info.serverProfile;
-    data.version = globals.version.current;
+    data.txAdminVersion = globals.version.current;
+    data.fxserverVersion = globals.info.fxserverVersion;
 
     let out;
     try {

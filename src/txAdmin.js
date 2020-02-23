@@ -59,7 +59,7 @@ module.exports = class txAdmin {
 
         //Setting global infos
         try {
-            globals.info = require('./extras/globalInfo')();
+            globals.info = require('./extras/globalInfo')(dataPath, profilePath, serverProfile, txAdminPort);
         } catch (err) {
             logError(`Failed to set globals.info with error: ${err.message}`);
             if(globals.config.verbose) dir(err);
@@ -67,7 +67,7 @@ module.exports = class txAdmin {
         }
 
         //Start all modules
-        this.startAuthenticator(profileConfig.authenticator, dataPath).catch((err) => { //NOTE: temp parameter
+        this.startAuthenticator(profileConfig.authenticator).catch((err) => {
             HandleFatalError(err, 'Authenticator');
         });
         this.startDiscordBot(profileConfig.discordBot).catch((err) => {
@@ -85,7 +85,7 @@ module.exports = class txAdmin {
         this.startMonitor(profileConfig.monitor).catch((err) => {
             HandleFatalError(err, 'Monitor');
         });
-        this.startWebServer(profileConfig.webServer, txAdminPort).catch((err) => { //NOTE: temp parameter
+        this.startWebServer(profileConfig.webServer).catch((err) => {
             HandleFatalError(err, 'WebServer');
         });
         // this.startDatabase().catch((err) => {
@@ -104,9 +104,9 @@ module.exports = class txAdmin {
 
 
     //==============================================================
-    async startAuthenticator(config, dataPath){
+    async startAuthenticator(config){
         const Authenticator = require('./components/authenticator')
-        globals.authenticator = new Authenticator(config, dataPath);
+        globals.authenticator = new Authenticator(config);
     }
 
     //==============================================================
@@ -140,9 +140,9 @@ module.exports = class txAdmin {
     }
 
     //==============================================================
-    async startWebServer(config, txAdminPort){
+    async startWebServer(config){
         const WebServer = require('./components/webServer')
-        globals.webServer = new WebServer(config, txAdminPort);
+        globals.webServer = new WebServer(config);
     }
 
     //==============================================================

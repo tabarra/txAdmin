@@ -112,7 +112,7 @@ module.exports = class Monitor {
             }
         })
 
-        if(globals.config.verbose) schedule.forEach(el => { dir(el.messages) });
+        if(globals.config.verbose) dir(schedule.map(el => { return el.messages }));
         this.schedule = (schedule.length)? schedule : false;
     }
 

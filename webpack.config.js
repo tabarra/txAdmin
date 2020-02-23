@@ -28,7 +28,6 @@ module.exports = {
             'extensions/**/*.lua',
             'extensions/**/cl_*.js',
             'web/**',
-            'locale/custom.json',
         ]),
     ],
 };

@@ -7,7 +7,7 @@ const slash = require('slash');
 const { dir, log, logOk, logWarn, logError, cleanTerminal, setTTYTitle } = require('./extras/console')();
 
 //Helpers
-const CleanPath = (x) => { return slash(path.normalize(x)) };
+const cleanPath = (x) => { return slash(path.normalize(x)) };
 
 
 //==============================================================
@@ -24,7 +24,7 @@ if(serverRootConvar == 'false'){
     logError(`serverRoot convar not set`);
     process.exit();
 }
-const serverRoot = CleanPath(serverRootConvar);
+const serverRoot = cleanPath(serverRootConvar);
 
 //Get profile name
 const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, "").trim();
@@ -38,7 +38,7 @@ if(!serverProfile.length){
 log(`Server profile selected: '${serverProfile}'`);
 
 //Checking data path
-const dataPath = CleanPath(serverRoot+'/txData');
+const dataPath = cleanPath(serverRoot+'/txData');
 try {
     if(!fs.existsSync(dataPath)) fs.mkdirSync(dataPath);
 } catch (error) {
@@ -47,7 +47,7 @@ try {
 }
 
 //Check if the profile exists and call setup if it doesn't
-const profilePath = CleanPath(path.join(dataPath, serverProfile));
+const profilePath = cleanPath(path.join(dataPath, serverProfile));
 if(!fs.existsSync(profilePath)){
     logWarn(`Profile not found in '${dataPath}', setting folder up...`);
     try {

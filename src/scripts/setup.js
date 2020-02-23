@@ -8,7 +8,7 @@ const osType = require('os').type();
 
 //Helpers
 const printDivider = () => { log('='.repeat(64)) };
-const CleanPath = (x) => { return slash(path.normalize(x)) };
+const cleanPath = (x) => { return slash(path.normalize(x)) };
 
 //Default config structure
 let defaultConfig = {
@@ -60,7 +60,7 @@ module.exports = (serverRoot, serverProfile, profilePath) => {
         logError(`citizen_root convar not set`);
         process.exit();
     }
-    const citizenRoot = CleanPath(citizenRootConvar);
+    const citizenRoot = cleanPath(citizenRootConvar);
 
     //Create new profile folder
     log('Creating new profile folder...');

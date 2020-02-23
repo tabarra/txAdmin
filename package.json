@@ -4,11 +4,7 @@
   "description": "FiveM FXServer Admin - remotely manage your GTA5 FiveM Server",
   "main": "src/index.js",
   "scripts": {
-    "watch": "npx nodemon --watch \"src/*\" src/index.js",
-    "admin-add": "node src/scripts/admin-add.js",
-    "setup": "node src/scripts/setup.js",
-    "start": "node src/index.js",
-    "config-tester": "node src/scripts/config-tester.js"
+    "build": "./node_modules/.bin/webpack.cmd --config webpack.config.js --progress"
   },
   "repository": {
     "type": "git",

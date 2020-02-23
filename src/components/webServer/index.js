@@ -20,9 +20,8 @@ const ctxUtils = require('./ctxUtils.js');
 
 
 module.exports = class WebServer {
-    constructor(config, httpPort) {
+    constructor(config) {
         this.config = config;
-        this.httpPort = httpPort; //NOTE: remove when adding support for multi-server
         this.intercomToken = nanoid();
         this.koaSessionKey = `txAdmin:${globals.info.serverProfile}:sess`;
         this.webConsole = null;
@@ -98,7 +97,7 @@ module.exports = class WebServer {
             }
         });
         //Setting up additional middlewares:
-        this.app.use(KoaServe(path.join(GetResourcePath(GetCurrentResourceName()), 'web/public'), {index: false, defer: false}));
+        this.app.use(KoaServe(path.join(globals.info.txAdminResourcePath, 'web/public'), {index: false, defer: false}));
         this.app.use(this.sessionInstance);
         this.app.use(KoaBodyParser({jsonLimit}));
 
@@ -167,8 +166,8 @@ module.exports = class WebServer {
                 logError(`Failed to start HTTP server, port ${error.port} already in use.`);
                 process.exit();
             });
-            this.httpServer.listen(this.httpPort, '0.0.0.0', () => {
-                logOk(`::Started at http://localhost:${this.httpPort}/`);
+            this.httpServer.listen(globals.info.txAdminPort, '0.0.0.0', () => {
+                logOk(`::Started at http://localhost:${globals.info.txAdminPort}/`);
             });
         } catch (error) {
             logError('::Failed to start HTTP server with error:');

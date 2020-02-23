@@ -46,9 +46,6 @@ function dependencyChecker() {
             console.log(`[txAdmin:PreCheck] Cannot start txAdmin due to missing dependencies.`);
             console.log(`[txAdmin:PreCheck] Make sure you executed 'npm i'.`);
             console.log(`[txAdmin:PreCheck] The following packages are missing: ` + missing.join(', '));
-            if(!process.version.startsWith('v10.')){
-                console.log(`[txAdmin:PreCheck] Note: txAdmin doesn't support NodeJS ${process.version}, please install NodeJS v10 LTS!`);
-            }
             process.exit();
         }
     } catch (error) {
