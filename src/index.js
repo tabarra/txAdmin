@@ -1,5 +1,4 @@
 //Environment and Requires
-process.chdir(__dirname+'/..');
 const fs = require('fs');
 const path = require('path');
 const helpers = require('./extras/helpers');

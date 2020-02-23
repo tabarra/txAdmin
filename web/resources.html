@@ -30,52 +30,61 @@
     </div>
 </div>
 <div class="row justify-content-md-center">
-    {{foreach(options.resGroups)}}
     <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
-        <div class="card card-accent-primary" id="resList-card-{{@this.divName}}">
-            <div class="card-header" data-toggle="collapse" href="#resList-cardBody-{{@this.divName}}"
-                aria-expanded="true" aria-controls="resList-cardBody-{{@this.divName}}"
-                id="resList-cardHeader-{{@this.divName}}">
-                <span style="font-size: large">{{@this.subPath}}</span>
-                <i class="icons icon-arrow-down float-right"></i>
-            </div>
-            <div class="card-body collapse show" id="resList-cardBody-{{@this.divName}}"
-                aria-labelledby="resList-cardHeader-{{@this.divName}}">
-                {{each(@this.resources)}}
-                <div class="callout callout-{{@this.statusClass}} b-t-1 b-r-1 b-b-1" id="res-{{@this.name}}"
-                    style="padding-top: 1em;">
-                    <strong class="h4" style="word-wrap: break-word;">{{@this.name}}</strong>
-                    {{if(@this.status=='started')}}
-                    <!-- FIXME: Quick wordaround for the padding problem: -->
-                    <span class="d-sm-none"><br></span>
-                    <button class="btn btn-sm btn-outline-dark float-right"
-                        onclick="btnCommand('ensure_res', '{{@this.name}}')" {{disableActions}}>
-                        RESTART
-                    </button>
-                    &nbsp;
-                    <button class="btn btn-sm btn-outline-dark float-right" style="margin-right: 0.5em;"
-                        onclick="btnCommand('stop_res', '{{@this.name}}')" {{disableActions}}>
-                        STOP
-                    </button>
-                    {{#else}}
-                    <button class="btn btn-sm btn-outline-dark float-right"
-                        onclick="btnCommand('ensure_res', '{{@this.name}}')" {{disableActions}}>
-                        START
-                    </button>
-                    {{/if}}
-                    {{if(@this.version=='')}}
-                    <br>
-                    <br>
-                    {{#else}}
-                    <br>
-                    <small class="text-muted">{{@this.version}} {{@this.author}}</small>
-                    {{/if}}
-                </div>
-                {{/each}}
-            </div>
+        <div class="card card-accent-primary table-responsive-sm">
+            <table class="table table-hover table-outline mb-0">
+                {{foreach(options.resGroups)}}
+                    <thead class="thead-light" id="resList-card-{{@this.divName}}">
+                        <tr>
+                            <th class="text-break">{{@this.subPath}}</th>
+                            <th class="text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resList-cardBody-{{@this.divName}}"
+                        aria-labelledby="resList-cardHeader-{{@this.divName}}">
+                        {{each(@this.resources)}}
+                        <tr class="{{@this.statusClass ? 'table-' + @this.statusClass : ''}}" id="res-{{@this.divName}}">
+                            <td>
+                                <strong style="word-wrap: break-word;">{{@this.name}}</strong>
+                                {{if(@this.version!='')}}
+                                    <em>{{@this.version}}</em>
+                                {{/if}}
+                                {{if(@this.author!='')}}
+                                    by {{@this.author}}
+                                {{/if}}
+                                {{if(@this.description!='')}}
+                                    <br>
+                                    {{@this.description}}
+                                {{/if}}
+                            </td>
+
+                            <td class="text-right">
+                                {{if(@this.status=='started')}}
+                                <a class="btn btn-sm btn-outline-primary d-block d-md-inline-block mr-md-1 mb-1 mb-md-0"
+                                    href="#"
+                                    onclick="btnCommand('ensure_res', '{{@this.name}}'); event.preventDefault();" {{disableActions}}>
+                                    Restart
+                                </a>
+                                <a class="btn btn-sm btn-outline-primary d-block d-md-inline-block m-0"
+                                    href="#"
+                                    onclick="btnCommand('stop_res', '{{@this.name}}'); event.preventDefault();" {{disableActions}}>
+                                    Stop
+                                </a>
+                                {{#else}}
+                                <a class="btn btn-sm btn-outline-primary d-block d-md-inline-block"
+                                    href="#"
+                                    onclick="btnCommand('ensure_res', '{{@this.name}}'); event.preventDefault();" {{disableActions}}>
+                                    Start
+                                </a>
+                                {{/if}}
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                {{/foreach}}
+            </table>
         </div>
     </div>
-    {{/foreach}}
 </div>
 
 
@@ -172,10 +181,10 @@
             let hidden = 0;
             folder.resources.forEach(resource => {
                 if (resource.name.toUpperCase().indexOf(filter) > -1) {
-                    $(`#res-${resource.name}`).show();
+                    $(`#res-${resource.divName}`).show();
                 } else {
                     hidden++;
-                    $(`#res-${resource.name}`).hide();
+                    $(`#res-${resource.divName}`).hide();
                 }
             });
             if (folder.resources.length == hidden) {
@@ -207,7 +216,7 @@
         resGroupsJS.forEach(folder => {
             let hidden = 0;
             folder.resources.forEach(resource => {
-                if ($(`#res-${resource.name}`).hasClass("defaultRes")) {
+                if ($(`#res-${resource.divName}`).hasClass("defaultRes")) {
                     hidden++;
                 }
             });

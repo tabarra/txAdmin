@@ -1,7 +1,11 @@
+if GetConvar('txAdminServerMode', 'false') ~= 'true' then
+    return
+end
+
 local apiPort = "invalid"
 local apiToken = "invalid"
 local serverCompatVersion = "invalid"
-local txAdminClientVersion = GetResourceMetadata('txAdminClient', 'version')
+local txAdminClientVersion = GetResourceMetadata('monitor', 'version')
 print("[txAdminClient] Version "..txAdminClientVersion.." starting...")
 
 Citizen.CreateThread(function()

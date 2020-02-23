@@ -150,17 +150,6 @@ module.exports = async function FXServerCommands(ctx) {
         return sendAlertOutput(ctx, toResp);
 
     //==============================================
-    }else if(action == 'reinject_res'){
-        if(!ensurePermission(ctx, 'commands.resources')) return false;
-        ctx.utils.appendLog('Re-Injected txAdmin resources');
-        await globals.fxRunner.injectResources();
-        let exexFilePath = await globals.fxRunner.writeExecFile(true, false);
-        if(!exexFilePath) return sendAlertOutput(ctx, 'Failed to write exec.tmp.cfg');
-        let cmd = `exec "${exexFilePath}"`;
-        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-        return sendAlertOutput(ctx, toResp);
-
-    //==============================================
     }else if(action == 'check_txaclient'){
         let cmd = `txaPing`;
         ctx.utils.appendLog(cmd);

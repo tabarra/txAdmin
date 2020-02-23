@@ -111,6 +111,7 @@ function handleFXServer(ctx) {
     if(
         isUndefined(ctx.request.body.basePath) ||
         isUndefined(ctx.request.body.cfgPath) ||
+        isUndefined(ctx.request.body.commandLine) ||
         isUndefined(ctx.request.body.onesync) ||
         isUndefined(ctx.request.body.autostart) ||
         isUndefined(ctx.request.body.quiet)
@@ -122,6 +123,7 @@ function handleFXServer(ctx) {
     let cfg = {
         basePath: slash(path.normalize(ctx.request.body.basePath+'/')),
         cfgPath: slash(path.normalize(ctx.request.body.cfgPath)),
+        commandLine: ctx.request.body.commandLine,
         onesync: (ctx.request.body.onesync === 'true'),
         autostart: (ctx.request.body.autostart === 'true'),
         quiet: (ctx.request.body.quiet === 'true'),
@@ -164,6 +166,7 @@ function handleFXServer(ctx) {
     newConfig.onesync = cfg.onesync;
     newConfig.autostart = cfg.autostart;
     newConfig.quiet = cfg.quiet;
+    newConfig.commandLine = cfg.commandLine;
     let saveStatus = globals.configVault.saveProfile('fxRunner', newConfig);
 
     //Sending output

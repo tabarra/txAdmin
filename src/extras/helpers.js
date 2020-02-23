@@ -26,8 +26,12 @@ function txAdminASCII() {
  * Check if the packages in package.json were installed
  */
 function dependencyChecker() {
+    if (process.env.APP_ENV === 'webpack') {
+        return;
+    }
+
     try {
-        let rawFile = fs.readFileSync('package.json');
+        let rawFile = fs.readFileSync(GetResourcePath(GetCurrentResourceName()) + '/package.json');
         let parsedFile = JSON.parse(rawFile);
         let packages = Object.keys(parsedFile.dependencies)
         let missing = [];

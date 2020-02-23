@@ -5,6 +5,24 @@ const crypto  = require('crypto');
 const Polyglot = require('node-polyglot');
 const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
+const languages = {
+    cs: require('../../locale/cs.json'),
+    da: require('../../locale/da.json'),
+    de: require('../../locale/de.json'),
+    en: require('../../locale/en.json'),
+    es: require('../../locale/es.json'),
+    fi: require('../../locale/fi.json'),
+    fr: require('../../locale/fr.json'),
+    hu: require('../../locale/hu.json'),
+    lv: require('../../locale/lv.json'),
+    nl: require('../../locale/nl.json'),
+    pl: require('../../locale/pl.json'),
+    pt_BR: require('../../locale/pt_BR.json'),
+    ro: require('../../locale/ro.json'),
+    th: require('../../locale/th.json'),
+    tr: require('../../locale/tr.json'),
+    zh: require('../../locale/zh.json'),
+};
 
 /**
  * Small translation module built around Polyglot.js.
@@ -71,14 +89,18 @@ module.exports = class Translator {
      */
     getLanguagePhrases(lang){
         let raw;
-        let jsonData;
 
         const thrower = (msg) => {
             throw new Error(`Unable to load 'locale/${lang}.json'. (${msg})`);
         }
 
+        let jsonData = null;
+
         try {
-            raw = fs.readFileSync(`locale/${lang}.json`, 'utf8');
+            jsonData = languages[lang] || JSON.parse(fs.readFileSync(
+                `${GetResourcePath(GetCurrentResourceName())}/locale/${lang}.json`,
+                'utf8'
+            ));
         } catch (error) {
             thrower('cannot read file');
         }
@@ -107,7 +129,7 @@ module.exports = class Translator {
         let hash = null;
         try {
             //FIXME: quickfix for git changing the line endings
-            let toHash = JSON.stringify(JSON.parse(raw));
+            let toHash = JSON.stringify(jsonData);
             hash = crypto.createHash('SHA1').update(toHash).digest("hex");
             if(globals.config.verbose) logOk(`Hash for ${lang} is ${hash}`);
         } catch (error) {
@@ -115,12 +137,6 @@ module.exports = class Translator {
         }
         if(langHashes.hasOwnProperty(lang) && hash !== null && hash !== langHashes[lang]){
             thrower('Please do not modify this file. Revert the changes and use the Custom language setting.')
-        }
-
-        try {
-            jsonData = JSON.parse(raw);
-        } catch (error) {
-            thrower('JSON parse error');
         }
 
         if(jsonData.constructor !== Object){

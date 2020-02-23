@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/tabarra/txAdmin#readme",
   "dependencies": {
-    "@citizenfx/http-wrapper": "^0.2.1",
+    "@citizenfx/http-wrapper": "^0.2.2",
     "@koa/router": "^8.0.7",
     "ansi-colors": "^4.1.1",
     "axios": "^0.19.2",
@@ -61,5 +61,10 @@
     "squirrelly": "^7.9.1",
     "stream-snitch": "0.0.3",
     "xss": "^1.0.6"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^5.1.1",
+    "webpack": "^4.41.6",
+    "webpack-cli": "^3.3.11"
   }
 }
