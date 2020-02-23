@@ -51,7 +51,7 @@ module.exports = class FXRunner {
         //Defaults
         let toExec = [
             `+sets txAdmin-version "${globals.version.current}"`,
-            `+set txAdmin-apiPort "${globals.webServer.httpPort}"`,
+            `+set txAdmin-apiPort "${globals.info.txAdminPort}"`,
             `+set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
             `+set txAdmin-clientCompatVersion "${globals.version.current}"`,
         ];
