@@ -47,7 +47,7 @@ module.exports = async function FXServerCommands(ctx) {
         ctx.utils.appendLog('Profiling txAdmin instance.');
         
         let profSeconds = 5;
-        let savePath = `${globals.config.serverProfilePath}/data/txProfile.bin`;
+        let savePath = `${globals.info.serverProfilePath}/data/txProfile.bin`;
         ExecuteCommand("profiler record start");
         setTimeout(async ()=>{
             ExecuteCommand("profiler record stop");

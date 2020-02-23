@@ -76,7 +76,7 @@ async function getProcessesData(){
                 order = 0;
 
             }else if(pid == termPID){
-                if(globals.config.osType === 'Linux' && Object.keys(processes).length == 2){
+                if(globals.info.osType === 'Linux' && Object.keys(processes).length == 2){
                     procName = 'FXServer';
                 }else{
                     procName = 'Terminal';

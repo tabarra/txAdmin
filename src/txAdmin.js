@@ -13,6 +13,7 @@ globals = {
     webServer: null,
     database: null,
     config: null,
+    info: null,
     version: {
         current: '--',
         latest: '--',
@@ -56,6 +57,15 @@ module.exports = class txAdmin {
             HandleFatalError(err, 'ConfigVault');
         }
 
+        //Setting global infos
+        try {
+            globals.info = require('./extras/globalInfo')();
+        } catch (err) {
+            logError(`Failed to set globals.info with error: ${err.message}`);
+            if(globals.config.verbose) dir(err);
+            process.exit();
+        }
+
         //Start all modules
         this.startAuthenticator(profileConfig.authenticator, dataPath).catch((err) => { //NOTE: temp parameter
             HandleFatalError(err, 'Authenticator');
@@ -87,7 +97,7 @@ module.exports = class txAdmin {
         //  - webserver before webconsole
 
         //Run Update Checker every 15 minutes
-        const updateChecker = require('./extras/updateChecker');
+        // const updateChecker = require('./extras/updateChecker');
         // updateChecker();
         // setInterval(updateChecker, 15 * 60 * 1000);
     }

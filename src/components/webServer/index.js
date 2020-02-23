@@ -24,7 +24,7 @@ module.exports = class WebServer {
         this.config = config;
         this.httpPort = httpPort; //NOTE: remove when adding support for multi-server
         this.intercomToken = nanoid();
-        this.koaSessionKey = `txAdmin:${globals.config.serverProfile}:sess`;
+        this.koaSessionKey = `txAdmin:${globals.info.serverProfile}:sess`;
         this.webConsole = null;
 
         this.setupKoa();

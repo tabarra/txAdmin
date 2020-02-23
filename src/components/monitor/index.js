@@ -25,7 +25,7 @@ module.exports = class Monitor {
         //Setting up
         logOk('::Started');
         this.cpuStatusProvider = new HostCPUStatus();
-        this.timeSeries = new TimeSeries(`${globals.config.serverProfilePath}/data/players.json`, 10, 60*60*24);
+        this.timeSeries = new TimeSeries(`${globals.info.serverProfilePath}/data/players.json`, 10, 60*60*24);
         this.lastAutoRestart = null;
         this.failCounter = 0;
         this.lastHeartBeat = 0;

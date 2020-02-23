@@ -1,7 +1,6 @@
 //Requires
 const modulename = 'ConfigVault';
 const fs = require('fs');
-const os = require('os');
 const path = require('path');
 const slash = require('slash');
 const clone = require('clone');
@@ -169,11 +168,6 @@ module.exports = class ConfigVault {
             cfg.global.publicIP = cfg.global.publicIP || "change-me";
             cfg.global.serverName = cfg.global.serverName || "change-me";
             cfg.global.language = cfg.global.language || "en";
-
-            //Global - Extras
-            cfg.global.osType = os.type() || 'unknown';
-            cfg.global.serverProfile = this.serverProfile;
-            cfg.global.serverProfilePath = this.serverProfilePath;
 
             //Logger
             cfg.logger.logPath = cfg.logger.logPath || `${this.serverProfilePath}/logs/admin.log`; //not in template

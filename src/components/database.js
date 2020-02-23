@@ -12,11 +12,11 @@ module.exports = class Database {
         //Start database instance
         (async () => {
             try {
-                const adapterAsync = new FileAsync(`${globals.config.serverProfilePath}/data/experimentsDB.json`)
+                const adapterAsync = new FileAsync(`${globals.info.serverProfilePath}/data/experimentsDB.json`)
                 this.db = await low(adapterAsync);
                 this.setDefaults();
             } catch (error) {
-                logError(`::Failed to load database file '${globals.config.serverProfilePath}/data/experimentsDB'`);
+                logError(`::Failed to load database file '${globals.info.serverProfilePath}/data/experimentsDB'`);
                 if(globals.config.verbose) dir(error);
                 process.exit();
             }

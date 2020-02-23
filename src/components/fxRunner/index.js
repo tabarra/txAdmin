@@ -73,18 +73,18 @@ module.exports = class FXRunner {
 
         const cliString = cliArgs.join(' ');
 
-        if(globals.config.osType === 'Linux'){
+        if(globals.info.osType === 'Linux'){
             this.spawnVariables = {
                 shell: '/bin/sh',
                 cmdArgs: [`${this.config.buildPath}/run.sh`, cliString]
             };
-        }else if(globals.config.osType === 'Windows_NT'){
+        }else if(globals.info.osType === 'Windows_NT'){
             this.spawnVariables = {
                 shell: 'cmd.exe',
                 cmdArgs: ['/c', `${this.config.buildPath}/run.cmd ${cliString}`]
             };
         }else{
-            logError(`OS type not supported: ${globals.config.osType}`);
+            logError(`OS type not supported: ${globals.info.osType}`);
             process.exit();
         }
 
@@ -188,7 +188,7 @@ module.exports = class FXRunner {
             logWarn(`>> [${pid}] FXServer Exited.`);
             if(now() - tsStart <= 5){
                 setTimeout(() => {
-                    const platformComplaint = (globals.config.osType === 'Windows_NT') ? ' Make sure you have Visual C++ Redistributable 2019 installed.' : '';
+                    const platformComplaint = (globals.info.osType === 'Windows_NT') ? ' Make sure you have Visual C++ Redistributable 2019 installed.' : '';
                     logWarn(`FXServer didn't start. This is not an issue with txAdmin.${platformComplaint}`)
                 }, 500);
             }
