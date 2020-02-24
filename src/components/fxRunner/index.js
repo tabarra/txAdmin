@@ -101,6 +101,10 @@ module.exports = class FXRunner {
         log("Starting FXServer");
         //Setup variables
         this.setupVariables();
+        if(globals.config.verbose){
+            log(`Executing:`);
+            dir(this.spawnVariables);
+        }
         //Sanity Check
         if(
             this.spawnVariables == null ||
@@ -144,7 +148,7 @@ module.exports = class FXRunner {
         globals.monitor.clearFXServerHitches();
 
         //Announcing
-        if(announce === 'true' | announce === true){
+        if(announce === 'true' || announce === true){
             let discordMessage = globals.translator.t('server_actions.spawning_discord', {servername: globals.config.serverName});
             globals.discordBot.sendAnnouncement(discordMessage);
         }
@@ -158,6 +162,10 @@ module.exports = class FXRunner {
                 this.spawnVariables.cmdArgs,
                 {cwd: this.config.basePath}
             );
+            if(typeof this.fxChild.pid === 'undefined'){
+                const platformComplaint = (globals.info.osType === 'Windows_NT') ? 'Make sure you have "C:/windows/system32" in your system PATH variables.' : '';
+                throw new Error(`Executon of "${this.spawnVariables.shell}" failed. ${platformComplaint}`);
+            }
             pid = this.fxChild.pid.toString();
             logOk(`:: [${pid}] FXServer Started!`);
             this.consoleBuffer.writeHeader();
@@ -188,8 +196,7 @@ module.exports = class FXRunner {
             logWarn(`>> [${pid}] FXServer Exited.`);
             if(now() - tsStart <= 5){
                 setTimeout(() => {
-                    const platformComplaint = (globals.info.osType === 'Windows_NT') ? ' Make sure you have Visual C++ Redistributable 2019 installed.' : '';
-                    logWarn(`FXServer didn't start. This is not an issue with txAdmin.${platformComplaint}`)
+                    logWarn(`FXServer didn't start. This is not an issue with txAdmin.`);
                 }, 500);
             }
         });

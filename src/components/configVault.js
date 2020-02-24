@@ -90,7 +90,6 @@ module.exports = class ConfigVault {
             monitor: null,
             authenticator: null,
             webServer: null,
-            webConsole: null,
             discordBot: null,
             fxRunner: null,
         }
@@ -122,9 +121,6 @@ module.exports = class ConfigVault {
                 limiterMinutes: toDefault(cfg.webServer.limiterMinutes, null), //not in template
                 limiterAttempts: toDefault(cfg.webServer.limiterAttempts, null), //not in template
             };
-            out.webConsole = {
-                //nothing to configure
-            };
             out.discordBot = {
                 enabled: toDefault(cfg.discordBot.enabled, null),
                 token:  toDefault(cfg.discordBot.token, null),
@@ -142,7 +138,8 @@ module.exports = class ConfigVault {
                 setPriority: toDefault(cfg.fxRunner.setPriority, null),
                 onesync: toDefault(cfg.fxRunner.onesync, null),
                 autostart: toDefault(cfg.fxRunner.autostart, null),
-                autostartDelay: toDefault(cfg.webServer.autostartDelay, null), //not in template
+                autostartDelay: toDefault(cfg.fxRunner.autostartDelay, null), //not in template
+                restartDelay: toDefault(cfg.fxRunner.restartDelay, null), //not in template
                 quiet: toDefault(cfg.fxRunner.quiet, null),
             };
         } catch (error) {
@@ -201,7 +198,8 @@ module.exports = class ConfigVault {
             cfg.fxRunner.setPriority = cfg.fxRunner.setPriority || "NORMAL";
             cfg.fxRunner.onesync = (cfg.fxRunner.onesync === 'true' || cfg.fxRunner.onesync === true);
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
-            cfg.fxRunner.autostartDelay = parseInt(cfg.webServer.autostartDelay) || 2; //not in template
+            cfg.fxRunner.autostartDelay = parseInt(cfg.fxRunner.autostartDelay) || 2; //not in template
+            cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in templater
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
         } catch (error) {
             throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`);
@@ -272,7 +270,6 @@ module.exports = class ConfigVault {
             monitor: Object.freeze(cfg.monitor),
             authenticator: Object.freeze(cfg.authenticator),
             webServer: Object.freeze(cfg.webServer),
-            webConsole: Object.freeze(cfg.webConsole),
             discordBot: Object.freeze(cfg.discordBot),
             fxRunner: Object.freeze(cfg.fxRunner),
         };
