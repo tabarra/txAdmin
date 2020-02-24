@@ -1,7 +1,10 @@
 //Requires
 const modulename = 'WebServer:FXServerCommands';
-const xss = require("xss");
+const xssClass = require('xss');
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
+
+//Set custom xss rules
+const xss = new xssClass.FilterXSS({whiteList: []});
 
 //Helper functions
 const escape = (x) => {return x.replace(/\"/g, '\\"');};
@@ -157,12 +160,12 @@ module.exports = async function FXServerCommands(ctx) {
         if(toResp.includes('Pong!')){
             return ctx.send({
                 type: 'success',
-                message: `<b>txAdminClient is running!<br> <pre>${xss(toResp)}</pre>`
+                message: `<b>txAdminClient is running!<br> <pre>${xss.process(toResp)}</pre>`
             });
         }else{
             return ctx.send({
                 type: 'danger',
-                message: `<b>txAdminClient is not running!<br> <pre>${xss(toResp)}</pre>`
+                message: `<b>txAdminClient is not running!<br> <pre>${xss.process(toResp)}</pre>`
             });
         }
 
@@ -185,7 +188,7 @@ module.exports = async function FXServerCommands(ctx) {
  * @param {string} msg
  */
 async function sendAlertOutput(ctx, toResp){
-    toResp = (toResp.length)? xss(toResp) : 'no output';
+    toResp = (toResp.length)? xss.process(toResp) : 'no output';
     return ctx.send({
         type: 'warning',
         message: `<b>Output:<br> <pre>${toResp}</pre>`

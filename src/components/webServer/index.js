@@ -105,12 +105,6 @@ module.exports = class WebServer {
         this.router = require('./router')(this.config);
         this.app.use(this.router.routes())
         this.app.use(this.router.allowedMethods());
-        // this.app.use(async (ctx, next) => {
-        //     ctx.body = Date.now()
-        //     // return async () => {
-        //     //     ctx.body = Date.now()
-        //     // }
-        // });
         this.koaCallback = this.app.callback();
     }
 

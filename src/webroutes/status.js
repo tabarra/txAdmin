@@ -1,9 +1,12 @@
 //Requires
 const modulename = 'WebServer:GetStatus';
 const os = require('os');
-const xss = require("xss");
+const xssClass = require('xss');
 const clone = require('clone');
 const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
+
+//Set custom xss rules
+const xss = new xssClass.FilterXSS({whiteList: []});
 
 
 /**
@@ -154,8 +157,8 @@ function preparePlayersData() {
         let name = (player.name.length > maxNameSize)? player.name.slice(0, maxNameSize-3)+'...' : player.name;
         out += `<div class="clearfix mt-3 playerlist">
                     <span class="pping text-${pingClass}">${paddedPing}</span>
-                    <span class="pname">${xss(name)}</span>
-                    <a onclick="showPlayer(${xss(player.id)})"><span class="badge badge-primary float-right">MORE</span></a>
+                    <span class="pname">${xss.process(name)}</span>
+                    <a onclick="showPlayer(${xss.process(player.id)})"><span class="badge badge-primary float-right">MORE</span></a>
                 </div>`;
 
     });

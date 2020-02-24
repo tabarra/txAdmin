@@ -1,7 +1,10 @@
 //Requires
 const modulename = 'WebServer:ExperimentsBansGet';
-const xss = require("xss");
+const xssClass = require('xss');
 const { dir, log, logOk, logWarn, logError} = require('../../../extras/console')(modulename);
+
+//Set custom xss rules
+const xss = new xssClass.FilterXSS({whiteList: []});
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -79,8 +82,8 @@ function processLog(banList){
             return;
         }
         let time = new Date(parseInt(ban.timestamp)*1000).toLocaleTimeString()
-        out += `<li><a href="/experiments/bans#!" data-player-identifier="${xss(ban.identifier)}" class="text-primary unban-btn">[unban]</a>
-                    [${time}] <code>${xss(ban.identifier)}</code> - ${xss(ban.reason)} (${xss(ban.banned_by)})</li>\n`;
+        out += `<li><a href="/experiments/bans#!" data-player-identifier="${xss.process(ban.identifier)}" class="text-primary unban-btn">[unban]</a>
+                    [${time}] <code>${xss.process(ban.identifier)}</code> - ${xss.process(ban.reason)} (${xss.process(ban.banned_by)})</li>\n`;
     });
 
     return out;

@@ -60,7 +60,6 @@ if(!fs.existsSync(profilePath)){
 }
 
 //Get Web Port
-//NOTE: Temporarily being passed down to txAdmin > webServer to make it easier to remove when adding support for multiple servers
 let txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
 let digitRegex = /^\d+$/;
 if(!digitRegex.test(txAdminPortConvar)){

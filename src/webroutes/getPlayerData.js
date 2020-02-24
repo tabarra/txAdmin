@@ -1,8 +1,11 @@
 //Requires
 const modulename = 'WebServer:GetPlayerData';
-const xss = require("xss");
+const xssClass = require('xss');
 const clone = require('clone');
 const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
+
+//Set custom xss rules
+const xss = new xssClass.FilterXSS({whiteList: []});
 
 
 /**
@@ -29,8 +32,8 @@ module.exports = async function GetPlayerData(ctx) {
     let disableKick = getPermDisable('commands.kick');
     if(player){
         out = {
-            name: xss(player.name),
-            identifiers: player.identifiers.map(x => xss(x)).join(', <br>\n'),
+            name: xss.process(player.name),
+            identifiers: player.identifiers.map(x => xss.process(x)).join(', <br>\n'),
             buttons: `<!-- buttons -->
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button onclick="messagePlayer(${id})" type="button" class="btn btn-secondary" ${disableDM}><i class="icon-speech"></i> Send Message</button>

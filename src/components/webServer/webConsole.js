@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'webConsole';
-const xssClass = require("xss");
+const xssClass = require('xss');
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const {authLogic} = require('./requestAuthenticator');
 

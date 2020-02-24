@@ -23,22 +23,6 @@ module.exports = router = (config) =>{
         disableHeader: true,
     });
 
-    //FIXME: test only
-    // router.post('/', async (ctx) => {
-    //     // throw new Error('sdfsdf')
-    //     // ctx.attachment('hello.txt')
-    //     // dir(ctx._matchedRoute)
-    //     dir(ctx.params.xxx) // for route parameters
-    //     dir(ctx.query.xxx) // for query parameters
-    //     dir(ctx.request.body) // for body data (x-www-form-urlencoded / json)
-    //     ctx.body = {sdfsdf:'gggggggggggggg'};
-        // ctx.body = 'ddd'
-    //     return;
-    //     return ctx.utils.error(400, "Invalid Request");
-    //     return ctx.send({aaa:false})
-    //     return ctx.utils.render('login', {message: 'sdfsdfdfs'})
-    // });
-
     //Authentication
     router.get('/auth', webRoutes.auth.get);
     router.all('/auth/addMaster/:action', authLimiter, webRoutes.auth.addMaster);
@@ -86,6 +70,8 @@ module.exports = router = (config) =>{
     router.get('/resources', requestAuth('web'), webRoutes.resources);
     router.get('/addExtension', requestAuth('web'), webRoutes.addExtension);
     router.get('/', requestAuth('web'), webRoutes.dashboard);
+
+    //TODO: replace this with an middleware checking for `ctx._matchedRoute`
     router.all('*', async (ctx) =>{
         ctx.status = 404;
         if(globals.config.verbose) logWarn(`Request 404 error: ${ctx.path}`);

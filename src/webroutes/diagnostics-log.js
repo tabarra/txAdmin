@@ -1,7 +1,7 @@
 //Requires
 const modulename = 'WebServer:DiagnosticsLog';
 const dateFormat = require('dateformat');
-const xssClass = require("xss");
+const xssClass = require('xss');
 const { dir, log, logOk, logWarn, logError, getLog } = require('../extras/console')(modulename);
 
 //Set custom xss rules

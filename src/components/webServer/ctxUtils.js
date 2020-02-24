@@ -20,7 +20,7 @@ const getRenderErrorText = (view, error, data) => {
     out += `</pre>\n`;
     return out;
 }
-function getWebViewPath(view){
+const getWebViewPath = (view) => {
     if(view.includes('..')) throw new Error('Path Traversal?');
     return path.join(globals.info.txAdminResourcePath, 'web/', view+'.html');
 }
