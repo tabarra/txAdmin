@@ -291,7 +291,7 @@ module.exports = class FXRunner {
 
             //Restart server
             this.killServer();
-            await sleep(1250);
+            await sleep(this.config.restartDelay);
             return this.spawnServer();
         } catch (error) {
             let errMsg = logError("Couldn't restart the server.");
