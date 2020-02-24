@@ -18,9 +18,8 @@
 
 
 ## This is the CONVERSION branch. 
-**Expect everything to be messy, and 40% of it to not work.**  
 
-### Replace old monitor and install dependencies
+### Install
 ```bash
 #Inside your fxserver folder, execute:
 cd citizen/system_resources
@@ -29,23 +28,19 @@ git clone -b conversion https://github.com/tabarra/txAdmin monitor
 cd monitor
 npm i
 ```
-Patch Discord.js library "bug":  
-Navigate to `node_modules\discord.js\src\client\Client.js` and around line 250 change the `window !== 'undefined';` to `process == 'undefined';`.
-> Well... the patch isn't working but I will investigate later 🤷
 
 Then to run it, just execute the `run.sh` or `run.cmd` without **any** `+exec` arguments.  
+An `txData` folder will be created in your current working directory.  
 
 ### ConVars
 - **serverProfile:** The name of the server profile to start. Profiles are saved/loaded from the current directory inside the `txData` folder.
 - **txAdminPort:** The TCP port to use as HTTP Server.
 
 ### Web Port Behaviour
-- **(Current)** Without Nucleus integration:
-    - From ConVar
-    - Defaults to 40120, creates an http server
 - **(Planned)** With Nucleus integration (single/multi server):
     - Grabs ConVar
     - Defaults to null, don't create http server unless port is specified
+NOTE: Think about the http calls between the server and txAdmin. Not having a local port will impact it for sure. Should I just let the default 40120?
 
 ## License, Credits and Thanks
 - This project is licensed under the [MIT License](https://github.com/tabarra/txAdmin/blob/master/LICENSE).

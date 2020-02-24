@@ -25,8 +25,9 @@ module.exports = (dataPath, serverProfilePath, serverProfile, txAdminPort) => {
     info.txAdminPort =  txAdminPort;
     info.serverProfile =  serverProfile;
     info.serverProfilePath =  serverProfilePath;
-    info.fxserverVersion =  getBuild(GetConvar('version', 'false'));
     info.txAdminResourcePath = cleanPath(GetResourcePath(GetCurrentResourceName()))
+    info.fxserverVersion =  getBuild(GetConvar('version', 'false'));
+    info.cfxUrl = null;
 
     return info;
 }

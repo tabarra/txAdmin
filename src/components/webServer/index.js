@@ -150,6 +150,18 @@ module.exports = class WebServer {
 
     //================================================================
     setupServerCallbacks(){
+        //Print cfx.re url... when available
+        let getUrlInterval = setInterval(() => {
+            try {
+                let urlConvar = GetConvar('web_baseUrl', 'false');
+                if(urlConvar !== 'false'){
+                    logOk(`::Listening at https://${urlConvar}/`);
+                    globals.info.cfxUrl = urlConvar;
+                    clearInterval(getUrlInterval)
+                }
+            } catch (error) {}
+        }, 1000);
+
         //CitizenFX Callback
         try {
             setHttpCallback(this.httpCallbackHandler.bind(this));
@@ -167,7 +179,7 @@ module.exports = class WebServer {
                 process.exit();
             });
             this.httpServer.listen(globals.info.txAdminPort, '0.0.0.0', () => {
-                logOk(`::Started at http://localhost:${globals.info.txAdminPort}/`);
+                logOk(`::Listening at http://localhost:${globals.info.txAdminPort}/`);
             });
         } catch (error) {
             logError('::Failed to start HTTP server with error:');

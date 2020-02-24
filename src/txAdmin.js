@@ -14,13 +14,18 @@ globals = {
     database: null,
     config: null,
     info: null,
+
+    //FIXME: send to inside of globals.info
     version: {
         current: '--',
         latest: '--',
         changelog: '--',
         allVersions: []
     },
+
+    //NOTE: currently not being used, find a way to push errors to the interface
     dashboardErrorMessage: null,
+
     //FIXME: remove with the Extensions update
     intercomTempLog: [],
     intercomTempResList: null,
