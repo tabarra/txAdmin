@@ -146,7 +146,7 @@
                     <div class="card-body text-center p-4">
                         <!-- TODO: see if squirrelly already supports elseif -->
                         {{if(options.template == 'justMessage')}}
-                            <h5 class="text-danger mb-3">{{message}}</h5>
+                            <h5 class="text-danger mb-3">{{message|n2br}}</h5>
                             <a href="/auth" class="btn btn-primary px-4" role="submit">Back</a>
                         {{/if}}
                         {{if(options.template == 'noMaster')}}

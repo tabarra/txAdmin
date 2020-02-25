@@ -60,6 +60,9 @@ async function handlePin(ctx) {
         return ctx.utils.render('login', {template: 'noMaster', message});
     }
 
+    //Make sure the session is initialized
+    ctx.session.startedSocialLogin = Date.now();
+
     //Generate URL
     try {
         let callback = ctx.protocol + '://' + ctx.get('host') + `/auth/addMaster/callback`;
@@ -89,8 +92,8 @@ async function handleCallback(ctx) {
         let currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/addMaster/callback`;
         tokenSet = await globals.authenticator.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
-        let message = `Code Exchange error: ${error.message}`;
-        logError(message);
+        logWarn(`Code Exchange error: ${error.message}`);
+        let message = `Failed to exchange code for token. Try again.\n\n\n\r\nIf this problem persists, check terminal for more info.`;
         return ctx.utils.render('login', {template: 'justMessage', message});
     }
 
@@ -180,6 +183,7 @@ async function handleSave(ctx) {
             ctx.session.tmpAddMasterTokenSet,
             ctx.session.tmpAddMasterUserInfo
         );
+        ctx.session.auth.username = ctx.session.tmpAddMasterUserInfo.name
         delete ctx.session.tmpAddMasterTokenSet;
         delete ctx.session.tmpAddMasterUserInfo;
     } catch (error) {

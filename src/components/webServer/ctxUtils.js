@@ -32,6 +32,9 @@ sqrl.defineFilter("isSelected", (x)=>{
 sqrl.defineFilter("isDisabled", (x)=>{
     return (x==='true')? 'disabled' : '';
 });
+sqrl.defineFilter("n2br", (x)=>{
+    return x.replace(/(\r|\n)+/m, '<br>');
+});
 
 
 //================================================================
