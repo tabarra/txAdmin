@@ -174,7 +174,6 @@ module.exports = async function WebCtxUtils(ctx, next){
             ctx.body = await renderSoloView(view, viewData);
         }else{
             ctx.body = await renderMasterView(view, ctx.session, viewData);
-            // dir(ctx.body)
         }
         ctx.type = 'text/html';
     }

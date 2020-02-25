@@ -145,10 +145,12 @@ module.exports = class WebServer {
     //================================================================
     setupServerCallbacks(){
         //Print cfx.re url... when available
+        //NOTE: perhaps open the URL automatically with the `open` library
+        let validUrlRegex = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\.users\.cfx\.re$/i
         let getUrlInterval = setInterval(() => {
             try {
                 let urlConvar = GetConvar('web_baseUrl', 'false');
-                if(urlConvar !== 'false'){
+                if(validUrlRegex.test(urlConvar)){
                     logOk(`::Listening at https://${urlConvar}/`);
                     globals.info.cfxUrl = urlConvar;
                     clearInterval(getUrlInterval)

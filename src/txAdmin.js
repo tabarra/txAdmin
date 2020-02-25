@@ -99,7 +99,6 @@ module.exports = class txAdmin {
 
         //FIXME: dependency order
         //  - translator before monitor
-        //  - webserver before webconsole
 
         //Run Update Checker every 15 minutes
         // const updateChecker = require('./extras/updateChecker');

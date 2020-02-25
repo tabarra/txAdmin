@@ -1,13 +1,14 @@
 //Require
 const xssClass = require('xss');
 
-// console.dir(xss.whiteList)
-//Set custom xss rules
 
-
-module.exports = (incWL = []) => {
+/**
+ * Returns a function with the passed whitelist parameter.
+ * https://github.com/leizongmin/js-xss#whitelist
+ */
+module.exports = (customWL = []) => {
     const xss = new xssClass.FilterXSS({
-        whiteList: incWL
+        whiteList: customWL
     });
-    return (x) => {return xss.process(x)}
+    return (x) => {return xss.process(x)};
 }

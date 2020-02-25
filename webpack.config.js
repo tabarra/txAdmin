@@ -53,6 +53,7 @@ module.exports = {
             'extensions/**/*.lua',
             'extensions/**/cl_*.js',
             'web/**',
+            'docs/**',
         ]),
         new webpack.BannerPlugin({banner}),
     ],

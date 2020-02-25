@@ -31,9 +31,6 @@ const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-
 if(!serverProfile.length){
     logError(`Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.`);
     process.exit();
-}else if(serverProfile === 'example'){
-    logError(`You can't use the 'example' profile.`);
-    process.exit();
 }
 log(`Server profile selected: '${serverProfile}'`);
 
@@ -49,9 +46,9 @@ try {
 //Check if the profile exists and call setup if it doesn't
 const profilePath = cleanPath(path.join(dataPath, serverProfile));
 if(!fs.existsSync(profilePath)){
-    logWarn(`Profile not found in '${dataPath}', setting folder up...`);
+    logWarn(`Profile not found in '${dataPath}'`);
     try {
-        const SetupScript = require('./scripts/setup.js');
+        const SetupScript = require('./extras/setup.js');
         SetupScript(serverRoot, serverProfile, profilePath);
     } catch (error) {
         logError(`Failed to create profile '${serverProfile}' with error: ${error.message}`);
@@ -77,21 +74,23 @@ const app = new txAdmin(dataPath, profilePath, serverProfile, txAdminPort);
 
 
 //==============================================================
-//Freeze detector
-let hdTimer = Date.now();
-setInterval(() => {
-    let now = Date.now();
-    if(now - hdTimer > 2000){
-        let sep = `=`.repeat(72);
-        setTimeout(() => {
-            logError(sep);
-            logError('Major process freeze detected.');
-            logError('THIS IS NOT AN ERROR CAUSED BY TXADMIN! Your VPS is probably lagging out.');
-            logError(sep);
-        }, 1000);
-    }
-    hdTimer = now;
-}, 500);
+//Freeze detector - starts after 10 seconds
+setTimeout(() => {
+    let hdTimer = Date.now();
+    setInterval(() => {
+        let now = Date.now();
+        if(now - hdTimer > 2000){
+            let sep = `=`.repeat(72);
+            setTimeout(() => {
+                logError(sep);
+                logError('Major process freeze detected.');
+                logError('THIS IS NOT AN ERROR CAUSED BY TXADMIN! Your VPS is probably lagging out.');
+                logError(sep);
+            }, 1000);
+        }
+        hdTimer = now;
+    }, 500);
+}, 10000);
 
 //Handle any stdio error
 process.stdin.on('error', (data) => {});

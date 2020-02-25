@@ -1,9 +1,10 @@
 //Requires
-const modulename = 'SetupScript';
+const modulename = 'Setup';
+const ac = require('ansi-colors');
 const fs = require('fs-extra');
 const path = require('path');
 const slash = require('slash');
-const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError} = require('./console')(modulename);
 const osType = require('os').type();
 
 //Helpers
@@ -90,7 +91,7 @@ module.exports = (serverRoot, serverProfile, profilePath) => {
 
     logOk(`To start with this profile add the following argument: +set serverProfile "${serverProfile}"`);
     if(osType == 'Windows_NT'){
-        logOk(`You can also execute run 'start_${serverProfile}.bat' added to this folder.`);
+        logOk(`You can also run ` + ac.inverse(` start_${serverProfile}.bat `) + ` added to this folder.`);
     }
     printDivider();
 }

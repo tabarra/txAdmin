@@ -3,10 +3,9 @@
 		txAdmin for FiveM
 	</h1>
 	<p align="center">
-		<img width="420" height="237" src="https://i.imgur.com/acV0dfO.png">
+		<img width="420" height="237" src="docs/banner.png">
 	</p>
 	<h4 align="center">
-		<!-- FiveM Forum thread: &nbsp; <a href="https://forum.fivem.net/t/530475"><img src="https://img.shields.io/badge/dynamic/json.svg?color=green&label=txAdmin&query=views&suffix=%20views&url=https%3A%2F%2Fforum.fivem.net%2Ft%2F530475.json"></img></a>  <br/> -->
 		Join our Discord Server: &nbsp; <a href="https://discord.gg/f3TsfvD"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
 	</h4>
 	<p align="center">
@@ -17,9 +16,34 @@
 <br/>
 
 
-## This is the CONVERSION branch. 
+## Main Features
+- Start/Stop/Restart your server instance or resources
+- Access control:
+	- Login via Password, CitizenFX or Discord
+	- Admin permission system ([more info](docs/permissions.md))
+	- Action logging
+	- Brute-force protection
+- Discord Integration:
+	- Server status command (`/status`)
+	- Custom static commands
+	- Command spam prevention
+- Monitoring:
+	- Auto Restart on crash
+	- Server’s CPU/RAM consumption
+	- Live Console (with log file)
+	- Hitch Detection statistics
+	- Online players chart
+	- Server Activity Log (connections/disconnections, kills, chat, explosions and [custom commands](docs/extra_logging.md))
+- Real-time playerlist with ping + steam-linked accounts (when available)
+- Scheduled restarts with warning announcements
+- Translation Support ([more info](docs/translation.md))
+- FiveM's Server CFG editor
 
-### Install
+
+## Installing & Running (Windows/Linux)
+
+If your copy of fxserver doesn't come with txAdmin (`citizen/system_resources/txAdmin`), you can install with the following steps:
+
 ```bash
 #Inside your fxserver folder, execute:
 cd citizen/system_resources
@@ -36,11 +60,10 @@ An `txData` folder will be created in your current working directory.
 - **serverProfile:** The name of the server profile to start. Profiles are saved/loaded from the current directory inside the `txData` folder.
 - **txAdminPort:** The TCP port to use as HTTP Server.
 
-### Web Port Behaviour
-- **(Planned)** With Nucleus integration (single/multi server):
-    - Grabs ConVar
-    - Defaults to null, don't create http server unless port is specified
-NOTE: Think about the http calls between the server and txAdmin. Not having a local port will impact it for sure. Should I just let the default 40120?
+ConVar usage example on Windows:  
+```bash
+./run.cmd +set serverProfile dev_server +set txAdminPort 40125
+```
 
 ## License, Credits and Thanks
 - This project is licensed under the [MIT License](https://github.com/tabarra/txAdmin/blob/master/LICENSE).

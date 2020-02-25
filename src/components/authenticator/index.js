@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'Authenticator';
+const ac = require('ansi-colors');
 const fs = require('fs-extra');
 const clone = require('clone');
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
@@ -51,7 +52,7 @@ module.exports = class Authenticator {
             let sep = `=`.repeat(42);
             log(sep);
             log('==> Admins file not found.');
-            log(`==> PIN to add a master account: ${this.addMasterPin}`);
+            log(`==> PIN to add a master account: ` + ac.inverse(' ' + this.addMasterPin + ' '));
             log(sep);
             this.admins = false;
         }else{
@@ -89,7 +90,6 @@ module.exports = class Authenticator {
             },
             permissions: []
         }];
-        dir(this.admins)
 
         //Saving admin file
         try {
