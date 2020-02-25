@@ -1,15 +1,8 @@
 //Requires
 const modulename = 'webConsole';
-const xssClass = require('xss');
+const xss = require('../../extras/xss')({mark:['class']});
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const {authLogic} = require('./requestAuthenticator');
-
-//Set custom xss rules
-const xss = new xssClass.FilterXSS({
-    whiteList: {
-        mark: ['class']
-    }
-});
 
 //Helpers
 const getIP = (socket) => {
@@ -48,7 +41,7 @@ module.exports = class webConsole {
         socket.on('consoleCommand', this.handleSocketMessages.bind(this, socket));
 
         try {
-            socket.emit('consoleData', xss.process(globals.fxRunner.consoleBuffer.webConsoleBuffer));
+            socket.emit('consoleData', xss(globals.fxRunner.consoleBuffer.webConsoleBuffer));
         } catch (error) {
             if(globals.config.verbose) logWarn(`Error sending sending old buffer: ${error.message}`);
         }
@@ -80,7 +73,7 @@ module.exports = class webConsole {
         if(!this.dataBuffer.length) return;
 
         try {
-            this.io.emit('consoleData', xss.process(this.dataBuffer));
+            this.io.emit('consoleData', xss(this.dataBuffer));
             this.dataBuffer = '';
         } catch (error) {
             logWarn('Message not sent');

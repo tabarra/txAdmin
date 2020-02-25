@@ -1,10 +1,7 @@
 //Requires
 const modulename = 'WebServer:ServerLog';
-const xssClass = require('xss');
+const xss = require('../extras/xss')();
 const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
-
-//Set custom xss rules
-const xss = new xssClass.FilterXSS({whiteList: []});
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -86,8 +83,8 @@ function processPlayerData(src){
         return `<span class="text-dark event-source">CONSOLE</span>`;
     }
 
-    let name = xss.process(src.name).replace(/"/g,'&quot;');
-    let identifiers = xss.process(src.identifiers.join(';')).replace(/"/g,'&quot;');
+    let name = xss(src.name).replace(/"/g,'&quot;');
+    let identifiers = xss(src.identifiers.join(';')).replace(/"/g,'&quot;');
     return `<a href="/serverLog#!" data-player-identifiers="${identifiers}" data-player-name="${name}" class="text-primary event-source">${name}</a>`;
 }
 
@@ -114,15 +111,15 @@ function processEventTypes(event){
         }
 
         let text = (typeof event.data.text === 'string')? event.data.text.replace(/\^([0-9])/g, '') : 'unknownText';
-        return xss.process(`${authorTag}: ${text}`);
+        return xss(`${authorTag}: ${text}`);
 
     }else if(event.action === 'DeathNotice'){
         let cause = event.data.cause || 'unknown';
         if(event.data.killer){
             let killer = processPlayerData(event.data.killer)
-            return `died from ${xss.process(cause)} by ${killer}`;
+            return `died from ${xss(cause)} by ${killer}`;
         }else{
-            return `died from ${xss.process(cause)}`;
+            return `died from ${xss(cause)}`;
         }
 
     }else if(event.action === 'explosionEvent'){
@@ -131,14 +128,14 @@ function processEventTypes(event){
 
     }else if(event.action === 'CommandExecuted'){
         let command = event.data || 'unknown';
-        return `executed: /${xss.process(command)}`;
+        return `executed: /${xss(command)}`;
 
     }else if(event.action === 'txAdminClient:Started'){
         return `txAdminClient Logger started`;
 
     }else if(event.action === 'DebugMessage'){
         let message = event.data || 'unknown';
-        return `txAdminClient Debug Message: <span class="text-warning">${xss.process(message)}</span>`;
+        return `txAdminClient Debug Message: <span class="text-warning">${xss(message)}</span>`;
 
     }else{
         if(globals.config.verbose){
