@@ -22,7 +22,7 @@ module.exports = async function ProviderCallback(ctx) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     let provider = ctx.params.provider;
-    let reqState = ctx.query.state
+    let reqState = ctx.query.state;
 
     //FIXME: generalize this to any provider
     if(provider !== 'citizenfx'){

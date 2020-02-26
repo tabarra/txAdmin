@@ -373,7 +373,7 @@ module.exports = class FXRunner {
         if(!result) return false;
         await sleep(bufferTime);
         this.consoleBuffer.enableCmdBuffer = false;
-        return this.consoleBuffer.cmdBuffer;
+        return this.consoleBuffer.cmdBuffer.replace(/\u001b\[\d+(;\d)?m/g, '');
     }
 
 } //Fim FXRunner()
