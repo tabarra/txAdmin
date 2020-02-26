@@ -154,8 +154,9 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmFXServer-commandLine" class="col-sm-3 col-form-label">Additional Arguments
-                                <span class="text-danger">*</span></label>
+                            <label for="frmFXServer-commandLine" class="col-sm-3 col-form-label">
+                                Additional Arguments
+                            </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmFXServer-commandLine" value="{{fxserver.commandLine}}"
                                     placeholder="+exec extra.cfg" {{disableWrite}}>
@@ -230,35 +231,6 @@
                                     The time MUST be in the 24-hour format with two digits for hours as well as
                                     minutes (<code>HH:MM</code>) and the times should be separated by commas. <br>
                                     <strong>Note:</strong> Make sure your schedule matches your server time and not your local time.
-                                </span>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="frmMonitor-conservative" class="col-sm-3 col-form-label">Conservative Mode</label>
-                            <div class="col-sm-9">
-                                <label class="switch switch-label switch-pill switch-success fix-pill-form">
-                                    <input class="switch-input" type="checkbox" id="frmMonitor-conservative"
-                                        checked disabled>
-                                    <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
-                                </label>
-                                <span class="form-text text-muted">
-                                    Try not to restart the server when it is still working (doesn't apply to partial crashes).
-                                </span>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="frmMonitor-detectPartial" class="col-sm-3 col-form-label">Detect Partial Crash</label>
-                            <div class="col-sm-9">
-                                <label class="switch switch-label switch-pill switch-success fix-pill-form">
-                                    <input class="switch-input" type="checkbox" id="frmMonitor-detectPartial"
-                                        checked disabled>
-                                    <span class="switch-slider" data-checked="On" data-unchecked="Off"></span>
-                                </label>
-                                <span class="form-text text-muted">
-                                    Detect when FXServer's HTTP endpoint dies and restart the server after 5 minutes. <br>
-                                    On a partial crash, new players won't be able to connect and your server will not
-                                    show in the server list even though players inside will still be able to play. <br>
-                                    This feature is still in beta
                                 </span>
                             </div>
                         </div>

@@ -125,8 +125,6 @@ module.exports = class WebServer {
     //================================================================
     httpCallbackHandler(source, req, res){
         //Rewrite source ip if it comes from nucleus reverse proxy
-        //NOTE: nucleus MUST replace the 'x-cfx-source-ip' and
-        //      fxserver must remove this header if the request doesn't come from the proxy
         const ipsrcRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}:\d{1,5}$/
         if(source == 'citizenfx' && ipsrcRegex.test(req.headers['x-cfx-source-ip'])){
             req.connection.remoteAddress = req.headers['x-cfx-source-ip'].split(':')[0];
@@ -161,7 +159,6 @@ module.exports = class WebServer {
 
         //CitizenFX Callback
         try {
-            // let run = ExecuteCommand("endpoint_add_tcp \"0.0.0.0:30110\""); //FIXME: test only
             setHttpCallback(this.httpCallbackHandler.bind(this, 'citizenfx'));
         } catch (error) {
             logError('::Failed to start CitizenFX Reverse Proxy Callback with error:');

@@ -48,6 +48,7 @@ module.exports = async function Resources(ctx) {
     let timeoutMessage = `<strong>Couldn't load the resources list.</strong> <br>
     - Make sure the server is online (try to join it). <br>
     - Make sure your fxserver is build/artifact 1550 or above. <br>
+    - Make sure you don't have more than 200 resources. <br>
     - Make sure you are not running the fxserver outside txAdmin.`;
 
     //Send command request

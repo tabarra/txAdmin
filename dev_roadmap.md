@@ -13,9 +13,7 @@
 - [ ] Make toggle button
 
 Major stuff:
-- [ ] Check compiling libraries like pkg and nexe.
 - [ ] Check config management libraries (specially 'convict' by Mozilla and nconf)
-- [ ] Auto updater with simple-git/promise
 - [ ] Make messages/commands.json via lowdb and remove the `Players online` and `File reloaded` spam.
 
 Medium stuff:
@@ -24,6 +22,17 @@ Medium stuff:
 Minor stuff:
 - [ ] Hide the verbosity option. People don't fucking read and click on it anyway,
 - [ ] xxxxxx
+
+
+- [x] why auto login when creating master doesn't work??
+- [x] acessar /auth?logout da state mismatch
+- [x] wrong ip, check x-forwarded-for
+- [ ] do I still need the clientCompatVersion convar?
+- [ ] build path to the global info - check for globals.fxRunner.something
+- [ ] add txDataPath convar
+- [ ] disable editing the master admin by other admins
+- [ ] remover messages.json temporariamente
+- [ ] clean this dumb file
 
 
 /e/FiveM/builds/tmpRoot
