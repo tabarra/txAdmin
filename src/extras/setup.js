@@ -70,7 +70,7 @@ module.exports = (serverRoot, serverProfile, profilePath) => {
         fs.mkdirSync(profilePath);
         fs.mkdirSync(`${profilePath}/logs/`);
         fs.mkdirSync(`${profilePath}/data/`);
-        fs.writeFileSync(`${profilePath}/messages.json`, '[]');
+        // fs.writeFileSync(`${profilePath}/messages.json`, '[]');
         // fs.writeFileSync(`${profilePath}/commands.json`, '[]');
         fs.writeFileSync(`${profilePath}/config.json`, jsonConfig);
     } catch (error) {

@@ -197,6 +197,11 @@ module.exports = class DiscordBot {
 
     //================================================================
     async refreshStaticCommands(){
+        //NOTE: since in the future this probably will be via database, shipping v2.0.0 with this as file is a bad idea
+        //      for now I will just disable this feature. To be reevaluated in the future. 
+        this.messages = [];
+        return;
+
         let raw = null;
         let jsonData = null;
 

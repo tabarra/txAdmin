@@ -152,7 +152,7 @@ module.exports = class WebServer {
                 if(validUrlRegex.test(urlConvar)){
                     logOk(`::Listening at https://${urlConvar}/`);
                     globals.info.cfxUrl = urlConvar;
-                    clearInterval(getUrlInterval)
+                    clearInterval(getUrlInterval);
                 }
             } catch (error) {}
         }, 1000);

@@ -76,12 +76,12 @@ module.exports = class FXRunner {
         if(globals.info.osType === 'Linux'){
             this.spawnVariables = {
                 shell: '/bin/sh',
-                cmdArgs: [`${this.config.buildPath}/run.sh`, cliString]
+                cmdArgs: [`${globals.info.buildPath}/run.sh`, cliString]
             };
         }else if(globals.info.osType === 'Windows_NT'){
             this.spawnVariables = {
                 shell: 'cmd.exe',
-                cmdArgs: ['/c', `${this.config.buildPath}/run.cmd ${cliString}`]
+                cmdArgs: ['/c', `${globals.info.buildPath}/run.cmd ${cliString}`]
             };
         }else{
             logError(`OS type not supported: ${globals.info.osType}`);
@@ -114,11 +114,7 @@ module.exports = class FXRunner {
             return logError('this.spawnVariables is not set.');
         }
         //If the any FXServer configuration is missing
-        if(
-            this.config.buildPath === null ||
-            this.config.basePath === null ||
-            this.config.cfgPath === null
-        ){
+        if(this.config.basePath === null || this.config.cfgPath === null){
             return logError('Cannot start the server with missing configuration (buildPath || basePath || cfgPath).');
         }
         //If the server is already alive

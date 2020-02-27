@@ -28,11 +28,16 @@ Minor stuff:
 - [x] acessar /auth?logout da state mismatch
 - [x] wrong ip, check x-forwarded-for
 - [ ] do I still need the clientCompatVersion convar?
-- [ ] build path to the global info - check for globals.fxRunner.something
-- [ ] add txDataPath convar
+- [ ] clean up the resource injector?
+- [x] build path to the global info - check for globals.fxRunner.something
+- [ ] add txDataPath convar + docs
 - [ ] disable editing the master admin by other admins
-- [ ] remover messages.json temporariamente
+- [x] remover messages.json temporariamente
+- [ ] add the stdout sniffer for wrong ip, hangs and etc
+- [ ] hide memory usage on linux?
 - [ ] clean this dumb file
+- [ ] perform end2end test
+- [ ] improve monitor?
 
 
 /e/FiveM/builds/tmpRoot
@@ -78,7 +83,7 @@ DIV transition: https://tympanus.net/Tutorials/OriginalHoverEffects/index9.html
 - [x] tie everything correctly and push update
 - [x] fix playerlist div name issue
 - [x] Fix paths with spaces (too hard, just block in the settings page)
-- [ ] Apple xss whitelist [] to all xss() calls (vide src\webroutes\diagnostics-log.js)
+- [x] Apple xss whitelist [] to all xss() calls (vide src\webroutes\diagnostics-log.js)
 
 ## Databases:
 Discarted due to node-gyp: level, better-sqlite3, sqlite3

@@ -18,16 +18,24 @@ const getBuild = (ver)=>{
 
 
 module.exports = (dataPath, serverProfilePath, serverProfile, txAdminPort) => {
-    let info = {};
+    //Prepare convars
+    let buildPathConvar = GetConvar("citizen_root", 'null');
+    if(buildPathConvar == 'null') throw new Error('citizen_root convar not set');
+    let fxserverVersionConvar = GetConvar('version', 'null');
+    if(fxserverVersionConvar == 'null') throw new Error('version convar not set');
 
+    //Build object
+    let info = {};
     info.osType =  os.type() || 'unknown';
     info.dataPath =  dataPath;
+    info.buildPath = cleanPath(buildPathConvar)+'/';
     info.txAdminPort =  txAdminPort;
     info.serverProfile =  serverProfile;
     info.serverProfilePath =  serverProfilePath;
     info.txAdminResourcePath = cleanPath(GetResourcePath(GetCurrentResourceName()))
-    info.fxserverVersion =  getBuild(GetConvar('version', 'false'));
+    info.fxserverVersion =  getBuild(fxserverVersionConvar);
     info.cfxUrl = null;
 
+    //FIXME: can't do object.freeze() because of `cfxUrl`
     return info;
 }

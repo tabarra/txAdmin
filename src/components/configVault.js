@@ -225,10 +225,10 @@ module.exports = class ConfigVault {
                 fs.mkdirSync(logsPath);
             }
 
-            let messagesPath = `${this.serverProfilePath}/messages.json`;
-            if(!fs.existsSync(messagesPath)){
-                fs.writeFileSync(messagesPath, '[]');
-            }
+            // let messagesPath = `${this.serverProfilePath}/messages.json`;
+            // if(!fs.existsSync(messagesPath)){
+            //     fs.writeFileSync(messagesPath, '[]');
+            // }
 
             // let commandsPath = `${this.serverProfilePath}/commands.json`;
             // if(!fs.existsSync(commandsPath)){

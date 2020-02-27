@@ -10,11 +10,7 @@ const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modul
  */
 module.exports = async function Dashboard(ctx) {
     //If the any FXServer configuration is missing
-    if(
-        globals.fxRunner.config.buildPath === null ||
-        globals.fxRunner.config.basePath === null ||
-        globals.fxRunner.config.cfgPath === null
-    ){
+    if(globals.fxRunner.config.basePath === null || globals.fxRunner.config.cfgPath === null){
         return ctx.response.redirect('/settings');
     }
 
