@@ -27,6 +27,9 @@ module.exports = async function ProviderRedirect(ctx) {
         return returnJustMessage(ctx, 'Provider not implemented... yet');
     }
 
+    //Make sure the session is initialized
+    ctx.session.startedSocialLogin = Date.now();
+
     //Generatte CitizenFX provider Auth URL
     try {
         let urlCitizenFX =  await globals.authenticator.providers.citizenfx.getAuthURL(genCallbackURL(ctx, 'citizenfx'), ctx.session._sessCtx.externalKey);
