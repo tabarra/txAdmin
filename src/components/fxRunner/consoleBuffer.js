@@ -17,13 +17,18 @@ const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(mo
  */
 module.exports = class ConsoleBuffer {
     constructor(logPath, saveInterval) {
-        this.hitchStreamProcessor = null;
         this.logFileSize = null;
         this.logPath = logPath;
         this.enableCmdBuffer = false;
         this.cmdBuffer = '';
         this.webConsoleBuffer = '';
         this.fileBuffer = '';
+
+        //FIXME: this is stupid, please fix
+        this.hitchStreamProcessor = null;
+        this.portStreamProcessor = null;
+        this.hangStreamProcessor = null;
+        this.hangStackStreamProcessor = null;
         this.setupStreamHandlers();
 
         //Start log file
@@ -52,6 +57,36 @@ module.exports = class ConsoleBuffer {
             (m) => { try{globals.monitor.processFXServerHitch(m[2])}catch(e){} }
         );
         this.hitchStreamProcessor.on('error', (data) => {});
+
+
+        //NOTE: detect these:
+        //"Could not bind on 0.0.0.0:30120 - is this address valid and not already in use?"
+        //"Loop %s seems hung! (last checkin %d seconds ago)"
+        //"Warning: %s watchdog stack: %s"
+
+        //FIXME: this is stupid, please fix
+        const deferError = (m, t=500) => {
+            setTimeout(() => {
+                logError(m);
+            }, t);
+        }
+        this.portStreamProcessor = new StreamSnitch(
+            /Could not bind on ([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})/ig,
+            (m) => { try{deferError(`Detected FXServer error: Port ${m[2]} is busy!`)}catch(e){} }
+        );
+        this.portStreamProcessor.on('error', (data) => {});
+
+        this.hangStreamProcessor = new StreamSnitch(
+            /Loop (default|svMain|svNetwork) seems hung!/ig,
+            (m) => { try{deferError(`Detected FXServer error: thread ${m[1]} hung!`)}catch(e){} }
+        );
+        this.hangStreamProcessor.on('error', (data) => {});
+
+        this.hangStackStreamProcessor = new StreamSnitch(
+            /(default|svMain|svNetwork) watchdog stack: (.*)/ig,
+            (m) => { try{deferError(`Detected FXServer error: thread ${m[1]} hung with stack: ${m[2]}`)}catch(e){} }
+        );
+        this.hangStackStreamProcessor.on('error', (data) => {});
     }//Final setupStreamHandlers()
 
 
@@ -66,15 +101,20 @@ module.exports = class ConsoleBuffer {
         //NOTE: not sure how this would throw any errors, but anyways...
         data = data.toString();
         try {
+            //FIXME: this is super stupid, fix it asap
             this.hitchStreamProcessor.write(data);
+            this.portStreamProcessor.write(data);
+            this.hangStreamProcessor.write(data);
+            this.hangStackStreamProcessor.write(data);
             globals.webServer.webConsole.buffer(data, markType);
+
             //NOTE: There used to be a rule "\x0B-\x1F" that was replaced with "x0B-\x1A\x1C-\x1F" to allow the \x1B terminal escape character.
             //This is neccessary for the terminal to have color, but beware of side effects.
             //This regex was done in the first place to prevent fxserver output to be interpreted as txAdmin output by the host terminal
             //IIRC the issue was that one user with a TM on their nick was making txAdmin's console to close or freeze. I couldn't reproduce the issue.
             if(!globals.fxRunner.config.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ""));
         } catch (error) {
-            if(globals.config.verbose) logError(`Buffer write error: ${error.message}`)
+            if(globals.config.verbose) logError(`Buffer write error: ${error.message}`);
         }
 
         //Adding data to the buffers
@@ -123,7 +163,8 @@ module.exports = class ConsoleBuffer {
      */
     saveLog() {
         if(!this.fileBuffer.length) return;
-        fs.appendFile(this.logPath, this.fileBuffer, {encoding: 'utf8'}, (err)=>{
+        let cleanBuff = this.fileBuffer.replace(/\u001b\[\d+(;\d)?m/g, '');
+        fs.appendFile(this.logPath, cleanBuff, {encoding: 'utf8'}, (err)=>{
             if(err){
                 if(globals.config.verbose) logError(`File Write Buffer error: ${error.message}`)
             }else{

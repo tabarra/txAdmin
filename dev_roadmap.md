@@ -33,7 +33,7 @@ Minor stuff:
 - [ ] add txDataPath convar + docs
 - [ ] disable editing the master admin by other admins
 - [x] remover messages.json temporariamente
-- [ ] add the stdout sniffer for wrong ip, hangs and etc
+- [x] add the stdout sniffer for wrong port and hangs (didn't tested tho)
 - [ ] hide memory usage on linux?
 - [ ] clean this dumb file
 - [ ] perform end2end test
