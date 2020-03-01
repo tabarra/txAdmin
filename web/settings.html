@@ -46,7 +46,7 @@
                             </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmGlobal-serverName"
-                                    value="{{global.serverName}}" maxlength="24" {{disableWrite}}>
+                                    value="{{global.serverName|undef}}" maxlength="24" {{disableWrite}}>
                                 <span class="form-text text-muted">
                                     A <strong>short</strong> server name to be used in txAdmin interface and Chat/Discord messages.
                                 </span>
@@ -60,7 +60,7 @@
                             </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmGlobal-publicIP"
-                                    value="{{global.publicIP}}" maxlength="32" placeholder="123.123.123.123" {{disableWrite}}>
+                                    value="{{global.publicIP|undef}}" maxlength="32" placeholder="123.123.123.123" {{disableWrite}}>
                                     <span class="form-text text-muted">
                                         You can set this to be your public IP or a domain name. <br>
                                         This will only be used for discord messages.
@@ -131,7 +131,7 @@
                             <label for="frmFXServer-basePath" class="col-sm-3 col-form-label">Base Folder Path
                                 <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmFXServer-basePath" value="{{fxserver.basePath}}"
+                                <input type="text" class="form-control" id="frmFXServer-basePath" value="{{fxserver.basePath|undef}}"
                                     placeholder="C:/Users/Admin/Desktop/server01" {{disableWrite}}>
                                 <span class="form-text text-muted">
                                     The folder that <strong>contains</strong> the <code>resources</code> and
@@ -145,7 +145,7 @@
                             <label for="frmFXServer-cfgPath" class="col-sm-3 col-form-label">Startup Script Path
                                 <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmFXServer-cfgPath" value="{{fxserver.cfgPath}}"
+                                <input type="text" class="form-control" id="frmFXServer-cfgPath" value="{{fxserver.cfgPath|undef}}"
                                     placeholder="C:/Users/Admin/Desktop/server01/server.cfg" {{disableWrite}}>
                                 <span class="form-text text-muted">
                                     The absolute or relative (to the Base) path of your <code>server.cfg</code>.
@@ -158,7 +158,7 @@
                                 Additional Arguments
                             </label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmFXServer-commandLine" value="{{fxserver.commandLine}}"
+                                <input type="text" class="form-control" id="frmFXServer-commandLine" value="{{fxserver.commandLine|undef}}"
                                     placeholder="+exec extra.cfg" {{disableWrite}}>
                                 <span class="form-text text-muted">
                                     Additional command-line arguments to pass to the FXServer instance.
@@ -264,7 +264,7 @@
                             <label for="frmDiscord-token" class="col-sm-3 col-form-label">Token <span
                                     class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmDiscord-token" value="{{discord.token}}"
+                                <input type="text" class="form-control" id="frmDiscord-token" value="{{discord.token|undef}}"
                                     maxlength="96" {{disableWrite}}>
                                 <span class="form-text text-muted">
                                     To get a token and the bot to join your server, follow these two guides:
@@ -280,7 +280,7 @@
                             <label for="frmDiscord-announceChannel" class="col-sm-3 col-form-label">Announcements Channel ID</label>
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" id="frmDiscord-announceChannel"
-                                    value="{{discord.announceChannel}}" {{disableWrite}}>
+                                    value="{{discord.announceChannel|undef}}" {{disableWrite}}>
                                 <span class="form-text text-muted">
                                     The ID of the channel to send Announcements (eg server restarts). <br>
                                     Leave it blank to disable this feature. <br>
@@ -297,7 +297,7 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmDiscord-statusCommand" value="{{discord.statusCommand}}"
+                                <input type="text" class="form-control" id="frmDiscord-statusCommand" value="{{discord.statusCommand|undef}}"
                                     placeholder="/status" {{disableWrite}}>
                                 <span class="form-text text-muted">
                                     The command that will trigger a status message from the bot.

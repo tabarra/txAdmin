@@ -35,6 +35,9 @@ sqrl.defineFilter("isDisabled", (x)=>{
 sqrl.defineFilter("n2br", (x)=>{
     return x.replace(/(\r|\n)+/m, '<br>');
 });
+sqrl.defineFilter("undef", (x)=>{
+    return (isUndefined(x) || x == 'undefined')? '' : x;
+});
 
 
 //================================================================

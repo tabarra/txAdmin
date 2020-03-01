@@ -33,10 +33,10 @@ Minor stuff:
 - [x] reorganize globals.info.xxx
 - [x] remover messages.json temporariamente
 - [x] add the stdout sniffer for wrong port and hangs (*must* be improved tho)
+- [x] Fix bug: new profile > save global settings > reload page > fxserver: both will be undefined
 - [ ] clean up the resource injector?
 - [ ] clean this dumb file
 - [ ] hide memory usage on linux?
-- [ ] Fix bug: new profile > save global settings > reload page > fxserver: both will be undefined
 - [ ] perform end2end test
 - [ ] improve monitor?
 
