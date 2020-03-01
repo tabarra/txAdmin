@@ -88,7 +88,7 @@ module.exports = class txAdmin {
         //     HandleFatalError(err, 'Database');
         // });
 
-        //FIXME: dependency order
+        //NOTE: dependency order
         //  - translator before monitor
 
         //Run Update Checker every 15 minutes

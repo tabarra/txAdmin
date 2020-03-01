@@ -318,8 +318,10 @@ module.exports = class FXRunner {
             }
 
             //Stopping server
-            this.fxChild.kill();
-            this.fxChild = null;
+            if(this.fxChild !== null){
+                this.fxChild.kill();
+                this.fxChild = null;
+            }
             return true;
         } catch (error) {
             logError("Couldn't kill the server. Perhaps What Is Dead May Never Die.");

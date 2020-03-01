@@ -332,8 +332,8 @@
     let serverTimezone = "{{serverTimezone}}";
     let browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if(serverTimezone !== browserTimezone){
-        let msg = `Your timezone: <b>${browserTimezone}</b> <br>
-            Server's timezone: <b>${serverTimezone}</b> <br>
+        let msg = `Server's timezone: <b>${serverTimezone}</b> <br>
+            Your timezone: <b>${browserTimezone}</b> <br>
             Make sure to adjust the times to match your expectations.`;
         $('#frmMonitor-timezoneAlert').html(msg);
     }
