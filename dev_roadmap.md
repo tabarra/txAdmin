@@ -23,26 +23,31 @@ Minor stuff:
 - [ ] Hide the verbosity option. People don't fucking read and click on it anyway,
 - [ ] xxxxxx
 
-
+## TODO v2.0.0-rc1
 - [x] why auto login when creating master doesn't work??
 - [x] acessar /auth?logout da state mismatch
 - [x] wrong ip, check x-forwarded-for
-- [ ] do I still need the clientCompatVersion convar?
-- [ ] clean up the resource injector?
+- [x] do I still need the clientCompatVersion convar?
 - [x] build path to the global info - check for globals.fxRunner.something
 - [x] add txDataPath convar + docs
 - [x] reorganize globals.info.xxx
-- [ ] disable editing the master admin by other admins
 - [x] remover messages.json temporariamente
 - [x] add the stdout sniffer for wrong port and hangs (*must* be improved tho)
-- [ ] hide memory usage on linux?
+- [ ] clean up the resource injector?
 - [ ] clean this dumb file
+- [ ] hide memory usage on linux?
+- [ ] Fix bug: new profile > save global settings > reload page > fxserver: both will be undefined
 - [ ] perform end2end test
 - [ ] improve monitor?
 
+- [ ] disable editing the master admin by other admins
+- [ ] Social auth provider setup retry every 15 seconds
+- [ ] Rework the entire monitor
 
-/e/FiveM/builds/tmpRoot
-npx nodemon --watch "../2116/citizen/system_resources/monitor/src/*" --exec "../2116/run.cmd"
+```bash
+cd /e/FiveM/builds
+npx nodemon --watch "2116/citizen/system_resources/monitor/src/*" --exec "2116/run.cmd"
+```
 
 ### Feature tasks for collaborators:
 - Logger:

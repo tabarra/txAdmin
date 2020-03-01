@@ -53,7 +53,6 @@ module.exports = class FXRunner {
             `+sets txAdmin-version "${GlobalData.txAdminVersion}"`,
             `+set txAdmin-apiPort "${GlobalData.txAdminPort}"`,
             `+set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
-            `+set txAdmin-clientCompatVersion "${GlobalData.txAdminVersion}"`,
         ];
 
         //Commands

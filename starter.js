@@ -25,7 +25,5 @@ if(monitorMode == 'true'){
         console.log('e'.repeat(80));
     }
 }else if(GetConvar('txAdminServerMode', 'false') == 'true'){
-    console.log('>txAdmin in server mode.');
-
     require('./extensions/txAdminClient/resource/sv_logger.js');
 }
