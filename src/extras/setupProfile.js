@@ -1,11 +1,10 @@
 //Requires
-const modulename = 'Setup';
+const modulename = 'SetupProfile';
 const ac = require('ansi-colors');
 const fs = require('fs-extra');
 const path = require('path');
 const slash = require('slash');
 const { dir, log, logOk, logWarn, logError} = require('./console')(modulename);
-const osType = require('os').type();
 
 //Helpers
 const printDivider = () => { log('='.repeat(64)) };
@@ -48,20 +47,13 @@ let defaultConfig = {
 
 
 //================================================================
-module.exports = (serverRoot, serverProfile, profilePath) => {
+module.exports = (osType, fxServerPath, fxServerVersion, serverProfile, profilePath) => {
     printDivider();
     //Sanity check presence of profile
     if (fs.existsSync(profilePath)) {
         logError(`There is already a profile named '${serverProfile}'.`);
         process.exit();
     }
-
-    let citizenRootConvar = GetConvar('citizen_root', 'false');
-    if(citizenRootConvar == 'false'){
-        logError(`citizen_root convar not set`);
-        process.exit();
-    }
-    const citizenRoot = cleanPath(citizenRootConvar);
 
     //Create new profile folder
     log('Creating new profile folder...');
@@ -78,20 +70,19 @@ module.exports = (serverRoot, serverProfile, profilePath) => {
         process.exit();
     }
     logOk(`Server profile was saved in '${profilePath}'`);
+    
 
     //Saving start.bat
     if(osType == 'Windows_NT'){
         try {
-            let batch = `@echo off\r\n${citizenRoot}/run.cmd +set serverProfile "${serverProfile}"\r\npause`;
-            fs.writeFileSync(`${serverRoot}/start_${serverProfile}.bat`, batch);
+            let batName  = `start_${fxServerVersion}_${serverProfile}.bat`;
+            let batFolder = path.resolve(fxServerPath, '..');
+            let batData = `@echo off\r\n${fxServerPath}/run.cmd +set serverProfile "${serverProfile}"\r\npause`;
+            fs.writeFileSync(path.join(batFolder, batName), batData);
+            logOk(`You can use ${batFolder}\\${ac.inverse(batName)} to start this profile.`);
         } catch (error) {
-            logWarn(`Failed to create 'start_${serverProfile}.bat' in the current folder.`);
+            logWarn(`Failed to create '${batName}' in ${batFolder}.`);
         }
-    }
-
-    logOk(`To start with this profile add the following argument: +set serverProfile "${serverProfile}"`);
-    if(osType == 'Windows_NT'){
-        logOk(`You can also run ` + ac.inverse(` start_${serverProfile}.bat `) + ` added to this folder.`);
     }
     printDivider();
 }

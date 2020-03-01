@@ -21,7 +21,6 @@ module.exports = async function Dashboard(ctx) {
 
     //Preparing render data
     let renderData = {
-        errorMessage: globals.dashboardErrorMessage,
         serverName: globals.config.serverName,
         updateData: getUpdateData(),
         chartData: getChartData(globals.monitor.timeSeries.get()),
@@ -80,8 +79,11 @@ function getChartData(series) {
  * Returns the update data
  */
 function getUpdateData() {
+    //FIXME: temp disable for conversion
+    return false;
+
     let updateData = {
-        currentVersion: globals.version.current,
+        currentVersion: GlobalData.txAdminVersion,
         latestVersion: globals.version.latest,
         changes: []
     }
@@ -89,7 +91,7 @@ function getUpdateData() {
     try {
         let diff;
         try {
-            diff = semver.diff(globals.version.current, globals.version.latest);
+            diff = semver.diff(GlobalData.txAdminVersion, globals.version.latest);
         } catch (error) {
             diff = 'major';
         }
@@ -107,7 +109,7 @@ function getUpdateData() {
         //Processing the version history and only picking the new ones
         globals.version.allVersions.forEach(version => {
             try {
-                if (semver.gt(version.version, globals.version.current)) {
+                if (semver.gt(version.version, GlobalData.txAdminVersion)) {
                     updateData.changes.push(version);
                 }
             } catch (error) { }

@@ -161,10 +161,10 @@ module.exports = class ConfigVault {
         //NOTE: the bool trick in global.verbose and fxRunner.autostart won't work if we want the default to be true
         try {
             //Global
-            cfg.global.verbose = (cfg.global.verbose === 'true' || cfg.global.verbose === true);
+            cfg.global.verbose = (cfg.global.verbose === 'true' || cfg.global.verbose === true); //TODO: move to GlobalData
             cfg.global.publicIP = cfg.global.publicIP || "change-me";
             cfg.global.serverName = cfg.global.serverName || "change-me";
-            cfg.global.language = cfg.global.language || "en";
+            cfg.global.language = cfg.global.language || "en"; //TODO: move to GlobalData
 
             //Logger
             cfg.logger.logPath = cfg.logger.logPath || `${this.serverProfilePath}/logs/admin.log`; //not in template
@@ -191,9 +191,6 @@ module.exports = class ConfigVault {
             cfg.discordBot.commandCooldown = parseInt(cfg.discordBot.commandCooldown) || 30; //not in template
 
             //FXRunner
-            let buildPath = GetConvar("citizen_root", 'null');
-            if(buildPath == 'null') throw new Error('citizen_root convar not set')
-            cfg.fxRunner.buildPath = slash(path.normalize(buildPath+'/'));
             cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template
             cfg.fxRunner.setPriority = cfg.fxRunner.setPriority || "NORMAL";
             cfg.fxRunner.onesync = (cfg.fxRunner.onesync === 'true' || cfg.fxRunner.onesync === true);

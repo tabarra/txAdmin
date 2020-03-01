@@ -76,7 +76,7 @@ async function getProcessesData(){
                 order = 0;
 
             }else if(pid == termPID){
-                if(globals.info.osType === 'Linux' && Object.keys(processes).length == 2){
+                if(GlobalData.osType === 'Linux' && Object.keys(processes).length == 2){
                     procName = 'FXServer';
                 }else{
                     procName = 'Terminal';
@@ -245,7 +245,7 @@ async function gettxAdminData(){
         timeout: globals.monitor.config.timeout,
         failures: globals.monitor.config.restarter.failures,
         schedule: globals.monitor.config.restarter.schedule.join(', '),
-        buildPath: globals.info.buildPath,
+        fxServerPath: GlobalData.fxServerPath,
         basePath: globals.fxRunner.config.basePath,
         cfgPath: globals.fxRunner.config.cfgPath,
     };

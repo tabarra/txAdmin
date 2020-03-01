@@ -30,10 +30,11 @@ Minor stuff:
 - [ ] do I still need the clientCompatVersion convar?
 - [ ] clean up the resource injector?
 - [x] build path to the global info - check for globals.fxRunner.something
-- [ ] add txDataPath convar + docs
+- [x] add txDataPath convar + docs
+- [x] reorganize globals.info.xxx
 - [ ] disable editing the master admin by other admins
 - [x] remover messages.json temporariamente
-- [x] add the stdout sniffer for wrong port and hangs (didn't tested tho)
+- [x] add the stdout sniffer for wrong port and hangs (*must* be improved tho)
 - [ ] hide memory usage on linux?
 - [ ] clean this dumb file
 - [ ] perform end2end test
@@ -41,7 +42,7 @@ Minor stuff:
 
 
 /e/FiveM/builds/tmpRoot
-npx nodemon --watch "../2083/citizen/system_resources/monitor/src/*" --exec "../2083/run.cmd"
+npx nodemon --watch "../2116/citizen/system_resources/monitor/src/*" --exec "../2116/run.cmd"
 
 ### Feature tasks for collaborators:
 - Logger:

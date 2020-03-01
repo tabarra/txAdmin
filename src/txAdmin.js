@@ -1,5 +1,12 @@
 //Requires
+const fs = require('fs');
+const path = require('path');
+const slash = require('slash');
 const { dir, log, logOk, logWarn, logError} = require('./extras/console')();
+
+//Helpers
+const cleanPath = (x) => { return slash(path.normalize(x)) };
+
 
 //FIXME: I should be using dependency injection or something
 globals = {
@@ -13,18 +20,7 @@ globals = {
     webServer: null,
     database: null,
     config: null,
-    info: null,
-
-    //FIXME: send to inside of globals.info
-    version: {
-        current: '--',
-        latest: '--',
-        changelog: '--',
-        allVersions: []
-    },
-
-    //NOTE: currently not being used, find a way to push errors to the interface
-    dashboardErrorMessage: null,
+    info: {},
 
     //FIXME: remove with the Extensions update
     intercomTempLog: [],
@@ -36,20 +32,24 @@ globals = {
  * Main APP
  */
 module.exports = class txAdmin {
-    //NOTE: after adding support for multi-server, review parameter cascading
-    constructor(dataPath, profilePath, serverProfile, txAdminPort){
-        log(">>Starting txAdmin");
+    constructor(serverProfile){
+        //FIXME: dataPath, profilePath, serverProfile, txAdminPort
+        log(`>>Starting txAdmin profile ${serverProfile}`);
+        globals.info.serverProfile =  serverProfile;
 
-        //Get current version
-        try {
-            let versioData = require('../version.json');
-            if(!versioData || typeof versioData.version !== 'string') throw new Error('Invalid data in the version file.');
-            globals.version.current = versioData.version;
-        } catch (error) {
-            logError(`Error reading or parsing the 'version.json' file:`);
-            logError(error.message);
-            process.exit();
+        //Check if the profile exists and call setup if it doesn't
+        const profilePath = cleanPath(path.join(GlobalData.dataPath, serverProfile));
+        if(!fs.existsSync(profilePath)){
+            logWarn(`Profile not found in '${GlobalData.dataPath}'`);
+            try {
+                const SetupProfile = require('./extras/setupProfile.js');
+                SetupProfile(GlobalData.osType, GlobalData.fxServerPath, GlobalData.fxServerVersion, serverProfile, profilePath);
+            } catch (error) {
+                logError(`Failed to create profile '${serverProfile}' with error: ${error.message}`);
+                process.exit();
+            }
         }
+        globals.info.serverProfilePath =  profilePath;
 
         //Load Config Vault
         let profileConfig;
@@ -60,15 +60,6 @@ module.exports = class txAdmin {
             globals.config = profileConfig.global;
         } catch (err) {
             HandleFatalError(err, 'ConfigVault');
-        }
-
-        //Setting global infos
-        try {
-            globals.info = require('./extras/globalInfo')(dataPath, profilePath, serverProfile, txAdminPort);
-        } catch (err) {
-            logError(`Failed to set globals.info with error: ${err.message}`);
-            if(globals.config.verbose) dir(err);
-            process.exit();
         }
 
         //Start all modules

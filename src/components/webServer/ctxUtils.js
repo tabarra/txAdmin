@@ -22,7 +22,7 @@ const getRenderErrorText = (view, error, data) => {
 }
 const getWebViewPath = (view) => {
     if(view.includes('..')) throw new Error('Path Traversal?');
-    return path.join(globals.info.txAdminResourcePath, 'web/', view+'.html');
+    return path.join(GlobalData.txAdminResourcePath, 'web/', view+'.html');
 }
 
 //Squirrelly Filters
@@ -46,8 +46,8 @@ sqrl.defineFilter("n2br", (x)=>{
 async function renderMasterView(view, reqSess, data){
     if(isUndefined(data)) data = {};
     data.headerTitle = (!isUndefined(data.headerTitle))? `${data.headerTitle} - txAdmin` : 'txAdmin';
-    data.txAdminVersion = globals.version.current;
-    data.fxserverVersion = `FXServer ${globals.info.fxserverVersion}`;
+    data.txAdminVersion = GlobalData.txAdminVersion;
+    data.fxserverVersion = `FXServer ${GlobalData.fxServerVersion}`;
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username)? reqSess.auth.username : 'unknown user';
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture)? reqSess.auth.picture : 'img/default_avatar.png';
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
@@ -87,8 +87,8 @@ async function renderLoginView(data){
     // data.template = 'normal';
     // data.template = 'justMessage';
     data.config = globals.info.serverProfile;
-    data.txAdminVersion = globals.version.current;
-    data.fxserverVersion = globals.info.fxserverVersion;
+    data.txAdminVersion = GlobalData.txAdminVersion;
+    data.fxserverVersion = GlobalData.fxServerVersion;
 
     let out;
     try {

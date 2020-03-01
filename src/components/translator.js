@@ -95,7 +95,7 @@ module.exports = class Translator {
         //If its a custom language
         try {
             return JSON.parse(fs.readFileSync(
-                `${globals.info.dataPath}/locale/${lang}.json`,
+                `${GlobalData.dataPath}/locale/${lang}.json`,
                 'utf8'
             ));
         } catch (error) {

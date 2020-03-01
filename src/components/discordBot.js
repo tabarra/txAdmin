@@ -150,7 +150,7 @@ module.exports = class DiscordBot {
         }else if(message.content.startsWith('/txadmin')){
             //Prepare object
             out = new Discord.RichEmbed();
-            out.setTitle(`${globals.config.serverName} uses txAdmin v${globals.version.current}!`);
+            out.setTitle(`${globals.config.serverName} uses txAdmin v${GlobalData.txAdminVersion}!`);
             out.setColor(0x4DEEEA);
             out.setDescription(`Checkout the project:\n GitHub: https://github.com/tabarra/txAdmin\n Discord: https://discord.gg/f3TsfvD`);
 

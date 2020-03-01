@@ -97,7 +97,7 @@ module.exports = class WebServer {
             }
         });
         //Setting up additional middlewares:
-        this.app.use(KoaServe(path.join(globals.info.txAdminResourcePath, 'web/public'), {index: false, defer: false}));
+        this.app.use(KoaServe(path.join(GlobalData.txAdminResourcePath, 'web/public'), {index: false, defer: false}));
         this.app.use(this.sessionInstance);
         this.app.use(KoaBodyParser({jsonLimit}));
 
@@ -151,7 +151,7 @@ module.exports = class WebServer {
                 let urlConvar = GetConvar('web_baseUrl', 'false');
                 if(validUrlRegex.test(urlConvar)){
                     logOk(`::Listening at https://${urlConvar}/`);
-                    globals.info.cfxUrl = urlConvar;
+                    GlobalData.cfxUrl = urlConvar;
                     clearInterval(getUrlInterval);
                 }
             } catch (error) {}
@@ -173,8 +173,8 @@ module.exports = class WebServer {
                 logError(`Failed to start HTTP server, port ${error.port} already in use.`);
                 process.exit();
             });
-            this.httpServer.listen(globals.info.txAdminPort, '0.0.0.0', () => {
-                logOk(`::Listening at http://localhost:${globals.info.txAdminPort}/`);
+            this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', () => {
+                logOk(`::Listening at http://localhost:${GlobalData.txAdminPort}/`);
             });
         } catch (error) {
             logError('::Failed to start HTTP server with error:');

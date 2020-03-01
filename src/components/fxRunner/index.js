@@ -50,10 +50,10 @@ module.exports = class FXRunner {
     setupVariables(){
         //Defaults
         let toExec = [
-            `+sets txAdmin-version "${globals.version.current}"`,
-            `+set txAdmin-apiPort "${globals.info.txAdminPort}"`,
+            `+sets txAdmin-version "${GlobalData.txAdminVersion}"`,
+            `+set txAdmin-apiPort "${GlobalData.txAdminPort}"`,
             `+set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
-            `+set txAdmin-clientCompatVersion "${globals.version.current}"`,
+            `+set txAdmin-clientCompatVersion "${GlobalData.txAdminVersion}"`,
         ];
 
         //Commands
@@ -73,18 +73,18 @@ module.exports = class FXRunner {
 
         const cliString = cliArgs.join(' ');
 
-        if(globals.info.osType === 'Linux'){
+        if(GlobalData.osType === 'Linux'){
             this.spawnVariables = {
                 shell: '/bin/sh',
-                cmdArgs: [`${globals.info.buildPath}/run.sh`, cliString]
+                cmdArgs: [`${GlobalData.fxServerPath}/run.sh`, cliString]
             };
-        }else if(globals.info.osType === 'Windows_NT'){
+        }else if(GlobalData.osType === 'Windows_NT'){
             this.spawnVariables = {
                 shell: 'cmd.exe',
-                cmdArgs: ['/c', `${globals.info.buildPath}/run.cmd ${cliString}`]
+                cmdArgs: ['/c', `${GlobalData.fxServerPath}/run.cmd ${cliString}`]
             };
         }else{
-            logError(`OS type not supported: ${globals.info.osType}`);
+            logError(`OS type not supported: ${GlobalData.osType}`);
             process.exit();
         }
 
@@ -115,7 +115,7 @@ module.exports = class FXRunner {
         }
         //If the any FXServer configuration is missing
         if(this.config.basePath === null || this.config.cfgPath === null){
-            return logError('Cannot start the server with missing configuration (buildPath || basePath || cfgPath).');
+            return logError('Cannot start the server with missing configuration (basePath || cfgPath).');
         }
         //If the server is already alive
         if(this.fxChild !== null){
@@ -159,7 +159,7 @@ module.exports = class FXRunner {
                 {cwd: this.config.basePath}
             );
             if(typeof this.fxChild.pid === 'undefined'){
-                const platformComplaint = (globals.info.osType === 'Windows_NT') ? 'Make sure you have "C:/windows/system32" in your system PATH variables.' : '';
+                const platformComplaint = (GlobalData.osType === 'Windows_NT') ? 'Make sure you have "C:/windows/system32" in your system PATH variables.' : '';
                 throw new Error(`Executon of "${this.spawnVariables.shell}" failed. ${platformComplaint}`);
             }
             pid = this.fxChild.pid.toString();

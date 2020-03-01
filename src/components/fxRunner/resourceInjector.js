@@ -30,7 +30,7 @@ async function resetCacheFolder(basePath) {
  */
 function getResourcesList() {
     try {
-        let rootDir = globals.info.txAdminResourcePath + '/extensions/';
+        let rootDir = GlobalData.txAdminResourcePath + '/extensions/';
         var paths = fs.readdirSync(rootDir);
         let resources = [];
         paths.forEach((path)=>{

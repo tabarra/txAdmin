@@ -42,10 +42,10 @@
 
 ## Installing & Running (Windows/Linux)
 
-If your copy of fxserver doesn't come with txAdmin (`citizen/system_resources/txAdmin`), you can install with the following steps:
+If your copy of FXServer doesn't come with txAdmin (`citizen/system_resources/txAdmin`), you can install with the following steps:
 
 ```bash
-#Inside your fxserver folder, execute:
+#Inside your FXServer folder, execute:
 cd citizen/system_resources
 mv monitor monitorOld
 git clone -b conversion https://github.com/tabarra/txAdmin monitor
@@ -59,10 +59,15 @@ An `txData` folder will be created in your current working directory.
 ### ConVars
 - **serverProfile:** The name of the server profile to start. Profiles are saved/loaded from the current directory inside the `txData` folder.
 - **txAdminPort:** The TCP port to use as HTTP Server.
+- **txDataPath:** The path of the data folder. The default on Windows is `<citizen_root>/../txData` and on Linux `<citizen_root>/../../../txData`.
 
-ConVar usage example on Windows:  
+ConVar usage **example** on Windows:  
 ```bash
-./run.cmd +set serverProfile dev_server +set txAdminPort 40125
+# Windows
+./run.cmd +set serverProfile dev_server +set txAdminPort 40125 +set txDataPath "%userprofile%/Desktop/txData"
+
+# Linux
+./run.sh +set serverProfile dev_server +set txAdminPort 40125 +set txDataPath "~/fxserver/txData"
 ```
 
 ## License, Credits and Thanks

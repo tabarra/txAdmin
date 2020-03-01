@@ -11,7 +11,7 @@ module.exports = class Authenticator {
     constructor(config) {
         logOk('::Started');
         this.config = config;
-        this.adminsFile = `${globals.info.dataPath}/admins.json`;
+        this.adminsFile = `${GlobalData.dataPath}/admins.json`;
         this.admins = null;
         this.registeredPermissions = [
             "all_permissions",
