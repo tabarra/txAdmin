@@ -1,3 +1,34 @@
+## TODO november, around v1.15:
+- [x] Fix potential memory exhaustion DoS
+- [x] Add Explosion type decoding
+- [x] Add Custom logging method + docs
+- [x] Diagnostics Page:
+    - [x] Incompatible version warning
+    - [x] Global crash counters + uptime
+    - [x] If on Linux, correctly name the process as FXServer
+- [x] Route Error Verbosity
+- [x] Detect failed server launch
+- [x] Move the start.bat file to the root dir
+- [ ] Try the dark theme scss
+- [ ] Make toggle button
+
+### Feature tasks for collaborators:
+- Logger:
+    - [-] Revert txAdminClient cl_logger.js back into lua and fix the mismatch of killer ID from client to server
+    - [ ] Listen for the most common vRP and ESX server events and log them
+    - [x] Divide the interface vertically, and on the right add filter options (HTML/CSS Only)
+    - [ ] Make the javascript for hiding events based on the `data-event-type` attribute
+    - [.] Create a "load more" at the top of the log, for the admin too be able to see older entries.
+- [x] When restarting the server, add the name of the admin to the chat/discord messages.
+- [x] When sending a DM as admin, add the name of the admin
+- [x] Add localized uptime to the /status command and review the usage of the dateformat lib
+- [x] Add to the resources page an option to see/hide the default cfx resources
+- [ ] Dark Theme!
+
+x = done
+- = being worked on
+. = on hold
+
 ## Around v1.12:
 - [x] Do something in case fxserver's tcp/http endpoint dies for more than 5 minutes
 - [x] Let admins change their password
@@ -7,9 +38,18 @@
 - [x] Remove figlet (also from the login page)
 - [x] Remove pretty-ms
 - [x] Improve CSS of the log pages on mobile, they look too tiny
+- [x] freeze detector
+- [x] inject via tmp file
+- [x] experiements dropdown menu + ban page html/js
+- [x] database module
+- [x] functional ban page with ban add, list and export
+- [x] ban feature at sv_main.lua
+- [x] tie everything correctly and push update
+- [x] fix playerlist div name issue
+- [x] Fix paths with spaces (too hard, just block in the settings page)
+- [x] Apple xss whitelist [] to all xss() calls (vide src\webroutes\diagnostics-log.js)
 
-
-## Settings Roadmap/TODO:
+## Settings Roadmap
 > v1.0.5
 - [x] adapt admin-add
 - [x] adapt config-tester
