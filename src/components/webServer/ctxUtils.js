@@ -78,7 +78,7 @@ async function renderMasterView(view, reqSess, data){
 async function renderLoginView(data){
     if(isUndefined(data)) data = {};
     data.headerTitle = data.headerTitle || 'Login';
-    data.isMatrix = (Math.random() <= 0.1);
+    data.isMatrix = (Math.random() <= 0.05);
     data.ascii = helpers.txAdminASCII();
     data.message = data.message || '';
     data.template = data.template || 'normal';

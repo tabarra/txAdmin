@@ -11,7 +11,6 @@ local apiPort = GetConvar("txAdmin-apiPort", "invalid")
 local apiToken = GetConvar("txAdmin-apiToken", "invalid")
 local txAdminClientVersion = GetResourceMetadata(GetCurrentResourceName(), 'version')
 if GetConvar('txAdminServerMode', 'false') ~= 'true' then
-    logError('This file should only be run in server mode.')
     return
 end
 if apiPort == "invalid" or apiToken == "invalid" then

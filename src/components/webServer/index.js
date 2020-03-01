@@ -155,7 +155,7 @@ module.exports = class WebServer {
                     clearInterval(getUrlInterval);
                 }
             } catch (error) {}
-        }, 1000);
+        }, 500);
 
         //CitizenFX Callback
         try {

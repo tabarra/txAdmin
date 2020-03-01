@@ -75,13 +75,13 @@ module.exports = (osType, fxServerPath, fxServerVersion, serverProfile, profileP
     //Saving start.bat
     if(osType == 'Windows_NT'){
         try {
-            let batName  = `start_${fxServerVersion}_${serverProfile}.bat`;
             let batFolder = path.resolve(fxServerPath, '..');
+            let batPath  = path.join(batFolder, `start_${fxServerVersion}_${serverProfile}.bat`);
             let batData = `@echo off\r\n${fxServerPath}/run.cmd +set serverProfile "${serverProfile}"\r\npause`;
-            fs.writeFileSync(path.join(batFolder, batName), batData);
-            logOk(`You can use ${batFolder}\\${ac.inverse(batName)} to start this profile.`);
+            fs.writeFileSync(batPath, batData);
+            logOk(`You can use ${ac.inverse(batPath)} to start this profile.`);
         } catch (error) {
-            logWarn(`Failed to create '${batName}' in ${batFolder}.`);
+            logWarn(`Failed to create '${batPath}'.`);
         }
     }
     printDivider();

@@ -66,7 +66,7 @@ class Logger {
 
         //Attempt to set env vars
         this.txAdminPort = GetConvar("txAdmin-apiPort", "invalid");
-        this.txAdminToken = GetConvar("txAdmin-apiTokenx", "invalid");
+        this.txAdminToken = GetConvar("txAdmin-apiToken", "invalid");
         if(this.txAdminPort === 'invalid' || this.txAdminToken === 'invalid'){
             logError('API Port and Token ConVars not found. Do not start this resource if not using txAdmin.') 
         }

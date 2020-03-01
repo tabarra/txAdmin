@@ -40,7 +40,6 @@ module.exports = class txAdmin {
         //Check if the profile exists and call setup if it doesn't
         const profilePath = cleanPath(path.join(GlobalData.dataPath, serverProfile));
         if(!fs.existsSync(profilePath)){
-            logWarn(`Profile not found in '${GlobalData.dataPath}'`);
             try {
                 const SetupProfile = require('./extras/setupProfile.js');
                 SetupProfile(GlobalData.osType, GlobalData.fxServerPath, GlobalData.fxServerVersion, serverProfile, profilePath);
@@ -90,6 +89,7 @@ module.exports = class txAdmin {
 
         //NOTE: dependency order
         //  - translator before monitor
+        //  - authenticator before webserver
 
         //Run Update Checker every 15 minutes
         // const updateChecker = require('./extras/updateChecker');
