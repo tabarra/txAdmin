@@ -150,7 +150,7 @@ module.exports = class WebServer {
             try {
                 let urlConvar = GetConvar('web_baseUrl', 'false');
                 if(validUrlRegex.test(urlConvar)){
-                    logOk(`::Listening at https://${urlConvar}/`);
+                    logOk(`Listening at https://${urlConvar}/`);
                     GlobalData.cfxUrl = urlConvar;
                     clearInterval(getUrlInterval);
                 }
@@ -161,7 +161,7 @@ module.exports = class WebServer {
         try {
             setHttpCallback(this.httpCallbackHandler.bind(this, 'citizenfx'));
         } catch (error) {
-            logError('::Failed to start CitizenFX Reverse Proxy Callback with error:');
+            logError('Failed to start CitizenFX Reverse Proxy Callback with error:');
             dir(error);
         }
 
@@ -174,10 +174,10 @@ module.exports = class WebServer {
                 process.exit();
             });
             this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', () => {
-                logOk(`::Listening at http://localhost:${GlobalData.txAdminPort}/`);
+                logOk(`Listening at http://localhost:${GlobalData.txAdminPort}/`);
             });
         } catch (error) {
-            logError('::Failed to start HTTP server with error:');
+            logError('Failed to start HTTP server with error:');
             dir(error);
             process.exit();
         }

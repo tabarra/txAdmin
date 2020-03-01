@@ -31,7 +31,7 @@ module.exports = class CitizenFXProvider {
                 response_types: ['openid']
             });
             this.client[custom.clock_tolerance] = 15;
-            log('CitizenFX Provider configured.');
+            if(globals.config.verbose) log('CitizenFX Provider configured.');
             this.ready = true;
         } catch (error) {
             logError(`Failed to create client with error: ${error.message}`);

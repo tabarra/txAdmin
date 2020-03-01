@@ -16,7 +16,7 @@ const now = () => { return Math.round(new Date() / 1000) };
 
 module.exports = class FXRunner {
     constructor(config) {
-        logOk('::Started');
+        logOk('Started');
         this.config = config;
         this.spawnVariables = null;
         this.fxChild = null;
@@ -163,7 +163,7 @@ module.exports = class FXRunner {
                 throw new Error(`Executon of "${this.spawnVariables.shell}" failed. ${platformComplaint}`);
             }
             pid = this.fxChild.pid.toString();
-            logOk(`:: [${pid}] FXServer Started!`);
+            logOk(`>> [${pid}] FXServer Started!`);
             this.consoleBuffer.writeHeader();
             this.tsChildStarted = tsStart;
         } catch (error) {

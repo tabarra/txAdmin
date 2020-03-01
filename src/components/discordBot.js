@@ -14,7 +14,7 @@ module.exports = class DiscordBot {
         this.messages = [];
         this.spamLimitCache = {}
         if(!this.config.enabled){
-            logOk('::Disabled by the config file.');
+            logOk('Disabled by the config file.');
         }else{
             this.refreshStaticCommands();
             this.cronFunc = setInterval(() => {
@@ -84,7 +84,7 @@ module.exports = class DiscordBot {
 
         //Setup event listeners
         this.client.on('ready', () => {
-            logOk(`::Started and logged in as '${this.client.user.tag}'`);
+            logOk(`Started and logged in as '${this.client.user.tag}'`);
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
         });
         this.client.on('message', this.handleMessage.bind(this));

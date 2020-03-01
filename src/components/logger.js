@@ -15,9 +15,9 @@ module.exports = class Logger {
         let header = `\r\n${sep}\r\n======== txAdmin starting - ${timestamp}\r\n${sep}\r\n`;
         try {
             fs.appendFileSync(this.config.logPath, header, 'utf8');
-            logOk('::Started');
+            logOk('Started');
         } catch (error) {
-            logError(`::Failed to write to log file '${this.config.logPath}'`);
+            logError(`Failed to write to log file '${this.config.logPath}'`);
             if(globals.config.verbose) dir(error);
             process.exit();
         }
@@ -34,7 +34,7 @@ module.exports = class Logger {
         try {
             await fs.appendFile(this.config.logPath, `[${timestamp}]${data}\n`, 'utf8');
         } catch (error) {
-            logError(`::Failed to write to log file '${this.config.logPath}'`);
+            logError(`Failed to write to log file '${this.config.logPath}'`);
         }
     }
 

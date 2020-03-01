@@ -34,7 +34,7 @@ globals = {
 module.exports = class txAdmin {
     constructor(serverProfile){
         //FIXME: dataPath, profilePath, serverProfile, txAdminPort
-        log(`>>Starting txAdmin profile ${serverProfile}`);
+        log(`>> Starting profile ${serverProfile}`);
         globals.info.serverProfile =  serverProfile;
 
         //Check if the profile exists and call setup if it doesn't
@@ -49,12 +49,12 @@ module.exports = class txAdmin {
                 process.exit();
             }
         }
-        globals.info.serverProfilePath =  profilePath;
+        globals.info.serverProfilePath = profilePath;
 
         //Load Config Vault
         let profileConfig;
         try {
-            const ConfigVault = require('./components/configVault')
+            const ConfigVault = require('./components/configVault');
             globals.configVault = new ConfigVault(profilePath, serverProfile);
             profileConfig = globals.configVault.getAll();
             globals.config = profileConfig.global;

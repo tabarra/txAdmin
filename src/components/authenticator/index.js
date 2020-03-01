@@ -9,7 +9,7 @@ const CitizenFXProvider = require('./providers/CitizenFX');
 
 module.exports = class Authenticator {
     constructor(config) {
-        logOk('::Started');
+        logOk('Started');
         this.config = config;
         this.adminsFile = `${GlobalData.dataPath}/admins.json`;
         this.admins = null;

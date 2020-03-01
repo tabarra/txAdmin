@@ -16,6 +16,10 @@ const { dir, log, logOk, logWarn, logError, cleanTerminal, setTTYTitle } = requi
 
 //Helpers
 const cleanPath = (x) => { return slash(path.normalize(x)) };
+const logDie = (x) => {
+    logError(x);
+    process.exit(1);
+}
 const getBuild = (ver)=>{
     try {
         let regex = /v1\.0\.0\.(\d{4,5})\s*/;
@@ -33,23 +37,20 @@ const osType = os.type();
 //Getting fxserver version
 const fxServerVersion = getBuild(GetConvar('version', 'false'));
 if(!fxServerVersion){
-    logError(`version convar not set or in the wrong format`);
-    process.exit();
+    logDie(`version convar not set or in the wrong format`);
 }
 
 //Getting txAdmin version
 const txAdminVersion = GetResourceMetadata(GetCurrentResourceName(), 'version');
 if(typeof txAdminVersion !== 'string' || txAdminVersion == 'null'){
-    logError(`txAdmin version not set or in the wrong format`);
-    process.exit();
+    logDie(`txAdmin version not set or in the wrong format`);
 }
 
 //Get txAdmin Resource Path
 let txAdminResourcePath;
 let txAdminResourcePathConvar = GetResourcePath(GetCurrentResourceName());
 if(typeof txAdminResourcePathConvar !== 'string' || txAdminResourcePathConvar == 'null'){
-    logError(`Could not resolve txAdmin resource path`);
-    process.exit();
+    logDie(`Could not resolve txAdmin resource path`);
 }else{
     txAdminResourcePath = cleanPath(txAdminResourcePathConvar);
 }
@@ -57,8 +58,7 @@ if(typeof txAdminResourcePathConvar !== 'string' || txAdminResourcePathConvar ==
 //Get citizen Root
 let citizenRootConvar = GetConvar('citizen_root', 'false');
 if(citizenRootConvar == 'false'){
-    logError(`citizen_root convar not set`);
-    process.exit();
+    logDie(`citizen_root convar not set`);
 }
 const fxServerPath = cleanPath(citizenRootConvar);
 
@@ -68,33 +68,29 @@ let txDataPathConvar = GetConvar('txDataPath', 'false');
 if(txDataPathConvar == 'false'){
     let dataPathSuffix = (osType == 'Windows_NT')? '..' : '../../../';
     dataPath = cleanPath(path.join(fxServerPath, dataPathSuffix, 'txData'));
-    log(`txData convar not specified, assuming: ${dataPath}`);
+    log(`Using: ${dataPath}`);
 }else{
     dataPath = cleanPath(txDataPathConvar);
 }
 try {
     if(!fs.existsSync(dataPath)) fs.mkdirSync(dataPath);
 } catch (error) {
-    logError(`Failed to check or create '${dataPath}' with error: ${error.message}`);
-    process.exit();
+    logDie(`Failed to check or create '${dataPath}' with error: ${error.message}`);
 }
 
 //Get Web Port
 let txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
 let digitRegex = /^\d+$/;
 if(!digitRegex.test(txAdminPortConvar)){
-    logError(`txAdminPort is not valid.`);
-    process.exit();
+    logDie(`txAdminPort is not valid.`);
 }
 const txAdminPort = parseInt(txAdminPortConvar);
 
 //Get profile name
 const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, "").trim();
 if(!serverProfile.length){
-    logError(`Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.`);
-    process.exit();
+    logDie(`Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.`);
 }
-log(`Server profile selected: '${serverProfile}'`);
 
 //Setting Global Data
 GlobalData = {
@@ -142,15 +138,15 @@ process.stderr.on('error', (data) => {});
 
 //Handle "the unexpected"
 process.on('unhandledRejection', (err) => {
-    logError(">>Ohh nooooo - unhandledRejection")
+    logError("Ohh nooooo - unhandledRejection")
     logError(err.message)
     dir(err.stack)
 });
 process.on('uncaughtException', function(err) {
-    logError(">>Ohh nooooo - uncaughtException")
+    logError("Ohh nooooo - uncaughtException")
     logError(err.message)
     dir(err.stack)
 });
 process.on('exit', (code) => {
-    log(">>Stopping txAdmin");
+    log("Stopping txAdmin");
 });
