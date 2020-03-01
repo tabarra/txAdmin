@@ -12,15 +12,19 @@
 - [x] add the stdout sniffer for wrong port and hangs (*must* be improved tho)
 - [x] Fix bug: new profile > save global settings > reload page > fxserver: both will be undefined
 - [x] clean this dumb file
+- [x] perform end2end test
+> v2.0.0-rc1
+- [ ] when you open the settings page, go directly to the fxserver tab
+- [ ] improve monitor?
 - [ ] clean up the resource injector?
 - [ ] hide memory usage on linux?
-- [ ] perform end2end test
-- [ ] improve monitor?
-> v2.0.0-rc1
 - [ ] disable editing the master admin by other admins
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] Rework the entire monitor
+- [ ] improve responsivity on smaller monitors (between 1474 and 900 width)
 > v2.0.0
+- [ ] show error when saving discord settings with wrong token
+- [ ] fix bug: resources page when you type then delete what you typed, it shows hidden default resources
 
 
 ## "in the roadmap"

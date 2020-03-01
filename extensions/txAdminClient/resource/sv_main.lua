@@ -82,7 +82,7 @@ function txaKickID(source, args)
         log("Kicking #"..args[1].." with reason: "..args[2])
         DropPlayer(args[1], "Kicked for: " .. args[2])
     else
-        print('[txAdminClient] invalid arguments for txaKickID')
+        logError('Invalid arguments for txaKickID')
     end
     CancelEvent()
 end
@@ -98,13 +98,13 @@ function txaKickIdentifier(source, args)
             local identifiers = GetPlayerIdentifiers(player)
             for _,id in ipairs(identifiers) do
                 if id == args[1] then
-                    print('[txAdminClient] Player: ' .. GetPlayerName(player) .. ' (' .. id .. ') kicked')
+                    log('Player: ' .. GetPlayerName(player) .. ' (' .. id .. ') kicked')
                     DropPlayer(player, "Kicked for: " .. args[2])
                 end
             end
         end
     else
-        print('[txAdminClient] invalid arguments for txaKickIdentifier')
+        logError('Invalid arguments for txaKickIdentifier')
     end
     CancelEvent()
 end
@@ -122,7 +122,7 @@ function txaBroadcast(source, args)
         })
         TriggerEvent('txaLogger:internalChatMessage', -1, "(Broadcast) "..args[1], args[2])
     else
-        print('[txAdminClient] invalid arguments for txaBroadcast')
+        logError('Invalid arguments for txaBroadcast')
     end
     CancelEvent()
 end
@@ -142,10 +142,10 @@ function txaSendDM(source, args)
             })
             TriggerEvent('txaLogger:internalChatMessage', -1, "(DM) "..args[2], args[3])
         else
-            print('[txAdminClient] txaSendDM: player not found')
+            logError('txaSendDM: player not found')
         end
     else
-        print('[txAdminClient] invalid arguments for txaSendDM')
+        logError('Invalid arguments for txaSendDM')
     end
     CancelEvent()
 end
@@ -174,7 +174,7 @@ function txaReportResources(source, args)
         txAdminToken = apiToken,
         resources = resources
     }
-    print('[txAdminClient] Sending resources list to txAdmin.')
+    log('Sending resources list to txAdmin.')
     PerformHttpRequest(url, function(httpCode, data, resultHeaders)
         local resp = tostring(data)
         if httpCode ~= 200 then
