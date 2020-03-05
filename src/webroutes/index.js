@@ -9,6 +9,11 @@ exports.liveConsole = require('./liveConsole.js');
 exports.serverLog = require('./serverLog.js');
 exports.status = require('./status.js');
 
+exports.fileManager = {
+    get: require('./fileManager/get.js'),
+    save: require('./fileManager/save.js')
+}
+
 exports.auth = {
     get: require('./authentication/get'),
     verify: require('./authentication/verify'),

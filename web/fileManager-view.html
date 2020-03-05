@@ -1,0 +1,64 @@
+{{include("header")/}}
+
+<div class="text-center mb-4">
+    <h2>File Manager</h2>
+</div>
+
+
+<div class="row justify-content-md-center">
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header float-left">
+                <button class="btn btn-sm btn-success" {{disabledBack}} onclick="back()"><i class="cui-arrow-left"></i></button> <span style="font-size: large">{{directory}}</span>
+                <button class="btn btn-sm btn-success float-right" type="button" id="btnNewFolder" style="margin-right: 5px;">
+                    <i class="icon-folder"></i> New Folder
+                </button>
+                <button class="btn btn-sm btn-success float-right" type="button" id="btnNewFile" style="margin-right: 5px;">
+                    <i class="cui-file"></i> New File
+                </button>                
+            </div>
+            <div class="card-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col"><input type="checkbox"></th>
+                            <th scope="col"><i class="icon-refresh"></i></th>
+                            <th scope="col">File Name</th>
+                            <th scope="col">Size</th>
+                            <th scope="col">Last Modified</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{each(options.currentFiles)}}
+                        <tr onclick="openFile('{{@this.fileName}}');">
+                            <th scope="row"><input type="checkbox"></th>
+                            <th>{{if(@this.isDirectory)}}<i class="icon-folder"></i>{{#else}}<i class="cui-file"></i>{{/if}}</th>
+                            <th>{{@this.fileName}}</th>
+                            <th>{{if(@this.fileSize!=-1)}}{{@this.fileSize}}{{/if}}</th>
+                            <th>{{@this.lastModified}}</th>
+                            <th><button type="button" class="btn btn-dark btn-sm"><i class="cui-cog"></i></button></th>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{include("footer")/}}
+
+
+<script>
+    function openFile(path) {
+        window.location = `${window.location}/${path}`;
+    }
+    function back() {
+        var path = window.location.toString().split('/');
+        path.pop();
+        path = path.join('/');
+        window.location = path;
+    }
+</script>

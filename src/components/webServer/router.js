@@ -119,6 +119,16 @@ module.exports = router = (config) =>{
             handleRouteError(res, req, 'intercom', err);
         });
     });
+    router.get(['/fileManager', '/fileManager/*'], requestAuth('web'), async (req, res) => {
+        await webRoutes.fileManager.get(res, req).catch((err) => {
+            handleRouteError(req, req, 'fileManager', err);
+        })
+    });
+    router.post(['/fileManager', '/fileManager/*'], requestAuth('web'),  async (req, res) => {
+        await webRoutes.fileManager.save(res, req).catch((err) => {
+            handleRouteError(req, req, 'fileManager', err);
+        })
+    });
 
     //Diagnostic routes
     router.get('/diagnostics', requestAuth('web'), async (req, res) => {
