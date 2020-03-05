@@ -24,6 +24,11 @@ module.exports = class Authenticator {
             "console.view",
             "console.write",
             "server.cfg.editor",
+            "files.all",
+            "files.view",
+            "files.download",
+            "files.delete",
+            "files.edit"
         ];
         this.refreshAdmins();
 
