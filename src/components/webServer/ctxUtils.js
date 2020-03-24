@@ -168,6 +168,7 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true){
         }
     } catch (error) {
         if(globals.config.verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
+        return false;
     }
 }
 
@@ -201,7 +202,7 @@ module.exports = async function WebCtxUtils(ctx, next){
     ctx.utils.appendLog = async (data) => {
         return appendLog(ctx, data);
     }
-    ctx.utils.checkPermission = async (perm, fromCtx, printWarn) => {
+    ctx.utils.checkPermission = (perm, fromCtx, printWarn) => {
         return checkPermission(ctx, perm, fromCtx, printWarn);
     }
 

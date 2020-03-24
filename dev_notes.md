@@ -28,6 +28,9 @@
 
 
 increase ajax timeouts
+disable resources page buttons
+protect action log and console log behind a permission
+
 
 - vRP grabs the first matched ID
 - esx uses licenses
