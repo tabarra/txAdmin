@@ -1,16 +1,23 @@
+/* Menu */
+/* .c-sidebar-nav-title {
+    background-color: #3A4860;
+} */
+
+
+/* Footer */
 .credit-links {
     font-weight: 600;
     color: #23282c;
 }
 
+
+
+/* TODO: deprecar? */
 .main-top-spacer {
     margin-top: 1.5em;
 }
 
-.nav-title {
-    background-color: #2b3136;
-}
-
+/* TODO: deprecar? */
 .tab-content{
     border: 0;
 }
@@ -29,68 +36,106 @@ option:disabled {
 }
 
 /* Console/Log marks */
+/* https://flatuicolors.com/palette/us */
 .consoleMark-command {background-color: #ffeaa7;}
 .consoleMark-warn {background-color: #ffeaa7;}
 .consoleMark-error {background-color: #ffbfa7;}
 .consoleMark-info {background-color: #a7d4ff;}
 .consoleMark-ok {background-color: #a7ffae;}
+mark {background-color: #ffeaa7;}
 
 /* Playerlist */
-.playerlist>.pping {
+@media (min-width: 1199.98px) {
+    .playerlist{
+        /* 56+36 = 92 +4*/
+        position: relative;
+        height: calc(100vh - 96px);
+    }
+}
+@media (max-width: 1199.98px) {
+    .playerlist-sidebar-max{
+        margin-right: 0 !important;
+    }
+    .playerlist-sidebar{
+        top: 56px !important;
+    }
+    .playerlist{
+        /* 56+56+36 = 148*/
+        position: relative;
+        height: calc(100vh - 152px);
+    }
+} 
+.playerlist-sidebar{
+    z-index: 1029;
+    right: 0;
+}
+.plheader{
+    padding-top: 17px;
+    height: 56px;
+    background-color: #eeeeee !important;
+}
+.plheader-label{
+    font-size: 1.15em;
+    color: #8f98a5 !important;
+}
+.plheader-bignum{
+    margin-top: -26px;
+    font-size: 3.25em;
+    color: #a2a9b3 !important;
+    font-weight: 600;
+}
+.playerlist-search{
+    padding: .25rem 1rem;
+}
+.playerlist>.player {
+    cursor: pointer;
+    padding: .25rem 1rem;
+}
+.playerlist>.player:hover {
+    background-color: #F2F2F2;
+}
+.playerlist>.player>.pping {
     font-family: Consolas, monaco, monospace;
 }
-.playerlist>.pname {
+.playerlist>.player>.pname {
     font-weight: 700;
     padding-left: 5px;
 }
-.playerlist>a>.badge {
-    padding: 0.4em 0.6em;
-    margin-top: 2px;
-    cursor: pointer;
+
+
+/* Necessary for the scrollbar  */
+#mainbody{
+    /* 56+50 = 106 +4 */
+    /* position: relative;
+    height: calc(100vh - 110px); */
 }
 
-/* Playerlist Padding Bottom Fix */
-.aside-menu-fixed .aside-menu .tab-content {
-    height: calc(100vh - 2.375rem);
-}
-.aside-menu-fixed .app-header+.app-body .aside-menu {
-    height: calc(100vh);
-}
-.aside-menu-off-canvas .aside-menu {
-    position: fixed;
-    z-index: 1019;
-    height: 100%;
-}
-.aside-menu-off-canvas .app-header+.app-body .aside-menu {
-    height: calc(100vh);
-}
+
 
 /* Scrollable PRE */
+/* TODO: review */
 .pre-scroll {
     overflow-y: scroll;
+    margin-right: 6px;
+}
+.pre-scroll::-webkit-scrollbar {
+    width: 8px;
+    margin-left: -10px;
+    appearance: none;
 }
 .pre-scroll::-webkit-scrollbar-track {
     background-color: white;
     border-right: 1px solid #f2f2f2;
     border-left: 1px solid #f2f2f2;
 }
-.pre-scroll::-webkit-scrollbar {
-    width: 15px;
-    margin-left: -10px;
-    appearance: none;
-}
 .pre-scroll::-webkit-scrollbar-thumb {
-    height: 50px;
-    background-color: #cfcfcf;
+    background-color: #f0f0f0;
     background-clip: content-box;
     border-color: transparent;
-    border-style: solid;
-    border-width: 1px 2px;
+    border-radius: 6px;
 }
-
-/* https://flatuicolors.com/palette/us */
-mark {
-    background-color: #ffeaa7;
+.pre-scroll:hover::-webkit-scrollbar-thumb{
+    background-color: #cfcfcf;
 }
 
 

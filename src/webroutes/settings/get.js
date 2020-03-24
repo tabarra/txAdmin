@@ -23,6 +23,7 @@ module.exports = async function SettingsGet(ctx) {
         disableWrite: (ctx.utils.checkPermission('settings.write', modulename))? '' : 'disabled',
         serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone
     }
+    renderData.activeTab = (renderData.fxserver.basePath && renderData.fxserver.cfgPath)? 'global' : 'fxserver';
 
     return ctx.utils.render('settings', renderData);
 };
@@ -33,7 +34,7 @@ function cleanRenderData(inputData){
     let input = clone(inputData);
     let out = {}
     Object.keys(input).forEach((prop) => {
-        if(input[prop] === null || input[prop] === false){
+        if(input[prop] === null || input[prop] === false || typeof input[prop] === 'undefined'){
             out[prop] = '';
         }else if(input[prop] === true){
             out[prop] = 'checked';

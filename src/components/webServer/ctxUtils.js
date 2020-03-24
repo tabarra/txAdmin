@@ -29,6 +29,12 @@ const getWebViewPath = (view) => {
 sqrl.defineFilter("isSelected", (x)=>{
     return (x==='true')? 'selected' : '';
 });
+sqrl.defineFilter("isActive", (x)=>{
+    return (x==='true')? 'active' : '';
+});
+sqrl.defineFilter("tShow", (x)=>{
+    return (x)? `show ${x}` : '';
+});
 sqrl.defineFilter("isDisabled", (x)=>{
     return (x==='true')? 'disabled' : '';
 });

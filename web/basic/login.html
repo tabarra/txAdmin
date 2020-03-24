@@ -6,20 +6,15 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <meta name="description" content="txAdmin - remotely manage&monitor your GTA5 FiveM Server">
+    <meta name="description" content="txAdmin - remotely Manage & Monitor your GTA5 FiveM Server">
     <meta name="author" content="André Tabarra">
     <title>{{headerTitle}}</title>
-    <!-- Icons-->
-    <link href="css/coreui-icons.min.css" rel="stylesheet">
     <link href="css/simple-line-icons.css" rel="stylesheet">
-    <!-- Main styles for this application-->
-    <link href="css/coreui.css" rel="stylesheet">
-    <link href="css/pace.min.css" rel="stylesheet">
+    <link href="css/coreui.min.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="img/favicon_default.png" id="favicon" />
-
     <link rel="stylesheet" href="css/custom.css">
-    <style>
 
+    <style>
         .logo-image svg{
             height: 25px;
             width: 25px;
@@ -33,6 +28,7 @@
             -moz-box-shadow: 2px 4px 8px rgb(143, 143, 143);
             -webkit-box-shadow: 2px 4px 8px rgb(143, 143, 143);
             box-shadow: 2px 4px 8px rgb(143, 143, 143);
+            border-radius: 50em;
         }
 
         .separator {
@@ -62,7 +58,7 @@
                 font-family: Consolas, monospace, serif;
                 color: lawngreen;
             }
-            body{
+            .c-app{
                 background-color: #23282c;
             }
             pre{
@@ -116,7 +112,7 @@
     {{/if}}
 </head>
 
-<body class="app flex-row align-items-center">
+<body class="c-app flex-row align-items-center">
     <svg style="display:none">
         <symbol id="fivem-icon" viewBox="0 0 342 430">
             <g transform="matrix(1,0,0,-1,-124.2,606.4)">
@@ -163,7 +159,7 @@
                             </div>
                         {{/if}}
                         {{if(options.template == 'callback')}}
-                            <img class="img-avatar profile-pic" src="{{addMaster_picture}}" alt="avatar">
+                            <img class="profile-pic" src="{{addMaster_picture}}" alt="avatar">
                             <h5 class="mt-2 mb-3 text-muted">{{addMaster_name}}</h5>
 
                             <h6>Type in the backup password:</h6>
@@ -273,12 +269,7 @@
     </div>
     <!-- CoreUI and necessary plugins-->
     <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/pace.min.js"></script>
-    <script src="js/perfect-scrollbar.min.js"></script>
-    <script src="js/coreui.min.js"></script>
-
+    <script src="js/coreui.bundle.min.js"></script>
     <script>
         $(".profile-pic").on("error", function() {
             if($(this).attr('src') != 'img/default_avatar.png'){

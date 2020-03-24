@@ -15,7 +15,6 @@
 - [x] perform end2end test
 > v2.0.0-rc1
 - [ ] when you open the settings page, go directly to the fxserver tab
-- [ ] improve monitor?
 - [ ] clean up the resource injector?
 - [ ] hide memory usage on linux?
 - [ ] disable editing the master admin by other admins
@@ -25,6 +24,33 @@
 > v2.0.0
 - [ ] show error when saving discord settings with wrong token
 - [ ] fix bug: resources page when you type then delete what you typed, it shows hidden default resources
+
+
+
+increase ajax timeouts
+
+- vRP grabs the first matched ID
+- esx uses licenses
+- For txAdmin:
+    - `players` table: index by license ID
+        - Name (overwrite on every update)
+        - Last connection timestamp
+        - Notes
+        - Online time counter
+    - `ids_data`
+        - timestamp
+        - IDs array
+        - author (the admin name)
+        - type [ban|warn]
+        - message (reason)
+
+- How do I do whitelisting in a smart way? 
+    - By license? 
+    - By any ID? 
+    - Could we add a temp ID to memory and show it on the `deferral.done()`? 
+
+
+
 
 
 ## "in the roadmap"
