@@ -69,7 +69,6 @@ module.exports = class FXRunner {
         ];
 
         cliArgs.push(...toExec);
-
         const cliString = cliArgs.join(' ');
 
         if(GlobalData.osType === 'Linux'){
@@ -78,9 +77,15 @@ module.exports = class FXRunner {
                 cmdArgs: [`${GlobalData.fxServerPath}/run.sh`, cliString]
             };
         }else if(GlobalData.osType === 'Windows_NT'){
+            let runCmd;
+            if(fs.existsSync(`${GlobalData.fxServerPath}/run.cmd`)){
+                runCmd = `${GlobalData.fxServerPath}/run.cmd ${cliString}`;
+            }else{
+                runCmd = `${GlobalData.fxServerPath}/FXServer.exe ${cliString}`;
+            }
             this.spawnVariables = {
                 shell: 'cmd.exe',
-                cmdArgs: ['/c', `${GlobalData.fxServerPath}/run.cmd ${cliString}`]
+                cmdArgs: ['/c', runCmd]
             };
         }else{
             logError(`OS type not supported: ${GlobalData.osType}`);

@@ -14,8 +14,8 @@ const cleanPath = (x) => { return slash(path.normalize(x)) };
 let defaultConfig = {
     global: {
         verbose: false,
-        publicIP: "change-me",
-        serverName: "change-me",
+        publicIP: null,
+        serverName: null,
         language: "en",
         forceFXServerPort: null
     },

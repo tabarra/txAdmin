@@ -68,7 +68,7 @@ let txDataPathConvar = GetConvar('txDataPath', 'false');
 if(txDataPathConvar == 'false'){
     let dataPathSuffix = (osType == 'Windows_NT')? '..' : '../../../';
     dataPath = cleanPath(path.join(fxServerPath, dataPathSuffix, 'txData'));
-    log(`Using: ${dataPath}`);
+    log(`Version ${txAdminVersion} using data path '${dataPath}'`);
 }else{
     dataPath = cleanPath(txDataPathConvar);
 }

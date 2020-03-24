@@ -261,6 +261,7 @@ module.exports = class ConfigVault {
      */
     getAll(){
         let cfg = clone(this.config);
+        // cfg.global.verbose = true;
         return {
             global: Object.freeze(cfg.global),
             logger: Object.freeze(cfg.logger),
