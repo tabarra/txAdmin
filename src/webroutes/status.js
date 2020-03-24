@@ -133,14 +133,17 @@ function prepareHostData() {
 function preparePlayersData() {
     let dataServer = clone(globals.monitor.statusServer);
 
-    if (!dataServer.players.length) return '<strong>No players Online.</strong>';
+    if (!dataServer.players.length) return {html: null, count: 0};
 
-    let out = '';
+    let out = {
+        html: '',
+        count: dataServer.players.length
+    };
     dataServer.players.forEach(player => {
         let pingClass;
         player.ping = parseInt(player.ping);
         if (player.ping < 0) {
-            pingClass = 'muted';
+            pingClass = 'secondary';
             player.ping = '??';
         } else if (player.ping < 60) {
             pingClass = 'success';
@@ -152,10 +155,9 @@ function preparePlayersData() {
         let paddedPing = player.ping.toString().padStart(3, 'x').replace(/x/g, '&nbsp;');
         let maxNameSize = 22;
         let name = (player.name.length > maxNameSize)? player.name.slice(0, maxNameSize-3)+'...' : player.name;
-        out += `<div class="clearfix mt-3 playerlist">
+        out.html += `<div class="list-group-item list-group-item-accent-${pingClass} player" onclick="showPlayer(${xss(player.id)})">
                     <span class="pping text-${pingClass}">${paddedPing}</span>
                     <span class="pname">${xss(name)}</span>
-                    <a onclick="showPlayer(${xss(player.id)})"><span class="badge badge-primary float-right">MORE</span></a>
                 </div>`;
 
     });

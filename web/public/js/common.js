@@ -1,6 +1,9 @@
 //================================================================
 //============================================== Dynamic Stats
 //================================================================
+const playerlistNoPlayers = `<div class="list-group-item text-center">
+    <span class="p-3 text-center font-weight-bold">No Players Online</span>
+</div>`
 function refreshData() {
     $.ajax({
         url: "/status",
@@ -17,7 +20,13 @@ function refreshData() {
             $('#hostusage-memory-bar').attr('aria-valuenow', data.host.memory.pct).css('width', data.host.memory.pct+"%");
             $('#hostusage-memory-text').html(data.host.memory.text);
             $("#status-card").html(data.status);
-            $("#playerlist").html(data.players);
+            if(data.players.count){
+                $("#playerlist").html(data.players.html);
+                $("#plist-count").text(data.players.count);
+            }else{
+                $("#plist-count").text(data.players.count);
+                $("#playerlist").html(playerlistNoPlayers);
+            }
             $("#favicon").attr("href", 'img/' + data.meta.favicon + ".png");
             document.title = data.meta.title;
         },

@@ -77,7 +77,17 @@ module.exports = (osType, fxServerPath, fxServerVersion, serverProfile, profileP
         try {
             let batFolder = path.resolve(fxServerPath, '..');
             let batPath  = path.join(batFolder, `start_${fxServerVersion}_${serverProfile}.bat`);
-            let batData = `@echo off\r\n${fxServerPath}/run.cmd +set serverProfile "${serverProfile}"\r\npause`;
+            let runCmd;
+            if(fs.existsSync(`${fxServerPath}/run.cmd`)){
+                runCmd = `${fxServerPath}/run.cmd`;
+            }else{
+                runCmd = `${fxServerPath}/FXServer.exe`;
+            }
+            this.spawnVariables = {
+                shell: 'cmd.exe',
+                cmdArgs: ['/c', runCmd]
+            };
+            let batData = `@echo off\r\n${runCmd} +set serverProfile "${serverProfile}"\r\npause`;
             fs.writeFileSync(batPath, batData);
             logOk(`You can use ${ac.inverse(batPath)} to start this profile.`);
         } catch (error) {
