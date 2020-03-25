@@ -20,7 +20,7 @@
 - [x] increase ajax timeouts
 - [x] disable resources page buttons when you don't have permission to use them
 - [x] fix scrollbars and colors from the live console page
-- [ ] update packages - npm outdated
+- [x] update packages - npm outdated
 > v2.0.0-rc2
 - [ ] protect action log and console log behind a permission
 - [ ] clean up the resource injector?
