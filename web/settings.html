@@ -355,7 +355,7 @@
         $.ajax({
             type: "POST",
             url: '/settings/save/global',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -391,7 +391,7 @@
         $.ajax({
             type: "POST",
             url: '/settings/save/fxserver',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -418,7 +418,7 @@
         $.ajax({
             type: "POST",
             url: '/settings/save/monitor',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -452,7 +452,7 @@
         $.ajax({
             type: "POST",
             url: '/settings/save/discord',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {

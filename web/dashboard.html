@@ -128,7 +128,7 @@
             url: actionURL = '/fxserver/controls/' + action,
             type: "GET",
             dataType: "json",
-            timeout: 3000,
+            timeout: timeoutLong,
             success: function (data) {
                 if (data.logout) {
                     window.location = '/auth?logout';
@@ -181,7 +181,7 @@
         $.ajax({
             type: "POST",
             url: '/fxserver/commands',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: data,
             success: function (data) {
                 notify.update('progress', 0);

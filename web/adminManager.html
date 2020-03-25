@@ -251,7 +251,7 @@
         $.ajax({
             type: "POST",
             url: '/adminManager/delete',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: {name: name},
             success: function (data) {
                 if(data.message == 'refresh'){
@@ -274,7 +274,7 @@
         $.ajax({
             type: "POST",
             url: '/adminManager/getModal',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: {name: name},
             success: function (data) {
                 $('#modEditAdmin-body').html(data);
@@ -309,7 +309,7 @@
         $.ajax({
             type: "POST",
             url: '/adminManager/edit',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -351,7 +351,7 @@
         $.ajax({
             type: "POST",
             url: '/adminManager/add',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {

@@ -14,9 +14,18 @@
 - [x] clean this dumb file
 - [x] perform end2end test
 > v2.0.0-rc1
-- [ ] when you open the settings page, go directly to the fxserver tab
+- [x] when you open the settings page, go directly to the fxserver tab
+- [x] fix broken authorization
+- [x] fix `run.cmd` compatibility with build 2270
+- [x] increase ajax timeouts
+- [ ] disable resources page buttons when you don't have permission to use them
+- [ ] fix scrollbars and colors from the live console page
+- [ ] protect action log and console log behind a permission
+- [ ] update packages - npm outdated
+> v2.0.0-rc2
 - [ ] clean up the resource injector?
 - [ ] hide memory usage on linux?
+- [ ] hide cpu usage for the processes?
 - [ ] disable editing the master admin by other admins
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] Rework the entire monitor
@@ -26,12 +35,7 @@
 - [ ] fix bug: resources page when you type then delete what you typed, it shows hidden default resources
 
 
-
-increase ajax timeouts
-disable resources page buttons
-protect action log and console log behind a permission
-
-
+# For the new access control system
 - vRP grabs the first matched ID
 - esx uses licenses
 - For txAdmin:

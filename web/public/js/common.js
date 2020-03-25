@@ -1,4 +1,11 @@
 //================================================================
+//============================================== Settings
+//================================================================
+const timeoutShort = 1500;
+const timeoutMedium = 2500;
+const timeoutLong = 4000;
+
+//================================================================
 //============================================== Dynamic Stats
 //================================================================
 const playerlistNoPlayers = `<div class="list-group-item text-center">
@@ -9,7 +16,7 @@ function refreshData() {
         url: "/status",
         type: "GET",
         dataType: "json",
-        timeout: 1500,
+        timeout: timeoutShort,
         success: function (data) {
             if (data.logout) {
                 window.location = '/auth?logout';
@@ -64,7 +71,7 @@ function showPlayer(id) {
         url: "/getPlayerData/" + id,
         type: "GET",
         dataType: "json",
-        timeout: 2000,
+        timeout: timeoutMedium,
         success: function (data) {
             if (data.logout) {
                 window.location = '/auth?logout';
@@ -96,7 +103,7 @@ function messagePlayer(id) {
     $.ajax({
         type: "POST",
         url: '/fxserver/commands',
-        timeout: 2000,
+        timeout: timeoutLong,
         data: data,
         // dataType: 'json',
         success: function (data) {
@@ -127,7 +134,7 @@ function kickPlayer(id) {
     $.ajax({
         type: "POST",
         url: '/fxserver/commands',
-        timeout: 2000,
+        timeout: timeoutLong,
         data: data,
         // dataType: 'json',
         success: function (data) {
@@ -188,7 +195,7 @@ $('#modChangePassword-save').click(function () {
     $.ajax({
         type: "POST",
         url: '/changePassword',
-        timeout: 2000,
+        timeout: timeoutMedium,
         data: data,
         dataType: 'json',
         success: function (data) {

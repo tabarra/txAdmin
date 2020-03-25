@@ -94,7 +94,7 @@
         $.ajax({
             type: "POST",
             url: '/cfgEditor/save',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: {cfgData},
             dataType: 'json',
             success: function (data) {

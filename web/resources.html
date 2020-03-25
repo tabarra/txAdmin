@@ -135,7 +135,7 @@
         $.ajax({
             type: "POST",
             url: '/fxserver/commands',
-            timeout: 2000,
+            timeout: timeoutLong,
             data: { action: 'refresh_res', parameter: '' },
             success: function (data) {
                 window.location.reload(true);
@@ -158,7 +158,7 @@
         $.ajax({
             type: "POST",
             url: '/fxserver/commands',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: { action, parameter },
             success: function (data) {
                 window.location.reload(true);

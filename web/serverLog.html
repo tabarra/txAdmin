@@ -47,7 +47,7 @@
         $.ajax({
             type: "GET",
             url: `/serverLog?offset=${currOffset}`,
-            timeout: 2000,
+            timeout: timeoutMedium,
             success: function (data) {
                 //FIXME: temporary before database
                 if(typeof data.offset !== 'undefined') currOffset = data.offset;
