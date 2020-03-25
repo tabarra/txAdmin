@@ -114,27 +114,28 @@ mark {background-color: #ffeaa7;}
 
 /* Scrollable PRE */
 /* TODO: review */
-.pre-scroll {
-    overflow-y: scroll;
+.thin-scroll {
+    overflow: scroll;
     margin-right: 6px;
 }
-.pre-scroll::-webkit-scrollbar {
+.thin-scroll::-webkit-scrollbar {
     width: 8px;
+    height: 8px;
     margin-left: -10px;
     appearance: none;
 }
-.pre-scroll::-webkit-scrollbar-track {
+.thin-scroll::-webkit-scrollbar-track {
     background-color: white;
     border-right: 1px solid #f2f2f2;
     border-left: 1px solid #f2f2f2;
 }
-.pre-scroll::-webkit-scrollbar-thumb {
+.thin-scroll::-webkit-scrollbar-thumb {
     background-color: #f0f0f0;
     background-clip: content-box;
     border-color: transparent;
     border-radius: 6px;
 }
-.pre-scroll:hover::-webkit-scrollbar-thumb{
+.thin-scroll:hover::-webkit-scrollbar-thumb{
     background-color: #cfcfcf;
 }
 

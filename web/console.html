@@ -3,7 +3,8 @@
 
 <style>
     .console-content {
-        height: calc(100vh - 348px);
+        height: calc(100vh - 378px);
+        margin: 0;
     }
 
     .console-input {
@@ -24,16 +25,20 @@
     }
 
     /* Custom Scrollbar colors for dark console */
-    .pre-scroll::-webkit-scrollbar-track {
+    .console-content::-webkit-scrollbar-track {
         background-color: #1E252D;
         border-right: 1px solid #1E252D;
         border-left: 1px solid #1E252D;
     }
-    .pre-scroll::-webkit-scrollbar-thumb {
+    .console-content::-webkit-scrollbar-thumb {
         background-color: #565C62;
     }
-    .pre-scroll::-webkit-scrollbar-corner {
+    .console-content::-webkit-scrollbar-corner {
         background: #1E252D;
+    }
+
+    .bg-dark {
+        background-color: #252E38!important;
     }
 </style>
 
@@ -42,8 +47,8 @@
     <h3>FXServer Console</h3>
 </div>
 <div class="card bg-dark">
-    <div class="card-body">
-        <pre id="console" class="pre-scroll console-content text-white"></pre>
+    <div class="card-body p-3">
+        <pre id="console" class="thin-scroll console-content text-white"></pre>
     </div>
     <div class="card-footer text-center bg-dark">
         <form class="form-inline container-fluid" id="frmConsole">

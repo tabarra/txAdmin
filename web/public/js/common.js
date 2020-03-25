@@ -8,9 +8,11 @@ const timeoutLong = 4000;
 //================================================================
 //============================================== Dynamic Stats
 //================================================================
-const playerlistNoPlayers = `<div class="list-group-item text-center">
-    <span class="p-3 text-center font-weight-bold">No Players Online</span>
-</div>`
+const getPlayerListMessage = (m) => {
+    return `<div class="list-group-item text-center">
+        <span class="p-3 text-center font-weight-bold">${m}</span>
+    </div>`;
+}
 function refreshData() {
     $.ajax({
         url: "/status",
@@ -32,7 +34,7 @@ function refreshData() {
                 $("#plist-count").text(data.players.count);
             }else{
                 $("#plist-count").text(data.players.count);
-                $("#playerlist").html(playerlistNoPlayers);
+                $("#playerlist").html(getPlayerListMessage('No Players Online'));
             }
             $("#favicon").attr("href", 'img/' + data.meta.favicon + ".png");
             document.title = data.meta.title;
@@ -49,7 +51,7 @@ function refreshData() {
             $('#hostusage-memory-bar').attr('aria-valuenow', 0).css('width', 0);
             $('#hostusage-memory-text').html('error');
             $("#status-card").html(out);
-            $("#playerlist").html(out);
+            $("#playerlist").html(getPlayerListMessage(out));
             $("#favicon").attr("href", "img/favicon_off.png");
             document.title = 'ERROR - txAdmin';
         }

@@ -19,10 +19,10 @@
 - [x] fix `run.cmd` compatibility with build 2270
 - [x] increase ajax timeouts
 - [x] disable resources page buttons when you don't have permission to use them
-- [ ] fix scrollbars and colors from the live console page
-- [ ] protect action log and console log behind a permission
+- [x] fix scrollbars and colors from the live console page
 - [ ] update packages - npm outdated
 > v2.0.0-rc2
+- [ ] protect action log and console log behind a permission
 - [ ] clean up the resource injector?
 - [ ] hide memory usage on linux?
 - [ ] hide cpu usage for the processes?
