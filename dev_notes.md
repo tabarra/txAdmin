@@ -18,7 +18,7 @@
 - [x] fix broken authorization
 - [x] fix `run.cmd` compatibility with build 2270
 - [x] increase ajax timeouts
-- [ ] disable resources page buttons when you don't have permission to use them
+- [x] disable resources page buttons when you don't have permission to use them
 - [ ] fix scrollbars and colors from the live console page
 - [ ] protect action log and console log behind a permission
 - [ ] update packages - npm outdated

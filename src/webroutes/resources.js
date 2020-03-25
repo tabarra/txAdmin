@@ -67,6 +67,7 @@ module.exports = async function Resources(ctx) {
                 (new Date() - globals.intercomTempResList.timestamp) <= 1000 &&
                 Array.isArray(globals.intercomTempResList.data)
             ){
+                clearTimeout(tListTimer);
                 clearTimeout(tErrorTimer);
                 let resGroups = processResources(globals.intercomTempResList.data);
                 let renderData = {
@@ -111,7 +112,7 @@ function processResources(resList){
             name: resource.name,
             divName: resource.name.replace(/%/g, ''),
             status: resource.status,
-            statusClass: (resource.status === 'started')? 'info' : '',
+            statusClass: (resource.status === 'started')? 'success' : 'danger',
             // path: slash(path.normalize(resource.path)),
             version: (resource.version)? `(${resource.version.trim()})` : '',
             author: (resource.author)? `${resource.author.trim()}` : '',

@@ -36,14 +36,14 @@
                 {{foreach(options.resGroups)}}
                     <thead class="thead-light" id="resList-card-{{@this.divName}}">
                         <tr>
-                            <th class="text-break">{{@this.subPath}}</th>
-                            <th class="text-right">Actions</th>
+                            <th class="text-break text-center" colspan="2">{{@this.subPath}}</th>
+                            <!-- <th class="text-right">Actions</th> -->
                         </tr>
                     </thead>
                     <tbody id="resList-cardBody-{{@this.divName}}"
                         aria-labelledby="resList-cardHeader-{{@this.divName}}">
                         {{each(@this.resources)}}
-                        <tr class="{{@this.statusClass ? 'table-' + @this.statusClass : ''}}" id="res-{{@this.divName}}">
+                        <tr id="res-{{@this.divName}}">
                             <td>
                                 <strong style="word-wrap: break-word;">{{@this.name}}</strong>
                                 {{if(@this.version!='')}}
@@ -60,18 +60,18 @@
 
                             <td class="text-right">
                                 {{if(@this.status=='started')}}
-                                <a class="btn btn-sm btn-outline-primary d-block d-md-inline-block mr-md-1 mb-1 mb-md-0"
+                                <a class="btn btn-sm btn-outline-warning d-block d-md-inline-block mr-md-1 mb-1 mb-md-0 {{disableActions}}"
                                     href="#"
                                     onclick="btnCommand('ensure_res', '{{@this.name}}'); event.preventDefault();" {{disableActions}}>
                                     Restart
                                 </a>
-                                <a class="btn btn-sm btn-outline-primary d-block d-md-inline-block m-0"
+                                <a class="btn btn-sm btn-outline-danger d-block d-md-inline-block m-0 {{disableActions}}"
                                     href="#"
                                     onclick="btnCommand('stop_res', '{{@this.name}}'); event.preventDefault();" {{disableActions}}>
                                     Stop
                                 </a>
                                 {{#else}}
-                                <a class="btn btn-sm btn-outline-primary d-block d-md-inline-block"
+                                <a class="btn btn-sm btn-outline-success d-block d-md-inline-block {{disableActions}}"
                                     href="#"
                                     onclick="btnCommand('ensure_res', '{{@this.name}}'); event.preventDefault();" {{disableActions}}>
                                     Start
@@ -125,7 +125,8 @@
         "yarn",
         "betaguns",
         "gameInit",
-        "keks"
+        "keks",
+        "runcode",
     ]
 
 
@@ -138,10 +139,13 @@
             timeout: timeoutLong,
             data: { action: 'refresh_res', parameter: '' },
             success: function (data) {
-                window.location.reload(true);
-                // notify.update('progress', 0);
-                // notify.update('type', data.type);
-                // notify.update('message', data.message);
+                if(data.type !== 'danger'){
+                    window.location.reload(true);
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);
@@ -161,7 +165,13 @@
             timeout: timeoutMedium,
             data: { action, parameter },
             success: function (data) {
-                window.location.reload(true);
+                if(data.type !== 'danger'){
+                    window.location.reload(true);
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);
