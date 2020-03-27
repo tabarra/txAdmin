@@ -73,11 +73,12 @@
                             </label>
                             <div class="col-sm-9">
                                 <select class="form-control" id="frmGlobal-language" {{disableWrite}}>
-                                    <!-- TODO: make this list dynamic -->
+                                    <option value="en" {{global.language=='en'|isSelected}}>English (default)</option>
+
+                                    <option value="ar" {{global.language=='ar'|isSelected}}>Arabic</option>
                                     <option value="cs" {{global.language=='cs'|isSelected}}>Czech</option>
                                     <option value="da" {{global.language=='da'|isSelected}}>Danish</option>
                                     <option value="de" {{global.language=='de'|isSelected}}>German</option>
-                                    <option value="en" {{global.language=='en'|isSelected}}>English</option>
                                     <option value="es" {{global.language=='es'|isSelected}}>Spanish</option>
                                     <option value="fi" {{global.language=='fi'|isSelected}}>Finnish</option>
                                     <option value="fr" {{global.language=='fr'|isSelected}}>French</option>
