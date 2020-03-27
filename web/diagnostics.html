@@ -29,7 +29,7 @@
                     <strong>OS Release:</strong> {{host.osRelease}} <br>
                     <strong>Username:</strong> {{host.username}} <br>
                     <strong>Host CPUs:</strong> {{host.cpus}} <br>
-                    <strong>Host Memory:</strong> {{host.memory}}
+                    <strong>Host Memory:</strong> {{host.memory}} {{if(options.isLinux)}}(used + cache + buffer){{/if}}
                 {{/if}}
             </div>
         </div>

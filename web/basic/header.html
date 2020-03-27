@@ -114,7 +114,7 @@
             <li class="c-sidebar-nav-item px-3 d-compact-none c-d-minimized-none">
                 <div class="text-uppercase mb-1">
                     <small>
-                        <b>Memory Usage</b>
+                        <b>Memory {{if(options.isLinux)}}used + cache + buffer{{#else}}Usage{{/if}}</b>
                     </small>
                 </div>
                 <div class="progress progress-xs">

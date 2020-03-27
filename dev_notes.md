@@ -25,8 +25,8 @@
 - [x] minor interface tweaks
 - [x] improve responsivity on smaller monitors (between 1474 and 900 width)
 - [x] clean custom.css an rename it to txAdmin.css
-- [ ] hide memory usage on linux?
-- [ ] hide cpu usage for the processes?
+- [x] hide memory usage on linux?
+- [x] change (fix?) cpu usage on diagnostics page
 - [ ] disable editing the master admin by other admins
 - [ ] protect action log and console log behind a permission
 > v2.0.0

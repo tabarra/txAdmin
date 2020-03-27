@@ -99,7 +99,8 @@ async function getProcessesData(){
             procList.push({
                 pid: pid,
                 name: procName,
-                cpu: (curr.cpu/cpus.length).toFixed(2) + '%',
+                // cpu: (curr.cpu/cpus.length).toFixed(2) + '%',
+                cpu: (curr.cpu).toFixed(2) + '%',
                 memory: bytes(curr.memory),
                 order: order
             });
