@@ -31,7 +31,7 @@
 
 
 <div class="row justify-content-md-center">
-    <div class="col-md-7">
+    <div class="col-md-7 mw-col8">
 
         <!-- Global Card -->
         <div class="card card-accent-primary">
@@ -44,7 +44,7 @@
             <div class="card-body">
                 <div class="table-responsive text-center">
 
-                    <table class="table table-responsive-md table-striped">
+                    <table class="table table-striped">
                         <thead>
                             <tr>
                                 <th>Username</th>
@@ -67,7 +67,7 @@
                                     <i class="admin-icon"><svg><use xlink:href="#password-icon"></use></svg></i>
                                 </td>
                                 <td>{{@this.perms}}</td>
-                                <td>
+                                <td class="tableActions">
                                     <button class="btn btn-sm btn-outline-primary"
                                         onclick="getEditModal('{{@this.name}}')" {{@this.disableActions|isDisabled}}>
                                         <i class="icon-pencil"></i> Edit
@@ -168,7 +168,7 @@
 
             </div>
             <div class="modal-footer text-center">
-                <div class="mx-auto button-spacer">
+                <div class="mx-auto">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-success" id="modAddAdmin-save">Save</button>
                 </div>
@@ -201,7 +201,7 @@
                 </div>
             </div>
             <div class="modal-footer text-center">
-                <div class="mx-auto button-spacer">
+                <div class="mx-auto">
                     <button type="button" class="btn btn-primary" onclick="window.location.reload(false);">Close & Refresh</button>
                 </div>
             </div>
@@ -223,7 +223,7 @@
             </div>
             <div class="modal-body" id="modEditAdmin-body"></div>
             <div class="modal-footer text-center">
-                <div class="mx-auto button-spacer">
+                <div class="mx-auto">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <button type="button" class="btn btn-success" id="modEditAdmin-save">Save</button>
                 </div>

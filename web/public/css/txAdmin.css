@@ -11,29 +11,48 @@
 }
 
 
-
-/* TODO: deprecar? */
-.main-top-spacer {
-    margin-top: 1.5em;
+/* General responsivity */
+@media (min-width: 1200px){
+    .dashboard-card{
+        max-width: 460px !important;
+    }
+}
+@media (min-width: 768px){
+    .mw-col8{
+        min-width: 660px;
+    }
+}
+@media (min-width: 576px){
+    .mw-col6{
+        min-width: 460px;
+    }
+}
+@media (max-width: 560px){
+    .main .container-fluid {
+        padding: 0 5px;
+    }
+    .main-top-spacer {
+        margin-top: 0.5em;
+    }
+}
+.tableActions{
+    white-space: nowrap;
+    text-align: right !important;
 }
 
-/* TODO: deprecar? */
-.tab-content{
-    border: 0;
-}
 
+/* General tweeks */
 .fix-pill-form {
     margin-top: 0.3rem;
     margin-bottom: 0;
 }
-
-.button-spacer button, .button-spacer a {
-    margin: 0.2rem;
-}
-
 option:disabled {
     background-color: #f0f3f5;
 }
+.form-control::placeholder {
+    color: #A9B5C0;
+}
+
 
 /* Console/Log marks */
 /* https://flatuicolors.com/palette/us */
@@ -43,6 +62,7 @@ option:disabled {
 .consoleMark-info {background-color: #a7d4ff;}
 .consoleMark-ok {background-color: #a7ffae;}
 mark {background-color: #ffeaa7;}
+
 
 /* Playerlist */
 @media (min-width: 1199.98px) {
@@ -103,17 +123,7 @@ mark {background-color: #ffeaa7;}
 }
 
 
-/* Necessary for the scrollbar  */
-#mainbody{
-    /* 56+50 = 106 +4 */
-    /* position: relative;
-    height: calc(100vh - 110px); */
-}
-
-
-
 /* Scrollable PRE */
-/* TODO: review */
 .thin-scroll {
     overflow: scroll;
     margin-right: 6px;
@@ -140,23 +150,9 @@ mark {background-color: #ffeaa7;}
 }
 
 
-/* Dashboard cards */
-@media (min-width: 1200px){
-    .dashboard-card{
-        max-width: 460px !important;
-    }
-}
-
-/* Content width on mobile */
-@media (max-width: 560px){
-    .main .container-fluid {
-        padding: 0 5px;
-    }
-    .main-top-spacer {
-        margin-top: 0.5em;
-    }
-}
-
-.form-control::placeholder {
-    color: #A9B5C0;
+/* Necessary for the scrollbar  */
+#mainbody{
+    /* 56+50 = 106 +4 */
+    /* position: relative;
+    height: calc(100vh - 110px); */
 }

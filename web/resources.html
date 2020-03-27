@@ -6,7 +6,7 @@
 
 
 <div class="row justify-content-md-center">
-    <div class="col-md-7">
+    <div class="col-md-7 mw-col6">
         <div class="card card-accent-primary">
             <div class="card-header float-left">
                 <span style="font-size: large">All Resources</span>
@@ -30,14 +30,13 @@
     </div>
 </div>
 <div class="row justify-content-md-center">
-    <div class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+    <div class="col-sm-12 col-lg-7 mw-col8">
         <div class="card card-accent-primary table-responsive-sm">
             <table class="table table-hover table-outline mb-0">
                 {{foreach(options.resGroups)}}
                     <thead class="thead-light" id="resList-card-{{@this.divName}}">
                         <tr>
                             <th class="text-break text-center" colspan="2">{{@this.subPath}}</th>
-                            <!-- <th class="text-right">Actions</th> -->
                         </tr>
                     </thead>
                     <tbody id="resList-cardBody-{{@this.divName}}"
@@ -58,7 +57,7 @@
                                 {{/if}}
                             </td>
 
-                            <td class="text-right">
+                            <td class="tableActions">
                                 {{if(@this.status=='started')}}
                                 <a class="btn btn-sm btn-outline-warning d-block d-md-inline-block mr-md-1 mb-1 mb-md-0 {{disableActions}}"
                                     href="#"

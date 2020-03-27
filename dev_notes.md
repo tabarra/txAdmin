@@ -22,15 +22,17 @@
 - [x] fix scrollbars and colors from the live console page
 - [x] update packages - npm outdated
 > v2.0.0-rc2
-- [ ] protect action log and console log behind a permission
-- [ ] clean up the resource injector?
+- [x] minor interface tweaks
+- [x] improve responsivity on smaller monitors (between 1474 and 900 width)
+- [x] clean custom.css an rename it to txAdmin.css
 - [ ] hide memory usage on linux?
 - [ ] hide cpu usage for the processes?
 - [ ] disable editing the master admin by other admins
-- [ ] Social auth provider setup retry every 15 seconds
-- [ ] Rework the entire monitor
-- [ ] improve responsivity on smaller monitors (between 1474 and 900 width)
+- [ ] protect action log and console log behind a permission
 > v2.0.0
+- [ ] clean up the resource injector?
+- [ ] Rework the entire monitor
+- [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
 - [ ] fix bug: resources page when you type then delete what you typed, it shows hidden default resources
 
@@ -44,7 +46,7 @@
         - Last connection timestamp
         - Notes
         - Online time counter
-    - `ids_data`
+    - `ids_events`
         - timestamp
         - IDs array
         - author (the admin name)

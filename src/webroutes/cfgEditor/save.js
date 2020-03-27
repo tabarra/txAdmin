@@ -35,8 +35,17 @@ module.exports = async function CFGEditorSave(ctx) {
         return ctx.send({type: 'danger', message});
     }
 
-    //Saving CFG file
+    //Saving backup file
     let cfgFilePath = helpers.resolveCFGFilePath(globals.fxRunner.config.cfgPath, globals.fxRunner.config.basePath);
+    try {
+        //NOTE: not moving to make sure we don't screw file permissions.
+        await fs.writeFile(cfgFilePath + '.bkp', helpers.getCFGFileData(cfgFilePath), 'utf8');
+    } catch (error) {
+        let message = `Failed to save BackupCFG file with error: ${error.message}`;
+        if(globals.config.verbose) logWarn(message);
+    }
+
+    //Saving CFG file
     try {
         globals.logger.append(`[${ctx.ip}][${ctx.session.auth.username}] Editing server CFG File.`);
         await fs.writeFile(cfgFilePath, ctx.request.body.cfgData, 'utf8');
