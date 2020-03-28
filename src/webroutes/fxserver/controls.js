@@ -1,6 +1,5 @@
 //Requires
 const modulename = 'WebServer:FXServerControls';
-const sleep = require('util').promisify((a, f) => setTimeout(f, a));
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 

@@ -16,16 +16,17 @@ module.exports = class Authenticator {
         this.registeredPermissions = [
             "all_permissions",
             "manage.admins",
-            "settings.view",
-            "settings.write",
-            "control.server",
-            "commands.resources",
+            "commands.custom",
             "commands.kick",
             "commands.message",
-            "commands.custom",
+            "commands.resources",
             "console.view",
             "console.write",
+            "control.server",
             "server.cfg.editor",
+            "settings.view",
+            "settings.write",
+            "txadmin.log.view",
         ];
 
         //Load providers

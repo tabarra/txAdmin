@@ -177,6 +177,15 @@ async function getFXServerData(){
             versionWarning = `<span class="badge badge-danger"> INCOMPATIBLE </span>`;
         }
 
+        let resourcesWarning;
+        if(infoData.resources.length <= 100){
+            resourcesWarning = '';
+        }else if(infoData.resources.length < 200){
+            resourcesWarning = `<span class="badge badge-warning"> HIGH </span>`;
+        }else{
+            resourcesWarning = `<span class="badge badge-danger"> VERY HIGH! </span>`;
+        }
+
         let fxData = {
             error: false,
             statusColor: 'success',
@@ -184,8 +193,10 @@ async function getFXServerData(){
             version: infoData.server,
             versionWarning: versionWarning || '',
             resources: infoData.resources.length,
+            resourcesWarning: resourcesWarning,
             onesync: (infoData.vars && infoData.vars.onesync_enabled === 'true')? 'enabled' : 'disabled',
             maxClients: (infoData.vars && infoData.vars.sv_maxClients)? infoData.vars.sv_maxClients : '--',
+            txAdminVersion: (infoData.vars && infoData.vars['txAdmin-version'])? infoData.vars['txAdmin-version'] : '--',
         };
 
         return fxData;

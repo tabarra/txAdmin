@@ -1,13 +1,13 @@
-exports.actionLog = require('./actionLog.js');
-exports.downFXServerLog = require('./downFXServerLog.js');
-exports.addExtension = require('./addExtension.js');
+exports.addExtension = require('./addExtension.js');  //FIXME: verb
 exports.dashboard = require('./dashboard.js');
-exports.getPlayerData = require('./getPlayerData.js');
-exports.resources = require('./resources.js');
+exports.diagnostics = require('./diagnostics.js');
+exports.getPlayerData = require('./getPlayerData.js'); //FIXME: verb
 exports.intercom = require('./intercom.js');
 exports.liveConsole = require('./liveConsole.js');
+exports.resources = require('./resources.js');
 exports.serverLog = require('./serverLog.js');
 exports.status = require('./status.js');
+exports.txAdminLog = require('./txAdminLog.js');
 
 exports.auth = {
     get: require('./authentication/get'),
@@ -28,11 +28,6 @@ exports.cfgEditor = {
     save: require('./cfgEditor/save'),
 }
 
-exports.diagnostics = {
-    get: require('./diagnostics'),
-    getLog: require('./diagnostics-log'),
-}
-
 exports.settings = {
     get: require('./settings/get'),
     save: require('./settings/save'),
@@ -41,6 +36,7 @@ exports.settings = {
 exports.fxserver = {
     commands: require('./fxserver/commands'),
     controls: require('./fxserver/controls'),
+    downloadLog: require('./fxserver/downloadLog'),
 }
 
 exports.experiments = {

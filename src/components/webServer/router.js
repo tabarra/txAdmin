@@ -42,6 +42,7 @@ module.exports = router = (config) =>{
     //FXServer
     router.get('/fxserver/controls/:action', requestAuth('api'), webRoutes.fxserver.controls);
     router.post('/fxserver/commands', requestAuth('web'), webRoutes.fxserver.commands);
+    router.get('/fxserver/downloadLog', requestAuth('web'), webRoutes.fxserver.downloadLog);
 
     //CFG Editor
     router.get('/cfgEditor', requestAuth('web'), webRoutes.cfgEditor.get);
@@ -56,15 +57,13 @@ module.exports = router = (config) =>{
     router.post('/intercom/:scope', requestAuth('intercom'), webRoutes.intercom);
 
     //Diagnostic routes
-    router.get('/diagnostics', requestAuth('web'), webRoutes.diagnostics.get);
-    router.get('/diagnostics/log', requestAuth('web'), webRoutes.diagnostics.getLog);
+    router.get('/diagnostics', requestAuth('web'), webRoutes.diagnostics);
 
     //Data routes
-    router.get('/actionLog', requestAuth('web'), webRoutes.actionLog);
+    router.get('/txAdminLog', requestAuth('web'), webRoutes.txAdminLog);
     router.get('/serverLog', requestAuth('web'), webRoutes.serverLog);
     router.get('/status', requestAuth('api'), webRoutes.status);
     router.get('/getPlayerData/:id', requestAuth('api'), webRoutes.getPlayerData);
-    router.get('/downFXServerLog', requestAuth('web'), webRoutes.downFXServerLog);
 
     //Index & generic
     router.get('/resources', requestAuth('web'), webRoutes.resources);

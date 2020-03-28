@@ -50,10 +50,6 @@
                 <strong>FXServer Path:</strong> <code>{{txadmin.fxServerPath}}</code> <br>
                 <strong>Base Path:</strong> <code>{{txadmin.basePath}}</code><br>
                 <strong>CFG Path:</strong> <code>{{txadmin.cfgPath}}</code>
-                <hr>
-                <div class="text-center">
-                    <a href="/diagnostics/log" role="button" class="btn btn-outline-dark mx-auto">See txAdmin Console Log</a>
-                </div>
             </div>
         </div>
 
@@ -65,16 +61,17 @@
 
         <!-- FXServer Info Card -->
         <div class="card card-accent-info" style="min-height: 160px;">
-            <div class="card-header font-weight-bold">FXServer Info:</div>
+            <div class="card-header font-weight-bold">FXServer /info.json:</div>
             <div class="card-body">
                 {{if(options.fxserver.error !== false)}}
                     {{fxserver.error|safe}}
                 {{#else}}
                     <strong>Status: <span class="badge badge-{{fxserver.statusColor}}">{{fxserver.status}}</span></strong><br>
                     <strong>Version:</strong> {{fxserver.versionWarning|safe}} {{fxserver.version}} <br>
-                    <strong>Resources:</strong> {{fxserver.resources}} <br>
+                    <strong>Resources:</strong> {{fxserver.resources}} {{fxserver.resourcesWarning|safe}}<br>
                     <strong>OneSync:</strong> {{fxserver.onesync}} <br>
                     <strong>Max Clients:</strong> {{fxserver.maxClients}} <br>
+                    <strong>txAdmin Version:</strong> {{fxserver.txAdminVersion}} <br>
                 {{/if}}
             </div>
         </div>

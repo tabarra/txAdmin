@@ -28,7 +28,7 @@
 - [x] hide memory usage on linux?
 - [x] change (fix?) cpu usage on diagnostics page
 - [x] disable editing the master admin by other admins
-- [ ] protect action log and console log behind a permission
+- [x] join action/console log and protect with permission
 > v2.0.0
 - [ ] clean up the resource injector?
 - [ ] Rework the entire monitor
