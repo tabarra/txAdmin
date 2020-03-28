@@ -26,7 +26,7 @@ module.exports = async function AdminManagerGet(ctx) {
             hasDiscord: (admin.providers.includes('discord')),
             name: admin.name,
             perms: perms,
-            disableActions: (ctx.session.auth.username.toLowerCase() === admin.name.toLowerCase())
+            disableActions: (admin.master || ctx.session.auth.username.toLowerCase() === admin.name.toLowerCase())
         }
     });
 

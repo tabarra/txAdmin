@@ -125,9 +125,18 @@ async function handleEdit(ctx) {
         return ctx.send({type: 'danger', message: "Invalid Discord ID"});
     }
 
-    //Check permissions
+    //Check if editing himself
     if(ctx.session.auth.username.toLowerCase() === name.toLowerCase()){
         return ctx.send({type: 'danger', message: "You can't edit yourself."});
+    }
+
+    //Check if admin exists
+    let admin = globals.authenticator.getAdminByName(name);
+    if(!admin) return ctx.send({type: 'danger', message: "Admin not found."});
+
+    //Check if editing an master admin
+    if(admin.master){
+        return ctx.send({type: 'danger', message: "You cannot edit an admin master."});
     }
 
     //Add admin and give output
@@ -158,9 +167,18 @@ async function handleDelete(ctx) {
     }
     let name = ctx.request.body.name.trim();
 
-    //Check permissions
+    //Check if editing himself
     if(ctx.session.auth.username.toLowerCase() === name.toLowerCase()){
         return ctx.send({type: 'danger', message: "You can't delete yourself."});
+    }
+
+    //Check if admin exists
+    let admin = globals.authenticator.getAdminByName(name);
+    if(!admin) return ctx.send({type: 'danger', message: "Admin not found."});
+
+    //Check if editing an master admin
+    if(admin.master){
+        return ctx.send({type: 'danger', message: "You cannot delete an admin master."});
     }
 
     //Delete admin and give output
@@ -189,10 +207,21 @@ async function handleGetModal(ctx) {
     ){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
+    let name = ctx.request.body.name.trim();
+
+    //Check if editing himself
+    if(ctx.session.auth.username.toLowerCase() === name.toLowerCase()){
+        return ctx.send("You can't edit yourself.");
+    }
 
     //Get admin data
-    let admin = globals.authenticator.getAdminByName(ctx.request.body.name);
+    let admin = globals.authenticator.getAdminByName(name);
     if(!admin) return ctx.send('Admin not found');
+
+    //Check if editing an master admin
+    if(admin.master){
+        return ctx.send("You cannot edit an admin master.");
+    }
 
     //Prepare permissions
     let allPermissions = globals.authenticator.getPermissionsList();

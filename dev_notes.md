@@ -27,7 +27,7 @@
 - [x] clean custom.css an rename it to txAdmin.css
 - [x] hide memory usage on linux?
 - [x] change (fix?) cpu usage on diagnostics page
-- [ ] disable editing the master admin by other admins
+- [x] disable editing the master admin by other admins
 - [ ] protect action log and console log behind a permission
 > v2.0.0
 - [ ] clean up the resource injector?
