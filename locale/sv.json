@@ -1,0 +1,25 @@
+{
+    "$meta": {
+        "label": "Svenska",
+        "humanizer_language": "sv"
+    },
+    "restarter": {
+        "crash_detected": "Servern krashade",
+        "partial_crash_warn": "En ensidig krash blev upptäckt, servern kommer att startas om innom 1 minut, disconnecta nu.",
+        "partial_crash_warn_discord": "På grund av en ensidig krash så kommer **%{servername}** startas om innom 60 sekunder.",
+        "schedule_reason": "Scemalagd restart (automatisk) %{time}",
+        "schedule_warn": "Servern är schemalagd att startas om  %{smart_count} minuter kvar. Disconnecta nu",
+        "schedule_warn_discord": "**%{servername}** är schemalagd att startas om %{smart_count} minuter kvar."
+    },
+    "server_actions": {
+        "restarting": "Servern startars om (%{reason}).",
+        "restarting_discord": "**%{servername}** startas om, anledning: (%{reason}).",
+        "stopping": "Servern stängs av, anledning: (%{reason}).",
+        "stopping_discord": "**%{servername}** stängs av, anledning: (%{reason}).",
+        "spawning_discord": "**%{servername}** is starting."
+    },
+    "discord": {
+        "status_online": "**%{servername}** är just nu **Online**!",
+        "status_offline": "**%{servername}** är just nu **Offline**!"
+    }
+}
