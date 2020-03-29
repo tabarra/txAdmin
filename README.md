@@ -62,6 +62,7 @@ ConVar usage **example**:
 ```
 
 ## Installing & Building it (Windows/Linux)
+**NOT RECOMMENDED for most users.**
 
 ```bash
 #Inside your FXServer folder, execute:
