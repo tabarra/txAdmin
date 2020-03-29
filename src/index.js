@@ -34,6 +34,9 @@ const getBuild = (ver)=>{
 //Get OSType
 const osType = os.type();
 
+//Get resource name
+const resourceName = GetCurrentResourceName();
+
 //Getting fxserver version
 const fxServerVersion = getBuild(GetConvar('version', 'false'));
 if(!fxServerVersion){
@@ -41,14 +44,14 @@ if(!fxServerVersion){
 }
 
 //Getting txAdmin version
-const txAdminVersion = GetResourceMetadata(GetCurrentResourceName(), 'version');
+const txAdminVersion = GetResourceMetadata(resourceName, 'version');
 if(typeof txAdminVersion !== 'string' || txAdminVersion == 'null'){
     logDie(`txAdmin version not set or in the wrong format`);
 }
 
 //Get txAdmin Resource Path
 let txAdminResourcePath;
-let txAdminResourcePathConvar = GetResourcePath(GetCurrentResourceName());
+let txAdminResourcePathConvar = GetResourcePath(resourceName);
 if(typeof txAdminResourcePathConvar !== 'string' || txAdminResourcePathConvar == 'null'){
     logDie(`Could not resolve txAdmin resource path`);
 }else{
@@ -95,6 +98,7 @@ if(!serverProfile.length){
 //Setting Global Data
 GlobalData = {
     osType,
+    resourceName,
     fxServerVersion,
     txAdminVersion,
     txAdminResourcePath,
@@ -103,7 +107,7 @@ GlobalData = {
     txAdminPort,
     cfxUrl: null
 }
-
+// NOTE: all variables set for monitor mode: monitorMode, version, serverRoot (cwd), citizen_root, citizen_dir
 
 //==============================================================
 //Starting txAdmin (have fun :p)

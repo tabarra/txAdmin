@@ -2,6 +2,7 @@
 const modulename = 'FXRunner';
 const { spawn } = require('child_process');
 const fs = require('fs-extra');
+const path = require('path');
 const os = require('os');
 const sleep = require('util').promisify((a, f) => setTimeout(f, a));
 const pidtree = require('pidtree');
@@ -72,10 +73,25 @@ module.exports = class FXRunner {
         const cliString = cliArgs.join(' ');
 
         if(GlobalData.osType === 'Linux'){
+            let runPath = path.resolve(GlobalData.fxServerPath, '../../../', 'run.sh');
             this.spawnVariables = {
-                shell: '/bin/sh',
-                cmdArgs: [`${GlobalData.fxServerPath}/run.sh`, cliString]
+                shell: `/bin/sh`,
+                cmdArgs: [runPath, `+start ${GlobalData.resourceName}`, cliString]
             };
+
+            //NOTE: Alternative - clean this soon if the previous one doesn't work well
+            // let alpinePath = path.resolve(GlobalData.fxServerPath, '../../');
+            // this.spawnVariables = {
+            //     shell: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
+            //     cmdArgs: [
+            //         `--library-path`,
+            //         `${alpinePath}/usr/lib/v8/:${alpinePath}/lib/:${alpinePath}/usr/lib/`,
+            //         '--',
+            //         `${alpinePath}/opt/cfx-server/FXServer`,
+            //         ...(`+set citizen_dir ${alpinePath}/opt/cfx-server/citizen/ ${cliString}`.split(' '))
+            //     ]
+            // };
+            
         }else if(GlobalData.osType === 'Windows_NT'){
             let runCmd;
             if(fs.existsSync(`${GlobalData.fxServerPath}/run.cmd`)){

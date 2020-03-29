@@ -34,10 +34,10 @@
 
             <div class="card-body settings-card">
                 <div class="tab-content" id="nav-tabContent">
+
+                    <!-- Global Tab -->
                     <div class="tab-pane fade {{activeTab=='global'|isActive|tShow}}" id="nav-global" role="tabpanel"
                         aria-labelledby="nav-global-tab">
-
-                        <!-- Global Card -->
                         <div class="form-group row">
                             <label for="frmGlobal-serverName" class="col-sm-3 col-form-label">
                                 Server Name
@@ -121,12 +121,11 @@
                                 <i class="icon-check"></i> Save Global Settings
                             </button>
                         </div>
-                        <!-- /Global Card -->
-
                     </div>
-                    <div class="tab-pane fade {{activeTab=='fxserver'|isActive|tShow}}" id="nav-fxserver" role="tabpanel" aria-labelledby="nav-fxserver-tab">
+                    <!-- /Global Tab -->
 
-                        <!-- FXServer Card -->
+                    <!-- FXServer Tab -->
+                    <div class="tab-pane fade {{activeTab=='fxserver'|isActive|tShow}}" id="nav-fxserver" role="tabpanel" aria-labelledby="nav-fxserver-tab">
                         <div class="form-group row">
                             <label for="frmFXServer-basePath" class="col-sm-3 col-form-label">Base Folder Path
                                 <span class="text-danger">*</span></label>
@@ -214,12 +213,11 @@
                                 <i class="icon-check"></i> Save FXServer Settings
                             </button>
                         </div>
-                        <!-- /FXServer Card -->
-
                     </div>
+                    <!-- /FXServer Tab -->
+                    
+                    <!-- Monitor Tab -->
                     <div class="tab-pane fade {{activeTab=='monitor'|isActive|tShow}}" id="nav-monitor" role="tabpanel" aria-labelledby="nav-monitor-tab">
-
-                        <!-- Monitor Card -->
                         <div class="form-group row">
                             <label for="frmMonitor-schedule" class="col-sm-3 col-form-label">Scheduled Restarts</label>
                             <div class="col-sm-9">
@@ -240,12 +238,11 @@
                                 <i class="icon-check"></i> Save Monitor/Restarter Settings
                             </button>
                         </div>
-                        <!-- /Monitor Card -->
-
                     </div>
-                    <div class="tab-pane fade {{activeTab=='discord'|isActive|tShow}}" id="nav-discord" role="tabpanel" aria-labelledby="nav-discord-tab">
+                    <!-- /Monitor Tab -->
 
-                        <!-- Discord Card -->
+                    <!-- Discord Tab -->
+                    <div class="tab-pane fade {{activeTab=='discord'|isActive|tShow}}" id="nav-discord" role="tabpanel" aria-labelledby="nav-discord-tab">
                         <div class="form-group row">
                             <label for="frmDiscord-enabled" class="col-sm-3 col-form-label">Enable Bot</label>
                             <div class="col-sm-9">
@@ -311,9 +308,9 @@
                                 <i class="icon-check"></i> Save Discord Settings
                             </button>
                         </div>
-                        <!-- /Discord Card -->
-
                     </div>
+                    <!-- /Discord Tab -->
+
                 </div>
             </div>
 

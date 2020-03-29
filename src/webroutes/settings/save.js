@@ -276,7 +276,11 @@ function handleDiscord(ctx) {
         let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing discordBot settings.`;
         logOk(logMessage);
         globals.logger.append(logMessage);
-        return ctx.send({type: 'success', message: `<strong>Discord configuration saved!</strong>`});
+        if(newConfig.enabled){
+            return ctx.send({type: 'warning', message: `<strong>Discord configuration saved. Check terminal to make sure the token is valid.</strong>`});
+        }else{
+            return ctx.send({type: 'success', message: `<strong>Discord configuration saved!</strong>`});
+        }
     }else{
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing discordBot settings.`);
         return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
