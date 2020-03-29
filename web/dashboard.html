@@ -5,18 +5,8 @@
     <h2>{{serverName}} Dashboard</h2>
 </div>
 
-{{if(options.errorMessage)}}
 <div class="row justify-content-md-center">
-    <div class="col-md-6 ">
-        <div class="alert alert-danger border-danger  text-center" role="alert">
-            {{errorMessage|safe}}
-        </div>
-    </div>
-</div>
-{{/if}}
-
-<div class="row justify-content-md-center">
-    <div class="col-lg-8 col-xl-5 dashboard-card">
+    <div class="col-lg-8 col-xl-6 dashboard-card mw-col6">
 
         <!-- FXServer Control Card -->
         <div class="card card-accent-danger" style="min-height: 160px;">
@@ -46,7 +36,6 @@
                             <!-- <option value="start_res" {{perms.commandResources}}>Start resource</option> -->
                             <option value="stop_res" {{perms.commandResources}}>Stop resource</option>
                             <option value="refresh_res" {{perms.commandResources}}>Refresh resources</option>
-                            <option value="reinject_res" {{perms.commandResources}}>Re-Inject txAdmin resources</option>
                             <option value="check_txaclient" {{perms.commandResources}}>Check txAdminClient</option>
                             <option value="kick_all" {{perms.commandKick}}>Kick all players</option>
                         </select>
@@ -69,11 +58,11 @@
     <!-- /.col-->
 
 
-    <div class="col-lg-8 col-xl-5 dashboard-card">
+    <div class="col-lg-8 col-xl-6 dashboard-card mw-col6">
 
         <!-- Card Chart-->
-        <div class="card text-white bg-primary" style="min-height: 160px;">
-            <div class="card-body pb-0">
+        <div class="card text-white bg-info" style="min-height: 160px;">
+            <div class="card-body pt-2 pb-0">
                 <div class="text-value">Players</div>
                 <div>last 24h</div>
             </div>
@@ -82,7 +71,7 @@
                 <h3 class="text-muted">Not enough data, yet...</h3>
             </div>
             {{#else}}
-            <div class="chart-wrapper mt-3 mx-3" style="height:70px;">
+            <div class="c-chart-wrapper mx-3" style="height:120px; margin-top: -50px;">
                 <div class="chartjs-size-monitor">
                     <div class="chartjs-size-monitor-expand">
                         <div class=""></div>
@@ -91,21 +80,8 @@
                         <div class=""></div>
                     </div>
                 </div>
-                <canvas class="chart chartjs-render-monitor" id="card-chart1" height="70"
-                    style="display: block; width: 355px; height: 70px;" width="355"></canvas>
-                <div id="card-chart1-tooltip" class="chartjs-tooltip top"
-                    style="opacity: 0; left: 194.39px; top: 93.2407px;">
-                    <div class="tooltip-header">
-                        <div class="tooltip-header-item">loading</div>
-                    </div>
-                    <div class="tooltip-body">
-                        <div class="tooltip-body-item">
-                            <span class="tooltip-body-item-color" style="background-color: rgb(0, 165, 224);"></span>
-                            <span class="tooltip-body-item-label">players</span>
-                            <span class="tooltip-body-item-value">loading</span>
-                        </div>
-                    </div>
-                </div>
+                <canvas class="c-chart chartjs-render-monitor" id="card-chart1" height="120"
+                    style="display: block; width: 355px; height: 120px;" width="355"></canvas>
             </div>
             {{/if}}
         </div>
@@ -122,8 +98,16 @@
     </div>
 </div>
 
-
-{{if(options.updateData.currentVersion !== options.updateData.latestVersion)}}
+<!-- FIXME: convert the update checker system! -->
+<div class="row justify-content-md-center">
+    <div class="col-md-4">
+        <div class="alert alert-secondary border-secondary  text-center" role="alert">
+            This version <i>currently</i> does not have an update checker. <br>
+            Please keep an eye out for our <a href="https://github.com/tabarra/txAdmin" target="_blank">GitHub Repository.</a>
+        </div>
+    </div>
+</div>
+{{if(options.updateData.currentVersion !== options.updateData.latestVersion && false)}}
 <div class="row justify-content-md-center">
     <div class="col-md-6 ">
         <div class="alert alert-{{updateData.class}} border-{{updateData.class}}  text-center" role="alert">
@@ -152,7 +136,7 @@
             url: actionURL = '/fxserver/controls/' + action,
             type: "GET",
             dataType: "json",
-            timeout: 3000,
+            timeout: timeoutLong,
             success: function (data) {
                 if (data.logout) {
                     window.location = '/auth?logout';
@@ -205,7 +189,7 @@
         $.ajax({
             type: "POST",
             url: '/fxserver/commands',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: data,
             success: function (data) {
                 notify.update('progress', 0);
@@ -244,22 +228,19 @@
 {{if(options.chartData)}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
-<script src="js/custom-tooltips.min.js"></script>
 <script>
-    // Disable the on-canvas tooltip
+    // Configure tooltip
     Chart.defaults.global.pointHitDetectionRadius = 1;
-    Chart.defaults.global.tooltips.enabled = false;
     Chart.defaults.global.tooltips.mode = 'index';
     Chart.defaults.global.tooltips.position = 'nearest';
     Chart.defaults.global.tooltips.intersect = false;
-    Chart.defaults.global.tooltips.custom = CustomTooltips;
 
     var cardChart1 = new Chart($('#card-chart1'), {
         type: 'line',
         data: {
             datasets: [{
                 label: 'players',
-                backgroundColor: getStyle('--primary'),
+                backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--info'),
                 borderColor: 'rgba(255,255,255,0.55)',
                 fill: false,
                 //NOTE: breaking multiple lines because squirrelly is not respecting LF as line endings.

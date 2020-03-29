@@ -1,53 +1,54 @@
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'WebServer:RequestAuthenticator';
+const modulename = 'WebServer:RequestAuthenticator';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
+
 
 /**
  * Returns a session authenticator function
- * @param {string} epType
+ * @param {string} epType type of consumer
  */
-module.exports = getRequestAuthFunc = (epType) => {
+const requestAuth = (epType) => {
     //Intercom auth function
-    const intercomAuth = (req, res, next) => {
+    const intercomAuth = async (ctx, next) => {
         if(
-            typeof req.body.txAdminToken !== 'undefined' &&
-            req.body.txAdminToken === globals.webServer.intercomToken
+            typeof ctx.request.body.txAdminToken !== 'undefined' &&
+            ctx.request.body.txAdminToken === globals.webServer.intercomToken
         ){
-            next();
+            await next();
         }else{
-            res.send({error: 'invalid token'})
+            return ctx.send({error: 'invalid token'})
         }
     }
 
     //Normal auth function
-    const normalAuth = (req, res, next) =>{
-        let follow = false;
-        if(
-            typeof req.session.auth !== 'undefined' &&
-            typeof req.session.auth.username !== 'undefined' &&
-            typeof req.session.auth.password !== 'undefined'
-        ){
-            let admin = globals.authenticator.checkAuth(req.session.auth.username, req.session.auth.password);
-            if(admin){
-                req.session.auth = {
-                    username: req.session.auth.username,
-                    password: req.session.auth.password,
-                    permissions: admin.permissions
-                };
-                follow = true;
-            }
-        }
+    const normalAuth = async (ctx, next) =>{
+        const {isValidAuth} = authLogic(ctx.session, true, epType);
 
-        if(!follow){
-            if(globals.config.verbose) logWarn(`Invalid session auth: ${req.originalUrl}`, context);
+        if(!isValidAuth){
+            if(globals.config.verbose) logWarn(`Invalid session auth: ${ctx.path}`, epType);
+            ctx.session.auth = {};
             if(epType === 'web'){
-                return res.redirect('/auth?logout');
+                return ctx.response.redirect('/auth?logout');
             }else if(epType === 'api'){
-                return res.send({logout:true});
+                return ctx.send({logout:true});
             }else{
                 return () => {throw new Error('Unknown auth type')};
             }
         }else{
-            next();
+            await next();
+        }
+    }
+
+    //Socket auth function
+    const socketAuth = async (socket, next) =>{
+        const {isValidAuth} = authLogic(socket.session, true, epType);
+
+        if(isValidAuth){
+            await next();
+        }else{
+            socket.session.auth = {}; //a bit redundant but it wont hurt anyone
+            socket.disconnect(0);
+            if(globals.config.verbose) logWarn('Auth denied when creating session');
+            next(new Error('Authentication Denied'));
         }
     }
 
@@ -58,7 +59,71 @@ module.exports = getRequestAuthFunc = (epType) => {
         return normalAuth;
     }else if(epType === 'api'){
         return normalAuth;
+    }else if(epType === 'socket'){
+        return socketAuth;
     }else{
         return () => {throw new Error('Unknown auth type')};
     }
+}
+
+
+/**
+ * Autentication & authorization logic used in both websocket and webserver
+ * @param {*} sess
+ * @param {*} perm
+ * @param {*} ctx
+ */
+const authLogic = (sess, perm, epType) => {
+    let isValidAuth = false;
+    let isValidPerm = false;
+    if(
+        typeof sess.auth !== 'undefined' &&
+        typeof sess.auth.username !== 'undefined' &&
+        typeof sess.auth.expires_at !== 'undefined'
+    ){
+        let now = Math.round(Date.now()/1000);
+        if(sess.auth.expires_at === false || now < sess.auth.expires_at){
+            try {
+                let admin = globals.authenticator.getAdminByName(sess.auth.username);
+                if(admin){
+                    if(
+                        typeof sess.auth.password_hash == 'string' &&
+                        admin.password_hash == sess.auth.password_hash
+                    ){
+                        isValidAuth = true;
+                    }else if(
+                        typeof sess.auth.provider == 'string' &&
+                        typeof admin.providers[sess.auth.provider] == 'object' &&
+                        sess.auth.provider_uid == admin.providers[sess.auth.provider].id
+                    ){
+                        isValidAuth = true;
+                    }
+
+                    sess.auth.master = admin.master;
+                    sess.auth.permissions = admin.permissions;
+                    sess.auth.isTempPassword = (typeof admin.password_temporary !== 'undefined');
+
+                    isValidPerm = (perm === true || (
+                        admin.master === true ||
+                        admin.permissions.includes('all_permissions') ||
+                        admin.permissions.includes(perm)
+                    ));
+                }
+            } catch (error) {
+                if(globals.config.verbose) logError(`Error validating session data:`, epType);
+                if(globals.config.verbose) dir(error);
+            }
+        }else{
+            if(globals.config.verbose) logWarn(`Expired session from ${sess.auth.username}`, epType);
+        }
+    }
+
+    return {isValidAuth, isValidPerm};
+}
+
+
+//================================================================
+module.exports = {
+    requestAuth,
+    authLogic
 }

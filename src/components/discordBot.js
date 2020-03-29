@@ -1,9 +1,9 @@
 //Requires
+const modulename = 'DiscordBot';
 const fs = require('fs-extra');
 const Discord = require('discord.js');
 const humanizeDuration = require('humanize-duration');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'DiscordBot';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 module.exports = class DiscordBot {
@@ -14,7 +14,7 @@ module.exports = class DiscordBot {
         this.messages = [];
         this.spamLimitCache = {}
         if(!this.config.enabled){
-            logOk('::Disabled by the config file.', context);
+            logOk('Disabled by the config file.');
         }else{
             this.refreshStaticCommands();
             this.cronFunc = setInterval(() => {
@@ -33,7 +33,7 @@ module.exports = class DiscordBot {
         this.config = globals.configVault.getScoped('discordBot');
         clearInterval(this.cronFunc);
         if(this.client !== null){
-            logWarn(`Stopping Discord Bot`, context);
+            logWarn(`Stopping Discord Bot`);
             this.client.destroy();
             this.client = null;
         }
@@ -63,13 +63,13 @@ module.exports = class DiscordBot {
         try {
             let chan = this.client.channels.find(x => x.id === this.config.announceChannel);
             if(chan === null){
-                logError(`The announcements channel could not be found. Check the ID: ${this.config.announceChannel}`, context);
+                logError(`The announcements channel could not be found. Check the ID: ${this.config.announceChannel}`);
                 return;
             }
 
             chan.send(message);
         } catch (error) {
-            logError(`Error sending Discord announcement: ${error.message}`, context);
+            logError(`Error sending Discord announcement: ${error.message}`);
         }
     }//Final sendAnnouncement()
 
@@ -84,22 +84,22 @@ module.exports = class DiscordBot {
 
         //Setup event listeners
         this.client.on('ready', () => {
-            logOk(`::Started and logged in as '${this.client.user.tag}'`, context);
+            logOk(`Started and logged in as '${this.client.user.tag}'`);
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
         });
         this.client.on('message', this.handleMessage.bind(this));
         this.client.on('error', (error) => {
-            logError(error.message, context);
+            logError(error.message);
         });
         this.client.on('resume', (error) => {
-            logOk('Connection resumed', context);
+            logOk('Connection resumed');
         });
 
         //Start bot
         try {
             await this.client.login(this.config.token);
         } catch (error) {
-            logError(error.message, context);
+            logError(error.message);
             //FIXME: colocar aqui mensagem de erro pra aparecer no dashboard
         }
     }
@@ -114,7 +114,7 @@ module.exports = class DiscordBot {
         if(message.content.startsWith(this.config.statusCommand)){
             //Check spam limiter
             if(!this.spamLimitChecker(this.config.statusCommand, message.channel.id)){
-                if(globals.config.verbose) log(`Spam prevented for command "${this.config.statusCommand}" in channel "${message.channel.name}".`, context);
+                if(globals.config.verbose) log(`Spam prevented for command "${this.config.statusCommand}" in channel "${message.channel.name}".`);
                 return;
             }
             this.spamLimitRegister(this.config.statusCommand, message.channel.id);
@@ -150,7 +150,7 @@ module.exports = class DiscordBot {
         }else if(message.content.startsWith('/txadmin')){
             //Prepare object
             out = new Discord.RichEmbed();
-            out.setTitle(`${globals.config.serverName} uses txAdmin v${globals.version.current}!`);
+            out.setTitle(`${globals.config.serverName} uses txAdmin v${GlobalData.txAdminVersion}!`);
             out.setColor(0x4DEEEA);
             out.setDescription(`Checkout the project:\n GitHub: https://github.com/tabarra/txAdmin\n Discord: https://discord.gg/f3TsfvD`);
 
@@ -161,7 +161,7 @@ module.exports = class DiscordBot {
 
             //Check spam limiter
             if(!this.spamLimitChecker(cmd.trigger, message.channel.id)){
-                if(globals.config.verbose) log(`Spam prevented for command "${cmd.trigger}" in channel "${message.channel.name}".`, context);
+                if(globals.config.verbose) log(`Spam prevented for command "${cmd.trigger}" in channel "${message.channel.name}".`);
                 return;
             }
             this.spamLimitRegister(cmd.trigger, message.channel.id);
@@ -180,7 +180,7 @@ module.exports = class DiscordBot {
             //     message.delete()
             // }, 10*1000);
         } catch (error) {
-            logError(`Failed to send message with error: ${error.message}`, context);
+            logError(`Failed to send message with error: ${error.message}`);
         }
         /*
             message.content
@@ -197,14 +197,19 @@ module.exports = class DiscordBot {
 
     //================================================================
     async refreshStaticCommands(){
+        //NOTE: since in the future this probably will be via database, shipping v2.0.0 with this as file is a bad idea
+        //      for now I will just disable this feature. To be reevaluated in the future. 
+        this.messages = [];
+        return;
+
         let raw = null;
         let jsonData = null;
 
         try {
             raw = await fs.readFile(this.config.messagesFilePath, 'utf8');
         } catch (error) {
-            logError('Unable to load discord messages. (cannot read file, please read the documentation)', context);
-            logError(error.message, context);
+            logError('Unable to load discord messages. (cannot read file, please read the documentation)');
+            logError(error.message);
             this.messages = [];
             return;
         }
@@ -212,13 +217,13 @@ module.exports = class DiscordBot {
         try {
             jsonData = JSON.parse(raw);
         } catch (error) {
-            logError('Unable to load discord messages. (json parse error, please read the documentation)', context);
+            logError('Unable to load discord messages. (json parse error, please read the documentation)');
             this.messages = [];
             return;
         }
 
         if(!Array.isArray(jsonData)){
-            logError('Unable to load discord messages. (not an array, please read the documentation)', context);
+            logError('Unable to load discord messages. (not an array, please read the documentation)');
             this.messages = [];
             return;
         }
@@ -229,13 +234,13 @@ module.exports = class DiscordBot {
             return false;
         });
         if(structureIntegrityTest){
-            logError('Unable to load discord messages. (invalid data in the messages file, please read the documentation)', context);
+            logError('Unable to load discord messages. (invalid data in the messages file, please read the documentation)');
             this.messages = [];
             return;
         }
 
         this.messages = jsonData;
-        if(globals.config.verbose) log(`Discord messages file loaded. Found: ${this.messages.length}`, context);
+        if(globals.config.verbose) log(`Discord messages file loaded. Found: ${this.messages.length}`);
     }
 
 

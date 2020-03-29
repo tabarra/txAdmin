@@ -1,8 +1,9 @@
 //Requires
+const modulename = 'TimeSeries';
 const fs = require('fs-extra');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'TimeSeries';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
+//Helpers
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const now = () => { return (new Date() / 1000).toFixed() };
 
@@ -80,7 +81,7 @@ module.exports = class TimeSeries {
         try {
             await fs.writeFile(this.file, JSON.stringify(this.log));
         } catch (error) {
-            if (globals.config.verbose) logWarn('Error writing the player history log file.', context);
+            if (globals.config.verbose) logWarn('Error writing the player history log file.');
         }
     }
 

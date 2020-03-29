@@ -1,5 +1,5 @@
 {
-    "version": "1.15.0",
+    "version": "2.0.0",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -137,6 +137,14 @@
         {
             "version": "1.15.0",
             "changelog": "Fixed console colors. Added custom command logging. Added explosion types to the server log. Added more information to the diagnostics page. Improved verbosity. Added Finnish, Turkish and Latvian languages."
+        },
+        {
+            "version": "1.15.1",
+            "changelog": "LEGACY: added support for servers without run.cmd"
+        },
+        {
+            "version": "v2.0.0",
+            "changelog": "Integrated with FiveM! New Responsive Interface! New Auth system. Migrated from Express to Koa. Got rid of setup, and admin-add scripts. Changed the `data` folder location. And many many more tweaks and improvements!"
         }
     ]
 }

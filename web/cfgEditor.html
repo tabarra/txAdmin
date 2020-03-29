@@ -19,15 +19,15 @@
 
 <!-- CFG Editor -->
 <div class="row justify-content-md-center">
-    <div class="col-lg-12 col-xl-10">
+    <div class="col-lg-12 col-xl-10 mw-col8">
         <textarea id="code-markdown" style="height: calc(100vh - 348px);"
             class="cms-s-lucario" name="code">{{rawFile}}</textarea>
     </div>
 </div>
 <div class="row justify-content-md-center" style="margin-top: 1em;">
-        <div class="mx-auto">
-            <button type="button" id="cfgEditor-save" class="btn btn-outline-dark btn-sm mb-2">Save File</button>
-        </div>
+    <div class="mx-auto">
+        <button type="button" id="cfgEditor-save" class="btn btn-outline-dark btn-sm mb-2">Save File</button>
+    </div>
 </div>
 
 
@@ -42,7 +42,7 @@
         // The start state contains the rules that are intially used
         start: [
             // The regex matches the token, the token property contains the type
-            {regex: /["'](?:[^\\]|\\.)*?(?:["']|$)/, token: "string"},
+            {regex: /(["'])(?:[^\\]|\\.)*?(?:\1|$)/, token: "string"},
 
             // Rules are matched in the order in which they appear, so there is
             // no ambiguity between this one and the one above
@@ -86,15 +86,14 @@
     $('#cfgEditor-save').click(function () {
         let cfgData = window.editor_markdown.getValue();
         if(cfgData.length < 1024){
-            var notify = $.notify({ message: `Your CFG file is too small, there is a good chance you deleted something you shouldn't.` }, { type: 'warning' });
-            return;
+            var notifyWarn = $.notify({ message: `Your CFG file is too small, there is a good chance you deleted something you shouldn't. We are saving an backup file just in case you need it.` }, { type: 'warning' });
         }
         var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
         $.ajax({
             type: "POST",
             url: '/cfgEditor/save',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: {cfgData},
             dataType: 'json',
             success: function (data) {

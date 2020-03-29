@@ -1,8 +1,8 @@
 //Requires
+const modulename = 'Logger';
 const fs = require('fs-extra');
 const dateFormat = require('dateformat');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'Logger';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 module.exports = class Logger {
@@ -15,9 +15,9 @@ module.exports = class Logger {
         let header = `\r\n${sep}\r\n======== txAdmin starting - ${timestamp}\r\n${sep}\r\n`;
         try {
             fs.appendFileSync(this.config.logPath, header, 'utf8');
-            logOk('::Started', context);
+            logOk('Started');
         } catch (error) {
-            logError(`::Failed to write to log file '${this.config.logPath}'`, context);
+            logError(`Failed to write to log file '${this.config.logPath}'`);
             if(globals.config.verbose) dir(error);
             process.exit();
         }
@@ -34,7 +34,7 @@ module.exports = class Logger {
         try {
             await fs.appendFile(this.config.logPath, `[${timestamp}]${data}\n`, 'utf8');
         } catch (error) {
-            logError(`::Failed to write to log file '${this.config.logPath}'`, context);
+            logError(`Failed to write to log file '${this.config.logPath}'`);
         }
     }
 

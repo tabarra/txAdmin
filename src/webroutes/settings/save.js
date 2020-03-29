@@ -1,30 +1,28 @@
 //Requires
+const modulename = 'WebServer:SettingsSave';
 const fs = require('fs');
 const slash = require('slash');
 const path = require('path');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
-const webUtils = require('./../webUtils.js');
-const context = 'WebServer:Settings-Save';
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 
 /**
  * Handle all the server control actions
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-module.exports = async function action(res, req) {
+module.exports = async function SettingsSave(ctx) {
     //Sanity check
-    if(isUndefined(req.params.scope)){
-        return res.status(400).send({type: 'danger', message: "Invalid Request"});
+    if(isUndefined(ctx.params.scope)){
+        return ctx.utils.error(400, 'Invalid Request');
     }
-    let scope = req.params.scope;
+    let scope = ctx.params.scope;
 
     //Check permissions
-    if(!webUtils.checkPermission(req, 'settings.write', context)){
-        return res.send({
+    if(!ctx.utils.checkPermission('settings.write', modulename)){
+        return ctx.send({
             type: 'danger',
             message: `You don't have permission to execute this action.`
         });
@@ -32,15 +30,15 @@ module.exports = async function action(res, req) {
 
     //Delegate to the specific scope functions
     if(scope == 'global'){
-        return handleGlobal(res, req);
+        return handleGlobal(ctx);
     }else if(scope == 'fxserver'){
-        return handleFXServer(res, req);
+        return handleFXServer(ctx);
     }else if(scope == 'monitor'){
-        return handleMonitor(res, req);
+        return handleMonitor(ctx);
     }else if(scope == 'discord'){
-        return handleDiscord(res, req);
+        return handleDiscord(ctx);
     }else{
-        return res.send({
+        return ctx.send({
             type: 'danger',
             message: 'Unknown settings scope.'
         });
@@ -51,26 +49,25 @@ module.exports = async function action(res, req) {
 //================================================================
 /**
  * Handle Global settings
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-function handleGlobal(res, req) {
+function handleGlobal(ctx) {
     //Sanity check
     if(
-        isUndefined(req.body.serverName) ||
-        isUndefined(req.body.publicIP) ||
-        isUndefined(req.body.language) ||
-        isUndefined(req.body.verbose)
+        isUndefined(ctx.request.body.serverName) ||
+        isUndefined(ctx.request.body.publicIP) ||
+        isUndefined(ctx.request.body.language) ||
+        isUndefined(ctx.request.body.verbose)
     ){
-        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
     //Prepare body input
     let cfg = {
-        serverName: req.body.serverName.trim(),
-        publicIP: req.body.publicIP.trim(),
-        language: req.body.language.trim(),
-        verbose: (req.body.verbose === 'true')
+        serverName: ctx.request.body.serverName.trim(),
+        publicIP: ctx.request.body.publicIP.trim(),
+        language: ctx.request.body.language.trim(),
+        verbose: (ctx.request.body.verbose === 'true')
     }
 
     //Trying to load language file
@@ -78,7 +75,7 @@ function handleGlobal(res, req) {
     try {
         langPhrases = globals.translator.getLanguagePhrases(cfg.language);
     } catch (error) {
-        return res.send({type: 'danger', message: `<strong>Language error:</strong> ${error.message}`});
+        return ctx.send({type: 'danger', message: `<strong>Language error:</strong> ${error.message}`});
     }
 
     //Preparing & saving config
@@ -93,13 +90,13 @@ function handleGlobal(res, req) {
     if(saveStatus){
         globals.translator.refreshConfig(langPhrases);
         globals.config = globals.configVault.getScoped('global');
-        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing global settings.`;
-        logOk(logMessage, context);
+        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing global settings.`;
+        logOk(logMessage);
         globals.logger.append(logMessage);
-        return res.send({type: 'success', message: `<strong>Global configuration saved!</strong>`});
+        return ctx.send({type: 'success', message: `<strong>Global configuration saved!</strong>`});
     }else{
-        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing global settings.`, context);
-        return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings.`);
+        return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }
 }
 
@@ -107,54 +104,37 @@ function handleGlobal(res, req) {
 //================================================================
 /**
  * Handle FXServer settings
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-function handleFXServer(res, req) {
+function handleFXServer(ctx) {
     //Sanity check
     if(
-        isUndefined(req.body.buildPath) ||
-        isUndefined(req.body.basePath) ||
-        isUndefined(req.body.cfgPath) ||
-        isUndefined(req.body.onesync) ||
-        isUndefined(req.body.autostart) ||
-        isUndefined(req.body.quiet)
+        isUndefined(ctx.request.body.basePath) ||
+        isUndefined(ctx.request.body.cfgPath) ||
+        isUndefined(ctx.request.body.commandLine) ||
+        isUndefined(ctx.request.body.onesync) ||
+        isUndefined(ctx.request.body.autostart) ||
+        isUndefined(ctx.request.body.quiet)
     ){
-        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
     //Prepare body input
     let cfg = {
-        buildPath: slash(path.normalize(req.body.buildPath+'/')),
-        basePath: slash(path.normalize(req.body.basePath+'/')),
-        cfgPath: slash(path.normalize(req.body.cfgPath)),
-        onesync: (req.body.onesync === 'true'),
-        autostart: (req.body.autostart === 'true'),
-        quiet: (req.body.quiet === 'true'),
+        basePath: slash(path.normalize(ctx.request.body.basePath+'/')),
+        cfgPath: slash(path.normalize(ctx.request.body.cfgPath)),
+        commandLine: ctx.request.body.commandLine,
+        onesync: (ctx.request.body.onesync === 'true'),
+        autostart: (ctx.request.body.autostart === 'true'),
+        quiet: (ctx.request.body.quiet === 'true'),
     }
 
     //Validating path spaces
     if(
-        cfg.buildPath.includes(' ') ||
         cfg.basePath.includes(' ') ||
         cfg.cfgPath.includes(' ')
     ){
-        return res.send({type: 'danger', message: `The paths cannot contain spaces.`});
-    }
-
-    //Validating Build Path
-    try {
-        if(!fs.existsSync(cfg.buildPath)) throw new Error("Path doesn't exist or its unreadable.");
-        if(globals.config.osType === 'Linux'){
-            if(!fs.existsSync(`${cfg.buildPath}/run.sh`)) throw new Error("run.sh not found.");
-        }else if(globals.config.osType === 'Windows_NT'){
-            if(!fs.existsSync(`${cfg.buildPath}/run.cmd`)) throw new Error("run.cmd not found.");
-            if(!fs.existsSync(`${cfg.buildPath}/fxserver.exe`)) throw new Error("fxserver.exe not found.");
-        }else{
-            throw new Error("OS Type not supported");
-        }
-    } catch (error) {
-        return res.send({type: 'danger', message: `<strong>Build Path error:</strong> ${error.message}`});
+        return ctx.send({type: 'danger', message: `The paths cannot contain spaces.`});
     }
 
     //Validating Base Path
@@ -167,7 +147,7 @@ function handleFXServer(res, req) {
             }
         }
     } catch (error) {
-        return res.send({type: 'danger', message: `<strong>Base Path error:</strong> ${error.message}`});
+        return ctx.send({type: 'danger', message: `<strong>Base Path error:</strong> ${error.message}`});
     }
 
     //Validating CFG Path
@@ -176,29 +156,29 @@ function handleFXServer(res, req) {
         let rawCfgFile = helpers.getCFGFileData(cfgFilePath);
         let port = helpers.getFXServerPort(rawCfgFile);
     } catch (error) {
-        return res.send({type: 'danger', message: `<strong>CFG Path error:</strong> ${error.message}`});
+        return ctx.send({type: 'danger', message: `<strong>CFG Path error:</strong> ${error.message}`});
     }
 
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('fxRunner');
-    newConfig.buildPath = cfg.buildPath;
     newConfig.basePath = cfg.basePath;
     newConfig.cfgPath = cfg.cfgPath;
     newConfig.onesync = cfg.onesync;
     newConfig.autostart = cfg.autostart;
     newConfig.quiet = cfg.quiet;
+    newConfig.commandLine = cfg.commandLine;
     let saveStatus = globals.configVault.saveProfile('fxRunner', newConfig);
 
     //Sending output
     if(saveStatus){
         globals.fxRunner.refreshConfig();
-        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing fxRunner settings.`;
-        logOk(logMessage, context);
+        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing fxRunner settings.`;
+        logOk(logMessage);
         globals.logger.append(logMessage);
-        return res.send({type: 'success', message: `<strong>FXServer configuration saved!</strong>`});
+        return ctx.send({type: 'success', message: `<strong>FXServer configuration saved!</strong>`});
     }else{
-        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing fxRunner settings.`, context);
-        return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing fxRunner settings.`);
+        return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }
 }
 
@@ -206,20 +186,19 @@ function handleFXServer(res, req) {
 //================================================================
 /**
  * Handle Monitor settings
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-function handleMonitor(res, req) {
+function handleMonitor(ctx) {
     //Sanity check
     if(
-        isUndefined(req.body.schedule)
+        isUndefined(ctx.request.body.schedule)
     ){
-        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
     //Prepare body input
     let cfg = {
-        schedule: req.body.schedule.split(',').map((x) => {return x.trim()})
+        schedule: ctx.request.body.schedule.split(',').map((x) => {return x.trim()})
     }
 
     //Validating times
@@ -237,7 +216,7 @@ function handleMonitor(res, req) {
     if(invalidTimes.length){
         let message = `<strong>The following entries were not recognized as valid 24h times:</strong><br>`;
         message += invalidTimes.join('<br>\n');
-        return res.send({type: 'danger', message: message});
+        return ctx.send({type: 'danger', message: message});
     }
 
     //Preparing & saving config
@@ -248,13 +227,13 @@ function handleMonitor(res, req) {
     //Sending output
     if(saveStatus){
         globals.monitor.refreshConfig();
-        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing monitor settings.`;
-        logOk(logMessage, context);
+        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing monitor settings.`;
+        logOk(logMessage);
         globals.logger.append(logMessage);
-        return res.send({type: 'success', message: `<strong>Monitor/Restarter configuration saved!</strong>`});
+        return ctx.send({type: 'success', message: `<strong>Monitor/Restarter configuration saved!</strong>`});
     }else{
-        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing monitor settings.`, context);
-        return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing monitor settings.`);
+        return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }
 }
 
@@ -262,26 +241,25 @@ function handleMonitor(res, req) {
 //================================================================
 /**
  * Handle Discord settings
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-function handleDiscord(res, req) {
+function handleDiscord(ctx) {
     //Sanity check
     if(
-        isUndefined(req.body.enabled) ||
-        isUndefined(req.body.token) ||
-        isUndefined(req.body.announceChannel) ||
-        isUndefined(req.body.statusCommand)
+        isUndefined(ctx.request.body.enabled) ||
+        isUndefined(ctx.request.body.token) ||
+        isUndefined(ctx.request.body.announceChannel) ||
+        isUndefined(ctx.request.body.statusCommand)
     ){
-        return res.status(400).send({type: 'danger', message: "Invalid Request - missing parameters"});
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
     //Prepare body input
     let cfg = {
-        enabled: (req.body.enabled === 'true'),
-        token: req.body.token.trim(),
-        announceChannel: req.body.announceChannel.trim(),
-        statusCommand: req.body.statusCommand.trim()
+        enabled: (ctx.request.body.enabled === 'true'),
+        token: ctx.request.body.token.trim(),
+        announceChannel: ctx.request.body.announceChannel.trim(),
+        statusCommand: ctx.request.body.statusCommand.trim()
     }
 
     //Preparing & saving config
@@ -295,12 +273,16 @@ function handleDiscord(res, req) {
     //Sending output
     if(saveStatus){
         globals.discordBot.refreshConfig();
-        let logMessage = `[${req.connection.remoteAddress}][${req.session.auth.username}] Changing discordBot settings.`;
-        logOk(logMessage, context);
+        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing discordBot settings.`;
+        logOk(logMessage);
         globals.logger.append(logMessage);
-        return res.send({type: 'success', message: `<strong>Discord configuration saved!</strong>`});
+        if(newConfig.enabled){
+            return ctx.send({type: 'warning', message: `<strong>Discord configuration saved. Check terminal to make sure the token is valid.</strong>`});
+        }else{
+            return ctx.send({type: 'success', message: `<strong>Discord configuration saved!</strong>`});
+        }
     }else{
-        logWarn(`[${req.connection.remoteAddress}][${req.session.auth.username}] Error changing discordBot settings.`, context);
-        return res.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing discordBot settings.`);
+        return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }
 }

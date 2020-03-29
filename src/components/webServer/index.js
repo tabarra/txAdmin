@@ -1,115 +1,185 @@
 //Requires
-const fs = require('fs')
-const httpServer  = require('http');
-const httpsServer  = require('https');
-const express = require('express');
-const session = require('express-session');
-const bodyParser = require('body-parser');
-const cors = require('cors');
+const modulename = 'WebServer';
+const HttpClass  = require('http');
+
+const Koa = require('koa');
+const KoaBodyParser = require('koa-bodyparser');
+const KoaServe = require('koa-static');
+const KoaSession = require('koa-session');
+const KoaSessionMemoryStoreClass = require('koa-session-memory');
+
+const SocketIO = require('socket.io');
+const SessionIO = require('koa-session-socketio')
+const WebConsole = require('./webConsole')
+
 const nanoid = require('nanoid');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const webUtils = require('../../webroutes/webUtils');
-const context = 'WebServer';
+const { setHttpCallback } = require('@citizenfx/http-wrapper');
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
+const {requestAuth} = require('./requestAuthenticator');
+const ctxUtils = require('./ctxUtils.js');
+
 
 module.exports = class WebServer {
     constructor(config) {
         this.config = config;
         this.intercomToken = nanoid();
+        this.koaSessionKey = `txAdmin:${globals.info.serverProfile}:sess`;
+        this.webConsole = null;
 
-        this.setupExpress();
-        this.setupServers();
+        this.setupKoa();
+        this.setupWebsocket();
+        this.setupServerCallbacks();
     }
 
 
     //================================================================
-    setupExpress(){
-        this.session = session({
-            secret: 'txAdmin'+nanoid(),
-            name: `txAdmin.${globals.config.serverProfile}.sid`,
-            resave: false,
-            saveUninitialized: false,
+    setupKoa(){
+        //Start Koa
+        this.app = new Koa();
+        this.app.keys = ['txAdmin'+nanoid()];
+
+        //Session
+        this.koaSessionMemoryStore = new KoaSessionMemoryStoreClass();
+        this.sessionInstance = KoaSession({
+            store: this.koaSessionMemoryStore,
+            key: this.koaSessionKey,
             rolling: true,
             maxAge: 24*60*60*1000 //one day
+        }, this.app);
+
+
+        //Setting up app
+        this.app.use(ctxUtils);
+        this.app.on('error', (error, ctx) => {
+            logError(`Strange error on ${ctx.path}`);
+            dir(error)
         });
-
-        this.app = express();
-
-        //Setting up middlewares
-        this.app.use(function(req, res, next){
-            res.setTimeout(5000, function(){
-                let desc = `Route timed out: ${req.originalUrl}`;
-                logError(desc, context);
-                return res.status(500).send(desc);
+        
+        //Setting up timeout/error/no-output/413:
+        let timeoutLimit = 5 * 1000;
+        let jsonLimit = '16MB';
+        this.app.use(async (ctx, next) => {
+            let timer; 
+            const timeout = new Promise((_, reject) => {
+                timer = setTimeout(() => {
+                    ctx.state.timeout = true;
+                    reject(new Error());
+                }, timeoutLimit);
             });
-            next();
-        });
-        this.app.use(this.session);
-        this.app.use(cors());
-        this.app.use(bodyParser.json({limit: '16MB'}));
-        this.app.use(express.urlencoded({extended: true}))
-        this.app.use(express.static('web/public', {index: false}))
-        this.app.use((error, req, res, next)=>{
-            logError(`Middleware error on: ${req.originalUrl} : ${error.message}`)
-            if(error.type === 'entity.too.large'){
-                return res.status(413).send({error: 'request entity too large'});
-            }else{
-                return res.status(500).send({error: 'middleware error'});
+            try {
+                await Promise.race([timeout, next()]);
+                clearTimeout(timer);
+                if (typeof ctx.body == 'undefined' || (typeof ctx.body == 'string' && !ctx.body.length)) {
+                    if(globals.config.verbose) logWarn(`Route without output: ${ctx.path}`);
+                    return ctx.body = '[no output from route]';
+                }
+            } catch (error) {
+                //TODO: perhaps we should also have a koa-bodyparser generic error handler?
+                //FIXME: yes we should - sending broken json will cause internal server error even without the route being called
+                let methodName = (error.stack && error.stack[0] && error.stack[0].name)? error.stack[0].name : 'anonym';
+                if(error.type === 'entity.too.large'){
+                    let desc = `Entity too large for: ${ctx.path}`;
+                    if(globals.config.verbose) logError(desc, methodName);
+                    ctx.status = 413;
+                    ctx.body = {error: desc};
+                }else if (ctx.state.timeout){
+                    let desc = `Route timed out: ${ctx.path}`;
+                    logError(desc, methodName);
+                    ctx.status = 408;
+                    ctx.body = desc;
+                }else{
+                    let desc = `Internal Error on: ${ctx.path}`;
+                    logError(desc, methodName);
+                    if(globals.config.verbose) dir(error)
+                    ctx.status = 500;
+                    ctx.body = desc;
+                }
             }
         });
+        //Setting up additional middlewares:
+        this.app.use(KoaServe(path.join(GlobalData.txAdminResourcePath, 'web/public'), {index: false, defer: false}));
+        this.app.use(this.sessionInstance);
+        this.app.use(KoaBodyParser({jsonLimit}));
 
         //Setting up routes
         this.router = require('./router')(this.config);
-        this.app.use(this.router);
-        this.app.get('*', (req, res) => {
-            if(globals.config.verbose) logWarn(`Request 404 error: ${req.originalUrl}`, context);
-            res.status(404).sendFile(webUtils.getWebViewPath('basic/404'));
-        });
+        this.app.use(this.router.routes())
+        this.app.use(this.router.allowedMethods());
+        this.koaCallback = this.app.callback();
     }
 
 
     //================================================================
-    setupServers(){
-        //HTTP Server
-        try {
-            this.httpServer = httpServer.createServer(this.app);
-            this.httpServer.on('error', (error)=>{
-                if(error.code !== 'EADDRINUSE') return;
-                logError(`Failed to start HTTP server, port ${error.port} already in use.`, context);
-                process.exit();
-            })
-            this.httpServer.listen(this.config.port, '0.0.0.0', () => {
-                logOk(`::Started at http://localhost:${this.config.port}/`, context);
-                globals.webConsole.attachSocket(this.httpServer);
-            })
-        } catch (error) {
-            logError('::Failed to start HTTP server with error:', context);
-            dir(error);
-            process.exit();
+    setupWebsocket(){
+        //Start SocketIO
+        this.io = SocketIO(HttpClass.createServer(), { serveClient: false });
+        this.io.use(SessionIO(this.koaSessionKey, this.koaSessionMemoryStore))
+        this.io.use(requestAuth('socket'));
+
+        //Setting up WebConsole
+        this.webConsole = new WebConsole(this.io);
+        this.io.on('connection', this.webConsole.handleConnection.bind(this.webConsole));
+    }
+
+
+    //================================================================
+    httpCallbackHandler(source, req, res){
+        //Rewrite source ip if it comes from nucleus reverse proxy
+        const ipsrcRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}:\d{1,5}$/
+        if(source == 'citizenfx' && ipsrcRegex.test(req.headers['x-cfx-source-ip'])){
+            req.connection.remoteAddress = req.headers['x-cfx-source-ip'].split(':')[0];
         }
 
-
-        //HTTPS Server
-        if(this.config.enableHTTPS){
-            try {
-                let httpsServerOptions = {
-                    key: fs.readFileSync('data/key.pem'),
-                    cert: fs.readFileSync('data/cert.pem'),
-                }
-                this.httpsServer = httpsServer.createServer(httpsServerOptions, this.app);
-                this.httpsServer.on('error', (error)=>{
-                    if(error.code !== 'EADDRINUSE') return;
-                    logError(`Failed to start HTTPS server, port ${error.port} already in use.`, context);
-                    process.exit();
-                })
-                this.httpsServer.listen(this.config.httpsPort, '0.0.0.0', () => {
-                    logOk(`::Started at https://localhost:${this.config.httpsPort}/`, context);
-                    globals.webConsole.attachSocket(this.httpsServer);
-                })
-            } catch (error) {
-                logError('::Failed to start HTTPS server with error:', context);
-                dir(error);
-                process.exit();
+        //Calls the appropriate callback
+        try {
+            if(req.url.startsWith('/socket.io')){
+                this.io.engine.handleRequest(req, res);
+            }else{
+                this.koaCallback(req, res);
             }
+        } catch (error) {}
+    }
+
+
+    //================================================================
+    setupServerCallbacks(){
+        //Print cfx.re url... when available
+        //NOTE: perhaps open the URL automatically with the `open` library
+        let validUrlRegex = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\.users\.cfx\.re$/i
+        let getUrlInterval = setInterval(() => {
+            try {
+                let urlConvar = GetConvar('web_baseUrl', 'false');
+                if(validUrlRegex.test(urlConvar)){
+                    logOk(`Listening at https://${urlConvar}/`);
+                    GlobalData.cfxUrl = urlConvar;
+                    clearInterval(getUrlInterval);
+                }
+            } catch (error) {}
+        }, 500);
+
+        //CitizenFX Callback
+        try {
+            setHttpCallback(this.httpCallbackHandler.bind(this, 'citizenfx'));
+        } catch (error) {
+            logError('Failed to start CitizenFX Reverse Proxy Callback with error:');
+            dir(error);
+        }
+
+        //HTTP Server
+        try {
+            this.httpServer = HttpClass.createServer(this.httpCallbackHandler.bind(this, 'httpserver'));
+            this.httpServer.on('error', (error)=>{
+                if(error.code !== 'EADDRINUSE') return;
+                logError(`Failed to start HTTP server, port ${error.port} already in use.`);
+                process.exit();
+            });
+            this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', () => {
+                logOk(`Listening at http://localhost:${GlobalData.txAdminPort}/`);
+            });
+        } catch (error) {
+            logError('Failed to start HTTP server with error:');
+            dir(error);
+            process.exit();
         }
     }
 

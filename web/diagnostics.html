@@ -15,7 +15,7 @@
 
 
 <div class="row justify-content-md-center">
-    <div class="col-lg-8 col-xl-5">
+    <div class="col-lg-8 col-xl-5 mw-col6">
 
         <!-- Host Machine Card -->
         <div class="card card-accent-danger" style="min-height: 160px;">
@@ -29,7 +29,7 @@
                     <strong>OS Release:</strong> {{host.osRelease}} <br>
                     <strong>Username:</strong> {{host.username}} <br>
                     <strong>Host CPUs:</strong> {{host.cpus}} <br>
-                    <strong>Host Memory:</strong> {{host.memory}}
+                    <strong>Host Memory:</strong> {{host.memory}} {{if(options.isLinux)}}(used + cache + buffer){{/if}}
                 {{/if}}
             </div>
         </div>
@@ -47,13 +47,9 @@
                 <strong>Schedule:</strong> <code>{{txadmin.schedule}}</code> <br>
                 <strong>Timeout Limit:</strong> <code>{{txadmin.timeout}}</code> <br>
                 <strong>Failures Limit:</strong> <code>{{txadmin.failures}}</code> <br>
-                <strong>Build Path:</strong> <code>{{txadmin.buildPath}}</code> <br>
+                <strong>FXServer Path:</strong> <code>{{txadmin.fxServerPath}}</code> <br>
                 <strong>Base Path:</strong> <code>{{txadmin.basePath}}</code><br>
                 <strong>CFG Path:</strong> <code>{{txadmin.cfgPath}}</code>
-                <hr>
-                <div class="text-center">
-                    <a href="/diagnostics/log" role="button" class="btn btn-outline-dark mx-auto">See txAdmin Console Log</a>
-                </div>
             </div>
         </div>
 
@@ -61,20 +57,21 @@
     <!-- /.col-->
 
 
-    <div class="col-lg-8 col-xl-5">
+    <div class="col-lg-8 col-xl-5 mw-col6">
 
         <!-- FXServer Info Card -->
         <div class="card card-accent-info" style="min-height: 160px;">
-            <div class="card-header font-weight-bold">FXServer Info:</div>
+            <div class="card-header font-weight-bold">FXServer /info.json:</div>
             <div class="card-body">
                 {{if(options.fxserver.error !== false)}}
                     {{fxserver.error|safe}}
                 {{#else}}
                     <strong>Status: <span class="badge badge-{{fxserver.statusColor}}">{{fxserver.status}}</span></strong><br>
                     <strong>Version:</strong> {{fxserver.versionWarning|safe}} {{fxserver.version}} <br>
-                    <strong>Resources:</strong> {{fxserver.resources}} <br>
+                    <strong>Resources:</strong> {{fxserver.resources}} {{fxserver.resourcesWarning|safe}}<br>
                     <strong>OneSync:</strong> {{fxserver.onesync}} <br>
                     <strong>Max Clients:</strong> {{fxserver.maxClients}} <br>
+                    <strong>txAdmin Version:</strong> {{fxserver.txAdminVersion}} <br>
                 {{/if}}
             </div>
         </div>

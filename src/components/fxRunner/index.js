@@ -1,15 +1,15 @@
 //Requires
+const modulename = 'FXRunner';
 const { spawn } = require('child_process');
 const fs = require('fs-extra');
-const os = require('os');
 const path = require('path');
-const sleep = require('util').promisify(setTimeout);
+const os = require('os');
+const sleep = require('util').promisify((a, f) => setTimeout(f, a));
 const pidtree = require('pidtree');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
 const resourceInjector = require('./resourceInjector');
 const ConsoleBuffer = require('./consoleBuffer');
-const context = 'FXRunner';
 
 //Helpers
 const now = () => { return Math.round(new Date() / 1000) };
@@ -17,7 +17,7 @@ const now = () => { return Math.round(new Date() / 1000) };
 
 module.exports = class FXRunner {
     constructor(config) {
-        logOk('::Started', context);
+        logOk('Started');
         this.config = config;
         this.spawnVariables = null;
         this.fxChild = null;
@@ -25,8 +25,6 @@ module.exports = class FXRunner {
         this.fxServerPort = null;
         this.extResources = [];
         this.consoleBuffer = new ConsoleBuffer(this.config.logPath, 10);
-        this.tmpExecFile = path.normalize(process.cwd()+`/${globals.config.serverProfilePath}/data/exec.tmp.cfg`);
-        this.setupVariables();
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
         if(config.autostart){
@@ -43,7 +41,6 @@ module.exports = class FXRunner {
      */
     refreshConfig(){
         this.config = globals.configVault.getScoped('fxRunner');
-        this.setupVariables();
     }//Final refreshConfig()
 
 
@@ -52,19 +49,62 @@ module.exports = class FXRunner {
      * Setup the spawn variables
      */
     setupVariables(){
+        //Defaults
+        let toExec = [
+            `+sets txAdmin-version "${GlobalData.txAdminVersion}"`,
+            `+set txAdmin-apiPort "${GlobalData.txAdminPort}"`,
+            `+set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
+        ];
+
+        //Commands
+        this.extResources.forEach((resource)=>{
+            toExec.push(`+ensure "${resource}"`);
+        });
+
         let onesyncFlag = (this.config.onesync)? '+set onesync_enabled 1' : '';
-        if(globals.config.osType === 'Linux'){
+        const cliArgs = [
+            onesyncFlag,
+            `+set txAdminServerMode true`,
+            this.config.commandLine || '',
+            `+exec "${this.config.cfgPath}"`,
+        ];
+
+        cliArgs.push(...toExec);
+        const cliString = cliArgs.join(' ');
+
+        if(GlobalData.osType === 'Linux'){
+            let runPath = path.resolve(GlobalData.fxServerPath, '../../../', 'run.sh');
             this.spawnVariables = {
-                shell: '/bin/sh',
-                cmdArgs: [`${this.config.buildPath}/run.sh`, `${onesyncFlag} +exec "${this.tmpExecFile}"`]
+                shell: `/bin/sh`,
+                cmdArgs: [runPath, `+start ${GlobalData.resourceName}`, cliString]
             };
-        }else if(globals.config.osType === 'Windows_NT'){
+
+            //NOTE: Alternative - clean this soon if the previous one doesn't work well
+            // let alpinePath = path.resolve(GlobalData.fxServerPath, '../../');
+            // this.spawnVariables = {
+            //     shell: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
+            //     cmdArgs: [
+            //         `--library-path`,
+            //         `${alpinePath}/usr/lib/v8/:${alpinePath}/lib/:${alpinePath}/usr/lib/`,
+            //         '--',
+            //         `${alpinePath}/opt/cfx-server/FXServer`,
+            //         ...(`+set citizen_dir ${alpinePath}/opt/cfx-server/citizen/ ${cliString}`.split(' '))
+            //     ]
+            // };
+            
+        }else if(GlobalData.osType === 'Windows_NT'){
+            let runCmd;
+            if(fs.existsSync(`${GlobalData.fxServerPath}/run.cmd`)){
+                runCmd = `${GlobalData.fxServerPath}/run.cmd ${cliString}`;
+            }else{
+                runCmd = `${GlobalData.fxServerPath}/FXServer.exe ${cliString}`;
+            }
             this.spawnVariables = {
                 shell: 'cmd.exe',
-                cmdArgs: ['/c', `${this.config.buildPath}/run.cmd ${onesyncFlag} +exec "${this.tmpExecFile}"`]
+                cmdArgs: ['/c', runCmd]
             };
         }else{
-            logError(`OS type not supported: ${globals.config.osType}`, context);
+            logError(`OS type not supported: ${GlobalData.osType}`);
             process.exit();
         }
 
@@ -78,34 +118,32 @@ module.exports = class FXRunner {
      * @returns {string} null or error message
      */
     async spawnServer(announce){
-        log("Starting FXServer", context);
+        log("Starting FXServer");
+        //Setup variables
+        this.setupVariables();
+        if(globals.config.verbose){
+            log(`Executing:`);
+            dir(this.spawnVariables);
+        }
         //Sanity Check
         if(
             this.spawnVariables == null ||
             typeof this.spawnVariables.shell == 'undefined' ||
             typeof this.spawnVariables.cmdArgs == 'undefined'
         ){
-            return logError('this.spawnVariables is not set.', context);
+            return logError('this.spawnVariables is not set.');
         }
         //If the any FXServer configuration is missing
-        if(
-            this.config.buildPath === null ||
-            this.config.basePath === null ||
-            this.config.cfgPath === null
-        ){
-            return logError('Cannot start the server with missing configuration (buildPath || basePath || cfgPath).', context);
+        if(this.config.basePath === null || this.config.cfgPath === null){
+            return logError('Cannot start the server with missing configuration (basePath || cfgPath).');
         }
         //If the server is already alive
         if(this.fxChild !== null){
-            return logError('The server is already started.', context);
+            return logError('The server is already started.');
         }
 
         //Refresh resource cache
         await this.injectResources();
-
-        //Write tmp exec file
-        let execFilePath = await this.writeExecFile(false, true);
-        if(!execFilePath) return logError('Failed to write exec file. Check terminal.', context);
 
         //Detecting endpoint port
         try {
@@ -113,7 +151,7 @@ module.exports = class FXRunner {
             let rawCfgFile = helpers.getCFGFileData(cfgFilePath);
             this.fxServerPort = helpers.getFXServerPort(rawCfgFile);
         } catch (error) {
-            let errMsg =  logError(`FXServer config error: ${error.message}`, context);
+            let errMsg =  logError(`FXServer config error: ${error.message}`);
             //the IF below is only a way to disable the endpoint check
             if(globals.config.forceFXServerPort){
                 this.fxServerPort = globals.config.forceFXServerPort;
@@ -122,14 +160,11 @@ module.exports = class FXRunner {
             }
         }
 
-        //Sending header to the console buffer
-        this.consoleBuffer.writeHeader();
-
-        //Resseting hitch counter
+        //Reseting hitch counter
         globals.monitor.clearFXServerHitches();
 
         //Announcing
-        if(announce === 'true' | announce === true){
+        if(announce === 'true' || announce === true){
             let discordMessage = globals.translator.t('server_actions.spawning_discord', {servername: globals.config.serverName});
             globals.discordBot.sendAnnouncement(discordMessage);
         }
@@ -143,8 +178,13 @@ module.exports = class FXRunner {
                 this.spawnVariables.cmdArgs,
                 {cwd: this.config.basePath}
             );
+            if(typeof this.fxChild.pid === 'undefined'){
+                const platformComplaint = (GlobalData.osType === 'Windows_NT') ? 'Make sure you have "C:/windows/system32" in your system PATH variables.' : '';
+                throw new Error(`Executon of "${this.spawnVariables.shell}" failed. ${platformComplaint}`);
+            }
             pid = this.fxChild.pid.toString();
-            logOk(`:: [${pid}] FXServer Started!`, context);
+            logOk(`>> [${pid}] FXServer Started!`);
+            this.consoleBuffer.writeHeader();
             this.tsChildStarted = tsStart;
         } catch (error) {
             logError('Failed to start FXServer with the following error:');
@@ -158,25 +198,21 @@ module.exports = class FXRunner {
 
         //Setting up event handlers
         this.fxChild.on('close', function (code, signal) {
-            logWarn(`>> [${pid}] FXServer Closed. (code ${code})`, context);
+            logWarn(`>> [${pid}] FXServer Closed. (code ${code})`);
         });
         this.fxChild.on('disconnect', function () {
-            logWarn(`>> [${pid}] FXServer Disconnected.`, context);
+            logWarn(`>> [${pid}] FXServer Disconnected.`);
         });
         this.fxChild.on('error', function (err) {
-            logWarn(`>> [${pid}] FXServer Errored:`, context);
+            logWarn(`>> [${pid}] FXServer Errored:`);
             dir(err)
         });
         this.fxChild.on('exit', function (code, signal) {
             process.stdout.write("\n"); //Make sure this isn't concatenated with the last line
-            logWarn(`>> [${pid}] FXServer Exited.`, context);
+            logWarn(`>> [${pid}] FXServer Exited.`);
             if(now() - tsStart <= 5){
                 setTimeout(() => {
-                    if(globals.config.osType === 'Windows_NT'){
-                        logWarn(`FXServer didn't started. This is not an issue with txAdmin. Make sure you have Visual C++ 2019 installed.`, context)
-                    }else{
-                        logWarn(`FXServer didn't started. This is not an issue with txAdmin.`, context)
-                    }
+                    logWarn(`FXServer didn't start. This is not an issue with txAdmin.`);
                 }, 500);
             }
         });
@@ -209,56 +245,7 @@ module.exports = class FXRunner {
             this.extResources = resourceInjector.getResourcesList(this.config.basePath);
             let inject = await resourceInjector.inject(this.config.basePath, this.extResources);
         } catch (error) {
-            logError(`ResourceInjector Error: ${error.message}`, context);
-            return false;
-        }
-    }
-
-
-    //================================================================
-    /**
-     * Writes the exec.tmp.cfg file
-     * @param {boolean} refresh
-     * @param {boolean} start
-     */
-    async writeExecFile(refresh = false, start = false){
-        log('Setting up FXServer temp exec file.', context);
-
-        //FIXME: experiment
-        let isEnabled;
-        try {
-            let dbo = globals.database.getDB();
-            isEnabled = await dbo.get("experiments.bans.enabled").value();
-        } catch (error) {
-            logError(`[writeExecFile] Database operation failed with error: ${error.message}`, context);
-            if(globals.config.verbose) dir(error);
-        }
-        let runExperiment = (isEnabled)? 'true' : 'false';
-
-        //Defaults
-        let timestamp = new Date().toLocaleString();
-        let toExec = [
-            `# [${timestamp}] This file was auto-generated by txAdmin`,
-            `sets txAdmin-version "${globals.version.current}"`,
-            `set txAdmin-apiPort "${globals.webServer.config.port}"`,
-            `set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
-            `set txAdmin-clientCompatVersion "1.5.0"`,
-            `set txAdmin-expBanEnabled ${runExperiment}`
-        ]
-
-        //Commands
-        this.extResources.forEach((res)=>{
-            toExec.push(`ensure "${res}"`);
-        });
-
-        if(refresh) toExec.push('refresh');
-        if(start) toExec.push(`exec "${this.config.cfgPath}"`);
-
-        try {
-            await fs.writeFile(this.tmpExecFile, toExec.join('\n'), 'utf8');
-            return this.tmpExecFile;
-        } catch (error) {
-            logError(`Error while writing tmp exec file for the FXServer: ${error.message}`, context);
+            logError(`ResourceInjector Error: ${error.message}`);
             return false;
         }
     }
@@ -276,11 +263,11 @@ module.exports = class FXRunner {
         if(priority === 'NORMAL') return;
         let validPriorities = ['LOW', 'BELOW_NORMAL', 'NORMAL', 'ABOVE_NORMAL', 'HIGH', 'HIGHEST'];
         if(!validPriorities.includes(priority)){
-            logWarn(`Couldn't set the processes priority: Invalid priority value. (Use one of these: ${validPriorities.join()})`, context);
+            logWarn(`Couldn't set the processes priority: Invalid priority value. (Use one of these: ${validPriorities.join()})`);
             return;
         }
         if(!this.fxChild.pid){
-            logWarn(`Couldn't set the processes priority: Unknown PID.`, context);
+            logWarn(`Couldn't set the processes priority: Unknown PID.`);
             return;
         }
 
@@ -290,9 +277,9 @@ module.exports = class FXRunner {
             pids.forEach(pid => {
                 os.setPriority(pid, os.constants.priority['PRIORITY_'+priority]);
             });
-            log(`Priority set ${priority} for processes ${pids.join()}`, context)
+            log(`Priority set ${priority} for processes ${pids.join()}`)
         } catch (error) {
-            logWarn("Couldn't set the processes priority.", context);
+            logWarn("Couldn't set the processes priority.");
             if(globals.config.verbose) dir(error);
         }
     }
@@ -320,10 +307,10 @@ module.exports = class FXRunner {
 
             //Restart server
             this.killServer();
-            await sleep(1250);
+            await sleep(this.config.restartDelay);
             return this.spawnServer();
         } catch (error) {
-            let errMsg = logError("Couldn't restart the server.", context);
+            let errMsg = logError("Couldn't restart the server.");
             if(globals.config.verbose) dir(error);
             return errMsg;
         }
@@ -351,11 +338,13 @@ module.exports = class FXRunner {
             }
 
             //Stopping server
-            this.fxChild.kill();
-            this.fxChild = null;
+            if(this.fxChild !== null){
+                this.fxChild.kill();
+                this.fxChild = null;
+            }
             return true;
         } catch (error) {
-            logError("Couldn't kill the server. Perhaps What Is Dead May Never Die.", context);
+            logError("Couldn't kill the server. Perhaps What Is Dead May Never Die.");
             if(globals.config.verbose) dir(error);
             this.fxChild = null;
             return false;
@@ -373,11 +362,11 @@ module.exports = class FXRunner {
         if(this.fxChild === null) return false;
         try {
             let success = this.fxChild.stdin.write(command + "\n");
-            globals.webConsole.buffer(command, 'command');
+            globals.webServer.webConsole.buffer(command, 'command');
             return success;
         } catch (error) {
             if(globals.config.verbose){
-                logError('Error writing to fxChild.stdin', context);
+                logError('Error writing to fxChild.stdin');
                 dir(error);
             }
             return false;
@@ -402,7 +391,7 @@ module.exports = class FXRunner {
         if(!result) return false;
         await sleep(bufferTime);
         this.consoleBuffer.enableCmdBuffer = false;
-        return this.consoleBuffer.cmdBuffer;
+        return this.consoleBuffer.cmdBuffer.replace(/\u001b\[\d+(;\d)?m/g, '');
     }
 
 } //Fim FXRunner()

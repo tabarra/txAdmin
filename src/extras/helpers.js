@@ -1,6 +1,5 @@
 //Requires
 const fs = require('fs');
-const net = require('net');
 const path = require('path');
 
 
@@ -27,8 +26,12 @@ function txAdminASCII() {
  * Check if the packages in package.json were installed
  */
 function dependencyChecker() {
+    if (process.env.APP_ENV === 'webpack') {
+        return;
+    }
+
     try {
-        let rawFile = fs.readFileSync('package.json');
+        let rawFile = fs.readFileSync(GetResourcePath(GetCurrentResourceName()) + '/package.json');
         let parsedFile = JSON.parse(rawFile);
         let packages = Object.keys(parsedFile.dependencies)
         let missing = [];
@@ -43,9 +46,6 @@ function dependencyChecker() {
             console.log(`[txAdmin:PreCheck] Cannot start txAdmin due to missing dependencies.`);
             console.log(`[txAdmin:PreCheck] Make sure you executed 'npm i'.`);
             console.log(`[txAdmin:PreCheck] The following packages are missing: ` + missing.join(', '));
-            if(!process.version.startsWith('v10.')){
-                console.log(`[txAdmin:PreCheck] Note: txAdmin doesn't support NodeJS ${process.version}, please install NodeJS v10 LTS!`);
-            }
             process.exit();
         }
     } catch (error) {
@@ -101,11 +101,12 @@ function getCFGFileData(cfgPath) {
 
     //Validating file existence
     if(!fs.existsSync(cfgPath)){
-        if(cfgPath.includes('cfg')){
-            throw new Error("File doesn't exist or its unreadable.");
-        }else{
-            throw new Error("File doesn't exist or its unreadable. Make sure to include the CFG file in the path, and not just the directory that contains it.");
-        }
+        throw new Error("File doesn't exist or its unreadable.");
+    }
+
+    //Validating if its actually a file
+    if(!fs.lstatSync(cfgPath).isFile()){
+        throw new Error("File doesn't exist or its unreadable. Make sure to include the CFG file in the path, and not just the directory that contains it.");
     }
 
     //Reading file
@@ -156,22 +157,22 @@ function getFXServerPort(rawCfgFile) {
         throw new Error("Regex Match Error");
     }
 
-    if(!matches.length) throw new Error("No endpoints found");
+    if(!matches.length) throw new Error("No <code>endpoint_add_*</code> found");
 
     let validTCPEndpoint = matches.find((match) => {
         return (match.type.toLowerCase() === 'tcp' && (match.interface === '0.0.0.0' || match.interface === '127.0.0.1'))
     })
-    if(!validTCPEndpoint) throw new Error("You MUST have a TCP endpoint with interface 0.0.0.0");
+    if(!validTCPEndpoint) throw new Error("You MUST have one <code>endpoint_add_tcp</code> with IP 0.0.0.0");
 
     let validUDPEndpoint = matches.find((match) => {
         return (match.type.toLowerCase() === 'udp')
     })
-    if(!validUDPEndpoint) throw new Error("You MUST have at least one UDP endpoint");
+    if(!validUDPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_udp</code>");
 
     //FIXME: Think of something to make this work:
     //  https://forum.fivem.net/t/release-txadmin-manager-discord-bot-live-console-playerlist-autorestarter/530475/348?u=tabarra
     matches.forEach((m) => {
-        if(m.port !== matches[0].port) throw new Error("All endpoints MUST have the same port")
+        if(m.port !== matches[0].port) throw new Error("All <code>endpoint_add_*</code> MUST have the same port")
     });
 
     return matches[0].port;

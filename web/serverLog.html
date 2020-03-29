@@ -26,7 +26,7 @@
 </div>
 <div class="card border-primary">
     <div class="card-body">
-        <pre id="console" class="pre-scroll pre-log-content">{{log|safe}}</pre>
+        <pre id="console" class="thin-scroll pre-log-content">{{log|safe}}</pre>
     </div>
 </div>
 
@@ -47,7 +47,7 @@
         $.ajax({
             type: "GET",
             url: `/serverLog?offset=${currOffset}`,
-            timeout: 2000,
+            timeout: timeoutMedium,
             success: function (data) {
                 //FIXME: temporary before database
                 if(typeof data.offset !== 'undefined') currOffset = data.offset;

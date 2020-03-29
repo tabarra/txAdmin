@@ -1,9 +1,9 @@
 //Requires
+const modulename = 'ResourceInjector';
 const fs = require('fs-extra');
 const path = require('path');
 const slash = require('slash');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const context = 'ResourceInjector';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 
 //================================================================
@@ -30,12 +30,12 @@ async function resetCacheFolder(basePath) {
  */
 function getResourcesList() {
     try {
-        let rootDir = './extensions/';
+        let rootDir = GlobalData.txAdminResourcePath + '/extensions/';
         var paths = fs.readdirSync(rootDir);
         let resources = [];
         paths.forEach((path)=>{
             if(!fs.lstatSync(rootDir+path).isDirectory()) return;
-            if(fs.existsSync(rootDir+path+'/resource/__resource.lua')){
+            if(fs.existsSync(rootDir+path+'/resource/fxmanifest.lua')){
                 resources.push(path)
             }
         });
@@ -61,8 +61,8 @@ async function inject(basePath, resList) {
         let rootDir = './extensions/';
         let cachePath = `${basePath}/resources/[txAdmin-cache]`;
         let promises = []
-        resList.forEach((res) => {
-            promises.push(promFunc(rootDir+res+'/resource', cachePath+'/'+res));
+        resList.forEach((resource) => {
+            promises.push(promFunc(rootDir+resource+'/resource', cachePath+'/'+resource));
         });
         await Promise.all(promises);
         return true;

@@ -1,18 +1,17 @@
 //Requires
+const modulename = 'WebServer:GetStatus';
 const os = require('os');
-const xss = require("xss");
 const clone = require('clone');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'WebServer:GetStatus';
+const xss = require('../extras/xss')();
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 /**
  * Getter for all the log/server/process data
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-module.exports = async function action(res, req) {
-    res.send({
+module.exports = async function GetStatus(ctx) {
+    return ctx.send({
         meta: prepareMetaData(),
         host: prepareHostData(),
         status: prepareServerStatus(),
@@ -110,7 +109,7 @@ function prepareHostData() {
 
     } catch (error) {
         if (globals.config.verbose) {
-            logError('Failed to execute prepareHostData()', context);
+            logError('Failed to execute prepareHostData()');
             dir(error);
         }
         return {
@@ -134,14 +133,17 @@ function prepareHostData() {
 function preparePlayersData() {
     let dataServer = clone(globals.monitor.statusServer);
 
-    if (!dataServer.players.length) return '<strong>No players Online.</strong>';
+    if (!dataServer.players.length) return {html: null, count: 0};
 
-    let out = '';
+    let out = {
+        html: '',
+        count: dataServer.players.length
+    };
     dataServer.players.forEach(player => {
         let pingClass;
         player.ping = parseInt(player.ping);
         if (player.ping < 0) {
-            pingClass = 'muted';
+            pingClass = 'secondary';
             player.ping = '??';
         } else if (player.ping < 60) {
             pingClass = 'success';
@@ -153,10 +155,9 @@ function preparePlayersData() {
         let paddedPing = player.ping.toString().padStart(3, 'x').replace(/x/g, '&nbsp;');
         let maxNameSize = 22;
         let name = (player.name.length > maxNameSize)? player.name.slice(0, maxNameSize-3)+'...' : player.name;
-        out += `<div class="clearfix mt-3 playerlist">
+        out.html += `<div class="list-group-item list-group-item-accent-${pingClass} player" onclick="showPlayer(${xss(player.id)})">
                     <span class="pping text-${pingClass}">${paddedPing}</span>
                     <span class="pname">${xss(name)}</span>
-                    <a onclick="showPlayer(${xss(player.id)})"><span class="badge badge-primary float-right">MORE</span></a>
                 </div>`;
 
     });

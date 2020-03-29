@@ -1,19 +1,19 @@
 //Requires
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const webUtils = require('./../webUtils.js');
-const context = 'WebServer:AdminManager-Get';
+const modulename = 'WebServer:AdminManagerGet';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 
 /**
  * Returns the output page containing the admins.
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-module.exports = async function action(res, req) {
+module.exports = async function AdminManagerGet(ctx) {
     //Prepare admin array
-    let admins = globals.authenticator.getAdmins().map((admin)=>{
+    let admins = globals.authenticator.getAdminsList().map((admin)=>{
         let perms;
-        if(admin.permissions.includes('all')){
+        if(admin.master == true){
+            perms = "master account";
+        }else if(admin.permissions.includes('all_permissions')){
             perms = "all permissions";
         }else if(admin.permissions.length !== 1){
             perms = `${admin.permissions.length} permissions`;
@@ -22,16 +22,17 @@ module.exports = async function action(res, req) {
         }
 
         return {
+            hasCitizenFX: (admin.providers.includes('citizenfx')),
+            hasDiscord: (admin.providers.includes('discord')),
             name: admin.name,
             perms: perms,
-            disableActions: (req.session.auth.username.toLowerCase() === admin.name.toLowerCase())? 'disabled': ''
+            disableActions: (admin.master || ctx.session.auth.username.toLowerCase() === admin.name.toLowerCase())
         }
     });
 
     //Check permission
-    if(!webUtils.checkPermission(req, 'manage.admins', context)){
-        let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to view this page.`});
-        return res.send(out);
+    if(!ctx.utils.checkPermission('manage.admins', modulename)){
+        return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
     }
 
     //Set render data
@@ -42,6 +43,5 @@ module.exports = async function action(res, req) {
     }
 
     //Give output
-    let out = await webUtils.renderMasterView('adminManager', req.session, renderData);
-    return res.send(out);
+    return ctx.utils.render('adminManager', renderData);
 };

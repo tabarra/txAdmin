@@ -1,0 +1,46 @@
+{{include("header")/}}
+
+
+<style>
+    .pre-log-content{
+        height: calc(100vh - 252px);
+        margin-bottom: 0;
+    }
+</style>
+
+<div>
+    <ul class="nav nav-pills nav-tabs justify-content-center mb-2">
+        <li class="nav-item"><a class="nav-link active" data-toggle="tab" href="#nav-console"
+            role="tab" aria-controls="nav-console" aria-selected="true" onclick="doScroll('consoleLog');">Console Logs</a></li>
+        <li class="nav-item"><a class="nav-link" data-toggle="tab" href="#nav-actions"
+            role="tab" aria-controls="nav-actions" aria-selected="true" onclick="doScroll('actionsLog');">Actions Logs</a></li>
+    </ul>
+</div>
+<div class="card border-primary">
+    <div class="card-body">
+        <div class="tab-content" id="nav-tabContent">
+            <div class="tab-pane fade active show" id="nav-console" role="tabpanel">
+                <pre id="consoleLog" class="thin-scroll pre-log-content">{{consoleLog|safe}}</pre>
+            </div>
+            <div class="tab-pane fade" id="nav-actions" role="tabpanel">
+                <pre id="actionsLog" class="thin-scroll pre-log-content">{{actionLog|safe}}</pre>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{{include("footer")/}}
+
+
+<script>
+    function doScroll(target){
+        setTimeout(() => {
+            $("#"+target).scrollTop($("#"+target)[0].scrollHeight);
+        }, 250);
+    }
+
+    $(document).ready(function () {
+        $("#consoleLog").scrollTop($("#consoleLog")[0].scrollHeight);
+    });
+</script>

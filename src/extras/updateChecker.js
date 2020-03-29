@@ -1,7 +1,7 @@
 //Requires
+const modulename = 'WebServer:updateChecker';
 const axios = require("axios");
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'WebServer:updateChecker';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 module.exports = async () => {
@@ -12,7 +12,7 @@ module.exports = async () => {
         globals.version.latest = rVer.version;
         globals.version.changelog = rVer.changelog;
         globals.version.allVersions = rVer.allVersions || [{version: rVer.version, changelog: rVer.changelog}];
-        if(globals.version.current !== rVer.version){
+        if(GlobalData.txAdminVersion !== rVer.version){
             logWarn(`A new version (v${rVer.version}) is available for txAdmin - https://github.com/tabarra/txAdmin`, 'UpdateChecker');
         }
     } catch (error) {

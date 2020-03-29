@@ -2,61 +2,247 @@
 <html lang="en">
 
 <head>
-    <base href="./">
+    <base href="/">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <meta name="description" content="txAdmin - remotely manage&monitor your GTA5 FiveM Server">
+    <meta name="description" content="txAdmin - remotely Manage & Monitor your GTA5 FiveM Server">
     <meta name="author" content="André Tabarra">
     <title>{{headerTitle}}</title>
-    <!-- Icons-->
-    <link href="css/coreui-icons.min.css" rel="stylesheet">
     <link href="css/simple-line-icons.css" rel="stylesheet">
-    <!-- Main styles for this application-->
-    <link href="css/coreui.css" rel="stylesheet">
-    <link href="css/pace.min.css" rel="stylesheet">
+    <link href="css/coreui.min.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="img/favicon_default.png" id="favicon" />
+    <link rel="stylesheet" href="css/txAdmin.css">
 
-    <link rel="stylesheet" href="css/custom.css">
+    <style>
+        .logo-image svg{
+            height: 25px;
+            width: 25px;
+            transform: scale(-1, 1);
+            text-align: center;
+            fill: #fff;
+        }
+
+        .profile-pic{
+            height: 100px;
+            -moz-box-shadow: 2px 4px 8px rgb(143, 143, 143);
+            -webkit-box-shadow: 2px 4px 8px rgb(143, 143, 143);
+            box-shadow: 2px 4px 8px rgb(143, 143, 143);
+            border-radius: 50em;
+        }
+
+        .separator {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+            border: 0;
+            color: #b1afaf;
+        }
+        .separator::before, .separator::after {
+            content: '';
+            flex: 1;
+            border-top: 1px solid #e6e6e6;
+        }
+        .separator::before {
+            margin-right: .25em;
+        }
+        .separator::after {
+            margin-left: .25em;
+        }
+    </style>
+    {{if(options.isMatrix)}}
+        <style>
+            * {
+                font-family: Consolas, monospace, serif;
+                color: lawngreen;
+            }
+            .c-app{
+                background-color: #23282c;
+            }
+            pre{
+                margin-bottom: -15px;
+            }
+            .card{
+                background-color: #23282c;
+                border: 4px solid lawngreen;
+            }
+            .alert-secondary{
+                background-color: #23282c;
+                border: 2px solid lawngreen;
+            }
+            .btn-primary {
+                color: lawngreen;
+                border: 2px solid lawngreen;
+                background-color: transparent;
+            }
+            .btn-primary:hover {
+                border: 2px solid black;
+                color: black;
+                font-weight: 700;
+                background-color: lawngreen;
+            }
+            .separator::before, .separator::after {
+                border-top: 1px dashed lawngreen;
+            }
+            .separator{
+                color: lawngreen;
+            }
+
+            .card-footer {
+                background-color: darkgreen;
+                border-top: 2px solid lawngreen;
+            }
+
+            input,
+            .btn-stack-overflow,
+            .btn-linkedin,
+            input:-webkit-autofill,
+            input:-webkit-autofill:hover,
+            input:-webkit-autofill:focus,
+            .input-group-text{
+                background-color: transparent !important;
+                border: 1px solid lawngreen !important;
+                -webkit-text-fill-color: #fff;
+                transition: background-color 5000s ease-in-out 0s;
+            }
+
+        </style>
+    {{/if}}
 </head>
 
-<body class="app flex-row align-items-center">
+<body class="c-app flex-row align-items-center">
+    <svg style="display:none">
+        <symbol id="fivem-icon" viewBox="0 0 342 430">
+            <g transform="matrix(1,0,0,-1,-124.2,606.4)">
+                <path d="m 125.8,215.9 85.1,0 c 1.9,0 7.4,18.3 16.7,54.9 32.3,112.4 50.9,178.1 55.7,197.2 l -54.9,54.1 -1.6,0 C 219.4,499 185.2,397.2 124.2,216.7 l 1.6,-0.8 z m 163.8,275.2 0.8,0 c 1.1,4.5 1.6,7.2 1.6,8 l 0,1.6 c -15.9,16.7 -33.7,34.5 -53.3,53.3 -2.1,-3.2 -3.2,-5.8 -3.2,-8 l 0,-0.8 c 19.9,-20.5 37.9,-38.5 54.1,-54.1 z M 393,429 l 0.8,0 c -10.9,34.5 -17.5,52.2 -19.9,53.3 L 254.6,600.8 c -1.3,0 -4.2,-8.5 -8.7,-25.4 L 393,429 Z m -22.3,65.3 0.8,0 c -24.4,74 -37.4,111.3 -39,112.1 l -73.2,0 0,-0.8 C 286.4,578 323.5,540.9 370.7,494.3 Z m 43.8,-128.1 0.8,0 c -2.7,13 -9,23.1 -19.1,30.2 -31,31.8 -62,62.8 -93,93 l -0.8,0 c 1.9,-10.9 6.1,-19.1 12.7,-24.7 l 99.4,-98.5 z m 50.1,-150.3 1.6,0.8 c -22.8,67.9 -35,102.9 -36.6,105 l -109.8,108.9 0,-0.8 c 4.2,-16.7 24.7,-88 61.2,-213.9 l 83.6,0 z" />
+            </g>
+        </symbol>
+        <symbol id="discord-icon" viewBox="0 0 245 240">
+            <path d="M104.4 103.9c-5.7 0-10.2 5-10.2 11.1s4.6 11.1 10.2 11.1c5.7 0 10.2-5 10.2-11.1.1-6.1-4.5-11.1-10.2-11.1zM140.9 103.9c-5.7 0-10.2 5-10.2 11.1s4.6 11.1 10.2 11.1c5.7 0 10.2-5 10.2-11.1s-4.5-11.1-10.2-11.1z" />
+            <path d="M189.5 20h-134C44.2 20 35 29.2 35 40.6v135.2c0 11.4 9.2 20.6 20.5 20.6h113.4l-5.3-18.5 12.8 11.9 12.1 11.2 21.5 19V40.6c0-11.4-9.2-20.6-20.5-20.6zm-38.6 130.6s-3.6-4.3-6.6-8.1c13.1-3.7 18.1-11.9 18.1-11.9-4.1 2.7-8 4.6-11.5 5.9-5 2.1-9.8 3.5-14.5 4.3-9.6 1.8-18.4 1.3-25.9-.1-5.7-1.1-10.6-2.7-14.7-4.3-2.3-.9-4.8-2-7.3-3.4-.3-.2-.6-.3-.9-.5-.2-.1-.3-.2-.4-.3-1.8-1-2.8-1.7-2.8-1.7s4.8 8 17.5 11.8c-3 3.8-6.7 8.3-6.7 8.3-22.1-.7-30.5-15.2-30.5-15.2 0-32.2 14.4-58.3 14.4-58.3 14.4-10.8 28.1-10.5 28.1-10.5l1 1.2c-18 5.2-26.3 13.1-26.3 13.1s2.2-1.2 5.9-2.9c10.7-4.7 19.2-6 22.7-6.3.6-.1 1.1-.2 1.7-.2 6.1-.8 13-1 20.2-.2 9.5 1.1 19.7 3.9 30.1 9.6 0 0-7.9-7.5-24.9-12.7l1.4-1.6s13.7-.3 28.1 10.5c0 0 14.4 26.1 14.4 58.3 0 0-8.5 14.5-30.6 15.2z" />
+        </symbol>
+    </svg>
     <div class="container">
 
         <!-- Logo Row -->
-        <div class="row justify-content-md-center mb-4">
-            <img src="img/txadmin.png" alt="txAdmin Logo">
-        </div>
+        {{if(options.isMatrix)}}
+            <div class="row justify-content-md-center mb-4"><pre><b>{{ascii}}</b></pre></div>
+        {{#else}}
+            <div class="row justify-content-md-center mb-4">
+                <img src="img/txadmin.png" alt="txAdmin Logo">
+            </div>
+        {{/if}}
 
         <!-- Card Row -->
         <div class="row justify-content-center">
             <div class="col-md-5">
-                <div class="card p-4">
-                    <div class="card-body text-center">
-                        <h1>Login</h1>
-                        <span class="text-danger"><strong>{{message}}</strong></span>
-                        <form action="/auth" method="post">
-                            <div class="input-group mb-3">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="icon-user"></i>
-                                    </span>
+                <div class="card ">
+                    <div class="card-body text-center p-4">
+                        <!-- TODO: see if squirrelly already supports elseif -->
+                        {{if(options.template == 'justMessage')}}
+                            <h5 class="text-danger mb-3">{{message|n2br}}</h5>
+                            <a href="/auth" class="btn btn-primary px-4" role="submit">Back</a>
+                        {{/if}}
+                        {{if(options.template == 'noMaster')}}
+                            <h3 class="mb-4">No <code>CitizenFX</code> Account Linked</h3>
+                            <div class="mx-auto">
+                                <h6>Type the PIN in your terminal and click "Link Account".</h6>
+                                <form action="/auth/addMaster/pin" method="post">
+                                    <div class="input-group mx-auto" style="max-width: 140px;">
+                                        <input class="form-control form-control-lg text-center mb-3" type="text"
+                                        minlength="4" maxlength="4" name="pin" placeholder="0000" autocomplete="off" autofocus required>
+                                    </div>
+                                    <button class="btn btn-primary px-4" type="submit">Link Account</button>
+                                </form>
+                            </div>
+                        {{/if}}
+                        {{if(options.template == 'callback')}}
+                            <img class="profile-pic" src="{{addMaster_picture}}" alt="avatar">
+                            <h5 class="mt-2 mb-3 text-muted">{{addMaster_name}}</h5>
+
+                            <h6>Type in the backup password:</h6>
+                            <form action="/auth/addMaster/save" method="post">
+                                <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="icon-lock"></i>
+                                        </span>
+                                    </div>
+                                    <input class="form-control" type="password" name="password" id="password"
+                                        placeholder="Password" autocomplete="new-password" minlength="6" maxlength="24" autofocus required>
                                 </div>
-                                <input class="form-control" type="text" name="username" placeholder="Username">
-                            </div>
-                            <div class="input-group mb-4">
-                                <div class="input-group-prepend">
-                                    <span class="input-group-text">
-                                        <i class="icon-lock"></i>
-                                    </span>
+                                <div class="input-group mx-auto" style="max-width: 280px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="icon-lock"></i>
+                                        </span>
+                                    </div>
+                                    <input class="form-control" type="password" name="password2" id="password2"
+                                        placeholder="Confirm Password" autocomplete="new-password" required>
                                 </div>
-                                <input class="form-control" type="password" name="password" placeholder="Password">
-                            </div>
-                            <div class="row justify-content-md-center">
-                                <button class="btn btn-primary px-4" type="submit">Login</button>
-                            </div>
-                        </form>
+                                <span class="form-text text-muted mb-4">
+                                    Must have between 6 and 24 characters.
+                                </span>
+                                <button class="btn btn-primary px-4" type="submit">Save</button>
+                            </form>
+                            <script>
+                                let password = document.getElementById("password")
+                                let password2 = document.getElementById("password2");
+                                function validatePassword(){
+                                    if(password.value != password2.value) {
+                                        password2.setCustomValidity("Passwords Don't Match");
+                                    } else {
+                                        password2.setCustomValidity('');
+                                    }
+                                }
+                                password.onchange = validatePassword;
+                                password2.onkeyup = validatePassword;
+                            </script>
+                        {{/if}}
+                        {{if(options.template == 'normal')}}
+                            <h1 class="mb-3">Login</h1>
+                            <a class="btn btn-brand btn-stack-overflow {{citizenfxDisabled|isDisabled}}"
+                                role="button" href="/auth/citizenfx/redirect">
+                                <i class="logo-image"><svg><use xlink:href="#fivem-icon"></use></svg></i>
+                                <span>CitizenFX</span>
+                            </a>
+                            &nbsp;
+                            <a class="btn btn-brand btn-linkedin {{discordDisabled|isDisabled}}"
+                            role="button" href="/auth/discord/redirect">
+                                <i class="logo-image"><svg><use xlink:href="#discord-icon"></use></svg></i>
+                                <span>Discord</span>
+                            </a>
+                            <div class="separator">OR</div>
+                            <form action="/auth/password" method="post">
+                                <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="icon-user"></i>
+                                        </span>
+                                    </div>
+                                    <input class="form-control" type="text" name="username" placeholder="Username" required>
+                                </div>
+                                <div class="input-group mb-4 mx-auto" style="max-width: 280px;">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="icon-lock"></i>
+                                        </span>
+                                    </div>
+                                    <input class="form-control" type="password" name="password" placeholder="Password" required>
+                                </div>
+                                <div class="row justify-content-md-center">
+                                    <button class="btn btn-primary px-4" type="submit">Login</button>
+                                </div>
+                            </form>
+                        {{/if}}
                     </div>
+                    {{if(options.message && options.template != 'justMessage')}}
+                        <div class="card-footer text-center text-danger">
+                            <strong>{{message}}</strong>
+                        </div>
+                    {{/if}}
                 </div>
             </div>
         </div>
@@ -65,21 +251,32 @@
         <div class="row justify-content-md-center">
             <div class="col-md-4 ">
                 <div class="alert alert-secondary text-center small" role="alert">
-                    <strong>Server Profile:</strong> {{config}} <br>
-                    <strong>txAdmin Version:</strong> {{version}}
+                    <strong>Server profile:</strong> {{config}} <br>
+                    <strong>txAdmin version:</strong> {{txAdminVersion}} <br>
+                    <strong>FXServer build:</strong> {{fxserverVersion}}
                 </div>
             </div>
         </div>
+        {{if(options.isMatrix)}}
+            <div class="row justify-content-md-center">
+                <div class="col-md-4 text-center pt-3">
+                    <h4 class="matrix-text">The Matrix has you...</h4>
+                </div>
+            </div>
+        {{/if}}
 
 
     </div>
     <!-- CoreUI and necessary plugins-->
     <script src="js/jquery.min.js"></script>
-    <script src="js/popper.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/pace.min.js"></script>
-    <script src="js/perfect-scrollbar.min.js"></script>
-    <script src="js/coreui.min.js"></script>
+    <script src="js/coreui.bundle.min.js"></script>
+    <script>
+        $(".profile-pic").on("error", function() {
+            if($(this).attr('src') != 'img/default_avatar.png'){
+                $(this).attr('src', 'img/default_avatar.png');
+            }
+        });
+    </script>
 </body>
 
 </html>

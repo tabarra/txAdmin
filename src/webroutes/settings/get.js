@@ -1,20 +1,17 @@
 //Requires
+const modulename = 'WebServer:SettingsGet';
 const clone = require('clone');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const webUtils = require('./../webUtils.js');
-const context = 'WebServer:Settings-Get';
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 
 /**
  * Returns the output page containing the live console
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-module.exports = async function action(res, req) {
+module.exports = async function SettingsGet(ctx) {
     //Check permissions
-    if(!webUtils.checkPermission(req, 'settings.view', context)){
-        let out = await webUtils.renderMasterView('basic/generic', req.session, {message: `You don't have permission to view this page.`});
-        return res.send(out);
+    if(!ctx.utils.checkPermission('settings.view', modulename)){
+        return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
     }
 
     let renderData = {
@@ -23,12 +20,12 @@ module.exports = async function action(res, req) {
         fxserver: cleanRenderData(globals.configVault.getScopedStructure('fxRunner')),
         monitor: cleanRenderData(globals.configVault.getScopedStructure('monitor')),
         discord: cleanRenderData(globals.configVault.getScopedStructure('discordBot')),
-        disableWrite: (webUtils.checkPermission(req, 'settings.write'))? '' : 'disabled',
+        disableWrite: (ctx.utils.checkPermission('settings.write', modulename))? '' : 'disabled',
         serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone
     }
+    renderData.activeTab = (renderData.fxserver.basePath && renderData.fxserver.cfgPath)? 'global' : 'fxserver';
 
-    let out = await webUtils.renderMasterView('settings', req.session, renderData);
-    return res.send(out);
+    return ctx.utils.render('settings', renderData);
 };
 
 
@@ -37,7 +34,7 @@ function cleanRenderData(inputData){
     let input = clone(inputData);
     let out = {}
     Object.keys(input).forEach((prop) => {
-        if(input[prop] === null || input[prop] === false){
+        if(input[prop] === null || input[prop] === false || typeof input[prop] === 'undefined'){
             out[prop] = '';
         }else if(input[prop] === true){
             out[prop] = 'checked';

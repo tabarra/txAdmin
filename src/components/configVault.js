@@ -1,9 +1,10 @@
 //Requires
-const os = require('os');
+const modulename = 'ConfigVault';
 const fs = require('fs');
+const path = require('path');
+const slash = require('slash');
 const clone = require('clone');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const context = 'ConfigVault';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -20,15 +21,15 @@ function removeNulls(obj) {
 
 
 module.exports = class ConfigVault {
-    constructor(serverProfile) {
+    constructor(profilePath, serverProfile) {
         this.serverProfile = serverProfile;
-        this.serverProfilePath = `data/${serverProfile}`;
+        this.serverProfilePath = profilePath;
         this.configFilePath = `${this.serverProfilePath}/config.json`;
         this.configFile = null;
         this.config = null;
 
         this.setupVault();
-        logOk('::Started', context);
+        logOk('Started');
     }
 
 
@@ -43,7 +44,7 @@ module.exports = class ConfigVault {
             this.config = this.setupConfigDefaults(this.configFile);
             this.setupFolderStructure();
         } catch (error) {
-            logError(error.stack, context)
+            logError(error.message)
             process.exit(0);
         }
     }
@@ -60,7 +61,7 @@ module.exports = class ConfigVault {
         try {
             rawFile = fs.readFileSync(this.configFilePath, 'utf8');
         } catch (error) {
-            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. (cannot read file, please read the documentation)\nOriginal error: ${error.message}`, error.stack);
+            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. (cannot read file, please read the documentation)\nOriginal error: ${error.message}`);
         }
 
         //Try to parse config file
@@ -68,8 +69,8 @@ module.exports = class ConfigVault {
         try {
             cfgData = JSON.parse(rawFile);
         } catch (error) {
-            if(rawFile.includes('\\')) logError(`Note: your 'data/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`, context);
-            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. (json parse error, please read the documentation)\nOriginal error: ${error.message}`, error.stack);
+            if(rawFile.includes('\\')) logError(`Note: your 'txData/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`);
+            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. \nOriginal error: ${error.message}`);
         }
 
         return cfgData;
@@ -89,7 +90,6 @@ module.exports = class ConfigVault {
             monitor: null,
             authenticator: null,
             webServer: null,
-            webConsole: null,
             discordBot: null,
             fxRunner: null,
         }
@@ -117,15 +117,9 @@ module.exports = class ConfigVault {
                 refreshInterval: toDefault(cfg.authenticator.refreshInterval, null), //not in template
             };
             out.webServer = {
-                port: toDefault(cfg.webServer.port, null),
                 bufferTime: toDefault(cfg.webServer.bufferTime, null), //not in template - deprecate?
                 limiterMinutes: toDefault(cfg.webServer.limiterMinutes, null), //not in template
                 limiterAttempts: toDefault(cfg.webServer.limiterAttempts, null), //not in template
-                enableHTTPS: toDefault(cfg.webServer.enableHTTPS, null), //not in template [BETA]
-                httpsPort: toDefault(cfg.webServer.httpsPort, null), //not in template [BETA]
-            };
-            out.webConsole = {
-                //nothing to configure
             };
             out.discordBot = {
                 enabled: toDefault(cfg.discordBot.enabled, null),
@@ -137,18 +131,19 @@ module.exports = class ConfigVault {
                 commandCooldown: toDefault(cfg.discordBot.commandCooldown, null), //not in template
             };
             out.fxRunner = {
-                buildPath: toDefault(cfg.fxRunner.buildPath, null),
                 basePath: toDefault(cfg.fxRunner.basePath, null),
                 cfgPath: toDefault(cfg.fxRunner.cfgPath, null),
+                commandLine: toDefault(cfg.fxRunner.commandLine, null),
                 logPath: toDefault(cfg.fxRunner.logPath, null), //not in template
                 setPriority: toDefault(cfg.fxRunner.setPriority, null),
                 onesync: toDefault(cfg.fxRunner.onesync, null),
                 autostart: toDefault(cfg.fxRunner.autostart, null),
-                autostartDelay: toDefault(cfg.webServer.autostartDelay, null), //not in template
+                autostartDelay: toDefault(cfg.fxRunner.autostartDelay, null), //not in template
+                restartDelay: toDefault(cfg.fxRunner.restartDelay, null), //not in template
                 quiet: toDefault(cfg.fxRunner.quiet, null),
             };
         } catch (error) {
-            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`, error.stack);
+            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`);
         }
 
         return out;
@@ -166,15 +161,10 @@ module.exports = class ConfigVault {
         //NOTE: the bool trick in global.verbose and fxRunner.autostart won't work if we want the default to be true
         try {
             //Global
-            cfg.global.verbose = (cfg.global.verbose === 'true' || cfg.global.verbose === true);
+            cfg.global.verbose = (cfg.global.verbose === 'true' || cfg.global.verbose === true); //TODO: move to GlobalData
             cfg.global.publicIP = cfg.global.publicIP || "change-me";
             cfg.global.serverName = cfg.global.serverName || "change-me";
-            cfg.global.language = cfg.global.language || "en";
-
-            //Global - Extras
-            cfg.global.osType = os.type() || 'unknown';
-            cfg.global.serverProfile = this.serverProfile;
-            cfg.global.serverProfilePath = this.serverProfilePath;
+            cfg.global.language = cfg.global.language || "en"; //TODO: move to GlobalData
 
             //Logger
             cfg.logger.logPath = cfg.logger.logPath || `${this.serverProfilePath}/logs/admin.log`; //not in template
@@ -189,12 +179,9 @@ module.exports = class ConfigVault {
             cfg.authenticator.refreshInterval = parseInt(cfg.authenticator.refreshInterval) || 15000; //not in template
 
             //WebServer
-            cfg.webServer.port = parseInt(cfg.webServer.port) || 40120;
             cfg.webServer.bufferTime = parseInt(cfg.webServer.bufferTime) || 1500; //not in template - deprecate?
             cfg.webServer.limiterMinutes = parseInt(cfg.webServer.limiterMinutes) || 15; //not in template
-            cfg.webServer.limiterAttempts = parseInt(cfg.webServer.limiterAttempts) || 5; //not in template
-            cfg.webServer.enableHTTPS = (cfg.webServer.enableHTTPS === 'true' || cfg.webServer.enableHTTPS === true); //not in template [BETA]
-            cfg.webServer.httpsPort = parseInt(cfg.webServer.httpsPort) || 50120; //not in template [BETA]
+            cfg.webServer.limiterAttempts = parseInt(cfg.webServer.limiterAttempts) || 10; //not in template
 
             //DiscordBot
             cfg.discordBot.enabled = (cfg.discordBot.enabled === 'true' || cfg.discordBot.enabled === true);
@@ -208,10 +195,11 @@ module.exports = class ConfigVault {
             cfg.fxRunner.setPriority = cfg.fxRunner.setPriority || "NORMAL";
             cfg.fxRunner.onesync = (cfg.fxRunner.onesync === 'true' || cfg.fxRunner.onesync === true);
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
-            cfg.fxRunner.autostartDelay = parseInt(cfg.webServer.autostartDelay) || 2; //not in template
+            cfg.fxRunner.autostartDelay = parseInt(cfg.fxRunner.autostartDelay) || 2; //not in template
+            cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in templater
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
         } catch (error) {
-            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`, error.stack);
+            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`);
         }
 
         return cfg;
@@ -234,18 +222,17 @@ module.exports = class ConfigVault {
                 fs.mkdirSync(logsPath);
             }
 
-            let messagesPath = `${this.serverProfilePath}/messages.json`;
-            if(!fs.existsSync(messagesPath)){
-                fs.writeFileSync(messagesPath, '[]');
-            }
+            // let messagesPath = `${this.serverProfilePath}/messages.json`;
+            // if(!fs.existsSync(messagesPath)){
+            //     fs.writeFileSync(messagesPath, '[]');
+            // }
 
             // let commandsPath = `${this.serverProfilePath}/commands.json`;
             // if(!fs.existsSync(commandsPath)){
             //     fs.writeFileSync(commandsPath, '[]');
             // }
         } catch (error) {
-            logError(`Error setting up folder structure in '${this.serverProfilePath}/'`, context);
-            logError(error);
+            logError(`Failed to set up folder structure in '${this.serverProfilePath}/' with error: ${error.message}`);
             process.exit();
         }
     }
@@ -274,13 +261,13 @@ module.exports = class ConfigVault {
      */
     getAll(){
         let cfg = clone(this.config);
+        // cfg.global.verbose = true;
         return {
             global: Object.freeze(cfg.global),
             logger: Object.freeze(cfg.logger),
             monitor: Object.freeze(cfg.monitor),
             authenticator: Object.freeze(cfg.authenticator),
             webServer: Object.freeze(cfg.webServer),
-            webConsole: Object.freeze(cfg.webConsole),
             discordBot: Object.freeze(cfg.discordBot),
             fxRunner: Object.freeze(cfg.fxRunner),
         };

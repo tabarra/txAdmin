@@ -1,9 +1,8 @@
 //Requires
+const modulename = 'WebServer:Resources';
 const path = require('path');
 const slash = require('slash');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const webUtils = require('./webUtils.js');
-const context = 'WebServer:Resources';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -20,6 +19,7 @@ const dynamicSort = (prop) => {
     }
 }
 const getResourceSubPath = (resPath) => {
+    if(resPath.indexOf('system_resources') >= 0) return `system_resources`;
     if(!path.isAbsolute(resPath)) return resPath;
 
     let basePathArr = breakPath(`${globals.fxRunner.config.basePath}/resources`);
@@ -42,55 +42,56 @@ const getResourceSubPath = (resPath) => {
 
 /**
  * Returns the resources list
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-module.exports = async function action(res, req) {
+module.exports = async function Resources(ctx) {
     let timeoutMessage = `<strong>Couldn't load the resources list.</strong> <br>
     - Make sure the server is online (try to join it). <br>
     - Make sure your fxserver is build/artifact 1550 or above. <br>
+    - Make sure you don't have more than 200 resources. <br>
     - Make sure you are not running the fxserver outside txAdmin.`;
 
     //Send command request
     let cmdSuccess = globals.fxRunner.srvCmd(`txaReportResources`);
     if(!cmdSuccess){
-        let out = await webUtils.renderMasterView('basic/generic', req.session, {message: timeoutMessage});
-        return res.send(out);
+        return ctx.utils.render('basic/generic', {message: timeoutMessage});
     }
 
-    let cnt = 0;
-    let intHandle = setInterval(async () => {
-        //Check if there is fresh data
-        try {
+    //Timer fot list delivery
+    let tListTimer; 
+    let tErrorTimer;
+    const tList = new Promise((resolve, reject) => {
+        tListTimer = setInterval(() => {
             if(
                 globals.intercomTempResList !== null &&
                 (new Date() - globals.intercomTempResList.timestamp) <= 1000 &&
                 Array.isArray(globals.intercomTempResList.data)
             ){
-                clearInterval(intHandle);
+                clearTimeout(tListTimer);
+                clearTimeout(tErrorTimer);
                 let resGroups = processResources(globals.intercomTempResList.data);
                 let renderData = {
                     headerTitle: 'Resources',
                     resGroupsJS: JSON.stringify(resGroups),
                     resGroups,
-                    disableActions: (webUtils.checkPermission(req, 'commands.resources'))? '' : 'disabled'
+                    disableActions: (ctx.utils.checkPermission('commands.resources'))? '' : 'disabled'
                 }
-                let out = await webUtils.renderMasterView('resources', req.session, renderData);
-                return res.send(out);
+                resolve(['resources', renderData]);
             }
-        } catch (error) {logError(error, context)}
+        }, 100);
+    });
+    
+    //Timer for timing out
+    const tError = new Promise((resolve, reject) => {
+        tErrorTimer = setTimeout(() => {
+            clearTimeout(tListTimer);
+            resolve(['basic/generic', {message: timeoutMessage}]);
+        }, 1000);
+    });
 
-        //Check execution limit of 1000ms
-        cnt++;
-        if(cnt > 10){
-            clearInterval(intHandle);
-            logWarn('the future is now, old man', context);
-            try {
-                let out = await webUtils.renderMasterView('basic/generic', req.session, {message: timeoutMessage});
-                return res.send(out);
-            } catch (error) {logError(error, context)}
-        }
-    }, 100);
+    //Start race and give output
+    let [view, renderData] = await Promise.race([tList, tError]);
+    return ctx.utils.render(view, renderData);
 };
 
 
@@ -102,19 +103,20 @@ module.exports = async function action(res, req) {
 function processResources(resList){
     //Clean resource data and add it so an object separated by subpaths
     let resGroupList = {}
-    resList.forEach(res =>{
-        if(isUndefined(res.name) || isUndefined(res.status) || isUndefined(res.path) || res.path === ''){
+    resList.forEach(resource =>{
+        if(isUndefined(resource.name) || isUndefined(resource.status) || isUndefined(resource.path) || resource.path === ''){
             return;
         }
-        let subPath = getResourceSubPath(res.path);
+        let subPath = getResourceSubPath(resource.path);
         let resData = {
-            name: res.name,
-            status: res.status,
-            statusClass: (res.status === 'started')? 'success' : 'danger',
-            // path: slash(path.normalize(res.path)),
-            version: (res.version)? `(${res.version.trim()})` : '',
-            author: (res.author)? `by ${res.author.trim()}` : '',
-            description: (res.description)? res.description.trim() : '',
+            name: resource.name,
+            divName: resource.name.replace(/%/g, ''),
+            status: resource.status,
+            statusClass: (resource.status === 'started')? 'success' : 'danger',
+            // path: slash(path.normalize(resource.path)),
+            version: (resource.version)? `(${resource.version.trim()})` : '',
+            author: (resource.author)? `${resource.author.trim()}` : '',
+            description: (resource.description)? resource.description.trim() : '',
         }
 
         if(resGroupList.hasOwnProperty(subPath)){
@@ -129,7 +131,7 @@ function processResources(resList){
     Object.keys(resGroupList).forEach(subPath => {
         let subPathData = {
             subPath: subPath,
-            divName: subPath.replace(/\W/g, ''),
+            divName: subPath.replace(/[\W%]/g, ''),
             resources: resGroupList[subPath].sort(dynamicSort('name'))
         }
         finalList.push(subPathData)

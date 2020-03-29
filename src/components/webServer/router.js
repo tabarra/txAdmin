@@ -1,20 +1,11 @@
 //Requires
-const express = require('express');
-const rateLimit = require("express-rate-limit");
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
-const webRoutes = require('../../webroutes');
-const requestAuth = require('./requestAuthenticator');
-const context = 'WebServer:Router';
+const modulename = 'WebServer:Router';
+const Router = require('@koa/router');
+const KoaRateLimit = require('koa-ratelimit');
 
-//Helper function
-function handleRouteError(res, req, route, error){
-    try {
-        let desc = `Internal Error on: ${req.originalUrl}`;
-        logError(desc, `${context}:${route}`);
-        dir(error) //NOTE: temporary to help troubleshoot the /auth error
-        res.status(500).send(`[${route} Route Internal Error]`);
-    } catch (error) {}
-}
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
+const webRoutes = require('../../webroutes');
+const {requestAuth} = require('./requestAuthenticator');
 
 
 /**
@@ -22,158 +13,68 @@ function handleRouteError(res, req, route, error){
  * @param {object} config
  */
 module.exports = router = (config) =>{
-    const router = express.Router();
-    authLimiter = rateLimit({
-        windowMs: config.limiterMinutes * 60 * 1000, // 15 minutes
-        max: config.limiterAttempts, // limit each IP to 5 requests per 15 minutes
-        message: `Too many login attempts, enjoy your ${config.limiterMinutes} minutes of cooldown.`
+    const router = new Router();
+    authLimiter = KoaRateLimit({
+        driver: 'memory',
+        db: new Map(),
+        duration: config.limiterMinutes * 60 * 1000, // 15 minutes
+        errorMessage: `Too many attempts, enjoy your ${config.limiterMinutes} minutes of cooldown.`,
+        max: config.limiterAttempts,
+        disableHeader: true,
     });
-
 
     //Authentication
-    router.get('/auth', async (req, res) => {
-        await webRoutes.auth.get(res, req).catch((err) => {
-            handleRouteError(res, req, 'Auth-Get', err);
-        });
-    });
-    router.post('/auth', authLimiter, async (req, res) => {
-        await webRoutes.auth.verify(res, req).catch((err) => {
-            handleRouteError(res, req, 'Auth-Verify', err);
-        });
-    });
-    router.post('/changePassword', requestAuth('web'), async (req, res) => {
-        await webRoutes.auth.changePassword(res, req).catch((err) => {
-            handleRouteError(res, req, 'Auth-ChangePassword', err);
-        });
-    });
+    router.get('/auth', webRoutes.auth.get);
+    router.all('/auth/addMaster/:action', authLimiter, webRoutes.auth.addMaster);
+    router.get('/auth/:provider/redirect', authLimiter, webRoutes.auth.providerRedirect);
+    router.get('/auth/:provider/callback', authLimiter, webRoutes.auth.providerCallback);
+    router.post('/auth/password', authLimiter, webRoutes.auth.verifyPassword);
+    router.post('/changePassword', requestAuth('web'), webRoutes.auth.changePassword);
 
     //Admin Manager
-    router.get('/adminManager', requestAuth('web'), async (req, res) => {
-        await webRoutes.adminManager.get(res, req).catch((err) => {
-            handleRouteError(res, req, 'AdminManager-Get', err);
-        });
-    });
-    router.post('/adminManager/:action', requestAuth('web'), async (req, res) => {
-        await webRoutes.adminManager.actions(res, req).catch((err) => {
-            handleRouteError(res, req, 'AdminManager-Actions', err);
-        });
-    });
+    router.get('/adminManager', requestAuth('web'), webRoutes.adminManager.get);
+    router.post('/adminManager/:action', requestAuth('web'), webRoutes.adminManager.actions);
 
     //Settings
-    router.get('/settings', requestAuth('web'), async (req, res) => {
-        await webRoutes.settings.get(res, req).catch((err) => {
-            handleRouteError(res, req, 'Settings-Get', err);
-        });
-    });
-    router.post('/settings/save/:scope', requestAuth('web'), async (req, res) => {
-        await webRoutes.settings.save(res, req).catch((err) => {
-            handleRouteError(res, req, 'Settings-Save', err);
-        });
-    });
+    router.get('/settings', requestAuth('web'), webRoutes.settings.get);
+    router.post('/settings/save/:scope', requestAuth('web'), webRoutes.settings.save);
 
     //FXServer
-    router.get('/fxserver/controls/:action', requestAuth('api'), async (req, res) => {
-        await webRoutes.fxserver.controls(res, req).catch((err) => {
-            handleRouteError(res, req, 'FXServer-Controls', err);
-        });
-    });
-    router.post('/fxserver/commands', requestAuth('web'), async (req, res) => {
-        await webRoutes.fxserver.commands(res, req).catch((err) => {
-            handleRouteError(res, req, 'FXServer-Commands', err);
-        });
-    });
+    router.get('/fxserver/controls/:action', requestAuth('api'), webRoutes.fxserver.controls);
+    router.post('/fxserver/commands', requestAuth('web'), webRoutes.fxserver.commands);
+    router.get('/fxserver/downloadLog', requestAuth('web'), webRoutes.fxserver.downloadLog);
 
     //CFG Editor
-    router.get('/cfgEditor', requestAuth('web'), async (req, res) => {
-        await webRoutes.cfgEditor.get(res, req).catch((err) => {
-            handleRouteError(res, req, 'CFGEditor-Get', err);
-        });
-    });
-    router.post('/cfgEditor/save', requestAuth('api'), async (req, res) => {
-        await webRoutes.cfgEditor.save(res, req).catch((err) => {
-            handleRouteError(res, req, 'CFGEditor-Save', err);
-        });
-    });
+    router.get('/cfgEditor', requestAuth('web'), webRoutes.cfgEditor.get);
+    router.post('/cfgEditor/save', requestAuth('api'), webRoutes.cfgEditor.save);
 
     //Experiments
-    router.get('/experiments/bans', requestAuth('web'), async (req, res) => {
-        await webRoutes.experiments.bans.get(res, req).catch((err) => {
-            handleRouteError(res, req, 'Experiments-Bans-Get', err);
-        });
-    });
-    router.all('/experiments/bans/actions/:action', requestAuth('web'), async (req, res) => {
-        await webRoutes.experiments.bans.actions(res, req).catch((err) => {
-            handleRouteError(res, req, 'Experiments-Bans-Actions', err);
-        });
-    });
-
+    router.get('/experiments/bans', requestAuth('web'), webRoutes.experiments.bans.get);
+    router.all('/experiments/bans/actions/:action', requestAuth('web'), webRoutes.experiments.bans.actions);
 
     //Control routes
-    router.get('/console', requestAuth('web'), async (req, res) => {
-        await webRoutes.liveConsole(res, req).catch((err) => {
-            handleRouteError(res, req, 'liveConsole', err);
-        });
-    });
-    router.post('/intercom/:scope', requestAuth('intercom'), async (req, res) => {
-        await webRoutes.intercom(res, req).catch((err) => {
-            handleRouteError(res, req, 'intercom', err);
-        });
-    });
+    router.get('/console', requestAuth('web'), webRoutes.liveConsole);
+    router.post('/intercom/:scope', requestAuth('intercom'), webRoutes.intercom);
 
     //Diagnostic routes
-    router.get('/diagnostics', requestAuth('web'), async (req, res) => {
-        await webRoutes.diagnostics.get(res, req).catch((err) => {
-            handleRouteError(res, req, 'diagnostics', err);
-        });
-    });
-    router.get('/diagnostics/log', requestAuth('web'), async (req, res) => {
-        await webRoutes.diagnostics.getLog(res, req).catch((err) => {
-            handleRouteError(res, req, 'diagnostics-log', err);
-        });
-    });
+    router.get('/diagnostics', requestAuth('web'), webRoutes.diagnostics);
 
     //Data routes
-    router.get('/actionLog', requestAuth('web'), async (req, res) => {
-        await webRoutes.actionLog(res, req).catch((err) => {
-            handleRouteError(res, req, 'actionLog', err);
-        });
-    });
-    router.get('/serverLog', requestAuth('web'), async (req, res) => {
-        await webRoutes.serverLog(res, req).catch((err) => {
-            handleRouteError(res, req, 'serverLog', err);
-        });
-    });
-    router.get('/status', requestAuth('api'), async (req, res) => {
-        await webRoutes.status(res, req).catch((err) => {
-            handleRouteError(res, req, 'status', err);
-        });
-    });
-    router.get('/getPlayerData/:id', requestAuth('api'), async (req, res) => {
-        await webRoutes.getPlayerData(res, req).catch((err) => {
-            handleRouteError(res, req, 'getPlayerData', err);
-        });
-    });
-    router.get('/downFXServerLog', requestAuth('web'), async (req, res) => {
-        await webRoutes.downFXServerLog(res, req).catch((err) => {
-            handleRouteError(res, req, 'downFXServerLog', err);
-        });
-    });
+    router.get('/txAdminLog', requestAuth('web'), webRoutes.txAdminLog);
+    router.get('/serverLog', requestAuth('web'), webRoutes.serverLog);
+    router.get('/status', requestAuth('api'), webRoutes.status);
+    router.get('/getPlayerData/:id', requestAuth('api'), webRoutes.getPlayerData);
 
     //Index & generic
-    router.get('/', requestAuth('web'), async (req, res) => {
-        await webRoutes.dashboard(res, req).catch((err) => {
-            handleRouteError(res, req, 'dashboard', err);
-        });
-    });
-    router.get('/resources', requestAuth('web'), async (req, res) => {
-        await webRoutes.resources(res, req).catch((err) => {
-            handleRouteError(res, req, 'resources', err);
-        });
-    });
-    router.get('/addExtension', requestAuth('web'), async (req, res) => {
-        await webRoutes.addExtension(res, req).catch((err) => {
-            handleRouteError(res, req, 'addExtension', err);
-        });
+    router.get('/resources', requestAuth('web'), webRoutes.resources);
+    router.get('/addExtension', requestAuth('web'), webRoutes.addExtension);
+    router.get('/', requestAuth('web'), webRoutes.dashboard);
+
+    //TODO: replace this with an middleware checking for `ctx._matchedRoute`
+    router.all('*', async (ctx) =>{
+        ctx.status = 404;
+        if(globals.config.verbose) logWarn(`Request 404 error: ${ctx.path}`);
+        return ctx.utils.render('basic/404');
     });
 
     //Return router

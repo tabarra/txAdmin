@@ -10,15 +10,31 @@
 </div>
 
 <div class="form-group row">
-    <label for="modEditAdmin-password" class="col-sm-3 col-form-label">
-        Change Password
+    <label for="modEditAdmin-citizenfxID" class="col-sm-3 col-form-label">
+        CitizenFX ID
     </label>
     <div class="col-sm-9">
         <div class="input-group">
-            <input type="password" class="form-control" id="modEditAdmin-password" maxlength="16">
+            <input type="text" class="form-control" id="modEditAdmin-citizenfxID" maxlength="16"
+                autocomplete="off" value="{{citizenfx_id}}">
         </div>
         <span class="form-text text-muted">
-            Must have between 6 and 16 characters.
+            The admin's CitizenFX Forum username.
+        </span>
+    </div>
+</div>
+
+<div class="form-group row">
+    <label for="modEditAdmin-discordID" class="col-sm-3 col-form-label">
+        Discord ID
+    </label>
+    <div class="col-sm-9">
+        <div class="input-group">
+            <input type="number" class="form-control" id="modEditAdmin-discordID" maxlength="16"
+                autocomplete="off" value="{{discord_id}}">
+        </div>
+        <span class="form-text text-muted">
+            The admin's Discord User ID. Follow <a href="https://support.discordapp.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID" target="_blank">this guide</a> if you don't know how to get the User ID.
         </span>
     </div>
 </div>

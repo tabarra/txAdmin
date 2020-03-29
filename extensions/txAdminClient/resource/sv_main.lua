@@ -1,35 +1,27 @@
-local apiPort = "invalid"
-local apiToken = "invalid"
-local serverCompatVersion = "invalid"
-local txAdminClientVersion = GetResourceMetadata('txAdminClient', 'version')
-print("[txAdminClient] Version "..txAdminClientVersion.." starting...")
+--Helpers
+function log(x)
+    print("^5[txAdminClientLUA]^0 " .. x)
+end
+function logError(x)
+    print("^5[txAdminClientLUA]^1 " .. x .. "^0")
+end
 
+--Check Environment
+local apiPort = GetConvar("txAdmin-apiPort", "invalid")
+local apiToken = GetConvar("txAdmin-apiToken", "invalid")
+local txAdminClientVersion = GetResourceMetadata(GetCurrentResourceName(), 'version')
+if GetConvar('txAdminServerMode', 'false') ~= 'true' then
+    return
+end
+if apiPort == "invalid" or apiToken == "invalid" then
+    logError('API Port and Token ConVars not found. Do not start this resource if not using txAdmin.')
+    return
+end
+
+
+-- Setup threads and commands
+log("Version "..txAdminClientVersion.." starting...")
 Citizen.CreateThread(function()
-    --Wait for environment variables
-    local envAttempts = 0
-    while apiPort == "invalid" or apiToken == "invalid" or serverCompatVersion == "invalid" do
-        if envAttempts then
-            Citizen.Wait(1000)
-        end
-        if envAttempts >= 5 then
-            print("[txAdminClient] LUA awaiting for environment setup...")
-        end
-        envAttempts = envAttempts + 1
-        apiPort = GetConvar("txAdmin-apiPort", "invalid")
-        apiToken = GetConvar("txAdmin-apiToken", "invalid")
-        serverCompatVersion = GetConvar("txAdmin-clientCompatVersion", "invalid")
-    end
-
-    -- Detect version compatibility issues
-    if serverCompatVersion ~= txAdminClientVersion then
-        while true do
-            print("[txAdminClient] This resource version is not compatible with the current txAdmin version. Please update or remove this resource to prevent any issues.")
-            Citizen.Wait(5000)
-        end
-    end
-
-    -- Setup threads and commands
-    print("[txAdminClient] setting up threads and commands...")
     RegisterCommand("txaPing", txaPing, true)
     RegisterCommand("txaKickAll", txaKickAll, true)
     RegisterCommand("txaKickID", txaKickID, true)
@@ -44,6 +36,7 @@ Citizen.CreateThread(function()
         end
     end)
     AddEventHandler('playerConnecting', handleConnections)
+    log("Threads and commands set up. All Ready.")
 end)
 
 
@@ -57,30 +50,28 @@ function HeartBeat()
     PerformHttpRequest(url, function(httpCode, data, resultHeaders)
         local resp = tostring(data)
         if httpCode ~= 200 then
-            print("[txAdminClient] HeartBeat failed with code "..httpCode.." and message: "..resp)
+            log("HeartBeat failed with code "..httpCode.." and message: "..resp)
         end
     end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
 end
 
 -- Ping!
 function txaPing(source, args)
-    print("[txAdminClient] Pong!")
+    log("Pong!")
     CancelEvent()
 end
-
 
 -- Kick all players
 function txaKickAll(source, args)
     if args[1] == nil then
         args[1] = 'no reason provided'
     end
-    print("[txAdminClient] Kicking all players with reason: "..args[1])
+    log("Kicking all players with reason: "..args[1])
     for _, pid in pairs(GetPlayers()) do
         DropPlayer(pid, "Kicked for: " .. args[1])
     end
     CancelEvent()
 end
-
 
 -- Kick specific player via server ID
 function txaKickID(source, args)
@@ -88,14 +79,13 @@ function txaKickID(source, args)
         if args[2] == nil then
             args[2] = 'no reason provided'
         end
-        print("[txAdminClient] Kicking #"..args[1].." with reason: "..args[2])
+        log("Kicking #"..args[1].." with reason: "..args[2])
         DropPlayer(args[1], "Kicked for: " .. args[2])
     else
-        print('[txAdminClient] invalid arguments for txaKickID')
+        logError('Invalid arguments for txaKickID')
     end
     CancelEvent()
 end
-
 
 -- Kick specific player via identifier
 function txaKickIdentifier(source, args)
@@ -103,27 +93,26 @@ function txaKickIdentifier(source, args)
         if args[2] == nil then
             args[2] = 'no reason provided'
         end
-        print("[txAdminClient] Kicking "..args[1].." with reason: "..args[2])
+        log("Kicking "..args[1].." with reason: "..args[2])
         for _,player in ipairs(GetPlayers()) do
             local identifiers = GetPlayerIdentifiers(player)
             for _,id in ipairs(identifiers) do
                 if id == args[1] then
-                    print('[txAdminClient] Player: ' .. GetPlayerName(player) .. ' (' .. id .. ') kicked')
+                    log('Player: ' .. GetPlayerName(player) .. ' (' .. id .. ') kicked')
                     DropPlayer(player, "Kicked for: " .. args[2])
                 end
             end
         end
     else
-        print('[txAdminClient] invalid arguments for txaKickIdentifier')
+        logError('Invalid arguments for txaKickIdentifier')
     end
     CancelEvent()
 end
 
-
 -- Broadcast admin message to all players
 function txaBroadcast(source, args)
     if args[1] ~= nil and args[2] ~= nil then
-        print("[txAdminClient] Admin Broadcast - "..args[1]..": "..args[2])
+        log("Admin Broadcast - "..args[1]..": "..args[2])
         TriggerClientEvent("chat:addMessage", -1, {
             args = {
                 "(Broadcast) "..args[1],
@@ -133,18 +122,17 @@ function txaBroadcast(source, args)
         })
         TriggerEvent('txaLogger:internalChatMessage', -1, "(Broadcast) "..args[1], args[2])
     else
-        print('[txAdminClient] invalid arguments for txaBroadcast')
+        logError('Invalid arguments for txaBroadcast')
     end
     CancelEvent()
 end
-
 
 -- Send admin direct message to specific player
 function txaSendDM(source, args)
     if args[1] ~= nil and args[2] ~= nil and args[3] ~= nil then
         local pName = GetPlayerName(args[1])
         if pName ~= nil then
-            print("[txAdminClient] Admin DM to "..pName.." from "..args[2]..": "..args[3])
+            log("Admin DM to "..pName.." from "..args[2]..": "..args[3])
             TriggerClientEvent("chat:addMessage", args[1], {
                 args = {
                     "(DM) "..args[2],
@@ -154,14 +142,13 @@ function txaSendDM(source, args)
             })
             TriggerEvent('txaLogger:internalChatMessage', -1, "(DM) "..args[2], args[3])
         else
-            print('[txAdminClient] txaSendDM: player not found')
+            logError('txaSendDM: player not found')
         end
     else
-        print('[txAdminClient] invalid arguments for txaSendDM')
+        logError('Invalid arguments for txaSendDM')
     end
     CancelEvent()
 end
-
 
 -- Get all resources/statuses and report back to txAdmin
 function txaReportResources(source, args)
@@ -187,15 +174,14 @@ function txaReportResources(source, args)
         txAdminToken = apiToken,
         resources = resources
     }
-    print('[txAdminClient] Sending resources list to txAdmin.')
+    log('Sending resources list to txAdmin.')
     PerformHttpRequest(url, function(httpCode, data, resultHeaders)
         local resp = tostring(data)
         if httpCode ~= 200 then
-            print("[txAdminClient] ReportResources failed with code "..httpCode.." and message: "..resp)
+            log("ReportResources failed with code "..httpCode.." and message: "..resp)
         end
     end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
 end
-
 
 -- Player connecting handler
 function handleConnections(name, skr, d)
@@ -219,7 +205,7 @@ function handleConnections(name, skr, d)
                 PerformHttpRequest(url, function(httpCode, data, resultHeaders)
                     local resp = tostring(data)
                     if httpCode ~= 200 then
-                        print("[txAdminClient] Checking whitelist failed with code "..httpCode.." and message: "..resp)
+                        log("Checking whitelist failed with code "..httpCode.." and message: "..resp)
                     elseif data == 'whitelist-ok' then
                         if not isDone then
                             d.done()

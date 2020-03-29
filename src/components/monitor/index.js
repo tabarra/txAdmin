@@ -1,11 +1,11 @@
 //Requires
+const modulename = 'Monitor';
 const axios = require("axios");
 const bigInt = require("big-integer");
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../../extras/console');
+const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
 const HostCPUStatus = require('./hostCPUStatus');
 const TimeSeries = require('./timeSeries');
-const context = 'Monitor';
 
 
 module.exports = class Monitor {
@@ -14,18 +14,18 @@ module.exports = class Monitor {
 
         //Checking config
         if(this.config.restarter.cooldown < 15){
-            logError('The monitor.restarter.cooldown setting must be 15 seconds or more.', context);
+            logError('The monitor.restarter.cooldown setting must be 15 seconds or more.');
             process.exit();
         }
         if(this.config.restarter.failures < 15){
-            logError('The monitor.restarter.failures setting must be 15 seconds or more.', context);
+            logError('The monitor.restarter.failures setting must be 15 seconds or more.');
             process.exit();
         }
 
         //Setting up
-        logOk('::Started', context);
+        logOk('Started');
         this.cpuStatusProvider = new HostCPUStatus();
-        this.timeSeries = new TimeSeries(`${globals.config.serverProfilePath}/data/players.json`, 10, 60*60*24);
+        this.timeSeries = new TimeSeries(`${globals.info.serverProfilePath}/data/players.json`, 10, 60*60*24);
         this.lastAutoRestart = null;
         this.failCounter = 0;
         this.lastHeartBeat = 0;
@@ -108,11 +108,11 @@ module.exports = class Monitor {
                 });
             } catch (error) {
                 let timeJSON = JSON.stringify(time);
-                if(globals.config.verbose) logWarn(`Error building restart schedule for time '${timeJSON}':\n ${error.message}`, context);
+                if(globals.config.verbose) logWarn(`Error building restart schedule for time '${timeJSON}':\n ${error.message}`);
             }
         })
 
-        if(globals.config.verbose) schedule.forEach(el => { dir(el.messages) });
+        if(globals.config.verbose) dir(schedule.map(el => { return el.messages }));
         this.schedule = (schedule.length)? schedule : false;
     }
 
@@ -160,20 +160,20 @@ module.exports = class Monitor {
     async restartFXServer(reason, reasonTranslated){
         //sanity check
         if(globals.fxRunner.fxChild === null){
-            logWarn('Server not started, no need to restart', context);
+            logWarn('Server not started, no need to restart');
             return false;
         }
 
         //Cooldown check
         let elapsed = Math.round(Date.now()/1000) - globals.fxRunner.tsChildStarted;
         if(elapsed < this.config.restarter.cooldown){
-            if(globals.config.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) restartFXServer() awaiting restarter cooldown.`, context);
+            if(globals.config.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) restartFXServer() awaiting restarter cooldown.`);
             return false;
         }
 
         //Restart server
         let message = `Restarting server (${reason}).`;
-        logWarn(message, context);
+        logWarn(message);
         globals.logger.append(`[MONITOR] ${message}`);
         globals.fxRunner.restartServer(reasonTranslated);
     }
@@ -193,7 +193,7 @@ module.exports = class Monitor {
 
         //Check cooldown
         if(elapsed < this.config.restarter.cooldown){
-            if(globals.config.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) Failed to connect to server. Still in cooldown.`, context);
+            if(globals.config.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) Failed to connect to server. Still in cooldown.`);
             return false;
         }
 
@@ -203,7 +203,7 @@ module.exports = class Monitor {
         this.failCounter++;
         this.timeSeries.add(0);
         if(globals.config.verbose || this.failCounter > 10){
-            logWarn(`(${this.failCounter}/${this.config.restarter.failures}) FXServer is not responding! (${errorMessage})`, context);
+            logWarn(`(${this.failCounter}/${this.config.restarter.failures}) FXServer is not responding! (${errorMessage})`);
         }
 
         //Check if it's time to restart the server

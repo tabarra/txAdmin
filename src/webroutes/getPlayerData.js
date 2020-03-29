@@ -1,26 +1,24 @@
 //Requires
-const xss = require("xss");
+const modulename = 'WebServer:GetPlayerData';
 const clone = require('clone');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const webUtils = require('./webUtils.js');
-const context = 'WebServer:getPlayerData';
+const xss = require('../extras/xss')();
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 /**
  * Returns the data for the player's modal
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-module.exports = async function action(res, req) {
+module.exports = async function GetPlayerData(ctx) {
     //Sanity check
-    if(typeof req.params.id === 'undefined'){
-        return res.status(400).send({status: 'error', error: "Invalid Request"});
+    if(typeof ctx.params.id === 'undefined'){
+        return ctx.utils.error(400, 'Invalid Request');
     }
-    let id = parseInt(req.params.id);
+    let id = parseInt(ctx.params.id);
 
     //Shortcut function
     let getPermDisable = (perm) => {
-        return (webUtils.checkPermission(req, perm))? '' : 'disabled'
+        return (ctx.utils.checkPermission(perm, modulename))? '' : 'disabled'
     }
 
     //Preparing output
@@ -48,5 +46,5 @@ module.exports = async function action(res, req) {
         }
     }
 
-    return res.send(out);
+    return ctx.send(out);
 };

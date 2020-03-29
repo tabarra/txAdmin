@@ -1,34 +1,26 @@
 //Requires
+const modulename = 'WebServer:Dashboard';
 const semver = require('semver');
-const { dir, log, logOk, logWarn, logError, cleanTerminal } = require('../extras/console');
-const webUtils = require('./webUtils.js');
-const context = 'WebServer:Dashboard';
+const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
 /**
  * Returns the output page containing the Dashboard (index)
- * @param {object} res
- * @param {object} req
+ * @param {object} ctx
  */
-module.exports = async function action(res, req) {
+module.exports = async function Dashboard(ctx) {
     //If the any FXServer configuration is missing
-    if(
-        globals.fxRunner.config.buildPath === null ||
-        globals.fxRunner.config.basePath === null ||
-        globals.fxRunner.config.cfgPath === null
-    ){
-        return res.redirect('/settings');
+    if(globals.fxRunner.config.basePath === null || globals.fxRunner.config.cfgPath === null){
+        return ctx.response.redirect('/settings');
     }
 
     //Shortcut function
     let getPermDisable = (perm) => {
-        return (webUtils.checkPermission(req, perm))? '' : 'disabled'
+        return (ctx.utils.checkPermission(perm, modulename, false))? '' : 'disabled'
     }
 
     //Preparing render data
     let renderData = {
-        //FIXME: temp missing resource detector
-        errorMessage: globals.dashboardErrorMessage,
         serverName: globals.config.serverName,
         updateData: getUpdateData(),
         chartData: getChartData(globals.monitor.timeSeries.get()),
@@ -37,14 +29,13 @@ module.exports = async function action(res, req) {
             commandKick: getPermDisable('commands.kick'),
             commandResources: getPermDisable('commands.resources'),
             controls: getPermDisable('control.server'),
-            controlsClass: (webUtils.checkPermission(req, 'control.server'))? 'danger' : 'secondary'
+            controlsClass: (ctx.utils.checkPermission('control.server', modulename, false))? 'danger' : 'secondary'
         }
     }
 
 
     //Rendering the page
-    let out = await webUtils.renderMasterView('dashboard', req.session, renderData);
-    return res.send(out);
+    return ctx.utils.render('dashboard', renderData);
 };
 
 
@@ -88,8 +79,11 @@ function getChartData(series) {
  * Returns the update data
  */
 function getUpdateData() {
+    //FIXME: temp disable for conversion
+    return false;
+
     let updateData = {
-        currentVersion: globals.version.current,
+        currentVersion: GlobalData.txAdminVersion,
         latestVersion: globals.version.latest,
         changes: []
     }
@@ -97,7 +91,7 @@ function getUpdateData() {
     try {
         let diff;
         try {
-            diff = semver.diff(globals.version.current, globals.version.latest);
+            diff = semver.diff(GlobalData.txAdminVersion, globals.version.latest);
         } catch (error) {
             diff = 'major';
         }
@@ -115,14 +109,14 @@ function getUpdateData() {
         //Processing the version history and only picking the new ones
         globals.version.allVersions.forEach(version => {
             try {
-                if (semver.gt(version.version, globals.version.current)) {
+                if (semver.gt(version.version, GlobalData.txAdminVersion)) {
                     updateData.changes.push(version);
                 }
             } catch (error) { }
         });
         updateData.changes = updateData.changes.reverse();
     } catch (error) {
-        logError(`Error while processing changelog. Enable verbosity for more information.`, context);
+        logError(`Error while processing changelog. Enable verbosity for more information.`);
         if(globals.config.verbose) dir(error);
     }
 

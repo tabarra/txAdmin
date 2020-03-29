@@ -94,7 +94,7 @@
             <div class="card-body">
 
                 {{if(options.log.length === 0)}}
-                <li>Not bans recorded.</li>
+                <li>No bans recorded.</li>
                 {{#else}}
                 {{log|safe}}
                 {{/if}}
@@ -131,7 +131,7 @@
         $.ajax({
             type: "POST",
             url: '/experiments/bans/actions/unban',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -169,7 +169,7 @@
         $.ajax({
             type: "POST",
             url: '/experiments/bans/actions/ban',
-            timeout: 2000,
+            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {

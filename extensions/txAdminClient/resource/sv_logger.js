@@ -2,19 +2,23 @@
 const utils = require('./utils.js')
 
 //Helpers
-const log = (x)=>{console.log(x)}
+const log = (x)=>{console.log(`^5[txAdminClientJS]^0 ${x}`)}
 const dir = (x)=>{console.dir(x)}
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const logError = (err) => {
-    console.log(`[txAdminClient] Error: ${err.message}`);
-    try {
-        err.stack.forEach(trace => {
-            console.log(`\t=> ${trace.file}:${trace.line} > ${trace.name}`)
-        });
-    } catch (error) {
-        console.log('Error stack unavailable.')
+    if(typeof err === 'string'){
+        console.log(`^5[txAdminClient:Error]^1 ${err}^0`);
+    }else{
+        console.log(`^5[txAdminClient:Error]^1 ${err.message}^0`);
+        try {
+            err.stack.forEach(trace => {
+                console.log(`\t=> ${trace.file}:${trace.line} > ${trace.name}`)
+            });
+        } catch (error) {
+            console.log('Error stack unavailable.')
+        }
+        console.log()
     }
-    console.log()
 }
 const getIdentifiers = (src) => {
     let identifiers = [];
@@ -52,34 +56,25 @@ const debugPrint = (data) => {
  */
 class Logger {
     constructor(){
-        log('[txAdminClient] Logger started');
+        log('Logger started');
         this.log = [{
             timestamp: (Date.now() / 1000).toFixed(),
             action: "txAdminClient:Started",
             source: false,
             data: false
         }];
-        this.txAdminPort = 'invalid';
-        this.txAdminToken = 'invalid';
-        this.setupVarsAttempts = 0;
-        this.setupVars();
+
+        //Attempt to set env vars
+        this.txAdminPort = GetConvar("txAdmin-apiPort", "invalid");
+        this.txAdminToken = GetConvar("txAdmin-apiToken", "invalid");
+        if(this.txAdminPort === 'invalid' || this.txAdminToken === 'invalid'){
+            logError('API Port and Token ConVars not found. Do not start this resource if not using txAdmin.') 
+        }
 
         //Attempt to flush log to txAdmin
         setInterval(() => {
             this.flushLog();
         }, 2500);
-    }
-
-    //Attempt to set env vars
-    setupVars(){
-        if(this.txAdminPort === 'invalid' || this.txAdminToken === 'invalid'){
-            if(this.setupVarsAttempts > 5){
-                log('[txAdminClient] JS awaiting for environment setup...')
-            }
-            this.setupVarsAttempts++;
-            this.txAdminPort = GetConvar("txAdmin-apiPort", "invalid");
-            this.txAdminToken = GetConvar("txAdmin-apiToken", "invalid");
-        }
     }
 
     //Register log event
@@ -97,9 +92,6 @@ class Logger {
     //Flush Log
     flushLog(){
         if(!this.log.length) return;
-        if(this.txAdminPort === 'invalid' || this.txAdminToken === 'invalid'){
-            return this.setupVars();
-        }
 
         const postData = JSON.stringify({
             txAdminToken: this.txAdminToken,
@@ -108,7 +100,7 @@ class Logger {
         utils.postJson(`http://localhost:${this.txAdminPort}/intercom/logger`, postData)
             .then((data) => {
                 if(data.statusCode === 413){
-                    log(`[txAdminClient] Logger upload failed with code 413 and body ${data.body}`);
+                    log(`Logger upload failed with code 413 and body ${data.body}`);
                     //TODO: introduce a buffer to re-upload the log in parts.
                     this.log = [{
                         timestamp: (Date.now() / 1000).toFixed(),
@@ -119,11 +111,11 @@ class Logger {
                 }else if(data.statusCode === 200){
                     this.log = [];
                 }else{
-                    log(`[txAdminClient] Logger upload failed with code ${data.statusCode} and body ${data.body}`);
+                    log(`Logger upload failed with code ${data.statusCode} and body ${data.body}`);
                 }
             })
             .catch((error) => {
-                log(`[txAdminClient] Logger upload failed with error: ${error.message}`);
+                log(`Logger upload failed with error: ${error.message}`);
             });
     }
 }

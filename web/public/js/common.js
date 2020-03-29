@@ -1,12 +1,24 @@
 //================================================================
+//============================================== Settings
+//================================================================
+const timeoutShort = 1500;
+const timeoutMedium = 2500;
+const timeoutLong = 4000;
+
+//================================================================
 //============================================== Dynamic Stats
 //================================================================
+const getPlayerListMessage = (m) => {
+    return `<div class="list-group-item text-center">
+        <span class="p-3 text-center font-weight-bold">${m}</span>
+    </div>`;
+}
 function refreshData() {
     $.ajax({
         url: "/status",
         type: "GET",
         dataType: "json",
-        timeout: 1500,
+        timeout: timeoutShort,
         success: function (data) {
             if (data.logout) {
                 window.location = '/auth?logout';
@@ -17,7 +29,13 @@ function refreshData() {
             $('#hostusage-memory-bar').attr('aria-valuenow', data.host.memory.pct).css('width', data.host.memory.pct+"%");
             $('#hostusage-memory-text').html(data.host.memory.text);
             $("#status-card").html(data.status);
-            $("#playerlist").html(data.players);
+            if(data.players.count){
+                $("#playerlist").html(data.players.html);
+                $("#plist-count").text(data.players.count);
+            }else{
+                $("#plist-count").text(data.players.count);
+                $("#playerlist").html(getPlayerListMessage('No Players Online'));
+            }
             $("#favicon").attr("href", 'img/' + data.meta.favicon + ".png");
             document.title = data.meta.title;
         },
@@ -33,7 +51,7 @@ function refreshData() {
             $('#hostusage-memory-bar').attr('aria-valuenow', 0).css('width', 0);
             $('#hostusage-memory-text').html('error');
             $("#status-card").html(out);
-            $("#playerlist").html(out);
+            $("#playerlist").html(getPlayerListMessage(out));
             $("#favicon").attr("href", "img/favicon_off.png");
             document.title = 'ERROR - txAdmin';
         }
@@ -55,7 +73,7 @@ function showPlayer(id) {
         url: "/getPlayerData/" + id,
         type: "GET",
         dataType: "json",
-        timeout: 2000,
+        timeout: timeoutMedium,
         success: function (data) {
             if (data.logout) {
                 window.location = '/auth?logout';
@@ -87,7 +105,7 @@ function messagePlayer(id) {
     $.ajax({
         type: "POST",
         url: '/fxserver/commands',
-        timeout: 2000,
+        timeout: timeoutLong,
         data: data,
         // dataType: 'json',
         success: function (data) {
@@ -118,7 +136,7 @@ function kickPlayer(id) {
     $.ajax({
         type: "POST",
         url: '/fxserver/commands',
-        timeout: 2000,
+        timeout: timeoutLong,
         data: data,
         // dataType: 'json',
         success: function (data) {
@@ -145,24 +163,29 @@ function changeOwnPasswordModal() {
 
 $('#modChangePassword-save').click(function () {
     let data = {
-        oldPassword: $('#modChangePassword-oldPassword').val().trim(),
         newPassword: $('#modChangePassword-newPassword').val().trim(),
         confirmPassword: $('#modChangePassword-confirmPassword').val().trim()
     }
 
     //Validity Checking
     let errors = [];
-    if (!data.oldPassword.length || !data.newPassword.length || !data.confirmPassword.length) {
-        errors.push('All 3 fields are required.');
+    if (!data.newPassword.length || !data.confirmPassword.length) {
+        errors.push('The new password fields are required.');
     }
     if(data.newPassword !== data.confirmPassword){
         errors.push(`Your new password doesn't match the one typed in the confirmation input.`);
     }
-    if(data.oldPassword === data.confirmPassword){
-        errors.push(`The new password must be different than the old one.`);
+    if(typeof isTempPassword === 'undefined'){
+        data.oldPassword = $('#modChangePassword-oldPassword').val().trim();
+        if (!data.oldPassword.length) {
+            errors.push('The old password field is required.');
+        }
+        if(data.oldPassword === data.confirmPassword){
+            errors.push(`The new password must be different than the old one.`);
+        }
     }
-    if(data.newPassword.length < 6 || data.newPassword.length > 16){
-        errors.push(`The new password have between 6 and 16 characters.`);
+    if(data.newPassword.length < 6 || data.newPassword.length > 24){
+        errors.push(`The new password have between 6 and 24 characters.`);
     }
     if(errors.length){
         var notify = $.notify({ message: '<b>Errors:</b><br> - ' + errors.join(' <br>\n - ') }, { type: 'warning' });
@@ -174,14 +197,20 @@ $('#modChangePassword-save').click(function () {
     $.ajax({
         type: "POST",
         url: '/changePassword',
-        timeout: 2000,
+        timeout: timeoutMedium,
         data: data,
         dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
             notify.update('type', data.type);
             notify.update('message', data.message);
-            $('#modChangePassword').modal('hide');
+            if(data.type == 'success'){
+                $('#modChangePassword').modal('hide');
+                setTimeout(() => {
+                    $('#modChangePassword-save').hide()
+                    $('#modChangePassword-body').html('<h4 class="mx-auto" style="max-width: 350px">password already changed, please refresh this page</h4>');
+                }, 500);
+            }
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
@@ -194,8 +223,10 @@ $('#modChangePassword-save').click(function () {
 
 
 
-
-//========================================== Page load
+//================================================================
+//========================================== Extra stuff
+//================================================================
+//Page load
 $(document).ready(function() {
     $.notifyDefaults({
         z_index: 2000,
@@ -207,8 +238,18 @@ $(document).ready(function() {
             y: 64
         },
     });
-
-
-    // checkVersion();
     setInterval(refreshData, 1000);
+
+    if(typeof isTempPassword !== 'undefined'){
+        $('#modChangePassword-oldPassword').attr('disabled', true);
+        $('#modChangePassword-oldPassword').attr('required', false);
+        $('#modChangePassword').modal('show');
+    }
+});
+
+//Handle profile picture load error
+$(".profile-pic").on("error", function() {
+    if($(this).attr('src') != 'img/default_avatar.png'){
+        $(this).attr('src', 'img/default_avatar.png');
+    }
 });

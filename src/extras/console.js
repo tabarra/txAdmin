@@ -1,5 +1,5 @@
 const ac = require('ansi-colors');
-ac.enabled = require('color-support').hasBasic;
+ac.enabled = true;
 const header = 'txAdmin';
 let logHistory = [];
 
@@ -59,7 +59,20 @@ function setTTYTitle(title){
 }
 
 function dir(data){
-    console.dir(data);
+    if(data instanceof Error){
+        try {
+            console.log(`${ac.redBright('[txAdmin Error]')} ${data.message}`);
+            data.stack.forEach(trace => {
+                console.log(`    ${ac.redBright('=>')} ${trace.file}:${trace.line} > ${ac.yellowBright(trace.name || 'anonym')}`)
+            });
+        } catch (error) {
+            console.log('Error stack unavailable.')
+        }
+        console.log()
+    }else{
+        let div = "=".repeat(32);
+        console.log(ac.cyan([div, JSON.stringify(data, null, 2), div].join("\n")));
+    }
 }
 
 function getLog(){
@@ -67,13 +80,16 @@ function getLog(){
 }
 
 //================================================================
-module.exports = {
-    log,
-    logOk,
-    logWarn,
-    logError,
-    cleanTerminal,
-    setTTYTitle,
-    dir,
-    getLog,
+module.exports = (ctx) => {
+    const appendSubCtx = (sub) => {return (sub !== null)? `${ctx}:${sub}` : ctx};
+    return {
+        log: (x, subCtx = null) => {log(x, appendSubCtx(subCtx))},
+        logOk: (x, subCtx = null) => {logOk(x, appendSubCtx(subCtx))},
+        logWarn: (x, subCtx = null) => {logWarn(x, appendSubCtx(subCtx))},
+        logError: (x, subCtx = null) => {logError(x, appendSubCtx(subCtx))},
+        dir: (x, subCtx = null) => { dir(x, appendSubCtx(subCtx))},
+        cleanTerminal,
+        setTTYTitle,
+        getLog
+    }
 }
