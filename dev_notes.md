@@ -4,7 +4,7 @@
 - [x] why auto login when creating master doesn't work??
 - [x] acessar /auth?logout da state mismatch
 - [x] wrong ip, check x-forwarded-for
-- [x] do I still need the clientCompatVersion convar?
+- [x] do I still need the clientCompatVersion convar? No
 - [x] build path to the global info - check for globals.fxRunner.something
 - [x] add txDataPath convar + docs
 - [x] reorganize globals.info.xxx
@@ -29,7 +29,11 @@
 - [x] change (fix?) cpu usage on diagnostics page
 - [x] disable editing the master admin by other admins
 - [x] join action/console log and protect with permission
+- [x] end2end test + beta testers run
+- [x] fix linux run.sh reference
+- [x] update readme
 > v2.0.0
+- [ ] Create legacy branch + fix `run.cmd` + disable updater and add deprecated message
 - [ ] clean up the resource injector?
 - [ ] Rework the entire monitor
 - [ ] Social auth provider setup retry every 15 seconds
@@ -60,8 +64,6 @@
 
 
 
-
-
 ## "in the roadmap"
 - [ ] Check config management libraries (specially 'convict' by Mozilla and nconf)
 - [ ] Make messages/commands.json via lowdb and remove the `Players online` and `File reloaded` spam.
@@ -86,6 +88,8 @@ https://date-fns.org/v2.0.1/docs/formatDistance
 https://www.reddit.com/r/javascript/comments/91a3tp/why_is_there_no_small_sane_nodejs_tool_for/
 
 DIV transition: https://tympanus.net/Tutorials/OriginalHoverEffects/index9.html
+Colors: https://coolors.co/3c4b64-3c4b64-3a4860-1e252d-252e38
+CSS Animated: https://daneden.github.io/animate.css/
 
 
 ### Global vs Individual Modules
