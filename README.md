@@ -61,20 +61,8 @@ ConVar usage **example**:
 ./run.sh +set serverProfile dev_server +set txAdminPort 40125 +set txDataPath "~/fxserver/txData"
 ```
 
-## Installing & Building it (Windows/Linux)
-**NOT RECOMMENDED for most users.**
-
-```bash
-#Inside your FXServer folder, execute:
-cd citizen/system_resources
-mv monitor monitorOld
-git clone -b conversion https://github.com/tabarra/txAdmin monitor
-cd monitor
-npm i
-
-#To perform an build execute the following then check the `dist` folder.
-npm run build
-```
+### Installing & Building it (NOT RECOMMENDED)
+If you want to run it from source, or build it yourself, please do read [this](docs/building.md).
 
 
 ## License, Credits and Thanks
