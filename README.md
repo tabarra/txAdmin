@@ -43,7 +43,7 @@
 
 ## Running (Windows/Linux)
 Currently txAdmin is included in all FXServer Windows builds above 2310, so to run it for the first time simply double click `FXServer.exe`. After that you could also run the `start_<build>_<profile>.bat` file created, or call it via cmd/bash if you want to edit the ConVars (profile, port, folder).  
-If on Linux, you can download the [LATEST BUILD](https://github.com/tabarra/txAdmin/releases/latest) and extract it into the `citizen/system_resources/monitor` folder, or build it from the source.  
+If on Linux, you can download the [LATEST BUILD](https://github.com/tabarra/txAdmin/releases/latest) and extract it into the `alpine/opt/cfx-server/citizen/system_resources/monitor` folder, or build it from the source.  
   
 txAdmin requires to be launched from *inside* FXServer in monitor mode, to do that, just execute the `run.sh` or `run.cmd` without **any** `+exec` arguments.  
   
