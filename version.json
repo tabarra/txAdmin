@@ -1,5 +1,5 @@
 {
-    "version": "2.0.0",
+    "version": "2.0.1",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -143,8 +143,12 @@
             "changelog": "LEGACY: added support for servers without run.cmd"
         },
         {
-            "version": "v2.0.0",
+            "version": "2.0.0",
             "changelog": "Integrated with FiveM! New Responsive Interface! New Auth system. Migrated from Express to Koa. Got rid of setup, and admin-add scripts. Changed the `data` folder location. And many many more tweaks and improvements!"
+        },
+        {
+            "version": "2.0.1",
+            "changelog": "Increased time tolerances for CitizenFX login. Minor message tweaks."
         }
     ]
 }

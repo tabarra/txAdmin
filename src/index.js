@@ -40,7 +40,7 @@ const resourceName = GetCurrentResourceName();
 //Getting fxserver version
 const fxServerVersion = getBuild(GetConvar('version', 'false'));
 if(!fxServerVersion){
-    logDie(`version convar not set or in the wrong format`);
+    logDie(`This version of FXServer is NOT compatible with txAdmin v2. Please update it to build 2310 or above. (version convar not set or in the wrong format)`);
 }
 
 //Getting txAdmin version

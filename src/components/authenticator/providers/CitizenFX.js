@@ -30,7 +30,7 @@ module.exports = class CitizenFXProvider {
                 client_secret: 'txadmin_test',
                 response_types: ['openid']
             });
-            this.client[custom.clock_tolerance] = 15;
+            this.client[custom.clock_tolerance] = 2*60*60; //Two hours due to the DST change. Reduce to 300s.
             if(globals.config.verbose) log('CitizenFX Provider configured.');
             this.ready = true;
         } catch (error) {
