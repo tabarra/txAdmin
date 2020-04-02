@@ -117,7 +117,7 @@ function getUpdateData() {
         updateData.changes = updateData.changes.reverse();
     } catch (error) {
         logError(`Error while processing changelog. Enable verbosity for more information.`);
-        if(globals.config.verbose) dir(error);
+        if(GlobalData.verbose) dir(error);
     }
 
 

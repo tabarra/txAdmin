@@ -95,6 +95,10 @@ if(!serverProfile.length){
     logDie(`Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.`);
 }
 
+//Get verbosity
+let txAdminVerboseConvar = GetConvar('txAdminVerbose', 'false').trim();
+const verbose = (['true', '1', 'on'].includes(txAdminVerboseConvar));
+
 //Setting Global Data
 GlobalData = {
     osType,
@@ -105,7 +109,8 @@ GlobalData = {
     fxServerPath,
     dataPath,
     txAdminPort,
-    cfxUrl: null
+    verbose,
+    cfxUrl: null,
 }
 // NOTE: all variables set for monitor mode: monitorMode, version, serverRoot (cwd), citizen_root, citizen_dir
 

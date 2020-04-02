@@ -108,7 +108,7 @@ function prepareHostData() {
         }
 
     } catch (error) {
-        if (globals.config.verbose) {
+        if (GlobalData.verbose) {
             logError('Failed to execute prepareHostData()');
             dir(error);
         }

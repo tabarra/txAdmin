@@ -48,17 +48,18 @@ If on Linux, you can download the [LATEST BUILD](https://github.com/tabarra/txAd
 txAdmin requires to be launched from *inside* FXServer in monitor mode, to do that, just execute the `run.sh` or `run.cmd` without **any** `+exec` arguments.  
   
 ### ConVars
-- **serverProfile:** The name of the server profile to start. Profiles are saved/loaded from the current directory inside the `txData` folder.
-- **txAdminPort:** The TCP port to use as HTTP Server.
+- **serverProfile:** The name of the server profile to start. Profiles are saved/loaded from the current directory inside the `txData` folder. The default is `default`.
+- **txAdminPort:** The TCP port to use as HTTP Server. The default is `40120`.
 - **txDataPath:** The path of the data folder. The default on Windows is `<citizen_root>/../txData` and on Linux `<citizen_root>/../../../txData`.
+- **txAdminVerbose:** Set to `true` to print on the console more detailed information about errors and events. The default is `false`.
   
-ConVar usage **example**:  
+ConVar usage **example** for different port and profile:  
 ```bash
 # Windows
-./FXServer.exe +set serverProfile dev_server +set txAdminPort 40125 +set txDataPath "%userprofile%/Desktop/txData"
+./FXServer.exe +set serverProfile dev_server +set txAdminPort 40125
 
 # Linux
-./run.sh +set serverProfile dev_server +set txAdminPort 40125 +set txDataPath "~/fxserver/txData"
+./run.sh +set serverProfile dev_server +set txAdminPort 40125
 ```
 
 ### Installing & Building it (NOT RECOMMENDED)

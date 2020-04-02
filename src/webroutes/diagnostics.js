@@ -108,7 +108,7 @@ async function getProcessesData(){
 
     } catch (error) {
         logError(`Error getting processes data.`);
-        if(globals.config.verbose) dir(error);
+        if(GlobalData.verbose) dir(error);
     }
 
     //Sort procList array
@@ -155,7 +155,7 @@ async function getFXServerData(){
         infoData = res.data;
     } catch (error) {
         logWarn('Failed to get FXServer information.');
-        if(globals.config.verbose) dir(error);
+        if(GlobalData.verbose) dir(error);
         return {error: `Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)`};
     }
 
@@ -202,7 +202,7 @@ async function getFXServerData(){
         return fxData;
     } catch (error) {
         logWarn('Failed to process FXServer information.');
-        if(globals.config.verbose) dir(error);
+        if(GlobalData.verbose) dir(error);
         return {error: `Failed to process FXServer data. <br>Check the terminal for more information (if verbosity is enabled)`};
     }
 }
@@ -232,7 +232,7 @@ async function getHostData(){
         hostData.error  = false;
     } catch (error) {
         logError('Error getting Host data');
-        if(globals.config.verbose) dir(error);
+        if(GlobalData.verbose) dir(error);
         hostData.error = `Failed to retrieve host data. <br>Check the terminal for more information (if verbosity is enabled)`;
     }
 

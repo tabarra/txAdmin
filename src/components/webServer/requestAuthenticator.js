@@ -24,7 +24,7 @@ const requestAuth = (epType) => {
         const {isValidAuth} = authLogic(ctx.session, true, epType);
 
         if(!isValidAuth){
-            if(globals.config.verbose) logWarn(`Invalid session auth: ${ctx.path}`, epType);
+            if(GlobalData.verbose) logWarn(`Invalid session auth: ${ctx.path}`, epType);
             ctx.session.auth = {};
             if(epType === 'web'){
                 return ctx.response.redirect('/auth?logout');
@@ -47,7 +47,7 @@ const requestAuth = (epType) => {
         }else{
             socket.session.auth = {}; //a bit redundant but it wont hurt anyone
             socket.disconnect(0);
-            if(globals.config.verbose) logWarn('Auth denied when creating session');
+            if(GlobalData.verbose) logWarn('Auth denied when creating session');
             next(new Error('Authentication Denied'));
         }
     }
@@ -110,11 +110,11 @@ const authLogic = (sess, perm, epType) => {
                     ));
                 }
             } catch (error) {
-                if(globals.config.verbose) logError(`Error validating session data:`, epType);
-                if(globals.config.verbose) dir(error);
+                if(GlobalData.verbose) logError(`Error validating session data:`, epType);
+                if(GlobalData.verbose) dir(error);
             }
         }else{
-            if(globals.config.verbose) logWarn(`Expired session from ${sess.auth.username}`, epType);
+            if(GlobalData.verbose) logWarn(`Expired session from ${sess.auth.username}`, epType);
         }
     }
 

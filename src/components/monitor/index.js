@@ -108,11 +108,11 @@ module.exports = class Monitor {
                 });
             } catch (error) {
                 let timeJSON = JSON.stringify(time);
-                if(globals.config.verbose) logWarn(`Error building restart schedule for time '${timeJSON}':\n ${error.message}`);
+                if(GlobalData.verbose) logWarn(`Error building restart schedule for time '${timeJSON}':\n ${error.message}`);
             }
         })
 
-        if(globals.config.verbose) dir(schedule.map(el => { return el.messages }));
+        if(GlobalData.verbose) dir(schedule.map(el => { return el.messages }));
         this.schedule = (schedule.length)? schedule : false;
     }
 
@@ -167,7 +167,7 @@ module.exports = class Monitor {
         //Cooldown check
         let elapsed = Math.round(Date.now()/1000) - globals.fxRunner.tsChildStarted;
         if(elapsed < this.config.restarter.cooldown){
-            if(globals.config.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) restartFXServer() awaiting restarter cooldown.`);
+            if(GlobalData.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) restartFXServer() awaiting restarter cooldown.`);
             return false;
         }
 
@@ -193,7 +193,7 @@ module.exports = class Monitor {
 
         //Check cooldown
         if(elapsed < this.config.restarter.cooldown){
-            if(globals.config.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) Failed to connect to server. Still in cooldown.`);
+            if(GlobalData.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) Failed to connect to server. Still in cooldown.`);
             return false;
         }
 
@@ -202,7 +202,7 @@ module.exports = class Monitor {
         //Count failure
         this.failCounter++;
         this.timeSeries.add(0);
-        if(globals.config.verbose || this.failCounter > 10){
+        if(GlobalData.verbose || this.failCounter > 10){
             logWarn(`(${this.failCounter}/${this.config.restarter.failures}) FXServer is not responding! (${errorMessage})`);
         }
 
@@ -231,7 +231,7 @@ module.exports = class Monitor {
                     globals.translator.t('restarter.crash_detected')
                 );
             }else{
-                if(globals.config.verbose) logWarn(`Above restarter limit for HealthCheck failures. Skipping restart since last HeartBeat was less than 30s ago.`);
+                if(GlobalData.verbose) logWarn(`Above restarter limit for HealthCheck failures. Skipping restart since last HeartBeat was less than 30s ago.`);
             }
         }
     }

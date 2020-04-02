@@ -10,7 +10,7 @@ const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(mo
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const getRenderErrorText = (view, error, data) => {
     logError(`Error rendering ${view}.`);
-    if(globals.config.verbose) dir(error)
+    if(GlobalData.verbose) dir(error)
     out = `<pre>\n`;
     out += `Error rendering '${view}'.\n`;
     out += `Message: ${error.message}\n`;
@@ -164,11 +164,11 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true){
         ){
             return true;
         }else{
-            if(globals.config.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
+            if(GlobalData.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
     } catch (error) {
-        if(globals.config.verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
+        if(GlobalData.verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
         return false;
     }
 }

@@ -73,7 +73,7 @@ module.exports = router = (config) =>{
     //TODO: replace this with an middleware checking for `ctx._matchedRoute`
     router.all('*', async (ctx) =>{
         ctx.status = 404;
-        if(globals.config.verbose) logWarn(`Request 404 error: ${ctx.path}`);
+        if(GlobalData.verbose) logWarn(`Request 404 error: ${ctx.path}`);
         return ctx.utils.render('basic/404');
     });
 

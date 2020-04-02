@@ -54,7 +54,7 @@ module.exports = async function Intercom(ctx) {
             return ctx.send(resp);
         } catch (error) {
             logError(`[whitelistCheck] Database operation failed with error: ${error.message}`);
-            if(globals.config.verbose) dir(error);
+            if(GlobalData.verbose) dir(error);
             return ctx.send('whitelist-error');
         }
 

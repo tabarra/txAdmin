@@ -33,17 +33,17 @@ module.exports = class webConsole {
         }
 
         socket.on('disconnect', (reason) => {
-            if(globals.config.verbose) log(`Client disconnected with reason: ${reason}`, 'SocketIO');
+            if(GlobalData.verbose) log(`Client disconnected with reason: ${reason}`, 'SocketIO');
         });
         socket.on('error', (error) => {
-            if(globals.config.verbose) log(`Socket error with message: ${error.message}`, 'SocketIO');
+            if(GlobalData.verbose) log(`Socket error with message: ${error.message}`, 'SocketIO');
         });
         socket.on('consoleCommand', this.handleSocketMessages.bind(this, socket));
 
         try {
             socket.emit('consoleData', xss(globals.fxRunner.consoleBuffer.webConsoleBuffer));
         } catch (error) {
-            if(globals.config.verbose) logWarn(`Error sending sending old buffer: ${error.message}`);
+            if(GlobalData.verbose) logWarn(`Error sending sending old buffer: ${error.message}`);
         }
     }
 
@@ -103,7 +103,7 @@ module.exports = class webConsole {
         //Check Permissions
         if(!isValidPerm){
             let errorMessage = `Permission 'console.write' denied.`;
-            if(globals.config.verbose) logWarn(`[${getIP(socket)}][${socket.session.auth.username}] ${errorMessage}`);
+            if(GlobalData.verbose) logWarn(`[${getIP(socket)}][${socket.session.auth.username}] ${errorMessage}`);
             socket.emit('consoleData', `\n<mark>${errorMessage}</mark>\n`);
             return;
         }

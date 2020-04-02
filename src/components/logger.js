@@ -18,7 +18,7 @@ module.exports = class Logger {
             logOk('Started');
         } catch (error) {
             logError(`Failed to write to log file '${this.config.logPath}'`);
-            if(globals.config.verbose) dir(error);
+            if(GlobalData.verbose) dir(error);
             process.exit();
         }
     }

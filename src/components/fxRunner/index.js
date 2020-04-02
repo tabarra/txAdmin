@@ -121,7 +121,7 @@ module.exports = class FXRunner {
         log("Starting FXServer");
         //Setup variables
         this.setupVariables();
-        if(globals.config.verbose){
+        if(GlobalData.verbose){
             log(`Executing:`);
             dir(this.spawnVariables);
         }
@@ -280,7 +280,7 @@ module.exports = class FXRunner {
             log(`Priority set ${priority} for processes ${pids.join()}`)
         } catch (error) {
             logWarn("Couldn't set the processes priority.");
-            if(globals.config.verbose) dir(error);
+            if(GlobalData.verbose) dir(error);
         }
     }
 
@@ -311,7 +311,7 @@ module.exports = class FXRunner {
             return this.spawnServer();
         } catch (error) {
             let errMsg = logError("Couldn't restart the server.");
-            if(globals.config.verbose) dir(error);
+            if(GlobalData.verbose) dir(error);
             return errMsg;
         }
     }
@@ -345,7 +345,7 @@ module.exports = class FXRunner {
             return true;
         } catch (error) {
             logError("Couldn't kill the server. Perhaps What Is Dead May Never Die.");
-            if(globals.config.verbose) dir(error);
+            if(GlobalData.verbose) dir(error);
             this.fxChild = null;
             return false;
         }
@@ -365,7 +365,7 @@ module.exports = class FXRunner {
             globals.webServer.webConsole.buffer(command, 'command');
             return success;
         } catch (error) {
-            if(globals.config.verbose){
+            if(GlobalData.verbose){
                 logError('Error writing to fxChild.stdin');
                 dir(error);
             }

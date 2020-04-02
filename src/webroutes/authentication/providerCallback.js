@@ -43,7 +43,7 @@ module.exports = async function ProviderCallback(ctx) {
         tokenSet = await globals.authenticator.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
         let message = `Code Exchange error: ${error.message}`;
-        if(globals.config.verbose) logError(message);
+        if(GlobalData.verbose) logError(message);
         return returnJustMessage(ctx, message);
     }
 
@@ -53,7 +53,7 @@ module.exports = async function ProviderCallback(ctx) {
         userInfo = await globals.authenticator.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
         let message = `Get UserInfo error: ${error.message}`;
-        if(globals.config.verbose) logError(message);
+        if(GlobalData.verbose) logError(message);
         return returnJustMessage(ctx, message);
     }
 
@@ -83,7 +83,7 @@ module.exports = async function ProviderCallback(ctx) {
         if(!admin){
             ctx.session.auth = {};
             let message = `This account is not an admin.`;
-            if(globals.config.verbose) logWarn(message);
+            if(GlobalData.verbose) logWarn(message);
             return returnJustMessage(ctx, message);
         }
 
@@ -98,7 +98,7 @@ module.exports = async function ProviderCallback(ctx) {
     } catch (error) {
         ctx.session.auth = {};
         let message = `Failed to login: ${error.message}`;
-        if(globals.config.verbose) logError(message);
+        if(GlobalData.verbose) logError(message);
         return returnJustMessage(ctx, message);
     }
 };

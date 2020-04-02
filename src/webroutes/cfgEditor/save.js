@@ -42,7 +42,7 @@ module.exports = async function CFGEditorSave(ctx) {
         await fs.writeFile(cfgFilePath + '.bkp', helpers.getCFGFileData(cfgFilePath), 'utf8');
     } catch (error) {
         let message = `Failed to save BackupCFG file with error: ${error.message}`;
-        if(globals.config.verbose) logWarn(message);
+        if(GlobalData.verbose) logWarn(message);
     }
 
     //Saving CFG file
@@ -52,7 +52,7 @@ module.exports = async function CFGEditorSave(ctx) {
         return ctx.send({type: 'success', message: 'File saved.'});
     } catch (error) {
         let message = `Failed to save CFG file with error: ${error.message}`;
-        if(globals.config.verbose) logWarn(message);
+        if(GlobalData.verbose) logWarn(message);
         return ctx.send({type: 'danger', message});
     }
 };
