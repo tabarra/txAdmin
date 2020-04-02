@@ -34,7 +34,7 @@ function cleanRenderData(inputData){
     let input = clone(inputData);
     let out = {}
     Object.keys(input).forEach((prop) => {
-        if(input[prop] === null || input[prop] === false || typeof input[prop] === 'undefined'){
+        if(input[prop] == null || input[prop] === false || typeof input[prop] === 'undefined'){
             out[prop] = '';
         }else if(input[prop] === true){
             out[prop] = 'checked';

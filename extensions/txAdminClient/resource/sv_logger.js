@@ -71,10 +71,12 @@ class Logger {
             logError('API Port and Token ConVars not found. Do not start this resource if not using txAdmin.') 
         }
 
-        //Attempt to flush log to txAdmin
-        setInterval(() => {
-            this.flushLog();
-        }, 2500);
+        //Attempt to flush log to txAdmin, starting after 10 seconds
+        setTimeout(() => {
+            setInterval(() => {
+                this.flushLog();
+            }, 2500);
+        }, 10000);
     }
 
     //Register log event

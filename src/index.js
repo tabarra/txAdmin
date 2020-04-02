@@ -123,11 +123,11 @@ setTimeout(() => {
     setInterval(() => {
         let now = Date.now();
         if(now - hdTimer > 2000){
-            let sep = `=`.repeat(72);
+            let sep = `=`.repeat(70);
             setTimeout(() => {
                 logError(sep);
-                logError('Major process freeze detected.');
-                logError('THIS IS NOT AN ERROR CAUSED BY TXADMIN! Your VPS is probably lagging out.');
+                logError('Major VPS freeze/lag detected!');
+                logError('THIS IS NOT AN ERROR CAUSED BY TXADMIN!');
                 logError(sep);
             }, 1000);
         }

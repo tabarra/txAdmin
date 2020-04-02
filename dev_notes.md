@@ -33,12 +33,29 @@
 - [x] fix linux run.sh reference
 - [x] update readme
 > v2.0.0
+- [x] improved docs and messages/strings
+- [x] allow for admin names with 3 characters due to discourse rules
+- [x] increased CitizenFX openid-client time skew tolerances to 2 hours 
+> v2.0.1
+- [ ] improve user onboarding experience
+- [ ] fix arabic language and merge language PRs
+- [ ] add text-truncate (class) to playerlist
+> v2.1.0
 - [ ] Create legacy branch + fix `run.cmd` + disable updater and add deprecated message
 - [ ] clean up the resource injector?
 - [ ] Rework the entire monitor
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
 - [ ] fix bug: resources page when you type then delete what you typed, it shows hidden default resources
+
+
+So, my propose:
+- Ask for "Server Data Folder" instead of "Base Path". This will be aligned with the name on the fivem docs, and many people actually have it named as "server-data"
+- If not valid, check if /resources/ is present and if its not one of the 1-level-deep folders
+- IF valid, and there is only one .cfg file inside, already insert it in the CFG File Path
+
+
+https://media.discordapp.net/attachments/595903099688845312/694965975786848397/unknown.png
 
 
 # For the new access control system
@@ -98,8 +115,44 @@ CSS Animated: https://daneden.github.io/animate.css/
     - discordBOT
     - logger
     - webserver
-    - config global
+    - translator
+    - players db (new)
+    - config global (new)
+
 - Individual
-    - config server
+    - fxrunner
     - monitor
-    - fxrunnder
+    - configvault
+
+### Global vs Individual Pages
+- Full Dashboard: Each row will be be one server, with: controls, stats (players, hitches, status), player chart
+- Players
+- Diagnostics: host + processes + multiple individual server info
+- Admin Manager
+- txAdmin Log
+- Global Settings
+- Servers:
+    - live console
+    - resources
+    - log
+    - cfg editor
+...and maybe more, but now I'm going to sleep
+
+
+
+Questões:
+- É possível tirar o webserver pra fora do txAdmin?
+    - Teria que tirar o verbose pra fora
+    - Criar um metodo pra setar rotas full + atachar socket.io
+    - Puxar o Authenticator pra fora
+- É possível mudar as rotas depois?
+    - Sim
+- É possível Puxar o autenticator pra fora?
+    - Sim
+- É possível só iniciar o txAdmin depois?
+    - Sim
+- Isso vai deixar o código muito zuado?
+- Vai valer a pena?
+
+Notas:
+- Tirar o verbose pro GlobalData não só é fácil, mas faz sentido

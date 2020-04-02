@@ -5,6 +5,7 @@ const Polyglot = require('node-polyglot');
 const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 const languages = {
+    ar: require('../../locale/ar.json'),
     cs: require('../../locale/cs.json'),
     da: require('../../locale/da.json'),
     de: require('../../locale/de.json'),

@@ -16,7 +16,6 @@ globals = {
     logger: null,
     monitor: null,
     translator: null,
-    webConsole: null,
     webServer: null,
     database: null,
     config: null,
@@ -33,7 +32,6 @@ globals = {
  */
 module.exports = class txAdmin {
     constructor(serverProfile){
-        //FIXME: dataPath, profilePath, serverProfile, txAdminPort
         log(`>> Starting profile ${serverProfile}`);
         globals.info.serverProfile =  serverProfile;
 
