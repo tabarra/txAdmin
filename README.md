@@ -69,4 +69,5 @@ If you want to run it from source, or build it yourself, please do read [this](d
 ## License, Credits and Thanks
 - This project is licensed under the [MIT License](https://github.com/tabarra/txAdmin/blob/master/LICENSE).
 - Favicons made by Freepik from [www.flaticon.com](www.flaticon.com) are licensed under [CC 3.0 BY](http://creativecommons.org/licenses/by/3.0/)
-- Special thanks to everyone that contributed to this project, specially the very fine discord folks that provide support for others.
+- Special thanks to everyone that contributed to this project, specially the very fine Discord folks that provide support for others.
+- Also thanks to our Discord's `sky{something}` bot, who will hopefully spare us when he becomes self aware and rebels against humanity. 

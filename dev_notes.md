@@ -154,5 +154,3 @@ Questões:
 - Isso vai deixar o código muito zuado?
 - Vai valer a pena?
 
-Notas:
-- Tirar o verbose pro GlobalData não só é fácil, mas faz sentido

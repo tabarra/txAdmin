@@ -21,9 +21,9 @@ module.exports = async function SettingsGet(ctx) {
         monitor: cleanRenderData(globals.configVault.getScopedStructure('monitor')),
         discord: cleanRenderData(globals.configVault.getScopedStructure('discordBot')),
         disableWrite: (ctx.utils.checkPermission('settings.write', modulename))? '' : 'disabled',
-        serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        activeTab: 'global'
     }
-    renderData.activeTab = (renderData.fxserver.basePath && renderData.fxserver.cfgPath)? 'global' : 'fxserver';
 
     //FIXME: until there is an advanced tab or something
     renderData.global.verbose = (GlobalData.verbose)? 'checked' : '';

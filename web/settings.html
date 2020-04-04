@@ -127,7 +127,7 @@
                     <!-- FXServer Tab -->
                     <div class="tab-pane fade {{activeTab=='fxserver'|isActive|tShow}}" id="nav-fxserver" role="tabpanel" aria-labelledby="nav-fxserver-tab">
                         <div class="form-group row">
-                            <label for="frmFXServer-basePath" class="col-sm-3 col-form-label">Base Folder Path
+                            <label for="frmFXServer-basePath" class="col-sm-3 col-form-label">Server Data Folder
                                 <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmFXServer-basePath" value="{{fxserver.basePath|undef}}"
@@ -274,7 +274,7 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmDiscord-announceChannel" class="col-sm-3 col-form-label">Announcements Channel ID</label>
+                            <label for="frmDiscord-announceChannel" class="col-sm-3 col-form-label">Announcements <br>Channel ID</label>
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" id="frmDiscord-announceChannel"
                                     value="{{discord.announceChannel|undef}}" {{disableWrite}}>

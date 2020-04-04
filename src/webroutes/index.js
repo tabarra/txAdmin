@@ -1,4 +1,3 @@
-exports.addExtension = require('./addExtension.js');  //FIXME: verb
 exports.dashboard = require('./dashboard.js');
 exports.diagnostics = require('./diagnostics.js');
 exports.getPlayerData = require('./getPlayerData.js'); //FIXME: verb
@@ -31,6 +30,11 @@ exports.cfgEditor = {
 exports.settings = {
     get: require('./settings/get'),
     save: require('./settings/save'),
+}
+
+exports.setup = {
+    get: require('./setup/get'),
+    post: require('./setup/post'),
 }
 
 exports.fxserver = {

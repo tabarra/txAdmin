@@ -149,7 +149,7 @@ function handleFXServer(ctx) {
             }
         }
     } catch (error) {
-        return ctx.send({type: 'danger', message: `<strong>Base Path error:</strong> ${error.message}`});
+        return ctx.send({type: 'danger', message: `<strong>Server Data Folder error:</strong> ${error.message}`});
     }
 
     //Validating CFG Path
