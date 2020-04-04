@@ -1,3 +1,7 @@
+//NOTE: declaring ANY variable in this file will pollute the global scope, 
+//      and it will NOT be found in `Object.keys(global)`!
+//      This is why I'm doing some creative data juggling in some parts
+
 //Check if running inside FXServer
 try {
     if(!IsDuplicityVersion()) throw new Error();
@@ -7,15 +11,13 @@ try {
 }
 
 //Checking OS compatibility
-const osType = require('os').type();
-if (osType != 'Linux' && osType != 'Windows_NT') {
+if (!['Linux', 'Windows_NT'].includes(require('os').type())) {
     console.log(`OS type not supported: ${osType}`);
     process.exit();
 }
 
 //Checking monitor mode and starting
-const monitorMode = GetConvar('monitorMode', 'false');
-if(monitorMode == 'true'){
+if(GetConvar('monitorMode', 'false') == 'true'){
     try {
         require('./src/index.js');
     } catch (error) {
