@@ -7,7 +7,7 @@ const slash = require('slash');
 const { dir, log, logOk, logWarn, logError} = require('./console')(modulename);
 
 //Helpers
-const printDivider = () => { log('='.repeat(64)) };
+const printDivider = () => { log('='.repeat(57)) };
 const cleanPath = (x) => { return slash(path.normalize(x)) };
 
 //Default config structure

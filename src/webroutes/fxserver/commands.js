@@ -36,7 +36,7 @@ module.exports = async function FXServerCommands(ctx) {
     if(unsafeActions.includes(action) && parameter.includes('runcode')){
         return ctx.send({
             type: 'danger',
-            message: `<b>Error:</b> The resource "runcode" is unsafe. <br> If you know what you are doing, run it via the Live Console.`
+            message: `<b>Error:</b> The resource "runcode" might be unsafe. <br> If you know what you are doing, run it via the Live Console.`
         });
     }
 

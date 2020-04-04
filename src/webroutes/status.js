@@ -71,9 +71,8 @@ function prepareServerStatus() {
                 <strong>Ping (localhost):</strong> ${ping}<br>
                 <strong>Players:</strong> ${players}<br>
                 <strong>Hitch Time:</strong> ${hitches}<br>
-                <strong>Log Size:</strong> ${logFileSize}<br>
-                <strong>Resources Injected:</strong> ${injectedResources}`;
-
+                <strong>Log Size:</strong> ${logFileSize}`;
+                // <strong>Resources Injected:</strong> ${injectedResources}
     return out;
 }
 
