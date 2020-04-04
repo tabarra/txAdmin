@@ -173,7 +173,7 @@ async function getFXServerData(){
     //Processing result
     try {
         let versionWarning;
-        if(getBuild(infoData.server) < 1543){
+        if(getBuild(infoData.server) !== GlobalData.fxServerVersion){
             versionWarning = `<span class="badge badge-danger"> INCOMPATIBLE </span>`;
         }
 

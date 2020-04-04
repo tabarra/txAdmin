@@ -147,7 +147,8 @@
                                 <input type="text" class="form-control" id="frmFXServer-cfgPath" value="{{fxserver.cfgPath|undef}}"
                                     placeholder="C:/Users/Admin/Desktop/server01/server.cfg" {{disableWrite}}>
                                 <span class="form-text text-muted">
-                                    The absolute or relative (to the Base) path of your <code>server.cfg</code>.
+                                    The path to your server config file, usually named <code>server.cfg</code>. <br>
+                                    This can either be absolute, or relative to the Server Data folder.
                                 </span>
                             </div>
                         </div>
@@ -158,7 +159,7 @@
                             </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmFXServer-commandLine" value="{{fxserver.commandLine|undef}}"
-                                    placeholder="+exec extra.cfg" {{disableWrite}}>
+                                    placeholder="+set onesync_enableInfinity 1" {{disableWrite}}>
                                 <span class="form-text text-muted">
                                     Additional command-line arguments to pass to the FXServer instance.
                                 </span>

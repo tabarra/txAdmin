@@ -37,10 +37,11 @@
 - [x] allow for admin names with 3 characters due to discourse rules
 - [x] increased CitizenFX openid-client time skew tolerances to 2 hours 
 > v2.0.1
-- [ ] improve user onboarding experience
+- [x] improve user onboarding experience by adding an wizzard/stepper setup
 - [ ] fix arabic language and merge language PRs
 - [ ] add text-truncate (class) to playerlist
 > v2.1.0
+- [ ] Rename basePath to serverDataPath
 - [ ] Create legacy branch + fix `run.cmd` + disable updater and add deprecated message
 - [ ] clean up the resource injector?
 - [ ] Rework the entire monitor
@@ -48,14 +49,6 @@
 - [ ] show error when saving discord settings with wrong token
 - [ ] fix bug: resources page when you type then delete what you typed, it shows hidden default resources
 
-
-So, my propose:
-- Ask for "Server Data Folder" instead of "Base Path". This will be aligned with the name on the fivem docs, and many people actually have it named as "server-data"
-- If not valid, check if /resources/ is present and if its not one of the 1-level-deep folders
-- IF valid, and there is only one .cfg file inside, already insert it in the CFG File Path
-
-
-https://media.discordapp.net/attachments/595903099688845312/694965975786848397/unknown.png
 
 
 # For the new access control system
@@ -92,7 +85,7 @@ https://media.discordapp.net/attachments/595903099688845312/694965975786848397/u
 ## ETC
 ```bash
 cd /e/FiveM/builds
-npx nodemon --watch "2116/citizen/system_resources/monitor/src/*" --exec "2116/run.cmd"
+npx nodemon --watch "2318/citizen/system_resources/monitor/src/*" --exec "2318/FXServer.exe"
 ```
 
 ### Links

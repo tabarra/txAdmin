@@ -37,7 +37,12 @@ module.exports = {
     },
     externals: {
         // engine.io
-        uws: 'uws'
+        uws: 'uws',
+        
+        // discord.js
+        '@discordjs/opus': 'empty',
+        'node-opus': 'empty',
+        'opusscript': 'empty',
     },
     stats: 'errors-warnings',
     plugins: [
