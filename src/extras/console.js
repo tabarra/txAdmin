@@ -83,11 +83,11 @@ function getLog(){
 module.exports = (ctx) => {
     const appendSubCtx = (sub) => {return (sub !== null)? `${ctx}:${sub}` : ctx};
     return {
-        log: (x, subCtx = null) => {log(x, appendSubCtx(subCtx))},
-        logOk: (x, subCtx = null) => {logOk(x, appendSubCtx(subCtx))},
-        logWarn: (x, subCtx = null) => {logWarn(x, appendSubCtx(subCtx))},
-        logError: (x, subCtx = null) => {logError(x, appendSubCtx(subCtx))},
-        dir: (x, subCtx = null) => { dir(x, appendSubCtx(subCtx))},
+        log: (x, subCtx = null) => log(x, appendSubCtx(subCtx)),
+        logOk: (x, subCtx = null) => logOk(x, appendSubCtx(subCtx)),
+        logWarn: (x, subCtx = null) => logWarn(x, appendSubCtx(subCtx)),
+        logError: (x, subCtx = null) => logError(x, appendSubCtx(subCtx)),
+        dir: (x, subCtx = null) => dir(x, appendSubCtx(subCtx)),
         cleanTerminal,
         setTTYTitle,
         getLog
