@@ -1,5 +1,5 @@
 {
-    "version": "2.1.0",
+    "version": "2.1.1",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -153,6 +153,10 @@
         {
             "version": "2.1.0",
             "changelog": "Improved onboarding process with an Setup Wizard. Minor tweaks."
+        },
+        {
+            "version": "2.1.1",
+            "changelog": "Removed maxsize for some Setup Wizard inputs."
         }
     ]
 }
