@@ -38,8 +38,8 @@
 - [x] increased CitizenFX openid-client time skew tolerances to 2 hours 
 > v2.0.1
 - [x] improve user onboarding experience by adding an wizzard/stepper setup
-- [ ] fix arabic language and merge language PRs
-- [ ] add text-truncate (class) to playerlist
+- [x] fix arabic language and merge language PRs
+- [x] add text-truncate (class) to playerlist
 > v2.1.0
 - [ ] Rename basePath to serverDataPath
 - [ ] Create legacy branch + fix `run.cmd` + disable updater and add deprecated message
