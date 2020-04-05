@@ -72,27 +72,27 @@ async function getProcessesData(){
             let procName;
             let order;
             if(pid == process.pid){
-                procName = 'FxMonitor + txAdmin';
+                procName = `(${pid}) `+'FxMonitor + txAdmin';
                 order = 0;
 
             }else if(pid == termPID){
                 if(GlobalData.osType === 'Linux' && Object.keys(processes).length == 2){
-                    procName = 'FXServer';
+                    procName = `(${pid}) `+'FXServer';
                 }else{
-                    procName = 'Terminal';
+                    procName = `(${pid}) `+'Terminal';
                 }
                 order = 1;
 
             }else if(pid == fxsvMainPID){
-                procName = 'FXServer Main';
+                procName = `(${pid}) `+'FXServer Main';
                 order = 2;
 
             }else if(pid == fxsvRepPID){
-                procName = 'FXServer Dump';
+                procName = `(${pid}) `+'FXServer Dump';
                 order = 3;
 
             }else{
-                procName = 'Unknown';
+                procName = `(${pid}) `+'Unknown';
                 order = 9;
             }
 

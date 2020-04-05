@@ -201,8 +201,7 @@ module.exports = class Monitor {
 
         //Count failure
         this.failCounter++;
-        this.timeSeries.add(0);
-        if(GlobalData.verbose || this.failCounter > 10){
+        if(GlobalData.verbose || (this.failCounter >= 10 && this.failCounter % 5 == 0)){
             logWarn(`(${this.failCounter}/${this.config.restarter.failures}) FXServer is not responding! (${errorMessage})`);
         }
 

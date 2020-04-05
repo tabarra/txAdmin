@@ -23,7 +23,7 @@ let defaultConfig = {
     monitor: {
         timeout: 1000,
         restarter: {
-            failures: 15,
+            failures: 30,
             schedule: []
         }
     },
