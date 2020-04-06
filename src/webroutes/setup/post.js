@@ -183,7 +183,8 @@ async function handleValidateCFGFile(ctx) {
         let port = helpers.getFXServerPort(rawCfgFile);
         return ctx.send({success: true});
     } catch (error) {
-        return ctx.send({success: false, message: error.message});
+        let message = `The file path is correct, but: <br>\n ${error.message}.`;
+        return ctx.send({success: false, message});
     }
 }
 
