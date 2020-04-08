@@ -41,6 +41,9 @@
 - [x] fix arabic language and merge language PRs
 - [x] add text-truncate (class) to playerlist
 > v2.1.0
+- [x] Remove maxsize for some Setup Wizard inputs
+> v2.1.1
+- [x] make player list dynamic and searchable
 - [ ] Rename basePath to serverDataPath
 - [ ] Create legacy branch + fix `run.cmd` + disable updater and add deprecated message
 - [ ] clean up the resource injector?

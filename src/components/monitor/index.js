@@ -265,7 +265,7 @@ module.exports = class Monitor {
             this.statusServer = {
                 online: false,
                 ping: false,
-                players: []
+                players: false
             }
             return;
         }
@@ -292,7 +292,7 @@ module.exports = class Monitor {
             this.statusServer = {
                 online: false,
                 ping: false,
-                players: []
+                players: false
             }
             return;
         }

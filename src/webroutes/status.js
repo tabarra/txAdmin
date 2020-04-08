@@ -130,36 +130,9 @@ function prepareHostData() {
  * Returns the html playerlist
  */
 function preparePlayersData() {
-    let dataServer = clone(globals.monitor.statusServer);
-
-    if (!dataServer.players.length) return {html: null, count: 0};
-
-    let out = {
-        html: '',
-        count: dataServer.players.length
-    };
-    dataServer.players.forEach(player => {
-        let pingClass;
-        player.ping = parseInt(player.ping);
-        if (player.ping < 0) {
-            pingClass = 'secondary';
-            player.ping = '??';
-        } else if (player.ping < 60) {
-            pingClass = 'success';
-        } else if (player.ping < 100) {
-            pingClass = 'warning';
-        } else {
-            pingClass = 'danger';
-        }
-        let paddedPing = player.ping.toString().padStart(3, 'x').replace(/x/g, '&nbsp;');
-        out.html += `<div class="list-group-item list-group-item-accent-${pingClass} player text-truncate" onclick="showPlayer(${xss(player.id)})">
-                    <span class="pping text-${pingClass}">${paddedPing}</span>
-                    <span class="pname">${xss(player.name)}</span>
-                </div>`;
-
-    });
-
-    return out;
+    // return globals.testPlayers;
+    // let dataServer = clone(globals.monitor.statusServer);
+    return dataServer.players;
 }
 
 
