@@ -131,7 +131,7 @@ function prepareHostData() {
  */
 function preparePlayersData() {
     // return globals.testPlayers;
-    // let dataServer = clone(globals.monitor.statusServer);
+    let dataServer = clone(globals.monitor.statusServer);
     return dataServer.players;
 }
 
