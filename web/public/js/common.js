@@ -147,31 +147,25 @@ function refreshData() {
             $('#hostusage-memory-bar').attr('aria-valuenow', data.host.memory.pct).css('width', data.host.memory.pct+"%");
             $('#hostusage-memory-text').html(data.host.memory.text);
             $("#status-card").html(data.status);
-            if(data.players.count){
-                $("#playerlist").html(data.players.html);
-                $("#plist-count").text(data.players.count);
-            }else{
-                $("#plist-count").text(data.players.count);
-                $("#playerlist").html(getPlayerListMessage('No Players Online'));
-            }
             $("#favicon").attr("href", 'img/' + data.meta.favicon + ".png");
             document.title = data.meta.title;
+            processPlayers(data.players)
         },
         error: function (xmlhttprequest, textstatus, message) {
             let out = null;
             if (textstatus == 'parsererror') {
-                out = `Response parse error.\n<br>Try refreshing your window.`;
+                out = `Response parse error.\nTry refreshing your window.`;
             } else {
-                out = `Request error: ${textstatus}\n<br>${message}`;
+                out = `Request error: ${textstatus}\n${message}`;
             }
             $('#hostusage-cpu-bar').attr('aria-valuenow', 0).css('width', 0);
             $('#hostusage-cpu-text').html('error');
             $('#hostusage-memory-bar').attr('aria-valuenow', 0).css('width', 0);
             $('#hostusage-memory-text').html('error');
-            $("#status-card").html(out);
-            $("#playerlist").html(getPlayerListMessage(out));
+            $("#status-card").html(out.replace('\n', '\n<br>'));
             $("#favicon").attr("href", "img/favicon_off.png");
             document.title = 'ERROR - txAdmin';
+            processPlayers(out)
         }
     });
 };
