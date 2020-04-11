@@ -20,7 +20,8 @@ module.exports = class FXRunner {
         this.config = config;
         this.spawnVariables = null;
         this.fxChild = null;
-        this.tsChildStarted = null;
+        this.tsChildStarted = null; //TODO: replace
+        this.history = [];
         this.fxServerPort = null;
         this.consoleBuffer = new ConsoleBuffer(this.config.logPath, 10);
 
@@ -70,8 +71,8 @@ module.exports = class FXRunner {
         if(GlobalData.osType === 'Linux'){
             let alpinePath = path.resolve(GlobalData.fxServerPath, '../../');
             this.spawnVariables = {
-                shell: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
-                cmdArgs: [
+                command: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
+                args: [
                     `--library-path`, `${alpinePath}/usr/lib/v8/:${alpinePath}/lib/:${alpinePath}/usr/lib/`,
                     '--',
                     `${alpinePath}/opt/cfx-server/FXServer`,
@@ -82,10 +83,10 @@ module.exports = class FXRunner {
             
         }else if(GlobalData.osType === 'Windows_NT'){
             this.spawnVariables = {
-                shell: `${GlobalData.fxServerPath}/FXServer.exe`,
-                cmdArgs
+                command: `${GlobalData.fxServerPath}/FXServer.exe`,
+                args: cmdArgs
             };
-            
+
         }else{
             logError(`OS type not supported: ${GlobalData.osType}`);
             process.exit();
@@ -111,8 +112,8 @@ module.exports = class FXRunner {
         //Sanity Check
         if(
             this.spawnVariables == null ||
-            typeof this.spawnVariables.shell == 'undefined' ||
-            typeof this.spawnVariables.cmdArgs == 'undefined'
+            typeof this.spawnVariables.command == 'undefined' ||
+            typeof this.spawnVariables.args == 'undefined'
         ){
             return logError('this.spawnVariables is not set.');
         }
@@ -151,21 +152,33 @@ module.exports = class FXRunner {
 
         //Starting server
         let pid;
-        let tsStart = now();
+        let historyIndex;
         try {
             this.fxChild = spawn(
-                this.spawnVariables.shell,
-                this.spawnVariables.cmdArgs,
+                this.spawnVariables.command,
+                this.spawnVariables.args,
                 {cwd: this.config.basePath}
             );
             if(typeof this.fxChild.pid === 'undefined'){
-                const platformComplaint = (GlobalData.osType === 'Windows_NT') ? 'Make sure you have "C:/windows/system32" in your system PATH variables.' : '';
-                throw new Error(`Executon of "${this.spawnVariables.shell}" failed. ${platformComplaint}`);
+                throw new Error(`Executon of "${this.spawnVariables.command}" failed.`);
             }
             pid = this.fxChild.pid.toString();
             logOk(`>> [${pid}] FXServer Started!`);
             this.consoleBuffer.writeHeader();
-            this.tsChildStarted = tsStart;
+            this.history.push({
+                pid: pid,
+                timestamps: {
+                    start: now(),
+                    kill: false,
+                    exit: false,
+                    close: false
+                }
+            });
+            historyIndex = this.history.length - 1;
+
+            //FIXME: remove
+            this.tsChildStarted = now();
+            
         } catch (error) {
             logError('Failed to start FXServer with the following error:');
             dir(error);
@@ -174,28 +187,29 @@ module.exports = class FXRunner {
 
         //Setting up stream handlers
         this.fxChild.stdout.setEncoding('utf8');
-        //process.stdin.pipe(this.fxChild.stdin);
 
         //Setting up event handlers
         this.fxChild.on('close', function (code, signal) {
             logWarn(`>> [${pid}] FXServer Closed. (code ${code})`);
-        });
+            this.history[historyIndex].timestamps.close = now();
+        }.bind(this));
         this.fxChild.on('disconnect', function () {
             logWarn(`>> [${pid}] FXServer Disconnected.`);
-        });
+        }.bind(this));
         this.fxChild.on('error', function (err) {
             logWarn(`>> [${pid}] FXServer Errored:`);
             dir(err)
-        });
+        }.bind(this));
         this.fxChild.on('exit', function (code, signal) {
             process.stdout.write("\n"); //Make sure this isn't concatenated with the last line
             logWarn(`>> [${pid}] FXServer Exited.`);
-            if(now() - tsStart <= 5){
+            this.history[historyIndex].timestamps.exit = now();
+            if(this.history[historyIndex].timestamps.exit - this.history[historyIndex].timestamps.start <= 5){
                 setTimeout(() => {
                     logWarn(`FXServer didn't start. This is not an issue with txAdmin.`);
                 }, 500);
             }
-        });
+        }.bind(this));
 
         this.fxChild.stdin.on('error', (data) => {});
         this.fxChild.stdin.on('data', (data) => {});
@@ -217,7 +231,8 @@ module.exports = class FXRunner {
 
     //================================================================
     /**
-     * Sets the process priority to all fxChild (cmd/bash) children (fxserver)
+     * Sets the process priority to all fxChild (cmd/bash) children (fxserver)3
+     * TODO: deprecate this feature. Nobody uses...
      */
     async setProcPriority(){
         //Sanity check
@@ -305,6 +320,7 @@ module.exports = class FXRunner {
             if(this.fxChild !== null){
                 this.fxChild.kill();
                 this.fxChild = null;
+                this.history[this.history.length - 1].timestamps.kill = now();
             }
             return true;
         } catch (error) {
@@ -356,6 +372,44 @@ module.exports = class FXRunner {
         await sleep(bufferTime);
         this.consoleBuffer.enableCmdBuffer = false;
         return this.consoleBuffer.cmdBuffer.replace(/\u001b\[\d+(;\d)?m/g, '');
+    }
+
+    
+    //================================================================
+    /**
+     * Returns the status of the server, with the states being:
+     *  - not started
+     *  - spawn awaiting last: <list of pending status of last instance>
+     *  - kill pending: <list of pending events from current instance>
+     *  - killed
+     *  - crashed
+     *  - spawned
+     * @returns {string} buffer
+     */
+    getStatus(){
+        if(!this.history.length) return 'not started';
+        let curr = this.history[this.history.length - 1];
+
+        if(!curr.timestamps.start && this.history.length == 1){
+            throw new Error(`This should NOT happen. Let's see how fast people will take to find this...`);
+        }else if(!curr.timestamps.start){
+            let last = this.history[this.history.length - 2];
+            let pending = Object.keys(last.timestamps).filter(k => !curr.timestamps[k]);
+            if(!pending.length) throw new Error(`This should also never happen... /shrug`);
+            return 'spawn awaiting last: ' + pending.join(', ');
+        }else if(curr.timestamps.kill){
+            let pending = Object.keys(curr.timestamps).filter(k => !curr.timestamps[k]);
+            if(pending.length){
+                return 'kill pending: ' + pending.join(', ');
+            }else{
+                return 'killed';
+            }
+        }else if(curr.timestamps.exit || curr.timestamps.close){
+            return 'crashed';
+            // TODO: if both events, we can already trigger an restart
+        }else{
+            return 'spawned';
+        }
     }
 
 } //Fim FXRunner()

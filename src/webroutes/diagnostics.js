@@ -48,6 +48,8 @@ module.exports = async function Diagnostics(ctx) {
 //================================================================
 /**
  * Gets the Processes Data.
+ * TODO: get process name with wmic
+ *       wmic PROCESS get "Name,ParentProcessId,ProcessId,CommandLine,CreationDate,UserModeTime,WorkingSetSize"
  */
 async function getProcessesData(){
     let procList = [];

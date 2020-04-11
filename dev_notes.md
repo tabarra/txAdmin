@@ -56,8 +56,8 @@
 
 How to fix the restart loop problem:
 - [x] launch fxserver directly instead of using `cmd.exe /c` or `/bin/sh`
-- [ ] create fxRunner.history[] with pid, kill_reason, ts.start, ts.exited, ts.closed
-- [ ] create fxRunner.getStatus()
+- [x] create fxRunner.history[] with pid, ts.started, ts.killed, ts.exited, ts.closed
+- [x] create fxRunner.getStatus()
 - [ ] make monitor use the fxRunner.getStatus()
 - [ ] make monitor show status on the interface when monitor status != online
 - [ ] make fxRunner.spawn() wait for last history = closed
