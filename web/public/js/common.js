@@ -15,9 +15,9 @@ let plistMsgElement = document.getElementById('playerlist-message');
 let plistCountElement = document.getElementById('plist-count');
 let plistSearchElement = document.getElementById('plist-search');
 
-//Search function
-plistSearchElement.addEventListener('input', function (ev) {
-    let search = this.value.toLowerCase();
+//Apply filter
+function applyPlayerlistFilter(){
+    let search = plistSearchElement.value.toLowerCase();
     Array.from(playerlistElement.children).forEach(el => {
         if(el.id == 'playerlist-message') return;
         console.dir(el.dataset['pname'])
@@ -30,6 +30,11 @@ plistSearchElement.addEventListener('input', function (ev) {
             el.hidden = true;
         }
     });
+}
+
+//Search function
+plistSearchElement.addEventListener('input', function (ev) {
+    applyPlayerlistFilter();
 });
 
 //TODO: try this again, currently doesn't feel a very polished experience
@@ -97,8 +102,7 @@ function processPlayers(players) {
         return;
     }
     plistMsgElement.hidden = true;
-    
-    
+    applyPlayerlistFilter();
     
     let newPlayers, removedPlayers, updatedPlayers;
     try {

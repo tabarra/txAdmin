@@ -44,9 +44,9 @@
 - [x] Remove maxsize for some Setup Wizard inputs
 > v2.1.1
 - [x] make player list dynamic and searchable
+- [x] clean up the resource injector?
 - [ ] Rename basePath to serverDataPath
 - [ ] Create legacy branch + fix `run.cmd` + disable updater and add deprecated message
-- [ ] clean up the resource injector?
 - [ ] Rework the entire monitor
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
@@ -91,7 +91,7 @@ cd /e/FiveM/builds
 npx nodemon --watch "2318/citizen/system_resources/monitor/src/*" --exec "2318/FXServer.exe"
 ```
 
-### Links
+### Links + random stuff
 https://www.science.co.il/language/Locale-codes.php
 https://www.npmjs.com/package/humanize-duration
 https://www.npmjs.com/package/dateformat
@@ -103,6 +103,8 @@ https://www.reddit.com/r/javascript/comments/91a3tp/why_is_there_no_small_sane_n
 DIV transition: https://tympanus.net/Tutorials/OriginalHoverEffects/index9.html
 Colors: https://coolors.co/3c4b64-3c4b64-3a4860-1e252d-252e38
 CSS Animated: https://daneden.github.io/animate.css/
+
+`histogram_quantile(0.95, sum(rate(tickTime_bucket[5m])) by (le))`
 
 
 ### Global vs Individual Modules

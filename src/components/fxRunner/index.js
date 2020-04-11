@@ -8,7 +8,6 @@ const sleep = require('util').promisify((a, f) => setTimeout(f, a));
 const pidtree = require('pidtree');
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
-const resourceInjector = require('./resourceInjector');
 const ConsoleBuffer = require('./consoleBuffer');
 
 //Helpers
@@ -23,7 +22,6 @@ module.exports = class FXRunner {
         this.fxChild = null;
         this.tsChildStarted = null;
         this.fxServerPort = null;
-        this.extResources = [];
         this.consoleBuffer = new ConsoleBuffer(this.config.logPath, 10);
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
@@ -55,11 +53,6 @@ module.exports = class FXRunner {
             `+set txAdmin-apiPort "${GlobalData.txAdminPort}"`,
             `+set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
         ];
-
-        //Commands
-        this.extResources.forEach((resource)=>{
-            toExec.push(`+ensure "${resource}"`);
-        });
 
         let onesyncFlag = (this.config.onesync)? '+set onesync_enabled 1' : '';
         const cliArgs = [
@@ -141,9 +134,6 @@ module.exports = class FXRunner {
         if(this.fxChild !== null){
             return logError('The server is already started.');
         }
-
-        //Refresh resource cache
-        await this.injectResources();
 
         //Detecting endpoint port
         try {
@@ -233,22 +223,6 @@ module.exports = class FXRunner {
 
         return null;
     }//Final spawnServer()
-
-
-    //================================================================
-    /**
-     * Inject the txAdmin resources
-     */
-    async injectResources(){
-        try {
-            let reset = await resourceInjector.resetCacheFolder(this.config.basePath);
-            this.extResources = resourceInjector.getResourcesList(this.config.basePath);
-            let inject = await resourceInjector.inject(this.config.basePath, this.extResources);
-        } catch (error) {
-            logError(`ResourceInjector Error: ${error.message}`);
-            return false;
-        }
-    }
 
 
     //================================================================
