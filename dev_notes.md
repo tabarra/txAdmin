@@ -54,6 +54,26 @@
 
 
 
+How to fix the restart loop problem:
+- [x] launch fxserver directly instead of using `cmd.exe /c` or `/bin/sh`
+- [ ] create fxRunner.history[] with pid, kill_reason, ts.start, ts.exited, ts.closed
+- [ ] create fxRunner.getStatus()
+- [ ] make monitor use the fxRunner.getStatus()
+- [ ] make monitor show status on the interface when monitor status != online
+- [ ] make fxRunner.spawn() wait for last history = closed
+- [ ] add fxRunner.history[] card to the diagnostics interface
+Another idea:
+    - wait for the last one to close for up to 15 seconds
+    - cache all the endpoint_add_xxx commands
+    - start server
+    - if it errors out, try to execute those commands again
+For the monitor:
+    - create checkStatus, that will check the timestamp of the last successfull client heartbeat and /info heartbeat
+    - execute it every 1 second
+    - execute /info heartbeat in the same setInterval
+
+
+
 # For the new access control system
 - vRP grabs the first matched ID
 - esx uses licenses

@@ -1,10 +1,10 @@
 //Requires
 const modulename = 'FXRunner';
 const { spawn } = require('child_process');
-const fs = require('fs-extra');
 const path = require('path');
 const os = require('os');
 const sleep = require('util').promisify((a, f) => setTimeout(f, a));
+const { parseArgsStringToArgv } = require('string-argv');
 const pidtree = require('pidtree');
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
@@ -44,58 +44,48 @@ module.exports = class FXRunner {
 
     //================================================================
     /**
-     * Setup the spawn variables
+     * Setup the spawn parameters
      */
     setupVariables(){
-        //Defaults
-        let toExec = [
-            `+sets txAdmin-version "${GlobalData.txAdminVersion}"`,
-            `+set txAdmin-apiPort "${GlobalData.txAdminPort}"`,
-            `+set txAdmin-apiToken "${globals.webServer.intercomToken}"`,
+        // Prepare extra args
+        let extraArgs;
+        if(typeof this.config.commandLine === 'string' || this.config.commandLine.length){
+            extraArgs = parseArgsStringToArgv(this.config.commandLine);
+        }else{
+            extraArgs = [];
+        }
+
+        // Prepare default args
+        const cmdArgs = [
+            '+sets', 'txAdmin-version', GlobalData.txAdminVersion,
+            '+set', 'txAdmin-apiPort', GlobalData.txAdminPort,
+            '+set', 'txAdmin-apiToken', globals.webServer.intercomToken,
+            '+set', 'txAdminServerMode', 'true',
+            '+set', 'onesync_enabled', (this.config.onesync).toString(),
+            ...extraArgs,
+            '+exec', this.config.cfgPath,
         ];
 
-        let onesyncFlag = (this.config.onesync)? '+set onesync_enabled 1' : '';
-        const cliArgs = [
-            onesyncFlag,
-            `+set txAdminServerMode true`,
-            this.config.commandLine || '',
-            `+exec "${this.config.cfgPath}"`,
-        ];
-
-        cliArgs.push(...toExec);
-        const cliString = cliArgs.join(' ');
-
+        // Configure spawn parameters according to the environment
         if(GlobalData.osType === 'Linux'){
-            let runPath = path.resolve(GlobalData.fxServerPath, '../../../', 'run.sh');
+            let alpinePath = path.resolve(GlobalData.fxServerPath, '../../');
             this.spawnVariables = {
-                shell: `/bin/sh`,
-                cmdArgs: [runPath, `+start ${GlobalData.resourceName}`, cliString]
+                shell: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
+                cmdArgs: [
+                    `--library-path`, `${alpinePath}/usr/lib/v8/:${alpinePath}/lib/:${alpinePath}/usr/lib/`,
+                    '--',
+                    `${alpinePath}/opt/cfx-server/FXServer`,
+                    '+set', 'citizen_dir', `${alpinePath}/opt/cfx-server/citizen/`,
+                    ...cmdArgs
+                ]
             };
-
-            //NOTE: Alternative - clean this soon if the previous one doesn't work well
-            // let alpinePath = path.resolve(GlobalData.fxServerPath, '../../');
-            // this.spawnVariables = {
-            //     shell: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
-            //     cmdArgs: [
-            //         `--library-path`,
-            //         `${alpinePath}/usr/lib/v8/:${alpinePath}/lib/:${alpinePath}/usr/lib/`,
-            //         '--',
-            //         `${alpinePath}/opt/cfx-server/FXServer`,
-            //         ...(`+set citizen_dir ${alpinePath}/opt/cfx-server/citizen/ ${cliString}`.split(' '))
-            //     ]
-            // };
             
         }else if(GlobalData.osType === 'Windows_NT'){
-            let runCmd;
-            if(fs.existsSync(`${GlobalData.fxServerPath}/run.cmd`)){
-                runCmd = `${GlobalData.fxServerPath}/run.cmd ${cliString}`;
-            }else{
-                runCmd = `${GlobalData.fxServerPath}/FXServer.exe ${cliString}`;
-            }
             this.spawnVariables = {
-                shell: 'cmd.exe',
-                cmdArgs: ['/c', runCmd]
+                shell: `${GlobalData.fxServerPath}/FXServer.exe`,
+                cmdArgs
             };
+            
         }else{
             logError(`OS type not supported: ${GlobalData.osType}`);
             process.exit();

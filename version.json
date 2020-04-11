@@ -1,5 +1,5 @@
 {
-    "version": "2.1.1",
+    "version": "2.2.0-test",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -157,6 +157,11 @@
         {
             "version": "2.1.1",
             "changelog": "Removed maxsize for some Setup Wizard inputs."
+        }
+        ,
+        {
+            "version": "2.2.0-test",
+            "changelog": "xxxx"
         }
     ]
 }
