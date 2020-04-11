@@ -85,7 +85,8 @@
                     Check the terminal for more information (if verbosity is enabled)
                 {{#else}}
                     {{foreach(options.proccesses)}}
-                    <strong>Process:</strong> {{@this.name}} <br>
+                    <strong>Process:</strong> ({{@this.pid}}) {{@this.name}} <br>
+                    <strong>Parent:</strong> {{@this.ppid}} <br>
                     <strong>Memory:</strong> {{@this.memory}} <br>
                     <strong>CPU:</strong> {{@this.cpu}} <br>
                     <br>

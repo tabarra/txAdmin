@@ -54,7 +54,6 @@ module.exports = async function Diagnostics(ctx) {
 async function getProcessesData(){
     let procList = [];
     try {
-        let cpus = os.cpus();
         var processes = await pidusageTree(process.pid);
 
         //NOTE: Cleaning invalid proccesses that might show up in Linux
@@ -62,46 +61,26 @@ async function getProcessesData(){
             if(processes[pid] === null) delete processes[pid];
         });
 
-        let termPID = Object.keys(processes).find((pid) => { return processes[pid].ppid == process.pid});
-        let fxsvMainPID = Object.keys(processes).find((pid) => { return processes[pid].ppid == termPID});
-        let fxsvRepPID = Object.keys(processes).find((pid) => { return processes[pid].ppid == fxsvMainPID});
-
         //Foreach PID
         Object.keys(processes).forEach((pid) => {
             var curr = processes[pid];
 
             //Define name and order
             let procName;
-            let order;
+            let order = process.timestamp || 1;
             if(pid == process.pid){
-                procName = `(${pid}) `+'FxMonitor + txAdmin';
+                procName = 'FxMonitor + txAdmin';
                 order = 0;
-
-            }else if(pid == termPID){
-                if(GlobalData.osType === 'Linux' && Object.keys(processes).length == 2){
-                    procName = `(${pid}) `+'FXServer';
-                }else{
-                    procName = `(${pid}) `+'Terminal';
-                }
-                order = 1;
-
-            }else if(pid == fxsvMainPID){
-                procName = `(${pid}) `+'FXServer Main';
-                order = 2;
-
-            }else if(pid == fxsvRepPID){
-                procName = `(${pid}) `+'FXServer Dump';
-                order = 3;
-
+            }else if(curr.memory <= 10*1024*1024){
+                procName = 'FXServer MiniDump';
             }else{
-                procName = `(${pid}) `+'Unknown';
-                order = 9;
+                procName = 'FXServer';
             }
 
             procList.push({
                 pid: pid,
+                ppid: (curr.ppid == process.pid)? 'txAdmin' : curr.ppid,
                 name: procName,
-                // cpu: (curr.cpu/cpus.length).toFixed(2) + '%',
                 cpu: (curr.cpu).toFixed(2) + '%',
                 memory: bytes(curr.memory),
                 order: order
@@ -115,12 +94,8 @@ async function getProcessesData(){
 
     //Sort procList array
     procList.sort(( a, b ) => {
-        if ( a.order < b.order ){
-            return -1;
-        }
-        if ( a.order > b.order ){
-            return 1;
-        }
+        if ( a.order < b.order )  return -1;
+        if ( a.order > b.order ) return 1;
         return 0;
     })
 
