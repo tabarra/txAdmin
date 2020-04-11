@@ -374,7 +374,7 @@ module.exports = class FXRunner {
         return this.consoleBuffer.cmdBuffer.replace(/\u001b\[\d+(;\d)?m/g, '');
     }
 
-    
+
     //================================================================
     /**
      * Returns the status of the server, with the states being:
@@ -384,7 +384,7 @@ module.exports = class FXRunner {
      *  - killed
      *  - crashed
      *  - spawned
-     * @returns {string} buffer
+     * @returns {string} status
      */
     getStatus(){
         if(!this.history.length) return 'not started';
@@ -410,6 +410,19 @@ module.exports = class FXRunner {
         }else{
             return 'spawned';
         }
+    }
+
+
+    //================================================================
+    /**
+     * Returns the current fxserver uptime in seconds 
+     * @returns {numeric} buffer
+     */
+    getUptime(){
+        if(!this.history.length) return 0;
+        let curr = this.history[this.history.length - 1];
+        
+        return Math.round(Date.now()/1000) - curr.timestamps.start;
     }
 
 } //Fim FXRunner()

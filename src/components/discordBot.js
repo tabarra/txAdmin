@@ -131,14 +131,13 @@ module.exports = class DiscordBot {
                 desc += `**IP:** ${globals.config.publicIP}:${port}\n`;
                 desc += `**Players:** ${players}\n`;
             }
-            let elapsed = Math.round(Date.now()/1000) - globals.fxRunner.tsChildStarted; //seconds
             let humanizeOptions = {
                 language: globals.translator.t('$meta.humanizer_language'),
                 round: true,
                 units: ['d', 'h', 'm', 's'],
                 fallbacks: ['en']
             }
-            let uptime = humanizeDuration(elapsed*1000, humanizeOptions);
+            let uptime = humanizeDuration(globals.fxRunner.getUptime()*1000, humanizeOptions);
             desc += `**Uptime:** ${uptime} \n`;
 
             //Prepare object

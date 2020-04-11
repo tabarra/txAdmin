@@ -165,7 +165,7 @@ module.exports = class Monitor {
         }
 
         //Cooldown check
-        let elapsed = Math.round(Date.now()/1000) - globals.fxRunner.tsChildStarted;
+        let elapsed = globals.fxRunner.getUptime();
         if(elapsed < this.config.restarter.cooldown){
             if(GlobalData.verbose) logWarn(`(Cooldown: ${elapsed}/${this.config.restarter.cooldown}s) restartFXServer() awaiting restarter cooldown.`);
             return false;
@@ -189,7 +189,7 @@ module.exports = class Monitor {
     //================================================================
     handleFailure(errorMessage){
         let now = Math.round(Date.now()/1000)
-        let elapsed = Math.round(Date.now()/1000) - globals.fxRunner.tsChildStarted;
+        let elapsed = globals.fxRunner.getUptime();
 
         //Check cooldown
         if(elapsed < this.config.restarter.cooldown){
