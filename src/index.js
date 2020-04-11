@@ -95,6 +95,10 @@ if(!serverProfile.length){
     logDie(`Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.`);
 }
 
+//Get verbosity
+let txAdminVerboseConvar = GetConvar('txAdminVerbose', 'false').trim();
+const verbose = (['true', '1', 'on'].includes(txAdminVerboseConvar));
+
 //Setting Global Data
 GlobalData = {
     osType,
@@ -105,7 +109,8 @@ GlobalData = {
     fxServerPath,
     dataPath,
     txAdminPort,
-    cfxUrl: null
+    verbose,
+    cfxUrl: null,
 }
 // NOTE: all variables set for monitor mode: monitorMode, version, serverRoot (cwd), citizen_root, citizen_dir
 
@@ -123,11 +128,11 @@ setTimeout(() => {
     setInterval(() => {
         let now = Date.now();
         if(now - hdTimer > 2000){
-            let sep = `=`.repeat(72);
+            let sep = `=`.repeat(70);
             setTimeout(() => {
                 logError(sep);
-                logError('Major process freeze detected.');
-                logError('THIS IS NOT AN ERROR CAUSED BY TXADMIN! Your VPS is probably lagging out.');
+                logError('Major VPS freeze/lag detected!');
+                logError('THIS IS NOT AN ERROR CAUSED BY TXADMIN!');
                 logError(sep);
             }, 1000);
         }

@@ -33,12 +33,45 @@
 - [x] fix linux run.sh reference
 - [x] update readme
 > v2.0.0
+- [x] improved docs and messages/strings
+- [x] allow for admin names with 3 characters due to discourse rules
+- [x] increased CitizenFX openid-client time skew tolerances to 2 hours 
+> v2.0.1
+- [x] improve user onboarding experience by adding an wizzard/stepper setup
+- [x] fix arabic language and merge language PRs
+- [x] add text-truncate (class) to playerlist
+> v2.1.0
+- [x] Remove maxsize for some Setup Wizard inputs
+> v2.1.1
+- [x] make player list dynamic and searchable
+- [x] clean up the resource injector?
+- [ ] Rename basePath to serverDataPath
 - [ ] Create legacy branch + fix `run.cmd` + disable updater and add deprecated message
-- [ ] clean up the resource injector?
 - [ ] Rework the entire monitor
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
 - [ ] fix bug: resources page when you type then delete what you typed, it shows hidden default resources
+
+
+
+How to fix the restart loop problem:
+- [x] launch fxserver directly instead of using `cmd.exe /c` or `/bin/sh`
+- [ ] create fxRunner.history[] with pid, kill_reason, ts.start, ts.exited, ts.closed
+- [ ] create fxRunner.getStatus()
+- [ ] make monitor use the fxRunner.getStatus()
+- [ ] make monitor show status on the interface when monitor status != online
+- [ ] make fxRunner.spawn() wait for last history = closed
+- [ ] add fxRunner.history[] card to the diagnostics interface
+Another idea:
+    - wait for the last one to close for up to 15 seconds
+    - cache all the endpoint_add_xxx commands
+    - start server
+    - if it errors out, try to execute those commands again
+For the monitor:
+    - create checkStatus, that will check the timestamp of the last successfull client heartbeat and /info heartbeat
+    - execute it every 1 second
+    - execute /info heartbeat in the same setInterval
+
 
 
 # For the new access control system
@@ -75,10 +108,10 @@
 ## ETC
 ```bash
 cd /e/FiveM/builds
-npx nodemon --watch "2116/citizen/system_resources/monitor/src/*" --exec "2116/run.cmd"
+npx nodemon --watch "2318/citizen/system_resources/monitor/src/*" --exec "2318/FXServer.exe"
 ```
 
-### Links
+### Links + random stuff
 https://www.science.co.il/language/Locale-codes.php
 https://www.npmjs.com/package/humanize-duration
 https://www.npmjs.com/package/dateformat
@@ -91,6 +124,8 @@ DIV transition: https://tympanus.net/Tutorials/OriginalHoverEffects/index9.html
 Colors: https://coolors.co/3c4b64-3c4b64-3a4860-1e252d-252e38
 CSS Animated: https://daneden.github.io/animate.css/
 
+`histogram_quantile(0.95, sum(rate(tickTime_bucket[5m])) by (le))`
+
 
 ### Global vs Individual Modules
 - Global
@@ -98,8 +133,42 @@ CSS Animated: https://daneden.github.io/animate.css/
     - discordBOT
     - logger
     - webserver
-    - config global
+    - translator
+    - players db (new)
+    - config global (new)
+
 - Individual
-    - config server
+    - fxrunner
     - monitor
-    - fxrunnder
+    - configvault
+
+### Global vs Individual Pages
+- Full Dashboard: Each row will be be one server, with: controls, stats (players, hitches, status), player chart
+- Players
+- Diagnostics: host + processes + multiple individual server info
+- Admin Manager
+- txAdmin Log
+- Global Settings
+- Servers:
+    - live console
+    - resources
+    - log
+    - cfg editor
+...and maybe more, but now I'm going to sleep
+
+
+
+Questões:
+- É possível tirar o webserver pra fora do txAdmin?
+    - Teria que tirar o verbose pra fora
+    - Criar um metodo pra setar rotas full + atachar socket.io
+    - Puxar o Authenticator pra fora
+- É possível mudar as rotas depois?
+    - Sim
+- É possível Puxar o autenticator pra fora?
+    - Sim
+- É possível só iniciar o txAdmin depois?
+    - Sim
+- Isso vai deixar o código muito zuado?
+- Vai valer a pena?
+

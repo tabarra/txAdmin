@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <base href="/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="description" content="txAdmin - remotely Manage & Monitor your GTA5 FiveM Server">
+    <meta name="author" content="André Tabarra">
+    <title>{{headerTitle}}</title>
+    <link href="css/simple-line-icons.css" rel="stylesheet">
+    <link href="css/coreui.min.css" rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href="img/favicon_default.png" id="favicon" />
+    <link rel="stylesheet" href="css/txAdmin.css">
+
+    <!-- setup specific -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://unpkg.com/materialize-stepper@3.1.0/dist/css/mstepper.min.css">
+
+    <style>
+        .logo-image svg {
+            height: 25px;
+            width: 25px;
+            transform: scale(-1, 1);
+            text-align: center;
+            fill: #fff;
+        }
+
+        code{
+            color: #321fdb!important;
+        }
+
+        .txSpinner,
+        .txSpinner:before,
+        .txSpinner:after {
+            background: #00c88f;
+            -webkit-animation: txSpinnerLoad 1s infinite ease-in-out;
+            animation: txSpinnerLoad 1s infinite ease-in-out;
+            width: 1em;
+            height: 4em;
+        }
+
+        .txSpinner {
+            color: #00c88f;
+            text-indent: -9999em;
+            margin: 88px auto;
+            position: relative;
+            font-size: 11px;
+            -webkit-transform: translateZ(0);
+            -ms-transform: translateZ(0);
+            transform: translateZ(0);
+            -webkit-animation-delay: -0.16s;
+            animation-delay: -0.16s;
+        }
+
+        .txSpinner:before,
+        .txSpinner:after {
+            position: absolute;
+            top: 0;
+            content: '';
+        }
+
+        .txSpinner:before {
+            left: -1.5em;
+            -webkit-animation-delay: -0.32s;
+            animation-delay: -0.32s;
+        }
+
+        .txSpinner:after {
+            left: 1.5em;
+        }
+
+        @-webkit-keyframes txSpinnerLoad {
+
+            0%,
+            80%,
+            100% {
+                box-shadow: 0 0;
+                height: 4em;
+            }
+
+            40% {
+                box-shadow: 0 -2em;
+                height: 5em;
+            }
+        }
+
+        @keyframes txSpinnerLoad {
+
+            0%,
+            80%,
+            100% {
+                box-shadow: 0 0;
+                height: 4em;
+            }
+
+            40% {
+                box-shadow: 0 -2em;
+                height: 5em;
+            }
+        }
+    </style>
+</head>
+
+<body class="c-app flex-row align-items-center">
+
+    <div class="container">
+
+        <!-- Logo Row -->
+        <div class="row justify-content-md-center mb-4">
+            <img src="img/txadmin.png" alt="txAdmin Logo">
+        </div>
+
+        <!-- Card Row -->
+        <div class="row justify-content-center">
+            <div class="col-md-6 mw-col6x">
+                <div class="card fade-in">
+                    <div class="card-body">
+                        <ul class="stepper linear">
+
+                            <!-- Welcome -->
+                            <li class="step active">
+                                <div class="step-title waves-effect">Welcome, {{adminUsername}}!</div>
+                                <div class="step-content">
+                                    {{if(options.serverProfile == 'default')}}
+                                    Since you didn't select any profile when starting txAdmin, we selected
+                                    <code>default</code> for you.
+                                    {{#else}}
+                                    You selected the profile <code>{{serverProfile}}</code>.
+                                    {{/if}}
+                                    <br>
+                                    This profile is not configured yet, let's do this now?
+                                    <div class="step-actions">
+                                        <button class="btn btn-pill btn-info next-step" type="button">Next</button>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <!-- Server Name -->
+                            <li class="step">
+                                <div class="step-title waves-effect">Server Name</div>
+                                <div class="step-content">
+                                    A <strong>short</strong> server name to be used in txAdmin interface and
+                                    Chat/Discord messages.
+                                    <input type="text" class="form-control mt-2" id="frmName" maxlength="22"
+                                        minlength="3" placeholder="Happy Server" required>
+                                    <span id="frmNameError" class="text-danger fade-in d-none"></span>
+                                    <div class="step-actions">
+                                        <button class="btn btn-pill btn-secondary previous-step"
+                                            type="button">Back</button>
+                                        <button class="btn btn-pill btn-info next-step" type="button"
+                                            data-feedback="validateName" id="frmNameSubmitBtn">Next</button>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <!-- Server Data Folder -->
+                            <li class="step">
+                                <div class="step-title waves-effect">Server Data Folder</div>
+                                <div class="step-content">
+                                    The folder that <strong>contains</strong> the <code>resources</code> and
+                                    <code>cache</code> folders, usually it's here that you put your <code>server.cfg</code>. <br>
+                                    Also known as Base Folder.
+                                    <input type="text" class="form-control mt-2" id="frmDataFolder"
+                                        placeholder="C:/Users/Admin/Desktop/server01" required>
+                                    <span id="frmDataFolderError" class="text-danger fade-in d-none"></span>
+                                    <div class="step-actions">
+                                        <button class="btn btn-pill btn-secondary previous-step"
+                                            type="button">Back</button>
+                                        <button class="btn btn-pill btn-info next-step" type="button"
+                                            data-feedback="validateDataFolder" id="frmDataFolderSubmitBtn">Next</button>
+                                        <button class="btn btn-pill btn-primary d-none fade-in" type="button"
+                                            id="frmDataFolderFixBtn" 
+                                            data-target="frmDataFolder">Accept Fix</button>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <!-- Server CFG File -->
+                            <li class="step">
+                                <div class="step-title waves-effect">Server CFG File</div>
+                                <div class="step-content">
+                                    The path to your server config file, usually named <code>server.cfg</code>. <br>
+                                    This can either be absolute, or relative to the Server Data folder.
+                                    <input type="text" class="form-control mt-2" id="frmCFGFile"
+                                        placeholder="C:/Users/Admin/Desktop/server01/server.cfg" required>
+                                    <span id="frmCFGFileError" class="text-danger fade-in d-none"></span>
+                                    <div class="step-actions">
+                                        <div class="step-actions">
+                                            <button class="btn btn-pill btn-secondary previous-step"
+                                                type="button">Back</button>
+                                            <button class="btn btn-pill btn-info next-step" type="button"
+                                                data-feedback="validateCFGFile" id="frmCFGFileSubmitBtn">Save</button>
+                                            <button class="btn btn-pill btn-primary d-none fade-in" type="button"
+                                                id="frmCFGFileFixBtn" 
+                                                data-target="frmCFGFile">Accept Fix</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <!-- Finish -->
+                            <li class="step">
+                                <div class="step-title waves-effect">Finish</div>
+                                <div class="step-content">
+                                    <strong>We are all set!</strong> <br>
+                                    {{if(options.windowsBatPath)}}
+                                        You can run this profile by executing: <br>
+                                        <code>{{windowsBatPath}}</code> <br>
+                                    {{/if}}
+                                    <span id="saveError" class="text-danger fade-in d-none"></span>
+                                    <div class="step-actions">
+                                        <button class="btn btn-pill btn-success next-step" 
+                                            type="button" data-feedback="performSave">
+                                            Save & Start Server</button>
+                                    </div>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Row -->
+        <div class="row justify-content-md-center">
+            <div class="col-md-4 ">
+                <div class="alert alert-secondary text-center small" role="alert">
+                    <strong>Server profile:</strong> {{serverProfile}} <br>
+                    <strong>txAdmin version:</strong> {{txAdminVersion}} <br>
+                    <strong>FXServer build:</strong> {{fxserverVersion}}
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <!-- CoreUI and necessary plugins-->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/coreui.bundle.min.js"></script>
+    <script src="js/bootstrap-notify.min.js"></script>
+
+    <!-- JS -->
+    <script src="https://unpkg.com/materialize-stepper@3.1.0/dist/js/mstepper.js"></script>
+    <script>
+        //Stepper config
+        var stepper = document.querySelector('.stepper');
+        var stepperInstace = new MStepper(stepper, {
+            autoFocusInput: true,
+            showFeedbackPreloader: true,
+            stepTitleNavigation: false,
+            firstActive: 0,
+            feedbackPreloader: '<div class="txSpinner">Loading...</div>',
+        });
+
+        const timeoutLong = 4000;
+        var suggestions = {};
+
+        //Functions
+        const inputKeyUp = (event) => {
+            event.target.classList.remove('is-invalid', 'is-valid');
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                document.getElementById(event.target.id+'SubmitBtn').click();
+            }
+        }
+        const acceptFix = (event) => {
+            event.target.classList.add('d-none');
+            let targetName = event.target.dataset.target;
+            var targetElement = document.getElementById(targetName);
+            targetElement.classList.remove('is-invalid');
+            targetElement.classList.add('is-valid');
+            targetElement.value = suggestions[targetName] || '';
+            var currentSteps = stepperInstace.getSteps()
+            currentSteps.active.step.classList.remove('wrong');
+            currentSteps.active.step.classList.add('done');
+        }
+
+
+        //Grabs the elements and set the event handlers
+        var frmName = document.getElementById("frmName");
+        var frmNameError = document.getElementById("frmNameError");
+        frmName.addEventListener("keyup", inputKeyUp);
+
+        var frmDataFolder = document.getElementById("frmDataFolder");
+        var frmDataFolderError = document.getElementById("frmDataFolderError");
+        var frmDataFolderFixBtn = document.getElementById("frmDataFolderFixBtn");
+        frmDataFolder.addEventListener("keyup", inputKeyUp);
+        frmDataFolderFixBtn.addEventListener("click", acceptFix);
+        
+        var frmCFGFile = document.getElementById("frmCFGFile");
+        var frmCFGFileError = document.getElementById("frmCFGFileError");
+        var frmCFGFileFixBtn = document.getElementById("frmCFGFileFixBtn");
+        frmCFGFile.addEventListener("keyup", inputKeyUp);
+        frmCFGFileFixBtn.addEventListener("click", acceptFix);
+        
+        
+        // Server Name step validation
+        function validateName(destroyFeedback) {
+            frmName.classList.remove('is-invalid', 'is-valid');
+            frmNameError.classList.add('d-none');
+            let name = frmName.value.trim();
+
+            if(name.length < 3 || name.length > 22){
+                frmNameError.innerHTML = `The name must have between 3 and 22 characters.`;
+                frmNameError.classList.remove('d-none');
+                frmName.classList.add('is-invalid');
+                stepperInstace.wrongStep();
+                destroyFeedback(false)
+            }else{
+                frmName.classList.add('is-valid');
+                destroyFeedback(true)
+            }
+        }
+
+        // Server Data Folder step validation
+        function validateDataFolder(destroyFeedback) {
+            frmDataFolder.classList.remove('is-invalid', 'is-valid');
+            frmDataFolderError.classList.add('d-none');
+            let data = {dataFolder: frmDataFolder.value.trim()};
+            
+            $.ajax({
+                type: "POST",
+                url: '/setup/validateDataFolder',
+                timeout: 5000,
+                data: data,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.logout) {
+                        window.location = '/auth?logout';
+                        return;
+                    }
+                    if (data.success == true){
+                        frmName.classList.add('is-valid');
+                        destroyFeedback(true)
+                    }else{
+                        frmDataFolderError.innerHTML = data.message;
+                        frmDataFolderError.classList.remove('d-none');
+                        frmDataFolder.classList.add('is-invalid');
+                        stepperInstace.wrongStep();
+                        if(data.suggestion){
+                            suggestions['frmDataFolder'] = data.suggestion;
+                            frmDataFolderFixBtn.classList.remove('d-none');
+                        }
+                        destroyFeedback(false)
+                    }
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    frmDataFolderError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
+                    frmDataFolderError.classList.remove('d-none');
+                    destroyFeedback(false)
+                }
+            });
+
+        }
+
+        // Server CFG File step validation
+        function validateCFGFile(destroyFeedback) {
+            frmCFGFile.classList.remove('is-invalid', 'is-valid');
+            frmCFGFileError.classList.add('d-none');
+            let data = {
+                dataFolder: frmDataFolder.value.trim(),
+                cfgFile: frmCFGFile.value.trim(),
+            };
+            
+            $.ajax({
+                type: "POST",
+                url: '/setup/validateCFGFile',
+                timeout: 5000,
+                data: data,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.logout) {
+                        window.location = '/auth?logout';
+                        return;
+                    }
+                    if (data.success == true){
+                        frmName.classList.add('is-valid');
+                        destroyFeedback(true)
+                    }else{
+                        frmCFGFileError.innerHTML = data.message;
+                        frmCFGFileError.classList.remove('d-none');
+                        frmCFGFile.classList.add('is-invalid');
+                        stepperInstace.wrongStep();
+                        if(data.suggestion){
+                            suggestions['frmCFGFile'] = data.suggestion;
+                            frmCFGFileFixBtn.classList.remove('d-none');
+                        }
+                        destroyFeedback(false)
+                    }
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    frmCFGFileError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
+                    frmCFGFileError.classList.remove('d-none');
+                    destroyFeedback(false)
+                }
+            });
+        }
+
+        // Save function
+        function performSave(destroyFeedback) {
+            var saveError = document.getElementById("saveError");
+            saveError.classList.add('d-none');
+            let data = {
+                name: frmName.value.trim(),
+                dataFolder: frmDataFolder.value.trim(),
+                cfgFile: frmCFGFile.value.trim(),
+            };
+            
+            $.ajax({
+                type: "POST",
+                url: '/setup/save',
+                timeout: 5000,
+                data: data,
+                dataType: 'json',
+                success: function (data) {
+                    if (data.logout) {
+                        window.location = '/auth?logout';
+                        return;
+                    }
+                    if (data.success == true){
+                        window.location = '/console';
+                    }else{
+                        saveError.innerHTML = data.message;
+                        saveError.classList.remove('d-none');
+                        stepperInstace.wrongStep();
+                        destroyFeedback(false)
+                    }
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    saveError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
+                    saveError.classList.remove('d-none');
+                    destroyFeedback(false)
+                }
+            });
+        }
+    </script>
+
+
+
+</body>
+
+</html>

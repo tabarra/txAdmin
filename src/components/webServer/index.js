@@ -12,6 +12,7 @@ const SocketIO = require('socket.io');
 const SessionIO = require('koa-session-socketio')
 const WebConsole = require('./webConsole')
 
+const ac = require('ansi-colors');
 const nanoid = require('nanoid');
 const { setHttpCallback } = require('@citizenfx/http-wrapper');
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
@@ -70,7 +71,7 @@ module.exports = class WebServer {
                 await Promise.race([timeout, next()]);
                 clearTimeout(timer);
                 if (typeof ctx.body == 'undefined' || (typeof ctx.body == 'string' && !ctx.body.length)) {
-                    if(globals.config.verbose) logWarn(`Route without output: ${ctx.path}`);
+                    if(GlobalData.verbose) logWarn(`Route without output: ${ctx.path}`);
                     return ctx.body = '[no output from route]';
                 }
             } catch (error) {
@@ -79,7 +80,7 @@ module.exports = class WebServer {
                 let methodName = (error.stack && error.stack[0] && error.stack[0].name)? error.stack[0].name : 'anonym';
                 if(error.type === 'entity.too.large'){
                     let desc = `Entity too large for: ${ctx.path}`;
-                    if(globals.config.verbose) logError(desc, methodName);
+                    if(GlobalData.verbose) logError(desc, methodName);
                     ctx.status = 413;
                     ctx.body = {error: desc};
                 }else if (ctx.state.timeout){
@@ -90,7 +91,7 @@ module.exports = class WebServer {
                 }else{
                     let desc = `Internal Error on: ${ctx.path}`;
                     logError(desc, methodName);
-                    if(globals.config.verbose) dir(error)
+                    if(GlobalData.verbose) dir(error)
                     ctx.status = 500;
                     ctx.body = desc;
                 }
@@ -150,7 +151,7 @@ module.exports = class WebServer {
             try {
                 let urlConvar = GetConvar('web_baseUrl', 'false');
                 if(validUrlRegex.test(urlConvar)){
-                    logOk(`Listening at https://${urlConvar}/`);
+                    logOk(`Listening at ` + ac.inverse(` https://${urlConvar}/ `));
                     GlobalData.cfxUrl = urlConvar;
                     clearInterval(getUrlInterval);
                 }
@@ -174,7 +175,7 @@ module.exports = class WebServer {
                 process.exit();
             });
             this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', () => {
-                logOk(`Listening at http://localhost:${GlobalData.txAdminPort}/`);
+                logOk(`Listening at ` + ac.inverse(` http://localhost:${GlobalData.txAdminPort}/ `));
             });
         } catch (error) {
             logError('Failed to start HTTP server with error:');

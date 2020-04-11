@@ -10,7 +10,7 @@ const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(mo
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const getRenderErrorText = (view, error, data) => {
     logError(`Error rendering ${view}.`);
-    if(globals.config.verbose) dir(error)
+    if(GlobalData.verbose) dir(error)
     out = `<pre>\n`;
     out += `Error rendering '${view}'.\n`;
     out += `Message: ${error.message}\n`;
@@ -56,7 +56,7 @@ async function renderMasterView(view, reqSess, data){
     if(isUndefined(data)) data = {};
     data.headerTitle = (!isUndefined(data.headerTitle))? `${data.headerTitle} - txAdmin` : 'txAdmin';
     data.txAdminVersion = GlobalData.txAdminVersion;
-    data.fxserverVersion = `FXServer ${GlobalData.fxServerVersion}`;
+    data.fxserverVersion = GlobalData.fxServerVersion;
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username)? reqSess.auth.username : 'unknown user';
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture)? reqSess.auth.picture : 'img/default_avatar.png';
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
@@ -96,7 +96,7 @@ async function renderLoginView(data){
     // data.template = 'callback';
     // data.template = 'normal';
     // data.template = 'justMessage';
-    data.config = globals.info.serverProfile;
+    data.serverProfile = globals.info.serverProfile;
     data.txAdminVersion = GlobalData.txAdminVersion;
     data.fxserverVersion = GlobalData.fxServerVersion;
 
@@ -164,11 +164,11 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true){
         ){
             return true;
         }else{
-            if(globals.config.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
+            if(GlobalData.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
     } catch (error) {
-        if(globals.config.verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
+        if(GlobalData.verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
         return false;
     }
 }

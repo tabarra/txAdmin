@@ -7,7 +7,7 @@ const escape = (x) => {return x.replace(/\"/g, '\\"');};
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const handleError = (ctx, error)=>{
     logError(`Database operation failed with error: ${error.message}`);
-    if(globals.config.verbose) dir(error);
+    if(GlobalData.verbose) dir(error);
     return ctx.send({
         type: 'danger',
         message: `Error executing this action, please copy the error on the terminal and report in the Discord Server.`

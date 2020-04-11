@@ -114,7 +114,7 @@ module.exports = class DiscordBot {
         if(message.content.startsWith(this.config.statusCommand)){
             //Check spam limiter
             if(!this.spamLimitChecker(this.config.statusCommand, message.channel.id)){
-                if(globals.config.verbose) log(`Spam prevented for command "${this.config.statusCommand}" in channel "${message.channel.name}".`);
+                if(GlobalData.verbose) log(`Spam prevented for command "${this.config.statusCommand}" in channel "${message.channel.name}".`);
                 return;
             }
             this.spamLimitRegister(this.config.statusCommand, message.channel.id);
@@ -161,7 +161,7 @@ module.exports = class DiscordBot {
 
             //Check spam limiter
             if(!this.spamLimitChecker(cmd.trigger, message.channel.id)){
-                if(globals.config.verbose) log(`Spam prevented for command "${cmd.trigger}" in channel "${message.channel.name}".`);
+                if(GlobalData.verbose) log(`Spam prevented for command "${cmd.trigger}" in channel "${message.channel.name}".`);
                 return;
             }
             this.spamLimitRegister(cmd.trigger, message.channel.id);
@@ -240,7 +240,7 @@ module.exports = class DiscordBot {
         }
 
         this.messages = jsonData;
-        if(globals.config.verbose) log(`Discord messages file loaded. Found: ${this.messages.length}`);
+        if(GlobalData.verbose) log(`Discord messages file loaded. Found: ${this.messages.length}`);
     }
 
 

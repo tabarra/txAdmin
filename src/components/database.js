@@ -17,7 +17,7 @@ module.exports = class Database {
                 this.setDefaults();
             } catch (error) {
                 logError(`Failed to load database file '${globals.info.serverProfilePath}/data/experimentsDB'`);
-                if(globals.config.verbose) dir(error);
+                if(GlobalData.verbose) dir(error);
                 process.exit();
             }
         })()

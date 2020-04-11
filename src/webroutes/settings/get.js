@@ -21,9 +21,12 @@ module.exports = async function SettingsGet(ctx) {
         monitor: cleanRenderData(globals.configVault.getScopedStructure('monitor')),
         discord: cleanRenderData(globals.configVault.getScopedStructure('discordBot')),
         disableWrite: (ctx.utils.checkPermission('settings.write', modulename))? '' : 'disabled',
-        serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        activeTab: 'global'
     }
-    renderData.activeTab = (renderData.fxserver.basePath && renderData.fxserver.cfgPath)? 'global' : 'fxserver';
+
+    //FIXME: until there is an advanced tab or something
+    renderData.global.verbose = (GlobalData.verbose)? 'checked' : '';
 
     return ctx.utils.render('settings', renderData);
 };
@@ -34,7 +37,7 @@ function cleanRenderData(inputData){
     let input = clone(inputData);
     let out = {}
     Object.keys(input).forEach((prop) => {
-        if(input[prop] === null || input[prop] === false || typeof input[prop] === 'undefined'){
+        if(input[prop] == null || input[prop] === false || typeof input[prop] === 'undefined'){
             out[prop] = '';
         }else if(input[prop] === true){
             out[prop] = 'checked';

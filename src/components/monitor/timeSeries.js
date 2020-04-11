@@ -81,7 +81,7 @@ module.exports = class TimeSeries {
         try {
             await fs.writeFile(this.file, JSON.stringify(this.log));
         } catch (error) {
-            if (globals.config.verbose) logWarn('Error writing the player history log file.');
+            if (GlobalData.verbose) logWarn('Error writing the player history log file.');
         }
     }
 

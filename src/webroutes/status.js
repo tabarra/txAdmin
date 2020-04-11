@@ -71,9 +71,8 @@ function prepareServerStatus() {
                 <strong>Ping (localhost):</strong> ${ping}<br>
                 <strong>Players:</strong> ${players}<br>
                 <strong>Hitch Time:</strong> ${hitches}<br>
-                <strong>Log Size:</strong> ${logFileSize}<br>
-                <strong>Resources Injected:</strong> ${injectedResources}`;
-
+                <strong>Log Size:</strong> ${logFileSize}`;
+                // <strong>Resources Injected:</strong> ${injectedResources}
     return out;
 }
 
@@ -108,7 +107,7 @@ function prepareHostData() {
         }
 
     } catch (error) {
-        if (globals.config.verbose) {
+        if (GlobalData.verbose) {
             logError('Failed to execute prepareHostData()');
             dir(error);
         }
@@ -131,38 +130,9 @@ function prepareHostData() {
  * Returns the html playerlist
  */
 function preparePlayersData() {
+    // return globals.testPlayers;
     let dataServer = clone(globals.monitor.statusServer);
-
-    if (!dataServer.players.length) return {html: null, count: 0};
-
-    let out = {
-        html: '',
-        count: dataServer.players.length
-    };
-    dataServer.players.forEach(player => {
-        let pingClass;
-        player.ping = parseInt(player.ping);
-        if (player.ping < 0) {
-            pingClass = 'secondary';
-            player.ping = '??';
-        } else if (player.ping < 60) {
-            pingClass = 'success';
-        } else if (player.ping < 100) {
-            pingClass = 'warning';
-        } else {
-            pingClass = 'danger';
-        }
-        let paddedPing = player.ping.toString().padStart(3, 'x').replace(/x/g, '&nbsp;');
-        let maxNameSize = 22;
-        let name = (player.name.length > maxNameSize)? player.name.slice(0, maxNameSize-3)+'...' : player.name;
-        out.html += `<div class="list-group-item list-group-item-accent-${pingClass} player" onclick="showPlayer(${xss(player.id)})">
-                    <span class="pping text-${pingClass}">${paddedPing}</span>
-                    <span class="pname">${xss(name)}</span>
-                </div>`;
-
-    });
-
-    return out;
+    return dataServer.players;
 }
 
 

@@ -5,6 +5,7 @@ const Polyglot = require('node-polyglot');
 const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 const languages = {
+    ar: require('../../locale/ar.json'),
     cs: require('../../locale/cs.json'),
     da: require('../../locale/da.json'),
     de: require('../../locale/de.json'),
@@ -18,6 +19,7 @@ const languages = {
     pl: require('../../locale/pl.json'),
     pt_BR: require('../../locale/pt_BR.json'),
     ro: require('../../locale/ro.json'),
+    ru: require('../../locale/ru.json'),
     th: require('../../locale/th.json'),
     tr: require('../../locale/tr.json'),
     zh: require('../../locale/zh.json'),

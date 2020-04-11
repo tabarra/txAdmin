@@ -1,5 +1,5 @@
 {
-    "version": "2.0.1",
+    "version": "2.2.0-test",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -149,6 +149,19 @@
         {
             "version": "2.0.1",
             "changelog": "Increased time tolerances for CitizenFX login. Minor message tweaks."
+        },
+        {
+            "version": "2.1.0",
+            "changelog": "Improved onboarding process with an Setup Wizard. Minor tweaks."
+        },
+        {
+            "version": "2.1.1",
+            "changelog": "Removed maxsize for some Setup Wizard inputs."
+        }
+        ,
+        {
+            "version": "2.2.0-test",
+            "changelog": "xxxx"
         }
     ]
 }

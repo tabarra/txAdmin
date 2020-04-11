@@ -7,7 +7,7 @@ const { dir, log, logOk, logWarn, logError} = require('../../../extras/console')
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const handleError = (ctx, error)=>{
     logError(`Failed to read the bans from the database with error: ${error.message}`);
-    if(globals.config.verbose) dir(error);
+    if(GlobalData.verbose) dir(error);
     let message = `Error loading this experimental page, please copy the error on the terminal and report in the Discord Server.`;
     return ctx.utils.render('basic/generic', {message});
 }

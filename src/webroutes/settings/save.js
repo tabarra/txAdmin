@@ -83,8 +83,10 @@ function handleGlobal(ctx) {
     newConfig.serverName = cfg.serverName;
     newConfig.publicIP = cfg.publicIP;
     newConfig.language = cfg.language;
-    newConfig.verbose = cfg.verbose;
     let saveStatus = globals.configVault.saveProfile('global', newConfig);
+
+    //FIXME: until there is an advanced tab or something
+    GlobalData.verbose = cfg.verbose;
 
     //Sending output
     if(saveStatus){
@@ -147,7 +149,7 @@ function handleFXServer(ctx) {
             }
         }
     } catch (error) {
-        return ctx.send({type: 'danger', message: `<strong>Base Path error:</strong> ${error.message}`});
+        return ctx.send({type: 'danger', message: `<strong>Server Data Folder error:</strong> ${error.message}`});
     }
 
     //Validating CFG Path

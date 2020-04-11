@@ -114,7 +114,7 @@ module.exports = class ConsoleBuffer {
             //IIRC the issue was that one user with a TM on their nick was making txAdmin's console to close or freeze. I couldn't reproduce the issue.
             if(!globals.fxRunner.config.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ""));
         } catch (error) {
-            if(globals.config.verbose) logError(`Buffer write error: ${error.message}`);
+            if(GlobalData.verbose) logError(`Buffer write error: ${error.message}`);
         }
 
         //Adding data to the buffers
@@ -140,7 +140,7 @@ module.exports = class ConsoleBuffer {
             globals.webServer.webConsole.buffer(data, 'error');
             if(!globals.fxRunner.config.quiet) process.stdout.write(ac.red(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, "")));
         } catch (error) {
-            if(globals.config.verbose) logError(`Buffer write error: ${error.message}`)
+            if(GlobalData.verbose) logError(`Buffer write error: ${error.message}`)
         }
     }
 
@@ -166,14 +166,14 @@ module.exports = class ConsoleBuffer {
         let cleanBuff = this.fileBuffer.replace(/\u001b\[\d+(;\d)?m/g, '');
         fs.appendFile(this.logPath, cleanBuff, {encoding: 'utf8'}, (err)=>{
             if(err){
-                if(globals.config.verbose) logError(`File Write Buffer error: ${error.message}`)
+                if(GlobalData.verbose) logError(`File Write Buffer error: ${error.message}`)
             }else{
                 this.fileBuffer = '';
             }
         });
         fs.stat(this.logPath, (err, stats)=>{
             if(err){
-                if(globals.config.verbose) logError(`Log File get stats error: ${error.message}`)
+                if(GlobalData.verbose) logError(`Log File get stats error: ${error.message}`)
             }else{
                 this.logFileSize = bytes(stats.size);
             }

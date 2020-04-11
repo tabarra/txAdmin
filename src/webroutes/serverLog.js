@@ -138,7 +138,7 @@ function processEventTypes(event){
         return `txAdminClient Debug Message: <span class="text-warning">${xss(message)}</span>`;
 
     }else{
-        if(globals.config.verbose){
+        if(GlobalData.verbose){
             logWarn(`Unrecognized event: ${event.action}`);
             dir(event)
         }

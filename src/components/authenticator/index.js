@@ -99,7 +99,7 @@ module.exports = class Authenticator {
             return true;
         } catch (error) {
             let message = `Failed to create '${this.adminsFile}' with error: ${error.message}`;
-            if(globals.config.verbose) logError(message);
+            if(GlobalData.verbose) logError(message);
             throw new Error(message);
         }
     }
@@ -215,7 +215,7 @@ module.exports = class Authenticator {
             await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
         } catch (error) {
-            if(globals.config.verbose) logError(error.message);
+            if(GlobalData.verbose) logError(error.message);
             throw new Error(`Failed to save '${this.adminsFile}'`);
         }
     }
@@ -272,7 +272,7 @@ module.exports = class Authenticator {
             await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return (password !== null)? this.admins[adminIndex].password_hash : true;
         } catch (error) {
-            if(globals.config.verbose) logError(error.message);
+            if(GlobalData.verbose) logError(error.message);
             throw new Error(`Failed to save '${this.adminsFile}'`);
         }
     }
@@ -304,7 +304,7 @@ module.exports = class Authenticator {
             await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
         } catch (error) {
-            if(globals.config.verbose) logError(error.message);
+            if(GlobalData.verbose) logError(error.message);
             throw new Error(`Failed to save '${this.adminsFile}'`);
         }
     }
@@ -370,7 +370,7 @@ module.exports = class Authenticator {
         }
 
         this.admins = jsonData;
-        if(globals.config.verbose) log(`Admins file loaded. Found: ${this.admins.length}`);
+        if(GlobalData.verbose) log(`Admins file loaded. Found: ${this.admins.length}`);
         return true;
     }
 

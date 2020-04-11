@@ -96,7 +96,6 @@ module.exports = class ConfigVault {
 
         try {
             out.global = {
-                verbose: toDefault(cfg.global.verbose, null),
                 publicIP:  toDefault(cfg.global.publicIP, null),
                 serverName:  toDefault(cfg.global.serverName, null),
                 language:  toDefault(cfg.global.language, null),
@@ -158,10 +157,9 @@ module.exports = class ConfigVault {
      */
     setupConfigDefaults(cfgData){
         let cfg = clone(cfgData);
-        //NOTE: the bool trick in global.verbose and fxRunner.autostart won't work if we want the default to be true
+        //NOTE: the bool trick in fxRunner.autostart won't work if we want the default to be true
         try {
             //Global
-            cfg.global.verbose = (cfg.global.verbose === 'true' || cfg.global.verbose === true); //TODO: move to GlobalData
             cfg.global.publicIP = cfg.global.publicIP || "change-me";
             cfg.global.serverName = cfg.global.serverName || "change-me";
             cfg.global.language = cfg.global.language || "en"; //TODO: move to GlobalData
@@ -261,7 +259,6 @@ module.exports = class ConfigVault {
      */
     getAll(){
         let cfg = clone(this.config);
-        // cfg.global.verbose = true;
         return {
             global: Object.freeze(cfg.global),
             logger: Object.freeze(cfg.logger),

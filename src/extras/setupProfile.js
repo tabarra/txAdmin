@@ -7,7 +7,7 @@ const slash = require('slash');
 const { dir, log, logOk, logWarn, logError} = require('./console')(modulename);
 
 //Helpers
-const printDivider = () => { log('='.repeat(64)) };
+const printDivider = () => { log('='.repeat(57)) };
 const cleanPath = (x) => { return slash(path.normalize(x)) };
 
 //Default config structure
@@ -23,7 +23,7 @@ let defaultConfig = {
     monitor: {
         timeout: 1000,
         restarter: {
-            failures: 15,
+            failures: 30,
             schedule: []
         }
     },
@@ -75,19 +75,11 @@ module.exports = (osType, fxServerPath, fxServerVersion, serverProfile, profileP
     //Saving start.bat
     if(osType == 'Windows_NT'){
         try {
+            let batData = `@echo off\r\n
+                ${fxServerPath}/FXServer.exe +set serverProfile "${serverProfile}"\r\n
+                pause`;
             let batFolder = path.resolve(fxServerPath, '..');
             let batPath  = path.join(batFolder, `start_${fxServerVersion}_${serverProfile}.bat`);
-            let runCmd;
-            if(fs.existsSync(`${fxServerPath}/run.cmd`)){
-                runCmd = `${fxServerPath}/run.cmd`;
-            }else{
-                runCmd = `${fxServerPath}/FXServer.exe`;
-            }
-            this.spawnVariables = {
-                shell: 'cmd.exe',
-                cmdArgs: ['/c', runCmd]
-            };
-            let batData = `@echo off\r\n${runCmd} +set serverProfile "${serverProfile}"\r\npause`;
             fs.writeFileSync(batPath, batData);
             logOk(`You can use ${ac.inverse(batPath)} to start this profile.`);
         } catch (error) {

@@ -11,7 +11,7 @@ const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modul
 module.exports = async function Dashboard(ctx) {
     //If the any FXServer configuration is missing
     if(globals.fxRunner.config.basePath === null || globals.fxRunner.config.cfgPath === null){
-        return ctx.response.redirect('/settings');
+        return ctx.response.redirect('/setup');
     }
 
     //Shortcut function
@@ -117,7 +117,7 @@ function getUpdateData() {
         updateData.changes = updateData.changes.reverse();
     } catch (error) {
         logError(`Error while processing changelog. Enable verbosity for more information.`);
-        if(globals.config.verbose) dir(error);
+        if(GlobalData.verbose) dir(error);
     }
 
 

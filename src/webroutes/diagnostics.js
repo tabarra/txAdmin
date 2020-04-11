@@ -72,27 +72,27 @@ async function getProcessesData(){
             let procName;
             let order;
             if(pid == process.pid){
-                procName = 'FxMonitor + txAdmin';
+                procName = `(${pid}) `+'FxMonitor + txAdmin';
                 order = 0;
 
             }else if(pid == termPID){
                 if(GlobalData.osType === 'Linux' && Object.keys(processes).length == 2){
-                    procName = 'FXServer';
+                    procName = `(${pid}) `+'FXServer';
                 }else{
-                    procName = 'Terminal';
+                    procName = `(${pid}) `+'Terminal';
                 }
                 order = 1;
 
             }else if(pid == fxsvMainPID){
-                procName = 'FXServer Main';
+                procName = `(${pid}) `+'FXServer Main';
                 order = 2;
 
             }else if(pid == fxsvRepPID){
-                procName = 'FXServer Dump';
+                procName = `(${pid}) `+'FXServer Dump';
                 order = 3;
 
             }else{
-                procName = 'Unknown';
+                procName = `(${pid}) `+'Unknown';
                 order = 9;
             }
 
@@ -108,7 +108,7 @@ async function getProcessesData(){
 
     } catch (error) {
         logError(`Error getting processes data.`);
-        if(globals.config.verbose) dir(error);
+        if(GlobalData.verbose) dir(error);
     }
 
     //Sort procList array
@@ -155,7 +155,7 @@ async function getFXServerData(){
         infoData = res.data;
     } catch (error) {
         logWarn('Failed to get FXServer information.');
-        if(globals.config.verbose) dir(error);
+        if(GlobalData.verbose) dir(error);
         return {error: `Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)`};
     }
 
@@ -173,7 +173,7 @@ async function getFXServerData(){
     //Processing result
     try {
         let versionWarning;
-        if(getBuild(infoData.server) < 1543){
+        if(getBuild(infoData.server) !== GlobalData.fxServerVersion){
             versionWarning = `<span class="badge badge-danger"> INCOMPATIBLE </span>`;
         }
 
@@ -202,7 +202,7 @@ async function getFXServerData(){
         return fxData;
     } catch (error) {
         logWarn('Failed to process FXServer information.');
-        if(globals.config.verbose) dir(error);
+        if(GlobalData.verbose) dir(error);
         return {error: `Failed to process FXServer data. <br>Check the terminal for more information (if verbosity is enabled)`};
     }
 }
@@ -232,7 +232,7 @@ async function getHostData(){
         hostData.error  = false;
     } catch (error) {
         logError('Error getting Host data');
-        if(globals.config.verbose) dir(error);
+        if(GlobalData.verbose) dir(error);
         hostData.error = `Failed to retrieve host data. <br>Check the terminal for more information (if verbosity is enabled)`;
     }
 

@@ -36,6 +36,8 @@ module.exports = router = (config) =>{
     router.post('/adminManager/:action', requestAuth('web'), webRoutes.adminManager.actions);
 
     //Settings
+    router.get('/setup', requestAuth('web'), webRoutes.setup.get);
+    router.post('/setup/:action', requestAuth('api'), webRoutes.setup.post);
     router.get('/settings', requestAuth('web'), webRoutes.settings.get);
     router.post('/settings/save/:scope', requestAuth('web'), webRoutes.settings.save);
 
@@ -67,13 +69,12 @@ module.exports = router = (config) =>{
 
     //Index & generic
     router.get('/resources', requestAuth('web'), webRoutes.resources);
-    router.get('/addExtension', requestAuth('web'), webRoutes.addExtension);
     router.get('/', requestAuth('web'), webRoutes.dashboard);
 
     //TODO: replace this with an middleware checking for `ctx._matchedRoute`
     router.all('*', async (ctx) =>{
         ctx.status = 404;
-        if(globals.config.verbose) logWarn(`Request 404 error: ${ctx.path}`);
+        if(GlobalData.verbose) logWarn(`Request 404 error: ${ctx.path}`);
         return ctx.utils.render('basic/404');
     });
 

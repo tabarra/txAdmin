@@ -14,7 +14,7 @@
     "server_actions": {
         "restarting": "يتم أعادة التشغيل (%{reason}).",
         "restarting_discord": "**%{servername}** يتم أعادة التشغيل (%{reason}).",
-        "stopping": "Server shutting down (%{reason}).",
+        "stopping": "يـتم أيقاف تشغيل الـسيرفر (%{reason}).",
         "stopping_discord": "**%{servername}** تم أيقاف السيرفر(%{reason}).",
         "spawning_discord": "**%{servername}** جاري تشغيل السيرفر."
     },
