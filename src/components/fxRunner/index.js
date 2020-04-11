@@ -49,11 +49,9 @@ module.exports = class FXRunner {
      */
     setupVariables(){
         // Prepare extra args
-        let extraArgs;
-        if(typeof this.config.commandLine === 'string' || this.config.commandLine.length){
+        let extraArgs = [];
+        if(typeof this.config.commandLine === 'string' && this.config.commandLine.length){
             extraArgs = parseArgsStringToArgv(this.config.commandLine);
-        }else{
-            extraArgs = [];
         }
 
         // Prepare default args
