@@ -128,10 +128,10 @@
                     <!-- FXServer Tab -->
                     <div class="tab-pane fade {{activeTab=='fxserver'|isActive|tShow}}" id="nav-fxserver" role="tabpanel" aria-labelledby="nav-fxserver-tab">
                         <div class="form-group row">
-                            <label for="frmFXServer-basePath" class="col-sm-3 col-form-label">Server Data Folder
+                            <label for="frmFXServer-serverDataPath" class="col-sm-3 col-form-label">Server Data Folder
                                 <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmFXServer-basePath" value="{{fxserver.basePath|undef}}"
+                                <input type="text" class="form-control" id="frmFXServer-serverDataPath" value="{{fxserver.serverDataPath|undef}}"
                                     placeholder="C:/Users/Admin/Desktop/server01" {{disableWrite}}>
                                 <span class="form-text text-muted">
                                     The folder that <strong>contains</strong> the <code>resources</code> and
@@ -375,14 +375,14 @@
     //============================================== FXServer Settings
     $('#frmFXServer-save').click(function () {
         let data = {
-            basePath: $('#frmFXServer-basePath').val().trim(),
+            serverDataPath: $('#frmFXServer-serverDataPath').val().trim(),
             cfgPath: $('#frmFXServer-cfgPath').val().trim(),
             commandLine: $('#frmFXServer-commandLine').val().trim(),
             onesync: $('#frmFXServer-onesync').is(':checked'),
             autostart: $('#frmFXServer-autostart').is(':checked'),
             quiet: $('#frmFXServer-quiet').is(':checked')
         }
-        if (!data.basePath.length || !data.cfgPath.length) {
+        if (!data.serverDataPath.length || !data.cfgPath.length) {
             var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
             return;
         }

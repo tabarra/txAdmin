@@ -23,7 +23,7 @@ module.exports = async function CFGEditorGet(ctx) {
     //Read cfg file
     let rawFile;
     try {
-        let cfgFilePath = helpers.resolveCFGFilePath(globals.fxRunner.config.cfgPath, globals.fxRunner.config.basePath);
+        let cfgFilePath = helpers.resolveCFGFilePath(globals.fxRunner.config.cfgPath, globals.fxRunner.config.serverDataPath);
         rawFile = helpers.getCFGFileData(cfgFilePath);
     } catch (error) {
         let message = `Failed to read CFG File with error: ${error.message}`;

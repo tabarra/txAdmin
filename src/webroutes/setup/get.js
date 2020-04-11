@@ -15,7 +15,7 @@ module.exports = async function SetupGet(ctx) {
     }
 
     // //If the any FXServer configuration is missing
-    // if(globals.fxRunner.config.basePath === null || globals.fxRunner.config.cfgPath === null){
+    // if(globals.fxRunner.config.serverDataPath === null || globals.fxRunner.config.cfgPath === null){
     //     return ctx.response.redirect('/setup');
     // }
 

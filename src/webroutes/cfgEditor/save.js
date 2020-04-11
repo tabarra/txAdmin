@@ -30,13 +30,13 @@ module.exports = async function CFGEditorSave(ctx) {
     }
 
     //Check if file is set
-    if(globals.fxRunner.config.cfgPath === null || globals.fxRunner.config.basePath === null){
+    if(globals.fxRunner.config.cfgPath === null || globals.fxRunner.config.serverDataPath === null){
         let message = `CFG or Base Path not defined. Configure it in the settings page first.`
         return ctx.send({type: 'danger', message});
     }
 
     //Saving backup file
-    let cfgFilePath = helpers.resolveCFGFilePath(globals.fxRunner.config.cfgPath, globals.fxRunner.config.basePath);
+    let cfgFilePath = helpers.resolveCFGFilePath(globals.fxRunner.config.cfgPath, globals.fxRunner.config.serverDataPath);
     try {
         //NOTE: not moving to make sure we don't screw file permissions.
         await fs.writeFile(cfgFilePath + '.bkp', helpers.getCFGFileData(cfgFilePath), 'utf8');

@@ -111,7 +111,7 @@ function handleGlobal(ctx) {
 function handleFXServer(ctx) {
     //Sanity check
     if(
-        isUndefined(ctx.request.body.basePath) ||
+        isUndefined(ctx.request.body.serverDataPath) ||
         isUndefined(ctx.request.body.cfgPath) ||
         isUndefined(ctx.request.body.commandLine) ||
         isUndefined(ctx.request.body.onesync) ||
@@ -123,7 +123,7 @@ function handleFXServer(ctx) {
 
     //Prepare body input
     let cfg = {
-        basePath: slash(path.normalize(ctx.request.body.basePath+'/')),
+        serverDataPath: slash(path.normalize(ctx.request.body.serverDataPath+'/')),
         cfgPath: slash(path.normalize(ctx.request.body.cfgPath)),
         commandLine: ctx.request.body.commandLine,
         onesync: (ctx.request.body.onesync === 'true'),
@@ -133,7 +133,7 @@ function handleFXServer(ctx) {
 
     //Validating path spaces
     if(
-        cfg.basePath.includes(' ') ||
+        cfg.serverDataPath.includes(' ') ||
         cfg.cfgPath.includes(' ')
     ){
         return ctx.send({type: 'danger', message: `The paths cannot contain spaces.`});
@@ -141,8 +141,8 @@ function handleFXServer(ctx) {
 
     //Validating Base Path
     try {
-        if(!fs.existsSync(path.join(cfg.basePath, 'resources'))){
-            if(cfg.basePath.includes('resources')){
+        if(!fs.existsSync(path.join(cfg.serverDataPath, 'resources'))){
+            if(cfg.serverDataPath.includes('resources')){
                 throw new Error("The base must be the folder that contains the resources folder.");
             }else{
                 throw new Error("Couldn't locate or read a resources folder inside of the base path.");
@@ -154,7 +154,7 @@ function handleFXServer(ctx) {
 
     //Validating CFG Path
     try {
-        let cfgFilePath = helpers.resolveCFGFilePath(cfg.cfgPath, cfg.basePath);
+        let cfgFilePath = helpers.resolveCFGFilePath(cfg.cfgPath, cfg.serverDataPath);
         let rawCfgFile = helpers.getCFGFileData(cfgFilePath);
         let port = helpers.getFXServerPort(rawCfgFile);
     } catch (error) {
@@ -163,7 +163,7 @@ function handleFXServer(ctx) {
 
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('fxRunner');
-    newConfig.basePath = cfg.basePath;
+    newConfig.serverDataPath = cfg.serverDataPath;
     newConfig.cfgPath = cfg.cfgPath;
     newConfig.onesync = cfg.onesync;
     newConfig.autostart = cfg.autostart;

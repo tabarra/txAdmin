@@ -45,9 +45,10 @@
 > v2.1.1
 - [x] make player list dynamic and searchable
 - [x] clean up the resource injector?
-- [ ] Rename basePath to serverDataPath
-- [ ] Create legacy branch + fix `run.cmd` + disable updater and add deprecated message
+- [x] Rename basePath to serverDataPath
+- [ ] Change code exchange error messages
 - [ ] Rework the entire monitor
+- [ ] Create legacy branch + fix `run.cmd` + disable updater and add deprecated message
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
 - [ ] fix bug: resources page when you type then delete what you typed, it shows hidden default resources
@@ -58,8 +59,8 @@ How to fix the restart loop problem:
 - [x] launch fxserver directly instead of using `cmd.exe /c` or `/bin/sh`
 - [x] create fxRunner.history[] with pid, ts.started, ts.killed, ts.exited, ts.closed
 - [x] create fxRunner.getStatus()
-- [ ] make monitor use the fxRunner.getStatus()
-- [ ] make monitor show status on the interface when monitor status != online
+- [x] make monitor use the fxRunner.getStatus()
+- [x] make monitor show status on the interface when monitor status != online
 - [ ] make fxRunner.spawn() wait for last history = closed
 - [ ] add fxRunner.history[] card to the diagnostics interface
 Another idea:

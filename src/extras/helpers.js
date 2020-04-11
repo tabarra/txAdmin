@@ -61,7 +61,7 @@ function dependencyChecker() {
  *  - the path is not valid (absolute or relative)
  *  - cannot read the file data
  * @param {string} cfgPath
- * @param {string} basePath
+ * @param {string} serverDataPath
  */
 function parseSchedule(schedule, filter) {
     if(typeof filter === 'undefined') filter = true;
@@ -122,10 +122,10 @@ function getCFGFileData(cfgPath) {
 /**
  * Returns the absolute path of the given CFG Path
  * @param {string} cfgPath
- * @param {string} basePath
+ * @param {string} serverDataPath
  */
-function resolveCFGFilePath(cfgPath, basePath) {
-    return (path.isAbsolute(cfgPath))? cfgPath : path.resolve(basePath, cfgPath);
+function resolveCFGFilePath(cfgPath, serverDataPath) {
+    return (path.isAbsolute(cfgPath))? cfgPath : path.resolve(serverDataPath, cfgPath);
 }
 
 

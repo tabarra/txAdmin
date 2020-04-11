@@ -118,8 +118,8 @@ module.exports = class FXRunner {
             return logError('this.spawnVariables is not set.');
         }
         //If the any FXServer configuration is missing
-        if(this.config.basePath === null || this.config.cfgPath === null){
-            return logError('Cannot start the server with missing configuration (basePath || cfgPath).');
+        if(this.config.serverDataPath === null || this.config.cfgPath === null){
+            return logError('Cannot start the server with missing configuration (serverDataPath || cfgPath).');
         }
         //If the server is already alive
         if(this.fxChild !== null){
@@ -128,7 +128,7 @@ module.exports = class FXRunner {
 
         //Detecting endpoint port
         try {
-            let cfgFilePath = helpers.resolveCFGFilePath(this.config.cfgPath, this.config.basePath);
+            let cfgFilePath = helpers.resolveCFGFilePath(this.config.cfgPath, this.config.serverDataPath);
             let rawCfgFile = helpers.getCFGFileData(cfgFilePath);
             this.fxServerPort = helpers.getFXServerPort(rawCfgFile);
         } catch (error) {
@@ -157,7 +157,7 @@ module.exports = class FXRunner {
             this.fxChild = spawn(
                 this.spawnVariables.command,
                 this.spawnVariables.args,
-                {cwd: this.config.basePath}
+                {cwd: this.config.serverDataPath}
             );
             if(typeof this.fxChild.pid === 'undefined'){
                 throw new Error(`Executon of "${this.spawnVariables.command}" failed.`);

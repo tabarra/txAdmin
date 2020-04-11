@@ -22,11 +22,11 @@ const getResourceSubPath = (resPath) => {
     if(resPath.indexOf('system_resources') >= 0) return `system_resources`;
     if(!path.isAbsolute(resPath)) return resPath;
 
-    let basePathArr = breakPath(`${globals.fxRunner.config.basePath}/resources`);
+    let serverDataPathArr = breakPath(`${globals.fxRunner.config.serverDataPath}/resources`);
     let resPathArr = breakPath(resPath);
-    for (let i = 0; i < basePathArr.length; i++) {
+    for (let i = 0; i < serverDataPathArr.length; i++) {
         if(isUndefined(resPathArr[i])) break;
-        if(basePathArr[i].toLowerCase() == resPathArr[i].toLowerCase()){
+        if(serverDataPathArr[i].toLowerCase() == resPathArr[i].toLowerCase()){
             delete resPathArr[i];
         }
     }

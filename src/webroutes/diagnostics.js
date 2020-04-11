@@ -235,7 +235,7 @@ async function gettxAdminData(){
         failures: globals.monitor.config.restarter.failures,
         schedule: globals.monitor.config.restarter.schedule.join(', '),
         fxServerPath: GlobalData.fxServerPath,
-        basePath: globals.fxRunner.config.basePath,
+        serverDataPath: globals.fxRunner.config.serverDataPath,
         cfgPath: globals.fxRunner.config.cfgPath,
     };
 

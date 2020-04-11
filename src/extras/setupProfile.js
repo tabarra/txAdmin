@@ -36,7 +36,7 @@ let defaultConfig = {
         statusCommand: '/status'
     },
     fxRunner: {
-        basePath: null,
+        serverDataPath: null,
         cfgPath: null,
         setPriority: false,
         onesync: false,

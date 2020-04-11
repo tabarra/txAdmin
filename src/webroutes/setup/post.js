@@ -250,7 +250,7 @@ async function handleSave(ctx) {
     let saveGlobalStatus = globals.configVault.saveProfile('global', newGlobalConfig);
 
     let newFXRunnerConfig = globals.configVault.getScopedStructure('fxRunner');
-    newFXRunnerConfig.basePath = cfg.dataFolder;
+    newFXRunnerConfig.serverDataPath = cfg.dataFolder;
     newFXRunnerConfig.cfgPath = cfg.cfgFile;
     let saveFXRunnerStatus = globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
     
