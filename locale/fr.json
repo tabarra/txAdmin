@@ -16,7 +16,7 @@
         "restarting_discord": "**%{servername}** redémarre (%{reason}).",
         "stopping": "Fermeture du serveur (%{reason}).",
         "stopping_discord": "**%{servername}** est en train de fermer (%{reason}).",
-        "spawning_discord": "**%{servername}** redémarre."
+        "spawning_discord": "**%{servername}** est en train de démarrer."
     },
     "discord": {
         "status_online": "**%{servername}** est actuellement **Ouvert**!",
