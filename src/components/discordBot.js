@@ -92,7 +92,7 @@ module.exports = class DiscordBot {
             logError(error.message);
         });
         this.client.on('resume', (error) => {
-            logOk('Connection resumed');
+            if(GlobalData.verbose) logOk('Connection with Discord API server resumed');
         });
 
         //Start bot
