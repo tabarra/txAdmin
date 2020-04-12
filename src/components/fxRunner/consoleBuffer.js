@@ -72,7 +72,16 @@ module.exports = class ConsoleBuffer {
         }
         this.portStreamProcessor = new StreamSnitch(
             /Could not bind on ([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})/ig,
-            (m) => { try{deferError(`Detected FXServer error: Port ${m[2]} is busy!`)}catch(e){} }
+            (m) => { 
+                try{
+                    if(!globals.fxRunner.restartDelayOverride){
+                        globals.fxRunner.restartDelayOverride = 10000;
+                    }else if(globals.fxRunner.restartDelayOverride <= 45000){
+                        globals.fxRunner.restartDelayOverride += 5000;
+                    }
+                    deferError(`Detected FXServer error: Port ${m[2]} is busy! Increasing restart delay to ${globals.fxRunner.restartDelayOverride}.`);
+                }catch(e){} 
+            }
         );
         this.portStreamProcessor.on('error', (data) => {});
 

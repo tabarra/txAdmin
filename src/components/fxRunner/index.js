@@ -20,7 +20,7 @@ module.exports = class FXRunner {
         this.config = config;
         this.spawnVariables = null;
         this.fxChild = null;
-        this.tsChildStarted = null; //TODO: replace
+        this.restartDelayOverride == false;
         this.history = [];
         this.fxServerPort = null;
         this.consoleBuffer = new ConsoleBuffer(this.config.logPath, 10);
@@ -95,16 +95,56 @@ module.exports = class FXRunner {
 
     //================================================================
     /**
+     * Returns a promise awaiting for the status to change to one that allows new server spawns
+     * @returns {promise} 
+     */
+    awaitCompleteShutdown(){
+        return new Promise((resolve, reject) => {
+            let roundsCounter = 0;
+            setInterval(() => {
+                let currStatus = this.getStatus();
+
+                // Start: spawn ready, not started
+                if(currStatus == 'spawn ready' || currStatus == 'not started'){
+                    resolve(true);
+
+                // Cancel:  killed
+                }else if(currStatus == 'killed'){
+                    reject(false);
+                }
+
+                // At start and every 10 seconds:
+                if(roundsCounter == 0 || roundsCounter % 20 == 0){
+                    logWarn(`(${roundsCounter/2}s) Awaiting FXServer to completely shutdown before starting `)
+                }
+                roundsCounter++;
+            }, 500);
+        });
+    }//Final awaitCompleteShutdown()
+
+
+    //================================================================
+    /**
      * Spawns the FXServer and sets up all the event handlers
      * @param {boolean} announce
      * @returns {string} null or error message
      */
     async spawnServer(announce){
-        log("Starting FXServer");
+        // //Check if there is an start pending
+        // let currStatus = this.getStatus();
+        // if(currStatus.startsWith('spawn awaiting')){
+        //     return logError('(status) The server is already started.');
+        // }
+        // try {
+        //     await awaitCompleteShutdown();
+        // } catch (error) {
+        //     if(GlobalData.verbose) logWarn('Spawn aborted.')
+        // }
+
         //Setup variables
         this.setupVariables();
         if(GlobalData.verbose){
-            log(`Executing:`);
+            log(`Spawn Variables:`);
             dir(this.spawnVariables);
         }
         //Sanity Check
@@ -119,10 +159,10 @@ module.exports = class FXRunner {
         if(this.config.serverDataPath === null || this.config.cfgPath === null){
             return logError('Cannot start the server with missing configuration (serverDataPath || cfgPath).');
         }
-        //If the server is already alive
-        if(this.fxChild !== null){
-            return logError('The server is already started.');
-        }
+        // //If the server is already alive
+        // if(this.fxChild !== null || currStatus == 'spawned'){
+        //     return logError('(fxChild) The server is already running.');
+        // }
 
         //Detecting endpoint port
         try {
@@ -173,9 +213,6 @@ module.exports = class FXRunner {
                 }
             });
             historyIndex = this.history.length - 1;
-
-            //FIXME: remove
-            this.tsChildStarted = now();
             
         } catch (error) {
             logError('Failed to start FXServer with the following error:');
@@ -284,7 +321,12 @@ module.exports = class FXRunner {
 
             //Restart server
             this.killServer();
-            await sleep(this.config.restartDelay);
+            if(this.restartDelayOverride){
+                logWarn(`Restarting the fxserver with delay override ${this.restartDelayOverride}`);
+                await sleep(this.restartDelayOverride);
+            }else{
+                await sleep(this.config.restartDelay);
+            }
             return this.spawnServer();
         } catch (error) {
             let errMsg = logError("Couldn't restart the server.");
@@ -313,6 +355,16 @@ module.exports = class FXRunner {
                 this.srvCmd(`txaKickAll "${kickMessage}"`);
                 await sleep(500);
             }
+
+            // // Check if we should cancel
+            // let currStatus = this.getStatus();
+            // if(
+            //     currStatus.startsWith('spawn awaiting') ||
+            //     currStatus == 'spawned'
+            // ){
+            //     return logError('(status) The server is already started.');
+            // }
+            // // spawned, crashed, spawn awaiting ..., spawn ready
 
             //Stopping server
             if(this.fxChild !== null){
@@ -377,6 +429,7 @@ module.exports = class FXRunner {
     /**
      * Returns the status of the server, with the states being:
      *  - not started
+     *  - spawn ready
      *  - spawn awaiting last: <list of pending status of last instance>
      *  - kill pending: <list of pending events from current instance>
      *  - killed
@@ -393,8 +446,11 @@ module.exports = class FXRunner {
         }else if(!curr.timestamps.start){
             let last = this.history[this.history.length - 2];
             let pending = Object.keys(last.timestamps).filter(k => !curr.timestamps[k]);
-            if(!pending.length) throw new Error(`This should also never happen... /shrug`);
-            return 'spawn awaiting last: ' + pending.join(', ');
+            if(!pending.length){
+                return 'spawn ready';
+            }else{
+                return 'spawn awaiting last: ' + pending.join(', ');
+            }
         }else if(curr.timestamps.kill){
             let pending = Object.keys(curr.timestamps).filter(k => !curr.timestamps[k]);
             if(pending.length){
@@ -408,6 +464,37 @@ module.exports = class FXRunner {
         }else{
             return 'spawned';
         }
+
+        /*
+            Behavior:
+                - Monitor:  xxx
+
+                - FXRunner:
+                    - Spawn: 
+                        - if status not in ["spawn ready", "not started" return "another start pending"
+                        - 
+                    - Restart: xxx
+                    - Kill:  xxx
+
+                - Controls:
+                    - Start: xxx
+                    - Restart: xxx
+                    - Stop: xxx
+
+
+            Behavior:
+                - Monitor:  xxx
+
+                - FXRunner:
+                    - Spawn: xxx
+                    - Restart: xxx
+                    - Kill:  xxx
+
+                - Controls:
+                    - Start: xxx
+                    - Restart: xxx
+                    - Stop: xxx
+        */
     }
 
 

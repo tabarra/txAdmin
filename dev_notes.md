@@ -46,7 +46,8 @@
 - [x] make player list dynamic and searchable
 - [x] clean up the resource injector?
 - [x] Rename basePath to serverDataPath
-- [ ] Change code exchange error messages
+- [x] Change code exchange error messages
+> v2.2.0
 - [ ] Rework the entire monitor
 - [ ] Create legacy branch + fix `run.cmd` + disable updater and add deprecated message
 - [ ] Social auth provider setup retry every 15 seconds

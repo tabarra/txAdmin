@@ -24,11 +24,16 @@ module.exports = async function FXServerControls(ctx) {
 
     if(action == 'restart'){
         ctx.utils.appendLog(`RESTART SERVER`);
-        let restartMsg = await globals.fxRunner.restartServer(ctx.session.auth.username);
-        if(restartMsg !== null){
-            return ctx.send({type: 'danger', message: restartMsg});
+        if(globals.fxRunner.restartDelayOverride || globals.fxRunner.restartDelayOverride <= 4000){
+            globals.fxRunner.restartServer(ctx.session.auth.username);
+            return ctx.send({type: 'success', message: `Restarting the fxserver with delay override ${globals.fxRunner.restartDelayOverride}.`});
         }else{
-            return ctx.send({type: 'success', message: 'Restarting server...'});
+            let restartMsg = await globals.fxRunner.restartServer(ctx.session.auth.username);
+            if(restartMsg !== null){
+                return ctx.send({type: 'danger', message: restartMsg});
+            }else{
+                return ctx.send({type: 'success', message: 'Restarting server...'});
+            }
         }
 
     }else if(action == 'stop'){

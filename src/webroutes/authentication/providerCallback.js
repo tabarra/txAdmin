@@ -42,8 +42,8 @@ module.exports = async function ProviderCallback(ctx) {
         let currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/${provider}/callback`;
         tokenSet = await globals.authenticator.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
-        let message = `Code Exchange error: ${error.message}`;
-        if(GlobalData.verbose) logError(message);
+        let message = `Code Exchange error: ${error.message}.\n\n\n\r\nSynchronize your VPS clock.`;
+        if(GlobalData.verbose) logError(`Code Exchange error: ${error.message}`);
         return returnJustMessage(ctx, message);
     }
 

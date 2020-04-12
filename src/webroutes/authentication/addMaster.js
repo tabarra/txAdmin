@@ -93,7 +93,7 @@ async function handleCallback(ctx) {
         tokenSet = await globals.authenticator.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
         logWarn(`Code Exchange error: ${error.message}`);
-        let message = `Failed to exchange code for token. Try again.\n\n\n\r\nIf this problem persists, check terminal for more info.`;
+        let message = `Failed to exchange code for token. Try again.\n\n\n\r\nSynchronize your VPS clock.`;
         return ctx.utils.render('login', {template: 'justMessage', message});
     }
 
