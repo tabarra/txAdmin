@@ -1,5 +1,5 @@
 {
-    "version": "2.2.0-test",
+    "version": "2.2.0",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -160,8 +160,8 @@
         }
         ,
         {
-            "version": "2.2.0-test",
-            "changelog": "xxxx"
+            "version": "2.2.0",
+            "changelog": "Fixed playerlist and improved diagnostics and error information."
         }
     ]
 }
