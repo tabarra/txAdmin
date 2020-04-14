@@ -14,6 +14,7 @@ const languages = {
     fi: require('../../locale/fi.json'),
     fr: require('../../locale/fr.json'),
     hu: require('../../locale/hu.json'),
+    lt: require('../../locale/lt.json'),
     lv: require('../../locale/lv.json'),
     nl: require('../../locale/nl.json'),
     pl: require('../../locale/pl.json'),

@@ -110,7 +110,7 @@ For the monitor:
 ## ETC
 ```bash
 cd /e/FiveM/builds
-npx nodemon --watch "2318/citizen/system_resources/monitor/src/*" --exec "2318/FXServer.exe"
+npx nodemon --watch "2339/citizen/system_resources/monitor/src/*" --exec "2339/FXServer.exe +set txAdminVerbose truex"
 ```
 
 ### Links + random stuff
