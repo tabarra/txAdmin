@@ -46,6 +46,7 @@
     "koa-static": "^5.0.0",
     "lowdb": "^1.0.0",
     "nanoid": "^2.1.11",
+    "nanoid-dictionary": "^3.0.0",
     "node-polyglot": "^2.4.0",
     "openid-client": "^3.14.1",
     "pidtree": "^0.3.0",
