@@ -433,7 +433,8 @@ module.exports = class FXRunner {
      *  - spawn awaiting last: <list of pending status of last instance>
      *  - kill pending: <list of pending events from current instance>
      *  - killed
-     *  - crashed
+     *  - closing
+     *  - closed
      *  - spawned
      * @returns {string} status
      */
@@ -458,43 +459,13 @@ module.exports = class FXRunner {
             }else{
                 return 'killed';
             }
-        }else if(curr.timestamps.exit || curr.timestamps.close){
-            return 'crashed';
-            // TODO: if both events, we can already trigger an restart
+        }else if(curr.timestamps.exit && !curr.timestamps.close){
+            return 'closing';
+        }else if(curr.timestamps.exit && curr.timestamps.close){
+            return 'closed'; // TODO: we can already trigger an restart - doing that from monitor
         }else{
             return 'spawned';
         }
-
-        /*
-            Behavior:
-                - Monitor:  xxx
-
-                - FXRunner:
-                    - Spawn: 
-                        - if status not in ["spawn ready", "not started" return "another start pending"
-                        - 
-                    - Restart: xxx
-                    - Kill:  xxx
-
-                - Controls:
-                    - Start: xxx
-                    - Restart: xxx
-                    - Stop: xxx
-
-
-            Behavior:
-                - Monitor:  xxx
-
-                - FXRunner:
-                    - Spawn: xxx
-                    - Restart: xxx
-                    - Kill:  xxx
-
-                - Controls:
-                    - Start: xxx
-                    - Restart: xxx
-                    - Stop: xxx
-        */
     }
 
 

@@ -1,8 +1,6 @@
 //Requires
 const modulename = 'ConfigVault';
 const fs = require('fs');
-const path = require('path');
-const slash = require('slash');
 const clone = require('clone');
 const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 

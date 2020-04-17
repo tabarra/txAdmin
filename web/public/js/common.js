@@ -20,7 +20,6 @@ function applyPlayerlistFilter(){
     let search = plistSearchElement.value.toLowerCase();
     Array.from(playerlistElement.children).forEach(el => {
         if(el.id == 'playerlist-message') return;
-        console.dir(el.dataset['pname'])
         if(
             search == '' || 
             (typeof el.dataset['pname'] == 'string' && el.dataset['pname'].includes(search))
