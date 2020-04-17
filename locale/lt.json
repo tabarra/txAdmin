@@ -4,22 +4,22 @@
         "humanizer_language": "lt"
     },
     "restarter": {
-        "crash_detected": "crash'as aptiktas",
-        "partial_crash_warn": "Dėl crash'o aptikimo serveris persikraus uz 1 min .",
-        "partial_crash_warn_discord": "Dėl potencialaus crash serveryje, **%{servername}** serveris persikraus už 1 minutės",
-        "schedule_reason": "Planinis perkrovimas %{time}",
-        "schedule_warn": "Serveris perkraunamas už %{smart_count} minutės. Prašome atsijungti. |||| Serverio planinis perkrovimas už %{smart_count} minučių.",
-        "schedule_warn_discord": "**%{servername}** planinis perkrovimas už %{smart_count} minutės. |||| **%{servername}** planinis perkrovimas %{smart_count} minučių."
+        "crash_detected": "Aptiktas serverio nulūžimas",
+        "partial_crash_warn": "Del aptikto serverio nulužimo serveris persikraus uz 1 minutes",
+        "partial_crash_warn_discord": "Dėl aptikto serverio nulūžimo **%{servername}** serveris persikraus už 1 minutės",
+        "schedule_reason": "Automatinis %{time} perkrovimas",
+        "schedule_warn": "Serveris persikraus už %{smart_count} minutes. Prašome atsijungti. |||| Serveris persikraus už %{smart_count} minuciu. Prašome atsijungti.",
+        "schedule_warn_discord": "**%{servername}** automatiškai persikraus už %{smart_count} minutės. |||| **%{servername}** automatiškai persikraus už %{smart_count} minučių."
     },
     "server_actions": {
-        "restarting": "Serveris perkraunamas (%{reason}).",
-        "restarting_discord": "**%{servername}** Perkraunamas (%{reason}).",
-        "stopping": "Serveris išjungiamas (%{reason}).",
-        "stopping_discord": "**%{servername}** išjungiamas (%{reason}).",
-        "spawning_discord": "**%{servername}** paleidžiamas."
+        "restarting": "Serverio perkrovimas (%{reason}).",
+        "restarting_discord": "**%{servername}** yra perkraunamas (%{reason}).",
+        "stopping": "Serverio išjungiamas (%{reason}).",
+        "stopping_discord": "**%{servername}** yra išjungiamas (%{reason}).",
+        "spawning_discord": "**%{servername}** yra įjungiamas."
     },
     "discord": {
-        "status_online": "**%{servername}** dabar **Paleistas**!",
-        "status_offline": "**%{servername}** dabar **Išjungtas**!"
+        "status_online": "**%{servername}** dabar **veikia**!",
+        "status_offline": "**%{servername}** dabar **neveikia**!"
     }
 }
