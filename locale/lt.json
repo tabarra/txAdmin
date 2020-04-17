@@ -4,10 +4,10 @@
         "humanizer_language": "lt"
     },
     "restarter": {
-        "crash_detected": "Aptiktas serverio nulūžimas",
+        "crash_detected": "aptiktas serverio nulūžimas",
         "partial_crash_warn": "Del aptikto serverio nulužimo serveris persikraus uz 1 minutes",
         "partial_crash_warn_discord": "Dėl aptikto serverio nulūžimo **%{servername}** serveris persikraus už 1 minutės",
-        "schedule_reason": "Automatinis %{time} perkrovimas",
+        "schedule_reason": "automatinis %{time} perkrovimas",
         "schedule_warn": "Serveris persikraus už %{smart_count} minutes. Prašome atsijungti. |||| Serveris persikraus už %{smart_count} minuciu. Prašome atsijungti.",
         "schedule_warn_discord": "**%{servername}** automatiškai persikraus už %{smart_count} minutės. |||| **%{servername}** automatiškai persikraus už %{smart_count} minučių."
     },
