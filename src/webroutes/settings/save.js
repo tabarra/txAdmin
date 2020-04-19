@@ -223,7 +223,7 @@ function handleMonitor(ctx) {
 
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('monitor');
-    newConfig.restarter.schedule = validTimes;
+    newConfig.restarterSchedule = validTimes;
     let saveStatus = globals.configVault.saveProfile('monitor', newConfig);
 
     //Sending output

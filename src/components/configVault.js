@@ -104,10 +104,15 @@ module.exports = class ConfigVault {
             };
             out.monitor = {
                 timeout: toDefault(cfg.monitor.timeout, null),
-                restarter: {
-                    cooldown: toDefault(cfg.monitor.restarter.cooldown, null), //not in template
-                    failures: toDefault(cfg.monitor.restarter.failures, null),
-                    schedule: toDefault(cfg.monitor.restarter.schedule, null),
+                restarterSchedule: toDefault(cfg.monitor.restarterSchedule, null),
+                cooldown: toDefault(cfg.monitor.cooldown, null), //not in template
+                heartBeat: {
+                    failThreshold: toDefault(cfg.monitor.heartBeat.failThreshold, null),
+                    failLimit: toDefault(cfg.monitor.heartBeat.failLimit, null),
+                },
+                healthCheck: {
+                    failThreshold: toDefault(cfg.monitor.heartBeat.failThreshold, null),
+                    failLimit: toDefault(cfg.monitor.heartBeat.failLimit, null),
                 }
             };
             out.authenticator = {
@@ -166,10 +171,13 @@ module.exports = class ConfigVault {
             cfg.logger.logPath = cfg.logger.logPath || `${this.serverProfilePath}/logs/admin.log`; //not in template
 
             //Monitor
-            cfg.monitor.timeout = parseInt(cfg.monitor.timeout) || 1000;
-            cfg.monitor.restarter.cooldown = parseInt(cfg.monitor.restarter.cooldown) || 60; //not in template
-            cfg.monitor.restarter.failures = parseInt(cfg.monitor.restarter.failures) || 30;
-            cfg.monitor.restarter.schedule = cfg.monitor.restarter.schedule || [];
+            cfg.monitor.timeout = cfg.monitor.timeout || 1500;
+            cfg.monitor.restarterSchedule = cfg.monitor.restarterSchedule || [];
+            cfg.monitor.cooldown = parseInt(cfg.monitor.cooldown) || 60; //not in template
+            cfg.monitor.heartBeat.failThreshold = parseInt(cfg.monitor.heartBeat.failThreshold) || 10;
+            cfg.monitor.heartBeat.failLimit = parseInt(cfg.monitor.heartBeat.failLimit) || 30;
+            cfg.monitor.healthCheck.failThreshold = parseInt(cfg.monitor.healthCheck.failThreshold) || 10;
+            cfg.monitor.healthCheck.failLimit = parseInt(cfg.monitor.healthCheck.failLimit) || 300;
 
             //Authenticator
             cfg.authenticator.refreshInterval = parseInt(cfg.authenticator.refreshInterval) || 15000; //not in template

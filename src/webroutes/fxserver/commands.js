@@ -65,6 +65,9 @@ module.exports = async function FXServerCommands(ctx) {
 
     //==============================================
     }else if(action == 'admin_broadcast'){
+        //FIXME: remove this test
+        // globals.disableReply = (parameter == '1');
+        // return logError(`setting disableReply to ${globals.disableReply}`);
         if(!ensurePermission(ctx, 'commands.message')) return false;
         let cmd = `txaBroadcast "${escape(ctx.session.auth.username)}" "${escape(parameter)}"`;
         ctx.utils.appendLog(cmd);

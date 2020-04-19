@@ -86,7 +86,7 @@
         // });
         socket.on('connect', () => {
             console.log("Socket.io Connected!")
-            $("#favicon").attr("href", "favicon_on.png");
+            // $("#favicon").attr("href", "favicon_online.png");
         });
         socket.on('logout', (error) => {
             alert('Error: logged out');
@@ -106,10 +106,10 @@
         });
 
         //Status
-        setInterval(() => {
-            let status = (socket.connected) ? 'on' : 'off';
-            $("#favicon").attr("href", "img/favicon_" + status + ".png");
-        }, 1000);
+        // setInterval(() => {
+        //     let status = (socket.connected) ? 'online' : 'offline';
+        //     $("#favicon").attr("href", "img/favicon_" + status + ".png");
+        // }, 1000);
     });
 
     //Buttons

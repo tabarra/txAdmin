@@ -180,7 +180,7 @@ module.exports = class FXRunner {
         }
 
         //Reseting hitch counter
-        globals.monitor.clearFXServerHitches();
+        globals.monitor.resetMonitorStats();
 
         //Announcing
         if(announce === 'true' || announce === true){

@@ -48,7 +48,7 @@
 - [x] Rename basePath to serverDataPath
 - [x] Change code exchange error messages
 > v2.2.0
-- [ ] Rework the entire monitor
+- [x] Rework the entire monitor
 - [ ] Create legacy branch + fix `run.cmd` + disable updater and add deprecated message
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token

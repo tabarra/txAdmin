@@ -21,10 +21,14 @@ let defaultConfig = {
     },
     logger: {},
     monitor: {
-        timeout: 1000,
-        restarter: {
-            failures: 30,
-            schedule: []
+        restarterSchedule: [],
+        healthCheck: {
+            failThreshold: 15,
+            failLimit: 300,
+        },
+        heartBeat: {
+            failThreshold: 15,
+            failLimit: 30,
         }
     },
     authenticator: {},

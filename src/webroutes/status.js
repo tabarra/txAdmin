@@ -2,7 +2,6 @@
 const modulename = 'WebServer:GetStatus';
 const os = require('os');
 const clone = require('clone');
-const xss = require('../extras/xss')();
 const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 
@@ -25,7 +24,6 @@ module.exports = async function GetStatus(ctx) {
  * Returns the fxserver's data
  */
 function prepareServerStatus() {
-    let dataServer = clone(globals.monitor.statusServer);
     let fxServerHitches = clone(globals.monitor.globalCounters.hitches);
 
     //processing hitches
@@ -50,11 +48,18 @@ function prepareServerStatus() {
     }
 
     //preparing the rest of the strings
-    let statusClass = (dataServer.online) ? 'success' : 'danger';
-    let statusText = (dataServer.online) ? 'ONLINE' : 'OFFLINE';
-    let statusExtra = (dataServer.online) ? '' : `(${globals.fxRunner.getStatus()})`;
-    let ping = (dataServer.online && typeof dataServer.ping !== 'undefined') ? dataServer.ping + 'ms' : '--';
-    let players = (dataServer.online && typeof dataServer.players !== 'undefined') ? dataServer.players.length : '--';
+    let monitorStatus = globals.monitor.currentStatus || '??';
+    let monitorStatusClass;
+    if(monitorStatus == 'ONLINE'){
+        monitorStatusClass = 'success';
+    }else if(monitorStatus == 'PARTIAL'){
+        monitorStatusClass = 'warning';
+    }else if(monitorStatus == 'OFFLINE'){
+        monitorStatusClass = 'danger';
+    }else{
+        monitorStatusClass = 'dark';
+    }
+    let processStatus = globals.fxRunner.getStatus();
 
     let logFileSize = (
         globals.fxRunner &&
@@ -63,9 +68,8 @@ function prepareServerStatus() {
     )? globals.fxRunner.consoleBuffer.logFileSize : '--';
 
 
-    let out = `<strong>Status: <span class="badge badge-${statusClass}">${statusText}</span> </strong> ${statusExtra}<br>
-                <strong>Ping (localhost):</strong> ${ping}<br>
-                <strong>Players:</strong> ${players}<br>
+    let out = `<strong>Monitor Status: <span class="badge badge-${monitorStatusClass}"> ${monitorStatus} </span> </strong><br>
+                <strong>Process Status:</strong> ${processStatus}<br>
                 <strong>Hitch Time:</strong> ${hitches}<br>
                 <strong>Log Size:</strong> ${logFileSize}`;
     return out;
@@ -125,9 +129,7 @@ function prepareHostData() {
  * Returns the html playerlist
  */
 function preparePlayersData() {
-    // return globals.testPlayers;
-    let dataServer = clone(globals.monitor.statusServer);
-    return dataServer.players;
+    return clone(globals.monitor.tmpPlayers); //FIXME: edit this part
 }
 
 
@@ -136,9 +138,16 @@ function preparePlayersData() {
  * Returns the page metadata (title and icon)
  */
 function prepareMetaData() {
-    let dataServer = clone(globals.monitor.statusServer);
+    let favicon;
+    if(globals.monitor.currentStatus == 'ONLINE'){
+        favicon = 'favicon_online';
+    }else if(globals.monitor.currentStatus == 'PARTIAL'){
+        favicon = 'favicon_partial';
+    }else{
+        favicon = 'favicon_offline';
+    }
     return {
-        favicon: (dataServer.online) ? 'favicon_on' : 'favicon_off',
-        title: (dataServer.online) ? `(${dataServer.players.length}) txAdmin` : 'txAdmin'
+        favicon,
+        title: (globals.monitor.currentStatus == 'ONLINE') ? `(${globals.monitor.tmpPlayers.length}) txAdmin` : 'txAdmin'
     };
 }

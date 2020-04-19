@@ -166,7 +166,7 @@ function refreshData() {
             $('#hostusage-memory-bar').attr('aria-valuenow', 0).css('width', 0);
             $('#hostusage-memory-text').html('error');
             $("#status-card").html(out.replace('\n', '\n<br>'));
-            $("#favicon").attr("href", "img/favicon_off.png");
+            $("#favicon").attr("href", "img/favicon_offline.png");
             document.title = 'ERROR - txAdmin';
             processPlayers(out)
         }
