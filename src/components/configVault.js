@@ -111,8 +111,8 @@ module.exports = class ConfigVault {
                     failLimit: toDefault(cfg.monitor.heartBeat.failLimit, null),
                 },
                 healthCheck: {
-                    failThreshold: toDefault(cfg.monitor.heartBeat.failThreshold, null),
-                    failLimit: toDefault(cfg.monitor.heartBeat.failLimit, null),
+                    failThreshold: toDefault(cfg.monitor.healthCheck.failThreshold, null),
+                    failLimit: toDefault(cfg.monitor.healthCheck.failLimit, null),
                 }
             };
             out.authenticator = {
