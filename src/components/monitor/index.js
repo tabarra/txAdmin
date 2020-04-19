@@ -80,8 +80,8 @@ module.exports = class Monitor {
                 minute: date.getMinutes(),
                 restart: false,
                 messages: {
-                    chat: globals.translator.t('restarterSchedule_warn', tOptions),
-                    discord: globals.translator.t('restarterSchedule_warn_discord', tOptions),
+                    chat: globals.translator.t('restarter.schedule_warn', tOptions),
+                    discord: globals.translator.t('restarter.schedule_warn_discord', tOptions),
                 }
             }
         }
