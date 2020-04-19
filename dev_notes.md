@@ -49,11 +49,11 @@
 - [x] Change code exchange error messages
 > v2.2.0
 - [x] Rework the entire monitor
-- [ ] Create legacy branch + fix `run.cmd` + disable updater and add deprecated message
+- [x] Change all the `monitor.statusServer` references
+- [x] fix bug: resources page when you type then delete what you typed, it shows hidden default resources
+- [ ] convert cl_logger.js to luan, and stop it when not in `monitorMode`
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
-- [ ] fix bug: resources page when you type then delete what you typed, it shows hidden default resources
-
 
 
 How to fix the restart loop problem:
@@ -114,6 +114,7 @@ npx nodemon --watch "2339/citizen/system_resources/monitor/src/*" --exec "2339/F
 ```
 
 ### Links + random stuff
+https://api.github.com/repos/tabarra/txAdmin/releases/latest
 https://www.science.co.il/language/Locale-codes.php
 https://www.npmjs.com/package/humanize-duration
 https://www.npmjs.com/package/dateformat

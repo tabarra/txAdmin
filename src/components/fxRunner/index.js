@@ -130,17 +130,6 @@ module.exports = class FXRunner {
      * @returns {string} null or error message
      */
     async spawnServer(announce){
-        // //Check if there is an start pending
-        // let currStatus = this.getStatus();
-        // if(currStatus.startsWith('spawn awaiting')){
-        //     return logError('(status) The server is already started.');
-        // }
-        // try {
-        //     await awaitCompleteShutdown();
-        // } catch (error) {
-        //     if(GlobalData.verbose) logWarn('Spawn aborted.')
-        // }
-
         //Setup variables
         this.setupVariables();
         if(GlobalData.verbose){
@@ -159,10 +148,6 @@ module.exports = class FXRunner {
         if(this.config.serverDataPath === null || this.config.cfgPath === null){
             return logError('Cannot start the server with missing configuration (serverDataPath || cfgPath).');
         }
-        // //If the server is already alive
-        // if(this.fxChild !== null || currStatus == 'spawned'){
-        //     return logError('(fxChild) The server is already running.');
-        // }
 
         //Detecting endpoint port
         try {
@@ -356,16 +341,6 @@ module.exports = class FXRunner {
                 await sleep(500);
             }
 
-            // // Check if we should cancel
-            // let currStatus = this.getStatus();
-            // if(
-            //     currStatus.startsWith('spawn awaiting') ||
-            //     currStatus == 'spawned'
-            // ){
-            //     return logError('(status) The server is already started.');
-            // }
-            // // spawned, crashed, spawn awaiting ..., spawn ready
-
             //Stopping server
             if(this.fxChild !== null){
                 this.fxChild.kill();
@@ -462,7 +437,7 @@ module.exports = class FXRunner {
         }else if(curr.timestamps.exit && !curr.timestamps.close){
             return 'closing';
         }else if(curr.timestamps.exit && curr.timestamps.close){
-            return 'closed'; // TODO: we can already trigger an restart - doing that from monitor
+            return 'closed';
         }else{
             return 'spawned';
         }

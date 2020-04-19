@@ -312,7 +312,7 @@ module.exports = class Monitor {
 
         //Check if fxChild is closed, in this case no need to wait the failure count
         let processStatus = globals.fxRunner.getStatus();
-        if(processStatus == 'closed' && false){ //HACK temp disable for testing
+        if(processStatus == 'closed'){
             this.globalCounters.fullCrashes++;
             this.restartFXServer(
                 'server close detected',

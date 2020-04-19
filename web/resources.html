@@ -101,6 +101,7 @@
     //intentionally 'blank' line
     const defaultResources = [
         "webadmin",
+        "monitor",
         "race-test",
         "race",
         "channelfeed",
@@ -202,6 +203,10 @@
                 $(`#resList-card-${folder.divName}`).show();
             }
         });
+        if(!filter.length){
+            hideDefaultResources();
+        }
+
     }
 
     //============================================== Hide defaults

@@ -120,11 +120,19 @@ module.exports = class DiscordBot {
             this.spamLimitRegister(this.config.statusCommand, message.channel.id);
 
             //Prepare message's data
-            let dataServer = globals.monitor.statusServer; //shorthand much!?
-            let color = (dataServer.online)? 0x74EE15 : 0xF000FF;
-            let titleKey = (dataServer.online)?  'discord.status_online' : 'discord.status_offline';
+            let monitorStatus = globals.monitor.currentStatus || '??';
+            let color, titleKey, players;
+            if(monitorStatus == 'ONLINE' || monitorStatus == 'PARTIAL'){
+                color = 0x74EE15;
+                titleKey = 'discord.status_online';
+                players = (Array.isArray(globals.monitor.tmpPlayers))? globals.monitor.tmpPlayers : '--';
+            }else{
+                color = 0xF000FF;
+                titleKey = 'discord.status_offline';
+                players = '--';
+            }
+
             let title = globals.translator.t(titleKey, {servername: globals.config.serverName});
-            let players = (dataServer.online && typeof dataServer.players !== 'undefined')? dataServer.players.length : '--';
             let desc = '';
             if(globals.config.forceFXServerPort || globals.fxRunner.fxServerPort){
                 let port = (globals.config.forceFXServerPort)? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
