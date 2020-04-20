@@ -107,12 +107,12 @@ module.exports = class ConfigVault {
                 restarterSchedule: toDefault(cfg.monitor.restarterSchedule, null),
                 cooldown: toDefault(cfg.monitor.cooldown, null), //not in template
                 heartBeat: {
-                    failThreshold: toDefault(cfg.monitor.heartBeat.failThreshold, null),
-                    failLimit: toDefault(cfg.monitor.heartBeat.failLimit, null),
+                    failThreshold: (cfg.monitor.heartBeat)? toDefault(cfg.monitor.heartBeat.failThreshold, null) : null,
+                    failLimit: (cfg.monitor.heartBeat)? toDefault(cfg.monitor.heartBeat.failLimit, null) : null,
                 },
                 healthCheck: {
-                    failThreshold: toDefault(cfg.monitor.healthCheck.failThreshold, null),
-                    failLimit: toDefault(cfg.monitor.healthCheck.failLimit, null),
+                    failThreshold: (cfg.monitor.healthCheck)? toDefault(cfg.monitor.healthCheck.failThreshold, null) : null,
+                    failLimit: (cfg.monitor.healthCheck)? toDefault(cfg.monitor.healthCheck.failLimit, null) : null,
                 }
             };
             out.authenticator = {
