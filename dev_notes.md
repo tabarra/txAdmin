@@ -51,6 +51,7 @@
 - [x] Rework the entire monitor
 - [x] Change all the `monitor.statusServer` references
 - [x] fix bug: resources page when you type then delete what you typed, it shows hidden default resources
+> v2.3.0
 - [ ] convert cl_logger.js to luan, and stop it when not in `monitorMode`
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
@@ -111,6 +112,10 @@ For the monitor:
 ```bash
 cd /e/FiveM/builds
 npx nodemon --watch "2339/citizen/system_resources/monitor/src/*" --exec "2339/FXServer.exe +set txAdminVerbose truex"
+
+cd /e/FiveM/builds/2339/citizen/system_resources/monitor
+rm -rf dist
+npm run build
 ```
 
 ### Links + random stuff
@@ -175,3 +180,32 @@ Questões:
 - Isso vai deixar o código muito zuado?
 - Vai valer a pena?
 
+
+
+### base clonning idea
+Context: https://discordapp.com/channels/192358910387159041/450373719974477835/701336723589955654
+Recipie example:
+```yaml
+tasks:
+  - clone_repo:
+      url: https://github.com/citizenfx/cfx-server-data.git
+      path: .
+  - clone_resource:
+      url: https://github.com/meow64bit/uberadmin.git
+      resourceDir: uberadmin
+  - download_archive:
+      url: https://github.com/wtf/wtfwtf/releases/v1.2.3/resource.zip
+      resourceDir: wtfwtf
+      stripPath: wtfwtf/
+  - download_file:
+      url: https://docs.fivem.net/blah/server.cfg
+      path: server.cfg
+  - replace_file:
+      path: server.cfg
+      pattern: 's/wtf/ftw/g'
+  - append_file:
+      path: server.cfg
+      data: |
+         start wtfwtf
+         start uberadmin
+```

@@ -60,6 +60,7 @@ module.exports = class FXRunner {
             '+set', 'txAdmin-apiPort', GlobalData.txAdminPort,
             '+set', 'txAdmin-apiToken', globals.webServer.intercomToken,
             '+set', 'txAdminServerMode', 'true',
+            '+start', GlobalData.resourceName, //NOTE: this is for some edge cases with linux around build 2350
             '+set', 'onesync_enabled', (this.config.onesync).toString(),
             ...extraArgs,
             '+exec', this.config.cfgPath,

@@ -276,7 +276,7 @@ module.exports = class Monitor {
 
         //Check if still in cooldown
         if(processUptime < this.config.cooldown){
-            if(GlobalData.verbose && currTimestamp - this.lastStatusWarningMessage > 10){
+            if(GlobalData.verbose && processUptime > 5 && currTimestamp - this.lastStatusWarningMessage > 10){
                 logWarn(`(HB:${cleanET(elapsedHeartBeat)}|HC:${cleanET(elapsedHealthCheck)}) FXServer is not responding. Still in cooldown.`)
                 this.lastStatusWarningMessage = now();
             }
