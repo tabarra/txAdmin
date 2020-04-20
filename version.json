@@ -1,5 +1,5 @@
 {
-    "version": "2.3.0-rc3",
+    "version": "2.3.0",
     "changelog": "Deprecated Message. Please Update.",
     "allVersions": [
         {
@@ -163,8 +163,8 @@
             "changelog": "Fixed playerlist and improved diagnostics and error information."
         },
         {
-            "version": "2.3.0-rc2",
-            "changelog": "xxxxx"
+            "version": "2.3.0",
+            "changelog": "Reworked the entire monitor/restarter module."
         }
     ]
 }

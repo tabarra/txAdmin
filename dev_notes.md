@@ -132,6 +132,10 @@ DIV transition: https://tympanus.net/Tutorials/OriginalHoverEffects/index9.html
 Colors: https://coolors.co/3c4b64-3c4b64-3a4860-1e252d-252e38
 CSS Animated: https://daneden.github.io/animate.css/
 
+Interesting shit, could be used to give like vMenu admin powers to txAdmin admins:
+https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
+
+Grafana query for the `/perf/` endpoint data: 
 `histogram_quantile(0.95, sum(rate(tickTime_bucket[5m])) by (le))`
 
 
