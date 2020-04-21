@@ -30,10 +30,10 @@ try {
 module.exports = {
     mode: 'development',
     target: 'node',
-    entry: './starter.js',
+    entry: './main.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'starter.js'
+        filename: 'main.js'
     },
     externals: {
         // engine.io
@@ -55,8 +55,8 @@ module.exports = {
             'LICENSE',
             '*.md',
             'fxmanifest.lua',
-            'extensions/**/*.lua',
-            'extensions/**/cl_*.js',
+            'scripts/*.lua',
+            'scripts/cl_*.js',
             'web/**',
             'docs/**',
         ]),

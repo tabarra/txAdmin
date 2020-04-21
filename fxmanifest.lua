@@ -4,17 +4,16 @@ games { 'gta5' }
 author 'Tabarra'
 description 'Remotely Manage & Monitor your GTA5 FiveM Server'
 repository 'https://github.com/tabarra/txAdmin'
-version '2.3.1'
+version '2.4.0-dev'
 
-server_script 'starter.js'
+server_script 'main.js'
 
+-- NOTE: Due to global package constraints, js scripts will be loaded from main.js
 server_scripts { 
-    -- NOTE: we will load js extensions from starter.js due to global package constraints
-    --'extensions/**/resource/sv_*.js',
-    'extensions/**/resource/sv_*.lua',
+    'scripts/sv_*.lua',
 }
 
 client_scripts {
-    'extensions/**/resource/cl_*.js',
-    'extensions/**/resource/cl_*.lua',
+    'scripts/cl_*.js',
+    'scripts/cl_*.lua',
 }

@@ -1,5 +1,5 @@
 {
-    "version": "2.3.1",
+    "version": "2.4.0-dev",
     "changelog": "Deprecated Message. Please Update to v2.",
     "allVersions": [
         {
@@ -169,6 +169,10 @@
         {
             "version": "2.3.1",
             "changelog": "Fixed /status, fixed ping colors."
+        },
+        {
+            "version": "2.4.0-dev",
+            "changelog": "wip"
         }
     ]
 }

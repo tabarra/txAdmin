@@ -1,3 +1,5 @@
+> NOTE: saving this file only for the idea but the extension system changed 100% since the integration  
+
 ### Note for when extensions is a thing:
 For comms, make the module register a function in `globals.intercomBus`? Then send it like:
 ```javascript

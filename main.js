@@ -27,5 +27,5 @@ if(GetConvar('monitorMode', 'false') == 'true'){
         console.log('e'.repeat(80));
     }
 }else if(GetConvar('txAdminServerMode', 'false') == 'true'){
-    require('./extensions/txAdminClient/resource/sv_logger.js');
+    require('./scripts/sv_logger.js');
 }
