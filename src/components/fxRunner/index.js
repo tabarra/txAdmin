@@ -96,36 +96,6 @@ module.exports = class FXRunner {
 
     //================================================================
     /**
-     * Returns a promise awaiting for the status to change to one that allows new server spawns
-     * @returns {promise} 
-     */
-    awaitCompleteShutdown(){
-        return new Promise((resolve, reject) => {
-            let roundsCounter = 0;
-            setInterval(() => {
-                let currStatus = this.getStatus();
-
-                // Start: spawn ready, not started
-                if(currStatus == 'spawn ready' || currStatus == 'not started'){
-                    resolve(true);
-
-                // Cancel:  killed
-                }else if(currStatus == 'killed'){
-                    reject(false);
-                }
-
-                // At start and every 10 seconds:
-                if(roundsCounter == 0 || roundsCounter % 20 == 0){
-                    logWarn(`(${roundsCounter/2}s) Awaiting FXServer to completely shutdown before starting `)
-                }
-                roundsCounter++;
-            }, 500);
-        });
-    }//Final awaitCompleteShutdown()
-
-
-    //================================================================
-    /**
      * Spawns the FXServer and sets up all the event handlers
      * @param {boolean} announce
      * @returns {string} null or error message
@@ -148,6 +118,11 @@ module.exports = class FXRunner {
         //If the any FXServer configuration is missing
         if(this.config.serverDataPath === null || this.config.cfgPath === null){
             return logError('Cannot start the server with missing configuration (serverDataPath || cfgPath).');
+        }
+
+        //If the server is already alive
+        if(this.fxChild !== null){
+            return logError('The server is already started.', context);
         }
 
         //Detecting endpoint port

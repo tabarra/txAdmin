@@ -265,11 +265,12 @@ module.exports = class Monitor {
         }
 
         //Check monitor resource status
-        if(this.lastSuccessfulHeartBeat === null && processUptime > 15 && processUptime % 30 == 0){
-            let cmd = `ensure ${GlobalData.resourceName}`;
-            logWarn(`No heartBeats received since FXServer started. Executing "${cmd}".`);
-            globals.fxRunner.srvCmdBuffer(cmd);
-        }
+        //FIXME: maybe this is causing issues?!
+        // if(this.lastSuccessfulHeartBeat === null && processUptime > 15 && processUptime % 30 == 0){
+        //     let cmd = `ensure ${GlobalData.resourceName}`;
+        //     logWarn(`No heartBeats received since FXServer started. Executing "${cmd}".`);
+        //     globals.fxRunner.srvCmdBuffer(cmd);
+        // }
         
         //Now to the (un)fun part: if the status != healthy
         this.currentStatus = (healthCheckFailed && heartBeatFailed)? 'OFFLINE' : 'PARTIAL';
