@@ -125,7 +125,7 @@ module.exports = class DiscordBot {
             if(monitorStatus == 'ONLINE' || monitorStatus == 'PARTIAL'){
                 color = 0x74EE15;
                 titleKey = 'discord.status_online';
-                players = (Array.isArray(globals.monitor.tmpPlayers))? globals.monitor.tmpPlayers : '--';
+                players = (Array.isArray(globals.monitor.tmpPlayers))? globals.monitor.tmpPlayers.length : '--';
             }else{
                 color = 0xF000FF;
                 titleKey = 'discord.status_offline';
