@@ -78,8 +78,10 @@ function updatePlayer(player){
         pingClass = 'danger';
     }
 
-    el.classList.replace('list-group-item-accent-secondary', 'list-group-item-accent-' + pingClass);
-    el.firstElementChild.classList.replace('text-secondary', 'text-' + pingClass);
+    el.classList.remove('list-group-item-accent-secondary', 'list-group-item-accent-success', 'list-group-item-accent-warning', 'list-group-item-accent-danger');
+    el.classList.add('list-group-item-accent-' + pingClass);
+    el.firstElementChild.classList.remove('text-secondary', 'text-success', 'text-warning', 'text-danger');
+    el.firstElementChild.classList.add('text-' + pingClass);
     el.firstElementChild.innerHTML = player.ping.toString().padStart(3, 'x').replace(/x/g, '&nbsp;');
     el.lastElementChild.textContent = player.name;
     el.dataset['pname'] = player.name.toLowerCase();

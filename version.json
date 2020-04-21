@@ -1,6 +1,6 @@
 {
-    "version": "2.3.0",
-    "changelog": "Deprecated Message. Please Update.",
+    "version": "2.3.1",
+    "changelog": "Deprecated Message. Please Update to v2.",
     "allVersions": [
         {
             "version": "1.0.1",
@@ -165,6 +165,10 @@
         {
             "version": "2.3.0",
             "changelog": "Reworked the entire monitor/restarter module."
+        },
+        {
+            "version": "2.3.1",
+            "changelog": "Fixed /status, fixed ping colors."
         }
     ]
 }
