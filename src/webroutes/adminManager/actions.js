@@ -1,7 +1,8 @@
 //Requires
 const modulename = 'WebServer:AdminManagerActions';
-const nanoidGen = require('nanoid/generate');
-const nolookalikes = require('nanoid-dictionary/nolookalikes');
+const { customAlphabet } = require('nanoid');
+const dict51 = require('nanoid-dictionary/nolookalikes');
+const nanoid = customAlphabet(dict51, 20);
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 
 //Helper functions
@@ -63,7 +64,7 @@ async function handleAdd(ctx) {
 
     //Prepare and filter variables
     let name = ctx.request.body.name.trim();
-    let password = nanoidGen(nolookalikes, 12);
+    let password = nano();
     let citizenfxID = ctx.request.body.citizenfxID.trim();
     let discordID = ctx.request.body.discordID.trim();
     let permissions = (Array.isArray(ctx.request.body.permissions))? ctx.request.body.permissions : [];

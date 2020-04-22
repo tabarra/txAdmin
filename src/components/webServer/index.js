@@ -9,12 +9,14 @@ const KoaSession = require('koa-session');
 const KoaSessionMemoryStoreClass = require('koa-session-memory');
 
 const SocketIO = require('socket.io');
-const SessionIO = require('koa-session-socketio')
-const WebConsole = require('./webConsole')
+const SessionIO = require('koa-session-socketio');
+const WebConsole = require('./webConsole');
+
+const { customAlphabet } = require('nanoid');
+const dict51 = require('nanoid-dictionary/nolookalikes');
+const nanoid = customAlphabet(dict51, 20);
 
 const ac = require('ansi-colors');
-const nanoidGen = require('nanoid/generate');
-const nolookalikes = require('nanoid-dictionary/nolookalikes');
 const { setHttpCallback } = require('@citizenfx/http-wrapper');
 const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
 const {requestAuth} = require('./requestAuthenticator');
@@ -24,7 +26,7 @@ const ctxUtils = require('./ctxUtils.js');
 module.exports = class WebServer {
     constructor(config) {
         this.config = config;
-        this.intercomToken = nanoidGen(nolookalikes, 20);
+        this.intercomToken = nanoid();
         this.koaSessionKey = `txAdmin:${globals.info.serverProfile}:sess`;
         this.webConsole = null;
 
@@ -38,7 +40,7 @@ module.exports = class WebServer {
     setupKoa(){
         //Start Koa
         this.app = new Koa();
-        this.app.keys = ['txAdmin'+nanoidGen(nolookalikes, 20)];
+        this.app.keys = ['txAdmin'+nanoid()];
 
         //Session
         this.koaSessionMemoryStore = new KoaSessionMemoryStoreClass();
