@@ -52,6 +52,12 @@
 - [x] Change all the `monitor.statusServer` references
 - [x] fix bug: resources page when you type then delete what you typed, it shows hidden default resources
 > v2.3.0
+- [x] fix /status showing objects instead of player count
+- [x] fix playerlist not updating the ping colors
+> v2.3.0
+- [x] rename `extensions` folder to `scripts` nad adjust webpack
+- [x] upgrade packages (Note: discord.js v12 didn't work)
+
 - [ ] convert cl_logger.js to luan, and stop it when not in `monitorMode`
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
@@ -74,7 +80,6 @@ For the monitor:
     - create checkStatus, that will check the timestamp of the last successfull client heartbeat and /info heartbeat
     - execute it every 1 second
     - execute /info heartbeat in the same setInterval
-
 
 
 # For the new access control system
@@ -110,12 +115,17 @@ For the monitor:
 
 ## ETC
 ```bash
+# run
 cd /e/FiveM/builds
 npx nodemon --watch "2339/citizen/system_resources/monitor/src/*" --exec "2339/FXServer.exe +set txAdminVerbose truex"
 
+# build
 cd /e/FiveM/builds/2339/citizen/system_resources/monitor
 rm -rf dist
 npm run build
+
+# upgrade util:
+npm-upgrade
 ```
 
 ### Links + random stuff

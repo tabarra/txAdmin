@@ -42,8 +42,8 @@
 
 
 ## Running (Windows/Linux)
-Currently **txAdmin is included in all FXServer builds** above 2325, so to run it for the first time simply do the following:
-- Update FXServer to the latest artifact/build (2325 or superior)
+Currently **txAdmin is included in all FXServer builds** above 2385, so to run it for the first time simply do the following:
+- Update FXServer to the latest artifact/build (2385 or superior)
 - If Windows, run FXServer.exe | If Linux, run `./run.sh`
 - Open one of the URLs shown and configure txAdmin
 
