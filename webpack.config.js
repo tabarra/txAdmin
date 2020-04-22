@@ -2,7 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const helpers = require('./src/extras/helpers');
 
 //Prepare banner
@@ -60,12 +60,9 @@ module.exports = {
             'web/**',
             'docs/**',
         ]),
+        new TerserPlugin({
+            extractComments: false,
+        }),
         new webpack.BannerPlugin({banner}),
     ],
-    optimization: {
-        minimize: true,
-        minimizer: [
-            new UglifyJsPlugin({})
-        ]
-    },
 };
