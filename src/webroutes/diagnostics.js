@@ -229,9 +229,11 @@ async function gettxAdminData(){
 
     let txadminData = {
         uptime: humanizeDuration(process.uptime()*1000, humanizeOptions),
+        cfxUrl: (GlobalData.cfxUrl)? `https://${GlobalData.cfxUrl}/` : '--',
         fullCrashes: globals.monitor.globalCounters.fullCrashes,
         partialCrashes: globals.monitor.globalCounters.partialCrashes,
         timeout: globals.monitor.config.timeout,
+        cooldown: globals.monitor.config.cooldown,
         schedule: globals.monitor.config.restarterSchedule.join(', ') || '--',
         fxServerPath: GlobalData.fxServerPath,
         serverDataPath: globals.fxRunner.config.serverDataPath,

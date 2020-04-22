@@ -92,8 +92,13 @@ async function handleCallback(ctx) {
         let currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/addMaster/callback`;
         tokenSet = await globals.authenticator.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
+        let message;
+        if(error.message.startsWith('JWT expired') || error.message.startsWith('JWT not active yet')){
+            message = `Code Exchange error.\r\nPlease Update/Synchronize your VPS clock.`;
+        }else{
+            message = `Code Exchange error:\r\n${error.message}.`;
+        }
         logWarn(`Code Exchange error: ${error.message}`);
-        let message = `Failed to exchange code for token. Try again.\n\n\n\r\nSynchronize your VPS clock.`;
         return ctx.utils.render('login', {template: 'justMessage', message});
     }
 
