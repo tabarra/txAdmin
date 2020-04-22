@@ -55,7 +55,7 @@ module.exports = class WebServer {
         //Setting up app
         this.app.use(ctxUtils);
         this.app.on('error', (error, ctx) => {
-            logError(`Strange error on ${ctx.path}`);
+            logWarn(`Probably harmless error on ${ctx.path}`);
             dir(error)
         });
         

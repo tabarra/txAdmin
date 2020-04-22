@@ -70,7 +70,7 @@ function HeartBeat()
     PerformHttpRequest(url, function(httpCode, data, resultHeaders)
         local resp = tostring(data)
         if httpCode ~= 200 then
-            log("HeartBeat failed with code "..httpCode.." and message: "..resp)
+            logError("HeartBeat failed with code "..httpCode.." and message: "..resp)
         end
     end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
 end
@@ -198,7 +198,7 @@ function txaReportResources(source, args)
     PerformHttpRequest(url, function(httpCode, data, resultHeaders)
         local resp = tostring(data)
         if httpCode ~= 200 then
-            log("ReportResources failed with code "..httpCode.." and message: "..resp)
+            logError("ReportResources failed with code "..httpCode.." and message: "..resp)
         end
     end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
 end
@@ -225,7 +225,7 @@ function handleConnections(name, skr, d)
                 PerformHttpRequest(url, function(httpCode, data, resultHeaders)
                     local resp = tostring(data)
                     if httpCode ~= 200 then
-                        log("Checking whitelist failed with code "..httpCode.." and message: "..resp)
+                        logError("Checking whitelist failed with code "..httpCode.." and message: "..resp)
                     elseif data == 'whitelist-ok' then
                         if not isDone then
                             d.done()
