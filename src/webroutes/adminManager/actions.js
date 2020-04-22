@@ -64,7 +64,7 @@ async function handleAdd(ctx) {
 
     //Prepare and filter variables
     let name = ctx.request.body.name.trim();
-    let password = nano();
+    let password = nanoid();
     let citizenfxID = ctx.request.body.citizenfxID.trim();
     let discordID = ctx.request.body.discordID.trim();
     let permissions = (Array.isArray(ctx.request.body.permissions))? ctx.request.body.permissions : [];
