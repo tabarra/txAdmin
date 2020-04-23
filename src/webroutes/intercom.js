@@ -32,7 +32,7 @@ module.exports = async function Intercom(ctx) {
         if(!Array.isArray(postData.resources)){
             return ctx.utils.error(400, 'Invalid Request');
         }
-        globals.intercomTempResList = {
+        globals.databus.resourcesList = {
             timestamp: new Date(),
             data: postData.resources
         }
@@ -41,7 +41,7 @@ module.exports = async function Intercom(ctx) {
         if(!Array.isArray(postData.log)){
             return ctx.utils.error(400, 'Invalid Request');
         }
-        globals.intercomTempLog = globals.intercomTempLog.concat(postData.log)
+        globals.databus.serverLog = globals.databus.serverLog.concat(postData.log)
 
     }else if(scope == 'checkWhitelist'){
         //FIXME: temporarily disabled

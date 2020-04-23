@@ -21,9 +21,13 @@ globals = {
     config: null,
     info: {},
 
-    //FIXME: remove with the Extensions update
-    intercomTempLog: [],
-    intercomTempResList: null,
+    //NOTE: still not ideal, but since the extensions system changed entirely, 
+    //      will have to rething the plans for this variable.
+    databus: {
+        resourcesList: null,
+        serverLog: [],
+        updateChecker: null,
+    },
 }
 
 

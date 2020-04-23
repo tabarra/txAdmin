@@ -63,13 +63,13 @@ module.exports = async function Resources(ctx) {
     const tList = new Promise((resolve, reject) => {
         tListTimer = setInterval(() => {
             if(
-                globals.intercomTempResList !== null &&
-                (new Date() - globals.intercomTempResList.timestamp) <= 1000 &&
-                Array.isArray(globals.intercomTempResList.data)
+                globals.databus.resourcesList !== null &&
+                (new Date() - globals.databus.resourcesList.timestamp) <= 1000 &&
+                Array.isArray(globals.databus.resourcesList.data)
             ){
                 clearTimeout(tListTimer);
                 clearTimeout(tErrorTimer);
-                let resGroups = processResources(globals.intercomTempResList.data);
+                let resGroups = processResources(globals.databus.resourcesList.data);
                 let renderData = {
                     headerTitle: 'Resources',
                     resGroupsJS: JSON.stringify(resGroups),

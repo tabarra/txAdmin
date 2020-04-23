@@ -98,28 +98,7 @@
     </div>
 </div>
 
-<!-- FIXME: convert the update checker system! -->
-<div class="row justify-content-md-center">
-    <div class="col-md-4">
-        <div class="alert alert-secondary border-secondary  text-center" role="alert">
-            This version <i>currently</i> does not have an update checker. <br>
-            Please keep an eye out for our <a href="https://github.com/tabarra/txAdmin" target="_blank">GitHub Repository.</a>
-        </div>
-    </div>
-</div>
-{{if(options.updateData.currentVersion !== options.updateData.latestVersion && false)}}
-<div class="row justify-content-md-center">
-    <div class="col-md-6 ">
-        <div class="alert alert-{{updateData.class}} border-{{updateData.class}}  text-center" role="alert">
-            <a href="" class="alert-link">Update available for txAdmin ({{updateData.currentVersion}} >
-                {{updateData.latestVersion}})! </a> <br>
-            {{foreach(options.updateData.changes)}}
-            <strong>v{{@this.version}}:</strong> {{@this.changelog|safe}} <br>
-            {{/foreach}}
-        </div>
-    </div>
-</div>
-{{/if}}
+
 
 
 {{include("footer")/}}

@@ -14,27 +14,27 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
 module.exports = async function ServerLog(ctx) {
     //If page
     if(isUndefined(ctx.query.offset)){
-        let log = processLog(globals.intercomTempLog.slice(-100));
+        let log = processLog(globals.databus.serverLog.slice(-100));
         let renderData = {
             headerTitle: 'Server Log',
-            offset: globals.intercomTempLog.length,
+            offset: globals.databus.serverLog.length,
             log
         }
         return ctx.utils.render('serverLog', renderData);
 
     //If offset
     }else if(parseInt(ctx.query.offset) !== NaN){
-        if(ctx.query.offset === globals.intercomTempLog.length){
-            return ctx.send({offset: globals.intercomTempLog.length, log : false});
+        if(ctx.query.offset === globals.databus.serverLog.length){
+            return ctx.send({offset: globals.databus.serverLog.length, log : false});
         }else{
-            let log = processLog(globals.intercomTempLog.slice(ctx.query.offset));
-            return ctx.send({offset: globals.intercomTempLog.length, log});
+            let log = processLog(globals.databus.serverLog.slice(ctx.query.offset));
+            return ctx.send({offset: globals.databus.serverLog.length, log});
         }
 
     //If null
     }else{
-        let log = processLog(globals.intercomTempLog.slice(-100));
-        return ctx.send({offset: globals.intercomTempLog.length, log});
+        let log = processLog(globals.databus.serverLog.slice(-100));
+        return ctx.send({offset: globals.databus.serverLog.length, log});
     }
 };
 

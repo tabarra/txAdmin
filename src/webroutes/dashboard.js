@@ -79,47 +79,15 @@ function getChartData(series) {
  * Returns the update data
  */
 function getUpdateData() {
-    //FIXME: temp disable for conversion
-    return false;
 
-    let updateData = {
-        currentVersion: GlobalData.txAdminVersion,
-        latestVersion: globals.version.latest,
-        changes: []
-    }
-
+    let updateData;
     try {
-        let diff;
-        try {
-            diff = semver.diff(GlobalData.txAdminVersion, globals.version.latest);
-        } catch (error) {
-            diff = 'major';
-        }
-
-        if (diff == 'major') {
-            updateData.class = 'danger';
-        } else if (diff == 'minor') {
-            updateData.class = 'warning';
-        } else if (diff == 'patch') {
-            updateData.class = 'info';
-        } else {
-            updateData.class = 'dark';
-        }
-
-        //Processing the version history and only picking the new ones
-        globals.version.allVersions.forEach(version => {
-            try {
-                if (semver.gt(version.version, GlobalData.txAdminVersion)) {
-                    updateData.changes.push(version);
-                }
-            } catch (error) { }
-        });
-        updateData.changes = updateData.changes.reverse();
+        // xxxxx
+        dir(globals.databus.updateChecker);
     } catch (error) {
         logError(`Error while processing changelog. Enable verbosity for more information.`);
         if(GlobalData.verbose) dir(error);
     }
-
 
     return updateData;
 }
