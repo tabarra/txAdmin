@@ -20,7 +20,7 @@ module.exports = async function SetupGet(ctx) {
     // }
 
     let windowsBatPath;
-    if(GlobalData.osType == 'Windows_NT'){
+    if(GlobalData.osType == 'windows'){
         let batFolder = path.resolve(GlobalData.fxServerPath, '..');
         windowsBatPath  = path.join(batFolder, `start_${GlobalData.fxServerVersion}_${globals.info.serverProfile}.bat`);
     }

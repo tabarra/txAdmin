@@ -32,7 +32,15 @@ const getBuild = (ver)=>{
 
 //==============================================================
 //Get OSType
-const osType = os.type();
+const osTypeVar = os.type();
+let osType;
+if(osTypeVar == 'Windows_NT'){
+    osType = 'windows'
+}else if(osTypeVar == 'Linux'){
+    osType = 'linux'
+}else{
+    logDie(`OS type not supported: ${osTypeVar}`)
+}
 
 //Get resource name
 const resourceName = GetCurrentResourceName();
@@ -69,7 +77,7 @@ const fxServerPath = cleanPath(citizenRootConvar);
 let dataPath;
 let txDataPathConvar = GetConvar('txDataPath', 'false');
 if(txDataPathConvar == 'false'){
-    let dataPathSuffix = (osType == 'Windows_NT')? '..' : '../../../';
+    let dataPathSuffix = (osType == 'windows')? '..' : '../../../';
     dataPath = cleanPath(path.join(fxServerPath, dataPathSuffix, 'txData'));
     log(`Version ${txAdminVersion} using data path '${dataPath}'`);
 }else{

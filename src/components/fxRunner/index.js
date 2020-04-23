@@ -80,7 +80,7 @@ module.exports = class FXRunner {
                 ]
             };
             
-        }else if(GlobalData.osType === 'Windows_NT'){
+        }else if(GlobalData.osType === 'windows'){
             this.spawnVariables = {
                 command: `${GlobalData.fxServerPath}/FXServer.exe`,
                 args: cmdArgs

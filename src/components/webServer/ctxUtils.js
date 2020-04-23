@@ -56,7 +56,7 @@ async function renderMasterView(view, reqSess, data){
     if(isUndefined(data)) data = {};
     data.headerTitle = (!isUndefined(data.headerTitle))? `${data.headerTitle} - txAdmin` : 'txAdmin';
     data.txAdminVersion = GlobalData.txAdminVersion;
-    data.fxserverVersion = GlobalData.fxServerVersion;
+    data.fxServerVersion = GlobalData.fxServerVersion;
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username)? reqSess.auth.username : 'unknown user';
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture)? reqSess.auth.picture : 'img/default_avatar.png';
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
@@ -98,7 +98,7 @@ async function renderLoginView(data){
     // data.template = 'justMessage';
     data.serverProfile = globals.info.serverProfile;
     data.txAdminVersion = GlobalData.txAdminVersion;
-    data.fxserverVersion = GlobalData.fxServerVersion;
+    data.fxServerVersion = GlobalData.fxServerVersion;
 
     let out;
     try {

@@ -10,12 +10,6 @@ try {
     process.exit();
 }
 
-//Checking OS compatibility
-if (!['Linux', 'Windows_NT'].includes(require('os').type())) {
-    console.log(`OS type not supported: ${osType}`);
-    process.exit();
-}
-
 //Checking monitor mode and starting
 if(GetConvar('monitorMode', 'false') == 'true'){
     try {
