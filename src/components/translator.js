@@ -9,6 +9,7 @@ const languages = {
     cs: require('../../locale/cs.json'),
     da: require('../../locale/da.json'),
     de: require('../../locale/de.json'),
+    el: require('../../locale/el.json'),
     en: require('../../locale/en.json'),
     es: require('../../locale/es.json'),
     fi: require('../../locale/fi.json'),
