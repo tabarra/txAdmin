@@ -4,7 +4,7 @@ const header = 'txAdmin';
 let logHistory = [];
 
 //Helpers
-const now = () => { return Math.round(new Date() / 1000) };
+const now = () => { return Math.round(Date.now() / 1000) };
 const getConCtx = (ctx) => { return (ctx !== null)? header+':'+ctx : header };
 const getHistCtx = (ctx) => { return (ctx !== null)? ctx : header };
 const toHistory = (type, ctx, msg) =>{

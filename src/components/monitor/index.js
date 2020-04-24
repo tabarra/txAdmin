@@ -8,7 +8,7 @@ const HostCPUStatus = require('./hostCPUStatus');
 const TimeSeries = require('./timeSeries');
 
 //Helpers
-const now = () => { return Math.round(new Date() / 1000) };
+const now = () => { return Math.round(Date.now() / 1000) };
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 
 module.exports = class Monitor {

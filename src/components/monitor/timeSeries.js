@@ -5,7 +5,7 @@ const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(mo
 
 //Helpers
 const isUndefined = (x) => { return (typeof x === 'undefined') };
-const now = () => { return (new Date() / 1000).toFixed() };
+const now = () => { return (Date.now() / 1000).toFixed() };
 
 /**
  * Simple Integer Time Series class with json file persistence

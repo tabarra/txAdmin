@@ -4,13 +4,16 @@ const axios = require("axios");
 const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 //Helpers
+const now = () => { return Math.round(Date.now() / 1000) };
 const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
 
 module.exports = async () => {
     try {
-        //perform request
-        let osTypeUrl = (GlobalData.osType == 'windows')? 'win32' : 'linux';
-        let changelogReq = await axios.get(`https://changelogs-live.fivem.net/api/changelog/versions/${osTypeUrl}/server`);
+        //perform request - cache busting every ~1.4h
+        let osTypeApiUrl = (GlobalData.osType == 'windows')? 'win32' : 'linux';
+        let cacheBuster = Math.floor(now() / 5e3);
+        let reqUrl = `https://changelogs-live.fivem.net/api/changelog/versions/${osTypeApiUrl}/server?${cacheBuster}`;
+        let changelogReq = await axios.get(reqUrl);
 
         //check response
         if(!changelogReq.data) throw new Error('request failed');
@@ -18,11 +21,13 @@ module.exports = async () => {
         if(anyUndefined(changelog.recommended, changelog.optional, changelog.latest, changelog.critical)){
             throw new Error('expected values not found');
         }
+        if(GlobalData.verbose) log(`Checked for updates. Latest version is ${changelog.latest}`);
         //FIXME: CHECK FOR BROKEN ORDER
 
         //fill in databus
-        if(GlobalData.verbose) log(`Checked for updates. Latest version is ${changelog.latest}`);
+        let osTypeRepoUrl = (GlobalData.osType == 'windows')? 'server_windows' : 'proot_linux';
         globals.databus.updateChecker = {
+            artifactsLink: `https://runtime.fivem.net/artifacts/fivem/build_${osTypeRepoUrl}/master/?${cacheBuster}`,
             recommended: parseInt(changelog.recommended),
             optional: parseInt(changelog.optional),
             latest: parseInt(changelog.latest),
