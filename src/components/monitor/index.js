@@ -35,6 +35,11 @@ module.exports = class Monitor {
         this.resetMonitorStats();
         this.buildSchedule();
 
+        //Running playerlist generator
+        if(process.env.APP_ENV !== 'webpack' && false) {
+            require('./genPlayers.js');
+        }
+
         //Cron functions
         setInterval(() => {
             this.sendHealthCheck();
@@ -347,6 +352,15 @@ module.exports = class Monitor {
 
     //================================================================
     handleHeartBeat(postData){
+        //NOTE: bypass when using the debug player generator
+        if(Array.isArray(globals.databus.debugPlayerlist)){
+            this.lastSuccessfulHeartBeat = now();
+            this.timeSeries.add(globals.databus.debugPlayerlist.length);
+            this.tmpPlayers = globals.databus.debugPlayerlist;
+            // globals.playerController.processHeartBeat(this.tmpPlayers);
+            return;
+        }
+
         //Sanity check
         if(!Array.isArray(postData.players)) return;
 
