@@ -1,5 +1,5 @@
 {
-    "version": "2.4.0-dev",
+    "version": "2.4.0",
     "changelog": "Deprecated Message. Please Update to v2.",
     "allVersions": [
         {
@@ -171,8 +171,8 @@
             "changelog": "Fixed /status, fixed ping colors."
         },
         {
-            "version": "2.4.0-dev",
-            "changelog": "wip"
+            "version": "2.4.0",
+            "changelog": "Added FXServer update checker, improved some error messages, increased heartbeat cooldown limit for low-spec machines and update packages."
         }
     ]
 }

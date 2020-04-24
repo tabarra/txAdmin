@@ -63,6 +63,8 @@
 - [x] created `globals.servicebus` to replace "temporary" variables
 - [x] added FXServer update checker
 - [x] improved monitor handling of very low-spec servers 
+- [x] add greek + pt_pt
+> v2.4.0
 - [ ] add an fxserver changelog page
 
 > Soon™
