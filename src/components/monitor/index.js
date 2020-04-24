@@ -234,7 +234,9 @@ module.exports = class Monitor {
 
     //================================================================
     /**
-     * Refreshes the Server Status.
+     * Refreshes the Server Status and calls for a restart if neccessary.
+     *  - HealthCheck: performing an GET to the /dynamic.json file
+     *  - HeartBeat: receiving an intercom POST from txAdminClient containing playerlist 
      */
     refreshServerStatus(){
         //Check if the server is supposed to be offline
@@ -269,17 +271,10 @@ module.exports = class Monitor {
             return;
         }
 
-        //Check monitor resource status
-        //FIXME: maybe this is causing issues?!
-        // if(this.lastSuccessfulHeartBeat === null && processUptime > 15 && processUptime % 30 == 0){
-        //     let cmd = `ensure ${GlobalData.resourceName}`;
-        //     logWarn(`No heartBeats received since FXServer started. Executing "${cmd}".`);
-        //     globals.fxRunner.srvCmdBuffer(cmd);
-        // }
-        
         //Now to the (un)fun part: if the status != healthy
         this.currentStatus = (healthCheckFailed && heartBeatFailed)? 'OFFLINE' : 'PARTIAL';
 
+        //FIXME: The fired heartbeat could take a lot of time to appear, find a way to not restart the server if that happens
         //Check if still in cooldown
         if(processUptime < this.config.cooldown){
             if(GlobalData.verbose && processUptime > 5 && currTimestamp - this.lastStatusWarningMessage > 10){
@@ -301,6 +296,17 @@ module.exports = class Monitor {
             logWarn(msg);
         }
         
+        //Check if fxChild is closed, in this case no need to wait the failure count
+        let processStatus = globals.fxRunner.getStatus();
+        if(processStatus == 'closed'){
+            this.globalCounters.fullCrashes++;
+            this.restartFXServer(
+                'server close detected',
+                globals.translator.t('restarter.crash_detected')
+            );
+            return;
+        }
+
         //If http partial crash, warn 1 minute before
         if(
             elapsedHealthCheck > (this.config.healthCheck.failLimit - 60) && 
@@ -316,14 +322,16 @@ module.exports = class Monitor {
             this.healthCheckRestartWarningIssued = now();
         }
 
-        //Check if fxChild is closed, in this case no need to wait the failure count
-        let processStatus = globals.fxRunner.getStatus();
-        if(processStatus == 'closed'){
-            this.globalCounters.fullCrashes++;
-            this.restartFXServer(
-                'server close detected',
-                globals.translator.t('restarter.crash_detected')
-            );
+        //Give a bit more time to the very very slow servers to come up
+        //They usually start replying to healthchecks way before sending heartbeats
+        let maxHBCooldownTolerance = 180;
+        if(
+            this.lastSuccessfulHeartBeat === null &&
+            processUptime < maxHBCooldownTolerance &&
+            elapsedHealthCheck < this.config.healthCheck.failLimit
+        ){
+            let msg = `Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`;
+            if(GlobalData.verbose && processUptime % 15 == 0) logWarn(msg);
             return;
         }
 

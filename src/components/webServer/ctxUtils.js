@@ -60,7 +60,7 @@ async function renderMasterView(view, reqSess, data){
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username)? reqSess.auth.username : 'unknown user';
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture)? reqSess.auth.picture : 'img/default_avatar.png';
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
-    data.isLinux = (GlobalData.osType == 'Linux');
+    data.isLinux = (GlobalData.osType == 'linux');
 
     let out;
     try {

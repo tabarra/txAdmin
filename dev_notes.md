@@ -54,11 +54,19 @@
 > v2.3.0
 - [x] fix /status showing objects instead of player count
 - [x] fix playerlist not updating the ping colors
-> v2.3.0
+- [x] fixed double server spawning bug
+> v2.3.1
 - [x] rename `extensions` folder to `scripts` nad adjust webpack
 - [x] upgrade packages (Note: discord.js v12 didn't work)
+- [x] improved error handling for code exchange errors and increased timeout
+- [x] create debug playerlist generator
+- [x] created `globals.servicebus` to replace "temporary" variables
+- [x] added FXServer update checker
+- [x] improved monitor handling of very low-spec servers 
+- [ ] add an fxserver changelog page
 
-- [ ] convert cl_logger.js to luan, and stop it when not in `monitorMode`
+> Soon™
+- [ ] convert cl_logger.js to lua, and stop it when not in `monitorMode`
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
 

@@ -11,7 +11,7 @@ const helpers = require('../../extras/helpers');
 const ConsoleBuffer = require('./consoleBuffer');
 
 //Helpers
-const now = () => { return Math.round(new Date() / 1000) };
+const now = () => { return Math.round(Date.now() / 1000) };
 
 
 module.exports = class FXRunner {
@@ -60,14 +60,14 @@ module.exports = class FXRunner {
             '+set', 'txAdmin-apiPort', GlobalData.txAdminPort,
             '+set', 'txAdmin-apiToken', globals.webServer.intercomToken,
             '+set', 'txAdminServerMode', 'true',
-            '+start', GlobalData.resourceName, //NOTE: this is for some edge cases with linux around build 2350
+            '+start', GlobalData.resourceName, //NOTE: required for builds <= 2391
             '+set', 'onesync_enabled', (this.config.onesync).toString(),
             ...extraArgs,
             '+exec', this.config.cfgPath,
         ];
 
         // Configure spawn parameters according to the environment
-        if(GlobalData.osType === 'Linux'){
+        if(GlobalData.osType === 'linux'){
             let alpinePath = path.resolve(GlobalData.fxServerPath, '../../');
             this.spawnVariables = {
                 command: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
@@ -100,7 +100,7 @@ module.exports = class FXRunner {
      * @param {boolean} announce
      * @returns {string} null or error message
      */
-    async spawnServer(announce){
+    spawnServer(announce){
         //Setup variables
         this.setupVariables();
         if(GlobalData.verbose){
@@ -281,7 +281,7 @@ module.exports = class FXRunner {
             }
 
             //Restart server
-            this.killServer();
+            await this.killServer();
             if(this.restartDelayOverride){
                 logWarn(`Restarting the fxserver with delay override ${this.restartDelayOverride}`);
                 await sleep(this.restartDelayOverride);
@@ -429,7 +429,7 @@ module.exports = class FXRunner {
         if(!this.history.length) return 0;
         let curr = this.history[this.history.length - 1];
         
-        return Math.round(Date.now()/1000) - curr.timestamps.start;
+        return now() - curr.timestamps.start;
     }
 
 } //Fim FXRunner()
