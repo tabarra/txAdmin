@@ -87,7 +87,7 @@ module.exports = (osType, fxServerPath, fxServerVersion, serverProfile, profileP
             fs.writeFileSync(batPath, batData);
             logOk(`You can use ${ac.inverse(batPath)} to start this profile.`);
         } catch (error) {
-            logWarn(`Failed to create '${batPath}'.`);
+            logWarn(`Failed to create 'start_${fxServerVersion}_${serverProfile}.bat' with error: ${error.message}`);
         }
     }
     printDivider();
