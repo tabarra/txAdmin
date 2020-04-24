@@ -3,24 +3,32 @@ const modulename = 'WebServer:updateChecker';
 const axios = require("axios");
 const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
+//Helpers
+const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
 
 module.exports = async () => {
     try {
-        let rVer = await axios.get('https://raw.githubusercontent.com/tabarra/txAdmin/master/version.json');
-        rVer = rVer.data;
-        if(typeof rVer.version !== 'string' || typeof rVer.changelog !== 'string') throw new Error('Invalid remote version.json file');
-        globals.version.latest = rVer.version;
-        globals.version.changelog = rVer.changelog;
-        globals.version.allVersions = rVer.allVersions || [{version: rVer.version, changelog: rVer.changelog}];
-        if(GlobalData.txAdminVersion !== rVer.version){
-            logWarn(`A new version (v${rVer.version}) is available for txAdmin - https://github.com/tabarra/txAdmin`, 'UpdateChecker');
+        //perform request
+        let osTypeUrl = (GlobalData.osType == 'windows')? 'win32' : 'linux';
+        let changelogReq = await axios.get(`https://changelogs-live.fivem.net/api/changelog/versions/${osTypeUrl}/server`);
+
+        //check response
+        if(!changelogReq.data) throw new Error('request failed');
+        changelog = changelogReq.data;
+        if(anyUndefined(changelog.recommended, changelog.optional, changelog.latest, changelog.critical)){
+            throw new Error('expected values not found');
+        }
+        //FIXME: CHECK FOR BROKEN ORDER
+
+        //fill in databus
+        if(GlobalData.verbose) log(`Checked for updates. Latest version is ${changelog.latest}`);
+        globals.databus.updateChecker = {
+            recommended: parseInt(changelog.recommended),
+            optional: parseInt(changelog.optional),
+            latest: parseInt(changelog.latest),
+            critical: parseInt(changelog.critical),
         }
     } catch (error) {
-        logError(`Error checking for updates. Go to the github repository to see if you need one. Its likely an issue with your internet.`, 'UpdateChecker');
-        let ver = '9.9.9';
-        let msg = `Error checking for updates, if this error persists for more than 4 hours, <br> you probably need to update. <br> This is likely an issue with your server's internet or GitHub.  <br> Check out our <a href="https://discord.gg/f3TsfvD" target="_blank" class="alert-link">Discord Server</a> for more information.`;
-        globals.version.latest = ver;
-        globals.version.changelog = msg;
-        globals.version.allVersions = [{version: ver, changelog: msg}];
+        if(GlobalData.verbose) logWarn(`Failed to retrieve FXServer update data with error: ${error.message}`);
     }
 }

@@ -49,7 +49,7 @@ function getChartData(series) {
         return false;
     }
 
-    //TODO: those are random values, do it via some calculation to maintain consistency.
+    //TODO: those are arbitrary values, do it via some calculation to maintain consistency.
     let mod;
     if (series.length > 6000) {
         mod = 32;
@@ -79,11 +79,38 @@ function getChartData(series) {
  * Returns the update data
  */
 function getUpdateData() {
+    // Prepping vars
+    let curr = GlobalData.fxServerVersion;
+    let rVer = globals.databus.updateChecker;
+    let updateData = {
+        color: false,
+        message: false,
+        subtext: false,
+    };
 
-    let updateData;
+    //Processing version data
     try {
-        // xxxxx
-        dir(globals.databus.updateChecker);
+        let logFunc;
+        if(curr < rVer.critical){
+            updateData.color = 'danger';
+            updateData.message = 'A critical update is available for FXServer, you should update now.';
+            updateData.subtext = `(recommended update ${curr} ➤ ${rVer.recommended})`;
+            logFunc = logWarn;
+            
+        }else if(curr < rVer.recommended){
+            updateData.color = 'warning';
+            updateData.message = 'A recommended update is available for FXServer, you should update.';
+            updateData.subtext = `(recommended update ${curr} ➤ ${rVer.recommended})`;
+            logFunc = logWarn;
+    
+        }else if(curr < rVer.optional){
+            updateData.color = 'info';
+            updateData.message = 'An optional update is available for FXServer.';
+            updateData.subtext = `(optional update ${curr} ➤ ${rVer.optional})`;
+            logFunc = log;
+        }
+        logFunc(`${updateData.message} ${updateData.subtext}`);
+
     } catch (error) {
         logError(`Error while processing changelog. Enable verbosity for more information.`);
         if(GlobalData.verbose) dir(error);
