@@ -76,7 +76,21 @@ function getChartData(series) {
 
 //================================================================
 /**
- * Returns the update data
+ * Returns the update data.
+ * 
+ * FIXME: improve the message to show suggestion based on weathor or not the user is an "early adopter".
+ * 
+ *   Logic:
+ *    if == recommended, you're fine
+ *    if > recommended && < optional, pls update to optional
+ *    if == optional, you're fine
+ *    if > optional && < latest, pls update to latest
+ *    if == latest, duh
+ *    if < critical, BIG WARNING
+ * 
+ *   For the changelog page, see if possible to show the changelog timeline color coded.
+ *   ex: all versions up to critical are danger, then warning, info and secondary for the above optional
+ * 
  */
 function getUpdateData() {
     // Prepping vars
