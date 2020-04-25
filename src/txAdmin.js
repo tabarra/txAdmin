@@ -17,7 +17,7 @@ globals = {
     monitor: null,
     translator: null,
     webServer: null,
-    database: null,
+    playerController: null,
     config: null,
     info: {},
 
@@ -86,9 +86,9 @@ module.exports = class txAdmin {
         this.startWebServer(profileConfig.webServer).catch((err) => {
             HandleFatalError(err, 'WebServer');
         });
-        // this.startDatabase().catch((err) => {
-        //     HandleFatalError(err, 'Database');
-        // });
+        this.startPlayerController().catch((err) => {
+            HandleFatalError(err, 'PlayerController');
+        });
 
         //NOTE: dependency order
         //  - translator before monitor
@@ -144,10 +144,10 @@ module.exports = class txAdmin {
     }
 
     //==============================================================
-    //FIXME: experimental database
-    async startDatabase(){
-        const Database = require('./components/database')
-        globals.database = new Database();
+    //NOTE: this component name might change
+    async startPlayerController(){
+        const PlayerController = require('./components/playerController')
+        globals.playerController = new PlayerController();
     }
 }
 

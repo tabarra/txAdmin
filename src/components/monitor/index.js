@@ -365,7 +365,7 @@ module.exports = class Monitor {
             this.lastSuccessfulHeartBeat = now();
             this.timeSeries.add(globals.databus.debugPlayerlist.length);
             this.tmpPlayers = globals.databus.debugPlayerlist;
-            // globals.playerController.processHeartBeat(this.tmpPlayers);
+            globals.playerController.processHeartBeat(this.tmpPlayers);
             return;
         }
 

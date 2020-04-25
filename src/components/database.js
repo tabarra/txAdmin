@@ -5,6 +5,7 @@ const FileAsync = require('lowdb/adapters/FileAsync')
 const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
 
 //FIXME: experimental database
+//NOTE: probably just deprecate this...
 module.exports = class Database {
     constructor() {
         this.db = null;
