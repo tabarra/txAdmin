@@ -173,15 +173,15 @@ module.exports = class ConsoleBuffer {
     saveLog() {
         if(!this.fileBuffer.length) return;
         let cleanBuff = this.fileBuffer.replace(/\u001b\[\d+(;\d)?m/g, '');
-        fs.appendFile(this.logPath, cleanBuff, {encoding: 'utf8'}, (err)=>{
-            if(err){
+        fs.appendFile(this.logPath, cleanBuff, {encoding: 'utf8'}, (error)=>{
+            if(error){
                 if(GlobalData.verbose) logError(`File Write Buffer error: ${error.message}`)
             }else{
                 this.fileBuffer = '';
             }
         });
-        fs.stat(this.logPath, (err, stats)=>{
-            if(err){
+        fs.stat(this.logPath, (error, stats)=>{
+            if(error){
                 if(GlobalData.verbose) logError(`Log File get stats error: ${error.message}`)
             }else{
                 this.logFileSize = bytes(stats.size);

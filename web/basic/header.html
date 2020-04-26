@@ -95,6 +95,15 @@
                     </svg> Settings
                 </a>
             </li>
+            {{if(options.showAdvanced)}}
+            <li class="c-sidebar-nav-item">
+                <a class="c-sidebar-nav-link text-warning" href="/advanced">
+                    <svg class="c-sidebar-nav-icon text-warning">
+                        <use xlink:href="img/coreui_icons.svg#cil-fire"></use>
+                    </svg> Advanced
+                </a>
+            </li>
+            {{/if}}
 
 
             <li class="c-sidebar-nav-divider"></li>

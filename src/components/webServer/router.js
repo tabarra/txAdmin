@@ -60,6 +60,8 @@ module.exports = router = (config) =>{
 
     //Diagnostic routes
     router.get('/diagnostics', requestAuth('web'), webRoutes.diagnostics);
+    router.get('/advanced', requestAuth('web'), webRoutes.advanced.get);
+    router.post('/advanced', requestAuth('api'), webRoutes.advanced.actions);
 
     //Data routes
     router.get('/txAdminLog', requestAuth('web'), webRoutes.txAdminLog);

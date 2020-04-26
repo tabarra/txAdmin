@@ -61,6 +61,7 @@ async function renderMasterView(view, reqSess, data){
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture)? reqSess.auth.picture : 'img/default_avatar.png';
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
     data.isLinux = (GlobalData.osType == 'linux');
+    data.showAdvanced = (process.env.APP_ENV !== 'webpack' || GlobalData.verbose);
 
     let out;
     try {

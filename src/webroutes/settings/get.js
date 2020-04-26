@@ -25,9 +25,6 @@ module.exports = async function SettingsGet(ctx) {
         activeTab: 'global'
     }
 
-    //FIXME: until there is an advanced tab or something
-    renderData.global.verbose = (GlobalData.verbose)? 'checked' : '';
-
     return ctx.utils.render('settings', renderData);
 };
 

@@ -43,7 +43,7 @@ module.exports = async function FXServerCommands(ctx) {
 
     //==============================================
     if(action == 'profile_monitor'){
-        //NOTE: undocumented feature... might come in handy
+        //NOTE: Only available in the /advanced page
         if(!ensurePermission(ctx, 'all_permissions')) return false;
         ctx.utils.appendLog('Profiling txAdmin instance.');
         

@@ -85,9 +85,6 @@ function handleGlobal(ctx) {
     newConfig.language = cfg.language;
     let saveStatus = globals.configVault.saveProfile('global', newConfig);
 
-    //FIXME: until there is an advanced tab or something
-    GlobalData.verbose = cfg.verbose;
-
     //Sending output
     if(saveStatus){
         globals.translator.refreshConfig(langPhrases);

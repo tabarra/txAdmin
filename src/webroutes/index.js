@@ -43,6 +43,11 @@ exports.fxserver = {
     downloadLog: require('./fxserver/downloadLog'),
 }
 
+exports.advanced = {
+    get: require('./advanced/get'),
+    actions: require('./advanced/actions'),
+}
+
 exports.experiments = {
     bans: {
         get: require('./experiments/bans/get'),
