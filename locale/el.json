@@ -9,7 +9,7 @@
         "partial_crash_warn_discord": "Λόγω μερικών προβλημάτων, Ο **%{servername}** θα κάνει επανεκκίνηση σε 1 λεπτό.",
         "schedule_reason": "Προγραμματισμένη επανεκκίνηση σε %{time}",
         "schedule_warn": "Αυτός ο διακομιστής έχει προγραμματιστεί για επανεκκίνηση %{smart_count} λεπτό. Παρακαλώ αποσυνδεθείτε τώρα. |||| Αυτός ο διακομιστής έχει προγραμματιστεί για επανεκκίνηση %{smart_count} λεπτά.",
-        "schedule_warn_discord": "**%{servername}** έχει προγραμματιστεί επανεκκίνηση σε %{smart_count} λεπτό. |||| **%{servername}** is scheduled to restart in %{smart_count} λεπτά."
+        "schedule_warn_discord": "**%{servername}** έχει προγραμματιστεί επανεκκίνηση σε %{smart_count} λεπτό. |||| **%{servername}** έχει προγραμματιστεί επανεκκίνηση σε %{smart_count} λεπτά."
     },
     "server_actions": {
         "restarting": "Επανεκκίνηση διακομιστή (%{reason}).",
