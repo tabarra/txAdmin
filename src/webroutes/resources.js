@@ -2,7 +2,7 @@
 const modulename = 'WebServer:Resources';
 const path = require('path');
 const slash = require('slash');
-const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };

@@ -18,7 +18,7 @@ const nanoid = customAlphabet(dict51, 20);
 
 const ac = require('ansi-colors');
 const { setHttpCallback } = require('@citizenfx/http-wrapper');
-const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const {requestAuth} = require('./requestAuthenticator');
 const ctxUtils = require('./ctxUtils.js');
 

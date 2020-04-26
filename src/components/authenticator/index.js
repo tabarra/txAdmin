@@ -3,7 +3,7 @@ const modulename = 'Authenticator';
 const ac = require('ansi-colors');
 const fs = require('fs-extra');
 const clone = require('clone');
-const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const CitizenFXProvider = require('./providers/CitizenFX');
 
 

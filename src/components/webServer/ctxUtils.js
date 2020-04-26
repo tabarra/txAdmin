@@ -4,7 +4,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const sqrl = require("squirrelly");
 const helpers = require('../../extras/helpers');
-const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };

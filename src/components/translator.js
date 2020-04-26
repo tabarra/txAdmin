@@ -2,7 +2,7 @@
 const modulename = 'Translator';
 const fs = require('fs');
 const Polyglot = require('node-polyglot');
-const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 const languages = {
     ar: require('../../locale/ar.json'),

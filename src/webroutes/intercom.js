@@ -1,7 +1,7 @@
 //Requires
 const modulename = 'WebServer:Intercom';
 const clone = require('clone');
-const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };

@@ -2,7 +2,7 @@
 const modulename = 'Authenticator:CitizenFXProvider';
 const crypto  = require('crypto');
 const { Issuer, custom } = require('openid-client');
-const { dir, log, logOk, logWarn, logError} = require('../../../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
 
 
 module.exports = class CitizenFXProvider {

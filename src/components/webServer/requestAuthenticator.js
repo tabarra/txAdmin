@@ -1,5 +1,5 @@
 const modulename = 'WebServer:RequestAuthenticator';
-const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 
 /**

@@ -3,7 +3,7 @@ const modulename = 'WebServer:Router';
 const Router = require('@koa/router');
 const KoaRateLimit = require('koa-ratelimit');
 
-const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const webRoutes = require('../../webroutes');
 const {requestAuth} = require('./requestAuthenticator');
 

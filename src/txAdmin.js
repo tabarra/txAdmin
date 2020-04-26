@@ -2,7 +2,7 @@
 const fs = require('fs');
 const path = require('path');
 const slash = require('slash');
-const { dir, log, logOk, logWarn, logError} = require('./extras/console')();
+const { dir, log, logOk, logWarn, logError } = require('./extras/console')();
 
 //Helpers
 const cleanPath = (x) => { return slash(path.normalize(x)) };

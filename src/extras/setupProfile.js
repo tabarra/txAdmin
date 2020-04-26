@@ -4,7 +4,7 @@ const ac = require('ansi-colors');
 const fs = require('fs-extra');
 const path = require('path');
 const slash = require('slash');
-const { dir, log, logOk, logWarn, logError} = require('./console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
 
 //Helpers
 const printDivider = () => { log('='.repeat(57)) };

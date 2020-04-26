@@ -2,7 +2,7 @@
 const modulename = 'Logger';
 const fs = require('fs-extra');
 const dateFormat = require('dateformat');
-const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 
 module.exports = class Logger {

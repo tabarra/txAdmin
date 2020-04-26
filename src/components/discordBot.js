@@ -3,7 +3,7 @@ const modulename = 'DiscordBot';
 const fs = require('fs-extra');
 const Discord = require('discord.js');
 const humanizeDuration = require('humanize-duration');
-const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 
 module.exports = class DiscordBot {

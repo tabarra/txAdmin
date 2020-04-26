@@ -9,7 +9,7 @@
  */
 
 //Requires
-const { dir, log, logOk, logWarn, logError} = require('../../extras/console')('PlayerlistGenerator');
+const { dir, log, logOk, logWarn, logError } = require('../../extras/console')('PlayerlistGenerator');
 const srcPlayerlist = require('./playerlist.ignore.json')
 
 //Helpers

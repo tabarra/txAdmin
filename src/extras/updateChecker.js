@@ -1,7 +1,7 @@
 //Requires
 const modulename = 'WebServer:updateChecker';
 const axios = require("axios");
-const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000) };

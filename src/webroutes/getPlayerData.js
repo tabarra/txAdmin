@@ -2,7 +2,7 @@
 const modulename = 'WebServer:GetPlayerData';
 const clone = require('clone');
 const xss = require('../extras/xss')();
-const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 
 /**

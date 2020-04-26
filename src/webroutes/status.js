@@ -2,7 +2,7 @@
 const modulename = 'WebServer:GetStatus';
 const os = require('os');
 const clone = require('clone');
-const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 
 /**

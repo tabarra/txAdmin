@@ -2,7 +2,7 @@
 const modulename = 'Database';
 const low = require('lowdb')
 const FileAsync = require('lowdb/adapters/FileAsync')
-const { dir, log, logOk, logWarn, logError} = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 //FIXME: experimental database
 //NOTE: probably just deprecate this...

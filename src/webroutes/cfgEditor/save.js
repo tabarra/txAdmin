@@ -1,7 +1,7 @@
 //Requires
 const modulename = 'WebServer:CFGEditorSave';
 const fs = require('fs-extra');
-const { dir, log, logOk, logWarn, logError} = require('../../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
 
 //Helper functions
