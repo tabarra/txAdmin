@@ -65,9 +65,12 @@
 - [x] improved monitor handling of very low-spec servers 
 - [x] add greek + pt_pt
 > v2.4.0
-- [ ] add an fxserver changelog page
+- [x] create `/advanced` page and move the verbosity switch there
+- [ ] create playerController module
 
 > Soon™
+- [ ] tweak dashboard update checker behavior
+- [ ] add an fxserver changelog page
 - [ ] convert cl_logger.js to lua, and stop it when not in `monitorMode`
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token

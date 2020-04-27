@@ -6,6 +6,7 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000) };
+const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
 
 
 module.exports = class PlayerController {
@@ -19,6 +20,7 @@ module.exports = class PlayerController {
         //Vars
         this.db = null;
         this.activePlayers = [];
+        this.knownIdentifiers = ['steam', 'license', 'xbl', 'live', 'discord', 'fivem'];
 
         //Start database instance
         (async () => {
@@ -83,6 +85,7 @@ module.exports = class PlayerController {
                 //remove isTmp
                 //add player to the db
             }else if(Math.round(sessionTime/4) % 4 == 0){
+                //update nickname
                 //add 1 minute
             }
         });
@@ -118,6 +121,7 @@ module.exports = class PlayerController {
     }
 
     //================================================================
+    //HACK
     async processHeartBeatxxxx(players){
         /*
             TODO:
@@ -164,47 +168,86 @@ module.exports = class PlayerController {
 
     //================================================================
     async processHeartBeat(players){
-        return;
-        /*
-            TODO:
-            - For all removed players = remove from this.activePlayers
-            - For all new players:
-                - search for it in the database
-                - add it to the activePlayers, containing:
-                    - some prop to indicate if it already exists in the db
-                    - ts_connected
-
-            - For all existing players:
-                - IF already on the list -- ???
         
-            FIXME:
-                - add nickname part
-        */
-        let newPlayers, removedPlayers, updatedPlayers;
         try {
-            newPlayers = players.filter(p => {
-                return !this.activePlayers.filter(x => x.id === p.id).length;
-            });
+            /*
+                TODO:
+                - For all removed players = remove from this.activePlayers
+                - For all new players:
+                    - search for it in the database
+                    - add it to the activePlayers, containing:
+                        - some prop to indicate if it already exists in the db
+                        - ts_connected
+            */
+            // let hbPlayerIDs = players.map((p) => p.id);
 
-            removedPlayers = this.activePlayers.filter(p => {
-                return !players.filter(x => x.id === p.id).length;
-            });
+            //Sanity check
+            if(!Array.isArray(players)) throw new Error('expected array');
+            
+            //Validate & filter players then extract ids and license
+            let pCount = players.length; //Optimization only, although V8 is probably smart enough
+            let hbPlayerIDs = []; //Optimization only
+            let invalids = 0;
+            for (let i = 0; i < pCount; i++) {
+                const p = players[i];
+                //Basic struct
+                if(
+                    typeof p !== 'object' ||
+                    typeof p.name !== 'string' ||
+                    typeof p.id !== 'number' ||
+                    !Array.isArray(p.identifiers) ||
+                    !p.identifiers.length
+                ){
+                    invalids++;
+                    delete players[i];
+                }
 
-            updatedPlayers = this.activePlayers.filter(p => {
-                return players.filter(x => x.id === p.id).length;
+                //Extract license
+                for (let j = 0; j < p.identifiers.length; j++) {
+                    const id = p.identifiers[j];
+                    //s.substring(0, "test".length) == "test"
+                    //either just extract license, or all ids
+                }
+
+                //Check if license exists
+                // if(xxx){} //TODO:
+
+                //Add to ids list
+                hbPlayerIDs.push(p.id);
+            }
+            if(GlobalData.verbose && invalids) logWarn(`HeartBeat playerlist contained ${invalids} players that were removed.`); 
+            
+            //TODO: this.knownIdentifiers
+
+            //Processing active players list, removing players that disconnected 
+            let apCount = this.activePlayers.length;  //Optimization only, although V8 is probably smart enough
+            let disconnectedPlayers = []; //might want to do something with this
+            let activePlayerIDs = []; //Optimization only
+            for (let apI = 0; apI < apCount; apI++) {
+                if(!hbPlayerIDs.includes(this.activePlayers[apI].id)){
+                    disconnectedPlayers.push(this.activePlayers[apI]); //NOTE: might require a Clone
+                    delete this.activePlayers[apI];
+                }else{
+                    activePlayerIDs.push(apI)
+                }
+            }
+            
+            //Filtering the new players
+            let newPlayers = [];
+            for (let hbPI = 0; hbPI < players.length; hbPI++) {
+                if(!activePlayerIDs.includes(players[hbPI].id)){
+                    newPlayers.push(players[hbPI]);
+                }
+            }
+            
+            dir({
+                disconnectedPlayers: disconnectedPlayers.length,
+                newPlayers: newPlayers.length
             });
         } catch (error) {
             dir(error)
         }
-        dir({
-            newPlayers: newPlayers.length,
-            removedPlayers: removedPlayers.length,
-            updatedPlayers: updatedPlayers.length,
-        });
 
-        newPlayers.forEach(p => {
-            this.activePlayers.push(p)
-        });
-    }
+    }//Fim processHeartBeat()
 
 } //Fim Database()
