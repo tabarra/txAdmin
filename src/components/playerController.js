@@ -200,6 +200,7 @@ module.exports = class PlayerController {
                 ){
                     invalids++;
                     delete players[i];
+                    continue;
                 }
 
                 //Extract license
@@ -223,22 +224,27 @@ module.exports = class PlayerController {
             let apCount = this.activePlayers.length;  //Optimization only, although V8 is probably smart enough
             let disconnectedPlayers = []; //might want to do something with this
             let activePlayerIDs = []; //Optimization only
-            for (let apI = 0; apI < apCount; apI++) {
-                if(!hbPlayerIDs.includes(this.activePlayers[apI].id)){
-                    disconnectedPlayers.push(this.activePlayers[apI]); //NOTE: might require a Clone
-                    delete this.activePlayers[apI];
+            for (let i = 0; i < apCount; i++) {
+                if(this.activePlayers[i] == null) continue;
+  
+                if(!hbPlayerIDs.includes(this.activePlayers[i].id)){
+                    disconnectedPlayers.push(this.activePlayers[i]); //NOTE: might require a Clone
+                    delete this.activePlayers[i];
                 }else{
-                    activePlayerIDs.push(apI)
+                    activePlayerIDs.push(this.activePlayers[i].id)
                 }
             }
             
-            //Filtering the new players
+            //Processing the new players
             let newPlayers = [];
             for (let hbPI = 0; hbPI < players.length; hbPI++) {
+                if(players[hbPI] == null) continue;
                 if(!activePlayerIDs.includes(players[hbPI].id)){
-                    newPlayers.push(players[hbPI]);
+                    newPlayers.push(players[hbPI]); //remove this line
+                    this.activePlayers.push(players[hbPI])
                 }
             }
+
             
             dir({
                 disconnectedPlayers: disconnectedPlayers.length,
