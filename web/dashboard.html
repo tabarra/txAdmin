@@ -96,16 +96,23 @@
     </div>
 </div>
 
-{{if(options.updateData.message)}}
+
 <div class="row justify-content-md-center">
-    <div class="col-md-6 ">
-        <div class="alert alert-{{updateData.color}} border-{{updateData.color}}  text-center" role="alert">
-            <a href="{{updateData.artifactsLink}}" target="_blank" class="alert-link">{{updateData.message}}</a> <br>
-            {{updateData.subtext}}
-        </div>
+    <div class="col-md-6 text-center">
+        {{if(options.versionData.message)}}
+            <div class="alert alert-{{versionData.color}} border-{{versionData.color}}" role="alert">
+                <a href="{{versionData.artifactsLink}}" target="_blank" class="alert-link">{{versionData.message}}</a> <br>
+                {{versionData.subtext}}
+            </div>
+        {{/if}}
+        {{if(options.txAdminVersion.includes('-'))}}
+            <span class="text-danger font-weight-bold">
+                You are using a pre-release version of txAdmin destined for developers and beta testers only! <br>
+                Your server stability might be impacted by this.
+            </span>
+        {{/if}}
     </div>
 </div>
-{{/if}}
 
 
 {{include("footer")/}}

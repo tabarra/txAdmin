@@ -66,7 +66,9 @@
 - [x] add greek + pt_pt
 > v2.4.0
 - [x] create `/advanced` page and move the verbosity switch there
+- [x] fixed updateChecker error handling and added a message for pre-releases
 - [ ] create playerController module
+- [ ] remove the public ip thing and make the /status configurable
 
 > Soon™
 - [ ] tweak dashboard update checker behavior

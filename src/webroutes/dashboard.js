@@ -22,7 +22,7 @@ module.exports = async function Dashboard(ctx) {
     //Preparing render data
     let renderData = {
         serverName: globals.config.serverName,
-        updateData: getUpdateData(),
+        versionData: getVersionData(),
         chartData: getChartData(globals.monitor.timeSeries.get()),
         perms:{
             commandMessage: getPermDisable('commands.message'),
@@ -92,11 +92,19 @@ function getChartData(series) {
  *   ex: all versions up to critical are danger, then warning, info and secondary for the above optional
  * 
  */
-function getUpdateData() {
-    // Prepping vars
+function getVersionData() {
+    // Prepping vars & checking if there is data available
     let curr = GlobalData.fxServerVersion;
     let rVer = globals.databus.updateChecker;
-    let updateData = {
+    if(rVer == false){
+        return {
+            artifactsLink: false,
+            color: false,
+            message: false,
+            subtext: false,
+        };
+    }
+    let versionData = {
         artifactsLink: rVer.artifactsLink,
         color: false,
         message: false,
@@ -106,19 +114,19 @@ function getUpdateData() {
     //Processing version data
     try {
         if(curr < rVer.critical){
-            updateData.color = 'danger';
-            updateData.message = 'A critical update is available for FXServer, you should update now.';
-            updateData.subtext = `(recommended update ${curr} ➤ ${rVer.recommended})`;
+            versionData.color = 'danger';
+            versionData.message = 'A critical update is available for FXServer, you should update now.';
+            versionData.subtext = `(recommended update ${curr} ➤ ${rVer.recommended})`;
             
         }else if(curr < rVer.recommended){
-            updateData.color = 'warning';
-            updateData.message = 'A recommended update is available for FXServer, you should update.';
-            updateData.subtext = `(recommended update ${curr} ➤ ${rVer.recommended})`;
+            versionData.color = 'warning';
+            versionData.message = 'A recommended update is available for FXServer, you should update.';
+            versionData.subtext = `(recommended update ${curr} ➤ ${rVer.recommended})`;
     
         }else if(curr < rVer.optional){
-            updateData.color = 'info';
-            updateData.message = 'An optional update is available for FXServer.';
-            updateData.subtext = `(optional update ${curr} ➤ ${rVer.optional})`;
+            versionData.color = 'info';
+            versionData.message = 'An optional update is available for FXServer.';
+            versionData.subtext = `(optional update ${curr} ➤ ${rVer.optional})`;
         }
 
     } catch (error) {
@@ -126,5 +134,5 @@ function getUpdateData() {
         if(GlobalData.verbose) dir(error);
     }
 
-    return updateData;
+    return versionData;
 }
