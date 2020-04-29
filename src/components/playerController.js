@@ -81,6 +81,7 @@ module.exports = class PlayerController {
     async processActive(){
         this.activePlayers.forEach(p => {
             let sessionTime = now() - p.tsConnected;
+            //if tsLastConnection = null mudar pra now() ou algo assim
             if(p.isTmp && sessionTime >= this.config.minSessionTime){
                 //remove isTmp
                 //add player to the db
@@ -115,72 +116,33 @@ module.exports = class PlayerController {
         }
     }
 
+
     //================================================================
     getPlayerList(){
         // just returns playerlist array, probably one this.activePlayers.map()
     }
 
-    //================================================================
-    //HACK
-    async processHeartBeatxxxx(players){
-        /*
-            TODO:
-            - For all removed players = remove from this.activePlayers
-            - For all new players:
-                - search for it in the database
-                - add it to the activePlayers, containing:
-                    - some prop to indicate if it already exists in the db
-                    - ts_connected
-
-            - For all existing players:
-                - IF already on the list -- ???
-        
-            FIXME:
-                - add nickname part
-        */
-        let newPlayers, removedPlayers, updatedPlayers;
-        try {
-            newPlayers = players.filter(p => {
-                return !this.activePlayers.filter(x => x.id === p.id).length;
-            });
-
-            removedPlayers = this.activePlayers.filter(p => {
-                return !players.filter(x => x.id === p.id).length;
-            });
-
-            updatedPlayers = this.activePlayers.filter(p => {
-                return players.filter(x => x.id === p.id).length;
-            });
-        } catch (error) {
-            dir(error)
-        }
-        dir({
-            newPlayers: newPlayers.length,
-            removedPlayers: removedPlayers.length,
-            updatedPlayers: updatedPlayers.length,
-        });
-
-        newPlayers.forEach(p => {
-            this.activePlayers.push(p)
-        });
-    }
-
 
     //================================================================
+    /**
+     * Processes the monitor heartbeat to update internal active playerlist.
+     * Macro view of this function:
+     *  -For all removed players = remove from this.activePlayers
+     *  -For all new players:
+     *      - search for them in the db
+     *      - add them to the active players containing:
+     *          - some prop to indicate if its present in the database
+     *          - tsJoined
+     * 
+     * NOTE:  This code was written this way to improve performance in exchange of readability
+     *           the ES6 gods might not like this..
+     * FIXME: To prevent retaliation from the gods, consider making the activePlayers an Map instead of an Array.
+     * 
+     * @param {array} players 
+     */
     async processHeartBeat(players){
         
         try {
-            /*
-                TODO:
-                - For all removed players = remove from this.activePlayers
-                - For all new players:
-                    - search for it in the database
-                    - add it to the activePlayers, containing:
-                        - some prop to indicate if it already exists in the db
-                        - ts_connected
-            */
-            // let hbPlayerIDs = players.map((p) => p.id);
-
             //Sanity check
             if(!Array.isArray(players)) throw new Error('expected array');
             
@@ -220,35 +182,37 @@ module.exports = class PlayerController {
             
             //TODO: this.knownIdentifiers
 
-            //Processing active players list, removing players that disconnected 
+            //Processing active players list, creating the removed list, creating new active list without removed players
             let apCount = this.activePlayers.length;  //Optimization only, although V8 is probably smart enough
             let disconnectedPlayers = []; //might want to do something with this
             let activePlayerIDs = []; //Optimization only
+            let newActivePlayers = [];
             for (let i = 0; i < apCount; i++) {
-                if(this.activePlayers[i] == null) continue;
-  
                 if(!hbPlayerIDs.includes(this.activePlayers[i].id)){
                     disconnectedPlayers.push(this.activePlayers[i]); //NOTE: might require a Clone
-                    delete this.activePlayers[i];
                 }else{
-                    activePlayerIDs.push(this.activePlayers[i].id)
+                    newActivePlayers.push(this.activePlayers[i]);
+                    activePlayerIDs.push(this.activePlayers[i].id);
                 }
             }
-            
+
             //Processing the new players
             let newPlayers = [];
             for (let hbPI = 0; hbPI < players.length; hbPI++) {
                 if(players[hbPI] == null) continue;
                 if(!activePlayerIDs.includes(players[hbPI].id)){
-                    newPlayers.push(players[hbPI]); //remove this line
-                    this.activePlayers.push(players[hbPI])
+                    newPlayers.push(players[hbPI]); // debug only - remove this line
+                    newActivePlayers.push(players[hbPI]) //NOTE: process before adding
                 }
             }
 
+            //Replacing the active playerlist
+            this.activePlayers = newActivePlayers;
             
             dir({
                 disconnectedPlayers: disconnectedPlayers.length,
-                newPlayers: newPlayers.length
+                newPlayers: newPlayers.length,
+                activePlayers: this.activePlayers.length
             });
         } catch (error) {
             dir(error)
