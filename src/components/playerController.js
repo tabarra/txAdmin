@@ -138,49 +138,58 @@ module.exports = class PlayerController {
      *           the ES6 gods might not like this..
      * FIXME: To prevent retaliation from the gods, consider making the activePlayers an Map instead of an Array.
      * 
-     * @param {array} players 
+     * 
+     * @param {array} players
      */
     async processHeartBeat(players){
-        
         try {
             //Sanity check
             if(!Array.isArray(players)) throw new Error('expected array');
             
             //Validate & filter players then extract ids and license
             let pCount = players.length; //Optimization only, although V8 is probably smart enough
-            let hbPlayerIDs = []; //Optimization only
+            let hbPlayerLicenses = []; //Optimization + duplicity checking
+            let hbPlayers = [];
             let invalids = 0;
             for (let i = 0; i < pCount; i++) {
-                const p = players[i];
+                let p = Object.assign({}, players[i]);
+
                 //Basic struct
                 if(
                     typeof p !== 'object' ||
                     typeof p.name !== 'string' ||
                     typeof p.id !== 'number' ||
+                    typeof p.license !== 'undefined' ||
                     !Array.isArray(p.identifiers) ||
                     !p.identifiers.length
                 ){
                     invalids++;
-                    delete players[i];
                     continue;
                 }
 
                 //Extract license
                 for (let j = 0; j < p.identifiers.length; j++) {
-                    const id = p.identifiers[j];
-                    //s.substring(0, "test".length) == "test"
-                    //either just extract license, or all ids
+                    //NOTE: maybe extract all ids to object props
+                    //TODO: filter by this.knownIdentifiers
+                    if(p.identifiers[j].substring(0, 8) == "license:"){
+                        p.license = p.identifiers[j].substring(8);
+                        break;
+                    }
                 }
 
-                //Check if license exists
-                // if(xxx){} //TODO:
+                //Check if license id exist and is not duplicated
+                if(typeof p.license !== 'string' || hbPlayerLicenses.includes(p.license)){
+                    invalids++;
+                    continue;
+                }
 
-                //Add to ids list
-                hbPlayerIDs.push(p.id);
+                //Add to licenses list
+                delete p.endpoint;
+                hbPlayerLicenses.push(p.license);
+                hbPlayers.push(p);
             }
             if(GlobalData.verbose && invalids) logWarn(`HeartBeat playerlist contained ${invalids} players that were removed.`); 
             
-            //TODO: this.knownIdentifiers
 
             //Processing active players list, creating the removed list, creating new active list without removed players
             let apCount = this.activePlayers.length;  //Optimization only, although V8 is probably smart enough
@@ -188,36 +197,34 @@ module.exports = class PlayerController {
             let activePlayerIDs = []; //Optimization only
             let newActivePlayers = [];
             for (let i = 0; i < apCount; i++) {
-                if(!hbPlayerIDs.includes(this.activePlayers[i].id)){
-                    disconnectedPlayers.push(this.activePlayers[i]); //NOTE: might require a Clone
-                }else{
+                if(hbPlayerLicenses.includes(this.activePlayers[i].license)){
                     newActivePlayers.push(this.activePlayers[i]);
                     activePlayerIDs.push(this.activePlayers[i].id);
+                }else{
+                    disconnectedPlayers.push(this.activePlayers[i]); //NOTE: might require a Clone
                 }
             }
 
             //Processing the new players
             let newPlayers = [];
-            for (let hbPI = 0; hbPI < players.length; hbPI++) {
-                if(players[hbPI] == null) continue;
-                if(!activePlayerIDs.includes(players[hbPI].id)){
-                    newPlayers.push(players[hbPI]); // debug only - remove this line
-                    newActivePlayers.push(players[hbPI]) //NOTE: process before adding
+            for (let hbPI = 0; hbPI < hbPlayers.length; hbPI++) {
+                if(!activePlayerIDs.includes(hbPlayers[hbPI].id)){
+                    newPlayers.push(hbPlayers[hbPI]); // debug only - remove this line
+                    newActivePlayers.push(hbPlayers[hbPI]) //NOTE: process before adding
                 }
             }
 
             //Replacing the active playerlist
             this.activePlayers = newActivePlayers;
             
-            dir({
-                disconnectedPlayers: disconnectedPlayers.length,
-                newPlayers: newPlayers.length,
-                activePlayers: this.activePlayers.length
-            });
+            // dir({
+            //     disconnectedPlayers: disconnectedPlayers.length,
+            //     newPlayers: newPlayers.length,
+            //     activePlayers: this.activePlayers.length
+            // });
         } catch (error) {
             dir(error)
         }
-
     }//Fim processHeartBeat()
 
 } //Fim Database()
