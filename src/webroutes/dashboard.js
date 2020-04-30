@@ -96,7 +96,7 @@ function getVersionData() {
     // Prepping vars & checking if there is data available
     let curr = GlobalData.fxServerVersion;
     let rVer = globals.databus.updateChecker;
-    if(rVer == false){
+    if(!rVer){
         return {
             artifactsLink: false,
             color: false,

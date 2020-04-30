@@ -9,7 +9,7 @@
 		Join our Discord Server: &nbsp; <a href="https://discord.gg/f3TsfvD"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
 	</h4>
 	<p align="center">
-		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM Server remotely.
+		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM Server remotely, used by over a thousand servers worldwide.
 	</p>
 </p>
 
@@ -40,6 +40,7 @@
 - FiveM's Server CFG editor
 - Responsive web interface
 
+Also, check our [Feature Graveyard](docs/feature_graveyard.md) for the features that are no longer among us (RIP).
 
 ## Running (Windows/Linux)
 Currently **txAdmin is included in all FXServer builds** above 2385, so to run it for the first time simply do the following:
