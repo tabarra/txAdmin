@@ -8,45 +8,51 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 const now = () => { return Math.round(Date.now() / 1000) };
 const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
 
-
+/**
+ * 
+ */
 module.exports = class PlayerController {
     constructor(config) {
+        return;
         logOk('Started');
 
         //Configs:
         this.config = {};
-        // this.config.minSessionTime = 15*60; //15 minutes, in seconds
-        this.config.minSessionTime = 1*60; //DEBUG
+        this.config.enableDatabase = false; //NOTE: while I'm testing
+        this.config.minSessionTime = 1*60; //NOTE: use 15 minutes as default
 
         //Vars
-        this.db = null;
+        this.dbo = null;
         this.activePlayers = [];
         this.knownIdentifiers = ['steam', 'license', 'xbl', 'live', 'discord', 'fivem'];
 
         //Start database instance
-        (async () => {
-            // let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
-            let dbPath = `./fakedb.json`;
-            try {
-                const adapterAsync = new FileAsync(dbPath); //DEBUG
-                // const adapterAsync = new FileAsync(dbPath, {
-                //     defaultValue: {}, 
-                //     serialize: JSON.stringify, 
-                //     deserialize: JSON.parse
-                // });
-                this.db = await low(adapterAsync);
-                await this.setupDatabase();
-            } catch (error) {
-                logError(`Failed to load database file '${dbPath}'`);
-                if(GlobalData.verbose) dir(error);
-                process.exit();
-            }
-        })();
+        if(this.config.enableDatabase){
+            (async () => {
+                // let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
+                let dbPath = `./fakedb.json`;
+                try {
+                    const adapterAsync = new FileAsync(dbPath); //DEBUG
+                    // const adapterAsync = new FileAsync(dbPath, {
+                    //     defaultValue: {}, 
+                    //     serialize: JSON.stringify, 
+                    //     deserialize: JSON.parse
+                    // });
+                    this.dbo = await low(adapterAsync);
+                    await this.setupDatabase();
+                } catch (error) {
+                    logError(`Failed to load database file '${dbPath}'`);
+                    if(GlobalData.verbose) dir(error);
+                    process.exit();
+                }
+            })();
+    
+        }
 
         //Cron functions
         setInterval(() => {
             this.processActive();
-        }, 15 * 1000); //DEBUG: 15s
+        }, 15 * 1000);
     }
 
 
@@ -57,11 +63,11 @@ module.exports = class PlayerController {
     async setupDatabase(){
         /* 
             - `players` table: index by license ID
-                - Name (overwrite on every update)
-                - tsConnected - Timestamp of join
+                - license
+                - name (overwrite on every update)
                 - tsLastConnection  - Timestamp of the last connection
                 - playTime - Online time counter in minutes
-                - Notes {
+                - notes {
                     text: string de tamanho máximo a ser definido,
                     lastAdmin: username,
                     tsLastEdit: timestamp,
@@ -73,12 +79,12 @@ module.exports = class PlayerController {
                 - type [ban|warn|whitelist]
                 - message (reason)
         */
-        await this.db.defaults({
+        await this.dbo.defaults({
             version: 1,
             players: [],
             actions: []
         }).write();
-        // await this.db.set('players', []).write(); //HACK
+        // await this.dbo.set('players', []).write(); //HACK
     }
 
 
@@ -87,38 +93,45 @@ module.exports = class PlayerController {
      * Processes the active players for playtime and saves the database
      */
     async processActive(){
+        if(!this.config.enableDatabase) return;
+        
         let writePending = false;
-        const unsetKey = {
-            id: undefined,
-            isTmp: undefined,
-            tsConnected: undefined,
-            ping: undefined
-        }
-
         try {
             this.activePlayers.forEach(async p => {
                 let sessionTime = now() - p.tsConnected;
-                //if tsLastConnection = null mudar pra now() ou algo assim
 
                 //If its time to add this player to the database
                 if(p.isTmp && sessionTime >= this.config.minSessionTime){
                     writePending = true;
                     p.isTmp = false;
                     p.playTime = Math.round(sessionTime/60);
-                    await this.db.get('players')
-                        .push(Object.assign({}, p, unsetKey))
+                    let toDB = {
+                        license: p.license,
+                        name: p.name,
+                        playTime: p.playTime,
+                        tsJoined: p.tsJoined,
+                        tsLastConnection: p.tsConnected,
+                        notes: null
+                    }
+                    await this.dbo.get('players')
+                        .push(toDB)
                         .value();
-                        logOk(`Adding '${p.name}' to players database.`); //DEBUG
+                    logOk(`Adding '${p.name}' to players database.`); //DEBUG
                     
                 //If its time to update this player's play time
                 }else if(!p.isTmp && Math.round(sessionTime/4) % 4 == 0){
                     writePending = true;
                     p.playTime += 1; 
-                    await this.db.get("players")
+                    await this.dbo.get("players")
                         .find({license: p.license})
-                        .assign(Object.assign({}, p, unsetKey))
+                        .assign({
+                            name: p.name, 
+                            playTime: p.playTime, 
+                            notes: p.notes,
+                            tsLastConnection: p.tsConnected
+                        })
                         .value();
-                    if(GlobalData.verbose) logOk(`Updating '${p.name}' in players database.`); //DEBUG
+                    logOk(`Updating '${p.name}' in players database.`); //DEBUG
                 }
             });
         } catch (error) {
@@ -127,7 +140,7 @@ module.exports = class PlayerController {
         }
 
         try {
-            if(writePending) await this.db.write();
+            if(writePending) await this.dbo.write();
         } catch (error) {
             logError(`Failed to save players database with error: ${error.message}`);
             if(GlobalData.verbose) dir(error);
@@ -142,10 +155,28 @@ module.exports = class PlayerController {
      */
     async getPlayer(license){
         try {
-            let p = await this.db.get("players").find({license: license}).value();
+            let p = await this.dbo.get("players").find({license: license}).value();
             return (typeof p === 'undefined')? null : p;
         } catch (error) {
-            if(GlobalData.verbose) logError(`Failed to search for a player in te database with error: ${error.message}`);
+            if(GlobalData.verbose) logError(`Failed to search for a player in the database with error: ${error.message}`);
+            return false;
+        }
+    }
+
+
+    //================================================================
+    /**
+     * Searches for a registered action in the database by a list of identifiers and optional filters
+     * Usage example: getRegisteredAction(['license:xxx'], {type: 'ban', revoked: false})
+     * @param {array} idArray identifiers array
+     * @param {object} filter lodash-compatible filter object
+     */
+    async getRegisteredAction(idArray, filter){
+        try {
+            let p = await this.dbo.get("players").find({license: license}).value();
+            return (typeof p === 'undefined')? null : p;
+        } catch (error) {
+            if(GlobalData.verbose) logError(`Failed to search for a registered action database with error: ${error.message}`);
             return false;
         }
     }
@@ -226,7 +257,7 @@ module.exports = class PlayerController {
 
             //Processing active players list, creating the removed list, creating new active list without removed players
             let apCount = this.activePlayers.length;  //Optimization only, although V8 is probably smart enough
-            let disconnectedPlayers = []; //might want to do something with this
+            let disconnectedPlayers = []; //NOTE: might want to do something with this
             let activePlayerIDs = []; //Optimization only
             let newActivePlayers = [];
             for (let i = 0; i < apCount; i++) {
@@ -241,14 +272,21 @@ module.exports = class PlayerController {
             //Processing the new players
             for (let hbPI = 0; hbPI < hbPlayers.length; hbPI++) {
                 if(!activePlayerIDs.includes(hbPlayers[hbPI].id)){
-                    let res = await this.getPlayer(hbPlayers[hbPI].license);
-                    if(res){
-                        let newPlayer = Object.assign({}, res);
-                        newPlayer.tsConnected = now();
-                        newPlayer.isTmp = false;
+                    let p = await this.getPlayer(hbPlayers[hbPI].license);
+                    if(p){
+                        //TODO: create a AllAssocIds for the players, containing all intersecting licenses
+                        let newPlayer = Object.assign({}, hbPlayers[hbPI], {
+                            tsJoined: p.tsJoined, 
+                            playTime: p.playTime, 
+                            tsConnected: now(), 
+                            isTmp: false,
+                            notes: p.notes
+                        });
                         newActivePlayers.push(newPlayer);
                     }else{
-                        hbPlayers[hbPI].tsConnected = now();
+                        let tsNow = now();
+                        hbPlayers[hbPI].tsJoined = tsNow;
+                        hbPlayers[hbPI].tsConnected = tsNow;
                         hbPlayers[hbPI].isTmp = true;
                         newActivePlayers.push(hbPlayers[hbPI]);
                     }
