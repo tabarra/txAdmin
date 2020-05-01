@@ -67,7 +67,8 @@
 > v2.4.0
 - [x] create `/advanced` page and move the verbosity switch there
 - [x] fixed updateChecker error handling and added a message for pre-releases
-- [ ] create playerController module
+> v2.4.1
+- [ ] create playerController module (started on v2.4.0)
 - [ ] remove the public ip thing and make the /status configurable
 
 > Soon™

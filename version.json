@@ -1,5 +1,5 @@
 {
-    "version": "2.4.0",
+    "version": "2.4.1",
     "changelog": "Deprecated Message. Please Update to v2.",
     "allVersions": [
         {
@@ -173,6 +173,10 @@
         {
             "version": "2.4.0",
             "changelog": "Added FXServer update checker, improved some error messages, increased heartbeat cooldown limit for low-spec machines and update packages."
+        },
+        {
+            "version": "2.4.1",
+            "changelog": "Minor fixes to the FXServer update checker."
         }
     ]
 }
