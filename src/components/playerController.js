@@ -15,7 +15,8 @@ module.exports = class PlayerController {
 
         //Configs:
         this.config = {};
-        this.config.minSessionTime = 15*60; //15 minutes, in seconds
+        // this.config.minSessionTime = 15*60; //15 minutes, in seconds
+        this.config.minSessionTime = 1*60; //DEBUG
 
         //Vars
         this.db = null;
@@ -24,9 +25,15 @@ module.exports = class PlayerController {
 
         //Start database instance
         (async () => {
-            let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
+            // let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
+            let dbPath = `./fakedb.json`;
             try {
-                const adapterAsync = new FileAsync(dbPath)
+                const adapterAsync = new FileAsync(dbPath); //DEBUG
+                // const adapterAsync = new FileAsync(dbPath, {
+                //     defaultValue: {}, 
+                //     serialize: JSON.stringify, 
+                //     deserialize: JSON.parse
+                // });
                 this.db = await low(adapterAsync);
                 await this.setupDatabase();
             } catch (error) {
@@ -39,7 +46,7 @@ module.exports = class PlayerController {
         //Cron functions
         setInterval(() => {
             this.processActive();
-        }, 15 * 1000);
+        }, 15 * 1000); //DEBUG: 15s
     }
 
 
@@ -51,7 +58,7 @@ module.exports = class PlayerController {
         /* 
             - `players` table: index by license ID
                 - Name (overwrite on every update)
-                - tsJoined - Timestamp of join
+                - tsConnected - Timestamp of join
                 - tsLastConnection  - Timestamp of the last connection
                 - playTime - Online time counter in minutes
                 - Notes {
@@ -67,10 +74,11 @@ module.exports = class PlayerController {
                 - message (reason)
         */
         await this.db.defaults({
-            verison: "1.0.0",
+            version: 1,
             players: [],
             actions: []
         }).write();
+        // await this.db.set('players', []).write(); //HACK
     }
 
 
@@ -79,21 +87,47 @@ module.exports = class PlayerController {
      * Processes the active players for playtime and saves the database
      */
     async processActive(){
-        this.activePlayers.forEach(p => {
-            let sessionTime = now() - p.tsConnected;
-            //if tsLastConnection = null mudar pra now() ou algo assim
-            if(p.isTmp && sessionTime >= this.config.minSessionTime){
-                //remove isTmp
-                //add player to the db
-            }else if(Math.round(sessionTime/4) % 4 == 0){
-                //update nickname
-                //add 1 minute
-            }
-        });
+        let writePending = false;
+        const unsetKey = {
+            id: undefined,
+            isTmp: undefined,
+            tsConnected: undefined,
+            ping: undefined
+        }
 
         try {
-            //save database
-            // if(GlobalData.verbose) log(`Saved player database with ${db.count} members.`);
+            this.activePlayers.forEach(async p => {
+                let sessionTime = now() - p.tsConnected;
+                //if tsLastConnection = null mudar pra now() ou algo assim
+
+                //If its time to add this player to the database
+                if(p.isTmp && sessionTime >= this.config.minSessionTime){
+                    writePending = true;
+                    p.isTmp = false;
+                    p.playTime = Math.round(sessionTime/60);
+                    await this.db.get('players')
+                        .push(Object.assign({}, p, unsetKey))
+                        .value();
+                        logOk(`Adding '${p.name}' to players database.`); //DEBUG
+                    
+                //If its time to update this player's play time
+                }else if(!p.isTmp && Math.round(sessionTime/4) % 4 == 0){
+                    writePending = true;
+                    p.playTime += 1; 
+                    await this.db.get("players")
+                        .find({license: p.license})
+                        .assign(Object.assign({}, p, unsetKey))
+                        .value();
+                    if(GlobalData.verbose) logOk(`Updating '${p.name}' in players database.`); //DEBUG
+                }
+            });
+        } catch (error) {
+            logError(`Failed to process active players array with error: ${error.message}`);
+            if(GlobalData.verbose) dir(error);
+        }
+
+        try {
+            if(writePending) await this.db.write();
         } catch (error) {
             logError(`Failed to save players database with error: ${error.message}`);
             if(GlobalData.verbose) dir(error);
@@ -103,16 +137,16 @@ module.exports = class PlayerController {
 
     //================================================================
     /**
-     * Searches for a player in the database
-     * @param {string|array} key 
+     * Searches for a player in the database by the license
+     * @param {string} license 
      */
-    async getPlayer(key){
-        if(Array.isArray(key)){
-            //search player by any id
-        }else if(typeof key === 'string'){
-            //search player by specific id
-        }else{
-            throw new Error('getPlayer expects Array or Strings.');
+    async getPlayer(license){
+        try {
+            let p = await this.db.get("players").find({license: license}).value();
+            return (typeof p === 'undefined')? null : p;
+        } catch (error) {
+            if(GlobalData.verbose) logError(`Failed to search for a player in te database with error: ${error.message}`);
+            return false;
         }
     }
 
@@ -132,7 +166,7 @@ module.exports = class PlayerController {
      *      - search for them in the db
      *      - add them to the active players containing:
      *          - some prop to indicate if its present in the database
-     *          - tsJoined
+     *          - tsConnected
      * 
      * NOTE:  This code was written this way to improve performance in exchange of readability
      *           the ES6 gods might not like this..
@@ -169,7 +203,6 @@ module.exports = class PlayerController {
 
                 //Extract license
                 for (let j = 0; j < p.identifiers.length; j++) {
-                    //NOTE: maybe extract all ids to object props
                     //TODO: filter by this.knownIdentifiers
                     if(p.identifiers[j].substring(0, 8) == "license:"){
                         p.license = p.identifiers[j].substring(8);
@@ -206,24 +239,29 @@ module.exports = class PlayerController {
             }
 
             //Processing the new players
-            let newPlayers = [];
             for (let hbPI = 0; hbPI < hbPlayers.length; hbPI++) {
                 if(!activePlayerIDs.includes(hbPlayers[hbPI].id)){
-                    newPlayers.push(hbPlayers[hbPI]); // debug only - remove this line
-                    newActivePlayers.push(hbPlayers[hbPI]) //NOTE: process before adding
+                    let res = await this.getPlayer(hbPlayers[hbPI].license);
+                    if(res){
+                        let newPlayer = Object.assign({}, res);
+                        newPlayer.tsConnected = now();
+                        newPlayer.isTmp = false;
+                        newActivePlayers.push(newPlayer);
+                    }else{
+                        hbPlayers[hbPI].tsConnected = now();
+                        hbPlayers[hbPI].isTmp = true;
+                        newActivePlayers.push(hbPlayers[hbPI]);
+                    }
                 }
             }
 
             //Replacing the active playerlist
             this.activePlayers = newActivePlayers;
-            
-            // dir({
-            //     disconnectedPlayers: disconnectedPlayers.length,
-            //     newPlayers: newPlayers.length,
-            //     activePlayers: this.activePlayers.length
-            // });
         } catch (error) {
-            dir(error)
+            if(GlobalData.verbose){
+                logError(`PlayerController failed to process HeartBeat with error: ${error.message}`);
+                dir(error);
+            }
         }
     }//Fim processHeartBeat()
 

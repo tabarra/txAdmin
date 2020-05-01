@@ -18,20 +18,30 @@ const randIndex = (arr) => Math.floor(Math.random() * arr.length);
 const unDups = (arr) => arr.filter((v,i) => arr.indexOf(v) === i)
 
 //Configs
-const minPlayers = 5;
-const maxPlayers = 45;
 const refreshInterval = 2500;
 let indexes = [1,2,3,4,5,6,7,8,9,10];
 
+//Testing player db
+const shouldAddRemovePlayers = false;
+const minPlayers = 2;
+const maxPlayers = 7;
+
+//Testing playerlist
+// const shouldAddRemovePlayers = true;
+// const minPlayers = 5;
+// const maxPlayers = 45;
+
 //Routine
 setInterval(() => {
-    if(Math.random() < 0.5 && indexes.length > minPlayers){
-        delete indexes[randIndex(indexes)];
-    }else if(indexes.length < maxPlayers){
-        indexes.push(randIndex(srcPlayerlist))
+    if(shouldAddRemovePlayers){
+        if(Math.random() < 0.5 && indexes.length > minPlayers){
+            delete indexes[randIndex(indexes)];
+        }else if(indexes.length < maxPlayers){
+            indexes.push(randIndex(srcPlayerlist))
+        }
+    
+        indexes = unDups(indexes);
     }
-
-    indexes = unDups(indexes);
     
     let out = [];
     indexes.forEach(ind => {
