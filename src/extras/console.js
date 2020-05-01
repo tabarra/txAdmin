@@ -72,7 +72,8 @@ function dir(data){
         console.log()
     }else{
         let div = "=".repeat(32);
-        console.log(ac.cyan([div, JSON.stringify(data, null, 2), div].join("\n")));
+        let printData = (typeof data !== 'undefined')? JSON.stringify(data, null, 2) : 'undefined';
+        console.log(ac.cyan([div, printData, div].join("\n")));
     }
 }
 

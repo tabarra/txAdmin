@@ -290,7 +290,7 @@ module.exports = class Monitor {
         ){
             let msg = (healthCheckFailed)
                         ? `(HB:${cleanET(elapsedHeartBeat)}|HC:${cleanET(elapsedHealthCheck)}) FXServer is not responding. (${this.lastHealthCheckErrorMessage})` 
-                        : `(HB:${cleanET(elapsedHeartBeat)}|HC:${cleanET(elapsedHealthCheck)}) FXServer is not responding. (probably crashed)`; 
+                        : `(HB:${cleanET(elapsedHeartBeat)}|HC:${cleanET(elapsedHealthCheck)}) FXServer is not responding. (HB Failed)`; 
             this.lastStatusWarningMessage = now();
             logWarn(msg);
         }

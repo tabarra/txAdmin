@@ -20,7 +20,8 @@
 
 
 <div class="row justify-content-md-center">
-    <div class="col-lg-8 col-xl-5 mw-col6">
+    
+    <div class="col-lg-8 col-xl-6 mw-col6">
         <div class="card card-accent-danger" style="min-height: 160px;">
             <div class="card-header font-weight-bold">Random buttons, knobs and data:</div>
             <div class="card-body text-center">
@@ -41,26 +42,63 @@
                 <hr>
 
                 <!-- Profile Monitor -->
-                <span class="text-muted">
-                    This will execute the profilet in the Monitor for 5 seconds. <br>
-                    Required the Server to be started for showing the profiler URL. <br>
-                </span>
                 <button class="btn btn-md btn-outline-dark mt-2" onclick="doProfileMonitor()">Profile Monitor</button>
             </div>
         </div>
+        <div class="text-center">
+            <img src="/img/not-meme.jpg" alt="Not A Meme" class="img-fluid" style="max-width: 350px;">
+        </div>
+    </div>
+
+    <div class="col-lg-8 col-xl-6 mw-col6 text-center">
+        <button class="btn btn-md btn-outline-dark mt-2" onclick="doMagicTrick()">Magic Button</button>
+        <pre class="alert alert-dark mt-2 text-left" id="magicPre">What will happen when its pressed?!</pre>
     </div>
 </div>
 
 
 <div class="row justify-content-md-center">
-    <div class="col-3">
-        <img src="/img/not-meme.jpg" alt="Not A Meme" class="img-fluid">
-    </div>
+    
 </div>
 
 {{include("footer")/}}
 
 <script>
+    //============================================== Magic
+    function doMagicTrick(){
+        let data = {
+            action: 'perform_magic',
+            parameter: false
+        }
+        var magicPre = document.getElementById("magicPre");
+        magicPre.innerText = 'doing magic';
+        var notify = $.notify({ message: '<p class="text-center">Performing Magic...</p>' }, {});
+        $.ajax({
+            type: "POST",
+            url: '/advanced',
+            timeout: timeoutLong,
+            data: data,
+            success: function (data) {
+                if(data.type === 'success'){
+                    notify.update('progress', 0);
+                    notify.update('type', 'success');
+                    notify.update('message', 'Check the magic box below...');
+                    magicPre.innerText = data.message;
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    }
+        
+
     //============================================== Verbosity
     function doChangeVerbosity(desiredState) {
         let data = {

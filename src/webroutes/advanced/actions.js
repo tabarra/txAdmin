@@ -37,6 +37,12 @@ module.exports = async function AdvancedActions(ctx) {
     if(action == 'change_verbosity'){
         GlobalData.verbose = (parameter == 'true');
         return ctx.send({refresh:true});
+
+    }else if(action == 'perform_magic'){
+        let data = globals.playerController.activePlayers;
+        let message = JSON.stringify(data, null, 2);
+        return ctx.send({type: 'success', message});
+        
     }
 
 
