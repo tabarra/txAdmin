@@ -352,7 +352,7 @@ module.exports = class Monitor {
         let dataSource;
         if(Array.isArray(globals.databus.debugPlayerlist)){
             dataSource = globals.databus.debugPlayerlist;
-        }else if(Array.isArray(postData)){
+        }else if(Array.isArray(postData.players)){
             dataSource = postData.players.map(player => {
                 player.id = parseInt(player.id);
                 return player;

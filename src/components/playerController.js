@@ -59,29 +59,30 @@ module.exports = class PlayerController {
      * Start lowdb instance and set defaults
      */
     async setupDatabase(){
-       if(!this.config.enableDatabase) return;
+        if(!this.config.enableDatabase) return;
 
-       // let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
-       let dbPath = `./fakedb.json`;
-       try {
-           const adapterAsync = new FileAsync(dbPath); //DEBUG
-           // const adapterAsync = new FileAsync(dbPath, {
-           //     defaultValue: {}, 
-           //     serialize: JSON.stringify, 
-           //     deserialize: JSON.parse
-           // });
-           this.dbo = await low(adapterAsync);
-           await this.dbo.defaults({
-                version: 1,
+        // let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
+        // let dbPath = `./fakedb.json`;
+        let dbPath = `${globals.info.serverProfilePath}/data/testDB.json`;
+        try {
+            const adapterAsync = new FileAsync(dbPath); //DEBUG
+            // const adapterAsync = new FileAsync(dbPath, {
+            //     defaultValue: {}, 
+            //     serialize: JSON.stringify, 
+            //     deserialize: JSON.parse
+            // });
+            this.dbo = await low(adapterAsync);
+            await this.dbo.defaults({
+                version: 0,
                 players: [],
                 actions: []
             }).write();
             // await this.dbo.set('players', []).write(); //DEBUG
-       } catch (error) {
-           logError(`Failed to load database file '${dbPath}'`);
-           if(GlobalData.verbose) dir(error);
-           process.exit();
-       }
+        } catch (error) {
+            logError(`Failed to load database file '${dbPath}'`);
+            if(GlobalData.verbose) dir(error);
+            process.exit();
+        }
     }
 
 
@@ -281,9 +282,16 @@ module.exports = class PlayerController {
             let activePlayerIDs = []; //Optimization only
             let newActivePlayers = [];
             for (let i = 0; i < apCount; i++) {
-                if(hbPlayers.has(this.activePlayers[i].license)){
-                    //FIXME:
-                    newActivePlayers.push(this.activePlayers[i]);
+                let hbPlayerData = hbPlayers.get(this.activePlayers[i].license);  
+                if(hbPlayerData){
+                    let updatedPlayer = Object.assign(
+                        this.activePlayers[i], 
+                        {
+                            ping: hbPlayerData.ping,
+                            extraData: hbPlayerData.extraData //NOTE: name will probably change, reserve for RolePlay data from frameworks
+                        }
+                    );
+                    newActivePlayers.push(updatedPlayer);
                     activePlayerIDs.push(this.activePlayers[i].id);
                 }else{
                     disconnectedPlayers.push(this.activePlayers[i]); //NOTE: might require a Clone
