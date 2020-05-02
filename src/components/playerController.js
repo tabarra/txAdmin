@@ -235,8 +235,7 @@ module.exports = class PlayerController {
             
             //Validate & filter players then extract ids and license
             let pCount = players.length; //Optimization only, although V8 is probably smart enough
-            let hbPlayerLicenses = []; //Optimization + duplicity checking
-            let hbPlayers = [];
+            let hbPlayers = new Map();
             let invalids = 0;
             for (let i = 0; i < pCount; i++) {
                 let p = Object.assign({}, players[i]);
@@ -264,15 +263,14 @@ module.exports = class PlayerController {
                 }
 
                 //Check if license id exist and is not duplicated
-                if(typeof p.license !== 'string' || hbPlayerLicenses.includes(p.license)){
+                if(typeof p.license !== 'string' || hbPlayers.has(p.license)){
                     invalids++;
                     continue;
                 }
 
                 //Add to licenses list
                 delete p.endpoint;
-                hbPlayerLicenses.push(p.license);
-                hbPlayers.push(p);
+                hbPlayers.set(p.license, p)
             }
             if(GlobalData.verbose && invalids) logWarn(`HeartBeat playerlist contained ${invalids} players that were removed.`); 
             
@@ -283,10 +281,8 @@ module.exports = class PlayerController {
             let activePlayerIDs = []; //Optimization only
             let newActivePlayers = [];
             for (let i = 0; i < apCount; i++) {
-                if(hbPlayerLicenses.includes(this.activePlayers[i].license)){
-                    //HACK: we are replicating the activePlayer object instead of
-                    //HACK:     grabbing data from the heartbeat players.
-                    //HACK:     Think about how to fix this without compromising this method's Big-O.
+                if(hbPlayers.has(this.activePlayers[i].license)){
+                    //FIXME:
                     newActivePlayers.push(this.activePlayers[i]);
                     activePlayerIDs.push(this.activePlayers[i].id);
                 }else{
@@ -295,25 +291,25 @@ module.exports = class PlayerController {
             }
 
             //Processing the new players
-            for (let hbPI = 0; hbPI < hbPlayers.length; hbPI++) {
-                if(!activePlayerIDs.includes(hbPlayers[hbPI].id)){
-                    let p = await this.getPlayer(hbPlayers[hbPI].license);
-                    if(p){
+            for (const [license, player] of hbPlayers) {
+                if(!activePlayerIDs.includes(player.id)){
+                    let dbPlayer = await this.getPlayer(license);
+                    if(dbPlayer){
                         //TODO: create a AllAssocIds for the players, containing all intersecting licenses
-                        let newPlayer = Object.assign({}, hbPlayers[hbPI], {
-                            tsJoined: p.tsJoined, 
-                            playTime: p.playTime, 
+                        let newPlayer = Object.assign({}, player, {
+                            tsJoined: dbPlayer.tsJoined, 
+                            playTime: dbPlayer.playTime, 
                             tsConnected: now(), 
                             isTmp: false,
-                            notes: p.notes
+                            notes: dbPlayer.notes
                         });
                         newActivePlayers.push(newPlayer);
                     }else{
                         let tsNow = now();
-                        hbPlayers[hbPI].tsJoined = tsNow;
-                        hbPlayers[hbPI].tsConnected = tsNow;
-                        hbPlayers[hbPI].isTmp = true;
-                        newActivePlayers.push(hbPlayers[hbPI]);
+                        player.tsJoined = tsNow;
+                        player.tsConnected = tsNow;
+                        player.isTmp = true;
+                        newActivePlayers.push(player);
                     }
                 }
             }
