@@ -187,7 +187,6 @@ module.exports = class Monitor {
         this.globalCounters.hitches = [];
 
         this.currentStatus = 'OFFLINE' // options: OFFLINE, ONLINE, PARTIAL
-        this.tmpPlayers = []; //FIXME: temporary
         this.lastSuccessfulHealthCheck = null; //to see if its above limit
         this.lastStatusWarningMessage = null; //to prevent spamming 
         this.lastSuccessfulHeartBeat = null; //to see if its above limit
@@ -252,15 +251,6 @@ module.exports = class Monitor {
         let heartBeatFailed = (elapsedHeartBeat > this.config.heartBeat.failThreshold);
         let processUptime = globals.fxRunner.getUptime();
 
-        //Debug only
-        // dir({
-        //     elapsedHealthCheck,
-        //     healthCheckFailed,
-        //     processUptime,
-        //     elapsedHeartBeat,
-        //     heartBeatFailed,
-        // })
-
         //Check if its online and return
         if(
             this.lastSuccessfulHealthCheck && !healthCheckFailed &&
@@ -273,7 +263,6 @@ module.exports = class Monitor {
         //Now to the (un)fun part: if the status != healthy
         this.currentStatus = (healthCheckFailed && heartBeatFailed)? 'OFFLINE' : 'PARTIAL';
 
-        //FIXME: The fired heartbeat could take a lot of time to appear, find a way to not restart the server if that happens
         //Check if still in cooldown
         if(processUptime < this.config.cooldown){
             if(GlobalData.verbose && processUptime > 5 && currTimestamp - this.lastStatusWarningMessage > 10){
@@ -330,7 +319,7 @@ module.exports = class Monitor {
             elapsedHealthCheck < this.config.healthCheck.failLimit
         ){
             let msg = `Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`;
-            if(GlobalData.verbose && processUptime % 15 == 0) logWarn(msg);
+            if(processUptime % 15 == 0) logWarn(msg);
             return;
         }
 
@@ -359,26 +348,23 @@ module.exports = class Monitor {
 
     //================================================================
     handleHeartBeat(postData){
-        //NOTE: bypass when using the debug player generator
+        //DEBUG: bypass when using the debug player generator
+        let dataSource;
         if(Array.isArray(globals.databus.debugPlayerlist)){
-            this.lastSuccessfulHeartBeat = now();
-            this.timeSeries.add(globals.databus.debugPlayerlist.length);
-            this.tmpPlayers = globals.databus.debugPlayerlist;
-            globals.playerController.processHeartBeat(this.tmpPlayers);
+            dataSource = globals.databus.debugPlayerlist;
+        }else if(Array.isArray(postData)){
+            dataSource = postData.players.map(player => {
+                player.id = parseInt(player.id);
+                return player;
+            });
+        }else{
+            if(GlobalData.verbose) logWarn(`Received an invalid HeartBeat.`);
             return;
         }
-
-        //Sanity check
-        if(!Array.isArray(postData.players)) return;
-
-        //Send data to the player database component
+        
         this.lastSuccessfulHeartBeat = now();
-        this.timeSeries.add(postData.players.length);
-        //FIXME: temporary variable
-        this.tmpPlayers = postData.players.map(player => {
-            player.id = parseInt(player.id);
-            return player
-        });
+        this.timeSeries.add(dataSource.length);
+        globals.playerController.processHeartBeat(dataSource);
     }
 
 } //Fim Monitor()

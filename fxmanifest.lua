@@ -4,7 +4,7 @@ games { 'gta5' }
 author 'Tabarra'
 description 'Remotely Manage & Monitor your GTA5 FiveM Server'
 repository 'https://github.com/tabarra/txAdmin'
-version '2.4.1'
+version '2.5.0-dev'
 
 server_script 'main.js'
 

@@ -8,12 +8,30 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 const now = () => { return Math.round(Date.now() / 1000) };
 const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
 
+
 /**
+ * Provide a central database for players, as well as assist with access control.
  * 
+ * Database Structurure:
+ *  - `players` table: index by license ID
+ *      - license
+ *      - name (overwrite on every update)
+ *      - tsLastConnection  - Timestamp of the last connection
+ *      - playTime - Online time counter in minutes
+ *      - notes {
+ *          text: string de tamanho máximo a ser definido,
+ *          lastAdmin: username,
+ *          tsLastEdit: timestamp,
+ *      }
+ *  - `actions`
+ *      - timestamp
+ *      - IDs array
+ *      - author (the admin name)
+ *      - type [ban|warn|whitelist]
+ *      - message (reason)    
  */
 module.exports = class PlayerController {
     constructor(config) {
-        return;
         logOk('Started');
 
         //Configs:
@@ -27,27 +45,7 @@ module.exports = class PlayerController {
         this.knownIdentifiers = ['steam', 'license', 'xbl', 'live', 'discord', 'fivem'];
 
         //Start database instance
-        if(this.config.enableDatabase){
-            (async () => {
-                // let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
-                let dbPath = `./fakedb.json`;
-                try {
-                    const adapterAsync = new FileAsync(dbPath); //DEBUG
-                    // const adapterAsync = new FileAsync(dbPath, {
-                    //     defaultValue: {}, 
-                    //     serialize: JSON.stringify, 
-                    //     deserialize: JSON.parse
-                    // });
-                    this.dbo = await low(adapterAsync);
-                    await this.setupDatabase();
-                } catch (error) {
-                    logError(`Failed to load database file '${dbPath}'`);
-                    if(GlobalData.verbose) dir(error);
-                    process.exit();
-                }
-            })();
-    
-        }
+        this.setupDatabase();
 
         //Cron functions
         setInterval(() => {
@@ -58,33 +56,32 @@ module.exports = class PlayerController {
 
     //================================================================
     /**
-     * Setup database defaults
+     * Start lowdb instance and set defaults
      */
     async setupDatabase(){
-        /* 
-            - `players` table: index by license ID
-                - license
-                - name (overwrite on every update)
-                - tsLastConnection  - Timestamp of the last connection
-                - playTime - Online time counter in minutes
-                - notes {
-                    text: string de tamanho máximo a ser definido,
-                    lastAdmin: username,
-                    tsLastEdit: timestamp,
-                }
-            - `actions`
-                - timestamp
-                - IDs array
-                - author (the admin name)
-                - type [ban|warn|whitelist]
-                - message (reason)
-        */
-        await this.dbo.defaults({
-            version: 1,
-            players: [],
-            actions: []
-        }).write();
-        // await this.dbo.set('players', []).write(); //HACK
+       if(!this.config.enableDatabase) return;
+
+       // let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
+       let dbPath = `./fakedb.json`;
+       try {
+           const adapterAsync = new FileAsync(dbPath); //DEBUG
+           // const adapterAsync = new FileAsync(dbPath, {
+           //     defaultValue: {}, 
+           //     serialize: JSON.stringify, 
+           //     deserialize: JSON.parse
+           // });
+           this.dbo = await low(adapterAsync);
+           await this.dbo.defaults({
+                version: 1,
+                players: [],
+                actions: []
+            }).write();
+            // await this.dbo.set('players', []).write(); //DEBUG
+       } catch (error) {
+           logError(`Failed to load database file '${dbPath}'`);
+           if(GlobalData.verbose) dir(error);
+           process.exit();
+       }
     }
 
 
@@ -95,6 +92,7 @@ module.exports = class PlayerController {
     async processActive(){
         if(!this.config.enableDatabase) return;
         
+        //Goes through each player processing playtime and sessiontime
         let writePending = false;
         try {
             this.activePlayers.forEach(async p => {
@@ -139,6 +137,7 @@ module.exports = class PlayerController {
             if(GlobalData.verbose) dir(error);
         }
 
+        //Saves the database to the file
         try {
             if(writePending) await this.dbo.write();
         } catch (error) {
@@ -152,8 +151,11 @@ module.exports = class PlayerController {
     /**
      * Searches for a player in the database by the license
      * @param {string} license 
+     * @returns {object|null|false} object if player is found, null if not found, false if error occurs
      */
     async getPlayer(license){
+        if(!this.config.enableDatabase) return false;
+
         try {
             let p = await this.dbo.get("players").find({license: license}).value();
             return (typeof p === 'undefined')? null : p;
@@ -170,6 +172,7 @@ module.exports = class PlayerController {
      * Usage example: getRegisteredAction(['license:xxx'], {type: 'ban', revoked: false})
      * @param {array} idArray identifiers array
      * @param {object} filter lodash-compatible filter object
+     * @returns {object|null|false} object if player is found, null if not found, false if error occurs
      */
     async getRegisteredAction(idArray, filter){
         try {
@@ -183,8 +186,28 @@ module.exports = class PlayerController {
 
 
     //================================================================
+    /**
+     * Returns a mostly /players.json compatible playerlist based on the activePlayers
+     * 
+     * NOTE: ATM only used by the /status endpoint.
+     *       Let's try to use just globals.playerController.activePlayers
+     * 
+     * @returns {array} array of player objects
+     */
     getPlayerList(){
-        // just returns playerlist array, probably one this.activePlayers.map()
+        try {
+            return this.activePlayers.map(p => {
+                return {
+                    id: p.id,
+                    name: p.name,
+                    ping: p.ping,
+                    identifiers: p.identifiers,
+                }
+            });
+        } catch (error) {
+            if(GlobalData.verbose) logError(`Failed to generate playerlist with error: ${error.message}`);
+            return false;
+        }
     }
 
 
@@ -202,7 +225,6 @@ module.exports = class PlayerController {
      * NOTE:  This code was written this way to improve performance in exchange of readability
      *           the ES6 gods might not like this..
      * FIXME: To prevent retaliation from the gods, consider making the activePlayers an Map instead of an Array.
-     * 
      * 
      * @param {array} players
      */
@@ -262,6 +284,9 @@ module.exports = class PlayerController {
             let newActivePlayers = [];
             for (let i = 0; i < apCount; i++) {
                 if(hbPlayerLicenses.includes(this.activePlayers[i].license)){
+                    //HACK: we are replicating the activePlayer object instead of
+                    //HACK:     grabbing data from the heartbeat players.
+                    //HACK:     Think about how to fix this without compromising this method's Big-O.
                     newActivePlayers.push(this.activePlayers[i]);
                     activePlayerIDs.push(this.activePlayers[i].id);
                 }else{

@@ -23,8 +23,7 @@ module.exports = async function GetPlayerData(ctx) {
 
     //Preparing output
     let out;
-    let players = clone(globals.monitor.tmpPlayers); //FIXME: edit this variable
-    let player = players.find(player => player.id === id);
+    let player = clone(globals.playerController.activePlayers).find(player => player.id === id);
     let disableDM = getPermDisable('commands.message');
     let disableKick = getPermDisable('commands.kick');
     if(player){
