@@ -212,9 +212,6 @@ module.exports = class Monitor {
 
         //Make request
         try {
-            //FIXME: remove this test
-            if(globals.disableReply) throw new Error('globals.disableReply test');
-
             const res = await axios(requestOptions);
             if(typeof res.data !== 'object') throw new Error("FXServer's dynamic endpoint didn't return a JSON object.");
             if(isUndefined(res.data.hostname) || isUndefined(res.data.clients)) throw new Error("FXServer's dynamic endpoint didn't return complete data.");
