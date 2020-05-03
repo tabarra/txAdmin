@@ -71,7 +71,8 @@
 - [x] create playerController module (started on v2.4.0)
 - [x] fix escaping issues on commands.js
 - [x] deprecate discord custom commands and set process priority features
-- [ ] remove the public ip thing and make the /status configurable
+- [x] remove the public ip setting and make the /status configurable
+- [ ] fix serverlist not wiping after server shutting down
 
 > Soon™
 - [ ] tweak dashboard update checker behavior

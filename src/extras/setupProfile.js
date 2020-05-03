@@ -14,7 +14,6 @@ const cleanPath = (x) => { return slash(path.normalize(x)) };
 let defaultConfig = {
     global: {
         verbose: false,
-        publicIP: null,
         serverName: null,
         language: "en",
         forceFXServerPort: null
@@ -37,7 +36,6 @@ let defaultConfig = {
         enabled: false,
         token: null,
         announceChannel: null,
-        statusCommand: '/status'
     },
     fxRunner: {
         serverDataPath: null,

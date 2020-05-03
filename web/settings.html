@@ -53,21 +53,6 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmGlobal-publicIP" class="col-sm-3 col-form-label">
-                                Public IP
-                                <span class="text-danger">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmGlobal-publicIP"
-                                    value="{{global.publicIP|undef}}" maxlength="32" placeholder="123.123.123.123" {{disableWrite}}>
-                                    <span class="form-text text-muted">
-                                        You can set this to be your public IP or a domain name. <br>
-                                        This will only be used for discord messages.
-                                    </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
                             <label for="frmGlobal-language" class="col-sm-3 col-form-label">
                                 Language
                             </label>
@@ -293,6 +278,21 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label for="frmDiscord-statusMessage" class="col-sm-3 col-form-label">
+                                Status Message
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="frmDiscord-statusMessage" rows="4" 
+                                    placeholder="**IP:** `connect cfx.re/join/xxxxxx`&#10;**Players:** <players>&#10;**Uptime:** <uptime>" {{disableWrite}}>{{discord.statusMessage|undef}}</textarea>
+                                <span class="form-text text-muted">
+                                    The command response. <br>
+                                    Supported placeholders: <code>players</code>, <code>port</code>, <code>uptime</code>.
+                                </span>
+                            </div>
+                        </div>
+
 
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-primary" type="submit" id="frmDiscord-save" {{disableWrite}}>
@@ -331,11 +331,10 @@
     $('#frmGlobal-save').click(function () {
         let data = {
             serverName: $('#frmGlobal-serverName').val().trim(),
-            publicIP: $('#frmGlobal-publicIP').val().trim(),
             language: $('#frmGlobal-language').val(),
             verbose: $('#frmGlobal-verbose').is(':checked')
         }
-        if (!data.serverName.length || !data.publicIP.length) {
+        if (!data.serverName.length) {
             var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
             return;
         }
@@ -430,9 +429,10 @@
             enabled: ($('#frmDiscord-enabled').is(':checked') === true),
             token: $('#frmDiscord-token').val().trim(),
             announceChannel: $('#frmDiscord-announceChannel').val().trim(),
-            statusCommand: $('#frmDiscord-statusCommand').val().trim()
+            statusCommand: $('#frmDiscord-statusCommand').val().trim(),
+            statusMessage: $('#frmDiscord-statusMessage').val().trim()
         };
-        if (data.enabled && (!data.token.length || !data.statusCommand.length)) {
+        if (data.enabled && (!data.token.length || !data.statusCommand.length || !data.statusMessage.length)) {
             var notify = $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
             return;
         }

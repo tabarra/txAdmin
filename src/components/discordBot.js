@@ -111,39 +111,41 @@ module.exports = class DiscordBot {
             }
             this.spamLimitRegister(this.config.statusCommand, message.channel.id);
 
-            //Prepare message's data
-            let monitorStatus = globals.monitor.currentStatus || '??';
-            let color, titleKey, players;
-            if(monitorStatus == 'ONLINE' || monitorStatus == 'PARTIAL'){
-                color = 0x74EE15;
-                titleKey = 'discord.status_online';
-                players = (Array.isArray(globals.playerController.activePlayers))? globals.playerController.activePlayers.length : '--';
+            //Prepare message's RichEmbed 
+            let replaces = {};
+            let cardColor, cardTitle;
+            if(globals.monitor.currentStatus == 'ONLINE' || globals.monitor.currentStatus == 'PARTIAL'){
+                cardColor = 0x74EE15;
+                cardTitle = globals.translator.t('discord.status_online', {servername: globals.config.serverName});
+                replaces.players = (Array.isArray(globals.playerController.activePlayers))? globals.playerController.activePlayers.length : '--';
+                replaces.port = (globals.config.forceFXServerPort)? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
             }else{
-                color = 0xF000FF;
-                titleKey = 'discord.status_offline';
-                players = '--';
+                cardColor = 0xF000FF;
+                cardTitle = globals.translator.t('discord.status_offline', {servername: globals.config.serverName});
+                replaces.players = '--';
+                replaces.port = '--';
             }
 
-            let title = globals.translator.t(titleKey, {servername: globals.config.serverName});
-            let desc = '';
-            if(globals.config.forceFXServerPort || globals.fxRunner.fxServerPort){
-                let port = (globals.config.forceFXServerPort)? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
-                desc += `**IP:** ${globals.config.publicIP}:${port}\n`;
-                desc += `**Players:** ${players}\n`;
-            }
+            //Preparing template variables
+            
             let humanizeOptions = {
                 language: globals.translator.t('$meta.humanizer_language'),
                 round: true,
                 units: ['d', 'h', 'm', 's'],
                 fallbacks: ['en']
             }
-            let uptime = humanizeDuration(globals.fxRunner.getUptime()*1000, humanizeOptions);
-            desc += `**Uptime:** ${uptime} \n`;
+            replaces.uptime = humanizeDuration(globals.fxRunner.getUptime()*1000, humanizeOptions);
+            
+            let desc = this.config.statusMessage;
+            Object.entries(replaces).forEach(([key, value]) => {
+                desc = desc.replace(`<${key}>`, value);
+            });
+            dir(desc)
 
             //Prepare object
             out = new Discord.RichEmbed();
-            out.setTitle(title);
-            out.setColor(color);
+            out.setTitle(cardTitle);
+            out.setColor(cardColor);
             out.setDescription(desc);
 
         }else if(message.content.startsWith('/txadmin')){

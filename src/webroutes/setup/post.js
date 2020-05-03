@@ -246,7 +246,6 @@ async function handleSave(ctx) {
     //Preparing & saving config
     let newGlobalConfig = globals.configVault.getScopedStructure('global');
     newGlobalConfig.serverName = cfg.name;
-    newGlobalConfig.publicIP = 'change-me';
     let saveGlobalStatus = globals.configVault.saveProfile('global', newGlobalConfig);
 
     let newFXRunnerConfig = globals.configVault.getScopedStructure('fxRunner');

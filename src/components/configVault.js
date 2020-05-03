@@ -94,7 +94,6 @@ module.exports = class ConfigVault {
 
         try {
             out.global = {
-                publicIP:  toDefault(cfg.global.publicIP, null),
                 serverName:  toDefault(cfg.global.serverName, null),
                 language:  toDefault(cfg.global.language, null),
                 forceFXServerPort:  toDefault(cfg.global.forceFXServerPort, null), //not in template
@@ -127,7 +126,8 @@ module.exports = class ConfigVault {
                 enabled: toDefault(cfg.discordBot.enabled, null),
                 token:  toDefault(cfg.discordBot.token, null),
                 announceChannel:  toDefault(cfg.discordBot.announceChannel, null),
-                statusCommand: toDefault(cfg.discordBot.statusCommand, null),
+                statusCommand: toDefault(cfg.discordBot.statusCommand, '/status'),
+                statusMessage: toDefault(cfg.discordBot.statusMessage, '**IP:** \`change-me:<port>\`\n**Players:** <players>\n**Uptime:** <uptime>'),
                 commandCooldown: toDefault(cfg.discordBot.commandCooldown, null), //not in template
             };
             out.fxRunner = {
@@ -160,7 +160,6 @@ module.exports = class ConfigVault {
         //NOTE: the bool trick in fxRunner.autostart won't work if we want the default to be true
         try {
             //Global
-            cfg.global.publicIP = cfg.global.publicIP || "change-me";
             cfg.global.serverName = cfg.global.serverName || "change-me";
             cfg.global.language = cfg.global.language || "en"; //TODO: move to GlobalData
 
@@ -186,7 +185,8 @@ module.exports = class ConfigVault {
 
             //DiscordBot
             cfg.discordBot.enabled = (cfg.discordBot.enabled === 'true' || cfg.discordBot.enabled === true);
-            cfg.discordBot.statusCommand = cfg.discordBot.statusCommand || "/status";
+            cfg.discordBot.statusCommand = cfg.discordBot.statusCommand || '/status';
+            cfg.discordBot.statusMessage = cfg.discordBot.statusMessage || '**IP:** \`change-me:<port>\`\n**Players:** <players>\n**Uptime:** <uptime>';
             cfg.discordBot.commandCooldown = parseInt(cfg.discordBot.commandCooldown) || 30; //not in template
 
             //FXRunner
