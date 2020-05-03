@@ -5,10 +5,9 @@ txData/*
 test/*
 dist/*
 locale/custom.json
-extensions/*
-!extensions/txAdminClient/
 *.ignore.*
 /start_*.bat
+monitor-*.zip
 
 ## Github's default node gitignore
 # Logs

@@ -78,7 +78,7 @@ async function handleAdd(ctx) {
     if(citizenfxID.length && !/^\w{4,20}$/.test(citizenfxID)){
         return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
     }
-    if(discordID.length && !/^\d+$/.test(discordID)){
+    if(discordID.length && !/^\d{7,20}$/.test(discordID)){
         return ctx.send({type: 'danger', message: "Invalid Discord ID"});
     }
 
@@ -123,7 +123,7 @@ async function handleEdit(ctx) {
     if(citizenfxID.length && !/^\w{4,20}$/.test(citizenfxID)){
         return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
     }
-    if(discordID.length && !/^\d+$/.test(discordID)){
+    if(discordID.length && !/^\d{7,20}$/.test(discordID)){
         return ctx.send({type: 'danger', message: "Invalid Discord ID"});
     }
 
