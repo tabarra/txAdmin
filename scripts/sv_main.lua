@@ -5,6 +5,9 @@ end
 function logError(x)
     print("^5[txAdminClientLUA]^1 " .. x .. "^0")
 end
+function unDeQuote(x)
+    return string.gsub(x, utf8.char(65282), '"')
+end
 
 --Check Environment
 local apiPort = GetConvar("txAdmin-apiPort", "invalid")
@@ -85,6 +88,8 @@ end
 function txaKickAll(source, args)
     if args[1] == nil then
         args[1] = 'no reason provided'
+    else
+        args[1] = unDeQuote(args[1])
     end
     log("Kicking all players with reason: "..args[1])
     for _, pid in pairs(GetPlayers()) do
@@ -98,6 +103,8 @@ function txaKickID(source, args)
     if args[1] ~= nil then
         if args[2] == nil then
             args[2] = 'no reason provided'
+        else
+            args[2] = unDeQuote(args[2])
         end
         log("Kicking #"..args[1].." with reason: "..args[2])
         DropPlayer(args[1], "Kicked for: " .. args[2])
@@ -112,6 +119,8 @@ function txaKickIdentifier(source, args)
     if args[1] ~= nil then
         if args[2] == nil then
             args[2] = 'no reason provided'
+        else
+            args[2] = unDeQuote(args[2])
         end
         log("Kicking "..args[1].." with reason: "..args[2])
         for _,player in ipairs(GetPlayers()) do
@@ -132,6 +141,8 @@ end
 -- Broadcast admin message to all players
 function txaBroadcast(source, args)
     if args[1] ~= nil and args[2] ~= nil then
+        args[1] = unDeQuote(args[1])
+        args[2] = unDeQuote(args[2])
         log("Admin Broadcast - "..args[1]..": "..args[2])
         TriggerClientEvent("chat:addMessage", -1, {
             args = {
@@ -150,6 +161,8 @@ end
 -- Send admin direct message to specific player
 function txaSendDM(source, args)
     if args[1] ~= nil and args[2] ~= nil and args[3] ~= nil then
+        args[2] = unDeQuote(args[2])
+        args[3] = unDeQuote(args[3])
         local pName = GetPlayerName(args[1])
         if pName ~= nil then
             log("Admin DM to "..pName.." from "..args[2]..": "..args[3])

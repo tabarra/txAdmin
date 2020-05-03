@@ -5,7 +5,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 
 //Helper functions
-const escape = (x) => {return x.replace(/\"/g, '\\"');};
+const escape = (x) => {return x.replace(/\"/g, '\uff02');};
 const formatCommand = (cmd, ...params) => {
     return `${cmd} "` + [...params].map(escape).join(`" "`) + `"`;
 };

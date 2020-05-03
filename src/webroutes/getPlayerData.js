@@ -28,7 +28,7 @@ module.exports = async function GetPlayerData(ctx) {
     let disableKick = getPermDisable('commands.kick');
     if(player){
         out = {
-            name: xss(player.name),
+            name: player.name,
             identifiers: player.identifiers.map(x => xss(x)).join(', <br>\n'),
             buttons: `<!-- buttons -->
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

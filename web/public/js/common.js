@@ -196,7 +196,7 @@ function showPlayer(id) {
                 window.location = '/auth?logout';
                 return;
             }
-            $("#modPlayerInfoTitle").html(data.name);
+            $("#modPlayerInfoTitle").text(data.name);
             $("#modPlayerInfoIdentifiers").html(data.identifiers);
             $("#modPlayerInfoButtons").html(data.buttons);
         },

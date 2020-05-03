@@ -76,7 +76,7 @@
             if(!ids) return;
             let name = $(this).data('player-name') || 'unknown';
 
-            $("#modPlayerInfoTitle").html(name);
+            $("#modPlayerInfoTitle").text(name);
             $("#modPlayerInfoIdentifiers").html(ids.split(';').join(', <br>\n'));
             $("#modPlayerInfoButtons").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>');
             $('#modPlayerInfo').modal('show');
