@@ -68,7 +68,9 @@
 - [x] create `/advanced` page and move the verbosity switch there
 - [x] fixed updateChecker error handling and added a message for pre-releases
 > v2.4.1
-- [ ] create playerController module (started on v2.4.0)
+- [x] create playerController module (started on v2.4.0)
+- [x] fix escaping issues on commands.js
+- [x] deprecate discord custom commands and set process priority features
 - [ ] remove the public ip thing and make the /status configurable
 
 > Soon™

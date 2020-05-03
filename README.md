@@ -25,7 +25,6 @@
 	- Brute-force protection
 - Discord Integration:
 	- Server status command (`/status`)
-	- Custom static commands
 	- Command spam prevention
 - Monitoring:
 	- Auto Restart on crash

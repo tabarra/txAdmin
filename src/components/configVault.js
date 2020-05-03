@@ -127,8 +127,6 @@ module.exports = class ConfigVault {
                 enabled: toDefault(cfg.discordBot.enabled, null),
                 token:  toDefault(cfg.discordBot.token, null),
                 announceChannel:  toDefault(cfg.discordBot.announceChannel, null),
-                messagesFilePath: toDefault(cfg.discordBot.messagesFilePath, null), //not in template
-                refreshInterval: toDefault(cfg.discordBot.refreshInterval, null), //not in template
                 statusCommand: toDefault(cfg.discordBot.statusCommand, null),
                 commandCooldown: toDefault(cfg.discordBot.commandCooldown, null), //not in template
             };
@@ -137,7 +135,6 @@ module.exports = class ConfigVault {
                 cfgPath: toDefault(cfg.fxRunner.cfgPath, null),
                 commandLine: toDefault(cfg.fxRunner.commandLine, null),
                 logPath: toDefault(cfg.fxRunner.logPath, null), //not in template
-                setPriority: toDefault(cfg.fxRunner.setPriority, null),
                 onesync: toDefault(cfg.fxRunner.onesync, null),
                 autostart: toDefault(cfg.fxRunner.autostart, null),
                 autostartDelay: toDefault(cfg.fxRunner.autostartDelay, null), //not in template
@@ -189,14 +186,11 @@ module.exports = class ConfigVault {
 
             //DiscordBot
             cfg.discordBot.enabled = (cfg.discordBot.enabled === 'true' || cfg.discordBot.enabled === true);
-            cfg.discordBot.messagesFilePath = cfg.discordBot.messagesFilePath || `${this.serverProfilePath}/messages.json`; //not in template
-            cfg.discordBot.refreshInterval = parseInt(cfg.discordBot.refreshInterval) || 15000; //not in template
             cfg.discordBot.statusCommand = cfg.discordBot.statusCommand || "/status";
             cfg.discordBot.commandCooldown = parseInt(cfg.discordBot.commandCooldown) || 30; //not in template
 
             //FXRunner
             cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template
-            cfg.fxRunner.setPriority = cfg.fxRunner.setPriority || "NORMAL";
             cfg.fxRunner.onesync = (cfg.fxRunner.onesync === 'true' || cfg.fxRunner.onesync === true);
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
             cfg.fxRunner.autostartDelay = parseInt(cfg.fxRunner.autostartDelay) || 2; //not in template

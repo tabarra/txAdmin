@@ -9,6 +9,7 @@ And as part of the process, we "retired" many features and parts of our code bas
 - **Automatic cache cleaner:** This feature were created due to the vast number of requests, but in the end this "common knowledge" was based on misinformation, therefore it was removed since we don't actually need it;
 - **SSL support:** With the rework of the entire web layer of txAdmin in preparation with the FiveM integration, we ended up removing this (tricky to implement) feature. But don't worry, one of the benefits from the integration is that now we have the FiveM cfx.re reverse proxy, which by default supports HTTPS;
 - **Experiments:** Well... not much to experience with right now;
-- **Discord static commands:** Did people ever used it?  
+- **Discord static commands:** I don't think anyone ever used it since they can do it with basically any other bot;
+- **Set process priority:** Although it was quite requested in the beginning, people just don't seem to use it;
   
 More features will eventually be removed, like the ability to set the FXServer process priority.
