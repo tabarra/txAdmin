@@ -6,7 +6,7 @@ The permissions are saved in the `txData/admins.json` file and can be edited thr
 ### Available Permissions
 - `all_permissions`: Root permission that allows the user to perform any action. When set, this will remove all other permissions;
 - `manage.admins`: Permission to create, edit and remove other admin accounts;
-- `settings.view`: Permission to view the settings;
+- `settings.view`: Permission to view the settings. Tokens will be redacted;
 - `settings.write`: Permission to edit the settings;
 - `control.server`: Permission to start/stop/restart the server;
 - `commands.resources`: Permission to start/ensure/restart/stop resources;

@@ -72,6 +72,7 @@
 - [x] fix escaping issues on commands.js
 - [x] deprecate discord custom commands and set process priority features
 - [x] remove the public ip setting and make the /status configurable
+- [x] redact discord token from the settings page for admins with only "settings.view" permission
 - [ ] fix serverlist not wiping after server shutting down
 
 > Soon™
