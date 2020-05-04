@@ -192,6 +192,9 @@ module.exports = class Monitor {
         this.lastSuccessfulHeartBeat = null; //to see if its above limit
         this.lastHealthCheckErrorMessage = null; //to print warning
         this.healthCheckRestartWarningIssued = false; //to prevent spamming 
+
+        //to reset active player list (if module is already loaded)
+        if(globals.playerController) globals.playerController.processHeartBeat([]); 
     }
 
 
