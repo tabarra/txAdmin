@@ -43,7 +43,7 @@ module.exports = async function ProviderCallback(ctx) {
         tokenSet = await globals.authenticator.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
         let message;
-        if(error.message.startsWith('JWT expired') || error.message.startsWith('JWT not active yet')){
+        if(!isUndefined(error.tolerance)){
             message = `Code Exchange error.\r\nPlease Update/Synchronize your VPS clock.`;
         }else{
             message = `Code Exchange error:\r\n${error.message}.`;

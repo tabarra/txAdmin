@@ -74,6 +74,7 @@
 - [x] remove the public ip setting and make the /status configurable
 - [x] redact discord token from the settings page for admins with only "settings.view" permission
 - [x] fix serverlist not wiping after server shutting down
+- [x] update packages and change detection of clock skew
 
 > Soon™
 - [ ] change webserver token every time the server starts
