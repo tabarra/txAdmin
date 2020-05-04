@@ -12,4 +12,5 @@ And as part of the process, we "retired" many features and parts of our code bas
 - **Discord static commands:** I don't think anyone ever used it since they can do it with basically any other bot;
 - **Set process priority:** Although it was quite requested in the beginning, people just don't seem to use it;
   
-More features will eventually be removed, like the ability to set the FXServer process priority.
+Don't cry because they are gone.  
+Smile because they existed :)

@@ -52,6 +52,9 @@ option:disabled {
 .form-control::placeholder {
     color: #A9B5C0;
 }
+.form-control{
+    color: #616a78;
+}
 
 
 /* Console/Log marks */

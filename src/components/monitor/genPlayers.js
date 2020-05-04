@@ -19,7 +19,7 @@ const unDups = (arr) => arr.filter((v,i) => arr.indexOf(v) === i)
 
 //Configs
 const refreshInterval = 2500;
-let indexes = [1,2,3,4,5,6,7,8,9,10];
+let indexes = [0,1,2,3,4,5,6,7,8,9];
 
 //Testing player db
 const shouldAddRemovePlayers = false;

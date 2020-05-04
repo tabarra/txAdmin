@@ -130,7 +130,7 @@ module.exports = class PlayerController {
                             tsLastConnection: p.tsConnected
                         })
                         .value();
-                    logOk(`Updating '${p.name}' in players database.`); //DEBUG
+                    // logOk(`Updating '${p.name}' in players database.`); //DEBUG
                 }
             });
         } catch (error) {

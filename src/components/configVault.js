@@ -219,16 +219,6 @@ module.exports = class ConfigVault {
             if(!fs.existsSync(logsPath)){
                 fs.mkdirSync(logsPath);
             }
-
-            // let messagesPath = `${this.serverProfilePath}/messages.json`;
-            // if(!fs.existsSync(messagesPath)){
-            //     fs.writeFileSync(messagesPath, '[]');
-            // }
-
-            // let commandsPath = `${this.serverProfilePath}/commands.json`;
-            // if(!fs.existsSync(commandsPath)){
-            //     fs.writeFileSync(commandsPath, '[]');
-            // }
         } catch (error) {
             logError(`Failed to set up folder structure in '${this.serverProfilePath}/' with error: ${error.message}`);
             process.exit();

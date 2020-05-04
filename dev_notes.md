@@ -146,6 +146,9 @@ npm run build
 
 # upgrade util:
 npm-upgrade
+
+# F8
+con_miniconChannels script:monitor
 ```
 
 ### Links + random stuff
