@@ -40,15 +40,15 @@
     "koa": "^2.11.0",
     "koa-bodyparser": "^4.3.0",
     "koa-ratelimit": "^4.2.1",
-    "koa-session": "^5.13.1",
+    "koa-session": "^6.0.0",
     "koa-session-memory": "^1.0.4",
     "koa-session-socketio": "^1.0.0",
     "koa-static": "^5.0.0",
     "lowdb": "^1.0.0",
-    "nanoid": "^3.1.3",
+    "nanoid": "^3.1.4",
     "nanoid-dictionary": "^3.0.0",
     "node-polyglot": "^2.4.0",
-    "openid-client": "^3.14.2",
+    "openid-client": "^3.15.0",
     "pidtree": "^0.5.0",
     "pidusage-tree": "^2.0.5",
     "semver": "^7.3.2",
@@ -61,7 +61,7 @@
   },
   "devDependencies": {
     "copy-webpack-plugin": "^5.1.1",
-    "terser-webpack-plugin": "^2.3.5",
+    "terser-webpack-plugin": "^3.0.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"
   }
