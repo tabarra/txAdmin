@@ -63,6 +63,8 @@ function dir(data){
     if(data instanceof Error){
         try {
             console.log(`${ac.redBright('[txAdmin Error]')} ${data.message}`);
+            if(typeof data.type !== 'undefined') console.log(`${ac.redBright('[txAdmin Error] Type:')} ${data.type}`);
+            if(typeof data.code !== 'undefined') console.log(`${ac.redBright('[txAdmin Error] Code:')} ${data.code}`);
             data.stack.forEach(trace => {
                 console.log(`    ${ac.redBright('=>')} ${trace.file}:${trace.line} > ${ac.yellowBright(trace.name || 'anonym')}`)
             });
