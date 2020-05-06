@@ -75,6 +75,8 @@
 - [x] redact discord token from the settings page for admins with only "settings.view" permission
 - [x] fix serverlist not wiping after server shutting down
 - [x] update packages and change detection of clock skew
+> v2.4.2
+- [ ] ????
 
 > Soon™
 - [ ] change webserver token every time the server starts

@@ -1,5 +1,5 @@
 {
-    "version": "2.4.1",
+    "version": "2.4.2",
     "changelog": "Deprecated Message. Please Update to v2.",
     "allVersions": [
         {
@@ -177,6 +177,10 @@
         {
             "version": "2.4.1",
             "changelog": "Minor fixes to the FXServer update checker."
+        },
+        {
+            "version": "2.4.2",
+            "changelog": "Added customizable /status messages. Security Updates: fixed escaping issues, restricted more the settings.view permission, upgraded packages."
         }
     ]
 }

@@ -55,8 +55,16 @@ module.exports = class WebServer {
         //Setting up app
         this.app.use(ctxUtils);
         this.app.on('error', (error, ctx) => {
-            logWarn(`Probably harmless error on ${ctx.path}`);
-            dir(error)
+            if(typeof error.code == 'string' && error.code.startsWith('HPE_')){
+                if(GlobalData.verbose){
+                    logError(`Probably harmless error on ${ctx.path}`);
+                    dir(error);
+                }
+            }else{
+                logError(`Probably harmless error on ${ctx.path}`);
+                logError('Please be kind and send an screenshot of this error to the txAdmin developer.');
+                dir(error)
+            }
         });
         
         //Setting up timeout/error/no-output/413:
