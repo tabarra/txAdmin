@@ -62,7 +62,7 @@ module.exports = class WebServer {
                 }
             }else{
                 logError(`Probably harmless error on ${ctx.path}`);
-                logError('Please be kind and send an screenshot of this error to the txAdmin developer.');
+                logError('Please be kind and send a screenshot of this error to the txAdmin developer.');
                 dir(error)
             }
         });
