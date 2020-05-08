@@ -90,7 +90,7 @@ module.exports = async function FXServerCommands(ctx) {
         if(!ensurePermission(ctx, 'commands.kick')) return false;
         let cmd;
         if(parameter[1].length){
-            cmd = formatCommand('txaKickID', parameter[0], reason);
+            cmd = formatCommand('txaKickID', parameter[0], parameter[1]);
         }else{
             cmd = formatCommand('txaKickID', parameter[0]);
         }
