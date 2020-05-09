@@ -2,7 +2,7 @@
 const modulename = 'PlayerController';
 const low = require('lowdb');
 const FileAsync = require('lowdb/adapters/FileAsync');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000) };
@@ -43,6 +43,12 @@ module.exports = class PlayerController {
         this.dbo = null;
         this.activePlayers = [];
         this.knownIdentifiers = ['steam', 'license', 'xbl', 'live', 'discord', 'fivem'];
+
+        //Running playerlist generator
+        if(process.env.APP_ENV !== 'webpack' && false) {
+            const PlayerlistGenerator = require('./playerlistGenerator.js');
+            this.playerlistGenerator = new PlayerlistGenerator();
+        }
 
         //Start database instance
         this.setupDatabase();
@@ -230,6 +236,9 @@ module.exports = class PlayerController {
      * @param {array} players
      */
     async processHeartBeat(players){
+        //DEBUG: in case the player generator is enabled
+        if(this.playerlistGenerator) players = this.playerlistGenerator.playerlist;
+
         try {
             //Sanity check
             if(!Array.isArray(players)) throw new Error('expected array');
