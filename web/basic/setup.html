@@ -273,7 +273,7 @@
             targetElement.classList.remove('is-invalid');
             targetElement.classList.add('is-valid');
             targetElement.value = suggestions[targetName] || '';
-            var currentSteps = stepperInstace.getSteps()
+            var currentSteps = stepperInstace.getSteps();
             currentSteps.active.step.classList.remove('wrong');
             currentSteps.active.step.classList.add('done');
         }
@@ -317,6 +317,7 @@
 
         // Server Data Folder step validation
         function validateDataFolder(destroyFeedback) {
+            var currentSteps = stepperInstace.getSteps();
             frmDataFolder.classList.remove('is-invalid', 'is-valid');
             frmDataFolderError.classList.add('d-none');
             let data = {dataFolder: frmDataFolder.value.trim()};
@@ -333,6 +334,8 @@
                         return;
                     }
                     if (data.success == true){
+                        currentSteps.active.step.classList.remove('wrong');
+                        currentSteps.active.step.classList.add('done');
                         frmName.classList.add('is-valid');
                         destroyFeedback(true)
                     }else{
@@ -358,6 +361,7 @@
 
         // Server CFG File step validation
         function validateCFGFile(destroyFeedback) {
+            var currentSteps = stepperInstace.getSteps();
             frmCFGFile.classList.remove('is-invalid', 'is-valid');
             frmCFGFileError.classList.add('d-none');
             let data = {
@@ -377,6 +381,8 @@
                         return;
                     }
                     if (data.success == true){
+                        currentSteps.active.step.classList.remove('wrong');
+                        currentSteps.active.step.classList.add('done');
                         frmName.classList.add('is-valid');
                         destroyFeedback(true)
                     }else{
