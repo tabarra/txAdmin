@@ -55,7 +55,10 @@ module.exports = class WebServer {
         //Setting up app
         this.app.use(ctxUtils);
         this.app.on('error', (error, ctx) => {
-            if(typeof error.code == 'string' && error.code.startsWith('HPE_')){
+            if(
+                typeof error.code == 'string' && 
+                (error.code.startsWith('HPE_') || error.code.startsWith('ECONN'))
+            ){
                 if(GlobalData.verbose){
                     logError(`Probably harmless error on ${ctx.path}`);
                     dir(error);
