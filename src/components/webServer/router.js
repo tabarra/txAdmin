@@ -50,10 +50,6 @@ module.exports = router = (config) =>{
     router.get('/cfgEditor', requestAuth('web'), webRoutes.cfgEditor.get);
     router.post('/cfgEditor/save', requestAuth('api'), webRoutes.cfgEditor.save);
 
-    //Experiments
-    router.get('/experiments/bans', requestAuth('web'), webRoutes.experiments.bans.get);
-    router.all('/experiments/bans/actions/:action', requestAuth('web'), webRoutes.experiments.bans.actions);
-
     //Control routes
     router.get('/console', requestAuth('web'), webRoutes.liveConsole);
     router.post('/intercom/:scope', requestAuth('intercom'), webRoutes.intercom);
@@ -70,6 +66,7 @@ module.exports = router = (config) =>{
     router.get('/getPlayerData/:id', requestAuth('api'), webRoutes.getPlayerData);
 
     //Index & generic
+    router.get('/players', requestAuth('web'), webRoutes.players);
     router.get('/resources', requestAuth('web'), webRoutes.resources);
     router.get('/', requestAuth('web'), webRoutes.dashboard);
 

@@ -111,7 +111,7 @@ module.exports = class DiscordBot {
             }
             this.spamLimitRegister(this.config.statusCommand, message.channel.id);
 
-            //Prepare message's RichEmbed 
+            //Prepare message's RichEmbed + template variables
             let replaces = {};
             let cardColor, cardTitle;
             if(globals.monitor.currentStatus == 'ONLINE' || globals.monitor.currentStatus == 'PARTIAL'){
@@ -125,9 +125,6 @@ module.exports = class DiscordBot {
                 replaces.players = '--';
                 replaces.port = '--';
             }
-
-            //Preparing template variables
-            
             let humanizeOptions = {
                 language: globals.translator.t('$meta.humanizer_language'),
                 round: true,
@@ -136,11 +133,11 @@ module.exports = class DiscordBot {
             }
             replaces.uptime = humanizeDuration(globals.fxRunner.getUptime()*1000, humanizeOptions);
             
+            //Replacing text
             let desc = this.config.statusMessage;
             Object.entries(replaces).forEach(([key, value]) => {
                 desc = desc.replace(`<${key}>`, value);
             });
-            dir(desc)
 
             //Prepare object
             out = new Discord.RichEmbed();

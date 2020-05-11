@@ -7,6 +7,7 @@ exports.resources = require('./resources.js');
 exports.serverLog = require('./serverLog.js');
 exports.status = require('./status.js');
 exports.txAdminLog = require('./txAdminLog.js');
+exports.players = require('./players.js');
 
 exports.auth = {
     get: require('./authentication/get'),

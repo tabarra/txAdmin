@@ -1,0 +1,151 @@
+{{include("header")/}}
+
+<style>
+    .pInfoCallout{
+        min-width: 180px !important;
+    }
+</style>
+
+
+<!-- Callouts -->
+<div class="row justify-content-center">
+    <div class="row col-xl-10 p-0 pb-3 justify-content-center">
+        <div class="col-2 pInfoCallout">
+            <div class="c-callout c-callout-info">
+                <small class="text-muted">Total Players</small><br>
+                <strong class="h4">9,123</strong>
+            </div>
+        </div>
+        <div class="col-2 pInfoCallout">
+            <div class="c-callout c-callout-info">
+                <small class="text-muted">Total Playtime</small><br>
+                <strong class="h4">9,123</strong>
+            </div>
+        </div>
+        <div class="col-2 pInfoCallout">
+            <div class="c-callout c-callout-success">
+                <small class="text-muted">New Players This Week</small><br>
+                <strong class="h4">9,123</strong>
+            </div>
+        </div>
+        <div class="col-2 pInfoCallout">
+            <div class="c-callout c-callout-success">
+                <small class="text-muted">Playtime This Week</small><br>
+                <strong class="h4">9,123</strong>
+            </div>
+        </div>
+        <div class="col-2 pInfoCallout">
+            <div class="c-callout c-callout-warning">
+                <small class="text-muted">Warns</small><br>
+                <strong class="h4">9,123</strong>
+            </div>
+        </div>
+        <div class="col-2 pInfoCallout">
+            <div class="c-callout c-callout-danger">
+                <small class="text-muted">Bans</small><br>
+                <strong class="h4">9,123</strong>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+
+<!-- Main info -->
+<div class="row justify-content-center">
+
+    <div class="col-md-10 col-lg-8 col-xl-5 mw-col6">
+        <div class="card card-accent-danger">
+            <div class="card-header font-weight-bold">Ban Identifiers:</div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <label for="frmAddBan-identifier" class="col-sm-3 col-form-label">
+                        Identifier(s)
+                    </label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="frmAddBan-identifier"
+                            placeholder="steam:101010101010101">
+                        <span class="form-text text-muted">
+                            Valid identifiers: <code>steam, license, xbl, live, discord</code> <br>
+                            You can insert multiple IDs separated by comma.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="frmAddBan-reason" class="col-sm-3 col-form-label">
+                        Reason
+                    </label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="frmAddBan-reason" maxlength="64"
+                            placeholder="doing bad things :(">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="modPlayerBan-banTime" class="col-sm-3 col-form-label">
+                        Duration
+                    </label>
+                    <div class="col-sm-9">
+                        <select class="form-control" id="modPlayerBan-banTime">
+                            <option value="2h" selected>2 hours</option>
+                            <option value="8h">8 hours</option>
+                            <option value="1d">1 day</option>
+                            <option value="2d">2 days</option>
+                            <option value="1w">1 week</option>
+                            <option value="2w">2 weeks</option>
+                            <option value="perma" class="font-weight-bold" selected>permanent</option>
+                        </select>
+                        <span class="form-text text-muted">
+                            <b>Note:</b> The ban will be applied to all identifiers.
+                        </span>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button class="btn btn-sm btn-danger" type="submit" id="modPlayerBan-button" {{disableWrite}}>
+                        <i class="icons cui-check"></i> Ban Identifiers
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="col-md-10 col-lg-8 col-xl-5 mw-col8">
+        <div class="card card-accent-info">
+            <div class="card-header font-weight-bold">Ban List:</div>
+            <div class="card-body">
+                <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
+                    <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
+                <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
+                    <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
+                <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
+                    <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
+                <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
+                    <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
+                <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
+                    <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
+                <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
+                    <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
+                <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
+                    <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
+                <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
+                    <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
+                <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
+                    <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
+                <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
+                    <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+{{include("footer")/}}
