@@ -75,7 +75,7 @@ async function handleAdd(ctx) {
     if(!/^[a-zA-Z0-9]{6,16}$/.test(name)){
         return ctx.send({type: 'danger', message: "Invalid username"});
     }
-    if(citizenfxID.length && !/^\w{4,20}$/.test(citizenfxID)){
+    if(citizenfxID.length && !/^\w{3,20}$/.test(citizenfxID)){
         return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
     }
     if(discordID.length && !/^\d{7,20}$/.test(discordID)){
@@ -120,7 +120,7 @@ async function handleEdit(ctx) {
     if(permissions.includes('all_permissions')) permissions = ['all_permissions'];
 
     //Validate fields
-    if(citizenfxID.length && !/^\w{4,20}$/.test(citizenfxID)){
+    if(citizenfxID.length && !/^\w{3,20}$/.test(citizenfxID)){
         return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
     }
     if(discordID.length && !/^\d{7,20}$/.test(discordID)){

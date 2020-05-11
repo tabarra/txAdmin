@@ -348,7 +348,7 @@ module.exports = class Authenticator {
             if(typeof x.providers !== 'object') return true;
             let providersTest = Object.keys(x.providers).some((y) => {
                 if(!Object.keys(this.providers).includes(y)) return true;
-                if(typeof x.providers[y].id !== 'string' || x.providers[y].id.length < 4) return true;
+                if(typeof x.providers[y].id !== 'string' || x.providers[y].id.length < 3) return true;
                 if(typeof x.providers[y].data !== 'object') return true;
             });
             if(providersTest) return true;
