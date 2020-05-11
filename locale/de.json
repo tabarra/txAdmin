@@ -7,19 +7,19 @@
         "crash_detected": "Absturz erkannt",
         "partial_crash_warn": "Aufgrund von Verbindungsproblemen startet dieser Server in 1 Minute neu. Bitte trenne die Verbindung jetzt.",
         "partial_crash_warn_discord": "Aufgrund von Verbindungsproblemen, startet **%{servername}** in einer Minute neu.",
-        "schedule_reason": "Geplanter Neustart um %{time}",
+        "schedule_reason": "Automatisierter Neustart um %{time}",
         "schedule_warn": "Der Server wird in %{smart_count} Minute neugestartet. Bitte trenne die Verbindung jetzt. |||| Der Server wird in %{smart_count} Minuten neu gestartet.",
         "schedule_warn_discord": "**%{servername}** wird in %{smart_count} Minute neugestartet. |||| **%{servername}** wird in %{smart_count} Minuten neu gestartet."
     },
     "server_actions": {
-        "restarting": "Server-Neustart (%{reason}).",
+        "restarting": "Server Restart (%{reason}).",
         "restarting_discord": "**%{servername}** wird neu gestartet (%{reason}).",
         "stopping": "Server wird heruntergefahren (%{reason}).",
         "stopping_discord": "**%{servername}** wird heruntergefahren (%{reason}).",
         "spawning_discord": "**%{servername}** startet."
     },
     "discord": {
-        "status_online": "**%{servername}** ist derzeit **Online**!",
-        "status_offline": "**%{servername}** ist derzeit **Offline**!"
+        "status_online": "**%{servername}** ist aktuell **Online**!",
+        "status_offline": "**%{servername}** ist aktuell **Offline**!"
     }
 }
