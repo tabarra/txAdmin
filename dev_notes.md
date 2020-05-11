@@ -76,57 +76,19 @@
 - [x] fix serverlist not wiping after server shutting down
 - [x] update packages and change detection of clock skew
 > v2.4.2
-- [ ] ????
+- [ ] make the html of the new player modal
+- [ ] make the html of the new players page
+- [ ] xxxxx
 
 > Soon™
 - [ ] change webserver token every time the server starts
+- [ ] add some chart to the players page?
 - [ ] tweak dashboard update checker behavior
 - [ ] add an fxserver changelog page
 - [ ] convert cl_logger.js to lua, and stop it when not in `monitorMode`
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
-
-
-How to fix the restart loop problem:
-- [x] launch fxserver directly instead of using `cmd.exe /c` or `/bin/sh`
-- [x] create fxRunner.history[] with pid, ts.started, ts.killed, ts.exited, ts.closed
-- [x] create fxRunner.getStatus()
-- [x] make monitor use the fxRunner.getStatus()
-- [x] make monitor show status on the interface when monitor status != online
-- [ ] make fxRunner.spawn() wait for last history = closed
-- [ ] add fxRunner.history[] card to the diagnostics interface
-Another idea:
-    - wait for the last one to close for up to 15 seconds
-    - cache all the endpoint_add_xxx commands
-    - start server
-    - if it errors out, try to execute those commands again
-For the monitor:
-    - create checkStatus, that will check the timestamp of the last successfull client heartbeat and /info heartbeat
-    - execute it every 1 second
-    - execute /info heartbeat in the same setInterval
-
-
-# For the new access control system
-- vRP grabs the first matched ID
-- esx uses licenses
-- For txAdmin:
-    - `players` table: index by license ID
-        - Name (overwrite on every update)
-        - Last connection timestamp
-        - Notes
-        - Online time counter
-    - `ids_events`
-        - timestamp
-        - IDs array
-        - author (the admin name)
-        - type [ban|warn]
-        - message (reason)
-
-- How do I do whitelisting in a smart way? 
-    - By license? 
-    - By any ID? 
-    - Could we add a temp ID to memory and show it on the `deferral.done()`? 
-
+- [ ] revisit the issue with server restarting too fast (before close) and the the bind failing, causing restart loop. Almost all cases were windows server 2012.
 
 
 ## "in the roadmap"
