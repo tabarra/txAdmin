@@ -44,7 +44,10 @@ module.exports = class PlayerController {
         this.knownIdentifiers = ['steam', 'license', 'xbl', 'live', 'discord', 'fivem'];
 
         //Running playerlist generator
-        if(process.env.APP_ENV !== 'webpack' && true) {
+        if(
+            process.env.APP_ENV !== 'webpack' && 
+            GetConvar('txAdminFakePlayerlist', 'false').trim() === 'yesplz'
+        ) {
             const PlayerlistGenerator = require('./playerlistGenerator.js');
             this.playerlistGenerator = new PlayerlistGenerator();
         }

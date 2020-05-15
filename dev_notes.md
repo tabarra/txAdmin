@@ -103,7 +103,7 @@
 ```bash
 # run
 cd /e/FiveM/builds
-npx nodemon --watch "2401/citizen/system_resources/monitor/src/*" --exec "2401/FXServer.exe +set txAdminVerbose truex"
+npx nodemon --watch "2401/citizen/system_resources/monitor/src/*" --exec "2401/FXServer.exe +set txAdminVerbose truex +set txAdminFakePlayerlist yesplzx"
 
 # build
 cd /e/FiveM/builds/2401/citizen/system_resources/monitor
