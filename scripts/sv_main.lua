@@ -50,19 +50,21 @@ function HeartBeat()
     local players = {}
     for i = 0, playerCount - 1 do
         local player = GetPlayerFromIndex(i)
-        local numIds = GetNumPlayerIdentifiers(player)
-        
-        local ids = {}
-        for j = 0, numIds - 1 do
-            table.insert(ids, GetPlayerIdentifier(player, j))
-        end
-        local playerData = {
-            id = player,
-            identifiers = ids,
-            name = GetPlayerName(player),
-            ping = GetPlayerPing(player)
-        }
-        table.insert(players, playerData)
+		if player ~= nil then
+			local numIds = GetNumPlayerIdentifiers(player)
+
+			local ids = {}
+			for j = 0, numIds - 1 do
+				table.insert(ids, GetPlayerIdentifier(player, j))
+			end
+			local playerData = {
+				id = player,
+				identifiers = ids,
+				name = GetPlayerName(player),
+				ping = GetPlayerPing(player)
+			}
+			table.insert(players, playerData)
+		end
     end
 
     local url = "http://localhost:"..apiPort.."/intercom/monitor"
