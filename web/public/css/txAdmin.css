@@ -163,6 +163,9 @@ mark {background-color: #ffeaa7;}
 #modPlayer .nav-link > i {
     padding-right: 0.75rem;
 }
+.nav-pills .nav-link.nav-link-disabled{
+    color: #cfcfcf;
+}
 .nav-pills .nav-link.nav-link-red{
     color: #e55353;
 }

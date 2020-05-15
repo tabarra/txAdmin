@@ -57,7 +57,7 @@ function removePlayer(player){
 
 function addPlayer(player){
     let div = `<div class="list-group-item list-group-item-accent-secondary player text-truncate" 
-                onclick="showPlayer(${player.id})" id="divPlayer${player.id}">
+                onclick="showPlayer('${player.license}')" id="divPlayer${player.id}">
                     <span class="pping text-secondary">&nbsp;??</span>
                     <span class="pname">#${player.id}</span>
             </div>`
@@ -182,14 +182,74 @@ function refreshData() {
 //================================================================
 //============================================== Player Info Modal
 //================================================================
-function showPlayer(id) {
-    $("#modPlayerInfoTitle").html('loading...');
-    $("#modPlayerInfoIdentifiers").html('loading...');
-    $("#modPlayerInfoButtons").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>');
+//Preparing variables
+var spinnerHTML = '<div class="txSpinner">Loading...</div>';
+var modPlayer = {
+    activeID: false,
+    identifiers: false,
+    Modal: new coreui.Modal(document.getElementById('modPlayer')),
+    Title: document.getElementById("modPlayerTitle"),
+    Message: document.getElementById("modPlayerMessage"),
+    Content: document.getElementById("modPlayerContent"),
+    Buttons: {
+        search: document.getElementById("modPlayerButtons-search"),
+        message: document.getElementById("modPlayerButtons-message"),
+        kick: document.getElementById("modPlayerButtons-kick"),
+        warn: document.getElementById("modPlayerButtons-warn"),
+    },
+    Main: {
+        joinDate: document.getElementById("modPlayerMain-joinDate"),
+        playTime: document.getElementById("modPlayerMain-playTime"),
+        sessionTime: document.getElementById("modPlayerMain-sessionTime"),
+        notesLog: document.getElementById("modPlayerMain-notesLog"),
+        notes: document.getElementById("modPlayerMain-notes"),
+    },
+    IDs: {
+        list: document.getElementById("modPlayerIDs-list")
+    },
+    History: {
+        list: document.getElementById("modPlayerHistory-log")
+    },
+    Ban: {
+        tab: document.getElementById("modPlayerBan-tab"),
+        reason: document.getElementById("modPlayerBan-reason"),
+        duration: document.getElementById("modPlayerBan-duration"),
+    }
+}
 
-    $('#modPlayerInfo').modal('show');
+
+function showPlayer(license) {
+    //Reset active player
+    modPlayer.activeID = false;
+    modPlayer.activeIdentifiers = false;
+
+    //Reset modal
+    modPlayer.Message.innerHTML = spinnerHTML;
+    modPlayer.Message.classList.remove('d-none');
+    modPlayer.Content.classList.add('d-none');
+    modPlayer.Title.innerText = 'loading...';
+    modPlayer.Main.joinDate.innerText = '--';
+    modPlayer.Main.playTime.innerText = '--';
+    modPlayer.Main.sessionTime.innerText = '--';
+    modPlayer.Main.notesLog.innerText = '--';
+    modPlayer.Main.notes.value = '';
+    modPlayer.IDs.list.innerText = 'loading...';
+    modPlayer.History.list.innerText = 'loading...';
+
+    modPlayer.Ban.tab.classList.add('nav-link-disabled', 'disabled');
+    modPlayer.Ban.tab.classList.remove('nav-link-red');
+
+    modPlayer.Ban.reason.value = '';
+    modPlayer.Ban.duration.value = '2d';
+    modPlayer.Buttons.search.disabled = true;
+    modPlayer.Buttons.message.disabled = true;
+    modPlayer.Buttons.kick.disabled = true;
+    modPlayer.Buttons.warn.disabled = true;
+    modPlayer.Modal.show();
+
+    //Perform request
     $.ajax({
-        url: "/getPlayerData/" + id,
+        url: "/getPlayerData/" + license,
         type: "GET",
         dataType: "json",
         timeout: timeoutMedium,
@@ -198,20 +258,57 @@ function showPlayer(id) {
                 window.location = '/auth?logout';
                 return;
             }
-            $("#modPlayerInfoTitle").text(data.name);
-            $("#modPlayerInfoIdentifiers").html(data.identifiers);
-            $("#modPlayerInfoButtons").html(data.buttons);
+            modPlayer.activeID = data.id;
+            modPlayer.activeIdentifiers = data.identifiers;
+            modPlayer.Title.innerText = data.name;
+
+            modPlayer.Main.joinDate.innerText = data.joinDate;
+            modPlayer.Main.playTime.innerText = data.playTime;
+            modPlayer.Main.sessionTime.innerText = data.sessionTime;
+            modPlayer.Main.notesLog.innerText = data.notesLog;
+            modPlayer.Main.notes.value = data.notes;
+            modPlayer.IDs.list.innerText = data.identifiers.join(',\n');
+            modPlayer.History.list.innerText = 'loading...'; //FIXME:
+            // <div class="list-group-item list-group-item-accent-info player-history-entry">
+            //     [02/02]<strong>[UNBAN]</strong>
+            //         lorem ipsum (tabarra)
+            // </div>
+            // <div class="text-center text-info">
+            //     For more events, click on the Search button below.
+            // </div>
+            
+            modPlayer.Buttons.search.disabled = false;
+            modPlayer.Buttons.message.disabled = data.funcDisabled.message;
+            modPlayer.Buttons.kick.disabled = data.funcDisabled.kick;
+            modPlayer.Buttons.warn.disabled = data.funcDisabled.warn;
+            if(!data.funcDisabled.ban){
+                modPlayer.Ban.tab.classList.add('nav-link-red');
+                modPlayer.Ban.tab.classList.remove('nav-link-disabled', 'disabled');
+            }
+
+            modPlayer.Content.classList.remove('d-none');
+            modPlayer.Message.classList.add('d-none');
         },
         error: function (xmlhttprequest, textstatus, message) {
-            $("#modPlayerInfoTitle").html('error');
-            $("#modPlayerInfoIdentifiers").html('error');
+            modPlayer.Title.innerText = 'error';
+            modPlayer.Content.classList.add('d-none');
+            modPlayer.Message.classList.remove('d-none');
+            modPlayer.Message.innerText = `Error loading player info:\n${message}`;
         }
     });
 }
 
 
-function messagePlayer(id) {
-    $('#modPlayerInfo').modal('hide');
+function searchPlayer() {
+    modPlayer.Modal.hide();
+    if(modPlayer.activeIdentifiers == false) return;
+    //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO:    
+}
+
+
+function messagePlayer() {
+    modPlayer.Modal.hide();
+    if(modPlayer.activeID == false) return;
     let message = prompt('Type your message');
     if(!message || message.length === 0) return;
 
@@ -219,14 +316,14 @@ function messagePlayer(id) {
 
     let data = {
         action: 'admin_dm',
-        parameter: [id, message]
+        parameter: [modPlayer.activeID, message]
     }
     $.ajax({
         type: "POST",
         url: '/fxserver/commands',
         timeout: timeoutLong,
         data: data,
-        // dataType: 'json',
+        dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
             notify.update('type', data.type);
@@ -241,8 +338,9 @@ function messagePlayer(id) {
 }
 
 
-function kickPlayer(id) {
-    $('#modPlayerInfo').modal('hide');
+function kickPlayer() {
+    modPlayer.Modal.hide();
+    if(modPlayer.activeID == false) return;
     let reason = prompt('Type the kick reason or leave it blank (press enter)');
     if(reason == null) return;
 
@@ -250,14 +348,81 @@ function kickPlayer(id) {
 
     let data = {
         action: 'kick_player',
-        parameter: [id, reason]
+        parameter: [modPlayer.activeID, reason]
     }
     $.ajax({
         type: "POST",
         url: '/fxserver/commands',
         timeout: timeoutLong,
         data: data,
-        // dataType: 'json',
+        dataType: 'json',
+        success: function (data) {
+            notify.update('progress', 0);
+            notify.update('type', data.type);
+            notify.update('message', data.message);
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+            notify.update('progress', 0);
+            notify.update('type', 'danger');
+            notify.update('message', message);
+        }
+    });
+}
+
+function warnPlayer() {
+    //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: 
+    return;
+    modPlayer.Modal.hide();
+    if(modPlayer.activeID == false) return;
+    let reason = prompt('Type your warn reason');
+    if(reason == null) return;
+
+    var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
+
+    let data = {
+        action: 'warn_player',
+        parameter: [modPlayer.activeID, reason]
+    }
+    $.ajax({
+        type: "POST",
+        url: '/fxserver/commands',
+        timeout: timeoutLong,
+        data: data,
+        dataType: 'json',
+        success: function (data) {
+            notify.update('progress', 0);
+            notify.update('type', data.type);
+            notify.update('message', data.message);
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+            notify.update('progress', 0);
+            notify.update('type', 'danger');
+            notify.update('message', message);
+        }
+    });
+}
+
+
+function banPlayer() {
+    //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: 
+    return;
+    modPlayer.Modal.hide();
+    if(modPlayer.activeIdentifiers == false) return;
+    let reason = prompt('Type your warn reason');
+    if(reason == null) return;
+
+    var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
+
+    let data = {
+        action: 'warn_player',
+        parameter: [modPlayer.activeID, reason]
+    }
+    $.ajax({
+        type: "POST",
+        url: '/fxserver/commands',
+        timeout: timeoutLong,
+        data: data,
+        dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
             notify.update('type', data.type);

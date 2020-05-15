@@ -63,7 +63,7 @@ module.exports = router = (config) =>{
     router.get('/txAdminLog', requestAuth('web'), webRoutes.txAdminLog);
     router.get('/serverLog', requestAuth('web'), webRoutes.serverLog);
     router.get('/status', requestAuth('api'), webRoutes.status);
-    router.get('/getPlayerData/:id', requestAuth('api'), webRoutes.getPlayerData);
+    router.get('/getPlayerData/:license', requestAuth('api'), webRoutes.getPlayerData);
 
     //Index & generic
     router.get('/players', requestAuth('web'), webRoutes.players);

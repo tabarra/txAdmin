@@ -16,9 +16,11 @@ module.exports = class Authenticator {
         this.registeredPermissions = [
             "all_permissions",
             "manage.admins",
+            "commands.ban",
             "commands.kick",
             "commands.message",
             "commands.resources",
+            "commands.warn",
             "console.view",
             "console.write",
             "control.server",

@@ -36,7 +36,6 @@ module.exports = class PlayerController {
 
         //Configs:
         this.config = {};
-        this.config.enableDatabase = false; //NOTE: while I'm testing
         this.config.minSessionTime = 1*60; //NOTE: use 15 minutes as default
 
         //Vars
@@ -45,7 +44,7 @@ module.exports = class PlayerController {
         this.knownIdentifiers = ['steam', 'license', 'xbl', 'live', 'discord', 'fivem'];
 
         //Running playerlist generator
-        if(process.env.APP_ENV !== 'webpack' && false) {
+        if(process.env.APP_ENV !== 'webpack' && true) {
             const PlayerlistGenerator = require('./playerlistGenerator.js');
             this.playerlistGenerator = new PlayerlistGenerator();
         }
@@ -65,8 +64,6 @@ module.exports = class PlayerController {
      * Start lowdb instance and set defaults
      */
     async setupDatabase(){
-        if(!this.config.enableDatabase) return;
-
         // let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
         // let dbPath = `./fakedb.json`;
         let dbPath = `${globals.info.serverProfilePath}/data/testDB.json`;
@@ -97,8 +94,6 @@ module.exports = class PlayerController {
      * Processes the active players for playtime and saves the database
      */
     async processActive(){
-        if(!this.config.enableDatabase) return;
-        
         //Goes through each player processing playtime and sessiontime
         let writePending = false;
         try {
@@ -161,8 +156,6 @@ module.exports = class PlayerController {
      * @returns {object|null|false} object if player is found, null if not found, false if error occurs
      */
     async getPlayer(license){
-        if(!this.config.enableDatabase) return false;
-
         try {
             let p = await this.dbo.get("players").find({license: license}).value();
             return (typeof p === 'undefined')? null : p;
@@ -205,6 +198,7 @@ module.exports = class PlayerController {
         try {
             return this.activePlayers.map(p => {
                 return {
+                    license: p.license,
                     id: p.id,
                     name: p.name,
                     ping: p.ping,
@@ -232,6 +226,8 @@ module.exports = class PlayerController {
      * NOTE:  This code was written this way to improve performance in exchange of readability
      *           the ES6 gods might not like this..
      * FIXME: To prevent retaliation from the gods, consider making the activePlayers an Map instead of an Array.
+     * 
+     * FIXME: I'm guaranteeing there are not two players with the same License, but not ID.
      * 
      * @param {array} players
      */
@@ -288,7 +284,7 @@ module.exports = class PlayerController {
             //Processing active players list, creating the removed list, creating new active list without removed players
             let apCount = this.activePlayers.length;  //Optimization only, although V8 is probably smart enough
             let disconnectedPlayers = []; //NOTE: might want to do something with this
-            let activePlayerIDs = []; //Optimization only
+            let activePlayerLicenses = []; //Optimization only
             let newActivePlayers = [];
             for (let i = 0; i < apCount; i++) {
                 let hbPlayerData = hbPlayers.get(this.activePlayers[i].license);  
@@ -301,7 +297,7 @@ module.exports = class PlayerController {
                         }
                     );
                     newActivePlayers.push(updatedPlayer);
-                    activePlayerIDs.push(this.activePlayers[i].id);
+                    activePlayerLicenses.push(this.activePlayers[i].license);
                 }else{
                     disconnectedPlayers.push(this.activePlayers[i]); //NOTE: might require a Clone
                 }
@@ -309,7 +305,7 @@ module.exports = class PlayerController {
 
             //Processing the new players
             for (const [license, player] of hbPlayers) {
-                if(!activePlayerIDs.includes(player.id)){
+                if(!activePlayerLicenses.includes(player.license)){
                     let dbPlayer = await this.getPlayer(license);
                     if(dbPlayer){
                         //TODO: create a AllAssocIds for the players, containing all intersecting licenses
