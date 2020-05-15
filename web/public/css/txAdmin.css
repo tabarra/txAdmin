@@ -176,6 +176,9 @@ mark {background-color: #ffeaa7;}
 #modPlayerMain-notes{
     background-color: #fcf8e3;
 }
+#modPlayerMain-notes:disabled{
+    background-color: #f4f3eb;
+}
 .player-history-entry{
     padding: .15rem .25rem;
     margin-bottom: 2px !important;

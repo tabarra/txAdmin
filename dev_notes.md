@@ -78,9 +78,11 @@
 > v2.4.2
 - [ ] make the html of the new player modal
 - [ ] make the html of the new players page
+- [ ] check everything done for xss
 - [ ] xxxxx
 
 > Soon™
+- [ ] try again the upgrade to Discord.js v12
 - [ ] change webserver token every time the server starts
 - [ ] add some chart to the players page?
 - [ ] tweak dashboard update checker behavior

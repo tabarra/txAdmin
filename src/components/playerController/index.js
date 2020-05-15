@@ -105,16 +105,23 @@ module.exports = class PlayerController {
 
                 //If its time to add this player to the database
                 if(p.isTmp && sessionTime >= this.config.minSessionTime){
+                    if(p.license == 'deadbeef0000nosave') return; //HACK
+                    
                     writePending = true;
                     p.isTmp = false;
                     p.playTime = Math.round(sessionTime/60);
+                    p.notes = {
+                        text: '',
+                        lastAdmin: null,
+                        tsLastEdit: null
+                    }
                     let toDB = {
                         license: p.license,
                         name: p.name,
                         playTime: p.playTime,
                         tsJoined: p.tsJoined,
                         tsLastConnection: p.tsConnected,
-                        notes: null
+                        notes: p.notes
                     }
                     await this.dbo.get('players')
                         .push(toDB)
@@ -311,7 +318,7 @@ module.exports = class PlayerController {
                 if(!activePlayerLicenses.includes(player.license)){
                     let dbPlayer = await this.getPlayer(license);
                     if(dbPlayer){
-                        //TODO: create a AllAssocIds for the players, containing all intersecting licenses
+                        //TODO: create a AllAssocIds for the players, containing all intersecting identifiers
                         let newPlayer = Object.assign({}, player, {
                             tsJoined: dbPlayer.tsJoined, 
                             playTime: dbPlayer.playTime, 

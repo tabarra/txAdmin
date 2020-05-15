@@ -266,9 +266,10 @@ function showPlayer(license) {
             modPlayer.Main.playTime.innerText = data.playTime;
             modPlayer.Main.sessionTime.innerText = data.sessionTime;
             modPlayer.Main.notesLog.innerText = data.notesLog;
+            modPlayer.Main.notes.disabled = data.isTmp;
             modPlayer.Main.notes.value = data.notes;
             modPlayer.IDs.list.innerText = data.identifiers.join(',\n');
-            modPlayer.History.list.innerText = 'loading...'; //FIXME:
+            modPlayer.History.list.innerText = 'fix me :p'; //FIXME:
             // <div class="list-group-item list-group-item-accent-info player-history-entry">
             //     [02/02]<strong>[UNBAN]</strong>
             //         lorem ipsum (tabarra)
