@@ -54,7 +54,7 @@ module.exports = async function GetPlayerData(ctx) {
         out.sessionTime = humanizeDuration(sessionTime, {round: true, units: ['h', 'm']});
 
         if(activePlayer.isTmp){
-            out.playTime = 'temporary player';
+            out.playTime = '--';
             out.notesLog = 'unavailable for temporary players';
             out.notes = '';
         }else{

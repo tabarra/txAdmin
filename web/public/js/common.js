@@ -282,6 +282,9 @@ function showPlayer(license) {
             modPlayer.Buttons.message.disabled = data.funcDisabled.message;
             modPlayer.Buttons.kick.disabled = data.funcDisabled.kick;
             modPlayer.Buttons.warn.disabled = data.funcDisabled.warn;
+            
+            //TODO: Show message disabling ban form if the user is already banned?
+            //      Or maybe just warn "this user is already banned"
             if(!data.funcDisabled.ban){
                 modPlayer.Ban.tab.classList.add('nav-link-red');
                 modPlayer.Ban.tab.classList.remove('nav-link-disabled', 'disabled');

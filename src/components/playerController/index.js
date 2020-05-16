@@ -37,11 +37,12 @@ module.exports = class PlayerController {
         //Configs:
         this.config = {};
         this.config.minSessionTime = 1*60; //NOTE: use 15 minutes as default
+        this.validIdentifiers = ['steam', 'license', 'xbl', 'live', 'discord', 'fivem'];
 
         //Vars
         this.dbo = null;
         this.activePlayers = [];
-        this.knownIdentifiers = ['steam', 'license', 'xbl', 'live', 'discord', 'fivem'];
+        this.writePending = false;
 
         //Running playerlist generator
         if(
@@ -56,8 +57,15 @@ module.exports = class PlayerController {
         this.setupDatabase();
 
         //Cron functions
-        setInterval(() => {
-            this.processActive();
+        setInterval(async () => {
+            await this.processActive();
+
+            try {
+                if(this.writePending) await this.dbo.write();
+            } catch (error) {
+                logError(`Failed to save players database with error: ${error.message}`);
+                if(GlobalData.verbose) dir(error);
+            }
         }, 15 * 1000);
     }
 
@@ -94,11 +102,9 @@ module.exports = class PlayerController {
 
     //================================================================
     /**
-     * Processes the active players for playtime and saves the database
+     * Processes the active players for playtime/sessiontime and sets to the database
      */
     async processActive(){
-        //Goes through each player processing playtime and sessiontime
-        let writePending = false;
         try {
             this.activePlayers.forEach(async p => {
                 let sessionTime = now() - p.tsConnected;
@@ -106,8 +112,8 @@ module.exports = class PlayerController {
                 //If its time to add this player to the database
                 if(p.isTmp && sessionTime >= this.config.minSessionTime){
                     if(p.license == 'deadbeef0000nosave') return; //HACK
-                    
-                    writePending = true;
+
+                    this.writePending = true;
                     p.isTmp = false;
                     p.playTime = Math.round(sessionTime/60);
                     p.notes = {
@@ -130,7 +136,7 @@ module.exports = class PlayerController {
                     
                 //If its time to update this player's play time
                 }else if(!p.isTmp && Math.round(sessionTime/4) % 4 == 0){
-                    writePending = true;
+                    this.writePending = true;
                     p.playTime += 1; 
                     await this.dbo.get("players")
                         .find({license: p.license})
@@ -146,14 +152,6 @@ module.exports = class PlayerController {
             });
         } catch (error) {
             logError(`Failed to process active players array with error: ${error.message}`);
-            if(GlobalData.verbose) dir(error);
-        }
-
-        //Saves the database to the file
-        try {
-            if(writePending) await this.dbo.write();
-        } catch (error) {
-            logError(`Failed to save players database with error: ${error.message}`);
             if(GlobalData.verbose) dir(error);
         }
     }
@@ -271,7 +269,7 @@ module.exports = class PlayerController {
 
                 //Extract license
                 for (let j = 0; j < p.identifiers.length; j++) {
-                    //TODO: filter by this.knownIdentifiers
+                    //TODO: filter by this.validIdentifiers
                     if(p.identifiers[j].substring(0, 8) == "license:"){
                         p.license = p.identifiers[j].substring(8);
                         break;
