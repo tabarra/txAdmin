@@ -63,10 +63,13 @@ module.exports = router = (config) =>{
     router.get('/txAdminLog', requestAuth('web'), webRoutes.txAdminLog);
     router.get('/serverLog', requestAuth('web'), webRoutes.serverLog);
     router.get('/status', requestAuth('api'), webRoutes.status);
-    router.get('/getPlayerData/:license', requestAuth('api'), webRoutes.getPlayerData);
+
+    //Player routes
+    router.get('/player/list', requestAuth('web'), webRoutes.player.list);
+    router.get('/player/:license', requestAuth('api'), webRoutes.player.modal);
+    router.post('/player/:action', requestAuth('api'), webRoutes.player.actions);
 
     //Index & generic
-    router.get('/players', requestAuth('web'), webRoutes.players);
     router.get('/resources', requestAuth('web'), webRoutes.resources);
     router.get('/', requestAuth('web'), webRoutes.dashboard);
 

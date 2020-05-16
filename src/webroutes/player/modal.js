@@ -1,10 +1,9 @@
 //Requires
-const modulename = 'WebServer:GetPlayerData';
-const clone = require('clone');
+const modulename = 'WebServer:PlayerModal';
 const dateFormat = require('dateformat');
 const humanizeDuration = require('humanize-duration');
-const xss = require('../extras/xss')();
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+const xss = require('../../extras/xss')();
+const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000) };
@@ -17,7 +16,7 @@ const now = () => { return Math.round(Date.now() / 1000) };
  * 
  * @param {object} ctx
  */
-module.exports = async function GetPlayerData(ctx) {
+module.exports = async function PlayerModal(ctx) {
     //Sanity check
     if(typeof ctx.params.license === 'undefined'){
         return ctx.utils.error(400, 'Invalid Request');
@@ -25,7 +24,8 @@ module.exports = async function GetPlayerData(ctx) {
     let license = ctx.params.license;
 
     //Locating player
-    let activePlayer = clone(globals.playerController.activePlayers).find(player => player.license === license);
+    //FIXME: checar se eu preciso de clone aqui!!!
+    let activePlayer = globals.playerController.activePlayers.find(player => player.license === license);
     dir(activePlayer)
     let playerHistory = []; //HACK
 

@@ -74,30 +74,6 @@ module.exports = async function FXServerCommands(ctx) {
         return sendAlertOutput(ctx, toResp);
 
     //==============================================
-    }else if(action == 'admin_dm'){
-        if(!ensurePermission(ctx, 'commands.message')) return false;
-        if(!Array.isArray(parameter) || parameter.length !== 2){
-            return sendAlertOutput(ctx, 'Invalid request');
-        }
-        let cmd = formatCommand('txaSendDM', parameter[0], ctx.session.auth.username, parameter[1]);
-        ctx.utils.appendLog(cmd);
-        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-        return sendAlertOutput(ctx, toResp);
-
-    //==============================================
-    }else if(action == 'kick_player'){
-        if(!ensurePermission(ctx, 'commands.kick')) return false;
-        let cmd;
-        if(parameter[1].length){
-            cmd = formatCommand('txaKickID', parameter[0], parameter[1]);
-        }else{
-            cmd = formatCommand('txaKickID', parameter[0]);
-        }
-        ctx.utils.appendLog(cmd);
-        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-        return sendAlertOutput(ctx, toResp);
-
-    //==============================================
     }else if(action == 'kick_all'){
         if(!ensurePermission(ctx, 'commands.kick')) return false;
         let cmd;

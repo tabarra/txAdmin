@@ -249,7 +249,7 @@ function showPlayer(license) {
 
     //Perform request
     $.ajax({
-        url: "/getPlayerData/" + license,
+        url: "/player/" + license,
         type: "GET",
         dataType: "json",
         timeout: timeoutMedium,

@@ -1,13 +1,11 @@
 exports.dashboard = require('./dashboard.js');
 exports.diagnostics = require('./diagnostics.js');
-exports.getPlayerData = require('./getPlayerData.js'); //FIXME: verb
 exports.intercom = require('./intercom.js');
 exports.liveConsole = require('./liveConsole.js');
 exports.resources = require('./resources.js');
 exports.serverLog = require('./serverLog.js');
 exports.status = require('./status.js');
 exports.txAdminLog = require('./txAdminLog.js');
-exports.players = require('./players.js');
 
 exports.auth = {
     get: require('./authentication/get'),
@@ -44,11 +42,19 @@ exports.fxserver = {
     downloadLog: require('./fxserver/downloadLog'),
 }
 
+exports.player = {
+    list: require('./player/list'),
+    modal: require('./player/modal'),
+    actions: require('./player/actions'),
+}
+
 exports.advanced = {
     get: require('./advanced/get'),
     actions: require('./advanced/actions'),
 }
 
+
+//FIXME: remove
 exports.experiments = {
     bans: {
         get: require('./experiments/bans/get'),
