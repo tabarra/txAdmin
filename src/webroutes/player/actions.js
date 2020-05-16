@@ -4,6 +4,8 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helper functions 
 //FIXME: review
+const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
+
 const escape = (x) => {return x.replace(/\"/g, '\\"');};
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const handleError = (ctx, error)=>{
@@ -29,7 +31,7 @@ module.exports = async function PlayerActions(ctx) {
 
     //Delegate to the specific action handler
     if(action === 'save_note'){
-        return await handleXXXXX(ctx);
+        return await handleSaveNote(ctx);
     }else if(action === 'message'){
         return await handleXXXXX(ctx);
     }else if(action === 'unban'){
@@ -55,6 +57,48 @@ module.exports = async function PlayerActions(ctx) {
 
 //================================================================
 /**
+ * Handle Save Note
+ * 
+ * NOTE: open to all admins
+ * 
+ * @param {object} ctx
+ */
+async function handleSaveNote(ctx) {
+    //Checking request
+    if(anyUndefined(
+        ctx.request.body,
+        ctx.request.body.note,
+        ctx.request.body.license
+    )){
+        return ctx.send({type: 'danger', message: 'Invalid request.'});
+    }
+    let license = ctx.request.body.license.trim();
+    let note = ctx.request.body.note.trim();
+
+    try {
+        let success = await globals.playerController.setPlayerNote(license, note, ctx.session.auth.username);
+        if(success){
+            return ctx.send({
+                type: 'success',
+                message: `Saved!`
+            });
+        }else{
+            return ctx.send({
+                type: 'danger',
+                message: `failed to save note.`
+            });
+        }
+    } catch (error) {
+        return ctx.send({
+            type: 'danger',
+            message: `Failed to save with error: ${error.message}`
+        });
+    }
+}
+
+
+//================================================================
+/**
  * Handle XXXXX
  * @param {object} ctx
  */
@@ -63,7 +107,7 @@ async function handleXXXXX(ctx) {
     if(isUndefined(ctx.request.body.yyyyy)){
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
-    let yyyyy = ctx.request.body.yyyyy.trim().toLowerCase();
+    let yyyyy = ctx.request.body.yyyyy.trim();
 
     //Check permissions
     if(!ctx.utils.checkPermission('all_permissions', modulename)){

@@ -185,8 +185,11 @@ function refreshData() {
 //Preparing variables
 var spinnerHTML = '<div class="txSpinner">Loading...</div>';
 var modPlayer = {
-    activeID: false,
-    identifiers: false,
+    curr: {
+        id: false,
+        license: false,
+        identifiers: false,
+    },
     Modal: new coreui.Modal(document.getElementById('modPlayer')),
     Title: document.getElementById("modPlayerTitle"),
     Message: document.getElementById("modPlayerMessage"),
@@ -218,10 +221,12 @@ var modPlayer = {
 }
 
 
+// Open Modal
 function showPlayer(license) {
     //Reset active player
-    modPlayer.activeID = false;
-    modPlayer.activeIdentifiers = false;
+    modPlayer.curr.id = false;
+    modPlayer.curr.license = false;
+    modPlayer.curr.identifiers = false;
 
     //Reset modal
     modPlayer.Message.innerHTML = spinnerHTML;
@@ -258,8 +263,9 @@ function showPlayer(license) {
                 window.location = '/auth?logout';
                 return;
             }
-            modPlayer.activeID = data.id;
-            modPlayer.activeIdentifiers = data.identifiers;
+            modPlayer.curr.id = data.id;
+            modPlayer.curr.license = data.license;
+            modPlayer.curr.identifiers = data.identifiers;
             modPlayer.Title.innerText = data.name;
 
             modPlayer.Main.joinDate.innerText = data.joinDate;
@@ -303,24 +309,65 @@ function showPlayer(license) {
 }
 
 
+// Save Note
+function setNoteMessage(msg, type){
+    if(typeof type == 'string'){
+        modPlayer.Main.notesLog.innerHTML = `<span class="text-${type}">${msg}</span>`;
+    }else{
+        modPlayer.Main.notesLog.innerText = msg;
+    }
+}
+modPlayer.Main.notes.addEventListener("keydown", (event) => {
+    setNoteMessage(`Press enter to save.`);
+    if (event.keyCode == 13 && !event.shiftKey) {
+        event.preventDefault();
+        setNoteMessage(`Saving...`, 'warning');
+        var data = {
+            license: modPlayer.curr.license,
+            note: modPlayer.Main.notes.value
+        }
+        $.ajax({
+            type: "POST",
+            url: '/player/save_note',
+            timeout: timeoutLong,
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+                if(typeof data.message == 'string' && typeof data.type == 'string'){
+                    setNoteMessage(data.message,  data.type);
+                }else{
+                    setNoteMessage(`Failed to save with error: wrong return format`, 'danger');
+                }
+                
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                setNoteMessage(`Failed to save with error: ${message}`, 'danger');
+            }
+        });
+    }
+});
+
+
+// Redirect to player search page
 function searchPlayer() {
     modPlayer.Modal.hide();
-    if(modPlayer.activeIdentifiers == false) return;
+    if(modPlayer.curr.identifiers == false) return;
     //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO:    
 }
 
 
+// Message player
 function messagePlayer() {
     modPlayer.Modal.hide();
-    if(modPlayer.activeID == false) return;
+    if(modPlayer.curr.id == false) return;
     let message = prompt('Type your message');
     if(!message || message.length === 0) return;
 
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
     let data = {
-        action: 'admin_dm',
-        parameter: [modPlayer.activeID, message]
+        action: 'admin_dm', //FIXME: flatten this
+        parameter: [modPlayer.curr.id, message]
     }
     $.ajax({
         type: "POST",
@@ -341,18 +388,18 @@ function messagePlayer() {
     });
 }
 
-
+// Kick Player
 function kickPlayer() {
     modPlayer.Modal.hide();
-    if(modPlayer.activeID == false) return;
+    if(modPlayer.curr.id == false) return;
     let reason = prompt('Type the kick reason or leave it blank (press enter)');
     if(reason == null) return;
 
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
     let data = {
-        action: 'kick_player',
-        parameter: [modPlayer.activeID, reason]
+        action: 'kick_player', //FIXME: flatten this
+        parameter: [modPlayer.curr.id, reason]
     }
     $.ajax({
         type: "POST",
@@ -373,19 +420,20 @@ function kickPlayer() {
     });
 }
 
+//Warn Player
 function warnPlayer() {
     //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: 
     return;
     modPlayer.Modal.hide();
-    if(modPlayer.activeID == false) return;
+    if(modPlayer.curr.id == false) return;
     let reason = prompt('Type your warn reason');
     if(reason == null) return;
 
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
     let data = {
-        action: 'warn_player',
-        parameter: [modPlayer.activeID, reason]
+        action: 'warn_player', //FIXME: flatten this
+        parameter: [modPlayer.curr.id, reason]
     }
     $.ajax({
         type: "POST",
@@ -406,20 +454,20 @@ function warnPlayer() {
     });
 }
 
-
+// Ban Player
 function banPlayer() {
     //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: 
     return;
     modPlayer.Modal.hide();
-    if(modPlayer.activeIdentifiers == false) return;
+    if(modPlayer.curr.identifiers == false) return;
     let reason = prompt('Type your warn reason');
     if(reason == null) return;
 
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
     let data = {
-        action: 'warn_player',
-        parameter: [modPlayer.activeID, reason]
+        action: 'warn_player', //FIXME: flatten this
+        parameter: [modPlayer.curr.id, reason]
     }
     $.ajax({
         type: "POST",

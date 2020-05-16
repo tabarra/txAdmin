@@ -12,6 +12,8 @@ const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'un
 /**
  * Provide a central database for players, as well as assist with access control.
  * 
+ * FIXME: separate the player calls to another file somehow
+ * 
  * Database Structurure:
  *  - `players` table: index by license ID
  *      - license
@@ -61,7 +63,11 @@ module.exports = class PlayerController {
             await this.processActive();
 
             try {
-                if(this.writePending) await this.dbo.write();
+                if(this.writePending){
+                    await this.dbo.write();
+                    this.writePending = false;
+                    if(GlobalData.verbose) logOk('Writing DB'); //DEBUG
+                }
             } catch (error) {
                 logError(`Failed to save players database with error: ${error.message}`);
                 if(GlobalData.verbose) dir(error);
@@ -177,12 +183,12 @@ module.exports = class PlayerController {
     //================================================================
     /**
      * Searches for a registered action in the database by a list of identifiers and optional filters
-     * Usage example: getRegisteredAction(['license:xxx'], {type: 'ban', revoked: false})
+     * Usage example: getRegisteredActions(['license:xxx'], {type: 'ban', revoked: false})
      * @param {array} idArray identifiers array
      * @param {object} filter lodash-compatible filter object
      * @returns {object|null|false} object if player is found, null if not found, false if error occurs
      */
-    async getRegisteredAction(idArray, filter){
+    async getRegisteredActions(idArray, filter){
         try {
             let p = await this.dbo.get("players").find({license: license}).value();
             return (typeof p === 'undefined')? null : p;
@@ -195,10 +201,48 @@ module.exports = class PlayerController {
 
     //================================================================
     /**
+     * Saves a player notes and returns true/false
+     * Usage example: setPlayerNote('xxx', 'super awesome player', 'tabarra')
+     * @param {string} license
+     * @param {string} note
+     * @param {string} author
+     * @returns {boolean} 
+     */
+    async setPlayerNote(license, note, author){
+        try {
+            //Search player
+            let target;
+            let ap = globals.playerController.activePlayers.find(p => p.license === license);
+            if(ap){
+                target = ap;
+            }else{
+                let dbp = await this.dbo.get("players").find({license: license}).value();
+                if(!dbp) return false;
+                target = dbp;
+            }
+
+            //Add note and set pending flag
+            target.notes = {
+                text: note,
+                lastAdmin: author,
+                tsLastEdit: now()
+            }
+            this.writePending = true;
+            
+            return true;
+        } catch (error) {
+            if(GlobalData.verbose) logError(`Failed to search for a registered action database with error: ${error.message}`);
+            return false;
+        }
+    }
+
+
+    //================================================================
+    /**
      * Returns a mostly /players.json compatible playerlist based on the activePlayers
      * 
      * NOTE: ATM only used by the /status endpoint.
-     *       Let's try to use just globals.playerController.activePlayers
+     *       Let's try to use just clone(globals.playerController.activePlayers)
      * 
      * @returns {array} array of player objects
      */
@@ -291,7 +335,7 @@ module.exports = class PlayerController {
 
             //Processing active players list, creating the removed list, creating new active list without removed players
             let apCount = this.activePlayers.length;  //Optimization only, although V8 is probably smart enough
-            let disconnectedPlayers = []; //NOTE: might want to do something with this
+            let disconnectedPlayers = [];
             let activePlayerLicenses = []; //Optimization only
             let newActivePlayers = [];
             for (let i = 0; i < apCount; i++) {
@@ -307,7 +351,7 @@ module.exports = class PlayerController {
                     newActivePlayers.push(updatedPlayer);
                     activePlayerLicenses.push(this.activePlayers[i].license);
                 }else{
-                    disconnectedPlayers.push(this.activePlayers[i]); //NOTE: might require a Clone
+                    disconnectedPlayers.push(this.activePlayers[i]);
                 }
             }
 
@@ -334,6 +378,23 @@ module.exports = class PlayerController {
                     }
                 }
             }
+
+            //Committing disconnected players data
+            //NOTE: I'm only assigning the notes because that's currently the only thing that can change between saves.
+            if(disconnectedPlayers.length) this.writePending = true;
+            disconnectedPlayers.forEach(async (p) => {
+                try {
+                    await this.dbo.get("players")
+                        .find({license: p.license})
+                        .assign({
+                            notes: p.notes,
+                        })
+                        .value();
+                } catch (error) {
+                    logError(`Failed to save the the following disconnected player to the database with error: ${error.message}`);
+                    dir(p);
+                }
+            });
 
             //Replacing the active playerlist
             this.activePlayers = newActivePlayers;

@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'WebServer:PlayerModal';
+const clone = require('clone');
 const dateFormat = require('dateformat');
 const humanizeDuration = require('humanize-duration');
 const xss = require('../../extras/xss')();
@@ -24,9 +25,8 @@ module.exports = async function PlayerModal(ctx) {
     let license = ctx.params.license;
 
     //Locating player
-    //FIXME: checar se eu preciso de clone aqui!!!
-    let activePlayer = globals.playerController.activePlayers.find(player => player.license === license);
-    dir(activePlayer)
+    let activePlayer = clone(globals.playerController.activePlayers).find(player => player.license === license);
+    dir(activePlayer) //DEBUG
     let playerHistory = []; //HACK
 
     //Preparing output
@@ -43,6 +43,7 @@ module.exports = async function PlayerModal(ctx) {
    
     if(activePlayer){
         out.id = activePlayer.id;
+        out.license = activePlayer.license;
         out.identifiers = activePlayer.identifiers;
         out.name = activePlayer.name;
         out.isTmp = activePlayer.isTmp;

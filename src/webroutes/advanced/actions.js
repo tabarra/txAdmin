@@ -43,6 +43,9 @@ module.exports = async function AdvancedActions(ctx) {
         let message = JSON.stringify(data, null, 2);
         return ctx.send({type: 'success', message});
         
+    }else if(action == 'perform_magic2'){
+        globals.playerController.playerlistGenerator.indexes = [];
+        return ctx.send({type: 'success', message: 'clearing generator playerlist'});
     }
 
 
