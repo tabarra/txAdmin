@@ -389,7 +389,6 @@ function messagePlayer() {
 
 // Kick Player
 function kickPlayer() {
-    modPlayer.Modal.hide();
     if(modPlayer.curr.id == false) return;
     let reason = prompt('Type the kick reason or leave it blank (press enter)');
     if(reason == null) return;
@@ -397,12 +396,12 @@ function kickPlayer() {
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
     let data = {
-        action: 'kick_player', //FIXME: flatten this
-        parameter: [modPlayer.curr.id, reason]
+        id: modPlayer.curr.id,
+        reason: reason
     }
     $.ajax({
         type: "POST",
-        url: '/fxserver/commands',
+        url: '/player/kick',
         timeout: timeoutLong,
         data: data,
         dataType: 'json',

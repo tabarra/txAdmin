@@ -45,10 +45,8 @@ module.exports = async function PlayerActions(ctx) {
         return await handleSaveNote(ctx);
     }else if(action === 'message'){
         return await handleMessage(ctx);
-    }else if(action === 'unban'){
-        return await handleXXXXX(ctx);
     }else if(action === 'kick'){
-        return await handleXXXXX(ctx);
+        return await handleKick(ctx);
     }else if(action === 'warn'){
         return await handleXXXXX(ctx);
     }else if(action === 'ban'){
@@ -134,6 +132,40 @@ async function handleMessage(ctx) {
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);
 }
+
+
+//================================================================
+/**
+ * Handle Kick Player
+ * @param {object} ctx
+ */
+async function handleKick(ctx) {
+    //Checking request
+    if(anyUndefined(
+        ctx.request.body,
+        ctx.request.body.id,
+        ctx.request.body.reason
+    )){
+        return ctx.send({type: 'danger', message: 'Invalid request.'});
+    }
+    let id = ctx.request.body.id;
+    let reason = ctx.request.body.reason.trim();
+
+    //Check permissions
+    if(!ensurePermission(ctx, 'commands.kick')) return false;
+
+    //Prepare and send command
+    let cmd;
+    if(reason.length){
+        cmd = formatCommand('txaKickID', id, reason);
+    }else{
+        cmd = formatCommand('txaKickID', id);
+    }
+    ctx.utils.appendLog(cmd);
+    let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+    return sendAlertOutput(ctx, toResp);
+}
+
 
 //================================================================
 /**
