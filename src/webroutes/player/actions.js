@@ -1,19 +1,30 @@
 //Requires
 const modulename = 'WebServer:PlayerActions';
+const xss = require('../../extras/xss')();
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions 
-//FIXME: review
 const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
-
-const escape = (x) => {return x.replace(/\"/g, '\\"');};
-const isUndefined = (x) => { return (typeof x === 'undefined') };
-const handleError = (ctx, error)=>{
-    logError(`Database operation failed with error: ${error.message}`);
-    if(GlobalData.verbose) dir(error);
+const escape = (x) => {return x.replace(/\"/g, '\uff02');};
+const formatCommand = (cmd, ...params) => {
+    return `${cmd} "` + [...params].map(escape).join(`" "`) + `"`;
+};
+function ensurePermission(ctx, perm){
+    if(ctx.utils.checkPermission(perm, modulename)){
+        return true;
+    }else{
+        ctx.send({
+            type: 'danger',
+            message: `You don't have permission to execute this action.`
+        });
+        return false;
+    }
+}
+function sendAlertOutput(ctx, toResp){
+    toResp = (toResp.length)? xss(toResp) : 'no output';
     return ctx.send({
-        type: 'danger',
-        message: `Error executing this action, please copy the error on the terminal and report in the Discord Server.`
+        type: 'warning',
+        message: `<b>Output:<br> <pre>${toResp}</pre>`
     });
 }
 
@@ -24,7 +35,7 @@ const handleError = (ctx, error)=>{
  */
 module.exports = async function PlayerActions(ctx) {
     //Sanity check
-    if(isUndefined(ctx.params.action)){
+    if(anyUndefined(ctx.params.action)){
         return ctx.utils.error(400, 'Invalid Request');
     }
     let action = ctx.params.action;
@@ -33,7 +44,7 @@ module.exports = async function PlayerActions(ctx) {
     if(action === 'save_note'){
         return await handleSaveNote(ctx);
     }else if(action === 'message'){
-        return await handleXXXXX(ctx);
+        return await handleMessage(ctx);
     }else if(action === 'unban'){
         return await handleXXXXX(ctx);
     }else if(action === 'kick'){
@@ -99,12 +110,39 @@ async function handleSaveNote(ctx) {
 
 //================================================================
 /**
+ * Handle Send Message (admin dm)
+ * @param {object} ctx
+ */
+async function handleMessage(ctx) {
+    //Checking request
+    if(anyUndefined(
+        ctx.request.body,
+        ctx.request.body.id,
+        ctx.request.body.message
+    )){
+        return ctx.send({type: 'danger', message: 'Invalid request.'});
+    }
+    let id = ctx.request.body.id;
+    let message = ctx.request.body.message.trim();
+
+    //Check permissions
+    if(!ensurePermission(ctx, 'commands.message')) return false;
+
+    //Prepare and send command
+    let cmd = formatCommand('txaSendDM', id, ctx.session.auth.username, message);
+    ctx.utils.appendLog(cmd);
+    let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+    return sendAlertOutput(ctx, toResp);
+}
+
+//================================================================
+/**
  * Handle XXXXX
  * @param {object} ctx
  */
 async function handleXXXXX(ctx) {
     //Checking request
-    if(isUndefined(ctx.request.body.yyyyy)){
+    if(anyUndefined(ctx.request.body.yyyyy)){
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
     let yyyyy = ctx.request.body.yyyyy.trim();

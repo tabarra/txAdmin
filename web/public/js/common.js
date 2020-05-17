@@ -358,7 +358,6 @@ function searchPlayer() {
 
 // Message player
 function messagePlayer() {
-    modPlayer.Modal.hide();
     if(modPlayer.curr.id == false) return;
     let message = prompt('Type your message');
     if(!message || message.length === 0) return;
@@ -366,12 +365,12 @@ function messagePlayer() {
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
     let data = {
-        action: 'admin_dm', //FIXME: flatten this
-        parameter: [modPlayer.curr.id, message]
+        id: modPlayer.curr.id,
+        message: message
     }
     $.ajax({
         type: "POST",
-        url: '/fxserver/commands',
+        url: '/player/message',
         timeout: timeoutLong,
         data: data,
         dataType: 'json',
