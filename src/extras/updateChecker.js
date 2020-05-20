@@ -42,7 +42,7 @@ module.exports = async () => {
             critical: parseInt(changelog.critical),
         }
     } catch (error) {
-        logWarn(`Failed to retrieve FXServer update data with error: ${error.message}`);
+        if(GlobalData.verbose) logWarn(`Failed to retrieve FXServer update data with error: ${error.message}`);
         if(globals.databus.updateChecker === null) globals.databus.updateChecker = false;
     }
 }

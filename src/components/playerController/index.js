@@ -277,7 +277,7 @@ module.exports = class PlayerController {
      * 
      * NOTE:  This code was written this way to improve performance in exchange of readability
      *           the ES6 gods might not like this..
-     * FIXME: To prevent retaliation from the gods, consider making the activePlayers an Map instead of an Array.
+     * FIXME: To prevent retaliation from the gods, consider making the activePlayers a Map instead of an Array.
      * 
      * FIXME: I'm guaranteeing there are not two players with the same License, but not ID.
      * 

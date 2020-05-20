@@ -83,6 +83,7 @@
 - [ ] xxxxx
 
 > Soon™
+- [ ] Add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
 - [ ] add a commend system?
 - [ ] try again the upgrade to Discord.js v12
 - [ ] change webserver token every time the server starts
@@ -118,7 +119,7 @@ npm run build
 npm-upgrade
 
 # F8
-con_miniconChannels script:monitor
+con_miniconChannels script:monitor*
 ```
 
 ### Links + random stuff
@@ -212,7 +213,7 @@ tasks:
       pattern: 's/wtf/ftw/g'
   - append_file:
       path: server.cfg
-      data: |
+      data: 
          start wtfwtf
          start uberadmin
 ```

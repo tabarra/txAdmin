@@ -359,14 +359,14 @@ function searchPlayer() {
 // Message player
 function messagePlayer() {
     if(modPlayer.curr.id == false) return;
-    let message = prompt('Type your message');
+    let message = prompt('Type your message.');
     if(!message || message.length === 0) return;
 
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
     let data = {
         id: modPlayer.curr.id,
-        message: message
+        message: message.trim()
     }
     $.ajax({
         type: "POST",

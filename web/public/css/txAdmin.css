@@ -58,6 +58,9 @@ option:disabled {
 .c-callout{
     background-color: #fff;
 }
+.c-sidebar .c-sidebar-nav-link.c-active {
+    border-left: aquamarine solid 3px;
+}
 
 
 /* Console/Log marks */

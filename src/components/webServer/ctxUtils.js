@@ -2,6 +2,7 @@
 const modulename = 'WebCtxUtils';
 const fs = require('fs-extra');
 const path = require('path');
+const ac = require('ansi-colors');
 const sqrl = require("squirrelly");
 const helpers = require('../../extras/helpers');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
@@ -145,7 +146,7 @@ async function renderSoloView(view, data){
  * @param {string} data
  */
 function appendLog(ctx, data){
-    log(`Executing "${data}"`);
+    log(`Executing ` + ac.inverse(' ' + data + ' '));
     globals.logger.append(`[${ctx.ip}][${ctx.session.auth.username}] ${data}`);
 }
 

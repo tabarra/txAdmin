@@ -6,10 +6,10 @@ description 'Remotely Manage & Monitor your GTA5 FiveM Server'
 repository 'https://github.com/tabarra/txAdmin'
 version '2.5.0-ui'
 
-server_script 'main.js'
 
 -- NOTE: Due to global package constraints, js scripts will be loaded from main.js
 server_scripts { 
+    'main.js',
     'scripts/sv_*.lua',
 }
 
