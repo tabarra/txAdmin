@@ -26,6 +26,7 @@ end
 log("Version "..txAdminClientVersion.." starting...")
 Citizen.CreateThread(function()
     RegisterCommand("txaPing", txaPing, true)
+    RegisterCommand("txaWarnID", txaWarnID, true)
     RegisterCommand("txaKickAll", txaKickAll, true)
     RegisterCommand("txaKickID", txaKickID, true)
     RegisterCommand("txaKickIdentifier", txaKickIdentifier, true)
@@ -83,6 +84,20 @@ end
 -- Ping!
 function txaPing(source, args)
     log("Pong!")
+    CancelEvent()
+end
+
+-- Warn specific player via server ID
+function txaWarnID(source, args)
+    if args[1] ~= nil and args[2] ~= nil and args[3] ~= nil and args[4] ~= nil then
+        args[2] = unDeQuote(args[2]) --author
+        args[3] = unDeQuote(args[3]) --reason
+        args[4] = unDeQuote(args[4]) --translation json
+        TriggerClientEvent('txAdminClient:warn', args[1], args[2], args[3], args[4])
+        log("Warning #"..args[1].." with reason: "..args[3])
+    else
+        logError('Invalid arguments for txaWarnID')
+    end
     CancelEvent()
 end
 

@@ -420,22 +420,24 @@ function kickPlayer() {
 
 //Warn Player
 function warnPlayer() {
-    //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: 
-    return;
-    modPlayer.Modal.hide();
     if(modPlayer.curr.id == false) return;
-    let reason = prompt('Type your warn reason');
+    let reason = prompt('Type the warn reason.');
     if(reason == null) return;
+    reason = reason.trim();
 
+    if (!reason.length) {
+        var notify = $.notify({ message: '<p class="text-center">The warn reason is required.</p>'}, {type: 'danger'});
+        return;
+    }
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
     let data = {
-        action: 'warn_player', //FIXME: flatten this
-        parameter: [modPlayer.curr.id, reason]
+        id: modPlayer.curr.id,
+        reason: reason
     }
     $.ajax({
         type: "POST",
-        url: '/fxserver/commands',
+        url: '/player/warn',
         timeout: timeoutLong,
         data: data,
         dataType: 'json',

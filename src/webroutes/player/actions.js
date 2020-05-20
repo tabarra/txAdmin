@@ -48,7 +48,7 @@ module.exports = async function PlayerActions(ctx) {
     }else if(action === 'kick'){
         return await handleKick(ctx);
     }else if(action === 'warn'){
-        return await handleXXXXX(ctx);
+        return await handleWarning(ctx);
     }else if(action === 'ban'){
         return await handleXXXXX(ctx);
     }else if(action === 'revoke_action'){
@@ -161,6 +161,44 @@ async function handleKick(ctx) {
     }else{
         cmd = formatCommand('txaKickID', id);
     }
+    ctx.utils.appendLog(cmd);
+    let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+    return sendAlertOutput(ctx, toResp);
+}
+
+
+//================================================================
+/**
+ * Handle Send Warning
+ * 
+ * TODO: register the warning on the database
+ * TODO: use translation
+ * 
+ * @param {object} ctx
+ */
+async function handleWarning(ctx) {
+    //Checking request
+    if(anyUndefined(
+        ctx.request.body,
+        ctx.request.body.id,
+        ctx.request.body.reason
+    )){
+        return ctx.send({type: 'danger', message: 'Invalid request.'});
+    }
+    let id = ctx.request.body.id;
+    let reason = ctx.request.body.reason.trim();
+
+    //Check permissions
+    if(!ensurePermission(ctx, 'commands.warn')) return false;
+
+    let translations = JSON.stringify({
+        title: 'WARNING',
+        warned_by: 'Warned by:',
+        instruction: 'Hold [SPACE] for 10 seconds to dismiss this message.'
+    })
+
+    //Prepare and send command
+    let cmd = formatCommand('txaWarnID', id, ctx.session.auth.username, reason, translations);
     ctx.utils.appendLog(cmd);
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);

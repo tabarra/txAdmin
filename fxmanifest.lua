@@ -17,3 +17,10 @@ client_scripts {
     'scripts/cl_*.js',
     'scripts/cl_*.lua',
 }
+
+ui_page 'scripts/warn.html'
+files {
+    'scripts/warn.html',
+    'scripts/warning_open.mp3',
+    'scripts/warning_pulse.mp3',
+}
