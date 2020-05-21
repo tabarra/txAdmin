@@ -142,12 +142,11 @@
     const svgWarn = `<svg class="warn-icon"><use xlink:href="#svg-warn"></use></svg>`;
     let isDebug = false;
 
-    function openWarning(author, reason, translations) {
-        let dict = JSON.parse(translations);
-        warnTitleInner.innerText = dict.title;
+    function openWarning(author, reason, tTitle, tWarnedBy, tInstructions) {
+        warnTitleInner.innerText = tTitle;
         warnMessage.innerText = reason;
-        warnAuthor.innerText = `${dict.warned_by} ${author}`;
-        warnInstruction.innerText = dict.instruction;
+        warnAuthor.innerText = `${tWarnedBy} ${author}`;
+        warnInstruction.innerText = tInstructions;
         warnBackdrop.style.backgroundColor = 'rgba(133, 3, 3, 0.95)';
         setTimeout(() => {
             warnOpenSound.play();
@@ -173,15 +172,13 @@
         if (isDebug) openWarning({
             author: 'tabarra',
             reason: `Stop doing bad stuff or I will get mad 😣`,
-            translations: JSON.stringify({
-                title: 'WARNING!',
-                warned_by: 'Warned by:',
-                instruction: 'Hold [SPACE] for 10 seconds to dismiss this message.'
-            })
+            tTitle: 'WARNING', 
+            tWarnedBy: 'Warned by:', 
+            tInstructions: 'Hold [SPACE] for 10 seconds to dismiss this message.'
         }); //DEBUG
         window.addEventListener('message', (event) => {
             if (event.data.type === 'open_warning') {
-                openWarning(event.data.author, event.data.reason, event.data.translations);
+                openWarning(event.data.author, event.data.reason, event.data.tTitle, event.data.tWarnedBy, event.data.tInstructions);
             } else if (event.data.type === 'close_warning') {
                 closeWarning();
             } else if (event.data.type === 'pulse_warning') {

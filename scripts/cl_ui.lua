@@ -1,9 +1,11 @@
-function openWarning(author, reason, translations)
+function openWarning(author, reason, tTitle, tWarnedBy, tInstructions)
     SendNUIMessage({
         type = 'open_warning',
         author = author,
         reason = reason,
-        translations = translations
+        tTitle = tTitle,
+        tWarnedBy = tWarnedBy,
+        tInstructions = tInstructions
     })
     Citizen.CreateThread(function()
         local countLimit = 100 --10 seconds

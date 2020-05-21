@@ -89,12 +89,18 @@ end
 
 -- Warn specific player via server ID
 function txaWarnID(source, args)
-    if args[1] ~= nil and args[2] ~= nil and args[3] ~= nil and args[4] ~= nil then
-        args[2] = unDeQuote(args[2]) --author
-        args[3] = unDeQuote(args[3]) --reason
-        args[4] = unDeQuote(args[4]) --translation json
-        TriggerClientEvent('txAdminClient:warn', args[1], args[2], args[3], args[4])
-        log("Warning #"..args[1].." with reason: "..args[3])
+    if #args == 6 then
+        for k,v in pairs(args) do
+            args[k] = unDeQuote(v)
+        end
+        local id, author, reason, tTitle, tWarnedBy, tInstruction = table.unpack(args)
+        local pName = GetPlayerName(id)
+        if pName ~= nil then
+            TriggerClientEvent('txAdminClient:warn', id, author, reason, tTitle, tWarnedBy, tInstruction)
+            log("Warning "..pName.." with reason: "..reason)
+        else
+            logError('txaWarnID: player not found')
+        end
     else
         logError('Invalid arguments for txaWarnID')
     end

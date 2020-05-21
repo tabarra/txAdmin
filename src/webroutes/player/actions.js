@@ -170,10 +170,6 @@ async function handleKick(ctx) {
 //================================================================
 /**
  * Handle Send Warning
- * 
- * TODO: register the warning on the database
- * TODO: use translation
- * 
  * @param {object} ctx
  */
 async function handleWarning(ctx) {
@@ -188,25 +184,26 @@ async function handleWarning(ctx) {
     let id = parseInt(ctx.request.body.id);
     let reason = ctx.request.body.reason.trim();
 
+    //Check permissions
+    if(!ensurePermission(ctx, 'commands.warn')) return false;
+
     //Register action (and checks if player is online)
     try {
-        await globals.playerController.registerAction(id, 'warning', ctx.session.auth.username, reason);
+        await globals.playerController.registerAction(id, 'warn', ctx.session.auth.username, reason, false);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
 
-    //Check permissions
-    if(!ensurePermission(ctx, 'commands.warn')) return false;
-
-    //FIXME: this is NOT optimal...
-    let translations = JSON.stringify({
-        title: globals.translator.t('nui_warning.title'),
-        warned_by: globals.translator.t('nui_warning.warned_by'),
-        instruction: globals.translator.t('nui_warning.instruction')
-    })
-
     //Prepare and send command
-    let cmd = formatCommand('txaWarnID', id, ctx.session.auth.username, reason, translations);
+    let cmd = formatCommand(
+        'txaWarnID', 
+        id, 
+        ctx.session.auth.username, 
+        reason, 
+        globals.translator.t('nui_warning.title'),
+        globals.translator.t('nui_warning.warned_by'),
+        globals.translator.t('nui_warning.instruction'),
+    );
     ctx.utils.appendLog(cmd);
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);
