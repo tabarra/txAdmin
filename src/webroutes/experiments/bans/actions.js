@@ -146,7 +146,7 @@ async function handleBan(ctx) {
     }
 
     //Kicking player
-    let cmd = `txaKickIdentifier "${escape(identifier)}" "${escape(reason)}"`
+    let cmd = `txaDropIdentifier "${escape(identifier)}" "${escape(reason)}"`
     await globals.fxRunner.srvCmdBuffer(cmd);
 
     let banData = {

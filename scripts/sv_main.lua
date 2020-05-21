@@ -29,7 +29,7 @@ Citizen.CreateThread(function()
     RegisterCommand("txaWarnID", txaWarnID, true)
     RegisterCommand("txaKickAll", txaKickAll, true)
     RegisterCommand("txaKickID", txaKickID, true)
-    RegisterCommand("txaKickIdentifier", txaKickIdentifier, true)
+    RegisterCommand("txaDropIdentifier", txaDropIdentifier, true)
     RegisterCommand("txaBroadcast", txaBroadcast, true)
     RegisterCommand("txaSendDM", txaSendDM, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
@@ -131,27 +131,41 @@ function txaKickID(source, args)
     CancelEvent()
 end
 
--- Kick specific player via identifier
-function txaKickIdentifier(source, args)
-    if args[1] ~= nil then
-        if args[2] == nil then
-            args[2] = 'no reason provided'
-        else
-            args[2] = unDeQuote(args[2])
-        end
-        log("Kicking "..args[1].." with reason: "..args[2])
-        for _,player in ipairs(GetPlayers()) do
-            local identifiers = GetPlayerIdentifiers(player)
-            for _,id in ipairs(identifiers) do
-                if id == args[1] then
-                    log('Player: ' .. GetPlayerName(player) .. ' (' .. id .. ') kicked')
-                    DropPlayer(player, "Kicked for: " .. args[2])
+-- Kick any player with matching identifiers
+function txaDropIdentifiers(_, args)
+    if #args ~= 2 then
+        return logError("Invalid arguments for txaDropIdentifiers")
+    end
+    local rawIdentifiers, quotedReason = table.unpack(args)
+
+    local dropMessage = 'no reason provided'
+    if quotedReason ~= nil then dropMessage = unDeQuote(quotedReason) end
+
+    local searchIdentifiers = {}
+    for id in string.gmatch(rawIdentifiers, '([^,;%s]+)') do
+        table.insert(searchIdentifiers, id)
+    end
+
+    -- find players to kick
+    for _, playerID in pairs(GetPlayers()) do
+        local identifiers = GetPlayerIdentifiers(playerID)
+        if identifiers ~= nil then
+            local found = false
+            for _, searchIdentifier in pairs(searchIdentifiers) do
+                if found then break end
+
+                for _, playerIdentifier in pairs(identifiers) do
+                    if searchIdentifier == playerIdentifier then
+                        DropPlayer(playerID, dropMessage)
+                        found = true
+                        break
+                    end
                 end
             end
+
         end
-    else
-        logError('Invalid arguments for txaKickIdentifier')
     end
+
     CancelEvent()
 end
 
