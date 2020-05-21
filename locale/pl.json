@@ -21,5 +21,10 @@
     "discord": {
         "status_online": "**%{servername}** jest aktualnie **Online**!",
         "status_offline": "**%{servername}** jest aktualnie **Offline**!"
+    },
+    "nui_warning": {
+        "title": "WARNING",
+        "warned_by": "Warned by:",
+        "instruction": "Hold [SPACE] for 10 seconds to dismiss this message."
     }
 }

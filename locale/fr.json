@@ -21,5 +21,10 @@
     "discord": {
         "status_online": "**%{servername}** est actuellement **Ouvert**!",
         "status_offline": "**%{servername}** est actuellement **Fermer**!"
+    },
+    "nui_warning": {
+        "title": "AVERTISSEMENT",
+        "warned_by": "Avertis par:",
+        "instruction": "Maintenir [ESPACE] pendant 10 secondes pour cacher ce message."
     }
 }

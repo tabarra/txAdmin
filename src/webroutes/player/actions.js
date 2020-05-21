@@ -191,10 +191,11 @@ async function handleWarning(ctx) {
     //Check permissions
     if(!ensurePermission(ctx, 'commands.warn')) return false;
 
+    //FIXME: this is NOT optimal...
     let translations = JSON.stringify({
-        title: 'WARNING',
-        warned_by: 'Warned by:',
-        instruction: 'Hold [SPACE] for 10 seconds to dismiss this message.'
+        title: globals.translator.t('nui_warning.title'),
+        warned_by: globals.translator.t('nui_warning.warned_by'),
+        instruction: globals.translator.t('nui_warning.instruction')
     })
 
     //Prepare and send command

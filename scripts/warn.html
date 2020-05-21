@@ -143,8 +143,6 @@
     let isDebug = false;
 
     function openWarning(author, reason, translations) {
-        console.log('function open')
-        console.log(translations)
         let dict = JSON.parse(translations);
         warnTitleInner.innerText = dict.title;
         warnMessage.innerText = reason;

@@ -21,5 +21,10 @@
     "discord": {
         "status_online": "**%{servername}** ir pašlaik **Ieslēgts**!",
         "status_offline": "**%{servername}** ir pašlaik **Izslēgts**!"
+    },
+    "nui_warning": {
+        "title": "WARNING",
+        "warned_by": "Warned by:",
+        "instruction": "Hold [SPACE] for 10 seconds to dismiss this message."
     }
 }
