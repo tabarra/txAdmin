@@ -29,7 +29,7 @@ Citizen.CreateThread(function()
     RegisterCommand("txaWarnID", txaWarnID, true)
     RegisterCommand("txaKickAll", txaKickAll, true)
     RegisterCommand("txaKickID", txaKickID, true)
-    RegisterCommand("txaDropIdentifier", txaDropIdentifier, true)
+    RegisterCommand("txaDropIdentifiers", txaDropIdentifiers, true)
     RegisterCommand("txaBroadcast", txaBroadcast, true)
     RegisterCommand("txaSendDM", txaSendDM, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
@@ -153,6 +153,7 @@ function txaDropIdentifiers(_, args)
     end
 
     -- find players to kick
+    local kickCount = 0
     for _, playerID in pairs(GetPlayers()) do
         local identifiers = GetPlayerIdentifiers(playerID)
         if identifiers ~= nil then
@@ -162,6 +163,8 @@ function txaDropIdentifiers(_, args)
 
                 for _, playerIdentifier in pairs(identifiers) do
                     if searchIdentifier == playerIdentifier then
+                        log("Kicking #"..playerID.." with message: "..dropMessage)
+                        kickCount = kickCount + 1
                         DropPlayer(playerID, dropMessage)
                         found = true
                         break
@@ -172,6 +175,9 @@ function txaDropIdentifiers(_, args)
         end
     end
 
+    if kickCount == 0 then
+        print("No players found to kick")
+    end
     CancelEvent()
 end
 
