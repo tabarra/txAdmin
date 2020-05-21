@@ -2,6 +2,9 @@
 const modulename = 'PlayerController';
 const low = require('lowdb');
 const FileAsync = require('lowdb/adapters/FileAsync');
+const { customAlphabet } = require('nanoid');
+const dict51 = require('nanoid-dictionary/nolookalikes');
+const nanoid = customAlphabet(dict51, 10);
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
@@ -210,9 +213,10 @@ module.exports = class PlayerController {
      * @param {string} type [ban|warning|whitelist]
      * @param {string} author admin name
      * @param {string} reason reason
-     * @returns {array} player identifiers, or throws if on error or ID not found
+     * @param {number|false} expiration reason
+     * @returns {string} action ID, or throws if on error or ID not found
      */
-    async registerAction(reference, type, author, reason){
+    async registerAction(reference, type, author, reason, expiration){
         //Processes target reference
         let identifiers;
         if(Array.isArray(reference)){
@@ -231,11 +235,14 @@ module.exports = class PlayerController {
         }
 
         //Saves it to the database
+        let actionID = nanoid();
         let toDB = {
+            id: actionID,
             identifiers,
             type,
             author,
             reason,
+            expiration: (typeof expiration == 'number')? expiration : false,
             timestamp: now(),
             revocation: {
                 timestamp: null,
@@ -254,8 +261,8 @@ module.exports = class PlayerController {
             throw new Error(msg)
         }
 
-        //Return target id/identifiers
-        return identifiers;
+
+        return actionID;
     }
 
 
