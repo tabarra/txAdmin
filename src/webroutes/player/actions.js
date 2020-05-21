@@ -7,7 +7,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
 const escape = (x) => {return x.replace(/\"/g, '\uff02');};
 const formatCommand = (cmd, ...params) => {
-    return `${cmd} "` + [...params].map(escape).join(`" "`) + `"`;
+    return `${cmd} "` + [...params].map(c => c.toString()).map(escape).join(`" "`) + `"`;
 };
 function ensurePermission(ctx, perm){
     if(ctx.utils.checkPermission(perm, modulename)){
@@ -185,8 +185,15 @@ async function handleWarning(ctx) {
     )){
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
-    let id = ctx.request.body.id;
+    let id = parseInt(ctx.request.body.id);
     let reason = ctx.request.body.reason.trim();
+
+    //Register action (and checks if player is online)
+    try {
+        await globals.playerController.registerAction(id, 'warning', ctx.session.auth.username, reason);
+    } catch (error) {
+        return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
+    }
 
     //Check permissions
     if(!ensurePermission(ctx, 'commands.warn')) return false;

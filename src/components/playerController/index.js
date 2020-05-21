@@ -26,11 +26,15 @@ const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'un
  *          tsLastEdit: timestamp,
  *      }
  *  - `actions`
- *      - timestamp
- *      - IDs array
+ *      - identifiers [array]
+ *      - type [ban|warning|whitelist]
  *      - author (the admin name)
- *      - type [ban|warn|whitelist]
- *      - message (reason)    
+ *      - reason
+ *      - timestamp
+ *      - revocation: {
+ *          timestamp: null,
+ *          author: null,
+ *      }
  */
 module.exports = class PlayerController {
     constructor(config) {
@@ -196,6 +200,62 @@ module.exports = class PlayerController {
             if(GlobalData.verbose) logError(`Failed to search for a registered action database with error: ${error.message}`);
             return false;
         }
+    }
+
+
+    //================================================================
+    /**
+     * Registers an action (ban, warning, whitelist)
+     * @param {array|number} reference identifiers array or server id
+     * @param {string} type [ban|warning|whitelist]
+     * @param {string} author admin name
+     * @param {string} reason reason
+     * @returns {array} player identifiers, or throws if on error or ID not found
+     */
+    async registerAction(reference, type, author, reason){
+        //Processes target reference
+        let identifiers;
+        if(Array.isArray(reference)){
+            throw new Error('not implemented'); //TODO:
+            identifiers = reference.filter((id)=>{
+                //check if string
+                //make sure all ids are valid or throw
+            });
+        }else if(typeof reference == 'number'){
+            let player = this.activePlayers.find((p) => p.id === reference);
+            if(!player) throw new Error('player disconnected.');
+            if(!player.identifiers.length) throw new Error('player has no identifiers.'); //sanity check
+            identifiers = player.identifiers; //FIXME: make sure we are already filtering the identifiers on the processHeartbeat function
+        }else{
+            throw new Error(`Reference expected to be an array of strings or id. Received '${typeof target}'.`)
+        }
+
+        //Saves it to the database
+        let toDB = {
+            identifiers,
+            type,
+            author,
+            reason,
+            timestamp: now(),
+            revocation: {
+                timestamp: null,
+                author: null,
+            }
+        }
+        try {
+            await this.dbo.get('actions')
+                .push(toDB)
+                .value();
+            this.writePending = true;
+        } catch (error) {
+            let msg = `Failed to register event to database with message: ${error.message}`;
+            logError(msg);
+            if(GlobalData.verbose) dir(error);
+            throw new Error(msg)
+        }
+
+        //Return target id/identifiers
+        return identifiers;
     }
 
 
