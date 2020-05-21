@@ -131,36 +131,32 @@ function txaKickID(source, args)
     CancelEvent()
 end
 
----- Kick a specific player via their identifiers
----@param args table<number, string>
----@return void
-function txaDropIdentifier(_, args)
-    local rawIdentifiers, quotedReason = table.unpack(args)
-    if not rawIdentifiers then
-        return logError("Invalid arguments for txaDropIdentifier")
+-- Kick any player with matching identifiers
+function txaDropIdentifiers(_, args)
+    if #args ~= 2 then
+        return logError("Invalid arguments for txaDropIdentifiers")
     end
+    local rawIdentifiers, quotedReason = table.unpack(args)
 
-    local reason = 'no reason provided'
-    if quotedReason ~= nil then reason = deUnQuote(quotedReason) end
+    local dropMessage = 'no reason provided'
+    if quotedReason ~= nil then dropMessage = unDeQuote(quotedReason) end
 
     local searchIdentifiers = {}
-    rawIdentifiers:gsub("([^;]*);", function(c) table.insert(searchIdentifiers, c) end)
+    for id in string.gmatch(rawIdentifiers, '([^,;%s]+)') do
+        table.insert(searchIdentifiers, id)
+    end
 
-    -- find player to kick
-    local found   = false
-    local players = GetPlayers()
-
-    for _, playerID in pairs(players) do
-        if found then break end
-
+    -- find players to kick
+    for _, playerID in pairs(GetPlayers()) do
         local identifiers = GetPlayerIdentifiers(playerID)
         if identifiers ~= nil then
+            local found = false
             for _, searchIdentifier in pairs(searchIdentifiers) do
                 if found then break end
 
                 for _, playerIdentifier in pairs(identifiers) do
                     if searchIdentifier == playerIdentifier then
-                        DropPlayer(player, "Kicked for: " .. reason)
+                        DropPlayer(playerID, dropMessage)
                         found = true
                         break
                     end
