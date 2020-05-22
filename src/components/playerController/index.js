@@ -215,9 +215,9 @@ module.exports = class PlayerController {
 
     //================================================================
     /**
-     * Registers an action (ban, warning, whitelist)
+     * Registers an action (ban, warn, whitelist)
      * @param {array|number} reference identifiers array or server id
-     * @param {string} type [ban|warning|whitelist]
+     * @param {string} type [ban|warn|whitelist]
      * @param {string} author admin name
      * @param {string} reason reason
      * @param {number|false} expiration reason

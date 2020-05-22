@@ -76,11 +76,20 @@
 - [x] fix serverlist not wiping after server shutting down
 - [x] update packages and change detection of clock skew
 > v2.4.2
-- [ ] make the html of the new player modal
+- [x] make the html of the new player modal
+- [x] make the NUI of the warn message
+- [.] code the modal actions (front+back+script+nui)
+- [x] removed the `Admins file reloaded` spam from verbosity.
 - [ ] make the html of the new players page
 - [ ] check everything done for xss
-- [ ] make the NUI of the warn message
-- [ ] xxxxx
+- [ ] make a settings tab for the player controller
+- [ ] change Server Log page to use the new modal
+- [ ] fix the double-player issue (timeout + fast rejoin?)
+- [ ] implement whitelist logic
+- [ ] re-add playerConnecting whitelist checking 
+- [ ] test on latest build
+
+NOTE: when opening a player from the offline list, disable ID-requiring actions like dm,kick,warning
 
 > Soon™
 - [ ] Add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
@@ -98,11 +107,26 @@
 
 ## "in the roadmap"
 - [ ] Check config management libraries (specially 'convict' by Mozilla and nconf)
-- [ ] Make messages/commands.json via lowdb and remove the `Players online` and `File reloaded` spam.
 - [ ] Add "discord client id" in the admin settings, this would enable "/kick @user"
 - [ ] Hide the verbosity option. People don't fucking read and click on it anyway,
+- [ ] Auto updater for txAdmin?
 - [ ] xxxxxx
 
+
+## Todas as funções que preciso programar (target type) [pct que precisa de comando]:
+    - save note     (license) [0%]
+    - warn player   (id/arr) [100%]
+    - ban player    (id/arr) [75%]
+    - revoke action (actID)  [0%]
+    - search        (name, license, csv ids)
+
+## Decisões:
+    - Mover o kick_player (kick) do commands.js pro actions.js
+    - Mover o admin_dm (message) do commands.js pro actions.js
+    - criar pasta "players" no webroutes com os arquivos
+        - [post] actions (save_note!, *message!, *kick!, *warn!, *ban!, revoke_action, search)
+        - [get] modal
+        - [get] list
 
 ## ETC
 ```bash

@@ -352,7 +352,7 @@ modPlayer.Main.notes.addEventListener("keydown", (event) => {
 function searchPlayer() {
     modPlayer.Modal.hide();
     if(modPlayer.curr.identifiers == false) return;
-    //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO:    
+    //TODO: //FIXME: //TODO: //FIXME: //TODO: //FIXME: //TODO: //FIXME:    
 }
 
 
@@ -409,6 +409,7 @@ function kickPlayer() {
             notify.update('progress', 0);
             notify.update('type', data.type);
             notify.update('message', data.message);
+            if(data.type !== 'danger') modPlayer.Modal.hide();
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
@@ -445,6 +446,7 @@ function warnPlayer() {
             notify.update('progress', 0);
             notify.update('type', data.type);
             notify.update('message', data.message);
+            if(data.type !== 'danger') modPlayer.Modal.hide();
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);
@@ -478,6 +480,7 @@ function banPlayer() {
             notify.update('progress', 0);
             notify.update('type', data.type);
             notify.update('message', data.message);
+            if(data.type !== 'danger') modPlayer.Modal.hide();
         },
         error: function (xmlhttprequest, textstatus, message) {
             notify.update('progress', 0);

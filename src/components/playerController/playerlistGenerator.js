@@ -28,7 +28,7 @@ module.exports = class PlayerlistGenerator {
         }
         
         //Starting data
-        this.indexes = [0,1,2,3,4,5,6,7,8,9];
+        this.indexes = [0,1,2,3];
         this.playerlist = [];
         
         

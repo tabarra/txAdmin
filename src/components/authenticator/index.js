@@ -371,7 +371,7 @@ module.exports = class Authenticator {
         }
 
         this.admins = jsonData;
-        if(GlobalData.verbose) log(`Admins file loaded. Found: ${this.admins.length}`);
+        // if(GlobalData.verbose) log(`Admins file loaded. Found: ${this.admins.length}`);
         return true;
     }
 
