@@ -38,8 +38,6 @@ module.exports = async function PlayerModal(ctx) {
             ban: !ctx.utils.checkPermission('commands.ban', modulename, false),
         }
     }
-
-
    
     if(activePlayer){
         out.id = activePlayer.id;
