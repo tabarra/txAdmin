@@ -25,6 +25,6 @@
     "nui_warning": {
         "title": "VAROVÁNÍ",
         "warned_by": "Varován od:",
-        "instruction": "Drž [SPACE] po dobu 10 sekund pro zavření této zprávy."
+        "instruction": "Drž [MEZERNÍK] po dobu 10 sekund pro zavření této zprávy."
     }
 }
