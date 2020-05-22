@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'PlayerController';
+const clonedeep = require('lodash/clonedeep');
 const low = require('lowdb');
 const FileAsync = require('lowdb/adapters/FileAsync');
 const { customAlphabet } = require('nanoid');
@@ -197,18 +198,26 @@ module.exports = class PlayerController {
     //================================================================
     /**
      * Searches for a registered action in the database by a list of identifiers and optional filters
-     * Usage example: getRegisteredActions(['license:xxx'], {type: 'ban', revoked: false})
+     * Usage example: getRegisteredActions(['license:xxx'], {type: 'ban', revocation.timestamp: null})
+     * 
+     * TODO: add+test filter
+     * 
      * @param {array} idArray identifiers array
      * @param {object} filter lodash-compatible filter object
-     * @returns {object|null|false} object if player is found, null if not found, false if error occurs
+     * @returns {array|error} array of actions, or, throws on error
      */
-    async getRegisteredActions(idArray, filter){
+    async getRegisteredActions(idArray, filter = {}){
+        const clone = require('clone');
+        if(!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
         try {
-            let p = await this.dbo.get("players").find({license: license}).value();
-            return (typeof p === 'undefined')? null : p;
+            let actions = await this.dbo.get("actions")
+                                .filter(p => idArray.some((fi) => p.identifiers.includes(fi)))
+                                .value();
+            return clonedeep(actions);
         } catch (error) {
-            if(GlobalData.verbose) logError(`Failed to search for a registered action database with error: ${error.message}`);
-            return false;
+            const msg = `Failed to search for a registered action database with error: ${error.message}`;
+            if(GlobalData.verbose) logError(msg);
+            throw new Error(msg);
         }
     }
 
@@ -249,12 +258,12 @@ module.exports = class PlayerController {
         let actionID = nanoid();
         let toDB = {
             id: actionID,
-            identifiers,
             type,
             author,
             reason,
             expiration: (typeof expiration == 'number')? expiration : false,
             timestamp: now(),
+            identifiers,
             revocation: {
                 timestamp: null,
                 author: null,

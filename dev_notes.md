@@ -78,9 +78,10 @@
 > v2.4.2
 - [x] make the html of the new player modal
 - [x] make the NUI of the warn message
-- [.] code the modal actions (front+back+script+nui)
+- [x] code the modal actions (front+back+script+nui) for the online players
 - [x] removed the `Admins file reloaded` spam from verbosity.
 - [.] make the html of the new players page
+- [.] finish all modal actions to offline players
 - [x] split `common.js` into separate files?
 - [ ] check everything done for xss
 - [ ] make a settings tab for the player controller
@@ -93,14 +94,18 @@
 NOTE: when opening a player from the offline list, disable ID-requiring actions like dm,kick,warning
 
 > Soon™
+- [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
+- [ ] convert cl_logger.js to lua, and stop it when not in `monitorMode`
+- [ ] try again the upgrade to Discord.js v12
 - [ ] Add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
 - [ ] add a commend system?
-- [ ] try again the upgrade to Discord.js v12
+- [ ] add stopwatch (or something) to the db functions and print on `/diagnostics`
 - [ ] change webserver token every time the server starts
-- [ ] add some chart to the players page?
+
+> Soon™®
 - [ ] tweak dashboard update checker behavior
+- [ ] add some chart to the players page?
 - [ ] add an fxserver changelog page
-- [ ] convert cl_logger.js to lua, and stop it when not in `monitorMode`
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
 - [ ] break down playerController into separate files?

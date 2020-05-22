@@ -227,14 +227,22 @@ function showPlayer(license) {
             modPlayer.Main.notes.disabled = data.isTmp;
             modPlayer.Main.notes.value = data.notes;
             modPlayer.IDs.list.innerText = data.identifiers.join(',\n');
-            modPlayer.History.list.innerText = 'fix me :p'; //FIXME:
-            // <div class="list-group-item list-group-item-accent-info player-history-entry">
-            //     [02/02]<strong>[UNBAN]</strong>
-            //         lorem ipsum (tabarra)
-            // </div>
-            // <div class="text-center text-info">
-            //     For more events, click on the Search button below.
-            // </div>
+
+            if(!Array.isArray(data.actionHistory) || !data.actionHistory.length){
+                modPlayer.History.list.innerHTML = `<h3 class="mx-auto pt-3 text-secondary">nothing here...</h3>`;
+            }else{
+                let elements = data.actionHistory.map(log => {
+                    return `<div class="list-group-item list-group-item-accent-${xss(log.color)} player-history-entry">
+                                [${xss(log.date)}]<strong>[${xss(log.action)}]</strong>
+                                ${xss(log.reason)} (${xss(log.author)})
+                            </div>`;
+                });
+                // FIXME: make the log scrollable instead of this?
+                elements.push(`<div class="text-center text-info">
+                    For more events, click on the Search button below.
+                </div>`);
+                modPlayer.History.list.innerHTML = elements.join('\n');
+            }
             
             modPlayer.Buttons.search.disabled = false;
             modPlayer.Buttons.message.disabled = data.funcDisabled.message;

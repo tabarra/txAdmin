@@ -24,10 +24,43 @@ module.exports = async function PlayerModal(ctx) {
     }
     let license = ctx.params.license;
 
+    //Helper function
+    const getHistory = async (idArray) => {
+        try {
+            let hist = await globals.playerController.getRegisteredActions(idArray);
+            return hist.map((log) => {
+                let out = {
+                    action: log.type.toUpperCase(),
+                    date: dateFormat(new Date(log.timestamp*1000), 'dd/mm'),
+                    reason: log.reason,
+                    author: log.author
+                };
+                if(log.revocation.timestamp){
+                    out.color = 'dark';
+                    out.action = `${out.action}-REVOKED`;
+                }else if(log.type == 'ban'){
+                    out.color = 'danger';
+                }else if(log.type == 'warn'){
+                    out.color = 'warning';
+                }else if(log.type == 'whitelist'){
+                    out.color = 'success';
+                }else{
+                    out.color = 'secondary';
+                }
+                return out;
+            })
+        } catch (error) {
+            if(GlobalData.verbose){
+                logError(`Error getting/processing player history`);
+                dir(error);
+            }
+            return [];
+        }
+    }
+
     //Locating player
     let activePlayer = clone(globals.playerController.activePlayers).find(player => player.license === license);
     dir(activePlayer) //DEBUG
-    let playerHistory = []; //HACK
 
     //Preparing output
     let out = {
@@ -39,12 +72,14 @@ module.exports = async function PlayerModal(ctx) {
         }
     }
    
+    //If player is active
     if(activePlayer){
         out.id = activePlayer.id;
         out.license = activePlayer.license;
         out.identifiers = activePlayer.identifiers;
         out.name = activePlayer.name;
         out.isTmp = activePlayer.isTmp;
+        out.actionHistory = await getHistory(activePlayer.identifiers);
 
         let joinDateObj = new Date(activePlayer.tsJoined*1000);
         out.joinDate = dateFormat(joinDateObj, 'longDate') + ' - ' + dateFormat(joinDateObj, 'isoTime');
@@ -69,8 +104,10 @@ module.exports = async function PlayerModal(ctx) {
             out.notes = activePlayer.notes.text;
         }
 
-
+    //If player is offline
     }else{
+        //FIXME: for actions, look just for the license
+        //TODO: when we start registering all associated identifiers, we could use that for the search
         let dbPlayer = globals.playerController.getPlayer(license);
         if(dbPlayer){
             //not online, in the database
@@ -82,28 +119,6 @@ module.exports = async function PlayerModal(ctx) {
             //not online, not in the database
         }
     }
-
-/*
-    if(player){
-        out = {
-            name: player.name,
-            identifiers: player.identifiers,
-            buttons: `<!-- buttons -->
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button onclick="messagePlayer(${id})" type="button" class="btn btn-secondary" ${disableDM}><i class="icon-speech"></i> Send Message</button>
-                <button onclick="kickPlayer(${id})" type="button" class="btn btn-danger pull-right" ${disableKick}><i class="icon-ban"></i> Kick</button>
-            `
-        }
-        if(player.steam) out.buttons += `<a href="${player.steam}" target="_blank" class="btn btn-info"><i class="icon-user"></i> Steam</a>`;
-    }else{
-        out = {
-            name: 'Unknown',
-            identifiers: 'Player Disconnected',
-            buttons: `<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>`
-        }
-    }
-*/
-
 
     return ctx.send(out);
 };

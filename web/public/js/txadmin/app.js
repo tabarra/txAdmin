@@ -1,12 +1,20 @@
 // FIXME: Remove jQuery, we really don't need it
 
 //================================================================
-//============================================== Settings
+//============================================= Settings & Helpers
 //================================================================
+//Settings
 const timeoutShort = 1500;
 const timeoutMedium = 2500;
 const timeoutLong = 4000;
+
+//Helpers
 const spinnerHTML = '<div class="txSpinner">Loading...</div>';
+const xss = (x) => {
+    let tmp = document.createElement('div');
+    tmp.innerText = x;
+    return tmp.innerHTML;
+} 
 
 
 //================================================================
