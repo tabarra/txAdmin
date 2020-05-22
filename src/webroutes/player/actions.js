@@ -53,9 +53,7 @@ module.exports = async function PlayerActions(ctx) {
     }else if(action === 'ban'){
         return await handleBan(ctx);
     }else if(action === 'revoke_action'){
-        return await handleXXXXX(ctx);
-    }else if(action === 'search'){
-        return await handleXXXXX(ctx);
+        return await handleRevokeAction(ctx);
     }else{
         return ctx.send({
             type: 'danger',
@@ -276,24 +274,20 @@ async function handleBan(ctx) {
 
 //================================================================
 /**
- * Handle XXXXX
+ * Handle Revoke Action
  * @param {object} ctx
  */
-async function handleXXXXX(ctx) {
+async function handleRevokeAction(ctx) {
     //Checking request
-    if(anyUndefined(ctx.request.body.yyyyy)){
+    if(anyUndefined(ctx.request.body.action_id)){
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
-    let yyyyy = ctx.request.body.yyyyy.trim();
+    let action_id = ctx.request.body.action_id.trim();
 
     //Check permissions
-    if(!ctx.utils.checkPermission('all_permissions', modulename)){
-        return ctx.send({
-            type: 'danger',
-            message: `You don't have permission to execute this action.`
-        });
-    }
+    if(!ensurePermission(ctx, 'commands.ban')) return false;
 
     //TODO: actually code things
+    return ctx.send({type: 'info', message: 'not existant yet.'});
 }
 

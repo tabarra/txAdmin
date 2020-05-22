@@ -279,6 +279,18 @@ module.exports = class PlayerController {
 
     //================================================================
     /**
+     * Revoke an action (ban, warn, whitelist)
+     * @param {string} actionID action id
+     * @param {string} author admin name
+     * @returns {string} action ID, or throws if ID not found
+     */
+    async revokeAction(reference, author){
+        throw new Error(`not implemented yet ☹`);
+    }
+
+
+    //================================================================
+    /**
      * Saves a player notes and returns true/false
      * Usage example: setPlayerNote('xxx', 'super awesome player', 'tabarra')
      * @param {string} license
