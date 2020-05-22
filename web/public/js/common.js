@@ -245,7 +245,7 @@ function showPlayer(license) {
     modPlayer.Ban.tab.classList.remove('nav-link-red');
 
     modPlayer.Ban.reason.value = '';
-    modPlayer.Ban.duration.value = '2d';
+    modPlayer.Ban.duration.value = 't2d';
     modPlayer.Buttons.search.disabled = true;
     modPlayer.Buttons.message.disabled = true;
     modPlayer.Buttons.kick.disabled = true;
@@ -456,22 +456,21 @@ function warnPlayer() {
 
 // Ban Player
 function banPlayer() {
-    //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: //TODO: 
-    return;
-    modPlayer.Modal.hide();
-    if(modPlayer.curr.identifiers == false) return;
-    let reason = prompt('Type your warn reason');
-    if(reason == null) return;
-
+    const reason = modPlayer.Ban.reason.value.trim()
+    if (!reason.length) {
+        var notify = $.notify({ message: '<p class="text-center">The ban reason is required.</p>'}, {type: 'danger'});
+        return;
+    }
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
     let data = {
-        action: 'warn_player', //FIXME: flatten this
-        parameter: [modPlayer.curr.id, reason]
+        duration: modPlayer.Ban.duration.value,
+        identifiers: modPlayer.curr.identifiers,
+        reason: reason
     }
     $.ajax({
         type: "POST",
-        url: '/fxserver/commands',
+        url: '/player/ban',
         timeout: timeoutLong,
         data: data,
         dataType: 'json',

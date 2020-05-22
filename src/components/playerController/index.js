@@ -30,7 +30,7 @@ const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'un
  *      }
  *  - `actions`
  *      - identifiers [array]
- *      - type [ban|warning|whitelist]
+ *      - type [ban|warn|whitelist]
  *      - author (the admin name)
  *      - reason
  *      - timestamp
@@ -46,7 +46,14 @@ module.exports = class PlayerController {
         //Configs:
         this.config = {};
         this.config.minSessionTime = 1*60; //NOTE: use 15 minutes as default
-        this.validIdentifiers = ['steam', 'license', 'xbl', 'live', 'discord', 'fivem'];
+        this.validIdentifiers = {
+            steam: /steam:1100001[0-9A-Fa-f]{8}/,
+            license: /license:[0-9A-Fa-f]{40}/,
+            xbl: /xbl:\d{14,20}/,
+            live: /live:\d{14,20}/,
+            discord: /discord:\d{7,20}/,
+            fivem: /fivem:\d{1,8}/,
+        }
 
         //Vars
         this.dbo = null;
@@ -220,11 +227,15 @@ module.exports = class PlayerController {
         //Processes target reference
         let identifiers;
         if(Array.isArray(reference)){
-            throw new Error('not implemented'); //TODO:
-            identifiers = reference.filter((id)=>{
-                //check if string
-                //make sure all ids are valid or throw
+            if(!reference.length) throw new Error('You must send at least one identifier');
+            let invalids = reference.filter((id)=>{
+                return (typeof id !== 'string') || !Object.values(this.validIdentifiers).some(vf => vf.test(id));
             });
+            if(invalids.length){
+                throw new Error('Invalid identifiers: ' + invalids.join(', '));
+            }else{
+                identifiers = reference;
+            }
         }else if(typeof reference == 'number'){
             let player = this.activePlayers.find((p) => p.id === reference);
             if(!player) throw new Error('player disconnected.');

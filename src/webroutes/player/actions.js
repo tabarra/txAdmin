@@ -4,6 +4,7 @@ const xss = require('../../extras/xss')();
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions 
+const now = () => { return Math.round(Date.now() / 1000) };
 const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
 const escape = (x) => {return x.replace(/\"/g, '\uff02');};
 const formatCommand = (cmd, ...params) => {
@@ -50,7 +51,7 @@ module.exports = async function PlayerActions(ctx) {
     }else if(action === 'warn'){
         return await handleWarning(ctx);
     }else if(action === 'ban'){
-        return await handleXXXXX(ctx);
+        return await handleBan(ctx);
     }else if(action === 'revoke_action'){
         return await handleXXXXX(ctx);
     }else if(action === 'search'){
@@ -204,6 +205,69 @@ async function handleWarning(ctx) {
         globals.translator.t('nui_warning.warned_by'),
         globals.translator.t('nui_warning.instruction'),
     );
+    ctx.utils.appendLog(cmd);
+    let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+    return sendAlertOutput(ctx, toResp);
+}
+
+
+//================================================================
+/**
+ * Handle Banning command
+ * @param {object} ctx
+ */
+async function handleBan(ctx) {
+    //Checking request & identifiers
+    if(anyUndefined(
+            ctx.request.body,
+            ctx.request.body.duration,
+            ctx.request.body.reason
+        ) ||
+        !Array.isArray(ctx.request.body.identifiers) || 
+        !ctx.request.body.identifiers.length
+    ){
+        return ctx.send({type: 'danger', message: 'Missing parameters or invalid identifiers.'});
+    }
+    let identifiers = ctx.request.body.identifiers;
+    let duration = ctx.request.body.duration;
+    let reason = ctx.request.body.reason.trim();
+
+    //Calculating expiration
+    let expiration;
+    const times = {
+        t2h: {label: '2 hours', time: 7200}, 
+        t8h: {label: '8 hours', time: 28800}, 
+        t1d: {label: '1 day', time: 86400}, 
+        t2d: {label: '2 days', time: 172800}, 
+        t1w: {label: '1 week', time: 604800}, 
+        t2w: {label: '2 weeks', time: 1209600}, 
+    }
+    if(duration == 'perma'){
+        expiration = false;
+    }else if(times[duration]){
+        expiration = now() + times[duration].time;
+    }else{
+        return ctx.send({type: 'danger', message: 'Unknown ban duration.'}); 
+    }
+
+    //Check permissions
+    if(!ensurePermission(ctx, 'commands.ban')) return false;
+
+    //Register action (and checks if player is online)
+    try {
+        let actionID = await globals.playerController.registerAction(identifiers, 'ban', ctx.session.auth.username, reason, expiration);
+    } catch (error) {
+        return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
+    }
+
+    //Prepare and send command
+    let msg;
+    if(expiration !== false){
+        msg = `You have been banned for "${times[duration].label}" with reason: ${reason} (${ctx.session.auth.username})`;
+    }else{
+        msg = `You have been permanently banned for: ${reason} (${ctx.session.auth.username})`;
+    }
+    let cmd = formatCommand('txaDropIdentifiers', identifiers.join(';'), msg);
     ctx.utils.appendLog(cmd);
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);

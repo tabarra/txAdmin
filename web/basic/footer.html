@@ -105,13 +105,13 @@
                                     </label>
                                     <div class="col-sm-9">
                                         <select class="form-control" id="modPlayerBan-duration">
-                                            <option value="2h" selected>2 hours</option>
-                                            <option value="8h">8 hours</option>
-                                            <option value="1d">1 day</option>
-                                            <option value="2d" selected>2 days</option>
-                                            <option value="1w">1 week</option>
-                                            <option value="2w">2 weeks</option>
-                                            <option value="perma" class="font-weight-bold" >permanent</option>
+                                            <option value="t2h">2 hours</option>
+                                            <option value="t8h">8 hours</option>
+                                            <option value="t1d">1 day</option>
+                                            <option value="t2d" selected>2 days</option>
+                                            <option value="t1w">1 week</option>
+                                            <option value="t2w">2 weeks</option>
+                                            <option value="perma" class="font-weight-bold">permanent</option>
                                         </select>
                                         <span class="form-text text-muted">
                                             <b>Note:</b> The ban will be applied to all identifiers.
@@ -120,7 +120,8 @@
                                 </div>
             
                                 <div class="text-center mt-4">
-                                    <button class="btn btn-sm btn-danger" type="submit" id="modPlayerButtons-ban">
+                                    <button class="btn btn-sm btn-danger" type="submit" 
+                                        id="modPlayerButtons-ban" onclick="banPlayer()">
                                         <i class="icons cui-check"></i> Ban Player
                                     </button>
                                 </div>
