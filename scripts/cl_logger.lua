@@ -35,7 +35,7 @@ local function processDeath(ped)
             killer = NetworkGetPlayerIndexFromPed(killerPed)
         elseif IsEntityAVehicle(killerPed) then
             local drivingPed = GetPedInVehicleSeat(killerPed, -1)
-            if IsEntityAPed(drivingPed) and IsPedAPlayer(drivingPed) then
+            if IsEntityAPed(drivingPed) == 1 and IsPedAPlayer(drivingPed) == true then
                 killer = NetworkGetPlayerIndexFromPed(drivingPed)
             else
                 killer = false
@@ -66,10 +66,8 @@ local deathFlag = false
 CreateThread(function()
     while true do
         Wait(750)
-
         local ped    = PlayerPedId()
         local isDead = IsEntityDead(ped)
-
         if isDead and not deathFlag then
             deathFlag = true
             processDeath(ped)
