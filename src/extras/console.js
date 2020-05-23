@@ -1,3 +1,4 @@
+const colorize = require('json-colorizer');
 const ac = require('ansi-colors');
 ac.enabled = true;
 const header = 'txAdmin';
@@ -14,6 +15,23 @@ const toHistory = (type, ctx, msg) =>{
         logHistory = logHistory.slice(0,500).concat(sliceMsg, logHistory.slice(-500))
     }
     return logHistory.push({ts: now(), type, ctx, msg});
+}
+
+//Colorize settings:
+const colorizeSettings = {
+    pretty: true,
+    colors: {
+        BRACE: 'white',
+        BRACKET: 'white',
+        COLON: 'white',
+        COMMA: 'white',
+        STRING_KEY: '#FF450',
+        // STRING_KEY: 'magenta',
+        STRING_LITERAL: 'cyan',
+        NUMBER_LITERAL: 'green',
+        BOOLEAN_LITERAL: 'blue',
+        NULL_LITERAL: 'white',
+    }
 }
 
 
@@ -74,7 +92,7 @@ function dir(data){
         console.log()
     }else{
         let div = "=".repeat(32);
-        let printData = (typeof data !== 'undefined')? JSON.stringify(data, null, 2) : 'undefined';
+        let printData = (typeof data !== 'undefined')? colorize(data, colorizeSettings) : 'undefined';
         console.log(ac.cyan([div, printData, div].join("\n")));
     }
 }
