@@ -86,12 +86,8 @@
         var consoleForm = document.getElementById("frmConsole");
 
         //Events
-        // socket.on('changeBodyColor', (msg) => {
-        //     document.body.style.backgroundColor = msg;
-        // });
         socket.on('connect', () => {
             console.log("Socket.io Connected!")
-            // $("#favicon").attr("href", "favicon_online.png");
         });
         socket.on('logout', (error) => {
             alert('Error: logged out');
@@ -151,16 +147,11 @@
 
         autoScrollToggle.addEventListener("click", function () {
             autoScroll = !autoScroll;
-            if (autoScroll) {
-                autoScrollToggle.innerText = 'Disable Scroll';
-            } else {
-                autoScrollToggle.innerText = 'Enable Scroll';
-            }
+            autoScrollToggle.innerText = (autoScroll ? "Disable Scroll" : "Enable Scroll");
         });
 
-        document.getElementById("clearConsole")
-            .addEventListener("click", function () {
-                consoleElement.innerHTML = "";
-            });
+        document.getElementById("clearConsole").addEventListener("click", function () {
+            consoleElement.innerHTML = "";
+        });
     })();
 </script>
