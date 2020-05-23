@@ -30,15 +30,17 @@
         border-right: 1px solid #1E252D;
         border-left: 1px solid #1E252D;
     }
+
     .console-content::-webkit-scrollbar-thumb {
         background-color: #565C62;
     }
+
     .console-content::-webkit-scrollbar-corner {
         background: #1E252D;
     }
 
     .bg-dark {
-        background-color: #252E38!important;
+        background-color: #252E38 !important;
     }
 </style>
 
@@ -55,12 +57,15 @@
             <div class="mx-auto">
                 <div class="form-group text-light">
                     <input type="text" class="form-control console-input form-control-sm" id="cmdInput"
-                        placeholder="Press enter to send" autocomplete="off" {{disableWrite}}>
+                           placeholder="Press enter to send. Up/Down arrows to navigate commands." 
+                           autocomplete="off" {{disableWrite}}>
                 </div>
-                <button type="button" id="clearConsole" class="btn btn-outline-light btn-sm mb-2">Clear Console</button>
-                <button type="button" id="toggleAutoScroll" class="btn btn-outline-light btn-sm mb-2">Disable
-                    Scroll</button>
-                <a href="/fxserver/downloadLog" target="_blank" class="btn btn-outline-light btn-sm mb-2">Download Log</a>
+                <button type="button" id="clearConsole" 
+                    class="btn btn-outline-light btn-sm mb-2">Clear Console</button>
+                <button type="button" id="toggleAutoScroll" 
+                    class="btn btn-outline-light btn-sm mb-2">Disable Scroll</button>
+                <a href="/fxserver/downloadLog" target="_blank" 
+                    class="btn btn-outline-light btn-sm mb-2">Download Log</a>
             </div>
         </form>
     </div>
@@ -74,56 +79,73 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 <script>
     //Socket
-    $(function () {
+    (function () {
         let prefix = '';
-        var socket = io({path: prefix+'/socket.io', transports: ['polling'], upgrade: false});
+        var socket = io({path: prefix + '/socket.io', transports: ['polling'], upgrade: false});
         var ansi_up = new AnsiUp;
         ansi_up.escape_for_html = false;
-        
+
+        var input = document.getElementById("cmdInput");
+        var consoleElement = document.getElementById("console");
+        var consoleForm = document.getElementById("frmConsole");
+
         //Events
-        // socket.on('changeBodyColor', (msg) => {
-        //     document.body.style.backgroundColor = msg;
-        // });
         socket.on('connect', () => {
             console.log("Socket.io Connected!")
-            // $("#favicon").attr("href", "favicon_online.png");
         });
         socket.on('logout', (error) => {
-            alert('Error: logged out');
             window.location = '/auth?logout';
         });
         socket.on('consoleData', function (msg) {
-            $('#console').append(ansi_up.ansi_to_html(msg));
-            if (autoScroll) $("#console").scrollTop($("#console")[0].scrollHeight);
+            consoleElement.innerHTML += ansi_up.ansi_to_html(msg);
+            if (autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight
         });
 
         //Form
-        $("#frmConsole").submit(function (e) {
+        consoleForm.addEventListener("submit", function (e) {
             e.preventDefault();
-            let cmd = $('#cmdInput').val();
-            socket.emit('consoleCommand', cmd);
-            $('#cmdInput').val('');
+            commandCache.unshift(input.value);
+            socket.emit('consoleCommand', input.value);
+            input.value = "";
         });
 
-        //Status
-        // setInterval(() => {
-        //     let status = (socket.connected) ? 'online' : 'offline';
-        //     $("#favicon").attr("href", "img/favicon_" + status + ".png");
-        // }, 1000);
-    });
+        //Up / Down history
+        var commandCache = [];
+        var currentIndex;
+        input.addEventListener("keydown", function (event) {
+            var changed = false;
 
-    //Buttons
-    let autoScroll = true;
-    $('#toggleAutoScroll').click(function () {
-        autoScroll = !autoScroll;
-        if (autoScroll) {
-            $('#toggleAutoScroll').text('Disable Scroll');
-        } else {
-            $('#toggleAutoScroll').text('Enable Scroll');
-        }
-    });
+            if (event.key === "ArrowUp") {
+                changed = true;
+                if (typeof currentIndex === 'undefined' && commandCache.length > 0) {
+                    currentIndex = 0;
+                } else if ((currentIndex + 1) < commandCache.length) {
+                    currentIndex += 1;
+                }
 
-    $('#clearConsole').click(function () {
-        $('#console').html('');
-    });
+            } else if (event.key === "ArrowDown") {
+                changed = true;
+                if (currentIndex > 0) {
+                    currentIndex -= 1;
+                } else if (currentIndex === 0) {
+                    currentIndex = undefined;
+                }
+            }
+
+            if (changed) input.value = commandCache[currentIndex] || "";
+        });
+
+        //Buttons
+        var autoScroll = true;
+        var autoScrollToggle = document.getElementById("toggleAutoScroll");
+
+        autoScrollToggle.addEventListener("click", function () {
+            autoScroll = !autoScroll;
+            autoScrollToggle.innerText = (autoScroll ? "Disable Scroll" : "Enable Scroll");
+        });
+
+        document.getElementById("clearConsole").addEventListener("click", function () {
+            consoleElement.innerHTML = "";
+        });
+    })();
 </script>
