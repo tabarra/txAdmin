@@ -16,7 +16,7 @@ const { customAlphabet } = require('nanoid');
 const dict51 = require('nanoid-dictionary/nolookalikes');
 const nanoid = customAlphabet(dict51, 20);
 
-const ac = require('ansi-colors');
+const chalk = require('chalk');
 const { setHttpCallback } = require('@citizenfx/http-wrapper');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const {requestAuth} = require('./requestAuthenticator');
@@ -165,7 +165,7 @@ module.exports = class WebServer {
             try {
                 let urlConvar = GetConvar('web_baseUrl', 'false');
                 if(validUrlRegex.test(urlConvar)){
-                    logOk(`Listening at ` + ac.inverse(` https://${urlConvar}/ `));
+                    logOk(`Listening at ` + chalk.inverse(` https://${urlConvar}/ `));
                     GlobalData.cfxUrl = urlConvar;
                     clearInterval(getUrlInterval);
                 }
@@ -189,7 +189,7 @@ module.exports = class WebServer {
                 process.exit();
             });
             this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', () => {
-                logOk(`Listening at ` + ac.inverse(` http://localhost:${GlobalData.txAdminPort}/ `));
+                logOk(`Listening at ` + chalk.inverse(` http://localhost:${GlobalData.txAdminPort}/ `));
             });
         } catch (error) {
             logError('Failed to start HTTP server with error:');

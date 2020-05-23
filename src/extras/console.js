@@ -1,6 +1,5 @@
+const chalk = require('chalk');
 const colorize = require('json-colorizer');
-const ac = require('ansi-colors');
-ac.enabled = true;
 const header = 'txAdmin';
 let logHistory = [];
 
@@ -26,7 +25,6 @@ const colorizeSettings = {
         COLON: 'white',
         COMMA: 'white',
         STRING_KEY: '#FF450',
-        // STRING_KEY: 'magenta',
         STRING_LITERAL: 'cyan',
         NUMBER_LITERAL: 'green',
         BOOLEAN_LITERAL: 'blue',
@@ -39,7 +37,7 @@ const colorizeSettings = {
 function log(msg, context=null){
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
-    console.log(ac.bold.bgBlue(`[${conCtx}]`)+' '+msg);
+    console.log(chalk.bold.bgBlue(`[${conCtx}]`)+' '+msg);
     toHistory('INFO', histCtx, msg);
     return `[INFO][${conCtx}] ${msg}`;
 }
@@ -47,7 +45,7 @@ function log(msg, context=null){
 function logOk(msg, context=null){
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
-    console.log(ac.bold.bgGreen(`[${conCtx}]`)+' '+msg);
+    console.log(chalk.bold.bgGreen(`[${conCtx}]`)+' '+msg);
     toHistory('OK', histCtx, msg);
     return `[OK][${conCtx}] ${msg}`;
 }
@@ -55,7 +53,7 @@ function logOk(msg, context=null){
 function logWarn(msg, context=null) {
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
-    console.log(ac.bold.bgYellow(`[${conCtx}]`)+' '+msg);
+    console.log(chalk.bold.bgYellow(`[${conCtx}]`)+' '+msg);
     toHistory('WARN', histCtx, msg);
     return `[WARN][${conCtx}] ${msg}`;
 }
@@ -63,7 +61,7 @@ function logWarn(msg, context=null) {
 function logError(msg, context=null) {
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
-    console.log(ac.bold.bgRed(`[${conCtx}]`)+' '+msg);
+    console.log(chalk.bold.bgRed(`[${conCtx}]`)+' '+msg);
     toHistory('ERROR', histCtx, msg);
     return `[ERROR][${conCtx}] ${msg}`;
 }
@@ -80,11 +78,11 @@ function setTTYTitle(title){
 function dir(data){
     if(data instanceof Error){
         try {
-            console.log(`${ac.redBright('[txAdmin Error]')} ${data.message}`);
-            if(typeof data.type !== 'undefined') console.log(`${ac.redBright('[txAdmin Error] Type:')} ${data.type}`);
-            if(typeof data.code !== 'undefined') console.log(`${ac.redBright('[txAdmin Error] Code:')} ${data.code}`);
+            console.log(`${chalk.redBright('[txAdmin Error]')} ${data.message}`);
+            if(typeof data.type !== 'undefined') console.log(`${chalk.redBright('[txAdmin Error] Type:')} ${data.type}`);
+            if(typeof data.code !== 'undefined') console.log(`${chalk.redBright('[txAdmin Error] Code:')} ${data.code}`);
             data.stack.forEach(trace => {
-                console.log(`    ${ac.redBright('=>')} ${trace.file}:${trace.line} > ${ac.yellowBright(trace.name || 'anonym')}`)
+                console.log(`    ${chalk.redBright('=>')} ${trace.file}:${trace.line} > ${chalk.yellowBright(trace.name || 'anonym')}`)
             });
         } catch (error) {
             console.log('Error stack unavailable.')
@@ -92,8 +90,28 @@ function dir(data){
         console.log()
     }else{
         let div = "=".repeat(32);
-        let printData = (typeof data !== 'undefined')? colorize(data, colorizeSettings) : 'undefined';
-        console.log(ac.cyan([div, printData, div].join("\n")));
+        // let printData = (typeof data !== 'undefined')? JSON.stringify(data, null, 2) : 'undefined';
+        let printData = chalk.keyword('orange').italic(typeof data + ': ');
+        if(typeof data == 'undefined'){
+            printData = chalk.white('undefined');
+
+        }else if(typeof data == 'string'){
+            printData += `"${data}"`;
+
+        }else if(typeof data == 'number'){
+            printData += chalk.green(data);
+
+        }else if(typeof data == 'function'){
+            printData += "\n";
+            printData += data.toString();
+
+        }else if(typeof data == 'object'){
+            printData = colorize(data, colorizeSettings);
+
+        }else{
+            printData = JSON.stringify(data, null, 2);
+        }
+        console.log(chalk.cyan([div, printData, div].join("\n")));
     }
 }
 

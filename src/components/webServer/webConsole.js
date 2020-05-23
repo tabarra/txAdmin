@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'WebConsole';
-const ac = require('ansi-colors');
+const chalk = require('chalk');
 const xss = require('../../extras/xss')({mark:['class']});
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const {authLogic} = require('./requestAuthenticator');
@@ -110,7 +110,7 @@ module.exports = class webConsole {
         }
         
         //Executing command
-        log(`Executing ` + ac.inverse(' ' + msg + ' '), 'SocketIO');
+        log(`Executing ` + chalk.inverse(' ' + msg + ' '), 'SocketIO');
         globals.fxRunner.srvCmd(msg);
         globals.logger.append(`[${getIP(socket)}][${socket.session.auth.username}] ${msg}`);
     }

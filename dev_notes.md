@@ -86,8 +86,9 @@
 - [?] fix the double-player issue (timeout + fast rejoin?)
 - [x] cleanup playerController for debug/testing stuff
 - [x] add/test getRegisteredActions filters
+- [x] replace `ansi-colors` with `chalk` since they fixed the performance issues
 - [ ] check everything done for xss
-- [ ] make a settings tab for the player controller
+- [ ] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
 - [ ] implement whitelist logic
 - [ ] re-add playerConnecting whitelist checking 
 - [ ] test on latest build
