@@ -23,8 +23,8 @@
         "status_offline": "**%{servername}** je nyní **Offline**!"
     },
     "nui_warning": {
-        "title": "WARNING",
-        "warned_by": "Warned by:",
-        "instruction": "Hold [SPACE] for 10 seconds to dismiss this message."
+        "title": "VAROVÁNÍ",
+        "warned_by": "Varován od:",
+        "instruction": "Drž [MEZERNÍK] po dobu 10 sekund pro zavření této zprávy."
     }
 }
