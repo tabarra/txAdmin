@@ -6,6 +6,7 @@ const helpers = require('../../extras/helpers');
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
+const now = () => { return Math.round(Date.now() / 1000) };
 
 
 /**
@@ -46,9 +47,21 @@ module.exports = async function AdvancedActions(ctx) {
     }else if(action == 'perform_magic2'){
         globals.playerController.playerlistGenerator.indexes = [];
         return ctx.send({type: 'success', message: 'clearing generator playerlist'});
+
     }else if(action == 'perform_magic3'){
-        //some code...
-        return ctx.send({type: 'success', message: `placeholder`});
+        let idArray = ["license:23fb884f1463da603330b9d4434f2886a725aaaa"];
+        let ts = now();
+        const filter = (x) => {
+            return (
+                // (x.type == 'ban') &&
+                (x.type == 'ban' || x.type == 'whitelist') &&
+                (!x.expiration || x.expiration > ts) &&
+                (!x.revocation.timestamp)
+            );
+        }
+
+        let hist = await globals.playerController.getRegisteredActions(idArray, filter);
+        return ctx.send({type: 'success', message: JSON.stringify(hist, null, 2)});
     }
 
 

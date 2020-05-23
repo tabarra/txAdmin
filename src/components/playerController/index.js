@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'PlayerController';
-const clonedeep = require('lodash/clonedeep');
+const cloneDeep = require('lodash/cloneDeep');
 const low = require('lowdb');
 const FileAsync = require('lowdb/adapters/FileAsync');
 const { customAlphabet } = require('nanoid');
@@ -81,7 +81,7 @@ module.exports = class PlayerController {
                 if(this.writePending){
                     await this.dbo.write();
                     this.writePending = false;
-                    if(GlobalData.verbose) logOk('Writing DB'); //DEBUG
+                    // if(GlobalData.verbose) logOk('Writing DB'); //DEBUG
                 }
             } catch (error) {
                 logError(`Failed to save players database with error: ${error.message}`);
@@ -96,9 +96,7 @@ module.exports = class PlayerController {
      * Start lowdb instance and set defaults
      */
     async setupDatabase(){
-        // let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
-        // let dbPath = `./fakedb.json`;
-        let dbPath = `${globals.info.serverProfilePath}/data/testDB.json`;
+        let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
         try {
             const adapterAsync = new FileAsync(dbPath); //DEBUG
             // const adapterAsync = new FileAsync(dbPath, {
@@ -153,7 +151,7 @@ module.exports = class PlayerController {
                     await this.dbo.get('players')
                         .push(toDB)
                         .value();
-                    logOk(`Adding '${p.name}' to players database.`); //DEBUG
+                    if(GlobalData.verbose) logOk(`Adding '${p.name}' to players database.`);
                     
                 //If its time to update this player's play time
                 }else if(!p.isTmp && Math.round(sessionTime/4) % 4 == 0){
@@ -200,20 +198,20 @@ module.exports = class PlayerController {
      * Searches for a registered action in the database by a list of identifiers and optional filters
      * Usage example: getRegisteredActions(['license:xxx'], {type: 'ban', revocation.timestamp: null})
      * 
-     * TODO: add+test filter
+     * NOTE: I haven't actually benchmarked to make sure passing the filter first increases the performance
      * 
      * @param {array} idArray identifiers array
      * @param {object} filter lodash-compatible filter object
      * @returns {array|error} array of actions, or, throws on error
      */
     async getRegisteredActions(idArray, filter = {}){
-        const clone = require('clone');
         if(!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
         try {
             let actions = await this.dbo.get("actions")
-                                .filter(p => idArray.some((fi) => p.identifiers.includes(fi)))
+                                .filter(filter)
+                                .filter(a => idArray.some((fi) => a.identifiers.includes(fi)))
                                 .value();
-            return clonedeep(actions);
+            return cloneDeep(actions);
         } catch (error) {
             const msg = `Failed to search for a registered action database with error: ${error.message}`;
             if(GlobalData.verbose) logError(msg);
@@ -376,7 +374,7 @@ module.exports = class PlayerController {
      * 
      * NOTE:  This code was written this way to improve performance in exchange of readability
      *           the ES6 gods might not like this..
-     * FIXME: To prevent retaliation from the gods, consider making the activePlayers a Map instead of an Array.
+     * TODO: To prevent retaliation from the gods, consider making the activePlayers a Map instead of an Array.
      * 
      * FIXME: I'm guaranteeing there are not two players with the same License, but not ID.
      * 

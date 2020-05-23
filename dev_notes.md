@@ -84,6 +84,8 @@
 - [.] finish all modal actions to offline players
 - [x] split `common.js` into separate files?
 - [?] fix the double-player issue (timeout + fast rejoin?)
+- [x] cleanup playerController for debug/testing stuff
+- [x] add/test getRegisteredActions filters
 - [ ] check everything done for xss
 - [ ] make a settings tab for the player controller
 - [ ] implement whitelist logic
@@ -109,6 +111,7 @@ NOTE: when opening a player from the offline list, disable ID-requiring actions 
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
 - [ ] break down playerController into separate files?
+- [ ] rename playerController to playerManager?
 
 
 ## "in the roadmap"
