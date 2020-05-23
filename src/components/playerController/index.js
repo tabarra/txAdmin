@@ -310,7 +310,7 @@ module.exports = class PlayerController {
             let player = this.activePlayers.find((p) => p.id === reference);
             if(!player) throw new Error('player disconnected.');
             if(!player.identifiers.length) throw new Error('player has no identifiers.'); //sanity check
-            identifiers = player.identifiers; //FIXME: make sure we are already filtering the identifiers on the processHeartbeat function
+            identifiers = player.identifiers;
         }else{
             throw new Error(`Reference expected to be an array of strings or id. Received '${typeof target}'.`)
         }
@@ -525,8 +525,13 @@ module.exports = class PlayerController {
 
             //Processing the new players
             for (const [license, player] of hbPlayers) {
-                //TODO: filter identifiers array by using this.validIdentifiers
+                //Make sure we are not adding the same user twice
                 if(!activePlayerLicenses.includes(player.license)){
+                    //Filter to only valid identifiers
+                    player.identifiers = player.identifiers.filter((id)=>{
+                        return Object.values(this.validIdentifiers).some(vf => vf.test(id));
+                    });
+                    //Check if he is already on the database
                     let dbPlayer = await this.getPlayer(license);
                     if(dbPlayer){
                         //TODO: create a AllAssocIds for the players, containing all intersecting identifiers

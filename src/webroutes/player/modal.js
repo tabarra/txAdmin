@@ -27,6 +27,7 @@ module.exports = async function PlayerModal(ctx) {
     //Helper function
     const getHistory = async (idArray) => {
         try {
+            //TODO: if it was today, show time instead
             let hist = await globals.playerController.getRegisteredActions(idArray);
             return hist.map((log) => {
                 let out = {
@@ -60,7 +61,7 @@ module.exports = async function PlayerModal(ctx) {
 
     //Locating player
     let activePlayer = clone(globals.playerController.activePlayers).find(player => player.license === license);
-    dir(activePlayer) //DEBUG
+    if(GlobalData.verbose) dir(activePlayer) //DEBUG
 
     //Preparing output
     let out = {
