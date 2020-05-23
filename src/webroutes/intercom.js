@@ -44,11 +44,11 @@ module.exports = async function Intercom(ctx) {
         globals.databus.serverLog = globals.databus.serverLog.concat(postData.log)
 
     }else if(scope == 'checkPlayerJoin'){
-        if(!Array.isArray(postData.identifiers)){
+        if(!Array.isArray(postData.identifiers) || typeof postData.name !== 'string'){
             return ctx.utils.error(400, 'Invalid Request');
         }
         try {
-            let resp = await globals.playerController.checkPlayerJoin(postData.identifiers);
+            let resp = await globals.playerController.checkPlayerJoin(postData.identifiers, postData.name);
             if(resp.allow){
                 return ctx.send('allow');
             }else{

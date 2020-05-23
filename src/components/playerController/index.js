@@ -8,11 +8,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000) };
-const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
 const nanoidAlphabet = "2346789ABCDEFGHJKLMNPQRTUVWXYZ";
-const genActionID = (prefix='U') => { 
-    return prefix.toUpperCase() + customAlphabet(nanoidAlphabet, 3)() + '-' + customAlphabet(nanoidAlphabet, 4)();
-};
 
 
 /**
@@ -32,6 +28,7 @@ const genActionID = (prefix='U') => {
  *          tsLastEdit: timestamp,
  *      }
  *  - `actions`
+ *      - id [X???-????]
  *      - identifiers [array]
  *      - type [ban|warn|whitelist]
  *      - author (the admin name)
@@ -41,6 +38,11 @@ const genActionID = (prefix='U') => {
  *          timestamp: null,
  *          author: null,
  *      }
+ *  - `pendingWL`
+ *      - id [R????]
+ *      - license
+ *      - name
+ *      - tsLastAttempt
  */
 module.exports = class PlayerController {
     constructor(config) {
@@ -50,9 +52,12 @@ module.exports = class PlayerController {
         this.config = {};
         this.config.minSessionTime = 1*60; //NOTE: use 15 minutes as default
         this.config.onJoinCheck = {
-            ban: true,
-            whitelist: true
+            ban: false,
+            whitelist: false
         }
+        this.config.whitelistRejectionMessage = `You are not yet whitelisted in this server.
+            Please join <a href="http://discord.gg/example">http://discord.gg/example</a>.
+            <strong>Your ID: <id></strong>`;
 
         //Vars
         this.dbo = null;
@@ -114,9 +119,11 @@ module.exports = class PlayerController {
             await this.dbo.defaults({
                 version: 0,
                 players: [],
-                actions: []
+                actions: [],
+                pendingWL: []
             }).write();
             // await this.dbo.set('players', []).write(); //DEBUG
+            await this.dbo.set('pendingWL', []).write();
         } catch (error) {
             logError(`Failed to load database file '${dbPath}'`);
             if(GlobalData.verbose) dir(error);
@@ -232,18 +239,24 @@ module.exports = class PlayerController {
      * 
      * TODO: improve ban message to be more verbose
      * 
-     * FIXME: if not whitelisted, create whitelist attempt 
-     * 
      * @param {array} idArray identifiers array
+     * @param {string} name player name
      * @returns {object} {allow: bool, reason: string}, or throws on error
      */
-    async checkPlayerJoin(idArray){
-        if(!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
-        try {
-            if(!this.config.onJoinCheck.ban && !this.config.onJoinCheck.whitelist){
-                return {allow: true, reason: 'checks disabled'};
-            }
+    async checkPlayerJoin(idArray, playerName){
+        //Check if required
+        if(!this.config.onJoinCheck.ban && !this.config.onJoinCheck.whitelist){
+            return {allow: true, reason: 'checks disabled'};
+        }
 
+        //Sanity checks
+        if(typeof playerName !== 'string') throw new Error('playerName should be an string.');
+        if(!Array.isArray(idArray)) throw new Error('Identifiers should be an array with at least 1 identifier.');
+        idArray = idArray.filter((id)=>{
+            return Object.values(this.validIdentifiers).some(vf => vf.test(id));
+        });
+        
+        try {
             //Prepare & query
             let ts = now();
             const filter = (x) => {
@@ -259,7 +272,7 @@ module.exports = class PlayerController {
             if(this.config.onJoinCheck.ban){
                 let ban = hist.find((a) => a.type = 'ban');
                 if(ban){
-                    let msg = `You have been banned from this server. Ban ID: ${ban.id}.`;
+                    let msg = `You have been banned from this server.\nBan ID: ${ban.id}.`;
                     return {allow: false, reason: msg};
                 }
             }
@@ -268,8 +281,31 @@ module.exports = class PlayerController {
             if(this.config.onJoinCheck.whitelist){
                 let wl = hist.find((a) => a.type = 'whitelist');
                 if(!wl){
-                    let msg = `You are not whitelisted in this server.`;
-                    return {allow: false, reason: msg};
+                    //Get license
+                    let license = idArray.find((id) => id.substring(0, 8) == "license:");
+                    if(!license) return {allow: false, reason: 'the whitelist module requires a license identifier.'}
+                    license = license.substring(8);
+                    //Check for pending WL requests
+                    let pending = await this.dbo.get("pendingWL").find({license: license}).value();
+                    let whitelistID;
+                    if(pending){
+                        pending.name = playerName;
+                        pending.tsLastAttempt = now();
+                        whitelistID = pending.id;
+                    }else{
+                        whitelistID = 'R' + customAlphabet(nanoidAlphabet, 4)()
+                        let toDB = {
+                            id: whitelistID,
+                            name: playerName,
+                            license: license,
+                            tsLastAttempt: now()
+                        }
+                        await this.dbo.get('pendingWL').push(toDB).value();
+                    }
+                    this.writePending = true;
+
+                    let reason = this.config.whitelistRejectionMessage.replace(`<id>`, whitelistID);
+                    return {allow: false, reason};
                 }
             }
 
@@ -317,7 +353,7 @@ module.exports = class PlayerController {
 
         //Saves it to the database
         let actionPrefix = (type == 'warn')? 'a' : type[0];
-        let actionID = genActionID(actionPrefix);
+        let actionID = actionPrefix.toUpperCase() + customAlphabet(nanoidAlphabet, 3)() + '-' + customAlphabet(nanoidAlphabet, 4)();
         let toDB = {
             id: actionID,
             type,

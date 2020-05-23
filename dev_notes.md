@@ -88,15 +88,17 @@
 - [x] add/test getRegisteredActions filters
 - [x] replace `ansi-colors` with `chalk` since they fixed the performance issues
 - [x] re-add playerConnecting the whitelist/ban checking function (lua+intercom+playerController)
-- [ ] implement whitelist registration logic
+- [x] implement whitelist registration logic
 
 - [ ] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
+- [ ] block admin kick -> player html usage
 - [ ] check everything done for xss
 - [ ] test on latest build
 
 NOTE: when opening a player from the offline list, disable ID-requiring actions like dm,kick,warning
 
 > Soon™
+- [ ] adapt kick messages to use some basic HTML for formatting
 - [ ] change Server Log page to use the new modal
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
 - [ ] convert cl_logger.js to lua, and stop it when not in `monitorMode`

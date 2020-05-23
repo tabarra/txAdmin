@@ -266,7 +266,8 @@ function handleConnections(name, skr, d)
         local url = "http://localhost:"..apiPort.."/intercom/checkPlayerJoin"
         local exData = {
             txAdminToken = apiToken,
-            identifiers  = GetPlayerIdentifiers(source)
+            identifiers  = GetPlayerIdentifiers(source),
+            name = name
         }
 
         --Attempt to validate the user
