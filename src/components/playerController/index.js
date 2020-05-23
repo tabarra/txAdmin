@@ -132,7 +132,7 @@ module.exports = class PlayerController {
 
                 //If its time to add this player to the database
                 if(p.isTmp && sessionTime >= this.config.minSessionTime){
-                    if(p.license == 'deadbeef0000nosave') return; //HACK
+                    if(p.license == '3333333333333333333333deadbeef0000nosave') return; //DEBUG
 
                     this.writePending = true;
                     p.isTmp = false;
@@ -394,6 +394,7 @@ module.exports = class PlayerController {
             let pCount = players.length; //Optimization only, although V8 is probably smart enough
             let hbPlayers = new Map();
             let invalids = 0;
+            let duplicated = 0;
             for (let i = 0; i < pCount; i++) {
                 let p = Object.assign({}, players[i]);
 
@@ -412,16 +413,19 @@ module.exports = class PlayerController {
 
                 //Extract license
                 for (let j = 0; j < p.identifiers.length; j++) {
-                    //TODO: filter by this.validIdentifiers
-                    if(p.identifiers[j].substring(0, 8) == "license:"){
+                    if(p.identifiers[j].length == 48 && p.identifiers[j].substring(0, 8) == "license:"){
                         p.license = p.identifiers[j].substring(8);
                         break;
                     }
                 }
 
                 //Check if license id exist and is not duplicated
-                if(typeof p.license !== 'string' || hbPlayers.has(p.license)){
+                if(typeof p.license !== 'string'){
                     invalids++;
+                    continue;
+                }
+                if(hbPlayers.has(p.license)){
+                    duplicated++;
                     continue;
                 }
 
@@ -429,7 +433,9 @@ module.exports = class PlayerController {
                 delete p.endpoint;
                 hbPlayers.set(p.license, p)
             }
-            if(GlobalData.verbose && invalids) logWarn(`HeartBeat playerlist contained ${invalids} players that were removed.`); 
+            //FIXME: make this verbose only
+            if(invalids) logWarn(`HeartBeat playerlist contained ${invalids} invalid players that were removed.`); 
+            if(duplicated) logWarn(`HeartBeat playerlist contained ${duplicated} duplicated players that were removed.`); 
             
 
             //Processing active players list, creating the removed list, creating new active list without removed players
@@ -443,8 +449,9 @@ module.exports = class PlayerController {
                     let updatedPlayer = Object.assign(
                         this.activePlayers[i], 
                         {
+                            id: hbPlayerData.id, //NOTE: possibly the solution to the double player issue?
                             ping: hbPlayerData.ping,
-                            extraData: hbPlayerData.extraData //NOTE: name will probably change, reserve for RolePlay data from frameworks
+                            // extraData: hbPlayerData.extraData //NOTE: reserve for RolePlay data from frameworks
                         }
                     );
                     newActivePlayers.push(updatedPlayer);
@@ -456,6 +463,7 @@ module.exports = class PlayerController {
 
             //Processing the new players
             for (const [license, player] of hbPlayers) {
+                //TODO: filter identifiers array by using this.validIdentifiers
                 if(!activePlayerLicenses.includes(player.license)){
                     let dbPlayer = await this.getPlayer(license);
                     if(dbPlayer){

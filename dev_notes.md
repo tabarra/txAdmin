@@ -83,9 +83,9 @@
 - [.] make the html of the new players page
 - [.] finish all modal actions to offline players
 - [x] split `common.js` into separate files?
+- [?] fix the double-player issue (timeout + fast rejoin?)
 - [ ] check everything done for xss
 - [ ] make a settings tab for the player controller
-- [ ] fix the double-player issue (timeout + fast rejoin?)
 - [ ] implement whitelist logic
 - [ ] re-add playerConnecting whitelist checking 
 - [ ] test on latest build
