@@ -24,7 +24,7 @@ end
 
 -- Setup threads and commands
 log("Version "..txAdminClientVersion.." starting...")
-Citizen.CreateThread(function()
+CreateThread(function()
     RegisterCommand("txaPing", txaPing, true)
     RegisterCommand("txaWarnID", txaWarnID, true)
     RegisterCommand("txaKickAll", txaKickAll, true)
@@ -33,10 +33,10 @@ Citizen.CreateThread(function()
     RegisterCommand("txaBroadcast", txaBroadcast, true)
     RegisterCommand("txaSendDM", txaSendDM, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
-    Citizen.CreateThread(function()
+    CreateThread(function()
         while true do
             HeartBeat()
-            Citizen.Wait(3000)
+            Wait(3000)
         end
     end)
     AddEventHandler('playerConnecting', handleConnections)
@@ -261,45 +261,44 @@ end
 
 -- Player connecting handler
 function handleConnections(name, skr, d)
-    local isEnabled = GetConvar("txAdmin-expBanEnabled", "invalid")
-    if isEnabled == "true" then
+    if  GetConvar("txAdmin-checkPlayerJoin", "invalid") == "true" then
         d.defer()
-        local url = "http://localhost:"..apiPort.."/intercom/checkWhitelist"
+        local url = "http://localhost:"..apiPort.."/intercom/checkPlayerJoin"
         local exData = {
             txAdminToken = apiToken,
             identifiers  = GetPlayerIdentifiers(source)
         }
 
         --Attempt to validate the user
-        Citizen.CreateThread(function()
+        CreateThread(function()
             local attempts = 0
             local isDone = false;
             --Do 5 attempts
             while isDone == false and attempts < 5 do
                 attempts = attempts + 1
-                d.update("Checking whitelist... ("..attempts.."/5)")
+                d.update("Checking banlist/whitelist... ("..attempts.."/5)")
                 PerformHttpRequest(url, function(httpCode, data, resultHeaders)
                     local resp = tostring(data)
                     if httpCode ~= 200 then
-                        logError("Checking whitelist failed with code "..httpCode.." and message: "..resp)
-                    elseif data == 'whitelist-ok' then
+                        logError("Checking banlist/whitelist failed with code "..httpCode.." and message: "..resp)
+                    elseif data == 'allow' then
                         if not isDone then
                             d.done()
                             isDone = true
                         end
-                    elseif data == 'whitelist-block' then
+                    else
                         if not isDone then
-                            d.done('[txAdmin] You were banned from this server.')
+                            d.done('[txAdmin] '..data)
                             isDone = true
                         end
                     end
                 end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
-                Citizen.Wait(2000)
+                Wait(2000)
             end
 
             --Block client if failed
             if not isDone then
-                d.done('[txAdmin] Failed to validate your whitelist status. Try again later.')
+                d.done('[txAdmin] Failed to validate your banlist/whitelist status. Try again later.')
                 isDone = true
             end
         end)

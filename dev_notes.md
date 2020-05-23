@@ -87,16 +87,17 @@
 - [x] cleanup playerController for debug/testing stuff
 - [x] add/test getRegisteredActions filters
 - [x] replace `ansi-colors` with `chalk` since they fixed the performance issues
-- [ ] check everything done for xss
+- [x] re-add playerConnecting the whitelist/ban checking function (lua+intercom+playerController)
+- [ ] implement whitelist registration logic
+
 - [ ] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
-- [ ] implement whitelist logic
-- [ ] re-add playerConnecting whitelist checking 
+- [ ] check everything done for xss
 - [ ] test on latest build
-- [ ] change Server Log page to use the new modal
 
 NOTE: when opening a player from the offline list, disable ID-requiring actions like dm,kick,warning
 
 > Soon™
+- [ ] change Server Log page to use the new modal
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
 - [ ] convert cl_logger.js to lua, and stop it when not in `monitorMode`
 - [ ] try again the upgrade to Discord.js v12

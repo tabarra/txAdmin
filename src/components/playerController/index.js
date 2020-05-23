@@ -49,6 +49,15 @@ module.exports = class PlayerController {
         //Configs:
         this.config = {};
         this.config.minSessionTime = 1*60; //NOTE: use 15 minutes as default
+        this.config.onJoinCheck = {
+            ban: true,
+            whitelist: true
+        }
+
+        //Vars
+        this.dbo = null;
+        this.activePlayers = [];
+        this.writePending = false;
         this.validIdentifiers = {
             steam: /steam:1100001[0-9A-Fa-f]{8}/,
             license: /license:[0-9A-Fa-f]{40}/,
@@ -57,11 +66,6 @@ module.exports = class PlayerController {
             discord: /discord:\d{7,20}/,
             fivem: /fivem:\d{1,8}/,
         }
-
-        //Vars
-        this.dbo = null;
-        this.activePlayers = [];
-        this.writePending = false;
 
         //Running playerlist generator
         if(
@@ -218,6 +222,63 @@ module.exports = class PlayerController {
             const msg = `Failed to search for a registered action database with error: ${error.message}`;
             if(GlobalData.verbose) logError(msg);
             throw new Error(msg);
+        }
+    }
+
+
+    //================================================================
+    /**
+     * Processes an playerConnecting validation request
+     * 
+     * TODO: improve ban message to be more verbose
+     * 
+     * FIXME: if not whitelisted, create whitelist attempt 
+     * 
+     * @param {array} idArray identifiers array
+     * @returns {object} {allow: bool, reason: string}, or throws on error
+     */
+    async checkPlayerJoin(idArray){
+        if(!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
+        try {
+            if(!this.config.onJoinCheck.ban && !this.config.onJoinCheck.whitelist){
+                return {allow: true, reason: 'checks disabled'};
+            }
+
+            //Prepare & query
+            let ts = now();
+            const filter = (x) => {
+                return (
+                    (x.type == 'ban' || x.type == 'whitelist') &&
+                    (!x.expiration || x.expiration > ts) &&
+                    (!x.revocation.timestamp)
+                );
+            }
+            let hist = await this.getRegisteredActions(idArray, filter);
+
+            //Check ban
+            if(this.config.onJoinCheck.ban){
+                let ban = hist.find((a) => a.type = 'ban');
+                if(ban){
+                    let msg = `You have been banned from this server. Ban ID: ${ban.id}.`;
+                    return {allow: false, reason: msg};
+                }
+            }
+
+            //Check whitelist
+            if(this.config.onJoinCheck.whitelist){
+                let wl = hist.find((a) => a.type = 'whitelist');
+                if(!wl){
+                    let msg = `You are not whitelisted in this server.`;
+                    return {allow: false, reason: msg};
+                }
+            }
+
+            return {allow: true, reason: null};
+        } catch (error) {
+            const msg = `Failed to check whitelist/blacklist: ${error.message}`;
+            logError(msg);
+            if(GlobalData.verbose) dir(error);
+            return {allow: false, reason: msg};
         }
     }
 

@@ -5,6 +5,7 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
+const now = () => { return Math.round(Date.now() / 1000) };
 
 /**
  * Intercommunications endpoint
@@ -24,7 +25,6 @@ module.exports = async function Intercom(ctx) {
     //Delegate to the specific scope functions
     if(scope == 'monitor'){
         try {
-            // dir(postData)
             globals.monitor.handleHeartBeat(postData);
         } catch (error) {}
 
@@ -43,24 +43,22 @@ module.exports = async function Intercom(ctx) {
         }
         globals.databus.serverLog = globals.databus.serverLog.concat(postData.log)
 
-    }else if(scope == 'checkWhitelist'){
-        //FIXME: temporarily disabled
-        return ctx.utils.error(403, 'Feature temporarily disabled.');
-
+    }else if(scope == 'checkPlayerJoin'){
         if(!Array.isArray(postData.identifiers)){
             return ctx.utils.error(400, 'Invalid Request');
         }
         try {
-            let dbo = globals.database.getDB();
-            let usr = await dbo.get("experiments.bans.banList")
-                    .find(function(o) { return postData.identifiers.includes(o.identifier); })
-                    .value()
-            let resp = (typeof usr === 'undefined')? 'whitelist-ok' : 'whitelist-block';
-            return ctx.send(resp);
+            let resp = await globals.playerController.checkPlayerJoin(postData.identifiers);
+            if(resp.allow){
+                return ctx.send('allow');
+            }else{
+                let msg = resp.reason || 'Access Denied for unknown reason';
+                return ctx.send(msg);
+            }
         } catch (error) {
-            logError(`[whitelistCheck] Database operation failed with error: ${error.message}`);
-            if(GlobalData.verbose) dir(error);
-            return ctx.send('whitelist-error');
+            let msg = `[JoinCheck] Failed with error: ${error.message}`;
+            logError(msg);
+            return ctx.send(msg);
         }
 
     }else{
