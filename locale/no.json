@@ -1,15 +1,15 @@
 {
     "$meta": {
-        "label": "Norwegian Bokmål",
+        "label": "Norwegian (Bokml)",
         "humanizer_language": "no"
     },
     "restarter": {
         "crash_detected": "oppdaget kræsj",
         "partial_crash_warn": "Serveren vil starte på nytt på grunn av delvis kræsj. Vennligst koble fra serveren nå.",
-        "partial_crash_warn_discord": "NB! **%{servername}** skal startes opp på nytt på grunn av et delvis kraæsj.",
+        "partial_crash_warn_discord": "**%{servername}** skal startes opp på nytt på grunn av et delvis kraæsj.",
         "schedule_reason": "et omstart er planlagt kl. %time}",
-        "schedule_warn": "En planlagt omstart av serveren vil skje om %{smart_count} minutter. Vennligst koble fra serveren nå. |||| Et planlagt omstart av serveren vil skje om %{smart_count} minutter.",
-        "schedule_warn_discord": "**%{servername}** har blitt planlagt om å starte på nytt om %{smart_count} minutter. |||| **%{servername}** skal omstartes om %{smart_count} minutter."
+        "schedule_warn": "En planlagt omstart av serveren vil skje om %{smart_count} minutt. Vennligst koble fra serveren nå. |||| Et planlagt omstart av serveren vil skje om %{smart_count} minutter.",
+        "schedule_warn_discord": "**%{servername}** har blitt planlagt om å starte på nytt om %{smart_count} minutt. |||| **%{servername}** skal omstartes om %{smart_count} minutter."
     },
     "server_actions": {
         "restarting": "Serveren omstartes (%{reason}).",
