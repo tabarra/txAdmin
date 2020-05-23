@@ -143,6 +143,7 @@ module.exports = class DiscordBot {
             out.setTitle(cardTitle);
             out.setColor(cardColor);
             out.setDescription(desc);
+            out.setFooter(`Powered by txAdmin v${GlobalData.txAdminVersion}.`);
 
         }else if(message.content.startsWith('/txadmin')){
             //Prepare object
