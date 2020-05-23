@@ -4,13 +4,15 @@ const cloneDeep = require('lodash/cloneDeep');
 const low = require('lowdb');
 const FileAsync = require('lowdb/adapters/FileAsync');
 const { customAlphabet } = require('nanoid');
-const dict51 = require('nanoid-dictionary/nolookalikes');
-const nanoid = customAlphabet(dict51, 10);
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000) };
 const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
+const nanoidAlphabet = "2346789ABCDEFGHJKLMNPQRTUVWXYZ";
+const genActionID = (prefix='U') => { 
+    return prefix.toUpperCase() + customAlphabet(nanoidAlphabet, 3)() + '-' + customAlphabet(nanoidAlphabet, 4)();
+};
 
 
 /**
@@ -253,7 +255,8 @@ module.exports = class PlayerController {
         }
 
         //Saves it to the database
-        let actionID = nanoid();
+        let actionPrefix = (type == 'warn')? 'a' : type[0];
+        let actionID = genActionID(actionPrefix);
         let toDB = {
             id: actionID,
             type,
