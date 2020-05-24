@@ -89,9 +89,9 @@
 - [x] replace `ansi-colors` with `chalk` since they fixed the performance issues
 - [x] re-add playerConnecting the whitelist/ban checking function (lua+intercom+playerController)
 - [x] implement whitelist registration logic
+- [x] block admin kick -> player html usage
 
 - [ ] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
-- [ ] block admin kick -> player html usage
 - [ ] check everything done for xss
 - [ ] test on latest build
 

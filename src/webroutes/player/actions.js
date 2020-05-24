@@ -156,7 +156,7 @@ async function handleKick(ctx) {
     //Prepare and send command
     let cmd;
     if(reason.length){
-        cmd = formatCommand('txaKickID', id, reason);
+        cmd = formatCommand('txaKickID', id, xss(reason));
     }else{
         cmd = formatCommand('txaKickID', id);
     }
@@ -261,9 +261,9 @@ async function handleBan(ctx) {
     //Prepare and send command
     let msg;
     if(expiration !== false){
-        msg = `You have been banned for "${times[duration].label}" with reason: ${reason} (${ctx.session.auth.username})`;
+        msg = `You have been banned for "${times[duration].label}" with reason: ${xss(reason)} (${ctx.session.auth.username})`;
     }else{
-        msg = `You have been permanently banned for: ${reason} (${ctx.session.auth.username})`;
+        msg = `You have been permanently banned for: ${xss(reason)} (${ctx.session.auth.username})`;
     }
     let cmd = formatCommand('txaDropIdentifiers', identifiers.join(';'), msg);
     ctx.utils.appendLog(cmd);
