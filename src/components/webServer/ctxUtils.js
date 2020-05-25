@@ -13,7 +13,7 @@ const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'un
 const getRenderErrorText = (view, error, data) => {
     logError(`Error rendering ${view}.`);
     if(GlobalData.verbose) dir(error)
-    if(!anyUndefined(data.discord, data.discord.token)) data.discord.token = '[redacted]';
+    if(!isUndefined(data.discord) && !isUndefined(data.discord.token)) data.discord.token = '[redacted]';
     out = `<pre>\n`;
     out += `Error rendering '${view}'.\n`;
     out += `Message: ${error.message}\n`;
