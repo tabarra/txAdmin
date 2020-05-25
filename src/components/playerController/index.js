@@ -58,6 +58,7 @@ module.exports = class PlayerController {
         this.config.whitelistRejectionMessage = `You are not yet whitelisted in this server.
             Please join <a href="http://discord.gg/example">http://discord.gg/example</a>.
             <strong>Your ID: <id></strong>`;
+        this.config.wipePendingWLOnStart = false;
 
         //Vars
         this.dbo = null;
@@ -123,12 +124,22 @@ module.exports = class PlayerController {
                 pendingWL: []
             }).write();
             // await this.dbo.set('players', []).write(); //DEBUG
-            await this.dbo.set('pendingWL', []).write();
+            if(this.config.wipePendingWLOnStart) await this.dbo.set('pendingWL', []).write();
         } catch (error) {
             logError(`Failed to load database file '${dbPath}'`);
             if(GlobalData.verbose) dir(error);
             process.exit();
         }
+    }
+
+
+    //================================================================
+    /**
+     * Returns the entire lowdb object. Please be careful with it :)
+     * @returns {object} lodash database
+     */
+    getDB(){
+        return this.dbo;
     }
 
 
@@ -279,7 +290,7 @@ module.exports = class PlayerController {
 
             //Check whitelist
             if(this.config.onJoinCheck.whitelist){
-                let wl = hist.find((a) => a.type = 'whitelist');
+                let wl = hist.find((a) => a.type == 'whitelist');
                 if(!wl){
                     //Get license
                     let license = idArray.find((id) => id.substring(0, 8) == "license:");
