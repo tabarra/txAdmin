@@ -112,7 +112,8 @@ module.exports = class ConfigVault {
                 healthCheck: {
                     failThreshold: (cfg.monitor.healthCheck)? toDefault(cfg.monitor.healthCheck.failThreshold, null) : null,
                     failLimit: (cfg.monitor.healthCheck)? toDefault(cfg.monitor.healthCheck.failLimit, null) : null,
-                }
+                },
+		disableChatMessages: toDefault(cfg.monitor.disableChatMessages, null)
             };
             out.authenticator = {
                 refreshInterval: toDefault(cfg.authenticator.refreshInterval, null), //not in template
@@ -174,6 +175,7 @@ module.exports = class ConfigVault {
             cfg.monitor.heartBeat.failLimit = parseInt(cfg.monitor.heartBeat.failLimit) || 45;
             cfg.monitor.healthCheck.failThreshold = parseInt(cfg.monitor.healthCheck.failThreshold) || 10;
             cfg.monitor.healthCheck.failLimit = parseInt(cfg.monitor.healthCheck.failLimit) || 300;
+            cfg.monitor.disableChatMessages = (cfg.monitor.disableChatMessages == 'true' || cfg.monitor.disableChatMessages == true);
 
             //Authenticator
             cfg.authenticator.refreshInterval = parseInt(cfg.authenticator.refreshInterval) || 15000; //not in template

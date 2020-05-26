@@ -137,7 +137,9 @@ module.exports = class Monitor {
                 );
             }else if(action.messages){
                 globals.discordBot.sendAnnouncement(action.messages.discord);
-                globals.fxRunner.srvCmd(`txaBroadcast "txAdmin" "${action.messages.chat}"`);
+                if(this.config.disableChatMessages == false){
+                    globals.fxRunner.srvCmd(`txaBroadcast "txAdmin" "${action.messages.chat}"`);
+                }
             }
         } catch (error) {}
     }

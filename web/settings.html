@@ -211,6 +211,20 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label for="frmMonitor-chatMessages" class="col-sm-3 col-form-label">Disable Chat Messages</label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMonitor-chatMessages"
+                                        {{monitor.disableChatMessages|undef}} {{readOnly|isDisabled}}>
+                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Check this if you want to disable broadcast chat messages in game before each scheduled restart.
+                                </span>
+                            </div>
+                        </div>
+
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-primary" type="submit" id="frmMonitor-save" {{readOnly|isDisabled}}>
                                 <i class="icon-check"></i> Save Monitor/Restarter Settings
@@ -402,7 +416,8 @@
     //============================================== Monitor Settings
     $('#frmMonitor-save').click(function () {
         let data = {
-            schedule: $('#frmMonitor-schedule').val().trim()
+            schedule: $('#frmMonitor-schedule').val().trim(),
+            disableChatMessages: ($('#frmMonitor-chatMessages').is(':checked') === true)
         }
         var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
