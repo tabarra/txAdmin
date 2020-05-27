@@ -186,8 +186,18 @@ module.exports = class PlayerController {
     //================================================================
     /**
      * Processes the active players for playtime/sessiontime and sets to the database
+     * 
+     * TODO: If this function is called multiple times within the first 15 seconds of an sessionTime minute, 
+     *          it will keep adding playTime
+     *       Solution: keep an property for tsLastTimeIncremment, and wait for it to be >=60 before playtime++ and reset the ts
+     * NOTE: I'm only saving notes every  15 seconds or when the player disconnects.
      */
     async processActive(){
+        const checkMinuteElapsed = (time) => {
+            return time > 15 && time%60 < 15;
+            // return time > 15 && Math.floor(time/15) % 4 == 0;
+        }
+
         try {
             this.activePlayers.forEach(async p => {
                 let sessionTime = now() - p.tsConnected;
@@ -218,7 +228,7 @@ module.exports = class PlayerController {
                     if(GlobalData.verbose) logOk(`Adding '${p.name}' to players database.`);
                     
                 //If its time to update this player's play time
-                }else if(!p.isTmp && Math.round(sessionTime/4) % 4 == 0){
+                }else if(!p.isTmp && checkMinuteElapsed(sessionTime)){
                     this.writePending = true;
                     p.playTime += 1; 
                     await this.dbo.get("players")
@@ -451,6 +461,9 @@ module.exports = class PlayerController {
     /**
      * Saves a player notes and returns true/false
      * Usage example: setPlayerNote('xxx', 'super awesome player', 'tabarra')
+     * 
+     * NOTE: Setting writePending here won't do anything. Don't try it...
+     * 
      * @param {string} license
      * @param {string} note
      * @param {string} author
@@ -475,7 +488,6 @@ module.exports = class PlayerController {
                 lastAdmin: author,
                 tsLastEdit: now()
             }
-            this.writePending = true;
             
             return true;
         } catch (error) {
