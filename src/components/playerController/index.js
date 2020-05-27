@@ -96,10 +96,14 @@ module.exports = class PlayerController {
             await this.processActive();
 
             try {
+                let timeStart = new Date();
                 if(this.writePending){
                     await this.dbo.write();
                     this.writePending = false;
-                    // if(GlobalData.verbose) logOk('Writing DB'); //DEBUG
+                    let timeElapsed = new Date() - timeStart;
+                    if(GlobalData.verbose) logOk(`DB file saved, took ${timeElapsed}ms.`); //DEBUG
+                }else{
+                    // if(GlobalData.verbose) logOk('Nothing to write to DB file');
                 }
             } catch (error) {
                 logError(`Failed to save players database with error: ${error.message}`);
@@ -129,12 +133,14 @@ module.exports = class PlayerController {
                 actions: [],
                 pendingWL: []
             }).write();
+
             const importedVersion = await dbo.get('version').value();
             if(importedVersion !== this.currentDatabaseVersion){
                 this.dbo = await this.migrateDB(dbo, importedVersion);
             }else{
                 this.dbo = dbo;
             }
+
             // await this.dbo.set('players', []).write(); //DEBUG
             if(this.config.wipePendingWLOnStart) await this.dbo.set('pendingWL', []).write();
         } catch (error) {

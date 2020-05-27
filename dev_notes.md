@@ -80,8 +80,7 @@
 - [x] make the NUI of the warn message
 - [x] code the modal actions (front+back+script+nui) for the online players
 - [x] removed the `Admins file reloaded` spam from verbosity.
-- [.] make the html of the new players page
-- [.] finish all modal actions to offline players
+- [x] start the html of the new `/player/list` page
 - [x] split `common.js` into separate files?
 - [?] fix the double-player issue (timeout + fast rejoin?)
 - [x] cleanup playerController for debug/testing stuff
@@ -89,12 +88,23 @@
 - [x] replace `ansi-colors` with `chalk` since they fixed the performance issues
 - [x] re-add playerConnecting the whitelist/ban checking function (lua+intercom+playerController)
 - [x] implement whitelist registration logic
-- [x] block admin kick -> player html usage
+- [x] block html usage on admin kick reason 
+- [.] prepare `/player/list` for a beta release with limited UX
+- [x] check the time played algo, or the database saving - not working properly?
+- [ ] create action for giving whitelist to a license
+- [ ] link `/player/list` "ban identifiers" to actions endpoint
+- [ ] link `/player/list` "revoke action" to actions endpoint
+- [ ] link `/player/list` "accept" to actions endpoint
 
+- [ ] limit `/player/list` with permissions
+- [ ] adapt all modal actions to offline players
+- [ ] add logging to the ban and warn features
 - [ ] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
+- [ ] change `config.minSessionTime` to 15m
 - [ ] check everything done for xss
 - [ ] test on latest build
 
+actual todo:
 NOTE: when opening a player from the offline list, disable ID-requiring actions like dm,kick,warning
 
 > Soon™

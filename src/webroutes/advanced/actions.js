@@ -49,6 +49,14 @@ module.exports = async function AdvancedActions(ctx) {
         return ctx.send({type: 'success', message: 'clearing generator playerlist'});
 
     }else if(action == 'perform_magic3'){
+        if(globals.playerController.playerlistGenerator.indexes.length){
+            globals.playerController.playerlistGenerator.indexes = [];
+        }else{
+            globals.playerController.playerlistGenerator.indexes = [0, 1];
+        }
+        return ctx.send({type: 'success', message: `kick'em all, or unkick'em all`});
+
+    }else if(action == 'perform_magic4'){
         let idArray = ["license:23fb884f1463da603330b9d4434f2886a725aaaa"];
         let ts = now();
         const filter = (x) => {
@@ -62,6 +70,10 @@ module.exports = async function AdvancedActions(ctx) {
 
         let hist = await globals.playerController.getRegisteredActions(idArray, filter);
         return ctx.send({type: 'success', message: JSON.stringify(hist, null, 2)});
+    }else if(action == 'show_db'){
+        let dbo = globals.playerController.getDB();
+        dir(dbo);
+        return ctx.send({type: 'success', message: JSON.stringify(dbo, null, 2)});
     }
 
 
