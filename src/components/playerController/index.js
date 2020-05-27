@@ -61,6 +61,7 @@ module.exports = class PlayerController {
         this.config.wipePendingWLOnStart = false;
 
         //Vars
+        this.currentDatabaseVersion = 1;
         this.dbo = null;
         this.activePlayers = [];
         this.writePending = false;
@@ -87,6 +88,11 @@ module.exports = class PlayerController {
 
         //Cron functions
         setInterval(async () => {
+            //Check if the database is ready
+            if(this.dbo === null){
+                if(GlobalData.verbose) logWarn('Database still not ready for processing.');
+                return;
+            }
             await this.processActive();
 
             try {
@@ -116,13 +122,19 @@ module.exports = class PlayerController {
             //     serialize: JSON.stringify, 
             //     deserialize: JSON.parse
             // });
-            this.dbo = await low(adapterAsync);
-            await this.dbo.defaults({
-                version: 0,
+            let dbo = await low(adapterAsync);
+            await dbo.defaults({
+                version: this.currentDatabaseVersion,
                 players: [],
                 actions: [],
                 pendingWL: []
             }).write();
+            const importedVersion = await dbo.get('version').value();
+            if(importedVersion !== this.currentDatabaseVersion){
+                this.dbo = await this.migrateDB(dbo, importedVersion);
+            }else{
+                this.dbo = dbo;
+            }
             // await this.dbo.set('players', []).write(); //DEBUG
             if(this.config.wipePendingWLOnStart) await this.dbo.set('pendingWL', []).write();
         } catch (error) {
@@ -130,6 +142,34 @@ module.exports = class PlayerController {
             if(GlobalData.verbose) dir(error);
             process.exit();
         }
+    }
+
+
+    //================================================================
+    /**
+     * Handles the migration of the database
+     * @param {object} dbo 
+     * @param {string} oldVersion 
+     * @returns {object} lodash database
+     */
+    async migrateDB(dbo, oldVersion){
+        if(typeof oldVersion !== 'number'){
+            logError(`Your players database version is not a number!`);
+            process.exit();
+        }
+        if(oldVersion < 1){
+            logWarn(`Migrating your players database from v${oldVersion} to v1. Wiping all the data.`);
+            await dbo.set('version', this.currentDatabaseVersion)
+                .set('players', [])
+                .set('actions', [])
+                .set('pendingWL', [])
+                .write();
+        }else{
+            logError(`Your players database is on v${oldVersion}, which is different from this version of txAdmin.`);
+            logError(`Since there is currently no migration method ready for the migration, txAdmin will attempt to use it anyways.`);
+            logError(`Please make sure your txAdmin is on the most updated version!`);
+        }
+        return dbo;
     }
 
 
