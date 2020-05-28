@@ -148,18 +148,16 @@ async function handleKick(ctx) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
     let id = ctx.request.body.id;
-    let reason = ctx.request.body.reason.trim();
+    let reason = ctx.request.body.reason.trim() || 'no reason provided';
 
     //Check permissions
     if(!ensurePermission(ctx, 'commands.kick')) return false;
 
     //Prepare and send command
-    let cmd;
-    if(reason.length){
-        cmd = formatCommand('txaKickID', id, xss(reason));
-    }else{
-        cmd = formatCommand('txaKickID', id);
-    }
+    let message = `You have been kicked from this server. <br>`;
+    message += `<b>Kicked for:</b> ${xss(reason)} <br>`;
+    message += `<b>Kicked by:</b> ${xss(ctx.session.auth.username)}`;
+    let cmd = formatCommand('txaKickID', id, message);
     ctx.utils.appendLog(cmd);
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);
