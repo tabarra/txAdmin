@@ -217,16 +217,25 @@ async function handleBan(ctx) {
     if(anyUndefined(
             ctx.request.body,
             ctx.request.body.duration,
+            ctx.request.body.reference,
             ctx.request.body.reason
-        ) ||
-        !Array.isArray(ctx.request.body.identifiers) || 
-        !ctx.request.body.identifiers.length
+        )
     ){
         return ctx.send({type: 'danger', message: 'Missing parameters or invalid identifiers.'});
     }
-    let identifiers = ctx.request.body.identifiers;
+    let reference = ctx.request.body.reference;
     let duration = ctx.request.body.duration;
     let reason = ctx.request.body.reason.trim();
+
+    //Converting ID to int
+    if(typeof reference === 'string'){
+        let intID = parseInt(reference);
+        if(isNaN(intID)){
+            return ctx.send({type: 'danger', message: 'You must send at least one identifier.'});
+        }else{
+            reference = intID;
+        }
+    }
 
     //Calculating expiration
     let expiration;
@@ -247,23 +256,30 @@ async function handleBan(ctx) {
     }
 
     //Check permissions
-    if(!ensurePermission(ctx, 'commands.ban')) return false;
+    if(!ensurePermission(ctx, 'commands.ban')) return ctx.send({type: 'danger', message: 'permission denied'});
 
     //Register action (and checks if player is online)
     try {
-        let actionID = await globals.playerController.registerAction(identifiers, 'ban', ctx.session.auth.username, reason, expiration);
+        let actionID = await globals.playerController.registerAction(reference, 'ban', ctx.session.auth.username, reason, expiration);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
 
     //Prepare and send command
-    let msg;
-    if(expiration !== false){
-        msg = `You have been banned for "${times[duration].label}" with reason: ${xss(reason)} (${ctx.session.auth.username})`;
+    const durationMessage = (expiration !== false)? times[duration].label : 'permanent';
+    let message = `You have been banned from this server. <br>`;
+    message += `<b>Ban duration:</b> ${durationMessage} <br>`;
+    message += `<b>Banned for:</b> ${xss(reason)} <br>`;
+    message += `<b>Banned by:</b> ${xss(ctx.session.auth.username)}`;
+
+    let cmd;
+    if(Array.isArray(reference)){
+        cmd = formatCommand('txaDropIdentifiers', reference.join(';'), message);
+    }else if(Number.isInteger(reference)){
+        cmd = formatCommand('txaKickID', reference, message);
     }else{
-        msg = `You have been permanently banned for: ${xss(reason)} (${ctx.session.auth.username})`;
+        return ctx.send({type: 'danger', message: `<b>Error:</b> unknown reference type`});
     }
-    let cmd = formatCommand('txaDropIdentifiers', identifiers.join(';'), msg);
     ctx.utils.appendLog(cmd);
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);
