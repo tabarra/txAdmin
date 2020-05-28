@@ -10,6 +10,18 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 const now = () => { return Math.round(Date.now() / 1000) };
 const nanoidAlphabet = "2346789ABCDEFGHJKLMNPQRTUVWXYZ";
 
+//Consts
+const validActions = ['ban', 'warn', 'whitelist']
+const currentDatabaseVersion = 1;
+const validIdentifiers = {
+    steam: /steam:1100001[0-9A-Fa-f]{8}/,
+    license: /license:[0-9A-Fa-f]{40}/,
+    xbl: /xbl:\d{14,20}/,
+    live: /live:\d{14,20}/,
+    discord: /discord:\d{7,20}/,
+    fivem: /fivem:\d{1,8}/,
+}
+
 
 /**
  * Provide a central database for players, as well as assist with access control.
@@ -61,18 +73,9 @@ module.exports = class PlayerController {
         this.config.wipePendingWLOnStart = false;
 
         //Vars
-        this.currentDatabaseVersion = 1;
         this.dbo = null;
         this.activePlayers = [];
         this.writePending = false;
-        this.validIdentifiers = {
-            steam: /steam:1100001[0-9A-Fa-f]{8}/,
-            license: /license:[0-9A-Fa-f]{40}/,
-            xbl: /xbl:\d{14,20}/,
-            live: /live:\d{14,20}/,
-            discord: /discord:\d{7,20}/,
-            fivem: /fivem:\d{1,8}/,
-        }
 
         //Running playerlist generator
         if(
@@ -128,14 +131,14 @@ module.exports = class PlayerController {
             // });
             let dbo = await low(adapterAsync);
             await dbo.defaults({
-                version: this.currentDatabaseVersion,
+                version: currentDatabaseVersion,
                 players: [],
                 actions: [],
                 pendingWL: []
             }).write();
 
             const importedVersion = await dbo.get('version').value();
-            if(importedVersion !== this.currentDatabaseVersion){
+            if(importedVersion !== currentDatabaseVersion){
                 this.dbo = await this.migrateDB(dbo, importedVersion);
             }else{
                 this.dbo = dbo;
@@ -165,7 +168,7 @@ module.exports = class PlayerController {
         }
         if(oldVersion < 1){
             logWarn(`Migrating your players database from v${oldVersion} to v1. Wiping all the data.`);
-            await dbo.set('version', this.currentDatabaseVersion)
+            await dbo.set('version', currentDatabaseVersion)
                 .set('players', [])
                 .set('actions', [])
                 .set('pendingWL', [])
@@ -320,7 +323,7 @@ module.exports = class PlayerController {
         if(typeof playerName !== 'string') throw new Error('playerName should be an string.');
         if(!Array.isArray(idArray)) throw new Error('Identifiers should be an array with at least 1 identifier.');
         idArray = idArray.filter((id)=>{
-            return Object.values(this.validIdentifiers).some(vf => vf.test(id));
+            return Object.values(validIdentifiers).some(vf => vf.test(id));
         });
         
         try {
@@ -402,7 +405,7 @@ module.exports = class PlayerController {
         if(Array.isArray(reference)){
             if(!reference.length) throw new Error('You must send at least one identifier');
             let invalids = reference.filter((id)=>{
-                return (typeof id !== 'string') || !Object.values(this.validIdentifiers).some(vf => vf.test(id));
+                return (typeof id !== 'string') || !Object.values(validIdentifiers).some(vf => vf.test(id));
             });
             if(invalids.length){
                 throw new Error('Invalid identifiers: ' + invalids.join(', '));
@@ -411,11 +414,12 @@ module.exports = class PlayerController {
             }
         }else if(typeof reference == 'number'){
             let player = this.activePlayers.find((p) => p.id === reference);
-            if(!player) throw new Error('player disconnected.');
-            if(!player.identifiers.length) throw new Error('player has no identifiers.'); //sanity check
+            if(!player) throw new Error('Player disconnected.');
+            if(!player.identifiers.length) throw new Error('Player has no identifiers.'); //sanity check
             identifiers = player.identifiers;
+            playerName = player.name;
         }else{
-            throw new Error(`Reference expected to be an array of strings or id. Received '${typeof target}'.`)
+            throw new Error(`Reference expected to be an array of strings or ID int. Received '${typeof target}'.`)
         }
 
         //Saves it to the database
@@ -426,8 +430,9 @@ module.exports = class PlayerController {
             type,
             author,
             reason,
-            expiration: (typeof expiration == 'number')? expiration : false,
-            timestamp: now(),
+            expiration,
+            timestamp,
+            playerName,
             identifiers,
             revocation: {
                 timestamp: null,
@@ -634,7 +639,7 @@ module.exports = class PlayerController {
                 if(!activePlayerLicenses.includes(player.license)){
                     //Filter to only valid identifiers
                     player.identifiers = player.identifiers.filter((id)=>{
-                        return Object.values(this.validIdentifiers).some(vf => vf.test(id));
+                        return Object.values(validIdentifiers).some(vf => vf.test(id));
                     });
                     //Check if he is already on the database
                     let dbPlayer = await this.getPlayer(license);
