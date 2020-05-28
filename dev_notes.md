@@ -91,7 +91,8 @@
 - [x] block html usage on admin kick reason 
 - [.] prepare `/player/list` for a beta release with limited UX
 - [x] check the time played algo, or the database saving - not working properly?
-- [ ] create action for giving whitelist to a license
+- [x] add playerName to ban/warn action db
+- [ ] create action for giving whitelist to a license (don't forget to set playerName)
 - [ ] link `/player/list` "ban identifiers" to actions endpoint
 - [ ] link `/player/list` "revoke action" to actions endpoint
 - [ ] link `/player/list` "accept" to actions endpoint

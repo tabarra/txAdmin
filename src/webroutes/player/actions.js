@@ -186,7 +186,7 @@ async function handleWarning(ctx) {
 
     //Register action (and checks if player is online)
     try {
-        await globals.playerController.registerAction(id, 'warn', ctx.session.auth.username, reason, false);
+        await globals.playerController.registerAction(id, 'warn', ctx.session.auth.username, reason);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }

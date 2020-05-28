@@ -42,6 +42,7 @@ const validIdentifiers = {
  *  - `actions`
  *      - id [X???-????]
  *      - identifiers [array]
+ *      - playerName (player name, or false to imply it was performed on the identifiers only)
  *      - type [ban|warn|whitelist]
  *      - author (the admin name)
  *      - reason
@@ -203,8 +204,7 @@ module.exports = class PlayerController {
      */
     async processActive(){
         const checkMinuteElapsed = (time) => {
-            return time > 15 && time%60 < 15;
-            // return time > 15 && Math.floor(time/15) % 4 == 0;
+            return time > 15 && time % 60 < 15;
         }
 
         try {
@@ -397,9 +397,18 @@ module.exports = class PlayerController {
      * @param {string} author admin name
      * @param {string} reason reason
      * @param {number|false} expiration reason
+     * @param {string|false} playerName the name of the player (for UX purposes only)
      * @returns {string} action ID, or throws if on error or ID not found
      */
-    async registerAction(reference, type, author, reason, expiration){
+    async registerAction(reference, type, author, reason, expiration = false, playerName = false){
+        //Sanity check
+        const timestamp = now();
+        if(!validActions.includes(type)) throw new Error('Invalid action type.');
+        if(typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
+        if(typeof reason !== 'string' || !reason.length) throw new Error('Invalid reason.');
+        if(expiration !== false && (typeof expiration !== 'number' || expiration < timestamp)) throw new Error('Invalid expiration.');
+        if(playerName !== false && (typeof playerName !== 'string' || !playerName.length)) throw new Error('Invalid playerName.');
+
         //Processes target reference
         let identifiers;
         if(Array.isArray(reference)){
