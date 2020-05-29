@@ -87,7 +87,8 @@
             <div class="card-body">
                 <div class="form-group row">
                     <label for="frmAddBan-identifiers" class="col-sm-3 col-form-label">
-                        Identifier(s)
+                        Identifier(s) <br>
+                        <small class="text-danger">(required)</small>
                     </label>
                     <div class="col-sm-9">
                         <input type="text" class="form-control" id="frmAddBan-identifiers"
@@ -101,7 +102,8 @@
 
                 <div class="form-group row">
                     <label for="frmAddBan-reason" class="col-sm-3 col-form-label">
-                        Reason
+                        Reason <br>
+                        <small class="text-danger">(required)</small>
                     </label>
                     <div class="col-sm-9">
                         <input type="text" class="form-control" id="frmAddBan-reason" maxlength="256"
@@ -121,7 +123,7 @@
                             <option value="t2d">2 days</option>
                             <option value="t1w">1 week</option>
                             <option value="t2w">2 weeks</option>
-                            <option value="perma" class="font-weight-bold" selected>permanent</option>
+                            <option value="perma" class="font-weight-bold text-danger" selected>permanent</option>
                         </select>
                         <span class="form-text text-muted">
                             <b>Note:</b> The ban will be applied to all identifiers.
@@ -323,4 +325,47 @@
             }
         });
     }
+
+    //Add ban button click
+    document.getElementById('frmAddBan-button').addEventListener('click', function (ev) {
+        let frmIdentifiers = document.getElementById('frmAddBan-identifiers').value.trim();
+        let data = {
+            reason: document.getElementById('frmAddBan-reason').value.trim(),
+            duration: document.getElementById('frmAddBan-duration').value.trim(),
+        }
+        if (!frmIdentifiers.length || !data.reason.length) {
+            let notify = $.notify({ message: 'The identifiers and reason fields are required.' }, { type: 'warning' });
+            return;
+        }
+        if (data.reason.length < 8) {
+            let notify = $.notify({ message: 'The reason must be at least 8 characters.' }, { type: 'warning' });
+            return;
+        }
+        data.reference = frmIdentifiers.split(/[,;'"\s]+/).filter(x => x.length);
+        let notify = $.notify({ message: '<p class="text-center">Banning...</p>' }, {});
+
+        $.ajax({
+            type: "POST",
+            url: '/player/ban',
+            timeout: timeoutLong,
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+                if(data.refresh === true){
+                    window.location.reload(true);
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    });
+
+    
 </script>

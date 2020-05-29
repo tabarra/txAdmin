@@ -94,7 +94,7 @@
 - [x] add playerName to ban/warn action db
 - [x] create action for giving whitelist to a license (don't forget to set playerName)
 - [x] link `/player/list` "accept wl" to actions endpoint
-- [ ] link `/player/list` "ban identifiers" to actions endpoint
+- [x] link `/player/list` "ban identifiers" to actions endpoint
 - [ ] link `/player/list` "revoke action" to actions endpoint
 
 - [ ] limit `/player/list` with permissions
