@@ -80,8 +80,7 @@
 - [x] make the NUI of the warn message
 - [x] code the modal actions (front+back+script+nui) for the online players
 - [x] removed the `Admins file reloaded` spam from verbosity.
-- [.] make the html of the new players page
-- [.] finish all modal actions to offline players
+- [x] start the html of the new `/player/list` page
 - [x] split `common.js` into separate files?
 - [?] fix the double-player issue (timeout + fast rejoin?)
 - [x] cleanup playerController for debug/testing stuff
@@ -89,15 +88,28 @@
 - [x] replace `ansi-colors` with `chalk` since they fixed the performance issues
 - [x] re-add playerConnecting the whitelist/ban checking function (lua+intercom+playerController)
 - [x] implement whitelist registration logic
-- [x] block admin kick -> player html usage
+- [x] block html usage on admin kick reason 
+- [x] prepare `/player/list` for a beta release with limited UX
+- [x] check the time played algo, or the database saving - not working properly?
+- [x] add playerName to ban/warn action db
+- [x] create action for giving whitelist to a license (don't forget to set playerName)
+- [x] link `/player/list` "accept wl" to actions endpoint
+- [x] link `/player/list` "ban identifiers" to actions endpoint
+- [ ] link `/player/list` "revoke action" to actions endpoint
 
+- [ ] limit `/player/list` with permissions
+- [ ] apply the new action log html to the modal
+- [ ] add logging to the ban, warn and whitelist features
 - [ ] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
+- [ ] change `config.minSessionTime` to 15m
 - [ ] check everything done for xss
 - [ ] test on latest build
 
-NOTE: when opening a player from the offline list, disable ID-requiring actions like dm,kick,warning
+FIXME: when doing the update announcement, don't forget to mention that the permission names changed
 
 > Soon™
+- [ ] adapt all modal actions to offline players
+- [ ] check why scheduled restarts are not kicking players
 - [ ] adapt kick messages to use some basic HTML for formatting
 - [ ] change Server Log page to use the new modal
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
@@ -107,6 +119,8 @@ NOTE: when opening a player from the offline list, disable ID-requiring actions 
 - [ ] add a commend system?
 - [ ] add stopwatch (or something) to the db functions and print on `/diagnostics`
 - [ ] change webserver token every time the server starts
+
+NOTE: when opening a player from the offline list, disable ID-requiring actions like dm,kick,warning
 
 > Soon™®
 - [ ] tweak dashboard update checker behavior

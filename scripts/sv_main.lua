@@ -123,17 +123,16 @@ end
 
 -- Kick specific player via server ID
 function txaKickID(source, args)
-    if args[1] ~= nil then
-        if args[2] == nil then
-            args[2] = 'no reason provided'
-        else
-            args[2] = unDeQuote(args[2])
-        end
-        log("Kicking #"..args[1].." with reason: "..args[2])
-        DropPlayer(args[1], "Kicked for: " .. args[2])
-    else
-        logError('Invalid arguments for txaKickID')
+    if #args ~= 2 then
+        return logError("Invalid arguments for txaKickID")
     end
+    local playerID, quotedMessage = table.unpack(args)
+
+    local dropMessage = 'Kicked with no reason provided.'
+    if quotedMessage ~= nil then dropMessage = unDeQuote(quotedMessage) end
+
+    log("Kicking #"..playerID.." with reason: "..dropMessage)
+    DropPlayer(playerID, dropMessage)
     CancelEvent()
 end
 

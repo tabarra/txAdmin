@@ -214,6 +214,10 @@ function showPlayer(license) {
             if (data.logout) {
                 window.location = '/auth?logout';
                 return;
+            }else if(data.type == 'danger'){
+                modPlayer.Message.innerText = data.message;
+                modPlayer.Title.innerText = 'Error';
+                return;
             }
             modPlayer.curr.id = data.id;
             modPlayer.curr.license = data.license;
@@ -428,7 +432,8 @@ function banPlayer() {
 
     let data = {
         duration: modPlayer.Ban.duration.value,
-        identifiers: modPlayer.curr.identifiers,
+        // reference: modPlayer.curr.identifiers,
+        reference: modPlayer.curr.id,
         reason: reason
     }
     $.ajax({

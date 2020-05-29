@@ -25,8 +25,8 @@ module.exports = async function Dashboard(ctx) {
         versionData: getVersionData(),
         chartData: getChartData(globals.monitor.timeSeries.get()),
         perms:{
-            commandMessage: getPermDisable('commands.message'),
-            commandKick: getPermDisable('commands.kick'),
+            commandMessage: getPermDisable('players.message'),
+            commandKick: getPermDisable('players.kick'),
             commandResources: getPermDisable('commands.resources'),
             controls: getPermDisable('control.server'),
             controlsClass: (ctx.utils.checkPermission('control.server', modulename, false))? 'danger' : 'secondary'

@@ -21,6 +21,6 @@ client_scripts {
 ui_page 'scripts/warn.html'
 files {
     'scripts/warn.html',
-    'scripts/warning_open.mp3',
-    'scripts/warning_pulse.mp3',
+    'scripts/assets/warning_open.mp3',
+    'scripts/assets/warning_pulse.mp3',
 }

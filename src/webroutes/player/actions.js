@@ -52,6 +52,8 @@ module.exports = async function PlayerActions(ctx) {
         return await handleWarning(ctx);
     }else if(action === 'ban'){
         return await handleBan(ctx);
+    }else if(action === 'whitelist'){
+        return await handleWhitelist(ctx);
     }else if(action === 'revoke_action'){
         return await handleRevokeAction(ctx);
     }else{
@@ -123,7 +125,7 @@ async function handleMessage(ctx) {
     let message = ctx.request.body.message.trim();
 
     //Check permissions
-    if(!ensurePermission(ctx, 'commands.message')) return false;
+    if(!ensurePermission(ctx, 'players.message')) return false;
 
     //Prepare and send command
     let cmd = formatCommand('txaSendDM', id, ctx.session.auth.username, message);
@@ -148,18 +150,16 @@ async function handleKick(ctx) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
     let id = ctx.request.body.id;
-    let reason = ctx.request.body.reason.trim();
+    let reason = ctx.request.body.reason.trim() || 'no reason provided';
 
     //Check permissions
-    if(!ensurePermission(ctx, 'commands.kick')) return false;
+    if(!ensurePermission(ctx, 'players.kick')) return false;
 
     //Prepare and send command
-    let cmd;
-    if(reason.length){
-        cmd = formatCommand('txaKickID', id, xss(reason));
-    }else{
-        cmd = formatCommand('txaKickID', id);
-    }
+    let message = `You have been kicked from this server. <br>`;
+    message += `<b>Kicked for:</b> ${xss(reason)} <br>`;
+    message += `<b>Kicked by:</b> ${xss(ctx.session.auth.username)}`;
+    let cmd = formatCommand('txaKickID', id, message);
     ctx.utils.appendLog(cmd);
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);
@@ -184,11 +184,11 @@ async function handleWarning(ctx) {
     let reason = ctx.request.body.reason.trim();
 
     //Check permissions
-    if(!ensurePermission(ctx, 'commands.warn')) return false;
+    if(!ensurePermission(ctx, 'players.warn')) return false;
 
     //Register action (and checks if player is online)
     try {
-        await globals.playerController.registerAction(id, 'warn', ctx.session.auth.username, reason, false);
+        await globals.playerController.registerAction(id, 'warn', ctx.session.auth.username, reason);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
@@ -219,16 +219,25 @@ async function handleBan(ctx) {
     if(anyUndefined(
             ctx.request.body,
             ctx.request.body.duration,
+            ctx.request.body.reference,
             ctx.request.body.reason
-        ) ||
-        !Array.isArray(ctx.request.body.identifiers) || 
-        !ctx.request.body.identifiers.length
+        )
     ){
         return ctx.send({type: 'danger', message: 'Missing parameters or invalid identifiers.'});
     }
-    let identifiers = ctx.request.body.identifiers;
+    let reference = ctx.request.body.reference;
     let duration = ctx.request.body.duration;
     let reason = ctx.request.body.reason.trim();
+
+    //Converting ID to int
+    if(typeof reference === 'string'){
+        let intID = parseInt(reference);
+        if(isNaN(intID)){
+            return ctx.send({type: 'danger', message: 'You must send at least one identifier.'});
+        }else{
+            reference = intID;
+        }
+    }
 
     //Calculating expiration
     let expiration;
@@ -249,23 +258,30 @@ async function handleBan(ctx) {
     }
 
     //Check permissions
-    if(!ensurePermission(ctx, 'commands.ban')) return false;
+    if(!ensurePermission(ctx, 'players.ban')) return false;
 
     //Register action (and checks if player is online)
     try {
-        let actionID = await globals.playerController.registerAction(identifiers, 'ban', ctx.session.auth.username, reason, expiration);
+        let actionID = await globals.playerController.registerAction(reference, 'ban', ctx.session.auth.username, reason, expiration);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
 
     //Prepare and send command
-    let msg;
-    if(expiration !== false){
-        msg = `You have been banned for "${times[duration].label}" with reason: ${xss(reason)} (${ctx.session.auth.username})`;
+    const durationMessage = (expiration !== false)? times[duration].label : 'permanent';
+    let message = `You have been banned from this server. <br>`;
+    message += `<b>Ban duration:</b> ${durationMessage} <br>`;
+    message += `<b>Banned for:</b> ${xss(reason)} <br>`;
+    message += `<b>Banned by:</b> ${xss(ctx.session.auth.username)}`;
+
+    let cmd;
+    if(Array.isArray(reference)){
+        cmd = formatCommand('txaDropIdentifiers', reference.join(';'), message);
+    }else if(Number.isInteger(reference)){
+        cmd = formatCommand('txaKickID', reference, message);
     }else{
-        msg = `You have been permanently banned for: ${xss(reason)} (${ctx.session.auth.username})`;
+        return ctx.send({type: 'danger', message: `<b>Error:</b> unknown reference type`});
     }
-    let cmd = formatCommand('txaDropIdentifiers', identifiers.join(';'), msg);
     ctx.utils.appendLog(cmd);
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);
@@ -277,6 +293,35 @@ async function handleBan(ctx) {
  * Handle Revoke Action
  * @param {object} ctx
  */
+async function handleWhitelist(ctx) {
+    //Checking request
+    if(anyUndefined(ctx.request.body.reference)){
+        return ctx.send({type: 'danger', message: 'Invalid request.'});
+    }
+    let reference = ctx.request.body.reference.trim();
+
+    //Check permissions
+    if(!ensurePermission(ctx, 'players.whitelist')) return false;
+
+    //Whitelist reference
+    try {
+        let actionID = await globals.playerController.approveWhitelist(reference, ctx.session.auth.username);
+    } catch (error) {
+        return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
+    }
+
+    return ctx.send({refresh: true});
+}
+
+
+//================================================================
+/**
+ * Handle Revoke Action
+ * 
+ * FIXME: make the permission based on the action type
+ * 
+ * @param {object} ctx
+ */
 async function handleRevokeAction(ctx) {
     //Checking request
     if(anyUndefined(ctx.request.body.action_id)){
@@ -285,9 +330,15 @@ async function handleRevokeAction(ctx) {
     let action_id = ctx.request.body.action_id.trim();
 
     //Check permissions
-    if(!ensurePermission(ctx, 'commands.ban')) return false;
+    if(!ensurePermission(ctx, 'players.ban')) return false;
 
-    //TODO: actually code things
-    return ctx.send({type: 'info', message: 'not existant yet.'});
+
+    //Revoke action
+    try {
+        let actionID = await globals.playerController.revokeAction(action_id, ctx.session.auth.username);
+    } catch (error) {
+        return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
+    }
+
+    return ctx.send({refresh: true});
 }
-

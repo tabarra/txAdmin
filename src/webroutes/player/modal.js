@@ -66,10 +66,10 @@ module.exports = async function PlayerModal(ctx) {
     //Preparing output
     let out = {
         funcDisabled: {
-            message: (activePlayer && ctx.utils.checkPermission('commands.message', modulename, false))? '' : 'disabled',
-            kick: (activePlayer && ctx.utils.checkPermission('commands.kick', modulename, false))? '' : 'disabled',
-            warn: (activePlayer && ctx.utils.checkPermission('commands.warn', modulename, false))? '' : 'disabled',
-            ban: !ctx.utils.checkPermission('commands.ban', modulename, false),
+            message: (activePlayer && ctx.utils.checkPermission('players.message', modulename, false))? '' : 'disabled',
+            kick: (activePlayer && ctx.utils.checkPermission('players.kick', modulename, false))? '' : 'disabled',
+            warn: (activePlayer && ctx.utils.checkPermission('players.warn', modulename, false))? '' : 'disabled',
+            ban: !ctx.utils.checkPermission('players.ban', modulename, false),
         }
     }
    
@@ -107,6 +107,7 @@ module.exports = async function PlayerModal(ctx) {
 
     //If player is offline
     }else{
+        return ctx.send({type: 'danger', message: 'player offline.'});
         //FIXME: for actions, look just for the license
         //TODO: when we start registering all associated identifiers, we could use that for the search
         let dbPlayer = globals.playerController.getPlayer(license);
