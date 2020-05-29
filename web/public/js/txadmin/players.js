@@ -428,6 +428,7 @@ function banPlayer() {
 
     let data = {
         duration: modPlayer.Ban.duration.value,
+        // reference: modPlayer.curr.identifiers,
         reference: modPlayer.curr.id,
         reason: reason
     }

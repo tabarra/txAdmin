@@ -92,14 +92,15 @@
 - [x] prepare `/player/list` for a beta release with limited UX
 - [x] check the time played algo, or the database saving - not working properly?
 - [x] add playerName to ban/warn action db
-- [ ] create action for giving whitelist to a license (don't forget to set playerName)
+- [x] create action for giving whitelist to a license (don't forget to set playerName)
+- [x] link `/player/list` "accept wl" to actions endpoint
 - [ ] link `/player/list` "ban identifiers" to actions endpoint
 - [ ] link `/player/list` "revoke action" to actions endpoint
-- [ ] link `/player/list` "accept" to actions endpoint
 
 - [ ] limit `/player/list` with permissions
 - [ ] adapt all modal actions to offline players
-- [ ] add logging to the ban and warn features
+- [ ] apply the new action log html to the modal
+- [ ] add logging to the ban, warn and whitelist features
 - [ ] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
 - [ ] change `config.minSessionTime` to 15m
 - [ ] check everything done for xss

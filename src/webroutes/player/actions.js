@@ -52,6 +52,8 @@ module.exports = async function PlayerActions(ctx) {
         return await handleWarning(ctx);
     }else if(action === 'ban'){
         return await handleBan(ctx);
+    }else if(action === 'whitelist'){
+        return await handleWhitelist(ctx);
     }else if(action === 'revoke_action'){
         return await handleRevokeAction(ctx);
     }else{
@@ -283,6 +285,32 @@ async function handleBan(ctx) {
     ctx.utils.appendLog(cmd);
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);
+}
+
+
+//================================================================
+/**
+ * Handle Revoke Action
+ * @param {object} ctx
+ */
+async function handleWhitelist(ctx) {
+    //Checking request
+    if(anyUndefined(ctx.request.body.reference)){
+        return ctx.send({type: 'danger', message: 'Invalid request.'});
+    }
+    let reference = ctx.request.body.reference.trim();
+
+    //Check permissions
+    if(!ensurePermission(ctx, 'players.whitelist')) return false;
+
+    //Whitelist reference
+    try {
+        let actionID = await globals.playerController.approveWhitelist(reference, ctx.session.auth.username);
+    } catch (error) {
+        return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
+    }
+
+    return ctx.send({refresh: true});
 }
 
 

@@ -400,12 +400,12 @@ module.exports = class PlayerController {
      * @param {string|false} playerName the name of the player (for UX purposes only)
      * @returns {string} action ID, or throws if on error or ID not found
      */
-    async registerAction(reference, type, author, reason, expiration = false, playerName = false){
+    async registerAction(reference, type, author, reason = null, expiration = false, playerName = false){
         //Sanity check
         const timestamp = now();
         if(!validActions.includes(type)) throw new Error('Invalid action type.');
         if(typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
-        if(typeof reason !== 'string' || !reason.length) throw new Error('Invalid reason.');
+        if(reason !== null && (typeof reason !== 'string' || !reason.length)) throw new Error('Invalid reason.');
         if(expiration !== false && (typeof expiration !== 'number' || expiration < timestamp)) throw new Error('Invalid expiration.');
         if(playerName !== false && (typeof playerName !== 'string' || !playerName.length)) throw new Error('Invalid playerName.');
 
@@ -474,6 +474,56 @@ module.exports = class PlayerController {
      */
     async revokeAction(reference, author){
         throw new Error(`not implemented yet ☹`);
+    }
+
+
+    //================================================================
+    /**
+     * Whitelists a player from its license or wl pending id
+     * 
+     * NOTE: I'm only getting the first matched pending, but removing all patching
+     * NOTE: maybe I should add a trycatch inside here
+     * 
+     * @param {string} reference "license:" prefixed license or pending id
+     * @param {string} author admin name
+     * @returns {string} action ID, or throws if ID not found or error
+     */
+    async approveWhitelist(reference, author){
+        //Sanity check & validation
+        if(typeof reference !== 'string' || typeof author !== 'string'){
+            throw new Error('Reference and Author should be strings');
+        }
+
+        //Localizing pending request
+        let pendingFilter;
+        let saveReference;
+        let playerName = false;
+        if(/[0-9A-Fa-f]{40}/.test(reference)){
+            pendingFilter = {license: reference};
+            saveReference = [`license:${reference}`];
+            let pending = await this.dbo.get("pendingWL").find(pendingFilter).value();
+            if(pending) playerName = pending.name;
+        }else if(/R[2346789ABCDEFGHJKLMNPQRTUVWXYZ]{4}/.test(reference)){
+            pendingFilter = {id: reference};
+            let pending = await this.dbo.get("pendingWL").find(pendingFilter).value();
+            if(!pending) throw new Error('Pending ID not found in database');
+            saveReference = [`license:${pending.license}`];
+            playerName = pending.name;
+        }else{
+            throw new Error('Invalid reference type');
+        }
+
+        //Register whitelist
+        let actionID = await this.registerAction(saveReference, 'whitelist', author, null, false, playerName);
+        if(!actionID) throw new Error('Failed to whitelist player');
+        this.writePending = true;
+
+        //Remove from the pending list
+        if(playerName){
+            await this.dbo.get("pendingWL").remove(pendingFilter).value();
+        }
+
+        return actionID;
     }
 
 
