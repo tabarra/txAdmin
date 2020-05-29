@@ -1,6 +1,5 @@
 //Requires
 const modulename = 'WebServer:PlayerList';
-const cloneDeep = require('lodash/cloneDeep');
 const dateFormat = require('dateformat');
 const humanizeDuration = require('humanize-duration');
 const xss = require('../../extras/xss')();
@@ -100,6 +99,7 @@ async function getPendingWL(dbo){
         let pendingWL = await dbo.get("pendingWL")
                             .sortBy('tsLastAttempt')
                             .take(10)
+                            .cloneDeep()
                             .value();
 
         //DEBUG: remove this
@@ -114,7 +114,7 @@ async function getPendingWL(dbo){
         // }
 
         const maxNameSize = 36;
-        let lastWhitelistBlocks = cloneDeep(pendingWL).map((x) => {
+        let lastWhitelistBlocks = pendingWL.map((x) => {
             x.time = dateFormat(new Date(x.tsLastAttempt*1000), 'isoTime');
             if(x.name.length > maxNameSize){
                 x.name = x.name.substring(0,maxNameSize-3) + '...';
@@ -137,10 +137,10 @@ async function getPendingWL(dbo){
  */
 async function getActionHistory(dbo){
     try {
-        let hist = await dbo.get("actions").value();
-        hist = cloneDeep(hist).reverse();
+        let hist = await dbo.get("actions").cloneDeep().reverse().value();
         return hist.map((log) => {
             let out = {
+                id: log.id,
                 action: log.type.toUpperCase(),
                 date: (new Date(log.timestamp*1000)).toLocaleString(),
                 reason: log.reason,

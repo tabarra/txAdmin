@@ -317,6 +317,9 @@ async function handleWhitelist(ctx) {
 //================================================================
 /**
  * Handle Revoke Action
+ * 
+ * FIXME: make the permission based on the action type
+ * 
  * @param {object} ctx
  */
 async function handleRevokeAction(ctx) {
@@ -329,6 +332,13 @@ async function handleRevokeAction(ctx) {
     //Check permissions
     if(!ensurePermission(ctx, 'players.ban')) return false;
 
-    //TODO: actually code things
-    return ctx.send({type: 'info', message: 'not existant yet.'});
+
+    //Revoke action
+    try {
+        let actionID = await globals.playerController.revokeAction(action_id, ctx.session.auth.username);
+    } catch (error) {
+        return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
+    }
+
+    return ctx.send({refresh: true});
 }

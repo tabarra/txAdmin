@@ -1,6 +1,5 @@
 //Requires
 const modulename = 'PlayerController';
-const cloneDeep = require('lodash/cloneDeep');
 const low = require('lowdb');
 const FileAsync = require('lowdb/adapters/FileAsync');
 const { customAlphabet } = require('nanoid');
@@ -186,6 +185,9 @@ module.exports = class PlayerController {
     //================================================================
     /**
      * Returns the entire lowdb object. Please be careful with it :)
+     * 
+     * TODO: perhaps add a .cloneDeep()? Mighe cause some performance issues tho
+     * 
      * @returns {object} lodash database
      */
     getDB(){
@@ -290,11 +292,11 @@ module.exports = class PlayerController {
     async getRegisteredActions(idArray, filter = {}){
         if(!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
         try {
-            let actions = await this.dbo.get("actions")
-                                .filter(filter)
-                                .filter(a => idArray.some((fi) => a.identifiers.includes(fi)))
-                                .value();
-            return cloneDeep(actions);
+            return await this.dbo.get("actions")
+                            .filter(filter)
+                            .filter(a => idArray.some((fi) => a.identifiers.includes(fi)))
+                            .cloneDeep()
+                            .value();
         } catch (error) {
             const msg = `Failed to search for a registered action database with error: ${error.message}`;
             if(GlobalData.verbose) logError(msg);
@@ -468,12 +470,33 @@ module.exports = class PlayerController {
     //================================================================
     /**
      * Revoke an action (ban, warn, whitelist)
-     * @param {string} actionID action id
+     * @param {string} action_id action id
      * @param {string} author admin name
      * @returns {string} action ID, or throws if ID not found
      */
-    async revokeAction(reference, author){
-        throw new Error(`not implemented yet ☹`);
+    async revokeAction(action_id, author){
+        if(typeof action_id !== 'string' || !action_id.length) throw new Error('Invalid action_id.');
+        if(typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
+        try {
+            let action = await this.dbo.get("actions")
+                            .find({id: action_id})
+                            .value();
+            if(action){
+                action.revocation = {
+                    timestamp: now(),
+                    author
+                }
+                this.writePending = true;
+                return true;
+            }else{
+                return null;
+            }
+        } catch (error) {
+            let msg = `Failed to revoke action with message: ${error.message}`;
+            logError(msg);
+            if(GlobalData.verbose) dir(error);
+            throw new Error(msg)
+        }
     }
 
 

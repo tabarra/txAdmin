@@ -248,7 +248,7 @@
                                                 {{if(@this.revocationNotice)}}
                                                     <span class="badge badge-outline-light p-1">REVOKED</span>
                                                 {{#else}}
-                                                    &nbsp;<a href="/player/list#!" data-action-id="{{@this.id}}" 
+                                                    &nbsp;<a href="/player/list#!" onclick="revokeAction('{{@this.id}}')" 
                                                         class="badge badge-secondary p-1 txActionsBtn">REVOKE</a>&nbsp;
                                                 {{/if}}
                                             </small>
@@ -276,6 +276,39 @@
 
 
 <script>
+    //Action revocation
+    //TODO: make an confirmation modal
+    function revokeAction(action_id){
+        if(!action_id){
+            var notify = $.notify({ message: 'Invalid actionID' }, { type: 'danger' });
+            return;
+        }
+
+        var notify = $.notify({ message: '<p class="text-center">Revoking...</p>' }, {});
+        $.ajax({
+            type: "POST",
+            url: '/player/revoke_action',
+            timeout: timeoutLong,
+            data: {action_id},
+            dataType: 'json',
+            success: function (data) {
+                if(data.refresh === true){
+                    window.location.reload(true);
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    }
+
+    //Whitelist an ID via prompt or button click
     function whitelistID(reference){
         if(!reference){
             reference = prompt('Type in the whitelist Request ID (R????) or License Identifier.');
