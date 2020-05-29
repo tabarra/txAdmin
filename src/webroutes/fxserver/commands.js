@@ -67,7 +67,7 @@ module.exports = async function FXServerCommands(ctx) {
 
     //==============================================
     }else if(action == 'admin_broadcast'){
-        if(!ensurePermission(ctx, 'commands.message')) return false;
+        if(!ensurePermission(ctx, 'players.message')) return false;
         let cmd = formatCommand('txaBroadcast', ctx.session.auth.username, parameter);
         ctx.utils.appendLog(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
@@ -75,7 +75,7 @@ module.exports = async function FXServerCommands(ctx) {
 
     //==============================================
     }else if(action == 'kick_all'){
-        if(!ensurePermission(ctx, 'commands.kick')) return false;
+        if(!ensurePermission(ctx, 'players.kick')) return false;
         let cmd;
         if(parameter.length){
             cmd = formatCommand('txaKickAll', parameter);

@@ -123,7 +123,7 @@ async function handleMessage(ctx) {
     let message = ctx.request.body.message.trim();
 
     //Check permissions
-    if(!ensurePermission(ctx, 'commands.message')) return false;
+    if(!ensurePermission(ctx, 'players.message')) return false;
 
     //Prepare and send command
     let cmd = formatCommand('txaSendDM', id, ctx.session.auth.username, message);
@@ -151,7 +151,7 @@ async function handleKick(ctx) {
     let reason = ctx.request.body.reason.trim() || 'no reason provided';
 
     //Check permissions
-    if(!ensurePermission(ctx, 'commands.kick')) return false;
+    if(!ensurePermission(ctx, 'players.kick')) return false;
 
     //Prepare and send command
     let message = `You have been kicked from this server. <br>`;
@@ -182,7 +182,7 @@ async function handleWarning(ctx) {
     let reason = ctx.request.body.reason.trim();
 
     //Check permissions
-    if(!ensurePermission(ctx, 'commands.warn')) return false;
+    if(!ensurePermission(ctx, 'players.warn')) return false;
 
     //Register action (and checks if player is online)
     try {
@@ -256,7 +256,7 @@ async function handleBan(ctx) {
     }
 
     //Check permissions
-    if(!ensurePermission(ctx, 'commands.ban')) return ctx.send({type: 'danger', message: 'permission denied'});
+    if(!ensurePermission(ctx, 'players.ban')) return false;
 
     //Register action (and checks if player is online)
     try {
@@ -299,9 +299,8 @@ async function handleRevokeAction(ctx) {
     let action_id = ctx.request.body.action_id.trim();
 
     //Check permissions
-    if(!ensurePermission(ctx, 'commands.ban')) return false;
+    if(!ensurePermission(ctx, 'players.ban')) return false;
 
     //TODO: actually code things
     return ctx.send({type: 'info', message: 'not existant yet.'});
 }
-

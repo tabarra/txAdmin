@@ -105,8 +105,7 @@
 - [ ] check everything done for xss
 - [ ] test on latest build
 
-actual todo:
-NOTE: when opening a player from the offline list, disable ID-requiring actions like dm,kick,warning
+FIXME: when doing the update announcement, don't forget to mention that the permission names changed
 
 > Soon™
 - [ ] adapt kick messages to use some basic HTML for formatting
@@ -118,6 +117,8 @@ NOTE: when opening a player from the offline list, disable ID-requiring actions 
 - [ ] add a commend system?
 - [ ] add stopwatch (or something) to the db functions and print on `/diagnostics`
 - [ ] change webserver token every time the server starts
+
+NOTE: when opening a player from the offline list, disable ID-requiring actions like dm,kick,warning
 
 > Soon™®
 - [ ] tweak dashboard update checker behavior

@@ -66,10 +66,10 @@ module.exports = async function PlayerModal(ctx) {
     //Preparing output
     let out = {
         funcDisabled: {
-            message: (activePlayer && ctx.utils.checkPermission('commands.message', modulename, false))? '' : 'disabled',
-            kick: (activePlayer && ctx.utils.checkPermission('commands.kick', modulename, false))? '' : 'disabled',
-            warn: (activePlayer && ctx.utils.checkPermission('commands.warn', modulename, false))? '' : 'disabled',
-            ban: !ctx.utils.checkPermission('commands.ban', modulename, false),
+            message: (activePlayer && ctx.utils.checkPermission('players.message', modulename, false))? '' : 'disabled',
+            kick: (activePlayer && ctx.utils.checkPermission('players.kick', modulename, false))? '' : 'disabled',
+            warn: (activePlayer && ctx.utils.checkPermission('players.warn', modulename, false))? '' : 'disabled',
+            ban: !ctx.utils.checkPermission('players.ban', modulename, false),
         }
     }
    
