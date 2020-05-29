@@ -107,6 +107,7 @@ module.exports = async function PlayerModal(ctx) {
 
     //If player is offline
     }else{
+        return ctx.send({type: 'danger', message: 'player offline.'});
         //FIXME: for actions, look just for the license
         //TODO: when we start registering all associated identifiers, we could use that for the search
         let dbPlayer = globals.playerController.getPlayer(license);

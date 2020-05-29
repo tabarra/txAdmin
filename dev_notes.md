@@ -98,7 +98,6 @@
 - [ ] link `/player/list` "revoke action" to actions endpoint
 
 - [ ] limit `/player/list` with permissions
-- [ ] adapt all modal actions to offline players
 - [ ] apply the new action log html to the modal
 - [ ] add logging to the ban, warn and whitelist features
 - [ ] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
@@ -109,6 +108,8 @@
 FIXME: when doing the update announcement, don't forget to mention that the permission names changed
 
 > Soon™
+- [ ] adapt all modal actions to offline players
+- [ ] check why scheduled restarts are not kicking players
 - [ ] adapt kick messages to use some basic HTML for formatting
 - [ ] change Server Log page to use the new modal
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones

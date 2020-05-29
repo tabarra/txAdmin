@@ -138,7 +138,8 @@ async function getPendingWL(dbo){
 async function getActionHistory(dbo){
     try {
         let hist = await dbo.get("actions").value();
-        return cloneDeep(hist).map((log) => {
+        hist = cloneDeep(hist).reverse();
+        return hist.map((log) => {
             let out = {
                 action: log.type.toUpperCase(),
                 date: (new Date(log.timestamp*1000)).toLocaleString(),
@@ -146,8 +147,12 @@ async function getActionHistory(dbo){
                 author: log.author,
                 revocationNotice: false
             };
-            log.pName = "some random nick lol???"
-            let actReference = (log.playerName)? xss(log.playerName) : log.identifiers.map((x) => x.split(':')[0]).join(', ');
+            let actReference;
+            if(log.playerName){
+                actReference = xss(log.playerName);
+            }else{
+                actReference = '<i>' + xss(log.identifiers.map((x) => x.split(':')[0]).join(', ')) + '</i>';
+            }
             if(log.type == 'ban'){
                 out.color = 'danger';
                 out.message = `${xss(log.author)} BANNED ${actReference}`;

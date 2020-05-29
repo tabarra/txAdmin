@@ -86,11 +86,11 @@
             <div class="card-header font-weight-bold">Ban Identifiers:</div>
             <div class="card-body">
                 <div class="form-group row">
-                    <label for="frmAddBan-identifier" class="col-sm-3 col-form-label">
+                    <label for="frmAddBan-identifiers" class="col-sm-3 col-form-label">
                         Identifier(s)
                     </label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="frmAddBan-identifier"
+                        <input type="text" class="form-control" id="frmAddBan-identifiers"
                             placeholder="steam:101010101010101, license:d3832ddc9f845bf...">
                         <span class="form-text text-muted">
                             Valid identifiers: <code>steam, license, xbl, live, discord, fivem</code>.
@@ -104,7 +104,7 @@
                         Reason
                     </label>
                     <div class="col-sm-9">
-                        <input type="text" class="form-control" id="frmAddBan-reason" maxlength="64"
+                        <input type="text" class="form-control" id="frmAddBan-reason" maxlength="256"
                             placeholder="doing bad things :(">
                     </div>
                 </div>
@@ -241,8 +241,8 @@
                                 {{foreach(options.actionHistory)}}
                                     <div class="list-group-item list-group-item-accent-{{@this.color}} actionLogEntry">
                                         <div class="d-flex w-100 justify-content-between">
-                                            <strong>{{@this.message}}</strong>
-                                            <small>{{@this.date}} 
+                                            <strong>{{@this.message|safe}}</strong>
+                                            <small class="text-right">{{@this.date}} 
                                                 {{if(@this.revocationNotice)}}
                                                     <span class="badge badge-outline-light p-1">REVOKED</span>
                                                 {{#else}}

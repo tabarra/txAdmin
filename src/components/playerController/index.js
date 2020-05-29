@@ -14,12 +14,12 @@ const nanoidAlphabet = "2346789ABCDEFGHJKLMNPQRTUVWXYZ";
 const validActions = ['ban', 'warn', 'whitelist']
 const currentDatabaseVersion = 1;
 const validIdentifiers = {
-    steam: /steam:1100001[0-9A-Fa-f]{8}/,
-    license: /license:[0-9A-Fa-f]{40}/,
-    xbl: /xbl:\d{14,20}/,
-    live: /live:\d{14,20}/,
-    discord: /discord:\d{7,20}/,
-    fivem: /fivem:\d{1,8}/,
+    steam: /^steam:1100001[0-9A-Fa-f]{8}$/,
+    license: /^license:[0-9A-Fa-f]{40}$/,
+    xbl: /^xbl:\d{14,20}$/,
+    live: /^live:\d{14,20}$/,
+    discord: /^discord:\d{7,20}$/,
+    fivem: /^fivem:\d{1,8}$/,
 }
 
 
@@ -66,7 +66,7 @@ module.exports = class PlayerController {
         this.config.minSessionTime = 1*60; //NOTE: use 15 minutes as default
         this.config.onJoinCheck = {
             ban: false,
-            whitelist: false
+            whitelist: true
         }
         this.config.whitelistRejectionMessage = `You are not yet whitelisted in this server.
             Please join <a href="http://discord.gg/example">http://discord.gg/example</a>.
