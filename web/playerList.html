@@ -7,7 +7,30 @@
     .pInfoCallout .c-callout{
         padding-bottom: 2px;
     }
+    .txWhitelistBtn{
+        letter-spacing: 0.1em;
+        font-weight: 300 !important;
+        padding: .25rem!important;
+    }
+
+    .actionLogEntry{
+        color: #768192;
+        padding: .15rem 0.55rem;
+        margin-bottom: 4px !important;
+    }
+    .actionLogEntry:hover{
+        background-color: #ebedef;
+    }
+    .actionLogEntry:hover a{
+        color: #fff;
+        background-color: #636f83;
+    }
 </style>
+
+<div class="text-center mb-3">
+    <h3 class="mb-0">Player Manager</h3 class="mb-1">
+    <small class="text-muted">{{message|safe}}</small>
+</div>
 
 
 <!-- Callouts -->
@@ -16,16 +39,16 @@
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-info">
                 <small class="text-muted">Total Players</small><br>
-                <strong class="h4">9,123</strong>
+                <strong class="h4">{{stats.players}}</strong>
             </div>
         </div>
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-info">
                 <small class="text-muted">Total Playtime</small><br>
-                <strong class="h4">9,123</strong>
+                <strong class="h4">{{stats.playTime}}</strong>
             </div>
         </div>
-        <div class="col-2 pInfoCallout">
+        <!-- <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-success">
                 <small class="text-muted">New Players This Week</small><br>
                 <strong class="h4">9,123</strong>
@@ -36,21 +59,20 @@
                 <small class="text-muted">Playtime This Week</small><br>
                 <strong class="h4">9,123</strong>
             </div>
-        </div>
+        </div> -->
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-warning">
                 <small class="text-muted">Warns</small><br>
-                <strong class="h4">9,123</strong>
+                <strong class="h4">{{stats.warns}}</strong>
             </div>
         </div>
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-danger">
                 <small class="text-muted">Bans</small><br>
-                <strong class="h4">9,123</strong>
+                <strong class="h4">{{stats.bans}}</strong>
             </div>
         </div>
     </div>
-    
 </div>
 
 
@@ -58,6 +80,8 @@
 <div class="row justify-content-center">
 
     <div class="col-md-10 col-lg-8 col-xl-5 mw-col6">
+
+        <!-- Ban ID -->
         <div class="card card-accent-danger">
             <div class="card-header font-weight-bold">Ban Identifiers:</div>
             <div class="card-body">
@@ -104,22 +128,62 @@
                         </span>
                     </div>
                 </div>
-
                 <div class="text-center mt-4">
                     <button class="btn btn-sm btn-danger" type="submit" id="frmAddBan-button" {{disableWrite}}>
                         <i class="icons cui-check"></i> Ban Identifiers
                     </button>
                 </div>
             </div>
-
         </div>
+        <!-- /Ban ID -->
+
+        <!-- Whitelist -->
+        <div class="card card-accent-success">
+            <div class="card-header font-weight-bold">
+                Whitelist - last 20 join attempts:
+            </div>
+            <div class="card-body text-center">
+                {{if(options.lastWhitelistBlocks.length == 0)}}
+                    <h3 class="mx-auto text-secondary">no pending whitelist requests</h3>
+                {{#else}}
+                    <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
+                        <thead>
+                            <tr>
+                                <th>Actions</th>
+                                <th>Time</th>
+                                <th>ID</th>
+                                <th>Name</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{foreach(options.lastWhitelistBlocks)}}
+                            <tr>
+                                <td>
+                                    <a href="/player/list#!" class="badge badge-primary txWhitelistBtn" 
+                                        onclick="whitelistID('{{@this.id}}')">ACCEPT</a>
+                                </td>
+                                <td>{{@this.time}}</td>
+                                <td>{{@this.id}}</td>
+                                <td class="text-truncate">{{@this.name}}</td>
+                            </tr>
+                            {{/foreach}}
+                        </tbody>
+                    </table>
+                {{/if}}
+                <button class="btn btn-sm btn-success mt-3" type="button" onclick="whitelistID(null)">
+                    <i class="icon-check"></i> Whitelist ID / License
+                </button>
+            </div>
+        </div>
+        <!-- /Whitelist -->
+
     </div>
+
 
 
     <div class="col-md-10 col-lg-8 col-xl-5 mw-col8">
         
-
-        <!-- Active -->
+        <!-- Tabbed Card -->
         <div class="card">
             <div class="card-header card-accent-info">
                 <ul class="nav nav-pills card-header-pills">
@@ -127,9 +191,9 @@
                         <div class="col-md-12">
                             <div class="input-group">
                                 <input class="form-control" id="input2-group2" type="text"
-                                    placeholder="name, license, csv ids">
+                                    placeholder="name, license, csv ids" disabled>
                                 <span class="input-group-append">
-                                    <button class="btn btn-sm btn-secondary" type="button">
+                                    <button class="btn btn-sm btn-secondary disabled" type="button">
                                         <svg class="c-icon">
                                             <use xlink:href="img/coreui_icons.svg#cil-magnifying-glass"></use>
                                         </svg> Search
@@ -139,78 +203,124 @@
                         </div>
                     </div>
                     <li class="nav-item">
-                        <a class="nav-link active" id="dbPlayers-tab" data-toggle="pill" href="#dbPlayers" role="tab" 
-                            aria-controls="dbPlayers" aria-selected="true"><i class="icon-user"></i> Players</a>
+                        <a class="nav-link disabled" id="dbPlayers-tab" data-toggle="pill" href="#dbPlayers" role="tab" 
+                            aria-controls="dbPlayers" aria-selected="false"><i class="icon-user"></i> Players</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="dbActions-tab" data-toggle="pill" href="#dbActions" role="tab" 
-                            aria-controls="dbActions" aria-selected="false"><i class="icon-notebook"></i> Actions</a>
+                        <a class="nav-link active" id="dbActions-tab" data-toggle="pill" href="#dbActions" role="tab" 
+                            aria-controls="dbActions" aria-selected="true"><i class="icon-notebook"></i> Actions</a>
                     </li>
                 </ul>
             </div>
             <div class="card-body">
                 <div class="tab-content">
-                    <div class="tab-pane fade show active" id="dbPlayers" role="tabpanel" aria-labelledby="dbPlayers-tab">
+                    <div class="tab-pane fade" id="dbPlayers" role="tabpanel" aria-labelledby="dbPlayers-tab">
+                        <!-- FIXME: currently disabled -->
                         <h5 class="card-title">Last xxx joined players</h5>
-                        <li><span class="text-muted">05:05:08</span> AmazingNickname123
-                            <code>steam:1100002h3g23hg</code></li>
-                        <li><span class="text-muted">05:05:08</span> AmazingNickname123
-                            <code>steam:1100002h3g23hg</code></li>
-                        <li><span class="text-muted">05:05:08</span> AmazingNickname123
-                            <code>steam:1100002h3g23hg</code></li>
-                        <li><span class="text-muted">05:05:08</span> AmazingNickname123
-                            <code>steam:1100002h3g23hg</code></li>
-                        <li><span class="text-muted">05:05:08</span> AmazingNickname123
-                            <code>steam:1100002h3g23hg</code></li>
-                        <li><span class="text-muted">05:05:08</span> AmazingNickname123
-                            <code>steam:1100002h3g23hg</code></li>
-                        <li><span class="text-muted">05:05:08</span> AmazingNickname123
-                            <code>steam:1100002h3g23hg</code></li>
-                        <li><span class="text-muted">05:05:08</span> AmazingNickname123
-                            <code>steam:1100002h3g23hg</code></li>
-                        <li><span class="text-muted">05:05:08</span> AmazingNickname123
-                            <code>steam:1100002h3g23hg</code></li>
-                        <li><span class="text-muted">05:05:08</span> AmazingNickname123
-                            <code>steam:1100002h3g23hg</code></li>
+                        {{if(options.lastJoinedPlayers.length == 0)}}
+                            <div class="text-center">
+                                <h3 class="mx-auto pt-3 text-secondary">no players yet...</h3>
+                            </div>
+                        {{#else}}
+                            {{foreach(options.lastJoinedPlayers)}}
+                                <li><span class="text-muted">05:05:08</span> AmazingNickname123
+                                    <code>steam:1100002h3g23hg</code></li>
+                            {{/foreach}}
+                        {{/if}}
                     </div>
-            
-                    <div class="tab-pane fade" id="dbActions" role="tabpanel" aria-labelledby="dbActions-tab">
-                        <h5 class="card-title">Last xxx actions:</h5>
-                        <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
-                            <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
-                        <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
-                            <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
-                        <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
-                            <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
-                        <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
-                            <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
-                        <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
-                            <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
-                        <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
-                            <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
-                        <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
-                            <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
-                        <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
-                            <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
-                        <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
-                            <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
-                        <li><a href="/experiments/bans#!" class="text-primary unban-btn">[unban]</a>05:05:08
-                            <code>steam:1100002h3g23hg</code> - being an idiot (tabarra)</li>
+
+                    <div class="tab-pane fade show active" id="dbActions" role="tabpanel" aria-labelledby="dbActions-tab">
+                        <!-- FIXME: change to "last xxx actions" -->
+                        <h5 class="card-title">Action History:</h5> 
+                        {{if(options.actionHistory.length == 0)}}
+                            <div class="text-center">
+                                <h3 class="mx-auto pt-3 text-secondary">no actions yet...</h3>
+                            </div>
+                        {{#else}}
+                            <div class="list-group list-group-accent">
+                                {{foreach(options.actionHistory)}}
+                                    <div class="list-group-item list-group-item-accent-{{@this.color}} actionLogEntry">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <strong>{{@this.message}}</strong>
+                                            <small>{{@this.date}} 
+                                                {{if(@this.revocationNotice)}}
+                                                    <span class="badge badge-outline-light p-1">REVOKED</span>
+                                                {{#else}}
+                                                    &nbsp;<a href="/player/list#!" data-action-id="{{@this.id}}" 
+                                                        class="badge badge-secondary p-1 txActionsBtn">REVOKE</a>&nbsp;
+                                                {{/if}}
+                                            </small>
+                                        </div>
+                                        <span>{{@this.reason}}</span>
+                                        {{if(@this.revocationNotice)}}
+                                            <br><small>{{@this.revocationNotice}}</small>
+                                        {{/if}}
+                                    </div>
+                                {{/foreach}}
+                            </div>
+                        {{/if}}
                     </div>
                 </div>
             </div>
         </div>
-        <!-- /Active -->
-
+        <!-- /Tabbed Card -->
 
 
     </div>
 </div>
 
 
-
-
-
-
-
 {{include("footer")/}}
+
+
+<script>
+    function whitelistID(reference){
+        if(!reference){
+            reference = prompt('Type in the whitelist Request ID (R????) or License Identifier.');
+            if(!reference) return;
+            reference = reference.trim();
+        }
+        console.dir(reference)
+        
+        //Treat input to improve UX
+        if(reference.length == 5){
+            reference = reference.toUpperCase();
+        }else if(reference.length == 40){
+            reference = reference.toLowerCase();
+        }else if(reference.length == 48){
+            reference = reference.substring(8).toLowerCase();
+        }
+        
+        //Check input validity
+        if(
+            !/R[2346789ABCDEFGHJKLMNPQRTUVWXYZ]{4}/.test(reference) && 
+            !/[0-9A-Fa-f]{40}/.test(reference)
+        ){
+            var notify = $.notify({ message: 'The value inserted is not a valid Whitelist ID nor a license identifier.' }, { type: 'danger' });
+            return;
+        }
+
+        var notify = $.notify({ message: '<p class="text-center">Whitelisting...</p>' }, {});
+        $.ajax({
+            type: "POST",
+            url: '/player/whitelist',
+            timeout: timeoutLong,
+            data: {reference},
+            dataType: 'json',
+            success: function (data) {
+                if(data.refresh === true){
+                    window.location.reload(true);
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    }
+</script>

@@ -89,7 +89,7 @@
 - [x] re-add playerConnecting the whitelist/ban checking function (lua+intercom+playerController)
 - [x] implement whitelist registration logic
 - [x] block html usage on admin kick reason 
-- [.] prepare `/player/list` for a beta release with limited UX
+- [x] prepare `/player/list` for a beta release with limited UX
 - [x] check the time played algo, or the database saving - not working properly?
 - [x] add playerName to ban/warn action db
 - [ ] create action for giving whitelist to a license (don't forget to set playerName)
