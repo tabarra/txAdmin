@@ -95,12 +95,12 @@
 - [x] create action for giving whitelist to a license (don't forget to set playerName)
 - [x] link `/player/list` "accept wl" to actions endpoint
 - [x] link `/player/list` "ban identifiers" to actions endpoint
-- [ ] link `/player/list` "revoke action" to actions endpoint
+- [x] link `/player/list` "revoke action" to actions endpoint
+- [x] limit `/player/list` ui with permissions
 
-- [ ] limit `/player/list` with permissions
+- [ ] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
 - [ ] apply the new action log html to the modal
 - [ ] add logging to the ban, warn and whitelist features
-- [ ] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
 - [ ] change `config.minSessionTime` to 15m
 - [ ] check everything done for xss
 - [ ] test on latest build

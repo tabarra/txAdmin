@@ -47,7 +47,9 @@ sqrl.defineFilter("n2br", (x)=>{
 sqrl.defineFilter("undef", (x)=>{
     return (isUndefined(x) || x == 'undefined')? '' : x;
 });
-
+sqrl.defineFilter("unnull", (x)=>{
+    return (isUndefined(x) || x == 'null')? '' : x;
+});
 
 //================================================================
 /**

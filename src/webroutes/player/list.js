@@ -18,16 +18,19 @@ module.exports = async function PlayerList(ctx) {
     
 
     let timeStart = new Date();
-    let respData = {};
-    try {
-        let dbo = globals.playerController.getDB();
-        respData.stats = await getStats(dbo);
-        respData.lastWhitelistBlocks = await getPendingWL(dbo);
-        respData.actionHistory = await getActionHistory(dbo);
-        respData.lastJoinedPlayers = [];
-        
-    } catch (error) {}
-    
+    const dbo = globals.playerController.getDB();
+    let respData = {
+        stats: await getStats(dbo),
+        lastWhitelistBlocks: await getPendingWL(dbo),
+        actionHistory: await getActionHistory(dbo),
+        lastJoinedPlayers: [],
+        funcDisabled: {
+            whitelist: !ctx.utils.checkPermission('players.whitelist', modulename, false),
+            revoke: !ctx.utils.checkPermission('players.ban', modulename, false),
+            ban: !ctx.utils.checkPermission('players.ban', modulename, false),
+        }
+    };
+
     //Output
     let timeElapsed = new Date() - timeStart;
     respData.message = `Executed in ${timeElapsed} ms`;
