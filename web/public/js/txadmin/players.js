@@ -124,7 +124,7 @@ function processPlayers(players) {
 
     if(!players.length){
         plistMsgElement.hidden = false
-        plistMsgElement.textContent = 'No Players Online';
+        plistMsgElement.textContent = 'Your server is empty you bum.';
     }
     cachedPlayers = players;
     plistCountElement.textContent = players.length;
@@ -283,7 +283,7 @@ function setNoteMessage(msg, type){
     }
 }
 modPlayer.Main.notes.addEventListener("keydown", (event) => {
-    setNoteMessage(`Press enter to save.`);
+    setNoteMessage(`Press enter to save. (Duh)`);
     if (event.keyCode == 13 && !event.shiftKey) {
         event.preventDefault();
         setNoteMessage(`Saving...`, 'warning');
@@ -355,7 +355,7 @@ function messagePlayer() {
 // Kick Player
 function kickPlayer() {
     if(modPlayer.curr.id == false) return;
-    let reason = prompt('Type the kick reason or leave it blank (press enter)');
+    let reason = prompt('Type a reason you lazy fuck.');
     if(reason == null) return;
 
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
@@ -387,12 +387,12 @@ function kickPlayer() {
 //Warn Player
 function warnPlayer() {
     if(modPlayer.curr.id == false) return;
-    let reason = prompt('Type the warn reason.');
+    let reason = prompt('Type a reason you lazy fuck.');
     if(reason == null) return;
     reason = reason.trim();
 
     if (!reason.length) {
-        var notify = $.notify({ message: '<p class="text-center">The warn reason is required.</p>'}, {type: 'danger'});
+        var notify = $.notify({ message: '<p class="text-center">I said type a reason not leave it blank you fucking cunt ass bitch. </p>'}, {type: 'danger'});
         return;
     }
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
@@ -425,7 +425,7 @@ function warnPlayer() {
 function banPlayer() {
     const reason = modPlayer.Ban.reason.value.trim()
     if (!reason.length) {
-        var notify = $.notify({ message: '<p class="text-center">The ban reason is required.</p>'}, {type: 'danger'});
+        var notify = $.notify({ message: '<p class="text-center">You really tried to ban someone without a reason you wanker. Put a reason.</p>'}, {type: 'danger'});
         return;
     }
     var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
