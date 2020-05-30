@@ -8,6 +8,7 @@ const helpers = require('../../extras/helpers');
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
+const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
 
 /**
  * Handle all the server control actions
@@ -33,6 +34,8 @@ module.exports = async function SettingsSave(ctx) {
         return handleGlobal(ctx);
     }else if(scope == 'fxserver'){
         return handleFXServer(ctx);
+    }else if(scope == 'playerController'){
+        return handlePlayerController(ctx);
     }else if(scope == 'monitor'){
         return handleMonitor(ctx);
     }else if(scope == 'discord'){
@@ -174,6 +177,61 @@ function handleFXServer(ctx) {
         return ctx.send({type: 'success', message: `<strong>FXServer configuration saved!</strong>`});
     }else{
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing fxRunner settings.`);
+        return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+    }
+}
+
+
+//================================================================
+/**
+ * Handle Player Controller settings
+ * @param {object} ctx
+ */
+function handlePlayerController(ctx) {
+    //Sanity check
+    if(anyUndefined(
+        ctx.request.body,
+        ctx.request.body.onJoinCheckBan,
+        ctx.request.body.onJoinCheckWhitelist,
+        ctx.request.body.minSessionTime,
+        ctx.request.body.whitelistRejectionMessage,
+        ctx.request.body.wipePendingWLOnStart,
+    )){
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
+    }
+
+    //Prepare body input
+    let cfg = {
+        onJoinCheckBan: (ctx.request.body.onJoinCheckBan === 'true'),
+        onJoinCheckWhitelist: (ctx.request.body.onJoinCheckWhitelist === 'true'),
+        minSessionTime: parseInt(ctx.request.body.minSessionTime.trim()),
+        whitelistRejectionMessage: ctx.request.body.whitelistRejectionMessage.trim(),
+        wipePendingWLOnStart: (ctx.request.body.wipePendingWLOnStart === 'true'),
+    }
+
+    //Validating wl message
+    if(cfg.whitelistRejectionMessage.length > 256){
+        return ctx.send({type: 'danger', message: 'The whitelist rejection message must be less than 256 characters.'});
+    }
+
+    //Preparing & saving config
+    let newConfig = globals.configVault.getScopedStructure('playerController');
+    newConfig.onJoinCheckBan = cfg.onJoinCheckBan;
+    newConfig.onJoinCheckWhitelist = cfg.onJoinCheckWhitelist;
+    newConfig.minSessionTime = cfg.minSessionTime;
+    newConfig.whitelistRejectionMessage = cfg.whitelistRejectionMessage;
+    newConfig.wipePendingWLOnStart = cfg.wipePendingWLOnStart;
+    let saveStatus = globals.configVault.saveProfile('playerController', newConfig);
+
+    //Sending output
+    if(saveStatus){
+        globals.playerController.refreshConfig();
+        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing Player Controller settings.`;
+        logOk(logMessage);
+        globals.logger.append(logMessage);
+        return ctx.send({type: 'success', message: `<strong>Player Controller configuration saved!</strong>`});
+    }else{
+        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing Player Controller settings.`);
         return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }
 }

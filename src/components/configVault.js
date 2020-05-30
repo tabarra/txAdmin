@@ -155,6 +155,7 @@ module.exports = class ConfigVault {
                 quiet: toDefault(cfg.fxRunner.quiet, null),
             };
         } catch (error) {
+            if(GlobalData.verbose) dir(error);
             throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`);
         }
 
@@ -217,6 +218,7 @@ module.exports = class ConfigVault {
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in templater
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
         } catch (error) {
+            if(GlobalData.verbose) dir(error)
             throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`);
         }
 

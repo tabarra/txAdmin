@@ -21,7 +21,7 @@ module.exports = async function PlayerList(ctx) {
     const dbo = globals.playerController.getDB();
     let respData = {
         stats: await getStats(dbo),
-        lastWhitelistBlocks: await getPendingWL(dbo),
+        lastWhitelistBlocks: await getPendingWL(dbo, 15),
         actionHistory: await getActionHistory(dbo),
         lastJoinedPlayers: [],
         funcDisabled: {
@@ -97,21 +97,21 @@ async function getStats(dbo){
  * Get the last entries of the pending whitelist table, sorted by timestamp.
  * @returns {array} array of actions, or [] on error
  */
-async function getPendingWL(dbo){
+async function getPendingWL(dbo, limit){
     try {
         let pendingWL = await dbo.get("pendingWL")
                             .sortBy('tsLastAttempt')
-                            .take(10)
+                            .take(limit)
                             .cloneDeep()
                             .value();
 
         //DEBUG: remove this
         // pendingWL = []
-        // for (let i = 0; i < 10; i++) {
+        // for (let i = 0; i < 15; i++) {
         //     pendingWL.push({
         //         id: "RNV000",
         //         name: `lorem ipsum ${i}`,
-        //         license: "9b9fc300cc65d22ad3b5df4d15c0e4933753",
+        //         license: "9b9fc300cc6aaaaad3b5df4dcccce4933753",
         //         tsLastAttempt: 1590282667
         //     });
         // }

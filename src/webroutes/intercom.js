@@ -53,10 +53,10 @@ module.exports = async function Intercom(ctx) {
                 return ctx.send('allow');
             }else{
                 let msg = resp.reason || 'Access Denied for unknown reason';
-                return ctx.send(msg);
+                return ctx.send(`[txAdmin] ${msg}`);
             }
         } catch (error) {
-            let msg = `[JoinCheck] Failed with error: ${error.message}`;
+            let msg = `[txAdmin] [JoinCheck] Failed with error: ${error.message}`;
             logError(msg);
             return ctx.send(msg);
         }
