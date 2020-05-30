@@ -28,7 +28,7 @@
 </style>
 
 <div class="text-center mb-2">
-    <h3 class="mb-0">Player Manager <small><span class="badge badge-secondary">BETA</span></small></h3>
+    <h3 class="mb-0">Player Manager (finally) <small><span class="badge badge-secondary">BETA</span></small></h3>
     <small class="text-muted">{{message|safe}}</small>
 </div>
 
@@ -38,13 +38,13 @@
     <div class="row col-xl-10 p-0 pb-3 justify-content-center">
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-info">
-                <small class="text-muted">Total Players</small><br>
+                <small class="text-muted">Total Scumbags</small><br>
                 <strong class="h4">{{stats.players}}</strong>
             </div>
         </div>
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-info">
-                <small class="text-muted">Total Playtime</small><br>
+                <small class="text-muted">Total Hours Wasted</small><br>
                 <strong class="h4">{{stats.playTime}}</strong>
             </div>
         </div>
@@ -62,13 +62,13 @@
         </div> -->
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-warning">
-                <small class="text-muted">Warns</small><br>
+                <small class="text-muted">No No Touches</small><br>
                 <strong class="h4">{{stats.warns}}</strong>
             </div>
         </div>
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-danger">
-                <small class="text-muted">Bans</small><br>
+                <small class="text-muted">Forbidden Banishments</small><br>
                 <strong class="h4">{{stats.bans}}</strong>
             </div>
         </div>
@@ -84,7 +84,7 @@
         <!-- Whitelist -->
         <div class="card card-accent-success">
             <div class="card-header font-weight-bold">
-                <h5 class="float-left mb-0" style="padding-top: .175em;">Last 15 Whitelist requests:</h5>
+                <h5 class="float-left mb-0" style="padding-top: .175em;">Last 15 people wanting to break in:</h5>
                 <button class="btn btn-sm btn-success float-right" type="button" 
                     onclick="whitelistID(null)" {{funcDisabled.whitelist|isDisabled}}>
                     <i class="icon-check"></i> Whitelist ID / License
@@ -92,7 +92,7 @@
             </div>
             <div class="card-body text-center">
                 {{if(options.lastWhitelistBlocks.length == 0)}}
-                    <h3 class="mx-auto text-secondary">no pending whitelist requests</h3>
+                    <h3 class="mx-auto text-secondary">no pending break ins.</h3>
                 {{#else}}
                     <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
                         <thead>
@@ -132,7 +132,7 @@
             <div class="card-body">
                 {{if(options.funcDisabled.whitelist)}}
                     <div class="text-center">
-                        <h3 class="mx-auto pt-3 text-secondary">you can't ban people</h3>
+                        <h3 class="mx-auto pt-3 text-secondary">you can't ban people lol imagine</h3>
                     </div>
                 {{#else}}
                     <div class="form-group row">
@@ -167,13 +167,13 @@
                         </label>
                         <div class="col-sm-9">
                             <select class="form-control" id="frmAddBan-duration">
-                                <option value="t2h">2 hours</option>
-                                <option value="t8h">8 hours</option>
-                                <option value="t1d">1 day</option>
-                                <option value="t2d">2 days</option>
-                                <option value="t1w">1 week</option>
-                                <option value="t2w">2 weeks</option>
-                                <option value="perma" class="font-weight-bold text-danger" selected>permanent</option>
+                                <option value="t2h">Two Forsaken Hours</option>
+                                <option value="t8h">Eight Forsaken Hours</option>
+                                <option value="t1d">One Forsaken Day</option>
+                                <option value="t2d">Two Forsaken Days</option>
+                                <option value="t1w">One Forsaken Week</option>
+                                <option value="t2w">Two Forsaken Weeks</option>
+                                <option value="perma" class="font-weight-bold text-danger" selected>The Ultimate Punishment</option>
                             </select>
                             <span class="form-text text-muted">
                                 <b>Note:</b> The ban will be applied to all identifiers.
@@ -344,7 +344,7 @@
             !/R[2346789ABCDEFGHJKLMNPQRTUVWXYZ]{4}/.test(reference) && 
             !/[0-9A-Fa-f]{40}/.test(reference)
         ){
-            var notify = $.notify({ message: 'The value inserted is not a valid Whitelist ID nor a license identifier.' }, { type: 'danger' });
+            var notify = $.notify({ message: 'The value inserted is not a valid Whitelist ID nor a license identifier dumbass.' }, { type: 'danger' });
             return;
         }
 
@@ -386,7 +386,7 @@
                 return;
             }
             if (data.reason.length < 8) {
-                let notify = $.notify({ message: 'The reason must be at least 8 characters.' }, { type: 'warning' });
+                let notify = $.notify({ message: 'The reason must be at least 8 characters. (Come on you lazy cunt)' }, { type: 'warning' });
                 return;
             }
             data.reference = frmIdentifiers.split(/[,;'"\s]+/).filter(x => x.length);

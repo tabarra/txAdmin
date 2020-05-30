@@ -54,13 +54,13 @@
                                 <div class="step-title waves-effect">Welcome, {{adminUsername}}!</div>
                                 <div class="step-content">
                                     {{if(options.serverProfile == 'default')}}
-                                    Since you didn't select any profile when starting txAdmin, we selected
+                                    Since you didn't select any profile when starting txAdmin,(because you're a dumb cunt) we selected
                                     <code>default</code> for you.
                                     {{#else}}
                                     You selected the profile <code>{{serverProfile}}</code>.
                                     {{/if}}
                                     <br>
-                                    This profile is not configured yet, let's do this now?
+                                    This profile is not configured yet because we sense that you need help. Let us hold your hand.
                                     <div class="step-actions">
                                         <button class="btn btn-pill btn-info next-step" type="button">Next</button>
                                     </div>
@@ -71,7 +71,7 @@
                             <li class="step">
                                 <div class="step-title waves-effect">Server Name</div>
                                 <div class="step-content">
-                                    A <strong>short</strong> server name to be used in txAdmin interface and
+                                    A <strong>short (like your no no stick)</strong> server name to be used in txAdmin interface and
                                     Chat/Discord messages.
                                     <input type="text" class="form-control mt-2" id="frmName" maxlength="22"
                                         minlength="3" placeholder="Happy Server" required>
@@ -134,7 +134,7 @@
                             <li class="step">
                                 <div class="step-title waves-effect">Finish</div>
                                 <div class="step-content">
-                                    <strong>We are all set!</strong> <br>
+                                    <strong>We are all set! Somehow...</strong> <br>
                                     {{if(options.windowsBatPath)}}
                                         You can run this profile by executing: <br>
                                         <code>{{windowsBatPath}}</code> <br>
@@ -143,7 +143,7 @@
                                     <div class="step-actions">
                                         <button class="btn btn-pill btn-success next-step" 
                                             type="button" data-feedback="performSave">
-                                            Save & Start Server</button>
+                                            Start your horrible journey.</button>
                                     </div>
                                 </div>
                             </li>
@@ -159,7 +159,7 @@
             <div class="col-md-4 ">
                 <div class="alert alert-secondary text-center small" role="alert">
                     <strong>Server profile:</strong> {{serverProfile}} <br>
-                    <strong>txAdmin version:</strong> {{txAdminVersion}} <br>
+                    <strong>The Best txAdmin version:</strong> {{txAdminVersion}} <br>
                     <strong>FXServer build:</strong> {{fxServerVersion}}
                 </div>
             </div>
