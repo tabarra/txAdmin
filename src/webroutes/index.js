@@ -52,12 +52,3 @@ exports.advanced = {
     get: require('./advanced/get'),
     actions: require('./advanced/actions'),
 }
-
-
-//FIXME: remove
-exports.experiments = {
-    bans: {
-        get: require('./experiments/bans/get'),
-        actions: require('./experiments/bans/actions'),
-    }
-}

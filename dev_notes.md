@@ -99,9 +99,10 @@
 - [x] limit `/player/list` ui with permissions
 - [x] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
 
+
+- [ ] review on every todohighlight keyword
 - [ ] apply the new action log html to the modal
 - [ ] add logging to the ban, warn and whitelist features!
-- [ ] change `config.minSessionTime` to 15m
 - [ ] check everything done for xss
 - [ ] test on latest build
 

@@ -64,6 +64,9 @@ module.exports = class PlayerController {
         this.activePlayers = [];
         this.writePending = false;
 
+        //Config check
+        if(this.config.minSessionTime < 1 || this.config.minSessionTime > 60) throw new Error('The playerController.minSessionTime setting must be between 1 and 60 minutes.');
+
         //Running playerlist generator
         if(
             process.env.APP_ENV !== 'webpack' && 
@@ -121,12 +124,12 @@ module.exports = class PlayerController {
     async setupDatabase(){
         let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
         try {
-            const adapterAsync = new FileAsync(dbPath); //DEBUG
-            // const adapterAsync = new FileAsync(dbPath, {
-            //     defaultValue: {}, 
-            //     serialize: JSON.stringify, 
-            //     deserialize: JSON.parse
-            // });
+            // const adapterAsync = new FileAsync(dbPath); //DEBUG
+            const adapterAsync = new FileAsync(dbPath, {
+                defaultValue: {}, 
+                serialize: JSON.stringify, 
+                deserialize: JSON.parse
+            });
             let dbo = await low(adapterAsync);
             await dbo.defaults({
                 version: currentDatabaseVersion,
@@ -340,7 +343,7 @@ module.exports = class PlayerController {
 
             //Check ban
             if(this.config.onJoinCheckBan){
-                let ban = hist.find((a) => a.type = 'ban');
+                let ban = hist.find((a) => a.type == 'ban');
                 if(ban){
                     let msg = `You have been banned from this server.\nBan ID: ${ban.id}.`;
                     return {allow: false, reason: msg};
