@@ -98,17 +98,19 @@
 - [x] link `/player/list` "revoke action" to actions endpoint
 - [x] limit `/player/list` ui with permissions
 - [x] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
-
-
-- [ ] review on every todohighlight keyword
-- [ ] apply the new action log html to the modal
+- [x] added flag to prevent noobs from running uncompiled version
+- [x] added time-based deprecation warning
 - [ ] add logging to the ban, warn and whitelist features!
-- [ ] check everything done for xss
+- [ ] review on every todohighlight keyword
 - [ ] test on latest build
+- [ ] update documentation
 
 FIXME: when doing the update announcement, don't forget to mention that the permission names changed
 
 > Soon™
+- [ ] monitor checks for duplicate active users every 10 minutes, then reports in diagnostics page
+- [ ] check everything done for xss
+- [ ] apply the new action log html to the modal
 - [ ] fix action div - revoke of action with no text looks bad
 - [ ] adapt all modal actions to offline players
 - [ ] check why scheduled restarts are not kicking players
@@ -154,10 +156,10 @@ NOTE: when opening a player from the offline list, disable ID-requiring actions 
 ```bash
 # run
 cd /e/FiveM/builds
-npx nodemon --watch "2401/citizen/system_resources/monitor/src/*" --exec "2401/FXServer.exe +set txAdminVerbose truex +set txAdminFakePlayerlist yesplzx"
+npx nodemon --watch "2539/citizen/system_resources/monitor/src/*" --exec "2539/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose truex +set txAdminFakePlayerlist yesplzx"
 
 # build
-cd /e/FiveM/builds/2401/citizen/system_resources/monitor
+cd /e/FiveM/builds/2539/citizen/system_resources/monitor
 rm -rf dist
 npm run build
 
