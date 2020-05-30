@@ -17,6 +17,9 @@
 
 
 ## Main Features
+
+- Swears at you! Dumbass.
+
 - Start/Stop/Restart your server instance or resources
 - Access control:
 	- Login via Password, CitizenFX or Discord
