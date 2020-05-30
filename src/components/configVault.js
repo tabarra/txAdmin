@@ -86,11 +86,17 @@ module.exports = class ConfigVault {
             global: null,
             logger: null,
             monitor: null,
+            playerController: null,
             authenticator: null,
             webServer: null,
             discordBot: null,
             fxRunner: null,
         }
+
+        //NOTE: this shit is ugly, but I wont bother fixing it.
+        //      this entire config vault is stupid.
+        //      use convict, lodash defaults or something like that
+        if(isUndefined(cfg.playerController)) cfg.playerController = {};
 
         try {
             out.global = {
@@ -113,6 +119,13 @@ module.exports = class ConfigVault {
                     failThreshold: (cfg.monitor.healthCheck)? toDefault(cfg.monitor.healthCheck.failThreshold, null) : null,
                     failLimit: (cfg.monitor.healthCheck)? toDefault(cfg.monitor.healthCheck.failLimit, null) : null,
                 }
+            };
+            out.playerController = {
+                onJoinCheckBan: toDefault(cfg.playerController.onJoinCheckBan, true),
+                onJoinCheckWhitelist: toDefault(cfg.playerController.onJoinCheckWhitelist, false),
+                minSessionTime:  toDefault(cfg.playerController.minSessionTime, 15),
+                whitelistRejectionMessage: toDefault(cfg.playerController.whitelistRejectionMessage, 'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\n<strong>Your ID: <id></strong>'),
+                wipePendingWLOnStart: toDefault(cfg.playerController.wipePendingWLOnStart, true),
             };
             out.authenticator = {
                 refreshInterval: toDefault(cfg.authenticator.refreshInterval, null), //not in template
@@ -174,6 +187,13 @@ module.exports = class ConfigVault {
             cfg.monitor.heartBeat.failLimit = parseInt(cfg.monitor.heartBeat.failLimit) || 45;
             cfg.monitor.healthCheck.failThreshold = parseInt(cfg.monitor.healthCheck.failThreshold) || 10;
             cfg.monitor.healthCheck.failLimit = parseInt(cfg.monitor.healthCheck.failLimit) || 300;
+
+            //Player Controller
+            cfg.playerController.onJoinCheckBan = (cfg.playerController.onJoinCheckBan === null)? true : (cfg.playerController.onJoinCheckBan === 'true' || cfg.playerController.onJoinCheckBan === true);
+            cfg.playerController.onJoinCheckWhitelist = (cfg.playerController.onJoinCheckWhitelist === null)? false : (cfg.playerController.onJoinCheckWhitelist === 'true' || cfg.playerController.onJoinCheckWhitelist === true);
+            cfg.playerController.minSessionTime = parseInt(cfg.playerController.minSessionTime) || 15;
+            cfg.playerController.whitelistRejectionMessage = cfg.playerController.whitelistRejectionMessage || 'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\n<strong>Your ID: <id></strong>';
+            cfg.playerController.wipePendingWLOnStart = (cfg.playerController.wipePendingWLOnStart === null)? true : (cfg.playerController.wipePendingWLOnStart === 'true' || cfg.playerController.wipePendingWLOnStart === true);
 
             //Authenticator
             cfg.authenticator.refreshInterval = parseInt(cfg.authenticator.refreshInterval) || 15000; //not in template
@@ -253,6 +273,7 @@ module.exports = class ConfigVault {
             global: Object.freeze(cfg.global),
             logger: Object.freeze(cfg.logger),
             monitor: Object.freeze(cfg.monitor),
+            playerController: Object.freeze(cfg.playerController),
             authenticator: Object.freeze(cfg.authenticator),
             webServer: Object.freeze(cfg.webServer),
             discordBot: Object.freeze(cfg.discordBot),

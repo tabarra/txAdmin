@@ -59,20 +59,7 @@ const validIdentifiers = {
 module.exports = class PlayerController {
     constructor(config) {
         logOk('Started');
-
-        //Configs:
-        this.config = {};
-        this.config.minSessionTime = 1*60; //NOTE: use 15 minutes as default
-        this.config.onJoinCheck = {
-            ban: false,
-            whitelist: true
-        }
-        this.config.whitelistRejectionMessage = `You are not yet whitelisted in this server.
-            Please join <a href="http://discord.gg/example">http://discord.gg/example</a>.
-            <strong>Your ID: <id></strong>`;
-        this.config.wipePendingWLOnStart = false;
-
-        //Vars
+        this.config = config;
         this.dbo = null;
         this.activePlayers = [];
         this.writePending = false;
@@ -114,6 +101,17 @@ module.exports = class PlayerController {
             }
         }, 15 * 1000);
     }
+
+
+    //================================================================
+    /**
+     * Refresh fxRunner configurations
+     */
+    refreshConfig(){
+        this.config = globals.configVault.getScoped('playerController');
+        let cmd = 'txAdmin-checkPlayerJoin' + (this.config.onJoinCheckBan || this.config.onJoinCheckWhitelist).toString();
+        globals.fxRunner.srvCmdBuffer(cmd).then().catch();
+    }//Final refreshConfig()
 
 
     //================================================================
@@ -317,7 +315,7 @@ module.exports = class PlayerController {
      */
     async checkPlayerJoin(idArray, playerName){
         //Check if required
-        if(!this.config.onJoinCheck.ban && !this.config.onJoinCheck.whitelist){
+        if(!this.config.onJoinCheckBan && !this.config.onJoinCheckWhitelist){
             return {allow: true, reason: 'checks disabled'};
         }
 
@@ -341,7 +339,7 @@ module.exports = class PlayerController {
             let hist = await this.getRegisteredActions(idArray, filter);
 
             //Check ban
-            if(this.config.onJoinCheck.ban){
+            if(this.config.onJoinCheckBan){
                 let ban = hist.find((a) => a.type = 'ban');
                 if(ban){
                     let msg = `You have been banned from this server.\nBan ID: ${ban.id}.`;
@@ -350,7 +348,7 @@ module.exports = class PlayerController {
             }
 
             //Check whitelist
-            if(this.config.onJoinCheck.whitelist){
+            if(this.config.onJoinCheckWhitelist){
                 let wl = hist.find((a) => a.type == 'whitelist');
                 if(!wl){
                     //Get license
@@ -376,7 +374,13 @@ module.exports = class PlayerController {
                     }
                     this.writePending = true;
 
-                    let reason = this.config.whitelistRejectionMessage.replace(`<id>`, whitelistID);
+                    //Clean rejection message
+                    const xssRejectMessage = require('../../extras/xss')({
+                        strong: [],
+                        id: []
+                    });
+                    let reason = xssRejectMessage(this.config.whitelistRejectionMessage)
+                                    .replace(/<id>/g, `<code>${whitelistID}</code>`);
                     return {allow: false, reason};
                 }
             }

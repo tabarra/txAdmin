@@ -22,6 +22,10 @@
                             role="tab" aria-controls="nav-fxserver" aria-selected="true">FXServer</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-item nav-link {{activeTab=='playerManager'|isActive}}" id="nav-playerManager-tab" data-toggle="tab" href="#nav-playerManager"
+                            role="tab" aria-controls="nav-playerManager" aria-selected="true">Player Manager</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-item nav-link {{activeTab=='monitor'|isActive}}" id="nav-monitor-tab" data-toggle="tab" href="#nav-monitor"
                             role="tab" aria-controls="nav-monitor" aria-selected="true">Monitor/Restarter</a>
                     </li>
@@ -194,6 +198,102 @@
                     </div>
                     <!-- /FXServer Tab -->
                     
+                    <!-- Player Manager Tab -->
+                    <div class="tab-pane fade {{activeTab=='playerManager'|isActive|tShow}}" id="nav-playerManager" role="tabpanel" aria-labelledby="nav-playerManager-tab">
+                        <div class="form-group row">
+                            <label for="frmPlayerManager-onJoinCheckBan" class="col-sm-3 col-form-label">
+                                Enable Banlist
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckBan"
+                                        {{playerController.onJoinCheckBan|undef}} {{readOnly|isDisabled}}>
+                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Enable checking for <strong>Ban</strong> status on player join. <br>
+                                    Bans will not work if this option is disabled.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="frmPlayerManager-onJoinCheckWhitelist" class="col-sm-3 col-form-label">
+                                Enable Whitelist
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckWhitelist"
+                                        {{playerController.onJoinCheckWhitelist|undef}} {{readOnly|isDisabled}}>
+                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Enable checking for <strong>Whitelist</strong> status on player join. <br>
+                                    Whitelists will not work if this option is disabled.
+                                </span>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="frmPlayerManager-minSessionTime" class="col-sm-3 col-form-label">
+                                Minimum <br>
+                                Session Time
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" id="frmPlayerManager-minSessionTime"
+                                    value="{{playerController.minSessionTime|undef}}" placeholder="15" min="1" max="60" {{readOnly|isDisabled}}>
+                                <span class="form-text text-muted">
+                                    The minimum ammount of minutes a player needs to be in the server before it gets saved to the database. <br>
+                                    This is done to prevent the database to get too big. <br>
+                                    This number must be between <code>1</code> and <code>60</code> minutes.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="frmPlayerManager-whitelistRejectionMessage" class="col-sm-3 col-form-label">
+                                Whitelist <br>Rejection Message
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" id="frmPlayerManager-whitelistRejectionMessage" rows="4" 
+                                    placeholder="You are not yet whitelisted in this server.&#10;Please join http://discord.gg/example.&#10;&lt;strong&gt;Your ID: &lt;id&gt;&lt;/strong&gt;" 
+                                    maxlength="256" {{readOnly|isDisabled}}>{{playerController.whitelistRejectionMessage|undef}}</textarea>
+                                <span class="form-text text-muted">
+                                    The message that will be returned to the player if he is not whitelisted. <br>
+                                    Use <code>&lt;id&gt;&#10;</code> as a placeholder for the whitelist request ID.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="frmPlayerManager-wipePendingWLOnStart" class="col-sm-3 col-form-label">
+                                Wipe Whitelist <br>
+                                On txAdmin Start
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmPlayerManager-wipePendingWLOnStart"
+                                        {{playerController.wipePendingWLOnStart|undef}} {{readOnly|isDisabled}}>
+                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    When enabled, the pending whitelist will be wiped every time txAdmin starts <br>
+                                    This is done to prevent the database to get too big.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmPlayerManager-save" {{readOnly|isDisabled}}>
+                                <i class="icon-check"></i> Save Player Manager Settings
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /Player Manager Tab -->
+
                     <!-- Monitor Tab -->
                     <div class="tab-pane fade {{activeTab=='monitor'|isActive|tShow}}" id="nav-monitor" role="tabpanel" aria-labelledby="nav-monitor-tab">
                         <div class="form-group row">
@@ -382,6 +482,41 @@
         $.ajax({
             type: "POST",
             url: '/settings/save/fxserver',
+            timeout: timeoutMedium,
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    });
+
+
+    //============================================== Player Manager Settings
+    $('#frmPlayerManager-save').click(function () {
+        let data = {
+            onJoinCheckBan: $('#frmPlayerManager-onJoinCheckBan').is(':checked'),
+            onJoinCheckWhitelist: $('#frmPlayerManager-onJoinCheckWhitelist').is(':checked'),
+            minSessionTime: $('#frmPlayerManager-minSessionTime').val().trim(),
+            whitelistRejectionMessage: $('#frmPlayerManager-whitelistRejectionMessage').val().trim(),
+            wipePendingWLOnStart: $('#frmPlayerManager-wipePendingWLOnStart').is(':checked'),
+        }
+        if (!data.minSessionTime.length || !data.whitelistRejectionMessage.length) {
+            var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
+            return;
+        }
+        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+
+        $.ajax({
+            type: "POST",
+            url: '/settings/save/playerController',
             timeout: timeoutMedium,
             data: data,
             dataType: 'json',

@@ -55,12 +55,12 @@ module.exports = class FXRunner {
         }
 
         // Prepare default args
-        const controllerChecks = globals.playerController.config.onJoinCheck;
+        const controllerConfigs = globals.playerController.config;
         const cmdArgs = [
             '+sets', 'txAdmin-version', GlobalData.txAdminVersion,
             '+set', 'txAdmin-apiPort', GlobalData.txAdminPort,
             '+set', 'txAdmin-apiToken', globals.webServer.intercomToken,
-            '+set', 'txAdmin-checkPlayerJoin', (controllerChecks.ban || controllerChecks.whitelist).toString(),
+            '+set', 'txAdmin-checkPlayerJoin', (controllerConfigs.onJoinCheckBan || controllerConfigs.onJoinCheckWhitelist).toString(),
             '+set', 'txAdminServerMode', 'true',
             '+start', GlobalData.resourceName, //NOTE: required for builds <= 2391
             '+set', 'onesync_enabled', (this.config.onesync).toString(),

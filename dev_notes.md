@@ -97,10 +97,10 @@
 - [x] link `/player/list` "ban identifiers" to actions endpoint
 - [x] link `/player/list` "revoke action" to actions endpoint
 - [x] limit `/player/list` ui with permissions
+- [x] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
 
-- [ ] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
 - [ ] apply the new action log html to the modal
-- [ ] add logging to the ban, warn and whitelist features
+- [ ] add logging to the ban, warn and whitelist features!
 - [ ] change `config.minSessionTime` to 15m
 - [ ] check everything done for xss
 - [ ] test on latest build
@@ -108,6 +108,7 @@
 FIXME: when doing the update announcement, don't forget to mention that the permission names changed
 
 > Soon™
+- [ ] fix action div - revoke of action with no text looks bad
 - [ ] adapt all modal actions to offline players
 - [ ] check why scheduled restarts are not kicking players
 - [ ] adapt kick messages to use some basic HTML for formatting
@@ -123,14 +124,14 @@ FIXME: when doing the update announcement, don't forget to mention that the perm
 NOTE: when opening a player from the offline list, disable ID-requiring actions like dm,kick,warning
 
 > Soon™®
-- [ ] tweak dashboard update checker behavior
 - [ ] add some chart to the players page?
+- [ ] the weekly playtime counter per user?
+- [ ] tweak dashboard update checker behavior
 - [ ] add an fxserver changelog page
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
 - [ ] break down playerController into separate files?
 - [ ] rename playerController to playerManager?
-
 
 ## "in the roadmap"
 - [ ] Auto updater for txAdmin?
