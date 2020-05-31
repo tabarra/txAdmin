@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'PlayerController';
+const humanizeDuration = require('humanize-duration'); //FIXME: remove, this controller is not the right place for interface stuff
 const low = require('lowdb');
 const FileAsync = require('lowdb/adapters/FileAsync');
 const { customAlphabet } = require('nanoid');
@@ -112,7 +113,7 @@ module.exports = class PlayerController {
      */
     refreshConfig(){
         this.config = globals.configVault.getScoped('playerController');
-        let cmd = 'txAdmin-checkPlayerJoin' + (this.config.onJoinCheckBan || this.config.onJoinCheckWhitelist).toString();
+        let cmd = 'txAdmin-checkPlayerJoin ' + (this.config.onJoinCheckBan || this.config.onJoinCheckWhitelist).toString();
         globals.fxRunner.srvCmdBuffer(cmd).then().catch();
     }//Final refreshConfig()
 
@@ -124,12 +125,16 @@ module.exports = class PlayerController {
     async setupDatabase(){
         let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
         try {
-            // const adapterAsync = new FileAsync(dbPath); //DEBUG
-            const adapterAsync = new FileAsync(dbPath, {
-                defaultValue: {}, 
-                serialize: JSON.stringify, 
-                deserialize: JSON.parse
-            });
+            let adapterAsync;
+            if(process.env.APP_ENV == 'webpack'){
+                adapterAsync = new FileAsync(dbPath, {
+                    defaultValue: {}, 
+                    serialize: JSON.stringify, 
+                    deserialize: JSON.parse
+                });
+            }else{
+                adapterAsync = new FileAsync(dbPath);
+            }
             let dbo = await low(adapterAsync);
             await dbo.defaults({
                 version: currentDatabaseVersion,
@@ -312,6 +317,8 @@ module.exports = class PlayerController {
      * 
      * TODO: improve ban message to be more verbose
      * 
+     * FIXME: this probably shouldn't be inside playerController
+     * 
      * @param {array} idArray identifiers array
      * @param {string} name player name
      * @returns {object} {allow: bool, reason: string}, or throws on error
@@ -328,7 +335,7 @@ module.exports = class PlayerController {
         idArray = idArray.filter((id)=>{
             return Object.values(validIdentifiers).some(vf => vf.test(id));
         });
-        
+
         try {
             //Prepare & query
             let ts = now();
@@ -345,7 +352,22 @@ module.exports = class PlayerController {
             if(this.config.onJoinCheckBan){
                 let ban = hist.find((a) => a.type == 'ban');
                 if(ban){
-                    let msg = `You have been banned from this server.\nBan ID: ${ban.id}.`;
+                    let msg;
+                    if(ban.expiration){
+                        let humanizeOptions = {
+                            language: globals.translator.t('$meta.humanizer_language'),
+                            round: true,
+                            units: ['d', 'h'],
+                        }
+                        const expiration = humanizeDuration((ban.expiration - ts)*1050, humanizeOptions);
+                        msg = `You have been banned from this server.\n`;
+                        msg += `Your ban will expire in: ${expiration}.\n`;
+                        msg += `Ban ID: <code>${ban.id}</code>.`;
+                    }else{
+                        msg = `You have been <strong>permanentely</strong> banned from this server.\n`;
+                        msg += `Ban ID: <code>${ban.id}</code>.`;
+                    }
+                    
                     return {allow: false, reason: msg};
                 }
             }
