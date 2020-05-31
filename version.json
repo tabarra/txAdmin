@@ -1,5 +1,5 @@
 {
-    "version": "2.4.2",
+    "version": "2.5.0",
     "changelog": "Deprecated Message. Please Update to v2.",
     "allVersions": [
         {
@@ -177,6 +177,10 @@
         {
             "version": "2.4.2",
             "changelog": "Added customizable /status messages. Security Updates: fixed escaping issues, restricted more the settings.view permission, upgraded packages."
+        },
+        {
+            "version": "2.5",
+            "changelog": "Added player manager with ban, warns, whitelist and much more."
         }
     ]
 }
