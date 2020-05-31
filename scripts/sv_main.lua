@@ -276,11 +276,11 @@ function handleConnections(name, skr, d)
             --Do 5 attempts
             while isDone == false and attempts < 5 do
                 attempts = attempts + 1
-                d.update("Checking banlist/whitelist... ("..attempts.."/5)")
+                d.update("[txAdmin] Checking banlist/whitelist... ("..attempts.."/5)")
                 PerformHttpRequest(url, function(httpCode, data, resultHeaders)
                     local resp = tostring(data)
                     if httpCode ~= 200 then
-                        logError("Checking banlist/whitelist failed with code "..httpCode.." and message: "..resp)
+                        logError("[txAdmin] Checking banlist/whitelist failed with code "..httpCode.." and message: "..resp)
                     elseif data == 'allow' then
                         if not isDone then
                             d.done()
@@ -288,7 +288,7 @@ function handleConnections(name, skr, d)
                         end
                     else
                         if not isDone then
-                            d.done('[txAdmin] '..data)
+                            d.done(data)
                             isDone = true
                         end
                     end

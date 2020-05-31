@@ -153,6 +153,8 @@ var modPlayer = {
         warn: document.getElementById("modPlayerButtons-warn"),
     },
     Main: {
+        body: document.getElementById("modPlayerMain"),
+        tab: document.getElementById("modPlayerMain-tab"),
         joinDate: document.getElementById("modPlayerMain-joinDate"),
         playTime: document.getElementById("modPlayerMain-playTime"),
         sessionTime: document.getElementById("modPlayerMain-sessionTime"),
@@ -160,12 +162,17 @@ var modPlayer = {
         notes: document.getElementById("modPlayerMain-notes"),
     },
     IDs: {
+        body: document.getElementById("modPlayerIDs"),
+        tab: document.getElementById("modPlayerIDs-tab"),
         list: document.getElementById("modPlayerIDs-list")
     },
     History: {
+        body: document.getElementById("modPlayerHistory"),
+        tab: document.getElementById("modPlayerHistory-tab"),
         list: document.getElementById("modPlayerHistory-log")
     },
     Ban: {
+        body: document.getElementById("modPlayerBan"),
         tab: document.getElementById("modPlayerBan-tab"),
         reason: document.getElementById("modPlayerBan-reason"),
         duration: document.getElementById("modPlayerBan-duration"),
@@ -185,16 +192,26 @@ function showPlayer(license) {
     modPlayer.Message.classList.remove('d-none');
     modPlayer.Content.classList.add('d-none');
     modPlayer.Title.innerText = 'loading...';
+
+    modPlayer.Main.tab.classList.add('active');
+    modPlayer.Main.body.classList.add('show', 'active');
     modPlayer.Main.joinDate.innerText = '--';
     modPlayer.Main.playTime.innerText = '--';
     modPlayer.Main.sessionTime.innerText = '--';
     modPlayer.Main.notesLog.innerText = '--';
     modPlayer.Main.notes.value = '';
+
+    modPlayer.IDs.tab.classList.remove('active');
+    modPlayer.IDs.body.classList.remove('show', 'active');
     modPlayer.IDs.list.innerText = 'loading...';
+
+    modPlayer.History.tab.classList.remove('active');
+    modPlayer.History.body.classList.remove('show', 'active');
     modPlayer.History.list.innerText = 'loading...';
 
+    modPlayer.Ban.tab.classList.remove('nav-link-red', 'active');
+    modPlayer.Ban.body.classList.remove('show', 'active');
     modPlayer.Ban.tab.classList.add('nav-link-disabled', 'disabled');
-    modPlayer.Ban.tab.classList.remove('nav-link-red');
 
     modPlayer.Ban.reason.value = '';
     modPlayer.Ban.duration.value = 't2d';
@@ -249,7 +266,9 @@ function showPlayer(license) {
                 modPlayer.History.list.innerHTML = elements.join('\n');
             }
             
-            modPlayer.Buttons.search.disabled = false;
+            //TODO: while the search doesn't work
+            modPlayer.Buttons.search.disabled = true;
+
             modPlayer.Buttons.message.disabled = data.funcDisabled.message;
             modPlayer.Buttons.kick.disabled = data.funcDisabled.kick;
             modPlayer.Buttons.warn.disabled = data.funcDisabled.warn;

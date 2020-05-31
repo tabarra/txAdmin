@@ -78,7 +78,7 @@ function getChartData(series) {
 /**
  * Returns the update data.
  * 
- * FIXME: improve the message to show suggestion based on weathor or not the user is an "early adopter".
+ * FIXME: improve the message to show suggestion based on whether or not the user is an "early adopter".
  * 
  *   Logic:
  *    if == recommended, you're fine

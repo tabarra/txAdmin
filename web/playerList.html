@@ -7,6 +7,9 @@
     .pInfoCallout .c-callout{
         padding-bottom: 2px;
     }
+    .pInfoCallout small{
+        letter-spacing: .04em;
+    }
     .txWhitelistBtn{
         letter-spacing: 0.1em;
         font-weight: 300 !important;
@@ -27,8 +30,8 @@
     }
 </style>
 
-<div class="text-center mb-3">
-    <h3 class="mb-0">Player Manager</h3 class="mb-1">
+<div class="text-center mb-2">
+    <h3 class="mb-0">Player Manager <small><span class="badge badge-secondary">BETA</span></small></h3>
     <small class="text-muted">{{message|safe}}</small>
 </div>
 
@@ -81,103 +84,130 @@
 
     <div class="col-md-10 col-lg-8 col-xl-5 mw-col6">
 
+        <!-- Whitelist -->
+        <div class="card card-accent-success">
+            <div class="card-header font-weight-bold">
+                <h5 class="float-left mb-0" style="padding-top: .175em;">
+                    Last 15 Whitelist requests:
+                </h5>
+                {{if(!options.disableWhitelist)}}
+                    <button class="btn btn-sm btn-success float-right" type="button" 
+                        onclick="whitelistID(null)" {{permsDisable.whitelist|isDisabled}}>
+                        <i class="icon-check"></i> Whitelist ID / License
+                    </button>
+                {{/if}}
+            </div>
+            <div class="card-body text-center">
+                {{if(options.disableWhitelist)}}
+                    <div class="text-center">
+                        <h3 class="mx-auto pt-3 text-danger">whitelist checking disabled</h3>
+                    </div>
+                {{#else}}
+                    {{if(options.lastWhitelistBlocks.length == 0)}}
+                        <h3 class="mx-auto text-secondary">no pending whitelist requests</h3>
+                    {{#else}}
+                        <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
+                            <thead>
+                                <tr>
+                                    <th>Actions</th>
+                                    <th>Time</th>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{foreach(options.lastWhitelistBlocks)}}
+                                <tr>
+                                    <td>
+                                        {{if(options.permsDisable.whitelist)}}
+                                            <a href="/player/list#!" class="badge badge-secondary txWhitelistBtn">ACCEPT</a>
+                                        {{#else}}
+                                            <a href="/player/list#!" class="badge badge-primary txWhitelistBtn" 
+                                                onclick="whitelistID('{{@this.id}}')">ACCEPT</a>
+                                        {{/if}}
+                                    </td>
+                                    <td>{{@this.time}}</td>
+                                    <td>{{@this.id}}</td>
+                                    <td class="text-truncate">{{@this.name}}</td>
+                                </tr>
+                                {{/foreach}}
+                            </tbody>
+                        </table>
+                    {{/if}}
+                {{/if}}
+            </div>
+        </div>
+        <!-- /Whitelist -->
+
         <!-- Ban ID -->
         <div class="card card-accent-danger">
             <div class="card-header font-weight-bold">Ban Identifiers:</div>
             <div class="card-body">
-                <div class="form-group row">
-                    <label for="frmAddBan-identifiers" class="col-sm-3 col-form-label">
-                        Identifier(s) <br>
-                        <small class="text-danger">(required)</small>
-                    </label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control" id="frmAddBan-identifiers"
-                            placeholder="steam:101010101010101, license:d3832ddc9f845bf...">
-                        <span class="form-text text-muted">
-                            Valid identifiers: <code>steam, license, xbl, live, discord, fivem</code>.
-                            You can insert multiple IDs separated by comma.
-                        </span>
+                {{if(options.disableBans)}}
+                    <div class="text-center">
+                        <h3 class="mx-auto pt-3 text-danger">ban checking disabled</h3>
                     </div>
-                </div>
+                {{#else}}
+                    {{if(options.permsDisable.whitelist)}}
+                        <div class="text-center">
+                            <h3 class="mx-auto pt-3 text-secondary">you can't ban people</h3>
+                        </div>
+                    {{#else}}
+                        <div class="form-group row">
+                            <label for="frmAddBan-identifiers" class="col-sm-3 col-form-label">
+                                Identifier(s) <br>
+                                <small class="text-danger">(required)</small>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmAddBan-identifiers"
+                                    placeholder="steam:101010101010101, license:d3832ddc9f845bf...">
+                                <span class="form-text text-muted">
+                                    Valid identifiers: <code>steam, license, xbl, live, discord, fivem</code>.
+                                    You can insert multiple IDs separated by comma.
+                                </span>
+                            </div>
+                        </div>
 
-                <div class="form-group row">
-                    <label for="frmAddBan-reason" class="col-sm-3 col-form-label">
-                        Reason <br>
-                        <small class="text-danger">(required)</small>
-                    </label>
-                    <div class="col-sm-9">
-                        <input type="text" class="form-control" id="frmAddBan-reason" maxlength="256"
-                            placeholder="doing bad things :(">
-                    </div>
-                </div>
+                        <div class="form-group row">
+                            <label for="frmAddBan-reason" class="col-sm-3 col-form-label">
+                                Reason <br>
+                                <small class="text-danger">(required)</small>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmAddBan-reason" maxlength="256"
+                                    placeholder="doing bad things :(">
+                            </div>
+                        </div>
 
-                <div class="form-group row">
-                    <label for="frmAddBan-duration" class="col-sm-3 col-form-label">
-                        Duration
-                    </label>
-                    <div class="col-sm-9">
-                        <select class="form-control" id="frmAddBan-duration">
-                            <option value="t2h">2 hours</option>
-                            <option value="t8h">8 hours</option>
-                            <option value="t1d">1 day</option>
-                            <option value="t2d">2 days</option>
-                            <option value="t1w">1 week</option>
-                            <option value="t2w">2 weeks</option>
-                            <option value="perma" class="font-weight-bold text-danger" selected>permanent</option>
-                        </select>
-                        <span class="form-text text-muted">
-                            <b>Note:</b> The ban will be applied to all identifiers.
-                        </span>
-                    </div>
-                </div>
-                <div class="text-center mt-4">
-                    <button class="btn btn-sm btn-danger" type="submit" id="frmAddBan-button" {{disableWrite}}>
-                        <i class="icons cui-check"></i> Ban Identifiers
-                    </button>
-                </div>
+                        <div class="form-group row">
+                            <label for="frmAddBan-duration" class="col-sm-3 col-form-label">
+                                Duration
+                            </label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="frmAddBan-duration">
+                                    <option value="t2h">2 hours</option>
+                                    <option value="t8h">8 hours</option>
+                                    <option value="t1d">1 day</option>
+                                    <option value="t2d">2 days</option>
+                                    <option value="t1w">1 week</option>
+                                    <option value="t2w">2 weeks</option>
+                                    <option value="perma" class="font-weight-bold text-danger" selected>permanent</option>
+                                </select>
+                                <span class="form-text text-muted">
+                                    <b>Note:</b> The ban will be applied to all identifiers.
+                                </span>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <button class="btn btn-sm btn-danger" type="submit" id="frmAddBan-button">
+                                <i class="icons cui-check"></i> Ban Identifiers
+                            </button>
+                        </div>
+                    {{/if}}
+                {{/if}}
             </div>
         </div>
         <!-- /Ban ID -->
-
-        <!-- Whitelist -->
-        <div class="card card-accent-success">
-            <div class="card-header font-weight-bold">
-                Whitelist - last 20 join attempts:
-            </div>
-            <div class="card-body text-center">
-                {{if(options.lastWhitelistBlocks.length == 0)}}
-                    <h3 class="mx-auto text-secondary">no pending whitelist requests</h3>
-                {{#else}}
-                    <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
-                        <thead>
-                            <tr>
-                                <th>Actions</th>
-                                <th>Time</th>
-                                <th>ID</th>
-                                <th>Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{foreach(options.lastWhitelistBlocks)}}
-                            <tr>
-                                <td>
-                                    <a href="/player/list#!" class="badge badge-primary txWhitelistBtn" 
-                                        onclick="whitelistID('{{@this.id}}')">ACCEPT</a>
-                                </td>
-                                <td>{{@this.time}}</td>
-                                <td>{{@this.id}}</td>
-                                <td class="text-truncate">{{@this.name}}</td>
-                            </tr>
-                            {{/foreach}}
-                        </tbody>
-                    </table>
-                {{/if}}
-                <button class="btn btn-sm btn-success mt-3" type="button" onclick="whitelistID(null)">
-                    <i class="icon-check"></i> Whitelist ID / License
-                </button>
-            </div>
-        </div>
-        <!-- /Whitelist -->
 
     </div>
 
@@ -188,7 +218,11 @@
         <!-- Tabbed Card -->
         <div class="card">
             <div class="card-header card-accent-info">
-                <ul class="nav nav-pills card-header-pills">
+                <h5 class="float-left mb-0" style="padding-top: .175em;">
+                    Database Actions (bans/warns/whitelists)
+                </h5>
+                <!-- FIXME: currently disabled -->
+                <!-- <ul class="nav nav-pills card-header-pills">
                     <div class="form-group row mb-0 mr-auto">
                         <div class="col-md-12">
                             <div class="input-group">
@@ -212,7 +246,7 @@
                         <a class="nav-link active" id="dbActions-tab" data-toggle="pill" href="#dbActions" role="tab" 
                             aria-controls="dbActions" aria-selected="true"><i class="icon-notebook"></i> Actions</a>
                     </li>
-                </ul>
+                </ul> -->
             </div>
             <div class="card-body">
                 <div class="tab-content">
@@ -233,7 +267,7 @@
 
                     <div class="tab-pane fade show active" id="dbActions" role="tabpanel" aria-labelledby="dbActions-tab">
                         <!-- FIXME: change to "last xxx actions" -->
-                        <h5 class="card-title">Action History:</h5> 
+                        <!-- <h5 class="card-title">Action History:</h5>  -->
                         {{if(options.actionHistory.length == 0)}}
                             <div class="text-center">
                                 <h3 class="mx-auto pt-3 text-secondary">no actions yet...</h3>
@@ -245,17 +279,19 @@
                                         <div class="d-flex w-100 justify-content-between">
                                             <strong>{{@this.message|safe}}</strong>
                                             <small class="text-right">{{@this.date}} 
-                                                {{if(@this.revocationNotice)}}
-                                                    <span class="badge badge-outline-light p-1">REVOKED</span>
-                                                {{#else}}
-                                                    &nbsp;<a href="/player/list#!" onclick="revokeAction('{{@this.id}}')" 
-                                                        class="badge badge-secondary p-1 txActionsBtn">REVOKE</a>&nbsp;
+                                                {{if(!options.permsDisable.revoke)}}
+                                                    {{if(@this.revocationNotice)}}
+                                                        <span class="badge badge-outline-light p-1">REVOKED</span>
+                                                    {{#else}}
+                                                        &nbsp;<a href="/player/list#!" onclick="revokeAction('{{@this.id}}')" 
+                                                            class="badge badge-secondary p-1 txActionsBtn">REVOKE</a>&nbsp;
+                                                    {{/if}}
                                                 {{/if}}
                                             </small>
                                         </div>
-                                        <span>{{@this.reason}}</span>
+                                        <span>{{@this.reason|unnull}}</span>
                                         {{if(@this.revocationNotice)}}
-                                            <br><small>{{@this.revocationNotice}}</small>
+                                            <small class="d-block">{{@this.revocationNotice}}</small>
                                         {{/if}}
                                     </div>
                                 {{/foreach}}
@@ -360,45 +396,47 @@
     }
 
     //Add ban button click
-    document.getElementById('frmAddBan-button').addEventListener('click', function (ev) {
-        let frmIdentifiers = document.getElementById('frmAddBan-identifiers').value.trim();
-        let data = {
-            reason: document.getElementById('frmAddBan-reason').value.trim(),
-            duration: document.getElementById('frmAddBan-duration').value.trim(),
-        }
-        if (!frmIdentifiers.length || !data.reason.length) {
-            let notify = $.notify({ message: 'The identifiers and reason fields are required.' }, { type: 'warning' });
-            return;
-        }
-        if (data.reason.length < 8) {
-            let notify = $.notify({ message: 'The reason must be at least 8 characters.' }, { type: 'warning' });
-            return;
-        }
-        data.reference = frmIdentifiers.split(/[,;'"\s]+/).filter(x => x.length);
-        let notify = $.notify({ message: '<p class="text-center">Banning...</p>' }, {});
-
-        $.ajax({
-            type: "POST",
-            url: '/player/ban',
-            timeout: timeoutLong,
-            data: data,
-            dataType: 'json',
-            success: function (data) {
-                if(data.refresh === true){
-                    window.location.reload(true);
-                }else{
-                    notify.update('progress', 0);
-                    notify.update('type', data.type);
-                    notify.update('message', data.message);
-                }
-            },
-            error: function (xmlhttprequest, textstatus, message) {
-                notify.update('progress', 0);
-                notify.update('type', 'danger');
-                notify.update('message', message);
+    const banButtonEl = document.getElementById('frmAddBan-button');
+    if(banButtonEl){
+        banButtonEl.addEventListener('click', function (ev) {
+            let frmIdentifiers = document.getElementById('frmAddBan-identifiers').value.trim();
+            let data = {
+                reason: document.getElementById('frmAddBan-reason').value.trim(),
+                duration: document.getElementById('frmAddBan-duration').value.trim(),
             }
-        });
-    });
+            if (!frmIdentifiers.length || !data.reason.length) {
+                let notify = $.notify({ message: 'The identifiers and reason fields are required.' }, { type: 'warning' });
+                return;
+            }
+            if (data.reason.length < 8) {
+                let notify = $.notify({ message: 'The reason must be at least 8 characters.' }, { type: 'warning' });
+                return;
+            }
+            data.reference = frmIdentifiers.split(/[,;'"\s]+/).filter(x => x.length);
+            let notify = $.notify({ message: '<p class="text-center">Banning...</p>' }, {});
 
+            $.ajax({
+                type: "POST",
+                url: '/player/ban',
+                timeout: timeoutLong,
+                data: data,
+                dataType: 'json',
+                success: function (data) {
+                    if(data.refresh === true){
+                        window.location.reload(true);
+                    }else{
+                        notify.update('progress', 0);
+                        notify.update('type', data.type);
+                        notify.update('message', data.message);
+                    }
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    notify.update('progress', 0);
+                    notify.update('type', 'danger');
+                    notify.update('message', message);
+                }
+            });
+        });
+    }
     
 </script>

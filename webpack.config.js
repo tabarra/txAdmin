@@ -51,17 +51,19 @@ module.exports = {
                 APP_ENV: JSON.stringify('webpack')
             }
         }),
-        new CopyPlugin([
-            'LICENSE',
-            '*.md',
-            'fxmanifest.lua',
-            'scripts/*.lua',
-            'scripts/cl_*.js', 
-            'scripts/*.html', 
-            'scripts/assets/**', 
-            'web/**',
-            'docs/**',
-        ]),
+        new CopyPlugin({
+            patterns: [
+                'LICENSE',
+                '*.md',
+                'fxmanifest.lua',
+                'scripts/*.lua',
+                'scripts/cl_*.js', 
+                'scripts/*.html', 
+                'scripts/assets/**', 
+                'web/**',
+                'docs/**',
+            ]
+        }),
         new TerserPlugin({
             extractComments: false,
         }),

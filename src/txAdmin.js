@@ -86,7 +86,7 @@ module.exports = class txAdmin {
         this.startWebServer(profileConfig.webServer).catch((err) => {
             HandleFatalError(err, 'WebServer');
         });
-        this.startPlayerController().catch((err) => {
+        this.startPlayerController(profileConfig.playerController).catch((err) => {
             HandleFatalError(err, 'PlayerController');
         });
 
@@ -145,9 +145,9 @@ module.exports = class txAdmin {
 
     //==============================================================
     //NOTE: this component name might change
-    async startPlayerController(){
+    async startPlayerController(config){
         const PlayerController = require('./components/playerController')
-        globals.playerController = new PlayerController();
+        globals.playerController = new PlayerController(config);
     }
 }
 

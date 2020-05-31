@@ -1,113 +1,14 @@
-## TODO Conversion
-> didn't keep track of what came before, but basically: new auth system, from express to koa
-> v2.0.0-conv
-- [x] why auto login when creating master doesn't work??
-- [x] acessar /auth?logout da state mismatch
-- [x] wrong ip, check x-forwarded-for
-- [x] do I still need the clientCompatVersion convar? No
-- [x] build path to the global info - check for globals.fxRunner.something
-- [x] add txDataPath convar + docs
-- [x] reorganize globals.info.xxx
-- [x] remover messages.json temporariamente
-- [x] add the stdout sniffer for wrong port and hangs (*must* be improved tho)
-- [x] Fix bug: new profile > save global settings > reload page > fxserver: both will be undefined
-- [x] clean this dumb file
-- [x] perform end2end test
-> v2.0.0-rc1
-- [x] when you open the settings page, go directly to the fxserver tab
-- [x] fix broken authorization
-- [x] fix `run.cmd` compatibility with build 2270
-- [x] increase ajax timeouts
-- [x] disable resources page buttons when you don't have permission to use them
-- [x] fix scrollbars and colors from the live console page
-- [x] update packages - npm outdated
-> v2.0.0-rc2
-- [x] minor interface tweaks
-- [x] improve responsivity on smaller monitors (between 1474 and 900 width)
-- [x] clean custom.css an rename it to txAdmin.css
-- [x] hide memory usage on linux?
-- [x] change (fix?) cpu usage on diagnostics page
-- [x] disable editing the master admin by other admins
-- [x] join action/console log and protect with permission
-- [x] end2end test + beta testers run
-- [x] fix linux run.sh reference
-- [x] update readme
-> v2.0.0
-- [x] improved docs and messages/strings
-- [x] allow for admin names with 3 characters due to discourse rules
-- [x] increased CitizenFX openid-client time skew tolerances to 2 hours 
-> v2.0.1
-- [x] improve user onboarding experience by adding an wizzard/stepper setup
-- [x] fix arabic language and merge language PRs
-- [x] add text-truncate (class) to playerlist
-> v2.1.0
-- [x] Remove maxsize for some Setup Wizard inputs
-> v2.1.1
-- [x] make player list dynamic and searchable
-- [x] clean up the resource injector?
-- [x] Rename basePath to serverDataPath
-- [x] Change code exchange error messages
-> v2.2.0
-- [x] Rework the entire monitor
-- [x] Change all the `monitor.statusServer` references
-- [x] fix bug: resources page when you type then delete what you typed, it shows hidden default resources
-> v2.3.0
-- [x] fix /status showing objects instead of player count
-- [x] fix playerlist not updating the ping colors
-- [x] fixed double server spawning bug
-> v2.3.1
-- [x] rename `extensions` folder to `scripts` nad adjust webpack
-- [x] upgrade packages (Note: discord.js v12 didn't work)
-- [x] improved error handling for code exchange errors and increased timeout
-- [x] create debug playerlist generator
-- [x] created `globals.servicebus` to replace "temporary" variables
-- [x] added FXServer update checker
-- [x] improved monitor handling of very low-spec servers 
-- [x] add greek + pt_pt
-> v2.4.0
-- [x] create `/advanced` page and move the verbosity switch there
-- [x] fixed updateChecker error handling and added a message for pre-releases
-> v2.4.1
-- [x] create playerController module (started on v2.4.0)
-- [x] fix escaping issues on commands.js
-- [x] deprecate discord custom commands and set process priority features
-- [x] remove the public ip setting and make the /status configurable
-- [x] redact discord token from the settings page for admins with only "settings.view" permission
-- [x] fix serverlist not wiping after server shutting down
-- [x] update packages and change detection of clock skew
-> v2.4.2
-- [x] make the html of the new player modal
-- [x] make the NUI of the warn message
-- [x] code the modal actions (front+back+script+nui) for the online players
-- [x] removed the `Admins file reloaded` spam from verbosity.
-- [x] start the html of the new `/player/list` page
-- [x] split `common.js` into separate files?
-- [?] fix the double-player issue (timeout + fast rejoin?)
-- [x] cleanup playerController for debug/testing stuff
-- [x] add/test getRegisteredActions filters
-- [x] replace `ansi-colors` with `chalk` since they fixed the performance issues
-- [x] re-add playerConnecting the whitelist/ban checking function (lua+intercom+playerController)
-- [x] implement whitelist registration logic
-- [x] block html usage on admin kick reason 
-- [x] prepare `/player/list` for a beta release with limited UX
-- [x] check the time played algo, or the database saving - not working properly?
-- [x] add playerName to ban/warn action db
-- [x] create action for giving whitelist to a license (don't forget to set playerName)
-- [x] link `/player/list` "accept wl" to actions endpoint
-- [x] link `/player/list` "ban identifiers" to actions endpoint
-- [ ] link `/player/list` "revoke action" to actions endpoint
-
-- [ ] limit `/player/list` with permissions
-- [ ] apply the new action log html to the modal
-- [ ] add logging to the ban, warn and whitelist features
-- [ ] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
-- [ ] change `config.minSessionTime` to 15m
-- [ ] check everything done for xss
-- [ ] test on latest build
+## TODO v2
+- [ ] ?????
 
 FIXME: when doing the update announcement, don't forget to mention that the permission names changed
 
 > Soon™
+- [ ] make warns un-revokable?
+- [ ] monitor checks for duplicate active users every 10 minutes, then reports in diagnostics page
+- [ ] check everything done for xss
+- [ ] apply the new action log html to the modal
+- [ ] fix action div - revoke of action with no text looks bad
 - [ ] adapt all modal actions to offline players
 - [ ] check why scheduled restarts are not kicking players
 - [ ] adapt kick messages to use some basic HTML for formatting
@@ -115,7 +16,8 @@ FIXME: when doing the update announcement, don't forget to mention that the perm
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
 - [ ] convert cl_logger.js to lua, and stop it when not in `monitorMode`
 - [ ] try again the upgrade to Discord.js v12
-- [ ] Add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
+- [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
+- [ ] add ban server-side ban cache (last 500 bans?), updated on every ban change 
 - [ ] add a commend system?
 - [ ] add stopwatch (or something) to the db functions and print on `/diagnostics`
 - [ ] change webserver token every time the server starts
@@ -123,14 +25,14 @@ FIXME: when doing the update announcement, don't forget to mention that the perm
 NOTE: when opening a player from the offline list, disable ID-requiring actions like dm,kick,warning
 
 > Soon™®
-- [ ] tweak dashboard update checker behavior
 - [ ] add some chart to the players page?
+- [ ] the weekly playtime counter per user?
+- [ ] tweak dashboard update checker behavior
 - [ ] add an fxserver changelog page
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
 - [ ] break down playerController into separate files?
 - [ ] rename playerController to playerManager?
-
 
 ## "in the roadmap"
 - [ ] Auto updater for txAdmin?
@@ -139,23 +41,16 @@ NOTE: when opening a player from the offline list, disable ID-requiring actions 
 - [ ] revisit the issue with server restarting too fast (before close) and the the bind failing, causing restart loop. Almost all cases were windows server 2012.
 - [ ] xxxxxx
 
-
-## Todas as funções que preciso programar (target type) [pct que precisa de comando]:
-    - save note     (license) [0%]
-    - warn player   (id/arr)  [100%]
-    - ban player    (id/arr)  [75%]
-    - revoke action (actID)   [0%]
-    - search        (name, license, csv ids)
-
+=======================================
 
 ## CLTR+C+V
 ```bash
 # run
 cd /e/FiveM/builds
-npx nodemon --watch "2401/citizen/system_resources/monitor/src/*" --exec "2401/FXServer.exe +set txAdminVerbose truex +set txAdminFakePlayerlist yesplzx"
+npx nodemon --watch "2539/citizen/system_resources/monitor/src/*" --exec "2539/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose truex +set txAdminFakePlayerlist yesplzx"
 
 # build
-cd /e/FiveM/builds/2401/citizen/system_resources/monitor
+cd /e/FiveM/builds/2539/citizen/system_resources/monitor
 rm -rf dist
 npm run build
 

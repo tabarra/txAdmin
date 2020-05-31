@@ -18,6 +18,7 @@ module.exports = async function SettingsGet(ctx) {
         headerTitle: 'settings',
         global: cleanRenderData(globals.configVault.getScopedStructure('global')),
         fxserver: cleanRenderData(globals.configVault.getScopedStructure('fxRunner')),
+        playerController: cleanRenderData(globals.configVault.getScopedStructure('playerController')),
         monitor: cleanRenderData(globals.configVault.getScopedStructure('monitor')),
         discord: cleanRenderData(globals.configVault.getScopedStructure('discordBot')),
         readOnly: !ctx.utils.checkPermission('settings.write', modulename, false),

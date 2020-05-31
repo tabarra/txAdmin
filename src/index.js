@@ -15,6 +15,7 @@ const slash = require('slash');
 const { dir, log, logOk, logWarn, logError, cleanTerminal, setTTYTitle } = require('./extras/console')();
 
 //Helpers
+const now = () => { return Math.round(Date.now() / 1000) };
 const cleanPath = (x) => { return slash(path.normalize(x)) };
 const logDie = (x) => {
     logError(x);
@@ -31,6 +32,13 @@ const getBuild = (ver)=>{
 }
 
 //==============================================================
+//Make sure this user knows what he is doing...
+let txAdmin1337 = GetConvar('txAdmin1337', 'false').trim();
+if(process.env.APP_ENV !== 'webpack' && txAdmin1337 !== 'IKnowWhatImDoing'){
+    logError(`Looks like you don't know what you are doing.`);
+    logDie(`Please use the compiled release from GitHub or the version that comes with the latest FXServer.`)
+}
+
 //Get OSType
 const osTypeVar = os.type();
 let osType;
@@ -55,6 +63,14 @@ if(!fxServerVersion){
 const txAdminVersion = GetResourceMetadata(resourceName, 'version');
 if(typeof txAdminVersion !== 'string' || txAdminVersion == 'null'){
     logDie(`txAdmin version not set or in the wrong format`);
+}
+
+//Check if this version of txAdmin is too outdated to be considered safe to use in prod
+//FIXME: Only valid if its being very actively maintained.
+const txAdminTooOutdated = (now() >  1593475200); //30 Jun 2020
+if(txAdminTooOutdated){
+    logError(`This version of txAdmin is too much outdated.`);
+    logError(`Please update as soon as possible.`);
 }
 
 //Get txAdmin Resource Path
@@ -113,6 +129,7 @@ GlobalData = {
     resourceName,
     fxServerVersion,
     txAdminVersion,
+    txAdminTooOutdated,
     txAdminResourcePath,
     fxServerPath,
     dataPath,

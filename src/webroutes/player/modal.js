@@ -64,15 +64,16 @@ module.exports = async function PlayerModal(ctx) {
     if(GlobalData.verbose) dir(activePlayer) //DEBUG
 
     //Preparing output
+    const controllerConfigs = globals.playerController.config;
     let out = {
         funcDisabled: {
             message: (activePlayer && ctx.utils.checkPermission('players.message', modulename, false))? '' : 'disabled',
             kick: (activePlayer && ctx.utils.checkPermission('players.kick', modulename, false))? '' : 'disabled',
             warn: (activePlayer && ctx.utils.checkPermission('players.warn', modulename, false))? '' : 'disabled',
-            ban: !ctx.utils.checkPermission('players.ban', modulename, false),
+            ban: !ctx.utils.checkPermission('players.ban', modulename, false) || !controllerConfigs.onJoinCheckBan,
         }
     }
-   
+
     //If player is active
     if(activePlayer){
         out.id = activePlayer.id;

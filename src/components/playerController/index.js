@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'PlayerController';
+const humanizeDuration = require('humanize-duration'); //FIXME: remove, this controller is not the right place for interface stuff
 const low = require('lowdb');
 const FileAsync = require('lowdb/adapters/FileAsync');
 const { customAlphabet } = require('nanoid');
@@ -59,23 +60,13 @@ const validIdentifiers = {
 module.exports = class PlayerController {
     constructor(config) {
         logOk('Started');
-
-        //Configs:
-        this.config = {};
-        this.config.minSessionTime = 1*60; //NOTE: use 15 minutes as default
-        this.config.onJoinCheck = {
-            ban: false,
-            whitelist: true
-        }
-        this.config.whitelistRejectionMessage = `You are not yet whitelisted in this server.
-            Please join <a href="http://discord.gg/example">http://discord.gg/example</a>.
-            <strong>Your ID: <id></strong>`;
-        this.config.wipePendingWLOnStart = false;
-
-        //Vars
+        this.config = config;
         this.dbo = null;
         this.activePlayers = [];
         this.writePending = false;
+
+        //Config check
+        if(this.config.minSessionTime < 1 || this.config.minSessionTime > 60) throw new Error('The playerController.minSessionTime setting must be between 1 and 60 minutes.');
 
         //Running playerlist generator
         if(
@@ -118,17 +109,32 @@ module.exports = class PlayerController {
 
     //================================================================
     /**
+     * Refresh fxRunner configurations
+     */
+    refreshConfig(){
+        this.config = globals.configVault.getScoped('playerController');
+        let cmd = 'txAdmin-checkPlayerJoin ' + (this.config.onJoinCheckBan || this.config.onJoinCheckWhitelist).toString();
+        globals.fxRunner.srvCmdBuffer(cmd).then().catch();
+    }//Final refreshConfig()
+
+
+    //================================================================
+    /**
      * Start lowdb instance and set defaults
      */
     async setupDatabase(){
         let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
         try {
-            const adapterAsync = new FileAsync(dbPath); //DEBUG
-            // const adapterAsync = new FileAsync(dbPath, {
-            //     defaultValue: {}, 
-            //     serialize: JSON.stringify, 
-            //     deserialize: JSON.parse
-            // });
+            let adapterAsync;
+            if(process.env.APP_ENV == 'webpack'){
+                adapterAsync = new FileAsync(dbPath, {
+                    defaultValue: {}, 
+                    serialize: JSON.stringify, 
+                    deserialize: JSON.parse
+                });
+            }else{
+                adapterAsync = new FileAsync(dbPath);
+            }
             let dbo = await low(adapterAsync);
             await dbo.defaults({
                 version: currentDatabaseVersion,
@@ -311,13 +317,15 @@ module.exports = class PlayerController {
      * 
      * TODO: improve ban message to be more verbose
      * 
+     * FIXME: this probably shouldn't be inside playerController
+     * 
      * @param {array} idArray identifiers array
      * @param {string} name player name
      * @returns {object} {allow: bool, reason: string}, or throws on error
      */
     async checkPlayerJoin(idArray, playerName){
         //Check if required
-        if(!this.config.onJoinCheck.ban && !this.config.onJoinCheck.whitelist){
+        if(!this.config.onJoinCheckBan && !this.config.onJoinCheckWhitelist){
             return {allow: true, reason: 'checks disabled'};
         }
 
@@ -327,7 +335,7 @@ module.exports = class PlayerController {
         idArray = idArray.filter((id)=>{
             return Object.values(validIdentifiers).some(vf => vf.test(id));
         });
-        
+
         try {
             //Prepare & query
             let ts = now();
@@ -341,16 +349,31 @@ module.exports = class PlayerController {
             let hist = await this.getRegisteredActions(idArray, filter);
 
             //Check ban
-            if(this.config.onJoinCheck.ban){
-                let ban = hist.find((a) => a.type = 'ban');
+            if(this.config.onJoinCheckBan){
+                let ban = hist.find((a) => a.type == 'ban');
                 if(ban){
-                    let msg = `You have been banned from this server.\nBan ID: ${ban.id}.`;
+                    let msg;
+                    if(ban.expiration){
+                        let humanizeOptions = {
+                            language: globals.translator.t('$meta.humanizer_language'),
+                            round: true,
+                            units: ['d', 'h'],
+                        }
+                        const expiration = humanizeDuration((ban.expiration - ts)*1050, humanizeOptions);
+                        msg = `You have been banned from this server.\n`;
+                        msg += `Your ban will expire in: ${expiration}.\n`;
+                        msg += `Ban ID: <code>${ban.id}</code>.`;
+                    }else{
+                        msg = `You have been <strong>permanently</strong> banned from this server.\n`;
+                        msg += `Ban ID: <code>${ban.id}</code>.`;
+                    }
+                    
                     return {allow: false, reason: msg};
                 }
             }
 
             //Check whitelist
-            if(this.config.onJoinCheck.whitelist){
+            if(this.config.onJoinCheckWhitelist){
                 let wl = hist.find((a) => a.type == 'whitelist');
                 if(!wl){
                     //Get license
@@ -376,7 +399,13 @@ module.exports = class PlayerController {
                     }
                     this.writePending = true;
 
-                    let reason = this.config.whitelistRejectionMessage.replace(`<id>`, whitelistID);
+                    //Clean rejection message
+                    const xssRejectMessage = require('../../extras/xss')({
+                        strong: [],
+                        id: []
+                    });
+                    let reason = xssRejectMessage(this.config.whitelistRejectionMessage)
+                                    .replace(/<id>/g, `<code>${whitelistID}</code>`);
                     return {allow: false, reason};
                 }
             }
@@ -687,9 +716,8 @@ module.exports = class PlayerController {
                 delete p.endpoint;
                 hbPlayers.set(p.license, p)
             }
-            //FIXME: make this verbose only
-            if(invalids) logWarn(`HeartBeat playerlist contained ${invalids} invalid players that were removed.`); 
-            if(duplicated) logWarn(`HeartBeat playerlist contained ${duplicated} duplicated players that were removed.`); 
+            if(GlobalData.verbose && invalids) logWarn(`HeartBeat playerlist contained ${invalids} invalid players that were removed.`); 
+            if(GlobalData.verbose && duplicated) logWarn(`HeartBeat playerlist contained ${duplicated} duplicated players that were removed.`); 
             
 
             //Processing active players list, creating the removed list, creating new active list without removed players
