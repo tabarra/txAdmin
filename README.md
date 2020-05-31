@@ -19,7 +19,7 @@
 ## Main Features
 - Start/Stop/Restart your server instance or resources
 - Access control:
-	- Login via Password, CitizenFX or Discord
+	- Login via Password or CitizenFX
 	- Admin permission system ([more info](docs/permissions.md))
 	- Action logging
 	- Brute-force protection
@@ -33,7 +33,14 @@
 	- Hitch Detection statistics
 	- Online players chart
 	- Server Activity Log (connections/disconnections, kills, chat, explosions and [custom commands](docs/extra_logging.md))
-- Real-time playerlist with ping + steam-linked accounts (when available)
+- Player Manager:
+	- [Warning system](https://www.youtube.com/watch?v=DeE0-5vtZ4E)
+	- Ban (temporary or permanently) system
+	- Whitelist system
+	- Take notes about players
+	- Keep track of player's play and session time
+	- Self-contained player database (no MySQL required!)
+- Real-time playerlist
 - Scheduled restarts with warning announcements
 - Translation Support ([more info](docs/translation.md))
 - FiveM's Server CFG editor

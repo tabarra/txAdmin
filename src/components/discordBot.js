@@ -91,7 +91,7 @@ module.exports = class DiscordBot {
             await this.client.login(this.config.token);
         } catch (error) {
             logError(error.message);
-            //FIXME: colocar aqui mensagem de erro pra aparecer no dashboard
+            //TODO: colocar aqui mensagem de erro pra aparecer no dashboard
         }
     }
 

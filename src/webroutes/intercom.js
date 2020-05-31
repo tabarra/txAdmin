@@ -11,7 +11,6 @@ const now = () => { return Math.round(Date.now() / 1000) };
  * Intercommunications endpoint
  * @param {object} ctx
  */
-//FIXME: tmp function
 module.exports = async function Intercom(ctx) {
     //Sanity check
     if(isUndefined(ctx.params.scope)){

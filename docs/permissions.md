@@ -10,9 +10,11 @@ The permissions are saved in the `txData/admins.json` file and can be edited thr
 - `settings.write`: Permission to edit the settings;
 - `control.server`: Permission to start/stop/restart the server;
 - `commands.resources`: Permission to start/ensure/restart/stop resources;
-- `commands.kick`: Permission to kick one or all players;
-- `commands.message`: Permission to send admin messages via DM or Broadcast command;
-- `commands.custom`: Permission to execute any of the custom commands (**not implemented yet**);
+- `players.ban`: Permission to ban/unban players;
+- `players.kick`: Permission to kick one or all players;
+- `players.message`: Permission to to send admin messages via DM or Broadcast command;
+- `players.warn`: Permission to warn players;
+- `players.whitelist`: Permission to whitelist or remove the whitelist of players;
 - `console.view`: Permission to view the Live Console;
 - `console.write`: Permission to execute commands in the Live Console.
 - `server.cfg.editor`: Permission to view and edit the FXServer CFG File (eg `server.cfg`).

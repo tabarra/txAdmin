@@ -716,9 +716,8 @@ module.exports = class PlayerController {
                 delete p.endpoint;
                 hbPlayers.set(p.license, p)
             }
-            //FIXME: make this verbose only
-            if(invalids) logWarn(`HeartBeat playerlist contained ${invalids} invalid players that were removed.`); 
-            if(duplicated) logWarn(`HeartBeat playerlist contained ${duplicated} duplicated players that were removed.`); 
+            if(GlobalData.verbose && invalids) logWarn(`HeartBeat playerlist contained ${invalids} invalid players that were removed.`); 
+            if(GlobalData.verbose && duplicated) logWarn(`HeartBeat playerlist contained ${duplicated} duplicated players that were removed.`); 
             
 
             //Processing active players list, creating the removed list, creating new active list without removed players
