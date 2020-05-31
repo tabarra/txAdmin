@@ -179,7 +179,7 @@
             "changelog": "Added customizable /status messages. Security Updates: fixed escaping issues, restricted more the settings.view permission, upgraded packages."
         },
         {
-            "version": "2.5",
+            "version": "2.5.0",
             "changelog": "Added player manager with ban, warns, whitelist and much more."
         }
     ]
