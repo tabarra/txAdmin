@@ -100,7 +100,9 @@
 - [x] make a settings tab for the player controller (dont forget to reset `checkPlayerJoin` convar!)
 - [x] added flag to prevent noobs from running uncompiled version
 - [x] added time-based deprecation warning
-- [ ] add logging to the ban, warn and whitelist features!
+- [x] hide player search and tabs in the players page for now
+- [x] add logging to the ban, warn and whitelist features
+- [x] improve and localize ban rejection message
 - [ ] review on every todohighlight keyword
 - [ ] test on latest build
 - [ ] update documentation

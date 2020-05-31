@@ -128,8 +128,8 @@ async function handleMessage(ctx) {
     if(!ensurePermission(ctx, 'players.message')) return false;
 
     //Prepare and send command
+    ctx.utils.appendLog(`DM to #${id}: ${message}`);
     let cmd = formatCommand('txaSendDM', id, ctx.session.auth.username, message);
-    ctx.utils.appendLog(cmd);
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);
 }
@@ -156,11 +156,11 @@ async function handleKick(ctx) {
     if(!ensurePermission(ctx, 'players.kick')) return false;
 
     //Prepare and send command
+    ctx.utils.appendLog(`Kicked #${id}: ${reason}`);
     let message = `You have been kicked from this server. <br>`;
     message += `<b>Kicked for:</b> ${xss(reason)} <br>`;
     message += `<b>Kicked by:</b> ${xss(ctx.session.auth.username)}`;
     let cmd = formatCommand('txaKickID', id, message);
-    ctx.utils.appendLog(cmd);
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);
 }
@@ -194,6 +194,7 @@ async function handleWarning(ctx) {
     }
 
     //Prepare and send command
+    ctx.utils.appendLog(`Warned #${id}: ${reason}`);
     let cmd = formatCommand(
         'txaWarnID', 
         id, 
@@ -203,7 +204,6 @@ async function handleWarning(ctx) {
         globals.translator.t('nui_warning.warned_by'),
         globals.translator.t('nui_warning.instruction'),
     );
-    ctx.utils.appendLog(cmd);
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);
 }
@@ -277,12 +277,13 @@ async function handleBan(ctx) {
     let cmd;
     if(Array.isArray(reference)){
         cmd = formatCommand('txaDropIdentifiers', reference.join(';'), message);
+        ctx.utils.appendLog(`Banned <${reference.join(';')}>: ${reason}`);
     }else if(Number.isInteger(reference)){
         cmd = formatCommand('txaKickID', reference, message);
+        ctx.utils.appendLog(`Banned #${reference}: ${reason}`);
     }else{
         return ctx.send({type: 'danger', message: `<b>Error:</b> unknown reference type`});
     }
-    ctx.utils.appendLog(cmd);
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);
 }
@@ -309,7 +310,7 @@ async function handleWhitelist(ctx) {
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
-
+    ctx.utils.appendLog(`Whitelisted ${reference}`);
     return ctx.send({refresh: true});
 }
 
@@ -332,13 +333,12 @@ async function handleRevokeAction(ctx) {
     //Check permissions
     if(!ensurePermission(ctx, 'players.ban')) return false;
 
-
     //Revoke action
     try {
         let actionID = await globals.playerController.revokeAction(action_id, ctx.session.auth.username);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
-
+    ctx.utils.appendLog(`Revoked ${action_id}`);
     return ctx.send({refresh: true});
 }
