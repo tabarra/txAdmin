@@ -90,42 +90,50 @@
                 <h5 class="float-left mb-0" style="padding-top: .175em;">
                     Last 15 Whitelist requests:
                 </h5>
-                <button class="btn btn-sm btn-success float-right" type="button" 
-                    onclick="whitelistID(null)" {{funcDisabled.whitelist|isDisabled}}>
-                    <i class="icon-check"></i> Whitelist ID / License
-                </button>
+                {{if(!options.disableWhitelist)}}
+                    <button class="btn btn-sm btn-success float-right" type="button" 
+                        onclick="whitelistID(null)" {{permsDisable.whitelist|isDisabled}}>
+                        <i class="icon-check"></i> Whitelist ID / License
+                    </button>
+                {{/if}}
             </div>
             <div class="card-body text-center">
-                {{if(options.lastWhitelistBlocks.length == 0)}}
-                    <h3 class="mx-auto text-secondary">no pending whitelist requests</h3>
+                {{if(options.disableWhitelist)}}
+                    <div class="text-center">
+                        <h3 class="mx-auto pt-3 text-danger">whitelist checking disabled</h3>
+                    </div>
                 {{#else}}
-                    <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
-                        <thead>
-                            <tr>
-                                <th>Actions</th>
-                                <th>Time</th>
-                                <th>ID</th>
-                                <th>Name</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{foreach(options.lastWhitelistBlocks)}}
-                            <tr>
-                                <td>
-                                    {{if(options.funcDisabled.whitelist)}}
-                                        <a href="/player/list#!" class="badge badge-secondary txWhitelistBtn">ACCEPT</a>
-                                    {{#else}}
-                                        <a href="/player/list#!" class="badge badge-primary txWhitelistBtn" 
-                                            onclick="whitelistID('{{@this.id}}')">ACCEPT</a>
-                                    {{/if}}
-                                </td>
-                                <td>{{@this.time}}</td>
-                                <td>{{@this.id}}</td>
-                                <td class="text-truncate">{{@this.name}}</td>
-                            </tr>
-                            {{/foreach}}
-                        </tbody>
-                    </table>
+                    {{if(options.lastWhitelistBlocks.length == 0)}}
+                        <h3 class="mx-auto text-secondary">no pending whitelist requests</h3>
+                    {{#else}}
+                        <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
+                            <thead>
+                                <tr>
+                                    <th>Actions</th>
+                                    <th>Time</th>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{foreach(options.lastWhitelistBlocks)}}
+                                <tr>
+                                    <td>
+                                        {{if(options.permsDisable.whitelist)}}
+                                            <a href="/player/list#!" class="badge badge-secondary txWhitelistBtn">ACCEPT</a>
+                                        {{#else}}
+                                            <a href="/player/list#!" class="badge badge-primary txWhitelistBtn" 
+                                                onclick="whitelistID('{{@this.id}}')">ACCEPT</a>
+                                        {{/if}}
+                                    </td>
+                                    <td>{{@this.time}}</td>
+                                    <td>{{@this.id}}</td>
+                                    <td class="text-truncate">{{@this.name}}</td>
+                                </tr>
+                                {{/foreach}}
+                            </tbody>
+                        </table>
+                    {{/if}}
                 {{/if}}
             </div>
         </div>
@@ -135,61 +143,67 @@
         <div class="card card-accent-danger">
             <div class="card-header font-weight-bold">Ban Identifiers:</div>
             <div class="card-body">
-                {{if(options.funcDisabled.whitelist)}}
+                {{if(options.disableBans)}}
                     <div class="text-center">
-                        <h3 class="mx-auto pt-3 text-secondary">you can't ban people</h3>
+                        <h3 class="mx-auto pt-3 text-danger">ban checking disabled</h3>
                     </div>
                 {{#else}}
-                    <div class="form-group row">
-                        <label for="frmAddBan-identifiers" class="col-sm-3 col-form-label">
-                            Identifier(s) <br>
-                            <small class="text-danger">(required)</small>
-                        </label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="frmAddBan-identifiers"
-                                placeholder="steam:101010101010101, license:d3832ddc9f845bf...">
-                            <span class="form-text text-muted">
-                                Valid identifiers: <code>steam, license, xbl, live, discord, fivem</code>.
-                                You can insert multiple IDs separated by comma.
-                            </span>
+                    {{if(options.permsDisable.whitelist)}}
+                        <div class="text-center">
+                            <h3 class="mx-auto pt-3 text-secondary">you can't ban people</h3>
                         </div>
-                    </div>
+                    {{#else}}
+                        <div class="form-group row">
+                            <label for="frmAddBan-identifiers" class="col-sm-3 col-form-label">
+                                Identifier(s) <br>
+                                <small class="text-danger">(required)</small>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmAddBan-identifiers"
+                                    placeholder="steam:101010101010101, license:d3832ddc9f845bf...">
+                                <span class="form-text text-muted">
+                                    Valid identifiers: <code>steam, license, xbl, live, discord, fivem</code>.
+                                    You can insert multiple IDs separated by comma.
+                                </span>
+                            </div>
+                        </div>
 
-                    <div class="form-group row">
-                        <label for="frmAddBan-reason" class="col-sm-3 col-form-label">
-                            Reason <br>
-                            <small class="text-danger">(required)</small>
-                        </label>
-                        <div class="col-sm-9">
-                            <input type="text" class="form-control" id="frmAddBan-reason" maxlength="256"
-                                placeholder="doing bad things :(">
+                        <div class="form-group row">
+                            <label for="frmAddBan-reason" class="col-sm-3 col-form-label">
+                                Reason <br>
+                                <small class="text-danger">(required)</small>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmAddBan-reason" maxlength="256"
+                                    placeholder="doing bad things :(">
+                            </div>
                         </div>
-                    </div>
 
-                    <div class="form-group row">
-                        <label for="frmAddBan-duration" class="col-sm-3 col-form-label">
-                            Duration
-                        </label>
-                        <div class="col-sm-9">
-                            <select class="form-control" id="frmAddBan-duration">
-                                <option value="t2h">2 hours</option>
-                                <option value="t8h">8 hours</option>
-                                <option value="t1d">1 day</option>
-                                <option value="t2d">2 days</option>
-                                <option value="t1w">1 week</option>
-                                <option value="t2w">2 weeks</option>
-                                <option value="perma" class="font-weight-bold text-danger" selected>permanent</option>
-                            </select>
-                            <span class="form-text text-muted">
-                                <b>Note:</b> The ban will be applied to all identifiers.
-                            </span>
+                        <div class="form-group row">
+                            <label for="frmAddBan-duration" class="col-sm-3 col-form-label">
+                                Duration
+                            </label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="frmAddBan-duration">
+                                    <option value="t2h">2 hours</option>
+                                    <option value="t8h">8 hours</option>
+                                    <option value="t1d">1 day</option>
+                                    <option value="t2d">2 days</option>
+                                    <option value="t1w">1 week</option>
+                                    <option value="t2w">2 weeks</option>
+                                    <option value="perma" class="font-weight-bold text-danger" selected>permanent</option>
+                                </select>
+                                <span class="form-text text-muted">
+                                    <b>Note:</b> The ban will be applied to all identifiers.
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="text-center mt-4">
-                        <button class="btn btn-sm btn-danger" type="submit" id="frmAddBan-button">
-                            <i class="icons cui-check"></i> Ban Identifiers
-                        </button>
-                    </div>
+                        <div class="text-center mt-4">
+                            <button class="btn btn-sm btn-danger" type="submit" id="frmAddBan-button">
+                                <i class="icons cui-check"></i> Ban Identifiers
+                            </button>
+                        </div>
+                    {{/if}}
                 {{/if}}
             </div>
         </div>
@@ -265,7 +279,7 @@
                                         <div class="d-flex w-100 justify-content-between">
                                             <strong>{{@this.message|safe}}</strong>
                                             <small class="text-right">{{@this.date}} 
-                                                {{if(!options.funcDisabled.revoke)}}
+                                                {{if(!options.permsDisable.revoke)}}
                                                     {{if(@this.revocationNotice)}}
                                                         <span class="badge badge-outline-light p-1">REVOKED</span>
                                                     {{#else}}

@@ -19,12 +19,15 @@ module.exports = async function PlayerList(ctx) {
 
     let timeStart = new Date();
     const dbo = globals.playerController.getDB();
+    const controllerConfigs = globals.playerController.config;
     let respData = {
         stats: await getStats(dbo),
         lastWhitelistBlocks: await getPendingWL(dbo, 15),
         actionHistory: await getActionHistory(dbo),
         lastJoinedPlayers: [],
-        funcDisabled: {
+        disableBans: !controllerConfigs.onJoinCheckBan,
+        disableWhitelist: !controllerConfigs.onJoinCheckWhitelist,
+        permsDisable: {
             whitelist: !ctx.utils.checkPermission('players.whitelist', modulename, false),
             revoke: !ctx.utils.checkPermission('players.ban', modulename, false),
             ban: !ctx.utils.checkPermission('players.ban', modulename, false),

@@ -103,6 +103,7 @@
 - [x] hide player search and tabs in the players page for now
 - [x] add logging to the ban, warn and whitelist features
 - [x] improve and localize ban rejection message
+- [x] make it clear for the admin if ban/whitelist checking is disabled
 - [ ] review on every todohighlight keyword
 - [ ] test on latest build
 - [ ] update documentation
