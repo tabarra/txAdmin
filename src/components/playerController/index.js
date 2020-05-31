@@ -364,7 +364,7 @@ module.exports = class PlayerController {
                         msg += `Your ban will expire in: ${expiration}.\n`;
                         msg += `Ban ID: <code>${ban.id}</code>.`;
                     }else{
-                        msg = `You have been <strong>permanentely</strong> banned from this server.\n`;
+                        msg = `You have been <strong>permanently</strong> banned from this server.\n`;
                         msg += `Ban ID: <code>${ban.id}</code>.`;
                     }
                     
