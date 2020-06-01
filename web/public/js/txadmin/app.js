@@ -92,7 +92,7 @@ $('#modChangePassword-save').click(function () {
         }
     }
     if(data.newPassword.length < 6 || data.newPassword.length > 24){
-        errors.push(`The new password have between 6 and 24 characters.`);
+        errors.push(`The new password has to be between 6 and 24 characters.`);
     }
     if(errors.length){
         var notify = $.notify({ message: '<b>Errors:</b><br> - ' + errors.join(' <br>\n - ') }, { type: 'warning' });
