@@ -104,6 +104,16 @@ module.exports = class PlayerController {
                 if(GlobalData.verbose) dir(error);
             }
         }, 15 * 1000);
+
+        setInterval(async () => {
+            //Check for inactive players and un-whitelist them if feature is enabled.
+            if(this.dbo === null){
+                if(GlobalData.verbose) logWarn('Database still not ready for processing.');
+                return;
+            }
+
+            await this.processAutomaticWhitelistCleanup();
+        }, 6 * 3600 * 1000)
     }
 
 
@@ -247,7 +257,7 @@ module.exports = class PlayerController {
                 //If its time to update this player's play time
                 }else if(!p.isTmp && checkMinuteElapsed(sessionTime)){
                     this.writePending = true;
-                    p.playTime += 1; 
+                    p.playTime += 1;
                     await this.dbo.get("players")
                         .find({license: p.license})
                         .assign({
@@ -262,6 +272,50 @@ module.exports = class PlayerController {
             });
         } catch (error) {
             logError(`Failed to process active players array with error: ${error.message}`);
+            if(GlobalData.verbose) dir(error);
+        }
+    }
+
+
+    //================================================================
+    /**
+     * Processes automatic whitelist cleanup.
+     * Feature: Automatic revocation of whitelist if inactive
+     * @returns {void}
+     */
+    async processAutomaticWhitelistCleanup(){
+        if (!this.config.automaticWhitelistCleanup) {
+            return;
+        }
+
+        try {
+            const revokeDays = this.config.automaticWhitelistCleanupDays ? this.config.automaticWhitelistCleanupDays : 30;
+            const revokeTime = now() - (86400 * +revokeDays);
+            await this.dbo.get('players')
+                .filter(player => player.tsLastConnection <= revokeTime)
+                .value()
+                .forEach(async player => {
+                    let idArray = [];
+                    idArray.push('license:' + player.license);
+                    await this.dbo.get('actions')
+                        .filter(x => x.type == 'whitelist' && !x.revocation.timestamp)
+                        .filter(a => idArray.some((fi) => a.identifiers.includes(fi)))
+                        .value()
+                        .forEach(async action => {
+                            if(action && action.id){
+                                //Using revokeAction in-case of refactoring.
+                                const revokeStatus = await this.revokeAction(action.id, 'WL Cleanup');
+                                if(true === revokeStatus){
+                                    log('Removing whitelist for player: ' + player.name);
+                                    await this.dbo.get('players')
+                                        .remove({license: player.license})
+                                        .write();
+                                }
+                            }
+                        });
+                });
+        } catch (error) {
+            logError(`Failed to process whitelist cleanup with error: ${error.message}`);
             if(GlobalData.verbose) dir(error);
         }
     }

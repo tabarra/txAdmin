@@ -191,6 +191,8 @@ function handlePlayerController(ctx) {
     //Sanity check
     if(anyUndefined(
         ctx.request.body,
+        ctx.request.body.automaticWhitelistCleanup,
+        ctx.request.body.automaticWhitelistCleanupDays,
         ctx.request.body.onJoinCheckBan,
         ctx.request.body.onJoinCheckWhitelist,
         ctx.request.body.minSessionTime,
@@ -202,6 +204,8 @@ function handlePlayerController(ctx) {
 
     //Prepare body input
     let cfg = {
+        automaticWhitelistCleanup: (ctx.request.body.automaticWhitelistCleanup === 'true'),
+        automaticWhitelistCleanupDays: parseInt(ctx.request.body.automaticWhitelistCleanupDays.trim()),
         onJoinCheckBan: (ctx.request.body.onJoinCheckBan === 'true'),
         onJoinCheckWhitelist: (ctx.request.body.onJoinCheckWhitelist === 'true'),
         minSessionTime: parseInt(ctx.request.body.minSessionTime.trim()),
@@ -216,6 +220,8 @@ function handlePlayerController(ctx) {
 
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('playerController');
+    newConfig.automaticWhitelistCleanup = cfg.automaticWhitelistCleanup;
+    newConfig.automaticWhitelistCleanupDays = cfg.automaticWhitelistCleanupDays;
     newConfig.onJoinCheckBan = cfg.onJoinCheckBan;
     newConfig.onJoinCheckWhitelist = cfg.onJoinCheckWhitelist;
     newConfig.minSessionTime = cfg.minSessionTime;

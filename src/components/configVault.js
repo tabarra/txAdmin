@@ -121,6 +121,8 @@ module.exports = class ConfigVault {
                 }
             };
             out.playerController = {
+                automaticWhitelistCleanup: toDefault(cfg.playerController.automaticWhitelistCleanup, false),
+                automaticWhitelistCleanupDays: toDefault(cfg.playerController.automaticWhitelistCleanupDays, 30),
                 onJoinCheckBan: toDefault(cfg.playerController.onJoinCheckBan, true),
                 onJoinCheckWhitelist: toDefault(cfg.playerController.onJoinCheckWhitelist, false),
                 minSessionTime:  toDefault(cfg.playerController.minSessionTime, 15),
@@ -190,6 +192,8 @@ module.exports = class ConfigVault {
             cfg.monitor.healthCheck.failLimit = parseInt(cfg.monitor.healthCheck.failLimit) || 300;
 
             //Player Controller
+            cfg.playerController.automaticWhitelistCleanup = (cfg.playerController.automaticWhitelistCleanup === null)? true : (cfg.playerController.automaticWhitelistCleanup === 'true' || cfg.playerController.automaticWhitelistCleanup === true);
+            cfg.playerController.automaticWhitelistCleanupDays = parseInt(cfg.playerController.automaticWhitelistCleanupDays) || 30;
             cfg.playerController.onJoinCheckBan = (cfg.playerController.onJoinCheckBan === null)? true : (cfg.playerController.onJoinCheckBan === 'true' || cfg.playerController.onJoinCheckBan === true);
             cfg.playerController.onJoinCheckWhitelist = (cfg.playerController.onJoinCheckWhitelist === null)? false : (cfg.playerController.onJoinCheckWhitelist === 'true' || cfg.playerController.onJoinCheckWhitelist === true);
             cfg.playerController.minSessionTime = parseInt(cfg.playerController.minSessionTime) || 15;

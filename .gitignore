@@ -71,3 +71,6 @@ typings/
 
 # next.js build output
 .next
+
+# History extension for vcode
+.history

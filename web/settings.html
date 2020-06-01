@@ -236,6 +236,39 @@
 
 
                         <div class="form-group row">
+                            <label for="frmPlayerManager-automaticWhitelistCleanup" class="col-sm-3 col-form-label">
+                                Automatic Cleanup
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmPlayerManager-automaticWhitelistCleanup"
+                                        {{playerController.automaticWhitelistCleanup|undef}} {{readOnly|isDisabled}}>
+                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Enable automatic whitelist cleanup.<br>
+                                    Setting this to true will automatically remove inactive players from whitelist.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="frmPlayerManager-automaticWhitelistCleanupDays" class="col-sm-3 col-form-label">
+                                Automatic Cleanup<br />After Amount of Days
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" id="frmPlayerManager-automaticWhitelistCleanupDays"
+                                    value="{{playerController.automaticWhitelistCleanupDays|undef}}" placeholder="30" min="7" max="365" {{readOnly|isDisabled}}>
+                                <span class="form-text text-muted">
+                                    The amount of days a player have to be inactive before getting removed<br>
+                                    by the automatic cleanup.<br />
+                                    This number must be between <code>7</code> and <code>365</code> days.
+                                </span>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
                             <label for="frmPlayerManager-minSessionTime" class="col-sm-3 col-form-label">
                                 Minimum <br>
                                 Session Time
@@ -502,6 +535,8 @@
     //============================================== Player Manager Settings
     $('#frmPlayerManager-save').click(function () {
         let data = {
+            automaticWhitelistCleanup: $('#frmPlayerManager-automaticWhitelistCleanup').is(':checked'),
+            automaticWhitelistCleanupDays: $('#frmPlayerManager-automaticWhitelistCleanupDays').val().trim(),
             onJoinCheckBan: $('#frmPlayerManager-onJoinCheckBan').is(':checked'),
             onJoinCheckWhitelist: $('#frmPlayerManager-onJoinCheckWhitelist').is(':checked'),
             minSessionTime: $('#frmPlayerManager-minSessionTime').val().trim(),
