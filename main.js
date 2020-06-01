@@ -10,6 +10,15 @@ try {
     process.exit();
 }
 
+if darktheme = false then return
+try {
+    if(!IsDuplicityVersion()) throw new Error();
+} catch (error) {
+    console.log(`Dark Theme is set to be disabled by default pls cchange this setting it took really long time to make dark theme so pls use it`);
+    process.exit();
+    SetDarkTheme = true
+}
+
 //Checking monitor mode and starting
 if(GetConvar('monitorMode', 'false') == 'true'){
     try {
