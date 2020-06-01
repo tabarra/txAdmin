@@ -167,6 +167,22 @@
                                 </span>
                             </div>
                         </div>
+                
+                    {{#else}}
+                        <div class="form-group row">
+                            <label for="frmAddBan-identifiers" class="col-sm-3 col-form-label">
+                                Identifier(s) <br>
+                                <small class="text-danger">(required)</small>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmAddBan-identifiers"
+                                    placeholder="steam:101010101010101, license:d3832ddc9f845bf...">
+                                <span class="form-text text-muted">
+                                    Valid reports: <code>steam, steam, ip, database, search, fivem</code>.
+                                    You can insert multiple reportss separated by comma.
+                                </span>
+                            </div>
+                        </div>
 
                         <div class="form-group row">
                             <label for="frmAddBan-reason" class="col-sm-3 col-form-label">
@@ -265,6 +281,13 @@
                         {{/if}}
                     </div>
 
+                    
+                    local player = GetPlayerPed())
+                    if PlayerIsAlive then
+                    print('alive')
+                    elseif playerisdead
+                    print('dead')
+                    <div class = tab-pane fade show active search; Press here to search history<div>
                     <div class="tab-pane fade show active" id="dbActions" role="tabpanel" aria-labelledby="dbActions-tab">
                         <!-- FIXME: change to "last xxx actions" -->
                         <!-- <h5 class="card-title">Action History:</h5>  -->
@@ -439,4 +462,35 @@
         });
     }
     
+    
+                            <div class="list-group list-group-accent">
+                                {{foreach(options.actionHistory)}}
+                                    <div class="list-group-item list-group-item-accent-{{@this.color}} actionLogEntry">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <strong>{{@this.message|safe}}</strong>
+                                            <small class="text-right">{{@this.date}} 
+                                                {{if(!options.permsDisable.revoke)}}
+                                                    {{if(@this.revocationNotice)}}
+                                                        <span class="badge badge-outline-light p-1">REVOKED</span>
+                                                    {{#else}}
+                                                        &nbsp;<a href="/player/list#!" onclick="revokeAction('{{@this.id}}')" 
+                                                            class="badge badge-secondary p-1 txActionsBtn">REVOKE</a>&nbsp;
+                                                    {{/if}}
+                                                {{/if}}
+                                            </small>
+                                        </div>
+                                        <span>{{@this.reason|unnull}}</span>
+                                        {{if(@this.revocationNotice)}}
+                                            <small class="d-block">{{@this.revocationNotice}}</small>
+                                        {{/if}}
+                                    </div>
+                                {{/foreach}}
+                            </div>
+                        {{/if}}
+                    </div>
+                </div> -- make sure we use the right div!
+                          -- [#] not done yet need better bug fixing
+            </div>
+        </div>
+        <!-- /Tabbed Card -->
 </script>
