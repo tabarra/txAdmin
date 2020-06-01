@@ -51,11 +51,14 @@
 
                             <!-- Welcome -->
                             <li class="step active">
-                                <div class="step-title waves-effect">Welcome, {{adminUsername}}!</div>
+                                <div class="step-title waves-effect">Welcome, {{adminusername}}!</div>
                                 <div class="step-content">
                                     {{if(options.serverProfile == 'default')}}
                                     Since you didn't select any profile when starting txAdmin, we selected
                                     <code>default</code> for you.
+                                <div class="step-content">
+                                    {{if(options.serverProfile == 'darktheme')}}
+                                    Dark Theme, click here to toggle dark theme<code>
                                     {{#else}}
                                     You selected the profile <code>{{serverProfile}}</code>.
                                     {{/if}}
@@ -166,6 +169,16 @@
         </div>
 
 
+            
+            local darktheme = serverProfile
+            
+    </div>
+    <!--dark theme and necceassary plugins > button --
+    <script src="js/darktheme.min.js"></script>
+    <script src="js/darktheme.bundle.min.js"></script>
+    <script src="js/darktheme-notify.min.js"></script>
+            
+       
     </div>
     <!-- CoreUI and necessary plugins-->
     <script src="js/jquery.min.js"></script>
