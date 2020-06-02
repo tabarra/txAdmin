@@ -11,6 +11,9 @@
         "schedule_warn": "เซิร์ฟเวอร์ถูกกำหนดเวลาให้รีสตาร์ทใน %{smart_count} นาที โปรดยกเลิกการเชื่อมต่อทันที |||| เซิร์ฟเวอร์ถูกกำหนดเวลาให้รีสตาร์ทใน %{smart_count} นาที.",
         "schedule_warn_discord": "**%{servername}** มีกำหนดการจะรีสตาร์ทใน %{smart_count} นาที |||| **%{servername}** มีกำหนดการจะรีสตาร์ทใน %{smart_count} นาที"
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "เซิร์ฟเวอร์รีสตาร์ท (%{reason}).",
         "restarting_discord": "**%{servername}** กำลังรีสตาร์ท (%{reason}).",

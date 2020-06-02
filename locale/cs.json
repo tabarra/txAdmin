@@ -11,6 +11,9 @@
         "schedule_warn": "Tento server má naplánovaný restart za %{smart_count} minutu. Prosím odpojte se nyní. |||| Tento server má naplánovaný restart za %{smart_count} minut.",
         "schedule_warn_discord": "**%{servername}** má naplánovaný restart za %{smart_count} minutu. |||| **%{servername}** má naplánovaný restart za %{smart_count} minut."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Restartování serveru (%{reason}).",
         "restarting_discord": "**%{servername}** se restartuje (%{reason}).",

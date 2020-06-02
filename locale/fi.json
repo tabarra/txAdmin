@@ -11,6 +11,9 @@
         "schedule_warn": "Tämä palvelin on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua. Katkaise yhteys nyt. |||| Tämä palvelin on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua.",
         "schedule_warn_discord": "**%{servername}** on uudelleenkäynnistymässä %{smart_count} minuutin kuluttua. |||| **%{servername}** on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Palvelin käynnistyy uudelleen (%{reason}).",
         "restarting_discord": "**%{servername}** käynnistyy uudelleen (%{reason}).",

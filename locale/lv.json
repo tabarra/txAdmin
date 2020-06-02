@@ -11,6 +11,9 @@
         "schedule_warn": "Šī servera restartēšana ir ieplānota pēc %{smart_count} minūtes. Lūdzu atvienojies tagad. |||| Šī servera restartēšana ir ieplānota pēc %{smart_count} minūtēm.",
         "schedule_warn_discord": "**%{servername}** ir ieplānots restarts pēc %{smart_count} minūtes. |||| **%{servername}** ir ieplānots restarts pēc %{smart_count} minūtēm."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Serveris tiek restartēts (%{reason}).",
         "restarting_discord": "**%{servername}** tiek restartēts (%{reason}).",

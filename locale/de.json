@@ -11,6 +11,9 @@
         "schedule_warn": "Der Server wird in %{smart_count} Minute neugestartet. Bitte trenne die Verbindung jetzt. |||| Der Server wird in %{smart_count} Minuten neu gestartet.",
         "schedule_warn_discord": "**%{servername}** wird in %{smart_count} Minute neugestartet. |||| **%{servername}** wird in %{smart_count} Minuten neu gestartet."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Server Restart (%{reason}).",
         "restarting_discord": "**%{servername}** wird neu gestartet (%{reason}).",

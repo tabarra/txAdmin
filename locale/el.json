@@ -11,6 +11,9 @@
         "schedule_warn": "Αυτός ο διακομιστής έχει προγραμματιστεί για επανεκκίνηση %{smart_count} λεπτό. Παρακαλώ αποσυνδεθείτε τώρα. |||| Αυτός ο διακομιστής έχει προγραμματιστεί για επανεκκίνηση %{smart_count} λεπτά.",
         "schedule_warn_discord": "**%{servername}** έχει προγραμματιστεί επανεκκίνηση σε %{smart_count} λεπτό. |||| **%{servername}** έχει προγραμματιστεί επανεκκίνηση σε %{smart_count} λεπτά."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Επανεκκίνηση διακομιστή (%{reason}).",
         "restarting_discord": "**%{servername}** εκτελείται επανεκκίνηση διακομιστή (%{reason}).",

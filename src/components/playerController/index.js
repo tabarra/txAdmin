@@ -105,15 +105,15 @@ module.exports = class PlayerController {
             }
         }, 15 * 1000);
 
-        setInterval(async () => {
-            //Check for inactive players and un-whitelist them if feature is enabled.
-            if(this.dbo === null){
-                if(GlobalData.verbose) logWarn('Database still not ready for processing.');
-                return;
-            }
+        // setInterval(async () => {
+        //     //Check for inactive players and un-whitelist them if feature is enabled.
+        //     if(this.dbo === null){
+        //         if(GlobalData.verbose) logWarn('Database still not ready for processing.');
+        //         return;
+        //     }
 
-            await this.processAutomaticWhitelistCleanup();
-        }, 6 * 3600 * 1000)
+        //     await this.processAutomaticWhitelistCleanup();
+        // }, 6 * 3600 * 1000)
     }
 
 
@@ -461,6 +461,40 @@ module.exports = class PlayerController {
                     let reason = xssRejectMessage(this.config.whitelistRejectionMessage)
                                     .replace(/<id>/g, `<code>${whitelistID}</code>`);
                     return {allow: false, reason};
+                }
+
+                if(this.config.automaticWhitelistCleanup){
+                    let license = idArray.find((id) => id.substring(0, 8) == "license:").substring(8);
+                    let player = await this.dbo.get('players').find({license: license}).value();
+
+
+                    if(player && player.tsLastConnection && wl.id){
+                        const revokeDays = this.config.automaticWhitelistCleanupDays ? this.config.automaticWhitelistCleanupDays : 30;
+                        const revokeTime = now() - (86400 * +revokeDays);
+
+                        if(player.tsLastConnection <= revokeTime){
+                            const revokeStatus = await this.revokeAction(wl.id, 'WL Cleanup');
+                            if(true === revokeStatus){
+                                log('Removed whitelist for player (WL Cleanup): ' + player.name);
+
+                                //Setting player tsLastConnection to 0. This will allow player to connect if he gets whitelisted again.
+                                await this.dbo.get('players')
+                                        .find({license: player.license})
+                                        .assign({tsLastConnection: 0})
+                                        .write();
+
+                                //Clean rejection message
+                                const message = globals.translator.t('player_actions.whitelist_expired');
+                                const xssRejectMessage = require('../../extras/xss')({
+                                    strong: [],
+                                    id: []
+                                });
+
+                                const reason = xssRejectMessage(message);
+                                return {allow: false, reason};
+                            }
+                        }
+                    }
                 }
             }
 

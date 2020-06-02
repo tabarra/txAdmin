@@ -11,6 +11,9 @@
         "schedule_warn": "此伺服器計劃 %{smart_count} 分鐘後重新啟動， 請立即斷開連接。 |||| 此伺服器計劃 %{smart_count} 分鐘後重新啟動。",
         "schedule_warn_discord": "**%{servername}** 計劃 %{smart_count} 分鐘後重新啟動。 |||| **%{servername}** 計劃 %{smart_count} 分鐘後重新啟動。"
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "伺服器正在重啟 (%{reason})。",
         "restarting_discord": "**%{servername}** 正在重新啟動 (%{reason})。",

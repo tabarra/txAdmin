@@ -11,6 +11,9 @@
         "schedule_warn": "Le serveur redémarrera dans %{smart_count} minute. Merci de vous déconnecter. |||| Le serveur redémarrera dans %{smart_count} minutes.",
         "schedule_warn_discord": "**%{servername}** redémarrera dans %{smart_count} minute. |||| **%{servername}** redémarrera dans %{smart_count} minutes."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Le serveur redémarre (%{reason}).",
         "restarting_discord": "**%{servername}** redémarre (%{reason}).",

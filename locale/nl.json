@@ -11,6 +11,9 @@
         "schedule_warn": "De server heeft een geplande restart over %{smart_count} minuut. Verlaat de server. |||| De server heeft een geplande restart over %{smart_count} minuten.",
         "schedule_warn_discord": "**%{servername}** heeft een geplande restart over %{smart_count} minuut. |||| **%{servername}** heeft een geplande restart over %{smart_count} minuten."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Server wordt herstart (%{reason}).",
         "restarting_discord": "**%{servername}** is aan het herstarten (%{reason}).",

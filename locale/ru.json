@@ -11,6 +11,9 @@
         "schedule_warn": "Сервер будет перезагружен через %{smart_count} минуту. Пожалуйста, отключитесь от сервера. |||| Сервер будет перезагружен через %{smart_count} минут.",
         "schedule_warn_discord": "**%{servername}** будет перезагружен через %{smart_count} минуту. |||| **%{servername}** будет перезагружен через %{smart_count} минут."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Сервер перезагружается (%{reason}).",
         "restarting_discord": "**%{servername}** перезагружается (%{reason}).",

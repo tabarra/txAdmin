@@ -11,6 +11,9 @@
         "schedule_warn": "El servidor se va a reiniciar en %{smart_count} minuto. Porfavor desconectate. |||| El servidor se va a reiniciar en %{smart_count} minutos.",
         "schedule_warn_discord": "**%{servername}** El servidor se va a reiniciar en %{smart_count} minuto. |||| **%{servername}** El servidor se va a reiniciar en %{smart_count} minutos."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Reiniciando Servidor (%{reason}).",
         "restarting_discord": "**%{servername}** se está reiniciando (%{reason}).",

@@ -11,6 +11,9 @@
         "schedule_warn": "Den här servern kommer startas om inom %{smart_count} minuter. Snälla lämna. |||| Den här servern kommer startas om inom %{smart_count} minuter.",
         "schedule_warn_discord": "**%{servername}** är schemalagd att startas om inom %{smart_count} minuter. |||| **%{servername}** är schemalagd att startas om inom %{smart_count} minuter."
     },
+    "player_actions": {
+        "whitelist_expired": "Du har varit inaktiv för länge och din whitelist har upphört."
+    },
     "server_actions": {
         "restarting": "Servern startar om (%{reason}).",
         "restarting_discord": "**%{servername}** startas om (%{reason}).",

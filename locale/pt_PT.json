@@ -11,6 +11,9 @@
         "schedule_warn": "Este servidor está agendado para reiniciar em %{smart_count} minuto. Por favor desconecta-te. |||| Este servidor está agendado para reiniciar em %{smart_count} minutos.",
         "schedule_warn_discord": "**%{servername}** está agendado para reiniciar em %{smart_count} minuto. |||| **%{servername}** está agendado para reiniciar em %{smart_count} minutos."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Servidor a reiniciar (%{reason}).",
         "restarting_discord": "**%{servername}** está a reiniciar (%{reason}).",

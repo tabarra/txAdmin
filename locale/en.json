@@ -11,6 +11,9 @@
         "schedule_warn": "This server is scheduled to restart in %{smart_count} minute. Please disconnect now. |||| This server is scheduled to restart in %{smart_count} minutes.",
         "schedule_warn_discord": "**%{servername}** is scheduled to restart in %{smart_count} minute. |||| **%{servername}** is scheduled to restart in %{smart_count} minutes."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Server restarting (%{reason}).",
         "restarting_discord": "**%{servername}** is restarting (%{reason}).",
