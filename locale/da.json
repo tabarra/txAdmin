@@ -11,6 +11,9 @@
         "schedule_warn": "Serveren genstarter om %{smart_count} minut. Vær venlig at disconnecte nu. |||| Serveren genstarter om %{smart_count} minutter.",
         "schedule_warn_discord": "**%{servername}** genstarter om %{smart_count} minut. |||| **%{servername}** genstarter om %{smart_count} minutter."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Server genstarter: (%{reason}).",
         "restarting_discord": "**%{servername}** genstarter: (%{reason}).",

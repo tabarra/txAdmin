@@ -11,6 +11,9 @@
         "schedule_warn": "Sunucu %{smart_count} dakika içerisinde zamanlanmış şekilde yeniden başlatılacaktır. Lütfen çıkış yapın. |||| Sunucu %{smart_count} dakika içerisinde zamanlamış şekilde yeniden başlatılacaktır.",
         "schedule_warn_discord": "**%{servername}** sunucusu %{smart_count} dakika içerisinde yeniden başlatılmaya zamanlandı. |||| **%{servername}** sunucusu %{smart_count} dakika içerisinde yeniden başlatılmaya zamanlandı."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Sunucu yeniden başlatılıyor.(%{reason}).",
         "restarting_discord": "**%{servername}** sunucusu yeniden başlatılıyor. (%{reason}).",

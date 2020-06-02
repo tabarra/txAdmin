@@ -11,6 +11,9 @@
         "schedule_warn": "A szerver ütemezett újrainditása lesz %{smart_count} perc múlva. Lépjetek le. |||| A szerver ütemezett újrainditása lesz %{smart_count} perc múlva.",
         "schedule_warn_discord": "**%{servername}** szerver ütemezett újrainditása lesz %{smart_count} perc múlva. |||| **%{servername}** szerver ütemezett újrainditása lesz %{smart_count} perc múlva."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Szerver újraindítás (%{reason}).",
         "restarting_discord": "**%{servername}** újraindul (%{reason}).",

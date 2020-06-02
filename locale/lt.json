@@ -11,6 +11,9 @@
         "schedule_warn": "Serveris persikraus už %{smart_count} minutes. Prašome atsijungti. |||| Serveris persikraus už %{smart_count} minuciu. Prašome atsijungti.",
         "schedule_warn_discord": "**%{servername}** automatiškai persikraus už %{smart_count} minutės. |||| **%{servername}** automatiškai persikraus už %{smart_count} minučių."
     },
+    "player_actions": {
+        "whitelist_expired": "You have been inactive for too long and your whitelist has expired."
+    },
     "server_actions": {
         "restarting": "Serverio perkrovimas (%{reason}).",
         "restarting_discord": "**%{servername}** yra perkraunamas (%{reason}).",
