@@ -1,0 +1,30 @@
+{
+    "$meta": {
+        "label": "Chinese (Traditional)",
+        "humanizer_language": "zh_TW"
+    },
+    "restarter": {
+        "crash_detected": "伺服器被檢測到已癱瘓",
+        "partial_crash_warn": "於某些原因導致崩潰， 此伺服器將在一分鐘後重新啟動， 請立刻登出。",
+        "partial_crash_warn_discord": "由於某些原因導致崩潰， **%{servername}** 將在一分鐘後重新啟動。",
+        "schedule_reason": "預定 %{time}重啟",
+        "schedule_warn": "此伺服器預計 %{smart_count} 分鐘後重新啟動， 請立刻登出。 |||| 此伺服器預計 %{smart_count} 分鐘後重新啟動。",
+        "schedule_warn_discord": "**%{servername}** 預計 %{smart_count} 分鐘後重新啟動。 |||| **%{servername}** 預計 %{smart_count} 分鐘後重新啟動。"
+    },
+    "server_actions": {
+        "restarting": "伺服器正在重啟 (%{reason})。",
+        "restarting_discord": "**%{servername}** 正在重新啟動 (%{reason})。",
+        "stopping": "伺服器正在關閉 (%{reason})。",
+        "stopping_discord": "**%{servername}** 正在關閉 (%{reason})。",
+        "spawning_discord": "**%{servername}** 正在重啟。"
+    },
+    "discord": {
+        "status_online": "**%{servername}** 目前 **啟動中**!",
+        "status_offline": "**%{servername}** 目前 **關閉中**!"
+    },
+    "nui_warning": {
+        "title": "警告",
+        "warned_by": "警告者:",
+        "instruction": "按住 [SPACE] 10秒來關閉這個訊息。"
+    }
+}

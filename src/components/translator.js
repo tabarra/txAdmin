@@ -27,7 +27,8 @@ const languages = {
     sv: require('../../locale/sv.json'),
     th: require('../../locale/th.json'),
     tr: require('../../locale/tr.json'),
-    zh: require('../../locale/zh.json'),
+    zh_CN: require('../../locale/zh_CN.json'),
+    zh_TW: require('../../locale/zh_TW.json'),
 };
 
 /**
