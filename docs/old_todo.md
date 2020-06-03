@@ -253,6 +253,7 @@ More:
 - [x] review on every todohighlight keyword
 - [x] update documentation
 - [x] test on latest build
+- [x] fix action div - revoke of action with no text looks bad
 > v2.5.0
 
 

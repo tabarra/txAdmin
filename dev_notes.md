@@ -1,14 +1,12 @@
 ## TODO v2
 - [ ] ?????
 
-FIXME: when doing the update announcement, don't forget to mention that the permission names changed
 
 > Soon™
 - [ ] make warns un-revokable?
 - [ ] monitor checks for duplicate active users every 10 minutes, then reports in diagnostics page
 - [ ] check everything done for xss
 - [ ] apply the new action log html to the modal
-- [ ] fix action div - revoke of action with no text looks bad
 - [ ] adapt all modal actions to offline players
 - [ ] check why scheduled restarts are not kicking players
 - [ ] adapt kick messages to use some basic HTML for formatting

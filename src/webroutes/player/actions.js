@@ -291,7 +291,7 @@ async function handleBan(ctx) {
 
 //================================================================
 /**
- * Handle Revoke Action
+ * Handle Whitelist Action
  * @param {object} ctx
  */
 async function handleWhitelist(ctx) {
