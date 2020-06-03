@@ -280,7 +280,7 @@
                                             <strong>{{@this.message|safe}}</strong>
                                             <small class="text-right">{{@this.date}} 
                                                 {{if(!options.permsDisable.revoke)}}
-                                                    {{if(@this.revocationNotice)}}
+                                                    {{if(@this.isRevoked)}}
                                                         <span class="badge badge-outline-light p-1">REVOKED</span>
                                                     {{#else}}
                                                         &nbsp;<a href="/player/list#!" onclick="revokeAction('{{@this.id}}')" 
@@ -290,8 +290,8 @@
                                             </small>
                                         </div>
                                         <span>{{@this.reason|unnull}}</span>
-                                        {{if(@this.revocationNotice)}}
-                                            <small class="d-block">{{@this.revocationNotice}}</small>
+                                        {{if(@this.footerNote)}}
+                                            <small class="d-block">{{@this.footerNote}}</small>
                                         {{/if}}
                                     </div>
                                 {{/foreach}}

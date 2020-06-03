@@ -5,6 +5,9 @@ const humanizeDuration = require('humanize-duration');
 const xss = require('../../extras/xss')();
 const { dir, log, logOk, logWarn, logError, getLog } = require('../../extras/console')(modulename);
 
+//Helpers
+const now = () => { return Math.round(Date.now() / 1000) };
+
 
 /**
  * Returns the output page containing the action log, and the console log
@@ -15,8 +18,6 @@ const { dir, log, logOk, logWarn, logError, getLog } = require('../../extras/con
  * @param {object} ctx
  */
 module.exports = async function PlayerList(ctx) {
-    
-
     let timeStart = new Date();
     const dbo = globals.playerController.getDB();
     const controllerConfigs = globals.playerController.config;
@@ -143,6 +144,7 @@ async function getPendingWL(dbo, limit){
  */
 async function getActionHistory(dbo){
     try {
+        let tsNow = now();
         let hist = await dbo.get("actions").cloneDeep().reverse().value();
         return hist.map((log) => {
             let out = {
@@ -180,7 +182,11 @@ async function getActionHistory(dbo){
             if(log.revocation.timestamp){
                 out.color = 'dark';
                 const revocationDate = (new Date(log.revocation.timestamp*1000)).toLocaleString();
-                out.revocationNotice = `Revoked by ${log.revocation.author} on ${revocationDate}.`;
+                out.footerNote = `Revoked by ${log.revocation.author} on ${revocationDate}.`;
+            }
+            if(typeof log.expiration == 'number'){
+                const expirationDate = (new Date(log.expiration*1000)).toLocaleString();
+                out.footerNote = (log.expiration < tsNow)? `Expired at ${expirationDate}.` : `Expires at ${expirationDate}.`;
             }
             return out;
         })
