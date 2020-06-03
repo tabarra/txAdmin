@@ -229,17 +229,17 @@ module.exports = class FXRunner {
      */
     async restartServer(tReason){
         try {
-            //If a reason is provided, announce restart on discord, kick all players and wait 500ms
+            //If a reason is provided, announce restart on discord, kick all players and wait 750ms
             if(typeof tReason === 'string'){
                 let tOptions = {
                     servername: globals.config.serverName,
                     reason: tReason
                 }
-                let discordMessage = globals.translator.t('server_actions.restarting_discord', tOptions);
-                globals.discordBot.sendAnnouncement(discordMessage);
                 let kickMessage = globals.translator.t('server_actions.restarting', tOptions).replace(/\"/g, '\\"');
                 this.srvCmd(`txaKickAll "${kickMessage}"`);
-                await sleep(500);
+                let discordMessage = globals.translator.t('server_actions.restarting_discord', tOptions);
+                globals.discordBot.sendAnnouncement(discordMessage);
+                await sleep(750);
             }
 
             //Restart server

@@ -1,5 +1,7 @@
 ## TODO v2
-- [ ] ?????
+- [x] player page: fix ban ids permission
+- [x] player page: add expiration note to the action history
+- [x] ignore EPIPE koa errors
 
 
 > Soon™
@@ -9,6 +11,7 @@
 - [ ] apply the new action log html to the modal
 - [ ] adapt all modal actions to offline players
 - [ ] check why scheduled restarts are not kicking players
+- [ ] make `fxRunner.srvCmd()` itself perform the escaping
 - [ ] adapt kick messages to use some basic HTML for formatting
 - [ ] change Server Log page to use the new modal
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones

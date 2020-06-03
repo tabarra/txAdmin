@@ -57,7 +57,11 @@ module.exports = class WebServer {
         this.app.on('error', (error, ctx) => {
             if(
                 typeof error.code == 'string' && 
-                (error.code.startsWith('HPE_') || error.code.startsWith('ECONN'))
+                (
+                    error.code.startsWith('HPE_') || 
+                    error.code.startsWith('ECONN') ||
+                    error.code.startsWith('EPIPE')
+                )
             ){
                 if(GlobalData.verbose){
                     logError(`Probably harmless error on ${ctx.path}`);
