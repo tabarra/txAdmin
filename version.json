@@ -181,6 +181,10 @@
         {
             "version": "2.5.0",
             "changelog": "Added player manager with ban, warns, whitelist and much more."
+        },
+        {
+            "version": "2.5.1",
+            "changelog": "Minor fixes and UI improvements."
         }
     ]
 }

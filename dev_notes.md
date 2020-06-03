@@ -2,6 +2,8 @@
 - [x] player page: fix ban ids permission
 - [x] player page: add expiration note to the action history
 - [x] ignore EPIPE koa errors
+> v2.5.1
+- [ ] xxxxx
 
 
 > Soon™
