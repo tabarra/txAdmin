@@ -24,7 +24,7 @@
     },
     "nui_warning": {
         "title": "FIGYELEM",
-        "warned_by": "Figyelmeztett:",
+        "warned_by": "Figyelmeztet:",
         "instruction": "Tartsd nyomva a [SPACE] 10 másodpercig, hogy eltüntesd az üzenetet."
     }
 }
