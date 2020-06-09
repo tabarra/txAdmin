@@ -1,6 +1,6 @@
 <p align="center">
 	<h1 align="center">
-		txAdmin for FiveM
+		txSwear for FiveM
 	</h1>
 	<p align="center">
 		<img width="420" height="237" src="docs/banner.png">
@@ -9,7 +9,7 @@
 		Join our Discord Server: &nbsp; <a href="https://discord.gg/f3TsfvD"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
 	</h4>
 	<p align="center">
-		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM Server remotely, used by over a thousand servers worldwide.
+		<b>txSwear</b> is a <b>full featured</b> web panel to Manage & Monitor & Belittle (you) and your FiveM Server remotely, used by over a thousand servers worldwide.
 	</p>
 </p>
 
@@ -17,6 +17,10 @@
 
 
 ## Main Features
+
+- Swears at you because you're a dumb cunt.
+And all of these amazing features!
+
 - Start/Stop/Restart your server instance or resources
 - Access control:
 	- Login via Password or CitizenFX
