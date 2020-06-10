@@ -214,6 +214,11 @@ function handlePlayerController(ctx) {
         return ctx.send({type: 'danger', message: 'The whitelist rejection message must be less than 256 characters.'});
     }
 
+    //Validating min session time
+    if(cfg.minSessionTime < 1 || cfg.minSessionTime > 60){
+        return ctx.send({type: 'danger', message: 'Minimum Session Time must be between 1 and 60 minutes.'});
+    }
+
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('playerController');
     newConfig.onJoinCheckBan = cfg.onJoinCheckBan;
