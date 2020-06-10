@@ -36,7 +36,7 @@
         <!-- Global Card -->
         <div class="card card-accent-primary">
             <div class="card-header float-left">
-                <span style="font-size: large">All Admins</span>
+                <span style="font-size: large">All Children</span>
                 <button class="btn btn-sm btn-success float-right" type="button" id="btnAddAdmin">
                     <i class="icon-plus"></i> Add
                 </button>
@@ -47,9 +47,9 @@
                     <table class="table table-striped">
                         <thead>
                             <tr>
-                                <th>Username</th>
+                                <th>Child Name</th>
                                 <th>Auth</th>
-                                <th>Permissions</th>
+                                <th>Parental Control</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -75,7 +75,7 @@
                                     &nbsp;
                                     <button class="btn btn-sm btn-outline-danger"
                                         onclick="deleteAdmin('{{@this.name}}')" {{@this.disableActions|isDisabled}}>
-                                        <i class="icon-trash"></i> Delete
+                                        <i class="icon-trash"></i> Punish
                                     </button>
                                 </td>
                             </tr>
@@ -99,7 +99,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modAddAdminTitle">Add Admin</h5>
+                <h5 class="modal-title" id="modAddAdminTitle">Add Child</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -107,7 +107,7 @@
             <div class="modal-body">
                 <div class="form-group row">
                     <label for="modAddAdmin-name" class="col-sm-3 col-form-label">
-                        Username <br>
+                        Child Name <br>
                         <small class="text-danger">(required)</small>
                     </label>
                     <div class="col-sm-9">
@@ -116,7 +116,7 @@
                                 autocomplete="off" required>
                         </div>
                         <span id="modAddAdmin-id-description" class="form-text text-muted">
-                            Must have between 6 and 16 characters and contain only letters and numbers. Case insensitive.
+                            Must have between 6 and 16 characters and contain only letters and numbers. Case insensitive. Dumbass.
                         </span>
                     </div>
                 </div>
@@ -154,7 +154,7 @@
 
                 <div class="form-group row">
                     <label class="col-sm-3 col-form-label">
-                        Permissions
+                        Parental Control
                     </label>
                     <div class="col-sm-9">
                         {{foreach(options.allPermissions)}}
@@ -185,18 +185,18 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modAddAdminTitle">Add Admin</h5>
+                <h5 class="modal-title" id="modAddAdminTitle">Add Child</h5>
             </div>
             <div class="modal-body text-center">
                 <div class="form-group row">
                     <div class="col-sm-8 mx-auto">
-                        <h4 class="text-success">Admin Saved!</h4>
+                        <h4 class="text-success">Child Saved!</h4>
                         <h6>Please copy the following temporary password:</h6>
                         <div class="input-group">
                             <input type="text" class="form-control text-center" id="modAddAdminPassword-pwd" readonly>
                         </div>
                         <span class="form-text text-muted">
-                            The admin will be prompted to change his password on first login.
+                            The child will be prompted to change his diaper on first login.
                         </span>
                     </div>
                 </div>
@@ -217,7 +217,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modEditAdminTitle">Edit Admin</h5>
+                <h5 class="modal-title" id="modEditAdminTitle">Edit Child</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>

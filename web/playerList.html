@@ -31,7 +31,7 @@
 </style>
 
 <div class="text-center mb-2">
-    <h3 class="mb-0">Player Manager <small><span class="badge badge-secondary">BETA</span></small></h3>
+    <h3 class="mb-0">Player Manager <small><span class="badge badge-secondary">PROB BROKEN</span></small></h3>
     <small class="text-muted">{{message|safe}}</small>
 </div>
 
@@ -41,13 +41,13 @@
     <div class="row col-xl-10 p-0 pb-3 justify-content-center">
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-info">
-                <small class="text-muted">Total Players</small><br>
+                <small class="text-muted">Total Noobs</small><br>
                 <strong class="h4">{{stats.players}}</strong>
             </div>
         </div>
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-info">
-                <small class="text-muted">Total Playtime</small><br>
+                <small class="text-muted">Total Hours Wasted</small><br>
                 <strong class="h4">{{stats.playTime}}</strong>
             </div>
         </div>
@@ -65,13 +65,13 @@
         </div> -->
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-warning">
-                <small class="text-muted">Warns</small><br>
+                <small class="text-muted">No No Touches</small><br>
                 <strong class="h4">{{stats.warns}}</strong>
             </div>
         </div>
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-danger">
-                <small class="text-muted">Bans</small><br>
+                <small class="text-muted">Banishments</small><br>
                 <strong class="h4">{{stats.bans}}</strong>
             </div>
         </div>
@@ -88,7 +88,7 @@
         <div class="card card-accent-success">
             <div class="card-header font-weight-bold">
                 <h5 class="float-left mb-0" style="padding-top: .175em;">
-                    Last 15 Whitelist requests:
+                    Last 15 Break ins:
                 </h5>
                 {{if(!options.disableWhitelist)}}
                     <button class="btn btn-sm btn-success float-right" type="button" 
@@ -100,11 +100,11 @@
             <div class="card-body text-center">
                 {{if(options.disableWhitelist)}}
                     <div class="text-center">
-                        <h3 class="mx-auto pt-3 text-danger">Whitelist checking disabled</h3>
+                        <h3 class="mx-auto pt-3 text-danger">Break in checking disabled</h3>
                     </div>
                 {{#else}}
                     {{if(options.lastWhitelistBlocks.length == 0)}}
-                        <h3 class="mx-auto text-secondary">No pending whitelist requests</h3>
+                        <h3 class="mx-auto text-secondary">No pending break ins</h3>
                     {{#else}}
                         <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
                             <thead>
@@ -150,7 +150,7 @@
                 {{#else}}
                     {{if(options.permsDisable.ban)}}
                         <div class="text-center">
-                            <h3 class="mx-auto pt-3 text-secondary">you can't ban people</h3>
+                            <h3 class="mx-auto pt-3 text-secondary">you can't ban people fucking idiot</h3>
                         </div>
                     {{#else}}
                         <div class="form-group row">
@@ -185,16 +185,16 @@
                             </label>
                             <div class="col-sm-9">
                                 <select class="form-control" id="frmAddBan-duration">
-                                    <option value="t2h">2 hours</option>
-                                    <option value="t8h">8 hours</option>
-                                    <option value="t1d">1 day</option>
-                                    <option value="t2d">2 days</option>
-                                    <option value="t1w">1 week</option>
-                                    <option value="t2w">2 weeks</option>
-                                    <option value="perma" class="font-weight-bold text-danger" selected>permanent</option>
+                                    <option value="t2h">2 Forsaken hours</option>
+                                    <option value="t8h">8 Forsaken hours</option>
+                                    <option value="t1d">1 Forsaken day</option>
+                                    <option value="t2d">2 Forsaken days</option>
+                                    <option value="t1w">1 Forsaken week</option>
+                                    <option value="t2w">2 Forsaken weeks</option>
+                                    <option value="perma" class="font-weight-bold text-danger" selected>The Ultimate Finisher</option>
                                 </select>
                                 <span class="form-text text-muted">
-                                    <b>Note:</b> The ban will be applied to all identifiers.
+                                    <b>Note:</b> The ban will be applied to all identifiers. (Including Discord :D
                                 </span>
                             </div>
                         </div>
@@ -255,7 +255,7 @@
                         <h5 class="card-title">Last xxx joined players</h5>
                         {{if(options.lastJoinedPlayers.length == 0)}}
                             <div class="text-center">
-                                <h3 class="mx-auto pt-3 text-secondary">no players yet...</h3>
+                                <h3 class="mx-auto pt-3 text-secondary">no players yet you bum...</h3>
                             </div>
                         {{#else}}
                             {{foreach(options.lastJoinedPlayers)}}

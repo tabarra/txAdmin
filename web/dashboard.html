@@ -4,7 +4,7 @@
 <div class="text-center mb-4">
     <h2>{{serverName}} Dashboard</h2>
     {{if(options.txAdminTooOutdated)}}
-        <h2 class="text-danger">This version of txAdmin is too outdated. Please update now.</h2>
+        <h2 class="text-danger">This version of txAdmin is too outdated. Please update now. You fucking idiot.</h2>
     {{/if}}
 </div>
 
@@ -13,14 +13,14 @@
 
         <!-- FXServer Control Card -->
         <div class="card card-accent-danger" style="min-height: 160px;">
-            <div class="card-header font-weight-bold">FXServer Control:</div>
+            <div class="card-header font-weight-bold">Your Shitty Server's Controls:</div>
             <div class="card-body text-center align-middle">
                 <button onclick="controlAction('start')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
-                    type="button" id="ctrl-start" {{perms.controls}}>START</button> &nbsp;
+                    type="button" id="ctrl-start" {{perms.controls}}>TURN ON</button> &nbsp;
                 <button onclick="controlAction('restart')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
-                    type="button" id="ctrl-restart" {{perms.controls}}>RESTART</button> &nbsp;
+                    type="button" id="ctrl-restart" {{perms.controls}}>MAGICAL FIX BUTTON</button> &nbsp;
                 <button onclick="controlAction('stop')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
-                    type="button" id="ctrl-stop" {{perms.controls}}>STOP</button>
+                    type="button" id="ctrl-stop" {{perms.controls}}>BREAK SERVER</button>
             </div>
         </div>
 
@@ -33,12 +33,12 @@
                     <div class="col-sm-8">
                         <select name="action" id="frm_action" class="form-control" required>
                             <option value="" disabled selected>&gt; SELECT</option>
-                            <option value="admin_broadcast" {{perms.commandMessage}}>Broadcast Admin Message</option>
-                            <option value="ensure_res" {{perms.commandResources}}>Start/Restart resource</option>
+                            <option value="admin_broadcast" {{perms.commandMessage}}>Broadcast Badmin Message</option>
+                            <option value="ensure_res" {{perms.commandResources}}>Break(start/restart) resource</option>
                             <option value="stop_res" {{perms.commandResources}}>Stop resource</option>
                             <option value="refresh_res" {{perms.commandResources}}>Refresh resources</option>
                             <option value="check_txaclient" {{perms.commandResources}}>Check txAdminClient</option>
-                            <option value="kick_all" class="text-danger" {{perms.commandKick}}>Kick all players</option>
+                            <option value="kick_all" class="text-danger" {{perms.commandKick}}>Kick all players (dont you dare)</option>
                         </select>
                     </div>
                 </div>
@@ -111,7 +111,7 @@
         {{if(options.txAdminVersion.includes('-'))}}
             <span class="text-danger font-weight-bold">
                 You are using a pre-release version of txAdmin destined for developers and beta testers only! <br>
-                Your server stability might be impacted by this.
+                Your server stability might be impacted by this. Duhhhh!
             </span>
         {{/if}}
     </div>
