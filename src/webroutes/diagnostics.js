@@ -227,9 +227,12 @@ async function gettxAdminData(){
         units: ['d', 'h', 'm']
     }
 
+    const controllerConfigs = globals.playerController.config;
     let txadminData = {
         uptime: humanizeDuration(process.uptime()*1000, humanizeOptions),
         cfxUrl: (GlobalData.cfxUrl)? `https://${GlobalData.cfxUrl}/` : '--',
+        banlistEnabled: controllerConfigs.onJoinCheckBan.toString(),
+        whitelistEnabled: controllerConfigs.onJoinCheckWhitelist.toString(),
         fullCrashes: globals.monitor.globalCounters.fullCrashes,
         partialCrashes: globals.monitor.globalCounters.partialCrashes,
         timeout: globals.monitor.config.timeout,
