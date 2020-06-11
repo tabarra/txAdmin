@@ -181,6 +181,7 @@ async function getActionHistory(dbo){
             }
             if(log.revocation.timestamp){
                 out.color = 'dark';
+                out.isRevoked = true;
                 const revocationDate = (new Date(log.revocation.timestamp*1000)).toLocaleString();
                 out.footerNote = `Revoked by ${log.revocation.author} on ${revocationDate}.`;
             }

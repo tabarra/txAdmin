@@ -4,12 +4,12 @@
 - [x] ignore EPIPE koa errors
 > v2.5.1
 - [x] validate that min session time is valid
+- [x] fix revoke button always visible
 - [ ] make warns un-revokable
 - [ ] change "revoke" for "unban"
 - [ ] add search
 - [ ] adapt all modal actions to offline players
 - [ ] add sv endpoint to say the whitelist/banlist usage
-
 
 > Soon™
 - [ ] monitor checks for duplicate active users every 10 minutes, then reports in diagnostics page
