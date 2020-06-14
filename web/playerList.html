@@ -16,17 +16,23 @@
         padding: .25rem!important;
     }
 
-    .actionLogEntry{
+    .logEntry{
         color: #768192;
         padding: .15rem 0.55rem;
         margin-bottom: 4px !important;
     }
-    .actionLogEntry:hover{
+    .logEntry:hover{
         background-color: #ebedef;
     }
-    .actionLogEntry:hover a{
+    .logEntry:hover a{
         color: #fff;
         background-color: #636f83;
+    }
+    .logEntry small{
+        margin-top: .25em;
+    }
+    .logEntryClickable{
+        cursor: pointer;
     }
 </style>
 
@@ -88,7 +94,7 @@
         <div class="card card-accent-success">
             <div class="card-header font-weight-bold">
                 <h5 class="float-left mb-0" style="padding-top: .175em;">
-                    Last 15 Whitelist requests:
+                    Last {{queryLimits.whitelist}} Whitelist requests:
                 </h5>
                 {{if(!options.disableWhitelist)}}
                     <button class="btn btn-sm btn-success float-right" type="button" 
@@ -127,7 +133,7 @@
                                         {{/if}}
                                     </td>
                                     <td>{{@this.time}}</td>
-                                    <td>{{@this.id}}</td>
+                                    <td class="text-monospace">{{@this.id}}</td>
                                     <td class="text-truncate">{{@this.name}}</td>
                                 </tr>
                                 {{/foreach}}
@@ -218,18 +224,18 @@
         <!-- Tabbed Card -->
         <div class="card">
             <div class="card-header card-accent-info">
-                <h5 class="float-left mb-0" style="padding-top: .175em;">
+                <!-- <h5 class="float-left mb-0" style="padding-top: .175em;">
                     Database Actions (bans/warns/whitelists)
-                </h5>
+                </h5> -->
                 <!-- FIXME: currently disabled -->
-                <!-- <ul class="nav nav-pills card-header-pills">
+                <ul class="nav nav-pills card-header-pills">
                     <div class="form-group row mb-0 mr-auto">
                         <div class="col-md-12">
                             <div class="input-group">
                                 <input class="form-control" id="input2-group2" type="text"
-                                    placeholder="name, license, csv ids" disabled>
+                                    placeholder="name, license, IDs">
                                 <span class="input-group-append">
-                                    <button class="btn btn-sm btn-secondary disabled" type="button">
+                                    <button class="btn btn-sm btn-secondary" type="button">
                                         <svg class="c-icon">
                                             <use xlink:href="img/coreui_icons.svg#cil-magnifying-glass"></use>
                                         </svg> Search
@@ -239,46 +245,53 @@
                         </div>
                     </div>
                     <li class="nav-item">
-                        <a class="nav-link disabled" id="dbPlayers-tab" data-toggle="pill" href="#dbPlayers" role="tab" 
+                        <a class="nav-link" id="dbPlayers-tab" data-toggle="pill" href="#dbPlayers" role="tab" 
                             aria-controls="dbPlayers" aria-selected="false"><i class="icon-user"></i> Players</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link active" id="dbActions-tab" data-toggle="pill" href="#dbActions" role="tab" 
                             aria-controls="dbActions" aria-selected="true"><i class="icon-notebook"></i> Actions</a>
                     </li>
-                </ul> -->
+                </ul>
             </div>
             <div class="card-body">
                 <div class="tab-content">
                     <div class="tab-pane fade" id="dbPlayers" role="tabpanel" aria-labelledby="dbPlayers-tab">
-                        <!-- FIXME: currently disabled -->
-                        <h5 class="card-title">Last xxx joined players</h5>
-                        {{if(options.lastJoinedPlayers.length == 0)}}
+                        <h5 class="card-title">Last {{queryLimits.players}} joined players</h5>
+                        {{if(options.lastPlayers.length == 0)}}
                             <div class="text-center">
                                 <h3 class="mx-auto pt-3 text-secondary">no players yet...</h3>
                             </div>
                         {{#else}}
-                            {{foreach(options.lastJoinedPlayers)}}
-                                <li><span class="text-muted">05:05:08</span> AmazingNickname123
-                                    <code>steam:1100002h3g23hg</code></li>
-                            {{/foreach}}
+                            <div class="list-group list-group-accent">
+                                {{foreach(options.lastPlayers)}}
+                                    <!-- FIXME: fix logEntryClickableX and onclickX-->
+                                    <div class="list-group-item list-group-item-accent-{{@this.class}} logEntry logEntryClickableX">
+                                        <div class="d-flex w-100 justify-content-between" onclickX="showPlayer('{{@this.license}}')"> 
+                                            <strong>{{@this.name}}</strong>
+                                            <small>{{@this.joined}}</small>
+                                        </div>
+                                    </div>
+                                {{/foreach}}
+                            </div>
                         {{/if}}
                     </div>
 
                     <div class="tab-pane fade show active" id="dbActions" role="tabpanel" aria-labelledby="dbActions-tab">
-                        <!-- FIXME: change to "last xxx actions" -->
-                        <!-- <h5 class="card-title">Action History:</h5>  -->
-                        {{if(options.actionHistory.length == 0)}}
+                        <h5 class="card-title">Last {{queryLimits.actions}} actions (bans/warns/whitelists):</h5> 
+                        {{if(options.lastActions.length == 0)}}
                             <div class="text-center">
                                 <h3 class="mx-auto pt-3 text-secondary">no actions yet...</h3>
                             </div>
                         {{#else}}
                             <div class="list-group list-group-accent">
-                                {{foreach(options.actionHistory)}}
-                                    <div class="list-group-item list-group-item-accent-{{@this.color}} actionLogEntry">
+                                {{foreach(options.lastActions)}}
+                                    <div class="list-group-item list-group-item-accent-{{@this.color}} logEntry">
                                         <div class="d-flex w-100 justify-content-between">
                                             <strong>{{@this.message|safe}}</strong>
-                                            <small class="text-right">{{@this.date}} 
+                                            <small class="text-right">
+                                                <span class="text-monospace font-weight-bold">({{@this.id}})</span>
+                                                {{@this.date}} 
                                                 {{if(!options.permsDisable.revoke)}}
                                                     {{if(@this.isRevoked)}}
                                                         <span class="badge badge-outline-light p-1">REVOKED</span>

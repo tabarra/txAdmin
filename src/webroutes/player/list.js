@@ -18,14 +18,55 @@ const now = () => { return Math.round(Date.now() / 1000) };
  * @param {object} ctx
  */
 module.exports = async function PlayerList(ctx) {
-    let timeStart = new Date();
+    //Prepare dbo
     const dbo = globals.playerController.getDB();
+
+    //Delegate to the specific action handler
+    if(ctx.request.query && typeof ctx.request.query.search == 'string'){
+        return await handleSearch(ctx, dbo, ctx.request.query.search);
+    }else{
+        return await handleDefault(ctx, dbo);
+    }
+};
+
+
+//================================================================
+/**
+ * Handles the search functionality.
+ * @param {object} ctx
+ * @param {object} dbo
+ * @param {string} query
+ * @returns {object} page render promise
+ */
+async function handleSearch(ctx, dbo, query){
+    //TODO: process the type of info on the query
+    //TODO: perform queries
+    //TODO: process results
+    //TODO: return object
+}
+
+
+//================================================================
+/**
+ * Handles the default page rendering (index).
+ * @param {object} ctx
+ * @param {object} dbo
+ * @returns {object} page render promise
+ */
+async function handleDefault(ctx, dbo){
+    let timeStart = new Date();
     const controllerConfigs = globals.playerController.config;
-    let respData = {
+    const queryLimits = {
+        whitelist: 15,
+        actions: 20,
+        players: 30,
+    }
+    const respData = {
         stats: await getStats(dbo),
-        lastWhitelistBlocks: await getPendingWL(dbo, 15),
-        actionHistory: await getActionHistory(dbo),
-        lastJoinedPlayers: [],
+        queryLimits,
+        lastWhitelistBlocks: await getPendingWL(dbo, queryLimits.whitelist),
+        lastActions: await getLastActions(dbo, queryLimits.actions),
+        lastPlayers: await getLastPlayers(dbo, queryLimits.players),
         disableBans: !controllerConfigs.onJoinCheckBan,
         disableWhitelist: !controllerConfigs.onJoinCheckWhitelist,
         permsDisable: {
@@ -38,17 +79,18 @@ module.exports = async function PlayerList(ctx) {
     //Output
     let timeElapsed = new Date() - timeStart;
     respData.message = `Executed in ${timeElapsed} ms`;
-    return ctx.utils.render('playerList', respData);
-};
+    return await ctx.utils.render('playerList', respData);
+}
 
 
+//================================================================
 /**
  * Get the last entries of the pending whitelist table, sorted by timestamp.
+ * @param {object} dbo
  * @returns {object} array of actions, or, throws on error
  */
 async function getStats(dbo){
     try {
-
         const actionStats = await dbo.get("actions")
                             .reduce((acc, a, ind)=>{
                                 if(a.type == 'ban'){
@@ -97,8 +139,11 @@ async function getStats(dbo){
 }
 
 
+//================================================================
 /**
  * Get the last entries of the pending whitelist table, sorted by timestamp.
+ * @param {object} dbo
+ * @param {number} limit
  * @returns {array} array of actions, or [] on error
  */
 async function getPendingWL(dbo, limit){
@@ -138,62 +183,114 @@ async function getPendingWL(dbo, limit){
 }
 
 
+//================================================================
 /**
- * Get the entire action history.
- * @returns {array} array of actions, or [] on error
+ * Get the last actions from the end of the list.
+ * NOTE: this is not being sorted by timestamp, we are assuming its ordered.
+ * @param {object} dbo
+ * @param {number} limit
+ * @returns {array} array of processed actions, or [] on error
  */
-async function getActionHistory(dbo){
+async function getLastActions(dbo, limit){
     try {
-        let tsNow = now();
-        let hist = await dbo.get("actions").cloneDeep().reverse().value();
-        return hist.map((log) => {
-            let out = {
-                id: log.id,
-                action: log.type.toUpperCase(),
-                date: (new Date(log.timestamp*1000)).toLocaleString(),
-                reason: log.reason,
-                author: log.author,
-                revocationNotice: false
-            };
-            let actReference;
-            if(log.playerName){
-                actReference = xss(log.playerName);
-            }else{
-                actReference = '<i>' + xss(log.identifiers.map((x) => x.split(':')[0]).join(', ')) + '</i>';
-            }
-            if(log.type == 'ban'){
-                out.color = 'danger';
-                out.message = `${xss(log.author)} BANNED ${actReference}`;
-
-            }else if(log.type == 'warn'){
-                out.color = 'warning';
-                out.message = `${xss(log.author)} WARNED ${actReference}`;
-                
-            }else if(log.type == 'whitelist'){
-                out.color = 'success';
-                out.message = `${xss(log.author)} WHITELISTED ${actReference}`;
-                out.reason = '';
-
-            }else{
-                out.color = 'secondary';
-                out.message = `${xss(log.author)} ${log.type.toUpperCase()} ${actReference}`;
-
-            }
-            if(log.revocation.timestamp){
-                out.color = 'dark';
-                out.isRevoked = true;
-                const revocationDate = (new Date(log.revocation.timestamp*1000)).toLocaleString();
-                out.footerNote = `Revoked by ${log.revocation.author} on ${revocationDate}.`;
-            }
-            if(typeof log.expiration == 'number'){
-                const expirationDate = (new Date(log.expiration*1000)).toLocaleString();
-                out.footerNote = (log.expiration < tsNow)? `Expired at ${expirationDate}.` : `Expires at ${expirationDate}.`;
-            }
-            return out;
-        })
+        const lastActions = await dbo.get("actions")
+                            .takeRight(limit)
+                            .reverse()
+                            .cloneDeep()
+                            .value();
+        return processActionHistory(lastActions)
     } catch (error) {
-        const msg = `getActionHistory failed with error: ${error.message}`;
+        const msg = `getLastActions failed with error: ${error.message}`;
         if(GlobalData.verbose) logError(msg);
         return []
     }
+}
+
+
+//================================================================
+/**
+ * Get the last actions from the end of the list.
+ * NOTE: this is not being sorted by timestamp, we are assuming its ordered.
+ * @param {object} dbo
+ * @param {number} limit
+ * @returns {array} array of processed actions, or [] on error
+ */
+async function getLastPlayers(dbo, limit){
+    try {
+        const activeLicenses = globals.playerController.activePlayers.map(p => p.license);
+        const lastPlayers = await dbo.get("players")
+                            .takeRight(limit)
+                            .reverse()
+                            .cloneDeep()
+                            .value();
+        return lastPlayers.map(p => {
+            return {
+                name: p.name,
+                license: p.license,
+                joined: (new Date(p.tsJoined*1000)).toLocaleString(),
+                class: (activeLicenses.includes(p.license))? 'success' : 'dark'
+            }   
+        })
+
+    } catch (error) {
+        const msg = `getLastPlayers failed with error: ${error.message}`;
+        if(GlobalData.verbose) logError(msg);
+        return []
+    }
+}
+
+
+//================================================================
+/**
+ * Processes the action history and returns a templatization array.
+ * @param {array} hist
+ * @returns {array} array of actions, or throws on error
+ */
+async function processActionHistory(hist){
+    let tsNow = now();
+    return hist.map((log) => {
+        let out = {
+            id: log.id,
+            action: log.type.toUpperCase(),
+            date: (new Date(log.timestamp*1000)).toLocaleString(),
+            reason: log.reason,
+            author: log.author,
+            revocationNotice: false
+        };
+        let actReference;
+        if(log.playerName){
+            actReference = xss(log.playerName);
+        }else{
+            actReference = '<i>' + xss(log.identifiers.map((x) => x.split(':')[0]).join(', ')) + '</i>';
+        }
+        if(log.type == 'ban'){
+            out.color = 'danger';
+            out.message = `${xss(log.author)} BANNED ${actReference}`;
+
+        }else if(log.type == 'warn'){
+            out.color = 'warning';
+            out.message = `${xss(log.author)} WARNED ${actReference}`;
+            
+        }else if(log.type == 'whitelist'){
+            out.color = 'success';
+            out.message = `${xss(log.author)} WHITELISTED ${actReference}`;
+            out.reason = '';
+
+        }else{
+            out.color = 'secondary';
+            out.message = `${xss(log.author)} ${log.type.toUpperCase()} ${actReference}`;
+
+        }
+        if(log.revocation.timestamp){
+            out.color = 'dark';
+            out.isRevoked = true;
+            const revocationDate = (new Date(log.revocation.timestamp*1000)).toLocaleString();
+            out.footerNote = `Revoked by ${log.revocation.author} on ${revocationDate}.`;
+        }
+        if(typeof log.expiration == 'number'){
+            const expirationDate = (new Date(log.expiration*1000)).toLocaleString();
+            out.footerNote = (log.expiration < tsNow)? `Expired at ${expirationDate}.` : `Expires at ${expirationDate}.`;
+        }
+        return out;
+    })
 }
