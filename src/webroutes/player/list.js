@@ -97,9 +97,11 @@ async function getStats(dbo){
                                     acc.bans++;
                                 }else if(a.type == 'warn'){
                                     acc.warns++;
+                                }else if(a.type == 'whitelist'){
+                                    acc.whitelists++;
                                 }
                                 return acc;
-                            }, {bans:0, warns:0})
+                            }, {bans:0, warns:0, whitelists:0})
                             .value();
 
         const playerStats = await dbo.get("players")
@@ -128,6 +130,7 @@ async function getStats(dbo){
         return {
             players: playerStats.players.toLocaleString(),
             playTime: playTime,
+            whitelists: actionStats.whitelists.toLocaleString(),
             bans: actionStats.bans.toLocaleString(),
             warns: actionStats.warns.toLocaleString()
         }
