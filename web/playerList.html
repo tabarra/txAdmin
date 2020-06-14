@@ -34,6 +34,10 @@
     .logEntryClickable{
         cursor: pointer;
     }
+
+    .searchTab{
+        min-height: 64px;
+    }
 </style>
 
 <div class="text-center mb-2">
@@ -238,7 +242,7 @@
                     <div class="form-group row mb-0 mr-auto">
                         <div class="col-md-12">
                             <div class="input-group">
-                                <input class="form-control" id="input2-group2" type="text"
+                                <input class="form-control" id="dbSearchBox" type="text"
                                     placeholder="name, license, IDs">
                                 <span class="input-group-append">
                                     <button class="btn btn-sm btn-secondary" type="button">
@@ -263,59 +267,65 @@
             <div class="card-body">
                 <div class="tab-content">
                     <div class="tab-pane fade" id="dbPlayers" role="tabpanel" aria-labelledby="dbPlayers-tab">
-                        <h5 class="card-title">Last {{queryLimits.players}} joined players</h5>
-                        {{if(options.lastPlayers.length == 0)}}
-                            <div class="text-center">
-                                <h3 class="mx-auto pt-3 text-secondary">no players yet...</h3>
-                            </div>
-                        {{#else}}
-                            <div class="list-group list-group-accent">
-                                {{foreach(options.lastPlayers)}}
-                                    <!-- FIXME: fix logEntryClickableX and onclickX-->
-                                    <div class="list-group-item list-group-item-accent-{{@this.class}} logEntry logEntryClickableX">
-                                        <div class="d-flex w-100 justify-content-between" onclickX="showPlayer('{{@this.license}}')"> 
-                                            <strong>{{@this.name}}</strong>
-                                            <small>{{@this.joined}}</small>
+                        <div id="dbPlayers-tabSearch" class="searchTab d-none"></div>
+                        <div id="dbPlayers-tabDefault">
+                            <h5 class="card-title">Last {{queryLimits.players}} joined players</h5>
+                            {{if(options.lastPlayers.length == 0)}}
+                                <div class="text-center">
+                                    <h3 class="mx-auto pt-3 text-secondary">no players yet...</h3>
+                                </div>
+                            {{#else}}
+                                <div class="list-group list-group-accent">
+                                    {{foreach(options.lastPlayers)}}
+                                        <!-- FIXME: fix logEntryClickableX and onclickX-->
+                                        <div class="list-group-item list-group-item-accent-{{@this.class}} logEntry logEntryClickableX">
+                                            <div class="d-flex w-100 justify-content-between" onclickX="showPlayer('{{@this.license}}')"> 
+                                                <strong>{{@this.name}}</strong>
+                                                <small>{{@this.joined}}</small>
+                                            </div>
                                         </div>
-                                    </div>
-                                {{/foreach}}
-                            </div>
-                        {{/if}}
+                                    {{/foreach}}
+                                </div>
+                            {{/if}}
+                        </div>
                     </div>
 
                     <div class="tab-pane fade show active" id="dbActions" role="tabpanel" aria-labelledby="dbActions-tab">
-                        <h5 class="card-title">Last {{queryLimits.actions}} actions (bans/warns/whitelists):</h5> 
-                        {{if(options.lastActions.length == 0)}}
-                            <div class="text-center">
-                                <h3 class="mx-auto pt-3 text-secondary">no actions yet...</h3>
-                            </div>
-                        {{#else}}
-                            <div class="list-group list-group-accent">
-                                {{foreach(options.lastActions)}}
-                                    <div class="list-group-item list-group-item-accent-{{@this.color}} logEntry">
-                                        <div class="d-flex w-100 justify-content-between">
-                                            <strong>{{@this.message|safe}}</strong>
-                                            <small class="text-right">
-                                                <span class="text-monospace font-weight-bold">({{@this.id}})</span>
-                                                {{@this.date}} 
-                                                {{if(!options.permsDisable.revoke)}}
-                                                    {{if(@this.isRevoked)}}
-                                                        <span class="badge badge-outline-light p-1">REVOKED</span>
-                                                    {{#else}}
-                                                        &nbsp;<a href="/player/list#!" onclick="revokeAction('{{@this.id}}')" 
-                                                            class="badge badge-secondary p-1 txActionsBtn">REVOKE</a>&nbsp;
+                        <div id="dbActions-tabSearch" class="searchTab d-none"></div>
+                        <div id="dbActions-tabDefault">
+                            <h5 class="card-title">Last {{queryLimits.actions}} actions (bans/warns/whitelists):</h5> 
+                            {{if(options.lastActions.length == 0)}}
+                                <div class="text-center">
+                                    <h3 class="mx-auto pt-3 text-secondary">no actions yet...</h3>
+                                </div>
+                            {{#else}}
+                                <div class="list-group list-group-accent">
+                                    {{foreach(options.lastActions)}}
+                                        <div class="list-group-item list-group-item-accent-{{@this.color}} logEntry">
+                                            <div class="d-flex w-100 justify-content-between">
+                                                <strong>{{@this.message|safe}}</strong>
+                                                <small class="text-right">
+                                                    <span class="text-monospace font-weight-bold">({{@this.id}})</span>
+                                                    {{@this.date}} 
+                                                    {{if(!options.permsDisable.revoke)}}
+                                                        {{if(@this.isRevoked)}}
+                                                            <span class="badge badge-outline-light p-1">REVOKED</span>
+                                                        {{#else}}
+                                                            &nbsp;<a href="/player/list#!" onclick="revokeAction('{{@this.id}}')" 
+                                                                class="badge badge-secondary p-1 txActionsBtn">REVOKE</a>&nbsp;
+                                                        {{/if}}
                                                     {{/if}}
-                                                {{/if}}
-                                            </small>
+                                                </small>
+                                            </div>
+                                            <span>{{@this.reason|unnull}}</span>
+                                            {{if(@this.footerNote)}}
+                                                <small class="d-block">{{@this.footerNote}}</small>
+                                            {{/if}}
                                         </div>
-                                        <span>{{@this.reason|unnull}}</span>
-                                        {{if(@this.footerNote)}}
-                                            <small class="d-block">{{@this.footerNote}}</small>
-                                        {{/if}}
-                                    </div>
-                                {{/foreach}}
-                            </div>
-                        {{/if}}
+                                    {{/foreach}}
+                                </div>
+                            {{/if}}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -413,6 +423,56 @@
             }
         });
     }
+
+
+    //Search functionality
+    const searchInput = document.getElementById('dbSearchBox');
+    const dbPlayersSearchTab = document.getElementById('dbPlayers-tabSearch');
+    const dbPlayersDefaultTab = document.getElementById('dbPlayers-tabDefault');
+    const dbActionsSearchTab = document.getElementById('dbActions-tabSearch');
+    const dbActionsDefaultTab = document.getElementById('dbActions-tabDefault');
+    
+    searchInput.addEventListener('keyup', (e) => {
+        if(e.keyCode !== 13) return;
+        if(!searchInput.value.length){
+            dbPlayersSearchTab.classList.add('d-none');
+            dbPlayersDefaultTab.classList.remove('d-none');
+            dbActionsSearchTab.classList.add('d-none');
+            dbActionsDefaultTab.classList.remove('d-none');
+        }else{
+            dbPlayersSearchTab.innerHTML = spinnerHTML;
+            dbActionsSearchTab.innerHTML = spinnerHTML;
+            dbPlayersSearchTab.classList.remove('d-none');
+            dbPlayersDefaultTab.classList.add('d-none');
+            dbActionsSearchTab.classList.remove('d-none');
+            dbActionsDefaultTab.classList.add('d-none');
+
+            $.ajax({
+                type: "GET",
+                url: '/player/list?search=' + encodeURI(searchInput.value),
+                timeout: timeoutLong,
+                dataType: 'json',
+                success: function (data) {
+                    //FIXME: add error handling
+                    alert(data)
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    notify.update('progress', 0);
+                    notify.update('type', 'danger');
+                    notify.update('message', message);
+                }
+            });
+        }
+    })
+   
+    
+    
+    
+
+
+
+
+
 
     //Add ban button click
     const banButtonEl = document.getElementById('frmAddBan-button');
