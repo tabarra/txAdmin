@@ -75,19 +75,19 @@ async function handleSearch(ctx, dbo){
               name: "Sharif222",
               license: "da4e5c173b3ba97e7f201de0fcd44443db7d4844",
               joined: "13/06/2020 03:52:35",
-              class: "dark"
+              color: "success"
             },
             {
               name: "TwopleSir",
               license: "da4e6b2215101b9db56403c3ac7c9b02ce39df72",
               joined: "13/06/2020 03:52:35",
-              class: "dark"
+              color: "dark"
             },
             {
               name: "roger gendron",
               license: "e38a1d8d76197ef1d786282e18f2751fe96c7a96",
               joined: "13/06/2020 03:52:24",
-              class: "dark"
+              color: "dark"
             }
         ]
         
@@ -391,7 +391,7 @@ async function processPlayerList(list){
             name: p.name,
             license: p.license,
             joined: (new Date(p.tsJoined*1000)).toLocaleString(),
-            class: (activeLicenses.includes(p.license))? 'success' : 'dark'
+            color: (activeLicenses.includes(p.license))? 'success' : 'dark'
         }   
     })
 }

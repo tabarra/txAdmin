@@ -242,10 +242,10 @@
                     <div class="form-group row mb-0 mr-auto">
                         <div class="col-md-12">
                             <div class="input-group">
-                                <input class="form-control" id="dbSearchBox" type="text"
+                                <input class="form-control" id="dbSearch-input" type="text"
                                     placeholder="name, license, IDs">
                                 <span class="input-group-append">
-                                    <button class="btn btn-sm btn-secondary" type="button">
+                                    <button class="btn btn-sm btn-secondary" type="button" id="dbSearch-button">
                                         <svg class="c-icon">
                                             <use xlink:href="img/coreui_icons.svg#cil-magnifying-glass"></use>
                                         </svg> Search
@@ -278,7 +278,7 @@
                                 <div class="list-group list-group-accent">
                                     {{foreach(options.lastPlayers)}}
                                         <!-- FIXME: fix logEntryClickableX and onclickX-->
-                                        <div class="list-group-item list-group-item-accent-{{@this.class}} logEntry logEntryClickableX">
+                                        <div class="list-group-item list-group-item-accent-{{@this.color}} logEntry logEntryClickableX">
                                             <div class="d-flex w-100 justify-content-between" onclickX="showPlayer('{{@this.license}}')"> 
                                                 <strong>{{@this.name}}</strong>
                                                 <small>{{@this.joined}}</small>
@@ -341,7 +341,14 @@
 
 
 <script>
-    //Action revocation
+    //============================================== SSR Variables
+    const permsDisableWhitelist = ('{{permsDisable.whitelist}}' === 'true');
+    const permsDisableBan = ('{{permsDisable.ban}}' === 'true');
+    const permsDisableRevoke = ('{{permsDisable.revoke}}' === 'true');
+
+
+
+    //============================================== Action revocation
     //TODO: make an confirmation modal
     function revokeAction(action_id){
         if(!action_id){
@@ -373,7 +380,8 @@
         });
     }
 
-    //Whitelist an ID via prompt or button click
+
+    //============================================== Whitelist an ID via prompt or button click
     function whitelistID(reference){
         if(!reference){
             reference = prompt('Type in the whitelist Request ID (R????) or License Identifier.');
@@ -425,53 +433,140 @@
     }
 
 
-    //Search functionality
-    const searchInput = document.getElementById('dbSearchBox');
+
+    //============================================== Search functionality
+    const getSVG = (icon) => {
+        return `<svg class="c-icon">
+            <use xlink:href="img/coreui_icons.svg#cil-${icon}"></use>
+        </svg>`;
+    }
+    const searchInput = document.getElementById('dbSearch-input');
+    const searchButton = document.getElementById('dbSearch-button');
     const dbPlayersSearchTab = document.getElementById('dbPlayers-tabSearch');
     const dbPlayersDefaultTab = document.getElementById('dbPlayers-tabDefault');
     const dbActionsSearchTab = document.getElementById('dbActions-tabSearch');
     const dbActionsDefaultTab = document.getElementById('dbActions-tabDefault');
-    
+
+    searchButton.addEventListener('click', (e) => {
+        clearSearch();
+    })
     searchInput.addEventListener('keyup', (e) => {
         if(e.keyCode !== 13) return;
-        if(!searchInput.value.length){
-            dbPlayersSearchTab.classList.add('d-none');
-            dbPlayersDefaultTab.classList.remove('d-none');
-            dbActionsSearchTab.classList.add('d-none');
-            dbActionsDefaultTab.classList.remove('d-none');
+        if(searchInput.value.length){
+            performSearch();
         }else{
-            dbPlayersSearchTab.innerHTML = spinnerHTML;
-            dbActionsSearchTab.innerHTML = spinnerHTML;
-            dbPlayersSearchTab.classList.remove('d-none');
-            dbPlayersDefaultTab.classList.add('d-none');
-            dbActionsSearchTab.classList.remove('d-none');
-            dbActionsDefaultTab.classList.add('d-none');
-
-            $.ajax({
-                type: "GET",
-                url: '/player/list?search=' + encodeURI(searchInput.value),
-                timeout: timeoutLong,
-                dataType: 'json',
-                success: function (data) {
-                    if(data.error){
-                        dbPlayersSearchTab.innerText = error;
-                        dbActionsSearchTab.innerText = error;
-                        return;
-                    }
-                    dbPlayersSearchTab.innerText = JSON.stringify(data.resPlayers, null, 2);
-                    dbActionsSearchTab.innerText = JSON.stringify(data.resActions, null, 2);
-                },
-                error: function (xmlhttprequest, textstatus, message) {
-                    dbPlayersSearchTab.innerText = message;
-                    dbActionsSearchTab.innerText = message;
-                }
-            });
+            clearSearch();
         }
     })
-   
 
+    //Clear search
+    function clearSearch(){
+        dbPlayersSearchTab.classList.add('d-none');
+        dbPlayersDefaultTab.classList.remove('d-none');
+        dbActionsSearchTab.classList.add('d-none');
+        dbActionsDefaultTab.classList.remove('d-none');
+        searchButton.innerHTML = getSVG('magnifying-glass') + ` Search`;
+        searchInput.value = '';
+    }
 
-    //Add ban button click
+    //Perform search
+    function performSearch(){
+        dbPlayersSearchTab.innerHTML = spinnerHTML;
+        dbActionsSearchTab.innerHTML = spinnerHTML;
+        dbPlayersSearchTab.classList.remove('d-none');
+        dbPlayersDefaultTab.classList.add('d-none');
+        dbActionsSearchTab.classList.remove('d-none');
+        dbActionsDefaultTab.classList.add('d-none');
+        searchButton.innerHTML = getSVG('x') + ` Clear`;
+
+        $.ajax({
+            type: "GET",
+            url: '/player/list?search=' + encodeURI(searchInput.value),
+            timeout: timeoutLong,
+            dataType: 'json',
+            success: function (data) {
+                if(data.error){
+                    dbPlayersSearchTab.innerText = error;
+                    dbActionsSearchTab.innerText = error;
+                    return;
+                }
+                dbPlayersSearchTab.innerHTML = dbPlayersToHtml(data.resPlayers);
+                dbActionsSearchTab.innerHTML = dbActionsToHtml(data.resActions);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                dbPlayersSearchTab.innerText = message;
+                dbActionsSearchTab.innerText = message;
+            }
+        });
+    }
+
+    //Converts players array to html
+    function dbPlayersToHtml(players){
+        if(!players.length){
+            return `<div class="text-center">
+                <h3 class="mx-auto pt-3 text-secondary">no players found</h3>
+            </div>`;
+        }else{
+            const processed = players.map(p => `
+                <div class="list-group-item list-group-item-accent-${xss(p.color)} logEntry logEntryClickableX">
+                    <div class="d-flex w-100 justify-content-between" onclickX="showPlayer('${xss(p.license)}')"> 
+                        <strong>${xss(p.name)}</strong>
+                        <small>${xss(p.joined)}</small>
+                    </div>
+                </div>`);
+            
+            return [
+                `<div class="list-group list-group-accent">`,
+                ...processed,
+                `</div>`
+            ].join('\n');
+        }
+    }
+
+    //Converts actions array to html
+    function dbActionsToHtml(actions){
+        if(!actions.length){
+            return `<div class="text-center">
+                <h3 class="mx-auto pt-3 text-secondary">no actions found</h3>
+            </div>`;
+        }else{
+            const processed = actions.map(a => {
+                let revokeButton = '';
+                if(!permsDisableRevoke){
+                    if(a.isRevoked){
+                        revokeButton = `<span class="badge badge-outline-light p-1">REVOKED</span>`; 
+                    }else{
+                        revokeButton = `&nbsp;<a href="/player/list#!" onclick="revokeAction('${xss(a.id)}')" 
+                            class="badge badge-secondary p-1 txActionsBtn">REVOKE</a>&nbsp;`; 
+                    }
+                }
+                const reason = (a.reason !== null)? xss(a.reason) : '';
+                const footerNote = (a.footerNote)? `<small class="d-block">${xss(a.footerNote)}</small>` : '';
+                return `<div class="list-group-item list-group-item-accent-${xss(a.color)} logEntry">
+                    <div class="d-flex w-100 justify-content-between">
+                        <strong>${a.message}</strong>
+                        <small class="text-right">
+                            <span class="text-monospace font-weight-bold">(${xss(a.id)})</span>
+                            ${xss(a.date)}
+                            ${revokeButton}
+                        </small>
+                    </div>
+                    <span>${reason}</span>
+                    ${footerNote}
+                </div>`;
+            });
+            
+            return [
+                `<div class="list-group list-group-accent">`,
+                ...processed,
+                `</div>`
+            ].join('\n');
+        }
+    }
+
+    
+
+    //============================================== Ban card
     const banButtonEl = document.getElementById('frmAddBan-button');
     if(banButtonEl){
         banButtonEl.addEventListener('click', function (ev) {
