@@ -453,25 +453,22 @@
                 timeout: timeoutLong,
                 dataType: 'json',
                 success: function (data) {
-                    //FIXME: add error handling
-                    alert(data)
+                    if(data.error){
+                        dbPlayersSearchTab.innerText = error;
+                        dbActionsSearchTab.innerText = error;
+                        return;
+                    }
+                    dbPlayersSearchTab.innerText = JSON.stringify(data.resPlayers, null, 2);
+                    dbActionsSearchTab.innerText = JSON.stringify(data.resActions, null, 2);
                 },
                 error: function (xmlhttprequest, textstatus, message) {
-                    notify.update('progress', 0);
-                    notify.update('type', 'danger');
-                    notify.update('message', message);
+                    dbPlayersSearchTab.innerText = message;
+                    dbActionsSearchTab.innerText = message;
                 }
             });
         }
     })
    
-    
-    
-    
-
-
-
-
 
 
     //Add ban button click

@@ -8,7 +8,7 @@ const { dir, log, logOk, logWarn, logError, getLog } = require('../../extras/con
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000) };
 
-
+//HACK search button doesn't actually work :facepalm:
 /**
  * Returns the output page containing the action log, and the console log
  * 
@@ -22,8 +22,8 @@ module.exports = async function PlayerList(ctx) {
     const dbo = globals.playerController.getDB();
 
     //Delegate to the specific action handler
-    if(ctx.request.query && typeof ctx.request.query.search == 'string'){
-        return await handleSearch(ctx, dbo, ctx.request.query.search);
+    if(ctx.request.query && ctx.request.query.search){
+        return await handleSearch(ctx, dbo);
     }else{
         return await handleDefault(ctx, dbo);
     }
@@ -35,14 +35,101 @@ module.exports = async function PlayerList(ctx) {
  * Handles the search functionality.
  * @param {object} ctx
  * @param {object} dbo
- * @param {string} query
  * @returns {object} page render promise
  */
-async function handleSearch(ctx, dbo, query){
+async function handleSearch(ctx, dbo){
+    //Sanity check
+    if(typeof ctx.request.query.search !== 'string'){
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
+    }
+    const searchString = ctx.request.query.search.trim();
+
+    dir(searchString)
     //TODO: process the type of info on the query
     //TODO: perform queries
     //TODO: process results
     //TODO: return object
+
+    try {
+        // const lastPlayers = await dbo.get("players")
+        //                     .takeRight(5)
+        //                     .reverse()
+        //                     .cloneDeep()
+        //                     .value();
+        // return await processPlayerList(lastPlayers);
+        // const resPlayers = await processPlayerList(lastPlayers);
+
+        // const lastActions = await dbo.get("actions")
+        //                     .takeRight(5)
+        //                     .reverse()
+        //                     .cloneDeep()
+        //                     .value();
+        // return await processActionList(lastActions);
+        // const resActions = await processActionList(lastActions);
+
+        // TODO: 
+        // processPlayerList()
+        // processActionList()
+        const resPlayers = [
+            {
+              name: "Sharif222",
+              license: "da4e5c173b3ba97e7f201de0fcd44443db7d4844",
+              joined: "13/06/2020 03:52:35",
+              class: "dark"
+            },
+            {
+              name: "TwopleSir",
+              license: "da4e6b2215101b9db56403c3ac7c9b02ce39df72",
+              joined: "13/06/2020 03:52:35",
+              class: "dark"
+            },
+            {
+              name: "roger gendron",
+              license: "e38a1d8d76197ef1d786282e18f2751fe96c7a96",
+              joined: "13/06/2020 03:52:24",
+              class: "dark"
+            }
+        ]
+        
+        const resActions = [
+            {
+              id: "AD8A-TF29",
+              action: "WARN",
+              date: "14/06/2020 02:20:16",
+              reason: "asdasd",
+              author: "tabarra",
+              revocationNotice: false,
+              color: "warning",
+              message: "tabarra WARNED Tabarra"
+            },
+            {
+              id: "WYN8-NMPH",
+              action: "WHITELIST",
+              date: "14/06/2020 02:19:23",
+              reason: "",
+              author: "tabarra",
+              revocationNotice: false,
+              color: "success",
+              message: "tabarra WHITELISTED Tabarra"
+            },
+            {
+              id: "B89M-LDZ8",
+              action: "BAN",
+              date: "13/06/2020 22:37:27",
+              reason: "ban dude ban",
+              author: "tabarra",
+              revocationNotice: false,
+              color: "danger",
+              message: "tabarra BANNED tuhvvrnt",
+              footerNote: "Expires at 15/06/2020 22:37:27."
+            }
+          ]
+
+        return ctx.send({resPlayers, resActions});
+    } catch (error) {
+        if(GlobalData.verbose) logError(`handleSearch failed with error: ${error.message}`);
+        return ctx.send({error: `Search failed with error: ${error.message}`})
+    }
 }
 
 
@@ -77,9 +164,9 @@ async function handleDefault(ctx, dbo){
     };
 
     //Output
-    let timeElapsed = new Date() - timeStart;
+    const timeElapsed = new Date() - timeStart;
     respData.message = `Executed in ${timeElapsed} ms`;
-    return await ctx.utils.render('playerList', respData);
+    return ctx.utils.render('playerList', respData);
 }
 
 
@@ -201,7 +288,7 @@ async function getLastActions(dbo, limit){
                             .reverse()
                             .cloneDeep()
                             .value();
-        return processActionHistory(lastActions)
+        return await processActionList(lastActions)
     } catch (error) {
         const msg = `getLastActions failed with error: ${error.message}`;
         if(GlobalData.verbose) logError(msg);
@@ -220,20 +307,12 @@ async function getLastActions(dbo, limit){
  */
 async function getLastPlayers(dbo, limit){
     try {
-        const activeLicenses = globals.playerController.activePlayers.map(p => p.license);
         const lastPlayers = await dbo.get("players")
                             .takeRight(limit)
                             .reverse()
                             .cloneDeep()
                             .value();
-        return lastPlayers.map(p => {
-            return {
-                name: p.name,
-                license: p.license,
-                joined: (new Date(p.tsJoined*1000)).toLocaleString(),
-                class: (activeLicenses.includes(p.license))? 'success' : 'dark'
-            }   
-        })
+        return await processPlayerList(lastPlayers);
 
     } catch (error) {
         const msg = `getLastPlayers failed with error: ${error.message}`;
@@ -245,13 +324,13 @@ async function getLastPlayers(dbo, limit){
 
 //================================================================
 /**
- * Processes the action history and returns a templatization array.
- * @param {array} hist
+ * Processes an action list and returns a templatization array.
+ * @param {array} list
  * @returns {array} array of actions, or throws on error
  */
-async function processActionHistory(hist){
+async function processActionList(list){
     let tsNow = now();
-    return hist.map((log) => {
+    return list.map((log) => {
         let out = {
             id: log.id,
             action: log.type.toUpperCase(),
@@ -295,5 +374,24 @@ async function processActionHistory(hist){
             out.footerNote = (log.expiration < tsNow)? `Expired at ${expirationDate}.` : `Expires at ${expirationDate}.`;
         }
         return out;
+    })
+}
+
+
+//================================================================
+/**
+ * Processes an player list and returns a templatization array.
+ * @param {array} list
+ * @returns {array} array of players, or throws on error
+ */
+async function processPlayerList(list){
+    const activeLicenses = globals.playerController.activePlayers.map(p => p.license);
+    return list.map(p => {
+        return {
+            name: p.name,
+            license: p.license,
+            joined: (new Date(p.tsJoined*1000)).toLocaleString(),
+            class: (activeLicenses.includes(p.license))? 'success' : 'dark'
+        }   
     })
 }
