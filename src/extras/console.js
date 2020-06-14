@@ -34,7 +34,7 @@ const colorizeSettings = {
 
 
 //================================================================
-function log(msg, context=null){
+function log(msg='', context=null){
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
     console.log(chalk.bold.bgBlue(`[${conCtx}]`)+' '+msg);
@@ -42,7 +42,7 @@ function log(msg, context=null){
     return `[INFO][${conCtx}] ${msg}`;
 }
 
-function logOk(msg, context=null){
+function logOk(msg='', context=null){
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
     console.log(chalk.bold.bgGreen(`[${conCtx}]`)+' '+msg);
@@ -50,7 +50,7 @@ function logOk(msg, context=null){
     return `[OK][${conCtx}] ${msg}`;
 }
 
-function logWarn(msg, context=null) {
+function logWarn(msg='', context=null) {
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
     console.log(chalk.bold.bgYellow(`[${conCtx}]`)+' '+msg);
@@ -58,7 +58,7 @@ function logWarn(msg, context=null) {
     return `[WARN][${conCtx}] ${msg}`;
 }
 
-function logError(msg, context=null) {
+function logError(msg='', context=null) {
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
     console.log(chalk.bold.bgRed(`[${conCtx}]`)+' '+msg);
@@ -89,31 +89,59 @@ function dir(data){
         }
         console.log()
     }else{
-        let div = "=".repeat(32);
-        // let printData = (typeof data !== 'undefined')? JSON.stringify(data, null, 2) : 'undefined';
-        let printData = chalk.keyword('orange').italic(typeof data + ': ');
+        let printData;
         if(typeof data == 'undefined'){
-            printData = chalk.white('undefined');
+            printData = chalk.keyword('moccasin').italic('> undefined');
 
-        }else if(typeof data == 'string'){
-            printData += `"${data}"`;
+        }else if(data instanceof Promise){
+            printData = chalk.keyword('moccasin').italic('> Promise');
 
-        }else if(typeof data == 'number'){
-            printData += chalk.green(data);
-
-        }else if(typeof data == 'function'){
-            printData += "\n";
-            printData += data.toString();
+        }else if(typeof data == 'boolean'){
+            if(data){
+                printData = chalk.keyword('lawngreen')('true');
+            }else{
+                printData = chalk.keyword('orangered')('false');
+            }
 
         }else if(typeof data == 'object'){
             printData = colorize(data, colorizeSettings);
 
         }else{
-            printData = JSON.stringify(data, null, 2);
+            printData = chalk.keyword('orange').italic(typeof data + ': ');
+            if(typeof data == 'string'){
+                printData += `"${data}"`;
+    
+            }else if(typeof data == 'number'){
+                printData += chalk.green(data);
+    
+            }else if(typeof data == 'function'){
+                printData += "\n";
+                printData += data.toString();
+
+            }else{
+                printData = JSON.stringify(data, null, 2);
+            }
         }
+        const div = "=".repeat(32);
         console.log(chalk.cyan([div, printData, div].join("\n")));
     }
 }
+
+/*
+NOTE: test calls:
+    dir(a => {return a.toUpperCase;})
+    dir('sdfsdfdsf')
+    dir(['aaa', 124])
+    dir(123)
+    dir(true)
+    dir(false)
+    dir({aaa: 'bbbb'})
+    dir({}.uuuu)
+    dir(new Error('hueeee'))
+    dir(new Promise((resolve, reject) => {
+        resolve('aaaa')
+    }))
+*/
 
 function getLog(){
     return logHistory;
