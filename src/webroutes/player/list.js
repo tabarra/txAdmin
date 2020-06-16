@@ -33,99 +33,100 @@ module.exports = async function PlayerList(ctx) {
 //================================================================
 /**
  * Handles the search functionality.
+ * 
+ * FIXME: add an .limit(512) to the queries just in case comething goes really wrong
+ * NOTE: This might be cool to add: https://fusejs.io/
+ * 
+ * NOTE: expected types:
+ *        *- identifier (solo/csv)
+ *        *- action id
+ *        *- partial name
+ *         - license
+ *         - active id
+ * 
  * @param {object} ctx
  * @param {object} dbo
  * @returns {object} page render promise
  */
 async function handleSearch(ctx, dbo){
-    //Sanity check
+    //Sanity check & var setup
     if(typeof ctx.request.query.search !== 'string'){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const searchString = ctx.request.query.search.trim();
-
-    dir(searchString)
-    //TODO: process the type of info on the query
-    //TODO: perform queries
-    //TODO: process results
-    //TODO: return object
+    let outData = {
+        message: '',
+        resPlayers: [],
+        resActions: []
+    };
 
     try {
-        // const lastPlayers = await dbo.get("players")
-        //                     .takeRight(5)
-        //                     .reverse()
-        //                     .cloneDeep()
-        //                     .value();
-        // return await processPlayerList(lastPlayers);
-        // const resPlayers = await processPlayerList(lastPlayers);
-
-        // const lastActions = await dbo.get("actions")
-        //                     .takeRight(5)
-        //                     .reverse()
-        //                     .cloneDeep()
-        //                     .value();
-        // return await processActionList(lastActions);
-        // const resActions = await processActionList(lastActions);
-
-        // TODO: 
-        // processPlayerList()
-        // processActionList()
-        const resPlayers = [
-            {
-              name: "Sharif222",
-              license: "da4e5c173b3ba97e7f201de0fcd44443db7d4844",
-              joined: "13/06/2020 03:52:35",
-              color: "success"
-            },
-            {
-              name: "TwopleSir",
-              license: "da4e6b2215101b9db56403c3ac7c9b02ce39df72",
-              joined: "13/06/2020 03:52:35",
-              color: "dark"
-            },
-            {
-              name: "roger gendron",
-              license: "e38a1d8d76197ef1d786282e18f2751fe96c7a96",
-              joined: "13/06/2020 03:52:24",
-              color: "dark"
-            }
-        ]
+        //Getting valid identifiers
+        const joinedValidIDKeys = Object.keys(GlobalData.validIdentifiers).join('|');
+        const idsRegex = new RegExp(`((${joinedValidIDKeys}):\\w+)`, 'g');
+        const idsArray = [...searchString.matchAll(idsRegex)]
+            .map(x => x[0])
+            .filter((e, i, arr) => {
+                return arr.indexOf(e) == i;
+            });
         
-        const resActions = [
-            {
-              id: "AD8A-TF29",
-              action: "WARN",
-              date: "14/06/2020 02:20:16",
-              reason: "asdasd",
-              author: "tabarra",
-              revocationNotice: false,
-              color: "warning",
-              message: "tabarra WARNED Tabarra"
-            },
-            {
-              id: "WYN8-NMPH",
-              action: "WHITELIST",
-              date: "14/06/2020 02:19:23",
-              reason: "",
-              author: "tabarra",
-              revocationNotice: false,
-              color: "success",
-              message: "tabarra WHITELISTED Tabarra"
-            },
-            {
-              id: "B89M-LDZ8",
-              action: "BAN",
-              date: "13/06/2020 22:37:27",
-              reason: "ban dude ban",
-              author: "tabarra",
-              revocationNotice: false,
-              color: "danger",
-              message: "tabarra BANNED tuhvvrnt",
-              footerNote: "Expires at 15/06/2020 22:37:27."
-            }
-          ]
 
-        return ctx.send({resPlayers, resActions});
+        //IF searching for identifiers
+        //FIXME: unexpected behavior: quando eu busco por uma license, ele mostra outros players pq ele ta extraindo outras licenses de actions com ban de multiplos users
+        if(idsArray.length){
+            const actions = await dbo.get("actions")
+                .filter(a => idsArray.some((fi) => a.identifiers.includes(fi)))
+                .cloneDeep()
+                .value();
+            outData.resActions = await processActionList(actions);
+
+            let licensesArr = [];
+            actions.forEach(a => {
+                a.identifiers.forEach(id => {
+                    if(id.substring(0, 8) == "license:"){
+                        licensesArr.push(id.substring(8));
+                    }
+                })
+            })
+            const players = await dbo.get("players")
+                .filter(p => licensesArr.includes(p.license))
+                .cloneDeep()
+                .value();
+            outData.resPlayers = await processPlayerList(players);
+            
+
+        //IF searching for an acition ID
+        }else if(/^\w{4}-\w{4}$/.test(searchString)){
+            const action = await dbo.get("actions")
+                .find({id: searchString.toUpperCase()})
+                .cloneDeep()
+                .value();
+            outData.resActions = await processActionList([action]);
+
+            const licensesArr = action.identifiers.filter(x => x.substring(0, 8) == "license:").map(x => x.substring(8));
+            if(licensesArr.length){
+                const players = await dbo.get("players")
+                    .filter(p => licensesArr.includes(p.license))
+                    .cloneDeep()
+                    .value();
+                outData.resPlayers = await processPlayerList(players);
+            }
+
+
+        //Likely searching for an partial name
+        }else{
+            const players = await dbo.get("players")
+                .filter(p => {
+                    return p.name && p.name.toLowerCase().includes(searchString.toLowerCase())
+                })
+                .cloneDeep()
+                .value();
+            outData.resPlayers = await processPlayerList(players);
+        }
+
+        
+        //Give output
+        return ctx.send(outData);
     } catch (error) {
         if(GlobalData.verbose) logError(`handleSearch failed with error: ${error.message}`);
         return ctx.send({error: `Search failed with error: ${error.message}`})
