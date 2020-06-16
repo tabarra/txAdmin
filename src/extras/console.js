@@ -128,7 +128,7 @@ function dir(data){
 }
 
 /*
-NOTE: test calls:
+// NOTE: test calls:
     dir(a => {return a.toUpperCase;})
     dir('sdfsdfdsf')
     dir(['aaa', 124])
@@ -137,10 +137,10 @@ NOTE: test calls:
     dir(false)
     dir({aaa: 'bbbb'})
     dir({}.uuuu)
-    dir(new Error('hueeee'))
     dir(new Promise((resolve, reject) => {
         resolve('aaaa')
     }))
+    dir(new Error('hueeee'))
 */
 
 function getLog(){

@@ -8,19 +8,11 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000) };
-const nanoidAlphabet = "2346789ABCDEFGHJKLMNPQRTUVWXYZ";
+const nanoidAlphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 
 //Consts
 const validActions = ['ban', 'warn', 'whitelist']
 const currentDatabaseVersion = 1;
-const validIdentifiers = {
-    steam: /^steam:1100001[0-9A-Fa-f]{8}$/,
-    license: /^license:[0-9A-Fa-f]{40}$/,
-    xbl: /^xbl:\d{14,20}$/,
-    live: /^live:\d{14,20}$/,
-    discord: /^discord:\d{7,20}$/,
-    fivem: /^fivem:\d{1,8}$/,
-}
 
 
 /**
@@ -333,7 +325,7 @@ module.exports = class PlayerController {
         if(typeof playerName !== 'string') throw new Error('playerName should be an string.');
         if(!Array.isArray(idArray)) throw new Error('Identifiers should be an array with at least 1 identifier.');
         idArray = idArray.filter((id)=>{
-            return Object.values(validIdentifiers).some(vf => vf.test(id));
+            return Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
         });
 
         try {
@@ -445,7 +437,7 @@ module.exports = class PlayerController {
         if(Array.isArray(reference)){
             if(!reference.length) throw new Error('You must send at least one identifier');
             let invalids = reference.filter((id)=>{
-                return (typeof id !== 'string') || !Object.values(validIdentifiers).some(vf => vf.test(id));
+                return (typeof id !== 'string') || !Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
             });
             if(invalids.length){
                 throw new Error('Invalid identifiers: ' + invalids.join(', '));
@@ -595,7 +587,7 @@ module.exports = class PlayerController {
         try {
             //Search player
             let target;
-            let ap = globals.playerController.activePlayers.find(p => p.license === license);
+            let ap = this.activePlayers.find(p => p.license === license);
             if(ap){
                 target = ap;
             }else{
@@ -749,7 +741,7 @@ module.exports = class PlayerController {
                 if(!activePlayerLicenses.includes(player.license)){
                     //Filter to only valid identifiers
                     player.identifiers = player.identifiers.filter((id)=>{
-                        return Object.values(validIdentifiers).some(vf => vf.test(id));
+                        return Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
                     });
                     //Check if he is already on the database
                     let dbPlayer = await this.getPlayer(license);

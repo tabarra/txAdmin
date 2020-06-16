@@ -125,16 +125,28 @@ const verbose = (['true', '1', 'on'].includes(txAdminVerboseConvar));
 
 //Setting Global Data
 GlobalData = {
+    //Env
     osType,
     resourceName,
     fxServerVersion,
     txAdminVersion,
     txAdminTooOutdated,
+    //Convars
     txAdminResourcePath,
     fxServerPath,
     dataPath,
     txAdminPort,
     verbose,
+    //Consts
+    validIdentifiers:{
+        steam: /^steam:1100001[0-9A-Fa-f]{8}$/,
+        license: /^license:[0-9A-Fa-f]{40}$/,
+        xbl: /^xbl:\d{14,20}$/,
+        live: /^live:\d{14,20}$/,
+        discord: /^discord:\d{7,20}$/,
+        fivem: /^fivem:\d{1,8}$/,
+    },
+    //Vars
     cfxUrl: null,
 }
 // NOTE: all variables set for monitor mode: monitorMode, version, serverRoot (cwd), citizen_root, citizen_dir

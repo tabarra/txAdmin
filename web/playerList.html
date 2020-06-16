@@ -448,7 +448,11 @@
     const dbActionsDefaultTab = document.getElementById('dbActions-tabDefault');
 
     searchButton.addEventListener('click', (e) => {
-        clearSearch();
+        if(searchButton.textContent.includes('Search')){
+            performSearch();
+        }else{
+            clearSearch();
+        }
     })
     searchInput.addEventListener('keyup', (e) => {
         if(e.keyCode !== 13) return;
