@@ -231,7 +231,7 @@
 
     <div class="col-md-10 col-lg-8 col-xl-5 mw-col8">
         
-        <!-- Tabbed Card -->
+        <!-- Search + List Card -->
         <div class="card">
             <div class="card-header card-accent-info">
                 <!-- <h5 class="float-left mb-0" style="padding-top: .175em;">
@@ -255,18 +255,19 @@
                         </div>
                     </div>
                     <li class="nav-item">
-                        <a class="nav-link" id="dbPlayers-tab" data-toggle="pill" href="#dbPlayers" role="tab" 
-                            aria-controls="dbPlayers" aria-selected="false"><i class="icon-user"></i> Players</a>
+                        <a class="nav-link" id="dbPlayers-tab" data-toggle="pill" href="#dbPlayers-content" role="tab" 
+                            aria-controls="dbPlayers-content" aria-selected="false"><i class="icon-user"></i> Players</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" id="dbActions-tab" data-toggle="pill" href="#dbActions" role="tab" 
-                            aria-controls="dbActions" aria-selected="true"><i class="icon-notebook"></i> Actions</a>
+                        <a class="nav-link active" id="dbActions-tab" data-toggle="pill" href="#dbActions-content" role="tab" 
+                            aria-controls="dbActions-content" aria-selected="true"><i class="icon-notebook"></i> Actions</a>
                     </li>
                 </ul>
             </div>
             <div class="card-body">
                 <div class="tab-content">
-                    <div class="tab-pane fade" id="dbPlayers" role="tabpanel" aria-labelledby="dbPlayers-tab">
+                    <h5 class="text-center text-primary mb-2" id="dbSearch-message"></h5>
+                    <div class="tab-pane fade" id="dbPlayers-content" role="tabpanel" aria-labelledby="dbPlayers-tab">
                         <div id="dbPlayers-tabSearch" class="searchTab d-none"></div>
                         <div id="dbPlayers-tabDefault">
                             <h5 class="card-title">Last {{queryLimits.players}} joined players</h5>
@@ -290,7 +291,7 @@
                         </div>
                     </div>
 
-                    <div class="tab-pane fade show active" id="dbActions" role="tabpanel" aria-labelledby="dbActions-tab">
+                    <div class="tab-pane fade show active" id="dbActions-content" role="tabpanel" aria-labelledby="dbActions-tab">
                         <div id="dbActions-tabSearch" class="searchTab d-none"></div>
                         <div id="dbActions-tabDefault">
                             <h5 class="card-title">Last {{queryLimits.actions}} actions (bans/warns/whitelists):</h5> 
@@ -442,11 +443,17 @@
     }
     const searchInput = document.getElementById('dbSearch-input');
     const searchButton = document.getElementById('dbSearch-button');
+    const searchMessage = document.getElementById('dbSearch-message');
+    const dbPlayersTab = document.getElementById('dbPlayers-tab');
+    const dbPlayersContent = document.getElementById('dbPlayers-content');
     const dbPlayersSearchTab = document.getElementById('dbPlayers-tabSearch');
     const dbPlayersDefaultTab = document.getElementById('dbPlayers-tabDefault');
+    const dbActionsTab = document.getElementById('dbActions-tab');
+    const dbActionsContent = document.getElementById('dbActions-content');
     const dbActionsSearchTab = document.getElementById('dbActions-tabSearch');
     const dbActionsDefaultTab = document.getElementById('dbActions-tabDefault');
 
+    //FIXME: if I change the text it should reset the button to "search" instead of "clear"
     searchButton.addEventListener('click', (e) => {
         if(searchButton.textContent.includes('Search')){
             performSearch();
@@ -471,10 +478,13 @@
         dbActionsDefaultTab.classList.remove('d-none');
         searchButton.innerHTML = getSVG('magnifying-glass') + ` Search`;
         searchInput.value = '';
+        searchMessage.innerText = '';
     }
 
     //Perform search
     function performSearch(){
+        const searchString = searchInput.value.trim();
+        if(!searchString.length) return clearSearch();
         dbPlayersSearchTab.innerHTML = spinnerHTML;
         dbActionsSearchTab.innerHTML = spinnerHTML;
         dbPlayersSearchTab.classList.remove('d-none');
@@ -482,10 +492,11 @@
         dbActionsSearchTab.classList.remove('d-none');
         dbActionsDefaultTab.classList.add('d-none');
         searchButton.innerHTML = getSVG('x') + ` Clear`;
+        searchMessage.innerText = '';
 
         $.ajax({
             type: "GET",
-            url: '/player/list?search=' + encodeURI(searchInput.value),
+            url: '/player/list?search=' + encodeURI(searchString),
             timeout: timeoutLong,
             dataType: 'json',
             success: function (data) {
@@ -494,8 +505,20 @@
                     dbActionsSearchTab.innerText = error;
                     return;
                 }
+                searchMessage.innerText = data.message;
                 dbPlayersSearchTab.innerHTML = dbPlayersToHtml(data.resPlayers);
                 dbActionsSearchTab.innerHTML = dbActionsToHtml(data.resActions);
+                if(data.resPlayers.length && !data.resActions.length){
+                    dbActionsTab.classList.remove('active');
+                    dbActionsContent.classList.remove('show', 'active');
+                    dbPlayersTab.classList.add('active');
+                    dbPlayersContent.classList.add('show', 'active');
+                }else if(data.resActions.length && !data.resPlayers.length){
+                    dbPlayersTab.classList.remove('active');
+                    dbPlayersContent.classList.remove('show', 'active');
+                    dbActionsTab.classList.add('active');
+                    dbActionsContent.classList.add('show', 'active');
+                }
             },
             error: function (xmlhttprequest, textstatus, message) {
                 dbPlayersSearchTab.innerText = message;

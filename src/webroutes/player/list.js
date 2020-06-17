@@ -34,7 +34,6 @@ module.exports = async function PlayerList(ctx) {
 /**
  * Handles the search functionality.
  * 
- * FIXME: add an .limit(512) to the queries just in case comething goes really wrong
  * NOTE: This might be cool to add: https://fusejs.io/
  * 
  * NOTE: expected types:
@@ -59,6 +58,7 @@ async function handleSearch(ctx, dbo){
         resPlayers: [],
         resActions: []
     };
+    const addPlural = (x) => { return (x == 0 || x > 1)? 's' : ''; };
 
     try {
         //Getting valid identifiers
@@ -72,14 +72,15 @@ async function handleSearch(ctx, dbo){
         
 
         //IF searching for identifiers
-        //FIXME: unexpected behavior: quando eu busco por uma license, ele mostra outros players pq ele ta extraindo outras licenses de actions com ban de multiplos users
         if(idsArray.length){
             const actions = await dbo.get("actions")
                 .filter(a => idsArray.some((fi) => a.identifiers.includes(fi)))
+                .take(512)
                 .cloneDeep()
                 .value();
             outData.resActions = await processActionList(actions);
 
+            //NOTE: disabled due to the unexpected behavior of it finding players that do not have any of the identifiers being searched for
             let licensesArr = [];
             actions.forEach(a => {
                 a.identifiers.forEach(id => {
@@ -88,11 +89,15 @@ async function handleSearch(ctx, dbo){
                     }
                 })
             })
+            //TODO: adapt this for when we start saving all IDs for the players
+            // const licensesArr = idsArray.filter(id => id.substring(0, 8) == "license:").map(id => id.substring(8));
             const players = await dbo.get("players")
                 .filter(p => licensesArr.includes(p.license))
+                .take(512)
                 .cloneDeep()
                 .value();
             outData.resPlayers = await processPlayerList(players);
+            outData.message = `Searching by identifiers found ${players.length} player${addPlural(players.length)} and ${actions.length} action${addPlural(actions.length)}.`;
             
 
         //IF searching for an acition ID
@@ -101,15 +106,23 @@ async function handleSearch(ctx, dbo){
                 .find({id: searchString.toUpperCase()})
                 .cloneDeep()
                 .value();
-            outData.resActions = await processActionList([action]);
+            if(!action){
+                outData.message = `Searching by Action ID found no results.`;
 
-            const licensesArr = action.identifiers.filter(x => x.substring(0, 8) == "license:").map(x => x.substring(8));
-            if(licensesArr.length){
-                const players = await dbo.get("players")
-                    .filter(p => licensesArr.includes(p.license))
-                    .cloneDeep()
-                    .value();
-                outData.resPlayers = await processPlayerList(players);
+            }else{
+                outData.resActions = await processActionList([action]);
+    
+                //TODO: adapt this for when we start saving all IDs for the players
+                const licensesArr = action.identifiers.filter(x => x.substring(0, 8) == "license:").map(x => x.substring(8));
+                if(licensesArr.length){
+                    const players = await dbo.get("players")
+                        .filter(p => licensesArr.includes(p.license))
+                        .take(512)
+                        .cloneDeep()
+                        .value();
+                    outData.resPlayers = await processPlayerList(players);
+                }
+                outData.message = `Searching by Action ID found ${outData.resPlayers.length} related player${addPlural(outData.resPlayers.length)}.`;
             }
 
 
@@ -119,16 +132,23 @@ async function handleSearch(ctx, dbo){
                 .filter(p => {
                     return p.name && p.name.toLowerCase().includes(searchString.toLowerCase())
                 })
+                .take(512)
                 .cloneDeep()
                 .value();
             outData.resPlayers = await processPlayerList(players);
+            //TODO: if player found, search for all actions from them
+            outData.message = `Searching by name found ${players.length} player${addPlural(players.length)}.`;
+            
         }
 
-        
+
         //Give output
         return ctx.send(outData);
     } catch (error) {
-        if(GlobalData.verbose) logError(`handleSearch failed with error: ${error.message}`);
+        if(GlobalData.verbose){
+            logError(`handleSearch failed with error: ${error.message}`);
+            dir(error)
+        }
         return ctx.send({error: `Search failed with error: ${error.message}`})
     }
 }
@@ -330,6 +350,8 @@ async function getLastPlayers(dbo, limit){
  * @returns {array} array of actions, or throws on error
  */
 async function processActionList(list){
+    if(!list) return [];
+
     let tsNow = now();
     return list.map((log) => {
         let out = {
@@ -386,6 +408,8 @@ async function processActionList(list){
  * @returns {array} array of players, or throws on error
  */
 async function processPlayerList(list){
+    if(!list) return [];
+
     const activeLicenses = globals.playerController.activePlayers.map(p => p.license);
     return list.map(p => {
         return {
