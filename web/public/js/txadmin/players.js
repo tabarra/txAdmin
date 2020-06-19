@@ -455,8 +455,8 @@ function banPlayer() {
 
     let data = {
         duration: modPlayer.Ban.duration.value,
+        reference: (modPlayer.curr.id !== false)? modPlayer.curr.id : modPlayer.curr.identifiers,
         // reference: modPlayer.curr.identifiers,
-        reference: modPlayer.curr.id,
         reason: reason
     }
     $.ajax({

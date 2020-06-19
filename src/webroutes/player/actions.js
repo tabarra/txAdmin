@@ -181,6 +181,7 @@ async function handleWarning(ctx) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
     let id = parseInt(ctx.request.body.id);
+    if(Number.isNaN(id)) return ctx.send({type: 'danger', message: 'Invalid ID.'});
     let reason = ctx.request.body.reason.trim();
 
     //Check permissions

@@ -5,22 +5,29 @@
 > v2.5.1
 - [x] validate that min session time is valid
 - [x] fix revoke button always visible
+- [x] add player/action search feature
+- [x] add search button for player modal
+- [x] adapt all modal actions to offline players
+- [ ] change Server Log page to use the new modal
 - [ ] make warns un-revokable
 - [ ] change "revoke" for "unban"
-- [ ] add search
-- [ ] adapt all modal actions to offline players
 - [ ] add sv endpoint to say the whitelist/banlist usage
+- [ ] adapt kick messages to use some basic HTML formatting and 🆃🆇🅰🅳🅼🅸🅽
+- [ ] set autostart as default, but only call spawnfunc if the cfg/data paths are set
+- [ ] convert cl_logger.js to lua, and stop it when not in `monitorMode`
+
+NOTE: when opening a player from the offline list, disable ID-requiring actions like dm,kick,warning
 
 > Soon™
+- [ ] break player page into `Players` and `Player Access`
+        - `Player Access` will only contain the whitelist and band ids cards
+        - `Players` will have a central search and will show players and actions at the same time
 - [ ] monitor checks for duplicate active users every 10 minutes, then reports in diagnostics page
 - [ ] check everything done for xss
 - [ ] apply the new action log html to the modal
 - [ ] check why scheduled restarts are not kicking players
 - [ ] make `fxRunner.srvCmd()` itself perform the escaping
-- [ ] adapt kick messages to use some basic HTML for formatting
-- [ ] change Server Log page to use the new modal
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
-- [ ] convert cl_logger.js to lua, and stop it when not in `monitorMode`
 - [ ] try again the upgrade to Discord.js v12
 - [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
 - [ ] add ban server-side ban cache (last 500 bans?), updated on every ban change 
@@ -28,9 +35,9 @@
 - [ ] add stopwatch (or something) to the db functions and print on `/diagnostics`
 - [ ] change webserver token every time the server starts
 
-NOTE: when opening a player from the offline list, disable ID-requiring actions like dm,kick,warning
 
 > Soon™®
+- [ ] get all functions from `web\public\js\txadmin\players.js` and wrap in some object.
 - [ ] add some chart to the players page?
 - [ ] the weekly playtime counter per user?
 - [ ] tweak dashboard update checker behavior

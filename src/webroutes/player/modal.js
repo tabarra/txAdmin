@@ -61,9 +61,8 @@ module.exports = async function PlayerModal(ctx) {
 
     //Locating player
     let activePlayer = clone(globals.playerController.activePlayers).find(player => player.license === license);
-    if(GlobalData.verbose) dir(activePlayer) //DEBUG
 
-    //Preparing output
+    //Setting up output
     const controllerConfigs = globals.playerController.config;
     let out = {
         funcDisabled: {
@@ -74,53 +73,51 @@ module.exports = async function PlayerModal(ctx) {
         }
     }
 
-    //If player is active
+    //If player is active or in the database
+    let playerData;
     if(activePlayer){
+        if(GlobalData.verbose) dir(activePlayer) //DEBUG
         out.id = activePlayer.id;
         out.license = activePlayer.license;
         out.identifiers = activePlayer.identifiers;
-        out.name = activePlayer.name;
         out.isTmp = activePlayer.isTmp;
-        out.actionHistory = await getHistory(activePlayer.identifiers);
-
-        let joinDateObj = new Date(activePlayer.tsJoined*1000);
-        out.joinDate = dateFormat(joinDateObj, 'longDate') + ' - ' + dateFormat(joinDateObj, 'isoTime');
+        playerData = activePlayer;
         
-        let sessionTime = (now() - activePlayer.tsConnected)*1000;
-        out.sessionTime = humanizeDuration(sessionTime, {round: true, units: ['h', 'm']});
-
-        if(activePlayer.isTmp){
-            out.playTime = '--';
-            out.notesLog = 'unavailable for temporary players';
-            out.notes = '';
-        }else{
-            let playTime = (activePlayer.playTime*60*1000);
-            out.playTime = humanizeDuration(playTime, {round: true, units: ['d', 'h', 'm']});
-
-            if(activePlayer.notes.lastAdmin && activePlayer.notes.tsLastEdit){
-                let lastEditObj = new Date(activePlayer.notes.tsLastEdit*1000);
-                out.notesLog = `Last modified by ${activePlayer.notes.lastAdmin} at ${dateFormat(lastEditObj, 'longDate') }`;
-            }else{
-                out.notesLog = '';
-            }
-            out.notes = activePlayer.notes.text;
-        }
-
-    //If player is offline
     }else{
-        return ctx.send({type: 'danger', message: 'player offline.'});
         //FIXME: for actions, look just for the license
         //TODO: when we start registering all associated identifiers, we could use that for the search
-        let dbPlayer = globals.playerController.getPlayer(license);
-        if(dbPlayer){
-            //not online, in the database
-            out.id = false;
-            out.identifiers = [`license:${license}`];
-            out.name = dbPlayer.name;
-            out.aaaa = 'bbb';
+        let dbPlayer = await globals.playerController.getPlayer(license);
+        if(!dbPlayer) return ctx.send({type: 'danger', message: 'Player not online and not in database.'});
+        if(GlobalData.verbose) dir(dbPlayer) //DEBUG
+
+        out.id = false;
+        out.license = license;
+        out.identifiers = [`license:${license}`];
+        out.isTmp = false;
+        playerData = dbPlayer;
+    }
+
+    //Preparing output
+    out.name = playerData.name;
+    out.actionHistory = await getHistory(out.identifiers);
+    const joinDateObj = new Date(playerData.tsJoined*1000);
+    out.joinDate = dateFormat(joinDateObj, 'longDate') + ' - ' + dateFormat(joinDateObj, 'isoTime');
+    const sessionTime = (now() - playerData.tsConnected)*1000;
+    out.sessionTime = humanizeDuration(sessionTime, {round: true, units: ['h', 'm']});
+    if(playerData.isTmp){
+        out.playTime = '--';
+        out.notesLog = 'unavailable for temporary players';
+        out.notes = '';
+    }else{
+        const playTime = (playerData.playTime*60*1000);
+        out.playTime = humanizeDuration(playTime, {round: true, units: ['d', 'h', 'm']});
+        if(playerData.notes.lastAdmin && playerData.notes.tsLastEdit){
+            let lastEditObj = new Date(playerData.notes.tsLastEdit*1000);
+            out.notesLog = `Last modified by ${playerData.notes.lastAdmin} at ${dateFormat(lastEditObj, 'longDate') }`;
         }else{
-            //not online, not in the database
+            out.notesLog = '';
         }
+        out.notes = playerData.notes.text;
     }
 
     return ctx.send(out);

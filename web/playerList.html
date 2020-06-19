@@ -279,8 +279,8 @@
                                 <div class="list-group list-group-accent">
                                     {{foreach(options.lastPlayers)}}
                                         <!-- FIXME: fix logEntryClickableX and onclickX-->
-                                        <div class="list-group-item list-group-item-accent-{{@this.color}} logEntry logEntryClickableX">
-                                            <div class="d-flex w-100 justify-content-between" onclickX="showPlayer('{{@this.license}}')"> 
+                                        <div class="list-group-item list-group-item-accent-{{@this.color}} logEntry logEntryClickable">
+                                            <div class="d-flex w-100 justify-content-between" onclick="showPlayer('{{@this.license}}')"> 
                                                 <strong>{{@this.name}}</strong>
                                                 <small>{{@this.joined}}</small>
                                             </div>
@@ -537,8 +537,8 @@
             </div>`;
         }else{
             const processed = players.map(p => `
-                <div class="list-group-item list-group-item-accent-${xss(p.color)} logEntry logEntryClickableX">
-                    <div class="d-flex w-100 justify-content-between" onclickX="showPlayer('${xss(p.license)}')"> 
+                <div class="list-group-item list-group-item-accent-${xss(p.color)} logEntry logEntryClickable">
+                    <div class="d-flex w-100 justify-content-between" onclick="showPlayer('${xss(p.license)}')"> 
                         <strong>${xss(p.name)}</strong>
                         <small>${xss(p.joined)}</small>
                     </div>
