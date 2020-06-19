@@ -267,7 +267,7 @@ module.exports = class PlayerController {
      */
     async getPlayer(license){
         try {
-            let p = await this.dbo.get("players").find({license: license}).value();
+            let p = await this.dbo.get("players").find({license: license}).cloneDeep().value();
             return (typeof p === 'undefined')? null : p;
         } catch (error) {
             if(GlobalData.verbose) logError(`Failed to search for a player in the database with error: ${error.message}`);

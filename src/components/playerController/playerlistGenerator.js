@@ -23,12 +23,12 @@ module.exports = class PlayerlistGenerator {
             srcPlayerlist: require('./playerlist.ignore.json'),
             refreshInterval: 2500,
             shouldAddRemovePlayers: false,
-            minPlayers: 2,
-            maxPlayers: 7,
+            minPlayers: 7,
+            maxPlayers: 10,
         }
         
         //Starting data
-        this.indexes = [0,1,2,3];
+        this.indexes = [0,1,2,3,4,5,6,7];
         this.playerlist = [];
         
         

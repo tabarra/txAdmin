@@ -239,7 +239,7 @@ function showPlayer(license) {
             modPlayer.curr.id = data.id;
             modPlayer.curr.license = data.license;
             modPlayer.curr.identifiers = data.identifiers;
-            modPlayer.Title.innerText = `[${data.id}] ${data.name}`;
+            modPlayer.Title.innerText = (data.id)? `[${data.id}] ${data.name}` : data.name;
 
             modPlayer.Main.joinDate.innerText = data.joinDate;
             modPlayer.Main.playTime.innerText = data.playTime;
