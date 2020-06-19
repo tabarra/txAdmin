@@ -336,7 +336,8 @@ function searchPlayer() {
     if(modPlayer.curr.identifiers == false) return;
     const idsString = modPlayer.curr.identifiers.join(';');
     if(window.location.pathname == '/player/list'){
-        performSearch(idsString);
+        searchInput.value = idsString;
+        performSearch();
     }else{
         window.location = '/player/list#' + encodeURI(idsString);
     }
