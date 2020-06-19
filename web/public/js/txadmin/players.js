@@ -266,9 +266,7 @@ function showPlayer(license) {
                 modPlayer.History.list.innerHTML = elements.join('\n');
             }
             
-            //TODO: while the search doesn't work
-            modPlayer.Buttons.search.disabled = true;
-
+            modPlayer.Buttons.search.disabled = false;
             modPlayer.Buttons.message.disabled = data.funcDisabled.message;
             modPlayer.Buttons.kick.disabled = data.funcDisabled.kick;
             modPlayer.Buttons.warn.disabled = data.funcDisabled.warn;
@@ -336,7 +334,12 @@ modPlayer.Main.notes.addEventListener("keydown", (event) => {
 function searchPlayer() {
     modPlayer.Modal.hide();
     if(modPlayer.curr.identifiers == false) return;
-    //TODO: //FIXME: //TODO: //FIXME: //TODO: //FIXME: //TODO: //FIXME:    
+    const idsString = modPlayer.curr.identifiers.join(';');
+    if(window.location.pathname == '/player/list'){
+        performSearch(idsString);
+    }else{
+        window.location = '/player/list#' + encodeURI(idsString);
+    }
 }
 
 

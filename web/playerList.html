@@ -456,7 +456,7 @@
     //FIXME: if I change the text it should reset the button to "search" instead of "clear"
     searchButton.addEventListener('click', (e) => {
         if(searchButton.textContent.includes('Search')){
-            performSearch();
+            performSearch(searchInput.value);
         }else{
             clearSearch();
         }
@@ -464,7 +464,7 @@
     searchInput.addEventListener('keyup', (e) => {
         if(e.keyCode !== 13) return;
         if(searchInput.value.length){
-            performSearch();
+            performSearch(searchInput.value);
         }else{
             clearSearch();
         }
@@ -482,8 +482,8 @@
     }
 
     //Perform search
-    function performSearch(){
-        const searchString = searchInput.value.trim();
+    function performSearch(searchString){
+        searchString = searchString.trim();
         if(!searchString.length) return clearSearch();
         dbPlayersSearchTab.innerHTML = spinnerHTML;
         dbActionsSearchTab.innerHTML = spinnerHTML;
@@ -589,6 +589,13 @@
                 `</div>`
             ].join('\n');
         }
+    }
+
+    //Performs auto-search
+    const urlHash = decodeURI(location.hash.substr(1).trim());
+    if(urlHash.length){
+        searchInput.value = urlHash;
+        performSearch(urlHash);
     }
 
     
