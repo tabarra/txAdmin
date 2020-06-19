@@ -18,6 +18,13 @@ local deathHashTable = {
     ["unknown"]   = { -842959696 }, -- Fall Damage or SetEntityHealth()
 }
 
+--- Trigger Event From External Script
+
+RegisterNetEvent('txAdmin:deathLog')
+AddEventHandler('txAdmin:deathLog', function(ped)
+	processDeath(ped) -- Remember to add a wait function before reviving into an animation.
+end)
+
 ---
 --- FUNCTIONS
 ---
