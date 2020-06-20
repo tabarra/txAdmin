@@ -39,6 +39,31 @@ module.exports = class DiscordBot {
 
     //================================================================
     /**
+     * Gets the accouncement channel object
+     */
+    getAccouncementChannel(){
+        if(
+            !this.config.announceChannel ||
+            !this.client ||
+            this.client.status
+        ){
+            return false;
+        }
+
+        try {
+            const chan = this.client.channels.find(x => x.id === this.config.announceChannel);
+            if(!chan){
+                logError(`The announcements channel could not be found. Check the ID: ${this.config.announceChannel}`);
+            }
+            return chan;
+        } catch (error) {
+            return false
+        }
+    }//Final getAccouncementChannel()
+
+
+    //================================================================
+    /**
      * Send an announcement to the configured channel
      * @param {string} message
      */
@@ -52,13 +77,7 @@ module.exports = class DiscordBot {
         }
 
         try {
-            let chan = this.client.channels.find(x => x.id === this.config.announceChannel);
-            if(chan === null){
-                logError(`The announcements channel could not be found. Check the ID: ${this.config.announceChannel}`);
-                return;
-            }
-
-            chan.send(message);
+            this.getAccouncementChannel().send(message);
         } catch (error) {
             logError(`Error sending Discord announcement: ${error.message}`);
         }
@@ -77,6 +96,10 @@ module.exports = class DiscordBot {
         this.client.on('ready', () => {
             logOk(`Started and logged in as '${this.client.user.tag}'`);
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
+            const msg = new Discord.RichEmbed();
+            msg.setColor(0X4287F5);
+            msg.setDescription(`**txAdmin** v${GlobalData.txAdminVersion} bot started :smiley:`);
+            this.sendAnnouncement(msg);
         });
         this.client.on('message', this.handleMessage.bind(this));
         this.client.on('error', (error) => {
@@ -84,6 +107,7 @@ module.exports = class DiscordBot {
         });
         this.client.on('resume', (error) => {
             if(GlobalData.verbose) logOk('Connection with Discord API server resumed');
+            this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
         });
 
         //Start bot
