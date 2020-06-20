@@ -72,14 +72,11 @@
     //Player name click function
     function setupHovers(){
         $('.event-source').click(function(e){
-            let ids = $(this).data('player-identifiers');
+            const ids = $(this).data('player-identifiers');
             if(!ids) return;
-            let name = $(this).data('player-name') || 'unknown';
-
-            $("#modPlayerInfoTitle").text(name);
-            $("#modPlayerInfoIdentifiers").html(ids.split(';').join(', <br>\n'));
-            $("#modPlayerInfoButtons").html('<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>');
-            $('#modPlayerInfo').modal('show');
+            const name = $(this).data('player-name') || 'unknown';
+            const license = ids.split(';').find(x => x.substring(0,8) == 'license:').substring(8);
+            showPlayer(license, name, ids);
         });
     }
 </script>

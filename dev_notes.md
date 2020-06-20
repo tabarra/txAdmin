@@ -8,7 +8,7 @@
 - [x] add player/action search feature
 - [x] add search button for player modal
 - [x] adapt all modal actions to offline players
-- [ ] change Server Log page to use the new modal
+- [x] change Server Log page to use the new modal
 - [ ] make warns un-revokable
 - [ ] change "revoke" for "unban"
 - [ ] add sv endpoint to say the whitelist/banlist usage

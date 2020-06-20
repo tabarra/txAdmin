@@ -181,7 +181,7 @@ var modPlayer = {
 
 
 // Open Modal
-function showPlayer(license) {
+function showPlayer(license, altName='unknown', altIDs='') {
     //Reset active player
     modPlayer.curr.id = false;
     modPlayer.curr.license = false;
@@ -232,8 +232,19 @@ function showPlayer(license) {
                 window.location = '/auth?logout';
                 return;
             }else if(data.type == 'danger'){
-                modPlayer.Message.innerText = data.message;
                 modPlayer.Title.innerText = 'Error';
+                modPlayer.Message.innerHTML = `<h4 class=text-danger>${xss(data.message)}</h4>`;
+                return;
+            }else if(data.type == 'offline'){
+                modPlayer.Title.innerText = altName;
+                const idsArray = altIDs.split(';');
+                const idsString = idsArray.join(';\n');
+                let msgHTML = `<h4 class=text-danger>${xss(data.message)}</h4>\n`;
+                msgHTML += `Player Identifiers:<br>\n`;
+                msgHTML += `<code>${xss(idsString)}</code>`;
+                modPlayer.Message.innerHTML = msgHTML;
+                modPlayer.curr.identifiers = idsArray;
+                modPlayer.Buttons.search.disabled = false;
                 return;
             }
             modPlayer.curr.id = data.id;

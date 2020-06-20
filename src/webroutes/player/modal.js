@@ -87,7 +87,7 @@ module.exports = async function PlayerModal(ctx) {
         //FIXME: for actions, look just for the license
         //TODO: when we start registering all associated identifiers, we could use that for the search
         let dbPlayer = await globals.playerController.getPlayer(license);
-        if(!dbPlayer) return ctx.send({type: 'danger', message: 'Player not online and not in database.'});
+        if(!dbPlayer) return ctx.send({type: 'offline', message: 'Player offline and not in database.'});
         if(GlobalData.verbose) dir(dbPlayer) //DEBUG
 
         out.id = false;
