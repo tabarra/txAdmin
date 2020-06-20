@@ -16,7 +16,14 @@
 - [ ] set autostart as default, but only call spawnfunc if the cfg/data paths are set
 - [ ] convert cl_logger.js to lua, and stop it when not in `monitorMode`
 
-NOTE: when opening a player from the offline list, disable ID-requiring actions like dm,kick,warning
+TODO: Bot commands - poste it when starting the bot
+/ban <mention> <preset time> <reason>
+/removeban <ban-id>
+/info - shows your info like join date and play time
+/info <mention> - shows someone else's info
+/wl <mention|wl req id>
+/removewl <mention>
+/log <mention> - shows the last low entries for an discord identifier
 
 > Soon™
 - [ ] break player page into `Players` and `Player Access`

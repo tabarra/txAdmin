@@ -70,10 +70,14 @@ module.exports = async function AdvancedActions(ctx) {
 
         let hist = await globals.playerController.getRegisteredActions(idArray, filter);
         return ctx.send({type: 'success', message: JSON.stringify(hist, null, 2)});
+
     }else if(action == 'show_db'){
         let dbo = globals.playerController.getDB();
         dir(dbo);
         return ctx.send({type: 'success', message: JSON.stringify(dbo, null, 2)});
+        
+    }else if(action == 'show_log'){
+        return ctx.send({type: 'success', message: JSON.stringify(globals.databus.serverLog, null, 2)})
     }
 
 

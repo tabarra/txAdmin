@@ -50,6 +50,7 @@
             timeout: timeoutMedium,
             success: function (data) {
                 //FIXME: temporary before database
+                //NOTE: /\ that was a lie :)
                 if(typeof data.offset !== 'undefined') currOffset = data.offset;
                 if(typeof data.log !== 'undefined' && data.log !== false && data.log.length){
                     $("#console").append(data.log);

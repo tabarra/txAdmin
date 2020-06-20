@@ -24,7 +24,8 @@ const getIdentifiers = (src) => {
     let identifiers = [];
     try {
         for (let i = 0; i < GetNumPlayerIdentifiers(src); i++) {
-            identifiers.push(GetPlayerIdentifier(src, i))
+            let id = GetPlayerIdentifier(src, i);
+            if(!id.startsWith('ip:')) identifiers.push(id)
         }
     } catch (error) {
         logError(error)
