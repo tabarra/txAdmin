@@ -13,6 +13,7 @@ module.exports = class DiscordBot {
     constructor(config) {
         this.config = config;
         this.client = null;
+        this.announceChannel = null;
         this.cronFunc = null;
         this.spamLimitCache = {}
         if(!this.config.enabled){
@@ -43,31 +44,6 @@ module.exports = class DiscordBot {
 
     //================================================================
     /**
-     * Gets the accouncement channel object
-     */
-    async getAccouncementChannel(){
-        if(
-            !this.config.announceChannel ||
-            !this.client ||
-            this.client.status
-        ){
-            return false;
-        }
-
-        try {
-            const chan = await this.client.channels.fetch(this.config.announceChannel);
-            if(!chan){
-                logError(`The announcements channel could not be found. Check the ID: ${this.config.announceChannel}`);
-            }
-            return chan;
-        } catch (error) {
-            return false
-        }
-    }//Final getAccouncementChannel()
-
-
-    //================================================================
-    /**
      * Send an announcement to the configured channel
      * @param {string} message
      */
@@ -75,14 +51,15 @@ module.exports = class DiscordBot {
         if(
             !this.config.announceChannel ||
             !this.client ||
-            this.client.status
+            this.client.ws.status ||
+            !this.announceChannel
         ){
+            if(GlobalData.verbose) logWarn(`returning false, not ready yet`, 'sendAnnouncement');
             return false;
         }
 
         try {
-            const chan = await this.getAccouncementChannel();
-            chan.send(message);
+            this.announceChannel.send(message);
         } catch (error) {
             logError(`Error sending Discord announcement: ${error.message}`);
         }
@@ -98,9 +75,13 @@ module.exports = class DiscordBot {
         this.client = new Discord.Client({autoReconnect:true});
 
         //Setup event listeners
-        this.client.on('ready', () => {
+        this.client.on('ready', async () => {
             logOk(`Started and logged in as '${this.client.user.tag}'`);
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
+            this.announceChannel = await this.client.channels.resolve(this.config.announceChannel);
+            if(!this.announceChannel){
+                logError(`The announcements channel could not be found. Check the ID: ${this.config.announceChannel}`);
+            }
             const msg = new Discord.MessageEmbed({
                 color: 0x4287F5,
                 description: `**txAdmin** v${GlobalData.txAdminVersion} bot started :smiley:`
