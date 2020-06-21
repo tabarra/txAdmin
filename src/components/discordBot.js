@@ -4,6 +4,10 @@ const Discord = require('discord.js');
 const humanizeDuration = require('humanize-duration');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
+//NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
+if(typeof URLSearchParams === 'undefined'){
+    global.URLSearchParams = require('url').URLSearchParams;
+}
 
 module.exports = class DiscordBot {
     constructor(config) {
@@ -41,7 +45,7 @@ module.exports = class DiscordBot {
     /**
      * Gets the accouncement channel object
      */
-    getAccouncementChannel(){
+    async getAccouncementChannel(){
         if(
             !this.config.announceChannel ||
             !this.client ||
@@ -51,7 +55,7 @@ module.exports = class DiscordBot {
         }
 
         try {
-            const chan = this.client.channels.find(x => x.id === this.config.announceChannel);
+            const chan = await this.client.channels.fetch(this.config.announceChannel);
             if(!chan){
                 logError(`The announcements channel could not be found. Check the ID: ${this.config.announceChannel}`);
             }
@@ -67,7 +71,7 @@ module.exports = class DiscordBot {
      * Send an announcement to the configured channel
      * @param {string} message
      */
-    sendAnnouncement(message){
+    async sendAnnouncement(message){
         if(
             !this.config.announceChannel ||
             !this.client ||
@@ -77,7 +81,8 @@ module.exports = class DiscordBot {
         }
 
         try {
-            this.getAccouncementChannel().send(message);
+            const chan = await this.getAccouncementChannel();
+            chan.send(message);
         } catch (error) {
             logError(`Error sending Discord announcement: ${error.message}`);
         }
@@ -96,9 +101,10 @@ module.exports = class DiscordBot {
         this.client.on('ready', () => {
             logOk(`Started and logged in as '${this.client.user.tag}'`);
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
-            const msg = new Discord.RichEmbed();
-            msg.setColor(0X4287F5);
-            msg.setDescription(`**txAdmin** v${GlobalData.txAdminVersion} bot started :smiley:`);
+            const msg = new Discord.MessageEmbed({
+                color: 0x4287F5,
+                description: `**txAdmin** v${GlobalData.txAdminVersion} bot started :smiley:`
+            });
             this.sendAnnouncement(msg);
         });
         this.client.on('message', this.handleMessage.bind(this));
@@ -123,7 +129,7 @@ module.exports = class DiscordBot {
     //================================================================
     async handleMessage(message){
         if(message.author.bot) return;
-        let out = false;
+        let outMsg = false;
 
         //Checking if message is a command
         if(message.content.startsWith(this.config.statusCommand)){
@@ -163,29 +169,31 @@ module.exports = class DiscordBot {
             });
 
             //Prepare object
-            out = new Discord.RichEmbed();
-            out.setTitle(cardTitle);
-            out.setColor(cardColor);
-            out.setDescription(desc);
-            out.setFooter(`Powered by txAdmin v${GlobalData.txAdminVersion}.`);
+            outMsg = new Discord.MessageEmbed({
+                title: cardTitle,
+                color: cardColor,
+                description: desc,
+                footer: `Powered by txAdmin v${GlobalData.txAdminVersion}.`
+            });
 
         }else if(message.content.startsWith('/txadmin')){
             //Prepare object
-            out = new Discord.RichEmbed();
-            out.setTitle(`${globals.config.serverName} uses txAdmin v${GlobalData.txAdminVersion}!`);
-            out.setColor(0x4DEEEA);
-            out.setDescription(`Checkout the project:\n GitHub: https://github.com/tabarra/txAdmin\n Discord: https://discord.gg/f3TsfvD`);
+            outMsg = new Discord.MessageEmbed({
+                color: 0x4DEEEA,
+                title: `${globals.config.serverName} uses txAdmin v${GlobalData.txAdminVersion}!`,
+                description: `Checkout the project:\n GitHub: https://github.com/tabarra/txAdmin\n Discord: https://discord.gg/f3TsfvD`
+            });
         }
 
         //If its not a recognized command
-        if(!out) return;
+        if(!outMsg) return;
 
         //Sending message
         try {
-            let outMsg = await message.channel.send(out);
+            let sentMsg = await message.channel.send(outMsg);
             //Example: if you want to delete the messages after a few seconds.
             // setTimeout(() => {
-            //     outMsg.delete()
+            //     sentMsg.delete()
             //     message.delete()
             // }, 10*1000);
         } catch (error) {
