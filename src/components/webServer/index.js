@@ -124,6 +124,13 @@ module.exports = class WebServer {
         this.router = require('./router')(this.config);
         this.app.use(this.router.routes())
         this.app.use(this.router.allowedMethods());
+        this.app.use(async (ctx) => {
+            if(typeof ctx._matchedRoute === 'undefined'){
+                ctx.status = 404;
+                if(GlobalData.verbose) logWarn(`Request 404 error: ${ctx.path}`);
+                return ctx.utils.render('basic/404');
+            }
+        })
         this.koaCallback = this.app.callback();
     }
 

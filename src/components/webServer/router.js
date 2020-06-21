@@ -73,13 +73,6 @@ module.exports = router = (config) =>{
     router.get('/resources', requestAuth('web'), webRoutes.resources);
     router.get('/', requestAuth('web'), webRoutes.dashboard);
 
-    //TODO: replace this with an middleware checking for `ctx._matchedRoute`
-    router.all('*', async (ctx) =>{
-        ctx.status = 404;
-        if(GlobalData.verbose) logWarn(`Request 404 error: ${ctx.path}`);
-        return ctx.utils.render('basic/404');
-    });
-
     //Return router
     return router;
 };
