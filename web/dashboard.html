@@ -1,9 +1,9 @@
-{{include("header")/}}
+{{@include("header", it)/}}
 
 
 <div class="text-center mb-4">
-    <h2>{{serverName}} Dashboard</h2>
-    {{if(options.txAdminTooOutdated)}}
+    <h2>{{it.serverName}} Dashboard</h2>
+    {{@if(it.txAdminTooOutdated)}}
         <h2 class="text-danger">This version of txAdmin is too outdated. Please update now.</h2>
     {{/if}}
 </div>
@@ -15,12 +15,12 @@
         <div class="card card-accent-danger" style="min-height: 160px;">
             <div class="card-header font-weight-bold">FXServer Control:</div>
             <div class="card-body text-center align-middle">
-                <button onclick="controlAction('start')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
-                    type="button" id="ctrl-start" {{perms.controls}}>START</button> &nbsp;
-                <button onclick="controlAction('restart')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
-                    type="button" id="ctrl-restart" {{perms.controls}}>RESTART</button> &nbsp;
-                <button onclick="controlAction('stop')" class="btn btn-outline-{{perms.controlsClass}} btn-lg mx-auto m-2"
-                    type="button" id="ctrl-stop" {{perms.controls}}>STOP</button>
+                <button onclick="controlAction('start')" class="btn btn-outline-{{it.perms.controlsClass}} btn-lg mx-auto m-2"
+                    type="button" id="ctrl-start" {{it.perms.controls}}>START</button> &nbsp;
+                <button onclick="controlAction('restart')" class="btn btn-outline-{{it.perms.controlsClass}} btn-lg mx-auto m-2"
+                    type="button" id="ctrl-restart" {{it.perms.controls}}>RESTART</button> &nbsp;
+                <button onclick="controlAction('stop')" class="btn btn-outline-{{it.perms.controlsClass}} btn-lg mx-auto m-2"
+                    type="button" id="ctrl-stop" {{it.perms.controls}}>STOP</button>
             </div>
         </div>
 
@@ -33,12 +33,12 @@
                     <div class="col-sm-8">
                         <select name="action" id="frm_action" class="form-control" required>
                             <option value="" disabled selected>&gt; SELECT</option>
-                            <option value="admin_broadcast" {{perms.commandMessage}}>Broadcast Admin Message</option>
-                            <option value="ensure_res" {{perms.commandResources}}>Start/Restart resource</option>
-                            <option value="stop_res" {{perms.commandResources}}>Stop resource</option>
-                            <option value="refresh_res" {{perms.commandResources}}>Refresh resources</option>
-                            <option value="check_txaclient" {{perms.commandResources}}>Check txAdminClient</option>
-                            <option value="kick_all" class="text-danger" {{perms.commandKick}}>Kick all players</option>
+                            <option value="admin_broadcast" {{it.perms.commandMessage}}>Broadcast Admin Message</option>
+                            <option value="ensure_res" {{it.perms.commandResources}}>Start/Restart resource</option>
+                            <option value="stop_res" {{it.perms.commandResources}}>Stop resource</option>
+                            <option value="refresh_res" {{it.perms.commandResources}}>Refresh resources</option>
+                            <option value="check_txaclient" {{it.perms.commandResources}}>Check txAdminClient</option>
+                            <option value="kick_all" class="text-danger" {{it.perms.commandKick}}>Kick all players</option>
                         </select>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                 <div class="text-value">Players</div>
                 <div>last 24h</div>
             </div>
-            {{if(options.chartData === false)}}
+            {{@if(it.chartData === false)}}
             <div class="text-center mb-4">
                 <h3 class="text-muted">Not enough data, yet...</h3>
             </div>
@@ -102,13 +102,13 @@
 
 <div class="row justify-content-md-center">
     <div class="col-md-6 text-center">
-        {{if(options.versionData.message)}}
-            <div class="alert alert-{{versionData.color}} border-{{versionData.color}}" role="alert">
-                <a href="{{versionData.artifactsLink}}" target="_blank" class="alert-link">{{versionData.message}}</a> <br>
-                {{versionData.subtext}}
+        {{@if(it.versionData.message)}}
+            <div class="alert alert-{{it.versionData.color}} border-{{it.versionData.color}}" role="alert">
+                <a href="{{it.versionData.artifactsLink}}" target="_blank" class="alert-link">{{it.versionData.message}}</a> <br>
+                {{it.versionData.subtext}}
             </div>
         {{/if}}
-        {{if(options.txAdminVersion.includes('-'))}}
+        {{@if(it.txAdminVersion.includes('-'))}}
             <span class="text-danger font-weight-bold">
                 You are using a pre-release version of txAdmin destined for developers and beta testers only! <br>
                 Your server stability might be impacted by this.
@@ -118,7 +118,7 @@
 </div>
 
 
-{{include("footer")/}}
+{{@include("footer", it)/}}
 
 
 <script>
@@ -221,7 +221,7 @@
 
 
 
-{{if(options.chartData)}}
+{{@if(it.chartData)}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
 <script>
@@ -240,10 +240,8 @@
                 borderColor: 'rgba(255,255,255,0.55)',
                 fill: false,
                 //NOTE: breaking multiple lines because squirrelly is not respecting LF as line endings.
-                //Change squirrelly tag: {{tags(--,--)/}}
                 //intentionally 'blank' line
-                data: --chartData|safe--
-                //Changing it back: --tags({{,}})/--
+                data: JSON.parse(`{{it.chartData|escapeBackTick|safe}}`)
                 //intentionally 'blank' line
             }]
         },

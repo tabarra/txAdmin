@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <meta name="description" content="txAdmin - remotely Manage & Monitor your GTA5 FiveM Server">
     <meta name="author" content="André Tabarra">
-    <title>{{headerTitle}}</title>
+    <title>{{it.headerTitle}}</title>
     <link href="css/simple-line-icons.css" rel="stylesheet">
     <link href="css/coreui.min.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="img/favicon_default.png" id="favicon" />
@@ -110,7 +110,7 @@
                     </svg> Settings
                 </a>
             </li>
-            {{if(options.showAdvanced)}}
+            {{@if(it.showAdvanced)}}
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link text-warning" href="/advanced">
                     <svg class="c-sidebar-nav-icon text-warning">
@@ -138,7 +138,7 @@
             <li class="c-sidebar-nav-item px-3 d-compact-none c-d-minimized-none">
                 <div class="text-uppercase mb-1">
                     <small>
-                        <b>Memory {{if(options.isLinux)}}used + cache + buffer{{#else}}Usage{{/if}}</b>
+                        <b>Memory {{@if(it.isLinux)}}used + cache + buffer{{#else}}Usage{{/if}}</b>
                     </small>
                 </div>
                 <div class="progress progress-xs">
@@ -193,9 +193,9 @@
                 <li class="c-header-nav-item dropdown">
                     <a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
                         aria-expanded="false">
-                        <span class="d-md-down-none pr-2">{{adminUsername}} </span>
+                        <span class="d-md-down-none pr-2">{{it.adminUsername}} </span>
                         <div class="c-avatar">
-                            <img class="c-avatar-img" src="{{profilePicture}}" alt="{{adminUsername}}">
+                            <img class="c-avatar-img" src="{{it.profilePicture}}" alt="{{it.adminUsername}}">
                         </div>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right pt-0">

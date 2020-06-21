@@ -1,4 +1,4 @@
-{{include("header")/}}
+{{@include("header", it)/}}
 
 
 <style>
@@ -58,7 +58,7 @@
                 <div class="form-group text-light">
                     <input type="text" class="form-control console-input form-control-sm" id="cmdInput"
                            placeholder="Press enter to send. Up/Down arrows to navigate commands." 
-                           autocomplete="off" {{disableWrite}}>
+                           autocomplete="off" {{it.disableWrite}}>
                 </div>
                 <button type="button" id="clearConsole" 
                     class="btn btn-outline-light btn-sm mb-2">Clear Console</button>
@@ -72,7 +72,7 @@
 </div>
 
 
-{{include("footer")/}}
+{{@include("footer", it)/}}
 
 
 <script src="js/ansi_up.js"></script>

@@ -1,4 +1,4 @@
-{{include("header")/}}
+{{@include("header", it)/}}
 
 
 <style>
@@ -26,12 +26,12 @@
 </div>
 <div class="card border-primary">
     <div class="card-body">
-        <pre id="console" class="thin-scroll pre-log-content">{{log|safe}}</pre>
+        <pre id="console" class="thin-scroll pre-log-content">{{it.log|safe}}</pre>
     </div>
 </div>
 
 
-{{include("footer")/}}
+{{@include("footer", it)/}}
 
 
 <script>
@@ -42,7 +42,7 @@
 
     setInterval(getNewData, 5000);
 
-    var currOffset = '{{offset}}';
+    var currOffset = '{{it.offset}}';
     function getNewData(){
         $.ajax({
             type: "GET",

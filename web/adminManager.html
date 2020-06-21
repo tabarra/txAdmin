@@ -1,4 +1,4 @@
-{{include("header")/}}
+{{@include("header", it)/}}
 
 <style>
     .admin-icon svg {
@@ -54,32 +54,32 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{foreach(options.admins)}}
+                            {{@each(it.admins) => admin}}
                             <tr>
-                                <td>{{@this.name}}</td>
+                                <td>{{admin.name}}</td>
                                 <td>
-                                    {{if(@this.hasCitizenFX == true)}}
+                                    {{@if(admin.hasCitizenFX == true)}}
                                         <i class="admin-icon"><svg><use xlink:href="#fivem-icon"></use></svg></i>
                                     {{/if}}
-                                    {{if(@this.hasDiscord)}}
+                                    {{@if(admin.hasDiscord)}}
                                         <i class="admin-icon"><svg><use xlink:href="#discord-icon"></use></svg></i>
                                     {{/if}}
                                     <i class="admin-icon"><svg><use xlink:href="#password-icon"></use></svg></i>
                                 </td>
-                                <td>{{@this.perms}}</td>
+                                <td>{{admin.perms}}</td>
                                 <td class="tableActions">
                                     <button class="btn btn-sm btn-outline-primary"
-                                        onclick="getEditModal('{{@this.name}}')" {{@this.disableActions|isDisabled}}>
+                                        onclick="getEditModal('{{admin.name}}')" {{admin.disableActions|isDisabled}}>
                                         <i class="icon-pencil"></i> Edit
                                     </button>
                                     &nbsp;
                                     <button class="btn btn-sm btn-outline-danger"
-                                        onclick="deleteAdmin('{{@this.name}}')" {{@this.disableActions|isDisabled}}>
+                                        onclick="deleteAdmin('{{admin.name}}')" {{admin.disableActions|isDisabled}}>
                                         <i class="icon-trash"></i> Delete
                                     </button>
                                 </td>
                             </tr>
-                            {{/foreach}}
+                            {{/each}}
                         </tbody>
                     </table>
                 </div>
@@ -90,7 +90,7 @@
 </div>
 
 
-{{include("footer")/}}
+{{@include("footer", it)/}}
 
 
 <!-- Add Admin Modal -->
@@ -157,13 +157,13 @@
                         Permissions
                     </label>
                     <div class="col-sm-9">
-                        {{foreach(options.allPermissions)}}
+                        {{@each(it.allPermissions) => permName, key}}
                         <div class="form-check checkbox">
-                            <input class="form-check-input" id="modAddAdmin-check{{@key}}" type="checkbox" name="modAddAdmin-permissions[]"
-                                value="{{@this}}">
-                            <label class="form-check-label" for="modAddAdmin-check{{@key}}">{{@this}} </label>
+                            <input class="form-check-input" id="modAddAdmin-check{{key}}" type="checkbox" name="modAddAdmin-permissions[]"
+                                value="{{permName}}">
+                            <label class="form-check-label" for="modAddAdmin-check{{key}}">{{permName}}</label>
                         </div>
-                        {{/foreach}}
+                        {{/each}}
                     </div>
                 </div>
 

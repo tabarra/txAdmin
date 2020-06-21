@@ -4,7 +4,7 @@
     </label>
     <div class="col-sm-9">
         <div class="input-group">
-            <input type="text" class="form-control" id="modEditAdmin-name" value="{{username}}" readonly>
+            <input type="text" class="form-control" id="modEditAdmin-name" value="{{it.username}}" readonly>
         </div>
     </div>
 </div>
@@ -17,7 +17,7 @@
     <div class="col-sm-9">
         <div class="input-group">
             <input type="text" class="form-control" id="modEditAdmin-citizenfxID" maxlength="16"
-                autocomplete="off" value="{{citizenfx_id}}">
+                autocomplete="off" value="{{it.citizenfx_id}}">
         </div>
         <span class="form-text text-muted">
             The admin's CitizenFX Forum username.
@@ -32,7 +32,7 @@
     </label>
     <div class="col-sm-9">
         <div class="input-group">
-            <input type="number" class="form-control" id="modEditAdmin-discordID" autocomplete="off" value="{{discord_id}}">
+            <input type="number" class="form-control" id="modEditAdmin-discordID" autocomplete="off" value="{{it.discord_id}}">
         </div>
         <span class="form-text text-muted">
             The admin's Discord User ID. Follow <a href="https://support.discordapp.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID" target="_blank">this guide</a> if you don't know how to get the User ID.
@@ -45,12 +45,12 @@
         Permissions
     </label>
     <div class="col-sm-9">
-        {{foreach(options.permissions)}}
+        {{@each(it.permissions) => perm, key}}
         <div class="form-check checkbox">
-            <input class="form-check-input" id="modEditAdmin-{{@key}}" type="checkbox" name="modEditAdmin-permissions[]"
-                value="{{@this.name}}" {{@this.checked}}>
-            <label class="form-check-label" for="modEditAdmin-{{@key}}">{{@this.name}} </label>
+            <input class="form-check-input" id="modEditAdmin-{{key}}" type="checkbox" name="modEditAdmin-permissions[]"
+                value="{{perm.name}}" {{perm.checked}}>
+            <label class="form-check-label" for="modEditAdmin-{{key}}">{{perm.name}} </label>
         </div>
-        {{/foreach}}
+        {{/each}}
     </div>
 </div>

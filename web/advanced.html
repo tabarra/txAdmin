@@ -1,4 +1,4 @@
-{{include("header")/}}
+{{@include("header", it)/}}
 
 
 <div class="text-center mb-4">
@@ -30,7 +30,7 @@
                     With verbosity enabled, you will see more detailed information on the terminal. <br>
                     Good to help getting information on errors. <br>
                 </span>
-                {{if(options.verbosityEnabled)}}
+                {{@if(it.verbosityEnabled)}}
                     <button class="btn btn-md btn-danger mt-2" onclick="doChangeVerbosity(false)">
                         Disable Verbosity
                     </button>
@@ -70,7 +70,7 @@
     
 </div>
 
-{{include("footer")/}}
+{{@include("footer", it)/}}
 
 <script>
     //============================================== Magic

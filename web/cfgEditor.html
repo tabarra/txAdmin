@@ -1,4 +1,4 @@
-{{include("header")/}}
+{{@include("header", it)/}}
 
 <!-- Page CSS -->
 <link rel="stylesheet" href="css/codemirror.css">
@@ -21,7 +21,7 @@
 <div class="row justify-content-md-center">
     <div class="col-lg-12 col-xl-10 mw-col8">
         <textarea id="code-markdown" style="height: calc(100vh - 348px);"
-            class="cms-s-lucario" name="code">{{rawFile}}</textarea>
+            class="cms-s-lucario" name="code">{{it.rawFile}}</textarea>
     </div>
 </div>
 <div class="row justify-content-md-center" style="margin-top: 1em;">
@@ -31,7 +31,7 @@
 </div>
 
 
-{{include("footer")/}}
+{{@include("footer", it)/}}
 
 
 <script src="js/codeEditor/codemirror.js"></script>

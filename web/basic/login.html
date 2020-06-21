@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <meta name="description" content="txAdmin - remotely Manage & Monitor your GTA5 FiveM Server">
     <meta name="author" content="André Tabarra">
-    <title>{{headerTitle}}</title>
+    <title>{{it.headerTitle}}</title>
     <link href="css/simple-line-icons.css" rel="stylesheet">
     <link href="css/coreui.min.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="img/favicon_default.png" id="favicon" />
@@ -52,7 +52,7 @@
             margin-left: .25em;
         }
     </style>
-    {{if(options.isMatrix)}}
+    {{@if(it.isMatrix)}}
         <style>
             * {
                 font-family: Consolas, monospace, serif;
@@ -127,8 +127,8 @@
     <div class="container">
 
         <!-- Logo Row -->
-        {{if(options.isMatrix)}}
-            <div class="row justify-content-md-center mb-4"><pre><b>{{ascii}}</b></pre></div>
+        {{@if(it.isMatrix)}}
+            <div class="row justify-content-md-center mb-4"><pre><b>{{it.ascii}}</b></pre></div>
         {{#else}}
             <div class="row justify-content-md-center mb-4">
                 <img src="img/txadmin.png" alt="txAdmin Logo">
@@ -141,11 +141,11 @@
                 <div class="card ">
                     <div class="card-body text-center p-4">
                         <!-- TODO: see if squirrelly already supports elseif -->
-                        {{if(options.template == 'justMessage')}}
-                            <h5 class="text-danger mb-3">{{message|n2br}}</h5>
+                        {{@if(it.template == 'justMessage')}}
+                            <h5 class="text-danger mb-3">{{it.message|n2br}}</h5>
                             <a href="/auth" class="btn btn-primary px-4" role="submit">Back</a>
                         {{/if}}
-                        {{if(options.template == 'noMaster')}}
+                        {{@if(it.template == 'noMaster')}}
                             <h3 class="mb-4">No <code>CitizenFX</code> Account Linked</h3>
                             <div class="mx-auto">
                                 <h6>Type the PIN in your terminal and click "Link Account".</h6>
@@ -158,9 +158,9 @@
                                 </form>
                             </div>
                         {{/if}}
-                        {{if(options.template == 'callback')}}
-                            <img class="profile-pic" src="{{addMaster_picture}}" alt="avatar">
-                            <h5 class="mt-2 mb-3 text-muted">{{addMaster_name}}</h5>
+                        {{@if(it.template == 'callback')}}
+                            <img class="profile-pic" src="{{it.addMaster_picture}}" alt="avatar">
+                            <h5 class="mt-2 mb-3 text-muted">{{it.addMaster_name}}</h5>
 
                             <h6>Type in the backup password:</h6>
                             <form action="/auth/addMaster/save" method="post">
@@ -201,15 +201,15 @@
                                 password2.onkeyup = validatePassword;
                             </script>
                         {{/if}}
-                        {{if(options.template == 'normal')}}
+                        {{@if(it.template == 'normal')}}
                             <h1 class="mb-3">Login</h1>
-                            <a class="btn btn-brand btn-stack-overflow {{citizenfxDisabled|isDisabled}}"
+                            <a class="btn btn-brand btn-stack-overflow {{it.citizenfxDisabled|isDisabled}}"
                                 role="button" href="/auth/citizenfx/redirect">
                                 <i class="logo-image"><svg><use xlink:href="#fivem-icon"></use></svg></i>
                                 <span>CitizenFX</span>
                             </a>
                             &nbsp;
-                            <a class="btn btn-brand btn-linkedin {{discordDisabled|isDisabled}}"
+                            <a class="btn btn-brand btn-linkedin {{it.discordDisabled|isDisabled}}"
                             role="button" href="/auth/discord/redirect">
                                 <i class="logo-image"><svg><use xlink:href="#discord-icon"></use></svg></i>
                                 <span>Discord</span>
@@ -238,9 +238,9 @@
                             </form>
                         {{/if}}
                     </div>
-                    {{if(options.message && options.template != 'justMessage')}}
+                    {{@if(it.message && it.template != 'justMessage')}}
                         <div class="card-footer text-center text-danger">
-                            <strong>{{message}}</strong>
+                            <strong>{{it.message}}</strong>
                         </div>
                     {{/if}}
                 </div>
@@ -251,13 +251,13 @@
         <div class="row justify-content-md-center">
             <div class="col-md-4 ">
                 <div class="alert alert-secondary text-center small" role="alert">
-                    <strong>Server profile:</strong> {{serverProfile}} <br>
-                    <strong>txAdmin version:</strong> {{txAdminVersion}} <br>
-                    <strong>FXServer build:</strong> {{fxServerVersion}}
+                    <strong>Server profile:</strong> {{it.serverProfile}} <br>
+                    <strong>txAdmin version:</strong> {{it.txAdminVersion}} <br>
+                    <strong>FXServer build:</strong> {{it.fxServerVersion}}
                 </div>
             </div>
         </div>
-        {{if(options.isMatrix)}}
+        {{@if(it.isMatrix)}}
             <div class="row justify-content-md-center">
                 <div class="col-md-4 text-center pt-3">
                     <h4 class="matrix-text">The Matrix has you...</h4>

@@ -9,11 +9,14 @@
 - [x] add search button for player modal
 - [x] adapt all modal actions to offline players
 - [x] change Server Log page to use the new modal
+- [x] upgrade to Discord.js v12
+- [x] upgrade to squirrelly 8 (omg why sooo hard???)
 - [ ] make warns un-revokable
 - [ ] change "revoke" for "unban"
 - [ ] add sv endpoint to say the whitelist/banlist usage
 - [ ] adapt kick messages to use some basic HTML formatting and 🆃🆇🅰🅳🅼🅸🅽
 - [ ] set autostart as default, but only call spawnfunc if the cfg/data paths are set
+- [ ] use the new fd3 stream
 - [ ] convert cl_logger.js to lua, and stop it when not in `monitorMode`
 
 TODO: Bot commands - poste it when starting the bot
@@ -35,7 +38,6 @@ TODO: Bot commands - poste it when starting the bot
 - [ ] check why scheduled restarts are not kicking players
 - [ ] make `fxRunner.srvCmd()` itself perform the escaping
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
-- [ ] try again the upgrade to Discord.js v12
 - [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
 - [ ] add ban server-side ban cache (last 500 bans?), updated on every ban change 
 - [ ] add a commend system?
@@ -67,10 +69,10 @@ TODO: Bot commands - poste it when starting the bot
 ```bash
 # run
 cd /e/FiveM/builds
-npx nodemon --watch "2539/citizen/system_resources/monitor/src/*" --exec "2539/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose truex +set txAdminFakePlayerlist yesplzx"
+npx nodemon --watch "2627/citizen/system_resources/monitor/src/*" --exec "2627/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose truex +set txAdminFakePlayerlist yesplzx"
 
 # build
-cd /e/FiveM/builds/2539/citizen/system_resources/monitor
+cd /e/FiveM/builds/2627/citizen/system_resources/monitor
 rm -rf dist
 npm run build
 

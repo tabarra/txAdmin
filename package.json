@@ -56,7 +56,7 @@
     "semver": "^7.3.2",
     "slash": "^3.0.0",
     "socket.io": "^2.3.0",
-    "squirrelly": "^7.9.2",
+    "squirrelly": "^8.0.2",
     "stream-snitch": "0.0.3",
     "string-argv": "^0.3.1",
     "xss": "^1.0.7"

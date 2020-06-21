@@ -5,13 +5,13 @@
 
             <!-- Footer -->
             <footer class="c-footer text-center">
-                <div class="mx-auto d-md-none"> v{{txAdminVersion}} atop FXServer {{fxServerVersion}}</div>
+                <div class="mx-auto d-md-none"> v{{it.txAdminVersion}} atop FXServer {{it.fxServerVersion}}</div>
                 <div class="d-sm-down-none"> Written with ❤️ by
                     <a href="https://github.com/tabarra" class="credit-links" target="_blank">Tabarra</a> for the
                     <a href="https://github.com/citizenfx" class="credit-links" target="_blank">CitizenFX
                         Collective</a>.
                 </div>
-                <div class="ml-auto d-sm-down-none"> v{{txAdminVersion}} atop FXServer {{fxServerVersion}}</div>
+                <div class="ml-auto d-sm-down-none"> v{{it.txAdminVersion}} atop FXServer {{it.fxServerVersion}}</div>
             </footer>
         </div>
     </div>
@@ -167,7 +167,7 @@
             </div>
             <div class="modal-body text-center" id="modChangePassword-body">
                 <div class="form-group row">
-                    {{if(options.isTempPassword)}}
+                    {{@if(it.isTempPassword)}}
                         <script>var isTempPassword = true;</script>
                         <div class="col-sm-8 mx-auto">
                             <h5 class="text-danger mx-auto">Your account has a temporary password that needs to be changed.</h5>

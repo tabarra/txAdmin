@@ -3,7 +3,7 @@ const modulename = 'WebCtxUtils';
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
-const sqrl = require("squirrelly");
+const sqrl = require('squirrelly');
 const helpers = require('../../extras/helpers');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
@@ -29,26 +29,29 @@ const getWebViewPath = (view) => {
 }
 
 //Squirrelly Filters
-sqrl.defineFilter("isSelected", (x)=>{
+sqrl.filters.define("isSelected", (x)=>{
     return (x==='true')? 'selected' : '';
 });
-sqrl.defineFilter("isActive", (x)=>{
+sqrl.filters.define("isActive", (x)=>{
     return (x==='true')? 'active' : '';
 });
-sqrl.defineFilter("tShow", (x)=>{
+sqrl.filters.define("tShow", (x)=>{
     return (x)? `show ${x}` : '';
 });
-sqrl.defineFilter("isDisabled", (x)=>{
+sqrl.filters.define("isDisabled", (x)=>{
     return (x==='true')? 'disabled' : '';
 });
-sqrl.defineFilter("n2br", (x)=>{
+sqrl.filters.define("n2br", (x)=>{
     return x.replace(/(\r|\n)+/m, '<br>');
 });
-sqrl.defineFilter("undef", (x)=>{
+sqrl.filters.define("undef", (x)=>{
     return (isUndefined(x) || x == 'undefined')? '' : x;
 });
-sqrl.defineFilter("unnull", (x)=>{
+sqrl.filters.define("unnull", (x)=>{
     return (isUndefined(x) || x == 'null')? '' : x;
+});
+sqrl.filters.define("escapeBackTick", (x)=>{
+    return x.replace(/`/, '\\`');
 });
 
 //================================================================
@@ -76,9 +79,9 @@ async function renderMasterView(view, reqSess, data){
             fs.readFile(getWebViewPath('basic/footer'), 'utf8'),
             fs.readFile(getWebViewPath(view), 'utf8')
         ]);
-        sqrl.definePartial("header", rawHeader);
-        sqrl.definePartial("footer", rawFooter);
-        out = sqrl.Render(rawView, data);
+        sqrl.templates.define("header", sqrl.compile(rawHeader));
+        sqrl.templates.define("footer", sqrl.compile(rawFooter));
+        out = sqrl.render(rawView, data);
     } catch (error) {
         out = getRenderErrorText(view, error, data);
     }
@@ -110,7 +113,7 @@ async function renderLoginView(data){
     let out;
     try {
         let rawView = await fs.readFile(getWebViewPath(`basic/login`), 'utf8');
-        out = sqrl.Render(rawView, data);
+        out = sqrl.render(rawView, data);
     } catch (error) {
         out = getRenderErrorText('Login', error, data);
     }
@@ -131,7 +134,7 @@ async function renderSoloView(view, data){
     let out;
     try {
         let rawView = await fs.readFile(getWebViewPath(view), 'utf8');
-        out = sqrl.Render(rawView, data);
+        out = sqrl.render(rawView, data);
     } catch (error) {
         out = getRenderErrorText(view, error, data);
     }

@@ -1,4 +1,4 @@
-{{include("header")/}}
+{{@include("header", it)/}}
 
 <style>
     .pInfoCallout{
@@ -42,7 +42,7 @@
 
 <div class="text-center mb-2">
     <h3 class="mb-0">Player Manager <small><span class="badge badge-secondary">BETA</span></small></h3>
-    <small class="text-muted">{{message|safe}}</small>
+    <small class="text-muted">{{it.message|safe}}</small>
 </div>
 
 
@@ -52,13 +52,13 @@
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-info">
                 <small class="text-muted">Total Players</small><br>
-                <strong class="h4">{{stats.players}}</strong>
+                <strong class="h4">{{it.stats.players}}</strong>
             </div>
         </div>
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-info">
                 <small class="text-muted">Total Playtime</small><br>
-                <strong class="h4">{{stats.playTime}}</strong>
+                <strong class="h4">{{it.stats.playTime}}</strong>
             </div>
         </div>
         <!-- <div class="col-2 pInfoCallout">
@@ -76,19 +76,19 @@
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-success">
                 <small class="text-muted">Whitelists</small><br>
-                <strong class="h4">{{stats.whitelists}}</strong>
+                <strong class="h4">{{it.stats.whitelists}}</strong>
             </div>
         </div>
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-warning">
                 <small class="text-muted">Warns</small><br>
-                <strong class="h4">{{stats.warns}}</strong>
+                <strong class="h4">{{it.stats.warns}}</strong>
             </div>
         </div>
         <div class="col-2 pInfoCallout">
             <div class="c-callout c-callout-danger">
                 <small class="text-muted">Bans</small><br>
-                <strong class="h4">{{stats.bans}}</strong>
+                <strong class="h4">{{it.stats.bans}}</strong>
             </div>
         </div>
     </div>
@@ -104,22 +104,22 @@
         <div class="card card-accent-success">
             <div class="card-header font-weight-bold">
                 <h5 class="float-left mb-0" style="padding-top: .175em;">
-                    Last {{queryLimits.whitelist}} Whitelist requests:
+                    Last {{it.queryLimits.whitelist}} Whitelist requests:
                 </h5>
-                {{if(!options.disableWhitelist)}}
+                {{@if(!it.disableWhitelist)}}
                     <button class="btn btn-sm btn-success float-right" type="button" 
-                        onclick="whitelistID(null)" {{permsDisable.whitelist|isDisabled}}>
+                        onclick="whitelistID(null)" {{it.permsDisable.whitelist|isDisabled}}>
                         <i class="icon-check"></i> Whitelist ID / License
                     </button>
                 {{/if}}
             </div>
             <div class="card-body text-center">
-                {{if(options.disableWhitelist)}}
+                {{@if(it.disableWhitelist)}}
                     <div class="text-center">
                         <h3 class="mx-auto pt-3 text-danger">Whitelist checking disabled</h3>
                     </div>
                 {{#else}}
-                    {{if(options.lastWhitelistBlocks.length == 0)}}
+                    {{@if(it.lastWhitelistBlocks.length == 0)}}
                         <h3 class="mx-auto text-secondary">No pending whitelist requests</h3>
                     {{#else}}
                         <table class="table table-responsive-sm table-borderless table-striped table-sm text-left">
@@ -132,21 +132,21 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                {{foreach(options.lastWhitelistBlocks)}}
+                                {{@each(it.lastWhitelistBlocks) => wlReq}}
                                 <tr>
                                     <td>
-                                        {{if(options.permsDisable.whitelist)}}
+                                        {{@if(it.permsDisable.whitelist)}}
                                             <a href="/player/list#!" class="badge badge-secondary txWhitelistBtn">ACCEPT</a>
                                         {{#else}}
                                             <a href="/player/list#!" class="badge badge-primary txWhitelistBtn" 
-                                                onclick="whitelistID('{{@this.id}}')">ACCEPT</a>
+                                                onclick="whitelistID('{{wlReq.id}}')">ACCEPT</a>
                                         {{/if}}
                                     </td>
-                                    <td>{{@this.time}}</td>
-                                    <td class="text-monospace">{{@this.id}}</td>
-                                    <td class="text-truncate">{{@this.name}}</td>
+                                    <td>{{wlReq.time}}</td>
+                                    <td class="text-monospace">{{wlReq.id}}</td>
+                                    <td class="text-truncate">{{wlReq.name}}</td>
                                 </tr>
-                                {{/foreach}}
+                                {{/each}}
                             </tbody>
                         </table>
                     {{/if}}
@@ -159,12 +159,12 @@
         <div class="card card-accent-danger">
             <div class="card-header font-weight-bold">Ban Identifiers:</div>
             <div class="card-body">
-                {{if(options.disableBans)}}
+                {{@if(it.disableBans)}}
                     <div class="text-center">
                         <h3 class="mx-auto pt-3 text-danger">ban checking disabled</h3>
                     </div>
                 {{#else}}
-                    {{if(options.permsDisable.ban)}}
+                    {{@if(it.permsDisable.ban)}}
                         <div class="text-center">
                             <h3 class="mx-auto pt-3 text-secondary">you can't ban people</h3>
                         </div>
@@ -270,22 +270,22 @@
                     <div class="tab-pane fade" id="dbPlayers-content" role="tabpanel" aria-labelledby="dbPlayers-tab">
                         <div id="dbPlayers-tabSearch" class="searchTab d-none"></div>
                         <div id="dbPlayers-tabDefault">
-                            <h5 class="card-title">Last {{queryLimits.players}} joined players</h5>
-                            {{if(options.lastPlayers.length == 0)}}
+                            <h5 class="card-title">Last {{it.queryLimits.players}} joined players</h5>
+                            {{@if(it.lastPlayers.length == 0)}}
                                 <div class="text-center">
                                     <h3 class="mx-auto pt-3 text-secondary">no players yet...</h3>
                                 </div>
                             {{#else}}
                                 <div class="list-group list-group-accent">
-                                    {{foreach(options.lastPlayers)}}
+                                    {{@each(it.lastPlayers) => player}}
                                         <!-- FIXME: fix logEntryClickableX and onclickX-->
-                                        <div class="list-group-item list-group-item-accent-{{@this.color}} logEntry logEntryClickable">
-                                            <div class="d-flex w-100 justify-content-between" onclick="showPlayer('{{@this.license}}')"> 
-                                                <strong>{{@this.name}}</strong>
-                                                <small>{{@this.joined}}</small>
+                                        <div class="list-group-item list-group-item-accent-{{player.color}} logEntry logEntryClickable">
+                                            <div class="d-flex w-100 justify-content-between" onclick="showPlayer('{{player.license}}')"> 
+                                                <strong>{{player.name}}</strong>
+                                                <small>{{player.joined}}</small>
                                             </div>
                                         </div>
-                                    {{/foreach}}
+                                    {{/each}}
                                 </div>
                             {{/if}}
                         </div>
@@ -294,36 +294,36 @@
                     <div class="tab-pane fade show active" id="dbActions-content" role="tabpanel" aria-labelledby="dbActions-tab">
                         <div id="dbActions-tabSearch" class="searchTab d-none"></div>
                         <div id="dbActions-tabDefault">
-                            <h5 class="card-title">Last {{queryLimits.actions}} actions (bans/warns/whitelists):</h5> 
-                            {{if(options.lastActions.length == 0)}}
+                            <h5 class="card-title">Last {{it.queryLimits.actions}} actions (bans/warns/whitelists):</h5> 
+                            {{@if(it.lastActions.length == 0)}}
                                 <div class="text-center">
                                     <h3 class="mx-auto pt-3 text-secondary">no actions yet...</h3>
                                 </div>
                             {{#else}}
                                 <div class="list-group list-group-accent">
-                                    {{foreach(options.lastActions)}}
-                                        <div class="list-group-item list-group-item-accent-{{@this.color}} logEntry">
+                                    {{@each(it.lastActions) => action}}
+                                        <div class="list-group-item list-group-item-accent-{{action.color}} logEntry">
                                             <div class="d-flex w-100 justify-content-between">
-                                                <strong>{{@this.message|safe}}</strong>
+                                                <strong>{{action.message|safe}}</strong>
                                                 <small class="text-right">
-                                                    <span class="text-monospace font-weight-bold">({{@this.id}})</span>
-                                                    {{@this.date}} 
-                                                    {{if(!options.permsDisable.revoke)}}
-                                                        {{if(@this.isRevoked)}}
+                                                    <span class="text-monospace font-weight-bold">({{action.id}})</span>
+                                                    {{action.date}} 
+                                                    {{@if(!it.permsDisable.revoke)}}
+                                                        {{@if(action.isRevoked)}}
                                                             <span class="badge badge-outline-light p-1">REVOKED</span>
                                                         {{#else}}
-                                                            &nbsp;<a href="/player/list#!" onclick="revokeAction('{{@this.id}}')" 
+                                                            &nbsp;<a href="/player/list#!" onclick="revokeAction('{{action.id}}')" 
                                                                 class="badge badge-secondary p-1 txActionsBtn">REVOKE</a>&nbsp;
                                                         {{/if}}
                                                     {{/if}}
                                                 </small>
                                             </div>
-                                            <span>{{@this.reason|unnull}}</span>
-                                            {{if(@this.footerNote)}}
-                                                <small class="d-block">{{@this.footerNote}}</small>
+                                            <span>{{action.reason|unnull}}</span>
+                                            {{@if(action.footerNote)}}
+                                                <small class="d-block">{{action.footerNote}}</small>
                                             {{/if}}
                                         </div>
-                                    {{/foreach}}
+                                    {{/each}}
                                 </div>
                             {{/if}}
                         </div>
@@ -338,14 +338,14 @@
 </div>
 
 
-{{include("footer")/}}
+{{@include("footer", it)/}}
 
 
 <script>
     //============================================== SSR Variables
-    const permsDisableWhitelist = ('{{permsDisable.whitelist}}' === 'true');
-    const permsDisableBan = ('{{permsDisable.ban}}' === 'true');
-    const permsDisableRevoke = ('{{permsDisable.revoke}}' === 'true');
+    const permsDisableWhitelist = ('{{it.permsDisable.whitelist}}' === 'true');
+    const permsDisableBan = ('{{it.permsDisable.ban}}' === 'true');
+    const permsDisableRevoke = ('{{it.permsDisable.revoke}}' === 'true');
 
 
 

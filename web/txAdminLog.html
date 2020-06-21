@@ -1,4 +1,4 @@
-{{include("header")/}}
+{{@include("header", it)/}}
 
 
 <style>
@@ -20,17 +20,17 @@
     <div class="card-body">
         <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane fade active show" id="nav-console" role="tabpanel">
-                <pre id="consoleLog" class="thin-scroll pre-log-content">{{consoleLog|safe}}</pre>
+                <pre id="consoleLog" class="thin-scroll pre-log-content">{{it.consoleLog|safe}}</pre>
             </div>
             <div class="tab-pane fade" id="nav-actions" role="tabpanel">
-                <pre id="actionsLog" class="thin-scroll pre-log-content">{{actionLog|safe}}</pre>
+                <pre id="actionsLog" class="thin-scroll pre-log-content">{{it.actionLog|safe}}</pre>
             </div>
         </div>
     </div>
 </div>
 
 
-{{include("footer")/}}
+{{@include("footer", it)/}}
 
 
 <script>

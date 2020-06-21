@@ -1,9 +1,9 @@
-{{include("header")/}}
+{{@include("header", it)/}}
 
 
 <div class="text-center mb-4">
     <h2>Diagnostics Report</h2>
-    <small class="text-muted">{{message|safe}}</small>
+    <small class="text-muted">{{it.message|safe}}</small>
 </div>
 
 
@@ -14,15 +14,15 @@
         <div class="card card-accent-danger" style="min-height: 160px;">
             <div class="card-header font-weight-bold">Host Machine:</div>
             <div class="card-body">
-                {{if(options.host.error !== false)}}
-                    {{host.error|safe}}
+                {{@if(it.host.error !== false)}}
+                    {{it.host.error|safe}}
                 {{#else}}
-                    <strong>Node Version:</strong> {{host.nodeVersion}} <br>
-                    <strong>OS Type:</strong> {{host.osType}} <br>
-                    <strong>OS Release:</strong> {{host.osRelease}} <br>
-                    <strong>Username:</strong> {{host.username}} <br>
-                    <strong>Host CPUs:</strong> {{host.cpus}} <br>
-                    <strong>Host Memory:</strong> {{host.memory}} {{if(options.isLinux)}}(used + cache + buffer){{/if}}
+                    <strong>Node Version:</strong> {{it.host.nodeVersion}} <br>
+                    <strong>OS Type:</strong> {{it.host.osType}} <br>
+                    <strong>OS Release:</strong> {{it.host.osRelease}} <br>
+                    <strong>Username:</strong> {{it.host.username}} <br>
+                    <strong>Host CPUs:</strong> {{it.host.cpus}} <br>
+                    <strong>Host Memory:</strong> {{it.host.memory}} {{@if(it.isLinux)}}(used + cache + buffer){{/if}}
                 {{/if}}
             </div>
         </div>
@@ -32,20 +32,20 @@
             <div class="card-header font-weight-bold">txAdmin Info:</div>
             <div class="card-body">
                 <h5>Stats:</h5>
-                <strong>Uptime:</strong> <code>{{txadmin.uptime}}</code> <br>
-                <strong>Cfx.re URL:</strong> <code>{{txadmin.cfxUrl}}</code> <br>
-                <strong>Ban Checking:</strong> <code>{{txadmin.banlistEnabled}}</code> <br>
-                <strong>Whitelist Checking:</strong> <code>{{txadmin.whitelistEnabled}}</code> <br>
-                <strong>Full Crashes:</strong> <code>{{txadmin.fullCrashes}}</code> <br>
-                <strong>Partial Crashes:</strong> <code>{{txadmin.partialCrashes}}</code> <br>
+                <strong>Uptime:</strong> <code>{{it.txadmin.uptime}}</code> <br>
+                <strong>Cfx.re URL:</strong> <code>{{it.txadmin.cfxUrl}}</code> <br>
+                <strong>Ban Checking:</strong> <code>{{it.txadmin.banlistEnabled}}</code> <br>
+                <strong>Whitelist Checking:</strong> <code>{{it.txadmin.whitelistEnabled}}</code> <br>
+                <strong>Full Crashes:</strong> <code>{{it.txadmin.fullCrashes}}</code> <br>
+                <strong>Partial Crashes:</strong> <code>{{it.txadmin.partialCrashes}}</code> <br>
                 <hr>
                 <h5>Settings:</h5>
-                <strong>Schedule:</strong> <code>{{txadmin.schedule}}</code> <br>
-                <strong>Cooldown:</strong> <code>{{txadmin.cooldown}}</code> <br>
-                <strong>Timeout Limit:</strong> <code>{{txadmin.timeout}}</code> <br>
-                <strong>FXServer Path:</strong> <code>{{txadmin.fxServerPath}}</code> <br>
-                <strong>Server Data Path:</strong> <code>{{txadmin.serverDataPath}}</code><br>
-                <strong>CFG Path:</strong> <code>{{txadmin.cfgPath}}</code>
+                <strong>Schedule:</strong> <code>{{it.txadmin.schedule}}</code> <br>
+                <strong>Cooldown:</strong> <code>{{it.txadmin.cooldown}}</code> <br>
+                <strong>Timeout Limit:</strong> <code>{{it.txadmin.timeout}}</code> <br>
+                <strong>FXServer Path:</strong> <code>{{it.txadmin.fxServerPath}}</code> <br>
+                <strong>Server Data Path:</strong> <code>{{it.txadmin.serverDataPath}}</code><br>
+                <strong>CFG Path:</strong> <code>{{it.txadmin.cfgPath}}</code>
             </div>
         </div>
 
@@ -59,15 +59,15 @@
         <div class="card card-accent-info" style="min-height: 160px;">
             <div class="card-header font-weight-bold">FXServer /info.json:</div>
             <div class="card-body">
-                {{if(options.fxserver.error !== false)}}
-                    {{fxserver.error|safe}}
+                {{@if(it.fxserver.error !== false)}}
+                    {{it.fxserver.error|safe}}
                 {{#else}}
-                    <strong>Status: <span class="badge badge-{{fxserver.statusColor}}">{{fxserver.status}}</span></strong><br>
-                    <strong>Version:</strong> {{fxserver.versionWarning|safe}} {{fxserver.version}} <br>
-                    <strong>Resources:</strong> {{fxserver.resources}} {{fxserver.resourcesWarning|safe}}<br>
-                    <strong>OneSync:</strong> {{fxserver.onesync}} <br>
-                    <strong>Max Clients:</strong> {{fxserver.maxClients}} <br>
-                    <strong>txAdmin Version:</strong> {{fxserver.txAdminVersion}} <br>
+                    <strong>Status: <span class="badge badge-{{it.fxserver.statusColor}}">{{it.fxserver.status}}</span></strong><br>
+                    <strong>Version:</strong> {{it.fxserver.versionWarning|safe}} {{it.fxserver.version}} <br>
+                    <strong>Resources:</strong> {{it.fxserver.resources}} {{it.fxserver.resourcesWarning|safe}}<br>
+                    <strong>OneSync:</strong> {{it.fxserver.onesync}} <br>
+                    <strong>Max Clients:</strong> {{it.fxserver.maxClients}} <br>
+                    <strong>txAdmin Version:</strong> {{it.fxserver.txAdminVersion}} <br>
                 {{/if}}
             </div>
         </div>
@@ -76,17 +76,17 @@
         <div class="card card-accent-info">
             <div class="card-header font-weight-bold">Proccesses:</div>
             <div class="card-body">
-                {{if(!options.proccesses.length)}}
+                {{@if(!it.proccesses.length)}}
                     Failed to retrieve proccesses data. <br>
                     Check the terminal for more information (if verbosity is enabled)
                 {{#else}}
-                    {{foreach(options.proccesses)}}
-                    <strong>Process:</strong> ({{@this.pid}}) {{@this.name}} <br>
-                    <strong>Parent:</strong> {{@this.ppid}} <br>
-                    <strong>Memory:</strong> {{@this.memory}} <br>
-                    <strong>CPU:</strong> {{@this.cpu}} <br>
-                    <br>
-                    {{/foreach}}
+                    {{@each(it.proccesses) => proc}}
+                        <strong>Process:</strong> ({{proc.pid}}) {{proc.name}} <br>
+                        <strong>Parent:</strong> {{proc.ppid}} <br>
+                        <strong>Memory:</strong> {{proc.memory}} <br>
+                        <strong>CPU:</strong> {{proc.cpu}} <br>
+                        <br>
+                    {{/each}}
                 {{/if}}
             </div>
         </div>
@@ -95,4 +95,4 @@
     <!-- /.col-->
 </div>
 
-{{include("footer")/}}
+{{@include("footer", it)/}}

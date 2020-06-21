@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <meta name="description" content="txAdmin - remotely Manage & Monitor your GTA5 FiveM Server">
     <meta name="author" content="André Tabarra">
-    <title>{{headerTitle}}</title>
+    <title>{{it.headerTitle}}</title>
     <link href="css/simple-line-icons.css" rel="stylesheet">
     <link href="css/coreui.min.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="img/favicon_default.png" id="favicon" />
@@ -51,13 +51,13 @@
 
                             <!-- Welcome -->
                             <li class="step active">
-                                <div class="step-title waves-effect">Welcome, {{adminUsername}}!</div>
+                                <div class="step-title waves-effect">Welcome, {{it.adminUsername}}!</div>
                                 <div class="step-content">
-                                    {{if(options.serverProfile == 'default')}}
-                                    Since you didn't select any profile when starting txAdmin, we selected
-                                    <code>default</code> for you.
+                                    {{@if(it.serverProfile == 'default')}}
+                                        Since you didn't select any profile when starting txAdmin, we selected
+                                        <code>default</code> for you.
                                     {{#else}}
-                                    You selected the profile <code>{{serverProfile}}</code>.
+                                        You selected the profile <code>{{it.serverProfile}}</code>.
                                     {{/if}}
                                     <br>
                                     This profile is not configured yet, let's do this now?
@@ -135,9 +135,9 @@
                                 <div class="step-title waves-effect">Finish</div>
                                 <div class="step-content">
                                     <strong>We are all set!</strong> <br>
-                                    {{if(options.windowsBatPath)}}
+                                    {{@if(it.windowsBatPath)}}
                                         You can run this profile by executing: <br>
-                                        <code>{{windowsBatPath}}</code> <br>
+                                        <code>{{it.windowsBatPath}}</code> <br>
                                     {{/if}}
                                     <span id="saveError" class="text-danger fade-in d-none"></span>
                                     <div class="step-actions">
@@ -158,9 +158,9 @@
         <div class="row justify-content-center">
             <div class="col-md-4 ">
                 <div class="alert alert-secondary text-center small" role="alert">
-                    <strong>Server profile:</strong> {{serverProfile}} <br>
-                    <strong>txAdmin version:</strong> {{txAdminVersion}} <br>
-                    <strong>FXServer build:</strong> {{fxServerVersion}}
+                    <strong>Server profile:</strong> {{it.serverProfile}} <br>
+                    <strong>txAdmin version:</strong> {{it.txAdminVersion}} <br>
+                    <strong>FXServer build:</strong> {{it.fxServerVersion}}
                 </div>
             </div>
         </div>

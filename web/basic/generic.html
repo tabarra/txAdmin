@@ -1,4 +1,4 @@
-{{include("header")/}}
+{{@include("header", it)/}}
 
 
 <div class="text-center mb-4">
@@ -8,10 +8,10 @@
 <div class="row justify-content-md-center">
     <div class="col-md-4 ">
         <div class="alert alert-warning text-center" role="alert">
-            {{message|safe}}
+            {{it.message|safe}}
         </div>
     </div>
 </div>
 
 
-{{include("footer")/}}
+{{@include("footer", it)/}}

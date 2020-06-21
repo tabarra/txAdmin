@@ -1,4 +1,4 @@
-{{include("header")/}}
+{{@include("header", it)/}}
 
 <div class="text-center mb-4">
     <h2>Resources List</h2>
@@ -10,7 +10,7 @@
         <div class="card card-accent-primary">
             <div class="card-header float-left">
                 <span style="font-size: large">All Resources</span>
-                <button class="btn btn-sm btn-primary float-right" type="button" id="btnRefresh" {{disableActions}}>
+                <button class="btn btn-sm btn-primary float-right" type="button" id="btnRefresh" {{it.disableActions}}>
                     <i class="icon-refresh"></i> Reload & Refresh
                 </button>
                 <input class="form-control" type="text" name="resource" id="resourceInput" onkeyup="findResource()"
@@ -33,72 +33,71 @@
     <div class="col-sm-12 col-lg-7 mw-col8">
         <div class="card card-accent-primary table-responsive-sm">
             <table class="table table-hover table-outline mb-0">
-                {{foreach(options.resGroups)}}
-                    <thead class="thead-light" id="resList-card-{{@this.divName}}">
+                {{@each(it.resGroups) => resGroup}}
+                    <thead class="thead-light" id="resList-card-{{resGroup.divName}}">
                         <tr>
-                            <th class="text-break text-center" colspan="2">{{@this.subPath}}</th>
+                            <th class="text-break text-center" colspan="2">{{resGroup.subPath}}</th>
                         </tr>
                     </thead>
-                    <tbody id="resList-cardBody-{{@this.divName}}"
-                        aria-labelledby="resList-cardHeader-{{@this.divName}}">
-                        {{each(@this.resources)}}
-                        <tr id="res-{{@this.divName}}">
-                            <td>
-                                <strong style="word-wrap: break-word;">{{@this.name}}</strong>
-                                {{if(@this.version!='')}}
-                                    <em>{{@this.version}}</em>
-                                {{/if}}
-                                {{if(@this.author!='')}}
-                                    by {{@this.author}}
-                                {{/if}}
-                                {{if(@this.description!='')}}
-                                    <br>
-                                    {{@this.description}}
-                                {{/if}}
-                            </td>
+                    <tbody id="resList-cardBody-{{resGroup.divName}}"
+                        aria-labelledby="resList-cardHeader-{{resGroup.divName}}">
+                        {{@each(resGroup.resources) => resource}}
+                            <tr id="res-{{resource.divName}}">
+                                <td>
+                                    <strong style="word-wrap: break-word;">{{resource.name}}</strong>
+                                    {{@if(resource.version!='')}}
+                                        <em>{{resource.version}}</em>
+                                    {{/if}}
+                                    {{@if(resource.author!='')}}
+                                        by {{resource.author}}
+                                    {{/if}}
+                                    {{@if(resource.description!='')}}
+                                        <br>
+                                        {{resource.description}}
+                                    {{/if}}
+                                </td>
 
-                            <td class="tableActions">
-                                {{if(@this.status=='started')}}
-                                <a class="btn btn-sm btn-outline-warning d-block d-md-inline-block mr-md-1 mb-1 mb-md-0 {{disableActions}}"
-                                    href="#"
-                                    onclick="btnCommand('ensure_res', '{{@this.name}}'); event.preventDefault();" {{disableActions}}>
-                                    Restart
-                                </a>
-                                <a class="btn btn-sm btn-outline-danger d-block d-md-inline-block m-0 {{disableActions}}"
-                                    href="#"
-                                    onclick="btnCommand('stop_res', '{{@this.name}}'); event.preventDefault();" {{disableActions}}>
-                                    Stop
-                                </a>
-                                {{#else}}
-                                <a class="btn btn-sm btn-outline-success d-block d-md-inline-block {{disableActions}}"
-                                    href="#"
-                                    onclick="btnCommand('ensure_res', '{{@this.name}}'); event.preventDefault();" {{disableActions}}>
-                                    Start
-                                </a>
-                                {{/if}}
-                            </td>
-                        </tr>
+                                <td class="tableActions">
+                                    {{@if(resource.status=='started')}}
+                                    <a class="btn btn-sm btn-outline-warning d-block d-md-inline-block mr-md-1 mb-1 mb-md-0 {{it.disableActions}}"
+                                        href="#"
+                                        onclick="btnCommand('ensure_res', '{{resource.name}}'); event.preventDefault();" {{it.disableActions}}>
+                                        Restart
+                                    </a>
+                                    <a class="btn btn-sm btn-outline-danger d-block d-md-inline-block m-0 {{it.disableActions}}"
+                                        href="#"
+                                        onclick="btnCommand('stop_res', '{{resource.name}}'); event.preventDefault();" {{it.disableActions}}>
+                                        Stop
+                                    </a>
+                                    {{#else}}
+                                    <a class="btn btn-sm btn-outline-success d-block d-md-inline-block {{it.disableActions}}"
+                                        href="#"
+                                        onclick="btnCommand('ensure_res', '{{resource.name}}'); event.preventDefault();" {{it.disableActions}}>
+                                        Start
+                                    </a>
+                                    {{/if}}
+                                </td>
+                            </tr>
                         {{/each}}
                     </tbody>
-                {{/foreach}}
+                {{/each}}
             </table>
         </div>
     </div>
 </div>
 
 
-{{include("footer")/}}
+{{@include("footer", it)/}}
 
 
 
 
 <script>
     //NOTE: breaking multiple lines because squirrelly is not respecting LF as line endings.
-    //Change squirrelly tag: {{tags(--,--)/}}
     //intentionally 'blank' line
-    const resGroupsJS = --resGroupsJS | safe--
-    //Changing it back: --tags({{,}})/--
+    const resGroupsJS = JSON.parse(`{{it.resGroupsJS|escapeBackTick|safe}}`)
     //intentionally 'blank' line
+    
     const defaultResources = [
         "baseevents",
         "basic-gamemode",
