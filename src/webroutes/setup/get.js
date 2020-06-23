@@ -14,7 +14,7 @@ module.exports = async function SetupGet(ctx) {
         return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
     }
 
-    // //If the any FXServer configuration is missing
+    // //If there is any FXServer configuration is missing
     // if(globals.fxRunner.config.serverDataPath === null || globals.fxRunner.config.cfgPath === null){
     //     return ctx.response.redirect('/setup');
     // }

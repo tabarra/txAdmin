@@ -175,7 +175,7 @@ function txaDropIdentifiers(_, args)
     end
 
     if kickCount == 0 then
-        print("No players found to kick")
+        log("No players found to kick")
     end
     CancelEvent()
 end

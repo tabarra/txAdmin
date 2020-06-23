@@ -16,7 +16,6 @@
 - [ ] add sv endpoint to say the whitelist/banlist usage
 - [ ] adapt kick messages to use some basic HTML formatting and 🆃🆇🅰🅳🅼🅸🅽
 - [ ] set autostart as default, but only call spawnfunc if the cfg/data paths are set
-- [ ] use the new fd3 stream
 - [ ] convert cl_logger.js to lua, and stop it when not in `monitorMode`
 
 TODO: Bot commands - poste it when starting the bot
@@ -26,9 +25,11 @@ TODO: Bot commands - poste it when starting the bot
 /info <mention> - shows someone else's info
 /wl <mention|wl req id>
 /removewl <mention>
-/log <mention> - shows the last low entries for an discord identifier
+/log <mention> - shows the last 5 log entries for an discord identifier
+/kick <mention>
 
 > Soon™
+- [ ] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
 - [ ] break player page into `Players` and `Player Access`
         - `Player Access` will only contain the whitelist and band ids cards
         - `Players` will have a central search and will show players and actions at the same time
@@ -53,13 +54,11 @@ TODO: Bot commands - poste it when starting the bot
 - [ ] add an fxserver changelog page
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
-- [ ] break down playerController into separate files?
+- [ ] break down playerController into separate files!
 - [ ] rename playerController to playerManager?
 
 ## "in the roadmap"
-- [ ] Auto updater for txAdmin?
 - [ ] Check config management libraries (specially 'convict' by Mozilla and nconf)
-- [ ] Add "discord client id" in the admin settings, this would enable "/kick @user"
 - [ ] revisit the issue with server restarting too fast (before close) and the the bind failing, causing restart loop. Almost all cases were windows server 2012.
 - [ ] xxxxxx
 
@@ -69,7 +68,7 @@ TODO: Bot commands - poste it when starting the bot
 ```bash
 # run
 cd /e/FiveM/builds
-npx nodemon --watch "2627/citizen/system_resources/monitor/src/*" --exec "2627/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose truex +set txAdminFakePlayerlist yesplzx"
+nodemon --watch "2627/citizen/system_resources/monitor/src/*" --exec "2627/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose truex +set txAdminFakePlayerlist yesplzx"
 
 # build
 cd /e/FiveM/builds/2627/citizen/system_resources/monitor
@@ -178,3 +177,7 @@ tasks:
          start wtfwtf
          start uberadmin
 ```
+
+
+### the ace permissions editor thing
+https://discordapp.com/channels/192358910387159041/450373719974477835/724266730024861717

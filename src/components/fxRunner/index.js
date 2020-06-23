@@ -117,7 +117,7 @@ module.exports = class FXRunner {
         ){
             return logError('this.spawnVariables is not set.');
         }
-        //If the any FXServer configuration is missing
+        //If there is any FXServer configuration is missing
         if(this.config.serverDataPath === null || this.config.cfgPath === null){
             return logError('Cannot start the server with missing configuration (serverDataPath || cfgPath).');
         }

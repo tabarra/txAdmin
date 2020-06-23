@@ -9,7 +9,7 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
  * @param {object} ctx
  */
 module.exports = async function Dashboard(ctx) {
-    //If the any FXServer configuration is missing
+    //If there is any FXServer configuration is missing
     if(globals.fxRunner.config.serverDataPath === null || globals.fxRunner.config.cfgPath === null){
         return ctx.response.redirect('/setup');
     }
