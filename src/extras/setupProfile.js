@@ -76,9 +76,9 @@ module.exports = (osType, fxServerPath, fxServerVersion, serverProfile, profileP
     //Saving start.bat
     if(osType == 'windows'){
         try {
-            let batData = `@echo off\r\n
-                ${fxServerPath}/FXServer.exe +set serverProfile "${serverProfile}"\r\n
-                pause`;
+            let batData = `@echo off
+${fxServerPath}/FXServer.exe +set serverProfile "${serverProfile}"
+pause`;
             let batFolder = path.resolve(fxServerPath, '..');
             let batPath  = path.join(batFolder, `start_${fxServerVersion}_${serverProfile}.bat`);
             fs.writeFileSync(batPath, batData);
