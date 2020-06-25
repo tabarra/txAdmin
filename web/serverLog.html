@@ -53,7 +53,12 @@
                 //NOTE: /\ that was a lie :)
                 if(typeof data.offset !== 'undefined') currOffset = data.offset;
                 if(typeof data.log !== 'undefined' && data.log !== false && data.log.length){
-                    $("#console").append(data.log);
+                    const consoleElement = document.getElementById("console");
+                    let _tempContent = consoleElement.innerHTML + data.log;
+                    _tempContent = (_tempContent.length > bufferTrimSize)
+                        ? _tempContent.slice(-0.5 * bufferTrimSize)
+                        : _tempContent;
+                    consoleElement.innerHTML = _tempContent.substr(_tempContent.indexOf("\n")).trim();
                     scrollToBottom();
                     setupHovers();
                 }

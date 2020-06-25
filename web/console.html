@@ -57,15 +57,17 @@
             <div class="mx-auto">
                 <div class="form-group text-light">
                     <input type="text" class="form-control console-input form-control-sm" id="cmdInput"
-                           placeholder="Press enter to send. Up/Down arrows to navigate commands." 
+                           placeholder="Press enter to send. Up/Down arrows to navigate commands."
                            autocomplete="off" {{it.disableWrite}}>
                 </div>
-                <button type="button" id="clearConsole" 
-                    class="btn btn-outline-light btn-sm mb-2">Clear Console</button>
-                <button type="button" id="toggleAutoScroll" 
-                    class="btn btn-outline-light btn-sm mb-2">Disable Scroll</button>
-                <a href="/fxserver/downloadLog" target="_blank" 
-                    class="btn btn-outline-light btn-sm mb-2">Download Log</a>
+                <button type="button" id="clearConsole"
+                        class="btn btn-outline-light btn-sm mb-2">Clear Console
+                </button>
+                <button type="button" id="toggleAutoScroll"
+                        class="btn btn-outline-light btn-sm mb-2">Disable Scroll
+                </button>
+                <a href="/fxserver/downloadLog" target="_blank"
+                   class="btn btn-outline-light btn-sm mb-2">Download Log</a>
             </div>
         </form>
     </div>
@@ -97,7 +99,11 @@
             window.location = '/auth?logout';
         });
         socket.on('consoleData', function (msg) {
-            consoleElement.innerHTML += ansi_up.ansi_to_html(msg);
+            var _consoleData = consoleElement.innerHTML + ansi_up.ansi_to_html(msg);
+            _consoleData = (_consoleData.length > bufferTrimSize)
+                ? _consoleData.slice(-0.5 * bufferTrimSize) // grab the last half
+                : _consoleData; // no need to trim
+            consoleElement.innerHTML = _consoleData.substr(_consoleData.indexOf("\n")).trim();
             if (autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight
         });
 
