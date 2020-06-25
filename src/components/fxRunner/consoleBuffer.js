@@ -21,6 +21,7 @@ module.exports = class ConsoleBuffer {
         this.enableCmdBuffer = false;
         this.cmdBuffer = '';
         this.webConsoleBuffer = '';
+        this.webConsoleBufferSize = 128*1024; //128kb
         this.fileBuffer = '';
 
         //FIXME: this is stupid, please fix
@@ -128,10 +129,11 @@ module.exports = class ConsoleBuffer {
         //Adding data to the buffers
         if(this.enableCmdBuffer) this.cmdBuffer += data;
         this.fileBuffer += data;
-        this.webConsoleBuffer += data;
-        if(this.webConsoleBuffer.length > 16*1024){
-            //TODO: use xxx.indexOf("\n")
-            this.webConsoleBuffer = this.webConsoleBuffer.slice(-8*1024);
+
+        this.webConsoleBuffer = this.webConsoleBuffer + data;
+        if(this.webConsoleBuffer.length > this.webConsoleBufferSize){
+            this.webConsoleBuffer = this.webConsoleBuffer.slice(-0.5 * this.webConsoleBufferSize);
+            this.webConsoleBuffer = this.webConsoleBuffer.substr(this.webConsoleBuffer.indexOf("\n"));
         }
     }
 

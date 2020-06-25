@@ -7,7 +7,7 @@
 const timeoutShort = 1500;
 const timeoutMedium = 2500;
 const timeoutLong = 4000;
-const bufferTrimSize = 16384; // 16k bytes
+const bufferTrimSize = 128*1024; // 128kb
 
 //Helpers
 const spinnerHTML = '<div class="txSpinner">Loading...</div>';
