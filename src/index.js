@@ -153,7 +153,7 @@ GlobalData = {
 
 //==============================================================
 //Starting txAdmin (have fun :p)
-setTTYTitle(serverProfile);
+setTTYTitle(txAdminVersion, serverProfile);
 const txAdmin = require('./txAdmin.js');
 const app = new txAdmin(serverProfile);
 

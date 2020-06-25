@@ -70,8 +70,8 @@ function cleanTerminal(){
     process.stdout.write(`.\n`.repeat(80) + `\x1B[2J\x1B[H`);
 }
 
-function setTTYTitle(title){
-    title = (title)? `txAdmin: ${title}` : 'txAdmin';
+function setTTYTitle(version, title){
+    title = (title)? `txAdmin v${version}: ${title}` : 'txAdmin';
     process.stdout.write(`\x1B]0;${title}\x07`);
 }
 
