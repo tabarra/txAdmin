@@ -14,7 +14,6 @@ server_scripts {
 }
 
 client_scripts {
-    'scripts/cl_*.js',
     'scripts/cl_*.lua',
 }
 
