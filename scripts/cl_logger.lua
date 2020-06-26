@@ -1,10 +1,4 @@
---- OPTIMIZATIONS
-local CreateThread   = Citizen.CreateThread
-local Wait           = Citizen.Wait
-local PlayerPedId    = PlayerPedId
-local IsEntityDead   = IsEntityDead
-
---- Death reasons
+-- Death reasons
 local deathHashTable = {
     ["animal"]    = { -100946242, 148160082 },
     ["bullet"]    = { 453432689, 1593441988, 584646201, -1716589765, 324215364, 736523883, -270015777, -1074790547, -2084633992, -1357824103, -1660422300, 2144741730, 487013001, 2017895192, -494615257, -1654528753, 100416529, 205991906, 1119849093 },
@@ -17,17 +11,6 @@ local deathHashTable = {
     ["drown"]     = { -10959621, 1936677264 },
     ["unknown"]   = { -842959696 }, -- Fall Damage or SetEntityHealth()
 }
-
---- Trigger Event From External Script
-
-RegisterNetEvent('txAdmin:deathLog')
-AddEventHandler('txAdmin:deathLog', function(ped)
-	processDeath(ped) -- Remember to add a wait function before reviving into an animation.
-end)
-
----
---- FUNCTIONS
----
 
 -- Process player deaths
 local function processDeath(ped)
@@ -70,10 +53,17 @@ local function processDeath(ped)
     TriggerServerEvent("txaLogger:DeathNotice", killer, deathReason)
 end
 
-local deathFlag = false
---[[ Thread ]]--
+-- Trigger Event From External Script
+-- NOTE: couldn't people just call the txaLogger:DeathNotice event???
+RegisterNetEvent('txAdmin:beta:deathLog')
+AddEventHandler('txAdmin:beta:deathLog', function(ped)
+	processDeath(ped) -- Remember to add a wait function before reviving into an animation.
+end)
 
-Citizen.CreateThread(function()
+--[[ Thread ]]--
+local deathFlag = false
+local IsEntityDead = IsEntityDead
+CreateThread(function()
     while true do
         Wait(500)
         local ped = GetPlayerPed(-1)
