@@ -26,7 +26,7 @@ module.exports = class FXRunner {
         this.consoleBuffer = new ConsoleBuffer(this.config.logPath, 10);
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
-        if(config.autostart){
+        if(config.autostart && this.config.serverDataPath !== null && this.config.cfgPath !== null){
             setTimeout(() => {
                 this.spawnServer(true);
             }, config.autostartDelay * 1000);

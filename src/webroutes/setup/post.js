@@ -168,7 +168,6 @@ async function handleValidateCFGFile(ctx) {
     } catch (error) {
         try {
             let attempt = path.join(dataFolderPath, 'server.cfg');
-            dir(attempt)
             rawCfgFile = helpers.getCFGFileData(attempt);
             let message = `The path provided is invalid. <br>
                     But it looks like <code>${attempt}</code> is correct. <br>

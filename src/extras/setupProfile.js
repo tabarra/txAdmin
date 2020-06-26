@@ -41,7 +41,7 @@ let defaultConfig = {
         serverDataPath: null,
         cfgPath: null,
         onesync: false,
-        autostart: false,
+        autostart: true,
         quiet: false
     }
 }

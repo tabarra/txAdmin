@@ -11,12 +11,12 @@
 - [x] change Server Log page to use the new modal
 - [x] upgrade to Discord.js v12
 - [x] upgrade to squirrelly 8 (omg why sooo hard???)
+- [x] convert cl_logger.js to lua
+- [x] set autostart as default, but only call spawnfunc if the cfg/data paths are set
 - [ ] make warns un-revokable
 - [ ] change "revoke" for "unban"
 - [ ] add sv endpoint to say the whitelist/banlist usage
 - [ ] adapt kick messages to use some basic HTML formatting and 🆃🆇🅰🅳🅼🅸🅽
-- [ ] set autostart as default, but only call spawnfunc if the cfg/data paths are set
-- [ ] convert cl_logger.js to lua, and stop it when not in `monitorMode`
 
 TODO: Bot commands - poste it when starting the bot
 /ban <mention> <preset time> <reason>
