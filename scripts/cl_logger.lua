@@ -13,13 +13,30 @@ local deathHashTable = {
 }
 
 -- Process player deaths
+local function getDeathReason(causeHash)
+    for reason, hashes in pairs(deathHashTable) do
+        for _, hash in pairs(hashes) do
+            if hash == causeHash then
+                return reason
+            end
+        end
+    end
+    return "unknown"
+end
+
 local function processDeath(ped)
     local killerPed = GetPedSourceOfDeath(ped)
+    local causeHash = GetPedCauseOfDeath(ped)
     local killer, deathReason
 
     if killerPed == ped then
         killer = false
-        deathReason = "suicide"
+        local cause = getDeathReason(causeHash)
+        if cause ~= "unknown" then
+            deathReason = "suicide (" .. cause .. ")"
+        else
+            deathReason = "suicide"
+        end
     else
         if IsEntityAPed(killerPed) and IsPedAPlayer(killerPed) then
             killer = NetworkGetPlayerIndexFromPed(killerPed)
@@ -34,16 +51,7 @@ local function processDeath(ped)
             killer = killerPed
         end
 
-        local causeHash = GetPedCauseOfDeath(ped)
-        for reason, hashes in pairs(deathHashTable) do
-            if deathReason ~= nil then break end
-            for _, hash in pairs(hashes) do
-                if hash == causeHash then
-                    deathReason = reason
-                    break
-                end
-            end
-        end
+        deathReason = getDeathReason(causeHash)
     end
 
     if killer == nil then
