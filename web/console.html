@@ -55,10 +55,11 @@
     <div class="card-footer text-center bg-dark">
         <form class="form-inline container-fluid" id="frmConsole">
             <div class="mx-auto">
-                <div class="form-group text-light">
+                <div class="form-group">
                     <input type="text" class="form-control console-input form-control-sm" id="cmdInput"
                            placeholder="Press enter to send. Up/Down arrows to navigate commands."
-                           autocomplete="off" {{it.disableWrite}}>
+                           autocomplete="off" autocorrect="off" autocapitalize="off" 
+                           spellcheck="false"{{it.disableWrite}}>
                 </div>
                 <button type="button" id="clearConsole"
                         class="btn btn-outline-light btn-sm mb-2">Clear Console
@@ -103,7 +104,7 @@
             _consoleData = (_consoleData.length > bufferTrimSize)
                 ? _consoleData.slice(-0.5 * bufferTrimSize) // grab the last half
                 : _consoleData; // no need to trim
-            consoleElement.innerHTML = _consoleData.substr(_consoleData.indexOf("\n")).trim();
+            consoleElement.innerHTML = _consoleData.substr(_consoleData.indexOf("\n"));
             if (autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight
         });
 

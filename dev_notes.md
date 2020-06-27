@@ -13,17 +13,20 @@
 - [x] upgrade to squirrelly 8 (omg why sooo hard???)
 - [x] convert cl_logger.js to lua
 - [x] set autostart as default, but only call spawnfunc if the cfg/data paths are set
+- [x] improve input readability in low-contrast monitors (css tweak)
 - [ ] make warns un-revokable
 - [ ] change "revoke" for "unban"
 - [ ] add sv endpoint to say the whitelist/banlist usage
 - [ ] adapt kick messages to use some basic HTML formatting and 🆃🆇🅰🅳🅼🅸🅽
+- [ ] give master admin the permission to edit his discord/fivem ID
 
 TODO: Bot commands - poste it when starting the bot
 /ban <mention> <preset time> <reason>
-/removeban <ban-id>
+/unban <ban-id>
 /info - shows your info like join date and play time
 /info <mention> - shows someone else's info
-/wl <mention|wl req id>
+/addwl <wl req id>
+/addwl <mention> ???
 /removewl <mention>
 /log <mention> - shows the last 5 log entries for an discord identifier
 /kick <mention>

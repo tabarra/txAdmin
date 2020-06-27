@@ -49,11 +49,14 @@
 option:disabled {
     background-color: #f0f3f5;
 }
-.form-control::placeholder {
-    color: #A9B5C0;
-}
 .form-control{
-    color: #616a78;
+    color: #5e6168;
+}
+.form-control:focus {
+    color: #373a40;
+}
+.form-control::placeholder {
+    color: #848d96;
 }
 .c-callout{
     background-color: #fff;
