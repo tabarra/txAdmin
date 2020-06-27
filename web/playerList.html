@@ -10,10 +10,23 @@
     .pInfoCallout small{
         letter-spacing: .04em;
     }
+    .txInlineBtn{
+        border-radius: .25rem;
+        line-height: 1;
+        text-align: center;
+        white-space: nowrap;
+        letter-spacing: 0.1rem;
+    }
+    .txActionsBtn{
+        font-size: 85%;
+        font-weight: 700;
+        padding: .25rem !important;
+        vertical-align: top;
+    }
     .txWhitelistBtn{
-        letter-spacing: 0.1em;
-        font-weight: 300 !important;
-        padding: .25rem!important;
+        font-size: 65%;
+        padding: .2rem !important;
+        vertical-align: text-top;
     }
 
     .logEntry{
@@ -24,7 +37,7 @@
     .logEntry:hover{
         background-color: #ebedef;
     }
-    .logEntry:hover a{
+    .logEntry:hover button{
         color: #fff;
         background-color: #636f83;
     }
@@ -136,10 +149,11 @@
                                 <tr>
                                     <td>
                                         {{@if(it.permsDisable.whitelist)}}
-                                            <a href="/player/list#!" class="badge badge-secondary txWhitelistBtn">ACCEPT</a>
+                                            <button class="btn btn-secondary txInlineBtn txWhitelistBtn disabled"
+                                                disabled>ACCEPT</button>
                                         {{#else}}
-                                            <a href="/player/list#!" class="badge badge-primary txWhitelistBtn" 
-                                                onclick="whitelistID('{{wlReq.id}}')">ACCEPT</a>
+                                            <button onclick="whitelistID('{{wlReq.id}}')" 
+                                                class="btn btn-primary txInlineBtn txWhitelistBtn">ACCEPT</button>
                                         {{/if}}
                                     </td>
                                     <td>{{wlReq.time}}</td>
@@ -307,13 +321,20 @@
                                                 <strong>{{action.message|safe}}</strong>
                                                 <small class="text-right">
                                                     <span class="text-monospace font-weight-bold">({{action.id}})</span>
-                                                    {{action.date}} 
-                                                    {{@if(!it.permsDisable.revoke)}}
-                                                        {{@if(action.isRevoked)}}
-                                                            <span class="badge badge-outline-light p-1">REVOKED</span>
+                                                    {{action.date}}
+                                                    {{@if(!it.permsDisable.ban || !it.permsDisable.whitelist)}}
+                                                        {{@if(
+                                                            action.isRevoked ||
+                                                            action.type == 'warn' ||
+                                                            (action.type == 'ban' && it.permsDisable.ban) ||
+                                                            (action.type == 'whitelist' && it.permsDisable.whitelist)
+                                                        )}}
+                                                            &nbsp;
+                                                            <span class="badge badge-outline-light txInlineBtn txActionsBtn">REVOKE</span>
                                                         {{#else}}
-                                                            &nbsp;<a href="/player/list#!" onclick="revokeAction('{{action.id}}')" 
-                                                                class="badge badge-secondary p-1 txActionsBtn">REVOKE</a>&nbsp;
+                                                            &nbsp;
+                                                            <button onclick="revokeAction('{{action.id}}')" 
+                                                                class="btn btn-secondary txInlineBtn txActionsBtn">REVOKE</button>
                                                         {{/if}}
                                                     {{/if}}
                                                 </small>
@@ -345,7 +366,6 @@
     //============================================== SSR Variables
     const permsDisableWhitelist = ('{{it.permsDisable.whitelist}}' === 'true');
     const permsDisableBan = ('{{it.permsDisable.ban}}' === 'true');
-    const permsDisableRevoke = ('{{it.permsDisable.revoke}}' === 'true');
 
 
 
@@ -561,12 +581,17 @@
         }else{
             const processed = actions.map(a => {
                 let revokeButton = '';
-                if(!permsDisableRevoke){
-                    if(a.isRevoked){
-                        revokeButton = `<span class="badge badge-outline-light p-1">REVOKED</span>`; 
+                if(!permsDisableBan || !permsDisableWhitelist){
+                    if(
+                        a.isRevoked ||
+                        a.type == 'warn' ||
+                        (a.type == 'ban' && permsDisableBan) ||
+                        (a.type == 'whitelist' && permsDisableWhitelist)
+                    ){
+                        revokeButton = `&nbsp;<span class="badge badge-outline-light txInlineBtn txActionsBtn">REVOKE</span>`; 
                     }else{
-                        revokeButton = `&nbsp;<a href="/player/list#!" onclick="revokeAction('${xss(a.id)}')" 
-                            class="badge badge-secondary p-1 txActionsBtn">REVOKE</a>&nbsp;`; 
+                        revokeButton = `&nbsp;<button onclick="revokeAction('${xss(a.id)}')" 
+                                class="btn btn-secondary txInlineBtn txActionsBtn">REVOKE</button>`; 
                     }
                 }
                 const reason = (a.reason !== null)? xss(a.reason) : '';

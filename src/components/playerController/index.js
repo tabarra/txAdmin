@@ -493,24 +493,30 @@ module.exports = class PlayerController {
      * Revoke an action (ban, warn, whitelist)
      * @param {string} action_id action id
      * @param {string} author admin name
-     * @returns {string} action ID, or throws if ID not found
+     * @param {array} allowedTypes array containing the types of actions this admin can revoke
+     * @returns {string} null, error message string, or throws if something goes wrong
      */
-    async revokeAction(action_id, author){
+    async revokeAction(action_id, author, allowedTypes=true){
         if(typeof action_id !== 'string' || !action_id.length) throw new Error('Invalid action_id.');
         if(typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
+        if(allowedTypes !== true && !Array.isArray(allowedTypes)) throw new Error('Invalid allowedTypes.');
         try {
             let action = await this.dbo.get("actions")
                             .find({id: action_id})
                             .value();
             if(action){
+                if(action.type === 'warn') return 'cannot revoke warns'
+                if(allowedTypes !== true && !allowedTypes.includes(action.type)){
+                    return 'you do not have permission to revoke this action'
+                }
                 action.revocation = {
                     timestamp: now(),
                     author
                 }
                 this.writePending = true;
-                return true;
-            }else{
                 return null;
+            }else{
+                return 'action not found';
             }
         } catch (error) {
             let msg = `Failed to revoke action with message: ${error.message}`;

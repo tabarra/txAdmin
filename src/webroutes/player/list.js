@@ -179,7 +179,6 @@ async function handleDefault(ctx, dbo){
         disableWhitelist: !controllerConfigs.onJoinCheckWhitelist,
         permsDisable: {
             whitelist: !ctx.utils.checkPermission('players.whitelist', modulename, false),
-            revoke: !ctx.utils.checkPermission('players.ban', modulename, false),
             ban: !ctx.utils.checkPermission('players.ban', modulename, false),
         }
     };
@@ -356,11 +355,15 @@ async function processActionList(list){
     return list.map((log) => {
         let out = {
             id: log.id,
-            action: log.type.toUpperCase(),
+            type: log.type,
             date: (new Date(log.timestamp*1000)).toLocaleString(),
             reason: log.reason,
             author: log.author,
-            revocationNotice: false
+            revocationNotice: false,
+            color: null,
+            message: null,
+            isRevoked: null,
+            footerNote: null,
         };
         let actReference;
         if(log.playerName){
