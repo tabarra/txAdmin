@@ -64,6 +64,9 @@ option:disabled {
 .c-sidebar .c-sidebar-nav-link.c-active {
     border-left: aquamarine solid 3px;
 }
+[data-notify="message"] pre{
+	white-space: normal;
+}
 
 
 /* Console/Log marks */

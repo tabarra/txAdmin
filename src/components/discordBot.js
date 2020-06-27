@@ -84,13 +84,13 @@ module.exports = class DiscordBot {
             }
             const msg = new Discord.MessageEmbed({
                 color: 0x4287F5,
-                description: `**txAdmin** v${GlobalData.txAdminVersion} bot started :smiley:`
+                description: `:rocket: **txAdmin** v${GlobalData.txAdminVersion} bot started`
             });
             this.sendAnnouncement(msg);
         });
         this.client.on('message', this.handleMessage.bind(this));
         this.client.on('error', (error) => {
-            logError(error.message);
+            logError(`Error from Discord.js client: ${error.message}`);
         });
         this.client.on('resume', (error) => {
             if(GlobalData.verbose) logOk('Connection with Discord API server resumed');
@@ -101,7 +101,7 @@ module.exports = class DiscordBot {
         try {
             await this.client.login(this.config.token);
         } catch (error) {
-            logError(error.message);
+            logError(`Discord login failed with error: ${error.message}`);
             //TODO: colocar aqui mensagem de erro pra aparecer no dashboard
         }
     }
