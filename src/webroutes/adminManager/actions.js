@@ -7,6 +7,9 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
+const citizenfxIDRegex = /^\w{3,20}$/;
+const discordIDRegex = /^\d{7,20}$/;
+const nameRegex = /^[a-zA-Z0-9]{6,16}$/;
 
 
 /**
@@ -72,13 +75,13 @@ async function handleAdd(ctx) {
     if(permissions.includes('all_permissions')) permissions = ['all_permissions'];
 
     //Validate fields
-    if(!/^[a-zA-Z0-9]{6,16}$/.test(name)){
+    if(!nameRegex.test(name)){
         return ctx.send({type: 'danger', message: "Invalid username"});
     }
-    if(citizenfxID.length && !/^\w{3,20}$/.test(citizenfxID)){
+    if(citizenfxID.length && !citizenfxIDRegex.test(citizenfxID)){
         return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
     }
-    if(discordID.length && !/^\d{7,20}$/.test(discordID)){
+    if(discordID.length && !discordIDRegex.test(discordID)){
         return ctx.send({type: 'danger', message: "Invalid Discord ID"});
     }
 
@@ -112,39 +115,43 @@ async function handleEdit(ctx) {
     }
 
     //Prepare and filter variables
-    let name = ctx.request.body.name.trim();
-    let citizenfxID = ctx.request.body.citizenfxID.trim();
-    let discordID = ctx.request.body.discordID.trim();
-    let permissions = (Array.isArray(ctx.request.body.permissions))? ctx.request.body.permissions : [];
-    permissions = permissions.filter((x)=>{ return typeof x === 'string'});
-    if(permissions.includes('all_permissions')) permissions = ['all_permissions'];
+    const name = ctx.request.body.name.trim();
+    const citizenfxID = ctx.request.body.citizenfxID.trim();
+    const discordID = ctx.request.body.discordID.trim();
+    const editingSelf = (ctx.session.auth.username.toLowerCase() === name.toLowerCase());
+    let permissions;
+    if(!editingSelf){
+        if(Array.isArray(ctx.request.body.permissions)){
+            permissions = ctx.request.body.permissions.filter((x)=>{ return typeof x === 'string'});
+            if(permissions.includes('all_permissions')) permissions = ['all_permissions'];
+        }else{
+            permissions = [];
+        }        
+    }else{
+        permissions = undefined;
+    }
 
     //Validate fields
-    if(citizenfxID.length && !/^\w{3,20}$/.test(citizenfxID)){
+    if(citizenfxID.length && !citizenfxIDRegex.test(citizenfxID)){
         return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
     }
-    if(discordID.length && !/^\d{7,20}$/.test(discordID)){
+    if(discordID.length && !discordIDRegex.test(discordID)){
         return ctx.send({type: 'danger', message: "Invalid Discord ID"});
     }
 
-    //Check if editing himself
-    if(ctx.session.auth.username.toLowerCase() === name.toLowerCase()){
-        return ctx.send({type: 'danger', message: "You can't edit yourself."});
-    }
-
     //Check if admin exists
-    let admin = globals.authenticator.getAdminByName(name);
+    const admin = globals.authenticator.getAdminByName(name);
     if(!admin) return ctx.send({type: 'danger', message: "Admin not found."});
 
     //Check if editing an master admin
-    if(admin.master){
+    if(!ctx.session.auth.master && admin.master){
         return ctx.send({type: 'danger', message: "You cannot edit an admin master."});
     }
 
     //Add admin and give output
     try {
         await globals.authenticator.editAdmin(name, null, citizenfxID, discordID, permissions);
-        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Editing user '${name}'.`;
+        const logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Editing user '${name}'.`;
         logOk(logMessage);
         globals.logger.append(logMessage);
         return ctx.send({type: 'success', message: `refresh`});
@@ -209,30 +216,29 @@ async function handleGetModal(ctx) {
     ){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
-    let name = ctx.request.body.name.trim();
-
-    //Check if editing himself
-    if(ctx.session.auth.username.toLowerCase() === name.toLowerCase()){
-        return ctx.send("You can't edit yourself.");
-    }
+    const name = ctx.request.body.name.trim();
+    const editingSelf = (ctx.session.auth.username.toLowerCase() === name.toLowerCase());
 
     //Get admin data
-    let admin = globals.authenticator.getAdminByName(name);
+    const admin = globals.authenticator.getAdminByName(name);
     if(!admin) return ctx.send('Admin not found');
 
     //Check if editing an master admin
-    if(admin.master){
+    if(!ctx.session.auth.master && admin.master){
         return ctx.send("You cannot edit an admin master.");
     }
 
     //Prepare permissions
-    let allPermissions = globals.authenticator.getPermissionsList();
-    let permissions = allPermissions.map((perm) => {
-        return {
-            name: perm,
-            checked: (admin.permissions.includes(perm))? 'checked' : ''
-        }
-    });
+    let permissions;
+    if(!editingSelf){
+        let allPermissions = globals.authenticator.getPermissionsList();
+        permissions = allPermissions.map((perm) => {
+            return {
+                name: perm,
+                checked: (admin.permissions.includes(perm))? 'checked' : ''
+            }
+        });
+    }
 
     //Set render data
     let renderData = {
@@ -240,7 +246,8 @@ async function handleGetModal(ctx) {
         username: admin.name,
         citizenfx_id: (admin.providers.citizenfx)? admin.providers.citizenfx.id : '',
         discord_id: (admin.providers.discord)? admin.providers.discord.id : '',
-        permissions: permissions
+        permissions,
+        editingSelf
     }
 
     //Give output

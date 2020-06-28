@@ -44,13 +44,19 @@
     <label class="col-sm-3 col-form-label">
         Permissions
     </label>
-    <div class="col-sm-9">
-        {{@each(it.permissions) => perm, key}}
-        <div class="form-check checkbox">
-            <input class="form-check-input" id="modEditAdmin-{{key}}" type="checkbox" name="modEditAdmin-permissions[]"
-                value="{{perm.name}}" {{perm.checked}}>
-            <label class="form-check-label" for="modEditAdmin-{{key}}">{{perm.name}} </label>
+    {{@if(it.editingSelf)}}
+        <div class="col-sm-9 text-center pt-2">
+            <h5 class="text-secondary">you cannot edit your own permissions</h5>
         </div>
-        {{/each}}
-    </div>
+    {{#else}}
+        <div class="col-sm-9">
+            {{@each(it.permissions) => perm, key}}
+            <div class="form-check checkbox">
+                <input class="form-check-input" id="modEditAdmin-{{key}}" type="checkbox" name="modEditAdmin-permissions[]"
+                    value="{{perm.name}}" {{perm.checked}}>
+                <label class="form-check-label" for="modEditAdmin-{{key}}">{{perm.name}} </label>
+            </div>
+            {{/each}}
+        </div>
+    {{/if}}
 </div>

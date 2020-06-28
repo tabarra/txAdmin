@@ -68,15 +68,27 @@
                                 </td>
                                 <td>{{admin.perms}}</td>
                                 <td class="tableActions">
-                                    <button class="btn btn-sm btn-outline-primary"
-                                        onclick="getEditModal('{{admin.name}}')" {{admin.disableActions|isDisabled}}>
-                                        <i class="icon-pencil"></i> Edit
-                                    </button>
+                                    {{@if(admin.disableEdit)}}
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>
+                                            <i class="icon-pencil"></i> Edit
+                                        </button>
+                                    {{#else}}
+                                        <button class="btn btn-sm btn-outline-primary"
+                                            onclick="getEditModal('{{admin.name}}')">
+                                            <i class="icon-pencil"></i> Edit
+                                        </button>
+                                    {{/if}}
                                     &nbsp;
-                                    <button class="btn btn-sm btn-outline-danger"
-                                        onclick="deleteAdmin('{{admin.name}}')" {{admin.disableActions|isDisabled}}>
-                                        <i class="icon-trash"></i> Delete
-                                    </button>
+                                    {{@if(admin.disableDelete)}}
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>
+                                            <i class="icon-trash"></i> Delete
+                                        </button>
+                                    {{#else}}
+                                        <button class="btn btn-sm btn-outline-danger"
+                                            onclick="deleteAdmin('{{admin.name}}')">
+                                            <i class="icon-trash"></i> Delete
+                                        </button>
+                                    {{/if}}
                                 </td>
                             </tr>
                             {{/each}}

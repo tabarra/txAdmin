@@ -15,6 +15,7 @@
 - [x] set autostart as default, but only call spawnfunc if the cfg/data paths are set
 - [x] improve input readability in low-contrast monitors (css tweak)
 - [x] action revoking based on permission
+- [x] give `manage.admins` permission to edit their social IDs
 - [ ] add sv endpoint to say the whitelist/banlist usage
 - [ ] adapt kick messages to use some basic HTML formatting and 🆃🆇🅰🅳🅼🅸🅽
 - [ ] give master admin the permission to edit his discord/fivem ID
