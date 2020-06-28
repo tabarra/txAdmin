@@ -16,9 +16,10 @@
 - [x] improve input readability in low-contrast monitors (css tweak)
 - [x] action revoking based on permission
 - [x] give `manage.admins` permission to edit their social IDs
-- [ ] add sv endpoint to say the whitelist/banlist usage
+- [x] convert discordBot to use a commands folder
+- [ ] add a bunch of player manager commands to the discord bot
 - [ ] adapt kick messages to use some basic HTML formatting and 🆃🆇🅰🅳🅼🅸🅽
-- [ ] give master admin the permission to edit his discord/fivem ID
+- [ ] check why scheduled restarts are not kicking players
 
 TODO: Bot commands - poste it when starting the bot
 /ban <mention> <preset time> <reason>
@@ -31,7 +32,8 @@ TODO: Bot commands - poste it when starting the bot
 /log <mention> - shows the last 5 log entries for an discord identifier
 /kick <mention>
 
-> Soon™
+> Soon™ (hopefully the next update)
+- [ ] add sv endpoint to say the whitelist/banlist usage
 - [ ] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
 - [ ] break player page into `Players` and `Player Access`
         - `Player Access` will only contain the whitelist and band ids cards
@@ -39,7 +41,6 @@ TODO: Bot commands - poste it when starting the bot
 - [ ] monitor checks for duplicate active users every 10 minutes, then reports in diagnostics page
 - [ ] check everything done for xss
 - [ ] apply the new action log html to the modal
-- [ ] check why scheduled restarts are not kicking players
 - [ ] make `fxRunner.srvCmd()` itself perform the escaping
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
 - [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
@@ -49,7 +50,7 @@ TODO: Bot commands - poste it when starting the bot
 - [ ] change webserver token every time the server starts
 
 
-> Soon™®
+> Soon™® (hopefully in two months or so)
 - [ ] get all functions from `web\public\js\txadmin\players.js` and wrap in some object.
 - [ ] add some chart to the players page?
 - [ ] the weekly playtime counter per user?

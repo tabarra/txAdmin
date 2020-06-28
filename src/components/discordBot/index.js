@@ -1,21 +1,29 @@
 //Requires
 const modulename = 'DiscordBot';
 const Discord = require('discord.js');
-const humanizeDuration = require('humanize-duration');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
 if(typeof URLSearchParams === 'undefined'){
     global.URLSearchParams = require('url').URLSearchParams;
 }
 
+
 module.exports = class DiscordBot {
     constructor(config) {
         this.config = config;
         this.client = null;
         this.announceChannel = null;
-        this.cronFunc = null;
-        this.spamLimitCache = {}
+        
+        //NOTE: New
+        this.commands = null;
+        this.setupCommands();
+
+        //FIXME: Settings
+        this.config = Object.assign({}, config); //DEBUG: REMOVE!
+        this.config.prefix = '/';
+
+        
         if(!this.config.enabled){
             logOk('Disabled by the config file.');
         }else{
@@ -30,7 +38,6 @@ module.exports = class DiscordBot {
      */
     refreshConfig(){
         this.config = globals.configVault.getScoped('discordBot');
-        clearInterval(this.cronFunc);
         if(this.client !== null){
             logWarn(`Stopping Discord Bot`);
             this.client.destroy();
@@ -40,6 +47,20 @@ module.exports = class DiscordBot {
             this.startBot();
         }
     }//Final refreshConfig()
+
+
+    //================================================================
+    /**
+     * Setup all commands
+     * NOTE: setting them up statically due to webpack requirements
+     */
+    setupCommands(){
+        this.commands = new Discord.Collection([
+            ['help', require('./commands/help.js')],
+            ['status', require('./commands/status.js')],
+            ['txadmin', require('./commands/txadmin.js')],
+        ]);
+    }
 
 
     //================================================================
@@ -74,7 +95,7 @@ module.exports = class DiscordBot {
         //Setup client
         this.client = new Discord.Client({autoReconnect:true});
 
-        //Setup event listeners
+        //Setup Ready listener
         this.client.on('ready', async () => {
             logOk(`Started and logged in as '${this.client.user.tag}'`);
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
@@ -82,12 +103,28 @@ module.exports = class DiscordBot {
             if(!this.announceChannel){
                 logError(`The announcements channel could not be found. Check the ID: ${this.config.announceChannel}`);
             }
+
+            //Prepare description
+            let cmdDescs = [];
+            this.commands.each((cmd, name) => {
+                cmdDescs.push(`${this.config.prefix}${name}: ${cmd.description}`);
+            });
+            const descLines = [
+                `:rocket: **txAdmin** v${GlobalData.txAdminVersion} bot started!`,
+                `:game_die: **Commands:**`,
+                '```',
+                ...cmdDescs,
+                '```',
+            ];
             const msg = new Discord.MessageEmbed({
                 color: 0x4287F5,
-                description: `:rocket: **txAdmin** v${GlobalData.txAdminVersion} bot started`
+                description: descLines.join('\n')
             });
+            
             this.sendAnnouncement(msg);
         });
+
+        //Setup remaining event listeners
         this.client.on('message', this.handleMessage.bind(this));
         this.client.on('error', (error) => {
             logError(`Error from Discord.js client: ${error.message}`);
@@ -106,79 +143,36 @@ module.exports = class DiscordBot {
         }
     }
 
-
     //================================================================
     async handleMessage(message){
+        //Ignoring bots and DMs
         if(message.author.bot) return;
-        let outMsg = false;
+        if(message.channel.type !== 'text') return;
 
-        //Checking if message is a command
-        if(message.content.startsWith(this.config.statusCommand)){
-            //Check spam limiter
-            if(!this.spamLimitChecker(this.config.statusCommand, message.channel.id)){
-                if(GlobalData.verbose) log(`Spam prevented for command "${this.config.statusCommand}" in channel "${message.channel.name}".`);
-                return;
-            }
-            this.spamLimitRegister(this.config.statusCommand, message.channel.id);
+        //Parse message
+        const args = message.content.slice(this.config.prefix.length).split(/\s+/);
+        const commandName = args.shift().toLowerCase();
 
-            //Prepare message's RichEmbed + template variables
-            let replaces = {};
-            let cardColor, cardTitle;
-            if(globals.monitor.currentStatus == 'ONLINE' || globals.monitor.currentStatus == 'PARTIAL'){
-                cardColor = 0x74EE15;
-                cardTitle = globals.translator.t('discord.status_online', {servername: globals.config.serverName});
-                replaces.players = (Array.isArray(globals.playerController.activePlayers))? globals.playerController.activePlayers.length : '--';
-                replaces.port = (globals.config.forceFXServerPort)? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
-            }else{
-                cardColor = 0xF000FF;
-                cardTitle = globals.translator.t('discord.status_offline', {servername: globals.config.serverName});
-                replaces.players = '--';
-                replaces.port = '--';
-            }
-            let humanizeOptions = {
-                language: globals.translator.t('$meta.humanizer_language'),
-                round: true,
-                units: ['d', 'h', 'm', 's'],
-                fallbacks: ['en']
-            }
-            replaces.uptime = humanizeDuration(globals.fxRunner.getUptime()*1000, humanizeOptions);
-            
-            //Replacing text
-            let desc = this.config.statusMessage;
-            Object.entries(replaces).forEach(([key, value]) => {
-                desc = desc.replace(`<${key}>`, value);
-            });
+        //Check if its a recognized command
+        const command = this.commands.get(commandName) 
+                        || this.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+        if (!command) return;
 
-            //Prepare object
-            outMsg = new Discord.MessageEmbed({
-                title: cardTitle,
-                color: cardColor,
-                description: desc,
-                footer: `Powered by txAdmin v${GlobalData.txAdminVersion}.`
-            });
+        //TODO: Check spam limiter
+        // if(!this.spamLimitChecker(this.config.statusCommand, message.channel.id)){
+        //     if(GlobalData.verbose) log(`Spam prevented for command "${this.config.statusCommand}" in channel "${message.channel.name}".`);
+        //     return;
+        // }
+        // this.spamLimitRegister(this.config.statusCommand, message.channel.id);
 
-        }else if(message.content.startsWith('/txadmin')){
-            //Prepare object
-            outMsg = new Discord.MessageEmbed({
-                color: 0x4DEEEA,
-                title: `${globals.config.serverName} uses txAdmin v${GlobalData.txAdminVersion}!`,
-                description: `Checkout the project:\n GitHub: https://github.com/tabarra/txAdmin\n Discord: https://discord.gg/f3TsfvD`
-            });
-        }
+        // TODO: Save usage
+        // this.addUsageStats(commandName);
 
-        //If its not a recognized command
-        if(!outMsg) return;
-
-        //Sending message
+        //Executing command
         try {
-            let sentMsg = await message.channel.send(outMsg);
-            //Example: if you want to delete the messages after a few seconds.
-            // setTimeout(() => {
-            //     sentMsg.delete()
-            //     message.delete()
-            // }, 10*1000);
+            let sentMsg = await command.execute(message, args);
         } catch (error) {
-            logError(`Failed to send message with error: ${error.message}`);
+            logError(`Failed to execute ${commandName}: ${error.message}`);
         }
     }
 
@@ -186,6 +180,7 @@ module.exports = class DiscordBot {
     //================================================================
     /**
      * Checks the spamLimitCache and returns false if its still in cooldown
+     * FIXME:
      * @param {string} cmd
      * @param {string} chan
      */
@@ -199,6 +194,7 @@ module.exports = class DiscordBot {
     //================================================================
     /**
      * Registers a command execution in the spamLimitCache
+     * FIXME:
      * @param {string} cmd
      * @param {string} chan
      */
