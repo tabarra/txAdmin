@@ -22,8 +22,7 @@ module.exports = class TimeSeries {
         this.file = file;
         this.resolution = resolution;
         this.window = window;
-        this.maxEntries = (window / resolution).toFixed(0);
-
+        this.maxEntries = Math.round(window / resolution);
 
         //Load previous data
         let rawFile;

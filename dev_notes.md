@@ -21,13 +21,14 @@
 - [ ] adapt kick messages to use some basic HTML formatting and 🆃🆇🅰🅳🅼🅸🅽
 - [ ] check why scheduled restarts are not kicking players
 
-TODO: Bot commands - poste it when starting the bot
-/ban <mention> <preset time> <reason>
+TODO: Bot commands:
+/ban <mention> <time> <reason>
 /unban <ban-id>
 /info - shows your info like join date and play time
 /info <mention> - shows someone else's info
 /addwl <wl req id>
-/addwl <mention> ???
+/addwl <license>
+/addwl <mention>
 /removewl <mention>
 /log <mention> - shows the last 5 log entries for an discord identifier
 /kick <mention>

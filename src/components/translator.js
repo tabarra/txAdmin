@@ -4,6 +4,7 @@ const fs = require('fs');
 const Polyglot = require('node-polyglot');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
+//Statically requiring languages because of webpack
 const languages = {
     ar: require('../../locale/ar.json'),
     cs: require('../../locale/cs.json'),
