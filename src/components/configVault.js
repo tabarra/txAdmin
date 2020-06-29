@@ -7,7 +7,7 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const toDefault = (input, defVal) => { return (isUndefined(input))? defVal : input };
-function removeNulls(obj) {
+const removeNulls = (obj) => {
     var isArray = obj instanceof Array;
     for (var k in obj) {
         if (obj[k] === null) isArray ? obj.splice(k, 1) : delete obj[k];
@@ -16,7 +16,19 @@ function removeNulls(obj) {
     }
     return obj;
 }
-
+const deepFreeze = (obj) => {
+    Object.freeze(obj);
+    Object.getOwnPropertyNames(obj).forEach(function (prop) {
+        if(obj.hasOwnProperty(prop)
+            && obj[prop] !== null
+            && (typeof obj[prop] === "object" || typeof obj[prop] === "function")
+            && !Object.isFrozen(obj[prop])
+        ){
+            deepFreeze(obj[prop]);
+        }
+    });
+    return obj;
+};
 
 module.exports = class ConfigVault {
     constructor(profilePath, serverProfile) {
@@ -271,16 +283,16 @@ module.exports = class ConfigVault {
      */
     getAll(){
         let cfg = clone(this.config);
-        return {
-            global: Object.freeze(cfg.global),
-            logger: Object.freeze(cfg.logger),
-            monitor: Object.freeze(cfg.monitor),
-            playerController: Object.freeze(cfg.playerController),
-            authenticator: Object.freeze(cfg.authenticator),
-            webServer: Object.freeze(cfg.webServer),
-            discordBot: Object.freeze(cfg.discordBot),
-            fxRunner: Object.freeze(cfg.fxRunner),
-        };
+        return deepFreeze({
+            global: cfg.global,
+            logger: cfg.logger,
+            monitor: cfg.monitor,
+            playerController: cfg.playerController,
+            authenticator: cfg.authenticator,
+            webServer: cfg.webServer,
+            discordBot: cfg.discordBot,
+            fxRunner: cfg.fxRunner,
+        });
     }
 
 
