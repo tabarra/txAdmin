@@ -14,15 +14,8 @@ module.exports = class DiscordBot {
         this.config = config;
         this.client = null;
         this.announceChannel = null;
-        
-        //NOTE: New
         this.commands = null;
         this.setupCommands();
-
-        //FIXME: Settings
-        this.config = Object.assign({}, config); //DEBUG: REMOVE!
-        this.config.prefix = '/';
-
         
         if(!this.config.enabled){
             logOk('Disabled by the config file.');
@@ -118,6 +111,7 @@ module.exports = class DiscordBot {
                 `:game_die: **Commands:**`,
                 '```',
                 ...cmdDescs,
+                '(more commands to come soon...)',
                 '```',
             ];
             const msg = new Discord.MessageEmbed({

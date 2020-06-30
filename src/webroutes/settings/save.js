@@ -308,7 +308,7 @@ function handleDiscord(ctx) {
         isUndefined(ctx.request.body.enabled) ||
         isUndefined(ctx.request.body.token) ||
         isUndefined(ctx.request.body.announceChannel) ||
-        isUndefined(ctx.request.body.statusCommand) ||
+        isUndefined(ctx.request.body.prefix) ||
         isUndefined(ctx.request.body.statusMessage)
     ){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
@@ -319,7 +319,7 @@ function handleDiscord(ctx) {
         enabled: (ctx.request.body.enabled === 'true'),
         token: ctx.request.body.token.trim(),
         announceChannel: ctx.request.body.announceChannel.trim(),
-        statusCommand: ctx.request.body.statusCommand.trim(),
+        prefix: ctx.request.body.prefix.trim(),
         statusMessage: ctx.request.body.statusMessage.trim(),
     }
 
@@ -328,7 +328,7 @@ function handleDiscord(ctx) {
     newConfig.enabled = cfg.enabled;
     newConfig.token = cfg.token;
     newConfig.announceChannel = (cfg.announceChannel.length)? cfg.announceChannel : false;
-    newConfig.statusCommand = cfg.statusCommand;
+    newConfig.prefix = cfg.prefix;
     newConfig.statusMessage = cfg.statusMessage;
     let saveStatus = globals.configVault.saveProfile('discordBot', newConfig);
 

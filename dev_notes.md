@@ -18,7 +18,7 @@
 - [x] give `manage.admins` permission to edit their social IDs
 - [x] convert discordBot to use a commands folder
 - [x] discord bot: add /addwl command
-- [ ] discord bot: change settings to accept only prefix
+- [x] discord bot: change settings to accept prefix
 - [ ] remove html tags from kick messages (hopefully temporarily)
 
 TODO: Bot commands:
@@ -34,6 +34,7 @@ TODO: Bot commands:
 /kick <mention>
 
 > Soon™ (hopefully the next update)
+- [ ] discord bot: re-add spam limiter
 - [ ] adapt kick messages to use some basic HTML formatting and 🆃🆇🅰🅳🅼🅸🅽
 - [ ] check why scheduled restarts are not kicking players
 - [ ] add sv endpoint to say the whitelist/banlist usage

@@ -368,29 +368,29 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmDiscord-statusCommand" class="col-sm-3 col-form-label">
-                                Status Command
+                            <label for="frmDiscord-prefix" class="col-sm-3 col-form-label">
+                                Command Prefix
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmDiscord-statusCommand" value="{{it.discord.statusCommand|undef}}"
-                                    placeholder="/status" {{it.readOnly|isDisabled}}>
+                                <input type="text" class="form-control" id="frmDiscord-prefix" value="{{it.discord.prefix|undef}}"
+                                    placeholder="/" maxlength="1" {{it.readOnly|isDisabled}}>
                                 <span class="form-text text-muted">
-                                    The command that will trigger a status message from the bot.
+                                    The prefix for all commands.
                                 </span>
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <label for="frmDiscord-statusMessage" class="col-sm-3 col-form-label">
-                                Status Message
+                                Status Command Message
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
                                 <textarea class="form-control" id="frmDiscord-statusMessage" rows="4" 
                                     placeholder="**IP:** `connect cfx.re/join/xxxxxx`&#10;**Players:** &lt;players&gt;&#10;**Uptime:** &lt;uptime&gt;" {{it.readOnly|isDisabled}}>{{it.discord.statusMessage|undef}}</textarea>
                                 <span class="form-text text-muted">
-                                    The command response. <br>
+                                    The response to the <code>/status</code> command. <br>
                                     Supported placeholders: <code>players</code>, <code>port</code>, <code>uptime</code>.
                                 </span>
                             </div>
@@ -567,10 +567,10 @@
             enabled: ($('#frmDiscord-enabled').is(':checked') === true),
             token: $('#frmDiscord-token').val().trim(),
             announceChannel: $('#frmDiscord-announceChannel').val().trim(),
-            statusCommand: $('#frmDiscord-statusCommand').val().trim(),
+            prefix: $('#frmDiscord-prefix').val().trim(),
             statusMessage: $('#frmDiscord-statusMessage').val().trim()
         };
-        if (data.enabled && (!data.token.length || !data.statusCommand.length || !data.statusMessage.length)) {
+        if (data.enabled && (!data.token.length || !data.prefix.length || !data.statusMessage.length)) {
             var notify = $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
             return;
         }

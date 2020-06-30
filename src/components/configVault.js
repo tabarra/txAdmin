@@ -151,7 +151,7 @@ module.exports = class ConfigVault {
                 enabled: toDefault(cfg.discordBot.enabled, null),
                 token:  toDefault(cfg.discordBot.token, null),
                 announceChannel:  toDefault(cfg.discordBot.announceChannel, null),
-                statusCommand: toDefault(cfg.discordBot.statusCommand, '/status'),
+                prefix: toDefault(cfg.discordBot.prefix, '/'),
                 statusMessage: toDefault(cfg.discordBot.statusMessage, '**IP:** \`change-me:<port>\`\n**Players:** <players>\n**Uptime:** <uptime>'),
                 commandCooldown: toDefault(cfg.discordBot.commandCooldown, null), //not in template
             };
@@ -218,7 +218,7 @@ module.exports = class ConfigVault {
 
             //DiscordBot
             cfg.discordBot.enabled = (cfg.discordBot.enabled === 'true' || cfg.discordBot.enabled === true);
-            cfg.discordBot.statusCommand = cfg.discordBot.statusCommand || '/status';
+            cfg.discordBot.prefix = cfg.discordBot.prefix || '/';
             cfg.discordBot.statusMessage = cfg.discordBot.statusMessage || '**IP:** \`change-me:<port>\`\n**Players:** <players>\n**Uptime:** <uptime>';
             cfg.discordBot.commandCooldown = parseInt(cfg.discordBot.commandCooldown) || 30; //not in template
 
