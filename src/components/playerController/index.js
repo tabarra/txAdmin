@@ -8,7 +8,6 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000) };
-const nanoidAlphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
 
 //Consts
 const validActions = ['ban', 'warn', 'whitelist']
@@ -44,7 +43,7 @@ const currentDatabaseVersion = 1;
  *          author: null,
  *      }
  *  - `pendingWL`
- *      - id [R????]
+ *      - id [R####]
  *      - license
  *      - name
  *      - tsLastAttempt
@@ -380,7 +379,7 @@ module.exports = class PlayerController {
                         pending.tsLastAttempt = now();
                         whitelistID = pending.id;
                     }else{
-                        whitelistID = 'R' + customAlphabet(nanoidAlphabet, 4)()
+                        whitelistID = 'R' + customAlphabet(GlobalData.noLookAlikesAlphabet, 4)()
                         let toDB = {
                             id: whitelistID,
                             name: playerName,
@@ -456,7 +455,10 @@ module.exports = class PlayerController {
 
         //Saves it to the database
         let actionPrefix = (type == 'warn')? 'a' : type[0];
-        let actionID = actionPrefix.toUpperCase() + customAlphabet(nanoidAlphabet, 3)() + '-' + customAlphabet(nanoidAlphabet, 4)();
+        let actionID = actionPrefix.toUpperCase() 
+            + customAlphabet(GlobalData.noLookAlikesAlphabet, 3)() 
+            + '-' 
+            + customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
         let toDB = {
             id: actionID,
             type,
@@ -553,7 +555,7 @@ module.exports = class PlayerController {
             saveReference = [`license:${reference}`];
             let pending = await this.dbo.get("pendingWL").find(pendingFilter).value();
             if(pending) playerName = pending.name;
-        }else if(/R[2346789ABCDEFGHJKLMNPQRTUVWXYZ]{4}/.test(reference)){
+        }else if(GlobalData.regexWhitelistReqID.test(reference)){
             pendingFilter = {id: reference};
             let pending = await this.dbo.get("pendingWL").find(pendingFilter).value();
             if(!pending) throw new Error('Pending ID not found in database');

@@ -69,7 +69,6 @@ async function handleSearch(ctx, dbo){
             .filter((e, i, arr) => {
                 return arr.indexOf(e) == i;
             });
-        
 
         //IF searching for identifiers
         if(idsArray.length){
@@ -101,7 +100,7 @@ async function handleSearch(ctx, dbo){
             
 
         //IF searching for an acition ID
-        }else if(/^\w{4}-\w{4}$/.test(searchString)){
+        }else if(GlobalData.regexActionID.test(searchString.toUpperCase())){
             const action = await dbo.get("actions")
                 .find({id: searchString.toUpperCase()})
                 .cloneDeep()

@@ -124,6 +124,7 @@ let txAdminVerboseConvar = GetConvar('txAdminVerbose', 'false').trim();
 const verbose = (['true', '1', 'on'].includes(txAdminVerboseConvar));
 
 //Setting Global Data
+const noLookAlikesAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 GlobalData = {
     //Env
     osType,
@@ -146,6 +147,9 @@ GlobalData = {
         discord: /^discord:\d{7,20}$/,
         fivem: /^fivem:\d{1,8}$/,
     },
+    regexActionID: new RegExp(`^[${noLookAlikesAlphabet}]{4}-[${noLookAlikesAlphabet}]{4}$`),
+    regexWhitelistReqID: new RegExp(`R[${noLookAlikesAlphabet}]{4}`),
+    noLookAlikesAlphabet,
     //Vars
     cfxUrl: null,
 }
