@@ -20,6 +20,10 @@
 - [x] discord bot: add /addwl command
 - [x] discord bot: change settings to accept prefix
 - [x] remove html tags from kick messages (hopefully temporarily)
+- [x] update dependencies
+- [ ] add stats endpoint
+- [ ] replace timestamp function in update checking
+- [ ] build test + version bump
 
 TODO: Bot commands:
 /ban <mention> <time> <reason>
