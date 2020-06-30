@@ -1,7 +1,4 @@
 ## TODO v2
-- [x] player page: fix ban ids permission
-- [x] player page: add expiration note to the action history
-- [x] ignore EPIPE koa errors
 > v2.5.1
 - [x] validate that min session time is valid
 - [x] fix revoke button always visible
@@ -22,8 +19,10 @@
 - [x] remove html tags from kick messages (hopefully temporarily)
 - [x] update dependencies
 - [x] add stats endpoint
-- [ ] replace timestamp function in update checking
-- [ ] build test + version bump
+- [x] replace timestamp function in update checking
+- [x] build test + version bump
+> v2.6.0
+- [ ] xxx
 
 TODO: Bot commands:
 /ban <mention> <time> <reason>

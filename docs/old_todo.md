@@ -255,7 +255,10 @@ More:
 - [x] test on latest build
 - [x] fix action div - revoke of action with no text looks bad
 > v2.5.0
-
+- [x] player page: fix ban ids permission
+- [x] player page: add expiration note to the action history
+- [x] ignore EPIPE koa errors
+> v2.5.1
 
 
 

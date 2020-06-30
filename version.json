@@ -185,6 +185,10 @@
         {
             "version": "2.5.1",
             "changelog": "Minor fixes and UI improvements."
+        },
+        {
+            "version": "2.6.0",
+            "changelog": "Added player/action search feature. Added discord whitelist command. Added new player modal to the server log. Minor tweaks, fixes and housekeeping."
         }
     ]
 }

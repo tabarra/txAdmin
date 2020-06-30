@@ -8,6 +8,7 @@ const helpers = require('../../extras/helpers');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
+const now = () => { return Math.round(Date.now() / 1000) };
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
 const getRenderErrorText = (view, error, data) => {
@@ -64,7 +65,7 @@ async function renderMasterView(view, reqSess, data){
     if(isUndefined(data)) data = {};
     data.headerTitle = (!isUndefined(data.headerTitle))? `${data.headerTitle} - txAdmin` : 'txAdmin';
     data.txAdminVersion = GlobalData.txAdminVersion;
-    data.txAdminTooOutdated = GlobalData.txAdminTooOutdated;
+    data.txAdminOutdated = (now() > GlobalData.txAdminVersionBestBy);
     data.fxServerVersion = GlobalData.fxServerVersion;
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username)? reqSess.auth.username : 'unknown user';
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture)? reqSess.auth.picture : 'img/default_avatar.png';

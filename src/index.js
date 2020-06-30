@@ -66,10 +66,11 @@ if(typeof txAdminVersion !== 'string' || txAdminVersion == 'null'){
 }
 
 //Check if this version of txAdmin is too outdated to be considered safe to use in prod
-//FIXME: Only valid if its being very actively maintained.
-const txAdminTooOutdated = (now() >  1593475200); //30 Jun 2020
-if(txAdminTooOutdated){
-    logError(`This version of txAdmin is too much outdated.`);
+//NOTE: Only valid if its being very actively maintained.
+//          Use 30d for patch 0, or 45~60d otherwise
+const txAdminVersionBestBy = 1593513059 + (30 * 86400); //2020-06-30 + 30 days
+if(now() > txAdminVersionBestBy){
+    logError(`This version of txAdmin is outdated.`);
     logError(`Please update as soon as possible.`);
 }
 
@@ -131,7 +132,7 @@ GlobalData = {
     resourceName,
     fxServerVersion,
     txAdminVersion,
-    txAdminTooOutdated,
+    txAdminVersionBestBy,
     //Convars
     txAdminResourcePath,
     fxServerPath,

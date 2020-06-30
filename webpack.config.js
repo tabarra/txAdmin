@@ -36,13 +36,8 @@ module.exports = {
         filename: 'main.js'
     },
     externals: {
-        // engine.io
-        uws: 'uws',
-        
         // discord.js
-        '@discordjs/opus': 'empty',
-        'node-opus': 'empty',
-        'opusscript': 'empty',
+        'ffmpeg-static': 'empty',
     },
     stats: 'errors-warnings',
     plugins: [
@@ -57,7 +52,6 @@ module.exports = {
                 '*.md',
                 'fxmanifest.lua',
                 'scripts/*.lua',
-                'scripts/cl_*.js', 
                 'scripts/*.html', 
                 'scripts/assets/**', 
                 'web/**',
