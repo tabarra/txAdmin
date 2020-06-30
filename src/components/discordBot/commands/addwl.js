@@ -1,6 +1,5 @@
 //Requires
 const modulename = 'DiscordBot:cmd:addwl';
-const { MessageEmbed } = require("discord.js");
 const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
 
 /**

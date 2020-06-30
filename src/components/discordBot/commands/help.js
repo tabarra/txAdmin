@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'DiscordBot:cmd:help';
-const { MessageEmbed } = require("discord.js");
+const { RichEmbed } = require("discord.js");
 const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
 
 module.exports = {
@@ -16,9 +16,10 @@ module.exports = {
             `:game_die: **Available commands:**`,
             '```',
             ...cmdDescs,
+            '...more commands to come soon 😮',
             '```',
         ];
-        const outMsg = new MessageEmbed({
+        const outMsg = new RichEmbed({
             color: 0x4287F5,
             description: descLines.join('\n')
         });

@@ -37,7 +37,9 @@ module.exports = {
     },
     externals: {
         // discord.js
-        'ffmpeg-static': 'empty',
+        '@discordjs/opus': 'empty',
+        'node-opus': 'empty',
+        'opusscript': 'empty',
     },
     stats: 'errors-warnings',
     plugins: [

@@ -1,7 +1,7 @@
 //Requires
 const modulename = 'DiscordBot:cmd:status';
 const humanizeDuration = require('humanize-duration');
-const { MessageEmbed } = require("discord.js");
+const { RichEmbed } = require("discord.js");
 const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
 
 module.exports = {
@@ -36,7 +36,7 @@ module.exports = {
         });
 
         //Prepare object
-        const outMsg = new MessageEmbed({
+        const outMsg = new RichEmbed({
             color: cardColor,
             title: cardTitle,
             description: desc,

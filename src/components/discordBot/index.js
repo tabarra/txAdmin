@@ -1,6 +1,10 @@
 //Requires
 const modulename = 'DiscordBot';
 const Discord = require('discord.js');
+
+//FIXME: remove when updating to djs12, as well as this from the package.json
+const Collection = require('@discordjs/collection'); 
+
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
@@ -48,7 +52,7 @@ module.exports = class DiscordBot {
      * NOTE: setting them up statically due to webpack requirements
      */
     setupCommands(){
-        this.commands = new Discord.Collection([
+        this.commands = new Collection([
             ['addwl', require('./commands/addwl.js')],
             ['help', require('./commands/help.js')],
             ['status', require('./commands/status.js')],
@@ -69,7 +73,7 @@ module.exports = class DiscordBot {
         if(
             !this.config.announceChannel ||
             !this.client ||
-            this.client.ws.status ||
+            this.client.status ||
             !this.announceChannel
         ){
             if(GlobalData.verbose) logWarn(`returning false, not ready yet`, 'sendAnnouncement');
@@ -96,30 +100,29 @@ module.exports = class DiscordBot {
         this.client.on('ready', async () => {
             logOk(`Started and logged in as '${this.client.user.tag}'`);
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
-            this.announceChannel = await this.client.channels.resolve(this.config.announceChannel);
+            // this.announceChannel = await this.client.channels.resolve(this.config.announceChannel);
+            this.announceChannel = this.client.channels.find(x => x.id === this.config.announceChannel);
             if(!this.announceChannel){
                 logError(`The announcements channel could not be found. Check the ID: ${this.config.announceChannel}`);
+            }else{
+                let cmdDescs = [];
+                this.commands.forEach((cmd, name) => {
+                    cmdDescs.push(`${this.config.prefix}${name}: ${cmd.description}`);
+                });
+                const descLines = [
+                    `:rocket: **txAdmin** v${GlobalData.txAdminVersion} bot started!`,
+                    `:game_die: **Commands:**`,
+                    '```',
+                    ...cmdDescs,
+                    '...more commands to come soon 😮',
+                    '```',
+                ];
+                const msg = new Discord.RichEmbed({
+                    color: 0x4287F5,
+                    description: descLines.join('\n')
+                });
+                this.announceChannel.send(msg);
             }
-
-            //Prepare description
-            let cmdDescs = [];
-            this.commands.each((cmd, name) => {
-                cmdDescs.push(`${this.config.prefix}${name}: ${cmd.description}`);
-            });
-            const descLines = [
-                `:rocket: **txAdmin** v${GlobalData.txAdminVersion} bot started!`,
-                `:game_die: **Commands:**`,
-                '```',
-                ...cmdDescs,
-                '(more commands to come soon...)',
-                '```',
-            ];
-            const msg = new Discord.MessageEmbed({
-                color: 0x4287F5,
-                description: descLines.join('\n')
-            });
-            
-            this.sendAnnouncement(msg);
         });
 
         //Setup remaining event listeners

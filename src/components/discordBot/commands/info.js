@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'DiscordBot:cmd:info';
-const { MessageEmbed } = require("discord.js");
+const { RichEmbed } = require("discord.js");
 const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
 
 //TODO: this doesn't make sense if we are not saving ot the db the player identifiers
