@@ -17,9 +17,9 @@
 - [x] action revoking based on permission
 - [x] give `manage.admins` permission to edit their social IDs
 - [x] convert discordBot to use a commands folder
-- [ ] add a bunch of player manager commands to the discord bot
-- [ ] adapt kick messages to use some basic HTML formatting and 🆃🆇🅰🅳🅼🅸🅽
-- [ ] check why scheduled restarts are not kicking players
+- [x] discord bot: add /addwl command
+- [ ] discord bot: change settings to accept only prefix
+- [ ] remove html tags from kick messages (hopefully temporarily)
 
 TODO: Bot commands:
 /ban <mention> <time> <reason>
@@ -34,6 +34,8 @@ TODO: Bot commands:
 /kick <mention>
 
 > Soon™ (hopefully the next update)
+- [ ] adapt kick messages to use some basic HTML formatting and 🆃🆇🅰🅳🅼🅸🅽
+- [ ] check why scheduled restarts are not kicking players
 - [ ] add sv endpoint to say the whitelist/banlist usage
 - [ ] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
 - [ ] break player page into `Players` and `Player Access`

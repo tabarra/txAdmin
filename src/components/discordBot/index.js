@@ -56,9 +56,13 @@ module.exports = class DiscordBot {
      */
     setupCommands(){
         this.commands = new Discord.Collection([
+            ['addwl', require('./commands/addwl.js')],
             ['help', require('./commands/help.js')],
             ['status', require('./commands/status.js')],
             ['txadmin', require('./commands/txadmin.js')],
+
+            //FIXME: first we need to have player ids in the players db
+            // ['info', require('./commands/info.js')], 
         ]);
     }
 
