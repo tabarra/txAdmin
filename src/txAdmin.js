@@ -27,7 +27,7 @@ globals = {
         resourcesList: null,
         serverLog: [],
         updateChecker: null,
-        debugPlayerlist: false, //NOTE: Debug only
+        heartbeatStats: {}
     },
 }
 

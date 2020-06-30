@@ -25,6 +25,14 @@ module.exports = async function Intercom(ctx) {
     if(scope == 'monitor'){
         try {
             globals.monitor.handleHeartBeat(postData);
+            const outData = {
+                txAdminVersion: GlobalData.txAdminVersion,
+                fxServerUptime: globals.fxRunner.getUptime(),
+                banlistEnabled: globals.playerController.config.onJoinCheckBan,
+                whitelistEnabled: globals.playerController.config.onJoinCheckWhitelist,
+                heartbeatStats: globals.databus.heartbeatStats,
+            }
+            return ctx.send(JSON.stringify(outData));
         } catch (error) {}
 
     }else if(scope == 'resources'){

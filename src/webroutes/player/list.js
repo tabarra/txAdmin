@@ -233,12 +233,23 @@ async function getStats(dbo){
         }
         const playTime = humanizeDuration(playTimeSeconds, humanizeOptions);
         
+        //Stats only:
+        //DEBUG reevaluate this in the future
+        globals.databus.heartbeatStats = {
+            ts: now(),
+            players: playerStats.players,
+            playTime: playerStats.playTime,
+            bans: actionStats.bans,
+            warns: actionStats.warns,
+            whitelists: actionStats.whitelists,
+        }
+
         return {
             players: playerStats.players.toLocaleString(),
             playTime: playTime,
-            whitelists: actionStats.whitelists.toLocaleString(),
             bans: actionStats.bans.toLocaleString(),
-            warns: actionStats.warns.toLocaleString()
+            warns: actionStats.warns.toLocaleString(),
+            whitelists: actionStats.whitelists.toLocaleString(),
         }
     } catch (error) {
         const msg = `getStats failed with error: ${error.message}`;

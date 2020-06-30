@@ -23,6 +23,7 @@ end
 
 
 -- Setup threads and commands
+local hbReturnData = 'no-data'
 log("Version "..txAdminClientVersion.." starting...")
 CreateThread(function()
     RegisterCommand("txaPing", txaPing, true)
@@ -40,6 +41,7 @@ CreateThread(function()
         end
     end)
     AddEventHandler('playerConnecting', handleConnections)
+    SetHttpHandler(handleHttp)
     log("Threads and commands set up. All Ready.")
 end)
 
@@ -76,9 +78,21 @@ function HeartBeat()
     PerformHttpRequest(url, function(httpCode, data, resultHeaders)
         local resp = tostring(data)
         if httpCode ~= 200 then
-            logError("HeartBeat failed with code "..httpCode.." and message: "..resp)
+            hbReturnData = "HeartBeat failed with code "..httpCode.." and message: "..resp
+            logError(hbReturnData)
+        else
+            hbReturnData = resp
         end
     end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
+end
+
+-- HTTP request handler
+function handleHttp(req, res)
+    if req.path == '/stats.json' then
+        return res.send(hbReturnData)
+    else
+        return res.send('')
+    end
 end
 
 -- Ping!
