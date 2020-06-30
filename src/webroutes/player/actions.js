@@ -149,19 +149,21 @@ async function handleKick(ctx) {
     )){
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
-    let id = ctx.request.body.id;
-    let reason = ctx.request.body.reason.trim() || 'no reason provided';
+    const id = ctx.request.body.id;
+    const reason = ctx.request.body.reason.trim() || 'no reason provided';
 
     //Check permissions
     if(!ensurePermission(ctx, 'players.kick')) return false;
 
     //Prepare and send command
     ctx.utils.appendLog(`Kicked #${id}: ${reason}`);
-    let message = `You have been kicked from this server. <br>`;
-    message += `<b>Kicked for:</b> ${xss(reason)} <br>`;
-    message += `<b>Kicked by:</b> ${xss(ctx.session.auth.username)}`;
-    let cmd = formatCommand('txaKickID', id, message);
-    let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+    // let message = `You have been kicked from this server. \n`;
+    // message += `<b>Kicked for:</b> ${xss(reason)} \n`;
+    // message += `<b>Kicked by:</b> ${xss(ctx.session.auth.username)}`;
+    // const msg = `[🆃🆇🅰🅳🅼🅸🅽] You have been kicked from this server by ${xss(ctx.session.auth.username)}. Kick reason: ${xss(reason)}`;
+    const msg = `[txAdmin] (${xss(ctx.session.auth.username)}) Kick reason: ${xss(reason)}`;
+    const cmd = formatCommand('txaKickID', id, msg);
+    const toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);
 }
 
@@ -269,18 +271,19 @@ async function handleBan(ctx) {
     }
 
     //Prepare and send command
-    const durationMessage = (expiration !== false)? times[duration].label : 'permanent';
-    let message = `You have been banned from this server. <br>`;
-    message += `<b>Ban duration:</b> ${durationMessage} <br>`;
-    message += `<b>Banned for:</b> ${xss(reason)} <br>`;
-    message += `<b>Banned by:</b> ${xss(ctx.session.auth.username)}`;
+    const durationMessage = (expiration !== false)? `for ${times[duration].label}` : 'permanently';
+    // let message = `You have been banned from this server. <br>`;
+    // message += `<b>Ban duration:</b> ${durationMessage} <br>`;
+    // message += `<b>Banned for:</b> ${xss(reason)} <br>`;
+    // message += `<b>Banned by:</b> ${xss(ctx.session.auth.username)}`;
+    const msg = `[txAdmin] (${xss(ctx.session.auth.username)}) You have been banned from this server ${durationMessage}. Ban reason: ${xss(reason)}`;
 
     let cmd;
     if(Array.isArray(reference)){
-        cmd = formatCommand('txaDropIdentifiers', reference.join(';'), message);
+        cmd = formatCommand('txaDropIdentifiers', reference.join(';'), msg);
         ctx.utils.appendLog(`Banned <${reference.join(';')}>: ${reason}`);
     }else if(Number.isInteger(reference)){
-        cmd = formatCommand('txaKickID', reference, message);
+        cmd = formatCommand('txaKickID', reference, msg);
         ctx.utils.appendLog(`Banned #${reference}: ${reason}`);
     }else{
         return ctx.send({type: 'danger', message: `<b>Error:</b> unknown reference type`});

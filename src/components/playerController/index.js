@@ -353,10 +353,10 @@ module.exports = class PlayerController {
                         const expiration = humanizeDuration((ban.expiration - ts)*1050, humanizeOptions);
                         msg = `You have been banned from this server.\n`;
                         msg += `Your ban will expire in: ${expiration}.\n`;
-                        msg += `Ban ID: <code>${ban.id}</code>.`;
+                        msg += `Ban ID: ${ban.id}.`;
                     }else{
-                        msg = `You have been <strong>permanently</strong> banned from this server.\n`;
-                        msg += `Ban ID: <code>${ban.id}</code>.`;
+                        msg = `You have been permanently banned from this server.\n`;
+                        msg += `Ban ID: ${ban.id}.`;
                     }
                     
                     return {allow: false, reason: msg};
@@ -396,7 +396,8 @@ module.exports = class PlayerController {
                         id: []
                     });
                     let reason = xssRejectMessage(this.config.whitelistRejectionMessage)
-                                    .replace(/<id>/g, `<code>${whitelistID}</code>`);
+                                    .replace(/<\/?strong>/g, '')
+                                    .replace(/<id>/g, whitelistID);
                     return {allow: false, reason};
                 }
             }

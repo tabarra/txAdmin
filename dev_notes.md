@@ -19,7 +19,7 @@
 - [x] convert discordBot to use a commands folder
 - [x] discord bot: add /addwl command
 - [x] discord bot: change settings to accept prefix
-- [ ] remove html tags from kick messages (hopefully temporarily)
+- [x] remove html tags from kick messages (hopefully temporarily)
 
 TODO: Bot commands:
 /ban <mention> <time> <reason>
