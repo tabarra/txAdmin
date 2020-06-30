@@ -104,7 +104,17 @@ function dir(data){
             }
 
         }else if(typeof data == 'object'){
-            printData = colorize(data, colorizeSettings);
+            if(
+                !Object.keys(data).length && 
+                typeof data.toString == 'function' &&
+                data.constructor.name &&
+                data.constructor.name !== 'Object'
+            ){
+                printData = chalk.keyword('moccasin').italic(`> ${data.constructor.name}.toString():\n`);
+                printData += chalk.white(data.toString());
+            }else{
+                printData = colorize(data, colorizeSettings);
+            }
 
         }else{
             printData = chalk.keyword('orange').italic(typeof data + ': ');
@@ -136,6 +146,8 @@ function dir(data){
     dir(true)
     dir(false)
     dir({aaa: 'bbbb'})
+    dir({})
+    dir(/xx/)
     dir({}.uuuu)
     dir(new Promise((resolve, reject) => {
         resolve('aaaa')
