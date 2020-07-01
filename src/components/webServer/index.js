@@ -60,7 +60,8 @@ module.exports = class WebServer {
                 (
                     error.code.startsWith('HPE_') || 
                     error.code.startsWith('ECONN') ||
-                    error.code.startsWith('EPIPE')
+                    error.code.startsWith('EPIPE') || 
+                    error.code.startsWith('ECANCELED') 
                 )
             ){
                 if(GlobalData.verbose){
