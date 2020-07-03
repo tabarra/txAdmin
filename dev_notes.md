@@ -22,26 +22,28 @@
 - [x] replace timestamp function in update checking
 - [x] build test + version bump
 > v2.6.0
-- [ ] xxx
+- [ ] discord bot: re-add spam limiter
+- [ ] check why scheduled restarts are not kicking players
+- [ ] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
+- [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
+- [ ] add admins count to the stats page
 
-TODO: Bot commands:
-/ban <mention> <time> <reason>
-/unban <ban-id>
-/info - shows your info like join date and play time
-/info <mention> - shows someone else's info
+
+TODO: Bot commands (in dev order):
 /addwl <wl req id>
 /addwl <license>
+/kick <mention>
+/log <mention> - shows the last 5 log entries for an discord identifier (make it clear its only looking for the ID)
+/ban <mention> <time> <reason>
+/unban <ban-id>
+
+/info - shows your info like join date and play time
+/info <mention> - shows someone else's info
 /addwl <mention>
 /removewl <mention>
-/log <mention> - shows the last 5 log entries for an discord identifier
-/kick <mention>
 
 > Soon™ (hopefully the next update)
-- [ ] discord bot: re-add spam limiter
 - [ ] adapt kick messages to use some basic HTML formatting and 🆃🆇🅰🅳🅼🅸🅽
-- [ ] check why scheduled restarts are not kicking players
-- [ ] add sv endpoint to say the whitelist/banlist usage
-- [ ] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
 - [ ] break player page into `Players` and `Player Access`
         - `Player Access` will only contain the whitelist and band ids cards
         - `Players` will have a central search and will show players and actions at the same time
@@ -49,7 +51,6 @@ TODO: Bot commands:
 - [ ] check everything done for xss
 - [ ] apply the new action log html to the modal
 - [ ] make `fxRunner.srvCmd()` itself perform the escaping
-- [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
 - [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
 - [ ] add ban server-side ban cache (last 500 bans?), updated on every ban change 
 - [ ] add a commend system?
