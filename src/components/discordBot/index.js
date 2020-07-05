@@ -38,7 +38,6 @@ module.exports = class DiscordBot {
         if(this.client !== null){
             logWarn(`Stopping Discord Bot`);
             this.client.destroy();
-            this.client = null;
         }
         if(this.config.enabled){
             this.startBot();
@@ -93,6 +92,12 @@ module.exports = class DiscordBot {
      * Starts the discord client
      */
     async startBot(){
+        //State check
+        if(this.client !== null && this.client.status !== 5){
+            logWarn('Client not yet destroyed, awaiting destruction.');
+            await this.client.destroy();
+        }
+
         //Setup client
         this.client = new Discord.Client({autoReconnect:true});
 
@@ -100,7 +105,6 @@ module.exports = class DiscordBot {
         this.client.on('ready', async () => {
             logOk(`Started and logged in as '${this.client.user.tag}'`);
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
-            // this.announceChannel = await this.client.channels.resolve(this.config.announceChannel);
             this.announceChannel = this.client.channels.find(x => x.id === this.config.announceChannel);
             if(!this.announceChannel){
                 logError(`The announcements channel could not be found. Check the ID: ${this.config.announceChannel}`);
