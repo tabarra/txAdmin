@@ -10,6 +10,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../../extras/console'
  */
 module.exports = {
     description: 'Adds a players to the whitelist',
+    cooldown: 5,
     async execute(message, args) {
         //Check permissions
         //TODO: generalize this to other commands?

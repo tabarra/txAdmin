@@ -18,8 +18,18 @@ module.exports = class DiscordBot {
         this.config = config;
         this.client = null;
         this.announceChannel = null;
-        this.commands = null;
-        this.setupCommands();
+        
+        //NOTE: setting them up statically due to webpack requirements
+        this.commands = new Collection([
+            ['addwl', require('./commands/addwl.js')],
+            ['help', require('./commands/help.js')],
+            ['status', require('./commands/status.js')],
+            ['txadmin', require('./commands/txadmin.js')],
+
+            //FIXME: first we need to have player ids in the players db
+            // ['info', require('./commands/info.js')], 
+        ]);
+        this.cooldowns = new Collection();
         
         if(!this.config.enabled){
             logOk('Disabled by the config file.');
@@ -43,24 +53,6 @@ module.exports = class DiscordBot {
             this.startBot();
         }
     }//Final refreshConfig()
-
-
-    //================================================================
-    /**
-     * Setup all commands
-     * NOTE: setting them up statically due to webpack requirements
-     */
-    setupCommands(){
-        this.commands = new Collection([
-            ['addwl', require('./commands/addwl.js')],
-            ['help', require('./commands/help.js')],
-            ['status', require('./commands/status.js')],
-            ['txadmin', require('./commands/txadmin.js')],
-
-            //FIXME: first we need to have player ids in the players db
-            // ['info', require('./commands/info.js')], 
-        ]);
-    }
 
 
     //================================================================
@@ -164,12 +156,20 @@ module.exports = class DiscordBot {
                         || this.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
         if (!command) return;
 
-        //TODO: Check spam limiter
-        // if(!this.spamLimitChecker(this.config.statusCommand, message.channel.id)){
-        //     if(GlobalData.verbose) log(`Spam prevented for command "${this.config.statusCommand}" in channel "${message.channel.name}".`);
-        //     return;
-        // }
-        // this.spamLimitRegister(this.config.statusCommand, message.channel.id);
+        //Check spam limiter
+        const now = Date.now();
+        if(!this.cooldowns.has(commandName)) {
+            this.cooldowns.set(commandName, now);
+        }else{
+            const cooldownTime = (command.cooldown || 30) * 1000;
+            const expirationTime = this.cooldowns.get(commandName) + cooldownTime;
+            if(now < expirationTime){
+                // const timeLeft = (expirationTime - now) / 1000;
+                // return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${commandName}\` command again.`);
+                if(GlobalData.verbose) log(`Spam prevented for command "${commandName}".`);
+                return;
+            }
+        }
 
         // TODO: Save usage
         // this.addUsageStats(commandName);
@@ -181,32 +181,6 @@ module.exports = class DiscordBot {
             logError(`Failed to execute ${commandName}: ${error.message}`);
         }
     }
-
-
-    //================================================================
-    /**
-     * Checks the spamLimitCache and returns false if its still in cooldown
-     * FIXME:
-     * @param {string} cmd
-     * @param {string} chan
-     */
-    spamLimitChecker(cmd, chan){
-        let tag = `${chan}:${cmd}`;
-        let now = (Date.now() / 1000).toFixed();
-        return (typeof this.spamLimitCache[tag] === 'undefined' || (now - this.spamLimitCache[tag] > this.config.commandCooldown))
-    }//Final spamLimitChecker()
-
-
-    //================================================================
-    /**
-     * Registers a command execution in the spamLimitCache
-     * FIXME:
-     * @param {string} cmd
-     * @param {string} chan
-     */
-    spamLimitRegister(cmd, chan){
-        this.spamLimitCache[`${chan}:${cmd}`] = (Date.now() / 1000).toFixed();
-    }//Final spamLimitRegister()
 
 
     //================================================================

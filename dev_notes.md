@@ -24,7 +24,7 @@
 > v2.6.0
 - [x] discord bot: fixed bug of it accepting any prefix
 - [x] discord bot: likely fixed multi-client issue
-- [ ] discord bot: re-add spam limiter
+- [x] discord bot: re-add spam limiter
 - [ ] check why scheduled restarts are not kicking players
 - [ ] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones

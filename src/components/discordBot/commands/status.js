@@ -6,6 +6,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../../extras/console'
 
 module.exports = {
     description: 'Prints the server status',
+    cooldown: 60,
     async execute(message, args) {
         //Prepare message's RichEmbed + template variables
         let replaces = {};
