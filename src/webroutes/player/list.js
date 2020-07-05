@@ -235,7 +235,7 @@ async function getStats(dbo){
         
         //Stats only:
         //DEBUG reevaluate this in the future
-        globals.databus.heartbeatStats = {
+        globals.databus.playerDBStats = {
             ts: now(),
             players: playerStats.players,
             playTime: playerStats.playTime,

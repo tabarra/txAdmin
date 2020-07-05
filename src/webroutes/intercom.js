@@ -28,9 +28,10 @@ module.exports = async function Intercom(ctx) {
             const outData = {
                 txAdminVersion: GlobalData.txAdminVersion,
                 fxServerUptime: globals.fxRunner.getUptime(),
+                admins: (globals.authenticator.admins)? globals.authenticator.admins.length : 1,
                 banlistEnabled: globals.playerController.config.onJoinCheckBan,
                 whitelistEnabled: globals.playerController.config.onJoinCheckWhitelist,
-                heartbeatStats: globals.databus.heartbeatStats,
+                playerDBStats: globals.databus.playerDBStats,
                 discordBotStats: (globals.discordBot.config.enabled)? globals.discordBot.usageStats : false,
             }
             return ctx.send(JSON.stringify(outData, null, 2));
