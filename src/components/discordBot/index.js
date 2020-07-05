@@ -12,12 +12,16 @@ if(typeof URLSearchParams === 'undefined'){
     global.URLSearchParams = require('url').URLSearchParams;
 }
 
+//Helpers
+const now = () => { return Math.round(Date.now() / 1000) };
+
 
 module.exports = class DiscordBot {
     constructor(config) {
         this.config = config;
         this.client = null;
         this.announceChannel = null;
+        this.usageStats = {};
         
         //NOTE: setting them up statically due to webpack requirements
         this.commands = new Collection([
@@ -157,22 +161,22 @@ module.exports = class DiscordBot {
         if (!command) return;
 
         //Check spam limiter
-        const now = Date.now();
         if(!this.cooldowns.has(commandName)) {
-            this.cooldowns.set(commandName, now);
+            this.cooldowns.set(commandName, now());
         }else{
-            const cooldownTime = (command.cooldown || 30) * 1000;
+            const cooldownTime = command.cooldown || 30;
             const expirationTime = this.cooldowns.get(commandName) + cooldownTime;
-            if(now < expirationTime){
-                // const timeLeft = (expirationTime - now) / 1000;
-                // return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${commandName}\` command again.`);
+            const ts = now();
+            if(ts < expirationTime){
+                const timeLeft = expirationTime - ts;
                 if(GlobalData.verbose) log(`Spam prevented for command "${commandName}".`);
+                return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${commandName}\` command again.`);
                 return;
             }
         }
 
-        // TODO: Save usage
-        // this.addUsageStats(commandName);
+        //Increment usage stats
+        this.usageStats[commandName] = (typeof this.usageStats[commandName] == 'undefined')? 1 : this.usageStats[commandName] + 1;
 
         //Executing command
         try {

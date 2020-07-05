@@ -31,8 +31,9 @@ module.exports = async function Intercom(ctx) {
                 banlistEnabled: globals.playerController.config.onJoinCheckBan,
                 whitelistEnabled: globals.playerController.config.onJoinCheckWhitelist,
                 heartbeatStats: globals.databus.heartbeatStats,
+                discordBotStats: (globals.discordBot.config.enabled)? globals.discordBot.usageStats : false,
             }
-            return ctx.send(JSON.stringify(outData));
+            return ctx.send(JSON.stringify(outData, null, 2));
         } catch (error) {}
 
     }else if(scope == 'resources'){
