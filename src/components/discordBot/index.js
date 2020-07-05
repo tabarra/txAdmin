@@ -149,6 +149,7 @@ module.exports = class DiscordBot {
         //Ignoring bots and DMs
         if(message.author.bot) return;
         if(message.channel.type !== 'text') return;
+        if(!message.content.startsWith(this.config.prefix)) return;
 
         //Parse message
         const args = message.content.slice(this.config.prefix.length).split(/\s+/);
