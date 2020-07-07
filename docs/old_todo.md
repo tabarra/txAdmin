@@ -259,7 +259,28 @@ More:
 - [x] player page: add expiration note to the action history
 - [x] ignore EPIPE koa errors
 > v2.5.1
-
+- [x] validate that min session time is valid
+- [x] fix revoke button always visible
+- [x] add player/action search feature
+- [x] add search button for player modal
+- [x] adapt all modal actions to offline players
+- [x] change Server Log page to use the new modal
+- [x] upgrade to Discord.js v12
+- [x] upgrade to squirrelly 8 (omg why sooo hard???)
+- [x] convert cl_logger.js to lua
+- [x] set autostart as default, but only call spawnfunc if the cfg/data paths are set
+- [x] improve input readability in low-contrast monitors (css tweak)
+- [x] action revoking based on permission
+- [x] give `manage.admins` permission to edit their social IDs
+- [x] convert discordBot to use a commands folder
+- [x] discord bot: add /addwl command
+- [x] discord bot: change settings to accept prefix
+- [x] remove html tags from kick messages (hopefully temporarily)
+- [x] update dependencies
+- [x] add stats endpoint
+- [x] replace timestamp function in update checking
+- [x] build test + version bump
+> v2.6.0
 
 
 ------------------------------

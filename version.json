@@ -1,5 +1,5 @@
 {
-    "version": "2.6.0",
+    "version": "2.6.1",
     "changelog": "Deprecated Message. Please Update to v2.",
     "allVersions": [
         {
@@ -189,6 +189,10 @@
         {
             "version": "2.6.0",
             "changelog": "Added player/action search feature. Added discord whitelist command. Added new player modal to the server log. Minor tweaks, fixes and housekeeping."
+        },
+        {
+            "version": "2.6.1",
+            "changelog": "Fixed discord bot commands prefix bug, re-added spam limiter. Minor tweaks and upgraded packages."
         }
     ]
 }

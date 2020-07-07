@@ -1,26 +1,4 @@
 ## TODO v2
-> v2.5.1
-- [x] validate that min session time is valid
-- [x] fix revoke button always visible
-- [x] add player/action search feature
-- [x] add search button for player modal
-- [x] adapt all modal actions to offline players
-- [x] change Server Log page to use the new modal
-- [x] upgrade to Discord.js v12
-- [x] upgrade to squirrelly 8 (omg why sooo hard???)
-- [x] convert cl_logger.js to lua
-- [x] set autostart as default, but only call spawnfunc if the cfg/data paths are set
-- [x] improve input readability in low-contrast monitors (css tweak)
-- [x] action revoking based on permission
-- [x] give `manage.admins` permission to edit their social IDs
-- [x] convert discordBot to use a commands folder
-- [x] discord bot: add /addwl command
-- [x] discord bot: change settings to accept prefix
-- [x] remove html tags from kick messages (hopefully temporarily)
-- [x] update dependencies
-- [x] add stats endpoint
-- [x] replace timestamp function in update checking
-- [x] build test + version bump
 > v2.6.0
 - [x] discord bot: fixed bug of it accepting any prefix
 - [x] discord bot: likely fixed multi-client issue
@@ -28,6 +6,7 @@
 - [x] discord bot: add usage stats
 - [x] add admins count to the stats.json
 - [x] check for "stop monitor" in cfg file
+> v2.6.1
 - [ ] check why scheduled restarts are not kicking players
 - [ ] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
