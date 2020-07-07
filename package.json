@@ -51,19 +51,19 @@
     "nanoid": "^3.1.10",
     "nanoid-dictionary": "^3.0.0",
     "node-polyglot": "^2.4.0",
-    "openid-client": "^3.15.5",
+    "openid-client": "^3.15.6",
     "pidtree": "^0.5.0",
     "pidusage-tree": "^2.0.5",
     "semver": "^7.3.2",
     "slash": "^3.0.0",
     "socket.io": "^2.3.0",
-    "squirrelly": "^8.0.2",
+    "squirrelly": "^8.0.3",
     "stream-snitch": "0.0.3",
     "string-argv": "^0.3.1",
     "xss": "^1.0.7"
   },
   "devDependencies": {
-    "copy-webpack-plugin": "^6.0.2",
+    "copy-webpack-plugin": "^6.0.3",
     "terser-webpack-plugin": "^3.0.6",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
