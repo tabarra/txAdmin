@@ -113,6 +113,20 @@ function dir(data){
                 printData = chalk.keyword('moccasin').italic(`> ${data.constructor.name}.toString():\n`);
                 printData += chalk.white(data.toString());
             }else{
+                // DEBUG when I really need it... (copypasted from stackoverflow)
+                // const getCircularReplacer = () => {
+                //     const seen = new WeakSet();
+                //     return (key, value) => {
+                //       if (typeof value === "object" && value !== null) {
+                //         if (seen.has(value)) {
+                //           return;
+                //         }
+                //         seen.add(value);
+                //       }
+                //       return value;
+                //     };
+                //   };
+                // printData = JSON.stringify(data, getCircularReplacer(), 2);
                 printData = colorize(data, colorizeSettings);
             }
 
