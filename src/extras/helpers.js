@@ -136,22 +136,24 @@ function resolveCFGFilePath(cfgPath, serverDataPath) {
  *  - no endpoints found
  *  - endpoints that are not 0.0.0.0:xxx
  *  - port mismatch
+ *  - "stop monitor"
  * @param {string} rawCfgFile
  */
 function getFXServerPort(rawCfgFile) {
-    let regex = /^\s*endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.*$/gim;
-    // let regex = /endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.*/gi;
+    if(rawCfgFile.includes('stop monitor')) throw new Error(`Remove "stop monitor" from your config`);
+
+    const regex = /^\s*endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.*$/gim;
+    // const regex = /endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.*/gi;
     let matches = [];
     try {
         let match;
         while (match = regex.exec(rawCfgFile)) {
-            let matchData = {
+            matches.push({
                 line: match[0].trim(),
                 type: match[1],
                 interface: match[2],
                 port: match[3],
-            }
-            matches.push(matchData);
+            });
         }
     } catch (error) {
         throw new Error("Regex Match Error");
@@ -159,12 +161,12 @@ function getFXServerPort(rawCfgFile) {
 
     if(!matches.length) throw new Error("No <code>endpoint_add_*</code> found inside the file");
 
-    let validTCPEndpoint = matches.find((match) => {
+    const validTCPEndpoint = matches.find((match) => {
         return (match.type.toLowerCase() === 'tcp' && (match.interface === '0.0.0.0' || match.interface === '127.0.0.1'))
     })
     if(!validTCPEndpoint) throw new Error("You MUST have one <code>endpoint_add_tcp</code> with IP 0.0.0.0 in your config");
 
-    let validUDPEndpoint = matches.find((match) => {
+    const validUDPEndpoint = matches.find((match) => {
         return (match.type.toLowerCase() === 'udp')
     })
     if(!validUDPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_udp</code> in your config");

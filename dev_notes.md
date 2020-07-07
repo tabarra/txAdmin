@@ -27,6 +27,7 @@
 - [x] discord bot: re-add spam limiter
 - [x] discord bot: add usage stats
 - [x] add admins count to the stats.json
+- [x] check for "stop monitor" in cfg file
 - [ ] check why scheduled restarts are not kicking players
 - [ ] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
