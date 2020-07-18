@@ -46,7 +46,7 @@
     "koa-session-memory": "^1.0.4",
     "koa-session-socketio": "^1.0.0",
     "koa-static": "^5.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "lowdb": "^1.0.0",
     "nanoid": "^3.1.10",
     "nanoid-dictionary": "^3.0.0",
