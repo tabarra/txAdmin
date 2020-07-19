@@ -95,7 +95,12 @@ module.exports = class DiscordBot {
         }
 
         //Setup client
-        this.client = new Discord.Client({autoReconnect:true});
+        this.client = new Discord.Client({
+            autoReconnect:true,
+            http: {
+                host: 'https://discord.com'
+            }
+        });
 
         //Setup Ready listener
         this.client.on('ready', async () => {
