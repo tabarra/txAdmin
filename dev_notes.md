@@ -7,6 +7,9 @@
 - [x] add admins count to the stats.json
 - [x] check for "stop monitor" in cfg file
 > v2.6.1
+- [x] update packages
+- [x] discord bot: set new api url
+- [x] reset /auth url after message or error
 - [ ] check why scheduled restarts are not kicking players
 - [ ] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
@@ -15,6 +18,7 @@
 TODO: Bot commands (in dev order):
 /addwl <wl req id>
 /addwl <license>
+
 /kick <mention>
 /log <mention> - shows the last 5 log entries for an discord identifier (make it clear its only looking for the ID)
 /ban <mention> <time> <reason>
@@ -96,6 +100,12 @@ https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae810
 
 Grafana query for the `/perf/` endpoint data: 
 `histogram_quantile(0.95, sum(rate(tickTime_bucket[5m])) by (le))`
+
+### CoreUI Stuff
+https://simplelineicons.github.io
+https://coreui.io/demo/3.1.0/#icons/coreui-icons-free.html
+https://coreui.io/demo/3.0.0/#colors.html
+https://coreui.io/docs/content/typography/
 
 
 ### Global vs Individual Modules

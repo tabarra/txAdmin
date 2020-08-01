@@ -112,24 +112,6 @@ async function handleCallback(ctx) {
         return ctx.utils.render('login', {template: 'justMessage', message});
     }
 
-/*
-    let tokenSet = {
-        "id_token": "sdfgdsfgdfsg",
-        "access_token": "dfgdsfgsdfg",
-        "expires_at": 1578863643,
-        "token_type": "Bearer",
-        "scope": "openid identify",
-        "session_state": "jdfghdfghdfghdfghb613bfc71"
-      }
-    let userInfo = {
-        "nameid": "https://forum.cfx.re/internal/user/271816",
-        "name": "tabarra",
-        "profile": "https://forum.cfx.re/u/tabarra",
-        "picture": "https://forum.cfx.re/user_avatar/forum.cfx.re/tabarra/256/198232_2.png",
-        "sub": "3777caekhg2345khg2345h23g45jh23g45j23g452g52jhghj3g543jg546247a6de8868"
-    }
-*/
-
     // Setar userinfo na sessão
     ctx.session.tmpAddMasterTokenSet = tokenSet;
     ctx.session.tmpAddMasterUserInfo = userInfo;
