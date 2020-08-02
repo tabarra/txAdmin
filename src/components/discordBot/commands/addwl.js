@@ -16,7 +16,7 @@ module.exports = {
         //TODO: generalize this to other commands?
         const admin = globals.authenticator.getAdminByProviderUID(message.author.id);
         if(!admin){
-            return await message.reply(`you are not registered in txAdmin :face_with_monocle:`);
+            return await message.reply(`your Discord ID is not registered in txAdmin :face_with_monocle:`);
         }
         if(
             admin.master !== true &&
@@ -26,6 +26,11 @@ module.exports = {
             return await message.reply(`you do not have whitelist permissions :face_with_raised_eyebrow:`);
         }
 
+        //Check if whitelist is enabled
+        if(!globals.playerController.config.onJoinCheckWhitelist){
+            return await message.reply(`**txAdmin** whitelist is disabled :man_facepalming:\nGo to the settings and enable it first.`);
+        }
+
         //Check usage
         if(args.length !== 1){
             const msgLines = [
@@ -33,6 +38,7 @@ module.exports = {
                 `Example:`,
                 `\`${globals.discordBot.config.prefix}addwl R1234\``,
                 `\`${globals.discordBot.config.prefix}addwl license:65a97df7ab8208b531f5b7a9cb91c3b853095f1d\``,
+                `An option to whitelist using other identifiers will soon be available.`,
             ]
             return await message.reply(msgLines.join('\n'));
         }
