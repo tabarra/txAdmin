@@ -4,7 +4,7 @@
         "humanizer_language": "de"
     },
     "restarter": {
-        "crash_detected": "Absturz erkannt",
+        "crash_detected": "Absturz registriert",
         "partial_crash_warn": "Aufgrund von Verbindungsproblemen startet dieser Server in 1 Minute neu. Bitte trenne die Verbindung jetzt.",
         "partial_crash_warn_discord": "Aufgrund von Verbindungsproblemen, startet **%{servername}** in einer Minute neu.",
         "schedule_reason": "Automatisierter Neustart um %{time}",
@@ -13,7 +13,7 @@
     },
     "server_actions": {
         "restarting": "Server Restart (%{reason}).",
-        "restarting_discord": "**%{servername}** wird neu gestartet (%{reason}).",
+        "restarting_discord": "**%{servername}** wird neugestartet (%{reason}).",
         "stopping": "Server wird heruntergefahren (%{reason}).",
         "stopping_discord": "**%{servername}** wird heruntergefahren (%{reason}).",
         "spawning_discord": "**%{servername}** startet."
