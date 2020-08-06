@@ -74,6 +74,44 @@
     </div>
 </div>
 
+<div class="text-center">
+    <h4>Commands Cache</h3>
+</div>
+<div class="card bg-dark">
+    <div class="card-body p-3">
+        <table class="table table-hover table-dark bg-dark">
+		  <thead>
+			<tr>
+			  <th scope="col">#</th>
+			  <th scope="col">Command</th>
+			  <th scope="col">Options</th>
+			</tr>
+		  </thead>
+		  <tbody id='tb_LastCMDs'>
+			
+		  </tbody>
+		</table>
+    </div>
+    <div class="card-footer text-center bg-dark">
+		<div class="mx-auto">
+			<button type="button" id="ClearLastCMDs" class="btn btn-outline-light btn-sm mb-2">Clear Commands Cache</button>
+		</div>
+    </div>
+</div>
+
+<!-- FXServer Control Card -->
+        <div class="card card-accent-danger" style="min-height: 160px;">
+            <div class="card-header font-weight-bold">FXServer Control:</div>
+            <div class="card-body text-center align-middle">
+                <button onclick="controlAction('start')" class="btn btn-outline-danger btn-lg mx-auto m-2"
+                    type="button" id="ctrl-start" >START</button> &nbsp;
+                <button onclick="controlAction('restart')" class="btn btn-outline-danger btn-lg mx-auto m-2"
+                    type="button" id="ctrl-restart" >RESTART</button> &nbsp;
+                <button onclick="controlAction('stop')" class="btn btn-outline-danger btn-lg mx-auto m-2"
+                    type="button" id="ctrl-stop" >STOP</button>
+            </div>
+        </div>
+
 
 {{@include("footer", it)/}}
 
@@ -81,6 +119,12 @@
 <script src="js/ansi_up.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 <script>
+
+
+	var lastCMDs = [];
+	
+	var exeCMD;
+
     //Socket
     (function () {
         let prefix = '';
@@ -111,6 +155,15 @@
         //Form
         consoleForm.addEventListener("submit", function (e) {
             e.preventDefault();
+			
+			let cmd = input.value;
+			
+			//store last command
+			lastCMDs = lastCMDs.filter(item => item !== cmd);
+			lastCMDs.unshift(cmd);
+			updateLastCMDs();
+			
+			
             commandCache.unshift(input.value);
             socket.emit('consoleCommand', input.value);
             input.value = "";
@@ -154,5 +207,90 @@
         document.getElementById("clearConsole").addEventListener("click", function () {
             consoleElement.innerHTML = "";
         });
+		
+		
+		exeCMD = function(btn){
+	
+			let cmd = $($(btn).parent().parent().find('.command')[0]).text();
+			
+			//store last command
+			lastCMDs = lastCMDs.filter(item => item !== cmd);
+			lastCMDs.unshift(cmd);
+			updateLastCMDs();
+			
+			//execute
+            socket.emit('consoleCommand', cmd);
+	
+		};
     })();
+	
+	function updateLastCMDs() {
+		let content = '';
+		lastCMDs.forEach((c,i) => {
+			
+			content += '<tr><th scope="row">' + i + '</th><td class="command">' + c + '</td><td><button type="button" class="btn btn-outline-light btn-sm mb-2 mr-1" onclick="exeCMD(this)">Execute</button><button data-toggle="tooltip" type="button" class="btn btn-outline-light btn-sm mb-2" onclick="CopyCMD(this)">Copy</button></td></tr>';
+		
+		});
+		
+		$('#tb_LastCMDs').html(content);
+	}
+	
+	
+    function CopyCMD(element) {
+	
+		let el = $(element);
+	
+		let text = $(el.parent().parent().find('.command')[0]).text();
+
+        el.tooltip("hide");
+
+        el.attr('data-original-title', 'Command Copied!');
+
+
+        let dummy = document.createElement("input");
+        document.body.appendChild(dummy);
+        dummy.setAttribute('value', text);
+        dummy.select();
+        document.execCommand('copy');
+        document.body.removeChild(dummy);
+
+        el.tooltip('show');
+
+        setTimeout(function(){ el.attr('data-original-title', 'Copy Command'); }, 1000);
+    }
+	
+	
+	$('#ClearLastCMDs').on('click', function() {
+		$('#tb_LastCMDs').html('');
+		lastCMDs = [];
+	
+	});
+	
+	//============================================== Controls (start/restart/stop)
+    function controlAction(action) {
+        if (action !== 'start' && !window.confirm('Are you sure you want to ' + action + ' the server?')) {
+            return;
+        }
+        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        $.ajax({
+            url: actionURL = '/fxserver/controls/' + action,
+            type: "GET",
+            dataType: "json",
+            timeout: timeoutLong,
+            success: function (data) {
+                if (data.logout) {
+                    window.location = '/auth?logout';
+                    return;
+                }
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    }
 </script>
