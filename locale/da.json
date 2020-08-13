@@ -5,7 +5,7 @@
     },
     "restarter": {
         "crash_detected": "crash opdaget",
-        "partial_crash_warn": "På grund af et delvist crash, vil serveren genstarte om et minut. Vær venlig og leave nu.",
+        "partial_crash_warn": "På grund af et delvist crash, vil serveren genstarte om et minut. Vær venlig og disconnect nu.",
         "partial_crash_warn_discord": "På grund af et delvist crash genstarter, **%{servername}** om et minut.",
         "schedule_reason": "planlagt genstart %{time}",
         "schedule_warn": "Serveren genstarter om %{smart_count} minut. Vær venlig at disconnecte nu. |||| Serveren genstarter om %{smart_count} minutter.",
