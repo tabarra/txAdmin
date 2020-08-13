@@ -1,6 +1,7 @@
 //Requires
 const modulename = 'WebServer:GetStatus';
 const os = require('os');
+const si = require('systeminformation');
 const clone = require('clone');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
@@ -12,7 +13,7 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 module.exports = async function GetStatus(ctx) {
     return ctx.send({
         meta: prepareMetaData(),
-        host: prepareHostData(),
+        host: await prepareHostData(),
         status: prepareServerStatus(),
         players: preparePlayersData()
     })
@@ -80,18 +81,17 @@ function prepareServerStatus() {
 /**
  * Returns the host's usage
  */
-function prepareHostData() {
-    let giga = 1024 * 1024 * 1024;
-
+async function prepareHostData() {
     try {
-        //processing host data
-        let memFree = (os.freemem() / giga).toFixed(2);
-        let memTotal = (os.totalmem() / giga).toFixed(2);
-        let memUsed = (memTotal - memFree).toFixed(2);;
-        let memUsage = ((memUsed / memTotal) * 100).toFixed(0);
-        let cpus = os.cpus();
-        let cpuStatus = globals.monitor.cpuStatusProvider.getUsageStats();
-        let cpuUsage = cpuStatus.last10 || cpuStatus.full;
+        const giga = 1024 * 1024 * 1024;
+        const memoryData = await si.mem();
+        const memFree = (memoryData.available / giga).toFixed(2);
+        const memTotal = (memoryData.total / giga).toFixed(2);
+        const memUsed = (memoryData.active / giga).toFixed(2);
+        const memUsage = ((memUsed / memTotal)*100).toFixed(0);
+        const cpus = os.cpus();
+        const cpuStatus = globals.monitor.cpuStatusProvider.getUsageStats();
+        const cpuUsage = cpuStatus.last10 || cpuStatus.full;
 
         //returning output output
         return {

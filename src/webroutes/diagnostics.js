@@ -1,6 +1,7 @@
 //Requires
 const modulename = 'WebServer:Diagnostics';
 const os = require('os');
+const si = require('systeminformation');
 const axios = require("axios");
 const bytes = require('bytes');
 const pidusageTree = require('pidusage-tree');
@@ -192,13 +193,14 @@ async function getFXServerData(){
 async function getHostData(){
     let hostData = {};
     try {
-        let giga = 1024 * 1024 * 1024;
-        let memFree = (os.freemem() / giga).toFixed(2);
-        let memTotal = (os.totalmem() / giga).toFixed(2);
-        let memUsed = (memTotal-memFree).toFixed(2);;
-        let memUsage = ((memUsed / memTotal)*100).toFixed(0);
-        let userInfo = os.userInfo()
-        let cpus = os.cpus();
+        const giga = 1024 * 1024 * 1024;
+        const memoryData = await si.mem();
+        const memFree = (memoryData.available / giga).toFixed(2);
+        const memTotal = (memoryData.total / giga).toFixed(2);
+        const memUsed = (memoryData.active / giga).toFixed(2);
+        const memUsage = ((memUsed / memTotal)*100).toFixed(0);
+        const userInfo = os.userInfo();
+        const cpus = os.cpus();
 
         hostData.nodeVersion = process.version;
         hostData.osType = `${os.type()} (${os.platform()}/${process.arch})`;

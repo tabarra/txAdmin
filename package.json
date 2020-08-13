@@ -60,6 +60,7 @@
     "squirrelly": "^8.0.3",
     "stream-snitch": "0.0.3",
     "string-argv": "^0.3.1",
+    "systeminformation": "^4.26.10",
     "xss": "^1.0.8"
   },
   "devDependencies": {
