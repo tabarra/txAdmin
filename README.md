@@ -61,6 +61,7 @@ txAdmin requires to be launched from *inside* FXServer in monitor mode, to do th
 ### ConVars
 - **serverProfile:** The name of the server profile to start. Profiles are saved/loaded from the current directory inside the `txData` folder. The default is `default`.
 - **txAdminPort:** The TCP port to use as HTTP Server. The default is `40120`.
+- **txAdminBindHost:** The hostname or IPv4/IPv6 address that server will be listening at. The default is `0.0.0.0` (listens on every available network interface).
 - **txDataPath:** The path of the data folder. The default on Windows is `<citizen_root>/../txData` and on Linux `<citizen_root>/../../../txData`.
 - **txAdminVerbose:** Set to `true` to print on the console more detailed information about errors and events. The default is `false`.
   

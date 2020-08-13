@@ -114,6 +114,10 @@ if(!digitRegex.test(txAdminPortConvar)){
 }
 const txAdminPort = parseInt(txAdminPortConvar);
 
+//Get bind hostname / IP
+let txAdminBindHostConvar = GetConvar('txAdminBindHost', '0.0.0.0').trim();
+const txAdminBindHost = txAdminBindHostConvar;
+
 //Get profile name
 const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, "").trim();
 if(!serverProfile.length){
@@ -138,6 +142,7 @@ GlobalData = {
     fxServerPath,
     dataPath,
     txAdminPort,
+    txAdminBindHost,
     verbose,
     //Consts
     validIdentifiers:{

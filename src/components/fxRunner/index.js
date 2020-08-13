@@ -59,6 +59,7 @@ module.exports = class FXRunner {
         const cmdArgs = [
             '+sets', 'txAdmin-version', GlobalData.txAdminVersion,
             '+set', 'txAdmin-apiPort', GlobalData.txAdminPort,
+            '+set', 'txAdmin-apiBindHost', GlobalData.txAdminBindHost,
             '+set', 'txAdmin-apiToken', globals.webServer.intercomToken,
             '+set', 'txAdmin-checkPlayerJoin', (controllerConfigs.onJoinCheckBan || controllerConfigs.onJoinCheckWhitelist).toString(),
             '+set', 'txAdminServerMode', 'true',

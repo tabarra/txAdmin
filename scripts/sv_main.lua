@@ -11,6 +11,7 @@ end
 
 --Check Environment
 local apiPort = GetConvar("txAdmin-apiPort", "invalid")
+local apiBindHost = GetConvar("txAdmin-apiBindHost", "0.0.0.0")
 local apiToken = GetConvar("txAdmin-apiToken", "invalid")
 local txAdminClientVersion = GetResourceMetadata(GetCurrentResourceName(), 'version')
 if GetConvar('txAdminServerMode', 'false') ~= 'true' then
@@ -21,6 +22,8 @@ if apiPort == "invalid" or apiToken == "invalid" then
     return
 end
 
+--Get actual host
+local actualHost = apiBindHost == "0.0.0.0" and "localhost" or apiBindHost
 
 -- Setup threads and commands
 local hbReturnData = 'no-data'
@@ -70,7 +73,7 @@ function HeartBeat()
 		end
     end
 
-    local url = "http://localhost:"..apiPort.."/intercom/monitor"
+    local url = "http://"..actualHost..":"..apiPort.."/intercom/monitor"
     local exData = {
         txAdminToken = apiToken,
         players = players
@@ -258,7 +261,7 @@ function txaReportResources(source, args)
     end
 
     --Send to txAdmin
-    local url = "http://localhost:"..apiPort.."/intercom/resources"
+    local url = "http://"..actualHost..":"..apiPort.."/intercom/resources"
     local exData = {
         txAdminToken = apiToken,
         resources = resources
@@ -276,7 +279,7 @@ end
 function handleConnections(name, skr, d)
     if  GetConvar("txAdmin-checkPlayerJoin", "invalid") == "true" then
         d.defer()
-        local url = "http://localhost:"..apiPort.."/intercom/checkPlayerJoin"
+        local url = "http://"..actualHost..":"..apiPort.."/intercom/checkPlayerJoin"
         local exData = {
             txAdminToken = apiToken,
             identifiers  = GetPlayerIdentifiers(source),

@@ -200,8 +200,9 @@ module.exports = class WebServer {
                 logError(`Failed to start HTTP server, port ${error.port} already in use.`);
                 process.exit();
             });
-            this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', () => {
-                logOk(`Listening at ` + chalk.inverse(` http://localhost:${GlobalData.txAdminPort}/ `));
+            this.httpServer.listen(GlobalData.txAdminPort, GlobalData.txAdminBindHost, () => {
+                const actualHost = (GlobalData.txAdminBindHost === '0.0.0.0' ? 'localhost' : GlobalData.txAdminBindHost);
+                logOk(`Listening at ` + chalk.inverse(` http://${actualHost}:${GlobalData.txAdminPort}/ `));
             });
         } catch (error) {
             logError('Failed to start HTTP server with error:');

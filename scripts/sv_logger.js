@@ -67,10 +67,14 @@ class Logger {
 
         //Attempt to set env vars
         this.txAdminPort = GetConvar("txAdmin-apiPort", "invalid");
+        this.txAdminBindHost = GetConvar("txAdmin-apiBindHost", "0.0.0.0");
         this.txAdminToken = GetConvar("txAdmin-apiToken", "invalid");
         if(this.txAdminPort === 'invalid' || this.txAdminToken === 'invalid'){
-            logError('API Port and Token ConVars not found. Do not start this resource if not using txAdmin.') 
+            logError('API Port or Token ConVars not found. Do not start this resource if not using txAdmin.') ;
         }
+
+        //Get actual host
+        this.actualHost = (this.txAdminBindHost === '0.0.0.0' ? 'localhost' : this.txAdminBindHost);
 
         //Attempt to flush log to txAdmin, starting after 10 seconds
         setTimeout(() => {
@@ -100,7 +104,7 @@ class Logger {
             txAdminToken: this.txAdminToken,
             log: this.log
         })
-        utils.postJson(`http://localhost:${this.txAdminPort}/intercom/logger`, postData)
+        utils.postJson(`http://${this.actualHost}:${this.txAdminPort}/intercom/logger`, postData)
             .then((data) => {
                 if(data.statusCode === 413){
                     log(`Logger upload failed with code 413 and body ${data.body}`);
