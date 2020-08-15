@@ -106,8 +106,7 @@ module.exports = class FXRunner {
         //Setup variables
         this.setupVariables();
         if(GlobalData.verbose){
-            log(`Spawn Variables:`);
-            dir(this.spawnVariables);
+            log(`Spawn Variables: ` + this.spawnVariables.args.join(' '));
         }
         //Sanity Check
         if(
