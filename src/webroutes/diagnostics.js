@@ -194,19 +194,20 @@ async function getHostData(){
     let hostData = {};
     try {
         const giga = 1024 * 1024 * 1024;
+        let memFree, memTotal, memUsed;
 
         if (GlobalData.osType === 'linux') {
             const memoryData = await si.mem();
-            const memFree = (memoryData.available / giga).toFixed(2);
-            const memTotal = (memoryData.total / giga).toFixed(2);
-            const memUsed = (memoryData.active / giga).toFixed(2);
+            memFree = (memoryData.available / giga).toFixed(2);
+            memTotal = (memoryData.total / giga).toFixed(2);
+            memUsed = (memoryData.active / giga).toFixed(2);
         } else {
-            const memFree = (os.freemem() / giga).toFixed(2);
-            const memTotal = (os.totalmem() / giga).toFixed(2);
-            const memUsed = (memTotal - memFree).toFixed(2);
+            memFree = (os.freemem() / giga).toFixed(2);
+            memTotal = (os.totalmem() / giga).toFixed(2);
+            memUsed = (memTotal - memFree).toFixed(2);
         }
 
-        const memUsage = ((memUsed / memTotal) * 100).toFixed(0);
+        let memUsage = ((memUsed / memTotal) * 100).toFixed(0);
         const userInfo = os.userInfo();
         const cpus = os.cpus();
 

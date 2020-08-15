@@ -4,16 +4,25 @@ const os = require('os');
 const si = require('systeminformation');
 const clone = require('clone');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+const Cache = require('../extras/dataCache');
+
+let hostDataCache = new Cache(30);
 
 
 /**
  * Getter for all the log/server/process data
  * @param {object} ctx
  */
-module.exports = async function GetStatus(ctx) {
+module.exports = async function GetStatus(ctx) {    
+    let hostData = hostDataCache.get();
+    if (hostData === false) {
+        hostData = await prepareHostData();
+        hostDataCache.set(hostData);
+    }
+
     return ctx.send({
         meta: prepareMetaData(),
-        host: await prepareHostData(),
+        host: hostData,
         status: prepareServerStatus(),
         players: preparePlayersData()
     })
@@ -84,19 +93,20 @@ function prepareServerStatus() {
 async function prepareHostData() {
     try {
         const giga = 1024 * 1024 * 1024;
+        let memFree, memTotal, memUsed;
 
         if (GlobalData.osType === 'linux') {
             const memoryData = await si.mem();
-            const memFree = (memoryData.available / giga).toFixed(2);
-            const memTotal = (memoryData.total / giga).toFixed(2);
-            const memUsed = (memoryData.active / giga).toFixed(2);
+            memFree = (memoryData.available / giga).toFixed(2);
+            memTotal = (memoryData.total / giga).toFixed(2);
+            memUsed = (memoryData.active / giga).toFixed(2);
         } else {
-            const memFree = (os.freemem() / giga).toFixed(2);
-            const memTotal = (os.totalmem() / giga).toFixed(2);
-            const memUsed = (memTotal - memFree).toFixed(2);
+            memFree = (os.freemem() / giga).toFixed(2);
+            memTotal = (os.totalmem() / giga).toFixed(2);
+            memUsed = (memTotal - memFree).toFixed(2);
         }
 
-        const memUsage = ((memUsed / memTotal) * 100).toFixed(0);
+        let memUsage = ((memUsed / memTotal) * 100).toFixed(0);
         const cpus = os.cpus();
         const cpuStatus = globals.monitor.cpuStatusProvider.getUsageStats();
         const cpuUsage = cpuStatus.last10 || cpuStatus.full;
