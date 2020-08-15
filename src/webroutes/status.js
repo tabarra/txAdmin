@@ -84,11 +84,20 @@ function prepareServerStatus() {
 async function prepareHostData() {
     try {
         const giga = 1024 * 1024 * 1024;
-        const memoryData = await si.mem();
-        const memFree = (memoryData.available / giga).toFixed(2);
-        const memTotal = (memoryData.total / giga).toFixed(2);
-        const memUsed = (memoryData.active / giga).toFixed(2);
-        const memUsage = ((memUsed / memTotal)*100).toFixed(0);
+
+        if (GlobalData.osType === 'linux') {
+            const memoryData = await si.mem();
+            const memFree = (memoryData.available / giga).toFixed(2);
+            const memTotal = (memoryData.total / giga).toFixed(2);
+            const memUsed = (memoryData.active / giga).toFixed(2);
+            const memUsage = ((memUsed / memTotal)*100).toFixed(0);
+        } else {
+            const memFree = (os.freemem() / giga).toFixed(2);
+            const memTotal = (os.totalmem() / giga).toFixed(2);
+            const memUsed = (memTotal-memFree).toFixed(2);
+            const memUsage = ((memUsed / memTotal)*100).toFixed(0);
+        }
+        
         const cpus = os.cpus();
         const cpuStatus = globals.monitor.cpuStatusProvider.getUsageStats();
         const cpuUsage = cpuStatus.last10 || cpuStatus.full;
