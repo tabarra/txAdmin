@@ -137,7 +137,7 @@ module.exports = class Monitor {
                 );
             }else if(action.messages){
                 globals.discordBot.sendAnnouncement(action.messages.discord);
-                if(this.config.disableChatMessages == false){
+                if(!this.config.disableChatWarnings){
                     globals.fxRunner.srvCmd(`txaBroadcast "txAdmin" "${action.messages.chat}"`);
                 }
             }

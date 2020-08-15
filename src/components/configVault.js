@@ -123,6 +123,7 @@ module.exports = class ConfigVault {
                 timeout: toDefault(cfg.monitor.timeout, null),
                 restarterSchedule: toDefault(cfg.monitor.restarterSchedule, null),
                 cooldown: toDefault(cfg.monitor.cooldown, null), //not in template
+                disableChatWarnings: toDefault(cfg.monitor.disableChatWarnings, null), //not in template
                 heartBeat: {
                     failThreshold: (cfg.monitor.heartBeat)? toDefault(cfg.monitor.heartBeat.failThreshold, null) : null,
                     failLimit: (cfg.monitor.heartBeat)? toDefault(cfg.monitor.heartBeat.failLimit, null) : null,
@@ -130,8 +131,7 @@ module.exports = class ConfigVault {
                 healthCheck: {
                     failThreshold: (cfg.monitor.healthCheck)? toDefault(cfg.monitor.healthCheck.failThreshold, null) : null,
                     failLimit: (cfg.monitor.healthCheck)? toDefault(cfg.monitor.healthCheck.failLimit, null) : null,
-                },
-		disableChatMessages: toDefault(cfg.monitor.disableChatMessages, null)
+                }
             };
             out.playerController = {
                 onJoinCheckBan: toDefault(cfg.playerController.onJoinCheckBan, true),
@@ -197,11 +197,11 @@ module.exports = class ConfigVault {
             cfg.monitor.timeout = cfg.monitor.timeout || 1500;
             cfg.monitor.restarterSchedule = cfg.monitor.restarterSchedule || [];
             cfg.monitor.cooldown = parseInt(cfg.monitor.cooldown) || 60; //not in template
+            cfg.monitor.disableChatWarnings = (cfg.monitor.disableChatWarnings === 'true' || cfg.monitor.disableChatWarnings === true);
             cfg.monitor.heartBeat.failThreshold = parseInt(cfg.monitor.heartBeat.failThreshold) || 10;
             cfg.monitor.heartBeat.failLimit = parseInt(cfg.monitor.heartBeat.failLimit) || 45;
             cfg.monitor.healthCheck.failThreshold = parseInt(cfg.monitor.healthCheck.failThreshold) || 10;
             cfg.monitor.healthCheck.failLimit = parseInt(cfg.monitor.healthCheck.failLimit) || 300;
-            cfg.monitor.disableChatMessages = (cfg.monitor.disableChatMessages == 'true' || cfg.monitor.disableChatMessages == true);
 
             //Player Controller
             cfg.playerController.onJoinCheckBan = (cfg.playerController.onJoinCheckBan === null)? true : (cfg.playerController.onJoinCheckBan === 'true' || cfg.playerController.onJoinCheckBan === true);
