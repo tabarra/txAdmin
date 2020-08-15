@@ -1,18 +1,28 @@
 //Requires
 const modulename = 'WebServer:GetStatus';
 const os = require('os');
+const si = require('systeminformation');
 const clone = require('clone');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+const Cache = require('../extras/dataCache');
+
+let hostDataCache = new Cache(30);
 
 
 /**
  * Getter for all the log/server/process data
  * @param {object} ctx
  */
-module.exports = async function GetStatus(ctx) {
+module.exports = async function GetStatus(ctx) {    
+    let hostData = hostDataCache.get();
+    if (hostData === false) {
+        hostData = await prepareHostData();
+        hostDataCache.set(hostData);
+    }
+
     return ctx.send({
         meta: prepareMetaData(),
-        host: prepareHostData(),
+        host: hostData,
         status: prepareServerStatus(),
         players: preparePlayersData()
     })
@@ -80,18 +90,26 @@ function prepareServerStatus() {
 /**
  * Returns the host's usage
  */
-function prepareHostData() {
-    let giga = 1024 * 1024 * 1024;
-
+async function prepareHostData() {
     try {
-        //processing host data
-        let memFree = (os.freemem() / giga).toFixed(2);
-        let memTotal = (os.totalmem() / giga).toFixed(2);
-        let memUsed = (memTotal - memFree).toFixed(2);;
+        const giga = 1024 * 1024 * 1024;
+        let memFree, memTotal, memUsed;
+
+        if (GlobalData.osType === 'linux') {
+            const memoryData = await si.mem();
+            memFree = (memoryData.available / giga).toFixed(2);
+            memTotal = (memoryData.total / giga).toFixed(2);
+            memUsed = (memoryData.active / giga).toFixed(2);
+        } else {
+            memFree = (os.freemem() / giga).toFixed(2);
+            memTotal = (os.totalmem() / giga).toFixed(2);
+            memUsed = (memTotal - memFree).toFixed(2);
+        }
+
         let memUsage = ((memUsed / memTotal) * 100).toFixed(0);
-        let cpus = os.cpus();
-        let cpuStatus = globals.monitor.cpuStatusProvider.getUsageStats();
-        let cpuUsage = cpuStatus.last10 || cpuStatus.full;
+        const cpus = os.cpus();
+        const cpuStatus = globals.monitor.cpuStatusProvider.getUsageStats();
+        const cpuUsage = cpuStatus.last10 || cpuStatus.full;
 
         //returning output output
         return {
