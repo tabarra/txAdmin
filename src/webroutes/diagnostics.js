@@ -9,7 +9,7 @@ const humanizeDuration = require('humanize-duration');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 const Cache = require('../extras/dataCache');
 
-let cache = new Cache(5);
+const cache = new Cache(5);
 
 
 /**
@@ -17,19 +17,17 @@ let cache = new Cache(5);
  * @param {object} ctx
  */
 module.exports = async function Diagnostics(ctx) {
-    let cachedData = cache.get();
+    const cachedData = cache.get();
     if(cachedData !== false){
         cachedData.message = 'This page was cached in the last 5 seconds';
         return ctx.utils.render('diagnostics', cachedData);
     }
 
-
-    let timeStart = new Date();
-    let data = {
+    const timeStart = Date.now();
+    const data = {
         headerTitle: 'Full Report',
         message: ''
     };
-
     [data.host, data.txadmin, data.fxserver, data.proccesses] = await Promise.all([
         getHostData(),
         gettxAdminData(),
@@ -37,8 +35,7 @@ module.exports = async function Diagnostics(ctx) {
         getProcessesData(),
     ]);
 
-
-    let timeElapsed = new Date() - timeStart;
+    const timeElapsed = Date.now() - timeStart;
     data.message = `Executed in ${timeElapsed} ms`;
 
     cache.set(data);
@@ -53,9 +50,9 @@ module.exports = async function Diagnostics(ctx) {
  *       wmic PROCESS get "Name,ParentProcessId,ProcessId,CommandLine,CreationDate,UserModeTime,WorkingSetSize"
  */
 async function getProcessesData(){
-    let procList = [];
+    const procList = [];
     try {
-        var processes = await pidusageTree(process.pid);
+        const processes = await pidusageTree(process.pid);
 
         //NOTE: Cleaning invalid proccesses that might show up in Linux
         Object.keys(processes).forEach((pid) => {
@@ -64,7 +61,7 @@ async function getProcessesData(){
 
         //Foreach PID
         Object.keys(processes).forEach((pid) => {
-            var curr = processes[pid];
+            const curr = processes[pid];
 
             //Define name and order
             let procName;
@@ -116,8 +113,8 @@ async function getFXServerData(){
     }
 
     //Preparing request
-    let port = (globals.config.forceFXServerPort)? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
-    let requestOptions = {
+    const port = (globals.config.forceFXServerPort)? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
+    const requestOptions = {
         url: `http://localhost:${port}/info.json`,
         method: 'get',
         responseType: 'json',
@@ -125,11 +122,11 @@ async function getFXServerData(){
         maxRedirects: 0,
         timeout: globals.monitor.config.timeout
     }
-    let infoData;
-
+    
     //Making HTTP Request
+    let infoData;
     try {
-        let res = await axios(requestOptions);
+        const res = await axios(requestOptions);
         infoData = res.data;
     } catch (error) {
         logWarn('Failed to get FXServer information.');
@@ -140,8 +137,8 @@ async function getFXServerData(){
     //Helper function
     const getBuild = (ver)=>{
         try {
-            let regex = /v1\.0\.0\.(\d{4,5})\s*/;
-            let res = regex.exec(ver);
+            const regex = /v1\.0\.0\.(\d{4,5})\s*/;
+            const res = regex.exec(ver);
             return parseInt(res[1]);
         } catch (error) {
             return 0;
@@ -164,7 +161,7 @@ async function getFXServerData(){
             resourcesWarning = `<span class="badge badge-danger"> VERY HIGH! </span>`;
         }
 
-        let fxData = {
+        return {
             error: false,
             statusColor: 'success',
             status: ' ONLINE ',
@@ -176,8 +173,6 @@ async function getFXServerData(){
             maxClients: (infoData.vars && infoData.vars.sv_maxClients)? infoData.vars.sv_maxClients : '--',
             txAdminVersion: (infoData.vars && infoData.vars['txAdmin-version'])? infoData.vars['txAdmin-version'] : '--',
         };
-
-        return fxData;
     } catch (error) {
         logWarn('Failed to process FXServer information.');
         if(GlobalData.verbose) dir(error);
@@ -191,7 +186,7 @@ async function getFXServerData(){
  * Gets the Host Data.
  */
 async function getHostData(){
-    let hostData = {};
+    const hostData = {};
     try {
         const giga = 1024 * 1024 * 1024;
         let memFree, memTotal, memUsed;
@@ -207,7 +202,7 @@ async function getHostData(){
             memUsed = (memTotal - memFree).toFixed(2);
         }
 
-        let memUsage = ((memUsed / memTotal) * 100).toFixed(0);
+        const memUsage = ((memUsed / memTotal) * 100).toFixed(0);
         const userInfo = os.userInfo();
         const cpus = os.cpus();
 
@@ -233,13 +228,13 @@ async function getHostData(){
  * Gets txAdmin Data
  */
 async function gettxAdminData(){
-    let humanizeOptions = {
+    const humanizeOptions = {
         round: true,
         units: ['d', 'h', 'm']
     }
 
     const controllerConfigs = globals.playerController.config;
-    let txadminData = {
+    return {
         uptime: humanizeDuration(process.uptime()*1000, humanizeOptions),
         cfxUrl: (GlobalData.cfxUrl)? `https://${GlobalData.cfxUrl}/` : '--',
         banlistEnabled: controllerConfigs.onJoinCheckBan.toString(),
@@ -253,6 +248,4 @@ async function gettxAdminData(){
         serverDataPath: globals.fxRunner.config.serverDataPath,
         cfgPath: globals.fxRunner.config.cfgPath,
     };
-
-    return txadminData;
 }

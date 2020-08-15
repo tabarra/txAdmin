@@ -8,30 +8,24 @@ module.exports = class Cache {
         this.data = false;
     }
 
-
-    //================================================================
     /**
      * Sets the cache
-     * @param {string} data
+     * @param {*} data
      */
     set(data){
-        this.dataTimestamp = (new Date()/1000).toFixed();
+        this.dataTimestamp = Math.round(Date.now() / 1000);
         this.data = data;
     }
 
-
-    //================================================================
     /**
      * Returns the cache if valid, or false
      */
     get(){
-        let now = (new Date()/1000).toFixed();
+        const now = Math.round(Date.now() / 1000);
         if(now - this.dataTimestamp < this.cacheTime){
             return clone(this.data);
         }else{
             return false;
         }
     }
-
-
 } //Fim Cache()

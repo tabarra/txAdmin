@@ -6,11 +6,12 @@ const clone = require('clone');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 const Cache = require('../extras/dataCache');
 
-let hostDataCache = new Cache(30);
+const hostDataCache = new Cache(5);
 
 
 /**
  * Getter for all the log/server/process data
+ * The host data is cached for 5 seconds
  * @param {object} ctx
  */
 module.exports = async function GetStatus(ctx) {    
@@ -94,7 +95,6 @@ async function prepareHostData() {
     try {
         const giga = 1024 * 1024 * 1024;
         let memFree, memTotal, memUsed;
-
         if (GlobalData.osType === 'linux') {
             const memoryData = await si.mem();
             memFree = (memoryData.available / giga).toFixed(2);
@@ -106,7 +106,7 @@ async function prepareHostData() {
             memUsed = (memTotal - memFree).toFixed(2);
         }
 
-        let memUsage = ((memUsed / memTotal) * 100).toFixed(0);
+        const memUsage = ((memUsed / memTotal) * 100).toFixed(0);
         const cpus = os.cpus();
         const cpuStatus = globals.monitor.cpuStatusProvider.getUsageStats();
         const cpuUsage = cpuStatus.last10 || cpuStatus.full;

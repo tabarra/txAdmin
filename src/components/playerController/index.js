@@ -104,8 +104,8 @@ module.exports = class PlayerController {
      */
     refreshConfig(){
         this.config = globals.configVault.getScoped('playerController');
-        let cmd = 'txAdmin-checkPlayerJoin ' + (this.config.onJoinCheckBan || this.config.onJoinCheckWhitelist).toString();
-        globals.fxRunner.srvCmdBuffer(cmd).then().catch();
+        const cmd = 'txAdmin-checkPlayerJoin ' + (this.config.onJoinCheckBan || this.config.onJoinCheckWhitelist).toString();
+        globals.fxRunner.srvCmd(cmd).catch(e => {});
     }//Final refreshConfig()
 
 

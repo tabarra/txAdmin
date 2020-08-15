@@ -13,7 +13,7 @@
 - [x] discord bot: fixed /help spam on reconnection
 - [x] updated dutch, german and danish languages
 - [x] added option to disable in game restart warning chat messages (thanks @is-sam)
-- [ ] check why scheduled restarts are not kicking players
+- [x] check why scheduled restarts are not kicking players (no issue found, still replaced `txaKickAll` eith `quit`)
 - [ ] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
 
@@ -40,7 +40,6 @@ TODO: Bot commands (in dev order):
 - [ ] monitor checks for duplicate active users every 10 minutes, then reports in diagnostics page
 - [ ] check everything done for xss
 - [ ] apply the new action log html to the modal
-- [ ] make `fxRunner.srvCmd()` itself perform the escaping
 - [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
 - [ ] add ban server-side ban cache (last 500 bans?), updated on every ban change 
 - [ ] add a commend system?

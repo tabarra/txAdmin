@@ -12,6 +12,10 @@ const ConsoleBuffer = require('./consoleBuffer');
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000) };
+const escape = (x) => {return x.replace(/\"/g, '\uff02');};
+const formatCommand = (cmd, ...params) => {
+    return `${cmd} "` + [...params].map(escape).join(`" "`) + `"`;
+};
 
 
 module.exports = class FXRunner {
@@ -234,8 +238,8 @@ module.exports = class FXRunner {
                     servername: globals.config.serverName,
                     reason: tReason
                 }
-                let kickMessage = globals.translator.t('server_actions.restarting', tOptions).replace(/\"/g, '\\"');
-                this.srvCmd(`txaKickAll "${kickMessage}"`);
+                let kickMessage = globals.translator.t('server_actions.restarting', tOptions);
+                this.srvCmd(formatCommand('quit', kickMessage));
                 let discordMessage = globals.translator.t('server_actions.restarting_discord', tOptions);
                 globals.discordBot.sendAnnouncement(discordMessage);
                 await sleep(750);
@@ -273,8 +277,8 @@ module.exports = class FXRunner {
                 }
                 let discordMessage = globals.translator.t('server_actions.stopping_discord', tOptions);
                 globals.discordBot.sendAnnouncement(discordMessage);
-                let kickMessage = globals.translator.t('server_actions.stopping', tOptions).replace(/\"/g, '\\"');
-                this.srvCmd(`txaKickAll "${kickMessage}"`);
+                let kickMessage = globals.translator.t('server_actions.stopping', tOptions);
+                this.srvCmd(formatCommand('quit', kickMessage));
                 await sleep(500);
             }
 
