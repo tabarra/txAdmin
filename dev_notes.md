@@ -10,6 +10,7 @@
 - [x] update packages
 - [x] discord bot: set new api url
 - [x] reset /auth url after message or error
+- [x] discord bot: fixed /help spam on reconnection
 - [ ] check why scheduled restarts are not kicking players
 - [ ] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones

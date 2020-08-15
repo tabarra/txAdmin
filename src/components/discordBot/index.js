@@ -21,6 +21,7 @@ module.exports = class DiscordBot {
         this.config = config;
         this.client = null;
         this.announceChannel = null;
+        this.latestMutex = null;
         this.usageStats = {};
         
         //NOTE: setting them up statically due to webpack requirements
@@ -102,14 +103,17 @@ module.exports = class DiscordBot {
             }
         });
 
+        //Set mutex to prevent spamming /help on reconnections
+        const currentMutex = Math.random();
+
         //Setup Ready listener
         this.client.on('ready', async () => {
             logOk(`Started and logged in as '${this.client.user.tag}'`);
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
             this.announceChannel = this.client.channels.find(x => x.id === this.config.announceChannel);
             if(!this.announceChannel){
-                logError(`The announcements channel could not be found. Check the ID: ${this.config.announceChannel}`);
-            }else{
+                logError(`The announcements channel could not be found. Check the channel ID ${this.config.announceChannel}, or the bot permissions.`);
+            }else if(currentMutex !== this.latestMutex){
                 let cmdDescs = [];
                 this.commands.forEach((cmd, name) => {
                     cmdDescs.push(`${this.config.prefix}${name}: ${cmd.description}`);
@@ -127,6 +131,7 @@ module.exports = class DiscordBot {
                     description: descLines.join('\n')
                 });
                 this.announceChannel.send(msg);
+                this.latestMutex = currentMutex;
             }
         });
 
