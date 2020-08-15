@@ -69,7 +69,7 @@ class Logger {
         this.txAdminPort = GetConvar("txAdmin-apiPort", "invalid");
         this.txAdminToken = GetConvar("txAdmin-apiToken", "invalid");
         if(this.txAdminPort === 'invalid' || this.txAdminToken === 'invalid'){
-            logError('API Port and Token ConVars not found. Do not start this resource if not using txAdmin.') 
+            logError('API Port or Token ConVars not found. Do not start this resource if not using txAdmin.') 
         }
 
         //Attempt to flush log to txAdmin, starting after 10 seconds

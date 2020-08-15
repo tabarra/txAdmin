@@ -201,7 +201,8 @@ module.exports = class WebServer {
                 process.exit();
             });
             this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', () => {
-                logOk(`Listening at ` + chalk.inverse(` http://localhost:${GlobalData.txAdminPort}/ `));
+                const addr = (GlobalData.osType === 'linux')? 'your-public-ip' : 'localhost';
+                logOk(`Listening at ` + chalk.inverse(` http://${addr}:${GlobalData.txAdminPort}/ `));
             });
         } catch (error) {
             logError('Failed to start HTTP server with error:');
