@@ -250,14 +250,16 @@ function handlePlayerController(ctx) {
 function handleMonitor(ctx) {
     //Sanity check
     if(
-        isUndefined(ctx.request.body.schedule)
+        isUndefined(ctx.request.body.schedule),
+        isUndefined(ctx.request.body.disableChatWarnings)
     ){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
     //Prepare body input
     let cfg = {
-        schedule: ctx.request.body.schedule.split(',').map((x) => {return x.trim()})
+        schedule: ctx.request.body.schedule.split(',').map((x) => {return x.trim()}),
+        disableChatWarnings: (ctx.request.body.disableChatWarnings === 'true')
     }
 
     //Validating times
@@ -281,6 +283,7 @@ function handleMonitor(ctx) {
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('monitor');
     newConfig.restarterSchedule = validTimes;
+    newConfig.disableChatWarnings = cfg.disableChatWarnings;
     let saveStatus = globals.configVault.saveProfile('monitor', newConfig);
 
     //Sending output
