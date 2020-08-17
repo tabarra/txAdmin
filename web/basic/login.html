@@ -128,9 +128,9 @@
 
         <!-- Logo Row -->
         {{@if(it.isMatrix)}}
-            <div class="row justify-content-md-center mb-4"><pre><b>{{it.ascii}}</b></pre></div>
+            <div class="row justify-content-center mb-4"><pre><b>{{it.ascii}}</b></pre></div>
         {{#else}}
-            <div class="row justify-content-md-center mb-4">
+            <div class="row justify-content-center mb-4">
                 <img src="img/txadmin.png" alt="txAdmin Logo">
             </div>
         {{/if}}
@@ -231,7 +231,7 @@
                                     </div>
                                     <input class="form-control" type="password" name="password" placeholder="Password" required>
                                 </div>
-                                <div class="row justify-content-md-center">
+                                <div class="row justify-content-center">
                                     <button class="btn btn-primary px-4" type="submit">Login</button>
                                 </div>
                             </form>
@@ -247,7 +247,7 @@
         </div>
 
         <!-- Info Row -->
-        <div class="row justify-content-md-center">
+        <div class="row justify-content-center">
             <div class="col-md-4 ">
                 <div class="alert alert-secondary text-center small" role="alert">
                     <strong>Server profile:</strong> {{it.serverProfile}} <br>
@@ -257,7 +257,7 @@
             </div>
         </div>
         {{@if(it.isMatrix)}}
-            <div class="row justify-content-md-center">
+            <div class="row justify-content-center">
                 <div class="col-md-4 text-center pt-3">
                     <h4 class="matrix-text">The Matrix has you...</h4>
                 </div>
