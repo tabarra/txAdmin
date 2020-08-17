@@ -167,15 +167,20 @@ module.exports = class Monitor {
 
 
     //================================================================
-    processFXServerHitch(hitchTime){
-        let hitch = {
+    /**
+     * Processes a server hitch
+     * NOTE: The minimum time for a hitch is 150ms. 60000/150=400
+     * 
+     * @param {string} thread //not being used
+     * @param {number} hitchTime 
+     */
+    processFXServerHitch(thread, hitchTime){
+        this.globalCounters.hitches.push({
             ts: now(),
             hitchTime: parseInt(hitchTime)
-        }
-        this.globalCounters.hitches.push(hitch);
+        });
 
-        //The minimum time for a hitch is 150ms. 60000/150=400
-        if (this.globalCounters.hitches>400) this.globalCounters.hitches.shift();
+        if(this.globalCounters.hitches>400) this.globalCounters.hitches.shift();
     }
 
 

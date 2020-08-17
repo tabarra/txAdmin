@@ -27,7 +27,7 @@ globals = {
         resourcesList: null,
         serverLog: [],
         updateChecker: null,
-        heartbeatStats: {}
+        fd3Errors: 0
     },
 }
 

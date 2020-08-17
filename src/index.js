@@ -58,6 +58,9 @@ const fxServerVersion = getBuild(GetConvar('version', 'false'));
 if(!fxServerVersion){
     logDie(`This version of FXServer is NOT compatible with txAdmin v2. Please update it to build 2310 or above. (version convar not set or in the wrong format)`);
 }
+if(fxServerVersion < 2524){
+    logDie(`This version of FXServer is too outdated and NOT compatible with txAdmin, please update.`);
+}
 
 //Getting txAdmin version
 const txAdminVersion = GetResourceMetadata(resourceName, 'version');

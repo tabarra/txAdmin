@@ -1,10 +1,17 @@
 //Requires
-const modulename = 'ConsoleBuffer';
+const modulename = 'OutputHandler';
 const fs = require('fs');
 const chalk = require('chalk');
-const StreamSnitch = require('stream-snitch');
 const bytes = require('bytes');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+
+//Helpers
+const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
+const deferError = (m, t=500) => {
+    setTimeout(() => {
+        logError(m);
+    }, t);
+}
 
 
 /**
@@ -14,7 +21,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
  * @param {string} logPath
  * @param {int} saveInterval
  */
-module.exports = class ConsoleBuffer {
+module.exports = class OutputHandler {
     constructor(logPath, saveInterval) {
         this.logFileSize = null;
         this.logPath = logPath;
@@ -23,13 +30,6 @@ module.exports = class ConsoleBuffer {
         this.webConsoleBuffer = '';
         this.webConsoleBufferSize = 128*1024; //128kb
         this.fileBuffer = '';
-
-        //FIXME: this is stupid, please fix
-        this.hitchStreamProcessor = null;
-        this.portStreamProcessor = null;
-        this.hangStreamProcessor = null;
-        this.hangStackStreamProcessor = null;
-        this.setupStreamHandlers();
 
         //Start log file
         try {
@@ -45,58 +45,57 @@ module.exports = class ConsoleBuffer {
 
     //================================================================
     /**
-     * Setup the stream handlers
+     * Processes FD3 traces
+     * 
+     * Mapped straces:
+     *   nucleus_connected
+     *   watchdog_bark
+     *   bind_error
+     *   script_log
+     *   hitch
+     *   script_structured_trace (not used)
+     * 
+     * @param {object} data
      */
-    setupStreamHandlers(){
-        // NOTE: detect these:
-        // server thread hitch warning: timer interval of %d milliseconds
-        // network thread hitch warning: timer interval of %d milliseconds
-        // hitch warning: frame time of %d milliseconds
-        this.hitchStreamProcessor = new StreamSnitch(
-            /hitch warning: (frame time|timer interval) of (\d{3,5}) milliseconds/g,
-            (m) => { try{globals.monitor.processFXServerHitch(m[2])}catch(e){} }
-        );
-        this.hitchStreamProcessor.on('error', (data) => {});
+    trace(trace) {
+        //Filter valid packages
+        if(anyUndefined(trace, trace.value, trace.value.data, trace.value.channel)) return;
+        const {channel, data} = trace.value;
 
+        //DEBUG
+        // if(trace.value.func == 'ScriptTrace') return; 
+        // dir({channel,data});
 
-        //NOTE: detect these:
-        //"Could not bind on 0.0.0.0:30120 - is this address valid and not already in use?"
-        //"Loop %s seems hung! (last checkin %d seconds ago)"
-        //"Warning: %s watchdog stack: %s"
-
-        //FIXME: this is stupid, please fix
-        const deferError = (m, t=500) => {
-            setTimeout(() => {
-                logError(m);
-            }, t);
+        //Handle hitches
+        if(channel == 'citizen-server-impl' && data.type == 'hitch'){
+            try{
+                globals.monitor.processFXServerHitch(data.thread, data.time)
+            }catch(e){} 
+            return;
         }
-        this.portStreamProcessor = new StreamSnitch(
-            /Could not bind on ([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})/ig,
-            (m) => { 
-                try{
-                    if(!globals.fxRunner.restartDelayOverride){
-                        globals.fxRunner.restartDelayOverride = 10000;
-                    }else if(globals.fxRunner.restartDelayOverride <= 45000){
-                        globals.fxRunner.restartDelayOverride += 5000;
-                    }
-                    deferError(`Detected FXServer error: Port ${m[2]} is busy! Increasing restart delay to ${globals.fxRunner.restartDelayOverride}.`);
-                }catch(e){} 
-            }
-        );
-        this.portStreamProcessor.on('error', (data) => {});
 
-        this.hangStreamProcessor = new StreamSnitch(
-            /Loop (default|svMain|svNetwork) seems hung!/ig,
-            (m) => { try{deferError(`Detected FXServer error: thread ${m[1]} hung!`)}catch(e){} }
-        );
-        this.hangStreamProcessor.on('error', (data) => {});
+        //Handle bind errors
+        if(channel == 'citizen-server-impl' && data.type == 'bind_error'){
+            try{
+                if(!globals.fxRunner.restartDelayOverride){
+                    globals.fxRunner.restartDelayOverride = 10000;
+                }else if(globals.fxRunner.restartDelayOverride <= 45000){
+                    globals.fxRunner.restartDelayOverride += 5000;
+                }
+                const [ip, port] = data.address.split(':');
+                deferError(`Detected FXServer error: Port ${port} is busy! Increasing restart delay to ${globals.fxRunner.restartDelayOverride}.`);
+            }catch(e){} 
+            return;
+        }
 
-        this.hangStackStreamProcessor = new StreamSnitch(
-            /(default|svMain|svNetwork) watchdog stack: (.*)/ig,
-            (m) => { try{deferError(`Detected FXServer error: thread ${m[1]} hung with stack: ${m[2]}`)}catch(e){} }
-        );
-        this.hangStackStreamProcessor.on('error', (data) => {});
-    }//Final setupStreamHandlers()
+        //Handle watchdog
+        if(channel == 'citizen-server-impl' && data.type == 'watchdog_bark'){
+            try{
+                deferError(`Detected FXServer thread ${data.thread} hung with stack: ${data.stack}`);
+            }catch(e){} 
+            return;
+        }
+    }
 
 
     //================================================================
@@ -110,11 +109,6 @@ module.exports = class ConsoleBuffer {
         //NOTE: not sure how this would throw any errors, but anyways...
         data = data.toString();
         try {
-            //FIXME: this is super stupid, fix it asap
-            this.hitchStreamProcessor.write(data);
-            this.portStreamProcessor.write(data);
-            this.hangStreamProcessor.write(data);
-            this.hangStackStreamProcessor.write(data);
             globals.webServer.webConsole.buffer(data, markType);
 
             //NOTE: There used to be a rule "\x0B-\x1F" that was replaced with "x0B-\x1A\x1C-\x1F" to allow the \x1B terminal escape character.
@@ -190,4 +184,4 @@ module.exports = class ConsoleBuffer {
         });
     }
 
-} //Fim ConsoleBuffer()
+} //Fim OutputHandler()

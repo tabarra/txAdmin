@@ -5,10 +5,11 @@ const path = require('path');
 const os = require('os');
 const sleep = require('util').promisify((a, f) => setTimeout(f, a));
 const { parseArgsStringToArgv } = require('string-argv');
-const pidtree = require('pidtree');
+const StreamValues = require('stream-json/streamers/StreamValues');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
-const ConsoleBuffer = require('./consoleBuffer');
+const OutputHandler = require('./outputHandler');
+
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000) };
@@ -27,7 +28,7 @@ module.exports = class FXRunner {
         this.restartDelayOverride == false;
         this.history = [];
         this.fxServerPort = null;
-        this.consoleBuffer = new ConsoleBuffer(this.config.logPath, 10);
+        this.outputHandler = new OutputHandler(this.config.logPath, 10);
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
         if(config.autostart && this.config.serverDataPath !== null && this.config.cfgPath !== null){
@@ -161,14 +162,17 @@ module.exports = class FXRunner {
             this.fxChild = spawn(
                 this.spawnVariables.command,
                 this.spawnVariables.args,
-                {cwd: this.config.serverDataPath}
+                {
+                    cwd: this.config.serverDataPath,
+                    stdio: [ 'pipe', 'pipe', 'pipe', 'pipe' ]
+                }
             );
             if(typeof this.fxChild.pid === 'undefined'){
                 throw new Error(`Executon of "${this.spawnVariables.command}" failed.`);
             }
             pid = this.fxChild.pid.toString();
             logOk(`>> [${pid}] FXServer Started!`);
-            this.consoleBuffer.writeHeader();
+            this.outputHandler.writeHeader();
             this.history.push({
                 pid: pid,
                 timestamps: {
@@ -216,10 +220,17 @@ module.exports = class FXRunner {
         this.fxChild.stdin.on('data', (data) => {});
 
         this.fxChild.stdout.on('error', (data) => {});
-        this.fxChild.stdout.on('data', this.consoleBuffer.write.bind(this.consoleBuffer));
+        this.fxChild.stdout.on('data', this.outputHandler.write.bind(this.outputHandler));
 
         this.fxChild.stderr.on('error', (data) => {});
-        this.fxChild.stderr.on('data', this.consoleBuffer.writeError.bind(this.consoleBuffer));
+        this.fxChild.stderr.on('data', this.outputHandler.writeError.bind(this.outputHandler));
+
+        const tracePipe = this.fxChild.stdio[3].pipe(StreamValues.withParser());
+        tracePipe.on('error', (data) => {
+            if(GlobalData.verbose) logWarn(`FD3 decode error: ${data.message}`)
+            globals.databus.fd3Errors++;
+        });
+        tracePipe.on('data', this.outputHandler.trace.bind(this.outputHandler));
 
         return null;
     }//Final spawnServer()
@@ -331,13 +342,13 @@ module.exports = class FXRunner {
         if(typeof command !== 'string') throw new Error('Expected String!');
         if(this.fxChild === null) return false;
         bufferTime = (bufferTime !== undefined)? bufferTime : 1500;
-        this.consoleBuffer.cmdBuffer = '';
-        this.consoleBuffer.enableCmdBuffer = true;
+        this.outputHandler.cmdBuffer = '';
+        this.outputHandler.enableCmdBuffer = true;
         let result = this.srvCmd(command);
         if(!result) return false;
         await sleep(bufferTime);
-        this.consoleBuffer.enableCmdBuffer = false;
-        return this.consoleBuffer.cmdBuffer.replace(/\u001b\[\d+(;\d)?m/g, '');
+        this.outputHandler.enableCmdBuffer = false;
+        return this.outputHandler.cmdBuffer.replace(/\u001b\[\d+(;\d)?m/g, '');
     }
 
 

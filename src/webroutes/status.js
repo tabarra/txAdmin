@@ -74,15 +74,15 @@ function prepareServerStatus() {
 
     let logFileSize = (
         globals.fxRunner &&
-        globals.fxRunner.consoleBuffer &&
-        globals.fxRunner.consoleBuffer.logFileSize
-    )? globals.fxRunner.consoleBuffer.logFileSize : '--';
+        globals.fxRunner.outputHandler &&
+        globals.fxRunner.outputHandler.logFileSize
+    )? globals.fxRunner.outputHandler.logFileSize : '--';
 
 
     let out = `<strong>Monitor Status: <span class="badge badge-${monitorStatusClass}"> ${monitorStatus} </span> </strong><br>
                 <strong>Process Status:</strong> ${processStatus}<br>
                 <strong>Hitch Time:</strong> ${hitches}<br>
-                <strong>Log Size:</strong> ${logFileSize}`;
+                <strong>Console Size:</strong> ${logFileSize}`;
     return out;
 }
 

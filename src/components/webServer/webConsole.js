@@ -42,7 +42,7 @@ module.exports = class webConsole {
         socket.on('consoleCommand', this.handleSocketMessages.bind(this, socket));
 
         try {
-            socket.emit('consoleData', xss(globals.fxRunner.consoleBuffer.webConsoleBuffer));
+            socket.emit('consoleData', xss(globals.fxRunner.outputHandler.webConsoleBuffer));
         } catch (error) {
             if(GlobalData.verbose) logWarn(`Error sending sending old buffer: ${error.message}`);
         }

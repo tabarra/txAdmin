@@ -14,7 +14,7 @@
 - [x] updated dutch, german and danish languages
 - [x] added option to disable in game restart warning chat messages (thanks @is-sam)
 - [x] check why scheduled restarts are not kicking players (no issue found, still replaced `txaKickAll` eith `quit`)
-- [ ] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
+- [x] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
 
 
