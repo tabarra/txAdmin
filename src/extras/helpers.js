@@ -137,6 +137,7 @@ function resolveCFGFilePath(cfgPath, serverDataPath) {
  *  - endpoints that are not 0.0.0.0:xxx
  *  - port mismatch
  *  - "stop monitor"
+ *  - if endpoint on 40120~40130
  * @param {string} rawCfgFile
  */
 function getFXServerPort(rawCfgFile) {
@@ -177,7 +178,12 @@ function getFXServerPort(rawCfgFile) {
         if(m.port !== matches[0].port) throw new Error("All <code>endpoint_add_*</code> MUST have the same port")
     });
 
-    return matches[0].port;
+    const port = parseInt(matches[0].port);
+    if(port >= 40120 && port <= 40130){
+        throw new Error(`The port ${port} is dedicated for txAdmin and can not be used for FXServer, please edit your <code>endpoint_add_*</code>`);
+    }
+
+    return port;
 }
 
 

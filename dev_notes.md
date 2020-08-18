@@ -15,6 +15,8 @@
 - [x] added option to disable in game restart warning chat messages (thanks @is-sam)
 - [x] check why scheduled restarts are not kicking players (no issue found, still replaced `txaKickAll` eith `quit`)
 - [x] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
+- [x] fix login page centralization on mobile screens
+- [ ] replace current onesync variables
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
 
 
@@ -37,7 +39,6 @@ TODO: Bot commands (in dev order):
 - [ ] break player page into `Players` and `Player Access`
         - `Player Access` will only contain the whitelist and band ids cards
         - `Players` will have a central search and will show players and actions at the same time
-- [ ] monitor checks for duplicate active users every 10 minutes, then reports in diagnostics page
 - [ ] check everything done for xss
 - [ ] apply the new action log html to the modal
 - [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
@@ -50,13 +51,13 @@ TODO: Bot commands (in dev order):
 > Soon™® (hopefully in two months or so)
 - [ ] get all functions from `web\public\js\txadmin\players.js` and wrap in some object.
 - [ ] add some chart to the players page?
-- [ ] the weekly playtime counter per user?
 - [ ] tweak dashboard update checker behavior
 - [ ] add an fxserver changelog page
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
 - [ ] break down playerController into separate files!
 - [ ] rename playerController to playerManager?
+- [ ] make heartbeats go through FD3?
 
 ## "in the roadmap"
 - [ ] Check config management libraries (specially 'convict' by Mozilla and nconf)
