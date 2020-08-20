@@ -40,9 +40,7 @@ let defaultConfig = {
     fxRunner: {
         serverDataPath: null,
         cfgPath: null,
-        onesync: false,
-        autostart: true,
-        quiet: false
+        autostart: true
     }
 }
 

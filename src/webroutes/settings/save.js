@@ -122,8 +122,8 @@ function handleFXServer(ctx) {
     let cfg = {
         serverDataPath: slash(path.normalize(ctx.request.body.serverDataPath+'/')),
         cfgPath: slash(path.normalize(ctx.request.body.cfgPath)),
-        commandLine: ctx.request.body.commandLine,
-        onesync: (ctx.request.body.onesync === 'true'),
+        commandLine: ctx.request.body.commandLine.trim(),
+        onesync: ctx.request.body.onesync,
         autostart: (ctx.request.body.autostart === 'true'),
         quiet: (ctx.request.body.quiet === 'true'),
     }

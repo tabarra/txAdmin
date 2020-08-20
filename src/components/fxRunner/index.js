@@ -67,9 +67,8 @@ module.exports = class FXRunner {
             '+set', 'txAdmin-apiToken', globals.webServer.intercomToken,
             '+set', 'txAdmin-checkPlayerJoin', (controllerConfigs.onJoinCheckBan || controllerConfigs.onJoinCheckWhitelist).toString(),
             '+set', 'txAdminServerMode', 'true',
-            '+start', GlobalData.resourceName, //NOTE: required for builds <= 2391
-            '+set', 'onesync_enabled', (this.config.onesync).toString(),
             ...extraArgs,
+            '+set', 'onesync', this.config.onesync,
             '+exec', this.config.cfgPath,
         ];
 

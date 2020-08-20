@@ -17,7 +17,7 @@
 - [x] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
 - [x] fix login page centralization on mobile screens
 - [x] add placeholders to discord bot settings tab
-- [ ] replace current onesync variables
+- [x] update onesync setting values to reflect fxserver's change
 - [ ] if clean install and on windows, open the listening URL on the browser
 
 
@@ -36,7 +36,7 @@ TODO: Bot commands (in dev order):
 /removewl <mention>
 
 > Soon™ (hopefully the next update)
-- [ ] adapt kick messages to use some basic HTML formatting and 🆃🆇🅰🅳🅼🅸🅽
+- [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
 - [ ] break player page into `Players` and `Player Access`
         - `Player Access` will only contain the whitelist and band ids cards
         - `Players` will have a central search and will show players and actions at the same time

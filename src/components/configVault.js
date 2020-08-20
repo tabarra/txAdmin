@@ -226,11 +226,18 @@ module.exports = class ConfigVault {
 
             //FXRunner
             cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template
-            cfg.fxRunner.onesync = (cfg.fxRunner.onesync === 'true' || cfg.fxRunner.onesync === true);
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
             cfg.fxRunner.autostartDelay = parseInt(cfg.fxRunner.autostartDelay) || 2; //not in template
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in templater
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
+            //FXRunner - Converting from old OneSync (build 2751)
+            if(isUndefined(cfg.fxRunner.onesync) || cfg.fxRunner.onesync === null){
+                cfg.fxRunner.onesync = 'off'
+            }else if(typeof cfg.fxRunner.onesync == 'boolean'){
+                cfg.fxRunner.onesync = (cfg.fxRunner.onesync)? 'on' : 'off';
+            }else if(!['on', 'legacy', 'off'].includes(cfg.fxRunner.onesync)){
+                throw new Error(`Invalid OneSync type.`);
+            }
         } catch (error) {
             if(GlobalData.verbose) dir(error)
             throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`);
