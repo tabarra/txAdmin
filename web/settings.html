@@ -357,6 +357,7 @@
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmDiscord-token" 
                                     value="{{@if(!it.readOnly)}}{{it.discord.token|undef}}{{#else}}[redacted]{{/if}}"
+                                    placeholder="CXPcWbxKOHpwlUBaYKznIfkz.ExpTAB.NX-3YxfmVIGUJLGbPamViXGAEiY"
                                     maxlength="96" {{it.readOnly|isDisabled}}>
                                 <span class="form-text text-muted">
                                     To get a token and the bot to join your server, follow these two guides:
@@ -372,7 +373,8 @@
                             <label for="frmDiscord-announceChannel" class="col-sm-3 col-form-label">Announcements <br>Channel ID</label>
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" id="frmDiscord-announceChannel"
-                                    value="{{it.discord.announceChannel|undef}}" {{it.readOnly|isDisabled}}>
+                                    value="{{it.discord.announceChannel|undef}}" 
+                                    placeholder="578045190955335691" {{it.readOnly|isDisabled}}>
                                 <span class="form-text text-muted">
                                     The ID of the channel to send Announcements (eg server restarts). <br>
                                     Leave it blank to disable this feature. <br>

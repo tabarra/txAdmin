@@ -16,8 +16,9 @@
 - [x] check why scheduled restarts are not kicking players (no issue found, still replaced `txaKickAll` eith `quit`)
 - [x] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
 - [x] fix login page centralization on mobile screens
+- [x] add placeholders to discord bot settings tab
 - [ ] replace current onesync variables
-- [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
+- [ ] if clean install and on windows, open the listening URL on the browser
 
 
 TODO: Bot commands (in dev order):
