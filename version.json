@@ -1,5 +1,5 @@
 {
-    "version": "2.6.1",
+    "version": "2.7.0",
     "changelog": "Deprecated Message. Please Update to v2.",
     "allVersions": [
         {
@@ -193,6 +193,10 @@
         {
             "version": "2.6.1",
             "changelog": "Fixed discord bot commands prefix bug, re-added spam limiter. Minor tweaks and upgraded packages."
+        },
+        {
+            "version": "2.7.0",
+            "changelog": "Updated onesync convars. Fixed discord bot /help spam. Minor fixes and tweaks."
         }
     ]
 }

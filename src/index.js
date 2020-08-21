@@ -56,7 +56,7 @@ const resourceName = GetCurrentResourceName();
 //Getting fxserver version
 const fxServerVersion = getBuild(GetConvar('version', 'false'));
 if(!fxServerVersion){
-    logDie(`This version of FXServer is NOT compatible with txAdmin v2. Please update it to build 2310 or above. (version convar not set or in the wrong format)`);
+    logDie(`This version of FXServer is NOT compatible with txAdmin v2. Please update it to build 2524 or above. (version convar not set or in the wrong format)`);
 }
 if(fxServerVersion < 2524){
     logDie(`This version of FXServer is too outdated and NOT compatible with txAdmin, please update.`);
@@ -71,7 +71,7 @@ if(typeof txAdminVersion !== 'string' || txAdminVersion == 'null'){
 //Check if this version of txAdmin is too outdated to be considered safe to use in prod
 //NOTE: Only valid if its being very actively maintained.
 //          Use 30d for patch 0, or 45~60d otherwise
-const txAdminVersionBestBy = 1594085555 + (45 * 86400);
+const txAdminVersionBestBy = 1597975555 + (45 * 86400);
 if(now() > txAdminVersionBestBy){
     logError(`This version of txAdmin is outdated.`);
     logError(`Please update as soon as possible.`);

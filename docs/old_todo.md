@@ -281,6 +281,13 @@ More:
 - [x] replace timestamp function in update checking
 - [x] build test + version bump
 > v2.6.0
+- [x] discord bot: fixed bug of it accepting any prefix
+- [x] discord bot: likely fixed multi-client issue
+- [x] discord bot: re-add spam limiter
+- [x] discord bot: add usage stats
+- [x] add admins count to the stats.json
+- [x] check for "stop monitor" in cfg file
+> v2.6.1
 
 
 ------------------------------

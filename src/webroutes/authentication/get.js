@@ -12,13 +12,13 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  */
 module.exports = async function AuthGet(ctx) {
     //Set template type
-    let template = (globals.authenticator.admins === false)? 'noMaster' : 'normal';
+    const template = (globals.authenticator.admins === false)? 'noMaster' : 'normal';
 
     //Destroy session? And start a new one
     if(!isUndefined(ctx.query.logout)) ctx.session.auth = {};
 
     //Render page
-    let renderData = {
+    const renderData = {
         template,
         message: (!isUndefined(ctx.query.logout))? 'Logged Out' : '',
         citizenfxDisabled: !globals.authenticator.providers.citizenfx.ready,

@@ -46,7 +46,7 @@
     "koa-session-memory": "^1.0.4",
     "koa-session-socketio": "^1.0.0",
     "koa-static": "^5.0.0",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.20",
     "lowdb": "^1.0.0",
     "nanoid": "^3.1.12",
     "nanoid-dictionary": "^3.0.0",
@@ -58,10 +58,10 @@
     "semver": "^7.3.2",
     "slash": "^3.0.0",
     "socket.io": "^2.3.0",
-    "squirrelly": "^8.0.3",
-    "stream-json": "^1.7.0",
+    "squirrelly": "^8.0.4",
+    "stream-json": "^1.7.1",
     "string-argv": "^0.3.1",
-    "systeminformation": "^4.26.10",
+    "systeminformation": "^4.26.11",
     "xss": "^1.0.8"
   },
   "devDependencies": {

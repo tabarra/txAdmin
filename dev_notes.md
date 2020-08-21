@@ -1,17 +1,10 @@
 ## TODO v2
-> v2.6.0
-- [x] discord bot: fixed bug of it accepting any prefix
-- [x] discord bot: likely fixed multi-client issue
-- [x] discord bot: re-add spam limiter
-- [x] discord bot: add usage stats
-- [x] add admins count to the stats.json
-- [x] check for "stop monitor" in cfg file
 > v2.6.1
 - [x] update packages
 - [x] discord bot: set new api url
 - [x] reset /auth url after message or error
 - [x] discord bot: fixed /help spam on reconnection
-- [x] updated dutch, german and danish languages
+- [x] updated dutch, german, danish and czech languages
 - [x] added option to disable in game restart warning chat messages (thanks @is-sam)
 - [x] check why scheduled restarts are not kicking players (no issue found, still replaced `txaKickAll` eith `quit`)
 - [x] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
@@ -19,6 +12,8 @@
 - [x] add placeholders to discord bot settings tab
 - [x] update onesync setting values to reflect fxserver's change
 - [x] if clean install and on windows, open the listening URL on the browser
+> v2.7.0
+- [ ] xxxxx
 
 TODO: Bot commands (in dev order):
 /addwl <wl req id>
