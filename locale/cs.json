@@ -5,7 +5,7 @@
     },
     "restarter": {
         "crash_detected": "pád detekován",
-        "partial_crash_warn": "Kvůli částečné havárii dr tento server restartuje za 1 minutu. Prosím odpoje se nyní.",
+        "partial_crash_warn": "Kvůli částečné havárii dojde za 1 minutu k restartu toho serveru. Prosím odpojte se nyní.",
         "partial_crash_warn_discord": "Kvůli částečné havárii se **%{servername}** restartuje za 1 minutu.",
         "schedule_reason": "plánovaný restart v %{time}",
         "schedule_warn": "Tento server má naplánovaný restart za %{smart_count} minutu. Prosím odpojte se nyní. |||| Tento server má naplánovaný restart za %{smart_count} minut.",
