@@ -31,16 +31,16 @@ const getWebViewPath = (view) => {
 
 //Squirrelly Filters
 sqrl.filters.define("isSelected", (x)=>{
-    return (x==='true')? 'selected' : '';
+    return (x)? 'selected' : '';
 });
 sqrl.filters.define("isActive", (x)=>{
-    return (x==='true')? 'active' : '';
+    return (x)? 'active' : '';
 });
 sqrl.filters.define("tShow", (x)=>{
     return (x)? `show ${x}` : '';
 });
 sqrl.filters.define("isDisabled", (x)=>{
-    return (x==='true')? 'disabled' : '';
+    return (x)? 'disabled' : '';
 });
 sqrl.filters.define("n2br", (x)=>{
     return x.replace(/(\r|\n)+/m, '<br>');
