@@ -18,8 +18,7 @@
 - [x] fix login page centralization on mobile screens
 - [x] add placeholders to discord bot settings tab
 - [x] update onesync setting values to reflect fxserver's change
-- [ ] if clean install and on windows, open the listening URL on the browser
-
+- [x] if clean install and on windows, open the listening URL on the browser
 
 TODO: Bot commands (in dev order):
 /addwl <wl req id>
