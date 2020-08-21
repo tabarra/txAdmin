@@ -14,7 +14,7 @@ module.exports = async function SettingsGet(ctx) {
         return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
     }
 
-    let renderData = {
+    const renderData = {
         headerTitle: 'settings',
         global: cleanRenderData(globals.configVault.getScopedStructure('global')),
         fxserver: cleanRenderData(globals.configVault.getScopedStructure('fxRunner')),
