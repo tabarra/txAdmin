@@ -197,6 +197,10 @@
         {
             "version": "2.7.0",
             "changelog": "Updated onesync convars. Fixed discord bot /help spam. Minor fixes and tweaks."
+        },
+        {
+            "version": "2.7.1",
+            "changelog": "Fixed rendering issues and player manager settings not saving."
         }
     ]
 }

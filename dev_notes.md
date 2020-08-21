@@ -13,6 +13,9 @@
 - [x] update onesync setting values to reflect fxserver's change
 - [x] if clean install and on windows, open the listening URL on the browser
 > v2.7.0
+- [x] fix player manager settigns page not saving
+- [x] fix squirrelly filters not working on v8.0.4
+> v2.7.1
 - [ ] xxxxx
 
 TODO: Bot commands (in dev order):
