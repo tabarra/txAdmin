@@ -181,7 +181,6 @@ module.exports = class DiscordBot {
                 const timeLeft = expirationTime - ts;
                 if(GlobalData.verbose) log(`Spam prevented for command "${commandName}".`);
                 return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${commandName}\` command again.`);
-                return;
             }
         }
 
