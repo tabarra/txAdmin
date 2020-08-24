@@ -68,7 +68,7 @@ TODO: Bot commands (in dev order):
 ```bash
 # run
 cd /e/FiveM/builds
-nodemon --watch "2786/citizen/system_resources/monitor/src/*" --exec "2786/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose truex +set txAdminFakePlayerlist yesplzx"
+nodemon --watch "2786/citizen/system_resources/monitor/src/*" --exec "2786/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose true +set txAdminFakePlayerlist yesplz"
 
 # build
 cd /e/FiveM/builds/2786/citizen/system_resources/monitor
