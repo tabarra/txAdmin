@@ -17,7 +17,7 @@ function applyPlayerlistFilter(){
     Array.from(playerlistElement.children).forEach(el => {
         if(el.id == 'playerlist-message') return;
         if(
-            search == '' || 
+            search == '' ||
             (typeof el.dataset['pname'] == 'string' && el.dataset['pname'].includes(search))
         ){
             el.hidden = false;
@@ -35,7 +35,7 @@ plistSearchElement.addEventListener('input', function (ev) {
 //TODO: try this again, currently doesn't feel a very polished experience
 // Clear search when the user clicks away
 // plistSearchElement.addEventListener('focusout', (event) => {
-//     setTimeout(() => {  
+//     setTimeout(() => {
 //         event.target.value = ''
 //         Array.from(playerlistElement.children).forEach(el => {
 //             if(el.id == 'playerlist-message') return;
@@ -100,13 +100,13 @@ function processPlayers(players) {
     }
     plistMsgElement.hidden = true;
     applyPlayerlistFilter();
-    
+
     let newPlayers, removedPlayers, updatedPlayers;
     try {
         newPlayers = players.filter(p => {
             return !cachedPlayers.filter(x => x.id === p.id).length;
         });
-        
+
         removedPlayers = cachedPlayers.filter(p => {
             return !players.filter(x => x.id === p.id).length;
         });
@@ -175,7 +175,7 @@ var modPlayer = {
         body: document.getElementById("modPlayerBan"),
         tab: document.getElementById("modPlayerBan-tab"),
         reason: document.getElementById("modPlayerBan-reason"),
-        duration: document.getElementById("modPlayerBan-duration"),
+        duration: document.getElementById("modPlayerBan-duration")
     }
 }
 
@@ -276,12 +276,12 @@ function showPlayer(license, altName='unknown', altIDs='') {
                 </div>`);
                 modPlayer.History.list.innerHTML = elements.join('\n');
             }
-            
+
             modPlayer.Buttons.search.disabled = false;
             modPlayer.Buttons.message.disabled = data.funcDisabled.message;
             modPlayer.Buttons.kick.disabled = data.funcDisabled.kick;
             modPlayer.Buttons.warn.disabled = data.funcDisabled.warn;
-            
+
             //TODO: Show message disabling ban form if the user is already banned?
             //      Or maybe just warn "this user is already banned"
             if(!data.funcDisabled.ban){
@@ -331,7 +331,7 @@ modPlayer.Main.notes.addEventListener("keydown", (event) => {
                 }else{
                     setNoteMessage(`Failed to save with error: wrong return format`, 'danger');
                 }
-                
+
             },
             error: function (xmlhttprequest, textstatus, message) {
                 setNoteMessage(`Failed to save with error: ${message}`, 'danger');
@@ -459,16 +459,18 @@ function warnPlayer() {
 function banPlayer() {
     const reason = modPlayer.Ban.reason.value.trim()
     if (!reason.length) {
-        var notify = $.notify({ message: '<p class="text-center">The ban reason is required.</p>'}, {type: 'danger'});
+        $.notify({ message: '<p class="text-center">The ban reason is required.</p>'}, {type: 'danger'});
         return;
     }
-    var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
-
+    const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
+    const duration = modPlayer.Ban.duration.value === 'custom' ?
+        `${document.getElementById("modPlayerBan-reasonDate").value} ${document.getElementById('modPlayerBan-durationTime').value}` :
+        modPlayer.Ban.duration.value;
     let data = {
-        duration: modPlayer.Ban.duration.value,
+        duration,
         reference: (modPlayer.curr.id !== false)? modPlayer.curr.id : modPlayer.curr.identifiers,
         // reference: modPlayer.curr.identifiers,
-        reason: reason
+        reason
     }
     $.ajax({
         type: "POST",
