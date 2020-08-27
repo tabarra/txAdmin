@@ -3,10 +3,10 @@ const modulename = 'WebServer:PlayerActions';
 const xss = require('../../extras/xss')();
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
-//Helper functions 
-const now = () => { return Math.round(Date.now() / 1000) };
-const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
-const escape = (x) => {return x.replace(/\"/g, '\uff02');};
+//Helper functions
+const now = () => Math.round(Date.now() / 1000);
+const anyUndefined = (...args) => [...args].some(x => (typeof x === 'undefined'));
+const escape = (x) => x.replace(/\"/g, '\uff02');
 const formatCommand = (cmd, ...params) => {
     return `${cmd} "` + [...params].map(c => c.toString()).map(escape).join(`" "`) + `"`;
 };
@@ -68,9 +68,9 @@ module.exports = async function PlayerActions(ctx) {
 //================================================================
 /**
  * Handle Save Note
- * 
+ *
  * NOTE: open to all admins
- * 
+ *
  * @param {object} ctx
  */
 async function handleSaveNote(ctx) {
@@ -199,10 +199,10 @@ async function handleWarning(ctx) {
     //Prepare and send command
     ctx.utils.appendLog(`Warned #${id}: ${reason}`);
     let cmd = formatCommand(
-        'txaWarnID', 
-        id, 
-        ctx.session.auth.username, 
-        reason, 
+        'txaWarnID',
+        id,
+        ctx.session.auth.username,
+        reason,
         globals.translator.t('nui_warning.title'),
         globals.translator.t('nui_warning.warned_by'),
         globals.translator.t('nui_warning.instruction'),
@@ -245,19 +245,47 @@ async function handleBan(ctx) {
     //Calculating expiration
     let expiration;
     const times = {
-        t2h: {label: '2 hours', time: 7200}, 
-        t8h: {label: '8 hours', time: 28800}, 
-        t1d: {label: '1 day', time: 86400}, 
-        t2d: {label: '2 days', time: 172800}, 
-        t1w: {label: '1 week', time: 604800}, 
-        t2w: {label: '2 weeks', time: 1209600}, 
+        t2h: {label: '2 hours', time: 7200},
+        t8h: {label: '8 hours', time: 28800},
+        t1d: {label: '1 day', time: 86400},
+        t2d: {label: '2 days', time: 172800},
+        t1w: {label: '1 week', time: 604800},
+        t2w: {label: '2 weeks', time: 1209600},
     }
-    if(duration == 'perma'){
+
+    const evaluateTimeString = (input) => {
+        if (input === 'perma') {
+            return false;
+        }
+
+        const [ duration, time ] = input.split(/\s/);
+        let out;
+        console.log(time, duration);
+        if (time.startsWith('hour')) {
+            out = duration * 3600;
+        } else if (time.startsWith('day')) {
+            out = duration * 86400;
+        } else if (time.startsWith('week')) {
+            out = duration * 604800;
+        } else if (time.startsWith('month')) {
+            out = duration * 2592000; // 30 days
+        }
+
+        if (!out) {
+            return [ null, null, null ];
+        }
+
+        return [ out, duration, time ];
+    }
+
+    const [ timeEval, timeLength, timeString ] = evaluateTimeString(duration);
+    console.log(timeEval);
+    if (duration === 'perma') {
         expiration = false;
-    }else if(times[duration]){
-        expiration = now() + times[duration].time;
-    }else{
-        return ctx.send({type: 'danger', message: 'Unknown ban duration.'}); 
+    } else if (timeEval) {
+        expiration = now() + timeEval;
+    } else {
+        return ctx.send({type: 'danger', message: 'Unknown ban duration.'});
     }
 
     //Check permissions
@@ -271,11 +299,12 @@ async function handleBan(ctx) {
     }
 
     //Prepare and send command
-    const durationMessage = (expiration !== false)? `for ${times[duration].label}` : 'permanently';
+    const durationMessage = (expiration !== false) ? `for ${timeLength} ${timeString}` : 'permanently';
     // let message = `You have been banned from this server. <br>`;
     // message += `<b>Ban duration:</b> ${durationMessage} <br>`;
     // message += `<b>Banned for:</b> ${xss(reason)} <br>`;
     // message += `<b>Banned by:</b> ${xss(ctx.session.auth.username)}`;
+    console.log(`banned ${reference.join ? reference.join(';') : 'some plr'} for ${durationMessage}`);
     const msg = `[txAdmin] (${xss(ctx.session.auth.username)}) You have been banned from this server ${durationMessage}. Ban reason: ${xss(reason)}`;
 
     let cmd;
