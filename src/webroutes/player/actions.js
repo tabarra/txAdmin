@@ -260,7 +260,6 @@ async function handleBan(ctx) {
 
         const [ duration, time ] = input.split(/\s/);
         let out;
-        console.log(time, duration);
         if (time.startsWith('hour')) {
             out = duration * 3600;
         } else if (time.startsWith('day')) {
@@ -279,7 +278,6 @@ async function handleBan(ctx) {
     }
 
     const [ timeEval, timeLength, timeString ] = evaluateTimeString(duration);
-    console.log(timeEval);
     if (duration === 'perma') {
         expiration = false;
     } else if (timeEval) {
