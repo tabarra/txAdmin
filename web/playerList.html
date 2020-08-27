@@ -119,7 +119,7 @@
                     Last {{it.queryLimits.whitelist}} Whitelist requests:
                 </h5>
                 {{@if(!it.disableWhitelist)}}
-                    <button class="btn btn-sm btn-success float-right" type="button" 
+                    <button class="btn btn-sm btn-success float-right" type="button"
                         onclick="whitelistID(null)" {{it.permsDisable.whitelist|isDisabled}}>
                         <i class="icon-check"></i> Whitelist ID / License
                     </button>
@@ -151,7 +151,7 @@
                                             <button class="btn btn-secondary txInlineBtn txWhitelistBtn disabled"
                                                 disabled>ACCEPT</button>
                                         {{#else}}
-                                            <button onclick="whitelistID('{{wlReq.id}}')" 
+                                            <button onclick="whitelistID('{{wlReq.id}}')"
                                                 class="btn btn-primary txInlineBtn txWhitelistBtn">ACCEPT</button>
                                         {{/if}}
                                     </td>
@@ -213,14 +213,13 @@
                                 Duration
                             </label>
                             <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmAddBan-time"
+                                       placeholder="7">
                                 <select class="form-control" id="frmAddBan-duration">
-                                    <option value="t2h">2 hours</option>
-                                    <option value="t8h">8 hours</option>
-                                    <option value="t1d">1 day</option>
-                                    <option value="t2d">2 days</option>
-                                    <option value="t1w">1 week</option>
-                                    <option value="t2w">2 weeks</option>
-                                    <option value="perma" class="font-weight-bold text-danger" selected>permanent</option>
+                                    <option value="hours">hour(s)</option>
+                                    <option value="days">day(s)</option>
+                                    <option value="weeks">week(s)</option>
+                                    <option value="year">year(s)</option>
                                 </select>
                                 <span class="form-text text-muted">
                                     <b>Note:</b> The ban will be applied to all identifiers.
@@ -247,7 +246,7 @@
 
 
     <div class="col-md-10 col-lg-8 col-xl-5 mw-col8">
-        
+
         <!-- Search + List Card -->
         <div class="card">
             <div class="card-header card-accent-info">
@@ -272,11 +271,11 @@
                         </div>
                     </div>
                     <li class="nav-item">
-                        <a class="nav-link" id="dbPlayers-tab" data-toggle="pill" href="#dbPlayers-content" role="tab" 
+                        <a class="nav-link" id="dbPlayers-tab" data-toggle="pill" href="#dbPlayers-content" role="tab"
                             aria-controls="dbPlayers-content" aria-selected="false"><i class="icon-user"></i> Players</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" id="dbActions-tab" data-toggle="pill" href="#dbActions-content" role="tab" 
+                        <a class="nav-link active" id="dbActions-tab" data-toggle="pill" href="#dbActions-content" role="tab"
                             aria-controls="dbActions-content" aria-selected="true"><i class="icon-notebook"></i> Actions</a>
                     </li>
                 </ul>
@@ -297,7 +296,7 @@
                                     {{@each(it.lastPlayers) => player}}
                                         <!-- FIXME: fix logEntryClickableX and onclickX-->
                                         <div class="list-group-item list-group-item-accent-{{player.color}} logEntry logEntryClickable">
-                                            <div class="d-flex w-100 justify-content-between" onclick="showPlayer('{{player.license}}')"> 
+                                            <div class="d-flex w-100 justify-content-between" onclick="showPlayer('{{player.license}}')">
                                                 <strong>{{player.name}}</strong>
                                                 <small>{{player.joined}}</small>
                                             </div>
@@ -311,7 +310,7 @@
                     <div class="tab-pane fade show active" id="dbActions-content" role="tabpanel" aria-labelledby="dbActions-tab">
                         <div id="dbActions-tabSearch" class="searchTab d-none"></div>
                         <div id="dbActions-tabDefault">
-                            <h5 class="card-title">Last {{it.queryLimits.actions}} actions (bans/warns/whitelists):</h5> 
+                            <h5 class="card-title">Last {{it.queryLimits.actions}} actions (bans/warns/whitelists):</h5>
                             {{@if(it.lastActions.length == 0)}}
                                 <div class="text-center">
                                     <h3 class="mx-auto pt-3 text-secondary">no actions yet...</h3>
@@ -336,7 +335,7 @@
                                                             <span class="badge badge-outline-light txInlineBtn txActionsBtn">REVOKE</span>
                                                         {{#else}}
                                                             &nbsp;
-                                                            <button onclick="revokeAction('{{action.id}}')" 
+                                                            <button onclick="revokeAction('{{action.id}}')"
                                                                 class="btn btn-secondary txInlineBtn txActionsBtn">REVOKE</button>
                                                         {{/if}}
                                                     {{/if}}
@@ -413,7 +412,7 @@
             reference = reference.trim();
         }
         console.dir(reference)
-        
+
         //Treat input to improve UX
         if(reference.length == 5){
             reference = reference.toUpperCase();
@@ -422,10 +421,10 @@
         }else if(reference.length == 48){
             reference = reference.substring(8).toLowerCase();
         }
-        
+
         //Check input validity
         if(
-            !/R[123456789ABCDEFGHJKLMNPQRSTUVWXYZ]{4}/.test(reference) && 
+            !/R[123456789ABCDEFGHJKLMNPQRSTUVWXYZ]{4}/.test(reference) &&
             !/[0-9A-Fa-f]{40}/.test(reference)
         ){
             var notify = $.notify({ message: 'The value inserted is not a valid Whitelist ID nor a license identifier.' }, { type: 'danger' });
@@ -561,12 +560,12 @@
         }else{
             const processed = players.map(p => `
                 <div class="list-group-item list-group-item-accent-${xss(p.color)} logEntry logEntryClickable">
-                    <div class="d-flex w-100 justify-content-between" onclick="showPlayer('${xss(p.license)}')"> 
+                    <div class="d-flex w-100 justify-content-between" onclick="showPlayer('${xss(p.license)}')">
                         <strong>${xss(p.name)}</strong>
                         <small>${xss(p.joined)}</small>
                     </div>
                 </div>`);
-            
+
             return [
                 `<div class="list-group list-group-accent">`,
                 ...processed,
@@ -591,10 +590,10 @@
                         (a.type == 'ban' && permsDisableBan) ||
                         (a.type == 'whitelist' && permsDisableWhitelist)
                     ){
-                        revokeButton = `&nbsp;<span class="badge badge-outline-light txInlineBtn txActionsBtn">REVOKE</span>`; 
+                        revokeButton = `&nbsp;<span class="badge badge-outline-light txInlineBtn txActionsBtn">REVOKE</span>`;
                     }else{
-                        revokeButton = `&nbsp;<button onclick="revokeAction('${xss(a.id)}')" 
-                                class="btn btn-secondary txInlineBtn txActionsBtn">REVOKE</button>`; 
+                        revokeButton = `&nbsp;<button onclick="revokeAction('${xss(a.id)}')"
+                                class="btn btn-secondary txInlineBtn txActionsBtn">REVOKE</button>`;
                     }
                 }
                 const reason = (a.reason !== null)? xss(a.reason) : '';
@@ -612,7 +611,7 @@
                     ${footerNote}
                 </div>`;
             });
-            
+
             return [
                 `<div class="list-group list-group-accent">`,
                 ...processed,
@@ -628,16 +627,22 @@
         performSearch();
     }
 
-    
+    const durationBtn = document.getElementById('modPlayerBan-duration');
+    if (durationBtn) {
+        durationBtn.addEventListener('selectionchange', (e) => {
+            console.log(e);
+        });
+    }
 
     //============================================== Ban card
     const banButtonEl = document.getElementById('frmAddBan-button');
     if(banButtonEl){
         banButtonEl.addEventListener('click', function (ev) {
             let frmIdentifiers = document.getElementById('frmAddBan-identifiers').value.trim();
+            const EByI = (x) => document.getElementById(x);
             let data = {
-                reason: document.getElementById('frmAddBan-reason').value.trim(),
-                duration: document.getElementById('frmAddBan-duration').value.trim(),
+                reason: EByI('frmAddBan-reason').value.trim(),
+                duration: EByI('frmAddBan-duration').value.trim()
             }
             if (!frmIdentifiers.length || !data.reason.length) {
                 let notify = $.notify({ message: 'The identifiers and reason fields are required.' }, { type: 'warning' });
@@ -673,5 +678,5 @@
             });
         });
     }
-    
+
 </script>
