@@ -213,17 +213,29 @@
                                 Duration
                             </label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmAddBan-time"
-                                       placeholder="7">
                                 <select class="form-control" id="frmAddBan-duration">
-                                    <option value="hours">hour(s)</option>
-                                    <option value="days">day(s)</option>
-                                    <option value="weeks">week(s)</option>
-                                    <option value="year">year(s)</option>
+                                    <option value="t2h">2 hours</option>
+                                    <option value="t8h">8 hours</option>
+                                    <option value="t1d">1 day</option>
+                                    <option value="t2d" selected>2 days</option>
+                                    <option value="t1w">1 week</option>
+                                    <option value="t2w">2 weeks</option>
+                                    <option value="perma" class="font-weight-bold text-danger">permanent</option>
+                                    <option value="custom" class="font-weight-bold">custom</option>
                                 </select>
-                                <span class="form-text text-muted">
-                                    <b>Note:</b> The ban will be applied to all identifiers.
-                                </span>
+                                <div class="row mt-2">
+                                    <div class="col-sm-3 pr-0">
+                                        <input type="text" class="form-control" id="frmAddBan-reasonDate" maxlength="3"
+                                               placeholder="7" style="display: none;">
+                                    </div>
+                                    <div class="col-sm-9 pl-2">
+                                        <select class="form-control" id="frmAddBan-durationTime" style="display: none;">
+                                            <option value="hours">hours</option>
+                                            <option value="days" selected>days</option>
+                                            <option value="weeks">weeks</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="text-center mt-4">
@@ -642,7 +654,9 @@
             const EByI = (x) => document.getElementById(x);
             let data = {
                 reason: EByI('frmAddBan-reason').value.trim(),
-                duration: EByI('frmAddBan-duration').value.trim()
+                duration: EByI('frmAddBan-duration').value === 'custom' ?
+                    `${EByI('modPlayerBan-reasonDate').value} ${EByI('modPlayerBan-reasonDate').value}` :
+                    EByI('frmAddBan-duration')
             }
             if (!frmIdentifiers.length || !data.reason.length) {
                 let notify = $.notify({ message: 'The identifiers and reason fields are required.' }, { type: 'warning' });
