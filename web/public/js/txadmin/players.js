@@ -15,13 +15,13 @@ let plistSearchElement = document.getElementById('plist-search');
 function applyPlayerlistFilter(){
     let search = plistSearchElement.value.toLowerCase();
     Array.from(playerlistElement.children).forEach(el => {
-        if(el.id == 'playerlist-message') return;
-        if(
-            search == '' ||
+        if (el.id === 'playerlist-message') return;
+        if (
+            search === '' ||
             (typeof el.dataset['pname'] == 'string' && el.dataset['pname'].includes(search))
-        ){
+        ) {
             el.hidden = false;
-        }else{
+        } else {
             el.hidden = true;
         }
     });
@@ -45,11 +45,11 @@ plistSearchElement.addEventListener('input', function (ev) {
 // });
 
 //Handle Remove, Add and Update playerlist
-function removePlayer(player){
+function removePlayer(player) {
     document.getElementById(`divPlayer${player.id}`).remove();
 }
 
-function addPlayer(player){
+function addPlayer(player) {
     let div = `<div class="list-group-item list-group-item-accent-secondary player text-truncate" 
                 onclick="showPlayer('${player.license}')" id="divPlayer${player.id}">
                     <span class="pping text-secondary">&nbsp;??</span>
@@ -59,9 +59,9 @@ function addPlayer(player){
 }
 
 function updatePlayer(player){
-    let el = document.getElementById(`divPlayer${player.id}`);
+    const el = document.getElementById(`divPlayer${player.id}`);
 
-    let pingClass;
+    let pingClass = 'danger';
     player.ping = parseInt(player.ping);
     if (player.ping < 0) {
         pingClass = 'secondary';
@@ -70,8 +70,6 @@ function updatePlayer(player){
         pingClass = 'success';
     } else if (player.ping < 100) {
         pingClass = 'warning';
-    } else {
-        pingClass = 'danger';
     }
 
     el.classList.remove('list-group-item-accent-secondary', 'list-group-item-accent-success', 'list-group-item-accent-warning', 'list-group-item-accent-danger');
@@ -86,13 +84,13 @@ function updatePlayer(player){
 
 function processPlayers(players) {
     //If invalid playerlist or error message
-    if(!Array.isArray(players)){
+    if (!Array.isArray(players)) {
         Array.from(playerlistElement.children).forEach(el => el.hidden = true);
-        if(typeof players == 'string'){
+        if (typeof players == 'string') {
             plistMsgElement.textContent = players;
-        }else if(players === false){
+        } else if (players === false) {
             plistMsgElement.textContent = 'Playerlist not available.';
-        }else{
+        } else {
             plistMsgElement.textContent = 'Invalid playerlist';
         }
         plistMsgElement.hidden = false
@@ -136,7 +134,7 @@ function processPlayers(players) {
 //============================================== Player Info Modal
 //================================================================
 //Preparing variables
-var modPlayer = {
+const modPlayer = {
     curr: {
         id: false,
         license: false,
@@ -174,8 +172,8 @@ var modPlayer = {
     Ban: {
         body: document.getElementById("modPlayerBan"),
         tab: document.getElementById("modPlayerBan-tab"),
-        reason: document.getElementById("modPlayerBan-reason"),
-        duration: document.getElementById("modPlayerBan-duration")
+        reason: document.getElementById("frmAddBan-reason") || '',
+        duration: document.getElementById("frmAddBan-duration")
     }
 }
 
@@ -231,11 +229,11 @@ function showPlayer(license, altName='unknown', altIDs='') {
             if (data.logout) {
                 window.location = '/auth?logout';
                 return;
-            }else if(data.type == 'danger'){
+            } else if (data.type === 'danger') {
                 modPlayer.Title.innerText = 'Error';
                 modPlayer.Message.innerHTML = `<h4 class=text-danger>${xss(data.message)}</h4>`;
                 return;
-            }else if(data.type == 'offline'){
+            } else if (data.type === 'offline') {
                 modPlayer.Title.innerText = altName;
                 const idsArray = altIDs.split(';');
                 const idsString = idsArray.join(';\n');
@@ -260,9 +258,9 @@ function showPlayer(license, altName='unknown', altIDs='') {
             modPlayer.Main.notes.value = data.notes;
             modPlayer.IDs.list.innerText = data.identifiers.join(',\n');
 
-            if(!Array.isArray(data.actionHistory) || !data.actionHistory.length){
+            if (!Array.isArray(data.actionHistory) || !data.actionHistory.length) {
                 modPlayer.History.list.innerHTML = `<h3 class="mx-auto pt-3 text-secondary">nothing here...</h3>`;
-            }else{
+            } else {
                 data.actionHistory.reverse();
                 let elements = data.actionHistory.map(log => {
                     return `<div class="list-group-item list-group-item-accent-${xss(log.color)} player-history-entry">
@@ -284,7 +282,7 @@ function showPlayer(license, altName='unknown', altIDs='') {
 
             //TODO: Show message disabling ban form if the user is already banned?
             //      Or maybe just warn "this user is already banned"
-            if(!data.funcDisabled.ban){
+            if (!data.funcDisabled.ban) {
                 modPlayer.Ban.tab.classList.add('nav-link-red');
                 modPlayer.Ban.tab.classList.remove('nav-link-disabled', 'disabled');
             }
@@ -304,18 +302,18 @@ function showPlayer(license, altName='unknown', altIDs='') {
 
 // Save Note
 function setNoteMessage(msg, type){
-    if(typeof type == 'string'){
+    if (typeof type == 'string') {
         modPlayer.Main.notesLog.innerHTML = `<span class="text-${type}">${msg}</span>`;
-    }else{
+    } else {
         modPlayer.Main.notesLog.innerText = msg;
     }
 }
 modPlayer.Main.notes.addEventListener("keydown", (event) => {
     setNoteMessage(`Press enter to save.`);
-    if (event.keyCode == 13 && !event.shiftKey) {
+    if (event.keyCode === 13 && !event.shiftKey) {
         event.preventDefault();
         setNoteMessage(`Saving...`, 'warning');
-        var data = {
+        const data = {
             license: modPlayer.curr.license,
             note: modPlayer.Main.notes.value
         }
@@ -326,9 +324,9 @@ modPlayer.Main.notes.addEventListener("keydown", (event) => {
             data: data,
             dataType: 'json',
             success: function (data) {
-                if(typeof data.message == 'string' && typeof data.type == 'string'){
+                if (typeof data.message == 'string' && typeof data.type == 'string') {
                     setNoteMessage(data.message,  data.type);
-                }else{
+                } else {
                     setNoteMessage(`Failed to save with error: wrong return format`, 'danger');
                 }
 
@@ -344,12 +342,12 @@ modPlayer.Main.notes.addEventListener("keydown", (event) => {
 // Redirect to player search page
 function searchPlayer() {
     modPlayer.Modal.hide();
-    if(modPlayer.curr.identifiers == false) return;
+    if (modPlayer.curr.identifiers === false) return;
     const idsString = modPlayer.curr.identifiers.join(';');
-    if(window.location.pathname == '/player/list'){
+    if (window.location.pathname === '/player/list') {
         searchInput.value = idsString;
         performSearch();
-    }else{
+    } else {
         window.location = '/player/list#' + encodeURI(idsString);
     }
 }
@@ -357,13 +355,13 @@ function searchPlayer() {
 
 // Message player
 function messagePlayer() {
-    if(modPlayer.curr.id == false) return;
+    if (modPlayer.curr.id === false) return;
     let message = prompt('Type your message.');
-    if(!message || message.length === 0) return;
+    if (!message || message.length === 0) return;
 
-    var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
+    const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
-    let data = {
+    const data = {
         id: modPlayer.curr.id,
         message: message.trim()
     }
@@ -388,13 +386,13 @@ function messagePlayer() {
 
 // Kick Player
 function kickPlayer() {
-    if(modPlayer.curr.id == false) return;
+    if (modPlayer.curr.id === false) return;
     let reason = prompt('Type the kick reason or leave it blank (press enter)');
-    if(reason == null) return;
+    if (reason === null) return;
 
-    var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
+    const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
-    let data = {
+    const data = {
         id: modPlayer.curr.id,
         reason: reason
     }
@@ -420,18 +418,18 @@ function kickPlayer() {
 
 //Warn Player
 function warnPlayer() {
-    if(modPlayer.curr.id == false) return;
+    if (modPlayer.curr.id === false) return;
     let reason = prompt('Type the warn reason.');
-    if(reason == null) return;
+    if (reason === null) return;
     reason = reason.trim();
 
     if (!reason.length) {
-        var notify = $.notify({ message: '<p class="text-center">The warn reason is required.</p>'}, {type: 'danger'});
+        $.notify({ message: '<p class="text-center">The warn reason is required.</p>'}, {type: 'danger'});
         return;
     }
-    var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
+    const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
-    let data = {
+    const data = {
         id: modPlayer.curr.id,
         reason: reason
     }
@@ -466,7 +464,7 @@ function banPlayer() {
     const duration = modPlayer.Ban.duration.value === 'custom' ?
         `${document.getElementById("modPlayerBan-reasonDate").value} ${document.getElementById('modPlayerBan-durationTime').value}` :
         modPlayer.Ban.duration.value;
-    let data = {
+    const data = {
         duration,
         reference: (modPlayer.curr.id !== false)? modPlayer.curr.id : modPlayer.curr.identifiers,
         // reference: modPlayer.curr.identifiers,
