@@ -15,7 +15,7 @@ const xss = (x) => {
     let tmp = document.createElement('div');
     tmp.innerText = x;
     return tmp.innerHTML;
-} 
+}
 
 
 //================================================================
@@ -129,7 +129,14 @@ $('#modChangePassword-save').click(function () {
     });
 });
 
-
+//================================================================
+//========================================== Ban Duration
+//================================================================
+$('#modPlayerBan-duration').change(function() {
+    const value = this.value;
+    const customInputBoxes = [ $('#modPlayerBan-reasonDate'), $('#modPlayerBan-durationTime') ];
+    customInputBoxes.forEach(x => value === 'custom' ? x.show() : x.hide());
+});
 
 //================================================================
 //========================================== Extra stuff
