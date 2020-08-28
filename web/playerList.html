@@ -649,7 +649,7 @@
                 reason: EByI('frmAddBan-reason').value.trim(),
                 duration: EByI('frmAddBan-duration').value === 'custom' ?
                     `${EByI('modPlayerBan-reasonDate').value} ${EByI('modPlayerBan-reasonDate').value}` :
-                    EByI('frmAddBan-duration')
+                    EByI('frmAddBan-duration').value
             }
             if (!frmIdentifiers.length || !data.reason.length) {
                 let notify = $.notify({ message: 'The identifiers and reason fields are required.' }, { type: 'warning' });
@@ -666,7 +666,7 @@
                 type: "POST",
                 url: '/player/ban',
                 timeout: timeoutLong,
-                data: data,
+                data,
                 dataType: 'json',
                 success: function (data) {
                     if(data.refresh === true){
