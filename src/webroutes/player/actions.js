@@ -232,12 +232,14 @@ async function handleBan(ctx) {
     let duration = ctx.request.body.duration;
     let reason = ctx.request.body.reason.trim();
 
+    console.log(ctx.request.body);
+
     //Converting ID to int
-    if(typeof reference === 'string'){
+    if (typeof reference === 'string') {
         let intID = parseInt(reference);
-        if(isNaN(intID)){
+        if (isNaN(intID)) {
             return ctx.send({type: 'danger', message: 'You must send at least one identifier.'});
-        }else{
+        } else {
             reference = intID;
         }
     }
@@ -254,11 +256,17 @@ async function handleBan(ctx) {
     }
 
     const evaluateTimeString = (input) => {
+        const regSplit = /\s/;
         if (input === 'perma') {
             return false;
         }
 
-        const [ duration, time ] = input.split(/\s/);
+        if (times[input]) {
+            const [ dur, time ] = times[input].label.split(regSplit);
+            return [ times[input].time, dur, time ];
+        }
+
+        const [ duration, time ] = input.split(regSplit);
         let out;
         if (time.startsWith('hour')) {
             out = duration * 3600;
