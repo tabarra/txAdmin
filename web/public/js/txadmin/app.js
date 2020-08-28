@@ -132,11 +132,21 @@ $('#modChangePassword-save').click(function () {
 //================================================================
 //========================================== Ban Duration
 //================================================================
-$('#frmAddBan-duration').change(function() {
-    const value = this.value;
-    const customInputBoxes = [ $('#frmAddBan-reasonDate'), $('#frmAddBan-durationTime') ];
-    customInputBoxes.forEach(x => value === 'custom' ? x.show() : x.hide());
-});
+const banElements = {
+    'frmAddBan-duration': [ 'frmAddBan-reasonDate', 'frmAddBan-durationTime' ],
+    'modPlayerBan-duration': [ 'modPlayerBan-reasonDate', 'modPlayerBan-durationTime' ]
+};
+for (const [ el, data ] of Object.entries(banElements)) {
+    $(`#${el}`).change(function() {
+        const value = this.value;
+        console.log(`${el} changed: ${value}`);
+        const customInputBoxes = data.map(inp => {
+            console.log(inp);
+            return $(`#${inp}`)
+        });
+        customInputBoxes.forEach(box => value === 'custom' ? box.show() : box.hide());
+    });
+}
 
 //================================================================
 //========================================== Extra stuff

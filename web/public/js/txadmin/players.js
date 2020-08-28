@@ -172,8 +172,8 @@ const modPlayer = {
     Ban: {
         body: document.getElementById("modPlayerBan"),
         tab: document.getElementById("modPlayerBan-tab"),
-        reason: document.getElementById("frmAddBan-reason") || '',
-        duration: document.getElementById("frmAddBan-duration")
+        reason: document.getElementById("modPlayerBan-reason"),
+        duration: document.getElementById("modPlayerBan-duration")
     }
 }
 
