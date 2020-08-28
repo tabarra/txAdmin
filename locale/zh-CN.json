@@ -1,0 +1,30 @@
+{
+    "$meta": {
+        "label": "简体中文",
+        "humanizer_language": "zh_CN"
+    },
+    "restarter": {
+        "crash_detected": "服务器被检测到已崩溃",
+        "partial_crash_warn": "于某些原因导致崩溃， 此服务器将在一分钟后重新启动，请立即断开连接。",
+        "partial_crash_warn_discord": "由于某些原因导致崩溃， **%{servername}** 将在一分钟后重新启动。",
+        "schedule_reason": "预计在 %{time}重启",
+        "schedule_warn": "此服务器定时 %{smart_count} 分钟后重新启动， 请保存数据并断开连接。 |||| 此服务器计划 %{smart_count} 分钟后重新启动。",
+        "schedule_warn_discord": "**%{servername}** 预计 %{smart_count} 分钟后重新启动。 |||| **%{servername}** 预计 %{smart_count} 分钟后重新启动。"
+    },
+    "server_actions": {
+        "restarting": "服务器正在重启 (%{reason})。",
+        "restarting_discord": "**%{servername}** 正在重新启动 (%{reason})。",
+        "stopping": "服务器正在关闭 (%{reason})。",
+        "stopping_discord": "**%{servername}** 正在关闭 (%{reason})。",
+        "spawning_discord": "**%{servername}** 正在重启。"
+    },
+    "discord": {
+        "status_online": "**%{servername}** 目前 **在线**!",
+        "status_offline": "**%{servername}** 目前 **离线**!"
+    },
+    "nui_warning": {
+        "title": "警告",
+        "warned_by": "警告者:",
+        "instruction": "按住 [SPACE] 10秒来关闭这个消息."
+    }
+}
