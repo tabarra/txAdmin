@@ -232,8 +232,6 @@ async function handleBan(ctx) {
     let duration = ctx.request.body.duration;
     let reason = ctx.request.body.reason.trim();
 
-    console.log(ctx.request.body);
-
     //Converting ID to int
     if (typeof reference === 'string') {
         let intID = parseInt(reference);
@@ -247,12 +245,12 @@ async function handleBan(ctx) {
     //Calculating expiration
     let expiration;
     const times = {
-        t2h: {label: '2 hours', time: 7200},
-        t8h: {label: '8 hours', time: 28800},
-        t1d: {label: '1 day', time: 86400},
-        t2d: {label: '2 days', time: 172800},
-        t1w: {label: '1 week', time: 604800},
-        t2w: {label: '2 weeks', time: 1209600},
+        t2h: { label: '2 hours', time: 7200 },
+        t8h: { label: '8 hours', time: 28800 },
+        t1d: { label: '1 day', time: 86400 },
+        t2d: { label: '2 days', time: 172800 },
+        t1w: { label: '1 week', time: 604800 },
+        t2w: { label: '2 weeks', time: 1209600 },
     }
 
     const evaluateTimeString = (input) => {

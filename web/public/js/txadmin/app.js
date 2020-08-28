@@ -139,11 +139,7 @@ const banElements = {
 for (const [ el, data ] of Object.entries(banElements)) {
     $(`#${el}`).change(function() {
         const value = this.value;
-        console.log(`${el} changed: ${value}`);
-        const customInputBoxes = data.map(inp => {
-            console.log(inp);
-            return $(`#${inp}`)
-        });
+        const customInputBoxes = data.map(inp => $(`#${inp}`));
         customInputBoxes.forEach(box => value === 'custom' ? box.show() : box.hide());
     });
 }
