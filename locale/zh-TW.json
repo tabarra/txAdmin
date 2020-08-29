@@ -1,7 +1,7 @@
 {
     "$meta": {
-        "label": "Chinese",
-        "humanizer_language": "zh_CN"
+        "label": "繁体中文",
+        "humanizer_language": "zh_TW"
     },
     "restarter": {
         "crash_detected": "服务器被检测到已瘫痪",
