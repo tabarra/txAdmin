@@ -5,7 +5,7 @@
     },
     "restarter": {
         "crash_detected": "Absturz registriert",
-        "partial_crash_warn": "Aufgrund von Verbindungsproblemen startet dieser Server in 1 Minute neu. Bitte trenne die Verbindung jetzt.",
+        "partial_crash_warn": "Aufgrund von Verbindungsproblemen startet dieser Server in einer Minute neu. Bitte trenne die Verbindung jetzt.",
         "partial_crash_warn_discord": "Aufgrund von Verbindungsproblemen, startet **%{servername}** in einer Minute neu.",
         "schedule_reason": "Automatisierter Neustart um %{time}",
         "schedule_warn": "Der Server wird in %{smart_count} Minute neugestartet. Bitte trenne die Verbindung jetzt. |||| Der Server wird in %{smart_count} Minuten neu gestartet.",
