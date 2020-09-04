@@ -8,8 +8,8 @@
         "partial_crash_warn": "Aufgrund von Verbindungsproblemen startet der Server in einer Minute neu. Bitte trenne die Verbindung jetzt.",
         "partial_crash_warn_discord": "Aufgrund von Verbindungsproblemen, startet **%{servername}** in einer Minute neu.",
         "schedule_reason": "Automatisierter Neustart um %{time}",
-        "schedule_warn": "Der Server wird in %{smart_count} Minute neu gestartet. Bitte trenne die Verbindung jetzt. |||| Der Server wird in %{smart_count} Minuten neu gestartet.",
-        "schedule_warn_discord": "**%{servername}** wird in %{smart_count} Minute neu gestartet. |||| **%{servername}** wird in %{smart_count} Minuten neu gestartet."
+        "schedule_warn": "Der Server wird in einer Minute neu gestartet. Bitte trenne die Verbindung jetzt. |||| Der Server wird in %{smart_count} Minuten neu gestartet.",
+        "schedule_warn_discord": "**%{servername}** wird in einer Minute neu gestartet. |||| **%{servername}** wird in %{smart_count} Minuten neu gestartet."
     },
     "server_actions": {
         "restarting": "Server Restart (%{reason}).",
