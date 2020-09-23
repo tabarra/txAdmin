@@ -34,7 +34,7 @@ CreateThread(function()
     RegisterCommand("txaBroadcast", txaBroadcast, true)
     RegisterCommand("txaSendDM", txaSendDM, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
-    RegisterCommand("txaShutdown", txaShutdown, true)
+    RegisterCommand("txaShuttingDown", txaShuttingDown, true)
     CreateThread(function()
         while true do
             HeartBeat()
@@ -274,7 +274,7 @@ function txaReportResources(source, args)
 end
 
 -- Send a server event prior to shutdown to allow resources to perform last minute saves.
-function txaShutdown(source, args)
+function txaShuttingDown(source, args)
     log('Sending txAdmin:shutdown event.')
     TriggerEvent('txAdmin:shutdown')
 end

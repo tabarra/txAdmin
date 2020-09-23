@@ -243,7 +243,7 @@ module.exports = class FXRunner {
     async restartServer(tReason){
         try {
             //Trigger the command to send a server-wide event notifying resources of the pending shutdown.
-            this.srvCmd('txaShutdown');
+            this.srvCmd('txaShuttingDown');
             await sleep(5000);
 
             //If a reason is provided, announce restart on discord, kick all players and wait 750ms
@@ -284,7 +284,7 @@ module.exports = class FXRunner {
     async killServer(tReason){
         try {
             //Trigger the command to send a server-wide event notifying resources of the pending shutdown.
-            this.srvCmd('txaShutdown')
+            this.srvCmd('txaShuttingDown')
             await sleep(5000)
     
             //If a reason is provided, announce restart on discord, kick all players and wait 500ms
