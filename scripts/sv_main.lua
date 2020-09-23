@@ -34,6 +34,7 @@ CreateThread(function()
     RegisterCommand("txaBroadcast", txaBroadcast, true)
     RegisterCommand("txaSendDM", txaSendDM, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
+    RegisterCommand("txaShutdown", txaShutdown, true)
     CreateThread(function()
         while true do
             HeartBeat()
@@ -270,6 +271,12 @@ function txaReportResources(source, args)
             logError("ReportResources failed with code "..httpCode.." and message: "..resp)
         end
     end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
+end
+
+-- Send a server event prior to shutdown to allow resources to perform last minute saves.
+function txaShutdown(source, args)
+    log('Sending txAdmin:shutdown event.')
+    TriggerEvent('txAdmin:shutdown')
 end
 
 -- Player connecting handler
