@@ -646,20 +646,13 @@
             let frmIdentifiers = document.getElementById('frmAddBan-identifiers').value.trim();
             const EByI = (x) => document.getElementById(x);
 
-            let data = {};
             const reason = EByI('frmAddBan-reason').value.trim();
-
-            if (EByI('frmAddBan-duration').value === 'custom') {
-                data = {
-                    reason,
-                    duration: `${EByI('frmAddBan-reasonDate').value} ${EByI('frmAddBan-durationTime').value}`
-                }
-            } else {
-                data = {
-                    reason,
-                    duration: EByI('frmAddBan-duration').value
-                }
-            }
+            const data = {
+                reason,
+                duration: EByI('frmAddBan-duration').value === 'custom' ?
+                    `${EByI('frmAddBan-reasonDate').value} ${EByI('frmAddBan-durationTime').value}` :
+                    EByI('frmAddBan-duration').value
+            };
 
             if (!frmIdentifiers.length || !data.reason.length) {
                 let notify = $.notify({ message: 'The identifiers and reason fields are required.' }, { type: 'warning' });
