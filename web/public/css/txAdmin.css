@@ -78,6 +78,23 @@ option:disabled {
 .consoleMark-ok {background-color: #a7ffae;}
 mark {background-color: #ffeaa7;}
 
+.command-history {
+    line-height: 2rem;
+}
+
+.command-history > a {
+    color: #768192!important;
+    border-radius: .2rem;
+    padding: .075rem .4rem;
+    margin-top: 20px;
+    border: 1px solid #768192;
+    text-decoration-line: none;
+}
+
+.command-history > a:hover {
+    color: rgb(183, 189, 199)!important;
+    border: 1px solid rgb(183, 189, 199);
+}
 
 /* Playerlist */
 @media (min-width: 1199.98px) {
@@ -99,7 +116,7 @@ mark {background-color: #ffeaa7;}
         position: relative;
         height: calc(100vh - 152px);
     }
-} 
+}
 .playerlist-sidebar{
     z-index: 1029;
     right: 0;
