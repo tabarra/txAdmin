@@ -15,6 +15,7 @@ module.exports = class Monitor {
         this.config = config;
 
         //Checking config validity
+        if(this.config.timeout > 5000) throw new Error('The monitor.timeout setting must be 5000ms or lower.');
         if(this.config.cooldown < 15) throw new Error('The monitor.cooldown setting must be 15 seconds or higher.');
         if(this.config.healthCheck.failThreshold < 10) throw new Error('The monitor.healthCheck.failThreshold setting must be 10 or higher.');
         if(this.config.healthCheck.failLimit < 180) throw new Error('The monitor.healthCheck.failLimit setting must be 180 or higher.');
