@@ -124,7 +124,7 @@
         const commandHistory = [];
         const commandHistoryLimit = 12;
 
-        const stringToDOMId = (str) => `${str.slice(0, 7)}${str.length > 7 ? '-trim' : ''}`.trim();
+        const stringToDOMId = (str) => `${str.replace(/\s?\s+/g, '-').slice(0, 32)}${str.length > 32 ? '_trim' : ''}`.trim();
 
         //Events
         socket.on('connect', () => {
