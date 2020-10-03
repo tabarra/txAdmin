@@ -126,6 +126,8 @@
         const commandHistory = [];
         const commandHistoryLimit = 12;
 
+        const stringToDOMId = (str) => `${str.slice(0, 7)}${str.length > 7 ? '-trim' : ''}`.trim();
+
         //Events
         socket.on('connect', () => {
             console.log("Socket.io Connected!")
@@ -153,21 +155,17 @@
                 const node = document.createElement('a');
                 node.appendChild(document.createTextNode(valueToPush));
                 node.setAttribute('href', '#');
-                node.setAttribute('id', `${input.value.slice(0, 7)}${input.value.length > 7 ? '-trim' : ''}`.trim());
+                node.setAttribute('id', stringToDOMId(input.value));
                 node.setAttribute('class', 'm-1');
                 document.getElementById('cmd-history').appendChild(node);
 
                 commandHistory.push(valueToPush);
                 // truncation
-                console.log(commandHistory.length);
                 if (commandHistory.length >= commandHistoryLimit) {
-                    const search = commandHistory.find((_, index) => {
-                        console.log(index, commandHistory.length - commandHistoryLimit);
-                        return index === (commandHistory.length - commandHistoryLimit);
-                    });
-                    const element = document.getElementById(search);
+                    const search = commandHistory.find((_, index) => index === (commandHistory.length - commandHistoryLimit));
+                    const element = document.getElementById(stringToDOMId(search));
                     element.remove();
-                    commandHistory.slice(commandHistory.length - commandHistoryLimit, commandHistory.length);
+                    commandHistory.shift();
                 }
             }
             input.value = '';
