@@ -141,8 +141,9 @@
                 <div class="card ">
                     <div class="card-body text-center p-4">
                         {{@if(it.template == 'justMessage')}}
-                            <h5 class="text-danger mb-3">{{it.message|n2br}}</h5>
-                            <a href="/auth" class="btn btn-primary px-4" role="submit">Back</a>
+                            <h4 class="text-danger">{{it.errorTitle}}</h4>
+                            <p class="font-weight-bold">{{it.errorMessage}}</p>
+                            <a href="/auth" class="btn btn-primary px-4 mt-3" role="submit">Back</a>
                         {{/if}}
                         {{@if(it.template == 'noMaster')}}
                             <h3 class="mb-4">No <code>CitizenFX</code> Account Linked</h3>

@@ -21,7 +21,7 @@
                     <strong>OS Type:</strong> {{it.host.osType}} <br>
                     <strong>OS Release:</strong> {{it.host.osRelease}} <br>
                     <strong>Username:</strong> {{it.host.username}} <br>
-                    <strong>Host CPUs:</strong> {{it.host.cpus}} <br>
+                    <strong>Host CPUs:</strong> {{it.host.cpus}} {{it.host.clockWarning|safe}}<br>
                     <strong>Host Memory:</strong> {{it.host.memory}}
                 {{/if}}
             </div>

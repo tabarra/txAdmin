@@ -96,19 +96,22 @@ module.exports = class WebServer {
             } catch (error) {
                 //TODO: perhaps we should also have a koa-bodyparser generic error handler?
                 //FIXME: yes we should - sending broken json will cause internal server error even without the route being called
-                let methodName = (error.stack && error.stack[0] && error.stack[0].name)? error.stack[0].name : 'anonym';
+                const methodName = (error.stack && error.stack[0] && error.stack[0].name)? error.stack[0].name : 'anonym';
                 if(error.type === 'entity.too.large'){
-                    let desc = `Entity too large for: ${ctx.path}`;
+                    const desc = `Entity too large for: ${ctx.path}`;
                     if(GlobalData.verbose) logError(desc, methodName);
                     ctx.status = 413;
                     ctx.body = {error: desc};
                 }else if (ctx.state.timeout){
-                    let desc = `Route timed out: ${ctx.path}`;
+                    const desc = `[txAdmin v${GlobalData.txAdminVersion}] Route timed out: ${ctx.path}`;
                     logError(desc, methodName);
                     ctx.status = 408;
                     ctx.body = desc;
                 }else{
-                    let desc = `Internal Error on: ${ctx.path}`;
+                    const desc = `[txAdmin v${GlobalData.txAdminVersion}] Internal Error\n` +
+                                 `Message: ${error.message}\n` +
+                                 `Route: ${ctx.path}\n` +
+                                 `Make sure your txAdmin is updated.`;
                     logError(desc, methodName);
                     if(GlobalData.verbose) dir(error)
                     ctx.status = 500;

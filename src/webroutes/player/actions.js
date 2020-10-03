@@ -21,11 +21,11 @@ function ensurePermission(ctx, perm){
         return false;
     }
 }
-function sendAlertOutput(ctx, toResp){
+function sendAlertOutput(ctx, toResp, header = 'Output:'){
     toResp = (toResp.length)? xss(toResp) : 'no output';
     return ctx.send({
         type: 'warning',
-        message: `<b>Output:<br> <pre>${toResp}</pre>`
+        message: `<b>${header}<br> <pre>${toResp}</pre>`
     });
 }
 
@@ -289,7 +289,7 @@ async function handleBan(ctx) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> unknown reference type`});
     }
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-    return sendAlertOutput(ctx, toResp);
+    return sendAlertOutput(ctx, toResp, "Identifiers banned!<br>Kicking players:");
 }
 
 
