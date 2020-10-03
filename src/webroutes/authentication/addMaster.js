@@ -14,12 +14,14 @@ module.exports = async function AddMaster(ctx) {
     if(isUndefined(ctx.params.action)){
         return ctx.utils.error(400, 'Invalid Request');
     }
-    let action = ctx.params.action;
+    const action = ctx.params.action;
 
     //Check if there are no master admins set up
     if(globals.authenticator.admins !== false){
-        let message = `Master account already set.`;
-        return ctx.utils.render('login', {template: 'justMessage', message});
+        return ctx.utils.render('login', {
+            template: 'justMessage',
+            errorTitle: `Master account already set.`
+        });
     }
 
     //Delegate to the specific action handler
@@ -56,7 +58,7 @@ async function handlePin(ctx) {
     //Checking the PIN
     if(ctx.request.body.pin !== globals.authenticator.addMasterPin){
         logWarn(`Wrong PIN for from: ${ctx.ip}`);
-        let message = `Wrong PIN.`;
+        const message = `Wrong PIN.`;
         return ctx.utils.render('login', {template: 'noMaster', message});
     }
 
@@ -65,12 +67,15 @@ async function handlePin(ctx) {
 
     //Generate URL
     try {
-        let callback = ctx.protocol + '://' + ctx.get('host') + `/auth/addMaster/callback`;
-        let url = await globals.authenticator.providers.citizenfx.getAuthURL(callback, ctx.session._sessCtx.externalKey);
+        const callback = ctx.protocol + '://' + ctx.get('host') + `/auth/addMaster/callback`;
+        const url = await globals.authenticator.providers.citizenfx.getAuthURL(callback, ctx.session._sessCtx.externalKey);
         return ctx.response.redirect(url);
     } catch (error) {
-        let message = `Failed to generate Provider Auth URL with error: ${error.message}`;
-        return ctx.utils.render('login', {template: 'justMessage', message});
+        return ctx.utils.render('login', {
+            template: 'justMessage',
+            errorTitle: `Failed to generate callback URL with error:`,
+            errorMessage: error.message
+        });
     }
 }
 
@@ -89,27 +94,37 @@ async function handleCallback(ctx) {
     //Exchange code for access token
     let tokenSet;
     try {
-        let currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/addMaster/callback`;
+        const currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/addMaster/callback`;
         tokenSet = await globals.authenticator.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
-        let message;
-        if(!isUndefined(error.tolerance)){
-            message = `Code Exchange error.\r\nPlease Update/Synchronize your VPS clock.`;
-        }else{
-            message = `Code Exchange error:\r\n${error.message}.`;
-        }
         logWarn(`Code Exchange error: ${error.message}`);
-        return ctx.utils.render('login', {template: 'justMessage', message});
+        if(!isUndefined(error.tolerance)){
+            return ctx.utils.render('login', {
+                template: 'justMessage',
+                errorTitle: `Please Update/Synchronize your VPS clock.`,
+                errorMessage: `Failed to login because this host's time is wrong. Please make sure to synchronize it with the internet.`
+            });
+        }else{
+            return ctx.utils.render('login', {
+                template: 'justMessage',
+                errorTitle: `Code Exchange error:`,
+                errorMessage: error.message
+            });
+        }
+
     }
 
-    //Exchange code for access token
+    //Get userinfo
     let userInfo;
     try {
         userInfo = await globals.authenticator.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
-        let message = `Get UserInfo error: ${error.message}`;
-        logError(message);
-        return ctx.utils.render('login', {template: 'justMessage', message});
+        logError(`Get UserInfo error: ${error.message}`);
+        return ctx.utils.render('login', {
+            template: 'justMessage',
+            errorTitle: `Get UserInfo error:`,
+            errorMessage: error.message
+        });
     }
 
     // Setar userinfo na sessão
@@ -143,8 +158,10 @@ async function handleSave(ctx) {
     let password = ctx.request.body.password.trim();
     let password2 = ctx.request.body.password2.trim();
     if(password != password2 || password.length < 6 || password.length > 24){
-        let message = `Invalid Password.`;
-        return ctx.utils.render('login', {template: 'justMessage', message});
+        return ctx.utils.render('login', {
+            template: 'justMessage',
+            errorTitle: `Invalid Password.`,
+        });
     }
 
     //Checking if session is still present
@@ -153,15 +170,21 @@ async function handleSave(ctx) {
         typeof ctx.session.tmpAddMasterUserInfo.name !== 'string' ||
         typeof ctx.session.tmpAddMasterUserInfo.picture !== 'string'
     ){
-        let message = `Invalid Session.`;
-        return ctx.utils.render('login', {template: 'justMessage', message});
+        return ctx.utils.render('login', {
+            template: 'justMessage',
+            errorTitle: `Invalid Session.`
+        });
     }
 
     //Creating admins file
     try {
         await globals.authenticator.createAdminsFile(ctx.session.tmpAddMasterUserInfo.name, ctx.session.tmpAddMasterUserInfo, password);
     } catch (error) {
-        return ctx.utils.render('login', {template: 'justMessage', message: error.message});
+        return ctx.utils.render('login', {
+            template: 'justMessage',
+            errorTitle: `Error:`,
+            errorMessage: error.message
+        });
     }
 
     //Login user
@@ -175,9 +198,12 @@ async function handleSave(ctx) {
         delete ctx.session.tmpAddMasterUserInfo;
     } catch (error) {
         ctx.session.auth = {};
-        let message = `Failed to login:<br> ${error.message}`;
-        logError(message);
-        return ctx.utils.render('login', {template: 'justMessage', message});
+        logError(`Failed to login: ${error.message}`);
+        return ctx.utils.render('login', {
+            template: 'justMessage',
+            errorTitle: `Failed to login:`,
+            errorMessage: error.message
+        });
     }
 
     log('Admin file created! You can now login normally.');

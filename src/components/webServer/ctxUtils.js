@@ -42,9 +42,6 @@ sqrl.filters.define("tShow", (x)=>{
 sqrl.filters.define("isDisabled", (x)=>{
     return (x)? 'disabled' : '';
 });
-sqrl.filters.define("n2br", (x)=>{
-    return x.replace(/(\r|\n)+/m, '<br>');
-});
 sqrl.filters.define("undef", (x)=>{
     return (isUndefined(x) || x == 'undefined')? '' : x;
 });
@@ -102,6 +99,8 @@ async function renderLoginView(data){
     data.isMatrix = (Math.random() <= 0.05);
     data.ascii = helpers.txAdminASCII();
     data.message = data.message || '';
+    data.errorTitle = data.errorTitle || 'Warning:';
+    data.errorMessage = data.errorMessage || '';
     data.template = data.template || 'normal';
     // data.template = 'noMaster';
     // data.template = 'callback';

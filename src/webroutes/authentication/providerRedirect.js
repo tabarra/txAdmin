@@ -7,8 +7,8 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
 const genCallbackURL = (ctx, provider) => {
     return ctx.protocol + '://' + ctx.get('host') + `/auth/${provider}/callback`
 }
-const returnJustMessage = async (ctx, message) => {
-    return ctx.utils.render('login', {template: 'justMessage', message});
+const returnJustMessage = (ctx, errorTitle, errorMessage) => {
+    return ctx.utils.render('login', {template: 'justMessage', errorTitle, errorMessage});
 };
 
 /**
@@ -20,7 +20,7 @@ module.exports = async function ProviderRedirect(ctx) {
     if(isUndefined(ctx.params.provider)){
         return ctx.utils.error(400, 'Invalid Request');
     }
-    let provider = ctx.params.provider;
+    const provider = ctx.params.provider;
 
     //FIXME: generalize this to any provider
     if(provider !== 'citizenfx'){
@@ -32,10 +32,10 @@ module.exports = async function ProviderRedirect(ctx) {
 
     //Generatte CitizenFX provider Auth URL
     try {
-        let urlCitizenFX =  await globals.authenticator.providers.citizenfx.getAuthURL(genCallbackURL(ctx, 'citizenfx'), ctx.session._sessCtx.externalKey);
+        const urlCitizenFX =  await globals.authenticator.providers.citizenfx.getAuthURL(genCallbackURL(ctx, 'citizenfx'), ctx.session._sessCtx.externalKey);
         return ctx.response.redirect(urlCitizenFX);
     } catch (error) {
         if(GlobalData.verbose || true) logWarn(`Failed to generate CitizenFX Auth URL with error: ${error.message}`);
-        return returnJustMessage(ctx, 'Failed to generate CitizenFX Auth URL');
+        return returnJustMessage(ctx, 'Failed to generate callback URL:', error.message);
     }
 };
