@@ -148,7 +148,6 @@
             commandCache.unshift(input.value);
             socket.emit('consoleCommand', input.value);
 
-            console.log('ok, i heard you');
             if (!commandHistory.includes(input.value)) {
                 const valueToPush = `${input.value.slice(0, 15)}${input.value.length > 15 ? '...' : ''}`;
                 const node = document.createElement('a');
@@ -166,12 +165,10 @@
                         console.log(index, commandHistory.length - commandHistoryLimit);
                         return index === (commandHistory.length - commandHistoryLimit);
                     });
-                    console.log(search);
                     const element = document.getElementById(search);
                     element.remove();
                     commandHistory.slice(commandHistory.length - commandHistoryLimit, commandHistory.length);
                 }
-                console.log('push to dom');
             }
             input.value = '';
         });
