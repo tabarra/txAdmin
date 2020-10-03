@@ -95,11 +95,9 @@
                     </div>
                 </form>
             </div>
-            <div class="col-xl-6 col-lg-12">
+            <div class="col-xl-6 col-lg-12" id="cmd-history-div" style="display: none;">
                 <span class="text-light font-weight-bold">History:</span> <br>
-                <div class="command-history" id="cmd-history">
-                    <a href="#">restart monitor</a>
-                </div>
+                <div class="command-history" id="cmd-history"></div>
 
             </div>
         </div>
@@ -149,6 +147,11 @@
             e.preventDefault();
             commandCache.unshift(input.value);
             socket.emit('consoleCommand', input.value);
+
+            const historyDiv = document.getElementById('cmd-history-div');
+            if (historyDiv && historyDiv.style.display === 'none') {
+                historyDiv.style.display = 'inline-block';
+            }
 
             if (!commandHistory.includes(input.value)) {
                 const valueToPush = `${input.value.slice(0, 15)}${input.value.length > 15 ? '...' : ''}`;
