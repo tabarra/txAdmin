@@ -78,7 +78,6 @@ option:disabled {
 .consoleMark-ok {background-color: #a7ffae;}
 mark {background-color: #ffeaa7;}
 
-
 /* Playerlist */
 @media (min-width: 1199.98px) {
     .playerlist{
@@ -99,7 +98,7 @@ mark {background-color: #ffeaa7;}
         position: relative;
         height: calc(100vh - 152px);
     }
-} 
+}
 .playerlist-sidebar{
     z-index: 1029;
     right: 0;
