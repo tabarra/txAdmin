@@ -73,14 +73,14 @@
     </div>
     <div class="card-footer bg-dark">
         <div class="row">
-            <div class="col-xl-6 col-lg-12 text-centerx">
+            <div class="col-xl-6 col-lg-12">
                 <form class="form-inline container-fluid" id="frmConsole">
                     <div class="mx-auto">
                         <div class="form-group">
                             <input type="text" class="form-control console-input form-control-sm" id="cmdInput"
                                    placeholder="Press enter to send. Up/Down arrows to navigate commands."
                                    autocomplete="off" autocorrect="off" autocapitalize="off"
-                                   spellcheck="false"{{it.disableWrite}}>
+                                   spellcheck="false" {{it.disableCommand}}>
                         </div>
                         <button type="button" id="clearConsole"
                                 class="btn btn-outline-light btn-sm mb-2">Clear Console
@@ -90,8 +90,8 @@
                         </button>
                         <a href="/fxserver/downloadLog" target="_blank"
                            class="btn btn-outline-light btn-sm mb-2">Download Log</a>
-                        <button onclick="controlAction('restart')" class="btn btn-outline-danger btn-sm mb-2"
-                                type="button" id="ctrl-restart" >RESTART</button> &nbsp;
+                        <button onclick="controlAction('restart')" class="btn btn-outline-{{it.restartBtnClass}} btn-sm mb-2"
+                                type="button" id="ctrl-restart" {{it.disableRestart}}>RESTART</button> &nbsp;
                     </div>
                 </form>
             </div>
