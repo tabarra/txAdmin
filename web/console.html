@@ -42,6 +42,23 @@
     .bg-dark {
         background-color: #252E38 !important;
     }
+
+    .command-history {
+        line-height: 2rem;
+        display: inline-block;
+    }
+
+    .command-history > button {
+        background-color: transparent !important;
+        color: #768192 !important;
+        border: 1px solid #768192;
+    }
+
+    .command-history > button:hover {
+        background-color: transparent !important;
+        color: rgb(183, 189, 199)!important;
+        border: 1px solid rgb(183, 189, 199);
+    }
 </style>
 
 
@@ -52,25 +69,36 @@
     <div class="card-body p-3">
         <pre id="console" class="thin-scroll console-content text-white"></pre>
     </div>
-    <div class="card-footer text-center bg-dark">
-        <form class="form-inline container-fluid" id="frmConsole">
-            <div class="mx-auto">
-                <div class="form-group">
-                    <input type="text" class="form-control console-input form-control-sm" id="cmdInput"
-                           placeholder="Press enter to send. Up/Down arrows to navigate commands."
-                           autocomplete="off" autocorrect="off" autocapitalize="off" 
-                           spellcheck="false"{{it.disableWrite}}>
-                </div>
-                <button type="button" id="clearConsole"
-                        class="btn btn-outline-light btn-sm mb-2">Clear Console
-                </button>
-                <button type="button" id="toggleAutoScroll"
-                        class="btn btn-outline-light btn-sm mb-2">Disable Scroll
-                </button>
-                <a href="/fxserver/downloadLog" target="_blank"
-                   class="btn btn-outline-light btn-sm mb-2">Download Log</a>
+    <div class="card-footer bg-dark">
+        <div class="row">
+            <div class="col-xl-6 col-lg-12">
+                <form class="form-inline container-fluid" id="frmConsole">
+                    <div class="mx-auto">
+                        <div class="form-group">
+                            <input type="text" class="form-control console-input form-control-sm" id="cmdInput"
+                                   placeholder="Press enter to send. Up/Down arrows to navigate commands."
+                                   autocomplete="off" autocorrect="off" autocapitalize="off"
+                                   spellcheck="false" {{it.disableCommand}}>
+                        </div>
+                        <button type="button" id="clearConsole"
+                                class="btn btn-outline-light btn-sm mb-2">Clear Console
+                        </button>
+                        <button type="button" id="toggleAutoScroll"
+                                class="btn btn-outline-light btn-sm mb-2">Disable Scroll
+                        </button>
+                        <a href="/fxserver/downloadLog" target="_blank"
+                           class="btn btn-outline-light btn-sm mb-2">Download Log</a>
+                        <button onclick="controlAction('restart')" class="btn btn-outline-{{it.restartBtnClass}} btn-sm mb-2"
+                                type="button" id="ctrl-restart" {{it.disableRestart}}>RESTART</button> &nbsp;
+                    </div>
+                </form>
             </div>
-        </form>
+            <div class="col-xl-6 col-lg-12" id="cmdHistoryDiv" style="display: none;">
+                <span class="text-light font-weight-bold">History:</span> <small class="text-muted">(click to copy)</small><br>
+                <div class="command-history" id="cmdHistory"></div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -84,13 +112,18 @@
     //Socket
     (function () {
         let prefix = '';
-        var socket = io({path: prefix + '/socket.io', transports: ['polling'], upgrade: false});
-        var ansi_up = new AnsiUp;
+        const socket = io({path: prefix + '/socket.io', transports: ['polling'], upgrade: false});
+        const ansi_up = new AnsiUp;
         ansi_up.escape_for_html = false;
+        const input = document.getElementById("cmdInput");
+        const consoleElement = document.getElementById("console");
+        const consoleForm = document.getElementById("frmConsole");
+        const historyDiv = document.getElementById('cmdHistoryDiv');
+        const historyElement = document.getElementById('cmdHistory')
+        const commandHistory = [];
+        const commandHistoryLimit = 12;
 
-        var input = document.getElementById("cmdInput");
-        var consoleElement = document.getElementById("console");
-        var consoleForm = document.getElementById("frmConsole");
+        const stringToDOMId = (str) => `${str.replace(/\s?\s+/g, '-').slice(0, 32)}${str.length > 32 ? '_trim' : ''}`.trim();
 
         //Events
         socket.on('connect', () => {
@@ -111,9 +144,39 @@
         //Form
         consoleForm.addEventListener("submit", function (e) {
             e.preventDefault();
-            commandCache.unshift(input.value);
-            socket.emit('consoleCommand', input.value);
-            input.value = "";
+            const command = input.value.trim();
+            input.value = '';
+            if(!command.length) return;
+
+            commandCache.unshift(command);
+            socket.emit('consoleCommand', command);
+
+            if (historyDiv && historyDiv.style.display === 'none') {
+                historyDiv.style.display = 'inline-block';
+            }
+
+            if (!commandHistory.includes(command)) {
+                const valueToPush = `${command.slice(0, 15)}${command.length > 15 ? '...' : ''}`;
+                const node = document.createElement('button');
+                node.appendChild(document.createTextNode(valueToPush));
+                node.setAttribute('id', stringToDOMId(command));
+                node.setAttribute('class', 'btn btn-outline-light btn-sm m-1');
+                node.onclick = (e) => {
+                    console.log('onclick')
+                    input.value = command;
+                    input.focus();
+                };
+                historyElement.appendChild(node);
+
+                commandHistory.push(valueToPush);
+                // truncation
+                if (commandHistory.length >= commandHistoryLimit) {
+                    const search = commandHistory.find((_, index) => index === (commandHistory.length - commandHistoryLimit));
+                    const element = document.getElementById(stringToDOMId(search));
+                    element.remove();
+                    commandHistory.shift();
+                }
+            }
         });
 
         //Up / Down history
