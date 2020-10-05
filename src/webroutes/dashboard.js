@@ -1,6 +1,5 @@
 //Requires
 const modulename = 'WebServer:Dashboard';
-const semver = require('semver');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 

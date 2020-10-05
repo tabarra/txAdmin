@@ -16,7 +16,16 @@
 - [x] fix player manager settigns page not saving
 - [x] fix squirrelly filters not working on v8.0.4
 > v2.7.1
-- [ ] xxxxx
+- [x] increase default cooldown to 90s and limit the monitor.timeout option
+- [x] improve some text messages
+- [x] added open graph to the login page (thanks @PLOKMJNB)
+- [x] improved live console page with server restart button and visual command history (thanks @Zeemahh) 
+- [x] added custom ban times option (thanks @Zeemahh) 
+- [ ] send heartbeat via FD3 (maybe both?)
+- [ ] add http requests/minute counter to the diagnostics page
+- [ ] check ban/wl checking logic to make sure its resilient against unexpected identifiers
+- [ ] update packages
+- [ ] xxxx
 
 TODO: Bot commands (in dev order):
 /addwl <wl req id>
@@ -68,10 +77,10 @@ TODO: Bot commands (in dev order):
 ```bash
 # run
 cd /e/FiveM/builds
-nodemon --watch "2786/citizen/system_resources/monitor/src/*" --exec "2786/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose truex +set txAdminFakePlayerlist yesplzx"
+nodemon --watch "2972/citizen/system_resources/monitor/src/*" --exec "2972/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose true +set txAdminFakePlayerlist yesplz"
 
 # build
-cd /e/FiveM/builds/2786/citizen/system_resources/monitor
+cd /e/FiveM/builds/2972/citizen/system_resources/monitor
 rm -rf dist
 npm run build
 
