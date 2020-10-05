@@ -244,7 +244,7 @@ async function handleBan(ctx) {
 
     //Calculating expiration
     let expiration;
-    if(inputDuration === 'perma'){
+    if(inputDuration === 'permanent'){
         expiration = false;
 
     }else{

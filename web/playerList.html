@@ -209,30 +209,30 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmAddBan-duration" class="col-sm-3 col-form-label">
+                            <label for="frmAddBan-durationSelect" class="col-sm-3 col-form-label">
                                 Duration
                             </label>
                             <div class="col-sm-9">
-                                <select class="form-control" id="frmAddBan-duration">
+                                <select class="form-control" id="frmAddBan-durationSelect">
                                     <option value="2 hours">2 hours</option>
                                     <option value="8 hours">8 hours</option>
                                     <option value="1 day">1 day</option>
                                     <option value="2 days">2 days</option>
                                     <option value="1 week">1 week</option>
                                     <option value="2 weeks">2 weeks</option>
-                                    <option value="perma" class="font-weight-bold text-danger" selected>permanent</option>
+                                    <option value="permanent" class="font-weight-bold text-danger" selected>permanent</option>
                                     <option value="custom" class="font-weight-bold">custom</option>
                                 </select>
                                 <div class="row mt-2">
                                     <div class="col-sm-3 pr-0">
-                                        <input type="number" class="form-control" id="frmAddBan-reasonDate" 
-                                            maxlength="3" placeholder="7" style="display: none;">
+                                        <input type="number" class="form-control" id="frmAddBan-durationMultiplier" 
+                                            maxlength="3" placeholder="7" disabled>
                                     </div>
                                     <div class="col-sm-9 pl-2">
-                                        <select class="form-control" id="frmAddBan-durationTime" style="display: none;">
+                                        <select class="form-control" id="frmAddBan-durationUnit" disabled>
                                             <option value="hours">hours</option>
-                                            <option value="days" selected>days</option>
-                                            <option value="weeks">weeks</option>
+                                            <option value="days">days</option>
+                                            <option value="weeks" selected>weeks</option>
                                             <option value="months">months</option>
                                         </select>
                                     </div>
@@ -643,52 +643,65 @@
     
 
     //============================================== Ban card
-    const banButtonEl = document.getElementById('frmAddBan-button');
-    if(banButtonEl){
-        banButtonEl.addEventListener('click', function (ev) {
-            const frmIdentifiers = document.getElementById('frmAddBan-identifiers').value.trim();
-            const EByI = (x) => document.getElementById(x);
+    const banCard = {
+        identifiers: document.getElementById("frmAddBan-identifiers"),
+        reason: document.getElementById("frmAddBan-reason"),
+        durationSelect: document.getElementById("frmAddBan-durationSelect"),
+        durationMultiplier: document.getElementById("frmAddBan-durationMultiplier"),
+        durationUnit: document.getElementById("frmAddBan-durationUnit"),
+        button: document.getElementById('frmAddBan-button'),
+    }
 
-            const reason = EByI('frmAddBan-reason').value.trim();
-            const data = {
-                reason,
-                duration: EByI('frmAddBan-duration').value === 'custom' ?
-                    `${EByI('frmAddBan-reasonDate').value} ${EByI('frmAddBan-durationTime').value}` :
-                    EByI('frmAddBan-duration').value
-            };
+    banCard.durationSelect.onchange = () => {
+        const isDefault = (banCard.durationSelect.value !== 'custom');
+        banCard.durationMultiplier.disabled = isDefault;
+        banCard.durationUnit.disabled = isDefault;
+    }
 
-            if (!frmIdentifiers.length || !data.reason.length) {
-                const notify = $.notify({ message: 'The identifiers and reason fields are required.' }, { type: 'warning' });
-                return;
-            }
-            if (data.reason.length < 8) {
-                const notify = $.notify({ message: 'The reason must be at least 8 characters.' }, { type: 'warning' });
-                return;
-            }
-            data.reference = frmIdentifiers.split(/[,;'"\s]+/).filter(x => x.length);
-            const notify = $.notify({ message: '<p class="text-center">Banning...</p>' }, {});
+    banCard.button.onclick = () => {
+        const frmIdentifiers = banCard.identifiers.value.trim();
+        const reason = banCard.reason.value.trim();
+        const data = {
+            reason,
+            duration: banCard.durationSelect.value === 'custom' ?
+                `${banCard.durationMultiplier.value} ${banCard.durationUnit.value}` :
+                banCard.durationSelect.value
+        };
 
-            $.ajax({
-                type: "POST",
-                url: '/player/ban',
-                timeout: timeoutLong,
-                data,
-                dataType: 'json',
-                success: function (data) {
-                    if(data.refresh === true){
-                        window.location.reload(true);
-                    }else{
-                        notify.update('progress', 0);
-                        notify.update('type', data.type);
-                        notify.update('message', data.message);
-                    }
-                },
-                error: function (xmlhttprequest, textstatus, message) {
+        if (!frmIdentifiers.length || !data.reason.length) {
+            const notify = $.notify({ message: 'The identifiers and reason fields are required.' }, { type: 'warning' });
+            return;
+        }
+        if (data.reason.length < 8) {
+            const notify = $.notify({ message: 'The reason must be at least 8 characters.' }, { type: 'warning' });
+            return;
+        }
+        data.reference = frmIdentifiers.split(/[,;'"\s]+/).filter(x => x.length);
+        const notify = $.notify({ message: '<p class="text-center">Banning...</p>' }, {});
+
+        banCard.identifiers.value = '';
+        banCard.reason.value = '';
+
+        $.ajax({
+            type: "POST",
+            url: '/player/ban',
+            timeout: timeoutLong,
+            data,
+            dataType: 'json',
+            success: function (data) {
+                if(data.refresh === true){
+                    window.location.reload(true);
+                }else{
                     notify.update('progress', 0);
-                    notify.update('type', 'danger');
-                    notify.update('message', message);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
                 }
-            });
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
         });
     }
     

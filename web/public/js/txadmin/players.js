@@ -175,7 +175,9 @@ var modPlayer = {
         body: document.getElementById("modPlayerBan"),
         tab: document.getElementById("modPlayerBan-tab"),
         reason: document.getElementById("modPlayerBan-reason"),
-        duration: document.getElementById("modPlayerBan-duration"),
+        durationSelect: document.getElementById("modPlayerBan-durationSelect"),
+        durationMultiplier: document.getElementById("modPlayerBan-durationMultiplier"),
+        durationUnit: document.getElementById("modPlayerBan-durationUnit"),
     }
 }
 
@@ -214,7 +216,11 @@ function showPlayer(license, altName='unknown', altIDs='') {
     modPlayer.Ban.tab.classList.add('nav-link-disabled', 'disabled');
 
     modPlayer.Ban.reason.value = '';
-    modPlayer.Ban.duration.value = '2 days';
+    modPlayer.Ban.durationSelect.value = '2 days';
+    modPlayer.Ban.durationMultiplier.value = '';
+    modPlayer.Ban.durationUnit.value = 'days';
+    modPlayer.Ban.durationMultiplier.disabled = true;
+    modPlayer.Ban.durationUnit.disabled = true;
     modPlayer.Buttons.search.disabled = true;
     modPlayer.Buttons.message.disabled = true;
     modPlayer.Buttons.kick.disabled = true;
@@ -456,15 +462,21 @@ function warnPlayer() {
 }
 
 // Ban Player
+modPlayer.Ban.durationSelect.onchange = () => {
+    const isDefault = (modPlayer.Ban.durationSelect.value !== 'custom');
+    modPlayer.Ban.durationMultiplier.disabled = isDefault;
+    modPlayer.Ban.durationUnit.disabled = isDefault;
+}
+
 function banPlayer() {
     const reason = modPlayer.Ban.reason.value.trim()
     if (!reason.length) {
         $.notify({ message: '<p class="text-center">The ban reason is required.</p>'}, {type: 'danger'});
         return;
     }
-    const duration = modPlayer.Ban.duration.value === 'custom' ?
-        `${document.getElementById("modPlayerBan-reasonDate").value} ${document.getElementById('modPlayerBan-durationTime').value}` :
-        modPlayer.Ban.duration.value;
+    const duration = modPlayer.Ban.durationSelect.value === 'custom' ?
+        `${modPlayer.Ban.durationMultiplier.value} ${modPlayer.Ban.durationUnit.value}` :
+        modPlayer.Ban.durationSelect.value;
 
     const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
     const data = {
