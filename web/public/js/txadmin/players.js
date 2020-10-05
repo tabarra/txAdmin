@@ -214,7 +214,7 @@ function showPlayer(license, altName='unknown', altIDs='') {
     modPlayer.Ban.tab.classList.add('nav-link-disabled', 'disabled');
 
     modPlayer.Ban.reason.value = '';
-    modPlayer.Ban.duration.value = 't2d';
+    modPlayer.Ban.duration.value = '2 days';
     modPlayer.Buttons.search.disabled = true;
     modPlayer.Buttons.message.disabled = true;
     modPlayer.Buttons.kick.disabled = true;
@@ -459,16 +459,19 @@ function warnPlayer() {
 function banPlayer() {
     const reason = modPlayer.Ban.reason.value.trim()
     if (!reason.length) {
-        var notify = $.notify({ message: '<p class="text-center">The ban reason is required.</p>'}, {type: 'danger'});
+        $.notify({ message: '<p class="text-center">The ban reason is required.</p>'}, {type: 'danger'});
         return;
     }
-    var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
+    const duration = modPlayer.Ban.duration.value === 'custom' ?
+        `${document.getElementById("modPlayerBan-reasonDate").value} ${document.getElementById('modPlayerBan-durationTime').value}` :
+        modPlayer.Ban.duration.value;
 
-    let data = {
-        duration: modPlayer.Ban.duration.value,
+    const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
+    const data = {
+        reason,
+        duration,
         reference: (modPlayer.curr.id !== false)? modPlayer.curr.id : modPlayer.curr.identifiers,
         // reference: modPlayer.curr.identifiers,
-        reason: reason
     }
     $.ajax({
         type: "POST",

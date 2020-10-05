@@ -161,3 +161,20 @@ $(".profile-pic").on("error", function() {
         $(this).attr('src', 'img/default_avatar.png');
     }
 });
+
+
+
+//================================================================
+//========================================== Ban Duration
+//================================================================
+const banElements = {
+    'frmAddBan-duration': [ 'frmAddBan-reasonDate', 'frmAddBan-durationTime' ],
+    'modPlayerBan-duration': [ 'modPlayerBan-reasonDate', 'modPlayerBan-durationTime' ]
+};
+for (const [ el, data ] of Object.entries(banElements)) {
+    $(`#${el}`).change(function() {
+        const value = this.value;
+        const customInputBoxes = data.map(inp => $(`#${inp}`));
+        customInputBoxes.forEach(box => value === 'custom' ? box.show() : box.hide());
+    });
+}

@@ -214,17 +214,29 @@
                             </label>
                             <div class="col-sm-9">
                                 <select class="form-control" id="frmAddBan-duration">
-                                    <option value="t2h">2 hours</option>
-                                    <option value="t8h">8 hours</option>
-                                    <option value="t1d">1 day</option>
-                                    <option value="t2d">2 days</option>
-                                    <option value="t1w">1 week</option>
-                                    <option value="t2w">2 weeks</option>
+                                    <option value="2 hours">2 hours</option>
+                                    <option value="8 hours">8 hours</option>
+                                    <option value="1 day">1 day</option>
+                                    <option value="2 days">2 days</option>
+                                    <option value="1 week">1 week</option>
+                                    <option value="2 weeks">2 weeks</option>
                                     <option value="perma" class="font-weight-bold text-danger" selected>permanent</option>
+                                    <option value="custom" class="font-weight-bold">custom</option>
                                 </select>
-                                <span class="form-text text-muted">
-                                    <b>Note:</b> The ban will be applied to all identifiers.
-                                </span>
+                                <div class="row mt-2">
+                                    <div class="col-sm-3 pr-0">
+                                        <input type="number" class="form-control" id="frmAddBan-reasonDate" 
+                                            maxlength="3" placeholder="7" style="display: none;">
+                                    </div>
+                                    <div class="col-sm-9 pl-2">
+                                        <select class="form-control" id="frmAddBan-durationTime" style="display: none;">
+                                            <option value="hours">hours</option>
+                                            <option value="days" selected>days</option>
+                                            <option value="weeks">weeks</option>
+                                            <option value="months">months</option>
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="text-center mt-4">
@@ -634,27 +646,33 @@
     const banButtonEl = document.getElementById('frmAddBan-button');
     if(banButtonEl){
         banButtonEl.addEventListener('click', function (ev) {
-            let frmIdentifiers = document.getElementById('frmAddBan-identifiers').value.trim();
-            let data = {
-                reason: document.getElementById('frmAddBan-reason').value.trim(),
-                duration: document.getElementById('frmAddBan-duration').value.trim(),
-            }
+            const frmIdentifiers = document.getElementById('frmAddBan-identifiers').value.trim();
+            const EByI = (x) => document.getElementById(x);
+
+            const reason = EByI('frmAddBan-reason').value.trim();
+            const data = {
+                reason,
+                duration: EByI('frmAddBan-duration').value === 'custom' ?
+                    `${EByI('frmAddBan-reasonDate').value} ${EByI('frmAddBan-durationTime').value}` :
+                    EByI('frmAddBan-duration').value
+            };
+
             if (!frmIdentifiers.length || !data.reason.length) {
-                let notify = $.notify({ message: 'The identifiers and reason fields are required.' }, { type: 'warning' });
+                const notify = $.notify({ message: 'The identifiers and reason fields are required.' }, { type: 'warning' });
                 return;
             }
             if (data.reason.length < 8) {
-                let notify = $.notify({ message: 'The reason must be at least 8 characters.' }, { type: 'warning' });
+                const notify = $.notify({ message: 'The reason must be at least 8 characters.' }, { type: 'warning' });
                 return;
             }
             data.reference = frmIdentifiers.split(/[,;'"\s]+/).filter(x => x.length);
-            let notify = $.notify({ message: '<p class="text-center">Banning...</p>' }, {});
+            const notify = $.notify({ message: '<p class="text-center">Banning...</p>' }, {});
 
             $.ajax({
                 type: "POST",
                 url: '/player/ban',
                 timeout: timeoutLong,
-                data: data,
+                data,
                 dataType: 'json',
                 success: function (data) {
                     if(data.refresh === true){
