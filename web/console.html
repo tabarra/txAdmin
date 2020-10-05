@@ -48,16 +48,14 @@
         display: inline-block;
     }
 
-    .command-history > a {
+    .command-history > button {
+        background-color: transparent !important;
         color: #768192 !important;
-        border-radius: .2rem;
-        padding: .075rem .8rem;
-        margin-top: 20px;
         border: 1px solid #768192;
-        text-decoration-line: none;
     }
 
-    .command-history > a:hover {
+    .command-history > button:hover {
+        background-color: transparent !important;
         color: rgb(183, 189, 199)!important;
         border: 1px solid rgb(183, 189, 199);
     }
@@ -95,10 +93,9 @@
                     </div>
                 </form>
             </div>
-            <div class="col-xl-6 col-lg-12" id="cmd-history-div" style="display: none;">
-                <span class="text-light font-weight-bold">History:</span> <br>
-                <div class="command-history" id="cmd-history"></div>
-
+            <div class="col-xl-6 col-lg-12" id="cmdHistoryDiv" style="display: none;">
+                <span class="text-light font-weight-bold">History:</span> <small class="text-muted">(click to copy)</small><br>
+                <div class="command-history" id="cmdHistory"></div>
             </div>
         </div>
 
@@ -121,6 +118,8 @@
         const input = document.getElementById("cmdInput");
         const consoleElement = document.getElementById("console");
         const consoleForm = document.getElementById("frmConsole");
+        const historyDiv = document.getElementById('cmdHistoryDiv');
+        const historyElement = document.getElementById('cmdHistory')
         const commandHistory = [];
         const commandHistoryLimit = 12;
 
@@ -145,22 +144,29 @@
         //Form
         consoleForm.addEventListener("submit", function (e) {
             e.preventDefault();
-            commandCache.unshift(input.value);
-            socket.emit('consoleCommand', input.value);
+            const command = input.value.trim();
+            input.value = '';
+            if(!command.length) return;
 
-            const historyDiv = document.getElementById('cmd-history-div');
+            commandCache.unshift(command);
+            socket.emit('consoleCommand', command);
+
             if (historyDiv && historyDiv.style.display === 'none') {
                 historyDiv.style.display = 'inline-block';
             }
 
-            if (!commandHistory.includes(input.value)) {
-                const valueToPush = `${input.value.slice(0, 15)}${input.value.length > 15 ? '...' : ''}`;
-                const node = document.createElement('a');
+            if (!commandHistory.includes(command)) {
+                const valueToPush = `${command.slice(0, 15)}${command.length > 15 ? '...' : ''}`;
+                const node = document.createElement('button');
                 node.appendChild(document.createTextNode(valueToPush));
-                node.setAttribute('href', '#');
-                node.setAttribute('id', stringToDOMId(input.value));
-                node.setAttribute('class', 'm-1');
-                document.getElementById('cmd-history').appendChild(node);
+                node.setAttribute('id', stringToDOMId(command));
+                node.setAttribute('class', 'btn btn-outline-light btn-sm m-1');
+                node.onclick = (e) => {
+                    console.log('onclick')
+                    input.value = command;
+                    input.focus();
+                };
+                historyElement.appendChild(node);
 
                 commandHistory.push(valueToPush);
                 // truncation
@@ -171,7 +177,6 @@
                     commandHistory.shift();
                 }
             }
-            input.value = '';
         });
 
         //Up / Down history
