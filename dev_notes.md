@@ -21,10 +21,11 @@
 - [x] added open graph to the login page (thanks @PLOKMJNB)
 - [x] improved live console page with server restart button and visual command history (thanks @Zeemahh) 
 - [x] added custom ban times option (thanks @Zeemahh) 
+- [x] update packages
 - [ ] send heartbeat via FD3 (maybe both?)
+- [ ] send log via FD3
 - [ ] add http requests/minute counter to the diagnostics page
 - [ ] check ban/wl checking logic to make sure its resilient against unexpected identifiers
-- [ ] update packages
 - [ ] xxxx
 
 TODO: Bot commands (in dev order):
