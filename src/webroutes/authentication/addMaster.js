@@ -4,6 +4,9 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
+const returnJustMessage = (ctx, errorTitle, errorMessage) => {
+    return ctx.utils.render('login', {template: 'justMessage', errorTitle, errorMessage});
+};
 
 /**
  * Handles the Add Master flow
@@ -99,19 +102,20 @@ async function handleCallback(ctx) {
     } catch (error) {
         logWarn(`Code Exchange error: ${error.message}`);
         if(!isUndefined(error.tolerance)){
-            return ctx.utils.render('login', {
-                template: 'justMessage',
-                errorTitle: `Please Update/Synchronize your VPS clock.`,
-                errorMessage: `Failed to login because this host's time is wrong. Please make sure to synchronize it with the internet.`
-            });
+            return returnJustMessage(
+                ctx,
+                `Please Update/Synchronize your VPS clock.`,
+                `Failed to login because this host's time is wrong. Please make sure to synchronize it with the internet.`
+            );
+        }else if(error.code === 'ETIMEDOUT'){
+            return returnJustMessage(
+                ctx,
+                `Connection to FiveM servers timed out:`,
+                `Failed to verify your login with FiveM's identity provider. Please try again or check your connection to the internet.`
+            );
         }else{
-            return ctx.utils.render('login', {
-                template: 'justMessage',
-                errorTitle: `Code Exchange error:`,
-                errorMessage: error.message
-            });
+            return returnJustMessage(ctx, `Code Exchange error:`, error.message);
         }
-
     }
 
     //Get userinfo

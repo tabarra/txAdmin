@@ -17,7 +17,7 @@
 - [x] fix squirrelly filters not working on v8.0.4
 > v2.7.1
 - [x] increase default cooldown to 90s and limit the monitor.timeout option
-- [x] improve some text messages
+- [x] improve some text and error messages
 - [x] added open graph to the login page (thanks @PLOKMJNB)
 - [x] improved live console page with server restart button and visual command history (thanks @Zeemahh) 
 - [x] added custom ban times option (thanks @Zeemahh) 
