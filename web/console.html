@@ -104,7 +104,35 @@
 <script src="js/ansi_up.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
 <script>
-    //Socket
+        //============================================== Controls (start/restart/stop)
+        function controlAction(action) {
+        if (action !== 'start' && !window.confirm('Are you sure you want to ' + action + ' the server?')) {
+            return;
+        }
+        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        $.ajax({
+            url: actionURL = '/fxserver/controls/' + action,
+            type: "GET",
+            dataType: "json",
+            timeout: timeoutLong,
+            success: function (data) {
+                if (data.logout) {
+                    window.location = '/auth?logout';
+                    return;
+                }
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    }
+
+    //============================================== Socket
     (function () {
         let prefix = '';
         const socket = io({path: prefix + '/socket.io', transports: ['polling'], upgrade: false});
