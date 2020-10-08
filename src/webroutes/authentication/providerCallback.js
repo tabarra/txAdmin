@@ -59,6 +59,12 @@ module.exports = async function ProviderCallback(ctx) {
                 `Connection to FiveM servers timed out:`,
                 `Please try again or login using your existing username and backup password.`
             );
+        }else if(error.message.startsWith('state mismatch')){
+            return returnJustMessage(
+                ctx,
+                `Invalid Session.`,
+                `You may have restarted txAdmin right before entering this page. Please try again.`
+            );
         }else{
             return returnJustMessage(ctx, `Code Exchange error:`, error.message);
         }

@@ -21,10 +21,10 @@ module.exports = async function AddMaster(ctx) {
 
     //Check if there are no master admins set up
     if(globals.authenticator.admins !== false){
-        return ctx.utils.render('login', {
-            template: 'justMessage',
-            errorTitle: `Master account already set.`
-        });
+        return returnJustMessage(
+            ctx,
+            `Master account already set.`,
+        );
     }
 
     //Delegate to the specific action handler
@@ -74,11 +74,11 @@ async function handlePin(ctx) {
         const url = await globals.authenticator.providers.citizenfx.getAuthURL(callback, ctx.session._sessCtx.externalKey);
         return ctx.response.redirect(url);
     } catch (error) {
-        return ctx.utils.render('login', {
-            template: 'justMessage',
-            errorTitle: `Failed to generate callback URL with error:`,
-            errorMessage: error.message
-        });
+        return returnJustMessage(
+            ctx,
+            `Failed to generate callback URL with error:`,
+            error.message
+        );
     }
 }
 
@@ -113,6 +113,12 @@ async function handleCallback(ctx) {
                 `Connection to FiveM servers timed out:`,
                 `Failed to verify your login with FiveM's identity provider. Please try again or check your connection to the internet.`
             );
+        }else if(error.message.startsWith('state mismatch')){
+            return returnJustMessage(
+                ctx,
+                `Invalid Session.`,
+                `You may have restarted txAdmin right before entering this page. Please try again.`
+            );
         }else{
             return returnJustMessage(ctx, `Code Exchange error:`, error.message);
         }
@@ -124,23 +130,22 @@ async function handleCallback(ctx) {
         userInfo = await globals.authenticator.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
         logError(`Get UserInfo error: ${error.message}`);
-        return ctx.utils.render('login', {
-            template: 'justMessage',
-            errorTitle: `Get UserInfo error:`,
-            errorMessage: error.message
-        });
+        return returnJustMessage(
+            ctx,
+            `Get UserInfo error:`,
+            error.message
+        );
     }
 
     // Setar userinfo na sessão
     ctx.session.tmpAddMasterTokenSet = tokenSet;
     ctx.session.tmpAddMasterUserInfo = userInfo;
 
-    let renderData = {
+    return ctx.utils.render('login', {
         template: 'callback',
         addMaster_name: userInfo.name,
         addMaster_picture: userInfo.picture
-    }
-    return ctx.utils.render('login', renderData);
+    });
 }
 
 
@@ -159,13 +164,13 @@ async function handleSave(ctx) {
     }
 
     //Sanity check2: Electric Boogaloo (Validating password)
-    let password = ctx.request.body.password.trim();
-    let password2 = ctx.request.body.password2.trim();
+    const password = ctx.request.body.password.trim();
+    const password2 = ctx.request.body.password2.trim();
     if(password != password2 || password.length < 6 || password.length > 24){
-        return ctx.utils.render('login', {
-            template: 'justMessage',
-            errorTitle: `Invalid Password.`,
-        });
+        return returnJustMessage(
+            ctx,
+            `Invalid Password.`,
+        );
     }
 
     //Checking if session is still present
@@ -174,21 +179,22 @@ async function handleSave(ctx) {
         typeof ctx.session.tmpAddMasterUserInfo.name !== 'string' ||
         typeof ctx.session.tmpAddMasterUserInfo.picture !== 'string'
     ){
-        return ctx.utils.render('login', {
-            template: 'justMessage',
-            errorTitle: `Invalid Session.`
-        });
+        return returnJustMessage(
+            ctx,
+            `Invalid Session.`,
+            `You may have restarted txAdmin right before entering this page. Please try again.`
+        );
     }
 
     //Creating admins file
     try {
         await globals.authenticator.createAdminsFile(ctx.session.tmpAddMasterUserInfo.name, ctx.session.tmpAddMasterUserInfo, password);
     } catch (error) {
-        return ctx.utils.render('login', {
-            template: 'justMessage',
-            errorTitle: `Error:`,
-            errorMessage: error.message
-        });
+        return returnJustMessage(
+            ctx,
+            `Error:`,
+            error.message
+        );
     }
 
     //Login user
@@ -203,11 +209,11 @@ async function handleSave(ctx) {
     } catch (error) {
         ctx.session.auth = {};
         logError(`Failed to login: ${error.message}`);
-        return ctx.utils.render('login', {
-            template: 'justMessage',
-            errorTitle: `Failed to login:`,
-            errorMessage: error.message
-        });
+        return returnJustMessage(
+            ctx,
+            `Failed to login:`,
+            error.message
+        );
     }
 
     log('Admin file created! You can now login normally.');
