@@ -348,7 +348,7 @@ module.exports = class PlayerController {
             if(this.config.onJoinCheckBan){
                 const ban = hist.find((a) => a.type == 'ban');
                 if(ban){
-                    const msg;
+                    let msg;
                     if(ban.expiration){
                         const humanizeOptions = {
                             language: globals.translator.t('$meta.humanizer_language'),
