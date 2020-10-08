@@ -52,7 +52,7 @@
     "nanoid-dictionary": "^3.0.0",
     "node-polyglot": "^2.4.0",
     "open": "^7.3.0",
-    "openid-client": "^4.2.0",
+    "openid-client": "^3.15.9",
     "pidtree": "^0.5.0",
     "pidusage-tree": "^2.0.5",
     "semver": "^7.3.2",
