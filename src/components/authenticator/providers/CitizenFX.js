@@ -116,6 +116,8 @@ module.exports = class CitizenFXProvider {
     //================================================================
     /**
      * Returns the session auth object
+     * NOTE: increasing session duration to 24 hours since we do not have refresh tokens
+     * 
      * @param {object} tokenSet
      * @param {object} userInfo
      * @returns {(object)}
@@ -124,7 +126,8 @@ module.exports = class CitizenFXProvider {
         return {
             provider: 'citizenfx',
             provider_uid: userInfo.name,
-            expires_at: tokenSet.expires_at,
+            // expires_at: tokenSet.expires_at,
+            expires_at: Math.round(Date.now()/1000) + 86400, 
             picture: userInfo.picture
         };
     }
