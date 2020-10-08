@@ -58,15 +58,15 @@ module.exports = async function Intercom(ctx) {
             return ctx.utils.error(400, 'Invalid Request');
         }
         try {
-            let resp = await globals.playerController.checkPlayerJoin(postData.identifiers, postData.name);
+            const resp = await globals.playerController.checkPlayerJoin(postData.identifiers, postData.name);
             if(resp.allow){
                 return ctx.send('allow');
             }else{
-                let msg = resp.reason || 'Access Denied for unknown reason';
+                const msg = resp.reason || 'Access Denied for unknown reason';
                 return ctx.send(`[txAdmin] ${msg}`);
             }
         } catch (error) {
-            let msg = `[txAdmin] [JoinCheck] Failed with error: ${error.message}`;
+            const msg = `[txAdmin] [JoinCheck] Failed with error: ${error.message}`;
             logError(msg);
             return ctx.send(msg);
         }
