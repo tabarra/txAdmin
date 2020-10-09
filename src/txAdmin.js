@@ -22,7 +22,7 @@ globals = {
     info: {},
 
     //NOTE: still not ideal, but since the extensions system changed entirely, 
-    //      will have to rething the plans for this variable.
+    //      will have to rethink the plans for this variable.
     databus: {
         resourcesList: null,
         serverLog: [],

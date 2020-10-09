@@ -23,10 +23,9 @@
 - [x] added custom ban times option (thanks @Zeemahh) 
 - [x] update packages
 - [x] increase CitizenFX session to 24 hours 
-- [ ] send heartbeat via FD3 (maybe both?)
-- [ ] send log via FD3
-- [ ] add http requests/minute counter to the diagnostics page
-- [ ] check ban/wl checking logic to make sure its resilient against unexpected identifiers
+- [x] add http requests/minute counter to the diagnostics page
+- [x] check ban/wl checking logic to make sure its resilient against unexpected identifiers
+- [ ] replace menu icons
 - [ ] xxxx
 
 TODO: Bot commands (in dev order):
@@ -44,6 +43,8 @@ TODO: Bot commands (in dev order):
 /removewl <mention>
 
 > Soon™ (hopefully the next update)
+- [ ] send heartbeat via FD3 (maybe both?)
+- [ ] send log via FD3
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
 - [ ] break player page into `Players` and `Player Access`
         - `Player Access` will only contain the whitelist and band ids cards
@@ -79,10 +80,10 @@ TODO: Bot commands (in dev order):
 ```bash
 # run
 cd /e/FiveM/builds
-nodemon --watch "2972/citizen/system_resources/monitor/src/*" --exec "2972/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose true +set txAdminFakePlayerlist yesplz"
+nodemon --watch "3004/citizen/system_resources/monitor/src/*" --exec "3004/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose true +set txAdminFakePlayerlist yesplz"
 
 # build
-cd /e/FiveM/builds/2972/citizen/system_resources/monitor
+cd /e/FiveM/builds/3004/citizen/system_resources/monitor
 rm -rf dist
 npm run build
 

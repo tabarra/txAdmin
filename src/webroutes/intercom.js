@@ -29,6 +29,7 @@ module.exports = async function Intercom(ctx) {
                 txAdminVersion: GlobalData.txAdminVersion,
                 fxServerUptime: globals.fxRunner.getUptime(),
                 fd3Errors: globals.databus.fd3Errors,
+                httpCounterMax: globals.databus.httpCounter.max,
                 admins: (globals.authenticator.admins)? globals.authenticator.admins.length : 1,
                 banlistEnabled: globals.playerController.config.onJoinCheckBan,
                 whitelistEnabled: globals.playerController.config.onJoinCheckWhitelist,
