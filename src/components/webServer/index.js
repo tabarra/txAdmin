@@ -33,6 +33,15 @@ module.exports = class WebServer {
         this.setupKoa();
         this.setupWebsocket();
         this.setupServerCallbacks();
+
+        //Cron function
+        setInterval(() => {
+            const httpCounter = globals.databus.httpCounter;
+            httpCounter.log.push(httpCounter.current);
+            if(httpCounter.log.length > 10) httpCounter.log.shift()
+            if(httpCounter.current > httpCounter.max) httpCounter.max = httpCounter.current;
+            httpCounter.current = 0;
+        }, 60*1000);
     }
 
 
@@ -162,6 +171,7 @@ module.exports = class WebServer {
 
         //Calls the appropriate callback
         try {
+            globals.databus.httpCounter.current++;
             if(req.url.startsWith('/socket.io')){
                 this.io.engine.handleRequest(req, res);
             }else{

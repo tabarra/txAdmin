@@ -27,7 +27,12 @@ globals = {
         resourcesList: null,
         serverLog: [],
         updateChecker: null,
-        fd3Errors: 0
+        fd3Errors: 0,
+        httpCounter: {
+            current: 0,
+            max: 0,
+            log: []
+        }
     },
 }
 
