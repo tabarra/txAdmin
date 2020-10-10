@@ -25,7 +25,9 @@
 - [x] increase CitizenFX session to 24 hours 
 - [x] add http requests/minute counter to the diagnostics page
 - [x] check ban/wl checking logic to make sure its resilient against unexpected identifiers
-- [ ] replace menu icons
+- [x] reduce svg icons file size to prevent loading issues
+- [x] check why 16 is the last HB, and make sure this is correct
+- [ ] add fd3 heartbeat as redundancy + stats
 - [ ] xxxx
 
 TODO: Bot commands (in dev order):

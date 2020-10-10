@@ -247,12 +247,12 @@ module.exports = class Monitor {
         const cleanET = (et) => {return (et > 99999)? '--' : et};
 
         //Get elapsed times & process status
-        let currTimestamp = now();
-        let elapsedHealthCheck = currTimestamp - this.lastSuccessfulHealthCheck;
-        let healthCheckFailed = (elapsedHealthCheck > this.config.healthCheck.failThreshold);
-        let elapsedHeartBeat = currTimestamp - this.lastSuccessfulHeartBeat;
-        let heartBeatFailed = (elapsedHeartBeat > this.config.heartBeat.failThreshold);
-        let processUptime = globals.fxRunner.getUptime();
+        const currTimestamp = now();
+        const elapsedHealthCheck = currTimestamp - this.lastSuccessfulHealthCheck;
+        const healthCheckFailed = (elapsedHealthCheck > this.config.healthCheck.failThreshold);
+        const elapsedHeartBeat = currTimestamp - this.lastSuccessfulHeartBeat;
+        const heartBeatFailed = (elapsedHeartBeat > this.config.heartBeat.failThreshold);
+        const processUptime = globals.fxRunner.getUptime();
 
         //Check if its online and return
         if(
@@ -265,30 +265,33 @@ module.exports = class Monitor {
 
         //Now to the (un)fun part: if the status != healthy
         this.currentStatus = (healthCheckFailed && heartBeatFailed)? 'OFFLINE' : 'PARTIAL';
+        const timesPrefix = `(HB:${cleanET(elapsedHeartBeat)}|HC:${cleanET(elapsedHealthCheck)})`;
+        const elapsedLastWarning = currTimestamp - this.lastStatusWarningMessage;
 
         //Check if still in cooldown
         if(processUptime < this.config.cooldown){
-            if(GlobalData.verbose && processUptime > 5 && currTimestamp - this.lastStatusWarningMessage > 10){
-                logWarn(`(HB:${cleanET(elapsedHeartBeat)}|HC:${cleanET(elapsedHealthCheck)}) FXServer is not responding. Still in cooldown.`)
-                this.lastStatusWarningMessage = now();
+            if(GlobalData.verbose && processUptime > 10 && elapsedLastWarning > 10){
+                logWarn(`${timesPrefix} FXServer is not responding. Still in cooldown of ${this.config.cooldown}s.`)
+                this.lastStatusWarningMessage = currTimestamp;
             }
             return;
         }
 
         //Log failure message
         if(
-            (GlobalData.verbose && (currTimestamp - this.lastStatusWarningMessage) > 15) ||
-            ((currTimestamp - this.lastStatusWarningMessage) > 30)
+            // (GlobalData.verbose && elapsedLastWarning > 15) ||
+            // (elapsedLastWarning >= 30)
+            (elapsedLastWarning > 15)
         ){
-            let msg = (healthCheckFailed)
-                        ? `(HB:${cleanET(elapsedHeartBeat)}|HC:${cleanET(elapsedHealthCheck)}) FXServer is not responding. (${this.lastHealthCheckErrorMessage})` 
-                        : `(HB:${cleanET(elapsedHeartBeat)}|HC:${cleanET(elapsedHealthCheck)}) FXServer is not responding. (HB Failed)`; 
-            this.lastStatusWarningMessage = now();
+            const msg = (healthCheckFailed)
+                        ? `${timesPrefix} FXServer is not responding. (${this.lastHealthCheckErrorMessage})` 
+                        : `${timesPrefix} FXServer is not responding. (HB Failed)`; 
+            this.lastStatusWarningMessage = currTimestamp;
             logWarn(msg);
         }
         
         //Check if fxChild is closed, in this case no need to wait the failure count
-        let processStatus = globals.fxRunner.getStatus();
+        const processStatus = globals.fxRunner.getStatus();
         if(processStatus == 'closed'){
             this.globalCounters.fullCrashes++;
             this.restartFXServer(
@@ -300,29 +303,28 @@ module.exports = class Monitor {
 
         //If http partial crash, warn 1 minute before
         if(
-            elapsedHealthCheck > (this.config.healthCheck.failLimit - 60) && 
+            !(elapsedHeartBeat > this.config.heartBeat.failLimit) && 
             !this.healthCheckRestartWarningIssued &&
-            !(elapsedHeartBeat > this.config.heartBeat.failLimit)
+            elapsedHealthCheck > (this.config.healthCheck.failLimit - 60)
         ){
-            let tOptions = {
-                servername: globals.config.serverName
-            }
-            globals.discordBot.sendAnnouncement(globals.translator.t('restarter.partial_crash_warn_discord', tOptions));
-            let chatMsg = globals.translator.t('restarter.partial_crash_warn');
+            globals.discordBot.sendAnnouncement(globals.translator.t(
+                'restarter.partial_crash_warn_discord', 
+                {servername: globals.config.serverName}
+            ));
+            const chatMsg = globals.translator.t('restarter.partial_crash_warn');
             globals.fxRunner.srvCmd(`txaBroadcast "txAdmin" "${chatMsg}"`);
-            this.healthCheckRestartWarningIssued = now();
+            this.healthCheckRestartWarningIssued = currTimestamp;
         }
 
         //Give a bit more time to the very very slow servers to come up
         //They usually start replying to healthchecks way before sending heartbeats
-        let maxHBCooldownTolerance = 180;
+        const maxHBCooldownTolerance = 180;
         if(
             this.lastSuccessfulHeartBeat === null &&
             processUptime < maxHBCooldownTolerance &&
             elapsedHealthCheck < this.config.healthCheck.failLimit
         ){
-            let msg = `Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`;
-            if(processUptime % 15 == 0) logWarn(msg);
+            if(processUptime % 15 == 0) logWarn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
             return;
         }
 
