@@ -27,8 +27,49 @@
 - [x] check ban/wl checking logic to make sure its resilient against unexpected identifiers
 - [x] reduce svg icons file size to prevent loading issues
 - [x] check why 16 is the last HB, and make sure this is correct
-- [ ] add fd3 heartbeat as redundancy + stats
+- [x] add FD3 heartbeat as redundancy + stats
 - [ ] xxxx
+
+
+`{user.id}` Welcome to the party, {user}! Please read #tutorial-txadmin🔥 
+
+
+### Setup Stepper:
+1. Welcome
+2. Server Name
+3. Deployment import type:
+    - Common Template
+    - URL Template
+    - Local Server Data
+
+    4. Select Template (cards)
+    5. Show data location
+
+    4. Import Remote Template (URL input)
+    5. Show data location
+
+    4. Local Server Data
+    5. Server CFG File
+
+6. Finish
+    - save configs
+    - if local:
+        - start server
+        - redirect to live console
+    - if template
+        - redirect to deployer
+
+
+setup não faz download
+vai pra página do deployer que é um stepper
+1. cfg file, será salvo como base.cfg
+2. progress, baixar tudo
+3. botão start
+vai pro live console
+e quando terminar só vai mostrar um cfg file pr ousuário configurar algumas coisas
+
+
+
 
 TODO: Bot commands (in dev order):
 /addwl <wl req id>
@@ -48,10 +89,6 @@ TODO: Bot commands (in dev order):
 - [ ] send heartbeat via FD3 (maybe both?)
 - [ ] send log via FD3
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
-- [ ] break player page into `Players` and `Player Access`
-        - `Player Access` will only contain the whitelist and band ids cards
-        - `Players` will have a central search and will show players and actions at the same time
-- [ ] check everything done for xss
 - [ ] apply the new action log html to the modal
 - [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
 - [ ] add ban server-side ban cache (last 500 bans?), updated on every ban change 

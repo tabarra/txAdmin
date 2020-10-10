@@ -192,9 +192,13 @@ module.exports = class Monitor {
         this.currentStatus = 'OFFLINE' // options: OFFLINE, ONLINE, PARTIAL
         this.lastSuccessfulHealthCheck = null; //to see if its above limit
         this.lastStatusWarningMessage = null; //to prevent spamming 
-        this.lastSuccessfulHeartBeat = null; //to see if its above limit
         this.lastHealthCheckErrorMessage = null; //to print warning
         this.healthCheckRestartWarningIssued = false; //to prevent spamming 
+
+        //to track http vs fd3
+        //to see if its above limit
+        this.lastSuccessfulFD3HeartBeat = null; 
+        this.lastSuccessfulHTTPHeartBeat = null; 
 
         //to reset active player list (if module is already loaded)
         if(globals.playerController) globals.playerController.processHeartBeat([]); 
@@ -250,14 +254,15 @@ module.exports = class Monitor {
         const currTimestamp = now();
         const elapsedHealthCheck = currTimestamp - this.lastSuccessfulHealthCheck;
         const healthCheckFailed = (elapsedHealthCheck > this.config.healthCheck.failThreshold);
-        const elapsedHeartBeat = currTimestamp - this.lastSuccessfulHeartBeat;
+        const lastSuccessfulHeartBeat = Math.max(this.lastSuccessfulFD3HeartBeat, this.lastSuccessfulHTTPHeartBeat);
+        const elapsedHeartBeat = currTimestamp - lastSuccessfulHeartBeat;
         const heartBeatFailed = (elapsedHeartBeat > this.config.heartBeat.failThreshold);
         const processUptime = globals.fxRunner.getUptime();
 
         //Check if its online and return
         if(
             this.lastSuccessfulHealthCheck && !healthCheckFailed &&
-            this.lastSuccessfulHeartBeat && !heartBeatFailed
+            lastSuccessfulHeartBeat && !heartBeatFailed
         ){
             this.currentStatus = 'ONLINE';
             return;
@@ -320,7 +325,7 @@ module.exports = class Monitor {
         //They usually start replying to healthchecks way before sending heartbeats
         const maxHBCooldownTolerance = 180;
         if(
-            this.lastSuccessfulHeartBeat === null &&
+            lastSuccessfulHeartBeat === null &&
             processUptime < maxHBCooldownTolerance &&
             elapsedHealthCheck < this.config.healthCheck.failLimit
         ){
@@ -352,23 +357,36 @@ module.exports = class Monitor {
 
 
     //================================================================
-    handleHeartBeat(postData){
-        //Sanity Check
-        if(!Array.isArray(postData.players)){
-            if(GlobalData.verbose) logWarn(`Received an invalid HeartBeat.`);
-            return;
+    handleHeartBeat(source, postData){
+        const tsNow = now();
+        if(source === 'fd3'){
+            //Processing stats
+            this.lastSuccessfulFD3HeartBeat = tsNow;
+            if(this.lastSuccessfulHTTPHeartBeat && tsNow - this.lastSuccessfulHTTPHeartBeat > 15){
+                globals.databus.heartBeatStats.httpFailed++;
+            }
+        
+        }else if(source === 'http'){
+            //Sanity Check
+            if(!Array.isArray(postData.players)){
+                if(GlobalData.verbose) logWarn(`Received an invalid HeartBeat.`);
+                return;
+            }
+
+            //Processing playerlist
+            const playerList = postData.players.map(player => {
+                player.id = parseInt(player.id);
+                return player;
+            });
+            this.timeSeries.add(playerList.length);
+            globals.playerController.processHeartBeat(playerList);
+
+            //Processing stats
+            this.lastSuccessfulHTTPHeartBeat = tsNow;
+            if(this.lastSuccessfulFD3HeartBeat && tsNow - this.lastSuccessfulFD3HeartBeat > 15){
+                globals.databus.heartBeatStats.fd3Failed++;
+            }
         }
-
-        //Cleaning playerlist
-        let playerList = postData.players.map(player => {
-            player.id = parseInt(player.id);
-            return player;
-        });
-
-        //The rest...
-        this.lastSuccessfulHeartBeat = now();
-        this.timeSeries.add(playerList.length);
-        globals.playerController.processHeartBeat(playerList);
     }
 
 } //Fim Monitor()

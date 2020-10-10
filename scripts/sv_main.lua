@@ -36,7 +36,13 @@ CreateThread(function()
     RegisterCommand("txaReportResources", txaReportResources, true)
     CreateThread(function()
         while true do
-            HeartBeat()
+            HTTPHeartBeat()
+            Wait(3000)
+        end
+    end)
+    CreateThread(function()
+        while true do
+            FD3HeartBeat()
             Wait(3000)
         end
     end)
@@ -46,8 +52,8 @@ CreateThread(function()
 end)
 
 
--- HeartBeat function
-function HeartBeat()
+-- HeartBeat functions
+function HTTPHeartBeat()
     local playerCount = GetNumPlayerIndices()
     
     local players = {}
@@ -84,6 +90,11 @@ function HeartBeat()
             hbReturnData = resp
         end
     end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
+end
+
+function FD3HeartBeat()
+    local payload = json.encode({type = 'txAdminHeartBeat'})
+    Citizen.InvokeNative(`PRINT_STRUCTURED_TRACE` & 0xFFFFFFFF, payload)
 end
 
 -- HTTP request handler

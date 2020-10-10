@@ -253,8 +253,10 @@ async function gettxAdminData(){
         whitelistEnabled: controllerConfigs.onJoinCheckWhitelist.toString(),
         fullCrashes: globals.monitor.globalCounters.fullCrashes,
         partialCrashes: globals.monitor.globalCounters.partialCrashes,
-        httpCounterLog: httpCounter.log.join(', '),
-        httpCounterMax: httpCounter.max,
+        httpCounterLog: httpCounter.log.join(', ') || '--',
+        httpCounterMax: httpCounter.max || '--',
+        hbFD3Fails: globals.databus.heartBeatStats.fd3Failed,
+        hbHTTPFails: globals.databus.heartBeatStats.httpFailed,
         //Settings
         timeout: globals.monitor.config.timeout,
         cooldown: globals.monitor.config.cooldown,

@@ -95,6 +95,14 @@ module.exports = class OutputHandler {
             }catch(e){} 
             return;
         }
+
+        //Handle script traces
+        if(channel == 'citizen-server-impl' && data.type == 'script_structured_trace'){
+            // dir(data.payload)
+            if(data.payload.type === 'txAdminHeartBeat'){
+                globals.monitor.handleHeartBeat('fd3');
+            }
+        }
     }
 
 

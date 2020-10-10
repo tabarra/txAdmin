@@ -28,6 +28,10 @@ globals = {
         serverLog: [],
         updateChecker: null,
         fd3Errors: 0,
+        heartBeatStats: {
+            httpFailed: 0,
+            fd3Failed: 0,
+        },
         httpCounter: {
             current: 0,
             max: 0,

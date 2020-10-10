@@ -24,11 +24,12 @@ module.exports = async function Intercom(ctx) {
     //Delegate to the specific scope functions
     if(scope == 'monitor'){
         try {
-            globals.monitor.handleHeartBeat(postData);
+            globals.monitor.handleHeartBeat('http', postData);
             const outData = {
                 txAdminVersion: GlobalData.txAdminVersion,
                 fxServerUptime: globals.fxRunner.getUptime(),
                 fd3Errors: globals.databus.fd3Errors,
+                heartBeatStats: globals.databus.heartBeatStats,
                 httpCounterMax: globals.databus.httpCounter.max,
                 admins: (globals.authenticator.admins)? globals.authenticator.admins.length : 1,
                 banlistEnabled: globals.playerController.config.onJoinCheckBan,
