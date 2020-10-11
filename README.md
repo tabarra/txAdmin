@@ -25,11 +25,12 @@
 	- Brute-force protection
 - Discord Integration:
 	- Server status command (`/status`)
+	- Add to Whitelist command  (`/addwl`)
 	- Command spam prevention
 - Monitoring:
-	- Auto Restart on crash
+	- Auto Restart FXServer on crash
 	- Server’s CPU/RAM consumption
-	- Live Console (with log file)
+	- Live Console (with log file and command history)
 	- Hitch Detection statistics
 	- Online players chart
 	- Server Activity Log (connections/disconnections, kills, chat, explosions and [custom commands](docs/extra_logging.md))
@@ -49,8 +50,8 @@
 Also, check our [Feature Graveyard](docs/feature_graveyard.md) for the features that are no longer among us (RIP).
 
 ## Running (Windows/Linux)
-Currently **txAdmin is included in all FXServer builds** above 2401, so to run it for the first time simply do the following:
-- Update FXServer to the latest artifact/build (2401 or superior)
+Currently **txAdmin is included in all FXServer builds** above 2524, so to run it for the first time simply do the following:
+- Update FXServer to the latest artifact/build (2524 or superior)
 - If Windows, run FXServer.exe | If Linux, run `./run.sh`
 - Open one of the URLs shown and configure txAdmin
 

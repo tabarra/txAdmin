@@ -288,6 +288,36 @@ More:
 - [x] add admins count to the stats.json
 - [x] check for "stop monitor" in cfg file
 > v2.6.1
+- [x] update packages
+- [x] discord bot: set new api url
+- [x] reset /auth url after message or error
+- [x] discord bot: fixed /help spam on reconnection
+- [x] updated dutch, german, danish and czech languages
+- [x] added option to disable in game restart warning chat messages (thanks @is-sam)
+- [x] check why scheduled restarts are not kicking players (no issue found, still replaced `txaKickAll` eith `quit`)
+- [x] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
+- [x] fix login page centralization on mobile screens
+- [x] add placeholders to discord bot settings tab
+- [x] update onesync setting values to reflect fxserver's change
+- [x] if clean install and on windows, open the listening URL on the browser
+> v2.7.0
+- [x] fix player manager settigns page not saving
+- [x] fix squirrelly filters not working on v8.0.4
+> v2.7.1
+- [x] increase default cooldown to 90s and limit the monitor.timeout option
+- [x] improve some text and error messages
+- [x] added open graph to the login page (thanks @PLOKMJNB)
+- [x] improved live console page with server restart button and visual command history (thanks @Zeemahh) 
+- [x] added custom ban times option (thanks @Zeemahh) 
+- [x] update packages
+- [x] increase CitizenFX session to 24 hours 
+- [x] add http requests/minute counter to the diagnostics page
+- [x] check ban/wl checking logic to make sure its resilient against unexpected identifiers
+- [x] reduce svg icons file size to prevent loading issues
+- [x] check why 16 is the last HB, and make sure this is correct
+- [x] add FD3 heartbeat as redundancy + stats
+- [x] live console: added command history to local storage
+> v2.7.2
 
 
 ------------------------------
