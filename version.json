@@ -201,6 +201,10 @@
         {
             "version": "2.7.1",
             "changelog": "Fixed rendering issues and player manager settings not saving."
+        },
+        {
+            "version": "2.7.2",
+            "changelog": "Added custom ban times. Added ban history to live console. Added redundant HeartBeat via FD3. Many smaller improvements."
         }
     ]
 }

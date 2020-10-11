@@ -42,7 +42,7 @@
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",
     "koa-ratelimit": "^4.2.1",
-    "koa-session": "^6.0.0",
+    "koa-session": "^6.1.0",
     "koa-session-memory": "^1.0.4",
     "koa-session-socketio": "^1.0.0",
     "koa-static": "^5.0.0",
@@ -61,7 +61,7 @@
     "squirrelly": "^8.0.8",
     "stream-json": "^1.7.1",
     "string-argv": "^0.3.1",
-    "systeminformation": "^4.27.7",
+    "systeminformation": "^4.27.8",
     "xss": "^1.0.8"
   },
   "devDependencies": {
