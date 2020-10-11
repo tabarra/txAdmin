@@ -116,8 +116,8 @@ async function handleCallback(ctx) {
         }else if(error.message.startsWith('state mismatch')){
             return returnJustMessage(
                 ctx,
-                `Invalid Session.`,
-                `You may have restarted txAdmin right before entering this page. Please try again.`
+                `Invalid Browser Session.`,
+                `You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.`
             );
         }else{
             return returnJustMessage(ctx, `Code Exchange error:`, error.message);
