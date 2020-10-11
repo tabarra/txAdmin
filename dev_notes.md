@@ -28,7 +28,7 @@
 - [x] reduce svg icons file size to prevent loading issues
 - [x] check why 16 is the last HB, and make sure this is correct
 - [x] add FD3 heartbeat as redundancy + stats
-- [ ] xxxx
+- [x] live console: added command history to local storage
 
 
 `{user.id}` Welcome to the party, {user}! Please read #tutorial-txadmin🔥 

@@ -13,6 +13,10 @@
         margin-bottom: 1em;
     }
 
+    #cmdHistoryDiv{
+        display: inline-block;
+    }
+
     @media (max-width: 1200px) {
         #cmdHistoryDiv{
             text-align: center!important;
@@ -88,7 +92,7 @@
                     </div>
                 </form>
             </div>
-            <div class="col-xl-6 col-lg-12" id="cmdHistoryDiv" style="display: none;">
+            <div class="col-xl-6 col-lg-12" id="cmdHistoryDiv">
                 <span class="text-light font-weight-bold">History:</span> <small class="text-muted">(click to copy)</small><br>
                 <div class="command-history" id="cmdHistory"></div>
             </div>
@@ -132,9 +136,11 @@
         });
     }
 
-    //============================================== Socket
+    //============================================== Live Console stuff
     (function () {
-        let prefix = '';
+        //Preparing variables
+        const prefix = '';
+        const commandHistoryLimit = 12;
         const socket = io({path: prefix + '/socket.io', transports: ['polling'], upgrade: false});
         const ansi_up = new AnsiUp;
         ansi_up.escape_for_html = false;
@@ -142,12 +148,40 @@
         const consoleElement = document.getElementById("console");
         const consoleForm = document.getElementById("frmConsole");
         const historyDiv = document.getElementById('cmdHistoryDiv');
-        const historyElement = document.getElementById('cmdHistory')
-        const commandHistory = [];
-        const commandHistoryLimit = 12;
+        const historyElement = document.getElementById('cmdHistory');
+        let commandHistory = [];
+    
 
+        //Helper Functions
         const stringToDOMId = (str) => `${str.replace(/\s?\s+/g, '-').slice(0, 32)}${str.length > 32 ? '_trim' : ''}`.trim();
 
+        const addCommandHistoryEntry = (command) => {
+            const btnText = `${command.slice(0, 15)}${command.length > 15 ? '...' : ''}`;
+            const node = document.createElement('button');
+            node.appendChild(document.createTextNode(btnText));
+            node.setAttribute('id', stringToDOMId(command));
+            node.setAttribute('class', 'btn btn-outline-light btn-sm m-1');
+            node.onclick = (e) => {
+                console.log('onclick')
+                input.value = command;
+                input.focus();
+            };
+            historyElement.appendChild(node);
+        }
+
+
+        //Load command history from local storage
+        if(typeof window.localStorage.liveConsoleCommandHistory !== 'undefined'){
+            try {
+                const fromStorage = JSON.parse(window.localStorage.liveConsoleCommandHistory);
+                commandHistory = fromStorage.slice(0 - commandHistoryLimit);
+                commandHistory.forEach(addCommandHistoryEntry);
+            } catch (error) {
+                console.error('Failed to process window.localStorage.liveConsoleCommandHistory');
+            }
+        }
+
+        
         //Events
         socket.on('connect', () => {
             console.log("Socket.io Connected!")
@@ -164,6 +198,7 @@
             if (autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight
         });
 
+
         //Form
         consoleForm.addEventListener("submit", function (e) {
             e.preventDefault();
@@ -174,24 +209,9 @@
             commandCache.unshift(command);
             socket.emit('consoleCommand', command);
 
-            if (historyDiv && historyDiv.style.display === 'none') {
-                historyDiv.style.display = 'inline-block';
-            }
-
-            if (!commandHistory.includes(command)) {
-                const valueToPush = `${command.slice(0, 15)}${command.length > 15 ? '...' : ''}`;
-                const node = document.createElement('button');
-                node.appendChild(document.createTextNode(valueToPush));
-                node.setAttribute('id', stringToDOMId(command));
-                node.setAttribute('class', 'btn btn-outline-light btn-sm m-1');
-                node.onclick = (e) => {
-                    console.log('onclick')
-                    input.value = command;
-                    input.focus();
-                };
-                historyElement.appendChild(node);
-
-                commandHistory.push(valueToPush);
+            if(!commandHistory.includes(command)){
+                addCommandHistoryEntry(command);
+                commandHistory.push(command); //DEBUG valueToPush?
                 // truncation
                 if (commandHistory.length >= commandHistoryLimit) {
                     const search = commandHistory.find((_, index) => index === (commandHistory.length - commandHistoryLimit));
@@ -199,8 +219,10 @@
                     element.remove();
                     commandHistory.shift();
                 }
+                window.localStorage.liveConsoleCommandHistory = JSON.stringify(commandHistory);
             }
         });
+
 
         //Up / Down history
         var commandCache = [];
@@ -227,6 +249,7 @@
 
             if (changed) input.value = commandCache[currentIndex] || "";
         });
+
 
         //Buttons
         var autoScroll = true;
