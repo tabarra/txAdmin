@@ -1,4 +1,4 @@
-fx_version 'bodacious'
+fx_version 'cerulean'
 games { 'gta5' }
 
 author 'Tabarra'
@@ -6,7 +6,7 @@ description 'Remotely Manage & Monitor your GTA5 FiveM Server'
 repository 'https://github.com/tabarra/txAdmin'
 version '2.7.2'
 
-
+-- What to run
 -- NOTE: Due to global package constraints, js scripts will be loaded from main.js
 server_scripts { 
     'main.js',
