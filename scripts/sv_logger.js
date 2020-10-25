@@ -197,6 +197,14 @@ onNet('txaLogger:CommandExecuted', (data) => {
     }
 });
 
+on('txaLogger:CommandExecutedServer', (data, source) => {
+    try {
+        logger.r(source, 'CommandExecuted', data);
+    } catch (error) {
+        logError(error)
+    }
+});
+
 onNet('txaLogger:DebugMessage', (data) => {
     try {
         logger.r(global.source, 'DebugMessage', data);
