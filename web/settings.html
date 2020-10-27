@@ -328,6 +328,18 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label for="frmMonitor-restartWarnings" class="col-sm-3 col-form-label">Restart warnings</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmMonitor-restartWarnings" value="{{it.monitor.restartWarnings|undef}}"
+                                    placeholder="30, 15, 10, 5, 4, 3, 2, 1" {{it.readOnly|isDisabled}}>
+                                <span class="form-text text-muted">
+                                    Minutes before restarts to trigger chat warnings and server event (<code>txAdmin:events:restart</code>). <br>
+                                    All the minutes must be 1 or bigger and less then 1440 and the minutes should be separated by commas. 
+                                </span>
+                            </div>
+                        </div>
+
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-primary" type="submit" id="frmMonitor-save" {{it.readOnly|isDisabled}}>
                                 <i class="icon-check"></i> Save Monitor/Restarter Settings
@@ -557,7 +569,8 @@
     $('#frmMonitor-save').click(function () {
         let data = {
             schedule: $('#frmMonitor-schedule').val().trim(),
-            disableChatWarnings: ($('#frmMonitor-chatMessages').is(':checked') === true)
+            disableChatWarnings: ($('#frmMonitor-chatMessages').is(':checked') === true),
+            restartWarnings: $('#frmMonitor-restartWarnings').val().trim()
         }
         var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
