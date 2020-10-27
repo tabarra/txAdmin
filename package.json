@@ -61,7 +61,7 @@
     "squirrelly": "^8.0.8",
     "stream-json": "^1.7.1",
     "string-argv": "^0.3.1",
-    "systeminformation": "^4.27.8",
+    "systeminformation": "^4.27.11",
     "xss": "^1.0.8"
   },
   "devDependencies": {
