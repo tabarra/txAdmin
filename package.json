@@ -62,7 +62,6 @@
     "stream-json": "^1.7.1",
     "string-argv": "^0.3.1",
     "systeminformation": "^4.27.8",
-    "utf-8-validate": "^5.0.2",
     "xss": "^1.0.8"
   },
   "devDependencies": {
