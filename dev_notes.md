@@ -1,8 +1,8 @@
 ## TODO v3
-- [ ] xxxxx
+- [x] replace `localhost` with `127.0.0.1` in functions to force usage of ipv4
+- [ ] add stats to know if users are coming from localhost, cfx.re, direct ip or domain (maybe just login?)
 - [ ] xxxxx
 
-`{user.id}` Welcome to the party, {user}! Please read #tutorial-txadmin🔥 
 
 ### Setup Stepper:
 1. Welcome

@@ -115,7 +115,7 @@ async function getFXServerData(){
     //Preparing request
     const port = (globals.config.forceFXServerPort)? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
     const requestOptions = {
-        url: `http://localhost:${port}/info.json`,
+        url: `http://127.0.0.1:${port}/info.json`,
         method: 'get',
         responseType: 'json',
         responseEncoding: 'utf8',

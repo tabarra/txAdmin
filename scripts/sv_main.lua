@@ -76,7 +76,7 @@ function HTTPHeartBeat()
 		end
     end
 
-    local url = "http://localhost:"..apiPort.."/intercom/monitor"
+    local url = "http://127.0.0.1:"..apiPort.."/intercom/monitor"
     local exData = {
         txAdminToken = apiToken,
         players = players
@@ -269,7 +269,7 @@ function txaReportResources(source, args)
     end
 
     --Send to txAdmin
-    local url = "http://localhost:"..apiPort.."/intercom/resources"
+    local url = "http://127.0.0.1:"..apiPort.."/intercom/resources"
     local exData = {
         txAdminToken = apiToken,
         resources = resources
@@ -287,7 +287,7 @@ end
 function handleConnections(name, skr, d)
     if  GetConvar("txAdmin-checkPlayerJoin", "invalid") == "true" then
         d.defer()
-        local url = "http://localhost:"..apiPort.."/intercom/checkPlayerJoin"
+        local url = "http://127.0.0.1:"..apiPort.."/intercom/checkPlayerJoin"
         local exData = {
             txAdminToken = apiToken,
             identifiers  = GetPlayerIdentifiers(source),
