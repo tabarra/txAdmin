@@ -100,7 +100,7 @@ class Logger {
             txAdminToken: this.txAdminToken,
             log: this.log
         })
-        utils.postJson(`http://localhost:${this.txAdminPort}/intercom/logger`, postData)
+        utils.postJson(`http://127.0.0.1:${this.txAdminPort}/intercom/logger`, postData)
             .then((data) => {
                 if(data.statusCode === 413){
                     log(`Logger upload failed with code 413 and body ${data.body}`);

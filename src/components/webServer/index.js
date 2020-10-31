@@ -213,7 +213,7 @@ module.exports = class WebServer {
                 logError(`Failed to start HTTP server, port ${error.port} already in use.`);
                 process.exit();
             });
-            this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', () => {
+            this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', async () => {
                 const addr = (GlobalData.osType === 'linux')? 'your-public-ip' : 'localhost';
                 logOk(`Listening at ` + chalk.inverse(` http://${addr}:${GlobalData.txAdminPort}/ `));
                 if(
@@ -223,7 +223,7 @@ module.exports = class WebServer {
                 ){
                     const open = require('open');
                     try {
-                        open(`http://${addr}:${GlobalData.txAdminPort}/`);
+                        await open(`http://${addr}:${GlobalData.txAdminPort}/`);
                     } catch (error) {}
                 }
             });

@@ -136,7 +136,7 @@ module.exports = class FXRunner {
             let rawCfgFile = helpers.getCFGFileData(cfgFilePath);
             this.fxServerPort = helpers.getFXServerPort(rawCfgFile);
         } catch (error) {
-            let errMsg =  logError(`FXServer config error: ${error.message}`);
+            let errMsg = logError(`FXServer config error: ${error.message}`);
             //the IF below is only a way to disable the endpoint check
             if(globals.config.forceFXServerPort){
                 this.fxServerPort = globals.config.forceFXServerPort;

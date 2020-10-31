@@ -102,19 +102,33 @@ npm-upgrade
 con_miniconChannels script:monitor*
 ```
 
-### Links + random stuff
-https://api.github.com/repos/tabarra/txAdmin/releases/latest
-https://www.science.co.il/language/Locale-codes.php
+=======================================
+
+## Links + Random Stuff
+
+### CoreUI Stuff + Things I use
+https://simplelineicons.github.io
+https://coreui.io/demo/3.1.0/#icons/coreui-icons-free.html
+https://coreui.io/demo/3.0.0/#colors.html
+https://coreui.io/docs/content/typography/
+
 https://www.npmjs.com/package/humanize-duration
-https://www.npmjs.com/package/dateformat
-https://www.npmjs.com/package/dateformat-light
-https://date-fns.org/v2.0.1/docs/formatDistance
+https://kinark.github.io/Materialize-stepper/
 
+
+### Reference stuff
+https://www.science.co.il/language/Locale-codes.php
+
+
+### Log Stuff:
+https://www.npmjs.com/package/rotating-file-stream
+https://www.npmjs.com/package/file-stream-rotator
+https://www.npmjs.com/package/simple-node-logger
+https://www.npmjs.com/package/infinite-scroll
+
+
+### "Look into it"
 https://www.reddit.com/r/javascript/comments/91a3tp/why_is_there_no_small_sane_nodejs_tool_for/
-
-DIV transition: https://tympanus.net/Tutorials/OriginalHoverEffects/index9.html
-Colors: https://coolors.co/3c4b64-3c4b64-3a4860-1e252d-252e38
-CSS Animated: https://daneden.github.io/animate.css/
 
 Interesting shit, could be used to give like vMenu admin powers to txAdmin admins:
 https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
@@ -122,12 +136,12 @@ https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae810
 Grafana query for the `/perf/` endpoint data: 
 `histogram_quantile(0.95, sum(rate(tickTime_bucket[5m])) by (le))`
 
-### CoreUI Stuff
-https://simplelineicons.github.io
-https://coreui.io/demo/3.1.0/#icons/coreui-icons-free.html
-https://coreui.io/demo/3.0.0/#colors.html
-https://coreui.io/docs/content/typography/
+"State bag" support for C#
+https://github.com/citizenfx/fivem/pull/516
+https://github.com/citizenfx/fivem/pull/539
 
+
+=======================================
 
 ### Global vs Individual Modules
 - Global
