@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:DeployerGet';
+const modulename = 'WebServer:DeployerStepper';
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 
@@ -7,7 +7,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
  * Returns the output page containing the live console
  * @param {object} ctx
  */
-module.exports = async function DeployerGet(ctx) {
+module.exports = async function DeployerStepper(ctx) {
     //Check permissions
     if(!ctx.utils.checkPermission('all_permissions', modulename)){
         return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
@@ -28,7 +28,7 @@ module.exports = async function DeployerGet(ctx) {
     const renderData = {
         step: `review`,
         // step: `run`,
-        // step: `configure`,
+        step: `configure`,
         recipe: {
             name: 'PlumeESX2',
             editorsChoice: false,
@@ -38,10 +38,10 @@ module.exports = async function DeployerGet(ctx) {
             raw: fs.readFileSync(`${GlobalData.txAdminResourcePath}/src/webroutes/deployer/tmprecipe.yaml`),
         },
         deployPath: `${GlobalData.dataPath}/plumeesx2.base/`,
-        serverCFG: fs.readFileSync(`${GlobalData.txAdminResourcePath}/src/webroutes/deployer/tmpserver.cfg`)
-        
+        serverCFG: fs.readFileSync(`${GlobalData.txAdminResourcePath}/src/webroutes/deployer/tmpserver.cfg`),
+        serverProfile: globals.info.serverProfile,
     }
   
 
-    return ctx.utils.render('deployer', renderData);
+    return ctx.utils.render('basic/deployer', renderData);
 };

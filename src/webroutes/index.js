@@ -27,8 +27,9 @@ exports.cfgEditor = {
 }
 
 exports.deployer = {
-    get: require('./deployer/get'),
-    post: require('./deployer/post'),
+    stepper: require('./deployer/stepper'),
+    status: require('./deployer/status'),
+    actions: require('./deployer/actions'),
 }
 
 exports.settings = {
