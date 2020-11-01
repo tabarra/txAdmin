@@ -4,20 +4,30 @@
 - [ ] xxxxx
 
 
+Micro steps:
+- finish deploy stepper mock html
+- add deployer post api simulation (saving, progress, save+redirect)
+- develop deployer component (or just class?)
+- make recipe engine mock
+- prepare insides of deployer get
+- --- then go to the setup stepper
+
+
+
 ### Setup Stepper:
 1. Welcome
 2. Server Name
-3. Deployment import type:
-    - Common Template
-    - URL Template
-    - Local Server Data
+3. Deployment import type: (select box or a "multiline radio box" with description)
 
+- Common Template
     4. Select Template (cards)
     5. Show data location
 
+- URL Template
     4. Import Remote Template (URL input)
     5. Show data location
 
+- Local Server Data
     4. Local Server Data
     5. Server CFG File
 
@@ -29,14 +39,40 @@
     - if template
         - redirect to deployer
 
+### Deployer stepper:
+- Review Recipe:
+    Show a code editor with the recipe, and some variables extracted from it.
+    Extracted fields:
+    - Author
+    - Description
+    - Version
+    - URL
+    Add a RED warning regarding running recipes from untrusted sources
 
-setup não faz download
-vai pra página do deployer que é um stepper
-1. cfg file, será salvo como base.cfg
+- Run Recipe
+    Something akin to live console, but no need to overengineer it!
+    At most an ajax that calls an API that will return the contents to a `<pre>`, and maybe a % to a progressbar.
+
+- Configure `server.cfg`
+    Code editor with the contents of the `server.cfg` file specified inside the recipe.
+    This will be the file containing the configuration of the base for the user to type, like hostname, mysql, RP-stuff...
+    Then a `Save & Start Server` button.
+
+### Deployer Notes:
+- Setup page does not execute anything, only sets the variables and start the server or redirects to the deployer.
+- Will force deployer bases to be `txData/xxx.base`. (check `.endsWith()` on profile selection)
+- If people want to try their own template file, they can select the "default" template and edit the recipe before running it
+- In the deployer page there will be an "cancel and go back to setup page" button.
+- The setup page will have a way to autofill inputs if its not the first time running it
+- If the admin master wants to run an new recipe, there should be a button in the settigs page for him to be able to do so (github's "danger zone" ?).
+
+
+
+1. cfg file, será salvo como server.cfg
 2. progress, baixar tudo
 3. botão start
 vai pro live console
-e quando terminar só vai mostrar um cfg file pr ousuário configurar algumas coisas
+e quando terminar só vai mostrar um cfg file pro usuário configurar algumas coisas
 
 
 
