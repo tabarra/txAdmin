@@ -120,14 +120,14 @@ module.exports = class FXRunner {
         ){
             return logError('this.spawnVariables is not set.');
         }
-        //If there is any FXServer configuration is missing
+        //If there is any FXServer configuration missing
         if(this.config.serverDataPath === null || this.config.cfgPath === null){
             return logError('Cannot start the server with missing configuration (serverDataPath || cfgPath).');
         }
 
         //If the server is already alive
         if(this.fxChild !== null){
-            return logError('The server is already started.', context);
+            return logError('The server is already started.');
         }
 
         //Detecting endpoint port

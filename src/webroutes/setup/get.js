@@ -21,11 +21,11 @@ module.exports = async function SetupGet(ctx) {
 
     let windowsBatPath;
     if(GlobalData.osType == 'windows'){
-        let batFolder = path.resolve(GlobalData.fxServerPath, '..');
+        const batFolder = path.resolve(GlobalData.fxServerPath, '..');
         windowsBatPath  = path.join(batFolder, `start_${GlobalData.fxServerVersion}_${globals.info.serverProfile}.bat`);
     }
 
-    let renderData = {
+    const renderData = {
         headerTitle: `Setup`,
         serverProfile: globals.info.serverProfile,
         windowsBatPath: windowsBatPath 

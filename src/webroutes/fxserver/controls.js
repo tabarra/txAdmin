@@ -12,7 +12,7 @@ module.exports = async function FXServerControls(ctx) {
     if(typeof ctx.params.action === 'undefined'){
         return ctx.utils.error(400, 'Invalid Request');
     }
-    let action = ctx.params.action;
+    const action = ctx.params.action;
 
     //Check permissions
     if(!ctx.utils.checkPermission('control.server', modulename)){
@@ -28,7 +28,7 @@ module.exports = async function FXServerControls(ctx) {
             globals.fxRunner.restartServer(ctx.session.auth.username);
             return ctx.send({type: 'success', message: `Restarting the fxserver with delay override ${globals.fxRunner.restartDelayOverride}.`});
         }else{
-            let restartMsg = await globals.fxRunner.restartServer(ctx.session.auth.username);
+            const restartMsg = await globals.fxRunner.restartServer(ctx.session.auth.username);
             if(restartMsg !== null){
                 return ctx.send({type: 'danger', message: restartMsg});
             }else{
@@ -49,7 +49,7 @@ module.exports = async function FXServerControls(ctx) {
             return ctx.send({type: 'danger', message: 'The server is already running. If it\'s not working, press RESTART.'});
         }
         ctx.utils.appendLog(`START SERVER`);
-        let spawnMsg = await globals.fxRunner.spawnServer(true);
+        const spawnMsg = await globals.fxRunner.spawnServer(true);
         if(spawnMsg !== null){
             return ctx.send({type: 'danger', message: spawnMsg});
         }else{

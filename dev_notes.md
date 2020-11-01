@@ -88,10 +88,10 @@ TODO: Bot commands (in dev order):
 ```bash
 # run
 cd /e/FiveM/builds
-nodemon --watch "3004/citizen/system_resources/monitor/src/*" --exec "3004/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose true +set txAdminFakePlayerlist yesplz"
+nodemon --watch "3120/citizen/system_resources/monitor/src/*" --exec "3120/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose true +set txAdminFakePlayerlist yesplz"
 
 # build
-cd /e/FiveM/builds/3004/citizen/system_resources/monitor
+cd /e/FiveM/builds/3120/citizen/system_resources/monitor
 rm -rf dist
 npm run build
 
