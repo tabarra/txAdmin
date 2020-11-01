@@ -37,7 +37,7 @@ module.exports = async function AdminManagerGet(ctx) {
     }
 
     //Set render data
-    let renderData = {
+    const renderData = {
         headerTitle: 'Admin Manager',
         admins: admins,
         allPermissions: globals.authenticator.getPermissionsList()

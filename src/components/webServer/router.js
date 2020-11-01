@@ -38,6 +38,8 @@ module.exports = router = (config) =>{
     //Settings
     router.get('/setup', requestAuth('web'), webRoutes.setup.get);
     router.post('/setup/:action', requestAuth('api'), webRoutes.setup.post);
+    router.get('/deployer', requestAuth('web'), webRoutes.deployer.get);
+    router.post('/deployer/:action', requestAuth('api'), webRoutes.deployer.post);
     router.get('/settings', requestAuth('web'), webRoutes.settings.get);
     router.post('/settings/save/:scope', requestAuth('web'), webRoutes.settings.save);
 

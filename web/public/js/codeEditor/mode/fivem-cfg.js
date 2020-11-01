@@ -30,6 +30,3 @@ CodeMirror.defineSimpleMode("fivem-cfg", {
         {regex: /.*/, token: "comment"}
     ],
 });
-
-rcon_password
-sv_scriptHookAllowed

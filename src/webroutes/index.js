@@ -26,6 +26,11 @@ exports.cfgEditor = {
     save: require('./cfgEditor/save'),
 }
 
+exports.deployer = {
+    get: require('./deployer/get'),
+    post: require('./deployer/post'),
+}
+
 exports.settings = {
     get: require('./settings/get'),
     save: require('./settings/save'),
