@@ -37,27 +37,6 @@
             box-shadow: 2px 4px 8px rgb(143, 143, 143);
             border-radius: 50em;
         }
-
-        .separator {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-            border: 0;
-            color: #b1afaf;
-        }
-        .separator::before, .separator::after {
-            content: '';
-            flex: 1;
-            border-top: 1px solid #e6e6e6;
-        }
-        .separator::before {
-            margin-right: .25em;
-        }
-        .separator::after {
-            margin-left: .25em;
-        }
     </style>
     {{@if(it.isMatrix)}}
         <style>
@@ -90,10 +69,10 @@
                 font-weight: 700;
                 background-color: lawngreen;
             }
-            .separator::before, .separator::after {
+            .hrsep::before, .hrsep::after {
                 border-top: 1px dashed lawngreen;
             }
-            .separator{
+            .hrsep{
                 color: lawngreen;
             }
 
@@ -221,7 +200,7 @@
                                 <i class="logo-image"><svg><use xlink:href="#discord-icon"></use></svg></i>
                                 <span>Discord</span>
                             </a>
-                            <div class="separator">OR</div>
+                            <div class="hrsep">OR</div>
                             <form action="/auth/password" method="post">
                                 <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
                                     <div class="input-group-prepend">
@@ -260,7 +239,14 @@
                 <div class="alert alert-secondary text-center small" role="alert">
                     <strong>Server profile:</strong> {{it.serverProfile}} <br>
                     <strong>txAdmin version:</strong> {{it.txAdminVersion}} <br>
-                    <strong>FXServer build:</strong> {{it.fxServerVersion}}
+                    <strong>FXServer build:</strong> {{it.fxServerVersion}} 
+                    <div class="hrsep hrsep-small">//</div>
+                    <h5 class="text-muted">
+                        <strong>txAdmin</strong> Official Discord: <br>
+                        <a href="https://discord.gg/uAmsGa2" target="_blank">
+                            <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
+                        </a>
+                    </h5>
                 </div>
             </div>
         </div>
@@ -268,17 +254,6 @@
             <div class="row justify-content-center">
                 <div class="col-md-4 text-center pt-3">
                     <h4>The Matrix has you...</h4>
-                </div>
-            </div>
-        {{#else}}
-            <div class="row justify-content-center">
-                <div class="col-md-4 text-center pt-3">
-                    <h5 class="text-muted">
-                        <strong>txAdmin</strong> Official Discord: <br>
-                        <a href="https://discord.gg/uAmsGa2" target="_blank">
-                            <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
-                        </a>
-                    </h5>
                 </div>
             </div>
         {{/if}}
