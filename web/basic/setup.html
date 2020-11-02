@@ -25,6 +25,23 @@
         .stepper{
             list-style: none;
         }
+        .deployment-type-card{
+            border-radius: 15px;
+            margin: 0.75em;
+            cursor: pointer;
+
+            background-color: #ebedef !important;
+            -webkit-transition: background-color 250ms linear, color 50ms linear;
+            -ms-transition: background-color 250ms linear, color 50ms linear;
+            transition: background-color 250ms linear, color 50ms linear;
+        }
+        .deployment-type-card:hover{
+            background-color: #2196f3 !important;
+            color: white; 
+        }
+        .deployment-type-card > .card-body{
+            padding: 0.75rem !important;
+        }
     </style>
 </head>
 
@@ -33,7 +50,7 @@
     <div class="container">
 
         <!-- Logo Row -->
-        <div class="row justify-content-center mb-4">
+        <div class="row justify-content-center pt-4 mb-4">
             <img src="img/txadmin.png" alt="txAdmin Logo">
         </div>
 
@@ -79,6 +96,40 @@
                                     </div>
                                 </div>
                             </li>
+
+                            <!-- Deployment Type -->
+                            <li class="step">
+                                <div class="step-title waves-effect">Deployment Type</div>
+                                <div class="step-content">
+                                    <strong>Select</strong> how you want to setup your server:
+                                    <div class="card deployment-type-card border-dark">
+                                        <div class="card-body">
+                                            <strong>⭐ Editor's Choice Template</strong> <br>
+                                            Select a template from a curated list of community favorites. <br>
+                                            This includes ESX, vRP and a Default template for you to customize.
+                                        </div>
+                                    </div>
+                                    <div class="card deployment-type-card border-dark">
+                                        <div class="card-body">
+                                            <strong>📑 Remote URL Template</strong> <br>
+                                            Based on a Recipe URL in the YAML format. <br>
+                                            You will have the option to edit the Recipe before running it.
+                                        </div>
+                                    </div>
+                                    <div class="card deployment-type-card border-dark">
+                                        <div class="card-body">
+                                            <strong>📁 Local Server Data</strong> <br>
+                                            Select an existing server-data folder in the VPS. <br>
+                                            This is the option you are already used to.
+                                        </div>
+                                    </div>
+                                    <div class="step-actions">
+                                        <button class="btn btn-pill btn-secondary previous-step"
+                                            type="button">Back</button>
+                                    </div>
+                                </div>
+                            </li>
+
 
                             <!-- Server Data Folder -->
                             <li class="step">
@@ -178,8 +229,8 @@
     <script src="https://unpkg.com/materialize-stepper@3.1.0/dist/js/mstepper.js"></script>
     <script>
         //Stepper config
-        var stepper = document.querySelector('.stepper');
-        var stepperInstace = new MStepper(stepper, {
+        const stepper = document.querySelector('.stepper');
+        const stepperInstace = new MStepper(stepper, {
             autoFocusInput: true,
             showFeedbackPreloader: true,
             stepTitleNavigation: false,
@@ -187,8 +238,8 @@
             feedbackPreloader: '<div class="txSpinner">Loading...</div>',
         });
 
-        const timeoutLong = 4000;
-        var suggestions = {};
+        const timeoutLong = 5000;
+        const suggestions = {};
 
         //Functions
         const inputKeyUp = (event) => {
@@ -200,31 +251,31 @@
         }
         const acceptFix = (event) => {
             event.target.classList.add('d-none');
-            let targetName = event.target.dataset.target;
-            var targetElement = document.getElementById(targetName);
+            const targetName = event.target.dataset.target;
+            const targetElement = document.getElementById(targetName);
             targetElement.classList.remove('is-invalid');
             targetElement.classList.add('is-valid');
             targetElement.value = suggestions[targetName] || '';
-            var currentSteps = stepperInstace.getSteps();
+            const currentSteps = stepperInstace.getSteps();
             currentSteps.active.step.classList.remove('wrong');
             currentSteps.active.step.classList.add('done');
         }
 
 
         //Grabs the elements and set the event handlers
-        var frmName = document.getElementById("frmName");
-        var frmNameError = document.getElementById("frmNameError");
+        const frmName = document.getElementById("frmName");
+        const frmNameError = document.getElementById("frmNameError");
         frmName.addEventListener("keyup", inputKeyUp);
 
-        var frmDataFolder = document.getElementById("frmDataFolder");
-        var frmDataFolderError = document.getElementById("frmDataFolderError");
-        var frmDataFolderFixBtn = document.getElementById("frmDataFolderFixBtn");
+        const frmDataFolder = document.getElementById("frmDataFolder");
+        const frmDataFolderError = document.getElementById("frmDataFolderError");
+        const frmDataFolderFixBtn = document.getElementById("frmDataFolderFixBtn");
         frmDataFolder.addEventListener("keyup", inputKeyUp);
         frmDataFolderFixBtn.addEventListener("click", acceptFix);
         
-        var frmCFGFile = document.getElementById("frmCFGFile");
-        var frmCFGFileError = document.getElementById("frmCFGFileError");
-        var frmCFGFileFixBtn = document.getElementById("frmCFGFileFixBtn");
+        const frmCFGFile = document.getElementById("frmCFGFile");
+        const frmCFGFileError = document.getElementById("frmCFGFileError");
+        const frmCFGFileFixBtn = document.getElementById("frmCFGFileFixBtn");
         frmCFGFile.addEventListener("keyup", inputKeyUp);
         frmCFGFileFixBtn.addEventListener("click", acceptFix);
         
@@ -233,7 +284,7 @@
         function validateName(destroyFeedback) {
             frmName.classList.remove('is-invalid', 'is-valid');
             frmNameError.classList.add('d-none');
-            let name = frmName.value.trim();
+            const name = frmName.value.trim();
 
             if(name.length < 3 || name.length > 22){
                 frmNameError.innerHTML = `The name must have between 3 and 22 characters.`;
@@ -249,16 +300,16 @@
 
         // Server Data Folder step validation
         function validateDataFolder(destroyFeedback) {
-            var currentSteps = stepperInstace.getSteps();
+            const currentSteps = stepperInstace.getSteps();
             frmDataFolder.classList.remove('is-invalid', 'is-valid');
             frmDataFolderError.classList.add('d-none');
-            let data = {dataFolder: frmDataFolder.value.trim()};
+            const outData = {dataFolder: frmDataFolder.value.trim()};
             
             $.ajax({
                 type: "POST",
                 url: '/setup/validateDataFolder',
-                timeout: 5000,
-                data: data,
+                timeout: timeoutLong,
+                data: outData,
                 dataType: 'json',
                 success: function (data) {
                     if (data.logout) {
@@ -293,10 +344,10 @@
 
         // Server CFG File step validation
         function validateCFGFile(destroyFeedback) {
-            var currentSteps = stepperInstace.getSteps();
+            const currentSteps = stepperInstace.getSteps();
             frmCFGFile.classList.remove('is-invalid', 'is-valid');
             frmCFGFileError.classList.add('d-none');
-            let data = {
+            const outData = {
                 dataFolder: frmDataFolder.value.trim(),
                 cfgFile: frmCFGFile.value.trim(),
             };
@@ -304,8 +355,8 @@
             $.ajax({
                 type: "POST",
                 url: '/setup/validateCFGFile',
-                timeout: 5000,
-                data: data,
+                timeout: timeoutLong,
+                data: outData,
                 dataType: 'json',
                 success: function (data) {
                     if (data.logout) {
@@ -339,10 +390,11 @@
 
         // Save function
         function performSave(destroyFeedback) {
-            var saveError = document.getElementById("saveError");
+            const saveError = document.getElementById("saveError");
             saveError.classList.add('d-none');
-            let data = {
+            const outData = {
                 name: frmName.value.trim(),
+                template: false,
                 dataFolder: frmDataFolder.value.trim(),
                 cfgFile: frmCFGFile.value.trim(),
             };
@@ -350,8 +402,8 @@
             $.ajax({
                 type: "POST",
                 url: '/setup/save',
-                timeout: 5000,
-                data: data,
+                timeout: timeoutLong,
+                data: outData,
                 dataType: 'json',
                 success: function (data) {
                     if (data.logout) {
