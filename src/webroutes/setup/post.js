@@ -3,6 +3,7 @@ const modulename = 'WebServer:SetupPost';
 const fs = require('fs');
 const slash = require('slash');
 const path = require('path');
+const axios = require("axios");
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
 
@@ -47,7 +48,7 @@ module.exports = async function SetupPost(ctx) {
     if(isUndefined(ctx.params.action)){
         return ctx.utils.error(400, 'Invalid Request');
     }
-    let action = ctx.params.action;
+    const action = ctx.params.action;
 
     //Check permissions
     if(!ctx.utils.checkPermission('all_permissions', modulename)){
@@ -59,12 +60,18 @@ module.exports = async function SetupPost(ctx) {
 
 
     //Delegate to the specific action functions
-    if(action == 'validateDataFolder'){
+    if(action == 'validateRecipeURL'){
+        return await handleValidateRecipeURL(ctx);
+
+    }else if(action == 'validateDataFolder'){
         return await handleValidateDataFolder(ctx);
+
     }else if(action == 'validateCFGFile'){
         return await handleValidateCFGFile(ctx);
+
     }else if(action == 'save'){
         return await handleSave(ctx);
+
     }else{
         return ctx.send({
             success: false, 
@@ -72,6 +79,41 @@ module.exports = async function SetupPost(ctx) {
         });
     }
 };
+
+
+//================================================================
+/**
+ * Handle Validation of a remote recipe/template URL
+ * @param {object} ctx
+ */
+async function handleValidateRecipeURL(ctx) {
+    //Sanity check
+    if(isUndefined(ctx.request.body.recipeURL)){
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
+    }
+    const recipeURL = ctx.request.body.recipeURL.trim();
+    dir(recipeURL)
+
+    //Setup do request options
+    const requestOptions = {
+        url: recipeURL,
+        method: 'get',
+        responseEncoding: 'utf8',
+        timeout: 4500
+    }
+
+    //Make request & validate recipe
+    try {
+        const res = await axios(requestOptions);
+        dir(res.data)
+        if(typeof res.data !== 'string') throw new Error('This URL did not return a string.');
+        
+        //FIXME: check if this is a remotely-valid recipe
+        return ctx.send({success: true});
+    } catch (error) {
+        return ctx.send({success: false, message: error.message});
+    }
+}
 
 
 //================================================================
