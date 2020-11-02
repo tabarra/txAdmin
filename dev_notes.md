@@ -5,12 +5,12 @@
 
 
 Micro steps:
-- finish deploy stepper mock html
-- add deployer post api simulation (saving, progress, save+redirect)
-- develop deployer component (or just class?)
-- make recipe engine mock
-- prepare insides of deployer get
-- --- then go to the setup stepper
+- [x] finish deploy stepper mock html
+- [x] add deployer post api simulation (saving, progress, save+redirect)
+- [ ] develop deployer component (or just class?)
+- [ ] make recipe engine mock
+- [ ] prepare insides of deployer get
+- [ ] **then go to the setup stepper**
 
 
 
@@ -21,11 +21,11 @@ Micro steps:
 
 - Common Template
     4. Select Template (cards)
-    5. Show data location
+    5. Suggest data location
 
 - URL Template
     4. Import Remote Template (URL input)
-    5. Show data location
+    5. Suggest data location
 
 - Local Server Data
     4. Local Server Data
@@ -67,14 +67,28 @@ Micro steps:
 - If the admin master wants to run an new recipe, there should be a button in the settigs page for him to be able to do so (github's "danger zone" ?).
 
 
+### Deployer logic
+- Setup page:
+    - Condition: globals.deployer == null && (serverDataPath === null || cfgPath === null)
+    - Local deploy actions: sets serverDataPath/cfgPath, starts the server, redirect to live console
+    - Template deploy actions: download recipe, globals.deployer = new Deployer(recipe)
 
-1. cfg file, será salvo como server.cfg
-2. progress, baixar tudo
-3. botão start
-vai pro live console
-e quando terminar só vai mostrar um cfg file pro usuário configurar algumas coisas
+- Deployer page:
+    - Condition: globals.deployer !== null
+    - Post-deploy actions: 
+        - set serverDataPath/cfgPath
+        - reset globals.deployer
+        - start the server
+        - redirect to live console
 
+- Normal txAdmin:
+    - IF globals.deployer THEN redirect to deployer
+    - ELSE IF (serverDataPath === null || cfgPath === null) THEN redirect to setup
 
+- To Reset:
+    - Stop server
+    - serverDataPath = null; cfgPath = null;
+    - Redirect to setup
 
 
 TODO: Bot commands (in dev order):

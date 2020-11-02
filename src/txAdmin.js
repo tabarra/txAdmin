@@ -19,6 +19,7 @@ globals = {
     webServer: null,
     playerController: null,
     config: null,
+    deployer: null,
     info: {},
 
     //NOTE: still not ideal, but since the extensions system changed entirely, 

@@ -25,20 +25,21 @@ module.exports = async function DeployerStepper(ctx) {
     }
 
     const fs = require('fs');
+    const tmpFilesPath = `${GlobalData.txAdminResourcePath}/src/webroutes/deployer`;
     const renderData = {
         step: `review`,
-        // step: `run`,
-        step: `configure`,
+        step: `run`,
+        // step: `configure`,
         recipe: {
             name: 'PlumeESX2',
             editorsChoice: false,
             version: (tmpRecipeMetadata.version)? `(${tmpRecipeMetadata.version.trim()})` : '',
             author: (tmpRecipeMetadata.author)? `${tmpRecipeMetadata.author.trim()}` : '',
             description: (tmpRecipeMetadata.description)? tmpRecipeMetadata.description.trim() : '',
-            raw: fs.readFileSync(`${GlobalData.txAdminResourcePath}/src/webroutes/deployer/tmprecipe.yaml`),
+            raw: fs.readFileSync(`${tmpFilesPath}/recipe.ignore.yaml`).toString().trim(),
         },
         deployPath: `${GlobalData.dataPath}/plumeesx2.base/`,
-        serverCFG: fs.readFileSync(`${GlobalData.txAdminResourcePath}/src/webroutes/deployer/tmpserver.cfg`),
+        serverCFG: fs.readFileSync(`${tmpFilesPath}/server.ignore.cfg`).toString().trim(),
         serverProfile: globals.info.serverProfile,
     }
   

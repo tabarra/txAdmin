@@ -90,7 +90,7 @@
                         <div class="card-body text-center">
                             <div class="row mb-1 mt-0 text-center">
                                 <div class="col-8 mx-auto card d-block border-primary p-2 mb-1">
-                                    Your recipe is being executed, the data will be deployed to: <br>
+                                    Your recipe is being executed, the template will be deployed to: <br>
                                     <code class="inline-code">{{it.deployPath}}</code>
                                 </div>
                             </div>
@@ -239,7 +239,9 @@
                 url: '/deployer/status',
                 timeout: timeoutLong,
                 success: function (data) {
-                    if (data.success == true){
+                    if(data.logout){
+                        window.location = '/auth?logout';
+                    }else if (data.success){
                         window.location.reload(true);
                     }else{
                         step2elements.error.classList.add('d-none');

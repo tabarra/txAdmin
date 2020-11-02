@@ -8,18 +8,21 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
  * @param {object} ctx
  */
 module.exports = async function Dashboard(ctx) {
-    //If there is any FXServer configuration missing
+    // Check if the deployer is running or setup is pending
+    if(globals.deployer !== null){
+        return ctx.response.redirect('/deployer');
+    }
     if(globals.fxRunner.config.serverDataPath === null || globals.fxRunner.config.cfgPath === null){
         return ctx.response.redirect('/setup');
     }
 
     //Shortcut function
-    let getPermDisable = (perm) => {
+    const getPermDisable = (perm) => {
         return (ctx.utils.checkPermission(perm, modulename, false))? '' : 'disabled'
     }
 
     //Preparing render data
-    let renderData = {
+    const renderData = {
         serverName: globals.config.serverName,
         versionData: getVersionData(),
         chartData: getChartData(globals.monitor.timeSeries.get()),
@@ -58,7 +61,7 @@ function getChartData(series) {
         mod = 6
     }
 
-    let chartData = [];
+    const chartData = [];
     for (let i = 0; i < series.length; i++) {
         if (i % mod === 0) {
             chartData.push({
@@ -93,8 +96,8 @@ function getChartData(series) {
  */
 function getVersionData() {
     // Prepping vars & checking if there is data available
-    let curr = GlobalData.fxServerVersion;
-    let rVer = globals.databus.updateChecker;
+    const curr = GlobalData.fxServerVersion;
+    const rVer = globals.databus.updateChecker;
     if(!rVer){
         return {
             artifactsLink: false,
@@ -103,7 +106,7 @@ function getVersionData() {
             subtext: false,
         };
     }
-    let versionData = {
+    const versionData = {
         artifactsLink: rVer.artifactsLink,
         color: false,
         message: false,
