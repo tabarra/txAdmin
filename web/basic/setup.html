@@ -22,25 +22,49 @@
         code{
             color: #321fdb!important;
         }
-        .stepper{
-            list-style: none;
-        }
-        .deployment-type-card{
-            border-radius: 15px;
-            margin: 0.75em;
+        .bigbutton{
             cursor: pointer;
-
-            background-color: #ebedef !important;
+            background-color: #f7f7f7;
             -webkit-transition: background-color 250ms linear, color 50ms linear;
             -ms-transition: background-color 250ms linear, color 50ms linear;
             transition: background-color 250ms linear, color 50ms linear;
         }
-        .deployment-type-card:hover{
+        .bigbutton:hover{
             background-color: #2196f3 !important;
             color: white; 
         }
+        .stepper{
+            list-style: none;
+            padding-inline-start: 20px;
+        }
+        .deployment-type-card{
+            border-radius: 15px;
+            margin: 0.75em;
+        }
         .deployment-type-card > .card-body{
             padding: 0.75rem !important;
+        }
+        .template-cards{
+            margin: 5px;
+            padding: 8px;
+            height: 5.1rem;
+            border-radius: 5px;
+        }
+        .template-cards > span{
+            overflow: hidden;
+            word-wrap: break-word;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+        }
+        .template-cards > .title{
+            -webkit-line-clamp: 1;
+        }
+        .template-cards > .description{
+            -webkit-line-clamp: 2;
+        }
+        .template-cards > .title::before{
+            content: "⭐";
         }
     </style>
 </head>
@@ -56,7 +80,7 @@
 
         <!-- Stepper Row -->
         <div class="row justify-content-center">
-            <div class="col-md-6">
+            <div class="col-md-8">
                 <div class="card fade-in">
                     <div class="card-body">
                         <ul class="stepper linear">
@@ -79,6 +103,7 @@
                                 </div>
                             </li>
 
+
                             <!-- Server Name -->
                             <li class="step">
                                 <div class="step-title waves-effect">Server Name</div>
@@ -97,27 +122,28 @@
                                 </div>
                             </li>
 
+
                             <!-- Deployment Type -->
                             <li class="step">
                                 <div class="step-title waves-effect">Deployment Type</div>
                                 <div class="step-content">
                                     <strong>Select</strong> how you want to setup your server:
-                                    <div class="card deployment-type-card border-dark">
-                                        <div class="card-body">
+                                    <div class="card bigbutton deployment-type-card border-dark">
+                                        <div class="card-body next-step" onclick="selectDeploymentType('common')">
                                             <strong>⭐ Editor's Choice Template</strong> <br>
                                             Select a template from a curated list of community favorites. <br>
                                             This includes ESX, vRP and a Default template for you to customize.
                                         </div>
                                     </div>
-                                    <div class="card deployment-type-card border-dark">
-                                        <div class="card-body">
+                                    <div class="card bigbutton deployment-type-card border-dark">
+                                        <div class="card-body next-step" onclick="selectDeploymentType('remote')">
                                             <strong>📑 Remote URL Template</strong> <br>
                                             Based on a Recipe URL in the YAML format. <br>
                                             You will have the option to edit the Recipe before running it.
                                         </div>
                                     </div>
-                                    <div class="card deployment-type-card border-dark">
-                                        <div class="card-body">
+                                    <div class="card bigbutton deployment-type-card border-dark">
+                                        <div class="card-body next-step" onclick="selectDeploymentType('local')">
                                             <strong>📁 Local Server Data</strong> <br>
                                             Select an existing server-data folder in the VPS. <br>
                                             This is the option you are already used to.
@@ -131,9 +157,184 @@
                             </li>
 
 
-                            <!-- Server Data Folder -->
+                            <!-- Step 4 -->
                             <li class="step">
-                                <div class="step-title waves-effect">Server Data Folder</div>
+                                <div class="step-title waves-effect" id="s4Title"><i>please select deployment type</i></div>
+                                <div class="step-content" id="s4Content">
+                                    <!-- select template buttons -->
+                                    <div class="d-none" id="s4CommonDiv">
+                                        <div class="row">
+                                            <div class="col-6 p-0">
+                                                <div class="bigbutton template-cards border-dark">
+                                                    <span class="title">
+                                                        <strong>CFX Default</strong> <em>(v1.0.0)</em>
+                                                    </span>
+                                                    <span class="description">
+                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 p-0">
+                                                <div class="bigbutton template-cards border-dark">
+                                                    <span class="title">
+                                                        <strong>CFX Default</strong> <em>(v1.0.0)</em>
+                                                    </span>
+                                                    <span class="description">
+                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 p-0">
+                                                <div class="bigbutton template-cards border-dark">
+                                                    <span class="title">
+                                                        <strong>CFX Default</strong> <em>(v1.0.0)</em>
+                                                    </span>
+                                                    <span class="description">
+                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 p-0">
+                                                <div class="bigbutton template-cards border-dark">
+                                                    <span class="title">
+                                                        <strong>CFX Default</strong> <em>(v1.0.0)</em>
+                                                    </span>
+                                                    <span class="description">
+                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 p-0">
+                                                <div class="bigbutton template-cards border-dark">
+                                                    <span class="title">
+                                                        <strong>CFX Default</strong> <em>(v1.0.0)</em>
+                                                    </span>
+                                                    <span class="description">
+                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 p-0">
+                                                <div class="bigbutton template-cards border-dark">
+                                                    <span class="title">
+                                                        <strong>CFX Default</strong> <em>(v1.0.0)</em>
+                                                    </span>
+                                                    <span class="description">
+                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 p-0">
+                                                <div class="bigbutton template-cards border-dark">
+                                                    <span class="title">
+                                                        <strong>CFX Default</strong> <em>(v1.0.0)</em>
+                                                    </span>
+                                                    <span class="description">
+                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col-6 p-0">
+                                                <div class="bigbutton template-cards border-dark">
+                                                    <span class="title">
+                                                        <strong>CFX Default</strong> <em>(v1.0.0)</em>
+                                                    </span>
+                                                    <span class="description">
+                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div> 
+                                        
+                                        <div class="step-actions">
+                                            <button class="btn btn-pill btn-secondary previous-step"
+                                                type="button">Back</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- input url with some minimal backend validation -->
+                                    <div class="d-none" id="s4RemoteDiv">
+                                        import tpl
+                                        <input type="text" class="form-control mt-2" id="s4TemplateURL"
+                                            placeholder="C:/Users/Admin/Desktop/server01">
+                                        <div class="step-actions">
+                                            <button class="btn btn-pill btn-secondary previous-step"
+                                                type="button">Back</button>
+                                            <button class="btn btn-pill btn-danger next-step" type="button"
+                                                data-feedback="validateTrue">next remove</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- input local data folder -->
+                                    <div class="d-none" id="s4LocalDiv">
+                                        The folder that <strong>contains</strong> the <code>resources</code> and
+                                        <code>cache</code> folders, usually it's here that you put your <code>server.cfg</code>. <br>
+                                        Also known as Base Folder.
+                                        <input type="text" class="form-control mt-2" id="frmDataFolder"
+                                            placeholder="C:/Users/Admin/Desktop/server01">
+                                        <span id="frmDataFolderError" class="text-danger fade-in d-none"></span>
+                                        <div class="step-actions">
+                                            <button class="btn btn-pill btn-secondary previous-step"
+                                                type="button">Back</button>
+                                            <button class="btn btn-pill btn-info next-step" type="button"
+                                                data-feedback="validateDataFolder" id="s4FolderSubmitBtn">Next</button>
+                                            <button class="btn btn-pill btn-primary d-none fade-in" type="button"
+                                                id="frmDataFolderFixBtn" 
+                                                data-target="frmDataFolder">Accept Fix</button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </li>
+
+
+                            <!-- Step 5 -->
+                            <li class="step">
+                                <div class="step-title waves-effect" id="s5Title"><i>please select deployment type</i></div>
+                                <div class="step-content" id="s5Content">
+
+                                    <!-- input local data folder --> 
+                                    <div class="d-none" id="s5TemplateDiv">
+                                        local data folder
+                                        <div class="step-actions">
+                                            <button class="btn btn-pill btn-secondary previous-step"
+                                                type="button">Back</button>
+                                            <button class="btn btn-pill btn-danger next-step" type="button"
+                                                data-feedback="validateTrue">next remove</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- input server cfg file -->
+                                    <div class="d-none" id="s5LocalDiv">
+                                        The path to your server config file, usually named <code>server.cfg</code>. <br>
+                                        This can either be absolute, or relative to the Server Data folder.
+                                        <input type="text" class="form-control mt-2" id="frmCFGFile"
+                                            placeholder="C:/Users/Admin/Desktop/server01/server.cfg">
+                                        <span id="frmCFGFileError" class="text-danger fade-in d-none"></span>
+                                        <div class="step-actions">
+                                            <div class="step-actions">
+                                                <button class="btn btn-pill btn-secondary previous-step"
+                                                    type="button">Back</button>
+                                                <button class="btn btn-pill btn-info next-step" type="button"
+                                                    data-feedback="validateCFGFile" id="frmCFGFileSubmitBtn">Save</button>
+                                                <button class="btn btn-pill btn-primary d-none fade-in" type="button"
+                                                    id="frmCFGFileFixBtn" 
+                                                    data-target="frmCFGFile">Accept Fix</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </li>
+
+
+
+
+
+
+                            <!-- Server Data Folder -->
+                            <!-- <li class="step">
+                                <div class="step-title waves-effect">OLD -- Server Data Folder</div>
                                 <div class="step-content">
                                     The folder that <strong>contains</strong> the <code>resources</code> and
                                     <code>cache</code> folders, usually it's here that you put your <code>server.cfg</code>. <br>
@@ -151,11 +352,11 @@
                                             data-target="frmDataFolder">Accept Fix</button>
                                     </div>
                                 </div>
-                            </li>
+                            </li> -->
 
                             <!-- Server CFG File -->
-                            <li class="step">
-                                <div class="step-title waves-effect">Server CFG File</div>
+                            <!-- <li class="step">
+                                <div class="step-title waves-effect">OLD -- Server CFG File</div>
                                 <div class="step-content">
                                     The path to your server config file, usually named <code>server.cfg</code>. <br>
                                     This can either be absolute, or relative to the Server Data folder.
@@ -174,7 +375,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </li>
+                            </li> -->
 
                             <!-- Finish -->
                             <li class="step">
@@ -228,6 +429,12 @@
     <!-- JS -->
     <script src="https://unpkg.com/materialize-stepper@3.1.0/dist/js/mstepper.js"></script>
     <script>
+        //Constants & vars
+        const timeoutLong = 5000;
+        const spinnerHTML = '<div class="txSpinner">Loading...</div>';
+        const suggestions = {};
+        let selectedDeploymentType;
+
         //Stepper config
         const stepper = document.querySelector('.stepper');
         const stepperInstace = new MStepper(stepper, {
@@ -235,11 +442,8 @@
             showFeedbackPreloader: true,
             stepTitleNavigation: false,
             firstActive: 0,
-            feedbackPreloader: '<div class="txSpinner">Loading...</div>',
+            feedbackPreloader: spinnerHTML,
         });
-
-        const timeoutLong = 5000;
-        const suggestions = {};
 
         //Functions
         const inputKeyUp = (event) => {
@@ -267,11 +471,26 @@
         const frmNameError = document.getElementById("frmNameError");
         frmName.addEventListener("keyup", inputKeyUp);
 
+        
+        const s4Title = document.getElementById("s4Title");
+        const s4Content = document.getElementById("s4Content");
+        const s4CommonDiv = document.getElementById("s4CommonDiv");
+        const s4RemoteDiv = document.getElementById("s4RemoteDiv");
+        const s4LocalDiv = document.getElementById("s4LocalDiv");
+        
+        const s5Title = document.getElementById("s5Title");
+        const s5Content = document.getElementById("s5Content");
+        const s5TemplateDiv = document.getElementById("s5TemplateDiv");
+        const s5LocalDiv = document.getElementById("s5LocalDiv");
+
+
+
         const frmDataFolder = document.getElementById("frmDataFolder");
         const frmDataFolderError = document.getElementById("frmDataFolderError");
         const frmDataFolderFixBtn = document.getElementById("frmDataFolderFixBtn");
         frmDataFolder.addEventListener("keyup", inputKeyUp);
         frmDataFolderFixBtn.addEventListener("click", acceptFix);
+
         
         const frmCFGFile = document.getElementById("frmCFGFile");
         const frmCFGFileError = document.getElementById("frmCFGFileError");
@@ -296,6 +515,47 @@
                 frmName.classList.add('is-valid');
                 destroyFeedback(true)
             }
+        }
+
+        // Deployment type selection
+        function selectDeploymentType(depType){
+            const currentSteps = stepperInstace.getSteps();
+            // currentSteps.active.step.classList.add('done');
+            
+            selectedDeploymentType = depType;
+            if(depType == 'common'){
+                s4Title.textContent = "Select Template";
+                s5Title.textContent = "Data Location";
+                // s4CommonDiv.innerHTML = spinnerHTML;
+                s4CommonDiv.classList.remove('d-none');
+                s4RemoteDiv.classList.add('d-none');
+                s4LocalDiv.classList.add('d-none');
+                s5TemplateDiv.classList.remove('d-none');
+                s5LocalDiv.classList.add('d-none');
+                
+            }else if(depType == 'remote'){
+                s4Title.textContent = "Import Remote Template";
+                s5Title.textContent = "Data Location";
+                s4CommonDiv.classList.add('d-none');
+                s4RemoteDiv.classList.remove('d-none');
+                s4LocalDiv.classList.add('d-none');
+                s5TemplateDiv.classList.remove('d-none');
+                s5LocalDiv.classList.add('d-none');
+                
+            }else if(depType == 'local'){
+                s4Title.textContent = "Local Server Data";
+                s5Title.textContent = "Server CFG File";
+                s4CommonDiv.classList.add('d-none');
+                s4RemoteDiv.classList.add('d-none');
+                s4LocalDiv.classList.remove('d-none');
+                s5TemplateDiv.classList.add('d-none');
+                s5LocalDiv.classList.remove('d-none');
+                
+            }
+        }
+
+        function validateTrue(destroyFeedback){
+            destroyFeedback(true)
         }
 
         // Server Data Folder step validation
@@ -427,9 +687,5 @@
             });
         }
     </script>
-
-
-
 </body>
-
 </html>
