@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'WebServer:SetupPost';
-const fs = require('fs');
+const fs = require('fs-extra');
 const slash = require('slash');
 const path = require('path');
 const axios = require("axios");
@@ -63,8 +63,11 @@ module.exports = async function SetupPost(ctx) {
     if(action == 'validateRecipeURL'){
         return await handleValidateRecipeURL(ctx);
 
-    }else if(action == 'validateDataFolder'){
-        return await handleValidateDataFolder(ctx);
+    }else if(action == 'validateLocalDeployPath'){
+        return await handleValidateLocalDeployPath(ctx);
+
+    }else if(action == 'validateLocalDataFolder'){
+        return await handleValidateLocalDataFolder(ctx);
 
     }else if(action == 'validateCFGFile'){
         return await handleValidateCFGFile(ctx);
@@ -92,7 +95,6 @@ async function handleValidateRecipeURL(ctx) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const recipeURL = ctx.request.body.recipeURL.trim();
-    dir(recipeURL)
 
     //Setup do request options
     const requestOptions = {
@@ -109,7 +111,7 @@ async function handleValidateRecipeURL(ctx) {
         if(typeof res.data !== 'string') throw new Error('This URL did not return a string.');
         
         //FIXME: check if this is a remotely-valid recipe
-        return ctx.send({success: true});
+        return ctx.send({success: true, name: 'PlumeESX2'});
     } catch (error) {
         return ctx.send({success: false, message: error.message});
     }
@@ -118,21 +120,70 @@ async function handleValidateRecipeURL(ctx) {
 
 //================================================================
 /**
- * Handle Validation of Server Data Folder
+ * Handle Validation of a remote recipe/template URL
  * @param {object} ctx
  */
-async function handleValidateDataFolder(ctx) {
+async function handleValidateLocalDeployPath(ctx) {
     //Sanity check
-    if(
-        isUndefined(ctx.request.body.dataFolder)
-    ){
+    if(isUndefined(ctx.request.body.deployPath)){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
+    const deployPath = slash(path.normalize(ctx.request.body.deployPath.trim()));
+    if(deployPath.includes(' ')){
+        return ctx.send({success: false, message: 'The path cannot contain spaces.'});
+    }
 
-    let dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim()+'/'));
+    //Helper function
+    const canCreateFile = async (targetPath) => {
+        try {
+            await fs.outputFile(path.join(targetPath, '.empty'), 'file save attempt, please ignore or remove');
+            return true;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    //Perform path checking
+    try {
+        if(await fs.pathExists(deployPath)){
+            const pathFiles = await fs.readdir(deployPath);
+            if(pathFiles.some(x => x !== '.empty')){
+                return ctx.send({success: false, message: `This folder is not empty!`});
+            }else{
+                if(await canCreateFile(deployPath)){
+                    return ctx.send({success: true, message: `Exists, empty, and writtable!`});
+                }else{
+                    return ctx.send({success: false, message: `Path exists, but its not a folder, or its not writtable.`});
+                }
+            }
+        }else{
+            if(await canCreateFile(deployPath)){
+                return ctx.send({success: true, message: `Path didn't existed, we created one.`});
+            }else{
+                return ctx.send({success: false, message: `Path doesn't exist, and we could not create it. Please check parent folder permissions.`});
+            }
+        }
+    } catch (error) {
+        return ctx.send({success: false, message: error.message});
+    }
+}
+
+
+//================================================================
+/**
+ * Handle Validation of Local (existing) Server Data Folder
+ * @param {object} ctx
+ */
+async function handleValidateLocalDataFolder(ctx) {
+    //Sanity check
+    if(isUndefined(ctx.request.body.dataFolder)){
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
+    }
+    const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim()+'/'));
     if(dataFolderPath.includes(' ')){
         return ctx.send({success: false, message: 'The path cannot contain spaces.'});
     }
+
     try {
         if(!fs.existsSync(path.join(dataFolderPath, 'resources'))){
             let recoveryTemplate = `The path provided is invalid. <br>

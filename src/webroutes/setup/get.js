@@ -19,16 +19,15 @@ module.exports = async function SetupGet(ctx) {
     //     return ctx.response.redirect('/setup');
     // }
 
-    let windowsBatPath;
-    if(GlobalData.osType == 'windows'){
-        const batFolder = path.resolve(GlobalData.fxServerPath, '..');
-        windowsBatPath  = path.join(batFolder, `start_${GlobalData.fxServerVersion}_${globals.info.serverProfile}.bat`);
-    }
-
     const renderData = {
         headerTitle: `Setup`,
         serverProfile: globals.info.serverProfile,
-        windowsBatPath: windowsBatPath 
+        txDataPath: GlobalData.dataPath,
+    }
+
+    if(GlobalData.osType == 'windows'){
+        const batFolder = path.resolve(GlobalData.fxServerPath, '..');
+        renderData.windowsBatPath  = path.join(batFolder, `start_${GlobalData.fxServerVersion}_${globals.info.serverProfile}.bat`);
     }
 
     return ctx.utils.render('basic/setup', renderData);
