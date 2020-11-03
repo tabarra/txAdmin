@@ -7,10 +7,11 @@
 Micro steps:
 - [x] finish deploy stepper mock html
 - [x] add deployer post api simulation (saving, progress, save+redirect)
+- [ ] add new steps to setup page (mocked data)
 - [ ] develop deployer component (or just class?)
 - [ ] make recipe engine mock
 - [ ] prepare insides of deployer get
-- [ ] **then go to the setup stepper**
+- [ ] ???
 
 
 

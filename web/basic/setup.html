@@ -165,15 +165,13 @@
                                     <template id="s4CommonCardTemplate">
                                         <div class="bigbutton template-cards border-dark next-step">
                                             <span class="title">
-                                                <strong>CFX Default</strong> <em>(v1.0.0)</em>
+                                                <strong></strong> <em class="text-muted"></em>
                                             </span>
-                                            <span class="description">
-                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
-                                            </span>
+                                            <span class="description"></span>
                                         </div>
                                     </template>
                                     <div class="d-none" id="s4CommonDiv">
-                                        <div class="row" id="s4CommonRow"></div> 
+                                        <div class="row" style="min-height: 250px;" id="s4CommonRow"></div> 
                                         
                                         <div class="step-actions">
                                             <button class="btn btn-pill btn-secondary previous-step"
@@ -330,9 +328,12 @@
         });
 
         //Functions
-        const checkDoLogout = (data) => {
-            if(typeof data.logout !== 'undefined'){
+        const checkDoLogoutRefresh = (data) => {
+            if(data.logout === true){
                 window.location = '/auth?logout';
+                return true;
+            }else if(data.refresh === true){
+                window.location.reload(true);
                 return true;
             }
             return false;
@@ -475,12 +476,11 @@
                     newNode.classList.add('col-12', 'col-md-6', 'p-0');
                     newNode.querySelector('.bigbutton').onclick = () => {selectTemplate(recipe.url)};
                     newNode.querySelector('.title > strong').innerText = recipe.name;
-                    newNode.querySelector('.title > em').innerText = (recipe.version)? `${recipe.version}` : '';
+                    newNode.querySelector('.title > em').innerText = (recipe.version)? `(v${recipe.version})` : '';
                     newNode.querySelector('.description').innerText = recipe.description;
-
                     s4CommonRow.appendChild(newNode);
                 });
-            }, 250);
+            }, 500);
         }
 
         // Deployment type selection
@@ -502,7 +502,7 @@
                 data: {recipeURL: s4RemoteInput.value.trim()},
                 dataType: 'json',
                 success: function (data) {
-                    if(checkDoLogout(data)) return;
+                    if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
                         currentSteps.active.step.classList.remove('wrong');
                         currentSteps.active.step.classList.add('done');
@@ -544,7 +544,7 @@
                 data: {dataFolder: s4LocalInput.value.trim()},
                 dataType: 'json',
                 success: function (data) {
-                    if(checkDoLogout(data)) return;
+                    if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
                         currentSteps.active.step.classList.remove('wrong');
                         currentSteps.active.step.classList.add('done');
@@ -588,7 +588,7 @@
                 data: outData,
                 dataType: 'json',
                 success: function (data) {
-                    if(checkDoLogout(data)) return;
+                    if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
                         currentSteps.active.step.classList.remove('wrong');
                         currentSteps.active.step.classList.add('done');
@@ -632,7 +632,7 @@
                 data: outData,
                 dataType: 'json',
                 success: function (data) {
-                    if(checkDoLogout(data)) return;
+                    if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
                         window.location = '/console';
                     }else{

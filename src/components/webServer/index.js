@@ -88,6 +88,7 @@ module.exports = class WebServer {
         let timeoutLimit = 5 * 1000;
         let jsonLimit = '16MB';
         this.app.use(async (ctx, next) => {
+            ctx.set('Server', `txAdmin v${GlobalData.txAdminVersion}`);
             let timer; 
             const timeout = new Promise((_, reject) => {
                 timer = setTimeout(() => {
