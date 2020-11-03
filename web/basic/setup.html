@@ -162,30 +162,18 @@
                                 <div class="step-title waves-effect" id="s4Title"><i>please select deployment type</i></div>
                                 <div class="step-content">
                                     <!-- select template buttons -->
+                                    <template id="s4CommonCardTemplate">
+                                        <div class="bigbutton template-cards border-dark next-step">
+                                            <span class="title">
+                                                <strong>CFX Default</strong> <em>(v1.0.0)</em>
+                                            </span>
+                                            <span class="description">
+                                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
+                                            </span>
+                                        </div>
+                                    </template>
                                     <div class="d-none" id="s4CommonDiv">
-                                        <div class="row">
-                                            <div class="col-12 col-md-6 p-0">
-                                                <div class="bigbutton template-cards border-dark next-step" onclick="selectTemplate('xxxxxx')">
-                                                    <span class="title">
-                                                        <strong>CFX Default</strong> <em>(v1.0.0)</em>
-                                                    </span>
-                                                    <span class="description">
-                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt 
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6 p-0">
-                                                <div class="bigbutton template-cards border-dark next-step" onclick="selectTemplate('xxxxxx')">
-                                                    <span class="title">
-                                                        <strong>CFX Default</strong> <em>(v1.0.0)</em>
-                                                    </span>
-                                                    <span class="description">
-                                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            
-                                        </div> 
+                                        <div class="row" id="s4CommonRow"></div> 
                                         
                                         <div class="step-actions">
                                             <button class="btn btn-pill btn-secondary previous-step"
@@ -272,55 +260,6 @@
                             </li>
 
 
-
-
-
-
-                            <!-- Server Data Folder -->
-                            <!-- <li class="step">
-                                <div class="step-title waves-effect">OLD -- Server Data Folder</div>
-                                <div class="step-content">
-                                    The folder that <strong>contains</strong> the <code>resources</code> and
-                                    <code>cache</code> folders, usually it's here that you put your <code>server.cfg</code>. <br>
-                                    Also known as Base Folder.
-                                    <input type="text" class="form-control mt-2" id="s4LocalInput"
-                                        placeholder="C:/Users/Admin/Desktop/server01" required>
-                                    <span id="s4LocalInputError" class="text-danger fade-in d-none"></span>
-                                    <div class="step-actions">
-                                        <button class="btn btn-pill btn-secondary previous-step"
-                                            type="button">Back</button>
-                                        <button class="btn btn-pill btn-info next-step" type="button"
-                                            data-feedback="validateDataFolder" id="s4LocalInputSubmitBtn">Next</button>
-                                        <button class="btn btn-pill btn-primary d-none fade-in" type="button"
-                                            id="s4LocalInputFixBtn" 
-                                            data-target="s4LocalInput">Accept Fix</button>
-                                    </div>
-                                </div>
-                            </li> -->
-
-                            <!-- Server CFG File -->
-                            <!-- <li class="step">
-                                <div class="step-title waves-effect">OLD -- Server CFG File</div>
-                                <div class="step-content">
-                                    The path to your server config file, usually named <code>server.cfg</code>. <br>
-                                    This can either be absolute, or relative to the Server Data folder.
-                                    <input type="text" class="form-control mt-2" id="frmCFGFile"
-                                        placeholder="C:/Users/Admin/Desktop/server01/server.cfg" required>
-                                    <span id="frmCFGFileError" class="text-danger fade-in d-none"></span>
-                                    <div class="step-actions">
-                                        <div class="step-actions">
-                                            <button class="btn btn-pill btn-secondary previous-step"
-                                                type="button">Back</button>
-                                            <button class="btn btn-pill btn-info next-step" type="button"
-                                                data-feedback="validateCFGFile" id="frmCFGFileSubmitBtn">Save</button>
-                                            <button class="btn btn-pill btn-primary d-none fade-in" type="button"
-                                                id="frmCFGFileFixBtn" 
-                                                data-target="frmCFGFile">Accept Fix</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </li> -->
-
                             <!-- Finish -->
                             <li class="step">
                                 <div class="step-title waves-effect">Finish</div>
@@ -378,6 +317,7 @@
         const spinnerHTML = '<div class="txSpinner">Loading...</div>';
         const suggestions = {};
         let selectedDeploymentType;
+        let selectedTemplateURL;
 
         //Stepper config
         const stepper = document.querySelector('.stepper');
@@ -425,6 +365,8 @@
         //Step 4
         const s4Title = document.getElementById("s4Title");
         const s4CommonDiv = document.getElementById("s4CommonDiv");
+        const s4CommonCardTemplate = document.getElementById("s4CommonCardTemplate");
+        const s4CommonRow = document.getElementById("s4CommonRow");
         const s4RemoteDiv = document.getElementById("s4RemoteDiv");
         const s4LocalDiv = document.getElementById("s4LocalDiv");
         const s4RemoteInput = document.getElementById("s4RemoteInput");
@@ -469,19 +411,18 @@
 
         // Deployment type selection
         function selectDeploymentType(depType){
-            const currentSteps = stepperInstace.getSteps();
-            // currentSteps.active.step.classList.add('done');
-            
             selectedDeploymentType = depType;
+            selectedTemplateURL = null;
             if(depType == 'common'){
                 s4Title.textContent = "Select Template";
                 s5Title.textContent = "Data Location";
-                // s4CommonDiv.innerHTML = spinnerHTML;
+                s4CommonRow.innerHTML = spinnerHTML;
                 s4CommonDiv.classList.remove('d-none');
                 s4RemoteDiv.classList.add('d-none');
                 s4LocalDiv.classList.add('d-none');
                 s5TemplateDiv.classList.remove('d-none');
                 s5LocalDiv.classList.add('d-none');
+                setFavTemplatesCards();
                 
             }else if(depType == 'remote'){
                 s4Title.textContent = "Import Remote Template";
@@ -500,8 +441,52 @@
                 s4LocalDiv.classList.remove('d-none');
                 s5TemplateDiv.classList.add('d-none');
                 s5LocalDiv.classList.remove('d-none');
-                
             }
+        }
+
+        //Download Recipe Editors Choice list and create cards
+        async function setFavTemplatesCards(){
+            //NOTE: mocked
+            const tmpGETResponse = [
+                {
+                    name: 'CFX Default',
+                    version: '1.0.0',
+                    description: 'Official recipe for the base resources required to run a server.',
+                    url: 'def'
+                },
+                {
+                    name: 'PlumeESX2',
+                    version: '1.2.3',
+                    description: 'A full featured (8 jobs) and highly configurable yet lightweight ESX v2 base that can be easily extendable.',
+                    url: 'plume'
+                },
+                {
+                    name: 'Testing',
+                    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ',
+                    url: 'test'
+                }
+            ];
+            
+            setTimeout(() => {
+                s4CommonRow.innerHTML = '';
+                tmpGETResponse.forEach(recipe => {
+                    const newNode = document.createElement("div");
+                    newNode.innerHTML = s4CommonCardTemplate.innerHTML;
+                    newNode.classList.add('col-12', 'col-md-6', 'p-0');
+                    newNode.querySelector('.bigbutton').onclick = () => {selectTemplate(recipe.url)};
+                    newNode.querySelector('.title > strong').innerText = recipe.name;
+                    newNode.querySelector('.title > em').innerText = (recipe.version)? `${recipe.version}` : '';
+                    newNode.querySelector('.description').innerText = recipe.description;
+
+                    s4CommonRow.appendChild(newNode);
+                });
+            }, 250);
+        }
+
+        // Deployment type selection
+        function selectTemplate(template){
+            selectedTemplateURL = template;
+            stepperInstace.nextStep();
         }
 
         // Server Name step validation
