@@ -213,17 +213,18 @@
             }
         });
         if(!filter.length){
-            hideDefaultResources();
+            setDefaultResourcesVisibility();
         }
 
     }
 
     //============================================== Hide defaults
     $('#defResCheckbox').click(function () {
-        hideDefaultResources();
+        window.localStorage.resourcesPageShowDefault = document.getElementById('defResCheckbox').checked;
+        setDefaultResourcesVisibility();
     });
 
-    function hideDefaultResources() {
+    function setDefaultResourcesVisibility() {
         if ($('#defResCheckbox').is(':checked')) {
             defaultResources.forEach(defRes => {
                 $(`#res-${defRes}`).show();
@@ -253,6 +254,11 @@
     }
 
     $(function () {
-        hideDefaultResources();
+        if(typeof window.localStorage.resourcesPageShowDefault === 'string'){
+            document.getElementById('defResCheckbox').checked = (window.localStorage.resourcesPageShowDefault  === 'true');
+        }else{
+            window.localStorage.resourcesPageShowDefault = false;
+        }
+        setDefaultResourcesVisibility();
     });
 </script>
