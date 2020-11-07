@@ -21,6 +21,7 @@ module.exports = async function SetupGet(ctx) {
 
     const renderData = {
         headerTitle: `Setup`,
+        serverName: globals.config.serverName || '',
         serverProfile: globals.info.serverProfile,
         txDataPath: GlobalData.dataPath,
     }

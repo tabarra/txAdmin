@@ -5,6 +5,7 @@ const slash = require('slash');
 const path = require('path');
 const axios = require("axios");
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+const { Deployer, validateTargetPath, parseRecipe } = require('../../extras/deployer');
 const helpers = require('../../extras/helpers');
 
 //Helper functions
@@ -73,7 +74,8 @@ module.exports = async function SetupPost(ctx) {
         return await handleValidateCFGFile(ctx);
 
     }else if(action == 'save'){
-        return await handleSave(ctx);
+        const handler = (ctx.request.body.template == 'true')? handleSaveDeployer : handleSaveLocal;
+        return await handler(ctx);
 
     }else{
         return ctx.send({
@@ -96,24 +98,19 @@ async function handleValidateRecipeURL(ctx) {
     }
     const recipeURL = ctx.request.body.recipeURL.trim();
 
-    //Setup do request options
-    const requestOptions = {
-        url: recipeURL,
-        method: 'get',
-        responseEncoding: 'utf8',
-        timeout: 4500
-    }
-
     //Make request & validate recipe
     try {
-        const res = await axios(requestOptions);
-        dir(res.data)
+        const res = await axios({
+            url: recipeURL,
+            method: 'get',
+            responseEncoding: 'utf8',
+            timeout: 4500
+        });
         if(typeof res.data !== 'string') throw new Error('This URL did not return a string.');
-        
-        //FIXME: check if this is a remotely-valid recipe
-        return ctx.send({success: true, name: 'PlumeESX2'});
+        const recipe = await parseRecipe(res.data);
+        return ctx.send({success: true, name: recipe.name});
     } catch (error) {
-        return ctx.send({success: false, message: error.message});
+        return ctx.send({success: false, message: `Recipe error: ${error.message}`});
     }
 }
 
@@ -133,36 +130,9 @@ async function handleValidateLocalDeployPath(ctx) {
         return ctx.send({success: false, message: 'The path cannot contain spaces.'});
     }
 
-    //Helper function
-    const canCreateFile = async (targetPath) => {
-        try {
-            await fs.outputFile(path.join(targetPath, '.empty'), 'file save attempt, please ignore or remove');
-            return true;
-        } catch (error) {
-            return false;
-        }
-    }
-
     //Perform path checking
     try {
-        if(await fs.pathExists(deployPath)){
-            const pathFiles = await fs.readdir(deployPath);
-            if(pathFiles.some(x => x !== '.empty')){
-                return ctx.send({success: false, message: `This folder is not empty!`});
-            }else{
-                if(await canCreateFile(deployPath)){
-                    return ctx.send({success: true, message: `Exists, empty, and writtable!`});
-                }else{
-                    return ctx.send({success: false, message: `Path exists, but its not a folder, or its not writtable.`});
-                }
-            }
-        }else{
-            if(await canCreateFile(deployPath)){
-                return ctx.send({success: true, message: `Path didn't existed, we created one.`});
-            }else{
-                return ctx.send({success: false, message: `Path doesn't exist, and we could not create it. Please check parent folder permissions.`});
-            }
-        }
+        return ctx.send({success: true, message: await validateTargetPath(deployPath)});
     } catch (error) {
         return ctx.send({success: false, message: error.message});
     }
@@ -253,8 +223,6 @@ async function handleValidateCFGFile(ctx) {
         return ctx.send({success: false, message: 'The path cannot contain spaces.'});
     }
 
-    // TODO: add option to download this:
-    // https://raw.githubusercontent.com/citizenfx/fivem-docs/master/static/examples/config/server.cfg
     let rawCfgFile;
     try {
         rawCfgFile = helpers.getCFGFileData(cfgFilePath);
@@ -284,9 +252,10 @@ async function handleValidateCFGFile(ctx) {
 //================================================================
 /**
  * Handle Save settings
+ * Actions: sets serverDataPath/cfgPath, starts the server, redirect to live console
  * @param {object} ctx
  */
-async function handleSave(ctx) {
+async function handleSaveLocal(ctx) {
     //Sanity check
     if(
         isUndefined(ctx.request.body.name) ||
@@ -297,17 +266,14 @@ async function handleSave(ctx) {
     }
 
     //Prepare body input
-    let cfg = {
+    const cfg = {
         name: ctx.request.body.name.trim(),
         dataFolder: slash(path.normalize(ctx.request.body.dataFolder+'/')),
         cfgFile: slash(path.normalize(ctx.request.body.cfgFile))
     }
 
     //Validating path spaces
-    if(
-        cfg.dataFolder.includes(' ') ||
-        cfg.cfgFile.includes(' ')
-    ){
+    if(cfg.dataFolder.includes(' ') || cfg.cfgFile.includes(' ')){
         return ctx.send({success: false, message: 'The paths cannot contain spaces.'});
     }
 
@@ -322,22 +288,22 @@ async function handleSave(ctx) {
 
     //Validating CFG Path
     try {
-        let cfgFilePath = helpers.resolveCFGFilePath(cfg.cfgFile, cfg.dataFolder);
-        let rawCfgFile = helpers.getCFGFileData(cfgFilePath);
-        let port = helpers.getFXServerPort(rawCfgFile);
+        const cfgFilePath = helpers.resolveCFGFilePath(cfg.cfgFile, cfg.dataFolder);
+        const rawCfgFile = helpers.getCFGFileData(cfgFilePath);
+        const port = helpers.getFXServerPort(rawCfgFile);
     } catch (error) {
         return ctx.send({success: false, message: `<strong>CFG File error:</strong> ${error.message}`});
     }
 
     //Preparing & saving config
-    let newGlobalConfig = globals.configVault.getScopedStructure('global');
+    const newGlobalConfig = globals.configVault.getScopedStructure('global');
     newGlobalConfig.serverName = cfg.name;
-    let saveGlobalStatus = globals.configVault.saveProfile('global', newGlobalConfig);
+    const saveGlobalStatus = globals.configVault.saveProfile('global', newGlobalConfig);
 
-    let newFXRunnerConfig = globals.configVault.getScopedStructure('fxRunner');
+    const newFXRunnerConfig = globals.configVault.getScopedStructure('fxRunner');
     newFXRunnerConfig.serverDataPath = cfg.dataFolder;
     newFXRunnerConfig.cfgPath = cfg.cfgFile;
-    let saveFXRunnerStatus = globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
+    const saveFXRunnerStatus = globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
     
 
     //Sending output
@@ -347,19 +313,80 @@ async function handleSave(ctx) {
         globals.fxRunner.refreshConfig();
 
         //Logging
-        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing global/fxserver settings via welcome stepper.`;
+        const logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing global/fxserver settings via setup stepper.`;
         logOk(logMessage);
         globals.logger.append(logMessage);
 
         //Starting server
-        let spawnMsg = await globals.fxRunner.spawnServer(false);
+        const spawnMsg = await globals.fxRunner.spawnServer(false);
         if(spawnMsg !== null){
             return ctx.send({success: false, message: `Faied to start server with error: <br>\n${spawnMsg}`});
         }else{
             return ctx.send({success: true});
         }
     }else{
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changingglobal/fxserver settings via welcome stepper.`);
+        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global/fxserver settings via setup stepper.`);
+        return ctx.send({success: false, message: `<strong>Error saving the configuration file.</strong>`});
+    }
+}
+
+
+
+//================================================================
+/**
+ * Handle Save settings
+ * Actions: download recipe, globals.deployer = new Deployer(recipe)
+ * @param {object} ctx
+ */
+async function handleSaveDeployer(ctx) {
+    //Sanity check
+    if(
+        isUndefined(ctx.request.body.name) ||
+        isUndefined(ctx.request.body.recipeURL) ||
+        isUndefined(ctx.request.body.targetPath)
+    ){
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
+    }
+    const serverName = ctx.request.body.name.trim();
+    const recipeURL = ctx.request.body.recipeURL.trim();
+    const targetPath = slash(path.normalize(ctx.request.body.targetPath+'/')); 
+
+    //Get and validate recipe
+    let recipeData;
+    try {
+        const res = await axios({
+            url: recipeURL,
+            method: 'get',
+            responseEncoding: 'utf8',
+            timeout: 4500
+        });
+        if(typeof res.data !== 'string') throw new Error('This URL did not return a string.');
+        recipeData = res.data;
+    } catch (error) {
+        return ctx.send({success: false, message: `Recipe error: ${error.message}`});
+    }
+    
+    //Initiate deployer
+    globals.deployer = new Deployer(recipeData, targetPath);
+
+    //Preparing & saving config
+    const newGlobalConfig = globals.configVault.getScopedStructure('global');
+    newGlobalConfig.serverName = serverName;
+    const saveGlobalStatus = globals.configVault.saveProfile('global', newGlobalConfig);
+
+    const newFXRunnerConfig = globals.configVault.getScopedStructure('fxRunner');
+    newFXRunnerConfig.serverDataPath = targetPath;
+    newFXRunnerConfig.cfgPath = path.join(targetPath, 'server.cfg');
+    const saveFXRunnerStatus = globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
+    
+    //Checking save and redirecting
+    if(saveGlobalStatus && saveFXRunnerStatus){
+        const logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing global/fxserver settings via setup stepper.`;
+        logOk(logMessage);
+        globals.logger.append(logMessage);
+        return ctx.send({success: true});
+    }else{
+        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global/fxserver settings via setup stepper.`);
         return ctx.send({success: false, message: `<strong>Error saving the configuration file.</strong>`});
     }
 }

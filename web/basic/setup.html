@@ -120,7 +120,7 @@
                                     A <strong>short</strong> server name to be used in txAdmin interface and
                                     Chat/Discord messages.
                                     <input type="text" class="form-control mt-2" id="frmName" maxlength="22"
-                                        minlength="3" placeholder="Happy Server" required>
+                                        minlength="3" placeholder="Happy Server" value="{{it.serverName}}" required>
                                     <span id="frmNameError" class="text-danger fade-in d-none"></span>
                                     <div class="step-actions">
                                         <button class="btn btn-pill btn-secondary previous-step"
@@ -180,7 +180,7 @@
                                         </div>
                                     </template>
                                     <div class="d-none" id="s4CommonTemplateDiv">
-                                        <div class="row" style="min-height: 250px;" id="s4CommonTemplateRow"></div> 
+                                        <div class="row" id="s4CommonTemplateRow"></div> 
                                         
                                         <div class="step-actions">
                                             <button class="btn btn-pill btn-secondary previous-step"
@@ -205,21 +205,21 @@
                                     </div>
 
                                     <!-- input local data folder -->
-                                    <div class="d-none" id="s4LocalDiv">
+                                    <div class="d-none" id="s4LocalDataPathDiv">
                                         The folder that <strong>contains</strong> the <code>resources</code> and
                                         <code>cache</code> folders, usually it's here that you put your <code>server.cfg</code>. <br>
                                         Also known as Base Folder.
-                                        <input type="text" class="form-control mt-2" id="s4LocalInput"
+                                        <input type="text" class="form-control mt-2" id="s4LocalDataPathInput"
                                             placeholder="C:/Users/Admin/Desktop/server01">
-                                        <span id="s4LocalInputError" class="text-danger fade-in d-none"></span>
+                                        <span id="s4LocalDataPathInputError" class="text-danger fade-in d-none"></span>
                                         <div class="step-actions">
                                             <button class="btn btn-pill btn-secondary previous-step"
                                                 type="button">Back</button>
                                             <button class="btn btn-pill btn-info next-step" type="button"
                                                 data-feedback="validateLocalDataFolder" id="s4FolderSubmitBtn">Next</button>
                                             <button class="btn btn-pill btn-primary d-none fade-in" type="button"
-                                                id="s4LocalInputFixBtn" 
-                                                data-target="s4LocalInput">Accept Fix</button>
+                                                id="s4LocalDataPathInputFixBtn" 
+                                                data-target="s4LocalDataPathInput">Accept Fix</button>
                                         </div>
                                     </div>
 
@@ -234,8 +234,8 @@
 
                                     <!-- input local data folder --> 
                                     <div class="d-none" id="s5DeployerTargetDiv">
-                                        The folder where the server will be deployed to. This folder will contain 
-                                        all your resources and configuration files. <br>
+                                        The folder where the server will be deployed to. <br>
+                                        This folder will contain all your resources and configuration files. <br>
                                         <strong>We strongly recommend using the path suggested below.</strong>
                                         <input type="text" class="form-control mt-2" id="s5DeployerTargetInput"
                                             placeholder="C:/Users/Admin/Desktop/server01/server.cfg">
@@ -327,7 +327,8 @@
         //Constants & vars
         const txDataPath = '{{it.txDataPath}}';
         const timeoutLong = 5000;
-        const spinnerHTML = '<div class="txSpinner">Loading...</div>';
+        // const spinnerHTML = '<div style="min-height: 250px;" class="txSpinner">Loading...</div>';
+        const spinnerHTML = '<div style="min-height: 250px; margin: auto;"><div class="txSpinner">Loading...</div></div>';
         const suggestions = {};
         let loadedTemplates = [];
         let selectedTemplateIndex;
@@ -339,7 +340,7 @@
             autoFocusInput: true,
             showFeedbackPreloader: true,
             stepTitleNavigation: false,
-            firstActive: 0,
+            firstActive: 2, //HACK
             feedbackPreloader: spinnerHTML,
         });
 
@@ -393,16 +394,16 @@
         const s4CommonTemplateCardTemplate = document.getElementById("s4CommonTemplateCardTemplate");
         const s4CommonTemplateRow = document.getElementById("s4CommonTemplateRow");
         const s4RemoteTemplateDiv = document.getElementById("s4RemoteTemplateDiv");
-        const s4LocalDiv = document.getElementById("s4LocalDiv");
+        const s4LocalDataPathDiv = document.getElementById("s4LocalDataPathDiv");
 
         const s4RemoteTemplateInput = document.getElementById("s4RemoteTemplateInput");
         const s4RemoteTemplateInputError = document.getElementById("s4RemoteTemplateInputError");
         s4RemoteTemplateInput.addEventListener("keyup", inputKeyUp);
-        const s4LocalInput = document.getElementById("s4LocalInput");
-        const s4LocalInputError = document.getElementById("s4LocalInputError");
-        const s4LocalInputFixBtn = document.getElementById("s4LocalInputFixBtn");
-        s4LocalInput.addEventListener("keyup", inputKeyUp);
-        s4LocalInputFixBtn.addEventListener("click", acceptFix);
+        const s4LocalDataPathInput = document.getElementById("s4LocalDataPathInput");
+        const s4LocalDataPathInputError = document.getElementById("s4LocalDataPathInputError");
+        const s4LocalDataPathInputFixBtn = document.getElementById("s4LocalDataPathInputFixBtn");
+        s4LocalDataPathInput.addEventListener("keyup", inputKeyUp);
+        s4LocalDataPathInputFixBtn.addEventListener("click", acceptFix);
 
         //Step 5
         const s5Title = document.getElementById("s5Title");
@@ -448,7 +449,7 @@
                 finishButton.textContent = "Go to Recipe Deployer";
                 finishMessage.textContent = "We are almost there!";
                 s4CommonTemplateRow.innerHTML = spinnerHTML;
-                s4LocalDiv.classList.add('d-none');
+                s4LocalDataPathDiv.classList.add('d-none');
                 s5DeployerTargetDiv.classList.remove('d-none');
                 s5ServerCFGDiv.classList.add('d-none');
                 
@@ -468,7 +469,7 @@
                 finishMessage.textContent = "We are all set!";
                 s4CommonTemplateDiv.classList.add('d-none');
                 s4RemoteTemplateDiv.classList.add('d-none');
-                s4LocalDiv.classList.remove('d-none');
+                s4LocalDataPathDiv.classList.remove('d-none');
                 s5DeployerTargetDiv.classList.add('d-none');
                 s5ServerCFGDiv.classList.remove('d-none');
             }
@@ -482,18 +483,24 @@
                     name: 'CFX Default',
                     version: '1.0.0',
                     description: 'Official recipe for the base resources required to run a server.',
-                    url: 'def'
+                    url: 'http://example/default'
                 },
                 {
                     name: 'PlumeESX2',
                     version: '1.2.3',
                     description: 'A full featured (8 jobs) and highly configurable yet lightweight ESX v2 base that can be easily extendable.',
-                    url: 'plume'
+                    url: 'http://example/plume'
                 },
                 {
-                    name: 'Testing',
+                    name: 'DriftMaster',
+                    version: '1.2.3',
                     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ',
-                    url: 'test'
+                    url: 'http://example/DriftMaster'
+                },
+                {
+                    name: 'testFill',
+                    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ',
+                    url: 'http://example/test'
                 }
             ];
             loadedTemplates = tmpGETResponse;
@@ -603,14 +610,14 @@
         // Server Data Folder step validation
         function validateLocalDataFolder(destroyFeedback) {
             const currentSteps = stepperInstace.getSteps();
-            s4LocalInput.classList.remove('is-invalid', 'is-valid');
-            s4LocalInputError.classList.add('d-none');
+            s4LocalDataPathInput.classList.remove('is-invalid', 'is-valid');
+            s4LocalDataPathInputError.classList.add('d-none');
             
             $.ajax({
                 type: "POST",
                 url: '/setup/validateLocalDataFolder',
                 timeout: timeoutLong,
-                data: {dataFolder: s4LocalInput.value.trim()},
+                data: {dataFolder: s4LocalDataPathInput.value.trim()},
                 dataType: 'json',
                 success: function (data) {
                     if(checkDoLogoutRefresh(data)) return;
@@ -620,20 +627,20 @@
                         frmName.classList.add('is-valid');
                         destroyFeedback(true)
                     }else{
-                        s4LocalInputError.innerHTML = data.message;
-                        s4LocalInputError.classList.remove('d-none');
-                        s4LocalInput.classList.add('is-invalid');
+                        s4LocalDataPathInputError.innerHTML = data.message;
+                        s4LocalDataPathInputError.classList.remove('d-none');
+                        s4LocalDataPathInput.classList.add('is-invalid');
                         stepperInstace.wrongStep();
                         if(data.suggestion){
-                            suggestions['s4LocalInput'] = data.suggestion;
-                            s4LocalInputFixBtn.classList.remove('d-none');
+                            suggestions['s4LocalDataPathInput'] = data.suggestion;
+                            s4LocalDataPathInputFixBtn.classList.remove('d-none');
                         }
                         destroyFeedback(false)
                     }
                 },
                 error: function (xmlhttprequest, textstatus, message) {
-                    s4LocalInputError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
-                    s4LocalInputError.classList.remove('d-none');
+                    s4LocalDataPathInputError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
+                    s4LocalDataPathInputError.classList.remove('d-none');
                     destroyFeedback(false)
                 }
             });
@@ -646,7 +653,8 @@
             s5ServerCFGInput.classList.remove('is-invalid', 'is-valid');
             s5ServerCFGError.classList.add('d-none');
             const outData = {
-                dataFolder: s4LocalInput.value.trim(),
+                template: false,
+                dataFolder: s4LocalDataPathInput.value.trim(),
                 cfgFile: s5ServerCFGInput.value.trim(),
             };
             
@@ -687,12 +695,28 @@
         function performSave(destroyFeedback) {
             const saveError = document.getElementById("saveError");
             saveError.classList.add('d-none');
+
             const outData = {
-                name: frmName.value.trim(),
-                template: false,
-                dataFolder: s4LocalInput.value.trim(),
-                cfgFile: s5ServerCFGInput.value.trim(),
+                name: frmName.value.trim()
             };
+            if(selectedDeploymentType == 'common'){
+                outData.template = true;
+                outData.recipeURL = loadedTemplates[selectedTemplateIndex].url;
+                outData.targetPath = s5DeployerTargetInput.value.trim();
+
+            }else if(selectedDeploymentType == 'remote'){
+                outData.template = true;
+                outData.recipeURL = s4RemoteTemplateInput.value.trim();
+                outData.targetPath = s5DeployerTargetInput.value.trim();
+                
+            }else if(selectedDeploymentType == 'local'){
+                outData.template = false;
+                outData.dataFolder = s4LocalDataPathInput.value.trim();
+                outData.cfgFile = s5ServerCFGInput.value.trim();
+                
+            }else{
+                return alert('Unknown deployment type')
+            }
             
             $.ajax({
                 type: "POST",
@@ -703,7 +727,7 @@
                 success: function (data) {
                     if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
-                        window.location = '/console';
+                        window.location = (outData.template)? '/deployer' : '/console';
                     }else{
                         saveError.innerHTML = data.message;
                         saveError.classList.remove('d-none');
