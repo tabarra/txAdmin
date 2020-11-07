@@ -19,12 +19,13 @@ module.exports = async function DeployerActions(ctx) {
 
     //Check permissions
     if(!ctx.utils.checkPermission('all_permissions', modulename)){
-        return ctx.send({
-            type: 'danger', 
-            message: `You don't have permission to execute this action.`
-        });
+        return ctx.send({success: false, refresh: true});
     }
 
+    //Check if this is the correct state for the deployer
+    if(globals.deployer == null){
+        return ctx.send({success: false, refresh: true});
+    }
     //FIXME: some checking to see if the deployer can continue 
 
 

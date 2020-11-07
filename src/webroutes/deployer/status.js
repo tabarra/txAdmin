@@ -11,7 +11,12 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 module.exports = async function DeployerStatus(ctx) {
     //Check permissions
     if(!ctx.utils.checkPermission('all_permissions', modulename)){
-        return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
+        return ctx.send({success: false, refresh: true});
+    }
+
+    //Check if this is the correct state for the deployer
+    if(globals.deployer == null){
+        return ctx.send({success: false, refresh: true});
     }
 
     const rawLog = `Starting deployment...

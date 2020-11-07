@@ -55,10 +55,20 @@ module.exports = async function SetupPost(ctx) {
     if(!ctx.utils.checkPermission('all_permissions', modulename)){
         return ctx.send({
             success: false, 
-            message: `You don't have permission to execute this action.`
+            message: `You need to be the admin master to use the setup page.`
         });
     }
 
+    //Check if this is the correct state for the setup page
+    if(
+        globals.deployer !== null ||
+        (globals.fxRunner.config.serverDataPath !== null && globals.fxRunner.config.cfgPath !== null)
+    ){
+        return ctx.send({
+            success: false, 
+            refresh: true
+        });
+    }
 
     //Delegate to the specific action functions
     if(action == 'validateRecipeURL'){
@@ -373,20 +383,15 @@ async function handleSaveDeployer(ctx) {
     const newGlobalConfig = globals.configVault.getScopedStructure('global');
     newGlobalConfig.serverName = serverName;
     const saveGlobalStatus = globals.configVault.saveProfile('global', newGlobalConfig);
-
-    const newFXRunnerConfig = globals.configVault.getScopedStructure('fxRunner');
-    newFXRunnerConfig.serverDataPath = targetPath;
-    newFXRunnerConfig.cfgPath = path.join(targetPath, 'server.cfg');
-    const saveFXRunnerStatus = globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
     
     //Checking save and redirecting
-    if(saveGlobalStatus && saveFXRunnerStatus){
-        const logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing global/fxserver settings via setup stepper.`;
+    if(saveGlobalStatus){
+        const logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing global settings via setup stepper and started Deployer`;
         logOk(logMessage);
         globals.logger.append(logMessage);
         return ctx.send({success: true});
     }else{
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global/fxserver settings via setup stepper.`);
+        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
         return ctx.send({success: false, message: `<strong>Error saving the configuration file.</strong>`});
     }
 }

@@ -171,6 +171,17 @@
         const currentStep = '{{it.step}}';
         const timeoutLong = 4000;
 
+        const checkDoLogoutRefresh = (data) => {
+            if(data.logout === true){
+                window.location = '/auth?logout';
+                return true;
+            }else if(data.refresh === true){
+                window.location.reload(true);
+                return true;
+            }
+            return false;
+        }
+
         window.onload = function () {
             $.notifyDefaults({
                 z_index: 2000,
@@ -210,6 +221,7 @@
                 data: {recipe},
                 dataType: 'json',
                 success: function (data) {
+                    if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
                         window.location.reload(true);
                     }else{
@@ -239,9 +251,8 @@
                 url: '/deployer/status',
                 timeout: timeoutLong,
                 success: function (data) {
-                    if(data.logout){
-                        window.location = '/auth?logout';
-                    }else if (data.success){
+                    if(checkDoLogoutRefresh(data)) return;
+                    if (data.success){
                         window.location.reload(true);
                     }else{
                         step2elements.error.classList.add('d-none');
@@ -277,6 +288,7 @@
                 data: {settingsCFG},
                 dataType: 'json',
                 success: function (data) {
+                    if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
                         window.location.reload(true);
                     }else{
@@ -302,6 +314,7 @@
                 url: '/deployer/recipe/cancel',
                 timeout: timeoutLong,
                 success: function (data) {
+                    if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
                         window.location = '/setup';
                     }else{

@@ -95,7 +95,7 @@
                         <ul class="stepper linear">
 
                             <!-- Welcome -->
-                            <li class="step active">
+                            <li class="step {{@if(it.isReset)}}done{{#else}}active{{/if}}">
                                 <div class="step-title waves-effect">Welcome, {{it.adminUsername}}!</div>
                                 <div class="step-content">
                                     {{@if(it.serverProfile == 'default')}}
@@ -105,7 +105,9 @@
                                         You selected the profile <code>{{it.serverProfile}}</code>.
                                     {{/if}}
                                     <br>
-                                    This profile is not configured yet, let's do this now?
+                                    {{@if(!it.isReset)}}
+                                        This profile is not configured yet, let's do this now?
+                                    {{/if}}
                                     <div class="step-actions">
                                         <button class="btn btn-pill btn-info next-step" type="button">Next</button>
                                     </div>
@@ -114,7 +116,7 @@
 
 
                             <!-- Server Name -->
-                            <li class="step">
+                            <li class="step {{@if(it.isReset)}}done{{/if}}">
                                 <div class="step-title waves-effect">Server Name</div>
                                 <div class="step-content">
                                     A <strong>short</strong> server name to be used in txAdmin interface and
@@ -326,6 +328,7 @@
     <script>
         //Constants & vars
         const txDataPath = '{{it.txDataPath}}';
+        const isReset = ('{{it.isReset}}' === 'true');
         const timeoutLong = 5000;
         // const spinnerHTML = '<div style="min-height: 250px;" class="txSpinner">Loading...</div>';
         const spinnerHTML = '<div style="min-height: 250px; margin: auto;"><div class="txSpinner">Loading...</div></div>';
@@ -340,7 +343,7 @@
             autoFocusInput: true,
             showFeedbackPreloader: true,
             stepTitleNavigation: false,
-            firstActive: 2, //HACK
+            firstActive: (isReset)? 2 : 0,
             feedbackPreloader: spinnerHTML,
         });
 

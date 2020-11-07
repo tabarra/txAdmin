@@ -10,18 +10,23 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
  */
 module.exports = async function SetupGet(ctx) {
     //Check permissions
-    if(!ctx.utils.checkPermission('settings.view', modulename)){
-        return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
+    if(!ctx.utils.checkPermission('all_permissions', modulename)){
+        return ctx.utils.render('basic/generic', {message: `You need to be the admin master to use the setup page.`});
     }
 
-    // //If there is any FXServer configuration is missing
-    // if(globals.fxRunner.config.serverDataPath === null || globals.fxRunner.config.cfgPath === null){
-    //     return ctx.response.redirect('/setup');
-    // }
+    // Check if this is the correct state for the setup page
+    if(globals.deployer !== null){
+        return ctx.response.redirect('/deployer');
+    }
+    if(globals.fxRunner.config.serverDataPath !== null && globals.fxRunner.config.cfgPath !== null){
+        return ctx.response.redirect('/');
+    }
 
+    const globalConfig = globals.configVault.getScopedStructure('global');
     const renderData = {
         headerTitle: `Setup`,
-        serverName: globals.config.serverName || '',
+        serverName: globalConfig.serverName || '',
+        isReset: (globalConfig.serverName !== null),
         serverProfile: globals.info.serverProfile,
         txDataPath: GlobalData.dataPath,
     }

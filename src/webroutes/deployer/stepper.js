@@ -10,13 +10,15 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 module.exports = async function DeployerStepper(ctx) {
     //Check permissions
     if(!ctx.utils.checkPermission('all_permissions', modulename)){
-        return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
+        return ctx.utils.render('basic/generic', {message: `You need to be the admin master to use the deployer.`});
     }
 
-    // //If there is any FXServer configuration missing
-    // if(globals.fxRunner.config.serverDataPath === null || globals.fxRunner.config.cfgPath === null){
-    //     return ctx.response.redirect('/setup');
-    // }
+    //Check if this is the correct state for the deployer
+    if(globals.deployer == null){
+        const redirPath = (globals.fxRunner.config.serverDataPath === null || globals.fxRunner.config.cfgPath === null)? '/setup' : '/';
+        return ctx.response.redirect(redirPath);
+    }
+
 
     const tmpRecipeMetadata = {
         version: 'v1.2.3',
@@ -28,7 +30,7 @@ module.exports = async function DeployerStepper(ctx) {
     const tmpFilesPath = `${GlobalData.txAdminResourcePath}/src/webroutes/deployer`;
     const renderData = {
         step: `review`,
-        step: `run`,
+        // step: `run`,
         // step: `configure`,
         recipe: {
             name: 'PlumeESX2',
