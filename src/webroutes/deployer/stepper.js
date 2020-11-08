@@ -38,7 +38,7 @@ module.exports = async function DeployerStepper(ctx) {
             raw: globals.deployer.recipe.raw,
         }
 
-    }else if(globals.deployer.step === 'running'){
+    }else if(globals.deployer.step === 'run'){
         renderData.deployPath = globals.deployer.deployPath;
 
     }else if(globals.deployer.step === 'configure'){

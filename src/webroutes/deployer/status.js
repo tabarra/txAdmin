@@ -19,9 +19,20 @@ module.exports = async function DeployerStatus(ctx) {
         return ctx.send({success: false, refresh: true});
     }
 
-    return ctx.send({
+    //Prepare data
+    const outData = {
         progress: globals.deployer.progress,
-        status: 'running', 
-        log: globals.deployer.log.join('\n'),
-    });
+        log: globals.deployer.log.join('\n')
+    }
+    if(globals.deployer.step == 'configure'){
+        outData.status = 'done';
+
+    }else if(globals.deployer.deployFailed){
+        outData.status = 'failed';
+
+    }else{
+        outData.status = 'running';
+    }
+
+    return ctx.send(outData);
 };

@@ -91,8 +91,6 @@ async function handleCommitRecipe(ctx) {
  * @param {object} ctx
  */
 async function handleCancel(ctx) {
-    //FIXME: add magic in here
-    // reset fxrunner settings
-
+    globals.deployer = null;
     return ctx.send({success: true});  
 }

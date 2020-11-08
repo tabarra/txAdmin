@@ -37,7 +37,6 @@ const validatorWasteTime = (options) => {
 const taskWasteTime = (options, target) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            if(Math.random() < 0.3) reject(Error('aaaaaaaa'))
             resolve(true)
         }, options.seconds * 1000);
     })

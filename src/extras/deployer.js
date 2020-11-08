@@ -115,6 +115,7 @@ class Deployer {
         
         //Setup variables        
         this.step = 'review';
+        this.deployFailed = false;
         this.deployPath = deployPath;
         this.isTrustedSource = isTrustedSource;
         this.originalRecipe = originalRecipe;
@@ -140,8 +141,9 @@ class Deployer {
         } catch (error) {
             throw new Error(`Recipe Error: ${error.message}`);
         }
+        this.deployFailed = false;
         this.progress = 0;
-        this.step = 'running';
+        this.step = 'run';
         this.log.push('Starting deployment...');
         this.runTasks();
     }
@@ -166,6 +168,7 @@ class Deployer {
                 const msg = `${taskID} failed with message: ${error.message}`;
                 logError(msg);
                 this.log.push(msg)
+                this.deployFailed = true;
                 return;
             }
         }
@@ -173,7 +176,7 @@ class Deployer {
         this.progress = 100;
         this.log.push(`All tasks done!`)
         logOk(`All tasks done!`)
-        this.step = 'configuring';
+        this.step = 'configure';
     }
 } //Fim Deployer()
 
