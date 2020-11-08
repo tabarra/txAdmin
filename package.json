@@ -38,6 +38,7 @@
     "discord.js": "^11.6.4",
     "fs-extra": "^9.0.1",
     "humanize-duration": "^3.24.0",
+    "js-yaml": "^3.14.0",
     "json-colorizer": "^2.2.2",
     "koa": "^2.13.0",
     "koa-bodyparser": "^4.3.0",

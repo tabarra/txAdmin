@@ -117,7 +117,7 @@ async function handleValidateRecipeURL(ctx) {
             timeout: 4500
         });
         if(typeof res.data !== 'string') throw new Error('This URL did not return a string.');
-        const recipe = await parseRecipe(res.data);
+        const recipe = parseRecipe(res.data);
         return ctx.send({success: true, name: recipe.name});
     } catch (error) {
         return ctx.send({success: false, message: `Recipe error: ${error.message}`});
