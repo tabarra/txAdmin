@@ -5,7 +5,7 @@ const slash = require('slash');
 const path = require('path');
 const axios = require("axios");
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const { Deployer, validateTargetPath, parseRecipe } = require('../../extras/deployer');
+const { Deployer, validateTargetPath, parseValidateRecipe } = require('../../extras/deployer');
 const helpers = require('../../extras/helpers');
 
 //Helper functions
@@ -117,7 +117,7 @@ async function handleValidateRecipeURL(ctx) {
             timeout: 4500
         });
         if(typeof res.data !== 'string') throw new Error('This URL did not return a string.');
-        const recipe = parseRecipe(res.data);
+        const recipe = parseValidateRecipe(res.data);
         return ctx.send({success: true, name: recipe.name});
     } catch (error) {
         return ctx.send({success: false, message: `Recipe error: ${error.message}`});
@@ -351,18 +351,19 @@ async function handleSaveLocal(ctx) {
 async function handleSaveDeployer(ctx) {
     //Sanity check
     if(
+        isUndefined(ctx.request.body.isTrustedSource) ||
         isUndefined(ctx.request.body.name) ||
         isUndefined(ctx.request.body.recipeURL) ||
         isUndefined(ctx.request.body.targetPath)
     ){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
+    const isTrustedSource = (ctx.request.body.isTrustedSource === 'true');
     const serverName = ctx.request.body.name.trim();
     const recipeURL = ctx.request.body.recipeURL.trim();
     const targetPath = slash(path.normalize(ctx.request.body.targetPath+'/')); 
 
-    //Get and validate recipe
-    let recipeData;
+    //Get recipe and start deployer (constructor will validate the recipe)
     try {
         const res = await axios({
             url: recipeURL,
@@ -371,14 +372,11 @@ async function handleSaveDeployer(ctx) {
             timeout: 4500
         });
         if(typeof res.data !== 'string') throw new Error('This URL did not return a string.');
-        recipeData = res.data;
+        globals.deployer = new Deployer(res.data, targetPath, isTrustedSource);
     } catch (error) {
-        return ctx.send({success: false, message: `Recipe error: ${error.message}`});
+        return ctx.send({success: false, message: error.message});
     }
     
-    //Initiate deployer
-    globals.deployer = new Deployer(recipeData, targetPath);
-
     //Preparing & saving config
     const newGlobalConfig = globals.configVault.getScopedStructure('global');
     newGlobalConfig.serverName = serverName;

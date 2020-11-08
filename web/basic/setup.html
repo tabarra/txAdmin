@@ -196,7 +196,7 @@
                                         You can discover new recipes by visiting the <a href="https://forum.cfx.re/c/development/releases/7" target="_blank" rel="noopener noreferrer">CFX Forum</a>.
                                         <input type="text" class="form-control mt-2" id="s4RemoteTemplateInput"
                                             placeholder="https://raw.githubusercontent.com/tabarra/PlumeESX2/master/.fxrecipe"
-                                            DEBUG value="https://gist.githubusercontent.com/tabarra/f104c19f127ea27940696cfae17c714f/raw/3f5d9f545c91ab71dedcdc0b77b3cf4c01ecc0be/plumeesx2.yaml">
+                                            DEBUG value="https://gist.githubusercontent.com/tabarra/3e9dfd4bccd1936b6d81144824821f77/raw/da69aac268bc92674f3ec2ff84eac97bcb94c0cf/recipe_test_import.yaml">
                                         <span id="s4RemoteTemplateInputError" class="text-danger fade-in d-none"></span>
                                         <div class="step-actions">
                                             <button class="btn btn-pill btn-secondary previous-step"
@@ -704,11 +704,13 @@
             };
             if(selectedDeploymentType == 'common'){
                 outData.template = true;
+                outData.isTrustedSource = true;
                 outData.recipeURL = loadedTemplates[selectedTemplateIndex].url;
                 outData.targetPath = s5DeployerTargetInput.value.trim();
-
+                
             }else if(selectedDeploymentType == 'remote'){
                 outData.template = true;
+                outData.isTrustedSource = false;
                 outData.recipeURL = s4RemoteTemplateInput.value.trim();
                 outData.targetPath = s5DeployerTargetInput.value.trim();
                 

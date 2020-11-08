@@ -19,13 +19,9 @@ module.exports = async function DeployerStatus(ctx) {
         return ctx.send({success: false, refresh: true});
     }
 
-    const rawLog = `Starting deployment...
-Cloning repository: https://github.com/citizenfx/cfx-server-data.git`;
-
     return ctx.send({
-        progress: Math.round(Math.random()*100),
+        progress: globals.deployer.progress,
         status: 'running', 
-        log: rawLog,
-        // log: xss(rawLog).replace(/\n+/, '<br>'), 
+        log: globals.deployer.log.join('\n'),
     });
 };

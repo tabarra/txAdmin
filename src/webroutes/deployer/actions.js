@@ -56,9 +56,12 @@ async function handleRunRecipe(ctx) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const userEditedRecipe = ctx.request.body.recipe;
-    dir(userEditedRecipe)
 
-    //FIXME: add magic in here
+    try {
+        globals.deployer.start(userEditedRecipe)
+    } catch (error) {
+        return ctx.send({type: 'danger', message: error.message});
+    }
 
     return ctx.send({success: true});
 }

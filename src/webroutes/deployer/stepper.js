@@ -19,32 +19,34 @@ module.exports = async function DeployerStepper(ctx) {
         return ctx.response.redirect(redirPath);
     }
 
-
-    const tmpRecipeMetadata = {
-        version: 'v1.2.3',
-        author: 'Toybarra',
-        description: 'A full featured (8 jobs) and highly configurable yet lightweight ESX v2 base that can be easily extendable. \nPlease join our discord to know more: http://discord.gg/example',
-    }
-
+    //DEBUG:
     const fs = require('fs');
     const tmpFilesPath = `${GlobalData.txAdminResourcePath}/src/webroutes/deployer`;
+
+    //Prepare Output
     const renderData = {
-        step: `review`,
-        // step: `run`,
-        // step: `configure`,
-        recipe: {
-            name: 'PlumeESX2',
-            editorsChoice: false,
-            version: (tmpRecipeMetadata.version)? `(${tmpRecipeMetadata.version.trim()})` : '',
-            author: (tmpRecipeMetadata.author)? `${tmpRecipeMetadata.author.trim()}` : '',
-            description: (tmpRecipeMetadata.description)? tmpRecipeMetadata.description.trim() : '',
-            raw: fs.readFileSync(`${tmpFilesPath}/recipe.ignore.yaml`).toString().trim(),
-        },
-        deployPath: `${GlobalData.dataPath}/plumeesx2.base/`,
-        serverCFG: fs.readFileSync(`${tmpFilesPath}/server.ignore.cfg`).toString().trim(),
+        step: globals.deployer.step,
         serverProfile: globals.info.serverProfile,
+    };
+    if(globals.deployer.step === 'review'){
+        renderData.recipe = {
+            isTrustedSource: globals.deployer.isTrustedSource,
+            name: globals.deployer.recipe.name,
+            version: globals.deployer.recipe.version,
+            author: globals.deployer.recipe.author,
+            description: globals.deployer.recipe.description,
+            raw: globals.deployer.recipe.raw,
+        }
+
+    }else if(globals.deployer.step === 'running'){
+        renderData.deployPath = globals.deployer.deployPath;
+
+    }else if(globals.deployer.step === 'configure'){
+        renderData.serverCFG = fs.readFileSync(`${tmpFilesPath}/server.ignore.cfg`).toString().trim() //DEBUG
+
+    }else{
+        return ctx.utils.render('basic/generic', {message: `Unknown Deployer step, please report this bug and restart txAdmin.`});
     }
-  
 
     return ctx.utils.render('basic/deployer', renderData);
 };

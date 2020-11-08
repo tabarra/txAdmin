@@ -55,7 +55,7 @@
                                     Please review the Recipe below and apply any changes you want, <br>
                                     then press the <strong>Run Recipe</strong> button below.
         
-                                    {{@if(!it.recipe.editorsChoice)}}
+                                    {{@if(!it.recipe.isTrustedSource)}}
                                         <br><span class="text-danger font-weight-bold">Warning: Only run Recipes from trusted sources!</span>
                                     {{/if}}
                                 </div>
@@ -84,13 +84,13 @@
                         <div class="card-footer text-muted">Step 2: Run Recipe</div>
                         <div class="card-footer text-muted">Step 3: Configure server.cfg</div>
         
-                    {{#elif(it.step == 'run')}}
+                    {{#elif(it.step == 'running')}}
                         <div class="card-header">Step 1: Review Recipe ✔️</div>
                         <div class="card-header font-weight-bold ">Step 2: Run Recipe</div>
                         <div class="card-body text-center">
                             <div class="row mb-1 mt-0 text-center">
                                 <div class="col-8 mx-auto card d-block border-primary p-2 mb-1">
-                                    Your recipe is being executed, the template will be deployed to: <br>
+                                    Your recipe is being executed, the server will be deployed to: <br>
                                     <code class="inline-code">{{it.deployPath}}</code>
                                 </div>
                             </div>
@@ -256,11 +256,20 @@
                         window.location.reload(true);
                     }else{
                         step2elements.error.classList.add('d-none');
-                        const ariaMin = (data.progress > 5)? data.progress : 5;
+                        if(data.progress < 100){
+                            const ariaMin = (data.progress > 5)? data.progress : 5;
+                            step2elements.progress.ariaValueNow = ariaMin;
+                            step2elements.progress.style.width = ariaMin + '%';
+                            step2elements.progress.innerText = data.progress + '%';
+                        }else{
+                            step2elements.progress.classList.remove('progress-bar-animated');
+                            step2elements.progress.classList.add('bg-success');
+                            step2elements.progress.ariaValueNow = 100;
+                            step2elements.progress.style.width = '100%';
+                            step2elements.progress.innerText = 'DONE';
+                        }
                         step2elements.log.innerText = data.log;
-                        step2elements.progress.ariaValueNow = ariaMin;
-                        step2elements.progress.style.width = ariaMin + '%';
-                        step2elements.progress.innerText = data.progress + '%';
+                        
                     }
                 },
                 error: function (xmlhttprequest, textstatus, message) {
@@ -270,7 +279,7 @@
             });
         }
 
-        if(currentStep == 'run') setInterval(refreshStatus, 1000);
+        if(currentStep == 'running') setInterval(refreshStatus, 1000);
 
 
         //============================================== Step3 action

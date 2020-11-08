@@ -54,13 +54,13 @@ const validateTargetPath = async (deployPath) => {
  * TODO: use Joi for schema validaiton
  * @param {*} rawRecipe 
  */
-const parseRecipe = (rawRecipe) => {
+const parseValidateRecipe = (rawRecipe) => {
     if(typeof rawRecipe !== 'string') throw new Error(`not a string`);
     
     //Loads YAML
     let recipe;
     try {
-        recipe = YAML.safeLoad(rawRecipe, { schema: YAML.JSON_SCHEMA });   
+        recipe = YAML.safeLoad(rawRecipe, { schemax: YAML.JSON_SCHEMA });   
     } catch (error) {
         if(GlobalData.verbose) dir(error);
         throw new Error(`invalid yaml`);
@@ -72,14 +72,16 @@ const parseRecipe = (rawRecipe) => {
 
     //Preparing output
     const outRecipe = {
-        name: toDefault(recipe.name, 'unnamed'),
-        version: toDefault(recipe.version, null),
-        author: toDefault(recipe.author, 'unknown'),
+        raw: rawRecipe.trim(),
+        name: toDefault(recipe.name, 'unnamed').trim(),
+        version: toDefault(recipe.version, '').trim(),
+        author: toDefault(recipe.author, 'unknown').trim(),
+        description: toDefault(recipe.description, '').trim(),
         tasks: []
     };
 
     //Checking engine version
-    if(typeof recipe['$engine'] == 'string'){
+    if(typeof recipe['$engine'] == 'number'){
         if(recipe['$engine'] !== 1) throw new Error(`unsupported '$engine' version ${recipe['$engine']}`);
     }else{
         outRecipe.recipeEngineVersion = 1;
@@ -87,9 +89,9 @@ const parseRecipe = (rawRecipe) => {
 
     //Validate tasks
     recipe.tasks.forEach((task, index) => {
-        if(typeof task.action !== 'string') throw new Error(`TASK:${index+1} no action specified`);
-        if(typeof recipeEngine.tasks[task.action] === 'undefined') throw new Error(`TASK:${index+1} unknown action '${task.action}'`);
-        if(!recipeEngine.tasks[task.action].validate(task)) throw new Error(`TASK:${index+1}:${task.action} invalid parameters`);
+        if(typeof task.action !== 'string') throw new Error(`[task${index+1}] no action specified`);
+        if(typeof recipeEngine.tasks[task.action] === 'undefined') throw new Error(`[task${index+1}] unknown action '${task.action}'`);
+        if(!recipeEngine.tasks[task.action].validate(task)) throw new Error(`[task${index+1}:${task.action}] invalid parameters`);
         outRecipe.tasks.push(task)
     });
 
@@ -99,30 +101,79 @@ const parseRecipe = (rawRecipe) => {
 
 
 /**
- * FIXME: describr it in here
+ * The deployer class is responsible for running the recipe and handling status and errors
+ * FIXME: add some logging (terminal)
  */
 class Deployer {
-    constructor(rawRecipe, deployPath) {
-        log('Deployer instance started');
+    /**
+     * @param {string} originalRecipe 
+     * @param {string} deployPath 
+     * @param {boolean} isTrustedSource 
+     */
+    constructor(originalRecipe, deployPath, isTrustedSource) {
+        log('Deployer instance ready.');
+        
+        //Setup variables        
+        this.step = 'review';
+        this.deployPath = deployPath;
+        this.isTrustedSource = isTrustedSource;
+        this.originalRecipe = originalRecipe;
+        this.progress = 0;
+        this.log = [];
 
-        //DEBUG:
+        //Load recipe
         try {
-            rawRecipe = fs.readFileSync(`${GlobalData.txAdminResourcePath}/src/webroutes/deployer/recipe.ignore.yaml`).toString().trim();
-            deployPath = 'E:/FiveM/BUILDS/txData/keepkeep.base/';
-            const recipe = parseRecipe(rawRecipe);
-            log('recipe parsed');
+            this.recipe = parseValidateRecipe(originalRecipe);
         } catch (error) {
-            dir(error)
+            throw new Error(`Recipe Error: ${error.message}`);
         }
-
     }
 
     /**
-     * Sets the cache
-     * @param {*} data
+     * Starts the deployment process
+     * @param {string} userRecipe 
      */
-    xxxxxx(data){
-        // xxxxxx
+    start(userRecipe){
+        log('Starting deployer runner');
+        try {
+            this.recipe = parseValidateRecipe(userRecipe);
+        } catch (error) {
+            throw new Error(`Recipe Error: ${error.message}`);
+        }
+        this.progress = 0;
+        this.step = 'running';
+        this.log.push('Starting deployment...');
+        this.runTasks();
+    }
+
+    /**
+     * (Private) Run the tasks in a sequential way.
+     */
+    async runTasks(){
+        for (let index = 0; index < this.recipe.tasks.length; index++) {
+            this.progress = Math.round((index/this.recipe.tasks.length)*100);
+
+            const task = this.recipe.tasks[index];
+            const taskID = `[task${index+1}:${task.action}]`;
+            this.log.push(`Running ${taskID}...`);
+            log(`Running ${taskID}`);
+
+            try {
+                await recipeEngine.tasks[task.action].run(task, this.deployPath)
+                this.log[this.log.length -1] += ` ✔️`;
+            } catch (error) {
+                this.log[this.log.length -1] += ` ❌`;
+                const msg = `${taskID} failed with message: ${error.message}`;
+                logError(msg);
+                this.log.push(msg)
+                return;
+            }
+        }
+
+        this.progress = 100;
+        this.log.push(`All tasks done!`)
+        logOk(`All tasks done!`)
+        this.step = 'configuring';
     }
 } //Fim Deployer()
 
@@ -130,5 +181,5 @@ class Deployer {
 module.exports = {
     Deployer,
     validateTargetPath,
-    parseRecipe
+    parseValidateRecipe
 }
