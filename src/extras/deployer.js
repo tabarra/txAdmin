@@ -80,9 +80,14 @@ const parseValidateRecipe = (rawRecipe) => {
         tasks: []
     };
 
-    //Checking engine version
+    //Checking meta tag requirements
+    if(typeof recipe['$minFxVersion'] == 'number'){
+        if(recipe['$minFxVersion'] > GlobalData.fxServerVersion) throw new Error(`this recipe requires FXServer v${recipe['$minFxVersion']} or above`);
+        outRecipe.fxserverMinVersion = recipe['$minFxVersion']; //useless for now
+    }
     if(typeof recipe['$engine'] == 'number'){
         if(recipe['$engine'] !== 1) throw new Error(`unsupported '$engine' version ${recipe['$engine']}`);
+        outRecipe.recipeEngineVersion = recipe['$engine']; //useless for now
     }else{
         outRecipe.recipeEngineVersion = 1;
     }

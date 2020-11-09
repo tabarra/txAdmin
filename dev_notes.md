@@ -1,6 +1,7 @@
 ## TODO v3
 - [x] replace `localhost` with `127.0.0.1` in functions to force usage of ipv4
 - [ ] add stats to know if users are coming from localhost, cfx.re, direct ip or domain (maybe just login?)
+- [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
 - [ ] xxxxx
 
 
@@ -253,7 +254,7 @@ tasks:
       pattern: 's/wtf/ftw/g'
   - append_file:
       path: server.cfg
-      data: 
+      data: |
          start wtfwtf
          start uberadmin
 ```
