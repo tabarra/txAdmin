@@ -10,21 +10,16 @@ const safePath = (base, suffix) => {
     const safeSuffix = path.normalize(suffix).replace(/^(\.\.(\/|\\|$))+/, '');
     return path.join(base, safeSuffix);
 }
-
-
-/**
- * Clones an git repository to a target folder with a target name
- */
-const validatorCloneRepo = (options) => {
-    return (
-        typeof options.url == 'string' &&
-        typeof options.path == 'string' &&
-        options.path.match(/(\.\.(\/|\\|$))+/g) === null
-    )
+const isPathLinear = (pathInput) => {
+    return pathInput.match(/(\.\.(\/|\\|$))+/g) === null;
 }
-const taskCloneRepo = async (options, target) => {
-    if(!validatorCloneRepo(options)) throw new Error(`invalid options`);
-    dir(`taskCloneRepo deploying to to: ` + safePath(target, options.path));
+const isPathRoot = (pathInput) => {
+    return /^\.[\/\\]*$/.test(pathInput);
+}
+const pathCleanTrail = (pathInput) => {
+    return pathInput.replace(/[\/\\]+$/, '');
+} 
+
 
 /**
  * Downloads a file to a target path using streams
@@ -34,15 +29,15 @@ const validatorDownloadFile = (options) => {
         typeof options.url == 'string' &&
         typeof options.path == 'string' &&
         options.path.length &&
-        options.path.match(/(\.\.(\/|\\|$))+/g) === null
+        isPathLinear(options.path)
     )
 }
-const taskDownloadFile = async (options, target) => {
+const taskDownloadFile = async (options, basePath) => {
     if(!validatorDownloadFile(options)) throw new Error(`invalid options`);
     if(options.path.endsWith('/')) throw new Error(`target filename not specified`); //FIXME: this should be on the validator
 
     //Process and create target file/path
-    const destPath = safePath(target, options.path);
+    const destPath = safePath(basePath, options.path);
     await fs.outputFile(destPath, 'file save attempt, please ignore or remove');
 
     //Start file download and create write stream
@@ -62,7 +57,31 @@ const taskDownloadFile = async (options, target) => {
 
 
 /**
- * Just wastes time /shrug
+ * Removes a file or directory. The directory can have contents. If the path does not exist, silently does nothing.
+ */
+const validatorRemovePath = (options) => {
+    return (
+        typeof options.path == 'string' &&
+        options.path.length &&
+        isPathLinear(options.path) &&
+        !isPathRoot(options.path)
+    )
+}
+const taskRemovePath = async (options, basePath) => {
+    if(!validatorRemovePath(options)) throw new Error(`invalid options`);
+
+    //Process and create target file/path
+    const destPath = safePath(basePath, options.path);
+
+    //NOTE: being extra safe about not deleting itself
+    const cleanBasePath = pathCleanTrail(path.normalize(basePath));
+    if(cleanBasePath == destPath) throw new Error(`cannot remove base folder`);
+    await fs.remove(destPath);
+}
+
+
+/**
+ * DEBUG Just wastes time /shrug
  */
 const validatorWasteTime = (options) => {
     return (typeof options.seconds == 'number')
@@ -77,7 +96,7 @@ const taskWasteTime = (options, target) => {
 
 
 /**
- * Fail fail fail :o
+ * DEBUG Fail fail fail :o
  */
 const validatorFailTest = (options) => {
     return true;
@@ -87,24 +106,44 @@ const taskFailTest = async (options, target) => {
 }
 
 
+/**
+ * DEBUG MOCK ONLY Clones an git repository to a target folder with a target name
+ */
+const validatorCloneRepo = (options) => {
+    return (
+        typeof options.url == 'string' &&
+        typeof options.path == 'string' &&
+        isPathLinear(options.path)
+    )
+}
+const taskCloneRepo = async (options, target) => {
+    if(!validatorCloneRepo(options)) throw new Error(`invalid options`);
+    dir(`taskCloneRepo deploying to to: ` + safePath(target, options.path));
+}
+
+
 //Exports
 module.exports = {
-    tasks: {
-        clone_repo:{
-            validate: validatorCloneRepo,
-            run: taskCloneRepo,
-        },
-        download_file:{
-            validate: validatorDownloadFile,
-            run: taskDownloadFile,
-        },
-        waste_time:{
-            validate: validatorWasteTime,
-            run: taskWasteTime,
-        },
-        fail_test:{
-            validate: validatorFailTest,
-            run: taskFailTest,
-        },
-    }
+    download_file:{
+        validate: validatorDownloadFile,
+        run: taskDownloadFile,
+    },
+    remove_path:{
+        validate: validatorRemovePath,
+        run: taskRemovePath,
+    },
+
+    //DEBUG mock only
+    clone_repo:{
+        validate: validatorCloneRepo,
+        run: taskCloneRepo,
+    },
+    waste_time:{
+        validate: validatorWasteTime,
+        run: taskWasteTime,
+    },
+    fail_test:{
+        validate: validatorFailTest,
+        run: taskFailTest,
+    },
 }

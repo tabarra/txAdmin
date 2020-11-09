@@ -90,8 +90,8 @@ const parseValidateRecipe = (rawRecipe) => {
     //Validate tasks
     recipe.tasks.forEach((task, index) => {
         if(typeof task.action !== 'string') throw new Error(`[task${index+1}] no action specified`);
-        if(typeof recipeEngine.tasks[task.action] === 'undefined') throw new Error(`[task${index+1}] unknown action '${task.action}'`);
-        if(!recipeEngine.tasks[task.action].validate(task)) throw new Error(`[task${index+1}:${task.action}] invalid parameters`);
+        if(typeof recipeEngine[task.action] === 'undefined') throw new Error(`[task${index+1}] unknown action '${task.action}'`);
+        if(!recipeEngine[task.action].validate(task)) throw new Error(`[task${index+1}:${task.action}] invalid parameters`);
         outRecipe.tasks.push(task)
     });
 
@@ -161,7 +161,7 @@ class Deployer {
             log(`Running ${taskID}`);
 
             try {
-                await recipeEngine.tasks[task.action].run(task, this.deployPath)
+                await recipeEngine[task.action].run(task, this.deployPath)
                 this.log[this.log.length -1] += ` ✔️`;
             } catch (error) {
                 this.log[this.log.length -1] += ` ❌`;
