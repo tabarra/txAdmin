@@ -165,7 +165,7 @@ class Deployer {
                 this.log[this.log.length -1] += ` ✔️`;
             } catch (error) {
                 this.log[this.log.length -1] += ` ❌`;
-                const msg = `${taskID} failed with message: ${error.message}`;
+                const msg = `${taskID} failed with message: \n${error.message}`;
                 logError(msg);
                 this.log.push(msg)
                 this.deployFailed = true;
