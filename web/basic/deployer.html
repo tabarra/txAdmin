@@ -45,7 +45,7 @@
 
         <!-- Stepper Row -->
         <div class="row justify-content-center">
-            <div class="col-md-8 mw-col10">
+            <div class="col-md-9">
                 <div class="card fade-in deployer-stepper">
                     {{@if(it.step == 'review')}}
                         <div class="card-header font-weight-bold">Step 1: Review Recipe</div>
@@ -87,16 +87,19 @@
                     {{#elif(it.step == 'run')}}
                         <div class="card-header">Step 1: Review Recipe ✔️</div>
                         <div class="card-header font-weight-bold ">Step 2: Run Recipe</div>
-                        <div class="card-body text-center">
+                        <div class="card-body">
                             <div class="row mb-1 mt-0 text-center">
                                 <div class="col-8 mx-auto card d-block border-primary p-2 mb-1">
                                     Your recipe is being executed, the server will be deployed to: <br>
                                     <code class="inline-code">{{it.deployPath}}</code>
                                 </div>
                             </div>
-                            <code id="step2Log"><h3>🐌🐌🐌</h3></code>
-        
-                            <div class="mx-auto col-8 pt-3">
+                            <div class="row mb-3">
+                                <div class="col-10 mx-auto card d-block p-2 m-0">
+                                    <code id="step2Log" class="text-body"><h3 class="text-center">🐌🐌🐌</h3></code>
+                                </div>
+                            </div>
+                            <div class="mx-auto col-8">
                                 <div class="progress">
                                     <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" 
                                         aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" 
@@ -284,7 +287,7 @@
                         step2elements.progress.ariaValueNow = ariaMin;
                         step2elements.progress.style.width = ariaMin + '%';
                         step2elements.progress.innerText = data.progress + '%';
-                        
+
                     }
                 },
                 error: function (xmlhttprequest, textstatus, message) {
