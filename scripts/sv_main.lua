@@ -36,7 +36,13 @@ CreateThread(function()
     RegisterCommand("txaReportResources", txaReportResources, true)
     CreateThread(function()
         while true do
-            HeartBeat()
+            HTTPHeartBeat()
+            Wait(3000)
+        end
+    end)
+    CreateThread(function()
+        while true do
+            FD3HeartBeat()
             Wait(3000)
         end
     end)
@@ -46,8 +52,8 @@ CreateThread(function()
 end)
 
 
--- HeartBeat function
-function HeartBeat()
+-- HeartBeat functions
+function HTTPHeartBeat()
     local playerCount = GetNumPlayerIndices()
     
     local players = {}
@@ -70,7 +76,7 @@ function HeartBeat()
 		end
     end
 
-    local url = "http://localhost:"..apiPort.."/intercom/monitor"
+    local url = "http://127.0.0.1:"..apiPort.."/intercom/monitor"
     local exData = {
         txAdminToken = apiToken,
         players = players
@@ -84,6 +90,11 @@ function HeartBeat()
             hbReturnData = resp
         end
     end, 'POST', json.encode(exData), {['Content-Type']='application/json'})
+end
+
+function FD3HeartBeat()
+    local payload = json.encode({type = 'txAdminHeartBeat'})
+    Citizen.InvokeNative(`PRINT_STRUCTURED_TRACE` & 0xFFFFFFFF, payload)
 end
 
 -- HTTP request handler
@@ -258,7 +269,7 @@ function txaReportResources(source, args)
     end
 
     --Send to txAdmin
-    local url = "http://localhost:"..apiPort.."/intercom/resources"
+    local url = "http://127.0.0.1:"..apiPort.."/intercom/resources"
     local exData = {
         txAdminToken = apiToken,
         resources = resources
@@ -276,7 +287,7 @@ end
 function handleConnections(name, skr, d)
     if  GetConvar("txAdmin-checkPlayerJoin", "invalid") == "true" then
         d.defer()
-        local url = "http://localhost:"..apiPort.."/intercom/checkPlayerJoin"
+        local url = "http://127.0.0.1:"..apiPort.."/intercom/checkPlayerJoin"
         local exData = {
             txAdminToken = apiToken,
             identifiers  = GetPlayerIdentifiers(source),

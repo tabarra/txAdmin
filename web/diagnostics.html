@@ -21,7 +21,7 @@
                     <strong>OS Type:</strong> {{it.host.osType}} <br>
                     <strong>OS Release:</strong> {{it.host.osRelease}} <br>
                     <strong>Username:</strong> {{it.host.username}} <br>
-                    <strong>Host CPUs:</strong> {{it.host.cpus}} <br>
+                    <strong>Host CPUs:</strong> {{it.host.cpus}} {{it.host.clockWarning|safe}}<br>
                     <strong>Host Memory:</strong> {{it.host.memory}}
                 {{/if}}
             </div>
@@ -32,10 +32,13 @@
             <div class="card-header font-weight-bold">txAdmin Info:</div>
             <div class="card-body">
                 <h5>Stats:</h5>
+                <strong>Versions:</strong> <code>v{{it.txAdminVersion}}</code> / <code>{{it.fxServerVersion}}</code> <br>
                 <strong>Uptime:</strong> <code>{{it.txadmin.uptime}}</code> <br>
                 <strong>Cfx.re URL:</strong> <code>{{it.txadmin.cfxUrl}}</code> <br>
                 <strong>Ban/Whitelist Checking:</strong> <code>{{it.txadmin.banlistEnabled}}</code>, <code>{{it.txadmin.whitelistEnabled}}</code> <br>
                 <strong>Full/Partial Crashes:</strong> <code>{{it.txadmin.fullCrashes}}</code>, <code>{{it.txadmin.partialCrashes}}</code> <br>
+                <strong>HTTP Counter:</strong> <code>{{it.txadmin.httpCounterLog}}</code> &lt; <code>{{it.txadmin.httpCounterMax}}</code> <br>
+                <strong>HB Fails:</strong> <code>HTTP {{it.txadmin.hbHTTPFails}}</code> / <code>FD3 {{it.txadmin.hbFD3Fails}}</code> <br>
                 <hr>
                 <h5>Settings:</h5>
                 <strong>Schedule:</strong> <code>{{it.txadmin.schedule}}</code> <br>

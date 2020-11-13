@@ -10,25 +10,30 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
  */
 module.exports = async function SetupGet(ctx) {
     //Check permissions
-    if(!ctx.utils.checkPermission('settings.view', modulename)){
-        return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
+    if(!ctx.utils.checkPermission('all_permissions', modulename)){
+        return ctx.utils.render('basic/generic', {message: `You need to be the admin master to use the setup page.`});
     }
 
-    // //If there is any FXServer configuration is missing
-    // if(globals.fxRunner.config.serverDataPath === null || globals.fxRunner.config.cfgPath === null){
-    //     return ctx.response.redirect('/setup');
-    // }
-
-    let windowsBatPath;
-    if(GlobalData.osType == 'windows'){
-        let batFolder = path.resolve(GlobalData.fxServerPath, '..');
-        windowsBatPath  = path.join(batFolder, `start_${GlobalData.fxServerVersion}_${globals.info.serverProfile}.bat`);
+    // Check if this is the correct state for the setup page
+    if(globals.deployer !== null){
+        return ctx.response.redirect('/deployer');
+    }
+    if(globals.fxRunner.config.serverDataPath !== null && globals.fxRunner.config.cfgPath !== null){
+        return ctx.response.redirect('/');
     }
 
-    let renderData = {
+    const globalConfig = globals.configVault.getScopedStructure('global');
+    const renderData = {
         headerTitle: `Setup`,
+        serverName: globalConfig.serverName || '',
+        isReset: (globalConfig.serverName !== null),
         serverProfile: globals.info.serverProfile,
-        windowsBatPath: windowsBatPath 
+        txDataPath: GlobalData.dataPath,
+    }
+
+    if(GlobalData.osType == 'windows'){
+        const batFolder = path.resolve(GlobalData.fxServerPath, '..');
+        renderData.windowsBatPath  = path.join(batFolder, `start_${GlobalData.fxServerVersion}_${globals.info.serverProfile}.bat`);
     }
 
     return ctx.utils.render('basic/setup', renderData);

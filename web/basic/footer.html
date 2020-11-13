@@ -99,20 +99,35 @@
                                 </div>
 
                                 <div class="form-group row">
-                                    <label for="modPlayerBan-duration" class="col-sm-3 col-form-label">
+                                    <label for="modPlayerBan-durationSelect" class="col-sm-3 col-form-label">
                                         Duration
                                         <span class="text-danger">*</span>
                                     </label>
                                     <div class="col-sm-9">
-                                        <select class="form-control" id="modPlayerBan-duration">
-                                            <option value="t2h">2 hours</option>
-                                            <option value="t8h">8 hours</option>
-                                            <option value="t1d">1 day</option>
-                                            <option value="t2d" selected>2 days</option>
-                                            <option value="t1w">1 week</option>
-                                            <option value="t2w">2 weeks</option>
-                                            <option value="perma" class="font-weight-bold text-danger">permanent</option>
+                                        <select class="form-control" id="modPlayerBan-durationSelect">
+                                            <option value="2 hours">2 hours</option>
+                                            <option value="8 hours">8 hours</option>
+                                            <option value="1 day">1 day</option>
+                                            <option value="2 days" selected>2 days</option>
+                                            <option value="1 week">1 week</option>
+                                            <option value="2 weeks">2 weeks</option>
+                                            <option value="permanent" class="font-weight-bold text-danger">permanent</option>
+                                            <option value="custom" class="font-weight-bold">custom</option>
                                         </select>
+                                        <div class="row mt-2">
+                                            <div class="col-sm-3 pr-0">
+                                                <input type="number" class="form-control" id="modPlayerBan-durationMultiplier" 
+                                                    maxlength="3" placeholder="7" disabled>
+                                            </div>
+                                            <div class="col-sm-9 pl-2">
+                                                <select class="form-control" id="modPlayerBan-durationUnit" disabled>
+                                                    <option value="hours">hours</option>
+                                                    <option value="days" selected>days</option>
+                                                    <option value="weeks">weeks</option>
+                                                    <option value="months">months</option>
+                                                </select>
+                                            </div>
+                                        </div>
                                         <span class="form-text text-muted">
                                             <b>Note:</b> The ban will be applied to all identifiers.
                                         </span>

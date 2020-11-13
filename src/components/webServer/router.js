@@ -38,11 +38,14 @@ module.exports = router = (config) =>{
     //Settings
     router.get('/setup', requestAuth('web'), webRoutes.setup.get);
     router.post('/setup/:action', requestAuth('api'), webRoutes.setup.post);
+    router.get('/deployer', requestAuth('web'), webRoutes.deployer.stepper);
+    router.get('/deployer/status', requestAuth('api'), webRoutes.deployer.status);
+    router.post('/deployer/recipe/:action', requestAuth('api'), webRoutes.deployer.actions);
     router.get('/settings', requestAuth('web'), webRoutes.settings.get);
     router.post('/settings/save/:scope', requestAuth('web'), webRoutes.settings.save);
 
     //FXServer
-    router.get('/fxserver/controls/:action', requestAuth('api'), webRoutes.fxserver.controls);
+    router.get('/fxserver/controls/:action', requestAuth('api'), webRoutes.fxserver.controls); //FIXME: transform into post
     router.post('/fxserver/commands', requestAuth('web'), webRoutes.fxserver.commands);
     router.get('/fxserver/downloadLog', requestAuth('web'), webRoutes.fxserver.downloadLog);
 
@@ -57,7 +60,7 @@ module.exports = router = (config) =>{
     //Diagnostic routes
     router.get('/diagnostics', requestAuth('web'), webRoutes.diagnostics);
     router.get('/advanced', requestAuth('web'), webRoutes.advanced.get);
-    router.post('/advanced', requestAuth('api'), webRoutes.advanced.actions);
+    router.post('/advanced', requestAuth('api'), webRoutes.advanced.actions); //FIXME: add action to URL
 
     //Data routes
     router.get('/txAdminLog', requestAuth('web'), webRoutes.txAdminLog);

@@ -31,17 +31,17 @@ module.exports = async function CFGEditorSave(ctx) {
 
     //Check if file is set
     if(globals.fxRunner.config.cfgPath === null || globals.fxRunner.config.serverDataPath === null){
-        let message = `CFG or Base Path not defined. Configure it in the settings page first.`
+        const message = `CFG or Base Path not defined. Configure it in the settings page first.`
         return ctx.send({type: 'danger', message});
     }
 
     //Saving backup file
-    let cfgFilePath = helpers.resolveCFGFilePath(globals.fxRunner.config.cfgPath, globals.fxRunner.config.serverDataPath);
+    const cfgFilePath = helpers.resolveCFGFilePath(globals.fxRunner.config.cfgPath, globals.fxRunner.config.serverDataPath);
     try {
         //NOTE: not moving to make sure we don't screw file permissions.
         await fs.writeFile(cfgFilePath + '.bkp', helpers.getCFGFileData(cfgFilePath), 'utf8');
     } catch (error) {
-        let message = `Failed to save BackupCFG file with error: ${error.message}`;
+        const message = `Failed to save BackupCFG file with error: ${error.message}`;
         if(GlobalData.verbose) logWarn(message);
     }
 
@@ -51,7 +51,7 @@ module.exports = async function CFGEditorSave(ctx) {
         await fs.writeFile(cfgFilePath, ctx.request.body.cfgData, 'utf8');
         return ctx.send({type: 'success', message: 'File saved.'});
     } catch (error) {
-        let message = `Failed to save CFG file with error: ${error.message}`;
+        const message = `Failed to save CFG file with error: ${error.message}`;
         if(GlobalData.verbose) logWarn(message);
         return ctx.send({type: 'danger', message});
     }

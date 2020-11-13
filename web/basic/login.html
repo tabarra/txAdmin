@@ -6,25 +6,16 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-    <title>txAdmin | {{it.headerTitle}}</title>
-    <meta name="description" content="Server profile: {{it.serverProfile}} | txAdmin version: {{it.txAdminVersion}} | FXServer build: {{it.fxServerVersion}} | Remotely Manage & Monitor your GTA5 FiveM Server">
+    <title>txAdmin Login</title>
+    <meta name="description" content="Remotely Manage & Monitor your GTA5 FiveM Server with txAdmin v{{it.txAdminVersion}} atop FXServer {{it.fxServerVersion}}">
     <meta name="author" content="André Tabarra">
     <meta name="robots" content="noindex">
-    <!-- Google / Search Engine Tags -->
-    <meta itemprop="name" content="txAdmin">
-    <meta itemprop="description" content="Server profile: {{it.serverProfile}} | txAdmin version: {{it.txAdminVersion}} | FXServer build: {{it.fxServerVersion}} | Remotely Manage & Monitor your GTA5 FiveM Server">
-    <meta itemprop="image" content="https://github.com/tabarra/txAdmin/blob/master/docs/banner.png?raw=true">
-    <!-- Facebook Meta Tags -->
+    <!-- Open Graph Meta Tags -->
     <meta property="og:url" content="https://github.com/tabarra/txAdmin">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="txAdmin">
-    <meta property="og:description" content="Server profile: {{it.serverProfile}} | txAdmin version: {{it.txAdminVersion}} | FXServer build: {{it.fxServerVersion}} | Remotely Manage & Monitor your GTA5 FiveM Server">
-    <meta property="og:image" content="https://github.com/tabarra/txAdmin/blob/master/docs/banner.png?raw=true">
-    <!-- Twitter Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="txAdmin">
-    <meta name="twitter:description" content="Server profile: {{it.serverProfile}} | txAdmin version: {{it.txAdminVersion}} | FXServer build: {{it.fxServerVersion}} | Remotely Manage & Monitor your GTA5 FiveM Server">
-    <meta name="twitter:image" content="https://github.com/tabarra/txAdmin/blob/master/docs/banner.png?raw=true">
+    <meta property="og:title" content="txAdmin - {{it.serverName}}">
+    <meta property="og:description" content="Remotely Manage & Monitor your GTA5 FiveM Server with txAdmin v{{it.txAdminVersion}} atop FXServer {{it.fxServerVersion}}">
+    <meta property="og:image" content="https://i.imgur.com/Z3S9q6J.png">
     <!--style-->
     <link href="css/simple-line-icons.css" rel="stylesheet">
     <link href="css/coreui.min.css" rel="stylesheet">
@@ -46,27 +37,6 @@
             -webkit-box-shadow: 2px 4px 8px rgb(143, 143, 143);
             box-shadow: 2px 4px 8px rgb(143, 143, 143);
             border-radius: 50em;
-        }
-
-        .separator {
-            display: flex;
-            align-items: center;
-            text-align: center;
-            margin-top: 1rem;
-            margin-bottom: 1rem;
-            border: 0;
-            color: #b1afaf;
-        }
-        .separator::before, .separator::after {
-            content: '';
-            flex: 1;
-            border-top: 1px solid #e6e6e6;
-        }
-        .separator::before {
-            margin-right: .25em;
-        }
-        .separator::after {
-            margin-left: .25em;
         }
     </style>
     {{@if(it.isMatrix)}}
@@ -100,10 +70,10 @@
                 font-weight: 700;
                 background-color: lawngreen;
             }
-            .separator::before, .separator::after {
+            .hrsep::before, .hrsep::after {
                 border-top: 1px dashed lawngreen;
             }
-            .separator{
+            .hrsep{
                 color: lawngreen;
             }
 
@@ -154,12 +124,13 @@
 
         <!-- Card Row -->
         <div class="row justify-content-center">
-            <div class="col-md-5">
+            <div class="col-lg-5">
                 <div class="card ">
                     <div class="card-body text-center p-4">
                         {{@if(it.template == 'justMessage')}}
-                            <h5 class="text-danger mb-3">{{it.message|n2br}}</h5>
-                            <a href="/auth" class="btn btn-primary px-4" role="submit">Back</a>
+                            <h4 class="text-danger">{{it.errorTitle}}</h4>
+                            <p class="font-weight-bold">{{it.errorMessage}}</p>
+                            <a href="/auth" class="btn btn-primary px-4 mt-3" role="submit">Back</a>
                         {{/if}}
                         {{@if(it.template == 'noMaster')}}
                             <h3 class="mb-4">No <code>CitizenFX</code> Account Linked</h3>
@@ -178,7 +149,7 @@
                             <img class="profile-pic" src="{{it.addMaster_picture}}" alt="avatar">
                             <h5 class="mt-2 mb-3 text-muted">{{it.addMaster_name}}</h5>
 
-                            <h6>Type in the backup password:</h6>
+                            <h5>Type in the <i>backup</i> password:</h5>
                             <form action="/auth/addMaster/save" method="post">
                                 <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
                                     <div class="input-group-prepend">
@@ -230,7 +201,7 @@
                                 <i class="logo-image"><svg><use xlink:href="#discord-icon"></use></svg></i>
                                 <span>Discord</span>
                             </a>
-                            <div class="separator">OR</div>
+                            <div class="hrsep">OR</div>
                             <form action="/auth/password" method="post">
                                 <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
                                     <div class="input-group-prepend">
@@ -269,14 +240,21 @@
                 <div class="alert alert-secondary text-center small" role="alert">
                     <strong>Server profile:</strong> {{it.serverProfile}} <br>
                     <strong>txAdmin version:</strong> {{it.txAdminVersion}} <br>
-                    <strong>FXServer build:</strong> {{it.fxServerVersion}}
+                    <strong>FXServer build:</strong> {{it.fxServerVersion}} 
+                    <div class="hrsep hrsep-small">//</div>
+                    <h5 class="text-muted">
+                        <strong>txAdmin</strong> Official Discord: <br>
+                        <a href="https://discord.gg/uAmsGa2" target="_blank">
+                            <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
+                        </a>
+                    </h5>
                 </div>
             </div>
         </div>
         {{@if(it.isMatrix)}}
             <div class="row justify-content-center">
                 <div class="col-md-4 text-center pt-3">
-                    <h4 class="matrix-text">The Matrix has you...</h4>
+                    <h4>The Matrix has you...</h4>
                 </div>
             </div>
         {{/if}}

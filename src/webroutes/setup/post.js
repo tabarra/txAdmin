@@ -1,9 +1,11 @@
 //Requires
 const modulename = 'WebServer:SetupPost';
-const fs = require('fs');
+const fs = require('fs-extra');
 const slash = require('slash');
 const path = require('path');
+const axios = require("axios");
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+const { Deployer, validateTargetPath, parseValidateRecipe } = require('../../extras/deployer');
 const helpers = require('../../extras/helpers');
 
 //Helper functions
@@ -47,24 +49,44 @@ module.exports = async function SetupPost(ctx) {
     if(isUndefined(ctx.params.action)){
         return ctx.utils.error(400, 'Invalid Request');
     }
-    let action = ctx.params.action;
+    const action = ctx.params.action;
 
     //Check permissions
     if(!ctx.utils.checkPermission('all_permissions', modulename)){
         return ctx.send({
             success: false, 
-            message: `You don't have permission to execute this action.`
+            message: `You need to be the admin master to use the setup page.`
         });
     }
 
+    //Check if this is the correct state for the setup page
+    if(
+        globals.deployer !== null ||
+        (globals.fxRunner.config.serverDataPath !== null && globals.fxRunner.config.cfgPath !== null)
+    ){
+        return ctx.send({
+            success: false, 
+            refresh: true
+        });
+    }
 
     //Delegate to the specific action functions
-    if(action == 'validateDataFolder'){
-        return await handleValidateDataFolder(ctx);
+    if(action == 'validateRecipeURL'){
+        return await handleValidateRecipeURL(ctx);
+
+    }else if(action == 'validateLocalDeployPath'){
+        return await handleValidateLocalDeployPath(ctx);
+
+    }else if(action == 'validateLocalDataFolder'){
+        return await handleValidateLocalDataFolder(ctx);
+
     }else if(action == 'validateCFGFile'){
         return await handleValidateCFGFile(ctx);
+
     }else if(action == 'save'){
-        return await handleSave(ctx);
+        const handler = (ctx.request.body.template == 'true')? handleSaveDeployer : handleSaveLocal;
+        return await handler(ctx);
+
     }else{
         return ctx.send({
             success: false, 
@@ -76,21 +98,72 @@ module.exports = async function SetupPost(ctx) {
 
 //================================================================
 /**
- * Handle Validation of Server Data Folder
+ * Handle Validation of a remote recipe/template URL
  * @param {object} ctx
  */
-async function handleValidateDataFolder(ctx) {
+async function handleValidateRecipeURL(ctx) {
     //Sanity check
-    if(
-        isUndefined(ctx.request.body.dataFolder)
-    ){
+    if(isUndefined(ctx.request.body.recipeURL)){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
+    const recipeURL = ctx.request.body.recipeURL.trim();
 
-    let dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim()+'/'));
+    //Make request & validate recipe
+    try {
+        const res = await axios({
+            url: recipeURL,
+            method: 'get',
+            responseEncoding: 'utf8',
+            timeout: 4500
+        });
+        if(typeof res.data !== 'string') throw new Error('This URL did not return a string.');
+        const recipe = parseValidateRecipe(res.data);
+        return ctx.send({success: true, name: recipe.name});
+    } catch (error) {
+        return ctx.send({success: false, message: `Recipe error: ${error.message}`});
+    }
+}
+
+
+//================================================================
+/**
+ * Handle Validation of a remote recipe/template URL
+ * @param {object} ctx
+ */
+async function handleValidateLocalDeployPath(ctx) {
+    //Sanity check
+    if(isUndefined(ctx.request.body.deployPath)){
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
+    }
+    const deployPath = slash(path.normalize(ctx.request.body.deployPath.trim()));
+    if(deployPath.includes(' ')){
+        return ctx.send({success: false, message: 'The path cannot contain spaces.'});
+    }
+
+    //Perform path checking
+    try {
+        return ctx.send({success: true, message: await validateTargetPath(deployPath)});
+    } catch (error) {
+        return ctx.send({success: false, message: error.message});
+    }
+}
+
+
+//================================================================
+/**
+ * Handle Validation of Local (existing) Server Data Folder
+ * @param {object} ctx
+ */
+async function handleValidateLocalDataFolder(ctx) {
+    //Sanity check
+    if(isUndefined(ctx.request.body.dataFolder)){
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
+    }
+    const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim()+'/'));
     if(dataFolderPath.includes(' ')){
         return ctx.send({success: false, message: 'The path cannot contain spaces.'});
     }
+
     try {
         if(!fs.existsSync(path.join(dataFolderPath, 'resources'))){
             let recoveryTemplate = `The path provided is invalid. <br>
@@ -160,8 +233,6 @@ async function handleValidateCFGFile(ctx) {
         return ctx.send({success: false, message: 'The path cannot contain spaces.'});
     }
 
-    // TODO: add option to download this:
-    // https://raw.githubusercontent.com/citizenfx/fivem-docs/master/static/examples/config/server.cfg
     let rawCfgFile;
     try {
         rawCfgFile = helpers.getCFGFileData(cfgFilePath);
@@ -191,9 +262,10 @@ async function handleValidateCFGFile(ctx) {
 //================================================================
 /**
  * Handle Save settings
+ * Actions: sets serverDataPath/cfgPath, starts the server, redirect to live console
  * @param {object} ctx
  */
-async function handleSave(ctx) {
+async function handleSaveLocal(ctx) {
     //Sanity check
     if(
         isUndefined(ctx.request.body.name) ||
@@ -204,17 +276,14 @@ async function handleSave(ctx) {
     }
 
     //Prepare body input
-    let cfg = {
+    const cfg = {
         name: ctx.request.body.name.trim(),
         dataFolder: slash(path.normalize(ctx.request.body.dataFolder+'/')),
         cfgFile: slash(path.normalize(ctx.request.body.cfgFile))
     }
 
     //Validating path spaces
-    if(
-        cfg.dataFolder.includes(' ') ||
-        cfg.cfgFile.includes(' ')
-    ){
+    if(cfg.dataFolder.includes(' ') || cfg.cfgFile.includes(' ')){
         return ctx.send({success: false, message: 'The paths cannot contain spaces.'});
     }
 
@@ -229,22 +298,22 @@ async function handleSave(ctx) {
 
     //Validating CFG Path
     try {
-        let cfgFilePath = helpers.resolveCFGFilePath(cfg.cfgFile, cfg.dataFolder);
-        let rawCfgFile = helpers.getCFGFileData(cfgFilePath);
-        let port = helpers.getFXServerPort(rawCfgFile);
+        const cfgFilePath = helpers.resolveCFGFilePath(cfg.cfgFile, cfg.dataFolder);
+        const rawCfgFile = helpers.getCFGFileData(cfgFilePath);
+        const port = helpers.getFXServerPort(rawCfgFile);
     } catch (error) {
         return ctx.send({success: false, message: `<strong>CFG File error:</strong> ${error.message}`});
     }
 
     //Preparing & saving config
-    let newGlobalConfig = globals.configVault.getScopedStructure('global');
+    const newGlobalConfig = globals.configVault.getScopedStructure('global');
     newGlobalConfig.serverName = cfg.name;
-    let saveGlobalStatus = globals.configVault.saveProfile('global', newGlobalConfig);
+    const saveGlobalStatus = globals.configVault.saveProfile('global', newGlobalConfig);
 
-    let newFXRunnerConfig = globals.configVault.getScopedStructure('fxRunner');
+    const newFXRunnerConfig = globals.configVault.getScopedStructure('fxRunner');
     newFXRunnerConfig.serverDataPath = cfg.dataFolder;
     newFXRunnerConfig.cfgPath = cfg.cfgFile;
-    let saveFXRunnerStatus = globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
+    const saveFXRunnerStatus = globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
     
 
     //Sending output
@@ -254,19 +323,73 @@ async function handleSave(ctx) {
         globals.fxRunner.refreshConfig();
 
         //Logging
-        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing global/fxserver settings via welcome stepper.`;
+        const logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing global/fxserver settings via setup stepper.`;
         logOk(logMessage);
         globals.logger.append(logMessage);
 
         //Starting server
-        let spawnMsg = await globals.fxRunner.spawnServer(false);
+        const spawnMsg = await globals.fxRunner.spawnServer(false);
         if(spawnMsg !== null){
             return ctx.send({success: false, message: `Faied to start server with error: <br>\n${spawnMsg}`});
         }else{
             return ctx.send({success: true});
         }
     }else{
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changingglobal/fxserver settings via welcome stepper.`);
+        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global/fxserver settings via setup stepper.`);
+        return ctx.send({success: false, message: `<strong>Error saving the configuration file.</strong>`});
+    }
+}
+
+
+
+//================================================================
+/**
+ * Handle Save settings
+ * Actions: download recipe, globals.deployer = new Deployer(recipe)
+ * @param {object} ctx
+ */
+async function handleSaveDeployer(ctx) {
+    //Sanity check
+    if(
+        isUndefined(ctx.request.body.isTrustedSource) ||
+        isUndefined(ctx.request.body.name) ||
+        isUndefined(ctx.request.body.recipeURL) ||
+        isUndefined(ctx.request.body.targetPath)
+    ){
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
+    }
+    const isTrustedSource = (ctx.request.body.isTrustedSource === 'true');
+    const serverName = ctx.request.body.name.trim();
+    const recipeURL = ctx.request.body.recipeURL.trim();
+    const targetPath = slash(path.normalize(ctx.request.body.targetPath+'/')); 
+
+    //Get recipe and start deployer (constructor will validate the recipe)
+    try {
+        const res = await axios({
+            url: recipeURL,
+            method: 'get',
+            responseEncoding: 'utf8',
+            timeout: 4500
+        });
+        if(typeof res.data !== 'string') throw new Error('This URL did not return a string.');
+        globals.deployer = new Deployer(res.data, targetPath, isTrustedSource);
+    } catch (error) {
+        return ctx.send({success: false, message: error.message});
+    }
+    
+    //Preparing & saving config
+    const newGlobalConfig = globals.configVault.getScopedStructure('global');
+    newGlobalConfig.serverName = serverName;
+    const saveGlobalStatus = globals.configVault.saveProfile('global', newGlobalConfig);
+    
+    //Checking save and redirecting
+    if(saveGlobalStatus){
+        const logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing global settings via setup stepper and started Deployer`;
+        logOk(logMessage);
+        globals.logger.append(logMessage);
+        return ctx.send({success: true});
+    }else{
+        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
         return ctx.send({success: false, message: `<strong>Error saving the configuration file.</strong>`});
     }
 }

@@ -13,9 +13,11 @@ module.exports = async function LiveConsole(ctx) {
         return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
     }
 
-    let renderData = {
+    const renderData = {
         headerTitle: 'Console',
-        disableWrite: (ctx.utils.checkPermission('console.write', modulename))? 'autofocus' : 'disabled'
+        disableCommand: (ctx.utils.checkPermission('console.write', modulename, false))? 'autofocus' : 'disabled',
+        disableRestart: (ctx.utils.checkPermission('control.server', modulename, false))? '' : 'disabled',
+        restartBtnClass: (ctx.utils.checkPermission('control.server', modulename, false))? 'danger' : 'secondary',
     }
 
     return ctx.utils.render('console', renderData);

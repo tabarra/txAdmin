@@ -326,14 +326,15 @@ module.exports = class PlayerController {
 
         //Sanity checks
         if(typeof playerName !== 'string') throw new Error('playerName should be an string.');
-        if(!Array.isArray(idArray)) throw new Error('Identifiers should be an array with at least 1 identifier.');
+        if(!Array.isArray(idArray)) throw new Error('Identifiers should be an array.');
         idArray = idArray.filter((id)=>{
             return Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
         });
+        if(idArray.length < 1) throw new Error('Identifiers array must contain at least 1 valid identifier.');
 
         try {
             //Prepare & query
-            let ts = now();
+            const ts = now();
             const filter = (x) => {
                 return (
                     (x.type == 'ban' || x.type == 'whitelist') &&
@@ -341,15 +342,15 @@ module.exports = class PlayerController {
                     (!x.revocation.timestamp)
                 );
             }
-            let hist = await this.getRegisteredActions(idArray, filter);
+            const hist = await this.getRegisteredActions(idArray, filter);
 
             //Check ban
             if(this.config.onJoinCheckBan){
-                let ban = hist.find((a) => a.type == 'ban');
+                const ban = hist.find((a) => a.type == 'ban');
                 if(ban){
                     let msg;
                     if(ban.expiration){
-                        let humanizeOptions = {
+                        const humanizeOptions = {
                             language: globals.translator.t('$meta.humanizer_language'),
                             round: true,
                             units: ['d', 'h'],
@@ -369,14 +370,14 @@ module.exports = class PlayerController {
 
             //Check whitelist
             if(this.config.onJoinCheckWhitelist){
-                let wl = hist.find((a) => a.type == 'whitelist');
+                const wl = hist.find((a) => a.type == 'whitelist');
                 if(!wl){
                     //Get license
                     let license = idArray.find((id) => id.substring(0, 8) == "license:");
                     if(!license) return {allow: false, reason: 'the whitelist module requires a license identifier.'}
                     license = license.substring(8);
                     //Check for pending WL requests
-                    let pending = await this.dbo.get("pendingWL").find({license: license}).value();
+                    const pending = await this.dbo.get("pendingWL").find({license: license}).value();
                     let whitelistID;
                     if(pending){
                         pending.name = playerName;
@@ -384,7 +385,7 @@ module.exports = class PlayerController {
                         whitelistID = pending.id;
                     }else{
                         whitelistID = 'R' + customAlphabet(GlobalData.noLookAlikesAlphabet, 4)()
-                        let toDB = {
+                        const toDB = {
                             id: whitelistID,
                             name: playerName,
                             license: license,

@@ -1,11 +1,14 @@
-fx_version 'bodacious'
-games { 'gta5' }
+-- Modifying or rewriting this resource for local use only is strongly discouraged.
+-- Feel free to open an issue or pull request in our GitHub.
+-- Official discord server: https://discord.gg/AFAAXzq
 
 author 'Tabarra'
 description 'Remotely Manage & Monitor your GTA5 FiveM Server'
 repository 'https://github.com/tabarra/txAdmin'
-version '2.7.1'
+version '3.0.0-dev'
 
+fx_version 'bodacious'
+games { 'gta5' }
 
 -- NOTE: Due to global package constraints, js scripts will be loaded from main.js
 server_scripts { 

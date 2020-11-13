@@ -101,26 +101,31 @@
     const defaultResources = [
         "baseevents",
         "basic-gamemode",
-        "betaguns",
-        "channelfeed",
+        "betaguns", //old
+        "channelfeed", //old
         "chat-theme-gtao",
         "chat",
         "example-loadscreen",
-        "fivem-awesome1501",
+        "fivem-awesome1501", //old
         "fivem-map-hipster",
         "fivem-map-skater",
         "fivem",
-        "gameInit",
+        "gameInit", //old
         "hardcap",
-        "irc",
-        "keks",
+        "irc", //old
+        "keks", //old
         "mapmanager",
+        "money-fountain-example-map",
+        "money-fountain",
+        "money",
         "monitor",
-        "obituary-deaths",
-        "obituary",
+        "obituary-deaths", //old
+        "obituary", //old
+        "ped-money-drops",
+        "player-data",
         "playernames",
-        "race-test",
-        "race",
+        "race-test", //old
+        "race", //old
         "rconlog",
         "redm-map-one",
         "runcode",
@@ -208,17 +213,18 @@
             }
         });
         if(!filter.length){
-            hideDefaultResources();
+            setDefaultResourcesVisibility();
         }
 
     }
 
     //============================================== Hide defaults
     $('#defResCheckbox').click(function () {
-        hideDefaultResources();
+        window.localStorage.resourcesPageShowDefault = document.getElementById('defResCheckbox').checked;
+        setDefaultResourcesVisibility();
     });
 
-    function hideDefaultResources() {
+    function setDefaultResourcesVisibility() {
         if ($('#defResCheckbox').is(':checked')) {
             defaultResources.forEach(defRes => {
                 $(`#res-${defRes}`).show();
@@ -248,6 +254,11 @@
     }
 
     $(function () {
-        hideDefaultResources();
+        if(typeof window.localStorage.resourcesPageShowDefault === 'string'){
+            document.getElementById('defResCheckbox').checked = (window.localStorage.resourcesPageShowDefault  === 'true');
+        }else{
+            window.localStorage.resourcesPageShowDefault = false;
+        }
+        setDefaultResourcesVisibility();
     });
 </script>

@@ -14,25 +14,66 @@
     <link rel="shortcut icon" type="image/png" href="img/favicon_default.png" id="favicon" />
     <link rel="stylesheet" href="css/txAdmin.css">
 
-    <!-- setup specific -->
+    <!-- Page CSS -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://unpkg.com/materialize-stepper@3.1.0/dist/css/mstepper.min.css">
 
     <style>
-        .logo-image svg {
-            height: 25px;
-            width: 25px;
-            transform: scale(-1, 1);
-            text-align: center;
-            fill: #fff;
-        }
-
         code{
             color: #321fdb!important;
         }
-
+        .bigbutton{
+            cursor: pointer;
+            background-color: #f7f7f7;
+            -webkit-transition: background-color 250ms linear, color 50ms linear;
+            -ms-transition: background-color 250ms linear, color 50ms linear;
+            transition: background-color 250ms linear, color 50ms linear;
+        }
+        .bigbutton:hover{
+            background-color: #2196f3 !important;
+            color: white; 
+        }
+        .bigbutton em{
+            -webkit-transition: color 50ms linear;
+            -ms-transition: color 50ms linear;
+            transition: color 50ms linear;
+            color: var(--dark) !important;
+        }
+        .bigbutton:hover em{
+            color: var(--light)!important;
+        }
         .stepper{
             list-style: none;
+            padding-inline-start: 20px;
+        }
+        .deployment-type-card{
+            border-radius: 15px;
+            margin: 0.75em;
+        }
+        .deployment-type-card > .card-body{
+            padding: 0.75rem !important;
+        }
+        .template-cards{
+            margin: 5px;
+            padding: 8px;
+            height: 5.1rem;
+            border-radius: 5px;
+        }
+        .template-cards > span{
+            overflow: hidden;
+            word-wrap: break-word;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+        }
+        .template-cards > .title{
+            -webkit-line-clamp: 1;
+        }
+        .template-cards > .description{
+            -webkit-line-clamp: 2;
+        }
+        .template-cards > .title::before{
+            content: "⭐";
         }
     </style>
 </head>
@@ -42,19 +83,19 @@
     <div class="container">
 
         <!-- Logo Row -->
-        <div class="row justify-content-center mb-4">
+        <div class="row justify-content-center pt-4 mb-4">
             <img src="img/txadmin.png" alt="txAdmin Logo">
         </div>
 
-        <!-- Card Row -->
+        <!-- Stepper Row -->
         <div class="row justify-content-center">
-            <div class="col-md-6 mw-col6x">
+            <div class="col-12 col-md-12 col-lg-8">
                 <div class="card fade-in">
                     <div class="card-body">
                         <ul class="stepper linear">
 
                             <!-- Welcome -->
-                            <li class="step active">
+                            <li class="step {{@if(it.isReset)}}done{{#else}}active{{/if}}">
                                 <div class="step-title waves-effect">Welcome, {{it.adminUsername}}!</div>
                                 <div class="step-content">
                                     {{@if(it.serverProfile == 'default')}}
@@ -64,21 +105,24 @@
                                         You selected the profile <code>{{it.serverProfile}}</code>.
                                     {{/if}}
                                     <br>
-                                    This profile is not configured yet, let's do this now?
+                                    {{@if(!it.isReset)}}
+                                        This profile is not configured yet, let's do this now?
+                                    {{/if}}
                                     <div class="step-actions">
                                         <button class="btn btn-pill btn-info next-step" type="button">Next</button>
                                     </div>
                                 </div>
                             </li>
 
+
                             <!-- Server Name -->
-                            <li class="step">
+                            <li class="step {{@if(it.isReset)}}done{{/if}}">
                                 <div class="step-title waves-effect">Server Name</div>
                                 <div class="step-content">
                                     A <strong>short</strong> server name to be used in txAdmin interface and
                                     Chat/Discord messages.
                                     <input type="text" class="form-control mt-2" id="frmName" maxlength="22"
-                                        minlength="3" placeholder="Happy Server" required>
+                                        minlength="3" placeholder="Happy Server" value="{{it.serverName}}" required>
                                     <span id="frmNameError" class="text-danger fade-in d-none"></span>
                                     <div class="step-actions">
                                         <button class="btn btn-pill btn-secondary previous-step"
@@ -89,64 +133,160 @@
                                 </div>
                             </li>
 
-                            <!-- Server Data Folder -->
+
+                            <!-- Deployment Type -->
                             <li class="step">
-                                <div class="step-title waves-effect">Server Data Folder</div>
+                                <div class="step-title waves-effect">Deployment Type</div>
                                 <div class="step-content">
-                                    The folder that <strong>contains</strong> the <code>resources</code> and
-                                    <code>cache</code> folders, usually it's here that you put your <code>server.cfg</code>. <br>
-                                    Also known as Base Folder.
-                                    <input type="text" class="form-control mt-2" id="frmDataFolder"
-                                        placeholder="C:/Users/Admin/Desktop/server01" required>
-                                    <span id="frmDataFolderError" class="text-danger fade-in d-none"></span>
+                                    <strong>Select</strong> how you want to setup your server:
+                                    <div class="card bigbutton deployment-type-card border-dark">
+                                        <div class="card-body next-step" onclick="selectDeploymentType('common')">
+                                            <strong>⭐ Editor's Choice Template</strong> <br>
+                                            Select a template from a curated list of community favorites. <br>
+                                            This includes ESX, vRP and a Default template for you to customize.
+                                        </div>
+                                    </div>
+                                    <div class="card bigbutton deployment-type-card border-dark">
+                                        <div class="card-body next-step" onclick="selectDeploymentType('remote')">
+                                            <strong>📑 Remote URL Template</strong> <br>
+                                            Based on a Recipe URL in the YAML format. <br>
+                                            You will have the option to edit the Recipe before running it.
+                                        </div>
+                                    </div>
+                                    <div class="card bigbutton deployment-type-card border-dark">
+                                        <div class="card-body next-step" onclick="selectDeploymentType('local')">
+                                            <strong>📁 Local Server Data</strong> <br>
+                                            Select an existing server-data folder in the VPS. <br>
+                                            This is the option you are already used to.
+                                        </div>
+                                    </div>
                                     <div class="step-actions">
                                         <button class="btn btn-pill btn-secondary previous-step"
                                             type="button">Back</button>
-                                        <button class="btn btn-pill btn-info next-step" type="button"
-                                            data-feedback="validateDataFolder" id="frmDataFolderSubmitBtn">Next</button>
-                                        <button class="btn btn-pill btn-primary d-none fade-in" type="button"
-                                            id="frmDataFolderFixBtn" 
-                                            data-target="frmDataFolder">Accept Fix</button>
                                     </div>
                                 </div>
                             </li>
 
-                            <!-- Server CFG File -->
+
+                            <!-- Step 4 -->
                             <li class="step">
-                                <div class="step-title waves-effect">Server CFG File</div>
+                                <div class="step-title waves-effect" id="s4Title"><i>please select deployment type</i></div>
                                 <div class="step-content">
-                                    The path to your server config file, usually named <code>server.cfg</code>. <br>
-                                    This can either be absolute, or relative to the Server Data folder.
-                                    <input type="text" class="form-control mt-2" id="frmCFGFile"
-                                        placeholder="C:/Users/Admin/Desktop/server01/server.cfg" required>
-                                    <span id="frmCFGFileError" class="text-danger fade-in d-none"></span>
-                                    <div class="step-actions">
+                                    <!-- select template buttons -->
+                                    <template id="s4CommonTemplateCardTemplate">
+                                        <div class="bigbutton template-cards border-dark next-step">
+                                            <span class="title">
+                                                <strong></strong> <em class="text-muted"></em>
+                                            </span>
+                                            <span class="description"></span>
+                                        </div>
+                                    </template>
+                                    <div class="d-none" id="s4CommonTemplateDiv">
+                                        <div class="row" id="s4CommonTemplateRow"></div> 
+                                        
+                                        <div class="step-actions">
+                                            <button class="btn btn-pill btn-secondary previous-step"
+                                                type="button">Back</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- input url with some minimal backend validation -->
+                                    <div class="d-none" id="s4RemoteTemplateDiv">
+                                        The URL for the remote recipe, or the forum thread. <br>
+                                        You can discover new recipes by visiting the <a href="https://forum.cfx.re/c/development/releases/7" target="_blank" rel="noopener noreferrer">CFX Forum</a>.
+                                        <input type="text" class="form-control mt-2" id="s4RemoteTemplateInput"
+                                            placeholder="https://raw.githubusercontent.com/tabarra/PlumeESX2/master/.fxrecipe"
+                                            DEBUG value="https://gist.githubusercontent.com/tabarra/3e9dfd4bccd1936b6d81144824821f77/raw/da69aac268bc92674f3ec2ff84eac97bcb94c0cf/recipe_test_import.yaml">
+                                        <span id="s4RemoteTemplateInputError" class="text-danger fade-in d-none"></span>
                                         <div class="step-actions">
                                             <button class="btn btn-pill btn-secondary previous-step"
                                                 type="button">Back</button>
                                             <button class="btn btn-pill btn-info next-step" type="button"
-                                                data-feedback="validateCFGFile" id="frmCFGFileSubmitBtn">Save</button>
-                                            <button class="btn btn-pill btn-primary d-none fade-in" type="button"
-                                                id="frmCFGFileFixBtn" 
-                                                data-target="frmCFGFile">Accept Fix</button>
+                                                data-feedback="validateRemoteTemplate">Next</button>
                                         </div>
                                     </div>
+
+                                    <!-- input local data folder -->
+                                    <div class="d-none" id="s4LocalDataPathDiv">
+                                        The folder that <strong>contains</strong> the <code>resources</code> and
+                                        <code>cache</code> folders, usually it's here that you put your <code>server.cfg</code>. <br>
+                                        Also known as Base Folder.
+                                        <input type="text" class="form-control mt-2" id="s4LocalDataPathInput"
+                                            placeholder="C:/Users/Admin/Desktop/server01">
+                                        <span id="s4LocalDataPathInputError" class="text-danger fade-in d-none"></span>
+                                        <div class="step-actions">
+                                            <button class="btn btn-pill btn-secondary previous-step"
+                                                type="button">Back</button>
+                                            <button class="btn btn-pill btn-info next-step" type="button"
+                                                data-feedback="validateLocalDataFolder" id="s4FolderSubmitBtn">Next</button>
+                                            <button class="btn btn-pill btn-primary d-none fade-in" type="button"
+                                                id="s4LocalDataPathInputFixBtn" 
+                                                data-target="s4LocalDataPathInput">Accept Fix</button>
+                                        </div>
+                                    </div>
+
                                 </div>
                             </li>
+
+
+                            <!-- Step 5 -->
+                            <li class="step">
+                                <div class="step-title waves-effect" id="s5Title"><i>please select deployment type</i></div>
+                                <div class="step-content" id="s5Content">
+
+                                    <!-- input local data folder --> 
+                                    <div class="d-none" id="s5DeployerTargetDiv">
+                                        The folder where the server will be deployed to. <br>
+                                        This folder will contain all your resources and configuration files. <br>
+                                        <strong>We strongly recommend using the path suggested below.</strong>
+                                        <input type="text" class="form-control mt-2" id="s5DeployerTargetInput"
+                                            placeholder="C:/Users/Admin/Desktop/server01/server.cfg">
+                                        <span id="s5DeployerTargetError" class="text-danger fade-in d-none"></span>
+                                        <div class="step-actions">
+                                            <button class="btn btn-pill btn-secondary previous-step"
+                                                type="button">Back</button>
+                                            <button class="btn btn-pill btn-info next-step" type="button"
+                                                data-feedback="validateLocalDeployPath" id="s5DeployerTargetSubmitBtn">Save</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- input server cfg file -->
+                                    <div class="d-none" id="s5ServerCFGDiv">
+                                        The path to your server config file, usually named <code>server.cfg</code>. <br>
+                                        This can either be absolute, or relative to the Server Data folder.
+                                        <input type="text" class="form-control mt-2" id="s5ServerCFGInput"
+                                            placeholder="C:/Users/Admin/Desktop/server01/server.cfg">
+                                        <span id="s5ServerCFGError" class="text-danger fade-in d-none"></span>
+                                        <div class="step-actions">
+                                            <div class="step-actions">
+                                                <button class="btn btn-pill btn-secondary previous-step"
+                                                    type="button">Back</button>
+                                                <button class="btn btn-pill btn-info next-step" type="button"
+                                                    data-feedback="validateCFGFile" id="s5ServerCFGSubmitBtn">Save</button>
+                                                <button class="btn btn-pill btn-primary d-none fade-in" type="button"
+                                                    id="s5ServerCFGFixBtn" 
+                                                    data-target="s5ServerCFGInput">Accept Fix</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                            </li>
+
 
                             <!-- Finish -->
                             <li class="step">
                                 <div class="step-title waves-effect">Finish</div>
                                 <div class="step-content">
-                                    <strong>We are all set!</strong> <br>
+                                    <h4 id="finishMessage">We are all set!</h4>
                                     {{@if(it.windowsBatPath)}}
                                         You can run this profile by executing: <br>
                                         <code>{{it.windowsBatPath}}</code> <br>
                                     {{/if}}
                                     <span id="saveError" class="text-danger fade-in d-none"></span>
                                     <div class="step-actions">
-                                        <button class="btn btn-pill btn-success next-step" 
-                                            type="button" data-feedback="performSave">
+                                        <button class="btn btn-pill btn-success next-step" type="button" 
+                                            data-feedback="performSave" id="finishButton">
                                             Save & Start Server</button>
                                     </div>
                                 </div>
@@ -164,7 +304,14 @@
                 <div class="alert alert-secondary text-center small" role="alert">
                     <strong>Server profile:</strong> {{it.serverProfile}} <br>
                     <strong>txAdmin version:</strong> {{it.txAdminVersion}} <br>
-                    <strong>FXServer build:</strong> {{it.fxServerVersion}}
+                    <strong>FXServer build:</strong> {{it.fxServerVersion}} 
+                    <div class="hrsep hrsep-small">//</div>
+                    <h5 class="text-muted">
+                        <strong>txAdmin</strong> Official Discord: <br>
+                        <a href="https://discord.gg/uAmsGa2" target="_blank">
+                            <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
+                        </a>
+                    </h5>
                 </div>
             </div>
         </div>
@@ -179,20 +326,44 @@
     <!-- JS -->
     <script src="https://unpkg.com/materialize-stepper@3.1.0/dist/js/mstepper.js"></script>
     <script>
+        //Constants & vars
+        const txDataPath = '{{it.txDataPath}}';
+        const isReset = ('{{it.isReset}}' === 'true');
+        const timeoutLong = 5000;
+        // const spinnerHTML = '<div style="min-height: 250px;" class="txSpinner">Loading...</div>';
+        const spinnerHTML = '<div style="min-height: 250px; margin: auto;"><div class="txSpinner">Loading...</div></div>';
+        const suggestions = {};
+        let loadedTemplates = [];
+        let selectedTemplateIndex;
+        let selectedDeploymentType;
+
         //Stepper config
-        var stepper = document.querySelector('.stepper');
-        var stepperInstace = new MStepper(stepper, {
+        const stepper = document.querySelector('.stepper');
+        const stepperInstace = new MStepper(stepper, {
             autoFocusInput: true,
             showFeedbackPreloader: true,
             stepTitleNavigation: false,
-            firstActive: 0,
-            feedbackPreloader: '<div class="txSpinner">Loading...</div>',
+            firstActive: (isReset)? 2 : 0,
+            feedbackPreloader: spinnerHTML,
         });
 
-        const timeoutLong = 4000;
-        var suggestions = {};
-
         //Functions
+        const checkDoLogoutRefresh = (data) => {
+            if(data.logout === true){
+                window.location = '/auth?logout';
+                return true;
+            }else if(data.refresh === true){
+                window.location.reload(true);
+                return true;
+            }
+            return false;
+        }
+        const buildDeployPath = (templateName) => {
+            const treatedName = templateName.replace(/[^a-zA-Z0-9\.\-_]/g, '');
+            const shortName = (treatedName.length < 3)? 'DumbName' : treatedName;
+            const timestamp = (Date.now()/1000).toFixed();
+            return `${txDataPath}/${shortName}_${timestamp}.base`;
+        }
         const inputKeyUp = (event) => {
             event.target.classList.remove('is-invalid', 'is-valid');
             if (event.keyCode === 13) {
@@ -202,40 +373,62 @@
         }
         const acceptFix = (event) => {
             event.target.classList.add('d-none');
-            let targetName = event.target.dataset.target;
-            var targetElement = document.getElementById(targetName);
+            const targetName = event.target.dataset.target;
+            const targetElement = document.getElementById(targetName);
             targetElement.classList.remove('is-invalid');
             targetElement.classList.add('is-valid');
             targetElement.value = suggestions[targetName] || '';
-            var currentSteps = stepperInstace.getSteps();
+            const currentSteps = stepperInstace.getSteps();
             currentSteps.active.step.classList.remove('wrong');
             currentSteps.active.step.classList.add('done');
         }
 
 
         //Grabs the elements and set the event handlers
-        var frmName = document.getElementById("frmName");
-        var frmNameError = document.getElementById("frmNameError");
+        const finishButton = document.getElementById("finishButton");
+        const finishMessage = document.getElementById("finishMessage");
+        const frmName = document.getElementById("frmName");
+        const frmNameError = document.getElementById("frmNameError");
         frmName.addEventListener("keyup", inputKeyUp);
 
-        var frmDataFolder = document.getElementById("frmDataFolder");
-        var frmDataFolderError = document.getElementById("frmDataFolderError");
-        var frmDataFolderFixBtn = document.getElementById("frmDataFolderFixBtn");
-        frmDataFolder.addEventListener("keyup", inputKeyUp);
-        frmDataFolderFixBtn.addEventListener("click", acceptFix);
+        //Step 4
+        const s4Title = document.getElementById("s4Title");
+        const s4CommonTemplateDiv = document.getElementById("s4CommonTemplateDiv");
+        const s4CommonTemplateCardTemplate = document.getElementById("s4CommonTemplateCardTemplate");
+        const s4CommonTemplateRow = document.getElementById("s4CommonTemplateRow");
+        const s4RemoteTemplateDiv = document.getElementById("s4RemoteTemplateDiv");
+        const s4LocalDataPathDiv = document.getElementById("s4LocalDataPathDiv");
+
+        const s4RemoteTemplateInput = document.getElementById("s4RemoteTemplateInput");
+        const s4RemoteTemplateInputError = document.getElementById("s4RemoteTemplateInputError");
+        s4RemoteTemplateInput.addEventListener("keyup", inputKeyUp);
+        const s4LocalDataPathInput = document.getElementById("s4LocalDataPathInput");
+        const s4LocalDataPathInputError = document.getElementById("s4LocalDataPathInputError");
+        const s4LocalDataPathInputFixBtn = document.getElementById("s4LocalDataPathInputFixBtn");
+        s4LocalDataPathInput.addEventListener("keyup", inputKeyUp);
+        s4LocalDataPathInputFixBtn.addEventListener("click", acceptFix);
+
+        //Step 5
+        const s5Title = document.getElementById("s5Title");
+        const s5Content = document.getElementById("s5Content");
+        const s5DeployerTargetDiv = document.getElementById("s5DeployerTargetDiv");
+        const s5ServerCFGDiv = document.getElementById("s5ServerCFGDiv");
         
-        var frmCFGFile = document.getElementById("frmCFGFile");
-        var frmCFGFileError = document.getElementById("frmCFGFileError");
-        var frmCFGFileFixBtn = document.getElementById("frmCFGFileFixBtn");
-        frmCFGFile.addEventListener("keyup", inputKeyUp);
-        frmCFGFileFixBtn.addEventListener("click", acceptFix);
+        const s5DeployerTargetInput = document.getElementById("s5DeployerTargetInput");
+        const s5DeployerTargetError = document.getElementById("s5DeployerTargetError");
+        s5DeployerTargetInput.addEventListener("keyup", inputKeyUp);
+        const s5ServerCFGInput = document.getElementById("s5ServerCFGInput");
+        const s5ServerCFGError = document.getElementById("s5ServerCFGError");
+        const s5ServerCFGFixBtn = document.getElementById("s5ServerCFGFixBtn");
+        s5ServerCFGInput.addEventListener("keyup", inputKeyUp);
+        s5ServerCFGFixBtn.addEventListener("click", acceptFix);
         
         
         // Server Name step validation
         function validateName(destroyFeedback) {
             frmName.classList.remove('is-invalid', 'is-valid');
             frmNameError.classList.add('d-none');
-            let name = frmName.value.trim();
+            const name = frmName.value.trim();
 
             if(name.length < 3 || name.length > 22){
                 frmNameError.innerHTML = `The name must have between 3 and 22 characters.`;
@@ -249,44 +442,208 @@
             }
         }
 
+        // Deployment type selection
+        function selectDeploymentType(depType){
+            selectedDeploymentType = depType;
+            selectedTemplateURL = null;
+            if(depType == 'common' || depType == 'remote'){
+                s4Title.textContent = "Select Template";
+                s5Title.textContent = "Data Location";
+                finishButton.textContent = "Go to Recipe Deployer";
+                finishMessage.textContent = "We are almost there!";
+                s4CommonTemplateRow.innerHTML = spinnerHTML;
+                s4LocalDataPathDiv.classList.add('d-none');
+                s5DeployerTargetDiv.classList.remove('d-none');
+                s5ServerCFGDiv.classList.add('d-none');
+                
+                if(depType == 'common'){
+                    s4CommonTemplateDiv.classList.remove('d-none');
+                    s4RemoteTemplateDiv.classList.add('d-none');
+                    setFavTemplatesCards();
+                }else{
+                    s4CommonTemplateDiv.classList.add('d-none');
+                    s4RemoteTemplateDiv.classList.remove('d-none');
+                }
+                
+            }else if(depType == 'local'){
+                s4Title.textContent = "Local Server Data";
+                s5Title.textContent = "Server CFG File";
+                finishButton.textContent = "Save & Start Server";
+                finishMessage.textContent = "We are all set!";
+                s4CommonTemplateDiv.classList.add('d-none');
+                s4RemoteTemplateDiv.classList.add('d-none');
+                s4LocalDataPathDiv.classList.remove('d-none');
+                s5DeployerTargetDiv.classList.add('d-none');
+                s5ServerCFGDiv.classList.remove('d-none');
+            }
+        }
+
+        //Download Recipe Editors Choice list and create cards
+        async function setFavTemplatesCards(){
+            //NOTE: mocked
+            const tmpGETResponse = [
+                {
+                    name: 'CFX Default',
+                    version: '1.0.0',
+                    description: 'Official recipe for the base resources required to run a server.',
+                    url: 'http://example/default'
+                },
+                {
+                    name: 'PlumeESX2',
+                    version: '1.2.3',
+                    description: 'A full featured (8 jobs) and highly configurable yet lightweight ESX v2 base that can be easily extendable.',
+                    url: 'http://example/plume'
+                },
+                {
+                    name: 'DriftMaster',
+                    version: '1.2.3',
+                    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ',
+                    url: 'http://example/DriftMaster'
+                },
+                {
+                    name: 'testFill',
+                    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ',
+                    url: 'http://example/test'
+                }
+            ];
+            loadedTemplates = tmpGETResponse;
+            
+            setTimeout(() => {
+                s4CommonTemplateRow.innerHTML = '';
+                tmpGETResponse.forEach((recipe, key) => {
+                    const newNode = document.createElement("div");
+                    newNode.innerHTML = s4CommonTemplateCardTemplate.innerHTML;
+                    newNode.classList.add('col-12', 'col-md-6', 'p-0');
+                    newNode.querySelector('.bigbutton').onclick = () => {selectTemplate(key)};
+                    newNode.querySelector('.title > strong').innerText = recipe.name;
+                    newNode.querySelector('.title > em').innerText = (recipe.version)? `(v${recipe.version})` : '';
+                    newNode.querySelector('.description').innerText = recipe.description;
+                    s4CommonTemplateRow.appendChild(newNode);
+                });
+            }, 500);
+        }
+
+        // Deployment type selection
+        function selectTemplate(key){
+            selectedTemplateIndex = key;
+            if(!loadedTemplates[key]){
+                return alert('Invalid Template');
+            }
+            s5DeployerTargetInput.value = buildDeployPath(loadedTemplates[key].name);
+            stepperInstace.nextStep();
+        }
+
+        // Validate a remote template url
+        function validateRemoteTemplate(destroyFeedback) {
+            const currentSteps = stepperInstace.getSteps();
+            s4RemoteTemplateInput.classList.remove('is-invalid', 'is-valid');
+            s4RemoteTemplateInputError.classList.add('d-none');
+
+            $.ajax({
+                type: "POST",
+                url: '/setup/validateRecipeURL',
+                timeout: timeoutLong,
+                data: {recipeURL: s4RemoteTemplateInput.value.trim()},
+                dataType: 'json',
+                success: function (data) {
+                    if(checkDoLogoutRefresh(data)) return;
+                    if (data.success == true){
+                        s5DeployerTargetInput.value = buildDeployPath(data.name);
+                        currentSteps.active.step.classList.remove('wrong');
+                        currentSteps.active.step.classList.add('done');
+                        s4RemoteTemplateInput.classList.add('is-valid');
+                        destroyFeedback(true);
+                    }else{
+                        stepperInstace.wrongStep();
+                        s4RemoteTemplateInputError.innerHTML = `<br>Error:</b> ${data.message} <br>Make sure this is a valid Recipe URL.`;
+                        s4RemoteTemplateInputError.classList.remove('d-none');
+                        s4RemoteTemplateInput.classList.add('is-invalid');
+                        destroyFeedback(false);
+                    }
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    stepperInstace.wrongStep();
+                    s4RemoteTemplateInputError.innerHTML = `<br>Error:</b> ${message} <br>Make sure this is a valid Recipe URL.`;
+                    s4RemoteTemplateInputError.classList.remove('d-none');
+                    s4RemoteTemplateInput.classList.add('is-invalid');
+                    destroyFeedback(false);
+                }
+            });
+        }
+
+        
+        // Validate a local deploy path
+        function validateLocalDeployPath(destroyFeedback) {
+            const currentSteps = stepperInstace.getSteps();
+            s5DeployerTargetInput.classList.remove('is-invalid', 'is-valid');
+            s5DeployerTargetError.classList.add('d-none');
+
+            $.ajax({
+                type: "POST",
+                url: '/setup/validateLocalDeployPath',
+                timeout: timeoutLong,
+                data: {deployPath: s5DeployerTargetInput.value.trim()},
+                dataType: 'json',
+                success: function (data) {
+                    if(checkDoLogoutRefresh(data)) return;
+                    if (data.success == true){
+                        currentSteps.active.step.classList.remove('wrong');
+                        currentSteps.active.step.classList.add('done');
+                        s5DeployerTargetInput.classList.add('is-valid');
+                        destroyFeedback(true);
+                    }else{
+                        stepperInstace.wrongStep();
+                        s5DeployerTargetError.innerHTML = `<br>Error:</b> ${data.message}`;
+                        s5DeployerTargetError.classList.remove('d-none');
+                        s5DeployerTargetInput.classList.add('is-invalid');
+                        destroyFeedback(false);
+                    }
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    stepperInstace.wrongStep();
+                    s5DeployerTargetError.innerHTML = `<br>Error:</b> ${message}`;
+                    s5DeployerTargetError.classList.remove('d-none');
+                    s5DeployerTargetInput.classList.add('is-invalid');
+                    destroyFeedback(false);
+                }
+            });
+        }
+
+
         // Server Data Folder step validation
-        function validateDataFolder(destroyFeedback) {
-            var currentSteps = stepperInstace.getSteps();
-            frmDataFolder.classList.remove('is-invalid', 'is-valid');
-            frmDataFolderError.classList.add('d-none');
-            let data = {dataFolder: frmDataFolder.value.trim()};
+        function validateLocalDataFolder(destroyFeedback) {
+            const currentSteps = stepperInstace.getSteps();
+            s4LocalDataPathInput.classList.remove('is-invalid', 'is-valid');
+            s4LocalDataPathInputError.classList.add('d-none');
             
             $.ajax({
                 type: "POST",
-                url: '/setup/validateDataFolder',
-                timeout: 5000,
-                data: data,
+                url: '/setup/validateLocalDataFolder',
+                timeout: timeoutLong,
+                data: {dataFolder: s4LocalDataPathInput.value.trim()},
                 dataType: 'json',
                 success: function (data) {
-                    if (data.logout) {
-                        window.location = '/auth?logout';
-                        return;
-                    }
+                    if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
                         currentSteps.active.step.classList.remove('wrong');
                         currentSteps.active.step.classList.add('done');
                         frmName.classList.add('is-valid');
                         destroyFeedback(true)
                     }else{
-                        frmDataFolderError.innerHTML = data.message;
-                        frmDataFolderError.classList.remove('d-none');
-                        frmDataFolder.classList.add('is-invalid');
+                        s4LocalDataPathInputError.innerHTML = data.message;
+                        s4LocalDataPathInputError.classList.remove('d-none');
+                        s4LocalDataPathInput.classList.add('is-invalid');
                         stepperInstace.wrongStep();
                         if(data.suggestion){
-                            suggestions['frmDataFolder'] = data.suggestion;
-                            frmDataFolderFixBtn.classList.remove('d-none');
+                            suggestions['s4LocalDataPathInput'] = data.suggestion;
+                            s4LocalDataPathInputFixBtn.classList.remove('d-none');
                         }
                         destroyFeedback(false)
                     }
                 },
                 error: function (xmlhttprequest, textstatus, message) {
-                    frmDataFolderError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
-                    frmDataFolderError.classList.remove('d-none');
+                    s4LocalDataPathInputError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
+                    s4LocalDataPathInputError.classList.remove('d-none');
                     destroyFeedback(false)
                 }
             });
@@ -295,45 +652,43 @@
 
         // Server CFG File step validation
         function validateCFGFile(destroyFeedback) {
-            var currentSteps = stepperInstace.getSteps();
-            frmCFGFile.classList.remove('is-invalid', 'is-valid');
-            frmCFGFileError.classList.add('d-none');
-            let data = {
-                dataFolder: frmDataFolder.value.trim(),
-                cfgFile: frmCFGFile.value.trim(),
+            const currentSteps = stepperInstace.getSteps();
+            s5ServerCFGInput.classList.remove('is-invalid', 'is-valid');
+            s5ServerCFGError.classList.add('d-none');
+            const outData = {
+                template: false,
+                dataFolder: s4LocalDataPathInput.value.trim(),
+                cfgFile: s5ServerCFGInput.value.trim(),
             };
             
             $.ajax({
                 type: "POST",
                 url: '/setup/validateCFGFile',
-                timeout: 5000,
-                data: data,
+                timeout: timeoutLong,
+                data: outData,
                 dataType: 'json',
                 success: function (data) {
-                    if (data.logout) {
-                        window.location = '/auth?logout';
-                        return;
-                    }
+                    if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
                         currentSteps.active.step.classList.remove('wrong');
                         currentSteps.active.step.classList.add('done');
                         frmName.classList.add('is-valid');
                         destroyFeedback(true)
                     }else{
-                        frmCFGFileError.innerHTML = data.message;
-                        frmCFGFileError.classList.remove('d-none');
-                        frmCFGFile.classList.add('is-invalid');
+                        s5ServerCFGError.innerHTML = data.message;
+                        s5ServerCFGError.classList.remove('d-none');
+                        s5ServerCFGInput.classList.add('is-invalid');
                         stepperInstace.wrongStep();
                         if(data.suggestion){
-                            suggestions['frmCFGFile'] = data.suggestion;
-                            frmCFGFileFixBtn.classList.remove('d-none');
+                            suggestions['s5ServerCFGInput'] = data.suggestion;
+                            s5ServerCFGFixBtn.classList.remove('d-none');
                         }
                         destroyFeedback(false)
                     }
                 },
                 error: function (xmlhttprequest, textstatus, message) {
-                    frmCFGFileError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
-                    frmCFGFileError.classList.remove('d-none');
+                    s5ServerCFGError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
+                    s5ServerCFGError.classList.remove('d-none');
                     destroyFeedback(false)
                 }
             });
@@ -341,27 +696,43 @@
 
         // Save function
         function performSave(destroyFeedback) {
-            var saveError = document.getElementById("saveError");
+            const saveError = document.getElementById("saveError");
             saveError.classList.add('d-none');
-            let data = {
-                name: frmName.value.trim(),
-                dataFolder: frmDataFolder.value.trim(),
-                cfgFile: frmCFGFile.value.trim(),
+
+            const outData = {
+                name: frmName.value.trim()
             };
+            if(selectedDeploymentType == 'common'){
+                outData.template = true;
+                outData.isTrustedSource = true;
+                outData.recipeURL = loadedTemplates[selectedTemplateIndex].url;
+                outData.targetPath = s5DeployerTargetInput.value.trim();
+                
+            }else if(selectedDeploymentType == 'remote'){
+                outData.template = true;
+                outData.isTrustedSource = false;
+                outData.recipeURL = s4RemoteTemplateInput.value.trim();
+                outData.targetPath = s5DeployerTargetInput.value.trim();
+                
+            }else if(selectedDeploymentType == 'local'){
+                outData.template = false;
+                outData.dataFolder = s4LocalDataPathInput.value.trim();
+                outData.cfgFile = s5ServerCFGInput.value.trim();
+                
+            }else{
+                return alert('Unknown deployment type')
+            }
             
             $.ajax({
                 type: "POST",
                 url: '/setup/save',
-                timeout: 5000,
-                data: data,
+                timeout: timeoutLong,
+                data: outData,
                 dataType: 'json',
                 success: function (data) {
-                    if (data.logout) {
-                        window.location = '/auth?logout';
-                        return;
-                    }
+                    if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
-                        window.location = '/console';
+                        window.location = (outData.template)? '/deployer' : '/console';
                     }else{
                         saveError.innerHTML = data.message;
                         saveError.classList.remove('d-none');
@@ -377,9 +748,5 @@
             });
         }
     </script>
-
-
-
 </body>
-
 </html>

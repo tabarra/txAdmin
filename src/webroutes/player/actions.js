@@ -21,11 +21,11 @@ function ensurePermission(ctx, perm){
         return false;
     }
 }
-function sendAlertOutput(ctx, toResp){
+function sendAlertOutput(ctx, toResp, header = 'Output:'){
     toResp = (toResp.length)? xss(toResp) : 'no output';
     return ctx.send({
         type: 'warning',
-        message: `<b>Output:<br> <pre>${toResp}</pre>`
+        message: `<b>${header}<br> <pre>${toResp}</pre>`
     });
 }
 
@@ -229,35 +229,44 @@ async function handleBan(ctx) {
         return ctx.send({type: 'danger', message: 'Missing parameters or invalid identifiers.'});
     }
     let reference = ctx.request.body.reference;
-    let duration = ctx.request.body.duration;
-    let reason = ctx.request.body.reason.trim();
+    const inputDuration = ctx.request.body.duration.trim();
+    const reason = ctx.request.body.reason.trim();
 
     //Converting ID to int
-    if(typeof reference === 'string'){
+    if (typeof reference === 'string') {
         let intID = parseInt(reference);
-        if(isNaN(intID)){
+        if (isNaN(intID)) {
             return ctx.send({type: 'danger', message: 'You must send at least one identifier.'});
-        }else{
+        } else {
             reference = intID;
         }
     }
 
     //Calculating expiration
     let expiration;
-    const times = {
-        t2h: {label: '2 hours', time: 7200}, 
-        t8h: {label: '8 hours', time: 28800}, 
-        t1d: {label: '1 day', time: 86400}, 
-        t2d: {label: '2 days', time: 172800}, 
-        t1w: {label: '1 week', time: 604800}, 
-        t2w: {label: '2 weeks', time: 1209600}, 
-    }
-    if(duration == 'perma'){
+    if(inputDuration === 'permanent'){
         expiration = false;
-    }else if(times[duration]){
-        expiration = now() + times[duration].time;
+
     }else{
-        return ctx.send({type: 'danger', message: 'Unknown ban duration.'}); 
+        const [ multiplierInput, unit ] = inputDuration.split(/\s+/);
+        const multiplier = parseInt(multiplierInput);
+        if (isNaN(multiplier) || multiplier < 1) {
+            return ctx.send({type: 'danger', message: 'The duration multiplier must be a number above 1.'});
+        }
+
+        let duration;
+        if(unit.startsWith('hour')){
+            duration = multiplier * 3600;
+        }else if (unit.startsWith('day')){
+            duration = multiplier * 86400;
+        }else if (unit.startsWith('week')){
+            duration = multiplier * 604800;
+        }else if (unit.startsWith('month')){
+            duration = multiplier * 2592000; //30 days
+        }else{
+            return ctx.send({type: 'danger', message: 'Invalid ban duration. Supported units: hours, days, weeks, months'});
+        }
+        expiration = now() + duration; 
     }
 
     //Check permissions
@@ -271,11 +280,7 @@ async function handleBan(ctx) {
     }
 
     //Prepare and send command
-    const durationMessage = (expiration !== false)? `for ${times[duration].label}` : 'permanently';
-    // let message = `You have been banned from this server. <br>`;
-    // message += `<b>Ban duration:</b> ${durationMessage} <br>`;
-    // message += `<b>Banned for:</b> ${xss(reason)} <br>`;
-    // message += `<b>Banned by:</b> ${xss(ctx.session.auth.username)}`;
+    const durationMessage = (expiration !== false) ? `for ${inputDuration}` : 'permanently';
     const msg = `[txAdmin] (${xss(ctx.session.auth.username)}) You have been banned from this server ${durationMessage}. Ban reason: ${xss(reason)}`;
 
     let cmd;
@@ -289,7 +294,7 @@ async function handleBan(ctx) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> unknown reference type`});
     }
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-    return sendAlertOutput(ctx, toResp);
+    return sendAlertOutput(ctx, toResp, "Identifiers banned!<br>Kicking players:");
 }
 
 

@@ -33,6 +33,15 @@ module.exports = class WebServer {
         this.setupKoa();
         this.setupWebsocket();
         this.setupServerCallbacks();
+
+        //Cron function
+        setInterval(() => {
+            const httpCounter = globals.databus.httpCounter;
+            httpCounter.log.push(httpCounter.current);
+            if(httpCounter.log.length > 10) httpCounter.log.shift()
+            if(httpCounter.current > httpCounter.max) httpCounter.max = httpCounter.current;
+            httpCounter.current = 0;
+        }, 60*1000);
     }
 
 
@@ -79,6 +88,7 @@ module.exports = class WebServer {
         let timeoutLimit = 5 * 1000;
         let jsonLimit = '16MB';
         this.app.use(async (ctx, next) => {
+            ctx.set('Server', `txAdmin v${GlobalData.txAdminVersion}`);
             let timer; 
             const timeout = new Promise((_, reject) => {
                 timer = setTimeout(() => {
@@ -96,19 +106,22 @@ module.exports = class WebServer {
             } catch (error) {
                 //TODO: perhaps we should also have a koa-bodyparser generic error handler?
                 //FIXME: yes we should - sending broken json will cause internal server error even without the route being called
-                let methodName = (error.stack && error.stack[0] && error.stack[0].name)? error.stack[0].name : 'anonym';
+                const methodName = (error.stack && error.stack[0] && error.stack[0].name)? error.stack[0].name : 'anonym';
                 if(error.type === 'entity.too.large'){
-                    let desc = `Entity too large for: ${ctx.path}`;
+                    const desc = `Entity too large for: ${ctx.path}`;
                     if(GlobalData.verbose) logError(desc, methodName);
                     ctx.status = 413;
                     ctx.body = {error: desc};
                 }else if (ctx.state.timeout){
-                    let desc = `Route timed out: ${ctx.path}`;
+                    const desc = `[txAdmin v${GlobalData.txAdminVersion}] Route timed out: ${ctx.path}`;
                     logError(desc, methodName);
                     ctx.status = 408;
                     ctx.body = desc;
                 }else{
-                    let desc = `Internal Error on: ${ctx.path}`;
+                    const desc = `[txAdmin v${GlobalData.txAdminVersion}] Internal Error\n` +
+                                 `Message: ${error.message}\n` +
+                                 `Route: ${ctx.path}\n` +
+                                 `Make sure your txAdmin is updated.`;
                     logError(desc, methodName);
                     if(GlobalData.verbose) dir(error)
                     ctx.status = 500;
@@ -159,6 +172,7 @@ module.exports = class WebServer {
 
         //Calls the appropriate callback
         try {
+            globals.databus.httpCounter.current++;
             if(req.url.startsWith('/socket.io')){
                 this.io.engine.handleRequest(req, res);
             }else{
@@ -200,7 +214,7 @@ module.exports = class WebServer {
                 logError(`Failed to start HTTP server, port ${error.port} already in use.`);
                 process.exit();
             });
-            this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', () => {
+            this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', async () => {
                 const addr = (GlobalData.osType === 'linux')? 'your-public-ip' : 'localhost';
                 logOk(`Listening at ` + chalk.inverse(` http://${addr}:${GlobalData.txAdminPort}/ `));
                 if(
@@ -210,7 +224,7 @@ module.exports = class WebServer {
                 ){
                     const open = require('open');
                     try {
-                        open(`http://${addr}:${GlobalData.txAdminPort}/`);
+                        await open(`http://${addr}:${GlobalData.txAdminPort}/`);
                     } catch (error) {}
                 }
             });

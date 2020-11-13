@@ -19,15 +19,25 @@ globals = {
     webServer: null,
     playerController: null,
     config: null,
+    deployer: null,
     info: {},
 
     //NOTE: still not ideal, but since the extensions system changed entirely, 
-    //      will have to rething the plans for this variable.
+    //      will have to rethink the plans for this variable.
     databus: {
         resourcesList: null,
         serverLog: [],
         updateChecker: null,
-        fd3Errors: 0
+        fd3Errors: 0,
+        heartBeatStats: {
+            httpFailed: 0,
+            fd3Failed: 0,
+        },
+        httpCounter: {
+            current: 0,
+            max: 0,
+            log: []
+        }
     },
 }
 

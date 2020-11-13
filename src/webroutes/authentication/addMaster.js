@@ -4,6 +4,9 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
+const returnJustMessage = (ctx, errorTitle, errorMessage) => {
+    return ctx.utils.render('login', {template: 'justMessage', errorTitle, errorMessage});
+};
 
 /**
  * Handles the Add Master flow
@@ -14,12 +17,14 @@ module.exports = async function AddMaster(ctx) {
     if(isUndefined(ctx.params.action)){
         return ctx.utils.error(400, 'Invalid Request');
     }
-    let action = ctx.params.action;
+    const action = ctx.params.action;
 
     //Check if there are no master admins set up
     if(globals.authenticator.admins !== false){
-        let message = `Master account already set.`;
-        return ctx.utils.render('login', {template: 'justMessage', message});
+        return returnJustMessage(
+            ctx,
+            `Master account already set.`,
+        );
     }
 
     //Delegate to the specific action handler
@@ -56,7 +61,7 @@ async function handlePin(ctx) {
     //Checking the PIN
     if(ctx.request.body.pin !== globals.authenticator.addMasterPin){
         logWarn(`Wrong PIN for from: ${ctx.ip}`);
-        let message = `Wrong PIN.`;
+        const message = `Wrong PIN.`;
         return ctx.utils.render('login', {template: 'noMaster', message});
     }
 
@@ -65,12 +70,15 @@ async function handlePin(ctx) {
 
     //Generate URL
     try {
-        let callback = ctx.protocol + '://' + ctx.get('host') + `/auth/addMaster/callback`;
-        let url = await globals.authenticator.providers.citizenfx.getAuthURL(callback, ctx.session._sessCtx.externalKey);
+        const callback = ctx.protocol + '://' + ctx.get('host') + `/auth/addMaster/callback`;
+        const url = await globals.authenticator.providers.citizenfx.getAuthURL(callback, ctx.session._sessCtx.externalKey);
         return ctx.response.redirect(url);
     } catch (error) {
-        let message = `Failed to generate Provider Auth URL with error: ${error.message}`;
-        return ctx.utils.render('login', {template: 'justMessage', message});
+        return returnJustMessage(
+            ctx,
+            `Failed to generate callback URL with error:`,
+            error.message
+        );
     }
 }
 
@@ -89,39 +97,55 @@ async function handleCallback(ctx) {
     //Exchange code for access token
     let tokenSet;
     try {
-        let currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/addMaster/callback`;
+        const currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/addMaster/callback`;
         tokenSet = await globals.authenticator.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
-        let message;
-        if(!isUndefined(error.tolerance)){
-            message = `Code Exchange error.\r\nPlease Update/Synchronize your VPS clock.`;
-        }else{
-            message = `Code Exchange error:\r\n${error.message}.`;
-        }
         logWarn(`Code Exchange error: ${error.message}`);
-        return ctx.utils.render('login', {template: 'justMessage', message});
+        if(!isUndefined(error.tolerance)){
+            return returnJustMessage(
+                ctx,
+                `Please Update/Synchronize your VPS clock.`,
+                `Failed to login because this host's time is wrong. Please make sure to synchronize it with the internet.`
+            );
+        }else if(error.code === 'ETIMEDOUT'){
+            return returnJustMessage(
+                ctx,
+                `Connection to FiveM servers timed out:`,
+                `Failed to verify your login with FiveM's identity provider. Please try again or check your connection to the internet.`
+            );
+        }else if(error.message.startsWith('state mismatch')){
+            return returnJustMessage(
+                ctx,
+                `Invalid Browser Session.`,
+                `You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.`
+            );
+        }else{
+            return returnJustMessage(ctx, `Code Exchange error:`, error.message);
+        }
     }
 
-    //Exchange code for access token
+    //Get userinfo
     let userInfo;
     try {
         userInfo = await globals.authenticator.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
-        let message = `Get UserInfo error: ${error.message}`;
-        logError(message);
-        return ctx.utils.render('login', {template: 'justMessage', message});
+        logError(`Get UserInfo error: ${error.message}`);
+        return returnJustMessage(
+            ctx,
+            `Get UserInfo error:`,
+            error.message
+        );
     }
 
     // Setar userinfo na sessão
     ctx.session.tmpAddMasterTokenSet = tokenSet;
     ctx.session.tmpAddMasterUserInfo = userInfo;
 
-    let renderData = {
+    return ctx.utils.render('login', {
         template: 'callback',
         addMaster_name: userInfo.name,
         addMaster_picture: userInfo.picture
-    }
-    return ctx.utils.render('login', renderData);
+    });
 }
 
 
@@ -140,11 +164,13 @@ async function handleSave(ctx) {
     }
 
     //Sanity check2: Electric Boogaloo (Validating password)
-    let password = ctx.request.body.password.trim();
-    let password2 = ctx.request.body.password2.trim();
+    const password = ctx.request.body.password.trim();
+    const password2 = ctx.request.body.password2.trim();
     if(password != password2 || password.length < 6 || password.length > 24){
-        let message = `Invalid Password.`;
-        return ctx.utils.render('login', {template: 'justMessage', message});
+        return returnJustMessage(
+            ctx,
+            `Invalid Password.`,
+        );
     }
 
     //Checking if session is still present
@@ -153,15 +179,22 @@ async function handleSave(ctx) {
         typeof ctx.session.tmpAddMasterUserInfo.name !== 'string' ||
         typeof ctx.session.tmpAddMasterUserInfo.picture !== 'string'
     ){
-        let message = `Invalid Session.`;
-        return ctx.utils.render('login', {template: 'justMessage', message});
+        return returnJustMessage(
+            ctx,
+            `Invalid Session.`,
+            `You may have restarted txAdmin right before entering this page. Please try again.`
+        );
     }
 
     //Creating admins file
     try {
         await globals.authenticator.createAdminsFile(ctx.session.tmpAddMasterUserInfo.name, ctx.session.tmpAddMasterUserInfo, password);
     } catch (error) {
-        return ctx.utils.render('login', {template: 'justMessage', message: error.message});
+        return returnJustMessage(
+            ctx,
+            `Error:`,
+            error.message
+        );
     }
 
     //Login user
@@ -175,9 +208,12 @@ async function handleSave(ctx) {
         delete ctx.session.tmpAddMasterUserInfo;
     } catch (error) {
         ctx.session.auth = {};
-        let message = `Failed to login:<br> ${error.message}`;
-        logError(message);
-        return ctx.utils.render('login', {template: 'justMessage', message});
+        logError(`Failed to login: ${error.message}`);
+        return returnJustMessage(
+            ctx,
+            `Failed to login:`,
+            error.message
+        );
     }
 
     log('Admin file created! You can now login normally.');

@@ -42,9 +42,6 @@ sqrl.filters.define("tShow", (x)=>{
 sqrl.filters.define("isDisabled", (x)=>{
     return (x)? 'disabled' : '';
 });
-sqrl.filters.define("n2br", (x)=>{
-    return x.replace(/(\r|\n)+/m, '<br>');
-});
 sqrl.filters.define("undef", (x)=>{
     return (isUndefined(x) || x == 'undefined')? '' : x;
 });
@@ -98,18 +95,16 @@ async function renderMasterView(view, reqSess, data){
  */
 async function renderLoginView(data){
     if(isUndefined(data)) data = {};
-    data.headerTitle = data.headerTitle || 'Login';
     data.isMatrix = (Math.random() <= 0.05);
     data.ascii = helpers.txAdminASCII();
     data.message = data.message || '';
+    data.errorTitle = data.errorTitle || 'Warning:';
+    data.errorMessage = data.errorMessage || '';
     data.template = data.template || 'normal';
-    // data.template = 'noMaster';
-    // data.template = 'callback';
-    // data.template = 'normal';
-    // data.template = 'justMessage';
     data.serverProfile = globals.info.serverProfile;
     data.txAdminVersion = GlobalData.txAdminVersion;
     data.fxServerVersion = GlobalData.fxServerVersion;
+    data.serverName = globals.config.serverName || globals.info.serverProfile;
 
     let out;
     try {

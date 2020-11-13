@@ -5,8 +5,8 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
-const returnJustMessage = (ctx, message) => {
-    return ctx.utils.render('login', {template: 'justMessage', message});
+const returnJustMessage = (ctx, errorTitle, errorMessage) => {
+    return ctx.utils.render('login', {template: 'justMessage', errorTitle, errorMessage});
 };
 
 /**
@@ -21,8 +21,8 @@ module.exports = async function ProviderCallback(ctx) {
     ){
         return ctx.utils.error(400, 'Invalid Request');
     }
-    let provider = ctx.params.provider;
-    let reqState = ctx.query.state;
+    const provider = ctx.params.provider;
+    const reqState = ctx.query.state;
 
     //FIXME: generalize this to any provider
     if(provider !== 'citizenfx'){
@@ -30,48 +30,68 @@ module.exports = async function ProviderCallback(ctx) {
     }
 
     //Check the state changed
-    let stateSeed = `txAdmin:${ctx.session._sessCtx.externalKey}`;
-    let stateExpected = crypto.createHash('SHA1').update(stateSeed).digest("hex");
+    const stateSeed = `txAdmin:${ctx.session._sessCtx.externalKey}`;
+    const stateExpected = crypto.createHash('SHA1').update(stateSeed).digest("hex");
     if(reqState != stateExpected){
-        return returnJustMessage(ctx, 'This link has expired.');
+        return returnJustMessage(
+            ctx,
+            'This link has expired.',
+            'Please refresh the page and try again.'
+        );
     }
 
     //Exchange code for access token
     let tokenSet;
     try {
-        let currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/${provider}/callback`;
+        const currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/${provider}/callback`;
         tokenSet = await globals.authenticator.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
-        let message;
-        if(!isUndefined(error.tolerance)){
-            message = `Code Exchange error.\r\nPlease Update/Synchronize your VPS clock.`;
-        }else{
-            message = `Code Exchange error:\r\n${error.message}.`;
-        }
         logWarn(`Code Exchange error: ${error.message}`);
-        return returnJustMessage(ctx, message);
+        if(!isUndefined(error.tolerance)){
+            return returnJustMessage(
+                ctx,
+                `Please Update/Synchronize your VPS clock.`,
+                `Failed to login because this host's time is wrong. Please make sure to synchronize it with the internet.`
+            );
+        }else if(error.code === 'ETIMEDOUT'){
+            return returnJustMessage(
+                ctx,
+                `Connection to FiveM servers timed out:`,
+                `Please try again or login using your existing username and backup password.`
+            );
+        }else if(error.message.startsWith('state mismatch')){
+            return returnJustMessage(
+                ctx,
+                `Invalid Browser Session.`,
+                `You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.`
+            );
+        }else{
+            return returnJustMessage(ctx, `Code Exchange error:`, error.message);
+        }
     }
 
-    //Exchange code for access token
+    //Get userinfo
     let userInfo;
     try {
         userInfo = await globals.authenticator.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
-        let message = `Get UserInfo error: ${error.message}`;
-        if(GlobalData.verbose) logError(message);
-        return returnJustMessage(ctx, message);
+        if(GlobalData.verbose) logError(`Get UserInfo error: ${error.message}`);
+        return returnJustMessage(ctx, `Get UserInfo error:`, error.message);
     }
 
     //FIXME: check the sub claim?
 
     //Check & Login user
     try {
-        let admin = globals.authenticator.getAdminByProviderUID(userInfo.name);
+        const admin = globals.authenticator.getAdminByProviderUID(userInfo.name);
         if(!admin){
             ctx.session.auth = {};
-            let message = `This account is not an admin.`;
             if(GlobalData.verbose) logWarn(message);
-            return returnJustMessage(ctx, message);
+            return returnJustMessage(
+                ctx,
+                `The account '${userInfo.name}' is not an admin.`, 
+                `This CitizenFX username is not assigned to any registered account. You can also try to login using your username and backup password.`
+            );
         }
 
         //Setting session
@@ -84,8 +104,7 @@ module.exports = async function ProviderCallback(ctx) {
         return ctx.response.redirect('/');
     } catch (error) {
         ctx.session.auth = {};
-        let message = `Failed to login: ${error.message}`;
-        if(GlobalData.verbose) logError(message);
-        return returnJustMessage(ctx, message);
+        if(GlobalData.verbose) logError(`Failed to login: ${error.message}`);
+        return returnJustMessage(ctx, `Failed to login:`, error.message);
     }
 };

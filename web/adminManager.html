@@ -268,7 +268,7 @@
             data: {name: name},
             success: function (data) {
                 if(data.message == 'refresh'){
-                    window.location = '/adminManager';
+                    window.location.reload(true);
                 }else{
                     notify.update('progress', 0);
                     notify.update('type', data.type);
@@ -327,7 +327,7 @@
             dataType: 'json',
             success: function (data) {
                 if(data.message == 'refresh'){
-                    window.location = '/adminManager';
+                    window.location.reload(true);
                 }else{
                     notify.update('progress', 0);
                     notify.update('type', data.type);
@@ -369,7 +369,7 @@
             dataType: 'json',
             success: function (data) {
                 if(data.message == 'refresh'){
-                    window.location = '/adminManager';
+                    window.location.reload(true);
                 }else{
                     if(data.type == 'modalrefresh'){
                         notify.update('progress', 0);

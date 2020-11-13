@@ -22,9 +22,9 @@ module.exports = class PlayerlistGenerator {
         this.config = {
             srcPlayerlist: require('./playerlist.ignore.json'),
             refreshInterval: 2500,
-            shouldAddRemovePlayers: false,
+            shouldAddRemovePlayers: true,
             minPlayers: 7,
-            maxPlayers: 10,
+            maxPlayers: 15,
         }
         
         //Starting data

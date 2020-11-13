@@ -115,7 +115,7 @@ async function getFXServerData(){
     //Preparing request
     const port = (globals.config.forceFXServerPort)? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
     const requestOptions = {
-        url: `http://localhost:${port}/info.json`,
+        url: `http://127.0.0.1:${port}/info.json`,
         method: 'get',
         responseType: 'json',
         responseEncoding: 'utf8',
@@ -206,10 +206,20 @@ async function getHostData(){
         const userInfo = os.userInfo();
         const cpus = os.cpus();
 
+        let clockWarning;
+        if(cpus[0].speed <= 2400){
+            clockWarning = '<span class="badge badge-danger"> VERY SLOW! </span>';
+        }else if(cpus[0].speed < 3000){
+            clockWarning = `<span class="badge badge-warning"> SLOW </span>`;
+        }else{
+            clockWarning = ``;
+        }
+
         hostData.nodeVersion = process.version;
         hostData.osType = `${os.type()} (${os.platform()}/${process.arch})`;
         hostData.osRelease = `${os.release()}`;
         hostData.username = `${userInfo.username}`;
+        hostData.clockWarning = clockWarning;
         hostData.cpus = `${cpus.length}x ${cpus[0].speed} MHz`;
         hostData.memory = `${memUsage}% (${memUsed}/${memTotal} GB)`;
         hostData.error  = false;
@@ -234,13 +244,20 @@ async function gettxAdminData(){
     }
 
     const controllerConfigs = globals.playerController.config;
+    const httpCounter = globals.databus.httpCounter;
     return {
+        //Stats
         uptime: humanizeDuration(process.uptime()*1000, humanizeOptions),
         cfxUrl: (GlobalData.cfxUrl)? `https://${GlobalData.cfxUrl}/` : '--',
         banlistEnabled: controllerConfigs.onJoinCheckBan.toString(),
         whitelistEnabled: controllerConfigs.onJoinCheckWhitelist.toString(),
         fullCrashes: globals.monitor.globalCounters.fullCrashes,
         partialCrashes: globals.monitor.globalCounters.partialCrashes,
+        httpCounterLog: httpCounter.log.join(', ') || '--',
+        httpCounterMax: httpCounter.max || '--',
+        hbFD3Fails: globals.databus.heartBeatStats.fd3Failed,
+        hbHTTPFails: globals.databus.heartBeatStats.httpFailed,
+        //Settings
         timeout: globals.monitor.config.timeout,
         cooldown: globals.monitor.config.cooldown,
         schedule: globals.monitor.config.restarterSchedule.join(', ') || '--',

@@ -1,22 +1,86 @@
-## TODO v2
-> v2.6.1
-- [x] update packages
-- [x] discord bot: set new api url
-- [x] reset /auth url after message or error
-- [x] discord bot: fixed /help spam on reconnection
-- [x] updated dutch, german, danish and czech languages
-- [x] added option to disable in game restart warning chat messages (thanks @is-sam)
-- [x] check why scheduled restarts are not kicking players (no issue found, still replaced `txaKickAll` eith `quit`)
-- [x] use the new fd3 stream (added on 2427, ask ferrum before dropping support for older fxserver)
-- [x] fix login page centralization on mobile screens
-- [x] add placeholders to discord bot settings tab
-- [x] update onesync setting values to reflect fxserver's change
-- [x] if clean install and on windows, open the listening URL on the browser
-> v2.7.0
-- [x] fix player manager settigns page not saving
-- [x] fix squirrelly filters not working on v8.0.4
-> v2.7.1
+## TODO v3
+- [x] replace `localhost` with `127.0.0.1` in functions to force usage of ipv4
+- [ ] add stats to know if users are coming from localhost, cfx.re, direct ip or domain (maybe just login?)
+- [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
 - [ ] xxxxx
+
+
+### Setup Stepper:
+1. Welcome
+2. Server Name
+3. Deployment import type: (select box or a "multiline radio box" with description)
+
+- Common Template
+    4. Select Template (cards)
+    5. Suggest data location
+
+- URL Template
+    4. Import Remote Template (URL input)
+    5. Suggest data location
+
+- Local Server Data
+    4. Local Server Data
+    5. Server CFG File
+
+6. Finish
+    - save configs
+    - if local:
+        - start server
+        - redirect to live console
+    - if template
+        - redirect to deployer
+
+### Deployer stepper:
+- Review Recipe:
+    Show a code editor with the recipe, and some variables extracted from it.
+    Extracted fields:
+    - Author
+    - Description
+    - Version
+    - URL
+    Add a RED warning regarding running recipes from untrusted sources
+
+- Run Recipe
+    Something akin to live console, but no need to overengineer it!
+    At most an ajax that calls an API that will return the contents to a `<pre>`, and maybe a % to a progressbar.
+
+- Configure `server.cfg`
+    Code editor with the contents of the `server.cfg` file specified inside the recipe.
+    This will be the file containing the configuration of the base for the user to type, like hostname, mysql, RP-stuff...
+    Then a `Save & Start Server` button.
+
+### Deployer Notes:
+- Setup page does not execute anything, only sets the variables and start the server or redirects to the deployer.
+- Will force deployer bases to be `txData/xxx.base`. (check `.endsWith()` on profile selection)
+- If people want to try their own template file, they can select the "default" template and edit the recipe before running it
+- In the deployer page there will be an "cancel and go back to setup page" button.
+- The setup page will have a way to autofill inputs if its not the first time running it
+- If the admin master wants to run an new recipe, there should be a button in the settigs page for him to be able to do so (github's "danger zone" ?).
+
+
+### Deployer logic
+- Setup page:
+    - Condition: globals.deployer == null && (serverDataPath === null || cfgPath === null)
+    - Local deploy actions: sets serverDataPath/cfgPath, starts the server, redirect to live console
+    - Template deploy actions: download recipe, globals.deployer = new Deployer(recipe)
+
+- Deployer page:
+    - Condition: globals.deployer !== null
+    - Post-deploy actions: 
+        - set serverDataPath/cfgPath
+        - reset globals.deployer
+        - start the server
+        - redirect to live console
+
+- Normal txAdmin:
+    - IF globals.deployer THEN redirect to deployer
+    - ELSE IF (serverDataPath === null || cfgPath === null) THEN redirect to setup
+
+- To Reset:
+    - Stop server
+    - serverDataPath = null; cfgPath = null;
+    - Redirect to setup
+
 
 TODO: Bot commands (in dev order):
 /addwl <wl req id>
@@ -33,11 +97,8 @@ TODO: Bot commands (in dev order):
 /removewl <mention>
 
 > Soon™ (hopefully the next update)
+- [ ] send log via FD3
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
-- [ ] break player page into `Players` and `Player Access`
-        - `Player Access` will only contain the whitelist and band ids cards
-        - `Players` will have a central search and will show players and actions at the same time
-- [ ] check everything done for xss
 - [ ] apply the new action log html to the modal
 - [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
 - [ ] add ban server-side ban cache (last 500 bans?), updated on every ban change 
@@ -68,10 +129,10 @@ TODO: Bot commands (in dev order):
 ```bash
 # run
 cd /e/FiveM/builds
-nodemon --watch "2786/citizen/system_resources/monitor/src/*" --exec "2786/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose truex +set txAdminFakePlayerlist yesplzx"
+nodemon --watch "3120/citizen/system_resources/monitor/src/*" --exec "3120/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose true +set txAdminFakePlayerlist yesplz"
 
 # build
-cd /e/FiveM/builds/2786/citizen/system_resources/monitor
+cd /e/FiveM/builds/3120/citizen/system_resources/monitor
 rm -rf dist
 npm run build
 
@@ -82,19 +143,33 @@ npm-upgrade
 con_miniconChannels script:monitor*
 ```
 
-### Links + random stuff
-https://api.github.com/repos/tabarra/txAdmin/releases/latest
-https://www.science.co.il/language/Locale-codes.php
+=======================================
+
+## Links + Random Stuff
+
+### CoreUI Stuff + Things I use
+https://simplelineicons.github.io
+https://coreui.io/demo/3.1.0/#icons/coreui-icons-free.html
+https://coreui.io/demo/3.0.0/#colors.html
+https://coreui.io/docs/content/typography/
+
 https://www.npmjs.com/package/humanize-duration
-https://www.npmjs.com/package/dateformat
-https://www.npmjs.com/package/dateformat-light
-https://date-fns.org/v2.0.1/docs/formatDistance
+https://kinark.github.io/Materialize-stepper/
 
+
+### Reference stuff
+https://www.science.co.il/language/Locale-codes.php
+
+
+### Log Stuff:
+https://www.npmjs.com/package/rotating-file-stream
+https://www.npmjs.com/package/file-stream-rotator
+https://www.npmjs.com/package/simple-node-logger
+https://www.npmjs.com/package/infinite-scroll
+
+
+### "Look into it"
 https://www.reddit.com/r/javascript/comments/91a3tp/why_is_there_no_small_sane_nodejs_tool_for/
-
-DIV transition: https://tympanus.net/Tutorials/OriginalHoverEffects/index9.html
-Colors: https://coolors.co/3c4b64-3c4b64-3a4860-1e252d-252e38
-CSS Animated: https://daneden.github.io/animate.css/
 
 Interesting shit, could be used to give like vMenu admin powers to txAdmin admins:
 https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
@@ -102,12 +177,12 @@ https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae810
 Grafana query for the `/perf/` endpoint data: 
 `histogram_quantile(0.95, sum(rate(tickTime_bucket[5m])) by (le))`
 
-### CoreUI Stuff
-https://simplelineicons.github.io
-https://coreui.io/demo/3.1.0/#icons/coreui-icons-free.html
-https://coreui.io/demo/3.0.0/#colors.html
-https://coreui.io/docs/content/typography/
+"State bag" support for C#
+https://github.com/citizenfx/fivem/pull/516
+https://github.com/citizenfx/fivem/pull/539
 
+
+=======================================
 
 ### Global vs Individual Modules
 - Global
@@ -179,7 +254,7 @@ tasks:
       pattern: 's/wtf/ftw/g'
   - append_file:
       path: server.cfg
-      data: 
+      data: |
          start wtfwtf
          start uberadmin
 ```
