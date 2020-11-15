@@ -173,30 +173,43 @@ class Deployer {
      * (Private) Run the tasks in a sequential way.
      */
     async runTasks(){
+        //Run all the tasks
         for (let index = 0; index < this.recipe.tasks.length; index++) {
             this.progress = Math.round((index/this.recipe.tasks.length)*100);
-
             const task = this.recipe.tasks[index];
             const taskID = `[task${index+1}:${task.action}]`;
-            this.log.push(`Running ${taskID}...`);
-            log(`Running ${taskID}`);
+            this.log(`Running ${taskID}...`);
 
             try {
                 await recipeEngine[task.action].run(task, this.deployPath)
-                this.log[this.log.length -1] += ` ✔️`;
+                this.logLines[this.logLines.length -1] += ` ✔️`;
             } catch (error) {
-                this.log[this.log.length -1] += ` ❌`;
-                const msg = `${taskID} failed with message: \n${error.message}`;
-                logError(msg);
-                this.log.push(msg)
+                this.logLines[this.logLines.length -1] += ` ❌`;
+                this.logError(`${taskID} failed with message: \n${error.message}`);
                 this.deployFailed = true;
                 return;
             }
         }
 
+        //Set progress 100
         this.progress = 100;
-        this.log.push(`All tasks done!`)
-        logOk(`All tasks done!`)
+        this.log(`All tasks completed.`);
+
+        //Check deploy folder validity (resources + server.cfg)
+        try {
+            if(!fs.existsSync(path.join(this.deployPath, 'resources'))){
+                throw new Error(`this recipe didn't create a 'resources' folder.`);
+            }else if(!fs.existsSync(path.join(this.deployPath, 'server.cfg'))){
+                throw new Error(`this recipe didn't create a 'server.cfg' file.`);
+            }
+        } catch (error) {
+            this.logError(`Deploy validation error: ${error.message}`);
+            this.deployFailed = true;
+            return;
+        }
+
+        //Else: success :)
+        this.log(`Deploy finished and folder validated. All done! 🏁`);
         this.step = 'configure';
     }
 } //Fim Deployer()
