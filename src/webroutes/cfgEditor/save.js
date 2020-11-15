@@ -47,7 +47,7 @@ module.exports = async function CFGEditorSave(ctx) {
 
     //Saving CFG file
     try {
-        globals.logger.append(`[${ctx.ip}][${ctx.session.auth.username}] Editing server CFG File.`);
+        ctx.utils.logAction(`Editing server CFG File.`);
         await fs.writeFile(cfgFilePath, ctx.request.body.cfgData, 'utf8');
         return ctx.send({type: 'success', message: 'File saved.'});
     } catch (error) {

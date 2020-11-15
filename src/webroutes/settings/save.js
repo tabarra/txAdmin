@@ -89,9 +89,7 @@ function handleGlobal(ctx) {
     if(saveStatus){
         globals.translator.refreshConfig(langPhrases);
         globals.config = globals.configVault.getScoped('global');
-        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing global settings.`;
-        logOk(logMessage);
-        globals.logger.append(logMessage);
+        ctx.utils.logAction(`Changing global settings.`);
         return ctx.send({type: 'success', message: `<strong>Global configuration saved!</strong>`});
     }else{
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings.`);
@@ -171,9 +169,7 @@ function handleFXServer(ctx) {
     //Sending output
     if(saveStatus){
         globals.fxRunner.refreshConfig();
-        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing fxRunner settings.`;
-        logOk(logMessage);
-        globals.logger.append(logMessage);
+        ctx.utils.logAction(`Changing fxRunner settings.`);
         return ctx.send({type: 'success', message: `<strong>FXServer configuration saved!</strong>`});
     }else{
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing fxRunner settings.`);
@@ -231,9 +227,7 @@ function handlePlayerController(ctx) {
     //Sending output
     if(saveStatus){
         globals.playerController.refreshConfig();
-        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing Player Controller settings.`;
-        logOk(logMessage);
-        globals.logger.append(logMessage);
+        ctx.utils.logAction(`Changing Player Controller settings.`);
         return ctx.send({type: 'success', message: `<strong>Player Controller configuration saved!</strong>`});
     }else{
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing Player Controller settings.`);
@@ -289,9 +283,7 @@ function handleMonitor(ctx) {
     //Sending output
     if(saveStatus){
         globals.monitor.refreshConfig();
-        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing monitor settings.`;
-        logOk(logMessage);
-        globals.logger.append(logMessage);
+        ctx.utils.logAction(`Changing monitor settings.`);
         return ctx.send({type: 'success', message: `<strong>Monitor/Restarter configuration saved!</strong>`});
     }else{
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing monitor settings.`);
@@ -338,9 +330,7 @@ function handleDiscord(ctx) {
     //Sending output
     if(saveStatus){
         globals.discordBot.refreshConfig();
-        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing discordBot settings.`;
-        logOk(logMessage);
-        globals.logger.append(logMessage);
+        ctx.utils.logAction(`Changing discordBot settings.`);
         if(newConfig.enabled){
             return ctx.send({type: 'warning', message: `<strong>Discord configuration saved. Check terminal to make sure the token is valid.</strong>`});
         }else{

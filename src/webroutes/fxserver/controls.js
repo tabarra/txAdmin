@@ -23,7 +23,7 @@ module.exports = async function FXServerControls(ctx) {
     }
 
     if(action == 'restart'){
-        ctx.utils.appendLog(`RESTART SERVER`);
+        ctx.utils.logCommand(`RESTART SERVER`);
         if(globals.fxRunner.restartDelayOverride || globals.fxRunner.restartDelayOverride <= 4000){
             globals.fxRunner.restartServer(ctx.session.auth.username);
             return ctx.send({type: 'success', message: `Restarting the fxserver with delay override ${globals.fxRunner.restartDelayOverride}.`});
@@ -40,7 +40,7 @@ module.exports = async function FXServerControls(ctx) {
         if(globals.fxRunner.fxChild === null){
             return ctx.send({type: 'danger', message: 'The server is already stopped.'});
         }
-        ctx.utils.appendLog(`STOP SERVER`);
+        ctx.utils.logCommand(`STOP SERVER`);
         await globals.fxRunner.killServer(ctx.session.auth.username);
         return ctx.send({type: 'warning', message: 'Server stopped.'});
 
@@ -48,7 +48,7 @@ module.exports = async function FXServerControls(ctx) {
         if(globals.fxRunner.fxChild !== null){
             return ctx.send({type: 'danger', message: 'The server is already running. If it\'s not working, press RESTART.'});
         }
-        ctx.utils.appendLog(`START SERVER`);
+        ctx.utils.logCommand(`START SERVER`);
         const spawnMsg = await globals.fxRunner.spawnServer(true);
         if(spawnMsg !== null){
             return ctx.send({type: 'danger', message: spawnMsg});

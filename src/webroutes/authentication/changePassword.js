@@ -38,9 +38,7 @@ module.exports = async function AuthChangePassword(ctx) {
     try {
         let newHash = await globals.authenticator.editAdmin(ctx.session.auth.username, newPassword);
         if(typeof ctx.session.auth.password_hash == 'string') ctx.session.auth.password_hash = newHash;
-        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing own password.`;
-        logOk(logMessage);
-        globals.logger.append(logMessage);
+        ctx.utils.logAction(`Changing own password.`);
         ctx.session.auth.password = newPassword;
         return ctx.send({type: 'success', message: `Password changed successfully`});
     } catch (error) {

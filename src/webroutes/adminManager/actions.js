@@ -88,9 +88,7 @@ async function handleAdd(ctx) {
     //Add admin and give output
     try {
         await globals.authenticator.addAdmin(name, citizenfxID, discordID, password, permissions);
-        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Adding admin '${name}'.`;
-        logOk(logMessage);
-        globals.logger.append(logMessage);
+        ctx.utils.logAction(`Adding admin '${name}'.`);
         return ctx.send({type: 'modalrefresh', password});
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
@@ -151,9 +149,7 @@ async function handleEdit(ctx) {
     //Add admin and give output
     try {
         await globals.authenticator.editAdmin(name, null, citizenfxID, discordID, permissions);
-        const logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Editing user '${name}'.`;
-        logOk(logMessage);
-        globals.logger.append(logMessage);
+        ctx.utils.logAction(`Editing user '${name}'.`);
         return ctx.send({type: 'success', message: `refresh`});
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
@@ -193,9 +189,7 @@ async function handleDelete(ctx) {
     //Delete admin and give output
     try {
         await globals.authenticator.deleteAdmin(name);
-        let logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Deleting user '${name}'.`;
-        logOk(logMessage);
-        globals.logger.append(logMessage);
+        ctx.utils.logAction(`Deleting user '${name}'.`);
         return ctx.send({type: 'success', message: `refresh`});
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});

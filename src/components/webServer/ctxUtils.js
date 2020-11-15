@@ -139,16 +139,26 @@ async function renderSoloView(view, data){
 }
 
 
-
 //================================================================
 /**
- * Append data to the log file
- * FIXME: edit consistency of this function and apply to all endpoints
+ * Logs a command to the console and the action logger
  * @param {object} ctx
  * @param {string} data
  */
-function appendLog(ctx, data){
-    log(`Executing ` + chalk.inverse(' ' + data + ' '));
+function logCommand(ctx, data){
+    log(`${ctx.session.auth.username} executing: ` + chalk.inverse(' ' + data + ' '));
+    globals.logger.append(`[${ctx.ip}][${ctx.session.auth.username}] ${data}`);
+}
+
+
+//================================================================
+/**
+ * Logs an action to the console and the action logger
+ * @param {object} ctx
+ * @param {string} data
+ */
+function logAction(ctx, data){
+    log(`[${ctx.session.auth.username}] ${data}`);
     globals.logger.append(`[${ctx.ip}][${ctx.session.auth.username}] ${data}`);
 }
 
@@ -206,8 +216,11 @@ module.exports = async function WebCtxUtils(ctx, next){
         };
     }
 
-    ctx.utils.appendLog = async (data) => {
-        return appendLog(ctx, data);
+    ctx.utils.logAction = async (data) => {
+        return logAction(ctx, data);
+    }
+    ctx.utils.logCommand = async (data) => {
+        return logCommand(ctx, data);
     }
     ctx.utils.checkPermission = (perm, fromCtx, printWarn) => {
         return checkPermission(ctx, perm, fromCtx, printWarn);

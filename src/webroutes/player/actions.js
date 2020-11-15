@@ -128,7 +128,7 @@ async function handleMessage(ctx) {
     if(!ensurePermission(ctx, 'players.message')) return false;
 
     //Prepare and send command
-    ctx.utils.appendLog(`DM to #${id}: ${message}`);
+    ctx.utils.logAction(`DM to #${id}: ${message}`);
     let cmd = formatCommand('txaSendDM', id, ctx.session.auth.username, message);
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);
@@ -156,7 +156,7 @@ async function handleKick(ctx) {
     if(!ensurePermission(ctx, 'players.kick')) return false;
 
     //Prepare and send command
-    ctx.utils.appendLog(`Kicked #${id}: ${reason}`);
+    ctx.utils.logAction(`Kicked #${id}: ${reason}`);
     // let message = `You have been kicked from this server. \n`;
     // message += `<b>Kicked for:</b> ${xss(reason)} \n`;
     // message += `<b>Kicked by:</b> ${xss(ctx.session.auth.username)}`;
@@ -197,7 +197,7 @@ async function handleWarning(ctx) {
     }
 
     //Prepare and send command
-    ctx.utils.appendLog(`Warned #${id}: ${reason}`);
+    ctx.utils.logAction(`Warned #${id}: ${reason}`);
     let cmd = formatCommand(
         'txaWarnID', 
         id, 
@@ -286,10 +286,10 @@ async function handleBan(ctx) {
     let cmd;
     if(Array.isArray(reference)){
         cmd = formatCommand('txaDropIdentifiers', reference.join(';'), msg);
-        ctx.utils.appendLog(`Banned <${reference.join(';')}>: ${reason}`);
+        ctx.utils.logAction(`Banned <${reference.join(';')}>: ${reason}`);
     }else if(Number.isInteger(reference)){
         cmd = formatCommand('txaKickID', reference, msg);
-        ctx.utils.appendLog(`Banned #${reference}: ${reason}`);
+        ctx.utils.logAction(`Banned #${reference}: ${reason}`);
     }else{
         return ctx.send({type: 'danger', message: `<b>Error:</b> unknown reference type`});
     }
@@ -319,7 +319,7 @@ async function handleWhitelist(ctx) {
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
-    ctx.utils.appendLog(`Whitelisted ${reference}`);
+    ctx.utils.logAction(`Whitelisted ${reference}`);
     return ctx.send({refresh: true});
 }
 
@@ -350,6 +350,6 @@ async function handleRevokeAction(ctx) {
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
-    ctx.utils.appendLog(`Revoked ${action_id}`);
+    ctx.utils.logAction(`Revoked ${action_id}`);
     return ctx.send({refresh: true});
 }

@@ -17,13 +17,13 @@ module.exports = async function txAdminLog(ctx) {
 
     //Console
     const rawConsoleLog = getLog();
-    let consoleLog = [];
+    const consoleLogLines = [];
     rawConsoleLog.forEach(logData => {
-        let ts = dateFormat(new Date(logData.ts*1000), 'HH:MM:ss');
-        let mark = `<mark class="consoleMark-${logData.type.toLowerCase()}">[${ts}][${logData.ctx}]</mark>`;
-        consoleLog.push(`${mark}  ${xss(logData.msg)}`);
+        const ts = dateFormat(new Date(logData.ts*1000), 'HH:MM:ss');
+        const mark = `<mark class="consoleMark-${logData.type.toLowerCase()}">[${ts}][${logData.ctx}]</mark>`;
+        consoleLogLines.push(`${mark}  ${xss(logData.msg)}`);
     });
-    consoleLog = consoleLog.join('\n');
+    const consoleLog = consoleLogLines.join('\n');
 
     //Actions
     const actionLog = xss(await globals.logger.get());

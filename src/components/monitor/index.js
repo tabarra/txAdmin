@@ -160,9 +160,9 @@ module.exports = class Monitor {
         }
 
         //Restart server
-        let message = `Restarting server (${reason}).`;
-        logWarn(message);
-        globals.logger.append(`[MONITOR] ${message}`);
+        const logMessage = `Restarting server (${reason}).`;
+        globals.logger.append(`[MONITOR] ${logMessage}`);
+        logWarn(logMessage);
         globals.fxRunner.restartServer(reasonTranslated);
     }
 

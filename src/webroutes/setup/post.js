@@ -323,9 +323,7 @@ async function handleSaveLocal(ctx) {
         globals.fxRunner.refreshConfig();
 
         //Logging
-        const logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing global/fxserver settings via setup stepper.`;
-        logOk(logMessage);
-        globals.logger.append(logMessage);
+        ctx.utils.logAction(`Changing global/fxserver settings via setup stepper.`);
 
         //Starting server
         const spawnMsg = await globals.fxRunner.spawnServer(false);
@@ -384,9 +382,7 @@ async function handleSaveDeployer(ctx) {
     
     //Checking save and redirecting
     if(saveGlobalStatus){
-        const logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Changing global settings via setup stepper and started Deployer`;
-        logOk(logMessage);
-        globals.logger.append(logMessage);
+        ctx.utils.logAction(`Changing global settings via setup stepper and started Deployer.`);
         return ctx.send({success: true});
     }else{
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
