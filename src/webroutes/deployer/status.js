@@ -22,7 +22,7 @@ module.exports = async function DeployerStatus(ctx) {
     //Prepare data
     const outData = {
         progress: globals.deployer.progress,
-        log: globals.deployer.log.join('\n')
+        log: globals.deployer.getLog()
     }
     if(globals.deployer.step == 'configure'){
         outData.status = 'done';

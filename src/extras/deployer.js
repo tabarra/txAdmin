@@ -2,15 +2,17 @@
 const modulename = 'Deployer';
 const YAML = require('js-yaml');
 const fs = require('fs-extra');
+const dateFormat = require('dateformat');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 const recipeEngine = require('./recipeEngine');
 
 //Helper functions
+const getTimestamp = () => { return dateFormat(new Date(), 'HH:MM:ss') };
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const toDefault = (input, defVal) => { return (isUndefined(input))? defVal : input };
 const canCreateFile = async (targetPath) => {
     try {
-        await fs.outputFile(path.join(targetPath, '.empty'), 'file save attempt, please ignore or remove');
+        await fs.outputFile(path.join(targetPath, '.empty'), '#save_attempt_please_ignore');
         return true;
     } catch (error) {
         return false;
@@ -108,6 +110,7 @@ const parseValidateRecipe = (rawRecipe) => {
 /**
  * The deployer class is responsible for running the recipe and handling status and errors
  * FIXME: add some logging (terminal)
+ * FIXME: log everything to deployPath/recipe.log
  */
 class Deployer {
     /**
@@ -125,7 +128,7 @@ class Deployer {
         this.isTrustedSource = isTrustedSource;
         this.originalRecipe = originalRecipe;
         this.progress = 0;
-        this.log = [];
+        this.logLines = [];
 
         //Load recipe
         try {
@@ -135,21 +138,34 @@ class Deployer {
         }
     }
 
+    //Dumb helpers - don't care enough to make this less bad
+    log(str){
+        this.logLines.push(`[${getTimestamp()}] ${str}`);
+        log(str);
+    }
+    logError(str){
+        this.logLines.push(`[${getTimestamp()}] ${str}`);
+        logError(str);
+    }
+    getLog(){
+        return this.logLines.join('\n');
+    }
+
     /**
      * Starts the deployment process
      * @param {string} userRecipe 
      */
     start(userRecipe){
-        log('Starting deployer runner');
         try {
             this.recipe = parseValidateRecipe(userRecipe);
         } catch (error) {
-            throw new Error(`Recipe Error: ${error.message}`);
+            throw new Error(`Cannot start() deployer due to a Recipe Error: ${error.message}`);
         }
+        this.logLines = [];
+        this.log(`Starting deployment...`);
         this.deployFailed = false;
         this.progress = 0;
         this.step = 'run';
-        this.log.push('Starting deployment...');
         this.runTasks();
     }
 
