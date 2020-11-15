@@ -302,9 +302,9 @@
 
         //============================================== Step3 action
         function step3Action(){
-            const settingsCFG = window.CMInstance.getValue();
-            if(settingsCFG.length < 256){
-                return $.notify({ message: `Your settings.cfg file is too small, there is a good chance you deleted something you shouldn't.` }, { type: 'warning' });
+            const serverCFG = window.CMInstance.getValue();
+            if(serverCFG.length < 256){
+                return $.notify({ message: `Your settings.cfg file is too small, there is a good chance it is not valid.` }, { type: 'warning' });
             }
             const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
@@ -312,18 +312,17 @@
                 type: "POST",
                 url: '/deployer/recipe/commit',
                 timeout: timeoutLong,
-                data: {settingsCFG},
+                data: {serverCFG},
                 dataType: 'json',
                 success: function (data) {
                     if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
-                        window.location.reload(true);
+                        window.location = '/console';
                     }else{
                         notify.update('progress', 0);
                         notify.update('type', data.type);
                         notify.update('message', data.message);
                     }
-                    
                 },
                 error: function (xmlhttprequest, textstatus, message) {
                     notify.update('progress', 0);

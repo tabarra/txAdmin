@@ -19,10 +19,6 @@ module.exports = async function DeployerStepper(ctx) {
         return ctx.response.redirect(redirPath);
     }
 
-    //DEBUG:
-    const fs = require('fs');
-    const tmpFilesPath = `${GlobalData.txAdminResourcePath}/src/webroutes/deployer`;
-
     //Prepare Output
     const renderData = {
         step: globals.deployer.step,
@@ -42,7 +38,18 @@ module.exports = async function DeployerStepper(ctx) {
         renderData.deployPath = globals.deployer.deployPath;
 
     }else if(globals.deployer.step === 'configure'){
-        renderData.serverCFG = fs.readFileSync(`${tmpFilesPath}/server.ignore.cfg`).toString().trim() //DEBUG
+        const errorMessage = `# This recipe didn't create the ./server.cfg for you, meaning the process likely failed.
+# Please make sure everything is correct, or insert here the contents of the ./server.cfg
+# (╯°□°）╯︵ ┻━┻`;
+        try {
+            renderData.serverCFG = await fs.readFile(`${globals.deployer.deployPath}/server.cfg`, 'utf8');
+            if(renderData.serverCFG == '#save_attempt_please_ignore' || !renderData.serverCFG.length){
+                renderData.serverCFG = errorMessage;
+            }
+        } catch (error) {
+            if(GlobalData.verbose) dir(error);
+            renderData.serverCFG = errorMessage;
+        }     
 
     }else{
         return ctx.utils.render('basic/generic', {message: `Unknown Deployer step, please report this bug and restart txAdmin.`});
