@@ -1,5 +1,6 @@
 ## TODO v3
 - [x] replace `localhost` with `127.0.0.1` in functions to force usage of ipv4
+- [x] rename `ctx.utils.appendLog` to `logCommand` then replace it and all `globals.logger.append` for consistency
 - [ ] add stats to know if users are coming from localhost, cfx.re, direct ip or domain (maybe just login?)
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
 - [ ] xxxxx

@@ -109,8 +109,7 @@ const parseValidateRecipe = (rawRecipe) => {
 
 /**
  * The deployer class is responsible for running the recipe and handling status and errors
- * FIXME: add some logging (terminal)
- * FIXME: log everything to deployPath/recipe.log
+ * TODO: log everything to deployPath/recipe.log
  */
 class Deployer {
     /**
@@ -162,7 +161,7 @@ class Deployer {
             throw new Error(`Cannot start() deployer due to a Recipe Error: ${error.message}`);
         }
         this.logLines = [];
-        this.log(`Starting deployment...`);
+        this.log(`Starting deployment of ${this.recipe.name} to ${this.deployPath}`);
         this.deployFailed = false;
         this.progress = 0;
         this.step = 'run';
@@ -209,7 +208,7 @@ class Deployer {
         }
 
         //Else: success :)
-        this.log(`Deploy finished and folder validated. All done! 🏁`);
+        this.log(`Deploy finished and folder validated. All done!`);
         this.step = 'configure';
     }
 } //Fim Deployer()

@@ -734,7 +734,7 @@
                     if (data.success == true){
                         window.location = (outData.template)? '/deployer' : '/console';
                     }else{
-                        saveError.innerHTML = data.message;
+                        saveError.innerHTML = `${data.message}<br>Please refresh the page and start again.`;
                         saveError.classList.remove('d-none');
                         stepperInstace.wrongStep();
                         destroyFeedback(false)

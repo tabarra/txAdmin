@@ -361,7 +361,8 @@ async function handleSaveDeployer(ctx) {
     const recipeURL = ctx.request.body.recipeURL.trim();
     const targetPath = slash(path.normalize(ctx.request.body.targetPath+'/')); 
 
-    //Get recipe and start deployer (constructor will validate the recipe)
+    //Get recipe
+    let recipeData;
     try {
         const res = await axios({
             url: recipeURL,
@@ -370,7 +371,14 @@ async function handleSaveDeployer(ctx) {
             timeout: 4500
         });
         if(typeof res.data !== 'string') throw new Error('This URL did not return a string.');
-        globals.deployer = new Deployer(res.data, targetPath, isTrustedSource);
+        recipeData = res.data;
+    } catch (error) {
+        return ctx.send({success: false, message: `Recipe download error: ${error.message}`});
+    }
+
+    //Start deployer (constructor will validate the recipe)
+    try {
+        globals.deployer = new Deployer(recipeData, targetPath, isTrustedSource);
     } catch (error) {
         return ctx.send({success: false, message: error.message});
     }

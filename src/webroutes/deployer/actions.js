@@ -1,6 +1,8 @@
 //Requires
 const modulename = 'WebServer:DeployerActions';
 const fs = require('fs-extra');
+const slash = require('slash');
+const path = require('path');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
 
@@ -28,8 +30,6 @@ module.exports = async function DeployerActions(ctx) {
     if(globals.deployer == null){
         return ctx.send({success: false, refresh: true});
     }
-    //FIXME: some checking to see if the deployer can continue 
-
 
     //Delegate to the specific action functions
     if(action == 'run'){
@@ -63,6 +63,7 @@ async function handleRunRecipe(ctx) {
     const userEditedRecipe = ctx.request.body.recipe;
 
     try {
+        ctx.utils.logAction(`Running recipe.`);
         globals.deployer.start(userEditedRecipe)
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
@@ -83,7 +84,7 @@ async function handleSaveConfig(ctx) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const serverCFG = ctx.request.body.serverCFG;
-    const cfgFilePath = `${globals.deployer.deployPath}/server.cfg`;
+    const cfgFilePath = path.join(globals.deployer.deployPath, 'server.cfg');
 
     //Saving backup file
     try {
@@ -104,31 +105,22 @@ async function handleSaveConfig(ctx) {
     //Saving CFG file
     try {
         await fs.writeFile(cfgFilePath, serverCFG, 'utf8');
-        const logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Configured server.cfg from deployer.`;
-        globals.logger.append(logMessage);
-        log(logMessage)
+        ctx.utils.logAction(`Configured server.cfg from deployer.`);
     } catch (error) {
         const message = `Failed to edit 'server.cfg' with error: ${error.message}`;
         if(GlobalData.verbose) logWarn(message);
         return ctx.send({type: 'danger', message});
     }
 
-
-
     //Preparing & saving config
     const newFXRunnerConfig = globals.configVault.getScopedStructure('fxRunner');
-    newFXRunnerConfig.serverDataPath = globals.deployer.deployPath;
-    newFXRunnerConfig.cfgPath = cfgFilePath;
+    newFXRunnerConfig.serverDataPath = slash(path.normalize(globals.deployer.deployPath));
+    newFXRunnerConfig.cfgPath = slash(path.normalize(cfgFilePath));
     const saveFXRunnerStatus = globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
 
     if(saveFXRunnerStatus){
-        //Refreshing config
         globals.fxRunner.refreshConfig();
-
-        //Logging
-        const logMessage = `[${ctx.ip}][${ctx.session.auth.username}] Deployer process completed.`;
-        globals.logger.append(logMessage);
-        logOk(logMessage);
+        ctx.utils.logAction(`Completed and committed server deploy.`);
 
         //Starting server
         const spawnMsg = await globals.fxRunner.spawnServer(false);
