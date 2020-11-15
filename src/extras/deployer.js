@@ -12,7 +12,9 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
 const toDefault = (input, defVal) => { return (isUndefined(input))? defVal : input };
 const canCreateFile = async (targetPath) => {
     try {
-        await fs.outputFile(path.join(targetPath, '.empty'), '#save_attempt_please_ignore');
+        const filePath = path.join(targetPath, '.empty');
+        await fs.outputFile(filePath, '#save_attempt_please_ignore');
+        await fs.remove(filePath);
         return true;
     } catch (error) {
         return false;
@@ -34,7 +36,6 @@ const validateTargetPath = async (deployPath) => {
             throw new Error(`This folder is not empty!`);
         }else{
             if(await canCreateFile(deployPath)){
-                //remove folder
                 return `Exists, empty, and writtable!`;
             }else{
                 throw new Error(`Path exists, but its not a folder, or its not writtable.`);
@@ -42,8 +43,8 @@ const validateTargetPath = async (deployPath) => {
         }
     }else{
         if(await canCreateFile(deployPath)){
-            //remove folder
-            return `Path didn't existed, we created one.`;
+            await fs.remove(deployPath);
+            return `Path didn't existed, we created one (then deleted it).`;
         }else{
             throw new Error(`Path doesn't exist, and we could not create it. Please check parent folder permissions.`);
         }
