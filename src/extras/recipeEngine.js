@@ -21,6 +21,8 @@ const pathCleanTrail = (pathInput) => {
 } 
 
 
+
+
 /**
  * Downloads a file to a target path using streams
  */
@@ -81,6 +83,26 @@ const taskRemovePath = async (options, basePath) => {
 
 
 /**
+ * Ensures that the directory exists. If the directory structure does not exist, it is created.
+ */
+const validatorEnsureDir = (options) => {
+    return (
+        typeof options.path == 'string' &&
+        options.path.length &&
+        isPathLinear(options.path) &&
+        !isPathRoot(options.path)
+    )
+}
+const taskEnsureDir = async (options, basePath) => {
+    if(!validatorEnsureDir(options)) throw new Error(`invalid options`);
+
+    //Process and create target file/path
+    const destPath = safePath(basePath, options.path);
+    await fs.ensureDir(destPath);
+}
+
+
+/**
  * DEBUG Just wastes time /shrug
  */
 const validatorWasteTime = (options) => {
@@ -131,6 +153,10 @@ module.exports = {
     remove_path:{
         validate: validatorRemovePath,
         run: taskRemovePath,
+    },
+    ensure_dir:{
+        validate: validatorEnsureDir,
+        run: taskEnsureDir,
     },
 
     //DEBUG mock only
