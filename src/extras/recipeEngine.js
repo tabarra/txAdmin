@@ -196,9 +196,9 @@ DONE:
     - remove_path (file or folder)
     - ensure_dir
     - unzip
+    - move_path (file or folder)
     
 TODO:
-    - move_path (file or folder)
     - copy_path (file or folder)
     - string_replace
     - create_database (creates a database in the local mysql)
@@ -206,6 +206,8 @@ TODO:
     - write_file (with option to append only)
 
     - replace_file
+    - read json into context vars?
+    - print vars to console?
 */
 
 
