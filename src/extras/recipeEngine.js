@@ -137,6 +137,32 @@ const taskUnzip = async (options, basePath) => {
 
 
 /**
+ * Moves a file or directory
+ */
+const validatorMovePath = (options) => {
+    return (
+        typeof options.src == 'string' &&
+        options.src.length &&
+        isPathLinear(options.src) &&
+        !isPathRoot(options.src) &&
+        typeof options.dest == 'string' &&
+        options.dest.length &&
+        isPathLinear(options.dest) &&
+        !isPathRoot(options.dest)
+    )
+}
+const taskMovePath = async (options, basePath) => {
+    if(!validatorMovePath(options)) throw new Error(`invalid options`);
+
+    const srcPath = safePath(basePath, options.src);
+    const destPath = safePath(basePath, options.dest);
+    await fs.move(srcPath, destPath, {
+        overwrite: (options.overwrite === 'true' || options.overwrite === true)
+    });
+}
+
+
+/**
  * DEBUG Just wastes time /shrug
  */
 const validatorWasteTime = (options) => {
@@ -170,13 +196,14 @@ DONE:
     - remove_path (file or folder)
     - ensure_dir
     - unzip
-
+    
 TODO:
+    - move_path (file or folder)
+    - copy_path (file or folder)
     - string_replace
-    - move_path (file or folder, maybe accept glob paths like src/*.lua)
-    - copy (file or folder, maybe accept glob paths like src/*.lua)
     - create_database (creates a database in the local mysql)
     - run_sql (runs a sql file in the database created)
+    - write_file (with option to append only)
 
     - replace_file
 */
@@ -199,6 +226,10 @@ module.exports = {
     unzip:{
         validate: validatorUnzip,
         run: taskUnzip,
+    },
+    move_path:{
+        validate: validatorMovePath,
+        run: taskMovePath,
     },
 
     //DEBUG mock only
