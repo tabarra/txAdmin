@@ -1,8 +1,10 @@
 //Requires
 const modulename = 'RecipeEngine';
-const axios = require("axios");
-const fs = require('fs-extra');
 const path = require('path');
+const util = require('util');
+const fs = require('fs-extra');
+const AdmZip = require('adm-zip');
+const axios = require("axios");
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 //Helper functions
@@ -103,6 +105,38 @@ const taskEnsureDir = async (options, basePath) => {
 
 
 /**
+ * Extracts a ZIP file to a targt folder.
+ * NOTE: wow that was not easy to pick a library!
+ *          - extract-zip: throws deprecation warnings
+ *          - decompress: super super super slow!
+ *          - adm-zip: bad docs, not promise-native, full of issues on github
+ *          - tar << não abre zip
+ *          - unzipper << não testei ainda
+ */
+const validatorUnzip = (options) => {
+    return (
+        typeof options.src == 'string' &&
+        options.src.length &&
+        isPathLinear(options.src) &&
+        typeof options.dest == 'string' &&
+        options.dest.length &&
+        isPathLinear(options.dest)
+    )
+}
+const taskUnzip = async (options, basePath) => {
+    if(!validatorUnzip(options)) throw new Error(`invalid options`);
+
+    const srcPath = safePath(basePath, options.src);
+    //maybe ensure dest doesn't seem to be an issue?
+    const destPath = safePath(basePath, options.dest);
+
+    const zip = new AdmZip(srcPath);
+    const extract = util.promisify(zip.extractAllToAsync);
+    await extract(destPath, true);
+}
+
+
+/**
  * DEBUG Just wastes time /shrug
  */
 const validatorWasteTime = (options) => {
@@ -128,20 +162,24 @@ const taskFailTest = async (options, target) => {
 }
 
 
-/**
- * DEBUG MOCK ONLY Clones an git repository to a target folder with a target name
- */
-const validatorCloneRepo = (options) => {
-    return (
-        typeof options.url == 'string' &&
-        typeof options.path == 'string' &&
-        isPathLinear(options.path)
-    )
-}
-const taskCloneRepo = async (options, target) => {
-    if(!validatorCloneRepo(options)) throw new Error(`invalid options`);
-    dir(`taskCloneRepo deploying to to: ` + safePath(target, options.path));
-}
+/*
+DONE:
+    - waste_time (DEBUG)
+    - fail_test (DEBUG)
+    - download_file
+    - remove_path (file or folder)
+    - ensure_dir
+    - unzip
+
+TODO:
+    - string_replace
+    - move_path (file or folder, maybe accept glob paths like src/*.lua)
+    - copy (file or folder, maybe accept glob paths like src/*.lua)
+    - create_database (creates a database in the local mysql)
+    - run_sql (runs a sql file in the database created)
+
+    - replace_file
+*/
 
 
 //Exports
@@ -158,12 +196,12 @@ module.exports = {
         validate: validatorEnsureDir,
         run: taskEnsureDir,
     },
+    unzip:{
+        validate: validatorUnzip,
+        run: taskUnzip,
+    },
 
     //DEBUG mock only
-    clone_repo:{
-        validate: validatorCloneRepo,
-        run: taskCloneRepo,
-    },
     waste_time:{
         validate: validatorWasteTime,
         run: taskWasteTime,
