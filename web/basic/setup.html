@@ -140,24 +140,24 @@
                                 <div class="step-content">
                                     <strong>Select</strong> how you want to setup your server:
                                     <div class="card bigbutton deployment-type-card border-dark">
+                                        <div class="card-body next-step" onclick="selectDeploymentType('local')">
+                                            <strong>📁 Local Server Data</strong> <br>
+                                            Select an existing server-data folder in the VPS. <br>
+                                            This is the option you are already used to.
+                                        </div>
+                                    </div>
+                                    <div class="card bigbutton deployment-type-card border-dark">
                                         <div class="card-body next-step" onclick="selectDeploymentType('common')">
-                                            <strong>⭐ Editor's Choice Template</strong> <br>
+                                            <strong>⭐ Editor's Choice Template</strong> <span class="badge badge-danger">BETA</span><br>
                                             Select a template from a curated list of community favorites. <br>
                                             This includes ESX, vRP and a Default template for you to customize.
                                         </div>
                                     </div>
                                     <div class="card bigbutton deployment-type-card border-dark">
                                         <div class="card-body next-step" onclick="selectDeploymentType('remote')">
-                                            <strong>📑 Remote URL Template</strong> <br>
+                                            <strong>📑 Remote URL Template</strong> <span class="badge badge-danger">BETA</span><br>
                                             Based on a Recipe URL in the YAML format. <br>
                                             You will have the option to edit the Recipe before running it.
-                                        </div>
-                                    </div>
-                                    <div class="card bigbutton deployment-type-card border-dark">
-                                        <div class="card-body next-step" onclick="selectDeploymentType('local')">
-                                            <strong>📁 Local Server Data</strong> <br>
-                                            Select an existing server-data folder in the VPS. <br>
-                                            This is the option you are already used to.
                                         </div>
                                     </div>
                                     <div class="step-actions">
@@ -195,8 +195,7 @@
                                         The URL for the remote recipe, or the forum thread. <br>
                                         You can discover new recipes by visiting the <a href="https://forum.cfx.re/c/development/releases/7" target="_blank" rel="noopener noreferrer">CFX Forum</a>.
                                         <input type="text" class="form-control mt-2" id="s4RemoteTemplateInput"
-                                            placeholder="https://raw.githubusercontent.com/tabarra/PlumeESX2/master/.fxrecipe"
-                                            DEBUG value="https://gist.githubusercontent.com/tabarra/3e9dfd4bccd1936b6d81144824821f77/raw/da69aac268bc92674f3ec2ff84eac97bcb94c0cf/recipe_test_import.yaml">
+                                            placeholder="https://raw.githubusercontent.com/tabarra/PlumeESX2/master/.fxrecipe">
                                         <span id="s4RemoteTemplateInputError" class="text-danger fade-in d-none"></span>
                                         <div class="step-actions">
                                             <button class="btn btn-pill btn-secondary previous-step"

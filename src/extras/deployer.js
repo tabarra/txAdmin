@@ -181,7 +181,7 @@ class Deployer {
             this.log(`Running ${taskID}...`);
 
             try {
-                await recipeEngine[task.action].run(task, this.deployPath)
+                await recipeEngine[task.action].run(task, this.deployPath);
                 this.logLines[this.logLines.length -1] += ` ✔️`;
             } catch (error) {
                 this.logLines[this.logLines.length -1] += ` ❌`;

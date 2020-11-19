@@ -81,7 +81,13 @@ async function renderMasterView(view, reqSess, data){
         sqrl.templates.define("footer", sqrl.compile(rawFooter));
         out = sqrl.render(rawView, data);
     } catch (error) {
-        out = getRenderErrorText(view, error, data);
+        if(error.code == 'ENOENT'){
+            out = `<pre>\n`;
+            out += `The '${view}' page file was not found.\n`;
+            out += `You probably deleted the 'citizen/system_resources/monitor/web/' folder or the folders above it.\n`;
+        }else{
+            out = getRenderErrorText(view, error, data);
+        }
     }
 
     return out;
@@ -108,10 +114,16 @@ async function renderLoginView(data){
 
     let out;
     try {
-        let rawView = await fs.readFile(getWebViewPath(`basic/login`), 'utf8');
+        const rawView = await fs.readFile(getWebViewPath(`basic/login`), 'utf8');
         out = sqrl.render(rawView, data);
     } catch (error) {
-        out = getRenderErrorText('Login', error, data);
+        if(error.code == 'ENOENT'){
+            out = `<pre>\n`;
+            out += `The login page file was not found.\n`;
+            out += `You probably deleted the 'citizen/system_resources/monitor/web/basic/login.html' file or the folders above it.\n`;
+        }else{
+            out = getRenderErrorText('Login', error, data);
+        }
     }
 
     return out;

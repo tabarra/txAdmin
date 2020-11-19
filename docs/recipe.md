@@ -61,19 +61,34 @@ Extracts a ZIP file to a targt folder. This do not work for tar files.
 ```
 
 ### `move_path`
-Extracts a ZIP file to a targt folder. This do not work for tar files.  
-- `overwrite:` When set to true, it will replace the destination path if it already exists.
+Moves a file or directory. The directory can have contents.
+This is an implementation of [fs-extra.move()](https://github.com/jprichardson/node-fs-extra/blob/HEAD/docs/move.md).
 - `src:` The source path. This can be either a file or a folder. Cannot be the root path (`./`).
 - `dest:` The destination path. Cannot be the root path (`./`).
+- `overwrite:` *(optional, boolean)* When set to true, it will replace the destination path if it already exists.
 ```yaml
 - action: move_path
-  overwrite: true
   src: ./tmp/cfx-server-data-master/resources
+  dest: ./resources
+  overwrite: true
+```
+
+### `copy_path`
+Copy a file or directory. The directory can have contents.
+This is an implementation of [fs-extra.copy()](https://github.com/jprichardson/node-fs-extra/blob/HEAD/docs/copy.md).
+- `src:` The source path. Note that if `src` is a directory it will copy everything inside of this directory, not the entire directory itself.
+- `dest:` The destination path. Note that if `src` is a file, `dest` cannot be a directory.
+- `overwrite:` *(optional, boolean)* When set to `true`, overwrite existing file or directory, default is `true`. Note that the copy operation will silently fail if you set this to `false` and the destination exists. Use the `errorOnExist` option to change this behavior.
+- `errorOnExist:` *(optional, boolean)* when overwrite is `false` and the destination exists, throw an error. Default is `false`.
+```yaml
+- action: copy_path
+  src: ./tmp/cfx-server-data-master/resources/
   dest: ./resources
 ```
 
 ### `remove_path`
 Removes a file or directory. The directory can have contents. If the path does not exist, silently does nothing.
+This is an implementation of [fs-extra.remove()](https://github.com/jprichardson/node-fs-extra/blob/HEAD/docs/remove.md).
 - `path:` The path to be removed. Cannot be the root path (`./`).
 ```yaml
 - action: remove_path
@@ -82,7 +97,8 @@ Removes a file or directory. The directory can have contents. If the path does n
 
 ### `ensure_dir`
 Ensures that the directory exists. If the directory structure does not exist, it is created.
-- `path:` The path to be removed. Cannot be the root path (`./`).
+This is an implementation of [fs-extra.ensureDir()](https://github.com/jprichardson/node-fs-extra/blob/HEAD/docs/ensureDir.md).
+- `path:` The path to be created. Cannot be the root path (`./`).
 ```yaml
 - action: ensure_dir
   path: ./resources
