@@ -13,23 +13,23 @@ module.exports = class Authenticator {
         this.config = config;
         this.adminsFile = `${GlobalData.dataPath}/admins.json`;
         this.admins = null;
-        this.registeredPermissions = [
-            "all_permissions",
-            "manage.admins",
-            "commands.resources",
-            "players.ban",
-            "players.kick",
-            "players.message",
-            "players.warn",
-            "players.whitelist",
-            "console.view",
-            "console.write",
-            "control.server",
-            "server.cfg.editor",
-            "settings.view",
-            "settings.write",
-            "txadmin.log.view",
-        ];
+        this.registeredPermissions = {
+            "all_permissions": "All Permissions",
+            "manage.admins": "Manage Admins",
+            "commands.resources": "Start/Stop Resources (start/stop)",
+            "players.ban": "Players: Ban",
+            "players.kick": "Players: Kick",
+            "players.message": "Players: DM",
+            "players.warn": "Players: Warn",
+            "players.whitelist": "Players: Whitelist",
+            "console.view": "Console: View",
+            "console.write": "Console: Write",
+            "control.server": "Start/Stop/Restart Server",
+            "server.cfg.editor": "Read/Write Server CFG file",
+            "settings.view": "Settings: View (except tokens)",
+            "settings.write": "Settings: Change",
+            "txadmin.log.view": "View txAdmin Log",
+        };
 
         //Load providers
         try {

@@ -53,8 +53,8 @@
             {{@each(it.permissions) => perm, key}}
             <div class="form-check checkbox">
                 <input class="form-check-input" id="modEditAdmin-{{key}}" type="checkbox" name="modEditAdmin-permissions[]"
-                    value="{{perm.name}}" {{perm.checked}}>
-                <label class="form-check-label" for="modEditAdmin-{{key}}">{{perm.name}} </label>
+                    value="{{perm.id}}" {{perm.checked}}>
+                <label class="form-check-label" for="modEditAdmin-{{key}}">{{perm.name}}</label>
             </div>
             {{/each}}
         </div>

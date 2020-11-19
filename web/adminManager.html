@@ -169,11 +169,11 @@
                         Permissions
                     </label>
                     <div class="col-sm-9">
-                        {{@each(it.allPermissions) => permName, key}}
+                        {{@each(it.allPermissions) => perm, key}}
                         <div class="form-check checkbox">
                             <input class="form-check-input" id="modAddAdmin-check{{key}}" type="checkbox" name="modAddAdmin-permissions[]"
-                                value="{{permName}}">
-                            <label class="form-check-label" for="modAddAdmin-check{{key}}">{{permName}}</label>
+                                value="{{perm[0]}}">
+                            <label class="form-check-label" for="modAddAdmin-check{{key}}">{{perm[1]}}</label>
                         </div>
                         {{/each}}
                     </div>

@@ -225,11 +225,12 @@ async function handleGetModal(ctx) {
     //Prepare permissions
     let permissions;
     if(!editingSelf){
-        let allPermissions = globals.authenticator.getPermissionsList();
+        const allPermissions = Object.entries(globals.authenticator.getPermissionsList());
         permissions = allPermissions.map((perm) => {
             return {
-                name: perm,
-                checked: (admin.permissions.includes(perm))? 'checked' : ''
+                id: perm[0],
+                name: perm[1],
+                checked: (admin.permissions.includes(perm[0]))? 'checked' : ''
             }
         });
     }
