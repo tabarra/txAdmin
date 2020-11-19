@@ -137,7 +137,7 @@ const taskUnzip = async (options, basePath) => {
 
 
 /**
- * Moves a file or directory
+ * Moves a file or directory. The directory can have contents.
  */
 const validatorMovePath = (options) => {
     return (
@@ -158,6 +158,30 @@ const taskMovePath = async (options, basePath) => {
     const destPath = safePath(basePath, options.dest);
     await fs.move(srcPath, destPath, {
         overwrite: (options.overwrite === 'true' || options.overwrite === true)
+    });
+}
+
+/**
+ * Copy a file or directory. The directory can have contents.
+ * TODO: add a filter property and use a glob lib in the fs.copy filter function
+ */
+const validatorCopyPath = (options) => {
+    return (
+        typeof options.src == 'string' &&
+        options.src.length &&
+        isPathLinear(options.src) &&
+        typeof options.dest == 'string' &&
+        options.dest.length &&
+        isPathLinear(options.dest)
+    )
+}
+const taskCopyPath = async (options, basePath) => {
+    if(!validatorCopyPath(options)) throw new Error(`invalid options`);
+
+    const srcPath = safePath(basePath, options.src);
+    const destPath = safePath(basePath, options.dest);
+    await fs.copy(srcPath, destPath, {
+        overwrite: (typeof options.overwrite !== undefined && (options.overwrite === 'true' || options.overwrite === true))
     });
 }
 
@@ -197,9 +221,9 @@ DONE:
     - ensure_dir
     - unzip
     - move_path (file or folder)
+    - copy_path (file or folder)
     
 TODO:
-    - copy_path (file or folder)
     - string_replace
     - create_database (creates a database in the local mysql)
     - run_sql (runs a sql file in the database created)
@@ -208,6 +232,11 @@ TODO:
     - replace_file
     - read json into context vars?
     - print vars to console?
+    - download_repo: automatiza toda a parte de download, unzip, move e rm temp
+        - url
+        - tag
+        - subfolders?
+        - dest path
 */
 
 
@@ -232,6 +261,10 @@ module.exports = {
     move_path:{
         validate: validatorMovePath,
         run: taskMovePath,
+    },
+    copy_path:{
+        validate: validatorCopyPath,
+        run: taskCopyPath,
     },
 
     //DEBUG mock only
