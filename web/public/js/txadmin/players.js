@@ -334,167 +334,30 @@ function searchPlayer() {
 }
 
 // Message player
+
 function messagePlayer() {
-  if (modPlayer.curr.id == false) return;
-  let message = prompt("Type your message.");
-  if (!message || message.length === 0) return;
-
-  var notify = $.notify(
-    { message: '<p class="text-center">Executing Command...</p>' },
-    {}
-  );
-
-  let data = {
-    id: modPlayer.curr.id,
-    message: message.trim(),
-  };
-  $.ajax({
-    type: "POST",
-    url: "/player/message",
-    timeout: timeoutLong,
-    data: data,
-    dataType: "json",
-    success: function (data) {
-      notify.update("progress", 0);
-      notify.update("type", data.type);
-      notify.update("message", data.message);
-    },
-    error: function (xmlhttprequest, textstatus, message) {
-      notify.update("progress", 0);
-      notify.update("type", "danger");
-      notify.update("message", message);
-    },
-  });
+  txPlayer.messagePlayer()
 }
 
-// Kick Player
+// kick player
 function kickPlayer() {
-  if (modPlayer.curr.id == false) return;
-  let reason = prompt("Type the kick reason or leave it blank (press enter)");
-  if (reason == null) return;
-
-  var notify = $.notify(
-    { message: '<p class="text-center">Executing Command...</p>' },
-    { type: 'info' }
-  );
-
-  let data = {
-    id: modPlayer.curr.id,
-    reason: reason,
-  };
-  $.ajax({
-    type: "POST",
-    url: "/player/kick",
-    timeout: timeoutLong,
-    data: data,
-    dataType: "json",
-    success: function (data) {
-      notify.update("progress", 0);
-      notify.update("type", data.type);
-      notify.update("message", data.message);
-      if (data.type !== "danger") modPlayer.Modal.hide();
-    },
-    error: function (xmlhttprequest, textstatus, message) {
-      notify.update("progress", 0);
-      notify.update("type", "danger");
-      notify.update("message", message);
-    },
-  });
+  txPlayer.kick();
 }
+
 
 //Warn Player
 function warnPlayer() {
-  if (modPlayer.curr.id == false) return;
-  let reason = prompt("Type the warn reason.");
-  if (reason == null) return;
-  reason = reason.trim();
-
-  if (!reason.length) {
-    var notify = $.notify(
-      { message: '<p class="text-center">The warn reason is required.</p>' },
-      { type: "danger" }
-    );
-    return;
-  }
-  var notify = $.notify(
-    { message: '<p class="text-center">Executing Command...</p>' },
-    {}
-  );
-
-  let data = {
-    id: modPlayer.curr.id,
-    reason: reason,
-  };
-  $.ajax({
-    type: "POST",
-    url: "/player/warn",
-    timeout: timeoutLong,
-    data: data,
-    dataType: "json",
-    success: function (data) {
-      notify.update("progress", 0);
-      notify.update("type", data.type);
-      notify.update("message", data.message);
-      if (data.type !== "danger") modPlayer.Modal.hide();
-    },
-    error: function (xmlhttprequest, textstatus, message) {
-      notify.update("progress", 0);
-      notify.update("type", "danger");
-      notify.update("message", message);
-    },
-  });
+  txPlayer.warnPlayer();
 }
 
-// Ban Player
 modPlayer.Ban.durationSelect.onchange = () => {
   const isDefault = modPlayer.Ban.durationSelect.value !== "custom";
   modPlayer.Ban.durationMultiplier.disabled = isDefault;
   modPlayer.Ban.durationUnit.disabled = isDefault;
 };
 
-function banPlayer() {
-  const reason = modPlayer.Ban.reason.value.trim();
-  if (!reason.length) {
-    $.notify(
-      { message: '<p class="text-center">The ban reason is required.</p>' },
-      { type: "danger" }
-    );
-    return;
-  }
-  const duration =
-    modPlayer.Ban.durationSelect.value === "custom"
-      ? `${modPlayer.Ban.durationMultiplier.value} ${modPlayer.Ban.durationUnit.value}`
-      : modPlayer.Ban.durationSelect.value;
 
-  const notify = $.notify(
-    { message: '<p class="text-center">Executing Command...</p>' },
-    {}
-  );
-  const data = {
-    reason,
-    duration,
-    reference:
-      modPlayer.curr.id !== false
-        ? modPlayer.curr.id
-        : modPlayer.curr.identifiers,
-    // reference: modPlayer.curr.identifiers,
-  };
-  $.ajax({
-    type: "POST",
-    url: "/player/ban",
-    timeout: timeoutLong,
-    data: data,
-    dataType: "json",
-    success: function (data) {
-      notify.update("progress", 0);
-      notify.update("type", data.type);
-      notify.update("message", data.message);
-      if (data.type !== "danger") modPlayer.Modal.hide();
-    },
-    error: function (xmlhttprequest, textstatus, message) {
-      notify.update("progress", 0);
-      notify.update("type", "danger");
-      notify.update("message", message);
-    },
-  });
+// Ban Player
+function banPlayer() {
+  txPlayer.banPlayer();
 }
