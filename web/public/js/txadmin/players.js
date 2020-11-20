@@ -1,4 +1,9 @@
+import { txPlayers, modPlayer } from './classes';
 // FIXME: Remove jQuery, we really don't need it
+
+let txPlayer = new txPlayers();
+
+
 
 //================================================================
 //============================================== Playerlist
@@ -144,57 +149,6 @@ function processPlayers(players) {
   plistCountElement.textContent = players.length;
 }
 
-//================================================================
-//============================================== Player Info Modal
-//================================================================
-//Preparing variables
-var modPlayer = {
-  curr: {
-    id: false,
-    license: false,
-    identifiers: false,
-  },
-  Modal: new coreui.Modal(document.getElementById("modPlayer")),
-  Title: document.getElementById("modPlayerTitle"),
-  Message: document.getElementById("modPlayerMessage"),
-  Content: document.getElementById("modPlayerContent"),
-  Buttons: {
-    search: document.getElementById("modPlayerButtons-search"),
-    message: document.getElementById("modPlayerButtons-message"),
-    kick: document.getElementById("modPlayerButtons-kick"),
-    warn: document.getElementById("modPlayerButtons-warn"),
-  },
-  Main: {
-    body: document.getElementById("modPlayerMain"),
-    tab: document.getElementById("modPlayerMain-tab"),
-    joinDate: document.getElementById("modPlayerMain-joinDate"),
-    playTime: document.getElementById("modPlayerMain-playTime"),
-    sessionTime: document.getElementById("modPlayerMain-sessionTime"),
-    notesLog: document.getElementById("modPlayerMain-notesLog"),
-    notes: document.getElementById("modPlayerMain-notes"),
-  },
-  IDs: {
-    body: document.getElementById("modPlayerIDs"),
-    tab: document.getElementById("modPlayerIDs-tab"),
-    list: document.getElementById("modPlayerIDs-list"),
-  },
-  History: {
-    body: document.getElementById("modPlayerHistory"),
-    tab: document.getElementById("modPlayerHistory-tab"),
-    list: document.getElementById("modPlayerHistory-log"),
-  },
-  Ban: {
-    body: document.getElementById("modPlayerBan"),
-    tab: document.getElementById("modPlayerBan-tab"),
-    reason: document.getElementById("modPlayerBan-reason"),
-    durationSelect: document.getElementById("modPlayerBan-durationSelect"),
-    durationMultiplier: document.getElementById(
-      "modPlayerBan-durationMultiplier"
-    ),
-    durationUnit: document.getElementById("modPlayerBan-durationUnit"),
-  },
-};
-
 // Open Modal
 function showPlayer(license, altName = "unknown", altIDs = "") {
   //Reset active player
@@ -329,18 +283,19 @@ function showPlayer(license, altName = "unknown", altIDs = "") {
 }
 
 // Save Note
-function setNoteMessage(msg, type) {
-  if (typeof type == "string") {
-    modPlayer.Main.notesLog.innerHTML = `<span class="text-${type}">${msg}</span>`;
-  } else {
-    modPlayer.Main.notesLog.innerText = msg;
-  }
-}
+//function setNoteMessage(msg, type) {
+//  if (typeof type == "string") {
+//    modPlayer.Main.notesLog.innerHTML = `<span class="text-${type}">${msg}</span>`;
+//  } else {
+//    modPlayer.Main.notesLog.innerText = msg;
+//  }
+//}
 modPlayer.Main.notes.addEventListener("keydown", (event) => {
-  setNoteMessage(`Press enter to save.`);
+    txPlayer.noteMessage(`Press enter to save`);
   if (event.keyCode == 13 && !event.shiftKey) {
     event.preventDefault();
-    setNoteMessage(`Saving...`, "warning");
+    txPlayer.noteMessage(`Saving...`, "warning");
+    //setNoteMessage(`Saving...`, "warning");
     var data = {
       license: modPlayer.curr.license,
       note: modPlayer.Main.notes.value,
@@ -353,16 +308,13 @@ modPlayer.Main.notes.addEventListener("keydown", (event) => {
       dataType: "json",
       success: function (data) {
         if (typeof data.message == "string" && typeof data.type == "string") {
-          setNoteMessage(data.message, data.type);
+            txPlayer.noteMessage(data.message, data.type)
         } else {
-          setNoteMessage(
-            `Failed to save with error: wrong return format`,
-            "danger"
-          );
+            txPlayer.noteMessage(`Failed to save with error: wrong return format`, "danger")
         }
       },
       error: function (xmlhttprequest, textstatus, message) {
-        setNoteMessage(`Failed to save with error: ${message}`, "danger");
+        txPlayer.noteMessage(`Failed to save with error: ${message}`, "danger");
       },
     });
   }
@@ -423,7 +375,7 @@ function kickPlayer() {
 
   var notify = $.notify(
     { message: '<p class="text-center">Executing Command...</p>' },
-    {}
+    { type: 'info' }
   );
 
   let data = {
