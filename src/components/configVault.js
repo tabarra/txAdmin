@@ -196,7 +196,7 @@ module.exports = class ConfigVault {
             //Monitor
             cfg.monitor.timeout = cfg.monitor.timeout || 1500;
             cfg.monitor.restarterSchedule = cfg.monitor.restarterSchedule || [];
-            cfg.monitor.cooldown = parseInt(cfg.monitor.cooldown) || 90; //not in template
+            cfg.monitor.cooldown = parseInt(cfg.monitor.cooldown) || 180; //not in template - uset do be: 45 > 60 > 90
             cfg.monitor.disableChatWarnings = (cfg.monitor.disableChatWarnings === 'true' || cfg.monitor.disableChatWarnings === true);
             cfg.monitor.heartBeat.failThreshold = parseInt(cfg.monitor.heartBeat.failThreshold) || 10;
             cfg.monitor.heartBeat.failLimit = parseInt(cfg.monitor.heartBeat.failLimit) || 45;
