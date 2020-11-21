@@ -128,3 +128,25 @@ This is an implementation of [fs-extra.outputFile()](https://github.com/jprichar
         "heyLookAnArray": [123, 456]
     }
 ```
+
+
+### `replace_string`
+Replaces a string in the target file or files array based on a search string.
+- `file:` String or array containing tie file(s) to be checked for the replacer string.
+- `search:` The String to be searched for.
+- `replace:` The String that will replace the `search` one.
+```yaml
+# Single file
+- action: replace_string
+  file: ./server.cfg
+  search: 'FXServer, but unconfigured'
+  replace: 'My cool new recipe!!!'
+
+# Multiple files
+- action: replace_string
+  file: 
+    - ./server.cfg
+    - ./doesntexist/config.json
+  search: 'omg_replace_this'
+  replace: 'got_it!'
+```

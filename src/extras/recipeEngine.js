@@ -196,6 +196,37 @@ const taskWriteFile = async (options, basePath) => {
 
 
 /**
+ * Replaces a string in the target file or files array based on a search string.
+ */
+const validatorReplaceString = (options) => {
+    return (
+        (
+            ( 
+                Array.isArray(options.file) && 
+                options.file.every(s => isPathValid(s, false)) 
+            ) ||
+            isPathValid(options.file, false)
+        ) &&
+        typeof options.search == 'string' &&
+        options.search.length &&
+        typeof options.replace == 'string'
+    )
+}
+const taskReplaceString = async (options, basePath) => {
+    if(!validatorReplaceString(options)) throw new Error(`invalid options`);
+
+    const fileList = (Array.isArray(options.file))? options.file : [options.file];
+    for (let i = 0; i < fileList.length; i++){
+        const filePath = safePath(basePath, fileList[i]);
+        const original = await fs.readFile(filePath);
+        const changed = original.toString().replace(options.search, options.replace);
+        await fs.writeFile(filePath, changed);
+    }
+}
+
+
+
+/**
  * DEBUG Just wastes time /shrug
  */
 const validatorWasteTime = (options) => {
@@ -232,9 +263,9 @@ DONE:
     - move_path (file or folder)
     - copy_path (file or folder)
     - write_file (with option to append only)
+    - replace_string
     
 TODO:
-    - string_replace
     - create_database (creates a database in the local mysql)
     - run_sql (runs a sql file in the database created)
 MAYBE?
@@ -287,6 +318,10 @@ module.exports = {
         validate: validatorWriteFile,
         run: taskWriteFile,
     },
+    replace_string:{
+        validate: validatorReplaceString,
+        run: taskReplaceString,
+    },
 
     //DEBUG mock only
     waste_time:{
@@ -298,35 +333,3 @@ module.exports = {
         run: taskFailTest,
     },
 }
-
-
-
-
-/*
-TODO: maybe accept multiple srcs or something?!
-const validatorMovePath = (options) => {
-    return (
-        (
-            ( 
-                Array.isArray(options.src) && 
-                options.src.every(s => isPathValid(s, false)) 
-            ) ||
-            isPathValid(options.src, false)
-        ) &&
-        isPathValid(options.dest, false)
-    )
-}
-const taskMovePath = async (options, basePath) => {
-    if(!validatorMovePath(options)) throw new Error(`invalid options`);
-
-    const destPath = safePath(basePath, options.dest);
-    const srcList = (Array.isArray(options.src))? options.src : [options.src];
-    for (let i = 0; i < srcList.length; i++){
-        const srcPath = safePath(basePath, srcList[i]);
-        log(srcPath)
-        await fs.move(srcPath, destPath, {
-            overwrite: (options.overwrite === 'true' || options.overwrite === true)
-        });
-    }
-}
- */
