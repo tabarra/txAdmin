@@ -1,5 +1,5 @@
 # Recipe Files
-A Recipe is a YAML document that descrives how to deploy a server: from downloading resources, to configuring the `server.cfg` file.  
+A Recipe is a YAML document that describes how to deploy a server: from downloading resources, to configuring the `server.cfg` file.  
 You can run a recipe from txAdmin's built-in Server Deployer.  
 Recipes will be "jailed" to the target folder, so for example they won't be able to execute `write_file` to your `admins.json`.  
 At the end of the deployment process, your target folder will be checked for the presence of a `server.cfg` and a `resources` folder to make sure everything went right.  
@@ -51,7 +51,7 @@ Downloads a file to a specific path.
 ```
 
 ### `unzip`
-Extracts a ZIP file to a targt folder. This do not work for tar files.  
+Extracts a ZIP file to a target folder. This do not work for tar files.  
 - `src:` The source path.
 - `dest:` The destination path.
 ```yaml
@@ -79,7 +79,7 @@ This is an implementation of [fs-extra.copy()](https://github.com/jprichardson/n
 - `src:` The source path. Note that if `src` is a directory it will copy everything inside of this directory, not the entire directory itself.
 - `dest:` The destination path. Note that if `src` is a file, `dest` cannot be a directory.
 - `overwrite:` *(optional, boolean)* When set to `true`, overwrite existing file or directory, default is `true`. Note that the copy operation will silently fail if you set this to `false` and the destination exists. Use the `errorOnExist` option to change this behavior.
-- `errorOnExist:` *(optional, boolean)* when overwrite is `false` and the destination exists, throw an error. Default is `false`.
+- `errorOnExist:` *(optional, boolean)* When overwrite is `false` and the destination exists, throw an error. Default is `false`.
 ```yaml
 - action: copy_path
   src: ./tmp/cfx-server-data-master/resources/
@@ -102,4 +102,29 @@ This is an implementation of [fs-extra.ensureDir()](https://github.com/jprichard
 ```yaml
 - action: ensure_dir
   path: ./resources
+```
+
+### `write_file`
+Writes or appends data to a file. If not in the append mode, the file will be overwritten and the directory structure will be created if it doesn't exists.
+This is an implementation of [fs-extra.outputFile()](https://github.com/jprichardson/node-fs-extra/blob/HEAD/docs/outputFile.md) and Node's default `fs.appendFile()`.
+- `file:` The path of the file to be written to.
+- `append:` *(optional, boolean)* When set to true, the data will be appended to the end of the target file instead of overwriting everything.
+- `data:` The data to be written to the target path.
+```yaml
+# Append example
+- action: write_file
+  file: ./server.cfg
+  append: true
+  data: |
+    ensure example1
+    ensure example2
+
+# Write file example
+- action: write_file
+  file: ./doesntexist/config.json
+  data: |
+    {
+        "someVariable": true,
+        "heyLookAnArray": [123, 456]
+    }
 ```

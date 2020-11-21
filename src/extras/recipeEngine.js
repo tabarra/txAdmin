@@ -21,6 +21,14 @@ const isPathRoot = (pathInput) => {
 const pathCleanTrail = (pathInput) => {
     return pathInput.replace(/[\/\\]+$/, '');
 } 
+const isPathValid = (pathInput, acceptRoot=true) => {
+    return (
+        typeof pathInput == 'string' &&
+        pathInput.length &&
+        isPathLinear(pathInput) &&
+        (acceptRoot || !isPathRoot(pathInput))
+    )
+}
 
 
 
@@ -31,9 +39,7 @@ const pathCleanTrail = (pathInput) => {
 const validatorDownloadFile = (options) => {
     return (
         typeof options.url == 'string' &&
-        typeof options.path == 'string' &&
-        options.path.length &&
-        isPathLinear(options.path)
+        isPathValid(options.path)
     )
 }
 const taskDownloadFile = async (options, basePath) => {
@@ -65,10 +71,7 @@ const taskDownloadFile = async (options, basePath) => {
  */
 const validatorRemovePath = (options) => {
     return (
-        typeof options.path == 'string' &&
-        options.path.length &&
-        isPathLinear(options.path) &&
-        !isPathRoot(options.path)
+        isPathValid(options.path, false)
     )
 }
 const taskRemovePath = async (options, basePath) => {
@@ -89,10 +92,7 @@ const taskRemovePath = async (options, basePath) => {
  */
 const validatorEnsureDir = (options) => {
     return (
-        typeof options.path == 'string' &&
-        options.path.length &&
-        isPathLinear(options.path) &&
-        !isPathRoot(options.path)
+        isPathValid(options.path, false)
     )
 }
 const taskEnsureDir = async (options, basePath) => {
@@ -115,12 +115,8 @@ const taskEnsureDir = async (options, basePath) => {
  */
 const validatorUnzip = (options) => {
     return (
-        typeof options.src == 'string' &&
-        options.src.length &&
-        isPathLinear(options.src) &&
-        typeof options.dest == 'string' &&
-        options.dest.length &&
-        isPathLinear(options.dest)
+        isPathValid(options.src, false) &&
+        isPathValid(options.dest)
     )
 }
 const taskUnzip = async (options, basePath) => {
@@ -141,14 +137,8 @@ const taskUnzip = async (options, basePath) => {
  */
 const validatorMovePath = (options) => {
     return (
-        typeof options.src == 'string' &&
-        options.src.length &&
-        isPathLinear(options.src) &&
-        !isPathRoot(options.src) &&
-        typeof options.dest == 'string' &&
-        options.dest.length &&
-        isPathLinear(options.dest) &&
-        !isPathRoot(options.dest)
+        isPathValid(options.src, false) &&
+        isPathValid(options.dest, false)
     )
 }
 const taskMovePath = async (options, basePath) => {
@@ -161,18 +151,15 @@ const taskMovePath = async (options, basePath) => {
     });
 }
 
+
 /**
  * Copy a file or directory. The directory can have contents.
  * TODO: add a filter property and use a glob lib in the fs.copy filter function
  */
 const validatorCopyPath = (options) => {
     return (
-        typeof options.src == 'string' &&
-        options.src.length &&
-        isPathLinear(options.src) &&
-        typeof options.dest == 'string' &&
-        options.dest.length &&
-        isPathLinear(options.dest)
+        isPathValid(options.src) &&
+        isPathValid(options.dest)
     )
 }
 const taskCopyPath = async (options, basePath) => {
@@ -181,8 +168,30 @@ const taskCopyPath = async (options, basePath) => {
     const srcPath = safePath(basePath, options.src);
     const destPath = safePath(basePath, options.dest);
     await fs.copy(srcPath, destPath, {
-        overwrite: (typeof options.overwrite !== undefined && (options.overwrite === 'true' || options.overwrite === true))
+        overwrite: (typeof options.overwrite !== 'undefined' && (options.overwrite === 'true' || options.overwrite === true))
     });
+}
+
+
+/**
+ * Writes or appends data to a file. If not in the append mode, the file will be overwritten and the directory structure will be created if it doesn't exists.
+ */
+const validatorWriteFile = (options) => {
+    return (
+        typeof options.data == 'string' &&
+        options.data.length &&
+        isPathValid(options.file, false)
+    )
+}
+const taskWriteFile = async (options, basePath) => {
+    if(!validatorWriteFile(options)) throw new Error(`invalid options`);
+
+    const filePath = safePath(basePath, options.file);
+    if(options.append === 'true' || options.append === true){
+        await fs.appendFile(filePath, options.data);
+    }else{
+        await fs.outputFile(filePath, options.data);
+    }
 }
 
 
@@ -222,21 +231,29 @@ DONE:
     - unzip
     - move_path (file or folder)
     - copy_path (file or folder)
+    - write_file (with option to append only)
     
 TODO:
     - string_replace
     - create_database (creates a database in the local mysql)
     - run_sql (runs a sql file in the database created)
-    - write_file (with option to append only)
-
+MAYBE?
     - replace_file
     - read json into context vars?
     - print vars to console?
-    - download_repo: automatiza toda a parte de download, unzip, move e rm temp
+    - github_extract: automatiza toda a parte de download, unzip, move e rm temp
         - url
         - tag
         - subfolders?
         - dest path
+
+
+https://api.github.com/repos/tabarra/txAdmin/zipball/master
+https://api.github.com/repos/tabarra/txAdmin/zipball/v2.7.2
+https://api.github.com/repos/tabarra/txAdmin/zipball/778bc41aa7a66ff9b37acdbfcb4c6cd957c8614e
+
+https://api.github.com/repos/tabarra/txAdmin/releases
+https://api.github.com/repos/tabarra/txAdmin/releases/latest
 */
 
 
@@ -266,6 +283,10 @@ module.exports = {
         validate: validatorCopyPath,
         run: taskCopyPath,
     },
+    write_file:{
+        validate: validatorWriteFile,
+        run: taskWriteFile,
+    },
 
     //DEBUG mock only
     waste_time:{
@@ -277,3 +298,35 @@ module.exports = {
         run: taskFailTest,
     },
 }
+
+
+
+
+/*
+TODO: maybe accept multiple srcs or something?!
+const validatorMovePath = (options) => {
+    return (
+        (
+            ( 
+                Array.isArray(options.src) && 
+                options.src.every(s => isPathValid(s, false)) 
+            ) ||
+            isPathValid(options.src, false)
+        ) &&
+        isPathValid(options.dest, false)
+    )
+}
+const taskMovePath = async (options, basePath) => {
+    if(!validatorMovePath(options)) throw new Error(`invalid options`);
+
+    const destPath = safePath(basePath, options.dest);
+    const srcList = (Array.isArray(options.src))? options.src : [options.src];
+    for (let i = 0; i < srcList.length; i++){
+        const srcPath = safePath(basePath, srcList[i]);
+        log(srcPath)
+        await fs.move(srcPath, destPath, {
+            overwrite: (options.overwrite === 'true' || options.overwrite === true)
+        });
+    }
+}
+ */
