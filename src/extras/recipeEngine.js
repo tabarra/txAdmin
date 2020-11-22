@@ -263,7 +263,7 @@ DONE:
     - move_path (file or folder)
     - copy_path (file or folder)
     - write_file (with option to append only)
-    - replace_string
+    - replace_string (single or array)
     
 TODO:
     - create_database (creates a database in the local mysql)

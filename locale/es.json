@@ -4,6 +4,7 @@
         "humanizer_language": "es"
     },
     "restarter": {
+        "start_timeout": "failed to start in time",
         "crash_detected": "Caída del servidor detectada.",
         "partial_crash_warn": "Debido a una caída parcial, este servidor se reiniciará  en 1 minuto. Favor desconectarse.",
         "partial_crash_warn_discord": "Debido a una caída parcial, **%{servername}**este servidor se reiniciará  en 1 minuto.",

@@ -4,6 +4,7 @@
         "humanizer_language": "fr"
     },
     "restarter": {
+        "start_timeout": "failed to start in time",
         "crash_detected": "le serveur a planté",
         "partial_crash_warn": "À cause d'un plantage partiel, le serveur redémarrera dans 1 minute. Merci de vous déconnecter.",
         "partial_crash_warn_discord": "À cause d'un plantage partiel, **%{servername}** redémarrera dans 1 minute.",

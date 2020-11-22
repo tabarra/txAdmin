@@ -96,6 +96,7 @@ const parseValidateRecipe = (rawRecipe) => {
     }
 
     //Validate tasks
+    if(!Array.isArray(recipe.tasks)) throw new Error(`no tasks array found`);
     recipe.tasks.forEach((task, index) => {
         if(typeof task.action !== 'string') throw new Error(`[task${index+1}] no action specified`);
         if(typeof recipeEngine[task.action] === 'undefined') throw new Error(`[task${index+1}] unknown action '${task.action}'`);

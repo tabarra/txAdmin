@@ -4,6 +4,7 @@
         "humanizer_language": "lt"
     },
     "restarter": {
+        "start_timeout": "failed to start in time",
         "crash_detected": "aptiktas serverio nulūžimas",
         "partial_crash_warn": "Del aptikto serverio nulužimo serveris persikraus uz 1 minutes",
         "partial_crash_warn_discord": "Dėl aptikto serverio nulūžimo **%{servername}** serveris persikraus už 1 minutės",
