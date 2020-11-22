@@ -293,15 +293,14 @@ mark {background-color: #ffeaa7;}
 }
 
 /* Necessary for the scrollbar  */
-#mainbody{
+#mainbody {
     /* 56+50 = 106 +4 */
     position: relative;
-    height: calc(100vh - 127px);
+    height: calc(100vh - 110px);
 }
 
 .thin-scroll {
     overflow-x: hidden;
     overflow-y: scroll;
     max-height: 87.5vh;
-    /*padding-bottom: 16px;*/
 }

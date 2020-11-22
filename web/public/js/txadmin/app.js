@@ -134,10 +134,8 @@ $('#modChangePassword-save').click(function () {
 //================================================================
 //========================================== Extra stuff
 //================================================================
-
 //Page load
 $(document).ready(function() {
-
     $.notifyDefaults({
         z_index: 2000,
         mouse_over: 'pause',
@@ -155,7 +153,6 @@ $(document).ready(function() {
         $('#modChangePassword-oldPassword').attr('required', false);
         $('#modChangePassword').modal('show');
     }
-
 });
 
 //Handle profile picture load error
@@ -164,4 +161,3 @@ $(".profile-pic").on("error", function() {
         $(this).attr('src', 'img/default_avatar.png');
     }
 });
-

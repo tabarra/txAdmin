@@ -1,6 +1,5 @@
 (function () {
     var isDarkMode = !!+localStorage.getItem('darkmode')
-    console.dir({isDarkMode})
     document.body.classList.toggle('theme--dark', isDarkMode)
 
     // Dark theme toggle
