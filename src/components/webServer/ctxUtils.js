@@ -205,9 +205,30 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true){
 //================================================================
 //================================================================
 module.exports = async function WebCtxUtils(ctx, next){
+    //Prepare variables
+    ctx.txVars = {};
+    const host = ctx.request.host || 'none';
+    if(host.startsWith('127.0.0.1') || host.startsWith('localhost')){
+        ctx.txVars.hostType = 'localhost';
+    }else if(host.includes('users.cfx.re')){
+        ctx.txVars.hostType = 'cfxre';
+    }else if(/^\d+[\d.:]+\d+$/.test(host)){
+        ctx.txVars.hostType = 'ip';
+    }else{
+        ctx.txVars.hostType = 'other';
+    }
+
+    //Functions
     ctx.send = (data) => { ctx.body = data; };
     ctx.utils = {};
     ctx.utils.render = async (view, viewData) => {
+        //Usage stats
+        if(!globals.databus.txStatsData.pageViews[view]){
+            globals.databus.txStatsData.pageViews[view] = 1;
+        }else{
+            globals.databus.txStatsData.pageViews[view]++;
+        }
+
         //TODO: fix this atrocity
         let soloViews = ['adminManager-editModal', 'basic/404'];
         if(view == 'login'){

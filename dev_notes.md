@@ -5,7 +5,7 @@
 - [x] added permission descriptions (`all_permissions` > `All Permissions`)
 - [x] fix heartbeat FD3 vs HTTP stats
 - [x] fix hardcoded 180s cooldown for slow server starts and add boot time statistics
-- [ ] add stats to know if users are coming from localhost, cfx.re, direct ip or domain (maybe just login?)
+- [x] add a bunch of stats
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
 - [ ] persistent discord status message that is set up by `!setmessage`:
         - this will trigger a big status message to be sent in that channel

@@ -269,7 +269,7 @@ module.exports = class Monitor {
             this.currentStatus = 'ONLINE';
             if(this.hasServerStartedYet == false){
                 this.hasServerStartedYet = true;
-                globals.databus.heartBeatStats.bootSeconds.push(processUptime);
+                globals.databus.txStatsData.bootSeconds.push(processUptime);
             }
             return;
         }
@@ -341,7 +341,7 @@ module.exports = class Monitor {
             elapsedHeartBeat > this.config.heartBeat.failLimit
         ){
             if(anySuccessfulHeartBeat === false){
-                globals.databus.heartBeatStats.bootSeconds.push(false);
+                globals.databus.txStatsData.bootSeconds.push(false);
                 this.restartFXServer(
                     `server failed to start within ${maxHBCooldownTolerance} seconds`,
                     globals.translator.t('restarter.start_timeout')
@@ -375,7 +375,7 @@ module.exports = class Monitor {
                 tsNow - this.lastSuccessfulHTTPHeartBeat > 15 &&
                 tsNow - this.lastSuccessfulFD3HeartBeat < 5
             ){
-                globals.databus.heartBeatStats.httpFailed++;
+                globals.databus.txStatsData.heartBeatStats.httpFailed++;
             }
             this.lastSuccessfulFD3HeartBeat = tsNow;
         
@@ -400,7 +400,7 @@ module.exports = class Monitor {
                 tsNow - this.lastSuccessfulFD3HeartBeat > 15 &&
                 tsNow - this.lastSuccessfulHTTPHeartBeat < 5
             ){
-                globals.databus.heartBeatStats.fd3Failed++;
+                globals.databus.txStatsData.heartBeatStats.fd3Failed++;
             }
             this.lastSuccessfulHTTPHeartBeat = tsNow;
         }

@@ -244,7 +244,7 @@ async function gettxAdminData(){
     }
 
     const controllerConfigs = globals.playerController.config;
-    const httpCounter = globals.databus.httpCounter;
+    const httpCounter = globals.databus.txStatsData.httpCounter;
     return {
         //Stats
         uptime: humanizeDuration(process.uptime()*1000, humanizeOptions),
@@ -255,9 +255,9 @@ async function gettxAdminData(){
         partialCrashes: globals.monitor.globalCounters.partialCrashes,
         httpCounterLog: httpCounter.log.join(', ') || '--',
         httpCounterMax: httpCounter.max || '--',
-        hbFD3Fails: globals.databus.heartBeatStats.fd3Failed,
-        hbHTTPFails: globals.databus.heartBeatStats.httpFailed,
-        hbBootSeconds: globals.databus.heartBeatStats.bootSeconds.join(', ') || '--',
+        hbFD3Fails: globals.databus.txStatsData.heartBeatStats.fd3Failed,
+        hbHTTPFails: globals.databus.txStatsData.heartBeatStats.httpFailed,
+        hbBootSeconds: globals.databus.txStatsData.bootSeconds.join(', ') || '--',
         //Settings
         timeout: globals.monitor.config.timeout,
         cooldown: globals.monitor.config.cooldown,
