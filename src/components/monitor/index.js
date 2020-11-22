@@ -361,10 +361,14 @@ module.exports = class Monitor {
         const tsNow = now();
         if(source === 'fd3'){
             //Processing stats
-            this.lastSuccessfulFD3HeartBeat = tsNow;
-            if(this.lastSuccessfulHTTPHeartBeat && tsNow - this.lastSuccessfulHTTPHeartBeat > 15){
+            if(
+                this.lastSuccessfulHTTPHeartBeat &&
+                tsNow - this.lastSuccessfulHTTPHeartBeat > 15 &&
+                tsNow - this.lastSuccessfulFD3HeartBeat < 5
+            ){
                 globals.databus.heartBeatStats.httpFailed++;
             }
+            this.lastSuccessfulFD3HeartBeat = tsNow;
         
         }else if(source === 'http'){
             //Sanity Check
@@ -382,10 +386,14 @@ module.exports = class Monitor {
             globals.playerController.processHeartBeat(playerList);
 
             //Processing stats
-            this.lastSuccessfulHTTPHeartBeat = tsNow;
-            if(this.lastSuccessfulFD3HeartBeat && tsNow - this.lastSuccessfulFD3HeartBeat > 15){
+            if(
+                this.lastSuccessfulFD3HeartBeat && 
+                tsNow - this.lastSuccessfulFD3HeartBeat > 15 &&
+                tsNow - this.lastSuccessfulHTTPHeartBeat < 5
+            ){
                 globals.databus.heartBeatStats.fd3Failed++;
             }
+            this.lastSuccessfulHTTPHeartBeat = tsNow;
         }
     }
 

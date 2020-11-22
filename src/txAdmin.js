@@ -30,6 +30,7 @@ globals = {
         updateChecker: null,
         fd3Errors: 0,
         heartBeatStats: {
+            isNewAlgo: true,
             httpFailed: 0,
             fd3Failed: 0,
         },
