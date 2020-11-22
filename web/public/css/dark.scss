@@ -26,6 +26,11 @@ $txadmin-danger: #ff148f;
  *        / / ``   w w
  *       w w
  */
+
+#darkToggleDark, #darkToggleLight {
+  max-width: 22px !important;
+}
+
 body.theme--dark {
 
   /*************************
@@ -56,7 +61,6 @@ body.theme--dark {
       background: opacify($txadmin-primary, 0.1);
     }
   }
-
 
   // ----- Text color styles
   a:not(.btn):not(.c-sidebar-nav-link) {

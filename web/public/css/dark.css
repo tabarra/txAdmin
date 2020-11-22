@@ -14,6 +14,10 @@
  *        / / ``   w w
  *       w w
  */
+#darkToggleDark, #darkToggleLight {
+  max-width: 22px !important;
+}
+
 body.theme--dark {
   /*************************
    * CORE UI MODIFICATIONS
