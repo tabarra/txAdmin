@@ -31,6 +31,7 @@ globals = {
         fd3Errors: 0,
         heartBeatStats: {
             isNewAlgo: true,
+            bootSeconds: [],
             httpFailed: 0,
             fd3Failed: 0,
         },

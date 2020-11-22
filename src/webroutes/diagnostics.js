@@ -257,6 +257,7 @@ async function gettxAdminData(){
         httpCounterMax: httpCounter.max || '--',
         hbFD3Fails: globals.databus.heartBeatStats.fd3Failed,
         hbHTTPFails: globals.databus.heartBeatStats.httpFailed,
+        hbBootSeconds: globals.databus.heartBeatStats.bootSeconds.join(', ') || '--',
         //Settings
         timeout: globals.monitor.config.timeout,
         cooldown: globals.monitor.config.cooldown,
