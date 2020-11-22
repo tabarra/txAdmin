@@ -186,10 +186,10 @@ module.exports = class WebServer {
     setupServerCallbacks(){
         //Print cfx.re url... when available
         //NOTE: perhaps open the URL automatically with the `open` library
-        let validUrlRegex = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\.users\.cfx\.re$/i
-        let getUrlInterval = setInterval(() => {
+        const validUrlRegex = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\.users\.cfx\.re$/i
+        const getUrlInterval = setInterval(() => {
             try {
-                let urlConvar = GetConvar('web_baseUrl', 'false');
+                const urlConvar = GetConvar('web_baseUrl', 'false');
                 if(validUrlRegex.test(urlConvar)){
                     logOk(`Listening at ` + chalk.inverse(` https://${urlConvar}/ `));
                     GlobalData.cfxUrl = urlConvar;
@@ -224,7 +224,7 @@ module.exports = class WebServer {
                 ){
                     const open = require('open');
                     try {
-                        await open(`http://${addr}:${GlobalData.txAdminPort}/`);
+                        await open(`http://${addr}:${GlobalData.txAdminPort}/auth#${globals.authenticator.addMasterPin}`);
                     } catch (error) {}
                 }
             });

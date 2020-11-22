@@ -6,6 +6,7 @@
 - [x] fix heartbeat FD3 vs HTTP stats
 - [x] fix hardcoded 180s cooldown for slow server starts and add boot time statistics
 - [x] add a bunch of stats
+- [x] downgrade `open` library and autofill the pin
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
 - [ ] persistent discord status message that is set up by `!setmessage`:
         - this will trigger a big status message to be sent in that channel
