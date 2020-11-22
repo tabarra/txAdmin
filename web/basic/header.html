@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="css/simple-line-icons.css">
     <link rel="stylesheet" href="css/coreui.min.css">
     <link rel="stylesheet" href="css/txAdmin.css">
+    <link rel="stylesheet" href="css/dark.css">
     <link rel="shortcut icon" href="img/favicon_default.png" type="image/png" id="favicon" />
 </head>
 
@@ -30,21 +31,21 @@
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="/">
                     <svg class="c-sidebar-nav-icon">
-                        <use xlink:href="img/coreui_icons.svg#cil-speedometer"></use>
+                        <use href="img/coreui_icons.svg#cil-speedometer"></use>
                     </svg> Dashboard
                 </a>
             </li>
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="/player/list">
                     <svg class="c-sidebar-nav-icon">
-                        <use xlink:href="img/coreui_icons.svg#cil-people"></use>
+                        <use href="img/coreui_icons.svg#cil-people"></use>
                     </svg> Players
                 </a>
             </li>
             <!-- <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="/player/list">
                     <svg class="c-sidebar-nav-icon">
-                        <use xlink:href="img/coreui_icons.svg#cil-shield-alt"></use>
+                        <use href="img/coreui_icons.svg#cil-shield-alt"></use>
                     </svg> Player Access <span class="badge badge-danger">NEW</span>
                 </a>
             </li> -->
@@ -52,21 +53,21 @@
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="/console">
                     <svg class="c-sidebar-nav-icon">
-                        <use xlink:href="img/coreui_icons.svg#cil-terminal"></use>
+                        <use href="img/coreui_icons.svg#cil-terminal"></use>
                     </svg> Live Console
                 </a>
             </li>
             <!-- <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="/discord">
                     <svg class="c-sidebar-nav-icon">
-                        <use xlink:href="img/coreui_icons.svg#cil-discord"></use>
+                        <use href="img/coreui_icons.svg#cil-discord"></use>
                     </svg> Discord Bot <span class="badge badge-info">NEW</span>
                 </a>
             </li> -->
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="/resources">
                     <svg class="c-sidebar-nav-icon">
-                        <use xlink:href="img/coreui_icons.svg#cil-bolt"></use>
+                        <use href="img/coreui_icons.svg#cil-bolt"></use>
                     </svg> Resources
                 </a>
             </li>
@@ -78,35 +79,35 @@
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="/cfgEditor">
                     <svg class="c-sidebar-nav-icon">
-                        <use xlink:href="img/coreui_icons.svg#cil-pencil"></use>
+                        <use href="img/coreui_icons.svg#cil-pencil"></use>
                     </svg> CFG Editor
                 </a>
             </li>
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="/diagnostics">
                     <svg class="c-sidebar-nav-icon">
-                        <use xlink:href="img/coreui_icons.svg#cil-chart-pie"></use>
+                        <use href="img/coreui_icons.svg#cil-chart-pie"></use>
                     </svg> Diagnostics
                 </a>
             </li>
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="/adminManager">
                     <svg class="c-sidebar-nav-icon">
-                        <use xlink:href="img/coreui_icons.svg#cil-contact"></use>
+                        <use href="img/coreui_icons.svg#cil-contact"></use>
                     </svg> Admin Manager
                 </a>
             </li>
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="/txAdminLog">
                     <svg class="c-sidebar-nav-icon">
-                        <use xlink:href="img/coreui_icons.svg#cil-notes"></use>
+                        <use href="img/coreui_icons.svg#cil-notes"></use>
                     </svg> txAdmin Log
                 </a>
             </li>
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="/settings">
                     <svg class="c-sidebar-nav-icon">
-                        <use xlink:href="img/coreui_icons.svg#cil-settings"></use>
+                        <use href="img/coreui_icons.svg#cil-settings"></use>
                     </svg> Settings
                 </a>
             </li>
@@ -114,7 +115,7 @@
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link text-warning" href="/advanced">
                     <svg class="c-sidebar-nav-icon text-warning">
-                        <use xlink:href="img/coreui_icons.svg#cil-fire"></use>
+                        <use href="img/coreui_icons.svg#cil-fire"></use>
                     </svg> Advanced
                 </a>
             </li>
@@ -183,13 +184,22 @@
             <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar"
                 data-class="c-sidebar-show">
                 <svg class="c-icon c-icon-lg">
-                    <use xlink:href="img/coreui_icons.svg#cil-menu"></use>
+                    <use href="img/coreui_icons.svg#cil-menu"></use>
                 </svg>
             </button>
             <a class="c-header-brand d-lg-none" href="/">
                 <img class="c-sidebar-brand-minimized" src="img/tx.png" width="30" height="30" alt="txAdmin Logo">
             </a>
             <ul class="c-header-nav ml-auto mr-4">
+                <a class="c-header-nav-link">
+                    <svg class="c-sidebar-nav-icon d-none" id="darkToggleLight">
+                        <use href="img/coreui_icons.svg#cil-sun"></use>
+                    </svg>
+                    <svg class="c-sidebar-nav-icon" id="darkToggleDark">
+                        <use href="img/coreui_icons.svg#cil-moon"></use>
+                    </svg>
+                </a>
+
                 <li class="c-header-nav-item dropdown">
                     <a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
                         aria-expanded="false">
@@ -199,17 +209,17 @@
                         </div>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right pt-0">
-                        <div class="dropdown-header bg-light py-2">
+                        <div class="dropdown-header py-2">
                             <strong>Account</strong>
                         </div>
                         <a class="dropdown-item" href="" onclick="changeOwnPasswordModal(); return false;">
                             <svg class="c-icon mr-2">
-                                <use xlink:href="img/coreui_icons.svg#cil-lock-locked"></use>
+                                <use href="img/coreui_icons.svg#cil-lock-locked"></use>
                             </svg> Change password
                         </a>
                         <a class="dropdown-item" href="/auth?logout">
                             <svg class="c-icon mr-2">
-                                <use xlink:href="img/coreui_icons.svg#cil-account-logout"></use>
+                                <use href="img/coreui_icons.svg#cil-account-logout"></use>
                             </svg> Logout
                         </a>
                     </div>
@@ -218,14 +228,14 @@
             <button class="c-header-toggler c-class-toggler d-xl-none" type="button" data-target="#plist"
                 data-class="playerlist-sidebar-max">
                 <svg class="c-icon c-icon-lg">
-                    <use xlink:href="img/coreui_icons.svg#cil-menu"></use>
+                    <use href="img/coreui_icons.svg#cil-menu"></use>
                 </svg>
             </button>
         </header>
 
         <!-- Actual Body -->
         <div class="c-body">
-            <main class="c-main" id="mainbody">
+            <main class="c-main thin-scroll" id="mainbody">
                 <div class="container-fluid">
                     <div class="fade-in">
 <!-- Begin Page Content -->

@@ -3,6 +3,7 @@
 <style>
     .pInfoCallout{
         min-width: 180px !important;
+        margin-bottom: .5rem;
     }
     .pInfoCallout .c-callout{
         padding-bottom: 2px;
@@ -276,7 +277,7 @@
                                 <span class="input-group-append">
                                     <button class="btn btn-sm btn-secondary" type="button" id="dbSearch-button">
                                         <svg class="c-icon">
-                                            <use xlink:href="img/coreui_icons.svg#cil-magnifying-glass"></use>
+                                            <use href="img/coreui_icons.svg#cil-magnifying-glass"></use>
                                         </svg> Search
                                     </button>
                                 </span>
@@ -473,7 +474,7 @@
     //============================================== Search functionality
     const getSVG = (icon) => {
         return `<svg class="c-icon">
-            <use xlink:href="img/coreui_icons.svg#cil-${icon}"></use>
+            <use href="img/coreui_icons.svg#cil-${icon}"></use>
         </svg>`;
     }
     const searchInput = document.getElementById('dbSearch-input');

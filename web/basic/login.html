@@ -21,6 +21,7 @@
     <link href="css/coreui.min.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="img/favicon_default.png" id="favicon" />
     <link rel="stylesheet" href="css/txAdmin.css">
+    <link rel="stylesheet" href="css/dark.css">
 
     <style>
         .logo-image svg{
@@ -192,13 +193,13 @@
                             <h1 class="mb-3">Login</h1>
                             <a class="btn btn-brand btn-stack-overflow {{it.citizenfxDisabled|isDisabled}}"
                                 role="button" href="/auth/citizenfx/redirect">
-                                <i class="logo-image"><svg><use xlink:href="#fivem-icon"></use></svg></i>
+                                <i class="logo-image"><svg><use href="#fivem-icon"></use></svg></i>
                                 <span>CitizenFX</span>
                             </a>
                             &nbsp;
                             <a class="btn btn-brand btn-linkedin {{it.discordDisabled|isDisabled}}"
                             role="button" href="/auth/discord/redirect">
-                                <i class="logo-image"><svg><use xlink:href="#discord-icon"></use></svg></i>
+                                <i class="logo-image"><svg><use href="#discord-icon"></use></svg></i>
                                 <span>Discord</span>
                             </a>
                             <div class="hrsep">OR</div>
@@ -249,6 +250,15 @@
                         </a>
                     </h5>
                 </div>
+
+                <div style="text-align: center">
+                    <svg class="c-sidebar-nav-icon d-none" id="darkToggleLight">
+                        <use href="img/coreui_icons.svg#cil-sun"></use>
+                    </svg>
+                    <svg class="c-sidebar-nav-icon" id="darkToggleDark">
+                        <use href="img/coreui_icons.svg#cil-moon"></use>
+                    </svg>
+                </div>
             </div>
         </div>
         {{@if(it.isMatrix)}}
@@ -264,6 +274,7 @@
     <!-- CoreUI and necessary plugins-->
     <script src="js/jquery.min.js"></script>
     <script src="js/coreui.bundle.min.js"></script>
+    <script src="js/txadmin/dark.js"></script>
     <script>
         window.history.pushState(null, 'txAdmin', '/auth');
         $(".profile-pic").on("error", function() {

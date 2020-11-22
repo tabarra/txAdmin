@@ -69,13 +69,13 @@
 
         <!-- Card Chart-->
         <div class="card text-white bg-info" style="min-height: 160px;">
-            <div class="card-body pt-2 pb-0">
+            <div class="card-body pt-2 pb-0" style="background-color:transparent">
                 <div class="text-value">Players</div>
                 <div>last 24h</div>
             </div>
             {{@if(it.chartData === false)}}
             <div class="text-center mb-4">
-                <h3 class="text-muted">Not enough data, yet...</h3>
+                <h3 class="text-light">Not enough data, yet...</h3>
             </div>
             {{#else}}
             <div class="c-chart-wrapper mx-3" style="height:120px; margin-top: -50px;">
