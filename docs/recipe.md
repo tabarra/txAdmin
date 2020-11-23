@@ -1,8 +1,8 @@
 # Recipe Files
-A Recipe is a YAML document that describes how to deploy a server: from downloading resources, to configuring the `server.cfg` file.  
+A Recipe is a YAML document that describes how to deploy a server properly: from downloading resources, to configuring the `server.cfg` file.  
 You can run a recipe from txAdmin's built-in Server Deployer.  
 Recipes will be "jailed" to the target folder, so for example they won't be able to execute `write_file` to your `admins.json`.  
-At the end of the deployment process, your target folder will be checked for the presence of a `server.cfg` and a `resources` folder to make sure everything went right.  
+At the end of the deployment process, your target folder will be checked for the presence of a `server.cfg` and a `resources` folder to make sure everything went correctly.  
 On the setup page you will be able to import a recipe via its URL or by selecting one of the recommended ones from the community.  
 **If you want to run your own recipes, select the `CFX Default` from the setup page then customize it before executing.**  
   
@@ -34,10 +34,10 @@ tasks:
 
 ## Meta Data
 The recipe accepts the following default meta data:
-- `name:` The short name for the recipe. Recommended to be under 24 characters.
+- `name:` The short name for your recipe. Recommended to be under 24 characters.
 - `version:` The version of your recipe.
 - `author:` The short name of the author. Recommended to be under 24 characters.
-- `description:` A single or multiline description for your recipe. Recommended to be under 256 characters. On YAML you can use multiline strings in many ways, fore more information check https://yaml-multiline.info.
+- `description:` A single or multiline description for your recipe. Recommended to be under 256 characters. On YAML you can use multiline strings in many ways, for more information check https://yaml-multiline.info.
 
 
 ## Context Variables
@@ -47,7 +47,7 @@ The only default Context Variable is `deploymentID`, which is composed by the sh
 
 
 ## Tasks
-Tasks are executed sequentially, and any failure stops the process.  
+Tasks are executed sequentially, and any failure in the chain stops the process.  
 Attention: careful with the number of spaces used in the indentation.  
 
 ### `download_file`
@@ -61,7 +61,7 @@ Downloads a file to a specific path.
 ```
 
 ### `unzip`
-Extracts a ZIP file to a target folder. This do not work for tar files.  
+Extracts a ZIP file to a target folder. This will not work for tar files.  
 - `src:` The source path.
 - `dest:` The destination path.
 ```yaml
