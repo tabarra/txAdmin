@@ -5,6 +5,7 @@ const util = require('util');
 const fs = require('fs-extra');
 const AdmZip = require('adm-zip');
 const axios = require("axios");
+const mysql = require('mysql2/promise');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 //Helper functions
@@ -42,7 +43,7 @@ const validatorDownloadFile = (options) => {
         isPathValid(options.path)
     )
 }
-const taskDownloadFile = async (options, basePath) => {
+const taskDownloadFile = async (options, basePath, deployerCtx) => {
     if(!validatorDownloadFile(options)) throw new Error(`invalid options`);
     if(options.path.endsWith('/')) throw new Error(`target filename not specified`); //FIXME: this should be on the validator
 
@@ -74,7 +75,7 @@ const validatorRemovePath = (options) => {
         isPathValid(options.path, false)
     )
 }
-const taskRemovePath = async (options, basePath) => {
+const taskRemovePath = async (options, basePath, deployerCtx) => {
     if(!validatorRemovePath(options)) throw new Error(`invalid options`);
 
     //Process and create target file/path
@@ -95,7 +96,7 @@ const validatorEnsureDir = (options) => {
         isPathValid(options.path, false)
     )
 }
-const taskEnsureDir = async (options, basePath) => {
+const taskEnsureDir = async (options, basePath, deployerCtx) => {
     if(!validatorEnsureDir(options)) throw new Error(`invalid options`);
 
     //Process and create target file/path
@@ -119,7 +120,7 @@ const validatorUnzip = (options) => {
         isPathValid(options.dest)
     )
 }
-const taskUnzip = async (options, basePath) => {
+const taskUnzip = async (options, basePath, deployerCtx) => {
     if(!validatorUnzip(options)) throw new Error(`invalid options`);
 
     const srcPath = safePath(basePath, options.src);
@@ -141,7 +142,7 @@ const validatorMovePath = (options) => {
         isPathValid(options.dest, false)
     )
 }
-const taskMovePath = async (options, basePath) => {
+const taskMovePath = async (options, basePath, deployerCtx) => {
     if(!validatorMovePath(options)) throw new Error(`invalid options`);
 
     const srcPath = safePath(basePath, options.src);
@@ -162,7 +163,7 @@ const validatorCopyPath = (options) => {
         isPathValid(options.dest)
     )
 }
-const taskCopyPath = async (options, basePath) => {
+const taskCopyPath = async (options, basePath, deployerCtx) => {
     if(!validatorCopyPath(options)) throw new Error(`invalid options`);
 
     const srcPath = safePath(basePath, options.src);
@@ -183,7 +184,7 @@ const validatorWriteFile = (options) => {
         isPathValid(options.file, false)
     )
 }
-const taskWriteFile = async (options, basePath) => {
+const taskWriteFile = async (options, basePath, deployerCtx) => {
     if(!validatorWriteFile(options)) throw new Error(`invalid options`);
 
     const filePath = safePath(basePath, options.file);
@@ -212,7 +213,7 @@ const validatorReplaceString = (options) => {
         typeof options.replace == 'string'
     )
 }
-const taskReplaceString = async (options, basePath) => {
+const taskReplaceString = async (options, basePath, deployerCtx) => {
     if(!validatorReplaceString(options)) throw new Error(`invalid options`);
 
     const fileList = (Array.isArray(options.file))? options.file : [options.file];
@@ -222,6 +223,64 @@ const taskReplaceString = async (options, basePath) => {
         const changed = original.toString().replace(options.search, options.replace);
         await fs.writeFile(filePath, changed);
     }
+}
+
+
+/**
+ * Connects to a MySQL/MariaDB server and creates a database if the dbName variable is null.
+ */
+const validatorConnectDatabase = (options) => {
+    return true;
+}
+const taskConnectDatabase = async (options, basePath, deployerCtx) => {
+    if(!validatorConnectDatabase(options)) throw new Error(`invalid options`);
+    if(typeof deployerCtx.deploymentID !== 'string' || !deployerCtx.deploymentID.length) throw new Error(`invalid deploymentID`);
+    if(typeof deployerCtx.dbHost !== 'string') throw new Error(`invalid dbHost`);
+    if(typeof deployerCtx.dbUsername !== 'string') throw new Error(`invalid dbUsername`);
+    if(typeof deployerCtx.dbPassword !== 'string' && deployerCtx.dbPassword !== null) throw new Error(`dbPassword should be a string or null`);
+    if(typeof deployerCtx.dbName !== 'string' && deployerCtx.dbName !== null) throw new Error(`dbName should be a string or null`);
+
+    //Connect to the database
+    const mysqlOptions = {
+        host: deployerCtx.dbHost,
+        user: deployerCtx.dbUsername,
+        password: (deployerCtx.dbPassword)? deployerCtx.dbPassword : undefined,
+        database: (deployerCtx.dbName)? deployerCtx.dbName : undefined,
+        multipleStatements: true,
+    }
+    deployerCtx.mysqlCon = await mysql.createConnection(mysqlOptions);
+    if(deployerCtx.dbName == null){
+        const escapedName = mysql.escapeId(deployerCtx.deploymentID);
+        if(deployerCtx.dbOverwrite === 'yes_delete_existing_database'){
+            await deployerCtx.mysqlCon.query(`DROP DATABASE IF EXISTS ${escapedName}`);
+        }
+        await deployerCtx.mysqlCon.query(`CREATE DATABASE IF NOT EXISTS ${escapedName}`);
+        await deployerCtx.mysqlCon.query(`USE ${escapedName}`);
+    }
+}
+
+
+/**
+ * Runs a SQL query in the previously connected database. This query can be a file path or a string.
+ */
+const validatorQueryDatabase = (options) => {
+    if(typeof options.file !== 'undefined' && typeof options.query !== 'undefined') return false;
+    if(typeof options.file == 'string') return isPathValid(options.file, false);
+    if(typeof options.query == 'string') return options.query.length;
+    return false;
+}
+const taskQueryDatabase = async (options, basePath, deployerCtx) => {
+    if(!validatorQueryDatabase(options)) throw new Error(`invalid options`);
+    if(!deployerCtx.mysqlCon) throw new Error(`Database connection not found. Run connect_database before query_database`);
+
+    let sql;
+    if(options.file){
+        const filePath = safePath(basePath, options.file);
+        sql = await fs.readFile(filePath, 'utf8');
+    }else{
+        sql = options.query;
+    }
+    await deployerCtx.mysqlCon.query(sql);
 }
 
 
@@ -264,12 +323,10 @@ DONE:
     - copy_path (file or folder)
     - write_file (with option to append only)
     - replace_string (single or array)
+    - connect_database (connects to mysql, creates db if not set)
+    - query_database (file or string)
     
 TODO:
-    - create_database (creates a database in the local mysql)
-    - run_sql (runs a sql file in the database created)
-MAYBE?
-    - replace_file
     - read json into context vars?
     - print vars to console?
     - github_extract: automatiza toda a parte de download, unzip, move e rm temp
@@ -321,6 +378,14 @@ module.exports = {
     replace_string:{
         validate: validatorReplaceString,
         run: taskReplaceString,
+    },
+    connect_database:{
+        validate: validatorConnectDatabase,
+        run: taskConnectDatabase,
+    },
+    query_database:{
+        validate: validatorQueryDatabase,
+        run: taskQueryDatabase,
     },
 
     //DEBUG mock only

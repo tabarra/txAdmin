@@ -50,6 +50,7 @@
     "koa-static": "^5.0.0",
     "lodash": "^4.17.20",
     "lowdb": "^1.0.0",
+    "mysql2": "^2.2.5",
     "nanoid": "^3.1.16",
     "nanoid-dictionary": "^4.1.0",
     "node-polyglot": "^2.4.0",
