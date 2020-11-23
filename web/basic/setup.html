@@ -335,6 +335,7 @@
         let loadedTemplates = [];
         let selectedTemplateIndex;
         let selectedDeploymentType;
+        let deploymentID;
 
         //Stepper config
         const stepper = document.querySelector('.stepper');
@@ -357,11 +358,14 @@
             }
             return false;
         }
-        const buildDeployPath = (templateName) => {
+        const buildDeployName = (templateName) => {
             const treatedName = templateName.replace(/[^a-zA-Z0-9\.\-_]/g, '');
             const shortName = (treatedName.length < 3)? 'DumbName' : treatedName;
-            const timestamp = (Date.now()/1000).toFixed();
-            return `${txDataPath}/${shortName}_${timestamp}.base`;
+            const timestamp = Math.round(Date.now()/1000).toString(16).padStart(6, 0).slice(-6).toUpperCase();
+            return {
+                id: `${shortName}_${timestamp}`,
+                path: `${txDataPath}/${shortName}_${timestamp}.base`,
+            };
         }
         const inputKeyUp = (event) => {
             event.target.classList.remove('is-invalid', 'is-valid');
@@ -528,7 +532,9 @@
             if(!loadedTemplates[key]){
                 return alert('Invalid Template');
             }
-            s5DeployerTargetInput.value = buildDeployPath(loadedTemplates[key].name);
+            const deployData = buildDeployName(loadedTemplates[key].name);
+            s5DeployerTargetInput.value = deployData.path;
+            deploymentID = deployData.id;
             stepperInstace.nextStep();
         }
 
@@ -547,7 +553,9 @@
                 success: function (data) {
                     if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
-                        s5DeployerTargetInput.value = buildDeployPath(data.name);
+                        const deployData = buildDeployName(data.name);
+                        s5DeployerTargetInput.value = deployData.path;
+                        deploymentID = deployData.id;
                         currentSteps.active.step.classList.remove('wrong');
                         currentSteps.active.step.classList.add('done');
                         s4RemoteTemplateInput.classList.add('is-valid');
@@ -706,12 +714,14 @@
                 outData.isTrustedSource = true;
                 outData.recipeURL = loadedTemplates[selectedTemplateIndex].url;
                 outData.targetPath = s5DeployerTargetInput.value.trim();
+                outData.deploymentID = deploymentID;
                 
             }else if(selectedDeploymentType == 'remote'){
                 outData.template = true;
                 outData.isTrustedSource = false;
                 outData.recipeURL = s4RemoteTemplateInput.value.trim();
                 outData.targetPath = s5DeployerTargetInput.value.trim();
+                outData.deploymentID = deploymentID;
                 
             }else if(selectedDeploymentType == 'local'){
                 outData.template = false;

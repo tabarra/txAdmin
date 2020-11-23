@@ -1,8 +1,10 @@
 //Requires
 const modulename = 'Deployer';
-const YAML = require('js-yaml');
-const fs = require('fs-extra');
+const clonedeep = require('lodash/clonedeep');
 const dateFormat = require('dateformat');
+const fs = require('fs-extra');
+const open = require('open');
+const YAML = require('js-yaml');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 const recipeEngine = require('./recipeEngine');
 
@@ -63,7 +65,7 @@ const parseValidateRecipe = (rawRecipe) => {
     //Loads YAML
     let recipe;
     try {
-        recipe = YAML.safeLoad(rawRecipe, { schemax: YAML.JSON_SCHEMA });   
+        recipe = YAML.safeLoad(rawRecipe, { schema: YAML.JSON_SCHEMA });   
     } catch (error) {
         if(GlobalData.verbose) dir(error);
         throw new Error(`invalid yaml`);
@@ -80,6 +82,7 @@ const parseValidateRecipe = (rawRecipe) => {
         version: toDefault(recipe.version, '').trim(),
         author: toDefault(recipe.author, 'unknown').trim(),
         description: toDefault(recipe.description, '').trim(),
+        variables: recipe.variables || {},
         tasks: []
     };
 
@@ -119,7 +122,7 @@ class Deployer {
      * @param {string} deployPath 
      * @param {boolean} isTrustedSource 
      */
-    constructor(originalRecipe, deployPath, isTrustedSource) {
+    constructor(originalRecipe, deploymentID, deployPath, isTrustedSource) {
         log('Deployer instance ready.');
         
         //Setup variables        
@@ -128,6 +131,7 @@ class Deployer {
         this.deployPath = deployPath;
         this.isTrustedSource = isTrustedSource;
         this.originalRecipe = originalRecipe;
+        this.deploymentID = deploymentID;
         this.progress = 0;
         this.logLines = [];
 
@@ -174,6 +178,9 @@ class Deployer {
      * (Private) Run the tasks in a sequential way.
      */
     async runTasks(){
+        const contextVariables = clonedeep(this.recipe.variables);
+        contextVariables.deploymentID = this.deploymentID;
+
         //Run all the tasks
         for (let index = 0; index < this.recipe.tasks.length; index++) {
             this.progress = Math.round((index/this.recipe.tasks.length)*100);
@@ -182,7 +189,7 @@ class Deployer {
             this.log(`Running ${taskID}...`);
 
             try {
-                await recipeEngine[task.action].run(task, this.deployPath);
+                await recipeEngine[task.action].run(task, this.deployPath, contextVariables);
                 this.logLines[this.logLines.length -1] += ` ✔️`;
             } catch (error) {
                 this.logLines[this.logLines.length -1] += ` ❌`;
@@ -212,6 +219,11 @@ class Deployer {
         //Else: success :)
         this.log(`Deploy finished and folder validated. All done!`);
         this.step = 'configure';
+        if(GlobalData.osType === 'windows'){
+            try {
+                await open(path.normalize(this.deployPath), {app: 'explorer'});
+            } catch (error) {}
+        }
     }
 } //Fim Deployer()
 

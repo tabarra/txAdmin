@@ -352,7 +352,8 @@ async function handleSaveDeployer(ctx) {
         isUndefined(ctx.request.body.isTrustedSource) ||
         isUndefined(ctx.request.body.name) ||
         isUndefined(ctx.request.body.recipeURL) ||
-        isUndefined(ctx.request.body.targetPath)
+        isUndefined(ctx.request.body.targetPath) ||
+        isUndefined(ctx.request.body.deploymentID) 
     ){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -360,6 +361,7 @@ async function handleSaveDeployer(ctx) {
     const serverName = ctx.request.body.name.trim();
     const recipeURL = ctx.request.body.recipeURL.trim();
     const targetPath = slash(path.normalize(ctx.request.body.targetPath+'/')); 
+    const deploymentID = ctx.request.body.deploymentID;
 
     //Get recipe
     let recipeData;
@@ -378,7 +380,7 @@ async function handleSaveDeployer(ctx) {
 
     //Start deployer (constructor will validate the recipe)
     try {
-        globals.deployer = new Deployer(recipeData, targetPath, isTrustedSource);
+        globals.deployer = new Deployer(recipeData, deploymentID, targetPath, isTrustedSource);
     } catch (error) {
         return ctx.send({success: false, message: error.message});
     }
