@@ -27,8 +27,8 @@
   "dependencies": {
     "@citizenfx/http-wrapper": "^0.2.2",
     "@discordjs/collection": "^0.1.6",
-    "@koa/router": "^9.4.0",
-    "adm-zip": "^0.4.16",
+    "@koa/router": "^10.0.0",
+    "adm-zip": "^0.5.0",
     "axios": "^0.21.0",
     "big-integer": "^1.6.48",
     "bytes": "^3.1.0",
@@ -51,7 +51,7 @@
     "lodash": "^4.17.20",
     "lowdb": "^1.0.0",
     "mysql2": "^2.2.5",
-    "nanoid": "^3.1.16",
+    "nanoid": "^3.1.18",
     "nanoid-dictionary": "^4.1.0",
     "node-polyglot": "^2.4.0",
     "open": "7.1.0",
@@ -60,11 +60,11 @@
     "pidusage-tree": "^2.0.5",
     "semver": "^7.3.2",
     "slash": "^3.0.0",
-    "socket.io": "^2.3.0",
+    "socket.io": "^3.0.3",
     "squirrelly": "^8.0.8",
     "stream-json": "^1.7.1",
     "string-argv": "^0.3.1",
-    "systeminformation": "^4.27.11",
+    "systeminformation": "^4.30.1",
     "xss": "^1.0.8"
   },
   "devDependencies": {

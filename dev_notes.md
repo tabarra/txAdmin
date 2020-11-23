@@ -7,12 +7,36 @@
 - [x] fix hardcoded 180s cooldown for slow server starts and add boot time statistics
 - [x] add a bunch of stats
 - [x] downgrade `open` library and autofill the pin
+- [x] completed recipe engine with the following actions: `waste_time`, `fail_test`, `download_file`, `remove_path`, `ensure_dir`, `unzip`, `move_path`, `copy_path`, `write_file`, `replace_string`, `connect_database`, `query_database`
+- [x] upgrade packages
+- [ ] custom recipe option
+- [ ] make cfx default recipe and populate `@tabarra/txAdmin-recipes`
+- [ ] update setup page to read `@tabarra/txAdmin-recipes`
+- [ ] option to reset the fxserver and go back to the setup page somewhere
+- [ ] merge dark mode
+- [ ] stats pra saber se usaram ou não o deployer, mesmo que não seja uma lógica forte
+- [ ] add stats enc?
+- [ ] test everything on latest fxserver + webpack and linux (check deployer and systeminformation memory)
+- [ ] reset timestamp + write changelog + version bump
+
+> Do as soon as v3.0.0 is out:
+- [ ] clean this file
+- [ ] create `admin.useroptions` for dark mode, welcome modals and such
+- [ ] IF deploy fails, add a DO_NOT_EDIT_DEPLOY_FAILED file to deploy path
+- [ ] add disabled input with the username on the pagina que salva a senha
+- [ ] remove the ForceFXServerPort config and do either via `server.cfg` comment, or execute `endpoint_add_tcp "127.0.0.1:random"`
+- [ ] improve terminal onboarding? Nem que seja só um pouquinho...
+- [ ] merge some PRs
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
 - [ ] persistent discord status message that is set up by `!setmessage`:
         - this will trigger a big status message to be sent in that channel
         - this message id can be stored in the config file
-- [ ] xxxxx
-
+- [ ] Upgrade packages:
+        - check if `got` patch was published - https://github.com/sindresorhus/got/pull/1491
+        - try to upgrade `webpack`
+        - see if the `open` library was fixed
+        - try to upgrade `dateformat`
+        - attempt to use `discord.js` v12
 
 ### Setup Stepper:
 1. Welcome

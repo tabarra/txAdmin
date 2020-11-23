@@ -159,6 +159,11 @@ module.exports = class WebServer {
         //Setting up WebConsole
         this.webConsole = new WebConsole(this.io);
         this.io.on('connection', this.webConsole.handleConnection.bind(this.webConsole));
+        //NOTE: when using namespaces:
+        // this.io.on('connection', client => {
+        //     logError('Triggered when not using any type of namespace.')
+        // });
+        // this.io.of('/console').use(this.webConsole.handleConnection.bind(this.webConsole));
     }
 
 

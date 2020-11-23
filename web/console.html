@@ -106,7 +106,7 @@
 
 
 <script src="js/ansi_up.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.1/socket.io.js"></script>
 <script>
         //============================================== Controls (start/restart/stop)
         function controlAction(action) {
@@ -139,9 +139,10 @@
     //============================================== Live Console stuff
     (function () {
         //Preparing variables
-        const prefix = '';
         const commandHistoryLimit = 12;
-        const socket = io({path: prefix + '/socket.io', transports: ['polling'], upgrade: false});
+        const socket = io({path: '/socket.io', transports: ['polling'], upgrade: false});
+        //NOTE: when using namespaces:
+        // const socket = io('/console', {path: '/socket.io', transports: ['polling'], upgrade: false});
         const ansi_up = new AnsiUp;
         ansi_up.escape_for_html = false;
         const input = document.getElementById("cmdInput");
@@ -183,6 +184,9 @@
 
         
         //Events
+        socket.on('error', (error) => {
+            console.dir(error)
+        });
         socket.on('connect', () => {
             console.log("Socket.io Connected!")
         });
