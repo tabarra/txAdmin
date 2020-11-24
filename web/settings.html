@@ -434,6 +434,35 @@
 </div>
 
 
+{{@if(it.adminIsMaster)}}
+    <div class="row justify-content-md-center">
+        <div class="col-md-7 mw-col8">
+            <div class="card border-danger">
+                <div class="card-header text-center">
+                    <h5 class="d-inline">Danger Zone</h5>
+                </div>
+                <div class="card-body">
+                    <!-- reset fxserver -->
+                    <div class="row text-center">
+                        <div class="col-lg-9 text-lg-left mb-2">
+                            <strong>Reset FXServer settings and return to Setup</strong> <br>
+                            In the FXServer tab you can change the server data path, but if you want to use
+                            the Deployer again, you will need to use this option. <br>
+                            None of your files or databases will be deleted by doing that.
+                        </div>
+                        <div class="col-lg-3 text-lg-right">
+                            <button class="btn btn-sm btn-outline-danger" type="button" 
+                                onclick="dangerZoneActions('reset');">Reset Settings</button>
+                        </div>
+                    </div>
+                    <!-- <hr class="m-1"> -->
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+{{/if}}
+
 {{@include("footer", it)/}}
 
 
@@ -446,6 +475,37 @@
             Your timezone: <b>${browserTimezone}</b> <br>
             Make sure to adjust the times to match your expectations.`;
         $('#frmMonitor-timezoneAlert').html(msg);
+    }
+
+    //============================================== Danger Zone
+    function dangerZoneActions(action){
+        var notify = $.notify({ message: '<p class="text-center">Executing...</p>' }, {});
+        if(!window.confirm(`Are you sure you want to Reset FXServer Settings?`)){
+            return;
+        }
+
+        $.ajax({
+            type: "POST",
+            url: `/settings/masterActions/${action}`,
+            timeout: timeoutMedium,
+            data: {},
+            dataType: 'json',
+            success: function (data) {
+                if(action == 'reset' && data.success == true){
+                    window.location = '/setup';
+                    return;
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
     }
 
 

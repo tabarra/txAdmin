@@ -12,7 +12,7 @@
 - [x] add custom recipe option to setup/deployer
 - [x] make cfx default recipe and populate `@tabarra/txAdmin-recipes`
 - [x] update setup page to read `@tabarra/txAdmin-recipes`
-- [ ] option to reset the fxserver and go back to the setup page somewhere
+- [x] add option to reset fxserver settings & return to setup
 - [ ] merge dark mode
 - [ ] stats pra saber se usaram ou não o deployer, mesmo que não seja uma lógica forte
 - [ ] add stats enc?

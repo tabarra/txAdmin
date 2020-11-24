@@ -16,7 +16,7 @@ module.exports = async function DeployerStepper(ctx) {
 
     //Check if this is the correct state for the deployer
     if(globals.deployer == null){
-        const redirPath = (globals.fxRunner.config.serverDataPath === null || globals.fxRunner.config.cfgPath === null)? '/setup' : '/';
+        const redirPath = (!globals.fxRunner.config.cfgPath || !globals.fxRunner.config.serverDataPath)? '/setup' : '/';
         return ctx.response.redirect(redirPath);
     }
 

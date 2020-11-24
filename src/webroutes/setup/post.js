@@ -62,7 +62,7 @@ module.exports = async function SetupPost(ctx) {
     //Check if this is the correct state for the setup page
     if(
         globals.deployer !== null ||
-        (globals.fxRunner.config.serverDataPath !== null && globals.fxRunner.config.cfgPath !== null)
+        (globals.fxRunner.config.serverDataPath && globals.fxRunner.config.cfgPath)
     ){
         return ctx.send({
             success: false, 
