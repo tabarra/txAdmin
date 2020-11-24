@@ -22,6 +22,18 @@ const canCreateFile = async (targetPath) => {
         return false;
     }
 }
+const makeTemplateRecipe = (serverName, author) => `name: ${serverName}
+author: ${author}
+
+variables:
+    example: madstuff
+
+tasks: 
+    - action: waste_time
+      seconds: 5
+    - action: waste_time
+      seconds: 5
+`;
 
 
 /**
@@ -122,7 +134,7 @@ class Deployer {
      * @param {string} deployPath 
      * @param {boolean} isTrustedSource 
      */
-    constructor(originalRecipe, deploymentID, deployPath, isTrustedSource) {
+    constructor(originalRecipe, deploymentID, deployPath, isTrustedSource, customMetaData={}) {
         log('Deployer instance ready.');
         
         //Setup variables        
@@ -136,8 +148,11 @@ class Deployer {
         this.logLines = [];
 
         //Load recipe
+        const impRecipe = (originalRecipe !== false)
+            ? originalRecipe 
+            : makeTemplateRecipe(customMetaData.serverName, customMetaData.author);
         try {
-            this.recipe = parseValidateRecipe(originalRecipe);
+            this.recipe = parseValidateRecipe(impRecipe);
         } catch (error) {
             throw new Error(`Recipe Error: ${error.message}`);
         }

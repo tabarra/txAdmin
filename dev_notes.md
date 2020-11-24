@@ -9,7 +9,7 @@
 - [x] downgrade `open` library and autofill the pin
 - [x] completed recipe engine with the following actions: `waste_time`, `fail_test`, `download_file`, `remove_path`, `ensure_dir`, `unzip`, `move_path`, `copy_path`, `write_file`, `replace_string`, `connect_database`, `query_database`
 - [x] upgrade packages
-- [ ] custom recipe option
+- [x] add custom recipe option to setup/deployer
 - [ ] make cfx default recipe and populate `@tabarra/txAdmin-recipes`
 - [ ] update setup page to read `@tabarra/txAdmin-recipes`
 - [ ] option to reset the fxserver and go back to the setup page somewhere

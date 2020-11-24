@@ -148,16 +148,23 @@
                                     </div>
                                     <div class="card bigbutton deployment-type-card border-dark">
                                         <div class="card-body next-step" onclick="selectDeploymentType('common')">
-                                            <strong>⭐ Editor's Choice Template</strong> <span class="badge badge-danger">BETA</span><br>
+                                            <strong>⭐ Popular Template</strong> <span class="badge badge-danger">BETA</span><br>
                                             Select a template from a curated list of community favorites. <br>
-                                            This includes ESX, vRP and a Default template for you to customize.
+                                            This includes ESX, Freeroam and a Default template for you to customize.
                                         </div>
                                     </div>
                                     <div class="card bigbutton deployment-type-card border-dark">
                                         <div class="card-body next-step" onclick="selectDeploymentType('remote')">
-                                            <strong>📑 Remote URL Template</strong> <span class="badge badge-danger">BETA</span><br>
+                                            <strong>📥 Remote URL Template</strong> <span class="badge badge-danger">BETA</span><br>
                                             Based on a Recipe URL in the YAML format. <br>
                                             You will have the option to edit the Recipe before running it.
+                                        </div>
+                                    </div>
+                                    <div class="card bigbutton deployment-type-card border-dark">
+                                        <div class="card-body next-step" onclick="selectDeploymentType('custom')">
+                                            <strong>📑 Custom Template</strong> <span class="badge badge-danger">BETA</span><br>
+                                            This is recommended if you have a custom recipe-based server or if you are writing your own recipe. 
+                                            You will be asked for the recipe right after this page.
                                         </div>
                                     </div>
                                     <div class="step-actions">
@@ -183,6 +190,7 @@
                                     </template>
                                     <div class="d-none" id="s4CommonTemplateDiv">
                                         <div class="row" id="s4CommonTemplateRow"></div> 
+                                        <span class="font-weight-bold"><strong>Note:</strong> this list will soon increase!</span>
                                         
                                         <div class="step-actions">
                                             <button class="btn btn-pill btn-secondary previous-step"
@@ -202,6 +210,26 @@
                                                 type="button">Back</button>
                                             <button class="btn btn-pill btn-info next-step" type="button"
                                                 data-feedback="validateRemoteTemplate">Next</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- explain and show some doc links -->
+                                    <div class="d-none" id="s4CustomTemplateDiv">
+                                        <p>
+                                            In the next page you will be prompted to insert your custom Recipe. <br>
+                                            If you are developing your own recipes, we highly recommend you to check the following:
+                                            <ul class="font-weight-bold">
+                                                <li><a href="https://github.com/tabarra/txAdmin/blob/master/docs/recipe.md" target="_blank" rel="noopener">Recipe Documentation</a></li>
+                                                <li><a href="https://github.com/tabarra/txAdmin-recipes" target="_blank" rel="noopener">Example Recipes</a></li>
+                                                <li><a href="https://discord.gg/NsXGTszYjK" target="_blank" rel="noopener">Discord Support</a></li>
+                                            </ul>
+                                        </p>
+                                        
+                                        <div class="step-actions">
+                                            <button class="btn btn-pill btn-secondary previous-step"
+                                                type="button">Back</button>
+                                            <button class="btn btn-pill btn-info next-step" 
+                                                type="button">Next</button>
                                         </div>
                                     </div>
 
@@ -400,6 +428,7 @@
         const s4CommonTemplateCardTemplate = document.getElementById("s4CommonTemplateCardTemplate");
         const s4CommonTemplateRow = document.getElementById("s4CommonTemplateRow");
         const s4RemoteTemplateDiv = document.getElementById("s4RemoteTemplateDiv");
+        const s4CustomTemplateDiv = document.getElementById("s4CustomTemplateDiv");
         const s4LocalDataPathDiv = document.getElementById("s4LocalDataPathDiv");
 
         const s4RemoteTemplateInput = document.getElementById("s4RemoteTemplateInput");
@@ -455,6 +484,7 @@
                 finishButton.textContent = "Go to Recipe Deployer";
                 finishMessage.textContent = "We are almost there!";
                 s4CommonTemplateRow.innerHTML = spinnerHTML;
+                s4CustomTemplateDiv.classList.add('d-none');
                 s4LocalDataPathDiv.classList.add('d-none');
                 s5DeployerTargetDiv.classList.remove('d-none');
                 s5ServerCFGDiv.classList.add('d-none');
@@ -467,6 +497,22 @@
                     s4CommonTemplateDiv.classList.add('d-none');
                     s4RemoteTemplateDiv.classList.remove('d-none');
                 }
+
+            }else if(depType == 'custom'){
+                const deployData = buildDeployName(frmName.value.trim());
+                s5DeployerTargetInput.value = deployData.path;
+                deploymentID = deployData.id;
+
+                s4Title.textContent = "Information";
+                s5Title.textContent = "Data Location";
+                finishButton.textContent = "Go to Recipe Deployer";
+                finishMessage.textContent = "We are almost there!";
+                s4CustomTemplateDiv.classList.remove('d-none');
+                s4RemoteTemplateDiv.classList.add('d-none');
+                s4CommonTemplateDiv.classList.add('d-none');
+                s4LocalDataPathDiv.classList.add('d-none');
+                s5DeployerTargetDiv.classList.remove('d-none');
+                s5ServerCFGDiv.classList.add('d-none');
                 
             }else if(depType == 'local'){
                 s4Title.textContent = "Local Server Data";
@@ -474,6 +520,7 @@
                 finishButton.textContent = "Save & Start Server";
                 finishMessage.textContent = "We are all set!";
                 s4CommonTemplateDiv.classList.add('d-none');
+                s4CustomTemplateDiv.classList.add('d-none');
                 s4RemoteTemplateDiv.classList.add('d-none');
                 s4LocalDataPathDiv.classList.remove('d-none');
                 s5DeployerTargetDiv.classList.add('d-none');
@@ -481,7 +528,7 @@
             }
         }
 
-        //Download Recipe Editors Choice list and create cards
+        //Download Popular Recipe list and create cards
         async function setFavTemplatesCards(){
             //NOTE: mocked
             const tmpGETResponse = [
@@ -707,24 +754,26 @@
             saveError.classList.add('d-none');
 
             const outData = {
-                name: frmName.value.trim()
+                name: frmName.value.trim(),
+                type: selectedDeploymentType
             };
             if(selectedDeploymentType == 'common'){
-                outData.template = true;
                 outData.isTrustedSource = true;
                 outData.recipeURL = loadedTemplates[selectedTemplateIndex].url;
                 outData.targetPath = s5DeployerTargetInput.value.trim();
                 outData.deploymentID = deploymentID;
                 
             }else if(selectedDeploymentType == 'remote'){
-                outData.template = true;
                 outData.isTrustedSource = false;
                 outData.recipeURL = s4RemoteTemplateInput.value.trim();
                 outData.targetPath = s5DeployerTargetInput.value.trim();
                 outData.deploymentID = deploymentID;
+
+            }else if(selectedDeploymentType == 'custom'){
+                outData.targetPath = s5DeployerTargetInput.value.trim();
+                outData.deploymentID = deploymentID;
                 
             }else if(selectedDeploymentType == 'local'){
-                outData.template = false;
                 outData.dataFolder = s4LocalDataPathInput.value.trim();
                 outData.cfgFile = s5ServerCFGInput.value.trim();
                 
@@ -741,7 +790,7 @@
                 success: function (data) {
                     if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
-                        window.location = (outData.template)? '/deployer' : '/console';
+                        window.location = (selectedDeploymentType == 'local')? '/console' : '/deployer';
                     }else{
                         saveError.innerHTML = `${data.message}<br>Please refresh the page and start again.`;
                         saveError.classList.remove('d-none');

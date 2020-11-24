@@ -83,9 +83,17 @@ module.exports = async function SetupPost(ctx) {
     }else if(action == 'validateCFGFile'){
         return await handleValidateCFGFile(ctx);
 
-    }else if(action == 'save'){
-        const handler = (ctx.request.body.template == 'true')? handleSaveDeployer : handleSaveLocal;
-        return await handler(ctx);
+    }else if(action == 'save' && ctx.request.body.type == 'common'){
+        return await handleSaveDeployerImport(ctx);
+
+    }else if(action == 'save' && ctx.request.body.type == 'remote'){
+        return await handleSaveDeployerImport(ctx);
+
+    }else if(action == 'save' && ctx.request.body.type == 'custom'){
+        return await handleSaveDeployerCustom(ctx);
+
+    }else if(action == 'save' && ctx.request.body.type == 'local'){
+        return await handleSaveLocal(ctx);
 
     }else{
         return ctx.send({
@@ -261,7 +269,7 @@ async function handleValidateCFGFile(ctx) {
 
 //================================================================
 /**
- * Handle Save settings
+ * Handle Save settings for local server data imports
  * Actions: sets serverDataPath/cfgPath, starts the server, redirect to live console
  * @param {object} ctx
  */
@@ -342,15 +350,15 @@ async function handleSaveLocal(ctx) {
 
 //================================================================
 /**
- * Handle Save settings
+ * Handle Save settings for remote recipe importing
  * Actions: download recipe, globals.deployer = new Deployer(recipe)
  * @param {object} ctx
  */
-async function handleSaveDeployer(ctx) {
+async function handleSaveDeployerImport(ctx) {
     //Sanity check
     if(
-        isUndefined(ctx.request.body.isTrustedSource) ||
         isUndefined(ctx.request.body.name) ||
+        isUndefined(ctx.request.body.isTrustedSource) ||
         isUndefined(ctx.request.body.recipeURL) ||
         isUndefined(ctx.request.body.targetPath) ||
         isUndefined(ctx.request.body.deploymentID) 
@@ -381,6 +389,52 @@ async function handleSaveDeployer(ctx) {
     //Start deployer (constructor will validate the recipe)
     try {
         globals.deployer = new Deployer(recipeData, deploymentID, targetPath, isTrustedSource);
+    } catch (error) {
+        return ctx.send({success: false, message: error.message});
+    }
+    
+    //Preparing & saving config
+    const newGlobalConfig = globals.configVault.getScopedStructure('global');
+    newGlobalConfig.serverName = serverName;
+    const saveGlobalStatus = globals.configVault.saveProfile('global', newGlobalConfig);
+    
+    //Checking save and redirecting
+    if(saveGlobalStatus){
+        ctx.utils.logAction(`Changing global settings via setup stepper and started Deployer.`);
+        return ctx.send({success: true});
+    }else{
+        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
+        return ctx.send({success: false, message: `<strong>Error saving the configuration file.</strong>`});
+    }
+}
+
+
+//================================================================
+/**
+ * Handle Save settings for custom recipe
+ * Actions: download recipe, globals.deployer = new Deployer(recipe)
+ * @param {object} ctx
+ */
+async function handleSaveDeployerCustom(ctx) {
+    //Sanity check
+    if(
+        isUndefined(ctx.request.body.name) ||
+        isUndefined(ctx.request.body.targetPath) ||
+        isUndefined(ctx.request.body.deploymentID) 
+    ){
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
+    }
+    const serverName = ctx.request.body.name.trim();
+    const targetPath = slash(path.normalize(ctx.request.body.targetPath+'/')); 
+    const deploymentID = ctx.request.body.deploymentID;
+    const customMetaData = {
+        author: ctx.session.auth.username,
+        serverName,
+    }
+
+    //Start deployer (constructor will create the recipe template)
+    try {
+        globals.deployer = new Deployer(false, deploymentID, targetPath, false, customMetaData);
     } catch (error) {
         return ctx.send({success: false, message: error.message});
     }
