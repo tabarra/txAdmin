@@ -191,7 +191,7 @@ onNet('txaLogger:DeathNotice', (killer, cause) => {
 
 onNet('txaLogger:CommandExecuted', (data, playerSource) => {
     try {
-        logger.r( (typeof(playerSource) === 'undefined')?global.source:playerSource, 'CommandExecuted', data);
+        logger.r( (typeof(playerSource) === 'number')?playerSource:global.source, 'CommandExecuted', data);
     } catch (error) {
         logError(error)
     }
