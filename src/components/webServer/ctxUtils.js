@@ -64,6 +64,7 @@ async function renderMasterView(view, reqSess, data){
     data.txAdminVersion = GlobalData.txAdminVersion;
     data.txAdminOutdated = (now() > GlobalData.txAdminVersionBestBy);
     data.fxServerVersion = GlobalData.fxServerVersion;
+    data.adminIsMaster = (reqSess && reqSess.auth && reqSess.auth.username && reqSess.auth.master === true);
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username)? reqSess.auth.username : 'unknown user';
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture)? reqSess.auth.picture : 'img/default_avatar.png';
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
@@ -185,6 +186,13 @@ function logAction(ctx, data){
  */
 function checkPermission(ctx, perm, fromCtx, printWarn = true){
     try {
+        //For master permission
+        if(perm === 'master' && ctx.session.auth.master !== true){
+            if(GlobalData.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
+            return false;
+        }
+        
+        //For all other permissions
         if(
             ctx.session.auth.master === true ||
             ctx.session.auth.permissions.includes('all_permissions') ||
@@ -195,6 +203,7 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true){
             if(GlobalData.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
+        
     } catch (error) {
         if(GlobalData.verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
         return false;

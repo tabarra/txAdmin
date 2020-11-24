@@ -10,7 +10,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
  */
 module.exports = async function DeployerStepper(ctx) {
     //Check permissions
-    if(!ctx.utils.checkPermission('all_permissions', modulename)){
+    if(!ctx.utils.checkPermission('master', modulename)){
         return ctx.utils.render('basic/generic', {message: `You need to be the admin master to use the deployer.`});
     }
 
