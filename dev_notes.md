@@ -10,8 +10,8 @@
 - [x] completed recipe engine with the following actions: `waste_time`, `fail_test`, `download_file`, `remove_path`, `ensure_dir`, `unzip`, `move_path`, `copy_path`, `write_file`, `replace_string`, `connect_database`, `query_database`
 - [x] upgrade packages
 - [x] add custom recipe option to setup/deployer
-- [ ] make cfx default recipe and populate `@tabarra/txAdmin-recipes`
-- [ ] update setup page to read `@tabarra/txAdmin-recipes`
+- [x] make cfx default recipe and populate `@tabarra/txAdmin-recipes`
+- [x] update setup page to read `@tabarra/txAdmin-recipes`
 - [ ] option to reset the fxserver and go back to the setup page somewhere
 - [ ] merge dark mode
 - [ ] stats pra saber se usaram ou não o deployer, mesmo que não seja uma lógica forte

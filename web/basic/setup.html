@@ -531,46 +531,61 @@
         //Download Popular Recipe list and create cards
         async function setFavTemplatesCards(){
             //NOTE: mocked
-            const tmpGETResponse = [
-                {
-                    name: 'CFX Default',
-                    version: '1.0.0',
-                    description: 'Official recipe for the base resources required to run a server.',
-                    url: 'http://example/default'
+            // const tmpGETResponse = [
+            //     {
+            //         name: 'CFX Default',
+            //         version: '1.0.0',
+            //         description: 'Official recipe for the base resources required to run a server.',
+            //         url: 'http://example/default'
+            //     },
+            //     {
+            //         name: 'PlumeESX2',
+            //         version: '1.2.3',
+            //         description: 'A full featured (8 jobs) and highly configurable yet lightweight ESX v2 base that can be easily extendable.',
+            //         url: 'http://example/plume'
+            //     },
+            //     {
+            //         name: 'DriftMaster',
+            //         version: '1.2.3',
+            //         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ',
+            //         url: 'http://example/DriftMaster'
+            //     },
+            //     {
+            //         name: 'testFill',
+            //         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ',
+            //         url: 'http://example/test'
+            //     }
+            // ];
+            loadedTemplates = [];
+            $.ajax({
+                type: "GET",
+                url: 'https://raw.githubusercontent.com/tabarra/txAdmin-recipes/main/indexv1.json',
+                dataType: 'json',
+                success: function (templates) {
+                    if(!Array.isArray(templates)){
+                        s4CommonTemplateRow.innerText = `Failed to load recipe list. 
+                        Please click on the "back" button and try again.`;
+                    }else{
+                        loadedTemplates = templates;
+                        s4CommonTemplateRow.innerHTML = '';
+                        templates.forEach((recipe, key) => {
+                            const newNode = document.createElement("div");
+                            newNode.innerHTML = s4CommonTemplateCardTemplate.innerHTML;
+                            newNode.classList.add('col-12', 'col-md-6', 'p-0');
+                            newNode.querySelector('.bigbutton').onclick = () => {selectTemplate(key)};
+                            newNode.querySelector('.title > strong').innerText = recipe.name;
+                            newNode.querySelector('.title > em').innerText = (recipe.version)? `(v${recipe.version})` : '';
+                            newNode.querySelector('.description').innerText = recipe.description;
+                            s4CommonTemplateRow.appendChild(newNode);
+                        });
+                    }
                 },
-                {
-                    name: 'PlumeESX2',
-                    version: '1.2.3',
-                    description: 'A full featured (8 jobs) and highly configurable yet lightweight ESX v2 base that can be easily extendable.',
-                    url: 'http://example/plume'
-                },
-                {
-                    name: 'DriftMaster',
-                    version: '1.2.3',
-                    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ',
-                    url: 'http://example/DriftMaster'
-                },
-                {
-                    name: 'testFill',
-                    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ',
-                    url: 'http://example/test'
+                error: function (xmlhttprequest, textstatus, message) {
+                    s4CommonTemplateRow.innerText = `Failed to load recipe list. 
+                    Please click on the "back" button and try again.`;
                 }
-            ];
-            loadedTemplates = tmpGETResponse;
-            
-            setTimeout(() => {
-                s4CommonTemplateRow.innerHTML = '';
-                tmpGETResponse.forEach((recipe, key) => {
-                    const newNode = document.createElement("div");
-                    newNode.innerHTML = s4CommonTemplateCardTemplate.innerHTML;
-                    newNode.classList.add('col-12', 'col-md-6', 'p-0');
-                    newNode.querySelector('.bigbutton').onclick = () => {selectTemplate(key)};
-                    newNode.querySelector('.title > strong').innerText = recipe.name;
-                    newNode.querySelector('.title > em').innerText = (recipe.version)? `(v${recipe.version})` : '';
-                    newNode.querySelector('.description').innerText = recipe.description;
-                    s4CommonTemplateRow.appendChild(newNode);
-                });
-            }, 500);
+            });
+
         }
 
         // Deployment type selection

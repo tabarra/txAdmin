@@ -308,6 +308,10 @@
             }
             const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
+            if(serverCFG.includes(`sv_licenseKey "changeme"`)){
+                return $.notify({ message: `Please change the <strong>sv_licenseKey</strong>.` }, { type: 'danger' });
+            }
+
             $.ajax({
                 type: "POST",
                 url: '/deployer/recipe/commit',
