@@ -5,6 +5,7 @@ const util = require('util');
 const fs = require('fs-extra');
 const AdmZip = require('adm-zip');
 const axios = require("axios");
+const mysql = require('mysql2/promise');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 //Helper functions
@@ -21,6 +22,14 @@ const isPathRoot = (pathInput) => {
 const pathCleanTrail = (pathInput) => {
     return pathInput.replace(/[\/\\]+$/, '');
 } 
+const isPathValid = (pathInput, acceptRoot=true) => {
+    return (
+        typeof pathInput == 'string' &&
+        pathInput.length &&
+        isPathLinear(pathInput) &&
+        (acceptRoot || !isPathRoot(pathInput))
+    )
+}
 
 
 
@@ -31,12 +40,10 @@ const pathCleanTrail = (pathInput) => {
 const validatorDownloadFile = (options) => {
     return (
         typeof options.url == 'string' &&
-        typeof options.path == 'string' &&
-        options.path.length &&
-        isPathLinear(options.path)
+        isPathValid(options.path)
     )
 }
-const taskDownloadFile = async (options, basePath) => {
+const taskDownloadFile = async (options, basePath, deployerCtx) => {
     if(!validatorDownloadFile(options)) throw new Error(`invalid options`);
     if(options.path.endsWith('/')) throw new Error(`target filename not specified`); //FIXME: this should be on the validator
 
@@ -65,13 +72,10 @@ const taskDownloadFile = async (options, basePath) => {
  */
 const validatorRemovePath = (options) => {
     return (
-        typeof options.path == 'string' &&
-        options.path.length &&
-        isPathLinear(options.path) &&
-        !isPathRoot(options.path)
+        isPathValid(options.path, false)
     )
 }
-const taskRemovePath = async (options, basePath) => {
+const taskRemovePath = async (options, basePath, deployerCtx) => {
     if(!validatorRemovePath(options)) throw new Error(`invalid options`);
 
     //Process and create target file/path
@@ -89,13 +93,10 @@ const taskRemovePath = async (options, basePath) => {
  */
 const validatorEnsureDir = (options) => {
     return (
-        typeof options.path == 'string' &&
-        options.path.length &&
-        isPathLinear(options.path) &&
-        !isPathRoot(options.path)
+        isPathValid(options.path, false)
     )
 }
-const taskEnsureDir = async (options, basePath) => {
+const taskEnsureDir = async (options, basePath, deployerCtx) => {
     if(!validatorEnsureDir(options)) throw new Error(`invalid options`);
 
     //Process and create target file/path
@@ -115,15 +116,11 @@ const taskEnsureDir = async (options, basePath) => {
  */
 const validatorUnzip = (options) => {
     return (
-        typeof options.src == 'string' &&
-        options.src.length &&
-        isPathLinear(options.src) &&
-        typeof options.dest == 'string' &&
-        options.dest.length &&
-        isPathLinear(options.dest)
+        isPathValid(options.src, false) &&
+        isPathValid(options.dest)
     )
 }
-const taskUnzip = async (options, basePath) => {
+const taskUnzip = async (options, basePath, deployerCtx) => {
     if(!validatorUnzip(options)) throw new Error(`invalid options`);
 
     const srcPath = safePath(basePath, options.src);
@@ -141,17 +138,11 @@ const taskUnzip = async (options, basePath) => {
  */
 const validatorMovePath = (options) => {
     return (
-        typeof options.src == 'string' &&
-        options.src.length &&
-        isPathLinear(options.src) &&
-        !isPathRoot(options.src) &&
-        typeof options.dest == 'string' &&
-        options.dest.length &&
-        isPathLinear(options.dest) &&
-        !isPathRoot(options.dest)
+        isPathValid(options.src, false) &&
+        isPathValid(options.dest, false)
     )
 }
-const taskMovePath = async (options, basePath) => {
+const taskMovePath = async (options, basePath, deployerCtx) => {
     if(!validatorMovePath(options)) throw new Error(`invalid options`);
 
     const srcPath = safePath(basePath, options.src);
@@ -161,29 +152,137 @@ const taskMovePath = async (options, basePath) => {
     });
 }
 
+
 /**
  * Copy a file or directory. The directory can have contents.
  * TODO: add a filter property and use a glob lib in the fs.copy filter function
  */
 const validatorCopyPath = (options) => {
     return (
-        typeof options.src == 'string' &&
-        options.src.length &&
-        isPathLinear(options.src) &&
-        typeof options.dest == 'string' &&
-        options.dest.length &&
-        isPathLinear(options.dest)
+        isPathValid(options.src) &&
+        isPathValid(options.dest)
     )
 }
-const taskCopyPath = async (options, basePath) => {
+const taskCopyPath = async (options, basePath, deployerCtx) => {
     if(!validatorCopyPath(options)) throw new Error(`invalid options`);
 
     const srcPath = safePath(basePath, options.src);
     const destPath = safePath(basePath, options.dest);
     await fs.copy(srcPath, destPath, {
-        overwrite: (typeof options.overwrite !== undefined && (options.overwrite === 'true' || options.overwrite === true))
+        overwrite: (typeof options.overwrite !== 'undefined' && (options.overwrite === 'true' || options.overwrite === true))
     });
 }
+
+
+/**
+ * Writes or appends data to a file. If not in the append mode, the file will be overwritten and the directory structure will be created if it doesn't exists.
+ */
+const validatorWriteFile = (options) => {
+    return (
+        typeof options.data == 'string' &&
+        options.data.length &&
+        isPathValid(options.file, false)
+    )
+}
+const taskWriteFile = async (options, basePath, deployerCtx) => {
+    if(!validatorWriteFile(options)) throw new Error(`invalid options`);
+
+    const filePath = safePath(basePath, options.file);
+    if(options.append === 'true' || options.append === true){
+        await fs.appendFile(filePath, options.data);
+    }else{
+        await fs.outputFile(filePath, options.data);
+    }
+}
+
+
+/**
+ * Replaces a string in the target file or files array based on a search string.
+ */
+const validatorReplaceString = (options) => {
+    return (
+        (
+            ( 
+                Array.isArray(options.file) && 
+                options.file.every(s => isPathValid(s, false)) 
+            ) ||
+            isPathValid(options.file, false)
+        ) &&
+        typeof options.search == 'string' &&
+        options.search.length &&
+        typeof options.replace == 'string'
+    )
+}
+const taskReplaceString = async (options, basePath, deployerCtx) => {
+    if(!validatorReplaceString(options)) throw new Error(`invalid options`);
+
+    const fileList = (Array.isArray(options.file))? options.file : [options.file];
+    for (let i = 0; i < fileList.length; i++){
+        const filePath = safePath(basePath, fileList[i]);
+        const original = await fs.readFile(filePath);
+        const changed = original.toString().replace(options.search, options.replace);
+        await fs.writeFile(filePath, changed);
+    }
+}
+
+
+/**
+ * Connects to a MySQL/MariaDB server and creates a database if the dbName variable is null.
+ */
+const validatorConnectDatabase = (options) => {
+    return true;
+}
+const taskConnectDatabase = async (options, basePath, deployerCtx) => {
+    if(!validatorConnectDatabase(options)) throw new Error(`invalid options`);
+    if(typeof deployerCtx.deploymentID !== 'string' || !deployerCtx.deploymentID.length) throw new Error(`invalid deploymentID`);
+    if(typeof deployerCtx.dbHost !== 'string') throw new Error(`invalid dbHost`);
+    if(typeof deployerCtx.dbUsername !== 'string') throw new Error(`invalid dbUsername`);
+    if(typeof deployerCtx.dbPassword !== 'string' && deployerCtx.dbPassword !== null) throw new Error(`dbPassword should be a string or null`);
+    if(typeof deployerCtx.dbName !== 'string' && deployerCtx.dbName !== null) throw new Error(`dbName should be a string or null`);
+
+    //Connect to the database
+    const mysqlOptions = {
+        host: deployerCtx.dbHost,
+        user: deployerCtx.dbUsername,
+        password: (deployerCtx.dbPassword)? deployerCtx.dbPassword : undefined,
+        database: (deployerCtx.dbName)? deployerCtx.dbName : undefined,
+        multipleStatements: true,
+    }
+    deployerCtx.mysqlCon = await mysql.createConnection(mysqlOptions);
+    if(deployerCtx.dbName == null){
+        const escapedName = mysql.escapeId(deployerCtx.deploymentID);
+        if(deployerCtx.dbOverwrite === 'yes_delete_existing_database'){
+            await deployerCtx.mysqlCon.query(`DROP DATABASE IF EXISTS ${escapedName}`);
+        }
+        await deployerCtx.mysqlCon.query(`CREATE DATABASE IF NOT EXISTS ${escapedName}`);
+        await deployerCtx.mysqlCon.query(`USE ${escapedName}`);
+    }
+}
+
+
+/**
+ * Runs a SQL query in the previously connected database. This query can be a file path or a string.
+ */
+const validatorQueryDatabase = (options) => {
+    if(typeof options.file !== 'undefined' && typeof options.query !== 'undefined') return false;
+    if(typeof options.file == 'string') return isPathValid(options.file, false);
+    if(typeof options.query == 'string') return options.query.length;
+    return false;
+}
+const taskQueryDatabase = async (options, basePath, deployerCtx) => {
+    if(!validatorQueryDatabase(options)) throw new Error(`invalid options`);
+    if(!deployerCtx.mysqlCon) throw new Error(`Database connection not found. Run connect_database before query_database`);
+
+    let sql;
+    if(options.file){
+        const filePath = safePath(basePath, options.file);
+        sql = await fs.readFile(filePath, 'utf8');
+    }else{
+        sql = options.query;
+    }
+    await deployerCtx.mysqlCon.query(sql);
+}
+
 
 
 /**
@@ -222,21 +321,27 @@ DONE:
     - unzip
     - move_path (file or folder)
     - copy_path (file or folder)
+    - write_file (with option to append only)
+    - replace_string (single or array)
+    - connect_database (connects to mysql, creates db if not set)
+    - query_database (file or string)
     
 TODO:
-    - string_replace
-    - create_database (creates a database in the local mysql)
-    - run_sql (runs a sql file in the database created)
-    - write_file (with option to append only)
-
-    - replace_file
     - read json into context vars?
     - print vars to console?
-    - download_repo: automatiza toda a parte de download, unzip, move e rm temp
+    - github_extract: automatiza toda a parte de download, unzip, move e rm temp
         - url
         - tag
         - subfolders?
         - dest path
+
+
+https://api.github.com/repos/tabarra/txAdmin/zipball/master
+https://api.github.com/repos/tabarra/txAdmin/zipball/v2.7.2
+https://api.github.com/repos/tabarra/txAdmin/zipball/778bc41aa7a66ff9b37acdbfcb4c6cd957c8614e
+
+https://api.github.com/repos/tabarra/txAdmin/releases
+https://api.github.com/repos/tabarra/txAdmin/releases/latest
 */
 
 
@@ -265,6 +370,22 @@ module.exports = {
     copy_path:{
         validate: validatorCopyPath,
         run: taskCopyPath,
+    },
+    write_file:{
+        validate: validatorWriteFile,
+        run: taskWriteFile,
+    },
+    replace_string:{
+        validate: validatorReplaceString,
+        run: taskReplaceString,
+    },
+    connect_database:{
+        validate: validatorConnectDatabase,
+        run: taskConnectDatabase,
+    },
+    query_database:{
+        validate: validatorQueryDatabase,
+        run: taskQueryDatabase,
     },
 
     //DEBUG mock only

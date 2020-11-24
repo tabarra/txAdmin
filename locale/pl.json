@@ -4,6 +4,7 @@
         "humanizer_language": "pl"
     },
     "restarter": {
+        "start_timeout": "failed to start in time",
         "crash_detected": "Wykryty Crash",
         "partial_crash_warn": "Due to a partial crash, this server will restart in 1 minute. Please disconnect now.",
         "partial_crash_warn_discord": "Due to a partial crash, **%{servername}** will restart in 1 minute.",

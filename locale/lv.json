@@ -4,6 +4,7 @@
         "humanizer_language": "lv"
     },
     "restarter": {
+        "start_timeout": "failed to start in time",
         "crash_detected": "konstatēta avārija",
         "partial_crash_warn": "Daļējas avārijas dēļ, šis serveris tiks restartēts pēc 1 minūtes. Lūdzu pārtrauc savienojumu ar serveri tagad.",
         "partial_crash_warn_discord": "Daļējas avārijas dēļ, **%{servername}** tiks restartēts pēc 1 minūtes.",

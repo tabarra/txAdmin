@@ -43,6 +43,7 @@ module.exports = router = (config) =>{
     router.post('/deployer/recipe/:action', requestAuth('api'), webRoutes.deployer.actions);
     router.get('/settings', requestAuth('web'), webRoutes.settings.get);
     router.post('/settings/save/:scope', requestAuth('web'), webRoutes.settings.save);
+    router.post('/settings/masterActions/:action', requestAuth('web'), webRoutes.settings.masterActions);
 
     //FXServer
     router.get('/fxserver/controls/:action', requestAuth('api'), webRoutes.fxserver.controls); //FIXME: transform into post

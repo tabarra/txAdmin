@@ -138,13 +138,30 @@
                             <div class="mx-auto">
                                 <h6>Type the PIN in your terminal and click "Link Account".</h6>
                                 <form action="/auth/addMaster/pin" method="post">
-                                    <div class="input-group mx-auto" style="max-width: 140px;">
+                                    <p class="text-success font-weight-bold mb-0 d-none" id="noMaster-autofill">Autofilled</p>
+                                    <div class="input-group mx-auto" style="max-width: 140px;" id="noMaster-div">
                                         <input class="form-control form-control-lg text-center mb-3" type="text"
-                                        minlength="4" maxlength="4" name="pin" placeholder="0000" autocomplete="off" autofocus required>
+                                        minlength="4" maxlength="4" name="pin" placeholder="0000" 
+                                        autocomplete="off"  id="noMaster-pin" autofocus required>
                                     </div>
-                                    <button class="btn btn-primary px-4" type="submit">Link Account</button>
+                                    <button class="btn btn-primary px-4" 
+                                        type="submit">Link Account</button>
                                 </form>
                             </div>
+                            <script>
+                                if(/^#\d{4}$/.test(window.location.hash)) {
+                                    const label = document.getElementById('noMaster-autofill');
+                                    const pinInput = document.getElementById('noMaster-pin');
+
+                                    label.classList.remove('d-none');
+                                    pinInput.value = window.location.hash.substring(1);
+                                    pinInput.classList.add('is-valid');
+                                    pinInput.onkeydown = (e) => {
+                                        pinInput.classList.remove('is-valid');
+                                        label.classList.add('d-none');
+                                    }
+                                }
+                            </script>
                         {{/if}}
                         {{@if(it.template == 'callback')}}
                             <img class="profile-pic" src="{{it.addMaster_picture}}" alt="avatar">

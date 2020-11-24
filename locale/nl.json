@@ -4,6 +4,7 @@
         "humanizer_language": "nl"
     },
     "restarter": {
+        "start_timeout": "failed to start in time",
         "crash_detected": "Crash geconstateerd",
         "partial_crash_warn": "Vanwege een gedeeltelijke crash wordt deze server over 1 minuut opnieuw opgestart. Verlaat de server nu.",
         "partial_crash_warn_discord": "Vanwege een gedeeltelijke crash wordt **%{servername}** over 1 minuut opnieuw opgestart.",

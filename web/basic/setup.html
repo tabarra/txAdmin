@@ -148,23 +148,39 @@
                                          onclick="selectDeploymentType('local')">
                                         <span class="title"><strong>📁 Local Server Data</strong></span>
                                         <br>
-                                        <span class="description">Select an existing server-data folder in the VPS. <br>
-                                            This is the option you are already used to. </span>
+                                        <span class="description">
+                                            Select an existing server-data folder in the VPS. <br>
+                                            This is the option you are already used to.
+                                        </span>
                                     </div>
                                     <div class="bigbutton deployment-type-card border-dark next-step">
                                         <div onclick="selectDeploymentType('common')">
-                                            <span class="title"><strong>⭐ Editor's Choice Template</strong> <span class="badge badge-danger">BETA</span></span>
+                                            <span class="title"><strong>⭐ Popular Template</strong> <span class="badge badge-danger">BETA</span></span>
                                             <br>
-                                            <span class="description">Select a template from a curated list of community favorites. <br>
-                                            This includes ESX, vRP and a Default template for you to customize.</span>
+                                            <span class="description">
+                                                Select a template from a curated list of community favorites. <br>
+                                                This includes ESX, Freeroam and a Default template for you to customize.
+                                            </span>
                                         </div>
                                     </div>
                                     <div class="bigbutton deployment-type-card border-dark next-step">
                                         <div onclick="selectDeploymentType('remote')">
-                                            <span class="title"><strong>📑 Remote URL Template</strong> <span class="badge badge-danger">BETA</span></span>
+                                            <span class="title"><strong>📥 Remote URL Template</strong> <span class="badge badge-danger">BETA</span></span>
                                             <br>
-                                            <span class="description">Based on a Recipe URL in the YAML format. <br>
-                                            You will have the option to edit the Recipe before running it.</span>
+                                            <span class="description">
+                                                Based on a Recipe URL in the YAML format. <br>
+                                                You will have the option to edit the Recipe before running it.
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="bigbutton deployment-type-card border-dark next-step">
+                                        <div onclick="selectDeploymentType('custom')">
+                                            <span class="title"><strong>📑 Custom Template</strong> <span class="badge badge-danger">BETA</span></span>
+                                            <br>
+                                            <span class="description">
+                                                This is recommended if you have a custom recipe-based server or if you are writing your own recipe. 
+                                                You will be asked for the recipe right after this page.
+                                            </span>
                                         </div>
                                     </div>
                                     <div class="step-actions">
@@ -190,6 +206,7 @@
                                     </template>
                                     <div class="d-none" id="s4CommonTemplateDiv">
                                         <div class="row" id="s4CommonTemplateRow"></div> 
+                                        <span class="font-weight-bold"><strong>Note:</strong> this list will soon increase!</span>
                                         
                                         <div class="step-actions">
                                             <button class="btn btn-pill btn-secondary previous-step"
@@ -209,6 +226,26 @@
                                                 type="button">Back</button>
                                             <button class="btn btn-pill btn-info next-step" type="button"
                                                 data-feedback="validateRemoteTemplate">Next</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- explain and show some doc links -->
+                                    <div class="d-none" id="s4CustomTemplateDiv">
+                                        <p>
+                                            In the next page you will be prompted to insert your custom Recipe. <br>
+                                            If you are developing your own recipes, we highly recommend you to check the following:
+                                            <ul class="font-weight-bold">
+                                                <li><a href="https://github.com/tabarra/txAdmin/blob/master/docs/recipe.md" target="_blank" rel="noopener">Recipe Documentation</a></li>
+                                                <li><a href="https://github.com/tabarra/txAdmin-recipes" target="_blank" rel="noopener">Example Recipes</a></li>
+                                                <li><a href="https://discord.gg/NsXGTszYjK" target="_blank" rel="noopener">Discord Support</a></li>
+                                            </ul>
+                                        </p>
+                                        
+                                        <div class="step-actions">
+                                            <button class="btn btn-pill btn-secondary previous-step"
+                                                type="button">Back</button>
+                                            <button class="btn btn-pill btn-info next-step" 
+                                                type="button">Next</button>
                                         </div>
                                     </div>
 
@@ -352,6 +389,7 @@
         let loadedTemplates = [];
         let selectedTemplateIndex;
         let selectedDeploymentType;
+        let deploymentID;
 
         //Stepper config
         const stepper = document.querySelector('.stepper');
@@ -374,11 +412,14 @@
             }
             return false;
         }
-        const buildDeployPath = (templateName) => {
+        const buildDeployName = (templateName) => {
             const treatedName = templateName.replace(/[^a-zA-Z0-9\.\-_]/g, '');
             const shortName = (treatedName.length < 3)? 'DumbName' : treatedName;
-            const timestamp = (Date.now()/1000).toFixed();
-            return `${txDataPath}/${shortName}_${timestamp}.base`;
+            const timestamp = Math.round(Date.now()/1000).toString(16).padStart(6, 0).slice(-6).toUpperCase();
+            return {
+                id: `${shortName}_${timestamp}`,
+                path: `${txDataPath}/${shortName}_${timestamp}.base`,
+            };
         }
         const inputKeyUp = (event) => {
             event.target.classList.remove('is-invalid', 'is-valid');
@@ -413,6 +454,7 @@
         const s4CommonTemplateCardTemplate = document.getElementById("s4CommonTemplateCardTemplate");
         const s4CommonTemplateRow = document.getElementById("s4CommonTemplateRow");
         const s4RemoteTemplateDiv = document.getElementById("s4RemoteTemplateDiv");
+        const s4CustomTemplateDiv = document.getElementById("s4CustomTemplateDiv");
         const s4LocalDataPathDiv = document.getElementById("s4LocalDataPathDiv");
 
         const s4RemoteTemplateInput = document.getElementById("s4RemoteTemplateInput");
@@ -468,6 +510,7 @@
                 finishButton.textContent = "Go to Recipe Deployer";
                 finishMessage.textContent = "We are almost there!";
                 s4CommonTemplateRow.innerHTML = spinnerHTML;
+                s4CustomTemplateDiv.classList.add('d-none');
                 s4LocalDataPathDiv.classList.add('d-none');
                 s5DeployerTargetDiv.classList.remove('d-none');
                 s5ServerCFGDiv.classList.add('d-none');
@@ -480,6 +523,22 @@
                     s4CommonTemplateDiv.classList.add('d-none');
                     s4RemoteTemplateDiv.classList.remove('d-none');
                 }
+
+            }else if(depType == 'custom'){
+                const deployData = buildDeployName(frmName.value.trim());
+                s5DeployerTargetInput.value = deployData.path;
+                deploymentID = deployData.id;
+
+                s4Title.textContent = "Information";
+                s5Title.textContent = "Data Location";
+                finishButton.textContent = "Go to Recipe Deployer";
+                finishMessage.textContent = "We are almost there!";
+                s4CustomTemplateDiv.classList.remove('d-none');
+                s4RemoteTemplateDiv.classList.add('d-none');
+                s4CommonTemplateDiv.classList.add('d-none');
+                s4LocalDataPathDiv.classList.add('d-none');
+                s5DeployerTargetDiv.classList.remove('d-none');
+                s5ServerCFGDiv.classList.add('d-none');
                 
             }else if(depType == 'local'){
                 s4Title.textContent = "Local Server Data";
@@ -487,6 +546,7 @@
                 finishButton.textContent = "Save & Start Server";
                 finishMessage.textContent = "We are all set!";
                 s4CommonTemplateDiv.classList.add('d-none');
+                s4CustomTemplateDiv.classList.add('d-none');
                 s4RemoteTemplateDiv.classList.add('d-none');
                 s4LocalDataPathDiv.classList.remove('d-none');
                 s5DeployerTargetDiv.classList.add('d-none');
@@ -494,49 +554,64 @@
             }
         }
 
-        //Download Recipe Editors Choice list and create cards
+        //Download Popular Recipe list and create cards
         async function setFavTemplatesCards(){
             //NOTE: mocked
-            const tmpGETResponse = [
-                {
-                    name: 'CFX Default',
-                    version: '1.0.0',
-                    description: 'Official recipe for the base resources required to run a server.',
-                    url: 'http://example/default'
+            // const tmpGETResponse = [
+            //     {
+            //         name: 'CFX Default',
+            //         version: '1.0.0',
+            //         description: 'Official recipe for the base resources required to run a server.',
+            //         url: 'http://example/default'
+            //     },
+            //     {
+            //         name: 'PlumeESX2',
+            //         version: '1.2.3',
+            //         description: 'A full featured (8 jobs) and highly configurable yet lightweight ESX v2 base that can be easily extendable.',
+            //         url: 'http://example/plume'
+            //     },
+            //     {
+            //         name: 'DriftMaster',
+            //         version: '1.2.3',
+            //         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ',
+            //         url: 'http://example/DriftMaster'
+            //     },
+            //     {
+            //         name: 'testFill',
+            //         description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ',
+            //         url: 'http://example/test'
+            //     }
+            // ];
+            loadedTemplates = [];
+            $.ajax({
+                type: "GET",
+                url: 'https://raw.githubusercontent.com/tabarra/txAdmin-recipes/main/indexv1.json',
+                dataType: 'json',
+                success: function (templates) {
+                    if(!Array.isArray(templates)){
+                        s4CommonTemplateRow.innerText = `Failed to load recipe list. 
+                        Please click on the "back" button and try again.`;
+                    }else{
+                        loadedTemplates = templates;
+                        s4CommonTemplateRow.innerHTML = '';
+                        templates.forEach((recipe, key) => {
+                            const newNode = document.createElement("div");
+                            newNode.innerHTML = s4CommonTemplateCardTemplate.innerHTML;
+                            newNode.classList.add('col-12', 'col-md-6', 'p-0');
+                            newNode.querySelector('.bigbutton').onclick = () => {selectTemplate(key)};
+                            newNode.querySelector('.title > strong').innerText = recipe.name;
+                            newNode.querySelector('.title > em').innerText = (recipe.version)? `(v${recipe.version})` : '';
+                            newNode.querySelector('.description').innerText = recipe.description;
+                            s4CommonTemplateRow.appendChild(newNode);
+                        });
+                    }
                 },
-                {
-                    name: 'PlumeESX2',
-                    version: '1.2.3',
-                    description: 'A full featured (8 jobs) and highly configurable yet lightweight ESX v2 base that can be easily extendable.',
-                    url: 'http://example/plume'
-                },
-                {
-                    name: 'DriftMaster',
-                    version: '1.2.3',
-                    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ',
-                    url: 'http://example/DriftMaster'
-                },
-                {
-                    name: 'testFill',
-                    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ',
-                    url: 'http://example/test'
+                error: function (xmlhttprequest, textstatus, message) {
+                    s4CommonTemplateRow.innerText = `Failed to load recipe list. 
+                    Please click on the "back" button and try again.`;
                 }
-            ];
-            loadedTemplates = tmpGETResponse;
-            
-            setTimeout(() => {
-                s4CommonTemplateRow.innerHTML = '';
-                tmpGETResponse.forEach((recipe, key) => {
-                    const newNode = document.createElement("div");
-                    newNode.innerHTML = s4CommonTemplateCardTemplate.innerHTML;
-                    newNode.classList.add('col-12', 'col-md-6', 'p-0');
-                    newNode.querySelector('.bigbutton').onclick = () => {selectTemplate(key)};
-                    newNode.querySelector('.title > strong').innerText = recipe.name;
-                    newNode.querySelector('.title > em').innerText = (recipe.version)? `(v${recipe.version})` : '';
-                    newNode.querySelector('.description').innerText = recipe.description;
-                    s4CommonTemplateRow.appendChild(newNode);
-                });
-            }, 500);
+            });
+
         }
 
         // Deployment type selection
@@ -545,7 +620,9 @@
             if(!loadedTemplates[key]){
                 return alert('Invalid Template');
             }
-            s5DeployerTargetInput.value = buildDeployPath(loadedTemplates[key].name);
+            const deployData = buildDeployName(loadedTemplates[key].name);
+            s5DeployerTargetInput.value = deployData.path;
+            deploymentID = deployData.id;
             stepperInstace.nextStep();
         }
 
@@ -564,7 +641,9 @@
                 success: function (data) {
                     if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
-                        s5DeployerTargetInput.value = buildDeployPath(data.name);
+                        const deployData = buildDeployName(data.name);
+                        s5DeployerTargetInput.value = deployData.path;
+                        deploymentID = deployData.id;
                         currentSteps.active.step.classList.remove('wrong');
                         currentSteps.active.step.classList.add('done');
                         s4RemoteTemplateInput.classList.add('is-valid');
@@ -716,22 +795,26 @@
             saveError.classList.add('d-none');
 
             const outData = {
-                name: frmName.value.trim()
+                name: frmName.value.trim(),
+                type: selectedDeploymentType
             };
             if(selectedDeploymentType == 'common'){
-                outData.template = true;
                 outData.isTrustedSource = true;
                 outData.recipeURL = loadedTemplates[selectedTemplateIndex].url;
                 outData.targetPath = s5DeployerTargetInput.value.trim();
+                outData.deploymentID = deploymentID;
                 
             }else if(selectedDeploymentType == 'remote'){
-                outData.template = true;
                 outData.isTrustedSource = false;
                 outData.recipeURL = s4RemoteTemplateInput.value.trim();
                 outData.targetPath = s5DeployerTargetInput.value.trim();
+                outData.deploymentID = deploymentID;
+
+            }else if(selectedDeploymentType == 'custom'){
+                outData.targetPath = s5DeployerTargetInput.value.trim();
+                outData.deploymentID = deploymentID;
                 
             }else if(selectedDeploymentType == 'local'){
-                outData.template = false;
                 outData.dataFolder = s4LocalDataPathInput.value.trim();
                 outData.cfgFile = s5ServerCFGInput.value.trim();
                 
@@ -748,7 +831,7 @@
                 success: function (data) {
                     if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){
-                        window.location = (outData.template)? '/deployer' : '/console';
+                        window.location = (selectedDeploymentType == 'local')? '/console' : '/deployer';
                     }else{
                         saveError.innerHTML = `${data.message}<br>Please refresh the page and start again.`;
                         saveError.classList.remove('d-none');

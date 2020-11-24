@@ -4,6 +4,7 @@
         "humanizer_language": "ru"
     },
     "restarter": {
+        "start_timeout": "failed to start in time",
         "crash_detected": "Обнаружен сбой",
         "partial_crash_warn": "Из-за частичного сбоя сервер будет перезагружен через 1 минуту. Пожалуйста, отключитесь от сервера.",
         "partial_crash_warn_discord": "Обнаружен частичный сбой, **%{servername}** будет перезагружен через 1 минуту.",

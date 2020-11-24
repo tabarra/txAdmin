@@ -4,6 +4,7 @@
         "humanizer_language": "fi"
     },
     "restarter": {
+        "start_timeout": "failed to start in time",
         "crash_detected": "Kaatuminen havaittu",
         "partial_crash_warn": "Osittaisen kaatumisen vuoksi palvelin käynnistyy uudelleen minuutin kuluttua. Poistukaa serveriltä nyt.",
         "partial_crash_warn_discord": "Osittaisen kaatumisen vuoksi **%{servername}** käynnistyy uudelleen minuutin kuluttua.",

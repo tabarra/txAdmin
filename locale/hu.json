@@ -4,6 +4,7 @@
         "humanizer_language": "hu"
     },
     "restarter": {
+        "start_timeout": "failed to start in time",
         "crash_detected": "crash észlelve",
         "partial_crash_warn": "Részleges összeomlás miatt, szerver újraindul 1 percen belül. Csatlakozz le a szerverről.",
         "partial_crash_warn_discord": "Részleges összeomlás miatt, **%{servername}** újraindul 1 percen belül.",

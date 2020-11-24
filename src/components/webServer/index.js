@@ -36,9 +36,9 @@ module.exports = class WebServer {
 
         //Cron function
         setInterval(() => {
-            const httpCounter = globals.databus.httpCounter;
+            const httpCounter = globals.databus.txStatsData.httpCounter;
             httpCounter.log.push(httpCounter.current);
-            if(httpCounter.log.length > 10) httpCounter.log.shift()
+            if(httpCounter.log.length > 10) httpCounter.log.shift();
             if(httpCounter.current > httpCounter.max) httpCounter.max = httpCounter.current;
             httpCounter.current = 0;
         }, 60*1000);
@@ -159,6 +159,11 @@ module.exports = class WebServer {
         //Setting up WebConsole
         this.webConsole = new WebConsole(this.io);
         this.io.on('connection', this.webConsole.handleConnection.bind(this.webConsole));
+        //NOTE: when using namespaces:
+        // this.io.on('connection', client => {
+        //     logError('Triggered when not using any type of namespace.')
+        // });
+        // this.io.of('/console').use(this.webConsole.handleConnection.bind(this.webConsole));
     }
 
 
@@ -172,7 +177,7 @@ module.exports = class WebServer {
 
         //Calls the appropriate callback
         try {
-            globals.databus.httpCounter.current++;
+            globals.databus.txStatsData.httpCounter.current++;
             if(req.url.startsWith('/socket.io')){
                 this.io.engine.handleRequest(req, res);
             }else{
@@ -186,10 +191,10 @@ module.exports = class WebServer {
     setupServerCallbacks(){
         //Print cfx.re url... when available
         //NOTE: perhaps open the URL automatically with the `open` library
-        let validUrlRegex = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\.users\.cfx\.re$/i
-        let getUrlInterval = setInterval(() => {
+        const validUrlRegex = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\.users\.cfx\.re$/i
+        const getUrlInterval = setInterval(() => {
             try {
-                let urlConvar = GetConvar('web_baseUrl', 'false');
+                const urlConvar = GetConvar('web_baseUrl', 'false');
                 if(validUrlRegex.test(urlConvar)){
                     logOk(`Listening at ` + chalk.inverse(` https://${urlConvar}/ `));
                     GlobalData.cfxUrl = urlConvar;
@@ -224,7 +229,7 @@ module.exports = class WebServer {
                 ){
                     const open = require('open');
                     try {
-                        await open(`http://${addr}:${GlobalData.txAdminPort}/`);
+                        await open(`http://${addr}:${GlobalData.txAdminPort}/auth#${globals.authenticator.addMasterPin}`);
                     } catch (error) {}
                 }
             });

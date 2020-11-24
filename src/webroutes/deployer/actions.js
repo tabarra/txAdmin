@@ -22,7 +22,7 @@ module.exports = async function DeployerActions(ctx) {
     const action = ctx.params.action;
 
     //Check permissions
-    if(!ctx.utils.checkPermission('all_permissions', modulename)){
+    if(!ctx.utils.checkPermission('master', modulename)){
         return ctx.send({success: false, refresh: true});
     }
 

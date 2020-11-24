@@ -199,6 +199,8 @@ module.exports = class Monitor {
         //to see if its above limit
         this.lastSuccessfulFD3HeartBeat = null; 
         this.lastSuccessfulHTTPHeartBeat = null; 
+        //to collect statistics
+        this.hasServerStartedYet = false; 
 
         //to reset active player list (if module is already loaded)
         if(globals.playerController) globals.playerController.processHeartBeat([]); 
@@ -254,17 +256,21 @@ module.exports = class Monitor {
         const currTimestamp = now();
         const elapsedHealthCheck = currTimestamp - this.lastSuccessfulHealthCheck;
         const healthCheckFailed = (elapsedHealthCheck > this.config.healthCheck.failThreshold);
-        const lastSuccessfulHeartBeat = Math.max(this.lastSuccessfulFD3HeartBeat, this.lastSuccessfulHTTPHeartBeat);
-        const elapsedHeartBeat = currTimestamp - lastSuccessfulHeartBeat;
+        const anySuccessfulHeartBeat = (this.lastSuccessfulFD3HeartBeat !== null || this.lastSuccessfulHTTPHeartBeat !== null);
+        const elapsedHeartBeat = currTimestamp - Math.max(this.lastSuccessfulFD3HeartBeat, this.lastSuccessfulHTTPHeartBeat);
         const heartBeatFailed = (elapsedHeartBeat > this.config.heartBeat.failThreshold);
         const processUptime = globals.fxRunner.getUptime();
 
         //Check if its online and return
         if(
             this.lastSuccessfulHealthCheck && !healthCheckFailed &&
-            lastSuccessfulHeartBeat && !heartBeatFailed
+            anySuccessfulHeartBeat && !heartBeatFailed
         ){
             this.currentStatus = 'ONLINE';
+            if(this.hasServerStartedYet == false){
+                this.hasServerStartedYet = true;
+                globals.databus.txStatsData.bootSeconds.push(processUptime);
+            }
             return;
         }
 
@@ -283,11 +289,7 @@ module.exports = class Monitor {
         }
 
         //Log failure message
-        if(
-            // (GlobalData.verbose && elapsedLastWarning > 15) ||
-            // (elapsedLastWarning >= 30)
-            (elapsedLastWarning > 15)
-        ){
+        if(elapsedLastWarning >= 15){
             const msg = (healthCheckFailed)
                         ? `${timesPrefix} FXServer is not responding. (${this.lastHealthCheckErrorMessage})` 
                         : `${timesPrefix} FXServer is not responding. (HB Failed)`; 
@@ -325,7 +327,7 @@ module.exports = class Monitor {
         //They usually start replying to healthchecks way before sending heartbeats
         const maxHBCooldownTolerance = 180;
         if(
-            lastSuccessfulHeartBeat === null &&
+            anySuccessfulHeartBeat === false &&
             processUptime < maxHBCooldownTolerance &&
             elapsedHealthCheck < this.config.healthCheck.failLimit
         ){
@@ -338,13 +340,20 @@ module.exports = class Monitor {
             elapsedHealthCheck > this.config.healthCheck.failLimit ||
             elapsedHeartBeat > this.config.heartBeat.failLimit
         ){
-            //TODO: improve the message telling what crashed?
-            if(elapsedHealthCheck > this.config.healthCheck.failLimit){
+            if(anySuccessfulHeartBeat === false){
+                globals.databus.txStatsData.bootSeconds.push(false);
+                this.restartFXServer(
+                    `server failed to start within ${maxHBCooldownTolerance} seconds`,
+                    globals.translator.t('restarter.start_timeout')
+                );
+                
+            }else if(elapsedHealthCheck > this.config.healthCheck.failLimit){
                 this.globalCounters.partialCrashes++;
                 this.restartFXServer(
                     'server partial crash detected',
                     globals.translator.t('restarter.crash_detected')
                 );
+
             }else{
                 this.globalCounters.fullCrashes++;
                 this.restartFXServer(
@@ -361,10 +370,14 @@ module.exports = class Monitor {
         const tsNow = now();
         if(source === 'fd3'){
             //Processing stats
-            this.lastSuccessfulFD3HeartBeat = tsNow;
-            if(this.lastSuccessfulHTTPHeartBeat && tsNow - this.lastSuccessfulHTTPHeartBeat > 15){
-                globals.databus.heartBeatStats.httpFailed++;
+            if(
+                this.lastSuccessfulHTTPHeartBeat &&
+                tsNow - this.lastSuccessfulHTTPHeartBeat > 15 &&
+                tsNow - this.lastSuccessfulFD3HeartBeat < 5
+            ){
+                globals.databus.txStatsData.heartBeatStats.httpFailed++;
             }
+            this.lastSuccessfulFD3HeartBeat = tsNow;
         
         }else if(source === 'http'){
             //Sanity Check
@@ -382,10 +395,14 @@ module.exports = class Monitor {
             globals.playerController.processHeartBeat(playerList);
 
             //Processing stats
-            this.lastSuccessfulHTTPHeartBeat = tsNow;
-            if(this.lastSuccessfulFD3HeartBeat && tsNow - this.lastSuccessfulFD3HeartBeat > 15){
-                globals.databus.heartBeatStats.fd3Failed++;
+            if(
+                this.lastSuccessfulFD3HeartBeat && 
+                tsNow - this.lastSuccessfulFD3HeartBeat > 15 &&
+                tsNow - this.lastSuccessfulHTTPHeartBeat < 5
+            ){
+                globals.databus.txStatsData.heartBeatStats.fd3Failed++;
             }
+            this.lastSuccessfulHTTPHeartBeat = tsNow;
         }
     }
 

@@ -4,6 +4,7 @@
         "humanizer_language": "ar"
     },
     "restarter": {
+        "start_timeout": "failed to start in time",
         "crash_detected": "حدث خطأ",
         "partial_crash_warn": "نظراً لحدوث خطأ جزئي , سيتم أعادة تشغيل السيرفر خلال دقيقة , يرجى الخروج",
         "partial_crash_warn_discord": "نظراً لحدوث خطأ جزئي, **%{servername}** سيتم أعادة التشغيل خلال دقيقة.",

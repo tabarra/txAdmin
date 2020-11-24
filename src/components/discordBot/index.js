@@ -22,7 +22,12 @@ module.exports = class DiscordBot {
         this.client = null;
         this.announceChannel = null;
         this.latestMutex = null;
-        this.usageStats = {};
+        this.usageStats = {
+            addwl: 0,
+            help: 0,
+            status: 0,
+            txadmin: 0,
+        };
         
         //NOTE: setting them up statically due to webpack requirements
         this.commands = new Collection([

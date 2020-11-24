@@ -101,6 +101,8 @@ module.exports = async function ProviderCallback(ctx) {
         //TODO: refresh the provider data on the admins file
 
         log(`Admin ${admin.name} logged in from ${ctx.ip}`);
+        globals.databus.txStatsData.loginOrigins[ctx.txVars.hostType]++;
+        globals.databus.txStatsData.loginMethods.citizenfx++;
         return ctx.response.redirect('/');
     } catch (error) {
         ctx.session.auth = {};

@@ -25,18 +25,18 @@ module.exports = async function Intercom(ctx) {
     if(scope == 'monitor'){
         try {
             globals.monitor.handleHeartBeat('http', postData);
-            const outData = {
+            const extractData = {
+                "$statsVersion": 2,
                 txAdminVersion: GlobalData.txAdminVersion,
+                txAdminIsDefaultPort: (GlobalData.txAdminPort == 40120),
+                txAdminUptime: Math.round(process.uptime()),
                 fxServerUptime: globals.fxRunner.getUptime(),
-                fd3Errors: globals.databus.fd3Errors,
-                heartBeatStats: globals.databus.heartBeatStats,
-                httpCounterMax: globals.databus.httpCounter.max,
-                admins: (globals.authenticator.admins)? globals.authenticator.admins.length : 1,
-                banlistEnabled: globals.playerController.config.onJoinCheckBan,
-                whitelistEnabled: globals.playerController.config.onJoinCheckWhitelist,
-                playerDBStats: globals.databus.playerDBStats,
                 discordBotStats: (globals.discordBot.config.enabled)? globals.discordBot.usageStats : false,
+                banlistEnabled: globals.playerController.config.onJoinCheckBan,
+                whitelistEnabled: globals.playerController.config.onJoinCheckWhitelist,     
+                admins: (globals.authenticator.admins)? globals.authenticator.admins.length : 1,
             }
+            const outData = Object.assign(extractData, globals.databus.txStatsData);
             return ctx.send(JSON.stringify(outData, null, 2));
         } catch (error) {}
 

@@ -4,6 +4,7 @@
         "humanizer_language": "da"
     },
     "restarter": {
+        "start_timeout": "failed to start in time",
         "crash_detected": "crash opdaget",
         "partial_crash_warn": "På grund af et delvist crash, vil serveren genstarte om et minut. Vær venlig og disconnect nu.",
         "partial_crash_warn_discord": "På grund af et delvist crash genstarter, **%{servername}** om et minut.",

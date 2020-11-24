@@ -4,6 +4,7 @@
         "humanizer_language": "pt"
     },
     "restarter": {
+        "start_timeout": "não iniciou a tempo",
         "crash_detected": "crash detectado",
         "partial_crash_warn": "Devido a um crash parcial, este servidor será reiniciado em 1 minuto. Por favor se disconecte agora.",
         "partial_crash_warn_discord": "Devido a um crash parcial, **%{servername}** será reiniciado em 1 minuto.",

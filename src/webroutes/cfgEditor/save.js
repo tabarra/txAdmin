@@ -30,7 +30,7 @@ module.exports = async function CFGEditorSave(ctx) {
     }
 
     //Check if file is set
-    if(globals.fxRunner.config.cfgPath === null || globals.fxRunner.config.serverDataPath === null){
+    if(!globals.fxRunner.config.cfgPath || !globals.fxRunner.config.serverDataPath){
         const message = `CFG or Base Path not defined. Configure it in the settings page first.`
         return ctx.send({type: 'danger', message});
     }

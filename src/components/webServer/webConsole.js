@@ -26,6 +26,8 @@ module.exports = class webConsole {
 
 
     //================================================================
+    //NOTE: when using namespaces, call next(); at the end
+    // handleConnection(socket, next)
     handleConnection(socket){
         try {
             log(`Connected: ${socket.session.auth.username} from ${getIP(socket)}`, 'SocketIO');

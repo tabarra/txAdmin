@@ -4,6 +4,7 @@
         "humanizer_language": "no"
     },
     "restarter": {
+        "start_timeout": "failed to start in time",
         "crash_detected": "oppdaget kræsj",
         "partial_crash_warn": "Serveren vil starte på nytt på grunn av delvis kræsj. Vennligst koble fra serveren nå.",
         "partial_crash_warn_discord": "**%{servername}** skal startes opp på nytt på grunn av et delvis kraæsj.",

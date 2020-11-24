@@ -12,7 +12,7 @@ module.exports = async function Dashboard(ctx) {
     if(globals.deployer !== null){
         return ctx.response.redirect('/deployer');
     }
-    if(globals.fxRunner.config.serverDataPath === null || globals.fxRunner.config.cfgPath === null){
+    if(!globals.fxRunner.config.serverDataPath || !globals.fxRunner.config.cfgPath){
         return ctx.response.redirect('/setup');
     }
 

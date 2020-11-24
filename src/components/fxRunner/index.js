@@ -227,7 +227,7 @@ module.exports = class FXRunner {
         const tracePipe = this.fxChild.stdio[3].pipe(StreamValues.withParser());
         tracePipe.on('error', (data) => {
             if(GlobalData.verbose) logWarn(`FD3 decode error: ${data.message}`)
-            globals.databus.fd3Errors++;
+            globals.databus.txStatsData.lastFD3Error = data.message;
         });
         tracePipe.on('data', this.outputHandler.trace.bind(this.outputHandler));
 

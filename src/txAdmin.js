@@ -25,19 +25,38 @@ globals = {
     //NOTE: still not ideal, but since the extensions system changed entirely, 
     //      will have to rethink the plans for this variable.
     databus: {
+        //internal
         resourcesList: null,
         serverLog: [],
         updateChecker: null,
-        fd3Errors: 0,
-        heartBeatStats: {
-            httpFailed: 0,
-            fd3Failed: 0,
+
+        //stats
+        txStatsData: {
+            playerDBStats: null,
+            lastFD3Error: '',
+            heartBeatStats: {
+                httpFailed: 0,
+                fd3Failed: 0,
+            },
+            bootSeconds: [],
+            pageViews: {},
+            httpCounter: {
+                current: 0,
+                max: 0,
+                log: []
+            },
+            loginOrigins: {
+                localhost: 0,
+                cfxre: 0,
+                ip: 0,
+                other: 0,
+            },
+            loginMethods: {
+                discord: 0,
+                citizenfx: 0,
+                password: 0,
+            },
         },
-        httpCounter: {
-            current: 0,
-            max: 0,
-            log: []
-        }
     },
 }
 
