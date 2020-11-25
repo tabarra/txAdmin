@@ -14,8 +14,7 @@
 - [x] update setup page to read `@tabarra/txAdmin-recipes`
 - [x] add option to reset fxserver settings & return to setup
 - [x] merge dark mode
-- [ ] stats pra saber se usaram ou não o deployer, mesmo que não seja uma lógica forte
-- [ ] add stats enc?
+- [x] added tmpLooksLikeRecipe to stats
 - [ ] test everything on latest fxserver + webpack and linux (check deployer and systeminformation memory)
 - [ ] reset timestamp + write changelog + version bump
 
@@ -37,6 +36,7 @@
         - see if the `open` library was fixed
         - try to upgrade `dateformat`
         - attempt to use `discord.js` v12
+- [ ] add stats enc?
 
 ### Setup Stepper:
 1. Welcome

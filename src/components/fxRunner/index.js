@@ -130,13 +130,20 @@ module.exports = class FXRunner {
             return logError('The server is already started.');
         }
 
-        //Detecting endpoint port
+        //Detecting server.cfg & endpoint port
+        let rawCfgFile;
         try {
-            let cfgFilePath = helpers.resolveCFGFilePath(this.config.cfgPath, this.config.serverDataPath);
-            let rawCfgFile = helpers.getCFGFileData(cfgFilePath);
+            const cfgFilePath = helpers.resolveCFGFilePath(this.config.cfgPath, this.config.serverDataPath);
+            rawCfgFile = helpers.getCFGFileData(cfgFilePath);
+        } catch (error) {
+            const errMsg = logError(`server.cfg error: ${error.message}`);
+            logError(`Please go to the settigns page and fix the paths.`);
+            return errMsg;
+        }
+        try {
             this.fxServerPort = helpers.getFXServerPort(rawCfgFile);
         } catch (error) {
-            let errMsg = logError(`FXServer config error: ${error.message}`);
+            const errMsg = logError(`server.cfg error: ${error.message}`);
             //the IF below is only a way to disable the endpoint check
             if(globals.config.forceFXServerPort){
                 this.fxServerPort = globals.config.forceFXServerPort;

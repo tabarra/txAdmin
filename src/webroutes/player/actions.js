@@ -25,7 +25,7 @@ function sendAlertOutput(ctx, toResp, header = 'Output:'){
     toResp = (toResp.length)? xss(toResp) : 'no output';
     return ctx.send({
         type: 'warning',
-        message: `<b>${header}<br> <pre>${toResp}</pre>`
+        message: `<b>${header}</b><br> <pre>${toResp}</pre>`
     });
 }
 

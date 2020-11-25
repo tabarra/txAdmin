@@ -217,6 +217,8 @@ module.exports = class WebServer {
             this.httpServer.on('error', (error)=>{
                 if(error.code !== 'EADDRINUSE') return;
                 logError(`Failed to start HTTP server, port ${error.port} already in use.`);
+                logError(`Maybe you already have another txAdmin running in this port.`);
+                logError(`If you want to run multiple txAdmin, check the documentation for the port convar.`);
                 process.exit();
             });
             this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', async () => {

@@ -35,10 +35,16 @@ module.exports = async function Intercom(ctx) {
                 banlistEnabled: globals.playerController.config.onJoinCheckBan,
                 whitelistEnabled: globals.playerController.config.onJoinCheckWhitelist,     
                 admins: (globals.authenticator.admins)? globals.authenticator.admins.length : 1,
+                tmpLooksLikeRecipe: (globals.fxRunner.config.serverDataPath || "").includes('.base'),
             }
             const outData = Object.assign(extractData, globals.databus.txStatsData);
             return ctx.send(JSON.stringify(outData, null, 2));
-        } catch (error) {}
+        } catch (error) {
+            return ctx.send({
+                txAdminVersion: GlobalData.txAdminVersion,
+                success: false
+            });
+        }
 
     }else if(scope == 'resources'){
         if(!Array.isArray(postData.resources)){
@@ -80,5 +86,8 @@ module.exports = async function Intercom(ctx) {
         });
     }
 
-    return ctx.send({success: true});
+    return ctx.send({
+        txAdminVersion: GlobalData.txAdminVersion,
+        success: false
+    });
 };

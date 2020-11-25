@@ -139,10 +139,11 @@
                             </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmFXServer-commandLine" value="{{it.fxserver.commandLine|undef}}"
-                                    placeholder="+set onesync_population false" {{it.readOnly|isDisabled}}>
+                                    placeholder="+exec private.cfg" {{it.readOnly|isDisabled}}>
                                 <span class="form-text text-muted">
                                     Additional command-line arguments to pass to the FXServer instance. <br>
-                                    For example, you can add <code>+set</code> and <code>+exec</code> commands.
+                                    For example, you can add <code>+set</code> and <code>+exec</code> commands. <br>
+                                    <b>Note:</b> These commands can be set inside the <code>server.cfg</code> as well.
                                 </span>
                             </div>
                         </div>
