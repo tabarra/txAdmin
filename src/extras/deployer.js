@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'Deployer';
-const clonedeep = require('lodash/clonedeep');
+const cloneDeep = require('lodash/cloneDeep');
 const dateFormat = require('dateformat');
 const fs = require('fs-extra');
 const open = require('open');
@@ -193,7 +193,7 @@ class Deployer {
      * (Private) Run the tasks in a sequential way.
      */
     async runTasks(){
-        const contextVariables = clonedeep(this.recipe.variables);
+        const contextVariables = cloneDeep(this.recipe.variables);
         contextVariables.deploymentID = this.deploymentID;
 
         //Run all the tasks

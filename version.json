@@ -1,6 +1,6 @@
 {
-    "version": "3.0.0",
-    "changelog": "Deprecated Message. Please Update to v2.",
+    "version": "3.0.1",
+    "changelog": "Deprecated Message. Please Update to v3.",
     "allVersions": [
         {
             "version": "1.0.1",
@@ -209,6 +209,10 @@
         {
             "version": "3.0.0",
             "changelog": "DARK MODE! Added Server Deployer. Increased server boot time tolerances. Bunch of small fixes and improvements."
+        },
+        {
+            "version": "3.0.1",
+            "changelog": "Fixed linux builds."
         }
     ]
 }
