@@ -30,6 +30,7 @@ $txadmin-danger: #ff148f;
 
 #darkToggleDark, #darkToggleLight {
   max-width: 22px !important;
+  cursor: pointer;
 }
 
 body.theme--dark {
@@ -52,6 +53,11 @@ body.theme--dark {
 
   .list-group-accent .list-group-item-accent-secondary {
     border-left: 4px solid $txadmin-dark-600;
+  }
+
+  // ----- Progress bar
+  .progress {
+    background-color: $txadmin-dark-800;
   }
 
   // ----- Buttons
@@ -81,6 +87,12 @@ body.theme--dark {
 
   .c-sidebar-nav-link.c-active {
     border-left: $txadmin-primary solid 4px;
+  }
+
+  .c-sidebar .c-sidebar-nav-dropdown-toggle:hover,
+  .c-sidebar .c-sidebar-nav-link:hover {
+    color: #fff;
+    background: $txadmin-primary;
   }
 
   .text-body {
@@ -178,13 +190,26 @@ body.theme--dark {
       border-radius: 0;
       transition: background-color 300ms ease-in-out;
 
-      &:hover {
-        background-color: lighten($txadmin-dark-900, 2.5%);
-      }
-
       &.active {
+        color: $txadmin-dark-900 !important;
+        font-weight: 600;
         border: 1px solid $txadmin-primary !important;
         border-bottom-width: 0 !important;
+      }
+    }
+  }
+
+  .nav-link {
+    &:hover {
+      background-color: lighten($txadmin-dark-900, 2.5%);
+    }
+
+    &.active {
+      color: $txadmin-dark-900 !important;
+      font-weight: 600;
+      
+      &.nav-link-red{
+        background-color: #e55353 !important;
       }
     }
   }

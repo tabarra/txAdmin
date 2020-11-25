@@ -16,6 +16,7 @@
  */
 #darkToggleDark, #darkToggleLight {
   max-width: 22px !important;
+  cursor: pointer;
 }
 
 body.theme--dark {
@@ -46,6 +47,10 @@ body.theme--dark .list-group-accent .list-group-item-accent-secondary {
   border-left: 4px solid #656568;
 }
 
+body.theme--dark .progress {
+  background-color: #3d3d3f;
+}
+
 body.theme--dark a:not(.btn):not(.c-sidebar-nav-link):not(.alert-link), body.theme--dark a:not(.btn):not(.c-sidebar-nav-link):not(.alert-link):hover {
   color: #00bf8f;
 }
@@ -56,6 +61,12 @@ body.theme--dark a:not(.btn):not(.c-sidebar-nav-link):not(.alert-link).nav-link-
 
 body.theme--dark .c-sidebar-nav-link.c-active {
   border-left: #00bf8f solid 4px;
+}
+
+body.theme--dark .c-sidebar .c-sidebar-nav-dropdown-toggle:hover,
+body.theme--dark .c-sidebar .c-sidebar-nav-link:hover {
+  color: #fff;
+  background: #00bf8f;
 }
 
 body.theme--dark .text-body {
@@ -149,13 +160,24 @@ body.theme--dark .nav-tabs .nav-link {
   transition: background-color 300ms ease-in-out;
 }
 
-body.theme--dark .nav-tabs .nav-link:hover {
+body.theme--dark .nav-tabs .nav-link.active {
+  color: #29292A !important;
+  font-weight: 600;
+  border: 1px solid #00bf8f !important;
+  border-bottom-width: 0 !important;
+}
+
+body.theme--dark .nav-link:hover {
   background-color: #2f2f30;
 }
 
-body.theme--dark .nav-tabs .nav-link.active {
-  border: 1px solid #00bf8f !important;
-  border-bottom-width: 0 !important;
+body.theme--dark .nav-link.active {
+  color: #29292A !important;
+  font-weight: 600;
+}
+
+body.theme--dark .nav-link.active.nav-link-red {
+  background-color: #e55353 !important;
 }
 
 body.theme--dark .nav-pills .nav-link.active,
