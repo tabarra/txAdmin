@@ -11,6 +11,7 @@
     <title>Server Deployer</title>
     <link href="css/simple-line-icons.css" rel="stylesheet">
     <link href="css/coreui.min.css" rel="stylesheet">
+    <link href="css/dark.css" rel="stylesheet">
     <link rel="shortcut icon" type="image/png" href="img/favicon_default.png" id="favicon" />
     <link rel="stylesheet" href="css/txAdmin.css">
 
@@ -20,6 +21,9 @@
     <style>
         .inline-code{
             color: #321fdb!important;
+        }
+        body.theme--dark .inline-code {
+            color: #00bf8f !important;
         }
         .cm-s-lucario{
             font-size: 1.05rem !important;
@@ -160,6 +164,15 @@
                         </a>
                     </h5>
                 </div>
+
+                <div style="text-align: center" class="pb-3">
+                    <svg class="c-sidebar-nav-icon d-none" id="darkToggleLight">
+                        <use href="img/coreui_icons.svg#cil-sun"></use>
+                    </svg>
+                    <svg class="c-sidebar-nav-icon" id="darkToggleDark">
+                        <use href="img/coreui_icons.svg#cil-moon"></use>
+                    </svg>
+                </div>
             </div>
         </div>
 
@@ -169,6 +182,7 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/coreui.bundle.min.js"></script>
     <script src="js/bootstrap-notify.min.js"></script>
+    <script src="js/txadmin/dark.js"></script>
 
     <!-- JS -->
     <script src="js/codeEditor/codemirror.js"></script>

@@ -1,0 +1,352 @@
+$txadmin-dark-900: #29292A;
+$txadmin-dark-800: lighten($txadmin-dark-900, 8%);
+$txadmin-dark-700: lighten($txadmin-dark-800, 8%);
+$txadmin-dark-600: lighten($txadmin-dark-700, 8%);
+
+$txadmin-text-color: #FFFFFF;
+$txadmin-text-color-inverse: #111111;
+$txadmin-border-color: $txadmin-dark-700;
+
+$txadmin-primary: #00bf8f;
+$txadmin-secondary: #3ab8cd;
+$txadmin-danger: #ff148f;
+
+:root {
+  --primary: #{$txadmin-primary} !important;
+  --secondary: #{$txadmin-secondary} !important;
+  --danger: #{$txadmin-danger} !important;
+}
+
+/**
+ *  A dark theme for all, by GoatGeek#0001
+ *
+ *       _))
+ *      > *\     _~
+ *      `;'\\__-' \_
+ *         | )  _ \ \
+ *        / / ``   w w
+ *       w w
+ */
+
+#darkToggleDark, #darkToggleLight {
+  max-width: 22px !important;
+}
+
+body.theme--dark {
+
+  /*************************
+   * CORE UI MODIFICATIONS
+   *************************/
+
+  // ----- Core Styles
+  //   Shape CoreUI in the darkness
+  &, .c-app, .c-main, .c-footer, .c-header {
+    background: darken($txadmin-dark-900, 7%);
+    color: $txadmin-text-color;
+  }
+
+  // Stepper for the setup pages
+  ul.stepper .step:not(:last-of-type)::after {
+    background-color: rgba(75, 75, 75, 1);
+  }
+
+  .list-group-accent .list-group-item-accent-secondary {
+    border-left: 4px solid $txadmin-dark-600;
+  }
+
+  // ----- Buttons
+  // FIXME: this specific instruction was breaking lots of things
+  // .btn:not(.btn-outline-danger):not(.btn-outline-primary):not(.btn-outline-warning):not(.btn-stack-overflow):not(.btn-linkedin) {
+  //   font-weight: 700;
+  //   background: $txadmin-dark-800;
+  //   border-color: transparent;
+  //   color: $txadmin-text-color !important;
+  //   transition: color 300ms ease-in-out, background 300ms ease-in-out;
+  //
+  //   &:hover {
+  //     background: opacify($txadmin-primary, 0.1);
+  //   }
+  // }
+
+  // ----- Text color styles
+  a:not(.btn):not(.c-sidebar-nav-link):not(.alert-link) {
+    &, &:hover {
+      color: $txadmin-primary;
+    }
+
+    &.nav-link-red {
+      color: $txadmin-danger;
+    }
+  }
+
+  .c-sidebar-nav-link.c-active {
+    border-left: $txadmin-primary solid 4px;
+  }
+
+  .text-body {
+    color: $txadmin-text-color !important;
+  }
+
+  .text-danger {
+    color: $txadmin-danger !important;
+  }
+
+  .text-muted {
+    color: #969696 !important;
+  }
+
+  // ----- Primary color overrides
+  .text-primary {
+    color: $txadmin-primary !important;
+  }
+
+  .border-primary {
+    border-color: $txadmin-primary !important;
+  }
+
+  .btn {
+    &.btn-primary {
+      background: $txadmin-primary;
+      border-color: $txadmin-primary;
+    }
+
+    &.btn-outline-primary {
+      color: $txadmin-primary;
+      border-color: $txadmin-primary;
+    }
+
+    &.btn-primary, &.btn-outline-primary {
+      &:hover {
+        background-color: $txadmin-primary;
+        color: black;
+      }
+    }
+  }
+
+  // ----- Body Element Changes
+  // Darken borders
+  .c-footer, .c-header, .card-footer, .card-header,
+  .modal-body, .modal-header, .modal-footer,
+  .border-right {
+    border-color: $txadmin-border-color !important;
+  }
+
+  // Darken backgrounds
+  .c-sidebar, .c-callout, .modal-content, .modal-body {
+    background: $txadmin-dark-900;
+  }
+
+  // ----- Alert elements
+  .alert {
+    &.alert-secondary {
+      background: $txadmin-dark-800;
+      color: $txadmin-text-color;
+      border-color: $txadmin-dark-700;
+    }
+  }
+
+  // ------ Nice scroll bars
+  $tx-scroll-bg: lighten($txadmin-dark-900, 3.75%);
+
+  ::-webkit-scrollbar-corner {
+    background: $tx-scroll-bg;
+  }
+
+  .thin-scroll::-webkit-scrollbar-track {
+    background-color: $tx-scroll-bg;
+    border-right: 1px solid $tx-scroll-bg;
+    border-left: 1px solid $tx-scroll-bg;
+  }
+
+  .thin-scroll::-webkit-scrollbar-thumb {
+    background-color: #333;
+    background-clip: content-box;
+    border-color: transparent;
+    border-radius: 6px;
+  }
+
+  .thin-scroll:hover::-webkit-scrollbar-thumb {
+    background-color: #444;
+  }
+
+  // ----- Tabs & Navs
+  .nav-tabs {
+    border: 0;
+
+    .nav-link {
+      border-color: $txadmin-dark-700;
+      border-radius: 0;
+      transition: background-color 300ms ease-in-out;
+
+      &:hover {
+        background-color: lighten($txadmin-dark-900, 2.5%);
+      }
+
+      &.active {
+        border: 1px solid $txadmin-primary !important;
+        border-bottom-width: 0 !important;
+      }
+    }
+  }
+
+  .nav-pills .nav-link.active,
+  .nav-tabs .nav-link.active,
+  .nav-pills .show > .nav-link {
+    @extend .btn;
+    background: $txadmin-primary;
+    color: $txadmin-text-color-inverse;
+  }
+
+  .c-header .c-header-nav .c-header-nav-btn, .c-header .c-header-nav .c-header-nav-link {
+    color: $txadmin-primary;
+  }
+
+  .dropdown-menu {
+    border-color: $txadmin-border-color;
+
+    .dropdown-item, & {
+      background-color: $txadmin-dark-800;
+    }
+
+    .dropdown-item:hover {
+      background-color: $txadmin-dark-900;
+    }
+  }
+
+  .dropdown-header {
+    background-color: $txadmin-dark-800;
+  }
+
+  .c-header .c-header-toggler {
+    color: white;
+  }
+
+  // ----- Modals / Popups / Notifications
+  pre, .close {
+    color: #fff;
+  }
+  [data-notify="message"] > pre{
+    color: $txadmin-dark-900;
+  }
+
+  // ----- Forms
+  .form-control, .btn, .c-callout {
+    border-radius: 0;
+  }
+
+  .form-control, .input-group-text {
+    background: $txadmin-dark-800;
+    border-color: $txadmin-dark-700;
+    color: $txadmin-text-color;
+  }
+
+  .form-control[disabled], .form-control[readonly]{
+    background: $txadmin-dark-900;
+    border-color: $txadmin-dark-700;
+    color: $txadmin-text-color;
+    cursor: not-allowed;
+  }
+
+  .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba($txadmin-primary, .15);;
+  }
+
+  // ----- Tables
+  .table {
+    &, td {
+      border-color: $txadmin-border-color !important;
+    }
+
+    tr {
+      color: $txadmin-text-color;
+    }
+
+    thead th {
+      border-top-color: $txadmin-dark-700;
+      border-bottom-color: $txadmin-dark-700;
+    }
+
+    strong, .table-hover tbody tr:hover {
+      color: $txadmin-primary;
+    }
+
+    .thead-light th {
+      background-color: $txadmin-dark-800 !important;
+      color: $txadmin-text-color;
+      font-size: 1.175em;
+      font-family: Consolas, Courier, Droid Sans Mono, monospace;
+    }
+  }
+
+  // ----- Cards
+  .card {
+    border: 0 solid transparent;
+    border-radius: 0;
+
+    &, .card-header, .card-body, .card-footer {
+      background-color: $txadmin-dark-900;
+    }
+
+    .card-header, .card-body {
+      &, p {
+        color: $txadmin-text-color;
+      }
+    }
+
+    .card-header {
+      & > h5, .card-title {
+        text-transform: uppercase;
+        font-size: 1.05rem;
+        border-radius: 0;
+        border: 0 solid transparent;
+      }
+    }
+  }
+
+
+  /***********************
+   * TXADMIN ELEMENTS
+   ***********************/
+  #modPlayerMain-notes {
+    background-color: $txadmin-dark-900;
+  }
+
+  // Player log entries
+  .logEntry {
+    color: $txadmin-text-color;
+
+    &:hover {
+      background-color: $txadmin-dark-800 !important;
+    }
+  }
+
+  /**
+   * Deployment buttons
+   */
+  .bigbutton {
+    background: $txadmin-dark-800;
+
+    &:hover {
+      background-color: $txadmin-primary;
+    }
+  }
+
+  /**
+   * txAdmin player list
+   */
+  .playerlist {
+    .player {
+      &:hover {
+        background-color: $txadmin-dark-800;
+      }
+
+      .pname {
+        color: #e6e6e6;
+      }
+    }
+  }
+
+  .plheader {
+    background-color: $txadmin-dark-800 !important;
+  }
+}
