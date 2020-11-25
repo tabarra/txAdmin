@@ -58,8 +58,9 @@ sqrl.filters.define("escapeBackTick", (x)=>{
  * @param {string} view
  * @param {string} data
  */
-async function renderMasterView(view, reqSess, data){
+async function renderMasterView(view, reqSess, data, txVars){
     if(isUndefined(data)) data = {};
+    data.uiTheme = (txVars.darkMode)? 'theme--dark' : '';
     data.headerTitle = (!isUndefined(data.headerTitle))? `${data.headerTitle} - txAdmin` : 'txAdmin';
     data.txAdminVersion = GlobalData.txAdminVersion;
     data.txAdminOutdated = (now() > GlobalData.txAdminVersionBestBy);
@@ -100,8 +101,9 @@ async function renderMasterView(view, reqSess, data){
  * Renders the login page.
  * @param {string} message
  */
-async function renderLoginView(data){
+async function renderLoginView(data, txVars){
     if(isUndefined(data)) data = {};
+    data.uiTheme = (txVars.darkMode)? 'theme--dark' : '';
     data.isMatrix = (Math.random() <= 0.05);
     data.ascii = helpers.txAdminASCII();
     data.message = data.message || '';
@@ -138,8 +140,9 @@ async function renderLoginView(data){
  * @param {string} view
  * @param {string} data
  */
-async function renderSoloView(view, data){
+async function renderSoloView(view, data, txVars){
     if(isUndefined(data)) data = {};
+    data.uiTheme = (txVars.darkMode)? 'theme--dark' : '';
     let out;
     try {
         let rawView = await fs.readFile(getWebViewPath(view), 'utf8');
@@ -215,7 +218,9 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true){
 //================================================================
 module.exports = async function WebCtxUtils(ctx, next){
     //Prepare variables
-    ctx.txVars = {};
+    ctx.txVars = {
+        darkMode: (ctx.cookies.get('txAdmin-darkMode') === 'true')
+    };
     const host = ctx.request.host || 'none';
     if(host.startsWith('127.0.0.1') || host.startsWith('localhost')){
         ctx.txVars.hostType = 'localhost';
@@ -241,11 +246,11 @@ module.exports = async function WebCtxUtils(ctx, next){
         //TODO: fix this atrocity
         let soloViews = ['adminManager-editModal', 'basic/404'];
         if(view == 'login'){
-            ctx.body = await renderLoginView(viewData);
+            ctx.body = await renderLoginView(viewData, ctx.txVars);
         }else if(soloViews.includes(view)){
-            ctx.body = await renderSoloView(view, viewData);
+            ctx.body = await renderSoloView(view, viewData, ctx.txVars);
         }else{
-            ctx.body = await renderMasterView(view, ctx.session, viewData);
+            ctx.body = await renderMasterView(view, ctx.session, viewData, ctx.txVars);
         }
         ctx.type = 'text/html';
     }

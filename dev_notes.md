@@ -13,7 +13,7 @@
 - [x] make cfx default recipe and populate `@tabarra/txAdmin-recipes`
 - [x] update setup page to read `@tabarra/txAdmin-recipes`
 - [x] add option to reset fxserver settings & return to setup
-- [ ] merge dark mode
+- [x] merge dark mode
 - [ ] stats pra saber se usaram ou não o deployer, mesmo que não seja uma lógica forte
 - [ ] add stats enc?
 - [ ] test everything on latest fxserver + webpack and linux (check deployer and systeminformation memory)
