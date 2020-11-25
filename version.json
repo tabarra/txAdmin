@@ -1,5 +1,5 @@
 {
-    "version": "2.7.0",
+    "version": "3.0.0",
     "changelog": "Deprecated Message. Please Update to v2.",
     "allVersions": [
         {
@@ -205,6 +205,10 @@
         {
             "version": "2.7.2",
             "changelog": "Added custom ban times. Added ban history to live console. Added redundant HeartBeat via FD3. Many smaller improvements."
+        },
+        {
+            "version": "3.0.0",
+            "changelog": "DARK MODE! Added Server Deployer. Increased server boot time tolerances. Bunch of small fixes and improvements."
         }
     ]
 }

@@ -15,8 +15,8 @@
 - [x] add option to reset fxserver settings & return to setup
 - [x] merge dark mode
 - [x] added tmpLooksLikeRecipe to stats
-- [ ] test everything on latest fxserver + webpack and linux (check deployer and systeminformation memory)
-- [ ] reset timestamp + write changelog + version bump
+- [x] test everything on latest fxserver + webpack and linux (check deployer and systeminformation memory)
+- [x] reset timestamp + write changelog + version bump
 
 > Do as soon as v3.0.0 is out:
 - [ ] clean this file
