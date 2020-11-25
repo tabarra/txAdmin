@@ -1,6 +1,7 @@
 $txadmin-dark-900: #29292A;
 $txadmin-dark-800: lighten($txadmin-dark-900, 8%);
 $txadmin-dark-700: lighten($txadmin-dark-800, 8%);
+$txadmin-dark-600: lighten($txadmin-dark-700, 8%);
 
 $txadmin-text-color: #FFFFFF;
 $txadmin-text-color-inverse: #111111;
@@ -49,21 +50,26 @@ body.theme--dark {
     background-color: rgba(75, 75, 75, 1);
   }
 
-  // ----- Buttons
-  .btn:not(.btn-outline-danger):not(.btn-outline-primary):not(.btn-outline-warning):not(.btn-stack-overflow):not(.btn-linkedin) {
-    font-weight: 700;
-    background: $txadmin-dark-800;
-    border-color: transparent;
-    color: $txadmin-text-color !important;
-    transition: color 300ms ease-in-out, background 300ms ease-in-out;
-
-    &:hover {
-      background: opacify($txadmin-primary, 0.1);
-    }
+  .list-group-accent .list-group-item-accent-secondary {
+    border-left: 4px solid $txadmin-dark-600;
   }
 
+  // ----- Buttons
+  // FIXME: this specific instruction was breaking lots of things
+  // .btn:not(.btn-outline-danger):not(.btn-outline-primary):not(.btn-outline-warning):not(.btn-stack-overflow):not(.btn-linkedin) {
+  //   font-weight: 700;
+  //   background: $txadmin-dark-800;
+  //   border-color: transparent;
+  //   color: $txadmin-text-color !important;
+  //   transition: color 300ms ease-in-out, background 300ms ease-in-out;
+  //
+  //   &:hover {
+  //     background: opacify($txadmin-primary, 0.1);
+  //   }
+  // }
+
   // ----- Text color styles
-  a:not(.btn):not(.c-sidebar-nav-link) {
+  a:not(.btn):not(.c-sidebar-nav-link):not(.alert-link) {
     &, &:hover {
       color: $txadmin-primary;
     }
@@ -101,6 +107,7 @@ body.theme--dark {
   .btn {
     &.btn-primary {
       background: $txadmin-primary;
+      border-color: $txadmin-primary;
     }
 
     &.btn-outline-primary {
@@ -214,9 +221,12 @@ body.theme--dark {
     color: white;
   }
 
-  // ----- Modals & Popups
+  // ----- Modals / Popups / Notifications
   pre, .close {
     color: #fff;
+  }
+  [data-notify="message"] > pre{
+    color: $txadmin-dark-900;
   }
 
   // ----- Forms
@@ -228,6 +238,17 @@ body.theme--dark {
     background: $txadmin-dark-800;
     border-color: $txadmin-dark-700;
     color: $txadmin-text-color;
+  }
+
+  .form-control[disabled], .form-control[readonly]{
+    background: $txadmin-dark-900;
+    border-color: $txadmin-dark-700;
+    color: $txadmin-text-color;
+    cursor: not-allowed;
+  }
+
+  .form-control:focus {
+    box-shadow: 0 0 0 0.2rem rgba($txadmin-primary, .15);;
   }
 
   // ----- Tables
