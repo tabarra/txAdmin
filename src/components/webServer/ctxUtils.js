@@ -51,6 +51,9 @@ sqrl.filters.define("unnull", (x)=>{
 sqrl.filters.define("escapeBackTick", (x)=>{
     return x.replace(/`/, '\\`');
 });
+sqrl.filters.define("base64", (x)=>{
+    return Buffer.from(x).toString('base64');
+});
 
 //================================================================
 /**

@@ -245,10 +245,8 @@
                 backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--info'),
                 borderColor: 'rgba(255,255,255,0.55)',
                 fill: false,
-                //NOTE: breaking multiple lines because squirrelly is not respecting LF as line endings.
-                //intentionally 'blank' line
-                data: JSON.parse(`{{it.chartData|escapeBackTick|safe}}`)
-                //intentionally 'blank' line
+                //NOTE: this is hacky af, but whatever
+                data: JSON.parse(atob(`{{it.chartData|base64}}`))
             }]
         },
         options: {

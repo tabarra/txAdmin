@@ -93,10 +93,8 @@
 
 
 <script>
-    //NOTE: breaking multiple lines because squirrelly is not respecting LF as line endings.
-    //intentionally 'blank' line
-    const resGroupsJS = JSON.parse(`{{it.resGroupsJS|escapeBackTick|safe}}`)
-    //intentionally 'blank' line
+    //NOTE: this is hacky af, but whatever
+    const resGroupsJS = JSON.parse(atob(`{{it.resGroupsJS|base64}}`));
     
     const defaultResources = [
         "baseevents",
