@@ -1,5 +1,5 @@
 {
-    "version": "3.0.1",
+    "version": "3.0.2",
     "changelog": "Deprecated Message. Please Update to v3.",
     "allVersions": [
         {
@@ -213,6 +213,10 @@
         {
             "version": "3.0.1",
             "changelog": "Fixed linux builds."
+        },
+        {
+            "version": "3.0.2",
+            "changelog": "Fixed resources page. Added ban reason to join rejection message. Minor css stuff."
         }
     ]
 }

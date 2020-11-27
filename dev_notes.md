@@ -23,7 +23,7 @@
 - [x] fixed resources page breaking due to weird inline json escaping
 - [x] added ban reason to server join rejection message
 - [x] assorted css fixes (mainly toggle switches)
-- [ ] versiom bump
+- [x] versiom bump
 
 
 > Do as soon as v3.0.0 is out:
