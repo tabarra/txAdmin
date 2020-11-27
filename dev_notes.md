@@ -17,8 +17,17 @@
 - [x] added tmpLooksLikeRecipe to stats
 - [x] test everything on latest fxserver + webpack and linux (check deployer and systeminformation memory)
 - [x] reset timestamp + write changelog + version bump
+> v3.0.0
+- [x] fix linux build pipeline
+> v3.0.1
+- [x] fixed resources page breaking due to weird inline json escaping
+- [x] added ban reason to server join rejection message
+- [x] assorted css fixes (mainly toggle switches)
+- [ ] versiom bump
+
 
 > Do as soon as v3.0.0 is out:
+- [ ] make playerController.writePending prioritized (low 5s, medium 30s, high 60s)
 - [ ] clean this file
 - [ ] create `admin.useroptions` for dark mode, welcome modals and such
 - [ ] IF deploy fails, add a DO_NOT_EDIT_DEPLOY_FAILED file to deploy path

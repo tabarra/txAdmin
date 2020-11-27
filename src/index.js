@@ -120,6 +120,9 @@ const txAdminPort = parseInt(txAdminPortConvar);
 
 //Get profile name
 const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, "").trim();
+if(serverProfile.endsWith('.base')){
+    logDie(`Looks like you the folder named '${serverProfile}' is actually a deployed base instead of a profile.`);
+}
 if(!serverProfile.length){
     logDie(`Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.`);
 }

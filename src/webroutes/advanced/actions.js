@@ -1,8 +1,7 @@
 //Requires
 const modulename = 'WebServer:AdvancedActions';
-const fs = require('fs-extra');
+const bytes = require('bytes');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const helpers = require('../../extras/helpers');
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -22,8 +21,8 @@ module.exports = async function AdvancedActions(ctx) {
         logWarn('Invalid request!');
         return ctx.send({type: 'danger', message: `<strong>Invalid request :(</strong>`});
     }
-    let action = ctx.request.body.action;
-    let parameter = ctx.request.body.parameter;
+    const action = ctx.request.body.action;
+    const parameter = ctx.request.body.parameter;
 
 
     //Check permissions
@@ -40,8 +39,8 @@ module.exports = async function AdvancedActions(ctx) {
         return ctx.send({refresh:true});
 
     }else if(action == 'perform_magic'){
-        let data = globals.playerController.activePlayers;
-        let message = JSON.stringify(data, null, 2);
+        const data = globals.playerController.activePlayers;
+        const message = JSON.stringify(data, null, 2);
         return ctx.send({type: 'success', message});
         
     }else if(action == 'perform_magic2'){
@@ -78,6 +77,19 @@ module.exports = async function AdvancedActions(ctx) {
         
     }else if(action == 'show_log'){
         return ctx.send({type: 'success', message: JSON.stringify(globals.databus.serverLog, null, 2)})
+
+    }else if(action == 'memory'){
+        let memory;
+        try {
+            const usage = process.memoryUsage();
+            Object.keys(usage).forEach(prop => {
+                usage[prop] = bytes(usage[prop]);
+            });
+            memory = JSON.stringify(usage, null, 2);
+        } catch (error) {
+            memory = 'error';
+        }
+        return ctx.send({type: 'success', message: memory})
     }
 
 
