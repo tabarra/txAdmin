@@ -313,7 +313,7 @@ function handleConnections(name, skr, d)
                         end
                     else
                         if not isDone then
-                            d.done(data)
+                            d.done("\n"..data)
                             isDone = true
                         end
                     end

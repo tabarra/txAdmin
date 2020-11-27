@@ -358,10 +358,12 @@ module.exports = class PlayerController {
                         const expiration = humanizeDuration((ban.expiration - ts)*1050, humanizeOptions);
                         msg = `You have been banned from this server.\n`;
                         msg += `Your ban will expire in: ${expiration}.\n`;
-                        msg += `Ban ID: ${ban.id}.`;
+                        msg += `Ban ID: ${ban.id}.\n`;
+                        msg += `Ban Reason: ${ban.reason}.`;
                     }else{
                         msg = `You have been permanently banned from this server.\n`;
-                        msg += `Ban ID: ${ban.id}.`;
+                        msg += `Ban ID: ${ban.id}.\n`;
+                        msg += `Ban Reason: ${ban.reason}.`;
                     }
                     
                     return {allow: false, reason: msg};
