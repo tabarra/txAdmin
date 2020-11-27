@@ -60,6 +60,25 @@ body.theme--dark {
     background-color: $txadmin-dark-800;
   }
 
+  // ----- Switches
+  .c-switch-slider, .c-switch-slider::before {
+    background-color: $txadmin-dark-800;
+    border-color: $txadmin-dark-700;
+    // color: $txadmin-text-color;
+    transition: .15s ease-out;
+  }
+  .c-switch-input:focus ~ .c-switch-slider {
+    color: $txadmin-text-color;
+    background-color: $txadmin-dark-700;
+    border-color: lighten($txadmin-dark-600, 10%) !important;
+    outline: 0;
+    box-shadow: none;
+  }
+  .c-switch-success .c-switch-input:checked + .c-switch-slider {
+    background-color: #2eb85c;
+    border-color: #248f48;
+  }
+
   // ----- Buttons
   // FIXME: this specific instruction was breaking lots of things
   // .btn:not(.btn-outline-danger):not(.btn-outline-primary):not(.btn-outline-warning):not(.btn-stack-overflow):not(.btn-linkedin) {
@@ -273,7 +292,7 @@ body.theme--dark {
   }
 
   .form-control:focus {
-    box-shadow: 0 0 0 0.2rem rgba($txadmin-primary, .15);;
+    box-shadow: 0 0 0 0.2rem rgba($txadmin-primary, .15);
   }
 
   // ----- Tables

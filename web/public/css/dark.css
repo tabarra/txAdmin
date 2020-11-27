@@ -51,6 +51,27 @@ body.theme--dark .progress {
   background-color: #3d3d3f;
 }
 
+body.theme--dark .c-switch-slider, body.theme--dark .c-switch-slider::before {
+  background-color: #3d3d3f;
+  border-color: #515153;
+  -webkit-transition: .15s ease-out;
+  transition: .15s ease-out;
+}
+
+body.theme--dark .c-switch-input:focus ~ .c-switch-slider {
+  color: #FFFFFF;
+  background-color: #515153;
+  border-color: #7f7f82 !important;
+  outline: 0;
+  -webkit-box-shadow: none;
+          box-shadow: none;
+}
+
+body.theme--dark .c-switch-success .c-switch-input:checked + .c-switch-slider {
+  background-color: #2eb85c;
+  border-color: #248f48;
+}
+
 body.theme--dark a:not(.btn):not(.c-sidebar-nav-link):not(.alert-link), body.theme--dark a:not(.btn):not(.c-sidebar-nav-link):not(.alert-link):hover {
   color: #00bf8f;
 }
