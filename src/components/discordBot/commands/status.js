@@ -44,9 +44,9 @@ module.exports = {
             footer: `Powered by txAdmin v${GlobalData.txAdminVersion}.`
         });
 
-        await message.channel.send(outMsg).then(sentMessage => {
+        message.channel.send(outMsg).then(sentMessage => {
             sentMessage.delete(30000);
-        });;
+        });
 
         return;
     },
