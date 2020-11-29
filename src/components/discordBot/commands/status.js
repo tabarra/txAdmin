@@ -11,14 +11,14 @@ module.exports = {
         //Prepare message's RichEmbed + template variables
         let replaces = {};
         let cardColor, cardTitle;
-        if(globals.monitor.currentStatus == 'ONLINE' || globals.monitor.currentStatus == 'PARTIAL'){
+        if (globals.monitor.currentStatus == 'ONLINE' || globals.monitor.currentStatus == 'PARTIAL') {
             cardColor = 0x74EE15;
-            cardTitle = globals.translator.t('discord.status_online', {servername: globals.config.serverName});
-            replaces.players = (Array.isArray(globals.playerController.activePlayers))? globals.playerController.activePlayers.length : '--';
-            replaces.port = (globals.config.forceFXServerPort)? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
-        }else{
+            cardTitle = globals.translator.t('discord.status_online', { servername: globals.config.serverName });
+            replaces.players = (Array.isArray(globals.playerController.activePlayers)) ? globals.playerController.activePlayers.length : '--';
+            replaces.port = (globals.config.forceFXServerPort) ? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
+        } else {
             cardColor = 0xF000FF;
-            cardTitle = globals.translator.t('discord.status_offline', {servername: globals.config.serverName});
+            cardTitle = globals.translator.t('discord.status_offline', { servername: globals.config.serverName });
             replaces.players = '--';
             replaces.port = '--';
         }
@@ -28,8 +28,8 @@ module.exports = {
             units: ['d', 'h', 'm', 's'],
             fallbacks: ['en']
         }
-        replaces.uptime = humanizeDuration(globals.fxRunner.getUptime()*1000, humanizeOptions);
-        
+        replaces.uptime = humanizeDuration(globals.fxRunner.getUptime() * 1000, humanizeOptions);
+
         //Replacing text
         let desc = globals.discordBot.config.statusMessage;
         Object.entries(replaces).forEach(([key, value]) => {
@@ -43,6 +43,11 @@ module.exports = {
             description: desc,
             footer: `Powered by txAdmin v${GlobalData.txAdminVersion}.`
         });
-        return await message.channel.send(outMsg);
+
+        await message.channel.send(outMsg).then(sentMessage => {
+            sentMessage.delete(30000);
+        });;
+
+        return;
     },
 };
