@@ -33,7 +33,6 @@ const isPathValid = (pathInput, acceptRoot=true) => {
 
 
 
-
 /**
  * Downloads a file to a target path using streams
  */
@@ -68,6 +67,67 @@ const taskDownloadFile = async (options, basePath, deployerCtx) => {
 
 
 /**
+ * Downloads a github repository with an optional reference (branch, tag, commit hash) or subpath. 
+ * If the directory structure does not exist, it is created.
+ */
+const githubRepoSourceRegex = /^((https?:\/\/github\.com\/)?|@)?([\w\.\-_]+)\/([\w\.\-_]+).*$/;
+const validatorDownloadGithub = (options) => {
+    return (
+        typeof options.src == 'string' &&
+        isPathValid(options.dest, false) &&
+        (typeof options.ref == 'string' || typeof options.ref == 'undefined') &&
+        (typeof options.subpath == 'string' || typeof options.subpath == 'undefined')
+    )
+}
+const taskDownloadGithub = async (options, basePath, deployerCtx) => {
+    if(!validatorDownloadGithub(options)) throw new Error(`invalid options`);
+
+    //Preparing vars
+    const srcMatch = options.src.match(githubRepoSourceRegex);
+    if(!srcMatch || !srcMatch[3] || !srcMatch[4]) throw new Error(`invalid repository`);
+    const repoOwner = srcMatch[3];
+    const repoName = srcMatch[4];
+    const reference = options.ref || 'master';
+    const downURL = `https://api.github.com/repos/${repoOwner}/${repoName}/zipball/${reference}`;
+    const tmpFileName = `${repoName}${reference}-` + (Date.now()%100000000).toString(16);
+    const tmpFileDir = path.join(basePath, `${tmpFileName}`);
+    const tmpFilePath = path.join(basePath, `${tmpFileName}.download`);
+    const destPath = safePath(basePath, options.dest);
+    
+    //Downloading file
+    const res = await axios({
+        method: 'get',
+        url: downURL,
+        timeout: 5000,
+        responseType: 'stream'
+    });
+    await new Promise((resolve, reject) => {
+        const outStream = fs.createWriteStream(tmpFilePath);
+        res.data.pipe(outStream)
+        outStream.on("finish", resolve);
+        outStream.on("error", reject); // don't forget this!
+    });
+
+    //Extracting file
+    const zip = new AdmZip(tmpFilePath);
+    const zipEntries = zip.getEntries();
+    if(!zipEntries.length || !zipEntries[0].isDirectory) throw new Error(`unexpected zip structure`);
+    const extract = util.promisify(zip.extractAllToAsync);
+    await extract(tmpFileDir, true);
+
+    //Moving path
+    const moveSrc = path.join(tmpFileDir, zipEntries[0].entryName, options.subpath || '');
+    await fs.move(moveSrc, destPath, {
+        overwrite: (options.overwrite === 'true' || options.overwrite === true)
+    });
+
+    //Removing temp paths
+    await fs.remove(tmpFilePath);
+    await fs.remove(tmpFileDir);
+}
+
+
+/**
  * Removes a file or directory. The directory can have contents. If the path does not exist, silently does nothing.
  */
 const validatorRemovePath = (options) => {
@@ -79,12 +139,12 @@ const taskRemovePath = async (options, basePath, deployerCtx) => {
     if(!validatorRemovePath(options)) throw new Error(`invalid options`);
 
     //Process and create target file/path
-    const destPath = safePath(basePath, options.path);
+    const targetPath = safePath(basePath, options.path);
 
     //NOTE: being extra safe about not deleting itself
     const cleanBasePath = pathCleanTrail(path.normalize(basePath));
-    if(cleanBasePath == destPath) throw new Error(`cannot remove base folder`);
-    await fs.remove(destPath);
+    if(cleanBasePath == targetPath) throw new Error(`cannot remove base folder`);
+    await fs.remove(targetPath);
 }
 
 
@@ -284,7 +344,6 @@ const taskQueryDatabase = async (options, basePath, deployerCtx) => {
 }
 
 
-
 /**
  * DEBUG Just wastes time /shrug
  */
@@ -325,23 +384,11 @@ DONE:
     - replace_string (single or array)
     - connect_database (connects to mysql, creates db if not set)
     - query_database (file or string)
+    - download_github (with ref and subpath)
     
 TODO:
     - read json into context vars?
     - print vars to console?
-    - github_extract: automatiza toda a parte de download, unzip, move e rm temp
-        - url
-        - tag
-        - subfolders?
-        - dest path
-
-
-https://api.github.com/repos/tabarra/txAdmin/zipball/master
-https://api.github.com/repos/tabarra/txAdmin/zipball/v2.7.2
-https://api.github.com/repos/tabarra/txAdmin/zipball/778bc41aa7a66ff9b37acdbfcb4c6cd957c8614e
-
-https://api.github.com/repos/tabarra/txAdmin/releases
-https://api.github.com/repos/tabarra/txAdmin/releases/latest
 */
 
 
@@ -350,6 +397,10 @@ module.exports = {
     download_file:{
         validate: validatorDownloadFile,
         run: taskDownloadFile,
+    },
+    download_github:{
+        validate: validatorDownloadGithub,
+        run: taskDownloadGithub,
     },
     remove_path:{
         validate: validatorRemovePath,

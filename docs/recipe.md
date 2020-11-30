@@ -50,6 +50,27 @@ The only default Context Variable is `deploymentID`, which is composed by the sh
 Tasks are executed sequentially, and any failure in the chain stops the process.  
 Attention: careful with the number of spaces used in the indentation.  
 
+### `download_github`
+Downloads a GitHub repository with an optional reference (branch, tag, commit hash) or subpath.  
+If the directory structure does not exist, it is created.
+- `src:` The repository to be downloaded. This can be an URL or `repo_owner/repo_name`.
+- `ref:` *(optional)* The git reference to be fownloaded. This can be a branch, a tag, or a commit hash. Defaults to `master`.
+- `subpath:` *(optional)* When specified, copies a subpath of the repository.
+- `dest:` The destination path for the downloaded file.
+```yaml
+# Example with subpath and reference
+- action: download_github
+  src: https://github.com/citizenfx/cfx-server-data
+  ref: 6eaa3525a6858a83546dc9c4ce621e59eae7085c
+  subpath: resources
+  dest: ./resources
+
+# Simple example
+- action: download_github
+  src: esx-framework/es_extended
+  dest: ./resources/[esx]/es_extended
+```
+
 ### `download_file`
 Downloads a file to a specific path.  
 - `url:` The URL of the file.
@@ -199,7 +220,7 @@ You need to execute the `connect_database` before this action.
 ```yaml
 # Running a query from a file
 - action: query_database
-  path: ./tmp/create_tables.sql
+  file: ./tmp/create_tables.sql
 
 # Running a query from a string
 - action: query_database
