@@ -1,36 +1,14 @@
 ## TODO v3
-- [x] Server Deployer with recipe engine!
-- [x] replace `localhost` with `127.0.0.1` in functions to force usage of ipv4
-- [x] rename `ctx.utils.appendLog` to `logCommand` then replace it and all `globals.logger.append` for consistency
-- [x] added permission descriptions (`all_permissions` > `All Permissions`)
-- [x] fix heartbeat FD3 vs HTTP stats
-- [x] fix hardcoded 180s cooldown for slow server starts and add boot time statistics
-- [x] add a bunch of stats
-- [x] downgrade `open` library and autofill the pin
-- [x] completed recipe engine with the following actions: `waste_time`, `fail_test`, `download_file`, `remove_path`, `ensure_dir`, `unzip`, `move_path`, `copy_path`, `write_file`, `replace_string`, `connect_database`, `query_database`
-- [x] upgrade packages
-- [x] add custom recipe option to setup/deployer
-- [x] make cfx default recipe and populate `@tabarra/txAdmin-recipes`
-- [x] update setup page to read `@tabarra/txAdmin-recipes`
-- [x] add option to reset fxserver settings & return to setup
-- [x] merge dark mode
-- [x] added tmpLooksLikeRecipe to stats
-- [x] test everything on latest fxserver + webpack and linux (check deployer and systeminformation memory)
-- [x] reset timestamp + write changelog + version bump
-> v3.0.0
-- [x] fix linux build pipeline
-> v3.0.1
-- [x] fixed resources page breaking due to weird inline json escaping
-- [x] added ban reason to server join rejection message
-- [x] assorted css fixes (mainly toggle switches)
-- [x] versiom bump
+- [x] deployer: add download_github action
+- [x] clean this file
+- [ ] improve setup page common template incompatibility behavior and set $engine to 2
+- [ ] xxxxxxx
 
 
-> Do as soon as v3.0.0 is out:
+> Hopefully now:
 - [ ] make playerController.writePending prioritized (low 5s, medium 30s, high 60s)
-- [ ] clean this file
 - [ ] create `admin.useroptions` for dark mode, welcome modals and such
-- [ ] IF deploy fails, add a DO_NOT_EDIT_DEPLOY_FAILED file to deploy path
+- [ ] IF deploy fails, add a `_DEPLOY_FAILED_DO_NOT_EDIT` file to deploy path
 - [ ] add disabled input with the username on the pagina que salva a senha
 - [ ] remove the ForceFXServerPort config and do either via `server.cfg` comment, or execute `endpoint_add_tcp "127.0.0.1:random"`
 - [ ] improve terminal onboarding? Nem que seja só um pouquinho...
@@ -47,96 +25,6 @@
         - attempt to use `discord.js` v12
 - [ ] add stats enc?
 
-### Setup Stepper:
-1. Welcome
-2. Server Name
-3. Deployment import type: (select box or a "multiline radio box" with description)
-
-- Common Template
-    4. Select Template (cards)
-    5. Suggest data location
-
-- URL Template
-    4. Import Remote Template (URL input)
-    5. Suggest data location
-
-- Local Server Data
-    4. Local Server Data
-    5. Server CFG File
-
-6. Finish
-    - save configs
-    - if local:
-        - start server
-        - redirect to live console
-    - if template
-        - redirect to deployer
-
-### Deployer stepper:
-- Review Recipe:
-    Show a code editor with the recipe, and some variables extracted from it.
-    Extracted fields:
-    - Author
-    - Description
-    - Version
-    - URL
-    Add a RED warning regarding running recipes from untrusted sources
-
-- Run Recipe
-    Something akin to live console, but no need to overengineer it!
-    At most an ajax that calls an API that will return the contents to a `<pre>`, and maybe a % to a progressbar.
-
-- Configure `server.cfg`
-    Code editor with the contents of the `server.cfg` file specified inside the recipe.
-    This will be the file containing the configuration of the base for the user to type, like hostname, mysql, RP-stuff...
-    Then a `Save & Start Server` button.
-
-### Deployer Notes:
-- Setup page does not execute anything, only sets the variables and start the server or redirects to the deployer.
-- Will force deployer bases to be `txData/xxx.base`. (check `.endsWith()` on profile selection)
-- If people want to try their own template file, they can select the "default" template and edit the recipe before running it
-- In the deployer page there will be an "cancel and go back to setup page" button.
-- The setup page will have a way to autofill inputs if its not the first time running it
-- If the admin master wants to run an new recipe, there should be a button in the settigs page for him to be able to do so (github's "danger zone" ?).
-
-
-### Deployer logic
-- Setup page:
-    - Condition: globals.deployer == null && (serverDataPath === null || cfgPath === null)
-    - Local deploy actions: sets serverDataPath/cfgPath, starts the server, redirect to live console
-    - Template deploy actions: download recipe, globals.deployer = new Deployer(recipe)
-
-- Deployer page:
-    - Condition: globals.deployer !== null
-    - Post-deploy actions: 
-        - set serverDataPath/cfgPath
-        - reset globals.deployer
-        - start the server
-        - redirect to live console
-
-- Normal txAdmin:
-    - IF globals.deployer THEN redirect to deployer
-    - ELSE IF (serverDataPath === null || cfgPath === null) THEN redirect to setup
-
-- To Reset:
-    - Stop server
-    - serverDataPath = null; cfgPath = null;
-    - Redirect to setup
-
-
-TODO: Bot commands (in dev order):
-/addwl <wl req id>
-/addwl <license>
-
-/kick <mention>
-/log <mention> - shows the last 5 log entries for an discord identifier (make it clear its only looking for the ID)
-/ban <mention> <time> <reason>
-/unban <ban-id>
-
-/info - shows your info like join date and play time
-/info <mention> - shows someone else's info
-/addwl <mention>
-/removewl <mention>
 
 > Soon™ (hopefully the next update)
 - [ ] send log via FD3
@@ -160,10 +48,26 @@ TODO: Bot commands (in dev order):
 - [ ] rename playerController to playerManager?
 - [ ] make heartbeats go through FD3?
 
+
+## Bot Commands:
+DONE:
+/addwl <wl req id>
+/addwl <license>
+
+TODO: Bot commands (in dev order):
+/kick <mention>
+/log <mention> - shows the last 5 log entries for an discord identifier (make it clear its only looking for the ID)
+/ban <mention> <time> <reason>
+/unban <ban-id>
+
+/info - shows your info like join date and play time
+/info <mention> - shows someone else's info
+/addwl <mention>
+/removewl <mention>
+
 ## "in the roadmap"
 - [ ] Check config management libraries (specially 'convict' by Mozilla and nconf)
-- [ ] revisit the issue with server restarting too fast (before close) and the the bind failing, causing restart loop. Almost all cases were windows server 2012.
-- [ ] xxxxxx
+
 
 =======================================
 
@@ -171,10 +75,10 @@ TODO: Bot commands (in dev order):
 ```bash
 # run
 cd /e/FiveM/builds
-nodemon --watch "3120/citizen/system_resources/monitor/src/*" --exec "3120/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose true +set txAdminFakePlayerlist yesplz"
+nodemon --watch "3247/citizen/system_resources/monitor/src/*" --exec "3247/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose truex +set txAdminFakePlayerlist yesplzx"
 
 # build
-cd /e/FiveM/builds/3120/citizen/system_resources/monitor
+cd /e/FiveM/builds/3247/citizen/system_resources/monitor
 rm -rf dist
 npm run build
 
@@ -224,6 +128,14 @@ https://github.com/citizenfx/fivem/pull/516
 https://github.com/citizenfx/fivem/pull/539
 
 
+### server deployer original idea
+https://discordapp.com/channels/192358910387159041/450373719974477835/701336723589955654
+
+### the ace permissions editor thing
+https://discordapp.com/channels/192358910387159041/450373719974477835/724266730024861717
+
+
+
 =======================================
 
 ### Global vs Individual Modules
@@ -254,53 +166,3 @@ https://github.com/citizenfx/fivem/pull/539
     - log
     - cfg editor
 ...and maybe more, but now I'm going to sleep
-
-
-
-Questões:
-- É possível tirar o webserver pra fora do txAdmin?
-    - Teria que tirar o verbose pra fora
-    - Criar um metodo pra setar rotas full + atachar socket.io
-    - Puxar o Authenticator pra fora
-- É possível mudar as rotas depois?
-    - Sim
-- É possível Puxar o autenticator pra fora?
-    - Sim
-- É possível só iniciar o txAdmin depois?
-    - Sim
-- Isso vai deixar o código muito zuado?
-- Vai valer a pena?
-
-
-
-### base clonning idea
-Context: https://discordapp.com/channels/192358910387159041/450373719974477835/701336723589955654
-Recipie example:
-```yaml
-tasks:
-  - clone_repo:
-      url: https://github.com/citizenfx/cfx-server-data.git
-      path: .
-  - clone_resource:
-      url: https://github.com/meow64bit/uberadmin.git
-      resourceDir: uberadmin
-  - download_archive:
-      url: https://github.com/wtf/wtfwtf/releases/v1.2.3/resource.zip
-      resourceDir: wtfwtf
-      stripPath: wtfwtf/
-  - download_file:
-      url: https://docs.fivem.net/blah/server.cfg
-      path: server.cfg
-  - replace_file:
-      path: server.cfg
-      pattern: 's/wtf/ftw/g'
-  - append_file:
-      path: server.cfg
-      data: |
-         start wtfwtf
-         start uberadmin
-```
-
-
-### the ace permissions editor thing
-https://discordapp.com/channels/192358910387159041/450373719974477835/724266730024861717

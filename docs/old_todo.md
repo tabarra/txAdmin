@@ -318,6 +318,32 @@ More:
 - [x] add FD3 heartbeat as redundancy + stats
 - [x] live console: added command history to local storage
 > v2.7.2
+- [x] Server Deployer with recipe engine!
+- [x] replace `localhost` with `127.0.0.1` in functions to force usage of ipv4
+- [x] rename `ctx.utils.appendLog` to `logCommand` then replace it and all `globals.logger.append` for consistency
+- [x] added permission descriptions (`all_permissions` > `All Permissions`)
+- [x] fix heartbeat FD3 vs HTTP stats
+- [x] fix hardcoded 180s cooldown for slow server starts and add boot time statistics
+- [x] add a bunch of stats
+- [x] downgrade `open` library and autofill the pin
+- [x] completed recipe engine with the following actions: `waste_time`, `fail_test`, `download_file`, `remove_path`, `ensure_dir`, `unzip`, `move_path`, `copy_path`, `write_file`, `replace_string`, `connect_database`, `query_database`
+- [x] upgrade packages
+- [x] add custom recipe option to setup/deployer
+- [x] make cfx default recipe and populate `@tabarra/txAdmin-recipes`
+- [x] update setup page to read `@tabarra/txAdmin-recipes`
+- [x] add option to reset fxserver settings & return to setup
+- [x] merge dark mode
+- [x] added tmpLooksLikeRecipe to stats
+- [x] test everything on latest fxserver + webpack and linux (check deployer and systeminformation memory)
+- [x] reset timestamp + write changelog + version bump
+> v3.0.0
+- [x] fix linux build pipeline
+> v3.0.1
+- [x] fixed resources page breaking due to weird inline json escaping
+- [x] added ban reason to server join rejection message
+- [x] assorted css fixes (mainly toggle switches)
+- [x] versiom bump
+> v3.0.2
 
 
 ------------------------------
