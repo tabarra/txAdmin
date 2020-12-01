@@ -5,6 +5,7 @@ const util = require('util');
 const fs = require('fs-extra');
 const AdmZip = require('adm-zip');
 const axios = require("axios");
+const cloneDeep = require('lodash/cloneDeep');
 const mysql = require('mysql2/promise');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
@@ -350,7 +351,7 @@ const taskQueryDatabase = async (options, basePath, deployerCtx) => {
 const validatorWasteTime = (options) => {
     return (typeof options.seconds == 'number')
 }
-const taskWasteTime = (options, target) => {
+const taskWasteTime = (options, basePath, deployerCtx) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             resolve(true)
@@ -362,11 +363,18 @@ const taskWasteTime = (options, target) => {
 /**
  * DEBUG Fail fail fail :o
  */
-const validatorFailTest = (options) => {
-    return true;
-}
-const taskFailTest = async (options, target) => {
+const taskFailTest = async (options, basePath, deployerCtx) => {
     throw new Error(`test error :p`);
+}
+
+
+/**
+ * DEBUG logs all ctx vars
+ */
+const taskDumpVars = async (options, basePath, deployerCtx) => {
+    const toDump = cloneDeep(deployerCtx)
+    toDump.mysqlCon = toDump.mysqlCon.constructor.name;
+    dir(toDump)
 }
 
 
@@ -385,10 +393,10 @@ DONE:
     - connect_database (connects to mysql, creates db if not set)
     - query_database (file or string)
     - download_github (with ref and subpath)
+    - dump_vars
     
 TODO:
     - read json into context vars?
-    - print vars to console?
 */
 
 
@@ -445,7 +453,11 @@ module.exports = {
         run: taskWasteTime,
     },
     fail_test:{
-        validate: validatorFailTest,
+        validate: (() => true),
         run: taskFailTest,
+    },
+    dump_vars:{
+        validate: (() => true),
+        run: taskDumpVars,
     },
 }
