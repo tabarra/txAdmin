@@ -55,7 +55,6 @@ const taskDownloadFile = async (options, basePath, deployerCtx) => {
     const res = await axios({
         method: 'get',
         url: options.url,
-        timeout: 5000,
         responseType: 'stream'
     });
     await new Promise((resolve, reject) => {
@@ -99,7 +98,6 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     const res = await axios({
         method: 'get',
         url: downURL,
-        timeout: 5000,
         responseType: 'stream'
     });
     await new Promise((resolve, reject) => {
@@ -346,6 +344,23 @@ const taskQueryDatabase = async (options, basePath, deployerCtx) => {
 
 
 /**
+ * Loads variables from a json file to the context.
+ */
+const validatorLoadVars = (options) => {
+    return isPathValid(options.src, false)
+}
+const taskLoadVars = async (options, basePath, deployerCtx) => {
+    if(!validatorLoadVars(options)) throw new Error(`invalid options`);
+    
+    const srcPath = safePath(basePath, options.src);
+    const rawData = await fs.readFile(srcPath, 'utf8');
+    const inData = JSON.parse(rawData);
+    inData.mysqlCon = undefined;
+    Object.assign(deployerCtx, inData);
+}
+
+
+/**
  * DEBUG Just wastes time /shrug
  */
 const validatorWasteTime = (options) => {
@@ -373,7 +388,7 @@ const taskFailTest = async (options, basePath, deployerCtx) => {
  */
 const taskDumpVars = async (options, basePath, deployerCtx) => {
     const toDump = cloneDeep(deployerCtx)
-    toDump.mysqlCon = toDump.mysqlCon.constructor.name;
+    toDump.mysqlCon = (toDump.mysqlCon && toDump.mysqlCon.constructor && toDump.mysqlCon.constructor.name)? toDump.mysqlCon.constructor.name : undefined;
     dir(toDump)
 }
 
@@ -382,6 +397,7 @@ const taskDumpVars = async (options, basePath, deployerCtx) => {
 DONE:
     - waste_time (DEBUG)
     - fail_test (DEBUG)
+    - dump_vars (DEBUG)
     - download_file
     - remove_path (file or folder)
     - ensure_dir
@@ -392,11 +408,11 @@ DONE:
     - replace_string (single or array)
     - connect_database (connects to mysql, creates db if not set)
     - query_database (file or string)
-    - download_github (with ref and subpath)
-    - dump_vars
+    - download_github (with ref and subpath) 
+    - load_vars
     
 TODO:
-    - read json into context vars?
+    - ??????
 */
 
 
@@ -445,6 +461,10 @@ module.exports = {
     query_database:{
         validate: validatorQueryDatabase,
         run: taskQueryDatabase,
+    },
+    load_vars: {
+        validate: validatorLoadVars,
+        run: taskLoadVars,
     },
 
     //DEBUG mock only

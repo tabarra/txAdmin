@@ -195,6 +195,7 @@ class Deployer {
     async runTasks(){
         const contextVariables = cloneDeep(this.recipe.variables);
         contextVariables.deploymentID = this.deploymentID;
+        contextVariables.serverName = globals.config.serverName || '';
 
         //Run all the tasks
         for (let index = 0; index < this.recipe.tasks.length; index++) {
@@ -208,7 +209,11 @@ class Deployer {
                 this.logLines[this.logLines.length -1] += ` ✔️`;
             } catch (error) {
                 this.logLines[this.logLines.length -1] += ` ❌`;
-                this.logError(`${taskID} failed with message: \n${error.message}`);
+                const msg = `${taskID} failed!\n`
+                        + `Message: ${error.message}\n`
+                        + `Options: \n`
+                        + JSON.stringify(task, null, 2);
+                this.logError(msg);
                 this.deployFailed = true;
                 return;
             }
