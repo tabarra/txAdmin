@@ -176,16 +176,20 @@ This is an implementation of [fs-extra.outputFile()](https://github.com/jprichar
 ```
 
 ### `replace_string`
-Replaces a string in the target file or files array based on a search string.
+Replaces a string in the target file or files array based on a search string and/or context variables.
 - `file`: String or array containing tie file(s) to be checked for the replacer string.
+- `mode`: *(optional)* Specify the behavior of the replacer.
+  - `template`: *(default)* The `replace` string option processed for context variables in the `{{varName}}` format.
+  - `all_vars`: All variables (`{{varName}}`) will be replaced in the target file. The `search` and `replace` options will be ignored.
+  - `literal`: Normal string search/replace without any vars
 - `search`: The String to be searched for.
 - `replace`: The String that will replace the `search` one.
 ```yaml
-# Single file
+# Single file - template mode is implicit
 - action: replace_string
   file: ./server.cfg
   search: 'FXServer, but unconfigured'
-  replace: 'My cool new recipe!!!'
+  replace: '{{serverName}} built with {{recipeName}} by {{recipeAuthor}}!'
 
 # Multiple files
 - action: replace_string
@@ -194,6 +198,11 @@ Replaces a string in the target file or files array based on a search string.
     - ./doesntexist/config.json
   search: 'omg_replace_this'
   replace: 'got_it!'
+
+# Replace all variables
+- action: replace_string
+  file: ./configs.cfg
+  mode: all_vars
 ```
 
 ### `connect_database`

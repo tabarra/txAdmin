@@ -257,29 +257,66 @@ const taskWriteFile = async (options, basePath, deployerCtx) => {
 
 /**
  * Replaces a string in the target file or files array based on a search string.
+ * Modes:
+ *  - template: (default) target string will be processed for vars
+ *  - literal: normal string search/replace without any vars
+ *  - all_vars: all vars.toString() will be replaced. The search option will be ignored
  */
 const validatorReplaceString = (options) => {
-    return (
-        (
-            ( 
-                Array.isArray(options.file) && 
-                options.file.every(s => isPathValid(s, false)) 
-            ) ||
-            isPathValid(options.file, false)
-        ) &&
-        typeof options.search == 'string' &&
-        options.search.length &&
-        typeof options.replace == 'string'
-    )
+    //Validate file
+    const fileList = (Array.isArray(options.file))? options.file : [options.file];
+    if(fileList.some(s => !isPathValid(s, false))){
+        return false;
+    }
+
+    //Validate mode
+    if(
+        typeof options.mode == 'undefined' ||
+        options.mode == 'template' ||
+        options.mode == 'literal'
+    ){
+        return (
+            typeof options.search == 'string' &&
+            options.search.length &&
+            typeof options.replace == 'string'
+        )
+
+    }else if(options.mode == 'all_vars'){
+        return true
+
+    }else{
+
+        return false;
+    }
 }
 const taskReplaceString = async (options, basePath, deployerCtx) => {
     if(!validatorReplaceString(options)) throw new Error(`invalid options`);
 
+    const replaceVars = (inputString) => {
+        const allVars = Object.keys(deployerCtx);
+        for (const varName of allVars) {
+            const varNameReplacer = new RegExp(`\\{\\{${varName}\\}\\}`, 'g');
+            inputString = inputString.replace(varNameReplacer, deployerCtx[varName].toString())
+        }
+        return inputString;
+    }
+
     const fileList = (Array.isArray(options.file))? options.file : [options.file];
     for (let i = 0; i < fileList.length; i++){
         const filePath = safePath(basePath, fileList[i]);
-        const original = await fs.readFile(filePath);
-        const changed = original.toString().replace(options.search, options.replace);
+        const original = await fs.readFile(filePath, 'utf8');
+        let changed;
+        if(typeof options.mode == 'undefined' || options.mode == 'template'){
+            changed = original.replace(new RegExp(options.search, 'g'), replaceVars(options.replace));
+            
+        }else if(options.mode == 'all_vars'){
+            changed = replaceVars(original);
+            dir(changed)
+
+        }else if(options.mode == 'literal'){
+            changed = original.replace(new RegExp(options.search, 'g'), options.replace);
+            
+        }
         await fs.writeFile(filePath, changed);
     }
 }
