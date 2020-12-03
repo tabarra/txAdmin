@@ -40,12 +40,30 @@ The recipe accepts the following default meta data:
 ## Context Variables
 The deployer has a shared context between tasks, and they are initially populated by the `variables` which is used by things like database configuration.  
 Hopefully in the next few updates we will introduce an interface to edit those.  
-The only default Context Variable is `deploymentID`, which is composed by the shortened recipe name with a hex timestamp which will look something like `PlumeESX_BBC957`.
+Default variables:
+- `deploymentID`: composed by the shortened recipe name with a hex timestamp which will look something like `PlumeESX_BBC957`.
+- `serverName`: The name of the server specified in the setup page.
+- `recipeName`, `recipeAuthor`, `recipeVersion`, `recipeDescription`: Populated from the recipe metadata, if available.
+> Note: the database variables are docummented in the `connect_database` section.
 
 
 ## Tasks
-Tasks are executed sequentially, and any failure in the chain stops the process.  
+Tasks/actions are executed sequentially, and any failure in the chain stops the process.  
 Attention: careful with the number of spaces used in the indentation.  
+
+**Available Actions:**
+- [download_github](#download_github)
+- [download_file](#download_file)
+- [unzip](#unzip)
+- [move_path](#move_path)
+- [copy_path](#copy_path)
+- [remove_path](#remove_path)
+- [ensure_dir](#ensure_dir)
+- [write_file](#write_file)
+- [replace_string](#replace_string)
+- [connect_database](#connect_database)
+- [query_database](#query_database)
+- [load_vars](#load_vars)
 
 ### `download_github`
 Downloads a GitHub repository with an optional reference (branch, tag, commit hash) or subpath.  
@@ -210,7 +228,7 @@ tasks:
 
 ### `query_database`
 Runs a SQL query in the previously connected database.  
-This query can be a file path **OR** a string, but not both at the same time!
+This query can be a file path **OR** a string, but not both at the same time!  
 You need to execute the `connect_database` before this action.
 - `file`: The path of the SQL file to be executed.
 - `query`: The query string to be executed.
@@ -227,4 +245,12 @@ You need to execute the `connect_database` before this action.
         `name` tinytext NOT NULL
     );
     INSERT INTO `users` (`name`) VALUES ('tabarra');
+```
+
+### `load_vars`
+Loads variables from a JSON file to the deployer context.
+- `src`: The path of the JSON file to be loaded.
+```yaml
+- action: load_vars
+  src: ./toload.json
 ```

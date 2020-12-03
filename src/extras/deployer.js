@@ -196,6 +196,10 @@ class Deployer {
         const contextVariables = cloneDeep(this.recipe.variables);
         contextVariables.deploymentID = this.deploymentID;
         contextVariables.serverName = globals.config.serverName || '';
+        contextVariables.recipeName = this.recipe.name;
+        contextVariables.recipeAuthor = this.recipe.author;
+        contextVariables.recipeVersion = this.recipe.version;
+        contextVariables.recipeDescription = this.recipe.description;
 
         //Run all the tasks
         for (let index = 0; index < this.recipe.tasks.length; index++) {
