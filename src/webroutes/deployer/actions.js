@@ -32,8 +32,11 @@ module.exports = async function DeployerActions(ctx) {
     }
 
     //Delegate to the specific action functions
-    if(action == 'run'){
-        return await handleRunRecipe(ctx);
+    if(action == 'confirmRecipe'){
+        return await handleConfirmRecipe(ctx);
+
+    }else if(action == 'setVariables'){
+        return await handleSetVariables(ctx);
 
     }else if(action == 'commit'){
         return await handleSaveConfig(ctx);
@@ -55,7 +58,7 @@ module.exports = async function DeployerActions(ctx) {
  * Handle submition of user-edited recipe (record to deployer, starts the process)
  * @param {object} ctx
  */
-async function handleRunRecipe(ctx) {
+async function handleConfirmRecipe(ctx) {
     //Sanity check
     if(isUndefined(ctx.request.body.recipe)){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
@@ -63,8 +66,36 @@ async function handleRunRecipe(ctx) {
     const userEditedRecipe = ctx.request.body.recipe;
 
     try {
+        ctx.utils.logAction(`Setting recipe.`);
+        globals.deployer.confirmRecipe(userEditedRecipe)
+    } catch (error) {
+        return ctx.send({type: 'danger', message: error.message});
+    }
+
+    return ctx.send({success: true});
+}
+
+
+//================================================================
+/**
+ * Handle submition of the input variables/parameters
+ * @param {object} ctx
+ */
+async function handleSetVariables(ctx) {
+    //Sanity check
+    // if(isUndefined(ctx.request.body.recipe)){
+    //     return ctx.utils.error(400, 'Invalid Request - missing parameters');
+    // }
+    // const userEditedRecipe = ctx.request.body.recipe;
+
+    const userInputs = {
+        testVar: 'varv ar varrrr'
+    };
+    //TODO: process ctx.body.input and push to userInputs
+
+    try {
         ctx.utils.logAction(`Running recipe.`);
-        globals.deployer.start(userEditedRecipe)
+        globals.deployer.start(userInputs)
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
     }

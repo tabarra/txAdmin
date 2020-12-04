@@ -94,8 +94,8 @@ const parseValidateRecipe = (rawRecipe) => {
         version: toDefault(recipe.version, '').trim(),
         author: toDefault(recipe.author, 'unknown').trim(),
         description: toDefault(recipe.description, '').trim(),
-        variables: recipe.variables || {},
-        tasks: []
+        variables: {},
+        tasks: [],
     };
 
     //Checking meta tag requirements
@@ -119,6 +119,18 @@ const parseValidateRecipe = (rawRecipe) => {
         outRecipe.tasks.push(task)
     });
 
+    //Process inputs
+    outRecipe.requireDBConfig = recipe.tasks.some(t => t.action.includes('database'));
+    const protectedVarNames = ['licenseKey', 'dbHost', 'dbUsername', 'dbPassword', 'dbName', 'dbConnection'];
+    if((typeof recipe.variables == 'object')){
+        const varNames = Object.keys(recipe.variables);
+        if(varNames.some(n => protectedVarNames.includes(n))){
+            throw new Error(`One or more of the variables declared in the recipe are not allowed.`);
+        }
+        Object.assign(outRecipe.variables, recipe.variables);
+    }
+
+    //Output
     if(GlobalData.verbose) dir(outRecipe);
     return outRecipe;
 }
@@ -172,15 +184,35 @@ class Deployer {
     }
 
     /**
-     * Starts the deployment process
+     * Confirms the recipe and goes to the input stage
      * @param {string} userRecipe 
      */
-    start(userRecipe){
+    confirmRecipe(userRecipe){
+        if(this.step !== 'review') throw new Error(`expected review step`);
         try {
             this.recipe = parseValidateRecipe(userRecipe);
         } catch (error) {
             throw new Error(`Cannot start() deployer due to a Recipe Error: ${error.message}`);
         }
+        this.step = 'input';
+    }
+
+    /**
+     * Returns the required variables for the deployer run step
+     */
+    getRequiredVars(){
+        if(this.step !== 'input') throw new Error(`expected input step`);
+        return cloneDeep(this.recipe.variables);
+        //TODO: ?? Object.keys pra montar varname: {type: 'string'}?
+    }
+
+    /**
+     * Starts the deployment process
+     * @param {string} userInputs 
+     */
+    start(userInputs){
+        if(this.step !== 'input') throw new Error(`expected input step`);
+        Object.assign(this.recipe.variables, userInputs);
         this.logLines = [];
         this.log(`Starting deployment of ${this.recipe.name} to ${this.deployPath}`);
         this.deployFailed = false;
@@ -193,6 +225,7 @@ class Deployer {
      * (Private) Run the tasks in a sequential way.
      */
     async runTasks(){
+        if(this.step !== 'run') throw new Error(`expected run step`);
         const contextVariables = cloneDeep(this.recipe.variables);
         contextVariables.deploymentID = this.deploymentID;
         contextVariables.serverName = globals.config.serverName || '';

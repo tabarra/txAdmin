@@ -35,6 +35,12 @@ module.exports = async function DeployerStepper(ctx) {
             raw: globals.deployer.recipe.raw,
         }
 
+    }else if(globals.deployer.step === 'input'){
+        renderData.inputVars = [];
+        const requiredVars = globals.deployer.getRequiredVars();
+        // process the stuff then push to renderData.inputVars
+        renderData.requireDBConfig = globals.deployer.recipe.requireDBConfig;
+
     }else if(globals.deployer.step === 'run'){
         renderData.deployPath = globals.deployer.deployPath;
 
