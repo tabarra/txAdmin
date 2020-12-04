@@ -166,6 +166,7 @@ class Deployer {
         try {
             this.recipe = parseValidateRecipe(impRecipe);
         } catch (error) {
+            if(GlobalData.verbose) dir(error);
             throw new Error(`Recipe Error: ${error.message}`);
         }
     }
@@ -256,7 +257,7 @@ class Deployer {
             }
         }
 
-        //Set progress 100
+        //Set progress
         this.progress = 100;
         this.log(`All tasks completed.`);
 

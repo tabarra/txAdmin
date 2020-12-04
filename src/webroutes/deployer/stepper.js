@@ -52,6 +52,9 @@ module.exports = async function DeployerStepper(ctx) {
             renderData.serverCFG = await fs.readFile(`${globals.deployer.deployPath}/server.cfg`, 'utf8');
             if(renderData.serverCFG == '#save_attempt_please_ignore' || !renderData.serverCFG.length){
                 renderData.serverCFG = errorMessage;
+            }else if(renderData.serverCFG.length > 10240){ //10kb
+                renderData.serverCFG = `# This recipe created a ./server.cfg above 10kb, meaning its probably the wrong data. 
+Make sure everything is correct in the recipe and try again.`;
             }
         } catch (error) {
             if(GlobalData.verbose) dir(error);

@@ -6,6 +6,7 @@ const fs = require('fs-extra');
 const AdmZip = require('adm-zip');
 const axios = require("axios");
 const cloneDeep = require('lodash/cloneDeep');
+const escapeRegExp = require('lodash/escapeRegExp');
 const mysql = require('mysql2/promise');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
@@ -31,7 +32,14 @@ const isPathValid = (pathInput, acceptRoot=true) => {
         (acceptRoot || !isPathRoot(pathInput))
     )
 }
-
+const replaceVars = (inputString, deployerCtx) => {
+    const allVars = Object.keys(deployerCtx);
+    for (const varName of allVars) {
+        const varNameReplacer = new RegExp(escapeRegExp(`{{${varName}}}`), 'g');
+        inputString = inputString.replace(varNameReplacer, deployerCtx[varName].toString())
+    }
+    return inputString;
+}
 
 
 /**
@@ -292,26 +300,16 @@ const validatorReplaceString = (options) => {
 const taskReplaceString = async (options, basePath, deployerCtx) => {
     if(!validatorReplaceString(options)) throw new Error(`invalid options`);
 
-    const replaceVars = (inputString) => {
-        const allVars = Object.keys(deployerCtx);
-        for (const varName of allVars) {
-            const varNameReplacer = new RegExp(`\\{\\{${varName}\\}\\}`, 'g');
-            inputString = inputString.replace(varNameReplacer, deployerCtx[varName].toString())
-        }
-        return inputString;
-    }
-
     const fileList = (Array.isArray(options.file))? options.file : [options.file];
     for (let i = 0; i < fileList.length; i++){
         const filePath = safePath(basePath, fileList[i]);
         const original = await fs.readFile(filePath, 'utf8');
         let changed;
         if(typeof options.mode == 'undefined' || options.mode == 'template'){
-            changed = original.replace(new RegExp(options.search, 'g'), replaceVars(options.replace));
+            changed = original.replace(new RegExp(options.search, 'g'), replaceVars(options.replace, deployerCtx));
             
         }else if(options.mode == 'all_vars'){
-            changed = replaceVars(original);
-            dir(changed)
+            changed = replaceVars(original, deployerCtx);
 
         }else if(options.mode == 'literal'){
             changed = original.replace(new RegExp(options.search, 'g'), options.replace);
@@ -344,14 +342,14 @@ const taskConnectDatabase = async (options, basePath, deployerCtx) => {
         database: (deployerCtx.dbName)? deployerCtx.dbName : undefined,
         multipleStatements: true,
     }
-    deployerCtx.mysqlCon = await mysql.createConnection(mysqlOptions);
+    deployerCtx.dbConnection = await mysql.createConnection(mysqlOptions);
     if(deployerCtx.dbName == null){
         const escapedName = mysql.escapeId(deployerCtx.deploymentID);
         if(deployerCtx.dbOverwrite === 'yes_delete_existing_database'){
-            await deployerCtx.mysqlCon.query(`DROP DATABASE IF EXISTS ${escapedName}`);
+            await deployerCtx.dbConnection.query(`DROP DATABASE IF EXISTS ${escapedName}`);
         }
-        await deployerCtx.mysqlCon.query(`CREATE DATABASE IF NOT EXISTS ${escapedName}`);
-        await deployerCtx.mysqlCon.query(`USE ${escapedName}`);
+        await deployerCtx.dbConnection.query(`CREATE DATABASE IF NOT EXISTS ${escapedName}`);
+        await deployerCtx.dbConnection.query(`USE ${escapedName}`);
     }
 }
 
@@ -367,7 +365,7 @@ const validatorQueryDatabase = (options) => {
 }
 const taskQueryDatabase = async (options, basePath, deployerCtx) => {
     if(!validatorQueryDatabase(options)) throw new Error(`invalid options`);
-    if(!deployerCtx.mysqlCon) throw new Error(`Database connection not found. Run connect_database before query_database`);
+    if(!deployerCtx.dbConnection) throw new Error(`Database connection not found. Run connect_database before query_database`);
 
     let sql;
     if(options.file){
@@ -376,7 +374,7 @@ const taskQueryDatabase = async (options, basePath, deployerCtx) => {
     }else{
         sql = options.query;
     }
-    await deployerCtx.mysqlCon.query(sql);
+    await deployerCtx.dbConnection.query(sql);
 }
 
 
@@ -392,7 +390,7 @@ const taskLoadVars = async (options, basePath, deployerCtx) => {
     const srcPath = safePath(basePath, options.src);
     const rawData = await fs.readFile(srcPath, 'utf8');
     const inData = JSON.parse(rawData);
-    inData.mysqlCon = undefined;
+    inData.dbConnection = undefined;
     Object.assign(deployerCtx, inData);
 }
 
@@ -425,7 +423,7 @@ const taskFailTest = async (options, basePath, deployerCtx) => {
  */
 const taskDumpVars = async (options, basePath, deployerCtx) => {
     const toDump = cloneDeep(deployerCtx)
-    toDump.mysqlCon = (toDump.mysqlCon && toDump.mysqlCon.constructor && toDump.mysqlCon.constructor.name)? toDump.mysqlCon.constructor.name : undefined;
+    toDump.dbConnection = (toDump.dbConnection && toDump.dbConnection.constructor && toDump.dbConnection.constructor.name)? toDump.dbConnection.constructor.name : undefined;
     dir(toDump)
 }
 

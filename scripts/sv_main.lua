@@ -141,7 +141,7 @@ function txaKickAll(source, args)
     end
     log("Kicking all players with reason: "..args[1])
     for _, pid in pairs(GetPlayers()) do
-        DropPlayer(pid, "Kicked for: " .. args[1])
+        DropPlayer(pid, "\n".."Kicked for: " .. args[1])
     end
     CancelEvent()
 end
@@ -157,7 +157,7 @@ function txaKickID(source, args)
     if quotedMessage ~= nil then dropMessage = unDeQuote(quotedMessage) end
 
     log("Kicking #"..playerID.." with reason: "..dropMessage)
-    DropPlayer(playerID, dropMessage)
+    DropPlayer(playerID, "\n"..dropMessage)
     CancelEvent()
 end
 

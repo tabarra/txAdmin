@@ -81,12 +81,12 @@ module.exports = class PlayerController {
             await this.processActive();
 
             try {
-                let timeStart = new Date();
+                const timeStart = new Date();
                 if(this.writePending){
                     await this.dbo.write();
                     this.writePending = false;
-                    let timeElapsed = new Date() - timeStart;
-                    if(GlobalData.verbose) logOk(`DB file saved, took ${timeElapsed}ms.`); //DEBUG
+                    const timeElapsed = new Date() - timeStart;
+                    if(GlobalData.verbose) logOk(`DB file saved, took ${timeElapsed}ms.`);
                 }else{
                     // if(GlobalData.verbose) logOk('Nothing to write to DB file');
                 }
@@ -118,7 +118,7 @@ module.exports = class PlayerController {
      * Start lowdb instance and set defaults
      */
     async setupDatabase(){
-        let dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
+        const dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
         try {
             let adapterAsync;
             if(process.env.APP_ENV == 'webpack'){
@@ -130,7 +130,7 @@ module.exports = class PlayerController {
             }else{
                 adapterAsync = new FileAsync(dbPath);
             }
-            let dbo = await low(adapterAsync);
+            const dbo = await low(adapterAsync);
             await dbo.defaults({
                 version: currentDatabaseVersion,
                 players: [],
@@ -443,7 +443,7 @@ module.exports = class PlayerController {
         let identifiers;
         if(Array.isArray(reference)){
             if(!reference.length) throw new Error('You must send at least one identifier');
-            let invalids = reference.filter((id)=>{
+            const invalids = reference.filter((id)=>{
                 return (typeof id !== 'string') || !Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
             });
             if(invalids.length){
@@ -452,7 +452,7 @@ module.exports = class PlayerController {
                 identifiers = reference;
             }
         }else if(typeof reference == 'number'){
-            let player = this.activePlayers.find((p) => p.id === reference);
+            const player = this.activePlayers.find((p) => p.id === reference);
             if(!player) throw new Error('Player disconnected.');
             if(!player.identifiers.length) throw new Error('Player has no identifiers.'); //sanity check
             identifiers = player.identifiers;
@@ -462,12 +462,12 @@ module.exports = class PlayerController {
         }
 
         //Saves it to the database
-        let actionPrefix = (type == 'warn')? 'a' : type[0];
-        let actionID = actionPrefix.toUpperCase() 
+        const actionPrefix = (type == 'warn')? 'a' : type[0];
+        const actionID = actionPrefix.toUpperCase() 
             + customAlphabet(GlobalData.noLookAlikesAlphabet, 3)() 
             + '-' 
             + customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
-        let toDB = {
+        const toDB = {
             id: actionID,
             type,
             author,
@@ -511,7 +511,7 @@ module.exports = class PlayerController {
         if(typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
         if(allowedTypes !== true && !Array.isArray(allowedTypes)) throw new Error('Invalid allowedTypes.');
         try {
-            let action = await this.dbo.get("actions")
+            const action = await this.dbo.get("actions")
                             .find({id: action_id})
                             .value();
             if(action){
@@ -529,7 +529,7 @@ module.exports = class PlayerController {
                 return 'action not found';
             }
         } catch (error) {
-            let msg = `Failed to revoke action with message: ${error.message}`;
+            const msg = `Failed to revoke action with message: ${error.message}`;
             logError(msg);
             if(GlobalData.verbose) dir(error);
             throw new Error(msg)
@@ -561,11 +561,11 @@ module.exports = class PlayerController {
         if(/[0-9A-Fa-f]{40}/.test(reference)){
             pendingFilter = {license: reference};
             saveReference = [`license:${reference}`];
-            let pending = await this.dbo.get("pendingWL").find(pendingFilter).value();
+            const pending = await this.dbo.get("pendingWL").find(pendingFilter).value();
             if(pending) playerName = pending.name;
         }else if(GlobalData.regexWhitelistReqID.test(reference)){
             pendingFilter = {id: reference};
-            let pending = await this.dbo.get("pendingWL").find(pendingFilter).value();
+            const pending = await this.dbo.get("pendingWL").find(pendingFilter).value();
             if(!pending) throw new Error('Pending ID not found in database');
             saveReference = [`license:${pending.license}`];
             playerName = pending.name;
@@ -574,7 +574,7 @@ module.exports = class PlayerController {
         }
 
         //Register whitelist
-        let actionID = await this.registerAction(saveReference, 'whitelist', author, null, false, playerName);
+        const actionID = await this.registerAction(saveReference, 'whitelist', author, null, false, playerName);
         if(!actionID) throw new Error('Failed to whitelist player');
         this.writePending = true;
 
