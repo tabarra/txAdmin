@@ -27,7 +27,7 @@ body.theme--dark {
    * TXADMIN ELEMENTS
    ***********************/
   /**
-   * Deployment buttons
+   * Deployment things
    */
   /**
    * txAdmin player list
@@ -326,6 +326,11 @@ body.theme--dark .bigbutton {
 
 body.theme--dark .bigbutton:hover {
   background-color: #00bf8f;
+}
+
+body.theme--dark .blur-input:not(:focus) {
+  color: transparent !important;
+  text-shadow: 0 0 5px rgba(235, 235, 235, 0.5) !important;
 }
 
 body.theme--dark .playerlist .player:hover {

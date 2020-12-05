@@ -365,7 +365,7 @@ body.theme--dark {
   }
 
   /**
-   * Deployment buttons
+   * Deployment things
    */
   .bigbutton {
     background: $txadmin-dark-800;
@@ -374,6 +374,10 @@ body.theme--dark {
       background-color: $txadmin-primary;
     }
   }
+  .blur-input:not(:focus) {
+    color: transparent !important;
+    text-shadow: 0 0 5px rgba(235, 235, 235, 0.5) !important;
+}
 
   /**
    * txAdmin player list

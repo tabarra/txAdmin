@@ -1,9 +1,3 @@
-/* Menu */
-/* .c-sidebar-nav-title {
-    background-color: #3A4860;
-} */
-
-
 /* Footer */
 .credit-links {
     font-weight: 600;
@@ -66,6 +60,10 @@ option:disabled {
 }
 [data-notify="message"] pre{
 	white-space: normal;
+}
+.blur-input:not(:focus) {
+    color: transparent !important;
+    text-shadow: 0 0 5px rgba(0,0,0,0.5) !important;
 }
 
 

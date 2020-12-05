@@ -25,9 +25,6 @@ const canCreateFile = async (targetPath) => {
 const makeTemplateRecipe = (serverName, author) => `name: ${serverName}
 author: ${author}
 
-variables:
-    example: madstuff
-
 tasks: 
     - action: waste_time
       seconds: 5
@@ -104,10 +101,8 @@ const parseValidateRecipe = (rawRecipe) => {
         outRecipe.fxserverMinVersion = recipe['$minFxVersion']; //useless for now
     }
     if(typeof recipe['$engine'] == 'number'){
-        if(recipe['$engine'] !== 1) throw new Error(`unsupported '$engine' version ${recipe['$engine']}`);
+        if(recipe['$engine'] < 2) throw new Error(`unsupported '$engine' version ${recipe['$engine']}`);
         outRecipe.recipeEngineVersion = recipe['$engine']; //useless for now
-    }else{
-        outRecipe.recipeEngineVersion = 1;
     }
 
     //Validate tasks
@@ -122,7 +117,7 @@ const parseValidateRecipe = (rawRecipe) => {
     //Process inputs
     outRecipe.requireDBConfig = recipe.tasks.some(t => t.action.includes('database'));
     const protectedVarNames = ['licenseKey', 'dbHost', 'dbUsername', 'dbPassword', 'dbName', 'dbConnection'];
-    if((typeof recipe.variables == 'object')){
+    if(typeof recipe.variables == 'object' && recipe.variables !== null){
         const varNames = Object.keys(recipe.variables);
         if(varNames.some(n => protectedVarNames.includes(n))){
             throw new Error(`One or more of the variables declared in the recipe are not allowed.`);

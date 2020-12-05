@@ -357,7 +357,7 @@
                             <label for="frmDiscord-token" class="col-sm-3 col-form-label">Token <span
                                     class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmDiscord-token" 
+                                <input type="text" class="form-control blur-input" id="frmDiscord-token" 
                                     value="{{@if(!it.readOnly)}}{{it.discord.token|undef}}{{#else}}[redacted]{{/if}}"
                                     placeholder="CXPcWbxKOHpwlUBaYKznIfkz.ExpTAB.NX-3YxfmVIGUJLGbPamViXGAEiY"
                                     maxlength="96" {{it.readOnly|isDisabled}}>
