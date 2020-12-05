@@ -1,6 +1,10 @@
 ## TODO v3
 - [x] deployer: add download_github action
 - [x] clean this file
+- [x] deployer: add `github_download` action
+- [x] deployer: add `load_vars`/`dump_vars` actions
+- [x] deployer: add context variables to the `replace_string` action
+- [x] deployer: add variable input stage
 - [ ] improve setup page common template incompatibility behavior and set $engine to 2
 - [ ] xxxxxxx
 

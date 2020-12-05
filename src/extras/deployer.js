@@ -274,6 +274,22 @@ class Deployer {
             return;
         }
 
+        //Replace {{svLicense}} in the server.cfg
+        try {
+            const task = {
+                file: './server.cfg',
+                mode: 'template',
+                search: '{{svLicense}}',
+                replace: '{{svLicense}}'
+            }
+            await recipeEngine['replace_string'].run(task, this.deployPath, contextVariables);
+            this.log(`Replacing {{svLicense}} in server.cfg... ✔️`);
+        } catch (error) {
+            this.logError(`Failed to set {{svLicense}} in server.cfg: ${error.message}`);
+            this.deployFailed = true;
+            return;
+        }
+
         //Else: success :)
         this.log(`Deploy finished and folder validated. All done!`);
         this.step = 'configure';

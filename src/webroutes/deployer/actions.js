@@ -86,9 +86,13 @@ async function handleSetVariables(ctx) {
     if(isUndefined(ctx.request.body.svLicense)){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
+    const userVars = ctx.request.body;
 
-    if(typeof ctx.request.body.dbDelete !== 'undefined'){
-        ctx.request.body.dbDelete = (ctx.request.body.dbDelete === 'true');
+    if(typeof userVars.dbDelete !== 'undefined'){
+        userVars.dbDelete = (userVars.dbDelete === 'true');
+        userVars.dbConnectionString = (userVars.dbPassword.length)
+            ? `mysql://${userVars.dbUsername}:${userVars.dbPassword}@${userVars.dbHost}/${userVars.dbName}?charset=utf8mb4`
+            : `mysql://${userVars.dbUsername}@${userVars.dbHost}/${userVars.dbName}?charset=utf8mb4`;
     }
 
     try {

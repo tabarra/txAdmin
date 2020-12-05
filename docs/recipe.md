@@ -38,14 +38,22 @@ The recipe accepts the following default meta data:
 
 
 ## Context Variables
-The deployer has a shared context between tasks, and they are initially populated by the `variables` which is used by things like database configuration.  
-Hopefully in the next few updates we will introduce an interface to edit those.  
+The deployer has a shared context between tasks, and they are initially populated by the `variables` and the deployer step 2 (user input) which is used by things like database configuration and string replacements.  
 Default variables:
 - `deploymentID`: composed by the shortened recipe name with a hex timestamp which will look something like `PlumeESX_BBC957`.
 - `serverName`: The name of the server specified in the setup page.
 - `recipeName`, `recipeAuthor`, `recipeVersion`, `recipeDescription`: Populated from the recipe metadata, if available.
-> Note: the database variables are docummented in the `connect_database` section.
-
+- `dbHost`, `dbUsername`, `dbPassword`, `dbName`, `dbDelete`, `dbConnectionString`: Populated from the database configuration user input, if available.
+- `svLicense`: Required variable, inputed in the deployer step 2. The deployer will automatically replace `{{svLicense}}` in the `server.cfg` at the end of the deployment.
+  
+In the second step of the deployer, the user will be asked to fill some information required to configure his server which will be loaded into context variables.  
+How to set custom variables:
+```yaml
+variables: 
+    aaa: bbbb
+    ccc: dddd
+```
+  
 
 ## Tasks
 Tasks/actions are executed sequentially, and any failure in the chain stops the process.  
@@ -207,32 +215,11 @@ Replaces a string in the target file or files array based on a search string and
 
 ### `connect_database`
 Connects to a MySQL/MariaDB server and creates a database if the dbName variable is null.  
-You need to execute this action before the `query_database` to populate the `mysqlCon` variable.  
-This action does not have any direct attributes attached to it. Instead it uses the following deployer Context Variables that you have to configure:
-- `dbHost`: The IP/Hostname of the database server (usually `localhost`).
-- `dbUsername`: The database username (usually `root`).
-- `dbPassword`: The database password (usually `""` - an empty string).
-- `dbName`: The database name. If set to `null`, a random name will be picked that contains the recipe or server name, followed by a sequential hex like `PlumeESX_BBC957`.
-- `dbOverwrite`: *(optional, boolean-ish)* If `dbName` is `null`, and the automatic database name chosen already exists, the deployer will **DELETE** the existing database to replace it. To enable, set this to `yes_delete_existing_database`.
-> Note: it is recommended to write recipes that have `dbName: null`, since this is the most seamless experience for inexperienced users.
+You need to execute this action before the `query_database` to prepare the deployer context.  
+This action does not have any direct attributes attached to it. Instead it uses Context Variables set in the deployer step 2 (user input).
 ```yaml
-# To create a new database (recommended)
-variables:
-    dbHost: localhost
-    dbUsername: root
-    dbPassword: ""
-    dbName: null
-    dbOverwrite: yes_delete_existing_database
-
-# To use an existing database
-variables:
-    dbHost: localhost
-    dbUsername: root
-    dbPassword: ""
-    dbName: es_extended
-
-tasks: 
-    - action: connect_database
+# Yes, that's just it
+- action: connect_database
 ```
 
 ### `query_database`
