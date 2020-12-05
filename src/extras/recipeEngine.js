@@ -328,29 +328,26 @@ const validatorConnectDatabase = (options) => {
 }
 const taskConnectDatabase = async (options, basePath, deployerCtx) => {
     if(!validatorConnectDatabase(options)) throw new Error(`invalid options`);
-    if(typeof deployerCtx.deploymentID !== 'string' || !deployerCtx.deploymentID.length) throw new Error(`invalid deploymentID`);
     if(typeof deployerCtx.dbHost !== 'string') throw new Error(`invalid dbHost`);
     if(typeof deployerCtx.dbUsername !== 'string') throw new Error(`invalid dbUsername`);
-    if(typeof deployerCtx.dbPassword !== 'string' && deployerCtx.dbPassword !== null) throw new Error(`dbPassword should be a string or null`);
-    if(typeof deployerCtx.dbName !== 'string' && deployerCtx.dbName !== null) throw new Error(`dbName should be a string or null`);
+    if(typeof deployerCtx.dbPassword !== 'string') throw new Error(`dbPassword should be a string`);
+    if(typeof deployerCtx.dbName !== 'string') throw new Error(`dbName should be a string`);
+    if(typeof deployerCtx.dbDelete !== 'boolean') throw new Error(`dbDelete should be a boolean`);
 
     //Connect to the database
     const mysqlOptions = {
         host: deployerCtx.dbHost,
         user: deployerCtx.dbUsername,
-        password: (deployerCtx.dbPassword)? deployerCtx.dbPassword : undefined,
-        database: (deployerCtx.dbName)? deployerCtx.dbName : undefined,
+        password: deployerCtx.dbPassword,
         multipleStatements: true,
     }
     deployerCtx.dbConnection = await mysql.createConnection(mysqlOptions);
-    if(deployerCtx.dbName == null){
-        const escapedName = mysql.escapeId(deployerCtx.deploymentID);
-        if(deployerCtx.dbOverwrite === 'yes_delete_existing_database'){
-            await deployerCtx.dbConnection.query(`DROP DATABASE IF EXISTS ${escapedName}`);
-        }
-        await deployerCtx.dbConnection.query(`CREATE DATABASE IF NOT EXISTS ${escapedName}`);
-        await deployerCtx.dbConnection.query(`USE ${escapedName}`);
+    const escapedDBName = mysql.escapeId(deployerCtx.dbName);
+    if(deployerCtx.dbDelete){
+        await deployerCtx.dbConnection.query(`DROP DATABASE IF EXISTS ${escapedDBName}`);
     }
+    await deployerCtx.dbConnection.query(`CREATE DATABASE IF NOT EXISTS ${escapedDBName} CHARACTER SET utf8 COLLATE utf8_general_ci`);
+    await deployerCtx.dbConnection.query(`USE ${escapedDBName}`);
 }
 
 

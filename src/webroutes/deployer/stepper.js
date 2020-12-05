@@ -24,6 +24,7 @@ module.exports = async function DeployerStepper(ctx) {
     const renderData = {
         step: globals.deployer.step,
         serverProfile: globals.info.serverProfile,
+        deploymentID: globals.deployer.deploymentID,
     };
     if(globals.deployer.step === 'review'){
         renderData.recipe = {
@@ -36,10 +37,16 @@ module.exports = async function DeployerStepper(ctx) {
         }
 
     }else if(globals.deployer.step === 'input'){
-        renderData.inputVars = [];
-        const requiredVars = globals.deployer.getRequiredVars();
-        // process the stuff then push to renderData.inputVars
         renderData.requireDBConfig = globals.deployer.recipe.requireDBConfig;
+        // renderData.inputVars = [];
+
+        const recipeVars = globals.deployer.getRecipeVars();
+        renderData.inputVars = Object.keys(recipeVars).map(name => {
+            return {
+                name: name,
+                value: recipeVars[name]
+            }
+        });
 
     }else if(globals.deployer.step === 'run'){
         renderData.deployPath = globals.deployer.deployPath;

@@ -199,9 +199,9 @@ class Deployer {
     }
 
     /**
-     * Returns the required variables for the deployer run step
+     * Returns the recipe variables for the deployer run step
      */
-    getRequiredVars(){
+    getRecipeVars(){
         if(this.step !== 'input') throw new Error(`expected input step`);
         return cloneDeep(this.recipe.variables);
         //TODO: ?? Object.keys pra montar varname: {type: 'string'}?

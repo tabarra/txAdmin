@@ -83,19 +83,17 @@ async function handleConfirmRecipe(ctx) {
  */
 async function handleSetVariables(ctx) {
     //Sanity check
-    // if(isUndefined(ctx.request.body.recipe)){
-    //     return ctx.utils.error(400, 'Invalid Request - missing parameters');
-    // }
-    // const userEditedRecipe = ctx.request.body.recipe;
+    if(isUndefined(ctx.request.body.svLicense)){
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
+    }
 
-    const userInputs = {
-        testVar: 'varv ar varrrr'
-    };
-    //TODO: process ctx.body.input and push to userInputs
+    if(typeof ctx.request.body.dbDelete !== 'undefined'){
+        ctx.request.body.dbDelete = (ctx.request.body.dbDelete === 'true');
+    }
 
     try {
         ctx.utils.logAction(`Running recipe.`);
-        globals.deployer.start(userInputs)
+        globals.deployer.start(ctx.request.body)
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
     }

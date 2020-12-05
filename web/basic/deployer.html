@@ -95,12 +95,102 @@
                         <div class="card-header">Step 1: Review Recipe ✔️</div>
                         <div class="card-header font-weight-bold ">Step 2: Input Parameters</div>
                         <div class="card-body">
-                            <form id="step2Form">
-                                license input
+                            <form id="step2-form">
+                                <div class="form-group row">
+                                    <label for="step2-svLicense" class="col-sm-3 col-form-label">
+                                        License Key
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="step2-svLicense"
+                                            maxlength="32" placeholder="pfy0t4b4rr40fr01dsnz9mu31337t4x5" required>
+                                        <span class="form-text text-muted">
+                                            The license key for your server obtained in <a href="https://keymaster.fivem.net/" target="_blank" rel="noopener noreferrer">Keymaster</a>.
+                                        </span>
+                                    </div>
+                                </div>
                                 {{@if(it.requireDBConfig)}}
-                                    db input
+                                    <div class="form-group row">
+                                        <label for="step2-dbHost" class="col-sm-3 col-form-label">
+                                            Database Host
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="step2-dbHost"
+                                                placeholder="localhost" value="localhost" required>
+                                            <span class="form-text text-muted">
+                                                The IP/Hostname of the database server (usually <code>localhost</code>).
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="step2-dbUsername" class="col-sm-3 col-form-label">
+                                            Database Username
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="step2-dbUsername"
+                                                placeholder="root" value="root" required>
+                                            <span class="form-text text-muted">
+                                                The database username (usually <code>root</code>).
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="step2-dbPassword" class="col-sm-3 col-form-label">
+                                            Database Password
+                                        </label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="step2-dbPassword"
+                                                placeholder="empty" value="">
+                                            <span class="form-text text-muted">
+                                                The database password (usually empty).
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="step2-dbName" class="col-sm-3 col-form-label">
+                                            Database Name
+                                        </label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control" id="step2-dbName"
+                                                placeholder="{{it.deploymentID}}" value="{{it.deploymentID}}">
+                                            <span class="form-text text-muted">
+                                                The name of the database to be used. <br>
+                                                If left empty, the deployment ID (<code>{{it.deploymentID}}</code>) will be used instead.
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="step2-dbDelete" class="col-sm-3 col-form-label">
+                                            Delete Database
+                                        </label>
+                                        <div class="col-sm-9">
+                                            <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                                <input class="c-switch-input" type="checkbox" id="step2-dbDelete" checked>
+                                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                            </label>
+                                            <span class="form-text text-muted">
+                                                If already exists, automatically deletes the database with the name provided above. <br>
+                                                <strong>Warning:</strong> all data will be lost.
+                                            </span>
+                                        </div>
+                                    </div>
                                 {{/if}}
-                                other input
+                                {{@if(it.inputVars.length)}}
+                                    <div class="hrsep hrsep-small mb-3">Custom Variables</div>
+                                    {{@each(it.inputVars) => inputVar, key}}
+                                        <div class="form-group row">
+                                            <label for="step2-customVar{{key}}" class="col-sm-3 col-form-label">
+                                                {{inputVar.name}}
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control customRecipeVars" id="step2-customVar{{key}}" 
+                                                    data-varName="{{inputVar.name}}" placeholder="{{inputVar.value}}" value="{{inputVar.value}}">
+                                            </div>
+                                        </div>
+                                    {{/each}}
+                                {{/if}}
                             </form>
                             <div class="row justify-content-center m-2">
                                 <button class="btn btn-outline-danger" type="button" 
@@ -290,14 +380,61 @@
         }
 
         //============================================== Step2 action
+        const requireDBConfig = ('{{it.requireDBConfig}}' == 'true');
+        const step2elements = {
+            form: document.getElementById('step2-form'),
+            svLicense: document.getElementById('step2-svLicense'),
+        }
+        if(requireDBConfig){
+            step2elements.dbHost = document.getElementById('step2-dbHost');
+            step2elements.dbUsername = document.getElementById('step2-dbUsername');
+            step2elements.dbPassword = document.getElementById('step2-dbPassword');
+            step2elements.dbName = document.getElementById('step2-dbName');
+            step2elements.dbDelete = document.getElementById('step2-dbDelete');
+
+            step2elements.dbName.addEventListener("keyup", () => {
+                const dbName = step2elements.dbName.value.trim()
+                step2elements.dbDelete.checked = (dbName == step2elements.dbName.placeholder || !dbName.length);
+            });
+        }
+        
+
         function step2Action(){
-            //????
+            if(!step2elements.form.reportValidity()) return;
+            const postData = {
+                svLicense: step2elements.svLicense.value.trim()
+            }
+            if(!/^\w{32}$/.test(postData.svLicense)){
+                return $.notify({ message: `The Server License does not appear to be valid.` }, { type: 'warning' });
+            }
+            if(requireDBConfig){
+                postData.dbHost = step2elements.dbHost.value.trim();
+                postData.dbUsername = step2elements.dbUsername.value.trim();
+                postData.dbPassword = step2elements.dbPassword.value.trim();
+                postData.dbName = step2elements.dbName.value.trim();
+                postData.dbDelete = step2elements.dbDelete.checked;
+
+                if(!postData.dbName.length){
+                    postData.dbName = step2elements.dbName.placeholder;
+                }
+                if(!postData.dbHost || !postData.dbUsername){
+                    return $.notify({ message: `The database host and username are required.` }, { type: 'warning' });
+                }
+            }
+
+            //Getting custom forms:
+            const customVarInputs = step2elements.form.getElementsByClassName("customRecipeVars");
+            for(const input of customVarInputs){
+                if(!input.dataset.varname) continue;
+                postData[input.dataset.varname] = input.value.trim();
+            }
+
             const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
             $.ajax({
                 type: "POST",
                 url: '/deployer/recipe/setVariables',
                 timeout: timeoutLong,
-                data: {/* TODO: */},
+                data: postData,
                 dataType: 'json',
                 success: function (data) {
                     if(checkDoLogoutRefresh(data)) return;
