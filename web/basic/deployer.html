@@ -102,8 +102,8 @@
                                         <span class="text-danger">*</span>
                                     </label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control blur-input" id="step2-svLicense"
-                                            maxlength="32" placeholder="pfy0t4b4rr40fr01dsnz9mu31337t4x5" required>
+                                        <input type="text" class="form-control blur-input" id="step2-svLicense" maxlength="32" 
+                                            autocomplete="off" placeholder="YourKeyYourKeyYourKeyYourKeyYour" required>
                                         <span class="form-text text-muted">
                                             The license key for your server obtained in <a href="https://keymaster.fivem.net/" target="_blank" rel="noopener noreferrer">Keymaster</a>.
                                         </span>
@@ -142,7 +142,7 @@
                                         </label>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control blur-input" id="step2-dbPassword"
-                                                placeholder="empty" value="">
+                                                autocomplete="off" placeholder="empty" value="">
                                             <span class="form-text text-muted">
                                                 The database password (usually empty).
                                             </span>
@@ -348,7 +348,9 @@
 
         //============================================== Step1 action
         function step1Action(){
-            const recipe = window.CMInstance.getValue();
+            const editor = window.CMInstance;
+            editor.setValue(editor.getValue().replace(/\t/g, ' '.repeat(4)));
+            const recipe = editor.getValue();
             if(recipe.length < 128){
                 return $.notify({ message: `Your Recipe file is too small, there is a good chance you deleted something you shouldn't.` }, { type: 'warning' });
             }

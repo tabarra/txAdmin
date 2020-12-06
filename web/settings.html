@@ -360,7 +360,7 @@
                                 <input type="text" class="form-control blur-input" id="frmDiscord-token" 
                                     value="{{@if(!it.readOnly)}}{{it.discord.token|undef}}{{#else}}[redacted]{{/if}}"
                                     placeholder="CXPcWbxKOHpwlUBaYKznIfkz.ExpTAB.NX-3YxfmVIGUJLGbPamViXGAEiY"
-                                    maxlength="96" {{it.readOnly|isDisabled}}>
+                                    maxlength="96" autocomplete="off" {{it.readOnly|isDisabled}}>
                                 <span class="form-text text-muted">
                                     To get a token and the bot to join your server, follow these two guides:
                                     <a href="https://discordjs.guide/preparations/setting-up-a-bot-application.html"
