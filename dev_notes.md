@@ -5,6 +5,7 @@
 - [x] deployer: add `load_vars`/`dump_vars` actions
 - [x] deployer: add context variables to the `replace_string` action
 - [x] deployer: add variable input stage
+- [ ] deployer: on download_github, first query to see which is the default branch
 - [ ] improve setup page common template incompatibility behavior and set $engine to 2
 - [ ] xxxxxxx
 

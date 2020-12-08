@@ -480,10 +480,10 @@
 
     //============================================== Danger Zone
     function dangerZoneActions(action){
-        var notify = $.notify({ message: '<p class="text-center">Executing...</p>' }, {});
         if(!window.confirm(`Are you sure you want to Reset FXServer Settings?`)){
             return;
         }
+        var notify = $.notify({ message: '<p class="text-center">Executing...</p>' }, {});
 
         $.ajax({
             type: "POST",

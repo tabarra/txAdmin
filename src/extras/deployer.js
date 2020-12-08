@@ -183,13 +183,24 @@ class Deployer {
      * Confirms the recipe and goes to the input stage
      * @param {string} userRecipe 
      */
-    confirmRecipe(userRecipe){
+    async confirmRecipe(userRecipe){
         if(this.step !== 'review') throw new Error(`expected review step`);
+
+        //Parse/set recipe
         try {
             this.recipe = parseValidateRecipe(userRecipe);
         } catch (error) {
             throw new Error(`Cannot start() deployer due to a Recipe Error: ${error.message}`);
         }
+
+        //Ensure deployment path
+        try {
+            await fs.ensureDir(this.deployPath);
+        } catch (error) {
+            if(GlobalData.verbose) dir(error);
+            throw new Error(`Failed to create ${this.deployPath} with error: ${error.message}`);
+        }
+
         this.step = 'input';
     }
 
