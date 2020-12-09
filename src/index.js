@@ -23,11 +23,12 @@ const logDie = (x) => {
 }
 const getBuild = (ver)=>{
     try {
-        let regex = /v1\.0\.0\.(\d{4,5})\s*/;
-        let res = regex.exec(ver);
+        const res = /v1\.0\.0\.(\d{4,5})\s*/.exec(ver);
         return parseInt(res[1]);
     } catch (error) {
-        return 0;
+        logError(`It looks like you are running a custom build of fxserver.`);
+        logError(`And because of that, there is no guarantee that txAdmin will work properly.`);
+        return 9999;
     }
 }
 
