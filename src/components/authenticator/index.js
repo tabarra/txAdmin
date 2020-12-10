@@ -71,12 +71,13 @@ module.exports = class Authenticator {
     //================================================================
     /**
      * Creates a admins.json file based on the first account
-     * @param {*} username
-     * @param {*} provider_data
-     * @param {*} password backup password
+     * @param {string} username
+     * @param {string} identifier
+     * @param {object} provider_data
+     * @param {string} password backup password
      * @returns {(boolean)} true or throws an error
      */
-    async createAdminsFile(username, provider_data, password){
+    async createAdminsFile(username, identifier, provider_data, password){
         //Check if admins file already exist
         if(this.admins != false) throw new Error("Admins file already exists.");
 
@@ -88,6 +89,7 @@ module.exports = class Authenticator {
             providers: {
                 citizenfx: {
                     id: username,
+                    identifier,
                     data: provider_data
                 }
             },
