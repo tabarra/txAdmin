@@ -2,7 +2,7 @@
 const modulename = 'Authenticator';
 const chalk = require('chalk');
 const fs = require('fs-extra');
-const clone = require('clone');
+const cloneDeep = require('lodash/cloneDeep');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const CitizenFXProvider = require('./providers/CitizenFX');
 
@@ -138,7 +138,7 @@ module.exports = class Authenticator {
                 return (id === user.providers[provider].id.toLowerCase())
             })
         });
-        return (admin)? admin : false;
+        return (admin)? cloneDeep(admin) : false;
     }
 
 
@@ -153,7 +153,7 @@ module.exports = class Authenticator {
         let admin = this.admins.find((user) => {
             return (username === user.name.toLowerCase())
         });
-        return (admin)? admin : false;
+        return (admin)? cloneDeep(admin) : false;
     }
 
 
@@ -162,7 +162,7 @@ module.exports = class Authenticator {
      * Returns a list with all registered permissions
      */
     getPermissionsList(){
-        return clone(this.registeredPermissions);
+        return cloneDeep(this.registeredPermissions);
     }
 
 
