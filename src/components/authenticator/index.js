@@ -171,20 +171,19 @@ module.exports = class Authenticator {
      * Add a new admin to the admins file
      * NOTE: I'm fully aware this coud be optimized. Leaving this way to improve readability and error verbosity
      * @param {string} name
-     * @param {string} citizenfxID
-     * @param {string} discordID
+     * @param {object} citizenfxData or false
+     * @param {object} discordData or false
      * @param {string} password
      * @param {array} permissions
      */
-    async addAdmin(name, citizenfxID, discordID, password, permissions){
+    async addAdmin(name, citizenfxData, discordData, password, permissions){
         if(this.admins == false) throw new Error("Admins not set");
 
         //Check if username is already taken
-        let existingUsername = this.getAdminByName(name);
-        if(existingUsername) throw new Error("Username already taken");
+        if(this.getAdminByName(name)) throw new Error("Username already taken");
 
         //Preparing admin
-        let admin = {
+        const admin = {
             name: name,
             master: false,
             password_hash: GetPasswordHash(password),
@@ -194,25 +193,27 @@ module.exports = class Authenticator {
         }
 
         //Check if provider uid already taken and inserting into admin object
-        if(citizenfxID.length){
-            let existingCitizenFX = this.getAdminByProviderUID(citizenfxID)
+        if(citizenfxData){
+            const existingCitizenFX = this.getAdminByProviderUID(citizenfxData.id);
             if(existingCitizenFX) throw new Error("CitizenFX ID already taken");
             admin.providers.citizenfx = {
-                id: citizenfxID,
+                id: citizenfxData.id,
+                identifier: citizenfxData.identifier,
                 data: {}
             }
         }
-        if(discordID.length){
-            let existingDiscord = this.getAdminByProviderUID(discordID)
+        if(discordData){
+            const existingDiscord = this.getAdminByProviderUID(discordData.id);
             if(existingDiscord) throw new Error("Discord ID already taken");
             admin.providers.discord = {
-                id: discordID,
+                id: discordData.id,
+                identifier: discordData.identifier,
                 data: {}
             }
         }
 
         //Saving admin file
-        this.admins.push(admin)
+        this.admins.push(admin);
         try {
             await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
@@ -228,11 +229,11 @@ module.exports = class Authenticator {
      * Edit admin and save to the admins file
      * @param {string} name
      * @param {string} password
-     * @param {string} citizenfxID
-     * @param {string} discordID
+     * @param {object} citizenfxData or false
+     * @param {object} discordData or false
      * @param {array} permissions
      */
-    async editAdmin(name, password, citizenfxID, discordID, permissions){
+    async editAdmin(name, password, citizenfxData, discordData, permissions){
         if(this.admins == false) throw new Error("Admins not set");
 
         //Find admin index
@@ -247,22 +248,24 @@ module.exports = class Authenticator {
             this.admins[adminIndex].password_hash = GetPasswordHash(password);
             delete this.admins[adminIndex].password_temporary;
         }
-        if(typeof citizenfxID !== 'undefined'){
-            if(citizenfxID == ''){
+        if(typeof citizenfxData !== 'undefined'){
+            if(!citizenfxData){
                 delete this.admins[adminIndex].providers.citizenfx;
             }else{
                 this.admins[adminIndex].providers.citizenfx = {
-                    id: citizenfxID,
+                    id: citizenfxData.id,
+                    identifier: citizenfxData.identifier,
                     data: {}
                 }
             }
         }
-        if(typeof discordID !== 'undefined'){
-            if(discordID == ''){
+        if(typeof discordData !== 'undefined'){
+            if(!discordData){
                 delete this.admins[adminIndex].providers.discord;
             }else{
                 this.admins[adminIndex].providers.discord = {
-                    id: discordID,
+                    id: discordData.id,
+                    identifier: discordData.identifier,
                     data: {}
                 }
             }

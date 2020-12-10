@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'WebServer:AdminManagerActions';
+const axios = require("axios");
 const { customAlphabet } = require('nanoid');
 const dict51 = require('nanoid-dictionary/nolookalikes');
 const nanoid = customAlphabet(dict51, 20);
@@ -74,20 +75,41 @@ async function handleAdd(ctx) {
     permissions = permissions.filter((x)=>{ return typeof x === 'string'});
     if(permissions.includes('all_permissions')) permissions = ['all_permissions'];
 
-    //Validate fields
+    //Validate & process fields
     if(!nameRegex.test(name)){
         return ctx.send({type: 'danger', message: "Invalid username"});
     }
-    if(citizenfxID.length && !citizenfxIDRegex.test(citizenfxID)){
-        return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
+    let citizenfxData = false;
+    if(citizenfxID.length){
+        if(!citizenfxIDRegex.test(citizenfxID)) return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
+        try {
+            const res = await axios({
+                url: `https://forum.cfx.re/u/${citizenfxID}.json`,
+                method: 'get',
+                responseType: 'json',
+                responseEncoding: 'utf8',
+                timeout: 4000
+            });
+            citizenfxData = {
+                id: citizenfxID,
+                identifier: `fivem:${res.data.user.id}`
+            };
+        } catch (error) {
+            logError(`Failed to resolve CitizenFX ID to game identifier with error: ${error.message}`);
+        }
     }
-    if(discordID.length && !discordIDRegex.test(discordID)){
-        return ctx.send({type: 'danger', message: "Invalid Discord ID"});
+    let discordData = false;
+    if(discordID.length){
+        if(!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: "Invalid Discord ID"});
+        discordData = {
+            id: discordID,
+            identifier: `discord:${discordID}`
+        };
     }
 
     //Add admin and give output
     try {
-        await globals.authenticator.addAdmin(name, citizenfxID, discordID, password, permissions);
+        await globals.authenticator.addAdmin(name, citizenfxData, discordData, password, permissions);
         ctx.utils.logAction(`Adding admin '${name}'.`);
         return ctx.send({type: 'modalrefresh', password});
     } catch (error) {
@@ -129,12 +151,33 @@ async function handleEdit(ctx) {
         permissions = undefined;
     }
 
-    //Validate fields
-    if(citizenfxID.length && !citizenfxIDRegex.test(citizenfxID)){
-        return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
+    //Validate & process fields
+    let citizenfxData = false;
+    if(citizenfxID.length){
+        if(!citizenfxIDRegex.test(citizenfxID)) return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
+        try {
+            const res = await axios({
+                url: `https://forum.cfx.re/u/${citizenfxID}.json`,
+                method: 'get',
+                responseType: 'json',
+                responseEncoding: 'utf8',
+                timeout: 4000
+            });
+            citizenfxData = {
+                id: citizenfxID,
+                identifier: `fivem:${res.data.user.id}`
+            };
+        } catch (error) {
+            logError(`Failed to resolve CitizenFX ID to game identifier with error: ${error.message}`);
+        }
     }
-    if(discordID.length && !discordIDRegex.test(discordID)){
-        return ctx.send({type: 'danger', message: "Invalid Discord ID"});
+    let discordData = false;
+    if(discordID.length){
+        if(!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: "Invalid Discord ID"});
+        discordData = {
+            id: discordID,
+            identifier: `discord:${discordID}`
+        };
     }
 
     //Check if admin exists
@@ -148,7 +191,7 @@ async function handleEdit(ctx) {
 
     //Add admin and give output
     try {
-        await globals.authenticator.editAdmin(name, null, citizenfxID, discordID, permissions);
+        await globals.authenticator.editAdmin(name, null, citizenfxData, discordData, permissions);
         ctx.utils.logAction(`Editing user '${name}'.`);
         return ctx.send({type: 'success', message: `refresh`});
     } catch (error) {
