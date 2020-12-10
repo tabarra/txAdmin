@@ -67,7 +67,7 @@ async function handleConfirmRecipe(ctx) {
 
     try {
         ctx.utils.logAction(`Setting recipe.`);
-        globals.deployer.confirmRecipe(userEditedRecipe)
+        await globals.deployer.confirmRecipe(userEditedRecipe);
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
     }

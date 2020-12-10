@@ -91,7 +91,7 @@ async function handlePin(ctx) {
 async function handleCallback(ctx) {
     //Sanity check
     if(ctx.method != 'GET'){
-        return ctx.utils.error(400, 'Invalid Request - missing parameters');
+        return ctx.utils.error(400, 'Invalid Request');
     }
 
     //Exchange code for access token

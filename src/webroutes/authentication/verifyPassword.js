@@ -38,6 +38,7 @@ module.exports = async function AuthVerify(ctx) {
         //Setting up session
         ctx.session.auth = {
             username: admin.name,
+            picture: Object.values(admin.providers).find(provider => provider.data && provider.data.picture).data.picture,
             password_hash: admin.password_hash,
             expires_at: false
         };

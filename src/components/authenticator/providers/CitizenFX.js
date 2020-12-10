@@ -95,7 +95,7 @@ module.exports = class CitizenFXProvider {
 
     //================================================================
     /**
-     * Processes the callback and returns the tokenSet
+     * Gets user info via access token
      * @param {string} accessToken
      * @returns {(string)} userInfo or throws an error
      */
