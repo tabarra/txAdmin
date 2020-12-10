@@ -1,8 +1,9 @@
 //Requires
 const modulename = 'WebServer:DeployerActions';
 const fs = require('fs-extra');
-const slash = require('slash');
 const path = require('path');
+const cloneDeep = require('lodash/cloneDeep');
+const slash = require('slash');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
 
@@ -86,8 +87,9 @@ async function handleSetVariables(ctx) {
     if(isUndefined(ctx.request.body.svLicense)){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
-    const userVars = ctx.request.body;
+    const userVars = cloneDeep(ctx.request.body);
 
+    //Setting iden
     if(typeof userVars.dbDelete !== 'undefined'){
         userVars.dbDelete = (userVars.dbDelete === 'true');
         userVars.dbConnectionString = (userVars.dbPassword.length)
@@ -95,9 +97,21 @@ async function handleSetVariables(ctx) {
             : `mysql://${userVars.dbUsername}@${userVars.dbHost}/${userVars.dbName}?charset=utf8mb4`;
     }
 
+    //Setting identifiers array
+    const admin = globals.authenticator.getAdminByName(ctx.session.auth.username);
+    if(!admin) return ctx.send({type: 'danger', message: "Admin not found."});
+    const addPrincipalLines = [];
+    Object.keys(admin.providers).forEach(providerName => {
+        if(admin.providers[providerName].identifier){
+            addPrincipalLines.push(`add_principal identifier.${admin.providers[providerName].identifier} group.admin`);
+        }
+    });
+    userVars.addPrincipalsMaster = addPrincipalLines.join('\n');
+
+    //Start deployer
     try {
         ctx.utils.logAction(`Running recipe.`);
-        globals.deployer.start(ctx.request.body)
+        globals.deployer.start(userVars)
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
     }
