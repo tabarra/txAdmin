@@ -287,6 +287,39 @@ module.exports = class Authenticator {
 
     //================================================================
     /**
+     * Refreshes admin's social login data
+     * @param {string} name
+     * @param {string} provider
+     * @param {string} identifier
+     * @param {object} providerData
+     */
+    async refreshAdminSocialData(name, provider, identifier, providerData){
+        if(this.admins == false) throw new Error("Admins not set");
+
+        //Find admin index
+        const username = name.toLowerCase();
+        const adminIndex = this.admins.findIndex((user) => {
+            return (username === user.name.toLowerCase())
+        });
+        if(adminIndex == -1) throw new Error("Admin not found");
+
+        //Refresh admin data
+        if(!this.admins[adminIndex].providers[provider]) throw new Error("Provider not available for this admin");
+        this.admins[adminIndex].providers[provider].identifier = identifier;
+        this.admins[adminIndex].providers[provider].data = providerData;
+
+        //Saving admin file
+        try {
+            await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
+        } catch (error) {
+            if(GlobalData.verbose) logError(error.message);
+            throw new Error(`Failed to save '${this.adminsFile}'`);
+        }
+    }
+
+
+    //================================================================
+    /**
      * Delete admin and save to the admins file
      * @param {string} name
      */

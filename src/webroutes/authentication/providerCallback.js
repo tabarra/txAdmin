@@ -79,7 +79,18 @@ module.exports = async function ProviderCallback(ctx) {
         return returnJustMessage(ctx, `Get UserInfo error:`, error.message);
     }
 
-    //FIXME: check the sub claim?
+    //Getting identifier
+    let identifier;
+    try {
+        const res = /\/user\/(\d{4,8})/.exec(userInfo.nameid);
+        identifier = `fivem:${res[1]}`;
+    } catch (error) {
+        return returnJustMessage(
+            ctx,
+            `Invalid nameid identifier.`,
+            `Could not extract the user identifier from the URL below. Please report this to the txAdmin dev team.\n${userInfo.nameid.toString()}`
+        );
+    }
 
     //Check & Login user
     try {
@@ -98,7 +109,8 @@ module.exports = async function ProviderCallback(ctx) {
         ctx.session.auth = await globals.authenticator.providers.citizenfx.getUserSession(tokenSet, userInfo);
         ctx.session.auth.username = admin.name;
 
-        //TODO: refresh the provider data on the admins file
+        //Save the updated provider identifier & data to the admins file
+        await globals.authenticator.refreshAdminSocialData(admin.name, 'citizenfx', identifier, userInfo);
 
         log(`Admin ${admin.name} logged in from ${ctx.ip}`);
         globals.databus.txStatsData.loginOrigins[ctx.txVars.hostType]++;
