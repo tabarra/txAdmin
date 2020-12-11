@@ -4,7 +4,7 @@
         "humanizer_language": "de"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
+        "start_timeout": "Der Server konnte nicht rechtzeitig hochfahren.",
         "crash_detected": "Absturz registriert",
         "partial_crash_warn": "Aufgrund von Verbindungsproblemen startet der Server in einer Minute neu. Bitte trenne die Verbindung jetzt.",
         "partial_crash_warn_discord": "Aufgrund von Verbindungsproblemen, startet **%{servername}** in einer Minute neu.",
@@ -26,6 +26,6 @@
     "nui_warning": {
         "title": "VERWARNUNG",
         "warned_by": "Verwarnt von:",
-        "instruction": "Halte die [LEERTASTE] für 10 Sekunden gedrückt, um diese Nachricht zu schließen."
+        "instruction": "Halte deine [LEERTASTE] für 10 Sekunden gedrückt, um diese Mitteilung zu schließen."
     }
 }
