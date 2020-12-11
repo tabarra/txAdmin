@@ -46,6 +46,8 @@ function dependencyChecker() {
             console.log(`[txAdmin:PreCheck] Cannot start txAdmin due to missing dependencies.`);
             console.log(`[txAdmin:PreCheck] Make sure you executed 'npm i'.`);
             console.log(`[txAdmin:PreCheck] The following packages are missing: ` + missing.join(', '));
+            console.log();
+            console.log(`[txAdmin:PreCheck] GO THE THE GITHUB RELEASES PAGE AND DOWNLOAD THE COMPILED ZIP FILE INSTEAD OF THE SOURCE`);
             process.exit();
         }
     } catch (error) {

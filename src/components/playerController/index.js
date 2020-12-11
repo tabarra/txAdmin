@@ -60,10 +60,7 @@ module.exports = class PlayerController {
         if(this.config.minSessionTime < 1 || this.config.minSessionTime > 60) throw new Error('The playerController.minSessionTime setting must be between 1 and 60 minutes.');
 
         //Running playerlist generator
-        if(
-            process.env.APP_ENV !== 'webpack' && 
-            GetConvar('txAdminFakePlayerlist', 'false').trim() === 'yesplz'
-        ) {
+        if(GetConvar('txAdminFakePlayerlist', 'false').trim() === 'yesplz') {
             const PlayerlistGenerator = require('./playerlistGenerator.js');
             this.playerlistGenerator = new PlayerlistGenerator();
         }
@@ -218,7 +215,7 @@ module.exports = class PlayerController {
                 if(p.isTmp && sessionTime >= this.config.minSessionTime){
                     if(p.license == '3333333333333333333333deadbeef0000nosave') return; //DEBUG
 
-                    this.writePending = true;
+                    this.writePending = true; //low
                     p.isTmp = false;
                     p.playTime = Math.round(sessionTime/60);
                     p.notes = {
@@ -241,7 +238,7 @@ module.exports = class PlayerController {
                     
                 //If its time to update this player's play time
                 }else if(!p.isTmp && checkMinuteElapsed(sessionTime)){
-                    this.writePending = true;
+                    this.writePending = true; //low
                     p.playTime += 1; 
                     await this.dbo.get("players")
                         .find({license: p.license})
@@ -395,7 +392,7 @@ module.exports = class PlayerController {
                         }
                         await this.dbo.get('pendingWL').push(toDB).value();
                     }
-                    this.writePending = true;
+                    this.writePending = true; //medium
 
                     //Clean rejection message
                     const xssRejectMessage = require('../../extras/xss')({
@@ -485,7 +482,7 @@ module.exports = class PlayerController {
             await this.dbo.get('actions')
                 .push(toDB)
                 .value();
-            this.writePending = true;
+            this.writePending = true; //high
         } catch (error) {
             let msg = `Failed to register event to database with message: ${error.message}`;
             logError(msg);
@@ -523,7 +520,7 @@ module.exports = class PlayerController {
                     timestamp: now(),
                     author
                 }
-                this.writePending = true;
+                this.writePending = true; //high
                 return null;
             }else{
                 return 'action not found';
@@ -576,7 +573,7 @@ module.exports = class PlayerController {
         //Register whitelist
         const actionID = await this.registerAction(saveReference, 'whitelist', author, null, false, playerName);
         if(!actionID) throw new Error('Failed to whitelist player');
-        this.writePending = true;
+        this.writePending = true; //high
 
         //Remove from the pending list
         if(playerName){
@@ -783,7 +780,7 @@ module.exports = class PlayerController {
 
             //Committing disconnected players data
             //NOTE: I'm only assigning the notes because that's currently the only thing that can change between saves.
-            if(disconnectedPlayers.length) this.writePending = true;
+            if(disconnectedPlayers.length) this.writePending = true; //low
             disconnectedPlayers.forEach(async (p) => {
                 try {
                     await this.dbo.get("players")

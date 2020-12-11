@@ -34,11 +34,12 @@ const getBuild = (ver)=>{
 
 //==============================================================
 //Make sure this user knows what he is doing...
-let txAdmin1337 = GetConvar('txAdmin1337', 'false').trim();
-if(process.env.APP_ENV !== 'webpack' && txAdmin1337 !== 'IKnowWhatImDoing'){
+const txAdmin1337Convar = GetConvar('txAdmin1337', 'false').trim();
+if(process.env.APP_ENV !== 'webpack' && txAdmin1337Convar !== 'IKnowWhatImDoing'){
     logError(`Looks like you don't know what you are doing.`);
     logDie(`Please use the compiled release from GitHub or the version that comes with the latest FXServer.`)
 }
+const isAdvancedUser = (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar !== 'IKnowWhatImDoing');
 
 //Get OSType
 const osTypeVar = os.type();
@@ -81,7 +82,7 @@ if(now() > txAdminVersionBestBy){
 
 //Get txAdmin Resource Path
 let txAdminResourcePath;
-let txAdminResourcePathConvar = GetResourcePath(resourceName);
+const txAdminResourcePathConvar = GetResourcePath(resourceName);
 if(typeof txAdminResourcePathConvar !== 'string' || txAdminResourcePathConvar == 'null'){
     logDie(`Could not resolve txAdmin resource path`);
 }else{
@@ -89,7 +90,7 @@ if(typeof txAdminResourcePathConvar !== 'string' || txAdminResourcePathConvar ==
 }
 
 //Get citizen Root
-let citizenRootConvar = GetConvar('citizen_root', 'false');
+const citizenRootConvar = GetConvar('citizen_root', 'false');
 if(citizenRootConvar == 'false'){
     logDie(`citizen_root convar not set`);
 }
@@ -97,9 +98,9 @@ const fxServerPath = cleanPath(citizenRootConvar);
 
 //Setting data path
 let dataPath;
-let txDataPathConvar = GetConvar('txDataPath', 'false');
+const txDataPathConvar = GetConvar('txDataPath', 'false');
 if(txDataPathConvar == 'false'){
-    let dataPathSuffix = (osType == 'windows')? '..' : '../../../';
+    const dataPathSuffix = (osType == 'windows')? '..' : '../../../';
     dataPath = cleanPath(path.join(fxServerPath, dataPathSuffix, 'txData'));
     log(`Version ${txAdminVersion} using data path '${dataPath}'`);
 }else{
@@ -112,9 +113,8 @@ try {
 }
 
 //Get Web Port
-let txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
-let digitRegex = /^\d+$/;
-if(!digitRegex.test(txAdminPortConvar)){
+const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
+if(!/^\d+$/.test(txAdminPortConvar)){
     logDie(`txAdminPort is not valid.`);
 }
 const txAdminPort = parseInt(txAdminPortConvar);
@@ -129,13 +129,14 @@ if(!serverProfile.length){
 }
 
 //Get verbosity
-let txAdminVerboseConvar = GetConvar('txAdminVerbose', 'false').trim();
+const txAdminVerboseConvar = GetConvar('txAdminVerbose', 'false').trim();
 const verbose = (['true', '1', 'on'].includes(txAdminVerboseConvar));
 
 //Setting Global Data
 const noLookAlikesAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 GlobalData = {
     //Env
+    isAdvancedUser,
     osType,
     resourceName,
     fxServerVersion,
