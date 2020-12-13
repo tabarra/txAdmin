@@ -93,33 +93,33 @@ async function handleImportBansFile(ctx, dbType) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     const banfilePath = ctx.request.body.banfile;
-    dir(ctx.request.files)
 
-    let rawFile;
+    let inBans;
     try {
-        rawFile = await fs.readFile(banfilePath)
+        const rawFile = await fs.readFile(banfilePath);
+        inBans = JSON.parse(rawFile);
     } catch (error) {
         return ctx.utils.render('basic/generic', {message: `Failed to import bans with error: ${error.message}`});
     }
-    
-    if(dbType == 'easyadmin'){
-        try {
-            const eaBans = JSON.parse(rawFile);
-            let invalid = 0;
-            let imported = 0;
 
-            for (let index = 0; index < eaBans.length; index++) {
-                const ban = eaBans[index];
-                const identifiers = ban.identifiers.filter((id)=>{
-                    return (typeof id == 'string') && Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
-                });
-                if(!identifiers.length){
-                    invalid++;
-                    continue;
-                }
-                const author = (typeof ban.banner == 'string' && ban.banner.length)? ban.banner.trim() : 'unknown';
-                const reason = (typeof ban.reason == 'string' && ban.reason.length)? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
-                let expiration;
+    let invalid = 0;
+    let imported = 0;
+    
+    try {
+        for (let index = 0; index < inBans.length; index++) {
+            const ban = inBans[index];
+            const identifiers = ban.identifiers.filter((id)=>{
+                return (typeof id == 'string') && Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
+            });
+            if(!identifiers.length){
+                invalid++;
+                continue;
+            }
+
+            let author, reason, expiration;
+            if(dbType == 'easyadmin'){
+                author = (typeof ban.banner == 'string' && ban.banner.length)? ban.banner.trim() : 'unknown';
+                reason = (typeof ban.reason == 'string' && ban.reason.length)? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
                 if(ban.expire == 10444633200){
                     expiration = false;
                 }else if(Number.isInteger(ban.expire)){
@@ -129,27 +129,34 @@ async function handleImportBansFile(ctx, dbType) {
                     continue;
                 }
 
-                let actionID = await globals.playerController.registerAction(identifiers, 'ban', author, reason, expiration);
-                imported++;
+            }else if(dbType == 'vmenu'){
+                author = (typeof ban.bannedBy == 'string' && ban.bannedBy.length)? ban.bannedBy.trim() : 'unknown';
+                reason = (typeof ban.banReason == 'string' && ban.banReason.length)? `[IMPORTED] ${ban.banReason.trim()}` : '[IMPORTED] unknown';
+                if(ban.bannedUntil == '3000-01-01T00:00:00'){
+                    expiration = false;
+                }else{
+                    const expirationDate = new Date(ban.bannedUntil);
+                    if(expirationDate.toString() == 'Invalid Date'){
+                        invalid++;
+                        continue;
+                    }else{
+                        expiration = Math.round(expirationDate.getTime()/1000);
+                    }
+                }
             }
 
-            let outMessage = `Process finished! <br>
-                Imported bans: ${imported} <br>
-                Invalid bans: ${invalid}  <br>`;
-            return ctx.utils.render('basic/generic', {message: outMessage});
+            await globals.playerController.registerAction(identifiers, 'ban', author, reason, expiration);
+            imported++;
+        }// end for()
+    } catch (error) {
+        dir(error)
+        return ctx.utils.render('basic/generic', {message: `Failed to import bans with error: ${error.message}`});
+    }
 
-        } catch (error) {
-            dir(error)
-            return ctx.utils.render('basic/generic', {message: `Failed to import bans with error: ${error.message}`});
-        }
-
-
-        
-
-    }else if(dbType == 'vmenu'){
-        return ctx.send({type: 'danger', message: `fileeee`});
-
-    } 
+    const outMessage = `<b>Process finished!</b> <br>
+        Imported bans: ${imported} <br>
+        Invalid bans: ${invalid}  <br>`;
+    return ctx.utils.render('basic/generic', {message: outMessage});
 }
 
 //================================================================

@@ -37,19 +37,6 @@
                             </span>
                         </div>
                     </div>
-                    <!-- <div class="form-group row">
-                        <label for="frm-banfile" class="col-sm-3 col-form-label">
-                            Bans File
-                            <span class="text-danger">*</span>
-                        </label>
-                        <div class="col-sm-9">
-                            <input id="frm-banfile " type="file" name="banfile" accept="application/json, .db">
-                            <span class="form-text text-muted">
-                                <strong>EasyAdmin: </strong>The <code>banlist.json</code> file inside the EasyAdmin resource folder. <br>
-                                <strong>vMenu: </strong>The <code>vmenu_bans.db</code> file outside the resources folder.
-                            </span>
-                        </div>
-                    </div> -->
                     <div class="form-group row">
                         <label for="frm-banfile" class="col-sm-3 col-form-label">
                             Bans File
@@ -60,8 +47,8 @@
                                 placeholder="{{it.dbFilePathSuggestion}}" value="{{it.dbFilePathSuggestion}}" required>
                             <span class="form-text text-muted">
                                 The path to the bans file you want to import. <br>
-                                <strong>EasyAdmin: </strong>The <code>banlist.json</code> file inside the EasyAdmin resource folder. <br>
-                                <strong>vMenu: </strong>The <code>vmenu_bans.db</code> file outside the resources folder. <br>
+                                <strong>EasyAdmin:</strong> The <code>banlist.json</code> file inside the EasyAdmin resource folder. <br>
+                                <strong>vMenu:</strong> If your database is <code>vmenu_bans.db</code> then first use <a href="https://vespura.com/vmenu/migrate/" target="_blank" rel="noopener noreferrer">Vespura's Tool</a> to convert it to JSON. <br>
                                 <small>This page doesn't contain a file upload option due to the lack of maintenance of some dependency libraries.</small>
                             </span>
                         </div>
