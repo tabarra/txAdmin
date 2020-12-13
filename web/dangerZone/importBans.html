@@ -1,0 +1,172 @@
+{{@include("header", it)/}}
+
+
+<div class="row justify-content-md-center">
+    <div class="col-lg-10 col-xl-8 text-center">
+        <h2>Import Bans</h2>
+        <div class="alert alert-secondary" role="alert">
+            <strong>Warning:</strong> those databases are not compatible with txAdmin, meaning that some information might be missing on the ban log. <br>
+            We strongly suggest you save a backup of the database first.
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-md-center">
+    <div class="col-lg-8 col-xl-6 mw-col6">
+
+        <!-- Ban via File -->
+        <div class="card card-accent-danger" style="min-height: 160px;">
+            <div class="card-header text-center">
+                <h5 class="d-inline">EasyAdmin / vMenu</h5>
+            </div>
+            <div class="card-body">
+                <form action="/dangerZone/importBans" method="post">
+                    <div class="form-group row">
+                        <label for="frm-filetype" class="col-sm-3 col-form-label">
+                            Source
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-sm-9">
+                            <select id="frm-filetype" name="dbType" class="form-control" required>
+                                <option value="" disabled selected>&gt; SELECT</option>
+                                <option value="easyadmin">EasyAdmin</option>
+                                <option value="vmenu">vMenu</option>
+                            </select>
+                            <span class="form-text text-muted">
+                                The database source type.
+                            </span>
+                        </div>
+                    </div>
+                    <!-- <div class="form-group row">
+                        <label for="frm-banfile" class="col-sm-3 col-form-label">
+                            Bans File
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-sm-9">
+                            <input id="frm-banfile " type="file" name="banfile" accept="application/json, .db">
+                            <span class="form-text text-muted">
+                                <strong>EasyAdmin: </strong>The <code>banlist.json</code> file inside the EasyAdmin resource folder. <br>
+                                <strong>vMenu: </strong>The <code>vmenu_bans.db</code> file outside the resources folder.
+                            </span>
+                        </div>
+                    </div> -->
+                    <div class="form-group row">
+                        <label for="frm-banfile" class="col-sm-3 col-form-label">
+                            Bans File
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="frm-banfile" name="banfile"
+                                placeholder="{{it.dbFilePathSuggestion}}" value="{{it.dbFilePathSuggestion}}" required>
+                            <span class="form-text text-muted">
+                                The path to the bans file you want to import. <br>
+                                <strong>EasyAdmin: </strong>The <code>banlist.json</code> file inside the EasyAdmin resource folder. <br>
+                                <strong>vMenu: </strong>The <code>vmenu_bans.db</code> file outside the resources folder. <br>
+                                <small>This page doesn't contain a file upload option due to the lack of maintenance of some dependency libraries.</small>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">
+                            <i class="icon-check"></i> Import Bans
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <!-- Ban via DBMS -->
+        <div class="card card-accent-danger" style="min-height: 160px;">
+            <div class="card-header text-center">
+                <h5 class="d-inline">BanSQL / vRP</h5>
+            </div>
+            <div class="card-body">
+                <form action="/dangerZone/importBans" method="post">
+                    <div class="form-group row">
+                        <label for="frm-dbtype" class="col-sm-3 col-form-label">
+                            Source
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-sm-9">
+                            <select id="frm-dbtype" name="dbType" class="form-control" required>
+                                <option value="" disabled selected>&gt; SELECT</option>
+                                <option value="bansql">BanSQL</option>
+                                <option value="vrp">vrp</option>
+                            </select>
+                            <span class="form-text text-muted">
+                                The database source type.
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="frm-dbHost" class="col-sm-3 col-form-label">
+                            DB Host
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="frm-dbHost"
+                                placeholder="localhost" value="localhost" required>
+                            <span class="form-text text-muted">
+                                The IP/Hostname of the database server (usually <code>localhost</code>).
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="frm-dbUsername" class="col-sm-3 col-form-label">
+                            DB Username
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="frm-dbUsername"
+                                placeholder="root" value="root" required>
+                            <span class="form-text text-muted">
+                                The database username (usually <code>root</code>).
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="frm-dbPassword" class="col-sm-3 col-form-label">
+                            DB Password
+                        </label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control blur-input" id="frm-dbPassword"
+                                autocomplete="off" placeholder="empty" value="">
+                            <span class="form-text text-muted">
+                                The database password (usually empty).
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="frm-dbName" class="col-sm-3 col-form-label">
+                            DB Name
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="frm-dbName"
+                                placeholder="" value="" required>
+                            <span class="form-text text-muted">
+                                The name of the database where the bans are stored is present.
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="text-center mt-4">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">
+                            <i class="icon-check"></i> Import Bans
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+
+{{@include("footer", it)/}}
+
+

@@ -433,7 +433,7 @@ module.exports = class PlayerController {
         if(!validActions.includes(type)) throw new Error('Invalid action type.');
         if(typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
         if(reason !== null && (typeof reason !== 'string' || !reason.length)) throw new Error('Invalid reason.');
-        if(expiration !== false && (typeof expiration !== 'number' || expiration < timestamp)) throw new Error('Invalid expiration.');
+        if(expiration !== false && (typeof expiration !== 'number')) throw new Error('Invalid expiration.');
         if(playerName !== false && (typeof playerName !== 'string' || !playerName.length)) throw new Error('Invalid playerName.');
 
         //Processes target reference
