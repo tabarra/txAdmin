@@ -44,5 +44,5 @@ module.exports = async function AdminManagerGet(ctx) {
     }
 
     //Give output
-    return ctx.utils.render('adminManager', renderData);
+    return ctx.utils.render('adminManager/index', renderData);
 };

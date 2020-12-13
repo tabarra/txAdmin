@@ -247,7 +247,7 @@ module.exports = async function WebCtxUtils(ctx, next){
         }
 
         //TODO: fix this atrocity
-        let soloViews = ['adminManager-editModal', 'basic/404'];
+        const soloViews = ['adminManager/editModal', 'basic/404'];
         if(view == 'login'){
             ctx.body = await renderLoginView(viewData, ctx.txVars);
         }else if(soloViews.includes(view)){

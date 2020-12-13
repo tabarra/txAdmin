@@ -279,7 +279,7 @@ async function handleGetModal(ctx) {
     }
 
     //Set render data
-    let renderData = {
+    const renderData = {
         headerTitle: 'Admin Manager',
         username: admin.name,
         citizenfx_id: (admin.providers.citizenfx)? admin.providers.citizenfx.id : '',
@@ -289,5 +289,5 @@ async function handleGetModal(ctx) {
     }
 
     //Give output
-    return ctx.utils.render('adminManager-editModal', renderData);
+    return ctx.utils.render('adminManager/editModal', renderData);
 }
