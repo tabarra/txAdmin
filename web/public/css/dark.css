@@ -309,7 +309,6 @@ body.theme--dark .card .card-header, body.theme--dark .card .card-header p, body
 }
 
 body.theme--dark .card .card-header > h5, body.theme--dark .card .card-header .card-title {
-  text-transform: uppercase;
   font-size: 1.05rem;
   border-radius: 0;
   border: 0 solid transparent;

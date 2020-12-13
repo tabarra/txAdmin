@@ -210,3 +210,7 @@ process.on('uncaughtException', function(err) {
 process.on('exit', (code) => {
     log("Stopping txAdmin");
 });
+// Error.stackTraceLimit = 25;
+// process.on('warning', (warning) => {
+//     dir(warning);
+// });

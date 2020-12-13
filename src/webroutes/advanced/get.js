@@ -14,9 +14,7 @@ module.exports = async function AdvancedGet(ctx) {
         return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
     }
 
-    let renderData = {
+    return ctx.utils.render('advanced', {
         verbosityEnabled: GlobalData.verbose
-    }
-
-    return ctx.utils.render('advanced', renderData);
+    });
 };
