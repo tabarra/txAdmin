@@ -77,7 +77,7 @@ Attention: careful with the number of spaces used in the indentation.
 Downloads a GitHub repository with an optional reference (branch, tag, commit hash) or subpath.  
 If the directory structure does not exist, it is created.
 - `src`: The repository to be downloaded. This can be an URL or `repo_owner/repo_name`.
-- `ref`: *(optional)* The git reference to be fownloaded. This can be a branch, a tag, or a commit hash. Defaults to `master`.
+- `ref`: *(optional)* The git reference to be fownloaded. This can be a branch, a tag, or a commit hash. If none is set, the recipe engine will query GitHub's API to get the default branch name (usually `master` or `main`).
 - `subpath`: *(optional)* When specified, copies a subpath of the repository.
 - `dest`: The destination path for the downloaded file.
 ```yaml

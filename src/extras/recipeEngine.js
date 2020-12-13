@@ -90,12 +90,29 @@ const validatorDownloadGithub = (options) => {
 const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     if(!validatorDownloadGithub(options)) throw new Error(`invalid options`);
 
-    //Preparing vars
+    //Parsing source
     const srcMatch = options.src.match(githubRepoSourceRegex);
     if(!srcMatch || !srcMatch[3] || !srcMatch[4]) throw new Error(`invalid repository`);
     const repoOwner = srcMatch[3];
     const repoName = srcMatch[4];
-    const reference = options.ref || 'master';
+
+    //Setting git ref
+    let reference;
+    if(options.ref){
+        reference = options.ref
+    }else{
+        const res = await axios({
+            method: 'get',
+            url: `https://api.github.com/repos/${repoOwner}/${repoName}`,
+            responseType: 'json'
+        });
+        if(!res.data || !res.data.default_branch){
+            throw new Error(`reference not set, and wasn ot able to detect using github's api`);
+        }
+        reference = res.data.default_branch
+    }
+
+    //Preparing vars
     const downURL = `https://api.github.com/repos/${repoOwner}/${repoName}/zipball/${reference}`;
     const tmpFileName = `${repoName}${reference}-` + (Date.now()%100000000).toString(16);
     const tmpFileDir = path.join(basePath, `${tmpFileName}`);

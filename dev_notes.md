@@ -8,10 +8,11 @@
 - [x] blur some inputs 
 - [x] persist user oauth data and refresh it on social login
 - [x] deployer: add a context var for the master admin identifiers
+- [x] deployer: on download_github, first query to see which is the default branch
 - [ ] add tool to import ban from other databases
-- [ ] deployer: on download_github, first query to see which is the default branch
 - [ ] improve setup page common template incompatibility behavior and set $engine to 2
-- [ ] xxxxxxx
+- [ ] fix darkmode cookie
+- [ ] consolidate the log pages
 
 
 > Hopefully now:
@@ -23,9 +24,11 @@
 - [ ] improve terminal onboarding? Nem que seja só um pouquinho...
 - [ ] merge some PRs
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
+        ---- 2 opções: estar na guild ou ter role na guild
 - [ ] persistent discord status message that is set up by `!setmessage`:
         - this will trigger a big status message to be sent in that channel
         - this message id can be stored in the config file
+        - if discord id is present, use that instead of name (careful with the pings!)
 - [ ] Upgrade packages:
         - check if `got` patch was published - https://github.com/sindresorhus/got/pull/1491
         - try to upgrade `webpack`
