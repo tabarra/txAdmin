@@ -60,7 +60,10 @@ module.exports = class PlayerController {
         if(this.config.minSessionTime < 1 || this.config.minSessionTime > 60) throw new Error('The playerController.minSessionTime setting must be between 1 and 60 minutes.');
 
         //Running playerlist generator
-        if(GetConvar('txAdminFakePlayerlist', 'false').trim() === 'yesplz') {
+        if(
+            process.env.APP_ENV !== 'webpack' && 
+            GetConvar('txAdminFakePlayerlist', 'false').trim() === 'yesplz'
+        ){
             const PlayerlistGenerator = require('./playerlistGenerator.js');
             this.playerlistGenerator = new PlayerlistGenerator();
         }
