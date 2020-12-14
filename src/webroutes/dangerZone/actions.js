@@ -1,8 +1,8 @@
 //Requires
 const modulename = 'WebServer:DangerZone:Action';
 const fs = require('fs-extra');
+const mysql = require('mysql2/promise');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const helpers = require('../../extras/helpers');
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
@@ -32,9 +32,11 @@ module.exports = async function DangerZoneAction(ctx) {
     if(action == 'reset'){
         return handleReset(ctx);
     }else if(action == 'importBans'){
-        if(ctx.request.body.dbType == 'easyadmin' || ctx.request.body.dbType == 'vmenu'){
+        const fileDbTypes = ['easyadmin', 'vmenu'];
+        const dbmsDbTypes = ['bansql', 'vrp'];
+        if(fileDbTypes.includes(ctx.request.body.dbType)){
             return await handleImportBansFile(ctx, ctx.request.body.dbType);
-        }else if(ctx.request.body.dbType == 'bansql' || ctx.request.body.dbType == 'vrp'){
+        }else if(dbmsDbTypes.includes(ctx.request.body.dbType)){
             return await handleImportBansDBMS(ctx, ctx.request.body.dbType);
         }else{
             return ctx.send({type: 'danger', message: `Invalid database type.`});
@@ -89,14 +91,15 @@ function handleReset(ctx) {
  */
 async function handleImportBansFile(ctx, dbType) {
     //Sanity check
-    if(isUndefined(ctx.request.body.banfile)){
+    if(isUndefined(ctx.request.body.banFile)){
         return ctx.utils.error(400, 'Invalid Request');
     }
-    const banfilePath = ctx.request.body.banfile;
+    const banFilePath = ctx.request.body.banFile;
 
+    //Read bans database file
     let inBans;
     try {
-        const rawFile = await fs.readFile(banfilePath);
+        const rawFile = await fs.readFile(banFilePath);
         inBans = JSON.parse(rawFile);
     } catch (error) {
         return ctx.utils.render('basic/generic', {message: `Failed to import bans with error: ${error.message}`});
@@ -149,7 +152,7 @@ async function handleImportBansFile(ctx, dbType) {
             imported++;
         }// end for()
     } catch (error) {
-        dir(error)
+        if(GlobalData.verbose) dir(error)
         return ctx.utils.render('basic/generic', {message: `Failed to import bans with error: ${error.message}`});
     }
 
@@ -167,11 +170,58 @@ async function handleImportBansFile(ctx, dbType) {
  */
 async function handleImportBansDBMS(ctx, dbType) {
     //Sanity check
-    if(anyUndefined(ctx.params.action)){
+    if(anyUndefined(
+        ctx.request.body.dbHost,
+        ctx.request.body.dbUsername,
+        ctx.request.body.dbPassword,
+        ctx.request.body.dbName
+    )){
         return ctx.utils.error(400, 'Invalid Request');
     }
-    const action = ctx.params.action;
-    dir(ctx.request.body)
 
-    return ctx.send({type: 'danger', message: `dbmssss`});
+    // Connect to the database
+    const mysqlOptions = {
+        host: ctx.request.body.dbHost.trim(),
+        user: ctx.request.body.dbUsername.trim(),
+        password: ctx.request.body.dbPassword.trim(),
+        database: ctx.request.body.dbName.trim()
+    }
+    const dbConnection = await mysql.createConnection(mysqlOptions);
+
+    let imported = 0;
+    let invalid = 0;
+    try {
+        if(dbType == 'bansql'){
+
+        }else if(dbType == 'vrp'){
+            const [rows, fields] = await dbConnection.execute(`SELECT 
+                    GROUP_CONCAT(vrp_user_ids.identifier SEPARATOR ', ') AS identifiers
+                FROM vrp_users 
+                JOIN vrp_user_ids ON vrp_user_ids.user_id=vrp_users.id
+                WHERE vrp_users.banned = 1
+                GROUP BY vrp_users.id`);
+            for (let index = 0; index < rows.length; index++) {
+                const ban = rows[index];
+                const identifiers = ban.identifiers.split(', ').filter((id)=>{
+                    return (typeof id == 'string') && Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
+                });
+                if(!identifiers.length){
+                    invalid++;
+                    continue;
+                }
+                await globals.playerController.registerAction(identifiers, 'ban', 'unknown', 'imported from vRP', false);
+                imported++;
+            }
+            
+        }
+        
+    } catch (error) {
+        if(GlobalData.verbose) dir(error)
+        return ctx.utils.render('basic/generic', {message: `Failed to import bans with error: ${error.message}`});
+    }
+
+    const outMessage = `<b>Process finished!</b> <br>
+        Imported bans: ${imported} <br>
+        Invalid bans: ${invalid}  <br>`;
+    return ctx.utils.render('basic/generic', {message: outMessage});
 }
