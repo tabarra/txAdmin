@@ -39,7 +39,7 @@ if(process.env.APP_ENV !== 'webpack' && txAdmin1337Convar !== 'IKnowWhatImDoing'
     logError(`Looks like you don't know what you are doing.`);
     logDie(`Please use the compiled release from GitHub or the version that comes with the latest FXServer.`)
 }
-const isAdvancedUser = (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar !== 'IKnowWhatImDoing');
+const isAdvancedUser = (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar == 'IKnowWhatImDoing');
 
 //Get OSType
 const osTypeVar = os.type();

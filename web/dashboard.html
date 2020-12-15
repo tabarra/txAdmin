@@ -135,7 +135,7 @@
         }
         var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
-            url: actionURL = '/fxserver/controls/' + action,
+            url: '/fxserver/controls/' + action,
             type: "GET",
             dataType: "json",
             timeout: timeoutLong,
