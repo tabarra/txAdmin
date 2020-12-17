@@ -192,6 +192,30 @@ async function handleImportBansDBMS(ctx, dbType) {
     let invalid = 0;
     try {
         if(dbType == 'bansql'){
+            const [rows, fields] = await dbConnection.execute(`SELECT * FROM banlist`);
+            for (let index = 1; index < rows.length; index++) {
+                const ban = rows[index];
+                const tmpIdentifiers = [ban.identifier, ban.license, ban.liveid, ban.xblid, ban.discord];
+                const identifiers = tmpIdentifiers.filter((id)=>{
+                    return (typeof id == 'string') && Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
+                });
+                if(!identifiers.length){
+                    invalid++;
+                    continue;
+                }
+
+                let author = (typeof ban.sourceplayername == 'string' && ban.sourceplayername.length)? ban.sourceplayername.trim() : 'unknown';
+                let reason = (typeof ban.reason == 'string' && ban.reason.length)? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
+                let expiration;
+                if((typeof ban.permanent && ban.permanent) || !ban.expiration){
+                    expiration = false;
+                }else{
+                    const expirationInt = parseInt(ban.expiration);
+                    expiration = (Number.isNaN(expirationInt))? false : expirationInt;
+                }
+                await globals.playerController.registerAction(identifiers, 'ban', author, reason, expiration);
+                imported++;
+            }
 
         }else if(dbType == 'vrp'){
             const [rows, fields] = await dbConnection.execute(`SELECT 
