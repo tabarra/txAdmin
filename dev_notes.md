@@ -86,11 +86,10 @@ TODO: Bot commands (in dev order):
 ## CLTR+C+V
 ```bash
 # run
-cd /e/FiveM/builds
-nodemon --watch "3247/citizen/system_resources/monitor/src/*" --exec "3247/FXServer.exe +set txAdmin1337 IKnowWhatImDoing +set txAdminVerbose truex +set txAdminFakePlayerlist yesplzx"
+cd /e/FiveM/builds/3247/citizen/system_resources/monitor
+nodemon +set txAdminFakePlayerlist yesplzx +set txAdminVerbose truex
 
 # build
-cd /e/FiveM/builds/3247/citizen/system_resources/monitor
 rm -rf dist
 npm run build
 

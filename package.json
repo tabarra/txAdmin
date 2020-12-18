@@ -4,7 +4,8 @@
   "description": "FiveM FXServer Admin - remotely manage your GTA5 FiveM Server",
   "main": "src/index.js",
   "scripts": {
-    "build": "webpack --config webpack.config.js --progress"
+    "build": "rimraf dist && webpack --config webpack.config.js --progress",
+    "watch": "nodemon --config nodemon.json"
   },
   "repository": {
     "type": "git",
@@ -69,6 +70,8 @@
   },
   "devDependencies": {
     "copy-webpack-plugin": "^6.2.0",
+    "nodemon": "^2.0.6",
+    "rimraf": "^3.0.2",
     "terser-webpack-plugin": "^4.2.2",
     "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12"

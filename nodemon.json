@@ -1,0 +1,4 @@
+{
+    "watch": ["src/*"],
+    "exec": "../../../FXServer.exe +set txAdmin1337 IKnowWhatImDoing"
+}
