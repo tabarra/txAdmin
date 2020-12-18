@@ -30,6 +30,7 @@
                                 <option value="vmenu">vMenu</option>
                                 <option value="bansql">BanSQL</option>
                                 <option value="vrp">vRP</option>
+                                <option value="el_bwh">el_bwh</option> 
                             </select>
                             <span class="form-text text-muted">
                                 The database source type.
@@ -141,7 +142,7 @@
     const submitButton = document.getElementById('submitButton');
 
     const fileDbTypes = ['easyadmin', 'vmenu'];
-    const dbmsDbTypes = ['bansql', 'vrp'];
+    const dbmsDbTypes = ['bansql', 'vrp', 'el_bwh'];
 
     dbType.onchange = () => {
         submitButton.disabled = false;

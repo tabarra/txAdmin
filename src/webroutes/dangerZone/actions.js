@@ -7,6 +7,9 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
+const filterIdentifiers = (idArr) => idArr.filter((id)=>{
+    return (typeof id == 'string') && Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
+});
 
 
 /**
@@ -33,7 +36,7 @@ module.exports = async function DangerZoneAction(ctx) {
         return handleReset(ctx);
     }else if(action == 'importBans'){
         const fileDbTypes = ['easyadmin', 'vmenu'];
-        const dbmsDbTypes = ['bansql', 'vrp'];
+        const dbmsDbTypes = ['bansql', 'vrp', 'el_bwh'];
         if(fileDbTypes.includes(ctx.request.body.dbType)){
             return await handleImportBansFile(ctx, ctx.request.body.dbType);
         }else if(dbmsDbTypes.includes(ctx.request.body.dbType)){
@@ -107,13 +110,10 @@ async function handleImportBansFile(ctx, dbType) {
 
     let invalid = 0;
     let imported = 0;
-    
     try {
         for (let index = 0; index < inBans.length; index++) {
             const ban = inBans[index];
-            const identifiers = ban.identifiers.filter((id)=>{
-                return (typeof id == 'string') && Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
-            });
+            const identifiers = filterIdentifiers(ban.identifiers);
             if(!identifiers.length){
                 invalid++;
                 continue;
@@ -196,16 +196,14 @@ async function handleImportBansDBMS(ctx, dbType) {
             for (let index = 1; index < rows.length; index++) {
                 const ban = rows[index];
                 const tmpIdentifiers = [ban.identifier, ban.license, ban.liveid, ban.xblid, ban.discord];
-                const identifiers = tmpIdentifiers.filter((id)=>{
-                    return (typeof id == 'string') && Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
-                });
+                const identifiers = filterIdentifiers(tmpIdentifiers);
                 if(!identifiers.length){
                     invalid++;
                     continue;
                 }
 
-                let author = (typeof ban.sourceplayername == 'string' && ban.sourceplayername.length)? ban.sourceplayername.trim() : 'unknown';
-                let reason = (typeof ban.reason == 'string' && ban.reason.length)? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
+                const author = (typeof ban.sourceplayername == 'string' && ban.sourceplayername.length)? ban.sourceplayername.trim() : 'unknown';
+                const reason = (typeof ban.reason == 'string' && ban.reason.length)? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
                 let expiration;
                 if((typeof ban.permanent && ban.permanent) || !ban.expiration){
                     expiration = false;
@@ -226,14 +224,52 @@ async function handleImportBansDBMS(ctx, dbType) {
                 GROUP BY vrp_users.id`);
             for (let index = 0; index < rows.length; index++) {
                 const ban = rows[index];
-                const identifiers = ban.identifiers.split(', ').filter((id)=>{
-                    return (typeof id == 'string') && Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
-                });
+                const identifiers = filterIdentifiers(ban.identifiers.split(', '));
                 if(!identifiers.length){
                     invalid++;
                     continue;
                 }
                 await globals.playerController.registerAction(identifiers, 'ban', 'unknown', 'imported from vRP', false);
+                imported++;
+            }
+
+        }else if(dbType == 'el_bwh'){
+            const [rows, fields] = await dbConnection.execute(`SELECT * FROM bwh_bans`);
+
+            for (let index = 0; index < rows.length; index++) {
+                const ban = rows[index];
+                if(typeof ban.unbanned !== 'undefined' && ban.unbanned !== 0){
+                    //Just ignoring it
+                    continue;
+                }
+                let dbIdentifiers;
+                try {
+                    dbIdentifiers = JSON.parse(ban.receiver);
+                    if(!Array.isArray(dbIdentifiers)) throw new Error(`not an array`);
+                } catch (error) {
+                    invalid++;
+                    continue;
+                }
+                const identifiers = filterIdentifiers(dbIdentifiers);
+                if(!identifiers.length){
+                    invalid++;
+                    continue;
+                }
+
+                const reason = (typeof ban.reason == 'string' && ban.reason.length)? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
+                let expiration;
+                if(ban.length == null){
+                    expiration = false;
+                }else{
+                    const expirationDate = new Date(ban.length);
+                    if(expirationDate.toString() == 'Invalid Date'){
+                        invalid++;
+                        continue;
+                    }else{
+                        expiration = Math.round(expirationDate.getTime()/1000);
+                    }
+                }
+                await globals.playerController.registerAction(identifiers, 'ban', 'unknown', reason, expiration);
                 imported++;
             }
             

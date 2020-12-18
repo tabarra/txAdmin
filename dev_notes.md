@@ -9,7 +9,7 @@
 - [x] persist user oauth data and refresh it on social login
 - [x] deployer: add a context var for the master admin identifiers
 - [x] deployer: on download_github, first query to see which is the default branch
-- [ ] add tool to import ban from other databases
+- [x] add tool to import ban from other databases
 - [ ] improve setup page common template incompatibility behavior and set $engine to 2
 - [ ] fix darkmode cookie
 - [ ] consolidate the log pages
