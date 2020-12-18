@@ -14,6 +14,40 @@
 - [ ] fix darkmode cookie
 - [ ] consolidate the log pages
 
+### NUI commands
+While the menu is open, show `ID | PlayerName` above nearby player heads.
+The first thing selected is the tab selector, which can be operated using the arrows.
+The Main menu will be fully arrow operated, but the player and txAdmin tab need to be mouse-operated
+
+- Main Menu:
+    - Teleport (submenu):
+        - TP to coords (use regex)
+        - TP to Marker
+        - Send back (<name>) (me to my last, or player to his last)
+    - Player mode (selector):
+        - Nornal
+        - NoClip/Invisible
+        - God Mode
+    - Heal Myself 
+    - Spawn Car
+    - Fix+Wash Car
+    - Revive/Heal all players (temp)
+    - Send Announcement (temp)
+- Player Tab:
+    - search box
+    - sort options
+    - player cards:
+        - basic modal (DM, Warn, Kick, Ban)
+        - Heal
+        - TP Player to me
+        - TP to Player
+        - Spectate
+- txAdmin Tab:
+    - iframe containing txAdmin's web with some customizations:
+        - menu starts collapsed
+        - no logo/header
+        - no footer
+
 
 > Hopefully now:
 - [ ] make playerController.writePending prioritized (low 5s, medium 30s, high 60s)
@@ -30,7 +64,6 @@
         - this message id can be stored in the config file
         - if discord id is present, use that instead of name (careful with the pings!)
 - [ ] Upgrade packages:
-        - check if `got` patch was published - https://github.com/sindresorhus/got/pull/1491
         - try to upgrade `webpack`
         - see if the `open` library was fixed
         - try to upgrade `dateformat`
@@ -39,6 +72,7 @@
 
 
 > Soon™ (hopefully the next update)
+- [ ] the Commands card in the dashboard is underused since resource commands are useless and nobody knows the kick all and broadcast options are there
 - [ ] send log via FD3
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
 - [ ] apply the new action log html to the modal
@@ -145,6 +179,13 @@ https://discordapp.com/channels/192358910387159041/450373719974477835/7013367235
 ### the ace permissions editor thing
 https://discordapp.com/channels/192358910387159041/450373719974477835/724266730024861717
 
+### the fun command thing
+https://github.com/VenomXNL/XNLRideAnimals/blob/master/XNLRideAnimals/client.lua
+https://docs.fivem.net/docs/game-references/ped-models/#animals
+https://github.com/SFL-Master/Peds/blob/master/client/main.lua
+https://forum.cfx.re/t/peds-attack-players/3467/4
+https://forum.cfx.re/t/request-how-to-create-aggressive-npcs/583370
+https://forum.cfx.re/t/i-want-to-make-a-spawned-npc-attack-players/462463
 
 
 =======================================
