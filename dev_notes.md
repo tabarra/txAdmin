@@ -10,8 +10,9 @@
 - [x] deployer: add a context var for the master admin identifiers
 - [x] deployer: on download_github, first query to see which is the default branch
 - [x] add tool to import ban from other databases
+- [x] fix darkmode cookie path
+- [x] upgrade packages
 - [ ] improve setup page common template incompatibility behavior and set $engine to 2
-- [ ] fix darkmode cookie
 - [ ] consolidate the log pages
 
 ### NUI commands
@@ -63,11 +64,6 @@ The Main menu will be fully arrow operated, but the player and txAdmin tab need 
         - this will trigger a big status message to be sent in that channel
         - this message id can be stored in the config file
         - if discord id is present, use that instead of name (careful with the pings!)
-- [ ] Upgrade packages:
-        - try to upgrade `webpack`
-        - see if the `open` library was fixed
-        - try to upgrade `dateformat`
-        - attempt to use `discord.js` v12
 - [ ] add stats enc?
 
 
