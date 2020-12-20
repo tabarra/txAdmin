@@ -112,6 +112,21 @@ try {
     logDie(`Failed to check or create '${dataPath}' with error: ${error.message}`);
 }
 
+//Check paths for non-ASCII characters
+//NOTE: Non-ASCII in one of those paths (don't know which) will make NodeJS crash due to a bug in v8 (or something)
+//      when running localization methods like Date.toLocaleString().
+//      There was also an issue with the slash() lib and with the +exec on FXServer
+const nonASCIIRegex = /[^\u0000-\u0080]+/
+if(nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)){
+    logError(`Due to environmental restrictions, your paths CANNOT contain non-ASCII characters.`);
+    logError(`Example of non-ASCII characters: çâýå, ρέθ, ñäé, ēļæ, глж, เซิร์, 警告.`);
+    logError(`Please make sure FXServer is not in a path contaning those characters.`);
+    logError(`If on windows, we suggest you moving the artifact to "C:/fivemserver/${fxServerVersion}/".`);
+    log(`FXServer path: ${fxServerPath}`);
+    log(`txData path: ${dataPath}`);
+    process.exit(1);
+}
+
 //Get Web Port
 const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
 if(!/^\d+$/.test(txAdminPortConvar)){

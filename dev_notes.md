@@ -15,10 +15,51 @@
 - [x] add option to backup (download) the database
 - [x] add `joinCheckHistory` advanced action to dump `playerController.checkPlayerJoin()` attempts
 - [x] add translation to the ban messages (kick/join)
+- [x] handle non-ascii characters in the paths to prevent crash
 - [ ] improve setup page common template incompatibility behavior and set $engine to 2
-- [ ] consolidate the log pages
+- [ ] maybe hardcode if(recipeName == plume) to open the readme in a new tab
+- [ ] IF deploy fails, add a `_DEPLOY_FAILED_DO_NOT_USE` file to deploy path
 
-### NUI commands
+> Hopefully now:
+- [ ] make `playerController.writePending` prioritized (low 5s, medium 30s, high 60s)
+- [ ] create `admin.useroptions` for dark mode, welcome modals and such
+- [ ] remove the ForceFXServerPort config and do either via `server.cfg` comment, or execute `endpoint_add_tcp "127.0.0.1:random"`
+- [ ] improve terminal onboarding? Nem que seja só um pouquinho...
+- [ ] merge some PRs
+- [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
+        ---- 2 opções: estar na guild ou ter role na guild
+- [ ] persistent discord status message that is set up by `!setmessage`:
+        - this will trigger a big status message to be sent in that channel
+        - this message id can be stored in the config file
+        - if discord id is present, use that instead of name (careful with the pings!)
+
+> Soon™ (hopefully the next update)
+- [ ] update README
+- [ ] consolidate the log pages
+- [ ] add stats enc?
+- [ ] the Commands card in the dashboard is underused since resource commands are useless and nobody knows the kick all and broadcast options are there
+- [ ] send log via FD3
+- [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
+- [ ] apply the new action log html to the modal
+- [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
+- [ ] add ban server-side ban cache (last 500 bans?), updated on every ban change 
+- [ ] add a commend system?
+- [ ] add stopwatch (or something) to the db functions and print on `/diagnostics`
+- [ ] change webserver token every time the server starts
+
+
+> Soon™® (hopefully in two months or so)
+- [ ] get all functions from `web\public\js\txadmin\players.js` and wrap in some object.
+- [ ] add some chart to the players page?
+- [ ] tweak dashboard update checker behavior
+- [ ] add an fxserver changelog page
+- [ ] Social auth provider setup retry every 15 seconds
+- [ ] show error when saving discord settings with wrong token
+- [ ] break down playerController into separate files!
+- [ ] rename playerController to playerManager?
+
+
+## NUI commands
 While the menu is open, show `ID | PlayerName` above nearby player heads.
 The first thing selected is the tab selector, which can be operated using the arrows.
 The Main menu will be fully arrow operated, but the player and txAdmin tab need to be mouse-operated
@@ -52,47 +93,66 @@ The Main menu will be fully arrow operated, but the player and txAdmin tab need 
         - no logo/header
         - no footer
 
+## Database Management page
+- erase all whitelists
+- erase all bans
+- erase all warnings
+- Prune Database:
+    All options will be select boxes containing 3 options: none, conservative, aggressive
+    - Players (without notes) innactive for xxx days: 60, 30
+    - Warns older than xx days: 30, 7
+    - Bans: revoked, revoked or expired
+Add a note that to erase the entire database, the user should delete the `playersDB.json` (full path) file and restart txAdmin.
+Pre calculate all counts
 
-> Hopefully now:
-- [ ] make playerController.writePending prioritized (low 5s, medium 30s, high 60s)
-- [ ] create `admin.useroptions` for dark mode, welcome modals and such
-- [ ] IF deploy fails, add a `_DEPLOY_FAILED_DO_NOT_EDIT` file to deploy path
-- [ ] add disabled input with the username on the pagina que salva a senha
-- [ ] remove the ForceFXServerPort config and do either via `server.cfg` comment, or execute `endpoint_add_tcp "127.0.0.1:random"`
-- [ ] improve terminal onboarding? Nem que seja só um pouquinho...
-- [ ] merge some PRs
-- [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
-        ---- 2 opções: estar na guild ou ter role na guild
-- [ ] persistent discord status message that is set up by `!setmessage`:
-        - this will trigger a big status message to be sent in that channel
-        - this message id can be stored in the config file
-        - if discord id is present, use that instead of name (careful with the pings!)
-- [ ] add stats enc?
-
-
-> Soon™ (hopefully the next update)
-- [ ] the Commands card in the dashboard is underused since resource commands are useless and nobody knows the kick all and broadcast options are there
-- [ ] send log via FD3
-- [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
-- [ ] apply the new action log html to the modal
-- [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
-- [ ] add ban server-side ban cache (last 500 bans?), updated on every ban change 
-- [ ] add a commend system?
-- [ ] add stopwatch (or something) to the db functions and print on `/diagnostics`
-- [ ] change webserver token every time the server starts
-
-
-> Soon™® (hopefully in two months or so)
-- [ ] get all functions from `web\public\js\txadmin\players.js` and wrap in some object.
-- [ ] add some chart to the players page?
-- [ ] tweak dashboard update checker behavior
-- [ ] add an fxserver changelog page
-- [ ] Social auth provider setup retry every 15 seconds
-- [ ] show error when saving discord settings with wrong token
-- [ ] break down playerController into separate files!
-- [ ] rename playerController to playerManager?
-- [ ] make heartbeats go through FD3?
-
+## Video tutorials
+Requirements:
+    - 2 non-rp recipes
+    - Solve non-ascii path crash issue
+    - Separate master actions page
+#### [OFFICIAL] How to make a FiveM Server tutorial 2021 for beginners!
+    Target: absolute beginners, barely have a vps
+    - Requirements:
+        - Needs to be a VPS
+        - OS: windows server 2016 or 2019 recommended
+        - Hardware specs recommendation
+        - Download Visual C++
+        - You need a forum account (show page, don't go trough)
+        - Create server key
+        - Download xamp (explain most servers require, show heidisql page)
+    - Open firewall ports (show windows + OVH)
+    - Download artifact (show difference between latest and latest recommended)
+    - Set folder structure
+    - Run txAdmin
+    - Open page outside VPS to show the ip:port thing
+    - Create master account
+    - Setup:
+        - Present options
+        - Run PlumeESX recipe
+        - Master Actions -> Reset FXServer Settings
+        - Setup local folder (show endpoint + server.cfg.txt errors)
+    - Show how to create admins
+    - Callout for advanced tutorial
+#### [OFFICIAL] How to update your FiveM Server tutorial 2021
+    Target: server owners that followed the stupid Jeva tutorial
+    - Why windows only
+    - Show current stupid folder structure
+    - Download artifact (show difference between latest and latest recommended)
+    - Set new folder structure
+    - Run txAdmin
+    - Create master account
+    - Setup (show endpoint + server.cfg.txt errors)
+    - Show how to create admins
+    - Open firewall port 40120 (show windows + OVH)
+    - Callout for advanced tutorial
+#### [OFFICIAL] txAdmin v3 advanced guide 2021
+    Target: average txAdmin users
+    - creating admins
+    - multiple servers
+    - discord bot
+    - discord login
+    - database pruning 
+    - scheduled restarter
 
 ## Bot Commands:
 DONE:
