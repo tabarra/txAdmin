@@ -442,7 +442,33 @@
                     <h5 class="d-inline">Master Actions</h5>
                 </div>
                 <div class="card-body">
-                    <!-- reset fxserver -->
+                    <!-- Backup Database -->
+                    <div class="row text-center pt-2">
+                        <div class="col-lg-9 text-lg-left mb-2">
+                            <h5>Backup Database <span class="badge badge-info">NEW</span></h5>
+                            Download a copy of the <code>playersDB.json</code> file containing all players and actions (bans, warns and whitelists).  
+                            You should do this every once in a while.
+                        </div>
+                        <div class="col-lg-3 text-lg-right">
+                            <a class="btn btn-sm btn-outline-danger" target="_blank" href="/masterActions/backupDatabase">Backup Database</a>
+                        </div>
+                    </div>
+                    <hr class="m-1">
+
+                    <!-- Import bans -->
+                    <div class="row text-center pt-2">
+                        <div class="col-lg-9 text-lg-left mb-2">
+                            <h5>Import Bans <span class="badge badge-info">NEW</span></h5>
+                            If you wish to migrate from another ban system, use this tool to import existing bans. <br>
+                            Supported systems: EasyAdmin, BanSQL, vMenu, vRP.
+                        </div>
+                        <div class="col-lg-3 text-lg-right">
+                            <a class="btn btn-sm btn-outline-danger" href="/masterActions/importBans">Import Bans</a>
+                        </div>
+                    </div>
+                    <hr class="m-1">
+
+                    <!-- Reset FXServer -->
                     <div class="row text-center">
                         <div class="col-lg-9 text-lg-left mb-2">
                             <h5>Reset FXServer</h5>
@@ -455,21 +481,8 @@
                                 onclick="masterActionsActions('reset_fxserver');">Reset FXServer</button>
                         </div>
                     </div>
-                    <hr class="m-1">
-
-                    <!-- Import bans -->
-                    <div class="row text-center pt-2">
-                        <div class="col-lg-9 text-lg-left mb-2">
-                            <h5>Import Bans <span class="badge badge-danger">NEW</span></h5>
-                            If you wish to migrate from another ban system, use this tool to import existing bans. <br>
-                            Supported systems: EasyAdmin, BanSQL, vMenu, vRP.
-                        </div>
-                        <div class="col-lg-3 text-lg-right">
-                            <a class="btn btn-sm btn-outline-danger" href="/masterActions/importBans">Import Bans</a>
-                        </div>
-                    </div>
                     <!-- <hr class="m-1"> -->
-                    
+
                 </div>
             </div>
         </div>

@@ -13,7 +13,6 @@ module.exports = async function FXServerDownloadLog(ctx) {
         return ctx.utils.render('basic/generic', {message: `You don't have permission to download this log.`});
     }
 
-    let now = (new Date()/1000).toFixed();
     let readFile;
     try {
         //NOTE: thy the fuck are errors from `createReadStream` not being caught? Well, using readFileSync for now...
@@ -22,7 +21,8 @@ module.exports = async function FXServerDownloadLog(ctx) {
     } catch (error) {
         logError(`Could not read log file ${globals.fxRunner.config.logPath}.`);
     }
-    ctx.attachment(`fxserver_${now}.log`)
+    const now = (new Date()/1000).toFixed();
+    ctx.attachment(`fxserver_${now}.log`);
     ctx.body = readFile;
     log(`[${ctx.ip}][${ctx.session.auth.username}] Downloading console log file.`);
 };

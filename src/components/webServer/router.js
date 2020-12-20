@@ -45,7 +45,7 @@ module.exports = router = (config) =>{
     router.post('/settings/save/:scope', requestAuth('web'), webRoutes.settings.save);
 
     //Master Actions
-    router.get('/masterActions/:page', requestAuth('web'), webRoutes.masterActions.get);
+    router.get('/masterActions/:resource', requestAuth('web'), webRoutes.masterActions.get);
     router.post('/masterActions/:action', requestAuth('web'), webRoutes.masterActions.actions);
 
     //FXServer

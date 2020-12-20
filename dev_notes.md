@@ -12,6 +12,7 @@
 - [x] add tool to import ban from other databases
 - [x] fix darkmode cookie path
 - [x] upgrade packages
+- [x] add option to backup (download) the database
 - [ ] improve setup page common template incompatibility behavior and set $engine to 2
 - [ ] consolidate the log pages
 
