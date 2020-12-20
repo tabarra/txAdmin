@@ -12,6 +12,12 @@
         "schedule_warn": "此服务器计划 %{smart_count} 分钟后重新启动， 请立即断开连接。 |||| 此服务器计划 %{smart_count} 分钟后重新启动。",
         "schedule_warn_discord": "**%{servername}** 预计 %{smart_count} 分钟后重新启动。 |||| **%{servername}** 预计 %{smart_count} 分钟后重新启动。"
     },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
+        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
+        "drop_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
+        "drop_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+    },
     "server_actions": {
         "restarting": "服务器正在重启 (%{reason})。",
         "restarting_discord": "**%{servername}** 正在重新启动 (%{reason})。",

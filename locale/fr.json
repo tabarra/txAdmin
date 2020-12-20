@@ -12,6 +12,12 @@
         "schedule_warn": "Le serveur redémarrera dans %{smart_count} minute. Merci de vous déconnecter. |||| Le serveur redémarrera dans %{smart_count} minutes.",
         "schedule_warn_discord": "**%{servername}** redémarrera dans %{smart_count} minute. |||| **%{servername}** redémarrera dans %{smart_count} minutes."
     },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
+        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
+        "drop_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
+        "drop_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+    },
     "server_actions": {
         "restarting": "Le serveur redémarre (%{reason}).",
         "restarting_discord": "**%{servername}** redémarre (%{reason}).",

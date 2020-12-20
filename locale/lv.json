@@ -12,6 +12,12 @@
         "schedule_warn": "Šī servera restartēšana ir ieplānota pēc %{smart_count} minūtes. Lūdzu atvienojies tagad. |||| Šī servera restartēšana ir ieplānota pēc %{smart_count} minūtēm.",
         "schedule_warn_discord": "**%{servername}** ir ieplānots restarts pēc %{smart_count} minūtes. |||| **%{servername}** ir ieplānots restarts pēc %{smart_count} minūtēm."
     },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
+        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
+        "drop_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
+        "drop_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+    },
     "server_actions": {
         "restarting": "Serveris tiek restartēts (%{reason}).",
         "restarting_discord": "**%{servername}** tiek restartēts (%{reason}).",

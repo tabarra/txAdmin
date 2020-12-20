@@ -12,6 +12,12 @@
         "schedule_warn": "Serveris persikraus už %{smart_count} minutes. Prašome atsijungti. |||| Serveris persikraus už %{smart_count} minuciu. Prašome atsijungti.",
         "schedule_warn_discord": "**%{servername}** automatiškai persikraus už %{smart_count} minutės. |||| **%{servername}** automatiškai persikraus už %{smart_count} minučių."
     },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
+        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
+        "drop_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
+        "drop_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+    },
     "server_actions": {
         "restarting": "Serverio perkrovimas (%{reason}).",
         "restarting_discord": "**%{servername}** yra perkraunamas (%{reason}).",

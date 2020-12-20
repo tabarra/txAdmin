@@ -12,6 +12,12 @@
         "schedule_warn": "Tämä palvelin on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua. Katkaise yhteys nyt. |||| Tämä palvelin on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua.",
         "schedule_warn_discord": "**%{servername}** on uudelleenkäynnistymässä %{smart_count} minuutin kuluttua. |||| **%{servername}** on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua."
     },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
+        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
+        "drop_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
+        "drop_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+    },
     "server_actions": {
         "restarting": "Palvelin käynnistyy uudelleen (%{reason}).",
         "restarting_discord": "**%{servername}** käynnistyy uudelleen (%{reason}).",

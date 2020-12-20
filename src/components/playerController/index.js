@@ -1,9 +1,10 @@
 //Requires
 const modulename = 'PlayerController';
-const humanizeDuration = require('humanize-duration'); //FIXME: remove, this controller is not the right place for interface stuff
 const low = require('lowdb');
 const FileAsync = require('lowdb/adapters/FileAsync');
 const { customAlphabet } = require('nanoid');
+const humanizeDuration = require('humanize-duration'); //FIXME: remove, this controller is not the right place for interface stuff
+const xss = require('../../extras/xss')(); //FIXME: same as above
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
@@ -358,21 +359,21 @@ module.exports = class PlayerController {
                 const ban = hist.find((a) => a.type == 'ban');
                 if(ban){
                     let msg;
+                    const tOptions = {
+                        id: ban.id,
+                        reason: xss(ban.reason),
+                        author: xss(ban.author),
+                    }
                     if(ban.expiration){
                         const humanizeOptions = {
                             language: globals.translator.t('$meta.humanizer_language'),
                             round: true,
                             units: ['d', 'h'],
                         }
-                        const expiration = humanizeDuration((ban.expiration - ts)*1050, humanizeOptions);
-                        msg = `You have been banned from this server.\n`;
-                        msg += `Your ban will expire in: ${expiration}.\n`;
-                        msg += `Ban ID: ${ban.id}.\n`;
-                        msg += `Ban Reason: ${ban.reason}.`;
+                        tOptions.expiration = humanizeDuration((ban.expiration - ts)*1000, humanizeOptions);
+                        msg = globals.translator.t('ban_messages.drop_temporary', tOptions);
                     }else{
-                        msg = `You have been permanently banned from this server.\n`;
-                        msg += `Ban ID: ${ban.id}.\n`;
-                        msg += `Ban Reason: ${ban.reason}.`;
+                        msg = globals.translator.t('ban_messages.drop_permanent', tOptions);
                     }
                     
                     return {allow: false, reason: msg};

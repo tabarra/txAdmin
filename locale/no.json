@@ -12,6 +12,12 @@
         "schedule_warn": "En planlagt omstart av serveren vil skje om %{smart_count} minutt. Vennligst koble fra serveren nå. |||| Et planlagt omstart av serveren vil skje om %{smart_count} minutter.",
         "schedule_warn_discord": "**%{servername}** har blitt planlagt om å starte på nytt om %{smart_count} minutt. |||| **%{servername}** skal omstartes om %{smart_count} minutter."
     },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
+        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
+        "drop_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
+        "drop_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+    },
     "server_actions": {
         "restarting": "Serveren omstartes (%{reason}).",
         "restarting_discord": "**%{servername}** blir omstartet (%{reason}).",
