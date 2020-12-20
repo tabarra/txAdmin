@@ -29,6 +29,7 @@ globals = {
         resourcesList: null,
         serverLog: [],
         updateChecker: null,
+        joinCheckHistory: [],
 
         //stats
         txStatsData: {

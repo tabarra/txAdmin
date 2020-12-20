@@ -324,6 +324,15 @@ module.exports = class PlayerController {
             return {allow: true, reason: 'checks disabled'};
         }
 
+        //DEBUG: save join log
+        const toLog = {
+            ts: Date.now(),
+            playerName, 
+            idArray,
+        }
+        globals.databus.joinCheckHistory.push(toLog);
+        if(globals.databus.joinCheckHistory.length > 25) globals.databus.joinCheckHistory.shift();
+
         //Sanity checks
         if(typeof playerName !== 'string') throw new Error('playerName should be an string.');
         if(!Array.isArray(idArray)) throw new Error('Identifiers should be an array.');

@@ -1,6 +1,7 @@
 //Requires
 const modulename = 'WebServer:AdvancedActions';
 const bytes = require('bytes');
+const humanizeDuration = require('humanize-duration');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
@@ -95,6 +96,23 @@ module.exports = async function AdvancedActions(ctx) {
             memory = 'error';
         }
         return ctx.send({type: 'success', message: memory})
+
+    }else if(action == 'joinCheckHistory'){
+        let outData;
+        try {
+            const currTime = Date.now();
+            const log = globals.databus.joinCheckHistory.map(e => {
+                return {
+                    when: humanizeDuration(currTime - e.ts, {round: true}),
+                    playerName: e.playerName,
+                    idArray: e.idArray,
+                };
+            });
+            outData = JSON.stringify(log, null, 2);
+        } catch (error) {
+            outData = error.message;
+        }
+        return ctx.send({type: 'success', message: outData});
     }
 
 

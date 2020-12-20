@@ -13,6 +13,7 @@
 - [x] fix darkmode cookie path
 - [x] upgrade packages
 - [x] add option to backup (download) the database
+- [x] add `joinCheckHistory` advanced action to dump `playerController.checkPlayerJoin()` attempts
 - [ ] improve setup page common template incompatibility behavior and set $engine to 2
 - [ ] consolidate the log pages
 
