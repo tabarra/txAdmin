@@ -87,7 +87,7 @@ body.theme--dark .c-sidebar-nav-link.c-active {
 body.theme--dark .c-sidebar .c-sidebar-nav-dropdown-toggle:hover,
 body.theme--dark .c-sidebar .c-sidebar-nav-link:hover {
   color: #fff;
-  background: #00bf8f;
+  background: #00bf8f !important;
 }
 
 body.theme--dark .text-body {

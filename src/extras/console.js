@@ -108,7 +108,8 @@ function dir(data){
                 !Object.keys(data).length && 
                 typeof data.toString == 'function' &&
                 data.constructor.name &&
-                data.constructor.name !== 'Object'
+                data.constructor.name !== 'Object' && 
+                !Array.isArray(data)
             ){
                 printData = chalk.keyword('moccasin').italic(`> ${data.constructor.name}.toString():\n`);
                 printData += chalk.white(data.toString());
