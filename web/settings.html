@@ -439,7 +439,7 @@
         <div class="col-md-7 mw-col8">
             <div class="card border-danger">
                 <div class="card-header text-center">
-                    <h5 class="d-inline">Danger Zone</h5>
+                    <h5 class="d-inline">Master Actions</h5>
                 </div>
                 <div class="card-body">
                     <!-- reset fxserver -->
@@ -452,7 +452,7 @@
                         </div>
                         <div class="col-lg-3 text-lg-right">
                             <button class="btn btn-sm btn-outline-danger" type="button" 
-                                onclick="dangerZoneActions('reset');">Reset FXServer</button>
+                                onclick="masterActionsActions('reset_fxserver');">Reset FXServer</button>
                         </div>
                     </div>
                     <hr class="m-1">
@@ -465,7 +465,7 @@
                             Supported systems: EasyAdmin, BanSQL, vMenu, vRP.
                         </div>
                         <div class="col-lg-3 text-lg-right">
-                            <a class="btn btn-sm btn-outline-danger" href="/dangerZone/importBans">Import Bans</a>
+                            <a class="btn btn-sm btn-outline-danger" href="/masterActions/importBans">Import Bans</a>
                         </div>
                     </div>
                     <!-- <hr class="m-1"> -->
@@ -490,8 +490,8 @@
         $('#frmMonitor-timezoneAlert').html(msg);
     }
 
-    //============================================== Danger Zone
-    function dangerZoneActions(action){
+    //============================================== Master Actions
+    function masterActionsActions(action){
         if(!window.confirm(`Are you sure you want to Reset FXServer Settings?`)){
             return;
         }
@@ -499,12 +499,12 @@
 
         $.ajax({
             type: "POST",
-            url: `/dangerZone/${action}`,
+            url: `/masterActions/${action}`,
             timeout: timeoutMedium,
             data: {},
             dataType: 'json',
             success: function (data) {
-                if(action == 'reset' && data.success == true){
+                if(action == 'reset_fxserver' && data.success == true){
                     window.location = '/setup';
                     return;
                 }else{

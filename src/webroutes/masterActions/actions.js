@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'WebServer:DangerZone:Action';
+const modulename = 'WebServer:MasterActions:Action';
 const fs = require('fs-extra');
 const mysql = require('mysql2/promise');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
@@ -13,10 +13,10 @@ const filterIdentifiers = (idArr) => idArr.filter((id)=>{
 
 
 /**
- * Handle all the danger zone actions
+ * Handle all the master actions... actions
  * @param {object} ctx
  */
-module.exports = async function DangerZoneAction(ctx) {
+module.exports = async function MasterActionsAction(ctx) {
     //Sanity check
     if(isUndefined(ctx.params.action)){
         return ctx.utils.error(400, 'Invalid Request');
@@ -32,8 +32,8 @@ module.exports = async function DangerZoneAction(ctx) {
     }
 
     //Delegate to the specific action functions
-    if(action == 'reset'){
-        return handleReset(ctx);
+    if(action == 'reset_fxserver'){
+        return handleResetFXServer(ctx);
     }else if(action == 'importBans'){
         const fileDbTypes = ['easyadmin', 'vmenu'];
         const dbmsDbTypes = ['bansql', 'vrp', 'el_bwh'];
@@ -59,7 +59,7 @@ module.exports = async function DangerZoneAction(ctx) {
  * Handle FXServer settinga reset nad resurn to setup
  * @param {object} ctx
  */
-function handleReset(ctx) {
+function handleResetFXServer(ctx) {
     if(globals.fxRunner.fxChild !== null){
         ctx.utils.logCommand(`STOP SERVER`);
         globals.fxRunner.killServer(ctx.session.auth.username);
@@ -161,6 +161,7 @@ async function handleImportBansFile(ctx, dbType) {
         Invalid bans: ${invalid}  <br>`;
     return ctx.utils.render('basic/generic', {message: outMessage});
 }
+
 
 //================================================================
 /**

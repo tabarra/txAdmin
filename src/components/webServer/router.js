@@ -44,9 +44,9 @@ module.exports = router = (config) =>{
     router.get('/settings', requestAuth('web'), webRoutes.settings.get);
     router.post('/settings/save/:scope', requestAuth('web'), webRoutes.settings.save);
 
-    //Danger Zone
-    router.get('/dangerZone/:page', requestAuth('web'), webRoutes.dangerZone.get);
-    router.post('/dangerZone/:action', requestAuth('web'), webRoutes.dangerZone.actions);
+    //Master Actions
+    router.get('/masterActions/:page', requestAuth('web'), webRoutes.masterActions.get);
+    router.post('/masterActions/:action', requestAuth('web'), webRoutes.masterActions.actions);
 
     //FXServer
     router.get('/fxserver/controls/:action', requestAuth('api'), webRoutes.fxserver.controls); //FIXME: transform into post

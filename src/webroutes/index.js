@@ -38,9 +38,9 @@ exports.settings = {
 }
 
 
-exports.dangerZone = {
-    get: require('./dangerZone/get'),
-    actions: require('./dangerZone/actions'),
+exports.masterActions = {
+    get: require('./masterActions/get'),
+    actions: require('./masterActions/actions'),
 }
 
 exports.setup = {
