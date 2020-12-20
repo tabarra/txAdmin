@@ -4,10 +4,10 @@
         "humanizer_language": "cs"
     },
     "restarter": {
-        "start_timeout": "server se nestihl spustit v požadovaném čas",
+        "start_timeout": "server se nestihl spustit v požadovaném čase",
         "crash_detected": "pád detekován",
-        "partial_crash_warn": "Kvůli částečné havárii dojde za 1 minutu k restartu toho serveru. Prosím odpojte se nyní.",
-        "partial_crash_warn_discord": "Kvůli částečné havárii se **%{servername}** restartuje za 1 minutu.",
+        "partial_crash_warn": "Kvůli částečnýmu pádu dojde za 1 minutu k restartu tohoto serveru. Prosím odpojte se nyní.",
+        "partial_crash_warn_discord": "Kvůli částečnýmu pádu se **%{servername}** restartuje za 1 minutu.",
         "schedule_reason": "plánovaný restart v %{time}",
         "schedule_warn": "Tento server má naplánovaný restart za %{smart_count} minutu. Prosím odpojte se nyní. |||| Tento server má naplánovaný restart za %{smart_count} minut.",
         "schedule_warn_discord": "**%{servername}** má naplánovaný restart za %{smart_count} minutu. |||| **%{servername}** má naplánovaný restart za %{smart_count} minut."
@@ -15,8 +15,8 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Dostal jsi ban, důvod banu je: \"%{reason}\". Ban vyprší za: %{expiration}.",
         "kick_permanent": "(%{author}) Byl ti permanentně odebrán přístup k serveru a to z důvodu: \"%{reason}\".",
-        "drop_temporary": "Dostal jsi ban.\nBan vyprší za: %{expiration}.\nID Banu je: %{id}.\nBan byl udělen za: %{reason}.\nBan byl udělen adminem: %{author}.",
-        "drop_permanent": "Byl ti permanetně odebrán přístup na server.\nID Banu je: %{id}.\nBan byl udělen za: %{reason}.\nBan byl udělen adminem: %{author}."
+        "drop_temporary": "Dostal jsi ban.\nTvůj ban vyprší za: %{expiration}.\nID Banu je: %{id}.\nDůvod banu: %{reason}.\nBan ti byl udělen adminem: %{author}.",
+        "drop_permanent": "Byl ti permanetně odebrán přístup na server.\nID Banu je: %{id}.\nDůvod banu: %{reason}.\nBan ti byl udělen adminem: %{author}."
     },
     "server_actions": {
         "restarting": "Restartování serveru (%{reason}).",
@@ -32,6 +32,6 @@
     "nui_warning": {
         "title": "VAROVÁNÍ",
         "warned_by": "Varován od:",
-        "instruction": "Drž [MEZERNÍK] po dobu 10 sekund pro zavření této zprávy."
+        "instruction": "Drž [MEZERNÍK] po dobu 10-ti sekund pro zavření této zprávy."
     }
 }
