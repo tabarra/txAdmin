@@ -4,7 +4,7 @@
         "humanizer_language": "ru"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
+        "start_timeout": "не удалось запустить сервер вовремя",
         "crash_detected": "Обнаружен сбой",
         "partial_crash_warn": "Из-за частичного сбоя сервер будет перезагружен через 1 минуту. Пожалуйста, отключитесь от сервера.",
         "partial_crash_warn_discord": "Обнаружен частичный сбой, **%{servername}** будет перезагружен через 1 минуту.",
@@ -24,8 +24,8 @@
         "status_offline": "**%{servername}** сейчас **Оффлайн**!"
     },
     "nui_warning": {
-        "title": "WARNING",
-        "warned_by": "Warned by:",
-        "instruction": "Hold [SPACE] for 10 seconds to dismiss this message."
+        "title": "ПРЕДУПРЕЖДЕНИЕ",
+        "warned_by": "Предупреждение выдал:",
+        "instruction": "Удерживайте [ПРОБЕЛ] 10 секунд, чтобы закрыть это сообщение."
     }
 }
