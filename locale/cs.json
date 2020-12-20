@@ -4,7 +4,7 @@
         "humanizer_language": "cs"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
+        "start_timeout": "server se nestihl spustit v požadovaném čas",
         "crash_detected": "pád detekován",
         "partial_crash_warn": "Kvůli částečné havárii dojde za 1 minutu k restartu toho serveru. Prosím odpojte se nyní.",
         "partial_crash_warn_discord": "Kvůli částečné havárii se **%{servername}** restartuje za 1 minutu.",
@@ -13,10 +13,10 @@
         "schedule_warn_discord": "**%{servername}** má naplánovaný restart za %{smart_count} minutu. |||| **%{servername}** má naplánovaný restart za %{smart_count} minut."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "drop_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "drop_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) Dostal jsi ban, důvod banu je: \"%{reason}\". Ban vyprší za: %{expiration}.",
+        "kick_permanent": "(%{author}) Byl ti permanentně odebrán přístup k serveru a to z důvodu: \"%{reason}\".",
+        "drop_temporary": "Dostal jsi ban.\nBan vyprší za: %{expiration}.\nID Banu je: %{id}.\nBan byl udělen za: %{reason}.\nBan byl udělen adminem: %{author}.",
+        "drop_permanent": "Byl ti permanetně odebrán přístup na server.\nID Banu je: %{id}.\nBan byl udělen za: %{reason}.\nBan byl udělen adminem: %{author}."
     },
     "server_actions": {
         "restarting": "Restartování serveru (%{reason}).",
