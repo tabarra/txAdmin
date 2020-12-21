@@ -6,8 +6,8 @@
     "restarter": {
         "start_timeout": "server se nestihl spustit v požadovaném čase",
         "crash_detected": "pád detekován",
-        "partial_crash_warn": "Kvůli částečnýmu pádu dojde za 1 minutu k restartu tohoto serveru. Prosím odpojte se nyní.",
-        "partial_crash_warn_discord": "Kvůli částečnýmu pádu se **%{servername}** restartuje za 1 minutu.",
+        "partial_crash_warn": "Kvůli částečnému pádu dojde za 1 minutu k restartu tohoto serveru. Prosím odpojte se nyní.",
+        "partial_crash_warn_discord": "Kvůli částečnému pádu se **%{servername}** restartuje za 1 minutu.",
         "schedule_reason": "plánovaný restart v %{time}",
         "schedule_warn": "Tento server má naplánovaný restart za %{smart_count} minutu. Prosím odpojte se nyní. |||| Tento server má naplánovaný restart za %{smart_count} minut.",
         "schedule_warn_discord": "**%{servername}** má naplánovaný restart za %{smart_count} minutu. |||| **%{servername}** má naplánovaný restart za %{smart_count} minut."
@@ -32,6 +32,6 @@
     "nui_warning": {
         "title": "VAROVÁNÍ",
         "warned_by": "Varován od:",
-        "instruction": "Drž [MEZERNÍK] po dobu 10-ti sekund pro zavření této zprávy."
+        "instruction": "Drž [MEZERNÍK] po dobu 10 sekund pro zavření této zprávy."
     }
 }
