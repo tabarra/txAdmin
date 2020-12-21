@@ -16,16 +16,25 @@
 - [x] add `joinCheckHistory` advanced action to dump `playerController.checkPlayerJoin()` attempts
 - [x] add translation to the ban messages (kick/join)
 - [x] handle non-ascii characters in the paths to prevent crash
-- [ ] improve setup page common template incompatibility behavior and set $engine to 2
-- [ ] maybe hardcode if(recipeName == plume) to open the readme in a new tab
+- [x] add temporary workaround for yarn stdin issue
 - [ ] IF deploy fails, add a `_DEPLOY_FAILED_DO_NOT_USE` file to deploy path
+- [ ] update cfx default recipe
+- [ ] improve setup page common template incompatibility behavior and set $engine to 2
+- [ ] fix console overflow
+- [ ] merge at least one PR
+- [ ] improve terminal onboarding? Nem que seja só um pouquinho...
+- [ ] test on linux
+- [ ] version bump
 
 > Hopefully now:
+- [ ] live console input should alto re-enable auto scroll
+- [ ] update README
+- [ ] maybe hardcode if(recipeName == plume) to open the readme in a new tab
+- [ ] add new hardware bans
 - [ ] make `playerController.writePending` prioritized (low 5s, medium 30s, high 60s)
 - [ ] create `admin.useroptions` for dark mode, welcome modals and such
 - [ ] remove the ForceFXServerPort config and do either via `server.cfg` comment, or execute `endpoint_add_tcp "127.0.0.1:random"`
-- [ ] improve terminal onboarding? Nem que seja só um pouquinho...
-- [ ] merge some PRs
+- [ ] clean github Issues/PRs
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
         ---- 2 opções: estar na guild ou ter role na guild
 - [ ] persistent discord status message that is set up by `!setmessage`:
@@ -34,7 +43,6 @@
         - if discord id is present, use that instead of name (careful with the pings!)
 
 > Soon™ (hopefully the next update)
-- [ ] update README
 - [ ] consolidate the log pages
 - [ ] add stats enc?
 - [ ] the Commands card in the dashboard is underused since resource commands are useless and nobody knows the kick all and broadcast options are there
@@ -46,7 +54,6 @@
 - [ ] add a commend system?
 - [ ] add stopwatch (or something) to the db functions and print on `/diagnostics`
 - [ ] change webserver token every time the server starts
-
 
 > Soon™® (hopefully in two months or so)
 - [ ] get all functions from `web\public\js\txadmin\players.js` and wrap in some object.
@@ -108,7 +115,6 @@ Pre calculate all counts
 ## Video tutorials
 Requirements:
     - 2 non-rp recipes
-    - Solve non-ascii path crash issue
     - Separate master actions page
 #### [OFFICIAL] How to make a FiveM Server tutorial 2021 for beginners!
     Target: absolute beginners, barely have a vps
