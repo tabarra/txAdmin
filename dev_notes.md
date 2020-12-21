@@ -17,7 +17,8 @@
 - [x] add translation to the ban messages (kick/join)
 - [x] handle non-ascii characters in the paths to prevent crash
 - [x] add temporary workaround for yarn stdin issue
-- [ ] IF deploy fails, add a `_DEPLOY_FAILED_DO_NOT_USE` file to deploy path
+- [x] if deploy fails, add a `_DEPLOY_FAILED_DO_NOT_USE` file to deploy path
+- [x] add $onesync directive to the deployer
 - [ ] update cfx default recipe
 - [ ] improve setup page common template incompatibility behavior and set $engine to 2
 - [ ] fix console overflow
@@ -27,7 +28,7 @@
 - [ ] version bump
 
 > Hopefully now:
-- [ ] live console input should alto re-enable auto scroll
+- [ ] live console input should alto re-enable auto scroll, and should scroll down when auto scroll is enabled
 - [ ] update README
 - [ ] maybe hardcode if(recipeName == plume) to open the readme in a new tab
 - [ ] add new hardware bans

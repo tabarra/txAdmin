@@ -95,7 +95,12 @@ const parseValidateRecipe = (rawRecipe) => {
         tasks: [],
     };
 
-    //Checking meta tag requirements
+    //Checking/parsing meta tag requirements
+    if(typeof recipe['$onesync'] == 'string'){
+        const onesync = recipe['$onesync'].trim();
+        if(![`off`, `legacy`, `on`].includes(onesync)) throw new Error(`the onesync option selected required for this recipe ("${onesync}") is not supported by this FXServer version.`);
+        outRecipe.onesync = onesync;
+    }
     if(typeof recipe['$minFxVersion'] == 'number'){
         if(recipe['$minFxVersion'] > GlobalData.fxServerVersion) throw new Error(`this recipe requires FXServer v${recipe['$minFxVersion']} or above`);
         outRecipe.fxserverMinVersion = recipe['$minFxVersion']; //useless for now
@@ -229,6 +234,17 @@ class Deployer {
     }
 
     /**
+     * Marks the deploy as failed
+     */
+    async markFailedDeploy(){
+        this.deployFailed = true;
+        try {
+            const filePath = path.join(this.deployPath, '_DEPLOY_FAILED_DO_NOT_USE');
+            await fs.outputFile(filePath, 'This deploy was failed, please do not use these files.');
+        } catch (error) {}
+    }
+
+    /**
      * (Private) Run the tasks in a sequential way.
      */
     async runTasks(){
@@ -258,8 +274,7 @@ class Deployer {
                         + `Options: \n`
                         + JSON.stringify(task, null, 2);
                 this.logError(msg);
-                this.deployFailed = true;
-                return;
+                return await this.markFailedDeploy();
             }
         }
 
@@ -276,8 +291,7 @@ class Deployer {
             }
         } catch (error) {
             this.logError(`Deploy validation error: ${error.message}`);
-            this.deployFailed = true;
-            return;
+            return await this.markFailedDeploy();
         }
 
         //Replace {{svLicense}} in the server.cfg
@@ -292,8 +306,7 @@ class Deployer {
             this.log(`Replacing {{svLicense}} in server.cfg... ✔️`);
         } catch (error) {
             this.logError(`Failed to set {{svLicense}} in server.cfg: ${error.message}`);
-            this.deployFailed = true;
-            return;
+            return await this.markFailedDeploy();
         }
 
         //Else: success :)

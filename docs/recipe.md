@@ -31,10 +31,15 @@ tasks:
 
 ## Meta Data
 The recipe accepts the following default meta data:
-- `name`: The short name for your recipe. Recommended to be under 24 characters.
-- `version`: The version of your recipe.
-- `author`: The short name of the author. Recommended to be under 24 characters.
-- `description`: A single or multiline description for your recipe. Recommended to be under 256 characters. On YAML you can use multiline strings in many ways, for more information check https://yaml-multiline.info.
+- Engine specific meta data *(optional)*:
+  - `$engine`: The recipe's target engine version.
+  - `$minFxVersion`: The minimum required FXserver version for this recipe.
+  - `$onesync`: The required onesync value to be set after deployment. Supports only `off`, `legacy`, `on` - just as FXServer.
+- General tags *(strongly-recommended)*:
+  - `name`: The short name for your recipe. Recommended to be under 24 characters.
+  - `version`: The version of your recipe.
+  - `author`: The short name of the author. Recommended to be under 24 characters.
+  - `description`: A single or multiline description for your recipe. Recommended to be under 256 characters. On YAML you can use multiline strings in many ways, for more information check https://yaml-multiline.info.
 
 
 ## Context Variables

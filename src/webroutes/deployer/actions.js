@@ -166,6 +166,9 @@ async function handleSaveConfig(ctx) {
     const newFXRunnerConfig = globals.configVault.getScopedStructure('fxRunner');
     newFXRunnerConfig.serverDataPath = slash(path.normalize(globals.deployer.deployPath));
     newFXRunnerConfig.cfgPath = slash(path.normalize(cfgFilePath));
+    if(typeof globals.deployer.recipe.onesync !== 'undefined'){
+        newFXRunnerConfig.onesync = globals.deployer.recipe.onesync;
+    }
     const saveFXRunnerStatus = globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
 
     if(saveFXRunnerStatus){
