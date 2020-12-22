@@ -2,7 +2,7 @@
 const modulename = 'WebServer:SetupGet';
 const path = require('path');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-
+const { engineVersion } = require('../../extras/deployer');
 
 /**
  * Returns the output page containing the live console
@@ -27,6 +27,7 @@ module.exports = async function SetupGet(ctx) {
         headerTitle: `Setup`,
         serverName: globalConfig.serverName || '',
         isReset: (globalConfig.serverName !== null),
+        deployerEngineVersion: engineVersion,
         serverProfile: globals.info.serverProfile,
         txDataPath: GlobalData.dataPath,
     }
