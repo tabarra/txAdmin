@@ -299,5 +299,8 @@ mark {background-color: #ffeaa7;}
 
 .thin-scroll {
     overflow-x: hidden;
-    overflow-y: scroll;
+    overflow-y: auto;
+}
+pre.thin-scroll{
+    white-space: pre-wrap;
 }

@@ -20,8 +20,8 @@
 - [x] if deploy fails, add a `_DEPLOY_FAILED_DO_NOT_USE` file to deploy path
 - [x] add $onesync directive to the deployer
 - [x] update cfx default recipe
-- [ ] adapt setup page to handle different recipe engine versions + handle outdated state
-- [ ] fix console overflow
+- [x] adapt setup page to handle different recipe engine versions + handle outdated state
+- [x] fix console hidden x overflow
 - [ ] merge at least one PR
 - [ ] improve terminal onboarding? Nem que seja só um pouquinho...
 - [ ] test on linux
