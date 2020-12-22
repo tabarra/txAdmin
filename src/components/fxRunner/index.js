@@ -74,7 +74,7 @@ module.exports = class FXRunner {
 
         // Configure spawn parameters according to the environment
         if(GlobalData.osType === 'linux'){
-            let alpinePath = path.resolve(GlobalData.fxServerPath, '../../');
+            const alpinePath = path.resolve(GlobalData.fxServerPath, '../../');
             this.spawnVariables = {
                 command: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
                 args: [
@@ -251,13 +251,13 @@ module.exports = class FXRunner {
         try {
             //If a reason is provided, announce restart on discord, kick all players and wait 750ms
             if(typeof tReason === 'string'){
-                let tOptions = {
+                const tOptions = {
                     servername: globals.config.serverName,
                     reason: tReason
                 }
-                let kickMessage = globals.translator.t('server_actions.restarting', tOptions);
+                const kickMessage = globals.translator.t('server_actions.restarting', tOptions);
                 this.srvCmd(formatCommand('quit', kickMessage));
-                let discordMessage = globals.translator.t('server_actions.restarting_discord', tOptions);
+                const discordMessage = globals.translator.t('server_actions.restarting_discord', tOptions);
                 globals.discordBot.sendAnnouncement(discordMessage);
                 await sleep(750);
             }
@@ -272,7 +272,7 @@ module.exports = class FXRunner {
             }
             return this.spawnServer();
         } catch (error) {
-            let errMsg = logError("Couldn't restart the server.");
+            const errMsg = logError("Couldn't restart the server.");
             if(GlobalData.verbose) dir(error);
             return errMsg;
         }

@@ -22,13 +22,14 @@
 - [x] update cfx default recipe
 - [x] adapt setup page to handle different recipe engine versions + handle outdated state
 - [x] fix console hidden x overflow
-- [ ] merge at least one PR
+- [x] if profile !== default, say it on the navbar
+- [ ] live console input should alto re-enable auto scroll, and should scroll down when auto scroll is enabled
 - [ ] improve terminal onboarding? Nem que seja só um pouquinho...
+- [ ] merge at least one PR
 - [ ] test on linux
 - [ ] version bump
 
 > Hopefully now:
-- [ ] live console input should alto re-enable auto scroll, and should scroll down when auto scroll is enabled
 - [ ] update README
 - [ ] maybe hardcode if(recipeName == plume) to open the readme in a new tab
 - [ ] add new hardware bans

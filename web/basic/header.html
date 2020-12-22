@@ -181,6 +181,10 @@
     <div class="c-wrapper c-fixed-components">
         <!-- Header -->
         <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
+            {{@if(it.serverProfile !== 'default')}}
+                <h5 class="c-header-nav font-weight-light px-3">Profile: {{it.serverProfile}}</h5>
+            {{/if}}
+
             <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar"
                 data-class="c-sidebar-show">
                 <svg class="c-icon c-icon-lg">

@@ -65,6 +65,7 @@ async function renderMasterView(view, reqSess, data, txVars){
     if(isUndefined(data)) data = {};
     data.uiTheme = (txVars.darkMode)? 'theme--dark' : '';
     data.headerTitle = (!isUndefined(data.headerTitle))? `${data.headerTitle} - txAdmin` : 'txAdmin';
+    data.serverProfile = globals.info.serverProfile;
     data.txAdminVersion = GlobalData.txAdminVersion;
     data.txAdminOutdated = (now() > GlobalData.txAdminVersionBestBy);
     data.fxServerVersion = GlobalData.fxServerVersion;

@@ -137,7 +137,7 @@ module.exports = class ConfigVault {
                 onJoinCheckBan: toDefault(cfg.playerController.onJoinCheckBan, true),
                 onJoinCheckWhitelist: toDefault(cfg.playerController.onJoinCheckWhitelist, false),
                 minSessionTime:  toDefault(cfg.playerController.minSessionTime, 15),
-                whitelistRejectionMessage: toDefault(cfg.playerController.whitelistRejectionMessage, 'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\n<strong>Your ID: <id></strong>'),
+                whitelistRejectionMessage: toDefault(cfg.playerController.whitelistRejectionMessage, 'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour ID: <id>'),
                 wipePendingWLOnStart: toDefault(cfg.playerController.wipePendingWLOnStart, true),
             };
             out.authenticator = {
