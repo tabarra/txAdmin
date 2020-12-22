@@ -23,8 +23,9 @@
 - [x] adapt setup page to handle different recipe engine versions + handle outdated state
 - [x] fix console hidden x overflow
 - [x] if profile !== default, say it on the navbar
-- [ ] live console input should alto re-enable auto scroll, and should scroll down when auto scroll is enabled
+- [x] improved (slightly) the behavior of the live console auto scroll
 - [ ] improve terminal onboarding? Nem que seja só um pouquinho...
+- [ ] move the Monitor/Restarter tab in the settings page
 - [ ] merge at least one PR
 - [ ] test on linux
 - [ ] version bump

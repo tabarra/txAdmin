@@ -141,6 +141,7 @@
         //Preparing variables
         const commandHistoryLimit = 12;
         const socket = io({path: '/socket.io', transports: ['polling'], upgrade: false});
+        
         //NOTE: when using namespaces:
         // const socket = io('/console', {path: '/socket.io', transports: ['polling'], upgrade: false});
         const ansi_up = new AnsiUp;
@@ -150,7 +151,9 @@
         const consoleForm = document.getElementById("frmConsole");
         const historyDiv = document.getElementById('cmdHistoryDiv');
         const historyElement = document.getElementById('cmdHistory');
+        const autoScrollToggle = document.getElementById("toggleAutoScroll");
         let commandHistory = [];
+        let autoScroll = true;
     
 
         //Helper Functions
@@ -199,7 +202,7 @@
                 ? _consoleData.slice(-0.5 * bufferTrimSize) // grab the last half
                 : _consoleData; // no need to trim
             consoleElement.innerHTML = _consoleData.substr(_consoleData.indexOf("\n"));
-            if (autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight
+            if (autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight;
         });
 
 
@@ -212,6 +215,10 @@
 
             commandCache.unshift(command);
             socket.emit('consoleCommand', command);
+
+            autoScroll = true;
+            consoleElement.scrollTop = consoleElement.scrollHeight;
+            autoScrollToggle.innerText = "Disable Scroll";
 
             if(!commandHistory.includes(command)){
                 addCommandHistoryEntry(command);
@@ -254,14 +261,11 @@
             if (changed) input.value = commandCache[currentIndex] || "";
         });
 
-
         //Buttons
-        var autoScroll = true;
-        var autoScrollToggle = document.getElementById("toggleAutoScroll");
-
         autoScrollToggle.addEventListener("click", function () {
             autoScroll = !autoScroll;
             autoScrollToggle.innerText = (autoScroll ? "Disable Scroll" : "Enable Scroll");
+            if(autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight;
         });
 
         document.getElementById("clearConsole").addEventListener("click", function () {
