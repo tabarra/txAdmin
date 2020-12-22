@@ -147,11 +147,6 @@ async function getFXServerData(){
 
     //Processing result
     try {
-        let versionWarning;
-        if(getBuild(infoData.server) !== GlobalData.fxServerVersion){
-            versionWarning = `<span class="badge badge-danger"> INCOMPATIBLE </span>`;
-        }
-
         let resourcesWarning;
         if(infoData.resources.length <= 100){
             resourcesWarning = '';
@@ -166,7 +161,7 @@ async function getFXServerData(){
             statusColor: 'success',
             status: ' ONLINE ',
             version: infoData.server,
-            versionWarning: versionWarning || '',
+            versionMismatch: (getBuild(infoData.server) !== GlobalData.fxServerVersion),
             resources: infoData.resources.length,
             resourcesWarning: resourcesWarning,
             onesync: (infoData.vars && infoData.vars.onesync_enabled === 'true')? 'enabled' : 'disabled',
