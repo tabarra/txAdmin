@@ -40,8 +40,7 @@ module.exports = async function AdvancedActions(ctx) {
         return ctx.send({refresh:true});
 
     }else if(action == 'perform_magic'){
-        const data = globals.playerController.activePlayers;
-        const message = JSON.stringify(data, null, 2);
+        const message = JSON.stringify(globals.playerController.activePlayers, null, 2);
         return ctx.send({type: 'success', message});
         
     }else if(action == 'perform_magic2'){
@@ -82,7 +81,7 @@ module.exports = async function AdvancedActions(ctx) {
         return ctx.send({type: 'success', message: 'wiiiiiiiiped'});
         
     }else if(action == 'show_log'){
-        return ctx.send({type: 'success', message: JSON.stringify(globals.databus.serverLog, null, 2)})
+        return ctx.send({type: 'success', message: JSON.stringify(globals.databus.serverLog, null, 2)});
 
     }else if(action == 'memory'){
         let memory;
@@ -95,7 +94,7 @@ module.exports = async function AdvancedActions(ctx) {
         } catch (error) {
             memory = 'error';
         }
-        return ctx.send({type: 'success', message: memory})
+        return ctx.send({type: 'success', message: memory});
 
     }else if(action == 'joinCheckHistory'){
         let outData;

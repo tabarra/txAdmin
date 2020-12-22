@@ -1,6 +1,5 @@
 //Requires
 const modulename = 'WebServer:DeployerStatus';
-const xss = require('../../extras/xss')();
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 

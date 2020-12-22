@@ -158,10 +158,6 @@ async function handleKick(ctx) {
 
     //Prepare and send command
     ctx.utils.logAction(`Kicked #${id}: ${reason}`);
-    // let message = `You have been kicked from this server. \n`;
-    // message += `<b>Kicked for:</b> ${xss(reason)} \n`;
-    // message += `<b>Kicked by:</b> ${xss(ctx.session.auth.username)}`;
-    // const msg = `[🆃🆇🅰🅳🅼🅸🅽] You have been kicked from this server by ${xss(ctx.session.auth.username)}. Kick reason: ${xss(reason)}`;
     const msg = `[txAdmin] (${xss(ctx.session.auth.username)}) Kick reason: ${xss(reason)}`;
     const cmd = formatCommand('txaKickID', id, msg);
     const toResp = await globals.fxRunner.srvCmdBuffer(cmd);
