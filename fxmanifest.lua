@@ -5,7 +5,7 @@
 author 'Tabarra'
 description 'Remotely Manage & Monitor your GTA5 FiveM Server'
 repository 'https://github.com/tabarra/txAdmin'
-version '3.1.0-beta2'
+version '3.1.0'
 
 fx_version 'bodacious'
 games { 'gta5' }

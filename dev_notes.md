@@ -26,7 +26,7 @@
 - [x] improved (slightly) the behavior of the live console auto scroll
 - [x] improve terminal onboarding? Nem que seja só um pouquinho...
 - [x] test on linux
-- [ ] version bump
+- [x] version bump
 
 > Hopefully now:
 - [ ] move the Monitor/Restarter tab in the settings page
