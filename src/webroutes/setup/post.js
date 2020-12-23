@@ -388,7 +388,7 @@ async function handleSaveDeployerImport(ctx) {
 
     //Start deployer (constructor will validate the recipe)
     try {
-        globals.deployer = new Deployer(recipeData, deploymentID, targetPath, isTrustedSource);
+        globals.deployer = new Deployer(recipeData, deploymentID, targetPath, isTrustedSource, {serverName});
     } catch (error) {
         return ctx.send({success: false, message: error.message});
     }

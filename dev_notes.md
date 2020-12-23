@@ -25,7 +25,7 @@
 - [x] if profile !== default, say it on the navbar
 - [x] improved (slightly) the behavior of the live console auto scroll
 - [x] improve terminal onboarding? Nem que seja só um pouquinho...
-- [ ] test on linux
+- [x] test on linux
 - [ ] version bump
 
 > Hopefully now:

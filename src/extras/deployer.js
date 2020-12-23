@@ -160,6 +160,7 @@ class Deployer {
         this.originalRecipe = originalRecipe;
         this.deploymentID = deploymentID;
         this.progress = 0;
+        this.serverName = customMetaData.serverName || globals.config.serverName || '';
         this.logLines = [];
 
         //Load recipe
@@ -254,7 +255,7 @@ class Deployer {
         if(this.step !== 'run') throw new Error(`expected run step`);
         const contextVariables = cloneDeep(this.recipe.variables);
         contextVariables.deploymentID = this.deploymentID;
-        contextVariables.serverName = globals.config.serverName || '';
+        contextVariables.serverName = this.serverName;
         contextVariables.recipeName = this.recipe.name;
         contextVariables.recipeAuthor = this.recipe.author;
         contextVariables.recipeVersion = this.recipe.version;

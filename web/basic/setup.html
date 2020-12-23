@@ -616,10 +616,12 @@
                             }
                             s4CommonTemplateRow.appendChild(newNode);
                         });
-                        const warningNode = document.createElement("span");
-                        warningNode.innerHTML = `Some recipes are not compatible with your txAdmin version.<br> Please update txAdmin to be able to use them.`;
-                        warningNode.classList.add('text-danger', 'font-weight-bold', 'ml-3');
-                        s4CommonTemplateRow.appendChild(warningNode);
+                        if(hasIncompatible){
+                            const warningNode = document.createElement("span");
+                            warningNode.innerHTML = `Some recipes are not compatible with your txAdmin version.<br> Please update txAdmin to be able to use them.`;
+                            warningNode.classList.add('text-danger', 'font-weight-bold', 'ml-3');
+                            s4CommonTemplateRow.appendChild(warningNode);
+                        }
                     }
                 },
                 error: function (xmlhttprequest, textstatus, message) {
