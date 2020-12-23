@@ -24,13 +24,13 @@
 - [x] fix console hidden x overflow
 - [x] if profile !== default, say it on the navbar
 - [x] improved (slightly) the behavior of the live console auto scroll
-- [ ] improve terminal onboarding? Nem que seja só um pouquinho...
-- [ ] move the Monitor/Restarter tab in the settings page
-- [ ] merge at least one PR
+- [x] improve terminal onboarding? Nem que seja só um pouquinho...
 - [ ] test on linux
 - [ ] version bump
 
 > Hopefully now:
+- [ ] move the Monitor/Restarter tab in the settings page
+- [ ] merge at least one PR
 - [ ] update README
 - [ ] maybe hardcode if(recipeName == plume) to open the readme in a new tab
 - [ ] add new hardware bans

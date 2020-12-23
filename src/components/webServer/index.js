@@ -16,6 +16,7 @@ const { customAlphabet } = require('nanoid');
 const dict51 = require('nanoid-dictionary/nolookalikes');
 const nanoid = customAlphabet(dict51, 20);
 
+const boxen = require('boxen');
 const chalk = require('chalk');
 const { setHttpCallback } = require('@citizenfx/http-wrapper');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
@@ -196,7 +197,7 @@ module.exports = class WebServer {
             try {
                 const urlConvar = GetConvar('web_baseUrl', 'false');
                 if(validUrlRegex.test(urlConvar)){
-                    logOk(`Listening at ` + chalk.inverse(` https://${urlConvar}/ `));
+                    logOk(`Alternative URL: ` + chalk.inverse(` https://${urlConvar}/ `));
                     GlobalData.cfxUrl = urlConvar;
                     clearInterval(getUrlInterval);
                 }
@@ -222,8 +223,20 @@ module.exports = class WebServer {
                 process.exit();
             });
             this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', async () => {
+                const boxOptions = {
+                    padding: 1,
+                    margin: 1,
+                    align: 'center',
+                    borderStyle: 'bold',
+                    borderColor: 'cyan',
+                    // backgroundColor: 'cyan',
+                }
                 const addr = (GlobalData.osType === 'linux')? 'your-public-ip' : 'localhost';
-                logOk(`Listening at ` + chalk.inverse(` http://${addr}:${GlobalData.txAdminPort}/ `));
+                const boxText = `Please access:\n` + chalk.inverse(` http://${addr}:${GlobalData.txAdminPort}/ `);
+                const logPrefix = chalk.bold.bgGreen(`[txAdmin:WebServer]`);
+                const banner = boxen(boxText, boxOptions).replace(/\n/g, `\n${logPrefix} `)
+                logOk(banner);
+                // logOk(`Please access ` + chalk.inverse(` http://${addr}:${GlobalData.txAdminPort}/ `));
                 if(
                     globals.authenticator &&
                     globals.authenticator.admins === false &&
