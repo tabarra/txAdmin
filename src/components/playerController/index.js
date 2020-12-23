@@ -149,8 +149,16 @@ module.exports = class PlayerController {
             // await this.dbo.set('players', []).write(); //DEBUG
             if(this.config.wipePendingWLOnStart) await this.dbo.set('pendingWL', []).write();
         } catch (error) {
-            logError(`Failed to load database file '${dbPath}'`);
-            if(GlobalData.verbose) dir(error);
+            if(error.message.startsWith('Malformed JSON')){
+                logError(`Your database file got corrupted and could not be loaded.`);
+                logError(`If you have a backup, you can manually replace the file.`);
+                logError(`If you don't care about the contents (players/bans/whitelists), just delete the file.`);
+                logError(`You can also try restoring it manually.`);
+                logError(`Database path: '${dbPath}'`);
+            }else{
+                logError(`Failed to load database file '${dbPath}'`);
+                if(GlobalData.verbose) dir(error);
+            }
             process.exit();
         }
     }

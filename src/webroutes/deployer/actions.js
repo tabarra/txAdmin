@@ -109,7 +109,9 @@ async function handleSetVariables(ctx) {
             addPrincipalLines.push(`add_principal identifier.${admin.providers[providerName].identifier} group.admin`);
         }
     });
-    userVars.addPrincipalsMaster = addPrincipalLines.join('\n');
+    userVars.addPrincipalsMaster = (addPrincipalLines.length)
+        ? addPrincipalLines.join('\n') 
+        : `# Deployer Note: this admin master has no identifiers to be automatically added.`;
 
     //Start deployer
     try {
