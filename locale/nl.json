@@ -13,10 +13,10 @@
         "schedule_warn_discord": "**%{servername}** heeft een geplande restart over %{smart_count} minuut. |||| **%{servername}** heeft een geplande restart over %{smart_count} minuten."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) Je bent verbannen van deze server omwille van \"%{reason}\". Je ban zal vervallen over: %{expiration}.",
+        "kick_permanent": "(%{author}) Je bent permanent verbannen van deze server omwille van \"%{reason}\".",
+        "reject_temporary": "Je bent verbannen van deze server.\nJe ban zal vervallen over: %{expiration}.\nBan ID: %{id}.\nBan Reden: %{reason}.\nVerbannen door: %{author}.",
+        "reject_permanent": "Je bent permanent verbannen van deze server.\nBan ID: %{id}.\nBan Reden: %{reason}.\nVerbannen door: %{author}."
     },
     "server_actions": {
         "restarting": "Server wordt herstart (%{reason}).",
