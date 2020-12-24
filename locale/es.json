@@ -4,19 +4,19 @@
         "humanizer_language": "es"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
+        "start_timeout": "Se ha agotado el tiempo de espera para el arranque.",
         "crash_detected": "Caída del servidor detectada.",
-        "partial_crash_warn": "Debido a una caída parcial, este servidor se reiniciará  en 1 minuto. Favor desconectarse.",
-        "partial_crash_warn_discord": "Debido a una caída parcial, **%{servername}**este servidor se reiniciará  en 1 minuto.",
+        "partial_crash_warn": "Debido a una caída parcial, el servidor se reiniciará  en 1 minuto. Por favor desconéctense.",
+        "partial_crash_warn_discord": "Debido a una caída parcial, **%{servername}** se reiniciará  en 1 minuto.",
         "schedule_reason": "Reinicio programado a las %{time}",
-        "schedule_warn": "El servidor se va a reiniciar en %{smart_count} minuto. Favor desconectarse. |||| El servidor se va a reiniciar en %{smart_count} minutos.",
+        "schedule_warn": "El servidor se va a reiniciar en %{smart_count} minutos. Por favor desconéctense. |||| El servidor se va a reiniciar en %{smart_count} minutos.",
         "schedule_warn_discord": "**%{servername}** El servidor se va a reiniciar en %{smart_count} minutos. |||| **%{servername}** El servidor se va a reiniciar en %{smart_count} minutos."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "drop_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "drop_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) Has sido baneado del servidor por \"%{reason}\". Tu baneo expirará en: %{expiration}.",
+        "kick_permanent": "(%{author}) Has sido baneado permanentemente del servidor por \"%{reason}\".",
+        "reject_temporary": "Has sido baneado del servidor.\nTu baneo expirará en: %{expiration}.\nID del baneo: %{id}.\nRazón del baneo: %{reason}.\nBaneado por: %{author}.",
+        "reject_permanent": "Has sido baneado permanentemente del servidor.\nID del baneo: %{id}.\nRazón del baneo: %{reason}.\nBaneado por: %{author}."
     },
     "server_actions": {
         "restarting": "Reiniciando Servidor (%{reason}).",
@@ -32,6 +32,6 @@
     "nui_warning": {
         "title": "ADVERTENCIA",
         "warned_by": "Advertido por:",
-        "instruction": "Presione [SPACE] durante 10 segundos para descartar este mensaje."
+        "instruction": "Presione [ESPACIO] durante 10 segundos para descartar este mensaje."
     }
 }

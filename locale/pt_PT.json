@@ -15,8 +15,8 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Você foi banido deste servidor por \"%{reason}\". Seu ban vai expirar em: %{expiration}.",
         "kick_permanent": "(%{author}) Você foi permanentemente banido deste servidor por \"%{reason}\".",
-        "drop_temporary": "Você foi banido deste servidor.\nSeu ban vai expirar em: %{expiration}.\nID: %{id}.\nMotivo: %{reason}.\nAutor: %{author}.",
-        "drop_permanent": "Você foi permanentemente banido deste servidor.\nID: %{id}.\nnMotivo: %{reason}.\nnAutor: %{author}."
+        "reject_temporary": "Você foi banido deste servidor.\nSeu ban vai expirar em: %{expiration}.\nID: %{id}.\nMotivo: %{reason}.\nAutor: %{author}.",
+        "reject_permanent": "Você foi permanentemente banido deste servidor.\nID: %{id}.\nnMotivo: %{reason}.\nnAutor: %{author}."
     },
     "server_actions": {
         "restarting": "Servidor a reiniciar (%{reason}).",

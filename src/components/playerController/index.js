@@ -379,9 +379,9 @@ module.exports = class PlayerController {
                             units: ['d', 'h'],
                         }
                         tOptions.expiration = humanizeDuration((ban.expiration - ts)*1000, humanizeOptions);
-                        msg = globals.translator.t('ban_messages.drop_temporary', tOptions);
+                        msg = globals.translator.t('ban_messages.reject_temporary', tOptions);
                     }else{
-                        msg = globals.translator.t('ban_messages.drop_permanent', tOptions);
+                        msg = globals.translator.t('ban_messages.reject_permanent', tOptions);
                     }
                     
                     return {allow: false, reason: msg};
