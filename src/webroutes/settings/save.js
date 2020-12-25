@@ -245,7 +245,8 @@ function handleMonitor(ctx) {
     //Sanity check
     if(
         isUndefined(ctx.request.body.schedule),
-        isUndefined(ctx.request.body.disableChatWarnings)
+        isUndefined(ctx.request.body.disableChatWarnings),
+        isUndefined(ctx.request.body.restartWarnings)
     ){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -253,7 +254,8 @@ function handleMonitor(ctx) {
     //Prepare body input
     let cfg = {
         schedule: ctx.request.body.schedule.split(',').map((x) => {return x.trim()}),
-        disableChatWarnings: (ctx.request.body.disableChatWarnings === 'true')
+        disableChatWarnings: (ctx.request.body.disableChatWarnings === 'true'),
+        restartWarnings: ctx.request.body.restartWarnings.split(',').map((x) => {return x.trim()})
     }
 
     //Validating times
@@ -274,10 +276,33 @@ function handleMonitor(ctx) {
         return ctx.send({type: 'danger', message: message});
     }
 
+    //Validating minutes
+    let minutes = helpers.parseMinutes(cfg.restartWarnings, false);
+    let invalidMinutes = [];
+    let validMinutes = [];
+    minutes.forEach((minute) => {
+        if(typeof minute !== 'string'){
+            invalidMinutes.push(`"${minute}"`);
+        }else{
+            minute = parseInt(minute)
+            if (minute >= 1 && minute < 1440) {
+                validMinutes.push(parseInt(minute));
+            } else if (!isNaN(minute)) {
+                invalidMinutes.push(`"${minute}"`);
+            }
+        }
+    });
+    if(invalidMinutes.length){
+        let message = `<strong>The following entries were not recognized as valid minutes before restart warning:</strong><br>`;
+        message += invalidMinutes.join('<br>\n');
+        return ctx.send({type: 'danger', message: message});
+    }
+
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('monitor');
     newConfig.restarterSchedule = validTimes;
     newConfig.disableChatWarnings = cfg.disableChatWarnings;
+    newConfig.restartWarnings = validMinutes;
     let saveStatus = globals.configVault.saveProfile('monitor', newConfig);
 
     //Sending output

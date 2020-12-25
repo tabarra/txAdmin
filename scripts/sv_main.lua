@@ -32,6 +32,7 @@ CreateThread(function()
     RegisterCommand("txaKickID", txaKickID, true)
     RegisterCommand("txaDropIdentifiers", txaDropIdentifiers, true)
     RegisterCommand("txaBroadcast", txaBroadcast, true)
+    RegisterCommand("txaEvent", txaEvent, true)
     RegisterCommand("txaSendDM", txaSendDM, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
     CreateThread(function()
@@ -201,6 +202,31 @@ function txaDropIdentifiers(_, args)
 
     if kickCount == 0 then
         log("No players found to kick")
+    end
+    CancelEvent()
+end
+
+function dump(o)
+    if type(o) == 'table' then
+       local s = '{ '
+       for k,v in pairs(o) do
+          if type(k) ~= 'number' then k = '"'..k..'"' end
+          s = s .. '['..k..'] = ' .. dump(v) .. ','
+       end
+       return s .. '} '
+    else
+       return tostring(o)
+    end
+ end
+
+-- Fire server event
+function txaEvent(source, args)
+    if args[1] ~= nil then
+        local eventName = unDeQuote(args[1])
+        local arguments = json.decode(args[2])
+        TriggerEvent("txAdmin:events:" .. eventName, arguments)
+    else
+        logError('Invalid arguments for txaEvent')
     end
     CancelEvent()
 end

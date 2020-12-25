@@ -87,6 +87,21 @@ function parseSchedule(schedule, filter) {
     return out;
 }
 
+function parseMinutes(minutesString, filter) {
+    if(typeof filter === 'undefined') filter = true;
+    minutes = (typeof minutesString === 'string') ? minutesString.split(',') : minutesString;
+    let out = []
+    minutes.forEach((minute) => {
+        if(!Number.isInteger(minute)){
+            if(!filter) out.push(minute);
+        }else{
+            out.push(parseInt(minute));
+        }
+    });
+
+    return out;
+}
+
 
 //================================================================
 /**
@@ -194,6 +209,7 @@ module.exports = {
     txAdminASCII,
     dependencyChecker,
     parseSchedule,
+    parseMinutes,
     getCFGFileData,
     resolveCFGFilePath,
     getFXServerPort,

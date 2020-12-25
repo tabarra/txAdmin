@@ -79,6 +79,7 @@ module.exports = class Monitor {
                 hour: date.getHours(),
                 minute: date.getMinutes(),
                 restart: false,
+                remaining: sub,
                 messages: {
                     chat: globals.translator.t('restarter.schedule_warn', tOptions),
                     discord: globals.translator.t('restarter.schedule_warn_discord', tOptions),
@@ -88,7 +89,8 @@ module.exports = class Monitor {
 
         let times = helpers.parseSchedule(this.config.restarterSchedule);
         let schedule = [];
-        let announceMinutes = [30, 15, 10, 5, 4, 3, 2, 1];
+        let announceMinutes = helpers.parseMinutes(this.config.restartWarnings);
+        
         times.forEach((time)=>{
             try {
                 announceMinutes.forEach((mins)=>{
@@ -97,6 +99,7 @@ module.exports = class Monitor {
                 schedule.push({
                     hour: time.hour,
                     minute: time.minute,
+                    remaining: 0,
                     restart: true,
                     messages: false
                 });
@@ -128,6 +131,9 @@ module.exports = class Monitor {
                 return (time.hour == now.getHours() && time.minute == now.getMinutes())
             });
             if(!action) return;
+
+            //Fire event
+            globals.fxRunner.srvCmd(`txaEvent "restart" ${JSON.stringify({minutesRemaining: action.remaining})}`);
 
             //Perform scheduled action
             if(action.restart === true){
