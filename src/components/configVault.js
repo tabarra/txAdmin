@@ -122,9 +122,9 @@ module.exports = class ConfigVault {
             out.monitor = {
                 timeout: toDefault(cfg.monitor.timeout, null),
                 restarterSchedule: toDefault(cfg.monitor.restarterSchedule, null),
+                restarterScheduleWarnings: toDefault(cfg.monitor.restarterScheduleWarnings, null), //not in template
                 cooldown: toDefault(cfg.monitor.cooldown, null), //not in template
                 disableChatWarnings: toDefault(cfg.monitor.disableChatWarnings, null), //not in template
-                restartWarnings: toDefault(cfg.monitor.restartWarnings, null), //not in template
                 heartBeat: {
                     failThreshold: (cfg.monitor.heartBeat)? toDefault(cfg.monitor.heartBeat.failThreshold, null) : null,
                     failLimit: (cfg.monitor.heartBeat)? toDefault(cfg.monitor.heartBeat.failLimit, null) : null,
@@ -197,9 +197,9 @@ module.exports = class ConfigVault {
             //Monitor
             cfg.monitor.timeout = cfg.monitor.timeout || 1500;
             cfg.monitor.restarterSchedule = cfg.monitor.restarterSchedule || [];
+            cfg.monitor.restarterScheduleWarnings = cfg.monitor.restarterScheduleWarnings || [30, 15, 10, 5, 4, 3, 2, 1];
             cfg.monitor.cooldown = parseInt(cfg.monitor.cooldown) || 60; //not in template - 45 > 60 > 90 -> 60 after fixing the "extra time" logic
             cfg.monitor.disableChatWarnings = (cfg.monitor.disableChatWarnings === 'true' || cfg.monitor.disableChatWarnings === true);
-            cfg.monitor.restartWarnings = cfg.monitor.restartWarnings || [30, 15, 10, 5, 4, 3, 2, 1];
             cfg.monitor.heartBeat.failThreshold = parseInt(cfg.monitor.heartBeat.failThreshold) || 10;
             cfg.monitor.heartBeat.failLimit = parseInt(cfg.monitor.heartBeat.failLimit) || 45;
             cfg.monitor.healthCheck.failThreshold = parseInt(cfg.monitor.healthCheck.failThreshold) || 10;

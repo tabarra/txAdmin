@@ -330,9 +330,9 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="frmMonitor-restartWarnings" class="col-sm-3 col-form-label">Restart warnings</label>
+                            <label for="frmMonitor-restarterScheduleWarnings" class="col-sm-3 col-form-label">Restart warnings</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmMonitor-restartWarnings" value="{{it.monitor.restartWarnings|undef}}"
+                                <input type="text" class="form-control" id="frmMonitor-restarterScheduleWarnings" value="{{it.monitor.restarterScheduleWarnings|undef}}"
                                     placeholder="30, 15, 10, 5, 4, 3, 2, 1" {{it.readOnly|isDisabled}}>
                                 <span class="form-text text-muted">
                                     Minutes before restarts to trigger chat warnings and server event (<code>txAdmin:events:restart</code>). <br>
@@ -656,7 +656,7 @@
         let data = {
             schedule: $('#frmMonitor-schedule').val().trim(),
             disableChatWarnings: ($('#frmMonitor-chatMessages').is(':checked') === true),
-            restartWarnings: $('#frmMonitor-restartWarnings').val().trim()
+            restarterScheduleWarnings: $('#frmMonitor-restarterScheduleWarnings').val().trim()
         }
         var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 

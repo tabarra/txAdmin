@@ -21,7 +21,6 @@ let defaultConfig = {
     logger: {},
     monitor: {
         restarterSchedule: [],
-        restartWarnings: [30, 15, 10, 5, 4, 3, 2, 1],
         healthCheck: {
             failThreshold: 15,
             failLimit: 300,

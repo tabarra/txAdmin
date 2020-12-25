@@ -246,7 +246,7 @@ function handleMonitor(ctx) {
     if(
         isUndefined(ctx.request.body.schedule),
         isUndefined(ctx.request.body.disableChatWarnings),
-        isUndefined(ctx.request.body.restartWarnings)
+        isUndefined(ctx.request.body.restarterScheduleWarnings)
     ){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -255,7 +255,7 @@ function handleMonitor(ctx) {
     let cfg = {
         schedule: ctx.request.body.schedule.split(',').map((x) => {return x.trim()}),
         disableChatWarnings: (ctx.request.body.disableChatWarnings === 'true'),
-        restartWarnings: ctx.request.body.restartWarnings.split(',').map((x) => {return x.trim()})
+        restarterScheduleWarnings: ctx.request.body.restarterScheduleWarnings.split(',').map((x) => {return x.trim()})
     }
 
     //Validating times
@@ -277,7 +277,7 @@ function handleMonitor(ctx) {
     }
 
     //Validating minutes
-    let minutes = helpers.parseMinutes(cfg.restartWarnings, false);
+    let minutes = helpers.parseMinutes(cfg.restarterScheduleWarnings, false);
     let invalidMinutes = [];
     let validMinutes = [];
     minutes.forEach((minute) => {
@@ -302,7 +302,7 @@ function handleMonitor(ctx) {
     let newConfig = globals.configVault.getScopedStructure('monitor');
     newConfig.restarterSchedule = validTimes;
     newConfig.disableChatWarnings = cfg.disableChatWarnings;
-    newConfig.restartWarnings = validMinutes;
+    newConfig.restarterScheduleWarnings = validMinutes;
     let saveStatus = globals.configVault.saveProfile('monitor', newConfig);
 
     //Sending output
