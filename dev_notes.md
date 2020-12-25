@@ -1,40 +1,14 @@
-## TODO v3
-- [x] deployer: add download_github action
-- [x] clean this file
-- [x] deployer: add `github_download` action
-- [x] deployer: add `load_vars`/`dump_vars` actions
-- [x] deployer: add context variables to the `replace_string` action
-- [x] deployer: add variable input stage
-- [x] blur some inputs 
-- [x] persist user oauth data and refresh it on social login
-- [x] deployer: add a context var for the master admin identifiers
-- [x] deployer: on download_github, first query to see which is the default branch
-- [x] add tool to import ban from other databases
-- [x] fix darkmode cookie path
-- [x] upgrade packages
-- [x] add option to backup (download) the database
-- [x] add `joinCheckHistory` advanced action to dump `playerController.checkPlayerJoin()` attempts
-- [x] add translation to the ban messages (kick/join)
-- [x] handle non-ascii characters in the paths to prevent crash
-- [x] add temporary workaround for yarn stdin issue
-- [x] if deploy fails, add a `_DEPLOY_FAILED_DO_NOT_USE` file to deploy path
-- [x] add $onesync directive to the deployer
-- [x] update cfx default recipe
-- [x] adapt setup page to handle different recipe engine versions + handle outdated state
-- [x] fix console hidden x overflow
-- [x] if profile !== default, say it on the navbar
-- [x] improved (slightly) the behavior of the live console auto scroll
-- [x] improve terminal onboarding? Nem que seja só um pouquinho...
-- [x] test on linux
-- [x] version bump
+## TODO v3.2
+- [x] update README
+- [ ] merge PR#226
+- [ ] move the Monitor/Restarter tab in the settings page
+- [ ] consolidate the log pages
+- [ ] send log via FD3
+
 
 > Hopefully now:
-- [ ] move the Monitor/Restarter tab in the settings page
-- [ ] merge at least one PR
-- [ ] update README
-- [ ] maybe hardcode if(recipeName == plume) to open the readme in a new tab
-- [ ] add new hardware bans
 - [ ] make `playerController.writePending` prioritized (low 5s, medium 30s, high 60s)
+- [ ] create autobackup of the database
 - [ ] create `admin.useroptions` for dark mode, welcome modals and such
 - [ ] remove the ForceFXServerPort config and do either via `server.cfg` comment, or execute `endpoint_add_tcp "127.0.0.1:random"`
 - [ ] clean github Issues/PRs
@@ -46,10 +20,10 @@
         - if discord id is present, use that instead of name (careful with the pings!)
 
 > Soon™ (hopefully the next update)
-- [ ] consolidate the log pages
+- [ ] maybe hardcode if(recipeName == plume) to open the readme in a new tab
+- [ ] add new hardware bans
 - [ ] add stats enc?
 - [ ] the Commands card in the dashboard is underused since resource commands are useless and nobody knows the kick all and broadcast options are there
-- [ ] send log via FD3
 - [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
 - [ ] apply the new action log html to the modal
 - [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
@@ -115,53 +89,66 @@ The Main menu will be fully arrow operated, but the player and txAdmin tab need 
 Add a note that to erase the entire database, the user should delete the `playersDB.json` (full path) file and restart txAdmin.
 Pre calculate all counts
 
+## Structured traces
+### Rate limiter
+We could be more sensible when restarting the server and pushing an event to alert other resources thatm ight want to auto block it.
+```bat
+netsh advfirewall firewall add rule name="txAdmin_block_XXXX" dir=in interface=any action=block remoteip=198.51.100.108/32
+netsh advfirewall firewall show rule name="txAdmin_block_XXXX"
+netsh advfirewall firewall delete rule name="txAdmin_block_XXXX"
+```
+### Oversized resources streams
+We could wait for the server to finish loading, as well as print in the interface somewhere an descending ordered list of large resource assets
+https://github.com/citizenfx/fivem/blob/649dac8e9c9702cc3e293f8b6a48105a9378b3f5/code/components/citizen-server-impl/src/ResourceStreamComponent.cpp#L435
+
+
 ## Video tutorials
 Requirements:
     - 2 non-rp recipes
     - Separate master actions page
-#### [OFFICIAL] How to make a FiveM Server tutorial 2021 for beginners!
-    Target: absolute beginners, barely have a vps
-    - Requirements:
-        - Needs to be a VPS
-        - OS: windows server 2016 or 2019 recommended
-        - Hardware specs recommendation
-        - Download Visual C++
-        - You need a forum account (show page, don't go trough)
-        - Create server key
-        - Download xamp (explain most servers require, show heidisql page)
-    - Open firewall ports (show windows + OVH)
-    - Download artifact (show difference between latest and latest recommended)
-    - Set folder structure
-    - Run txAdmin
-    - Open page outside VPS to show the ip:port thing
-    - Create master account
-    - Setup:
-        - Present options
-        - Run PlumeESX recipe
-        - Master Actions -> Reset FXServer Settings
-        - Setup local folder (show endpoint + server.cfg.txt errors)
-    - Show how to create admins
-    - Callout for advanced tutorial
-#### [OFFICIAL] How to update your FiveM Server tutorial 2021
-    Target: server owners that followed the stupid Jeva tutorial
-    - Why windows only
-    - Show current stupid folder structure
-    - Download artifact (show difference between latest and latest recommended)
-    - Set new folder structure
-    - Run txAdmin
-    - Create master account
-    - Setup (show endpoint + server.cfg.txt errors)
-    - Show how to create admins
-    - Open firewall port 40120 (show windows + OVH)
-    - Callout for advanced tutorial
-#### [OFFICIAL] txAdmin v3 advanced guide 2021
-    Target: average txAdmin users
-    - creating admins
-    - multiple servers
-    - discord bot
-    - discord login
-    - database pruning 
-    - scheduled restarter
+### [OFFICIAL] How to make a FiveM Server tutorial 2021 for beginners!
+Target: absolute beginners, barely have a vps
+- Requirements:
+    - Needs to be a VPS
+    - OS: windows server 2016 or 2019 recommended
+    - Hardware specs recommendation
+    - Download Visual C++
+    - You need a forum account (show page, don't go trough)
+    - Create server key
+    - Download xamp (explain most servers require, show heidisql page)
+- Open firewall ports (show windows + OVH)
+- Download artifact (show difference between latest and latest recommended)
+- Set folder structure
+- Run txAdmin
+- Open page outside VPS to show the ip:port thing
+- Create master account
+- Setup:
+    - Present options
+    - Run PlumeESX recipe
+    - Master Actions -> Reset FXServer Settings
+    - Setup local folder (show endpoint + server.cfg.txt errors)
+- Show how to create admins
+- Callout for advanced tutorial
+### [OFFICIAL] How to update your FiveM Server tutorial 2021
+Target: server owners that followed the stupid Jeva tutorial
+- Why windows only
+- Show current stupid folder structure
+- Download artifact (show difference between latest and latest recommended)
+- Set new folder structure
+- Run txAdmin
+- Create master account
+- Setup (show endpoint + server.cfg.txt errors)
+- Show how to create admins
+- Open firewall port 40120 (show windows + OVH)
+- Callout for advanced tutorial
+### [OFFICIAL] txAdmin v3 advanced guide 2021
+Target: average txAdmin users
+- creating admins
+- multiple servers
+- discord bot
+- discord login
+- database pruning 
+- scheduled restarter
 
 ## Bot Commands:
 DONE:

@@ -9,7 +9,7 @@
 		Join our Discord Server: &nbsp; <a href="https://discord.gg/AFAAXzq"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
 	</h4>
 	<p align="center">
-		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM Server remotely, in use by over two thousand servers worldwide at any given time.
+		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM Server remotely, in use by over three thousand servers worldwide at any given time.
 	</p>
 </p>
 
@@ -17,6 +17,7 @@
 
 
 ## Main Features
+- Recipe-based Server Deployer: create a server in under 60 seconds! ([more info](docs/recipe.md))
 - Start/Stop/Restart your server instance or resources
 - Access control:
 	- Login via Password or CitizenFX
@@ -40,19 +41,20 @@
 	- Whitelist system
 	- Take notes about players
 	- Keep track of player's play and session time
-	- Self-contained player database (no MySQL required!)
+	- Import bans from EasyAdmin, BanSQL, vMenu, vRP, el_bwh
+	- Self-contained player database with backup tool (no MySQL required!)
 - Real-time playerlist
 - Scheduled restarts with warning announcements
 - Translation Support ([more info](docs/translation.md))
 - FiveM's Server CFG editor
-- Responsive web interface
+- Responsive web interface with Dark Mode 😎
 
 Also, check our [Feature Graveyard](docs/feature_graveyard.md) for the features that are no longer among us (RIP).
 
 ## Running (Windows/Linux)
 Currently **txAdmin is included in all FXServer builds** above 2524, so to run it for the first time simply do the following:
 - Update FXServer to the latest artifact/build (2524 or superior)
-- If Windows, run FXServer.exe | If Linux, run `./run.sh`
+- If Windows, run FXServer.exe | If Linux, run `screen ./run.sh`
 - Open one of the URLs shown and configure txAdmin
 
 After that you could also run the `start_<build>_<profile>.bat` file created, or call it via cmd/bash if you want to edit the ConVars (ex http port).  
@@ -68,10 +70,10 @@ txAdmin requires to be launched from *inside* FXServer in monitor mode, to do th
 ConVar usage **example** for different port and profile:  
 ```bash
 # Windows
-./FXServer.exe +set serverProfile dev_server +set txAdminPort 40125
+./FXServer.exe +set serverProfile dev_server +set txAdminPort 40121
 
 # Linux
-./run.sh +set serverProfile dev_server +set txAdminPort 40125
+./run.sh +set serverProfile dev_server +set txAdminPort 40121
 ```
 
 ### Installing & Building it (NOT RECOMMENDED)
