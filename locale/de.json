@@ -13,10 +13,10 @@
         "schedule_warn_discord": "**%{servername}** wird in einer Minute neu gestartet. |||| **%{servername}** wird in %{smart_count} Minuten neu gestartet."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) Du wurdest von diesem Server für %{expiration} gebannt. Grund: \"%{reason}\".",
+        "kick_permanent": "(%{author}) Du wurdest von diesem Server permanent gebannt. Grund: \"%{reason}\".",
+        "reject_temporary": "Du wurdest von diesem Server gebannt.\nDein Bann läuft ab in: %{expiration}.\nBann ID: %{id}.\nGrund: %{reason}.\nGebannt von: %{author}.",
+        "reject_permanent": "Du wurdest von diesem Server permanent gebannt.\nBann ID: %{id}.\nGrund: %{reason}.\nGebannt von: %{author}."
     },
     "server_actions": {
         "restarting": "Server Restart (%{reason}).",
