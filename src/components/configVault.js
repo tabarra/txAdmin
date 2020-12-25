@@ -122,7 +122,7 @@ module.exports = class ConfigVault {
             out.monitor = {
                 timeout: toDefault(cfg.monitor.timeout, null),
                 restarterSchedule: toDefault(cfg.monitor.restarterSchedule, null),
-                restarterScheduleWarnings: toDefault(cfg.monitor.restarterScheduleWarnings, null), //not in template
+                restarterScheduleWarnings: toDefault(cfg.monitor.restarterScheduleWarnings, [30, 15, 10, 5, 4, 3, 2, 1]), //not in template
                 cooldown: toDefault(cfg.monitor.cooldown, null), //not in template
                 disableChatWarnings: toDefault(cfg.monitor.disableChatWarnings, null), //not in template
                 heartBeat: {
