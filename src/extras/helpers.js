@@ -59,14 +59,11 @@ function dependencyChecker() {
 
 //================================================================
 /**
- * Reads CFG Path and return the file contents, or throw error if:
- *  - the path is not valid (absolute or relative)
- *  - cannot read the file data
- * @param {string} cfgPath
- * @param {string} serverDataPath
+ * Extracts hours and minutes from an string containing times
+ * @param {string} schedule 
+ * @param {boolean} filter default true
  */
-function parseSchedule(schedule, filter) {
-    if(typeof filter === 'undefined') filter = true;
+function parseSchedule(schedule, filter = true) {
     times = (typeof schedule === 'string')? schedule.split(',') : schedule;
     let out = []
     times.forEach((time) => {
@@ -81,21 +78,6 @@ function parseSchedule(schedule, filter) {
                 hour: parseInt(m[1]),
                 minute: parseInt(m[2]),
             });
-        }
-    });
-
-    return out;
-}
-
-function parseMinutes(minutesString, filter) {
-    if(typeof filter === 'undefined') filter = true;
-    minutes = (typeof minutesString === 'string') ? minutesString.split(',') : minutesString;
-    let out = []
-    minutes.forEach((minute) => {
-        if(!Number.isInteger(minute)){
-            if(!filter) out.push(minute);
-        }else{
-            out.push(parseInt(minute));
         }
     });
 
@@ -209,7 +191,6 @@ module.exports = {
     txAdminASCII,
     dependencyChecker,
     parseSchedule,
-    parseMinutes,
     getCFGFileData,
     resolveCFGFilePath,
     getFXServerPort,

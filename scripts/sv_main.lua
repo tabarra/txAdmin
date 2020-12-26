@@ -6,7 +6,8 @@ function logError(x)
     print("^5[txAdminClientLUA]^1 " .. x .. "^0")
 end
 function unDeQuote(x)
-    return string.gsub(x, utf8.char(65282), '"')
+    local new, count = string.gsub(x, utf8.char(65282), '"')
+    return new
 end
 
 --Check Environment
@@ -221,10 +222,10 @@ function dump(o)
 
 -- Fire server event
 function txaEvent(source, args)
-    if args[1] ~= nil then
+    if args[1] ~= nil and args[2] ~= nil then
         local eventName = unDeQuote(args[1])
-        local arguments = json.decode(args[2])
-        TriggerEvent("txAdmin:events:" .. eventName, arguments)
+        local eventData = unDeQuote(args[2])
+        TriggerEvent("txAdmin:events:" .. eventName, json.decode(eventData))
     else
         logError('Invalid arguments for txaEvent')
     end
