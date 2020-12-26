@@ -59,14 +59,11 @@ function dependencyChecker() {
 
 //================================================================
 /**
- * Reads CFG Path and return the file contents, or throw error if:
- *  - the path is not valid (absolute or relative)
- *  - cannot read the file data
- * @param {string} cfgPath
- * @param {string} serverDataPath
+ * Extracts hours and minutes from an string containing times
+ * @param {string} schedule 
+ * @param {boolean} filter default true
  */
-function parseSchedule(schedule, filter) {
-    if(typeof filter === 'undefined') filter = true;
+function parseSchedule(schedule, filter = true) {
     times = (typeof schedule === 'string')? schedule.split(',') : schedule;
     let out = []
     times.forEach((time) => {

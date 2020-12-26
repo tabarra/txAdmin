@@ -244,41 +244,67 @@ function handlePlayerController(ctx) {
 function handleMonitor(ctx) {
     //Sanity check
     if(
-        isUndefined(ctx.request.body.schedule),
-        isUndefined(ctx.request.body.disableChatWarnings)
+        isUndefined(ctx.request.body.restarterSchedule),
+        isUndefined(ctx.request.body.disableChatWarnings),
+        isUndefined(ctx.request.body.restarterScheduleWarnings)
     ){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
     //Prepare body input
     let cfg = {
-        schedule: ctx.request.body.schedule.split(',').map((x) => {return x.trim()}),
-        disableChatWarnings: (ctx.request.body.disableChatWarnings === 'true')
+        restarterSchedule: ctx.request.body.restarterSchedule.split(',').map((x) => {return x.trim()}),
+        restarterScheduleWarnings: ctx.request.body.restarterScheduleWarnings.split(',').map((x) => {return x.trim()}),
+        disableChatWarnings: (ctx.request.body.disableChatWarnings === 'true'),
     }
 
-    //Validating times
-    let times = helpers.parseSchedule(cfg.schedule, false);
-    let invalidTimes = [];
-    let validTimes = [];
-    times.forEach((time) => {
+    //Validating restart times
+    let scheduleTimes = helpers.parseSchedule(cfg.restarterSchedule, false);
+    let invalidRestartTimes = [];
+    let validRestartTimes = [];
+    scheduleTimes.forEach((time) => {
         if(typeof time === 'string'){
-            invalidTimes.push(`"${time}"`);
+            invalidRestartTimes.push(`"${time}"`);
         }else{
-            let cleanTime = time.hour.toString().padStart(2, '0') + ':' + time.minute.toString().padStart(2, '0');
-            validTimes.push(cleanTime);
+            const cleanTime = time.hour.toString().padStart(2, '0') + ':' + time.minute.toString().padStart(2, '0');
+            validRestartTimes.push(cleanTime);
         }
     });
-    if(invalidTimes.length){
-        let message = `<strong>The following entries were not recognized as valid 24h times:</strong><br>`;
-        message += invalidTimes.join('<br>\n');
+    if(invalidRestartTimes.length){
+        const message = `<strong>The following entries were not recognized as valid 24h times:</strong><br>`;
+        message += invalidRestartTimes.join('<br>\n');
+        return ctx.send({type: 'danger', message: message});
+    }
+
+    //Validating restart warning minutes
+    const invalidRestartWarningMinutes = [];
+    const validRestartWarningMinutes = [];
+    cfg.restarterScheduleWarnings.forEach((minutes) => {
+        if(typeof minutes !== 'string'){
+            invalidRestartWarningMinutes.push(`"${minutes}"`);
+        }else{
+            const minutesAttempt = parseInt(minutes);
+            if(isNaN(minutesAttempt)){
+                invalidRestartWarningMinutes.push(`"${minutes}"`);
+            }else if(minutesAttempt < 1 || minutesAttempt > 360){
+                invalidRestartWarningMinutes.push(minutesAttempt);
+            }else {
+                validRestartWarningMinutes.push(parseInt(minutes));
+            }
+        }
+    });
+    if(invalidRestartWarningMinutes.length){
+        const message = `<strong>The following entries were not recognized as valid minutes before restart warning:</strong><br>`;
+        message += invalidRestartWarningMinutes.join('<br>\n');
         return ctx.send({type: 'danger', message: message});
     }
 
     //Preparing & saving config
-    let newConfig = globals.configVault.getScopedStructure('monitor');
-    newConfig.restarterSchedule = validTimes;
+    const newConfig = globals.configVault.getScopedStructure('monitor');
+    newConfig.restarterSchedule = validRestartTimes;
+    newConfig.restarterScheduleWarnings = validRestartWarningMinutes.sort((a, b) => b-a);
     newConfig.disableChatWarnings = cfg.disableChatWarnings;
-    let saveStatus = globals.configVault.saveProfile('monitor', newConfig);
+    const saveStatus = globals.configVault.saveProfile('monitor', newConfig);
 
     //Sending output
     if(saveStatus){

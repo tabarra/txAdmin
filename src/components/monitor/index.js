@@ -6,9 +6,13 @@ const helpers = require('../../extras/helpers');
 const HostCPUStatus = require('./hostCPUStatus');
 const TimeSeries = require('./timeSeries');
 
-//Helpers
+//Helper functions
 const now = () => { return Math.round(Date.now() / 1000) };
 const isUndefined = (x) => { return (typeof x === 'undefined') };
+const escape = (x) => {return x.replace(/\"/g, '\uff02');};
+const formatCommand = (cmd, ...params) => {
+    return `${cmd} "` + [...params].map(escape).join(`" "`) + `"`;
+};
 
 module.exports = class Monitor {
     constructor(config) {
@@ -21,6 +25,7 @@ module.exports = class Monitor {
         if(this.config.healthCheck.failLimit < 180) throw new Error('The monitor.healthCheck.failLimit setting must be 180 or higher.');
         if(this.config.heartBeat.failThreshold < 10) throw new Error('The monitor.heartBeat.failThreshold setting must be 10 or higher.');
         if(this.config.heartBeat.failLimit < 30) throw new Error('The monitor.heartBeat.failLimit setting must be 30 or higher.');
+        if(!Array.isArray(this.config.restarterScheduleWarnings)) throw new Error('The monitor.restarterScheduleWarnings must be an array.');
 
         //Setting up
         logOk('Started');
@@ -66,45 +71,54 @@ module.exports = class Monitor {
             return;
         }
 
-        let getScheduleObj = (hour, minute, sub) => {
-            var date = new Date();
-            date.setHours(hour);
-            date.setMinutes(minute - sub);
+        let getScheduleObj = (hour, minute, sub, sendMessage = false) => {
+            const time = new Date();
+            time.setHours(hour);
+            time.setMinutes(minute - sub);
 
-            let tOptions = {
+            const tOptions = {
                 smart_count: sub,
                 servername: globals.config.serverName
             }
             return {
-                hour: date.getHours(),
-                minute: date.getMinutes(),
+                hour: time.getHours(),
+                minute: time.getMinutes(),
+                remaining: sub,
                 restart: false,
-                messages: {
+                messages: (!sendMessage)? false : {
                     chat: globals.translator.t('restarter.schedule_warn', tOptions),
                     discord: globals.translator.t('restarter.schedule_warn_discord', tOptions),
                 }
             }
         }
 
-        let times = helpers.parseSchedule(this.config.restarterSchedule);
-        let schedule = [];
-        let announceMinutes = [30, 15, 10, 5, 4, 3, 2, 1];
+        const times = helpers.parseSchedule(this.config.restarterSchedule);
+        const defaultTimes = [30, 15, 10, 5, 4, 3, 2, 1];
+        const warnTimes = defaultTimes.concat(
+            this.config.restarterScheduleWarnings.filter(
+                (item) => defaultTimes.indexOf(item) < 0
+            )
+        ).sort((a, b) => b-a);
+
+        const schedule = [];
         times.forEach((time)=>{
             try {
-                announceMinutes.forEach((mins)=>{
-                    schedule.push(getScheduleObj(time.hour, time.minute, mins));
+                warnTimes.forEach((mins)=>{
+                    schedule.push(getScheduleObj(time.hour, time.minute, mins, this.config.restarterScheduleWarnings.includes(mins)));
                 })
                 schedule.push({
                     hour: time.hour,
                     minute: time.minute,
+                    remaining: 0,
                     restart: true,
                     messages: false
                 });
             } catch (error) {
-                let timeJSON = JSON.stringify(time);
+                const timeJSON = JSON.stringify(time);
                 if(GlobalData.verbose) logWarn(`Error building restart schedule for time '${timeJSON}':\n ${error.message}`);
             }
-        })
+        });
+        dir(schedule)
 
         if(GlobalData.verbose) dir(schedule.map(el => { return el.messages }));
         this.schedule = (schedule.length)? schedule : false;
@@ -123,26 +137,32 @@ module.exports = class Monitor {
             //Check schedule for current time
             //NOTE: returns only the first result, not necessarily the most important
             // eg, when a restart message comes before a restart command
-            let now = new Date;
-            let action = this.schedule.find((time) => {
-                return (time.hour == now.getHours() && time.minute == now.getMinutes())
+            const currTime = new Date;
+            const action = this.schedule.find((time) => {
+                return (time.hour == currTime.getHours() && time.minute == currTime.getMinutes())
             });
             if(!action) return;
 
+            //Fire event
+            const cmd = formatCommand('txaEvent', 'scheduledRestart', JSON.stringify({secondsRemaining: action.remaining*60}));
+            globals.fxRunner.srvCmd(cmd);
+
             //Perform scheduled action
             if(action.restart === true){
-                let currTime = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+                const currTimestamp = currTime.getHours().toString().padStart(2, '0') + ':' + currTime.getMinutes().toString().padStart(2, '0');
                 this.restartFXServer(
-                    `scheduled restart at ${currTime}`,
-                    globals.translator.t('restarter.schedule_reason', {time: currTime})
+                    `scheduled restart at ${currTimestamp}`,
+                    globals.translator.t('restarter.schedule_reason', {time: currTimestamp})
                 );
             }else if(action.messages){
                 globals.discordBot.sendAnnouncement(action.messages.discord);
                 if(!this.config.disableChatWarnings){
-                    globals.fxRunner.srvCmd(`txaBroadcast "txAdmin" "${action.messages.chat}"`);
+                    globals.fxRunner.srvCmd(formatCommand('txaBroadcast', 'txAdmin', action.messages.chat));
                 }
             }
-        } catch (error) {}
+        } catch (error) {
+            if(GlobalData.verbose) dir(error)
+        }
     }
 
 
@@ -319,7 +339,7 @@ module.exports = class Monitor {
                 {servername: globals.config.serverName}
             ));
             const chatMsg = globals.translator.t('restarter.partial_crash_warn');
-            globals.fxRunner.srvCmd(`txaBroadcast "txAdmin" "${chatMsg}"`);
+            globals.fxRunner.srvCmd(formatCommand('txaBroadcast', 'txAdmin', chatMsg));
             this.healthCheckRestartWarningIssued = currTimestamp;
         }
 

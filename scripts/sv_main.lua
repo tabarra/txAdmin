@@ -6,7 +6,8 @@ function logError(x)
     print("^5[txAdminClientLUA]^1 " .. x .. "^0")
 end
 function unDeQuote(x)
-    return string.gsub(x, utf8.char(65282), '"')
+    local new, count = string.gsub(x, utf8.char(65282), '"')
+    return new
 end
 
 --Check Environment
@@ -32,6 +33,7 @@ CreateThread(function()
     RegisterCommand("txaKickID", txaKickID, true)
     RegisterCommand("txaDropIdentifiers", txaDropIdentifiers, true)
     RegisterCommand("txaBroadcast", txaBroadcast, true)
+    RegisterCommand("txaEvent", txaEvent, true)
     RegisterCommand("txaSendDM", txaSendDM, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
     CreateThread(function()
@@ -201,6 +203,31 @@ function txaDropIdentifiers(_, args)
 
     if kickCount == 0 then
         log("No players found to kick")
+    end
+    CancelEvent()
+end
+
+function dump(o)
+    if type(o) == 'table' then
+       local s = '{ '
+       for k,v in pairs(o) do
+          if type(k) ~= 'number' then k = '"'..k..'"' end
+          s = s .. '['..k..'] = ' .. dump(v) .. ','
+       end
+       return s .. '} '
+    else
+       return tostring(o)
+    end
+ end
+
+-- Fire server event
+function txaEvent(source, args)
+    if args[1] ~= nil and args[2] ~= nil then
+        local eventName = unDeQuote(args[1])
+        local eventData = unDeQuote(args[2])
+        TriggerEvent("txAdmin:events:" .. eventName, json.decode(eventData))
+    else
+        logError('Invalid arguments for txaEvent')
     end
     CancelEvent()
 end
