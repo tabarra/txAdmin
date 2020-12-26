@@ -44,7 +44,7 @@
 	- Import bans from EasyAdmin, BanSQL, vMenu, vRP, el_bwh
 	- Self-contained player database with backup tool (no MySQL required!)
 - Real-time playerlist
-- Scheduled restarts with warning announcements
+- Scheduled restarts with warning announcements and custom events ([more info](docs/events.md))
 - Translation Support ([more info](docs/translation.md))
 - FiveM's Server CFG editor
 - Responsive web interface with Dark Mode 😎

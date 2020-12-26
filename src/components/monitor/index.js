@@ -144,7 +144,7 @@ module.exports = class Monitor {
             if(!action) return;
 
             //Fire event
-            const cmd = formatCommand('txaEvent', 'restart', JSON.stringify({secondsRemaining: action.remaining*60}));
+            const cmd = formatCommand('txaEvent', 'scheduledRestart', JSON.stringify({secondsRemaining: action.remaining*60}));
             globals.fxRunner.srvCmd(cmd);
 
             //Perform scheduled action

@@ -335,8 +335,9 @@
                                 <input type="text" class="form-control" id="frmMonitor-restarterScheduleWarnings" value="{{it.monitor.restarterScheduleWarnings|undef}}"
                                     placeholder="30, 15, 10, 5, 4, 3, 2, 1" {{it.readOnly|isDisabled}}>
                                 <span class="form-text text-muted">
-                                    Minutes before restarts to trigger chat warnings and server event (<code>txAdmin:events:restart</code>). <br>
-                                    All the minutes must be between 1 and 360 minutes and should be separated by commas. 
+                                    Minutes before restarts to trigger chat warnings <br>
+                                    All the minutes must be between 1 and 360 minutes and be separated by commas. <br>
+                                    <strong>Note:</strong> This will also trigger the server event <code>txAdmin:events:scheduledRestart</code> <a href="https://github.com/tabarra/txAdmin/blob/master/docs/events.md" target="_blank" rel="noopener noreferrer">(docs)</a>
                                 </span>
                             </div>
                         </div>
