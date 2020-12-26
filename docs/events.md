@@ -1,6 +1,6 @@
 # Custom Events
 
-Starting in v3.1, **txAdmin** now has the ability to trigger server events.  
+Starting in v3.2, **txAdmin** now has the ability to trigger server events.  
 The event name will be `txAdmin:events:<name>` and the first (and only) parameter will be a table that may contain relevant data.
 
 ## txAdmin:events:scheduledRestart

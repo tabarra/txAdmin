@@ -1,7 +1,7 @@
 ## TODO v3.2
 - [x] update README
-- [ ] merge PR#226
-- [ ] move the Monitor/Restarter tab in the settings page
+- [x] merge PR#226
+- [x] move the Monitor/Restarter tab in the settings page
 - [ ] consolidate the log pages
 - [ ] send log via FD3
 

@@ -26,7 +26,7 @@ const getRenderErrorText = (view, error, data) => {
 }
 const getWebViewPath = (view) => {
     if(view.includes('..')) throw new Error('Path Traversal?');
-    return path.join(GlobalData.txAdminResourcePath, 'web/', view+'.html');
+    return path.join(GlobalData.txAdminResourcePath, 'web', view+'.html');
 }
 
 //Squirrelly Filters

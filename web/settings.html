@@ -22,12 +22,12 @@
                             role="tab" aria-controls="nav-fxserver" aria-selected="true">FXServer</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item nav-link {{it.activeTab=='playerManager'|isActive}}" id="nav-playerManager-tab" data-toggle="tab" href="#nav-playerManager"
-                            role="tab" aria-controls="nav-playerManager" aria-selected="true">Player Manager</a>
+                        <a class="nav-item nav-link {{it.activeTab=='monitor'|isActive}}" id="nav-monitor-tab" data-toggle="tab" href="#nav-monitor"
+                            role="tab" aria-controls="nav-monitor" aria-selected="true">Restarter</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item nav-link {{it.activeTab=='monitor'|isActive}}" id="nav-monitor-tab" data-toggle="tab" href="#nav-monitor"
-                            role="tab" aria-controls="nav-monitor" aria-selected="true">Monitor/Restarter</a>
+                        <a class="nav-item nav-link {{it.activeTab=='playerManager'|isActive}}" id="nav-playerManager-tab" data-toggle="tab" href="#nav-playerManager"
+                            role="tab" aria-controls="nav-playerManager" aria-selected="true">Player Manager</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-item nav-link {{it.activeTab=='discord'|isActive}}" id="nav-discord-tab" data-toggle="tab" href="#nav-discord"
@@ -199,6 +199,60 @@
                         </div>
                     </div>
                     <!-- /FXServer Tab -->
+
+                    <!-- Restarter Tab -->
+                    <div class="tab-pane fade {{it.activeTab=='monitor'|isActive|tShow}}" id="nav-monitor" role="tabpanel" aria-labelledby="nav-monitor-tab">
+                        <div class="form-group row">
+                            <label for="frmMonitor-restarterSchedule" class="col-sm-3 col-form-label">Scheduled Restarts</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmMonitor-restarterSchedule" value="{{it.monitor.restarterSchedule|undef}}"
+                                    placeholder="05:00, 13:00" {{it.readOnly|isDisabled}}>
+                                <span class="form-text text-danger" id="frmMonitor-timezoneAlert"></span>
+                                <span class="form-text text-muted">
+                                    At which times of day to restart the server. Leave it blank to disable this feature. <br>
+                                    The time MUST be in the 24-hour format with two digits for hours as well as
+                                    minutes (<code>HH:MM</code>) and the times should be separated by commas. <br>
+                                    <strong>Note:</strong> Make sure your schedule matches your server time and not your local time.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Disable Chat Warnings
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMonitor-chatMessages"
+                                        {{it.monitor.disableChatWarnings|undef}} {{it.readOnly|isDisabled}}>
+                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Check this if you want to disable broadcast chat warning messages in game before each scheduled restart.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="frmMonitor-restarterScheduleWarnings" class="col-sm-3 col-form-label">Restart Warnings</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmMonitor-restarterScheduleWarnings" value="{{it.monitor.restarterScheduleWarnings|undef}}"
+                                    placeholder="30, 15, 10, 5, 4, 3, 2, 1" {{it.readOnly|isDisabled}}>
+                                <span class="form-text text-muted">
+                                    Minutes before restarts to trigger chat warnings <br>
+                                    All the minutes must be between 1 and 360 minutes and be separated by commas. <br>
+                                    <strong>Note:</strong> This will also trigger the server event <code>txAdmin:events:scheduledRestart</code> <a href="https://github.com/tabarra/txAdmin/blob/master/docs/events.md" target="_blank" rel="noopener noreferrer">(docs)</a>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmMonitor-save" {{it.readOnly|isDisabled}}>
+                                <i class="icon-check"></i> Save Monitor/Restarter Settings
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /Restarter Tab -->
                     
                     <!-- Player Manager Tab -->
                     <div class="tab-pane fade {{it.activeTab=='playerManager'|isActive|tShow}}" id="nav-playerManager" role="tabpanel" aria-labelledby="nav-playerManager-tab">
@@ -295,60 +349,6 @@
                         </div>
                     </div>
                     <!-- /Player Manager Tab -->
-
-                    <!-- Monitor Tab -->
-                    <div class="tab-pane fade {{it.activeTab=='monitor'|isActive|tShow}}" id="nav-monitor" role="tabpanel" aria-labelledby="nav-monitor-tab">
-                        <div class="form-group row">
-                            <label for="frmMonitor-restarterSchedule" class="col-sm-3 col-form-label">Scheduled Restarts</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmMonitor-restarterSchedule" value="{{it.monitor.restarterSchedule|undef}}"
-                                    placeholder="05:00, 13:00" {{it.readOnly|isDisabled}}>
-                                <span class="form-text text-danger" id="frmMonitor-timezoneAlert"></span>
-                                <span class="form-text text-muted">
-                                    At which times of day to restart the server. Leave it blank to disable this feature. <br>
-                                    The time MUST be in the 24-hour format with two digits for hours as well as
-                                    minutes (<code>HH:MM</code>) and the times should be separated by commas. <br>
-                                    <strong>Note:</strong> Make sure your schedule matches your server time and not your local time.
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">
-                                Disable Chat Warnings
-                            </label>
-                            <div class="col-sm-9">
-                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                                    <input class="c-switch-input" type="checkbox" id="frmMonitor-chatMessages"
-                                        {{it.monitor.disableChatWarnings|undef}} {{it.readOnly|isDisabled}}>
-                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
-                                </label>
-                                <span class="form-text text-muted">
-                                    Check this if you want to disable broadcast chat warning messages in game before each scheduled restart.
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="frmMonitor-restarterScheduleWarnings" class="col-sm-3 col-form-label">Restart Warnings</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmMonitor-restarterScheduleWarnings" value="{{it.monitor.restarterScheduleWarnings|undef}}"
-                                    placeholder="30, 15, 10, 5, 4, 3, 2, 1" {{it.readOnly|isDisabled}}>
-                                <span class="form-text text-muted">
-                                    Minutes before restarts to trigger chat warnings <br>
-                                    All the minutes must be between 1 and 360 minutes and be separated by commas. <br>
-                                    <strong>Note:</strong> This will also trigger the server event <code>txAdmin:events:scheduledRestart</code> <a href="https://github.com/tabarra/txAdmin/blob/master/docs/events.md" target="_blank" rel="noopener noreferrer">(docs)</a>
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="text-center mt-4">
-                            <button class="btn btn-sm btn-primary" type="submit" id="frmMonitor-save" {{it.readOnly|isDisabled}}>
-                                <i class="icon-check"></i> Save Monitor/Restarter Settings
-                            </button>
-                        </div>
-                    </div>
-                    <!-- /Monitor Tab -->
 
                     <!-- Discord Tab -->
                     <div class="tab-pane fade {{it.activeTab=='discord'|isActive|tShow}}" id="nav-discord" role="tabpanel" aria-labelledby="nav-discord-tab">

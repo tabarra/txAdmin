@@ -207,19 +207,6 @@ function txaDropIdentifiers(_, args)
     CancelEvent()
 end
 
-function dump(o)
-    if type(o) == 'table' then
-       local s = '{ '
-       for k,v in pairs(o) do
-          if type(k) ~= 'number' then k = '"'..k..'"' end
-          s = s .. '['..k..'] = ' .. dump(v) .. ','
-       end
-       return s .. '} '
-    else
-       return tostring(o)
-    end
- end
-
 -- Fire server event
 function txaEvent(source, args)
     if args[1] ~= nil and args[2] ~= nil then

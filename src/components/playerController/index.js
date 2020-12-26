@@ -420,7 +420,7 @@ module.exports = class PlayerController {
                         strong: [],
                         id: []
                     });
-                    let reason = xssRejectMessage(this.config.whitelistRejectionMessage)
+                    const reason = xssRejectMessage(this.config.whitelistRejectionMessage)
                                     .replace(/<\/?strong>/g, '')
                                     .replace(/<id>/g, whitelistID);
                     return {allow: false, reason};

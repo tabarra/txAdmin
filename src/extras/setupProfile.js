@@ -3,15 +3,13 @@ const modulename = 'SetupProfile';
 const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
-const slash = require('slash');
 const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
 
 //Helpers
 const printDivider = () => { log('='.repeat(57)) };
-const cleanPath = (x) => { return slash(path.normalize(x)) };
 
 //Default config structure
-let defaultConfig = {
+const defaultConfig = {
     global: {
         verbose: false,
         serverName: null,
@@ -57,12 +55,10 @@ module.exports = (osType, fxServerPath, fxServerVersion, serverProfile, profileP
     //Create new profile folder
     log('Creating new profile folder...');
     try {
-        let jsonConfig = JSON.stringify(defaultConfig, null, 2);
+        const jsonConfig = JSON.stringify(defaultConfig, null, 2);
         fs.mkdirSync(profilePath);
         fs.mkdirSync(`${profilePath}/logs/`);
         fs.mkdirSync(`${profilePath}/data/`);
-        // fs.writeFileSync(`${profilePath}/messages.json`, '[]');
-        // fs.writeFileSync(`${profilePath}/commands.json`, '[]');
         fs.writeFileSync(`${profilePath}/config.json`, jsonConfig);
     } catch (error) {
         logError(`Failed to set up folder structure in '${profilePath}' with error: ${error.message}`);
@@ -74,11 +70,11 @@ module.exports = (osType, fxServerPath, fxServerVersion, serverProfile, profileP
     //Saving start.bat
     if(osType == 'windows'){
         try {
-            let batData = `@echo off
+            const batData = `@echo off
 ${fxServerPath}/FXServer.exe +set serverProfile "${serverProfile}"
 pause`;
-            let batFolder = path.resolve(fxServerPath, '..');
-            let batPath  = path.join(batFolder, `start_${fxServerVersion}_${serverProfile}.bat`);
+            const batFolder = path.resolve(fxServerPath, '..');
+            const batPath  = path.join(batFolder, `start_${fxServerVersion}_${serverProfile}.bat`);
             fs.writeFileSync(batPath, batData);
             logOk(`You can use ${chalk.inverse(batPath)} to start this profile.`);
         } catch (error) {
