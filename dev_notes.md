@@ -2,6 +2,8 @@
 - [x] update README
 - [x] merge PR#226
 - [x] move the Monitor/Restarter tab in the settings page
+- [ ] start collecting `/perf/` metrics
+- [ ] add statistics page
 - [ ] consolidate the log pages
 - [ ] send log via FD3
 

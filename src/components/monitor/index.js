@@ -118,7 +118,6 @@ module.exports = class Monitor {
                 if(GlobalData.verbose) logWarn(`Error building restart schedule for time '${timeJSON}':\n ${error.message}`);
             }
         });
-        dir(schedule)
 
         if(GlobalData.verbose) dir(schedule.map(el => { return el.messages }));
         this.schedule = (schedule.length)? schedule : false;
