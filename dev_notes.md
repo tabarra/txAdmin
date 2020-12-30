@@ -2,6 +2,10 @@
 - [x] update README
 - [x] merge PR#226
 - [x] move the Monitor/Restarter tab in the settings page
+- [x] clean github Issues
+- [x] replace `clone` with `lodash/cloneDeep`
+- [ ] check the places where I'm doing `Object.assign()` for shallow clones
+- [ ] deal with the last 2 PRs
 - [ ] start collecting `/perf/` metrics
 - [ ] add statistics page
 - [ ] consolidate the log pages
@@ -13,7 +17,6 @@
 - [ ] create autobackup of the database
 - [ ] create `admin.useroptions` for dark mode, welcome modals and such
 - [ ] remove the ForceFXServerPort config and do either via `server.cfg` comment, or execute `endpoint_add_tcp "127.0.0.1:random"`
-- [ ] clean github Issues/PRs
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
         ---- 2 opções: estar na guild ou ter role na guild
 - [ ] persistent discord status message that is set up by `!setmessage`:
@@ -26,7 +29,6 @@
 - [ ] add new hardware bans
 - [ ] add stats enc?
 - [ ] the Commands card in the dashboard is underused since resource commands are useless and nobody knows the kick all and broadcast options are there
-- [ ] replace `clone` with `lodash/clonedeep` and check the places where I'm doing `Object.assign()` for shallow clones
 - [ ] apply the new action log html to the modal
 - [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
 - [ ] add ban server-side ban cache (last 500 bans?), updated on every ban change 

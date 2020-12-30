@@ -1,7 +1,7 @@
 //Requires
 const modulename = 'ConfigVault';
 const fs = require('fs');
-const clone = require('clone');
+const cloneDeep = require('lodash/cloneDeep');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 //Helper functions
@@ -93,7 +93,7 @@ module.exports = class ConfigVault {
      * @param {object} cfgData
      */
     setupConfigStructure(cfgData){
-        let cfg = clone(cfgData);
+        let cfg = cloneDeep(cfgData);
         let out = {
             global: null,
             logger: null,
@@ -184,7 +184,7 @@ module.exports = class ConfigVault {
      * @param {object} cfgData
      */
     setupConfigDefaults(cfgData){
-        let cfg = clone(cfgData);
+        let cfg = cloneDeep(cfgData);
         //NOTE: the bool trick in fxRunner.autostart won't work if we want the default to be true
         try {
             //Global
@@ -276,7 +276,7 @@ module.exports = class ConfigVault {
      * Return configs for a specific scope (reconstructed and freezed)
      */
     getScoped(scope){
-        return clone(this.config[scope]);
+        return cloneDeep(this.config[scope]);
     }
 
     //================================================================
@@ -284,7 +284,7 @@ module.exports = class ConfigVault {
      * Return configs for a specific scope (reconstructed and freezed)
      */
     getScopedStructure(scope){
-        return clone(this.configFile[scope]);
+        return cloneDeep(this.configFile[scope]);
     }
 
 
@@ -293,7 +293,7 @@ module.exports = class ConfigVault {
      * Return all configs individually reconstructed and freezed
      */
     getAll(){
-        let cfg = clone(this.config);
+        let cfg = cloneDeep(this.config);
         return deepFreeze({
             global: cfg.global,
             logger: cfg.logger,
@@ -315,7 +315,7 @@ module.exports = class ConfigVault {
      */
     saveProfile(scope, newConfig){
         try {
-            let toSave = clone(this.configFile);
+            let toSave = cloneDeep(this.configFile);
             toSave[scope] = newConfig;
             toSave = removeNulls(toSave);
             fs.writeFileSync(this.configFilePath, JSON.stringify(toSave, null, 2), 'utf8');

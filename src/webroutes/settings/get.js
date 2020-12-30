@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'WebServer:SettingsGet';
-const clone = require('clone');
+const cloneDeep = require('lodash/cloneDeep');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 
@@ -32,7 +32,7 @@ module.exports = async function SettingsGet(ctx) {
 
 //================================================================
 function cleanRenderData(inputData){
-    const input = clone(inputData);
+    const input = cloneDeep(inputData);
     const out = {}
     Object.keys(input).forEach((prop) => {
         if(input[prop] == null || input[prop] === false || typeof input[prop] === 'undefined'){

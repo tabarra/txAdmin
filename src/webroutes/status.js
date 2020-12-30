@@ -2,7 +2,7 @@
 const modulename = 'WebServer:GetStatus';
 const os = require('os');
 const si = require('systeminformation');
-const clone = require('clone');
+const cloneDeep = require('lodash/cloneDeep');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 const Cache = require('../extras/dataCache');
 
@@ -35,7 +35,7 @@ module.exports = async function GetStatus(ctx) {
  * Returns the fxserver's data
  */
 function prepareServerStatus() {
-    let fxServerHitches = clone(globals.monitor.globalCounters.hitches);
+    let fxServerHitches = cloneDeep(globals.monitor.globalCounters.hitches);
 
     //processing hitches
     let now = (Date.now() / 1000).toFixed();

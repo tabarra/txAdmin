@@ -1,5 +1,5 @@
 //Requires
-const clone = require('clone');
+const cloneDeep = require('lodash/cloneDeep');
 
 module.exports = class Cache {
     constructor(cacheTime) {
@@ -23,7 +23,7 @@ module.exports = class Cache {
     get(){
         const now = Math.round(Date.now() / 1000);
         if(now - this.dataTimestamp < this.cacheTime){
-            return clone(this.data);
+            return cloneDeep(this.data);
         }else{
             return false;
         }

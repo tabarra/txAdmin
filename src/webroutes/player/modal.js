@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'WebServer:PlayerModal';
-const clone = require('clone');
+const cloneDeep = require('lodash/cloneDeep');
 const dateFormat = require('dateformat');
 const humanizeDuration = require('humanize-duration');
 const xss = require('../../extras/xss')();
@@ -60,7 +60,7 @@ module.exports = async function PlayerModal(ctx) {
     }
 
     //Locating player
-    let activePlayer = clone(globals.playerController.activePlayers).find(player => player.license === license);
+    const activePlayer = cloneDeep(globals.playerController.activePlayers).find(player => player.license === license);
 
     //Setting up output
     const controllerConfigs = globals.playerController.config;
