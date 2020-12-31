@@ -5,26 +5,33 @@
 - [x] clean github Issues
 - [x] replace `clone` with `lodash/cloneDeep`
 - [ ] check the places where I'm doing `Object.assign()` for shallow clones
-- [ ] deal with the last 2 PRs
 - [ ] start collecting `/perf/` metrics
-- [ ] add statistics page
+- [ ] add performance chart to dashboard
+- [ ] deal with the last 2 PRs
 - [ ] consolidate the log pages
-- [ ] send log via FD3
-
-
-> Hopefully now:
-- [ ] make `playerController.writePending` prioritized (low 5s, medium 30s, high 60s)
-- [ ] create autobackup of the database
-- [ ] create `admin.useroptions` for dark mode, welcome modals and such
-- [ ] remove the ForceFXServerPort config and do either via `server.cfg` comment, or execute `endpoint_add_tcp "127.0.0.1:random"`
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
-        ---- 2 opções: estar na guild ou ter role na guild
-- [ ] persistent discord status message that is set up by `!setmessage`:
+        - Manual Approval (default)
+        - Discord: be in guild
+        - Discord: have a role in guild
+- [ ] persistent discord status message that is set up by `/statusfixed`:
         - this will trigger a big status message to be sent in that channel
         - this message id can be stored in the config file
         - if discord id is present, use that instead of name (careful with the pings!)
+- [ ] send log via FD3
+- [ ] add RedM compatibility
+- [ ] add `.editorconfig`
+- [ ] create auto backup of the database
+
+
+> Hopefully now:
+- [ ] break `playerController` database stuff to another file
+- [ ] remove the ForceFXServerPort config and do either via `server.cfg` comment, or execute `endpoint_add_tcp "127.0.0.1:random"`
+- [ ] make `playerController.writePending` prioritized (low 5s, medium 30s, high 60s)
+- [ ] create `admin.useroptions` for dark mode, welcome modals and such
 
 > Soon™ (hopefully the next update)
+- [ ] get all functions from `web\public\js\txadmin\players.js` and wrap in some object.
+- [ ] Add basic code linting
 - [ ] maybe hardcode if(recipeName == plume) to open the readme in a new tab
 - [ ] add new hardware bans
 - [ ] add stats enc?
@@ -37,14 +44,12 @@
 - [ ] change webserver token every time the server starts
 
 > Soon™® (hopefully in two months or so)
-- [ ] get all functions from `web\public\js\txadmin\players.js` and wrap in some object.
-- [ ] add some chart to the players page?
 - [ ] tweak dashboard update checker behavior
 - [ ] add an fxserver changelog page
 - [ ] Social auth provider setup retry every 15 seconds
 - [ ] show error when saving discord settings with wrong token
-- [ ] break down playerController into separate files!
-- [ ] rename playerController to playerManager?
+- [ ] break down `playerController` into separate files even more
+- [ ] rename `playerController` to `playerManager`?
 
 
 ## NUI commands
@@ -80,6 +85,14 @@ The Main menu will be fully arrow operated, but the player and txAdmin tab need 
         - menu starts collapsed
         - no logo/header
         - no footer
+
+High-level roadmap:
+- Write the lua+js code to pipe the traffic + authenticate the user
+- Make HTML changes to accept iframe
+- Have the react stuff done
+- Do all the Lua admin stuff (spawn cars, heal people & etc)
+- Do all the txAdmin backend code to support those functions
+- Finish the interface (Look & Feel)
 
 ## Database Management page
 - erase all whitelists

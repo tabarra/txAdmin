@@ -82,7 +82,7 @@ module.exports = async function ProviderCallback(ctx) {
     //Getting identifier
     let identifier;
     try {
-        const res = /\/user\/(\d{4,8})/.exec(userInfo.nameid);
+        const res = /\/user\/(\d{1,8})/.exec(userInfo.nameid);
         identifier = `fivem:${res[1]}`;
     } catch (error) {
         return returnJustMessage(

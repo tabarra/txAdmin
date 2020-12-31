@@ -189,7 +189,7 @@ async function handleSave(ctx) {
     //Getting identifier
     let identifier;
     try {
-        const res = /\/user\/(\d{4,8})/.exec(ctx.session.tmpAddMasterUserInfo.nameid);
+        const res = /\/user\/(\d{1,8})/.exec(ctx.session.tmpAddMasterUserInfo.nameid);
         identifier = `fivem:${res[1]}`;
     } catch (error) {
         return returnJustMessage(
