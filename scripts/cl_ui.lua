@@ -11,9 +11,9 @@ function openWarning(author, reason, tTitle, tWarnedBy, tInstructions)
         local countLimit = 100 --10 seconds
         local count = 0
         local SpaceKey = 22
-            if GetConvar("gamename", "rdr3") then 
-                SpaceKey = 0xD9D0E1C0
-            end
+        if GetConvar("gamename", "rdr3") then 
+            SpaceKey = 0xD9D0E1C0
+        end
         while true do
             Citizen.Wait(100)
             print(SpaceKey)
