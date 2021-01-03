@@ -1,3 +1,14 @@
+local isRDR = not TerraingridActivate and true or false
+local dismissKey
+local dismissKeyGroup
+if isRDR then 
+    dismissKey = 0xD9D0E1C0
+    dismissKeyGroup = 1
+else
+    dismissKey = 22
+    dismissKeyGroup = 0
+end
+
 function openWarning(author, reason, tTitle, tWarnedBy, tInstructions)
     SendNUIMessage({
         type = 'open_warning',
@@ -7,12 +18,13 @@ function openWarning(author, reason, tTitle, tWarnedBy, tInstructions)
         tWarnedBy = tWarnedBy,
         tInstructions = tInstructions
     })
+
     Citizen.CreateThread(function()
         local countLimit = 100 --10 seconds
         local count = 0
         while true do
             Citizen.Wait(100)
-            if IsControlPressed(0, 22) then
+            if IsControlPressed(dismissKeyGroup, dismissKey) then
                 count = count +1
                 if count >= countLimit then
                     SendNUIMessage({type = 'close_warning'})
