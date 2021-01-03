@@ -10,9 +10,14 @@ function openWarning(author, reason, tTitle, tWarnedBy, tInstructions)
     Citizen.CreateThread(function()
         local countLimit = 100 --10 seconds
         local count = 0
+        local SpaceKey = 22
+            if GetConvar("gamename", "rdr3") then 
+                SpaceKey = 0xD9D0E1C0
+            end
         while true do
             Citizen.Wait(100)
-            if IsControlPressed(0, 22) then
+            print(SpaceKey)
+            if IsControlPressed(1, SpaceKey) then
                 count = count +1
                 if count >= countLimit then
                     SendNUIMessage({type = 'close_warning'})
