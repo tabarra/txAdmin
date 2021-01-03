@@ -1,13 +1,6 @@
 local isRDR = not TerraingridActivate and true or false
-local dismissKey
-local dismissKeyGroup
-if isRDR then 
-    dismissKey = 0xD9D0E1C0
-    dismissKeyGroup = 1
-else
-    dismissKey = 22
-    dismissKeyGroup = 0
-end
+local dismissKey = isRDR and 0xD9D0E1C0 or 22
+local dismissKeyGroup = isRDR and 1 or 0
 
 function openWarning(author, reason, tTitle, tWarnedBy, tInstructions)
     SendNUIMessage({
