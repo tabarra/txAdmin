@@ -16,7 +16,6 @@ function openWarning(author, reason, tTitle, tWarnedBy, tInstructions)
         end
         while true do
             Citizen.Wait(100)
-            print(SpaceKey)
             if IsControlPressed(1, SpaceKey) then
                 count = count +1
                 if count >= countLimit then
