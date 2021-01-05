@@ -30,7 +30,7 @@
     "@discordjs/collection": "^0.1.6",
     "@koa/router": "^10.0.0",
     "adm-zip": "^0.5.1",
-    "axios": "^0.21.0",
+    "axios": "^0.21.1",
     "big-integer": "^1.6.48",
     "boxen": "^4.2.0",
     "bytes": "^3.1.0",
