@@ -59,7 +59,7 @@ function prepareServerStatus() {
     }
 
     //preparing the rest of the strings
-    let monitorStatus = globals.monitor.currentStatus || '??';
+    const monitorStatus = globals.monitor.currentStatus || '??';
     let monitorStatusClass;
     if(monitorStatus == 'ONLINE'){
         monitorStatusClass = 'success';
@@ -70,9 +70,9 @@ function prepareServerStatus() {
     }else{
         monitorStatusClass = 'dark';
     }
-    let processStatus = globals.fxRunner.getStatus();
+    const processStatus = globals.fxRunner.getStatus();
 
-    let logFileSize = (
+    const logFileSize = (
         globals.fxRunner &&
         globals.fxRunner.outputHandler &&
         globals.fxRunner.outputHandler.logFileSize

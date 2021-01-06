@@ -16,7 +16,7 @@ module.exports = async function Intercom(ctx) {
     if(isUndefined(ctx.params.scope)){
         return ctx.utils.error(400, 'Invalid Request');
     }
-    let scope = ctx.params.scope;
+    const scope = ctx.params.scope;
 
     const postData = cloneDeep(ctx.request.body);
     postData.txAdminToken = true;

@@ -190,7 +190,7 @@ This is an implementation of [fs-extra.outputFile()](https://github.com/jprichar
 
 ### `replace_string`
 Replaces a string in the target file or files array based on a search string and/or context variables.
-- `file`: String or array containing tie file(s) to be checked for the replacer string.
+- `file`: String or array containing the file(s) to be checked for the replacer string.
 - `mode`: *(optional)* Specify the behavior of the replacer.
   - `template`: *(default)* The `replace` string option processed for context variables in the `{{varName}}` format.
   - `all_vars`: All variables (`{{varName}}`) will be replaced in the target file. The `search` and `replace` options will be ignored.
@@ -206,16 +206,16 @@ Replaces a string in the target file or files array based on a search string and
 
 # Multiple files
 - action: replace_string
+  mode: all_vars
   file: 
     - ./server.cfg
     - ./doesntexist/config.json
-  search: 'omg_replace_this'
-  replace: 'got_it!'
 
 # Replace all variables
 - action: replace_string
   file: ./configs.cfg
-  mode: all_vars
+  search: 'omg_replace_this'
+  replace: 'got_it!'
 ```
 
 ### `connect_database`

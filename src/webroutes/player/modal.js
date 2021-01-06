@@ -22,15 +22,15 @@ module.exports = async function PlayerModal(ctx) {
     if(typeof ctx.params.license === 'undefined'){
         return ctx.utils.error(400, 'Invalid Request');
     }
-    let license = ctx.params.license;
+    const license = ctx.params.license;
 
     //Helper function
     const getHistory = async (idArray) => {
         try {
             //TODO: if it was today, show time instead
-            let hist = await globals.playerController.getRegisteredActions(idArray);
+            const hist = await globals.playerController.getRegisteredActions(idArray);
             return hist.map((log) => {
-                let out = {
+                const out = {
                     action: log.type.toUpperCase(),
                     date: dateFormat(new Date(log.timestamp*1000), 'dd/mm'),
                     reason: log.reason,
@@ -64,7 +64,7 @@ module.exports = async function PlayerModal(ctx) {
 
     //Setting up output
     const controllerConfigs = globals.playerController.config;
-    let out = {
+    const out = {
         funcDisabled: {
             message: (activePlayer && ctx.utils.checkPermission('players.message', modulename, false))? '' : 'disabled',
             kick: (activePlayer && ctx.utils.checkPermission('players.kick', modulename, false))? '' : 'disabled',
