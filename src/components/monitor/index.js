@@ -344,7 +344,7 @@ module.exports = class Monitor {
 
         //Give a bit more time to the very very slow servers to come up
         //They usually start replying to healthchecks way before sending heartbeats
-        const maxHBCooldownTolerance = 180;
+        const maxHBCooldownTolerance = 300;
         if(
             anySuccessfulHeartBeat === false &&
             processUptime < maxHBCooldownTolerance &&
