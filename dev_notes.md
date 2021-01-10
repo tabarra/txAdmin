@@ -4,6 +4,8 @@
 - [x] move the Monitor/Restarter tab in the settings page
 - [x] clean github Issues
 - [x] replace `clone` with `lodash/cloneDeep`
+- [x] refactor dashboard in preparation to the chart
+- [x] remove many monitor settings since they were being misused and were never useful
 - [ ] start collecting `/perf/` metrics
 - [ ] add performance chart to dashboard
 - [ ] deal with the last 2 PRs
@@ -36,7 +38,6 @@
 - [ ] maybe hardcode if(recipeName == plume) to open the readme in a new tab
 - [ ] add new hardware bans
 - [ ] add stats enc?
-- [ ] the Commands card in the dashboard is underused since resource commands are useless and nobody knows the kick all and broadcast options are there
 - [ ] apply the new action log html to the modal
 - [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
 - [ ] add ban server-side ban cache (last 500 bans?), updated on every ban change 

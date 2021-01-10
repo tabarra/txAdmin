@@ -19,13 +19,24 @@ module.exports = class Monitor {
         this.config = config;
 
         //Checking config validity
-        if(this.config.timeout > 5000) throw new Error('The monitor.timeout setting must be 5000ms or lower.');
         if(this.config.cooldown < 15) throw new Error('The monitor.cooldown setting must be 15 seconds or higher.');
-        if(this.config.healthCheck.failThreshold < 10) throw new Error('The monitor.healthCheck.failThreshold setting must be 10 or higher.');
-        if(this.config.healthCheck.failLimit < 180) throw new Error('The monitor.healthCheck.failLimit setting must be 180 or higher.');
-        if(this.config.heartBeat.failThreshold < 10) throw new Error('The monitor.heartBeat.failThreshold setting must be 10 or higher.');
-        if(this.config.heartBeat.failLimit < 30) throw new Error('The monitor.heartBeat.failLimit setting must be 30 or higher.');
         if(!Array.isArray(this.config.restarterScheduleWarnings)) throw new Error('The monitor.restarterScheduleWarnings must be an array.');
+
+        //Hardcoded Configs
+        //NOTE: done mainly because the timeout/limit was never useful, and makes things more complicated
+        this.hardConfigs = {
+            timeout: 1500,
+            defaultWarningTimes: [30, 15, 10, 5, 4, 3, 2, 1],
+            maxHBCooldownTolerance: 300,
+            healthCheck: {
+                failThreshold: 15,
+                failLimit: 300,
+            },
+            heartBeat: {
+                failThreshold: 15,
+                failLimit: 30,
+            }
+        }
 
         //Setting up
         logOk('Started');
@@ -93,10 +104,9 @@ module.exports = class Monitor {
         }
 
         const times = helpers.parseSchedule(this.config.restarterSchedule);
-        const defaultTimes = [30, 15, 10, 5, 4, 3, 2, 1];
-        const warnTimes = defaultTimes.concat(
+        const warnTimes = this.hardConfigs.defaultWarningTimes.concat(
             this.config.restarterScheduleWarnings.filter(
-                (item) => defaultTimes.indexOf(item) < 0
+                (item) => this.hardConfigs.defaultWarningTimes.indexOf(item) < 0
             )
         ).sort((a, b) => b-a);
 
@@ -238,7 +248,7 @@ module.exports = class Monitor {
             responseType: 'json',
             responseEncoding: 'utf8',
             maxRedirects: 0,
-            timeout: this.config.timeout
+            timeout: this.hardConfigs.timeout
         }
 
         //Make request
@@ -274,10 +284,10 @@ module.exports = class Monitor {
         //Get elapsed times & process status
         const currTimestamp = now();
         const elapsedHealthCheck = currTimestamp - this.lastSuccessfulHealthCheck;
-        const healthCheckFailed = (elapsedHealthCheck > this.config.healthCheck.failThreshold);
+        const healthCheckFailed = (elapsedHealthCheck > this.hardConfigs.healthCheck.failThreshold);
         const anySuccessfulHeartBeat = (this.lastSuccessfulFD3HeartBeat !== null || this.lastSuccessfulHTTPHeartBeat !== null);
         const elapsedHeartBeat = currTimestamp - Math.max(this.lastSuccessfulFD3HeartBeat, this.lastSuccessfulHTTPHeartBeat);
-        const heartBeatFailed = (elapsedHeartBeat > this.config.heartBeat.failThreshold);
+        const heartBeatFailed = (elapsedHeartBeat > this.hardConfigs.heartBeat.failThreshold);
         const processUptime = globals.fxRunner.getUptime();
 
         //Check if its online and return
@@ -329,9 +339,9 @@ module.exports = class Monitor {
 
         //If http partial crash, warn 1 minute before
         if(
-            !(elapsedHeartBeat > this.config.heartBeat.failLimit) && 
+            !(elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit) && 
             !this.healthCheckRestartWarningIssued &&
-            elapsedHealthCheck > (this.config.healthCheck.failLimit - 60)
+            elapsedHealthCheck > (this.hardConfigs.healthCheck.failLimit - 60)
         ){
             globals.discordBot.sendAnnouncement(globals.translator.t(
                 'restarter.partial_crash_warn_discord', 
@@ -344,11 +354,10 @@ module.exports = class Monitor {
 
         //Give a bit more time to the very very slow servers to come up
         //They usually start replying to healthchecks way before sending heartbeats
-        const maxHBCooldownTolerance = 300;
         if(
             anySuccessfulHeartBeat === false &&
-            processUptime < maxHBCooldownTolerance &&
-            elapsedHealthCheck < this.config.healthCheck.failLimit
+            processUptime < this.hardConfigs.maxHBCooldownTolerance &&
+            elapsedHealthCheck < this.hardConfigs.healthCheck.failLimit
         ){
             if(processUptime % 15 == 0) logWarn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
             return;
@@ -356,17 +365,17 @@ module.exports = class Monitor {
 
         //Check if already over the limit 
         if(
-            elapsedHealthCheck > this.config.healthCheck.failLimit ||
-            elapsedHeartBeat > this.config.heartBeat.failLimit
+            elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit ||
+            elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit
         ){
             if(anySuccessfulHeartBeat === false){
                 globals.databus.txStatsData.bootSeconds.push(false);
                 this.restartFXServer(
-                    `server failed to start within ${maxHBCooldownTolerance} seconds`,
+                    `server failed to start within ${this.hardConfigs.maxHBCooldownTolerance} seconds`,
                     globals.translator.t('restarter.start_timeout')
                 );
                 
-            }else if(elapsedHealthCheck > this.config.healthCheck.failLimit){
+            }else if(elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit){
                 this.globalCounters.partialCrashes++;
                 this.restartFXServer(
                     'server partial crash detected',
