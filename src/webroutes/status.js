@@ -35,30 +35,55 @@ module.exports = async function GetStatus(ctx) {
  * Returns the fxserver's data
  */
 function prepareServerStatus() {
-    let fxServerHitches = cloneDeep(globals.monitor.globalCounters.hitches);
+    
+    // //processing hitches
+    // let fxServerHitches = cloneDeep(globals.monitor.globalCounters.hitches);
+    // let now = (Date.now() / 1000).toFixed();
+    // let hitchTimeSum = 0;
+    // fxServerHitches.forEach((hitch, key) => {
+    //     if (now - hitch.ts < 60) {
+    //         hitchTimeSum += hitch.hitchTime;
+    //     } else {
+    //         delete (fxServerHitches[key]);
+    //     }
+    // });
 
-    //processing hitches
-    let now = (Date.now() / 1000).toFixed();
-    let hitchTimeSum = 0;
-    fxServerHitches.forEach((hitch, key) => {
-        if (now - hitch.ts < 60) {
-            hitchTimeSum += hitch.hitchTime;
-        } else {
-            delete (fxServerHitches[key]);
-        }
-    });
+    // //preparing hitch output string
+    // let hitches;
+    // if (hitchTimeSum > 5000) {
+    //     let secs = (hitchTimeSum / 1000).toFixed();
+    //     let pct = ((secs / 60) * 100).toFixed();
+    //     hitches = `${secs}s/min (${pct}%)`;
+    // } else {
+    //     hitches = hitchTimeSum + 'ms/min';
+    // }
 
-    //preparing hitch output string
-    let hitches;
-    if (hitchTimeSum > 5000) {
-        let secs = (hitchTimeSum / 1000).toFixed();
-        let pct = ((secs / 60) * 100).toFixed();
-        hitches = `${secs}s/min (${pct}%)`;
-    } else {
-        hitches = hitchTimeSum + 'ms/min';
+    //Discord status
+    const discordClient = globals.discordBot.client;
+    let discordStatus;
+    let discordStatusClass;
+    const discStatusCodes = [
+        ['READY', 'success'],
+        ['CONNECTING', 'warning'],
+        ['RECONNECTING', 'warning'],
+        ['IDLE', 'warning'],
+        ['NEARLY', 'warning'],
+        ['DISCONNECTED', 'danger'],
+    ]
+    if(discordClient == null){
+        discordStatus = 'DISABLED';
+        discordStatusClass = 'secondary';
+
+    }else if(discStatusCodes[discordClient.status]){
+        discordStatus = discStatusCodes[discordClient.status][0];
+        discordStatusClass = discStatusCodes[discordClient.status][1];
+
+    }else{
+        discordStatus = 'UNKNOWN';
+        discordStatusClass = 'danger';
     }
 
-    //preparing the rest of the strings
+    //Server status
     const monitorStatus = globals.monitor.currentStatus || '??';
     let monitorStatusClass;
     if(monitorStatus == 'ONLINE'){
@@ -72,17 +97,10 @@ function prepareServerStatus() {
     }
     const processStatus = globals.fxRunner.getStatus();
 
-    const logFileSize = (
-        globals.fxRunner &&
-        globals.fxRunner.outputHandler &&
-        globals.fxRunner.outputHandler.logFileSize
-    )? globals.fxRunner.outputHandler.logFileSize : '--';
+    let out = `Discord Bot Status: <span class="badge badge-${discordStatusClass}"> ${discordStatus} </span> <br>
+        Server Status: <span class="badge badge-${monitorStatusClass}"> ${monitorStatus} </span> <br>
+        Process Status: <span class="font-weight-light">${processStatus}</span>`;
 
-
-    let out = `<strong>Monitor Status: <span class="badge badge-${monitorStatusClass}"> ${monitorStatus} </span> </strong><br>
-                <strong>Process Status:</strong> ${processStatus}<br>
-                <strong>Hitch Time:</strong> ${hitches}<br>
-                <strong>Console Size:</strong> ${logFileSize}`;
     return out;
 }
 

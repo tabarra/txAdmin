@@ -67,12 +67,12 @@ module.exports = class OutputHandler {
         // dir({channel,data});
 
         //Handle hitches
-        if(channel == 'citizen-server-impl' && data.type == 'hitch'){
-            try{
-                globals.monitor.processFXServerHitch(data.thread, data.time)
-            }catch(e){} 
-            return;
-        }
+        // if(channel == 'citizen-server-impl' && data.type == 'hitch'){
+        //     try{
+        //         globals.monitor.processFXServerHitch(data.thread, data.time)
+        //     }catch(e){} 
+        //     return;
+        // }
 
         //Handle bind errors
         if(channel == 'citizen-server-impl' && data.type == 'bind_error'){

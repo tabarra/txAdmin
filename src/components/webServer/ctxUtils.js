@@ -54,6 +54,9 @@ sqrl.filters.define("escapeBackTick", (x)=>{
 sqrl.filters.define("base64", (x)=>{
     return Buffer.from(x).toString('base64');
 });
+sqrl.filters.define("ternary", (x)=>{
+    return (x[0])? x[2] : x[1];
+});
 
 //================================================================
 /**

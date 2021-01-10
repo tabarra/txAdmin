@@ -33,7 +33,7 @@ module.exports = class Monitor {
         this.timeSeries = new TimeSeries(`${globals.info.serverProfilePath}/data/players.json`, 10, 60*60*24);
         this.schedule = null;
         this.globalCounters = {
-            hitches: [],
+            // hitches: [],
             fullCrashes: 0,
             partialCrashes: 0,
         }
@@ -194,19 +194,19 @@ module.exports = class Monitor {
      * @param {string} thread //not being used
      * @param {number} hitchTime 
      */
-    processFXServerHitch(thread, hitchTime){
-        this.globalCounters.hitches.push({
-            ts: now(),
-            hitchTime: parseInt(hitchTime)
-        });
+    // processFXServerHitch(thread, hitchTime){
+    //     this.globalCounters.hitches.push({
+    //         ts: now(),
+    //         hitchTime: parseInt(hitchTime)
+    //     });
 
-        if(this.globalCounters.hitches>400) this.globalCounters.hitches.shift();
-    }
+    //     if(this.globalCounters.hitches>400) this.globalCounters.hitches.shift();
+    // }
 
 
     //================================================================
     resetMonitorStats(){
-        this.globalCounters.hitches = [];
+        // this.globalCounters.hitches = [];
 
         this.currentStatus = 'OFFLINE' // options: OFFLINE, ONLINE, PARTIAL
         this.lastSuccessfulHealthCheck = null; //to see if its above limit

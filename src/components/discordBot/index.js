@@ -58,6 +58,9 @@ module.exports = class DiscordBot {
         if(this.client !== null){
             logWarn(`Stopping Discord Bot`);
             this.client.destroy();
+            setTimeout(() => {
+                if(this.config.enabled == false) this.client = null;
+            }, 1000);
         }
         if(this.config.enabled){
             this.startBot();
