@@ -124,6 +124,20 @@ body.theme--dark .nav-pills .show > .btn-outline-primary.nav-link {
   border-color: #00bf8f;
 }
 
+body.theme--dark .btn.btn-outline-dark, body.theme--dark .nav-pills .btn-outline-dark.nav-link.active,
+body.theme--dark .nav-tabs .btn-outline-dark.nav-link.active,
+body.theme--dark .nav-pills .show > .btn-outline-dark.nav-link {
+  color: #ebedef;
+  border-color: #ebedef;
+}
+
+body.theme--dark .btn.btn-outline-dark:hover, body.theme--dark .nav-pills .btn-outline-dark.nav-link.active:hover,
+body.theme--dark .nav-tabs .btn-outline-dark.nav-link.active:hover,
+body.theme--dark .nav-pills .show > .btn-outline-dark.nav-link:hover {
+  background-color: #ebedef;
+  color: #515153;
+}
+
 body.theme--dark .btn.btn-primary:hover, body.theme--dark .nav-pills .btn-primary.nav-link.active:hover,
 body.theme--dark .nav-tabs .btn-primary.nav-link.active:hover,
 body.theme--dark .nav-pills .show > .btn-primary.nav-link:hover, body.theme--dark .btn.btn-outline-primary:hover, body.theme--dark .nav-pills .btn-outline-primary.nav-link.active:hover,

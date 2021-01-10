@@ -8,7 +8,7 @@ const now = () => { return Math.round(Date.now() / 1000) };
 const getConCtx = (ctx) => { return (ctx !== null)? header+':'+ctx : header };
 const getHistCtx = (ctx) => { return (ctx !== null)? ctx : header };
 const toHistory = (type, ctx, msg) =>{
-    msg = msg.replace(/\u001b\[\d+(;\d)?m/g, '');
+    msg = msg.toString().replace(/\u001b\[\d+(;\d)?m/g, '');
     if(logHistory.length > 4000){
         let sliceMsg = {ts: now(), type: 'ERROR', ctx: 'ConsoleLog', msg: 'The log was sliced to prevent memory exhaustion.'};
         logHistory = logHistory.slice(0,500).concat(sliceMsg, logHistory.slice(-500))

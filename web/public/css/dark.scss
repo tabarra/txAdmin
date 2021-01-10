@@ -2,6 +2,11 @@ $txadmin-dark-900: #29292A;
 $txadmin-dark-800: lighten($txadmin-dark-900, 8%);
 $txadmin-dark-700: lighten($txadmin-dark-800, 8%);
 $txadmin-dark-600: lighten($txadmin-dark-700, 8%);
+$txadmin-dark-secondary: #ebedef;
+// Default:
+// #636f83 dark
+// #ced2d8 secondary
+// #ebedef light
 
 $txadmin-text-color: #FFFFFF;
 $txadmin-text-color-inverse: #111111;
@@ -144,6 +149,15 @@ body.theme--dark {
     &.btn-outline-primary {
       color: $txadmin-primary;
       border-color: $txadmin-primary;
+    }
+
+    &.btn-outline-dark {
+      color: $txadmin-dark-secondary;
+      border-color: $txadmin-dark-secondary;
+      &:hover {
+        background-color: $txadmin-dark-secondary;
+        color: $txadmin-dark-700;
+      }
     }
 
     &.btn-primary, &.btn-outline-primary {

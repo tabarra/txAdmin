@@ -4,7 +4,6 @@
 - [x] move the Monitor/Restarter tab in the settings page
 - [x] clean github Issues
 - [x] replace `clone` with `lodash/cloneDeep`
-- [ ] check the places where I'm doing `Object.assign()` for shallow clones
 - [ ] start collecting `/perf/` metrics
 - [ ] add performance chart to dashboard
 - [ ] deal with the last 2 PRs
@@ -24,12 +23,14 @@
 
 
 > Hopefully now:
+- [ ] check the places where I'm doing `Object.assign()` for shallow clones
 - [ ] break `playerController` database stuff to another file
 - [ ] remove the ForceFXServerPort config and do either via `server.cfg` comment, or execute `endpoint_add_tcp "127.0.0.1:random"`
 - [ ] make `playerController.writePending` prioritized (low 5s, medium 30s, high 60s)
 - [ ] create `admin.useroptions` for dark mode, welcome modals and such
 
 > Soon™ (hopefully the next update)
+- [ ] remove hitch detector entirely
 - [ ] get all functions from `web\public\js\txadmin\players.js` and wrap in some object.
 - [ ] Add basic code linting
 - [ ] maybe hardcode if(recipeName == plume) to open the readme in a new tab
