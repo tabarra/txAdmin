@@ -6,6 +6,7 @@
 //================================================================
 //Vars and elements
 let cachedPlayers = [];
+let biggestPlayerID = 0;
 let playerlistElement = document.getElementById('playerlist');
 let plistMsgElement = document.getElementById('playerlist-message');
 let plistCountElement = document.getElementById('plist-count');
@@ -50,10 +51,11 @@ function removePlayer(player){
 }
 
 function addPlayer(player){
+    if(player.id > biggestPlayerID) biggestPlayerID = player.id;
     let div = `<div class="list-group-item list-group-item-accent-secondary player text-truncate" 
                 onclick="showPlayer('${player.license}')" id="divPlayer${player.id}">
-                    <span class="pping text-secondary">&nbsp;??</span>
-                    <span class="pname">#${player.id}</span>
+                    <span class="pping"> ---- </span>
+                    <span class="pname">${xss(player.name)}</span>
             </div>`
     $("#playerlist").append(div);
 }
@@ -77,8 +79,8 @@ function updatePlayer(player){
     el.classList.remove('list-group-item-accent-secondary', 'list-group-item-accent-success', 'list-group-item-accent-warning', 'list-group-item-accent-danger');
     el.classList.add('list-group-item-accent-' + pingClass);
     el.firstElementChild.classList.remove('text-secondary', 'text-success', 'text-warning', 'text-danger');
-    el.firstElementChild.classList.add('text-' + pingClass);
-    el.firstElementChild.innerHTML = player.ping.toString().padStart(3, 'x').replace(/x/g, '&nbsp;');
+    const padSize = biggestPlayerID.toString().length+2;
+    el.firstElementChild.innerHTML = `[${player.id}]`.padStart(padSize, 'x').replace(/x/g, '&nbsp;');
     el.lastElementChild.textContent = player.name;
     el.dataset['pname'] = player.name.toLowerCase();
 }
