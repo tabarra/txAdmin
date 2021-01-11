@@ -129,7 +129,10 @@ module.exports = class ConfigVault {
                 onJoinCheckBan: toDefault(cfg.playerController.onJoinCheckBan, true),
                 onJoinCheckWhitelist: toDefault(cfg.playerController.onJoinCheckWhitelist, false),
                 minSessionTime:  toDefault(cfg.playerController.minSessionTime, 15),
-                whitelistRejectionMessage: toDefault(cfg.playerController.whitelistRejectionMessage, 'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour ID: <id>'),
+                whitelistRejectionMessage: toDefault(
+                    cfg.playerController.whitelistRejectionMessage, 
+                    'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour ID: <id>'
+                ),
                 wipePendingWLOnStart: toDefault(cfg.playerController.wipePendingWLOnStart, true),
             };
             out.authenticator = {
@@ -145,7 +148,10 @@ module.exports = class ConfigVault {
                 token:  toDefault(cfg.discordBot.token, null),
                 announceChannel:  toDefault(cfg.discordBot.announceChannel, null),
                 prefix: toDefault(cfg.discordBot.prefix, '/'),
-                statusMessage: toDefault(cfg.discordBot.statusMessage, '**IP:** \`change-me:<port>\`\n**Players:** <players>\n**Uptime:** <uptime>'),
+                statusMessage: toDefault(
+                    cfg.discordBot.statusMessage, 
+                    '**IP:** \`change-me:<port>\`\n**Players:** <players>\n**Uptime:** <uptime>'
+                ),
                 commandCooldown: toDefault(cfg.discordBot.commandCooldown, null), //not in template
             };
             out.fxRunner = {

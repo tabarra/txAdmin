@@ -64,7 +64,7 @@ module.exports = class Monitor {
 
     //================================================================
     /**
-     * Refresh fxRunner configurations
+     * Refresh Monitor configurations
      */
     refreshConfig(){
         this.config = globals.configVault.getScoped('monitor');

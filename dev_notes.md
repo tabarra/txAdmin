@@ -27,6 +27,8 @@
 - [ ] add RedM compatibility
 - [ ] add `.editorconfig`
 - [ ] create auto backup of the database
+- [ ] ignore key bindings commands 
+- [ ] add custom event for broadcast
 
 
 > Hopefully now:
@@ -58,6 +60,7 @@
 - [ ] break down `playerController` into separate files even more
 - [ ] rename `playerController` to `playerManager`?
 
+=======================================
 
 ## NUI commands
 While the menu is open, show `ID | PlayerName` above nearby player heads.
@@ -101,6 +104,8 @@ High-level roadmap:
 - Do all the txAdmin backend code to support those functions
 - Finish the interface (Look & Feel)
 
+=======================================
+
 ## Database Management page
 - erase all whitelists
 - erase all bans
@@ -113,7 +118,10 @@ High-level roadmap:
 Add a note that to erase the entire database, the user should delete the `playersDB.json` (full path) file and restart txAdmin.
 Pre calculate all counts
 
+=======================================
+
 ## Structured traces
+
 ### Rate limiter
 We could be more sensible when restarting the server and pushing an event to alert other resources thatm ight want to auto block it.
 ```bat
@@ -121,10 +129,14 @@ netsh advfirewall firewall add rule name="txAdmin_block_XXXX" dir=in interface=a
 netsh advfirewall firewall show rule name="txAdmin_block_XXXX"
 netsh advfirewall firewall delete rule name="txAdmin_block_XXXX"
 ```
+
 ### Oversized resources streams
 We could wait for the server to finish loading, as well as print in the interface somewhere an descending ordered list of large resource assets
 https://github.com/citizenfx/fivem/blob/649dac8e9c9702cc3e293f8b6a48105a9378b3f5/code/components/citizen-server-impl/src/ResourceStreamComponent.cpp#L435
 
+### Crash dumps
+
+=======================================
 
 ## Video tutorials
 Requirements:
@@ -174,6 +186,8 @@ Target: average txAdmin users
 - database pruning 
 - scheduled restarter
 
+=======================================
+
 ## Bot Commands:
 DONE:
 /addwl <wl req id>
@@ -189,10 +203,6 @@ TODO: Bot commands (in dev order):
 /info <mention> - shows someone else's info
 /addwl <mention>
 /removewl <mention>
-
-## "in the roadmap"
-- [ ] Check config management libraries (specially 'convict' by Mozilla and nconf)
-
 
 =======================================
 
@@ -241,12 +251,6 @@ https://www.npmjs.com/package/infinite-scroll
 ### "Look into it"
 https://www.reddit.com/r/javascript/comments/91a3tp/why_is_there_no_small_sane_nodejs_tool_for/
 
-Interesting shit, could be used to give like vMenu admin powers to txAdmin admins:
-https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
-
-Grafana query for the `/perf/` endpoint data: 
-`histogram_quantile(0.95, sum(rate(tickTime_bucket[5m])) by (le))`
-
 "State bag" support for C#
 https://github.com/citizenfx/fivem/pull/516
 https://github.com/citizenfx/fivem/pull/539
@@ -257,6 +261,8 @@ https://discordapp.com/channels/192358910387159041/450373719974477835/7013367235
 
 ### the ace permissions editor thing
 https://discordapp.com/channels/192358910387159041/450373719974477835/724266730024861717
+maybe playerConnecting and then set permission by ID?
+https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
 
 ### the fun command thing
 https://github.com/VenomXNL/XNLRideAnimals/blob/master/XNLRideAnimals/client.lua

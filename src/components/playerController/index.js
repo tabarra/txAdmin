@@ -101,7 +101,7 @@ module.exports = class PlayerController {
 
     //================================================================
     /**
-     * Refresh fxRunner configurations
+     * Refresh PlayerController configurations
      */
     refreshConfig(){
         this.config = globals.configVault.getScoped('playerController');

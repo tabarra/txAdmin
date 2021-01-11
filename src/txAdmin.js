@@ -157,8 +157,8 @@ module.exports = class txAdmin {
 
     //==============================================================
     async startMonitor(config){
-        const Authenticator = require('./components/monitor')
-        globals.monitor = new Authenticator(config);
+        const Monitor = require('./components/monitor')
+        globals.monitor = new Monitor(config);
     }
 
     //==============================================================

@@ -26,11 +26,24 @@
         font-size: 16px;
         font-weight: 500;
     }
-    .axisTitle .tickTimeLabel{
+    /* .axisTitle .tickTimeLabel{
         color: #27b7e5;
+    } */
+    .axisTitle .tickTimeLabel{
+        min-width: 2em;
+        height: 18px;
+        border: dimgrey 2px solid;
+        background: rgb(35,23,27);
+        background: linear-gradient(90deg, rgba(35,23,27,1) 10%, rgba(45,161,243,1) 35%, rgba(69,246,139,1) 65%, rgba(224,69,19,1) 90%);
     }
-    .axisTitle .clientsLabel{
+    /* .axisTitle .clientsLabel{
         color: #2eb85c;
+    } */
+    .axisTitle .clientsLabel{
+        min-width: 2em;
+        height: 18px;
+        border: dimgrey 2px solid;
+        background: rgb(204, 203, 203);
     }
 
     /* Other stuff */
@@ -62,10 +75,12 @@
         <div class="card card-accent-info">
             <div class="card-body p-1">
                 <div class="text-center axisTitle">
-                    <span class="clientsLabel">■</span>
+                    <!-- <span class="clientsLabel">■</span> -->
+                    <span class="badge clientsLabel"> &nbsp; </span>
                     Players
                     &nbsp;&nbsp;&nbsp;&nbsp;
-                    <span class="tickTimeLabel">■</span>
+                    <!-- <span class="tickTimeLabel">■</span> -->
+                    <span class="badge tickTimeLabel"> &nbsp; </span>
                     Tick Time (lower is better)
                 </div>
                 
