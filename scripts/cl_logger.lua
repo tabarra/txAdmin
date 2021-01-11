@@ -74,7 +74,7 @@ local IsEntityDead = IsEntityDead
 CreateThread(function()
     while true do
         Wait(500)
-        local ped = GetPlayerPed(-1)
+        local ped = PlayerPedId()
         local isDead = IsEntityDead(ped)
         if isDead and not deathFlag then
             deathFlag = true
