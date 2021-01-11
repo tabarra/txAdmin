@@ -117,15 +117,15 @@
                 <h1 id="warn-title">
                     <svg class="warn-icon">
                         <use xlink:href="#svg-warn"></use>
-                    </svg><span id="warn-title-inner">WARNING</span><svg class="warn-icon">
+                    </svg><span id="warn-title-inner">Advertencia</span><svg class="warn-icon">
                         <use xlink:href="#svg-warn"></use>
                     </svg>
                 </h1>
-                <span id="warn-message">warn reason</span>
+                <span id="warn-message">Razon de advertencia</span>
                 <br>
-                <div id="warn-author">Warned by: Tabarra</div>
+                <div id="warn-author">Sistema de Advertencia: Modificado por Bandido</div>
             </div>
-            <div id="warn-instruction">Hold [SPACE] for 10 seconds to dismiss this message.</div>
+            <div id="warn-instruction">Deja [SPACE] oprimido por 10 segudon para cerrar advertencia.</div>
         </div>
     </div>
 </body>
@@ -170,11 +170,11 @@
 
     window.onload = function () {
         if (isDebug) openWarning({
-            author: 'tabarra',
-            reason: `Stop doing bad stuff or I will get mad 😣`,
-            tTitle: 'WARNING', 
-            tWarnedBy: 'Warned by:', 
-            tInstructions: 'Hold [SPACE] for 10 seconds to dismiss this message.'
+            author: 'Bandido',
+            reason: `Me estas cabreando tio 😣`,
+            tTitle: 'Advertencia', 
+            tWarnedBy: 'Adevertido por:', 
+            tInstructions: 'Deja [SPACE] oprimido por 10 segudon para cerrar advertencia.'
         }); //DEBUG
         window.addEventListener('message', (event) => {
             if (event.data.type === 'open_warning') {
