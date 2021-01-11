@@ -6,8 +6,13 @@
 - [x] replace `clone` with `lodash/cloneDeep`
 - [x] refactor dashboard in preparation to the chart
 - [x] remove many monitor settings since they were being misused and were never useful
+- [x] replace ping with player ID on sidebar
+- [x] updated packages
 - [ ] start collecting `/perf/` metrics
 - [ ] add performance chart to dashboard
+- [ ] set darkmode as default
+
+> ASAP!:
 - [ ] deal with the last 2 PRs
 - [ ] consolidate the log pages
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
