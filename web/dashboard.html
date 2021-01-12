@@ -6,8 +6,15 @@
     #d3-container {
         height: 340px;
         margin: auto;
+        overflow: hidden;
         /* DEBUG */
         /* background-color: rgb(207, 233, 255);  */
+    }
+    #d3-container svg {
+        height: 340px;
+        width: 100%;
+        margin: auto;
+        overflow: hidden;
     }
     #x-axis path{
         stroke: none;
@@ -52,6 +59,11 @@
         font-weight: 500;
         line-height: 2;
     }
+
+    .dashboard-chart {
+        width: 100% !important; 
+        max-width: 890px !important;
+    }
 </style>
 
 <!-- Title & outdated message: -->
@@ -71,7 +83,7 @@
 
 <!-- Chart stuff -->
 <div class="row justify-content-center">
-    <div class="col-lg-12 col-xl-8">
+    <div class="dashboard-chart">
         <div class="card card-accent-info">
             <div class="card-body p-1">
                 <div class="text-center axisTitle">
@@ -214,10 +226,24 @@
             colorScheme: d3.interpolateTurbo,
             // colorScheme: d3.interpolateViridis,
         }
-        const tsStart = Date.now();
-        drawHeatmap(d3Container, perfData, chartOptions);
-        const duration = Date.now() - tsStart;
-        perfDiagnosticsMessage.textContent = `Took ${duration}ms to draw ${perfData.length*15} rects from ${perfData.length} snapshots.`;
+
+        const draw = () => {
+            const tsStart = Date.now();
+            drawHeatmap(d3Container, perfData, chartOptions);
+            d3Container.style.opacity = 1;
+            const duration = Date.now() - tsStart;
+            perfDiagnosticsMessage.textContent = `Took ${duration}ms to draw ${perfData.length*15} rects from ${perfData.length} snapshots.`;
+        }
+        draw();
+
+        let redrawTimeout;
+        window.addEventListener("resize", () => {
+            clearTimeout(redrawTimeout);
+            d3Container.style.opacity = 0.5;
+            redrawTimeout = setTimeout(() => {
+                draw();
+            }, 250);
+        });
     })();
 </script>
 
