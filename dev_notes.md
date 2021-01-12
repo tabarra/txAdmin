@@ -12,6 +12,9 @@
 - [x] add performance chart to dashboard
 - [x] set darkmode as default
 - [x] compile test on latest, reset timer, version bump
+> v3.2.0
+- [x] fixed perf chart time labels
+> v3.2.1
 
 > ASAP!:
 - [ ] deal with the last 2 PRs

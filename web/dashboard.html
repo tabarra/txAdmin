@@ -203,6 +203,9 @@
             d3ContainerMessage.innerText = 'failed to load chart data';
         }
         if(!perfData) return;
+        //DEBUG
+        // perfData = [...perfData, ...perfData, ...perfData]
+        // perfData = perfData.slice(-200)
 
         //Render page
         const chartOptions = {

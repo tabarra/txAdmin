@@ -20,6 +20,12 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
     const colorScheme = options.colorScheme || d3.interpolateInferno;
     const timeTickInterval = options.timeTickInterval || 15;
 
+    //TODO: make it responsive with screen size
+    const tickIntervalMod = Math.min(
+        15,
+        Math.ceil(perfData.length / 20)
+    );
+
     //Flatten data
     const snapTimes = [];
     const snapAvgTickTimes = [];
@@ -35,7 +41,7 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
 
         //Process times
         const time = new Date(snap.ts);
-        if (time.getMinutes() % timeTickInterval == 0) {
+        if (snapIndex % tickIntervalMod == 0) {
             const hours = String(time.getHours()).padStart(2, "0");
             const minutes = String(time.getMinutes()).padStart(2, "0");
             snapTimes.push({
