@@ -11,7 +11,7 @@
 - [x] start collecting `/perf/` metrics
 - [x] add performance chart to dashboard
 - [x] set darkmode as default
-- [ ] compile test on latest, reset timer, version bump
+- [x] compile test on latest, reset timer, version bump
 
 > ASAP!:
 - [ ] deal with the last 2 PRs
@@ -28,7 +28,7 @@
 - [ ] add RedM compatibility
 - [ ] add `.editorconfig`
 - [ ] create auto backup of the database
-- [ ] ignore key bindings commands 
+- [ ] ignore key bindings commands  https://discord.com/channels/577993482761928734/766868363041046589/795420910713831446
 - [ ] add custom event for broadcast
 
 

@@ -1,5 +1,5 @@
 {
-    "version": "3.1.0",
+    "version": "3.2.0",
     "changelog": "Deprecated Message. Please Update to v3.",
     "allVersions": [
         {
@@ -221,6 +221,10 @@
         {
             "version": "3.1.0",
             "changelog": "Improved the Deployer. Added ban importer tool. Added database backup tool. Many minor changes/tweaks/fixes."
+        },
+        {
+            "version": "3.2.0",
+            "changelog": "Added amazing performance & players chart. Replaced ping with server ID on playerlist. Added option to change scheduled restart warning times. Set darkmode as default. Many small changes/tweaks/fixes."
         }
     ]
 }
