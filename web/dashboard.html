@@ -180,7 +180,7 @@
         //Prepare data
         let perfData;
         try {
-            const rawPerfData = await fetch(`http://localhost:40120/chartData`);
+            const rawPerfData = await fetch(`/chartData`);
             const parsedPerfData = JSON.parse(await rawPerfData.text());
             if(!Array.isArray(parsedPerfData)){
                 if(parsedPerfData.failReason == 'not_set'){
