@@ -70,6 +70,7 @@ module.exports = router = (config) =>{
     router.get('/txAdminLog', requestAuth('web'), webRoutes.txAdminLog);
     router.get('/serverLog', requestAuth('web'), webRoutes.serverLog);
     router.get('/status', requestAuth('api'), webRoutes.status);
+    router.get('/chartData', requestAuth('api'), webRoutes.chartData);
 
     //Player routes
     router.get('/player/list', requestAuth('web'), webRoutes.player.list);

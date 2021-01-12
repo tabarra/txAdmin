@@ -1,6 +1,6 @@
 ## TODO v3.2
 - [x] update README
-- [x] merge PR#226
+- [x] added option to configure the scheduled restart warning times (merge PR#226)
 - [x] move the Monitor/Restarter tab in the settings page
 - [x] clean github Issues
 - [x] replace `clone` with `lodash/cloneDeep`
@@ -10,7 +10,7 @@
 - [x] updated packages
 - [x] start collecting `/perf/` metrics
 - [x] add performance chart to dashboard
-- [ ] set darkmode as default
+- [x] set darkmode as default
 - [ ] compile test on latest, reset timer, version bump
 
 > ASAP!:

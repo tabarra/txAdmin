@@ -113,9 +113,9 @@ module.exports = class ConfigVault {
 
         try {
             out.global = {
-                serverName:  toDefault(cfg.global.serverName, null),
-                language:  toDefault(cfg.global.language, null),
-                forceFXServerPort:  toDefault(cfg.global.forceFXServerPort, null), //not in template
+                serverName: toDefault(cfg.global.serverName, null),
+                language: toDefault(cfg.global.language, null),
+                forceFXServerPort: toDefault(cfg.global.forceFXServerPort, null), //not in template
             };
             out.logger = {
                 logPath: toDefault(cfg.logger.logPath, null), //not in template
@@ -130,7 +130,7 @@ module.exports = class ConfigVault {
             out.playerController = {
                 onJoinCheckBan: toDefault(cfg.playerController.onJoinCheckBan, true),
                 onJoinCheckWhitelist: toDefault(cfg.playerController.onJoinCheckWhitelist, false),
-                minSessionTime:  toDefault(cfg.playerController.minSessionTime, 15),
+                minSessionTime: toDefault(cfg.playerController.minSessionTime, 15),
                 whitelistRejectionMessage: toDefault(
                     cfg.playerController.whitelistRejectionMessage, 
                     'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour ID: <id>'
@@ -147,8 +147,8 @@ module.exports = class ConfigVault {
             };
             out.discordBot = {
                 enabled: toDefault(cfg.discordBot.enabled, null),
-                token:  toDefault(cfg.discordBot.token, null),
-                announceChannel:  toDefault(cfg.discordBot.announceChannel, null),
+                token: toDefault(cfg.discordBot.token, null),
+                announceChannel: toDefault(cfg.discordBot.announceChannel, null),
                 prefix: toDefault(cfg.discordBot.prefix, '/'),
                 statusMessage: toDefault(
                     cfg.discordBot.statusMessage, 
