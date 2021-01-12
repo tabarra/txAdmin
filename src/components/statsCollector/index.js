@@ -25,7 +25,7 @@ module.exports = class StatsCollector {
             heatmapDataFile: `${globals.info.serverProfilePath}/data/stats_heatmapData_v1.json`,
             playerCountFile: `${globals.info.serverProfilePath}/data/stats_playerCount_v1.json`,
             performance: {
-                resolution: 1, //DEBUG must be 5
+                resolution: 5, //DEBUG must be 5
                 lenthCap: 288, //5*288 = 1440 = 1 day
             }
         }
@@ -156,11 +156,11 @@ module.exports = class StatsCollector {
         
         //Get player count
         const baseURL = `http://127.0.0.1:${globals.fxRunner.fxServerPort}`;
-        const dynamicData = await got(`${baseURL}/dynamic.json`).json();
+        const dynamicData = await got(`${baseURL}/dynamic.json`, {timeout: 1500}).json();
         if (typeof dynamicData.clients !== 'number') throw new Error(`invalid clients count`);
 
         //Get performance data
-        const currPerfRaw = await got(`${baseURL}/perf/`).text();
+        const currPerfRaw = await got(`${baseURL}/perf/`, {timeout: 1500}).text();
         const currPerfData = parsePerf(currPerfRaw);
         if(
             !validatePerfThreadData(currPerfData.svSync) ||

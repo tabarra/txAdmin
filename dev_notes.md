@@ -9,8 +9,9 @@
 - [x] replace ping with player ID on sidebar
 - [x] updated packages
 - [x] start collecting `/perf/` metrics
-- [ ] add performance chart to dashboard
+- [x] add performance chart to dashboard
 - [ ] set darkmode as default
+- [ ] compile test on latest, reset timer, version bump
 
 > ASAP!:
 - [ ] deal with the last 2 PRs

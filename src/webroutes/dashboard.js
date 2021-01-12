@@ -25,7 +25,6 @@ module.exports = async function Dashboard(ctx) {
     const renderData = {
         serverName: globals.config.serverName,
         versionData: getVersionData(),
-        chartData: getChartData(globals.monitor.timeSeries.get()),
         perms:{
             commandMessage: getPermDisable('players.message'),
             commandKick: getPermDisable('players.kick'),

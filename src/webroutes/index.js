@@ -5,6 +5,7 @@ exports.liveConsole = require('./liveConsole.js');
 exports.resources = require('./resources.js');
 exports.serverLog = require('./serverLog.js');
 exports.status = require('./status.js');
+exports.chartData = require('./chartData.js');
 exports.txAdminLog = require('./txAdminLog.js');
 
 exports.auth = {
@@ -36,7 +37,6 @@ exports.settings = {
     get: require('./settings/get'),
     save: require('./settings/save'),
 }
-
 
 exports.masterActions = {
     get: require('./masterActions/get'),

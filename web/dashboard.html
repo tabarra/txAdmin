@@ -84,18 +84,12 @@
                     Tick Time (lower is better)
                 </div>
                 
-                {{@if(it.chartData)}}
                 <div id="d3-container">
                     <br><br><br><br><br>
-                    <div class="text-center text-muted p-4" style="font-size: 3em;">
+                    <div class="text-center text-muted p-4" style="font-size: 2.25em;" id="d3-container-message">
                         loading chart...
                     </div>
                 </div>
-                {{#else}}
-                    <div class="text-center text-muted p-4" style="font-size: 2.25em;">
-                        Players & Performance data will be available soon...
-                    </div>
-                {{/if}}
             
             </div>
         </div>
@@ -173,6 +167,56 @@
 
 {{@include("footer", it)/}}
 
+<script src="https://d3js.org/d3.v6.min.js"></script>
+<script type="module">
+    import { drawHeatmap } from "/js/txadmin/chart.js";
+
+    //Elements
+    const perfDiagnosticsMessage = document.getElementById('perfDiagnosticsMessage');
+    const d3Container = document.getElementById('d3-container');
+    const d3ContainerMessage = document.getElementById('d3-container-message');
+    
+    (async () => {
+        //Prepare data
+        let perfData;
+        try {
+            const rawPerfData = await fetch(`http://localhost:40120/chartData`);
+            const parsedPerfData = JSON.parse(await rawPerfData.text());
+            if(!Array.isArray(parsedPerfData)){
+                if(parsedPerfData.failReason == 'not_set'){
+                    d3ContainerMessage.innerText = 'chart database still loading';
+
+                }else if(parsedPerfData.failReason == 'not_enough_data'){
+                    d3ContainerMessage.innerText = 'Players & Performance data will be available soon...';
+
+                }else if(parsedPerfData.failReason == 'data_processing'){
+                    d3ContainerMessage.innerText = 'chart data processing failed';
+
+                }else{
+                    d3ContainerMessage.innerText = 'invalid chart data';
+
+                }
+            }else{
+                perfData = parsedPerfData;
+            }
+        } catch (error) {
+            d3ContainerMessage.innerText = 'failed to load chart data';
+        }
+        if(!perfData) return;
+
+        //Render page
+        const chartOptions = {
+            // colorScheme: d3[`{{[it.uiTheme, 'interpolateViridis', 'interpolateTurbo']|ternary}}`],
+            // colorScheme: d3.interpolateInferno,
+            colorScheme: d3.interpolateTurbo,
+            // colorScheme: d3.interpolateViridis,
+        }
+        const tsStart = Date.now();
+        drawHeatmap(d3Container, perfData, chartOptions);
+        const duration = Date.now() - tsStart;
+        perfDiagnosticsMessage.textContent = `Took ${duration}ms to draw ${perfData.length*15} rects from ${perfData.length} snapshots.`;
+    })();
+</script>
 
 <script>
     //============================================== Controls (start/restart/stop)
