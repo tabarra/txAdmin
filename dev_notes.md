@@ -8,7 +8,7 @@
 - [x] remove many monitor settings since they were being misused and were never useful
 - [x] replace ping with player ID on sidebar
 - [x] updated packages
-- [ ] start collecting `/perf/` metrics
+- [x] start collecting `/perf/` metrics
 - [ ] add performance chart to dashboard
 - [ ] set darkmode as default
 

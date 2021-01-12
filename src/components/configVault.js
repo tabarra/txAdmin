@@ -98,6 +98,7 @@ module.exports = class ConfigVault {
             global: null,
             logger: null,
             monitor: null,
+            statsCollector: null,
             playerController: null,
             authenticator: null,
             webServer: null,
@@ -125,6 +126,7 @@ module.exports = class ConfigVault {
                 cooldown: toDefault(cfg.monitor.cooldown, null), //not in template
                 disableChatWarnings: toDefault(cfg.monitor.disableChatWarnings, null), //not in template
             };
+            out.statsCollector = {};
             out.playerController = {
                 onJoinCheckBan: toDefault(cfg.playerController.onJoinCheckBan, true),
                 onJoinCheckWhitelist: toDefault(cfg.playerController.onJoinCheckWhitelist, false),
@@ -196,6 +198,9 @@ module.exports = class ConfigVault {
             cfg.monitor.restarterScheduleWarnings = cfg.monitor.restarterScheduleWarnings || [30, 15, 10, 5, 4, 3, 2, 1];
             cfg.monitor.cooldown = parseInt(cfg.monitor.cooldown) || 60; //not in template - 45 > 60 > 90 -> 60 after fixing the "extra time" logic
             cfg.monitor.disableChatWarnings = (cfg.monitor.disableChatWarnings === 'true' || cfg.monitor.disableChatWarnings === true);
+            
+            //StatsCollector
+            //nothing here /shrug
 
             //Player Controller
             cfg.playerController.onJoinCheckBan = (cfg.playerController.onJoinCheckBan === null)? true : (cfg.playerController.onJoinCheckBan === 'true' || cfg.playerController.onJoinCheckBan === true);
@@ -290,6 +295,7 @@ module.exports = class ConfigVault {
             global: cfg.global,
             logger: cfg.logger,
             monitor: cfg.monitor,
+            statsCollector: cfg.statsCollector,
             playerController: cfg.playerController,
             authenticator: cfg.authenticator,
             webServer: cfg.webServer,

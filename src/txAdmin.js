@@ -15,6 +15,7 @@ globals = {
     fxRunner: null,
     logger: null,
     monitor: null,
+    statsCollector: null,
     translator: null,
     webServer: null,
     playerController: null,
@@ -113,6 +114,9 @@ module.exports = class txAdmin {
         this.startMonitor(profileConfig.monitor).catch((err) => {
             HandleFatalError(err, 'Monitor');
         });
+        this.startStatsCollector(profileConfig.statsCollector).catch((err) => {
+            HandleFatalError(err, 'StatsCollector');
+        });
         this.startWebServer(profileConfig.webServer).catch((err) => {
             HandleFatalError(err, 'WebServer');
         });
@@ -159,6 +163,12 @@ module.exports = class txAdmin {
     async startMonitor(config){
         const Monitor = require('./components/monitor')
         globals.monitor = new Monitor(config);
+    }
+
+    //==============================================================
+    async startStatsCollector(config){
+        const StatsCollector = require('./components/statsCollector')
+        globals.statsCollector = new StatsCollector(config);
     }
 
     //==============================================================

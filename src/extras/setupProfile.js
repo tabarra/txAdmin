@@ -20,6 +20,7 @@ const defaultConfig = {
     monitor: {
         restarterSchedule: [],
     },
+    statsCollector: {},
     authenticator: {},
     webServer: {},
     discordBot: {

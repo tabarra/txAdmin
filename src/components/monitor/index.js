@@ -4,7 +4,6 @@ const axios = require("axios");
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
 const HostCPUStatus = require('./hostCPUStatus');
-const TimeSeries = require('./timeSeries');
 
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000) };
@@ -41,7 +40,6 @@ module.exports = class Monitor {
         //Setting up
         logOk('Started');
         this.cpuStatusProvider = new HostCPUStatus();
-        this.timeSeries = new TimeSeries(`${globals.info.serverProfilePath}/data/players.json`, 10, 60*60*24);
         this.schedule = null;
         this.globalCounters = {
             // hitches: [],
@@ -419,7 +417,6 @@ module.exports = class Monitor {
                 player.id = parseInt(player.id);
                 return player;
             });
-            this.timeSeries.add(playerList.length);
             globals.playerController.processHeartBeat(playerList);
 
             //Processing stats
