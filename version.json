@@ -1,5 +1,5 @@
 {
-    "version": "3.2.1",
+    "version": "3.2.2",
     "changelog": "Deprecated Message. Please Update to v3.",
     "allVersions": [
         {
@@ -229,6 +229,10 @@
         {
             "version": "3.2.1",
             "changelog": "Fixed performance chart time labels."
+        },
+        {
+            "version": "3.2.2",
+            "changelog": "Fixed performance chart data url."
         }
     ]
 }
