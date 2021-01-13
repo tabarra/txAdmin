@@ -5,6 +5,34 @@
 }
 
 
+/* Missing tooltip stuff */
+.tooltip[data-popper-placement^=top] .tooltip-arrow, .tooltip[data-popper-placement^=bottom] .tooltip-arrow {
+    width: .8rem;
+    height: .4rem;
+}
+.tooltip[data-popper-placement^=bottom] .tooltip-arrow {
+    top: 0;
+}
+.tooltip .tooltip-arrow {
+    position: absolute;
+    display: block;
+}
+.tooltip[data-popper-placement^=top], .tooltip[data-popper-placement^=bottom] {
+    padding: .4rem 0;
+}
+.tooltip[data-popper-placement^=bottom] .tooltip-arrow::before {
+    bottom: 0;
+    border-width: 0 .4rem .4rem;
+    border-bottom-color: #000015;
+}
+.tooltip .tooltip-arrow::before {
+    position: absolute;
+    content: "";
+    border-color: transparent;
+    border-style: solid;
+}
+
+
 /* General responsivity */
 @media (min-width: 1200px){
     .dashboard-card{

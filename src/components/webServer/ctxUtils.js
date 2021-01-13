@@ -225,9 +225,8 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true){
 //================================================================
 module.exports = async function WebCtxUtils(ctx, next){
     //Prepare variables
-    const darkModeCookie = ctx.cookies.get('txAdmin-darkMode');
     ctx.txVars = {
-        darkMode: (typeof darkModeCookie == 'undefined' || darkModeCookie === 'true')
+        darkMode: (ctx.cookies.get('txAdmin-darkMode') === 'true')
     };
     const host = ctx.request.host || 'none';
     if(host.startsWith('127.0.0.1') || host.startsWith('localhost')){
