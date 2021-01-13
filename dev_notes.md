@@ -15,6 +15,11 @@
 > v3.2.0
 - [x] fixed perf chart time labels
 > v3.2.1
+- [x] fixed perf chart URL
+> v3.2.2
+- [x] made the chart resposive
+- [x] made the chart player count more consistent
+- [x] reverted dark mode as default
 
 > ASAP!:
 - [ ] deal with the last 2 PRs

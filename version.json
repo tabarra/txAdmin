@@ -233,6 +233,10 @@
         {
             "version": "3.2.2",
             "changelog": "Fixed performance chart data url."
+        },
+        {
+            "version": "3.2.3",
+            "changelog": "Improved chart player count consistency. Made the chart responsive. Reverted dark mode as default."
         }
     ]
 }
