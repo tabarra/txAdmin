@@ -141,10 +141,12 @@ module.exports = class StatsCollector {
         if(this.perfSeries === null) return;
         if(globals.fxRunner.fxChild === null) return;
 
-        //Check skip rules
-        const cfg = this.hardConfigs.performance; //Shorthand only
+        //Commom vars
         const now = Date.now();
+        const cfg = this.hardConfigs.performance; //Shorthand only
         const lastSnap = this.perfSeries.length ? this.perfSeries[this.perfSeries.length-1] : false;
+        
+        //Check skip rules
         if(
             lastSnap &&
             getEpoch(cfg.resolution, lastSnap.ts) == getEpoch(cfg.resolution) &&
@@ -154,13 +156,8 @@ module.exports = class StatsCollector {
             return;
         }
         
-        //Get player count
-        const baseURL = `http://127.0.0.1:${globals.fxRunner.fxServerPort}`;
-        const dynamicData = await got(`${baseURL}/dynamic.json`, {timeout: 1500}).json();
-        if (typeof dynamicData.clients !== 'number') throw new Error(`invalid clients count`);
-
         //Get performance data
-        const currPerfRaw = await got(`${baseURL}/perf/`, {timeout: 1500}).text();
+        const currPerfRaw = await got(`http://127.0.0.1:${globals.fxRunner.fxServerPort}/perf/`, {timeout: 1500}).text();
         const currPerfData = parsePerf(currPerfRaw);
         if(
             !validatePerfThreadData(currPerfData.svSync) ||
@@ -190,7 +187,7 @@ module.exports = class StatsCollector {
             ts: now,
             skipped: !islinear,
             mainTickCounter: currPerfData.svMain.count,
-            clients: dynamicData.clients,
+            clients: globals.playerController.getPlayerList().length,
             perfSrc: currPerfData,
             perf: currPerfDiff
         }
