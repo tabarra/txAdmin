@@ -42,41 +42,6 @@ module.exports = async function Dashboard(ctx) {
 
 //================================================================
 /**
- * Process player history and returns the chart data or false
- * @param {array} series
- */
-function getChartData(series) {
-    if (series.length < 360) {
-        return false;
-    }
-
-    //TODO: those are arbitrary values, do it via some calculation to maintain consistency.
-    let mod;
-    if (series.length > 6000) {
-        mod = 32;
-    } else if (series.length > 2000) {
-        mod = 18;
-    } else {
-        mod = 6
-    }
-
-    const chartData = [];
-    for (let i = 0; i < series.length; i++) {
-        if (i % mod === 0) {
-            chartData.push({
-                t: series[i].timestamp * 1000,
-                y: series[i].value.toString()
-            });
-        }
-    }
-
-    return JSON.stringify(chartData);
-
-}
-
-
-//================================================================
-/**
  * Returns the update data.
  * 
  * FIXME: improve the message to show suggestion based on whether or not the user is an "early adopter".
