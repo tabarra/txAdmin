@@ -464,8 +464,8 @@ module.exports = class PlayerController {
                 }
 
                 if(this.config.automaticWhitelistCleanup){
-                    let license = idArray.find((id) => id.substring(0, 8) == "license:").substring(8);
-                    let player = await this.dbo.get('players').find({license: license}).value();
+                    const license = idArray.find((id) => id.substring(0, 8) == "license:").substring(8);
+                    const player = await this.dbo.get('players').find({license: license}).value();
 
 
                     if(player && player.tsLastConnection && wl.id){
