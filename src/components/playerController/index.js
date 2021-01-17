@@ -295,7 +295,7 @@ module.exports = class PlayerController {
                 .filter(player => player.tsLastConnection <= revokeTime)
                 .value()
                 .forEach(async player => {
-                    let idArray = [];
+                    const idArray = [];
                     idArray.push('license:' + player.license);
                     await this.dbo.get('actions')
                         .filter(x => x.type == 'whitelist' && !x.revocation.timestamp)
