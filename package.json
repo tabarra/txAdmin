@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "build": "rimraf dist && webpack --config webpack.config.js --progress",
-    "watch": "nodemon --config nodemon.json"
+    "watch": "nodemon --config nodemon.json",
+    "lint": "eslint ./src/** --ext .js"
   },
   "repository": {
     "type": "git",
@@ -70,6 +71,7 @@
   },
   "devDependencies": {
     "copy-webpack-plugin": "^6.2.0",
+    "eslint": "^7.18.0",
     "nodemon": "^2.0.7",
     "rimraf": "^3.0.2",
     "terser-webpack-plugin": "^4.2.2",
