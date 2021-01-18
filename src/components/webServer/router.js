@@ -18,7 +18,24 @@ module.exports = router = (config) =>{
         driver: 'memory',
         db: new Map(),
         duration: config.limiterMinutes * 60 * 1000, // 15 minutes
-        errorMessage: `Too many attempts, enjoy your ${config.limiterMinutes} minutes of cooldown.`,
+        errorMessage: `<html>
+                <head>
+                    <title>txAdmin Rate Limit</title>
+                    <style>
+                        body {
+                            background-color: #171718;
+                            color: orangered;
+                            text-align: center; 
+                            margin-top: 6em; 
+                            font-family: monospace;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>Too many attempts, enjoy your ${config.limiterMinutes} minutes of cooldown.</h1>
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/otCpCn0l4Wo?start=15" frameborder="0" allow="accelerometer; autoplay="1"; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </body>
+            </html>`,
         max: config.limiterAttempts,
         disableHeader: true,
     });
