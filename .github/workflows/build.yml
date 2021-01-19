@@ -20,7 +20,7 @@ jobs:
           node-version: '${{ matrix.node-version }}'
 
       - name: Download all modules
-        run: npm i
+        run: npm ci
       - name: Build project
         run: npm run build
       - name: Compress build output with zip
