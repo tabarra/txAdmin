@@ -135,7 +135,7 @@ export class txPlayers {
     reason = reason.trim();
 
     if (!reason.length) {
-      var notify = $.notify(
+      $.notify(
         { message: '<p class="text-center">The warn reason is required.</p>' },
         { type: "danger" }
       );
