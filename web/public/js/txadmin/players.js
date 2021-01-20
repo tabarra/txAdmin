@@ -68,7 +68,7 @@ function updatePlayer(player) {
 
   let pingClass;
   player.ping = parseInt(player.ping);
-  if (player.ping < 0) {
+  if (player.ping === NaN || player.ping < 0) {
     pingClass = "secondary";
     player.ping = "??";
   } else if (player.ping < 60) {
