@@ -16,7 +16,7 @@ export class txPlayers {
     const message = prompt("Type your message.");
     if (!message || message.length === 0) return;
 
-    var notify = $.notify(
+    const notify = $.notify(
       { message: '<p class="text-center">Executing Command...</p>' },
       { type: 'info' }
     );
