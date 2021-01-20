@@ -296,7 +296,7 @@ modPlayer.Main.notes.addEventListener("keydown", (event) => {
     event.preventDefault();
     txPlayer.noteMessage(`Saving...`, "warning");
     //setNoteMessage(`Saving...`, "warning");
-    var data = {
+    const data = {
       license: modPlayer.curr.license,
       note: modPlayer.Main.notes.value,
     };
