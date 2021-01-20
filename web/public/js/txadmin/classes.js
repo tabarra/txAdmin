@@ -47,7 +47,7 @@ export class txPlayers {
   // kick player
   kick() {
     if (modPlayer.curr.id == false) return;
-    let reason = prompt("Type the kick reason or leave it blank (press enter)");
+    const reason = prompt("Type the kick reason or leave it blank (press enter)");
     if (reason == null) return;
 
     var notify = $.notify(
