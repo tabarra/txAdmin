@@ -21,7 +21,7 @@ export class txPlayers {
       { type: 'info' }
     );
 
-    let data = {
+    const data = {
       id: modPlayer.curr.id,
       message: message.trim(),
     };
