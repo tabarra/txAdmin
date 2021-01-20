@@ -241,7 +241,7 @@ function showPlayer(license, altName = "unknown", altIDs = "") {
         modPlayer.History.list.innerHTML = `<h3 class="mx-auto pt-3 text-secondary">nothing here...</h3>`;
       } else {
         data.actionHistory.reverse();
-        let elements = data.actionHistory.map((log) => {
+        const elements = data.actionHistory.map((log) => {
           return `<div class="list-group-item list-group-item-accent-${xss(
             log.color
           )} player-history-entry">
