@@ -13,7 +13,7 @@ export class txPlayers {
   // message player
   messagePlayer() {
     if (modPlayer.curr.id == false) return;
-    let message = prompt("Type your message.");
+    const message = prompt("Type your message.");
     if (!message || message.length === 0) return;
 
     var notify = $.notify(
