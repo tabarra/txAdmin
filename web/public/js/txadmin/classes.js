@@ -50,7 +50,7 @@ export class txPlayers {
     const reason = prompt("Type the kick reason or leave it blank (press enter)");
     if (reason == null) return;
 
-    var notify = $.notify(
+    const notify = $.notify(
       { message: '<p class="text-center">Executing Command...</p>' },
       { type: 'info' }
     );
