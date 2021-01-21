@@ -137,7 +137,7 @@ module.exports = class FXRunner {
             rawCfgFile = helpers.getCFGFileData(cfgFilePath);
         } catch (error) {
             const errMsg = logError(`server.cfg error: ${error.message}`);
-            logError(`Please go to the settigns page and fix the paths.`);
+            logError(`Please go to the settings page and fix the paths.`);
             return errMsg;
         }
         try {
