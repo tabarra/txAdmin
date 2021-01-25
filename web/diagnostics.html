@@ -83,10 +83,10 @@
 
         <!-- Proccesses Card -->
         <div class="card card-accent-info">
-            <div class="card-header font-weight-bold">Proccesses:</div>
+            <div class="card-header font-weight-bold">Processes:</div>
             <div class="card-body">
                 {{@if(!it.proccesses.length)}}
-                    Failed to retrieve proccesses data. <br>
+                    Failed to retrieve processed data. <br>
                     Check the terminal for more information (if verbosity is enabled)
                 {{#else}}
                     {{@each(it.proccesses) => proc}}
