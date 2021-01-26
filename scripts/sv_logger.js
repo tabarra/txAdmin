@@ -171,11 +171,11 @@ on('explosionEvent', (source, ev) => {
     }
 })
 
-onNet('txaLogger:DeathNotice', (killer, cause) => {
+onNet('txaLogger:DeathNotice', (killerSource, cause) => {
     let killerData = null;
-    if(killer !== null && killer !== false){
+    if(killerSource !== null && killerSource !== false){
         try {
-            killerData = getPlayerData(GetPlayerFromIndex(killer));
+            killerData = getPlayerData(killerSource);
         } catch (error) {}
     }
     try {
