@@ -39,16 +39,16 @@ local function processDeath(ped)
         end
     else
         if IsEntityAPed(killerPed) and IsPedAPlayer(killerPed) then
-            killer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(killerPed))
+            killer = NetworkGetPlayerIndexFromPed(killerPed)
         elseif IsEntityAVehicle(killerPed) then
             local drivingPed = GetPedInVehicleSeat(killerPed, -1)
             if IsEntityAPed(drivingPed) == 1 and IsPedAPlayer(drivingPed) then
-                killer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(drivingPed))
+                killer = NetworkGetPlayerIndexFromPed(drivingPed)
             else
                 killer = false
             end
         elseif not IsPedAPlayer(killerPed) then
-            killer = killerPed
+            killer = false
         end
 
         deathReason = getDeathReason(causeHash)
@@ -56,6 +56,8 @@ local function processDeath(ped)
 
     if killer == nil then
         killer = false
+    elseif killer then
+        killer = GetPlayerServerId(killer)
     end
 
     TriggerServerEvent("txaLogger:DeathNotice", killer, deathReason)
