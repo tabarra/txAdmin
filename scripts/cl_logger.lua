@@ -39,11 +39,11 @@ local function processDeath(ped)
         end
     else
         if IsEntityAPed(killerPed) and IsPedAPlayer(killerPed) then
-            killer = NetworkGetPlayerIndexFromPed(killerPed)
+            killer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(killerPed))
         elseif IsEntityAVehicle(killerPed) then
             local drivingPed = GetPedInVehicleSeat(killerPed, -1)
             if IsEntityAPed(drivingPed) == 1 and IsPedAPlayer(drivingPed) then
-                killer = NetworkGetPlayerIndexFromPed(drivingPed)
+                killer = GetPlayerServerId(NetworkGetPlayerIndexFromPed(drivingPed))
             else
                 killer = false
             end
