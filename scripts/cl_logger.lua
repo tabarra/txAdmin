@@ -98,7 +98,7 @@ local deathHashTable = {
     },
     ["gas"] = { 
         GetHashKey('WEAPON_BZGAS'),
-        GetHashKey('WEAPON_FIREEXTINGUISHER')
+        GetHashKey('WEAPON_FIREEXTINGUISHER'),
         GetHashKey('WEAPON_SMOKEGRENADE')
     },
     ["knife"] = { 
