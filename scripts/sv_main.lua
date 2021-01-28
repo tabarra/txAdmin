@@ -62,7 +62,7 @@ function HTTPHeartBeat()
 		local player = players[i]
 		local ids = GetPlayerIdentifiers(player)
 		-- using manual insertion instead of table.insert is faster
-		txAdminTbl[#txAdminTbl+1] = {
+		curPlyData[#curPlyData+1] = {
 			id = player,
 			identifiers = ids,
 			name = GetPlayerName(player),
@@ -291,7 +291,7 @@ end
 
 -- Player connecting handler
 function handleConnections(name, skr, d)
-    if  GetConvar("txAdmin-checkPlayerJoin", "invalid") == "true" then
+    if GetConvar("txAdmin-checkPlayerJoin", "invalid") == "true" then
         d.defer()
         local url = "http://127.0.0.1:"..apiPort.."/intercom/checkPlayerJoin"
         local exData = {
