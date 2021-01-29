@@ -112,7 +112,8 @@ function handleFXServer(ctx) {
         isUndefined(ctx.request.body.commandLine) ||
         isUndefined(ctx.request.body.onesync) ||
         isUndefined(ctx.request.body.autostart) ||
-        isUndefined(ctx.request.body.quiet)
+        isUndefined(ctx.request.body.quiet) ||
+        isUndefined(ctx.request.body.disableAnnouncementPrint)
     ){
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -125,6 +126,7 @@ function handleFXServer(ctx) {
         onesync: ctx.request.body.onesync,
         autostart: (ctx.request.body.autostart === 'true'),
         quiet: (ctx.request.body.quiet === 'true'),
+        disableAnnouncementPrint: (ctx.request.body.disableAnnouncementPrint === 'true')
     }
 
     //Validating path spaces
@@ -165,6 +167,7 @@ function handleFXServer(ctx) {
     newConfig.autostart = cfg.autostart;
     newConfig.quiet = cfg.quiet;
     newConfig.commandLine = cfg.commandLine;
+    newConfig.disableAnnouncementPrint = cfg.disableAnnouncementPrint;
     let saveStatus = globals.configVault.saveProfile('fxRunner', newConfig);
 
     //Sending output

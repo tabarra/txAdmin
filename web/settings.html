@@ -194,6 +194,23 @@
                             </div>
                         </div>
 
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">
+                                Disable Announcement Warnings
+                            </label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmFXServer-announcementPrint"
+                                        {{it.fxserver.disableAnnouncementPrint|undef}} {{it.readOnly|isDisabled}}>
+                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Check this if you want to disable broadcast chat warning messages in game for announcements.<br>
+                                    This is best used if you want to trigger the custom event <code>txAdmin:events:broadcast</code> <a href="https://github.com/tabarra/txAdmin/blob/master/docs/events.md" target="_blank" rel="noopener noreferrer">(docs)</a>
+                                </span>
+                            </div>
+                        </div>
+
                         <div class="text-center mt-4">
                             <button class="btn btn-sm btn-primary" type="submit" id="frmFXServer-save" {{it.readOnly|isDisabled}}>
                                 <i class="icon-check"></i> Save FXServer Settings
@@ -591,7 +608,8 @@
             commandLine: $('#frmFXServer-commandLine').val().trim(),
             onesync: $('#frmFXServer-onesync').val(),
             autostart: $('#frmFXServer-autostart').is(':checked'),
-            quiet: $('#frmFXServer-quiet').is(':checked')
+            quiet: $('#frmFXServer-quiet').is(':checked'),
+            disableAnnouncementPrint: ($('#frmFXServer-announcementPrint').is(':checked') === true),
         }
         if (!data.serverDataPath.length || !data.cfgPath.length) {
             var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });

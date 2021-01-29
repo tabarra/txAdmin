@@ -25,3 +25,16 @@ AddEventHandler('txAdmin:events:scheduledRestart', function(eventData)
     end
 end)
 ```
+
+## txAdmin:events:broadcast
+Called for whenever an announcement is triggered from the admin panel.  
+Arguments:
+- `author`: Username of the person triggering the announcement.  
+- `announcement`: Announcement text
+
+Example usage:
+```lua
+AddEventHandler('txAdmin:events:broadcast', function(eventData)
+    print(("announcement %s: %s"):format(eventData.author, eventData.announcement))
+end)
+```

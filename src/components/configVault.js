@@ -166,6 +166,7 @@ module.exports = class ConfigVault {
                 autostartDelay: toDefault(cfg.fxRunner.autostartDelay, null), //not in template
                 restartDelay: toDefault(cfg.fxRunner.restartDelay, null), //not in template
                 quiet: toDefault(cfg.fxRunner.quiet, null),
+                disableAnnouncementPrint: toDefault(cfg.fxRunner.disableAnnouncementPrint, null),
             };
         } catch (error) {
             if(GlobalData.verbose) dir(error);
@@ -229,6 +230,7 @@ module.exports = class ConfigVault {
             cfg.fxRunner.autostartDelay = parseInt(cfg.fxRunner.autostartDelay) || 2; //not in template
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in templater
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
+            cfg.fxRunner.disableAnnouncementPrint = (cfg.fxRunner.disableAnnouncementPrint === 'true' || cfg.fxRunner.disableAnnouncementPrint === true);
             //FXRunner - Converting from old OneSync (build 2751)
             if(isUndefined(cfg.fxRunner.onesync) || cfg.fxRunner.onesync === null){
                 cfg.fxRunner.onesync = 'off'

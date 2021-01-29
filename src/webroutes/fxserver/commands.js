@@ -68,10 +68,16 @@ module.exports = async function FXServerCommands(ctx) {
     //==============================================
     }else if(action == 'admin_broadcast'){
         if(!ensurePermission(ctx, 'players.message')) return false;
-        let cmd = formatCommand('txaBroadcast', ctx.session.auth.username, parameter);
+        const config = globals.fxRunner.config
+        const cmd = formatCommand('txaBroadcast', ctx.session.auth.username, parameter);
+        const eventCmd = formatCommand('txaEvent', 'broadcast', JSON.stringify({author: ctx.session.auth.username, announcement: parameter}));
+        globals.fxRunner.srvCmdBuffer(eventCmd);
         ctx.utils.logCommand(cmd);
-        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-        return sendAlertOutput(ctx, toResp);
+        if (config.disableAnnouncementPrint !== 'true' && config.disableAnnouncementPrint !== true) {
+            let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+            return sendAlertOutput(ctx, toResp)
+        }
+        return sendAlertOutput(ctx, cmd)
 
     //==============================================
     }else if(action == 'kick_all'){
