@@ -222,7 +222,7 @@ module.exports = class WebServer {
                 logError(`If you want to run multiple txAdmin, check the documentation for the port convar.`);
                 process.exit();
             });
-            this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', async () => {
+            this.httpServer.listen(GlobalData.txAdminPort, GlobalData.txAdminPrivate ? '127.0.0.1' : '0.0.0.0', async () => {
                 const boxOptions = {
                     padding: 1,
                     margin: 1,

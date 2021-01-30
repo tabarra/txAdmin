@@ -134,6 +134,10 @@ if(!/^\d+$/.test(txAdminPortConvar)){
 }
 const txAdminPort = parseInt(txAdminPortConvar);
 
+//Get txadmin visibility
+const txAdminPrivateConvar = getConVar('txAdminPrivate', 'false').trim();
+const txAdminPrivate = (['true', '1', 'on'].includes(txAdminPrivate));
+
 //Get profile name
 const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, "").trim();
 if(serverProfile.endsWith('.base')){
@@ -162,6 +166,7 @@ GlobalData = {
     fxServerPath,
     dataPath,
     txAdminPort,
+    txAdminPrivate,
     verbose,
     //Consts
     validIdentifiers:{
