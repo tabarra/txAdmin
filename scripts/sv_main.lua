@@ -56,19 +56,19 @@ end)
 
 -- HeartBeat functions
 function HTTPHeartBeat()
-	local curPlyData = {}
-	local players = GetPlayers()
-	for i = 1, #players do
-		local player = players[i]
-		local ids = GetPlayerIdentifiers(player)
-		-- using manual insertion instead of table.insert is faster
-		curPlyData[#curPlyData+1] = {
-			id = player,
-			identifiers = ids,
-			name = GetPlayerName(player),
-			ping = GetPlayerPing(player)
-		}
-	end
+    local curPlyData = {}
+    local players = GetPlayers()
+    for i = 1, #players do
+        local player = players[i]
+        local ids = GetPlayerIdentifiers(player)
+        -- using manual insertion instead of table.insert is faster
+        curPlyData[#curPlyData+1] = {
+            id = player,
+            identifiers = ids,
+            name = GetPlayerName(player),
+            ping = GetPlayerPing(player)
+        }
+    end
 
     local url = "http://127.0.0.1:"..apiPort.."/intercom/monitor"
     local exData = {
