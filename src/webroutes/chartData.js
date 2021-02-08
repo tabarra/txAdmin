@@ -21,12 +21,14 @@ module.exports = async function chartData(ctx) {
     // const threadName = 'svNetwork';
     // const threadName = 'svSync';
     const threadName = 'svMain';
-    const maxDeltaTime = 288; //5*288 = 1440 = 1 day
+    // const maxDeltaTime = 288; //5*288 = 1440 = 1 day
+    const maxDeltaTime = 360; //5*360 = 30 hours
     let outData;
     try {
         outData = globals.statsCollector.perfSeries.slice(-maxDeltaTime).map(s => {
             return {
                 ts: s.ts,
+                skipped: s.skipped,
                 clients: s.clients,
                 avgTime: s.perf[threadName].sum / s.perf[threadName].count,
                 buckets: s.perf[threadName].buckets,

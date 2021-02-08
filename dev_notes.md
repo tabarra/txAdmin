@@ -20,6 +20,12 @@
 - [x] made the chart resposive
 - [x] made the chart player count more consistent
 - [x] reverted dark mode as default
+> v3.2.3
+- [x] perf chart: increase chart to 30 hours (360 snaps) 
+- [x] perf chart: changed color scheme
+- [x] perf chart: change padding
+- [x] perf chart: added server reset lines
+
 
 > ASAP!:
 - [ ] deal with the last 2 PRs
