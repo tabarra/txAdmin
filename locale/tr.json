@@ -4,7 +4,7 @@
         "humanizer_language": "tr"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
+        "start_timeout": "zamanında başlatılamadı",
         "crash_detected": "Çökme tespit edildi",
         "partial_crash_warn": "Kısmi bir çökme nedeniyle, sunucu 1 dakika içerisinde yeniden başlatılacaktır. Lütfen çıkış yapın.",
         "partial_crash_warn_discord": "Kısmi bir çökme nedeniyle,  **%{servername}** 1 dakika içerisinde yeniden başlatılacaktır.",
@@ -13,10 +13,10 @@
         "schedule_warn_discord": "**%{servername}** sunucusu %{smart_count} dakika içerisinde yeniden başlatılmaya zamanlandı. |||| **%{servername}** sunucusu %{smart_count} dakika içerisinde yeniden başlatılmaya zamanlandı."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) \"%{reason}\" sebebi ile bu sunucudan uzaklaştırıldın! Cezanın bitmesine kalan: %{expiration}.",
+        "kick_permanent": "(%{author}) \"%{reason}\". sebebi ile bu sunucudan süresiz olarak uzaklaştırıldın!",
+        "reject_temporary": "Bu sunucudan  %{expiration} süre ile uzaklaştırıldın!.\nBan ID: %{id}.\nBan Sebebi: %{reason}.\nBanlayan: %{author}.",
+        "reject_permanent": "Bu sunucudan süresiz olarak uzaklaştırıldın!.\nBan ID: %{id}.\nBan Sebebi: %{reason}.\nnBanlayan: %{author}."
     },
     "server_actions": {
         "restarting": "Sunucu yeniden başlatılıyor.(%{reason}).",
