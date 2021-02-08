@@ -73,8 +73,8 @@ if(typeof txAdminVersion !== 'string' || txAdminVersion == 'null'){
 //Check if this version of txAdmin is too outdated to be considered safe to use in prod
 //NOTE: Only valid if its being very actively maintained.
 //          Use 30d for patch 0, or 45~60d otherwise
-const txAdminVersionBestBy = 1610430000 + (27 * 86400); 
-// dir(new Date(txAdminVersionBestBy*1000).toLocaleString()) // 08/02/2021 03:40:00 BRT 
+const txAdminVersionBestBy = 1612770000 + (28 * 86400); 
+// dir(new Date(txAdminVersionBestBy*1000).toLocaleString()) // 08/03/2021 04:40:00 BRT 
 if(now() > txAdminVersionBestBy){
     logError(`This version of txAdmin is outdated.`);
     logError(`Please update as soon as possible.`);

@@ -259,6 +259,11 @@ async function gettxAdminData(){
         hbHTTPFails: globals.databus.txStatsData.heartBeatStats.httpFailed,
         hbBootSeconds: globals.databus.txStatsData.bootSeconds.join(', ') || '--',
         logFileSize,
+
+        //Possible memory leaks:
+        serverLogSize: globals.databus.serverLog.length || '--',
+        koaSessions: Object.keys(globals.webServer.koaSessionMemoryStore.sessions).length || '--',
+
         //Settings
         cooldown: globals.monitor.config.cooldown,
         schedule: globals.monitor.config.restarterSchedule.join(', ') || '--',
