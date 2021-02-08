@@ -21,7 +21,7 @@ module.exports = class PlayerlistGenerator {
         //Configs
         this.config = {
             srcPlayerlist: require('./playerlist.ignore.json'),
-            refreshInterval: 2500,
+            refreshInterval: 2*60*1000, //2500
             shouldAddRemovePlayers: true,
             minPlayers: 7,
             maxPlayers: 15,
@@ -33,6 +33,7 @@ module.exports = class PlayerlistGenerator {
         
         
         //Cron functions
+        this.playerlist = this.refreshPlayers();
         setInterval(() => {
             this.playerlist = this.refreshPlayers();
         }, this.config.refreshInterval);
