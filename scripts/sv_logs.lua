@@ -27,6 +27,7 @@ local function getPlayerData(src)
     }
 end
 
+local loggerBuffer = {}
 local PRINT_STRUCTURED_TRACE = GetHashKey('PRINT_STRUCTURED_TRACE')
 --- function logger
 --- Sends logs through fd3 to the server & displays the logs on the panel.
@@ -34,20 +35,29 @@ local PRINT_STRUCTURED_TRACE = GetHashKey('PRINT_STRUCTURED_TRACE')
 ---@param action string the action type
 ---@param data table|boolean will take a table, or a boolean if there is no data.
 local function logger(src, action, data)
-    local logData = {
+    loggerBuffer[#loggerBuffer+1] = {
         timestamp = round(os_time()),
         source = getPlayerData(src),
         action = action,
         data = data or false
     }
-    local payload = json.encode({
-        type = 'txAdminLogData',
-        logs = logData
-    })
-    Citizen.InvokeNative(PRINT_STRUCTURED_TRACE & 0xFFFFFFFF, payload)
 end
 
-log('Logger module started')
+-- send all of the buffered logs every second
+CreateThread(function()
+    while true do
+        Wait(1000)
+        if #loggerBuffer > 0 then
+            local payload = json.encode({
+                type = 'txAdminLogData',
+                logs = loggerBuffer
+            })
+            Citizen.InvokeNative(PRINT_STRUCTURED_TRACE & 0xFFFFFFFF, payload)
+            loggerBuffer = {}
+        end
+    end
+end)
+
 logger(-1, 'txAdminClient:Started')
 
 AddEventHandler('playerConnecting', function()
