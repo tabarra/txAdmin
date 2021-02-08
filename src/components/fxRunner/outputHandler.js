@@ -101,6 +101,8 @@ module.exports = class OutputHandler {
             // dir(data.payload)
             if(data.payload.type === 'txAdminHeartBeat'){
                 globals.monitor.handleHeartBeat('fd3');
+            } else if (data.payload.type === 'txAdminLogData') {
+                globals.databus.serverLog = globals.databus.serverLog.concat(data.payload.logs)
             }
         }
     }
