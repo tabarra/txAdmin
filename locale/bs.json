@@ -1,0 +1,37 @@
+{
+    "$meta": {
+        "label": "Bosnian",
+        "humanizer_language": "en"
+    },
+    "restarter": {
+        "start_timeout": "Server nije uspio započeti na vrijeme",
+        "crash_detected": "Server se zaustavio",
+        "partial_crash_warn": "Zbog djelomičnog pada, Server će se ponovo pokrenuti za 1 minutu. Isključiti te se sada.",
+        "partial_crash_warn_discord": "Zbog djelomičnog pada, **%{servername}** će se restartovati",
+        "schedule_reason": "restart je zakazan za %{time}",
+        "schedule_warn": "Ovaj server je zakazan da se restarta za %{smart_count} minutu. Molim vas se isključitite. |||| Ovaj server ce se restartovati za %{smart_count} minuta.",
+        "schedule_warn_discord": "**%{servername}** restarta se za %{smart_count} minutu. |||| **%{servername}** restarta se za %{smart_count} minuta."
+    },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) Zabranjen vam je pristup ovom serveru zbog \"%{reason}\". Vaša zabrana istječe za: %{expiration}.",
+        "kick_permanent": "(%{author}) Zabranjen vam je pristup ovom serveru za uvjek zbog \"%{reason}\".",
+        "reject_temporary": "Zabranjen vam je pristup ovom serveru.\n: %{expiration}.\nBan ID: %{id}.\n Razlog za zabranu: %{reason}.\n%{author} vas je zabranio.",
+        "reject_permanent": "Zabranjen vam je pristup ovom serveru za uvjek.\nBan ID: %{id}.\n Razlog za zabranu: %{reason}.\n%{author} vas je zabranio."
+    },
+    "server_actions": {
+        "restarting": "Server se restartuje: (%{reason}).",
+        "restarting_discord": "**%{servername}** se restarta zbog: (%{reason}).",
+        "stopping": "Server je bio zaustavljien: (%{reason}).",
+        "stopping_discord": "**%{servername}** se gasi: (%{reason}).",
+        "spawning_discord": "**%{servername}** se pali"
+    },
+    "discord": {
+        "status_online": "**%{servername}** je **Online**!",
+        "status_offline": "**%{servername}** je **Offline**!"
+    },
+    "nui_warning": {
+        "title": "WARNING",
+        "warned_by": "Vas je upozorio",
+        "instruction": "držite [SPACE] 10 sekundi da vam se skine ova poruka."
+    }
+}

@@ -7,6 +7,7 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 //Statically requiring languages because of webpack
 const languages = {
     ar: require('../../locale/ar.json'),
+    bs: require('../../locale/bs.json'),
     cs: require('../../locale/cs.json'),
     da: require('../../locale/da.json'),
     de: require('../../locale/de.json'),
