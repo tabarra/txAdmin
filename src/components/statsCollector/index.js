@@ -25,8 +25,9 @@ module.exports = class StatsCollector {
             heatmapDataFile: `${globals.info.serverProfilePath}/data/stats_heatmapData_v1.json`,
             playerCountFile: `${globals.info.serverProfilePath}/data/stats_playerCount_v1.json`,
             performance: {
-                resolution: 5, //DEBUG must be 5
-                lenthCap: 288, //5*288 = 1440 = 1 day
+                resolution: 5,
+                // lenthCap: 288, //5*288 = 1440 = 1 day
+                lenthCap: 360, //5*360 = 30 hours
             }
         }
         // this.playersBuffer = [];
@@ -45,7 +46,7 @@ module.exports = class StatsCollector {
                     dir(error)
                 }
             }
-        }, 60*1000); //DEBUG mudar pra 60
+        }, 60*1000);
     }
 
 

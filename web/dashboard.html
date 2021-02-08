@@ -20,8 +20,8 @@
         stroke: none;
         fill: none;
     }
-    #y-axis path,
-    #y-axis line {
+    #tickBucketsAxis path,
+    #tickBucketsAxis line {
         stroke: none;
         fill: none;
     }
@@ -33,19 +33,14 @@
         font-size: 16px;
         font-weight: 500;
     }
-    /* .axisTitle .tickTimeLabel{
-        color: #27b7e5;
-    } */
     .axisTitle .tickTimeLabel{
         min-width: 2em;
         height: 18px;
         border: dimgrey 2px solid;
         background: rgb(35,23,27);
-        background: linear-gradient(90deg, rgba(35,23,27,1) 10%, rgba(45,161,243,1) 35%, rgba(69,246,139,1) 65%, rgba(224,69,19,1) 90%);
+        /* background: linear-gradient(90deg, rgba(35,23,27,1) 10%, rgba(45,161,243,1) 35%, rgba(69,246,139,1) 65%, rgba(224,69,19,1) 90%); */
+        background: linear-gradient(90deg, #482475 10%, #2f6c8e 35%, #2fb47c 65%, #bddf26 90%);
     }
-    /* .axisTitle .clientsLabel{
-        color: #2eb85c;
-    } */
     .axisTitle .clientsLabel{
         min-width: 2em;
         height: 18px;
@@ -217,14 +212,14 @@
         if(!perfData) return;
         //DEBUG
         // perfData = [...perfData, ...perfData, ...perfData]
-        // perfData = perfData.slice(-200)
+        // perfData = perfData.slice(-50)
 
         //Render page
         const chartOptions = {
             // colorScheme: d3[`{{[it.uiTheme, 'interpolateViridis', 'interpolateTurbo']|ternary}}`],
             // colorScheme: d3.interpolateInferno,
-            colorScheme: d3.interpolateTurbo,
-            // colorScheme: d3.interpolateViridis,
+            // colorScheme: d3.interpolateTurbo,
+            colorScheme: d3.interpolateViridis,
         }
 
         const draw = () => {
