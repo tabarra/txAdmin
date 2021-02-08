@@ -1,0 +1,37 @@
+{
+    "$meta": {
+        "label": "Persian",
+        "humanizer_language": "fa"
+    },
+    "restarter": {
+        "start_timeout": "Failed to start in time",
+        "crash_detected": "Crash Shenasaee Shod!",
+        "partial_crash_warn": "Be dalil shenasaee yek moshkel, Server ta 1 daghighe digar restart mishavad. Lotfan Disconnect Konid.",
+        "partial_crash_warn_discord": "Be dalil shenasaee yek moshkel, **%{servername}** ta 1 daghighe digar restart mishavad.",
+        "schedule_reason": "Restart Dar Saat: %{time}",
+        "schedule_warn": "Server ta %{smart_count} daghighe digar restart mishavad. Lotfan Disconnect Konid. |||| Server ta %{smart_count} daghighe digar restart mishavad.",
+        "schedule_warn_discord": "**%{servername}** ta %{smart_count} daghighe digar restart mishavad. |||| **%{servername}** ta %{smart_count} daghighe digar restart mishavad."
+    },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) Shoma Az in Server Ban Shodid, Be Dalil: \"%{reason}\". Etmam Ban Shoma: %{expiration}.",
+        "kick_permanent": "(%{author}) Shoma Baraye Hamishe Az in Server Ban Shodid, Be Dalil: \"%{reason}\".",
+        "reject_temporary": "Shoma Az in Server Ban Shodid.\nEtmam Ban Shoma: %{expiration}.\nBan ID: %{id}.\nDalil Ban: %{reason}.\nBan Tavasot: %{author}.",
+        "reject_permanent": "Shoma Az in Server Baraye Hamishe Ban Shodid.\nBan ID: %{id}.\nDalil Ban: %{reason}.\nBan Tavasot: %{author}."
+    },
+    "server_actions": {
+        "restarting": "سرور درحال راه اندازی مجدد، دلیل: (%{reason}).",
+        "restarting_discord": "**%{servername}** درحال راه اندازی مجدد شدن، دلیل: (%{reason}).",
+        "stopping": "سرور درحال خاموش شدن، دلیل: : (%{reason}).",
+        "stopping_discord": "**%{servername}** درحال خاموش شدن، دلیل: (%{reason}).",
+        "spawning_discord": "**%{servername}** درحال راه اندازی."
+    },
+    "discord": {
+        "status_online": "**%{servername}** درحال حاضر: **Online**!",
+        "status_offline": "**%{servername}** درحال حاضر **Offline**!"
+    },
+    "nui_warning": {
+        "title": "WARNING",
+        "warned_by": "Warned by:",
+        "instruction": "Dokme [SPACE] ro baraye 10 saniye negah darid ta payam rad shavad."
+    }
+}
