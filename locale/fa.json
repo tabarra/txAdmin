@@ -1,7 +1,7 @@
 {
     "$meta": {
         "label": "Persian",
-        "humanizer_language": "fa-IR"
+        "humanizer_language": "fa"
     },
     "restarter": {
         "start_timeout": "Failed to start in time",
