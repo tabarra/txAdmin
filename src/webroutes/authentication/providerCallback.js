@@ -97,7 +97,6 @@ module.exports = async function ProviderCallback(ctx) {
         const admin = globals.authenticator.getAdminByProviderUID(userInfo.name);
         if(!admin){
             ctx.session.auth = {};
-            if(GlobalData.verbose) logWarn(message);
             return returnJustMessage(
                 ctx,
                 `The account '${userInfo.name}' is not an admin.`, 
