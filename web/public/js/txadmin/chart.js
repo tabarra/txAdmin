@@ -40,7 +40,7 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
         });
 
         //Process skips
-        if(snap.skipped){
+        if (snap.skipped) {
             snapSkips.push(snapIndex);
         }
 
@@ -99,7 +99,7 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
     svg.append("g")
         .attr("id", "tickBucketsAxis")
         .attr("class", "axis")
-        .attr("transform", translate(width - margin.right -3, 0))
+        .attr("transform", translate(width - margin.right - 3, 0))
         .call(tickBucketsAxis);
 
 
@@ -120,16 +120,20 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
 
 
     // Y2 Axis - Player count
-    const y2Padding = Math.round(tickBucketsScale.bandwidth() / 2)
+    const y2Padding = Math.round(tickBucketsScale.bandwidth() / 2);
+    const maxClients = d3.max(snapClients.map(t => t.c));
     const clientsScale = d3.scaleLinear()
-        .domain([0, d3.max(snapClients.map(t => t.c))])
+        .domain([0, maxClients])
         .range([height - margin.bottom - y2Padding, margin.top + y2Padding]);
 
+    const clientsAxis = d3.axisLeft(clientsScale)
+        .tickFormat(t => t)
+        .tickValues((maxClients > 7)? null : d3.range(maxClients+1))
     svg.append("g")
         .attr("id", "clientAxis")
         .attr("class", "axis")
         .attr("transform", translate(margin.left - 1.5, 0))
-        .call(d3.axisLeft(clientsScale));
+        .call(clientsAxis);
 
     const clientsLine = d3.line()
         .defined(d => !isNaN(d.c))
