@@ -106,7 +106,7 @@ async function handleSetVariables(ctx) {
     const addPrincipalLines = [];
     Object.keys(admin.providers).forEach(providerName => {
         if(admin.providers[providerName].identifier){
-            addPrincipalLines.push(`add_principal identifier.${admin.providers[providerName].identifier} group.admin`);
+            addPrincipalLines.push(`add_principal identifier.${admin.providers[providerName].identifier} group.admin #${ctx.session.auth.username}`);
         }
     });
     userVars.addPrincipalsMaster = (addPrincipalLines.length)
