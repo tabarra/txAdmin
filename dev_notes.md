@@ -2,7 +2,7 @@
 - [x] change chart awaiting data message
 - [x] check if the "custom template" was modified at all
 - [x] add master username to the `{{addPrincipalsMaster}}` `server.cfg` placeholder to prevent confusion
-- [ ] validate if the database config is working before running the deployer
+- [x] validate if the database config is working before running the deployer
 - [ ] add validator/message for `server.cfg.txt` 
 - [ ] disable server auto-start when no admins configured
 - [ ] hide all the `txAdmin:xxxx` started and maybe even check if the port is open

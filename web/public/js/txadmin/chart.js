@@ -159,6 +159,15 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
         .attr("stroke-linecap", "round")
         .attr("d", clientsLine);
 
+    // Horizontal line on the max client count
+    // playerLineGroup.append('line')
+    //     .style("stroke", "dodgerblue")  // dodgerblue maybe
+    //     .attr("stroke-dasharray", 6)
+    //     .attr("y1", clientsScale(maxClients))
+    //     .attr("y2", clientsScale(maxClients))
+    //     .attr("x1", margin.left) 
+    //     .attr("x2", width - margin.right)
+
 
     // Skip lines
     svg.append("g")
