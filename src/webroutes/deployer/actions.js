@@ -177,20 +177,6 @@ async function handleSaveConfig(ctx) {
         globals.fxRunner.refreshConfig();
         ctx.utils.logAction(`Completed and committed server deploy.`);
 
-        //FIXME: temporary fix for the yarn issue requiring fxchild.stdin writes
-        yarnInputFixCounter = 0;
-        clearInterval(yarnInputFix);
-        yarnInputFix = setInterval(() => {
-            if(yarnInputFixCounter > 6){
-                if(GlobalData.verbose) log('Clearing yarnInputFix setInterval');
-                clearInterval(yarnInputFix);
-            }
-            yarnInputFixCounter++;
-            try {
-                globals.fxRunner.srvCmd(`txaPing temporary_yarn_workaround_please_ignore#${yarnInputFixCounter}`);
-            } catch (error) {}
-        }, 30*1000);
-
         //Starting server
         const spawnMsg = await globals.fxRunner.spawnServer(false);
         if(spawnMsg !== null){
