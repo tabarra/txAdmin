@@ -169,10 +169,10 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
         .append('line')
         .style("stroke", "gold")  // dodgerblue maybe
         .attr("stroke-dasharray", 6)
-        .attr("x1", (d) => timeScale(d))     // x position of the first end of the line
-        .attr("x2", (d) => timeScale(d))     // x position of the second end of the line
-        .attr("y1", height - margin.bottom)      // y position of the first end of the line
-        .attr("y2", margin.top);    // y position of the second end of the line
+        .attr("x1", (d) => timeScale(d))
+        .attr("x2", (d) => timeScale(d))
+        .attr("y1", height - margin.bottom) 
+        .attr("y2", margin.top);
 
     d3Container.innerHTML = '';
     d3Container.append(svg.node());

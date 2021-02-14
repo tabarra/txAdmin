@@ -1,32 +1,10 @@
-## TODO v3.2
-- [x] update README
-- [x] added option to configure the scheduled restart warning times (merge PR#226)
-- [x] move the Monitor/Restarter tab in the settings page
-- [x] clean github Issues
-- [x] replace `clone` with `lodash/cloneDeep`
-- [x] refactor dashboard in preparation to the chart
-- [x] remove many monitor settings since they were being misused and were never useful
-- [x] replace ping with player ID on sidebar
-- [x] updated packages
-- [x] start collecting `/perf/` metrics
-- [x] add performance chart to dashboard
-- [x] set darkmode as default
-- [x] compile test on latest, reset timer, version bump
-> v3.2.0
-- [x] fixed perf chart time labels
-> v3.2.1
-- [x] fixed perf chart URL
-> v3.2.2
-- [x] made the chart resposive
-- [x] made the chart player count more consistent
-- [x] reverted dark mode as default
-> v3.2.3
-- [x] perf chart: increase chart to 30 hours (360 snaps) 
-- [x] perf chart: changed color scheme
-- [x] perf chart: change padding
-- [x] perf chart: added server reset lines
-- [x] merge some prs (language, redm, minor)
-- [x] add koa sessions and server log to the diagnostics page
+## TODO v3.4
+- [x] change chart awaiting data message
+- [ ] check if the "custom template" was modified at all
+- [ ] validate if the database config is working before running the deployer
+- [ ] add validator/message for `server.cfg.txt` 
+- [ ] disable server auto-start when no admins configured
+- [ ] hide all the `txAdmin:xxxx` started and maybe even check if the port is open
 
 
 > ASAP!:
