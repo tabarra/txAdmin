@@ -5,7 +5,7 @@
     },
     "restarter": {
         "start_timeout": "Der Server konnte nicht rechtzeitig hochfahren.",
-        "crash_detected": "Absturz registriert",
+        "crash_detected": "Absturz erkannt",
         "partial_crash_warn": "Aufgrund von Verbindungsproblemen startet der Server in einer Minute neu. Bitte trenne die Verbindung jetzt.",
         "partial_crash_warn_discord": "Aufgrund von Verbindungsproblemen, startet **%{servername}** in einer Minute neu.",
         "schedule_reason": "Automatisierter Neustart um %{time}",
@@ -13,8 +13,8 @@
         "schedule_warn_discord": "**%{servername}** wird in einer Minute neu gestartet. |||| **%{servername}** wird in %{smart_count} Minuten neu gestartet."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) Du wurdest von diesem Server für %{expiration} gebannt. Grund: \"%{reason}\".",
-        "kick_permanent": "(%{author}) Du wurdest von diesem Server permanent gebannt. Grund: \"%{reason}\".",
+        "kick_temporary": "(%{author}) Du wurdest von diesem Server gebannt.\nDein Bann läuft ab in: %{expiration}.\nGrund: \"%{reason}\".",
+        "kick_permanent": "(%{author}) Du wurdest von diesem Server permanent gebannt.\n Grund: \"%{reason}\".",
         "reject_temporary": "Du wurdest von diesem Server gebannt.\nDein Bann läuft ab in: %{expiration}.\nBann ID: %{id}.\nGrund: %{reason}.\nGebannt von: %{author}.",
         "reject_permanent": "Du wurdest von diesem Server permanent gebannt.\nBann ID: %{id}.\nGrund: %{reason}.\nGebannt von: %{author}."
     },
