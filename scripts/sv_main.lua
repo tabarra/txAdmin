@@ -225,12 +225,9 @@ function txaBroadcast(source, args)
         args[1] = unDeQuote(args[1])
         args[2] = unDeQuote(args[2])
         log("Admin Broadcast - "..args[1]..": "..args[2])
-        TriggerClientEvent("chat:addMessage", -1, {
-            args = {
-                "(Broadcast) "..args[1],
-                args[2],
-            },
-            color = {255, 0, 0}
+        TriggerClientEvent('chat:addMessage', -1, { 
+            template = '<div style="padding: 1.0vw; margin: 1.0vw; background-color: rgba(252, 3, 3, 0.6); border-radius: 5px;"><i class="fas fa-crown"></i> {0}:<br> {1}</div>', --{0}:<br> {1}</div>
+            args = { "(Broadcast) "..args[1], args[2] }, color = {255, 255, 255} -- 128, 128, 128
         })
         TriggerEvent('txaLogger:internalChatMessage', -1, "(Broadcast) "..args[1], args[2])
     else
@@ -247,12 +244,9 @@ function txaSendDM(source, args)
         local pName = GetPlayerName(args[1])
         if pName ~= nil then
             log("Admin DM to "..pName.." from "..args[2]..": "..args[3])
-            TriggerClientEvent("chat:addMessage", args[1], {
-                args = {
-                    "(DM) "..args[2],
-                    args[3],
-                },
-                color = {255, 0, 0}
+            TriggerClientEvent('chat:addMessage', -1, { 
+                template = '<div style="padding: 1.0vw; margin: 1.0vw; background-color: rgba(252, 3, 3, 0.6); border-radius: 5px;"><i class="fas fa-crown"></i> {0}:<br> {1}</div>', --{0}:<br> {1}</div>
+                args = { "(DM) "..args[2], args[3] }, color = {255, 255, 255} -- 128, 128, 128
             })
             TriggerEvent('txaLogger:internalChatMessage', -1, "(DM) "..args[2], args[3])
         else
