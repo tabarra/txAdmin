@@ -25,3 +25,39 @@ AddEventHandler('txAdmin:events:scheduledRestart', function(eventData)
     end
 end)
 ```
+## txAdmin:events:serverStopped
+Called when the Server is being Stopped using the Stop button on the Dashboard.
+Arguments:
+- `reason`: The person who stopped the Server
+
+Example usage on ESX v1.2:
+```lua
+ESX = nil
+TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+
+AddEventHandler('txAdmin:events:serverStopped', function(eventData)
+        CreateThread(function()
+            ESX.SavePlayers(function()
+                -- do something
+            end)
+        end)
+end)
+```
+## txAdmin:events:serverREstarted
+Called when the Server is being Restarted using the Stop button on the Dashboard or by the Sheduled Restarts.
+Arguments:
+- `reason`: The person who stopped the Server
+
+Example usage on ESX v1.2:
+```lua
+ESX = nil
+TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
+
+AddEventHandler('txAdmin:events:serverRestarted', function(eventData)
+        CreateThread(function()
+            ESX.SavePlayers(function()
+                -- do something
+            end)
+        end)
+end)
+```
