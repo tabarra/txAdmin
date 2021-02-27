@@ -41,6 +41,7 @@ globals = {
                 fd3Failed: 0,
             },
             bootSeconds: [],
+            freezeSeconds: [],
             pageViews: {},
             httpCounter: {
                 current: 0,
