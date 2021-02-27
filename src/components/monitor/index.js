@@ -217,6 +217,7 @@ module.exports = class Monitor {
         // this.globalCounters.hitches = [];
 
         this.currentStatus = 'OFFLINE' // options: OFFLINE, ONLINE, PARTIAL
+        this.lastRefreshStatus = null; //to prevent DDoS crash false positive
         this.lastSuccessfulHealthCheck = null; //to see if its above limit
         this.lastStatusWarningMessage = null; //to prevent spamming 
         this.lastHealthCheckErrorMessage = null; //to print warning
@@ -279,8 +280,20 @@ module.exports = class Monitor {
         //Helper func
         const cleanET = (et) => {return (et > 99999)? '--' : et};
 
-        //Get elapsed times & process status
+        //Check if process was frozen
         const currTimestamp = now();
+        const elapsedRefreshStatus = currTimestamp - this.lastRefreshStatus;
+        if(this.lastRefreshStatus !== null && elapsedRefreshStatus > 10){
+            globals.databus.txStatsData.freezeSeconds.push(elapsedRefreshStatus -1);
+            if(globals.databus.txStatsData.freezeSeconds.length > 30) globals.databus.txStatsData.freezeSeconds.shift();
+            logError(`Due to VPS issues or DDoS, this FXServer was frozen for ${elapsedRefreshStatus -1} seconds.`);
+            logError(`Don't worry, txAdmin is preventing the server from being restarted.`);
+            this.lastRefreshStatus = currTimestamp;
+            return;
+        }
+        this.lastRefreshStatus = currTimestamp;
+
+        //Get elapsed times & process status
         const elapsedHealthCheck = currTimestamp - this.lastSuccessfulHealthCheck;
         const healthCheckFailed = (elapsedHealthCheck > this.hardConfigs.healthCheck.failThreshold);
         const anySuccessfulHeartBeat = (this.lastSuccessfulFD3HeartBeat !== null || this.lastSuccessfulHTTPHeartBeat !== null);

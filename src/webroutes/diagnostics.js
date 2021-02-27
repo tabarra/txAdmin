@@ -258,6 +258,7 @@ async function gettxAdminData(){
         hbFD3Fails: globals.databus.txStatsData.heartBeatStats.fd3Failed,
         hbHTTPFails: globals.databus.txStatsData.heartBeatStats.httpFailed,
         hbBootSeconds: globals.databus.txStatsData.bootSeconds.join(', ') || '--',
+        freezeSeconds: globals.databus.txStatsData.freezeSeconds.join(', ') || '--',
         logFileSize,
 
         //Possible memory leaks:

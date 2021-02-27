@@ -112,6 +112,9 @@ module.exports = async function AdvancedActions(ctx) {
             outData = error.message;
         }
         return ctx.send({type: 'success', message: outData});
+    }else if(action == 'freeze'){
+        logWarn('Freezing process for 50 seconds.');
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50 * 1000);
     }
 
 

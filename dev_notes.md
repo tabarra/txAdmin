@@ -3,6 +3,7 @@
 - [x] check if the "custom template" was modified at all
 - [x] add master username to the `{{addPrincipalsMaster}}` `server.cfg` placeholder to prevent confusion
 - [x] validate if the database config is working before running the deployer
+- [x] preventing VPS lag / DDoS to cause server restarts, and add freeze stats for the diagnostics page
 - [ ] add validator/message for `server.cfg.txt` 
 - [ ] disable server auto-start when no admins configured
 - [ ] hide all the `txAdmin:xxxx` started and maybe even check if the port is open
