@@ -4,13 +4,14 @@
 - [x] add master username to the `{{addPrincipalsMaster}}` `server.cfg` placeholder to prevent confusion
 - [x] validate if the database config is working before running the deployer
 - [x] preventing VPS lag / DDoS to cause server restarts, and add freeze stats for the diagnostics page
+- [x] update packages
 - [ ] add validator/message for `server.cfg.txt` 
 - [ ] disable server auto-start when no admins configured
 - [ ] hide all the `txAdmin:xxxx` started and maybe even check if the port is open
+- [ ] consolidate the log pages
 
 
 > ASAP!:
-- [ ] consolidate the log pages
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
         - Manual Approval (default)
         - Discord: be in guild
@@ -140,7 +141,7 @@ Requirements:
 ### [OFFICIAL] How to make a FiveM Server tutorial 2021 for beginners!
 Target: absolute beginners, barely have a vps
 - Requirements:
-    - Needs to be a VPS
+    - Needs to be a VPS (show suggestion list)
     - OS: windows server 2016 or 2019 recommended
     - Hardware specs recommendation
     - Download Visual C++
@@ -150,7 +151,7 @@ Target: absolute beginners, barely have a vps
 - Open firewall ports (show windows + OVH)
 - Download artifact (show difference between latest and latest recommended)
 - Set folder structure
-- Run txAdmin
+- Run txAdmin (should open chrome, if it doesn't, then open manually)
 - Open page outside VPS to show the ip:port thing
 - Create master account
 - Setup:
@@ -166,7 +167,7 @@ Target: server owners that followed the stupid Jeva tutorial
 - Show current stupid folder structure
 - Download artifact (show difference between latest and latest recommended)
 - Set new folder structure
-- Run txAdmin
+- Run txAdmin (should open chrome, if it doesn't, then open manually)
 - Create master account
 - Setup (show endpoint + server.cfg.txt errors)
 - Show how to create admins

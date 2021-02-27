@@ -77,7 +77,7 @@ const parseValidateRecipe = (rawRecipe) => {
     //Loads YAML
     let recipe;
     try {
-        recipe = YAML.safeLoad(rawRecipe, { schema: YAML.JSON_SCHEMA });   
+        recipe = YAML.load(rawRecipe, { schema: YAML.JSON_SCHEMA });   
     } catch (error) {
         if(GlobalData.verbose) dir(error);
         throw new Error(`invalid yaml`);
