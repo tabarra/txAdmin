@@ -186,6 +186,32 @@ function getFXServerPort(rawCfgFile) {
 }
 
 
+//================================================================
+/**
+ * Returns the first likely server.cfg given a server data path, or false
+ * @param {string} serverDataPath
+ */
+function findLikelyCFGPath(serverDataPath) {
+    const attempts = [
+        'server.cfg',
+        'server.cfg.txt',
+        'server.cfg.cfg',
+        'server.txt',
+        'server',
+        '../server.cfg',
+    ]
+
+    for (let i = 0; i < attempts.length; i++) {
+        const cfgPath = path.join(serverDataPath, attempts[i]);
+        try {
+            getCFGFileData(cfgPath);
+            return cfgPath;
+        } catch (error) {}
+    }
+    return false;
+}
+
+
 
 module.exports = {
     txAdminASCII,
@@ -194,4 +220,5 @@ module.exports = {
     getCFGFileData,
     resolveCFGFilePath,
     getFXServerPort,
+    findLikelyCFGPath,
 }
