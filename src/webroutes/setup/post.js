@@ -35,7 +35,7 @@ const getPotentialServerDataFolders = (source) => {
         - Check if its inside the parent folder
         - Check if its inside current folder
         - Check if it contains the string `/resources`, then if its the path up to that string
-        - For the cfg file, we check if its `server.cfg` inside the Server Data Folder (most common case)
+        - Detect config as `server.cfg` or with wrong extensions inside the Server Data Folder
 
     FIXME: Also note that this entire file is a bit too messy, please clean it up a bit
 */
@@ -174,37 +174,37 @@ async function handleValidateLocalDataFolder(ctx) {
 
     try {
         if(!fs.existsSync(path.join(dataFolderPath, 'resources'))){
-            let recoveryTemplate = `The path provided is invalid. <br>
+            const recoveryTemplate = `The path provided is invalid. <br>
                 But it looks like <code>{{attempt}}</code> is correct. <br>
                 Do you want to use it instead?`;
 
             //Recovery if parent folder
-            let attemptIsParent = path.join(dataFolderPath, '..');
+            const attemptIsParent = path.join(dataFolderPath, '..');
             if(fs.existsSync(path.join(attemptIsParent, 'resources'))){
-                let message = recoveryTemplate.replace('{{attempt}}', attemptIsParent);
+                const message = recoveryTemplate.replace('{{attempt}}', attemptIsParent);
                 return ctx.send({success: false, message, suggestion: attemptIsParent});
             }
 
             //Recovery parent inside folder
-            let attemptOutside = getPotentialServerDataFolders(path.join(dataFolderPath, '..'));
+            const attemptOutside = getPotentialServerDataFolders(path.join(dataFolderPath, '..'));
             if(attemptOutside.length >= 1){
-                let message = recoveryTemplate.replace('{{attempt}}', attemptOutside[0]);
+                const message = recoveryTemplate.replace('{{attempt}}', attemptOutside[0]);
                 return ctx.send({success: false, message, suggestion: attemptOutside[0]});
             }
 
             //Recovery if resources
             if(dataFolderPath.includes('/resources')){
-                let attemptRes = dataFolderPath.split('/resources')[0];
+                const attemptRes = dataFolderPath.split('/resources')[0];
                 if(fs.existsSync(path.join(attemptRes, 'resources'))){
-                    let message = recoveryTemplate.replace('{{attempt}}', attemptRes);
+                    const message = recoveryTemplate.replace('{{attempt}}', attemptRes);
                     return ctx.send({success: false, message, suggestion: attemptRes});
                 }
             }
 
             //Recovery subfolder
-            let attemptInside = getPotentialServerDataFolders(dataFolderPath);
+            const attemptInside = getPotentialServerDataFolders(dataFolderPath);
             if(attemptInside.length >= 1){
-                let message = recoveryTemplate.replace('{{attempt}}', attemptInside[0]);
+                const message = recoveryTemplate.replace('{{attempt}}', attemptInside[0]);
                 return ctx.send({success: false, message, suggestion: attemptInside[0]});
             }
 
@@ -212,7 +212,10 @@ async function handleValidateLocalDataFolder(ctx) {
             throw new Error("Couldn't locate or read a resources folder inside of the path provided.");
 
         }else{
-            return ctx.send({success: true});
+            return ctx.send({
+                success: true, 
+                detectedConfig: helpers.findLikelyCFGPath(dataFolderPath)
+            });
         }
     } catch (error) {
         return ctx.send({success: false, message: error.message});
@@ -234,34 +237,27 @@ async function handleValidateCFGFile(ctx) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
-    let dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim()));
-    let cfgFilePath = slash(path.normalize(ctx.request.body.cfgFile.trim()));
-    cfgFilePath = helpers.resolveCFGFilePath(cfgFilePath, dataFolderPath);
+    const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim()));
+    const cfgFilePathNormalized = slash(path.normalize(ctx.request.body.cfgFile.trim()));
+    const cfgFilePath = helpers.resolveCFGFilePath(cfgFilePathNormalized, dataFolderPath);
     if(cfgFilePath.includes(' ')){
         return ctx.send({success: false, message: 'The path cannot contain spaces.'});
     }
 
+    //Try to read file
     let rawCfgFile;
     try {
         rawCfgFile = helpers.getCFGFileData(cfgFilePath);
     } catch (error) {
-        try {
-            let attempt = path.join(dataFolderPath, 'server.cfg');
-            rawCfgFile = helpers.getCFGFileData(attempt);
-            let message = `The path provided is invalid. <br>
-                    But it looks like <code>${attempt}</code> is correct. <br>
-                    Do you want to use it instead?`;
-            return ctx.send({success: false, message, suggestion: attempt});
-        } catch (error2) {}
-
         return ctx.send({success: false, message: error.message});
     }
     
+    //Validate file
     try {
-        let port = helpers.getFXServerPort(rawCfgFile);
+        helpers.getFXServerPort(rawCfgFile);
         return ctx.send({success: true});
     } catch (error) {
-        let message = `The file path is correct, but: <br>\n ${error.message}.`;
+        const message = `The file path is correct, but: <br>\n ${error.message}.`;
         return ctx.send({success: false, message});
     }
 }

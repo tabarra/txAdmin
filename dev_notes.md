@@ -5,7 +5,7 @@
 - [x] validate if the database config is working before running the deployer
 - [x] preventing VPS lag / DDoS to cause server restarts, and add freeze stats for the diagnostics page
 - [x] update packages
-- [ ] add validator/message for `server.cfg.txt` 
+- [x] setup: add automatic config file suggestion, with wrong ext check
 - [ ] disable server auto-start when no admins configured
 - [ ] hide all the `txAdmin:xxxx` started and maybe even check if the port is open
 - [ ] consolidate the log pages
