@@ -392,6 +392,7 @@
         const timeoutLong = 5000;
         // const spinnerHTML = '<div style="min-height: 250px;" class="txSpinner">Loading...</div>';
         const spinnerHTML = '<div style="min-height: 250px; margin: auto;"><div class="txSpinner">Loading...</div></div>';
+        const connectErrorMessage = `<b>Unable to connect to txAdmin.</b> <br> If you closed it, please start again and retry.`;
         const suggestions = {};
         let loadedTemplates = [];
         let selectedTemplateIndex;
@@ -714,7 +715,7 @@
                 },
                 error: function (xmlhttprequest, textstatus, message) {
                     stepperInstace.wrongStep();
-                    s5DeployerTargetError.innerHTML = `<br>Error:</b> ${message}`;
+                    s5DeployerTargetError.innerHTML = connectErrorMessage;
                     s5DeployerTargetError.classList.remove('d-none');
                     s5DeployerTargetInput.classList.add('is-invalid');
                     destroyFeedback(false);
@@ -755,7 +756,7 @@
                     }
                 },
                 error: function (xmlhttprequest, textstatus, message) {
-                    s4LocalDataPathInputError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
+                    s4LocalDataPathInputError.innerHTML = connectErrorMessage;
                     s4LocalDataPathInputError.classList.remove('d-none');
                     destroyFeedback(false)
                 }
@@ -800,7 +801,7 @@
                     }
                 },
                 error: function (xmlhttprequest, textstatus, message) {
-                    s5ServerCFGError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
+                    s5ServerCFGError.innerHTML = connectErrorMessage;
                     s5ServerCFGError.classList.remove('d-none');
                     destroyFeedback(false)
                 }
@@ -858,7 +859,7 @@
                     }
                 },
                 error: function (xmlhttprequest, textstatus, message) {
-                    saveError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
+                    saveError.innerHTML = connectErrorMessage;
                     saveError.classList.remove('d-none');
                     destroyFeedback(false)
                 }
