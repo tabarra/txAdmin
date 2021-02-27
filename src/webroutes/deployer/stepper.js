@@ -38,8 +38,8 @@ module.exports = async function DeployerStepper(ctx) {
         }
 
     }else if(globals.deployer.step === 'input'){
+        renderData.defaultLicenseKey = process.env.TXADMIN_DEFAULT_LICENSE || '';
         renderData.requireDBConfig = globals.deployer.recipe.requireDBConfig;
-        // renderData.inputVars = [];
 
         const recipeVars = globals.deployer.getRecipeVars();
         renderData.inputVars = Object.keys(recipeVars).map(name => {

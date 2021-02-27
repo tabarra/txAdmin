@@ -212,10 +212,9 @@ nodemon +set txAdminFakePlayerlist yesplzx +set txAdminVerbose truex
 rm -rf dist
 npm run build
 
-# upgrade util:
+# other stuff
+export TXADMIN_DEFAULT_LICENSE="YourKeyYourKeyYourKeyYourKeyYour"
 npm-upgrade
-
-# F8
 con_miniconChannels script:monitor*
 ```
 

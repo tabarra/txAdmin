@@ -67,7 +67,7 @@ async function getProcessesData(){
             let procName;
             let order = process.timestamp || 1;
             if(pid == process.pid){
-                procName = 'FxMonitor + txAdmin';
+                procName = 'txAdmin (inside FXserver)';
                 order = 0;
             }else if(curr.memory <= 10*1024*1024){
                 procName = 'FXServer MiniDump';

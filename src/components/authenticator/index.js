@@ -383,7 +383,7 @@ module.exports = class Authenticator {
         }
 
         let structureIntegrityTest = jsonData.some((x) => {
-            if(typeof x.name !== 'string' || x.name < 3) return true;
+            if(typeof x.name !== 'string' || x.name.length < 3) return true;
             if(typeof x.master !== 'boolean') return true;
             if(typeof x.password_hash !== 'string' || !x.password_hash.startsWith('$2')) return true;
             if(typeof x.providers !== 'object') return true;
