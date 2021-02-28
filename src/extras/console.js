@@ -1,3 +1,4 @@
+const util = require('util')
 const chalk = require('chalk');
 const colorize = require('json-colorizer');
 const header = 'txAdmin';
@@ -114,20 +115,8 @@ function dir(data){
                 printData = chalk.keyword('moccasin').italic(`> ${data.constructor.name}.toString():\n`);
                 printData += chalk.white(data.toString());
             }else{
-                // DEBUG when I really need it... (copypasted from stackoverflow)
-                // const getCircularReplacer = () => {
-                //     const seen = new WeakSet();
-                //     return (key, value) => {
-                //       if (typeof value === "object" && value !== null) {
-                //         if (seen.has(value)) {
-                //           return;
-                //         }
-                //         seen.add(value);
-                //       }
-                //       return value;
-                //     };
-                //   };
-                // printData = JSON.stringify(data, getCircularReplacer(), 2);
+                // DEBUG when I really need it... 
+                //printData = util.format('%o', data);
                 printData = colorize(data, colorizeSettings);
             }
 
@@ -144,7 +133,7 @@ function dir(data){
                 printData += data.toString();
 
             }else{
-                printData = JSON.stringify(data, null, 2);
+                printData = util.format('%o', data);
             }
         }
         const div = "=".repeat(32);
