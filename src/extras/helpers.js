@@ -112,7 +112,7 @@ function getCFGFileData(cfgPath) {
     try {
         return fs.readFileSync(cfgPath).toString();
     } catch (error) {
-        throw new Error("Cannot read CFG Path file.");
+        throw new Error("Cannot read CFG file.");
     }
 }
 
