@@ -39,7 +39,7 @@ module.exports = class ConfigVault {
         this.config = null;
 
         this.setupVault();
-        logOk('Started');
+        // logOk('Started');
     }
 
 

@@ -51,7 +51,7 @@ const currentDatabaseVersion = 1;
  */
 module.exports = class PlayerController {
     constructor(config) {
-        logOk('Started');
+        // logOk('Started');
         this.config = config;
         this.dbo = null;
         this.activePlayers = [];

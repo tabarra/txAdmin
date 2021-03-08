@@ -19,7 +19,7 @@ module.exports = class StatsCollector {
         this.config = config;
 
         //Setting up
-        logOk('Started');
+        // logOk('Started');
         // this.playersTimeSeries = new TimeSeries(`${globals.info.serverProfilePath}/data/players.json`, 10, 60*60*24);
         this.hardConfigs = {
             heatmapDataFile: `${globals.info.serverProfilePath}/data/stats_heatmapData_v1.json`,

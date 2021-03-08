@@ -21,7 +21,7 @@ const formatCommand = (cmd, ...params) => {
 
 module.exports = class FXRunner {
     constructor(config) {
-        logOk('Started');
+        // logOk('Started');
         this.config = config;
         this.spawnVariables = null;
         this.fxChild = null;

@@ -5,13 +5,14 @@
 - [x] validate if the database config is working before running the deployer
 - [x] preventing VPS lag / DDoS to cause server restarts, and add freeze stats for the diagnostics page
 - [x] update packages
-- [x] setup: add automatic config file suggestion, with wrong ext check
-- [ ] disable server auto-start when no admins configured
-- [ ] hide all the `txAdmin:xxxx` started and maybe even check if the port is open
-- [ ] consolidate the log pages
+- [x] setup: add automatic config file suggestion, with wrong extension check
+- [x] simplify the start messages
+- [ ] test on latest + version bump
 
 
 > ASAP!:
+- [ ] disable server auto-start when no admins configured
+- [ ] consolidate the log pages
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
         - Manual Approval (default)
         - Discord: be in guild

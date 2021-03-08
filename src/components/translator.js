@@ -39,7 +39,7 @@ const languages = {
  */
 module.exports = class Translator {
     constructor() {
-        logOk('Started');
+        // logOk('Started');
         this.language = globals.config.language;
         this.polyglot = null;
 

@@ -211,8 +211,7 @@ async function getHostData(){
         }
 
         hostData.nodeVersion = process.version;
-        hostData.osType = `${os.type()} (${os.platform()}/${process.arch})`;
-        hostData.osRelease = `${os.release()}`;
+        hostData.osDistro = GlobalData.osDistro || GlobalData.osType;
         hostData.username = `${userInfo.username}`;
         hostData.clockWarning = clockWarning;
         hostData.cpus = `${cpus.length}x ${cpus[0].speed} MHz`;

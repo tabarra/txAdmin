@@ -1,6 +1,5 @@
 //Requires
 const modulename = 'Authenticator';
-const chalk = require('chalk');
 const fs = require('fs-extra');
 const cloneDeep = require('lodash/cloneDeep');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
@@ -9,7 +8,7 @@ const CitizenFXProvider = require('./providers/CitizenFX');
 
 module.exports = class Authenticator {
     constructor(config) {
-        logOk('Started');
+        // logOk('Started');
         this.config = config;
         this.adminsFile = `${GlobalData.dataPath}/admins.json`;
         this.admins = null;
@@ -52,11 +51,6 @@ module.exports = class Authenticator {
         //Printing PIN or starting loop
         if (!adminFileExists) {
             this.addMasterPin = (Math.random()*10000).toFixed().padStart(4, '0');
-            let sep = `=`.repeat(42);
-            log(sep);
-            log('==> Admins file not found.');
-            log(`==> PIN to add a master account: ` + chalk.inverse(' ' + this.addMasterPin + ' '));
-            log(sep);
             this.admins = false;
         }else{
             this.refreshAdmins(true);
