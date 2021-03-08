@@ -5,7 +5,7 @@ const dateFormat = require('dateformat');
 const fs = require('fs-extra');
 const open = require('open');
 const YAML = require('js-yaml');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
 const recipeEngine = require('./recipeEngine');
 
 //Helper functions
