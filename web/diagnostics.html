@@ -17,9 +17,8 @@
                 {{@if(it.host.error !== false)}}
                     {{it.host.error|safe}}
                 {{#else}}
-                    <strong>Node Version:</strong> {{it.host.nodeVersion}} <br>
-                    <strong>OS Type:</strong> {{it.host.osType}} <br>
-                    <strong>OS Release:</strong> {{it.host.osRelease}} <br>
+                    <strong>Node:</strong> {{it.host.nodeVersion}} <br>
+                    <strong>OS:</strong> {{it.host.osDistro}} <br>
                     <strong>Username:</strong> {{it.host.username}} <br>
                     <strong>Host CPUs:</strong> {{it.host.cpus}} {{it.host.clockWarning|safe}}<br>
                     <strong>Host Memory:</strong> {{it.host.memory}}

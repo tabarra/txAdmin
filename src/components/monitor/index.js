@@ -38,7 +38,7 @@ module.exports = class Monitor {
         }
 
         //Setting up
-        logOk('Started');
+        // logOk('Started');
         this.cpuStatusProvider = new HostCPUStatus();
         this.schedule = null;
         this.globalCounters = {

@@ -37,7 +37,7 @@ const getBuild = (ver)=>{
 const txAdmin1337Convar = GetConvar('txAdmin1337', 'false').trim();
 if(process.env.APP_ENV !== 'webpack' && txAdmin1337Convar !== 'IKnowWhatImDoing'){
     logError(`Looks like you don't know what you are doing.`);
-    logDie(`Please use the compiled release from GitHub or the version that comes with the latest FXServer.`)
+    logDie(`Please use the compiled release from GitHub or the version that comes with the latest FXServer.`);
 }
 const isAdvancedUser = (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar == 'IKnowWhatImDoing');
 
@@ -45,9 +45,9 @@ const isAdvancedUser = (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar =
 const osTypeVar = os.type();
 let osType;
 if(osTypeVar == 'Windows_NT'){
-    osType = 'windows'
+    osType = 'windows';
 }else if(osTypeVar == 'Linux'){
-    osType = 'linux'
+    osType = 'linux';
 }else{
     logDie(`OS type not supported: ${osTypeVar}`)
 }
@@ -102,7 +102,6 @@ const txDataPathConvar = GetConvar('txDataPath', 'false');
 if(txDataPathConvar == 'false'){
     const dataPathSuffix = (osType == 'windows')? '..' : '../../../';
     dataPath = cleanPath(path.join(fxServerPath, dataPathSuffix, 'txData'));
-    log(`Version ${txAdminVersion} using data path '${dataPath}'`);
 }else{
     dataPath = cleanPath(txDataPathConvar);
 }
@@ -177,6 +176,7 @@ GlobalData = {
     noLookAlikesAlphabet,
     //Vars
     cfxUrl: null,
+    osDistro: null,
 }
 // NOTE: all variables set for monitor mode: monitorMode, version, serverRoot (cwd), citizen_root, citizen_dir
 
