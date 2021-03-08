@@ -42,7 +42,7 @@ module.exports = class DiscordBot {
         this.cooldowns = new Collection();
         
         if(!this.config.enabled){
-            logOk('Disabled by the config file.');
+            // logOk('Disabled by the config file.');
         }else{
             this.startBot();
         }
