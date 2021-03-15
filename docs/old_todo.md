@@ -405,6 +405,16 @@ More:
 - [x] merge some prs (language, redm, minor)
 - [x] add koa sessions and server log to the diagnostics page
 > v3.3.0
+- [x] change chart awaiting data message
+- [x] check if the "custom template" was modified at all
+- [x] add master username to the `{{addPrincipalsMaster}}` `server.cfg` placeholder to prevent confusion
+- [x] validate if the database config is working before running the deployer
+- [x] preventing VPS lag / DDoS to cause server restarts, and add freeze stats for the diagnostics page
+- [x] update packages
+- [x] setup: add automatic config file suggestion, with wrong extension check
+- [x] simplify the start messages
+- [x] test on latest + version bump
+> v3.4.0
 
 ------------------------------
 > NOTE: this was an attempt to get the help from the community around september 2019
