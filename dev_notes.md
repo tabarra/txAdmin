@@ -17,7 +17,6 @@
         - this will trigger a big status message to be sent in that channel
         - this message id can be stored in the config file
         - if discord id is present, use that instead of name (careful with the pings!)
-- [ ] send log via FD3
 - [ ] add `.editorconfig`
 - [ ] create auto backup of the database
 - [ ] ignore key bindings commands  https://discord.com/channels/577993482761928734/766868363041046589/795420910713831446

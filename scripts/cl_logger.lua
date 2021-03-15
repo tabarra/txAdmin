@@ -1,42 +1,132 @@
 -- Death reasons
 local deathHashTable = {
-    ["animal"]    = { -100946242, 148160082 },
-    ["bullet"]    = { 453432689, 1593441988, 584646201, -1716589765, 324215364, 736523883, -270015777, -1074790547, -2084633992, -1357824103, -1660422300, 2144741730, 487013001, 2017895192, -494615257, -1654528753, 100416529, 205991906, 1119849093 },
-    ["burn"]      = { 615608432, 883325847, -544306709 },
-    ["car"]       = { 133987706, -1553120962 },
-    ["explosion"] = { -1568386805, 1305664598, -1312131151, 375527679, 324506233, 1752584910, -1813897027, 741814745, -37975472, 539292904, 341774354, -1090665087 },
-    ["gas"]       = { -1600701090 },
-    ["knife"]     = { -1716189206, 1223143800, -1955384325, -1833087301, 910830060 },
-    ["melee"]     = { -1569615261, 1737195953, 1317494643, -1786099057, 1141786504, -2067956739, -868994466 },
-    ["drown"]     = { -10959621, 1936677264 },
-    ["unknown"]   = { -842959696 }, -- Fall Damage or SetEntityHealth()
+    [GetHashKey('WEAPON_ANIMAL')] = 'Animal',
+    [GetHashKey('WEAPON_COUGAR')] = 'Cougar',
+    [GetHashKey('WEAPON_ADVANCEDRIFLE')] = 'Advanced Rifle',
+    [GetHashKey('WEAPON_APPISTOL')] = 'AP Pistol',
+    [GetHashKey('WEAPON_ASSAULTRIFLE')] = 'Assault Rifle',
+    [GetHashKey('WEAPON_ASSAULTRIFLE_MK2')] = 'Assault Rifke Mk2',
+    [GetHashKey('WEAPON_ASSAULTSHOTGUN')] = 'Assault Shotgun',
+    [GetHashKey('WEAPON_ASSAULTSMG')] = 'Assault SMG',
+    [GetHashKey('WEAPON_AUTOSHOTGUN')] = 'Automatic Shotgun',
+    [GetHashKey('WEAPON_BULLPUPRIFLE')] = 'Bullpup Rifle',
+    [GetHashKey('WEAPON_BULLPUPRIFLE_MK2')] = 'Bullpup Rifle Mk2',
+    [GetHashKey('WEAPON_BULLPUPSHOTGUN')] = 'Bullpup Shotgun',
+    [GetHashKey('WEAPON_CARBINERIFLE')] = 'Carbine Rifle',
+    [GetHashKey('WEAPON_CARBINERIFLE_MK2')] = 'Carbine Rifle Mk2',
+    [GetHashKey('WEAPON_COMBATMG')] = 'Combat MG',
+    [GetHashKey('WEAPON_COMBATMG_MK2')] = 'Combat MG Mk2',
+    [GetHashKey('WEAPON_COMBATPDW')] = 'Combat PDW',
+    [GetHashKey('WEAPON_COMBATPISTOL')] = 'Combat Pistol',
+    [GetHashKey('WEAPON_COMPACTRIFLE')] = 'Compact Rifle',
+    [GetHashKey('WEAPON_DBSHOTGUN')] = 'Double Barrel Shotgun',
+    [GetHashKey('WEAPON_DOUBLEACTION')] = 'Double Action Revolver',
+    [GetHashKey('WEAPON_FLAREGUN')] = 'Flare gun',
+    [GetHashKey('WEAPON_GUSENBERG')] = 'Gusenberg',
+    [GetHashKey('WEAPON_HEAVYPISTOL')] = 'Heavy Pistol',
+    [GetHashKey('WEAPON_HEAVYSHOTGUN')] = 'Heavy Shotgun',
+    [GetHashKey('WEAPON_HEAVYSNIPER')] = 'Heavy Sniper',
+    [GetHashKey('WEAPON_HEAVYSNIPER_MK2')] = 'Heavy Sniper',
+    [GetHashKey('WEAPON_MACHINEPISTOL')] = 'Machine Pistol',
+    [GetHashKey('WEAPON_MARKSMANPISTOL')] = 'Marksman Pistol',
+    [GetHashKey('WEAPON_MARKSMANRIFLE')] = 'Marksman Rifle',
+    [GetHashKey('WEAPON_MARKSMANRIFLE_MK2')] = 'Marksman Rifle Mk2',
+    [GetHashKey('WEAPON_MG')] = 'MG',
+    [GetHashKey('WEAPON_MICROSMG')] = 'Micro SMG',
+    [GetHashKey('WEAPON_MINIGUN')] = 'Minigun',
+    [GetHashKey('WEAPON_MINISMG')] = 'Mini SMG',
+    [GetHashKey('WEAPON_MUSKET')] = 'Musket',
+    [GetHashKey('WEAPON_PISTOL')] = 'Pistol',
+    [GetHashKey('WEAPON_PISTOL_MK2')] = 'Pistol Mk2',
+    [GetHashKey('WEAPON_PISTOL50')] = 'Pistol .50',
+    [GetHashKey('WEAPON_PUMPSHOTGUN')] = 'Pump Shotgun',
+    [GetHashKey('WEAPON_PUMPSHOTGUN_MK2')] = 'Pump Shotgun Mk2',
+    [GetHashKey('WEAPON_RAILGUN')] = 'Railgun',
+    [GetHashKey('WEAPON_REVOLVER')] = 'Revolver',
+    [GetHashKey('WEAPON_REVOLVER_MK2')] = 'Revolver Mk2',
+    [GetHashKey('WEAPON_SAWNOFFSHOTGUN')] = 'Sawnoff Shotgun',
+    [GetHashKey('WEAPON_SMG')] = 'SMG',
+    [GetHashKey('WEAPON_SMG_MK2')] = 'SMG Mk2',
+    [GetHashKey('WEAPON_SNIPERRIFLE')] = 'Sniper Rifle',
+    [GetHashKey('WEAPON_SNSPISTOL')] = 'SNS Pistol',
+    [GetHashKey('WEAPON_SNSPISTOL_MK2')] = 'SNS Pistol Mk2',
+    [GetHashKey('WEAPON_SPECIALCARBINE')] = 'Special Carbine',
+    [GetHashKey('WEAPON_SPECIALCARBINE_MK2')] = 'Special Carbine Mk2',
+    [GetHashKey('WEAPON_STINGER')] = 'Stinger',
+    [GetHashKey('WEAPON_STUNGUN')] = 'Stungun',
+    [GetHashKey('WEAPON_VINTAGEPISTOL')] = 'Vintage Pistol',
+    [GetHashKey('VEHICLE_WEAPON_PLAYER_LASER')] = 'Vehicle Lasers',
+    [GetHashKey('WEAPON_FIRE')] = 'Fire',
+    [GetHashKey('WEAPON_FLARE')] = 'Flare',
+    [GetHashKey('WEAPON_FLAREGUN')] = 'Flaregun',
+    [GetHashKey('WEAPON_MOLOTOV')] = 'Molotov',
+    [GetHashKey('WEAPON_PETROLCAN')] = 'Petrol Can',
+    [GetHashKey('WEAPON_HELI_CRASH')] = 'Helicopter Crash',
+    [GetHashKey('WEAPON_RAMMED_BY_CAR')] = 'Rammed by Vehicle',
+    [GetHashKey('WEAPON_RUN_OVER_BY_CAR')] = 'Ranover by Vehicle',
+    [GetHashKey('VEHICLE_WEAPON_SPACE_ROCKET')] = 'Vehicle Space Rocket',
+    [GetHashKey('VEHICLE_WEAPON_TANK')] = 'Tank',
+    [GetHashKey('WEAPON_AIRSTRIKE_ROCKET')] = 'Airstrike Rocket',
+    [GetHashKey('WEAPON_AIR_DEFENCE_GUN')] = 'Air Defence Gun',
+    [GetHashKey('WEAPON_COMPACTLAUNCHER')] = 'Compact Launcher',
+    [GetHashKey('WEAPON_EXPLOSION')] = 'Explosion',
+    [GetHashKey('WEAPON_FIREWORK')] = 'Firework',
+    [GetHashKey('WEAPON_GRENADE')] = 'Grenade',
+    [GetHashKey('WEAPON_GRENADELAUNCHER')] = 'Grenade Launcher',
+    [GetHashKey('WEAPON_HOMINGLAUNCHER')] = 'Homing Launcher',
+    [GetHashKey('WEAPON_PASSENGER_ROCKET')] = 'Passenger Rocket',
+    [GetHashKey('WEAPON_PIPEBOMB')] = 'Pipe bomb',
+    [GetHashKey('WEAPON_PROXMINE')] = 'Proximity Mine',
+    [GetHashKey('WEAPON_RPG')] = 'RPG',
+    [GetHashKey('WEAPON_STICKYBOMB')] = 'Sticky Bomb',
+    [GetHashKey('WEAPON_VEHICLE_ROCKET')] = 'Vehicle Rocket',
+    [GetHashKey('WEAPON_BZGAS')] = 'BZ Gas',
+    [GetHashKey('WEAPON_FIREEXTINGUISHER')] = 'Fire Extinguisher',
+    [GetHashKey('WEAPON_SMOKEGRENADE')] = 'Smoke Grenade',
+    [GetHashKey('WEAPON_BATTLEAXE')] = 'Battleaxe',
+    [GetHashKey('WEAPON_BOTTLE')] = 'Bottle',
+    [GetHashKey('WEAPON_KNIFE')] = 'Knife',
+    [GetHashKey('WEAPON_MACHETE')] = 'Machete',
+    [GetHashKey('WEAPON_SWITCHBLADE')] = 'Switch Blade',
+    [GetHashKey('OBJECT')] = 'Object',
+    [GetHashKey('VEHICLE_WEAPON_ROTORS')] = 'Vehicle Rotors',
+    [GetHashKey('WEAPON_BALL')] = 'Ball',
+    [GetHashKey('WEAPON_BAT')] = 'Bat',
+    [GetHashKey('WEAPON_CROWBAR')] = 'Crowbar',
+    [GetHashKey('WEAPON_FLASHLIGHT')] = 'Flashlight',
+    [GetHashKey('WEAPON_GOLFCLUB')] = 'Golfclub',
+    [GetHashKey('WEAPON_HAMMER')] = 'Hammer',
+    [GetHashKey('WEAPON_HATCHET')] = 'Hatchet',
+    [GetHashKey('WEAPON_HIT_BY_WATER_CANNON')] = 'Water Cannon',
+    [GetHashKey('WEAPON_KNUCKLE')] = 'Knuckle',
+    [GetHashKey('WEAPON_NIGHTSTICK')] = 'Night Stick',
+    [GetHashKey('WEAPON_POOLCUE')] = 'Pool Cue',
+    [GetHashKey('WEAPON_SNOWBALL')] = 'Snowball',
+    [GetHashKey('WEAPON_UNARMED')] = 'Fist',
+    [GetHashKey('WEAPON_WRENCH')] = 'Wrench',
+    [GetHashKey('WEAPON_DROWNING')] = 'Drowned',
+    [GetHashKey('WEAPON_DROWNING_IN_VEHICLE')] = 'Drowned in Vehicle',
+    [GetHashKey('WEAPON_BARBED_WIRE')] = 'Barbed Wire',
+    [GetHashKey('WEAPON_BLEEDING')] = 'Bleed',
+    [GetHashKey('WEAPON_ELECTRIC_FENCE')] = 'Electric Fence',
+    [GetHashKey('WEAPON_EXHAUSTION')] = 'Exhaustion',
+    [GetHashKey('WEAPON_FALL')] = 'Falling',
 }
-
--- Process player deaths
-local function getDeathReason(causeHash)
-    for reason, hashes in pairs(deathHashTable) do
-        for _, hash in pairs(hashes) do
-            if hash == causeHash then
-                return reason
-            end
-        end
-    end
-    return "unknown"
-end
 
 local function processDeath(ped)
     local killerPed = GetPedSourceOfDeath(ped)
     local causeHash = GetPedCauseOfDeath(ped)
-    local killer, deathReason
+    local killer
+
+    local deathReason = deathHashTable[causeHash] or 'unknown'
+    if deathReason ~= "unknown" then
+        deathReason = "suicide (" .. deathReason .. ")"
+    else
+        deathReason = "suicide"
+    end
 
     if killerPed == ped then
         killer = false
-        local cause = getDeathReason(causeHash)
-        if cause ~= "unknown" then
-            deathReason = "suicide (" .. cause .. ")"
-        else
-            deathReason = "suicide"
-        end
     else
         if IsEntityAPed(killerPed) and IsPedAPlayer(killerPed) then
             killer = NetworkGetPlayerIndexFromPed(killerPed)
@@ -48,14 +138,14 @@ local function processDeath(ped)
                 killer = false
             end
         elseif not IsPedAPlayer(killerPed) then
-            killer = killerPed
+            killer = false
         end
-
-        deathReason = getDeathReason(causeHash)
     end
 
     if killer == nil then
         killer = false
+    elseif killer then
+        killer = GetPlayerServerId(killer)
     end
 
     TriggerServerEvent("txaLogger:DeathNotice", killer, deathReason)
@@ -74,7 +164,7 @@ local IsEntityDead = IsEntityDead
 CreateThread(function()
     while true do
         Wait(500)
-        local ped = GetPlayerPed(-1)
+        local ped = PlayerPedId()
         local isDead = IsEntityDead(ped)
         if isDead and not deathFlag then
             deathFlag = true
