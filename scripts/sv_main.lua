@@ -1,9 +1,9 @@
 --Helpers
 function log(x)
-    print("^5[txAdminClientLUA]^0 " .. x)
+    print("^5[txAdminClient]^0 " .. x)
 end
 function logError(x)
-    print("^5[txAdminClientLUA]^1 " .. x .. "^0")
+    print("^5[txAdminClient]^1 " .. x .. "^0")
 end
 function unDeQuote(x)
     local new, count = string.gsub(x, utf8.char(65282), '"')
