@@ -1,15 +1,142 @@
 -- Death reasons
 local deathHashTable = {
-    ["animal"]    = { -100946242, 148160082 },
-    ["bullet"]    = { 453432689, 1593441988, 584646201, -1716589765, 324215364, 736523883, -270015777, -1074790547, -2084633992, -1357824103, -1660422300, 2144741730, 487013001, 2017895192, -494615257, -1654528753, 100416529, 205991906, 1119849093 },
-    ["burn"]      = { 615608432, 883325847, -544306709 },
-    ["car"]       = { 133987706, -1553120962 },
-    ["explosion"] = { -1568386805, 1305664598, -1312131151, 375527679, 324506233, 1752584910, -1813897027, 741814745, -37975472, 539292904, 341774354, -1090665087 },
-    ["gas"]       = { -1600701090 },
-    ["knife"]     = { -1716189206, 1223143800, -1955384325, -1833087301, 910830060 },
-    ["melee"]     = { -1569615261, 1737195953, 1317494643, -1786099057, 1141786504, -2067956739, -868994466 },
-    ["drown"]     = { -10959621, 1936677264 },
-    ["unknown"]   = { -842959696 }, -- Fall Damage or SetEntityHealth()
+    ["animal"] = { 
+        GetHashKey('WEAPON_ANIMAL'),
+        GetHashKey('WEAPON_COUGAR')
+    },
+    ["bullet"] = { 
+        GetHashKey('WEAPON_ADVANCEDRIFLE'),
+        GetHashKey('WEAPON_APPISTOL'),
+        GetHashKey('WEAPON_ASSAULTRIFLE'),
+        GetHashKey('WEAPON_ASSAULTRIFLE_MK2'),
+        GetHashKey('WEAPON_ASSAULTSHOTGUN'),
+        GetHashKey('WEAPON_ASSAULTSMG'),
+        GetHashKey('WEAPON_ASSAULTSNIPER'),
+        GetHashKey('WEAPON_AUTOSHOTGUN'),
+        GetHashKey('WEAPON_BULLPUPRIFLE'),
+        GetHashKey('WEAPON_BULLPUPRIFLE_MK2'),
+        GetHashKey('WEAPON_BULLPUPSHOTGUN'),
+        GetHashKey('WEAPON_CARBINERIFLE'),
+        GetHashKey('WEAPON_CARBINERIFLE_MK2'),
+        GetHashKey('WEAPON_COMBATMG'),
+        GetHashKey('WEAPON_COMBATMG_MK2'),
+        GetHashKey('WEAPON_COMBATPDW'),
+        GetHashKey('WEAPON_COMBATPISTOL'),
+        GetHashKey('WEAPON_COMPACTRIFLE'),
+        GetHashKey('WEAPON_DBSHOTGUN'),
+        GetHashKey('WEAPON_DOUBLEACTION'),
+        GetHashKey('WEAPON_FLAREGUN'),
+        GetHashKey('WEAPON_GUSENBERG'),
+        GetHashKey('WEAPON_HEAVYPISTOL'),
+        GetHashKey('WEAPON_HEAVYSHOTGUN'),
+        GetHashKey('WEAPON_HEAVYSNIPER'),
+        GetHashKey('WEAPON_HEAVYSNIPER_MK2'),
+        GetHashKey('WEAPON_MACHINEPISTOL'),
+        GetHashKey('WEAPON_MARKSMANPISTOL'),
+        GetHashKey('WEAPON_MARKSMANRIFLE'),
+        GetHashKey('WEAPON_MARKSMANRIFLE_MK2'),
+        GetHashKey('WEAPON_MG'),
+        GetHashKey('WEAPON_MICROSMG'),
+        GetHashKey('WEAPON_MINIGUN'),
+        GetHashKey('WEAPON_MINISMG'),
+        GetHashKey('WEAPON_MUSKET'),
+        GetHashKey('WEAPON_PISTOL'),
+        GetHashKey('WEAPON_PISTOL50'),
+        GetHashKey('WEAPON_PISTOL_MK2'),
+        GetHashKey('WEAPON_PUMPSHOTGUN'),
+        GetHashKey('WEAPON_PUMPSHOTGUN_MK2'),
+        GetHashKey('WEAPON_RAILGUN'),
+        GetHashKey('WEAPON_REVOLVER'),
+        GetHashKey('WEAPON_REVOLVER_MK2'),
+        GetHashKey('WEAPON_SAWNOFFSHOTGUN'),
+        GetHashKey('WEAPON_SMG'),
+        GetHashKey('WEAPON_SMG_MK2'),
+        GetHashKey('WEAPON_SNIPERRIFLE'),
+        GetHashKey('WEAPON_SNSPISTOL'),
+        GetHashKey('WEAPON_SNSPISTOL_MK2'),
+        GetHashKey('WEAPON_SPECIALCARBINE'),
+        GetHashKey('WEAPON_SPECIALCARBINE_MK2'),
+        GetHashKey('WEAPON_STINGER'),
+        GetHashKey('WEAPON_STUNGUN'),
+        GetHashKey('WEAPON_VINTAGEPISTOL')
+    },
+    ["burn"] = { 
+        GetHashKey('AMMO_ENEMY_LASER'),
+        GetHashKey('AMMO_PLAYER_LASER'),
+        GetHashKey('VEHICLE_WEAPON_PLAYER_LASER'),
+        GetHashKey('WEAPON_FIRE'),
+        GetHashKey('WEAPON_FLARE'),
+        GetHashKey('WEAPON_FLAREGUN'),
+        GetHashKey('WEAPON_MOLOTOV'),
+        GetHashKey('WEAPON_PETROLCAN')
+    },
+    ["car"] = { 
+        GetHashKey('WEAPON_HELI_CRASH'),
+        GetHashKey('WEAPON_RAMMED_BY_CAR'),
+        GetHashKey('WEAPON_RUN_OVER_BY_CAR')
+    },
+    ["explosion"] = { 
+        GetHashKey('AMMO_RPG'),
+        GetHashKey('AMMO_SPACE_ROCKET'),
+        GetHashKey('AMMO_TANK'),
+        GetHashKey('VEHICLE_WEAPON_SPACE_ROCKET'),
+        GetHashKey('VEHICLE_WEAPON_TANK'),
+        GetHashKey('WEAPON_AIRSTRIKE_ROCKET'),
+        GetHashKey('WEAPON_AIR_DEFENCE_GUN'),
+        GetHashKey('WEAPON_COMPACTLAUNCHER'),
+        GetHashKey('WEAPON_EXPLOSION'),
+        GetHashKey('WEAPON_FIREWORK'),
+        GetHashKey('WEAPON_GRENADE'),
+        GetHashKey('WEAPON_GRENADELAUNCHER'),
+        GetHashKey('WEAPON_HOMINGLAUNCHER'),
+        GetHashKey('WEAPON_PASSENGER_ROCKET'),
+        GetHashKey('WEAPON_PIPEBOMB'),
+        GetHashKey('WEAPON_PROXMINE'),
+        GetHashKey('WEAPON_RPG'),
+        GetHashKey('WEAPON_STICKYBOMB'),
+        GetHashKey('WEAPON_VEHICLE_ROCKET')
+    },
+    ["gas"] = { 
+        GetHashKey('WEAPON_BZGAS'),
+        GetHashKey('WEAPON_FIREEXTINGUISHER'),
+        GetHashKey('WEAPON_SMOKEGRENADE')
+    },
+    ["knife"] = { 
+        GetHashKey('WEAPON_BATTLEAXE'),
+        GetHashKey('WEAPON_BOTTLE'),
+        GetHashKey('WEAPON_KNIFE'),
+        GetHashKey('WEAPON_MACHETE'),
+        GetHashKey('WEAPON_SWITCHBLADE')
+    },
+    ["melee"] = { 
+        GetHashKey('OBJECT'),
+        GetHashKey('VEHICLE_WEAPON_ROTORS'),
+        GetHashKey('WEAPON_BALL'),
+        GetHashKey('WEAPON_BAT'),
+        GetHashKey('WEAPON_CROWBAR'),
+        GetHashKey('WEAPON_FLASHLIGHT'),
+        GetHashKey('WEAPON_GOLFCLUB'),
+        GetHashKey('WEAPON_HAMMER'),
+        GetHashKey('WEAPON_HATCHET'),
+        GetHashKey('WEAPON_HIT_BY_WATER_CANNON'),
+        GetHashKey('WEAPON_KNUCKLE'),
+        GetHashKey('WEAPON_NIGHTSTICK'),
+        GetHashKey('WEAPON_POOLCUE'),
+        GetHashKey('WEAPON_SNOWBALL'),
+        GetHashKey('WEAPON_UNARMED'),
+        GetHashKey('WEAPON_WRENCH')
+    },
+    ["drown"] = { 
+        GetHashKey('WEAPON_DROWNING'),
+        GetHashKey('WEAPON_DROWNING_IN_VEHICLE')
+    },
+    ["unknown"] = { 
+        GetHashKey('WEAPON_BARBED_WIRE'),
+        GetHashKey('WEAPON_BLEEDING'),
+        GetHashKey('WEAPON_ELECTRIC_FENCE'),
+        GetHashKey('WEAPON_EXHAUSTION'),
+        GetHashKey('WEAPON_FALL')
+    }, -- Fall Damage or SetEntityHealth()
 }
 
 -- Process player deaths
@@ -48,7 +175,7 @@ local function processDeath(ped)
                 killer = false
             end
         elseif not IsPedAPlayer(killerPed) then
-            killer = killerPed
+            killer = false
         end
 
         deathReason = getDeathReason(causeHash)
@@ -56,6 +183,8 @@ local function processDeath(ped)
 
     if killer == nil then
         killer = false
+    elseif killer then
+        killer = GetPlayerServerId(killer)
     end
 
     TriggerServerEvent("txaLogger:DeathNotice", killer, deathReason)
