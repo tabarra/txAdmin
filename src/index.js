@@ -37,7 +37,7 @@ const getBuild = (ver)=>{
 const txAdmin1337Convar = GetConvar('txAdmin1337', 'false').trim();
 if(process.env.APP_ENV !== 'webpack' && txAdmin1337Convar !== 'IKnowWhatImDoing'){
     logError(`Looks like you don't know what you are doing.`);
-    logDie(`Please use the compiled release from GitHub or the version that comes with the latest FXServer.`)
+    logDie(`Please use the compiled release from GitHub or the version that comes with the latest FXServer.`);
 }
 const isAdvancedUser = (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar == 'IKnowWhatImDoing');
 
@@ -45,9 +45,9 @@ const isAdvancedUser = (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar =
 const osTypeVar = os.type();
 let osType;
 if(osTypeVar == 'Windows_NT'){
-    osType = 'windows'
+    osType = 'windows';
 }else if(osTypeVar == 'Linux'){
-    osType = 'linux'
+    osType = 'linux';
 }else{
     logDie(`OS type not supported: ${osTypeVar}`)
 }
@@ -73,8 +73,9 @@ if(typeof txAdminVersion !== 'string' || txAdminVersion == 'null'){
 //Check if this version of txAdmin is too outdated to be considered safe to use in prod
 //NOTE: Only valid if its being very actively maintained.
 //          Use 30d for patch 0, or 45~60d otherwise
-const txAdminVersionBestBy = 1612770000 + (28 * 86400); 
-// dir(new Date(txAdminVersionBestBy*1000).toLocaleString()) // 08/03/2021 04:40:00 BRT 
+const txAdminVersionBestBy = 1615200000 + (28 * 86400); 
+// dir(new Date(txAdminVersionBestBy*1000).toLocaleString()) // 05/04/2021 07:40:00 BRT 
+// dir(require('humanize-duration')(((now() - txAdminVersionBestBy)*1000)))
 if(now() > txAdminVersionBestBy){
     logError(`This version of txAdmin is outdated.`);
     logError(`Please update as soon as possible.`);
@@ -102,7 +103,6 @@ const txDataPathConvar = GetConvar('txDataPath', 'false');
 if(txDataPathConvar == 'false'){
     const dataPathSuffix = (osType == 'windows')? '..' : '../../../';
     dataPath = cleanPath(path.join(fxServerPath, dataPathSuffix, 'txData'));
-    log(`Version ${txAdminVersion} using data path '${dataPath}'`);
 }else{
     dataPath = cleanPath(txDataPathConvar);
 }
@@ -177,6 +177,7 @@ GlobalData = {
     noLookAlikesAlphabet,
     //Vars
     cfxUrl: null,
+    osDistro: null,
 }
 // NOTE: all variables set for monitor mode: monitorMode, version, serverRoot (cwd), citizen_root, citizen_dir
 

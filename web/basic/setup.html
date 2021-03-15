@@ -304,6 +304,9 @@
                                         This can either be absolute, or relative to the Server Data folder.
                                         <input type="text" class="form-control mt-2" id="s5ServerCFGInput"
                                             placeholder="C:/Users/Admin/Desktop/server01/server.cfg">
+                                        <p class="text-success font-weight-bold mb-0 d-none" id="s5ServerCFGAutofill">
+                                            Config file detected! If this file is correct, just click on the save button below.
+                                        </p>
                                         <span id="s5ServerCFGError" class="text-danger fade-in d-none"></span>
                                         <div class="step-actions">
                                             <div class="step-actions">
@@ -311,9 +314,6 @@
                                                     type="button">Back</button>
                                                 <button class="btn btn-pill btn-info next-step" type="button"
                                                     data-feedback="validateCFGFile" id="s5ServerCFGSubmitBtn">Save</button>
-                                                <button class="btn btn-pill btn-primary d-none fade-in" type="button"
-                                                    id="s5ServerCFGFixBtn" 
-                                                    data-target="s5ServerCFGInput">Accept Fix</button>
                                             </div>
                                         </div>
                                     </div>
@@ -392,6 +392,7 @@
         const timeoutLong = 5000;
         // const spinnerHTML = '<div style="min-height: 250px;" class="txSpinner">Loading...</div>';
         const spinnerHTML = '<div style="min-height: 250px; margin: auto;"><div class="txSpinner">Loading...</div></div>';
+        const connectErrorMessage = `<b>Unable to connect to txAdmin.</b> <br> If you closed it, please start again and retry.`;
         const suggestions = {};
         let loadedTemplates = [];
         let selectedTemplateIndex;
@@ -430,6 +431,9 @@
         }
         const inputKeyUp = (event) => {
             event.target.classList.remove('is-invalid', 'is-valid');
+            if (event.target.id == 's5ServerCFGInput'){
+                s5ServerCFGAutofill.classList.add('d-none');
+            }
             if (event.keyCode === 13) {
                 event.preventDefault();
                 document.getElementById(event.target.id+'SubmitBtn').click();
@@ -467,6 +471,7 @@
         const s4RemoteTemplateInput = document.getElementById("s4RemoteTemplateInput");
         const s4RemoteTemplateInputError = document.getElementById("s4RemoteTemplateInputError");
         s4RemoteTemplateInput.addEventListener("keyup", inputKeyUp);
+
         const s4LocalDataPathInput = document.getElementById("s4LocalDataPathInput");
         const s4LocalDataPathInputError = document.getElementById("s4LocalDataPathInputError");
         const s4LocalDataPathInputFixBtn = document.getElementById("s4LocalDataPathInputFixBtn");
@@ -482,11 +487,11 @@
         const s5DeployerTargetInput = document.getElementById("s5DeployerTargetInput");
         const s5DeployerTargetError = document.getElementById("s5DeployerTargetError");
         s5DeployerTargetInput.addEventListener("keyup", inputKeyUp);
+
         const s5ServerCFGInput = document.getElementById("s5ServerCFGInput");
+        const s5ServerCFGAutofill = document.getElementById("s5ServerCFGAutofill");
         const s5ServerCFGError = document.getElementById("s5ServerCFGError");
-        const s5ServerCFGFixBtn = document.getElementById("s5ServerCFGFixBtn");
         s5ServerCFGInput.addEventListener("keyup", inputKeyUp);
-        s5ServerCFGFixBtn.addEventListener("click", acceptFix);
         
         
         // Server Name step validation
@@ -714,7 +719,7 @@
                 },
                 error: function (xmlhttprequest, textstatus, message) {
                     stepperInstace.wrongStep();
-                    s5DeployerTargetError.innerHTML = `<br>Error:</b> ${message}`;
+                    s5DeployerTargetError.innerHTML = connectErrorMessage;
                     s5DeployerTargetError.classList.remove('d-none');
                     s5DeployerTargetInput.classList.add('is-invalid');
                     destroyFeedback(false);
@@ -728,7 +733,10 @@
             const currentSteps = stepperInstace.getSteps();
             s4LocalDataPathInput.classList.remove('is-invalid', 'is-valid');
             s4LocalDataPathInputError.classList.add('d-none');
-            
+            s5ServerCFGAutofill.classList.add('d-none');
+            s5ServerCFGError.classList.add('d-none');
+            s5ServerCFGInput.value = '';
+
             $.ajax({
                 type: "POST",
                 url: '/setup/validateLocalDataFolder',
@@ -740,7 +748,11 @@
                     if (data.success == true){
                         currentSteps.active.step.classList.remove('wrong');
                         currentSteps.active.step.classList.add('done');
-                        frmName.classList.add('is-valid');
+                        s4LocalDataPathInput.classList.add('is-valid');
+                        if(data.detectedConfig){
+                            s5ServerCFGAutofill.classList.remove('d-none');
+                            s5ServerCFGInput.value = data.detectedConfig;
+                        }
                         destroyFeedback(true)
                     }else{
                         s4LocalDataPathInputError.innerHTML = data.message;
@@ -755,7 +767,7 @@
                     }
                 },
                 error: function (xmlhttprequest, textstatus, message) {
-                    s4LocalDataPathInputError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
+                    s4LocalDataPathInputError.innerHTML = connectErrorMessage;
                     s4LocalDataPathInputError.classList.remove('d-none');
                     destroyFeedback(false)
                 }
@@ -792,15 +804,11 @@
                         s5ServerCFGError.classList.remove('d-none');
                         s5ServerCFGInput.classList.add('is-invalid');
                         stepperInstace.wrongStep();
-                        if(data.suggestion){
-                            suggestions['s5ServerCFGInput'] = data.suggestion;
-                            s5ServerCFGFixBtn.classList.remove('d-none');
-                        }
                         destroyFeedback(false)
                     }
                 },
                 error: function (xmlhttprequest, textstatus, message) {
-                    s5ServerCFGError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
+                    s5ServerCFGError.innerHTML = connectErrorMessage;
                     s5ServerCFGError.classList.remove('d-none');
                     destroyFeedback(false)
                 }
@@ -858,7 +866,7 @@
                     }
                 },
                 error: function (xmlhttprequest, textstatus, message) {
-                    saveError.innerHTML = `<br>Error:</b> ${message} <br>Please try again.`;
+                    saveError.innerHTML = connectErrorMessage;
                     saveError.classList.remove('d-none');
                     destroyFeedback(false)
                 }

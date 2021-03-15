@@ -8,7 +8,7 @@ const axios = require("axios");
 const cloneDeep = require('lodash/cloneDeep');
 const escapeRegExp = require('lodash/escapeRegExp');
 const mysql = require('mysql2/promise');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
 
 //Helper functions
 const safePath = (base, suffix) => {

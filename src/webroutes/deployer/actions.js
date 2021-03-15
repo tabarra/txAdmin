@@ -3,6 +3,7 @@ const modulename = 'WebServer:DeployerActions';
 const fs = require('fs-extra');
 const path = require('path');
 const cloneDeep = require('lodash/cloneDeep');
+const mysql = require('mysql2/promise');
 const slash = require('slash');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
@@ -92,8 +93,29 @@ async function handleSetVariables(ctx) {
     }
     const userVars = cloneDeep(ctx.request.body);
 
-    //Setting iden
+    //DB Stuff
     if(typeof userVars.dbDelete !== 'undefined'){
+        //Testing the db config
+        try {
+            const mysqlOptions = {
+                host: userVars.dbHost,
+                user: userVars.dbUsername,
+                password: userVars.dbPassword,
+            }
+            await mysql.createConnection(mysqlOptions);
+        } catch (error) {
+            const msgHeader = `<b>Database connection failed:</b> ${error.message}`;
+            if(error.code == 'ECONNREFUSED'){
+                const osSpecific = (GlobalData.osType === 'windows')
+                ? `If you do not have a database installed, you can download and run XAMPP.`
+                : `If you do not have a database installed, you must download and run MySQL or MariaDB.`;
+                return ctx.send({type: 'danger', message: `${msgHeader}<br>\n${osSpecific}`});
+            }else{
+                return ctx.send({type: 'danger', message: msgHeader});
+            }
+        }
+
+        //Setting connection string
         userVars.dbDelete = (userVars.dbDelete === 'true');
         userVars.dbConnectionString = (userVars.dbPassword.length)
             ? `mysql://${userVars.dbUsername}:${userVars.dbPassword}@${userVars.dbHost}/${userVars.dbName}?charset=utf8mb4`
@@ -106,7 +128,7 @@ async function handleSetVariables(ctx) {
     const addPrincipalLines = [];
     Object.keys(admin.providers).forEach(providerName => {
         if(admin.providers[providerName].identifier){
-            addPrincipalLines.push(`add_principal identifier.${admin.providers[providerName].identifier} group.admin`);
+            addPrincipalLines.push(`add_principal identifier.${admin.providers[providerName].identifier} group.admin #${ctx.session.auth.username}`);
         }
     });
     userVars.addPrincipalsMaster = (addPrincipalLines.length)
@@ -176,20 +198,6 @@ async function handleSaveConfig(ctx) {
     if(saveFXRunnerStatus){
         globals.fxRunner.refreshConfig();
         ctx.utils.logAction(`Completed and committed server deploy.`);
-
-        //FIXME: temporary fix for the yarn issue requiring fxchild.stdin writes
-        yarnInputFixCounter = 0;
-        clearInterval(yarnInputFix);
-        yarnInputFix = setInterval(() => {
-            if(yarnInputFixCounter > 6){
-                if(GlobalData.verbose) log('Clearing yarnInputFix setInterval');
-                clearInterval(yarnInputFix);
-            }
-            yarnInputFixCounter++;
-            try {
-                globals.fxRunner.srvCmd(`txaPing temporary_yarn_workaround_please_ignore#${yarnInputFixCounter}`);
-            } catch (error) {}
-        }, 30*1000);
 
         //Starting server
         const spawnMsg = await globals.fxRunner.spawnServer(false);

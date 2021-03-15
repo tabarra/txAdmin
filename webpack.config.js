@@ -40,6 +40,7 @@ module.exports = {
         '@discordjs/opus': 'empty',
         'node-opus': 'empty',
         'opusscript': 'empty',
+        'osx-temperature-sensor': 'empty',
     },
     stats: 'errors-warnings',
     plugins: [

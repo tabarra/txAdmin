@@ -67,7 +67,7 @@ async function getProcessesData(){
             let procName;
             let order = process.timestamp || 1;
             if(pid == process.pid){
-                procName = 'FxMonitor + txAdmin';
+                procName = 'txAdmin (inside FXserver)';
                 order = 0;
             }else if(curr.memory <= 10*1024*1024){
                 procName = 'FXServer MiniDump';
@@ -211,8 +211,7 @@ async function getHostData(){
         }
 
         hostData.nodeVersion = process.version;
-        hostData.osType = `${os.type()} (${os.platform()}/${process.arch})`;
-        hostData.osRelease = `${os.release()}`;
+        hostData.osDistro = GlobalData.osDistro || GlobalData.osType;
         hostData.username = `${userInfo.username}`;
         hostData.clockWarning = clockWarning;
         hostData.cpus = `${cpus.length}x ${cpus[0].speed} MHz`;
@@ -258,6 +257,7 @@ async function gettxAdminData(){
         hbFD3Fails: globals.databus.txStatsData.heartBeatStats.fd3Failed,
         hbHTTPFails: globals.databus.txStatsData.heartBeatStats.httpFailed,
         hbBootSeconds: globals.databus.txStatsData.bootSeconds.join(', ') || '--',
+        freezeSeconds: globals.databus.txStatsData.freezeSeconds.join(', ') || '--',
         logFileSize,
 
         //Possible memory leaks:

@@ -101,6 +101,7 @@ function handleGlobal(ctx) {
 //================================================================
 /**
  * Handle FXServer settings
+ * TODO: it MAY be worth to use helpers.findLikelyServerDataPath() and helpers.findLikelyCFGPath()
  * @param {object} ctx
  */
 function handleFXServer(ctx) {

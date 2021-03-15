@@ -5,7 +5,7 @@ const dateFormat = require('dateformat');
 const fs = require('fs-extra');
 const open = require('open');
 const YAML = require('js-yaml');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
 const recipeEngine = require('./recipeEngine');
 
 //Helper functions
@@ -77,7 +77,7 @@ const parseValidateRecipe = (rawRecipe) => {
     //Loads YAML
     let recipe;
     try {
-        recipe = YAML.safeLoad(rawRecipe, { schema: YAML.JSON_SCHEMA });   
+        recipe = YAML.load(rawRecipe, { schema: YAML.JSON_SCHEMA });   
     } catch (error) {
         if(GlobalData.verbose) dir(error);
         throw new Error(`invalid yaml`);

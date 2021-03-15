@@ -4,25 +4,25 @@
         "humanizer_language": "hu"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
-        "crash_detected": "crash észlelve",
-        "partial_crash_warn": "Részleges összeomlás miatt, szerver újraindul 1 percen belül. Csatlakozz le a szerverről.",
-        "partial_crash_warn_discord": "Részleges összeomlás miatt, **%{servername}** újraindul 1 percen belül.",
+        "start_timeout": "sikertelen indítás a megadott időn belül",
+        "crash_detected": "összeomlás észlelve",
+        "partial_crash_warn": "Részleges összeomlás miatt a szerver 1 percen belül újraindul. Kérjük hagyd el a szervert!.",
+        "partial_crash_warn_discord": "Részleges összeomlás miatt, a(z) **%{servername}** újraindul 1 percen belül.",
         "schedule_reason": "ütemezett újraindítás %{time}",
-        "schedule_warn": "A szerver ütemezett újrainditása lesz %{smart_count} perc múlva. Lépjetek le. |||| A szerver ütemezett újrainditása lesz %{smart_count} perc múlva.",
-        "schedule_warn_discord": "**%{servername}** szerver ütemezett újrainditása lesz %{smart_count} perc múlva. |||| **%{servername}** szerver ütemezett újrainditása lesz %{smart_count} perc múlva."
+        "schedule_warn": "A szerver ütemezetten újraindul %{smart_count} perc múlva. Kérjük hagyd el a szervert!. |||| A szerver ütemezetten újra indul %{smart_count} perc múlva.",
+        "schedule_warn_discord": "A **%{servername}** szerver ütemezetten újraindul %{smart_count} perc múlva. |||| **%{servername}** szerver ütemezetten újraindul %{smart_count} perc múlva."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) Ki lettél tiltva a szerverről. Indok: \"%{reason}\". Lejár: %{expiration}.",
+        "kick_permanent": "(%{author}) Véglegesen ki lettél tiltva a szerverről. Indok: \"%{reason}\".",
+        "reject_temporary": "Jelenleg ki vagy tiltva a szerverről.\nLejár: %{expiration}.\nBan ID: %{id}.\nIndok: %{reason}.\nBannoló: %{author}.",
+        "reject_permanent": "Erről a szerverről véglegesen ki vagy tiltva.\nBan ID: %{id}.\nIndok: %{reason}.\nBannoló: %{author}."
     },
     "server_actions": {
-        "restarting": "Szerver újraindítás (%{reason}).",
-        "restarting_discord": "**%{servername}** újraindul (%{reason}).",
+        "restarting": "Szerver újraindítása: (%{reason}).",
+        "restarting_discord": "**%{servername}** újraindul: (%{reason}).",
         "stopping": "Szerver leállítás (%{reason}).",
-        "stopping_discord": "**%{servername}** szervert leállítják (%{reason}).",
+        "stopping_discord": "**%{servername}** szervert leállítják: (%{reason}).",
         "spawning_discord": "**%{servername}** szerver indul."
     },
     "discord": {

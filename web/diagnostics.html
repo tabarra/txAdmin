@@ -17,9 +17,8 @@
                 {{@if(it.host.error !== false)}}
                     {{it.host.error|safe}}
                 {{#else}}
-                    <strong>Node Version:</strong> {{it.host.nodeVersion}} <br>
-                    <strong>OS Type:</strong> {{it.host.osType}} <br>
-                    <strong>OS Release:</strong> {{it.host.osRelease}} <br>
+                    <strong>Node:</strong> {{it.host.nodeVersion}} <br>
+                    <strong>OS:</strong> {{it.host.osDistro}} <br>
                     <strong>Username:</strong> {{it.host.username}} <br>
                     <strong>Host CPUs:</strong> {{it.host.cpus}} {{it.host.clockWarning|safe}}<br>
                     <strong>Host Memory:</strong> {{it.host.memory}}
@@ -40,6 +39,7 @@
                 <strong>HTTP Counter:</strong> <code>{{it.txadmin.httpCounterLog}}</code> &lt; <code>{{it.txadmin.httpCounterMax}}</code> <br>
                 <strong>HB Fails:</strong> <code>HTTP {{it.txadmin.hbHTTPFails}}</code> / <code>FD3 {{it.txadmin.hbFD3Fails}}</code> <br>
                 <strong>Boot Seconds:</strong> <code>{{it.txadmin.hbBootSeconds}}</code> <br>
+                <strong>Freeze Seconds:</strong> <code>{{it.txadmin.freezeSeconds}}</code> <br>
                 <strong>FXServer Log Size:</strong> <code>{{it.txadmin.logFileSize}}</code> <br>
                 <strong>Server Log Size:</strong> <code>{{it.txadmin.serverLogSize}}</code> <br>
                 <strong>Koa Sessions:</strong> <code>{{it.txadmin.koaSessions}}</code> <br>

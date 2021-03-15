@@ -15,7 +15,7 @@ module.exports = class Logger {
         let header = `\r\n${sep}\r\n======== txAdmin starting - ${timestamp}\r\n${sep}\r\n`;
         try {
             fs.appendFileSync(this.config.logPath, header, 'utf8');
-            logOk('Started');
+            // logOk('Started');
         } catch (error) {
             logError(`Failed to write to log file '${this.config.logPath}'`);
             if(GlobalData.verbose) dir(error);

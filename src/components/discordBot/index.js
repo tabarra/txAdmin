@@ -42,7 +42,7 @@ module.exports = class DiscordBot {
         this.cooldowns = new Collection();
         
         if(!this.config.enabled){
-            logOk('Disabled by the config file.');
+            // logOk('Disabled by the config file.');
         }else{
             this.startBot();
         }
@@ -116,7 +116,7 @@ module.exports = class DiscordBot {
 
         //Setup Ready listener
         this.client.on('ready', async () => {
-            logOk(`Started and logged in as '${this.client.user.tag}'`);
+            // logOk(`Started and logged in as '${this.client.user.tag}'`);
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
             this.announceChannel = this.client.channels.find(x => x.id === this.config.announceChannel);
             if(!this.announceChannel){

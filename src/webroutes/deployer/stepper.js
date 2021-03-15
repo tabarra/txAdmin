@@ -25,6 +25,7 @@ module.exports = async function DeployerStepper(ctx) {
         step: globals.deployer.step,
         serverProfile: globals.info.serverProfile,
         deploymentID: globals.deployer.deploymentID,
+        isPlaceholderRecipe: (globals.deployer === false),
     };
     if(globals.deployer.step === 'review'){
         renderData.recipe = {
@@ -37,8 +38,8 @@ module.exports = async function DeployerStepper(ctx) {
         }
 
     }else if(globals.deployer.step === 'input'){
+        renderData.defaultLicenseKey = process.env.TXADMIN_DEFAULT_LICENSE || '';
         renderData.requireDBConfig = globals.deployer.recipe.requireDBConfig;
-        // renderData.inputVars = [];
 
         const recipeVars = globals.deployer.getRecipeVars();
         renderData.inputVars = Object.keys(recipeVars).map(name => {

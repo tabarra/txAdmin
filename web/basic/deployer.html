@@ -103,7 +103,8 @@
                                     </label>
                                     <div class="col-sm-9">
                                         <input type="text" class="form-control blur-input" id="step2-svLicense" maxlength="32" 
-                                            autocomplete="off" placeholder="YourKeyYourKeyYourKeyYourKeyYour" required autofocus>
+                                            autocomplete="off" placeholder="YourKeyYourKeyYourKeyYourKeyYour" 
+                                            value="{{it.defaultLicenseKey}}" required autofocus>
                                         <span class="form-text text-muted">
                                             The license key for your server obtained in <a href="https://keymaster.fivem.net/" target="_blank" rel="noopener noreferrer">Keymaster</a>.
                                         </span>
@@ -309,6 +310,8 @@
     <script>
         //============================================== CodeMirror & Page Setup
         const currentStep = '{{it.step}}';
+        const isPlaceholderRecipe = ('{{it.isPlaceholderRecipe}}' === 'true');
+        const codeMirrorTarget = document.getElementById("codeMirrorTarget");
         const timeoutLong = 4000;
 
         const checkDoLogoutRefresh = (data) => {
@@ -334,7 +337,6 @@
                 },
             });
             if(currentStep == 'review' || currentStep == 'configure'){
-                const codeMirrorTarget = document.getElementById("codeMirrorTarget");
                 window.CMInstance = CodeMirror.fromTextArea(codeMirrorTarget, {
                     mode: (currentStep == 'review')? 'yaml' : 'fivem-cfg',
                     lineNumbers: true,
@@ -349,6 +351,9 @@
         //============================================== Step1 action
         function step1Action(){
             const editor = window.CMInstance;
+            if(isPlaceholderRecipe && codeMirrorTarget.value == editor.getValue()){
+                return $.notify({ message: `If you are not trying to write a recipe, click on the cancel button below to return to the setup page, where you can select a recommended template.` }, { type: 'warning' });
+            }
             editor.setValue(editor.getValue().replace(/\t/g, ' '.repeat(4)));
             const recipe = editor.getValue();
             if(recipe.length < 128){

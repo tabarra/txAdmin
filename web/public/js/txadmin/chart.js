@@ -40,7 +40,7 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
         });
 
         //Process skips
-        if(snap.skipped){
+        if (snap.skipped) {
             snapSkips.push(snapIndex);
         }
 
@@ -99,7 +99,7 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
     svg.append("g")
         .attr("id", "tickBucketsAxis")
         .attr("class", "axis")
-        .attr("transform", translate(width - margin.right -3, 0))
+        .attr("transform", translate(width - margin.right - 3, 0))
         .call(tickBucketsAxis);
 
 
@@ -120,16 +120,20 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
 
 
     // Y2 Axis - Player count
-    const y2Padding = Math.round(tickBucketsScale.bandwidth() / 2)
+    const y2Padding = Math.round(tickBucketsScale.bandwidth() / 2);
+    const maxClients = d3.max(snapClients.map(t => t.c));
     const clientsScale = d3.scaleLinear()
-        .domain([0, d3.max(snapClients.map(t => t.c))])
+        .domain([0, maxClients])
         .range([height - margin.bottom - y2Padding, margin.top + y2Padding]);
 
+    const clientsAxis = d3.axisLeft(clientsScale)
+        .tickFormat(t => t)
+        .tickValues((maxClients > 7)? null : d3.range(maxClients+1))
     svg.append("g")
         .attr("id", "clientAxis")
         .attr("class", "axis")
         .attr("transform", translate(margin.left - 1.5, 0))
-        .call(d3.axisLeft(clientsScale));
+        .call(clientsAxis);
 
     const clientsLine = d3.line()
         .defined(d => !isNaN(d.c))
@@ -155,6 +159,15 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
         .attr("stroke-linecap", "round")
         .attr("d", clientsLine);
 
+    // Horizontal line on the max client count
+    // playerLineGroup.append('line')
+    //     .style("stroke", "dodgerblue")  // dodgerblue maybe
+    //     .attr("stroke-dasharray", 6)
+    //     .attr("y1", clientsScale(maxClients))
+    //     .attr("y2", clientsScale(maxClients))
+    //     .attr("x1", margin.left) 
+    //     .attr("x2", width - margin.right)
+
 
     // Skip lines
     svg.append("g")
@@ -165,10 +178,10 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
         .append('line')
         .style("stroke", "gold")  // dodgerblue maybe
         .attr("stroke-dasharray", 6)
-        .attr("x1", (d) => timeScale(d))     // x position of the first end of the line
-        .attr("x2", (d) => timeScale(d))     // x position of the second end of the line
-        .attr("y1", height - margin.bottom)      // y position of the first end of the line
-        .attr("y2", margin.top);    // y position of the second end of the line
+        .attr("x1", (d) => timeScale(d))
+        .attr("x2", (d) => timeScale(d))
+        .attr("y1", height - margin.bottom) 
+        .attr("y2", margin.top);
 
     d3Container.innerHTML = '';
     d3Container.append(svg.node());

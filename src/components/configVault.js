@@ -39,7 +39,7 @@ module.exports = class ConfigVault {
         this.config = null;
 
         this.setupVault();
-        logOk('Started');
+        // logOk('Started');
     }
 
 
@@ -133,7 +133,7 @@ module.exports = class ConfigVault {
                 minSessionTime: toDefault(cfg.playerController.minSessionTime, 15),
                 whitelistRejectionMessage: toDefault(
                     cfg.playerController.whitelistRejectionMessage, 
-                    'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour ID: <id>'
+                    'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour Request ID: <id>'
                 ),
                 wipePendingWLOnStart: toDefault(cfg.playerController.wipePendingWLOnStart, true),
             };
@@ -206,7 +206,7 @@ module.exports = class ConfigVault {
             cfg.playerController.onJoinCheckBan = (cfg.playerController.onJoinCheckBan === null)? true : (cfg.playerController.onJoinCheckBan === 'true' || cfg.playerController.onJoinCheckBan === true);
             cfg.playerController.onJoinCheckWhitelist = (cfg.playerController.onJoinCheckWhitelist === null)? false : (cfg.playerController.onJoinCheckWhitelist === 'true' || cfg.playerController.onJoinCheckWhitelist === true);
             cfg.playerController.minSessionTime = parseInt(cfg.playerController.minSessionTime) || 15;
-            cfg.playerController.whitelistRejectionMessage = cfg.playerController.whitelistRejectionMessage || 'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour ID: <id>';
+            cfg.playerController.whitelistRejectionMessage = cfg.playerController.whitelistRejectionMessage || 'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour Request ID: <id>';
             cfg.playerController.wipePendingWLOnStart = (cfg.playerController.wipePendingWLOnStart === null)? true : (cfg.playerController.wipePendingWLOnStart === 'true' || cfg.playerController.wipePendingWLOnStart === true);
 
             //Authenticator
