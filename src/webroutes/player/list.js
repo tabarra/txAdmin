@@ -269,7 +269,7 @@ async function getStats(dbo){
 async function getPendingWL(dbo, limit){
     try {
         let pendingWL = await dbo.get("pendingWL")
-                            .sortBy('tsLastAttempt')
+                            .orderBy('tsLastAttempt', 'desc')
                             .take(limit)
                             .cloneDeep()
                             .value();

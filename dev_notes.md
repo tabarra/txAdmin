@@ -1,13 +1,9 @@
-## TODO v3.4
-- [x] change chart awaiting data message
-- [x] check if the "custom template" was modified at all
-- [x] add master username to the `{{addPrincipalsMaster}}` `server.cfg` placeholder to prevent confusion
-- [x] validate if the database config is working before running the deployer
-- [x] preventing VPS lag / DDoS to cause server restarts, and add freeze stats for the diagnostics page
-- [x] update packages
-- [x] setup: add automatic config file suggestion, with wrong extension check
-- [x] simplify the start messages
-- [ ] test on latest + version bump
+## TODO v3.5.0
+- [x] fix whitelist sorting order in the players page
+- [ ] updated packages
+- [ ] login page indicate if the `admins.json` file is not found
+- [ ] xxxx
+
 
 
 > ASAP!:

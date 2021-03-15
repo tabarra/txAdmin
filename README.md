@@ -9,7 +9,7 @@
 		Join our Discord Server: &nbsp; <a href="https://discord.gg/AFAAXzq"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
 	</h4>
 	<p align="center">
-		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM Server remotely, in use by over three thousand servers worldwide at any given time.
+		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM/RedM Server remotely, in use by over FIVE thousand servers worldwide at any given time.
 	</p>
 </p>
 
@@ -19,6 +19,7 @@
 ## Main Features
 - Recipe-based Server Deployer: create a server in under 60 seconds! ([more info](docs/recipe.md))
 - Start/Stop/Restart your server instance or resources
+- Server Performance Chart
 - Access control:
 	- Login via Password or CitizenFX
 	- Admin permission system ([more info](docs/permissions.md))

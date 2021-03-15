@@ -37,7 +37,6 @@ module.exports = class StatsCollector {
 
         //Cron functions
         setInterval(async () => {
-            // this.collectPlayers();
             try {
                 await this.collectPerformance();
             } catch (error) {
