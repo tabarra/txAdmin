@@ -1,6 +1,7 @@
 //Requires
 const modulename = 'ConfigVault';
 const fs = require('fs');
+const path = require('path');
 const cloneDeep = require('lodash/cloneDeep');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
@@ -29,6 +30,41 @@ const deepFreeze = (obj) => {
     });
     return obj;
 };
+const copyRecursiveSync = (src, dest) => {
+    var exists = fs.existsSync(src);
+    var stats = exists && fs.statSync(src);
+    var isDirectory = exists && stats.isDirectory();
+    if (exists && isDirectory) {
+        mkdirRecursiveSync(dest);
+        fs.readdirSync(src).forEach(function (childItemName) {
+            copyRecursiveSync(path.join(src, childItemName), path.join(dest, childItemName));
+        });
+    } else {
+        fs.linkSync(src, dest);
+    }
+}
+const deleteFolderRecursive = (path) => {
+    if (fs.existsSync(path)) {
+      fs.readdirSync(path).forEach(function(file, index){
+        var curPath = path + "/" + file;
+        if (fs.lstatSync(curPath).isDirectory()) { // recurse
+          deleteFolderRecursive(curPath);
+        } else { // delete file
+          fs.unlinkSync(curPath);
+        }
+      });
+      fs.rmdirSync(path);
+    }
+};
+const mkdirRecursiveSync = (fileDestination) => {
+    const dirPath = fileDestination.split('/');
+    dirPath.forEach((element, index) => {
+        if(!fs.existsSync(dirPath.slice(0, index + 1).join('/'))){
+            fs.mkdirSync(dirPath.slice(0, index + 1).join('/')); 
+        }
+    });
+}
+
 
 module.exports = class ConfigVault {
     constructor(profilePath, serverProfile) {
@@ -242,6 +278,8 @@ module.exports = class ConfigVault {
             throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`);
         }
 
+        this.saveOldLog(cfg);
+
         return cfg;
     }
 
@@ -326,4 +364,23 @@ module.exports = class ConfigVault {
         }
     }
 
+    //================================================================
+    /**
+     * Save the previous log with the end date
+     * @param {object} cfgData
+     */
+    saveOldLog(cfg) {
+        try {
+            const nameOldFile = `fxserver_${new Date().toJSON().replace(/[\.,:]/g, '-')}.log`;
+            if (cfg.fxRunner.logPath) {
+                const pathFile = cfg.fxRunner.logPath.replace(`fxserver.log`,``);
+                copyRecursiveSync(cfg.fxRunner.logPath, `${pathFile}${nameOldFile}`);
+            } else {
+                const pathFile = `${this.serverProfilePath}/logs/`;
+                copyRecursiveSync(`${pathFile}fxserver.log`, `${pathFile}${nameOldFile}`);
+            }
+        } catch (error) {
+            dir(error)
+        }
+    }
 } //Fim ConfigVault()
