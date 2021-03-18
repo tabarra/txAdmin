@@ -88,7 +88,7 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     <!-- <span class="tickTimeLabel">■</span> -->
                     <span class="badge tickTimeLabel"> &nbsp; </span>
-                    Tick Time (lower is better)
+                    Tick Time (at bottom is better)
                 </div>
                 
                 <div id="d3-container">
@@ -224,10 +224,10 @@
 
         const draw = () => {
             const tsStart = Date.now();
-            drawHeatmap(d3Container, perfData, chartOptions);
+            const rects = drawHeatmap(d3Container, perfData, chartOptions);
             d3Container.style.opacity = 1;
             const duration = Date.now() - tsStart;
-            perfDiagnosticsMessage.textContent = `Took ${duration}ms to draw ${perfData.length*15} rects from ${perfData.length} snapshots.`;
+            perfDiagnosticsMessage.textContent = `Took ${duration}ms to draw ${rects} rects from ${perfData.length} snapshots.`;
         }
         draw();
 

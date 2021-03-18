@@ -17,7 +17,8 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
         left: options.margin.left || 27
     };
     const height = options.height || 340;
-    const colorScheme = options.colorScheme || d3.interpolateInferno;
+    const colorScheme = options.colorScheme || d3.interpolateViridis;
+    const bgColor = options.bgColor || '#360043'; //color(0) darken 2
 
     //TODO: make it responsive with screen size
     const tickIntervalMod = Math.min(
@@ -103,14 +104,24 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
         .call(tickBucketsAxis);
 
 
+    //Background
+    svg.append('rect')
+    .attr('x', margin.left)
+    .attr('y', margin.top)
+    .attr('width', width - margin.right - margin.left)
+    .attr('height', height - margin.top - margin.bottom)
+    .attr('fill', bgColor)
+    .attr('stroke', bgColor)
+
+
     // Drawing the Heatmap
-    svg.append("g")
+    const heatmap = svg.append("g")
         .attr("id", "heatmap")
         .selectAll('rect')
         .data(snapBuckets)
         .enter()
         .append('rect')
-        .filter(d => typeof d.freq == 'number')
+        .filter(d => (typeof d.freq == 'number' && d.freq > 0))
         .attr('x', (d, i) => timeScale(d.x))
         .attr('y', (d, i) => tickBucketsScale(d.y))
         .attr('width', timeScale.bandwidth())
@@ -185,6 +196,8 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
 
     d3Container.innerHTML = '';
     d3Container.append(svg.node());
+
+    return heatmap._groups[0].length + 1;
 }
 
 
