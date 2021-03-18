@@ -1,13 +1,8 @@
+--Check Environment
 if GetConvar('txAdminServerMode', 'false') ~= 'true' then
     return
 end
 
-local apiPort = GetConvar("txAdmin-apiPort", "invalid")
-local apiToken = GetConvar("txAdmin-apiToken", "invalid")
-if apiPort == "invalid" or apiToken == "invalid" then
-    logError('API Port and Token ConVars not found. Do not start this resource if not using txAdmin.')
-    return
-end
 -- micro optimization
 local os_time = os.time
 -- http://lua-users.org/wiki/SimpleRound

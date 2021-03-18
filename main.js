@@ -20,4 +20,6 @@ if(GetConvar('monitorMode', 'false') == 'true'){
         console.dir(error.stack);
         console.log('e'.repeat(80));
     }
+}else if(GetConvar('txAdminServerMode', 'false') == 'true'){
+    //Nothing, for now
 }
