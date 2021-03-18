@@ -1,6 +1,9 @@
 ## TODO v3.5.0
 - [x] fix whitelist sorting order in the players page
-- [ ] updated packages
+- [x] updated packages
+- [x] convert the logger to lua and use fd3 (thanks @AvarianKnight)
+- [x] increased chart performance by 60%
+- [x] settings/save/monitor: fixed schedules restart times validation
 - [ ] login page indicate if the `admins.json` file is not found
 - [ ] xxxx
 
@@ -202,7 +205,8 @@ TODO: Bot commands (in dev order):
 ```bash
 # run
 cd /e/FiveM/builds/3247/citizen/system_resources/monitor
-nodemon +set txAdminFakePlayerlist yesplzx +set txAdminVerbose truex
+nodemon +set txDebugPlayerlistGenerator truex +set txAdminVerbose truex
+nodemon +set txDebugPlayerlistGenerator true +set txDebugExternalSource "x.x.x.x:30120" +set txAdminVerbose truex
 
 # build
 rm -rf dist

@@ -41,8 +41,8 @@ module.exports = class StatsCollector {
                 await this.collectPerformance();
             } catch (error) {
                 if(GlobalData.verbose){
-                    logError(`Error while collecting fxserver performance data`)
-                    dir(error)
+                    logError(`Error while collecting fxserver performance data`);
+                    dir(error);
                 }
             }
         }, 60*1000);
@@ -157,7 +157,8 @@ module.exports = class StatsCollector {
         }
         
         //Get performance data
-        const currPerfRaw = await got(`http://127.0.0.1:${globals.fxRunner.fxServerPort}/perf/`, {timeout: 1500}).text();
+        const sourceURL = (GlobalData.debugExternalSource)? GlobalData.debugExternalSource : `127.0.0.1:${globals.fxRunner.fxServerPort}`;
+        const currPerfRaw = await got(`http://${sourceURL}/perf/`, {timeout: 1500}).text();
         const currPerfData = parsePerf(currPerfRaw);
         if(
             !validatePerfThreadData(currPerfData.svSync) ||

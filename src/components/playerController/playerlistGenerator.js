@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'PlayerlistGenerator';
+const got = require('got');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
@@ -21,7 +22,8 @@ module.exports = class PlayerlistGenerator {
         //Configs
         this.config = {
             srcPlayerlist: require('./playerlist.ignore.json'),
-            refreshInterval: 2*60*1000, //2500
+            // refreshInterval: 2*60*1000,
+            refreshInterval: 10*1000,
             shouldAddRemovePlayers: true,
             minPlayers: 7,
             maxPlayers: 15,
@@ -30,18 +32,27 @@ module.exports = class PlayerlistGenerator {
         //Starting data
         this.indexes = [0,1,2,3,4,5,6,7];
         this.playerlist = [];
-        
+        const refreshFunc = (GlobalData.debugExternalSource)? this.refreshPlayersExternal.bind(this) : this.refreshPlayersStatic.bind(this);
         
         //Cron functions
-        this.playerlist = this.refreshPlayers();
+        refreshFunc();
         setInterval(() => {
-            this.playerlist = this.refreshPlayers();
+            refreshFunc();
         }, this.config.refreshInterval);
     }
 
 
     //================================================================
-    refreshPlayers(){
+    async refreshPlayersExternal(){
+        try {
+            this.playerlist = await got(`http://${GlobalData.debugExternalSource}/players.json`, {timeout: 1500}).json();
+        } catch (error) {
+            logError(`External source failed: ${error.message}`);
+        }
+    }
+
+    //================================================================
+    refreshPlayersStatic(){
         //Add and remove indexes
         if(this.config.shouldAddRemovePlayers){
             if(Math.random() < 0.5 && this.indexes.length > this.config.minPlayers){
@@ -65,7 +76,7 @@ module.exports = class PlayerlistGenerator {
             p.ping  = (newPing > 10)? newPing : 10;
         });
 
-        //Returns playerlist
-        return out;
+        //Sets playerlist
+        this.playerlist = out;
     }
 }

@@ -134,6 +134,14 @@ if(!/^\d+$/.test(txAdminPortConvar)){
 }
 const txAdminPort = parseInt(txAdminPortConvar);
 
+//Get Debug/Dev convars
+const txAdminVerboseConvar = GetConvar('txAdminVerbose', 'false').trim();
+const verbose = (['true', '1', 'on'].includes(txAdminVerboseConvar));
+const txDebugPlayerlistGeneratorConvar = GetConvar('txDebugPlayerlistGenerator', 'false').trim();
+const debugPlayerlistGenerator = (['true', '1', 'on'].includes(txDebugPlayerlistGeneratorConvar));
+const txDebugExternalSourceConvar = GetConvar('txDebugExternalSource', 'false').trim();
+const debugExternalSource = (txDebugExternalSourceConvar !== 'false')? txDebugExternalSourceConvar : false;
+
 //Get profile name
 const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, "").trim();
 if(serverProfile.endsWith('.base')){
@@ -143,9 +151,7 @@ if(!serverProfile.length){
     logDie(`Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.`);
 }
 
-//Get verbosity
-const txAdminVerboseConvar = GetConvar('txAdminVerbose', 'false').trim();
-const verbose = (['true', '1', 'on'].includes(txAdminVerboseConvar));
+
 
 //Setting Global Data
 const noLookAlikesAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
@@ -163,6 +169,8 @@ GlobalData = {
     dataPath,
     txAdminPort,
     verbose,
+    debugPlayerlistGenerator,
+    debugExternalSource,
     //Consts
     validIdentifiers:{
         steam: /^steam:1100001[0-9A-Fa-f]{8}$/,
