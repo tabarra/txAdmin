@@ -111,6 +111,7 @@ async function renderMasterView(view, reqSess, data, txVars){
 async function renderLoginView(data, txVars){
     if(isUndefined(data)) data = {};
     data.uiTheme = (txVars.darkMode)? 'theme--dark' : '';
+    data.logoURL = (GlobalData.loginPageLogo)? GlobalData.loginPageLogo : 'img/txadmin.png';
     data.isMatrix = (Math.random() <= 0.05);
     data.ascii = helpers.txAdminASCII();
     data.message = data.message || '';

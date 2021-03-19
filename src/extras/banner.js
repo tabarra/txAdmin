@@ -112,10 +112,15 @@ module.exports.printBanner = async () => {
     ]);
 
     //Addresses
-    const addrs = [
-        (GlobalData.osType === 'linux') ? 'your-public-ip' : 'localhost',
-    ];
-    if(ipRes.value) addrs.push(ipRes.value);
+    let addrs;
+    if(GlobalData.forceInterface == false || GlobalData.forceInterface == '0.0.0.0'){
+        addrs = [
+            (GlobalData.osType === 'linux') ? 'your-public-ip' : 'localhost',
+        ];
+        if(ipRes.value) addrs.push(ipRes.value);
+    }else{
+        addrs = [GlobalData.forceInterface];
+    }
 
     //Admin PIN
     let adminPinLines = [];

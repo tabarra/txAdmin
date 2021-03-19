@@ -127,12 +127,40 @@ if(nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)){
     process.exit(1);
 }
 
-//Get Web Port
-const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
-if(!/^\d+$/.test(txAdminPortConvar)){
-    logDie(`txAdminPort is not valid.`);
+
+//Checking for Zap Configuration file
+const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.jsonc');
+let zapCfgData, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo;
+if(fs.existsSync(zapCfgFile)){
+    log('Loading Zap-Hosting configuration file.');
+    try {
+        zapCfgData = JSON.parse(fs.readFileSync(zapCfgFile));
+        forceInterface = zapCfgData.interface;
+        forceFXServerPort = zapCfgData.fxServerPort;
+        txAdminPort = zapCfgData.txAdminPort;
+        loginPageLogo = zapCfgData.loginPageLogo;
+
+        fs.unlinkSync(zapCfgFile);
+    } catch (error) {
+        logDie(`Failed to load with Zap-Hosting configuration error: ${error.message}`);
+    }
+}else{
+    forceFXServerPort = false;
+    loginPageLogo = false;
+
+    const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
+    if(!/^\d+$/.test(txAdminPortConvar)) logDie(`txAdminPort is not valid.`);
+    txAdminPort = parseInt(txAdminPortConvar);
+
+    const txAdminInterfaceConvar = GetConvar('txAdminInterface', 'false').trim();
+    if(txAdminInterfaceConvar == 'false'){
+        forceInterface = false;
+    }else{
+        if(!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(txAdminInterfaceConvar)) logDie(`txAdminInterface is not valid.`);
+        forceInterface = txAdminInterfaceConvar;
+    }
 }
-const txAdminPort = parseInt(txAdminPortConvar);
+// dir({zapCfgData, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo}); //DEBUG
 
 //Get Debug/Dev convars
 const txAdminVerboseConvar = GetConvar('txAdminVerbose', 'false').trim();
@@ -163,14 +191,18 @@ GlobalData = {
     fxServerVersion,
     txAdminVersion,
     txAdminVersionBestBy,
-    //Convars
+
+    //Convars - default
     txAdminResourcePath,
     fxServerPath,
     dataPath,
-    txAdminPort,
+    //Convars - zap dependant
+    forceInterface, forceFXServerPort, txAdminPort, loginPageLogo,
+    //Convars - Debug
     verbose,
     debugPlayerlistGenerator,
     debugExternalSource,
+
     //Consts
     validIdentifiers:{
         steam: /^steam:1100001[0-9A-Fa-f]{8}$/,
@@ -183,6 +215,7 @@ GlobalData = {
     regexActionID: new RegExp(`^[${noLookAlikesAlphabet}]{4}-[${noLookAlikesAlphabet}]{4}$`),
     regexWhitelistReqID: new RegExp(`R[${noLookAlikesAlphabet}]{4}`),
     noLookAlikesAlphabet,
+
     //Vars
     cfxUrl: null,
     osDistro: null,

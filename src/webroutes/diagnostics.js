@@ -201,13 +201,13 @@ async function getHostData(){
         const userInfo = os.userInfo();
         const cpus = os.cpus();
 
-        let clockWarning;
-        if(cpus[0].speed <= 2400){
-            clockWarning = '<span class="badge badge-danger"> VERY SLOW! </span>';
-        }else if(cpus[0].speed < 3000){
-            clockWarning = `<span class="badge badge-warning"> SLOW </span>`;
-        }else{
-            clockWarning = ``;
+        let clockWarning = ``;
+        if(cpus.length < 8){
+            if(cpus[0].speed <= 2400){
+                clockWarning = '<span class="badge badge-danger"> VERY SLOW! </span>';
+            }else if(cpus[0].speed < 3000){
+                clockWarning = `<span class="badge badge-warning"> SLOW </span>`;
+            }
         }
 
         hostData.nodeVersion = process.version;

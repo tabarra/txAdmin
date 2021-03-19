@@ -222,7 +222,12 @@ module.exports = class WebServer {
                 logError(`If you want to run multiple txAdmin, check the documentation for the port convar.`);
                 process.exit();
             });
-            this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', async () => {
+            let iface = '0.0.0.0';
+            if(GlobalData.forceInterface !== false){
+                logWarn(`Starting with interface ${iface}. If the HTTP server doesn't start, this is probably the reason.`);
+                iface = GlobalData.forceInterface
+            }
+            this.httpServer.listen(GlobalData.txAdminPort, iface, async () => {
                 globals.databus.isWebserverListening = true;
             });
         } catch (error) {
