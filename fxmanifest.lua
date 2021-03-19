@@ -8,7 +8,7 @@ repository 'https://github.com/tabarra/txAdmin'
 version '3.5.0-dev'
 
 rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aware my resources *will* become incompatible once RedM ships.'
-fx_version 'bodacious'
+fx_version 'cerulean'
 games { 'gta5', 'rdr3' }
 
 -- NOTE: Due to global package constraints, js scripts will be loaded from main.js
