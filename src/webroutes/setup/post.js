@@ -83,7 +83,7 @@ module.exports = async function SetupPost(ctx) {
     }else if(action == 'validateCFGFile'){
         return await handleValidateCFGFile(ctx);
 
-    }else if(action == 'save' && ctx.request.body.type == 'common'){
+    }else if(action == 'save' && ctx.request.body.type == 'popular'){
         return await handleSaveDeployerImport(ctx);
 
     }else if(action == 'save' && ctx.request.body.type == 'remote'){
