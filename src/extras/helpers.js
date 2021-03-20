@@ -137,6 +137,7 @@ function resolveCFGFilePath(cfgPath, serverDataPath) {
  *  - port mismatch
  *  - "stop monitor"
  *  - if endpoint on 40120~40130
+ *  - zap-hosting iface and port enforcement
  * @param {string} rawCfgFile
  */
 function getFXServerPort(rawCfgFile) {
@@ -150,39 +151,65 @@ function getFXServerPort(rawCfgFile) {
         while (match = regex.exec(rawCfgFile)) {
             matches.push({
                 line: match[0].trim(),
-                type: match[1],
-                interface: match[2],
-                port: match[3],
+                type: match[1].toLowerCase(),
+                iface: match[2],
+                port: parseInt(match[3]),
             });
         }
     } catch (error) {
         throw new Error("Regex Match Error");
     }
 
-    if(!matches.length) throw new Error("No <code>endpoint_add_*</code> found inside the file");
-
-    const validTCPEndpoint = matches.find((match) => {
-        return (match.type.toLowerCase() === 'tcp' && (match.interface === '0.0.0.0' || match.interface === '127.0.0.1'))
-    })
-    if(!validTCPEndpoint) throw new Error("You MUST have one <code>endpoint_add_tcp</code> with IP 0.0.0.0 in your config");
-
-    const validUDPEndpoint = matches.find((match) => {
-        return (match.type.toLowerCase() === 'udp')
-    })
-    if(!validUDPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_udp</code> in your config");
+    //Checking if endpoints present at all
+    const oneTCPEndpoint = matches.find((m) => (m.type === 'tcp'));
+    if(!oneTCPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_tcp</code> in your config");
+    const oneUDPEndpoint = matches.find((m) => (m.type === 'udp'));
+    if(!oneUDPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_udp</code> in your config");
 
     //FIXME: Think of something to make this work:
-    //  https://forum.fivem.net/t/release-txadmin-manager-discord-bot-live-console-playerlist-autorestarter/530475/348?u=tabarra
+    const firstPort = matches[0].port;
     matches.forEach((m) => {
-        if(m.port !== matches[0].port) throw new Error("All <code>endpoint_add_*</code> MUST have the same port")
+        if(m.port !== firstPort) throw new Error("All <code>endpoint_add_*</code> MUST have the same port");
     });
 
-    const port = parseInt(matches[0].port);
-    if(port >= 40120 && port <= 40130){
+    if(firstPort >= 40120 && firstPort <= 40130){
         throw new Error(`The port ${port} is dedicated for txAdmin and can not be used for FXServer, please edit your <code>endpoint_add_*</code>`);
     }
 
-    return port;
+    //IF Zap-hosting interface bind enforcement
+    if(GlobalData.forceInterface){
+        const stdMessage = [
+            `Remove all lines containing <code>endpoint_add</code> and add the lines below to the top of your file.`,
+            `<code>endpoint_add_tcp "127.0.0.1:${GlobalData.forceFXServerPort}"`,
+            `endpoint_add_tcp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}"`,
+            `endpoint_add_udp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}" </code>`,
+        ].join('\n<br>');
+
+        //Check if all ports are the ones being forced
+        if(firstPort !== GlobalData.forceFXServerPort){
+            throw new Error(`Zap-Hosting: invalid port found.\n${stdMessage}`);
+        }
+
+        //Check if all interfaces are the ones being forced
+        const invalidInterface = matches.find((match) => {
+            return (match.iface !== GlobalData.forceInterface && match.iface !== '127.0.0.1')
+        });
+        if(invalidInterface) throw new Error(`Zap-Hosting: invalid interface '${invalidInterface.iface}'.\n${stdMessage}`);
+
+        //Check if the server is listening on the loopback interface
+        const listeningOnLoopback = matches.find((match) => {
+            return (match.type === 'tcp' && match.iface === '127.0.0.1')
+        });
+        if(!listeningOnLoopback) throw new Error(`Zap-Hosting: missing interface '127.0.0.1'.\n${stdMessage}`);
+
+    }else{
+        const validTCPEndpoint = matches.find((match) => {
+            return (match.type === 'tcp' && (match.iface === '0.0.0.0' || match.iface === '127.0.0.1'))
+        })
+        if(!validTCPEndpoint) throw new Error("You MUST have one <code>endpoint_add_tcp</code> with IP 0.0.0.0 in your config");
+    }
+
+    return firstPort;
 }
 
 

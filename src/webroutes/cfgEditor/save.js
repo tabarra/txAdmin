@@ -35,6 +35,13 @@ module.exports = async function CFGEditorSave(ctx) {
         return ctx.send({type: 'danger', message});
     }
 
+    //Validating CFG Data
+    try {
+        const port = helpers.getFXServerPort(ctx.request.body.cfgData);
+    } catch (error) {
+        return ctx.send({type: 'danger', message: `<strong>server.cfg error:</strong> <br>${error.message}`});
+    }
+
     //Saving backup file
     const cfgFilePath = helpers.resolveCFGFilePath(globals.fxRunner.config.cfgPath, globals.fxRunner.config.serverDataPath);
     try {

@@ -4,6 +4,7 @@
 - [x] convert the logger to lua and use fd3 (thanks @AvarianKnight)
 - [x] increased chart performance by 60%
 - [x] settings/save/monitor: fixed schedules restart times validation
+- [x] cfg editor: save on ctrl+s
 - [ ] login page indicate if the `admins.json` file is not found
 - [ ] xxxx
 
