@@ -122,6 +122,21 @@ async function handleSetVariables(ctx) {
             : `mysql://${userVars.dbUsername}@${userVars.dbHost}/${userVars.dbName}?charset=utf8mb4`;
     }
 
+    //Server Endpoints
+    if(GlobalData.forceInterface){
+        const suffix = '# zap-hosting: do not modify!'
+        userVars.serverEndpoints = [
+            `endpoint_add_tcp "127.0.0.1:${GlobalData.forceFXServerPort}" ${suffix}`,
+            `endpoint_add_tcp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}" ${suffix}`,
+            `endpoint_add_udp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}" ${suffix}`,
+        ].join('\n');
+    }else{
+        userVars.serverEndpoints = [
+            `endpoint_add_tcp "0.0.0.0:30120"`,
+            `endpoint_add_udp "0.0.0.0:30120"`,
+        ].join('\n');
+    }
+
     //Setting identifiers array
     const admin = globals.authenticator.getAdminByName(ctx.session.auth.username);
     if(!admin) return ctx.send({type: 'danger', message: "Admin not found."});
@@ -173,7 +188,7 @@ async function handleSaveConfig(ctx) {
     try {
         const port = helpers.getFXServerPort(serverCFG);
     } catch (error) {
-        return ctx.send({type: 'danger', message: `<strong>CFG File error:</strong> ${error.message}`});
+        return ctx.send({type: 'danger', message: `<strong>server.cfg error:</strong> <br>${error.message}`});
     }
 
     //Saving CFG file

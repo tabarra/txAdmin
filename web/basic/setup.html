@@ -378,7 +378,7 @@
     <script src="https://unpkg.com/materialize-stepper@3.1.0/dist/js/mstepper.js"></script>
     <script>
         //Constants & vars
-        const recipesIndexURL = 'https://raw.githubusercontent.com/tabarra/txAdmin-recipes/main/indexv2.json';
+        const recipesIndexURL = 'https://raw.githubusercontent.com/tabarra/txAdmin-recipes/main/indexv3.json';
         const txDataPath = '{{it.txDataPath}}';
         const deployerEngineVersion = parseInt('{{it.deployerEngineVersion}}');
         const isReset = ('{{it.isReset}}' === 'true');
@@ -568,20 +568,20 @@
             //NOTE: mocked
             // const tmpGETResponse = [
             //     {
-            //         "engine": 2,
+            //         "engine": 3,
             //         "name": "CFX Default",
             //         "author": "Tabarra",
-            //         "version": "2.0.0",
+            //         "version": "3.0.0",
             //         "description": "Recipe for the base resources required to run a minimal FiveM server.",
-            //         "url": "https://raw.githubusercontent.com/tabarra/txAdmin-recipes/76d7564e8d0a2ddab8b1c5cfc2fcb48e5dce57c4/cfx_default/recipe.yaml"
+            //         "url": "https://raw.githubusercontent.com/tabarra/CFX-Default-recipe/main/recipe.yaml"
             //     },
             //     {
-            //         "engine": 2,
+            //         "engine": 3,
             //         "name": "Plume ESX",
             //         "author": "Tabarra & Chip",
-            //         "version": "1.0.0",
-            //         "description": "A full featured (13 jobs) and highly configurable yet lightweight ESX v1.2 base that can be easily extendable.",
-            //         "url": "https://raw.githubusercontent.com/tabarra/txAdmin-recipes/76d7564e8d0a2ddab8b1c5cfc2fcb48e5dce57c4/cfx_default/recipe.yaml"
+            //         "version": "2.0.0",
+            //         "description": "A full featured (13 jobs) and highly configurable yet lightweight ESX v1-final base that can be easily extendable.",
+            //         "url": "https://raw.githubusercontent.com/tabarra/PlumeESX-recipe/master/recipe.yaml"
             //     }
             // ];
             s4PopularTemplateRow.innerText = `Loading templates...`;
@@ -595,8 +595,8 @@
                         s4PopularTemplateRow.innerText = `Failed to load recipe list. 
                         Please click on the "back" button and try again.`;
                     }else{
-                        // loadedTemplates = tmpGETResponse;
                         loadedTemplates = templates;
+                        // loadedTemplates = tmpGETResponse;
                         s4PopularTemplateRow.innerHTML = '';
                         let hasIncompatible = false;
                         loadedTemplates.forEach((recipe, key) => {
@@ -606,7 +606,6 @@
                             newNode.classList.add('col-8');
                             newNode.querySelector('.title > strong').innerText = recipe.name;
                             newNode.querySelector('.description').innerText = recipe.description;
-                            //TODO: make compatibility be an array - ignore old engine versions
                             if(recipe.engine !== deployerEngineVersion){
                                 hasIncompatible = true;
                                 newNode.querySelector('.bigbutton').classList.add('disabled');

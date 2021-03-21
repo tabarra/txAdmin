@@ -40,6 +40,25 @@ module.exports = async function DeployerStepper(ctx) {
     }else if(globals.deployer.step === 'input'){
         renderData.defaultLicenseKey = process.env.TXADMIN_DEFAULT_LICENSE || '';
         renderData.requireDBConfig = globals.deployer.recipe.requireDBConfig;
+        if(GlobalData.deployerDefaults){
+            renderData.defaults = {
+                autofilled: true,
+                license: GlobalData.deployerDefaults.license || '',
+                mysqlHost: GlobalData.deployerDefaults.mysqlHost || 'localhost',
+                mysqlUser: GlobalData.deployerDefaults.mysqlUser || 'root',
+                mysqlPassword: GlobalData.deployerDefaults.mysqlPassword || '',
+                mysqlDatabase: GlobalData.deployerDefaults.mysqlDatabase || globals.deployer.deploymentID,
+            }
+        }else{
+            renderData.defaults = {
+                autofilled: false,
+                license: process.env.TXADMIN_DEFAULT_LICENSE || '',
+                mysqlHost: 'localhost',
+                mysqlUser: 'root',
+                mysqlPassword: '',
+                mysqlDatabase: globals.deployer.deploymentID,
+            }
+        }
 
         const recipeVars = globals.deployer.getRecipeVars();
         renderData.inputVars = Object.keys(recipeVars).map(name => {

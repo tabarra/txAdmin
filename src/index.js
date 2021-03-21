@@ -129,8 +129,8 @@ if(nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)){
 
 
 //Checking for Zap Configuration file
-const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.jsonc');
-let zapCfgData, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo;
+const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
+let zapCfgData, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults;
 if(fs.existsSync(zapCfgFile)){
     log('Loading Zap-Hosting configuration file.');
     try {
@@ -139,14 +139,22 @@ if(fs.existsSync(zapCfgFile)){
         forceFXServerPort = zapCfgData.fxServerPort;
         txAdminPort = zapCfgData.txAdminPort;
         loginPageLogo = zapCfgData.loginPageLogo;
+        deployerDefaults = {
+            license: zapCfgData.defaults.license,
+            mysqlHost: zapCfgData.defaults.mysqlHost,
+            mysqlUser: zapCfgData.defaults.mysqlUser,
+            mysqlPassword: zapCfgData.defaults.mysqlPassword,
+            mysqlDatabase: zapCfgData.defaults.mysqlDatabase,
+        }
 
-        fs.unlinkSync(zapCfgFile);
+        // fs.unlinkSync(zapCfgFile);
     } catch (error) {
         logDie(`Failed to load with Zap-Hosting configuration error: ${error.message}`);
     }
 }else{
     forceFXServerPort = false;
     loginPageLogo = false;
+    deployerDefaults = false;
 
     const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
     if(!/^\d+$/.test(txAdminPortConvar)) logDie(`txAdminPort is not valid.`);
@@ -160,7 +168,7 @@ if(fs.existsSync(zapCfgFile)){
         forceInterface = txAdminInterfaceConvar;
     }
 }
-// dir({zapCfgData, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo}); //DEBUG
+// dir({zapCfgData, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults}); //DEBUG
 
 //Get Debug/Dev convars
 const txAdminVerboseConvar = GetConvar('txAdminVerbose', 'false').trim();
@@ -197,7 +205,7 @@ GlobalData = {
     fxServerPath,
     dataPath,
     //Convars - zap dependant
-    forceInterface, forceFXServerPort, txAdminPort, loginPageLogo,
+    forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults,
     //Convars - Debug
     verbose,
     debugPlayerlistGenerator,
