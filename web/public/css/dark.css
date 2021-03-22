@@ -206,6 +206,10 @@ body.theme--dark .nav-link:hover {
   background-color: #2f2f30;
 }
 
+body.theme--dark .nav-link.nav-link-disabled {
+  color: #656568 !important;
+}
+
 body.theme--dark .nav-link.active {
   color: #29292A !important;
   font-weight: 600;
@@ -251,6 +255,10 @@ body.theme--dark pre, body.theme--dark .close {
 }
 
 body.theme--dark [data-notify="message"] > pre {
+  color: #29292A;
+}
+
+body.theme--dark button[data-notify="dismiss"] {
   color: #29292A;
 }
 

@@ -131,16 +131,16 @@
 </body>
 
 <script>
-    let warnMain = document.getElementById('warn-main');
-    let warnBackdrop = document.getElementById('warn-backdrop');
-    let warnTitleInner = document.getElementById('warn-title-inner');
-    let warnMessage = document.getElementById('warn-message');
-    let warnAuthor = document.getElementById('warn-author');
-    let warnInstruction = document.getElementById('warn-instruction');
-    let warnOpenSound = new Audio('assets/warning_open.mp3');
-    let warnPulseSound = new Audio('assets/warning_pulse.mp3');
+    const warnMain = document.getElementById('warn-main');
+    const warnBackdrop = document.getElementById('warn-backdrop');
+    const warnTitleInner = document.getElementById('warn-title-inner');
+    const warnMessage = document.getElementById('warn-message');
+    const warnAuthor = document.getElementById('warn-author');
+    const warnInstruction = document.getElementById('warn-instruction');
+    const warnOpenSound = new Audio('assets/warning_open.mp3');
+    const warnPulseSound = new Audio('assets/warning_pulse.mp3');
     const svgWarn = `<svg class="warn-icon"><use xlink:href="#svg-warn"></use></svg>`;
-    let isDebug = false;
+    const isDebug = false;
 
     function openWarning(author, reason, tTitle, tWarnedBy, tInstructions) {
         warnTitleInner.innerText = tTitle;

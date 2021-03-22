@@ -187,14 +187,14 @@ function getFXServerPort(rawCfgFile) {
 
         //Check if all ports are the ones being forced
         if(firstPort !== GlobalData.forceFXServerPort){
-            throw new Error(`Zap-Hosting: invalid port found.\n${stdMessage}`);
+            throw new Error(`Zap-Hosting: invalid port found.<br>\n ${stdMessage}`);
         }
 
         //Check if all interfaces are the ones being forced
         const invalidInterface = matches.find((match) => {
             return (match.iface !== GlobalData.forceInterface && match.iface !== '127.0.0.1')
         });
-        if(invalidInterface) throw new Error(`Zap-Hosting: invalid interface '${invalidInterface.iface}'.\n${stdMessage}`);
+        if(invalidInterface) throw new Error(`Zap-Hosting: invalid interface '${invalidInterface.iface}'.<br>\n${stdMessage}`);
 
         //Check if the server is listening on the loopback interface
         const listeningOnLoopback = matches.find((match) => {

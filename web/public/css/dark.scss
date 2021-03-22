@@ -237,6 +237,10 @@ body.theme--dark {
       background-color: lighten($txadmin-dark-900, 2.5%);
     }
 
+    &.nav-link-disabled {
+      color: $txadmin-dark-600 !important;
+    }
+
     &.active {
       color: $txadmin-dark-900 !important;
       font-weight: 600;
@@ -284,6 +288,9 @@ body.theme--dark {
     color: #fff;
   }
   [data-notify="message"] > pre{
+    color: $txadmin-dark-900;
+  }
+  button[data-notify="dismiss"]{
     color: $txadmin-dark-900;
   }
 
