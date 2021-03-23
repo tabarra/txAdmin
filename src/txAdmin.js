@@ -28,7 +28,6 @@ globals = {
     //      will have to rethink the plans for this variable.
     databus: {
         //internal
-        isWebserverListening: false,
         resourcesList: null,
         serverLog: [],
         updateChecker: null,

@@ -29,6 +29,7 @@ module.exports = class WebServer {
         this.intercomToken = nanoid();
         this.koaSessionKey = `txAdmin:${globals.info.serverProfile}:sess`;
         this.webConsole = null;
+        this.status = 0;
 
         this.setupKoa();
         this.setupWebsocket();
@@ -189,6 +190,9 @@ module.exports = class WebServer {
 
     //================================================================
     setupServerCallbacks(){
+        //Just in case i want to re-execute this function
+        this.status = 0;
+
         //Print cfx.re url... when available
         //NOTE: perhaps open the URL automatically with the `open` library
         const validUrlRegex = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\.users\.cfx\.re$/i
@@ -224,11 +228,16 @@ module.exports = class WebServer {
             });
             let iface = '0.0.0.0';
             if(GlobalData.forceInterface !== false){
-                logWarn(`Starting with interface ${iface}. If the HTTP server doesn't start, this is probably the reason.`);
-                iface = GlobalData.forceInterface
+                logWarn(`Starting with interfaces ${iface} and 127.0.0.1; If the HTTP server doesn't start, this is probably the reason.`);
+                iface = GlobalData.forceInterface;
+                this.httpServer.listen(GlobalData.txAdminPort, '127.0.0.1', async () => {
+                    this.status++;
+                });
+            }else{
+                this.status++;
             }
             this.httpServer.listen(GlobalData.txAdminPort, iface, async () => {
-                globals.databus.isWebserverListening = true;
+                this.status++;
             });
         } catch (error) {
             logError('Failed to start HTTP server with error:');

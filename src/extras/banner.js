@@ -84,12 +84,23 @@ const getOSMessage = async () => {
 }
 
 const awaitHttp = new Promise((resolve, reject) => {
-    const interval = setInterval(() => {
-        if (globals.databus.isWebserverListening == true) {
+    const tickLimit = 100; //if over 15 seconds
+    let counter = 0;
+    let interval;
+    const check = () => {
+        counter++;
+        const status = (globals.webServer && globals.webServer.status)? globals.webServer.status : false;
+        if (status == 2) {
             clearInterval(interval);
             resolve(true);
+        }else if(counter == tickLimit){
+            clearInterval(interval);
+            interval = setInterval(check, 2500);
+        }else if(counter > tickLimit){
+            logWarn(`The webserver is taking too long to start. Current status: ${status}`);
         }
-    }, 150);
+    }
+    interval = setInterval(check, 150);
 });
 
 const awaitMasterPin = new Promise((resolve, reject) => {
@@ -150,5 +161,7 @@ module.exports.printBanner = async () => {
         ...adminPinLines,
     ];
     printMultiline(boxen(boxLines.join('\n'), boxOptions), chalk.bold.bgGreen);
-    printMultiline(msgRes.value, chalk.bold.bgBlue)
+    if(GlobalData.forceInterface == false){
+        printMultiline(msgRes.value, chalk.bold.bgBlue);
+    }
 }
