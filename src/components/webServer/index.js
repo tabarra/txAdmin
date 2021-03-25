@@ -218,27 +218,37 @@ module.exports = class WebServer {
 
         //HTTP Server
         try {
-            this.httpServer = HttpClass.createServer(this.httpCallbackHandler.bind(this, 'httpserver'));
-            this.httpServer.on('error', (error)=>{
+            const listenErrorHandler = (error)=>{
                 if(error.code !== 'EADDRINUSE') return;
                 logError(`Failed to start HTTP server, port ${error.port} already in use.`);
                 logError(`Maybe you already have another txAdmin running in this port.`);
                 logError(`If you want to run multiple txAdmin, check the documentation for the port convar.`);
                 process.exit();
-            });
-            let iface = '0.0.0.0';
-            if(GlobalData.forceInterface !== false){
-                logWarn(`Starting with interfaces ${iface} and 127.0.0.1; If the HTTP server doesn't start, this is probably the reason.`);
-                iface = GlobalData.forceInterface;
-                this.httpServer.listen(GlobalData.txAdminPort, '127.0.0.1', async () => {
+            }
+            this.httpServer = HttpClass.createServer(this.httpCallbackHandler.bind(this, 'httpserver'));
+            this.httpServer.on('error', listenErrorHandler);
+
+            if(GlobalData.forceInterface){
+                logWarn(`Starting with interfaces ${GlobalData.forceInterface} and 127.0.0.1.`);
+                logWarn(`If the HTTP server doesn't start, this is probably the reason.`);
+                this.httpServer.listen(GlobalData.txAdminPort, GlobalData.forceInterface, async () => {
+                    logOk(`Listening on ${GlobalData.forceInterface}`);
+                    this.status++;
+                });
+                this.httpServerLocal = HttpClass.createServer(this.httpCallbackHandler.bind(this, 'httpserver'));
+                this.httpServerLocal.on('error', listenErrorHandler);
+                this.httpServerLocal.listen(GlobalData.txAdminPort, '127.0.0.1', async () => {
+                    logOk(`Listening on 127.0.0.1`);
                     this.status++;
                 });
             }else{
                 this.status++;
+                this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', async () => {
+                    logOk(`Listening on 0.0.0.0`);
+                    this.status++;
+                });
             }
-            this.httpServer.listen(GlobalData.txAdminPort, iface, async () => {
-                this.status++;
-            });
+
         } catch (error) {
             logError('Failed to start HTTP server with error:');
             dir(error);
