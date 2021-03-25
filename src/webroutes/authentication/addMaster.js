@@ -201,7 +201,7 @@ async function handleSave(ctx) {
 
     //Creating admins file
     try {
-        await globals.authenticator.createAdminsFile(ctx.session.tmpAddMasterUserInfo.name, identifier, ctx.session.tmpAddMasterUserInfo, password);
+        await globals.authenticator.createAdminsFile(ctx.session.tmpAddMasterUserInfo.name, identifier, ctx.session.tmpAddMasterUserInfo, password, true);
     } catch (error) {
         return returnJustMessage(
             ctx,

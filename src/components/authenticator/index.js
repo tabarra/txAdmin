@@ -50,8 +50,14 @@ module.exports = class Authenticator {
 
         //Printing PIN or starting loop
         if (!adminFileExists) {
-            this.addMasterPin = (Math.random()*10000).toFixed().padStart(4, '0');
-            this.admins = false;
+            if(!GlobalData.forceMasterAccount){
+                this.addMasterPin = (Math.random()*10000).toFixed().padStart(4, '0');
+                this.admins = false;
+            }else{
+                log(`Setting up master account '${GlobalData.forceMasterAccount.name}'. The password is the same as in zap-hosting.com.`);
+                this.createAdminsFile(GlobalData.forceMasterAccount.name, false, false, GlobalData.forceMasterAccount.password_hash, false)
+            }
+
         }else{
             this.refreshAdmins(true);
             //Cron Function
@@ -69,24 +75,27 @@ module.exports = class Authenticator {
      * @param {string} identifier
      * @param {object} provider_data
      * @param {string} password backup password
+     * @param {boolean} isPlainText
      * @returns {(boolean)} true or throws an error
      */
-    async createAdminsFile(username, identifier, provider_data, password){
+    async createAdminsFile(username, identifier, provider_data, password, isPlainText){
         //Check if admins file already exist
-        if(this.admins != false) throw new Error("Admins file already exists.");
+        if(this.admins !== false && this.admins !== null) throw new Error("Admins file already exists.");
 
         //Creating admin array
+        let providers = {};
+        if(identifier && provider_data){
+            providers.citizenfx = {
+                id: username,
+                identifier,
+                data: provider_data
+            }
+        }
         this.admins = [{
             name: username,
             master: true,
-            password_hash: GetPasswordHash(password),
-            providers: {
-                citizenfx: {
-                    id: username,
-                    identifier,
-                    data: provider_data
-                }
-            },
+            password_hash: (isPlainText)? GetPasswordHash(password) : password,
+            providers,
             permissions: []
         }];
 

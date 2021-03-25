@@ -130,7 +130,7 @@ if(nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)){
 
 //Checking for Zap Configuration file
 const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
-let zapCfgData, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults;
+let zapCfgData, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, forceMasterAccount, deployerDefaults;
 if(fs.existsSync(zapCfgFile)){
     log('Loading Zap-Hosting configuration file.');
     try {
@@ -139,12 +139,25 @@ if(fs.existsSync(zapCfgFile)){
         forceFXServerPort = zapCfgData.fxServerPort;
         txAdminPort = zapCfgData.txAdminPort;
         loginPageLogo = zapCfgData.loginPageLogo;
+        forceMasterAccount = zapCfgData.customer;
         deployerDefaults = {
             license: zapCfgData.defaults.license,
             mysqlHost: zapCfgData.defaults.mysqlHost,
             mysqlUser: zapCfgData.defaults.mysqlUser,
             mysqlPassword: zapCfgData.defaults.mysqlPassword,
             mysqlDatabase: zapCfgData.defaults.mysqlDatabase,
+        }
+        if(
+            zapCfgData.customer &&
+            typeof zapCfgData.customer.name == 'string' &&
+            typeof zapCfgData.customer.password_hash == 'string'
+        ){
+            forceMasterAccount = {
+                name: zapCfgData.customer.name,
+                password_hash: zapCfgData.customer.password_hash,
+            }
+        }else{
+            forceMasterAccount = false;
         }
 
         // fs.unlinkSync(zapCfgFile);
@@ -154,6 +167,7 @@ if(fs.existsSync(zapCfgFile)){
 }else{
     forceFXServerPort = false;
     loginPageLogo = false;
+    forceMasterAccount = false;
     deployerDefaults = false;
 
     const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
@@ -205,7 +219,7 @@ GlobalData = {
     fxServerPath,
     dataPath,
     //Convars - zap dependant
-    forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults,
+    forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, forceMasterAccount, deployerDefaults,
     //Convars - Debug
     verbose,
     debugPlayerlistGenerator,
