@@ -1,4 +1,7 @@
-# Custom Events
+---
+title: Custom Events 
+hide_table_of_contents: false
+---
 
 Starting in v3.2, **txAdmin** now has the ability to trigger server events.  
 The event name will be `txAdmin:events:<name>` and the first (and only) parameter will be a table that may contain relevant data.
@@ -9,7 +12,7 @@ Arguments:
 - `secondsRemaining`: The number of seconds before the scheduled restart.  
 
 Example usage on ESX v1.2:
-```lua
+```js title="event.lua"
 ESX = nil
 TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 

@@ -1,4 +1,8 @@
-# Recipe Files
+---
+title: Recipe Files
+description: Recipes are the new way to get pre-built and tested servers, easier, faster and more securely.
+hide_table_of_contents: false
+---
 A Recipe is a YAML document that describes how to deploy a server properly: from downloading resources, to configuring the `server.cfg` file.  
 You can run a recipe from txAdmin's built-in Server Deployer.  
 Recipes will be "jailed" to the target folder, so for example they won't be able to execute `write_file` to your `admins.json`.  

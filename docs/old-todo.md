@@ -1,6 +1,13 @@
-> NOTE: this is really not that great of an history, it was very spotty before v2.0.0-conv
+---
+title: Older To-Do 
+hide_table_of_contents: false
+--- 
 
-## Older TODO:
+:::note
+This is really not that great of an history, it was very spotty before v2.0.0-conv
+:::
+
+## Old To-Do:
 - [x] **Improve the README.**
 - [x] Get the correct PID through pidtree (should we get only the correct fxserver's pid, or sum all the processes? This code usually takes about 40MB so it might be significant enough to include)
 - [x] Put the configuration into a json and set default values

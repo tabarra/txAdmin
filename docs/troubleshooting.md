@@ -1,5 +1,7 @@
-# Troubleshooting
-
+---
+title: Troubleshooting
+hide_table_of_contents: false
+---
 First and foremost check if you are using the most recent version of txAdmin and that you followed the installation instructions.
 
 ## Problems running txAdmin  
