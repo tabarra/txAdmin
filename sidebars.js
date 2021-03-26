@@ -6,6 +6,7 @@ module.exports = {
       items: [
         'building',
         'cache-wiping',
+        'convars',
         'dev-interface',
         'events',
         'extra-logging',
