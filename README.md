@@ -19,6 +19,7 @@
 ## Main Features
 - Recipe-based Server Deployer: create a server in under 60 seconds! ([more info](docs/recipe.md))
 - Start/Stop/Restart your server instance or resources
+- Server Performance Chart
 - Access control:
 	- Login via Password or CitizenFX
 	- Admin permission system ([more info](docs/permissions.md))
