@@ -1,4 +1,9 @@
-## Logging Extra Data
+---
+title: Logging Extra Data
+hide_table_of_contents: false
+--- 
+import TOCInline from '@theme/TOCInline';
+
 This feature allows you to add logging for custom commands like `/car` and `/tp`.  
 To do that, you will need to edit the scripts of those commands adding a **txAdmin** callback.  
   
@@ -11,7 +16,7 @@ Where `rawCommand` is a variable containing the full command with parameters.
   
 ### Example
 In this example, we will log data from the `/car` command from the `CarCommand` script.
-```lua
+```js title="/CarCommand/client.lua"
 RegisterCommand('car', function(source, args, rawCommand)
     TriggerServerEvent('txaLogger:CommandExecuted', rawCommand) -- txAdmin logging Callback
 

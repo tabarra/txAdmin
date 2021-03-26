@@ -1,4 +1,7 @@
-## Interface Development
+---
+title: Interface Development
+hide_table_of_contents: false
+--- 
 **DO NOT** Modify `css/coreui.css`. Either do a patch in the `custom.css` or modify the SCSS variables.  
 This doc is a reference if you are trying to re-build the `css/coreui.css` from the SCSS source.  
 The only thing I changed from CoreUI was the `aside-menu` size from 200px to 300px in `scss/_variables.scss : $aside-menu-width`.  
@@ -18,7 +21,8 @@ $ npx node-sass --output-style expanded --source-map true --source-map-contents 
   
 Then copy the `src/css/style.css` to txAdmin's folder.  
   
-----
-  
-**Note:** When it comes to interface, I have no clue what I'm doing, so this is probably not right.  
-*-- Tabarra*
+:::tip **Note:**
+When it comes to interface, I have no clue what I'm doing, so this is probably not right.
+
+*-- Tabarra* 😜
+:::
