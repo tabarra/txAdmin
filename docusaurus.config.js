@@ -13,8 +13,8 @@ module.exports = {
     navbar: {
       title: 'txAdmin Docs',
       logo: {
-        alt: 'txAdmin Logo',
-        src: 'img/logo.svg',
+        alt: 'Logo',
+        src: 'img/logo.png',
       },
       items: [
         {

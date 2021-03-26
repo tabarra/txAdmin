@@ -2,14 +2,25 @@ module.exports = {
   docs: [
     {
       type: 'category',
-      label: 'Docusaurus Tutorial',
+      label: 'txAdmin Documentation',
       items: [
-        'getting-started',
-        'create-a-page',
-        'create-a-document',
-        'create-a-blog-post',
-        'markdown-features',
-        'thank-you',
+        'building',
+        'cache_wiping',
+        'dev_interface',
+        'events',
+        'extra_logging',
+        'permissions',
+        'recipe',
+        'translation',
+        'troubleshooting',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Basement',
+      items: [
+        'feature_graveyard',
+        'old_todo',
       ],
     },
   ],
