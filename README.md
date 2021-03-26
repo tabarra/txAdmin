@@ -3,7 +3,7 @@
 		txAdmin for FiveM
 	</h1>
 	<p align="center">
-		<img width="420" height="237" src="docs/banner.png">
+		<img width="420" height="237" src="docs/static/img/banner.png">
 	</p>
 	<h4 align="center">
 		Join our Discord Server: &nbsp; <a href="https://discord.gg/AFAAXzq"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
