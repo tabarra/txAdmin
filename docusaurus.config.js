@@ -1,7 +1,7 @@
 /** @type {import('@docusaurus/types').DocusaurusConfig} */
 module.exports = {
   title: 'txAdmin Docs',
-  tagline: 'Remotely Manage & Monitor your GTA5 FiveM Server',
+  tagline: 'txAdmin is a full featured web panel to Manage & Monitor your FiveM Server remotely, in use by over five thousand servers worldwide at any given time.',
   url: 'https://docs.txadm.in',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -18,7 +18,7 @@ module.exports = {
       },
       items: [
         {
-          to: 'docs/',
+          to: 'docs/building',
           activeBasePath: 'docs',
           label: 'Docs',
           position: 'left',
@@ -37,8 +37,12 @@ module.exports = {
           title: 'Docs',
           items: [
             {
-              label: 'Getting Started',
-              to: 'docs/',
+              label: 'Main Docs',
+              to: 'docs/building',
+            },
+            {
+              label: 'Basement',
+              to: 'docs/feature-graveyard',
             },
           ],
         },
@@ -85,6 +89,12 @@ module.exports = {
       '@docusaurus/plugin-client-redirects',
       {
         fromExtensions: ['html'],
+        redirects: [
+          {
+            to: '/docs/building', // string
+            from: ['/docs/'], // string | string[]
+          },
+        ],
       },
     ],
   ],
