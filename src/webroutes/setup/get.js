@@ -30,6 +30,7 @@ module.exports = async function SetupGet(ctx) {
         deployerEngineVersion: engineVersion,
         serverProfile: globals.info.serverProfile,
         txDataPath: GlobalData.dataPath,
+        isZapHosting: GlobalData.isZapHosting,
     }
 
     if(GlobalData.osType == 'windows'){

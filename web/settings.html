@@ -116,8 +116,10 @@
                                     placeholder="C:/Users/Admin/Desktop/server01" {{it.readOnly|isDisabled}}>
                                 <span class="form-text text-muted">
                                     The folder that <strong>contains</strong> the <code>resources</code> and
-                                    <code>cache</code> folders, usually it's where you put your
-                                    <code>server.cfg</code>.
+                                    <code>cache</code> folders, usually it's where you put your <code>server.cfg</code>. <br>
+                                    {{@if(it.isZapHosting)}}
+                                        <span class="font-weight-bold">Zap-Hosting warning: this path must start with <code>{{it.txDataPath}}</code>.</span>
+                                    {{/if}}
                                 </span>
                             </div>
                         </div>

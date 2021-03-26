@@ -251,7 +251,10 @@
                                     <div class="d-none" id="s4LocalDataPathDiv">
                                         The folder that <strong>contains</strong> the <code>resources</code> and
                                         <code>cache</code> folders, usually it's here that you put your <code>server.cfg</code>. <br>
-                                        Also known as Base Folder.
+                                        Also known as Base Folder. <br>
+                                        {{@if(it.isZapHosting)}}
+                                            <span class="font-weight-bold">Zap-Hosting warning: this path must start with <code>{{it.txDataPath}}</code>.</span>
+                                        {{/if}}
                                         <input type="text" class="form-control mt-2" id="s4LocalDataPathInput"
                                             placeholder="C:/Users/Admin/Desktop/server01">
                                         <span id="s4LocalDataPathInputError" class="text-danger fade-in d-none"></span>
@@ -279,6 +282,9 @@
                                     <div class="d-none" id="s5DeployerTargetDiv">
                                         The folder where the server will be deployed to. <br>
                                         This folder will contain all your resources and configuration files. <br>
+                                        {{@if(it.isZapHosting)}}
+                                            <span class="font-weight-bold">Zap-Hosting warning: this path must start with <code>{{it.txDataPath}}</code>.</span> <br>
+                                        {{/if}}
                                         <strong>We strongly recommend using the path suggested below.</strong>
                                         <input type="text" class="form-control mt-2" id="s5DeployerTargetInput"
                                             placeholder="C:/Users/Admin/Desktop/server01/server.cfg">

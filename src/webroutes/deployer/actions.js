@@ -122,7 +122,8 @@ async function handleSetVariables(ctx) {
             : `mysql://${userVars.dbUsername}@${userVars.dbHost}/${userVars.dbName}?charset=utf8mb4`;
     }
 
-    //Server Endpoints
+    //Max Clients & Server Endpoints
+    userVars.maxClients = (GlobalData.deployerDefaults && GlobalData.deployerDefaults.maxClients)? GlobalData.deployerDefaults.maxClients : 48;
     if(GlobalData.forceInterface){
         const suffix = '# zap-hosting: do not modify!'
         userVars.serverEndpoints = [

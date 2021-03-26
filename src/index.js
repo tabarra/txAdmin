@@ -130,11 +130,12 @@ if(nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)){
 
 //Checking for Zap Configuration file
 const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
-let zapCfgData, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, forceMasterAccount, deployerDefaults;
+let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, forceMasterAccount, deployerDefaults;
 if(fs.existsSync(zapCfgFile)){
     log('Loading Zap-Hosting configuration file.');
     try {
         zapCfgData = JSON.parse(fs.readFileSync(zapCfgFile));
+        isZapHosting = true;
         forceInterface = zapCfgData.interface;
         forceFXServerPort = zapCfgData.fxServerPort;
         txAdminPort = zapCfgData.txAdminPort;
@@ -142,6 +143,7 @@ if(fs.existsSync(zapCfgFile)){
         forceMasterAccount = zapCfgData.customer;
         deployerDefaults = {
             license: zapCfgData.defaults.license,
+            maxClients: zapCfgData.defaults.maxClients,
             mysqlHost: zapCfgData.defaults.mysqlHost,
             mysqlUser: zapCfgData.defaults.mysqlUser,
             mysqlPassword: zapCfgData.defaults.mysqlPassword,
@@ -165,6 +167,7 @@ if(fs.existsSync(zapCfgFile)){
         logDie(`Failed to load with Zap-Hosting configuration error: ${error.message}`);
     }
 }else{
+    isZapHosting = false;
     forceFXServerPort = false;
     loginPageLogo = false;
     forceMasterAccount = false;
@@ -182,7 +185,7 @@ if(fs.existsSync(zapCfgFile)){
         forceInterface = txAdminInterfaceConvar;
     }
 }
-// dir({zapCfgData, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults}); //DEBUG
+dir({isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults}); //DEBUG
 
 //Get Debug/Dev convars
 const txAdminVerboseConvar = GetConvar('txAdminVerbose', 'false').trim();
@@ -219,7 +222,7 @@ GlobalData = {
     fxServerPath,
     dataPath,
     //Convars - zap dependant
-    forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, forceMasterAccount, deployerDefaults,
+    isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, forceMasterAccount, deployerDefaults,
     //Convars - Debug
     verbose,
     debugPlayerlistGenerator,

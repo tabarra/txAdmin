@@ -143,32 +143,48 @@ function resolveCFGFilePath(cfgPath, serverDataPath) {
 function getFXServerPort(rawCfgFile) {
     if(rawCfgFile.includes('stop monitor')) throw new Error(`Remove "stop monitor" from your config`);
 
-    const regex = /^\s*endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.*$/gim;
-    // const regex = /endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.*/gi;
-    let matches = [];
+    const maxClientsRegex = /^\s*sv_maxclients\s+(\d+).*$/gim;
+    const endpointsRegex = /^\s*endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.*$/gim;
+    // const endpointsRegex = /endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.*/gi;
+    let endpoints = [];
+    let maxClients = [];
     try {
         let match;
-        while (match = regex.exec(rawCfgFile)) {
-            matches.push({
+        while (match = endpointsRegex.exec(rawCfgFile)) {
+            endpoints.push({
                 line: match[0].trim(),
                 type: match[1].toLowerCase(),
                 iface: match[2],
                 port: parseInt(match[3]),
             });
         }
+        while (match = maxClientsRegex.exec(rawCfgFile)) {
+            maxClients.push(parseInt(match[1]));
+        }
     } catch (error) {
         throw new Error("Regex Match Error");
     }
+    
+    //Checking for the maxClients 
+    if(GlobalData.deployerDefaults && GlobalData.deployerDefaults.maxClients){
+        if(!maxClients.length){
+            throw new Error(`Zap-Hosting: please add 'sv_maxclients ${GlobalData.deployerDefaults.maxClients}' to your server.cfg.`);
+        }
+        if(maxClients.some(mc => mc > GlobalData.deployerDefaults.maxClients)){
+            throw new Error(`Zap-Hosting: your 'sv_maxclients' MUST be less or equal than ${GlobalData.deployerDefaults.maxClients}.`);
+        }
+    }
+
 
     //Checking if endpoints present at all
-    const oneTCPEndpoint = matches.find((m) => (m.type === 'tcp'));
+    const oneTCPEndpoint = endpoints.find((m) => (m.type === 'tcp'));
     if(!oneTCPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_tcp</code> in your config");
-    const oneUDPEndpoint = matches.find((m) => (m.type === 'udp'));
+    const oneUDPEndpoint = endpoints.find((m) => (m.type === 'udp'));
     if(!oneUDPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_udp</code> in your config");
 
     //FIXME: Think of something to make this work:
-    const firstPort = matches[0].port;
-    matches.forEach((m) => {
+    const firstPort = endpoints[0].port;
+    endpoints.forEach((m) => {
         if(m.port !== firstPort) throw new Error("All <code>endpoint_add_*</code> MUST have the same port");
     });
 
@@ -191,19 +207,19 @@ function getFXServerPort(rawCfgFile) {
         }
 
         //Check if all interfaces are the ones being forced
-        const invalidInterface = matches.find((match) => {
+        const invalidInterface = endpoints.find((match) => {
             return (match.iface !== GlobalData.forceInterface && match.iface !== '127.0.0.1')
         });
         if(invalidInterface) throw new Error(`Zap-Hosting: invalid interface '${invalidInterface.iface}'.<br>\n${stdMessage}`);
 
         //Check if the server is listening on the loopback interface
-        const listeningOnLoopback = matches.find((match) => {
+        const listeningOnLoopback = endpoints.find((match) => {
             return (match.type === 'tcp' && match.iface === '127.0.0.1')
         });
         if(!listeningOnLoopback) throw new Error(`Zap-Hosting: missing interface '127.0.0.1'.\n${stdMessage}`);
 
     }else{
-        const validTCPEndpoint = matches.find((match) => {
+        const validTCPEndpoint = endpoints.find((match) => {
             return (match.type === 'tcp' && (match.iface === '0.0.0.0' || match.iface === '127.0.0.1'))
         })
         if(!validTCPEndpoint) throw new Error("You MUST have one <code>endpoint_add_tcp</code> with IP 0.0.0.0 in your config");

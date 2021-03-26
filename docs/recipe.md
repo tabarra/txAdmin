@@ -50,6 +50,8 @@ Default variables:
 - `recipeName`, `recipeAuthor`, `recipeVersion`, `recipeDescription`: Populated from the recipe metadata, if available.
 - `dbHost`, `dbUsername`, `dbPassword`, `dbName`, `dbDelete`, `dbConnectionString`: Populated from the database configuration user input, if available.
 - `svLicense`: Required variable, inputed in the deployer step 2. The deployer will automatically replace `{{svLicense}}` in the `server.cfg` at the end of the deployment.
+- `serverEndpoints`: The `endpoint_add_xxxx` for the server. The deployer will set this with the defaults (`0.0.0.0:30120`) or using the appropriate Zap-Hosting configuration.
+- `maxClients`: The number of max clients for the server. The deployer will set this with the default 48 slots or using the appropriate Zap-Hosting configuration.
   
 In the second step of the deployer, the user will be asked to fill some information required to configure his server which will be loaded into context variables.  
 How to set custom variables:

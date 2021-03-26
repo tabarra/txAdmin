@@ -23,7 +23,9 @@ module.exports = async function SettingsGet(ctx) {
         discord: cleanRenderData(globals.configVault.getScopedStructure('discordBot')),
         readOnly: !ctx.utils.checkPermission('settings.write', modulename, false),
         serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        activeTab: 'global'
+        activeTab: 'global',
+        isZapHosting: GlobalData.isZapHosting,
+        txDataPath: GlobalData.dataPath,
     }
 
     return ctx.utils.render('settings', renderData);
