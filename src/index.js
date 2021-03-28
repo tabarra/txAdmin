@@ -128,9 +128,18 @@ if(nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)){
 }
 
 
+//Get Debug/Dev convars
+const txAdminVerboseConvar = GetConvar('txAdminVerbose', 'false').trim();
+const verbose = (['true', '1', 'on'].includes(txAdminVerboseConvar));
+const txDebugPlayerlistGeneratorConvar = GetConvar('txDebugPlayerlistGenerator', 'false').trim();
+const debugPlayerlistGenerator = (['true', '1', 'on'].includes(txDebugPlayerlistGeneratorConvar));
+const txDebugExternalSourceConvar = GetConvar('txDebugExternalSource', 'false').trim();
+const debugExternalSource = (txDebugExternalSourceConvar !== 'false')? txDebugExternalSourceConvar : false;
+
+
 //Checking for Zap Configuration file
 const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
-let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, forceMasterAccount, deployerDefaults;
+let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, defaultMasterAccount, deployerDefaults;
 if(fs.existsSync(zapCfgFile)){
     log('Loading Zap-Hosting configuration file.');
     try {
@@ -140,7 +149,7 @@ if(fs.existsSync(zapCfgFile)){
         forceFXServerPort = zapCfgData.fxServerPort;
         txAdminPort = zapCfgData.txAdminPort;
         loginPageLogo = zapCfgData.loginPageLogo;
-        forceMasterAccount = zapCfgData.customer;
+        defaultMasterAccount = false;
         deployerDefaults = {
             license: zapCfgData.defaults.license,
             maxClients: zapCfgData.defaults.maxClients,
@@ -149,20 +158,25 @@ if(fs.existsSync(zapCfgFile)){
             mysqlPassword: zapCfgData.defaults.mysqlPassword,
             mysqlDatabase: zapCfgData.defaults.mysqlDatabase,
         }
-        if(
-            zapCfgData.customer &&
-            typeof zapCfgData.customer.name == 'string' &&
-            typeof zapCfgData.customer.password_hash == 'string'
-        ){
-            forceMasterAccount = {
+        if(zapCfgData.customer){
+            if(typeof zapCfgData.customer.name !== 'string') throw new Error("customer.name is not a string.");
+            if(zapCfgData.customer.name.length < 3) throw new Error("customer.name too short.");
+            if(typeof zapCfgData.customer.password_hash !== 'string') throw new Error("customer.password_hash is not a string.");
+            if(!zapCfgData.customer.password_hash.startsWith('$2y$')) throw new Error("customer.password_hash is not a bcrypt hash.");
+            defaultMasterAccount = {
                 name: zapCfgData.customer.name,
                 password_hash: zapCfgData.customer.password_hash,
             }
+        }
+        const runtimeSecretConvar = GetConvar('txAdminRTS', 'false').trim();
+        if(runtimeSecretConvar !== 'false'){
+            if(!/^[0-9a-f]{48}$/i.test(runtimeSecretConvar)) logDie(`txAdminRTS is not valid.`);
+            runtimeSecret = runtimeSecretConvar;
         }else{
-            forceMasterAccount = false;
+            runtimeSecret = false;
         }
 
-        // fs.unlinkSync(zapCfgFile);
+        if(!isAdvancedUser) fs.unlinkSync(zapCfgFile);
     } catch (error) {
         logDie(`Failed to load with Zap-Hosting configuration error: ${error.message}`);
     }
@@ -170,7 +184,8 @@ if(fs.existsSync(zapCfgFile)){
     isZapHosting = false;
     forceFXServerPort = false;
     loginPageLogo = false;
-    forceMasterAccount = false;
+    defaultMasterAccount = false;
+    runtimeSecret = false;
     deployerDefaults = false;
 
     const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
@@ -185,15 +200,8 @@ if(fs.existsSync(zapCfgFile)){
         forceInterface = txAdminInterfaceConvar;
     }
 }
-dir({isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults}); //DEBUG
+if(verbose) dir({isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, runtimeSecret, deployerDefaults});
 
-//Get Debug/Dev convars
-const txAdminVerboseConvar = GetConvar('txAdminVerbose', 'false').trim();
-const verbose = (['true', '1', 'on'].includes(txAdminVerboseConvar));
-const txDebugPlayerlistGeneratorConvar = GetConvar('txDebugPlayerlistGenerator', 'false').trim();
-const debugPlayerlistGenerator = (['true', '1', 'on'].includes(txDebugPlayerlistGeneratorConvar));
-const txDebugExternalSourceConvar = GetConvar('txDebugExternalSource', 'false').trim();
-const debugExternalSource = (txDebugExternalSourceConvar !== 'false')? txDebugExternalSourceConvar : false;
 
 //Get profile name
 const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, "").trim();
@@ -221,12 +229,19 @@ GlobalData = {
     txAdminResourcePath,
     fxServerPath,
     dataPath,
-    //Convars - zap dependant
-    isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, forceMasterAccount, deployerDefaults,
     //Convars - Debug
     verbose,
     debugPlayerlistGenerator,
     debugExternalSource,
+    //Convars - zap dependant
+    isZapHosting,
+    forceInterface,
+    forceFXServerPort,
+    txAdminPort,
+    loginPageLogo,
+    defaultMasterAccount,
+    runtimeSecret,
+    deployerDefaults, 
 
     //Consts
     validIdentifiers:{

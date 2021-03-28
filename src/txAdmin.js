@@ -59,6 +59,7 @@ globals = {
                 discord: 0,
                 citizenfx: 0,
                 password: 0,
+                zap: 0,
             },
         },
     },
