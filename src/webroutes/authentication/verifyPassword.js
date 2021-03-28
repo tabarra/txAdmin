@@ -21,24 +21,21 @@ module.exports = async function AuthVerify(ctx) {
     }
 
     try {
+        //Checking admin
         let admin = globals.authenticator.getAdminByName(ctx.request.body.username);
-        //Admin exists?
         if(!admin){
             logWarn(`Wrong username for from: ${ctx.ip}`);
             renderData.message = 'Wrong Password!';
             return ctx.utils.render('login', renderData);
         }
-        //Does password match?
         if(!VerifyPasswordHash(ctx.request.body.password, admin.password_hash)){
             logWarn(`Wrong password for from: ${ctx.ip}`);
             renderData.message = 'Wrong Password!';
             return ctx.utils.render('login', renderData);
         }
 
-        //Resolve picture
-        const providerWithPicture = Object.values(admin.providers).find(provider => provider.data && provider.data.picture);
-
         //Setting up session
+        const providerWithPicture = Object.values(admin.providers).find(provider => provider.data && provider.data.picture);
         ctx.session.auth = {
             username: admin.name,
             picture: (providerWithPicture)? providerWithPicture.data.picture : undefined,

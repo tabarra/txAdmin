@@ -86,7 +86,7 @@ module.exports = async function AuthVerify(ctx) {
         ].join('|');
         const expectedVerifier = crypto.createHash('sha256').update(verifierComposition).digest('hex');
         if (expectedVerifier !== jwtData.verifier) {
-            logWarn(`${errorPrefix} Invalid verifier: ${ctx.ip}`);
+            logWarn(`${errorPrefix} Invalid verifier from ${ctx.ip}`);
             return ctx.utils.render('login', renderData);
         }
     } catch (error) {
@@ -101,18 +101,18 @@ module.exports = async function AuthVerify(ctx) {
         //Checking admin
         const admin = globals.authenticator.getAdminByName(jwtData.sub);
         if (!admin) {
-            logWarn(`${errorPrefix} Wrong username for from: ${ctx.ip}`);
+            logWarn(`${errorPrefix} Wrong username from ${ctx.ip}`);
             return ctx.utils.render('login', renderData);
         }
         if(!admin.master){
-            logWarn(`${errorPrefix} Account is not master: ${ctx.ip}`);
+            logWarn(`${errorPrefix} Account is not master from ${ctx.ip}`);
             return ctx.utils.render('login', renderData);
         }
 
         //Checking if the token was already used
         const signature = ctx.query.token.split('.')[2];
         if(usedTokens.has(signature)){
-            logWarn(`${errorPrefix} Token already used: ${ctx.ip}`);
+            logWarn(`${errorPrefix} Token already used from ${ctx.ip}`);
             return ctx.utils.render('login', renderData);
         }
         usedTokens.add(signature);
