@@ -251,13 +251,30 @@ module.exports = class Monitor {
         }
 
         //Make request
+        let dynamicResp;
         try {
             const res = await axios(requestOptions);
             if(typeof res.data !== 'object') throw new Error("FXServer's dynamic endpoint didn't return a JSON object.");
             if(isUndefined(res.data.hostname) || isUndefined(res.data.clients)) throw new Error("FXServer's dynamic endpoint didn't return complete data.");
+            dynamicResp = res.data;
         } catch (error) {
             this.lastHealthCheckErrorMessage = error.message;
             return;
+        }
+
+        //Checking for the maxClients 
+        if(
+            GlobalData.deployerDefaults && 
+            GlobalData.deployerDefaults.maxClients &&
+            dynamicResp &&
+            dynamicResp.sv_maxclients
+        ){
+            const maxClients = parseInt(dynamicResp.sv_maxclients);
+            if(maxClients !== NaN && maxClients > GlobalData.deployerDefaults.maxClients){
+                globals.fxRunner.srvCmdBuffer(`sv_maxclients ${GlobalData.deployerDefaults.maxClients}`);
+                logError(`Zap-Hosting: Detected that the server has sv_maxclients above the limit (${GlobalData.deployerDefaults.maxClients}). Changing back to the default value.`);
+                globals.logger.append(`[SYSTEM] changing sv_maxclients back to ${GlobalData.deployerDefaults.maxClients}`);
+            }
         }
         
         //Set variables
