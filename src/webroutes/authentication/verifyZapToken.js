@@ -7,26 +7,26 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 //DEBUG: the dev key
-const zapPublicKey = JWK.asKey(`-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnqysbyFbmOr97wTERsmu
-t2FIHYcOJHn6UDdM824uvQxChcEAtHqv1312pTlLklNxPoVunrwbRrMb6iUuWmsn
-hhNrUiZIemhW2iIR2tZmaxSA5/BgnDUKNOow3kce1EMb8wm/WMohy6+25fgVBIvs
-1XcXlz6EdUNGiHerF0vOL6yEzfaooLt3tgBrgRPonLwLtm7hMax8+ED1042tL331
-JF4k0DOGTBx3yeAY50jjCabkvvpZn5ATGtK02SnDWVEm/tw2drVJkq2RpnZzuOje
-ffoLza7ofXX3BLgMxc3hFVfPFKWR/84oF+pHzcmQync4F4xb3BL7hUqWgoYMs7SO
-TQIDAQAB
------END PUBLIC KEY-----`);
+// const zapPublicKey = JWK.asKey(`-----BEGIN PUBLIC KEY-----
+// MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnqysbyFbmOr97wTERsmu
+// t2FIHYcOJHn6UDdM824uvQxChcEAtHqv1312pTlLklNxPoVunrwbRrMb6iUuWmsn
+// hhNrUiZIemhW2iIR2tZmaxSA5/BgnDUKNOow3kce1EMb8wm/WMohy6+25fgVBIvs
+// 1XcXlz6EdUNGiHerF0vOL6yEzfaooLt3tgBrgRPonLwLtm7hMax8+ED1042tL331
+// JF4k0DOGTBx3yeAY50jjCabkvvpZn5ATGtK02SnDWVEm/tw2drVJkq2RpnZzuOje
+// ffoLza7ofXX3BLgMxc3hFVfPFKWR/84oF+pHzcmQync4F4xb3BL7hUqWgoYMs7SO
+// TQIDAQAB
+// -----END PUBLIC KEY-----`);
 
 //The actual key
-// const zapPublicKey = JWK.asKey(`-----BEGIN PUBLIC KEY-----
-// MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArrztSUnu8Mv7AdwLjton
-// iyTMfk2zhQbVFDNOBAPXAZiU/3uTtyQH3cIs0UjVE66QiwRParENlJ+bOOICSOC+
-// jbwK/H4bE1uTpC0vbclsyXv6cVUyokoh4tuKr8P3RbQS2zViPUL4K0tCBn9Wo/VI
-// BKY5Jn8ZnnQn0fUeIWD5HFzNGSPO/bHHaRYDitpwbq4zdi5dRbXKgxc9MxigYYBi
-// ajuNtvCudG2/oK/BdmYIt6M3uXz2SOv6hKKGUUizLuiGQEJkg6VgaPd/3RNf+XlU
-// NUDBmW4S6ByK4V/OWmJV+uIUTbi03TmRDPF4/uDF8ljxlT0XHgvJ0d2a9ec1ulqv
-// hwIDAQAB
-// -----END PUBLIC KEY-----`);
+const zapPublicKey = JWK.asKey(`-----BEGIN PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArrztSUnu8Mv7AdwLjton
+iyTMfk2zhQbVFDNOBAPXAZiU/3uTtyQH3cIs0UjVE66QiwRParENlJ+bOOICSOC+
+jbwK/H4bE1uTpC0vbclsyXv6cVUyokoh4tuKr8P3RbQS2zViPUL4K0tCBn9Wo/VI
+BKY5Jn8ZnnQn0fUeIWD5HFzNGSPO/bHHaRYDitpwbq4zdi5dRbXKgxc9MxigYYBi
+ajuNtvCudG2/oK/BdmYIt6M3uXz2SOv6hKKGUUizLuiGQEJkg6VgaPd/3RNf+XlU
+NUDBmW4S6ByK4V/OWmJV+uIUTbi03TmRDPF4/uDF8ljxlT0XHgvJ0d2a9ec1ulqv
+hwIDAQAB
+-----END PUBLIC KEY-----`);
 
 //NOTE: the routes SHOULD not have any persistent data, but meh...
 const usedTokens = new Set();
