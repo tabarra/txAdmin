@@ -89,15 +89,14 @@ const awaitHttp = new Promise((resolve, reject) => {
     let interval;
     const check = () => {
         counter++;
-        const status = (globals.webServer && globals.webServer.status)? globals.webServer.status : false;
-        if (status == 2) {
+        if (globals.webServer && globals.webServer.isListening) {
             clearInterval(interval);
             resolve(true);
         }else if(counter == tickLimit){
             clearInterval(interval);
             interval = setInterval(check, 2500);
         }else if(counter > tickLimit){
-            logWarn(`The webserver is taking too long to start. Current status: ${status}`);
+            logWarn(`The webserver is taking too long to start.`);
         }
     }
     interval = setInterval(check, 150);

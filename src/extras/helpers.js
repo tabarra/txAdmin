@@ -175,7 +175,6 @@ function getFXServerPort(rawCfgFile) {
         }
     }
 
-
     //Checking if endpoints present at all
     const oneTCPEndpoint = endpoints.find((m) => (m.type === 'tcp'));
     if(!oneTCPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_tcp</code> in your config");
@@ -189,16 +188,15 @@ function getFXServerPort(rawCfgFile) {
     });
 
     if(firstPort >= 40120 && firstPort <= 40130){
-        throw new Error(`The port ${port} is dedicated for txAdmin and can not be used for FXServer, please edit your <code>endpoint_add_*</code>`);
+        throw new Error(`The port ${firstPort} is dedicated for txAdmin and can not be used for FXServer, please edit your <code>endpoint_add_*</code>`);
     }
 
     //IF Zap-hosting interface bind enforcement
     if(GlobalData.forceInterface){
         const stdMessage = [
             `Remove all lines containing <code>endpoint_add</code> and add the lines below to the top of your file.`,
-            `<code>endpoint_add_tcp "127.0.0.1:${GlobalData.forceFXServerPort}"`,
-            `endpoint_add_tcp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}"`,
-            `endpoint_add_udp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}" </code>`,
+            `<code>endpoint_add_tcp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}"`,
+            `endpoint_add_udp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}"</code>`,
         ].join('\n<br>');
 
         //Check if all ports are the ones being forced
@@ -207,16 +205,8 @@ function getFXServerPort(rawCfgFile) {
         }
 
         //Check if all interfaces are the ones being forced
-        const invalidInterface = endpoints.find((match) => {
-            return (match.iface !== GlobalData.forceInterface && match.iface !== '127.0.0.1')
-        });
+        const invalidInterface = endpoints.find((match) => match.iface !== GlobalData.forceInterface);
         if(invalidInterface) throw new Error(`Zap-Hosting: invalid interface '${invalidInterface.iface}'.<br>\n${stdMessage}`);
-
-        //Check if the server is listening on the loopback interface
-        const listeningOnLoopback = endpoints.find((match) => {
-            return (match.type === 'tcp' && match.iface === '127.0.0.1')
-        });
-        if(!listeningOnLoopback) throw new Error(`Zap-Hosting: missing interface '127.0.0.1'.\n${stdMessage}`);
 
     }else{
         const validTCPEndpoint = endpoints.find((match) => {

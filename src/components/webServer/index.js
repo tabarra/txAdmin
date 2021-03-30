@@ -29,7 +29,7 @@ module.exports = class WebServer {
         this.intercomToken = nanoid();
         this.koaSessionKey = `txAdmin:${globals.info.serverProfile}:sess`;
         this.webConsole = null;
-        this.status = 0;
+        this.isListening = false;
 
         this.setupKoa();
         this.setupWebsocket();
@@ -191,7 +191,7 @@ module.exports = class WebServer {
     //================================================================
     setupServerCallbacks(){
         //Just in case i want to re-execute this function
-        this.status = 0;
+        this.isListening = false;
 
         //Print cfx.re url... when available
         //NOTE: perhaps open the URL automatically with the `open` library
@@ -228,26 +228,19 @@ module.exports = class WebServer {
             this.httpServer = HttpClass.createServer(this.httpCallbackHandler.bind(this, 'httpserver'));
             this.httpServer.on('error', listenErrorHandler);
 
+            let iface;
             if(GlobalData.forceInterface){
-                logWarn(`Starting with interfaces ${GlobalData.forceInterface} and 127.0.0.1.`);
+                logWarn(`Starting with interface ${GlobalData.forceInterface}.`);
                 logWarn(`If the HTTP server doesn't start, this is probably the reason.`);
-                this.httpServer.listen(GlobalData.txAdminPort, GlobalData.forceInterface, async () => {
-                    logOk(`Listening on ${GlobalData.forceInterface}`);
-                    this.status++;
-                });
-                this.httpServerLocal = HttpClass.createServer(this.httpCallbackHandler.bind(this, 'httpserver'));
-                this.httpServerLocal.on('error', listenErrorHandler);
-                this.httpServerLocal.listen(GlobalData.txAdminPort, '127.0.0.1', async () => {
-                    logOk(`Listening on 127.0.0.1`);
-                    this.status++;
-                });
+                iface = GlobalData.forceInterface;
             }else{
-                this.status++;
-                this.httpServer.listen(GlobalData.txAdminPort, '0.0.0.0', async () => {
-                    logOk(`Listening on 0.0.0.0`);
-                    this.status++;
-                });
+                iface = '0.0.0.0';
             }
+
+            this.httpServer.listen(GlobalData.txAdminPort, iface, async () => {
+                logOk(`Listening on ${iface}.`);
+                this.isListening = true;
+            });
 
         } catch (error) {
             logError('Failed to start HTTP server with error:');

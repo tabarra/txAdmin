@@ -127,7 +127,6 @@ async function handleSetVariables(ctx) {
     if(GlobalData.forceInterface){
         const suffix = '# zap-hosting: do not modify!'
         userVars.serverEndpoints = [
-            `endpoint_add_tcp "127.0.0.1:${GlobalData.forceFXServerPort}" ${suffix}`,
             `endpoint_add_tcp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}" ${suffix}`,
             `endpoint_add_udp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}" ${suffix}`,
         ].join('\n');

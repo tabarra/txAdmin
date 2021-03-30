@@ -157,7 +157,7 @@ module.exports = class StatsCollector {
         }
         
         //Get performance data
-        const sourceURL = (GlobalData.debugExternalSource)? GlobalData.debugExternalSource : `127.0.0.1:${globals.fxRunner.fxServerPort}`;
+        const sourceURL = (GlobalData.debugExternalSource)? GlobalData.debugExternalSource : globals.fxRunner.fxServerHost;
         const currPerfRaw = await got(`http://${sourceURL}/perf/`, {timeout: 1500}).text();
         const currPerfData = parsePerf(currPerfRaw);
         if(

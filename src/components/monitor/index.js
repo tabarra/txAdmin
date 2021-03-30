@@ -242,7 +242,7 @@ module.exports = class Monitor {
 
         //Setup do request e variáveis iniciais
         let requestOptions = {
-            url: `http://127.0.0.1:${globals.fxRunner.fxServerPort}/dynamic.json`,
+            url: `http://${globals.fxRunner.fxServerHost}/dynamic.json`,
             method: 'get',
             responseType: 'json',
             responseEncoding: 'utf8',

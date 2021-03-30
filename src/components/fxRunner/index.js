@@ -28,6 +28,7 @@ module.exports = class FXRunner {
         this.restartDelayOverride == false;
         this.history = [];
         this.fxServerPort = null;
+        this.fxServerHost = null;
         this.outputHandler = new OutputHandler(this.config.logPath, 10);
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
@@ -61,9 +62,12 @@ module.exports = class FXRunner {
 
         // Prepare default args
         const controllerConfigs = globals.playerController.config;
+        const txAdminInterface = (GlobalData.forceInterface)
+            ? `${GlobalData.forceInterface}:${GlobalData.txAdminPort}` 
+            : `127.0.0.1:${GlobalData.txAdminPort}`;
         const cmdArgs = [
             '+sets', 'txAdmin-version', GlobalData.txAdminVersion,
-            '+set', 'txAdmin-apiPort', GlobalData.txAdminPort,
+            '+set', 'txAdmin-apiHost', txAdminInterface,
             '+set', 'txAdmin-apiToken', globals.webServer.intercomToken,
             '+set', 'txAdmin-checkPlayerJoin', (controllerConfigs.onJoinCheckBan || controllerConfigs.onJoinCheckWhitelist).toString(),
             '+set', 'txAdminServerMode', 'true',
@@ -155,6 +159,9 @@ module.exports = class FXRunner {
                 return outMsg;
             }
         }
+        this.fxServerHost = (GlobalData.forceInterface)
+            ? `${GlobalData.forceInterface}:${this.fxServerPort}` 
+            : `127.0.0.1:${this.fxServerPort}`;
 
         //Reseting hitch counter
         globals.monitor.resetMonitorStats();

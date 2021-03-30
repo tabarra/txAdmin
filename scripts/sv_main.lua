@@ -11,14 +11,14 @@ function unDeQuote(x)
 end
 
 --Check Environment
-local apiPort = GetConvar("txAdmin-apiPort", "invalid")
+local apiHost = GetConvar("txAdmin-apiHost", "invalid")
 local apiToken = GetConvar("txAdmin-apiToken", "invalid")
 local txAdminClientVersion = GetResourceMetadata(GetCurrentResourceName(), 'version')
 if GetConvar('txAdminServerMode', 'false') ~= 'true' then
     return
 end
-if apiPort == "invalid" or apiToken == "invalid" then
-    logError('API Port and Token ConVars not found. Do not start this resource if not using txAdmin.')
+if apiHost == "invalid" or apiToken == "invalid" then
+    logError('API Host or Token ConVars not found. Do not start this resource if not using txAdmin.')
     return
 end
 
@@ -78,7 +78,7 @@ function HTTPHeartBeat()
 		end
     end
 
-    local url = "http://127.0.0.1:"..apiPort.."/intercom/monitor"
+    local url = "http://"..apiHost.."/intercom/monitor"
     local exData = {
         txAdminToken = apiToken,
         players = players
@@ -283,7 +283,7 @@ function txaReportResources(source, args)
     end
 
     --Send to txAdmin
-    local url = "http://127.0.0.1:"..apiPort.."/intercom/resources"
+    local url = "http://"..apiHost.."/intercom/resources"
     local exData = {
         txAdminToken = apiToken,
         resources = resources
@@ -301,7 +301,7 @@ end
 function handleConnections(name, skr, d)
     if  GetConvar("txAdmin-checkPlayerJoin", "invalid") == "true" then
         d.defer()
-        local url = "http://127.0.0.1:"..apiPort.."/intercom/checkPlayerJoin"
+        local url = "http://"..apiHost.."/intercom/checkPlayerJoin"
         local exData = {
             txAdminToken = apiToken,
             identifiers  = GetPlayerIdentifiers(source),
