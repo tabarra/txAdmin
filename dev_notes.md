@@ -5,53 +5,28 @@
 - [x] increased chart performance by 60%
 - [x] settings/save/monitor: fixed schedules restart times validation
 - [x] cfg editor: save on ctrl+s
+- [x] zap: Disable "Slow" label when vCore count >= 8;
+- [x] zap: On txAdmin boot, read then erase `txData/txAdminZapConfig.json`;
+- [x] zap: Login page logo url from the config file (the 5% chance matrix easter egg won't be affected);
+- [x] zap: Preset txAdmin interface/port;
+- [x] zap: Enforce server.cfg endpoints;
+- [x] zap: Make server deployer preset `server.cfg` endpoints. (unplanned)
+- [x] zap: Database and license autofill in the deployer - the user can change it if they want;
+- [x] zap: Master account automatically set on startup or first start;
+- [x] zap: Add txData path warnings;
+- [x] zap: Add `sv_maxClients` enforcement;
+- [x] zap: One-click-login button via JWT/JWT (and documment it); 
+- [ ] zap: increase `txAdminVersionBestBy` by 7d when running in zap;
+- [ ] zap: Ad placement on login page, main interface (desk/mobile), and home-hosting warning (CLI);
+- [ ] allow 3 chars admin names NOTE: `\webroutes\adminManager\actions.js` `nameRegex`
+- [ ] disable server auto-start when no admins configured
 - [ ] login page indicate if the `admins.json` file is not found
 - [ ] make warns revokable?
 - [ ] xxxx
 
 
-- [x] Disable "Slow" label when vCore count >= 8;
-- [x] On txAdmin boot, read then erase `txData/txAdminZapConfig.json`;
-- [x] Login page logo url from the config file (the 5% chance matrix easter egg won't be affected);
-- [x] Preset txAdmin interface/port;
-- [x] Enforce server.cfg endpoints;
-- [x] Make server deployer preset `server.cfg` endpoints. (unplanned)
-- [x] Database and license autofill in the deployer - the user can change it if they want;
-
-- [ ] Lock the deployer to only use folders inside txData;
-- [ ] Lock config to only allow selecting paths inside txData;
-- [ ] Master account automatically set on startup or first start;
-
-- [ ] make sequence diagram -- the jwt need to include the master admin username, have expiration, and maybe something else
-- [ ] One-click-login button via 3-legged flow (zap backend > tx > user redirect > tx) or via JWT signing;
- 
-- [ ] Ad placement on login page
-- [ ] Ad placement on main desktop interface
-- [ ] Ad placement on main mobile interface (replace menu's machine stats?)
-- [ ] Ad placement on home-hosting warning (CLI)
-
-
-- [ ] add stats tracking to zap servers, need to know how many out there
-- [ ] if zap, bestBy + 7d????
-https://zap-hosting.com/txAdmin
-
-### What Zap will customize on their side:
-- At start, create a `txAdminZapConfig.json` containing:
-    - interface
-    - txadmin port
-    - gameserver port
-    - admin username / bcrypt hash
-    - default license (deployer auto-fill)
-    - mysql host / username / password (deployer auto-fill)
-    - login page logo image urlp
-- Disable the server.cfg editing from the Zap Console (mysql string, rcon pq, etc)
-
-
-134.255.252.132:30238
-
 
 > ASAP!:
-- [ ] disable server auto-start when no admins configured
 - [ ] consolidate the log pages
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
         - Manual Approval (default)
@@ -247,16 +222,42 @@ TODO: Bot commands (in dev order):
 # run
 cd /e/FiveM/builds/3247/citizen/system_resources/monitor
 nodemon +set txDebugPlayerlistGenerator truex +set txAdminVerbose truex
+nodemon +set txDebugPlayerlistGenerator true +set txAdminRTS "deadbeef00deadbeef00deadbeef00deadbeef00deadbeef" +set txAdminVerbose truex
 nodemon +set txDebugPlayerlistGenerator true +set txDebugExternalSource "x.x.x.x:30120" +set txAdminVerbose truex
 
 # build
-rm -rf dist
-npm run build
+rm -rf dist && npm run build && tar.exe -cvf dist/monitor.zip dist/* && explorer dist
 
 # other stuff
 export TXADMIN_DEFAULT_LICENSE="YourKeyYourKeyYourKeyYourKeyYour"
 npm-upgrade
 con_miniconChannels script:monitor*
+```
+
+```json
+{
+    "interface": "192.168.0.123",
+    "fxServerPort": 30120,
+    "txAdminPort": 40120,
+    "loginPageLogo": "https://github.com/tabarra/txAdmin/raw/master/docs/banner.png",
+    "defaults": {
+        "license": "YourKeyYourKeyYourKeyYourKeyYour",
+        "maxClients": 10,
+        "mysqlHost": "mysql-mariadb-20-104.zap-hosting.com",
+        "mysqlUser": "xxxxxxxxxx",
+        "mysqlPassword": "xxxxxxxxxx",
+        "mysqlDatabase": "xxxxxxxxxx"
+    },
+    "customer": {
+        "name": "tabarra",
+        "password_hash": "$2y$12$WNuN6IxozL4CjgScsLvmGOmxtskg8EcPe67HtUw0ENeCCSaZ.z3AW"
+    },
+
+    "interface-": false,
+    "loginPageLogo-": false,
+    "customer-": false
+}
+
 ```
 
 =======================================

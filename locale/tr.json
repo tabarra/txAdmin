@@ -16,7 +16,7 @@
         "kick_temporary": "(%{author}) \"%{reason}\" sebebi ile bu sunucudan uzaklaştırıldın! Cezanın bitmesine kalan: %{expiration}.",
         "kick_permanent": "(%{author}) \"%{reason}\". sebebi ile bu sunucudan süresiz olarak uzaklaştırıldın!",
         "reject_temporary": "Bu sunucudan  %{expiration} süre ile uzaklaştırıldın!.\nBan ID: %{id}.\nBan Sebebi: %{reason}.\nBanlayan: %{author}.",
-        "reject_permanent": "Bu sunucudan süresiz olarak uzaklaştırıldın!.\nBan ID: %{id}.\nBan Sebebi: %{reason}.\nnBanlayan: %{author}."
+        "reject_permanent": "Bu sunucudan süresiz olarak uzaklaştırıldın!.\nBan ID: %{id}.\nBan Sebebi: %{reason}.\nBanlayan: %{author}."
     },
     "server_actions": {
         "restarting": "Sunucu yeniden başlatılıyor.(%{reason}).",
