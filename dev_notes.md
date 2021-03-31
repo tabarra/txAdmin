@@ -16,8 +16,9 @@
 - [x] zap: Add txData path warnings;
 - [x] zap: Add `sv_maxClients` enforcement;
 - [x] zap: One-click-login button via JWT/JWT (and documment it); 
-- [ ] zap: increase `txAdminVersionBestBy` by 7d when running in zap;
+- [x] zap: increase `txAdminVersionBestBy` by 10d when running in zap;
 - [x] zap: Ad placement on login page, main interface (desk/mobile), and home-hosting warning (CLI);
+- [x] make chart available without auth (since its public info anyways) and add thread filter
 - [ ] allow 3 chars admin names NOTE: `\webroutes\adminManager\actions.js` `nameRegex`
 - [ ] disable server auto-start when no admins configured
 - [ ] login page indicate if the `admins.json` file is not found
