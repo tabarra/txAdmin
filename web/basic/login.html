@@ -39,6 +39,32 @@
             box-shadow: 2px 4px 8px rgb(143, 143, 143);
             border-radius: 50em;
         }
+
+        .zapAdContainer{
+            width: 100%;
+            display: flex;
+            color: unset !important;
+        }
+        .zapLogo {
+            /* background-color: salmon; */
+            height: 44px;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+        .zapText {
+            /* background-color: royalblue; */
+            font-size: 1.25em;
+            font-weight: 700;
+            width: 100%;
+            padding-left: 8px;
+            align-self: center;
+        }
+        .zapTextIcon {
+            margin-top: -0.25em;
+            width: 0.9rem !important;
+            height: 0.9rem !important;
+            font-size: 0.9rem !important;
+        }
     </style>
     {{@if(it.isMatrix)}}
         <style>
@@ -257,16 +283,31 @@
         <div class="row justify-content-center">
             <div class="col-md-4 ">
                 <div class="alert alert-secondary text-center small" role="alert">
-                    <strong>Server profile:</strong> {{it.serverProfile}} <br>
-                    <strong>txAdmin version:</strong> {{it.txAdminVersion}} <br>
-                    <strong>FXServer build:</strong> {{it.fxServerVersion}} 
-                    <div class="hrsep hrsep-small">//</div>
                     <h5 class="text-muted">
                         <strong>txAdmin</strong> Official Discord: <br>
                         <a href="https://discord.gg/uAmsGa2" target="_blank">
                             <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
                         </a>
                     </h5>
+                    
+                    <div class="hrsep hrsep-small">Ad</div>
+                    <a class="zapAdContainer" href="http://zap-hosting.com/txAdmin3" target="_blank" rel="noopener noreferrer">
+                        <img class="zapLogo show-dark-mode" alt="zap hosting" src="img/zap256_white.png">
+                        <img class="zapLogo show-light-mode" alt="zap hosting" src="img/zap256_black.png">
+                        <div class="zapText attentionText">
+                            DDoS protected & preconfigured FiveM txAdmin servers
+                            <svg class="c-sidebar-nav-iconx c-icon zapTextIcon">
+                                <use href="img/coreui_icons.svg#cil-external-link"></use>
+                            </svg>
+                        </div>
+                    </a>
+
+                    <div class="hrsep hrsep-small">Info</div>
+                    <div class="text-muted">
+                        <strong>Server profile:</strong> {{it.serverProfile}} <br>
+                        <strong>txAdmin version:</strong> {{it.txAdminVersion}} <br>
+                        <strong>FXServer build:</strong> {{it.fxServerVersion}} 
+                    </div>
                 </div>
 
                 <div style="text-align: center">

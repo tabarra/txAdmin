@@ -381,6 +381,9 @@ body.theme--dark {
   #modPlayerMain-notes {
     background-color: $txadmin-dark-900;
   }
+  .attentionText {
+      color: $txadmin-text-color;
+  }
 
   // Player log entries
   .logEntry {

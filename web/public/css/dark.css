@@ -340,6 +340,10 @@ body.theme--dark #modPlayerMain-notes {
   background-color: #29292A;
 }
 
+body.theme--dark .attentionText {
+  color: #FFFFFF;
+}
+
 body.theme--dark .logEntry {
   color: #FFFFFF;
 }

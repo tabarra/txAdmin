@@ -14,6 +14,34 @@
     <link rel="stylesheet" href="css/txAdmin.css">
     <link rel="stylesheet" href="css/dark.css">
     <link rel="shortcut icon" href="img/favicon_default.png" type="image/png" id="favicon" />
+    <style>
+        .zapAdContainer {
+            /* background-color: darkslategray; */
+            padding-left: 1em;
+            display: flex;
+            color: unset !important;
+        }
+        .zapLogo {
+            /* background-color: salmon; */
+            height: 26px;
+            margin-top: auto;
+            margin-bottom: auto;
+        } 
+        .zapText {
+            /* background-color: royalblue; */
+            font-size: 0.85em;
+            font-weight: 700;
+            padding-left: 8px;
+            align-self: center;
+            text-transform: initial;
+        }
+        .zapTextIcon {
+            margin-top: -0.25em;
+            width: 0.7rem !important;
+            height: 0.7rem !important;
+            font-size: 0.7rem !important;
+        }
+    </style>
 </head>
 
 <body class="c-app {{it.uiTheme}}">
@@ -26,7 +54,9 @@
             </a>
         </div>
         <ul class="c-sidebar-nav">
-            <li class="c-sidebar-nav-title">General</li>
+            <li class="c-sidebar-nav-title font-size-larger">
+                Profile: {{it.serverProfile}}
+            </li>
 
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="/">
@@ -121,7 +151,7 @@
             </li>
             {{/if}}
 
-
+            <!-- Sidebar footer -->
             <li class="c-sidebar-nav-divider"></li>
             <li class="c-sidebar-nav-title mt-auto">Host System Usage</li>
             <li class="c-sidebar-nav-item px-3 d-compact-none c-d-minimized-none">
@@ -148,6 +178,20 @@
                 </div>
                 <small class="text-muted" id="hostusage-memory-text">loading...</small>
             </li>
+
+            <!-- Zap Hosting Ad - Mobile -->
+            <li class="c-sidebar-nav-title d-lg-none" style="background-color: rgba(0, 0, 0, 0.178);">
+                <a class="zapAdContainer" href="http://zap-hosting.com/txAdmin7" target="_blank" rel="noopener noreferrer">
+                    <img class="zapLogo" alt="zap hosting" src="img/zap256_white.png">
+                    <div class="zapText text-light">
+                        DDoS protected & preconfigured <br> FiveM txAdmin servers
+                        <svg class="c-sidebar-nav-iconx c-icon zapTextIcon">
+                            <use href="img/coreui_icons.svg#cil-external-link"></use>
+                        </svg>
+                    </div>
+                </a>
+            </li>
+
         </ul>
         <button class="c-sidebar-minimizer c-class-toggler" type="button" data-target="_parent"
             data-class="c-sidebar-minimized"></button>
@@ -181,9 +225,17 @@
     <div class="c-wrapper c-fixed-components">
         <!-- Header -->
         <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
-            {{@if(it.serverProfile !== 'default')}}
-                <h5 class="c-header-nav font-weight-light px-3">Profile: {{it.serverProfile}}</h5>
-            {{/if}}
+            <!-- Zap Hosting Ad - Desktop -->
+            <a class="zapAdContainer d-md-down-none" href="http://zap-hosting.com/txAdmin5" target="_blank" rel="noopener noreferrer">
+                <img class="zapLogo show-dark-mode" alt="zap hosting" src="img/zap256_white.png">
+                <img class="zapLogo show-light-mode" alt="zap hosting" src="img/zap256_black.png">
+                <div class="zapText attentionText">
+                    DDoS protected & preconfigured <br> FiveM txAdmin servers
+                    <svg class="c-sidebar-nav-iconx c-icon zapTextIcon">
+                        <use href="img/coreui_icons.svg#cil-external-link"></use>
+                    </svg>
+                </div>
+            </a>
 
             <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar"
                 data-class="c-sidebar-show">

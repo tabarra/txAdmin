@@ -93,7 +93,24 @@ option:disabled {
     color: transparent !important;
     text-shadow: 0 0 5px rgba(0,0,0,0.5) !important;
 }
+.attentionText {
+    /* background-color: #a7d4ff !important; */
+}
 
+
+/* Theme dependant */
+.show-dark-mode {
+    display: none;
+}
+.theme--dark .show-dark-mode {
+    display: inline-block;
+}
+.show-light-mode {
+    display: inline-block;
+}
+.theme--dark .show-light-mode {
+    display: none;
+}
 
 /* Console/Log marks */
 /* https://flatuicolors.com/palette/us */
