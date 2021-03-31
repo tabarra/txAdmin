@@ -198,12 +198,12 @@ if(verbose) dir({isZapHosting, forceInterface, forceFXServerPort, txAdminPort, l
 const txVerBBLastUpdate = 1615200000;
 const txVerBBDelta = 28 + ((isZapHosting)? 10 : 0);
 const txAdminVersionBestBy = txVerBBLastUpdate + (txVerBBDelta * 86400); 
-dir({
-    lastUpdate: new Date(txVerBBLastUpdate*1000).toLocaleString(),
-    nextUpdate: new Date(txAdminVersionBestBy*1000).toLocaleString(),
-    timeUntil: require('humanize-duration')(((now() - txAdminVersionBestBy)*1000)),
-    delta: txVerBBDelta
-})
+// dir({
+//     updateDelta: txVerBBDelta,
+//     lastUpdate: new Date(txVerBBLastUpdate*1000).toLocaleString(),
+//     nextUpdate: new Date(txAdminVersionBestBy*1000).toLocaleString(),
+//     timeUntil: require('humanize-duration')(((now() - txAdminVersionBestBy)*1000)),  
+// })
 if(now() > txAdminVersionBestBy){
     logError(`This version of txAdmin is outdated.`);
     logError(`Please update as soon as possible.`);

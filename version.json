@@ -1,5 +1,5 @@
 {
-    "version": "3.4.0",
+    "version": "3.5.0",
     "allVersions": [
         {
             "version": "1.0.1",
@@ -244,6 +244,10 @@
         {
             "version": "3.4.0",
             "changelog": "Preventing DDoS on txAdmin to cause false crash detection. Imporved onboarding experience."
+        },
+        {
+            "version": "3.5.0",
+            "changelog": "Zap integration and minot tweaks, fixes and improvements."
         }
     ]
 }
