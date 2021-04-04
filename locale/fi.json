@@ -4,7 +4,7 @@
         "humanizer_language": "fi"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
+        "start_timeout": "palvelin ei käynnistynyt ajoissa.",
         "crash_detected": "Kaatuminen havaittu",
         "partial_crash_warn": "Osittaisen kaatumisen vuoksi palvelin käynnistyy uudelleen minuutin kuluttua. Poistukaa serveriltä nyt.",
         "partial_crash_warn_discord": "Osittaisen kaatumisen vuoksi **%{servername}** käynnistyy uudelleen minuutin kuluttua.",
@@ -13,10 +13,10 @@
         "schedule_warn_discord": "**%{servername}** on uudelleenkäynnistymässä %{smart_count} minuutin kuluttua. |||| **%{servername}** on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) Sinulle on asetettu bannit palvelimelle. Bannien syy: \"%{reason}\". Bannit päättyvät: %{expiration}.",
+        "kick_permanent": "(%{author}) Sinulle on asetettu ikuiset bannit palvelimelle. Bannien syy: \"%{reason}\".",
+        "reject_temporary": "Sinulle on asetettu bannit palvelimelle.\nBannit päättyvät: %{expiration}.\nBan ID: %{id}.\nBannien syy: %{reason}.\nBannit antoi: %{author}.",
+        "reject_permanent": "Sinulle on asetettu ikuiset bannit palvelimelle.\nBan ID: %{id}.\nBannien syy: %{reason}.\nBannit antoi: %{author}."
     },
     "server_actions": {
         "restarting": "Palvelin käynnistyy uudelleen (%{reason}).",
