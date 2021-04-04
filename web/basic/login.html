@@ -290,17 +290,19 @@
                         </a>
                     </h5>
                     
-                    <div class="hrsep hrsep-small">Ad</div>
-                    <a class="zapAdContainer" href="http://zap-hosting.com/txAdmin3" target="_blank" rel="noopener noreferrer">
-                        <img class="zapLogo show-dark-mode" alt="zap hosting" src="img/zap256_white.png">
-                        <img class="zapLogo show-light-mode" alt="zap hosting" src="img/zap256_black.png">
-                        <div class="zapText attentionText">
-                            DDoS protected & preconfigured FiveM txAdmin servers
-                            <svg class="c-sidebar-nav-iconx c-icon zapTextIcon">
-                                <use href="img/coreui_icons.svg#cil-external-link"></use>
-                            </svg>
-                        </div>
-                    </a>
+                    {{@if(it.dynamicAd)}}
+                        <div class="hrsep hrsep-small">Ad</div>
+                        <a class="zapAdContainer" href="{{it.dynamicAd.link}}" target="_blank" rel="noopener noreferrer">
+                            <img class="zapLogo show-dark-mode" alt="zap hosting" src="{{it.dynamicAd.logoDarkMode}}">
+                            <img class="zapLogo show-light-mode" alt="zap hosting" src="{{it.dynamicAd.logoLightMode}}">
+                            <div class="zapText attentionText">
+                                {{it.dynamicAd.text|safe}}
+                                <svg class="c-icon zapTextIcon">
+                                    <use href="img/coreui_icons.svg#cil-external-link"></use>
+                                </svg>
+                            </div>
+                        </a>
+                    {{/if}}
 
                     <div class="hrsep hrsep-small">Info</div>
                     <div class="text-muted">

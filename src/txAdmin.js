@@ -15,6 +15,7 @@ globals = {
     discordBot: null,
     fxRunner: null,
     logger: null,
+    dynamicAds: null,
     monitor: null,
     statsCollector: null,
     translator: null,
@@ -111,6 +112,9 @@ module.exports = class txAdmin {
         this.startLogger(profileConfig.logger).catch((err) => {
             HandleFatalError(err, 'Logger');
         });
+        this.startDynamicAds().catch((err) => {
+            HandleFatalError(err, 'DynamicAds');
+        });
         this.startTranslator().catch((err) => {
             HandleFatalError(err, 'Translator');
         });
@@ -163,6 +167,12 @@ module.exports = class txAdmin {
     async startLogger(config){
         const Logger = require('./components/logger')
         globals.logger = new Logger(config);
+    }
+
+    //==============================================================
+    async startDynamicAds(config){
+        const DynamicAds = require('./components/dynamicAds')
+        globals.dynamicAds = new DynamicAds(config);
     }
 
     //==============================================================

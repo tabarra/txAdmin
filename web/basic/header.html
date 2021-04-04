@@ -180,17 +180,19 @@
             </li>
 
             <!-- Zap Hosting Ad - Mobile -->
-            <li class="c-sidebar-nav-title d-lg-none" style="background-color: rgba(0, 0, 0, 0.178);">
-                <a class="zapAdContainer" href="http://zap-hosting.com/txAdmin7" target="_blank" rel="noopener noreferrer">
-                    <img class="zapLogo" alt="zap hosting" src="img/zap256_white.png">
-                    <div class="zapText text-light">
-                        DDoS protected & preconfigured <br> FiveM txAdmin servers
-                        <svg class="c-sidebar-nav-iconx c-icon zapTextIcon">
-                            <use href="img/coreui_icons.svg#cil-external-link"></use>
-                        </svg>
-                    </div>
-                </a>
-            </li>
+            {{@if(it.dynamicAd)}}
+                <li class="c-sidebar-nav-title d-lg-none" style="background-color: rgba(0, 0, 0, 0.178);">
+                    <a class="zapAdContainer" href="{{it.dynamicAd.linkMobile}}" target="_blank" rel="noopener noreferrer">
+                        <img class="zapLogo" alt="zap hosting" src="{{it.dynamicAd.logoDarkMode}}">
+                        <div class="zapText text-light">
+                            {{it.dynamicAd.text|safe}}
+                            <svg class="c-icon zapTextIcon">
+                                <use href="img/coreui_icons.svg#cil-external-link"></use>
+                            </svg>
+                        </div>
+                    </a>
+                </li>
+            {{/if}}
 
         </ul>
         <button class="c-sidebar-minimizer c-class-toggler" type="button" data-target="_parent"
@@ -226,16 +228,18 @@
         <!-- Header -->
         <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
             <!-- Zap Hosting Ad - Desktop -->
-            <a class="zapAdContainer d-md-down-none" href="http://zap-hosting.com/txAdmin5" target="_blank" rel="noopener noreferrer">
-                <img class="zapLogo show-dark-mode" alt="zap hosting" src="img/zap256_white.png">
-                <img class="zapLogo show-light-mode" alt="zap hosting" src="img/zap256_black.png">
-                <div class="zapText attentionText">
-                    DDoS protected & preconfigured <br> FiveM txAdmin servers
-                    <svg class="c-sidebar-nav-iconx c-icon zapTextIcon">
-                        <use href="img/coreui_icons.svg#cil-external-link"></use>
-                    </svg>
-                </div>
-            </a>
+            {{@if(it.dynamicAd)}}
+                <a class="zapAdContainer d-md-down-none" href="{{it.dynamicAd.linkDesktop}}" target="_blank" rel="noopener noreferrer">
+                    <img class="zapLogo show-dark-mode" alt="zap hosting" src="{{it.dynamicAd.logoDarkMode}}">
+                    <img class="zapLogo show-light-mode" alt="zap hosting" src="{{it.dynamicAd.logoLightMode}}">
+                    <div class="zapText attentionText">
+                        {{it.dynamicAd.text|safe}}
+                        <svg class="c-icon zapTextIcon">
+                            <use href="img/coreui_icons.svg#cil-external-link"></use>
+                        </svg>
+                    </div>
+                </a>
+            {{/if}}
 
             <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar"
                 data-class="c-sidebar-show">

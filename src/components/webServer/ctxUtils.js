@@ -78,6 +78,7 @@ async function renderMasterView(view, reqSess, data, txVars){
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
     data.isLinux = (GlobalData.osType == 'linux');
     data.showAdvanced = (GlobalData.isAdvancedUser || GlobalData.verbose);
+    data.dynamicAd = globals.dynamicAds.pick('main');
 
     let out;
     try {
@@ -122,6 +123,7 @@ async function renderLoginView(data, txVars){
     data.txAdminVersion = GlobalData.txAdminVersion;
     data.fxServerVersion = (GlobalData.isZapHosting)? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion;
     data.serverName = globals.config.serverName || globals.info.serverProfile;
+    data.dynamicAd = globals.dynamicAds.pick('login');
 
     let out;
     try {
