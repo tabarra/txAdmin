@@ -1,10 +1,7 @@
 //Requires
 const modulename = 'DiscordBot';
 const Discord = require('discord.js');
-
-//FIXME: remove when updating to djs12, as well as this from the package.json
 const Collection = require('@discordjs/collection'); 
-
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
@@ -116,7 +113,7 @@ module.exports = class DiscordBot {
 
         //Setup Ready listener
         this.client.on('ready', async () => {
-            // logOk(`Started and logged in as '${this.client.user.tag}'`);
+            logOk(`Started and logged in as '${this.client.user.tag}'`);
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
             this.announceChannel = this.client.channels.find(x => x.id === this.config.announceChannel);
             if(!this.announceChannel){
