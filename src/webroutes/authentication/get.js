@@ -17,6 +17,15 @@ module.exports = async function AuthGet(ctx) {
     //Destroy session? And start a new one
     if(!isUndefined(ctx.query.logout)) ctx.session.auth = {};
 
+    //If admins file was deleted
+    if(Array.isArray(globals.authenticator.admins) && !globals.authenticator.admins.length){
+        return ctx.utils.render('login', {
+            template: 'justMessage', 
+            errorTitle: 'No admins configured.', 
+            errorMessage: 'This likely means that you moved or deleted the admins.json file. Please restart txAdmin to configure a new master account.'
+        });
+    }
+
     //Render page
     const renderData = {
         template,

@@ -24,7 +24,7 @@
 - [x] on windows, always open the web page on boot
 - [x] allow 3 chars admin names
 - [x] disable server auto-start when no admins configured
-- [ ] login page indicate if the `admins.json` file is not found
+- [x] login page indicate if the `admins.json` file is not found
 - [ ] make warns revokable?
 - [ ] xxxx
 

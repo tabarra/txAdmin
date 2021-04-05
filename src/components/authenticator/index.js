@@ -12,6 +12,7 @@ module.exports = class Authenticator {
         this.config = config;
         this.adminsFile = `${GlobalData.dataPath}/admins.json`;
         this.admins = null;
+        this.refreshRoutine = null;
         this.registeredPermissions = {
             "all_permissions": "All Permissions",
             "manage.admins": "Manage Admins",
@@ -60,11 +61,20 @@ module.exports = class Authenticator {
 
         }else{
             this.refreshAdmins(true);
-            //Cron Function
-            setInterval(() => {
-                this.refreshAdmins();
-            }, this.config.refreshInterval);
+            this.setupRefreshRoutine();
         }
+    }
+
+
+    //================================================================
+    /**
+     * sets the admins file refresh routine
+     */
+    setupRefreshRoutine(){
+        logError('setup routine')
+        this.refreshRoutine = setInterval(() => {
+            this.refreshAdmins();
+        }, this.config.refreshInterval);
     }
 
 
@@ -103,8 +113,9 @@ module.exports = class Authenticator {
 
         //Saving admin file
         try {
-            let json = JSON.stringify(this.admins, null, 2);
+            const json = JSON.stringify(this.admins, null, 2);
             fs.writeFileSync(this.adminsFile, json, {encoding: 'utf8', flag: 'wx'});
+            this.setupRefreshRoutine();
             return true;
         } catch (error) {
             let message = `Failed to create '${this.adminsFile}' with error: ${error.message}`;
@@ -416,7 +427,6 @@ module.exports = class Authenticator {
         }
 
         this.admins = jsonData;
-        // if(GlobalData.verbose) log(`Admins file loaded. Found: ${this.admins.length}`);
         return true;
     }
 
