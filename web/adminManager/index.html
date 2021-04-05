@@ -356,7 +356,7 @@
             discordID: $('#modAddAdmin-discordID').val().trim(),
             permissions: permissions
         }
-        if(data.name.length < 6) {
+        if(data.name.length < 3) {
             return $.notify({ message: 'The Username is not long enough.' }, { type: 'warning' });
         }
         var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});

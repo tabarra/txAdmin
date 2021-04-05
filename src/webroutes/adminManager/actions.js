@@ -8,9 +8,9 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
-const citizenfxIDRegex = /^[\w\.\-]{3,20}$/;
+const citizenfxIDRegex = /^\w[\w\.\-]{1,18}\w$/;
 const discordIDRegex = /^\d{7,20}$/;
-const nameRegex = /^[a-zA-Z0-9]{6,16}$/;
+const nameRegex = citizenfxIDRegex;
 
 
 /**
@@ -77,7 +77,7 @@ async function handleAdd(ctx) {
 
     //Validate & process fields
     if(!nameRegex.test(name)){
-        return ctx.send({type: 'danger', message: "Invalid username"});
+        return ctx.send({type: 'danger', message: "Invalid username, must have between 3 and 20 characters."});
     }
     let citizenfxData = false;
     if(citizenfxID.length){
