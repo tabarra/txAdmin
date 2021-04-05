@@ -34,7 +34,11 @@ module.exports = class FXRunner {
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
         if(config.autostart && this.config.serverDataPath !== null && this.config.cfgPath !== null){
             setTimeout(() => {
-                this.spawnServer(true);
+                if(globals.authenticator && globals.authenticator.admins){
+                    this.spawnServer(true);
+                }else{
+                    logWarn('The server will not auto start because there are no admins configured.');
+                }
             }, config.autostartDelay * 1000);
         }
     }
