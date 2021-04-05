@@ -134,16 +134,13 @@ module.exports.printBanner = async () => {
 
     //Admin PIN
     let adminPinLines = [];
+    let urlSuffix = '';
     if(adminPinRes.value){
         adminPinLines = [
             '', 'Use the PIN below to register:',
             chalk.inverse(` ${adminPinRes.value} `),
         ];
-        if(GlobalData.osType === 'windows'){
-            try {
-                await open(`http://localhost:${GlobalData.txAdminPort}/auth#${globals.authenticator.addMasterPin}`);
-            } catch (error) {}
-        }
+        urlSuffix = `#${globals.authenticator.addMasterPin}`;
     }
 
     //Printing stuff
@@ -162,5 +159,10 @@ module.exports.printBanner = async () => {
     printMultiline(boxen(boxLines.join('\n'), boxOptions), chalk.bold.bgGreen);
     if(GlobalData.forceInterface == false){
         printMultiline(msgRes.value, chalk.bold.bgBlue);
+    }
+
+    //Opening page
+    if(GlobalData.osType === 'windows' && !GlobalData.isAdvancedUser){
+        open(`http://localhost:${GlobalData.txAdminPort}/auth${urlSuffix}`).catch();
     }
 }
