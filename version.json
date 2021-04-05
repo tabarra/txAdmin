@@ -1,5 +1,5 @@
 {
-    "version": "3.5.0",
+    "version": "3.6.3",
     "allVersions": [
         {
             "version": "1.0.1",
@@ -248,6 +248,22 @@
         {
             "version": "3.5.0",
             "changelog": "Zap integration and minot tweaks, fixes and improvements."
+        },
+        {
+            "version": "3.6.0",
+            "changelog": "Fixed discord bot"
+        },
+        {
+            "version": "3.6.1",
+            "changelog": "CICD hates me."
+        },
+        {
+            "version": "3.6.2",
+            "changelog": "CICD hates me."
+        },
+        {
+            "version": "3.6.3",
+            "changelog": "CICD hates me."
         }
     ]
 }
