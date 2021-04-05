@@ -1,5 +1,5 @@
 {
-    "version": "3.6.3",
+    "version": "3.6.4",
     "allVersions": [
         {
             "version": "1.0.1",
@@ -263,6 +263,10 @@
         },
         {
             "version": "3.6.3",
+            "changelog": "CICD hates me."
+        },
+        {
+            "version": "3.6.4",
             "changelog": "CICD hates me."
         }
     ]

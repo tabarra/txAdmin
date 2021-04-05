@@ -234,6 +234,8 @@ nodemon +set txDebugPlayerlistGenerator true +set txAdminRTS "deadbeef00deadbeef
 nodemon +set txDebugPlayerlistGenerator true +set txDebugExternalSource "x.x.x.x:30120" +set txAdminVerbose truex
 
 # build
+rm -rf dist && npm run build && explorer dist
+# fix this command later, the zip generated is too big and malformed
 rm -rf dist && npm run build && tar.exe -cvf dist/monitor.zip dist/* && explorer dist
 
 # other stuff

@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'DiscordBot:cmd:txadmin';
-const { RichEmbed } = require("discord.js");
+const { RichEmbed } = require("@tabarra/discord");
 const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
 
 module.exports = {

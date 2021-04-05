@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'DiscordBot';
-const Discord = require('discord.js');
+const Discord = require('@tabarra/discord');
 const Collection = require('@discordjs/collection'); 
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
