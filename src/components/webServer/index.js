@@ -16,7 +16,6 @@ const { customAlphabet } = require('nanoid');
 const dict51 = require('nanoid-dictionary/nolookalikes');
 const nanoid = customAlphabet(dict51, 20);
 
-const chalk = require('chalk');
 const { setHttpCallback } = require('@citizenfx/http-wrapper');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const {requestAuth} = require('./requestAuthenticator');

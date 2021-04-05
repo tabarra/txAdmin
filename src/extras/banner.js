@@ -162,7 +162,10 @@ module.exports.printBanner = async () => {
     }
 
     //Opening page
-    if(GlobalData.osType === 'windows' && !GlobalData.isAdvancedUser){
+    if(
+        GlobalData.osType === 'windows' && 
+        (urlSuffix || !GlobalData.isAdvancedUser)
+    ){
         open(`http://localhost:${GlobalData.txAdminPort}/auth${urlSuffix}`).catch();
     }
 }

@@ -25,12 +25,16 @@
 - [x] allow 3 chars admin names
 - [x] disable server auto-start when no admins configured
 - [x] login page indicate if the `admins.json` file is not found
-- [ ] make warns revokable?
-- [ ] xxxx
 
 
+Quickie:
+- crash replace 45 > 90?
+- ctx.ip overwrite with xff?
+- make warns revokable?
 
 > ASAP!:
+- [ ] a way to create admins file without cfx.re 
+- [ ] rename authenticator pra adminVault
 - [ ] consolidate the log pages
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
         - Manual Approval (default)
