@@ -71,7 +71,6 @@ module.exports = class Authenticator {
      * sets the admins file refresh routine
      */
     setupRefreshRoutine(){
-        logError('setup routine')
         this.refreshRoutine = setInterval(() => {
             this.refreshAdmins();
         }, this.config.refreshInterval);
