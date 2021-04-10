@@ -161,6 +161,15 @@ async function handleKick(ctx) {
     const msg = `[txAdmin] (${xss(ctx.session.auth.username)}) Kick reason: ${xss(reason)}`;
     const cmd = formatCommand('txaKickID', id, msg);
     const toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+
+    // Prepare and dispatch txaEvent `playerKicked`
+    const kickEvent = formatCommand(
+      'txaEvent',
+      'playerKicked',
+      JSON.stringify({ target: id, author: ctx.session.auth.username, reason })
+    )
+    globals.fxRunner.srvCmd(kickEvent)
+
     return sendAlertOutput(ctx, toResp);
 }
 
@@ -187,8 +196,9 @@ async function handleWarning(ctx) {
     if(!ensurePermission(ctx, 'players.warn')) return false;
 
     //Register action (and checks if player is online)
+    let actionId
     try {
-        await globals.playerController.registerAction(id, 'warn', ctx.session.auth.username, reason);
+        actionId = await globals.playerController.registerAction(id, 'warn', ctx.session.auth.username, reason);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
@@ -205,6 +215,15 @@ async function handleWarning(ctx) {
         globals.translator.t('nui_warning.instruction'),
     );
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+
+    // Prepare and dispatch txaEvent `playerWarned`
+    const warnEvent = formatCommand(
+      'txaEvent',
+      'playerWarned',
+      JSON.stringify({ target: id, author: ctx.session.auth.username, reason, actionId })
+    )
+
+    globals.fxRunner.srvCmd(warnEvent)
     return sendAlertOutput(ctx, toResp);
 }
 
@@ -270,8 +289,9 @@ async function handleBan(ctx) {
     if(!ensurePermission(ctx, 'players.ban')) return false;
 
     //Register action (and checks if player is online)
+    let actionId
     try {
-        let actionID = await globals.playerController.registerAction(reference, 'ban', ctx.session.auth.username, reason, expiration);
+        actionId = await globals.playerController.registerAction(reference, 'ban', ctx.session.auth.username, reason, expiration);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
@@ -304,6 +324,17 @@ async function handleBan(ctx) {
     }else{
         return ctx.send({type: 'danger', message: `<b>Error:</b> unknown reference type`});
     }
+
+    // Prepare and dispatch txaEvent `playerBanned`
+    const banEvent = formatCommand('txaEvent', 'playerBanned', JSON.stringify({
+        author: ctx.session.auth.username,
+        reason,
+        actionId,
+        target: reference
+    }))
+
+    globals.fxRunner.srvCmd(banEvent)
+
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp, "Identifiers banned!<br>Kicking players:");
 }
@@ -325,11 +356,22 @@ async function handleWhitelist(ctx) {
     if(!ensurePermission(ctx, 'players.whitelist')) return false;
 
     //Whitelist reference
+    let actionId
     try {
-        let actionID = await globals.playerController.approveWhitelist(reference, ctx.session.auth.username);
+        actionId = await globals.playerController.approveWhitelist(reference, ctx.session.auth.username);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
+
+    // Prepare and emit txaEvent `playerWhitelisted`
+    const whitelistEvent = formatCommand('txaEvent', 'playerWhitelisted', JSON.stringify({
+        author: ctx.session.auth.username,
+        actionId,
+        target: reference,
+    }))
+
+    globals.fxRunner.srvCmd(whitelistEvent)
+
     ctx.utils.logAction(`Whitelisted ${reference}`);
     return ctx.send({refresh: true});
 }
