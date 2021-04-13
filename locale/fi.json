@@ -16,7 +16,7 @@
         "kick_temporary": "(%{author}) Olet saanut porttikiellon palvelimelle. Porttikiellon syy: \"%{reason}\". Porttikielto päättyy: %{expiration}.",
         "kick_permanent": "(%{author}) Olet saanut pysyvän porttikiellon palvelimelle. Porttikiellon syy: \"%{reason}\".",
         "reject_temporary": "Olet saanut porttikiellon palvelimelle.\nPorttikielto päättyy: %{expiration}.\nPorttikiellon ID: %{id}.\Porttikiellon syy: %{reason}.\nPorttikiellon antoi: %{author}.",
-        "reject_permanent": "Olet saanut pysyvän porttikiellon palvelimelle.\nPorttikiellon ID: %{id}.\Porttikiellon syy: %{reason}.\nPorttikiellon antoi: %{author}."
+        "reject_permanent": "Olet saanut pysyvän porttikiellon palvelimelle.\nPorttikiellon ID: %{id}.\nPorttikiellon syy: %{reason}.\nPorttikiellon antoi: %{author}."
     },
     "server_actions": {
         "restarting": "Palvelin käynnistyy uudelleen (%{reason}).",
