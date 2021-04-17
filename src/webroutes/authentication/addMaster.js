@@ -144,7 +144,7 @@ async function handleCallback(ctx) {
     return ctx.utils.render('login', {
         template: 'callback',
         addMaster_name: userInfo.name,
-        addMaster_picture: userInfo.picture
+        addMaster_picture: (userInfo.picture)? userInfo.picture : 'img/default_avatar.png'
     });
 }
 
@@ -176,8 +176,7 @@ async function handleSave(ctx) {
     //Checking if session is still present
     if(
         typeof ctx.session.tmpAddMasterUserInfo === 'undefined' ||
-        typeof ctx.session.tmpAddMasterUserInfo.name !== 'string' ||
-        typeof ctx.session.tmpAddMasterUserInfo.picture !== 'string'
+        typeof ctx.session.tmpAddMasterUserInfo.name !== 'string'
     ){
         return returnJustMessage(
             ctx,
@@ -197,6 +196,10 @@ async function handleSave(ctx) {
             `Invalid nameid identifier.`,
             `Could not extract the user identifier from the URL below. Please report this to the txAdmin dev team.\n${ctx.session.tmpAddMasterUserInfo.nameid.toString()}`
         );
+    }
+
+    if(typeof ctx.session.tmpAddMasterUserInfo.picture !== 'string'){
+        ctx.session.tmpAddMasterUserInfo.picture = null;
     }
 
     //Creating admins file
