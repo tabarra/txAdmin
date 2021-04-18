@@ -1,6 +1,6 @@
 {
     "$meta": {
-        "label": "Italiano",
+        "label": "Italian",
         "humanizer_language": "it"
     },
     "restarter": {
@@ -9,7 +9,7 @@
         "partial_crash_warn": "A causa di un crash parziale questo server si riavvierà in 1 minuto. Per cortesia uscite adesso!",
         "partial_crash_warn_discord": "A causa di un crash parziale **%{servername}** si riavvierà in 1 minuto.",
         "schedule_reason": "Riavvio programmato alle %{time}",
-        "schedule_warn": "Questo server è programmato per riavviarsi in %{smart_count} minuti. Per cortesia uscite ora!. |||| Questo server è programmato per riavviarsi in %{smart_count} minuti.",
+        "schedule_warn": "Questo server è programmato per riavviarsi in %{smart_count} minuti. Per cortesia uscite ora! |||| Questo server è programmato per riavviarsi in %{smart_count} minuti.",
         "schedule_warn_discord": "**%{servername}** è programmato per riavviarsi inn %{smart_count} minuti. |||| **%{servername}** è programmato per riavviarsi in %{smart_count} minuti."
     },
     "ban_messages": {
