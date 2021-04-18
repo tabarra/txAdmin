@@ -1,30 +1,10 @@
-## TODO v3.5.0
-- [x] fix whitelist sorting order in the players page
-- [x] updated packages
-- [x] convert the logger to lua and use fd3 (thanks @AvarianKnight)
-- [x] increased chart performance by 60%
-- [x] settings/save/monitor: fixed schedules restart times validation
-- [x] cfg editor: save on ctrl+s
-- [x] zap: Disable "Slow" label when vCore count >= 8;
-- [x] zap: On txAdmin boot, read then erase `txData/txAdminZapConfig.json`;
-- [x] zap: Login page logo url from the config file (the 5% chance matrix easter egg won't be affected);
-- [x] zap: Preset txAdmin interface/port;
-- [x] zap: Enforce server.cfg endpoints;
-- [x] zap: Make server deployer preset `server.cfg` endpoints. (unplanned)
-- [x] zap: Database and license autofill in the deployer - the user can change it if they want;
-- [x] zap: Master account automatically set on startup or first start;
-- [x] zap: Add txData path warnings;
-- [x] zap: Add `sv_maxClients` enforcement;
-- [x] zap: One-click-login button via JWT/JWT (and documment it); 
-- [x] zap: increase `txAdminVersionBestBy` by 10d when running in zap;
-- [x] zap: Ad placement on login page, main interface (desk/mobile), and home-hosting warning (CLI);
-- [x] make chart available without auth (since its public info anyways) and add thread filter
-> v3.5.0
-- [x] fix discord bot for guilds with stage channels
-- [x] on windows, always open the web page on boot
-- [x] allow 3 chars admin names
-- [x] disable server auto-start when no admins configured
-- [x] login page indicate if the `admins.json` file is not found
+## TODO v3.7.0
+- [x] solve the invalid session issue
+- [x] dashboard: add selector for the thread and make it auto refresh
+- [ ] xxxx
+- [ ] xxxx
+- [ ] xxxx
+- [ ] xxxx
 
 
 Quickie:

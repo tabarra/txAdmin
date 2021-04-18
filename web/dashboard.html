@@ -217,56 +217,58 @@
         colorScheme: d3.interpolateViridis,
     }
 
-    //Gets the chart data
-    const getChartData = async (thread) => {
-        
-    }
-
-    //Draws the chart
-    const draw = () => {
-        const tsStart = Date.now();
-        const rects = drawHeatmap(d3Container, perfData, chartOptions);
+    //Draws the chart or sets the message
+    const draw = (data) => {
+        if(Array.isArray(data)){
+            const tsStart = Date.now();
+            const rects = drawHeatmap(d3Container, perfData, chartOptions);
+            const duration = Date.now() - tsStart;
+            perfDiagnosticsMessage.textContent = `Took ${duration}ms to draw ${rects} rects from ${perfData.length} snapshots.`;
+        }else if(typeof data == 'string'){
+            perfDiagnosticsMessage.textContent = '';
+            d3Container.innerHTML = `<div class="text-center text-muted p-4" id="d3-container-message">${data}</div>`;
+        }else{
+            perfDiagnosticsMessage.textContent = '';
+            d3Container.innerHTML = `<div class="text-center text-muted p-4" id="d3-container-message">unknown data type</div>`;
+        }
         d3Container.style.opacity = 1;
-        const duration = Date.now() - tsStart;
-        perfDiagnosticsMessage.textContent = `Took ${duration}ms to draw ${rects} rects from ${perfData.length} snapshots.`;
     }
 
     //Sets the chart data
     const setChartThread = async (thread) => {
+        console.log(`Fetching data for ${thread}`);
         chartThreadSelectBtn.textContent = thread;
-        let retData;
+        perfData = false;
         try {
             const rawPerfData = await fetch(`/chartData?thread=${thread}`);
             const parsedPerfData = JSON.parse(await rawPerfData.text());
             if(Array.isArray(parsedPerfData)){
-                retData = parsedPerfData;
+                perfData = parsedPerfData;
+                draw(parsedPerfData);
             }else{
                 if(parsedPerfData.failReason == 'not_set'){
-                    retData = 'chart database still loading';
+                    draw('chart database still loading');
                 }else if(parsedPerfData.failReason == 'not_enough_data'){
-                    retData = 'Players & Performance chart will be available in an hour.';
+                    draw('Players & Performance chart will be available in an hour.');
                 }else if(parsedPerfData.failReason == 'data_processing'){
-                    retData = 'chart data processing failed';
+                    draw('chart data processing failed');
                 }else{
-                    retData = 'invalid chart data';
+                    draw('invalid chart data');
                 }
             }
         } catch (error) {
-            retData = 'failed to load chart data';
-        }
-
-        if(Array.isArray(retData)){
-            perfData = retData;
-            draw();
-        }else{
-            perfData = false;
-            d3Container.innerHTML = `<div class="text-center text-muted p-4" id="d3-container-message">${retData}</div>`;
+            draw('failed to load chart data');
         }
     }
     setChartThread('svMain');
     document.getElementById('chartThreadSelectBtn-svMain').addEventListener('click', () => setChartThread('svMain'), false);
     document.getElementById('chartThreadSelectBtn-svSync').addEventListener('click', () => setChartThread('svSync'), false);
     document.getElementById('chartThreadSelectBtn-svNetwork').addEventListener('click', () => setChartThread('svNetwork'), false);
+
+    //Every 2.5 minutes
+    setInterval(() => {
+        setChartThread(chartThreadSelectBtn.textContent);
+    }, 2.5*60*1000);
 
     //Renders it again when redized
     let redrawTimeout;
@@ -275,7 +277,7 @@
         clearTimeout(redrawTimeout);
         d3Container.style.opacity = 0.5;
         redrawTimeout = setTimeout(() => {
-            draw();
+            draw(perfData);
         }, 250);
     });
 </script>
