@@ -391,7 +391,7 @@ module.exports = class FXRunner {
         let curr = this.history[this.history.length - 1];
 
         if(!curr.timestamps.start && this.history.length == 1){
-            throw new Error(`This should NOT happen. Let's see how fast people will take to find this...`);
+            throw new Error(`This should NOT happen. Let's see how long people will take to find this...`);
         }else if(!curr.timestamps.start){
             let last = this.history[this.history.length - 2];
             let pending = Object.keys(last.timestamps).filter(k => !curr.timestamps[k]);
