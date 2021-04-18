@@ -32,6 +32,8 @@
         color: dimgrey;
         font-size: 16px;
         font-weight: 500;
+        margin: 2px calc(45px + 10px) 0px calc(27px + 10px);
+        line-height: 1;
     }
     .axisTitle .tickTimeLabel{
         min-width: 2em;
@@ -44,8 +46,28 @@
     .axisTitle .clientsLabel{
         min-width: 2em;
         height: 18px;
+        width: 6px;
         border: dimgrey 2px solid;
         background: rgb(204, 203, 203);
+    }
+    .axisTitle .labelText {
+        
+        margin-left: 0.2rem;
+        margin-right: 1.2rem;
+    }
+    #chartThreadSelectBtn{
+        padding: .1rem .4rem;
+        font-size: .7rem;
+    }
+    .axisTitle .threadSelectDropdown{
+        margin: 0px; position: absolute;
+        inset: 0px auto auto 0px;
+        transform: translate(0px, 26px);
+        min-width: unset;
+    }
+    #d3-container-message {
+        font-size: 2.25em;
+        line-height: 8;
     }
 
     /* Other stuff */
@@ -81,23 +103,28 @@
     <div class="dashboard-chart">
         <div class="card card-accent-info">
             <div class="card-body p-1">
-                <div class="text-center axisTitle">
-                    <!-- <span class="clientsLabel">■</span> -->
-                    <span class="badge clientsLabel"> &nbsp; </span>
-                    Players
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <!-- <span class="tickTimeLabel">■</span> -->
-                    <span class="badge tickTimeLabel"> &nbsp; </span>
-                    Tick Time (at bottom is better)
+                <div class="text-center axisTitle d-flex">
+                    <div class="mt-1x">
+                        <span class="badge clientsLabel">&nbsp;</span>
+                        <span class="labelText">Players</span>
+                        <span class="badge tickTimeLabel">&nbsp;</span>
+                        <span class="labelText">Tick Time (at bottom is better)</span>
+                    </div>
+
+                    <div class="btn-group ml-auto">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" 
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" id="chartThreadSelectBtn">svMain</button>
+                        <div class="dropdown-menu threadSelectDropdown bg-secondary" data-popper-placement="bottom-start">
+                            <a class="dropdown-item bg-secondary text-dark" href="#" id="chartThreadSelectBtn-svMain">svMain</a>
+                            <a class="dropdown-item bg-secondary text-dark" href="#" id="chartThreadSelectBtn-svSync">svSync</a>
+                            <a class="dropdown-item bg-secondary text-dark" href="#" id="chartThreadSelectBtn-svNetwork">svNetwork</a>
+                        </div>
+                    </div>
                 </div>
                 
                 <div id="d3-container">
-                    <br><br><br><br><br>
-                    <div class="text-center text-muted p-4" style="font-size: 2.25em;" id="d3-container-message">
-                        loading chart...
-                    </div>
+                    <div class="text-center text-muted p-4" id="d3-container-message">loading chart...</div>
                 </div>
-            
             </div>
         </div>
     </div>
@@ -178,68 +205,79 @@
 <script type="module">
     import { drawHeatmap } from "/js/txadmin/chart.js";
 
-    //Elements
+    //Elements & vars
+    let perfData;
+    const chartThreadSelectBtn = document.getElementById('chartThreadSelectBtn');
     const perfDiagnosticsMessage = document.getElementById('perfDiagnosticsMessage');
     const d3Container = document.getElementById('d3-container');
-    const d3ContainerMessage = document.getElementById('d3-container-message');
-    
-    (async () => {
-        //Prepare data
-        let perfData;
+    const chartOptions = {
+        // colorScheme: d3[`{{[it.uiTheme, 'interpolateViridis', 'interpolateTurbo']|ternary}}`],
+        // colorScheme: d3.interpolateInferno,
+        // colorScheme: d3.interpolateTurbo,
+        colorScheme: d3.interpolateViridis,
+    }
+
+    //Gets the chart data
+    const getChartData = async (thread) => {
+        
+    }
+
+    //Draws the chart
+    const draw = () => {
+        const tsStart = Date.now();
+        const rects = drawHeatmap(d3Container, perfData, chartOptions);
+        d3Container.style.opacity = 1;
+        const duration = Date.now() - tsStart;
+        perfDiagnosticsMessage.textContent = `Took ${duration}ms to draw ${rects} rects from ${perfData.length} snapshots.`;
+    }
+
+    //Sets the chart data
+    const setChartThread = async (thread) => {
+        chartThreadSelectBtn.textContent = thread;
+        let retData;
         try {
-            const rawPerfData = await fetch(`/chartData`);
+            const rawPerfData = await fetch(`/chartData?thread=${thread}`);
             const parsedPerfData = JSON.parse(await rawPerfData.text());
-            if(!Array.isArray(parsedPerfData)){
-                if(parsedPerfData.failReason == 'not_set'){
-                    d3ContainerMessage.innerText = 'chart database still loading';
-
-                }else if(parsedPerfData.failReason == 'not_enough_data'){
-                    d3ContainerMessage.innerText = 'Players & Performance chart will be available in an hour.';
-
-                }else if(parsedPerfData.failReason == 'data_processing'){
-                    d3ContainerMessage.innerText = 'chart data processing failed';
-
-                }else{
-                    d3ContainerMessage.innerText = 'invalid chart data';
-
-                }
+            if(Array.isArray(parsedPerfData)){
+                retData = parsedPerfData;
             }else{
-                perfData = parsedPerfData;
+                if(parsedPerfData.failReason == 'not_set'){
+                    retData = 'chart database still loading';
+                }else if(parsedPerfData.failReason == 'not_enough_data'){
+                    retData = 'Players & Performance chart will be available in an hour.';
+                }else if(parsedPerfData.failReason == 'data_processing'){
+                    retData = 'chart data processing failed';
+                }else{
+                    retData = 'invalid chart data';
+                }
             }
         } catch (error) {
-            d3ContainerMessage.innerText = 'failed to load chart data';
+            retData = 'failed to load chart data';
         }
+
+        if(Array.isArray(retData)){
+            perfData = retData;
+            draw();
+        }else{
+            perfData = false;
+            d3Container.innerHTML = `<div class="text-center text-muted p-4" id="d3-container-message">${retData}</div>`;
+        }
+    }
+    setChartThread('svMain');
+    document.getElementById('chartThreadSelectBtn-svMain').addEventListener('click', () => setChartThread('svMain'), false);
+    document.getElementById('chartThreadSelectBtn-svSync').addEventListener('click', () => setChartThread('svSync'), false);
+    document.getElementById('chartThreadSelectBtn-svNetwork').addEventListener('click', () => setChartThread('svNetwork'), false);
+
+    //Renders it again when redized
+    let redrawTimeout;
+    window.addEventListener("resize", () => {
         if(!perfData) return;
-        //DEBUG
-        // perfData = [...perfData, ...perfData, ...perfData]
-        // perfData = perfData.slice(-50)
-
-        //Render page
-        const chartOptions = {
-            // colorScheme: d3[`{{[it.uiTheme, 'interpolateViridis', 'interpolateTurbo']|ternary}}`],
-            // colorScheme: d3.interpolateInferno,
-            // colorScheme: d3.interpolateTurbo,
-            colorScheme: d3.interpolateViridis,
-        }
-
-        const draw = () => {
-            const tsStart = Date.now();
-            const rects = drawHeatmap(d3Container, perfData, chartOptions);
-            d3Container.style.opacity = 1;
-            const duration = Date.now() - tsStart;
-            perfDiagnosticsMessage.textContent = `Took ${duration}ms to draw ${rects} rects from ${perfData.length} snapshots.`;
-        }
-        draw();
-
-        let redrawTimeout;
-        window.addEventListener("resize", () => {
-            clearTimeout(redrawTimeout);
-            d3Container.style.opacity = 0.5;
-            redrawTimeout = setTimeout(() => {
-                draw();
-            }, 250);
-        });
-    })();
+        clearTimeout(redrawTimeout);
+        d3Container.style.opacity = 0.5;
+        redrawTimeout = setTimeout(() => {
+            draw();
+        }, 250);
+    });
 </script>
 
 <script>
