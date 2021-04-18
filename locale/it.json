@@ -1,0 +1,37 @@
+{
+    "$meta": {
+        "label": "Italiano",
+        "humanizer_language": "it"
+    },
+    "restarter": {
+        "start_timeout": "Avviato fallito nel tempo previsto",
+        "crash_detected": "rilevato crash",
+        "partial_crash_warn": "A causa di un crash parziale questo server si riavvierà in 1 minuto. Per cortesia uscite adesso!",
+        "partial_crash_warn_discord": "A causa di un crash parziale **%{servername}** si riavvierà in 1 minuto.",
+        "schedule_reason": "Riavvio programmato alle %{time}",
+        "schedule_warn": "Questo server è programmato per riavviarsi in %{smart_count} minuti. Per cortesia uscite ora!. |||| Questo server è programmato per riavviarsi in %{smart_count} minuti.",
+        "schedule_warn_discord": "**%{servername}** è programmato per riavviarsi inn %{smart_count} minuti. |||| **%{servername}** è programmato per riavviarsi in %{smart_count} minuti."
+    },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) Sei stato bannato da questo server per \"%{reason}\". Il tuo ban scadrà in: %{expiration}.",
+        "kick_permanent": "(%{author}) Sei stato bannato permanentemente da questo server per \"%{reason}\".",
+        "reject_temporary": "Sei stato bannato da questo server..\nIl tuo ban scadrà in: %{expiration}.\nBan ID: %{id}.\nBan Motivazione: %{reason}.\nBannato da: %{author}.",
+        "reject_permanent": "Sei stato bannato da questo server.\nBan ID: %{id}.\nBan Motivazione: %{reason}.\nBanned da: %{author}."
+    },
+    "server_actions": {
+        "restarting": "Riavvio del server (%{reason}).",
+        "restarting_discord": "**%{servername}** si sta riavviando (%{reason}).",
+        "stopping": "Il Server si sta spegnendo (%{reason}).",
+        "stopping_discord": "**%{servername}** si sta spegnendo (%{reason}).",
+        "spawning_discord": "**%{servername}** si sta avviando."
+    },
+    "discord": {
+        "status_online": "**%{servername}** è **Online**!",
+        "status_offline": "**%{servername}** è **Offline**!"
+    },
+    "nui_warning": {
+        "title": "WARNING",
+        "warned_by": "Avvisato da:",
+        "instruction": "Tieni premuto [SPACE] per 10 secondi per rimuovere questo messaggio."
+    }
+}
