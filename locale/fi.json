@@ -6,17 +6,17 @@
     "restarter": {
         "start_timeout": "palvelin ei käynnistynyt ajoissa.",
         "crash_detected": "Kaatuminen havaittu",
-        "partial_crash_warn": "Osittaisen kaatumisen vuoksi palvelin käynnistyy uudelleen minuutin kuluttua. Poistukaa serveriltä nyt.",
+        "partial_crash_warn": "Osittaisen kaatumisen vuoksi palvelin käynnistyy uudelleen minuutin kuluttua. Poistukaa palvelimelta nyt!",
         "partial_crash_warn_discord": "Osittaisen kaatumisen vuoksi **%{servername}** käynnistyy uudelleen minuutin kuluttua.",
         "schedule_reason": "Ajoitettu uudelleenkäynnistys kello %{time}",
-        "schedule_warn": "Tämä palvelin on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua. Katkaise yhteys nyt. |||| Tämä palvelin on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua.",
+        "schedule_warn": "Palvelin on ajoitettu käynnistymään uudelleen minuutin kuluttua. Poistu palvelimelta nyt! |||| Palvelin on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua.",
         "schedule_warn_discord": "**%{servername}** on uudelleenkäynnistymässä %{smart_count} minuutin kuluttua. |||| **%{servername}** on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) Sinulle on asetettu bannit palvelimelle. Bannien syy: \"%{reason}\". Bannit päättyvät: %{expiration}.",
-        "kick_permanent": "(%{author}) Sinulle on asetettu ikuiset bannit palvelimelle. Bannien syy: \"%{reason}\".",
-        "reject_temporary": "Sinulle on asetettu bannit palvelimelle.\nBannit päättyvät: %{expiration}.\nBan ID: %{id}.\nBannien syy: %{reason}.\nBannit antoi: %{author}.",
-        "reject_permanent": "Sinulle on asetettu ikuiset bannit palvelimelle.\nBan ID: %{id}.\nBannien syy: %{reason}.\nBannit antoi: %{author}."
+        "kick_temporary": "(%{author}) Olet saanut porttikiellon palvelimelle. Porttikiellon syy: \"%{reason}\". Porttikielto päättyy: %{expiration}.",
+        "kick_permanent": "(%{author}) Olet saanut pysyvän porttikiellon palvelimelle. Porttikiellon syy: \"%{reason}\".",
+        "reject_temporary": "Olet saanut porttikiellon palvelimelle.\nPorttikielto päättyy: %{expiration}.\nPorttikiellon ID: %{id}.\nPorttikiellon syy: %{reason}.\nPorttikiellon antoi: %{author}.",
+        "reject_permanent": "Olet saanut pysyvän porttikiellon palvelimelle.\nPorttikiellon ID: %{id}.\nPorttikiellon syy: %{reason}.\nPorttikiellon antoi: %{author}."
     },
     "server_actions": {
         "restarting": "Palvelin käynnistyy uudelleen (%{reason}).",
