@@ -48,10 +48,12 @@ module.exports = class HostCPUStatus {
             var prevCpu = this.prevCpus[i];
             var currCpu = currCpus[i];
             var deltas = {total:0};
-            for (var t in prevCpu.times)
+            for (let t in prevCpu.times){
                 deltas.total += currCpu.times[t] - prevCpu.times[t];
-            for (var t in prevCpu.times)
+            }
+            for (let t in prevCpu.times){
                 deltas[t] = currCpu.times[t] - prevCpu.times[t];
+            }
         }
         this.prevCpus = currCpus;
         this.samples.push(deltas);

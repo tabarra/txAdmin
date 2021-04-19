@@ -64,7 +64,7 @@ function dependencyChecker() {
  * @param {boolean} filter default true
  */
 function parseSchedule(schedule, filter = true) {
-    times = (typeof schedule === 'string')? schedule.split(',') : schedule;
+    const times = (typeof schedule === 'string')? schedule.split(',') : schedule;
     let out = []
     times.forEach((time) => {
         if(!time.length) return;
@@ -144,13 +144,13 @@ function getFXServerPort(rawCfgFile) {
     if(rawCfgFile.includes('stop monitor')) throw new Error(`Remove "stop monitor" from your config`);
 
     const maxClientsRegex = /^\s*sv_maxclients\s+(\d+).*$/gim;
-    const endpointsRegex = /^\s*endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.*$/gim;
+    const endpointsRegex = /^\s*endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):([0-9]{1,5})["']?.*$/gim;
     // const endpointsRegex = /endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.*/gi;
     let endpoints = [];
     let maxClients = [];
     try {
         let match;
-        while (match = endpointsRegex.exec(rawCfgFile)) {
+        while ((match = endpointsRegex.exec(rawCfgFile))) {
             endpoints.push({
                 line: match[0].trim(),
                 type: match[1].toLowerCase(),
@@ -158,7 +158,7 @@ function getFXServerPort(rawCfgFile) {
                 port: parseInt(match[3]),
             });
         }
-        while (match = maxClientsRegex.exec(rawCfgFile)) {
+        while ((match = maxClientsRegex.exec(rawCfgFile))) {
             maxClients.push(parseInt(match[1]));
         }
     } catch (error) {

@@ -2,25 +2,29 @@ module.exports = {
     "env": {
         "node": true,
         "commonjs": true,
-        "es2021": true,
+        "es2017": true
     },
     "globals": {
-        "globals": true,
-        "GlobalData": true,
-        "ExecuteCommand": true,
-        "GetConvar": true,
-        "GetCurrentResourceName": true,
-        "GetResourcePath": true,
-        "IsDuplicityVersion": true,
-        "GetResourceMetadata": true
+        "globals": "writable",
+        "GlobalData": "writable",
+        "ExecuteCommand": "readonly",
+        "GetConvar": "readonly",
+        "GetCurrentResourceName": "readonly",
+        "GetPasswordHash": "readonly",
+        "GetResourceMetadata": "readonly",
+        "GetResourcePath": "readonly",
+        "IsDuplicityVersion": "readonly",
+        "VerifyPasswordHash": "readonly"
     },
     "extends": "eslint:recommended",
     "parserOptions": {
-        "ecmaVersion": 12
+        "ecmaVersion": 10
     },
     "ignorePatterns": ["webpack.config.js"],
     "rules": {
-        "no-unused-vars": "off",
-        "no-empty": "off"
+        "no-control-regex": "off",
+        "no-empty": ["error", { "allowEmptyCatch": true }],
+        "no-prototype-builtins": "off",
+        "no-unused-vars": ["off", { "varsIgnorePattern": "(dir|log)\\w*" }]
     }
 };

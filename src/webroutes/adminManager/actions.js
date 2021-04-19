@@ -8,7 +8,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
-const citizenfxIDRegex = /^\w[\w\.\-]{1,18}\w$/;
+const citizenfxIDRegex = /^\w[\w.-]{1,18}\w$/;
 const discordIDRegex = /^\d{7,20}$/;
 const nameRegex = citizenfxIDRegex;
 

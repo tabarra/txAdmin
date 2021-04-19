@@ -23,7 +23,7 @@ module.exports = async function ServerLog(ctx) {
         return ctx.utils.render('serverLog', renderData);
 
     //If offset
-    }else if(parseInt(ctx.query.offset) !== NaN){
+    }else if(!isNaN(parseInt(ctx.query.offset))){
         if(ctx.query.offset === globals.databus.serverLog.length){
             return ctx.send({offset: globals.databus.serverLog.length, log : false});
         }else{

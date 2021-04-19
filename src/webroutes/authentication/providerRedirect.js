@@ -35,7 +35,7 @@ module.exports = async function ProviderRedirect(ctx) {
         const urlCitizenFX =  await globals.authenticator.providers.citizenfx.getAuthURL(genCallbackURL(ctx, 'citizenfx'), ctx.session._sessCtx.externalKey);
         return ctx.response.redirect(urlCitizenFX);
     } catch (error) {
-        if(GlobalData.verbose || true) logWarn(`Failed to generate CitizenFX Auth URL with error: ${error.message}`);
+        if(GlobalData.verbose) logWarn(`Failed to generate CitizenFX Auth URL with error: ${error.message}`);
         return returnJustMessage(ctx, 'Failed to generate callback URL:', error.message);
     }
 };

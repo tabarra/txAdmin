@@ -13,7 +13,7 @@ const OutputHandler = require('./outputHandler');
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000) };
-const escape = (x) => {return x.replace(/\"/g, '\uff02');};
+const escape = (x) => {return x.replace(/"/g, '\uff02');};
 const formatCommand = (cmd, ...params) => {
     return `${cmd} "` + [...params].map(escape).join(`" "`) + `"`;
 };
@@ -154,7 +154,7 @@ module.exports = class FXRunner {
         try {
             this.fxServerPort = helpers.getFXServerPort(rawCfgFile);
         } catch (error) {
-            const cleanedErrorMessage = error.message.replace(/\<\/?code>/gi, '').replace(/\<br>/gi, '');
+            const cleanedErrorMessage = error.message.replace(/<\/?code>/gi, '').replace(/<br>/gi, '');
             const outMsg = logError(`server.cfg error: \n${cleanedErrorMessage}`);
             //the IF below is only a way to disable the endpoint check
             if(globals.config.forceFXServerPort){
@@ -369,7 +369,7 @@ module.exports = class FXRunner {
         if(!result) return false;
         await sleep(bufferTime);
         this.outputHandler.enableCmdBuffer = false;
-        return this.outputHandler.cmdBuffer.replace(/\u001b\[\d+(;\d)?m/g, '');
+        return this.outputHandler.cmdBuffer.replace(/\x1b\[\d+(;\d)?m/g, '');
     }
 
 

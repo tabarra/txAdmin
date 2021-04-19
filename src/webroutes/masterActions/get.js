@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'WebServer:MasterActions:Get';
+const fs = require('fs');
 const path = require('path');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');

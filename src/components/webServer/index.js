@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'WebServer';
+const path = require('path');
 const HttpClass  = require('http');
 
 const Koa = require('koa');

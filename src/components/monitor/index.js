@@ -8,7 +8,7 @@ const HostCPUStatus = require('./hostCPUStatus');
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000) };
 const isUndefined = (x) => { return (typeof x === 'undefined') };
-const escape = (x) => {return x.replace(/\"/g, '\uff02');};
+const escape = (x) => {return x.replace(/"/g, '\uff02');};
 const formatCommand = (cmd, ...params) => {
     return `${cmd} "` + [...params].map(escape).join(`" "`) + `"`;
 };
@@ -270,8 +270,8 @@ module.exports = class Monitor {
             dynamicResp.sv_maxclients
         ){
             const maxClients = parseInt(dynamicResp.sv_maxclients);
-            if(maxClients !== NaN && maxClients > GlobalData.deployerDefaults.maxClients){
-                globals.fxRunner.srvCmdBuffer(`sv_maxclients ${GlobalData.deployerDefaults.maxClients}`);
+            if(!isNaN(maxClients) && maxClients > GlobalData.deployerDefaults.maxClients){
+                globals.fxRunner.srvCmdBuffer(`sv_maxclients ${GlobalData.deployerDefaults.maxClients} ##ZAP-Hosting: please don't modify`);
                 logError(`Zap-Hosting: Detected that the server has sv_maxclients above the limit (${GlobalData.deployerDefaults.maxClients}). Changing back to the default value.`);
                 globals.logger.append(`[SYSTEM] changing sv_maxclients back to ${GlobalData.deployerDefaults.maxClients}`);
             }
