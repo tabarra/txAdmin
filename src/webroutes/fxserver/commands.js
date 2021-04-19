@@ -4,7 +4,7 @@ const xss = require('../../extras/xss')();
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
-const escape = (x) => {return x.replace(/\"/g, '\uff02');};
+const escape = (x) => {return x.replace(/"/g, '\uff02');};
 const formatCommand = (cmd, ...params) => {
     return `${cmd} "` + [...params].map(escape).join(`" "`) + `"`;
 };

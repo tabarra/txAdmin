@@ -107,16 +107,16 @@ module.exports = class StatsCollector {
         return 'not implemented yet';
 
         // check if server is offline
-        const epoch = getEpoch(1);
-        const lastReg = this.playersSeries.length ? this.playersSeries[this.playersSeries.length-1] : false;
-        if(lastReg && lastReg.epoch !== epoch){
-            this.playersSeries = this.playersSeries.map(e => {
+        // const epoch = getEpoch(1);
+        // const lastReg = this.playersSeries.length ? this.playersSeries[this.playersSeries.length-1] : false;
+        // if(lastReg && lastReg.epoch !== epoch){
+        //     this.playersSeries = this.playersSeries.map(e => {
 
-            })
-        }
-        const playerlist = globals.playerController.getPlayerList();
-        this.playersTimeSeries.add(playerlist.length);
-        dir(playerlist.length)
+        //     })
+        // }
+        // const playerlist = globals.playerController.getPlayerList();
+        // this.playersTimeSeries.add(playerlist.length);
+        // dir(playerlist.length)
     }
 
 

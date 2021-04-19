@@ -1,4 +1,5 @@
 //Requires
+const os = require('os');
 const boxen = require('boxen');
 const chalk = require('chalk');
 const got = require('got');

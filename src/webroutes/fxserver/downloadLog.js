@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'WebServer:FXServerDownloadLog';
+const fs = require('fs');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 

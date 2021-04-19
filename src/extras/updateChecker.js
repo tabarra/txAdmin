@@ -18,14 +18,14 @@ const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'un
 module.exports = async () => {
     try {
         //perform request - cache busting every ~1.4h
-        let osTypeApiUrl = (GlobalData.osType == 'windows')? 'win32' : 'linux';
-        let cacheBuster = Math.floor(now() / 5e3);
-        let reqUrl = `https://changelogs-live.fivem.net/api/changelog/versions/${osTypeApiUrl}/server?${cacheBuster}`;
-        let changelogReq = await axios.get(reqUrl);
+        const osTypeApiUrl = (GlobalData.osType == 'windows')? 'win32' : 'linux';
+        const cacheBuster = Math.floor(now() / 5e3);
+        const reqUrl = `https://changelogs-live.fivem.net/api/changelog/versions/${osTypeApiUrl}/server?${cacheBuster}`;
+        const changelogReq = await axios.get(reqUrl);
 
         //check response
         if(!changelogReq.data) throw new Error('request failed');
-        changelog = changelogReq.data;
+        const changelog = changelogReq.data;
         if(anyUndefined(changelog.recommended, changelog.optional, changelog.latest, changelog.critical)){
             throw new Error('expected values not found');
         }
@@ -33,7 +33,7 @@ module.exports = async () => {
         //FIXME: CHECK FOR BROKEN ORDER
 
         //fill in databus
-        let osTypeRepoUrl = (GlobalData.osType == 'windows')? 'server_windows' : 'proot_linux';
+        const osTypeRepoUrl = (GlobalData.osType == 'windows')? 'server_windows' : 'proot_linux';
         globals.databus.updateChecker = {
             artifactsLink: `https://runtime.fivem.net/artifacts/fivem/build_${osTypeRepoUrl}/master/?${cacheBuster}`,
             recommended: parseInt(changelog.recommended),

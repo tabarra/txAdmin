@@ -105,7 +105,7 @@ try {
 //NOTE: Non-ASCII in one of those paths (don't know which) will make NodeJS crash due to a bug in v8 (or something)
 //      when running localization methods like Date.toLocaleString().
 //      There was also an issue with the slash() lib and with the +exec on FXServer
-const nonASCIIRegex = /[^\u0000-\u0080]+/
+const nonASCIIRegex = /[^\x00-\x80]+/;
 if(nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)){
     logError(`Due to environmental restrictions, your paths CANNOT contain non-ASCII characters.`);
     logError(`Example of non-ASCII characters: çâýå, ρέθ, ñäé, ēļæ, глж, เซิร์, 警告.`);
@@ -128,7 +128,7 @@ const debugExternalSource = (txDebugExternalSourceConvar !== 'false')? txDebugEx
 
 //Checking for Zap Configuration file
 const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
-let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, defaultMasterAccount, deployerDefaults;
+let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, defaultMasterAccount, runtimeSecret, deployerDefaults;
 if(fs.existsSync(zapCfgFile)){
     log('Loading Zap-Hosting configuration file.');
     try {

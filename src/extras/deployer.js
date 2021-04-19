@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'Deployer';
+const path = require('path');
 const cloneDeep = require('lodash/cloneDeep');
 const dateFormat = require('dateformat');
 const fs = require('fs-extra');

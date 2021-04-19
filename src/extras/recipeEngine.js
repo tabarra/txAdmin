@@ -19,10 +19,10 @@ const isPathLinear = (pathInput) => {
     return pathInput.match(/(\.\.(\/|\\|$))+/g) === null;
 }
 const isPathRoot = (pathInput) => {
-    return /^\.[\/\\]*$/.test(pathInput);
+    return /^\.[/\\]*$/.test(pathInput);
 }
 const pathCleanTrail = (pathInput) => {
-    return pathInput.replace(/[\/\\]+$/, '');
+    return pathInput.replace(/[/\\]+$/, '');
 } 
 const isPathValid = (pathInput, acceptRoot=true) => {
     return (
@@ -78,7 +78,7 @@ const taskDownloadFile = async (options, basePath, deployerCtx) => {
  * Downloads a github repository with an optional reference (branch, tag, commit hash) or subpath. 
  * If the directory structure does not exist, it is created.
  */
-const githubRepoSourceRegex = /^((https?:\/\/github\.com\/)?|@)?([\w\.\-_]+)\/([\w\.\-_]+).*$/;
+const githubRepoSourceRegex = /^((https?:\/\/github\.com\/)?|@)?([\w.\-_]+)\/([\w.\-_]+).*$/;
 const validatorDownloadGithub = (options) => {
     return (
         typeof options.src == 'string' &&

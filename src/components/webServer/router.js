@@ -12,9 +12,9 @@ const {requestAuth} = require('./requestAuthenticator');
  * Router factory
  * @param {object} config
  */
-module.exports = router = (config) =>{
+module.exports = (config) => {
     const router = new Router();
-    authLimiter = KoaRateLimit({
+    const authLimiter = KoaRateLimit({
         driver: 'memory',
         db: new Map(),
         duration: config.limiterMinutes * 60 * 1000, // 15 minutes

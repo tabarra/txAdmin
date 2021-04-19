@@ -15,7 +15,7 @@ const getRenderErrorText = (view, error, data) => {
     logError(`Error rendering ${view}.`);
     if(GlobalData.verbose) dir(error)
     if(!isUndefined(data.discord) && !isUndefined(data.discord.token)) data.discord.token = '[redacted]';
-    out = `<pre>\n`;
+    let out = `<pre>\n`;
     out += `Error rendering '${view}'.\n`;
     out += `Message: ${error.message}\n`;
     out += `The data provided was:\n`;
