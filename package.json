@@ -6,7 +6,8 @@
   "scripts": {
     "build": "rimraf dist && webpack --config webpack.config.js --progress",
     "watch": "nodemon --config nodemon.json",
-    "lint": "eslint ./src/** --ext .js"
+    "lint": "eslint ./src/** --ext .js; echo \"Please run 'npm run lint:fix' to fix those issues\"",
+    "lint:fix": "eslint ./src/** --ext .js --fix"
   },
   "repository": {
     "type": "git",
@@ -74,7 +75,9 @@
   },
   "devDependencies": {
     "copy-webpack-plugin": "^6.2.0",
-    "eslint": "^7.24.0",
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-config-airbnb-base": "^14.2.1",
     "nodemon": "^2.0.7",
     "rimraf": "^3.0.2",
     "terser-webpack-plugin": "^4.2.2",

@@ -208,7 +208,9 @@ TODO: Bot commands (in dev order):
 ## CLTR+C+V
 ```bash
 # run
-cd /e/FiveM/builds/3247/citizen/system_resources/monitor
+export CURR_FX_VERSION="3247"
+alias cdmon="cd /e/FiveM/builds/$CURR_FX_VERSION/citizen/system_resources/monitor"
+
 nodemon +set txDebugPlayerlistGenerator truex +set txAdminVerbose truex
 nodemon +set txDebugPlayerlistGenerator true +set txAdminRTS "deadbeef00deadbeef00deadbeef00deadbeef00deadbeef" +set txAdminVerbose truex
 nodemon +set txDebugPlayerlistGenerator true +set txDebugExternalSource "x.x.x.x:30120" +set txAdminVerbose truex
