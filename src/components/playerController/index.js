@@ -300,10 +300,10 @@ module.exports = class PlayerController {
         if(!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
         try {
             return await this.dbo.get("actions")
-                            .filter(filter)
-                            .filter(a => idArray.some((fi) => a.identifiers.includes(fi)))
-                            .cloneDeep()
-                            .value();
+                .filter(filter)
+                .filter(a => idArray.some((fi) => a.identifiers.includes(fi)))
+                .cloneDeep()
+                .value();
         } catch (error) {
             const msg = `Failed to search for a registered action database with error: ${error.message}`;
             if(GlobalData.verbose) logError(msg);
@@ -418,8 +418,8 @@ module.exports = class PlayerController {
                         id: []
                     });
                     const reason = xssRejectMessage(this.config.whitelistRejectionMessage)
-                                    .replace(/<\/?strong>/g, '')
-                                    .replace(/<id>/g, whitelistID);
+                        .replace(/<\/?strong>/g, '')
+                        .replace(/<id>/g, whitelistID);
                     return {allow: false, reason};
                 }
             }
@@ -527,8 +527,8 @@ module.exports = class PlayerController {
         if(allowedTypes !== true && !Array.isArray(allowedTypes)) throw new Error('Invalid allowedTypes.');
         try {
             const action = await this.dbo.get("actions")
-                            .find({id: action_id})
-                            .value();
+                .find({id: action_id})
+                .value();
             if(action){
                 if(action.type === 'warn') return 'cannot revoke warns'
                 if(allowedTypes !== true && !allowedTypes.includes(action.type)){

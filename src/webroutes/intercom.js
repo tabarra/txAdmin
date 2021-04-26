@@ -5,7 +5,7 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
-const now = () => { return Math.round(Date.now() / 1000) };
+
 
 /**
  * Intercommunications endpoint

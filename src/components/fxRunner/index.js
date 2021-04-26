@@ -2,7 +2,6 @@
 const modulename = 'FXRunner';
 const { spawn } = require('child_process');
 const path = require('path');
-const os = require('os');
 const sleep = require('util').promisify((a, f) => setTimeout(f, a));
 const { parseArgsStringToArgv } = require('string-argv');
 const StreamValues = require('stream-json/streamers/StreamValues');
@@ -215,7 +214,7 @@ module.exports = class FXRunner {
         this.fxChild.stdout.setEncoding('utf8');
 
         //Setting up event handlers
-        this.fxChild.on('close', function (code, signal) {
+        this.fxChild.on('close', function (code) {
             logWarn(`>> [${pid}] FXServer Closed. (code ${code})`);
             this.history[historyIndex].timestamps.close = now();
         }.bind(this));
@@ -226,7 +225,7 @@ module.exports = class FXRunner {
             logWarn(`>> [${pid}] FXServer Errored:`);
             dir(err)
         }.bind(this));
-        this.fxChild.on('exit', function (code, signal) {
+        this.fxChild.on('exit', function () {
             process.stdout.write("\n"); //Make sure this isn't concatenated with the last line
             logWarn(`>> [${pid}] FXServer Exited.`);
             this.history[historyIndex].timestamps.exit = now();
@@ -237,13 +236,13 @@ module.exports = class FXRunner {
             }
         }.bind(this));
 
-        this.fxChild.stdin.on('error', (data) => {});
-        this.fxChild.stdin.on('data', (data) => {});
+        this.fxChild.stdin.on('error', () => {});
+        this.fxChild.stdin.on('data', () => {});
 
-        this.fxChild.stdout.on('error', (data) => {});
+        this.fxChild.stdout.on('error', () => {});
         this.fxChild.stdout.on('data', this.outputHandler.write.bind(this.outputHandler));
 
-        this.fxChild.stderr.on('error', (data) => {});
+        this.fxChild.stderr.on('error', () => {});
         this.fxChild.stderr.on('data', this.outputHandler.writeError.bind(this.outputHandler));
 
         const tracePipe = this.fxChild.stdio[3].pipe(StreamValues.withParser());

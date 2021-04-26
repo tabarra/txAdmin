@@ -4,7 +4,6 @@ const got = require('got');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
-const getRand = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const randIndex = (arr) => Math.floor(Math.random() * arr.length);
 const unDups = (arr) => arr.filter((v,i) => arr.indexOf(v) === i)
 

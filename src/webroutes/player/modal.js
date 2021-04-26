@@ -3,7 +3,6 @@ const modulename = 'WebServer:PlayerModal';
 const cloneDeep = require('lodash/cloneDeep');
 const dateFormat = require('dateformat');
 const humanizeDuration = require('humanize-duration');
-const xss = require('../../extras/xss')();
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers

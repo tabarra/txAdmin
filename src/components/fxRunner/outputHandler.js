@@ -82,7 +82,7 @@ module.exports = class OutputHandler {
                 }else if(globals.fxRunner.restartDelayOverride <= 45000){
                     globals.fxRunner.restartDelayOverride += 5000;
                 }
-                const [ip, port] = data.address.split(':');
+                const [_ip, port] = data.address.split(':');
                 deferError(`Detected FXServer error: Port ${port} is busy! Increasing restart delay to ${globals.fxRunner.restartDelayOverride}.`);
             }catch(e){} 
             return;

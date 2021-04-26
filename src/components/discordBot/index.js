@@ -145,7 +145,7 @@ module.exports = class DiscordBot {
         this.client.on('error', (error) => {
             logError(`Error from Discord.js client: ${error.message}`);
         });
-        this.client.on('resume', (error) => {
+        this.client.on('resume', () => {
             if(GlobalData.verbose) logOk('Connection with Discord API server resumed');
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
         });
@@ -194,7 +194,7 @@ module.exports = class DiscordBot {
 
         //Executing command
         try {
-            let sentMsg = await command.execute(message, args);
+            await command.execute(message, args);
         } catch (error) {
             logError(`Failed to execute ${commandName}: ${error.message}`);
         }

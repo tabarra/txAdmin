@@ -83,8 +83,8 @@ function getVersionData() {
             versionData.color = 'danger';
             versionData.message = 'A critical update is available for FXServer, you should update now.';
             versionData.subtext = (rVer.critical > rVer.recommended)
-                                    ? `(critical update ${curr} ➤ ${rVer.critical})`
-                                    : `(recommended update ${curr} ➤ ${rVer.recommended})`;
+                ? `(critical update ${curr} ➤ ${rVer.critical})`
+                : `(recommended update ${curr} ➤ ${rVer.recommended})`;
             
         }else if(curr < rVer.recommended){
             versionData.color = 'warning';

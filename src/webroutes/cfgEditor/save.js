@@ -37,7 +37,7 @@ module.exports = async function CFGEditorSave(ctx) {
 
     //Validating CFG Data
     try {
-        const port = helpers.getFXServerPort(ctx.request.body.cfgData);
+        const _port = helpers.getFXServerPort(ctx.request.body.cfgData);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<strong>server.cfg error:</strong> <br>${error.message}`});
     }

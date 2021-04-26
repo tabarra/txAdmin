@@ -11,9 +11,6 @@ const helpers = require('../../extras/helpers');
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 
-//FIXME: temporary fix for the yarn issue requiring fxchild.stdin writes
-let yarnInputFix, yarnInputFixCounter;
-
 
 /**
  * Handle all the server control actions
@@ -107,8 +104,8 @@ async function handleSetVariables(ctx) {
             const msgHeader = `<b>Database connection failed:</b> ${error.message}`;
             if(error.code == 'ECONNREFUSED'){
                 const osSpecific = (GlobalData.osType === 'windows')
-                ? `If you do not have a database installed, you can download and run XAMPP.`
-                : `If you do not have a database installed, you must download and run MySQL or MariaDB.`;
+                    ? `If you do not have a database installed, you can download and run XAMPP.`
+                    : `If you do not have a database installed, you must download and run MySQL or MariaDB.`;
                 return ctx.send({type: 'danger', message: `${msgHeader}<br>\n${osSpecific}`});
             }else{
                 return ctx.send({type: 'danger', message: msgHeader});
@@ -186,7 +183,7 @@ async function handleSaveConfig(ctx) {
 
     //Validating config contents
     try {
-        const port = helpers.getFXServerPort(serverCFG);
+        const _port = helpers.getFXServerPort(serverCFG);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<strong>server.cfg error:</strong> <br>${error.message}`});
     }

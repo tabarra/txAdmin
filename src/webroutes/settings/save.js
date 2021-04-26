@@ -152,7 +152,7 @@ function handleFXServer(ctx) {
     try {
         let cfgFilePath = helpers.resolveCFGFilePath(cfg.cfgPath, cfg.serverDataPath);
         let rawCfgFile = helpers.getCFGFileData(cfgFilePath);
-        let port = helpers.getFXServerPort(rawCfgFile);
+        let _port = helpers.getFXServerPort(rawCfgFile);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<strong>CFG Path error:</strong> ${error.message}`});
     }

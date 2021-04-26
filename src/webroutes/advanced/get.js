@@ -1,7 +1,6 @@
 //Requires
 const modulename = 'WebServer:AdvancedGet';
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const helpers = require('../../extras/helpers');
 
 
 /**

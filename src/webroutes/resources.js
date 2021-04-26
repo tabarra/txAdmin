@@ -30,7 +30,7 @@ const getResourceSubPath = (resPath) => {
             delete resPathArr[i];
         }
     }
-    let resName = resPathArr.pop();
+    resPathArr.pop();
     resPathArr = resPathArr.filter(String);
 
     if(resPathArr.length){

@@ -216,7 +216,8 @@ async function handleWarning(ctx) {
  */
 async function handleBan(ctx) {
     //Checking request & identifiers
-    if(anyUndefined(
+    if(
+        anyUndefined(
             ctx.request.body,
             ctx.request.body.duration,
             ctx.request.body.reference,
@@ -271,7 +272,7 @@ async function handleBan(ctx) {
 
     //Register action (and checks if player is online)
     try {
-        let actionID = await globals.playerController.registerAction(reference, 'ban', ctx.session.auth.username, reason, expiration);
+        await globals.playerController.registerAction(reference, 'ban', ctx.session.auth.username, reason, expiration);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
@@ -326,7 +327,7 @@ async function handleWhitelist(ctx) {
 
     //Whitelist reference
     try {
-        let actionID = await globals.playerController.approveWhitelist(reference, ctx.session.auth.username);
+        await globals.playerController.approveWhitelist(reference, ctx.session.auth.username);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }

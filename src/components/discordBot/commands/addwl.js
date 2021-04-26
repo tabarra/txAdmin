@@ -63,7 +63,7 @@ module.exports = {
 
         //Whitelist reference
         try {
-            let actionID = await globals.playerController.approveWhitelist(reference, admin.name);
+            await globals.playerController.approveWhitelist(reference, admin.name);
         } catch (error) {
             return await message.reply(`**Error:** ${error.message}`);
         }

@@ -20,13 +20,19 @@ module.exports = {
     parserOptions: {
         ecmaVersion: 10,
     },
-    ignorePatterns: ['webpack.config.js'],
+    ignorePatterns: [
+        'webpack.config.js',
+        '*.ignore.*',
+    ],
     rules: {
         'no-control-regex': 'off',
         'no-empty': ['error', { allowEmptyCatch: true }],
         'no-prototype-builtins': 'off',
         'no-unused-vars': ['warn', {
-            varsIgnorePattern: '(dir|log)\\w*',
+            varsIgnorePattern: '^(_|(dir|log)\\w*)',
+            vars: 'all',
+            args: 'none', //diff
+            ignoreRestSiblings: true,
         }],
 
         // Custom

@@ -115,7 +115,7 @@ const awaitMasterPin = new Promise((resolve, reject) => {
 
 
 module.exports.printBanner = async () => {
-    const [ ipRes, msgRes, adminPinRes, httpRes ] = await Promise.allSettled([
+    const [ ipRes, msgRes, adminPinRes ] = await Promise.allSettled([
         getIPs(),
         getOSMessage(),
         awaitMasterPin,

@@ -193,7 +193,7 @@ async function handleImportBansDBMS(ctx, dbType) {
     let invalid = 0;
     try {
         if(dbType == 'bansql'){
-            const [rows, fields] = await dbConnection.execute(`SELECT * FROM banlist`);
+            const [rows, _fields] = await dbConnection.execute(`SELECT * FROM banlist`);
             for (let index = 1; index < rows.length; index++) {
                 const ban = rows[index];
                 const tmpIdentifiers = [ban.identifier, ban.license, ban.liveid, ban.xblid, ban.discord];
@@ -217,7 +217,7 @@ async function handleImportBansDBMS(ctx, dbType) {
             }
 
         }else if(dbType == 'vrp'){
-            const [rows, fields] = await dbConnection.execute(`SELECT 
+            const [rows, _fields] = await dbConnection.execute(`SELECT 
                     GROUP_CONCAT(vrp_user_ids.identifier SEPARATOR ', ') AS identifiers
                 FROM vrp_users 
                 JOIN vrp_user_ids ON vrp_user_ids.user_id=vrp_users.id
@@ -235,7 +235,7 @@ async function handleImportBansDBMS(ctx, dbType) {
             }
 
         }else if(dbType == 'el_bwh'){
-            const [rows, fields] = await dbConnection.execute(`SELECT * FROM bwh_bans`);
+            const [rows, _fields] = await dbConnection.execute(`SELECT * FROM bwh_bans`);
 
             for (let index = 0; index < rows.length; index++) {
                 const ban = rows[index];

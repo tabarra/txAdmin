@@ -12,7 +12,7 @@ const os = require('os');
 const fs = require('fs');
 const path = require('path');
 const slash = require('slash');
-const { dir, log, logOk, logWarn, logError, cleanTerminal, setTTYTitle } = require('./extras/console')();
+const { dir, log, logOk, logWarn, logError, setTTYTitle } = require('./extras/console')();
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000) };
@@ -274,7 +274,7 @@ GlobalData = {
 //Starting txAdmin (have fun :p)
 setTTYTitle(txAdminVersion, serverProfile);
 const txAdmin = require('./txAdmin.js');
-const app = new txAdmin(serverProfile);
+new txAdmin(serverProfile);
 
 
 //==============================================================

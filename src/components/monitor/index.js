@@ -348,8 +348,8 @@ module.exports = class Monitor {
         //Log failure message
         if(elapsedLastWarning >= 15){
             const msg = (healthCheckFailed)
-                        ? `${timesPrefix} FXServer is not responding. (${this.lastHealthCheckErrorMessage})` 
-                        : `${timesPrefix} FXServer is not responding. (HB Failed)`; 
+                ? `${timesPrefix} FXServer is not responding. (${this.lastHealthCheckErrorMessage})` 
+                : `${timesPrefix} FXServer is not responding. (HB Failed)`; 
             this.lastStatusWarningMessage = currTimestamp;
             logWarn(msg);
         }

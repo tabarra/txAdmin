@@ -2,7 +2,6 @@
 const modulename = 'WebServer:GetStatus';
 const os = require('os');
 const si = require('systeminformation');
-const cloneDeep = require('lodash/cloneDeep');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 const Cache = require('../extras/dataCache');
 

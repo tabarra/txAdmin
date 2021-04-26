@@ -10,7 +10,6 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000) };
 const isUndefined = (x) => { return (typeof x === 'undefined') };
-const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
 const getRenderErrorText = (view, error, data) => {
     logError(`Error rendering ${view}.`);
     if(GlobalData.verbose) dir(error)

@@ -304,7 +304,7 @@ async function handleSaveLocal(ctx) {
     try {
         const cfgFilePath = helpers.resolveCFGFilePath(cfg.cfgFile, cfg.dataFolder);
         const rawCfgFile = helpers.getCFGFileData(cfgFilePath);
-        const port = helpers.getFXServerPort(rawCfgFile);
+        const _port = helpers.getFXServerPort(rawCfgFile);
     } catch (error) {
         return ctx.send({success: false, message: `<strong>CFG File error:</strong> ${error.message}`});
     }

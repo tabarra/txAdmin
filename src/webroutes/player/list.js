@@ -3,7 +3,7 @@ const modulename = 'WebServer:PlayerList';
 const dateFormat = require('dateformat');
 const humanizeDuration = require('humanize-duration');
 const xss = require('../../extras/xss')();
-const { dir, log, logOk, logWarn, logError, getLog } = require('../../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000) };
@@ -198,25 +198,25 @@ async function handleDefault(ctx, dbo){
 async function getStats(dbo){
     try {
         const actionStats = await dbo.get("actions")
-                            .reduce((acc, a, ind)=>{
-                                if(a.type == 'ban'){
-                                    acc.bans++;
-                                }else if(a.type == 'warn'){
-                                    acc.warns++;
-                                }else if(a.type == 'whitelist'){
-                                    acc.whitelists++;
-                                }
-                                return acc;
-                            }, {bans:0, warns:0, whitelists:0})
-                            .value();
+            .reduce((acc, a, ind)=>{
+                if(a.type == 'ban'){
+                    acc.bans++;
+                }else if(a.type == 'warn'){
+                    acc.warns++;
+                }else if(a.type == 'whitelist'){
+                    acc.whitelists++;
+                }
+                return acc;
+            }, {bans:0, warns:0, whitelists:0})
+            .value();
 
         const playerStats = await dbo.get("players")
-                            .reduce((acc, p, ind)=>{
-                                acc.players++;
-                                acc.playTime += p.playTime;
-                                return acc;
-                            }, {players:0, playTime:0})
-                            .value();
+            .reduce((acc, p, ind)=>{
+                acc.players++;
+                acc.playTime += p.playTime;
+                return acc;
+            }, {players:0, playTime:0})
+            .value();
         const playTimeSeconds = playerStats.playTime * 60 * 1000;
         let humanizeOptions = {
             round: true,
@@ -269,10 +269,10 @@ async function getStats(dbo){
 async function getPendingWL(dbo, limit){
     try {
         let pendingWL = await dbo.get("pendingWL")
-                            .orderBy('tsLastAttempt', 'desc')
-                            .take(limit)
-                            .cloneDeep()
-                            .value();
+            .orderBy('tsLastAttempt', 'desc')
+            .take(limit)
+            .cloneDeep()
+            .value();
 
         //DEBUG: remove this
         // pendingWL = []
@@ -314,10 +314,10 @@ async function getPendingWL(dbo, limit){
 async function getLastActions(dbo, limit){
     try {
         const lastActions = await dbo.get("actions")
-                            .takeRight(limit)
-                            .reverse()
-                            .cloneDeep()
-                            .value();
+            .takeRight(limit)
+            .reverse()
+            .cloneDeep()
+            .value();
         return await processActionList(lastActions)
     } catch (error) {
         const msg = `getLastActions failed with error: ${error.message}`;
@@ -338,10 +338,10 @@ async function getLastActions(dbo, limit){
 async function getLastPlayers(dbo, limit){
     try {
         const lastPlayers = await dbo.get("players")
-                            .takeRight(limit)
-                            .reverse()
-                            .cloneDeep()
-                            .value();
+            .takeRight(limit)
+            .reverse()
+            .cloneDeep()
+            .value();
         return await processPlayerList(lastPlayers);
 
     } catch (error) {
