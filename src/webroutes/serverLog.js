@@ -4,7 +4,7 @@ const xss = require('../extras/xss')();
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined') };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
 
 
 /**
@@ -19,7 +19,7 @@ module.exports = async function ServerLog(ctx) {
             headerTitle: 'Server Log',
             offset: globals.databus.serverLog.length,
             log
-        }
+        };
         return ctx.utils.render('serverLog', renderData);
 
     //If offset
@@ -55,9 +55,9 @@ function processLog(logArray) {
         ) {
             return;
         }
-        let time = new Date(parseInt(event.timestamp)*1000).toLocaleTimeString()
+        let time = new Date(parseInt(event.timestamp)*1000).toLocaleTimeString();
         let source = processPlayerData(event.source);
-        let eventMessage = processEventTypes(event)
+        let eventMessage = processEventTypes(event);
         out += `[${time}] ${source} ${eventMessage}\n`;
     });
 
@@ -76,11 +76,11 @@ function processPlayerData(src) {
         typeof src.name !== 'string' ||
         !Array.isArray(src.identifiers)
     ) {
-        return `<span class="text-secondary event-source">unknown</span>`;
+        return '<span class="text-secondary event-source">unknown</span>';
     }
 
     if (src.name === 'console') {
-        return `<span class="text-dark event-source">CONSOLE</span>`;
+        return '<span class="text-dark event-source">CONSOLE</span>';
     }
 
     let name = xss(src.name).replace(/"/g,'&quot;');
@@ -97,10 +97,10 @@ function processPlayerData(src) {
 function processEventTypes(event) {
     //TODO: normalize/padronize actions
     if (event.action === 'playerConnecting') {
-        return `connected`;
+        return 'connected';
 
     } else if (event.action === 'playerDropped') {
-        return `disconnected`;
+        return 'disconnected';
 
     } else if (event.action === 'ChatMessage') {
         let authorTag;
@@ -116,7 +116,7 @@ function processEventTypes(event) {
     } else if (event.action === 'DeathNotice') {
         let cause = event.data.cause || 'unknown';
         if (event.data.killer) {
-            let killer = processPlayerData(event.data.killer)
+            let killer = processPlayerData(event.data.killer);
             return `died from ${xss(cause)} by ${killer}`;
         } else {
             return `died from ${xss(cause)}`;
@@ -131,7 +131,7 @@ function processEventTypes(event) {
         return `executed: /${xss(command)}`;
 
     } else if (event.action === 'txAdminClient:Started') {
-        return `txAdminClient Logger started`;
+        return 'txAdminClient Logger started';
 
     } else if (event.action === 'DebugMessage') {
         let message = event.data || 'unknown';
@@ -140,7 +140,7 @@ function processEventTypes(event) {
     } else {
         if (GlobalData.verbose) {
             logWarn(`Unrecognized event: ${event.action}`);
-            dir(event)
+            dir(event);
         }
         return `${event.action}`;
     }

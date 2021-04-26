@@ -28,4 +28,4 @@ module.exports = class Cache {
             return false;
         }
     }
-} //Fim Cache()
+}; //Fim Cache()

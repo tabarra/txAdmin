@@ -23,7 +23,7 @@ module.exports = class CitizenFXProvider {
         try {
             //NOTE: using static config due to performance concerns
             // const fivemIssuer = await Issuer.discover('https://idms.fivem.net/.well-known/openid-configuration');
-            const fivemIssuer = new Issuer({"issuer":"https://idms.fivem.net","jwks_uri":"https://idms.fivem.net/.well-known/openid-configuration/jwks","authorization_endpoint":"https://idms.fivem.net/connect/authorize","token_endpoint":"https://idms.fivem.net/connect/token","userinfo_endpoint":"https://idms.fivem.net/connect/userinfo","end_session_endpoint":"https://idms.fivem.net/connect/endsession","check_session_iframe":"https://idms.fivem.net/connect/checksession","revocation_endpoint":"https://idms.fivem.net/connect/revocation","introspection_endpoint":"https://idms.fivem.net/connect/introspect","device_authorization_endpoint":"https://idms.fivem.net/connect/deviceauthorization","frontchannel_logout_supported":true,"frontchannel_logout_session_supported":true,"backchannel_logout_supported":true,"backchannel_logout_session_supported":true,"scopes_supported":["openid","email","identify","offline_access"],"claims_supported":["sub","email","email_verified","nameid","name","picture","profile"],"grant_types_supported":["authorization_code","client_credentials","refresh_token","implicit","urn:ietf:params:oauth:grant-type:device_code"],"response_types_supported":["code","token","id_token","id_token token","code id_token","code token","code id_token token"],"response_modes_supported":["form_post","query","fragment"],"token_endpoint_auth_methods_supported":["client_secret_basic","client_secret_post"],"subject_types_supported":["public"],"id_token_signing_alg_values_supported":["RS256"],"code_challenge_methods_supported":["plain","S256"],"request_parameter_supported":true});
+            const fivemIssuer = new Issuer({'issuer':'https://idms.fivem.net','jwks_uri':'https://idms.fivem.net/.well-known/openid-configuration/jwks','authorization_endpoint':'https://idms.fivem.net/connect/authorize','token_endpoint':'https://idms.fivem.net/connect/token','userinfo_endpoint':'https://idms.fivem.net/connect/userinfo','end_session_endpoint':'https://idms.fivem.net/connect/endsession','check_session_iframe':'https://idms.fivem.net/connect/checksession','revocation_endpoint':'https://idms.fivem.net/connect/revocation','introspection_endpoint':'https://idms.fivem.net/connect/introspect','device_authorization_endpoint':'https://idms.fivem.net/connect/deviceauthorization','frontchannel_logout_supported':true,'frontchannel_logout_session_supported':true,'backchannel_logout_supported':true,'backchannel_logout_session_supported':true,'scopes_supported':['openid','email','identify','offline_access'],'claims_supported':['sub','email','email_verified','nameid','name','picture','profile'],'grant_types_supported':['authorization_code','client_credentials','refresh_token','implicit','urn:ietf:params:oauth:grant-type:device_code'],'response_types_supported':['code','token','id_token','id_token token','code id_token','code token','code id_token token'],'response_modes_supported':['form_post','query','fragment'],'token_endpoint_auth_methods_supported':['client_secret_basic','client_secret_post'],'subject_types_supported':['public'],'id_token_signing_alg_values_supported':['RS256'],'code_challenge_methods_supported':['plain','S256'],'request_parameter_supported':true});
 
             this.client = new fivemIssuer.Client({
                 client_id: 'txadmin_test',
@@ -53,7 +53,7 @@ module.exports = class CitizenFXProvider {
         if (!this.ready) throw new Error(`${modulename} is not ready`);
 
         const stateSeed = `txAdmin:${stateKern}`;
-        const state = crypto.createHash('SHA1').update(stateSeed).digest("hex");
+        const state = crypto.createHash('SHA1').update(stateSeed).digest('hex');
         const url = await this.client.authorizationUrl({
             redirect_uri: redirectUri,
             state: state,
@@ -82,7 +82,7 @@ module.exports = class CitizenFXProvider {
 
         //Check the state
         const stateSeed = `txAdmin:${stateKern}`;
-        const stateExpected = crypto.createHash('SHA1').update(stateSeed).digest("hex");
+        const stateExpected = crypto.createHash('SHA1').update(stateSeed).digest('hex');
 
         //Exchange code for token
         const tokenSet = await this.client.callback(redirectUri, params, {state: stateExpected});
@@ -117,7 +117,7 @@ module.exports = class CitizenFXProvider {
     /**
      * Returns the session auth object
      * NOTE: increasing session duration to 24 hours since we do not have refresh tokens
-     * 
+     *
      * @param {object} tokenSet
      * @param {object} userInfo
      * @returns {(object)}
@@ -127,9 +127,9 @@ module.exports = class CitizenFXProvider {
             provider: 'citizenfx',
             provider_uid: userInfo.name,
             // expires_at: tokenSet.expires_at,
-            expires_at: Math.round(Date.now()/1000) + 86400, 
+            expires_at: Math.round(Date.now()/1000) + 86400,
             picture: userInfo.picture
         };
     }
 
-} //Fim CitizenFXProvider()
+}; //Fim CitizenFXProvider()

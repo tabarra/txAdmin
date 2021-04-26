@@ -10,8 +10,8 @@ const cleanAds = (ads) => {
     return ads.map(ad => {
         if (ad.text) ad.text = xss(ad.text);
         return ad;
-    })
-}
+    });
+};
 
 
 module.exports = class DynamicAds {
@@ -19,7 +19,7 @@ module.exports = class DynamicAds {
         this.adIndex = {
             login: 0,
             main: 0,
-        }
+        };
         this.adOptions = false;
 
         //Set default ads
@@ -27,7 +27,7 @@ module.exports = class DynamicAds {
             this.adOptions = {
                 login: cleanAds(defaultAds.login),
                 main: cleanAds(defaultAds.main),
-            }
+            };
         }
 
         //Update with the ads from the interweebs
@@ -49,11 +49,11 @@ module.exports = class DynamicAds {
                 this.adOptions = {
                     login: cleanAds(res.login),
                     main: cleanAds(res.main),
-                }
+                };
                 this.adIndex = {
                     login: 0,
                     main: 0,
-                }
+                };
             }
         } catch (error) {
             if (GlobalData.verbose) logWarn(`Failed to retrieve dynamic ads with error: ${error.message}`);
@@ -72,7 +72,7 @@ module.exports = class DynamicAds {
     //================================================================
     pick(spot) {
         if (!this.adOptions) {
-            return false
+            return false;
         } else if (spot === 'login') {
             return (this.adOptions.login && this.adOptions.login.length)
                 ? this.adOptions.login[this.adIndex.login]
@@ -82,8 +82,8 @@ module.exports = class DynamicAds {
                 ? this.adOptions.main[this.adIndex.main]
                 : false;
         } else {
-            throw new Error(`unknown spot type`);
+            throw new Error('unknown spot type');
         }
     }
 
-} //Fim DynamicAds()
+}; //Fim DynamicAds()

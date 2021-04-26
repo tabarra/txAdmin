@@ -4,12 +4,12 @@ const humanizeDuration = require('humanize-duration');
 const xss = require('../../extras/xss')();
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
-//Helper functions 
-const now = () => { return Math.round(Date.now() / 1000) };
-const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
+//Helper functions
+const now = () => { return Math.round(Date.now() / 1000); };
+const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')); };
 const escape = (x) => {return x.replace(/"/g, '\uff02');};
 const formatCommand = (cmd, ...params) => {
-    return `${cmd} "` + [...params].map(c => c.toString()).map(escape).join(`" "`) + `"`;
+    return `${cmd} "` + [...params].map(c => c.toString()).map(escape).join('" "') + '"';
 };
 function ensurePermission(ctx, perm) {
     if (ctx.utils.checkPermission(perm, modulename)) {
@@ -17,7 +17,7 @@ function ensurePermission(ctx, perm) {
     } else {
         ctx.send({
             type: 'danger',
-            message: `You don't have permission to execute this action.`
+            message: 'You don\'t have permission to execute this action.'
         });
         return false;
     }
@@ -69,9 +69,9 @@ module.exports = async function PlayerActions(ctx) {
 //================================================================
 /**
  * Handle Save Note
- * 
+ *
  * NOTE: open to all admins
- * 
+ *
  * @param {object} ctx
  */
 async function handleSaveNote(ctx) {
@@ -91,12 +91,12 @@ async function handleSaveNote(ctx) {
         if (success) {
             return ctx.send({
                 type: 'success',
-                message: `Saved!`
+                message: 'Saved!'
             });
         } else {
             return ctx.send({
                 type: 'danger',
-                message: `failed to save note.`
+                message: 'failed to save note.'
             });
         }
     } catch (error) {
@@ -196,10 +196,10 @@ async function handleWarning(ctx) {
     //Prepare and send command
     ctx.utils.logAction(`Warned #${id}: ${reason}`);
     let cmd = formatCommand(
-        'txaWarnID', 
-        id, 
-        ctx.session.auth.username, 
-        reason, 
+        'txaWarnID',
+        id,
+        ctx.session.auth.username,
+        reason,
         globals.translator.t('nui_warning.title'),
         globals.translator.t('nui_warning.warned_by'),
         globals.translator.t('nui_warning.instruction'),
@@ -252,7 +252,7 @@ async function handleBan(ctx) {
         if (isNaN(multiplier) || multiplier < 1) {
             return ctx.send({type: 'danger', message: 'The duration multiplier must be a number above 1.'});
         }
-        
+
         if (unit.startsWith('hour')) {
             duration = multiplier * 3600;
         } else if (unit.startsWith('day')) {
@@ -264,7 +264,7 @@ async function handleBan(ctx) {
         } else {
             return ctx.send({type: 'danger', message: 'Invalid ban duration. Supported units: hours, days, weeks, months'});
         }
-        expiration = now() + duration; 
+        expiration = now() + duration;
     }
 
     //Check permissions
@@ -282,13 +282,13 @@ async function handleBan(ctx) {
     const tOptions = {
         author: xss(ctx.session.auth.username),
         reason: xss(reason),
-    }
+    };
     if (expiration !== false) {
         const humanizeOptions = {
             language: globals.translator.t('$meta.humanizer_language'),
             round: true,
             units: ['d', 'h'],
-        }
+        };
         tOptions.expiration = humanizeDuration((duration)*1000, humanizeOptions);
         msg = '[txAdmin] ' + globals.translator.t('ban_messages.kick_temporary', tOptions);
     } else {
@@ -303,10 +303,10 @@ async function handleBan(ctx) {
         cmd = formatCommand('txaKickID', reference, msg);
         ctx.utils.logAction(`Banned #${reference}: ${reason}`);
     } else {
-        return ctx.send({type: 'danger', message: `<b>Error:</b> unknown reference type`});
+        return ctx.send({type: 'danger', message: '<b>Error:</b> unknown reference type'});
     }
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-    return sendAlertOutput(ctx, toResp, "Identifiers banned!<br>Kicking players:");
+    return sendAlertOutput(ctx, toResp, 'Identifiers banned!<br>Kicking players:');
 }
 
 

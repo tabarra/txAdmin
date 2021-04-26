@@ -5,8 +5,8 @@ const mysql = require('mysql2/promise');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined') };
-const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
+const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')); };
 const filterIdentifiers = (idArr) => idArr.filter((id)=>{
     return (typeof id == 'string') && Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
 });
@@ -27,7 +27,7 @@ module.exports = async function MasterActionsAction(ctx) {
     if (!ctx.utils.checkPermission('master', modulename)) {
         return ctx.send({
             type: 'danger',
-            message: `Only the master account has permission to view/use this page.`
+            message: 'Only the master account has permission to view/use this page.'
         });
     }
 
@@ -42,9 +42,9 @@ module.exports = async function MasterActionsAction(ctx) {
         } else if (dbmsDbTypes.includes(ctx.request.body.dbType)) {
             return await handleImportBansDBMS(ctx, ctx.request.body.dbType);
         } else {
-            return ctx.send({type: 'danger', message: `Invalid database type.`});
+            return ctx.send({type: 'danger', message: 'Invalid database type.'});
         }
-        
+
     } else {
         return ctx.send({
             type: 'danger',
@@ -61,7 +61,7 @@ module.exports = async function MasterActionsAction(ctx) {
  */
 function handleResetFXServer(ctx) {
     if (globals.fxRunner.fxChild !== null) {
-        ctx.utils.logCommand(`STOP SERVER`);
+        ctx.utils.logCommand('STOP SERVER');
         globals.fxRunner.killServer(ctx.session.auth.username);
     }
 
@@ -77,11 +77,11 @@ function handleResetFXServer(ctx) {
     //Sending output
     if (saveStatus) {
         globals.fxRunner.refreshConfig();
-        ctx.utils.logAction(`Resetting fxRunner settings.`);
+        ctx.utils.logAction('Resetting fxRunner settings.');
         return ctx.send({success: true});
     } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error resetting fxRunner settings.`);
-        return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
 
@@ -152,7 +152,7 @@ async function handleImportBansFile(ctx, dbType) {
             imported++;
         }// end for()
     } catch (error) {
-        if (GlobalData.verbose) dir(error)
+        if (GlobalData.verbose) dir(error);
         return ctx.utils.render('basic/generic', {message: `Failed to import bans with error: ${error.message}`});
     }
 
@@ -186,14 +186,14 @@ async function handleImportBansDBMS(ctx, dbType) {
         user: ctx.request.body.dbUsername.trim(),
         password: ctx.request.body.dbPassword.trim(),
         database: ctx.request.body.dbName.trim()
-    }
+    };
     const dbConnection = await mysql.createConnection(mysqlOptions);
 
     let imported = 0;
     let invalid = 0;
     try {
         if (dbType == 'bansql') {
-            const [rows, _fields] = await dbConnection.execute(`SELECT * FROM banlist`);
+            const [rows, _fields] = await dbConnection.execute('SELECT * FROM banlist');
             for (let index = 1; index < rows.length; index++) {
                 const ban = rows[index];
                 const tmpIdentifiers = [ban.identifier, ban.license, ban.liveid, ban.xblid, ban.discord];
@@ -235,7 +235,7 @@ async function handleImportBansDBMS(ctx, dbType) {
             }
 
         } else if (dbType == 'el_bwh') {
-            const [rows, _fields] = await dbConnection.execute(`SELECT * FROM bwh_bans`);
+            const [rows, _fields] = await dbConnection.execute('SELECT * FROM bwh_bans');
 
             for (let index = 0; index < rows.length; index++) {
                 const ban = rows[index];
@@ -246,7 +246,7 @@ async function handleImportBansDBMS(ctx, dbType) {
                 let dbIdentifiers;
                 try {
                     dbIdentifiers = JSON.parse(ban.receiver);
-                    if (!Array.isArray(dbIdentifiers)) throw new Error(`not an array`);
+                    if (!Array.isArray(dbIdentifiers)) throw new Error('not an array');
                 } catch (error) {
                     invalid++;
                     continue;
@@ -273,11 +273,11 @@ async function handleImportBansDBMS(ctx, dbType) {
                 await globals.playerController.registerAction(identifiers, 'ban', 'unknown', reason, expiration);
                 imported++;
             }
-            
+
         }
-        
+
     } catch (error) {
-        if (GlobalData.verbose) dir(error)
+        if (GlobalData.verbose) dir(error);
         return ctx.utils.render('basic/generic', {message: `Failed to import bans with error: ${error.message}`});
     }
 

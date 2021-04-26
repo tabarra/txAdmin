@@ -6,15 +6,15 @@ const xss = require('../../extras/xss')();
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
-const now = () => { return Math.round(Date.now() / 1000) };
+const now = () => { return Math.round(Date.now() / 1000); };
 
 //HACK search button doesn't actually work :facepalm:
 /**
  * Returns the output page containing the action log, and the console log
- * 
+ *
  * TODO: Return last players
  * FIXME: Add Caching ASAP. This is a _very_ expensive method.
- * 
+ *
  * @param {object} ctx
  */
 module.exports = async function PlayerList(ctx) {
@@ -33,16 +33,16 @@ module.exports = async function PlayerList(ctx) {
 //================================================================
 /**
  * Handles the search functionality.
- * 
+ *
  * NOTE: This might be cool to add: https://fusejs.io/
- * 
+ *
  * NOTE: expected types:
  *        *- identifier (solo/csv)
  *        *- action id
  *        *- partial name
  *         - license
  *         - active id
- * 
+ *
  * @param {object} ctx
  * @param {object} dbo
  * @returns {object} page render promise
@@ -72,7 +72,7 @@ async function handleSearch(ctx, dbo) {
 
         //IF searching for identifiers
         if (idsArray.length) {
-            const actions = await dbo.get("actions")
+            const actions = await dbo.get('actions')
                 .filter(a => idsArray.some((fi) => a.identifiers.includes(fi)))
                 .take(512)
                 .cloneDeep()
@@ -83,38 +83,38 @@ async function handleSearch(ctx, dbo) {
             let licensesArr = [];
             actions.forEach(a => {
                 a.identifiers.forEach(id => {
-                    if (id.substring(0, 8) == "license:") {
+                    if (id.substring(0, 8) == 'license:') {
                         licensesArr.push(id.substring(8));
                     }
-                })
-            })
+                });
+            });
             //TODO: adapt this for when we start saving all IDs for the players
             // const licensesArr = idsArray.filter(id => id.substring(0, 8) == "license:").map(id => id.substring(8));
-            const players = await dbo.get("players")
+            const players = await dbo.get('players')
                 .filter(p => licensesArr.includes(p.license))
                 .take(512)
                 .cloneDeep()
                 .value();
             outData.resPlayers = await processPlayerList(players);
             outData.message = `Searching by identifiers found ${players.length} player${addPlural(players.length)} and ${actions.length} action${addPlural(actions.length)}.`;
-            
+
 
         //IF searching for an acition ID
         } else if (GlobalData.regexActionID.test(searchString.toUpperCase())) {
-            const action = await dbo.get("actions")
+            const action = await dbo.get('actions')
                 .find({id: searchString.toUpperCase()})
                 .cloneDeep()
                 .value();
             if (!action) {
-                outData.message = `Searching by Action ID found no results.`;
+                outData.message = 'Searching by Action ID found no results.';
 
             } else {
                 outData.resActions = await processActionList([action]);
-    
+
                 //TODO: adapt this for when we start saving all IDs for the players
-                const licensesArr = action.identifiers.filter(x => x.substring(0, 8) == "license:").map(x => x.substring(8));
+                const licensesArr = action.identifiers.filter(x => x.substring(0, 8) == 'license:').map(x => x.substring(8));
                 if (licensesArr.length) {
-                    const players = await dbo.get("players")
+                    const players = await dbo.get('players')
                         .filter(p => licensesArr.includes(p.license))
                         .take(512)
                         .cloneDeep()
@@ -127,9 +127,9 @@ async function handleSearch(ctx, dbo) {
 
         //Likely searching for an partial name
         } else {
-            const players = await dbo.get("players")
+            const players = await dbo.get('players')
                 .filter(p => {
-                    return p.name && p.name.toLowerCase().includes(searchString.toLowerCase())
+                    return p.name && p.name.toLowerCase().includes(searchString.toLowerCase());
                 })
                 .take(512)
                 .cloneDeep()
@@ -137,7 +137,7 @@ async function handleSearch(ctx, dbo) {
             outData.resPlayers = await processPlayerList(players);
             //TODO: if player found, search for all actions from them
             outData.message = `Searching by name found ${players.length} player${addPlural(players.length)}.`;
-            
+
         }
 
 
@@ -146,9 +146,9 @@ async function handleSearch(ctx, dbo) {
     } catch (error) {
         if (GlobalData.verbose) {
             logError(`handleSearch failed with error: ${error.message}`);
-            dir(error)
+            dir(error);
         }
-        return ctx.send({error: `Search failed with error: ${error.message}`})
+        return ctx.send({error: `Search failed with error: ${error.message}`});
     }
 }
 
@@ -167,7 +167,7 @@ async function handleDefault(ctx, dbo) {
         whitelist: 15,
         actions: 20,
         players: 30,
-    }
+    };
     const respData = {
         stats: await getStats(dbo),
         queryLimits,
@@ -197,7 +197,7 @@ async function handleDefault(ctx, dbo) {
  */
 async function getStats(dbo) {
     try {
-        const actionStats = await dbo.get("actions")
+        const actionStats = await dbo.get('actions')
             .reduce((acc, a, ind)=>{
                 if (a.type == 'ban') {
                     acc.bans++;
@@ -210,7 +210,7 @@ async function getStats(dbo) {
             }, {bans:0, warns:0, whitelists:0})
             .value();
 
-        const playerStats = await dbo.get("players")
+        const playerStats = await dbo.get('players')
             .reduce((acc, p, ind)=>{
                 acc.players++;
                 acc.playTime += p.playTime;
@@ -230,9 +230,9 @@ async function getStats(dbo) {
                     h: () => 'h'
                 }
             }
-        }
+        };
         const playTime = humanizeDuration(playTimeSeconds, humanizeOptions);
-        
+
         //Stats only:
         //DEBUG reevaluate this in the future
         globals.databus.txStatsData.playerDBStats = {
@@ -242,7 +242,7 @@ async function getStats(dbo) {
             bans: actionStats.bans,
             warns: actionStats.warns,
             whitelists: actionStats.whitelists,
-        }
+        };
 
         return {
             players: playerStats.players.toLocaleString(),
@@ -250,11 +250,11 @@ async function getStats(dbo) {
             bans: actionStats.bans.toLocaleString(),
             warns: actionStats.warns.toLocaleString(),
             whitelists: actionStats.whitelists.toLocaleString(),
-        }
+        };
     } catch (error) {
         const msg = `getStats failed with error: ${error.message}`;
         if (GlobalData.verbose) logError(msg);
-        return []
+        return [];
     }
 }
 
@@ -268,7 +268,7 @@ async function getStats(dbo) {
  */
 async function getPendingWL(dbo, limit) {
     try {
-        let pendingWL = await dbo.get("pendingWL")
+        let pendingWL = await dbo.get('pendingWL')
             .orderBy('tsLastAttempt', 'desc')
             .take(limit)
             .cloneDeep()
@@ -292,13 +292,13 @@ async function getPendingWL(dbo, limit) {
                 x.name = x.name.substring(0,maxNameSize-3) + '...';
             }
             return x;
-        })
+        });
 
         return lastWhitelistBlocks;
     } catch (error) {
         const msg = `getPendingWL failed with error: ${error.message}`;
         if (GlobalData.verbose) logError(msg);
-        return []
+        return [];
     }
 }
 
@@ -313,16 +313,16 @@ async function getPendingWL(dbo, limit) {
  */
 async function getLastActions(dbo, limit) {
     try {
-        const lastActions = await dbo.get("actions")
+        const lastActions = await dbo.get('actions')
             .takeRight(limit)
             .reverse()
             .cloneDeep()
             .value();
-        return await processActionList(lastActions)
+        return await processActionList(lastActions);
     } catch (error) {
         const msg = `getLastActions failed with error: ${error.message}`;
         if (GlobalData.verbose) logError(msg);
-        return []
+        return [];
     }
 }
 
@@ -337,7 +337,7 @@ async function getLastActions(dbo, limit) {
  */
 async function getLastPlayers(dbo, limit) {
     try {
-        const lastPlayers = await dbo.get("players")
+        const lastPlayers = await dbo.get('players')
             .takeRight(limit)
             .reverse()
             .cloneDeep()
@@ -347,7 +347,7 @@ async function getLastPlayers(dbo, limit) {
     } catch (error) {
         const msg = `getLastPlayers failed with error: ${error.message}`;
         if (GlobalData.verbose) logError(msg);
-        return []
+        return [];
     }
 }
 
@@ -388,7 +388,7 @@ async function processActionList(list) {
         } else if (log.type == 'warn') {
             out.color = 'warning';
             out.message = `${xss(log.author)} WARNED ${actReference}`;
-            
+
         } else if (log.type == 'whitelist') {
             out.color = 'success';
             out.message = `${xss(log.author)} WHITELISTED ${actReference}`;
@@ -410,7 +410,7 @@ async function processActionList(list) {
             out.footerNote = (log.expiration < tsNow)? `Expired at ${expirationDate}.` : `Expires at ${expirationDate}.`;
         }
         return out;
-    })
+    });
 }
 
 
@@ -430,6 +430,6 @@ async function processPlayerList(list) {
             license: p.license,
             joined: (new Date(p.tsJoined*1000)).toLocaleString(),
             color: (activeLicenses.includes(p.license))? 'success' : 'dark'
-        }   
-    })
+        };
+    });
 }

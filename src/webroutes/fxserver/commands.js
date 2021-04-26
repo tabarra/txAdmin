@@ -6,7 +6,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 //Helper functions
 const escape = (x) => {return x.replace(/"/g, '\uff02');};
 const formatCommand = (cmd, ...params) => {
-    return `${cmd} "` + [...params].map(escape).join(`" "`) + `"`;
+    return `${cmd} "` + [...params].map(escape).join('" "') + '"';
 };
 
 
@@ -29,7 +29,7 @@ module.exports = async function FXServerCommands(ctx) {
     if (globals.fxRunner.fxChild === null) {
         return ctx.send({
             type: 'danger',
-            message: `<b>Cannot execute this action with the server offline.</b>`
+            message: '<b>Cannot execute this action with the server offline.</b>'
         });
     }
 
@@ -38,7 +38,7 @@ module.exports = async function FXServerCommands(ctx) {
     if (unsafeActions.includes(action) && parameter.includes('runcode')) {
         return ctx.send({
             type: 'danger',
-            message: `<b>Error:</b> The resource "runcode" might be unsafe. <br> If you know what you are doing, run it via the Live Console.`
+            message: '<b>Error:</b> The resource "runcode" might be unsafe. <br> If you know what you are doing, run it via the Live Console.'
         });
     }
 
@@ -48,20 +48,20 @@ module.exports = async function FXServerCommands(ctx) {
     if (action == 'profile_monitor') {
         if (!ensurePermission(ctx, 'all_permissions')) return false;
         ctx.utils.logAction('Profiling txAdmin instance.');
-        
+
         let profSeconds = 5;
         let savePath = `${globals.info.serverProfilePath}/data/txProfile.bin`;
-        ExecuteCommand("profiler record start");
+        ExecuteCommand('profiler record start');
         setTimeout(async ()=>{
-            ExecuteCommand("profiler record stop");
+            ExecuteCommand('profiler record stop');
             setTimeout(async ()=>{
                 ExecuteCommand(`profiler save "${escape(savePath)}"`);
                 setTimeout(async ()=>{
                     logOk(`Profile saved to: ${savePath}`);
                     let cmd = `profiler view "${escape(savePath)}"`;
                     globals.fxRunner.srvCmdBuffer(cmd);
-                }, 150)
-            }, 150)
+                }, 150);
+            }, 150);
         }, profSeconds * 1000);
         return sendAlertOutput(ctx, 'Check your live console in a few seconds.');
 
@@ -80,7 +80,7 @@ module.exports = async function FXServerCommands(ctx) {
         if (parameter.length) {
             cmd = formatCommand('txaKickAll', parameter);
         } else {
-            cmd = `txaKickAll "txAdmin Web Panel"`;
+            cmd = 'txaKickAll "txAdmin Web Panel"';
         }
         ctx.utils.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
@@ -121,14 +121,14 @@ module.exports = async function FXServerCommands(ctx) {
     //==============================================
     } else if (action == 'refresh_res') {
         if (!ensurePermission(ctx, 'commands.resources')) return false;
-        let cmd = `refresh`;
+        let cmd = 'refresh';
         ctx.utils.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(ctx, toResp);
 
     //==============================================
     } else if (action == 'check_txaclient') {
-        let cmd = `txaPing`;
+        let cmd = 'txaPing';
         ctx.utils.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd, 512);
         if (toResp.includes('Pong!')) {
@@ -148,7 +148,7 @@ module.exports = async function FXServerCommands(ctx) {
         ctx.utils.logCommand('Unknown action!');
         return ctx.send({
             type: 'danger',
-            message: `Unknown Action.`
+            message: 'Unknown Action.'
         });
     }
 };
@@ -182,7 +182,7 @@ function ensurePermission(ctx, perm) {
     } else {
         ctx.send({
             type: 'danger',
-            message: `You don't have permission to execute this action.`
+            message: 'You don\'t have permission to execute this action.'
         });
         return false;
     }

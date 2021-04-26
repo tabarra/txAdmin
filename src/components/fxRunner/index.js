@@ -11,10 +11,10 @@ const OutputHandler = require('./outputHandler');
 
 
 //Helpers
-const now = () => { return Math.round(Date.now() / 1000) };
+const now = () => { return Math.round(Date.now() / 1000); };
 const escape = (x) => {return x.replace(/"/g, '\uff02');};
 const formatCommand = (cmd, ...params) => {
-    return `${cmd} "` + [...params].map(escape).join(`" "`) + `"`;
+    return `${cmd} "` + [...params].map(escape).join('" "') + '"';
 };
 
 
@@ -66,7 +66,7 @@ module.exports = class FXRunner {
         // Prepare default args
         const controllerConfigs = globals.playerController.config;
         const txAdminInterface = (GlobalData.forceInterface)
-            ? `${GlobalData.forceInterface}:${GlobalData.txAdminPort}` 
+            ? `${GlobalData.forceInterface}:${GlobalData.txAdminPort}`
             : `127.0.0.1:${GlobalData.txAdminPort}`;
         const cmdArgs = [
             '+sets', 'txAdmin-version', GlobalData.txAdminVersion,
@@ -85,14 +85,14 @@ module.exports = class FXRunner {
             this.spawnVariables = {
                 command: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
                 args: [
-                    `--library-path`, `${alpinePath}/usr/lib/v8/:${alpinePath}/lib/:${alpinePath}/usr/lib/`,
+                    '--library-path', `${alpinePath}/usr/lib/v8/:${alpinePath}/lib/:${alpinePath}/usr/lib/`,
                     '--',
                     `${alpinePath}/opt/cfx-server/FXServer`,
                     '+set', 'citizen_dir', `${alpinePath}/opt/cfx-server/citizen/`,
                     ...cmdArgs
                 ]
             };
-            
+
         } else if (GlobalData.osType === 'windows') {
             this.spawnVariables = {
                 command: `${GlobalData.fxServerPath}/FXServer.exe`,
@@ -117,7 +117,7 @@ module.exports = class FXRunner {
         //Setup variables
         this.setupVariables();
         if (GlobalData.verbose) {
-            log(`Spawn Variables: ` + this.spawnVariables.args.join(' '));
+            log('Spawn Variables: ' + this.spawnVariables.args.join(' '));
         }
         //Sanity Check
         if (
@@ -145,8 +145,8 @@ module.exports = class FXRunner {
         } catch (error) {
             const errMsg = logError(`server.cfg error: ${error.message}`);
             if (error.message.includes('unreadable')) {
-                logError(`You likely copied the txData folder from another server, or moved/deleted your server files.`);
-                logError(`Please go to "Settings > FXServer" and fix the "Server Data Folder" and "CFX File Path".`);
+                logError('You likely copied the txData folder from another server, or moved/deleted your server files.');
+                logError('Please go to "Settings > FXServer" and fix the "Server Data Folder" and "CFX File Path".');
             }
             return errMsg;
         }
@@ -163,7 +163,7 @@ module.exports = class FXRunner {
             }
         }
         this.fxServerHost = (GlobalData.forceInterface)
-            ? `${GlobalData.forceInterface}:${this.fxServerPort}` 
+            ? `${GlobalData.forceInterface}:${this.fxServerPort}`
             : `127.0.0.1:${this.fxServerPort}`;
 
         //Reseting hitch counter
@@ -203,7 +203,7 @@ module.exports = class FXRunner {
                 }
             });
             historyIndex = this.history.length - 1;
-            
+
         } catch (error) {
             logError('Failed to start FXServer with the following error:');
             dir(error);
@@ -223,15 +223,15 @@ module.exports = class FXRunner {
         }.bind(this));
         this.fxChild.on('error', function (err) {
             logWarn(`>> [${pid}] FXServer Errored:`);
-            dir(err)
+            dir(err);
         }.bind(this));
         this.fxChild.on('exit', function () {
-            process.stdout.write("\n"); //Make sure this isn't concatenated with the last line
+            process.stdout.write('\n'); //Make sure this isn't concatenated with the last line
             logWarn(`>> [${pid}] FXServer Exited.`);
             this.history[historyIndex].timestamps.exit = now();
             if (this.history[historyIndex].timestamps.exit - this.history[historyIndex].timestamps.start <= 5) {
                 setTimeout(() => {
-                    logWarn(`FXServer didn't start. This is not an issue with txAdmin.`);
+                    logWarn('FXServer didn\'t start. This is not an issue with txAdmin.');
                 }, 500);
             }
         }.bind(this));
@@ -247,7 +247,7 @@ module.exports = class FXRunner {
 
         const tracePipe = this.fxChild.stdio[3].pipe(StreamValues.withParser());
         tracePipe.on('error', (data) => {
-            if (GlobalData.verbose) logWarn(`FD3 decode error: ${data.message}`)
+            if (GlobalData.verbose) logWarn(`FD3 decode error: ${data.message}`);
             globals.databus.txStatsData.lastFD3Error = data.message;
         });
         tracePipe.on('data', this.outputHandler.trace.bind(this.outputHandler));
@@ -268,7 +268,7 @@ module.exports = class FXRunner {
                 const tOptions = {
                     servername: globals.config.serverName,
                     reason: tReason
-                }
+                };
                 const kickMessage = globals.translator.t('server_actions.restarting', tOptions);
                 this.srvCmd(formatCommand('quit', kickMessage));
                 const discordMessage = globals.translator.t('server_actions.restarting_discord', tOptions);
@@ -305,7 +305,7 @@ module.exports = class FXRunner {
                 let tOptions = {
                     servername: globals.config.serverName,
                     reason: tReason
-                }
+                };
                 let discordMessage = globals.translator.t('server_actions.stopping_discord', tOptions);
                 globals.discordBot.sendAnnouncement(discordMessage);
                 let kickMessage = globals.translator.t('server_actions.stopping', tOptions);
@@ -338,7 +338,7 @@ module.exports = class FXRunner {
         if (typeof command !== 'string') throw new Error('Expected String!');
         if (this.fxChild === null) return false;
         try {
-            let success = this.fxChild.stdin.write(command + "\n");
+            let success = this.fxChild.stdin.write(command + '\n');
             globals.webServer.webConsole.buffer(command, 'command');
             return success;
         } catch (error) {
@@ -390,7 +390,7 @@ module.exports = class FXRunner {
         let curr = this.history[this.history.length - 1];
 
         if (!curr.timestamps.start && this.history.length == 1) {
-            throw new Error(`This should NOT happen. Let's see how long people will take to find this...`);
+            throw new Error('This should NOT happen. Let\'s see how long people will take to find this...');
         } else if (!curr.timestamps.start) {
             let last = this.history[this.history.length - 2];
             let pending = Object.keys(last.timestamps).filter(k => !curr.timestamps[k]);
@@ -418,14 +418,14 @@ module.exports = class FXRunner {
 
     //================================================================
     /**
-     * Returns the current fxserver uptime in seconds 
+     * Returns the current fxserver uptime in seconds
      * @returns {numeric} buffer
      */
     getUptime() {
         if (!this.history.length) return 0;
         let curr = this.history[this.history.length - 1];
-        
+
         return now() - curr.timestamps.start;
     }
 
-} //Fim FXRunner()
+}; //Fim FXRunner()

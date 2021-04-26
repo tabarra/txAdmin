@@ -6,14 +6,14 @@ const humanizeDuration = require('humanize-duration');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
-const now = () => { return Math.round(Date.now() / 1000) };
+const now = () => { return Math.round(Date.now() / 1000); };
 
 
 /**
  * Returns the data for the player's modal
- * 
+ *
  * NOTE: sending license instead of id to be able to show data even for offline players
- * 
+ *
  * @param {object} ctx
  */
 module.exports = async function PlayerModal(ctx) {
@@ -48,15 +48,15 @@ module.exports = async function PlayerModal(ctx) {
                     out.color = 'secondary';
                 }
                 return out;
-            })
+            });
         } catch (error) {
             if (GlobalData.verbose) {
-                logError(`Error getting/processing player history`);
+                logError('Error getting/processing player history');
                 dir(error);
             }
             return [];
         }
-    }
+    };
 
     //Locating player
     const activePlayer = cloneDeep(globals.playerController.activePlayers).find(player => player.license === license);
@@ -70,24 +70,24 @@ module.exports = async function PlayerModal(ctx) {
             warn: (activePlayer && ctx.utils.checkPermission('players.warn', modulename, false))? '' : 'disabled',
             ban: !ctx.utils.checkPermission('players.ban', modulename, false) || !controllerConfigs.onJoinCheckBan,
         }
-    }
+    };
 
     //If player is active or in the database
     let playerData;
     if (activePlayer) {
-        if (GlobalData.verbose) dir(activePlayer) //DEBUG
+        if (GlobalData.verbose) dir(activePlayer); //DEBUG
         out.id = activePlayer.id;
         out.license = activePlayer.license;
         out.identifiers = activePlayer.identifiers;
         out.isTmp = activePlayer.isTmp;
         playerData = activePlayer;
-        
+
     } else {
         //FIXME: for actions, look just for the license
         //TODO: when we start registering all associated identifiers, we could use that for the search
         let dbPlayer = await globals.playerController.getPlayer(license);
         if (!dbPlayer) return ctx.send({type: 'offline', message: 'Player offline and not in database.'});
-        if (GlobalData.verbose) dir(dbPlayer) //DEBUG
+        if (GlobalData.verbose) dir(dbPlayer); //DEBUG
 
         out.id = false;
         out.license = license;

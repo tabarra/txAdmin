@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'DiscordBot:cmd:help';
-const { RichEmbed } = require("@tabarra/discord");
+const { RichEmbed } = require('@tabarra/discord');
 const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
 
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
             cmdDescs.push(`${globals.discordBot.config.prefix}${name}: ${cmd.description}`);
         });
         const descLines = [
-            `:game_die: **Available commands:**`,
+            ':game_die: **Available commands:**',
             '```',
             ...cmdDescs,
             '...more commands to come soon 😮',

@@ -4,8 +4,8 @@ const fs = require('fs-extra');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
-const isUndefined = (x) => { return (typeof x === 'undefined') };
-const now = () => { return Math.round(Date.now() / 1000) };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
+const now = () => { return Math.round(Date.now() / 1000); };
 
 /**
  * Simple Integer Time Series class with json file persistence
@@ -98,4 +98,4 @@ module.exports = class TimeSeries {
     }
 
 
-} //Fim TimeSeries()
+}; //Fim TimeSeries()

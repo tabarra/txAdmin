@@ -1,7 +1,7 @@
 //Requires
 const modulename = 'DiscordBot:cmd:status';
 const humanizeDuration = require('humanize-duration');
-const { RichEmbed } = require("@tabarra/discord");
+const { RichEmbed } = require('@tabarra/discord');
 const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
 
 module.exports = {
@@ -27,9 +27,9 @@ module.exports = {
             round: true,
             units: ['d', 'h', 'm', 's'],
             fallbacks: ['en']
-        }
+        };
         replaces.uptime = humanizeDuration(globals.fxRunner.getUptime()*1000, humanizeOptions);
-        
+
         //Replacing text
         let desc = globals.discordBot.config.statusMessage;
         Object.entries(replaces).forEach(([key, value]) => {

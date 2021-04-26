@@ -9,7 +9,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 const helpers = require('../../extras/helpers');
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined') };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
 
 
 /**
@@ -48,7 +48,7 @@ module.exports = async function DeployerActions(ctx) {
 
     } else {
         return ctx.send({
-            type: 'danger', 
+            type: 'danger',
             message: 'Unknown setup action.'
         });
     }
@@ -68,7 +68,7 @@ async function handleConfirmRecipe(ctx) {
     const userEditedRecipe = ctx.request.body.recipe;
 
     try {
-        ctx.utils.logAction(`Setting recipe.`);
+        ctx.utils.logAction('Setting recipe.');
         await globals.deployer.confirmRecipe(userEditedRecipe);
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
@@ -98,14 +98,14 @@ async function handleSetVariables(ctx) {
                 host: userVars.dbHost,
                 user: userVars.dbUsername,
                 password: userVars.dbPassword,
-            }
+            };
             await mysql.createConnection(mysqlOptions);
         } catch (error) {
             const msgHeader = `<b>Database connection failed:</b> ${error.message}`;
             if (error.code == 'ECONNREFUSED') {
                 const osSpecific = (GlobalData.osType === 'windows')
-                    ? `If you do not have a database installed, you can download and run XAMPP.`
-                    : `If you do not have a database installed, you must download and run MySQL or MariaDB.`;
+                    ? 'If you do not have a database installed, you can download and run XAMPP.'
+                    : 'If you do not have a database installed, you must download and run MySQL or MariaDB.';
                 return ctx.send({type: 'danger', message: `${msgHeader}<br>\n${osSpecific}`});
             } else {
                 return ctx.send({type: 'danger', message: msgHeader});
@@ -122,21 +122,21 @@ async function handleSetVariables(ctx) {
     //Max Clients & Server Endpoints
     userVars.maxClients = (GlobalData.deployerDefaults && GlobalData.deployerDefaults.maxClients)? GlobalData.deployerDefaults.maxClients : 48;
     if (GlobalData.forceInterface) {
-        const suffix = '# zap-hosting: do not modify!'
+        const suffix = '# zap-hosting: do not modify!';
         userVars.serverEndpoints = [
             `endpoint_add_tcp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}" ${suffix}`,
             `endpoint_add_udp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}" ${suffix}`,
         ].join('\n');
     } else {
         userVars.serverEndpoints = [
-            `endpoint_add_tcp "0.0.0.0:30120"`,
-            `endpoint_add_udp "0.0.0.0:30120"`,
+            'endpoint_add_tcp "0.0.0.0:30120"',
+            'endpoint_add_udp "0.0.0.0:30120"',
         ].join('\n');
     }
 
     //Setting identifiers array
     const admin = globals.authenticator.getAdminByName(ctx.session.auth.username);
-    if (!admin) return ctx.send({type: 'danger', message: "Admin not found."});
+    if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
     const addPrincipalLines = [];
     Object.keys(admin.providers).forEach(providerName => {
         if (admin.providers[providerName].identifier) {
@@ -144,13 +144,13 @@ async function handleSetVariables(ctx) {
         }
     });
     userVars.addPrincipalsMaster = (addPrincipalLines.length)
-        ? addPrincipalLines.join('\n') 
-        : `# Deployer Note: this admin master has no identifiers to be automatically added.`;
+        ? addPrincipalLines.join('\n')
+        : '# Deployer Note: this admin master has no identifiers to be automatically added.';
 
     //Start deployer
     try {
-        ctx.utils.logAction(`Running recipe.`);
-        globals.deployer.start(userVars)
+        ctx.utils.logAction('Running recipe.');
+        globals.deployer.start(userVars);
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
     }
@@ -191,7 +191,7 @@ async function handleSaveConfig(ctx) {
     //Saving CFG file
     try {
         await fs.writeFile(cfgFilePath, serverCFG, 'utf8');
-        ctx.utils.logAction(`Configured server.cfg from deployer.`);
+        ctx.utils.logAction('Configured server.cfg from deployer.');
     } catch (error) {
         const message = `Failed to edit 'server.cfg' with error: ${error.message}`;
         if (GlobalData.verbose) logWarn(message);
@@ -209,7 +209,7 @@ async function handleSaveConfig(ctx) {
 
     if (saveFXRunnerStatus) {
         globals.fxRunner.refreshConfig();
-        ctx.utils.logAction(`Completed and committed server deploy.`);
+        ctx.utils.logAction('Completed and committed server deploy.');
 
         //Starting server
         const spawnMsg = await globals.fxRunner.spawnServer(false);
@@ -221,17 +221,17 @@ async function handleSaveConfig(ctx) {
         }
     } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing fxserver settings via deployer.`);
-        return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
 
 
 //================================================================
 /**
- * Handle the cancellation of the deployer proguess 
+ * Handle the cancellation of the deployer proguess
  * @param {object} ctx
  */
 async function handleCancel(ctx) {
     globals.deployer = null;
-    return ctx.send({success: true});  
+    return ctx.send({success: true});
 }

@@ -5,7 +5,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 const helpers = require('../../extras/helpers');
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined') };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
 
 
 /**
@@ -25,13 +25,13 @@ module.exports = async function CFGEditorSave(ctx) {
     if (!ctx.utils.checkPermission('server.cfg.editor', modulename)) {
         return ctx.send({
             type: 'danger',
-            message: `You don't have permission to execute this action.`
+            message: 'You don\'t have permission to execute this action.'
         });
     }
 
     //Check if file is set
     if (!globals.fxRunner.config.cfgPath || !globals.fxRunner.config.serverDataPath) {
-        const message = `CFG or Base Path not defined. Configure it in the settings page first.`
+        const message = 'CFG or Base Path not defined. Configure it in the settings page first.';
         return ctx.send({type: 'danger', message});
     }
 
@@ -54,7 +54,7 @@ module.exports = async function CFGEditorSave(ctx) {
 
     //Saving CFG file
     try {
-        ctx.utils.logAction(`Editing server CFG File.`);
+        ctx.utils.logAction('Editing server CFG File.');
         await fs.writeFile(cfgFilePath, ctx.request.body.cfgData, 'utf8');
         return ctx.send({type: 'success', message: 'File saved.'});
     } catch (error) {

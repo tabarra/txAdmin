@@ -11,12 +11,12 @@ const helpers = require('../../extras/helpers');
 module.exports = async function CFGEditorGet(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('server.cfg.editor', modulename)) {
-        return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
+        return ctx.utils.render('basic/generic', {message: 'You don\'t have permission to view this page.'});
     }
 
     //Check if file is set
     if (globals.fxRunner.config.cfgPath === null) {
-        let message = `Your CFG Path is not set. Configure it in the settings page first.`
+        let message = 'Your CFG Path is not set. Configure it in the settings page first.';
         return ctx.utils.render('basic/generic', {message});
     }
 

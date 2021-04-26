@@ -3,7 +3,7 @@ const modulename = 'WebServer:AddMaster';
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined') };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const returnJustMessage = (ctx, errorTitle, errorMessage) => {
     return ctx.utils.render('login', {template: 'justMessage', errorTitle, errorMessage});
 };
@@ -23,7 +23,7 @@ module.exports = async function AddMaster(ctx) {
     if (globals.authenticator.admins !== false) {
         return returnJustMessage(
             ctx,
-            `Master account already set.`,
+            'Master account already set.',
         );
     }
 
@@ -61,7 +61,7 @@ async function handlePin(ctx) {
     //Checking the PIN
     if (ctx.request.body.pin !== globals.authenticator.addMasterPin) {
         logWarn(`Wrong PIN for from: ${ctx.ip}`);
-        const message = `Wrong PIN.`;
+        const message = 'Wrong PIN.';
         return ctx.utils.render('login', {template: 'noMaster', message});
     }
 
@@ -70,13 +70,13 @@ async function handlePin(ctx) {
 
     //Generate URL
     try {
-        const callback = ctx.protocol + '://' + ctx.get('host') + `/auth/addMaster/callback`;
+        const callback = ctx.protocol + '://' + ctx.get('host') + '/auth/addMaster/callback';
         const url = await globals.authenticator.providers.citizenfx.getAuthURL(callback, ctx.session._sessCtx.externalKey);
         return ctx.response.redirect(url);
     } catch (error) {
         return returnJustMessage(
             ctx,
-            `Failed to generate callback URL with error:`,
+            'Failed to generate callback URL with error:',
             error.message
         );
     }
@@ -97,30 +97,30 @@ async function handleCallback(ctx) {
     //Exchange code for access token
     let tokenSet;
     try {
-        const currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/addMaster/callback`;
+        const currentURL = ctx.protocol + '://' + ctx.get('host') + '/auth/addMaster/callback';
         tokenSet = await globals.authenticator.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
         logWarn(`Code Exchange error: ${error.message}`);
         if (!isUndefined(error.tolerance)) {
             return returnJustMessage(
                 ctx,
-                `Please Update/Synchronize your VPS clock.`,
-                `Failed to login because this host's time is wrong. Please make sure to synchronize it with the internet.`
+                'Please Update/Synchronize your VPS clock.',
+                'Failed to login because this host\'s time is wrong. Please make sure to synchronize it with the internet.'
             );
         } else if (error.code === 'ETIMEDOUT') {
             return returnJustMessage(
                 ctx,
-                `Connection to FiveM servers timed out:`,
-                `Failed to verify your login with FiveM's identity provider. Please try again or check your connection to the internet.`
+                'Connection to FiveM servers timed out:',
+                'Failed to verify your login with FiveM\'s identity provider. Please try again or check your connection to the internet.'
             );
         } else if (error.message.startsWith('state mismatch')) {
             return returnJustMessage(
                 ctx,
-                `Invalid Browser Session.`,
-                `You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.`
+                'Invalid Browser Session.',
+                'You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.'
             );
         } else {
-            return returnJustMessage(ctx, `Code Exchange error:`, error.message);
+            return returnJustMessage(ctx, 'Code Exchange error:', error.message);
         }
     }
 
@@ -132,7 +132,7 @@ async function handleCallback(ctx) {
         logError(`Get UserInfo error: ${error.message}`);
         return returnJustMessage(
             ctx,
-            `Get UserInfo error:`,
+            'Get UserInfo error:',
             error.message
         );
     }
@@ -169,7 +169,7 @@ async function handleSave(ctx) {
     if (password != password2 || password.length < 6 || password.length > 24) {
         return returnJustMessage(
             ctx,
-            `Invalid Password.`,
+            'Invalid Password.',
         );
     }
 
@@ -180,8 +180,8 @@ async function handleSave(ctx) {
     ) {
         return returnJustMessage(
             ctx,
-            `Invalid Session.`,
-            `You may have restarted txAdmin right before entering this page. Please try again.`
+            'Invalid Session.',
+            'You may have restarted txAdmin right before entering this page. Please try again.'
         );
     }
 
@@ -193,7 +193,7 @@ async function handleSave(ctx) {
     } catch (error) {
         return returnJustMessage(
             ctx,
-            `Invalid nameid identifier.`,
+            'Invalid nameid identifier.',
             `Could not extract the user identifier from the URL below. Please report this to the txAdmin dev team.\n${ctx.session.tmpAddMasterUserInfo.nameid.toString()}`
         );
     }
@@ -208,7 +208,7 @@ async function handleSave(ctx) {
     } catch (error) {
         return returnJustMessage(
             ctx,
-            `Error:`,
+            'Error:',
             error.message
         );
     }
@@ -219,7 +219,7 @@ async function handleSave(ctx) {
             ctx.session.tmpAddMasterTokenSet,
             ctx.session.tmpAddMasterUserInfo
         );
-        ctx.session.auth.username = ctx.session.tmpAddMasterUserInfo.name
+        ctx.session.auth.username = ctx.session.tmpAddMasterUserInfo.name;
         delete ctx.session.tmpAddMasterTokenSet;
         delete ctx.session.tmpAddMasterUserInfo;
     } catch (error) {
@@ -227,7 +227,7 @@ async function handleSave(ctx) {
         logError(`Failed to login: ${error.message}`);
         return returnJustMessage(
             ctx,
-            `Failed to login:`,
+            'Failed to login:',
             error.message
         );
     }

@@ -6,7 +6,7 @@ const { dir, log, logOk, logWarn, logError } = require('./extras/console')(`v${G
 const { printBanner } = require('./extras/banner');
 
 //Helpers
-const cleanPath = (x) => { return slash(path.normalize(x)) };
+const cleanPath = (x) => { return slash(path.normalize(x)); };
 
 
 //FIXME: I should be using dependency injection or something
@@ -25,7 +25,7 @@ globals = {
     deployer: null,
     info: {},
 
-    //NOTE: still not ideal, but since the extensions system changed entirely, 
+    //NOTE: still not ideal, but since the extensions system changed entirely,
     //      will have to rethink the plans for this variable.
     databus: {
         //internal
@@ -64,7 +64,7 @@ globals = {
             },
         },
     },
-}
+};
 
 
 /**
@@ -147,75 +147,75 @@ module.exports = class txAdmin {
 
     //==============================================================
     async startAuthenticator(config) {
-        const Authenticator = require('./components/authenticator')
+        const Authenticator = require('./components/authenticator');
         globals.authenticator = new Authenticator(config);
     }
 
     //==============================================================
     async startDiscordBot(config) {
-        const DiscordBot = require('./components/discordBot')
+        const DiscordBot = require('./components/discordBot');
         globals.discordBot = new DiscordBot(config);
     }
 
     //==============================================================
     async startFXRunner(config) {
-        const FXRunner = require('./components/fxRunner')
+        const FXRunner = require('./components/fxRunner');
         globals.fxRunner = new FXRunner(config);
     }
 
     //==============================================================
     async startLogger(config) {
-        const Logger = require('./components/logger')
+        const Logger = require('./components/logger');
         globals.logger = new Logger(config);
     }
 
     //==============================================================
     async startDynamicAds(config) {
-        const DynamicAds = require('./components/dynamicAds')
+        const DynamicAds = require('./components/dynamicAds');
         globals.dynamicAds = new DynamicAds(config);
     }
 
     //==============================================================
     async startMonitor(config) {
-        const Monitor = require('./components/monitor')
+        const Monitor = require('./components/monitor');
         globals.monitor = new Monitor(config);
     }
 
     //==============================================================
     async startStatsCollector(config) {
-        const StatsCollector = require('./components/statsCollector')
+        const StatsCollector = require('./components/statsCollector');
         globals.statsCollector = new StatsCollector(config);
     }
 
     //==============================================================
     async startTranslator() {
-        const Translator = require('./components/translator')
+        const Translator = require('./components/translator');
         globals.translator = new Translator();
     }
 
     //==============================================================
     async startWebServer(config) {
-        const WebServer = require('./components/webServer')
+        const WebServer = require('./components/webServer');
         globals.webServer = new WebServer(config);
     }
 
     //==============================================================
     //NOTE: this component name might change
     async startPlayerController(config) {
-        const PlayerController = require('./components/playerController')
+        const PlayerController = require('./components/playerController');
         globals.playerController = new PlayerController(config);
     }
-}
+};
 
 
 //==============================================================
 function HandleFatalError(error, componentName) {
     if (error.message.includes('Cannot find module') && process.env.APP_ENV !== 'webpack') {
-        logError(`Error starting '${componentName}' module. Make sure you executed 'npm install'.`)
+        logError(`Error starting '${componentName}' module. Make sure you executed 'npm install'.`);
         if (GlobalData.verbose) dir(error);
     } else {
-        logError(`Error starting '${componentName}' module: ${error.message}`)
-        dir(error)
+        logError(`Error starting '${componentName}' module: ${error.message}`);
+        dir(error);
     }
 
     process.exit();

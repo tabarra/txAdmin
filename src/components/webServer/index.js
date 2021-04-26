@@ -66,12 +66,12 @@ module.exports = class WebServer {
         this.app.use(ctxUtils);
         this.app.on('error', (error, ctx) => {
             if (
-                typeof error.code == 'string' && 
+                typeof error.code == 'string' &&
                 (
-                    error.code.startsWith('HPE_') || 
+                    error.code.startsWith('HPE_') ||
                     error.code.startsWith('ECONN') ||
-                    error.code.startsWith('EPIPE') || 
-                    error.code.startsWith('ECANCELED') 
+                    error.code.startsWith('EPIPE') ||
+                    error.code.startsWith('ECANCELED')
                 )
             ) {
                 if (GlobalData.verbose) {
@@ -81,16 +81,16 @@ module.exports = class WebServer {
             } else {
                 logError(`Probably harmless error on ${ctx.path}`);
                 logError('Please be kind and send a screenshot of this error to the txAdmin developer.');
-                dir(error)
+                dir(error);
             }
         });
-        
+
         //Setting up timeout/error/no-output/413:
         const timeoutLimit = 5 * 1000;
         const jsonLimit = '16MB';
         this.app.use(async (ctx, next) => {
             ctx.set('Server', `txAdmin v${GlobalData.txAdminVersion}`);
-            let timer; 
+            let timer;
             const timeout = new Promise((_, reject) => {
                 timer = setTimeout(() => {
                     ctx.state.timeout = true;
@@ -122,9 +122,9 @@ module.exports = class WebServer {
                     const desc = `[txAdmin v${GlobalData.txAdminVersion}] Internal Error\n` +
                                  `Message: ${error.message}\n` +
                                  `Route: ${ctx.path}\n` +
-                                 `Make sure your txAdmin is updated.`;
+                                 'Make sure your txAdmin is updated.';
                     logError(desc, methodName);
-                    if (GlobalData.verbose) dir(error)
+                    if (GlobalData.verbose) dir(error);
                     ctx.status = 500;
                     ctx.body = desc;
                 }
@@ -137,7 +137,7 @@ module.exports = class WebServer {
 
         //Setting up routes
         this.router = require('./router')(this.config);
-        this.app.use(this.router.routes())
+        this.app.use(this.router.routes());
         this.app.use(this.router.allowedMethods());
         this.app.use(async (ctx) => {
             if (typeof ctx._matchedRoute === 'undefined') {
@@ -145,7 +145,7 @@ module.exports = class WebServer {
                 if (GlobalData.verbose) logWarn(`Request 404 error: ${ctx.path}`);
                 return ctx.utils.render('basic/404');
             }
-        })
+        });
         this.koaCallback = this.app.callback();
     }
 
@@ -154,7 +154,7 @@ module.exports = class WebServer {
     setupWebsocket() {
         //Start SocketIO
         this.io = SocketIO(HttpClass.createServer(), { serveClient: false });
-        this.io.use(SessionIO(this.koaSessionKey, this.koaSessionMemoryStore))
+        this.io.use(SessionIO(this.koaSessionKey, this.koaSessionMemoryStore));
         this.io.use(requestAuth('socket'));
 
         //Setting up WebConsole
@@ -171,7 +171,7 @@ module.exports = class WebServer {
     //================================================================
     httpCallbackHandler(source, req, res) {
         //Rewrite source ip if it comes from nucleus reverse proxy
-        const ipsrcRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}:\d{1,5}$/
+        const ipsrcRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}:\d{1,5}$/;
         if (source == 'citizenfx' && ipsrcRegex.test(req.headers['x-cfx-source-ip'])) {
             req.connection.remoteAddress = req.headers['x-cfx-source-ip'].split(':')[0];
         }
@@ -195,7 +195,7 @@ module.exports = class WebServer {
 
         //Print cfx.re url... when available
         //NOTE: perhaps open the URL automatically with the `open` library
-        const validUrlRegex = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\.users\.cfx\.re$/i
+        const validUrlRegex = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\.users\.cfx\.re$/i;
         const getUrlInterval = setInterval(() => {
             try {
                 const urlConvar = GetConvar('web_baseUrl', 'false');
@@ -221,17 +221,17 @@ module.exports = class WebServer {
             const listenErrorHandler = (error)=>{
                 if (error.code !== 'EADDRINUSE') return;
                 logError(`Failed to start HTTP server, port ${error.port} already in use.`);
-                logError(`Maybe you already have another txAdmin running in this port.`);
-                logError(`If you want to run multiple txAdmin, check the documentation for the port convar.`);
+                logError('Maybe you already have another txAdmin running in this port.');
+                logError('If you want to run multiple txAdmin, check the documentation for the port convar.');
                 process.exit();
-            }
+            };
             this.httpServer = HttpClass.createServer(this.httpCallbackHandler.bind(this, 'httpserver'));
             this.httpServer.on('error', listenErrorHandler);
 
             let iface;
             if (GlobalData.forceInterface) {
                 logWarn(`Starting with interface ${GlobalData.forceInterface}.`);
-                logWarn(`If the HTTP server doesn't start, this is probably the reason.`);
+                logWarn('If the HTTP server doesn\'t start, this is probably the reason.');
                 iface = GlobalData.forceInterface;
             } else {
                 iface = '0.0.0.0';
@@ -249,4 +249,4 @@ module.exports = class WebServer {
         }
     }
 
-} //Fim WebServer()
+}; //Fim WebServer()

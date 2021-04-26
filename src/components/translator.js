@@ -50,11 +50,11 @@ module.exports = class Translator {
             let polyglotOptions = {
                 allowMissing: false,
                 onMissingKey: (key)=>{
-                    logError(`Missing key '${key}' from translation file.`, 'Translator')
+                    logError(`Missing key '${key}' from translation file.`, 'Translator');
                     return key;
                 },
                 phrases
-            }
+            };
             this.polyglot = new Polyglot(polyglotOptions);
         } catch (error) {
             logError(error.message);
@@ -74,11 +74,11 @@ module.exports = class Translator {
             let polyglotOptions = {
                 allowMissing: false,
                 onMissingKey: (key)=>{
-                    logError(`Missing key '${key}' from translation file.`, 'Translator')
+                    logError(`Missing key '${key}' from translation file.`, 'Translator');
                     return key;
                 },
                 phrases
-            }
+            };
             this.polyglot = new Polyglot(polyglotOptions);
         } catch (error) {
             logError(error.message);
@@ -101,7 +101,7 @@ module.exports = class Translator {
         //If its a known language
         if (typeof languages[lang] === 'object') {
             return languages[lang];
-        
+
         //If its a custom language
         } else if (lang === 'custom') {
             try {
@@ -115,7 +115,7 @@ module.exports = class Translator {
 
         //If its an invalid language
         } else {
-            throw new Error(`Language not found.`);
+            throw new Error('Language not found.');
         }
     }
 
@@ -136,4 +136,4 @@ module.exports = class Translator {
         }
     }
 
-} //Fim Translator()
+}; //Fim Translator()

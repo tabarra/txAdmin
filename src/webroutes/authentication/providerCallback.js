@@ -4,7 +4,7 @@ const crypto  = require('crypto');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined') };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const returnJustMessage = (ctx, errorTitle, errorMessage) => {
     return ctx.utils.render('login', {template: 'justMessage', errorTitle, errorMessage});
 };
@@ -31,7 +31,7 @@ module.exports = async function ProviderCallback(ctx) {
 
     //Check the state changed
     const stateSeed = `txAdmin:${ctx.session._sessCtx.externalKey}`;
-    const stateExpected = crypto.createHash('SHA1').update(stateSeed).digest("hex");
+    const stateExpected = crypto.createHash('SHA1').update(stateSeed).digest('hex');
     if (reqState != stateExpected) {
         return returnJustMessage(
             ctx,
@@ -50,23 +50,23 @@ module.exports = async function ProviderCallback(ctx) {
         if (!isUndefined(error.tolerance)) {
             return returnJustMessage(
                 ctx,
-                `Please Update/Synchronize your VPS clock.`,
-                `Failed to login because this host's time is wrong. Please make sure to synchronize it with the internet.`
+                'Please Update/Synchronize your VPS clock.',
+                'Failed to login because this host\'s time is wrong. Please make sure to synchronize it with the internet.'
             );
         } else if (error.code === 'ETIMEDOUT') {
             return returnJustMessage(
                 ctx,
-                `Connection to FiveM servers timed out:`,
-                `Please try again or login using your existing username and backup password.`
+                'Connection to FiveM servers timed out:',
+                'Please try again or login using your existing username and backup password.'
             );
         } else if (error.message.startsWith('state mismatch')) {
             return returnJustMessage(
                 ctx,
-                `Invalid Browser Session.`,
-                `You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.`
+                'Invalid Browser Session.',
+                'You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.'
             );
         } else {
-            return returnJustMessage(ctx, `Code Exchange error:`, error.message);
+            return returnJustMessage(ctx, 'Code Exchange error:', error.message);
         }
     }
 
@@ -76,7 +76,7 @@ module.exports = async function ProviderCallback(ctx) {
         userInfo = await globals.authenticator.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
         if (GlobalData.verbose) logError(`Get UserInfo error: ${error.message}`);
-        return returnJustMessage(ctx, `Get UserInfo error:`, error.message);
+        return returnJustMessage(ctx, 'Get UserInfo error:', error.message);
     }
 
     //Getting identifier
@@ -87,7 +87,7 @@ module.exports = async function ProviderCallback(ctx) {
     } catch (error) {
         return returnJustMessage(
             ctx,
-            `Invalid nameid identifier.`,
+            'Invalid nameid identifier.',
             `Could not extract the user identifier from the URL below. Please report this to the txAdmin dev team.\n${userInfo.nameid.toString()}`
         );
     }
@@ -99,8 +99,8 @@ module.exports = async function ProviderCallback(ctx) {
             ctx.session.auth = {};
             return returnJustMessage(
                 ctx,
-                `The account '${userInfo.name}' is not an admin.`, 
-                `This CitizenFX username is not assigned to any registered account. You can also try to login using your username and backup password.`
+                `The account '${userInfo.name}' is not an admin.`,
+                'This CitizenFX username is not assigned to any registered account. You can also try to login using your username and backup password.'
             );
         }
 
@@ -118,6 +118,6 @@ module.exports = async function ProviderCallback(ctx) {
     } catch (error) {
         ctx.session.auth = {};
         if (GlobalData.verbose) logError(`Failed to login: ${error.message}`);
-        return returnJustMessage(ctx, `Failed to login:`, error.message);
+        return returnJustMessage(ctx, 'Failed to login:', error.message);
     }
 };

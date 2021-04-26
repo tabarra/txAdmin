@@ -33,7 +33,7 @@ function dependencyChecker() {
     try {
         let rawFile = fs.readFileSync(GetResourcePath(GetCurrentResourceName()) + '/package.json');
         let parsedFile = JSON.parse(rawFile);
-        let packages = Object.keys(parsedFile.dependencies)
+        let packages = Object.keys(parsedFile.dependencies);
         let missing = [];
         packages.forEach(package => {
             try {
@@ -43,11 +43,11 @@ function dependencyChecker() {
             }
         });
         if (missing.length) {
-            console.log(`[txAdmin:PreCheck] Cannot start txAdmin due to missing dependencies.`);
-            console.log(`[txAdmin:PreCheck] Make sure you executed 'npm i'.`);
-            console.log(`[txAdmin:PreCheck] The following packages are missing: ` + missing.join(', '));
+            console.log('[txAdmin:PreCheck] Cannot start txAdmin due to missing dependencies.');
+            console.log('[txAdmin:PreCheck] Make sure you executed \'npm i\'.');
+            console.log('[txAdmin:PreCheck] The following packages are missing: ' + missing.join(', '));
             console.log();
-            console.log(`[txAdmin:PreCheck] GO THE THE GITHUB RELEASES PAGE AND DOWNLOAD THE COMPILED ZIP FILE INSTEAD OF THE SOURCE`);
+            console.log('[txAdmin:PreCheck] GO THE THE GITHUB RELEASES PAGE AND DOWNLOAD THE COMPILED ZIP FILE INSTEAD OF THE SOURCE');
             process.exit();
         }
     } catch (error) {
@@ -60,16 +60,16 @@ function dependencyChecker() {
 //================================================================
 /**
  * Extracts hours and minutes from an string containing times
- * @param {string} schedule 
+ * @param {string} schedule
  * @param {boolean} filter default true
  */
 function parseSchedule(schedule, filter = true) {
     const times = (typeof schedule === 'string')? schedule.split(',') : schedule;
-    let out = []
+    let out = [];
     times.forEach((time) => {
         if (!time.length) return;
         const regex = /^$|^([01]?[0-9]|2[0-3]):([0-5][0-9])$/gm;
-        let m = regex.exec(time.trim())
+        let m = regex.exec(time.trim());
         if (m === null) {
             if (!filter) out.push(time);
         } else {
@@ -95,7 +95,7 @@ function parseSchedule(schedule, filter = true) {
 function getCFGFileData(cfgPath) {
     //Validating if the path is absolute
     if (!path.isAbsolute(cfgPath)) {
-        throw new Error("File path must be absolute.");
+        throw new Error('File path must be absolute.');
     }
 
     //Validating file existence
@@ -112,7 +112,7 @@ function getCFGFileData(cfgPath) {
     try {
         return fs.readFileSync(cfgPath).toString();
     } catch (error) {
-        throw new Error("Cannot read CFG file.");
+        throw new Error('Cannot read CFG file.');
     }
 }
 
@@ -141,7 +141,7 @@ function resolveCFGFilePath(cfgPath, serverDataPath) {
  * @param {string} rawCfgFile
  */
 function getFXServerPort(rawCfgFile) {
-    if (rawCfgFile.includes('stop monitor')) throw new Error(`Remove "stop monitor" from your config`);
+    if (rawCfgFile.includes('stop monitor')) throw new Error('Remove "stop monitor" from your config');
 
     const maxClientsRegex = /^\s*sv_maxclients\s+(\d+).*$/gim;
     const endpointsRegex = /^\s*endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):([0-9]{1,5})["']?.*$/gim;
@@ -162,10 +162,10 @@ function getFXServerPort(rawCfgFile) {
             maxClients.push(parseInt(match[1]));
         }
     } catch (error) {
-        throw new Error("Regex Match Error");
+        throw new Error('Regex Match Error');
     }
-    
-    //Checking for the maxClients 
+
+    //Checking for the maxClients
     if (GlobalData.deployerDefaults && GlobalData.deployerDefaults.maxClients) {
         if (!maxClients.length) {
             throw new Error(`Zap-Hosting: please add 'sv_maxclients ${GlobalData.deployerDefaults.maxClients}' to your server.cfg.`);
@@ -177,14 +177,14 @@ function getFXServerPort(rawCfgFile) {
 
     //Checking if endpoints present at all
     const oneTCPEndpoint = endpoints.find((m) => (m.type === 'tcp'));
-    if (!oneTCPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_tcp</code> in your config");
+    if (!oneTCPEndpoint) throw new Error('You MUST have at least one <code>endpoint_add_tcp</code> in your config');
     const oneUDPEndpoint = endpoints.find((m) => (m.type === 'udp'));
-    if (!oneUDPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_udp</code> in your config");
+    if (!oneUDPEndpoint) throw new Error('You MUST have at least one <code>endpoint_add_udp</code> in your config');
 
     //FIXME: Think of something to make this work:
     const firstPort = endpoints[0].port;
     endpoints.forEach((m) => {
-        if (m.port !== firstPort) throw new Error("All <code>endpoint_add_*</code> MUST have the same port");
+        if (m.port !== firstPort) throw new Error('All <code>endpoint_add_*</code> MUST have the same port');
     });
 
     if (firstPort >= 40120 && firstPort <= 40130) {
@@ -194,7 +194,7 @@ function getFXServerPort(rawCfgFile) {
     //IF Zap-hosting interface bind enforcement
     if (GlobalData.forceInterface) {
         const stdMessage = [
-            `Remove all lines containing <code>endpoint_add</code> and add the lines below to the top of your file.`,
+            'Remove all lines containing <code>endpoint_add</code> and add the lines below to the top of your file.',
             `<code>endpoint_add_tcp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}"`,
             `endpoint_add_udp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}"</code>`,
         ].join('\n<br>');
@@ -210,9 +210,9 @@ function getFXServerPort(rawCfgFile) {
 
     } else {
         const validTCPEndpoint = endpoints.find((match) => {
-            return (match.type === 'tcp' && (match.iface === '0.0.0.0' || match.iface === '127.0.0.1'))
-        })
-        if (!validTCPEndpoint) throw new Error("You MUST have one <code>endpoint_add_tcp</code> with IP 0.0.0.0 in your config");
+            return (match.type === 'tcp' && (match.iface === '0.0.0.0' || match.iface === '127.0.0.1'));
+        });
+        if (!validTCPEndpoint) throw new Error('You MUST have one <code>endpoint_add_tcp</code> with IP 0.0.0.0 in your config');
     }
 
     return firstPort;
@@ -232,7 +232,7 @@ function findLikelyCFGPath(serverDataPath) {
         'server.txt',
         'server',
         '../server.cfg',
-    ]
+    ];
 
     for (let i = 0; i < attempts.length; i++) {
         const cfgPath = path.join(serverDataPath, attempts[i]);
@@ -254,4 +254,4 @@ module.exports = {
     resolveCFGFilePath,
     getFXServerPort,
     findLikelyCFGPath,
-}
+};

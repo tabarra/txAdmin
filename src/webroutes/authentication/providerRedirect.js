@@ -3,10 +3,10 @@ const modulename = 'WebServer:ProviderRedirect';
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined') };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const genCallbackURL = (ctx, provider) => {
-    return ctx.protocol + '://' + ctx.get('host') + `/auth/${provider}/callback`
-}
+    return ctx.protocol + '://' + ctx.get('host') + `/auth/${provider}/callback`;
+};
 const returnJustMessage = (ctx, errorTitle, errorMessage) => {
     return ctx.utils.render('login', {template: 'justMessage', errorTitle, errorMessage});
 };

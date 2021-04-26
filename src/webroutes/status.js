@@ -13,7 +13,7 @@ const hostDataCache = new Cache(5);
  * The host data is cached for 5 seconds
  * @param {object} ctx
  */
-module.exports = async function GetStatus(ctx) {    
+module.exports = async function GetStatus(ctx) {
     let hostData = hostDataCache.get();
     if (hostData === false) {
         hostData = await prepareHostData();
@@ -25,7 +25,7 @@ module.exports = async function GetStatus(ctx) {
         host: hostData,
         status: prepareServerStatus(),
         players: preparePlayersData()
-    })
+    });
 };
 
 
@@ -34,7 +34,7 @@ module.exports = async function GetStatus(ctx) {
  * Returns the fxserver's data
  */
 function prepareServerStatus() {
-    
+
     // //processing hitches
     // let fxServerHitches = cloneDeep(globals.monitor.globalCounters.hitches);
     // let now = (Date.now() / 1000).toFixed();
@@ -68,7 +68,7 @@ function prepareServerStatus() {
         ['IDLE', 'warning'],
         ['NEARLY', 'warning'],
         ['DISCONNECTED', 'danger'],
-    ]
+    ];
     if (discordClient == null) {
         discordStatus = 'DISABLED';
         discordStatusClass = 'secondary';
@@ -138,7 +138,7 @@ async function prepareHostData() {
                 pct: cpuUsage,
                 text: `${cpuUsage}% of ${cpus.length}x ${cpus[0].speed} MHz`
             }
-        }
+        };
 
     } catch (error) {
         if (GlobalData.verbose) {
@@ -148,13 +148,13 @@ async function prepareHostData() {
         return {
             memory: {
                 pct: 0,
-                text: `error`
+                text: 'error'
             },
             cpu:{
                 pct: 0,
-                text: `error`
+                text: 'error'
             }
-        }
+        };
     }
 }
 
@@ -162,7 +162,7 @@ async function prepareHostData() {
 //==============================================================
 /**
  * Returns the activePlayers list in /playerlist.json compatible-ish format
- * 
+ *
  * FIXME: This is very wasteful, we need to start only sending the playerlist diff for the admins.
  *        Could be done via socket.io, and then playerlist changed would push update events
  */

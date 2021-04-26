@@ -10,5 +10,5 @@ module.exports = (customWL = []) => {
     const xss = new xssClass.FilterXSS({
         whiteList: customWL
     });
-    return (x) => {return xss.process(x)};
-}
+    return (x) => {return xss.process(x);};
+};

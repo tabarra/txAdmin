@@ -5,23 +5,23 @@ const cloneDeep = require('lodash/cloneDeep');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined') };
-const toDefault = (input, defVal) => { return (isUndefined(input))? defVal : input };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
+const toDefault = (input, defVal) => { return (isUndefined(input))? defVal : input; };
 const removeNulls = (obj) => {
     var isArray = obj instanceof Array;
     for (var k in obj) {
         if (obj[k] === null) isArray ? obj.splice(k, 1) : delete obj[k];
-        else if (typeof obj[k] == "object") removeNulls(obj[k]);
+        else if (typeof obj[k] == 'object') removeNulls(obj[k]);
         if (isArray && obj.length == k) removeNulls(obj);
     }
     return obj;
-}
+};
 const deepFreeze = (obj) => {
     Object.freeze(obj);
     Object.getOwnPropertyNames(obj).forEach(function (prop) {
         if (obj.hasOwnProperty(prop)
             && obj[prop] !== null
-            && (typeof obj[prop] === "object" || typeof obj[prop] === "function")
+            && (typeof obj[prop] === 'object' || typeof obj[prop] === 'function')
             && !Object.isFrozen(obj[prop])
         ) {
             deepFreeze(obj[prop]);
@@ -54,7 +54,7 @@ module.exports = class ConfigVault {
             this.config = this.setupConfigDefaults(this.configFile);
             this.setupFolderStructure();
         } catch (error) {
-            logError(error.message)
+            logError(error.message);
             process.exit(0);
         }
     }
@@ -104,7 +104,7 @@ module.exports = class ConfigVault {
             webServer: null,
             discordBot: null,
             fxRunner: null,
-        }
+        };
 
         //NOTE: this shit is ugly, but I wont bother fixing it.
         //      this entire config vault is stupid.
@@ -132,7 +132,7 @@ module.exports = class ConfigVault {
                 onJoinCheckWhitelist: toDefault(cfg.playerController.onJoinCheckWhitelist, false),
                 minSessionTime: toDefault(cfg.playerController.minSessionTime, 15),
                 whitelistRejectionMessage: toDefault(
-                    cfg.playerController.whitelistRejectionMessage, 
+                    cfg.playerController.whitelistRejectionMessage,
                     'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour Request ID: <id>'
                 ),
                 wipePendingWLOnStart: toDefault(cfg.playerController.wipePendingWLOnStart, true),
@@ -151,7 +151,7 @@ module.exports = class ConfigVault {
                 announceChannel: toDefault(cfg.discordBot.announceChannel, null),
                 prefix: toDefault(cfg.discordBot.prefix, '/'),
                 statusMessage: toDefault(
-                    cfg.discordBot.statusMessage, 
+                    cfg.discordBot.statusMessage,
                     '**IP:** `change-me:<port>`\n**Players:** <players>\n**Uptime:** <uptime>'
                 ),
                 commandCooldown: toDefault(cfg.discordBot.commandCooldown, null), //not in template
@@ -187,8 +187,8 @@ module.exports = class ConfigVault {
         //NOTE: the bool trick in fxRunner.autostart won't work if we want the default to be true
         try {
             //Global
-            cfg.global.serverName = cfg.global.serverName || "change-me";
-            cfg.global.language = cfg.global.language || "en"; //TODO: move to GlobalData
+            cfg.global.serverName = cfg.global.serverName || 'change-me';
+            cfg.global.language = cfg.global.language || 'en'; //TODO: move to GlobalData
 
             //Logger
             cfg.logger.logPath = cfg.logger.logPath || `${this.serverProfilePath}/logs/admin.log`; //not in template
@@ -198,7 +198,7 @@ module.exports = class ConfigVault {
             cfg.monitor.restarterScheduleWarnings = cfg.monitor.restarterScheduleWarnings || [30, 15, 10, 5, 4, 3, 2, 1];
             cfg.monitor.cooldown = parseInt(cfg.monitor.cooldown) || 60; //not in template - 45 > 60 > 90 -> 60 after fixing the "extra time" logic
             cfg.monitor.disableChatWarnings = (cfg.monitor.disableChatWarnings === 'true' || cfg.monitor.disableChatWarnings === true);
-            
+
             //StatsCollector
             //nothing here /shrug
 
@@ -231,14 +231,14 @@ module.exports = class ConfigVault {
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
             //FXRunner - Converting from old OneSync (build 2751)
             if (isUndefined(cfg.fxRunner.onesync) || cfg.fxRunner.onesync === null) {
-                cfg.fxRunner.onesync = 'off'
+                cfg.fxRunner.onesync = 'off';
             } else if (typeof cfg.fxRunner.onesync == 'boolean') {
                 cfg.fxRunner.onesync = (cfg.fxRunner.onesync)? 'on' : 'off';
             } else if (!['on', 'legacy', 'off'].includes(cfg.fxRunner.onesync)) {
-                throw new Error(`Invalid OneSync type.`);
+                throw new Error('Invalid OneSync type.');
             }
         } catch (error) {
-            if (GlobalData.verbose) dir(error)
+            if (GlobalData.verbose) dir(error);
             throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`);
         }
 
@@ -321,9 +321,9 @@ module.exports = class ConfigVault {
             this.config = this.setupConfigDefaults(this.configFile);
             return true;
         } catch (error) {
-            dir(error)
+            dir(error);
             return false;
         }
     }
 
-} //Fim ConfigVault()
+}; //Fim ConfigVault()

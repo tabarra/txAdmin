@@ -1,13 +1,13 @@
 //Requires
 const modulename = 'WebServer:AdminManagerActions';
-const axios = require("axios");
+const axios = require('axios');
 const { customAlphabet } = require('nanoid');
 const dict51 = require('nanoid-dictionary/nolookalikes');
 const nanoid = customAlphabet(dict51, 20);
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined') };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const citizenfxIDRegex = /^\w[\w.-]{1,18}\w$/;
 const discordIDRegex = /^\d{7,20}$/;
 const nameRegex = citizenfxIDRegex;
@@ -28,7 +28,7 @@ module.exports = async function AdminManagerActions(ctx) {
     if (!ctx.utils.checkPermission('manage.admins', modulename)) {
         return ctx.send({
             type: 'danger',
-            message: `You don't have permission to execute this action.`
+            message: 'You don\'t have permission to execute this action.'
         });
     }
 
@@ -72,16 +72,16 @@ async function handleAdd(ctx) {
     let citizenfxID = ctx.request.body.citizenfxID.trim();
     let discordID = ctx.request.body.discordID.trim();
     let permissions = (Array.isArray(ctx.request.body.permissions))? ctx.request.body.permissions : [];
-    permissions = permissions.filter((x)=>{ return typeof x === 'string'});
+    permissions = permissions.filter((x)=>{ return typeof x === 'string';});
     if (permissions.includes('all_permissions')) permissions = ['all_permissions'];
 
     //Validate & process fields
     if (!nameRegex.test(name)) {
-        return ctx.send({type: 'danger', message: "Invalid username, must have between 3 and 20 characters."});
+        return ctx.send({type: 'danger', message: 'Invalid username, must have between 3 and 20 characters.'});
     }
     let citizenfxData = false;
     if (citizenfxID.length) {
-        if (!citizenfxIDRegex.test(citizenfxID)) return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
+        if (!citizenfxIDRegex.test(citizenfxID)) return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID'});
         try {
             const res = await axios({
                 url: `https://forum.cfx.re/u/${citizenfxID}.json`,
@@ -100,7 +100,7 @@ async function handleAdd(ctx) {
     }
     let discordData = false;
     if (discordID.length) {
-        if (!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: "Invalid Discord ID"});
+        if (!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
         discordData = {
             id: discordID,
             identifier: `discord:${discordID}`
@@ -142,11 +142,11 @@ async function handleEdit(ctx) {
     let permissions;
     if (!editingSelf) {
         if (Array.isArray(ctx.request.body.permissions)) {
-            permissions = ctx.request.body.permissions.filter((x)=>{ return typeof x === 'string'});
+            permissions = ctx.request.body.permissions.filter((x)=>{ return typeof x === 'string';});
             if (permissions.includes('all_permissions')) permissions = ['all_permissions'];
         } else {
             permissions = [];
-        }        
+        }
     } else {
         permissions = undefined;
     }
@@ -154,7 +154,7 @@ async function handleEdit(ctx) {
     //Validate & process fields
     let citizenfxData = false;
     if (citizenfxID.length) {
-        if (!citizenfxIDRegex.test(citizenfxID)) return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
+        if (!citizenfxIDRegex.test(citizenfxID)) return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID'});
         try {
             const res = await axios({
                 url: `https://forum.cfx.re/u/${citizenfxID}.json`,
@@ -173,7 +173,7 @@ async function handleEdit(ctx) {
     }
     let discordData = false;
     if (discordID.length) {
-        if (!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: "Invalid Discord ID"});
+        if (!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
         discordData = {
             id: discordID,
             identifier: `discord:${discordID}`
@@ -182,18 +182,18 @@ async function handleEdit(ctx) {
 
     //Check if admin exists
     const admin = globals.authenticator.getAdminByName(name);
-    if (!admin) return ctx.send({type: 'danger', message: "Admin not found."});
+    if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
 
     //Check if editing an master admin
     if (!ctx.session.auth.master && admin.master) {
-        return ctx.send({type: 'danger', message: "You cannot edit an admin master."});
+        return ctx.send({type: 'danger', message: 'You cannot edit an admin master.'});
     }
 
     //Add admin and give output
     try {
         await globals.authenticator.editAdmin(name, null, citizenfxData, discordData, permissions);
         ctx.utils.logAction(`Editing user '${name}'.`);
-        return ctx.send({type: 'success', message: `refresh`});
+        return ctx.send({type: 'success', message: 'refresh'});
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
     }
@@ -222,18 +222,18 @@ async function handleDelete(ctx) {
 
     //Check if admin exists
     let admin = globals.authenticator.getAdminByName(name);
-    if (!admin) return ctx.send({type: 'danger', message: "Admin not found."});
+    if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
 
     //Check if editing an master admin
     if (admin.master) {
-        return ctx.send({type: 'danger', message: "You cannot delete an admin master."});
+        return ctx.send({type: 'danger', message: 'You cannot delete an admin master.'});
     }
 
     //Delete admin and give output
     try {
         await globals.authenticator.deleteAdmin(name);
         ctx.utils.logAction(`Deleting user '${name}'.`);
-        return ctx.send({type: 'success', message: `refresh`});
+        return ctx.send({type: 'success', message: 'refresh'});
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
     }
@@ -262,7 +262,7 @@ async function handleGetModal(ctx) {
 
     //Check if editing an master admin
     if (!ctx.session.auth.master && admin.master) {
-        return ctx.send("You cannot edit an admin master.");
+        return ctx.send('You cannot edit an admin master.');
     }
 
     //Prepare permissions
@@ -274,7 +274,7 @@ async function handleGetModal(ctx) {
                 id: perm[0],
                 name: perm[1],
                 checked: (admin.permissions.includes(perm[0]))? 'checked' : ''
-            }
+            };
         });
     }
 
@@ -286,7 +286,7 @@ async function handleGetModal(ctx) {
         discord_id: (admin.providers.discord)? admin.providers.discord.id : '',
         permissions,
         editingSelf
-    }
+    };
 
     //Give output
     return ctx.utils.render('adminManager/editModal', renderData);

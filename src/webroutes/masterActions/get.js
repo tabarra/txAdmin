@@ -5,7 +5,7 @@ const path = require('path');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
-const isUndefined = (x) => { return (typeof x === 'undefined') };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
 
 
 /**
@@ -21,7 +21,7 @@ module.exports = async function MasterActionsGet(ctx) {
 
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
-        return ctx.utils.render('basic/generic', {message: `Only the master account has permission to view/use this page.`});
+        return ctx.utils.render('basic/generic', {message: 'Only the master account has permission to view/use this page.'});
     }
 
     //Render the page

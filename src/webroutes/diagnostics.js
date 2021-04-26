@@ -2,7 +2,7 @@
 const modulename = 'WebServer:Diagnostics';
 const os = require('os');
 const si = require('systeminformation');
-const axios = require("axios");
+const axios = require('axios');
 const bytes = require('bytes');
 const pidusageTree = require('pidusage-tree');
 const humanizeDuration = require('humanize-duration');
@@ -86,7 +86,7 @@ async function getProcessesData() {
         });
 
     } catch (error) {
-        logError(`Error getting processes data.`);
+        logError('Error getting processes data.');
         if (GlobalData.verbose) dir(error);
     }
 
@@ -95,7 +95,7 @@ async function getProcessesData() {
         if ( a.order < b.order )  return -1;
         if ( a.order > b.order ) return 1;
         return 0;
-    })
+    });
 
 
     return procList;
@@ -109,7 +109,7 @@ async function getProcessesData() {
 async function getFXServerData() {
     //Sanity Check
     if (!globals.config.forceFXServerPort && !globals.fxRunner.fxServerPort) {
-        return {error: `Server Offline`}
+        return {error: 'Server Offline'};
     }
 
     //Preparing request
@@ -120,8 +120,8 @@ async function getFXServerData() {
         responseEncoding: 'utf8',
         maxRedirects: 0,
         timeout: globals.monitor.hardConfigs.timeout
-    }
-    
+    };
+
     //Making HTTP Request
     let infoData;
     try {
@@ -130,7 +130,7 @@ async function getFXServerData() {
     } catch (error) {
         logWarn('Failed to get FXServer information.');
         if (GlobalData.verbose) dir(error);
-        return {error: `Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)`};
+        return {error: 'Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)'};
     }
 
     //Helper function
@@ -142,7 +142,7 @@ async function getFXServerData() {
         } catch (error) {
             return 0;
         }
-    }
+    };
 
     //Processing result
     try {
@@ -150,9 +150,9 @@ async function getFXServerData() {
         if (infoData.resources.length <= 100) {
             resourcesWarning = '';
         } else if (infoData.resources.length < 200) {
-            resourcesWarning = `<span class="badge badge-warning"> HIGH </span>`;
+            resourcesWarning = '<span class="badge badge-warning"> HIGH </span>';
         } else {
-            resourcesWarning = `<span class="badge badge-danger"> VERY HIGH! </span>`;
+            resourcesWarning = '<span class="badge badge-danger"> VERY HIGH! </span>';
         }
 
         return {
@@ -170,7 +170,7 @@ async function getFXServerData() {
     } catch (error) {
         logWarn('Failed to process FXServer information.');
         if (GlobalData.verbose) dir(error);
-        return {error: `Failed to process FXServer data. <br>Check the terminal for more information (if verbosity is enabled)`};
+        return {error: 'Failed to process FXServer data. <br>Check the terminal for more information (if verbosity is enabled)'};
     }
 }
 
@@ -200,12 +200,12 @@ async function getHostData() {
         const userInfo = os.userInfo();
         const cpus = os.cpus();
 
-        let clockWarning = ``;
+        let clockWarning = '';
         if (cpus.length < 8) {
             if (cpus[0].speed <= 2400) {
                 clockWarning = '<span class="badge badge-danger"> VERY SLOW! </span>';
             } else if (cpus[0].speed < 3000) {
-                clockWarning = `<span class="badge badge-warning"> SLOW </span>`;
+                clockWarning = '<span class="badge badge-warning"> SLOW </span>';
             }
         }
 
@@ -219,7 +219,7 @@ async function getHostData() {
     } catch (error) {
         logError('Error getting Host data');
         if (GlobalData.verbose) dir(error);
-        hostData.error = `Failed to retrieve host data. <br>Check the terminal for more information (if verbosity is enabled)`;
+        hostData.error = 'Failed to retrieve host data. <br>Check the terminal for more information (if verbosity is enabled)';
     }
 
     return hostData;
@@ -234,7 +234,7 @@ async function gettxAdminData() {
     const humanizeOptions = {
         round: true,
         units: ['d', 'h', 'm']
-    }
+    };
 
     const controllerConfigs = globals.playerController.config;
     const httpCounter = globals.databus.txStatsData.httpCounter;

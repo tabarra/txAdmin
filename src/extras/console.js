@@ -1,21 +1,21 @@
-const util = require('util')
+const util = require('util');
 const chalk = require('chalk');
 const colorize = require('json-colorizer');
 const header = 'txAdmin';
 let logHistory = [];
 
 //Helpers
-const now = () => { return Math.round(Date.now() / 1000) };
-const getConCtx = (ctx) => { return (ctx !== null)? header+':'+ctx : header };
-const getHistCtx = (ctx) => { return (ctx !== null)? ctx : header };
+const now = () => { return Math.round(Date.now() / 1000); };
+const getConCtx = (ctx) => { return (ctx !== null)? header+':'+ctx : header; };
+const getHistCtx = (ctx) => { return (ctx !== null)? ctx : header; };
 const toHistory = (type, ctx, msg) =>{
     msg = msg.toString().replace(/\u001b\[\d+(;\d)?m/g, '');
     if (logHistory.length > 4000) {
         let sliceMsg = {ts: now(), type: 'ERROR', ctx: 'ConsoleLog', msg: 'The log was sliced to prevent memory exhaustion.'};
-        logHistory = logHistory.slice(0,500).concat(sliceMsg, logHistory.slice(-500))
+        logHistory = logHistory.slice(0,500).concat(sliceMsg, logHistory.slice(-500));
     }
     return logHistory.push({ts: now(), type, ctx, msg});
-}
+};
 
 //Colorize settings:
 const colorizeSettings = {
@@ -31,7 +31,7 @@ const colorizeSettings = {
         BOOLEAN_LITERAL: 'blue',
         NULL_LITERAL: 'white',
     }
-}
+};
 
 
 //================================================================
@@ -68,7 +68,7 @@ function logError(msg='', context=null) {
 }
 
 function cleanTerminal() {
-    process.stdout.write(`.\n`.repeat(80) + `\x1B[2J\x1B[H`);
+    process.stdout.write('.\n'.repeat(80) + '\x1B[2J\x1B[H');
 }
 
 function setTTYTitle(version, title) {
@@ -83,12 +83,12 @@ function dir(data) {
             if (typeof data.type !== 'undefined') console.log(`${chalk.redBright('[txAdmin Error] Type:')} ${data.type}`);
             if (typeof data.code !== 'undefined') console.log(`${chalk.redBright('[txAdmin Error] Code:')} ${data.code}`);
             data.stack.forEach(trace => {
-                console.log(`    ${chalk.redBright('=>')} ${trace.file}:${trace.line} > ${chalk.yellowBright(trace.name || 'anonym')}`)
+                console.log(`    ${chalk.redBright('=>')} ${trace.file}:${trace.line} > ${chalk.yellowBright(trace.name || 'anonym')}`);
             });
         } catch (error) {
-            console.log('Error stack unavailable.')
+            console.log('Error stack unavailable.');
         }
-        console.log()
+        console.log();
     } else {
         let printData;
         if (typeof data == 'undefined') {
@@ -106,16 +106,16 @@ function dir(data) {
 
         } else if (typeof data == 'object') {
             if (
-                !Object.keys(data).length && 
+                !Object.keys(data).length &&
                 typeof data.toString == 'function' &&
                 data.constructor.name &&
-                data.constructor.name !== 'Object' && 
+                data.constructor.name !== 'Object' &&
                 !Array.isArray(data)
             ) {
                 printData = chalk.keyword('moccasin').italic(`> ${data.constructor.name}.toString():\n`);
                 printData += chalk.white(data.toString());
             } else {
-                // DEBUG when I really need it... 
+                // DEBUG when I really need it...
                 //printData = util.format('%o', data);
                 printData = colorize(data, colorizeSettings);
             }
@@ -124,20 +124,20 @@ function dir(data) {
             printData = chalk.keyword('orange').italic(typeof data + ': ');
             if (typeof data == 'string') {
                 printData += `"${data}"`;
-    
+
             } else if (typeof data == 'number') {
                 printData += chalk.green(data);
-    
+
             } else if (typeof data == 'function') {
-                printData += "\n";
+                printData += '\n';
                 printData += data.toString();
 
             } else {
                 printData = util.format('%o', data);
             }
         }
-        const div = "=".repeat(32);
-        console.log(chalk.cyan([div, printData, div].join("\n")));
+        const div = '='.repeat(32);
+        console.log(chalk.cyan([div, printData, div].join('\n')));
     }
 }
 
@@ -165,7 +165,7 @@ function getLog() {
 
 //================================================================
 module.exports = (ctx) => {
-    const appendSubCtx = (sub) => {return (sub !== null)? `${ctx}:${sub}` : ctx};
+    const appendSubCtx = (sub) => {return (sub !== null)? `${ctx}:${sub}` : ctx;};
     return {
         log: (x, subCtx = null) => log(x, appendSubCtx(subCtx)),
         logOk: (x, subCtx = null) => logOk(x, appendSubCtx(subCtx)),
@@ -175,5 +175,5 @@ module.exports = (ctx) => {
         cleanTerminal,
         setTTYTitle,
         getLog
-    }
-}
+    };
+};

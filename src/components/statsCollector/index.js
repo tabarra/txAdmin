@@ -10,7 +10,7 @@ const { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } = 
 const getEpoch = (mod, ts=false) => {
     const time = ts ? new Date(ts) : new Date();
     const minutes = Math.floor(time.getMinutes() / mod) * mod;
-    return String(time.getHours()).padStart(2, "0") + String(minutes).padStart(2, "0");
+    return String(time.getHours()).padStart(2, '0') + String(minutes).padStart(2, '0');
 };
 
 
@@ -29,7 +29,7 @@ module.exports = class StatsCollector {
                 // lenthCap: 288, //5*288 = 1440 = 1 day
                 lenthCap: 360, //5*360 = 30 hours
             }
-        }
+        };
         // this.playersBuffer = [];
         // this.playersSeries = [];
         this.perfSeries = null;
@@ -41,7 +41,7 @@ module.exports = class StatsCollector {
                 await this.collectPerformance();
             } catch (error) {
                 if (GlobalData.verbose) {
-                    logError(`Error while collecting fxserver performance data`);
+                    logError('Error while collecting fxserver performance data');
                     dir(error);
                 }
             }
@@ -76,18 +76,18 @@ module.exports = class StatsCollector {
                 logError(`Unnable to create stats_heatmapData_v1 with error: ${error.message}`);
                 process.exit();
             }
-        }
+        };
 
         if (rawFile !== null) {
             try {
                 const heatmapData = JSON.parse(rawFile);
-                if (!Array.isArray(heatmapData)) throw new Error(`data is not an array`);
-                if (!validatePerfCacheData(heatmapData)) throw new Error(`invalid data in cache`);
+                if (!Array.isArray(heatmapData)) throw new Error('data is not an array');
+                if (!validatePerfCacheData(heatmapData)) throw new Error('invalid data in cache');
                 this.perfSeries = heatmapData;
 
             } catch (error) {
                 logError(`Failed to load stats_heatmapData_v1 with message: ${error.message}`);
-                logError(`Since this is not a critical file, it will be reset.`);
+                logError('Since this is not a critical file, it will be reset.');
                 await setFile();
             }
 
@@ -124,13 +124,13 @@ module.exports = class StatsCollector {
     /**
      * Cron function to collect the performance data from fxserver.
      * This function will also collect player count and process the perf history.
-     * 
+     *
      * NOTE:
      * a cada 1 minuto coleta:
      *     - se o último epoch = epoch atual, ignora
      *     - coleta perf
      *     - coleta players count
-     *     
+     *
      * dessa forma:
      *     - em vai ter 5 chances de se coletar cada epoch
      *     - normalmente o timestamp do coletado vai ser com o epoch correto
@@ -145,17 +145,17 @@ module.exports = class StatsCollector {
         const now = Date.now();
         const cfg = this.hardConfigs.performance; //Shorthand only
         const lastSnap = this.perfSeries.length ? this.perfSeries[this.perfSeries.length-1] : false;
-        
+
         //Check skip rules
         if (
             lastSnap &&
             getEpoch(cfg.resolution, lastSnap.ts) == getEpoch(cfg.resolution) &&
             now - lastSnap.ts < cfg.resolution*60*1000
         ) {
-            if (GlobalData.verbose) log(`Skipping perf collection due to resolution`);
+            if (GlobalData.verbose) log('Skipping perf collection due to resolution');
             return;
         }
-        
+
         //Get performance data
         const sourceURL = (GlobalData.debugExternalSource)? GlobalData.debugExternalSource : globals.fxRunner.fxServerHost;
         const currPerfRaw = await got(`http://${sourceURL}/perf/`, {timeout: 1500}).text();
@@ -165,7 +165,7 @@ module.exports = class StatsCollector {
             !validatePerfThreadData(currPerfData.svNetwork) ||
             !validatePerfThreadData(currPerfData.svMain)
         ) {
-            throw new Error(`invalid or incomplete /perf/ response`);
+            throw new Error('invalid or incomplete /perf/ response');
         }
 
         //Process performance data
@@ -173,17 +173,17 @@ module.exports = class StatsCollector {
             lastSnap &&
             now - lastSnap.ts <= cfg.resolution*60*1000*4 && //resolution time in ms * 4 -- just in case there is some lag
             lastSnap.mainTickCounter < currPerfData.svMain.count
-        )
+        );
         const currPerfDiff = diffPerfs(currPerfData, (islinear) ? lastSnap.perfSrc : false);
         Object.keys(currPerfDiff).forEach((thread) => {
-            const bucketsFrequencies = []
+            const bucketsFrequencies = [];
             currPerfDiff[thread].buckets.forEach((b, bIndex) => {
                 const prevBucket = (bIndex) ? currPerfDiff[thread].buckets[bIndex - 1] : 0;
                 const freq = (b - prevBucket) / currPerfDiff[thread].count;
                 bucketsFrequencies.push(freq);
             });
             currPerfDiff[thread].buckets = bucketsFrequencies;
-        })
+        });
         const currSnapshot = {
             ts: now,
             skipped: !islinear,
@@ -191,7 +191,7 @@ module.exports = class StatsCollector {
             clients: globals.playerController.getPlayerList().length,
             perfSrc: currPerfData,
             perf: currPerfDiff
-        }
+        };
 
         //Push to cache and save it
         this.perfSeries.push(currSnapshot);
@@ -203,8 +203,8 @@ module.exports = class StatsCollector {
         } catch (error) {
             if (GlobalData.verbose) {
                 logWarn('Failed to write the performance history log file with error:');
-                dir(error)
+                dir(error);
             }
         }
     }
-} //Fim StatsCollector()
+}; //Fim StatsCollector()

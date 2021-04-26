@@ -7,8 +7,8 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 const helpers = require('../../extras/helpers');
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined') };
-const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
+const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')); };
 
 /**
  * Handle all the server control actions
@@ -25,7 +25,7 @@ module.exports = async function SettingsSave(ctx) {
     if (!ctx.utils.checkPermission('settings.write', modulename)) {
         return ctx.send({
             type: 'danger',
-            message: `You don't have permission to execute this action.`
+            message: 'You don\'t have permission to execute this action.'
         });
     }
 
@@ -69,7 +69,7 @@ function handleGlobal(ctx) {
         serverName: ctx.request.body.serverName.trim(),
         language: ctx.request.body.language.trim(),
         verbose: (ctx.request.body.verbose === 'true')
-    }
+    };
 
     //Trying to load language file
     let langPhrases;
@@ -89,11 +89,11 @@ function handleGlobal(ctx) {
     if (saveStatus) {
         globals.translator.refreshConfig(langPhrases);
         globals.config = globals.configVault.getScoped('global');
-        ctx.utils.logAction(`Changing global settings.`);
-        return ctx.send({type: 'success', message: `<strong>Global configuration saved!</strong>`});
+        ctx.utils.logAction('Changing global settings.');
+        return ctx.send({type: 'success', message: '<strong>Global configuration saved!</strong>'});
     } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings.`);
-        return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
 
@@ -125,21 +125,21 @@ function handleFXServer(ctx) {
         onesync: ctx.request.body.onesync,
         autostart: (ctx.request.body.autostart === 'true'),
         quiet: (ctx.request.body.quiet === 'true'),
-    }
+    };
 
     //Validating path spaces
     if (
         cfg.serverDataPath.includes(' ') ||
         cfg.cfgPath.includes(' ')
     ) {
-        return ctx.send({type: 'danger', message: `The paths cannot contain spaces.`});
+        return ctx.send({type: 'danger', message: 'The paths cannot contain spaces.'});
     }
 
     //Validating Base Path
     try {
         if (!fs.existsSync(path.join(cfg.serverDataPath, 'resources'))) {
             if (cfg.serverDataPath.includes('resources')) {
-                throw new Error("The base must be the folder that contains the resources folder.");
+                throw new Error('The base must be the folder that contains the resources folder.');
             } else {
                 throw new Error("Couldn't locate or read a resources folder inside of the base path.");
             }
@@ -170,11 +170,11 @@ function handleFXServer(ctx) {
     //Sending output
     if (saveStatus) {
         globals.fxRunner.refreshConfig();
-        ctx.utils.logAction(`Changing fxRunner settings.`);
-        return ctx.send({type: 'success', message: `<strong>FXServer configuration saved!</strong>`});
+        ctx.utils.logAction('Changing fxRunner settings.');
+        return ctx.send({type: 'success', message: '<strong>FXServer configuration saved!</strong>'});
     } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing fxRunner settings.`);
-        return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
 
@@ -204,7 +204,7 @@ function handlePlayerController(ctx) {
         minSessionTime: parseInt(ctx.request.body.minSessionTime.trim()),
         whitelistRejectionMessage: ctx.request.body.whitelistRejectionMessage.trim(),
         wipePendingWLOnStart: (ctx.request.body.wipePendingWLOnStart === 'true'),
-    }
+    };
 
     //Validating wl message
     if (cfg.whitelistRejectionMessage.length > 256) {
@@ -228,11 +228,11 @@ function handlePlayerController(ctx) {
     //Sending output
     if (saveStatus) {
         globals.playerController.refreshConfig();
-        ctx.utils.logAction(`Changing Player Controller settings.`);
-        return ctx.send({type: 'success', message: `<strong>Player Controller configuration saved!</strong>`});
+        ctx.utils.logAction('Changing Player Controller settings.');
+        return ctx.send({type: 'success', message: '<strong>Player Controller configuration saved!</strong>'});
     } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing Player Controller settings.`);
-        return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
 
@@ -254,10 +254,10 @@ function handleMonitor(ctx) {
 
     //Prepare body input
     let cfg = {
-        restarterSchedule: ctx.request.body.restarterSchedule.split(',').map((x) => {return x.trim()}),
-        restarterScheduleWarnings: ctx.request.body.restarterScheduleWarnings.split(',').map((x) => {return x.trim()}),
+        restarterSchedule: ctx.request.body.restarterSchedule.split(',').map((x) => {return x.trim();}),
+        restarterScheduleWarnings: ctx.request.body.restarterScheduleWarnings.split(',').map((x) => {return x.trim();}),
         disableChatWarnings: (ctx.request.body.disableChatWarnings === 'true'),
-    }
+    };
 
     //Validating restart times
     let scheduleTimes = helpers.parseSchedule(cfg.restarterSchedule, false);
@@ -272,7 +272,7 @@ function handleMonitor(ctx) {
         }
     });
     if (invalidRestartTimes.length) {
-        let message = `<strong>The following entries were not recognized as valid 24h times:</strong><br>`;
+        let message = '<strong>The following entries were not recognized as valid 24h times:</strong><br>';
         message += invalidRestartTimes.join('<br>\n');
         return ctx.send({type: 'danger', message: message});
     }
@@ -295,7 +295,7 @@ function handleMonitor(ctx) {
         }
     });
     if (invalidRestartWarningMinutes.length) {
-        let message = `<strong>The following entries were not recognized as valid minutes before restart warning:</strong><br>`;
+        let message = '<strong>The following entries were not recognized as valid minutes before restart warning:</strong><br>';
         message += invalidRestartWarningMinutes.join('<br>\n');
         return ctx.send({type: 'danger', message: message});
     }
@@ -310,11 +310,11 @@ function handleMonitor(ctx) {
     //Sending output
     if (saveStatus) {
         globals.monitor.refreshConfig();
-        ctx.utils.logAction(`Changing monitor settings.`);
-        return ctx.send({type: 'success', message: `<strong>Monitor/Restarter configuration saved!</strong>`});
+        ctx.utils.logAction('Changing monitor settings.');
+        return ctx.send({type: 'success', message: '<strong>Monitor/Restarter configuration saved!</strong>'});
     } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing monitor settings.`);
-        return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
 
@@ -343,7 +343,7 @@ function handleDiscord(ctx) {
         announceChannel: ctx.request.body.announceChannel.trim(),
         prefix: ctx.request.body.prefix.trim(),
         statusMessage: ctx.request.body.statusMessage.trim(),
-    }
+    };
 
     //Preparing & saving config
     let newConfig = globals.configVault.getScopedStructure('discordBot');
@@ -357,14 +357,14 @@ function handleDiscord(ctx) {
     //Sending output
     if (saveStatus) {
         globals.discordBot.refreshConfig();
-        ctx.utils.logAction(`Changing discordBot settings.`);
+        ctx.utils.logAction('Changing discordBot settings.');
         if (newConfig.enabled) {
-            return ctx.send({type: 'warning', message: `<strong>Discord configuration saved. Check terminal to make sure the token is valid.</strong>`});
+            return ctx.send({type: 'warning', message: '<strong>Discord configuration saved. Check terminal to make sure the token is valid.</strong>'});
         } else {
-            return ctx.send({type: 'success', message: `<strong>Discord configuration saved!</strong>`});
+            return ctx.send({type: 'success', message: '<strong>Discord configuration saved!</strong>'});
         }
     } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing discordBot settings.`);
-        return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
+        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }

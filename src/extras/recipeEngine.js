@@ -4,7 +4,7 @@ const path = require('path');
 const util = require('util');
 const fs = require('fs-extra');
 const AdmZip = require('adm-zip');
-const axios = require("axios");
+const axios = require('axios');
 const cloneDeep = require('lodash/cloneDeep');
 const escapeRegExp = require('lodash/escapeRegExp');
 const mysql = require('mysql2/promise');
@@ -14,32 +14,32 @@ const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
 const safePath = (base, suffix) => {
     const safeSuffix = path.normalize(suffix).replace(/^(\.\.(\/|\\|$))+/, '');
     return path.join(base, safeSuffix);
-}
+};
 const isPathLinear = (pathInput) => {
     return pathInput.match(/(\.\.(\/|\\|$))+/g) === null;
-}
+};
 const isPathRoot = (pathInput) => {
     return /^\.[/\\]*$/.test(pathInput);
-}
+};
 const pathCleanTrail = (pathInput) => {
     return pathInput.replace(/[/\\]+$/, '');
-} 
+};
 const isPathValid = (pathInput, acceptRoot=true) => {
     return (
         typeof pathInput == 'string' &&
         pathInput.length &&
         isPathLinear(pathInput) &&
         (acceptRoot || !isPathRoot(pathInput))
-    )
-}
+    );
+};
 const replaceVars = (inputString, deployerCtx) => {
     const allVars = Object.keys(deployerCtx);
     for (const varName of allVars) {
         const varNameReplacer = new RegExp(escapeRegExp(`{{${varName}}}`), 'g');
-        inputString = inputString.replace(varNameReplacer, deployerCtx[varName].toString())
+        inputString = inputString.replace(varNameReplacer, deployerCtx[varName].toString());
     }
     return inputString;
-}
+};
 
 
 /**
@@ -49,11 +49,11 @@ const validatorDownloadFile = (options) => {
     return (
         typeof options.url == 'string' &&
         isPathValid(options.path)
-    )
-}
+    );
+};
 const taskDownloadFile = async (options, basePath, deployerCtx) => {
-    if (!validatorDownloadFile(options)) throw new Error(`invalid options`);
-    if (options.path.endsWith('/')) throw new Error(`target filename not specified`); //FIXME: this should be on the validator
+    if (!validatorDownloadFile(options)) throw new Error('invalid options');
+    if (options.path.endsWith('/')) throw new Error('target filename not specified'); //FIXME: this should be on the validator
 
     //Process and create target file/path
     const destPath = safePath(basePath, options.path);
@@ -67,15 +67,15 @@ const taskDownloadFile = async (options, basePath, deployerCtx) => {
     });
     await new Promise((resolve, reject) => {
         const outStream = fs.createWriteStream(destPath);
-        res.data.pipe(outStream)
-        outStream.on("finish", resolve);
-        outStream.on("error", reject); // don't forget this!
+        res.data.pipe(outStream);
+        outStream.on('finish', resolve);
+        outStream.on('error', reject); // don't forget this!
     });
-}
+};
 
 
 /**
- * Downloads a github repository with an optional reference (branch, tag, commit hash) or subpath. 
+ * Downloads a github repository with an optional reference (branch, tag, commit hash) or subpath.
  * If the directory structure does not exist, it is created.
  */
 const githubRepoSourceRegex = /^((https?:\/\/github\.com\/)?|@)?([\w.\-_]+)\/([\w.\-_]+).*$/;
@@ -85,21 +85,21 @@ const validatorDownloadGithub = (options) => {
         isPathValid(options.dest, false) &&
         (typeof options.ref == 'string' || typeof options.ref == 'undefined') &&
         (typeof options.subpath == 'string' || typeof options.subpath == 'undefined')
-    )
-}
+    );
+};
 const taskDownloadGithub = async (options, basePath, deployerCtx) => {
-    if (!validatorDownloadGithub(options)) throw new Error(`invalid options`);
+    if (!validatorDownloadGithub(options)) throw new Error('invalid options');
 
     //Parsing source
     const srcMatch = options.src.match(githubRepoSourceRegex);
-    if (!srcMatch || !srcMatch[3] || !srcMatch[4]) throw new Error(`invalid repository`);
+    if (!srcMatch || !srcMatch[3] || !srcMatch[4]) throw new Error('invalid repository');
     const repoOwner = srcMatch[3];
     const repoName = srcMatch[4];
 
     //Setting git ref
     let reference;
     if (options.ref) {
-        reference = options.ref
+        reference = options.ref;
     } else {
         const res = await axios({
             method: 'get',
@@ -107,9 +107,9 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
             responseType: 'json'
         });
         if (!res.data || !res.data.default_branch) {
-            throw new Error(`reference not set, and wasn ot able to detect using github's api`);
+            throw new Error('reference not set, and wasn ot able to detect using github\'s api');
         }
-        reference = res.data.default_branch
+        reference = res.data.default_branch;
     }
 
     //Preparing vars
@@ -118,7 +118,7 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     const tmpFileDir = path.join(basePath, `${tmpFileName}`);
     const tmpFilePath = path.join(basePath, `${tmpFileName}.download`);
     const destPath = safePath(basePath, options.dest);
-    
+
     //Downloading file
     const res = await axios({
         method: 'get',
@@ -127,15 +127,15 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     });
     await new Promise((resolve, reject) => {
         const outStream = fs.createWriteStream(tmpFilePath);
-        res.data.pipe(outStream)
-        outStream.on("finish", resolve);
-        outStream.on("error", reject); // don't forget this!
+        res.data.pipe(outStream);
+        outStream.on('finish', resolve);
+        outStream.on('error', reject); // don't forget this!
     });
 
     //Extracting file
     const zip = new AdmZip(tmpFilePath);
     const zipEntries = zip.getEntries();
-    if (!zipEntries.length || !zipEntries[0].isDirectory) throw new Error(`unexpected zip structure`);
+    if (!zipEntries.length || !zipEntries[0].isDirectory) throw new Error('unexpected zip structure');
     const extract = util.promisify(zip.extractAllToAsync);
     await extract(tmpFileDir, true);
 
@@ -148,7 +148,7 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     //Removing temp paths
     await fs.remove(tmpFilePath);
     await fs.remove(tmpFileDir);
-}
+};
 
 
 /**
@@ -157,19 +157,19 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
 const validatorRemovePath = (options) => {
     return (
         isPathValid(options.path, false)
-    )
-}
+    );
+};
 const taskRemovePath = async (options, basePath, deployerCtx) => {
-    if (!validatorRemovePath(options)) throw new Error(`invalid options`);
+    if (!validatorRemovePath(options)) throw new Error('invalid options');
 
     //Process and create target file/path
     const targetPath = safePath(basePath, options.path);
 
     //NOTE: being extra safe about not deleting itself
     const cleanBasePath = pathCleanTrail(path.normalize(basePath));
-    if (cleanBasePath == targetPath) throw new Error(`cannot remove base folder`);
+    if (cleanBasePath == targetPath) throw new Error('cannot remove base folder');
     await fs.remove(targetPath);
-}
+};
 
 
 /**
@@ -178,15 +178,15 @@ const taskRemovePath = async (options, basePath, deployerCtx) => {
 const validatorEnsureDir = (options) => {
     return (
         isPathValid(options.path, false)
-    )
-}
+    );
+};
 const taskEnsureDir = async (options, basePath, deployerCtx) => {
-    if (!validatorEnsureDir(options)) throw new Error(`invalid options`);
+    if (!validatorEnsureDir(options)) throw new Error('invalid options');
 
     //Process and create target file/path
     const destPath = safePath(basePath, options.path);
     await fs.ensureDir(destPath);
-}
+};
 
 
 /**
@@ -202,10 +202,10 @@ const validatorUnzip = (options) => {
     return (
         isPathValid(options.src, false) &&
         isPathValid(options.dest)
-    )
-}
+    );
+};
 const taskUnzip = async (options, basePath, deployerCtx) => {
-    if (!validatorUnzip(options)) throw new Error(`invalid options`);
+    if (!validatorUnzip(options)) throw new Error('invalid options');
 
     const srcPath = safePath(basePath, options.src);
     //maybe ensure dest doesn't seem to be an issue?
@@ -214,7 +214,7 @@ const taskUnzip = async (options, basePath, deployerCtx) => {
     const zip = new AdmZip(srcPath);
     const extract = util.promisify(zip.extractAllToAsync);
     await extract(destPath, true);
-}
+};
 
 
 /**
@@ -224,17 +224,17 @@ const validatorMovePath = (options) => {
     return (
         isPathValid(options.src, false) &&
         isPathValid(options.dest, false)
-    )
-}
+    );
+};
 const taskMovePath = async (options, basePath, deployerCtx) => {
-    if (!validatorMovePath(options)) throw new Error(`invalid options`);
+    if (!validatorMovePath(options)) throw new Error('invalid options');
 
     const srcPath = safePath(basePath, options.src);
     const destPath = safePath(basePath, options.dest);
     await fs.move(srcPath, destPath, {
         overwrite: (options.overwrite === 'true' || options.overwrite === true)
     });
-}
+};
 
 
 /**
@@ -245,17 +245,17 @@ const validatorCopyPath = (options) => {
     return (
         isPathValid(options.src) &&
         isPathValid(options.dest)
-    )
-}
+    );
+};
 const taskCopyPath = async (options, basePath, deployerCtx) => {
-    if (!validatorCopyPath(options)) throw new Error(`invalid options`);
+    if (!validatorCopyPath(options)) throw new Error('invalid options');
 
     const srcPath = safePath(basePath, options.src);
     const destPath = safePath(basePath, options.dest);
     await fs.copy(srcPath, destPath, {
         overwrite: (typeof options.overwrite !== 'undefined' && (options.overwrite === 'true' || options.overwrite === true))
     });
-}
+};
 
 
 /**
@@ -266,10 +266,10 @@ const validatorWriteFile = (options) => {
         typeof options.data == 'string' &&
         options.data.length &&
         isPathValid(options.file, false)
-    )
-}
+    );
+};
 const taskWriteFile = async (options, basePath, deployerCtx) => {
-    if (!validatorWriteFile(options)) throw new Error(`invalid options`);
+    if (!validatorWriteFile(options)) throw new Error('invalid options');
 
     const filePath = safePath(basePath, options.file);
     if (options.append === 'true' || options.append === true) {
@@ -277,7 +277,7 @@ const taskWriteFile = async (options, basePath, deployerCtx) => {
     } else {
         await fs.outputFile(filePath, options.data);
     }
-}
+};
 
 
 /**
@@ -304,18 +304,18 @@ const validatorReplaceString = (options) => {
             typeof options.search == 'string' &&
             options.search.length &&
             typeof options.replace == 'string'
-        )
+        );
 
     } else if (options.mode == 'all_vars') {
-        return true
+        return true;
 
     } else {
 
         return false;
     }
-}
+};
 const taskReplaceString = async (options, basePath, deployerCtx) => {
-    if (!validatorReplaceString(options)) throw new Error(`invalid options`);
+    if (!validatorReplaceString(options)) throw new Error('invalid options');
 
     const fileList = (Array.isArray(options.file))? options.file : [options.file];
     for (let i = 0; i < fileList.length; i++) {
@@ -324,17 +324,17 @@ const taskReplaceString = async (options, basePath, deployerCtx) => {
         let changed;
         if (typeof options.mode == 'undefined' || options.mode == 'template') {
             changed = original.replace(new RegExp(options.search, 'g'), replaceVars(options.replace, deployerCtx));
-            
+
         } else if (options.mode == 'all_vars') {
             changed = replaceVars(original, deployerCtx);
 
         } else if (options.mode == 'literal') {
             changed = original.replace(new RegExp(options.search, 'g'), options.replace);
-            
+
         }
         await fs.writeFile(filePath, changed);
     }
-}
+};
 
 
 /**
@@ -342,14 +342,14 @@ const taskReplaceString = async (options, basePath, deployerCtx) => {
  */
 const validatorConnectDatabase = (options) => {
     return true;
-}
+};
 const taskConnectDatabase = async (options, basePath, deployerCtx) => {
-    if (!validatorConnectDatabase(options)) throw new Error(`invalid options`);
-    if (typeof deployerCtx.dbHost !== 'string') throw new Error(`invalid dbHost`);
-    if (typeof deployerCtx.dbUsername !== 'string') throw new Error(`invalid dbUsername`);
-    if (typeof deployerCtx.dbPassword !== 'string') throw new Error(`dbPassword should be a string`);
-    if (typeof deployerCtx.dbName !== 'string') throw new Error(`dbName should be a string`);
-    if (typeof deployerCtx.dbDelete !== 'boolean') throw new Error(`dbDelete should be a boolean`);
+    if (!validatorConnectDatabase(options)) throw new Error('invalid options');
+    if (typeof deployerCtx.dbHost !== 'string') throw new Error('invalid dbHost');
+    if (typeof deployerCtx.dbUsername !== 'string') throw new Error('invalid dbUsername');
+    if (typeof deployerCtx.dbPassword !== 'string') throw new Error('dbPassword should be a string');
+    if (typeof deployerCtx.dbName !== 'string') throw new Error('dbName should be a string');
+    if (typeof deployerCtx.dbDelete !== 'boolean') throw new Error('dbDelete should be a boolean');
 
     //Connect to the database
     const mysqlOptions = {
@@ -357,7 +357,7 @@ const taskConnectDatabase = async (options, basePath, deployerCtx) => {
         user: deployerCtx.dbUsername,
         password: deployerCtx.dbPassword,
         multipleStatements: true,
-    }
+    };
     deployerCtx.dbConnection = await mysql.createConnection(mysqlOptions);
     const escapedDBName = mysql.escapeId(deployerCtx.dbName);
     if (deployerCtx.dbDelete) {
@@ -365,7 +365,7 @@ const taskConnectDatabase = async (options, basePath, deployerCtx) => {
     }
     await deployerCtx.dbConnection.query(`CREATE DATABASE IF NOT EXISTS ${escapedDBName} CHARACTER SET utf8 COLLATE utf8_general_ci`);
     await deployerCtx.dbConnection.query(`USE ${escapedDBName}`);
-}
+};
 
 
 /**
@@ -376,10 +376,10 @@ const validatorQueryDatabase = (options) => {
     if (typeof options.file == 'string') return isPathValid(options.file, false);
     if (typeof options.query == 'string') return options.query.length;
     return false;
-}
+};
 const taskQueryDatabase = async (options, basePath, deployerCtx) => {
-    if (!validatorQueryDatabase(options)) throw new Error(`invalid options`);
-    if (!deployerCtx.dbConnection) throw new Error(`Database connection not found. Run connect_database before query_database`);
+    if (!validatorQueryDatabase(options)) throw new Error('invalid options');
+    if (!deployerCtx.dbConnection) throw new Error('Database connection not found. Run connect_database before query_database');
 
     let sql;
     if (options.file) {
@@ -389,57 +389,57 @@ const taskQueryDatabase = async (options, basePath, deployerCtx) => {
         sql = options.query;
     }
     await deployerCtx.dbConnection.query(sql);
-}
+};
 
 
 /**
  * Loads variables from a json file to the context.
  */
 const validatorLoadVars = (options) => {
-    return isPathValid(options.src, false)
-}
+    return isPathValid(options.src, false);
+};
 const taskLoadVars = async (options, basePath, deployerCtx) => {
-    if (!validatorLoadVars(options)) throw new Error(`invalid options`);
-    
+    if (!validatorLoadVars(options)) throw new Error('invalid options');
+
     const srcPath = safePath(basePath, options.src);
     const rawData = await fs.readFile(srcPath, 'utf8');
     const inData = JSON.parse(rawData);
     inData.dbConnection = undefined;
     Object.assign(deployerCtx, inData);
-}
+};
 
 
 /**
  * DEBUG Just wastes time /shrug
  */
 const validatorWasteTime = (options) => {
-    return (typeof options.seconds == 'number')
-}
+    return (typeof options.seconds == 'number');
+};
 const taskWasteTime = (options, basePath, deployerCtx) => {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
-            resolve(true)
+            resolve(true);
         }, options.seconds * 1000);
-    })
-}
+    });
+};
 
 
 /**
  * DEBUG Fail fail fail :o
  */
 const taskFailTest = async (options, basePath, deployerCtx) => {
-    throw new Error(`test error :p`);
-}
+    throw new Error('test error :p');
+};
 
 
 /**
  * DEBUG logs all ctx vars
  */
 const taskDumpVars = async (options, basePath, deployerCtx) => {
-    const toDump = cloneDeep(deployerCtx)
+    const toDump = cloneDeep(deployerCtx);
     toDump.dbConnection = (toDump.dbConnection && toDump.dbConnection.constructor && toDump.dbConnection.constructor.name)? toDump.dbConnection.constructor.name : undefined;
-    dir(toDump)
-}
+    dir(toDump);
+};
 
 
 /*
@@ -457,9 +457,9 @@ DONE:
     - replace_string (single or array)
     - connect_database (connects to mysql, creates db if not set)
     - query_database (file or string)
-    - download_github (with ref and subpath) 
+    - download_github (with ref and subpath)
     - load_vars
-    
+
 TODO:
     - ??????
 */
@@ -529,4 +529,4 @@ module.exports = {
         validate: (() => true),
         run: taskDumpVars,
     },
-}
+};

@@ -11,7 +11,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 module.exports = async function DeployerStepper(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
-        return ctx.utils.render('basic/generic', {message: `You need to be the admin master to use the deployer.`});
+        return ctx.utils.render('basic/generic', {message: 'You need to be the admin master to use the deployer.'});
     }
 
     //Check if this is the correct state for the deployer
@@ -35,7 +35,7 @@ module.exports = async function DeployerStepper(ctx) {
             author: globals.deployer.recipe.author,
             description: globals.deployer.recipe.description,
             raw: globals.deployer.recipe.raw,
-        }
+        };
 
     } else if (globals.deployer.step === 'input') {
         renderData.defaultLicenseKey = process.env.TXADMIN_DEFAULT_LICENSE || '';
@@ -48,7 +48,7 @@ module.exports = async function DeployerStepper(ctx) {
                 mysqlUser: GlobalData.deployerDefaults.mysqlUser || 'root',
                 mysqlPassword: GlobalData.deployerDefaults.mysqlPassword || '',
                 mysqlDatabase: GlobalData.deployerDefaults.mysqlDatabase || globals.deployer.deploymentID,
-            }
+            };
         } else {
             renderData.defaults = {
                 autofilled: false,
@@ -57,7 +57,7 @@ module.exports = async function DeployerStepper(ctx) {
                 mysqlUser: 'root',
                 mysqlPassword: '',
                 mysqlDatabase: globals.deployer.deploymentID,
-            }
+            };
         }
 
         const recipeVars = globals.deployer.getRecipeVars();
@@ -65,7 +65,7 @@ module.exports = async function DeployerStepper(ctx) {
             return {
                 name: name,
                 value: recipeVars[name]
-            }
+            };
         });
 
     } else if (globals.deployer.step === 'run') {
@@ -86,10 +86,10 @@ Make sure everything is correct in the recipe and try again.`;
         } catch (error) {
             if (GlobalData.verbose) dir(error);
             renderData.serverCFG = errorMessage;
-        }     
+        }
 
     } else {
-        return ctx.utils.render('basic/generic', {message: `Unknown Deployer step, please report this bug and restart txAdmin.`});
+        return ctx.utils.render('basic/generic', {message: 'Unknown Deployer step, please report this bug and restart txAdmin.'});
     }
 
     return ctx.utils.render('basic/deployer', renderData);

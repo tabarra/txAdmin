@@ -9,7 +9,7 @@ module.exports = {
     async execute(message, args) {
         const targetID = (message.mentions.users.size)
             ? message.mentions.users.first().id
-            : message.author.id;   
+            : message.author.id;
         return message.reply(targetID);
     },
 };

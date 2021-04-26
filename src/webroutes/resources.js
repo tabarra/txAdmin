@@ -5,21 +5,21 @@ const slash = require('slash');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined') };
-const breakPath = (inPath) => {return slash(path.normalize(inPath)).split('/').filter(String)};
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
+const breakPath = (inPath) => {return slash(path.normalize(inPath)).split('/').filter(String);};
 const dynamicSort = (prop) => {
     var sortOrder = 1;
-    if (prop[0] === "-") {
+    if (prop[0] === '-') {
         sortOrder = -1;
         prop = prop.substr(1);
     }
     return function (a,b) {
         var result = (a[prop] < b[prop]) ? -1 : (a[prop] > b[prop]) ? 1 : 0;
         return result * sortOrder;
-    }
-}
+    };
+};
 const getResourceSubPath = (resPath) => {
-    if (resPath.indexOf('system_resources') >= 0) return `system_resources`;
+    if (resPath.indexOf('system_resources') >= 0) return 'system_resources';
     if (!path.isAbsolute(resPath)) return resPath;
 
     let serverDataPathArr = breakPath(`${globals.fxRunner.config.serverDataPath}/resources`);
@@ -38,7 +38,7 @@ const getResourceSubPath = (resPath) => {
     } else {
         return 'root';
     }
-}
+};
 
 /**
  * Returns the resources list
@@ -52,13 +52,13 @@ module.exports = async function Resources(ctx) {
     - Make sure you are not running the fxserver outside txAdmin.`;
 
     //Send command request
-    let cmdSuccess = globals.fxRunner.srvCmd(`txaReportResources`);
+    let cmdSuccess = globals.fxRunner.srvCmd('txaReportResources');
     if (!cmdSuccess) {
         return ctx.utils.render('basic/generic', {message: timeoutMessage});
     }
 
     //Timer fot list delivery
-    let tListTimer; 
+    let tListTimer;
     let tErrorTimer;
     const tList = new Promise((resolve, reject) => {
         tListTimer = setInterval(() => {
@@ -75,12 +75,12 @@ module.exports = async function Resources(ctx) {
                     resGroupsJS: JSON.stringify(resGroups),
                     resGroups,
                     disableActions: (ctx.utils.checkPermission('commands.resources'))? '' : 'disabled'
-                }
+                };
                 resolve(['resources', renderData]);
             }
         }, 100);
     });
-    
+
     //Timer for timing out
     const tError = new Promise((resolve, reject) => {
         tErrorTimer = setTimeout(() => {
@@ -102,7 +102,7 @@ module.exports = async function Resources(ctx) {
  */
 function processResources(resList) {
     //Clean resource data and add it so an object separated by subpaths
-    let resGroupList = {}
+    let resGroupList = {};
     resList.forEach(resource =>{
         if (isUndefined(resource.name) || isUndefined(resource.status) || isUndefined(resource.path) || resource.path === '') {
             return;
@@ -117,24 +117,24 @@ function processResources(resList) {
             version: (resource.version)? `(${resource.version.trim()})` : '',
             author: (resource.author)? `${resource.author.trim()}` : '',
             description: (resource.description)? resource.description.trim() : '',
-        }
+        };
 
         if (resGroupList.hasOwnProperty(subPath)) {
-            resGroupList[subPath].push(resData)
+            resGroupList[subPath].push(resData);
         } else {
-            resGroupList[subPath] = [resData]
+            resGroupList[subPath] = [resData];
         }
     });
 
     //Generate final array with subpaths and div ids
-    let finalList = []
+    let finalList = [];
     Object.keys(resGroupList).forEach(subPath => {
         let subPathData = {
             subPath: subPath,
             divName: subPath.replace(/[\W%]/g, ''),
             resources: resGroupList[subPath].sort(dynamicSort('name'))
-        }
-        finalList.push(subPathData)
+        };
+        finalList.push(subPathData);
     });
 
     // finalList = JSON.stringify(finalList, null, 2)

@@ -5,7 +5,7 @@ const { JWK, JWT } = require('jose');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined') };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
 //DEBUG: the dev key
 // const zapPublicKey = JWK.asKey(`-----BEGIN PUBLIC KEY-----
 // MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnqysbyFbmOr97wTERsmu
@@ -43,12 +43,12 @@ module.exports = async function AuthVerify(ctx) {
         message: 'Invalid token. Please login using one of the options above.',
         citizenfxDisabled: !globals.authenticator.providers.citizenfx.ready,
         discordDisabled: true,
-    }
+    };
 
     //Sanity check
     if (
-        isUndefined(ctx.query.token) || 
-        !GlobalData.isZapHosting || 
+        isUndefined(ctx.query.token) ||
+        !GlobalData.isZapHosting ||
         !GlobalData.runtimeSecret ||
         !GlobalData.defaultMasterAccount
     ) {
@@ -56,7 +56,7 @@ module.exports = async function AuthVerify(ctx) {
         return ctx.response.redirect('/');
     }
 
-    
+
     //Validating the JWT
     let jwtData;
     try {
@@ -66,9 +66,9 @@ module.exports = async function AuthVerify(ctx) {
             maxTokenAge: '5 minutes',
             audience: (GlobalData.forceInterface)? `${GlobalData.forceInterface}:${GlobalData.txAdminPort}` : undefined
         });
-        if (typeof jwtData.iat !== 'number') throw new Error(`missing "iat" claim`);
-        if (typeof jwtData.sub !== 'string') throw new Error(`missing "sub" claim`);
-        if (typeof jwtData.verifier !== 'string') throw new Error(`missing "verifier" claim`);
+        if (typeof jwtData.iat !== 'number') throw new Error('missing "iat" claim');
+        if (typeof jwtData.sub !== 'string') throw new Error('missing "sub" claim');
+        if (typeof jwtData.verifier !== 'string') throw new Error('missing "verifier" claim');
     } catch (error) {
         logWarn(`${errorPrefix} [${error.code}] ${error.message}`);
         return ctx.utils.render('login', renderData);
@@ -91,7 +91,7 @@ module.exports = async function AuthVerify(ctx) {
         }
     } catch (error) {
         logWarn(`Failed to validate zap token with error: ${error.message}`);
-        if (GlobalData.verbose) dir(error)
+        if (GlobalData.verbose) dir(error);
         renderData.message = 'Error autenticating admin. Please try again.';
         return ctx.utils.render('login', renderData);
     }
@@ -116,7 +116,7 @@ module.exports = async function AuthVerify(ctx) {
             return ctx.utils.render('login', renderData);
         }
         usedTokens.add(signature);
-        
+
         //Setting up session
         const providerWithPicture = Object.values(admin.providers).find(provider => provider.data && provider.data.picture);
         ctx.session.auth = {
@@ -131,7 +131,7 @@ module.exports = async function AuthVerify(ctx) {
         globals.databus.txStatsData.loginMethods.zap++;
     } catch (error) {
         logWarn(`Failed to authenticate ${ctx.request.body.username} with error: ${error.message}`);
-        if (GlobalData.verbose) dir(error)
+        if (GlobalData.verbose) dir(error);
         renderData.message = 'Error autenticating admin.';
         return ctx.utils.render('login', renderData);
     }

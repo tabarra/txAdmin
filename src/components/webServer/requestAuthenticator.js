@@ -15,9 +15,9 @@ const requestAuth = (epType) => {
         ) {
             await next();
         } else {
-            return ctx.send({error: 'invalid token'})
+            return ctx.send({error: 'invalid token'});
         }
-    }
+    };
 
     //Normal auth function
     const normalAuth = async (ctx, next) =>{
@@ -31,12 +31,12 @@ const requestAuth = (epType) => {
             } else if (epType === 'api') {
                 return ctx.send({logout:true});
             } else {
-                return () => {throw new Error('Unknown auth type')};
+                return () => {throw new Error('Unknown auth type');};
             }
         } else {
             await next();
         }
-    }
+    };
 
     //Socket auth function
     const socketAuth = async (socket, next) =>{
@@ -50,7 +50,7 @@ const requestAuth = (epType) => {
             if (GlobalData.verbose) logWarn('Auth denied when creating session');
             next(new Error('Authentication Denied'));
         }
-    }
+    };
 
     //Return the appropriate function
     if (epType === 'intercom') {
@@ -62,9 +62,9 @@ const requestAuth = (epType) => {
     } else if (epType === 'socket') {
         return socketAuth;
     } else {
-        return () => {throw new Error('Unknown auth type')};
+        return () => {throw new Error('Unknown auth type');};
     }
-}
+};
 
 
 /**
@@ -110,7 +110,7 @@ const authLogic = (sess, perm, epType) => {
                     ));
                 }
             } catch (error) {
-                if (GlobalData.verbose) logError(`Error validating session data:`, epType);
+                if (GlobalData.verbose) logError('Error validating session data:', epType);
                 if (GlobalData.verbose) dir(error);
             }
         } else {
@@ -119,11 +119,11 @@ const authLogic = (sess, perm, epType) => {
     }
 
     return {isValidAuth, isValidPerm};
-}
+};
 
 
 //================================================================
 module.exports = {
     requestAuth,
     authLogic
-}
+};

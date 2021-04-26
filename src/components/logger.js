@@ -46,11 +46,11 @@ module.exports = class Logger {
      */
     async get() {
         try {
-            return await fs.readFile(this.config.logPath, 'utf8')
+            return await fs.readFile(this.config.logPath, 'utf8');
         } catch (error) {
             return false;
         }
     }
 
 
-} //Fim Logger()
+}; //Fim Logger()

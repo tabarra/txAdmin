@@ -1,11 +1,11 @@
 //Requires
 const modulename = 'WebServer:updateChecker';
-const axios = require("axios");
+const axios = require('axios');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 //Helpers
-const now = () => { return Math.round(Date.now() / 1000) };
-const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
+const now = () => { return Math.round(Date.now() / 1000); };
+const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')); };
 
 /*
     TODO:
@@ -40,9 +40,9 @@ module.exports = async () => {
             optional: parseInt(changelog.optional),
             latest: parseInt(changelog.latest),
             critical: parseInt(changelog.critical),
-        }
+        };
     } catch (error) {
         if (GlobalData.verbose) logWarn(`Failed to retrieve FXServer update data with error: ${error.message}`);
         if (globals.databus.updateChecker === null) globals.databus.updateChecker = false;
     }
-}
+};

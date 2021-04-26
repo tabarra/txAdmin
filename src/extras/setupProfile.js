@@ -6,14 +6,14 @@ const chalk = require('chalk');
 const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
 
 //Helpers
-const printDivider = () => { log('='.repeat(57)) };
+const printDivider = () => { log('='.repeat(57)); };
 
 //Default config structure
 const defaultConfig = {
     global: {
         verbose: false,
         serverName: null,
-        language: "en",
+        language: 'en',
         forceFXServerPort: null
     },
     logger: {},
@@ -33,7 +33,7 @@ const defaultConfig = {
         cfgPath: null,
         autostart: true
     }
-}
+};
 
 
 //================================================================
@@ -58,7 +58,7 @@ module.exports = (osType, fxServerPath, fxServerVersion, serverProfile, profileP
         process.exit();
     }
     logOk(`Server profile was saved in '${profilePath}'`);
-    
+
 
     //Saving start.bat
     if (osType == 'windows') {
@@ -75,4 +75,4 @@ pause`;
         }
     }
     printDivider();
-}
+};

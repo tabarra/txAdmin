@@ -1,7 +1,7 @@
 //Requires
 const modulename = 'DiscordBot';
 const Discord = require('@tabarra/discord');
-const Collection = require('@discordjs/collection'); 
+const Collection = require('@discordjs/collection');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
@@ -10,7 +10,7 @@ if (typeof URLSearchParams === 'undefined') {
 }
 
 //Helpers
-const now = () => { return Math.round(Date.now() / 1000) };
+const now = () => { return Math.round(Date.now() / 1000); };
 
 
 module.exports = class DiscordBot {
@@ -25,7 +25,7 @@ module.exports = class DiscordBot {
             status: 0,
             txadmin: 0,
         };
-        
+
         //NOTE: setting them up statically due to webpack requirements
         this.commands = new Collection([
             ['addwl', require('./commands/addwl.js')],
@@ -34,10 +34,10 @@ module.exports = class DiscordBot {
             ['txadmin', require('./commands/txadmin.js')],
 
             //FIXME: first we need to have player ids in the players db
-            // ['info', require('./commands/info.js')], 
+            // ['info', require('./commands/info.js')],
         ]);
         this.cooldowns = new Collection();
-        
+
         if (!this.config.enabled) {
             // logOk('Disabled by the config file.');
         } else {
@@ -53,7 +53,7 @@ module.exports = class DiscordBot {
     refreshConfig() {
         this.config = globals.configVault.getScoped('discordBot');
         if (this.client !== null) {
-            logWarn(`Stopping Discord Bot`);
+            logWarn('Stopping Discord Bot');
             this.client.destroy();
             setTimeout(() => {
                 if (this.config.enabled == false) this.client = null;
@@ -77,7 +77,7 @@ module.exports = class DiscordBot {
             this.client.status ||
             !this.announceChannel
         ) {
-            if (GlobalData.verbose) logWarn(`returning false, not ready yet`, 'sendAnnouncement');
+            if (GlobalData.verbose) logWarn('returning false, not ready yet', 'sendAnnouncement');
             return false;
         }
 
@@ -125,7 +125,7 @@ module.exports = class DiscordBot {
                 });
                 const descLines = [
                     `:rocket: **txAdmin** v${GlobalData.txAdminVersion} bot started!`,
-                    `:game_die: **Commands:**`,
+                    ':game_die: **Commands:**',
                     '```',
                     ...cmdDescs,
                     '...more commands to come soon 😮',
@@ -171,7 +171,7 @@ module.exports = class DiscordBot {
         const commandName = args.shift().toLowerCase();
 
         //Check if its a recognized command
-        const command = this.commands.get(commandName) 
+        const command = this.commands.get(commandName)
                         || this.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
         if (!command) return;
 
@@ -212,4 +212,4 @@ module.exports = class DiscordBot {
     //     dir(testUser.avatarURL)
     // }
 
-} //Fim DiscordBot()
+}; //Fim DiscordBot()

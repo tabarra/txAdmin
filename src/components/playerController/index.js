@@ -8,18 +8,18 @@ const xss = require('../../extras/xss')(); //FIXME: same as above
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
-const now = () => { return Math.round(Date.now() / 1000) };
+const now = () => { return Math.round(Date.now() / 1000); };
 
 //Consts
-const validActions = ['ban', 'warn', 'whitelist']
+const validActions = ['ban', 'warn', 'whitelist'];
 const currentDatabaseVersion = 1;
 
 
 /**
  * Provide a central database for players, as well as assist with access control.
- * 
+ *
  * FIXME: separate the player calls to another file somehow
- * 
+ *
  * Database Structurure:
  *  - `players` table: index by license ID
  *      - license
@@ -121,8 +121,8 @@ module.exports = class PlayerController {
             let adapterAsync;
             if (process.env.APP_ENV == 'webpack') {
                 adapterAsync = new FileAsync(dbPath, {
-                    defaultValue: {}, 
-                    serialize: JSON.stringify, 
+                    defaultValue: {},
+                    serialize: JSON.stringify,
                     deserialize: JSON.parse
                 });
             } else {
@@ -147,10 +147,10 @@ module.exports = class PlayerController {
             if (this.config.wipePendingWLOnStart) await this.dbo.set('pendingWL', []).write();
         } catch (error) {
             if (error.message.startsWith('Malformed JSON')) {
-                logError(`Your database file got corrupted and could not be loaded.`);
-                logError(`If you have a backup, you can manually replace the file.`);
-                logError(`If you don't care about the contents (players/bans/whitelists), just delete the file.`);
-                logError(`You can also try restoring it manually.`);
+                logError('Your database file got corrupted and could not be loaded.');
+                logError('If you have a backup, you can manually replace the file.');
+                logError('If you don\'t care about the contents (players/bans/whitelists), just delete the file.');
+                logError('You can also try restoring it manually.');
                 logError(`Database path: '${dbPath}'`);
             } else {
                 logError(`Failed to load database file '${dbPath}'`);
@@ -164,13 +164,13 @@ module.exports = class PlayerController {
     //================================================================
     /**
      * Handles the migration of the database
-     * @param {object} dbo 
-     * @param {string} oldVersion 
+     * @param {object} dbo
+     * @param {string} oldVersion
      * @returns {object} lodash database
      */
     async migrateDB(dbo, oldVersion) {
         if (typeof oldVersion !== 'number') {
-            logError(`Your players database version is not a number!`);
+            logError('Your players database version is not a number!');
             process.exit();
         }
         if (oldVersion < 1) {
@@ -182,8 +182,8 @@ module.exports = class PlayerController {
                 .write();
         } else {
             logError(`Your players database is on v${oldVersion}, which is different from this version of txAdmin.`);
-            logError(`Since there is currently no migration method ready for the migration, txAdmin will attempt to use it anyways.`);
-            logError(`Please make sure your txAdmin is on the most updated version!`);
+            logError('Since there is currently no migration method ready for the migration, txAdmin will attempt to use it anyways.');
+            logError('Please make sure your txAdmin is on the most updated version!');
         }
         return dbo;
     }
@@ -192,9 +192,9 @@ module.exports = class PlayerController {
     //================================================================
     /**
      * Returns the entire lowdb object. Please be careful with it :)
-     * 
+     *
      * TODO: perhaps add a .cloneDeep()? Mighe cause some performance issues tho
-     * 
+     *
      * @returns {object} lodash database
      */
     getDB() {
@@ -205,8 +205,8 @@ module.exports = class PlayerController {
     //================================================================
     /**
      * Processes the active players for playtime/sessiontime and sets to the database
-     * 
-     * TODO: If this function is called multiple times within the first 15 seconds of an sessionTime minute, 
+     *
+     * TODO: If this function is called multiple times within the first 15 seconds of an sessionTime minute,
      *          it will keep adding playTime
      *       Solution: keep an property for tsLastTimeIncremment, and wait for it to be >=60 before playtime++ and reset the ts
      * NOTE: I'm only saving notes every  15 seconds or when the player disconnects.
@@ -214,7 +214,7 @@ module.exports = class PlayerController {
     async processActive() {
         const checkMinuteElapsed = (time) => {
             return time > 15 && time % 60 < 15;
-        }
+        };
 
         try {
             this.activePlayers.forEach(async p => {
@@ -231,7 +231,7 @@ module.exports = class PlayerController {
                         text: '',
                         lastAdmin: null,
                         tsLastEdit: null
-                    }
+                    };
                     let toDB = {
                         license: p.license,
                         name: p.name,
@@ -239,21 +239,21 @@ module.exports = class PlayerController {
                         tsJoined: p.tsJoined,
                         tsLastConnection: p.tsConnected,
                         notes: p.notes
-                    }
+                    };
                     await this.dbo.get('players')
                         .push(toDB)
                         .value();
                     if (GlobalData.verbose) logOk(`Adding '${p.name}' to players database.`);
-                    
+
                 //If its time to update this player's play time
                 } else if (!p.isTmp && checkMinuteElapsed(sessionTime)) {
                     this.writePending = true; //low
-                    p.playTime += 1; 
-                    await this.dbo.get("players")
+                    p.playTime += 1;
+                    await this.dbo.get('players')
                         .find({license: p.license})
                         .assign({
-                            name: p.name, 
-                            playTime: p.playTime, 
+                            name: p.name,
+                            playTime: p.playTime,
                             notes: p.notes,
                             tsLastConnection: p.tsConnected
                         })
@@ -271,12 +271,12 @@ module.exports = class PlayerController {
     //================================================================
     /**
      * Searches for a player in the database by the license
-     * @param {string} license 
+     * @param {string} license
      * @returns {object|null|false} object if player is found, null if not found, false if error occurs
      */
     async getPlayer(license) {
         try {
-            let p = await this.dbo.get("players").find({license: license}).cloneDeep().value();
+            let p = await this.dbo.get('players').find({license: license}).cloneDeep().value();
             return (typeof p === 'undefined')? null : p;
         } catch (error) {
             if (GlobalData.verbose) logError(`Failed to search for a player in the database with error: ${error.message}`);
@@ -289,9 +289,9 @@ module.exports = class PlayerController {
     /**
      * Searches for a registered action in the database by a list of identifiers and optional filters
      * Usage example: getRegisteredActions(['license:xxx'], {type: 'ban', revocation.timestamp: null})
-     * 
+     *
      * NOTE: I haven't actually benchmarked to make sure passing the filter first increases the performance
-     * 
+     *
      * @param {array} idArray identifiers array
      * @param {object} filter lodash-compatible filter object
      * @returns {array|error} array of actions, or, throws on error
@@ -299,7 +299,7 @@ module.exports = class PlayerController {
     async getRegisteredActions(idArray, filter = {}) {
         if (!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
         try {
-            return await this.dbo.get("actions")
+            return await this.dbo.get('actions')
                 .filter(filter)
                 .filter(a => idArray.some((fi) => a.identifiers.includes(fi)))
                 .cloneDeep()
@@ -315,11 +315,11 @@ module.exports = class PlayerController {
     //================================================================
     /**
      * Processes an playerConnecting validation request
-     * 
+     *
      * TODO: improve ban message to be more verbose
-     * 
+     *
      * FIXME: this probably shouldn't be inside playerController
-     * 
+     *
      * @param {array} idArray identifiers array
      * @param {string} name player name
      * @returns {object} {allow: bool, reason: string}, or throws on error
@@ -333,9 +333,9 @@ module.exports = class PlayerController {
         //DEBUG: save join log
         const toLog = {
             ts: Date.now(),
-            playerName, 
+            playerName,
             idArray,
-        }
+        };
         globals.databus.joinCheckHistory.push(toLog);
         if (globals.databus.joinCheckHistory.length > 25) globals.databus.joinCheckHistory.shift();
 
@@ -356,7 +356,7 @@ module.exports = class PlayerController {
                     (!x.expiration || x.expiration > ts) &&
                     (!x.revocation.timestamp)
                 );
-            }
+            };
             const hist = await this.getRegisteredActions(idArray, filter);
 
             //Check ban
@@ -368,19 +368,19 @@ module.exports = class PlayerController {
                         id: ban.id,
                         reason: xss(ban.reason),
                         author: xss(ban.author),
-                    }
+                    };
                     if (ban.expiration) {
                         const humanizeOptions = {
                             language: globals.translator.t('$meta.humanizer_language'),
                             round: true,
                             units: ['d', 'h'],
-                        }
+                        };
                         tOptions.expiration = humanizeDuration((ban.expiration - ts)*1000, humanizeOptions);
                         msg = globals.translator.t('ban_messages.reject_temporary', tOptions);
                     } else {
                         msg = globals.translator.t('ban_messages.reject_permanent', tOptions);
                     }
-                    
+
                     return {allow: false, reason: msg};
                 }
             }
@@ -390,24 +390,24 @@ module.exports = class PlayerController {
                 const wl = hist.find((a) => a.type == 'whitelist');
                 if (!wl) {
                     //Get license
-                    let license = idArray.find((id) => id.substring(0, 8) == "license:");
-                    if (!license) return {allow: false, reason: 'the whitelist module requires a license identifier.'}
+                    let license = idArray.find((id) => id.substring(0, 8) == 'license:');
+                    if (!license) return {allow: false, reason: 'the whitelist module requires a license identifier.'};
                     license = license.substring(8);
                     //Check for pending WL requests
-                    const pending = await this.dbo.get("pendingWL").find({license: license}).value();
+                    const pending = await this.dbo.get('pendingWL').find({license: license}).value();
                     let whitelistID;
                     if (pending) {
                         pending.name = playerName;
                         pending.tsLastAttempt = now();
                         whitelistID = pending.id;
                     } else {
-                        whitelistID = 'R' + customAlphabet(GlobalData.noLookAlikesAlphabet, 4)()
+                        whitelistID = 'R' + customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
                         const toDB = {
                             id: whitelistID,
                             name: playerName,
                             license: license,
                             tsLastAttempt: now()
-                        }
+                        };
                         await this.dbo.get('pendingWL').push(toDB).value();
                     }
                     this.writePending = true; //medium
@@ -473,14 +473,14 @@ module.exports = class PlayerController {
             identifiers = player.identifiers;
             playerName = player.name;
         } else {
-            throw new Error(`Reference expected to be an array of strings or ID int. Received '${typeof target}'.`)
+            throw new Error(`Reference expected to be an array of strings or ID int. Received '${typeof target}'.`);
         }
 
         //Saves it to the database
         const actionPrefix = (type == 'warn')? 'a' : type[0];
-        const actionID = actionPrefix.toUpperCase() 
-            + customAlphabet(GlobalData.noLookAlikesAlphabet, 3)() 
-            + '-' 
+        const actionID = actionPrefix.toUpperCase()
+            + customAlphabet(GlobalData.noLookAlikesAlphabet, 3)()
+            + '-'
             + customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
         const toDB = {
             id: actionID,
@@ -495,7 +495,7 @@ module.exports = class PlayerController {
                 timestamp: null,
                 author: null,
             }
-        }
+        };
         try {
             await this.dbo.get('actions')
                 .push(toDB)
@@ -505,7 +505,7 @@ module.exports = class PlayerController {
             let msg = `Failed to register event to database with message: ${error.message}`;
             logError(msg);
             if (GlobalData.verbose) dir(error);
-            throw new Error(msg)
+            throw new Error(msg);
         }
 
 
@@ -526,18 +526,18 @@ module.exports = class PlayerController {
         if (typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
         if (allowedTypes !== true && !Array.isArray(allowedTypes)) throw new Error('Invalid allowedTypes.');
         try {
-            const action = await this.dbo.get("actions")
+            const action = await this.dbo.get('actions')
                 .find({id: action_id})
                 .value();
             if (action) {
-                if (action.type === 'warn') return 'cannot revoke warns'
+                if (action.type === 'warn') return 'cannot revoke warns';
                 if (allowedTypes !== true && !allowedTypes.includes(action.type)) {
-                    return 'you do not have permission to revoke this action'
+                    return 'you do not have permission to revoke this action';
                 }
                 action.revocation = {
                     timestamp: now(),
                     author
-                }
+                };
                 this.writePending = true; //high
                 return null;
             } else {
@@ -547,7 +547,7 @@ module.exports = class PlayerController {
             const msg = `Failed to revoke action with message: ${error.message}`;
             logError(msg);
             if (GlobalData.verbose) dir(error);
-            throw new Error(msg)
+            throw new Error(msg);
         }
     }
 
@@ -555,10 +555,10 @@ module.exports = class PlayerController {
     //================================================================
     /**
      * Whitelists a player from its license or wl pending id
-     * 
+     *
      * NOTE: I'm only getting the first matched pending, but removing all patching
      * NOTE: maybe I should add a trycatch inside here
-     * 
+     *
      * @param {string} reference "license:" prefixed license or pending id
      * @param {string} author admin name
      * @returns {string} action ID, or throws if ID not found or error
@@ -576,11 +576,11 @@ module.exports = class PlayerController {
         if (/[0-9A-Fa-f]{40}/.test(reference)) {
             pendingFilter = {license: reference};
             saveReference = [`license:${reference}`];
-            const pending = await this.dbo.get("pendingWL").find(pendingFilter).value();
+            const pending = await this.dbo.get('pendingWL').find(pendingFilter).value();
             if (pending) playerName = pending.name;
         } else if (GlobalData.regexWhitelistReqID.test(reference)) {
             pendingFilter = {id: reference};
-            const pending = await this.dbo.get("pendingWL").find(pendingFilter).value();
+            const pending = await this.dbo.get('pendingWL').find(pendingFilter).value();
             if (!pending) throw new Error('Pending ID not found in database');
             saveReference = [`license:${pending.license}`];
             playerName = pending.name;
@@ -595,7 +595,7 @@ module.exports = class PlayerController {
 
         //Remove from the pending list
         if (playerName) {
-            await this.dbo.get("pendingWL").remove(pendingFilter).value();
+            await this.dbo.get('pendingWL').remove(pendingFilter).value();
         }
 
         return actionID;
@@ -606,13 +606,13 @@ module.exports = class PlayerController {
     /**
      * Saves a player notes and returns true/false
      * Usage example: setPlayerNote('xxx', 'super awesome player', 'tabarra')
-     * 
+     *
      * NOTE: Setting writePending here won't do anything. Don't try it...
-     * 
+     *
      * @param {string} license
      * @param {string} note
      * @param {string} author
-     * @returns {boolean} 
+     * @returns {boolean}
      */
     async setPlayerNote(license, note, author) {
         try {
@@ -622,7 +622,7 @@ module.exports = class PlayerController {
             if (ap) {
                 target = ap;
             } else {
-                let dbp = await this.dbo.get("players").find({license: license}).value();
+                let dbp = await this.dbo.get('players').find({license: license}).value();
                 if (!dbp) return false;
                 target = dbp;
             }
@@ -632,8 +632,8 @@ module.exports = class PlayerController {
                 text: note,
                 lastAdmin: author,
                 tsLastEdit: now()
-            }
-            
+            };
+
             return true;
         } catch (error) {
             if (GlobalData.verbose) logError(`Failed to search for a registered action database with error: ${error.message}`);
@@ -645,10 +645,10 @@ module.exports = class PlayerController {
     //================================================================
     /**
      * Returns a mostly /players.json compatible playerlist based on the activePlayers
-     * 
+     *
      * NOTE: ATM only used by the /status endpoint.
      *       Let's try to use just clone(globals.playerController.activePlayers)
-     * 
+     *
      * @returns {array} array of player objects
      */
     getPlayerList() {
@@ -660,7 +660,7 @@ module.exports = class PlayerController {
                     name: p.name,
                     ping: p.ping,
                     identifiers: p.identifiers,
-                }
+                };
             });
         } catch (error) {
             if (GlobalData.verbose) logError(`Failed to generate playerlist with error: ${error.message}`);
@@ -679,13 +679,13 @@ module.exports = class PlayerController {
      *      - add them to the active players containing:
      *          - some prop to indicate if its present in the database
      *          - tsConnected
-     * 
+     *
      * NOTE:  This code was written this way to improve performance in exchange of readability
      *           the ES6 gods might not like this..
      * TODO: To prevent retaliation from the gods, consider making the activePlayers a Map instead of an Array.
-     * 
+     *
      * FIXME: I'm guaranteeing there are not two players with the same License, but not ID.
-     * 
+     *
      * @param {array} players
      */
     async processHeartBeat(players) {
@@ -695,7 +695,7 @@ module.exports = class PlayerController {
         try {
             //Sanity check
             if (!Array.isArray(players)) throw new Error('expected array');
-            
+
             //Validate & filter players then extract ids and license
             let pCount = players.length; //Optimization only, although V8 is probably smart enough
             let hbPlayers = new Map();
@@ -719,7 +719,7 @@ module.exports = class PlayerController {
 
                 //Extract license
                 for (let j = 0; j < p.identifiers.length; j++) {
-                    if (p.identifiers[j].length == 48 && p.identifiers[j].substring(0, 8) == "license:") {
+                    if (p.identifiers[j].length == 48 && p.identifiers[j].substring(0, 8) == 'license:') {
                         p.license = p.identifiers[j].substring(8);
                         break;
                     }
@@ -737,11 +737,11 @@ module.exports = class PlayerController {
 
                 //Add to licenses list
                 delete p.endpoint;
-                hbPlayers.set(p.license, p)
+                hbPlayers.set(p.license, p);
             }
-            if (GlobalData.verbose && invalids) logWarn(`HeartBeat playerlist contained ${invalids} invalid players that were removed.`); 
-            if (GlobalData.verbose && duplicated) logWarn(`HeartBeat playerlist contained ${duplicated} duplicated players that were removed.`); 
-            
+            if (GlobalData.verbose && invalids) logWarn(`HeartBeat playerlist contained ${invalids} invalid players that were removed.`);
+            if (GlobalData.verbose && duplicated) logWarn(`HeartBeat playerlist contained ${duplicated} duplicated players that were removed.`);
+
 
             //Processing active players list, creating the removed list, creating new active list without removed players
             let apCount = this.activePlayers.length;  //Optimization only, although V8 is probably smart enough
@@ -749,10 +749,10 @@ module.exports = class PlayerController {
             let activePlayerLicenses = []; //Optimization only
             let newActivePlayers = [];
             for (let i = 0; i < apCount; i++) {
-                let hbPlayerData = hbPlayers.get(this.activePlayers[i].license);  
+                let hbPlayerData = hbPlayers.get(this.activePlayers[i].license);
                 if (hbPlayerData) {
                     let updatedPlayer = Object.assign(
-                        this.activePlayers[i], 
+                        this.activePlayers[i],
                         {
                             id: hbPlayerData.id, //NOTE: possibly the solution to the double player issue?
                             ping: hbPlayerData.ping,
@@ -779,9 +779,9 @@ module.exports = class PlayerController {
                     if (dbPlayer) {
                         //TODO: create a AllAssocIds for the players, containing all intersecting identifiers
                         let newPlayer = Object.assign({}, player, {
-                            tsJoined: dbPlayer.tsJoined, 
-                            playTime: dbPlayer.playTime, 
-                            tsConnected: now(), 
+                            tsJoined: dbPlayer.tsJoined,
+                            playTime: dbPlayer.playTime,
+                            tsConnected: now(),
                             isTmp: false,
                             notes: dbPlayer.notes
                         });
@@ -801,7 +801,7 @@ module.exports = class PlayerController {
             if (disconnectedPlayers.length) this.writePending = true; //low
             disconnectedPlayers.forEach(async (p) => {
                 try {
-                    await this.dbo.get("players")
+                    await this.dbo.get('players')
                         .find({license: p.license})
                         .assign({
                             notes: p.notes,
@@ -823,4 +823,4 @@ module.exports = class PlayerController {
         }
     }//Fim processHeartBeat()
 
-} //Fim Database()
+}; //Fim Database()

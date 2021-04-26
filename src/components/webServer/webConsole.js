@@ -9,11 +9,11 @@ const {authLogic} = require('./requestAuthenticator');
 const getIP = (socket) => {
     return (
         socket &&
-        socket.request && 
-        socket.request.connection && 
+        socket.request &&
+        socket.request.connection &&
         socket.request.connection.remoteAddress
     )? socket.request.connection.remoteAddress : 'unknown';
-}
+};
 
 
 module.exports = class webConsole {
@@ -32,7 +32,7 @@ module.exports = class webConsole {
         try {
             log(`Connected: ${socket.session.auth.username} from ${getIP(socket)}`, 'SocketIO');
         } catch (error) {
-            log(`Connected: new connection with unknown source`, 'SocketIO');
+            log('Connected: new connection with unknown source', 'SocketIO');
         }
 
         socket.on('disconnect', (reason) => {
@@ -80,7 +80,7 @@ module.exports = class webConsole {
             this.dataBuffer = '';
         } catch (error) {
             logWarn('Message not sent');
-            dir(error)
+            dir(error);
         }
     }
 
@@ -105,16 +105,16 @@ module.exports = class webConsole {
 
         //Check Permissions
         if (!isValidPerm) {
-            let errorMessage = `Permission 'console.write' denied.`;
+            let errorMessage = 'Permission \'console.write\' denied.';
             if (GlobalData.verbose) logWarn(`[${getIP(socket)}][${socket.session.auth.username}] ${errorMessage}`);
             socket.emit('consoleData', `\n<mark>${errorMessage}</mark>\n`);
             return;
         }
-        
+
         //Executing command
         log(`${socket.session.auth.username} executing ` + chalk.inverse(' ' + msg + ' '), 'SocketIO');
         globals.logger.append(`[${getIP(socket)}][${socket.session.auth.username}] ${msg}`);
         globals.fxRunner.srvCmd(msg);
     }
 
-} //Fim webConsole()
+}; //Fim webConsole()

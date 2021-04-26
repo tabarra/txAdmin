@@ -11,7 +11,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 module.exports = async function SettingsGet(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('settings.view', modulename)) {
-        return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
+        return ctx.utils.render('basic/generic', {message: 'You don\'t have permission to view this page.'});
     }
 
     const renderData = {
@@ -26,7 +26,7 @@ module.exports = async function SettingsGet(ctx) {
         activeTab: 'global',
         isZapHosting: GlobalData.isZapHosting,
         txDataPath: GlobalData.dataPath,
-    }
+    };
 
     return ctx.utils.render('settings', renderData);
 };
@@ -35,7 +35,7 @@ module.exports = async function SettingsGet(ctx) {
 //================================================================
 function cleanRenderData(inputData) {
     const input = cloneDeep(inputData);
-    const out = {}
+    const out = {};
     Object.keys(input).forEach((prop) => {
         if (input[prop] == null || input[prop] === false || typeof input[prop] === 'undefined') {
             out[prop] = '';

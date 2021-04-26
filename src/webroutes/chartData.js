@@ -29,10 +29,10 @@ module.exports = async function chartData(ctx) {
                 clients: s.clients,
                 avgTime: s.perf[threadName].sum / s.perf[threadName].count,
                 buckets: s.perf[threadName].buckets,
-            }
+            };
         });
     } catch (error) {
-        outData = {failReason: 'data_processing'}
+        outData = {failReason: 'data_processing'};
     }
 
     //Output

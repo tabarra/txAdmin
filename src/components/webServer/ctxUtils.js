@@ -8,52 +8,52 @@ const helpers = require('../../extras/helpers');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
-const now = () => { return Math.round(Date.now() / 1000) };
-const isUndefined = (x) => { return (typeof x === 'undefined') };
+const now = () => { return Math.round(Date.now() / 1000); };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const getRenderErrorText = (view, error, data) => {
     logError(`Error rendering ${view}.`);
-    if (GlobalData.verbose) dir(error)
+    if (GlobalData.verbose) dir(error);
     if (!isUndefined(data.discord) && !isUndefined(data.discord.token)) data.discord.token = '[redacted]';
-    let out = `<pre>\n`;
+    let out = '<pre>\n';
     out += `Error rendering '${view}'.\n`;
     out += `Message: ${error.message}\n`;
-    out += `The data provided was:\n`;
-    out += `================\n`;
+    out += 'The data provided was:\n';
+    out += '================\n';
     out += JSON.stringify(data, null, 2);
-    out += `</pre>\n`;
+    out += '</pre>\n';
     return out;
-}
+};
 const getWebViewPath = (view) => {
     if (view.includes('..')) throw new Error('Path Traversal?');
     return path.join(GlobalData.txAdminResourcePath, 'web', view+'.html');
-}
+};
 
 //Squirrelly Filters
-sqrl.filters.define("isSelected", (x)=>{
+sqrl.filters.define('isSelected', (x)=>{
     return (x)? 'selected' : '';
 });
-sqrl.filters.define("isActive", (x)=>{
+sqrl.filters.define('isActive', (x)=>{
     return (x)? 'active' : '';
 });
-sqrl.filters.define("tShow", (x)=>{
+sqrl.filters.define('tShow', (x)=>{
     return (x)? `show ${x}` : '';
 });
-sqrl.filters.define("isDisabled", (x)=>{
+sqrl.filters.define('isDisabled', (x)=>{
     return (x)? 'disabled' : '';
 });
-sqrl.filters.define("undef", (x)=>{
+sqrl.filters.define('undef', (x)=>{
     return (isUndefined(x) || x == 'undefined')? '' : x;
 });
-sqrl.filters.define("unnull", (x)=>{
+sqrl.filters.define('unnull', (x)=>{
     return (isUndefined(x) || x == 'null')? '' : x;
 });
-sqrl.filters.define("escapeBackTick", (x)=>{
+sqrl.filters.define('escapeBackTick', (x)=>{
     return x.replace(/`/, '\\`');
 });
-sqrl.filters.define("base64", (x)=>{
+sqrl.filters.define('base64', (x)=>{
     return Buffer.from(x).toString('base64');
 });
-sqrl.filters.define("ternary", (x)=>{
+sqrl.filters.define('ternary', (x)=>{
     return (x[0])? x[1] : x[2];
 });
 
@@ -86,14 +86,14 @@ async function renderMasterView(view, reqSess, data, txVars) {
             fs.readFile(getWebViewPath('basic/footer'), 'utf8'),
             fs.readFile(getWebViewPath(view), 'utf8')
         ]);
-        sqrl.templates.define("header", sqrl.compile(rawHeader));
-        sqrl.templates.define("footer", sqrl.compile(rawFooter));
+        sqrl.templates.define('header', sqrl.compile(rawHeader));
+        sqrl.templates.define('footer', sqrl.compile(rawFooter));
         out = sqrl.render(rawView, data);
     } catch (error) {
         if (error.code == 'ENOENT') {
-            out = `<pre>\n`;
+            out = '<pre>\n';
             out += `The '${view}' page file was not found.\n`;
-            out += `You probably deleted the 'citizen/system_resources/monitor/web/' folder or the folders above it.\n`;
+            out += 'You probably deleted the \'citizen/system_resources/monitor/web/\' folder or the folders above it.\n';
         } else {
             out = getRenderErrorText(view, error, data);
         }
@@ -126,13 +126,13 @@ async function renderLoginView(data, txVars) {
 
     let out;
     try {
-        const rawView = await fs.readFile(getWebViewPath(`basic/login`), 'utf8');
+        const rawView = await fs.readFile(getWebViewPath('basic/login'), 'utf8');
         out = sqrl.render(rawView, data);
     } catch (error) {
         if (error.code == 'ENOENT') {
-            out = `<pre>\n`;
-            out += `The login page file was not found.\n`;
-            out += `You probably deleted the 'citizen/system_resources/monitor/web/basic/login.html' file or the folders above it.\n`;
+            out = '<pre>\n';
+            out += 'The login page file was not found.\n';
+            out += 'You probably deleted the \'citizen/system_resources/monitor/web/basic/login.html\' file or the folders above it.\n';
         } else {
             out = getRenderErrorText('Login', error, data);
         }
@@ -203,7 +203,7 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true) {
             if (GlobalData.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
-        
+
         //For all other permissions
         if (
             ctx.session.auth.master === true ||
@@ -215,7 +215,7 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true) {
             if (GlobalData.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
-        
+
     } catch (error) {
         if (GlobalData.verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
         return false;
@@ -262,25 +262,25 @@ module.exports = async function WebCtxUtils(ctx, next) {
             ctx.body = await renderMasterView(view, ctx.session, viewData, ctx.txVars);
         }
         ctx.type = 'text/html';
-    }
+    };
     ctx.utils.error = (httpStatus = 500, message = 'unknown error') => {
         ctx.status = httpStatus;
         ctx.body = {
-            status: 'error', 
+            status: 'error',
             code: parseInt(httpStatus),
             message
         };
-    }
+    };
 
     ctx.utils.logAction = async (data) => {
         return logAction(ctx, data);
-    }
+    };
     ctx.utils.logCommand = async (data) => {
         return logCommand(ctx, data);
-    }
+    };
     ctx.utils.checkPermission = (perm, fromCtx, printWarn) => {
         return checkPermission(ctx, perm, fromCtx, printWarn);
-    }
+    };
 
     return next();
-}
+};

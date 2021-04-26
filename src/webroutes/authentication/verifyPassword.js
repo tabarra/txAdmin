@@ -3,7 +3,7 @@ const modulename = 'WebServer:AuthVerify';
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined') };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
 
 /**
  * Verify login
@@ -18,7 +18,7 @@ module.exports = async function AuthVerify(ctx) {
         message: null,
         citizenfxDisabled: !globals.authenticator.providers.citizenfx.ready,
         discordDisabled: true,
-    }
+    };
 
     try {
         //Checking admin
@@ -48,7 +48,7 @@ module.exports = async function AuthVerify(ctx) {
         globals.databus.txStatsData.loginMethods.password++;
     } catch (error) {
         logWarn(`Failed to authenticate ${ctx.request.body.username} with error: ${error.message}`);
-        if (GlobalData.verbose) dir(error)
+        if (GlobalData.verbose) dir(error);
         renderData.message = 'Error autenticating admin.';
         return ctx.utils.render('login', renderData);
     }

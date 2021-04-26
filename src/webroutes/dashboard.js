@@ -18,8 +18,8 @@ module.exports = async function Dashboard(ctx) {
 
     //Shortcut function
     const getPermDisable = (perm) => {
-        return (ctx.utils.checkPermission(perm, modulename, false))? '' : 'disabled'
-    }
+        return (ctx.utils.checkPermission(perm, modulename, false))? '' : 'disabled';
+    };
 
     //Preparing render data
     const renderData = {
@@ -32,7 +32,7 @@ module.exports = async function Dashboard(ctx) {
             controls: getPermDisable('control.server'),
             controlsClass: (ctx.utils.checkPermission('control.server', modulename, false))? 'danger' : 'secondary'
         }
-    }
+    };
 
 
     //Rendering the page
@@ -43,9 +43,9 @@ module.exports = async function Dashboard(ctx) {
 //================================================================
 /**
  * Returns the update data.
- * 
+ *
  * FIXME: improve the message to show suggestion based on whether or not the user is an "early adopter".
- * 
+ *
  *   Logic:
  *    if == recommended, you're fine
  *    if > recommended && < optional, pls update to optional
@@ -53,10 +53,10 @@ module.exports = async function Dashboard(ctx) {
  *    if > optional && < latest, pls update to latest
  *    if == latest, duh
  *    if < critical, BIG WARNING
- * 
+ *
  *   For the changelog page, see if possible to show the changelog timeline color coded.
  *   ex: all versions up to critical are danger, then warning, info and secondary for the above optional
- * 
+ *
  */
 function getVersionData() {
     // Prepping vars & checking if there is data available
@@ -85,12 +85,12 @@ function getVersionData() {
             versionData.subtext = (rVer.critical > rVer.recommended)
                 ? `(critical update ${curr} ➤ ${rVer.critical})`
                 : `(recommended update ${curr} ➤ ${rVer.recommended})`;
-            
+
         } else if (curr < rVer.recommended) {
             versionData.color = 'warning';
             versionData.message = 'A recommended update is available for FXServer, you should update.';
             versionData.subtext = `(recommended update ${curr} ➤ ${rVer.recommended})`;
-    
+
         } else if (curr < rVer.optional) {
             versionData.color = 'info';
             versionData.message = 'An optional update is available for FXServer.';
@@ -98,7 +98,7 @@ function getVersionData() {
         }
 
     } catch (error) {
-        logError(`Error while processing changelog. Enable verbosity for more information.`);
+        logError('Error while processing changelog. Enable verbosity for more information.');
         if (GlobalData.verbose) dir(error);
     }
 

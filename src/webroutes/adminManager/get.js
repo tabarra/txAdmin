@@ -12,13 +12,13 @@ module.exports = async function AdminManagerGet(ctx) {
     let admins = globals.authenticator.getAdminsList().map((admin)=>{
         let perms;
         if (admin.master == true) {
-            perms = "master account";
+            perms = 'master account';
         } else if (admin.permissions.includes('all_permissions')) {
-            perms = "all permissions";
+            perms = 'all permissions';
         } else if (admin.permissions.length !== 1) {
             perms = `${admin.permissions.length} permissions`;
         } else {
-            perms = `1 permission`;
+            perms = '1 permission';
         }
 
         return {
@@ -28,12 +28,12 @@ module.exports = async function AdminManagerGet(ctx) {
             perms: perms,
             disableEdit: !ctx.session.auth.master && admin.master,
             disableDelete: (admin.master || ctx.session.auth.username.toLowerCase() === admin.name.toLowerCase()),
-        }
+        };
     });
 
     //Check permission
     if (!ctx.utils.checkPermission('manage.admins', modulename)) {
-        return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
+        return ctx.utils.render('basic/generic', {message: 'You don\'t have permission to view this page.'});
     }
 
     //Set render data
@@ -41,7 +41,7 @@ module.exports = async function AdminManagerGet(ctx) {
         headerTitle: 'Admin Manager',
         admins: admins,
         allPermissions: Object.entries(globals.authenticator.getPermissionsList())
-    }
+    };
 
     //Give output
     return ctx.utils.render('adminManager/index', renderData);

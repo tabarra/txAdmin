@@ -12,7 +12,7 @@ const { dir, log, logOk, logWarn, logError, getLog } = require('../extras/consol
 module.exports = async function txAdminLog(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('txadmin.log.view', modulename)) {
-        return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
+        return ctx.utils.render('basic/generic', {message: 'You don\'t have permission to view this page.'});
     }
 
     //Console
@@ -27,7 +27,7 @@ module.exports = async function txAdminLog(ctx) {
 
     //Actions
     const actionLog = xss(await globals.logger.get());
-    
+
     //Output
     return ctx.utils.render('txAdminLog', {headerTitle: 'txAdmin Log', consoleLog, actionLog});
 };

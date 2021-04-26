@@ -1,15 +1,15 @@
 //Constants
 const perfBuckets = ['0.005000', '0.010000', '0.025000', '0.050000', '0.075000', '0.100000', '0.250000', '0.500000', '0.750000', '1.000000', '2.500000', '5.000000', '7.500000', '10.000000', '+Inf'];
-const perfLineRegex = /tickTime_(count|sum|bucket)\{name="(svSync|svNetwork|svMain)"(,le="(\d+\.\d+|\+Inf)")?\}\s(\S+)/
+const perfLineRegex = /tickTime_(count|sum|bucket)\{name="(svSync|svNetwork|svMain)"(,le="(\d+\.\d+|\+Inf)")?\}\s(\S+)/;
 
 
 /**
  * Parses the FXServer /perf/ output in the proteus scrape text format
- * @param {string} raw 
+ * @param {string} raw
  */
 const parsePerf = (raw) => {
-    if (typeof raw !== 'string') throw new Error(`string expected`);
-    
+    if (typeof raw !== 'string') throw new Error('string expected');
+
     //Vars
     const lines = raw.trim().split('\n');
     const metrics = {
@@ -43,7 +43,7 @@ const parsePerf = (raw) => {
 
         } else if (regType == 'bucket') {
             if (bucket !== perfBuckets[metrics[thread].buckets.length]) throw new Error(`unexpected bucket ${bucket} at position ${metrics[thread].buckets.length}`);
-            metrics[thread].buckets.push(parseInt(value))
+            metrics[thread].buckets.push(parseInt(value));
         }
     }
 
@@ -53,18 +53,18 @@ const parsePerf = (raw) => {
             !Number.isInteger(thread.count) ||
             !Number.isFinite(thread.sum) ||
             thread.buckets.length !== perfBuckets.length - 1
-        )
-    })
+        );
+    });
     if (invalid.length) throw new Error(`there are ${invalid.length} invalid threads in /perf/ data`);
 
     return metrics;
-}
+};
 
 
 /**
  * Compares a perf snapshot with the one that came before
- * @param {object} newPerf 
- * @param {object} oldPerf 
+ * @param {object} newPerf
+ * @param {object} oldPerf
  */
 const diffPerfs = (newPerf, oldPerf = false) => {
     if (oldPerf === false) {
@@ -72,7 +72,7 @@ const diffPerfs = (newPerf, oldPerf = false) => {
             count: 0,
             sum: 0,
             buckets: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-        }
+        };
         oldPerf = {
             svSync: zeros,
             svNetwork: zeros,
@@ -96,12 +96,12 @@ const diffPerfs = (newPerf, oldPerf = false) => {
             buckets: newPerf.svMain.buckets.map((bucket, i) => bucket - oldPerf.svMain.buckets[i])
         },
     };
-}
+};
 
 
 /**
  * Validates a perf thread object validity
- * @param {object} threadData 
+ * @param {object} threadData
  */
 const validatePerfThreadData = (threadData) => {
     return (
@@ -112,13 +112,13 @@ const validatePerfThreadData = (threadData) => {
         Array.isArray(threadData.buckets) &&
         threadData.buckets.length == 15 &&
         threadData.buckets.every(b => typeof b == 'number')
-    )
-}
+    );
+};
 
 
 /**
  * Returns true if all data inside performance history file is valid
- * @param {array} perfCache 
+ * @param {array} perfCache
  */
 const validatePerfCacheData = (perfCache) => {
     return perfCache.every((s) => {
@@ -132,9 +132,9 @@ const validatePerfCacheData = (perfCache) => {
             validatePerfThreadData(s.perf.svSync) &&
             validatePerfThreadData(s.perf.svNetwork) &&
             validatePerfThreadData(s.perf.svMain)
-        )
+        );
     });
-}
+};
 
 
 module.exports = {
@@ -143,4 +143,4 @@ module.exports = {
     diffPerfs,
     validatePerfThreadData,
     validatePerfCacheData
-}
+};

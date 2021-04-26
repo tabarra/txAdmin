@@ -11,7 +11,7 @@ const { engineVersion } = require('../../extras/deployer');
 module.exports = async function SetupGet(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
-        return ctx.utils.render('basic/generic', {message: `You need to be the admin master to use the setup page.`});
+        return ctx.utils.render('basic/generic', {message: 'You need to be the admin master to use the setup page.'});
     }
 
     // Check if this is the correct state for the setup page
@@ -24,14 +24,14 @@ module.exports = async function SetupGet(ctx) {
 
     const globalConfig = globals.configVault.getScopedStructure('global');
     const renderData = {
-        headerTitle: `Setup`,
+        headerTitle: 'Setup',
         serverName: globalConfig.serverName || '',
         isReset: (globalConfig.serverName !== null),
         deployerEngineVersion: engineVersion,
         serverProfile: globals.info.serverProfile,
         txDataPath: GlobalData.dataPath,
         isZapHosting: GlobalData.isZapHosting,
-    }
+    };
 
     if (GlobalData.osType == 'windows') {
         const batFolder = path.resolve(GlobalData.fxServerPath, '..');

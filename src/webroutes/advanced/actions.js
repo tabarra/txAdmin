@@ -5,12 +5,12 @@ const humanizeDuration = require('humanize-duration');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined') };
-const now = () => { return Math.round(Date.now() / 1000) };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
+const now = () => { return Math.round(Date.now() / 1000); };
 
 
 /**
- * 
+ *
  * @param {object} ctx
  */
 module.exports = async function AdvancedActions(ctx) {
@@ -20,7 +20,7 @@ module.exports = async function AdvancedActions(ctx) {
         isUndefined(ctx.request.body.parameter)
     ) {
         logWarn('Invalid request!');
-        return ctx.send({type: 'danger', message: `<strong>Invalid request :(</strong>`});
+        return ctx.send({type: 'danger', message: '<strong>Invalid request :(</strong>'});
     }
     const action = ctx.request.body.action;
     const parameter = ctx.request.body.parameter;
@@ -30,7 +30,7 @@ module.exports = async function AdvancedActions(ctx) {
     if (!ctx.utils.checkPermission('all_permissions', modulename)) {
         return ctx.send({
             type: 'danger',
-            message: `You don't have permission to execute this action.`
+            message: 'You don\'t have permission to execute this action.'
         });
     }
 
@@ -42,7 +42,7 @@ module.exports = async function AdvancedActions(ctx) {
     } else if (action == 'perform_magic') {
         const message = JSON.stringify(globals.playerController.activePlayers, null, 2);
         return ctx.send({type: 'success', message});
-        
+
     } else if (action == 'perform_magic2') {
         globals.playerController.playerlistGenerator.indexes = [];
         return ctx.send({type: 'success', message: 'clearing generator playerlist'});
@@ -53,10 +53,10 @@ module.exports = async function AdvancedActions(ctx) {
         } else {
             globals.playerController.playerlistGenerator.indexes = [0, 1];
         }
-        return ctx.send({type: 'success', message: `kick'em all, or unkick'em all`});
+        return ctx.send({type: 'success', message: 'kick\'em all, or unkick\'em all'});
 
     } else if (action == 'perform_magic4') {
-        let idArray = ["license:23fb884f1463da603330b9d4434f2886a725aaaa"];
+        let idArray = ['license:23fb884f1463da603330b9d4434f2886a725aaaa'];
         let ts = now();
         const filter = (x) => {
             return (
@@ -65,7 +65,7 @@ module.exports = async function AdvancedActions(ctx) {
                 (!x.expiration || x.expiration > ts) &&
                 (!x.revocation.timestamp)
             );
-        }
+        };
 
         let hist = await globals.playerController.getRegisteredActions(idArray, filter);
         return ctx.send({type: 'success', message: JSON.stringify(hist, null, 2)});
@@ -79,7 +79,7 @@ module.exports = async function AdvancedActions(ctx) {
         const dbo = globals.playerController.getDB();
         await dbo.set('players', []).set('actions', []).set('pendingWL', []).write();
         return ctx.send({type: 'success', message: 'wiiiiiiiiped'});
-        
+
     } else if (action == 'show_log') {
         return ctx.send({type: 'success', message: JSON.stringify(globals.databus.serverLog, null, 2)});
 
@@ -119,5 +119,5 @@ module.exports = async function AdvancedActions(ctx) {
 
 
     //Catch all
-    return ctx.send({type: 'danger', message: `<strong>Unknown action :(</strong>`});
+    return ctx.send({type: 'danger', message: '<strong>Unknown action :(</strong>'});
 };

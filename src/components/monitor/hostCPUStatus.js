@@ -20,14 +20,14 @@ module.exports = class HostCPUStatus {
      * @returns {object} {full, last10, last30}
      */
     getUsageStats() {
-        var result = {full:null, last10:null, last30:null}
-        var percent = 0
-        var i = this.samples.length
-        var cnt = 0
+        var result = {full:null, last10:null, last30:null};
+        var percent = 0;
+        var i = this.samples.length;
+        var cnt = 0;
         while (i--) {
             cnt++;
             if (this.samples[i].total > 0) {
-                percent += (100 - Math.round(100 * this.samples[i].idle / this.samples[i].total))
+                percent += (100 - Math.round(100 * this.samples[i].idle / this.samples[i].total));
             }
             if (cnt == 100)       result.last10  = (percent/cnt).toFixed();   //10 segundos
             else if (cnt == 300)  result.last30  = (percent/cnt).toFixed();  //30 segundos
@@ -43,7 +43,7 @@ module.exports = class HostCPUStatus {
      * Get samples and process deltas
      */
     getSamples() {
-        let currCpus = os.cpus()
+        let currCpus = os.cpus();
         for (var i=0,len=currCpus.length;i<len;i++) {
             var prevCpu = this.prevCpus[i];
             var currCpu = currCpus[i];
@@ -61,4 +61,4 @@ module.exports = class HostCPUStatus {
     }
 
 
-} //Fim HostCPUStatus()
+}; //Fim HostCPUStatus()

@@ -14,21 +14,21 @@ module.exports = class Authenticator {
         this.admins = null;
         this.refreshRoutine = null;
         this.registeredPermissions = {
-            "all_permissions": "All Permissions",
-            "manage.admins": "Manage Admins",
-            "commands.resources": "Start/Stop Resources (start/stop)",
-            "players.ban": "Players: Ban",
-            "players.kick": "Players: Kick",
-            "players.message": "Players: DM",
-            "players.warn": "Players: Warn",
-            "players.whitelist": "Players: Whitelist",
-            "console.view": "Console: View",
-            "console.write": "Console: Write",
-            "control.server": "Start/Stop/Restart Server",
-            "server.cfg.editor": "Read/Write Server CFG file",
-            "settings.view": "Settings: View (except tokens)",
-            "settings.write": "Settings: Change",
-            "txadmin.log.view": "View txAdmin Log",
+            'all_permissions': 'All Permissions',
+            'manage.admins': 'Manage Admins',
+            'commands.resources': 'Start/Stop Resources (start/stop)',
+            'players.ban': 'Players: Ban',
+            'players.kick': 'Players: Kick',
+            'players.message': 'Players: DM',
+            'players.warn': 'Players: Warn',
+            'players.whitelist': 'Players: Whitelist',
+            'console.view': 'Console: View',
+            'console.write': 'Console: Write',
+            'control.server': 'Start/Stop/Restart Server',
+            'server.cfg.editor': 'Read/Write Server CFG file',
+            'settings.view': 'Settings: View (except tokens)',
+            'settings.write': 'Settings: Change',
+            'txadmin.log.view': 'View txAdmin Log',
         };
 
         //Load providers
@@ -36,7 +36,7 @@ module.exports = class Authenticator {
             this.providers = {
                 discord: 'xxxxx',
                 citizenfx: new CitizenFXProvider(null)
-            }
+            };
         } catch (error) {
             throw new Error(`Failed to load providers with error: ${error.message}`);
         }
@@ -89,9 +89,9 @@ module.exports = class Authenticator {
      */
     createAdminsFile(username, identifier, provider_data, password, isPlainText) {
         //Sanity check
-        if (this.admins !== false && this.admins !== null) throw new Error("Admins file already exists.");
-        if (typeof username !== 'string' || username.length < 3) throw new Error("Invalid username parameter.");
-        if (typeof password !== 'string' || password.length < 6) throw new Error("Invalid password parameter.");
+        if (this.admins !== false && this.admins !== null) throw new Error('Admins file already exists.');
+        if (typeof username !== 'string' || username.length < 3) throw new Error('Invalid username parameter.');
+        if (typeof password !== 'string' || password.length < 6) throw new Error('Invalid password parameter.');
 
         //Creating admin array
         let providers = {};
@@ -100,7 +100,7 @@ module.exports = class Authenticator {
                 id: username,
                 identifier,
                 data: provider_data
-            }
+            };
         }
         this.admins = [{
             name: username,
@@ -136,7 +136,7 @@ module.exports = class Authenticator {
                 master: user.master,
                 providers: Object.keys(user.providers),
                 permissions: user.permissions
-            }
+            };
             return out;
         });
     }
@@ -152,8 +152,8 @@ module.exports = class Authenticator {
         let id = uid.trim().toLowerCase();
         let admin = this.admins.find((user) => {
             return Object.keys(user.providers).find((provider) => {
-                return (id === user.providers[provider].id.toLowerCase())
-            })
+                return (id === user.providers[provider].id.toLowerCase());
+            });
         });
         return (admin)? cloneDeep(admin) : false;
     }
@@ -169,7 +169,7 @@ module.exports = class Authenticator {
         const username = uname.trim().toLowerCase();
         if (!username.length) return false;
         const admin = this.admins.find((user) => {
-            return (username === user.name.toLowerCase())
+            return (username === user.name.toLowerCase());
         });
         return (admin)? cloneDeep(admin) : false;
     }
@@ -195,10 +195,10 @@ module.exports = class Authenticator {
      * @param {array} permissions
      */
     async addAdmin(name, citizenfxData, discordData, password, permissions) {
-        if (this.admins == false) throw new Error("Admins not set");
+        if (this.admins == false) throw new Error('Admins not set');
 
         //Check if username is already taken
-        if (this.getAdminByName(name)) throw new Error("Username already taken");
+        if (this.getAdminByName(name)) throw new Error('Username already taken');
 
         //Preparing admin
         const admin = {
@@ -208,26 +208,26 @@ module.exports = class Authenticator {
             password_temporary: true,
             providers: {},
             permissions: permissions,
-        }
+        };
 
         //Check if provider uid already taken and inserting into admin object
         if (citizenfxData) {
             const existingCitizenFX = this.getAdminByProviderUID(citizenfxData.id);
-            if (existingCitizenFX) throw new Error("CitizenFX ID already taken");
+            if (existingCitizenFX) throw new Error('CitizenFX ID already taken');
             admin.providers.citizenfx = {
                 id: citizenfxData.id,
                 identifier: citizenfxData.identifier,
                 data: {}
-            }
+            };
         }
         if (discordData) {
             const existingDiscord = this.getAdminByProviderUID(discordData.id);
-            if (existingDiscord) throw new Error("Discord ID already taken");
+            if (existingDiscord) throw new Error('Discord ID already taken');
             admin.providers.discord = {
                 id: discordData.id,
                 identifier: discordData.identifier,
                 data: {}
-            }
+            };
         }
 
         //Saving admin file
@@ -252,14 +252,14 @@ module.exports = class Authenticator {
      * @param {array} permissions
      */
     async editAdmin(name, password, citizenfxData, discordData, permissions) {
-        if (this.admins == false) throw new Error("Admins not set");
+        if (this.admins == false) throw new Error('Admins not set');
 
         //Find admin index
         let username = name.toLowerCase();
         let adminIndex = this.admins.findIndex((user) => {
-            return (username === user.name.toLowerCase())
+            return (username === user.name.toLowerCase());
         });
-        if (adminIndex == -1) throw new Error("Admin not found");
+        if (adminIndex == -1) throw new Error('Admin not found');
 
         //Editing admin
         if (password !== null) {
@@ -274,7 +274,7 @@ module.exports = class Authenticator {
                     id: citizenfxData.id,
                     identifier: citizenfxData.identifier,
                     data: {}
-                }
+                };
             }
         }
         if (typeof discordData !== 'undefined') {
@@ -285,7 +285,7 @@ module.exports = class Authenticator {
                     id: discordData.id,
                     identifier: discordData.identifier,
                     data: {}
-                }
+                };
             }
         }
         if (typeof permissions !== 'undefined') this.admins[adminIndex].permissions = permissions;
@@ -310,17 +310,17 @@ module.exports = class Authenticator {
      * @param {object} providerData
      */
     async refreshAdminSocialData(name, provider, identifier, providerData) {
-        if (this.admins == false) throw new Error("Admins not set");
+        if (this.admins == false) throw new Error('Admins not set');
 
         //Find admin index
         const username = name.toLowerCase();
         const adminIndex = this.admins.findIndex((user) => {
-            return (username === user.name.toLowerCase())
+            return (username === user.name.toLowerCase());
         });
-        if (adminIndex == -1) throw new Error("Admin not found");
+        if (adminIndex == -1) throw new Error('Admin not found');
 
         //Refresh admin data
-        if (!this.admins[adminIndex].providers[provider]) throw new Error("Provider not available for this admin");
+        if (!this.admins[adminIndex].providers[provider]) throw new Error('Provider not available for this admin');
         this.admins[adminIndex].providers[provider].identifier = identifier;
         this.admins[adminIndex].providers[provider].data = providerData;
 
@@ -340,7 +340,7 @@ module.exports = class Authenticator {
      * @param {string} name
      */
     async deleteAdmin(name) {
-        if (this.admins == false) throw new Error("Admins not set");
+        if (this.admins == false) throw new Error('Admins not set');
 
         //Delete admin
         let username = name.toLowerCase();
@@ -353,7 +353,7 @@ module.exports = class Authenticator {
                 return false;
             }
         });
-        if (!found) throw new Error("Admin not found");
+        if (!found) throw new Error('Admin not found');
 
         //Saving admin file
         try {
@@ -380,7 +380,7 @@ module.exports = class Authenticator {
             if (isFirstTime) process.exit();
             this.admins = [];
             return false;
-        }
+        };
 
         try {
             raw = await fs.readFile(this.adminsFile, 'utf8');
@@ -416,7 +416,7 @@ module.exports = class Authenticator {
             return callError('invalid data in the admins file');
         }
 
-        let masterCount = jsonData.filter((x) => { return x.master }).length;
+        let masterCount = jsonData.filter((x) => { return x.master; }).length;
         if (masterCount !== 1) {
             return callError('must have exactly 1 master account');
         }
@@ -429,4 +429,4 @@ module.exports = class Authenticator {
         return true;
     }
 
-} //Fim Authenticator()
+}; //Fim Authenticator()

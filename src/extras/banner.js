@@ -29,18 +29,18 @@ const windowsReleaseAsync = require('./windowsReleaseAsync');
 // });
 
 const printMultiline = (lines, color) => {
-    const prefix = color(`[txAdmin]`);
+    const prefix = color('[txAdmin]');
     if (!Array.isArray(lines)) lines = lines.split('\n');
     const message = lines.map(line => `${prefix} ${line}`);
     console.log(message.join('\n'));
-}
+};
 
 const getIPs = async () => {
     const reqOptions = {timeout: 2500};
     const allOps = await Promise.allSettled([
-        got(`https://ip.seeip.org/json`, reqOptions).json(),
-        got(`https://api.ipify.org/?format=json`, reqOptions).json(),
-        got(`https://api.myip.com`, reqOptions).json(),
+        got('https://ip.seeip.org/json', reqOptions).json(),
+        got('https://api.ipify.org/?format=json', reqOptions).json(),
+        got('https://api.myip.com', reqOptions).json(),
         // Promise.reject()
         // got(`http://ip-api.com/json/`, reqOptions).json(),
         // got(`https://extreme-ip-lookup.com/json/`, reqOptions).json(),
@@ -52,18 +52,18 @@ const getIPs = async () => {
         }
     }
     return false;
-}
+};
 
 const getOSMessage = async () => {
     const serverMessage = [
         `To be able to access txAdmin from the internet open port ${GlobalData.txAdminPort}`,
-        `on your OS Firewall as well as in the hosting company.`,
+        'on your OS Firewall as well as in the hosting company.',
     ];
     const winWorkstationMessage = [
-        `⚠️ Home-hosting fxserver is not recommended ⚠️`,
-        `You need to open the fxserver port (usually 30120) on Windows Firewall`,
-        `and port forward it in your router for other players be able to access it.`,
-        `We recommend renting a server from ` + chalk.inverse(` https://zap-hosting.com/txAdmin `) + '.',
+        '⚠️ Home-hosting fxserver is not recommended ⚠️',
+        'You need to open the fxserver port (usually 30120) on Windows Firewall',
+        'and port forward it in your router for other players be able to access it.',
+        'We recommend renting a server from ' + chalk.inverse(' https://zap-hosting.com/txAdmin ') + '.',
     ];
 
     if (GlobalData.osType == 'linux') {
@@ -77,12 +77,12 @@ const getOSMessage = async () => {
         } catch (error) {
             if (GlobalData.verbose) {
                 logWarn(`Failed to detect windows version with error: ${error.message}`);
-                dir(error)
+                dir(error);
             }
             return serverMessage;
         }
     }
-}
+};
 
 const awaitHttp = new Promise((resolve, reject) => {
     const tickLimit = 100; //if over 15 seconds
@@ -97,9 +97,9 @@ const awaitHttp = new Promise((resolve, reject) => {
             clearInterval(interval);
             interval = setInterval(check, 2500);
         } else if (counter > tickLimit) {
-            logWarn(`The webserver is taking too long to start.`);
+            logWarn('The webserver is taking too long to start.');
         }
-    }
+    };
     interval = setInterval(check, 150);
 });
 
@@ -151,7 +151,7 @@ module.exports.printBanner = async () => {
         align: 'center',
         borderStyle: 'bold',
         borderColor: 'cyan',
-    }
+    };
     const boxLines = [
         'All ready! Please access:',
         ...addrs.map(addr => chalk.inverse(` http://${addr}:${GlobalData.txAdminPort}/ `)),
@@ -164,9 +164,9 @@ module.exports.printBanner = async () => {
 
     //Opening page
     if (
-        GlobalData.osType === 'windows' && 
+        GlobalData.osType === 'windows' &&
         (urlSuffix || !GlobalData.isAdvancedUser)
     ) {
         open(`http://localhost:${GlobalData.txAdminPort}/auth${urlSuffix}`).catch();
     }
-}
+};

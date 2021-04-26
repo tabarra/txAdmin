@@ -6,12 +6,12 @@ const bytes = require('bytes');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
-const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')) };
+const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')); };
 const deferError = (m, t=500) => {
     setTimeout(() => {
         logError(m);
     }, t);
-}
+};
 
 
 /**
@@ -35,7 +35,7 @@ module.exports = class OutputHandler {
         try {
             fs.writeFileSync(this.logPath, '');
         } catch (error) {
-            logError(`Failed to create log file '${this.logPath}' with error: ${error.message}`)
+            logError(`Failed to create log file '${this.logPath}' with error: ${error.message}`);
         }
 
         //Cron Function
@@ -46,7 +46,7 @@ module.exports = class OutputHandler {
     //================================================================
     /**
      * Processes FD3 traces
-     * 
+     *
      * Mapped straces:
      *   nucleus_connected
      *   watchdog_bark
@@ -54,7 +54,7 @@ module.exports = class OutputHandler {
      *   script_log
      *   hitch
      *   script_structured_trace (not used)
-     * 
+     *
      * @param {object} data
      */
     trace(trace) {
@@ -63,14 +63,14 @@ module.exports = class OutputHandler {
         const {channel, data} = trace.value;
 
         //DEBUG
-        // if(trace.value.func == 'ScriptTrace') return; 
+        // if(trace.value.func == 'ScriptTrace') return;
         // dir({channel,data});
 
         //Handle hitches
         // if(channel == 'citizen-server-impl' && data.type == 'hitch'){
         //     try{
         //         globals.monitor.processFXServerHitch(data.thread, data.time)
-        //     }catch(e){} 
+        //     }catch(e){}
         //     return;
         // }
 
@@ -84,7 +84,7 @@ module.exports = class OutputHandler {
                 }
                 const [_ip, port] = data.address.split(':');
                 deferError(`Detected FXServer error: Port ${port} is busy! Increasing restart delay to ${globals.fxRunner.restartDelayOverride}.`);
-            } catch (e) {} 
+            } catch (e) {}
             return;
         }
 
@@ -92,7 +92,7 @@ module.exports = class OutputHandler {
         if (channel == 'citizen-server-impl' && data.type == 'watchdog_bark') {
             try {
                 deferError(`Detected FXServer thread ${data.thread} hung with stack: ${data.stack}`);
-            } catch (e) {} 
+            } catch (e) {}
             return;
         }
 
@@ -102,7 +102,7 @@ module.exports = class OutputHandler {
             if (data.payload.type === 'txAdminHeartBeat') {
                 globals.monitor.handleHeartBeat('fd3');
             } else if (data.payload.type === 'txAdminLogData') {
-                globals.databus.serverLog = globals.databus.serverLog.concat(data.payload.logs)
+                globals.databus.serverLog = globals.databus.serverLog.concat(data.payload.logs);
             }
         }
     }
@@ -125,7 +125,7 @@ module.exports = class OutputHandler {
             //This is neccessary for the terminal to have color, but beware of side effects.
             //This regex was done in the first place to prevent fxserver output to be interpreted as txAdmin output by the host terminal
             //IIRC the issue was that one user with a TM on their nick was making txAdmin's console to close or freeze. I couldn't reproduce the issue.
-            if (!globals.fxRunner.config.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ""));
+            if (!globals.fxRunner.config.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ''));
         } catch (error) {
             if (GlobalData.verbose) logError(`Buffer write error: ${error.message}`);
         }
@@ -137,7 +137,7 @@ module.exports = class OutputHandler {
         this.webConsoleBuffer = this.webConsoleBuffer + data;
         if (this.webConsoleBuffer.length > this.webConsoleBufferSize) {
             this.webConsoleBuffer = this.webConsoleBuffer.slice(-0.5 * this.webConsoleBufferSize);
-            this.webConsoleBuffer = this.webConsoleBuffer.substr(this.webConsoleBuffer.indexOf("\n"));
+            this.webConsoleBuffer = this.webConsoleBuffer.substr(this.webConsoleBuffer.indexOf('\n'));
         }
     }
 
@@ -152,9 +152,9 @@ module.exports = class OutputHandler {
         data = data.toString();
         try {
             globals.webServer.webConsole.buffer(data, 'error');
-            if (!globals.fxRunner.config.quiet) process.stdout.write(chalk.red(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, "")));
+            if (!globals.fxRunner.config.quiet) process.stdout.write(chalk.red(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, '')));
         } catch (error) {
-            if (GlobalData.verbose) logError(`Buffer write error: ${error.message}`)
+            if (GlobalData.verbose) logError(`Buffer write error: ${error.message}`);
         }
     }
 
@@ -180,18 +180,18 @@ module.exports = class OutputHandler {
         let cleanBuff = this.fileBuffer.replace(/\u001b\[\d+(;\d)?m/g, '');
         fs.appendFile(this.logPath, cleanBuff, {encoding: 'utf8'}, (error)=>{
             if (error) {
-                if (GlobalData.verbose) logError(`File Write Buffer error: ${error.message}`)
+                if (GlobalData.verbose) logError(`File Write Buffer error: ${error.message}`);
             } else {
                 this.fileBuffer = '';
             }
         });
         fs.stat(this.logPath, (error, stats)=>{
             if (error) {
-                if (GlobalData.verbose) logError(`Log File get stats error: ${error.message}`)
+                if (GlobalData.verbose) logError(`Log File get stats error: ${error.message}`);
             } else {
                 this.logFileSize = bytes(stats.size);
             }
         });
     }
 
-} //Fim OutputHandler()
+}; //Fim OutputHandler()

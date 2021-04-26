@@ -1,16 +1,16 @@
 //Requires
 const modulename = 'Monitor';
-const axios = require("axios");
+const axios = require('axios');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
 const HostCPUStatus = require('./hostCPUStatus');
 
 //Helper functions
-const now = () => { return Math.round(Date.now() / 1000) };
-const isUndefined = (x) => { return (typeof x === 'undefined') };
+const now = () => { return Math.round(Date.now() / 1000); };
+const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const escape = (x) => {return x.replace(/"/g, '\uff02');};
 const formatCommand = (cmd, ...params) => {
-    return `${cmd} "` + [...params].map(escape).join(`" "`) + `"`;
+    return `${cmd} "` + [...params].map(escape).join('" "') + '"';
 };
 
 module.exports = class Monitor {
@@ -35,7 +35,7 @@ module.exports = class Monitor {
                 failThreshold: 15,
                 failLimit: 30,
             }
-        }
+        };
 
         //Setting up
         // logOk('Started');
@@ -45,7 +45,7 @@ module.exports = class Monitor {
             // hitches: [],
             fullCrashes: 0,
             partialCrashes: 0,
-        }
+        };
         this.resetMonitorStats();
         this.buildSchedule();
 
@@ -88,7 +88,7 @@ module.exports = class Monitor {
             const tOptions = {
                 smart_count: sub,
                 servername: globals.config.serverName
-            }
+            };
             return {
                 hour: time.getHours(),
                 minute: time.getMinutes(),
@@ -98,8 +98,8 @@ module.exports = class Monitor {
                     chat: globals.translator.t('restarter.schedule_warn', tOptions),
                     discord: globals.translator.t('restarter.schedule_warn_discord', tOptions),
                 }
-            }
-        }
+            };
+        };
 
         const times = helpers.parseSchedule(this.config.restarterSchedule);
         const warnTimes = this.hardConfigs.defaultWarningTimes.concat(
@@ -113,7 +113,7 @@ module.exports = class Monitor {
             try {
                 warnTimes.forEach((mins)=>{
                     schedule.push(getScheduleObj(time.hour, time.minute, mins, this.config.restarterScheduleWarnings.includes(mins)));
-                })
+                });
                 schedule.push({
                     hour: time.hour,
                     minute: time.minute,
@@ -127,7 +127,7 @@ module.exports = class Monitor {
             }
         });
 
-        if (GlobalData.verbose) dir(schedule.map(el => { return el.messages }));
+        if (GlobalData.verbose) dir(schedule.map(el => { return el.messages; }));
         this.schedule = (schedule.length)? schedule : false;
     }
 
@@ -146,7 +146,7 @@ module.exports = class Monitor {
             // eg, when a restart message comes before a restart command
             const currTime = new Date;
             const action = this.schedule.find((time) => {
-                return (time.hour == currTime.getHours() && time.minute == currTime.getMinutes())
+                return (time.hour == currTime.getHours() && time.minute == currTime.getMinutes());
             });
             if (!action) return;
 
@@ -168,7 +168,7 @@ module.exports = class Monitor {
                 }
             }
         } catch (error) {
-            if (GlobalData.verbose) dir(error)
+            if (GlobalData.verbose) dir(error);
         }
     }
 
@@ -198,9 +198,9 @@ module.exports = class Monitor {
     /**
      * Processes a server hitch
      * NOTE: The minimum time for a hitch is 150ms. 60000/150=400
-     * 
+     *
      * @param {string} thread //not being used
-     * @param {number} hitchTime 
+     * @param {number} hitchTime
      */
     // processFXServerHitch(thread, hitchTime){
     //     this.globalCounters.hitches.push({
@@ -216,22 +216,22 @@ module.exports = class Monitor {
     resetMonitorStats() {
         // this.globalCounters.hitches = [];
 
-        this.currentStatus = 'OFFLINE' // options: OFFLINE, ONLINE, PARTIAL
+        this.currentStatus = 'OFFLINE'; // options: OFFLINE, ONLINE, PARTIAL
         this.lastRefreshStatus = null; //to prevent DDoS crash false positive
         this.lastSuccessfulHealthCheck = null; //to see if its above limit
-        this.lastStatusWarningMessage = null; //to prevent spamming 
+        this.lastStatusWarningMessage = null; //to prevent spamming
         this.lastHealthCheckErrorMessage = null; //to print warning
-        this.healthCheckRestartWarningIssued = false; //to prevent spamming 
+        this.healthCheckRestartWarningIssued = false; //to prevent spamming
 
         //to track http vs fd3
         //to see if its above limit
-        this.lastSuccessfulFD3HeartBeat = null; 
-        this.lastSuccessfulHTTPHeartBeat = null; 
+        this.lastSuccessfulFD3HeartBeat = null;
+        this.lastSuccessfulHTTPHeartBeat = null;
         //to collect statistics
-        this.hasServerStartedYet = false; 
+        this.hasServerStartedYet = false;
 
         //to reset active player list (if module is already loaded)
-        if (globals.playerController) globals.playerController.processHeartBeat([]); 
+        if (globals.playerController) globals.playerController.processHeartBeat([]);
     }
 
 
@@ -248,7 +248,7 @@ module.exports = class Monitor {
             responseEncoding: 'utf8',
             maxRedirects: 0,
             timeout: this.hardConfigs.timeout
-        }
+        };
 
         //Make request
         let dynamicResp;
@@ -262,9 +262,9 @@ module.exports = class Monitor {
             return;
         }
 
-        //Checking for the maxClients 
+        //Checking for the maxClients
         if (
-            GlobalData.deployerDefaults && 
+            GlobalData.deployerDefaults &&
             GlobalData.deployerDefaults.maxClients &&
             dynamicResp &&
             dynamicResp.sv_maxclients
@@ -276,7 +276,7 @@ module.exports = class Monitor {
                 globals.logger.append(`[SYSTEM] changing sv_maxclients back to ${GlobalData.deployerDefaults.maxClients}`);
             }
         }
-        
+
         //Set variables
         this.healthCheckRestartWarningIssued = false;
         this.lastHealthCheckErrorMessage = false;
@@ -288,14 +288,14 @@ module.exports = class Monitor {
     /**
      * Refreshes the Server Status and calls for a restart if neccessary.
      *  - HealthCheck: performing an GET to the /dynamic.json file
-     *  - HeartBeat: receiving an intercom POST from txAdminClient containing playerlist 
+     *  - HeartBeat: receiving an intercom POST from txAdminClient containing playerlist
      */
     refreshServerStatus() {
         //Check if the server is supposed to be offline
         if (globals.fxRunner.fxChild === null) return this.resetMonitorStats();
 
         //Helper func
-        const cleanET = (et) => {return (et > 99999)? '--' : et};
+        const cleanET = (et) => {return (et > 99999)? '--' : et;};
 
         //Check if process was frozen
         const currTimestamp = now();
@@ -304,7 +304,7 @@ module.exports = class Monitor {
             globals.databus.txStatsData.freezeSeconds.push(elapsedRefreshStatus -1);
             if (globals.databus.txStatsData.freezeSeconds.length > 30) globals.databus.txStatsData.freezeSeconds.shift();
             logError(`Due to VPS issues or DDoS, this FXServer was frozen for ${elapsedRefreshStatus -1} seconds.`);
-            logError(`Don't worry, txAdmin is preventing the server from being restarted.`);
+            logError('Don\'t worry, txAdmin is preventing the server from being restarted.');
             this.lastRefreshStatus = currTimestamp;
             return;
         }
@@ -339,7 +339,7 @@ module.exports = class Monitor {
         //Check if still in cooldown
         if (processUptime < this.config.cooldown) {
             if (GlobalData.verbose && processUptime > 10 && elapsedLastWarning > 10) {
-                logWarn(`${timesPrefix} FXServer is not responding. Still in cooldown of ${this.config.cooldown}s.`)
+                logWarn(`${timesPrefix} FXServer is not responding. Still in cooldown of ${this.config.cooldown}s.`);
                 this.lastStatusWarningMessage = currTimestamp;
             }
             return;
@@ -348,12 +348,12 @@ module.exports = class Monitor {
         //Log failure message
         if (elapsedLastWarning >= 15) {
             const msg = (healthCheckFailed)
-                ? `${timesPrefix} FXServer is not responding. (${this.lastHealthCheckErrorMessage})` 
-                : `${timesPrefix} FXServer is not responding. (HB Failed)`; 
+                ? `${timesPrefix} FXServer is not responding. (${this.lastHealthCheckErrorMessage})`
+                : `${timesPrefix} FXServer is not responding. (HB Failed)`;
             this.lastStatusWarningMessage = currTimestamp;
             logWarn(msg);
         }
-        
+
         //Check if fxChild is closed, in this case no need to wait the failure count
         const processStatus = globals.fxRunner.getStatus();
         if (processStatus == 'closed') {
@@ -367,12 +367,12 @@ module.exports = class Monitor {
 
         //If http partial crash, warn 1 minute before
         if (
-            !(elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit) && 
+            !(elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit) &&
             !this.healthCheckRestartWarningIssued &&
             elapsedHealthCheck > (this.hardConfigs.healthCheck.failLimit - 60)
         ) {
             globals.discordBot.sendAnnouncement(globals.translator.t(
-                'restarter.partial_crash_warn_discord', 
+                'restarter.partial_crash_warn_discord',
                 {servername: globals.config.serverName}
             ));
             const chatMsg = globals.translator.t('restarter.partial_crash_warn');
@@ -391,7 +391,7 @@ module.exports = class Monitor {
             return;
         }
 
-        //Check if already over the limit 
+        //Check if already over the limit
         if (
             elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit ||
             elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit
@@ -402,7 +402,7 @@ module.exports = class Monitor {
                     `server failed to start within ${this.hardConfigs.maxHBCooldownTolerance} seconds`,
                     globals.translator.t('restarter.start_timeout')
                 );
-                
+
             } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {
                 this.globalCounters.partialCrashes++;
                 this.restartFXServer(
@@ -434,11 +434,11 @@ module.exports = class Monitor {
                 globals.databus.txStatsData.heartBeatStats.httpFailed++;
             }
             this.lastSuccessfulFD3HeartBeat = tsNow;
-        
+
         } else if (source === 'http') {
             //Sanity Check
             if (!Array.isArray(postData.players)) {
-                if (GlobalData.verbose) logWarn(`Received an invalid HeartBeat.`);
+                if (GlobalData.verbose) logWarn('Received an invalid HeartBeat.');
                 return;
             }
 
@@ -451,7 +451,7 @@ module.exports = class Monitor {
 
             //Processing stats
             if (
-                this.lastSuccessfulFD3HeartBeat && 
+                this.lastSuccessfulFD3HeartBeat &&
                 tsNow - this.lastSuccessfulFD3HeartBeat > 15 &&
                 tsNow - this.lastSuccessfulHTTPHeartBeat < 5
             ) {
@@ -461,4 +461,4 @@ module.exports = class Monitor {
         }
     }
 
-} //Fim Monitor()
+}; //Fim Monitor()
