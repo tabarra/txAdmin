@@ -6,8 +6,9 @@
   "scripts": {
     "build": "rimraf dist && webpack --config webpack.config.js --progress",
     "watch": "nodemon --config nodemon.json",
-    "lint": "eslint ./src/** --ext .js; echo \"Please run 'npm run lint:fix' to fix those issues\"",
-    "lint:fix": "eslint ./src/** --ext .js --fix"
+    "lint": "eslint ./src/**",
+    "lint:count": "eslint ./src/** -f ./lint-formatter.js",
+    "lint:fix": "eslint ./src/** --fix"
   },
   "repository": {
     "type": "git",

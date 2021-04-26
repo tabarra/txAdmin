@@ -224,6 +224,11 @@ rm -rf dist && npm run build && tar.exe -cvf dist/monitor.zip dist/* && explorer
 export TXADMIN_DEFAULT_LICENSE="YourKeyYourKeyYourKeyYourKeyYour"
 npm-upgrade
 con_miniconChannels script:monitor*
+
+# eslint stuff
+npx eslint ./src/**
+npx eslint ./src/** -f ./lint-formatter.js
+npx eslint ./src/** --fix
 ```
 
 ```json
