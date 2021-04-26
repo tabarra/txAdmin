@@ -4,7 +4,7 @@
 - [x] dashboard: add selector for the thread and make it auto refresh
 - [x] massive linting!
 - [x] hot-patch for the unicode in ansi fxmanifest issue
-- [ ] xxxx
+- [x] added events for kick, warns, bans and whitelists (@TasoOneAsia)
 
 
 Quickie:
