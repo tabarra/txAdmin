@@ -1,9 +1,9 @@
 ## TODO v3.7.0
+- [x] added italian locale
 - [x] solve the invalid session issue
 - [x] dashboard: add selector for the thread and make it auto refresh
-- [ ] xxxx
-- [ ] xxxx
-- [ ] xxxx
+- [x] massive linting!
+- [x] hot-patch for the unicode in ansi fxmanifest issue
 - [ ] xxxx
 
 

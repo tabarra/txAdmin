@@ -263,12 +263,19 @@ function txaReportResources(source, args)
     local max = GetNumResources() - 1
     for i = 0, max do
         local resName = GetResourceByFindIndex(i)
+
+        -- hacky patch
+        local resDesc = GetResourceMetadata(resName, 'description')
+        if resDesc ~= nil and string.find(resDesc, "Louis.dll") then
+            resDesc = nil
+        end
+
         local currentRes = {
             name = resName,
             status = GetResourceState(resName),
             author = GetResourceMetadata(resName, 'author'),
             version = GetResourceMetadata(resName, 'version'),
-            description = GetResourceMetadata(resName, 'description'),
+            description = resDesc,
             path = GetResourcePath(resName)
         }
         table.insert(resources, currentRes)
