@@ -17,16 +17,16 @@ function ensurePermission(ctx, perm) {
     } else {
         ctx.send({
             type: 'danger',
-            message: 'You don\'t have permission to execute this action.'
+            message: 'You don\'t have permission to execute this action.',
         });
         return false;
     }
 }
 function sendAlertOutput(ctx, toResp, header = 'Output:') {
-    toResp = (toResp.length)? xss(toResp) : 'no output';
+    toResp = (toResp.length) ? xss(toResp) : 'no output';
     return ctx.send({
         type: 'warning',
-        message: `<b>${header}</b><br> <pre>${toResp}</pre>`
+        message: `<b>${header}</b><br> <pre>${toResp}</pre>`,
     });
 }
 
@@ -60,7 +60,7 @@ module.exports = async function PlayerActions(ctx) {
     } else {
         return ctx.send({
             type: 'danger',
-            message: 'Unknown action.'
+            message: 'Unknown action.',
         });
     }
 };
@@ -79,7 +79,7 @@ async function handleSaveNote(ctx) {
     if (anyUndefined(
         ctx.request.body,
         ctx.request.body.note,
-        ctx.request.body.license
+        ctx.request.body.license,
     )) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
@@ -91,18 +91,18 @@ async function handleSaveNote(ctx) {
         if (success) {
             return ctx.send({
                 type: 'success',
-                message: 'Saved!'
+                message: 'Saved!',
             });
         } else {
             return ctx.send({
                 type: 'danger',
-                message: 'failed to save note.'
+                message: 'failed to save note.',
             });
         }
     } catch (error) {
         return ctx.send({
             type: 'danger',
-            message: `Failed to save with error: ${error.message}`
+            message: `Failed to save with error: ${error.message}`,
         });
     }
 }
@@ -118,7 +118,7 @@ async function handleMessage(ctx) {
     if (anyUndefined(
         ctx.request.body,
         ctx.request.body.id,
-        ctx.request.body.message
+        ctx.request.body.message,
     )) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
@@ -146,7 +146,7 @@ async function handleKick(ctx) {
     if (anyUndefined(
         ctx.request.body,
         ctx.request.body.id,
-        ctx.request.body.reason
+        ctx.request.body.reason,
     )) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
@@ -175,7 +175,7 @@ async function handleWarning(ctx) {
     if (anyUndefined(
         ctx.request.body,
         ctx.request.body.id,
-        ctx.request.body.reason
+        ctx.request.body.reason,
     )) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
@@ -221,7 +221,7 @@ async function handleBan(ctx) {
             ctx.request.body,
             ctx.request.body.duration,
             ctx.request.body.reference,
-            ctx.request.body.reason
+            ctx.request.body.reason,
         )
     ) {
         return ctx.send({type: 'danger', message: 'Missing parameters or invalid identifiers.'});
@@ -245,7 +245,6 @@ async function handleBan(ctx) {
     let duration;
     if (inputDuration === 'permanent') {
         expiration = false;
-
     } else {
         const [ multiplierInput, unit ] = inputDuration.split(/\s+/);
         const multiplier = parseInt(multiplierInput);
@@ -289,7 +288,7 @@ async function handleBan(ctx) {
             round: true,
             units: ['d', 'h'],
         };
-        tOptions.expiration = humanizeDuration((duration)*1000, humanizeOptions);
+        tOptions.expiration = humanizeDuration((duration) * 1000, humanizeOptions);
         msg = '[txAdmin] ' + globals.translator.t('ban_messages.kick_temporary', tOptions);
     } else {
         msg = '[txAdmin] ' + globals.translator.t('ban_messages.kick_permanent', tOptions);

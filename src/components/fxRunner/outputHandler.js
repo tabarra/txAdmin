@@ -7,7 +7,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helpers
 const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')); };
-const deferError = (m, t=500) => {
+const deferError = (m, t = 500) => {
     setTimeout(() => {
         logError(m);
     }, t);
@@ -28,7 +28,7 @@ module.exports = class OutputHandler {
         this.enableCmdBuffer = false;
         this.cmdBuffer = '';
         this.webConsoleBuffer = '';
-        this.webConsoleBufferSize = 128*1024; //128kb
+        this.webConsoleBufferSize = 128 * 1024; //128kb
         this.fileBuffer = '';
 
         //Start log file
@@ -39,7 +39,7 @@ module.exports = class OutputHandler {
         }
 
         //Cron Function
-        setInterval(this.saveLog.bind(this), saveInterval*1000);
+        setInterval(this.saveLog.bind(this), saveInterval * 1000);
     }
 
 
@@ -193,5 +193,4 @@ module.exports = class OutputHandler {
             }
         });
     }
-
 }; //Fim OutputHandler()

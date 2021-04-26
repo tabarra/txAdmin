@@ -34,7 +34,7 @@ module.exports = class Monitor {
             heartBeat: {
                 failThreshold: 15,
                 failLimit: 30,
-            }
+            },
         };
 
         //Setting up
@@ -56,7 +56,7 @@ module.exports = class Monitor {
         }, 1000);
         setInterval(() => {
             this.checkRestartSchedule();
-        }, 60*1000);
+        }, 60 * 1000);
     }
 
 
@@ -87,26 +87,26 @@ module.exports = class Monitor {
 
             const tOptions = {
                 smart_count: sub,
-                servername: globals.config.serverName
+                servername: globals.config.serverName,
             };
             return {
                 hour: time.getHours(),
                 minute: time.getMinutes(),
                 remaining: sub,
                 restart: false,
-                messages: (!sendMessage)? false : {
+                messages: (!sendMessage) ? false : {
                     chat: globals.translator.t('restarter.schedule_warn', tOptions),
                     discord: globals.translator.t('restarter.schedule_warn_discord', tOptions),
-                }
+                },
             };
         };
 
         const times = helpers.parseSchedule(this.config.restarterSchedule);
         const warnTimes = this.hardConfigs.defaultWarningTimes.concat(
             this.config.restarterScheduleWarnings.filter(
-                (item) => this.hardConfigs.defaultWarningTimes.indexOf(item) < 0
-            )
-        ).sort((a, b) => b-a);
+                (item) => this.hardConfigs.defaultWarningTimes.indexOf(item) < 0,
+            ),
+        ).sort((a, b) => b - a);
 
         const schedule = [];
         times.forEach((time)=>{
@@ -119,7 +119,7 @@ module.exports = class Monitor {
                     minute: time.minute,
                     remaining: 0,
                     restart: true,
-                    messages: false
+                    messages: false,
                 });
             } catch (error) {
                 const timeJSON = JSON.stringify(time);
@@ -128,7 +128,7 @@ module.exports = class Monitor {
         });
 
         if (GlobalData.verbose) dir(schedule.map(el => { return el.messages; }));
-        this.schedule = (schedule.length)? schedule : false;
+        this.schedule = (schedule.length) ? schedule : false;
     }
 
 
@@ -151,7 +151,7 @@ module.exports = class Monitor {
             if (!action) return;
 
             //Fire event
-            const cmd = formatCommand('txaEvent', 'scheduledRestart', JSON.stringify({secondsRemaining: action.remaining*60}));
+            const cmd = formatCommand('txaEvent', 'scheduledRestart', JSON.stringify({secondsRemaining: action.remaining * 60}));
             globals.fxRunner.srvCmd(cmd);
 
             //Perform scheduled action
@@ -159,7 +159,7 @@ module.exports = class Monitor {
                 const currTimestamp = currTime.getHours().toString().padStart(2, '0') + ':' + currTime.getMinutes().toString().padStart(2, '0');
                 this.restartFXServer(
                     `scheduled restart at ${currTimestamp}`,
-                    globals.translator.t('restarter.schedule_reason', {time: currTimestamp})
+                    globals.translator.t('restarter.schedule_reason', {time: currTimestamp}),
                 );
             } else if (action.messages) {
                 globals.discordBot.sendAnnouncement(action.messages.discord);
@@ -247,7 +247,7 @@ module.exports = class Monitor {
             responseType: 'json',
             responseEncoding: 'utf8',
             maxRedirects: 0,
-            timeout: this.hardConfigs.timeout
+            timeout: this.hardConfigs.timeout,
         };
 
         //Make request
@@ -295,15 +295,15 @@ module.exports = class Monitor {
         if (globals.fxRunner.fxChild === null) return this.resetMonitorStats();
 
         //Helper func
-        const cleanET = (et) => {return (et > 99999)? '--' : et;};
+        const cleanET = (et) => {return (et > 99999) ? '--' : et;};
 
         //Check if process was frozen
         const currTimestamp = now();
         const elapsedRefreshStatus = currTimestamp - this.lastRefreshStatus;
         if (this.lastRefreshStatus !== null && elapsedRefreshStatus > 10) {
-            globals.databus.txStatsData.freezeSeconds.push(elapsedRefreshStatus -1);
+            globals.databus.txStatsData.freezeSeconds.push(elapsedRefreshStatus - 1);
             if (globals.databus.txStatsData.freezeSeconds.length > 30) globals.databus.txStatsData.freezeSeconds.shift();
-            logError(`Due to VPS issues or DDoS, this FXServer was frozen for ${elapsedRefreshStatus -1} seconds.`);
+            logError(`Due to VPS issues or DDoS, this FXServer was frozen for ${elapsedRefreshStatus - 1} seconds.`);
             logError('Don\'t worry, txAdmin is preventing the server from being restarted.');
             this.lastRefreshStatus = currTimestamp;
             return;
@@ -332,7 +332,7 @@ module.exports = class Monitor {
         }
 
         //Now to the (un)fun part: if the status != healthy
-        this.currentStatus = (healthCheckFailed && heartBeatFailed)? 'OFFLINE' : 'PARTIAL';
+        this.currentStatus = (healthCheckFailed && heartBeatFailed) ? 'OFFLINE' : 'PARTIAL';
         const timesPrefix = `(HB:${cleanET(elapsedHeartBeat)}|HC:${cleanET(elapsedHealthCheck)})`;
         const elapsedLastWarning = currTimestamp - this.lastStatusWarningMessage;
 
@@ -360,7 +360,7 @@ module.exports = class Monitor {
             this.globalCounters.fullCrashes++;
             this.restartFXServer(
                 'server close detected',
-                globals.translator.t('restarter.crash_detected')
+                globals.translator.t('restarter.crash_detected'),
             );
             return;
         }
@@ -373,7 +373,7 @@ module.exports = class Monitor {
         ) {
             globals.discordBot.sendAnnouncement(globals.translator.t(
                 'restarter.partial_crash_warn_discord',
-                {servername: globals.config.serverName}
+                {servername: globals.config.serverName},
             ));
             const chatMsg = globals.translator.t('restarter.partial_crash_warn');
             globals.fxRunner.srvCmd(formatCommand('txaBroadcast', 'txAdmin', chatMsg));
@@ -400,21 +400,19 @@ module.exports = class Monitor {
                 globals.databus.txStatsData.bootSeconds.push(false);
                 this.restartFXServer(
                     `server failed to start within ${this.hardConfigs.maxHBCooldownTolerance} seconds`,
-                    globals.translator.t('restarter.start_timeout')
+                    globals.translator.t('restarter.start_timeout'),
                 );
-
             } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {
                 this.globalCounters.partialCrashes++;
                 this.restartFXServer(
                     'server partial crash detected',
-                    globals.translator.t('restarter.crash_detected')
+                    globals.translator.t('restarter.crash_detected'),
                 );
-
             } else {
                 this.globalCounters.fullCrashes++;
                 this.restartFXServer(
                     'server crash detected',
-                    globals.translator.t('restarter.crash_detected')
+                    globals.translator.t('restarter.crash_detected'),
                 );
             }
         }
@@ -434,7 +432,6 @@ module.exports = class Monitor {
                 globals.databus.txStatsData.heartBeatStats.httpFailed++;
             }
             this.lastSuccessfulFD3HeartBeat = tsNow;
-
         } else if (source === 'http') {
             //Sanity Check
             if (!Array.isArray(postData.players)) {
@@ -460,5 +457,4 @@ module.exports = class Monitor {
             this.lastSuccessfulHTTPHeartBeat = tsNow;
         }
     }
-
 }; //Fim Monitor()

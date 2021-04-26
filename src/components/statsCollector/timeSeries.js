@@ -71,7 +71,7 @@ module.exports = class TimeSeries {
         ) {
             this.log.push({
                 timestamp: currTs,
-                value: value
+                value: value,
             });
         }
 
@@ -96,6 +96,4 @@ module.exports = class TimeSeries {
 
         return outList;
     }
-
-
 }; //Fim TimeSeries()

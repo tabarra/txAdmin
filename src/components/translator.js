@@ -53,7 +53,7 @@ module.exports = class Translator {
                     logError(`Missing key '${key}' from translation file.`, 'Translator');
                     return key;
                 },
-                phrases
+                phrases,
             };
             this.polyglot = new Polyglot(polyglotOptions);
         } catch (error) {
@@ -77,7 +77,7 @@ module.exports = class Translator {
                     logError(`Missing key '${key}' from translation file.`, 'Translator');
                     return key;
                 },
-                phrases
+                phrases,
             };
             this.polyglot = new Polyglot(polyglotOptions);
         } catch (error) {
@@ -107,7 +107,7 @@ module.exports = class Translator {
             try {
                 return JSON.parse(fs.readFileSync(
                     `${GlobalData.dataPath}/locale/custom.json`,
-                    'utf8'
+                    'utf8',
                 ));
             } catch (error) {
                 throw new Error(`Failed to load '${GlobalData.dataPath}/locale/custom.json'. (${error.message})`);
@@ -135,5 +135,4 @@ module.exports = class Translator {
             return key;
         }
     }
-
 }; //Fim Translator()

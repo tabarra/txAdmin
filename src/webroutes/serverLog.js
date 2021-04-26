@@ -18,7 +18,7 @@ module.exports = async function ServerLog(ctx) {
         let renderData = {
             headerTitle: 'Server Log',
             offset: globals.databus.serverLog.length,
-            log
+            log,
         };
         return ctx.utils.render('serverLog', renderData);
 
@@ -55,7 +55,7 @@ function processLog(logArray) {
         ) {
             return;
         }
-        let time = new Date(parseInt(event.timestamp)*1000).toLocaleTimeString();
+        let time = new Date(parseInt(event.timestamp) * 1000).toLocaleTimeString();
         let source = processPlayerData(event.source);
         let eventMessage = processEventTypes(event);
         out += `[${time}] ${source} ${eventMessage}\n`;
@@ -98,10 +98,8 @@ function processEventTypes(event) {
     //TODO: normalize/padronize actions
     if (event.action === 'playerConnecting') {
         return 'connected';
-
     } else if (event.action === 'playerDropped') {
         return 'disconnected';
-
     } else if (event.action === 'ChatMessage') {
         let authorTag;
         if (typeof event.data.author === 'string' && event.data.author !== event.source.name) {
@@ -110,9 +108,8 @@ function processEventTypes(event) {
             authorTag = '';
         }
 
-        let text = (typeof event.data.text === 'string')? event.data.text.replace(/\^([0-9])/g, '') : 'unknownText';
+        let text = (typeof event.data.text === 'string') ? event.data.text.replace(/\^([0-9])/g, '') : 'unknownText';
         return xss(`${authorTag}: ${text}`);
-
     } else if (event.action === 'DeathNotice') {
         let cause = event.data.cause || 'unknown';
         if (event.data.killer) {
@@ -121,22 +118,17 @@ function processEventTypes(event) {
         } else {
             return `died from ${xss(cause)}`;
         }
-
     } else if (event.action === 'explosionEvent') {
         let expType = event.data.explosionType || 'UNKNOWN';
         return `caused an explosion (${expType})`;
-
     } else if (event.action === 'CommandExecuted') {
         let command = event.data || 'unknown';
         return `executed: /${xss(command)}`;
-
     } else if (event.action === 'txAdminClient:Started') {
         return 'txAdminClient Logger started';
-
     } else if (event.action === 'DebugMessage') {
         let message = event.data || 'unknown';
         return `txAdminClient Debug Message: <span class="text-warning">${xss(message)}</span>`;
-
     } else {
         if (GlobalData.verbose) {
             logWarn(`Unrecognized event: ${event.action}`);

@@ -107,7 +107,7 @@ const awaitMasterPin = new Promise((resolve, reject) => {
     const interval = setInterval(() => {
         if (globals.authenticator && globals.authenticator.admins !== null) {
             clearInterval(interval);
-            const pin = (globals.authenticator.admins === false)? globals.authenticator.addMasterPin : false;
+            const pin = (globals.authenticator.admins === false) ? globals.authenticator.addMasterPin : false;
             resolve(pin);
         }
     }, 150);

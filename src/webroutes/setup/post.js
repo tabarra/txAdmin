@@ -21,7 +21,7 @@ const getPotentialServerDataFolders = (source) => {
     try {
         return getDirectories(source)
             .filter(dirent => getDirectories(path.join(source, dirent)).includes('resources'))
-            .map(dirent => slash(path.join(source, dirent))+'/');
+            .map(dirent => slash(path.join(source, dirent)) + '/');
     } catch (error) {
         if (GlobalData.verbose) logWarn(`Failed to find server data folder with message: ${error.message}`);
         return [];
@@ -55,7 +55,7 @@ module.exports = async function SetupPost(ctx) {
     if (!ctx.utils.checkPermission('all_permissions', modulename)) {
         return ctx.send({
             success: false,
-            message: 'You need to be the admin master to use the setup page.'
+            message: 'You need to be the admin master to use the setup page.',
         });
     }
 
@@ -66,39 +66,31 @@ module.exports = async function SetupPost(ctx) {
     ) {
         return ctx.send({
             success: false,
-            refresh: true
+            refresh: true,
         });
     }
 
     //Delegate to the specific action functions
     if (action == 'validateRecipeURL') {
         return await handleValidateRecipeURL(ctx);
-
     } else if (action == 'validateLocalDeployPath') {
         return await handleValidateLocalDeployPath(ctx);
-
     } else if (action == 'validateLocalDataFolder') {
         return await handleValidateLocalDataFolder(ctx);
-
     } else if (action == 'validateCFGFile') {
         return await handleValidateCFGFile(ctx);
-
     } else if (action == 'save' && ctx.request.body.type == 'popular') {
         return await handleSaveDeployerImport(ctx);
-
     } else if (action == 'save' && ctx.request.body.type == 'remote') {
         return await handleSaveDeployerImport(ctx);
-
     } else if (action == 'save' && ctx.request.body.type == 'custom') {
         return await handleSaveDeployerCustom(ctx);
-
     } else if (action == 'save' && ctx.request.body.type == 'local') {
         return await handleSaveLocal(ctx);
-
     } else {
         return ctx.send({
             success: false,
-            message: 'Unknown setup action.'
+            message: 'Unknown setup action.',
         });
     }
 };
@@ -122,7 +114,7 @@ async function handleValidateRecipeURL(ctx) {
             url: recipeURL,
             method: 'get',
             responseEncoding: 'utf8',
-            timeout: 4500
+            timeout: 4500,
         });
         if (typeof res.data !== 'string') throw new Error('This URL did not return a string.');
         const recipe = parseValidateRecipe(res.data);
@@ -167,7 +159,7 @@ async function handleValidateLocalDataFolder(ctx) {
     if (isUndefined(ctx.request.body.dataFolder)) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
-    const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim()+'/'));
+    const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim() + '/'));
     if (dataFolderPath.includes(' ')) {
         return ctx.send({success: false, message: 'The path cannot contain spaces.'});
     }
@@ -210,11 +202,10 @@ async function handleValidateLocalDataFolder(ctx) {
 
             //really invalid :(
             throw new Error("Couldn't locate or read a resources folder inside of the path provided.");
-
         } else {
             return ctx.send({
                 success: true,
-                detectedConfig: helpers.findLikelyCFGPath(dataFolderPath)
+                detectedConfig: helpers.findLikelyCFGPath(dataFolderPath),
             });
         }
     } catch (error) {
@@ -282,8 +273,8 @@ async function handleSaveLocal(ctx) {
     //Prepare body input
     const cfg = {
         name: ctx.request.body.name.trim(),
-        dataFolder: slash(path.normalize(ctx.request.body.dataFolder+'/')),
-        cfgFile: slash(path.normalize(ctx.request.body.cfgFile))
+        dataFolder: slash(path.normalize(ctx.request.body.dataFolder + '/')),
+        cfgFile: slash(path.normalize(ctx.request.body.cfgFile)),
     };
 
     //Validating path spaces
@@ -364,7 +355,7 @@ async function handleSaveDeployerImport(ctx) {
     const isTrustedSource = (ctx.request.body.isTrustedSource === 'true');
     const serverName = ctx.request.body.name.trim();
     const recipeURL = ctx.request.body.recipeURL.trim();
-    const targetPath = slash(path.normalize(ctx.request.body.targetPath+'/'));
+    const targetPath = slash(path.normalize(ctx.request.body.targetPath + '/'));
     const deploymentID = ctx.request.body.deploymentID;
 
     //Get recipe
@@ -374,7 +365,7 @@ async function handleSaveDeployerImport(ctx) {
             url: recipeURL,
             method: 'get',
             responseEncoding: 'utf8',
-            timeout: 4500
+            timeout: 4500,
         });
         if (typeof res.data !== 'string') throw new Error('This URL did not return a string.');
         recipeData = res.data;
@@ -421,7 +412,7 @@ async function handleSaveDeployerCustom(ctx) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const serverName = ctx.request.body.name.trim();
-    const targetPath = slash(path.normalize(ctx.request.body.targetPath+'/'));
+    const targetPath = slash(path.normalize(ctx.request.body.targetPath + '/'));
     const deploymentID = ctx.request.body.deploymentID;
     const customMetaData = {
         author: ctx.session.auth.username,

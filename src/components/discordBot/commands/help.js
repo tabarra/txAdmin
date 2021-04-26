@@ -6,7 +6,6 @@ const { dir, log, logOk, logWarn, logError } = require('../../../extras/console'
 module.exports = {
     description: 'Prints a list of commands',
     async execute(message, args) {
-
         //Prepare description
         let cmdDescs = [];
         globals.discordBot.commands.each((cmd, name) => {
@@ -21,7 +20,7 @@ module.exports = {
         ];
         const outMsg = new RichEmbed({
             color: 0x4287F5,
-            description: descLines.join('\n')
+            description: descLines.join('\n'),
         });
         return await message.channel.send(outMsg);
     },

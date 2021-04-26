@@ -12,7 +12,7 @@ const recipeEngine = require('./recipeEngine');
 //Helper functions
 const getTimestamp = () => { return dateFormat(new Date(), 'HH:MM:ss'); };
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
-const toDefault = (input, defVal) => { return (isUndefined(input))? defVal : input; };
+const toDefault = (input, defVal) => { return (isUndefined(input)) ? defVal : input; };
 const canCreateFile = async (targetPath) => {
     try {
         const filePath = path.join(targetPath, '.empty');
@@ -117,9 +117,9 @@ const parseValidateRecipe = (rawRecipe) => {
     //Validate tasks
     if (!Array.isArray(recipe.tasks)) throw new Error('no tasks array found');
     recipe.tasks.forEach((task, index) => {
-        if (typeof task.action !== 'string') throw new Error(`[task${index+1}] no action specified`);
-        if (typeof recipeEngine[task.action] === 'undefined') throw new Error(`[task${index+1}] unknown action '${task.action}'`);
-        if (!recipeEngine[task.action].validate(task)) throw new Error(`[task${index+1}:${task.action}] invalid parameters`);
+        if (typeof task.action !== 'string') throw new Error(`[task${index + 1}] no action specified`);
+        if (typeof recipeEngine[task.action] === 'undefined') throw new Error(`[task${index + 1}] unknown action '${task.action}'`);
+        if (!recipeEngine[task.action].validate(task)) throw new Error(`[task${index + 1}:${task.action}] invalid parameters`);
         outRecipe.tasks.push(task);
     });
 
@@ -150,7 +150,7 @@ class Deployer {
      * @param {string} deployPath
      * @param {boolean} isTrustedSource
      */
-    constructor(originalRecipe, deploymentID, deployPath, isTrustedSource, customMetaData={}) {
+    constructor(originalRecipe, deploymentID, deployPath, isTrustedSource, customMetaData = {}) {
         log('Deployer instance ready.');
 
         //Setup variables
@@ -264,16 +264,16 @@ class Deployer {
 
         //Run all the tasks
         for (let index = 0; index < this.recipe.tasks.length; index++) {
-            this.progress = Math.round((index/this.recipe.tasks.length)*100);
+            this.progress = Math.round((index / this.recipe.tasks.length) * 100);
             const task = this.recipe.tasks[index];
-            const taskID = `[task${index+1}:${task.action}]`;
+            const taskID = `[task${index + 1}:${task.action}]`;
             this.log(`Running ${taskID}...`);
 
             try {
                 await recipeEngine[task.action].run(task, this.deployPath, contextVariables);
-                this.logLines[this.logLines.length -1] += ' ✔️';
+                this.logLines[this.logLines.length - 1] += ' ✔️';
             } catch (error) {
-                this.logLines[this.logLines.length -1] += ' ❌';
+                this.logLines[this.logLines.length - 1] += ' ❌';
                 const msg = `${taskID} failed!\n`
                         + `Message: ${error.message}\n`
                         + 'Options: \n'
@@ -328,5 +328,5 @@ module.exports = {
     Deployer,
     validateTargetPath,
     parseValidateRecipe,
-    engineVersion
+    engineVersion,
 };

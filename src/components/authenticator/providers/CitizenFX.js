@@ -28,9 +28,9 @@ module.exports = class CitizenFXProvider {
             this.client = new fivemIssuer.Client({
                 client_id: 'txadmin_test',
                 client_secret: 'txadmin_test',
-                response_types: ['openid']
+                response_types: ['openid'],
             });
-            this.client[custom.clock_tolerance] = 2*60*60; //Two hours due to the DST change. Reduce to 300s.
+            this.client[custom.clock_tolerance] = 2 * 60 * 60; //Two hours due to the DST change. Reduce to 300s.
             custom.setHttpOptionsDefaults({
                 timeout: 4500,
             });
@@ -58,7 +58,7 @@ module.exports = class CitizenFXProvider {
             redirect_uri: redirectUri,
             state: state,
             response_type: 'code',
-            scope: 'openid identify'
+            scope: 'openid identify',
         });
         if (typeof url !== 'string') throw new Error('url is not string');
         return url;
@@ -127,9 +127,8 @@ module.exports = class CitizenFXProvider {
             provider: 'citizenfx',
             provider_uid: userInfo.name,
             // expires_at: tokenSet.expires_at,
-            expires_at: Math.round(Date.now()/1000) + 86400,
-            picture: userInfo.picture
+            expires_at: Math.round(Date.now() / 1000) + 86400,
+            picture: userInfo.picture,
         };
     }
-
 }; //Fim CitizenFXProvider()

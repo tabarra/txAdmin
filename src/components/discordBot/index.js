@@ -104,8 +104,8 @@ module.exports = class DiscordBot {
         this.client = new Discord.Client({
             autoReconnect:true,
             http: {
-                host: 'https://discord.com'
-            }
+                host: 'https://discord.com',
+            },
         });
 
         //Set mutex to prevent spamming /help on reconnections
@@ -133,7 +133,7 @@ module.exports = class DiscordBot {
                 ];
                 const msg = new Discord.RichEmbed({
                     color: 0x4287F5,
-                    description: descLines.join('\n')
+                    description: descLines.join('\n'),
                 });
                 this.announceChannel.send(msg);
                 this.latestMutex = currentMutex;
@@ -190,7 +190,7 @@ module.exports = class DiscordBot {
         }
 
         //Increment usage stats
-        this.usageStats[commandName] = (typeof this.usageStats[commandName] == 'undefined')? 1 : this.usageStats[commandName] + 1;
+        this.usageStats[commandName] = (typeof this.usageStats[commandName] == 'undefined') ? 1 : this.usageStats[commandName] + 1;
 
         //Executing command
         try {
@@ -211,5 +211,4 @@ module.exports = class DiscordBot {
     //     dir(testUser)
     //     dir(testUser.avatarURL)
     // }
-
 }; //Fim DiscordBot()

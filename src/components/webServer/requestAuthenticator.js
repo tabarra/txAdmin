@@ -81,7 +81,7 @@ const authLogic = (sess, perm, epType) => {
         typeof sess.auth.username !== 'undefined' &&
         typeof sess.auth.expires_at !== 'undefined'
     ) {
-        let now = Math.round(Date.now()/1000);
+        let now = Math.round(Date.now() / 1000);
         if (sess.auth.expires_at === false || now < sess.auth.expires_at) {
             try {
                 let admin = globals.authenticator.getAdminByName(sess.auth.username);
@@ -125,5 +125,5 @@ const authLogic = (sess, perm, epType) => {
 //================================================================
 module.exports = {
     requestAuth,
-    authLogic
+    authLogic,
 };

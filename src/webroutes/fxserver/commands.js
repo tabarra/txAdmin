@@ -29,7 +29,7 @@ module.exports = async function FXServerCommands(ctx) {
     if (globals.fxRunner.fxChild === null) {
         return ctx.send({
             type: 'danger',
-            message: '<b>Cannot execute this action with the server offline.</b>'
+            message: '<b>Cannot execute this action with the server offline.</b>',
         });
     }
 
@@ -38,7 +38,7 @@ module.exports = async function FXServerCommands(ctx) {
     if (unsafeActions.includes(action) && parameter.includes('runcode')) {
         return ctx.send({
             type: 'danger',
-            message: '<b>Error:</b> The resource "runcode" might be unsafe. <br> If you know what you are doing, run it via the Live Console.'
+            message: '<b>Error:</b> The resource "runcode" might be unsafe. <br> If you know what you are doing, run it via the Live Console.',
         });
     }
 
@@ -134,12 +134,12 @@ module.exports = async function FXServerCommands(ctx) {
         if (toResp.includes('Pong!')) {
             return ctx.send({
                 type: 'success',
-                message: `<b>txAdminClient is running!</b><br> <pre>${xss(toResp)}</pre>`
+                message: `<b>txAdminClient is running!</b><br> <pre>${xss(toResp)}</pre>`,
             });
         } else {
             return ctx.send({
                 type: 'danger',
-                message: `<b>txAdminClient is not running!</b><br> <pre>${xss(toResp)}</pre>`
+                message: `<b>txAdminClient is not running!</b><br> <pre>${xss(toResp)}</pre>`,
             });
         }
 
@@ -148,7 +148,7 @@ module.exports = async function FXServerCommands(ctx) {
         ctx.utils.logCommand('Unknown action!');
         return ctx.send({
             type: 'danger',
-            message: 'Unknown Action.'
+            message: 'Unknown Action.',
         });
     }
 };
@@ -162,10 +162,10 @@ module.exports = async function FXServerCommands(ctx) {
  * @param {string} msg
  */
 async function sendAlertOutput(ctx, toResp) {
-    toResp = (toResp.length)? xss(toResp) : 'no output';
+    toResp = (toResp.length) ? xss(toResp) : 'no output';
     return ctx.send({
         type: 'warning',
-        message: `<b>Output:</b><br> <pre>${toResp}</pre>`
+        message: `<b>Output:</b><br> <pre>${toResp}</pre>`,
     });
 }
 
@@ -182,7 +182,7 @@ function ensurePermission(ctx, perm) {
     } else {
         ctx.send({
             type: 'danger',
-            message: 'You don\'t have permission to execute this action.'
+            message: 'You don\'t have permission to execute this action.',
         });
         return false;
     }

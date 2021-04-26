@@ -37,7 +37,7 @@ module.exports = async function AddMaster(ctx) {
     } else {
         return ctx.send({
             type: 'danger',
-            message: 'Unknown action.'
+            message: 'Unknown action.',
         });
     }
 };
@@ -77,7 +77,7 @@ async function handlePin(ctx) {
         return returnJustMessage(
             ctx,
             'Failed to generate callback URL with error:',
-            error.message
+            error.message,
         );
     }
 }
@@ -105,19 +105,19 @@ async function handleCallback(ctx) {
             return returnJustMessage(
                 ctx,
                 'Please Update/Synchronize your VPS clock.',
-                'Failed to login because this host\'s time is wrong. Please make sure to synchronize it with the internet.'
+                'Failed to login because this host\'s time is wrong. Please make sure to synchronize it with the internet.',
             );
         } else if (error.code === 'ETIMEDOUT') {
             return returnJustMessage(
                 ctx,
                 'Connection to FiveM servers timed out:',
-                'Failed to verify your login with FiveM\'s identity provider. Please try again or check your connection to the internet.'
+                'Failed to verify your login with FiveM\'s identity provider. Please try again or check your connection to the internet.',
             );
         } else if (error.message.startsWith('state mismatch')) {
             return returnJustMessage(
                 ctx,
                 'Invalid Browser Session.',
-                'You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.'
+                'You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.',
             );
         } else {
             return returnJustMessage(ctx, 'Code Exchange error:', error.message);
@@ -133,7 +133,7 @@ async function handleCallback(ctx) {
         return returnJustMessage(
             ctx,
             'Get UserInfo error:',
-            error.message
+            error.message,
         );
     }
 
@@ -144,7 +144,7 @@ async function handleCallback(ctx) {
     return ctx.utils.render('login', {
         template: 'callback',
         addMaster_name: userInfo.name,
-        addMaster_picture: (userInfo.picture)? userInfo.picture : 'img/default_avatar.png'
+        addMaster_picture: (userInfo.picture) ? userInfo.picture : 'img/default_avatar.png',
     });
 }
 
@@ -181,7 +181,7 @@ async function handleSave(ctx) {
         return returnJustMessage(
             ctx,
             'Invalid Session.',
-            'You may have restarted txAdmin right before entering this page. Please try again.'
+            'You may have restarted txAdmin right before entering this page. Please try again.',
         );
     }
 
@@ -194,7 +194,7 @@ async function handleSave(ctx) {
         return returnJustMessage(
             ctx,
             'Invalid nameid identifier.',
-            `Could not extract the user identifier from the URL below. Please report this to the txAdmin dev team.\n${ctx.session.tmpAddMasterUserInfo.nameid.toString()}`
+            `Could not extract the user identifier from the URL below. Please report this to the txAdmin dev team.\n${ctx.session.tmpAddMasterUserInfo.nameid.toString()}`,
         );
     }
 
@@ -209,7 +209,7 @@ async function handleSave(ctx) {
         return returnJustMessage(
             ctx,
             'Error:',
-            error.message
+            error.message,
         );
     }
 
@@ -217,7 +217,7 @@ async function handleSave(ctx) {
     try {
         ctx.session.auth = await globals.authenticator.providers.citizenfx.getUserSession(
             ctx.session.tmpAddMasterTokenSet,
-            ctx.session.tmpAddMasterUserInfo
+            ctx.session.tmpAddMasterUserInfo,
         );
         ctx.session.auth.username = ctx.session.tmpAddMasterUserInfo.name;
         delete ctx.session.tmpAddMasterTokenSet;
@@ -228,7 +228,7 @@ async function handleSave(ctx) {
         return returnJustMessage(
             ctx,
             'Failed to login:',
-            error.message
+            error.message,
         );
     }
 

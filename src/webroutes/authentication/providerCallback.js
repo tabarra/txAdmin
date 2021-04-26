@@ -36,7 +36,7 @@ module.exports = async function ProviderCallback(ctx) {
         return returnJustMessage(
             ctx,
             'This link has expired.',
-            'Please refresh the page and try again.'
+            'Please refresh the page and try again.',
         );
     }
 
@@ -51,19 +51,19 @@ module.exports = async function ProviderCallback(ctx) {
             return returnJustMessage(
                 ctx,
                 'Please Update/Synchronize your VPS clock.',
-                'Failed to login because this host\'s time is wrong. Please make sure to synchronize it with the internet.'
+                'Failed to login because this host\'s time is wrong. Please make sure to synchronize it with the internet.',
             );
         } else if (error.code === 'ETIMEDOUT') {
             return returnJustMessage(
                 ctx,
                 'Connection to FiveM servers timed out:',
-                'Please try again or login using your existing username and backup password.'
+                'Please try again or login using your existing username and backup password.',
             );
         } else if (error.message.startsWith('state mismatch')) {
             return returnJustMessage(
                 ctx,
                 'Invalid Browser Session.',
-                'You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.'
+                'You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.',
             );
         } else {
             return returnJustMessage(ctx, 'Code Exchange error:', error.message);
@@ -88,7 +88,7 @@ module.exports = async function ProviderCallback(ctx) {
         return returnJustMessage(
             ctx,
             'Invalid nameid identifier.',
-            `Could not extract the user identifier from the URL below. Please report this to the txAdmin dev team.\n${userInfo.nameid.toString()}`
+            `Could not extract the user identifier from the URL below. Please report this to the txAdmin dev team.\n${userInfo.nameid.toString()}`,
         );
     }
 
@@ -100,7 +100,7 @@ module.exports = async function ProviderCallback(ctx) {
             return returnJustMessage(
                 ctx,
                 `The account '${userInfo.name}' is not an admin.`,
-                'This CitizenFX username is not assigned to any registered account. You can also try to login using your username and backup password.'
+                'This CitizenFX username is not assigned to any registered account. You can also try to login using your username and backup password.',
             );
         }
 

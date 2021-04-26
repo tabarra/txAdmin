@@ -29,11 +29,11 @@ module.exports = class HostCPUStatus {
             if (this.samples[i].total > 0) {
                 percent += (100 - Math.round(100 * this.samples[i].idle / this.samples[i].total));
             }
-            if (cnt == 100)       result.last10  = (percent/cnt).toFixed();   //10 segundos
-            else if (cnt == 300)  result.last30  = (percent/cnt).toFixed();  //30 segundos
+            if (cnt == 100)       result.last10  = (percent / cnt).toFixed();   //10 segundos
+            else if (cnt == 300)  result.last30  = (percent / cnt).toFixed();  //30 segundos
         }
 
-        result.full = (cnt)? (percent/cnt).toFixed() : null;
+        result.full = (cnt) ? (percent / cnt).toFixed() : null;
         return result;
     }
 
@@ -44,7 +44,7 @@ module.exports = class HostCPUStatus {
      */
     getSamples() {
         let currCpus = os.cpus();
-        for (var i=0,len=currCpus.length;i<len;i++) {
+        for (var i = 0,len = currCpus.length;i < len;i++) {
             var prevCpu = this.prevCpus[i];
             var currCpu = currCpus[i];
             var deltas = {total:0};
@@ -57,8 +57,6 @@ module.exports = class HostCPUStatus {
         }
         this.prevCpus = currCpus;
         this.samples.push(deltas);
-        if (this.samples.length>300) this.samples.shift();
+        if (this.samples.length > 300) this.samples.shift();
     }
-
-
 }; //Fim HostCPUStatus()

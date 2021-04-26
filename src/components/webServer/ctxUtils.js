@@ -25,27 +25,27 @@ const getRenderErrorText = (view, error, data) => {
 };
 const getWebViewPath = (view) => {
     if (view.includes('..')) throw new Error('Path Traversal?');
-    return path.join(GlobalData.txAdminResourcePath, 'web', view+'.html');
+    return path.join(GlobalData.txAdminResourcePath, 'web', view + '.html');
 };
 
 //Squirrelly Filters
 sqrl.filters.define('isSelected', (x)=>{
-    return (x)? 'selected' : '';
+    return (x) ? 'selected' : '';
 });
 sqrl.filters.define('isActive', (x)=>{
-    return (x)? 'active' : '';
+    return (x) ? 'active' : '';
 });
 sqrl.filters.define('tShow', (x)=>{
-    return (x)? `show ${x}` : '';
+    return (x) ? `show ${x}` : '';
 });
 sqrl.filters.define('isDisabled', (x)=>{
-    return (x)? 'disabled' : '';
+    return (x) ? 'disabled' : '';
 });
 sqrl.filters.define('undef', (x)=>{
-    return (isUndefined(x) || x == 'undefined')? '' : x;
+    return (isUndefined(x) || x == 'undefined') ? '' : x;
 });
 sqrl.filters.define('unnull', (x)=>{
-    return (isUndefined(x) || x == 'null')? '' : x;
+    return (isUndefined(x) || x == 'null') ? '' : x;
 });
 sqrl.filters.define('escapeBackTick', (x)=>{
     return x.replace(/`/, '\\`');
@@ -54,7 +54,7 @@ sqrl.filters.define('base64', (x)=>{
     return Buffer.from(x).toString('base64');
 });
 sqrl.filters.define('ternary', (x)=>{
-    return (x[0])? x[1] : x[2];
+    return (x[0]) ? x[1] : x[2];
 });
 
 //================================================================
@@ -65,15 +65,15 @@ sqrl.filters.define('ternary', (x)=>{
  */
 async function renderMasterView(view, reqSess, data, txVars) {
     if (isUndefined(data)) data = {};
-    data.uiTheme = (txVars.darkMode)? 'theme--dark' : '';
-    data.headerTitle = (!isUndefined(data.headerTitle))? `${data.headerTitle} - txAdmin` : 'txAdmin';
+    data.uiTheme = (txVars.darkMode) ? 'theme--dark' : '';
+    data.headerTitle = (!isUndefined(data.headerTitle)) ? `${data.headerTitle} - txAdmin` : 'txAdmin';
     data.serverProfile = globals.info.serverProfile;
     data.txAdminVersion = GlobalData.txAdminVersion;
     data.txAdminOutdated = (now() > GlobalData.txAdminVersionBestBy);
-    data.fxServerVersion = (GlobalData.isZapHosting)? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion;
+    data.fxServerVersion = (GlobalData.isZapHosting) ? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion;
     data.adminIsMaster = (reqSess && reqSess.auth && reqSess.auth.username && reqSess.auth.master === true);
-    data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username)? reqSess.auth.username : 'unknown user';
-    data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture)? reqSess.auth.picture : 'img/default_avatar.png';
+    data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username) ? reqSess.auth.username : 'unknown user';
+    data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture) ? reqSess.auth.picture : 'img/default_avatar.png';
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
     data.isLinux = (GlobalData.osType == 'linux');
     data.showAdvanced = (GlobalData.isAdvancedUser || GlobalData.verbose);
@@ -84,7 +84,7 @@ async function renderMasterView(view, reqSess, data, txVars) {
         const [rawHeader, rawFooter, rawView] = await Promise.all([
             fs.readFile(getWebViewPath('basic/header'), 'utf8'),
             fs.readFile(getWebViewPath('basic/footer'), 'utf8'),
-            fs.readFile(getWebViewPath(view), 'utf8')
+            fs.readFile(getWebViewPath(view), 'utf8'),
         ]);
         sqrl.templates.define('header', sqrl.compile(rawHeader));
         sqrl.templates.define('footer', sqrl.compile(rawFooter));
@@ -110,8 +110,8 @@ async function renderMasterView(view, reqSess, data, txVars) {
  */
 async function renderLoginView(data, txVars) {
     if (isUndefined(data)) data = {};
-    data.uiTheme = (txVars.darkMode)? 'theme--dark' : '';
-    data.logoURL = (GlobalData.loginPageLogo)? GlobalData.loginPageLogo : 'img/txadmin.png';
+    data.uiTheme = (txVars.darkMode) ? 'theme--dark' : '';
+    data.logoURL = (GlobalData.loginPageLogo) ? GlobalData.loginPageLogo : 'img/txadmin.png';
     data.isMatrix = (Math.random() <= 0.05);
     data.ascii = helpers.txAdminASCII();
     data.message = data.message || '';
@@ -120,7 +120,7 @@ async function renderLoginView(data, txVars) {
     data.template = data.template || 'normal';
     data.serverProfile = globals.info.serverProfile;
     data.txAdminVersion = GlobalData.txAdminVersion;
-    data.fxServerVersion = (GlobalData.isZapHosting)? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion;
+    data.fxServerVersion = (GlobalData.isZapHosting) ? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion;
     data.serverName = globals.config.serverName || globals.info.serverProfile;
     data.dynamicAd = globals.dynamicAds.pick('login');
 
@@ -151,7 +151,7 @@ async function renderLoginView(data, txVars) {
  */
 async function renderSoloView(view, data, txVars) {
     if (isUndefined(data)) data = {};
-    data.uiTheme = (txVars.darkMode)? 'theme--dark' : '';
+    data.uiTheme = (txVars.darkMode) ? 'theme--dark' : '';
     let out;
     try {
         let rawView = await fs.readFile(getWebViewPath(view), 'utf8');
@@ -215,7 +215,6 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true) {
             if (GlobalData.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
-
     } catch (error) {
         if (GlobalData.verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
         return false;
@@ -228,7 +227,7 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true) {
 module.exports = async function WebCtxUtils(ctx, next) {
     //Prepare variables
     ctx.txVars = {
-        darkMode: (ctx.cookies.get('txAdmin-darkMode') === 'true')
+        darkMode: (ctx.cookies.get('txAdmin-darkMode') === 'true'),
     };
     const host = ctx.request.host || 'none';
     if (host.startsWith('127.0.0.1') || host.startsWith('localhost')) {
@@ -268,7 +267,7 @@ module.exports = async function WebCtxUtils(ctx, next) {
         ctx.body = {
             status: 'error',
             code: parseInt(httpStatus),
-            message
+            message,
         };
     };
 

@@ -89,21 +89,18 @@ module.exports = class FXRunner {
                     '--',
                     `${alpinePath}/opt/cfx-server/FXServer`,
                     '+set', 'citizen_dir', `${alpinePath}/opt/cfx-server/citizen/`,
-                    ...cmdArgs
-                ]
+                    ...cmdArgs,
+                ],
             };
-
         } else if (GlobalData.osType === 'windows') {
             this.spawnVariables = {
                 command: `${GlobalData.fxServerPath}/FXServer.exe`,
-                args: cmdArgs
+                args: cmdArgs,
             };
-
         } else {
             logError(`OS type not supported: ${GlobalData.osType}`);
             process.exit();
         }
-
     }//Final setupVariables()
 
 
@@ -184,8 +181,8 @@ module.exports = class FXRunner {
                 this.spawnVariables.args,
                 {
                     cwd: this.config.serverDataPath,
-                    stdio: [ 'pipe', 'pipe', 'pipe', 'pipe' ]
-                }
+                    stdio: [ 'pipe', 'pipe', 'pipe', 'pipe' ],
+                },
             );
             if (typeof this.fxChild.pid === 'undefined') {
                 throw new Error(`Executon of "${this.spawnVariables.command}" failed.`);
@@ -199,11 +196,10 @@ module.exports = class FXRunner {
                     start: now(),
                     kill: false,
                     exit: false,
-                    close: false
-                }
+                    close: false,
+                },
             });
             historyIndex = this.history.length - 1;
-
         } catch (error) {
             logError('Failed to start FXServer with the following error:');
             dir(error);
@@ -267,7 +263,7 @@ module.exports = class FXRunner {
             if (typeof tReason === 'string') {
                 const tOptions = {
                     servername: globals.config.serverName,
-                    reason: tReason
+                    reason: tReason,
                 };
                 const kickMessage = globals.translator.t('server_actions.restarting', tOptions);
                 this.srvCmd(formatCommand('quit', kickMessage));
@@ -304,7 +300,7 @@ module.exports = class FXRunner {
             if (typeof tReason === 'string') {
                 let tOptions = {
                     servername: globals.config.serverName,
-                    reason: tReason
+                    reason: tReason,
                 };
                 let discordMessage = globals.translator.t('server_actions.stopping_discord', tOptions);
                 globals.discordBot.sendAnnouncement(discordMessage);
@@ -361,7 +357,7 @@ module.exports = class FXRunner {
     async srvCmdBuffer(command, bufferTime) {
         if (typeof command !== 'string') throw new Error('Expected String!');
         if (this.fxChild === null) return false;
-        bufferTime = (bufferTime !== undefined)? bufferTime : 1500;
+        bufferTime = (bufferTime !== undefined) ? bufferTime : 1500;
         this.outputHandler.cmdBuffer = '';
         this.outputHandler.enableCmdBuffer = true;
         let result = this.srvCmd(command);
@@ -427,5 +423,4 @@ module.exports = class FXRunner {
 
         return now() - curr.timestamps.start;
     }
-
 }; //Fim FXRunner()

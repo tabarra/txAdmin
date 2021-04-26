@@ -35,7 +35,7 @@ module.exports = class Authenticator {
         try {
             this.providers = {
                 discord: 'xxxxx',
-                citizenfx: new CitizenFXProvider(null)
+                citizenfx: new CitizenFXProvider(null),
             };
         } catch (error) {
             throw new Error(`Failed to load providers with error: ${error.message}`);
@@ -52,13 +52,12 @@ module.exports = class Authenticator {
         //Printing PIN or starting loop
         if (!adminFileExists) {
             if (!GlobalData.defaultMasterAccount) {
-                this.addMasterPin = (Math.random()*10000).toFixed().padStart(4, '0');
+                this.addMasterPin = (Math.random() * 10000).toFixed().padStart(4, '0');
                 this.admins = false;
             } else {
                 log(`Setting up master account '${GlobalData.defaultMasterAccount.name}'. The password is the same as in zap-hosting.com.`);
                 this.createAdminsFile(GlobalData.defaultMasterAccount.name, false, false, GlobalData.defaultMasterAccount.password_hash, false);
             }
-
         } else {
             this.refreshAdmins(true);
             this.setupRefreshRoutine();
@@ -99,15 +98,15 @@ module.exports = class Authenticator {
             providers.citizenfx = {
                 id: username,
                 identifier,
-                data: provider_data
+                data: provider_data,
             };
         }
         this.admins = [{
             name: username,
             master: true,
-            password_hash: (isPlainText)? GetPasswordHash(password) : password,
+            password_hash: (isPlainText) ? GetPasswordHash(password) : password,
             providers,
-            permissions: []
+            permissions: [],
         }];
 
         //Saving admin file
@@ -135,7 +134,7 @@ module.exports = class Authenticator {
                 name: user.name,
                 master: user.master,
                 providers: Object.keys(user.providers),
-                permissions: user.permissions
+                permissions: user.permissions,
             };
             return out;
         });
@@ -155,7 +154,7 @@ module.exports = class Authenticator {
                 return (id === user.providers[provider].id.toLowerCase());
             });
         });
-        return (admin)? cloneDeep(admin) : false;
+        return (admin) ? cloneDeep(admin) : false;
     }
 
 
@@ -171,7 +170,7 @@ module.exports = class Authenticator {
         const admin = this.admins.find((user) => {
             return (username === user.name.toLowerCase());
         });
-        return (admin)? cloneDeep(admin) : false;
+        return (admin) ? cloneDeep(admin) : false;
     }
 
 
@@ -217,7 +216,7 @@ module.exports = class Authenticator {
             admin.providers.citizenfx = {
                 id: citizenfxData.id,
                 identifier: citizenfxData.identifier,
-                data: {}
+                data: {},
             };
         }
         if (discordData) {
@@ -226,7 +225,7 @@ module.exports = class Authenticator {
             admin.providers.discord = {
                 id: discordData.id,
                 identifier: discordData.identifier,
-                data: {}
+                data: {},
             };
         }
 
@@ -273,7 +272,7 @@ module.exports = class Authenticator {
                 this.admins[adminIndex].providers.citizenfx = {
                     id: citizenfxData.id,
                     identifier: citizenfxData.identifier,
-                    data: {}
+                    data: {},
                 };
             }
         }
@@ -284,7 +283,7 @@ module.exports = class Authenticator {
                 this.admins[adminIndex].providers.discord = {
                     id: discordData.id,
                     identifier: discordData.identifier,
-                    data: {}
+                    data: {},
                 };
             }
         }
@@ -293,7 +292,7 @@ module.exports = class Authenticator {
         //Saving admin file
         try {
             await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
-            return (password !== null)? this.admins[adminIndex].password_hash : true;
+            return (password !== null) ? this.admins[adminIndex].password_hash : true;
         } catch (error) {
             if (GlobalData.verbose) logError(error.message);
             throw new Error(`Failed to save '${this.adminsFile}'`);
@@ -428,5 +427,4 @@ module.exports = class Authenticator {
         this.admins = jsonData;
         return true;
     }
-
 }; //Fim Authenticator()

@@ -7,7 +7,7 @@ const { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } = 
 // const TimeSeries = require('./timeSeries'); //NOTE: may still use for the player counter
 
 //Helper functions
-const getEpoch = (mod, ts=false) => {
+const getEpoch = (mod, ts = false) => {
     const time = ts ? new Date(ts) : new Date();
     const minutes = Math.floor(time.getMinutes() / mod) * mod;
     return String(time.getHours()).padStart(2, '0') + String(minutes).padStart(2, '0');
@@ -28,7 +28,7 @@ module.exports = class StatsCollector {
                 resolution: 5,
                 // lenthCap: 288, //5*288 = 1440 = 1 day
                 lenthCap: 360, //5*360 = 30 hours
-            }
+            },
         };
         // this.playersBuffer = [];
         // this.playersSeries = [];
@@ -45,7 +45,7 @@ module.exports = class StatsCollector {
                     dir(error);
                 }
             }
-        }, 60*1000);
+        }, 60 * 1000);
     }
 
 
@@ -84,13 +84,11 @@ module.exports = class StatsCollector {
                 if (!Array.isArray(heatmapData)) throw new Error('data is not an array');
                 if (!validatePerfCacheData(heatmapData)) throw new Error('invalid data in cache');
                 this.perfSeries = heatmapData;
-
             } catch (error) {
                 logError(`Failed to load stats_heatmapData_v1 with message: ${error.message}`);
                 logError('Since this is not a critical file, it will be reset.');
                 await setFile();
             }
-
         } else {
             await setFile();
         }
@@ -144,20 +142,20 @@ module.exports = class StatsCollector {
         //Commom vars
         const now = Date.now();
         const cfg = this.hardConfigs.performance; //Shorthand only
-        const lastSnap = this.perfSeries.length ? this.perfSeries[this.perfSeries.length-1] : false;
+        const lastSnap = this.perfSeries.length ? this.perfSeries[this.perfSeries.length - 1] : false;
 
         //Check skip rules
         if (
             lastSnap &&
             getEpoch(cfg.resolution, lastSnap.ts) == getEpoch(cfg.resolution) &&
-            now - lastSnap.ts < cfg.resolution*60*1000
+            now - lastSnap.ts < cfg.resolution * 60 * 1000
         ) {
             if (GlobalData.verbose) log('Skipping perf collection due to resolution');
             return;
         }
 
         //Get performance data
-        const sourceURL = (GlobalData.debugExternalSource)? GlobalData.debugExternalSource : globals.fxRunner.fxServerHost;
+        const sourceURL = (GlobalData.debugExternalSource) ? GlobalData.debugExternalSource : globals.fxRunner.fxServerHost;
         const currPerfRaw = await got(`http://${sourceURL}/perf/`, {timeout: 1500}).text();
         const currPerfData = parsePerf(currPerfRaw);
         if (
@@ -171,7 +169,7 @@ module.exports = class StatsCollector {
         //Process performance data
         const islinear = (
             lastSnap &&
-            now - lastSnap.ts <= cfg.resolution*60*1000*4 && //resolution time in ms * 4 -- just in case there is some lag
+            now - lastSnap.ts <= cfg.resolution * 60 * 1000 * 4 && //resolution time in ms * 4 -- just in case there is some lag
             lastSnap.mainTickCounter < currPerfData.svMain.count
         );
         const currPerfDiff = diffPerfs(currPerfData, (islinear) ? lastSnap.perfSrc : false);
@@ -190,7 +188,7 @@ module.exports = class StatsCollector {
             mainTickCounter: currPerfData.svMain.count,
             clients: globals.playerController.getPlayerList().length,
             perfSrc: currPerfData,
-            perf: currPerfDiff
+            perf: currPerfDiff,
         };
 
         //Push to cache and save it

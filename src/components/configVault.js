@@ -6,7 +6,7 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
-const toDefault = (input, defVal) => { return (isUndefined(input))? defVal : input; };
+const toDefault = (input, defVal) => { return (isUndefined(input)) ? defVal : input; };
 const removeNulls = (obj) => {
     var isArray = obj instanceof Array;
     for (var k in obj) {
@@ -133,7 +133,7 @@ module.exports = class ConfigVault {
                 minSessionTime: toDefault(cfg.playerController.minSessionTime, 15),
                 whitelistRejectionMessage: toDefault(
                     cfg.playerController.whitelistRejectionMessage,
-                    'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour Request ID: <id>'
+                    'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour Request ID: <id>',
                 ),
                 wipePendingWLOnStart: toDefault(cfg.playerController.wipePendingWLOnStart, true),
             };
@@ -152,7 +152,7 @@ module.exports = class ConfigVault {
                 prefix: toDefault(cfg.discordBot.prefix, '/'),
                 statusMessage: toDefault(
                     cfg.discordBot.statusMessage,
-                    '**IP:** `change-me:<port>`\n**Players:** <players>\n**Uptime:** <uptime>'
+                    '**IP:** `change-me:<port>`\n**Players:** <players>\n**Uptime:** <uptime>',
                 ),
                 commandCooldown: toDefault(cfg.discordBot.commandCooldown, null), //not in template
             };
@@ -203,11 +203,11 @@ module.exports = class ConfigVault {
             //nothing here /shrug
 
             //Player Controller
-            cfg.playerController.onJoinCheckBan = (cfg.playerController.onJoinCheckBan === null)? true : (cfg.playerController.onJoinCheckBan === 'true' || cfg.playerController.onJoinCheckBan === true);
-            cfg.playerController.onJoinCheckWhitelist = (cfg.playerController.onJoinCheckWhitelist === null)? false : (cfg.playerController.onJoinCheckWhitelist === 'true' || cfg.playerController.onJoinCheckWhitelist === true);
+            cfg.playerController.onJoinCheckBan = (cfg.playerController.onJoinCheckBan === null) ? true : (cfg.playerController.onJoinCheckBan === 'true' || cfg.playerController.onJoinCheckBan === true);
+            cfg.playerController.onJoinCheckWhitelist = (cfg.playerController.onJoinCheckWhitelist === null) ? false : (cfg.playerController.onJoinCheckWhitelist === 'true' || cfg.playerController.onJoinCheckWhitelist === true);
             cfg.playerController.minSessionTime = parseInt(cfg.playerController.minSessionTime) || 15;
             cfg.playerController.whitelistRejectionMessage = cfg.playerController.whitelistRejectionMessage || 'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour Request ID: <id>';
-            cfg.playerController.wipePendingWLOnStart = (cfg.playerController.wipePendingWLOnStart === null)? true : (cfg.playerController.wipePendingWLOnStart === 'true' || cfg.playerController.wipePendingWLOnStart === true);
+            cfg.playerController.wipePendingWLOnStart = (cfg.playerController.wipePendingWLOnStart === null) ? true : (cfg.playerController.wipePendingWLOnStart === 'true' || cfg.playerController.wipePendingWLOnStart === true);
 
             //Authenticator
             cfg.authenticator.refreshInterval = parseInt(cfg.authenticator.refreshInterval) || 15000; //not in template
@@ -233,7 +233,7 @@ module.exports = class ConfigVault {
             if (isUndefined(cfg.fxRunner.onesync) || cfg.fxRunner.onesync === null) {
                 cfg.fxRunner.onesync = 'off';
             } else if (typeof cfg.fxRunner.onesync == 'boolean') {
-                cfg.fxRunner.onesync = (cfg.fxRunner.onesync)? 'on' : 'off';
+                cfg.fxRunner.onesync = (cfg.fxRunner.onesync) ? 'on' : 'off';
             } else if (!['on', 'legacy', 'off'].includes(cfg.fxRunner.onesync)) {
                 throw new Error('Invalid OneSync type.');
             }
@@ -325,5 +325,4 @@ module.exports = class ConfigVault {
             return false;
         }
     }
-
 }; //Fim ConfigVault()

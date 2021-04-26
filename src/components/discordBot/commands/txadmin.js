@@ -9,7 +9,7 @@ module.exports = {
         const outMsg = new RichEmbed({
             color: 0x4DEEEA,
             title: `${globals.config.serverName} uses txAdmin v${GlobalData.txAdminVersion} :smiley:`,
-            description: 'Checkout the project:\n GitHub: https://github.com/tabarra/txAdmin\n Discord: https://discord.gg/f3TsfvD'
+            description: 'Checkout the project:\n GitHub: https://github.com/tabarra/txAdmin\n Discord: https://discord.gg/f3TsfvD',
         });
         return await message.channel.send(outMsg);
     },

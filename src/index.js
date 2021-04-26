@@ -90,7 +90,7 @@ const fxServerPath = cleanPath(citizenRootConvar);
 let dataPath;
 const txDataPathConvar = GetConvar('txDataPath', 'false');
 if (txDataPathConvar == 'false') {
-    const dataPathSuffix = (osType == 'windows')? '..' : '../../../';
+    const dataPathSuffix = (osType == 'windows') ? '..' : '../../../';
     dataPath = cleanPath(path.join(fxServerPath, dataPathSuffix, 'txData'));
 } else {
     dataPath = cleanPath(txDataPathConvar);
@@ -123,7 +123,7 @@ const verbose = (['true', '1', 'on'].includes(txAdminVerboseConvar));
 const txDebugPlayerlistGeneratorConvar = GetConvar('txDebugPlayerlistGenerator', 'false').trim();
 const debugPlayerlistGenerator = (['true', '1', 'on'].includes(txDebugPlayerlistGeneratorConvar));
 const txDebugExternalSourceConvar = GetConvar('txDebugExternalSource', 'false').trim();
-const debugExternalSource = (txDebugExternalSourceConvar !== 'false')? txDebugExternalSourceConvar : false;
+const debugExternalSource = (txDebugExternalSourceConvar !== 'false') ? txDebugExternalSourceConvar : false;
 
 
 //Checking for Zap Configuration file
@@ -196,7 +196,7 @@ if (verbose) dir({isZapHosting, forceInterface, forceFXServerPort, txAdminPort, 
 //NOTE: Only valid if its being very actively maintained.
 //          Use 30d for patch 0, or 45~60d otherwise
 const txVerBBLastUpdate = 1617619200;
-const txVerBBDelta = 21 + ((isZapHosting)? 10 : 0);
+const txVerBBDelta = 21 + ((isZapHosting) ? 10 : 0);
 const txAdminVersionBestBy = txVerBBLastUpdate + (txVerBBDelta * 86400);
 // dir({
 //     updateDelta: txVerBBDelta,

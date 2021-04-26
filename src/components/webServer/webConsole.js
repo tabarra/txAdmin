@@ -12,7 +12,7 @@ const getIP = (socket) => {
         socket.request &&
         socket.request.connection &&
         socket.request.connection.remoteAddress
-    )? socket.request.connection.remoteAddress : 'unknown';
+    ) ? socket.request.connection.remoteAddress : 'unknown';
 };
 
 
@@ -116,5 +116,4 @@ module.exports = class webConsole {
         globals.logger.append(`[${getIP(socket)}][${socket.session.auth.username}] ${msg}`);
         globals.fxRunner.srvCmd(msg);
     }
-
 }; //Fim webConsole()

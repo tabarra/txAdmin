@@ -22,7 +22,7 @@ module.exports = class PlayerlistGenerator {
         this.config = {
             srcPlayerlist: require('./playerlist.ignore.json'),
             // refreshInterval: 2*60*1000,
-            refreshInterval: 10*1000,
+            refreshInterval: 10 * 1000,
             shouldAddRemovePlayers: true,
             minPlayers: 7,
             maxPlayers: 15,
@@ -31,7 +31,7 @@ module.exports = class PlayerlistGenerator {
         //Starting data
         this.indexes = [0,1,2,3,4,5,6,7];
         this.playerlist = [];
-        const refreshFunc = (GlobalData.debugExternalSource)? this.refreshPlayersExternal.bind(this) : this.refreshPlayersStatic.bind(this);
+        const refreshFunc = (GlobalData.debugExternalSource) ? this.refreshPlayersExternal.bind(this) : this.refreshPlayersStatic.bind(this);
 
         //Cron functions
         refreshFunc();
@@ -72,7 +72,7 @@ module.exports = class PlayerlistGenerator {
         //Update player's pings
         out.forEach(p => {
             let newPing = p.ping + parseInt(Math.random() * 40) - 20;
-            p.ping  = (newPing > 10)? newPing : 10;
+            p.ping  = (newPing > 10) ? newPing : 10;
         });
 
         //Sets playerlist

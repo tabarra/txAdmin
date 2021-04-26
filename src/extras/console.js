@@ -6,8 +6,8 @@ let logHistory = [];
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
-const getConCtx = (ctx) => { return (ctx !== null)? header+':'+ctx : header; };
-const getHistCtx = (ctx) => { return (ctx !== null)? ctx : header; };
+const getConCtx = (ctx) => { return (ctx !== null) ? header + ':' + ctx : header; };
+const getHistCtx = (ctx) => { return (ctx !== null) ? ctx : header; };
 const toHistory = (type, ctx, msg) =>{
     msg = msg.toString().replace(/\u001b\[\d+(;\d)?m/g, '');
     if (logHistory.length > 4000) {
@@ -30,39 +30,39 @@ const colorizeSettings = {
         NUMBER_LITERAL: 'green',
         BOOLEAN_LITERAL: 'blue',
         NULL_LITERAL: 'white',
-    }
+    },
 };
 
 
 //================================================================
-function log(msg='', context=null) {
+function log(msg = '', context = null) {
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
-    console.log(chalk.bold.bgBlue(`[${conCtx}]`)+' '+msg);
+    console.log(chalk.bold.bgBlue(`[${conCtx}]`) + ' ' + msg);
     toHistory('INFO', histCtx, msg);
     return `[INFO][${conCtx}] ${msg}`;
 }
 
-function logOk(msg='', context=null) {
+function logOk(msg = '', context = null) {
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
-    console.log(chalk.bold.bgGreen(`[${conCtx}]`)+' '+msg);
+    console.log(chalk.bold.bgGreen(`[${conCtx}]`) + ' ' + msg);
     toHistory('OK', histCtx, msg);
     return `[OK][${conCtx}] ${msg}`;
 }
 
-function logWarn(msg='', context=null) {
+function logWarn(msg = '', context = null) {
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
-    console.log(chalk.bold.bgYellow(`[${conCtx}]`)+' '+msg);
+    console.log(chalk.bold.bgYellow(`[${conCtx}]`) + ' ' + msg);
     toHistory('WARN', histCtx, msg);
     return `[WARN][${conCtx}] ${msg}`;
 }
 
-function logError(msg='', context=null) {
+function logError(msg = '', context = null) {
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
-    console.log(chalk.bold.bgRed(`[${conCtx}]`)+' '+msg);
+    console.log(chalk.bold.bgRed(`[${conCtx}]`) + ' ' + msg);
     toHistory('ERROR', histCtx, msg);
     return `[ERROR][${conCtx}] ${msg}`;
 }
@@ -72,7 +72,7 @@ function cleanTerminal() {
 }
 
 function setTTYTitle(version, title) {
-    title = (title)? `txAdmin v${version}: ${title}` : 'txAdmin';
+    title = (title) ? `txAdmin v${version}: ${title}` : 'txAdmin';
     process.stdout.write(`\x1B]0;${title}\x07`);
 }
 
@@ -93,17 +93,14 @@ function dir(data) {
         let printData;
         if (typeof data == 'undefined') {
             printData = chalk.keyword('moccasin').italic('> undefined');
-
         } else if (data instanceof Promise) {
             printData = chalk.keyword('moccasin').italic('> Promise');
-
         } else if (typeof data == 'boolean') {
             if (data) {
                 printData = chalk.keyword('lawngreen')('true');
             } else {
                 printData = chalk.keyword('orangered')('false');
             }
-
         } else if (typeof data == 'object') {
             if (
                 !Object.keys(data).length &&
@@ -119,19 +116,15 @@ function dir(data) {
                 //printData = util.format('%o', data);
                 printData = colorize(data, colorizeSettings);
             }
-
         } else {
             printData = chalk.keyword('orange').italic(typeof data + ': ');
             if (typeof data == 'string') {
                 printData += `"${data}"`;
-
             } else if (typeof data == 'number') {
                 printData += chalk.green(data);
-
             } else if (typeof data == 'function') {
                 printData += '\n';
                 printData += data.toString();
-
             } else {
                 printData = util.format('%o', data);
             }
@@ -165,7 +158,7 @@ function getLog() {
 
 //================================================================
 module.exports = (ctx) => {
-    const appendSubCtx = (sub) => {return (sub !== null)? `${ctx}:${sub}` : ctx;};
+    const appendSubCtx = (sub) => {return (sub !== null) ? `${ctx}:${sub}` : ctx;};
     return {
         log: (x, subCtx = null) => log(x, appendSubCtx(subCtx)),
         logOk: (x, subCtx = null) => logOk(x, appendSubCtx(subCtx)),
@@ -174,6 +167,6 @@ module.exports = (ctx) => {
         dir: (x, subCtx = null) => dir(x, appendSubCtx(subCtx)),
         cleanTerminal,
         setTTYTitle,
-        getLog
+        getLog,
     };
 };

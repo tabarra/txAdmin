@@ -38,9 +38,9 @@ module.exports = async function AuthVerify(ctx) {
         const providerWithPicture = Object.values(admin.providers).find(provider => provider.data && provider.data.picture);
         ctx.session.auth = {
             username: admin.name,
-            picture: (providerWithPicture)? providerWithPicture.data.picture : undefined,
+            picture: (providerWithPicture) ? providerWithPicture.data.picture : undefined,
             password_hash: admin.password_hash,
-            expires_at: false
+            expires_at: false,
         };
 
         log(`Admin ${admin.name} logged in from ${ctx.ip}`);

@@ -14,7 +14,7 @@ const defaultConfig = {
         verbose: false,
         serverName: null,
         language: 'en',
-        forceFXServerPort: null
+        forceFXServerPort: null,
     },
     logger: {},
     monitor: {
@@ -31,8 +31,8 @@ const defaultConfig = {
     fxRunner: {
         serverDataPath: null,
         cfgPath: null,
-        autostart: true
-    }
+        autostart: true,
+    },
 };
 
 

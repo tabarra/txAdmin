@@ -36,20 +36,16 @@ module.exports = async function DeployerActions(ctx) {
     //Delegate to the specific action functions
     if (action == 'confirmRecipe') {
         return await handleConfirmRecipe(ctx);
-
     } else if (action == 'setVariables') {
         return await handleSetVariables(ctx);
-
     } else if (action == 'commit') {
         return await handleSaveConfig(ctx);
-
     } else if (action == 'cancel') {
         return await handleCancel(ctx);
-
     } else {
         return ctx.send({
             type: 'danger',
-            message: 'Unknown setup action.'
+            message: 'Unknown setup action.',
         });
     }
 };
@@ -120,7 +116,7 @@ async function handleSetVariables(ctx) {
     }
 
     //Max Clients & Server Endpoints
-    userVars.maxClients = (GlobalData.deployerDefaults && GlobalData.deployerDefaults.maxClients)? GlobalData.deployerDefaults.maxClients : 48;
+    userVars.maxClients = (GlobalData.deployerDefaults && GlobalData.deployerDefaults.maxClients) ? GlobalData.deployerDefaults.maxClients : 48;
     if (GlobalData.forceInterface) {
         const suffix = '# zap-hosting: do not modify!';
         userVars.serverEndpoints = [

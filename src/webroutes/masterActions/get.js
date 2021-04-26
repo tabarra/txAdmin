@@ -27,7 +27,7 @@ module.exports = async function MasterActionsGet(ctx) {
     //Render the page
     if (resource == 'importBans') {
         return ctx.utils.render('masterActions/importBans', {
-            dbFilePathSuggestion: path.join(globals.fxRunner.config.serverDataPath, 'resources')
+            dbFilePathSuggestion: path.join(globals.fxRunner.config.serverDataPath, 'resources'),
         });
     } else if (resource == 'backupDatabase') {
         return handleBackupDatabase(ctx);
@@ -50,7 +50,7 @@ function handleBackupDatabase(ctx) {
     } catch (error) {
         logError(`Could not read database file ${dbPath}.`);
     }
-    const now = (new Date()/1000).toFixed();
+    const now = (new Date() / 1000).toFixed();
     ctx.attachment(`playersDB_${now}.json`);
     ctx.body = readFile;
     log(`[${ctx.ip}][${ctx.session.auth.username}] Downloading player database.`);

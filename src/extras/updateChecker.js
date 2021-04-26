@@ -18,7 +18,7 @@ const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'un
 module.exports = async () => {
     try {
         //perform request - cache busting every ~1.4h
-        const osTypeApiUrl = (GlobalData.osType == 'windows')? 'win32' : 'linux';
+        const osTypeApiUrl = (GlobalData.osType == 'windows') ? 'win32' : 'linux';
         const cacheBuster = Math.floor(now() / 5e3);
         const reqUrl = `https://changelogs-live.fivem.net/api/changelog/versions/${osTypeApiUrl}/server?${cacheBuster}`;
         const changelogReq = await axios.get(reqUrl);
@@ -33,7 +33,7 @@ module.exports = async () => {
         //FIXME: CHECK FOR BROKEN ORDER
 
         //fill in databus
-        const osTypeRepoUrl = (GlobalData.osType == 'windows')? 'server_windows' : 'proot_linux';
+        const osTypeRepoUrl = (GlobalData.osType == 'windows') ? 'server_windows' : 'proot_linux';
         globals.databus.updateChecker = {
             artifactsLink: `https://runtime.fivem.net/artifacts/fivem/build_${osTypeRepoUrl}/master/?${cacheBuster}`,
             recommended: parseInt(changelog.recommended),

@@ -18,7 +18,7 @@ module.exports = async function Dashboard(ctx) {
 
     //Shortcut function
     const getPermDisable = (perm) => {
-        return (ctx.utils.checkPermission(perm, modulename, false))? '' : 'disabled';
+        return (ctx.utils.checkPermission(perm, modulename, false)) ? '' : 'disabled';
     };
 
     //Preparing render data
@@ -30,8 +30,8 @@ module.exports = async function Dashboard(ctx) {
             commandKick: getPermDisable('players.kick'),
             commandResources: getPermDisable('commands.resources'),
             controls: getPermDisable('control.server'),
-            controlsClass: (ctx.utils.checkPermission('control.server', modulename, false))? 'danger' : 'secondary'
-        }
+            controlsClass: (ctx.utils.checkPermission('control.server', modulename, false)) ? 'danger' : 'secondary',
+        },
     };
 
 
@@ -85,18 +85,15 @@ function getVersionData() {
             versionData.subtext = (rVer.critical > rVer.recommended)
                 ? `(critical update ${curr} ➤ ${rVer.critical})`
                 : `(recommended update ${curr} ➤ ${rVer.recommended})`;
-
         } else if (curr < rVer.recommended) {
             versionData.color = 'warning';
             versionData.message = 'A recommended update is available for FXServer, you should update.';
             versionData.subtext = `(recommended update ${curr} ➤ ${rVer.recommended})`;
-
         } else if (curr < rVer.optional) {
             versionData.color = 'info';
             versionData.message = 'An optional update is available for FXServer.';
             versionData.subtext = `(optional update ${curr} ➤ ${rVer.optional})`;
         }
-
     } catch (error) {
         logError('Error while processing changelog. Enable verbosity for more information.');
         if (GlobalData.verbose) dir(error);

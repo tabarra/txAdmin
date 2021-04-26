@@ -48,7 +48,7 @@ globals = {
             httpCounter: {
                 current: 0,
                 max: 0,
-                log: []
+                log: [],
             },
             loginOrigins: {
                 localhost: 0,

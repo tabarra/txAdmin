@@ -18,7 +18,7 @@ module.exports = async function FXServerControls(ctx) {
     if (!ctx.utils.checkPermission('control.server', modulename)) {
         return ctx.send({
             type: 'danger',
-            message: 'You don\'t have permission to execute this action.'
+            message: 'You don\'t have permission to execute this action.',
         });
     }
 
@@ -35,7 +35,6 @@ module.exports = async function FXServerControls(ctx) {
                 return ctx.send({type: 'success', message: 'Restarting server...'});
             }
         }
-
     } else if (action == 'stop') {
         if (globals.fxRunner.fxChild === null) {
             return ctx.send({type: 'danger', message: 'The server is already stopped.'});
@@ -43,7 +42,6 @@ module.exports = async function FXServerControls(ctx) {
         ctx.utils.logCommand('STOP SERVER');
         await globals.fxRunner.killServer(ctx.session.auth.username);
         return ctx.send({type: 'warning', message: 'Server stopped.'});
-
     } else if (action == 'start') {
         if (globals.fxRunner.fxChild !== null) {
             return ctx.send({type: 'danger', message: 'The server is already running. If it\'s not working, press RESTART.'});
@@ -55,7 +53,6 @@ module.exports = async function FXServerControls(ctx) {
         } else {
             return ctx.send({type: 'success', message: 'Starting server...'});
         }
-
     } else {
         logWarn(`Unknown control action '${action}'.`);
         return ctx.utils.error(400, 'Unknown Action');

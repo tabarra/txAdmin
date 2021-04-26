@@ -64,7 +64,7 @@ function dependencyChecker() {
  * @param {boolean} filter default true
  */
 function parseSchedule(schedule, filter = true) {
-    const times = (typeof schedule === 'string')? schedule.split(',') : schedule;
+    const times = (typeof schedule === 'string') ? schedule.split(',') : schedule;
     let out = [];
     times.forEach((time) => {
         if (!time.length) return;
@@ -124,7 +124,7 @@ function getCFGFileData(cfgPath) {
  * @param {string} serverDataPath
  */
 function resolveCFGFilePath(cfgPath, serverDataPath) {
-    return (path.isAbsolute(cfgPath))? cfgPath : path.resolve(serverDataPath, cfgPath);
+    return (path.isAbsolute(cfgPath)) ? cfgPath : path.resolve(serverDataPath, cfgPath);
 }
 
 
@@ -207,7 +207,6 @@ function getFXServerPort(rawCfgFile) {
         //Check if all interfaces are the ones being forced
         const invalidInterface = endpoints.find((match) => match.iface !== GlobalData.forceInterface);
         if (invalidInterface) throw new Error(`Zap-Hosting: invalid interface '${invalidInterface.iface}'.<br>\n${stdMessage}`);
-
     } else {
         const validTCPEndpoint = endpoints.find((match) => {
             return (match.type === 'tcp' && (match.iface === '0.0.0.0' || match.iface === '127.0.0.1'));

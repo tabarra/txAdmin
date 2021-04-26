@@ -64,7 +64,7 @@ module.exports = async function AuthVerify(ctx) {
             algorithms: ['RS256'],
             issuer: 'zap-hosting.com',
             maxTokenAge: '5 minutes',
-            audience: (GlobalData.forceInterface)? `${GlobalData.forceInterface}:${GlobalData.txAdminPort}` : undefined
+            audience: (GlobalData.forceInterface) ? `${GlobalData.forceInterface}:${GlobalData.txAdminPort}` : undefined,
         });
         if (typeof jwtData.iat !== 'number') throw new Error('missing "iat" claim');
         if (typeof jwtData.sub !== 'string') throw new Error('missing "sub" claim');
@@ -82,7 +82,7 @@ module.exports = async function AuthVerify(ctx) {
             GlobalData.runtimeSecret,
             jwtData.sub,
             GlobalData.defaultMasterAccount.password_hash,
-            ctx.ip
+            ctx.ip,
         ].join('|');
         const expectedVerifier = crypto.createHash('sha256').update(verifierComposition).digest('hex');
         if (expectedVerifier !== jwtData.verifier) {
@@ -123,7 +123,7 @@ module.exports = async function AuthVerify(ctx) {
             username: admin.name,
             picture: (providerWithPicture) ? providerWithPicture.data.picture : undefined,
             password_hash: admin.password_hash,
-            expires_at: false
+            expires_at: false,
         };
 
         log(`Admin ${admin.name} logged in from ${ctx.ip} via zap token`);

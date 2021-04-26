@@ -74,7 +74,7 @@ module.exports = async function Resources(ctx) {
                     headerTitle: 'Resources',
                     resGroupsJS: JSON.stringify(resGroups),
                     resGroups,
-                    disableActions: (ctx.utils.checkPermission('commands.resources'))? '' : 'disabled'
+                    disableActions: (ctx.utils.checkPermission('commands.resources')) ? '' : 'disabled',
                 };
                 resolve(['resources', renderData]);
             }
@@ -112,11 +112,11 @@ function processResources(resList) {
             name: resource.name,
             divName: resource.name.replace(/%/g, ''),
             status: resource.status,
-            statusClass: (resource.status === 'started')? 'success' : 'danger',
+            statusClass: (resource.status === 'started') ? 'success' : 'danger',
             // path: slash(path.normalize(resource.path)),
-            version: (resource.version)? `(${resource.version.trim()})` : '',
-            author: (resource.author)? `${resource.author.trim()}` : '',
-            description: (resource.description)? resource.description.trim() : '',
+            version: (resource.version) ? `(${resource.version.trim()})` : '',
+            author: (resource.author) ? `${resource.author.trim()}` : '',
+            description: (resource.description) ? resource.description.trim() : '',
         };
 
         if (resGroupList.hasOwnProperty(subPath)) {
@@ -132,7 +132,7 @@ function processResources(resList) {
         let subPathData = {
             subPath: subPath,
             divName: subPath.replace(/[\W%]/g, ''),
-            resources: resGroupList[subPath].sort(dynamicSort('name'))
+            resources: resGroupList[subPath].sort(dynamicSort('name')),
         };
         finalList.push(subPathData);
     });

@@ -12,7 +12,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
  */
 module.exports = async function AuthGet(ctx) {
     //Set template type
-    const template = (globals.authenticator.admins === false)? 'noMaster' : 'normal';
+    const template = (globals.authenticator.admins === false) ? 'noMaster' : 'normal';
 
     //Destroy session? And start a new one
     if (!isUndefined(ctx.query.logout)) ctx.session.auth = {};
@@ -22,14 +22,14 @@ module.exports = async function AuthGet(ctx) {
         return ctx.utils.render('login', {
             template: 'justMessage',
             errorTitle: 'No admins configured.',
-            errorMessage: 'This likely means that you moved or deleted the admins.json file. Please restart txAdmin to configure a new master account.'
+            errorMessage: 'This likely means that you moved or deleted the admins.json file. Please restart txAdmin to configure a new master account.',
         });
     }
 
     //Render page
     const renderData = {
         template,
-        message: (!isUndefined(ctx.query.logout))? 'Logged Out' : '',
+        message: (!isUndefined(ctx.query.logout)) ? 'Logged Out' : '',
         citizenfxDisabled: !globals.authenticator.providers.citizenfx.ready,
         discordDisabled: true,
     };

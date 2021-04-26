@@ -56,9 +56,9 @@ async function handleSearch(ctx, dbo) {
     let outData = {
         message: '',
         resPlayers: [],
-        resActions: []
+        resActions: [],
     };
-    const addPlural = (x) => { return (x == 0 || x > 1)? 's' : ''; };
+    const addPlural = (x) => { return (x == 0 || x > 1) ? 's' : ''; };
 
     try {
         //Getting valid identifiers
@@ -107,7 +107,6 @@ async function handleSearch(ctx, dbo) {
                 .value();
             if (!action) {
                 outData.message = 'Searching by Action ID found no results.';
-
             } else {
                 outData.resActions = await processActionList([action]);
 
@@ -137,7 +136,6 @@ async function handleSearch(ctx, dbo) {
             outData.resPlayers = await processPlayerList(players);
             //TODO: if player found, search for all actions from them
             outData.message = `Searching by name found ${players.length} player${addPlural(players.length)}.`;
-
         }
 
 
@@ -179,7 +177,7 @@ async function handleDefault(ctx, dbo) {
         permsDisable: {
             whitelist: !ctx.utils.checkPermission('players.whitelist', modulename, false),
             ban: !ctx.utils.checkPermission('players.ban', modulename, false),
-        }
+        },
     };
 
     //Output
@@ -227,9 +225,9 @@ async function getStats(dbo) {
             languages: {
                 shortEn: {
                     d: () => 'd',
-                    h: () => 'h'
-                }
-            }
+                    h: () => 'h',
+                },
+            },
         };
         const playTime = humanizeDuration(playTimeSeconds, humanizeOptions);
 
@@ -287,9 +285,9 @@ async function getPendingWL(dbo, limit) {
 
         const maxNameSize = 36;
         let lastWhitelistBlocks = pendingWL.map((x) => {
-            x.time = dateFormat(new Date(x.tsLastAttempt*1000), 'isoTime');
+            x.time = dateFormat(new Date(x.tsLastAttempt * 1000), 'isoTime');
             if (x.name.length > maxNameSize) {
-                x.name = x.name.substring(0,maxNameSize-3) + '...';
+                x.name = x.name.substring(0,maxNameSize - 3) + '...';
             }
             return x;
         });
@@ -343,7 +341,6 @@ async function getLastPlayers(dbo, limit) {
             .cloneDeep()
             .value();
         return await processPlayerList(lastPlayers);
-
     } catch (error) {
         const msg = `getLastPlayers failed with error: ${error.message}`;
         if (GlobalData.verbose) logError(msg);
@@ -366,7 +363,7 @@ async function processActionList(list) {
         let out = {
             id: log.id,
             type: log.type,
-            date: (new Date(log.timestamp*1000)).toLocaleString(),
+            date: (new Date(log.timestamp * 1000)).toLocaleString(),
             reason: log.reason,
             author: log.author,
             revocationNotice: false,
@@ -384,30 +381,26 @@ async function processActionList(list) {
         if (log.type == 'ban') {
             out.color = 'danger';
             out.message = `${xss(log.author)} BANNED ${actReference}`;
-
         } else if (log.type == 'warn') {
             out.color = 'warning';
             out.message = `${xss(log.author)} WARNED ${actReference}`;
-
         } else if (log.type == 'whitelist') {
             out.color = 'success';
             out.message = `${xss(log.author)} WHITELISTED ${actReference}`;
             out.reason = '';
-
         } else {
             out.color = 'secondary';
             out.message = `${xss(log.author)} ${log.type.toUpperCase()} ${actReference}`;
-
         }
         if (log.revocation.timestamp) {
             out.color = 'dark';
             out.isRevoked = true;
-            const revocationDate = (new Date(log.revocation.timestamp*1000)).toLocaleString();
+            const revocationDate = (new Date(log.revocation.timestamp * 1000)).toLocaleString();
             out.footerNote = `Revoked by ${log.revocation.author} on ${revocationDate}.`;
         }
         if (typeof log.expiration == 'number') {
-            const expirationDate = (new Date(log.expiration*1000)).toLocaleString();
-            out.footerNote = (log.expiration < tsNow)? `Expired at ${expirationDate}.` : `Expires at ${expirationDate}.`;
+            const expirationDate = (new Date(log.expiration * 1000)).toLocaleString();
+            out.footerNote = (log.expiration < tsNow) ? `Expired at ${expirationDate}.` : `Expires at ${expirationDate}.`;
         }
         return out;
     });
@@ -428,8 +421,8 @@ async function processPlayerList(list) {
         return {
             name: p.name,
             license: p.license,
-            joined: (new Date(p.tsJoined*1000)).toLocaleString(),
-            color: (activeLicenses.includes(p.license))? 'success' : 'dark'
+            joined: (new Date(p.tsJoined * 1000)).toLocaleString(),
+            color: (activeLicenses.includes(p.license)) ? 'success' : 'dark',
         };
     });
 }

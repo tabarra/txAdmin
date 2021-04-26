@@ -24,7 +24,7 @@ const isPathRoot = (pathInput) => {
 const pathCleanTrail = (pathInput) => {
     return pathInput.replace(/[/\\]+$/, '');
 };
-const isPathValid = (pathInput, acceptRoot=true) => {
+const isPathValid = (pathInput, acceptRoot = true) => {
     return (
         typeof pathInput == 'string' &&
         pathInput.length &&
@@ -63,7 +63,7 @@ const taskDownloadFile = async (options, basePath, deployerCtx) => {
     const res = await axios({
         method: 'get',
         url: options.url,
-        responseType: 'stream'
+        responseType: 'stream',
     });
     await new Promise((resolve, reject) => {
         const outStream = fs.createWriteStream(destPath);
@@ -104,7 +104,7 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
         const res = await axios({
             method: 'get',
             url: `https://api.github.com/repos/${repoOwner}/${repoName}`,
-            responseType: 'json'
+            responseType: 'json',
         });
         if (!res.data || !res.data.default_branch) {
             throw new Error('reference not set, and wasn ot able to detect using github\'s api');
@@ -114,7 +114,7 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
 
     //Preparing vars
     const downURL = `https://api.github.com/repos/${repoOwner}/${repoName}/zipball/${reference}`;
-    const tmpFileName = `${repoName}${reference}-` + (Date.now()%100000000).toString(16);
+    const tmpFileName = `${repoName}${reference}-` + (Date.now() % 100000000).toString(16);
     const tmpFileDir = path.join(basePath, `${tmpFileName}`);
     const tmpFilePath = path.join(basePath, `${tmpFileName}.download`);
     const destPath = safePath(basePath, options.dest);
@@ -123,7 +123,7 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     const res = await axios({
         method: 'get',
         url: downURL,
-        responseType: 'stream'
+        responseType: 'stream',
     });
     await new Promise((resolve, reject) => {
         const outStream = fs.createWriteStream(tmpFilePath);
@@ -142,7 +142,7 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     //Moving path
     const moveSrc = path.join(tmpFileDir, zipEntries[0].entryName, options.subpath || '');
     await fs.move(moveSrc, destPath, {
-        overwrite: (options.overwrite === 'true' || options.overwrite === true)
+        overwrite: (options.overwrite === 'true' || options.overwrite === true),
     });
 
     //Removing temp paths
@@ -232,7 +232,7 @@ const taskMovePath = async (options, basePath, deployerCtx) => {
     const srcPath = safePath(basePath, options.src);
     const destPath = safePath(basePath, options.dest);
     await fs.move(srcPath, destPath, {
-        overwrite: (options.overwrite === 'true' || options.overwrite === true)
+        overwrite: (options.overwrite === 'true' || options.overwrite === true),
     });
 };
 
@@ -253,7 +253,7 @@ const taskCopyPath = async (options, basePath, deployerCtx) => {
     const srcPath = safePath(basePath, options.src);
     const destPath = safePath(basePath, options.dest);
     await fs.copy(srcPath, destPath, {
-        overwrite: (typeof options.overwrite !== 'undefined' && (options.overwrite === 'true' || options.overwrite === true))
+        overwrite: (typeof options.overwrite !== 'undefined' && (options.overwrite === 'true' || options.overwrite === true)),
     });
 };
 
@@ -289,7 +289,7 @@ const taskWriteFile = async (options, basePath, deployerCtx) => {
  */
 const validatorReplaceString = (options) => {
     //Validate file
-    const fileList = (Array.isArray(options.file))? options.file : [options.file];
+    const fileList = (Array.isArray(options.file)) ? options.file : [options.file];
     if (fileList.some(s => !isPathValid(s, false))) {
         return false;
     }
@@ -305,32 +305,26 @@ const validatorReplaceString = (options) => {
             options.search.length &&
             typeof options.replace == 'string'
         );
-
     } else if (options.mode == 'all_vars') {
         return true;
-
     } else {
-
         return false;
     }
 };
 const taskReplaceString = async (options, basePath, deployerCtx) => {
     if (!validatorReplaceString(options)) throw new Error('invalid options');
 
-    const fileList = (Array.isArray(options.file))? options.file : [options.file];
+    const fileList = (Array.isArray(options.file)) ? options.file : [options.file];
     for (let i = 0; i < fileList.length; i++) {
         const filePath = safePath(basePath, fileList[i]);
         const original = await fs.readFile(filePath, 'utf8');
         let changed;
         if (typeof options.mode == 'undefined' || options.mode == 'template') {
             changed = original.replace(new RegExp(options.search, 'g'), replaceVars(options.replace, deployerCtx));
-
         } else if (options.mode == 'all_vars') {
             changed = replaceVars(original, deployerCtx);
-
         } else if (options.mode == 'literal') {
             changed = original.replace(new RegExp(options.search, 'g'), options.replace);
-
         }
         await fs.writeFile(filePath, changed);
     }
@@ -437,7 +431,7 @@ const taskFailTest = async (options, basePath, deployerCtx) => {
  */
 const taskDumpVars = async (options, basePath, deployerCtx) => {
     const toDump = cloneDeep(deployerCtx);
-    toDump.dbConnection = (toDump.dbConnection && toDump.dbConnection.constructor && toDump.dbConnection.constructor.name)? toDump.dbConnection.constructor.name : undefined;
+    toDump.dbConnection = (toDump.dbConnection && toDump.dbConnection.constructor && toDump.dbConnection.constructor.name) ? toDump.dbConnection.constructor.name : undefined;
     dir(toDump);
 };
 

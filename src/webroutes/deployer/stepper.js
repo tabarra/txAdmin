@@ -16,7 +16,7 @@ module.exports = async function DeployerStepper(ctx) {
 
     //Check if this is the correct state for the deployer
     if (globals.deployer == null) {
-        const redirPath = (!globals.fxRunner.config.cfgPath || !globals.fxRunner.config.serverDataPath)? '/setup' : '/';
+        const redirPath = (!globals.fxRunner.config.cfgPath || !globals.fxRunner.config.serverDataPath) ? '/setup' : '/';
         return ctx.response.redirect(redirPath);
     }
 
@@ -36,7 +36,6 @@ module.exports = async function DeployerStepper(ctx) {
             description: globals.deployer.recipe.description,
             raw: globals.deployer.recipe.raw,
         };
-
     } else if (globals.deployer.step === 'input') {
         renderData.defaultLicenseKey = process.env.TXADMIN_DEFAULT_LICENSE || '';
         renderData.requireDBConfig = globals.deployer.recipe.requireDBConfig;
@@ -64,13 +63,11 @@ module.exports = async function DeployerStepper(ctx) {
         renderData.inputVars = Object.keys(recipeVars).map(name => {
             return {
                 name: name,
-                value: recipeVars[name]
+                value: recipeVars[name],
             };
         });
-
     } else if (globals.deployer.step === 'run') {
         renderData.deployPath = globals.deployer.deployPath;
-
     } else if (globals.deployer.step === 'configure') {
         const errorMessage = `# This recipe didn't create the ./server.cfg for you, meaning the process likely failed.
 # Please make sure everything is correct, or insert here the contents of the ./server.cfg
@@ -87,7 +84,6 @@ Make sure everything is correct in the recipe and try again.`;
             if (GlobalData.verbose) dir(error);
             renderData.serverCFG = errorMessage;
         }
-
     } else {
         return ctx.utils.render('basic/generic', {message: 'Unknown Deployer step, please report this bug and restart txAdmin.'});
     }

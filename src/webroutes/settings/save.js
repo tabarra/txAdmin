@@ -25,7 +25,7 @@ module.exports = async function SettingsSave(ctx) {
     if (!ctx.utils.checkPermission('settings.write', modulename)) {
         return ctx.send({
             type: 'danger',
-            message: 'You don\'t have permission to execute this action.'
+            message: 'You don\'t have permission to execute this action.',
         });
     }
 
@@ -43,7 +43,7 @@ module.exports = async function SettingsSave(ctx) {
     } else {
         return ctx.send({
             type: 'danger',
-            message: 'Unknown settings scope.'
+            message: 'Unknown settings scope.',
         });
     }
 };
@@ -68,7 +68,7 @@ function handleGlobal(ctx) {
     let cfg = {
         serverName: ctx.request.body.serverName.trim(),
         language: ctx.request.body.language.trim(),
-        verbose: (ctx.request.body.verbose === 'true')
+        verbose: (ctx.request.body.verbose === 'true'),
     };
 
     //Trying to load language file
@@ -119,7 +119,7 @@ function handleFXServer(ctx) {
 
     //Prepare body input
     let cfg = {
-        serverDataPath: slash(path.normalize(ctx.request.body.serverDataPath+'/')),
+        serverDataPath: slash(path.normalize(ctx.request.body.serverDataPath + '/')),
         cfgPath: slash(path.normalize(ctx.request.body.cfgPath)),
         commandLine: ctx.request.body.commandLine.trim(),
         onesync: ctx.request.body.onesync,
@@ -303,7 +303,7 @@ function handleMonitor(ctx) {
     //Preparing & saving config
     const newConfig = globals.configVault.getScopedStructure('monitor');
     newConfig.restarterSchedule = validRestartTimes;
-    newConfig.restarterScheduleWarnings = validRestartWarningMinutes.sort((a, b) => b-a);
+    newConfig.restarterScheduleWarnings = validRestartWarningMinutes.sort((a, b) => b - a);
     newConfig.disableChatWarnings = cfg.disableChatWarnings;
     const saveStatus = globals.configVault.saveProfile('monitor', newConfig);
 
@@ -349,7 +349,7 @@ function handleDiscord(ctx) {
     let newConfig = globals.configVault.getScopedStructure('discordBot');
     newConfig.enabled = cfg.enabled;
     newConfig.token = cfg.token;
-    newConfig.announceChannel = (cfg.announceChannel.length)? cfg.announceChannel : false;
+    newConfig.announceChannel = (cfg.announceChannel.length) ? cfg.announceChannel : false;
     newConfig.prefix = cfg.prefix;
     newConfig.statusMessage = cfg.statusMessage;
     let saveStatus = globals.configVault.saveProfile('discordBot', newConfig);

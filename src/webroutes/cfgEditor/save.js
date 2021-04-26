@@ -25,7 +25,7 @@ module.exports = async function CFGEditorSave(ctx) {
     if (!ctx.utils.checkPermission('server.cfg.editor', modulename)) {
         return ctx.send({
             type: 'danger',
-            message: 'You don\'t have permission to execute this action.'
+            message: 'You don\'t have permission to execute this action.',
         });
     }
 

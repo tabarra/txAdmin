@@ -8,7 +8,7 @@ const xssClass = require('xss');
  */
 module.exports = (customWL = []) => {
     const xss = new xssClass.FilterXSS({
-        whiteList: customWL
+        whiteList: customWL,
     });
     return (x) => {return xss.process(x);};
 };

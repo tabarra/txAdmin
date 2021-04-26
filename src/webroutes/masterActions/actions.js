@@ -27,7 +27,7 @@ module.exports = async function MasterActionsAction(ctx) {
     if (!ctx.utils.checkPermission('master', modulename)) {
         return ctx.send({
             type: 'danger',
-            message: 'Only the master account has permission to view/use this page.'
+            message: 'Only the master account has permission to view/use this page.',
         });
     }
 
@@ -44,11 +44,10 @@ module.exports = async function MasterActionsAction(ctx) {
         } else {
             return ctx.send({type: 'danger', message: 'Invalid database type.'});
         }
-
     } else {
         return ctx.send({
             type: 'danger',
-            message: 'Unknown settings action.'
+            message: 'Unknown settings action.',
         });
     }
 };
@@ -121,8 +120,8 @@ async function handleImportBansFile(ctx, dbType) {
 
             let author, reason, expiration;
             if (dbType == 'easyadmin') {
-                author = (typeof ban.banner == 'string' && ban.banner.length)? ban.banner.trim() : 'unknown';
-                reason = (typeof ban.reason == 'string' && ban.reason.length)? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
+                author = (typeof ban.banner == 'string' && ban.banner.length) ? ban.banner.trim() : 'unknown';
+                reason = (typeof ban.reason == 'string' && ban.reason.length) ? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
                 if (ban.expire == 10444633200) {
                     expiration = false;
                 } else if (Number.isInteger(ban.expire)) {
@@ -131,10 +130,9 @@ async function handleImportBansFile(ctx, dbType) {
                     invalid++;
                     continue;
                 }
-
             } else if (dbType == 'vmenu') {
-                author = (typeof ban.bannedBy == 'string' && ban.bannedBy.length)? ban.bannedBy.trim() : 'unknown';
-                reason = (typeof ban.banReason == 'string' && ban.banReason.length)? `[IMPORTED] ${ban.banReason.trim()}` : '[IMPORTED] unknown';
+                author = (typeof ban.bannedBy == 'string' && ban.bannedBy.length) ? ban.bannedBy.trim() : 'unknown';
+                reason = (typeof ban.banReason == 'string' && ban.banReason.length) ? `[IMPORTED] ${ban.banReason.trim()}` : '[IMPORTED] unknown';
                 if (ban.bannedUntil == '3000-01-01T00:00:00') {
                     expiration = false;
                 } else {
@@ -143,7 +141,7 @@ async function handleImportBansFile(ctx, dbType) {
                         invalid++;
                         continue;
                     } else {
-                        expiration = Math.round(expirationDate.getTime()/1000);
+                        expiration = Math.round(expirationDate.getTime() / 1000);
                     }
                 }
             }
@@ -175,7 +173,7 @@ async function handleImportBansDBMS(ctx, dbType) {
         ctx.request.body.dbHost,
         ctx.request.body.dbUsername,
         ctx.request.body.dbPassword,
-        ctx.request.body.dbName
+        ctx.request.body.dbName,
     )) {
         return ctx.utils.error(400, 'Invalid Request');
     }
@@ -185,7 +183,7 @@ async function handleImportBansDBMS(ctx, dbType) {
         host: ctx.request.body.dbHost.trim(),
         user: ctx.request.body.dbUsername.trim(),
         password: ctx.request.body.dbPassword.trim(),
-        database: ctx.request.body.dbName.trim()
+        database: ctx.request.body.dbName.trim(),
     };
     const dbConnection = await mysql.createConnection(mysqlOptions);
 
@@ -203,19 +201,18 @@ async function handleImportBansDBMS(ctx, dbType) {
                     continue;
                 }
 
-                const author = (typeof ban.sourceplayername == 'string' && ban.sourceplayername.length)? ban.sourceplayername.trim() : 'unknown';
-                const reason = (typeof ban.reason == 'string' && ban.reason.length)? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
+                const author = (typeof ban.sourceplayername == 'string' && ban.sourceplayername.length) ? ban.sourceplayername.trim() : 'unknown';
+                const reason = (typeof ban.reason == 'string' && ban.reason.length) ? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
                 let expiration;
                 if ((typeof ban.permanent && ban.permanent) || !ban.expiration) {
                     expiration = false;
                 } else {
                     const expirationInt = parseInt(ban.expiration);
-                    expiration = (Number.isNaN(expirationInt))? false : expirationInt;
+                    expiration = (Number.isNaN(expirationInt)) ? false : expirationInt;
                 }
                 await globals.playerController.registerAction(identifiers, 'ban', author, reason, expiration);
                 imported++;
             }
-
         } else if (dbType == 'vrp') {
             const [rows, _fields] = await dbConnection.execute(`SELECT 
                     GROUP_CONCAT(vrp_user_ids.identifier SEPARATOR ', ') AS identifiers
@@ -233,7 +230,6 @@ async function handleImportBansDBMS(ctx, dbType) {
                 await globals.playerController.registerAction(identifiers, 'ban', 'unknown', 'imported from vRP', false);
                 imported++;
             }
-
         } else if (dbType == 'el_bwh') {
             const [rows, _fields] = await dbConnection.execute('SELECT * FROM bwh_bans');
 
@@ -257,7 +253,7 @@ async function handleImportBansDBMS(ctx, dbType) {
                     continue;
                 }
 
-                const reason = (typeof ban.reason == 'string' && ban.reason.length)? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
+                const reason = (typeof ban.reason == 'string' && ban.reason.length) ? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
                 let expiration;
                 if (ban.length == null) {
                     expiration = false;
@@ -267,15 +263,13 @@ async function handleImportBansDBMS(ctx, dbType) {
                         invalid++;
                         continue;
                     } else {
-                        expiration = Math.round(expirationDate.getTime()/1000);
+                        expiration = Math.round(expirationDate.getTime() / 1000);
                     }
                 }
                 await globals.playerController.registerAction(identifiers, 'ban', 'unknown', reason, expiration);
                 imported++;
             }
-
         }
-
     } catch (error) {
         if (GlobalData.verbose) dir(error);
         return ctx.utils.render('basic/generic', {message: `Failed to import bans with error: ${error.message}`});

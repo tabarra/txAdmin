@@ -32,10 +32,10 @@ module.exports = async function Intercom(ctx) {
                 txAdminIsDefaultPort: (GlobalData.txAdminPort == 40120),
                 txAdminUptime: Math.round(process.uptime()),
                 fxServerUptime: globals.fxRunner.getUptime(),
-                discordBotStats: (globals.discordBot.config.enabled)? globals.discordBot.usageStats : false,
+                discordBotStats: (globals.discordBot.config.enabled) ? globals.discordBot.usageStats : false,
                 banlistEnabled: globals.playerController.config.onJoinCheckBan,
                 whitelistEnabled: globals.playerController.config.onJoinCheckWhitelist,
-                admins: (globals.authenticator.admins)? globals.authenticator.admins.length : 1,
+                admins: (globals.authenticator.admins) ? globals.authenticator.admins.length : 1,
                 tmpLooksLikeRecipe: (globals.fxRunner.config.serverDataPath || '').includes('.base'),
             };
             const outData = Object.assign(extractData, globals.databus.txStatsData);
@@ -43,25 +43,22 @@ module.exports = async function Intercom(ctx) {
         } catch (error) {
             return ctx.send({
                 txAdminVersion: GlobalData.txAdminVersion,
-                success: false
+                success: false,
             });
         }
-
     } else if (scope == 'resources') {
         if (!Array.isArray(postData.resources)) {
             return ctx.utils.error(400, 'Invalid Request');
         }
         globals.databus.resourcesList = {
             timestamp: new Date(),
-            data: postData.resources
+            data: postData.resources,
         };
-
     } else if (scope == 'logger') {
         if (!Array.isArray(postData.log)) {
             return ctx.utils.error(400, 'Invalid Request');
         }
         globals.databus.serverLog = globals.databus.serverLog.concat(postData.log);
-
     } else if (scope == 'checkPlayerJoin') {
         if (!Array.isArray(postData.identifiers) || typeof postData.name !== 'string') {
             return ctx.utils.error(400, 'Invalid Request');
@@ -79,16 +76,15 @@ module.exports = async function Intercom(ctx) {
             logError(msg);
             return ctx.send(msg);
         }
-
     } else {
         return ctx.send({
             type: 'danger',
-            message: 'Unknown intercom scope.'
+            message: 'Unknown intercom scope.',
         });
     }
 
     return ctx.send({
         txAdminVersion: GlobalData.txAdminVersion,
-        success: false
+        success: false,
     });
 };

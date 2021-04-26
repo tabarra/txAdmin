@@ -42,7 +42,7 @@ module.exports = class WebServer {
             if (httpCounter.log.length > 10) httpCounter.log.shift();
             if (httpCounter.current > httpCounter.max) httpCounter.max = httpCounter.current;
             httpCounter.current = 0;
-        }, 60*1000);
+        }, 60 * 1000);
     }
 
 
@@ -50,7 +50,7 @@ module.exports = class WebServer {
     setupKoa() {
         //Start Koa
         this.app = new Koa();
-        this.app.keys = ['txAdmin'+nanoid()];
+        this.app.keys = ['txAdmin' + nanoid()];
 
         //Session
         this.koaSessionMemoryStore = new KoaSessionMemoryStoreClass();
@@ -58,7 +58,7 @@ module.exports = class WebServer {
             store: this.koaSessionMemoryStore,
             key: this.koaSessionKey,
             rolling: true,
-            maxAge: 24*60*60*1000 //one day
+            maxAge: 24 * 60 * 60 * 1000, //one day
         }, this.app);
 
 
@@ -107,7 +107,7 @@ module.exports = class WebServer {
             } catch (error) {
                 //TODO: perhaps we should also have a koa-bodyparser generic error handler?
                 //FIXME: yes we should - sending broken json will cause internal server error even without the route being called
-                const methodName = (error.stack && error.stack[0] && error.stack[0].name)? error.stack[0].name : 'anonym';
+                const methodName = (error.stack && error.stack[0] && error.stack[0].name) ? error.stack[0].name : 'anonym';
                 if (error.type === 'entity.too.large') {
                     const desc = `Entity too large for: ${ctx.path}`;
                     if (GlobalData.verbose) logError(desc, methodName);
@@ -241,12 +241,10 @@ module.exports = class WebServer {
                 logOk(`Listening on ${iface}.`);
                 this.isListening = true;
             });
-
         } catch (error) {
             logError('Failed to start HTTP server with error:');
             dir(error);
             process.exit();
         }
     }
-
 }; //Fim WebServer()

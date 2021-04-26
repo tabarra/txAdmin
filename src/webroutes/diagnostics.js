@@ -26,7 +26,7 @@ module.exports = async function Diagnostics(ctx) {
     const timeStart = Date.now();
     const data = {
         headerTitle: 'Full Report',
-        message: ''
+        message: '',
     };
     [data.host, data.txadmin, data.fxserver, data.proccesses] = await Promise.all([
         getHostData(),
@@ -69,7 +69,7 @@ async function getProcessesData() {
             if (pid == process.pid) {
                 procName = 'txAdmin (inside FXserver)';
                 order = 0;
-            } else if (curr.memory <= 10*1024*1024) {
+            } else if (curr.memory <= 10 * 1024 * 1024) {
                 procName = 'FXServer MiniDump';
             } else {
                 procName = 'FXServer';
@@ -77,14 +77,13 @@ async function getProcessesData() {
 
             procList.push({
                 pid: pid,
-                ppid: (curr.ppid == process.pid)? 'txAdmin' : curr.ppid,
+                ppid: (curr.ppid == process.pid) ? 'txAdmin' : curr.ppid,
                 name: procName,
                 cpu: (curr.cpu).toFixed(2) + '%',
                 memory: bytes(curr.memory),
-                order: order
+                order: order,
             });
         });
-
     } catch (error) {
         logError('Error getting processes data.');
         if (GlobalData.verbose) dir(error);
@@ -119,7 +118,7 @@ async function getFXServerData() {
         responseType: 'json',
         responseEncoding: 'utf8',
         maxRedirects: 0,
-        timeout: globals.monitor.hardConfigs.timeout
+        timeout: globals.monitor.hardConfigs.timeout,
     };
 
     //Making HTTP Request
@@ -163,9 +162,9 @@ async function getFXServerData() {
             versionMismatch: (getBuild(infoData.server) !== GlobalData.fxServerVersion),
             resources: infoData.resources.length,
             resourcesWarning: resourcesWarning,
-            onesync: (infoData.vars && infoData.vars.onesync_enabled === 'true')? 'enabled' : 'disabled',
-            maxClients: (infoData.vars && infoData.vars.sv_maxClients)? infoData.vars.sv_maxClients : '--',
-            txAdminVersion: (infoData.vars && infoData.vars['txAdmin-version'])? infoData.vars['txAdmin-version'] : '--',
+            onesync: (infoData.vars && infoData.vars.onesync_enabled === 'true') ? 'enabled' : 'disabled',
+            maxClients: (infoData.vars && infoData.vars.sv_maxClients) ? infoData.vars.sv_maxClients : '--',
+            txAdminVersion: (infoData.vars && infoData.vars['txAdmin-version']) ? infoData.vars['txAdmin-version'] : '--',
         };
     } catch (error) {
         logWarn('Failed to process FXServer information.');
@@ -233,7 +232,7 @@ async function getHostData() {
 async function gettxAdminData() {
     const humanizeOptions = {
         round: true,
-        units: ['d', 'h', 'm']
+        units: ['d', 'h', 'm'],
     };
 
     const controllerConfigs = globals.playerController.config;
@@ -242,11 +241,11 @@ async function gettxAdminData() {
         globals.fxRunner &&
         globals.fxRunner.outputHandler &&
         globals.fxRunner.outputHandler.logFileSize
-    )? globals.fxRunner.outputHandler.logFileSize : '--';
+    ) ? globals.fxRunner.outputHandler.logFileSize : '--';
     return {
         //Stats
-        uptime: humanizeDuration(process.uptime()*1000, humanizeOptions),
-        cfxUrl: (GlobalData.cfxUrl)? `https://${GlobalData.cfxUrl}/` : '--',
+        uptime: humanizeDuration(process.uptime() * 1000, humanizeOptions),
+        cfxUrl: (GlobalData.cfxUrl) ? `https://${GlobalData.cfxUrl}/` : '--',
         banlistEnabled: controllerConfigs.onJoinCheckBan.toString(),
         whitelistEnabled: controllerConfigs.onJoinCheckWhitelist.toString(),
         fullCrashes: globals.monitor.globalCounters.fullCrashes,

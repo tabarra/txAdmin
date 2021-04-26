@@ -51,6 +51,4 @@ module.exports = class Logger {
             return false;
         }
     }
-
-
 }; //Fim Logger()

@@ -123,7 +123,7 @@ module.exports = class PlayerController {
                 adapterAsync = new FileAsync(dbPath, {
                     defaultValue: {},
                     serialize: JSON.stringify,
-                    deserialize: JSON.parse
+                    deserialize: JSON.parse,
                 });
             } else {
                 adapterAsync = new FileAsync(dbPath);
@@ -133,7 +133,7 @@ module.exports = class PlayerController {
                 version: currentDatabaseVersion,
                 players: [],
                 actions: [],
-                pendingWL: []
+                pendingWL: [],
             }).write();
 
             const importedVersion = await dbo.get('version').value();
@@ -226,11 +226,11 @@ module.exports = class PlayerController {
 
                     this.writePending = true; //low
                     p.isTmp = false;
-                    p.playTime = Math.round(sessionTime/60);
+                    p.playTime = Math.round(sessionTime / 60);
                     p.notes = {
                         text: '',
                         lastAdmin: null,
-                        tsLastEdit: null
+                        tsLastEdit: null,
                     };
                     let toDB = {
                         license: p.license,
@@ -238,7 +238,7 @@ module.exports = class PlayerController {
                         playTime: p.playTime,
                         tsJoined: p.tsJoined,
                         tsLastConnection: p.tsConnected,
-                        notes: p.notes
+                        notes: p.notes,
                     };
                     await this.dbo.get('players')
                         .push(toDB)
@@ -255,7 +255,7 @@ module.exports = class PlayerController {
                             name: p.name,
                             playTime: p.playTime,
                             notes: p.notes,
-                            tsLastConnection: p.tsConnected
+                            tsLastConnection: p.tsConnected,
                         })
                         .value();
                     // logOk(`Updating '${p.name}' in players database.`); //DEBUG
@@ -277,7 +277,7 @@ module.exports = class PlayerController {
     async getPlayer(license) {
         try {
             let p = await this.dbo.get('players').find({license: license}).cloneDeep().value();
-            return (typeof p === 'undefined')? null : p;
+            return (typeof p === 'undefined') ? null : p;
         } catch (error) {
             if (GlobalData.verbose) logError(`Failed to search for a player in the database with error: ${error.message}`);
             return false;
@@ -375,7 +375,7 @@ module.exports = class PlayerController {
                             round: true,
                             units: ['d', 'h'],
                         };
-                        tOptions.expiration = humanizeDuration((ban.expiration - ts)*1000, humanizeOptions);
+                        tOptions.expiration = humanizeDuration((ban.expiration - ts) * 1000, humanizeOptions);
                         msg = globals.translator.t('ban_messages.reject_temporary', tOptions);
                     } else {
                         msg = globals.translator.t('ban_messages.reject_permanent', tOptions);
@@ -406,7 +406,7 @@ module.exports = class PlayerController {
                             id: whitelistID,
                             name: playerName,
                             license: license,
-                            tsLastAttempt: now()
+                            tsLastAttempt: now(),
                         };
                         await this.dbo.get('pendingWL').push(toDB).value();
                     }
@@ -415,7 +415,7 @@ module.exports = class PlayerController {
                     //Clean rejection message
                     const xssRejectMessage = require('../../extras/xss')({
                         strong: [],
-                        id: []
+                        id: [],
                     });
                     const reason = xssRejectMessage(this.config.whitelistRejectionMessage)
                         .replace(/<\/?strong>/g, '')
@@ -477,7 +477,7 @@ module.exports = class PlayerController {
         }
 
         //Saves it to the database
-        const actionPrefix = (type == 'warn')? 'a' : type[0];
+        const actionPrefix = (type == 'warn') ? 'a' : type[0];
         const actionID = actionPrefix.toUpperCase()
             + customAlphabet(GlobalData.noLookAlikesAlphabet, 3)()
             + '-'
@@ -494,7 +494,7 @@ module.exports = class PlayerController {
             revocation: {
                 timestamp: null,
                 author: null,
-            }
+            },
         };
         try {
             await this.dbo.get('actions')
@@ -521,7 +521,7 @@ module.exports = class PlayerController {
      * @param {array} allowedTypes array containing the types of actions this admin can revoke
      * @returns {string} null, error message string, or throws if something goes wrong
      */
-    async revokeAction(action_id, author, allowedTypes=true) {
+    async revokeAction(action_id, author, allowedTypes = true) {
         if (typeof action_id !== 'string' || !action_id.length) throw new Error('Invalid action_id.');
         if (typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
         if (allowedTypes !== true && !Array.isArray(allowedTypes)) throw new Error('Invalid allowedTypes.');
@@ -536,7 +536,7 @@ module.exports = class PlayerController {
                 }
                 action.revocation = {
                     timestamp: now(),
-                    author
+                    author,
                 };
                 this.writePending = true; //high
                 return null;
@@ -631,7 +631,7 @@ module.exports = class PlayerController {
             target.notes = {
                 text: note,
                 lastAdmin: author,
-                tsLastEdit: now()
+                tsLastEdit: now(),
             };
 
             return true;
@@ -757,7 +757,7 @@ module.exports = class PlayerController {
                             id: hbPlayerData.id, //NOTE: possibly the solution to the double player issue?
                             ping: hbPlayerData.ping,
                             // extraData: hbPlayerData.extraData //NOTE: reserve for RolePlay data from frameworks
-                        }
+                        },
                     );
                     newActivePlayers.push(updatedPlayer);
                     activePlayerLicenses.push(this.activePlayers[i].license);
@@ -783,7 +783,7 @@ module.exports = class PlayerController {
                             playTime: dbPlayer.playTime,
                             tsConnected: now(),
                             isTmp: false,
-                            notes: dbPlayer.notes
+                            notes: dbPlayer.notes,
                         });
                         newActivePlayers.push(newPlayer);
                     } else {
@@ -822,5 +822,4 @@ module.exports = class PlayerController {
             }
         }
     }//Fim processHeartBeat()
-
 }; //Fim Database()

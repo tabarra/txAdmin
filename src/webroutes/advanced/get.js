@@ -14,6 +14,6 @@ module.exports = async function AdvancedGet(ctx) {
     }
 
     return ctx.utils.render('advanced', {
-        verbosityEnabled: GlobalData.verbose
+        verbosityEnabled: GlobalData.verbose,
     });
 };

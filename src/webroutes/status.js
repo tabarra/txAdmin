@@ -24,7 +24,7 @@ module.exports = async function GetStatus(ctx) {
         meta: prepareMetaData(),
         host: hostData,
         status: prepareServerStatus(),
-        players: preparePlayersData()
+        players: preparePlayersData(),
     });
 };
 
@@ -34,7 +34,6 @@ module.exports = async function GetStatus(ctx) {
  * Returns the fxserver's data
  */
 function prepareServerStatus() {
-
     // //processing hitches
     // let fxServerHitches = cloneDeep(globals.monitor.globalCounters.hitches);
     // let now = (Date.now() / 1000).toFixed();
@@ -72,11 +71,9 @@ function prepareServerStatus() {
     if (discordClient == null) {
         discordStatus = 'DISABLED';
         discordStatusClass = 'secondary';
-
     } else if (discStatusCodes[discordClient.status]) {
         discordStatus = discStatusCodes[discordClient.status][0];
         discordStatusClass = discStatusCodes[discordClient.status][1];
-
     } else {
         discordStatus = 'UNKNOWN';
         discordStatusClass = 'danger';
@@ -132,14 +129,13 @@ async function prepareHostData() {
         return {
             memory: {
                 pct: memUsage,
-                text: `${memUsage}% (${memUsed}/${memTotal} GB)`
+                text: `${memUsage}% (${memUsed}/${memTotal} GB)`,
             },
             cpu:{
                 pct: cpuUsage,
-                text: `${cpuUsage}% of ${cpus.length}x ${cpus[0].speed} MHz`
-            }
+                text: `${cpuUsage}% of ${cpus.length}x ${cpus[0].speed} MHz`,
+            },
         };
-
     } catch (error) {
         if (GlobalData.verbose) {
             logError('Failed to execute prepareHostData()');
@@ -148,12 +144,12 @@ async function prepareHostData() {
         return {
             memory: {
                 pct: 0,
-                text: 'error'
+                text: 'error',
             },
             cpu:{
                 pct: 0,
-                text: 'error'
-            }
+                text: 'error',
+            },
         };
     }
 }
@@ -186,6 +182,6 @@ function prepareMetaData() {
     }
     return {
         favicon,
-        title: (globals.monitor.currentStatus == 'ONLINE') ? `(${globals.playerController.activePlayers.length}) txAdmin` : 'txAdmin'
+        title: (globals.monitor.currentStatus == 'ONLINE') ? `(${globals.playerController.activePlayers.length}) txAdmin` : 'txAdmin',
     };
 }

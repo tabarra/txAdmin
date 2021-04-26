@@ -28,7 +28,7 @@ module.exports = async function AdminManagerActions(ctx) {
     if (!ctx.utils.checkPermission('manage.admins', modulename)) {
         return ctx.send({
             type: 'danger',
-            message: 'You don\'t have permission to execute this action.'
+            message: 'You don\'t have permission to execute this action.',
         });
     }
 
@@ -44,7 +44,7 @@ module.exports = async function AdminManagerActions(ctx) {
     } else {
         return ctx.send({
             type: 'danger',
-            message: 'Unknown action.'
+            message: 'Unknown action.',
         });
     }
 };
@@ -71,7 +71,7 @@ async function handleAdd(ctx) {
     let password = nanoid();
     let citizenfxID = ctx.request.body.citizenfxID.trim();
     let discordID = ctx.request.body.discordID.trim();
-    let permissions = (Array.isArray(ctx.request.body.permissions))? ctx.request.body.permissions : [];
+    let permissions = (Array.isArray(ctx.request.body.permissions)) ? ctx.request.body.permissions : [];
     permissions = permissions.filter((x)=>{ return typeof x === 'string';});
     if (permissions.includes('all_permissions')) permissions = ['all_permissions'];
 
@@ -88,11 +88,11 @@ async function handleAdd(ctx) {
                 method: 'get',
                 responseType: 'json',
                 responseEncoding: 'utf8',
-                timeout: 4000
+                timeout: 4000,
             });
             citizenfxData = {
                 id: citizenfxID,
-                identifier: `fivem:${res.data.user.id}`
+                identifier: `fivem:${res.data.user.id}`,
             };
         } catch (error) {
             logError(`Failed to resolve CitizenFX ID to game identifier with error: ${error.message}`);
@@ -103,7 +103,7 @@ async function handleAdd(ctx) {
         if (!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
         discordData = {
             id: discordID,
-            identifier: `discord:${discordID}`
+            identifier: `discord:${discordID}`,
         };
     }
 
@@ -161,11 +161,11 @@ async function handleEdit(ctx) {
                 method: 'get',
                 responseType: 'json',
                 responseEncoding: 'utf8',
-                timeout: 4000
+                timeout: 4000,
             });
             citizenfxData = {
                 id: citizenfxID,
-                identifier: `fivem:${res.data.user.id}`
+                identifier: `fivem:${res.data.user.id}`,
             };
         } catch (error) {
             logError(`Failed to resolve CitizenFX ID to game identifier with error: ${error.message}`);
@@ -176,7 +176,7 @@ async function handleEdit(ctx) {
         if (!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
         discordData = {
             id: discordID,
-            identifier: `discord:${discordID}`
+            identifier: `discord:${discordID}`,
         };
     }
 
@@ -273,7 +273,7 @@ async function handleGetModal(ctx) {
             return {
                 id: perm[0],
                 name: perm[1],
-                checked: (admin.permissions.includes(perm[0]))? 'checked' : ''
+                checked: (admin.permissions.includes(perm[0])) ? 'checked' : '',
             };
         });
     }
@@ -282,10 +282,10 @@ async function handleGetModal(ctx) {
     const renderData = {
         headerTitle: 'Admin Manager',
         username: admin.name,
-        citizenfx_id: (admin.providers.citizenfx)? admin.providers.citizenfx.id : '',
-        discord_id: (admin.providers.discord)? admin.providers.discord.id : '',
+        citizenfx_id: (admin.providers.citizenfx) ? admin.providers.citizenfx.id : '',
+        discord_id: (admin.providers.discord) ? admin.providers.discord.id : '',
         permissions,
-        editingSelf
+        editingSelf,
     };
 
     //Give output

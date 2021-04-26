@@ -14,13 +14,13 @@ const parsePerf = (raw) => {
     const lines = raw.trim().split('\n');
     const metrics = {
         svSync: {
-            buckets: []
+            buckets: [],
         },
         svNetwork: {
-            buckets: []
+            buckets: [],
         },
         svMain: {
-            buckets: []
+            buckets: [],
         },
     };
 
@@ -36,11 +36,9 @@ const parsePerf = (raw) => {
         if (regType == 'count') {
             const count = parseInt(value);
             if (!isNaN(count)) metrics[thread].count = count;
-
         } else if (regType == 'sum') {
             const sum = parseFloat(value);
             if (!isNaN(sum)) metrics[thread].sum = sum;
-
         } else if (regType == 'bucket') {
             if (bucket !== perfBuckets[metrics[thread].buckets.length]) throw new Error(`unexpected bucket ${bucket} at position ${metrics[thread].buckets.length}`);
             metrics[thread].buckets.push(parseInt(value));
@@ -71,7 +69,7 @@ const diffPerfs = (newPerf, oldPerf = false) => {
         const zeros = {
             count: 0,
             sum: 0,
-            buckets: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+            buckets: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
         };
         oldPerf = {
             svSync: zeros,
@@ -83,17 +81,17 @@ const diffPerfs = (newPerf, oldPerf = false) => {
         svSync: {
             count: newPerf.svSync.count - oldPerf.svSync.count,
             sum: newPerf.svSync.sum - oldPerf.svSync.sum,
-            buckets: newPerf.svSync.buckets.map((bucket, i) => bucket - oldPerf.svSync.buckets[i])
+            buckets: newPerf.svSync.buckets.map((bucket, i) => bucket - oldPerf.svSync.buckets[i]),
         },
         svNetwork: {
             count: newPerf.svNetwork.count - oldPerf.svNetwork.count,
             sum: newPerf.svNetwork.sum - oldPerf.svNetwork.sum,
-            buckets: newPerf.svNetwork.buckets.map((bucket, i) => bucket - oldPerf.svNetwork.buckets[i])
+            buckets: newPerf.svNetwork.buckets.map((bucket, i) => bucket - oldPerf.svNetwork.buckets[i]),
         },
         svMain: {
             count: newPerf.svMain.count - oldPerf.svMain.count,
             sum: newPerf.svMain.sum - oldPerf.svMain.sum,
-            buckets: newPerf.svMain.buckets.map((bucket, i) => bucket - oldPerf.svMain.buckets[i])
+            buckets: newPerf.svMain.buckets.map((bucket, i) => bucket - oldPerf.svMain.buckets[i]),
         },
     };
 };
@@ -142,5 +140,5 @@ module.exports = {
     parsePerf,
     diffPerfs,
     validatePerfThreadData,
-    validatePerfCacheData
+    validatePerfCacheData,
 };
