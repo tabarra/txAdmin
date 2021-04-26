@@ -13,7 +13,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  */
 module.exports = async function Intercom(ctx) {
     //Sanity check
-    if(isUndefined(ctx.params.scope)){
+    if (isUndefined(ctx.params.scope)) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     const scope = ctx.params.scope;
@@ -22,7 +22,7 @@ module.exports = async function Intercom(ctx) {
     postData.txAdminToken = true;
 
     //Delegate to the specific scope functions
-    if(scope == 'monitor'){
+    if (scope == 'monitor') {
         try {
             globals.monitor.handleHeartBeat('http', postData);
             const extractData = {
@@ -47,8 +47,8 @@ module.exports = async function Intercom(ctx) {
             });
         }
 
-    }else if(scope == 'resources'){
-        if(!Array.isArray(postData.resources)){
+    } else if (scope == 'resources') {
+        if (!Array.isArray(postData.resources)) {
             return ctx.utils.error(400, 'Invalid Request');
         }
         globals.databus.resourcesList = {
@@ -56,21 +56,21 @@ module.exports = async function Intercom(ctx) {
             data: postData.resources
         }
 
-    }else if(scope == 'logger'){
-        if(!Array.isArray(postData.log)){
+    } else if (scope == 'logger') {
+        if (!Array.isArray(postData.log)) {
             return ctx.utils.error(400, 'Invalid Request');
         }
         globals.databus.serverLog = globals.databus.serverLog.concat(postData.log)
 
-    }else if(scope == 'checkPlayerJoin'){
-        if(!Array.isArray(postData.identifiers) || typeof postData.name !== 'string'){
+    } else if (scope == 'checkPlayerJoin') {
+        if (!Array.isArray(postData.identifiers) || typeof postData.name !== 'string') {
             return ctx.utils.error(400, 'Invalid Request');
         }
         try {
             const resp = await globals.playerController.checkPlayerJoin(postData.identifiers, postData.name);
-            if(resp.allow){
+            if (resp.allow) {
                 return ctx.send('allow');
-            }else{
+            } else {
                 const msg = resp.reason || 'Access Denied for unknown reason';
                 return ctx.send(`[txAdmin] ${msg}`);
             }
@@ -80,7 +80,7 @@ module.exports = async function Intercom(ctx) {
             return ctx.send(msg);
         }
 
-    }else{
+    } else {
         return ctx.send({
             type: 'danger',
             message: 'Unknown intercom scope.'

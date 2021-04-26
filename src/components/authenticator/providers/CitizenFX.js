@@ -19,7 +19,7 @@ module.exports = class CitizenFXProvider {
     /**
      * Do OpenID Connect auto-discover on CitizenFX endpoint
      */
-    async setClient(){
+    async setClient() {
         try {
             //NOTE: using static config due to performance concerns
             // const fivemIssuer = await Issuer.discover('https://idms.fivem.net/.well-known/openid-configuration');
@@ -34,7 +34,7 @@ module.exports = class CitizenFXProvider {
             custom.setHttpOptionsDefaults({
                 timeout: 4500,
             });
-            if(GlobalData.verbose) log('CitizenFX Provider configured.');
+            if (GlobalData.verbose) log('CitizenFX Provider configured.');
             this.ready = true;
         } catch (error) {
             logError(`Failed to create client with error: ${error.message}`);
@@ -49,8 +49,8 @@ module.exports = class CitizenFXProvider {
      * @param {string} redirectUri
      * @returns {(string)} the auth url or throws an error
      */
-    async getAuthURL(redirectUri, stateKern){
-        if(!this.ready) throw new Error(`${modulename} is not ready`);
+    async getAuthURL(redirectUri, stateKern) {
+        if (!this.ready) throw new Error(`${modulename} is not ready`);
 
         const stateSeed = `txAdmin:${stateKern}`;
         const state = crypto.createHash('SHA1').update(stateSeed).digest("hex");
@@ -60,7 +60,7 @@ module.exports = class CitizenFXProvider {
             response_type: 'code',
             scope: 'openid identify'
         });
-        if(typeof url !== 'string') throw new Error('url is not string');
+        if (typeof url !== 'string') throw new Error('url is not string');
         return url;
     }
 
@@ -73,12 +73,12 @@ module.exports = class CitizenFXProvider {
      * @param {string} stateKern
      * @returns {(object)} tokenSet or throws an error
      */
-    async processCallback(ctx, redirectUri, stateKern){
-        if(!this.ready) throw new Error(`${modulename} is not ready`);
+    async processCallback(ctx, redirectUri, stateKern) {
+        if (!this.ready) throw new Error(`${modulename} is not ready`);
 
         //Process the request
         const params = this.client.callbackParams(ctx);
-        if(typeof params.code == 'undefined') throw new Error('code not present');
+        if (typeof params.code == 'undefined') throw new Error('code not present');
 
         //Check the state
         const stateSeed = `txAdmin:${stateKern}`;
@@ -86,9 +86,9 @@ module.exports = class CitizenFXProvider {
 
         //Exchange code for token
         const tokenSet = await this.client.callback(redirectUri, params, {state: stateExpected});
-        if(typeof tokenSet !== 'object') throw new Error('tokenSet is not an object');
-        if(typeof tokenSet.access_token == 'undefined') throw new Error('access_token not present');
-        if(typeof tokenSet.expires_at == 'undefined') throw new Error('expires_at not present');
+        if (typeof tokenSet !== 'object') throw new Error('tokenSet is not an object');
+        if (typeof tokenSet.access_token == 'undefined') throw new Error('access_token not present');
+        if (typeof tokenSet.expires_at == 'undefined') throw new Error('expires_at not present');
         return tokenSet;
     }
 
@@ -99,16 +99,16 @@ module.exports = class CitizenFXProvider {
      * @param {string} accessToken
      * @returns {(string)} userInfo or throws an error
      */
-    async getUserInfo(accessToken){
-        if(!this.ready) throw new Error(`${modulename} is not ready`);
+    async getUserInfo(accessToken) {
+        if (!this.ready) throw new Error(`${modulename} is not ready`);
 
         //Perform introspection
         const userInfo = await this.client.userinfo(accessToken);
-        if(typeof userInfo !== 'object') throw new Error('userInfo is not an object');
-        if(typeof userInfo.name != 'string' || !userInfo.name.length) throw new Error('name not present');
-        if(typeof userInfo.profile != 'string' || !userInfo.profile.length) throw new Error('profile not present');
-        if(typeof userInfo.nameid != 'string' || !userInfo.nameid.length) throw new Error('nameid not present');
-        if(typeof userInfo.picture != 'string' || !userInfo.picture.length) userInfo.picture = null;
+        if (typeof userInfo !== 'object') throw new Error('userInfo is not an object');
+        if (typeof userInfo.name != 'string' || !userInfo.name.length) throw new Error('name not present');
+        if (typeof userInfo.profile != 'string' || !userInfo.profile.length) throw new Error('profile not present');
+        if (typeof userInfo.nameid != 'string' || !userInfo.nameid.length) throw new Error('nameid not present');
+        if (typeof userInfo.picture != 'string' || !userInfo.picture.length) userInfo.picture = null;
         return userInfo;
     }
 
@@ -122,7 +122,7 @@ module.exports = class CitizenFXProvider {
      * @param {object} userInfo
      * @returns {(object)}
      */
-    async getUserSession(tokenSet, userInfo){
+    async getUserSession(tokenSet, userInfo) {
         return {
             provider: 'citizenfx',
             provider_uid: userInfo.name,

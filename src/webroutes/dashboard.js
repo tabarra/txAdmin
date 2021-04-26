@@ -9,10 +9,10 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
  */
 module.exports = async function Dashboard(ctx) {
     // Check if the deployer is running or setup is pending
-    if(globals.deployer !== null){
+    if (globals.deployer !== null) {
         return ctx.response.redirect('/deployer');
     }
-    if(!globals.fxRunner.config.serverDataPath || !globals.fxRunner.config.cfgPath){
+    if (!globals.fxRunner.config.serverDataPath || !globals.fxRunner.config.cfgPath) {
         return ctx.response.redirect('/setup');
     }
 
@@ -62,7 +62,7 @@ function getVersionData() {
     // Prepping vars & checking if there is data available
     const curr = GlobalData.fxServerVersion;
     const rVer = globals.databus.updateChecker;
-    if(!rVer){
+    if (!rVer) {
         return {
             artifactsLink: false,
             color: false,
@@ -79,19 +79,19 @@ function getVersionData() {
 
     //Processing version data
     try {
-        if(curr < rVer.critical){
+        if (curr < rVer.critical) {
             versionData.color = 'danger';
             versionData.message = 'A critical update is available for FXServer, you should update now.';
             versionData.subtext = (rVer.critical > rVer.recommended)
                 ? `(critical update ${curr} ➤ ${rVer.critical})`
                 : `(recommended update ${curr} ➤ ${rVer.recommended})`;
             
-        }else if(curr < rVer.recommended){
+        } else if (curr < rVer.recommended) {
             versionData.color = 'warning';
             versionData.message = 'A recommended update is available for FXServer, you should update.';
             versionData.subtext = `(recommended update ${curr} ➤ ${rVer.recommended})`;
     
-        }else if(curr < rVer.optional){
+        } else if (curr < rVer.optional) {
             versionData.color = 'info';
             versionData.message = 'An optional update is available for FXServer.';
             versionData.subtext = `(optional update ${curr} ➤ ${rVer.optional})`;
@@ -99,7 +99,7 @@ function getVersionData() {
 
     } catch (error) {
         logError(`Error while processing changelog. Enable verbosity for more information.`);
-        if(GlobalData.verbose) dir(error);
+        if (GlobalData.verbose) dir(error);
     }
 
     return versionData;

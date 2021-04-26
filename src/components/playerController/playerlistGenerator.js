@@ -17,7 +17,7 @@ const unDups = (arr) => arr.filter((v,i) => arr.indexOf(v) === i)
  *  - enable this require in monitor component's constructor
  */
 module.exports = class PlayerlistGenerator {
-    constructor(){
+    constructor() {
         //Configs
         this.config = {
             srcPlayerlist: require('./playerlist.ignore.json'),
@@ -42,7 +42,7 @@ module.exports = class PlayerlistGenerator {
 
 
     //================================================================
-    async refreshPlayersExternal(){
+    async refreshPlayersExternal() {
         try {
             this.playerlist = await got(`http://${GlobalData.debugExternalSource}/players.json`, {timeout: 1500}).json();
         } catch (error) {
@@ -51,12 +51,12 @@ module.exports = class PlayerlistGenerator {
     }
 
     //================================================================
-    refreshPlayersStatic(){
+    refreshPlayersStatic() {
         //Add and remove indexes
-        if(this.config.shouldAddRemovePlayers){
-            if(Math.random() < 0.5 && this.indexes.length > this.config.minPlayers){
+        if (this.config.shouldAddRemovePlayers) {
+            if (Math.random() < 0.5 && this.indexes.length > this.config.minPlayers) {
                 delete this.indexes[randIndex(this.indexes)];
-            }else if(this.indexes.length < this.config.maxPlayers){
+            } else if (this.indexes.length < this.config.maxPlayers) {
                 this.indexes.push(randIndex(this.config.srcPlayerlist))
             }
         

@@ -71,13 +71,13 @@ globals = {
  * Main APP
  */
 module.exports = class txAdmin {
-    constructor(serverProfile){
+    constructor(serverProfile) {
         log(`Profile '${serverProfile}' starting...`);
         globals.info.serverProfile = serverProfile;
 
         //Check if the profile exists and call setup if it doesn't
         const profilePath = cleanPath(path.join(GlobalData.dataPath, serverProfile));
-        if(!fs.existsSync(profilePath)){
+        if (!fs.existsSync(profilePath)) {
             try {
                 const SetupProfile = require('./extras/setupProfile.js');
                 SetupProfile(GlobalData.osType, GlobalData.fxServerPath, GlobalData.fxServerVersion, serverProfile, profilePath);
@@ -146,62 +146,62 @@ module.exports = class txAdmin {
 
 
     //==============================================================
-    async startAuthenticator(config){
+    async startAuthenticator(config) {
         const Authenticator = require('./components/authenticator')
         globals.authenticator = new Authenticator(config);
     }
 
     //==============================================================
-    async startDiscordBot(config){
+    async startDiscordBot(config) {
         const DiscordBot = require('./components/discordBot')
         globals.discordBot = new DiscordBot(config);
     }
 
     //==============================================================
-    async startFXRunner(config){
+    async startFXRunner(config) {
         const FXRunner = require('./components/fxRunner')
         globals.fxRunner = new FXRunner(config);
     }
 
     //==============================================================
-    async startLogger(config){
+    async startLogger(config) {
         const Logger = require('./components/logger')
         globals.logger = new Logger(config);
     }
 
     //==============================================================
-    async startDynamicAds(config){
+    async startDynamicAds(config) {
         const DynamicAds = require('./components/dynamicAds')
         globals.dynamicAds = new DynamicAds(config);
     }
 
     //==============================================================
-    async startMonitor(config){
+    async startMonitor(config) {
         const Monitor = require('./components/monitor')
         globals.monitor = new Monitor(config);
     }
 
     //==============================================================
-    async startStatsCollector(config){
+    async startStatsCollector(config) {
         const StatsCollector = require('./components/statsCollector')
         globals.statsCollector = new StatsCollector(config);
     }
 
     //==============================================================
-    async startTranslator(){
+    async startTranslator() {
         const Translator = require('./components/translator')
         globals.translator = new Translator();
     }
 
     //==============================================================
-    async startWebServer(config){
+    async startWebServer(config) {
         const WebServer = require('./components/webServer')
         globals.webServer = new WebServer(config);
     }
 
     //==============================================================
     //NOTE: this component name might change
-    async startPlayerController(config){
+    async startPlayerController(config) {
         const PlayerController = require('./components/playerController')
         globals.playerController = new PlayerController(config);
     }
@@ -209,11 +209,11 @@ module.exports = class txAdmin {
 
 
 //==============================================================
-function HandleFatalError(error, componentName){
-    if(error.message.includes('Cannot find module') && process.env.APP_ENV !== 'webpack'){
+function HandleFatalError(error, componentName) {
+    if (error.message.includes('Cannot find module') && process.env.APP_ENV !== 'webpack') {
         logError(`Error starting '${componentName}' module. Make sure you executed 'npm install'.`)
-        if(GlobalData.verbose) dir(error);
-    }else{
+        if (GlobalData.verbose) dir(error);
+    } else {
         logError(`Error starting '${componentName}' module: ${error.message}`)
         dir(error)
     }

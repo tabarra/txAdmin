@@ -19,14 +19,14 @@ module.exports = class HostCPUStatus {
      * Returns an object containing host's machine cpu usage
      * @returns {object} {full, last10, last30}
      */
-    getUsageStats(){
+    getUsageStats() {
         var result = {full:null, last10:null, last30:null}
         var percent = 0
         var i = this.samples.length
         var cnt = 0
         while (i--) {
             cnt++;
-            if (this.samples[i].total > 0){
+            if (this.samples[i].total > 0) {
                 percent += (100 - Math.round(100 * this.samples[i].idle / this.samples[i].total))
             }
             if (cnt == 100)       result.last10  = (percent/cnt).toFixed();   //10 segundos
@@ -42,16 +42,16 @@ module.exports = class HostCPUStatus {
     /**
      * Get samples and process deltas
      */
-    getSamples(){
+    getSamples() {
         let currCpus = os.cpus()
         for (var i=0,len=currCpus.length;i<len;i++) {
             var prevCpu = this.prevCpus[i];
             var currCpu = currCpus[i];
             var deltas = {total:0};
-            for (let t in prevCpu.times){
+            for (let t in prevCpu.times) {
                 deltas.total += currCpu.times[t] - prevCpu.times[t];
             }
-            for (let t in prevCpu.times){
+            for (let t in prevCpu.times) {
                 deltas[t] = currCpu.times[t] - prevCpu.times[t];
             }
         }

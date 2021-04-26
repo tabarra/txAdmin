@@ -10,12 +10,12 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
  */
 module.exports = async function DeployerStepper(ctx) {
     //Check permissions
-    if(!ctx.utils.checkPermission('master', modulename)){
+    if (!ctx.utils.checkPermission('master', modulename)) {
         return ctx.utils.render('basic/generic', {message: `You need to be the admin master to use the deployer.`});
     }
 
     //Check if this is the correct state for the deployer
-    if(globals.deployer == null){
+    if (globals.deployer == null) {
         const redirPath = (!globals.fxRunner.config.cfgPath || !globals.fxRunner.config.serverDataPath)? '/setup' : '/';
         return ctx.response.redirect(redirPath);
     }
@@ -27,7 +27,7 @@ module.exports = async function DeployerStepper(ctx) {
         deploymentID: globals.deployer.deploymentID,
         isPlaceholderRecipe: (globals.deployer === false),
     };
-    if(globals.deployer.step === 'review'){
+    if (globals.deployer.step === 'review') {
         renderData.recipe = {
             isTrustedSource: globals.deployer.isTrustedSource,
             name: globals.deployer.recipe.name,
@@ -37,10 +37,10 @@ module.exports = async function DeployerStepper(ctx) {
             raw: globals.deployer.recipe.raw,
         }
 
-    }else if(globals.deployer.step === 'input'){
+    } else if (globals.deployer.step === 'input') {
         renderData.defaultLicenseKey = process.env.TXADMIN_DEFAULT_LICENSE || '';
         renderData.requireDBConfig = globals.deployer.recipe.requireDBConfig;
-        if(GlobalData.deployerDefaults){
+        if (GlobalData.deployerDefaults) {
             renderData.defaults = {
                 autofilled: true,
                 license: GlobalData.deployerDefaults.license || '',
@@ -49,7 +49,7 @@ module.exports = async function DeployerStepper(ctx) {
                 mysqlPassword: GlobalData.deployerDefaults.mysqlPassword || '',
                 mysqlDatabase: GlobalData.deployerDefaults.mysqlDatabase || globals.deployer.deploymentID,
             }
-        }else{
+        } else {
             renderData.defaults = {
                 autofilled: false,
                 license: process.env.TXADMIN_DEFAULT_LICENSE || '',
@@ -68,27 +68,27 @@ module.exports = async function DeployerStepper(ctx) {
             }
         });
 
-    }else if(globals.deployer.step === 'run'){
+    } else if (globals.deployer.step === 'run') {
         renderData.deployPath = globals.deployer.deployPath;
 
-    }else if(globals.deployer.step === 'configure'){
+    } else if (globals.deployer.step === 'configure') {
         const errorMessage = `# This recipe didn't create the ./server.cfg for you, meaning the process likely failed.
 # Please make sure everything is correct, or insert here the contents of the ./server.cfg
 # (╯°□°）╯︵ ┻━┻`;
         try {
             renderData.serverCFG = await fs.readFile(`${globals.deployer.deployPath}/server.cfg`, 'utf8');
-            if(renderData.serverCFG == '#save_attempt_please_ignore' || !renderData.serverCFG.length){
+            if (renderData.serverCFG == '#save_attempt_please_ignore' || !renderData.serverCFG.length) {
                 renderData.serverCFG = errorMessage;
-            }else if(renderData.serverCFG.length > 10240){ //10kb
+            } else if (renderData.serverCFG.length > 10240) { //10kb
                 renderData.serverCFG = `# This recipe created a ./server.cfg above 10kb, meaning its probably the wrong data. 
 Make sure everything is correct in the recipe and try again.`;
             }
         } catch (error) {
-            if(GlobalData.verbose) dir(error);
+            if (GlobalData.verbose) dir(error);
             renderData.serverCFG = errorMessage;
         }     
 
-    }else{
+    } else {
         return ctx.utils.render('basic/generic', {message: `Unknown Deployer step, please report this bug and restart txAdmin.`});
     }
 

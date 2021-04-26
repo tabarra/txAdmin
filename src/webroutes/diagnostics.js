@@ -18,7 +18,7 @@ const cache = new Cache(5);
  */
 module.exports = async function Diagnostics(ctx) {
     const cachedData = cache.get();
-    if(cachedData !== false){
+    if (cachedData !== false) {
         cachedData.message = 'This page was cached in the last 5 seconds';
         return ctx.utils.render('diagnostics', cachedData);
     }
@@ -49,14 +49,14 @@ module.exports = async function Diagnostics(ctx) {
  * TODO: get process name with wmic
  *       wmic PROCESS get "Name,ParentProcessId,ProcessId,CommandLine,CreationDate,UserModeTime,WorkingSetSize"
  */
-async function getProcessesData(){
+async function getProcessesData() {
     const procList = [];
     try {
         const processes = await pidusageTree(process.pid);
 
         //NOTE: Cleaning invalid proccesses that might show up in Linux
         Object.keys(processes).forEach((pid) => {
-            if(processes[pid] === null) delete processes[pid];
+            if (processes[pid] === null) delete processes[pid];
         });
 
         //Foreach PID
@@ -66,12 +66,12 @@ async function getProcessesData(){
             //Define name and order
             let procName;
             let order = process.timestamp || 1;
-            if(pid == process.pid){
+            if (pid == process.pid) {
                 procName = 'txAdmin (inside FXserver)';
                 order = 0;
-            }else if(curr.memory <= 10*1024*1024){
+            } else if (curr.memory <= 10*1024*1024) {
                 procName = 'FXServer MiniDump';
-            }else{
+            } else {
                 procName = 'FXServer';
             }
 
@@ -87,7 +87,7 @@ async function getProcessesData(){
 
     } catch (error) {
         logError(`Error getting processes data.`);
-        if(GlobalData.verbose) dir(error);
+        if (GlobalData.verbose) dir(error);
     }
 
     //Sort procList array
@@ -106,9 +106,9 @@ async function getProcessesData(){
 /**
  * Gets the FXServer Data.
  */
-async function getFXServerData(){
+async function getFXServerData() {
     //Sanity Check
-    if(!globals.config.forceFXServerPort && !globals.fxRunner.fxServerPort){
+    if (!globals.config.forceFXServerPort && !globals.fxRunner.fxServerPort) {
         return {error: `Server Offline`}
     }
 
@@ -129,7 +129,7 @@ async function getFXServerData(){
         infoData = res.data;
     } catch (error) {
         logWarn('Failed to get FXServer information.');
-        if(GlobalData.verbose) dir(error);
+        if (GlobalData.verbose) dir(error);
         return {error: `Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)`};
     }
 
@@ -147,11 +147,11 @@ async function getFXServerData(){
     //Processing result
     try {
         let resourcesWarning;
-        if(infoData.resources.length <= 100){
+        if (infoData.resources.length <= 100) {
             resourcesWarning = '';
-        }else if(infoData.resources.length < 200){
+        } else if (infoData.resources.length < 200) {
             resourcesWarning = `<span class="badge badge-warning"> HIGH </span>`;
-        }else{
+        } else {
             resourcesWarning = `<span class="badge badge-danger"> VERY HIGH! </span>`;
         }
 
@@ -169,7 +169,7 @@ async function getFXServerData(){
         };
     } catch (error) {
         logWarn('Failed to process FXServer information.');
-        if(GlobalData.verbose) dir(error);
+        if (GlobalData.verbose) dir(error);
         return {error: `Failed to process FXServer data. <br>Check the terminal for more information (if verbosity is enabled)`};
     }
 }
@@ -179,7 +179,7 @@ async function getFXServerData(){
 /**
  * Gets the Host Data.
  */
-async function getHostData(){
+async function getHostData() {
     const hostData = {};
     try {
         const giga = 1024 * 1024 * 1024;
@@ -201,10 +201,10 @@ async function getHostData(){
         const cpus = os.cpus();
 
         let clockWarning = ``;
-        if(cpus.length < 8){
-            if(cpus[0].speed <= 2400){
+        if (cpus.length < 8) {
+            if (cpus[0].speed <= 2400) {
                 clockWarning = '<span class="badge badge-danger"> VERY SLOW! </span>';
-            }else if(cpus[0].speed < 3000){
+            } else if (cpus[0].speed < 3000) {
                 clockWarning = `<span class="badge badge-warning"> SLOW </span>`;
             }
         }
@@ -218,7 +218,7 @@ async function getHostData(){
         hostData.error  = false;
     } catch (error) {
         logError('Error getting Host data');
-        if(GlobalData.verbose) dir(error);
+        if (GlobalData.verbose) dir(error);
         hostData.error = `Failed to retrieve host data. <br>Check the terminal for more information (if verbosity is enabled)`;
     }
 
@@ -230,7 +230,7 @@ async function getHostData(){
 /**
  * Gets txAdmin Data
  */
-async function gettxAdminData(){
+async function gettxAdminData() {
     const humanizeOptions = {
         round: true,
         units: ['d', 'h', 'm']

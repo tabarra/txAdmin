@@ -5,7 +5,7 @@ const Collection = require('@discordjs/collection');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
-if(typeof URLSearchParams === 'undefined'){
+if (typeof URLSearchParams === 'undefined') {
     global.URLSearchParams = require('url').URLSearchParams;
 }
 
@@ -38,9 +38,9 @@ module.exports = class DiscordBot {
         ]);
         this.cooldowns = new Collection();
         
-        if(!this.config.enabled){
+        if (!this.config.enabled) {
             // logOk('Disabled by the config file.');
-        }else{
+        } else {
             this.startBot();
         }
     }
@@ -50,16 +50,16 @@ module.exports = class DiscordBot {
     /**
      * Refresh discordBot configurations
      */
-    refreshConfig(){
+    refreshConfig() {
         this.config = globals.configVault.getScoped('discordBot');
-        if(this.client !== null){
+        if (this.client !== null) {
             logWarn(`Stopping Discord Bot`);
             this.client.destroy();
             setTimeout(() => {
-                if(this.config.enabled == false) this.client = null;
+                if (this.config.enabled == false) this.client = null;
             }, 1000);
         }
-        if(this.config.enabled){
+        if (this.config.enabled) {
             this.startBot();
         }
     }//Final refreshConfig()
@@ -70,14 +70,14 @@ module.exports = class DiscordBot {
      * Send an announcement to the configured channel
      * @param {string} message
      */
-    async sendAnnouncement(message){
-        if(
+    async sendAnnouncement(message) {
+        if (
             !this.config.announceChannel ||
             !this.client ||
             this.client.status ||
             !this.announceChannel
-        ){
-            if(GlobalData.verbose) logWarn(`returning false, not ready yet`, 'sendAnnouncement');
+        ) {
+            if (GlobalData.verbose) logWarn(`returning false, not ready yet`, 'sendAnnouncement');
             return false;
         }
 
@@ -93,9 +93,9 @@ module.exports = class DiscordBot {
     /**
      * Starts the discord client
      */
-    async startBot(){
+    async startBot() {
         //State check
-        if(this.client !== null && this.client.status !== 5){
+        if (this.client !== null && this.client.status !== 5) {
             logWarn('Client not yet destroyed, awaiting destruction.');
             await this.client.destroy();
         }
@@ -116,9 +116,9 @@ module.exports = class DiscordBot {
             logOk(`Started and logged in as '${this.client.user.tag}'`);
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
             this.announceChannel = this.client.channels.find(x => x.id === this.config.announceChannel);
-            if(!this.announceChannel){
+            if (!this.announceChannel) {
                 logError(`The announcements channel could not be found. Check the channel ID ${this.config.announceChannel}, or the bot permissions.`);
-            }else if(currentMutex !== this.latestMutex){
+            } else if (currentMutex !== this.latestMutex) {
                 let cmdDescs = [];
                 this.commands.forEach((cmd, name) => {
                     cmdDescs.push(`${this.config.prefix}${name}: ${cmd.description}`);
@@ -146,7 +146,7 @@ module.exports = class DiscordBot {
             logError(`Error from Discord.js client: ${error.message}`);
         });
         this.client.on('resume', () => {
-            if(GlobalData.verbose) logOk('Connection with Discord API server resumed');
+            if (GlobalData.verbose) logOk('Connection with Discord API server resumed');
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
         });
 
@@ -160,11 +160,11 @@ module.exports = class DiscordBot {
     }
 
     //================================================================
-    async handleMessage(message){
+    async handleMessage(message) {
         //Ignoring bots and DMs
-        if(message.author.bot) return;
-        if(message.channel.type !== 'text') return;
-        if(!message.content.startsWith(this.config.prefix)) return;
+        if (message.author.bot) return;
+        if (message.channel.type !== 'text') return;
+        if (!message.content.startsWith(this.config.prefix)) return;
 
         //Parse message
         const args = message.content.slice(this.config.prefix.length).split(/\s+/);
@@ -176,15 +176,15 @@ module.exports = class DiscordBot {
         if (!command) return;
 
         //Check spam limiter
-        if(!this.cooldowns.has(commandName)) {
+        if (!this.cooldowns.has(commandName)) {
             this.cooldowns.set(commandName, now());
-        }else{
+        } else {
             const cooldownTime = command.cooldown || 30;
             const expirationTime = this.cooldowns.get(commandName) + cooldownTime;
             const ts = now();
-            if(ts < expirationTime){
+            if (ts < expirationTime) {
                 const timeLeft = expirationTime - ts;
-                if(GlobalData.verbose) log(`Spam prevented for command "${commandName}".`);
+                if (GlobalData.verbose) log(`Spam prevented for command "${commandName}".`);
                 return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${commandName}\` command again.`);
             }
         }

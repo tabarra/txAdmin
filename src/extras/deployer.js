@@ -43,24 +43,24 @@ const engineVersion = 3;
  * @param {*} path 
  */
 const validateTargetPath = async (deployPath) => {
-    if(deployPath.includes(' ')) throw new Error(`The paths cannot contain spaces.`);
+    if (deployPath.includes(' ')) throw new Error(`The paths cannot contain spaces.`);
 
-    if(await fs.pathExists(deployPath)){
+    if (await fs.pathExists(deployPath)) {
         const pathFiles = await fs.readdir(deployPath);
-        if(pathFiles.some(x => x !== '.empty')){
+        if (pathFiles.some(x => x !== '.empty')) {
             throw new Error(`This folder is not empty!`);
-        }else{
-            if(await canCreateFile(deployPath)){
+        } else {
+            if (await canCreateFile(deployPath)) {
                 return `Exists, empty, and writtable!`;
-            }else{
+            } else {
                 throw new Error(`Path exists, but its not a folder, or its not writtable.`);
             }
         }
-    }else{
-        if(await canCreateFile(deployPath)){
+    } else {
+        if (await canCreateFile(deployPath)) {
             await fs.remove(deployPath);
             return `Path didn't existed, we created one (then deleted it).`;
-        }else{
+        } else {
             throw new Error(`Path doesn't exist, and we could not create it. Please check parent folder permissions.`);
         }
     }
@@ -73,20 +73,20 @@ const validateTargetPath = async (deployPath) => {
  * @param {*} rawRecipe 
  */
 const parseValidateRecipe = (rawRecipe) => {
-    if(typeof rawRecipe !== 'string') throw new Error(`not a string`);
+    if (typeof rawRecipe !== 'string') throw new Error(`not a string`);
     
     //Loads YAML
     let recipe;
     try {
         recipe = YAML.load(rawRecipe, { schema: YAML.JSON_SCHEMA });   
     } catch (error) {
-        if(GlobalData.verbose) dir(error);
+        if (GlobalData.verbose) dir(error);
         throw new Error(`invalid yaml`);
     }
 
     //Basic validation
-    if(typeof recipe !== 'object') throw new Error(`invalid YAML, couldn't resolve to object`);
-    if(!Array.isArray(recipe.tasks)) throw new Error(`no tasks array found`);
+    if (typeof recipe !== 'object') throw new Error(`invalid YAML, couldn't resolve to object`);
+    if (!Array.isArray(recipe.tasks)) throw new Error(`no tasks array found`);
 
     //Preparing output
     const outRecipe = {
@@ -100,42 +100,42 @@ const parseValidateRecipe = (rawRecipe) => {
     };
 
     //Checking/parsing meta tag requirements
-    if(typeof recipe['$onesync'] == 'string'){
+    if (typeof recipe['$onesync'] == 'string') {
         const onesync = recipe['$onesync'].trim();
-        if(![`off`, `legacy`, `on`].includes(onesync)) throw new Error(`the onesync option selected required for this recipe ("${onesync}") is not supported by this FXServer version.`);
+        if (![`off`, `legacy`, `on`].includes(onesync)) throw new Error(`the onesync option selected required for this recipe ("${onesync}") is not supported by this FXServer version.`);
         outRecipe.onesync = onesync;
     }
-    if(typeof recipe['$minFxVersion'] == 'number'){
-        if(recipe['$minFxVersion'] > GlobalData.fxServerVersion) throw new Error(`this recipe requires FXServer v${recipe['$minFxVersion']} or above`);
+    if (typeof recipe['$minFxVersion'] == 'number') {
+        if (recipe['$minFxVersion'] > GlobalData.fxServerVersion) throw new Error(`this recipe requires FXServer v${recipe['$minFxVersion']} or above`);
         outRecipe.fxserverMinVersion = recipe['$minFxVersion']; //useless for now
     }
-    if(typeof recipe['$engine'] == 'number'){
-        if(recipe['$engine'] < engineVersion) throw new Error(`unsupported '$engine' version ${recipe['$engine']}`);
+    if (typeof recipe['$engine'] == 'number') {
+        if (recipe['$engine'] < engineVersion) throw new Error(`unsupported '$engine' version ${recipe['$engine']}`);
         outRecipe.recipeEngineVersion = recipe['$engine']; //useless for now
     }
 
     //Validate tasks
-    if(!Array.isArray(recipe.tasks)) throw new Error(`no tasks array found`);
+    if (!Array.isArray(recipe.tasks)) throw new Error(`no tasks array found`);
     recipe.tasks.forEach((task, index) => {
-        if(typeof task.action !== 'string') throw new Error(`[task${index+1}] no action specified`);
-        if(typeof recipeEngine[task.action] === 'undefined') throw new Error(`[task${index+1}] unknown action '${task.action}'`);
-        if(!recipeEngine[task.action].validate(task)) throw new Error(`[task${index+1}:${task.action}] invalid parameters`);
+        if (typeof task.action !== 'string') throw new Error(`[task${index+1}] no action specified`);
+        if (typeof recipeEngine[task.action] === 'undefined') throw new Error(`[task${index+1}] unknown action '${task.action}'`);
+        if (!recipeEngine[task.action].validate(task)) throw new Error(`[task${index+1}:${task.action}] invalid parameters`);
         outRecipe.tasks.push(task)
     });
 
     //Process inputs
     outRecipe.requireDBConfig = recipe.tasks.some(t => t.action.includes('database'));
     const protectedVarNames = ['licenseKey', 'dbHost', 'dbUsername', 'dbPassword', 'dbName', 'dbConnection'];
-    if(typeof recipe.variables == 'object' && recipe.variables !== null){
+    if (typeof recipe.variables == 'object' && recipe.variables !== null) {
         const varNames = Object.keys(recipe.variables);
-        if(varNames.some(n => protectedVarNames.includes(n))){
+        if (varNames.some(n => protectedVarNames.includes(n))) {
             throw new Error(`One or more of the variables declared in the recipe are not allowed.`);
         }
         Object.assign(outRecipe.variables, recipe.variables);
     }
 
     //Output
-    if(GlobalData.verbose) dir(outRecipe);
+    if (GlobalData.verbose) dir(outRecipe);
     return outRecipe;
 }
 
@@ -171,21 +171,21 @@ class Deployer {
         try {
             this.recipe = parseValidateRecipe(impRecipe);
         } catch (error) {
-            if(GlobalData.verbose) dir(error);
+            if (GlobalData.verbose) dir(error);
             throw new Error(`Recipe Error: ${error.message}`);
         }
     }
 
     //Dumb helpers - don't care enough to make this less bad
-    log(str){
+    log(str) {
         this.logLines.push(`[${getTimestamp()}] ${str}`);
         log(str);
     }
-    logError(str){
+    logError(str) {
         this.logLines.push(`[${getTimestamp()}] ${str}`);
         logError(str);
     }
-    getLog(){
+    getLog() {
         return this.logLines.join('\n');
     }
 
@@ -193,8 +193,8 @@ class Deployer {
      * Confirms the recipe and goes to the input stage
      * @param {string} userRecipe 
      */
-    async confirmRecipe(userRecipe){
-        if(this.step !== 'review') throw new Error(`expected review step`);
+    async confirmRecipe(userRecipe) {
+        if (this.step !== 'review') throw new Error(`expected review step`);
 
         //Parse/set recipe
         try {
@@ -207,7 +207,7 @@ class Deployer {
         try {
             await fs.ensureDir(this.deployPath);
         } catch (error) {
-            if(GlobalData.verbose) dir(error);
+            if (GlobalData.verbose) dir(error);
             throw new Error(`Failed to create ${this.deployPath} with error: ${error.message}`);
         }
 
@@ -217,8 +217,8 @@ class Deployer {
     /**
      * Returns the recipe variables for the deployer run step
      */
-    getRecipeVars(){
-        if(this.step !== 'input') throw new Error(`expected input step`);
+    getRecipeVars() {
+        if (this.step !== 'input') throw new Error(`expected input step`);
         return cloneDeep(this.recipe.variables);
         //TODO: ?? Object.keys pra montar varname: {type: 'string'}?
     }
@@ -227,8 +227,8 @@ class Deployer {
      * Starts the deployment process
      * @param {string} userInputs 
      */
-    start(userInputs){
-        if(this.step !== 'input') throw new Error(`expected input step`);
+    start(userInputs) {
+        if (this.step !== 'input') throw new Error(`expected input step`);
         Object.assign(this.recipe.variables, userInputs);
         this.logLines = [];
         this.log(`Starting deployment of ${this.recipe.name} to ${this.deployPath}`);
@@ -241,7 +241,7 @@ class Deployer {
     /**
      * Marks the deploy as failed
      */
-    async markFailedDeploy(){
+    async markFailedDeploy() {
         this.deployFailed = true;
         try {
             const filePath = path.join(this.deployPath, '_DEPLOY_FAILED_DO_NOT_USE');
@@ -252,8 +252,8 @@ class Deployer {
     /**
      * (Private) Run the tasks in a sequential way.
      */
-    async runTasks(){
-        if(this.step !== 'run') throw new Error(`expected run step`);
+    async runTasks() {
+        if (this.step !== 'run') throw new Error(`expected run step`);
         const contextVariables = cloneDeep(this.recipe.variables);
         contextVariables.deploymentID = this.deploymentID;
         contextVariables.serverName = this.serverName;
@@ -289,9 +289,9 @@ class Deployer {
 
         //Check deploy folder validity (resources + server.cfg)
         try {
-            if(!fs.existsSync(path.join(this.deployPath, 'resources'))){
+            if (!fs.existsSync(path.join(this.deployPath, 'resources'))) {
                 throw new Error(`this recipe didn't create a 'resources' folder.`);
-            }else if(!fs.existsSync(path.join(this.deployPath, 'server.cfg'))){
+            } else if (!fs.existsSync(path.join(this.deployPath, 'server.cfg'))) {
                 throw new Error(`this recipe didn't create a 'server.cfg' file.`);
             }
         } catch (error) {
@@ -315,7 +315,7 @@ class Deployer {
         //Else: success :)
         this.log(`Deploy finished and folder validated. All done!`);
         this.step = 'configure';
-        if(GlobalData.osType === 'windows'){
+        if (GlobalData.osType === 'windows') {
             try {
                 await open(path.normalize(this.deployPath), {app: 'explorer'});
             } catch (error) {}

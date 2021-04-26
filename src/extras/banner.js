@@ -30,7 +30,7 @@ const windowsReleaseAsync = require('./windowsReleaseAsync');
 
 const printMultiline = (lines, color) => {
     const prefix = color(`[txAdmin]`);
-    if(!Array.isArray(lines)) lines = lines.split('\n');
+    if (!Array.isArray(lines)) lines = lines.split('\n');
     const message = lines.map(line => `${prefix} ${line}`);
     console.log(message.join('\n'));
 }
@@ -47,7 +47,7 @@ const getIPs = async () => {
     ]);
     for (let i = 0; i < allOps.length; i++) {
         const op = allOps[i];
-        if(op.status == 'fulfilled' && op.value.ip){
+        if (op.status == 'fulfilled' && op.value.ip) {
             return op.value.ip;
         }
     }
@@ -93,10 +93,10 @@ const awaitHttp = new Promise((resolve, reject) => {
         if (globals.webServer && globals.webServer.isListening) {
             clearInterval(interval);
             resolve(true);
-        }else if(counter == tickLimit){
+        } else if (counter == tickLimit) {
             clearInterval(interval);
             interval = setInterval(check, 2500);
-        }else if(counter > tickLimit){
+        } else if (counter > tickLimit) {
             logWarn(`The webserver is taking too long to start.`);
         }
     }
@@ -124,19 +124,19 @@ module.exports.printBanner = async () => {
 
     //Addresses
     let addrs;
-    if(GlobalData.forceInterface == false || GlobalData.forceInterface == '0.0.0.0'){
+    if (GlobalData.forceInterface == false || GlobalData.forceInterface == '0.0.0.0') {
         addrs = [
             (GlobalData.osType === 'linux') ? 'your-public-ip' : 'localhost',
         ];
-        if(ipRes.value) addrs.push(ipRes.value);
-    }else{
+        if (ipRes.value) addrs.push(ipRes.value);
+    } else {
         addrs = [GlobalData.forceInterface];
     }
 
     //Admin PIN
     let adminPinLines = [];
     let urlSuffix = '';
-    if(adminPinRes.value){
+    if (adminPinRes.value) {
         adminPinLines = [
             '', 'Use the PIN below to register:',
             chalk.inverse(` ${adminPinRes.value} `),
@@ -158,15 +158,15 @@ module.exports.printBanner = async () => {
         ...adminPinLines,
     ];
     printMultiline(boxen(boxLines.join('\n'), boxOptions), chalk.bold.bgGreen);
-    if(GlobalData.forceInterface == false){
+    if (GlobalData.forceInterface == false) {
         printMultiline(msgRes.value, chalk.bold.bgBlue);
     }
 
     //Opening page
-    if(
+    if (
         GlobalData.osType === 'windows' && 
         (urlSuffix || !GlobalData.isAdvancedUser)
-    ){
+    ) {
         open(`http://localhost:${GlobalData.txAdminPort}/auth${urlSuffix}`).catch();
     }
 }

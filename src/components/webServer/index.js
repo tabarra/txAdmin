@@ -39,15 +39,15 @@ module.exports = class WebServer {
         setInterval(() => {
             const httpCounter = globals.databus.txStatsData.httpCounter;
             httpCounter.log.push(httpCounter.current);
-            if(httpCounter.log.length > 10) httpCounter.log.shift();
-            if(httpCounter.current > httpCounter.max) httpCounter.max = httpCounter.current;
+            if (httpCounter.log.length > 10) httpCounter.log.shift();
+            if (httpCounter.current > httpCounter.max) httpCounter.max = httpCounter.current;
             httpCounter.current = 0;
         }, 60*1000);
     }
 
 
     //================================================================
-    setupKoa(){
+    setupKoa() {
         //Start Koa
         this.app = new Koa();
         this.app.keys = ['txAdmin'+nanoid()];
@@ -65,7 +65,7 @@ module.exports = class WebServer {
         //Setting up app
         this.app.use(ctxUtils);
         this.app.on('error', (error, ctx) => {
-            if(
+            if (
                 typeof error.code == 'string' && 
                 (
                     error.code.startsWith('HPE_') || 
@@ -73,12 +73,12 @@ module.exports = class WebServer {
                     error.code.startsWith('EPIPE') || 
                     error.code.startsWith('ECANCELED') 
                 )
-            ){
-                if(GlobalData.verbose){
+            ) {
+                if (GlobalData.verbose) {
                     logError(`Probably harmless error on ${ctx.path}`);
                     dir(error);
                 }
-            }else{
+            } else {
                 logError(`Probably harmless error on ${ctx.path}`);
                 logError('Please be kind and send a screenshot of this error to the txAdmin developer.');
                 dir(error)
@@ -101,30 +101,30 @@ module.exports = class WebServer {
                 await Promise.race([timeout, next()]);
                 clearTimeout(timer);
                 if (typeof ctx.body == 'undefined' || (typeof ctx.body == 'string' && !ctx.body.length)) {
-                    if(GlobalData.verbose) logWarn(`Route without output: ${ctx.path}`);
+                    if (GlobalData.verbose) logWarn(`Route without output: ${ctx.path}`);
                     return ctx.body = '[no output from route]';
                 }
             } catch (error) {
                 //TODO: perhaps we should also have a koa-bodyparser generic error handler?
                 //FIXME: yes we should - sending broken json will cause internal server error even without the route being called
                 const methodName = (error.stack && error.stack[0] && error.stack[0].name)? error.stack[0].name : 'anonym';
-                if(error.type === 'entity.too.large'){
+                if (error.type === 'entity.too.large') {
                     const desc = `Entity too large for: ${ctx.path}`;
-                    if(GlobalData.verbose) logError(desc, methodName);
+                    if (GlobalData.verbose) logError(desc, methodName);
                     ctx.status = 413;
                     ctx.body = {error: desc};
-                }else if (ctx.state.timeout){
+                } else if (ctx.state.timeout) {
                     const desc = `[txAdmin v${GlobalData.txAdminVersion}] Route timed out: ${ctx.path}`;
                     logError(desc, methodName);
                     ctx.status = 408;
                     ctx.body = desc;
-                }else{
+                } else {
                     const desc = `[txAdmin v${GlobalData.txAdminVersion}] Internal Error\n` +
                                  `Message: ${error.message}\n` +
                                  `Route: ${ctx.path}\n` +
                                  `Make sure your txAdmin is updated.`;
                     logError(desc, methodName);
-                    if(GlobalData.verbose) dir(error)
+                    if (GlobalData.verbose) dir(error)
                     ctx.status = 500;
                     ctx.body = desc;
                 }
@@ -140,9 +140,9 @@ module.exports = class WebServer {
         this.app.use(this.router.routes())
         this.app.use(this.router.allowedMethods());
         this.app.use(async (ctx) => {
-            if(typeof ctx._matchedRoute === 'undefined'){
+            if (typeof ctx._matchedRoute === 'undefined') {
                 ctx.status = 404;
-                if(GlobalData.verbose) logWarn(`Request 404 error: ${ctx.path}`);
+                if (GlobalData.verbose) logWarn(`Request 404 error: ${ctx.path}`);
                 return ctx.utils.render('basic/404');
             }
         })
@@ -151,7 +151,7 @@ module.exports = class WebServer {
 
 
     //================================================================
-    setupWebsocket(){
+    setupWebsocket() {
         //Start SocketIO
         this.io = SocketIO(HttpClass.createServer(), { serveClient: false });
         this.io.use(SessionIO(this.koaSessionKey, this.koaSessionMemoryStore))
@@ -169,19 +169,19 @@ module.exports = class WebServer {
 
 
     //================================================================
-    httpCallbackHandler(source, req, res){
+    httpCallbackHandler(source, req, res) {
         //Rewrite source ip if it comes from nucleus reverse proxy
         const ipsrcRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}:\d{1,5}$/
-        if(source == 'citizenfx' && ipsrcRegex.test(req.headers['x-cfx-source-ip'])){
+        if (source == 'citizenfx' && ipsrcRegex.test(req.headers['x-cfx-source-ip'])) {
             req.connection.remoteAddress = req.headers['x-cfx-source-ip'].split(':')[0];
         }
 
         //Calls the appropriate callback
         try {
             globals.databus.txStatsData.httpCounter.current++;
-            if(req.url.startsWith('/socket.io')){
+            if (req.url.startsWith('/socket.io')) {
                 this.io.engine.handleRequest(req, res);
-            }else{
+            } else {
                 this.koaCallback(req, res);
             }
         } catch (error) {}
@@ -189,7 +189,7 @@ module.exports = class WebServer {
 
 
     //================================================================
-    setupServerCallbacks(){
+    setupServerCallbacks() {
         //Just in case i want to re-execute this function
         this.isListening = false;
 
@@ -199,7 +199,7 @@ module.exports = class WebServer {
         const getUrlInterval = setInterval(() => {
             try {
                 const urlConvar = GetConvar('web_baseUrl', 'false');
-                if(validUrlRegex.test(urlConvar)){
+                if (validUrlRegex.test(urlConvar)) {
                     // logOk(`Alternative URL: ` + chalk.inverse(` https://${urlConvar}/ `));
                     logOk(`Cfx.re URL: https://${urlConvar}/`);
                     GlobalData.cfxUrl = urlConvar;
@@ -219,7 +219,7 @@ module.exports = class WebServer {
         //HTTP Server
         try {
             const listenErrorHandler = (error)=>{
-                if(error.code !== 'EADDRINUSE') return;
+                if (error.code !== 'EADDRINUSE') return;
                 logError(`Failed to start HTTP server, port ${error.port} already in use.`);
                 logError(`Maybe you already have another txAdmin running in this port.`);
                 logError(`If you want to run multiple txAdmin, check the documentation for the port convar.`);
@@ -229,11 +229,11 @@ module.exports = class WebServer {
             this.httpServer.on('error', listenErrorHandler);
 
             let iface;
-            if(GlobalData.forceInterface){
+            if (GlobalData.forceInterface) {
                 logWarn(`Starting with interface ${GlobalData.forceInterface}.`);
                 logWarn(`If the HTTP server doesn't start, this is probably the reason.`);
                 iface = GlobalData.forceInterface;
-            }else{
+            } else {
                 iface = '0.0.0.0';
             }
 

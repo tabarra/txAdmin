@@ -10,7 +10,7 @@ const getConCtx = (ctx) => { return (ctx !== null)? header+':'+ctx : header };
 const getHistCtx = (ctx) => { return (ctx !== null)? ctx : header };
 const toHistory = (type, ctx, msg) =>{
     msg = msg.toString().replace(/\u001b\[\d+(;\d)?m/g, '');
-    if(logHistory.length > 4000){
+    if (logHistory.length > 4000) {
         let sliceMsg = {ts: now(), type: 'ERROR', ctx: 'ConsoleLog', msg: 'The log was sliced to prevent memory exhaustion.'};
         logHistory = logHistory.slice(0,500).concat(sliceMsg, logHistory.slice(-500))
     }
@@ -35,7 +35,7 @@ const colorizeSettings = {
 
 
 //================================================================
-function log(msg='', context=null){
+function log(msg='', context=null) {
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
     console.log(chalk.bold.bgBlue(`[${conCtx}]`)+' '+msg);
@@ -43,7 +43,7 @@ function log(msg='', context=null){
     return `[INFO][${conCtx}] ${msg}`;
 }
 
-function logOk(msg='', context=null){
+function logOk(msg='', context=null) {
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
     console.log(chalk.bold.bgGreen(`[${conCtx}]`)+' '+msg);
@@ -67,21 +67,21 @@ function logError(msg='', context=null) {
     return `[ERROR][${conCtx}] ${msg}`;
 }
 
-function cleanTerminal(){
+function cleanTerminal() {
     process.stdout.write(`.\n`.repeat(80) + `\x1B[2J\x1B[H`);
 }
 
-function setTTYTitle(version, title){
+function setTTYTitle(version, title) {
     title = (title)? `txAdmin v${version}: ${title}` : 'txAdmin';
     process.stdout.write(`\x1B]0;${title}\x07`);
 }
 
-function dir(data){
-    if(data instanceof Error){
+function dir(data) {
+    if (data instanceof Error) {
         try {
             console.log(`${chalk.redBright('[txAdmin Error]')} ${data.message}`);
-            if(typeof data.type !== 'undefined') console.log(`${chalk.redBright('[txAdmin Error] Type:')} ${data.type}`);
-            if(typeof data.code !== 'undefined') console.log(`${chalk.redBright('[txAdmin Error] Code:')} ${data.code}`);
+            if (typeof data.type !== 'undefined') console.log(`${chalk.redBright('[txAdmin Error] Type:')} ${data.type}`);
+            if (typeof data.code !== 'undefined') console.log(`${chalk.redBright('[txAdmin Error] Code:')} ${data.code}`);
             data.stack.forEach(trace => {
                 console.log(`    ${chalk.redBright('=>')} ${trace.file}:${trace.line} > ${chalk.yellowBright(trace.name || 'anonym')}`)
             });
@@ -89,50 +89,50 @@ function dir(data){
             console.log('Error stack unavailable.')
         }
         console.log()
-    }else{
+    } else {
         let printData;
-        if(typeof data == 'undefined'){
+        if (typeof data == 'undefined') {
             printData = chalk.keyword('moccasin').italic('> undefined');
 
-        }else if(data instanceof Promise){
+        } else if (data instanceof Promise) {
             printData = chalk.keyword('moccasin').italic('> Promise');
 
-        }else if(typeof data == 'boolean'){
-            if(data){
+        } else if (typeof data == 'boolean') {
+            if (data) {
                 printData = chalk.keyword('lawngreen')('true');
-            }else{
+            } else {
                 printData = chalk.keyword('orangered')('false');
             }
 
-        }else if(typeof data == 'object'){
-            if(
+        } else if (typeof data == 'object') {
+            if (
                 !Object.keys(data).length && 
                 typeof data.toString == 'function' &&
                 data.constructor.name &&
                 data.constructor.name !== 'Object' && 
                 !Array.isArray(data)
-            ){
+            ) {
                 printData = chalk.keyword('moccasin').italic(`> ${data.constructor.name}.toString():\n`);
                 printData += chalk.white(data.toString());
-            }else{
+            } else {
                 // DEBUG when I really need it... 
                 //printData = util.format('%o', data);
                 printData = colorize(data, colorizeSettings);
             }
 
-        }else{
+        } else {
             printData = chalk.keyword('orange').italic(typeof data + ': ');
-            if(typeof data == 'string'){
+            if (typeof data == 'string') {
                 printData += `"${data}"`;
     
-            }else if(typeof data == 'number'){
+            } else if (typeof data == 'number') {
                 printData += chalk.green(data);
     
-            }else if(typeof data == 'function'){
+            } else if (typeof data == 'function') {
                 printData += "\n";
                 printData += data.toString();
 
-            }else{
+            } else {
                 printData = util.format('%o', data);
             }
         }
@@ -159,7 +159,7 @@ function dir(data){
     dir(new Error('hueeee'))
 */
 
-function getLog(){
+function getLog() {
     return logHistory;
 }
 

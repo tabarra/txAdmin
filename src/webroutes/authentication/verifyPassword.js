@@ -10,7 +10,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  * @param {object} ctx
  */
 module.exports = async function AuthVerify(ctx) {
-    if(isUndefined(ctx.request.body.username) || isUndefined(ctx.request.body.password)){
+    if (isUndefined(ctx.request.body.username) || isUndefined(ctx.request.body.password)) {
         return ctx.response.redirect('/');
     }
     const renderData = {
@@ -23,12 +23,12 @@ module.exports = async function AuthVerify(ctx) {
     try {
         //Checking admin
         let admin = globals.authenticator.getAdminByName(ctx.request.body.username);
-        if(!admin){
+        if (!admin) {
             logWarn(`Wrong username for from: ${ctx.ip}`);
             renderData.message = 'Wrong Password!';
             return ctx.utils.render('login', renderData);
         }
-        if(!VerifyPasswordHash(ctx.request.body.password, admin.password_hash)){
+        if (!VerifyPasswordHash(ctx.request.body.password, admin.password_hash)) {
             logWarn(`Wrong password for from: ${ctx.ip}`);
             renderData.message = 'Wrong Password!';
             return ctx.utils.render('login', renderData);
@@ -48,7 +48,7 @@ module.exports = async function AuthVerify(ctx) {
         globals.databus.txStatsData.loginMethods.password++;
     } catch (error) {
         logWarn(`Failed to authenticate ${ctx.request.body.username} with error: ${error.message}`);
-        if(GlobalData.verbose) dir(error)
+        if (GlobalData.verbose) dir(error)
         renderData.message = 'Error autenticating admin.';
         return ctx.utils.render('login', renderData);
     }

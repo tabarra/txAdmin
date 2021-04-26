@@ -46,12 +46,12 @@ module.exports = async function AuthVerify(ctx) {
     }
 
     //Sanity check
-    if(
+    if (
         isUndefined(ctx.query.token) || 
         !GlobalData.isZapHosting || 
         !GlobalData.runtimeSecret ||
         !GlobalData.defaultMasterAccount
-    ){
+    ) {
         logWarn(`${errorPrefix} Sanity check, precondition failed`);
         return ctx.response.redirect('/');
     }
@@ -66,9 +66,9 @@ module.exports = async function AuthVerify(ctx) {
             maxTokenAge: '5 minutes',
             audience: (GlobalData.forceInterface)? `${GlobalData.forceInterface}:${GlobalData.txAdminPort}` : undefined
         });
-        if(typeof jwtData.iat !== 'number') throw new Error(`missing "iat" claim`);
-        if(typeof jwtData.sub !== 'string') throw new Error(`missing "sub" claim`);
-        if(typeof jwtData.verifier !== 'string') throw new Error(`missing "verifier" claim`);
+        if (typeof jwtData.iat !== 'number') throw new Error(`missing "iat" claim`);
+        if (typeof jwtData.sub !== 'string') throw new Error(`missing "sub" claim`);
+        if (typeof jwtData.verifier !== 'string') throw new Error(`missing "verifier" claim`);
     } catch (error) {
         logWarn(`${errorPrefix} [${error.code}] ${error.message}`);
         return ctx.utils.render('login', renderData);
@@ -104,14 +104,14 @@ module.exports = async function AuthVerify(ctx) {
             logWarn(`${errorPrefix} Wrong username from ${ctx.ip}`);
             return ctx.utils.render('login', renderData);
         }
-        if(!admin.master){
+        if (!admin.master) {
             logWarn(`${errorPrefix} Account is not master from ${ctx.ip}`);
             return ctx.utils.render('login', renderData);
         }
 
         //Checking if the token was already used
         const signature = ctx.query.token.split('.')[2];
-        if(usedTokens.has(signature)){
+        if (usedTokens.has(signature)) {
             logWarn(`${errorPrefix} Token already used from ${ctx.ip}`);
             return ctx.utils.render('login', renderData);
         }

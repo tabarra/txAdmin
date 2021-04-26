@@ -14,15 +14,15 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  */
 module.exports = async function CFGEditorSave(ctx) {
     //Sanity check
-    if(
+    if (
         isUndefined(ctx.request.body.cfgData) ||
         typeof ctx.request.body.cfgData !== 'string'
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request');
     }
 
     //Check permissions
-    if(!ctx.utils.checkPermission('server.cfg.editor', modulename)){
+    if (!ctx.utils.checkPermission('server.cfg.editor', modulename)) {
         return ctx.send({
             type: 'danger',
             message: `You don't have permission to execute this action.`
@@ -30,7 +30,7 @@ module.exports = async function CFGEditorSave(ctx) {
     }
 
     //Check if file is set
-    if(!globals.fxRunner.config.cfgPath || !globals.fxRunner.config.serverDataPath){
+    if (!globals.fxRunner.config.cfgPath || !globals.fxRunner.config.serverDataPath) {
         const message = `CFG or Base Path not defined. Configure it in the settings page first.`
         return ctx.send({type: 'danger', message});
     }
@@ -49,7 +49,7 @@ module.exports = async function CFGEditorSave(ctx) {
         await fs.writeFile(cfgFilePath + '.bkp', helpers.getCFGFileData(cfgFilePath), 'utf8');
     } catch (error) {
         const message = `Failed to save BackupCFG file with error: ${error.message}`;
-        if(GlobalData.verbose) logWarn(message);
+        if (GlobalData.verbose) logWarn(message);
     }
 
     //Saving CFG file
@@ -59,7 +59,7 @@ module.exports = async function CFGEditorSave(ctx) {
         return ctx.send({type: 'success', message: 'File saved.'});
     } catch (error) {
         const message = `Failed to save CFG file with error: ${error.message}`;
-        if(GlobalData.verbose) logWarn(message);
+        if (GlobalData.verbose) logWarn(message);
         return ctx.send({type: 'danger', message});
     }
 };

@@ -42,7 +42,7 @@ function dependencyChecker() {
                 missing.push(package);
             }
         });
-        if(missing.length){
+        if (missing.length) {
             console.log(`[txAdmin:PreCheck] Cannot start txAdmin due to missing dependencies.`);
             console.log(`[txAdmin:PreCheck] Make sure you executed 'npm i'.`);
             console.log(`[txAdmin:PreCheck] The following packages are missing: ` + missing.join(', '));
@@ -67,12 +67,12 @@ function parseSchedule(schedule, filter = true) {
     const times = (typeof schedule === 'string')? schedule.split(',') : schedule;
     let out = []
     times.forEach((time) => {
-        if(!time.length) return;
+        if (!time.length) return;
         const regex = /^$|^([01]?[0-9]|2[0-3]):([0-5][0-9])$/gm;
         let m = regex.exec(time.trim())
-        if(m === null){
-            if(!filter) out.push(time);
-        }else{
+        if (m === null) {
+            if (!filter) out.push(time);
+        } else {
             out.push({
                 string: m[0],
                 hour: parseInt(m[1]),
@@ -94,17 +94,17 @@ function parseSchedule(schedule, filter = true) {
  */
 function getCFGFileData(cfgPath) {
     //Validating if the path is absolute
-    if(!path.isAbsolute(cfgPath)){
+    if (!path.isAbsolute(cfgPath)) {
         throw new Error("File path must be absolute.");
     }
 
     //Validating file existence
-    if(!fs.existsSync(cfgPath)){
+    if (!fs.existsSync(cfgPath)) {
         throw new Error("File doesn't exist or its unreadable.");
     }
 
     //Validating if its actually a file
-    if(!fs.lstatSync(cfgPath).isFile()){
+    if (!fs.lstatSync(cfgPath).isFile()) {
         throw new Error("File doesn't exist or its unreadable. Make sure to include the CFG file in the path, and not just the directory that contains it.");
     }
 
@@ -141,7 +141,7 @@ function resolveCFGFilePath(cfgPath, serverDataPath) {
  * @param {string} rawCfgFile
  */
 function getFXServerPort(rawCfgFile) {
-    if(rawCfgFile.includes('stop monitor')) throw new Error(`Remove "stop monitor" from your config`);
+    if (rawCfgFile.includes('stop monitor')) throw new Error(`Remove "stop monitor" from your config`);
 
     const maxClientsRegex = /^\s*sv_maxclients\s+(\d+).*$/gim;
     const endpointsRegex = /^\s*endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):([0-9]{1,5})["']?.*$/gim;
@@ -166,33 +166,33 @@ function getFXServerPort(rawCfgFile) {
     }
     
     //Checking for the maxClients 
-    if(GlobalData.deployerDefaults && GlobalData.deployerDefaults.maxClients){
-        if(!maxClients.length){
+    if (GlobalData.deployerDefaults && GlobalData.deployerDefaults.maxClients) {
+        if (!maxClients.length) {
             throw new Error(`Zap-Hosting: please add 'sv_maxclients ${GlobalData.deployerDefaults.maxClients}' to your server.cfg.`);
         }
-        if(maxClients.some(mc => mc > GlobalData.deployerDefaults.maxClients)){
+        if (maxClients.some(mc => mc > GlobalData.deployerDefaults.maxClients)) {
             throw new Error(`Zap-Hosting: your 'sv_maxclients' MUST be less or equal than ${GlobalData.deployerDefaults.maxClients}.`);
         }
     }
 
     //Checking if endpoints present at all
     const oneTCPEndpoint = endpoints.find((m) => (m.type === 'tcp'));
-    if(!oneTCPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_tcp</code> in your config");
+    if (!oneTCPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_tcp</code> in your config");
     const oneUDPEndpoint = endpoints.find((m) => (m.type === 'udp'));
-    if(!oneUDPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_udp</code> in your config");
+    if (!oneUDPEndpoint) throw new Error("You MUST have at least one <code>endpoint_add_udp</code> in your config");
 
     //FIXME: Think of something to make this work:
     const firstPort = endpoints[0].port;
     endpoints.forEach((m) => {
-        if(m.port !== firstPort) throw new Error("All <code>endpoint_add_*</code> MUST have the same port");
+        if (m.port !== firstPort) throw new Error("All <code>endpoint_add_*</code> MUST have the same port");
     });
 
-    if(firstPort >= 40120 && firstPort <= 40130){
+    if (firstPort >= 40120 && firstPort <= 40130) {
         throw new Error(`The port ${firstPort} is dedicated for txAdmin and can not be used for FXServer, please edit your <code>endpoint_add_*</code>`);
     }
 
     //IF Zap-hosting interface bind enforcement
-    if(GlobalData.forceInterface){
+    if (GlobalData.forceInterface) {
         const stdMessage = [
             `Remove all lines containing <code>endpoint_add</code> and add the lines below to the top of your file.`,
             `<code>endpoint_add_tcp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}"`,
@@ -200,19 +200,19 @@ function getFXServerPort(rawCfgFile) {
         ].join('\n<br>');
 
         //Check if all ports are the ones being forced
-        if(firstPort !== GlobalData.forceFXServerPort){
+        if (firstPort !== GlobalData.forceFXServerPort) {
             throw new Error(`Zap-Hosting: invalid port found.<br>\n ${stdMessage}`);
         }
 
         //Check if all interfaces are the ones being forced
         const invalidInterface = endpoints.find((match) => match.iface !== GlobalData.forceInterface);
-        if(invalidInterface) throw new Error(`Zap-Hosting: invalid interface '${invalidInterface.iface}'.<br>\n${stdMessage}`);
+        if (invalidInterface) throw new Error(`Zap-Hosting: invalid interface '${invalidInterface.iface}'.<br>\n${stdMessage}`);
 
-    }else{
+    } else {
         const validTCPEndpoint = endpoints.find((match) => {
             return (match.type === 'tcp' && (match.iface === '0.0.0.0' || match.iface === '127.0.0.1'))
         })
-        if(!validTCPEndpoint) throw new Error("You MUST have one <code>endpoint_add_tcp</code> with IP 0.0.0.0 in your config");
+        if (!validTCPEndpoint) throw new Error("You MUST have one <code>endpoint_add_tcp</code> with IP 0.0.0.0 in your config");
     }
 
     return firstPort;

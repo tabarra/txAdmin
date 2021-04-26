@@ -12,8 +12,8 @@ const now = () => { return Math.round(Date.now() / 1000) };
 const isUndefined = (x) => { return (typeof x === 'undefined') };
 const getRenderErrorText = (view, error, data) => {
     logError(`Error rendering ${view}.`);
-    if(GlobalData.verbose) dir(error)
-    if(!isUndefined(data.discord) && !isUndefined(data.discord.token)) data.discord.token = '[redacted]';
+    if (GlobalData.verbose) dir(error)
+    if (!isUndefined(data.discord) && !isUndefined(data.discord.token)) data.discord.token = '[redacted]';
     let out = `<pre>\n`;
     out += `Error rendering '${view}'.\n`;
     out += `Message: ${error.message}\n`;
@@ -24,7 +24,7 @@ const getRenderErrorText = (view, error, data) => {
     return out;
 }
 const getWebViewPath = (view) => {
-    if(view.includes('..')) throw new Error('Path Traversal?');
+    if (view.includes('..')) throw new Error('Path Traversal?');
     return path.join(GlobalData.txAdminResourcePath, 'web', view+'.html');
 }
 
@@ -63,8 +63,8 @@ sqrl.filters.define("ternary", (x)=>{
  * @param {string} view
  * @param {string} data
  */
-async function renderMasterView(view, reqSess, data, txVars){
-    if(isUndefined(data)) data = {};
+async function renderMasterView(view, reqSess, data, txVars) {
+    if (isUndefined(data)) data = {};
     data.uiTheme = (txVars.darkMode)? 'theme--dark' : '';
     data.headerTitle = (!isUndefined(data.headerTitle))? `${data.headerTitle} - txAdmin` : 'txAdmin';
     data.serverProfile = globals.info.serverProfile;
@@ -90,11 +90,11 @@ async function renderMasterView(view, reqSess, data, txVars){
         sqrl.templates.define("footer", sqrl.compile(rawFooter));
         out = sqrl.render(rawView, data);
     } catch (error) {
-        if(error.code == 'ENOENT'){
+        if (error.code == 'ENOENT') {
             out = `<pre>\n`;
             out += `The '${view}' page file was not found.\n`;
             out += `You probably deleted the 'citizen/system_resources/monitor/web/' folder or the folders above it.\n`;
-        }else{
+        } else {
             out = getRenderErrorText(view, error, data);
         }
     }
@@ -108,8 +108,8 @@ async function renderMasterView(view, reqSess, data, txVars){
  * Renders the login page.
  * @param {string} message
  */
-async function renderLoginView(data, txVars){
-    if(isUndefined(data)) data = {};
+async function renderLoginView(data, txVars) {
+    if (isUndefined(data)) data = {};
     data.uiTheme = (txVars.darkMode)? 'theme--dark' : '';
     data.logoURL = (GlobalData.loginPageLogo)? GlobalData.loginPageLogo : 'img/txadmin.png';
     data.isMatrix = (Math.random() <= 0.05);
@@ -129,11 +129,11 @@ async function renderLoginView(data, txVars){
         const rawView = await fs.readFile(getWebViewPath(`basic/login`), 'utf8');
         out = sqrl.render(rawView, data);
     } catch (error) {
-        if(error.code == 'ENOENT'){
+        if (error.code == 'ENOENT') {
             out = `<pre>\n`;
             out += `The login page file was not found.\n`;
             out += `You probably deleted the 'citizen/system_resources/monitor/web/basic/login.html' file or the folders above it.\n`;
-        }else{
+        } else {
             out = getRenderErrorText('Login', error, data);
         }
     }
@@ -149,8 +149,8 @@ async function renderLoginView(data, txVars){
  * @param {string} view
  * @param {string} data
  */
-async function renderSoloView(view, data, txVars){
-    if(isUndefined(data)) data = {};
+async function renderSoloView(view, data, txVars) {
+    if (isUndefined(data)) data = {};
     data.uiTheme = (txVars.darkMode)? 'theme--dark' : '';
     let out;
     try {
@@ -170,7 +170,7 @@ async function renderSoloView(view, data, txVars){
  * @param {object} ctx
  * @param {string} data
  */
-function logCommand(ctx, data){
+function logCommand(ctx, data) {
     log(`${ctx.session.auth.username} executing: ` + chalk.inverse(' ' + data + ' '));
     globals.logger.append(`[${ctx.ip}][${ctx.session.auth.username}] ${data}`);
 }
@@ -182,7 +182,7 @@ function logCommand(ctx, data){
  * @param {object} ctx
  * @param {string} data
  */
-function logAction(ctx, data){
+function logAction(ctx, data) {
     log(`[${ctx.session.auth.username}] ${data}`);
     globals.logger.append(`[${ctx.ip}][${ctx.session.auth.username}] ${data}`);
 }
@@ -196,28 +196,28 @@ function logAction(ctx, data){
  * @param {string} fromCtx
  * @param {boolean} printWarn
  */
-function checkPermission(ctx, perm, fromCtx, printWarn = true){
+function checkPermission(ctx, perm, fromCtx, printWarn = true) {
     try {
         //For master permission
-        if(perm === 'master' && ctx.session.auth.master !== true){
-            if(GlobalData.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
+        if (perm === 'master' && ctx.session.auth.master !== true) {
+            if (GlobalData.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
         
         //For all other permissions
-        if(
+        if (
             ctx.session.auth.master === true ||
             ctx.session.auth.permissions.includes('all_permissions') ||
             ctx.session.auth.permissions.includes(perm)
-        ){
+        ) {
             return true;
-        }else{
-            if(GlobalData.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
+        } else {
+            if (GlobalData.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
         
     } catch (error) {
-        if(GlobalData.verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
+        if (GlobalData.verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
         return false;
     }
 }
@@ -225,19 +225,19 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true){
 //================================================================
 //================================================================
 //================================================================
-module.exports = async function WebCtxUtils(ctx, next){
+module.exports = async function WebCtxUtils(ctx, next) {
     //Prepare variables
     ctx.txVars = {
         darkMode: (ctx.cookies.get('txAdmin-darkMode') === 'true')
     };
     const host = ctx.request.host || 'none';
-    if(host.startsWith('127.0.0.1') || host.startsWith('localhost')){
+    if (host.startsWith('127.0.0.1') || host.startsWith('localhost')) {
         ctx.txVars.hostType = 'localhost';
-    }else if(host.includes('users.cfx.re')){
+    } else if (host.includes('users.cfx.re')) {
         ctx.txVars.hostType = 'cfxre';
-    }else if(/^\d+[\d.:]+\d+$/.test(host)){
+    } else if (/^\d+[\d.:]+\d+$/.test(host)) {
         ctx.txVars.hostType = 'ip';
-    }else{
+    } else {
         ctx.txVars.hostType = 'other';
     }
 
@@ -246,19 +246,19 @@ module.exports = async function WebCtxUtils(ctx, next){
     ctx.utils = {};
     ctx.utils.render = async (view, viewData) => {
         //Usage stats
-        if(!globals.databus.txStatsData.pageViews[view]){
+        if (!globals.databus.txStatsData.pageViews[view]) {
             globals.databus.txStatsData.pageViews[view] = 1;
-        }else{
+        } else {
             globals.databus.txStatsData.pageViews[view]++;
         }
 
         //TODO: fix this atrocity
         const soloViews = ['adminManager/editModal', 'basic/404'];
-        if(view == 'login'){
+        if (view == 'login') {
             ctx.body = await renderLoginView(viewData, ctx.txVars);
-        }else if(soloViews.includes(view)){
+        } else if (soloViews.includes(view)) {
             ctx.body = await renderSoloView(view, viewData, ctx.txVars);
-        }else{
+        } else {
             ctx.body = await renderMasterView(view, ctx.session, viewData, ctx.txVars);
         }
         ctx.type = 'text/html';

@@ -8,10 +8,10 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
  * @param {object} ctx
  */
 module.exports = async function chartData(ctx) {
-    if(!Array.isArray(globals.statsCollector.perfSeries)){
+    if (!Array.isArray(globals.statsCollector.perfSeries)) {
         return ctx.send({failReason: 'not_set'});
     }
-    if(globals.statsCollector.perfSeries.length < 12){
+    if (globals.statsCollector.perfSeries.length < 12) {
         return ctx.send({failReason: 'not_enough_data'});
     }
 

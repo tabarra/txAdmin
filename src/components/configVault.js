@@ -19,11 +19,11 @@ const removeNulls = (obj) => {
 const deepFreeze = (obj) => {
     Object.freeze(obj);
     Object.getOwnPropertyNames(obj).forEach(function (prop) {
-        if(obj.hasOwnProperty(prop)
+        if (obj.hasOwnProperty(prop)
             && obj[prop] !== null
             && (typeof obj[prop] === "object" || typeof obj[prop] === "function")
             && !Object.isFrozen(obj[prop])
-        ){
+        ) {
             deepFreeze(obj[prop]);
         }
     });
@@ -47,7 +47,7 @@ module.exports = class ConfigVault {
     /**
      * Setup Vault
      */
-    setupVault(){
+    setupVault() {
         try {
             let cfgData = this.getConfigFromFile();
             this.configFile = this.setupConfigStructure(cfgData);
@@ -64,7 +64,7 @@ module.exports = class ConfigVault {
     /**
      * Returns the config file data
      */
-    getConfigFromFile(){
+    getConfigFromFile() {
         //Try to load config file
         //TODO: create a lock file to prevent starting twice the same config file?
         let rawFile = null;
@@ -79,7 +79,7 @@ module.exports = class ConfigVault {
         try {
             cfgData = JSON.parse(rawFile);
         } catch (error) {
-            if(rawFile.includes('\\')) logError(`Note: your 'txData/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`);
+            if (rawFile.includes('\\')) logError(`Note: your 'txData/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`);
             throw new Error(`Unnable to load configuration file '${this.configFilePath}'. \nOriginal error: ${error.message}`);
         }
 
@@ -92,7 +92,7 @@ module.exports = class ConfigVault {
      * Setup the this.config variable based on the config file data
      * @param {object} cfgData
      */
-    setupConfigStructure(cfgData){
+    setupConfigStructure(cfgData) {
         let cfg = cloneDeep(cfgData);
         let out = {
             global: null,
@@ -109,7 +109,7 @@ module.exports = class ConfigVault {
         //NOTE: this shit is ugly, but I wont bother fixing it.
         //      this entire config vault is stupid.
         //      use convict, lodash defaults or something like that
-        if(isUndefined(cfg.playerController)) cfg.playerController = {};
+        if (isUndefined(cfg.playerController)) cfg.playerController = {};
 
         try {
             out.global = {
@@ -168,7 +168,7 @@ module.exports = class ConfigVault {
                 quiet: toDefault(cfg.fxRunner.quiet, null),
             };
         } catch (error) {
-            if(GlobalData.verbose) dir(error);
+            if (GlobalData.verbose) dir(error);
             throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`);
         }
 
@@ -182,7 +182,7 @@ module.exports = class ConfigVault {
      * FIXME: rename this function
      * @param {object} cfgData
      */
-    setupConfigDefaults(cfgData){
+    setupConfigDefaults(cfgData) {
         let cfg = cloneDeep(cfgData);
         //NOTE: the bool trick in fxRunner.autostart won't work if we want the default to be true
         try {
@@ -230,15 +230,15 @@ module.exports = class ConfigVault {
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in templater
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
             //FXRunner - Converting from old OneSync (build 2751)
-            if(isUndefined(cfg.fxRunner.onesync) || cfg.fxRunner.onesync === null){
+            if (isUndefined(cfg.fxRunner.onesync) || cfg.fxRunner.onesync === null) {
                 cfg.fxRunner.onesync = 'off'
-            }else if(typeof cfg.fxRunner.onesync == 'boolean'){
+            } else if (typeof cfg.fxRunner.onesync == 'boolean') {
                 cfg.fxRunner.onesync = (cfg.fxRunner.onesync)? 'on' : 'off';
-            }else if(!['on', 'legacy', 'off'].includes(cfg.fxRunner.onesync)){
+            } else if (!['on', 'legacy', 'off'].includes(cfg.fxRunner.onesync)) {
                 throw new Error(`Invalid OneSync type.`);
             }
         } catch (error) {
-            if(GlobalData.verbose) dir(error)
+            if (GlobalData.verbose) dir(error)
             throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`);
         }
 
@@ -250,15 +250,15 @@ module.exports = class ConfigVault {
     /**
      * Create server profile folder structure if doesn't exist
      */
-    setupFolderStructure(){
+    setupFolderStructure() {
         try {
             let dataPath = `${this.serverProfilePath}/data/`;
-            if(!fs.existsSync(dataPath)){
+            if (!fs.existsSync(dataPath)) {
                 fs.mkdirSync(dataPath);
             }
 
             let logsPath = `${this.serverProfilePath}/logs/`;
-            if(!fs.existsSync(logsPath)){
+            if (!fs.existsSync(logsPath)) {
                 fs.mkdirSync(logsPath);
             }
         } catch (error) {
@@ -272,7 +272,7 @@ module.exports = class ConfigVault {
     /**
      * Return configs for a specific scope (reconstructed and freezed)
      */
-    getScoped(scope){
+    getScoped(scope) {
         return cloneDeep(this.config[scope]);
     }
 
@@ -280,7 +280,7 @@ module.exports = class ConfigVault {
     /**
      * Return configs for a specific scope (reconstructed and freezed)
      */
-    getScopedStructure(scope){
+    getScopedStructure(scope) {
         return cloneDeep(this.configFile[scope]);
     }
 
@@ -289,7 +289,7 @@ module.exports = class ConfigVault {
     /**
      * Return all configs individually reconstructed and freezed
      */
-    getAll(){
+    getAll() {
         let cfg = cloneDeep(this.config);
         return deepFreeze({
             global: cfg.global,
@@ -311,7 +311,7 @@ module.exports = class ConfigVault {
      * @param {string} scope
      * @param {string} newConfig
      */
-    saveProfile(scope, newConfig){
+    saveProfile(scope, newConfig) {
         try {
             let toSave = cloneDeep(this.configFile);
             toSave[scope] = newConfig;

@@ -24,12 +24,12 @@ module.exports = async () => {
         const changelogReq = await axios.get(reqUrl);
 
         //check response
-        if(!changelogReq.data) throw new Error('request failed');
+        if (!changelogReq.data) throw new Error('request failed');
         const changelog = changelogReq.data;
-        if(anyUndefined(changelog.recommended, changelog.optional, changelog.latest, changelog.critical)){
+        if (anyUndefined(changelog.recommended, changelog.optional, changelog.latest, changelog.critical)) {
             throw new Error('expected values not found');
         }
-        if(GlobalData.verbose) log(`Checked for updates. Latest version is ${changelog.latest}`);
+        if (GlobalData.verbose) log(`Checked for updates. Latest version is ${changelog.latest}`);
         //FIXME: CHECK FOR BROKEN ORDER
 
         //fill in databus
@@ -42,7 +42,7 @@ module.exports = async () => {
             critical: parseInt(changelog.critical),
         }
     } catch (error) {
-        if(GlobalData.verbose) logWarn(`Failed to retrieve FXServer update data with error: ${error.message}`);
-        if(globals.databus.updateChecker === null) globals.databus.updateChecker = false;
+        if (GlobalData.verbose) logWarn(`Failed to retrieve FXServer update data with error: ${error.message}`);
+        if (globals.databus.updateChecker === null) globals.databus.updateChecker = false;
     }
 }

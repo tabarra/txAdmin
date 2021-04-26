@@ -16,13 +16,13 @@ const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'un
  */
 module.exports = async function SettingsSave(ctx) {
     //Sanity check
-    if(isUndefined(ctx.params.scope)){
+    if (isUndefined(ctx.params.scope)) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     let scope = ctx.params.scope;
 
     //Check permissions
-    if(!ctx.utils.checkPermission('settings.write', modulename)){
+    if (!ctx.utils.checkPermission('settings.write', modulename)) {
         return ctx.send({
             type: 'danger',
             message: `You don't have permission to execute this action.`
@@ -30,17 +30,17 @@ module.exports = async function SettingsSave(ctx) {
     }
 
     //Delegate to the specific scope functions
-    if(scope == 'global'){
+    if (scope == 'global') {
         return handleGlobal(ctx);
-    }else if(scope == 'fxserver'){
+    } else if (scope == 'fxserver') {
         return handleFXServer(ctx);
-    }else if(scope == 'playerController'){
+    } else if (scope == 'playerController') {
         return handlePlayerController(ctx);
-    }else if(scope == 'monitor'){
+    } else if (scope == 'monitor') {
         return handleMonitor(ctx);
-    }else if(scope == 'discord'){
+    } else if (scope == 'discord') {
         return handleDiscord(ctx);
-    }else{
+    } else {
         return ctx.send({
             type: 'danger',
             message: 'Unknown settings scope.'
@@ -56,11 +56,11 @@ module.exports = async function SettingsSave(ctx) {
  */
 function handleGlobal(ctx) {
     //Sanity check
-    if(
+    if (
         isUndefined(ctx.request.body.serverName) ||
         isUndefined(ctx.request.body.language) ||
         isUndefined(ctx.request.body.verbose)
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
@@ -86,12 +86,12 @@ function handleGlobal(ctx) {
     let saveStatus = globals.configVault.saveProfile('global', newConfig);
 
     //Sending output
-    if(saveStatus){
+    if (saveStatus) {
         globals.translator.refreshConfig(langPhrases);
         globals.config = globals.configVault.getScoped('global');
         ctx.utils.logAction(`Changing global settings.`);
         return ctx.send({type: 'success', message: `<strong>Global configuration saved!</strong>`});
-    }else{
+    } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings.`);
         return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }
@@ -106,14 +106,14 @@ function handleGlobal(ctx) {
  */
 function handleFXServer(ctx) {
     //Sanity check
-    if(
+    if (
         isUndefined(ctx.request.body.serverDataPath) ||
         isUndefined(ctx.request.body.cfgPath) ||
         isUndefined(ctx.request.body.commandLine) ||
         isUndefined(ctx.request.body.onesync) ||
         isUndefined(ctx.request.body.autostart) ||
         isUndefined(ctx.request.body.quiet)
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
@@ -128,19 +128,19 @@ function handleFXServer(ctx) {
     }
 
     //Validating path spaces
-    if(
+    if (
         cfg.serverDataPath.includes(' ') ||
         cfg.cfgPath.includes(' ')
-    ){
+    ) {
         return ctx.send({type: 'danger', message: `The paths cannot contain spaces.`});
     }
 
     //Validating Base Path
     try {
-        if(!fs.existsSync(path.join(cfg.serverDataPath, 'resources'))){
-            if(cfg.serverDataPath.includes('resources')){
+        if (!fs.existsSync(path.join(cfg.serverDataPath, 'resources'))) {
+            if (cfg.serverDataPath.includes('resources')) {
                 throw new Error("The base must be the folder that contains the resources folder.");
-            }else{
+            } else {
                 throw new Error("Couldn't locate or read a resources folder inside of the base path.");
             }
         }
@@ -168,11 +168,11 @@ function handleFXServer(ctx) {
     let saveStatus = globals.configVault.saveProfile('fxRunner', newConfig);
 
     //Sending output
-    if(saveStatus){
+    if (saveStatus) {
         globals.fxRunner.refreshConfig();
         ctx.utils.logAction(`Changing fxRunner settings.`);
         return ctx.send({type: 'success', message: `<strong>FXServer configuration saved!</strong>`});
-    }else{
+    } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing fxRunner settings.`);
         return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }
@@ -186,14 +186,14 @@ function handleFXServer(ctx) {
  */
 function handlePlayerController(ctx) {
     //Sanity check
-    if(anyUndefined(
+    if (anyUndefined(
         ctx.request.body,
         ctx.request.body.onJoinCheckBan,
         ctx.request.body.onJoinCheckWhitelist,
         ctx.request.body.minSessionTime,
         ctx.request.body.whitelistRejectionMessage,
         ctx.request.body.wipePendingWLOnStart,
-    )){
+    )) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
@@ -207,12 +207,12 @@ function handlePlayerController(ctx) {
     }
 
     //Validating wl message
-    if(cfg.whitelistRejectionMessage.length > 256){
+    if (cfg.whitelistRejectionMessage.length > 256) {
         return ctx.send({type: 'danger', message: 'The whitelist rejection message must be less than 256 characters.'});
     }
 
     //Validating min session time
-    if(cfg.minSessionTime < 1 || cfg.minSessionTime > 60){
+    if (cfg.minSessionTime < 1 || cfg.minSessionTime > 60) {
         return ctx.send({type: 'danger', message: 'Minimum Session Time must be between 1 and 60 minutes.'});
     }
 
@@ -226,11 +226,11 @@ function handlePlayerController(ctx) {
     let saveStatus = globals.configVault.saveProfile('playerController', newConfig);
 
     //Sending output
-    if(saveStatus){
+    if (saveStatus) {
         globals.playerController.refreshConfig();
         ctx.utils.logAction(`Changing Player Controller settings.`);
         return ctx.send({type: 'success', message: `<strong>Player Controller configuration saved!</strong>`});
-    }else{
+    } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing Player Controller settings.`);
         return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }
@@ -244,11 +244,11 @@ function handlePlayerController(ctx) {
  */
 function handleMonitor(ctx) {
     //Sanity check
-    if(
+    if (
         isUndefined(ctx.request.body.restarterSchedule),
         isUndefined(ctx.request.body.disableChatWarnings),
         isUndefined(ctx.request.body.restarterScheduleWarnings)
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
@@ -264,14 +264,14 @@ function handleMonitor(ctx) {
     let invalidRestartTimes = [];
     let validRestartTimes = [];
     scheduleTimes.forEach((time) => {
-        if(typeof time === 'string'){
+        if (typeof time === 'string') {
             invalidRestartTimes.push(`"${time}"`);
-        }else{
+        } else {
             const cleanTime = time.hour.toString().padStart(2, '0') + ':' + time.minute.toString().padStart(2, '0');
             validRestartTimes.push(cleanTime);
         }
     });
-    if(invalidRestartTimes.length){
+    if (invalidRestartTimes.length) {
         let message = `<strong>The following entries were not recognized as valid 24h times:</strong><br>`;
         message += invalidRestartTimes.join('<br>\n');
         return ctx.send({type: 'danger', message: message});
@@ -281,20 +281,20 @@ function handleMonitor(ctx) {
     const invalidRestartWarningMinutes = [];
     const validRestartWarningMinutes = [];
     cfg.restarterScheduleWarnings.forEach((minutes) => {
-        if(typeof minutes !== 'string'){
+        if (typeof minutes !== 'string') {
             invalidRestartWarningMinutes.push(`"${minutes}"`);
-        }else{
+        } else {
             const minutesAttempt = parseInt(minutes);
-            if(isNaN(minutesAttempt)){
+            if (isNaN(minutesAttempt)) {
                 invalidRestartWarningMinutes.push(`"${minutes}"`);
-            }else if(minutesAttempt < 1 || minutesAttempt > 360){
+            } else if (minutesAttempt < 1 || minutesAttempt > 360) {
                 invalidRestartWarningMinutes.push(minutesAttempt);
-            }else {
+            } else {
                 validRestartWarningMinutes.push(parseInt(minutes));
             }
         }
     });
-    if(invalidRestartWarningMinutes.length){
+    if (invalidRestartWarningMinutes.length) {
         let message = `<strong>The following entries were not recognized as valid minutes before restart warning:</strong><br>`;
         message += invalidRestartWarningMinutes.join('<br>\n');
         return ctx.send({type: 'danger', message: message});
@@ -308,11 +308,11 @@ function handleMonitor(ctx) {
     const saveStatus = globals.configVault.saveProfile('monitor', newConfig);
 
     //Sending output
-    if(saveStatus){
+    if (saveStatus) {
         globals.monitor.refreshConfig();
         ctx.utils.logAction(`Changing monitor settings.`);
         return ctx.send({type: 'success', message: `<strong>Monitor/Restarter configuration saved!</strong>`});
-    }else{
+    } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing monitor settings.`);
         return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }
@@ -326,13 +326,13 @@ function handleMonitor(ctx) {
  */
 function handleDiscord(ctx) {
     //Sanity check
-    if(
+    if (
         isUndefined(ctx.request.body.enabled) ||
         isUndefined(ctx.request.body.token) ||
         isUndefined(ctx.request.body.announceChannel) ||
         isUndefined(ctx.request.body.prefix) ||
         isUndefined(ctx.request.body.statusMessage)
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
@@ -355,15 +355,15 @@ function handleDiscord(ctx) {
     let saveStatus = globals.configVault.saveProfile('discordBot', newConfig);
 
     //Sending output
-    if(saveStatus){
+    if (saveStatus) {
         globals.discordBot.refreshConfig();
         ctx.utils.logAction(`Changing discordBot settings.`);
-        if(newConfig.enabled){
+        if (newConfig.enabled) {
             return ctx.send({type: 'warning', message: `<strong>Discord configuration saved. Check terminal to make sure the token is valid.</strong>`});
-        }else{
+        } else {
             return ctx.send({type: 'success', message: `<strong>Discord configuration saved!</strong>`});
         }
-    }else{
+    } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing discordBot settings.`);
         return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }

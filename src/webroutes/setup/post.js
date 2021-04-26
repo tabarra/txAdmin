@@ -23,7 +23,7 @@ const getPotentialServerDataFolders = (source) => {
             .filter(dirent => getDirectories(path.join(source, dirent)).includes('resources'))
             .map(dirent => slash(path.join(source, dirent))+'/')
     } catch (error) {
-        if(GlobalData.verbose) logWarn(`Failed to find server data folder with message: ${error.message}`)
+        if (GlobalData.verbose) logWarn(`Failed to find server data folder with message: ${error.message}`)
         return []
     }
 }
@@ -46,13 +46,13 @@ const getPotentialServerDataFolders = (source) => {
  */
 module.exports = async function SetupPost(ctx) {
     //Sanity check
-    if(isUndefined(ctx.params.action)){
+    if (isUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     const action = ctx.params.action;
 
     //Check permissions
-    if(!ctx.utils.checkPermission('all_permissions', modulename)){
+    if (!ctx.utils.checkPermission('all_permissions', modulename)) {
         return ctx.send({
             success: false, 
             message: `You need to be the admin master to use the setup page.`
@@ -60,10 +60,10 @@ module.exports = async function SetupPost(ctx) {
     }
 
     //Check if this is the correct state for the setup page
-    if(
+    if (
         globals.deployer !== null ||
         (globals.fxRunner.config.serverDataPath && globals.fxRunner.config.cfgPath)
-    ){
+    ) {
         return ctx.send({
             success: false, 
             refresh: true
@@ -71,31 +71,31 @@ module.exports = async function SetupPost(ctx) {
     }
 
     //Delegate to the specific action functions
-    if(action == 'validateRecipeURL'){
+    if (action == 'validateRecipeURL') {
         return await handleValidateRecipeURL(ctx);
 
-    }else if(action == 'validateLocalDeployPath'){
+    } else if (action == 'validateLocalDeployPath') {
         return await handleValidateLocalDeployPath(ctx);
 
-    }else if(action == 'validateLocalDataFolder'){
+    } else if (action == 'validateLocalDataFolder') {
         return await handleValidateLocalDataFolder(ctx);
 
-    }else if(action == 'validateCFGFile'){
+    } else if (action == 'validateCFGFile') {
         return await handleValidateCFGFile(ctx);
 
-    }else if(action == 'save' && ctx.request.body.type == 'popular'){
+    } else if (action == 'save' && ctx.request.body.type == 'popular') {
         return await handleSaveDeployerImport(ctx);
 
-    }else if(action == 'save' && ctx.request.body.type == 'remote'){
+    } else if (action == 'save' && ctx.request.body.type == 'remote') {
         return await handleSaveDeployerImport(ctx);
 
-    }else if(action == 'save' && ctx.request.body.type == 'custom'){
+    } else if (action == 'save' && ctx.request.body.type == 'custom') {
         return await handleSaveDeployerCustom(ctx);
 
-    }else if(action == 'save' && ctx.request.body.type == 'local'){
+    } else if (action == 'save' && ctx.request.body.type == 'local') {
         return await handleSaveLocal(ctx);
 
-    }else{
+    } else {
         return ctx.send({
             success: false, 
             message: 'Unknown setup action.'
@@ -111,7 +111,7 @@ module.exports = async function SetupPost(ctx) {
  */
 async function handleValidateRecipeURL(ctx) {
     //Sanity check
-    if(isUndefined(ctx.request.body.recipeURL)){
+    if (isUndefined(ctx.request.body.recipeURL)) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const recipeURL = ctx.request.body.recipeURL.trim();
@@ -124,7 +124,7 @@ async function handleValidateRecipeURL(ctx) {
             responseEncoding: 'utf8',
             timeout: 4500
         });
-        if(typeof res.data !== 'string') throw new Error('This URL did not return a string.');
+        if (typeof res.data !== 'string') throw new Error('This URL did not return a string.');
         const recipe = parseValidateRecipe(res.data);
         return ctx.send({success: true, name: recipe.name});
     } catch (error) {
@@ -140,11 +140,11 @@ async function handleValidateRecipeURL(ctx) {
  */
 async function handleValidateLocalDeployPath(ctx) {
     //Sanity check
-    if(isUndefined(ctx.request.body.deployPath)){
+    if (isUndefined(ctx.request.body.deployPath)) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const deployPath = slash(path.normalize(ctx.request.body.deployPath.trim()));
-    if(deployPath.includes(' ')){
+    if (deployPath.includes(' ')) {
         return ctx.send({success: false, message: 'The path cannot contain spaces.'});
     }
 
@@ -164,38 +164,38 @@ async function handleValidateLocalDeployPath(ctx) {
  */
 async function handleValidateLocalDataFolder(ctx) {
     //Sanity check
-    if(isUndefined(ctx.request.body.dataFolder)){
+    if (isUndefined(ctx.request.body.dataFolder)) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim()+'/'));
-    if(dataFolderPath.includes(' ')){
+    if (dataFolderPath.includes(' ')) {
         return ctx.send({success: false, message: 'The path cannot contain spaces.'});
     }
 
     try {
-        if(!fs.existsSync(path.join(dataFolderPath, 'resources'))){
+        if (!fs.existsSync(path.join(dataFolderPath, 'resources'))) {
             const recoveryTemplate = `The path provided is invalid. <br>
                 But it looks like <code>{{attempt}}</code> is correct. <br>
                 Do you want to use it instead?`;
 
             //Recovery if parent folder
             const attemptIsParent = path.join(dataFolderPath, '..');
-            if(fs.existsSync(path.join(attemptIsParent, 'resources'))){
+            if (fs.existsSync(path.join(attemptIsParent, 'resources'))) {
                 const message = recoveryTemplate.replace('{{attempt}}', attemptIsParent);
                 return ctx.send({success: false, message, suggestion: attemptIsParent});
             }
 
             //Recovery parent inside folder
             const attemptOutside = getPotentialServerDataFolders(path.join(dataFolderPath, '..'));
-            if(attemptOutside.length >= 1){
+            if (attemptOutside.length >= 1) {
                 const message = recoveryTemplate.replace('{{attempt}}', attemptOutside[0]);
                 return ctx.send({success: false, message, suggestion: attemptOutside[0]});
             }
 
             //Recovery if resources
-            if(dataFolderPath.includes('/resources')){
+            if (dataFolderPath.includes('/resources')) {
                 const attemptRes = dataFolderPath.split('/resources')[0];
-                if(fs.existsSync(path.join(attemptRes, 'resources'))){
+                if (fs.existsSync(path.join(attemptRes, 'resources'))) {
                     const message = recoveryTemplate.replace('{{attempt}}', attemptRes);
                     return ctx.send({success: false, message, suggestion: attemptRes});
                 }
@@ -203,7 +203,7 @@ async function handleValidateLocalDataFolder(ctx) {
 
             //Recovery subfolder
             const attemptInside = getPotentialServerDataFolders(dataFolderPath);
-            if(attemptInside.length >= 1){
+            if (attemptInside.length >= 1) {
                 const message = recoveryTemplate.replace('{{attempt}}', attemptInside[0]);
                 return ctx.send({success: false, message, suggestion: attemptInside[0]});
             }
@@ -211,7 +211,7 @@ async function handleValidateLocalDataFolder(ctx) {
             //really invalid :(
             throw new Error("Couldn't locate or read a resources folder inside of the path provided.");
 
-        }else{
+        } else {
             return ctx.send({
                 success: true, 
                 detectedConfig: helpers.findLikelyCFGPath(dataFolderPath)
@@ -230,17 +230,17 @@ async function handleValidateLocalDataFolder(ctx) {
  */
 async function handleValidateCFGFile(ctx) {
     //Sanity check
-    if(
+    if (
         isUndefined(ctx.request.body.dataFolder) ||
         isUndefined(ctx.request.body.cfgFile)
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
     const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim()));
     const cfgFilePathNormalized = slash(path.normalize(ctx.request.body.cfgFile.trim()));
     const cfgFilePath = helpers.resolveCFGFilePath(cfgFilePathNormalized, dataFolderPath);
-    if(cfgFilePath.includes(' ')){
+    if (cfgFilePath.includes(' ')) {
         return ctx.send({success: false, message: 'The path cannot contain spaces.'});
     }
 
@@ -271,11 +271,11 @@ async function handleValidateCFGFile(ctx) {
  */
 async function handleSaveLocal(ctx) {
     //Sanity check
-    if(
+    if (
         isUndefined(ctx.request.body.name) ||
         isUndefined(ctx.request.body.dataFolder) ||
         isUndefined(ctx.request.body.cfgFile)
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
@@ -287,13 +287,13 @@ async function handleSaveLocal(ctx) {
     }
 
     //Validating path spaces
-    if(cfg.dataFolder.includes(' ') || cfg.cfgFile.includes(' ')){
+    if (cfg.dataFolder.includes(' ') || cfg.cfgFile.includes(' ')) {
         return ctx.send({success: false, message: 'The paths cannot contain spaces.'});
     }
 
     //Validating Base Path
     try {
-        if(!fs.existsSync(path.join(cfg.dataFolder, 'resources'))){
+        if (!fs.existsSync(path.join(cfg.dataFolder, 'resources'))) {
             throw new Error("Invalid path");
         }
     } catch (error) {
@@ -321,7 +321,7 @@ async function handleSaveLocal(ctx) {
     
 
     //Sending output
-    if(saveGlobalStatus && saveFXRunnerStatus){
+    if (saveGlobalStatus && saveFXRunnerStatus) {
         //Refreshing config
         globals.config = globals.configVault.getScoped('global');
         globals.fxRunner.refreshConfig();
@@ -331,12 +331,12 @@ async function handleSaveLocal(ctx) {
 
         //Starting server
         const spawnMsg = await globals.fxRunner.spawnServer(false);
-        if(spawnMsg !== null){
+        if (spawnMsg !== null) {
             return ctx.send({success: false, message: `Faied to start server with error: <br>\n${spawnMsg}`});
-        }else{
+        } else {
             return ctx.send({success: true});
         }
-    }else{
+    } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global/fxserver settings via setup stepper.`);
         return ctx.send({success: false, message: `<strong>Error saving the configuration file.</strong>`});
     }
@@ -352,13 +352,13 @@ async function handleSaveLocal(ctx) {
  */
 async function handleSaveDeployerImport(ctx) {
     //Sanity check
-    if(
+    if (
         isUndefined(ctx.request.body.name) ||
         isUndefined(ctx.request.body.isTrustedSource) ||
         isUndefined(ctx.request.body.recipeURL) ||
         isUndefined(ctx.request.body.targetPath) ||
         isUndefined(ctx.request.body.deploymentID) 
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const isTrustedSource = (ctx.request.body.isTrustedSource === 'true');
@@ -376,7 +376,7 @@ async function handleSaveDeployerImport(ctx) {
             responseEncoding: 'utf8',
             timeout: 4500
         });
-        if(typeof res.data !== 'string') throw new Error('This URL did not return a string.');
+        if (typeof res.data !== 'string') throw new Error('This URL did not return a string.');
         recipeData = res.data;
     } catch (error) {
         return ctx.send({success: false, message: `Recipe download error: ${error.message}`});
@@ -395,10 +395,10 @@ async function handleSaveDeployerImport(ctx) {
     const saveGlobalStatus = globals.configVault.saveProfile('global', newGlobalConfig);
     
     //Checking save and redirecting
-    if(saveGlobalStatus){
+    if (saveGlobalStatus) {
         ctx.utils.logAction(`Changing global settings via setup stepper and started Deployer.`);
         return ctx.send({success: true});
-    }else{
+    } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
         return ctx.send({success: false, message: `<strong>Error saving the configuration file.</strong>`});
     }
@@ -413,11 +413,11 @@ async function handleSaveDeployerImport(ctx) {
  */
 async function handleSaveDeployerCustom(ctx) {
     //Sanity check
-    if(
+    if (
         isUndefined(ctx.request.body.name) ||
         isUndefined(ctx.request.body.targetPath) ||
         isUndefined(ctx.request.body.deploymentID) 
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const serverName = ctx.request.body.name.trim();
@@ -441,10 +441,10 @@ async function handleSaveDeployerCustom(ctx) {
     const saveGlobalStatus = globals.configVault.saveProfile('global', newGlobalConfig);
     
     //Checking save and redirecting
-    if(saveGlobalStatus){
+    if (saveGlobalStatus) {
         ctx.utils.logAction(`Changing global settings via setup stepper and started Deployer.`);
         return ctx.send({success: true});
-    }else{
+    } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
         return ctx.send({success: false, message: `<strong>Error saving the configuration file.</strong>`});
     }

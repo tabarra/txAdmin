@@ -9,7 +9,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
 const breakPath = (inPath) => {return slash(path.normalize(inPath)).split('/').filter(String)};
 const dynamicSort = (prop) => {
     var sortOrder = 1;
-    if(prop[0] === "-") {
+    if (prop[0] === "-") {
         sortOrder = -1;
         prop = prop.substr(1);
     }
@@ -19,23 +19,23 @@ const dynamicSort = (prop) => {
     }
 }
 const getResourceSubPath = (resPath) => {
-    if(resPath.indexOf('system_resources') >= 0) return `system_resources`;
-    if(!path.isAbsolute(resPath)) return resPath;
+    if (resPath.indexOf('system_resources') >= 0) return `system_resources`;
+    if (!path.isAbsolute(resPath)) return resPath;
 
     let serverDataPathArr = breakPath(`${globals.fxRunner.config.serverDataPath}/resources`);
     let resPathArr = breakPath(resPath);
     for (let i = 0; i < serverDataPathArr.length; i++) {
-        if(isUndefined(resPathArr[i])) break;
-        if(serverDataPathArr[i].toLowerCase() == resPathArr[i].toLowerCase()){
+        if (isUndefined(resPathArr[i])) break;
+        if (serverDataPathArr[i].toLowerCase() == resPathArr[i].toLowerCase()) {
             delete resPathArr[i];
         }
     }
     resPathArr.pop();
     resPathArr = resPathArr.filter(String);
 
-    if(resPathArr.length){
+    if (resPathArr.length) {
         return resPathArr.join('/');
-    }else{
+    } else {
         return 'root';
     }
 }
@@ -53,7 +53,7 @@ module.exports = async function Resources(ctx) {
 
     //Send command request
     let cmdSuccess = globals.fxRunner.srvCmd(`txaReportResources`);
-    if(!cmdSuccess){
+    if (!cmdSuccess) {
         return ctx.utils.render('basic/generic', {message: timeoutMessage});
     }
 
@@ -62,11 +62,11 @@ module.exports = async function Resources(ctx) {
     let tErrorTimer;
     const tList = new Promise((resolve, reject) => {
         tListTimer = setInterval(() => {
-            if(
+            if (
                 globals.databus.resourcesList !== null &&
                 (new Date() - globals.databus.resourcesList.timestamp) <= 1000 &&
                 Array.isArray(globals.databus.resourcesList.data)
-            ){
+            ) {
                 clearTimeout(tListTimer);
                 clearTimeout(tErrorTimer);
                 let resGroups = processResources(globals.databus.resourcesList.data);
@@ -100,11 +100,11 @@ module.exports = async function Resources(ctx) {
  * Returns the Processed Resource list.
  * @param {array} resList
  */
-function processResources(resList){
+function processResources(resList) {
     //Clean resource data and add it so an object separated by subpaths
     let resGroupList = {}
     resList.forEach(resource =>{
-        if(isUndefined(resource.name) || isUndefined(resource.status) || isUndefined(resource.path) || resource.path === ''){
+        if (isUndefined(resource.name) || isUndefined(resource.status) || isUndefined(resource.path) || resource.path === '') {
             return;
         }
         let subPath = getResourceSubPath(resource.path);
@@ -119,9 +119,9 @@ function processResources(resList){
             description: (resource.description)? resource.description.trim() : '',
         }
 
-        if(resGroupList.hasOwnProperty(subPath)){
+        if (resGroupList.hasOwnProperty(subPath)) {
             resGroupList[subPath].push(resData)
-        }else{
+        } else {
             resGroupList[subPath] = [resData]
         }
     });

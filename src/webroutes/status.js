@@ -69,15 +69,15 @@ function prepareServerStatus() {
         ['NEARLY', 'warning'],
         ['DISCONNECTED', 'danger'],
     ]
-    if(discordClient == null){
+    if (discordClient == null) {
         discordStatus = 'DISABLED';
         discordStatusClass = 'secondary';
 
-    }else if(discStatusCodes[discordClient.status]){
+    } else if (discStatusCodes[discordClient.status]) {
         discordStatus = discStatusCodes[discordClient.status][0];
         discordStatusClass = discStatusCodes[discordClient.status][1];
 
-    }else{
+    } else {
         discordStatus = 'UNKNOWN';
         discordStatusClass = 'danger';
     }
@@ -85,13 +85,13 @@ function prepareServerStatus() {
     //Server status
     const monitorStatus = globals.monitor.currentStatus || '??';
     let monitorStatusClass;
-    if(monitorStatus == 'ONLINE'){
+    if (monitorStatus == 'ONLINE') {
         monitorStatusClass = 'success';
-    }else if(monitorStatus == 'PARTIAL'){
+    } else if (monitorStatus == 'PARTIAL') {
         monitorStatusClass = 'warning';
-    }else if(monitorStatus == 'OFFLINE'){
+    } else if (monitorStatus == 'OFFLINE') {
         monitorStatusClass = 'danger';
-    }else{
+    } else {
         monitorStatusClass = 'dark';
     }
     const processStatus = globals.fxRunner.getStatus();
@@ -177,11 +177,11 @@ function preparePlayersData() {
  */
 function prepareMetaData() {
     let favicon;
-    if(globals.monitor.currentStatus == 'ONLINE'){
+    if (globals.monitor.currentStatus == 'ONLINE') {
         favicon = 'favicon_online';
-    }else if(globals.monitor.currentStatus == 'PARTIAL'){
+    } else if (globals.monitor.currentStatus == 'PARTIAL') {
         favicon = 'favicon_partial';
-    }else{
+    } else {
         favicon = 'favicon_offline';
     }
     return {

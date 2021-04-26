@@ -11,13 +11,13 @@ module.exports = async function AdminManagerGet(ctx) {
     //Prepare admin array
     let admins = globals.authenticator.getAdminsList().map((admin)=>{
         let perms;
-        if(admin.master == true){
+        if (admin.master == true) {
             perms = "master account";
-        }else if(admin.permissions.includes('all_permissions')){
+        } else if (admin.permissions.includes('all_permissions')) {
             perms = "all permissions";
-        }else if(admin.permissions.length !== 1){
+        } else if (admin.permissions.length !== 1) {
             perms = `${admin.permissions.length} permissions`;
-        }else{
+        } else {
             perms = `1 permission`;
         }
 
@@ -32,7 +32,7 @@ module.exports = async function AdminManagerGet(ctx) {
     });
 
     //Check permission
-    if(!ctx.utils.checkPermission('manage.admins', modulename)){
+    if (!ctx.utils.checkPermission('manage.admins', modulename)) {
         return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
     }
 

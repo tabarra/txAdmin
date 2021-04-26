@@ -22,9 +22,9 @@ module.exports = async function PlayerList(ctx) {
     const dbo = globals.playerController.getDB();
 
     //Delegate to the specific action handler
-    if(ctx.request.query && ctx.request.query.search){
+    if (ctx.request.query && ctx.request.query.search) {
         return await handleSearch(ctx, dbo);
-    }else{
+    } else {
         return await handleDefault(ctx, dbo);
     }
 };
@@ -47,9 +47,9 @@ module.exports = async function PlayerList(ctx) {
  * @param {object} dbo
  * @returns {object} page render promise
  */
-async function handleSearch(ctx, dbo){
+async function handleSearch(ctx, dbo) {
     //Sanity check & var setup
-    if(typeof ctx.request.query.search !== 'string'){
+    if (typeof ctx.request.query.search !== 'string') {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const searchString = ctx.request.query.search.trim();
@@ -71,7 +71,7 @@ async function handleSearch(ctx, dbo){
             });
 
         //IF searching for identifiers
-        if(idsArray.length){
+        if (idsArray.length) {
             const actions = await dbo.get("actions")
                 .filter(a => idsArray.some((fi) => a.identifiers.includes(fi)))
                 .take(512)
@@ -83,7 +83,7 @@ async function handleSearch(ctx, dbo){
             let licensesArr = [];
             actions.forEach(a => {
                 a.identifiers.forEach(id => {
-                    if(id.substring(0, 8) == "license:"){
+                    if (id.substring(0, 8) == "license:") {
                         licensesArr.push(id.substring(8));
                     }
                 })
@@ -100,20 +100,20 @@ async function handleSearch(ctx, dbo){
             
 
         //IF searching for an acition ID
-        }else if(GlobalData.regexActionID.test(searchString.toUpperCase())){
+        } else if (GlobalData.regexActionID.test(searchString.toUpperCase())) {
             const action = await dbo.get("actions")
                 .find({id: searchString.toUpperCase()})
                 .cloneDeep()
                 .value();
-            if(!action){
+            if (!action) {
                 outData.message = `Searching by Action ID found no results.`;
 
-            }else{
+            } else {
                 outData.resActions = await processActionList([action]);
     
                 //TODO: adapt this for when we start saving all IDs for the players
                 const licensesArr = action.identifiers.filter(x => x.substring(0, 8) == "license:").map(x => x.substring(8));
-                if(licensesArr.length){
+                if (licensesArr.length) {
                     const players = await dbo.get("players")
                         .filter(p => licensesArr.includes(p.license))
                         .take(512)
@@ -126,7 +126,7 @@ async function handleSearch(ctx, dbo){
 
 
         //Likely searching for an partial name
-        }else{
+        } else {
             const players = await dbo.get("players")
                 .filter(p => {
                     return p.name && p.name.toLowerCase().includes(searchString.toLowerCase())
@@ -144,7 +144,7 @@ async function handleSearch(ctx, dbo){
         //Give output
         return ctx.send(outData);
     } catch (error) {
-        if(GlobalData.verbose){
+        if (GlobalData.verbose) {
             logError(`handleSearch failed with error: ${error.message}`);
             dir(error)
         }
@@ -160,7 +160,7 @@ async function handleSearch(ctx, dbo){
  * @param {object} dbo
  * @returns {object} page render promise
  */
-async function handleDefault(ctx, dbo){
+async function handleDefault(ctx, dbo) {
     let timeStart = new Date();
     const controllerConfigs = globals.playerController.config;
     const queryLimits = {
@@ -195,15 +195,15 @@ async function handleDefault(ctx, dbo){
  * @param {object} dbo
  * @returns {object} array of actions, or, throws on error
  */
-async function getStats(dbo){
+async function getStats(dbo) {
     try {
         const actionStats = await dbo.get("actions")
             .reduce((acc, a, ind)=>{
-                if(a.type == 'ban'){
+                if (a.type == 'ban') {
                     acc.bans++;
-                }else if(a.type == 'warn'){
+                } else if (a.type == 'warn') {
                     acc.warns++;
-                }else if(a.type == 'whitelist'){
+                } else if (a.type == 'whitelist') {
                     acc.whitelists++;
                 }
                 return acc;
@@ -253,7 +253,7 @@ async function getStats(dbo){
         }
     } catch (error) {
         const msg = `getStats failed with error: ${error.message}`;
-        if(GlobalData.verbose) logError(msg);
+        if (GlobalData.verbose) logError(msg);
         return []
     }
 }
@@ -266,7 +266,7 @@ async function getStats(dbo){
  * @param {number} limit
  * @returns {array} array of actions, or [] on error
  */
-async function getPendingWL(dbo, limit){
+async function getPendingWL(dbo, limit) {
     try {
         let pendingWL = await dbo.get("pendingWL")
             .orderBy('tsLastAttempt', 'desc')
@@ -288,7 +288,7 @@ async function getPendingWL(dbo, limit){
         const maxNameSize = 36;
         let lastWhitelistBlocks = pendingWL.map((x) => {
             x.time = dateFormat(new Date(x.tsLastAttempt*1000), 'isoTime');
-            if(x.name.length > maxNameSize){
+            if (x.name.length > maxNameSize) {
                 x.name = x.name.substring(0,maxNameSize-3) + '...';
             }
             return x;
@@ -297,7 +297,7 @@ async function getPendingWL(dbo, limit){
         return lastWhitelistBlocks;
     } catch (error) {
         const msg = `getPendingWL failed with error: ${error.message}`;
-        if(GlobalData.verbose) logError(msg);
+        if (GlobalData.verbose) logError(msg);
         return []
     }
 }
@@ -311,7 +311,7 @@ async function getPendingWL(dbo, limit){
  * @param {number} limit
  * @returns {array} array of processed actions, or [] on error
  */
-async function getLastActions(dbo, limit){
+async function getLastActions(dbo, limit) {
     try {
         const lastActions = await dbo.get("actions")
             .takeRight(limit)
@@ -321,7 +321,7 @@ async function getLastActions(dbo, limit){
         return await processActionList(lastActions)
     } catch (error) {
         const msg = `getLastActions failed with error: ${error.message}`;
-        if(GlobalData.verbose) logError(msg);
+        if (GlobalData.verbose) logError(msg);
         return []
     }
 }
@@ -335,7 +335,7 @@ async function getLastActions(dbo, limit){
  * @param {number} limit
  * @returns {array} array of processed actions, or [] on error
  */
-async function getLastPlayers(dbo, limit){
+async function getLastPlayers(dbo, limit) {
     try {
         const lastPlayers = await dbo.get("players")
             .takeRight(limit)
@@ -346,7 +346,7 @@ async function getLastPlayers(dbo, limit){
 
     } catch (error) {
         const msg = `getLastPlayers failed with error: ${error.message}`;
-        if(GlobalData.verbose) logError(msg);
+        if (GlobalData.verbose) logError(msg);
         return []
     }
 }
@@ -358,8 +358,8 @@ async function getLastPlayers(dbo, limit){
  * @param {array} list
  * @returns {array} array of actions, or throws on error
  */
-async function processActionList(list){
-    if(!list) return [];
+async function processActionList(list) {
+    if (!list) return [];
 
     let tsNow = now();
     return list.map((log) => {
@@ -376,36 +376,36 @@ async function processActionList(list){
             footerNote: null,
         };
         let actReference;
-        if(log.playerName){
+        if (log.playerName) {
             actReference = xss(log.playerName);
-        }else{
+        } else {
             actReference = '<i>' + xss(log.identifiers.map((x) => x.split(':')[0]).join(', ')) + '</i>';
         }
-        if(log.type == 'ban'){
+        if (log.type == 'ban') {
             out.color = 'danger';
             out.message = `${xss(log.author)} BANNED ${actReference}`;
 
-        }else if(log.type == 'warn'){
+        } else if (log.type == 'warn') {
             out.color = 'warning';
             out.message = `${xss(log.author)} WARNED ${actReference}`;
             
-        }else if(log.type == 'whitelist'){
+        } else if (log.type == 'whitelist') {
             out.color = 'success';
             out.message = `${xss(log.author)} WHITELISTED ${actReference}`;
             out.reason = '';
 
-        }else{
+        } else {
             out.color = 'secondary';
             out.message = `${xss(log.author)} ${log.type.toUpperCase()} ${actReference}`;
 
         }
-        if(log.revocation.timestamp){
+        if (log.revocation.timestamp) {
             out.color = 'dark';
             out.isRevoked = true;
             const revocationDate = (new Date(log.revocation.timestamp*1000)).toLocaleString();
             out.footerNote = `Revoked by ${log.revocation.author} on ${revocationDate}.`;
         }
-        if(typeof log.expiration == 'number'){
+        if (typeof log.expiration == 'number') {
             const expirationDate = (new Date(log.expiration*1000)).toLocaleString();
             out.footerNote = (log.expiration < tsNow)? `Expired at ${expirationDate}.` : `Expires at ${expirationDate}.`;
         }
@@ -420,8 +420,8 @@ async function processActionList(list){
  * @param {array} list
  * @returns {array} array of players, or throws on error
  */
-async function processPlayerList(list){
-    if(!list) return [];
+async function processPlayerList(list) {
+    if (!list) return [];
 
     const activeLicenses = globals.playerController.activePlayers.map(p => p.license);
     return list.map(p => {

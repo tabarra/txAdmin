@@ -14,13 +14,13 @@ const returnJustMessage = (ctx, errorTitle, errorMessage) => {
  */
 module.exports = async function AddMaster(ctx) {
     //Sanity check
-    if(isUndefined(ctx.params.action)){
+    if (isUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     const action = ctx.params.action;
 
     //Check if there are no master admins set up
-    if(globals.authenticator.admins !== false){
+    if (globals.authenticator.admins !== false) {
         return returnJustMessage(
             ctx,
             `Master account already set.`,
@@ -28,13 +28,13 @@ module.exports = async function AddMaster(ctx) {
     }
 
     //Delegate to the specific action handler
-    if(action == 'pin'){
+    if (action == 'pin') {
         return await handlePin(ctx);
-    }else if(action == 'callback'){
+    } else if (action == 'callback') {
         return await handleCallback(ctx);
-    }else if(action == 'save'){
+    } else if (action == 'save') {
         return await handleSave(ctx);
-    }else{
+    } else {
         return ctx.send({
             type: 'danger',
             message: 'Unknown action.'
@@ -50,16 +50,16 @@ module.exports = async function AddMaster(ctx) {
  */
 async function handlePin(ctx) {
     //Sanity check
-    if(
+    if (
         isUndefined(ctx.request.body.pin) ||
         typeof ctx.request.body.pin !== 'string' ||
         ctx.method != 'POST'
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
     //Checking the PIN
-    if(ctx.request.body.pin !== globals.authenticator.addMasterPin){
+    if (ctx.request.body.pin !== globals.authenticator.addMasterPin) {
         logWarn(`Wrong PIN for from: ${ctx.ip}`);
         const message = `Wrong PIN.`;
         return ctx.utils.render('login', {template: 'noMaster', message});
@@ -90,7 +90,7 @@ async function handlePin(ctx) {
  */
 async function handleCallback(ctx) {
     //Sanity check
-    if(ctx.method != 'GET'){
+    if (ctx.method != 'GET') {
         return ctx.utils.error(400, 'Invalid Request');
     }
 
@@ -101,25 +101,25 @@ async function handleCallback(ctx) {
         tokenSet = await globals.authenticator.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
         logWarn(`Code Exchange error: ${error.message}`);
-        if(!isUndefined(error.tolerance)){
+        if (!isUndefined(error.tolerance)) {
             return returnJustMessage(
                 ctx,
                 `Please Update/Synchronize your VPS clock.`,
                 `Failed to login because this host's time is wrong. Please make sure to synchronize it with the internet.`
             );
-        }else if(error.code === 'ETIMEDOUT'){
+        } else if (error.code === 'ETIMEDOUT') {
             return returnJustMessage(
                 ctx,
                 `Connection to FiveM servers timed out:`,
                 `Failed to verify your login with FiveM's identity provider. Please try again or check your connection to the internet.`
             );
-        }else if(error.message.startsWith('state mismatch')){
+        } else if (error.message.startsWith('state mismatch')) {
             return returnJustMessage(
                 ctx,
                 `Invalid Browser Session.`,
                 `You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.`
             );
-        }else{
+        } else {
             return returnJustMessage(ctx, `Code Exchange error:`, error.message);
         }
     }
@@ -156,17 +156,17 @@ async function handleCallback(ctx) {
  */
 async function handleSave(ctx) {
     //Sanity check
-    if(
+    if (
         typeof ctx.request.body.password !== 'string' ||
         typeof ctx.request.body.password2 !== 'string'
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
     //Sanity check2: Electric Boogaloo (Validating password)
     const password = ctx.request.body.password.trim();
     const password2 = ctx.request.body.password2.trim();
-    if(password != password2 || password.length < 6 || password.length > 24){
+    if (password != password2 || password.length < 6 || password.length > 24) {
         return returnJustMessage(
             ctx,
             `Invalid Password.`,
@@ -174,10 +174,10 @@ async function handleSave(ctx) {
     }
 
     //Checking if session is still present
-    if(
+    if (
         typeof ctx.session.tmpAddMasterUserInfo === 'undefined' ||
         typeof ctx.session.tmpAddMasterUserInfo.name !== 'string'
-    ){
+    ) {
         return returnJustMessage(
             ctx,
             `Invalid Session.`,
@@ -198,7 +198,7 @@ async function handleSave(ctx) {
         );
     }
 
-    if(typeof ctx.session.tmpAddMasterUserInfo.picture !== 'string'){
+    if (typeof ctx.session.tmpAddMasterUserInfo.picture !== 'string') {
         ctx.session.tmpAddMasterUserInfo.picture = null;
     }
 

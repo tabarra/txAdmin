@@ -15,10 +15,10 @@ module.exports = async function AuthGet(ctx) {
     const template = (globals.authenticator.admins === false)? 'noMaster' : 'normal';
 
     //Destroy session? And start a new one
-    if(!isUndefined(ctx.query.logout)) ctx.session.auth = {};
+    if (!isUndefined(ctx.query.logout)) ctx.session.auth = {};
 
     //If admins file was deleted
-    if(Array.isArray(globals.authenticator.admins) && !globals.authenticator.admins.length){
+    if (Array.isArray(globals.authenticator.admins) && !globals.authenticator.admins.length) {
         return ctx.utils.render('login', {
             template: 'justMessage', 
             errorTitle: 'No admins configured.', 

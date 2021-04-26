@@ -1,6 +1,6 @@
 //Checking Environment
 try {
-    if(!IsDuplicityVersion()) throw new Error();
+    if (!IsDuplicityVersion()) throw new Error();
 } catch (error) {
     console.log(`txAdmin must be run inside fxserver in monitor mode.`);
     process.exit();
@@ -35,7 +35,7 @@ const getBuild = (ver)=>{
 //==============================================================
 //Make sure this user knows what he is doing...
 const txAdmin1337Convar = GetConvar('txAdmin1337', 'false').trim();
-if(process.env.APP_ENV !== 'webpack' && txAdmin1337Convar !== 'IKnowWhatImDoing'){
+if (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar !== 'IKnowWhatImDoing') {
     logError(`Looks like you don't know what you are doing.`);
     logDie(`Please use the compiled release from GitHub or the version that comes with the latest FXServer.`);
 }
@@ -44,11 +44,11 @@ const isAdvancedUser = (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar =
 //Get OSType
 const osTypeVar = os.type();
 let osType;
-if(osTypeVar == 'Windows_NT'){
+if (osTypeVar == 'Windows_NT') {
     osType = 'windows';
-}else if(osTypeVar == 'Linux'){
+} else if (osTypeVar == 'Linux') {
     osType = 'linux';
-}else{
+} else {
     logDie(`OS type not supported: ${osTypeVar}`)
 }
 
@@ -57,31 +57,31 @@ const resourceName = GetCurrentResourceName();
 
 //Getting fxserver version
 const fxServerVersion = getBuild(GetConvar('version', 'false'));
-if(!fxServerVersion){
+if (!fxServerVersion) {
     logDie(`This version of FXServer is NOT compatible with txAdmin v2. Please update it to build 2524 or above. (version convar not set or in the wrong format)`);
 }
-if(fxServerVersion < 2524){
+if (fxServerVersion < 2524) {
     logDie(`This version of FXServer is too outdated and NOT compatible with txAdmin, please update.`);
 }
 
 //Getting txAdmin version
 const txAdminVersion = GetResourceMetadata(resourceName, 'version');
-if(typeof txAdminVersion !== 'string' || txAdminVersion == 'null'){
+if (typeof txAdminVersion !== 'string' || txAdminVersion == 'null') {
     logDie(`txAdmin version not set or in the wrong format`);
 }
 
 //Get txAdmin Resource Path
 let txAdminResourcePath;
 const txAdminResourcePathConvar = GetResourcePath(resourceName);
-if(typeof txAdminResourcePathConvar !== 'string' || txAdminResourcePathConvar == 'null'){
+if (typeof txAdminResourcePathConvar !== 'string' || txAdminResourcePathConvar == 'null') {
     logDie(`Could not resolve txAdmin resource path`);
-}else{
+} else {
     txAdminResourcePath = cleanPath(txAdminResourcePathConvar);
 }
 
 //Get citizen Root
 const citizenRootConvar = GetConvar('citizen_root', 'false');
-if(citizenRootConvar == 'false'){
+if (citizenRootConvar == 'false') {
     logDie(`citizen_root convar not set`);
 }
 const fxServerPath = cleanPath(citizenRootConvar);
@@ -89,14 +89,14 @@ const fxServerPath = cleanPath(citizenRootConvar);
 //Setting data path
 let dataPath;
 const txDataPathConvar = GetConvar('txDataPath', 'false');
-if(txDataPathConvar == 'false'){
+if (txDataPathConvar == 'false') {
     const dataPathSuffix = (osType == 'windows')? '..' : '../../../';
     dataPath = cleanPath(path.join(fxServerPath, dataPathSuffix, 'txData'));
-}else{
+} else {
     dataPath = cleanPath(txDataPathConvar);
 }
 try {
-    if(!fs.existsSync(dataPath)) fs.mkdirSync(dataPath);
+    if (!fs.existsSync(dataPath)) fs.mkdirSync(dataPath);
 } catch (error) {
     logDie(`Failed to check or create '${dataPath}' with error: ${error.message}`);
 }
@@ -106,7 +106,7 @@ try {
 //      when running localization methods like Date.toLocaleString().
 //      There was also an issue with the slash() lib and with the +exec on FXServer
 const nonASCIIRegex = /[^\x00-\x80]+/;
-if(nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)){
+if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
     logError(`Due to environmental restrictions, your paths CANNOT contain non-ASCII characters.`);
     logError(`Example of non-ASCII characters: çâýå, ρέθ, ñäé, ēļæ, глж, เซิร์, 警告.`);
     logError(`Please make sure FXServer is not in a path contaning those characters.`);
@@ -129,7 +129,7 @@ const debugExternalSource = (txDebugExternalSourceConvar !== 'false')? txDebugEx
 //Checking for Zap Configuration file
 const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
 let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, defaultMasterAccount, runtimeSecret, deployerDefaults;
-if(fs.existsSync(zapCfgFile)){
+if (fs.existsSync(zapCfgFile)) {
     log('Loading Zap-Hosting configuration file.');
     try {
         zapCfgData = JSON.parse(fs.readFileSync(zapCfgFile));
@@ -147,29 +147,29 @@ if(fs.existsSync(zapCfgFile)){
             mysqlPassword: zapCfgData.defaults.mysqlPassword,
             mysqlDatabase: zapCfgData.defaults.mysqlDatabase,
         }
-        if(zapCfgData.customer){
-            if(typeof zapCfgData.customer.name !== 'string') throw new Error("customer.name is not a string.");
-            if(zapCfgData.customer.name.length < 3) throw new Error("customer.name too short.");
-            if(typeof zapCfgData.customer.password_hash !== 'string') throw new Error("customer.password_hash is not a string.");
-            if(!zapCfgData.customer.password_hash.startsWith('$2y$')) throw new Error("customer.password_hash is not a bcrypt hash.");
+        if (zapCfgData.customer) {
+            if (typeof zapCfgData.customer.name !== 'string') throw new Error("customer.name is not a string.");
+            if (zapCfgData.customer.name.length < 3) throw new Error("customer.name too short.");
+            if (typeof zapCfgData.customer.password_hash !== 'string') throw new Error("customer.password_hash is not a string.");
+            if (!zapCfgData.customer.password_hash.startsWith('$2y$')) throw new Error("customer.password_hash is not a bcrypt hash.");
             defaultMasterAccount = {
                 name: zapCfgData.customer.name,
                 password_hash: zapCfgData.customer.password_hash,
             }
         }
         const runtimeSecretConvar = GetConvar('txAdminRTS', 'false').trim();
-        if(runtimeSecretConvar !== 'false'){
-            if(!/^[0-9a-f]{48}$/i.test(runtimeSecretConvar)) logDie(`txAdminRTS is not valid.`);
+        if (runtimeSecretConvar !== 'false') {
+            if (!/^[0-9a-f]{48}$/i.test(runtimeSecretConvar)) logDie(`txAdminRTS is not valid.`);
             runtimeSecret = runtimeSecretConvar;
-        }else{
+        } else {
             runtimeSecret = false;
         }
 
-        if(!isAdvancedUser) fs.unlinkSync(zapCfgFile);
+        if (!isAdvancedUser) fs.unlinkSync(zapCfgFile);
     } catch (error) {
         logDie(`Failed to load with Zap-Hosting configuration error: ${error.message}`);
     }
-}else{
+} else {
     isZapHosting = false;
     forceFXServerPort = false;
     loginPageLogo = false;
@@ -178,18 +178,18 @@ if(fs.existsSync(zapCfgFile)){
     deployerDefaults = false;
 
     const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
-    if(!/^\d+$/.test(txAdminPortConvar)) logDie(`txAdminPort is not valid.`);
+    if (!/^\d+$/.test(txAdminPortConvar)) logDie(`txAdminPort is not valid.`);
     txAdminPort = parseInt(txAdminPortConvar);
 
     const txAdminInterfaceConvar = GetConvar('txAdminInterface', 'false').trim();
-    if(txAdminInterfaceConvar == 'false'){
+    if (txAdminInterfaceConvar == 'false') {
         forceInterface = false;
-    }else{
-        if(!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(txAdminInterfaceConvar)) logDie(`txAdminInterface is not valid.`);
+    } else {
+        if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(txAdminInterfaceConvar)) logDie(`txAdminInterface is not valid.`);
         forceInterface = txAdminInterfaceConvar;
     }
 }
-if(verbose) dir({isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, runtimeSecret, deployerDefaults});
+if (verbose) dir({isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, runtimeSecret, deployerDefaults});
 
 
 //Check if this version of txAdmin is too outdated to be considered safe to use in prod
@@ -205,7 +205,7 @@ const txAdminVersionBestBy = txVerBBLastUpdate + (txVerBBDelta * 86400);
 //     nextUpdateTS: txAdminVersionBestBy,
 //     timeLeft: require('humanize-duration')(((now() - txAdminVersionBestBy)*1000)),  
 // })
-if(now() > txAdminVersionBestBy){
+if (now() > txAdminVersionBestBy) {
     logError(`This version of txAdmin is outdated.`);
     logError(`Please update as soon as possible.`);
 }
@@ -213,10 +213,10 @@ if(now() > txAdminVersionBestBy){
 
 //Get profile name
 const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, "").trim();
-if(serverProfile.endsWith('.base')){
+if (serverProfile.endsWith('.base')) {
     logDie(`Looks like you the folder named '${serverProfile}' is actually a deployed base instead of a profile.`);
 }
-if(!serverProfile.length){
+if (!serverProfile.length) {
     logDie(`Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.`);
 }
 
@@ -283,7 +283,7 @@ setTimeout(() => {
     let hdTimer = Date.now();
     setInterval(() => {
         let now = Date.now();
-        if(now - hdTimer > 2000){
+        if (now - hdTimer > 2000) {
             let sep = `=`.repeat(70);
             setTimeout(() => {
                 logError(sep);

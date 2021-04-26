@@ -31,11 +31,11 @@ module.exports = class FXRunner {
         this.outputHandler = new OutputHandler(this.config.logPath, 10);
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
-        if(config.autostart && this.config.serverDataPath !== null && this.config.cfgPath !== null){
+        if (config.autostart && this.config.serverDataPath !== null && this.config.cfgPath !== null) {
             setTimeout(() => {
-                if(globals.authenticator && globals.authenticator.admins){
+                if (globals.authenticator && globals.authenticator.admins) {
                     this.spawnServer(true);
-                }else{
+                } else {
                     logWarn('The server will not auto start because there are no admins configured.');
                 }
             }, config.autostartDelay * 1000);
@@ -47,7 +47,7 @@ module.exports = class FXRunner {
     /**
      * Refresh fxRunner configurations
      */
-    refreshConfig(){
+    refreshConfig() {
         this.config = globals.configVault.getScoped('fxRunner');
     }//Final refreshConfig()
 
@@ -56,10 +56,10 @@ module.exports = class FXRunner {
     /**
      * Setup the spawn parameters
      */
-    setupVariables(){
+    setupVariables() {
         // Prepare extra args
         let extraArgs = [];
-        if(typeof this.config.commandLine === 'string' && this.config.commandLine.length){
+        if (typeof this.config.commandLine === 'string' && this.config.commandLine.length) {
             extraArgs = parseArgsStringToArgv(this.config.commandLine);
         }
 
@@ -80,7 +80,7 @@ module.exports = class FXRunner {
         ];
 
         // Configure spawn parameters according to the environment
-        if(GlobalData.osType === 'linux'){
+        if (GlobalData.osType === 'linux') {
             const alpinePath = path.resolve(GlobalData.fxServerPath, '../../');
             this.spawnVariables = {
                 command: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
@@ -93,13 +93,13 @@ module.exports = class FXRunner {
                 ]
             };
             
-        }else if(GlobalData.osType === 'windows'){
+        } else if (GlobalData.osType === 'windows') {
             this.spawnVariables = {
                 command: `${GlobalData.fxServerPath}/FXServer.exe`,
                 args: cmdArgs
             };
 
-        }else{
+        } else {
             logError(`OS type not supported: ${GlobalData.osType}`);
             process.exit();
         }
@@ -113,27 +113,27 @@ module.exports = class FXRunner {
      * @param {boolean} announce
      * @returns {string} null or error message
      */
-    spawnServer(announce){
+    spawnServer(announce) {
         //Setup variables
         this.setupVariables();
-        if(GlobalData.verbose){
+        if (GlobalData.verbose) {
             log(`Spawn Variables: ` + this.spawnVariables.args.join(' '));
         }
         //Sanity Check
-        if(
+        if (
             this.spawnVariables == null ||
             typeof this.spawnVariables.command == 'undefined' ||
             typeof this.spawnVariables.args == 'undefined'
-        ){
+        ) {
             return logError('this.spawnVariables is not set.');
         }
         //If there is any FXServer configuration missing
-        if(this.config.serverDataPath === null || this.config.cfgPath === null){
+        if (this.config.serverDataPath === null || this.config.cfgPath === null) {
             return logError('Cannot start the server with missing configuration (serverDataPath || cfgPath).');
         }
 
         //If the server is already alive
-        if(this.fxChild !== null){
+        if (this.fxChild !== null) {
             return logError('The server is already started.');
         }
 
@@ -144,7 +144,7 @@ module.exports = class FXRunner {
             rawCfgFile = helpers.getCFGFileData(cfgFilePath);
         } catch (error) {
             const errMsg = logError(`server.cfg error: ${error.message}`);
-            if(error.message.includes('unreadable')) {
+            if (error.message.includes('unreadable')) {
                 logError(`You likely copied the txData folder from another server, or moved/deleted your server files.`);
                 logError(`Please go to "Settings > FXServer" and fix the "Server Data Folder" and "CFX File Path".`);
             }
@@ -156,9 +156,9 @@ module.exports = class FXRunner {
             const cleanedErrorMessage = error.message.replace(/<\/?code>/gi, '').replace(/<br>/gi, '');
             const outMsg = logError(`server.cfg error: \n${cleanedErrorMessage}`);
             //the IF below is only a way to disable the endpoint check
-            if(globals.config.forceFXServerPort){
+            if (globals.config.forceFXServerPort) {
                 this.fxServerPort = globals.config.forceFXServerPort;
-            }else{
+            } else {
                 return outMsg;
             }
         }
@@ -170,7 +170,7 @@ module.exports = class FXRunner {
         globals.monitor.resetMonitorStats();
 
         //Announcing
-        if(announce === 'true' || announce === true){
+        if (announce === 'true' || announce === true) {
             let discordMessage = globals.translator.t('server_actions.spawning_discord', {servername: globals.config.serverName});
             globals.discordBot.sendAnnouncement(discordMessage);
         }
@@ -187,7 +187,7 @@ module.exports = class FXRunner {
                     stdio: [ 'pipe', 'pipe', 'pipe', 'pipe' ]
                 }
             );
-            if(typeof this.fxChild.pid === 'undefined'){
+            if (typeof this.fxChild.pid === 'undefined') {
                 throw new Error(`Executon of "${this.spawnVariables.command}" failed.`);
             }
             pid = this.fxChild.pid.toString();
@@ -229,7 +229,7 @@ module.exports = class FXRunner {
             process.stdout.write("\n"); //Make sure this isn't concatenated with the last line
             logWarn(`>> [${pid}] FXServer Exited.`);
             this.history[historyIndex].timestamps.exit = now();
-            if(this.history[historyIndex].timestamps.exit - this.history[historyIndex].timestamps.start <= 5){
+            if (this.history[historyIndex].timestamps.exit - this.history[historyIndex].timestamps.start <= 5) {
                 setTimeout(() => {
                     logWarn(`FXServer didn't start. This is not an issue with txAdmin.`);
                 }, 500);
@@ -247,7 +247,7 @@ module.exports = class FXRunner {
 
         const tracePipe = this.fxChild.stdio[3].pipe(StreamValues.withParser());
         tracePipe.on('error', (data) => {
-            if(GlobalData.verbose) logWarn(`FD3 decode error: ${data.message}`)
+            if (GlobalData.verbose) logWarn(`FD3 decode error: ${data.message}`)
             globals.databus.txStatsData.lastFD3Error = data.message;
         });
         tracePipe.on('data', this.outputHandler.trace.bind(this.outputHandler));
@@ -261,10 +261,10 @@ module.exports = class FXRunner {
      * Restarts the FXServer
      * @param {string} tReason
      */
-    async restartServer(tReason){
+    async restartServer(tReason) {
         try {
             //If a reason is provided, announce restart on discord, kick all players and wait 750ms
-            if(typeof tReason === 'string'){
+            if (typeof tReason === 'string') {
                 const tOptions = {
                     servername: globals.config.serverName,
                     reason: tReason
@@ -278,16 +278,16 @@ module.exports = class FXRunner {
 
             //Restart server
             await this.killServer();
-            if(this.restartDelayOverride){
+            if (this.restartDelayOverride) {
                 logWarn(`Restarting the fxserver with delay override ${this.restartDelayOverride}`);
                 await sleep(this.restartDelayOverride);
-            }else{
+            } else {
                 await sleep(this.config.restartDelay);
             }
             return this.spawnServer();
         } catch (error) {
             const errMsg = logError("Couldn't restart the server.");
-            if(GlobalData.verbose) dir(error);
+            if (GlobalData.verbose) dir(error);
             return errMsg;
         }
     }
@@ -298,10 +298,10 @@ module.exports = class FXRunner {
      * Kills the FXServer
      * @param {string} tReason
      */
-    async killServer(tReason){
+    async killServer(tReason) {
         try {
             //If a reason is provided, announce restart on discord, kick all players and wait 500ms
-            if(typeof tReason === 'string'){
+            if (typeof tReason === 'string') {
                 let tOptions = {
                     servername: globals.config.serverName,
                     reason: tReason
@@ -314,7 +314,7 @@ module.exports = class FXRunner {
             }
 
             //Stopping server
-            if(this.fxChild !== null){
+            if (this.fxChild !== null) {
                 this.fxChild.kill();
                 this.fxChild = null;
                 this.history[this.history.length - 1].timestamps.kill = now();
@@ -322,7 +322,7 @@ module.exports = class FXRunner {
             return true;
         } catch (error) {
             logError("Couldn't kill the server. Perhaps What Is Dead May Never Die.");
-            if(GlobalData.verbose) dir(error);
+            if (GlobalData.verbose) dir(error);
             this.fxChild = null;
             return false;
         }
@@ -334,15 +334,15 @@ module.exports = class FXRunner {
      * Pipe a string into FXServer's stdin (aka executes a cfx's command)
      * @param {string} command
      */
-    srvCmd(command){
-        if(typeof command !== 'string') throw new Error('Expected String!');
-        if(this.fxChild === null) return false;
+    srvCmd(command) {
+        if (typeof command !== 'string') throw new Error('Expected String!');
+        if (this.fxChild === null) return false;
         try {
             let success = this.fxChild.stdin.write(command + "\n");
             globals.webServer.webConsole.buffer(command, 'command');
             return success;
         } catch (error) {
-            if(GlobalData.verbose){
+            if (GlobalData.verbose) {
                 logError('Error writing to fxChild.stdin');
                 dir(error);
             }
@@ -358,14 +358,14 @@ module.exports = class FXRunner {
      * @param {*} bufferTime the size of the buffer in milliseconds
      * @returns {string} buffer
      */
-    async srvCmdBuffer(command, bufferTime){
-        if(typeof command !== 'string') throw new Error('Expected String!');
-        if(this.fxChild === null) return false;
+    async srvCmdBuffer(command, bufferTime) {
+        if (typeof command !== 'string') throw new Error('Expected String!');
+        if (this.fxChild === null) return false;
         bufferTime = (bufferTime !== undefined)? bufferTime : 1500;
         this.outputHandler.cmdBuffer = '';
         this.outputHandler.enableCmdBuffer = true;
         let result = this.srvCmd(command);
-        if(!result) return false;
+        if (!result) return false;
         await sleep(bufferTime);
         this.outputHandler.enableCmdBuffer = false;
         return this.outputHandler.cmdBuffer.replace(/\x1b\[\d+(;\d)?m/g, '');
@@ -385,32 +385,32 @@ module.exports = class FXRunner {
      *  - spawned
      * @returns {string} status
      */
-    getStatus(){
-        if(!this.history.length) return 'not started';
+    getStatus() {
+        if (!this.history.length) return 'not started';
         let curr = this.history[this.history.length - 1];
 
-        if(!curr.timestamps.start && this.history.length == 1){
+        if (!curr.timestamps.start && this.history.length == 1) {
             throw new Error(`This should NOT happen. Let's see how long people will take to find this...`);
-        }else if(!curr.timestamps.start){
+        } else if (!curr.timestamps.start) {
             let last = this.history[this.history.length - 2];
             let pending = Object.keys(last.timestamps).filter(k => !curr.timestamps[k]);
-            if(!pending.length){
+            if (!pending.length) {
                 return 'spawn ready';
-            }else{
+            } else {
                 return 'spawn awaiting last: ' + pending.join(', ');
             }
-        }else if(curr.timestamps.kill){
+        } else if (curr.timestamps.kill) {
             let pending = Object.keys(curr.timestamps).filter(k => !curr.timestamps[k]);
-            if(pending.length){
+            if (pending.length) {
                 return 'kill pending: ' + pending.join(', ');
-            }else{
+            } else {
                 return 'killed';
             }
-        }else if(curr.timestamps.exit && !curr.timestamps.close){
+        } else if (curr.timestamps.exit && !curr.timestamps.close) {
             return 'closing';
-        }else if(curr.timestamps.exit && curr.timestamps.close){
+        } else if (curr.timestamps.exit && curr.timestamps.close) {
             return 'closed';
-        }else{
+        } else {
             return 'spawned';
         }
     }
@@ -421,8 +421,8 @@ module.exports = class FXRunner {
      * Returns the current fxserver uptime in seconds 
      * @returns {numeric} buffer
      */
-    getUptime(){
-        if(!this.history.length) return 0;
+    getUptime() {
+        if (!this.history.length) return 0;
         let curr = this.history[this.history.length - 1];
         
         return now() - curr.timestamps.start;

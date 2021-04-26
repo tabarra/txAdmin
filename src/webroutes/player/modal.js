@@ -18,7 +18,7 @@ const now = () => { return Math.round(Date.now() / 1000) };
  */
 module.exports = async function PlayerModal(ctx) {
     //Sanity check
-    if(typeof ctx.params.license === 'undefined'){
+    if (typeof ctx.params.license === 'undefined') {
         return ctx.utils.error(400, 'Invalid Request');
     }
     const license = ctx.params.license;
@@ -35,22 +35,22 @@ module.exports = async function PlayerModal(ctx) {
                     reason: log.reason,
                     author: log.author
                 };
-                if(log.revocation.timestamp){
+                if (log.revocation.timestamp) {
                     out.color = 'dark';
                     out.action = `${out.action}-REVOKED`;
-                }else if(log.type == 'ban'){
+                } else if (log.type == 'ban') {
                     out.color = 'danger';
-                }else if(log.type == 'warn'){
+                } else if (log.type == 'warn') {
                     out.color = 'warning';
-                }else if(log.type == 'whitelist'){
+                } else if (log.type == 'whitelist') {
                     out.color = 'success';
-                }else{
+                } else {
                     out.color = 'secondary';
                 }
                 return out;
             })
         } catch (error) {
-            if(GlobalData.verbose){
+            if (GlobalData.verbose) {
                 logError(`Error getting/processing player history`);
                 dir(error);
             }
@@ -74,20 +74,20 @@ module.exports = async function PlayerModal(ctx) {
 
     //If player is active or in the database
     let playerData;
-    if(activePlayer){
-        if(GlobalData.verbose) dir(activePlayer) //DEBUG
+    if (activePlayer) {
+        if (GlobalData.verbose) dir(activePlayer) //DEBUG
         out.id = activePlayer.id;
         out.license = activePlayer.license;
         out.identifiers = activePlayer.identifiers;
         out.isTmp = activePlayer.isTmp;
         playerData = activePlayer;
         
-    }else{
+    } else {
         //FIXME: for actions, look just for the license
         //TODO: when we start registering all associated identifiers, we could use that for the search
         let dbPlayer = await globals.playerController.getPlayer(license);
-        if(!dbPlayer) return ctx.send({type: 'offline', message: 'Player offline and not in database.'});
-        if(GlobalData.verbose) dir(dbPlayer) //DEBUG
+        if (!dbPlayer) return ctx.send({type: 'offline', message: 'Player offline and not in database.'});
+        if (GlobalData.verbose) dir(dbPlayer) //DEBUG
 
         out.id = false;
         out.license = license;
@@ -103,17 +103,17 @@ module.exports = async function PlayerModal(ctx) {
     out.joinDate = dateFormat(joinDateObj, 'longDate') + ' - ' + dateFormat(joinDateObj, 'isoTime');
     const sessionTime = (now() - playerData.tsConnected)*1000;
     out.sessionTime = humanizeDuration(sessionTime, {round: true, units: ['h', 'm']});
-    if(playerData.isTmp){
+    if (playerData.isTmp) {
         out.playTime = '--';
         out.notesLog = 'unavailable for temporary players';
         out.notes = '';
-    }else{
+    } else {
         const playTime = (playerData.playTime*60*1000);
         out.playTime = humanizeDuration(playTime, {round: true, units: ['d', 'h', 'm']});
-        if(playerData.notes.lastAdmin && playerData.notes.tsLastEdit){
+        if (playerData.notes.lastAdmin && playerData.notes.tsLastEdit) {
             let lastEditObj = new Date(playerData.notes.tsLastEdit*1000);
             out.notesLog = `Last modified by ${playerData.notes.lastAdmin} at ${dateFormat(lastEditObj, 'longDate') }`;
-        }else{
+        } else {
             out.notesLog = '';
         }
         out.notes = playerData.notes.text;

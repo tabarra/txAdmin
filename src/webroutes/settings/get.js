@@ -10,7 +10,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
  */
 module.exports = async function SettingsGet(ctx) {
     //Check permissions
-    if(!ctx.utils.checkPermission('settings.view', modulename)){
+    if (!ctx.utils.checkPermission('settings.view', modulename)) {
         return ctx.utils.render('basic/generic', {message: `You don't have permission to view this page.`});
     }
 
@@ -33,19 +33,19 @@ module.exports = async function SettingsGet(ctx) {
 
 
 //================================================================
-function cleanRenderData(inputData){
+function cleanRenderData(inputData) {
     const input = cloneDeep(inputData);
     const out = {}
     Object.keys(input).forEach((prop) => {
-        if(input[prop] == null || input[prop] === false || typeof input[prop] === 'undefined'){
+        if (input[prop] == null || input[prop] === false || typeof input[prop] === 'undefined') {
             out[prop] = '';
-        }else if(input[prop] === true){
+        } else if (input[prop] === true) {
             out[prop] = 'checked';
-        }else if(input[prop].constructor === Array){
+        } else if (input[prop].constructor === Array) {
             out[prop] = input[prop].join(', ');
-        }else if(input[prop].constructor === Object){
+        } else if (input[prop].constructor === Object) {
             out[prop] = cleanRenderData(input[prop]);
-        }else{
+        } else {
             out[prop] = input[prop];
         }
     });

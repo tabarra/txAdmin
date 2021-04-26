@@ -18,7 +18,7 @@ module.exports = class Logger {
             // logOk('Started');
         } catch (error) {
             logError(`Failed to write to log file '${this.config.logPath}'`);
-            if(GlobalData.verbose) dir(error);
+            if (GlobalData.verbose) dir(error);
             process.exit();
         }
     }
@@ -29,7 +29,7 @@ module.exports = class Logger {
      * Save log entriy
      * @param {string} data
      */
-    async append(data){
+    async append(data) {
         let timestamp = dateFormat(new Date(), 'HH:MM:ss');
         try {
             await fs.appendFile(this.config.logPath, `[${timestamp}]${data}\n`, 'utf8');
@@ -44,7 +44,7 @@ module.exports = class Logger {
      * Getter for the log contents
      * @returns {string} log data
      */
-    async get(){
+    async get() {
         try {
             return await fs.readFile(this.config.logPath, 'utf8')
         } catch (error) {

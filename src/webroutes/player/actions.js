@@ -11,10 +11,10 @@ const escape = (x) => {return x.replace(/"/g, '\uff02');};
 const formatCommand = (cmd, ...params) => {
     return `${cmd} "` + [...params].map(c => c.toString()).map(escape).join(`" "`) + `"`;
 };
-function ensurePermission(ctx, perm){
-    if(ctx.utils.checkPermission(perm, modulename)){
+function ensurePermission(ctx, perm) {
+    if (ctx.utils.checkPermission(perm, modulename)) {
         return true;
-    }else{
+    } else {
         ctx.send({
             type: 'danger',
             message: `You don't have permission to execute this action.`
@@ -22,7 +22,7 @@ function ensurePermission(ctx, perm){
         return false;
     }
 }
-function sendAlertOutput(ctx, toResp, header = 'Output:'){
+function sendAlertOutput(ctx, toResp, header = 'Output:') {
     toResp = (toResp.length)? xss(toResp) : 'no output';
     return ctx.send({
         type: 'warning',
@@ -37,27 +37,27 @@ function sendAlertOutput(ctx, toResp, header = 'Output:'){
  */
 module.exports = async function PlayerActions(ctx) {
     //Sanity check
-    if(anyUndefined(ctx.params.action)){
+    if (anyUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     let action = ctx.params.action;
 
     //Delegate to the specific action handler
-    if(action === 'save_note'){
+    if (action === 'save_note') {
         return await handleSaveNote(ctx);
-    }else if(action === 'message'){
+    } else if (action === 'message') {
         return await handleMessage(ctx);
-    }else if(action === 'kick'){
+    } else if (action === 'kick') {
         return await handleKick(ctx);
-    }else if(action === 'warn'){
+    } else if (action === 'warn') {
         return await handleWarning(ctx);
-    }else if(action === 'ban'){
+    } else if (action === 'ban') {
         return await handleBan(ctx);
-    }else if(action === 'whitelist'){
+    } else if (action === 'whitelist') {
         return await handleWhitelist(ctx);
-    }else if(action === 'revoke_action'){
+    } else if (action === 'revoke_action') {
         return await handleRevokeAction(ctx);
-    }else{
+    } else {
         return ctx.send({
             type: 'danger',
             message: 'Unknown action.'
@@ -76,11 +76,11 @@ module.exports = async function PlayerActions(ctx) {
  */
 async function handleSaveNote(ctx) {
     //Checking request
-    if(anyUndefined(
+    if (anyUndefined(
         ctx.request.body,
         ctx.request.body.note,
         ctx.request.body.license
-    )){
+    )) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
     let license = ctx.request.body.license.trim();
@@ -88,12 +88,12 @@ async function handleSaveNote(ctx) {
 
     try {
         let success = await globals.playerController.setPlayerNote(license, note, ctx.session.auth.username);
-        if(success){
+        if (success) {
             return ctx.send({
                 type: 'success',
                 message: `Saved!`
             });
-        }else{
+        } else {
             return ctx.send({
                 type: 'danger',
                 message: `failed to save note.`
@@ -115,18 +115,18 @@ async function handleSaveNote(ctx) {
  */
 async function handleMessage(ctx) {
     //Checking request
-    if(anyUndefined(
+    if (anyUndefined(
         ctx.request.body,
         ctx.request.body.id,
         ctx.request.body.message
-    )){
+    )) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
     let id = ctx.request.body.id;
     let message = ctx.request.body.message.trim();
 
     //Check permissions
-    if(!ensurePermission(ctx, 'players.message')) return false;
+    if (!ensurePermission(ctx, 'players.message')) return false;
 
     //Prepare and send command
     ctx.utils.logAction(`DM to #${id}: ${message}`);
@@ -143,18 +143,18 @@ async function handleMessage(ctx) {
  */
 async function handleKick(ctx) {
     //Checking request
-    if(anyUndefined(
+    if (anyUndefined(
         ctx.request.body,
         ctx.request.body.id,
         ctx.request.body.reason
-    )){
+    )) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
     const id = ctx.request.body.id;
     const reason = ctx.request.body.reason.trim() || 'no reason provided';
 
     //Check permissions
-    if(!ensurePermission(ctx, 'players.kick')) return false;
+    if (!ensurePermission(ctx, 'players.kick')) return false;
 
     //Prepare and send command
     ctx.utils.logAction(`Kicked #${id}: ${reason}`);
@@ -172,19 +172,19 @@ async function handleKick(ctx) {
  */
 async function handleWarning(ctx) {
     //Checking request
-    if(anyUndefined(
+    if (anyUndefined(
         ctx.request.body,
         ctx.request.body.id,
         ctx.request.body.reason
-    )){
+    )) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
     let id = parseInt(ctx.request.body.id);
-    if(Number.isNaN(id)) return ctx.send({type: 'danger', message: 'Invalid ID.'});
+    if (Number.isNaN(id)) return ctx.send({type: 'danger', message: 'Invalid ID.'});
     let reason = ctx.request.body.reason.trim();
 
     //Check permissions
-    if(!ensurePermission(ctx, 'players.warn')) return false;
+    if (!ensurePermission(ctx, 'players.warn')) return false;
 
     //Register action (and checks if player is online)
     try {
@@ -216,14 +216,14 @@ async function handleWarning(ctx) {
  */
 async function handleBan(ctx) {
     //Checking request & identifiers
-    if(
+    if (
         anyUndefined(
             ctx.request.body,
             ctx.request.body.duration,
             ctx.request.body.reference,
             ctx.request.body.reason
         )
-    ){
+    ) {
         return ctx.send({type: 'danger', message: 'Missing parameters or invalid identifiers.'});
     }
     let reference = ctx.request.body.reference;
@@ -243,32 +243,32 @@ async function handleBan(ctx) {
     //Calculating expiration
     let expiration;
     let duration;
-    if(inputDuration === 'permanent'){
+    if (inputDuration === 'permanent') {
         expiration = false;
 
-    }else{
+    } else {
         const [ multiplierInput, unit ] = inputDuration.split(/\s+/);
         const multiplier = parseInt(multiplierInput);
         if (isNaN(multiplier) || multiplier < 1) {
             return ctx.send({type: 'danger', message: 'The duration multiplier must be a number above 1.'});
         }
         
-        if(unit.startsWith('hour')){
+        if (unit.startsWith('hour')) {
             duration = multiplier * 3600;
-        }else if (unit.startsWith('day')){
+        } else if (unit.startsWith('day')) {
             duration = multiplier * 86400;
-        }else if (unit.startsWith('week')){
+        } else if (unit.startsWith('week')) {
             duration = multiplier * 604800;
-        }else if (unit.startsWith('month')){
+        } else if (unit.startsWith('month')) {
             duration = multiplier * 2592000; //30 days
-        }else{
+        } else {
             return ctx.send({type: 'danger', message: 'Invalid ban duration. Supported units: hours, days, weeks, months'});
         }
         expiration = now() + duration; 
     }
 
     //Check permissions
-    if(!ensurePermission(ctx, 'players.ban')) return false;
+    if (!ensurePermission(ctx, 'players.ban')) return false;
 
     //Register action (and checks if player is online)
     try {
@@ -283,7 +283,7 @@ async function handleBan(ctx) {
         author: xss(ctx.session.auth.username),
         reason: xss(reason),
     }
-    if(expiration !== false){
+    if (expiration !== false) {
         const humanizeOptions = {
             language: globals.translator.t('$meta.humanizer_language'),
             round: true,
@@ -291,18 +291,18 @@ async function handleBan(ctx) {
         }
         tOptions.expiration = humanizeDuration((duration)*1000, humanizeOptions);
         msg = '[txAdmin] ' + globals.translator.t('ban_messages.kick_temporary', tOptions);
-    }else{
+    } else {
         msg = '[txAdmin] ' + globals.translator.t('ban_messages.kick_permanent', tOptions);
     }
 
     let cmd;
-    if(Array.isArray(reference)){
+    if (Array.isArray(reference)) {
         cmd = formatCommand('txaDropIdentifiers', reference.join(';'), msg);
         ctx.utils.logAction(`Banned <${reference.join(';')}>: ${reason}`);
-    }else if(Number.isInteger(reference)){
+    } else if (Number.isInteger(reference)) {
         cmd = formatCommand('txaKickID', reference, msg);
         ctx.utils.logAction(`Banned #${reference}: ${reason}`);
-    }else{
+    } else {
         return ctx.send({type: 'danger', message: `<b>Error:</b> unknown reference type`});
     }
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
@@ -317,13 +317,13 @@ async function handleBan(ctx) {
  */
 async function handleWhitelist(ctx) {
     //Checking request
-    if(anyUndefined(ctx.request.body.reference)){
+    if (anyUndefined(ctx.request.body.reference)) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
     let reference = ctx.request.body.reference.trim();
 
     //Check permissions
-    if(!ensurePermission(ctx, 'players.whitelist')) return false;
+    if (!ensurePermission(ctx, 'players.whitelist')) return false;
 
     //Whitelist reference
     try {
@@ -343,20 +343,20 @@ async function handleWhitelist(ctx) {
  */
 async function handleRevokeAction(ctx) {
     //Checking request
-    if(anyUndefined(ctx.request.body.action_id)){
+    if (anyUndefined(ctx.request.body.action_id)) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
     let action_id = ctx.request.body.action_id.trim();
 
     //Check permissions
     let perms = [];
-    if(ensurePermission(ctx, 'players.ban')) perms.push('ban');
-    if(ensurePermission(ctx, 'players.whitelist')) perms.push('whitelist');
+    if (ensurePermission(ctx, 'players.ban')) perms.push('ban');
+    if (ensurePermission(ctx, 'players.whitelist')) perms.push('whitelist');
 
     //Revoke action
     try {
         let errorMsg = await globals.playerController.revokeAction(action_id, ctx.session.auth.username, perms);
-        if(errorMsg !== null){
+        if (errorMsg !== null) {
             return ctx.send({type: 'danger', message: `<b>Error:</b> ${errorMsg}`});
         }
     } catch (error) {

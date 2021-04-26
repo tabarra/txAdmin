@@ -61,7 +61,7 @@ module.exports = (osType, fxServerPath, fxServerVersion, serverProfile, profileP
     
 
     //Saving start.bat
-    if(osType == 'windows'){
+    if (osType == 'windows') {
         try {
             const batData = `@echo off
 ${fxServerPath}/FXServer.exe +set serverProfile "${serverProfile}"

@@ -18,35 +18,35 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  */
 module.exports = async function DeployerActions(ctx) {
     //Sanity check
-    if(isUndefined(ctx.params.action)){
+    if (isUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     const action = ctx.params.action;
 
     //Check permissions
-    if(!ctx.utils.checkPermission('master', modulename)){
+    if (!ctx.utils.checkPermission('master', modulename)) {
         return ctx.send({success: false, refresh: true});
     }
 
     //Check if this is the correct state for the deployer
-    if(globals.deployer == null){
+    if (globals.deployer == null) {
         return ctx.send({success: false, refresh: true});
     }
 
     //Delegate to the specific action functions
-    if(action == 'confirmRecipe'){
+    if (action == 'confirmRecipe') {
         return await handleConfirmRecipe(ctx);
 
-    }else if(action == 'setVariables'){
+    } else if (action == 'setVariables') {
         return await handleSetVariables(ctx);
 
-    }else if(action == 'commit'){
+    } else if (action == 'commit') {
         return await handleSaveConfig(ctx);
 
-    }else if(action == 'cancel'){
+    } else if (action == 'cancel') {
         return await handleCancel(ctx);
 
-    }else{
+    } else {
         return ctx.send({
             type: 'danger', 
             message: 'Unknown setup action.'
@@ -62,7 +62,7 @@ module.exports = async function DeployerActions(ctx) {
  */
 async function handleConfirmRecipe(ctx) {
     //Sanity check
-    if(isUndefined(ctx.request.body.recipe)){
+    if (isUndefined(ctx.request.body.recipe)) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const userEditedRecipe = ctx.request.body.recipe;
@@ -85,13 +85,13 @@ async function handleConfirmRecipe(ctx) {
  */
 async function handleSetVariables(ctx) {
     //Sanity check
-    if(isUndefined(ctx.request.body.svLicense)){
+    if (isUndefined(ctx.request.body.svLicense)) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const userVars = cloneDeep(ctx.request.body);
 
     //DB Stuff
-    if(typeof userVars.dbDelete !== 'undefined'){
+    if (typeof userVars.dbDelete !== 'undefined') {
         //Testing the db config
         try {
             const mysqlOptions = {
@@ -102,12 +102,12 @@ async function handleSetVariables(ctx) {
             await mysql.createConnection(mysqlOptions);
         } catch (error) {
             const msgHeader = `<b>Database connection failed:</b> ${error.message}`;
-            if(error.code == 'ECONNREFUSED'){
+            if (error.code == 'ECONNREFUSED') {
                 const osSpecific = (GlobalData.osType === 'windows')
                     ? `If you do not have a database installed, you can download and run XAMPP.`
                     : `If you do not have a database installed, you must download and run MySQL or MariaDB.`;
                 return ctx.send({type: 'danger', message: `${msgHeader}<br>\n${osSpecific}`});
-            }else{
+            } else {
                 return ctx.send({type: 'danger', message: msgHeader});
             }
         }
@@ -121,13 +121,13 @@ async function handleSetVariables(ctx) {
 
     //Max Clients & Server Endpoints
     userVars.maxClients = (GlobalData.deployerDefaults && GlobalData.deployerDefaults.maxClients)? GlobalData.deployerDefaults.maxClients : 48;
-    if(GlobalData.forceInterface){
+    if (GlobalData.forceInterface) {
         const suffix = '# zap-hosting: do not modify!'
         userVars.serverEndpoints = [
             `endpoint_add_tcp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}" ${suffix}`,
             `endpoint_add_udp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}" ${suffix}`,
         ].join('\n');
-    }else{
+    } else {
         userVars.serverEndpoints = [
             `endpoint_add_tcp "0.0.0.0:30120"`,
             `endpoint_add_udp "0.0.0.0:30120"`,
@@ -136,10 +136,10 @@ async function handleSetVariables(ctx) {
 
     //Setting identifiers array
     const admin = globals.authenticator.getAdminByName(ctx.session.auth.username);
-    if(!admin) return ctx.send({type: 'danger', message: "Admin not found."});
+    if (!admin) return ctx.send({type: 'danger', message: "Admin not found."});
     const addPrincipalLines = [];
     Object.keys(admin.providers).forEach(providerName => {
-        if(admin.providers[providerName].identifier){
+        if (admin.providers[providerName].identifier) {
             addPrincipalLines.push(`add_principal identifier.${admin.providers[providerName].identifier} group.admin #${ctx.session.auth.username}`);
         }
     });
@@ -166,7 +166,7 @@ async function handleSetVariables(ctx) {
  */
 async function handleSaveConfig(ctx) {
     //Sanity check
-    if(isUndefined(ctx.request.body.serverCFG)){
+    if (isUndefined(ctx.request.body.serverCFG)) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const serverCFG = ctx.request.body.serverCFG;
@@ -177,7 +177,7 @@ async function handleSaveConfig(ctx) {
         await fs.copy(cfgFilePath, `${cfgFilePath}.bkp`);
     } catch (error) {
         const message = `Failed to backup 'server.cfg' file with error: ${error.message}`;
-        if(GlobalData.verbose) logWarn(message);
+        if (GlobalData.verbose) logWarn(message);
         return ctx.send({type: 'danger', message});
     }
 
@@ -194,7 +194,7 @@ async function handleSaveConfig(ctx) {
         ctx.utils.logAction(`Configured server.cfg from deployer.`);
     } catch (error) {
         const message = `Failed to edit 'server.cfg' with error: ${error.message}`;
-        if(GlobalData.verbose) logWarn(message);
+        if (GlobalData.verbose) logWarn(message);
         return ctx.send({type: 'danger', message});
     }
 
@@ -202,24 +202,24 @@ async function handleSaveConfig(ctx) {
     const newFXRunnerConfig = globals.configVault.getScopedStructure('fxRunner');
     newFXRunnerConfig.serverDataPath = slash(path.normalize(globals.deployer.deployPath));
     newFXRunnerConfig.cfgPath = slash(path.normalize(cfgFilePath));
-    if(typeof globals.deployer.recipe.onesync !== 'undefined'){
+    if (typeof globals.deployer.recipe.onesync !== 'undefined') {
         newFXRunnerConfig.onesync = globals.deployer.recipe.onesync;
     }
     const saveFXRunnerStatus = globals.configVault.saveProfile('fxRunner', newFXRunnerConfig);
 
-    if(saveFXRunnerStatus){
+    if (saveFXRunnerStatus) {
         globals.fxRunner.refreshConfig();
         ctx.utils.logAction(`Completed and committed server deploy.`);
 
         //Starting server
         const spawnMsg = await globals.fxRunner.spawnServer(false);
-        if(spawnMsg !== null){
+        if (spawnMsg !== null) {
             return ctx.send({type: 'danger', message: `Faied to start server with error: <br>\n${spawnMsg}`});
-        }else{
+        } else {
             globals.deployer = null;
             return ctx.send({success: true});
         }
-    }else{
+    } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing fxserver settings via deployer.`);
         return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }

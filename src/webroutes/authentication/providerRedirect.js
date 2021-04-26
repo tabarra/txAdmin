@@ -17,13 +17,13 @@ const returnJustMessage = (ctx, errorTitle, errorMessage) => {
  */
 module.exports = async function ProviderRedirect(ctx) {
     //Sanity check
-    if(isUndefined(ctx.params.provider)){
+    if (isUndefined(ctx.params.provider)) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     const provider = ctx.params.provider;
 
     //FIXME: generalize this to any provider
-    if(provider !== 'citizenfx'){
+    if (provider !== 'citizenfx') {
         return returnJustMessage(ctx, 'Provider not implemented... yet');
     }
 
@@ -35,7 +35,7 @@ module.exports = async function ProviderRedirect(ctx) {
         const urlCitizenFX =  await globals.authenticator.providers.citizenfx.getAuthURL(genCallbackURL(ctx, 'citizenfx'), ctx.session._sessCtx.externalKey);
         return ctx.response.redirect(urlCitizenFX);
     } catch (error) {
-        if(GlobalData.verbose) logWarn(`Failed to generate CitizenFX Auth URL with error: ${error.message}`);
+        if (GlobalData.verbose) logWarn(`Failed to generate CitizenFX Auth URL with error: ${error.message}`);
         return returnJustMessage(ctx, 'Failed to generate callback URL:', error.message);
     }
 };

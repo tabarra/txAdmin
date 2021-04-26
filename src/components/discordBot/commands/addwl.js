@@ -15,24 +15,24 @@ module.exports = {
         //Check permissions
         //TODO: generalize this to other commands?
         const admin = globals.authenticator.getAdminByProviderUID(message.author.id);
-        if(!admin){
+        if (!admin) {
             return await message.reply(`your Discord ID is not registered in txAdmin :face_with_monocle:`);
         }
-        if(
+        if (
             admin.master !== true &&
             !admin.permissions.includes('all_permissions') &&
             !admin.permissions.includes('players.whitelist')
-        ){
+        ) {
             return await message.reply(`you do not have whitelist permissions :face_with_raised_eyebrow:`);
         }
 
         //Check if whitelist is enabled
-        if(!globals.playerController.config.onJoinCheckWhitelist){
+        if (!globals.playerController.config.onJoinCheckWhitelist) {
             return await message.reply(`**txAdmin** whitelist is disabled :man_facepalming:\nGo to the settings and enable it first.`);
         }
 
         //Check usage
-        if(args.length !== 1){
+        if (args.length !== 1) {
             const msgLines = [
                 `Type in the whitelist Request ID (R####) or License Identifier.`,
                 `Example:`,
@@ -45,19 +45,19 @@ module.exports = {
         
         //Treat input to improve UX
         let reference = args[0];
-        if(reference.length == 5){
+        if (reference.length == 5) {
             reference = reference.toUpperCase();
-        }else if(reference.length == 40){
+        } else if (reference.length == 40) {
             reference = reference.toLowerCase();
-        }else if(reference.length == 48){
+        } else if (reference.length == 48) {
             reference = reference.substring(8).toLowerCase();
         }
 
         //Check input validity
-        if(
+        if (
             !GlobalData.regexWhitelistReqID.test(reference) && 
             !/[0-9A-Fa-f]{40}/.test(reference)
-        ){
+        ) {
             return await message.reply(`The value inserted is not a valid Whitelist Request ID (R####) nor a license identifier.`);
         }
 

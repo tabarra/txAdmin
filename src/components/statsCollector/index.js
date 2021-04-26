@@ -40,7 +40,7 @@ module.exports = class StatsCollector {
             try {
                 await this.collectPerformance();
             } catch (error) {
-                if(GlobalData.verbose){
+                if (GlobalData.verbose) {
                     logError(`Error while collecting fxserver performance data`);
                     dir(error);
                 }
@@ -53,7 +53,7 @@ module.exports = class StatsCollector {
     /**
      * Refresh Stats Collector configurations
      */
-    refreshConfig(){
+    refreshConfig() {
         this.config = globals.configVault.getScoped('statsCollector');
     }
 
@@ -62,7 +62,7 @@ module.exports = class StatsCollector {
     /**
      * Loads the database/cache/history for the performance heatmap
      */
-    async loadPerformanceHistory(){
+    async loadPerformanceHistory() {
         let rawFile = null;
         try {
             rawFile = await fs.readFile(this.hardConfigs.heatmapDataFile, 'utf8');
@@ -78,11 +78,11 @@ module.exports = class StatsCollector {
             }
         }
 
-        if(rawFile !== null){
+        if (rawFile !== null) {
             try {
                 const heatmapData = JSON.parse(rawFile);
-                if(!Array.isArray(heatmapData)) throw new Error(`data is not an array`);
-                if(!validatePerfCacheData(heatmapData)) throw new Error(`invalid data in cache`);
+                if (!Array.isArray(heatmapData)) throw new Error(`data is not an array`);
+                if (!validatePerfCacheData(heatmapData)) throw new Error(`invalid data in cache`);
                 this.perfSeries = heatmapData;
 
             } catch (error) {
@@ -91,7 +91,7 @@ module.exports = class StatsCollector {
                 await setFile();
             }
 
-        }else{
+        } else {
             await setFile();
         }
     }
@@ -103,7 +103,7 @@ module.exports = class StatsCollector {
      * Cron function to collect the player count from fxserver.
      * The objective is to collect 1 week of data with 1 minute resolution.
      */
-    collectPlayers(){
+    collectPlayers() {
         return 'not implemented yet';
 
         // check if server is offline
@@ -136,10 +136,10 @@ module.exports = class StatsCollector {
      *     - normalmente o timestamp do coletado vai ser com o epoch correto
      *     - não estamos fazendo média de players
      */
-    async collectPerformance(){
+    async collectPerformance() {
         //Check pre-condition
-        if(this.perfSeries === null) return;
-        if(globals.fxRunner.fxChild === null) return;
+        if (this.perfSeries === null) return;
+        if (globals.fxRunner.fxChild === null) return;
 
         //Commom vars
         const now = Date.now();
@@ -147,12 +147,12 @@ module.exports = class StatsCollector {
         const lastSnap = this.perfSeries.length ? this.perfSeries[this.perfSeries.length-1] : false;
         
         //Check skip rules
-        if(
+        if (
             lastSnap &&
             getEpoch(cfg.resolution, lastSnap.ts) == getEpoch(cfg.resolution) &&
             now - lastSnap.ts < cfg.resolution*60*1000
-        ){
-            if(GlobalData.verbose) log(`Skipping perf collection due to resolution`);
+        ) {
+            if (GlobalData.verbose) log(`Skipping perf collection due to resolution`);
             return;
         }
         
@@ -160,11 +160,11 @@ module.exports = class StatsCollector {
         const sourceURL = (GlobalData.debugExternalSource)? GlobalData.debugExternalSource : globals.fxRunner.fxServerHost;
         const currPerfRaw = await got(`http://${sourceURL}/perf/`, {timeout: 1500}).text();
         const currPerfData = parsePerf(currPerfRaw);
-        if(
+        if (
             !validatePerfThreadData(currPerfData.svSync) ||
             !validatePerfThreadData(currPerfData.svNetwork) ||
             !validatePerfThreadData(currPerfData.svMain)
-        ){
+        ) {
             throw new Error(`invalid or incomplete /perf/ response`);
         }
 
@@ -197,11 +197,11 @@ module.exports = class StatsCollector {
         this.perfSeries.push(currSnapshot);
         try {
             await fs.outputJSON(this.hardConfigs.heatmapDataFile, this.perfSeries);
-            if(GlobalData.verbose){
+            if (GlobalData.verbose) {
                 logOk(`Collected performance snapshot #${this.perfSeries.length}`);
             }
         } catch (error) {
-            if (GlobalData.verbose){
+            if (GlobalData.verbose) {
                 logWarn('Failed to write the performance history log file with error:');
                 dir(error)
             }

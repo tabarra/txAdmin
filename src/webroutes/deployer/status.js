@@ -9,12 +9,12 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
  */
 module.exports = async function DeployerStatus(ctx) {
     //Check permissions
-    if(!ctx.utils.checkPermission('all_permissions', modulename)){
+    if (!ctx.utils.checkPermission('all_permissions', modulename)) {
         return ctx.send({success: false, refresh: true});
     }
 
     //Check if this is the correct state for the deployer
-    if(globals.deployer == null){
+    if (globals.deployer == null) {
         return ctx.send({success: false, refresh: true});
     }
 
@@ -23,13 +23,13 @@ module.exports = async function DeployerStatus(ctx) {
         progress: globals.deployer.progress,
         log: globals.deployer.getLog()
     }
-    if(globals.deployer.step == 'configure'){
+    if (globals.deployer.step == 'configure') {
         outData.status = 'done';
 
-    }else if(globals.deployer.deployFailed){
+    } else if (globals.deployer.deployFailed) {
         outData.status = 'failed';
 
-    }else{
+    } else {
         outData.status = 'running';
     }
 

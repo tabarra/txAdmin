@@ -59,7 +59,7 @@ module.exports = class OutputHandler {
      */
     trace(trace) {
         //Filter valid packages
-        if(anyUndefined(trace, trace.value, trace.value.data, trace.value.channel)) return;
+        if (anyUndefined(trace, trace.value, trace.value.data, trace.value.channel)) return;
         const {channel, data} = trace.value;
 
         //DEBUG
@@ -75,31 +75,31 @@ module.exports = class OutputHandler {
         // }
 
         //Handle bind errors
-        if(channel == 'citizen-server-impl' && data.type == 'bind_error'){
-            try{
-                if(!globals.fxRunner.restartDelayOverride){
+        if (channel == 'citizen-server-impl' && data.type == 'bind_error') {
+            try {
+                if (!globals.fxRunner.restartDelayOverride) {
                     globals.fxRunner.restartDelayOverride = 10000;
-                }else if(globals.fxRunner.restartDelayOverride <= 45000){
+                } else if (globals.fxRunner.restartDelayOverride <= 45000) {
                     globals.fxRunner.restartDelayOverride += 5000;
                 }
                 const [_ip, port] = data.address.split(':');
                 deferError(`Detected FXServer error: Port ${port} is busy! Increasing restart delay to ${globals.fxRunner.restartDelayOverride}.`);
-            }catch(e){} 
+            } catch (e) {} 
             return;
         }
 
         //Handle watchdog
-        if(channel == 'citizen-server-impl' && data.type == 'watchdog_bark'){
-            try{
+        if (channel == 'citizen-server-impl' && data.type == 'watchdog_bark') {
+            try {
                 deferError(`Detected FXServer thread ${data.thread} hung with stack: ${data.stack}`);
-            }catch(e){} 
+            } catch (e) {} 
             return;
         }
 
         //Handle script traces
-        if(channel == 'citizen-server-impl' && data.type == 'script_structured_trace'){
+        if (channel == 'citizen-server-impl' && data.type == 'script_structured_trace') {
             // dir(data.payload)
-            if(data.payload.type === 'txAdminHeartBeat'){
+            if (data.payload.type === 'txAdminHeartBeat') {
                 globals.monitor.handleHeartBeat('fd3');
             } else if (data.payload.type === 'txAdminLogData') {
                 globals.databus.serverLog = globals.databus.serverLog.concat(data.payload.logs)
@@ -115,7 +115,7 @@ module.exports = class OutputHandler {
      * @param {string} markType
      */
     write(data, markType) {
-        if(typeof markType === 'undefined') markType = false;
+        if (typeof markType === 'undefined') markType = false;
         //NOTE: not sure how this would throw any errors, but anyways...
         data = data.toString();
         try {
@@ -125,17 +125,17 @@ module.exports = class OutputHandler {
             //This is neccessary for the terminal to have color, but beware of side effects.
             //This regex was done in the first place to prevent fxserver output to be interpreted as txAdmin output by the host terminal
             //IIRC the issue was that one user with a TM on their nick was making txAdmin's console to close or freeze. I couldn't reproduce the issue.
-            if(!globals.fxRunner.config.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ""));
+            if (!globals.fxRunner.config.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ""));
         } catch (error) {
-            if(GlobalData.verbose) logError(`Buffer write error: ${error.message}`);
+            if (GlobalData.verbose) logError(`Buffer write error: ${error.message}`);
         }
 
         //Adding data to the buffers
-        if(this.enableCmdBuffer) this.cmdBuffer += data;
+        if (this.enableCmdBuffer) this.cmdBuffer += data;
         this.fileBuffer += data;
 
         this.webConsoleBuffer = this.webConsoleBuffer + data;
-        if(this.webConsoleBuffer.length > this.webConsoleBufferSize){
+        if (this.webConsoleBuffer.length > this.webConsoleBufferSize) {
             this.webConsoleBuffer = this.webConsoleBuffer.slice(-0.5 * this.webConsoleBufferSize);
             this.webConsoleBuffer = this.webConsoleBuffer.substr(this.webConsoleBuffer.indexOf("\n"));
         }
@@ -152,9 +152,9 @@ module.exports = class OutputHandler {
         data = data.toString();
         try {
             globals.webServer.webConsole.buffer(data, 'error');
-            if(!globals.fxRunner.config.quiet) process.stdout.write(chalk.red(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, "")));
+            if (!globals.fxRunner.config.quiet) process.stdout.write(chalk.red(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, "")));
         } catch (error) {
-            if(GlobalData.verbose) logError(`Buffer write error: ${error.message}`)
+            if (GlobalData.verbose) logError(`Buffer write error: ${error.message}`)
         }
     }
 
@@ -176,19 +176,19 @@ module.exports = class OutputHandler {
      * Save the log file and clear buffer
      */
     saveLog() {
-        if(!this.fileBuffer.length) return;
+        if (!this.fileBuffer.length) return;
         let cleanBuff = this.fileBuffer.replace(/\u001b\[\d+(;\d)?m/g, '');
         fs.appendFile(this.logPath, cleanBuff, {encoding: 'utf8'}, (error)=>{
-            if(error){
-                if(GlobalData.verbose) logError(`File Write Buffer error: ${error.message}`)
-            }else{
+            if (error) {
+                if (GlobalData.verbose) logError(`File Write Buffer error: ${error.message}`)
+            } else {
                 this.fileBuffer = '';
             }
         });
         fs.stat(this.logPath, (error, stats)=>{
-            if(error){
-                if(GlobalData.verbose) logError(`Log File get stats error: ${error.message}`)
-            }else{
+            if (error) {
+                if (GlobalData.verbose) logError(`Log File get stats error: ${error.message}`)
+            } else {
                 this.logFileSize = bytes(stats.size);
             }
         });

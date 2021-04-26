@@ -12,7 +12,7 @@ module.exports = class Cache {
      * Sets the cache
      * @param {*} data
      */
-    set(data){
+    set(data) {
         this.dataTimestamp = Math.round(Date.now() / 1000);
         this.data = data;
     }
@@ -20,11 +20,11 @@ module.exports = class Cache {
     /**
      * Returns the cache if valid, or false
      */
-    get(){
+    get() {
         const now = Math.round(Date.now() / 1000);
-        if(now - this.dataTimestamp < this.cacheTime){
+        if (now - this.dataTimestamp < this.cacheTime) {
             return cloneDeep(this.data);
-        }else{
+        } else {
             return false;
         }
     }

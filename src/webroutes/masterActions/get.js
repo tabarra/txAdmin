@@ -14,24 +14,24 @@ const isUndefined = (x) => { return (typeof x === 'undefined') };
  */
 module.exports = async function MasterActionsGet(ctx) {
     //Sanity check
-    if(isUndefined(ctx.params.resource)){
+    if (isUndefined(ctx.params.resource)) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     const resource = ctx.params.resource;
 
     //Check permissions
-    if(!ctx.utils.checkPermission('master', modulename)){
+    if (!ctx.utils.checkPermission('master', modulename)) {
         return ctx.utils.render('basic/generic', {message: `Only the master account has permission to view/use this page.`});
     }
 
     //Render the page
-    if(resource == 'importBans'){
+    if (resource == 'importBans') {
         return ctx.utils.render('masterActions/importBans', {
             dbFilePathSuggestion: path.join(globals.fxRunner.config.serverDataPath, 'resources')
         });
-    }else if(resource == 'backupDatabase'){
+    } else if (resource == 'backupDatabase') {
         return handleBackupDatabase(ctx);
-    }else{
+    } else {
         return ctx.utils.render('basic/404');
     }
 };

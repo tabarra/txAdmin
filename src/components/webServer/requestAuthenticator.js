@@ -9,12 +9,12 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 const requestAuth = (epType) => {
     //Intercom auth function
     const intercomAuth = async (ctx, next) => {
-        if(
+        if (
             typeof ctx.request.body.txAdminToken !== 'undefined' &&
             ctx.request.body.txAdminToken === globals.webServer.intercomToken
-        ){
+        ) {
             await next();
-        }else{
+        } else {
             return ctx.send({error: 'invalid token'})
         }
     }
@@ -23,17 +23,17 @@ const requestAuth = (epType) => {
     const normalAuth = async (ctx, next) =>{
         const {isValidAuth} = authLogic(ctx.session, true, epType);
 
-        if(!isValidAuth){
-            if(GlobalData.verbose) logWarn(`Invalid session auth: ${ctx.path}`, epType);
+        if (!isValidAuth) {
+            if (GlobalData.verbose) logWarn(`Invalid session auth: ${ctx.path}`, epType);
             ctx.session.auth = {};
-            if(epType === 'web'){
+            if (epType === 'web') {
                 return ctx.response.redirect('/auth?logout');
-            }else if(epType === 'api'){
+            } else if (epType === 'api') {
                 return ctx.send({logout:true});
-            }else{
+            } else {
                 return () => {throw new Error('Unknown auth type')};
             }
-        }else{
+        } else {
             await next();
         }
     }
@@ -42,26 +42,26 @@ const requestAuth = (epType) => {
     const socketAuth = async (socket, next) =>{
         const {isValidAuth} = authLogic(socket.session, true, epType);
 
-        if(isValidAuth){
+        if (isValidAuth) {
             await next();
-        }else{
+        } else {
             socket.session.auth = {}; //a bit redundant but it wont hurt anyone
             socket.disconnect(0);
-            if(GlobalData.verbose) logWarn('Auth denied when creating session');
+            if (GlobalData.verbose) logWarn('Auth denied when creating session');
             next(new Error('Authentication Denied'));
         }
     }
 
     //Return the appropriate function
-    if(epType === 'intercom'){
+    if (epType === 'intercom') {
         return intercomAuth;
-    }else if(epType === 'web'){
+    } else if (epType === 'web') {
         return normalAuth;
-    }else if(epType === 'api'){
+    } else if (epType === 'api') {
         return normalAuth;
-    }else if(epType === 'socket'){
+    } else if (epType === 'socket') {
         return socketAuth;
-    }else{
+    } else {
         return () => {throw new Error('Unknown auth type')};
     }
 }
@@ -76,26 +76,26 @@ const requestAuth = (epType) => {
 const authLogic = (sess, perm, epType) => {
     let isValidAuth = false;
     let isValidPerm = false;
-    if(
+    if (
         typeof sess.auth !== 'undefined' &&
         typeof sess.auth.username !== 'undefined' &&
         typeof sess.auth.expires_at !== 'undefined'
-    ){
+    ) {
         let now = Math.round(Date.now()/1000);
-        if(sess.auth.expires_at === false || now < sess.auth.expires_at){
+        if (sess.auth.expires_at === false || now < sess.auth.expires_at) {
             try {
                 let admin = globals.authenticator.getAdminByName(sess.auth.username);
-                if(admin){
-                    if(
+                if (admin) {
+                    if (
                         typeof sess.auth.password_hash == 'string' &&
                         admin.password_hash == sess.auth.password_hash
-                    ){
+                    ) {
                         isValidAuth = true;
-                    }else if(
+                    } else if (
                         typeof sess.auth.provider == 'string' &&
                         typeof admin.providers[sess.auth.provider] == 'object' &&
                         sess.auth.provider_uid == admin.providers[sess.auth.provider].id
-                    ){
+                    ) {
                         isValidAuth = true;
                     }
 
@@ -110,11 +110,11 @@ const authLogic = (sess, perm, epType) => {
                     ));
                 }
             } catch (error) {
-                if(GlobalData.verbose) logError(`Error validating session data:`, epType);
-                if(GlobalData.verbose) dir(error);
+                if (GlobalData.verbose) logError(`Error validating session data:`, epType);
+                if (GlobalData.verbose) dir(error);
             }
-        }else{
-            if(GlobalData.verbose) logWarn(`Expired session from ${sess.auth.username}`, epType);
+        } else {
+            if (GlobalData.verbose) logWarn(`Expired session from ${sess.auth.username}`, epType);
         }
     }
 

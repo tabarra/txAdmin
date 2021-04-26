@@ -15,24 +15,24 @@ const returnJustMessage = (ctx, errorTitle, errorMessage) => {
  */
 module.exports = async function ProviderCallback(ctx) {
     //Sanity check
-    if(
+    if (
         isUndefined(ctx.params.provider) ||
         isUndefined(ctx.query.state)
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     const provider = ctx.params.provider;
     const reqState = ctx.query.state;
 
     //FIXME: generalize this to any provider
-    if(provider !== 'citizenfx'){
+    if (provider !== 'citizenfx') {
         return returnJustMessage(ctx, 'Provider not implemented... yet');
     }
 
     //Check the state changed
     const stateSeed = `txAdmin:${ctx.session._sessCtx.externalKey}`;
     const stateExpected = crypto.createHash('SHA1').update(stateSeed).digest("hex");
-    if(reqState != stateExpected){
+    if (reqState != stateExpected) {
         return returnJustMessage(
             ctx,
             'This link has expired.',
@@ -47,25 +47,25 @@ module.exports = async function ProviderCallback(ctx) {
         tokenSet = await globals.authenticator.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
         logWarn(`Code Exchange error: ${error.message}`);
-        if(!isUndefined(error.tolerance)){
+        if (!isUndefined(error.tolerance)) {
             return returnJustMessage(
                 ctx,
                 `Please Update/Synchronize your VPS clock.`,
                 `Failed to login because this host's time is wrong. Please make sure to synchronize it with the internet.`
             );
-        }else if(error.code === 'ETIMEDOUT'){
+        } else if (error.code === 'ETIMEDOUT') {
             return returnJustMessage(
                 ctx,
                 `Connection to FiveM servers timed out:`,
                 `Please try again or login using your existing username and backup password.`
             );
-        }else if(error.message.startsWith('state mismatch')){
+        } else if (error.message.startsWith('state mismatch')) {
             return returnJustMessage(
                 ctx,
                 `Invalid Browser Session.`,
                 `You may have restarted txAdmin right before entering this page, or copied the link to another browser. Please try again.`
             );
-        }else{
+        } else {
             return returnJustMessage(ctx, `Code Exchange error:`, error.message);
         }
     }
@@ -75,7 +75,7 @@ module.exports = async function ProviderCallback(ctx) {
     try {
         userInfo = await globals.authenticator.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
-        if(GlobalData.verbose) logError(`Get UserInfo error: ${error.message}`);
+        if (GlobalData.verbose) logError(`Get UserInfo error: ${error.message}`);
         return returnJustMessage(ctx, `Get UserInfo error:`, error.message);
     }
 
@@ -95,7 +95,7 @@ module.exports = async function ProviderCallback(ctx) {
     //Check & Login user
     try {
         const admin = globals.authenticator.getAdminByProviderUID(userInfo.name);
-        if(!admin){
+        if (!admin) {
             ctx.session.auth = {};
             return returnJustMessage(
                 ctx,
@@ -117,7 +117,7 @@ module.exports = async function ProviderCallback(ctx) {
         return ctx.response.redirect('/');
     } catch (error) {
         ctx.session.auth = {};
-        if(GlobalData.verbose) logError(`Failed to login: ${error.message}`);
+        if (GlobalData.verbose) logError(`Failed to login: ${error.message}`);
         return returnJustMessage(ctx, `Failed to login:`, error.message);
     }
 };

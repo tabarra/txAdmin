@@ -8,7 +8,7 @@ const perfLineRegex = /tickTime_(count|sum|bucket)\{name="(svSync|svNetwork|svMa
  * @param {string} raw 
  */
 const parsePerf = (raw) => {
-    if(typeof raw !== 'string') throw new Error(`string expected`);
+    if (typeof raw !== 'string') throw new Error(`string expected`);
     
     //Vars
     const lines = raw.trim().split('\n');
@@ -27,22 +27,22 @@ const parsePerf = (raw) => {
     //Parse lines
     for (let i = 0; i < lines.length; i++) {
         const parsed = lines[i].match(perfLineRegex);
-        if(parsed == null) continue;
+        if (parsed == null) continue;
         const regType = parsed[1];
         const thread = parsed[2];
         const bucket = parsed[4];
         const value = parsed[5];
 
-        if(regType == 'count'){
+        if (regType == 'count') {
             const count = parseInt(value);
-            if(!isNaN(count)) metrics[thread].count = count;
+            if (!isNaN(count)) metrics[thread].count = count;
 
-        }else if(regType == 'sum'){
+        } else if (regType == 'sum') {
             const sum = parseFloat(value);
-            if(!isNaN(sum)) metrics[thread].sum = sum;
+            if (!isNaN(sum)) metrics[thread].sum = sum;
 
-        }else if(regType == 'bucket'){
-            if(bucket !== perfBuckets[metrics[thread].buckets.length]) throw new Error(`unexpected bucket ${bucket} at position ${metrics[thread].buckets.length}`);
+        } else if (regType == 'bucket') {
+            if (bucket !== perfBuckets[metrics[thread].buckets.length]) throw new Error(`unexpected bucket ${bucket} at position ${metrics[thread].buckets.length}`);
             metrics[thread].buckets.push(parseInt(value))
         }
     }
@@ -55,7 +55,7 @@ const parsePerf = (raw) => {
             thread.buckets.length !== perfBuckets.length - 1
         )
     })
-    if(invalid.length) throw new Error(`there are ${invalid.length} invalid threads in /perf/ data`);
+    if (invalid.length) throw new Error(`there are ${invalid.length} invalid threads in /perf/ data`);
 
     return metrics;
 }
@@ -67,7 +67,7 @@ const parsePerf = (raw) => {
  * @param {object} oldPerf 
  */
 const diffPerfs = (newPerf, oldPerf = false) => {
-    if(oldPerf === false){
+    if (oldPerf === false) {
         const zeros = {
             count: 0,
             sum: 0,

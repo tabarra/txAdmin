@@ -52,8 +52,8 @@ const validatorDownloadFile = (options) => {
     )
 }
 const taskDownloadFile = async (options, basePath, deployerCtx) => {
-    if(!validatorDownloadFile(options)) throw new Error(`invalid options`);
-    if(options.path.endsWith('/')) throw new Error(`target filename not specified`); //FIXME: this should be on the validator
+    if (!validatorDownloadFile(options)) throw new Error(`invalid options`);
+    if (options.path.endsWith('/')) throw new Error(`target filename not specified`); //FIXME: this should be on the validator
 
     //Process and create target file/path
     const destPath = safePath(basePath, options.path);
@@ -88,25 +88,25 @@ const validatorDownloadGithub = (options) => {
     )
 }
 const taskDownloadGithub = async (options, basePath, deployerCtx) => {
-    if(!validatorDownloadGithub(options)) throw new Error(`invalid options`);
+    if (!validatorDownloadGithub(options)) throw new Error(`invalid options`);
 
     //Parsing source
     const srcMatch = options.src.match(githubRepoSourceRegex);
-    if(!srcMatch || !srcMatch[3] || !srcMatch[4]) throw new Error(`invalid repository`);
+    if (!srcMatch || !srcMatch[3] || !srcMatch[4]) throw new Error(`invalid repository`);
     const repoOwner = srcMatch[3];
     const repoName = srcMatch[4];
 
     //Setting git ref
     let reference;
-    if(options.ref){
+    if (options.ref) {
         reference = options.ref
-    }else{
+    } else {
         const res = await axios({
             method: 'get',
             url: `https://api.github.com/repos/${repoOwner}/${repoName}`,
             responseType: 'json'
         });
-        if(!res.data || !res.data.default_branch){
+        if (!res.data || !res.data.default_branch) {
             throw new Error(`reference not set, and wasn ot able to detect using github's api`);
         }
         reference = res.data.default_branch
@@ -135,7 +135,7 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     //Extracting file
     const zip = new AdmZip(tmpFilePath);
     const zipEntries = zip.getEntries();
-    if(!zipEntries.length || !zipEntries[0].isDirectory) throw new Error(`unexpected zip structure`);
+    if (!zipEntries.length || !zipEntries[0].isDirectory) throw new Error(`unexpected zip structure`);
     const extract = util.promisify(zip.extractAllToAsync);
     await extract(tmpFileDir, true);
 
@@ -160,14 +160,14 @@ const validatorRemovePath = (options) => {
     )
 }
 const taskRemovePath = async (options, basePath, deployerCtx) => {
-    if(!validatorRemovePath(options)) throw new Error(`invalid options`);
+    if (!validatorRemovePath(options)) throw new Error(`invalid options`);
 
     //Process and create target file/path
     const targetPath = safePath(basePath, options.path);
 
     //NOTE: being extra safe about not deleting itself
     const cleanBasePath = pathCleanTrail(path.normalize(basePath));
-    if(cleanBasePath == targetPath) throw new Error(`cannot remove base folder`);
+    if (cleanBasePath == targetPath) throw new Error(`cannot remove base folder`);
     await fs.remove(targetPath);
 }
 
@@ -181,7 +181,7 @@ const validatorEnsureDir = (options) => {
     )
 }
 const taskEnsureDir = async (options, basePath, deployerCtx) => {
-    if(!validatorEnsureDir(options)) throw new Error(`invalid options`);
+    if (!validatorEnsureDir(options)) throw new Error(`invalid options`);
 
     //Process and create target file/path
     const destPath = safePath(basePath, options.path);
@@ -205,7 +205,7 @@ const validatorUnzip = (options) => {
     )
 }
 const taskUnzip = async (options, basePath, deployerCtx) => {
-    if(!validatorUnzip(options)) throw new Error(`invalid options`);
+    if (!validatorUnzip(options)) throw new Error(`invalid options`);
 
     const srcPath = safePath(basePath, options.src);
     //maybe ensure dest doesn't seem to be an issue?
@@ -227,7 +227,7 @@ const validatorMovePath = (options) => {
     )
 }
 const taskMovePath = async (options, basePath, deployerCtx) => {
-    if(!validatorMovePath(options)) throw new Error(`invalid options`);
+    if (!validatorMovePath(options)) throw new Error(`invalid options`);
 
     const srcPath = safePath(basePath, options.src);
     const destPath = safePath(basePath, options.dest);
@@ -248,7 +248,7 @@ const validatorCopyPath = (options) => {
     )
 }
 const taskCopyPath = async (options, basePath, deployerCtx) => {
-    if(!validatorCopyPath(options)) throw new Error(`invalid options`);
+    if (!validatorCopyPath(options)) throw new Error(`invalid options`);
 
     const srcPath = safePath(basePath, options.src);
     const destPath = safePath(basePath, options.dest);
@@ -269,12 +269,12 @@ const validatorWriteFile = (options) => {
     )
 }
 const taskWriteFile = async (options, basePath, deployerCtx) => {
-    if(!validatorWriteFile(options)) throw new Error(`invalid options`);
+    if (!validatorWriteFile(options)) throw new Error(`invalid options`);
 
     const filePath = safePath(basePath, options.file);
-    if(options.append === 'true' || options.append === true){
+    if (options.append === 'true' || options.append === true) {
         await fs.appendFile(filePath, options.data);
-    }else{
+    } else {
         await fs.outputFile(filePath, options.data);
     }
 }
@@ -290,45 +290,45 @@ const taskWriteFile = async (options, basePath, deployerCtx) => {
 const validatorReplaceString = (options) => {
     //Validate file
     const fileList = (Array.isArray(options.file))? options.file : [options.file];
-    if(fileList.some(s => !isPathValid(s, false))){
+    if (fileList.some(s => !isPathValid(s, false))) {
         return false;
     }
 
     //Validate mode
-    if(
+    if (
         typeof options.mode == 'undefined' ||
         options.mode == 'template' ||
         options.mode == 'literal'
-    ){
+    ) {
         return (
             typeof options.search == 'string' &&
             options.search.length &&
             typeof options.replace == 'string'
         )
 
-    }else if(options.mode == 'all_vars'){
+    } else if (options.mode == 'all_vars') {
         return true
 
-    }else{
+    } else {
 
         return false;
     }
 }
 const taskReplaceString = async (options, basePath, deployerCtx) => {
-    if(!validatorReplaceString(options)) throw new Error(`invalid options`);
+    if (!validatorReplaceString(options)) throw new Error(`invalid options`);
 
     const fileList = (Array.isArray(options.file))? options.file : [options.file];
-    for (let i = 0; i < fileList.length; i++){
+    for (let i = 0; i < fileList.length; i++) {
         const filePath = safePath(basePath, fileList[i]);
         const original = await fs.readFile(filePath, 'utf8');
         let changed;
-        if(typeof options.mode == 'undefined' || options.mode == 'template'){
+        if (typeof options.mode == 'undefined' || options.mode == 'template') {
             changed = original.replace(new RegExp(options.search, 'g'), replaceVars(options.replace, deployerCtx));
             
-        }else if(options.mode == 'all_vars'){
+        } else if (options.mode == 'all_vars') {
             changed = replaceVars(original, deployerCtx);
 
-        }else if(options.mode == 'literal'){
+        } else if (options.mode == 'literal') {
             changed = original.replace(new RegExp(options.search, 'g'), options.replace);
             
         }
@@ -344,12 +344,12 @@ const validatorConnectDatabase = (options) => {
     return true;
 }
 const taskConnectDatabase = async (options, basePath, deployerCtx) => {
-    if(!validatorConnectDatabase(options)) throw new Error(`invalid options`);
-    if(typeof deployerCtx.dbHost !== 'string') throw new Error(`invalid dbHost`);
-    if(typeof deployerCtx.dbUsername !== 'string') throw new Error(`invalid dbUsername`);
-    if(typeof deployerCtx.dbPassword !== 'string') throw new Error(`dbPassword should be a string`);
-    if(typeof deployerCtx.dbName !== 'string') throw new Error(`dbName should be a string`);
-    if(typeof deployerCtx.dbDelete !== 'boolean') throw new Error(`dbDelete should be a boolean`);
+    if (!validatorConnectDatabase(options)) throw new Error(`invalid options`);
+    if (typeof deployerCtx.dbHost !== 'string') throw new Error(`invalid dbHost`);
+    if (typeof deployerCtx.dbUsername !== 'string') throw new Error(`invalid dbUsername`);
+    if (typeof deployerCtx.dbPassword !== 'string') throw new Error(`dbPassword should be a string`);
+    if (typeof deployerCtx.dbName !== 'string') throw new Error(`dbName should be a string`);
+    if (typeof deployerCtx.dbDelete !== 'boolean') throw new Error(`dbDelete should be a boolean`);
 
     //Connect to the database
     const mysqlOptions = {
@@ -360,7 +360,7 @@ const taskConnectDatabase = async (options, basePath, deployerCtx) => {
     }
     deployerCtx.dbConnection = await mysql.createConnection(mysqlOptions);
     const escapedDBName = mysql.escapeId(deployerCtx.dbName);
-    if(deployerCtx.dbDelete){
+    if (deployerCtx.dbDelete) {
         await deployerCtx.dbConnection.query(`DROP DATABASE IF EXISTS ${escapedDBName}`);
     }
     await deployerCtx.dbConnection.query(`CREATE DATABASE IF NOT EXISTS ${escapedDBName} CHARACTER SET utf8 COLLATE utf8_general_ci`);
@@ -372,20 +372,20 @@ const taskConnectDatabase = async (options, basePath, deployerCtx) => {
  * Runs a SQL query in the previously connected database. This query can be a file path or a string.
  */
 const validatorQueryDatabase = (options) => {
-    if(typeof options.file !== 'undefined' && typeof options.query !== 'undefined') return false;
-    if(typeof options.file == 'string') return isPathValid(options.file, false);
-    if(typeof options.query == 'string') return options.query.length;
+    if (typeof options.file !== 'undefined' && typeof options.query !== 'undefined') return false;
+    if (typeof options.file == 'string') return isPathValid(options.file, false);
+    if (typeof options.query == 'string') return options.query.length;
     return false;
 }
 const taskQueryDatabase = async (options, basePath, deployerCtx) => {
-    if(!validatorQueryDatabase(options)) throw new Error(`invalid options`);
-    if(!deployerCtx.dbConnection) throw new Error(`Database connection not found. Run connect_database before query_database`);
+    if (!validatorQueryDatabase(options)) throw new Error(`invalid options`);
+    if (!deployerCtx.dbConnection) throw new Error(`Database connection not found. Run connect_database before query_database`);
 
     let sql;
-    if(options.file){
+    if (options.file) {
         const filePath = safePath(basePath, options.file);
         sql = await fs.readFile(filePath, 'utf8');
-    }else{
+    } else {
         sql = options.query;
     }
     await deployerCtx.dbConnection.query(sql);
@@ -399,7 +399,7 @@ const validatorLoadVars = (options) => {
     return isPathValid(options.src, false)
 }
 const taskLoadVars = async (options, basePath, deployerCtx) => {
-    if(!validatorLoadVars(options)) throw new Error(`invalid options`);
+    if (!validatorLoadVars(options)) throw new Error(`invalid options`);
     
     const srcPath = safePath(basePath, options.src);
     const rawData = await fs.readFile(srcPath, 'utf8');

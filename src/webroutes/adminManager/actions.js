@@ -19,13 +19,13 @@ const nameRegex = citizenfxIDRegex;
  */
 module.exports = async function AdminManagerActions(ctx) {
     //Sanity check
-    if(isUndefined(ctx.params.action)){
+    if (isUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     let action = ctx.params.action;
 
     //Check permissions
-    if(!ctx.utils.checkPermission('manage.admins', modulename)){
+    if (!ctx.utils.checkPermission('manage.admins', modulename)) {
         return ctx.send({
             type: 'danger',
             message: `You don't have permission to execute this action.`
@@ -33,15 +33,15 @@ module.exports = async function AdminManagerActions(ctx) {
     }
 
     //Delegate to the specific action handler
-    if(action == 'add'){
+    if (action == 'add') {
         return await handleAdd(ctx);
-    }else if(action == 'edit'){
+    } else if (action == 'edit') {
         return await handleEdit(ctx);
-    }else if(action == 'delete'){
+    } else if (action == 'delete') {
         return await handleDelete(ctx);
-    }else if(action == 'getModal'){
+    } else if (action == 'getModal') {
         return await handleGetModal(ctx);
-    }else{
+    } else {
         return ctx.send({
             type: 'danger',
             message: 'Unknown action.'
@@ -57,12 +57,12 @@ module.exports = async function AdminManagerActions(ctx) {
  */
 async function handleAdd(ctx) {
     //Sanity check
-    if(
+    if (
         typeof ctx.request.body.name !== 'string' ||
         typeof ctx.request.body.citizenfxID !== 'string' ||
         typeof ctx.request.body.discordID !== 'string' ||
         isUndefined(ctx.request.body.permissions)
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
@@ -73,15 +73,15 @@ async function handleAdd(ctx) {
     let discordID = ctx.request.body.discordID.trim();
     let permissions = (Array.isArray(ctx.request.body.permissions))? ctx.request.body.permissions : [];
     permissions = permissions.filter((x)=>{ return typeof x === 'string'});
-    if(permissions.includes('all_permissions')) permissions = ['all_permissions'];
+    if (permissions.includes('all_permissions')) permissions = ['all_permissions'];
 
     //Validate & process fields
-    if(!nameRegex.test(name)){
+    if (!nameRegex.test(name)) {
         return ctx.send({type: 'danger', message: "Invalid username, must have between 3 and 20 characters."});
     }
     let citizenfxData = false;
-    if(citizenfxID.length){
-        if(!citizenfxIDRegex.test(citizenfxID)) return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
+    if (citizenfxID.length) {
+        if (!citizenfxIDRegex.test(citizenfxID)) return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
         try {
             const res = await axios({
                 url: `https://forum.cfx.re/u/${citizenfxID}.json`,
@@ -99,8 +99,8 @@ async function handleAdd(ctx) {
         }
     }
     let discordData = false;
-    if(discordID.length){
-        if(!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: "Invalid Discord ID"});
+    if (discordID.length) {
+        if (!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: "Invalid Discord ID"});
         discordData = {
             id: discordID,
             identifier: `discord:${discordID}`
@@ -125,12 +125,12 @@ async function handleAdd(ctx) {
  */
 async function handleEdit(ctx) {
     //Sanity check
-    if(
+    if (
         typeof ctx.request.body.name !== 'string' ||
         typeof ctx.request.body.citizenfxID !== 'string' ||
         typeof ctx.request.body.discordID !== 'string' ||
         isUndefined(ctx.request.body.permissions)
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
 
@@ -140,21 +140,21 @@ async function handleEdit(ctx) {
     const discordID = ctx.request.body.discordID.trim();
     const editingSelf = (ctx.session.auth.username.toLowerCase() === name.toLowerCase());
     let permissions;
-    if(!editingSelf){
-        if(Array.isArray(ctx.request.body.permissions)){
+    if (!editingSelf) {
+        if (Array.isArray(ctx.request.body.permissions)) {
             permissions = ctx.request.body.permissions.filter((x)=>{ return typeof x === 'string'});
-            if(permissions.includes('all_permissions')) permissions = ['all_permissions'];
-        }else{
+            if (permissions.includes('all_permissions')) permissions = ['all_permissions'];
+        } else {
             permissions = [];
         }        
-    }else{
+    } else {
         permissions = undefined;
     }
 
     //Validate & process fields
     let citizenfxData = false;
-    if(citizenfxID.length){
-        if(!citizenfxIDRegex.test(citizenfxID)) return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
+    if (citizenfxID.length) {
+        if (!citizenfxIDRegex.test(citizenfxID)) return ctx.send({type: 'danger', message: "Invalid CitizenFX ID"});
         try {
             const res = await axios({
                 url: `https://forum.cfx.re/u/${citizenfxID}.json`,
@@ -172,8 +172,8 @@ async function handleEdit(ctx) {
         }
     }
     let discordData = false;
-    if(discordID.length){
-        if(!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: "Invalid Discord ID"});
+    if (discordID.length) {
+        if (!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: "Invalid Discord ID"});
         discordData = {
             id: discordID,
             identifier: `discord:${discordID}`
@@ -182,10 +182,10 @@ async function handleEdit(ctx) {
 
     //Check if admin exists
     const admin = globals.authenticator.getAdminByName(name);
-    if(!admin) return ctx.send({type: 'danger', message: "Admin not found."});
+    if (!admin) return ctx.send({type: 'danger', message: "Admin not found."});
 
     //Check if editing an master admin
-    if(!ctx.session.auth.master && admin.master){
+    if (!ctx.session.auth.master && admin.master) {
         return ctx.send({type: 'danger', message: "You cannot edit an admin master."});
     }
 
@@ -207,25 +207,25 @@ async function handleEdit(ctx) {
  */
 async function handleDelete(ctx) {
     //Sanity check
-    if(
+    if (
         isUndefined(ctx.request.body.name) ||
         typeof ctx.request.body.name !== 'string'
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     let name = ctx.request.body.name.trim();
 
     //Check if editing himself
-    if(ctx.session.auth.username.toLowerCase() === name.toLowerCase()){
+    if (ctx.session.auth.username.toLowerCase() === name.toLowerCase()) {
         return ctx.send({type: 'danger', message: "You can't delete yourself."});
     }
 
     //Check if admin exists
     let admin = globals.authenticator.getAdminByName(name);
-    if(!admin) return ctx.send({type: 'danger', message: "Admin not found."});
+    if (!admin) return ctx.send({type: 'danger', message: "Admin not found."});
 
     //Check if editing an master admin
-    if(admin.master){
+    if (admin.master) {
         return ctx.send({type: 'danger', message: "You cannot delete an admin master."});
     }
 
@@ -247,10 +247,10 @@ async function handleDelete(ctx) {
  */
 async function handleGetModal(ctx) {
     //Sanity check
-    if(
+    if (
         isUndefined(ctx.request.body.name) ||
         typeof ctx.request.body.name !== 'string'
-    ){
+    ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const name = ctx.request.body.name.trim();
@@ -258,16 +258,16 @@ async function handleGetModal(ctx) {
 
     //Get admin data
     const admin = globals.authenticator.getAdminByName(name);
-    if(!admin) return ctx.send('Admin not found');
+    if (!admin) return ctx.send('Admin not found');
 
     //Check if editing an master admin
-    if(!ctx.session.auth.master && admin.master){
+    if (!ctx.session.auth.master && admin.master) {
         return ctx.send("You cannot edit an admin master.");
     }
 
     //Prepare permissions
     let permissions;
-    if(!editingSelf){
+    if (!editingSelf) {
         const allPermissions = Object.entries(globals.authenticator.getPermissionsList());
         permissions = allPermissions.map((perm) => {
             return {

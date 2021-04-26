@@ -68,7 +68,7 @@ module.exports = class Translator {
      * Refresh translator configurations
      * @param {string} phrases
      */
-    refreshConfig(phrases){
+    refreshConfig(phrases) {
         //Load language
         try {
             let polyglotOptions = {
@@ -97,13 +97,13 @@ module.exports = class Translator {
      * Loads a language file or throws Error.
      * @param {string} lang
      */
-    getLanguagePhrases(lang){
+    getLanguagePhrases(lang) {
         //If its a known language
-        if(typeof languages[lang] === 'object'){
+        if (typeof languages[lang] === 'object') {
             return languages[lang];
         
         //If its a custom language
-        }else if(lang === 'custom'){
+        } else if (lang === 'custom') {
             try {
                 return JSON.parse(fs.readFileSync(
                     `${GlobalData.dataPath}/locale/custom.json`,
@@ -114,7 +114,7 @@ module.exports = class Translator {
             }
 
         //If its an invalid language
-        }else{
+        } else {
             throw new Error(`Language not found.`);
         }
     }
@@ -126,8 +126,8 @@ module.exports = class Translator {
      * @param {string} key
      * @param {object} options
      */
-    t(key, options){
-        if(typeof options === 'undefined') options = {};
+    t(key, options) {
+        if (typeof options === 'undefined') options = {};
         try {
             return this.polyglot.t(key, options);
         } catch (error) {

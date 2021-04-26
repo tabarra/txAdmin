@@ -18,13 +18,13 @@ const filterIdentifiers = (idArr) => idArr.filter((id)=>{
  */
 module.exports = async function MasterActionsAction(ctx) {
     //Sanity check
-    if(isUndefined(ctx.params.action)){
+    if (isUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     const action = ctx.params.action;
 
     //Check permissions
-    if(!ctx.utils.checkPermission('master', modulename)){
+    if (!ctx.utils.checkPermission('master', modulename)) {
         return ctx.send({
             type: 'danger',
             message: `Only the master account has permission to view/use this page.`
@@ -32,20 +32,20 @@ module.exports = async function MasterActionsAction(ctx) {
     }
 
     //Delegate to the specific action functions
-    if(action == 'reset_fxserver'){
+    if (action == 'reset_fxserver') {
         return handleResetFXServer(ctx);
-    }else if(action == 'importBans'){
+    } else if (action == 'importBans') {
         const fileDbTypes = ['easyadmin', 'vmenu'];
         const dbmsDbTypes = ['bansql', 'vrp', 'el_bwh'];
-        if(fileDbTypes.includes(ctx.request.body.dbType)){
+        if (fileDbTypes.includes(ctx.request.body.dbType)) {
             return await handleImportBansFile(ctx, ctx.request.body.dbType);
-        }else if(dbmsDbTypes.includes(ctx.request.body.dbType)){
+        } else if (dbmsDbTypes.includes(ctx.request.body.dbType)) {
             return await handleImportBansDBMS(ctx, ctx.request.body.dbType);
-        }else{
+        } else {
             return ctx.send({type: 'danger', message: `Invalid database type.`});
         }
         
-    }else{
+    } else {
         return ctx.send({
             type: 'danger',
             message: 'Unknown settings action.'
@@ -60,7 +60,7 @@ module.exports = async function MasterActionsAction(ctx) {
  * @param {object} ctx
  */
 function handleResetFXServer(ctx) {
-    if(globals.fxRunner.fxChild !== null){
+    if (globals.fxRunner.fxChild !== null) {
         ctx.utils.logCommand(`STOP SERVER`);
         globals.fxRunner.killServer(ctx.session.auth.username);
     }
@@ -75,11 +75,11 @@ function handleResetFXServer(ctx) {
     const saveStatus = globals.configVault.saveProfile('fxRunner', newConfig);
 
     //Sending output
-    if(saveStatus){
+    if (saveStatus) {
         globals.fxRunner.refreshConfig();
         ctx.utils.logAction(`Resetting fxRunner settings.`);
         return ctx.send({success: true});
-    }else{
+    } else {
         logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error resetting fxRunner settings.`);
         return ctx.send({type: 'danger', message: `<strong>Error saving the configuration file.</strong>`});
     }
@@ -94,7 +94,7 @@ function handleResetFXServer(ctx) {
  */
 async function handleImportBansFile(ctx, dbType) {
     //Sanity check
-    if(isUndefined(ctx.request.body.banFile)){
+    if (isUndefined(ctx.request.body.banFile)) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     const banFilePath = ctx.request.body.banFile;
@@ -114,35 +114,35 @@ async function handleImportBansFile(ctx, dbType) {
         for (let index = 0; index < inBans.length; index++) {
             const ban = inBans[index];
             const identifiers = filterIdentifiers(ban.identifiers);
-            if(!identifiers.length){
+            if (!identifiers.length) {
                 invalid++;
                 continue;
             }
 
             let author, reason, expiration;
-            if(dbType == 'easyadmin'){
+            if (dbType == 'easyadmin') {
                 author = (typeof ban.banner == 'string' && ban.banner.length)? ban.banner.trim() : 'unknown';
                 reason = (typeof ban.reason == 'string' && ban.reason.length)? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
-                if(ban.expire == 10444633200){
+                if (ban.expire == 10444633200) {
                     expiration = false;
-                }else if(Number.isInteger(ban.expire)){
+                } else if (Number.isInteger(ban.expire)) {
                     expiration = ban.expire;
-                }else{
+                } else {
                     invalid++;
                     continue;
                 }
 
-            }else if(dbType == 'vmenu'){
+            } else if (dbType == 'vmenu') {
                 author = (typeof ban.bannedBy == 'string' && ban.bannedBy.length)? ban.bannedBy.trim() : 'unknown';
                 reason = (typeof ban.banReason == 'string' && ban.banReason.length)? `[IMPORTED] ${ban.banReason.trim()}` : '[IMPORTED] unknown';
-                if(ban.bannedUntil == '3000-01-01T00:00:00'){
+                if (ban.bannedUntil == '3000-01-01T00:00:00') {
                     expiration = false;
-                }else{
+                } else {
                     const expirationDate = new Date(ban.bannedUntil);
-                    if(expirationDate.toString() == 'Invalid Date'){
+                    if (expirationDate.toString() == 'Invalid Date') {
                         invalid++;
                         continue;
-                    }else{
+                    } else {
                         expiration = Math.round(expirationDate.getTime()/1000);
                     }
                 }
@@ -152,7 +152,7 @@ async function handleImportBansFile(ctx, dbType) {
             imported++;
         }// end for()
     } catch (error) {
-        if(GlobalData.verbose) dir(error)
+        if (GlobalData.verbose) dir(error)
         return ctx.utils.render('basic/generic', {message: `Failed to import bans with error: ${error.message}`});
     }
 
@@ -171,12 +171,12 @@ async function handleImportBansFile(ctx, dbType) {
  */
 async function handleImportBansDBMS(ctx, dbType) {
     //Sanity check
-    if(anyUndefined(
+    if (anyUndefined(
         ctx.request.body.dbHost,
         ctx.request.body.dbUsername,
         ctx.request.body.dbPassword,
         ctx.request.body.dbName
-    )){
+    )) {
         return ctx.utils.error(400, 'Invalid Request');
     }
 
@@ -192,13 +192,13 @@ async function handleImportBansDBMS(ctx, dbType) {
     let imported = 0;
     let invalid = 0;
     try {
-        if(dbType == 'bansql'){
+        if (dbType == 'bansql') {
             const [rows, _fields] = await dbConnection.execute(`SELECT * FROM banlist`);
             for (let index = 1; index < rows.length; index++) {
                 const ban = rows[index];
                 const tmpIdentifiers = [ban.identifier, ban.license, ban.liveid, ban.xblid, ban.discord];
                 const identifiers = filterIdentifiers(tmpIdentifiers);
-                if(!identifiers.length){
+                if (!identifiers.length) {
                     invalid++;
                     continue;
                 }
@@ -206,9 +206,9 @@ async function handleImportBansDBMS(ctx, dbType) {
                 const author = (typeof ban.sourceplayername == 'string' && ban.sourceplayername.length)? ban.sourceplayername.trim() : 'unknown';
                 const reason = (typeof ban.reason == 'string' && ban.reason.length)? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
                 let expiration;
-                if((typeof ban.permanent && ban.permanent) || !ban.expiration){
+                if ((typeof ban.permanent && ban.permanent) || !ban.expiration) {
                     expiration = false;
-                }else{
+                } else {
                     const expirationInt = parseInt(ban.expiration);
                     expiration = (Number.isNaN(expirationInt))? false : expirationInt;
                 }
@@ -216,7 +216,7 @@ async function handleImportBansDBMS(ctx, dbType) {
                 imported++;
             }
 
-        }else if(dbType == 'vrp'){
+        } else if (dbType == 'vrp') {
             const [rows, _fields] = await dbConnection.execute(`SELECT 
                     GROUP_CONCAT(vrp_user_ids.identifier SEPARATOR ', ') AS identifiers
                 FROM vrp_users 
@@ -226,7 +226,7 @@ async function handleImportBansDBMS(ctx, dbType) {
             for (let index = 0; index < rows.length; index++) {
                 const ban = rows[index];
                 const identifiers = filterIdentifiers(ban.identifiers.split(', '));
-                if(!identifiers.length){
+                if (!identifiers.length) {
                     invalid++;
                     continue;
                 }
@@ -234,39 +234,39 @@ async function handleImportBansDBMS(ctx, dbType) {
                 imported++;
             }
 
-        }else if(dbType == 'el_bwh'){
+        } else if (dbType == 'el_bwh') {
             const [rows, _fields] = await dbConnection.execute(`SELECT * FROM bwh_bans`);
 
             for (let index = 0; index < rows.length; index++) {
                 const ban = rows[index];
-                if(typeof ban.unbanned !== 'undefined' && ban.unbanned !== 0){
+                if (typeof ban.unbanned !== 'undefined' && ban.unbanned !== 0) {
                     //Just ignoring it
                     continue;
                 }
                 let dbIdentifiers;
                 try {
                     dbIdentifiers = JSON.parse(ban.receiver);
-                    if(!Array.isArray(dbIdentifiers)) throw new Error(`not an array`);
+                    if (!Array.isArray(dbIdentifiers)) throw new Error(`not an array`);
                 } catch (error) {
                     invalid++;
                     continue;
                 }
                 const identifiers = filterIdentifiers(dbIdentifiers);
-                if(!identifiers.length){
+                if (!identifiers.length) {
                     invalid++;
                     continue;
                 }
 
                 const reason = (typeof ban.reason == 'string' && ban.reason.length)? `[IMPORTED] ${ban.reason.trim()}` : '[IMPORTED] unknown';
                 let expiration;
-                if(ban.length == null){
+                if (ban.length == null) {
                     expiration = false;
-                }else{
+                } else {
                     const expirationDate = new Date(ban.length);
-                    if(expirationDate.toString() == 'Invalid Date'){
+                    if (expirationDate.toString() == 'Invalid Date') {
                         invalid++;
                         continue;
-                    }else{
+                    } else {
                         expiration = Math.round(expirationDate.getTime()/1000);
                     }
                 }
@@ -277,7 +277,7 @@ async function handleImportBansDBMS(ctx, dbType) {
         }
         
     } catch (error) {
-        if(GlobalData.verbose) dir(error)
+        if (GlobalData.verbose) dir(error)
         return ctx.utils.render('basic/generic', {message: `Failed to import bans with error: ${error.message}`});
     }
 

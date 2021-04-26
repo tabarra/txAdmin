@@ -15,10 +15,10 @@ const formatCommand = (cmd, ...params) => {
  * @param {object} ctx
  */
 module.exports = async function FXServerCommands(ctx) {
-    if(
+    if (
         typeof ctx.request.body.action === 'undefined' ||
         typeof ctx.request.body.parameter === 'undefined'
-    ){
+    ) {
         logWarn('Invalid request!');
         return sendAlertOutput(ctx, 'Invalid request!');
     }
@@ -26,7 +26,7 @@ module.exports = async function FXServerCommands(ctx) {
     let parameter = ctx.request.body.parameter;
 
     //Ignore commands when the server is offline
-    if(globals.fxRunner.fxChild === null){
+    if (globals.fxRunner.fxChild === null) {
         return ctx.send({
             type: 'danger',
             message: `<b>Cannot execute this action with the server offline.</b>`
@@ -35,7 +35,7 @@ module.exports = async function FXServerCommands(ctx) {
 
     //Block starting/restarting the 'runcode' resource
     let unsafeActions = ['restart_res', 'start_res', 'ensure_res'];
-    if(unsafeActions.includes(action) && parameter.includes('runcode')){
+    if (unsafeActions.includes(action) && parameter.includes('runcode')) {
         return ctx.send({
             type: 'danger',
             message: `<b>Error:</b> The resource "runcode" might be unsafe. <br> If you know what you are doing, run it via the Live Console.`
@@ -45,8 +45,8 @@ module.exports = async function FXServerCommands(ctx) {
 
     //==============================================
     //DEBUG: Only available in the /advanced page
-    if(action == 'profile_monitor'){
-        if(!ensurePermission(ctx, 'all_permissions')) return false;
+    if (action == 'profile_monitor') {
+        if (!ensurePermission(ctx, 'all_permissions')) return false;
         ctx.utils.logAction('Profiling txAdmin instance.');
         
         let profSeconds = 5;
@@ -66,20 +66,20 @@ module.exports = async function FXServerCommands(ctx) {
         return sendAlertOutput(ctx, 'Check your live console in a few seconds.');
 
     //==============================================
-    }else if(action == 'admin_broadcast'){
-        if(!ensurePermission(ctx, 'players.message')) return false;
+    } else if (action == 'admin_broadcast') {
+        if (!ensurePermission(ctx, 'players.message')) return false;
         let cmd = formatCommand('txaBroadcast', ctx.session.auth.username, parameter);
         ctx.utils.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(ctx, toResp);
 
     //==============================================
-    }else if(action == 'kick_all'){
-        if(!ensurePermission(ctx, 'players.kick')) return false;
+    } else if (action == 'kick_all') {
+        if (!ensurePermission(ctx, 'players.kick')) return false;
         let cmd;
-        if(parameter.length){
+        if (parameter.length) {
             cmd = formatCommand('txaKickAll', parameter);
-        }else{
+        } else {
             cmd = `txaKickAll "txAdmin Web Panel"`;
         }
         ctx.utils.logCommand(cmd);
@@ -87,56 +87,56 @@ module.exports = async function FXServerCommands(ctx) {
         return sendAlertOutput(ctx, toResp);
 
     //==============================================
-    }else if(action == 'restart_res'){
-        if(!ensurePermission(ctx, 'commands.resources')) return false;
+    } else if (action == 'restart_res') {
+        if (!ensurePermission(ctx, 'commands.resources')) return false;
         let cmd = formatCommand('restart', parameter);
         ctx.utils.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(ctx, toResp);
 
     //==============================================
-    }else if(action == 'start_res'){
-        if(!ensurePermission(ctx, 'commands.resources')) return false;
+    } else if (action == 'start_res') {
+        if (!ensurePermission(ctx, 'commands.resources')) return false;
         let cmd = formatCommand('start', parameter);
         ctx.utils.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(ctx, toResp);
 
     //==============================================
-    }else if(action == 'ensure_res'){
-        if(!ensurePermission(ctx, 'commands.resources')) return false;
+    } else if (action == 'ensure_res') {
+        if (!ensurePermission(ctx, 'commands.resources')) return false;
         let cmd = formatCommand('ensure', parameter);
         ctx.utils.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(ctx, toResp);
 
     //==============================================
-    }else if(action == 'stop_res'){
-        if(!ensurePermission(ctx, 'commands.resources')) return false;
+    } else if (action == 'stop_res') {
+        if (!ensurePermission(ctx, 'commands.resources')) return false;
         let cmd = formatCommand('stop', parameter);
         ctx.utils.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(ctx, toResp);
 
     //==============================================
-    }else if(action == 'refresh_res'){
-        if(!ensurePermission(ctx, 'commands.resources')) return false;
+    } else if (action == 'refresh_res') {
+        if (!ensurePermission(ctx, 'commands.resources')) return false;
         let cmd = `refresh`;
         ctx.utils.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
         return sendAlertOutput(ctx, toResp);
 
     //==============================================
-    }else if(action == 'check_txaclient'){
+    } else if (action == 'check_txaclient') {
         let cmd = `txaPing`;
         ctx.utils.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd, 512);
-        if(toResp.includes('Pong!')){
+        if (toResp.includes('Pong!')) {
             return ctx.send({
                 type: 'success',
                 message: `<b>txAdminClient is running!</b><br> <pre>${xss(toResp)}</pre>`
             });
-        }else{
+        } else {
             return ctx.send({
                 type: 'danger',
                 message: `<b>txAdminClient is not running!</b><br> <pre>${xss(toResp)}</pre>`
@@ -144,7 +144,7 @@ module.exports = async function FXServerCommands(ctx) {
         }
 
     //==============================================
-    }else{
+    } else {
         ctx.utils.logCommand('Unknown action!');
         return ctx.send({
             type: 'danger',
@@ -161,7 +161,7 @@ module.exports = async function FXServerCommands(ctx) {
  * @param {object} ctx
  * @param {string} msg
  */
-async function sendAlertOutput(ctx, toResp){
+async function sendAlertOutput(ctx, toResp) {
     toResp = (toResp.length)? xss(toResp) : 'no output';
     return ctx.send({
         type: 'warning',
@@ -176,10 +176,10 @@ async function sendAlertOutput(ctx, toResp){
  * @param {object} ctx
  * @param {string} perm
  */
-function ensurePermission(ctx, perm){
-    if(ctx.utils.checkPermission(perm, modulename)){
+function ensurePermission(ctx, perm) {
+    if (ctx.utils.checkPermission(perm, modulename)) {
         return true;
-    }else{
+    } else {
         ctx.send({
             type: 'danger',
             message: `You don't have permission to execute this action.`
