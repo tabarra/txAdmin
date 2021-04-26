@@ -16,8 +16,8 @@ const formatCommand = (cmd, ...params) => {
  */
 module.exports = async function FXServerCommands(ctx) {
     if (
-        typeof ctx.request.body.action === 'undefined' ||
-        typeof ctx.request.body.parameter === 'undefined'
+        typeof ctx.request.body.action === 'undefined'
+        || typeof ctx.request.body.parameter === 'undefined'
     ) {
         logWarn('Invalid request!');
         return sendAlertOutput(ctx, 'Invalid request!');
@@ -52,11 +52,11 @@ module.exports = async function FXServerCommands(ctx) {
         let profSeconds = 5;
         let savePath = `${globals.info.serverProfilePath}/data/txProfile.bin`;
         ExecuteCommand('profiler record start');
-        setTimeout(async ()=>{
+        setTimeout(async () => {
             ExecuteCommand('profiler record stop');
-            setTimeout(async ()=>{
+            setTimeout(async () => {
                 ExecuteCommand(`profiler save "${escape(savePath)}"`);
-                setTimeout(async ()=>{
+                setTimeout(async () => {
                     logOk(`Profile saved to: ${savePath}`);
                     let cmd = `profiler view "${escape(savePath)}"`;
                     globals.fxRunner.srvCmdBuffer(cmd);

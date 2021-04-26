@@ -51,9 +51,9 @@ module.exports = async function AddMaster(ctx) {
 async function handlePin(ctx) {
     //Sanity check
     if (
-        isUndefined(ctx.request.body.pin) ||
-        typeof ctx.request.body.pin !== 'string' ||
-        ctx.method != 'POST'
+        isUndefined(ctx.request.body.pin)
+        || typeof ctx.request.body.pin !== 'string'
+        || ctx.method != 'POST'
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -157,8 +157,8 @@ async function handleCallback(ctx) {
 async function handleSave(ctx) {
     //Sanity check
     if (
-        typeof ctx.request.body.password !== 'string' ||
-        typeof ctx.request.body.password2 !== 'string'
+        typeof ctx.request.body.password !== 'string'
+        || typeof ctx.request.body.password2 !== 'string'
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -175,8 +175,8 @@ async function handleSave(ctx) {
 
     //Checking if session is still present
     if (
-        typeof ctx.session.tmpAddMasterUserInfo === 'undefined' ||
-        typeof ctx.session.tmpAddMasterUserInfo.name !== 'string'
+        typeof ctx.session.tmpAddMasterUserInfo === 'undefined'
+        || typeof ctx.session.tmpAddMasterUserInfo.name !== 'string'
     ) {
         return returnJustMessage(
             ctx,

@@ -49,7 +49,7 @@ module.exports = class Translator {
             let phrases = this.getLanguagePhrases(this.language);
             let polyglotOptions = {
                 allowMissing: false,
-                onMissingKey: (key)=>{
+                onMissingKey: (key) => {
                     logError(`Missing key '${key}' from translation file.`, 'Translator');
                     return key;
                 },
@@ -73,7 +73,7 @@ module.exports = class Translator {
         try {
             let polyglotOptions = {
                 allowMissing: false,
-                onMissingKey: (key)=>{
+                onMissingKey: (key) => {
                     logError(`Missing key '${key}' from translation file.`, 'Translator');
                     return key;
                 },

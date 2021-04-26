@@ -72,10 +72,10 @@ module.exports = class DiscordBot {
      */
     async sendAnnouncement(message) {
         if (
-            !this.config.announceChannel ||
-            !this.client ||
-            this.client.status ||
-            !this.announceChannel
+            !this.config.announceChannel
+            || !this.client
+            || this.client.status
+            || !this.announceChannel
         ) {
             if (GlobalData.verbose) logWarn('returning false, not ready yet', 'sendAnnouncement');
             return false;
@@ -115,7 +115,7 @@ module.exports = class DiscordBot {
         this.client.on('ready', async () => {
             logOk(`Started and logged in as '${this.client.user.tag}'`);
             this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
-            this.announceChannel = this.client.channels.find(x => x.id === this.config.announceChannel);
+            this.announceChannel = this.client.channels.find((x) => x.id === this.config.announceChannel);
             if (!this.announceChannel) {
                 logError(`The announcements channel could not be found. Check the channel ID ${this.config.announceChannel}, or the bot permissions.`);
             } else if (currentMutex !== this.latestMutex) {
@@ -172,7 +172,7 @@ module.exports = class DiscordBot {
 
         //Check if its a recognized command
         const command = this.commands.get(commandName)
-                        || this.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+                        || this.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
         if (!command) return;
 
         //Check spam limiter

@@ -31,7 +31,7 @@ const windowsReleaseAsync = require('./windowsReleaseAsync');
 const printMultiline = (lines, color) => {
     const prefix = color('[txAdmin]');
     if (!Array.isArray(lines)) lines = lines.split('\n');
-    const message = lines.map(line => `${prefix} ${line}`);
+    const message = lines.map((line) => `${prefix} ${line}`);
     console.log(message.join('\n'));
 };
 
@@ -154,7 +154,7 @@ module.exports.printBanner = async () => {
     };
     const boxLines = [
         'All ready! Please access:',
-        ...addrs.map(addr => chalk.inverse(` http://${addr}:${GlobalData.txAdminPort}/ `)),
+        ...addrs.map((addr) => chalk.inverse(` http://${addr}:${GlobalData.txAdminPort}/ `)),
         ...adminPinLines,
     ];
     printMultiline(boxen(boxLines.join('\n'), boxOptions), chalk.bold.bgGreen);
@@ -164,8 +164,8 @@ module.exports.printBanner = async () => {
 
     //Opening page
     if (
-        GlobalData.osType === 'windows' &&
-        (urlSuffix || !GlobalData.isAdvancedUser)
+        GlobalData.osType === 'windows'
+        && (urlSuffix || !GlobalData.isAdvancedUser)
     ) {
         open(`http://localhost:${GlobalData.txAdminPort}/auth${urlSuffix}`).catch();
     }

@@ -8,7 +8,7 @@ const helpers = require('../../extras/helpers');
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
-const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')); };
+const anyUndefined = (...args) => { return [...args].some((x) => (typeof x === 'undefined')); };
 
 /**
  * Handle all the server control actions
@@ -57,9 +57,9 @@ module.exports = async function SettingsSave(ctx) {
 function handleGlobal(ctx) {
     //Sanity check
     if (
-        isUndefined(ctx.request.body.serverName) ||
-        isUndefined(ctx.request.body.language) ||
-        isUndefined(ctx.request.body.verbose)
+        isUndefined(ctx.request.body.serverName)
+        || isUndefined(ctx.request.body.language)
+        || isUndefined(ctx.request.body.verbose)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -107,12 +107,12 @@ function handleGlobal(ctx) {
 function handleFXServer(ctx) {
     //Sanity check
     if (
-        isUndefined(ctx.request.body.serverDataPath) ||
-        isUndefined(ctx.request.body.cfgPath) ||
-        isUndefined(ctx.request.body.commandLine) ||
-        isUndefined(ctx.request.body.onesync) ||
-        isUndefined(ctx.request.body.autostart) ||
-        isUndefined(ctx.request.body.quiet)
+        isUndefined(ctx.request.body.serverDataPath)
+        || isUndefined(ctx.request.body.cfgPath)
+        || isUndefined(ctx.request.body.commandLine)
+        || isUndefined(ctx.request.body.onesync)
+        || isUndefined(ctx.request.body.autostart)
+        || isUndefined(ctx.request.body.quiet)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -129,8 +129,8 @@ function handleFXServer(ctx) {
 
     //Validating path spaces
     if (
-        cfg.serverDataPath.includes(' ') ||
-        cfg.cfgPath.includes(' ')
+        cfg.serverDataPath.includes(' ')
+        || cfg.cfgPath.includes(' ')
     ) {
         return ctx.send({type: 'danger', message: 'The paths cannot contain spaces.'});
     }
@@ -327,11 +327,11 @@ function handleMonitor(ctx) {
 function handleDiscord(ctx) {
     //Sanity check
     if (
-        isUndefined(ctx.request.body.enabled) ||
-        isUndefined(ctx.request.body.token) ||
-        isUndefined(ctx.request.body.announceChannel) ||
-        isUndefined(ctx.request.body.prefix) ||
-        isUndefined(ctx.request.body.statusMessage)
+        isUndefined(ctx.request.body.enabled)
+        || isUndefined(ctx.request.body.token)
+        || isUndefined(ctx.request.body.announceChannel)
+        || isUndefined(ctx.request.body.prefix)
+        || isUndefined(ctx.request.body.statusMessage)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }

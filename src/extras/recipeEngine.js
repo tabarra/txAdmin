@@ -26,10 +26,10 @@ const pathCleanTrail = (pathInput) => {
 };
 const isPathValid = (pathInput, acceptRoot = true) => {
     return (
-        typeof pathInput == 'string' &&
-        pathInput.length &&
-        isPathLinear(pathInput) &&
-        (acceptRoot || !isPathRoot(pathInput))
+        typeof pathInput == 'string'
+        && pathInput.length
+        && isPathLinear(pathInput)
+        && (acceptRoot || !isPathRoot(pathInput))
     );
 };
 const replaceVars = (inputString, deployerCtx) => {
@@ -47,8 +47,8 @@ const replaceVars = (inputString, deployerCtx) => {
  */
 const validatorDownloadFile = (options) => {
     return (
-        typeof options.url == 'string' &&
-        isPathValid(options.path)
+        typeof options.url == 'string'
+        && isPathValid(options.path)
     );
 };
 const taskDownloadFile = async (options, basePath, deployerCtx) => {
@@ -81,10 +81,10 @@ const taskDownloadFile = async (options, basePath, deployerCtx) => {
 const githubRepoSourceRegex = /^((https?:\/\/github\.com\/)?|@)?([\w.\-_]+)\/([\w.\-_]+).*$/;
 const validatorDownloadGithub = (options) => {
     return (
-        typeof options.src == 'string' &&
-        isPathValid(options.dest, false) &&
-        (typeof options.ref == 'string' || typeof options.ref == 'undefined') &&
-        (typeof options.subpath == 'string' || typeof options.subpath == 'undefined')
+        typeof options.src == 'string'
+        && isPathValid(options.dest, false)
+        && (typeof options.ref == 'string' || typeof options.ref == 'undefined')
+        && (typeof options.subpath == 'string' || typeof options.subpath == 'undefined')
     );
 };
 const taskDownloadGithub = async (options, basePath, deployerCtx) => {
@@ -200,8 +200,8 @@ const taskEnsureDir = async (options, basePath, deployerCtx) => {
  */
 const validatorUnzip = (options) => {
     return (
-        isPathValid(options.src, false) &&
-        isPathValid(options.dest)
+        isPathValid(options.src, false)
+        && isPathValid(options.dest)
     );
 };
 const taskUnzip = async (options, basePath, deployerCtx) => {
@@ -222,8 +222,8 @@ const taskUnzip = async (options, basePath, deployerCtx) => {
  */
 const validatorMovePath = (options) => {
     return (
-        isPathValid(options.src, false) &&
-        isPathValid(options.dest, false)
+        isPathValid(options.src, false)
+        && isPathValid(options.dest, false)
     );
 };
 const taskMovePath = async (options, basePath, deployerCtx) => {
@@ -243,8 +243,8 @@ const taskMovePath = async (options, basePath, deployerCtx) => {
  */
 const validatorCopyPath = (options) => {
     return (
-        isPathValid(options.src) &&
-        isPathValid(options.dest)
+        isPathValid(options.src)
+        && isPathValid(options.dest)
     );
 };
 const taskCopyPath = async (options, basePath, deployerCtx) => {
@@ -263,9 +263,9 @@ const taskCopyPath = async (options, basePath, deployerCtx) => {
  */
 const validatorWriteFile = (options) => {
     return (
-        typeof options.data == 'string' &&
-        options.data.length &&
-        isPathValid(options.file, false)
+        typeof options.data == 'string'
+        && options.data.length
+        && isPathValid(options.file, false)
     );
 };
 const taskWriteFile = async (options, basePath, deployerCtx) => {
@@ -290,20 +290,20 @@ const taskWriteFile = async (options, basePath, deployerCtx) => {
 const validatorReplaceString = (options) => {
     //Validate file
     const fileList = (Array.isArray(options.file)) ? options.file : [options.file];
-    if (fileList.some(s => !isPathValid(s, false))) {
+    if (fileList.some((s) => !isPathValid(s, false))) {
         return false;
     }
 
     //Validate mode
     if (
-        typeof options.mode == 'undefined' ||
-        options.mode == 'template' ||
-        options.mode == 'literal'
+        typeof options.mode == 'undefined'
+        || options.mode == 'template'
+        || options.mode == 'literal'
     ) {
         return (
-            typeof options.search == 'string' &&
-            options.search.length &&
-            typeof options.replace == 'string'
+            typeof options.search == 'string'
+            && options.search.length
+            && typeof options.replace == 'string'
         );
     } else if (options.mode == 'all_vars') {
         return true;

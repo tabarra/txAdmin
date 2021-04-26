@@ -47,7 +47,7 @@ const validateTargetPath = async (deployPath) => {
 
     if (await fs.pathExists(deployPath)) {
         const pathFiles = await fs.readdir(deployPath);
-        if (pathFiles.some(x => x !== '.empty')) {
+        if (pathFiles.some((x) => x !== '.empty')) {
             throw new Error('This folder is not empty!');
         } else {
             if (await canCreateFile(deployPath)) {
@@ -124,11 +124,11 @@ const parseValidateRecipe = (rawRecipe) => {
     });
 
     //Process inputs
-    outRecipe.requireDBConfig = recipe.tasks.some(t => t.action.includes('database'));
+    outRecipe.requireDBConfig = recipe.tasks.some((t) => t.action.includes('database'));
     const protectedVarNames = ['licenseKey', 'dbHost', 'dbUsername', 'dbPassword', 'dbName', 'dbConnection'];
     if (typeof recipe.variables == 'object' && recipe.variables !== null) {
         const varNames = Object.keys(recipe.variables);
-        if (varNames.some(n => protectedVarNames.includes(n))) {
+        if (varNames.some((n) => protectedVarNames.includes(n))) {
             throw new Error('One or more of the variables declared in the recipe are not allowed.');
         }
         Object.assign(outRecipe.variables, recipe.variables);

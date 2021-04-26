@@ -7,7 +7,7 @@ const defaultAds = require('../../dynamicAds.json');
 
 //Helper
 const cleanAds = (ads) => {
-    return ads.map(ad => {
+    return ads.map((ad) => {
         if (ad.text) ad.text = xss(ad.text);
         return ad;
     });

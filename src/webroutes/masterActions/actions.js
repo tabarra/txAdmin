@@ -6,9 +6,9 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
-const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')); };
-const filterIdentifiers = (idArr) => idArr.filter((id)=>{
-    return (typeof id == 'string') && Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
+const anyUndefined = (...args) => { return [...args].some((x) => (typeof x === 'undefined')); };
+const filterIdentifiers = (idArr) => idArr.filter((id) => {
+    return (typeof id == 'string') && Object.values(GlobalData.validIdentifiers).some((vf) => vf.test(id));
 });
 
 

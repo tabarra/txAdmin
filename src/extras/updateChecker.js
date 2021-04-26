@@ -5,7 +5,7 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
-const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')); };
+const anyUndefined = (...args) => { return [...args].some((x) => (typeof x === 'undefined')); };
 
 /*
     TODO:

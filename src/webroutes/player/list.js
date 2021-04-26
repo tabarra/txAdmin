@@ -65,7 +65,7 @@ async function handleSearch(ctx, dbo) {
         const joinedValidIDKeys = Object.keys(GlobalData.validIdentifiers).join('|');
         const idsRegex = new RegExp(`((${joinedValidIDKeys}):\\w+)`, 'g');
         const idsArray = [...searchString.matchAll(idsRegex)]
-            .map(x => x[0])
+            .map((x) => x[0])
             .filter((e, i, arr) => {
                 return arr.indexOf(e) == i;
             });
@@ -73,7 +73,7 @@ async function handleSearch(ctx, dbo) {
         //IF searching for identifiers
         if (idsArray.length) {
             const actions = await dbo.get('actions')
-                .filter(a => idsArray.some((fi) => a.identifiers.includes(fi)))
+                .filter((a) => idsArray.some((fi) => a.identifiers.includes(fi)))
                 .take(512)
                 .cloneDeep()
                 .value();
@@ -81,8 +81,8 @@ async function handleSearch(ctx, dbo) {
 
             //NOTE: disabled due to the unexpected behavior of it finding players that do not have any of the identifiers being searched for
             let licensesArr = [];
-            actions.forEach(a => {
-                a.identifiers.forEach(id => {
+            actions.forEach((a) => {
+                a.identifiers.forEach((id) => {
                     if (id.substring(0, 8) == 'license:') {
                         licensesArr.push(id.substring(8));
                     }
@@ -91,7 +91,7 @@ async function handleSearch(ctx, dbo) {
             //TODO: adapt this for when we start saving all IDs for the players
             // const licensesArr = idsArray.filter(id => id.substring(0, 8) == "license:").map(id => id.substring(8));
             const players = await dbo.get('players')
-                .filter(p => licensesArr.includes(p.license))
+                .filter((p) => licensesArr.includes(p.license))
                 .take(512)
                 .cloneDeep()
                 .value();
@@ -111,10 +111,10 @@ async function handleSearch(ctx, dbo) {
                 outData.resActions = await processActionList([action]);
 
                 //TODO: adapt this for when we start saving all IDs for the players
-                const licensesArr = action.identifiers.filter(x => x.substring(0, 8) == 'license:').map(x => x.substring(8));
+                const licensesArr = action.identifiers.filter((x) => x.substring(0, 8) == 'license:').map((x) => x.substring(8));
                 if (licensesArr.length) {
                     const players = await dbo.get('players')
-                        .filter(p => licensesArr.includes(p.license))
+                        .filter((p) => licensesArr.includes(p.license))
                         .take(512)
                         .cloneDeep()
                         .value();
@@ -127,7 +127,7 @@ async function handleSearch(ctx, dbo) {
         //Likely searching for an partial name
         } else {
             const players = await dbo.get('players')
-                .filter(p => {
+                .filter((p) => {
                     return p.name && p.name.toLowerCase().includes(searchString.toLowerCase());
                 })
                 .take(512)
@@ -196,7 +196,7 @@ async function handleDefault(ctx, dbo) {
 async function getStats(dbo) {
     try {
         const actionStats = await dbo.get('actions')
-            .reduce((acc, a, ind)=>{
+            .reduce((acc, a, ind) => {
                 if (a.type == 'ban') {
                     acc.bans++;
                 } else if (a.type == 'warn') {
@@ -209,7 +209,7 @@ async function getStats(dbo) {
             .value();
 
         const playerStats = await dbo.get('players')
-            .reduce((acc, p, ind)=>{
+            .reduce((acc, p, ind) => {
                 acc.players++;
                 acc.playTime += p.playTime;
                 return acc;
@@ -287,7 +287,7 @@ async function getPendingWL(dbo, limit) {
         let lastWhitelistBlocks = pendingWL.map((x) => {
             x.time = dateFormat(new Date(x.tsLastAttempt * 1000), 'isoTime');
             if (x.name.length > maxNameSize) {
-                x.name = x.name.substring(0,maxNameSize - 3) + '...';
+                x.name = x.name.substring(0, maxNameSize - 3) + '...';
             }
             return x;
         });
@@ -416,8 +416,8 @@ async function processActionList(list) {
 async function processPlayerList(list) {
     if (!list) return [];
 
-    const activeLicenses = globals.playerController.activePlayers.map(p => p.license);
-    return list.map(p => {
+    const activeLicenses = globals.playerController.activePlayers.map((p) => p.license);
+    return list.map((p) => {
         return {
             name: p.name,
             license: p.license,

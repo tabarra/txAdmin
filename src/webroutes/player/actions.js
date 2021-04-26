@@ -6,10 +6,10 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000); };
-const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')); };
+const anyUndefined = (...args) => { return [...args].some((x) => (typeof x === 'undefined')); };
 const escape = (x) => {return x.replace(/"/g, '\uff02');};
 const formatCommand = (cmd, ...params) => {
-    return `${cmd} "` + [...params].map(c => c.toString()).map(escape).join('" "') + '"';
+    return `${cmd} "` + [...params].map((c) => c.toString()).map(escape).join('" "') + '"';
 };
 function ensurePermission(ctx, perm) {
     if (ctx.utils.checkPermission(perm, modulename)) {

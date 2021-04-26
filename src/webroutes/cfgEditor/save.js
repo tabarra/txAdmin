@@ -15,8 +15,8 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
 module.exports = async function CFGEditorSave(ctx) {
     //Sanity check
     if (
-        isUndefined(ctx.request.body.cfgData) ||
-        typeof ctx.request.body.cfgData !== 'string'
+        isUndefined(ctx.request.body.cfgData)
+        || typeof ctx.request.body.cfgData !== 'string'
     ) {
         return ctx.utils.error(400, 'Invalid Request');
     }

@@ -44,7 +44,7 @@ module.exports = class HostCPUStatus {
      */
     getSamples() {
         let currCpus = os.cpus();
-        for (var i = 0,len = currCpus.length;i < len;i++) {
+        for (var i = 0, len = currCpus.length;i < len;i++) {
             var prevCpu = this.prevCpus[i];
             var currCpu = currCpus[i];
             var deltas = {total:0};

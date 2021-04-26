@@ -134,7 +134,7 @@ async function handleSetVariables(ctx) {
     const admin = globals.authenticator.getAdminByName(ctx.session.auth.username);
     if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
     const addPrincipalLines = [];
-    Object.keys(admin.providers).forEach(providerName => {
+    Object.keys(admin.providers).forEach((providerName) => {
         if (admin.providers[providerName].identifier) {
             addPrincipalLines.push(`add_principal identifier.${admin.providers[providerName].identifier} group.admin #${ctx.session.auth.username}`);
         }

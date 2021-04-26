@@ -8,10 +8,10 @@ const {authLogic} = require('./requestAuthenticator');
 //Helpers
 const getIP = (socket) => {
     return (
-        socket &&
-        socket.request &&
-        socket.request.connection &&
-        socket.request.connection.remoteAddress
+        socket
+        && socket.request
+        && socket.request.connection
+        && socket.request.connection.remoteAddress
     ) ? socket.request.connection.remoteAddress : 'unknown';
 };
 

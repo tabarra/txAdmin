@@ -13,15 +13,15 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
 
 const getDirectories = (source) => {
     return fs.readdirSync(source, { withFileTypes: true })
-        .filter(dirent => dirent.isDirectory())
-        .map(dirent => dirent.name);
+        .filter((dirent) => dirent.isDirectory())
+        .map((dirent) => dirent.name);
 };
 
 const getPotentialServerDataFolders = (source) => {
     try {
         return getDirectories(source)
-            .filter(dirent => getDirectories(path.join(source, dirent)).includes('resources'))
-            .map(dirent => slash(path.join(source, dirent)) + '/');
+            .filter((dirent) => getDirectories(path.join(source, dirent)).includes('resources'))
+            .map((dirent) => slash(path.join(source, dirent)) + '/');
     } catch (error) {
         if (GlobalData.verbose) logWarn(`Failed to find server data folder with message: ${error.message}`);
         return [];
@@ -61,8 +61,8 @@ module.exports = async function SetupPost(ctx) {
 
     //Check if this is the correct state for the setup page
     if (
-        globals.deployer !== null ||
-        (globals.fxRunner.config.serverDataPath && globals.fxRunner.config.cfgPath)
+        globals.deployer !== null
+        || (globals.fxRunner.config.serverDataPath && globals.fxRunner.config.cfgPath)
     ) {
         return ctx.send({
             success: false,
@@ -222,8 +222,8 @@ async function handleValidateLocalDataFolder(ctx) {
 async function handleValidateCFGFile(ctx) {
     //Sanity check
     if (
-        isUndefined(ctx.request.body.dataFolder) ||
-        isUndefined(ctx.request.body.cfgFile)
+        isUndefined(ctx.request.body.dataFolder)
+        || isUndefined(ctx.request.body.cfgFile)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -263,9 +263,9 @@ async function handleValidateCFGFile(ctx) {
 async function handleSaveLocal(ctx) {
     //Sanity check
     if (
-        isUndefined(ctx.request.body.name) ||
-        isUndefined(ctx.request.body.dataFolder) ||
-        isUndefined(ctx.request.body.cfgFile)
+        isUndefined(ctx.request.body.name)
+        || isUndefined(ctx.request.body.dataFolder)
+        || isUndefined(ctx.request.body.cfgFile)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -344,11 +344,11 @@ async function handleSaveLocal(ctx) {
 async function handleSaveDeployerImport(ctx) {
     //Sanity check
     if (
-        isUndefined(ctx.request.body.name) ||
-        isUndefined(ctx.request.body.isTrustedSource) ||
-        isUndefined(ctx.request.body.recipeURL) ||
-        isUndefined(ctx.request.body.targetPath) ||
-        isUndefined(ctx.request.body.deploymentID)
+        isUndefined(ctx.request.body.name)
+        || isUndefined(ctx.request.body.isTrustedSource)
+        || isUndefined(ctx.request.body.recipeURL)
+        || isUndefined(ctx.request.body.targetPath)
+        || isUndefined(ctx.request.body.deploymentID)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -405,9 +405,9 @@ async function handleSaveDeployerImport(ctx) {
 async function handleSaveDeployerCustom(ctx) {
     //Sanity check
     if (
-        isUndefined(ctx.request.body.name) ||
-        isUndefined(ctx.request.body.targetPath) ||
-        isUndefined(ctx.request.body.deploymentID)
+        isUndefined(ctx.request.body.name)
+        || isUndefined(ctx.request.body.targetPath)
+        || isUndefined(ctx.request.body.deploymentID)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }

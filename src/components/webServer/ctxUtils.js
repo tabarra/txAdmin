@@ -29,31 +29,31 @@ const getWebViewPath = (view) => {
 };
 
 //Squirrelly Filters
-sqrl.filters.define('isSelected', (x)=>{
+sqrl.filters.define('isSelected', (x) => {
     return (x) ? 'selected' : '';
 });
-sqrl.filters.define('isActive', (x)=>{
+sqrl.filters.define('isActive', (x) => {
     return (x) ? 'active' : '';
 });
-sqrl.filters.define('tShow', (x)=>{
+sqrl.filters.define('tShow', (x) => {
     return (x) ? `show ${x}` : '';
 });
-sqrl.filters.define('isDisabled', (x)=>{
+sqrl.filters.define('isDisabled', (x) => {
     return (x) ? 'disabled' : '';
 });
-sqrl.filters.define('undef', (x)=>{
+sqrl.filters.define('undef', (x) => {
     return (isUndefined(x) || x == 'undefined') ? '' : x;
 });
-sqrl.filters.define('unnull', (x)=>{
+sqrl.filters.define('unnull', (x) => {
     return (isUndefined(x) || x == 'null') ? '' : x;
 });
-sqrl.filters.define('escapeBackTick', (x)=>{
+sqrl.filters.define('escapeBackTick', (x) => {
     return x.replace(/`/, '\\`');
 });
-sqrl.filters.define('base64', (x)=>{
+sqrl.filters.define('base64', (x) => {
     return Buffer.from(x).toString('base64');
 });
-sqrl.filters.define('ternary', (x)=>{
+sqrl.filters.define('ternary', (x) => {
     return (x[0]) ? x[1] : x[2];
 });
 
@@ -206,9 +206,9 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true) {
 
         //For all other permissions
         if (
-            ctx.session.auth.master === true ||
-            ctx.session.auth.permissions.includes('all_permissions') ||
-            ctx.session.auth.permissions.includes(perm)
+            ctx.session.auth.master === true
+            || ctx.session.auth.permissions.includes('all_permissions')
+            || ctx.session.auth.permissions.includes(perm)
         ) {
             return true;
         } else {

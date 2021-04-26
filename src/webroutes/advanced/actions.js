@@ -16,8 +16,8 @@ const now = () => { return Math.round(Date.now() / 1000); };
 module.exports = async function AdvancedActions(ctx) {
     //Sanity check
     if (
-        isUndefined(ctx.request.body.action) ||
-        isUndefined(ctx.request.body.parameter)
+        isUndefined(ctx.request.body.action)
+        || isUndefined(ctx.request.body.parameter)
     ) {
         logWarn('Invalid request!');
         return ctx.send({type: 'danger', message: '<strong>Invalid request :(</strong>'});
@@ -57,9 +57,9 @@ module.exports = async function AdvancedActions(ctx) {
         const filter = (x) => {
             return (
                 // (x.type == 'ban') &&
-                (x.type == 'ban' || x.type == 'whitelist') &&
-                (!x.expiration || x.expiration > ts) &&
-                (!x.revocation.timestamp)
+                (x.type == 'ban' || x.type == 'whitelist')
+                && (!x.expiration || x.expiration > ts)
+                && (!x.revocation.timestamp)
             );
         };
 
@@ -79,7 +79,7 @@ module.exports = async function AdvancedActions(ctx) {
         let memory;
         try {
             const usage = process.memoryUsage();
-            Object.keys(usage).forEach(prop => {
+            Object.keys(usage).forEach((prop) => {
                 usage[prop] = bytes(usage[prop]);
             });
             memory = JSON.stringify(usage, null, 2);
@@ -91,7 +91,7 @@ module.exports = async function AdvancedActions(ctx) {
         let outData;
         try {
             const currTime = Date.now();
-            const log = globals.databus.joinCheckHistory.map(e => {
+            const log = globals.databus.joinCheckHistory.map((e) => {
                 return {
                     when: humanizeDuration(currTime - e.ts, {round: true}),
                     playerName: e.playerName,

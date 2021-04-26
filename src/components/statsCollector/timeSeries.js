@@ -43,11 +43,11 @@ module.exports = class TimeSeries {
             oldData = JSON.parse(rawFile);
             oldData.filter((point) => {
                 return (
-                    !isUndefined(point.timestamp) &&
-                    Number.isInteger(point.timestamp) &&
-                    !isUndefined(point.data) &&
-                    Number.isInteger(point.data) &&
-                    now() - point.timestamp < window
+                    !isUndefined(point.timestamp)
+                    && Number.isInteger(point.timestamp)
+                    && !isUndefined(point.data)
+                    && Number.isInteger(point.data)
+                    && now() - point.timestamp < window
                 );
             });
         } catch (error) {
@@ -66,8 +66,8 @@ module.exports = class TimeSeries {
     async add(value) {
         let currTs = now();
         if (
-            !this.log.length ||
-            (currTs - this.log[this.log.length - 1].timestamp) > this.resolution
+            !this.log.length
+            || (currTs - this.log[this.log.length - 1].timestamp) > this.resolution
         ) {
             this.log.push({
                 timestamp: currTs,

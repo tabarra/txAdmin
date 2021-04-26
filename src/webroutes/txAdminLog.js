@@ -18,7 +18,7 @@ module.exports = async function txAdminLog(ctx) {
     //Console
     const rawConsoleLog = getLog();
     const consoleLogLines = [];
-    rawConsoleLog.forEach(logData => {
+    rawConsoleLog.forEach((logData) => {
         const ts = dateFormat(new Date(logData.ts * 1000), 'HH:MM:ss');
         const mark = `<mark class="consoleMark-${logData.type.toLowerCase()}">[${ts}][${logData.ctx}]</mark>`;
         consoleLogLines.push(`${mark}  ${xss(logData.msg)}`);

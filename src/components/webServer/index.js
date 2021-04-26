@@ -66,12 +66,12 @@ module.exports = class WebServer {
         this.app.use(ctxUtils);
         this.app.on('error', (error, ctx) => {
             if (
-                typeof error.code == 'string' &&
-                (
-                    error.code.startsWith('HPE_') ||
-                    error.code.startsWith('ECONN') ||
-                    error.code.startsWith('EPIPE') ||
-                    error.code.startsWith('ECANCELED')
+                typeof error.code == 'string'
+                && (
+                    error.code.startsWith('HPE_')
+                    || error.code.startsWith('ECONN')
+                    || error.code.startsWith('EPIPE')
+                    || error.code.startsWith('ECANCELED')
                 )
             ) {
                 if (GlobalData.verbose) {
@@ -119,10 +119,10 @@ module.exports = class WebServer {
                     ctx.status = 408;
                     ctx.body = desc;
                 } else {
-                    const desc = `[txAdmin v${GlobalData.txAdminVersion}] Internal Error\n` +
-                                 `Message: ${error.message}\n` +
-                                 `Route: ${ctx.path}\n` +
-                                 'Make sure your txAdmin is updated.';
+                    const desc = `[txAdmin v${GlobalData.txAdminVersion}] Internal Error\n`
+                                 + `Message: ${error.message}\n`
+                                 + `Route: ${ctx.path}\n`
+                                 + 'Make sure your txAdmin is updated.';
                     logError(desc, methodName);
                     if (GlobalData.verbose) dir(error);
                     ctx.status = 500;
@@ -218,7 +218,7 @@ module.exports = class WebServer {
 
         //HTTP Server
         try {
-            const listenErrorHandler = (error)=>{
+            const listenErrorHandler = (error) => {
                 if (error.code !== 'EADDRINUSE') return;
                 logError(`Failed to start HTTP server, port ${error.port} already in use.`);
                 logError('Maybe you already have another txAdmin running in this port.');

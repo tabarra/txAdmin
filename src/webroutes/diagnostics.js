@@ -133,7 +133,7 @@ async function getFXServerData() {
     }
 
     //Helper function
-    const getBuild = (ver)=>{
+    const getBuild = (ver) => {
         try {
             const regex = /v1\.0\.0\.(\d{4,5})\s*/;
             const res = regex.exec(ver);
@@ -238,9 +238,9 @@ async function gettxAdminData() {
     const controllerConfigs = globals.playerController.config;
     const httpCounter = globals.databus.txStatsData.httpCounter;
     const logFileSize = (
-        globals.fxRunner &&
-        globals.fxRunner.outputHandler &&
-        globals.fxRunner.outputHandler.logFileSize
+        globals.fxRunner
+        && globals.fxRunner.outputHandler
+        && globals.fxRunner.outputHandler.logFileSize
     ) ? globals.fxRunner.outputHandler.logFileSize : '--';
     return {
         //Stats

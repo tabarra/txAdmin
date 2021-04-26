@@ -8,11 +8,11 @@ let logHistory = [];
 const now = () => { return Math.round(Date.now() / 1000); };
 const getConCtx = (ctx) => { return (ctx !== null) ? header + ':' + ctx : header; };
 const getHistCtx = (ctx) => { return (ctx !== null) ? ctx : header; };
-const toHistory = (type, ctx, msg) =>{
+const toHistory = (type, ctx, msg) => {
     msg = msg.toString().replace(/\u001b\[\d+(;\d)?m/g, '');
     if (logHistory.length > 4000) {
         let sliceMsg = {ts: now(), type: 'ERROR', ctx: 'ConsoleLog', msg: 'The log was sliced to prevent memory exhaustion.'};
-        logHistory = logHistory.slice(0,500).concat(sliceMsg, logHistory.slice(-500));
+        logHistory = logHistory.slice(0, 500).concat(sliceMsg, logHistory.slice(-500));
     }
     return logHistory.push({ts: now(), type, ctx, msg});
 };
@@ -82,7 +82,7 @@ function dir(data) {
             console.log(`${chalk.redBright('[txAdmin Error]')} ${data.message}`);
             if (typeof data.type !== 'undefined') console.log(`${chalk.redBright('[txAdmin Error] Type:')} ${data.type}`);
             if (typeof data.code !== 'undefined') console.log(`${chalk.redBright('[txAdmin Error] Code:')} ${data.code}`);
-            data.stack.forEach(trace => {
+            data.stack.forEach((trace) => {
                 console.log(`    ${chalk.redBright('=>')} ${trace.file}:${trace.line} > ${chalk.yellowBright(trace.name || 'anonym')}`);
             });
         } catch (error) {
@@ -103,11 +103,11 @@ function dir(data) {
             }
         } else if (typeof data == 'object') {
             if (
-                !Object.keys(data).length &&
-                typeof data.toString == 'function' &&
-                data.constructor.name &&
-                data.constructor.name !== 'Object' &&
-                !Array.isArray(data)
+                !Object.keys(data).length
+                && typeof data.toString == 'function'
+                && data.constructor.name
+                && data.constructor.name !== 'Object'
+                && !Array.isArray(data)
             ) {
                 printData = chalk.keyword('moccasin').italic(`> ${data.constructor.name}.toString():\n`);
                 printData += chalk.white(data.toString());

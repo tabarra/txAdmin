@@ -118,9 +118,9 @@ module.exports = class FXRunner {
         }
         //Sanity Check
         if (
-            this.spawnVariables == null ||
-            typeof this.spawnVariables.command == 'undefined' ||
-            typeof this.spawnVariables.args == 'undefined'
+            this.spawnVariables == null
+            || typeof this.spawnVariables.command == 'undefined'
+            || typeof this.spawnVariables.args == 'undefined'
         ) {
             return logError('this.spawnVariables is not set.');
         }
@@ -389,14 +389,14 @@ module.exports = class FXRunner {
             throw new Error('This should NOT happen. Let\'s see how long people will take to find this...');
         } else if (!curr.timestamps.start) {
             let last = this.history[this.history.length - 2];
-            let pending = Object.keys(last.timestamps).filter(k => !curr.timestamps[k]);
+            let pending = Object.keys(last.timestamps).filter((k) => !curr.timestamps[k]);
             if (!pending.length) {
                 return 'spawn ready';
             } else {
                 return 'spawn awaiting last: ' + pending.join(', ');
             }
         } else if (curr.timestamps.kill) {
-            let pending = Object.keys(curr.timestamps).filter(k => !curr.timestamps[k]);
+            let pending = Object.keys(curr.timestamps).filter((k) => !curr.timestamps[k]);
             if (pending.length) {
                 return 'kill pending: ' + pending.join(', ');
             } else {

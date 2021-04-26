@@ -217,7 +217,7 @@ module.exports = class PlayerController {
         };
 
         try {
-            this.activePlayers.forEach(async p => {
+            this.activePlayers.forEach(async (p) => {
                 let sessionTime = now() - p.tsConnected;
 
                 //If its time to add this player to the database
@@ -301,7 +301,7 @@ module.exports = class PlayerController {
         try {
             return await this.dbo.get('actions')
                 .filter(filter)
-                .filter(a => idArray.some((fi) => a.identifiers.includes(fi)))
+                .filter((a) => idArray.some((fi) => a.identifiers.includes(fi)))
                 .cloneDeep()
                 .value();
         } catch (error) {
@@ -342,8 +342,8 @@ module.exports = class PlayerController {
         //Sanity checks
         if (typeof playerName !== 'string') throw new Error('playerName should be an string.');
         if (!Array.isArray(idArray)) throw new Error('Identifiers should be an array.');
-        idArray = idArray.filter((id)=>{
-            return Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
+        idArray = idArray.filter((id) => {
+            return Object.values(GlobalData.validIdentifiers).some((vf) => vf.test(id));
         });
         if (idArray.length < 1) throw new Error('Identifiers array must contain at least 1 valid identifier.');
 
@@ -352,9 +352,9 @@ module.exports = class PlayerController {
             const ts = now();
             const filter = (x) => {
                 return (
-                    (x.type == 'ban' || x.type == 'whitelist') &&
-                    (!x.expiration || x.expiration > ts) &&
-                    (!x.revocation.timestamp)
+                    (x.type == 'ban' || x.type == 'whitelist')
+                    && (!x.expiration || x.expiration > ts)
+                    && (!x.revocation.timestamp)
                 );
             };
             const hist = await this.getRegisteredActions(idArray, filter);
@@ -458,8 +458,8 @@ module.exports = class PlayerController {
         let identifiers;
         if (Array.isArray(reference)) {
             if (!reference.length) throw new Error('You must send at least one identifier');
-            const invalids = reference.filter((id)=>{
-                return (typeof id !== 'string') || !Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
+            const invalids = reference.filter((id) => {
+                return (typeof id !== 'string') || !Object.values(GlobalData.validIdentifiers).some((vf) => vf.test(id));
             });
             if (invalids.length) {
                 throw new Error('Invalid identifiers: ' + invalids.join(', '));
@@ -618,7 +618,7 @@ module.exports = class PlayerController {
         try {
             //Search player
             let target;
-            let ap = this.activePlayers.find(p => p.license === license);
+            let ap = this.activePlayers.find((p) => p.license === license);
             if (ap) {
                 target = ap;
             } else {
@@ -653,7 +653,7 @@ module.exports = class PlayerController {
      */
     getPlayerList() {
         try {
-            return this.activePlayers.map(p => {
+            return this.activePlayers.map((p) => {
                 return {
                     license: p.license,
                     id: p.id,
@@ -706,12 +706,12 @@ module.exports = class PlayerController {
 
                 //Basic struct
                 if (
-                    typeof p !== 'object' ||
-                    typeof p.name !== 'string' ||
-                    typeof p.id !== 'number' ||
-                    typeof p.license !== 'undefined' ||
-                    !Array.isArray(p.identifiers) ||
-                    !p.identifiers.length
+                    typeof p !== 'object'
+                    || typeof p.name !== 'string'
+                    || typeof p.id !== 'number'
+                    || typeof p.license !== 'undefined'
+                    || !Array.isArray(p.identifiers)
+                    || !p.identifiers.length
                 ) {
                     invalids++;
                     continue;
@@ -771,8 +771,8 @@ module.exports = class PlayerController {
                 //Make sure we are not adding the same user twice
                 if (!activePlayerLicenses.includes(player.license)) {
                     //Filter to only valid identifiers
-                    player.identifiers = player.identifiers.filter((id)=>{
-                        return Object.values(GlobalData.validIdentifiers).some(vf => vf.test(id));
+                    player.identifiers = player.identifiers.filter((id) => {
+                        return Object.values(GlobalData.validIdentifiers).some((vf) => vf.test(id));
                     });
                     //Check if he is already on the database
                     let dbPlayer = await this.getPlayer(license);

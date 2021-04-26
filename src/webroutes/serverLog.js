@@ -46,12 +46,12 @@ module.exports = async function ServerLog(ctx) {
  */
 function processLog(logArray) {
     let out = '';
-    logArray.forEach(event => {
+    logArray.forEach((event) => {
         if (
-            isUndefined(event.timestamp) ||
-            isUndefined(event.action) ||
-            isUndefined(event.source) ||
-            isUndefined(event.data)
+            isUndefined(event.timestamp)
+            || isUndefined(event.action)
+            || isUndefined(event.source)
+            || isUndefined(event.data)
         ) {
             return;
         }
@@ -72,9 +72,9 @@ function processLog(logArray) {
  */
 function processPlayerData(src) {
     if (
-        typeof src !== 'object' ||
-        typeof src.name !== 'string' ||
-        !Array.isArray(src.identifiers)
+        typeof src !== 'object'
+        || typeof src.name !== 'string'
+        || !Array.isArray(src.identifiers)
     ) {
         return '<span class="text-secondary event-source">unknown</span>';
     }
@@ -83,8 +83,8 @@ function processPlayerData(src) {
         return '<span class="text-dark event-source">CONSOLE</span>';
     }
 
-    let name = xss(src.name).replace(/"/g,'&quot;');
-    let identifiers = xss(src.identifiers.join(';')).replace(/"/g,'&quot;');
+    let name = xss(src.name).replace(/"/g, '&quot;');
+    let identifiers = xss(src.identifiers.join(';')).replace(/"/g, '&quot;');
     return `<a href="/serverLog#!" data-player-identifiers="${identifiers}" data-player-name="${name}" class="text-primary event-source">${name}</a>`;
 }
 

@@ -46,11 +46,11 @@ const parsePerf = (raw) => {
     }
 
     //Check perf validity
-    const invalid = Object.values(metrics).some(thread => {
+    const invalid = Object.values(metrics).some((thread) => {
         return (
-            !Number.isInteger(thread.count) ||
-            !Number.isFinite(thread.sum) ||
-            thread.buckets.length !== perfBuckets.length - 1
+            !Number.isInteger(thread.count)
+            || !Number.isFinite(thread.sum)
+            || thread.buckets.length !== perfBuckets.length - 1
         );
     });
     if (invalid.length) throw new Error(`there are ${invalid.length} invalid threads in /perf/ data`);
@@ -69,7 +69,7 @@ const diffPerfs = (newPerf, oldPerf = false) => {
         const zeros = {
             count: 0,
             sum: 0,
-            buckets: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+            buckets: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         };
         oldPerf = {
             svSync: zeros,
@@ -103,13 +103,13 @@ const diffPerfs = (newPerf, oldPerf = false) => {
  */
 const validatePerfThreadData = (threadData) => {
     return (
-        threadData &&
-        typeof threadData == 'object' &&
-        typeof threadData.count == 'number' &&
-        typeof threadData.sum == 'number' &&
-        Array.isArray(threadData.buckets) &&
-        threadData.buckets.length == 15 &&
-        threadData.buckets.every(b => typeof b == 'number')
+        threadData
+        && typeof threadData == 'object'
+        && typeof threadData.count == 'number'
+        && typeof threadData.sum == 'number'
+        && Array.isArray(threadData.buckets)
+        && threadData.buckets.length == 15
+        && threadData.buckets.every((b) => typeof b == 'number')
     );
 };
 
@@ -121,15 +121,15 @@ const validatePerfThreadData = (threadData) => {
 const validatePerfCacheData = (perfCache) => {
     return perfCache.every((s) => {
         return (
-            typeof s.ts == 'number' &&
-            typeof s.mainTickCounter == 'number' &&
-            typeof s.clients == 'number' &&
-            validatePerfThreadData(s.perfSrc.svSync) &&
-            validatePerfThreadData(s.perfSrc.svNetwork) &&
-            validatePerfThreadData(s.perfSrc.svMain) &&
-            validatePerfThreadData(s.perf.svSync) &&
-            validatePerfThreadData(s.perf.svNetwork) &&
-            validatePerfThreadData(s.perf.svMain)
+            typeof s.ts == 'number'
+            && typeof s.mainTickCounter == 'number'
+            && typeof s.clients == 'number'
+            && validatePerfThreadData(s.perfSrc.svSync)
+            && validatePerfThreadData(s.perfSrc.svNetwork)
+            && validatePerfThreadData(s.perfSrc.svMain)
+            && validatePerfThreadData(s.perf.svSync)
+            && validatePerfThreadData(s.perf.svNetwork)
+            && validatePerfThreadData(s.perf.svMain)
         );
     });
 };

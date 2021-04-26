@@ -21,7 +21,7 @@ const logDie = (x) => {
     logError(x);
     process.exit(1);
 };
-const getBuild = (ver)=>{
+const getBuild = (ver) => {
     try {
         const res = /v1\.0\.0\.(\d{4,5})\s*/.exec(ver);
         return parseInt(res[1]);

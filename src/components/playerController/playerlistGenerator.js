@@ -5,7 +5,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helpers
 const randIndex = (arr) => Math.floor(Math.random() * arr.length);
-const unDups = (arr) => arr.filter((v,i) => arr.indexOf(v) === i);
+const unDups = (arr) => arr.filter((v, i) => arr.indexOf(v) === i);
 
 /**
  * NOTE: This is an fake playerlist generator, intended to help me test many
@@ -29,7 +29,7 @@ module.exports = class PlayerlistGenerator {
         };
 
         //Starting data
-        this.indexes = [0,1,2,3,4,5,6,7];
+        this.indexes = [0, 1, 2, 3, 4, 5, 6, 7];
         this.playerlist = [];
         const refreshFunc = (GlobalData.debugExternalSource) ? this.refreshPlayersExternal.bind(this) : this.refreshPlayersStatic.bind(this);
 
@@ -65,12 +65,12 @@ module.exports = class PlayerlistGenerator {
 
         //Fill an array with the players
         let out = [];
-        this.indexes.forEach(ind => {
+        this.indexes.forEach((ind) => {
             out.push(this.config.srcPlayerlist[ind]);
         });
 
         //Update player's pings
-        out.forEach(p => {
+        out.forEach((p) => {
             let newPing = p.ping + parseInt(Math.random() * 40) - 20;
             p.ping  = (newPing > 10) ? newPing : 10;
         });

@@ -6,7 +6,7 @@ const bytes = require('bytes');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
-const anyUndefined = (...args) => { return [...args].some(x => (typeof x === 'undefined')); };
+const anyUndefined = (...args) => { return [...args].some((x) => (typeof x === 'undefined')); };
 const deferError = (m, t = 500) => {
     setTimeout(() => {
         logError(m);
@@ -178,14 +178,14 @@ module.exports = class OutputHandler {
     saveLog() {
         if (!this.fileBuffer.length) return;
         let cleanBuff = this.fileBuffer.replace(/\u001b\[\d+(;\d)?m/g, '');
-        fs.appendFile(this.logPath, cleanBuff, {encoding: 'utf8'}, (error)=>{
+        fs.appendFile(this.logPath, cleanBuff, {encoding: 'utf8'}, (error) => {
             if (error) {
                 if (GlobalData.verbose) logError(`File Write Buffer error: ${error.message}`);
             } else {
                 this.fileBuffer = '';
             }
         });
-        fs.stat(this.logPath, (error, stats)=>{
+        fs.stat(this.logPath, (error, stats) => {
             if (error) {
                 if (GlobalData.verbose) logError(`Log File get stats error: ${error.message}`);
             } else {

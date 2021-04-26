@@ -58,10 +58,10 @@ module.exports = async function AdminManagerActions(ctx) {
 async function handleAdd(ctx) {
     //Sanity check
     if (
-        typeof ctx.request.body.name !== 'string' ||
-        typeof ctx.request.body.citizenfxID !== 'string' ||
-        typeof ctx.request.body.discordID !== 'string' ||
-        isUndefined(ctx.request.body.permissions)
+        typeof ctx.request.body.name !== 'string'
+        || typeof ctx.request.body.citizenfxID !== 'string'
+        || typeof ctx.request.body.discordID !== 'string'
+        || isUndefined(ctx.request.body.permissions)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -72,7 +72,7 @@ async function handleAdd(ctx) {
     let citizenfxID = ctx.request.body.citizenfxID.trim();
     let discordID = ctx.request.body.discordID.trim();
     let permissions = (Array.isArray(ctx.request.body.permissions)) ? ctx.request.body.permissions : [];
-    permissions = permissions.filter((x)=>{ return typeof x === 'string';});
+    permissions = permissions.filter((x) => { return typeof x === 'string';});
     if (permissions.includes('all_permissions')) permissions = ['all_permissions'];
 
     //Validate & process fields
@@ -126,10 +126,10 @@ async function handleAdd(ctx) {
 async function handleEdit(ctx) {
     //Sanity check
     if (
-        typeof ctx.request.body.name !== 'string' ||
-        typeof ctx.request.body.citizenfxID !== 'string' ||
-        typeof ctx.request.body.discordID !== 'string' ||
-        isUndefined(ctx.request.body.permissions)
+        typeof ctx.request.body.name !== 'string'
+        || typeof ctx.request.body.citizenfxID !== 'string'
+        || typeof ctx.request.body.discordID !== 'string'
+        || isUndefined(ctx.request.body.permissions)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -142,7 +142,7 @@ async function handleEdit(ctx) {
     let permissions;
     if (!editingSelf) {
         if (Array.isArray(ctx.request.body.permissions)) {
-            permissions = ctx.request.body.permissions.filter((x)=>{ return typeof x === 'string';});
+            permissions = ctx.request.body.permissions.filter((x) => { return typeof x === 'string';});
             if (permissions.includes('all_permissions')) permissions = ['all_permissions'];
         } else {
             permissions = [];
@@ -208,8 +208,8 @@ async function handleEdit(ctx) {
 async function handleDelete(ctx) {
     //Sanity check
     if (
-        isUndefined(ctx.request.body.name) ||
-        typeof ctx.request.body.name !== 'string'
+        isUndefined(ctx.request.body.name)
+        || typeof ctx.request.body.name !== 'string'
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -248,8 +248,8 @@ async function handleDelete(ctx) {
 async function handleGetModal(ctx) {
     //Sanity check
     if (
-        isUndefined(ctx.request.body.name) ||
-        typeof ctx.request.body.name !== 'string'
+        isUndefined(ctx.request.body.name)
+        || typeof ctx.request.body.name !== 'string'
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }

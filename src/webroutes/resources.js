@@ -13,7 +13,7 @@ const dynamicSort = (prop) => {
         sortOrder = -1;
         prop = prop.substr(1);
     }
-    return function (a,b) {
+    return function (a, b) {
         var result = (a[prop] < b[prop]) ? -1 : (a[prop] > b[prop]) ? 1 : 0;
         return result * sortOrder;
     };
@@ -63,9 +63,9 @@ module.exports = async function Resources(ctx) {
     const tList = new Promise((resolve, reject) => {
         tListTimer = setInterval(() => {
             if (
-                globals.databus.resourcesList !== null &&
-                (new Date() - globals.databus.resourcesList.timestamp) <= 1000 &&
-                Array.isArray(globals.databus.resourcesList.data)
+                globals.databus.resourcesList !== null
+                && (new Date() - globals.databus.resourcesList.timestamp) <= 1000
+                && Array.isArray(globals.databus.resourcesList.data)
             ) {
                 clearTimeout(tListTimer);
                 clearTimeout(tErrorTimer);
@@ -103,7 +103,7 @@ module.exports = async function Resources(ctx) {
 function processResources(resList) {
     //Clean resource data and add it so an object separated by subpaths
     let resGroupList = {};
-    resList.forEach(resource =>{
+    resList.forEach((resource) => {
         if (isUndefined(resource.name) || isUndefined(resource.status) || isUndefined(resource.path) || resource.path === '') {
             return;
         }
@@ -128,7 +128,7 @@ function processResources(resList) {
 
     //Generate final array with subpaths and div ids
     let finalList = [];
-    Object.keys(resGroupList).forEach(subPath => {
+    Object.keys(resGroupList).forEach((subPath) => {
         let subPathData = {
             subPath: subPath,
             divName: subPath.replace(/[\W%]/g, ''),

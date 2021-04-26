@@ -109,9 +109,9 @@ module.exports = class Monitor {
         ).sort((a, b) => b - a);
 
         const schedule = [];
-        times.forEach((time)=>{
+        times.forEach((time) => {
             try {
-                warnTimes.forEach((mins)=>{
+                warnTimes.forEach((mins) => {
                     schedule.push(getScheduleObj(time.hour, time.minute, mins, this.config.restarterScheduleWarnings.includes(mins)));
                 });
                 schedule.push({
@@ -127,7 +127,7 @@ module.exports = class Monitor {
             }
         });
 
-        if (GlobalData.verbose) dir(schedule.map(el => { return el.messages; }));
+        if (GlobalData.verbose) dir(schedule.map((el) => { return el.messages; }));
         this.schedule = (schedule.length) ? schedule : false;
     }
 
@@ -264,10 +264,10 @@ module.exports = class Monitor {
 
         //Checking for the maxClients
         if (
-            GlobalData.deployerDefaults &&
-            GlobalData.deployerDefaults.maxClients &&
-            dynamicResp &&
-            dynamicResp.sv_maxclients
+            GlobalData.deployerDefaults
+            && GlobalData.deployerDefaults.maxClients
+            && dynamicResp
+            && dynamicResp.sv_maxclients
         ) {
             const maxClients = parseInt(dynamicResp.sv_maxclients);
             if (!isNaN(maxClients) && maxClients > GlobalData.deployerDefaults.maxClients) {
@@ -320,8 +320,8 @@ module.exports = class Monitor {
 
         //Check if its online and return
         if (
-            this.lastSuccessfulHealthCheck && !healthCheckFailed &&
-            anySuccessfulHeartBeat && !heartBeatFailed
+            this.lastSuccessfulHealthCheck && !healthCheckFailed
+            && anySuccessfulHeartBeat && !heartBeatFailed
         ) {
             this.currentStatus = 'ONLINE';
             if (this.hasServerStartedYet == false) {
@@ -367,9 +367,9 @@ module.exports = class Monitor {
 
         //If http partial crash, warn 1 minute before
         if (
-            !(elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit) &&
-            !this.healthCheckRestartWarningIssued &&
-            elapsedHealthCheck > (this.hardConfigs.healthCheck.failLimit - 60)
+            !(elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit)
+            && !this.healthCheckRestartWarningIssued
+            && elapsedHealthCheck > (this.hardConfigs.healthCheck.failLimit - 60)
         ) {
             globals.discordBot.sendAnnouncement(globals.translator.t(
                 'restarter.partial_crash_warn_discord',
@@ -383,9 +383,9 @@ module.exports = class Monitor {
         //Give a bit more time to the very very slow servers to come up
         //They usually start replying to healthchecks way before sending heartbeats
         if (
-            anySuccessfulHeartBeat === false &&
-            processUptime < this.hardConfigs.maxHBCooldownTolerance &&
-            elapsedHealthCheck < this.hardConfigs.healthCheck.failLimit
+            anySuccessfulHeartBeat === false
+            && processUptime < this.hardConfigs.maxHBCooldownTolerance
+            && elapsedHealthCheck < this.hardConfigs.healthCheck.failLimit
         ) {
             if (processUptime % 15 == 0) logWarn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
             return;
@@ -393,8 +393,8 @@ module.exports = class Monitor {
 
         //Check if already over the limit
         if (
-            elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit ||
-            elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit
+            elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit
+            || elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit
         ) {
             if (anySuccessfulHeartBeat === false) {
                 globals.databus.txStatsData.bootSeconds.push(false);
@@ -425,9 +425,9 @@ module.exports = class Monitor {
         if (source === 'fd3') {
             //Processing stats
             if (
-                this.lastSuccessfulHTTPHeartBeat &&
-                tsNow - this.lastSuccessfulHTTPHeartBeat > 15 &&
-                tsNow - this.lastSuccessfulFD3HeartBeat < 5
+                this.lastSuccessfulHTTPHeartBeat
+                && tsNow - this.lastSuccessfulHTTPHeartBeat > 15
+                && tsNow - this.lastSuccessfulFD3HeartBeat < 5
             ) {
                 globals.databus.txStatsData.heartBeatStats.httpFailed++;
             }
@@ -440,7 +440,7 @@ module.exports = class Monitor {
             }
 
             //Processing playerlist
-            const playerList = postData.players.map(player => {
+            const playerList = postData.players.map((player) => {
                 player.id = parseInt(player.id);
                 return player;
             });
@@ -448,9 +448,9 @@ module.exports = class Monitor {
 
             //Processing stats
             if (
-                this.lastSuccessfulFD3HeartBeat &&
-                tsNow - this.lastSuccessfulFD3HeartBeat > 15 &&
-                tsNow - this.lastSuccessfulHTTPHeartBeat < 5
+                this.lastSuccessfulFD3HeartBeat
+                && tsNow - this.lastSuccessfulFD3HeartBeat > 15
+                && tsNow - this.lastSuccessfulHTTPHeartBeat < 5
             ) {
                 globals.databus.txStatsData.heartBeatStats.fd3Failed++;
             }

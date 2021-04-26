@@ -59,7 +59,7 @@ module.exports = async function PlayerModal(ctx) {
     };
 
     //Locating player
-    const activePlayer = cloneDeep(globals.playerController.activePlayers).find(player => player.license === license);
+    const activePlayer = cloneDeep(globals.playerController.activePlayers).find((player) => player.license === license);
 
     //Setting up output
     const controllerConfigs = globals.playerController.config;

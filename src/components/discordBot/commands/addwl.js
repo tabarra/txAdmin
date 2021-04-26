@@ -19,9 +19,9 @@ module.exports = {
             return await message.reply('your Discord ID is not registered in txAdmin :face_with_monocle:');
         }
         if (
-            admin.master !== true &&
-            !admin.permissions.includes('all_permissions') &&
-            !admin.permissions.includes('players.whitelist')
+            admin.master !== true
+            && !admin.permissions.includes('all_permissions')
+            && !admin.permissions.includes('players.whitelist')
         ) {
             return await message.reply('you do not have whitelist permissions :face_with_raised_eyebrow:');
         }
@@ -55,8 +55,8 @@ module.exports = {
 
         //Check input validity
         if (
-            !GlobalData.regexWhitelistReqID.test(reference) &&
-            !/[0-9A-Fa-f]{40}/.test(reference)
+            !GlobalData.regexWhitelistReqID.test(reference)
+            && !/[0-9A-Fa-f]{40}/.test(reference)
         ) {
             return await message.reply('The value inserted is not a valid Whitelist Request ID (R####) nor a license identifier.');
         }

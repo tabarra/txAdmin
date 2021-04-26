@@ -146,9 +146,9 @@ module.exports = class StatsCollector {
 
         //Check skip rules
         if (
-            lastSnap &&
-            getEpoch(cfg.resolution, lastSnap.ts) == getEpoch(cfg.resolution) &&
-            now - lastSnap.ts < cfg.resolution * 60 * 1000
+            lastSnap
+            && getEpoch(cfg.resolution, lastSnap.ts) == getEpoch(cfg.resolution)
+            && now - lastSnap.ts < cfg.resolution * 60 * 1000
         ) {
             if (GlobalData.verbose) log('Skipping perf collection due to resolution');
             return;
@@ -159,18 +159,18 @@ module.exports = class StatsCollector {
         const currPerfRaw = await got(`http://${sourceURL}/perf/`, {timeout: 1500}).text();
         const currPerfData = parsePerf(currPerfRaw);
         if (
-            !validatePerfThreadData(currPerfData.svSync) ||
-            !validatePerfThreadData(currPerfData.svNetwork) ||
-            !validatePerfThreadData(currPerfData.svMain)
+            !validatePerfThreadData(currPerfData.svSync)
+            || !validatePerfThreadData(currPerfData.svNetwork)
+            || !validatePerfThreadData(currPerfData.svMain)
         ) {
             throw new Error('invalid or incomplete /perf/ response');
         }
 
         //Process performance data
         const islinear = (
-            lastSnap &&
-            now - lastSnap.ts <= cfg.resolution * 60 * 1000 * 4 && //resolution time in ms * 4 -- just in case there is some lag
-            lastSnap.mainTickCounter < currPerfData.svMain.count
+            lastSnap
+            && now - lastSnap.ts <= cfg.resolution * 60 * 1000 * 4 //resolution time in ms * 4 -- just in case there is some lag
+            && lastSnap.mainTickCounter < currPerfData.svMain.count
         );
         const currPerfDiff = diffPerfs(currPerfData, (islinear) ? lastSnap.perfSrc : false);
         Object.keys(currPerfDiff).forEach((thread) => {

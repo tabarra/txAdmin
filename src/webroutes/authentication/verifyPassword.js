@@ -35,7 +35,7 @@ module.exports = async function AuthVerify(ctx) {
         }
 
         //Setting up session
-        const providerWithPicture = Object.values(admin.providers).find(provider => provider.data && provider.data.picture);
+        const providerWithPicture = Object.values(admin.providers).find((provider) => provider.data && provider.data.picture);
         ctx.session.auth = {
             username: admin.name,
             picture: (providerWithPicture) ? providerWithPicture.data.picture : undefined,

@@ -16,8 +16,8 @@ const returnJustMessage = (ctx, errorTitle, errorMessage) => {
 module.exports = async function ProviderCallback(ctx) {
     //Sanity check
     if (
-        isUndefined(ctx.params.provider) ||
-        isUndefined(ctx.query.state)
+        isUndefined(ctx.params.provider)
+        || isUndefined(ctx.query.state)
     ) {
         return ctx.utils.error(400, 'Invalid Request');
     }

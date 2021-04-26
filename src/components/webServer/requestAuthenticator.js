@@ -10,8 +10,8 @@ const requestAuth = (epType) => {
     //Intercom auth function
     const intercomAuth = async (ctx, next) => {
         if (
-            typeof ctx.request.body.txAdminToken !== 'undefined' &&
-            ctx.request.body.txAdminToken === globals.webServer.intercomToken
+            typeof ctx.request.body.txAdminToken !== 'undefined'
+            && ctx.request.body.txAdminToken === globals.webServer.intercomToken
         ) {
             await next();
         } else {
@@ -20,7 +20,7 @@ const requestAuth = (epType) => {
     };
 
     //Normal auth function
-    const normalAuth = async (ctx, next) =>{
+    const normalAuth = async (ctx, next) => {
         const {isValidAuth} = authLogic(ctx.session, true, epType);
 
         if (!isValidAuth) {
@@ -39,7 +39,7 @@ const requestAuth = (epType) => {
     };
 
     //Socket auth function
-    const socketAuth = async (socket, next) =>{
+    const socketAuth = async (socket, next) => {
         const {isValidAuth} = authLogic(socket.session, true, epType);
 
         if (isValidAuth) {
@@ -77,9 +77,9 @@ const authLogic = (sess, perm, epType) => {
     let isValidAuth = false;
     let isValidPerm = false;
     if (
-        typeof sess.auth !== 'undefined' &&
-        typeof sess.auth.username !== 'undefined' &&
-        typeof sess.auth.expires_at !== 'undefined'
+        typeof sess.auth !== 'undefined'
+        && typeof sess.auth.username !== 'undefined'
+        && typeof sess.auth.expires_at !== 'undefined'
     ) {
         let now = Math.round(Date.now() / 1000);
         if (sess.auth.expires_at === false || now < sess.auth.expires_at) {
@@ -87,14 +87,14 @@ const authLogic = (sess, perm, epType) => {
                 let admin = globals.authenticator.getAdminByName(sess.auth.username);
                 if (admin) {
                     if (
-                        typeof sess.auth.password_hash == 'string' &&
-                        admin.password_hash == sess.auth.password_hash
+                        typeof sess.auth.password_hash == 'string'
+                        && admin.password_hash == sess.auth.password_hash
                     ) {
                         isValidAuth = true;
                     } else if (
-                        typeof sess.auth.provider == 'string' &&
-                        typeof admin.providers[sess.auth.provider] == 'object' &&
-                        sess.auth.provider_uid == admin.providers[sess.auth.provider].id
+                        typeof sess.auth.provider == 'string'
+                        && typeof admin.providers[sess.auth.provider] == 'object'
+                        && sess.auth.provider_uid == admin.providers[sess.auth.provider].id
                     ) {
                         isValidAuth = true;
                     }
@@ -104,9 +104,9 @@ const authLogic = (sess, perm, epType) => {
                     sess.auth.isTempPassword = (typeof admin.password_temporary !== 'undefined');
 
                     isValidPerm = (perm === true || (
-                        admin.master === true ||
-                        admin.permissions.includes('all_permissions') ||
-                        admin.permissions.includes(perm)
+                        admin.master === true
+                        || admin.permissions.includes('all_permissions')
+                        || admin.permissions.includes(perm)
                     ));
                 }
             } catch (error) {

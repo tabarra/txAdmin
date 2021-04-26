@@ -60,7 +60,7 @@ module.exports = async function DeployerStepper(ctx) {
         }
 
         const recipeVars = globals.deployer.getRecipeVars();
-        renderData.inputVars = Object.keys(recipeVars).map(name => {
+        renderData.inputVars = Object.keys(recipeVars).map((name) => {
             return {
                 name: name,
                 value: recipeVars[name],

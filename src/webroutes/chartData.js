@@ -22,7 +22,7 @@ module.exports = async function chartData(ctx) {
     const maxDeltaTime = 360; //5*360 = 30 hours
     let outData;
     try {
-        outData = globals.statsCollector.perfSeries.slice(-maxDeltaTime).map(s => {
+        outData = globals.statsCollector.perfSeries.slice(-maxDeltaTime).map((s) => {
             return {
                 ts: s.ts,
                 skipped: s.skipped,

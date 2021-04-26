@@ -35,7 +35,7 @@ function dependencyChecker() {
         let parsedFile = JSON.parse(rawFile);
         let packages = Object.keys(parsedFile.dependencies);
         let missing = [];
-        packages.forEach(package => {
+        packages.forEach((package) => {
             try {
                 require.resolve(package);
             } catch (error) {
@@ -170,7 +170,7 @@ function getFXServerPort(rawCfgFile) {
         if (!maxClients.length) {
             throw new Error(`Zap-Hosting: please add 'sv_maxclients ${GlobalData.deployerDefaults.maxClients}' to your server.cfg.`);
         }
-        if (maxClients.some(mc => mc > GlobalData.deployerDefaults.maxClients)) {
+        if (maxClients.some((mc) => mc > GlobalData.deployerDefaults.maxClients)) {
             throw new Error(`Zap-Hosting: your 'sv_maxclients' MUST be less or equal than ${GlobalData.deployerDefaults.maxClients}.`);
         }
     }

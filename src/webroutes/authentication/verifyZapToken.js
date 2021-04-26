@@ -47,10 +47,10 @@ module.exports = async function AuthVerify(ctx) {
 
     //Sanity check
     if (
-        isUndefined(ctx.query.token) ||
-        !GlobalData.isZapHosting ||
-        !GlobalData.runtimeSecret ||
-        !GlobalData.defaultMasterAccount
+        isUndefined(ctx.query.token)
+        || !GlobalData.isZapHosting
+        || !GlobalData.runtimeSecret
+        || !GlobalData.defaultMasterAccount
     ) {
         logWarn(`${errorPrefix} Sanity check, precondition failed`);
         return ctx.response.redirect('/');
@@ -118,7 +118,7 @@ module.exports = async function AuthVerify(ctx) {
         usedTokens.add(signature);
 
         //Setting up session
-        const providerWithPicture = Object.values(admin.providers).find(provider => provider.data && provider.data.picture);
+        const providerWithPicture = Object.values(admin.providers).find((provider) => provider.data && provider.data.picture);
         ctx.session.auth = {
             username: admin.name,
             picture: (providerWithPicture) ? providerWithPicture.data.picture : undefined,
