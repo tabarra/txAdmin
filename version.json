@@ -1,5 +1,5 @@
 {
-    "version": "3.6.4",
+    "version": "3.7.0",
     "allVersions": [
         {
             "version": "1.0.1",
@@ -247,7 +247,7 @@
         },
         {
             "version": "3.5.0",
-            "changelog": "Zap integration and minot tweaks, fixes and improvements."
+            "changelog": "Zap integration and minor tweaks, fixes and improvements."
         },
         {
             "version": "3.6.0",
@@ -268,6 +268,10 @@
         {
             "version": "3.6.4",
             "changelog": "CICD hates me."
+        },
+        {
+            "version": "3.7.0",
+            "changelog": "Fixed invalid session issue. Massive linting and styling. Minor tweaks, fixes and improvements."
         }
     ]
 }

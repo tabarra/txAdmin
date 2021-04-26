@@ -195,16 +195,16 @@ if (verbose) dir({isZapHosting, forceInterface, forceFXServerPort, txAdminPort, 
 //Check if this version of txAdmin is too outdated to be considered safe to use in prod
 //NOTE: Only valid if its being very actively maintained.
 //          Use 30d for patch 0, or 45~60d otherwise
-const txVerBBLastUpdate = 1617619200;
-const txVerBBDelta = 21 + ((isZapHosting) ? 10 : 0);
+const txVerBBLastUpdate = 1619440000;
+const txVerBBDelta = 35 + ((isZapHosting) ? 10 : 0);
 const txAdminVersionBestBy = txVerBBLastUpdate + (txVerBBDelta * 86400);
 // dir({
 //     updateDelta: txVerBBDelta,
-//     lastUpdate: new Date(txVerBBLastUpdate*1000).toLocaleString(),
-//     nextUpdate: new Date(txAdminVersionBestBy*1000).toLocaleString(),
+//     lastUpdate: new Date(txVerBBLastUpdate * 1000).toLocaleString(),
+//     nextUpdate: new Date(txAdminVersionBestBy * 1000).toLocaleString(),
 //     nextUpdateTS: txAdminVersionBestBy,
-//     timeLeft: require('humanize-duration')(((now() - txAdminVersionBestBy)*1000)),
-// })
+//     timeLeft: require('humanize-duration')(((now() - txAdminVersionBestBy) * 1000)),
+// });
 if (now() > txAdminVersionBestBy) {
     logError('This version of txAdmin is outdated.');
     logError('Please update as soon as possible.');
