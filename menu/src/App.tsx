@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.css';
+import { useMenuContext } from "./provider/MenuProvider";
+import { Fade } from "@material-ui/core";
+import MenuRoot from "./components/MenuRoot";
 
-export default function App() {
-  const [count, setCount] = useState<number>(0);
+const App: React.FC = () => {
+  const { visibility } = useMenuContext()
 
   return (
     <div>
-      <h1>{count}</h1>
-      <button className="App" onClick={() => setCount(count + 1)}>Increase</button>
+      <Fade in={visibility}>
+        <MenuRoot />
+      </Fade>
     </div>
   )
 }
 
+export default App
