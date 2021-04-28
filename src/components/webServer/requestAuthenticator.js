@@ -77,7 +77,8 @@ const authLogic = (sess, perm, epType) => {
     let isValidAuth = false;
     let isValidPerm = false;
     if (
-        typeof sess.auth !== 'undefined'
+        typeof sess !== 'undefined'
+        && typeof sess.auth !== 'undefined'
         && typeof sess.auth.username !== 'undefined'
         && typeof sess.auth.expires_at !== 'undefined'
     ) {
