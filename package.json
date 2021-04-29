@@ -35,6 +35,7 @@
     "@discordjs/collection": "^0.1.6",
     "@koa/router": "^10.0.0",
     "@material-ui/core": "^4.11.4",
+    "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.58",
     "@tabarra/discord": "^11.6.6",
     "adm-zip": "^0.5.4",
