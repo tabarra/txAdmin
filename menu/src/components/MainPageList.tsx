@@ -11,8 +11,15 @@ import {
   LocationSearching,
 } from "@material-ui/icons";
 import { useArrowKeys } from "../hooks/useArrowKeys";
+import { useDialogContext } from "../provider/DialogProvider";
+import { fetchNui } from "../utils/fetchNui";
+import { useSnackbarContext } from "../provider/SnackbarProvider";
 
 export const MainPageList: React.FC = () => {
+  const { openDialog } = useDialogContext();
+
+  const { openSnackbar } = useSnackbarContext();
+
   const [curSelected, setCurSelected] = useState(0);
 
   const { page } = usePageContext();
@@ -28,6 +35,19 @@ export const MainPageList: React.FC = () => {
     onDownDown: handleArrowDown,
     onUpDown: handleArrowUp,
   });
+
+  const handleAnnounceMessage = () => {
+    openDialog({
+      description: "Send an announcement to all online players",
+      title: "Send Announcement",
+      placeholder: "Your announcement...",
+      onSubmit: (message: string) => {
+        // Post up to client with announcement message
+        openSnackbar("success", "Sending the announcement");
+        fetchNui("announceMessage", message);
+      },
+    });
+  };
 
   return (
     <Collapse in={page === txAdminMenuPage.Main} mountOnEnter unmountOnExit>
@@ -72,7 +92,7 @@ export const MainPageList: React.FC = () => {
           icon={<Announcement />}
           primary="Send Announcement"
           secondary="Announce a message"
-          onSelect={() => console.log("Send announcement Clicked")}
+          onSelect={handleAnnounceMessage}
         />
       </List>
     </Collapse>
