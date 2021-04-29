@@ -1,10 +1,10 @@
-import { useEffect } from 'react'
+import { useEffect } from "react";
 
 interface KeyCallbacks {
-  onLeftDown?: () => void
-  onRightDown?: () => void
-  onUpDown?: () => void
-  onDownDown?: () => void
+  onLeftDown?: () => void;
+  onRightDown?: () => void;
+  onUpDown?: () => void;
+  onDownDown?: () => void;
 }
 
 /**
@@ -18,34 +18,39 @@ interface KeyCallbacks {
  * @param onDownDown - Down arrow handler function
  */
 
-export const useArrowKeys = ({onLeftDown, onRightDown, onUpDown, onDownDown}: KeyCallbacks) => {
+export const useArrowKeys = ({
+  onLeftDown,
+  onRightDown,
+  onUpDown,
+  onDownDown,
+}: KeyCallbacks) => {
   useEffect(() => {
     // Our basic handler function for keydown events
     const keyHandler = (e: KeyboardEvent) => {
       switch (e.code) {
-       case "ArrowLeft":
-         e.preventDefault()
-         onLeftDown && onLeftDown()
-         break;
-       case "ArrowRight":
-         e.preventDefault()
-         onRightDown && onRightDown()
-         break;
-       case "ArrowUp":
-         e.preventDefault()
-         onUpDown && onUpDown()
-         break;
-       case "ArrowDown":
-         e.preventDefault()
-         onDownDown && onDownDown()
-         break;
-     }
-    }
+        case "ArrowLeft":
+          e.preventDefault();
+          onLeftDown && onLeftDown();
+          break;
+        case "ArrowRight":
+          e.preventDefault();
+          onRightDown && onRightDown();
+          break;
+        case "ArrowUp":
+          e.preventDefault();
+          onUpDown && onUpDown();
+          break;
+        case "ArrowDown":
+          e.preventDefault();
+          onDownDown && onDownDown();
+          break;
+      }
+    };
 
     // Add that boi
-    window.addEventListener('keydown', keyHandler)
+    window.addEventListener("keydown", keyHandler);
 
     // Remove on cleanup
-    return () => window.removeEventListener('keydown', keyHandler)
-  }, [onLeftDown, onRightDown, onUpDown, onDownDown])
-}
+    return () => window.removeEventListener("keydown", keyHandler);
+  }, [onLeftDown, onRightDown, onUpDown, onDownDown]);
+};

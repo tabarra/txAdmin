@@ -8,7 +8,7 @@ interface PageProviderContext {
 export enum txAdminMenuPage {
   Main,
   Players,
-  txAdmin
+  txAdmin,
 }
 
 const PageContext = createContext(null);
@@ -32,4 +32,5 @@ export const PageProvider: React.FC = ({ children }) => {
   );
 };
 
-export const usePageContext = () => useContext<PageProviderContext>(PageContext);
+export const usePageContext = () =>
+  useContext<PageProviderContext>(PageContext);

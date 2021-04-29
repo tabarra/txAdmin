@@ -24,4 +24,3 @@ export const PageTabs: React.FC = () => {
     </Box>
   );
 };
-

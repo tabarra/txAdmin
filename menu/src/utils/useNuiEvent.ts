@@ -1,4 +1,4 @@
-import { MutableRefObject, useEffect, useRef } from 'react';
+import { MutableRefObject, useEffect, useRef } from "react";
 
 interface IOptions {
   capture?: boolean;
@@ -19,7 +19,7 @@ export const useNuiEvent = <S = Record<string, unknown>>(
   method: string,
   handler: Function,
   currentState?: S,
-  options: IOptions = defaultOptions,
+  options: IOptions = defaultOptions
 ) => {
   const savedHandler: MutableRefObject<any> = useRef();
 
