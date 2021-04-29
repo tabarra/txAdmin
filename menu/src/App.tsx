@@ -1,12 +1,12 @@
 import React from 'react';
 import './App.css';
-import { useMenuContext } from "./provider/MenuProvider";
+import { useVisibleContext } from "./provider/VisibilityProvider";
 import { Fade } from "@material-ui/core";
 import MenuRoot from "./components/MenuRoot";
 import { SnackbarProvider } from "./provider/SnackbarProvider";
 
 const App: React.FC = () => {
-  const { visibility } = useMenuContext()
+  const { visibility } = useVisibleContext()
 
   return (
     <SnackbarProvider>
