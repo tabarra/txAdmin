@@ -1,5 +1,5 @@
-import React, {createContext, useContext, useState} from "react";
-import { Snackbar } from "@material-ui/core";
+import React, { createContext, useContext, useState } from "react";
+import {Fade, Snackbar} from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 
 const SnackbarContext = createContext(null);
@@ -12,8 +12,8 @@ interface SnackbarAlert {
 }
 
 interface SnackbarProviderContext {
-  openSnackbar: (level: SnackbarAlertSeverities, message: string) => void
-  closeSnackbar: () => void
+  openSnackbar: (level: SnackbarAlertSeverities, message: string) => void;
+  closeSnackbar: () => void;
 }
 
 export const SnackbarProvider: React.FC = ({ children }) => {
@@ -43,8 +43,13 @@ export const SnackbarProvider: React.FC = ({ children }) => {
         closeSnackbar,
       }}
     >
-      <Snackbar open={isOpen} autoHideDuration={6000} onClose={handleClose}>
-        <Alert onClose={handleClose} severity={alert.level} variant="filled">
+      <Snackbar
+        open={isOpen}
+        autoHideDuration={6000}
+        onClose={handleClose}
+        TransitionComponent={Fade}
+      >
+        <Alert severity={alert.level} variant="filled">
           {alert.message}
         </Alert>
       </Snackbar>
@@ -53,4 +58,5 @@ export const SnackbarProvider: React.FC = ({ children }) => {
   );
 };
 
-export const useSnackbarContext = () => useContext<SnackbarProviderContext>(SnackbarContext)
+export const useSnackbarContext = () =>
+  useContext<SnackbarProviderContext>(SnackbarContext);

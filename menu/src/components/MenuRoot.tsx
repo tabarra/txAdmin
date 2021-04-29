@@ -2,7 +2,7 @@ import React from "react";
 import { Box, makeStyles, Theme } from "@material-ui/core";
 import { PageTabs } from "./PageTabs";
 import { MainPageList } from "./MainPageList";
-import {PlayersPage} from "./PlayersPage";
+import { PlayersPage } from "./PlayersPage";
 
 const TxAdminLogo: React.FC = () => (
   <Box my={1} display="flex" justifyContent="center">
@@ -12,7 +12,7 @@ const TxAdminLogo: React.FC = () => (
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    height: 'fit-content',
+    height: "fit-content",
     background: theme.palette.background.default,
     width: 325,
     borderRadius: 15,
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const MenuRoot: React.FC = ({}) => {
+const MenuRoot: React.FC = () => {
   const classes = useStyles();
 
   return (
