@@ -4,20 +4,20 @@ import { useVisibleContext } from "./provider/VisibilityProvider";
 import { Fade } from "@material-ui/core";
 import MenuList from "./components/MenuList";
 import { SnackbarProvider } from "./provider/SnackbarProvider";
-import {TabProvider} from "./provider/TabProvider";
+import {PageProvider} from "./provider/PageProvider";
 
 const App: React.FC = () => {
   const { visibility } = useVisibleContext()
 
   return (
     <SnackbarProvider>
-      <TabProvider>
+      <PageProvider>
         <div className='App'>
           <Fade in={visibility}>
             <MenuList />
           </Fade>
         </div>
-      </TabProvider>
+      </PageProvider>
     </SnackbarProvider>
   )
 }
