@@ -1,25 +1,25 @@
 import React, { createContext, useContext, useState } from 'react';
 
-interface IMenuProvider {
+interface VisibleProviderContext {
     visibility: boolean,
     setVisibility: (visible: boolean) => void
 }
 
-export const MenuContext = createContext(null);
+export const VisibleContext = createContext(null);
 
-export const MenuProvider: React.FC = ({children}) => {
+export const VisibilityProvider: React.FC = ({children}) => {
     const [visibility, setVisibility] = useState<boolean>(process.env.NODE_ENV === 'development')
 
     return (
-      <MenuContext.Provider
+      <VisibleContext.Provider
         value={{
             visibility,
             setVisibility
         }}
       >
         {children}
-      </MenuContext.Provider>)
+      </VisibleContext.Provider>)
 }
 
-export const useMenuContext = () => useContext<IMenuProvider>(MenuContext)
+export const useVisibleContext = () => useContext<VisibleProviderContext>(VisibleContext)
 
