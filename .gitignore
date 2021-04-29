@@ -9,6 +9,9 @@ locale/custom.json
 /start_*.bat
 monitor-*.zip
 
+# IDE Specific
+.idea
+
 ## Github's default node gitignore
 # Logs
 logs
