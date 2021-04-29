@@ -25,19 +25,19 @@ export const useArrowKeys = ({onLeftDown, onRightDown, onUpDown, onDownDown}: Ke
       switch (e.code) {
        case "ArrowLeft":
          e.preventDefault()
-         onLeftDown()
+         onLeftDown && onLeftDown()
          break;
        case "ArrowRight":
          e.preventDefault()
-         onRightDown()
+         onRightDown && onRightDown()
          break;
        case "ArrowUp":
          e.preventDefault()
-         onUpDown()
+         onUpDown && onUpDown()
          break;
        case "ArrowDown":
          e.preventDefault()
-         onDownDown()
+         onDownDown && onDownDown()
          break;
      }
     }
