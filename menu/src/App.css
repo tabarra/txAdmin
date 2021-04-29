@@ -1,4 +1,6 @@
 .App {
-  padding: 10px;
   height: 100%;
+  display: flex;
+  margin: 20px 40px;
+  flex-direction: column;
 }
