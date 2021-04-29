@@ -4,7 +4,8 @@
   "description": "FiveM FXServer Admin - remotely manage your GTA5 FiveM Server",
   "main": "src/index.js",
   "scripts": {
-    "menu:dev": "webpack-dev-server --config webpack.menu_dev.js --mode development",
+    "menu:dev": "rimraf ./scripts/menu/nui && webpack-dev-server --config ./menu/webpack/webpack.dev.js",
+    "menu:build": "rimraf ./scripts/menu/nui && webpack --config ./menu/webpack/webpack.prod.js --progress",
     "build": "rimraf dist && webpack --config webpack.config.js --progress",
     "watch": "nodemon --config nodemon.json",
     "lint": "eslint ./src/**",

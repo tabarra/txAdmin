@@ -21,9 +21,9 @@ client_scripts {
     'scripts/cl_*.lua',
 }
 
-ui_page 'scripts/warn.html'
+ui_page 'scripts/menu/nui/index.html'
+
 files {
-    'scripts/warn.html',
-    'scripts/assets/warning_open.mp3',
-    'scripts/assets/warning_pulse.mp3',
+    'scripts/menu/nui/index.html',
+    'scripts/menu/nui/**/*'
 }
