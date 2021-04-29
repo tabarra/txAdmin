@@ -55,14 +55,23 @@ export const MainPageList: React.FC = () => {
       title: "Spawn Vehicle",
       placeholder: "Adder",
       onSubmit: (modelName: string) => {
-        openSnackbar('info', `Trying to spawn ${modelName}`)
-        fetchNui("spawnVehicle", modelName).catch(e => {
-          console.log('Test')
-          openSnackbar('success', `Vehicle spawned!`)
-        })
-      }
-    })
-  }
+        openSnackbar("info", `Trying to spawn ${modelName}`);
+        fetchNui("spawnVehicle", modelName).catch((e) => {
+          openSnackbar("success", `Vehicle spawned!`);
+        });
+      },
+    });
+  };
+
+  const handleFixVehicle = () => {
+    fetchNui("fixCurrentVehicle");
+    openSnackbar("info", "Vehicle fixed!");
+  };
+
+  const handleHealAllPlayers = () => {
+    fetchNui("healAllPlayers");
+    openSnackbar("info", "Healing all players");
+  };
 
   return (
     <Collapse in={page === txAdminMenuPage.Main} mountOnEnter unmountOnExit>
@@ -93,14 +102,14 @@ export const MainPageList: React.FC = () => {
           icon={<Build />}
           primary="Fix Vehicle"
           secondary="Set current vehicle health to 100%"
-          onSelect={() => console.log("Fix Vehicle Clicked")}
+          onSelect={handleFixVehicle}
         />
         <MenuListItem
           selected={curSelected === 4}
           icon={<LocalHospital />}
           primary="Heal All Players"
           secondary="Will heal all players to full health"
-          onSelect={() => console.log("Heal All Clicked")}
+          onSelect={handleHealAllPlayers}
         />
         <MenuListItem
           selected={curSelected === 5}
