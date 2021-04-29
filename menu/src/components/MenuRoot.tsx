@@ -1,5 +1,5 @@
 import React from "react";
-import {Box, makeStyles, Theme} from "@material-ui/core";
+import { Box, makeStyles, Theme } from "@material-ui/core";
 import { PageTabs } from "./PageTabs";
 import { MainPageList } from "./MainPageList";
 import {PlayersPage} from "./PlayersPage";
