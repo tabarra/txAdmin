@@ -2,15 +2,15 @@ import React from "react";
 import ReactDOM from "react-dom";
 import App from "./App";
 import "./index.css";
-import { VisibilityProvider } from "./provider/VisibilityProvider";
-import { MuiThemeProvider } from "@material-ui/core";
+import {Fade, MuiThemeProvider} from "@material-ui/core";
 import { MenuTheme } from "./styles/theme";
+import {RecoilRoot} from "recoil";
 
 ReactDOM.render(
-  <VisibilityProvider>
+  <RecoilRoot>
     <MuiThemeProvider theme={MenuTheme}>
       <App />
     </MuiThemeProvider>
-  </VisibilityProvider>,
+  </RecoilRoot>,
   document.getElementById("root")
 );

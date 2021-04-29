@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { txAdminMenuPage, usePageContext } from "../provider/PageProvider";
 import { Collapse, List } from "@material-ui/core";
 import { MenuListItem } from "./MenuListItem";
 import {
@@ -14,6 +13,7 @@ import { useArrowKeys } from "../hooks/useArrowKeys";
 import { useDialogContext } from "../provider/DialogProvider";
 import { fetchNui } from "../utils/fetchNui";
 import { useSnackbarContext } from "../provider/SnackbarProvider";
+import { txAdminMenuPage, usePageValue } from "../atoms/page.atom";
 
 export const MainPageList: React.FC = () => {
   const { openDialog } = useDialogContext();
@@ -22,7 +22,7 @@ export const MainPageList: React.FC = () => {
 
   const [curSelected, setCurSelected] = useState(0);
 
-  const { page } = usePageContext();
+  const page = usePageValue();
 
   const handleArrowDown = () => {
     if (curSelected <= 4) setCurSelected(curSelected + 1);

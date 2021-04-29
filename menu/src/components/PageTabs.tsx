@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from "react";
 import { Box, makeStyles, Tab, Tabs, Theme } from "@material-ui/core";
-import { usePageContext } from "../provider/PageProvider";
+import {usePage} from "../atoms/page.atom";
 
 const useStyles = makeStyles((theme: Theme) => ({
   tab: {
@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export const PageTabs: React.FC = () => {
   const classes = useStyles();
-  const { page, setPage } = usePageContext();
+  const [page, setPage] = usePage();
 
   const handleChange = (event: ChangeEvent<{}>, newValue: number) => {
     setPage(newValue);
