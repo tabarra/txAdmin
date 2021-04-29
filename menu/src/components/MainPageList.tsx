@@ -49,6 +49,21 @@ export const MainPageList: React.FC = () => {
     });
   };
 
+  const handleSpawnVehicle = () => {
+    openDialog({
+      description: "Spawn a vehicle using the model name",
+      title: "Spawn Vehicle",
+      placeholder: "Adder",
+      onSubmit: (modelName: string) => {
+        openSnackbar('info', `Trying to spawn ${modelName}`)
+        fetchNui("spawnVehicle", modelName).catch(e => {
+          console.log('Test')
+          openSnackbar('success', `Vehicle spawned!`)
+        })
+      }
+    })
+  }
+
   return (
     <Collapse in={page === txAdminMenuPage.Main} mountOnEnter unmountOnExit>
       <List>
@@ -71,7 +86,7 @@ export const MainPageList: React.FC = () => {
           icon={<DirectionsCar />}
           primary="Spawn Vehicle"
           secondary="Uses model name"
-          onSelect={() => console.log("Spawn Vehicle Clicked")}
+          onSelect={handleSpawnVehicle}
         />
         <MenuListItem
           selected={curSelected === 3}
