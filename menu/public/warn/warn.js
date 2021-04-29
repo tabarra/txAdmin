@@ -44,7 +44,6 @@ window.onload = function () {
         tInstructions: 'Hold [SPACE] for 10 seconds to dismiss this message.',
     }); //DEBUG
     window.addEventListener('message', (event) => {
-        console.log(event);
         if (event.data.type === 'open_warning') {
             openWarning(event.data.author, event.data.reason, event.data.tTitle, event.data.tWarnedBy, event.data.tInstructions);
         } else if (event.data.type === 'close_warning') {
