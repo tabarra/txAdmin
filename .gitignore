@@ -8,6 +8,7 @@ locale/custom.json
 *.ignore.*
 /start_*.bat
 monitor-*.zip
+scripts/menu/nui
 
 # IDE Specific
 .idea
