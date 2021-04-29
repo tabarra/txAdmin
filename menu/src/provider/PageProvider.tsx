@@ -2,15 +2,21 @@ import React, { createContext, useContext, useState } from "react";
 
 interface PageProviderContext {
   page: number;
-  setPage: (tab: number) => void;
+  setPage: (page: txAdminMenuPage) => void;
+}
+
+export enum txAdminMenuPage {
+  Main,
+  Players,
+  txAdmin
 }
 
 const PageContext = createContext(null);
 
 export const PageProvider: React.FC = ({ children }) => {
-  const [page, setPage] = useState(0);
+  const [page, setPage] = useState<txAdminMenuPage>(0);
 
-  const handleSetPage = (newPage: number) => {
+  const handleSetPage = (newPage: txAdminMenuPage) => {
     setPage(newPage);
   };
 
