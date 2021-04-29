@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, makeStyles, Theme } from "@material-ui/core";
-import { txAdminMenuPage, usePageContext } from "../provider/PageProvider";
-
+import {usePageValue, txAdminMenuPage} from "../atoms/page.atom";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -16,12 +15,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export const PlayersPage: React.FC = () => {
   const classes = useStyles()
-  const { page } = usePageContext()
+  const page = usePageValue()
 
   const isCurrentPage = page === txAdminMenuPage.Players
 
   return isCurrentPage && (
-    <Box className={classes.root} mt={4} mb={10}>
+    <Box className={classes.root} mt={2} mb={10}>
 
     </Box>
   )
