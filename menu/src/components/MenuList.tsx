@@ -40,7 +40,7 @@ const MenuList: React.FC = ({}) => {
   return (
     <Box p={2} className={classes.root}>
       <Box my={1} display='flex' justifyContent='center'>
-        <img src='https://i.tasoagc.dev/ntG9' alt='txadmin bro' />
+        <img src='assets/images/txadmin.png' alt='txadmin bro' />
       </Box>
       <Box width='100%'>
         <Tabs
