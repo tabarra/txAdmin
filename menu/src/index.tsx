@@ -2,15 +2,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import './index.css'
-import { MenuProvider } from "./provider/MenuProvider";
+import { VisibilityProvider } from "./provider/VisibilityProvider";
 import { MuiThemeProvider } from "@material-ui/core";
 import { MenuTheme } from "./styles/theme";
 
 ReactDOM.render(
-  <MenuProvider>
+  <VisibilityProvider>
     <MuiThemeProvider theme={MenuTheme} >
       <App />
     </MuiThemeProvider>
-  </MenuProvider>,
+  </VisibilityProvider>,
  document.getElementById('root')
 )
