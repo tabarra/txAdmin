@@ -4,8 +4,9 @@ const warnTitleInner = document.getElementById('warn-title-inner');
 const warnMessage = document.getElementById('warn-message');
 const warnAuthor = document.getElementById('warn-author');
 const warnInstruction = document.getElementById('warn-instruction');
-const warnOpenSound = new Audio('assets/warning_open.mp3');
-const warnPulseSound = new Audio('assets/warning_pulse.mp3');
+const warnOpenSound = new Audio('assets/sounds/warning_open.mp3');
+const warnPulseSound = new Audio('assets/sounds/warning_pulse.mp3');
+
 const isDebug = false;
 
 function openWarning(author, reason, tTitle, tWarnedBy, tInstructions) {
