@@ -1,7 +1,6 @@
 import React, { ChangeEvent } from "react";
 import { Box, makeStyles, Tab, Tabs, Theme } from "@material-ui/core";
 import { usePageContext } from "../provider/PageProvider";
-import { ClassSharp } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme: Theme) => ({
   tab: {
