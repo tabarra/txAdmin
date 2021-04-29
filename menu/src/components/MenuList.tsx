@@ -9,7 +9,8 @@ import {
   LocalHospital,
   Announcement
 } from "@material-ui/icons"
-import {useTabContext} from "../provider/TabProvider";
+
+import { usePageContext } from "../provider/PageProvider";
 
 const useStyles = makeStyles({
   root: {
@@ -27,12 +28,13 @@ const useStyles = makeStyles({
 
 const MenuList: React.FC = ({}) => {
   const classes = useStyles()
+
   const [curSelected, setCurSelected] = useState(0)
 
-  const { tab, setTab } = useTabContext()
+  const { page, setPage } = usePageContext()
 
   const handleChange = (event: ChangeEvent<{}>, newValue: number) => {
-    setTab(newValue)
+    setPage(newValue)
   }
 
   return (
@@ -42,7 +44,7 @@ const MenuList: React.FC = ({}) => {
       </Box>
       <Box width='100%'>
         <Tabs
-          value={tab}
+          value={page}
           indicatorColor="primary"
           textColor="secondary"
           onChange={handleChange}
