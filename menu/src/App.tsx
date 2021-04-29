@@ -1,26 +1,26 @@
 import React from "react";
 import "./App.css";
-import { useVisibleContext } from "./provider/VisibilityProvider";
-import { Fade } from "@material-ui/core";
+import { useIsMenuVisible } from "./atoms/visibility.atom";
 import MenuRoot from "./components/MenuRoot";
 import { SnackbarProvider } from "./provider/SnackbarProvider";
-import { PageProvider } from "./provider/PageProvider";
 import {DialogProvider} from "./provider/DialogProvider";
+import {useEscapeListener} from "./hooks/useEscapeListener";
 
 const App: React.FC = () => {
-  const { visibility } = useVisibleContext();
+  const visible = useIsMenuVisible();
+  useEscapeListener()
 
   return (
     <SnackbarProvider>
-      <PageProvider>
         <div className="App">
           <DialogProvider>
-            <Fade in={visibility}>
-              <MenuRoot />
-            </Fade>
+            {/*
+              Fade API seems to not like this here
+              will probably need to do a manual transition
+            */}
+            {visible && <MenuRoot />}
           </DialogProvider>
         </div>
-      </PageProvider>
     </SnackbarProvider>
   );
 };

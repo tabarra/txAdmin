@@ -16,15 +16,10 @@ export async function fetchNui<T = any>(
     console.groupEnd()
   }
 
-  try {
-    const resp = await fetch(
-      `https://monitor/${eventName}`,
-      options
-    );
+  const resp = await fetch(
+    `https://monitor/${eventName}`,
+    options
+  );
 
-    return await resp.json();
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
+  return await resp.json();
 }
