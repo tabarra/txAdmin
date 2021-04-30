@@ -36,6 +36,18 @@ export const MainPageList: React.FC = () => {
     onUpDown: handleArrowUp,
   });
 
+  const handleTeleport = () => {
+    openDialog({
+      description: "Provide coordinates in an x, y, z format to go through the wormhole",
+      title: "Teleport",
+      placeholder: "340, 480, 12",
+      onSubmit: (coords: string) => {
+        openSnackbar("success", "Sending you into the wormhole!"),
+        fetchNui("tpToCoords", coords)
+      }
+    })
+  }
+
   const handleAnnounceMessage = () => {
     openDialog({
       description: "Send an announcement to all online players",
@@ -81,7 +93,7 @@ export const MainPageList: React.FC = () => {
           icon={<LocationSearching />}
           primary="Teleport"
           secondary="Teleport with context"
-          onSelect={() => console.log("Teleport Clicked")}
+          onSelect={handleTeleport}
         />
         <MenuListItem
           selected={curSelected === 1}
