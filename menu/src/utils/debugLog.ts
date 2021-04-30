@@ -15,3 +15,32 @@ export const debugLog = (action: string, data: unknown, context: string = 'Unkno
     console.groupEnd()
   }
 }
+
+interface DebugEvent<P = any> {
+  app: string;
+  method: string;
+  data: P;
+}
+
+/**
+ * Emulates data we'll have in production.
+ * @param events - The event you want to cover 
+ * @param timer - How long until it should trigger (ms)
+ */
+export const debugData = <P>(events: DebugEvent<P>[], timer = 1000) => {
+  if (process.env.NODE_ENV === 'development') {
+    for (const event of events) {
+      setTimeout(() => {
+        window.dispatchEvent(
+          new MessageEvent('message', {
+            data: {
+              app: event.app,
+              method: event.method,
+              data: event.data,
+            },
+          }),
+        );
+      }, timer);
+    }
+  }
+};
