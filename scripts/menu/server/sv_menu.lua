@@ -34,6 +34,12 @@ end)
 RegisterServerEvent('txAdmin:menu:sendAnnouncement', function(message)
   local src = source
 
+  TriggerClientEvent('chat:addMessage', -1, { 
+    color = {255, 0, 0},
+    multiline = true,
+    args = {"Announcement", message}
+  })
+
   -- Verification check here or cancel
   -- Goes up to txAdmin WebServer for meming
 end)
