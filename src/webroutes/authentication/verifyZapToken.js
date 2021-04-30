@@ -19,13 +19,13 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
 
 //The actual key
 const zapPublicKey = JWK.asKey(`-----BEGIN PUBLIC KEY-----
-MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEArrztSUnu8Mv7AdwLjton
-iyTMfk2zhQbVFDNOBAPXAZiU/3uTtyQH3cIs0UjVE66QiwRParENlJ+bOOICSOC+
-jbwK/H4bE1uTpC0vbclsyXv6cVUyokoh4tuKr8P3RbQS2zViPUL4K0tCBn9Wo/VI
-BKY5Jn8ZnnQn0fUeIWD5HFzNGSPO/bHHaRYDitpwbq4zdi5dRbXKgxc9MxigYYBi
-ajuNtvCudG2/oK/BdmYIt6M3uXz2SOv6hKKGUUizLuiGQEJkg6VgaPd/3RNf+XlU
-NUDBmW4S6ByK4V/OWmJV+uIUTbi03TmRDPF4/uDF8ljxlT0XHgvJ0d2a9ec1ulqv
-hwIDAQAB
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA47Uk3Ly5lWE0PGvF2Uno
+xjyN/37+fbtgW7gWnRzfh1hdr7cYk8h+qhtTpP/gjJPLVOTS0FV0zwnWxZaGwgTm
+UpjI1Ik2M+wUlvKpcEvFz30fj5/GnzRH5nU1JLSD26qwRCVqzxNrrxS7J+BtNfVC
+KK8s/iPYG6TZp/ONyoAt0hicYFnHtoxkcXh+B7xV1AY8drwo287nOAcrXcVQ3wy3
+MVNEXJjaF2Y4AcOclRu2kp4tNmyzi4+fVIMuAeUJn4dy7rBa46MDOQQEyu3NdNzt
+ef3OFncqQH5WIymLzUSe1UjPbT8iXxVuZVz4JBmDvJv5JnCfp5QVILGzGioP+B3L
+0QIDAQAB
 -----END PUBLIC KEY-----`);
 
 //NOTE: the routes SHOULD not have any persistent data, but meh...
