@@ -16,10 +16,9 @@ export const debugLog = (action: string, data: unknown, context: string = 'Unkno
   }
 }
 
-interface DebugEvent<P = any> {
-  app: string;
-  method: string;
-  data: P;
+interface DebugEvent<T = any> {
+  action: string;
+  data: T;
 }
 
 /**
@@ -34,8 +33,7 @@ export const debugData = <P>(events: DebugEvent<P>[], timer = 1000) => {
         window.dispatchEvent(
           new MessageEvent('message', {
             data: {
-              app: event.app,
-              method: event.method,
+              action: event.action,
               data: event.data,
             },
           }),
