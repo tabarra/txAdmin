@@ -1,6 +1,6 @@
 import { useEffect } from "react";
-import { useSetIsMenuVisible } from "../atoms/visibility.atom";
 import {fetchNui} from "../utils/fetchNui";
+import { useSetIsMenuVisible } from "../state/visibility.state";
 
 /**
  * Attach a keyboard listener for escape, which will close the menu
