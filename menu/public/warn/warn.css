@@ -12,6 +12,9 @@ body {
   justify-content: center;
   align-items: center;
 
+  /* Temporarily disable pending migration to React */
+  visibility: hidden;
+
   background-color: transparent;
   transition: background-color 750ms ease-in-out;
 }
