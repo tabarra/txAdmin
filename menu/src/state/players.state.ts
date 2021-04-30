@@ -46,7 +46,11 @@ const playersState = {
       const unfilteredPlayerStates = get(playersState.playerData);
 
       const playerStates: PlayerData[] = filteredValueInput
-        ? unfilteredPlayerStates.filter((player) => player.username.toLowerCase().includes(filteredValueInput))
+        ? unfilteredPlayerStates.filter(
+            (player) =>
+              player.username.toLowerCase().includes(filteredValueInput.toLowerCase()) ||
+              player.id.toString().includes(filteredValueInput)
+          )
         : unfilteredPlayerStates;
 
       switch (sortType) {
