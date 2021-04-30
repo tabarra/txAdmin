@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { useIsMenuVisible } from "./atoms/visibility.atom";
+import { useIsMenuVisible } from "./state/visibility.state";
 import MenuRoot from "./components/MenuRoot";
 import { SnackbarProvider } from "./provider/SnackbarProvider";
 import { DialogProvider } from "./provider/DialogProvider";

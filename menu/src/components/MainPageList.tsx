@@ -13,7 +13,7 @@ import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation";
 import { useDialogContext } from "../provider/DialogProvider";
 import { fetchNui } from "../utils/fetchNui";
 import { useSnackbarContext } from "../provider/SnackbarProvider";
-import { txAdminMenuPage, usePage } from "../atoms/page.atom";
+import { txAdminMenuPage, usePageValue } from "../state/page.state";
 
 export const MainPageList: React.FC = () => {
   const { openDialog } = useDialogContext();

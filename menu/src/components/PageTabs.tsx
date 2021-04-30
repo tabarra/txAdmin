@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from "react";
 import { Box, makeStyles, Tab, Tabs, Theme } from "@material-ui/core";
-import {usePage} from "../atoms/page.atom";
+import {usePage} from "../state/page.state";
 
 const useStyles = makeStyles((theme: Theme) => ({
   tab: {
