@@ -55,6 +55,7 @@ module.exports = {
                 '*.md',
                 'fxmanifest.lua',
                 'scripts/*.lua',
+                'scripts/menu/**',
                 'web/**',
                 'docs/**',
             ]

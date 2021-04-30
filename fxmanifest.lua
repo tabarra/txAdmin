@@ -14,11 +14,11 @@ games { 'gta5', 'rdr3' }
 -- NOTE: Due to global package constraints, js scripts will be loaded from main.js
 server_scripts { 
     'main.js',
-    'scripts/sv_*.lua',
+    'scripts/**/sv_*.lua',
 }
 
 client_scripts {
-    'scripts/cl_*.lua',
+    'scripts/**/cl_*.lua',
 }
 
 ui_page 'scripts/menu/nui/index.html'
