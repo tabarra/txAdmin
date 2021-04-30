@@ -14,6 +14,6 @@ const playersAtom = atom<PlayerData[]>({
   key: "playerStates",
 });
 
-const usePlayersState = () => useRecoilValue(playersAtom)
+export const usePlayersState = () => useRecoilValue(playersAtom)
 
-const useSetPlayersState = () => useSetRecoilState(playersAtom)
+export const useSetPlayersState = () => useSetRecoilState(playersAtom)
