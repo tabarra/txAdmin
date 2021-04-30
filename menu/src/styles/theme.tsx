@@ -17,7 +17,7 @@ export const MenuTheme = createMuiTheme({
     },
     background: {
       default: "#151a1f",
-      paper: "#1a2126"
+      paper: "#24282B"
     },
     action: {
       selected: "rgba(255, 255, 255, 0.08)",
