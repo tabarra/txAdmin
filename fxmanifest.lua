@@ -17,6 +17,10 @@ server_scripts {
     'scripts/**/sv_*.lua',
 }
 
+shared_scripts {
+    'scripts/menu/shared.lua'
+}
+
 client_scripts {
     'scripts/**/cl_*.lua',
 }
