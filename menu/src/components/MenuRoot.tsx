@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, makeStyles, Theme } from "@material-ui/core";
+import {Box, Collapse, makeStyles, Theme} from "@material-ui/core";
 import { PageTabs } from "./PageTabs";
 import { MainPageList } from "./MainPageList";
 import { PlayersPage } from "./PlayersPage";
@@ -32,7 +32,9 @@ const MenuRoot: React.FC = () => {
       <Box p={2} className={classes.root}>
         <TxAdminLogo />
         <PageTabs />
-        <MainPageList visible={curPage === txAdminMenuPage.Main} />
+        <Collapse in={curPage === txAdminMenuPage.Main} unmountOnExit mountOnEnter>
+          <MainPageList />
+        </Collapse>
       </Box>
       <PlayersPage visible={curPage === txAdminMenuPage.Players} />
     </>
