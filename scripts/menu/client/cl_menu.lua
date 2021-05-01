@@ -120,6 +120,23 @@ RegisterNUICallback('fixVehicle', function(data, cb)
   cb({})
 end)
 
+--[[ Player list sync ]]
+RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
+  -- process data to add distance, remove pos
+  for i in ipairs(data) do
+    local row = data[i]
+    local targetVec = vec3(row.pos.x, row.pos.y, row.pos.z)
+    local dist = #(GetEntityCoords(PlayerPedId()) - targetVec)
+    row.pos = nil
+    row.distance = dist
+  end
+  
+  debugPrint(json.encode(data))
+  SendNUIMessage({
+    action = 'setPlayerState',
+    data = data
+  })
+end)
 
 --[[ Teleport the player to the coordinates ]]
 ---@param x number
@@ -134,7 +151,6 @@ RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   local veh = GetVehiclePedIsIn(ped, false)
   if veh and veh > 0 then SetVehicleOnGroundProperly(veh) end
 end)
-
 
 --[[ Heal all players ]]
 RegisterNetEvent('txAdmin:menu:healed', function()

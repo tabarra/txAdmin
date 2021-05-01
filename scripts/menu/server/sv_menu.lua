@@ -23,13 +23,13 @@ CreateThread(function()
   elseif oneSyncConvar == 'off' then
     ServerCtxObj.oneSyncStatus = false
   end
-
+  
   -- Default '' in fxServer
   local svProjectName = GetConvar('sv_projectname', '')
   if svProjectName ~= '' then
     ServerCtxObj.projectName = svProjectName
   end
-
+  
   -- Default 30 in fxServer
   local svMaxClients = GetConvarInt('sv_maxclients', 30)
   ServerCtxObj.maxClients = svMaxClients
