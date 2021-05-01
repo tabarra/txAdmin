@@ -111,3 +111,16 @@ RegisterServerEvent('txAdmin:menu:fixVehicle', function()
   debugPrint("Player " .. GetPlayerName(src) .. " repaired their vehicle!")
   TriggerClientEvent('txAdmin:menu:fixVehicle', src)
 end)
+
+RegisterServerEvent('txAdmin:menu:spawnVehicle', function(model)
+  local src = source
+  if type(model) ~= 'string' then error() end
+  
+  -- TODO: Security, permission check
+  if false then return end
+  
+  debugPrint("Player " .. GetPlayerName(src) .. " spawned a ^2" .. model .. "^0!")
+  local ped = GetPlayerPed(src)
+  local veh = Citizen.InvokeNative(GetHashKey("CREATE_AUTOMOBILE"), GetHashKey(model), GetEntityCoords(ped));
+  TriggerClientEvent('txAdmin:menu:spawnVehicle', src, NetworkGetNetworkIdFromEntity(veh))
+end)

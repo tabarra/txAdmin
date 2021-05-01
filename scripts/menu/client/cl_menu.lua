@@ -82,9 +82,16 @@ end)
 
 -- CB From Menu
 RegisterNUICallback('spawnVehicle', function(data, cb)
-  debugPrint(data)
-  TriggerServerEvent('txAdmin:menu:spawnvehicle', data.model)
-  cb({})
+  local model = data.model
+  debugPrint("Model requested: " .. model)
+  
+  if not IsModelValid(model) then
+    debugPrint("^1Invalid vehicle model: " .. model)
+    cb({ e = true })
+  else
+    TriggerServerEvent('txAdmin:menu:spawnVehicle', model)
+    cb({})
+  end
 end)
 
 -- CB From Menu
@@ -144,5 +151,46 @@ RegisterNetEvent('txAdmin:menu:fixVehicle', function()
     SetVehicleUndriveable(veh, false)
     SetVehicleFixed(veh)
     SetVehicleEngineOn(veh, true, false)
+  end
+end)
+
+--[[ Spawn vehicles, with support for entity lockdown ]]
+RegisterNetEvent('txAdmin:menu:spawnVehicle', function(netID)
+  debugPrint(json.encode({ netID = netID }))
+  SetNetworkIdExistsOnAllMachines(netID, true)
+  SetNetworkIdCanMigrate(netID, true)
+  
+  -- get current veh and speed
+  local ped = PlayerPedId()
+  local oldVeh = GetVehiclePedIsIn(ped, false)
+  local oldVel = DoesEntityExist(oldVeh) and GetEntitySpeed(oldVeh) or 0.0
+  
+  -- only delete if the new vehicle is found
+  if oldVeh and IsPedInVehicle(ped, oldVeh, true) then
+    debugPrint("Deleting existing vehicle (" .. oldVeh .. ")")
+    DeleteVehicle(oldVeh)
+    SetEntityAsMissionEntity(oldVeh, true, true)
+    Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(oldVeh))
+  end
+  
+  local tries = 0
+  while NetworkGetEntityFromNetworkId(netID) == 0 do
+    if tries > 50 then
+      debugPrint("^1Vehicle (net ID " .. netID .. ") did not become networked for this client in time ("
+              .. (tries * 25) .. "ms)")
+      return
+    end
+    debugPrint("Waiting for vehicle networking...")
+    tries = tries + 1
+    Wait(50)
+  end
+  
+  local veh = NetworkGetEntityFromNetworkId(netID)
+  debugPrint("Found networked vehicle " .. netID .. " (entity " .. veh .. ")")
+  SetVehicleHasBeenOwnedByPlayer(veh, true)
+  TaskWarpPedIntoVehicle(ped, veh, -1)
+  if oldVel > 0.0 then
+    SetVehicleEngineOn(veh, true, true, false)
+    SetVehicleForwardSpeed(veh, oldVel)
   end
 end)

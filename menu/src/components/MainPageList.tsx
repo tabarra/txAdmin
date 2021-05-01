@@ -88,8 +88,9 @@ export const MainPageList: React.FC = () => {
       placeholder: "Adder",
       onSubmit: (modelName: string) => {
         openSnackbar("info", `Trying to spawn ${modelName}`);
-        fetchNui("spawnVehicle", modelName).catch(() => {
-          openSnackbar("success", `Vehicle spawned!`);
+        fetchNui("spawnVehicle", {model: modelName}).then(({e}) => {
+          e ? openSnackbar("error", `The vehicle model name '${modelName}' does not exist!`)
+            : openSnackbar("success", `Vehicle spawned!`);
         });
       },
     });
