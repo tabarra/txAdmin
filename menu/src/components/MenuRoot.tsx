@@ -3,6 +3,7 @@ import { Box, makeStyles, Theme } from "@material-ui/core";
 import { PageTabs } from "./PageTabs";
 import { MainPageList } from "./MainPageList";
 import { PlayersPage } from "./PlayersPage";
+import { txAdminMenuPage, usePageValue } from "../state/page.state";
 
 const TxAdminLogo: React.FC = () => (
   <Box my={1} display="flex" justifyContent="center">
@@ -24,15 +25,17 @@ const useStyles = makeStyles((theme: Theme) => ({
 const MenuRoot: React.FC = () => {
   const classes = useStyles();
 
+  const curPage = usePageValue()
+
   return (
    <>
       <Box p={2} className={classes.root}>
         <TxAdminLogo />
         <PageTabs />
-        <MainPageList />
+        <MainPageList visible={curPage === txAdminMenuPage.Main} />
       </Box>
-      <PlayersPage />
-   </>
+      <PlayersPage visible={curPage === txAdminMenuPage.Players} />
+    </>
   );
 };
 
