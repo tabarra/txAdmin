@@ -1,7 +1,7 @@
 import {atom, useRecoilValue, useSetRecoilState} from "recoil";
 
 const visibilityAtom = atom<boolean>({
-  default: process.env.NODE_ENV === 'development',
+  default: false,
   key: 'menuVisibility'
 })
 
