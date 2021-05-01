@@ -10,7 +10,7 @@ export const useEscapeListener = () => {
 
   useEffect(() => {
     const keyHandler = (e: KeyboardEvent) => {
-      if (e.code === "Escape") {
+      if (["Escape", "F1"].includes(e.code)) {
         if (process.env.NODE_ENV !== "development") {
           setVisible(false)
           fetchNui('closeMenu')

@@ -17,28 +17,26 @@ import { txAdminMenuPage, usePage } from "../atoms/page.atom";
 
 export const MainPageList: React.FC = () => {
   const { openDialog } = useDialogContext();
-
   const { openSnackbar } = useSnackbarContext();
 
   const [curSelected, setCurSelected] = useState(0);
-
   const [page, setPage] = usePage();
 
+  // the directions are inverted
   const handleArrowDown = () => {
-    if (curSelected <= 4) setCurSelected(curSelected + 1);
+    const next = (curSelected + 1);
+    setCurSelected((next >= menuListItems.length) ? 0 : next);
   };
   const handleArrowUp = () => {
-    if (curSelected > 0) setCurSelected(curSelected - 1);
+    const next = (curSelected - 1);
+    setCurSelected((curSelected < 0) ? (menuListItems.length - 1) : next)
   };
-
   const handleArrowLeft = () => {
     if (page > txAdminMenuPage.Main) setPage(page - 1);
   };
-
   const handleArrowRight = () => {
     if (page <= txAdminMenuPage.txAdmin) setPage(page + 1);
   };
-
   const handleEnter = () => {
     menuListItems[curSelected].onSelect();
   };
@@ -53,16 +51,23 @@ export const MainPageList: React.FC = () => {
 
   const handleTeleport = () => {
     openDialog({
-      description:
-        "Provide coordinates in an x, y, z format to go through the wormhole",
+      description: "Provide coordinates in an x, y, z format to go through the wormhole",
       title: "Teleport",
       placeholder: "340, 480, 12",
       onSubmit: (coords: string) => {
-        openSnackbar("success", "Sending you into the wormhole!"),
-          fetchNui("tpToCoords", coords);
-      },
+        const [x, y, z] = coords.split(',').map(s => s.trim())
+          .filter(s => s.match(/^\d{1,4}(?:\.\d{1,9})?$/))
+          .map(s => +s);
+
+        if ([x, y, z].every(n => (typeof n === 'number'))) {
+          openSnackbar("success", "Sending you into the wormhole!");
+          fetchNui("tpToCoords", {x, y, z});
+        } else {
+          openSnackbar("error", "Invalid coordinates. Must be in the format of: 111, 222, 333")
+        }
+      }
     });
-  };
+  }
 
   const handleAnnounceMessage = () => {
     openDialog({
@@ -72,7 +77,7 @@ export const MainPageList: React.FC = () => {
       onSubmit: (message: string) => {
         // Post up to client with announcement message
         openSnackbar("success", "Sending the announcement");
-        fetchNui("announceMessage", message);
+        fetchNui("sendAnnouncement", {message});
       },
     });
   };
@@ -83,14 +88,14 @@ export const MainPageList: React.FC = () => {
       placeholder: "Adder",
       onSubmit: (modelName: string) => {
         openSnackbar("info", `Trying to spawn ${modelName}`);
-        fetchNui("spawnVehicle", modelName).catch((e) => {
+        fetchNui("spawnVehicle", modelName).catch(() => {
           openSnackbar("success", `Vehicle spawned!`);
         });
       },
     });
   };
   const handleFixVehicle = () => {
-    fetchNui("fixCurrentVehicle");
+    fetchNui("fixVehicle");
     openSnackbar("info", "Vehicle fixed!");
   };
   const handleHealAllPlayers = () => {
