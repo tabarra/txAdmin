@@ -5,10 +5,11 @@ interface KeyCallbacks {
   onRightDown?: () => void;
   onUpDown?: () => void;
   onDownDown?: () => void;
+  onEnterDown?: () => void;
 }
 
 /**
- * A simple hook for listening to arrow key down events
+ * A simple hook for listening to arrow key down events + enter
  *
  * Note: Might change this up a little bit so its more of a global event listener
  *
@@ -16,23 +17,20 @@ interface KeyCallbacks {
  * @param onRightDown - Right arrow handler function
  * @param onUpDown - Up arrow handler function
  * @param onDownDown - Down arrow handler function
+ * @param onEnterDown - Enter handler function
  */
 
-export const useArrowKeys = ({
+export const useKeyboardNavigation = ({
   onLeftDown,
   onRightDown,
   onUpDown,
   onDownDown,
+  onEnterDown,
 }: KeyCallbacks) => {
   useEffect(() => {
     // Our basic handler function for keydown events
     const keyHandler = (e: KeyboardEvent) => {
-      /**
-       * TODO: Migrate this off of KeyboardEvent.key when possible
-       *
-       * See useEscapeListener.tsx for further context on why .code isnt used
-       */
-      switch (e.key) {
+      switch (e.code) {
         case "ArrowLeft":
           e.preventDefault();
           onLeftDown && onLeftDown();
@@ -49,6 +47,10 @@ export const useArrowKeys = ({
           e.preventDefault();
           onDownDown && onDownDown();
           break;
+        case 'Enter':
+          e.preventDefault();
+          onEnterDown && onEnterDown();
+          break;
       }
     };
 
@@ -57,5 +59,5 @@ export const useArrowKeys = ({
 
     // Remove on cleanup
     return () => window.removeEventListener("keydown", keyHandler);
-  }, [onLeftDown, onRightDown, onUpDown, onDownDown]);
+  }, [onLeftDown, onRightDown, onUpDown, onDownDown, onEnterDown]);
 };

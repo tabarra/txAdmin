@@ -25,9 +25,9 @@ export const PageTabs: React.FC = () => {
         textColor="secondary"
         onChange={handleChange}
       >
-        <Tab className={classes.tab} label="Main" wrapped />
-        <Tab className={classes.tab}label="Players" wrapped />
-        <Tab className={classes.tab} label="TXAdmin" wrapped />
+        <Tab className={classes.tab} label="Main" wrapped disableFocusRipple/>
+        <Tab className={classes.tab}label="Players" wrapped disableFocusRipple/>
+        <Tab className={classes.tab} label="TXAdmin" wrapped disableFocusRipple/>
       </Tabs>
     </Box>
   );

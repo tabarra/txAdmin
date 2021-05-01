@@ -7,12 +7,15 @@ import {
   Theme,
 } from "@material-ui/core";
 
-interface MenuListItemProps {
+interface MenuListItemProps extends MenuListItemData {
+  selected: boolean;
+}
+
+export interface MenuListItemData {
   icon: JSX.Element;
   primary: string;
   secondary: string;
   onSelect: () => void;
-  selected: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -40,7 +43,6 @@ export const MenuListItem: React.FC<MenuListItemProps> = ({
   return (
     <ListItem
       onClick={() => onSelect()}
-      button
       className={classes.root}
       dense
       selected={selected}
