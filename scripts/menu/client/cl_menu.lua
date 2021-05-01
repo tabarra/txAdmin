@@ -9,7 +9,20 @@ RegisterNetEvent('txAdmin:menu:setAccessible', function(canAccess)
   debugPrint('Menu Accessible: ' .. tostring(canAccess))
   menuIsAccessible = canAccess
 end)
-CreateThread(function() TriggerServerEvent("txAdmin:menu:checkAccess") end)
+
+CreateThread(function()
+  local ServerCtx = GlobalState.txAdminServerCtx
+  debugPrint('Checking for ServerCtx')
+  debugPrint(json.encode(ServerCtx))
+
+  -- Dispatch ctx to React state
+  SendNUIMessage({
+    action = 'setServerCtx',
+    data = GlobalState.txAdminServerCtx
+  })
+  
+  TriggerServerEvent("txAdmin:menu:checkAccess")
+end)
 --- End auth
 
 
