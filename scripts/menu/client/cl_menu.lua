@@ -1,30 +1,23 @@
 -- Variable that determines whether a player can even access the menu
 local menuIsAccessible
-local debugModeEnabled
 
-RegisterKeyMapping('txadmin:openMenu', 'Open the txAdmin Menu', 'keyboard', 'f1')
+RegisterKeyMapping('txAdmin:openMenu', 'Open the txAdmin Menu', 'keyboard', 'f1')
 
-CreateThread(function()
-  local convar = GetConvar('TXADMIN_MENU_DEBUG', 'false')
-  if convar == 'true' then
-    debugModeEnabled = true
-  end
+--- Authentication logic
+RegisterNetEvent('txAdmin:menu:setAccessible', function(canAccess)
+  if type(canAccess) ~= 'boolean' then error() end
+  debugPrint('Menu Accessible: ' .. tostring(canAccess))
+  menuIsAccessible = canAccess
 end)
+CreateThread(function() TriggerServerEvent("txAdmin:menu:checkAccess") end)
+--- End auth
 
-local function debugPrint(message)
-  if (debugModeEnabled) then
-    local msgTemplate = '^3[txAdminMenu]^0 %s'
-    local msg = msgTemplate:format(message)
-    print(msg)
-  end
-end
 
---- Snack
+--- Snackbar message
 ---@param level string - The severity of the message can be 'info', 'error', or 'warning' 
 ---@param message string - Message to display with snackbar
 local function sendSnackbarMessage(level, message)
   debugPrint(('Sending snackbar message, level: %s, message: %s'):format(level, message))
-
   SendNUIMessage({
     method = 'setSnackbarAlert',
     data = {
@@ -36,16 +29,15 @@ end
 
 
 -- Command to be used with the register key mapping
-RegisterCommand('txadmin:openMenu', function()
-  -- Commented out for dev, needs to actually be set at some point
-  --if (menuIsAccessible) then
-  -- Temporary until keyboard handlers for main page are all done
+RegisterCommand('txAdmin:openMenu', function()
+  if menuIsAccessible then
+    -- TODO: Temporary until keyboard handlers for main page are all done
     SetNuiFocus(true, true)
     SendNUIMessage({
       action = 'setVisible',
       data = true
     })
-  --end
+  end
 end)
 
 
@@ -70,26 +62,29 @@ end)
 -- CB From Menu
 -- Data is a object with x, y, z
 RegisterNUICallback('tpToCoords', function(data, cb)
-  TriggerServerEvent('txAdmin:menu:tpToCoords', data)
+  debugPrint(json.encode(data))
+  TriggerServerEvent('txAdmin:menu:tpToCoords', data.x + 0.0, data.y + 0.0, data.z + 0.0)
   cb({})
 end)
 
 -- CB From Menu
 RegisterNUICallback('spawnVehicle', function(data, cb)
-  
+  debugPrint(data)
+  TriggerServerEvent('txAdmin:menu:spawnvehicle', data.model)
   cb({})
 end)
 
 -- CB From Menu
 RegisterNUICallback('healAllPlayers', function(data, cb)
+  debugPrint(data)
   TriggerServerEvent('txAdmin:menu:healAllPlayers')
   cb({})
 end)
 
-
 -- CB From Menu
 -- Data will be an object with a message attribute
 RegisterNUICallback('sendAnnouncement', function(data, cb)
+  debugPrint(data)
   TriggerServerEvent('txAdmin:menu:sendAnnouncement', data.message)
   cb({})
 end)
@@ -100,37 +95,41 @@ RegisterNUICallback('fixVehicle', function(data, cb)
   if (veh == 0) then
     sendSnackbarMessage('error', 'You are currently not in a vehicle')
   end
-
-  TriggerServerEvent('txadmin:menu:fixVehicle')
-end)
-
---[[ 
-  Sensitive Events that are triggered 
-  by the server after verification
- ]]
-
-RegisterNetEvent('txAdmin:menu:setMenuAccessible', function(canAccess)
-  debugPrint('Menu Accessible: ' ..  tostring(canAccess))
-  menuIsAccessible = canAccess
+  
+  TriggerServerEvent('txAdmin:menu:fixVehicle')
+  cb({})
 end)
 
 
-RegisterNetEvent('txAdmin:menu:tpToCoords', function(coords)
+--[[ Teleport the player to the coordinates ]]
+---@param x number
+---@param y number
+---@param z number
+RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   local ped = PlayerPedId()
   debugPrint('Teleporting to coords')
-  debugPrint(json.encode(coords))
-
-  SetEntityCoords(ped, coords.x, coords.y, coords.z , 0, 0, 0, false)
+  debugPrint(json.encode({ x, y, z }))
+  RequestCollisionAtCoord(x, y, z)
+  SetPedCoordsKeepVehicle(ped, x, y, z)
+  local veh = GetVehiclePedIsIn(ped, false)
+  if veh and veh > 0 then SetVehicleOnGroundProperly(veh) end
 end)
 
 
---[[
-  Registered and used on all clients for global events (heal all)
- ]]
-
+--[[ Heal all players ]]
 RegisterNetEvent('txAdmin:menu:healed', function()
   debugPrint('Received heal event, healing to full')
   local ped = PlayerPedId()
-  local maxHealth = GetEntityMaxHealth(ped)
-  SetEntityHealth(ped, maxHealth)
+  SetEntityHealth(ped, GetEntityMaxHealth(ped))
+end)
+
+--[[ Repair vehicle ]]
+RegisterNetEvent('txAdmin:menu:fixVehicle', function()
+  local ped = PlayerPedId()
+  local veh = GetVehiclePedIsIn(ped, false)
+  if veh and veh > 0 then
+    SetVehicleUndriveable(veh, false)
+    SetVehicleFixed(veh)
+    SetVehicleEngineOn(veh, true, false)
+  end
 end)

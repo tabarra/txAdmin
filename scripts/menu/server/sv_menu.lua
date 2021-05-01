@@ -5,41 +5,64 @@ if GetConvar('onesync', 'off') == 'on' or 'legacy' then
   oneSyncEnabled = true
 end
 
-RegisterServerEvent('txadmin:menu:checkAccess', function()
+RegisterServerEvent('txAdmin:menu:checkAccess', function()
   local src = source
-
-  -- Do the accessible verification check here, not sure how you want
-  -- to do this Tabarra, but this logic goes here
+  
+  -- TODO: Make this NOT constant
   local canAccess = true
-  TriggerClientEvent('txadmin:menu:setAccessible', src, canAccess)
+  if false then canAccess = false end
+  
+  debugPrint((canAccess and "^3" or "^1") .. "Player " .. src ..
+               "does " .. (canAccess and "" or "NOT") .. "have menu permission.")
+  TriggerClientEvent('txAdmin:menu:setAccessible', src, canAccess)
 end)
 
-
 RegisterServerEvent('txAdmin:menu:healAllPlayers', function()
-  -- Verification Check here or cancel
   local src = source
-
+  
+  -- TODO: Security, permission check
+  if false then return end
+  
+  debugPrint("Healing all players!")
   TriggerClientEvent('txAdmin:menu:healed', -1)
 end)
 
-
-RegisterServerEvent('txAdmin:menu:tpToCoords', function(coords)
+---@param x number|nil
+---@param y number|nil
+---@param z number|nil
+RegisterServerEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   local src = source
-
-  -- Verification check here or cancel
-
-  TriggerClientEvent('txAdmin:menu:tpToCoords', src, coords)
+  
+  -- sanity check
+  if type(x) ~= 'number' or type(y) ~= 'number' or type(z) ~= 'number' then return end
+  
+  -- TODO: Security, permission check
+  if false then return end
+  
+  debugPrint("Teleporting " .. src .. " to " .. x .. ", " .. y .. ", " .. z)
+  TriggerClientEvent('txAdmin:menu:tpToCoords', src, x, y, z)
 end)
 
 RegisterServerEvent('txAdmin:menu:sendAnnouncement', function(message)
   local src = source
-
-  TriggerClientEvent('chat:addMessage', -1, { 
-    color = {255, 0, 0},
+  
+  -- TODO: Security, permission check
+  if false then return end
+  
+  debugPrint("Player " .. src .. " sent announcement: " .. message)
+  TriggerClientEvent('chat:addMessage', -1, {
+    color = { 255, 0, 0 },
     multiline = true,
-    args = {"Announcement", message}
+    args = { "Announcement", message }
   })
+end)
 
-  -- Verification check here or cancel
-  -- Goes up to txAdmin WebServer for meming
+RegisterServerEvent('txAdmin:menu:fixVehicle', function()
+  local src = source
+  
+  -- TODO: Security, permission check
+  if false then return end
+  
+  debugPrint("Player " .. GetPlayerName(src) .. " repaired their vehicle!")
+  TriggerClientEvent('txAdmin:menu:fixVehicle', src)
 end)
