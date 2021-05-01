@@ -5,7 +5,10 @@ local debugModeEnabled
 RegisterKeyMapping('txadmin:openMenu', 'Open the txAdmin Menu', 'keyboard', 'f1')
 
 CreateThread(function()
-  debugModeEnabled = GetConvar('TXADMIN_MENU_DEBUG', false)
+  local convar = GetConvar('TXADMIN_MENU_DEBUG', 'false')
+  if convar == 'true' then
+    debugModeEnabled = true
+  end
 end)
 
 local function debugPrint(message)
@@ -34,13 +37,14 @@ end
 
 -- Command to be used with the register key mapping
 RegisterCommand('txadmin:openMenu', function()
-  if (menuIsAccessible) then
+  -- Commented out for dev, needs to actually be set at some point
+  --if (menuIsAccessible) then
     SetNuiFocusKeepInput(true)
     SendNUIMessage({
-      method = 'setVisibility',
+      action = 'setVisible',
       data = true
     })
-  end
+  --end
 end)
 
 
