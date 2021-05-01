@@ -29,7 +29,7 @@ export const MainPageList: React.FC = () => {
   };
   const handleArrowUp = () => {
     const next = (curSelected - 1);
-    setCurSelected((curSelected < 0) ? (menuListItems.length - 1) : next)
+    setCurSelected((next < 0) ? (menuListItems.length - 1) : next)
   };
   const handleArrowLeft = () => {
     if (page > txAdminMenuPage.Main) setPage(page - 1);
@@ -56,7 +56,7 @@ export const MainPageList: React.FC = () => {
       placeholder: "340, 480, 12",
       onSubmit: (coords: string) => {
         const [x, y, z] = coords.split(',').map(s => s.trim())
-          .filter(s => s.match(/^\d{1,4}(?:\.\d{1,9})?$/))
+          .filter(s => s.match(/^-?\d{1,4}(?:\.\d{1,9})?$/))
           .map(s => +s);
 
         if ([x, y, z].every(n => (typeof n === 'number'))) {

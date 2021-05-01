@@ -57,8 +57,8 @@ RegisterServerEvent('txAdmin:menu:checkAccess', function()
   local canAccess = true
   if false then canAccess = false end
   
-  debugPrint((canAccess and "^3" or "^1") .. "Player " .. src ..
-               "does " .. (canAccess and "" or "NOT") .. "have menu permission.")
+  debugPrint((canAccess and "^2" or "^1") .. GetPlayerName(src) ..
+               " does " .. (canAccess and "" or "NOT ") .. "have menu permission.")
   TriggerClientEvent('txAdmin:menu:setAccessible', src, canAccess)
 end)
 
@@ -68,7 +68,7 @@ RegisterServerEvent('txAdmin:menu:healAllPlayers', function()
   -- TODO: Security, permission check
   if false then return end
   
-  debugPrint("Healing all players!")
+  debugPrint("^2" .. GetPlayerName(src) .. " healed all players!")
   TriggerClientEvent('txAdmin:menu:healed', -1)
 end)
 
@@ -84,7 +84,7 @@ RegisterServerEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   -- TODO: Security, permission check
   if false then return end
   
-  debugPrint("Teleporting " .. src .. " to " .. x .. ", " .. y .. ", " .. z)
+  debugPrint("Teleporting " .. GetPlayerName(src) .. " to " .. x .. ", " .. y .. ", " .. z)
   TriggerClientEvent('txAdmin:menu:tpToCoords', src, x, y, z)
 end)
 
@@ -94,7 +94,7 @@ RegisterServerEvent('txAdmin:menu:sendAnnouncement', function(message)
   -- TODO: Security, permission check
   if false then return end
   
-  debugPrint("Player " .. src .. " sent announcement: " .. message)
+  debugPrint("Player ^2" .. GetPlayerName(src) .. "^0 sent announcement: ^4" .. message)
   TriggerClientEvent('chat:addMessage', -1, {
     color = { 255, 0, 0 },
     multiline = true,
