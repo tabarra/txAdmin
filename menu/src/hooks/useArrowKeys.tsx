@@ -27,7 +27,12 @@ export const useArrowKeys = ({
   useEffect(() => {
     // Our basic handler function for keydown events
     const keyHandler = (e: KeyboardEvent) => {
-      switch (e.code) {
+      /**
+       * TODO: Migrate this off of KeyboardEvent.key when possible
+       *
+       * See useEscapeListener.tsx for further context on why .code isnt used
+       */
+      switch (e.key) {
         case "ArrowLeft":
           e.preventDefault();
           onLeftDown && onLeftDown();
