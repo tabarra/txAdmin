@@ -7,9 +7,10 @@ import { useFilteredSortedPlayers } from "../state/players.state";
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.background.default,
-    flexGrow: 1,
+    height: '50vh',
     borderRadius: 15,
     displayFlex: "column",
+    flex: 1,
   },
   overrideWrapper: {
     display: "flex",
@@ -21,10 +22,17 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.text.secondary,
     fontWeight: 500,
   },
+  grid: {
+    display: 'flex',
+    flexDirection: 'column',
+    height: '80%'
+  },
   playerGrid: {
     display: "flex",
     flexWrap: "wrap",
     alignItems: "center",
+    flexGrow: 1,
+    overflow: 'auto',
   },
 }));
 
@@ -43,12 +51,14 @@ export const PlayersPage: React.FC<{ visible: boolean }> = ({ visible }) => {
       visibility={visible ? "visible" : "hidden"}
     >
       <PlayerPageHeader />
-      <Box py={2} className={classes.playerGrid}>
-        {optimizedPlayers.map((player) => (
-          <PlayerCard {...player} key={player.id} />
-        ))}
-        {hasMorePlayers && <p>yo there's more</p>}
-      </Box>
+      <div className={classes.grid}>
+        <Box py={2} className={classes.playerGrid}>
+          {optimizedPlayers.map((player) => (
+            <PlayerCard {...player} key={player.id} />
+          ))}
+          {hasMorePlayers && <p>yo there's more</p>}
+        </Box>
+      </div>
     </Box>
   );
 };
