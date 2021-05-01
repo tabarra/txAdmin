@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   InputAdornment,
@@ -10,11 +10,13 @@ import {
 } from "@material-ui/core";
 import { Search, SortByAlpha } from "@material-ui/icons";
 import {
-  PlayerDataSort, useFilteredSortedPlayers,
-  useSetPlayerFilters,
-  usePlayersSortBy, usePlayersState,
+  PlayerDataSort,
+  useFilteredSortedPlayers,
+  usePlayersSortBy,
+  usePlayersState,
+  useSetPlayerFilter,
 } from "../state/players.state";
-import {useDebounce} from "../hooks/useDebouce";
+import { useDebounce } from "../hooks/useDebouce";
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
@@ -35,12 +37,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const PlayerPageHeader: React.FC = () => {
   const classes = useStyles();
   const [sortType, setSortType] = usePlayersSortBy();
-  const setPlayerFilter = useSetPlayerFilters();
+  const setPlayerFilter = useSetPlayerFilter();
   const allPlayers = usePlayersState();
   const filteredPlayers = useFilteredSortedPlayers();
-  const [searchVal, setSearchVal] = useState('')
+  const [searchVal, setSearchVal] = useState("");
 
-  const debouncedInput = useDebounce(searchVal, 500)
+  const debouncedInput = useDebounce(searchVal, 500);
 
   // We might need to debounce this in the future
   const handleSortData = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,12 +50,12 @@ export const PlayerPageHeader: React.FC = () => {
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setSearchVal(e.target.value)
+    setSearchVal(e.target.value);
   };
 
   useEffect(() => {
-    setPlayerFilter(debouncedInput as string)
-  }, [debouncedInput, setPlayerFilter])
+    setPlayerFilter(debouncedInput as string);
+  }, [debouncedInput, setPlayerFilter]);
 
   return (
     <Box display="flex" justifyContent="space-between">

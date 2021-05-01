@@ -45,13 +45,15 @@ const playersState = {
       const filteredValueInput = get(playersState.filterPlayerDataInput);
       const unfilteredPlayerStates = get(playersState.playerData);
 
+      const formattedInput = filteredValueInput.trim().toLowerCase()
+
       const playerStates: PlayerData[] = filteredValueInput
         ? unfilteredPlayerStates.filter(
             (player) =>
               player.username
                 .toLowerCase()
-                .includes(filteredValueInput.toLowerCase()) ||
-              player.id.toString().includes(filteredValueInput)
+                .includes(formattedInput) ||
+              player.id.toString().includes(formattedInput)
           )
         : unfilteredPlayerStates;
 
@@ -84,6 +86,8 @@ export const usePlayersState = () => useRecoilValue(playersState.playerData);
 export const useSetPlayersState = () =>
   useSetRecoilState(playersState.playerData);
 
+export const useSetPlayerFilter = () => useSetRecoilState(playersState.filterPlayerDataInput)
+
 export const usePlayersSortedValue = () =>
   useRecoilValue(playersState.sortedAndFilteredPlayerData);
 
@@ -92,6 +96,8 @@ export const usePlayersSortBy = () =>
 
 export const usePlayersFilter = () =>
   useRecoilState(playersState.filterPlayerDataInput);
+
+
 
 export const useFilteredSortedPlayers = (): PlayerData[] =>
   useRecoilValue(playersState.sortedAndFilteredPlayerData);
