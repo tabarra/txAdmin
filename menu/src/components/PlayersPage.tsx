@@ -1,13 +1,14 @@
-import React from "react";
-import { Box, makeStyles, Theme } from "@material-ui/core";
+import React, {useEffect, useState} from "react";
+import { Box, CircularProgress, makeStyles, Theme } from "@material-ui/core";
 import PlayerCard from "./PlayerCard";
 import { PlayerPageHeader } from "./PlayerPageHeader";
 import { useFilteredSortedPlayers } from "../state/players.state";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
     backgroundColor: theme.palette.background.default,
-    height: '50vh',
+    height: "50vh",
     borderRadius: 15,
     displayFlex: "column",
     flex: 1,
@@ -23,24 +24,45 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontWeight: 500,
   },
   grid: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: '80%'
+    display: "flex",
+    flexDirection: "column",
+    height: "85%",
   },
   playerGrid: {
     display: "flex",
     flexWrap: "wrap",
     alignItems: "center",
     flexGrow: 1,
-    overflow: 'auto',
+    overflow: "auto",
   },
 }));
 
 export const PlayersPage: React.FC<{ visible: boolean }> = ({ visible }) => {
   const classes = useStyles();
   const players = useFilteredSortedPlayers();
-  const optimizedPlayers = players.slice(0, 300)
-  const hasMorePlayers = (players.length > optimizedPlayers.length)
+  const [playerAmountRender, setPlayerAmountRender] = useState(50);
+  const [loading, setLoading] = useState(false);
+
+  const slicedPlayers = players.slice(0, playerAmountRender);
+
+  useEffect(() => {
+    setPlayerAmountRender(40)
+  }, [players])
+
+  const handleNextLoad = () => {
+    setLoading(true);
+    setTimeout(() => {
+      if (playerAmountRender + 40 > players.length) {
+        const max = players.length - playerAmountRender
+        setPlayerAmountRender(max)
+        setLoading(false);
+        return
+      }
+      setPlayerAmountRender(playerAmountRender + 40)
+      setLoading(false);
+    }, 1000);
+  };
+
   return (
     <Box
       className={classes.root}
@@ -51,14 +73,36 @@ export const PlayersPage: React.FC<{ visible: boolean }> = ({ visible }) => {
       visibility={visible ? "visible" : "hidden"}
     >
       <PlayerPageHeader />
-      <div className={classes.grid}>
-        <Box py={2} className={classes.playerGrid}>
-          {optimizedPlayers.map((player) => (
-            <PlayerCard {...player} key={player.id} />
-          ))}
-          {hasMorePlayers && <p>yo there's more</p>}
+      <Box className={classes.grid} pt={2}>
+        <Box py={2} className={classes.playerGrid} id="playerGrid">
+          <InfiniteScroll
+            next={handleNextLoad}
+            hasMore={true}
+            dataLength={playerAmountRender}
+            scrollableTarget="playerGrid"
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              flexGrow: 1,
+            }}
+            loader={<div/>}
+          >
+            {slicedPlayers.map((player) => (
+              <PlayerCard {...player} key={player.id} />
+            ))}
+          </InfiniteScroll>
+          <Box
+            visibility={loading ? 'visible' : 'hidden'}
+            id='grid-loader'
+            width="100%"
+            display="flex"
+            justifyContent="center"
+          >
+            <CircularProgress />
+          </Box>
         </Box>
-      </div>
+      </Box>
     </Box>
   );
 };
