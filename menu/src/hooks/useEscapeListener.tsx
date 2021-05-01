@@ -10,14 +10,7 @@ export const useEscapeListener = () => {
 
   useEffect(() => {
     const keyHandler = (e: KeyboardEvent) => {
-      /**
-       * TODO: Change to KeyboardEvent.code if fixed
-       *
-       * Probably shouldn't be using this as its language
-       * dependent but KeyboardEvent.code is currently returning
-       * an empty string in CEF
-       */
-      if (e.key === "Escape") {
+      if (e.code === "Escape") {
         if (process.env.NODE_ENV !== "development") {
           setVisible(false)
           fetchNui('closeMenu')
