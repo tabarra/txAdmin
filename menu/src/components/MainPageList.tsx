@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Collapse, List } from "@material-ui/core";
+import { List } from "@material-ui/core";
 import MenuListItem, { MenuListItemData } from "./MenuListItem";
 import {
   AccessibilityNew,
@@ -13,14 +13,12 @@ import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation";
 import { useDialogContext } from "../provider/DialogProvider";
 import { fetchNui } from "../utils/fetchNui";
 import { useSnackbarContext } from "../provider/SnackbarProvider";
-import {txAdminMenuPage, usePage} from "../state/page.state";
 
-export const MainPageList: React.FC<{ visible: boolean }> = ({ visible }) => {
+export const MainPageList: React.FC = () => {
   const { openDialog } = useDialogContext();
   const { openSnackbar } = useSnackbarContext();
 
   const [curSelected, setCurSelected] = useState(0);
-  const [page, setPage] = usePage();
 
   // the directions are inverted
   const handleArrowDown = () => {
@@ -31,12 +29,6 @@ export const MainPageList: React.FC<{ visible: boolean }> = ({ visible }) => {
     const next = (curSelected - 1);
     setCurSelected((next < 0) ? (menuListItems.length - 1) : next)
   };
-  const handleArrowLeft = () => {
-    if (page > txAdminMenuPage.Main) setPage(page - 1);
-  };
-  const handleArrowRight = () => {
-    if (page <= txAdminMenuPage.txAdmin) setPage(page + 1);
-  };
   const handleEnter = () => {
     menuListItems[curSelected].onSelect();
   };
@@ -44,8 +36,6 @@ export const MainPageList: React.FC<{ visible: boolean }> = ({ visible }) => {
   useKeyboardNavigation({
     onDownDown: handleArrowDown,
     onUpDown: handleArrowUp,
-    onLeftDown: handleArrowLeft,
-    onRightDown: handleArrowRight,
     onEnterDown: handleEnter,
   });
 
@@ -144,16 +134,14 @@ export const MainPageList: React.FC<{ visible: boolean }> = ({ visible }) => {
   ];
 
   return (
-    <Collapse in={visible} mountOnEnter unmountOnExit>
-      <List>
-        {menuListItems.map((item, index) => (
-          <MenuListItem
-            key={index}
-            selected={curSelected === index}
-            {...item}
-          />
-        ))}
-      </List>
-    </Collapse>
+    <List>
+      {menuListItems.map((item, index) => (
+        <MenuListItem
+          key={index}
+          selected={curSelected === index}
+          {...item}
+        />
+      ))}
+    </List>
   );
 };
