@@ -25,14 +25,14 @@ const MenuRoot: React.FC = () => {
   const classes = useStyles();
 
   return (
-    <>
+   <>
       <Box p={2} className={classes.root}>
         <TxAdminLogo />
         <PageTabs />
         <MainPageList />
       </Box>
       <PlayersPage />
-    </>
+   </>
   );
 };
 

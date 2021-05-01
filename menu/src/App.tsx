@@ -25,17 +25,13 @@ const App: React.FC = () => {
 
   return (
     <SnackbarProvider>
-      <div className="App">
         <DialogProvider>
           <TopLevelErrorBoundary>
-          {/*
-              Fade API seems to not like this here
-              will probably need to do a manual transition
-            */}
-          {visible && <MenuRoot />}
+          <div className="App" style={visible ? {opacity: 1} : undefined}>
+            <MenuRoot />
+          </div>
           </TopLevelErrorBoundary>
         </DialogProvider>
-      </div>
     </SnackbarProvider>
 );
 };
