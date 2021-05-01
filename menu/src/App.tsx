@@ -7,6 +7,14 @@ import { DialogProvider } from "./provider/DialogProvider";
 import { useEscapeListener } from "./hooks/useEscapeListener";
 import { useNuiListenerService } from "./hooks/useNuiListenersService";
 import { TopLevelErrorBoundary } from "./components/TopLevelErrorBoundary";
+import {debugData} from "./utils/debugLog";
+
+debugData([
+  {
+    action: 'setVisible',
+    data: true
+  }
+])
 
 const App: React.FC = () => {
   const visible = useIsMenuVisible();
