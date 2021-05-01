@@ -151,6 +151,7 @@ RegisterNetEvent('txAdmin:menu:fixVehicle', function()
     SetVehicleUndriveable(veh, false)
     SetVehicleFixed(veh)
     SetVehicleEngineOn(veh, true, false)
+    SetVehicleDirtLevel(veh, 0.0)
   end
 end)
 
@@ -189,6 +190,7 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(netID)
   debugPrint("Found networked vehicle " .. netID .. " (entity " .. veh .. ")")
   SetVehicleHasBeenOwnedByPlayer(veh, true)
   TaskWarpPedIntoVehicle(ped, veh, -1)
+  SetEntityHeading(veh, GetEntityHeading(ped))
   if oldVel > 0.0 then
     SetVehicleEngineOn(veh, true, true, false)
     SetVehicleForwardSpeed(veh, oldVel)
