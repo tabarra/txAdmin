@@ -39,7 +39,8 @@ end
 RegisterCommand('txadmin:openMenu', function()
   -- Commented out for dev, needs to actually be set at some point
   --if (menuIsAccessible) then
-    SetNuiFocusKeepInput(true)
+  -- Temporary until keyboard handlers for main page are all done
+    SetNuiFocus(true, true)
     SendNUIMessage({
       action = 'setVisible',
       data = true
@@ -54,7 +55,9 @@ end)
 
 -- Triggered whenever we require full focus, cursor and keyboard
 RegisterNUICallback('focusInput', function(data, cb)
+  -- Temporary until keyboard handlers for main page are all done
   SetNuiFocus(true, true)
+  SetNuiFocusKeepInput()
   cb({})
 end)
 
