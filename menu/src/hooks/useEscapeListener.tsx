@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import {fetchNui} from "../utils/fetchNui";
+import { fetchNui } from "../utils/fetchNui";
 import { useSetIsMenuVisible } from "../state/visibility.state";
 
 /**
@@ -12,8 +12,8 @@ export const useEscapeListener = () => {
     const keyHandler = (e: KeyboardEvent) => {
       if (["Escape", "F1"].includes(e.code)) {
         if (process.env.NODE_ENV !== "development") {
-          setVisible(false)
-          fetchNui('closeMenu')
+          setVisible(false);
+          fetchNui("closeMenu");
         }
       }
     };

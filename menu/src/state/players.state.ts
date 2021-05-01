@@ -48,7 +48,9 @@ const playersState = {
       const playerStates: PlayerData[] = filteredValueInput
         ? unfilteredPlayerStates.filter(
             (player) =>
-              player.username.toLowerCase().includes(filteredValueInput.toLowerCase()) ||
+              player.username
+                .toLowerCase()
+                .includes(filteredValueInput.toLowerCase()) ||
               player.id.toString().includes(filteredValueInput)
           )
         : unfilteredPlayerStates;
