@@ -6,11 +6,12 @@ import { SnackbarProvider } from "./provider/SnackbarProvider";
 import { DialogProvider } from "./provider/DialogProvider";
 import { useEscapeListener } from "./hooks/useEscapeListener";
 import { useNuiListenerService } from "./hooks/useNuiListenersService";
+import { TopLevelErrorBoundary } from "./components/TopLevelErrorBoundary";
 
 const App: React.FC = () => {
   const visible = useIsMenuVisible();
 
-  // These hooks are pretty should always be mounted
+  // These hooks don't ever unmount
   useEscapeListener();
   useNuiListenerService()
 
@@ -18,15 +19,17 @@ const App: React.FC = () => {
     <SnackbarProvider>
       <div className="App">
         <DialogProvider>
+          <TopLevelErrorBoundary>
           {/*
               Fade API seems to not like this here
               will probably need to do a manual transition
             */}
           {visible && <MenuRoot />}
+          </TopLevelErrorBoundary>
         </DialogProvider>
       </div>
     </SnackbarProvider>
-  );
+);
 };
 
 export default App;
