@@ -1,3 +1,4 @@
+import React, { memo } from "react";
 import {
   Box,
   IconButton,
@@ -14,7 +15,6 @@ import {
   MoreVert,
   Motorcycle,
 } from "@material-ui/icons";
-import React from "react";
 import { PlayerData } from "../state/players.state";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -105,4 +105,4 @@ const PlayerCard: React.FC<PlayerData> = ({
   );
 };
 
-export default PlayerCard;
+export default memo(PlayerCard);

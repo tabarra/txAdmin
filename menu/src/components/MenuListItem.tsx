@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import {
   ListItem,
   ListItemIcon,
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const MenuListItem: React.FC<MenuListItemProps> = ({
+const MenuListItem: React.FC<MenuListItemProps> = ({
   icon,
   primary,
   onSelect,
@@ -58,3 +58,5 @@ export const MenuListItem: React.FC<MenuListItemProps> = ({
     </ListItem>
   );
 };
+
+export default memo(MenuListItem);
