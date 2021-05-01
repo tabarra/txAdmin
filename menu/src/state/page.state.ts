@@ -1,4 +1,9 @@
-import {atom, useRecoilState, useRecoilValue, useSetRecoilState} from "recoil";
+import {
+  atom,
+  useRecoilState,
+  useRecoilValue,
+  useSetRecoilState,
+} from "recoil";
 
 export enum txAdminMenuPage {
   Main,
@@ -8,11 +13,11 @@ export enum txAdminMenuPage {
 
 const pageState = atom<txAdminMenuPage>({
   default: 0,
-  key: 'menuPage'
-})
+  key: "menuPage",
+});
 
-export const usePage = () => useRecoilState(pageState)
+export const usePage = () => useRecoilState(pageState);
 
-export const useSetPage = () => useSetRecoilState(pageState)
+export const useSetPage = () => useSetRecoilState(pageState);
 
-export const usePageValue = () => useRecoilValue(pageState)
+export const usePageValue = () => useRecoilValue(pageState);

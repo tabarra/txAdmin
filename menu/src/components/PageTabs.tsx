@@ -1,12 +1,12 @@
 import React, { ChangeEvent } from "react";
-import { Box, makeStyles, Tab, Tabs, Theme } from "@material-ui/core";
-import {usePage} from "../state/page.state";
+import { Box, makeStyles, Tab, Tabs } from "@material-ui/core";
+import { usePage } from "../state/page.state";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles({
   tab: {
-    minWidth: '100px',
-  }
-}))
+    minWidth: "100px",
+  },
+});
 
 export const PageTabs: React.FC = () => {
   const classes = useStyles();
@@ -17,7 +17,7 @@ export const PageTabs: React.FC = () => {
   };
 
   return (
-      <Box width="100%">
+    <Box width="100%">
       <Tabs
         value={page}
         centered

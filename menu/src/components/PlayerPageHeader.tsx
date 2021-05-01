@@ -9,7 +9,11 @@ import {
   Typography,
 } from "@material-ui/core";
 import { Search, SortByAlpha } from "@material-ui/icons";
-import {PlayerDataSort, usePlayersFilter, usePlayersSortBy} from "../state/players.state";
+import {
+  PlayerDataSort,
+  usePlayersFilter,
+  usePlayersSortBy,
+} from "../state/players.state";
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
@@ -23,14 +27,14 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.text.secondary,
   },
   inputs: {
-    minWidth: 150
-  }
+    minWidth: 150,
+  },
 }));
 
 export const PlayerPageHeader: React.FC = () => {
   const classes = useStyles();
-  const [sortType, setSortType] = usePlayersSortBy()
-  const [playerFilter, setPlayerFilter] = usePlayersFilter()
+  const [sortType, setSortType] = usePlayersSortBy();
+  const [playerFilter, setPlayerFilter] = usePlayersFilter();
 
   // We might need to debounce this in the future
   const handleSortData = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,8 +42,8 @@ export const PlayerPageHeader: React.FC = () => {
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPlayerFilter(e.target.value)
-  }
+    setPlayerFilter(e.target.value);
+  };
 
   return (
     <Box display="flex" justifyContent="space-between">
@@ -51,7 +55,7 @@ export const PlayerPageHeader: React.FC = () => {
       </Box>
       <Box display="flex" alignItems="center" justifyContent="center">
         <TextField
-          label='Search'
+          label="Search"
           value={playerFilter}
           onChange={handleSearchChange}
           className={classes.inputs}
@@ -95,9 +99,3 @@ export const PlayerPageHeader: React.FC = () => {
     </Box>
   );
 };
-
-{
-  /* <InputAdornment position="start">
-  <Search />
-</InputAdornment> */
-}

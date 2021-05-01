@@ -15,7 +15,7 @@ import { useDialogContext } from "../provider/DialogProvider";
 import { fetchNui } from "../utils/fetchNui";
 import { useSnackbarContext } from "../provider/SnackbarProvider";
 
-export const MainPageList: React.FC<{visible: boolean}> = ({ visible}) => {
+export const MainPageList: React.FC<{ visible: boolean }> = ({ visible }) => {
   const { openDialog } = useDialogContext();
   const { openSnackbar } = useSnackbarContext();
 

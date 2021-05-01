@@ -1,10 +1,10 @@
-import {atom, useRecoilValue, useSetRecoilState} from "recoil";
+import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 
 const visibilityState = atom<boolean>({
   default: false,
-  key: 'menuVisibility'
-})
+  key: "menuVisibility",
+});
 
-export const useIsMenuVisible = () => useRecoilValue(visibilityState)
+export const useIsMenuVisible = () => useRecoilValue(visibilityState);
 
-export const useSetIsMenuVisible = () => useSetRecoilState(visibilityState)
+export const useSetIsMenuVisible = () => useSetRecoilState(visibilityState);

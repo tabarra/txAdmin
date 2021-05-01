@@ -12,7 +12,7 @@ import {
   Theme,
 } from "@material-ui/core";
 import { Create } from "@material-ui/icons";
-import {useSnackbarContext} from "./SnackbarProvider";
+import { useSnackbarContext } from "./SnackbarProvider";
 
 interface InputDialogProps {
   title: string;
@@ -49,7 +49,7 @@ export const DialogProvider: React.FC = ({ children }) => {
 
   const [dialogInputVal, setDialogInputVal] = useState<string>("");
 
-  const { openSnackbar } = useSnackbarContext()
+  const { openSnackbar } = useSnackbarContext();
 
   const classes = useStyles();
 
@@ -59,13 +59,13 @@ export const DialogProvider: React.FC = ({ children }) => {
 
   const handleDialogSubmit = () => {
     if (!dialogInputVal.trim()) {
-      openSnackbar('error', "You cannot have an empty input")
-      return
+      openSnackbar("error", "You cannot have an empty input");
+      return;
     }
 
     dialogProps.onSubmit(dialogInputVal);
     setDialogOpen(false);
-    setDialogInputVal('')
+    setDialogInputVal("");
   };
 
   const openDialog = (dialogProps: InputDialogProps) => {
@@ -88,7 +88,7 @@ export const DialogProvider: React.FC = ({ children }) => {
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            handleDialogSubmit()
+            handleDialogSubmit();
           }}
           action="/"
         >

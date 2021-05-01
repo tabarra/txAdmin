@@ -59,17 +59,15 @@ const PlayerCard: React.FC<PlayerData> = ({
     biking: <Motorcycle color="inherit" />,
   };
 
-  const upperCaseStatus = vehicleStatus.charAt(0).toUpperCase() + vehicleStatus.slice(1)
+  const upperCaseStatus =
+    vehicleStatus.charAt(0).toUpperCase() + vehicleStatus.slice(1);
 
   return (
     <Box p={2}>
       <Paper className={classes.paper}>
         <Box display="flex" alignItems="center" pb="5px">
           <Box flexGrow={1} display="flex">
-            <Tooltip
-              title={upperCaseStatus}
-              placement="top"
-            >
+            <Tooltip title={upperCaseStatus} placement="top">
               <span className={classes.icon}>{statusIcon[vehicleStatus]}</span>
             </Tooltip>
             <Typography

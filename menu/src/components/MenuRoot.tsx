@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const MenuRoot: React.FC = () => {
   const classes = useStyles();
 
-  const curPage = usePageValue()
+  const curPage = usePageValue();
 
   return (
    <>
