@@ -1,8 +1,7 @@
 debugModeEnabled = false
 
 CreateThread(function() 
-  --debugModeEnabled = (GetConvar('TXADMIN_MENU_DEBUG', 'false') == 'true') 
-  debugModeEnabled = true
+  debugModeEnabled = (GetConvar('TXADMIN_MENU_DEBUG', 'false') == 'true') 
 end)
 
 function debugPrint(...)
