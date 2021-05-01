@@ -10,7 +10,7 @@ import { debugData } from "../utils/debugLog";
 enum VehicleStatus {
   Walking = "walking",
   Driving = "driving",
-  Boat = "boat",
+  Boat = "boating",
   Biking = "biking",
 }
 
@@ -93,7 +93,7 @@ export const usePlayersSortBy = () =>
 export const usePlayersFilter = () =>
   useRecoilState(playersState.filterPlayerDataInput);
 
-export const useFilteredSortedPlayers = () =>
+export const useFilteredSortedPlayers = (): PlayerData[] =>
   useRecoilValue(playersState.sortedAndFilteredPlayerData);
 
 debugData<PlayerData[]>([
