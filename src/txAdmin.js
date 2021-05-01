@@ -116,6 +116,9 @@ module.exports = class txAdmin {
         this.startDiscordBot(profileConfig.discordBot).catch((err) => {
             HandleFatalError(err, 'DiscordBot');
         });
+        this.startTranslator().catch((err) => {
+            HandleFatalError(err, 'Translator');
+        });
         this.startFXRunner(profileConfig.fxRunner).catch((err) => {
             HandleFatalError(err, 'FXRunner');
         });
@@ -124,9 +127,6 @@ module.exports = class txAdmin {
         });
         this.startDynamicAds().catch((err) => {
             HandleFatalError(err, 'DynamicAds');
-        });
-        this.startTranslator().catch((err) => {
-            HandleFatalError(err, 'Translator');
         });
         this.startMonitor(profileConfig.monitor).catch((err) => {
             HandleFatalError(err, 'Monitor');
@@ -147,6 +147,8 @@ module.exports = class txAdmin {
         //NOTE: dependency order
         //  - translator before monitor
         //  - adminVault before webserver
+        //  - translator before fxrunner (for the locale string)
+        //  - authenticator before webserver
 
         //Run Update Checker every 15 minutes
         const updateChecker = require('./extras/updateChecker');

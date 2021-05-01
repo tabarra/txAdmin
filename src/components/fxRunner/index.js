@@ -70,6 +70,7 @@ module.exports = class FXRunner {
             : `127.0.0.1:${GlobalData.txAdminPort}`;
         const cmdArgs = [
             '+sets', 'txAdmin-version', GlobalData.txAdminVersion,
+            '+setr', 'txAdmin-locale', globals.translator.language || 'en',
             '+set', 'txAdmin-apiHost', txAdminInterface,
             '+set', 'txAdmin-apiToken', globals.webServer.intercomToken,
             '+set', 'txAdmin-checkPlayerJoin', (controllerConfigs.onJoinCheckBan || controllerConfigs.onJoinCheckWhitelist).toString(),
