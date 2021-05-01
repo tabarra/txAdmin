@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
   Box,
   InputAdornment,
@@ -11,9 +11,10 @@ import {
 import { Search, SortByAlpha } from "@material-ui/icons";
 import {
   PlayerDataSort, useFilteredSortedPlayers,
-  usePlayersFilter,
+  useSetPlayerFilters,
   usePlayersSortBy, usePlayersState,
 } from "../state/players.state";
+import {useDebounce} from "../hooks/useDebouce";
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
@@ -34,9 +35,12 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const PlayerPageHeader: React.FC = () => {
   const classes = useStyles();
   const [sortType, setSortType] = usePlayersSortBy();
-  const [playerFilter, setPlayerFilter] = usePlayersFilter();
+  const setPlayerFilter = useSetPlayerFilters();
   const allPlayers = usePlayersState();
   const filteredPlayers = useFilteredSortedPlayers();
+  const [searchVal, setSearchVal] = useState('')
+
+  const debouncedInput = useDebounce(searchVal, 500)
 
   // We might need to debounce this in the future
   const handleSortData = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,8 +48,12 @@ export const PlayerPageHeader: React.FC = () => {
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPlayerFilter(e.target.value);
+      setSearchVal(e.target.value)
   };
+
+  useEffect(() => {
+    setPlayerFilter(debouncedInput as string)
+  }, [debouncedInput, setPlayerFilter])
 
   return (
     <Box display="flex" justifyContent="space-between">
@@ -60,7 +68,7 @@ export const PlayerPageHeader: React.FC = () => {
       <Box display="flex" alignItems="center" justifyContent="center">
         <TextField
           label="Search"
-          value={playerFilter}
+          value={searchVal}
           onChange={handleSearchChange}
           className={classes.inputs}
           InputProps={{
