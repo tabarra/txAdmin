@@ -10,9 +10,9 @@ import {
 } from "@material-ui/core";
 import { Search, SortByAlpha } from "@material-ui/icons";
 import {
-  PlayerDataSort,
+  PlayerDataSort, useFilteredSortedPlayers,
   usePlayersFilter,
-  usePlayersSortBy,
+  usePlayersSortBy, usePlayersState,
 } from "../state/players.state";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -35,6 +35,8 @@ export const PlayerPageHeader: React.FC = () => {
   const classes = useStyles();
   const [sortType, setSortType] = usePlayersSortBy();
   const [playerFilter, setPlayerFilter] = usePlayersFilter();
+  const allPlayers = usePlayersState();
+  const filteredPlayers = useFilteredSortedPlayers();
 
   // We might need to debounce this in the future
   const handleSortData = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,7 +53,9 @@ export const PlayerPageHeader: React.FC = () => {
         <Typography variant="h5" color="primary" className={classes.title}>
           ONLINE PLAYERS
         </Typography>
-        <Typography className={classes.playerCount}>47/420 Players</Typography>
+        <Typography className={classes.playerCount}>
+          {filteredPlayers.length}/{allPlayers.length} Players
+        </Typography>
       </Box>
       <Box display="flex" alignItems="center" justifyContent="center">
         <TextField

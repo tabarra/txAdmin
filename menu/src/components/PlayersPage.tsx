@@ -31,7 +31,8 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const PlayersPage: React.FC<{ visible: boolean }> = ({ visible }) => {
   const classes = useStyles();
   const players = useFilteredSortedPlayers();
-
+  const optimizedPlayers = players.slice(0, 300)
+  const hasMorePlayers = (players.length > optimizedPlayers.length)
   return (
     <Box
       className={classes.root}
@@ -43,9 +44,10 @@ export const PlayersPage: React.FC<{ visible: boolean }> = ({ visible }) => {
     >
       <PlayerPageHeader />
       <Box py={2} className={classes.playerGrid}>
-        {players.map((player) => (
+        {optimizedPlayers.map((player) => (
           <PlayerCard {...player} key={player.id} />
         ))}
+        {hasMorePlayers && <p>yo there's more</p>}
       </Box>
     </Box>
   );

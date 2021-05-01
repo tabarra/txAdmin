@@ -123,3 +123,55 @@ RegisterServerEvent('txAdmin:menu:spawnVehicle', function(model)
   local veh = Citizen.InvokeNative(CREATE_AUTOMOBILE, GetHashKey(model), GetEntityCoords(ped));
   TriggerClientEvent('txAdmin:menu:spawnVehicle', src, NetworkGetNetworkIdFromEntity(veh))
 end)
+
+--[[ Emit player list to clients ]]
+CreateThread(function()
+  while true do
+    local found = {}
+    
+    -- TODO: Uncomment live code
+    --local players = GetPlayers()
+    --for serverID in pairs(players) do
+    --  local ped = GetPlayerPed(serverID)
+    --  
+    --  local veh = GetVehiclePedIsIn(ped, false)
+    --  local vehClass = "walking"
+    --  if veh and veh > 0 then 
+    --    local class = GetVehicleClass(veh)
+    --    if class == 8 then
+    --      vehClass = "biking"
+    --    elseif class == 14 then
+    --      vehClass = "boating"
+    --    else
+    --      vehClass = "driving"
+    --    end
+    --  end
+    --  
+    --  local data = {
+    --    id = serverID,
+    --    health = GetEntityHealth(ped),
+    --    vehicleStatus = vehClass,
+    --    pos = GetEntityCoords(ped),
+    --    username = GetPlayerName(serverID),
+    --  }
+    --  table.insert(found, data)
+    --  Wait(0)
+    --end
+    
+    -- TODO: remove test data
+    for i = 1, 1000 do
+      local data = {
+        id = i,
+        vehicleStatus = "walking",
+        health = math.random(0, 200),
+        distance = math.random(1, 5000),
+        username = 'skeleboi' .. i,
+        pos = vec3(0, 0, 0)
+      }
+      table.insert(found, data)
+    end
+    
+    TriggerClientEvent('txAdmin:menu:setPlayerState', -1, found)
+    Wait(1000 * 15)
+  end
+end)
