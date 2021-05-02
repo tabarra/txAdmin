@@ -67,8 +67,8 @@ export const PlayersPage: React.FC<{ visible: boolean }> = ({ visible }) => {
       visibility={visible ? "visible" : "hidden"}
     >
       <PlayerPageHeader />
-      <Box className={classes.grid} pt={2}>
-        <Box py={2} className={classes.playerGrid} id="playerGrid">
+      <Box className={classes.grid}>
+        <Box my={2} className={classes.playerGrid} id="playerGrid">
           <InfiniteScroll
             next={handleNextLoad}
             hasMore={playerAmountRender === players.length}
