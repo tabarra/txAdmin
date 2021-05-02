@@ -55,7 +55,7 @@ const PlayerCard: React.FC<PlayerData> = ({
   const statusIcon = {
     walking: <DirectionsWalk color="inherit" />,
     driving: <DriveEta color="inherit" />,
-    boat: <DirectionsBoat color="inherit" />,
+    boating: <DirectionsBoat color="inherit" />,
     biking: <Motorcycle color="inherit" />,
   };
 
