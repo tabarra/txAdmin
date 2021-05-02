@@ -162,13 +162,12 @@ async function handleKick(ctx) {
     const cmd = formatCommand('txaKickID', id, msg);
     const toResp = await globals.fxRunner.srvCmdBuffer(cmd);
 
-    // Prepare and dispatch txaEvent `playerKicked`
-    const kickEvent = formatCommand(
-        'txaEvent',
-        'playerKicked',
-        JSON.stringify({ target: id, author: ctx.session.auth.username, reason }),
-    );
-    globals.fxRunner.srvCmd(kickEvent);
+    // Dispatch `txAdmin:events:playerKicked`
+    globals.fxRunner.sendEvent('playerKicked', {
+        target: id,
+        author: ctx.session.auth.username,
+        reason,
+    });
 
     return sendAlertOutput(ctx, toResp);
 }
@@ -216,14 +215,13 @@ async function handleWarning(ctx) {
     );
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
 
-    // Prepare and dispatch txaEvent `playerWarned`
-    const warnEvent = formatCommand(
-        'txaEvent',
-        'playerWarned',
-        JSON.stringify({ target: id, author: ctx.session.auth.username, reason, actionId }),
-    );
-
-    globals.fxRunner.srvCmd(warnEvent);
+    // Dispatch `txAdmin:events:playerWarned`
+    globals.fxRunner.sendEvent('playerWarned', {
+        target: id,
+        author: ctx.session.auth.username,
+        reason,
+        actionId,
+    });
     return sendAlertOutput(ctx, toResp);
 }
 
@@ -325,17 +323,15 @@ async function handleBan(ctx) {
         return ctx.send({type: 'danger', message: '<b>Error:</b> unknown reference type'});
     }
 
-    // Prepare and dispatch txaEvent `playerBanned`
-    const banEvent = formatCommand('txaEvent', 'playerBanned', JSON.stringify({
+    // Dispatch `txAdmin:events:playerBanned`
+    globals.fxRunner.sendEvent('playerBanned', {
         author: ctx.session.auth.username,
         reason,
         actionId,
         target: reference,
-    }));
+    });
 
-    globals.fxRunner.srvCmd(banEvent);
-
-    let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+    const toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp, 'Identifiers banned!<br>Kicking players:');
 }
 
@@ -363,14 +359,12 @@ async function handleWhitelist(ctx) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
 
-    // Prepare and emit txaEvent `playerWhitelisted`
-    const whitelistEvent = formatCommand('txaEvent', 'playerWhitelisted', JSON.stringify({
+    // Dispatch `txAdmin:events:playerWhitelisted`
+    globals.fxRunner.sendEvent('playerWhitelisted', {
+        target: reference,
         author: ctx.session.auth.username,
         actionId,
-        target: reference,
-    }));
-
-    globals.fxRunner.srvCmd(whitelistEvent);
+    });
 
     ctx.utils.logAction(`Whitelisted ${reference}`);
     return ctx.send({refresh: true});

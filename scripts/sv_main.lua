@@ -200,6 +200,7 @@ function txaDropIdentifiers(_, args)
 end
 
 -- Fire server event
+-- FIXME: check source to make sure its from the console
 function txaEvent(source, args)
     if args[1] ~= nil and args[2] ~= nil then
         local eventName = unDeQuote(args[1])
@@ -212,6 +213,7 @@ function txaEvent(source, args)
 end
 
 -- Broadcast admin message to all players
+-- TODO: deprecate txaBroadcast, carefull to also show it on the Server Log
 function txaBroadcast(source, args)
     if args[1] ~= nil and args[2] ~= nil then
         args[1] = unDeQuote(args[1])

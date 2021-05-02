@@ -150,9 +150,10 @@ module.exports = class Monitor {
             });
             if (!action) return;
 
-            //Fire event
-            const cmd = formatCommand('txaEvent', 'scheduledRestart', JSON.stringify({secondsRemaining: action.remaining * 60}));
-            globals.fxRunner.srvCmd(cmd);
+            // Dispatch `txAdmin:events:scheduledRestart`
+            globals.fxRunner.sendEvent('scheduledRestart', {
+                secondsRemaining: action.remaining * 60,
+            });
 
             //Perform scheduled action
             if (action.restart === true) {
@@ -164,6 +165,7 @@ module.exports = class Monitor {
             } else if (action.messages) {
                 globals.discordBot.sendAnnouncement(action.messages.discord);
                 if (!this.config.disableChatWarnings) {
+                    // TODO: deprecate txaBroadcast, carefull to also show it on the Server Log
                     globals.fxRunner.srvCmd(formatCommand('txaBroadcast', 'txAdmin', action.messages.chat));
                 }
             }
@@ -376,6 +378,7 @@ module.exports = class Monitor {
                 {servername: globals.config.serverName},
             ));
             const chatMsg = globals.translator.t('restarter.partial_crash_warn');
+            // TODO: deprecate txaBroadcast, carefull to also show it on the Server Log
             globals.fxRunner.srvCmd(formatCommand('txaBroadcast', 'txAdmin', chatMsg));
             this.healthCheckRestartWarningIssued = currTimestamp;
         }
