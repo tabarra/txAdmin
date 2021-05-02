@@ -1,6 +1,14 @@
-import React, {ChangeEvent, createContext, useContext, useEffect, useState} from "react";
+import React, {
+  ChangeEvent,
+  createContext, SyntheticEvent,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import {
+  Box,
   Button,
+  createMuiTheme,
   Dialog,
   DialogActions,
   DialogContent,
@@ -8,12 +16,14 @@ import {
   DialogTitle,
   InputAdornment,
   makeStyles,
+  MuiThemeProvider,
   TextField,
   Theme,
+  useTheme,
 } from "@material-ui/core";
 import { Create } from "@material-ui/icons";
 import { useSnackbarContext } from "./SnackbarProvider";
-import {useKeyboardNavContext} from "./KeyboardNavProvider";
+import { useKeyboardNavContext } from "./KeyboardNavProvider";
 
 interface InputDialogProps {
   title: string;
@@ -38,7 +48,19 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const DialogTheme = createMuiTheme({
+  palette: {
+    background: {
+      paper: "#151a1f",
+    },
+  },
+});
+
 export const DialogProvider: React.FC = ({ children }) => {
+  const classes = useStyles();
+
+  const theme = useTheme();
+
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const [dialogProps, setDialogProps] = useState<InputDialogProps>({
@@ -48,21 +70,19 @@ export const DialogProvider: React.FC = ({ children }) => {
     title: "Dialog Title",
   });
 
-  const { setDisabledKeyNav } = useKeyboardNavContext()
+  const { setDisabledKeyNav } = useKeyboardNavContext();
 
   const [dialogInputVal, setDialogInputVal] = useState<string>("");
 
   const { openSnackbar } = useSnackbarContext();
 
-  const classes = useStyles();
-
   useEffect(() => {
     if (dialogOpen) {
-      setDisabledKeyNav(true)
+      setDisabledKeyNav(true);
     } else {
-      setDisabledKeyNav(false)
+      setDisabledKeyNav(false);
     }
-  }, [dialogOpen, setDisabledKeyNav])
+  }, [dialogOpen, setDisabledKeyNav]);
 
   const handleDialogClose = () => {
     setDialogOpen(false);
@@ -95,13 +115,21 @@ export const DialogProvider: React.FC = ({ children }) => {
         closeDialog: handleDialogClose,
       }}
     >
-      <Dialog open={dialogOpen} fullWidth>
+      <Dialog
+        onEscapeKeyDown={handleDialogClose}
+        open={dialogOpen}
+        fullWidth
+        PaperProps={{
+          style: {
+            backgroundColor: theme.palette.background.default,
+          },
+        }}
+      >
         <form
           onSubmit={(e) => {
             e.preventDefault();
             handleDialogSubmit();
           }}
-          action="/"
         >
           <DialogTitle classes={{ root: classes.dialogTitleOverride }}>
             {dialogProps.title}
@@ -125,7 +153,14 @@ export const DialogProvider: React.FC = ({ children }) => {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleDialogClose}>Cancel</Button>
+            <Button
+              onClick={handleDialogClose}
+              style={{
+                color: theme.palette.text.secondary,
+              }}
+            >
+              Cancel
+            </Button>
             <Button onClick={handleDialogSubmit} color="primary">
               Submit
             </Button>
