@@ -9,17 +9,16 @@
 
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 7px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: #828486; 
   border-radius: 20px;
 }
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #057C5B;
+  background: #24282b;
   border-radius: 20px;
 }
