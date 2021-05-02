@@ -68,6 +68,7 @@ module.exports = async function FXServerCommands(ctx) {
     //==============================================
     } else if (action == 'admin_broadcast') {
         if (!ensurePermission(ctx, 'players.message')) return false;
+        // TODO: deprecate txaBroadcast, carefull to also show it on the Server Log
         let cmd = formatCommand('txaBroadcast', ctx.session.auth.username, parameter);
         ctx.utils.logCommand(cmd);
         let toResp = await globals.fxRunner.srvCmdBuffer(cmd);

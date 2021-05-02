@@ -328,6 +328,31 @@ module.exports = class FXRunner {
 
     //================================================================
     /**
+     * Fires an `txAdmin:event` inside the server via srvCmd > stdin > command > lua broadcaster.
+     * @param {string} eventType
+     * @param {object} data
+     */
+    sendEvent(eventType, data = {}) {
+        if (typeof eventType !== 'string') throw new Error('Expected eventType as String!');
+        try {
+            const eventCommand = formatCommand(
+                'txaEvent',
+                eventType,
+                JSON.stringify(data),
+            );
+            return this.srvCmd(eventCommand);
+        } catch (error) {
+            if (GlobalData.verbose) {
+                logError(`Error writing firing server event ${eventType}`);
+                dir(error);
+            }
+            return false;
+        }
+    }
+
+
+    //================================================================
+    /**
      * Pipe a string into FXServer's stdin (aka executes a cfx's command)
      * @param {string} command
      */
@@ -335,7 +360,7 @@ module.exports = class FXRunner {
         if (typeof command !== 'string') throw new Error('Expected String!');
         if (this.fxChild === null) return false;
         try {
-            let success = this.fxChild.stdin.write(command + '\n');
+            const success = this.fxChild.stdin.write(command + '\n');
             globals.webServer.webConsole.buffer(command, 'command');
             return success;
         } catch (error) {
