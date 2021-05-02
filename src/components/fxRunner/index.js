@@ -12,9 +12,28 @@ const OutputHandler = require('./outputHandler');
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
-const escape = (x) => {return x.replace(/"/g, '\uff02');};
+const escape = (x) => {return x.toString().replace(/"/g, '\uff02');};
 const formatCommand = (cmd, ...params) => {
     return `${cmd} "` + [...params].map(escape).join('" "') + '"';
+};
+const getConvars = (isCmdLine = false) => {
+    const p = isCmdLine ? '+' : '';
+    const controllerConfigs = globals.playerController.config;
+    const checkPlayerJoin = (controllerConfigs.onJoinCheckBan || controllerConfigs.onJoinCheckWhitelist);
+    const txAdminInterface = (GlobalData.forceInterface)
+        ? `${GlobalData.forceInterface}:${GlobalData.txAdminPort}`
+        : `127.0.0.1:${GlobalData.txAdminPort}`;
+
+    return [
+        //type, name, value
+        [`${p}sets`, 'txAdmin-version', GlobalData.txAdminVersion],
+        [`${p}setr`, 'txAdmin-locale', globals.translator.language || 'en'],
+        [`${p}setr`, 'txAdmin-verbose', GlobalData.verbose],
+        [`${p}set`, 'txAdmin-apiHost', txAdminInterface],
+        [`${p}set`, 'txAdmin-apiToken', globals.webServer.intercomToken],
+        [`${p}set`, 'txAdmin-checkPlayerJoin', checkPlayerJoin],
+        [`${p}set`, 'txAdmin-serverMode', 'true'],
+    ];
 };
 
 
@@ -64,21 +83,12 @@ module.exports = class FXRunner {
         }
 
         // Prepare default args
-        const controllerConfigs = globals.playerController.config;
-        const txAdminInterface = (GlobalData.forceInterface)
-            ? `${GlobalData.forceInterface}:${GlobalData.txAdminPort}`
-            : `127.0.0.1:${GlobalData.txAdminPort}`;
         const cmdArgs = [
-            '+sets', 'txAdmin-version', GlobalData.txAdminVersion,
-            '+setr', 'txAdmin-locale', globals.translator.language || 'en',
-            '+set', 'txAdmin-apiHost', txAdminInterface,
-            '+set', 'txAdmin-apiToken', globals.webServer.intercomToken,
-            '+set', 'txAdmin-checkPlayerJoin', (controllerConfigs.onJoinCheckBan || controllerConfigs.onJoinCheckWhitelist).toString(),
-            '+set', 'txAdminServerMode', 'true',
-            ...extraArgs,
+            getConvars(true),
+            extraArgs,
             '+set', 'onesync', this.config.onesync,
             '+exec', this.config.cfgPath,
-        ];
+        ].flat(2);
 
         // Configure spawn parameters according to the environment
         if (GlobalData.osType === 'linux') {
@@ -328,6 +338,31 @@ module.exports = class FXRunner {
 
     //================================================================
     /**
+     * Resets the convars in the server.
+     * Useful for when we change txAdmin settings and want it to reflect on the server.
+     * This will also fire the `txAdmin:event:configChanged`
+     */
+    resetConvars() {
+        log('Refreshing fxserver convars.');
+        try {
+            const convarList = getConvars(false);
+            if (GlobalData.verbose) dir(convarList);
+            convarList.forEach(([type, name, value]) => {
+                this.srvCmd(formatCommand(type, name, value));
+            });
+            return this.sendEvent('configChanged');
+        } catch (error) {
+            if (GlobalData.verbose) {
+                logError('Error resetting server convars');
+                dir(error);
+            }
+            return false;
+        }
+    }
+
+
+    //================================================================
+    /**
      * Fires an `txAdmin:event` inside the server via srvCmd > stdin > command > lua broadcaster.
      * @param {string} eventType
      * @param {object} data
@@ -354,6 +389,7 @@ module.exports = class FXRunner {
     //================================================================
     /**
      * Pipe a string into FXServer's stdin (aka executes a cfx's command)
+     * TODO: make this method accept an array and apply the formatCommand() logic
      * @param {string} command
      */
     srvCmd(command) {

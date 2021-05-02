@@ -72,9 +72,8 @@ function handleGlobal(ctx) {
     };
 
     //Trying to load language file
-    let langPhrases;
     try {
-        langPhrases = globals.translator.getLanguagePhrases(cfg.language);
+        globals.translator.getLanguagePhrases(cfg.language);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<strong>Language error:</strong> ${error.message}`});
     }
@@ -87,8 +86,8 @@ function handleGlobal(ctx) {
 
     //Sending output
     if (saveStatus) {
-        globals.translator.refreshConfig(langPhrases);
         globals.config = globals.configVault.getScoped('global');
+        globals.translator.refreshConfig();
         ctx.utils.logAction('Changing global settings.');
         return ctx.send({type: 'success', message: '<strong>Global configuration saved!</strong>'});
     } else {

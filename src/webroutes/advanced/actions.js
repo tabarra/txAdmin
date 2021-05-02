@@ -37,6 +37,7 @@ module.exports = async function AdvancedActions(ctx) {
     //Action: Change Verbosity
     if (action == 'change_verbosity') {
         GlobalData.verbose = (parameter == 'true');
+        globals.fxRunner.resetConvars();
         return ctx.send({refresh:true});
     } else if (action == 'perform_magic') {
         const message = JSON.stringify(globals.playerController.activePlayers, null, 2);
@@ -106,6 +107,9 @@ module.exports = async function AdvancedActions(ctx) {
     } else if (action == 'freeze') {
         logWarn('Freezing process for 50 seconds.');
         Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50 * 1000);
+    } else if (action == 'resetConvars') {
+        globals.fxRunner.resetConvars();
+        return ctx.send({refresh:true});
     } else if (action == 'backupdb') {
         await globals.playerController.db.backupDatabase();
         return ctx.send({type: 'success', message: 'backing it up'});
