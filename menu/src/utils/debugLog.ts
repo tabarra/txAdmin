@@ -13,7 +13,7 @@ export const debugLog = (
   data: unknown,
   context: string = "Unknown"
 ) => {
-  if (config.DEBUG_MODE) {
+  if (config.debugMode) {
     console.group(`${context} | Action: ${action}`);
     console.dir(data);
     console.groupEnd();

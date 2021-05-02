@@ -1,3 +1,11 @@
 {
-  "DEBUG_MODE": true
+  "debugMode": true,
+  "serverCtx": {
+    "oneSync": {
+      "type": "on",
+      "status": true
+    },
+    "projectName": "",
+    "maxClients": 32
+  }
 }
