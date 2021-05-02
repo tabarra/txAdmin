@@ -2,7 +2,7 @@
   "debugMode": true,
   "serverCtx": {
     "oneSync": {
-      "type": "on",
+      "type": "Infinity",
       "status": true
     },
     "projectName": "",

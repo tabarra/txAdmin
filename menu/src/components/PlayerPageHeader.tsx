@@ -11,12 +11,12 @@ import {
 import { Search, SortByAlpha } from "@material-ui/icons";
 import {
   PlayerDataSort,
-  useFilteredSortedPlayers,
   usePlayersSortBy,
   usePlayersState,
   useSetPlayerFilter,
 } from "../state/players.state";
 import { useDebounce } from "../hooks/useDebouce";
+import {useServerCtxValue} from "../state/server.state";
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
@@ -39,8 +39,8 @@ export const PlayerPageHeader: React.FC = () => {
   const [sortType, setSortType] = usePlayersSortBy();
   const setPlayerFilter = useSetPlayerFilter();
   const allPlayers = usePlayersState();
-  const filteredPlayers = useFilteredSortedPlayers();
   const [searchVal, setSearchVal] = useState("");
+  const serverCtx = useServerCtxValue()
 
   const debouncedInput = useDebounce(searchVal, 500);
 
@@ -64,7 +64,7 @@ export const PlayerPageHeader: React.FC = () => {
           ONLINE PLAYERS
         </Typography>
         <Typography className={classes.playerCount}>
-          {filteredPlayers.length}/{allPlayers.length} Players
+          {`${allPlayers.length}/${serverCtx.maxClients} Players - OneSync (${serverCtx.oneSync.type})`}
         </Typography>
       </Box>
       <Box display="flex" alignItems="center" justifyContent="center">
