@@ -14,7 +14,7 @@ local function getPlayerData(src)
     if not src then
         return false
     end
-    if src == -1 then return {name = 'console', identifiers = {}} end
+    if src == 0 then return {name = 'console', identifiers = {}} end
 
     return {
         name = GetPlayerName(src),
