@@ -1,4 +1,4 @@
-if GetConvar('txAdminServerMode', 'false') ~= 'true' then
+if GetConvar('txAdmin-serverMode', 'false') ~= 'true' then
   return
 end
 

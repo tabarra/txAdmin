@@ -14,7 +14,7 @@ end
 local apiHost = GetConvar("txAdmin-apiHost", "invalid")
 local apiToken = GetConvar("txAdmin-apiToken", "invalid")
 local txAdminClientVersion = GetResourceMetadata(GetCurrentResourceName(), 'version')
-if GetConvar('txAdminServerMode', 'false') ~= 'true' then
+if GetConvar('txAdmin-serverMode', 'false') ~= 'true' then
     return
 end
 if apiHost == "invalid" or apiToken == "invalid" then

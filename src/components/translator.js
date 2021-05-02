@@ -45,9 +45,18 @@ module.exports = class Translator {
         this.polyglot = null;
 
         //Load language
+        this.setupTranslator(true);
+    }
+
+
+    //================================================================
+    /**
+     * Setup polyglot instance
+     */
+    setupTranslator(isFirstTime = false) {
         try {
-            let phrases = this.getLanguagePhrases(this.language);
-            let polyglotOptions = {
+            const phrases = this.getLanguagePhrases(this.language);
+            const polyglotOptions = {
                 allowMissing: false,
                 onMissingKey: (key) => {
                     logError(`Missing key '${key}' from translation file.`, 'Translator');
@@ -58,7 +67,7 @@ module.exports = class Translator {
             this.polyglot = new Polyglot(polyglotOptions);
         } catch (error) {
             logError(error.message);
-            process.exit();
+            if (isFirstTime) process.exit();
         }
     }
 
@@ -66,28 +75,16 @@ module.exports = class Translator {
     //================================================================
     /**
      * Refresh translator configurations
-     * @param {string} phrases
      */
-    refreshConfig(phrases) {
-        //Load language
-        try {
-            let polyglotOptions = {
-                allowMissing: false,
-                onMissingKey: (key) => {
-                    logError(`Missing key '${key}' from translation file.`, 'Translator');
-                    return key;
-                },
-                phrases,
-            };
-            this.polyglot = new Polyglot(polyglotOptions);
-        } catch (error) {
-            logError(error.message);
-            process.exit();
-        }
+    refreshConfig() {
+        //Change config and restart polyglot
+        this.language = globals.config.language;
+        this.setupTranslator(false);
 
-        //Rebuild Monitor's schedule with new text
+        //Rebuild Monitor's schedule with new text and refreshes fxserver convars
         try {
             globals.monitor.buildSchedule();
+            globals.fxRunner.resetConvars();
         } catch (error) {}
     }
 
