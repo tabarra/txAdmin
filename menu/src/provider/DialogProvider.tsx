@@ -1,4 +1,4 @@
-import React, { ChangeEvent, createContext, useContext, useState } from "react";
+import React, {ChangeEvent, createContext, useContext, useEffect, useState} from "react";
 import {
   Button,
   Dialog,
@@ -13,6 +13,7 @@ import {
 } from "@material-ui/core";
 import { Create } from "@material-ui/icons";
 import { useSnackbarContext } from "./SnackbarProvider";
+import {useKeyboardNavContext} from "./KeyboardNavProvider";
 
 interface InputDialogProps {
   title: string;
@@ -47,11 +48,21 @@ export const DialogProvider: React.FC = ({ children }) => {
     title: "Dialog Title",
   });
 
+  const { setDisabledKeyNav } = useKeyboardNavContext()
+
   const [dialogInputVal, setDialogInputVal] = useState<string>("");
 
   const { openSnackbar } = useSnackbarContext();
 
   const classes = useStyles();
+
+  useEffect(() => {
+    if (dialogOpen) {
+      setDisabledKeyNav(true)
+    } else {
+      setDisabledKeyNav(false)
+    }
+  }, [dialogOpen, setDisabledKeyNav])
 
   const handleDialogClose = () => {
     setDialogOpen(false);
