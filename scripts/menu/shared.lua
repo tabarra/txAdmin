@@ -4,10 +4,15 @@ CreateThread(function()
   debugModeEnabled = (GetConvar('TXADMIN_MENU_DEBUG', 'false') == 'true') 
 end)
 
-function debugPrint(message)
+function debugPrint(...)
+  local args = {...}
+  local appendedStr = ''
   if debugModeEnabled then
-    local msgTemplate = '^3[txAdminMenu]^0 %s'
-    local msg = msgTemplate:format(message)
+    for _, v in ipairs(args) do
+      appendedStr = appendedStr .. ' ' .. tostring(v)
+    end
+    local msgTemplate = '^3[txAdminMenu]^0%s'
+    local msg = msgTemplate:format(appendedStr)
     print(msg)
   end
 end
