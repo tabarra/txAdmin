@@ -8,22 +8,18 @@ local ServerCtxObj = {
     status = false
   },
   projectName = nil,
-  maxClients = 30
+  maxClients = 30,
+  locale = nil
 }
 
--- OneSync check
--- In case of hot reloads attach this event handler at start of
--- script init, Client Event that queries GlobalState are queued
--- at the **end** of resource init.
-AddEventHandler('onResourceStart', function(resourceName)
-  if resourceName ~= GetCurrentResourceName() then
-    return
-  end
-
+CreateThread(function()
+  -- If we don't wait for a tick there is some race condition that
+  -- sometimes prevents debugPrint lmao
+  Wait(0)
   local oneSyncConvar = GetConvar('onesync', 'off')
   if oneSyncConvar == ('on' or 'legacy') then
     ServerCtxObj.oneSync.type = oneSyncConvar
-    ServerCtxObj.oneSyncEnabled = true
+    ServerCtxObj.status = true
   elseif oneSyncConvar == 'off' then
     ServerCtxObj.oneSyncStatus = false
   end
@@ -38,9 +34,11 @@ AddEventHandler('onResourceStart', function(resourceName)
   local svMaxClients = GetConvarInt('sv_maxclients', 30)
   ServerCtxObj.maxClients = svMaxClients
 
+  local txAdminLocale = GetConvar('txAdmin-locale', 'en')
+  ServerCtxObj.locale = txAdminLocale
+
   debugPrint('Server CTX assigned to GlobalState, CTX:')
   debugPrint(json.encode(ServerCtxObj))
-
   -- In case this was a hot reload of monitor, we send init event to all online clients
   GlobalState.txAdminServerCtx = ServerCtxObj
 end)
