@@ -6,17 +6,17 @@
     "restarter": {
         "start_timeout": "failed to start in time",
         "crash_detected": "Wykryty Crash",
-        "partial_crash_warn": "Due to a partial crash, this server will restart in 1 minute. Please disconnect now.",
-        "partial_crash_warn_discord": "Due to a partial crash, **%{servername}** will restart in 1 minute.",
+        "partial_crash_warn": "W związku z częściową awarią, serwer zostanie ponownie uruchomiony za 1 minutę. Prosimy o opuszczenie serwera.",
+        "partial_crash_warn_discord": "W związku z częściową awarią, **%{servername}** zostanie ponownie uruchomiony za 1 minutę.",
         "schedule_reason": "Planowany restart o %{time}",
         "schedule_warn": "Ten serwer ma zaplanowany restart w ciągu %{smart_count} minuty. Proszę opuścić serwer. |||| Ten serwer ma zaplanowany restart w ciągu %{smart_count} minut.",
         "schedule_warn_discord": "**%{servername}** ma zaplanowany restart w ciągu %{smart_count} minuty. |||| **%{servername}** ma zaplanowany restart w ciągu %{smart_count} minut."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) Zostałeś zbanowany na tym serwerze za \"%{reason}\". Twój ban wygaśnie za: %{expiration}.",
+        "kick_permanent": "(%{author}) Zostałeś permanentnie zbanowany na tym serwerze za \"%{reason}\".",
+        "reject_temporary": "Zostałeś zbanowany na tym serwerze.\nTwój ban wygaśnie za: %{expiration}.\nID Bana: %{id}.\nPowód Bana: %{reason}.\nZbanowany przez: %{author}.",
+        "reject_permanent": "Zostałeś permanentnie zbanowany na tym serwerze.\nID Bana: %{id}.\nPowód Bana: %{reason}.\nZbanowany przez: %{author}."
     },
     "server_actions": {
         "restarting": "Trwa restart (%{reason}).",
