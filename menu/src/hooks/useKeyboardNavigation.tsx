@@ -33,8 +33,6 @@ export const useKeyboardNavigation = ({
   useEffect(() => {
     // Our basic handler function for keydown events
     const keyHandler = (e: KeyboardEvent) => {
-      // Disable any handlers if disabled
-      if (disabledKeyNav) return;
 
       switch (e.code) {
         case "ArrowLeft":

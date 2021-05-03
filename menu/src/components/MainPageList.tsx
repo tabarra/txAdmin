@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { List } from "@material-ui/core";
 import MenuListItem, { MenuListItemData } from "./MenuListItem";
 import {
@@ -13,10 +13,12 @@ import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation";
 import { useDialogContext } from "../provider/DialogProvider";
 import { fetchNui } from "../utils/fetchNui";
 import { useSnackbarContext } from "../provider/SnackbarProvider";
+import {useKeyboardNavContext} from "../provider/KeyboardNavProvider";
 
 export const MainPageList: React.FC = () => {
   const { openDialog } = useDialogContext();
   const { openSnackbar } = useSnackbarContext();
+  const { setDisabledKeyNav } = useKeyboardNavContext()
 
   const [curSelected, setCurSelected] = useState(0);
 
@@ -29,9 +31,16 @@ export const MainPageList: React.FC = () => {
     const next = (curSelected - 1);
     setCurSelected((next < 0) ? (menuListItems.length - 1) : next)
   };
+
   const handleEnter = () => {
     menuListItems[curSelected].onSelect();
   };
+
+  useEffect(() => {
+    setDisabledKeyNav(false)
+    return () => setDisabledKeyNav(true)
+  }, [setDisabledKeyNav]);
+
 
   useKeyboardNavigation({
     onDownDown: handleArrowDown,
