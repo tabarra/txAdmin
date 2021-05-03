@@ -110,6 +110,7 @@ RegisterServerEvent('txAdmin:menu:fixVehicle', function()
   TriggerClientEvent('txAdmin:menu:fixVehicle', src)
 end)
 
+local CREATE_AUTOMOBILE = GetHashKey("CREATE_AUTOMOBILE")
 RegisterServerEvent('txAdmin:menu:spawnVehicle', function(model)
   local src = source
   if type(model) ~= 'string' then error() end
@@ -119,6 +120,6 @@ RegisterServerEvent('txAdmin:menu:spawnVehicle', function(model)
   
   debugPrint("Player " .. GetPlayerName(src) .. " spawned a ^2" .. model .. "^0!")
   local ped = GetPlayerPed(src)
-  local veh = Citizen.InvokeNative(GetHashKey("CREATE_AUTOMOBILE"), GetHashKey(model), GetEntityCoords(ped));
+  local veh = Citizen.InvokeNative(CREATE_AUTOMOBILE, GetHashKey(model), GetEntityCoords(ped));
   TriggerClientEvent('txAdmin:menu:spawnVehicle', src, NetworkGetNetworkIdFromEntity(veh))
 end)
