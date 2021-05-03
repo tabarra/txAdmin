@@ -36,23 +36,18 @@ export const useKeyboardNavigation = ({
 
       switch (e.code) {
         case "ArrowLeft":
-          e.preventDefault();
           onLeftDown && onLeftDown();
           break;
         case "ArrowRight":
-          e.preventDefault();
           onRightDown && onRightDown();
           break;
         case "ArrowUp":
-          e.preventDefault();
           onUpDown && onUpDown();
           break;
         case "ArrowDown":
-          e.preventDefault();
           onDownDown && onDownDown();
           break;
         case "Enter":
-          e.preventDefault();
           onEnterDown && onEnterDown();
           break;
       }
