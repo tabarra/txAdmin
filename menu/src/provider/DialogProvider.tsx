@@ -127,7 +127,7 @@ export const DialogProvider: React.FC = ({ children }) => {
       >
         <form
           onSubmit={(e) => {
-            e.preventDefault();
+            e.preventDefault()
             handleDialogSubmit();
           }}
         >
@@ -161,7 +161,7 @@ export const DialogProvider: React.FC = ({ children }) => {
             >
               Cancel
             </Button>
-            <Button onClick={handleDialogSubmit} color="primary">
+            <Button type="submit" color="primary">
               Submit
             </Button>
           </DialogActions>
