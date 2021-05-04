@@ -30,7 +30,11 @@ const App: React.FC = () => {
 
   return (
     <TopLevelErrorBoundary>
-      <I18n locale={serverCtx.locale} messages={localeSelected}>
+      <I18n
+        locale={serverCtx.locale}
+        messages={localeSelected}
+        allowMissing={false}
+      >
         <SnackbarProvider>
           <DialogProvider>
             <div className="App" style={visible ? { opacity: 1 } : undefined}>
