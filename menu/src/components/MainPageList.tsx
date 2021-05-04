@@ -52,7 +52,7 @@ export const MainPageList: React.FC = () => {
 
   const handleTeleport = () => {
     openDialog({
-      description: t("nui_menu.page_main.teleport.dialog_secondary"),
+      description: t("nui_menu.page_main.teleport.dialog_desc"),
       title: t("nui_menu.page_main.teleport.dialog_title"),
       placeholder: "340, 480, 12",
       onSubmit: (coords: string) => {
