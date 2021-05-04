@@ -20,14 +20,14 @@ CreateThread(function()
     action = 'setServerCtx',
     data = GlobalState.txAdminServerCtx
   })
-  
+
   TriggerServerEvent("txAdmin:menu:checkAccess")
 end)
 --- End auth
 
 
 --- Snackbar message
----@param level string - The severity of the message can be 'info', 'error', or 'warning' 
+---@param level string - The severity of the message can be 'info', 'error', or 'warning'
 ---@param message string - Message to display with snackbar
 local function sendSnackbarMessage(level, message)
   debugPrint(('Sending snackbar message, level: %s, message: %s'):format(level, message))
@@ -54,15 +54,15 @@ RegisterCommand('txAdmin:openMenu', function()
 end)
 
 
---[[ 
+--[[
   NUI Callbacks from the menu
  ]]
 
 -- Triggered whenever we require full focus, cursor and keyboard
-RegisterNUICallback('focusInput', function(data, cb)
+RegisterNUICallback('focusInput', function(shouldFocus, cb)
   -- Temporary until keyboard handlers for main page are all done
-  SetNuiFocus(true, true)
-  SetNuiFocusKeepInput()
+  SetNuiFocus(shouldFocus, shouldFocus)
+  SetNuiFocusKeepInput(not shouldFocus)
   cb({})
 end)
 
@@ -115,11 +115,28 @@ RegisterNUICallback('fixVehicle', function(data, cb)
   if (veh == 0) then
     sendSnackbarMessage('error', 'You are currently not in a vehicle')
   end
-  
+
   TriggerServerEvent('txAdmin:menu:fixVehicle')
   cb({})
 end)
 
+--[[ Player list sync ]]
+RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
+  -- process data to add distance, remove pos
+  for i in ipairs(data) do
+    local row = data[i]
+    local targetVec = vec3(row.pos.x, row.pos.y, row.pos.z)
+    local dist = #(GetEntityCoords(PlayerPedId()) - targetVec)
+    row.pos = nil
+    row.distance = dist
+  end
+
+  debugPrint(json.encode(data))
+  SendNUIMessage({
+    action = 'setPlayerState',
+    data = data
+  })
+end)
 
 --[[ Teleport the player to the coordinates ]]
 ---@param x number
@@ -134,7 +151,6 @@ RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   local veh = GetVehiclePedIsIn(ped, false)
   if veh and veh > 0 then SetVehicleOnGroundProperly(veh) end
 end)
-
 
 --[[ Heal all players ]]
 RegisterNetEvent('txAdmin:menu:healed', function()

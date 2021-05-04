@@ -1,3 +1,11 @@
 {
-  "DEBUG_MODE": true
+  "debugMode": true,
+  "serverCtx": {
+    "oneSync": {
+      "type": "Infinity",
+      "status": true
+    },
+    "projectName": "Project Taso",
+    "maxClients": 32
+  }
 }

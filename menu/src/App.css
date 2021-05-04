@@ -6,3 +6,19 @@
   opacity: 0;
   transition: opacity 0.15s linear;
 }
+
+/* width */
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 20px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #24282b;
+  border-radius: 20px;
+}

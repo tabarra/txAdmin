@@ -1,13 +1,11 @@
-import React, { Component, ErrorInfo } from "react";
+import React, { Component } from "react";
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
-  Typography
 } from "@material-ui/core";
 
 interface ErrorCompState {
@@ -23,7 +21,7 @@ export class TopLevelErrorBoundary extends Component<{}, ErrorCompState> {
 
   constructor(props) {
     super(props);
-    this.handleReloadClick.bind(this)
+    this.handleReloadClick.bind(this);
   }
 
   static getDerivedStateFromError(error) {
@@ -52,7 +50,7 @@ export class TopLevelErrorBoundary extends Component<{}, ErrorCompState> {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button color='primary' onClick={this.handleReloadClick}>
+            <Button color="primary" onClick={this.handleReloadClick}>
               Reload Page
             </Button>
           </DialogActions>

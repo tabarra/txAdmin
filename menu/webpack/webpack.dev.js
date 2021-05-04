@@ -4,6 +4,7 @@ const path = require('path');
 
 module.exports = CommonWebpack({
     mode: 'development',
+    devtool: 'source-map',
     devServer: {
         contentBase: path.join(process.cwd(), 'menu/public'),
         watchContentBase: true,

@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
-import {Fade, Snackbar} from "@material-ui/core";
+import React, { createContext, useCallback, useContext, useState } from "react";
+import { Fade, Snackbar } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
 
 const SnackbarContext = createContext(null);
@@ -23,16 +23,15 @@ export const SnackbarProvider: React.FC = ({ children }) => {
   });
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const openSnackbar = (level: SnackbarAlertSeverities, message: string) => {
-    setAlert({ level, message });
-    setIsOpen(true);
-  };
+  const openSnackbar = useCallback(
+    (level: SnackbarAlertSeverities, message: string) => {
+      setAlert({ level, message });
+      setIsOpen(true);
+    },
+    []
+  );
 
   const closeSnackbar = () => {
-    setIsOpen(false);
-  };
-
-  const handleClose = () => {
     setIsOpen(false);
   };
 
@@ -46,7 +45,7 @@ export const SnackbarProvider: React.FC = ({ children }) => {
       <Snackbar
         open={isOpen}
         autoHideDuration={6000}
-        onClose={handleClose}
+        onClose={closeSnackbar}
         TransitionComponent={Fade}
       >
         <Alert severity={alert.level} variant="filled">

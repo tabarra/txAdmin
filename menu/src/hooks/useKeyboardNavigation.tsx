@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useKeyboardNavContext } from "../provider/KeyboardNavProvider";
 
 interface KeyCallbacks {
   onLeftDown?: () => void;
@@ -27,28 +28,26 @@ export const useKeyboardNavigation = ({
   onDownDown,
   onEnterDown,
 }: KeyCallbacks) => {
+  const { disabledKeyNav } = useKeyboardNavContext();
+
   useEffect(() => {
     // Our basic handler function for keydown events
     const keyHandler = (e: KeyboardEvent) => {
+
       switch (e.code) {
         case "ArrowLeft":
-          e.preventDefault();
           onLeftDown && onLeftDown();
           break;
         case "ArrowRight":
-          e.preventDefault();
           onRightDown && onRightDown();
           break;
         case "ArrowUp":
-          e.preventDefault();
           onUpDown && onUpDown();
           break;
         case "ArrowDown":
-          e.preventDefault();
           onDownDown && onDownDown();
           break;
-        case 'Enter':
-          e.preventDefault();
+        case "Enter":
           onEnterDown && onEnterDown();
           break;
       }
@@ -59,5 +58,12 @@ export const useKeyboardNavigation = ({
 
     // Remove on cleanup
     return () => window.removeEventListener("keydown", keyHandler);
-  }, [onLeftDown, onRightDown, onUpDown, onDownDown, onEnterDown]);
+  }, [
+    onLeftDown,
+    onRightDown,
+    onUpDown,
+    onDownDown,
+    onEnterDown,
+    disabledKeyNav,
+  ]);
 };

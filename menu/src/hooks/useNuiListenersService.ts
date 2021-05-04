@@ -1,7 +1,8 @@
-import { useSetIsMenuVisible } from "../atoms/visibility.atom";
-import { PlayerData, useSetPlayersState } from "../atoms/players.atom";
-import { txAdminMenuPage, useSetPage } from "../atoms/page.atom";
+import { useSetIsMenuVisible } from "../state/visibility.state";
+import { PlayerData, useSetPlayersState } from "../state/players.state";
+import { txAdminMenuPage, useSetPage } from "../state/page.state";
 import { useNuiEvent } from "./useNuiEvent";
+import { useSetServerCtx } from "../state/server.state";
 
 // Passive Message Event Listeners & Handlers for global state
 export const useNuiListenerService = () => {
@@ -12,4 +13,5 @@ export const useNuiListenerService = () => {
   useNuiEvent<boolean>("setVisible", setVisible);
   useNuiEvent<PlayerData[]>("setPlayerState", setPlayerState);
   useNuiEvent<txAdminMenuPage>("setMenuPage", setMenuPage);
+  useNuiEvent("setServerCtx", useSetServerCtx)
 };

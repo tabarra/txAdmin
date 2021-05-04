@@ -1,6 +1,7 @@
 import { useEffect } from "react";
-import { useSetIsMenuVisible } from "../atoms/visibility.atom";
-import {fetchNui} from "../utils/fetchNui";
+import { fetchNui } from "../utils/fetchNui";
+import { useSetIsMenuVisible } from "../state/visibility.state";
+import {useKeyboardNavContext} from "../provider/KeyboardNavProvider";
 
 /**
  * Attach a keyboard listener for escape, which will close the menu
@@ -8,12 +9,15 @@ import {fetchNui} from "../utils/fetchNui";
 export const useEscapeListener = () => {
   const setVisible = useSetIsMenuVisible();
 
+  const { disabledKeyNav } = useKeyboardNavContext()
+
   useEffect(() => {
     const keyHandler = (e: KeyboardEvent) => {
+      if (disabledKeyNav) return
       if (["Escape", "F1"].includes(e.code)) {
         if (process.env.NODE_ENV !== "development") {
-          setVisible(false)
-          fetchNui('closeMenu')
+          setVisible(false);
+          fetchNui("closeMenu");
         }
       }
     };
@@ -21,5 +25,5 @@ export const useEscapeListener = () => {
     window.addEventListener("keydown", keyHandler);
 
     return () => window.removeEventListener("keydown", keyHandler);
-  }, [setVisible]);
+  }, [setVisible, disabledKeyNav]);
 };

@@ -1,12 +1,13 @@
-import React, { ChangeEvent } from "react";
-import { Box, makeStyles, Tab, Tabs, Theme } from "@material-ui/core";
-import {usePage} from "../atoms/page.atom";
+import React, {ChangeEvent, useCallback} from "react";
+import {Box, makeStyles, Tab, Tabs} from "@material-ui/core";
+import {txAdminMenuPage, usePage} from "../state/page.state";
+import {useKeyboardNavigation} from "../hooks/useKeyboardNavigation";
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles({
   tab: {
-    minWidth: '100px',
-  }
-}))
+    minWidth: "100px",
+  },
+});
 
 export const PageTabs: React.FC = () => {
   const classes = useStyles();
@@ -16,8 +17,21 @@ export const PageTabs: React.FC = () => {
     setPage(newValue);
   };
 
+  const handleArrowLeft = useCallback(() => {
+    if (page > txAdminMenuPage.Main) setPage(page - 1)
+  }, [page])
+
+  const handleArrowRight = useCallback(() => {
+    if (page < txAdminMenuPage.txAdmin) setPage(page + 1)
+  }, [page])
+
+  useKeyboardNavigation({
+    onLeftDown: handleArrowLeft,
+    onRightDown: handleArrowRight
+  })
+
   return (
-      <Box width="100%">
+    <Box width="100%">
       <Tabs
         value={page}
         centered
