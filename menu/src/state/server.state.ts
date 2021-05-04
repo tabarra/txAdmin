@@ -10,6 +10,7 @@ export interface ServerCtx {
   oneSync: OneSyncCtx
   projectName: null | string,
   maxClients: number
+  locale: string
 }
 
 const serverCtx = atom<ServerCtx>({

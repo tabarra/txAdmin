@@ -73,6 +73,7 @@
     "pidtree": "^0.5.0",
     "pidusage-tree": "^2.0.5",
     "react-infinite-scroll-component": "^6.1.0",
+    "react-polyglot": "^0.7.1",
     "recoil": "^0.2.0",
     "slash": "^3.0.0",
     "socket.io": "^4.0.1",

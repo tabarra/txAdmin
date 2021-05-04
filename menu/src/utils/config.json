@@ -1,6 +1,7 @@
 {
   "debugMode": true,
   "serverCtx": {
+    "locale": "en",
     "oneSync": {
       "type": "Infinity",
       "status": true

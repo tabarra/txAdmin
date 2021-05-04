@@ -13,14 +13,15 @@ import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation";
 import { useDialogContext } from "../provider/DialogProvider";
 import { fetchNui } from "../utils/fetchNui";
 import { useSnackbarContext } from "../provider/SnackbarProvider";
-import {useKeyboardNavContext} from "../provider/KeyboardNavProvider";
+import { useKeyboardNavContext } from "../provider/KeyboardNavProvider";
+import { useTranslate } from "react-polyglot";
 
 export const MainPageList: React.FC = () => {
   const { openDialog } = useDialogContext();
   const { openSnackbar } = useSnackbarContext();
   const { setDisabledKeyNav } = useKeyboardNavContext()
-
   const [curSelected, setCurSelected] = useState(0);
+  const t = useTranslate()
 
   // the directions are inverted
   const handleArrowDown = () => {
@@ -51,8 +52,8 @@ export const MainPageList: React.FC = () => {
 
   const handleTeleport = () => {
     openDialog({
-      description: "Provide coordinates in an x, y, z format to go through the wormhole",
-      title: "Teleport",
+      description: t("nui_menu.page_main.teleport.dialog_secondary"),
+      title: t("nui_menu.page_main.teleport.dialog_title"),
       placeholder: "340, 480, 12",
       onSubmit: (coords: string) => {
         const [x, y, z] = coords.split(',').map(s => s.trim())
@@ -60,10 +61,10 @@ export const MainPageList: React.FC = () => {
           .map(s => +s);
 
         if ([x, y, z].every(n => (typeof n === 'number'))) {
-          openSnackbar("success", "Sending you into the wormhole!");
+          openSnackbar("success", t("nui_menu.page_main.teleport.dialog_success"));
           fetchNui("tpToCoords", {x, y, z});
         } else {
-          openSnackbar("error", "Invalid coordinates. Must be in the format of: 111, 222, 333")
+          openSnackbar("error", t("nui_menu.page_main.teleport.dialog_error"))
         }
       }
     });
@@ -71,74 +72,79 @@ export const MainPageList: React.FC = () => {
 
   const handleAnnounceMessage = () => {
     openDialog({
-      description: "Send an announcement to all online players",
-      title: "Send Announcement",
+      description: t("nui_menu.page_main.send_announce.dialog_desc"),
+      title: t("nui_menu.page_main.send_announce.dialog_title"),
       placeholder: "Your announcement...",
       onSubmit: (message: string) => {
         // Post up to client with announcement message
-        openSnackbar("success", "Sending the announcement");
+        openSnackbar("success", t("nui_menu.page_main.send_announce.dialog_success"));
         fetchNui("sendAnnouncement", {message});
       },
     });
   };
+
   const handleSpawnVehicle = () => {
     openDialog({
-      description: "Spawn a vehicle using the model name",
-      title: "Spawn Vehicle",
+      description: t("nui_menu.page_main.spawn_veh.dialog_desc"),
+      title: t("nui_menu.page_main.spawn_veh.dialog_title"),
       placeholder: "Adder",
       onSubmit: (modelName: string) => {
-        openSnackbar("info", `Trying to spawn ${modelName}`);
+        openSnackbar("info", t("nui_menu.page_main.spawn_veh.dialog_info", { modelName }));
         fetchNui("spawnVehicle", {model: modelName}).then(({e}) => {
-          e ? openSnackbar("error", `The vehicle model name '${modelName}' does not exist!`)
-            : openSnackbar("success", `Vehicle spawned!`);
+          e ? openSnackbar("error", t("nui_menu.page_main.spawn_veh.dialog_error", { modelName }))
+            : openSnackbar("success", t("nui_menu.page_main.spawn_veh.dialog_success"));
         });
       },
     });
   };
+
   const handleFixVehicle = () => {
     fetchNui("fixVehicle");
-    openSnackbar("info", "Vehicle fixed!");
+    openSnackbar("info", t("nui_menu.page_main.fix_vehicle.dialog_success"));
   };
+
   const handleHealAllPlayers = () => {
     fetchNui("healAllPlayers");
-    openSnackbar("info", "Healing all players");
+    openSnackbar("info", t("nui_menu.page_main.heal_all.dialog_success"));
   };
 
   const menuListItems: MenuListItemData[] = [
     {
       icon: <LocationSearching />,
-      primary: "Teleport",
-      secondary: "Teleport with context",
+      primary: t("nui_menu.page_main.teleport.list_primary"),
+      secondary: t("nui_menu.page_main.teleport.list_secondary"),
       onSelect: handleTeleport,
     },
     {
       icon: <AccessibilityNew />,
-      primary: "Player Mode",
-      secondary: "Current: NoClip",
+      primary: t("nui_menu.page_main.player_mode.list_primary"),
+      secondary: t("nui_menu.page_main.player_mode.list_secondary",
+        { no_clip: 'NoClip' }
+      ),
       onSelect: () => console.log("Player Mode Clicked"),
     },
     {
       icon: <DirectionsCar />,
-      primary: "Spawn Vehicle",
-      secondary: "Uses model name",
+      primary: t("nui_menu.page_main.spawn_veh.list_primary"),
+      secondary: t("nui_menu.page_main.spawn_veh.list_secondary"),
       onSelect: handleSpawnVehicle,
     },
     {
       icon: <Build />,
-      primary: "Fix Vehicle",
-      secondary: "Set current vehicle health to 100%",
+      primary: t("nui_menu.page_main.fix_vehicle.list_primary"),
+      secondary: t("nui_menu.page_main.fix_vehicle.list_secondary"),
       onSelect: handleFixVehicle,
     },
     {
       icon: <LocalHospital />,
-      primary: "Heal All Players",
-      secondary: "Will heal all players to full health",
+      primary: t("nui_menu.page_main.heal_all.list_primary"),
+      secondary: t("nui_menu.page_main.heal_all.list_secondary"),
       onSelect: handleHealAllPlayers,
     },
     {
       icon: <Announcement />,
-      primary: "Send Announcement",
-      secondary: "Announce a message",
+      primary: t("nui_menu.page_main.send_announce.list_primary"),
+      secondary: t("nui_menu.page_main.send_announce.list_secondary"),
       onSelect: handleAnnounceMessage,
     },
   ];
