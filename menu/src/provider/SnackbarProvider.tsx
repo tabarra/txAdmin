@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useState } from "react";
 import { Fade, Snackbar } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
+import { useNuiEvent } from "../hooks/useNuiEvent";
 
 const SnackbarContext = createContext(null);
 
@@ -22,6 +23,13 @@ export const SnackbarProvider: React.FC = ({ children }) => {
     message: "",
   });
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  useNuiEvent<SnackbarAlert>("setSnackbarAlert", ({ level, message }) => {
+    setAlert({
+      level,
+      message,
+    });
+  });
 
   const openSnackbar = useCallback(
     (level: SnackbarAlertSeverities, message: string) => {
