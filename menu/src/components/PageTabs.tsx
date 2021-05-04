@@ -27,7 +27,8 @@ export const PageTabs: React.FC = () => {
 
   useKeyboardNavigation({
     onLeftDown: handleArrowLeft,
-    onRightDown: handleArrowRight
+    onRightDown: handleArrowRight,
+    disableOnFocused: true
   })
 
   return (
