@@ -28,7 +28,7 @@ module.exports = async function AuthVerify(ctx) {
             renderData.message = 'Wrong Password!';
             return ctx.utils.render('login', renderData);
         }
-        if (!VerifyPasswordHash(ctx.request.body.password, admin.password_hash)) {
+        if (!VerifyPasswordHash(ctx.request.body.password.trim(), admin.password_hash)) {
             logWarn(`Wrong password for from: ${ctx.ip}`);
             renderData.message = 'Wrong Password!';
             return ctx.utils.render('login', renderData);
