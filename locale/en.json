@@ -33,5 +33,48 @@
         "title": "WARNING",
         "warned_by": "Warned by:",
         "instruction": "Hold [SPACE] for 10 seconds to dismiss this message."
+    },
+    "nui_menu": {
+        "page_main": {
+            "fix_vehicle": {
+                "list_primary": "Fix vehicle",
+                "list_secondary": "Set current vehicle health to 100%",
+                "dialog_success": "Vehicle fixed!"
+            },
+            "teleport": {
+                "list_primary": "Teleport",
+                "list_secondary": "Teleport with context",
+                "dialog_title": "Teleport",
+                "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole",
+                "dialog_success": "Sending you into the wormhole!",
+                "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33"
+            },
+            "player_mode": {
+                "list_primary": "Player Mode",
+                "list_secondary": "Current: %{no_clip}"
+            },
+            "spawn_veh": {
+                "list_primary": "Spawn Vehicle",
+                "list_secondary": "Uses model name",
+                "dialog_title": "Spawn Vehicle",
+                "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole",
+                "dialog_success": "Vehicle spawned!",
+                "dialog_error": "`The vehicle model name '%{modelName}' does not exist!",
+                "dialog_info": "Trying to spawn %{modelName}"
+            },
+            "heal_all": {
+                "list_primary": "Heal All Players",
+                "list_secondary": "Will heal all players to full health",
+                "dialog_success": "Healing all players"
+            },
+            "send_announce": {
+                "list_primary": "Send Announcement",
+                "list_secondary": "Announce a message",
+                "dialog_title": "Send Announcement",
+                "dialog_desc": "Send an announcement to all online players",
+                "dialog_success": "Sending the announcement"
+            }
+        },
+        "page_players": {}
     }
 }
