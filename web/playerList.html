@@ -310,8 +310,8 @@
                                     {{@each(it.lastPlayers) => player}}
                                         <!-- FIXME: fix logEntryClickableX and onclickX-->
                                         <div class="list-group-item list-group-item-accent-{{player.color}} logEntry logEntryClickable">
-                                            <div class="d-flex w-100 justify-content-between" onclick="showPlayer('{{player.license}}')"> 
-                                                <strong>{{player.name}}</strong>
+                                            <div class="d-flex w-100 justify-content-between" onclick="showPlayer('{{player.license}}')">
+                                                <strong class="overflow-hidden">{{player.name}}</strong>
                                                 <small>{{player.joined}}</small>
                                             </div>
                                         </div>
