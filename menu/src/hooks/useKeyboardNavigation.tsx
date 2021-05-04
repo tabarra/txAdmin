@@ -7,6 +7,7 @@ interface KeyCallbacks {
   onUpDown?: () => void;
   onDownDown?: () => void;
   onEnterDown?: () => void;
+  disableOnFocused?: boolean
 }
 
 /**
@@ -19,6 +20,7 @@ interface KeyCallbacks {
  * @param onUpDown - Up arrow handler function
  * @param onDownDown - Down arrow handler function
  * @param onEnterDown - Enter handler function
+ * @param disableOnFocused - Whether to disable these inputs if the NUI currently has both keyboard and mouse focus
  */
 
 export const useKeyboardNavigation = ({
@@ -27,27 +29,33 @@ export const useKeyboardNavigation = ({
   onUpDown,
   onDownDown,
   onEnterDown,
+  disableOnFocused = false
 }: KeyCallbacks) => {
   const { disabledKeyNav } = useKeyboardNavContext();
 
   useEffect(() => {
     // Our basic handler function for keydown events
     const keyHandler = (e: KeyboardEvent) => {
-
+      if (disableOnFocused && disabledKeyNav) return
       switch (e.code) {
         case "ArrowLeft":
+          e.preventDefault()
           onLeftDown && onLeftDown();
           break;
         case "ArrowRight":
+          e.preventDefault()
           onRightDown && onRightDown();
           break;
         case "ArrowUp":
+          e.preventDefault()
           onUpDown && onUpDown();
           break;
         case "ArrowDown":
+          e.preventDefault()
           onDownDown && onDownDown();
           break;
         case "Enter":
+          e.preventDefault()
           onEnterDown && onEnterDown();
           break;
       }
@@ -65,5 +73,6 @@ export const useKeyboardNavigation = ({
     onDownDown,
     onEnterDown,
     disabledKeyNav,
+    disableOnFocused
   ]);
 };

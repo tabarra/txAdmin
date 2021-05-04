@@ -46,6 +46,7 @@ export const MainPageList: React.FC = () => {
     onDownDown: handleArrowDown,
     onUpDown: handleArrowUp,
     onEnterDown: handleEnter,
+    disableOnFocused: true
   });
 
   const handleTeleport = () => {
