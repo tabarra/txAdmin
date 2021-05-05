@@ -31,7 +31,7 @@ interface DebugEvent<T = any> {
  * @param timer - How long until it should trigger (ms)
  */
 export const debugData = <P>(events: DebugEvent<P>[], timer = 1000) => {
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === "development" && !process.env.DEV_IN_GAME) {
     for (const event of events) {
       setTimeout(() => {
         window.dispatchEvent(

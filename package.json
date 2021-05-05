@@ -6,7 +6,8 @@
   "scripts": {
     "build": "rimraf dist scripts/menu/nui && webpack --config webpack.config.js --progress && npm run build:menu",
     "build:menu": "rimraf scripts/menu/nui && webpack --config ./menu/webpack/webpack.prod.js --progress",
-    "build:menu:dev": "rimraf scripts/menu/nui && webpack-dev-server --config ./menu/webpack/webpack.dev.js",
+    "menu:dev": "rimraf scripts/menu/nui && webpack-dev-server --config ./menu/webpack/webpack.dev.js",
+    "menu:dev:game": "rimraf scripts/menu/nui && webpack-dev-server --config ./menu/webpack/webpack.game.dev.js",
     "dev": "rimraf dist scripts/menu/nui && run-p build build:menu:dev",
     "watch": "nodemon --config nodemon.json",
     "lint": "eslint ./src/**",
