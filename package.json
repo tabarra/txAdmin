@@ -69,6 +69,7 @@
     "nanoid": "^3.1.22",
     "nanoid-dictionary": "^4.3.0",
     "node-polyglot": "^2.4.0",
+    "notistack": "^1.0.6",
     "open": "7.1.0",
     "openid-client": "^4.5.1",
     "pidtree": "^0.5.0",

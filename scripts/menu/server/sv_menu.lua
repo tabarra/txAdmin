@@ -93,11 +93,12 @@ RegisterServerEvent('txAdmin:menu:sendAnnouncement', function(message)
   if false then return end
   
   debugPrint("Player ^2" .. GetPlayerName(src) .. "^0 sent announcement: ^4" .. message)
-  TriggerClientEvent('chat:addMessage', -1, {
-    color = { 255, 0, 0 },
-    multiline = true,
-    args = { "Announcement", message }
-  })
+  --TriggerClientEvent('chat:addMessage', -1, {
+  --  color = { 255, 0, 0 },
+  --  multiline = true,
+  --  args = { "Announcement", message }
+  --})
+  TriggerClientEvent('txAdmin:receiveAnnounce', -1, message)
 end)
 
 RegisterServerEvent('txAdmin:menu:fixVehicle', function()

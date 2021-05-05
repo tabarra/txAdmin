@@ -2,7 +2,6 @@ import React, { useMemo } from "react";
 import "./App.css";
 import { useIsMenuVisible } from "./state/visibility.state";
 import MenuRoot from "./components/MenuRoot";
-import { SnackbarProvider } from "./provider/SnackbarProvider";
 import { DialogProvider } from "./provider/DialogProvider";
 import { useEscapeListener } from "./hooks/useEscapeListener";
 import { useNuiListenerService } from "./hooks/useNuiListenersService";
@@ -35,13 +34,11 @@ const App: React.FC = () => {
         messages={localeSelected}
         allowMissing={false}
       >
-        <SnackbarProvider>
-          <DialogProvider>
-            <div className="App" style={visible ? { opacity: 1 } : undefined}>
-              <MenuRoot />
-            </div>
-          </DialogProvider>
-        </SnackbarProvider>
+        <DialogProvider>
+          <div className="App" style={visible ? { opacity: 1 } : undefined}>
+            <MenuRoot />
+          </div>
+        </DialogProvider>
       </I18n>
     </TopLevelErrorBoundary>
   );

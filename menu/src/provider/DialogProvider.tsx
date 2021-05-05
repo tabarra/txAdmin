@@ -1,14 +1,12 @@
 import React, {
   ChangeEvent,
-  createContext, SyntheticEvent,
+  createContext,
   useContext,
   useEffect,
   useState,
 } from "react";
 import {
-  Box,
   Button,
-  createMuiTheme,
   Dialog,
   DialogActions,
   DialogContent,
@@ -16,14 +14,13 @@ import {
   DialogTitle,
   InputAdornment,
   makeStyles,
-  MuiThemeProvider,
   TextField,
   Theme,
   useTheme,
 } from "@material-ui/core";
 import { Create } from "@material-ui/icons";
-import { useSnackbarContext } from "./SnackbarProvider";
 import { useKeyboardNavContext } from "./KeyboardNavProvider";
+import {useSnackbar} from "notistack";
 
 interface InputDialogProps {
   title: string;
@@ -48,14 +45,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-const DialogTheme = createMuiTheme({
-  palette: {
-    background: {
-      paper: "#151a1f",
-    },
-  },
-});
-
 export const DialogProvider: React.FC = ({ children }) => {
   const classes = useStyles();
 
@@ -74,7 +63,7 @@ export const DialogProvider: React.FC = ({ children }) => {
 
   const [dialogInputVal, setDialogInputVal] = useState<string>("");
 
-  const { openSnackbar } = useSnackbarContext();
+  const { enqueueSnackbar } = useSnackbar();
 
   useEffect(() => {
     if (dialogOpen) {
@@ -90,7 +79,7 @@ export const DialogProvider: React.FC = ({ children }) => {
 
   const handleDialogSubmit = () => {
     if (!dialogInputVal.trim()) {
-      openSnackbar("error", "You cannot have an empty input");
+      enqueueSnackbar("You cannot have an empty input", { variant: 'error' });
       return;
     }
 

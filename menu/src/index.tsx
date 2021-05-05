@@ -6,12 +6,20 @@ import { MuiThemeProvider } from "@material-ui/core";
 import { MenuTheme } from "./styles/theme";
 import { RecoilRoot } from "recoil";
 import {KeyboardNavProvider} from "./provider/KeyboardNavProvider";
+import {SnackbarProvider} from "notistack";
+import {I18n} from "react-polyglot";
 
 ReactDOM.render(
   <RecoilRoot>
     <MuiThemeProvider theme={MenuTheme}>
       <KeyboardNavProvider>
-        <App />
+        <SnackbarProvider
+          maxSnack={3}
+          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+          disableWindowBlurListener={true}
+        >
+          <App />
+        </SnackbarProvider>
       </KeyboardNavProvider>
     </MuiThemeProvider>
   </RecoilRoot>,
