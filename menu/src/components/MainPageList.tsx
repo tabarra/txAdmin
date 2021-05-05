@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { List } from "@material-ui/core";
 import MenuListItem, { MenuListItemData } from "./MenuListItem";
 import {
@@ -12,25 +12,25 @@ import {
 import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation";
 import { useDialogContext } from "../provider/DialogProvider";
 import { fetchNui } from "../utils/fetchNui";
-import { useSnackbarContext } from "../provider/SnackbarProvider";
 import { useKeyboardNavContext } from "../provider/KeyboardNavProvider";
 import { useTranslate } from "react-polyglot";
+import { useSnackbar } from "notistack";
 
 export const MainPageList: React.FC = () => {
   const { openDialog } = useDialogContext();
-  const { openSnackbar } = useSnackbarContext();
-  const { setDisabledKeyNav } = useKeyboardNavContext()
+  const { setDisabledKeyNav } = useKeyboardNavContext();
   const [curSelected, setCurSelected] = useState(0);
-  const t = useTranslate()
+  const t = useTranslate();
+  const { enqueueSnackbar } = useSnackbar();
 
   // the directions are inverted
   const handleArrowDown = () => {
-    const next = (curSelected + 1);
-    setCurSelected((next >= menuListItems.length) ? 0 : next);
+    const next = curSelected + 1;
+    setCurSelected(next >= menuListItems.length ? 0 : next);
   };
   const handleArrowUp = () => {
-    const next = (curSelected - 1);
-    setCurSelected((next < 0) ? (menuListItems.length - 1) : next)
+    const next = curSelected - 1;
+    setCurSelected(next < 0 ? menuListItems.length - 1 : next);
   };
 
   const handleEnter = () => {
@@ -38,16 +38,15 @@ export const MainPageList: React.FC = () => {
   };
 
   useEffect(() => {
-    setDisabledKeyNav(false)
-    return () => setDisabledKeyNav(true)
+    setDisabledKeyNav(false);
+    return () => setDisabledKeyNav(true);
   }, [setDisabledKeyNav]);
-
 
   useKeyboardNavigation({
     onDownDown: handleArrowDown,
     onUpDown: handleArrowUp,
     onEnterDown: handleEnter,
-    disableOnFocused: true
+    disableOnFocused: true,
   });
 
   const handleTeleport = () => {
@@ -56,19 +55,25 @@ export const MainPageList: React.FC = () => {
       title: t("nui_menu.page_main.teleport.dialog_title"),
       placeholder: "340, 480, 12",
       onSubmit: (coords: string) => {
-        const [x, y, z] = coords.split(',').map(s => s.trim())
-          .filter(s => s.match(/^-?\d{1,4}(?:\.\d{1,9})?$/))
-          .map(s => +s);
+        const [x, y, z] = coords
+          .split(",")
+          .map((s) => s.trim())
+          .filter((s) => s.match(/^-?\d{1,4}(?:\.\d{1,9})?$/))
+          .map((s) => +s);
 
-        if ([x, y, z].every(n => (typeof n === 'number'))) {
-          openSnackbar("success", t("nui_menu.page_main.teleport.dialog_success"));
-          fetchNui("tpToCoords", {x, y, z});
+        if ([x, y, z].every((n) => typeof n === "number")) {
+          enqueueSnackbar(t("nui_menu.page_main.teleport.dialog_success"), {
+            variant: "success",
+          });
+          fetchNui("tpToCoords", { x, y, z });
         } else {
-          openSnackbar("error", t("nui_menu.page_main.teleport.dialog_error"))
+          enqueueSnackbar(t("nui_menu.page_main.teleport.dialog_error"), {
+            variant: "error",
+          });
         }
-      }
+      },
     });
-  }
+  };
 
   const handleAnnounceMessage = () => {
     openDialog({
@@ -77,8 +82,10 @@ export const MainPageList: React.FC = () => {
       placeholder: "Your announcement...",
       onSubmit: (message: string) => {
         // Post up to client with announcement message
-        openSnackbar("success", t("nui_menu.page_main.send_announce.dialog_success"));
-        fetchNui("sendAnnouncement", {message});
+        enqueueSnackbar(t("nui_menu.page_main.send_announce.dialog_success"), {
+          variant: "success",
+        });
+        fetchNui("sendAnnouncement", { message });
       },
     });
   };
@@ -89,10 +96,20 @@ export const MainPageList: React.FC = () => {
       title: t("nui_menu.page_main.spawn_veh.dialog_title"),
       placeholder: "Adder",
       onSubmit: (modelName: string) => {
-        openSnackbar("info", t("nui_menu.page_main.spawn_veh.dialog_info", { modelName }));
-        fetchNui("spawnVehicle", {model: modelName}).then(({e}) => {
-          e ? openSnackbar("error", t("nui_menu.page_main.spawn_veh.dialog_error", { modelName }))
-            : openSnackbar("success", t("nui_menu.page_main.spawn_veh.dialog_success"));
+        enqueueSnackbar(
+          t("nui_menu.page_main.spawn_veh.dialog_info", { modelName }),
+          { variant: "info" }
+        );
+        fetchNui("spawnVehicle", { model: modelName }).then(({ e }) => {
+          e
+            ? enqueueSnackbar(
+                t("nui_menu.page_main.spawn_veh.dialog_error", { modelName }),
+                { variant: "error" }
+              )
+            : enqueueSnackbar(
+                t("nui_menu.page_main.spawn_veh.dialog_success"),
+                { variant: "success" }
+              );
         });
       },
     });
@@ -100,12 +117,16 @@ export const MainPageList: React.FC = () => {
 
   const handleFixVehicle = () => {
     fetchNui("fixVehicle");
-    openSnackbar("info", t("nui_menu.page_main.fix_vehicle.dialog_success"));
+    enqueueSnackbar(t("nui_menu.page_main.fix_vehicle.dialog_success"), {
+      variant: "info",
+    });
   };
 
   const handleHealAllPlayers = () => {
     fetchNui("healAllPlayers");
-    openSnackbar("info", t("nui_menu.page_main.heal_all.dialog_success"));
+    enqueueSnackbar(t("nui_menu.page_main.heal_all.dialog_success"), {
+      variant: "info",
+    });
   };
 
   const menuListItems: MenuListItemData[] = [
@@ -118,9 +139,9 @@ export const MainPageList: React.FC = () => {
     {
       icon: <AccessibilityNew />,
       primary: t("nui_menu.page_main.player_mode.list_primary"),
-      secondary: t("nui_menu.page_main.player_mode.list_secondary",
-        { no_clip: 'NoClip' }
-      ),
+      secondary: t("nui_menu.page_main.player_mode.list_secondary", {
+        no_clip: "NoClip",
+      }),
       onSelect: () => console.log("Player Mode Clicked"),
     },
     {
@@ -152,11 +173,7 @@ export const MainPageList: React.FC = () => {
   return (
     <List>
       {menuListItems.map((item, index) => (
-        <MenuListItem
-          key={index}
-          selected={curSelected === index}
-          {...item}
-        />
+        <MenuListItem key={index} selected={curSelected === index} {...item} />
       ))}
     </List>
   );

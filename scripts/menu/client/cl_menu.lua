@@ -109,6 +109,15 @@ RegisterNUICallback('sendAnnouncement', function(data, cb)
   cb({})
 end)
 
+RegisterNetEvent('txAdmin:receiveAnnounce', function(message)
+  SendNUIMessage({
+    action = 'addAnnounceMessage',
+    data = {
+      message = message
+    }
+  })
+end)
+
 RegisterNUICallback('fixVehicle', function(data, cb)
   local ped = PlayerPedId()
   local veh = GetVehiclePedIsIn(ped, false)
