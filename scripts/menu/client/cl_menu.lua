@@ -59,10 +59,10 @@ end)
  ]]
 
 -- Triggered whenever we require full focus, cursor and keyboard
-RegisterNUICallback('focusInput', function(shouldFocus, cb)
+RegisterNUICallback('focusInputs', function(shouldFocus, cb)
   -- Temporary until keyboard handlers for main page are all done
-  SetNuiFocus(shouldFocus, shouldFocus)
-  SetNuiFocusKeepInput(not shouldFocus)
+  --SetNuiFocus(shouldFocus, shouldFocus)
+  --SetNuiFocusKeepInput(not shouldFocus)
   cb({})
 end)
 

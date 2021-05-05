@@ -16,7 +16,7 @@ import {
   useSetPlayerFilter,
 } from "../state/players.state";
 import { useDebounce } from "../hooks/useDebouce";
-import {useServerCtxValue} from "../state/server.state";
+import { useServerCtxValue } from "../state/server.state";
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
