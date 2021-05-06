@@ -1,6 +1,7 @@
 import React, {
   ChangeEvent,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -20,13 +21,15 @@ import {
 } from "@material-ui/core";
 import { Create } from "@material-ui/icons";
 import { useKeyboardNavContext } from "./KeyboardNavProvider";
-import {useSnackbar} from "notistack";
+import { useSnackbar } from "notistack";
+import { useTranslate } from "react-polyglot";
 
 interface InputDialogProps {
   title: string;
   description: string;
   placeholder: string;
   onSubmit: (inputValue: string) => void;
+  isMultiline?: boolean;
 }
 
 interface DialogProviderContext {
@@ -45,6 +48,13 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const defaultDialogState = {
+  description: "This is the default description for whatever",
+  placeholder: "This is the default placeholder...",
+  onSubmit: () => {},
+  title: "Dialog Title",
+};
+
 export const DialogProvider: React.FC = ({ children }) => {
   const classes = useStyles();
 
@@ -52,18 +62,17 @@ export const DialogProvider: React.FC = ({ children }) => {
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const [dialogProps, setDialogProps] = useState<InputDialogProps>({
-    description: "This is the default description for whatever",
-    placeholder: "This is the default placeholder...",
-    onSubmit: () => {},
-    title: "Dialog Title",
-  });
+  const [dialogProps, setDialogProps] = useState<InputDialogProps>(
+    defaultDialogState
+  );
 
   const { setDisabledKeyNav } = useKeyboardNavContext();
 
   const [dialogInputVal, setDialogInputVal] = useState<string>("");
 
   const { enqueueSnackbar } = useSnackbar();
+
+  const t = useTranslate();
 
   useEffect(() => {
     if (dialogOpen) {
@@ -73,29 +82,31 @@ export const DialogProvider: React.FC = ({ children }) => {
     }
   }, [dialogOpen, setDisabledKeyNav]);
 
-  const handleDialogClose = () => {
-    setDialogOpen(false);
-  };
-
   const handleDialogSubmit = () => {
+
     if (!dialogInputVal.trim()) {
-      enqueueSnackbar("You cannot have an empty input", { variant: 'error' });
-      return;
+      return enqueueSnackbar("You cannot have an empty input", { variant: "error" });
     }
 
     dialogProps.onSubmit(dialogInputVal);
+
     setDialogOpen(false);
     setDialogInputVal("");
-  };
-
-  const openDialog = (dialogProps: InputDialogProps) => {
-    setDialogProps(dialogProps);
-    setDialogOpen(true);
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setDialogInputVal(e.target.value);
   };
+
+  const openDialog = useCallback((dialogProps: InputDialogProps) => {
+    setDialogProps(dialogProps);
+    setDialogOpen(true);
+  }, []);
+
+  const handleDialogClose = useCallback(() => {
+    setDialogOpen(false);
+    setDialogProps(defaultDialogState)
+  }, []);
 
   return (
     <DialogContext.Provider
@@ -116,7 +127,7 @@ export const DialogProvider: React.FC = ({ children }) => {
       >
         <form
           onSubmit={(e) => {
-            e.preventDefault()
+            e.preventDefault();
             handleDialogSubmit();
           }}
         >
@@ -129,6 +140,7 @@ export const DialogProvider: React.FC = ({ children }) => {
               variant="standard"
               autoFocus
               fullWidth
+              multiline={dialogProps?.isMultiline}
               id="dialog-input"
               placeholder={dialogProps.placeholder}
               InputProps={{
@@ -148,10 +160,10 @@ export const DialogProvider: React.FC = ({ children }) => {
                 color: theme.palette.text.secondary,
               }}
             >
-              Cancel
+              {t("nui_menu.common.cancel")}
             </Button>
             <Button type="submit" color="primary">
-              Submit
+              {t("nui_menu.common.submit")}
             </Button>
           </DialogActions>
         </form>

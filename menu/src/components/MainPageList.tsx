@@ -80,6 +80,7 @@ export const MainPageList: React.FC = () => {
       description: t("nui_menu.page_main.send_announce.dialog_desc"),
       title: t("nui_menu.page_main.send_announce.dialog_title"),
       placeholder: "Your announcement...",
+      isMultiline: true,
       onSubmit: (message: string) => {
         // Post up to client with announcement message
         enqueueSnackbar(t("nui_menu.page_main.send_announce.dialog_success"), {
