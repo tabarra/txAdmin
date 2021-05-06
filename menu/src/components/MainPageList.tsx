@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { List } from "@material-ui/core";
-import MenuListItem, { MenuListItemData } from "./MenuListItem";
+import { MenuListItem, MenuListItemMulti } from "./MenuListItem";
 import {
   AccessibilityNew,
   Announcement,
@@ -15,6 +15,7 @@ import { fetchNui } from "../utils/fetchNui";
 import { useKeyboardNavContext } from "../provider/KeyboardNavProvider";
 import { useTranslate } from "react-polyglot";
 import { useSnackbar } from "notistack";
+import {usePlayerMode} from "../state/playermode.state";
 
 export const MainPageList: React.FC = () => {
   const { openDialog } = useDialogContext();
@@ -22,6 +23,7 @@ export const MainPageList: React.FC = () => {
   const [curSelected, setCurSelected] = useState(0);
   const t = useTranslate();
   const { enqueueSnackbar } = useSnackbar();
+  const [playerMode, setPlayerMode] = usePlayerMode()
 
   // the directions are inverted
   const handleArrowDown = () => {
@@ -34,7 +36,7 @@ export const MainPageList: React.FC = () => {
   };
 
   const handleEnter = () => {
-    menuListItems[curSelected].onSelect();
+    menuListItems[curSelected].onSelect && menuListItems[curSelected].onSelect();
   };
 
   useEffect(() => {
@@ -137,7 +139,7 @@ export const MainPageList: React.FC = () => {
     });
   };
 
-  const menuListItems: MenuListItemData[] = [
+  const menuListItems = [
     {
       icon: <LocationSearching />,
       primary: t("nui_menu.page_main.teleport.list_primary"),
@@ -150,7 +152,26 @@ export const MainPageList: React.FC = () => {
       secondary: t("nui_menu.page_main.player_mode.list_secondary", {
         no_clip: "NoClip",
       }),
-      onSelect: () => console.log("Player Mode Clicked"),
+      isMultiAction: true,
+      onChange: (playerMode) => {
+        setPlayerMode(playerMode)
+        fetchNui('playerModeChanged', playerMode)
+      },
+      initialValue: playerMode,
+      actions: [
+        {
+          label: "None",
+          value: "none",
+        },
+        {
+          label: "NoClip",
+          value: "noclip",
+        },
+        {
+          label: "God Mode",
+          value: "godmode",
+        },
+      ],
     },
     {
       icon: <DirectionsCar />,
@@ -181,7 +202,8 @@ export const MainPageList: React.FC = () => {
   return (
     <List>
       {menuListItems.map((item, index) => (
-        <MenuListItem key={index} selected={curSelected === index} {...item} />
+        // @ts-ignore
+        item.isMultiAction ? <MenuListItemMulti key={index} selected={curSelected === index} {...item} /> : <MenuListItem key={index} selected={curSelected === index} {...item} />
       ))}
     </List>
   );

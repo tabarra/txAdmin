@@ -1,6 +1,7 @@
 -- Variable that determines whether a player can even access the menu
 local menuIsAccessible
-
+-- Since the menu yields/receives keyboard
+-- focus we need to store that the menu is already visible
 local isMenuVisible
 
 RegisterKeyMapping('txAdmin:openMenu', 'Open the txAdmin Menu', 'keyboard', 'f1')
@@ -87,6 +88,13 @@ RegisterNUICallback('tpToCoords', function(data, cb)
   cb({})
 end)
 
+-- This will trigger everytime the playerMode in the main menu is changed
+-- it will send an object with label and value.
+RegisterNUICallback('playerModeChanged', function(data, cb)
+  debugPrint(json.encode(data))
+  cb({})
+end)
+
 -- CB From Menu
 RegisterNUICallback('spawnVehicle', function(data, cb)
   local model = data.model
@@ -111,7 +119,7 @@ end)
 -- CB From Menu
 -- Data will be an object with a message attribute
 RegisterNUICallback('sendAnnouncement', function(data, cb)
-  debugPrint(data)
+  debugPrint(data.message)
   TriggerServerEvent('txAdmin:menu:sendAnnouncement', data.message)
   cb({})
 end)

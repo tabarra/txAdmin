@@ -1,7 +1,8 @@
 import React, {ChangeEvent, useCallback} from "react";
 import {Box, makeStyles, Tab, Tabs} from "@material-ui/core";
-import {txAdminMenuPage, usePage} from "../state/page.state";
+import { txAdminMenuPage, usePage } from "../state/page.state";
 import {useKeyboardNavigation} from "../hooks/useKeyboardNavigation";
+import {useTabStateValue} from "../state/tab.state";
 
 const useStyles = makeStyles({
   tab: {
@@ -12,18 +13,21 @@ const useStyles = makeStyles({
 export const PageTabs: React.FC = () => {
   const classes = useStyles();
   const [page, setPage] = usePage();
+  const tabDisabled = useTabStateValue()
 
   const handleChange = (event: ChangeEvent<{}>, newValue: number) => {
     setPage(newValue);
   };
 
   const handleArrowLeft = useCallback(() => {
+    if (tabDisabled) return
     if (page > txAdminMenuPage.Main) setPage(page - 1)
-  }, [page])
+  }, [page, tabDisabled])
 
   const handleArrowRight = useCallback(() => {
+    if (tabDisabled) return
     if (page < txAdminMenuPage.txAdmin) setPage(page + 1)
-  }, [page])
+  }, [page, tabDisabled])
 
   useKeyboardNavigation({
     onLeftDown: handleArrowLeft,
