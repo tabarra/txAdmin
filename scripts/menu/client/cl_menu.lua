@@ -60,15 +60,16 @@ end)
 
 -- Triggered whenever we require full focus, cursor and keyboard
 RegisterNUICallback('focusInputs', function(shouldFocus, cb)
-  -- Temporary until keyboard handlers for main page are all done
-  --SetNuiFocus(shouldFocus, shouldFocus)
-  --SetNuiFocusKeepInput(not shouldFocus)
+  SetNuiFocus(true, shouldFocus)
+  SetNuiFocusKeepInput(not shouldFocus)
   cb({})
 end)
 
 -- When the escape key is pressed in menu
-RegisterNUICallback('closeMenu', function(data, cb)
+RegisterNUICallback('closeMenu', function(_, cb)
+  isMenuVisible = false
   SetNuiFocus(false)
+  SetNuiFocusKeepInput(false)
   cb({})
 end)
 
