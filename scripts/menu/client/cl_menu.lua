@@ -3,6 +3,15 @@ local menuIsAccessible
 
 RegisterKeyMapping('txAdmin:openMenu', 'Open the txAdmin Menu', 'keyboard', 'f1')
 
+--- Send data to the NUI frame
+---@param action string Action
+---@param data any Data corresponding to action
+local function sendMenuMessage(action, data)
+  SendNUIMessage({
+    action = action,
+    data = data
+  })
+end
 --- Authentication logic
 RegisterNetEvent('txAdmin:menu:setAccessible', function(canAccess)
   if type(canAccess) ~= 'boolean' then error() end
