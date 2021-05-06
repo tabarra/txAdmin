@@ -36,6 +36,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     paddingRight: 7,
     color: theme.palette.primary.main,
   },
+  tooltipOverride: {
+    fontSize: 12
+  }
 }));
 
 const PlayerCard: React.FC<PlayerData> = ({
@@ -61,7 +64,9 @@ const PlayerCard: React.FC<PlayerData> = ({
       <Paper className={classes.paper}>
         <Box display="flex" alignItems="center" pb="5px">
           <Box flexGrow={1} display="flex">
-            <Tooltip title={upperCaseStatus} placement="top">
+            <Tooltip title={upperCaseStatus} placement="top" arrow classes={{
+              tooltip: classes.tooltipOverride
+            }}>
               <span className={classes.icon}>{statusIcon[vehicleStatus]}</span>
             </Tooltip>
             <Typography
@@ -86,7 +91,9 @@ const PlayerCard: React.FC<PlayerData> = ({
           <IconButton>{<MoreVert />}</IconButton>
         </Box>
         <div>
-          <Tooltip title={`${health}% health`} placement="bottom" arrow>
+          <Tooltip title={`${health}% health`} placement="bottom" arrow classes={{
+            tooltip: classes.tooltipOverride
+          }}>
             <div className={classes.barBackground}>
               <Box className={classes.barInner} width={`${health}%`} />
             </div>
