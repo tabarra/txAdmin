@@ -80,6 +80,10 @@
                 "dialog_success": "Sending the announcement"
             }
         },
-        "page_players": {}
+        "page_players": {
+            "misc": {
+                "zero_players": "No players found"
+            }
+        }
     }
 }

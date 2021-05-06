@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { Box, CircularProgress, makeStyles, Theme } from "@material-ui/core";
-import PlayerCard from "./PlayerCard";
+import React from "react";
+import { Box, makeStyles, Theme } from "@material-ui/core";
 import { PlayerPageHeader } from "./PlayerPageHeader";
 import { useFilteredSortedPlayers } from "../state/players.state";
-import InfiniteScroll from "react-infinite-scroll-component";
+import { PlayersListEmpty } from "./PlayersListEmpty";
+import { PlayersListGrid } from "./PlayersListGrid";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -39,23 +39,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const PlayersPage: React.FC<{ visible: boolean }> = ({ visible }) => {
   const classes = useStyles();
   const players = useFilteredSortedPlayers();
-  const [playerAmountRender, setPlayerAmountRender] = useState(40);
-  const [loading, setLoading] = useState(false);
-  const slicedPlayers = players.slice(0, playerAmountRender);
-
-  const handleNextLoad = () => {
-    setLoading(true);
-    setTimeout(() => {
-      if (playerAmountRender + 40 > players.length && players.length > 40) {
-        const max = players.length - playerAmountRender;
-        setLoading(false);
-        setPlayerAmountRender(max);
-        return;
-      }
-      setLoading(false);
-      setPlayerAmountRender(playerAmountRender + 40);
-    }, 500);
-  };
 
   return (
     <Box
@@ -68,33 +51,7 @@ export const PlayersPage: React.FC<{ visible: boolean }> = ({ visible }) => {
     >
       <PlayerPageHeader />
       <Box className={classes.grid}>
-        <Box my={2} className={classes.playerGrid} id="playerGrid">
-          <InfiniteScroll
-            next={handleNextLoad}
-            hasMore={playerAmountRender === players.length}
-            dataLength={playerAmountRender}
-            scrollableTarget="playerGrid"
-            style={{
-              display: "flex",
-              flexWrap: "wrap",
-              flexGrow: 1,
-            }}
-            loader={<div />}
-          >
-            {slicedPlayers.map((player) => (
-              <PlayerCard {...player} key={player.id} />
-            ))}
-          </InfiniteScroll>
-          <Box
-            visibility={loading ? "visible" : "hidden"}
-            id="grid-loader"
-            width="100%"
-            display="flex"
-            justifyContent="center"
-          >
-            <CircularProgress />
-          </Box>
-        </Box>
+        {players.length ? <PlayersListGrid /> : <PlayersListEmpty />}
       </Box>
     </Box>
   );
