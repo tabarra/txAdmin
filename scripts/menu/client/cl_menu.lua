@@ -48,6 +48,22 @@ local function sendSnackbarMessage(level, message)
 end
 
 
+--- Send a persistent alert to NUI
+---@param key string An unique ID for this alert
+---@param level string The level for the alert
+---@param message string The message for this alert
+local function sendPersistentAlert(key, level, message)
+  debugPrint(('Sending persistent alert, key: %s, level: %s, message: %s'):format(key, level, message))
+  sendMenuMessage('setPersistentAlert', { key = key, level = level, message = message })
+end
+
+--- Clear a persistent alert on screen
+---@param key string The unique ID passed in sendPersistentAlert for the notification
+local function clearPersistentAlert(key)
+  debugPrint(('Clearing persistent alert, key: %s'):format(key))
+  sendMenuMessage('clearPersistentAlert', { key = key })
+end
+
 -- Command to be used with the register key mapping
 RegisterCommand('txAdmin:openMenu', function()
   if menuIsAccessible and not isMenuVisible then
