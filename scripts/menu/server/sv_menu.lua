@@ -12,10 +12,7 @@ local ServerCtxObj = {
   locale = nil
 }
 
-CreateThread(function()
-  -- If we don't wait for a tick there is some race condition that
-  -- sometimes prevents debugPrint lmao
-  Wait(0)
+local function syncServerCtx()
   local oneSyncConvar = GetConvar('onesync', 'off')
   if oneSyncConvar == ('on' or 'legacy') then
     ServerCtxObj.oneSync.type = oneSyncConvar
@@ -23,13 +20,13 @@ CreateThread(function()
   elseif oneSyncConvar == 'off' then
     ServerCtxObj.oneSyncStatus = false
   end
-  
+
   -- Default '' in fxServer
   local svProjectName = GetConvar('sv_projectname', '')
   if svProjectName ~= '' then
     ServerCtxObj.projectName = svProjectName
   end
-  
+
   -- Default 30 in fxServer
   local svMaxClients = GetConvarInt('sv_maxclients', 30)
   ServerCtxObj.maxClients = svMaxClients
@@ -39,8 +36,21 @@ CreateThread(function()
 
   debugPrint('Server CTX assigned to GlobalState, CTX:')
   debugPrint(json.encode(ServerCtxObj))
-  -- In case this was a hot reload of monitor, we send init event to all online clients
   GlobalState.txAdminServerCtx = ServerCtxObj
+end
+
+-- Everytime the txAdmin convars are changed this event will fire
+-- Therefore, lets update global state with that.
+AddEventHandler('txAdmin:events:configChanged', function()
+  debugPrint('configChanged event triggered, syncing GlobalState')
+  syncServerCtx()
+end)
+
+CreateThread(function()
+  -- If we don't wait for a tick there is some race condition that
+  -- sometimes prevents debugPrint lmao
+  Wait(0)
+  syncServerCtx()
 end)
 
 RegisterServerEvent('txAdmin:menu:getServerCtx', function()
@@ -131,46 +141,46 @@ CreateThread(function()
     local found = {}
     
     -- TODO: Uncomment live code
-    --local players = GetPlayers()
-    --for serverID in pairs(players) do
-    --  local ped = GetPlayerPed(serverID)
-    --  
-    --  local veh = GetVehiclePedIsIn(ped, false)
-    --  local vehClass = "walking"
-    --  if veh and veh > 0 then 
-    --    local class = GetVehicleClass(veh)
-    --    if class == 8 then
-    --      vehClass = "biking"
-    --    elseif class == 14 then
-    --      vehClass = "boating"
-    --    else
-    --      vehClass = "driving"
-    --    end
-    --  end
-    --  
-    --  local data = {
-    --    id = serverID,
-    --    health = GetEntityHealth(ped),
-    --    vehicleStatus = vehClass,
-    --    pos = GetEntityCoords(ped),
-    --    username = GetPlayerName(serverID),
-    --  }
-    --  table.insert(found, data)
-    --  Wait(0)
-    --end
+    local players = GetPlayers()
+    for _, serverID in ipairs(players) do
+      local ped = GetPlayerPed(serverID)
+
+      local veh = GetVehiclePedIsIn(ped, false)
+      local vehClass = "walking"
+      if veh and veh > 0 then
+        local class = GetVehicleClass(veh)
+        if class == 8 then
+          vehClass = "biking"
+        elseif class == 14 then
+          vehClass = "boating"
+        else
+          vehClass = "driving"
+        end
+      end
+
+      found[#found + 1] = {
+        id = serverID,
+        health = GetEntityHealth(ped),
+        vehicleStatus = vehClass,
+        pos = GetEntityCoords(ped),
+        username = GetPlayerName(serverID),
+      }
+      -- Lets yield for a tick so we don't have hitch issues
+      Wait(0)
+    end
     
     -- TODO: remove test data
-    for i = 1, 1000 do
-      local data = {
-        id = i,
-        vehicleStatus = "walking",
-        health = math.random(0, 200),
-        distance = math.random(1, 5000),
-        username = 'skeleboi' .. i,
-        pos = vec3(0, 0, 0)
-      }
-      table.insert(found, data)
-    end
+    --for i = 1, 1000 do
+    --  local data = {
+    --    id = i,
+    --    vehicleStatus = "walking",
+    --    health = math.random(0, 200),
+    --    distance = math.random(1, 5000),
+    --    username = 'skeleboi' .. i,
+    --    pos = vec3(0, 0, 0)
+    --  }
+    --  table.insert(found, data)
+    --end
     
     TriggerClientEvent('txAdmin:menu:setPlayerState', -1, found)
     Wait(1000 * 15)
