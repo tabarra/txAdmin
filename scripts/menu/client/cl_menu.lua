@@ -1,6 +1,8 @@
 -- Variable that determines whether a player can even access the menu
 local menuIsAccessible
 
+local isMenuVisible
+
 RegisterKeyMapping('txAdmin:openMenu', 'Open the txAdmin Menu', 'keyboard', 'f1')
 
 --- Send data to the NUI frame
@@ -12,6 +14,17 @@ local function sendMenuMessage(action, data)
     data = data
   })
 end
+
+--- Will update ServerCtx based on GlobalState and will send it to NUI
+local function updateServerCtx()
+  local ServerCtx = GlobalState.txAdminServerCtx
+  debugPrint('Checking for ServerCtx')
+  debugPrint(json.encode(ServerCtx))
+
+  -- Dispatch ctx to React state
+  sendMenuMessage('setServerCtx', GlobalState.txAdminServerCtx)
+end
+
 --- Authentication logic
 RegisterNetEvent('txAdmin:menu:setAccessible', function(canAccess)
   if type(canAccess) ~= 'boolean' then error() end
@@ -20,45 +33,29 @@ RegisterNetEvent('txAdmin:menu:setAccessible', function(canAccess)
 end)
 
 CreateThread(function()
-  local ServerCtx = GlobalState.txAdminServerCtx
-  debugPrint('Checking for ServerCtx')
-  debugPrint(json.encode(ServerCtx))
-
-  -- Dispatch ctx to React state
-  SendNUIMessage({
-    action = 'setServerCtx',
-    data = GlobalState.txAdminServerCtx
-  })
-
+  Wait(0)
+  updateServerCtx()
   TriggerServerEvent("txAdmin:menu:checkAccess")
 end)
---- End auth
-
 
 --- Snackbar message
----@param level string - The severity of the message can be 'info', 'error', or 'warning'
----@param message string - Message to display with snackbar
+---@param level string The severity of the message can be 'info', 'error', or 'warning'
+---@param message string Message to display with snackbar
 local function sendSnackbarMessage(level, message)
   debugPrint(('Sending snackbar message, level: %s, message: %s'):format(level, message))
-  SendNUIMessage({
-    method = 'setSnackbarAlert',
-    data = {
-      level = level,
-      message = message
-    }
-  })
+  sendMenuMessage('setSnackbarAlert', { level = level, message = message })
 end
 
 
 -- Command to be used with the register key mapping
 RegisterCommand('txAdmin:openMenu', function()
-  if menuIsAccessible then
-    -- TODO: Temporary until keyboard handlers for main page are all done
-    SetNuiFocus(true, true)
-    SendNUIMessage({
-      action = 'setVisible',
-      data = true
-    })
+  if menuIsAccessible and not isMenuVisible then
+    isMenuVisible = true
+    -- Lets update before we open the menu
+    updateServerCtx()
+    SetNuiFocus(true, false)
+    SetNuiFocusKeepInput(true)
+    sendMenuMessage('setVisible', true)
   end
 end)
 
@@ -120,19 +117,14 @@ RegisterNUICallback('sendAnnouncement', function(data, cb)
 end)
 
 RegisterNetEvent('txAdmin:receiveAnnounce', function(message)
-  SendNUIMessage({
-    action = 'addAnnounceMessage',
-    data = {
-      message = message
-    }
-  })
+  sendMenuMessage('addAnnounceMessage', { message = message })
 end)
 
-RegisterNUICallback('fixVehicle', function(data, cb)
+RegisterNUICallback('fixVehicle', function(_, cb)
   local ped = PlayerPedId()
   local veh = GetVehiclePedIsIn(ped, false)
   if (veh == 0) then
-    sendSnackbarMessage('error', 'You are currently not in a vehicle')
+    return cb({ e = true })
   end
 
   TriggerServerEvent('txAdmin:menu:fixVehicle')
