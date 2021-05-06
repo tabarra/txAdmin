@@ -40,7 +40,8 @@
             "fix_vehicle": {
                 "list_primary": "Fix vehicle",
                 "list_secondary": "Set current vehicle health to 100%",
-                "dialog_success": "Vehicle fixed!"
+                "dialog_success": "Vehicle fixed!",
+                "dialog_error": "You are not in a vehicle currently!"
             },
             "teleport": {
                 "list_primary": "Teleport",
