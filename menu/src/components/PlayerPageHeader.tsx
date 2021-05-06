@@ -61,7 +61,7 @@ export const PlayerPageHeader: React.FC = () => {
     <Box display="flex" justifyContent="space-between">
       <Box px={2}>
         <Typography variant="h5" color="primary" className={classes.title}>
-          {`${serverCtx.projectName} | Online Players`}
+          Online Players
         </Typography>
         <Typography className={classes.playerCount}>
           {`${allPlayers.length}/${serverCtx.maxClients} Players - OneSync (${serverCtx.oneSync.type})`}
