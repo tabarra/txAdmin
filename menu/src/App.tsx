@@ -10,6 +10,7 @@ import { debugData } from "./utils/debugLog";
 import { I18n } from "react-polyglot";
 import { useServerCtxValue } from "./state/server.state";
 import { getLocale } from "./utils/getLocale";
+import {useHudListenersService} from "./hooks/useHudListenersService";
 
 debugData([
   {
@@ -24,6 +25,7 @@ const App: React.FC = () => {
   // These hooks don't ever unmount
   useEscapeListener();
   useNuiListenerService();
+  useHudListenersService()
 
   const localeSelected = useMemo(() => getLocale(serverCtx.locale), [serverCtx.locale]);
 
