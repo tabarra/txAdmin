@@ -21,12 +21,6 @@ const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     padding: 20,
     borderRadius: 10,
-    minWidth: 250,
-  },
-  root: {
-    display: "flex",
-    alignItems: "center",
-    paddingBottom: 5,
   },
   barBackground: {
     background: theme.palette.primary.dark,
@@ -63,7 +57,7 @@ const PlayerCard: React.FC<PlayerData> = ({
     vehicleStatus.charAt(0).toUpperCase() + vehicleStatus.slice(1);
 
   return (
-    <Box p={2}>
+    <Box p={2} flexGrow={1} className={classes.cardWrapper}>
       <Paper className={classes.paper}>
         <Box display="flex" alignItems="center" pb="5px">
           <Box flexGrow={1} display="flex">
