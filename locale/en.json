@@ -36,6 +36,10 @@
         "instruction": "Hold [SPACE] for 10 seconds to dismiss this message."
     },
     "nui_menu": {
+        "common": {
+            "cancel": "Cancel",
+            "submit": "Submit"
+        },
         "page_main": {
             "fix_vehicle": {
                 "list_primary": "Fix vehicle",
