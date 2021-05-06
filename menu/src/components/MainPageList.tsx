@@ -116,9 +116,16 @@ export const MainPageList: React.FC = () => {
   };
 
   const handleFixVehicle = () => {
-    fetchNui("fixVehicle");
-    enqueueSnackbar(t("nui_menu.page_main.fix_vehicle.dialog_success"), {
-      variant: "info",
+    fetchNui("fixVehicle").then(({ e }) => {
+      if (e) {
+        return enqueueSnackbar(t("nui_menu.page_main.fix_vehicle.dialog_error"), {
+          variant: "error",
+        });
+      }
+
+      enqueueSnackbar(t("nui_menu.page_main.fix_vehicle.dialog_success"), {
+        variant: "info",
+      });
     });
   };
 
