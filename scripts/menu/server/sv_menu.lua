@@ -147,16 +147,19 @@ CreateThread(function()
 
       local veh = GetVehiclePedIsIn(ped, false)
       local vehClass = "walking"
-      if veh and veh > 0 then
-        local class = GetVehicleClass(veh)
-        if class == 8 then
-          vehClass = "biking"
-        elseif class == 14 then
-          vehClass = "boating"
-        else
-          vehClass = "driving"
-        end
-      end
+      -- TODO: Goat GetVehicleClass isn't available as a server side native or RPC, this breaks
+      -- if you are in a vehicle
+
+      --if veh and veh > 0 then
+      --  local class = GetVehicleClass(veh)
+      --  if class == 8 then
+      --    vehClass = "biking"
+      --  elseif class == 14 then
+      --    vehClass = "boating"
+      --  else
+      --    vehClass = "driving"
+      --  end
+      --end
 
       found[#found + 1] = {
         id = serverID,
