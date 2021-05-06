@@ -117,6 +117,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     useKeyboardNavigation({
       onRightDown: handleRightArrow,
       onLeftDown: handleLeftArrow,
+      disableOnFocused: true
     });
 
     return (
