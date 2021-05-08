@@ -1,7 +1,7 @@
 ## TODO v3.8.0
 - [x] remove hitch detector entirely
 - [x] improve crash detection, increase limit from 30s to 60s, printing thread stack
-- [ ] add new monitor data to diagnostics and improve stats
+- [x] add new monitor data to diagnostics and improve stats
 - [ ] rename authenticator pra adminVault
 - [ ] break `playerController` database stuff to another file
 - [ ] create auto backup of the database
@@ -40,7 +40,7 @@ Quickie:
         - Manual Approval (default)
         - Discord: be in guild
         - Discord: have a role in guild
-- [ ] (really needed?) ignore key bindings commands  https://discord.com/channels/577993482761928734/766868363041046589/795420910713831446
+- [ ] (really needed?) ignore key bindings commands https://discord.com/channels/577993482761928734/766868363041046589/795420910713831446
 - [ ] add custom event for broadcast
 
 

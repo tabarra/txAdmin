@@ -127,8 +127,8 @@ module.exports = async function AuthVerify(ctx) {
         };
 
         log(`Admin ${admin.name} logged in from ${ctx.ip} via zap token`);
-        globals.databus.txStatsData.loginOrigins[ctx.txVars.hostType]++;
-        globals.databus.txStatsData.loginMethods.zap++;
+        globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;
+        globals.databus.txStatsData.login.methods.zap++;
     } catch (error) {
         logWarn(`Failed to authenticate ${ctx.request.body.username} with error: ${error.message}`);
         if (GlobalData.verbose) dir(error);

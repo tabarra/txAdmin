@@ -41,10 +41,6 @@ module.exports = class Monitor {
         // logOk('Started');
         this.cpuStatusProvider = new HostCPUStatus();
         this.schedule = null;
-        this.globalCounters = {
-            fullCrashes: 0,
-            partialCrashes: 0,
-        };
         this.resetMonitorStats();
         this.buildSchedule();
 
@@ -280,8 +276,8 @@ module.exports = class Monitor {
         const currTimestamp = now();
         const elapsedRefreshStatus = currTimestamp - this.lastRefreshStatus;
         if (this.lastRefreshStatus !== null && elapsedRefreshStatus > 10) {
-            globals.databus.txStatsData.freezeSeconds.push(elapsedRefreshStatus - 1);
-            if (globals.databus.txStatsData.freezeSeconds.length > 30) globals.databus.txStatsData.freezeSeconds.shift();
+            globals.databus.txStatsData.monitorStats.freezeSeconds.push(elapsedRefreshStatus - 1);
+            if (globals.databus.txStatsData.monitorStats.freezeSeconds.length > 30) globals.databus.txStatsData.monitorStats.freezeSeconds.shift();
             logError(`Due to VPS issues or DDoS, this FXServer was frozen for ${elapsedRefreshStatus - 1} seconds.`);
             logError('Don\'t worry, txAdmin is preventing the server from being restarted.');
             this.lastRefreshStatus = currTimestamp;
@@ -307,7 +303,7 @@ module.exports = class Monitor {
             this.currentStatus = 'ONLINE';
             if (this.hasServerStartedYet == false) {
                 this.hasServerStartedYet = true;
-                globals.databus.txStatsData.bootSeconds.push(processUptime);
+                globals.databus.txStatsData.monitorStats.bootSeconds.push(processUptime);
             }
             return;
         }
@@ -338,7 +334,7 @@ module.exports = class Monitor {
         //Check if fxChild is closed, in this case no need to wait the failure count
         const processStatus = globals.fxRunner.getStatus();
         if (processStatus == 'closed') {
-            this.globalCounters.fullCrashes++;
+            globals.databus.txStatsData.monitorStats.restartReasons.close++;
             this.restartFXServer(
                 'server close detected',
                 globals.translator.t('restarter.crash_detected'),
@@ -378,19 +374,19 @@ module.exports = class Monitor {
             || elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit
         ) {
             if (anySuccessfulHeartBeat === false) {
-                globals.databus.txStatsData.bootSeconds.push(false);
+                globals.databus.txStatsData.monitorStats.bootSeconds.push(false);
                 this.restartFXServer(
                     `server failed to start within ${this.hardConfigs.maxHBCooldownTolerance} seconds`,
                     globals.translator.t('restarter.start_timeout'),
                 );
             } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {
-                this.globalCounters.partialCrashes++;
+                globals.databus.txStatsData.monitorStats.restartReasons.healthCheck++;
                 this.restartFXServer(
                     'server partial hang detected',
                     globals.translator.t('restarter.hang_detected'),
                 );
             } else {
-                this.globalCounters.fullCrashes++;
+                globals.databus.txStatsData.monitorStats.restartReasons.heartBeat++;
                 this.restartFXServer(
                     'server hang detected',
                     globals.translator.t('restarter.hang_detected'),
@@ -410,7 +406,7 @@ module.exports = class Monitor {
                 && tsNow - this.lastSuccessfulHTTPHeartBeat > 15
                 && tsNow - this.lastSuccessfulFD3HeartBeat < 5
             ) {
-                globals.databus.txStatsData.heartBeatStats.httpFailed++;
+                globals.databus.txStatsData.monitorStats.heartBeatStats.httpFailed++;
             }
             this.lastSuccessfulFD3HeartBeat = tsNow;
         } else if (source === 'http') {
@@ -433,7 +429,7 @@ module.exports = class Monitor {
                 && tsNow - this.lastSuccessfulFD3HeartBeat > 15
                 && tsNow - this.lastSuccessfulHTTPHeartBeat < 5
             ) {
-                globals.databus.txStatsData.heartBeatStats.fd3Failed++;
+                globals.databus.txStatsData.monitorStats.heartBeatStats.fd3Failed++;
             }
             this.lastSuccessfulHTTPHeartBeat = tsNow;
         }

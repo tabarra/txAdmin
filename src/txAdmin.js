@@ -38,29 +38,38 @@ globals = {
         txStatsData: {
             playerDBStats: null,
             lastFD3Error: '',
-            heartBeatStats: {
-                httpFailed: 0,
-                fd3Failed: 0,
+            monitorStats: {
+                heartBeatStats: {
+                    httpFailed: 0,
+                    fd3Failed: 0,
+                },
+                restartReasons: {
+                    close: 0,
+                    heartBeat: 0,
+                    healthCheck: 0,
+                },
+                bootSeconds: [],
+                freezeSeconds: [],
             },
-            bootSeconds: [],
-            freezeSeconds: [],
             pageViews: {},
             httpCounter: {
                 current: 0,
                 max: 0,
                 log: [],
             },
-            loginOrigins: {
-                localhost: 0,
-                cfxre: 0,
-                ip: 0,
-                other: 0,
-            },
-            loginMethods: {
-                discord: 0,
-                citizenfx: 0,
-                password: 0,
-                zap: 0,
+            login: {
+                origins: {
+                    localhost: 0,
+                    cfxre: 0,
+                    ip: 0,
+                    other: 0,
+                },
+                methods: {
+                    discord: 0,
+                    citizenfx: 0,
+                    password: 0,
+                    zap: 0,
+                },
             },
         },
     },

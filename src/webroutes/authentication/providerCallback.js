@@ -112,8 +112,8 @@ module.exports = async function ProviderCallback(ctx) {
         await globals.authenticator.refreshAdminSocialData(admin.name, 'citizenfx', identifier, userInfo);
 
         log(`Admin ${admin.name} logged in from ${ctx.ip}`);
-        globals.databus.txStatsData.loginOrigins[ctx.txVars.hostType]++;
-        globals.databus.txStatsData.loginMethods.citizenfx++;
+        globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;
+        globals.databus.txStatsData.login.methods.citizenfx++;
         return ctx.response.redirect('/');
     } catch (error) {
         ctx.session.auth = {};

@@ -44,8 +44,8 @@ module.exports = async function AuthVerify(ctx) {
         };
 
         log(`Admin ${admin.name} logged in from ${ctx.ip}`);
-        globals.databus.txStatsData.loginOrigins[ctx.txVars.hostType]++;
-        globals.databus.txStatsData.loginMethods.password++;
+        globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;
+        globals.databus.txStatsData.login.methods.password++;
     } catch (error) {
         logWarn(`Failed to authenticate ${ctx.request.body.username} with error: ${error.message}`);
         if (GlobalData.verbose) dir(error);
