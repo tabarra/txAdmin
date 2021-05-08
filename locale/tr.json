@@ -6,8 +6,9 @@
     "restarter": {
         "start_timeout": "zamanında başlatılamadı",
         "crash_detected": "Çökme tespit edildi",
-        "partial_crash_warn": "Kısmi bir çökme nedeniyle, sunucu 1 dakika içerisinde yeniden başlatılacaktır. Lütfen çıkış yapın.",
-        "partial_crash_warn_discord": "Kısmi bir çökme nedeniyle,  **%{servername}** 1 dakika içerisinde yeniden başlatılacaktır.",
+        "hang_detected": "hang detected",
+        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
+        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
         "schedule_reason": "Zamanlanmış yeniden başlatma %{time}",
         "schedule_warn": "Sunucu %{smart_count} dakika içerisinde zamanlanmış şekilde yeniden başlatılacaktır. Lütfen çıkış yapın. |||| Sunucu %{smart_count} dakika içerisinde zamanlamış şekilde yeniden başlatılacaktır.",
         "schedule_warn_discord": "**%{servername}** sunucusu %{smart_count} dakika içerisinde yeniden başlatılmaya zamanlandı. |||| **%{servername}** sunucusu %{smart_count} dakika içerisinde yeniden başlatılmaya zamanlandı."

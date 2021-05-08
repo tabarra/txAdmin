@@ -6,8 +6,9 @@
     "restarter": {
         "start_timeout": "failed to start in time",
         "crash_detected": "Crash geconstateerd",
-        "partial_crash_warn": "Vanwege een gedeeltelijke crash wordt deze server over 1 minuut opnieuw opgestart. Verlaat de server nu.",
-        "partial_crash_warn_discord": "Vanwege een gedeeltelijke crash wordt **%{servername}** over 1 minuut opnieuw opgestart.",
+        "hang_detected": "hang detected",
+        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
+        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
         "schedule_reason": "Geplande restart om %{time}",
         "schedule_warn": "De server heeft een geplande restart over %{smart_count} minuut. Verlaat de server. |||| De server heeft een geplande restart over %{smart_count} minuten.",
         "schedule_warn_discord": "**%{servername}** heeft een geplande restart over %{smart_count} minuut. |||| **%{servername}** heeft een geplande restart over %{smart_count} minuten."

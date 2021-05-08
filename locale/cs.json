@@ -6,8 +6,9 @@
     "restarter": {
         "start_timeout": "server se nestihl spustit v požadovaném čase",
         "crash_detected": "pád detekován",
-        "partial_crash_warn": "Kvůli částečnému pádu dojde za 1 minutu k restartu tohoto serveru. Prosím odpojte se nyní.",
-        "partial_crash_warn_discord": "Kvůli částečnému pádu se **%{servername}** restartuje za 1 minutu.",
+        "hang_detected": "hang detected",
+        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
+        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
         "schedule_reason": "plánovaný restart v %{time}",
         "schedule_warn": "Tento server má naplánovaný restart za %{smart_count} minutu. Prosím odpojte se nyní. |||| Tento server má naplánovaný restart za %{smart_count} minut.",
         "schedule_warn_discord": "**%{servername}** má naplánovaný restart za %{smart_count} minutu. |||| **%{servername}** má naplánovaný restart za %{smart_count} minut."

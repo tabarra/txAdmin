@@ -33,7 +33,7 @@ module.exports = class Monitor {
             },
             heartBeat: {
                 failThreshold: 15,
-                failLimit: 30,
+                failLimit: 60,
             },
         };
 
@@ -42,7 +42,6 @@ module.exports = class Monitor {
         this.cpuStatusProvider = new HostCPUStatus();
         this.schedule = null;
         this.globalCounters = {
-            // hitches: [],
             fullCrashes: 0,
             partialCrashes: 0,
         };
@@ -195,27 +194,7 @@ module.exports = class Monitor {
 
 
     //================================================================
-    /**
-     * Processes a server hitch
-     * NOTE: The minimum time for a hitch is 150ms. 60000/150=400
-     *
-     * @param {string} thread //not being used
-     * @param {number} hitchTime
-     */
-    // processFXServerHitch(thread, hitchTime){
-    //     this.globalCounters.hitches.push({
-    //         ts: now(),
-    //         hitchTime: parseInt(hitchTime)
-    //     });
-
-    //     if(this.globalCounters.hitches>400) this.globalCounters.hitches.shift();
-    // }
-
-
-    //================================================================
     resetMonitorStats() {
-        // this.globalCounters.hitches = [];
-
         this.currentStatus = 'OFFLINE'; // options: OFFLINE, ONLINE, PARTIAL
         this.lastRefreshStatus = null; //to prevent DDoS crash false positive
         this.lastSuccessfulHealthCheck = null; //to see if its above limit
@@ -320,8 +299,10 @@ module.exports = class Monitor {
 
         //Check if its online and return
         if (
-            this.lastSuccessfulHealthCheck && !healthCheckFailed
-            && anySuccessfulHeartBeat && !heartBeatFailed
+            this.lastSuccessfulHealthCheck
+            && !healthCheckFailed
+            && anySuccessfulHeartBeat
+            && !heartBeatFailed
         ) {
             this.currentStatus = 'ONLINE';
             if (this.hasServerStartedYet == false) {
@@ -372,10 +353,10 @@ module.exports = class Monitor {
             && elapsedHealthCheck > (this.hardConfigs.healthCheck.failLimit - 60)
         ) {
             globals.discordBot.sendAnnouncement(globals.translator.t(
-                'restarter.partial_crash_warn_discord',
+                'restarter.partial_hang_warn_discord',
                 {servername: globals.config.serverName},
             ));
-            const chatMsg = globals.translator.t('restarter.partial_crash_warn');
+            const chatMsg = globals.translator.t('restarter.partial_hang_warn');
             globals.fxRunner.srvCmd(formatCommand('txaBroadcast', 'txAdmin', chatMsg));
             this.healthCheckRestartWarningIssued = currTimestamp;
         }
@@ -405,14 +386,14 @@ module.exports = class Monitor {
             } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {
                 this.globalCounters.partialCrashes++;
                 this.restartFXServer(
-                    'server partial crash detected',
-                    globals.translator.t('restarter.crash_detected'),
+                    'server partial hang detected',
+                    globals.translator.t('restarter.hang_detected'),
                 );
             } else {
                 this.globalCounters.fullCrashes++;
                 this.restartFXServer(
-                    'server crash detected',
-                    globals.translator.t('restarter.crash_detected'),
+                    'server hang detected',
+                    globals.translator.t('restarter.hang_detected'),
                 );
             }
         }

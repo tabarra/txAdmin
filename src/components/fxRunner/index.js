@@ -163,7 +163,7 @@ module.exports = class FXRunner {
             ? `${GlobalData.forceInterface}:${this.fxServerPort}`
             : `127.0.0.1:${this.fxServerPort}`;
 
-        //Reseting hitch counter
+        //Reseting monitor stats
         globals.monitor.resetMonitorStats();
 
         //Announcing

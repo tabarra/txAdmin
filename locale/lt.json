@@ -6,8 +6,9 @@
     "restarter": {
         "start_timeout": "failed to start in time",
         "crash_detected": "aptiktas serverio nulūžimas",
-        "partial_crash_warn": "Del aptikto serverio nulužimo serveris persikraus uz 1 minutes",
-        "partial_crash_warn_discord": "Dėl aptikto serverio nulūžimo **%{servername}** serveris persikraus už 1 minutės",
+        "hang_detected": "hang detected",
+        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
+        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
         "schedule_reason": "automatinis %{time} perkrovimas",
         "schedule_warn": "Serveris persikraus už %{smart_count} minutes. Prašome atsijungti. |||| Serveris persikraus už %{smart_count} minuciu. Prašome atsijungti.",
         "schedule_warn_discord": "**%{servername}** automatiškai persikraus už %{smart_count} minutės. |||| **%{servername}** automatiškai persikraus už %{smart_count} minučių."
