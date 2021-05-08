@@ -2,9 +2,11 @@
 - [x] remove hitch detector entirely
 - [x] improve crash detection, increase limit from 30s to 60s, printing thread stack
 - [x] add new monitor data to diagnostics and improve stats
+- [x] fix the "change-me" server name when using deployer
 - [ ] rename authenticator pra adminVault
 - [ ] break `playerController` database stuff to another file
 - [ ] create auto backup of the database
+- [ ] remove the discord login button
 
 
 
