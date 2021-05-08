@@ -1,45 +1,57 @@
-## TODO v3.7.0
-- [x] added italian locale
-- [x] solve the invalid session issue
-- [x] dashboard: add selector for the thread and make it auto refresh
-- [x] massive linting!
-- [x] hot-patch for the unicode in ansi fxmanifest issue
-- [x] added events for kick, warns, bans and whitelists (@TasoOneAsia)
+## TODO v3.8.0
+- [x] remove hitch detector entirely
+- [x] improve crash detection, increase limit from 30s to 60s, printing thread stack
+- [ ] add new monitor data to diagnostics and improve stats
+- [ ] rename authenticator pra adminVault
+- [ ] break `playerController` database stuff to another file
+- [ ] create auto backup of the database
+
+
+
+stuff:
+- [ ] do the sv_listingIPOverride thing
+- [ ] maybe remove the sv_maxclients enforcement in the cfg file
+- [ ] fix the interface enforcement without port being set as zap server?
+- [ ] consolidate the log pages
+- [ ] persistent discord status message that is set up by `/statusfixed`:
+    - this will trigger a big status message to be sent in that channel
+    - this message id can be stored in the config file
+    - if discord id is present, use that instead of name (careful with the pings!)
+- [ ] make warns revokable?
+- [ ] update plume
+
+
+sv_listingIPOverride 
+set sv_listingIPOverride "109.230.238.70"
+
+    //Convars - zap dependant
+    isZapHosting,
+    forceInterface,
+
+
 
 
 Quickie:
-- crash replace 45 > 90?
 - ctx.ip overwrite with xff?
-- make warns revokable?
 
 > ASAP!:
 - [ ] a way to create admins file without cfx.re 
-- [ ] rename authenticator pra adminVault
-- [ ] consolidate the log pages
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
         - Manual Approval (default)
         - Discord: be in guild
         - Discord: have a role in guild
-- [ ] persistent discord status message that is set up by `/statusfixed`:
-        - this will trigger a big status message to be sent in that channel
-        - this message id can be stored in the config file
-        - if discord id is present, use that instead of name (careful with the pings!)
-- [ ] create auto backup of the database
-- [ ] ignore key bindings commands  https://discord.com/channels/577993482761928734/766868363041046589/795420910713831446
+- [ ] (really needed?) ignore key bindings commands  https://discord.com/channels/577993482761928734/766868363041046589/795420910713831446
 - [ ] add custom event for broadcast
 
 
 > Hopefully now:
 - [ ] check the places where I'm doing `Object.assign()` for shallow clones
-- [ ] break `playerController` database stuff to another file
 - [ ] remove the ForceFXServerPort config and do either via `server.cfg` comment, or execute `endpoint_add_tcp "127.0.0.1:random"`
 - [ ] make `playerController.writePending` prioritized (low 5s, medium 30s, high 60s)
 - [ ] create `admin.useroptions` for dark mode, welcome modals and such
 
 > Soon™ (hopefully the next update)
-- [ ] remove hitch detector entirely
 - [ ] get all functions from `web\public\js\txadmin\players.js` and wrap in some object.
-- [ ] Add basic code linting
 - [ ] maybe hardcode if(recipeName == plume) to open the readme in a new tab
 - [ ] add new hardware bans
 - [ ] add stats enc?
@@ -88,6 +100,11 @@ The Main menu will be fully arrow operated, but the player and txAdmin tab need 
         - TP Player to me
         - TP to Player
         - Spectate
+        - Troll commands????
+            - Kill
+            - Set on fire
+            - Wild animal attack
+            - make drunk
 - txAdmin Tab:
     - iframe containing txAdmin's web with some customizations:
         - menu starts collapsed
@@ -228,6 +245,11 @@ con_miniconChannels script:monitor*
 npx eslint ./src/**
 npx eslint ./src/** -f ./lint-formatter.js
 npx eslint ./src/** --fix
+
+# hang fxserver (runcode)
+console.log('ganging the thread for 60s');
+Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 60 * 1000);
+console.log('done');
 ```
 
 ```json
