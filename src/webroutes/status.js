@@ -34,28 +34,6 @@ module.exports = async function GetStatus(ctx) {
  * Returns the fxserver's data
  */
 function prepareServerStatus() {
-    // //processing hitches
-    // let fxServerHitches = cloneDeep(globals.monitor.globalCounters.hitches);
-    // let now = (Date.now() / 1000).toFixed();
-    // let hitchTimeSum = 0;
-    // fxServerHitches.forEach((hitch, key) => {
-    //     if (now - hitch.ts < 60) {
-    //         hitchTimeSum += hitch.hitchTime;
-    //     } else {
-    //         delete (fxServerHitches[key]);
-    //     }
-    // });
-
-    // //preparing hitch output string
-    // let hitches;
-    // if (hitchTimeSum > 5000) {
-    //     let secs = (hitchTimeSum / 1000).toFixed();
-    //     let pct = ((secs / 60) * 100).toFixed();
-    //     hitches = `${secs}s/min (${pct}%)`;
-    // } else {
-    //     hitches = hitchTimeSum + 'ms/min';
-    // }
-
     //Discord status
     const discordClient = globals.discordBot.client;
     let discordStatus;

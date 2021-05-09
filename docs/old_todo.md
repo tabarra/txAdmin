@@ -442,6 +442,13 @@ More:
 - [x] disable server auto-start when no admins configured
 - [x] login page indicate if the `admins.json` file is not found
 > v3.6.0~v3.6.4 (cicd issues)
+- [x] added italian locale
+- [x] solve the invalid session issue
+- [x] dashboard: add selector for the thread and make it auto refresh
+- [x] massive linting!
+- [x] hot-patch for the unicode in ansi fxmanifest issue
+- [x] added events for kick, warns, bans and whitelists (@TasoOneAsia)
+> v3.7.0
 
 
 ------------------------------

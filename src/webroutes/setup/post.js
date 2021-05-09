@@ -387,6 +387,7 @@ async function handleSaveDeployerImport(ctx) {
 
     //Checking save and redirecting
     if (saveGlobalStatus) {
+        globals.config = globals.configVault.getScoped('global');
         ctx.utils.logAction('Changing global settings via setup stepper and started Deployer.');
         return ctx.send({success: true});
     } else {
@@ -433,6 +434,7 @@ async function handleSaveDeployerCustom(ctx) {
 
     //Checking save and redirecting
     if (saveGlobalStatus) {
+        globals.config = globals.configVault.getScoped('global');
         ctx.utils.logAction('Changing global settings via setup stepper and started Deployer.');
         return ctx.send({success: true});
     } else {

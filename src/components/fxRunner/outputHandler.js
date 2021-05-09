@@ -52,7 +52,6 @@ module.exports = class OutputHandler {
      *   watchdog_bark
      *   bind_error
      *   script_log
-     *   hitch
      *   script_structured_trace (not used)
      *
      * @param {object} data
@@ -65,14 +64,6 @@ module.exports = class OutputHandler {
         //DEBUG
         // if(trace.value.func == 'ScriptTrace') return;
         // dir({channel,data});
-
-        //Handle hitches
-        // if(channel == 'citizen-server-impl' && data.type == 'hitch'){
-        //     try{
-        //         globals.monitor.processFXServerHitch(data.thread, data.time)
-        //     }catch(e){}
-        //     return;
-        // }
 
         //Handle bind errors
         if (channel == 'citizen-server-impl' && data.type == 'bind_error') {
@@ -91,7 +82,9 @@ module.exports = class OutputHandler {
         //Handle watchdog
         if (channel == 'citizen-server-impl' && data.type == 'watchdog_bark') {
             try {
-                deferError(`Detected FXServer thread ${data.thread} hung with stack: ${data.stack}`);
+                deferError(`Detected FXServer thread ${data.thread} hung with stack:`);
+                deferError(`\t${data.stack}`);
+                deferError('Please check the resource above to prevent further hangs.');
             } catch (e) {}
             return;
         }

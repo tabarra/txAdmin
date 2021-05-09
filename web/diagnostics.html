@@ -1,12 +1,6 @@
 {{@include("header", it)/}}
 
 
-<div class="text-center mb-4">
-    <h2>Diagnostics Report</h2>
-    <small class="text-muted">{{it.message|safe}}</small>
-</div>
-
-
 <div class="row justify-content-md-center">
     <div class="col-lg-8 col-xl-5 mw-col6">
 
@@ -31,13 +25,22 @@
             <div class="card-header font-weight-bold">txAdmin Info:</div>
             <div class="card-body">
                 <h5>Stats:</h5>
-                <strong>Versions:</strong> <code>v{{it.txAdminVersion}}</code> / <code>{{it.fxServerVersion}}</code> <br>
+                <strong>Versions:</strong> 
+                    <code>v{{it.txAdminVersion}}</code> / <code>{{it.fxServerVersion}}</code> <br>
                 <strong>Uptime:</strong> <code>{{it.txadmin.uptime}}</code> <br>
-                <strong>Cfx.re URL:</strong> <a href="{{it.txadmin.cfxUrl}}" target="_blank" rel="noopener noreferrer">{{it.txadmin.cfxUrl}}</a> <br>
-                <strong>Ban/Whitelist Checking:</strong> <code>{{it.txadmin.banlistEnabled}}</code>, <code>{{it.txadmin.whitelistEnabled}}</code> <br>
-                <strong>Full/Partial Crashes:</strong> <code>{{it.txadmin.fullCrashes}}</code>, <code>{{it.txadmin.partialCrashes}}</code> <br>
-                <strong>HTTP Counter:</strong> <code>{{it.txadmin.httpCounterLog}}</code> &lt; <code>{{it.txadmin.httpCounterMax}}</code> <br>
-                <strong>HB Fails:</strong> <code>HTTP {{it.txadmin.hbHTTPFails}}</code> / <code>FD3 {{it.txadmin.hbFD3Fails}}</code> <br>
+                <strong>Cfx.re URL:</strong> 
+                    <a href="{{it.txadmin.cfxUrl}}" target="_blank" rel="noopener noreferrer">{{it.txadmin.cfxUrl}}</a> <br>
+                <strong>Ban/Whitelist Checking:</strong> 
+                    <code>{{it.txadmin.banlistEnabled}}</code>, 
+                    <code>{{it.txadmin.whitelistEnabled}}</code> <br>
+                <strong>HTTP Counter:</strong> 
+                    <code>{{it.txadmin.httpCounterLog}}</code> &lt; <code>{{it.txadmin.httpCounterMax}}</code> <br>
+                <strong>Monitor Restarts:</strong> 
+                    <code>CL {{it.txadmin.monitorRestarts.close}}</code> /
+                    <code>HB {{it.txadmin.monitorRestarts.heartBeat}}</code> / 
+                    <code>HC {{it.txadmin.monitorRestarts.healthCheck}}</code> <br>
+                <strong>HB Fails:</strong> 
+                    <code>HTTP {{it.txadmin.hbHTTPFails}}</code> / <code>FD3 {{it.txadmin.hbFD3Fails}}</code> <br>
                 <strong>Boot Seconds:</strong> <code>{{it.txadmin.hbBootSeconds}}</code> <br>
                 <strong>Freeze Seconds:</strong> <code>{{it.txadmin.freezeSeconds}}</code> <br>
                 <strong>FXServer Log Size:</strong> <code>{{it.txadmin.logFileSize}}</code> <br>
@@ -100,6 +103,11 @@
                     {{/each}}
                 {{/if}}
             </div>
+        </div>
+
+        <!-- Execution time -->
+        <div class="text-center mb-4">
+            <small class="text-muted">{{it.message|safe}}</small>
         </div>
 
     </div>

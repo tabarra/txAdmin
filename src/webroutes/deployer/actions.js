@@ -131,7 +131,7 @@ async function handleSetVariables(ctx) {
     }
 
     //Setting identifiers array
-    const admin = globals.authenticator.getAdminByName(ctx.session.auth.username);
+    const admin = globals.adminVault.getAdminByName(ctx.session.auth.username);
     if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
     const addPrincipalLines = [];
     Object.keys(admin.providers).forEach((providerName) => {

@@ -126,7 +126,8 @@ function processPlayers(players) {
 
     if(!players.length){
         plistMsgElement.hidden = false
-        plistMsgElement.textContent = 'No Players Online';
+        plistMsgElement.innerHTML = `No Players Online.<br>
+        <small>If you have players in your server, remove <code>sv_lan</code> from <code>server.cfg</code>.</small>`;
     }
     cachedPlayers = players;
     plistCountElement.textContent = players.length;

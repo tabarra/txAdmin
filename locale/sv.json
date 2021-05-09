@@ -6,8 +6,9 @@
     "restarter": {
         "start_timeout": "failed to start in time",
         "crash_detected": "Server krasch upptäckt",
-        "partial_crash_warn": "Pågrund av en partiell krasch, Så kommer servern startas om inom 1 minut. Snälla lämna.",
-        "partial_crash_warn_discord": "Pågrund av en partiell krasch, **%{servername}** så kommer servern startas om inom 1 minut.",
+        "hang_detected": "hang detected",
+        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
+        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
         "schedule_reason": "Schemalagd restart %{time}",
         "schedule_warn": "Den här servern kommer startas om inom %{smart_count} minuter. Snälla lämna. |||| Den här servern kommer startas om inom %{smart_count} minuter.",
         "schedule_warn_discord": "**%{servername}** är schemalagd att startas om inom %{smart_count} minuter. |||| **%{servername}** är schemalagd att startas om inom %{smart_count} minuter."
