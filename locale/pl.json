@@ -14,7 +14,7 @@
         "schedule_warn_discord": "**%{servername}** ma zaplanowany restart w ciągu %{smart_count} minuty. |||| **%{servername}** ma zaplanowany restart w ciągu %{smart_count} minut."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) Zostałeś zbanowany na tym serwerze z powodu "%{reason}". Twój ban wygaśnie za: %{expiration}.",
+        "kick_temporary": "(%{author}) Zostałeś zbanowany na tym serwerze z powodu \"%{reason}\". Twój ban wygaśnie za: %{expiration}.",
         "kick_permanent": "(%{author}) Zostałeś permanentnie zbanowany na tym serwerze za \"%{reason}\".",
         "reject_temporary": "Zostałeś zbanowany na tym serwerze. Twój ban wygaśnie za: %{expiration}.\nID Bana: %{id}.\nPowód bana: %{reason}.\nZbanowany przez: %{author}.",
         "reject_permanent": "Zostałeś permanentnie zbanowany na tym serwerze.\nID Bana: %{id}.\nPowód bana: %{reason}.\nZbanowany przez: %{author}."
