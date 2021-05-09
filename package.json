@@ -8,7 +8,8 @@
     "watch": "nodemon --config nodemon.json",
     "lint": "eslint ./src/**",
     "lint:count": "eslint ./src/** -f ./lint-formatter.js",
-    "lint:fix": "eslint ./src/** --fix"
+    "lint:fix": "eslint ./src/** --fix",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -75,10 +76,13 @@
     "xss": "^1.0.8"
   },
   "devDependencies": {
+    "@commitlint/cli": "^12.1.1",
+    "@commitlint/config-conventional": "^12.1.1",
     "copy-webpack-plugin": "^6.2.0",
     "eslint": "^7.2.0",
     "eslint-config-airbnb": "^18.2.1",
     "eslint-config-airbnb-base": "^14.2.1",
+    "husky": "^6.0.0",
     "nodemon": "^2.0.7",
     "rimraf": "^3.0.2",
     "terser-webpack-plugin": "^4.2.2",
