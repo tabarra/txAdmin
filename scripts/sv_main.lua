@@ -21,6 +21,10 @@ if apiHost == "invalid" or apiToken == "invalid" then
     logError('API Host or Token ConVars not found. Do not start this resource if not using txAdmin.')
     return
 end
+if GetCurrentResourceName() ~= "monitor" then
+    logError('This resource should not be installed separately, it already comes with fxserver.')
+    return
+end
 
 
 -- Setup threads and commands
