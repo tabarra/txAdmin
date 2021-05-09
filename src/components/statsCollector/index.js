@@ -15,11 +15,7 @@ const getEpoch = (mod, ts = false) => {
 
 
 module.exports = class StatsCollector {
-    constructor(config) {
-        this.config = config;
-
-        //Setting up
-        // logOk('Started');
+    constructor() {
         // this.playersTimeSeries = new TimeSeries(`${globals.info.serverProfilePath}/data/players.json`, 10, 60*60*24);
         this.hardConfigs = {
             heatmapDataFile: `${globals.info.serverProfilePath}/data/stats_heatmapData_v1.json`,
@@ -46,15 +42,6 @@ module.exports = class StatsCollector {
                 }
             }
         }, 60 * 1000);
-    }
-
-
-    //================================================================
-    /**
-     * Refresh Stats Collector configurations
-     */
-    refreshConfig() {
-        this.config = globals.configVault.getScoped('statsCollector');
     }
 
 

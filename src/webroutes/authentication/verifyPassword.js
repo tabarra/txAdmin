@@ -16,13 +16,13 @@ module.exports = async function AuthVerify(ctx) {
     const renderData = {
         template: 'normal',
         message: null,
-        citizenfxDisabled: !globals.authenticator.providers.citizenfx.ready,
+        citizenfxDisabled: !globals.adminVault.providers.citizenfx.ready,
         discordDisabled: true,
     };
 
     try {
         //Checking admin
-        let admin = globals.authenticator.getAdminByName(ctx.request.body.username);
+        let admin = globals.adminVault.getAdminByName(ctx.request.body.username);
         if (!admin) {
             logWarn(`Wrong username for from: ${ctx.ip}`);
             renderData.message = 'Wrong Password!';

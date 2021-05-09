@@ -35,7 +35,7 @@ module.exports = async function Intercom(ctx) {
                 discordBotStats: (globals.discordBot.config.enabled) ? globals.discordBot.usageStats : false,
                 banlistEnabled: globals.playerController.config.onJoinCheckBan,
                 whitelistEnabled: globals.playerController.config.onJoinCheckWhitelist,
-                admins: (globals.authenticator.admins) ? globals.authenticator.admins.length : 1,
+                admins: (globals.adminVault.admins) ? globals.adminVault.admins.length : 1,
                 tmpLooksLikeRecipe: (globals.fxRunner.config.serverDataPath || '').includes('.base'),
             };
             const outData = Object.assign(extractData, globals.databus.txStatsData);
