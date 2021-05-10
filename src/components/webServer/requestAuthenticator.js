@@ -45,7 +45,7 @@ const requestAuth = (epType) => {
         if (isValidAuth) {
             await next();
         } else {
-            socket.session.auth = {}; //a bit redundant but it wont hurt anyone
+            if (socket.session) socket.session.auth = {}; //a bit redundant but it wont hurt anyone
             socket.disconnect(0);
             if (GlobalData.verbose) logWarn('Auth denied when creating session');
             next(new Error('Authentication Denied'));

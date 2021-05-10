@@ -4,9 +4,11 @@
 - [x] add new monitor data to diagnostics and improve stats
 - [x] fix the "change-me" server name when using deployer
 - [x] rename authenticator to adminVault
+- [x] update custom locale location + docs
 - [ ] break `playerController` database stuff to another file
 - [ ] create auto backup of the database
 - [ ] remove the discord login button
+- [ ] update recipes
 
 
 
@@ -20,7 +22,6 @@ stuff:
     - this message id can be stored in the config file
     - if discord id is present, use that instead of name (careful with the pings!)
 - [ ] make warns revokable?
-- [ ] update plume
 
 
 sv_listingIPOverride 
