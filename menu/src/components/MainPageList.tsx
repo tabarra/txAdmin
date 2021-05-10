@@ -164,9 +164,9 @@ export const MainPageList: React.FC = () => {
 
   const handleSpawnWeapon = () => {
     openDialog({
-      title: "Spawn Weapon",
+      title: t("nui_menu.page_main.spawn_wep.dialog_title"),
       placeholder: "WEAPON_ASSAULTRIFLE",
-      description: "Spawn a weapon using its model name.",
+      description: t("nui_menu.page_main.spawn_wep.dialog_desc"),
       onSubmit: (inputValue) => {
         fetchNui("spawnWeapon", inputValue);
       },
@@ -179,14 +179,14 @@ export const MainPageList: React.FC = () => {
         icon: <AccessibilityNew />,
         primary: t("nui_menu.page_main.player_mode.list_primary"),
         secondary: t("nui_menu.page_main.player_mode.list_secondary", {
-          no_clip: "NoClip",
+          mode: "NoClip",
         }),
         showCurrentPrefix: true,
         isMultiAction: true,
         initialValue: playerMode,
         actions: [
           {
-            label: "None",
+            label: t("nui_menu.page_main.player_mode.item_none"),
             value: "none",
             onSelect: () => {
               setPlayerMode("none");
@@ -194,7 +194,7 @@ export const MainPageList: React.FC = () => {
             },
           },
           {
-            label: "NoClip",
+            label: t("nui_menu.page_main.player_mode.item_noclip"),
             value: "noclip",
             onSelect: () => {
               setPlayerMode("noclip");
@@ -202,7 +202,7 @@ export const MainPageList: React.FC = () => {
             },
           },
           {
-            label: "God Mode",
+            label: t("nui_menu.page_main.player_mode.item_godmode"),
             value: "godmode",
             onSelect: () => {
               setPlayerMode("godmode");
@@ -249,8 +249,8 @@ export const MainPageList: React.FC = () => {
       },
       {
         icon: <Gavel />,
-        primary: "Spawn Weapon",
-        secondary: "Add a weapon to yourself",
+        primary: t("nui_menu.page_main.spawn_wep.list_primary"),
+        secondary: t("nui_menu.page_main.spawn_wep.list_secondary"),
         onSelect: handleSpawnWeapon,
       },
     ],

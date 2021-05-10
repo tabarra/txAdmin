@@ -57,7 +57,16 @@
             },
             "player_mode": {
                 "list_primary": "Player Mode",
-                "list_secondary": "Current: %{no_clip}"
+                "list_secondary": "Current: %{mode}",
+                "item_none": "None",
+                "item_noclip": "NoClip",
+                "item_godmode": "God Mode"
+            },
+            "spawn_wep": {
+                "list_primary": "Spawn Weapon",
+                "list_secondary": "Add a weapon to yourself",
+                "dialog_title": "Spawn Weapon",
+                "dialog_desc": "Spawn a weapon using its model name."
             },
             "spawn_veh": {
                 "list_primary": "Spawn Vehicle",
