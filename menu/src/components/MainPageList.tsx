@@ -247,12 +247,12 @@ export const MainPageList: React.FC = () => {
         secondary: t("nui_menu.page_main.send_announce.list_secondary"),
         onSelect: handleAnnounceMessage,
       },
-      {
-        icon: <Gavel />,
-        primary: t("nui_menu.page_main.spawn_wep.list_primary"),
-        secondary: t("nui_menu.page_main.spawn_wep.list_secondary"),
-        onSelect: handleSpawnWeapon,
-      },
+      // {
+      //   icon: <Gavel />,
+      //   primary: t("nui_menu.page_main.spawn_wep.list_primary"),
+      //   secondary: t("nui_menu.page_main.spawn_wep.list_secondary"),
+      //   onSelect: handleSpawnWeapon,
+      // },
     ],
     []
   );
