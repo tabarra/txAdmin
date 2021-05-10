@@ -4,6 +4,7 @@ local menuIsAccessible
 -- focus we need to store that the menu is already visible
 local isMenuVisible
 
+
 RegisterKeyMapping('txAdmin:openMenu', 'Open the txAdmin Menu', 'keyboard', 'f1')
 
 --- Send data to the NUI frame
@@ -104,10 +105,47 @@ RegisterNUICallback('tpToCoords', function(data, cb)
   cb({})
 end)
 
+local function toggleGodMode(enabled)
+  local playerPed = PlayerPedId()
+  if enabled then
+    sendPersistentAlert('godModeEnabled', 'info', 'God mode enabled!')
+  else
+    clearPersistentAlert('godModeEnabled')
+  end
+
+  SetEntityInvincible(playerPed, enabled)
+end
+
+local function toggleNoClip(enabled)
+  if enabled then
+    sendPersistentAlert('noClipEnabled', 'info', 'NoClip enabled!')
+  else
+    clearPersistentAlert('noClipEnabled')
+  end
+
+  -- Whatever
+end
+
 -- This will trigger everytime the playerMode in the main menu is changed
 -- it will send an object with label and value.
-RegisterNUICallback('playerModeChanged', function(data, cb)
-  debugPrint(json.encode(data))
+RegisterNUICallback('playerModeChanged', function(mode, cb)
+  debugPrint(json.encode(mode))
+  if mode == 'godmode' then
+    toggleGodMode(true)
+  elseif mode == 'noclip' then
+    toggleNoClip(true)
+  elseif mode == 'none' then
+    toggleGodMode(false)
+    toggleNoClip(false)
+  end
+  cb({})
+end)
+
+RegisterNUICallback('spawnWeapon', function(weapon, cb)
+  debugPrint("Spawning weapon: " .. weapon)
+  local playerPed = PlayerPedId()
+  local weaponHash = GetHashKey(weapon)
+  GiveWeaponToPed(playerPed, weaponHash, 500, false, true)
   cb({})
 end)
 

@@ -1,13 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { List } from "@material-ui/core";
+import React, { useEffect, useMemo, useState } from "react";
+import { Box, List, makeStyles, Theme } from "@material-ui/core";
 import { MenuListItem, MenuListItemMulti } from "./MenuListItem";
 import {
   AccessibilityNew,
   Announcement,
   Build,
   DirectionsCar,
+  ExpandMore,
+  Gavel,
   LocalHospital,
   LocationSearching,
+  Restore,
 } from "@material-ui/icons";
 import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation";
 import { useDialogContext } from "../provider/DialogProvider";
@@ -15,7 +18,21 @@ import { fetchNui } from "../utils/fetchNui";
 import { useKeyboardNavContext } from "../provider/KeyboardNavProvider";
 import { useTranslate } from "react-polyglot";
 import { useSnackbar } from "notistack";
-import {usePlayerMode} from "../state/playermode.state";
+import { usePlayerMode } from "../state/playermode.state";
+import { useSetTabState } from "../state/tab.state";
+
+const useStyles = makeStyles((theme: Theme) => ({
+  list: {
+    maxHeight: 388,
+    overflow: "auto",
+    "&::-webkit-scrollbar": {
+      display: "none",
+    },
+  },
+  icon: {
+    color: theme.palette.text.secondary,
+  },
+}));
 
 export const MainPageList: React.FC = () => {
   const { openDialog } = useDialogContext();
@@ -23,20 +40,19 @@ export const MainPageList: React.FC = () => {
   const [curSelected, setCurSelected] = useState(0);
   const t = useTranslate();
   const { enqueueSnackbar } = useSnackbar();
-  const [playerMode, setPlayerMode] = usePlayerMode()
+  const [playerMode, setPlayerMode] = usePlayerMode();
+  const useSetTabDisable = useSetTabState();
+  const classes = useStyles();
 
   // the directions are inverted
   const handleArrowDown = () => {
     const next = curSelected + 1;
     setCurSelected(next >= menuListItems.length ? 0 : next);
   };
+
   const handleArrowUp = () => {
     const next = curSelected - 1;
     setCurSelected(next < 0 ? menuListItems.length - 1 : next);
-  };
-
-  const handleEnter = () => {
-    menuListItems[curSelected].onSelect && menuListItems[curSelected].onSelect();
   };
 
   useEffect(() => {
@@ -47,7 +63,6 @@ export const MainPageList: React.FC = () => {
   useKeyboardNavigation({
     onDownDown: handleArrowDown,
     onUpDown: handleArrowUp,
-    onEnterDown: handleEnter,
     disableOnFocused: true,
   });
 
@@ -75,6 +90,11 @@ export const MainPageList: React.FC = () => {
         }
       },
     });
+  };
+
+  const handleTeleportBack = () => {
+    fetchNui("tpBack");
+    enqueueSnackbar("Teleporting back", { variant: "info" });
   };
 
   const handleAnnounceMessage = () => {
@@ -121,9 +141,12 @@ export const MainPageList: React.FC = () => {
   const handleFixVehicle = () => {
     fetchNui("fixVehicle").then(({ e }) => {
       if (e) {
-        return enqueueSnackbar(t("nui_menu.page_main.fix_vehicle.dialog_error"), {
-          variant: "error",
-        });
+        return enqueueSnackbar(
+          t("nui_menu.page_main.fix_vehicle.dialog_error"),
+          {
+            variant: "error",
+          }
+        );
       }
 
       enqueueSnackbar(t("nui_menu.page_main.fix_vehicle.dialog_success"), {
@@ -139,72 +162,131 @@ export const MainPageList: React.FC = () => {
     });
   };
 
-  const menuListItems = [
-    {
-      icon: <LocationSearching />,
-      primary: t("nui_menu.page_main.teleport.list_primary"),
-      secondary: t("nui_menu.page_main.teleport.list_secondary"),
-      onSelect: handleTeleport,
-    },
-    {
-      icon: <AccessibilityNew />,
-      primary: t("nui_menu.page_main.player_mode.list_primary"),
-      secondary: t("nui_menu.page_main.player_mode.list_secondary", {
-        no_clip: "NoClip",
-      }),
-      isMultiAction: true,
-      onChange: (playerMode) => {
-        setPlayerMode(playerMode)
-        fetchNui('playerModeChanged', playerMode)
+  const handleSpawnWeapon = () => {
+    openDialog({
+      title: "Spawn Weapon",
+      placeholder: "WEAPON_ASSAULTRIFLE",
+      description: "Spawn a weapon using its model name.",
+      onSubmit: (inputValue) => {
+        fetchNui("spawnWeapon", inputValue);
       },
-      initialValue: playerMode,
-      actions: [
-        {
-          label: "None",
-          value: "none",
-        },
-        {
-          label: "NoClip",
-          value: "noclip",
-        },
-        {
-          label: "God Mode",
-          value: "godmode",
-        },
-      ],
-    },
-    {
-      icon: <DirectionsCar />,
-      primary: t("nui_menu.page_main.spawn_veh.list_primary"),
-      secondary: t("nui_menu.page_main.spawn_veh.list_secondary"),
-      onSelect: handleSpawnVehicle,
-    },
-    {
-      icon: <Build />,
-      primary: t("nui_menu.page_main.fix_vehicle.list_primary"),
-      secondary: t("nui_menu.page_main.fix_vehicle.list_secondary"),
-      onSelect: handleFixVehicle,
-    },
-    {
-      icon: <LocalHospital />,
-      primary: t("nui_menu.page_main.heal_all.list_primary"),
-      secondary: t("nui_menu.page_main.heal_all.list_secondary"),
-      onSelect: handleHealAllPlayers,
-    },
-    {
-      icon: <Announcement />,
-      primary: t("nui_menu.page_main.send_announce.list_primary"),
-      secondary: t("nui_menu.page_main.send_announce.list_secondary"),
-      onSelect: handleAnnounceMessage,
-    },
-  ];
+    });
+  };
+
+  const menuListItems = useMemo(
+    () => [
+      {
+        icon: <AccessibilityNew />,
+        primary: t("nui_menu.page_main.player_mode.list_primary"),
+        secondary: t("nui_menu.page_main.player_mode.list_secondary", {
+          no_clip: "NoClip",
+        }),
+        showCurrentPrefix: true,
+        isMultiAction: true,
+        initialValue: playerMode,
+        actions: [
+          {
+            label: "None",
+            value: "none",
+            onSelect: () => {
+              setPlayerMode("none");
+              fetchNui("playerModeChanged", "none");
+            },
+          },
+          {
+            label: "NoClip",
+            value: "noclip",
+            onSelect: () => {
+              setPlayerMode("noclip");
+              fetchNui("playerModeChanged", "noclip");
+            },
+          },
+          {
+            label: "God Mode",
+            value: "godmode",
+            onSelect: () => {
+              setPlayerMode("godmode");
+              fetchNui("playerModeChanged", "godmode");
+            },
+          },
+        ],
+      },
+      {
+        icon: <LocationSearching />,
+        primary: t("nui_menu.page_main.teleport.list_primary"),
+        secondary: t("nui_menu.page_main.teleport.list_secondary"),
+        onSelect: handleTeleport,
+      },
+      {
+        icon: <Restore />,
+        primary: "Go Back",
+        secondary: "Teleport to your last location",
+        onSelect: handleTeleportBack,
+      },
+      {
+        icon: <DirectionsCar />,
+        primary: t("nui_menu.page_main.spawn_veh.list_primary"),
+        secondary: t("nui_menu.page_main.spawn_veh.list_secondary"),
+        onSelect: handleSpawnVehicle,
+      },
+      {
+        icon: <Build />,
+        primary: t("nui_menu.page_main.fix_vehicle.list_primary"),
+        secondary: t("nui_menu.page_main.fix_vehicle.list_secondary"),
+        onSelect: handleFixVehicle,
+      },
+      {
+        icon: <LocalHospital />,
+        primary: t("nui_menu.page_main.heal_all.list_primary"),
+        secondary: t("nui_menu.page_main.heal_all.list_secondary"),
+        onSelect: handleHealAllPlayers,
+      },
+      {
+        icon: <Announcement />,
+        primary: t("nui_menu.page_main.send_announce.list_primary"),
+        secondary: t("nui_menu.page_main.send_announce.list_secondary"),
+        onSelect: handleAnnounceMessage,
+      },
+      {
+        icon: <Gavel />,
+        primary: "Spawn Weapon",
+        secondary: "Add a weapon to yourself",
+        onSelect: handleSpawnWeapon,
+      },
+    ],
+    []
+  );
+
+  // If we are on a ListItemMulti we disable tab navigation using arrow keys
+  useEffect(() => {
+    if (menuListItems[curSelected].isMultiAction) useSetTabDisable(true);
+    else useSetTabDisable(false);
+  }, [curSelected, menuListItems]);
 
   return (
-    <List>
-      {menuListItems.map((item, index) => (
-        // @ts-ignore
-        item.isMultiAction ? <MenuListItemMulti key={index} selected={curSelected === index} {...item} /> : <MenuListItem key={index} selected={curSelected === index} {...item} />
-      ))}
-    </List>
+    <Box>
+      <List className={classes.list}>
+        {menuListItems.map((item, index) =>
+          item.isMultiAction ? (
+            // @ts-ignore
+            <MenuListItemMulti
+              key={index}
+              selected={curSelected === index}
+              {...item}
+            />
+          ) : (
+            // @ts-ignore
+            <MenuListItem
+              key={index}
+              selected={curSelected === index}
+              {...item}
+            />
+          )
+        )}
+      </List>
+      <Box className={classes.icon} display="flex" justifyContent="center">
+        <ExpandMore />
+      </Box>
+    </Box>
   );
 };

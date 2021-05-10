@@ -48,8 +48,8 @@
                 "dialog_error": "You are not in a vehicle currently!"
             },
             "teleport": {
-                "list_primary": "Teleport",
-                "list_secondary": "Teleport with context",
+                "list_primary": "Teleport to Coords",
+                "list_secondary": "Teleport to specific coordinates",
                 "dialog_title": "Teleport",
                 "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole",
                 "dialog_success": "Sending you into the wormhole!",
