@@ -29,7 +29,7 @@ const MenuRoot: React.FC = () => {
 
   return (
    <>
-      <Box p={2} className={classes.root}>
+      <Box p={2} pb={0} className={classes.root}>
         <TxAdminLogo />
         <PageTabs />
         <Collapse in={curPage === txAdminMenuPage.Main} unmountOnExit mountOnEnter>
