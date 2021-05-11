@@ -6,7 +6,7 @@ import {
   Announcement,
   Build,
   DirectionsCar,
-  ExpandMore,
+  ExpandMore, Favorite,
   LocalHospital,
   LocationSearching,
   Restore,
@@ -163,6 +163,13 @@ export const MainPageList: React.FC = () => {
     });
   };
 
+  const handleHealMyself = () => {
+    fetchNui("healMyself");
+    enqueueSnackbar(t("nui_menu.page_main.heal_myself.dialog_success"), {
+      variant: "info",
+    });
+  }
+
   const handleSpawnWeapon = () => {
     openDialog({
       title: t("nui_menu.page_main.spawn_wep.dialog_title"),
@@ -235,6 +242,12 @@ export const MainPageList: React.FC = () => {
         primary: t("nui_menu.page_main.fix_vehicle.list_primary"),
         secondary: t("nui_menu.page_main.fix_vehicle.list_secondary"),
         onSelect: handleFixVehicle,
+      },
+      {
+        icon: <Favorite />,
+        primary: t("nui_menu.page_main.heal_myself.list_primary"),
+        secondary: t("nui_menu.page_main.heal_myself.list_secondary"),
+        onSelect: handleHealMyself,
       },
       {
         icon: <LocalHospital />,

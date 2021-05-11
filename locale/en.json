@@ -88,6 +88,11 @@
                 "list_secondary": "Will heal all players to full health",
                 "dialog_success": "Healing all players"
             },
+            "heal_myself": {
+                "list_primary": "Heal Myself",
+                "list_secondary": "Will heal yourself to full",
+                "dialog_success": "Healing yourself to full!"
+            },
             "send_announce": {
                 "list_primary": "Send Announcement",
                 "list_secondary": "Announce a message",

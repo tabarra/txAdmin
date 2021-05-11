@@ -70,6 +70,16 @@ RegisterServerEvent('txAdmin:menu:checkAccess', function()
   TriggerClientEvent('txAdmin:menu:setAccessible', src, canAccess)
 end)
 
+RegisterServerEvent('txAdmin:menu:healMyself', function()
+  local src = source
+
+  if false then return end
+
+  debugPrint("^2" .. GetPlayerName(src) .. " healed themselves")
+  TriggerClientEvent('txAdmin:menu:healed', src)
+end)
+
+
 RegisterServerEvent('txAdmin:menu:healAllPlayers', function()
   local src = source
   

@@ -3,7 +3,7 @@ local menuIsAccessible
 -- Since the menu yields/receives keyboard
 -- focus we need to store that the menu is already visible
 local isMenuVisible
-
+-- Last location stored in a vec3
 local lastTp
 
 RegisterKeyMapping('txAdmin:openMenu', 'Open the txAdmin Menu', 'keyboard', 'f1')
@@ -174,6 +174,11 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
 end)
 
 -- CB From Menu
+RegisterNUICallback('healMyself', function(_, cb)
+  TriggerServerEvent('txAdmin:menu:healMyself')
+  cb({})
+end)
+
 RegisterNUICallback('healAllPlayers', function(data, cb)
   debugPrint(data)
   TriggerServerEvent('txAdmin:menu:healAllPlayers')
