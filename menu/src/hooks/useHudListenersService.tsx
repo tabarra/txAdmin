@@ -39,6 +39,7 @@ export const useHudListenersService = () => {
   useNuiEvent<SnackbarPersistentAlert>(
     "setPersistentAlert",
     ({ level, message, key }) => {
+      if (alertMap.get(key)) return
       const snackbarItem = enqueueSnackbar(message, {
         variant: level,
         persist: true,
