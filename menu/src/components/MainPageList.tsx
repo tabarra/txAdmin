@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Box, List, makeStyles, Theme } from "@material-ui/core";
+import {Box, List, makeStyles, Theme} from "@material-ui/core";
 import { MenuListItem, MenuListItemMulti } from "./MenuListItem";
 import {
   AccessibilityNew,
@@ -96,8 +96,11 @@ export const MainPageList: React.FC = () => {
   };
 
   const handleTeleportBack = () => {
-    fetchNui("tpBack");
-    enqueueSnackbar("Teleporting back", { variant: "info" });
+    fetchNui("tpBack").then(({e}) => {
+      e
+        ? enqueueSnackbar(t("nui_menu.page_main.teleport_back.error"), { variant: 'error' })
+        : enqueueSnackbar(t("nui_menu.page_main.teleport_back.success"), { variant: 'success' })
+    });
   };
 
   const handleAnnounceMessage = () => {
@@ -217,8 +220,8 @@ export const MainPageList: React.FC = () => {
       },
       {
         icon: <Restore />,
-        primary: "Go Back",
-        secondary: "Teleport to your last location",
+        primary: t("nui_menu.page_main.teleport_back.list_primary"),
+        secondary: t("nui_menu.page_main.teleport_back.list_secondary"),
         onSelect: handleTeleportBack,
       },
       {

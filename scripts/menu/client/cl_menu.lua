@@ -4,6 +4,7 @@ local menuIsAccessible
 -- focus we need to store that the menu is already visible
 local isMenuVisible
 
+local lastTp
 
 RegisterKeyMapping('txAdmin:openMenu', 'Open the txAdmin Menu', 'keyboard', 'f1')
 
@@ -103,6 +104,15 @@ RegisterNUICallback('tpToCoords', function(data, cb)
   debugPrint(json.encode(data))
   TriggerServerEvent('txAdmin:menu:tpToCoords', data.x + 0.0, data.y + 0.0, data.z + 0.0)
   cb({})
+end)
+
+RegisterNUICallback('tpBack', function(_, cb)
+  if lastTp then
+    TriggerServerEvent('txAdmin:menu:tpToCoords', lastTp.x, lastTp.y, lastTp.z)
+    cb({})
+  else
+    cb({ e = true })
+  end
 end)
 
 local function toggleGodMode(enabled)
@@ -217,6 +227,7 @@ end)
 ---@param z number
 RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   local ped = PlayerPedId()
+  lastTp = GetEntityCoords(ped)
   debugPrint('Teleporting to coords')
   debugPrint(json.encode({ x, y, z }))
   RequestCollisionAtCoord(x, y, z)

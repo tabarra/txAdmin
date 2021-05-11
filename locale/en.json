@@ -55,6 +55,12 @@
                 "dialog_success": "Sending you into the wormhole!",
                 "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33"
             },
+            "teleport_back": {
+                "list_primary": "Go Back",
+                "list_secondary": "Teleport to your last location",
+                "error": "You don't have a last location to teleport to!",
+                "success": "Returning through the wormhole!"
+            },
             "player_mode": {
                 "list_primary": "Player Mode",
                 "list_secondary": "Current: %{mode}",
