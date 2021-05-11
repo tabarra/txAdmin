@@ -17,6 +17,7 @@ import {
 } from "../state/players.state";
 import { useDebounce } from "../hooks/useDebouce";
 import { useServerCtxValue } from "../state/server.state";
+import { useTranslate } from "react-polyglot";
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
@@ -40,7 +41,8 @@ export const PlayerPageHeader: React.FC = () => {
   const setPlayerFilter = useSetPlayerFilter();
   const allPlayers = usePlayersState();
   const [searchVal, setSearchVal] = useState("");
-  const serverCtx = useServerCtxValue()
+  const serverCtx = useServerCtxValue();
+  const t = useTranslate();
 
   const debouncedInput = useDebounce(searchVal, 500);
 
@@ -61,15 +63,15 @@ export const PlayerPageHeader: React.FC = () => {
     <Box display="flex" justifyContent="space-between">
       <Box px={2}>
         <Typography variant="h5" color="primary" className={classes.title}>
-          Online Players
+          {t("nui_menu.page_players.misc.online_players")}
         </Typography>
         <Typography className={classes.playerCount}>
-          {`${allPlayers.length}/${serverCtx.maxClients} Players - OneSync (${serverCtx.oneSync.type})`}
+          {`${allPlayers.length}/${serverCtx.maxClients} ${t('nui_menu.page_players.misc.players')} - OneSync (${serverCtx.oneSync.type})`}
         </Typography>
       </Box>
       <Box display="flex" alignItems="center" justifyContent="center">
         <TextField
-          label="Search"
+          label={t("nui_menu.page_players.misc.search")}
           value={searchVal}
           onChange={handleSearchChange}
           className={classes.inputs}
@@ -83,7 +85,7 @@ export const PlayerPageHeader: React.FC = () => {
           style={{ marginRight: 20 }}
         />
         <TextField
-          label="Sort by"
+          label={t("nui_menu.page_players.sort.label")}
           select
           className={classes.inputs}
           onChange={handleSortData}
@@ -97,16 +99,24 @@ export const PlayerPageHeader: React.FC = () => {
           }}
         >
           <MenuItem value={PlayerDataSort.IdJoinedFirst}>
-            ID (Joined First)
+            {`${t("nui_menu.page_players.sort.id")} (${t(
+              "nui_menu.page_players.sort.joined_first"
+            )})`}
           </MenuItem>
           <MenuItem value={PlayerDataSort.IdJoinedLast}>
-            ID (Joined Last)
+            {`${t("nui_menu.page_players.sort.id")} (${t(
+              "nui_menu.page_players.sort.joined_last"
+            )})`}
           </MenuItem>
           <MenuItem value={PlayerDataSort.DistanceClosest}>
-            Distance (Closest)
+            {`${t("nui_menu.page_players.sort.distance")} (${t(
+              "nui_menu.page_players.sort.closest"
+            )})`}
           </MenuItem>
           <MenuItem value={PlayerDataSort.DistanceFarthest}>
-            Distance (Farthest)
+            {`${t("nui_menu.page_players.sort.distance")} (${t(
+              "nui_menu.page_players.sort.farthest"
+            )})`}
           </MenuItem>
         </TextField>
       </Box>
