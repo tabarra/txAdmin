@@ -7,7 +7,6 @@ import {
   Build,
   DirectionsCar,
   ExpandMore,
-  Gavel,
   LocalHospital,
   LocationSearching,
   Restore,
@@ -19,7 +18,6 @@ import { useKeyboardNavContext } from "../provider/KeyboardNavProvider";
 import { useTranslate } from "react-polyglot";
 import { useSnackbar } from "notistack";
 import { usePlayerMode } from "../state/playermode.state";
-import { useSetTabState } from "../state/tab.state";
 
 const useStyles = makeStyles((theme: Theme) => ({
   list: {
@@ -41,7 +39,6 @@ export const MainPageList: React.FC = () => {
   const t = useTranslate();
   const { enqueueSnackbar } = useSnackbar();
   const [playerMode, setPlayerMode] = usePlayerMode();
-  const useSetTabDisable = useSetTabState();
   const classes = useStyles();
 
   // the directions are inverted
@@ -256,12 +253,6 @@ export const MainPageList: React.FC = () => {
     ],
     []
   );
-
-  // If we are on a ListItemMulti we disable tab navigation using arrow keys
-  useEffect(() => {
-    if (menuListItems[curSelected].isMultiAction) useSetTabDisable(true);
-    else useSetTabDisable(false);
-  }, [curSelected, menuListItems]);
 
   return (
     <Box>
