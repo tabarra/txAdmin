@@ -213,9 +213,6 @@ export const MainPageList: React.FC = () => {
             onSelect: () => {
               setPlayerMode("freecam");
               fetchNui("playerModeChanged", "freecam");
-              enqueueSnackbar(t("nui_menu.page_main.player_mode.dialog_success_freecam"), {
-                variant: "success",
-              });
             },
           },
           {
@@ -224,9 +221,6 @@ export const MainPageList: React.FC = () => {
             onSelect: () => {
               setPlayerMode("godmode");
               fetchNui("playerModeChanged", "godmode");
-              enqueueSnackbar(t("nui_menu.page_main.player_mode.dialog_success_godmode"), {
-                variant: "success",
-              });
             },
           },
         ],

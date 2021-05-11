@@ -68,8 +68,8 @@
                 "item_freecam": "Freecam",
                 "item_godmode": "God Mode",
                 "dialog_success_none": "Returned to default player mode",
-                "dialog_success_freecam": "Freecam enabled!",
-                "dialog_success_godmode": "God mode enabled!"
+                "dialog_success_freecam": "Freecam enabled",
+                "dialog_success_godmode": "God mode enabled"
             },
             "spawn_wep": {
                 "list_primary": "Spawn Weapon",

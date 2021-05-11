@@ -54,9 +54,10 @@ end
 ---@param key string An unique ID for this alert
 ---@param level string The level for the alert
 ---@param message string The message for this alert
-local function sendPersistentAlert(key, level, message)
+---@param isTranslationKey boolean Whether the message is a translation key
+local function sendPersistentAlert(key, level, message, isTranslationKey)
   debugPrint(('Sending persistent alert, key: %s, level: %s, message: %s'):format(key, level, message))
-  sendMenuMessage('setPersistentAlert', { key = key, level = level, message = message })
+  sendMenuMessage('setPersistentAlert', { key = key, level = level, message = message, isTranslationKey = isTranslationKey })
 end
 
 --- Clear a persistent alert on screen
@@ -116,16 +117,26 @@ RegisterNUICallback('tpBack', function(_, cb)
 end)
 
 local function toggleGodMode(enabled)
+  if enabled then
+    sendPersistentAlert('godModeEnabled', 'info', 'nui_menu.page_main.player_mode.dialog_success_godmode', true)
+  else
+    clearPersistentAlert('godModeEnabled')
+  end
   SetEntityInvincible(PlayerPedId(), enabled)
 end
 
 local function toggleFreecam(enabled)
   SetFreecamActive(enabled)
-  if enabled then StartFreecamThread() end
+  if enabled then
+    sendPersistentAlert('freeCamEnabled', 'info', 'nui_menu.page_main.player_mode.dialog_success_freecam', true)
+    StartFreecamThread()
+  else
+    clearPersistentAlert('freeCamEnabled')
+  end
 end
 
 -- This will trigger everytime the playerMode in the main menu is changed
--- it will send an object with label and value.
+-- it will send the mode
 RegisterNUICallback('playerModeChanged', function(mode, cb)
   debugPrint(json.encode(mode))
   if mode == 'godmode' then

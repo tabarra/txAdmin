@@ -4,6 +4,7 @@ import { PageTabs } from "./PageTabs";
 import { MainPageList } from "./MainPageList";
 import { PlayersPage } from "./PlayersPage";
 import { txAdminMenuPage, usePageValue } from "../state/page.state";
+import { useHudListenersService } from "../hooks/useHudListenersService";
 
 const TxAdminLogo: React.FC = () => (
   <Box my={1} display="flex" justifyContent="center">
@@ -24,6 +25,9 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const MenuRoot: React.FC = () => {
   const classes = useStyles();
+  // We need to mount this here so we can get access to
+  // the translation context
+  useHudListenersService();
 
   const curPage = usePageValue();
 
