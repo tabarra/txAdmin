@@ -2,7 +2,7 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "lib": ["dom"],
+    "lib": ["dom", "ES2020"],
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,

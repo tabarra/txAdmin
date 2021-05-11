@@ -75,11 +75,14 @@ export const MainPageList: React.FC = () => {
       title: t("nui_menu.page_main.teleport.dialog_title"),
       placeholder: "340, 480, 12",
       onSubmit: (coords: string) => {
-        const [x, y, z] = coords
-          .split(",")
-          .map((s) => s.trim())
-          .filter((s) => s.match(/^-?\d{1,4}(?:\.\d{1,9})?$/))
-          .map((s) => +s);
+        // Testing examples:
+        // {x: -1; y: 2; z:3}
+        // {x = -1.01; y= 2.02; z=3.03}
+        // -1, 2, 3
+        const [x, y, z] = Array.from(
+          coords.matchAll(/-?\d{1,4}(?:\.\d{1,9})?/g), 
+          m => parseFloat(m[0])
+        );
 
         if ([x, y, z].every((n) => typeof n === "number")) {
           enqueueSnackbar(t("nui_menu.page_main.teleport.dialog_success"), {
