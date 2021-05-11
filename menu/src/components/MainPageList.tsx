@@ -18,6 +18,7 @@ import { useKeyboardNavContext } from "../provider/KeyboardNavProvider";
 import { useTranslate } from "react-polyglot";
 import { useSnackbar } from "notistack";
 import { usePlayerMode } from "../state/playermode.state";
+import { useIsMenuVisible } from "../state/visibility.state";
 
 const useStyles = makeStyles((theme: Theme) => ({
   list: {
@@ -39,6 +40,7 @@ export const MainPageList: React.FC = () => {
   const t = useTranslate();
   const { enqueueSnackbar } = useSnackbar();
   const [playerMode, setPlayerMode] = usePlayerMode();
+  const menuVisible = useIsMenuVisible()
   const classes = useStyles();
 
   // the directions are inverted
@@ -56,6 +58,10 @@ export const MainPageList: React.FC = () => {
     setDisabledKeyNav(false);
     return () => setDisabledKeyNav(true);
   }, [setDisabledKeyNav]);
+
+  useEffect(() => {
+    setCurSelected(0)
+  }, [menuVisible])
 
   useKeyboardNavigation({
     onDownDown: handleArrowDown,
