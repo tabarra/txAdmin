@@ -4,6 +4,8 @@ import { PlayerPageHeader } from "./PlayerPageHeader";
 import { useFilteredSortedPlayers } from "../state/players.state";
 import { PlayersListEmpty } from "./PlayersListEmpty";
 import { PlayersListGrid } from "./PlayersListGrid";
+import PlayerModal from "./PlayerModal";
+import PlayerProvider from "../provider/PlayerProvider";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -41,18 +43,21 @@ export const PlayersPage: React.FC<{ visible: boolean }> = ({ visible }) => {
   const players = useFilteredSortedPlayers();
 
   return (
-    <Box
-      className={classes.root}
-      mt={2}
-      mb={10}
-      pt={4}
-      px={4}
-      visibility={visible ? "visible" : "hidden"}
-    >
-      <PlayerPageHeader />
-      <Box className={classes.grid}>
-        {players.length ? <PlayersListGrid /> : <PlayersListEmpty />}
+    <PlayerProvider>
+      <Box
+        className={classes.root}
+        mt={2}
+        mb={10}
+        pt={4}
+        px={4}
+        visibility={visible ? "visible" : "hidden"}
+      >
+        <PlayerPageHeader />
+        <PlayerModal />
+        <Box className={classes.grid}>
+          {players.length ? <PlayersListGrid /> : <PlayersListEmpty />}
+        </Box>
       </Box>
-    </Box>
+    </PlayerProvider>
   );
 };

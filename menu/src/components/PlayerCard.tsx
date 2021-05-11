@@ -15,7 +15,8 @@ import {
   MoreVert,
   Motorcycle,
 } from "@material-ui/icons";
-import { PlayerData } from "../state/players.state";
+import { PlayerData, useSetPlayerDetails } from "../state/players.state";
+import { usePlayerModal } from "../provider/PlayerProvider";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -48,6 +49,8 @@ const PlayerCard: React.FC<PlayerData> = ({
   vehicleStatus,
 }) => {
   const classes = useStyles();
+  const setPlayerDetails = useSetPlayerDetails();
+  const { setModal } = usePlayerModal();
 
   const statusIcon = {
     walking: <DirectionsWalk color="inherit" />,
@@ -59,9 +62,14 @@ const PlayerCard: React.FC<PlayerData> = ({
   const upperCaseStatus =
     vehicleStatus.charAt(0).toUpperCase() + vehicleStatus.slice(1);
 
+  const openPlayeModal = () => {
+    setPlayerDetails({ id, username, health, vehicleStatus });
+    setModal(true)
+  }
+
   return (
     <Box p={2}>
-      <Paper className={classes.paper}>
+      <Paper className={classes.paper} onClick={openPlayeModal}>
         <Box display="flex" alignItems="center" pb="5px">
           <Box flexGrow={1} display="flex">
             <Tooltip title={upperCaseStatus} placement="top" arrow classes={{
