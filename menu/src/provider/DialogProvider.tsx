@@ -111,8 +111,12 @@ export const DialogProvider: React.FC = ({ children }) => {
 
   const handleDialogClose = useCallback(() => {
     setDialogOpen(false);
-    setDialogProps(defaultDialogState)
   }, []);
+
+  // We reset default state after the animation is complete
+  const handleOnExited = () => {
+    setDialogProps(defaultDialogState)
+  }
 
   return (
     <DialogContext.Provider
@@ -124,6 +128,7 @@ export const DialogProvider: React.FC = ({ children }) => {
       <Dialog
         onEscapeKeyDown={handleDialogClose}
         open={dialogOpen}
+        onExited={handleOnExited}
         fullWidth
         PaperProps={{
           style: {
