@@ -115,10 +115,6 @@ export const MainPageList: React.FC = () => {
       title: t("nui_menu.page_main.spawn_veh.dialog_title"),
       placeholder: "Adder",
       onSubmit: (modelName: string) => {
-        enqueueSnackbar(
-          t("nui_menu.page_main.spawn_veh.dialog_info", { modelName }),
-          { variant: "info" }
-        );
         fetchNui("spawnVehicle", { model: modelName }).then(({ e }) => {
           e
             ? enqueueSnackbar(
