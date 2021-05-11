@@ -130,6 +130,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
 
     const handleLeftArrow = () => {
       if (!selected) return;
+      fetchNui('playSound', 'move')
       const nextEstimatedItem = curState - 1;
       const nextItem =
         nextEstimatedItem < 0 ? actions.length - 1 : nextEstimatedItem;
@@ -138,6 +139,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
 
     const handleRightArrow = () => {
       if (!selected) return;
+      fetchNui('playSound', 'move')
       const nextEstimatedItem = curState + 1;
       const nextItem =
         nextEstimatedItem >= actions.length ? 0 : nextEstimatedItem;
