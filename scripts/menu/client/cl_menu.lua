@@ -116,24 +116,12 @@ RegisterNUICallback('tpBack', function(_, cb)
 end)
 
 local function toggleGodMode(enabled)
-  local playerPed = PlayerPedId()
-  if enabled then
-    sendPersistentAlert('godModeEnabled', 'info', 'God mode enabled!')
-  else
-    clearPersistentAlert('godModeEnabled')
-  end
-
-  SetEntityInvincible(playerPed, enabled)
+  SetEntityInvincible(PlayerPedId(), enabled)
 end
 
-local function toggleNoClip(enabled)
-  if enabled then
-    sendPersistentAlert('noClipEnabled', 'info', 'NoClip enabled!')
-  else
-    clearPersistentAlert('noClipEnabled')
-  end
-
-  -- Whatever
+local function toggleFreecam(enabled)
+  SetFreecamActive(enabled)
+  if enabled then StartFreecamThread() end
 end
 
 -- This will trigger everytime the playerMode in the main menu is changed
@@ -142,11 +130,13 @@ RegisterNUICallback('playerModeChanged', function(mode, cb)
   debugPrint(json.encode(mode))
   if mode == 'godmode' then
     toggleGodMode(true)
-  elseif mode == 'noclip' then
-    toggleNoClip(true)
+    toggleFreecam(false)
+  elseif mode == 'freecam' then
+    toggleGodMode(false)
+    toggleFreecam(true)
   elseif mode == 'none' then
     toggleGodMode(false)
-    toggleNoClip(false)
+    toggleFreecam(false)
   end
   cb({})
 end)

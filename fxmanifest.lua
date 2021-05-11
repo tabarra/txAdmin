@@ -23,6 +23,10 @@ shared_scripts {
 
 client_scripts {
     'scripts/**/cl_*.lua',
+    'scripts/menu/vendor/freecam/utils.lua',
+    'scripts/menu/vendor/freecam/config.lua',
+    'scripts/menu/vendor/freecam/main.lua',
+    'scripts/menu/vendor/freecam/camera.lua',
 }
 
 ui_page 'scripts/menu/nui/index.html'

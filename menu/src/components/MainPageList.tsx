@@ -166,7 +166,7 @@ export const MainPageList: React.FC = () => {
   const handleHealMyself = () => {
     fetchNui("healMyself");
     enqueueSnackbar(t("nui_menu.page_main.heal_myself.dialog_success"), {
-      variant: "info",
+      variant: "success",
     });
   }
 
@@ -199,14 +199,20 @@ export const MainPageList: React.FC = () => {
             onSelect: () => {
               setPlayerMode("none");
               fetchNui("playerModeChanged", "none");
+              enqueueSnackbar(t("nui_menu.page_main.player_mode.dialog_success_none"), {
+                variant: "success",
+              });
             },
           },
           {
-            label: t("nui_menu.page_main.player_mode.item_noclip"),
-            value: "noclip",
+            label: t("nui_menu.page_main.player_mode.item_freecam"),
+            value: "freecam",
             onSelect: () => {
-              setPlayerMode("noclip");
-              fetchNui("playerModeChanged", "noclip");
+              setPlayerMode("freecam");
+              fetchNui("playerModeChanged", "freecam");
+              enqueueSnackbar(t("nui_menu.page_main.player_mode.dialog_success_freecam"), {
+                variant: "success",
+              });
             },
           },
           {
@@ -215,6 +221,9 @@ export const MainPageList: React.FC = () => {
             onSelect: () => {
               setPlayerMode("godmode");
               fetchNui("playerModeChanged", "godmode");
+              enqueueSnackbar(t("nui_menu.page_main.player_mode.dialog_success_godmode"), {
+                variant: "success",
+              });
             },
           },
         ],

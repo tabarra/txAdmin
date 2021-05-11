@@ -52,7 +52,7 @@
                 "list_secondary": "Teleport to specific coordinates",
                 "dialog_title": "Teleport",
                 "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole",
-                "dialog_success": "Sending you into the wormhole!",
+                "dialog_success": "Sent you into the wormhole!",
                 "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33"
             },
             "teleport_back": {
@@ -65,8 +65,11 @@
                 "list_primary": "Player Mode",
                 "list_secondary": "Current: %{mode}",
                 "item_none": "None",
-                "item_noclip": "NoClip",
-                "item_godmode": "God Mode"
+                "item_freecam": "Freecam",
+                "item_godmode": "God Mode",
+                "dialog_success_none": "Returned to default player mode",
+                "dialog_success_freecam": "Freecam enabled!",
+                "dialog_success_godmode": "God mode enabled!"
             },
             "spawn_wep": {
                 "list_primary": "Spawn Weapon",
