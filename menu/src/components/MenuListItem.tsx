@@ -9,6 +9,7 @@ import {
 } from "@material-ui/core";
 import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation";
 import { Code } from "@material-ui/icons";
+import { fetchNui } from '../utils/fetchNui';
 
 export interface MenuListItemProps {
   icon: JSX.Element;
@@ -37,7 +38,10 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
     const divRef = useRef<HTMLDivElement | null>(null);
 
     const handleEnter = () => {
-      if (selected) onSelect()
+      if (selected) {
+        fetchNui('playSound', 'enter')
+        onSelect()
+      }
     }
 
     useEffect(() => {
@@ -141,7 +145,10 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     };
 
     const handleEnter = () => {
-      if (selected) actions[curState].onSelect()
+      if (selected) {
+        fetchNui('playSound', 'enter')
+        actions[curState].onSelect();
+      }
     }
 
     useKeyboardNavigation({

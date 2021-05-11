@@ -99,8 +99,19 @@ RegisterNUICallback('closeMenu', function(_, cb)
   cb({})
 end)
 
+local SoundEnum = {
+  move = 'NAV_UP_DOWN',
+  enter = 'SELECT'
+}
+
+RegisterNUICallback('playSound', function(sound, cb)
+  PlaySoundFrontend(-1, SoundEnum[sound], 'HUD_FRONTEND_DEFAULT_SOUNDSET', 1)
+  cb({})
+end)
+
 -- CB From Menu
 -- Data is a object with x, y, z
+
 RegisterNUICallback('tpToCoords', function(data, cb)
   debugPrint(json.encode(data))
   TriggerServerEvent('txAdmin:menu:tpToCoords', data.x + 0.0, data.y + 0.0, data.z + 0.0)

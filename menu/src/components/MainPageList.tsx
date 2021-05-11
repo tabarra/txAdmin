@@ -46,11 +46,13 @@ export const MainPageList: React.FC = () => {
   // the directions are inverted
   const handleArrowDown = () => {
     const next = curSelected + 1;
+    fetchNui('playSound', 'move')
     setCurSelected(next >= menuListItems.length ? 0 : next);
   };
 
   const handleArrowUp = () => {
     const next = curSelected - 1;
+    fetchNui('playSound', 'move')
     setCurSelected(next < 0 ? menuListItems.length - 1 : next);
   };
 
