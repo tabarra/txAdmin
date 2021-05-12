@@ -6,9 +6,9 @@
     "restarter": {
         "start_timeout": "sikertelen indítás a megadott időn belül",
         "crash_detected": "összeomlás észlelve",
-        "hang_detected": "hang detected",
-        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
-        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
+        "hang_detected": "lefagyás észlelve",
+        "partial_hang_warn": "Részleges lefagyás miatt a szerver 1 perc múlva újraindul. Kérjük, lépj ki.",
+        "partial_hang_warn_discord": "Részleges lefagyás miatt, **%{servername}** 1 perc múlva újraindul.",
         "schedule_reason": "ütemezett újraindítás %{time}",
         "schedule_warn": "A szerver ütemezetten újraindul %{smart_count} perc múlva. Kérjük hagyd el a szervert!. |||| A szerver ütemezetten újra indul %{smart_count} perc múlva.",
         "schedule_warn_discord": "A **%{servername}** szerver ütemezetten újraindul %{smart_count} perc múlva. |||| **%{servername}** szerver ütemezetten újraindul %{smart_count} perc múlva."
