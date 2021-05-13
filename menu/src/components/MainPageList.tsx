@@ -20,16 +20,32 @@ import { useSnackbar } from "notistack";
 import { usePlayerMode } from "../state/playermode.state";
 import { useIsMenuVisible } from "../state/visibility.state";
 
+const fadeHeight = 20;
+const listHeight = 388;
+
 const useStyles = makeStyles((theme: Theme) => ({
   list: {
-    maxHeight: 388,
+    maxHeight: listHeight,
     overflow: "auto",
     "&::-webkit-scrollbar": {
       display: "none",
     },
   },
+  fadeTop: {
+    backgroundImage: `linear-gradient(to top, transparent, ${theme.palette.background.default})`,
+    position: 'relative',
+    bottom: listHeight + fadeHeight - 4, //the 2 comes from the tab selector
+    height: fadeHeight,
+  },
+  fadeBottom: {
+    backgroundImage: `linear-gradient(to bottom, transparent, ${theme.palette.background.default})`,
+    position: 'relative',
+    bottom: fadeHeight*2,
+    height: fadeHeight,
+  },
   icon: {
     color: theme.palette.text.secondary,
+    marginTop: -(fadeHeight*2)
   },
 }));
 
@@ -48,12 +64,14 @@ export const MainPageList: React.FC = () => {
     const next = curSelected + 1;
     fetchNui('playSound', 'move')
     setCurSelected(next >= menuListItems.length ? 0 : next);
+    console.log(next >= menuListItems.length ? 0 : next, menuListItems.length)
   };
 
   const handleArrowUp = () => {
     const next = curSelected - 1;
     fetchNui('playSound', 'move')
     setCurSelected(next < 0 ? menuListItems.length - 1 : next);
+    console.log(next < 0 ? menuListItems.length - 1 : next, menuListItems.length)
   };
 
   useEffect(() => {
@@ -300,6 +318,8 @@ export const MainPageList: React.FC = () => {
           )
         )}
       </List>
+      <Box className={classes.fadeTop} style={{opacity: curSelected <= 1 ? 0 : 1}}></Box>
+      <Box className={classes.fadeBottom} style={{opacity: curSelected >= 6 ? 0 : 1}}></Box>
       <Box className={classes.icon} display="flex" justifyContent="center">
         <ExpandMore />
       </Box>
