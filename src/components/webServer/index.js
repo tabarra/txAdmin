@@ -195,7 +195,7 @@ module.exports = class WebServer {
 
         //Print cfx.re url... when available
         //NOTE: perhaps open the URL automatically with the `open` library
-        const validUrlRegex = /^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\.users\.cfx\.re$/i;
+        const validUrlRegex = /\.users\.cfx\.re$/i;
         const getUrlInterval = setInterval(() => {
             try {
                 const urlConvar = GetConvar('web_baseUrl', 'false');
