@@ -5,11 +5,15 @@ import {
   AccessibilityNew,
   Announcement,
   Build,
+  ControlCamera,
   DirectionsCar,
-  ExpandMore, Favorite,
+  ExpandMore,
+  Favorite,
+  GpsFixed,
   LocalHospital,
   LocationSearching,
   Restore,
+  Security,
 } from "@material-ui/icons";
 import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation";
 import { useDialogContext } from "../provider/DialogProvider";
@@ -17,8 +21,10 @@ import { fetchNui } from "../utils/fetchNui";
 import { useKeyboardNavContext } from "../provider/KeyboardNavProvider";
 import { useTranslate } from "react-polyglot";
 import { useSnackbar } from "notistack";
-import { usePlayerMode } from "../state/playermode.state";
+import { PlayerMode, usePlayerMode } from "../state/playermode.state";
 import { useIsMenuVisible } from "../state/visibility.state";
+import { TeleportMode, useTeleportMode } from "../state/teleportmode.state";
+import { HealMode, useHealMode } from "../state/healmode.state";
 
 const fadeHeight = 20;
 const listHeight = 388;
@@ -56,6 +62,8 @@ export const MainPageList: React.FC = () => {
   const t = useTranslate();
   const { enqueueSnackbar } = useSnackbar();
   const [playerMode, setPlayerMode] = usePlayerMode();
+  const [teleportMode, setTeleportMode] = useTeleportMode();
+  const [healMode, setHealMode] = useHealMode();
   const menuVisible = useIsMenuVisible()
   const classes = useStyles();
 
@@ -188,7 +196,14 @@ export const MainPageList: React.FC = () => {
 
   const handleHealMyself = () => {
     fetchNui("healMyself");
-    enqueueSnackbar(t("nui_menu.page_main.heal_myself.dialog_success"), {
+    const messages = [
+      t("nui_menu.page_main.heal_myself.dialog_success_0"),
+      t("nui_menu.page_main.heal_myself.dialog_success_1"),
+      t("nui_menu.page_main.heal_myself.dialog_success_2"),
+      t("nui_menu.page_main.heal_myself.dialog_success_3"),
+    ].filter(v => !!(v && v.length))
+    const msg = messages[Math.round((messages.length-1) * Math.random())]
+    enqueueSnackbar(msg, {
       variant: "success",
     });
   }
@@ -218,29 +233,31 @@ export const MainPageList: React.FC = () => {
         actions: [
           {
             label: t("nui_menu.page_main.player_mode.item_none"),
-            value: "none",
+            value: PlayerMode.DEFAULT,
             onSelect: () => {
-              setPlayerMode("none");
-              fetchNui("playerModeChanged", "none");
+              setPlayerMode(PlayerMode.DEFAULT);
+              fetchNui("playerModeChanged", PlayerMode.DEFAULT);
               enqueueSnackbar(t("nui_menu.page_main.player_mode.dialog_success_none"), {
                 variant: "success",
               });
             },
           },
           {
-            label: t("nui_menu.page_main.player_mode.item_freecam"),
-            value: "freecam",
+            label: t("nui_menu.page_main.player_mode.item_noclip"),
+            value: PlayerMode.NOCLIP,
+            icon: <ControlCamera />,
             onSelect: () => {
-              setPlayerMode("freecam");
-              fetchNui("playerModeChanged", "freecam");
+              setPlayerMode(PlayerMode.NOCLIP);
+              fetchNui("playerModeChanged", PlayerMode.NOCLIP);
             },
           },
           {
             label: t("nui_menu.page_main.player_mode.item_godmode"),
-            value: "godmode",
+            value: PlayerMode.GOD_MODE,
+            icon: <Security />,
             onSelect: () => {
-              setPlayerMode("godmode");
-              fetchNui("playerModeChanged", "godmode");
+              setPlayerMode(PlayerMode.GOD_MODE);
+              fetchNui("playerModeChanged", PlayerMode.GOD_MODE);
             },
           },
         ],
@@ -248,14 +265,33 @@ export const MainPageList: React.FC = () => {
       {
         icon: <LocationSearching />,
         primary: t("nui_menu.page_main.teleport.list_primary"),
-        secondary: t("nui_menu.page_main.teleport.list_secondary"),
-        onSelect: handleTeleport,
-      },
-      {
-        icon: <Restore />,
-        primary: t("nui_menu.page_main.teleport_back.list_primary"),
-        secondary: t("nui_menu.page_main.teleport_back.list_secondary"),
-        onSelect: handleTeleportBack,
+        isMultiAction: true,
+        initialValue: teleportMode,
+        actions: [
+          {
+            label: t("nui_menu.page_main.teleport.item_waypoint"),
+            value: TeleportMode.WAYPOINT,
+            onSelect: () => {
+              setTeleportMode(TeleportMode.WAYPOINT);
+              fetchNui("tpToWaypoint", {});
+            },
+            icon: <GpsFixed />
+          },
+          {
+            label: t("nui_menu.page_main.teleport.item_coords"),
+            value: TeleportMode.COORDINATES,
+            onSelect: () => {
+              setTeleportMode(TeleportMode.COORDINATES);
+              handleTeleport();
+            }
+          },
+          {
+            label: t("nui_menu.page_main.teleport.item_previous"),
+            value: TeleportMode.PREVIOUS,
+            onSelect: handleTeleportBack,
+            icon: <Restore />
+          }
+        ],
       },
       {
         icon: <DirectionsCar />,
@@ -270,16 +306,30 @@ export const MainPageList: React.FC = () => {
         onSelect: handleFixVehicle,
       },
       {
-        icon: <Favorite />,
         primary: t("nui_menu.page_main.heal_myself.list_primary"),
-        secondary: t("nui_menu.page_main.heal_myself.list_secondary"),
-        onSelect: handleHealMyself,
-      },
-      {
-        icon: <LocalHospital />,
-        primary: t("nui_menu.page_main.heal_all.list_primary"),
-        secondary: t("nui_menu.page_main.heal_all.list_secondary"),
-        onSelect: handleHealAllPlayers,
+        isMultiAction: true,
+        initialValue: healMode,
+        actions: [
+          {
+            label: t("nui_menu.page_main.heal_myself.list_secondary"),
+            value: HealMode.SELF,
+            icon: <Favorite />,
+            onSelect: () => {
+              setHealMode(HealMode.SELF);
+              handleHealMyself();
+            },
+          },
+          {
+            primary: t("nui_menu.page_main.heal_all.list_primary"),
+            label: t("nui_menu.page_main.heal_all.list_secondary"),
+            value: HealMode.ALL,
+            icon: <LocalHospital />,
+            onSelect: () => {
+              setHealMode(HealMode.ALL);
+              handleHealAllPlayers();
+            },
+          }
+        ]
       },
       {
         icon: <Announcement />,
@@ -318,8 +368,8 @@ export const MainPageList: React.FC = () => {
           )
         )}
       </List>
-      <Box className={classes.fadeTop} style={{opacity: curSelected <= 1 ? 0 : 1}}></Box>
-      <Box className={classes.fadeBottom} style={{opacity: curSelected >= 6 ? 0 : 1}}></Box>
+      <Box className={classes.fadeTop} style={{opacity: curSelected <= 1 ? 0 : 1}}/>
+      <Box className={classes.fadeBottom} style={{opacity: curSelected >= 6 ? 0 : 1}}/>
       <Box className={classes.icon} display="flex" justifyContent="center">
         <ExpandMore />
       </Box>

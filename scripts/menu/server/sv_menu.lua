@@ -106,6 +106,15 @@ RegisterServerEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   TriggerClientEvent('txAdmin:menu:tpToCoords', src, x, y, z)
 end)
 
+RegisterServerEvent('txAdmin:menu:tpToWaypoint', function()
+  local src = source
+  
+  -- TODO: Security, permission check
+  if false then return end
+  
+  TriggerClientEvent('txAdmin:menu:tpToWaypoint', src)
+end)
+
 RegisterServerEvent('txAdmin:menu:sendAnnouncement', function(message)
   local src = source
   

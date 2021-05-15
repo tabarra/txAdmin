@@ -85,6 +85,8 @@ interface MenuListItemMultiAction {
   label: string;
   value: string | number | boolean;
   onSelect: () => void;
+  icon?: JSX.Element;
+  primary?: string | JSX.Element;
 }
 
 export interface MenuListItemMultiProps {
@@ -163,9 +165,9 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     return (
       <div ref={divRef}>
         <ListItem className={classes.root} dense selected={selected}>
-          <ListItemIcon className={classes.icon}>{icon}</ListItemIcon>
+          <ListItemIcon className={classes.icon}>{actions[curState]?.icon || icon}</ListItemIcon>
           <ListItemText
-            primary={primary}
+            primary={actions[curState]?.primary || primary}
             secondary={`${showCurrentPrefix ? "Current: " : ""}${actions[curState]?.label || "Unknown"}`}
             classes={{
               primary: classes.overrideText,

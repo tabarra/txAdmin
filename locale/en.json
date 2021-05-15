@@ -42,14 +42,16 @@
         },
         "page_main": {
             "fix_vehicle": {
-                "list_primary": "Fix vehicle",
+                "list_primary": "Fix Vehicle",
                 "list_secondary": "Set current vehicle health to 100%",
                 "dialog_success": "Vehicle fixed!",
-                "dialog_error": "You are not in a vehicle currently!"
+                "dialog_error": "You are not currently in a vehicle!"
             },
             "teleport": {
-                "list_primary": "Teleport to Coords",
-                "list_secondary": "Teleport to specific coordinates",
+                "list_primary": "Teleport",
+                "item_waypoint": "To: Waypoint",
+                "item_coords": "To: Coordinates",
+                "item_previous": "To: Previous Location",
                 "dialog_title": "Teleport",
                 "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole",
                 "dialog_success": "Sent you into the wormhole!",
@@ -64,11 +66,11 @@
             "player_mode": {
                 "list_primary": "Player Mode",
                 "list_secondary": "Current: %{mode}",
-                "item_none": "None",
-                "item_freecam": "Freecam",
+                "item_none": "Normal",
+                "item_noclip": "No-clip",
                 "item_godmode": "God Mode",
                 "dialog_success_none": "Returned to default player mode",
-                "dialog_success_freecam": "Freecam enabled",
+                "dialog_success_noclip": "No-clip enabled",
                 "dialog_success_godmode": "God mode enabled"
             },
             "spawn_wep": {
@@ -79,7 +81,7 @@
             },
             "spawn_veh": {
                 "list_primary": "Spawn Vehicle",
-                "list_secondary": "Uses model name",
+                "list_secondary": "Spawn a vehicle by model name",
                 "dialog_title": "Spawn Vehicle",
                 "dialog_desc": "Enter in the model name of the vehicle you want to spawn",
                 "dialog_success": "Vehicle spawned!",
@@ -88,13 +90,16 @@
             },
             "heal_all": {
                 "list_primary": "Heal All Players",
-                "list_secondary": "Will heal all players to full health",
-                "dialog_success": "Healing all players"
+                "list_secondary": "Will heal & revive all players",
+                "dialog_success": "Healed and revived all players"
             },
             "heal_myself": {
-                "list_primary": "Heal Myself",
-                "list_secondary": "Will heal yourself to full",
-                "dialog_success": "Healing yourself to full!"
+                "list_primary": "Heal Self",
+                "list_secondary": "Restores your health",
+                "dialog_success_0": "All healed up!",
+                "dialog_success_1": "You should be feeling good now!",
+                "dialog_success_2": "Restored to full!",
+                "dialog_success_3": "Ouchies fixed!"
             },
             "send_announce": {
                 "list_primary": "Send Announcement",

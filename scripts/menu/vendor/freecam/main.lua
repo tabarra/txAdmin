@@ -63,6 +63,15 @@ local function UpdateCamera()
     -- Update camera
     SetFreecamPosition(pos.x, pos.y, pos.z)
     SetFreecamRotation(rot.x, rot.y, rot.z)
+  
+    -- Update ped
+    local ped = PlayerPedId()
+    SetEntityCoords(ped, pos.x, pos.y, pos.z)
+    -- Update veh
+    local veh = GetVehiclePedIsIn(ped, true)
+    if veh and veh > 0 then 
+      SetEntityCoords(veh, pos.x, pos.y, pos.z)
+    end
   end
 
   -- Trigger a tick event. Resources depending on the freecam position can

@@ -118,6 +118,12 @@ RegisterNUICallback('tpToCoords', function(data, cb)
   cb({})
 end)
 
+-- Handle teleport to waypoint
+RegisterNUICallback('tpToWaypoint', function(_, cb)
+  TriggerServerEvent('txAdmin:menu:tpToWaypoint')
+  cb({})
+end)
+
 RegisterNUICallback('tpBack', function(_, cb)
   if lastTp then
     TriggerServerEvent('txAdmin:menu:tpToCoords', lastTp.x, lastTp.y, lastTp.z)
@@ -137,12 +143,50 @@ local function toggleGodMode(enabled)
 end
 
 local function toggleFreecam(enabled)
-  SetFreecamActive(enabled)
-  if enabled then
-    sendPersistentAlert('freeCamEnabled', 'info', 'nui_menu.page_main.player_mode.dialog_success_freecam', true)
+  local ped = PlayerPedId()
+  SetPlayerInvincible(ped, enabled)
+  local veh = GetVehiclePedIsIn(ped, true)
+  if veh == 0 then veh = nil end
+  
+  local function enableNoClip()
+    lastTp = GetEntityCoords(ped)
+    
+    SetFreecamActive(true)
     StartFreecamThread()
-  else
-    clearPersistentAlert('freeCamEnabled')
+    
+    NetworkSetEntityInvisibleToNetwork(ped, true)
+    if veh then NetworkSetEntityInvisibleToNetwork(veh, true) end
+    
+    Citizen.CreateThread(function()
+      while IsFreecamActive() do
+        SetEntityLocallyInvisible(ped)
+        if veh then SetEntityLocallyInvisible(veh) end
+        Wait(1)
+      end
+      
+      if veh and veh > 0 then
+        local coords = GetEntityCoords(ped)
+        SetEntityCoords(veh, coords[1], coords[2], coords[3])
+        SetPedIntoVehicle(ped, veh, -1)
+      end
+    end)
+  end
+  
+  local function disableNoClip()
+    SetFreecamActive(false)
+    NetworkSetEntityInvisibleToNetwork(ped, false)
+    if veh then NetworkSetEntityInvisibleToNetwork(veh, false) end
+    SetGameplayCamRelativeHeading(0)
+  end
+  
+  if not IsFreecamActive() and enabled then
+    sendPersistentAlert('noClipEnabled', 'info', 'nui_menu.page_main.player_mode.dialog_success_noclip', true)
+    enableNoClip()
+  end
+  
+  if IsFreecamActive() and not enabled then
+    clearPersistentAlert('noClipEnabled')
+    disableNoClip()
   end
 end
 
@@ -153,7 +197,7 @@ RegisterNUICallback('playerModeChanged', function(mode, cb)
   if mode == 'godmode' then
     toggleGodMode(true)
     toggleFreecam(false)
-  elseif mode == 'freecam' then
+  elseif mode == 'noclip' then
     toggleGodMode(false)
     toggleFreecam(true)
   elseif mode == 'none' then
@@ -245,18 +289,75 @@ end)
 RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   local ped = PlayerPedId()
   lastTp = GetEntityCoords(ped)
+  
+  DoScreenFadeOut(200)
+  while not IsScreenFadedOut() do Wait(1) end
+  
   debugPrint('Teleporting to coords')
-  debugPrint(json.encode({ x, y, z }))
+  if z == 0 then
+    for i = 0, 1000, 10 do
+      SetPedCoordsKeepVehicle(ped, x, y, i)
+      local zFound, _z = GetGroundZFor_3dCoord(x + 0.0, y + 0.0, i + 0.0)
+      if zFound then
+        debugPrint("3D ground found: " .. json.encode({ zFound, _z }))
+        z = _z
+        break
+      end
+      Wait(0)
+    end
+  end
   RequestCollisionAtCoord(x, y, z)
+  RequestAdditionalCollisionAtCoord(x, y, z)
   SetPedCoordsKeepVehicle(ped, x, y, z)
-  local veh = GetVehiclePedIsIn(ped, false)
-  if veh and veh > 0 then SetVehicleOnGroundProperly(veh) end
+  DoScreenFadeIn(500)
+  SetGameplayCamRelativeHeading(0)
+end)
+
+-- [[ Teleport to the current waypoint ]]
+RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
+  local waypoint = GetFirstBlipInfoId(GetWaypointBlipEnumId())
+  if waypoint and waypoint > 0 then
+    local ped = PlayerPedId()
+    lastTp = GetEntityCoords(ped)
+    
+    DoScreenFadeOut(200)
+    while not IsScreenFadedOut() do Wait(1) end
+    
+    local blipCoords = GetBlipInfoIdCoord(waypoint)
+    debugPrint("waypoint blip: " .. json.encode(blipCoords))
+    local x = blipCoords[1]
+    local y = blipCoords[2]
+    local z = blipCoords[3]
+    for i = 0, 1000, 10 do
+      SetPedCoordsKeepVehicle(ped, x, y, i)
+      local zFound, _z = GetGroundZFor_3dCoord(x, y, i + 0.0)
+      if zFound then
+        debugPrint("3D ground found: " .. json.encode({ zFound, _z }))
+        z = _z
+        break
+      end
+      Wait(0)
+    end
+    RequestCollisionAtCoord(x, y, z)
+    RequestAdditionalCollisionAtCoord(x, y, z)
+    SetPedCoordsKeepVehicle(ped, x, y, z)
+    DoScreenFadeIn(500)
+    SetGameplayCamRelativeHeading(0)
+  else
+    sendSnackbarMessage("error", "You have no waypoint set!")
+  end
 end)
 
 --[[ Heal all players ]]
 RegisterNetEvent('txAdmin:menu:healed', function()
   debugPrint('Received heal event, healing to full')
   local ped = PlayerPedId()
+  local pos = GetEntityCoords(ped)
+  if IsEntityDead(ped) then
+    ResurrectPed(ped)
+    ped = PlayerPedId()
+    SetEntityCoords(ped, pos[1], pos[2], pos[3])
+  end
   SetEntityHealth(ped, GetEntityMaxHealth(ped))
 end)
 
@@ -269,6 +370,7 @@ RegisterNetEvent('txAdmin:menu:fixVehicle', function()
     SetVehicleFixed(veh)
     SetVehicleEngineOn(veh, true, false)
     SetVehicleDirtLevel(veh, 0.0)
+    SetVehicleOnGroundProperly(veh)
   end
 end)
 
