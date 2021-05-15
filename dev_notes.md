@@ -5,7 +5,8 @@
 - [x] fix the "change-me" server name when using deployer
 - [x] rename authenticator to adminVault
 - [x] update custom locale location + docs
-- [ ] break `playerController` database stuff to another file
+- [x] break `playerController` database stuff to another file
+- [x] make database save on timer tiers
 - [ ] create auto backup of the database
 - [ ] remove the discord login button
 - [ ] update recipes
