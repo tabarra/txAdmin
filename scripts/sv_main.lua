@@ -315,10 +315,10 @@ function handleConnections(name, skr, d)
         CreateThread(function()
             local attempts = 0
             local isDone = false;
-            --Do 5 attempts
-            while isDone == false and attempts < 5 do
+            --Do 10 attempts
+            while isDone == false and attempts < 10 do
                 attempts = attempts + 1
-                d.update("[txAdmin] Checking banlist/whitelist... ("..attempts.."/5)")
+                d.update("[txAdmin] Checking banlist/whitelist... ("..attempts.."/10)")
                 PerformHttpRequest(url, function(httpCode, data, resultHeaders)
                     local resp = tostring(data)
                     if httpCode ~= 200 then
