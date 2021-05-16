@@ -423,7 +423,6 @@ module.exports = class PlayerController {
                 .find({id: action_id})
                 .value();
             if (action) {
-                if (action.type === 'warn') return 'cannot revoke warns';
                 if (allowedTypes !== true && !allowedTypes.includes(action.type)) {
                     return 'you do not have permission to revoke this action';
                 }

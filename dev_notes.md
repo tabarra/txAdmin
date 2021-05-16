@@ -7,7 +7,7 @@
 - [x] update custom locale location + docs
 - [x] break `playerController` database stuff to another file
 - [x] make database save on timer tiers
-- [ ] make warns revokable
+- [x] make warns revokable
 - [ ] break `playerController` actions stuff to another file
 - [ ] create auto backup/restore of the database
 - [ ] make quiet mode default on windows

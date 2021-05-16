@@ -392,6 +392,7 @@ async function handleRevokeAction(ctx) {
     //Check permissions
     let perms = [];
     if (ensurePermission(ctx, 'players.ban')) perms.push('ban');
+    if (ensurePermission(ctx, 'players.warn')) perms.push('warn');
     if (ensurePermission(ctx, 'players.whitelist')) perms.push('whitelist');
 
     //Revoke action

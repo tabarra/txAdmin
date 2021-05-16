@@ -337,7 +337,7 @@
                                                     {{@if(!it.permsDisable.ban || !it.permsDisable.whitelist)}}
                                                         {{@if(
                                                             action.isRevoked ||
-                                                            action.type == 'warn' ||
+                                                            (action.type == 'warn' && it.permsDisableWarn) ||
                                                             (action.type == 'ban' && it.permsDisable.ban) ||
                                                             (action.type == 'whitelist' && it.permsDisable.whitelist)
                                                         )}}
@@ -376,8 +376,9 @@
 
 <script>
     //============================================== SSR Variables
-    const permsDisableWhitelist = ('{{it.permsDisable.whitelist}}' === 'true');
     const permsDisableBan = ('{{it.permsDisable.ban}}' === 'true');
+    const permsDisableWarn = ('{{it.permsDisable.warn}}' === 'true');
+    const permsDisableWhitelist = ('{{it.permsDisable.whitelist}}' === 'true');
 
 
 
@@ -598,7 +599,7 @@
                 if(!permsDisableBan || !permsDisableWhitelist){
                     if(
                         a.isRevoked ||
-                        a.type == 'warn' ||
+                        (a.type == 'warn' && permsDisableWarn) ||
                         (a.type == 'ban' && permsDisableBan) ||
                         (a.type == 'whitelist' && permsDisableWhitelist)
                     ){
