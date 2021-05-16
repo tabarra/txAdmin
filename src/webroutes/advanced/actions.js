@@ -106,6 +106,9 @@ module.exports = async function AdvancedActions(ctx) {
     } else if (action == 'freeze') {
         logWarn('Freezing process for 50 seconds.');
         Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50 * 1000);
+    } else if (action == 'backupdb') {
+        await globals.playerController.db.backupDatabase();
+        return ctx.send({type: 'success', message: 'backing it up'});
     }
 
 

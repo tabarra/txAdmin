@@ -1,11 +1,13 @@
 //Requires
 const modulename = 'Database';
+const fs = require('fs').promises;
 const low = require('lowdb');
 const FileAsync = require('lowdb/adapters/FileAsync');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 
 //Consts
+const BACKUP_INTERVAL = 300e3;
 const SAVE_STANDBY = 0;
 const SAVE_PRIORITY_LOW = 1;
 const SAVE_PRIORITY_MEDIUM = 2;
@@ -15,8 +17,23 @@ const SAVE_TIMES = [300e3, 58e3, 28e3, 13e3];
 // considering a 2 sec skew for the setInterval
 // saving every 5 minutes even if nothing changed
 
+//LowDB prod serializer
+const ldbProdSerializer = {
+    defaultValue: {},
+    serialize: JSON.stringify,
+    deserialize: JSON.parse,
+};
+const ldbSerializer = (process.env.APP_ENV === 'webpack') ? ldbProdSerializer : undefined;
+
+
+/**
+ *
+ */
+
 class Database {
     constructor(wipePendingWLOnStart) {
+        this.dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
+        this.backupPath = `${globals.info.serverProfilePath}/data/playersDB.backup.json`;
         this.writePending = SAVE_STANDBY;
         this.lastWrite = 0;
         this.obj = null;
@@ -28,6 +45,9 @@ class Database {
         setInterval(() => {
             this.writeDatabase();
         }, SAVE_TIMES[SAVE_PRIORITY_HIGH]);
+        setInterval(() => {
+            this.backupDatabase();
+        }, BACKUP_INTERVAL);
     }
 
 
@@ -35,19 +55,31 @@ class Database {
      * Start lowdb instance and set defaults
      */
     async setupDatabase(wipePendingWLOnStart) {
-        const dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
+        //Tries to load the database
+        let dbo;
         try {
-            let adapterAsync;
-            if (process.env.APP_ENV == 'webpack') {
-                adapterAsync = new FileAsync(dbPath, {
-                    defaultValue: {},
-                    serialize: JSON.stringify,
-                    deserialize: JSON.parse,
-                });
-            } else {
-                adapterAsync = new FileAsync(dbPath);
+            const adapterAsync = new FileAsync(this.dbPath, ldbSerializer);
+            dbo = await low(adapterAsync);
+        } catch (errorMain) {
+            logError('Your txAdmin player/actions database could not be loaded.');
+            try {
+                await fs.copyFile(this.backupPath, this.dbPath);
+                const adapterAsync = new FileAsync(this.dbPath, ldbSerializer);
+                dbo = await low(adapterAsync);
+                logWarn('The database file was restored with the automatic backup file.');
+                logWarn('A five minute rollback is expected.');
+            } catch (errorBackup) {
+                logError('It was also not possible to load the automatic backup file.');
+                logError(`Main error: '${errorMain.message}'`);
+                logError(`Backup error: '${errorBackup.message}'`);
+                logError(`Database path: '${this.dbPath}'`);
+                logError('If there is a file in that location, you may try to delete or restore it manually.');
+                process.exit();
             }
-            const dbo = await low(adapterAsync);
+        }
+
+        //Setting up loaded database
+        try {
             await dbo.defaults({
                 version: DATABASE_VERSION,
                 players: [],
@@ -66,16 +98,8 @@ class Database {
             if (wipePendingWLOnStart) await this.obj.set('pendingWL', []).write();
             this.lastWrite = Date.now();
         } catch (error) {
-            if (error.message.startsWith('Malformed JSON')) {
-                logError('Your database file got corrupted and could not be loaded.');
-                logError('If you have a backup, you can manually replace the file.');
-                logError('If you don\'t care about the contents (players/bans/whitelists), just delete the file.');
-                logError('You can also try restoring it manually.');
-                logError(`Database path: '${dbPath}'`);
-            } else {
-                logError(`Failed to load database file '${dbPath}'`);
-                if (GlobalData.verbose) dir(error);
-            }
+            logError('Failed to setup database object.');
+            dir(error);
             process.exit();
         }
     }
@@ -105,6 +129,20 @@ class Database {
             logError('Please make sure your txAdmin is on the most updated version!');
         }
         return dbo;
+    }
+
+
+    /**
+     * Creates a copy of the database file
+     */
+    async backupDatabase() {
+        try {
+            await fs.copyFile(this.dbPath, this.backupPath);
+            logOk('Database file backed up.');
+        } catch (error) {
+            logError(`Failed to backup database file '${this.dbPath}'`);
+            if (GlobalData.verbose) dir(error);
+        }
     }
 
 

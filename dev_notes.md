@@ -8,8 +8,8 @@
 - [x] break `playerController` database stuff to another file
 - [x] make database save on timer tiers
 - [x] make warns revokable
+- [x] create auto backup/restore of the database
 - [ ] break `playerController` actions stuff to another file
-- [ ] create auto backup/restore of the database
 - [ ] make quiet mode default on windows
 - [ ] remove the discord login button
 - [ ] update recipes
@@ -21,25 +21,7 @@ stuff:
 - [ ] maybe remove the sv_maxclients enforcement in the cfg file
 - [ ] fix the interface enforcement without port being set as zap server?
 - [ ] consolidate the log pages
-- [ ] persistent discord status message that is set up by `/statusfixed`:
-    - this will trigger a big status message to be sent in that channel
-    - this message id can be stored in the config file
-    - if discord id is present, use that instead of name (careful with the pings!)
 
-
-
-sv_listingIPOverride 
-set sv_listingIPOverride "109.230.238.70"
-
-    //Convars - zap dependant
-    isZapHosting,
-    forceInterface,
-
-
-
-
-Quickie:
-- ctx.ip overwrite with xff?
 
 > ASAP!:
 - [ ] a way to create admins file without cfx.re 
@@ -47,6 +29,10 @@ Quickie:
         - Manual Approval (default)
         - Discord: be in guild
         - Discord: have a role in guild
+- [ ] persistent discord status message that is set up by `/statusfixed`:
+    - this will trigger a big status message to be sent in that channel
+    - this message id can be stored in the config file
+    - if discord id is present, use that instead of name (careful with the pings!)
 - [ ] (really needed?) ignore key bindings commands https://discord.com/channels/577993482761928734/766868363041046589/795420910713831446
 - [ ] add custom event for broadcast
 
