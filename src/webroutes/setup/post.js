@@ -137,7 +137,10 @@ async function handleValidateLocalDeployPath(ctx) {
     }
     const deployPath = slash(path.normalize(ctx.request.body.deployPath.trim()));
     if (deployPath.includes(' ')) {
-        return ctx.send({success: false, message: 'The path cannot contain spaces.'});
+        return ctx.send({
+            success: false,
+            message: 'The path cannot contain spaces (the space character that separate words).',
+        });
     }
 
     //Perform path checking

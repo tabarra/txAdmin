@@ -43,7 +43,6 @@ module.exports = class OutputHandler {
     }
 
 
-    //================================================================
     /**
      * Processes FD3 traces
      *
@@ -101,7 +100,6 @@ module.exports = class OutputHandler {
     }
 
 
-    //================================================================
     /**
      * Write data to all buffers
      * @param {string} data
@@ -135,7 +133,6 @@ module.exports = class OutputHandler {
     }
 
 
-    //================================================================
     /**
      * Print fxChild's stderr to the webconsole and to the terminal
      * @param {string} data
@@ -152,7 +149,6 @@ module.exports = class OutputHandler {
     }
 
 
-    //================================================================
     /**
      * Save the log file and clear buffer
      */
@@ -164,7 +160,6 @@ module.exports = class OutputHandler {
     }
 
 
-    //================================================================
     /**
      * Save the log file and clear buffer
      */

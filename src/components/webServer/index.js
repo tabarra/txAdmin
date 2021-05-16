@@ -105,8 +105,8 @@ module.exports = class WebServer {
                     return ctx.body = '[no output from route]';
                 }
             } catch (error) {
-                //TODO: perhaps we should also have a koa-bodyparser generic error handler?
-                //FIXME: yes we should - sending broken json will cause internal server error even without the route being called
+                //TODO: we should also have a koa-bodyparser generic error handler
+                // sending broken json will cause internal server error even without the route being called
                 const methodName = (error.stack && error.stack[0] && error.stack[0].name) ? error.stack[0].name : 'anonym';
                 if (error.type === 'entity.too.large') {
                     const desc = `Entity too large for: ${ctx.path}`;

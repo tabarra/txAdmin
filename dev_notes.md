@@ -7,7 +7,10 @@
 - [x] update custom locale location + docs
 - [x] break `playerController` database stuff to another file
 - [x] make database save on timer tiers
-- [ ] create auto backup of the database
+- [ ] make warns revokable
+- [ ] break `playerController` actions stuff to another file
+- [ ] create auto backup/restore of the database
+- [ ] make quiet mode default on windows
 - [ ] remove the discord login button
 - [ ] update recipes
 
@@ -22,7 +25,7 @@ stuff:
     - this will trigger a big status message to be sent in that channel
     - this message id can be stored in the config file
     - if discord id is present, use that instead of name (careful with the pings!)
-- [ ] make warns revokable?
+
 
 
 sv_listingIPOverride 

@@ -264,10 +264,6 @@
         <!-- Search + List Card -->
         <div class="card">
             <div class="card-header card-accent-info">
-                <!-- <h5 class="float-left mb-0" style="padding-top: .175em;">
-                    Database Actions (bans/warns/whitelists)
-                </h5> -->
-                <!-- FIXME: currently disabled -->
                 <ul class="nav nav-pills card-header-pills">
                     <div class="form-group row mb-0 mr-auto">
                         <div class="col-md-12">
@@ -489,7 +485,6 @@
     const dbActionsSearchTab = document.getElementById('dbActions-tabSearch');
     const dbActionsDefaultTab = document.getElementById('dbActions-tabDefault');
 
-    //FIXME: if I change the text it should reset the button to "search" instead of "clear"
     searchButton.addEventListener('click', (e) => {
         if(searchButton.textContent.includes('Search')){
             performSearch();
@@ -498,11 +493,14 @@
         }
     })
     searchInput.addEventListener('keyup', (e) => {
-        if(e.keyCode !== 13) return;
-        if(searchInput.value.length){
-            performSearch();
+        if(e.keyCode !== 13){
+            searchButton.innerHTML = getSVG('magnifying-glass') + ` Search`;
         }else{
-            clearSearch();
+            if(searchInput.value.length){
+                performSearch();
+            }else{
+                clearSearch();
+            }
         }
     })
 

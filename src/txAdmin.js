@@ -9,7 +9,8 @@ const { printBanner } = require('./extras/banner');
 const cleanPath = (x) => { return slash(path.normalize(x)); };
 
 
-//FIXME: I should be using dependency injection or something
+// Long ago I wanted to replace this with dependency injection.
+// I Totally gave up.
 globals = {
     adminVault: null,
     discordBot: null,
