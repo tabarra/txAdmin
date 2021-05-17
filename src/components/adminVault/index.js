@@ -36,7 +36,7 @@ module.exports = class AdminVault {
         //Load providers
         try {
             this.providers = {
-                discord: 'xxxxx',
+                discord: false,
                 citizenfx: new CitizenFXProvider(null),
             };
         } catch (error) {

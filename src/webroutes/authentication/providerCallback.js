@@ -24,7 +24,6 @@ module.exports = async function ProviderCallback(ctx) {
     const provider = ctx.params.provider;
     const reqState = ctx.query.state;
 
-    //FIXME: generalize this to any provider
     if (provider !== 'citizenfx') {
         return returnJustMessage(ctx, 'Provider not implemented... yet');
     }

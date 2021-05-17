@@ -10,8 +10,8 @@
 - [x] make warns revokable
 - [x] create auto backup/restore of the database
 - [x] make quiet mode default on windows
+- [x] remove the discord login option
 - [ ] break `playerController` actions stuff to another file
-- [ ] remove the discord login button
 - [ ] update recipes
 
 

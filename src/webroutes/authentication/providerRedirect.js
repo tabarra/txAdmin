@@ -22,7 +22,6 @@ module.exports = async function ProviderRedirect(ctx) {
     }
     const provider = ctx.params.provider;
 
-    //FIXME: generalize this to any provider
     if (provider !== 'citizenfx') {
         return returnJustMessage(ctx, 'Provider not implemented... yet');
     }
