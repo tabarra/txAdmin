@@ -11,12 +11,12 @@
 - [x] create auto backup/restore of the database
 - [x] make quiet mode default on windows
 - [x] remove the discord login option
-- [ ] break `playerController` actions stuff to another file
-- [ ] update recipes
+- [x] version bump
 
 
 
 stuff:
+- [ ] break `playerController` actions stuff to another file
 - [ ] do the sv_listingIPOverride thing
 - [ ] maybe remove the sv_maxclients enforcement in the cfg file
 - [ ] fix the interface enforcement without port being set as zap server?
