@@ -15,8 +15,8 @@ local function getPlayerData(src)
         return false
     end
 
-    if typeof src == 'string' then
-        src = parseInt(src)
+    if type(src) == 'string' then
+        src = tonumber(src)
     end
 
     if src == 0 then return {name = 'console', identifiers = {}} end
