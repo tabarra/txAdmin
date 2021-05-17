@@ -9,8 +9,8 @@
 - [x] make database save on timer tiers
 - [x] make warns revokable
 - [x] create auto backup/restore of the database
+- [x] make quiet mode default on windows
 - [ ] break `playerController` actions stuff to another file
-- [ ] make quiet mode default on windows
 - [ ] remove the discord login button
 - [ ] update recipes
 
