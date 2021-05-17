@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -15,9 +15,9 @@ import {
   makeStyles,
   useTheme,
   IconButton,
-  ListItemIcon
+  ListItemIcon, MenuItem
 } from "@material-ui/core";
-import { Close, Person, Block, FormatListBulleted, MenuBook, FlashOn } from '@material-ui/icons'
+import { Close, Person, Block, FormatListBulleted, MenuBook, FlashOn, TerrainTwoTone } from '@material-ui/icons'
 import { usePlayerDetails } from "../state/players.state";
 import { usePlayerModal, useTabs } from "../provider/PlayerProvider";
 
@@ -59,7 +59,7 @@ const useDialogStyles = makeStyles((theme: Theme) => ({
   selected: {}
 }))
 
-const PlayerModal: React.FC = () =>  {
+const PlayerModal: React.FC = () => {
   const player = usePlayerDetails();
   const { tab } = useTabs();
   const { modal, setModal } = usePlayerModal();
@@ -74,12 +74,12 @@ const PlayerModal: React.FC = () =>  {
   }
 
   return (
-    <Dialog 
+    <Dialog
       disableEscapeKeyDown
-      open={modal} 
-      fullWidth 
-      onClose={handleClose} 
-      maxWidth="md" 
+      open={modal}
+      fullWidth
+      onClose={handleClose}
+      maxWidth="md"
       PaperProps={{
         style: {
           backgroundColor: theme.palette.background.default,
@@ -90,20 +90,20 @@ const PlayerModal: React.FC = () =>  {
     >
       <DialogTitle style={{ borderBottom: '1px solid rgba(221,221,221,0.54)' }}>
         [{player.id}] {player.username}
-        <IconButton onClick={handleClose} className={classes.closeButton}><Close /></IconButton>
+        <IconButton onClick={handleClose} className={classes.closeButton}><Close/></IconButton>
       </DialogTitle>
-        <Box display="flex" px={2} pb={2} pt={2} flexGrow={1} >
-          <Box minWidth={200} pr={2} borderRight="1px solid rgba(221,221,221,0.54)">
-            <DialogList />
-          </Box>
-          <Box flexGrow={1} mt={-2}>
-            {tab == 1 && <DialogActionView />}
-            {tab == 2 && <DialogInfoView />}
-            {tab == 3 && <DialogIdView />}
-            {tab == 5 && <DialogBanView />}
-          </Box>
+      <Box display="flex" px={2} pb={2} pt={2} flexGrow={1}>
+        <Box minWidth={200} pr={2} borderRight="1px solid rgba(221,221,221,0.54)">
+          <DialogList/>
         </Box>
-      </Dialog>
+        <Box flexGrow={1} mt={-2}>
+          {tab == 1 && <DialogActionView/>}
+          {tab == 2 && <DialogInfoView/>}
+          {tab == 3 && <DialogIdView/>}
+          {tab == 5 && <DialogBanView/>}
+        </Box>
+      </Box>
+    </Dialog>
   )
 }
 
@@ -112,25 +112,30 @@ const DialogList: React.FC = () => {
   const classes = useDialogStyles();
   return (
     <List>
-      <ListItem style={{ borderRadius: 8 }} button onClick={() => setTab(1)} selected={tab === 1 && true} classes={{ root: classes.root, selected: classes.selected }}>
-        <ListItemIcon><FlashOn /></ListItemIcon>
-        <ListItemText primary="Actions" />
+      <ListItem style={{ borderRadius: 8 }} button onClick={() => setTab(1)} selected={tab === 1 && true}
+                classes={{ root: classes.root, selected: classes.selected }}>
+        <ListItemIcon><FlashOn/></ListItemIcon>
+        <ListItemText primary="Actions"/>
       </ListItem>
-      <ListItem style={{ borderRadius: 8 }} button onClick={() => setTab(2)} selected={tab === 2 && true} classes={{ root: classes.root, selected: classes.selected }}>
-        <ListItemIcon><Person /></ListItemIcon>
-        <ListItemText primary="Info" />
+      <ListItem style={{ borderRadius: 8 }} button onClick={() => setTab(2)} selected={tab === 2 && true}
+                classes={{ root: classes.root, selected: classes.selected }}>
+        <ListItemIcon><Person/></ListItemIcon>
+        <ListItemText primary="Info"/>
       </ListItem>
-      <ListItem style={{ borderRadius: 8 }} button onClick={() => setTab(3)} selected={tab === 3 && true} classes={{ root: classes.root, selected: classes.selected }}>
-        <ListItemIcon><FormatListBulleted /></ListItemIcon>
-        <ListItemText primary="IDs" />
+      <ListItem style={{ borderRadius: 8 }} button onClick={() => setTab(3)} selected={tab === 3 && true}
+                classes={{ root: classes.root, selected: classes.selected }}>
+        <ListItemIcon><FormatListBulleted/></ListItemIcon>
+        <ListItemText primary="IDs"/>
       </ListItem>
-      <ListItem style={{ borderRadius: 8 }} button onClick={() => setTab(4)} classes={{ root: classes.root, selected: classes.selected }}>
-        <ListItemIcon><MenuBook /></ListItemIcon>
-        <ListItemText primary="History" />
+      <ListItem style={{ borderRadius: 8 }} button onClick={() => setTab(4)}
+                classes={{ root: classes.root, selected: classes.selected }}>
+        <ListItemIcon><MenuBook/></ListItemIcon>
+        <ListItemText primary="History"/>
       </ListItem>
-      <ListItem style={{ borderRadius: 8 }} button onClick={() => setTab(5)} selected={tab === 5 && true} classes={{ root: classes.banRoot, selected: classes.selected }}>
-        <ListItemIcon><Block /></ListItemIcon>
-        <ListItemText primary="Ban" />
+      <ListItem style={{ borderRadius: 8 }} button onClick={() => setTab(5)} selected={tab === 5 && true}
+                classes={{ root: classes.banRoot, selected: classes.selected }}>
+        <ListItemIcon><Block/></ListItemIcon>
+        <ListItemText primary="Ban"/>
       </ListItem>
     </List>
   )
@@ -170,11 +175,12 @@ const DialogActionView: React.FC = () => {
 const DialogInfoView: React.FC = () => {
   const theme = useTheme();
   return (
-    <DialogContent >
+    <DialogContent>
       <Typography variant="h6">Player Info</Typography>
       <Typography>Session Time: <span style={{ color: theme.palette.text.secondary }}>0 minutes</span></Typography>
       <Typography>Play time: <span style={{ color: theme.palette.text.secondary }}>--</span></Typography>
-      <Typography>Joined: <span style={{ color: theme.palette.text.secondary }}>May 4, 2021 - 14:25:15</span></Typography>
+      <Typography>Joined: <span
+        style={{ color: theme.palette.text.secondary }}>May 4, 2021 - 14:25:15</span></Typography>
       <TextField
         autoFocus
         margin="dense"
@@ -201,27 +207,36 @@ const DialogIdView: React.FC = () => {
     <DialogContent>
       <Typography variant="h6" style={{ paddingBottom: 5 }}>Player Identifiers</Typography>
       <Box className={classes.codeBlock}>
-        <Typography className={classes.codeBlockText} ><strong>steam:</strong><span style={{ color: theme.palette.text.secondary }}>32423422424424</span></Typography>
+        <Typography className={classes.codeBlockText}><strong>steam:</strong><span
+          style={{ color: theme.palette.text.secondary }}>32423422424424</span></Typography>
       </Box>
       <Box className={classes.codeBlock}>
-        <Typography className={classes.codeBlockText}><strong>license:</strong><span style={{ color: theme.palette.text.secondary }}>32423422424424</span></Typography>
+        <Typography className={classes.codeBlockText}><strong>license:</strong><span
+          style={{ color: theme.palette.text.secondary }}>32423422424424</span></Typography>
       </Box>
       <Box className={classes.codeBlock}>
-        <Typography className={classes.codeBlockText}><strong>discord:</strong><span style={{ color: theme.palette.text.secondary }}>32423422424424</span></Typography>
+        <Typography className={classes.codeBlockText}><strong>discord:</strong><span
+          style={{ color: theme.palette.text.secondary }}>32423422424424</span></Typography>
       </Box>
       <Box className={classes.codeBlock}>
-        <Typography className={classes.codeBlockText}><strong>xbl:</strong><span style={{ color: theme.palette.text.secondary }}>32423422424424</span></Typography>
+        <Typography className={classes.codeBlockText}><strong>xbl:</strong><span
+          style={{ color: theme.palette.text.secondary }}>32423422424424</span></Typography>
       </Box>
       <Box className={classes.codeBlock}>
-        <Typography className={classes.codeBlockText}><strong>fivem:</strong><span style={{ color: theme.palette.text.secondary }}>32423422424424</span></Typography>
+        <Typography className={classes.codeBlockText}><strong>fivem:</strong><span
+          style={{ color: theme.palette.text.secondary }}>32423422424424</span></Typography>
       </Box>
     </DialogContent>
   )
 }
 
 
-
 const DialogBanView: React.FC = () => {
+
+  const [duration, setDuration] = useState('2 hours');
+  const [customDuration, setCustomDuration] = useState('hours')
+  const [customDurLength, setCustomDurLength] = useState('1');
+
   return (
     <DialogContent>
       <DialogContentText>Ban Player</DialogContentText>
@@ -241,19 +256,108 @@ const DialogBanView: React.FC = () => {
       <TextField
         autoFocus
         margin="dense"
-        id="name"
+        select
         label="Duration"
-        required
-        type="text"
         variant="outlined"
-        multiline
-        rows={2}
-        rowsMax={2}
+        value={duration}
+        onChange={(e) => setDuration(e.target.value)}
+        helperText="Please select an duration"
         fullWidth
-      />
+      >
+        {banDurations.map((option) => (
+          <MenuItem key={option.value} value={option.value}>
+            {option.label}
+          </MenuItem>
+        ))}
+      </TextField>
+      {duration === 'custom' && (
+        <Box display="flex" alignItems="center" justifyContent="center">
+          <Box>
+            <TextField
+              type="number"
+              placeholder="1"
+              variant="outlined"
+              margin="dense"
+              value={customDurLength}
+              onChange={(e) => setCustomDurLength(e.target.value)}
+            />
+          </Box>
+          <Box flexGrow={1}>
+            <TextField
+              select
+              variant="outlined"
+              margin="dense"
+              fullWidth
+              value={customDuration}
+              onChange={(e) => setCustomDuration(e.target.value)}
+            >
+              {customBanLength.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </TextField>
+          </Box>
+        </Box>
+      )}
       <Button variant="contained" color="primary" style={{ marginTop: 2 }}>Ban</Button>
     </DialogContent>
   )
 }
+
+
+const banDurations = [
+  {
+    value: '2 hours',
+    label: '2 hours'
+  },
+  {
+    value: '8 hours',
+    label: '8 hours'
+  },
+  {
+    value: '1 day',
+    label: '1 day'
+  },
+  {
+    value: '2 days',
+    label: '2 days'
+  },
+  {
+    value: '1 week',
+    label: '1 week'
+  },
+  {
+    value: '2 weeks',
+    label: '2 weeks'
+  },
+  {
+    value: 'perma',
+    label: 'Permanent'
+  },
+  {
+    value: 'custom',
+    label: 'Custom'
+  }
+]
+
+const customBanLength = [
+  {
+    value: 'hours',
+    label: 'Hours'
+  },
+  {
+    value: 'days',
+    label: 'Days'
+  },
+  {
+    value: 'weeks',
+    label: 'Week'
+  },
+  {
+    value: 'months',
+    label: 'Months'
+  }
+]
 
 export default PlayerModal;
