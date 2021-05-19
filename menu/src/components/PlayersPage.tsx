@@ -4,7 +4,7 @@ import { PlayerPageHeader } from "./PlayerPageHeader";
 import { useFilteredSortedPlayers } from "../state/players.state";
 import { PlayersListEmpty } from "./PlayersListEmpty";
 import { PlayersListGrid } from "./PlayersListGrid";
-import PlayerModal from "./PlayerModal";
+import PlayerModal from "./PlayerModal/PlayerModal";
 import PlayerProvider from "../provider/PlayerProvider";
 
 const useStyles = makeStyles((theme: Theme) => ({

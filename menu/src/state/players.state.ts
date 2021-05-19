@@ -104,10 +104,10 @@ export const usePlayersFilter = () =>
 export const useFilteredSortedPlayers = (): PlayerData[] =>
   useRecoilValue(playersState.sortedAndFilteredPlayerData);
 
-export const usePlayerDetails = () => 
+export const usePlayerDetails= (): PlayerData  =>
   useRecoilValue(playersState.playerDetails);
 
-export const useSetPlayerDetails = () => 
+export const useSetPlayerDetails = () =>
   useSetRecoilState(playersState.playerDetails);
 
 debugData<PlayerData[]>([
