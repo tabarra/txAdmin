@@ -302,14 +302,21 @@ end
 
 -- Player connecting handler
 function handleConnections(name, skr, d)
-    if  GetConvar("txAdmin-checkPlayerJoin", "invalid") == "true" then
+    if GetConvar("txAdmin-checkPlayerJoin", "invalid") == "true" then
         d.defer()
+        Wait(0)
+
+        --Preparing vars and making sure we do have indentifiers
         local url = "http://"..apiHost.."/intercom/checkPlayerJoin"
         local exData = {
             txAdminToken = apiToken,
-            identifiers  = GetPlayerIdentifiers(source),
+            identifiers = GetPlayerIdentifiers(source),
             name = name
         }
+        if #exData.identifiers <= 1 then
+            d.done("[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg")
+            return
+        end
 
         --Attempt to validate the user
         CreateThread(function()

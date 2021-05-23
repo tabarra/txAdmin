@@ -138,7 +138,7 @@ class Database {
     async backupDatabase() {
         try {
             await fs.copyFile(this.dbPath, this.backupPath);
-            logOk('Database file backed up.');
+            if (GlobalData.verbose) logOk('Database file backed up.');
         } catch (error) {
             logError(`Failed to backup database file '${this.dbPath}'`);
             if (GlobalData.verbose) dir(error);

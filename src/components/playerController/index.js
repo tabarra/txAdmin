@@ -14,6 +14,16 @@ const validActions = ['ban', 'warn', 'whitelist'];
 
 
 
+/*
+    TODO:
+    Move the following to another file:
+    - getRegisteredActions
+    - registerAction
+    - revokeAction
+    - approveWhitelist
+    - checkPlayerJoin
+*/
+
 /**
  * Provide a central database for players, as well as assist with access control.
  *

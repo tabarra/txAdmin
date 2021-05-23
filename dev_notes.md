@@ -14,6 +14,11 @@
 - [x] version bump
 
 
+quando falta convar
+set sv_listingIPOverride "109.230.238.70"
+isZapHosting, forceInterface,
+
+
 
 stuff:
 - [ ] break `playerController` actions stuff to another file
@@ -40,7 +45,6 @@ stuff:
 > Hopefully now:
 - [ ] check the places where I'm doing `Object.assign()` for shallow clones
 - [ ] remove the ForceFXServerPort config and do either via `server.cfg` comment, or execute `endpoint_add_tcp "127.0.0.1:random"`
-- [ ] make `playerController.writePending` prioritized (low 5s, medium 30s, high 60s)
 - [ ] create `admin.useroptions` for dark mode, welcome modals and such
 
 > Soon™ (hopefully the next update)
