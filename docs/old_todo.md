@@ -449,6 +449,20 @@ More:
 - [x] hot-patch for the unicode in ansi fxmanifest issue
 - [x] added events for kick, warns, bans and whitelists (@TasoOneAsia)
 > v3.7.0
+- [x] remove hitch detector entirely
+- [x] improve crash detection, increase limit from 30s to 60s, printing thread stack
+- [x] add new monitor data to diagnostics and improve stats
+- [x] fix the "change-me" server name when using deployer
+- [x] rename authenticator to adminVault
+- [x] update custom locale location + docs
+- [x] break `playerController` database stuff to another file
+- [x] make database save on timer tiers
+- [x] make warns revokable
+- [x] create auto backup/restore of the database
+- [x] make quiet mode default on windows
+- [x] remove the discord login option
+- [x] version bump
+> v3.8.0
 
 
 ------------------------------

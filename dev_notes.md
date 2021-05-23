@@ -1,22 +1,15 @@
-## TODO v3.8.0
-- [x] remove hitch detector entirely
-- [x] improve crash detection, increase limit from 30s to 60s, printing thread stack
-- [x] add new monitor data to diagnostics and improve stats
-- [x] fix the "change-me" server name when using deployer
-- [x] rename authenticator to adminVault
-- [x] update custom locale location + docs
-- [x] break `playerController` database stuff to another file
-- [x] make database save on timer tiers
-- [x] make warns revokable
-- [x] create auto backup/restore of the database
-- [x] make quiet mode default on windows
-- [x] remove the discord login option
-- [x] version bump
+## TODO v4.0.0
+- [x] fixed perf chart labels
+- [ ] xxxxxxxx
 
 
 quando falta convar
 set sv_listingIPOverride "109.230.238.70"
 isZapHosting, forceInterface,
+
+
+// 1619440000 v3.7 -- 31/05 09:30 AM
+// 1621233333 v3.8 -- 07/06 03:30 AM
 
 
 
@@ -244,7 +237,7 @@ npx eslint ./src/** -f ./lint-formatter.js
 npx eslint ./src/** --fix
 
 # hang fxserver (runcode)
-console.log('ganging the thread for 60s');
+console.log('hanging the thread for 60s');
 Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 60 * 1000);
 console.log('done');
 ```
