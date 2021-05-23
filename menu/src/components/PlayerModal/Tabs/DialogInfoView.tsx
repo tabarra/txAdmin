@@ -1,8 +1,20 @@
-import React from "react";
+import React, { useState } from "react";
 import { DialogContent, TextField, Typography, useTheme } from "@material-ui/core";
+import { usePlayerDetails } from "../../../state/players.state";
 
 const DialogInfoView: React.FC = () => {
+  const [note, setNote] = useState('');
+  const player = usePlayerDetails();
+
   const theme = useTheme();
+
+  const handleSaveNote = async () => {
+    const res = await fetch('player/save_note', {
+      method: 'POST',
+      body: JSON.stringify({ license: player.id, note })
+    })
+  }
+
   return (
     <DialogContent>
       <Typography variant="h6">Player Info</Typography>
@@ -16,6 +28,9 @@ const DialogInfoView: React.FC = () => {
         id="name"
         label="Notes about this player"
         type="text"
+        value={note}
+        onChange={(e) => setNote(e.currentTarget.value)}
+        onKeyPress={(e) => e.key === 'Enter' && handleSaveNote}
         placeholder="Someting about Tabarra"
         variant="outlined"
         multiline
