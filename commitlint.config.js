@@ -12,6 +12,7 @@ const types = [
 
     //custom
     'tweak',
+    'chore',
 ];
 
 module.exports = {
