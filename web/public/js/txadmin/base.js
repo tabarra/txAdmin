@@ -2,15 +2,17 @@
 //================================================================
 //============================================= Settings & Helpers
 //================================================================
-//Settings
-const timeoutShort = 1500;
-const timeoutMedium = 2500;
-const timeoutLong = 4000; //FIXME: na setup era 5000
-const bufferTrimSize = 128 * 1024; // 128kb
-const statusRefreshInterval = (isWebInterface) ? 1000 : 5000;
+//Settings & constants
+const TX_BASE_PATH = '';
+const REQ_TIMEOUT_SHORT = 1500;
+const REQ_TIMEOUT_MEDIUM = 2500;
+const REQ_TIMEOUT_LONG = 4000; //FIXME: na setup era 5000
+const BUFFER_TRIM_SIZE = 128 * 1024; // 128kb
+const STATUS_REFRESH_INTERVAL = (isWebInterface) ? 1000 : 5000;
+const SPINNER_HTML = '<div class="txSpinner">Loading...</div>';
 
 //Helpers
-const spinnerHTML = '<div class="txSpinner">Loading...</div>';
+const anyUndefined = (...args) => { return [...args].some((x) => (typeof x === 'undefined')); };
 const xss = (x) => {
     let tmp = document.createElement('div');
     tmp.innerText = x;
@@ -51,9 +53,32 @@ for (let pfp of pfpList) {
 //================================================================
 //================================================= Event Handlers
 //================================================================
-//Must be as close to a JQuery $.ajax() as possible
-const txAdminAPI = () => {
+const checkDoLogoutRefresh = (data) => {
+    if (data.logout === true) {
+        window.location = '/auth?logout';
+        return true;
+    } else if (data.refresh === true) {
+        window.location.reload(true);
+        return true;
+    }
     return false;
+};
+//if(checkDoLogoutRefresh(data)) return;
+
+//Must be as close to a JQuery $.ajax() as possible
+//TODO: abstract a little bit more and use fetch
+//TODO: use the function above for all calls
+//NOTE: datatype is the expected return, we can probably remove it
+//NOTE: still one $.ajax at setup.html > setFavTemplatesCards
+const txAdminAPI = ({type, url, data, dataType, timeout, success, error}) => {
+    if (anyUndefined(type, url)) return false;
+
+    url = TX_BASE_PATH + url;
+    timeout = timeout || REQ_TIMEOUT_MEDIUM;
+    success = success || (() => {});
+    error = error || (() => {});
+    console.log({type, url, timeout, data, dataType, success, error});
+    return $.ajax({type, url, timeout, data, dataType, success, error});
 };
 
 

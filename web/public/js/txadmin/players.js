@@ -190,7 +190,7 @@ function showPlayer(license, altName = 'unknown', altIDs = '') {
     modPlayer.curr.identifiers = false;
 
     //Reset modal
-    modPlayer.Message.innerHTML = spinnerHTML;
+    modPlayer.Message.innerHTML = SPINNER_HTML;
     modPlayer.Message.classList.remove('d-none');
     modPlayer.Content.classList.add('d-none');
     modPlayer.Title.innerText = 'loading...';
@@ -228,11 +228,10 @@ function showPlayer(license, altName = 'unknown', altIDs = '') {
     modPlayer.Modal.show();
 
     //Perform request
-    $.ajax({
+    txAdminAPI({
         url: '/player/' + license,
         type: 'GET',
         dataType: 'json',
-        timeout: timeoutMedium,
         success: function (data) {
             if (data.logout) {
                 window.location = '/auth?logout';
@@ -325,10 +324,10 @@ modPlayer.Main.notes.addEventListener('keydown', (event) => {
             license: modPlayer.curr.license,
             note: modPlayer.Main.notes.value,
         };
-        $.ajax({
+        txAdminAPI({
             type: 'POST',
             url: '/player/save_note',
-            timeout: timeoutLong,
+            timeout: REQ_TIMEOUT_LONG,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -372,10 +371,10 @@ function messagePlayer() {
         id: modPlayer.curr.id,
         message: message.trim(),
     };
-    $.ajax({
+    txAdminAPI({
         type: 'POST',
         url: '/player/message',
-        timeout: timeoutLong,
+        timeout: REQ_TIMEOUT_LONG,
         data: data,
         dataType: 'json',
         success: function (data) {
@@ -403,10 +402,10 @@ function kickPlayer() {
         id: modPlayer.curr.id,
         reason: reason,
     };
-    $.ajax({
+    txAdminAPI({
         type: 'POST',
         url: '/player/kick',
-        timeout: timeoutLong,
+        timeout: REQ_TIMEOUT_LONG,
         data: data,
         dataType: 'json',
         success: function (data) {
@@ -439,10 +438,10 @@ function warnPlayer() {
         id: modPlayer.curr.id,
         reason: reason,
     };
-    $.ajax({
+    txAdminAPI({
         type: 'POST',
         url: '/player/warn',
-        timeout: timeoutLong,
+        timeout: REQ_TIMEOUT_LONG,
         data: data,
         dataType: 'json',
         success: function (data) {
@@ -483,10 +482,10 @@ function banPlayer() {
         reference: (modPlayer.curr.id !== false) ? modPlayer.curr.id : modPlayer.curr.identifiers,
         // reference: modPlayer.curr.identifiers,
     };
-    $.ajax({
+    txAdminAPI({
         type: 'POST',
         url: '/player/ban',
-        timeout: timeoutLong,
+        timeout: REQ_TIMEOUT_LONG,
         data: data,
         dataType: 'json',
         success: function (data) {

@@ -528,10 +528,9 @@
         }
         const notify = $.notify({ message: '<p class="text-center">Executing...</p>' }, {});
         
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: `/masterActions/${action}`,
-            timeout: timeoutMedium,
             data: {},
             dataType: 'json',
             success: function (data) {
@@ -565,10 +564,9 @@
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/settings/save/global',
-            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -600,10 +598,9 @@
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/settings/save/fxserver',
-            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -634,10 +631,9 @@
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/settings/save/playerController',
-            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -663,10 +659,9 @@
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/settings/save/monitor',
-            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -697,10 +692,9 @@
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/settings/save/discord',
-            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {

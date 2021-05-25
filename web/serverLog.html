@@ -44,10 +44,9 @@
 
     let currOffset = '{{it.offset}}';
     function getNewData(){
-        $.ajax({
+        txAdminAPI({
             type: "GET",
             url: `/serverLog?offset=${currOffset}`,
-            timeout: timeoutMedium,
             success: function (data) {
                 //FIXME: temporary before database
                 //NOTE: /\ that was a lie :)
@@ -55,8 +54,8 @@
                 if(typeof data.log !== 'undefined' && data.log !== false && data.log.length){
                     const consoleElement = document.getElementById("console");
                     let _tempContent = consoleElement.innerHTML + data.log;
-                    _tempContent = (_tempContent.length > bufferTrimSize)
-                        ? _tempContent.slice(-0.5 * bufferTrimSize)
+                    _tempContent = (_tempContent.length > BUFFER_TRIM_SIZE)
+                        ? _tempContent.slice(-0.5 * BUFFER_TRIM_SIZE)
                         : _tempContent;
                     consoleElement.innerHTML = _tempContent.substr(_tempContent.indexOf("\n"));
                     scrollToBottom();

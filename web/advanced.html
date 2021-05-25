@@ -78,10 +78,10 @@
         const magicPre = document.getElementById("magicPre");
         magicPre.innerText = 'doing magic';
         const notify = $.notify({ message: '<p class="text-center">Performing Magic...</p>' }, {});
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/advanced',
-            timeout: timeoutLong,
+            timeout: REQ_TIMEOUT_LONG,
             data: data,
             success: function (data) {
                 if(data.type === 'success'){
@@ -111,10 +111,9 @@
             parameter: desiredState
         }
         const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/advanced',
-            timeout: timeoutMedium,
             data: data,
             success: function (data) {
                 if(data.refresh === true){
@@ -141,10 +140,9 @@
             parameter: false
         }
         const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/fxserver/commands',
-            timeout: timeoutMedium,
             data: data,
             success: function (data) {
                 notify.update('progress', 0);

@@ -291,11 +291,11 @@
             return;
         }
         const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
-        $.ajax({
+        txAdminAPI({
             url: '/fxserver/controls/' + action,
             type: "GET",
             dataType: "json",
-            timeout: timeoutLong,
+            timeout: REQ_TIMEOUT_LONG,
             success: function (data) {
                 if (data.logout) {
                     window.location = '/auth?logout';
@@ -331,10 +331,9 @@
         if(message == null) return;
 
         const notify = $.notify({ message: 'Executing Command...' }, {});
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/fxserver/commands',
-            timeout: timeoutMedium,
             data: {
                 action,
                 parameter: message

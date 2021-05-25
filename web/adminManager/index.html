@@ -261,10 +261,9 @@
         }
 
         const notify = $.notify({ message: '<p class="text-center">Deleting...</p>' }, {});
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/adminManager/delete',
-            timeout: timeoutMedium,
             data: {name: name},
             success: function (data) {
                 if(data.message == 'refresh'){
@@ -284,10 +283,9 @@
 
     //============================================== Show Edit Modal
     function getEditModal(name){
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/adminManager/getModal',
-            timeout: timeoutMedium,
             data: {name: name},
             success: function (data) {
                 $('#modEditAdmin-body').html(data);
@@ -317,10 +315,9 @@
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/adminManager/edit',
-            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -358,10 +355,9 @@
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/adminManager/add',
-            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {

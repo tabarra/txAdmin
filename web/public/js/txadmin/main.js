@@ -3,11 +3,10 @@
 //============================================== Dynamic Stats
 //================================================================
 function refreshData() {
-    $.ajax({
+    txAdminAPI({
         url: '/status',
         type: 'GET',
-        dataType: 'json',
-        timeout: timeoutShort,
+        timeout: REQ_TIMEOUT_SHORT,
         success: function (data) {
             if (data.logout) {
                 window.location = '/auth?logout';
@@ -85,10 +84,9 @@ document.getElementById('modChangePassword-save').onclick = (e) => {
     }
 
     const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
-    $.ajax({
+    txAdminAPI({
         type: 'POST',
         url: '/changePassword',
-        timeout: timeoutMedium,
         data: form,
         dataType: 'json',
         success: function (data) {
@@ -119,7 +117,7 @@ document.getElementById('modChangePassword-save').onclick = (e) => {
 document.addEventListener('DOMContentLoaded', function(event) {
     //Setting up status refresh
     refreshData();
-    setInterval(refreshData, statusRefreshInterval);
+    setInterval(refreshData, STATUS_REFRESH_INTERVAL);
 
     //Opening modal
     if (typeof isTempPassword !== 'undefined') {
