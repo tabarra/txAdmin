@@ -1,7 +1,7 @@
 ## TODO v4.0.0
 - [x] fixed perf chart labels
 - [x] reorganize web js files
-- [ ] remove all `var` from web and core
+- [x] remove all `var` from web and core
 - [ ] web: create `txAdminAPI` and replace all `$.ajax`
 - [ ] web: prepare html/js for iframe mode (remove logo, header, footer, playerlist, stats, live console, sv log?)
 - [ ] increase page timeouts

@@ -526,8 +526,8 @@
         if(!window.confirm(`Are you sure you want to Reset FXServer Settings?`)){
             return;
         }
-        var notify = $.notify({ message: '<p class="text-center">Executing...</p>' }, {});
-
+        const notify = $.notify({ message: '<p class="text-center">Executing...</p>' }, {});
+        
         $.ajax({
             type: "POST",
             url: `/masterActions/${action}`,
@@ -561,10 +561,9 @@
             verbose: $('#frmGlobal-verbose').is(':checked')
         }
         if (!data.serverName.length) {
-            var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
-            return;
+            return $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
         }
-        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
         $.ajax({
             type: "POST",
@@ -597,10 +596,9 @@
             quiet: $('#frmFXServer-quiet').is(':checked')
         }
         if (!data.serverDataPath.length || !data.cfgPath.length) {
-            var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
-            return;
+            return $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
         }
-        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
         $.ajax({
             type: "POST",
@@ -632,10 +630,9 @@
             wipePendingWLOnStart: $('#frmPlayerManager-wipePendingWLOnStart').is(':checked'),
         }
         if (!data.minSessionTime.length || !data.whitelistRejectionMessage.length) {
-            var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
-            return;
+            return $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
         }
-        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
         $.ajax({
             type: "POST",
@@ -664,7 +661,7 @@
             restarterScheduleWarnings: $('#frmMonitor-restarterScheduleWarnings').val().trim(),
             disableChatWarnings: ($('#frmMonitor-chatMessages').is(':checked') === true),
         }
-        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
         $.ajax({
             type: "POST",
@@ -696,10 +693,9 @@
             statusMessage: $('#frmDiscord-statusMessage').val().trim()
         };
         if (data.enabled && (!data.token.length || !data.prefix.length || !data.statusMessage.length)) {
-            var notify = $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
-            return;
+            return $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
         }
-        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
         $.ajax({
             type: "POST",

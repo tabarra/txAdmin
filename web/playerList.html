@@ -386,11 +386,10 @@
     //TODO: make an confirmation modal
     function revokeAction(action_id){
         if(!action_id){
-            var notify = $.notify({ message: 'Invalid actionID' }, { type: 'danger' });
-            return;
+            return $.notify({ message: 'Invalid actionID' }, { type: 'danger' });
         }
 
-        var notify = $.notify({ message: '<p class="text-center">Revoking...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Revoking...</p>' }, {});
         $.ajax({
             type: "POST",
             url: '/player/revoke_action',
@@ -438,11 +437,10 @@
             !/R[123456789ABCDEFGHJKLMNPQRSTUVWXYZ]{4}/.test(reference) && 
             !/[0-9A-Fa-f]{40}/.test(reference)
         ){
-            var notify = $.notify({ message: 'The value inserted is not a valid Whitelist ID nor a license identifier.' }, { type: 'danger' });
-            return;
+            return $.notify({ message: 'The value inserted is not a valid Whitelist ID nor a license identifier.' }, { type: 'danger' });
         }
 
-        var notify = $.notify({ message: '<p class="text-center">Whitelisting...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Whitelisting...</p>' }, {});
         $.ajax({
             type: "POST",
             url: '/player/whitelist',

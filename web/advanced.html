@@ -75,9 +75,9 @@
             action: document.getElementById('magicActionInput').value.trim(),
             parameter: false
         }
-        var magicPre = document.getElementById("magicPre");
+        const magicPre = document.getElementById("magicPre");
         magicPre.innerText = 'doing magic';
-        var notify = $.notify({ message: '<p class="text-center">Performing Magic...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Performing Magic...</p>' }, {});
         $.ajax({
             type: "POST",
             url: '/advanced',
@@ -110,7 +110,7 @@
             action: 'change_verbosity',
             parameter: desiredState
         }
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
             type: "POST",
             url: '/advanced',
@@ -140,7 +140,7 @@
             action: 'profile_monitor',
             parameter: false
         }
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
             type: "POST",
             url: '/fxserver/commands',

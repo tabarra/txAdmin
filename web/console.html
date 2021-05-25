@@ -113,7 +113,7 @@
         if (action !== 'start' && !window.confirm('Are you sure you want to ' + action + ' the server?')) {
             return;
         }
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
             url: actionURL = '/fxserver/controls/' + action,
             type: "GET",
@@ -153,6 +153,7 @@
         const historyElement = document.getElementById('cmdHistory');
         const autoScrollToggle = document.getElementById("toggleAutoScroll");
         let commandHistory = [];
+        let commandCache = [];
         let autoScroll = true;
     
 
@@ -197,7 +198,7 @@
             window.location = '/auth?logout';
         });
         socket.on('consoleData', function (msg) {
-            var _consoleData = consoleElement.innerHTML + ansi_up.ansi_to_html(msg);
+            let _consoleData = consoleElement.innerHTML + ansi_up.ansi_to_html(msg);
             _consoleData = (_consoleData.length > bufferTrimSize)
                 ? _consoleData.slice(-0.5 * bufferTrimSize) // grab the last half
                 : _consoleData; // no need to trim
@@ -236,10 +237,9 @@
 
 
         //Up / Down history
-        var commandCache = [];
-        var currentIndex;
+        let currentIndex;
         input.addEventListener("keydown", function (event) {
-            var changed = false;
+            let changed = false;
 
             if (event.key === "ArrowUp") {
                 changed = true;

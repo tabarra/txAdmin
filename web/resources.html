@@ -139,7 +139,7 @@
 
     //============================================== Refresh List
     $('#btnRefresh').click(function () {
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
             type: "POST",
             url: '/fxserver/commands',
@@ -165,7 +165,7 @@
 
     //============================================== Refresh button
     function btnCommand(action, parameter) {
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
             type: "POST",
             url: '/fxserver/commands',
@@ -190,9 +190,8 @@
 
     //============================================== Search function
     function findResource() {
-        var input, filter;
-        input = document.getElementById("resourceInput");
-        filter = input.value.toUpperCase();
+        const inputEl = document.getElementById("resourceInput");
+        const filter = inputEl.value.toUpperCase();
 
         resGroupsJS.forEach(folder => {
             let hidden = 0;

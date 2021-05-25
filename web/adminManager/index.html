@@ -260,7 +260,7 @@
             return;
         }
 
-        var notify = $.notify({ message: '<p class="text-center">Deleting...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Deleting...</p>' }, {});
         $.ajax({
             type: "POST",
             url: '/adminManager/delete',
@@ -302,22 +302,20 @@
 
     //============================================== Edit Admin
     $('#modEditAdmin-save').click(function () {
-        var permissions = new Array();
+        const permissions = [];
         $.each($("input[name='modEditAdmin-permissions[]']:checked"), function() {
             permissions.push($(this).val());
         });
-        if(!permissions.length) permissions = false;
-        let data = {
+        const data = {
             name: $('#modEditAdmin-name').val().trim(),
             citizenfxID: $('#modEditAdmin-citizenfxID').val().trim(),
             discordID: $('#modEditAdmin-discordID').val().trim(),
-            permissions: permissions
+            permissions: (permissions.length)? permissions : false
         }
         if (!data.name.length) {
-            var notify = $.notify({ message: 'Unnable to detect username.' }, { type: 'warning' });
-            return;
+            return $.notify({ message: 'Unnable to detect username.' }, { type: 'warning' });
         }
-        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
         $.ajax({
             type: "POST",
@@ -345,21 +343,20 @@
 
     //============================================== Add Admin
     $('#modAddAdmin-save').click(function () {
-        var permissions = new Array();
+        const permissions = [];
         $.each($("input[name='modAddAdmin-permissions[]']:checked"), function() {
             permissions.push($(this).val());
         });
-        if(!permissions.length) permissions = false;
-        let data = {
+        const data = {
             name: $('#modAddAdmin-name').val().trim(),
             citizenfxID: $('#modAddAdmin-citizenfxID').val().trim(),
             discordID: $('#modAddAdmin-discordID').val().trim(),
-            permissions: permissions
+            permissions: (permissions.length)? permissions : false
         }
         if(data.name.length < 3) {
             return $.notify({ message: 'The Username is not long enough.' }, { type: 'warning' });
         }
-        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
         $.ajax({
             type: "POST",

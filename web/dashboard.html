@@ -288,7 +288,7 @@
         if (action !== 'start' && !window.confirm('Are you sure you want to ' + action + ' the server?')) {
             return;
         }
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         $.ajax({
             url: '/fxserver/controls/' + action,
             type: "GET",
@@ -328,7 +328,7 @@
         }
         if(message == null) return;
 
-        var notify = $.notify({ message: 'Executing Command...' }, {});
+        const notify = $.notify({ message: 'Executing Command...' }, {});
         $.ajax({
             type: "POST",
             url: '/fxserver/commands',
