@@ -3,11 +3,12 @@
 - [x] reorganize web js files
 - [x] remove all `var` from web and core
 - [x] core: optimize host stats collection
+- [x] web: prepare html/js for nui mode (remove elements)
 - [ ] web: create `txAdminAPI` and replace all `$.ajax`
-- [ ] web: prepare html/js for iframe mode (remove logo, header, footer, playerlist, stats, live console, sv log?)
 - [ ] increase page timeouts
 - [ ] xxx
 - [ ] xxx
+- [ ] diagnostics: use `globals.monitor.hostStats` instead of `systeminformation`
 - [ ] add html file caching
 - [ ] master actions deveria aparecer, mas desabilitado
 

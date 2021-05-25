@@ -1,16 +1,13 @@
-// FIXME: Remove jQuery, we really don't need it
-
-
 //================================================================
 //============================================== Playerlist
 //================================================================
 //Vars and elements
 let cachedPlayers = [];
 let biggestPlayerID = 0;
-let playerlistElement = document.getElementById('playerlist');
-let plistMsgElement = document.getElementById('playerlist-message');
-let plistCountElement = document.getElementById('plist-count');
-let plistSearchElement = document.getElementById('plist-search');
+const playerlistElement = document.getElementById('playerlist');
+const plistMsgElement = document.getElementById('playerlist-message');
+const plistCountElement = document.getElementById('plist-count');
+const plistSearchElement = document.getElementById('plist-search');
 
 //Apply filter
 function applyPlayerlistFilter() {
@@ -29,7 +26,7 @@ function applyPlayerlistFilter() {
 }
 
 //Search function
-plistSearchElement.addEventListener('input', function (ev) {
+if (plistSearchElement) plistSearchElement.addEventListener('input', function (ev) {
     applyPlayerlistFilter();
 });
 

@@ -7,6 +7,7 @@ const timeoutShort = 1500;
 const timeoutMedium = 2500;
 const timeoutLong = 4000; //FIXME: na setup era 5000
 const bufferTrimSize = 128 * 1024; // 128kb
+const statusRefreshInterval = (isWebInterface) ? 1000 : 5000;
 
 //Helpers
 const spinnerHTML = '<div class="txSpinner">Loading...</div>';
@@ -60,6 +61,7 @@ const txAdminAPI = () => {
 //================================================= Darkmode Theme
 //================================================================
 (function () {
+    if (!isWebInterface) return;
     const darkModeCookie = document.cookie.match(/(^| )txAdmin-darkMode=([^;]+)/);
 
     if (darkModeCookie === null) {

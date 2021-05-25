@@ -50,7 +50,6 @@ module.exports = class Monitor {
         }, 1000);
         setInterval(async () => {
             this.hostStats = await getHostStats();
-            dir(this.hostStats);
         }, 5000);
         setInterval(() => {
             this.checkRestartSchedule();

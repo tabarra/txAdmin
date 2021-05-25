@@ -4,20 +4,23 @@
             </main>
 
             <!-- Footer -->
-            <footer class="c-footer text-center">
-                <div class="mx-auto d-md-none"> <strong>v{{it.txAdminVersion}}</strong> atop FXServer <strong>{{it.fxServerVersion}}</strong></div>
-                <div class="d-sm-down-none"> Written with ❤️ by
-                    <a href="https://github.com/tabarra" class="credit-links" target="_blank">Tabarra</a> for the
-                    <a href="https://github.com/citizenfx" class="credit-links" target="_blank">CitizenFX
-                        Collective</a>.
-                </div>
-                <div class="ml-auto d-sm-down-none"> <strong>v{{it.txAdminVersion}}</strong> atop FXServer <strong>{{it.fxServerVersion}}</strong></div>
-            </footer>
+            {{@if(it.isWebInterface)}}
+                <footer class="c-footer text-center">
+                    <div class="mx-auto d-md-none"> <strong>v{{it.txAdminVersion}}</strong> atop FXServer <strong>{{it.fxServerVersion}}</strong></div>
+                    <div class="d-sm-down-none"> Written with ❤️ by
+                        <a href="https://github.com/tabarra" class="credit-links" target="_blank">Tabarra</a> for the
+                        <a href="https://github.com/citizenfx" class="credit-links" target="_blank">CitizenFX
+                            Collective</a>.
+                    </div>
+                    <div class="ml-auto d-sm-down-none"> <strong>v{{it.txAdminVersion}}</strong> atop FXServer <strong>{{it.fxServerVersion}}</strong></div>
+                </footer>
+            {{/if}}
         </div>
     </div>
 
 
 <!-- Player info modal -->
+<!-- FIXME: usar partials -->
 <div class="modal fade" id="modPlayer" tabindex="-1" role="dialog" aria-labelledby="modPlayerTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -44,7 +47,7 @@
                                 aria-controls="modPlayerHistory" aria-selected="false"><i class="icon-notebook"></i> History</a>
                             <a class="nav-link nav-link-red" id="modPlayerBan-tab" data-toggle="pill" href="#modPlayerBan" role="tab" 
                                 aria-controls="modPlayerBan" aria-selected="false"><i class="icon-shield"></i> Ban</a>
-                          </div>
+                        </div>
                     </div> <!-- End Col -->
 
                     <div class="col-9">
@@ -142,7 +145,7 @@
                                 </div>
                             </div>
 
-                          </div>
+                        </div>
                     </div> <!-- End Col -->
 
                 </div> <!-- End Row -->
@@ -168,6 +171,7 @@
         </div>
     </div>
 </div>
+
 
 
 <!-- Change password modal -->

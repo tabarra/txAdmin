@@ -13,14 +13,16 @@ function refreshData() {
                 window.location = '/auth?logout';
                 return;
             }
-            $('#hostusage-cpu-bar').attr('aria-valuenow', data.host.cpu.pct).css('width', data.host.cpu.pct + '%');
-            $('#hostusage-cpu-text').html(data.host.cpu.text);
-            $('#hostusage-memory-bar').attr('aria-valuenow', data.host.memory.pct).css('width', data.host.memory.pct + '%');
-            $('#hostusage-memory-text').html(data.host.memory.text);
             $('#status-card').html(data.status);
-            $('#favicon').attr('href', 'img/' + data.meta.favicon + '.png');
-            document.title = data.meta.title;
-            processPlayers(data.players);
+            if (isWebInterface) {
+                $('#hostusage-cpu-bar').attr('aria-valuenow', data.host.cpu.pct).css('width', data.host.cpu.pct + '%');
+                $('#hostusage-cpu-text').html(data.host.cpu.text);
+                $('#hostusage-memory-bar').attr('aria-valuenow', data.host.memory.pct).css('width', data.host.memory.pct + '%');
+                $('#hostusage-memory-text').html(data.host.memory.text);
+                $('#favicon').attr('href', 'img/' + data.meta.favicon + '.png');
+                document.title = data.meta.title;
+                processPlayers(data.players);
+            }
         },
         error: function (xmlhttprequest, textstatus, message) {
             let out = null;
@@ -29,14 +31,16 @@ function refreshData() {
             } else {
                 out = `Request error: ${textstatus}\n${message}`;
             }
-            $('#hostusage-cpu-bar').attr('aria-valuenow', 0).css('width', 0);
-            $('#hostusage-cpu-text').html('error');
-            $('#hostusage-memory-bar').attr('aria-valuenow', 0).css('width', 0);
-            $('#hostusage-memory-text').html('error');
             $('#status-card').html(out.replace('\n', '\n<br>'));
-            $('#favicon').attr('href', 'img/favicon_offline.png');
-            document.title = 'ERROR - txAdmin';
-            processPlayers(out);
+            if (isWebInterface) {
+                $('#hostusage-cpu-bar').attr('aria-valuenow', 0).css('width', 0);
+                $('#hostusage-cpu-text').html('error');
+                $('#hostusage-memory-bar').attr('aria-valuenow', 0).css('width', 0);
+                $('#hostusage-memory-text').html('error');
+                $('#favicon').attr('href', 'img/favicon_offline.png');
+                document.title = 'ERROR - txAdmin';
+                processPlayers(out);
+            }
         },
     });
 };
@@ -114,7 +118,8 @@ document.getElementById('modChangePassword-save').onclick = (e) => {
 //================================================================
 document.addEventListener('DOMContentLoaded', function(event) {
     //Setting up status refresh
-    setInterval(refreshData, 1000);
+    refreshData();
+    setInterval(refreshData, statusRefreshInterval);
 
     //Opening modal
     if (typeof isTempPassword !== 'undefined') {

@@ -84,8 +84,10 @@
 </style>
 
 <!-- Title & outdated message: -->
-<div class="text-center mb-4">
-    <h2>{{it.serverName}} Dashboard</h2>
+<div class="text-center {{[(it.isWebInterface || it.txAdminOutdated), 'mb-4', '']|ternary}}">
+    {{@if(it.isWebInterface)}}
+        <h2>{{it.serverName}} Dashboard</h2>
+    {{/if}}
     {{@if(it.txAdminOutdated)}}
         <h2 class="text-danger">This version of txAdmin is outdated. Please update now.</h2>
         <h5 class="text-muted">
