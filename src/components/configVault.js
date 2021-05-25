@@ -8,8 +8,8 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const toDefault = (input, defVal) => { return (isUndefined(input)) ? defVal : input; };
 const removeNulls = (obj) => {
-    var isArray = obj instanceof Array;
-    for (var k in obj) {
+    const isArray = obj instanceof Array;
+    for (let k in obj) {
         if (obj[k] === null) isArray ? obj.splice(k, 1) : delete obj[k];
         else if (typeof obj[k] == 'object') removeNulls(obj[k]);
         if (isArray && obj.length == k) removeNulls(obj);

@@ -2,6 +2,7 @@
 - [x] fixed perf chart labels
 - [x] reorganize web js files
 - [x] remove all `var` from web and core
+- [x] core: optimize host stats collection
 - [ ] web: create `txAdminAPI` and replace all `$.ajax`
 - [ ] web: prepare html/js for iframe mode (remove logo, header, footer, playerlist, stats, live console, sv log?)
 - [ ] increase page timeouts
