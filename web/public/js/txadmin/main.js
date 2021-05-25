@@ -1,23 +1,4 @@
-// FIXME: Remove jQuery, we really don't need it
-
-//================================================================
-//============================================= Settings & Helpers
-//================================================================
-//Settings
-const timeoutShort = 1500;
-const timeoutMedium = 2500;
-const timeoutLong = 4000;
-const bufferTrimSize = 128 * 1024; // 128kb
-
-//Helpers
-const spinnerHTML = '<div class="txSpinner">Loading...</div>';
-const xss = (x) => {
-    let tmp = document.createElement('div');
-    tmp.innerText = x;
-    return tmp.innerHTML;
-};
-
-
+/* eslint-disable no-unused-vars */
 //================================================================
 //============================================== Dynamic Stats
 //================================================================
@@ -69,44 +50,42 @@ function changeOwnPasswordModal() {
     $('#modChangePassword').modal('show');
 }
 
-$('#modChangePassword-save').click(function () {
-    let data = {
+document.getElementById('modChangePassword-save').onclick = (e) => {
+    const form = {
         newPassword: $('#modChangePassword-newPassword').val().trim(),
         confirmPassword: $('#modChangePassword-confirmPassword').val().trim(),
     };
 
     //Validity Checking
-    let errors = [];
-    if (!data.newPassword.length || !data.confirmPassword.length) {
+    const errors = [];
+    if (!form.newPassword.length || !form.confirmPassword.length) {
         errors.push('The new password fields are required.');
     }
-    if (data.newPassword !== data.confirmPassword) {
+    if (form.newPassword !== form.confirmPassword) {
         errors.push('Your new password doesn\'t match the one typed in the confirmation input.');
     }
     if (typeof isTempPassword === 'undefined') {
-        data.oldPassword = $('#modChangePassword-oldPassword').val().trim();
-        if (!data.oldPassword.length) {
+        form.oldPassword = $('#modChangePassword-oldPassword').val().trim();
+        if (!form.oldPassword.length) {
             errors.push('The old password field is required.');
         }
-        if (data.oldPassword === data.confirmPassword) {
+        if (form.oldPassword === form.confirmPassword) {
             errors.push('The new password must be different than the old one.');
         }
     }
-    if (data.newPassword.length < 6 || data.newPassword.length > 24) {
+    if (form.newPassword.length < 6 || form.newPassword.length > 24) {
         errors.push('The new password has to be between 6 and 24 characters.');
     }
     if (errors.length) {
-        var notify = $.notify({ message: '<b>Errors:</b><br> - ' + errors.join(' <br>\n - ') }, { type: 'warning' });
-        return;
+        return $.notify({ message: '<b>Errors:</b><br> - ' + errors.join(' <br>\n - ') }, { type: 'warning' });
     }
 
-    var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
-
+    const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
     $.ajax({
         type: 'POST',
         url: '/changePassword',
         timeout: timeoutMedium,
-        data: data,
+        data: form,
         dataType: 'json',
         success: function (data) {
             notify.update('progress', 0);
@@ -127,37 +106,18 @@ $('#modChangePassword-save').click(function () {
             $('#modChangePassword').modal('hide');
         },
     });
-});
-
+};
 
 
 //================================================================
-//========================================== Extra stuff
+//=================================================== On Page Load
 //================================================================
-//Page load
-$(document).ready(function() {
-    $.notifyDefaults({
-        z_index: 2000,
-        mouse_over: 'pause',
-        placement: {
-            align: 'center',
-        },
-        offset: {
-            y: 64,
-        },
-    });
+document.addEventListener('DOMContentLoaded', function(event) {
+    //Setting up status refresh
     setInterval(refreshData, 1000);
 
+    //Opening modal
     if (typeof isTempPassword !== 'undefined') {
-        $('#modChangePassword-oldPassword').attr('disabled', true);
-        $('#modChangePassword-oldPassword').attr('required', false);
         $('#modChangePassword').modal('show');
-    }
-});
-
-//Handle profile picture load error
-$('.profile-pic').on('error', function() {
-    if ($(this).attr('src') != 'img/default_avatar.png') {
-        $(this).attr('src', 'img/default_avatar.png');
     }
 });

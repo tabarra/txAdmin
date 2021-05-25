@@ -183,7 +183,7 @@
             <div class="modal-body text-center" id="modChangePassword-body">
                 <div class="form-group row">
                     {{@if(it.isTempPassword)}}
-                        <script>var isTempPassword = true;</script>
+                        <script>const isTempPassword = true;</script>
                         <div class="col-sm-8 mx-auto">
                             <h5 class="text-danger mx-auto">Your account has a temporary password that needs to be changed.</h5>
                         </div>
@@ -242,8 +242,8 @@
     <script src="https://unpkg.com/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
     <script src="js/coreui.bundle.min.js"></script>
     <script src="js/bootstrap-notify.min.js"></script>
-    <script src="js/txadmin/app.js"></script>
+    <script src="js/txadmin/base.js"></script>
+    <script src="js/txadmin/main.js"></script>
     <script src="js/txadmin/players.js"></script>
-    <script src="js/txadmin/dark.js"></script>
 </body>
 </html>

@@ -308,7 +308,7 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/coreui.bundle.min.js"></script>
     <script src="js/bootstrap-notify.min.js"></script>
-    <script src="js/txadmin/dark.js"></script>
+    <script src="js/txadmin/base.js"></script>
 
     <!-- JS -->
     <script src="js/codeEditor/codemirror.js"></script>
@@ -320,7 +320,6 @@
         const currentStep = '{{it.step}}';
         const isPlaceholderRecipe = ('{{it.isPlaceholderRecipe}}' === 'true');
         const codeMirrorTarget = document.getElementById("codeMirrorTarget");
-        const timeoutLong = 4000;
 
         const checkDoLogoutRefresh = (data) => {
             if(data.logout === true){
@@ -334,16 +333,6 @@
         }
 
         window.onload = function () {
-            $.notifyDefaults({
-                z_index: 2000,
-                mouse_over: 'pause',
-                placement: {
-                    align: 'center'
-                },
-                offset: {
-                    y: 64
-                },
-            });
             if(currentStep == 'review' || currentStep == 'configure'){
                 window.CMInstance = CodeMirror.fromTextArea(codeMirrorTarget, {
                     mode: (currentStep == 'review')? 'yaml' : 'fivem-cfg',

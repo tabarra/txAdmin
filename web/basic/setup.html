@@ -378,20 +378,20 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/coreui.bundle.min.js"></script>
     <script src="js/bootstrap-notify.min.js"></script>
-    <script src="js/txadmin/dark.js"></script>
+    <script src="js/txadmin/base.js"></script>
 
     <!-- JS -->
     <script src="https://unpkg.com/materialize-stepper@3.1.0/dist/js/mstepper.js"></script>
     <script>
-        //Constants & vars
+        //Constants
         const recipesIndexURL = 'https://raw.githubusercontent.com/tabarra/txAdmin-recipes/main/indexv3.json';
         const txDataPath = '{{it.txDataPath}}';
         const deployerEngineVersion = parseInt('{{it.deployerEngineVersion}}');
         const isReset = ('{{it.isReset}}' === 'true');
-        const timeoutLong = 5000;
-        // const spinnerHTML = '<div style="min-height: 250px;" class="txSpinner">Loading...</div>';
-        const spinnerHTML = '<div style="min-height: 250px; margin: auto;"><div class="txSpinner">Loading...</div></div>';
+        const spinnerHTMLSized = `<div style="min-height: 250px; margin: auto;">${spinnerHTML}</div>`;
         const connectErrorMessage = `<b>Unable to connect to txAdmin.</b> <br> If you closed it, please start again and retry.`;
+
+        //Vars
         const suggestions = {};
         let loadedTemplates = [];
         let selectedTemplateIndex;
@@ -405,7 +405,7 @@
             showFeedbackPreloader: true,
             stepTitleNavigation: false,
             firstActive: (isReset)? 2 : 0,
-            feedbackPreloader: spinnerHTML,
+            feedbackPreloader: spinnerHTMLSized,
         });
 
         //Functions
@@ -521,7 +521,7 @@
                 s5Title.textContent = "Data Location";
                 finishButton.textContent = "Go to Recipe Deployer";
                 finishMessage.textContent = "We are almost there!";
-                s4PopularTemplateRow.innerHTML = spinnerHTML;
+                s4PopularTemplateRow.innerHTML = spinnerHTMLSized;
                 s4CustomTemplateDiv.classList.add('d-none');
                 s4LocalDataPathDiv.classList.add('d-none');
                 s5DeployerTargetDiv.classList.remove('d-none');
