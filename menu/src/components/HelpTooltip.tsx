@@ -93,7 +93,7 @@ export const HelpTooltip: React.FC = ({ children }) => {
 
     return () => {
       if (timeTillOpenRef.current) {
-        clearInterval(timeTillOpenRef.current);
+        clearTimeout(timeTillOpenRef.current);
         timeTillOpenRef.current = null;
       }
     };
@@ -101,9 +101,10 @@ export const HelpTooltip: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (tooltipOpen) {
-      changeMsgTimeRef.current = setTimeout(() => {
+      changeMsgTimeRef.current = setInterval(() => {
         const tooltip = getNewTooltip();
         setTooltipContent(tooltip);
+        changeMsgTimeRef.current = null
       }, RANDOM_CHANGE_TIME);
     }
 
@@ -119,7 +120,7 @@ export const HelpTooltip: React.FC = ({ children }) => {
     <Tooltip
       open={tooltipOpen}
       title={
-        <Typography style={{textAlign: 'center'}}>
+        <Typography variant='caption' align='center'>
           {tooltipContent}
         </Typography>
       }
