@@ -79,7 +79,6 @@ RegisterCommand('txAdmin:openMenu', function()
   end
 end)
 
-
 --[[
   NUI Callbacks from the menu
  ]]
@@ -262,6 +261,12 @@ RegisterNUICallback('fixVehicle', function(_, cb)
 
   TriggerServerEvent('txAdmin:menu:fixVehicle')
   cb({})
+end)
+
+-- Used to trigger the help alert
+AddEventHandler('playerSpawned', function()
+  Wait(60000)
+  sendMenuMessage('showMenuHelpInfo', {})
 end)
 
 --[[ Player list sync ]]
