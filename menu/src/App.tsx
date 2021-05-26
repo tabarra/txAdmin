@@ -10,6 +10,7 @@ import { debugData } from "./utils/debugLog";
 import { I18n } from "react-polyglot";
 import { useServerCtxValue } from "./state/server.state";
 import { getLocale } from "./utils/getLocale";
+import { WarnPage } from "./components/WarnPage";
 
 debugData([
   {
@@ -34,11 +35,14 @@ const App: React.FC = () => {
         messages={localeSelected}
         allowMissing={false}
       >
-        <DialogProvider>
-          <div className="App" style={visible ? { opacity: 1 } : undefined}>
-            <MenuRoot />
-          </div>
-        </DialogProvider>
+        <>
+          <DialogProvider>
+            <div className="App" style={visible ? { opacity: 1 } : undefined}>
+              <MenuRoot />
+            </div>
+          </DialogProvider>
+          <WarnPage />
+        </>
       </I18n>
     </TopLevelErrorBoundary>
   );
