@@ -31,7 +31,6 @@ const DialogInfoView: React.FC = () => {
         value={note}
         onChange={(e) => setNote(e.currentTarget.value)}
         onKeyPress={(e) => e.key === 'Enter' && handleSaveNote}
-        placeholder="Someting about Tabarra"
         variant="outlined"
         multiline
         rows={4}

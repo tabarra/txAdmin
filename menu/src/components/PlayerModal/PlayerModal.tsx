@@ -18,6 +18,7 @@ import DialogActionView from "./Tabs/DialogActionView";
 import DialogInfoView from "./Tabs/DialogInfoView";
 import { useDialogStyles, useStyles } from "./modal.styles";
 import DialogIdView from "./Tabs/DialogIdView";
+import DialogHistoryView from "./Tabs/DialogHistoryView";
 
 const PlayerModal: React.FC = () => {
   const player = usePlayerDetails();
@@ -43,6 +44,7 @@ const PlayerModal: React.FC = () => {
         style: {
           backgroundColor: theme.palette.background.default,
           minHeight: 450,
+          maxHeight: 450,
           borderRadius: 15
         },
       }}
@@ -59,6 +61,7 @@ const PlayerModal: React.FC = () => {
           {tab == 1 && <DialogActionView />}
           {tab == 2 && <DialogInfoView />}
           {tab == 3 && <DialogIdView />}
+          {tab == 4 && <DialogHistoryView />}
           {tab == 5 && <DialogBanView />}
         </Box>
       </Box>
@@ -104,6 +107,7 @@ const DialogList: React.FC = () => {
         style={{ borderRadius: 8 }}
         button
         onClick={() => setTab(4)}
+        selected={tab === 4 && true}
         classes={{ root: classes.root, selected: classes.selected }}
       >
         <ListItemIcon><MenuBook/></ListItemIcon>
