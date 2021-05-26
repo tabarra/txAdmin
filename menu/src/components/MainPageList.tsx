@@ -348,7 +348,7 @@ export const MainPageList: React.FC = () => {
   );
 
   return (
-    <Box>
+    <Box pb={2}>
       <List className={classes.list}>
         {menuListItems.map((item, index) =>
           item.isMultiAction ? (
@@ -368,11 +368,17 @@ export const MainPageList: React.FC = () => {
           )
         )}
       </List>
-      <Box className={classes.fadeTop} style={{opacity: curSelected <= 1 ? 0 : 1}}/>
-      <Box className={classes.fadeBottom} style={{opacity: curSelected >= 6 ? 0 : 1}}/>
-      <Box className={classes.icon} display="flex" justifyContent="center">
-        <ExpandMore />
-      </Box>
+      {/*<Box className={classes.fadeTop} style={{opacity: curSelected <= 1 ? 0 : 1}}/>*/}
+      {/*<Box className={classes.fadeBottom} style={{opacity: curSelected >= 6 ? 0 : 1}}/>*/}
+      {
+      /*
+        This arrow was used for a scrollable main item list, if it becomes scrollable again
+        reuse this
+      */
+      /*<Box className={classes.icon} display="flex" justifyContent="center">*/
+      /*  <ExpandMore />*/
+      /*</Box>*/
+      }
     </Box>
   );
 };
