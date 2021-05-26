@@ -3,7 +3,7 @@ import {Box, Collapse, makeStyles, Theme} from "@material-ui/core";
 import { PageTabs } from "./PageTabs";
 import { MainPageList } from "./MainPageList";
 import { PlayersPage } from "./PlayersPage";
-import { IframePage } from "./IframePage";
+import { IFramePage } from "./IFramePage";
 import { txAdminMenuPage, usePageValue } from "../state/page.state";
 import { useHudListenersService } from "../hooks/useHudListenersService";
 
@@ -42,7 +42,7 @@ const MenuRoot: React.FC = () => {
         </Collapse>
       </Box>
       <PlayersPage visible={curPage === txAdminMenuPage.Players} />
-      <IframePage visible={curPage === txAdminMenuPage.Iframe} />
+      <IFramePage visible={curPage === txAdminMenuPage.IFrame} />
     </>
   );
 };

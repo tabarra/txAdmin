@@ -15,7 +15,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-export const IframePage: React.FC<{ visible: boolean }> = ({ visible }) => {
+export const IFramePage: React.FC<{ visible: boolean }> = ({ visible }) => {
   const classes = useStyles();
 
   return (
