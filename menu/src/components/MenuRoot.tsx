@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderRadius: 15,
     display: "flex",
     flexDirection: "column",
+    userSelect: 'none'
   },
 }));
 
