@@ -7,9 +7,9 @@ import {
   makeStyles,
   Theme,
 } from "@material-ui/core";
-import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation";
+import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { Code } from "@material-ui/icons";
-import { fetchNui } from '../utils/fetchNui';
+import { fetchNui } from '../../utils/fetchNui';
 
 export interface MenuListItemProps {
   icon: JSX.Element;

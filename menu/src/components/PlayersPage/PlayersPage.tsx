@@ -1,7 +1,7 @@
 import React from "react";
 import { Box, makeStyles, Theme } from "@material-ui/core";
 import { PlayerPageHeader } from "./PlayerPageHeader";
-import { useFilteredSortedPlayers } from "../state/players.state";
+import { useFilteredSortedPlayers } from "../../state/players.state";
 import { PlayersListEmpty } from "./PlayersListEmpty";
 import { PlayersListGrid } from "./PlayersListGrid";
 

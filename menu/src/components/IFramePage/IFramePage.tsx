@@ -25,7 +25,7 @@ export const IFramePage: React.FC<{ visible: boolean }> = ({ visible }) => {
       mb={10}
       display={visible ? "initial" : "none"}
     >
-      <iframe src="http://localhost:40120/" className={classes.iframe}></iframe>
+      <iframe src="http://localhost:40120/" className={classes.iframe} />
     </Box>
   );
 };

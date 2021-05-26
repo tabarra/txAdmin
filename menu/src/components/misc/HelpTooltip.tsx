@@ -12,8 +12,8 @@ import {
   Tooltip,
   Typography,
 } from "@material-ui/core";
-import { txAdminMenuPage, usePageValue } from "../state/page.state";
-import { useIsMenuVisible } from "../state/visibility.state";
+import { txAdminMenuPage, usePageValue } from "../../state/page.state";
+import { useIsMenuVisible } from "../../state/visibility.state";
 
 const RANDOM_CHANGE_TIME = 7000;
 const TIME_FOR_TOOLTIP_TO_APPEAR = 3000;
@@ -104,7 +104,7 @@ export const HelpTooltip: React.FC = ({ children }) => {
       changeMsgTimeRef.current = setInterval(() => {
         const tooltip = getNewTooltip();
         setTooltipContent(tooltip);
-        changeMsgTimeRef.current = null
+        changeMsgTimeRef.current = null;
       }, RANDOM_CHANGE_TIME);
     }
 
@@ -120,7 +120,7 @@ export const HelpTooltip: React.FC = ({ children }) => {
     <Tooltip
       open={tooltipOpen}
       title={
-        <Typography variant='caption' align='center'>
+        <Typography variant="caption" align="center">
           {tooltipContent}
         </Typography>
       }

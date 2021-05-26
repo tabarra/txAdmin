@@ -5,7 +5,7 @@ import MenuRoot from "./components/MenuRoot";
 import { DialogProvider } from "./provider/DialogProvider";
 import { useExitListener } from "./hooks/useExitListener";
 import { useNuiListenerService } from "./hooks/useNuiListenersService";
-import { TopLevelErrorBoundary } from "./components/TopLevelErrorBoundary";
+import { TopLevelErrorBoundary } from "./components/misc/TopLevelErrorBoundary";
 import { debugData } from "./utils/debugLog";
 import { I18n } from "react-polyglot";
 import { useServerCtxValue } from "./state/server.state";

@@ -15,7 +15,7 @@ import {
   MoreVert,
   Motorcycle,
 } from "@material-ui/icons";
-import { PlayerData } from "../state/players.state";
+import { PlayerData } from "../../state/players.state";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {

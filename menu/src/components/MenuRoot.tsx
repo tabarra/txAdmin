@@ -5,13 +5,13 @@ import {
   makeStyles,
   Theme,
 } from "@material-ui/core";
-import { PageTabs } from "./PageTabs";
-import { MainPageList } from "./MainPageList";
-import { PlayersPage } from "./PlayersPage";
-import { IFramePage } from "./IFramePage";
+import { PageTabs } from "./misc/PageTabs";
+import { MainPageList } from "./MainPage/MainPageList";
+import { PlayersPage } from "./PlayersPage/PlayersPage";
+import { IFramePage } from "./IFramePage/IFramePage";
 import { txAdminMenuPage, usePageValue } from "../state/page.state";
 import { useHudListenersService } from "../hooks/useHudListenersService";
-import { HelpTooltip } from './HelpTooltip';
+import { HelpTooltip } from './misc/HelpTooltip';
 
 
 const TxAdminLogo: React.FC = () => (

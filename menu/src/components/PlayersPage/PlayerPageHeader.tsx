@@ -14,9 +14,9 @@ import {
   usePlayersSortBy,
   usePlayersState,
   useSetPlayerFilter,
-} from "../state/players.state";
-import { useDebounce } from "../hooks/useDebouce";
-import { useServerCtxValue } from "../state/server.state";
+} from "../../state/players.state";
+import { useDebounce } from "../../hooks/useDebouce";
+import { useServerCtxValue } from "../../state/server.state";
 import { useTranslate } from "react-polyglot";
 
 const useStyles = makeStyles((theme: Theme) => ({

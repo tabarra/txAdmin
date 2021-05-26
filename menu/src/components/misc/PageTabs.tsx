@@ -1,8 +1,8 @@
 import React, { ChangeEvent, useCallback } from "react";
 import { Box, makeStyles, Tab, Tabs } from "@material-ui/core";
-import { usePage } from "../state/page.state";
-import { useKey } from "../hooks/useKey";
-import { useTabDisabledValue } from "../state/tab.state";
+import { usePage } from "../../state/page.state";
+import { useKey } from "../../hooks/useKey";
+import { useTabDisabledValue } from "../../state/tab.state";
 
 const useStyles = makeStyles({
   tab: {
