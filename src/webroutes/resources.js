@@ -8,13 +8,13 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const breakPath = (inPath) => {return slash(path.normalize(inPath)).split('/').filter(String);};
 const dynamicSort = (prop) => {
-    var sortOrder = 1;
+    let sortOrder = 1;
     if (prop[0] === '-') {
         sortOrder = -1;
         prop = prop.substr(1);
     }
     return function (a, b) {
-        var result = (a[prop] < b[prop]) ? -1 : (a[prop] > b[prop]) ? 1 : 0;
+        const result = (a[prop] < b[prop]) ? -1 : (a[prop] > b[prop]) ? 1 : 0;
         return result * sortOrder;
     };
 };

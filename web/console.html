@@ -113,12 +113,12 @@
         if (action !== 'start' && !window.confirm('Are you sure you want to ' + action + ' the server?')) {
             return;
         }
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
-        $.ajax({
+        const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        txAdminAPI({
             url: actionURL = '/fxserver/controls/' + action,
             type: "GET",
             dataType: "json",
-            timeout: timeoutLong,
+            timeout: REQ_TIMEOUT_LONG,
             success: function (data) {
                 if (data.logout) {
                     window.location = '/auth?logout';
@@ -153,6 +153,7 @@
         const historyElement = document.getElementById('cmdHistory');
         const autoScrollToggle = document.getElementById("toggleAutoScroll");
         let commandHistory = [];
+        let commandCache = [];
         let autoScroll = true;
     
 
@@ -197,9 +198,9 @@
             window.location = '/auth?logout';
         });
         socket.on('consoleData', function (msg) {
-            var _consoleData = consoleElement.innerHTML + ansi_up.ansi_to_html(msg);
-            _consoleData = (_consoleData.length > bufferTrimSize)
-                ? _consoleData.slice(-0.5 * bufferTrimSize) // grab the last half
+            let _consoleData = consoleElement.innerHTML + ansi_up.ansi_to_html(msg);
+            _consoleData = (_consoleData.length > BUFFER_TRIM_SIZE)
+                ? _consoleData.slice(-0.5 * BUFFER_TRIM_SIZE) // grab the last half
                 : _consoleData; // no need to trim
             consoleElement.innerHTML = _consoleData.substr(_consoleData.indexOf("\n"));
             if (autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight;
@@ -236,10 +237,9 @@
 
 
         //Up / Down history
-        var commandCache = [];
-        var currentIndex;
+        let currentIndex;
         input.addEventListener("keydown", function (event) {
-            var changed = false;
+            let changed = false;
 
             if (event.key === "ArrowUp") {
                 changed = true;

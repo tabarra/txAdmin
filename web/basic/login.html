@@ -124,6 +124,10 @@
 
         </style>
     {{/if}}
+
+    <!-- injected consts -->
+    <script>{{it.jsInjection|safe}}</script>
+    
 </head>
 
 <body class="c-app flex-row align-items-center {{it.uiTheme}}">
@@ -325,14 +329,9 @@
     <!-- CoreUI and necessary plugins-->
     <script src="js/jquery.min.js"></script>
     <script src="js/coreui.bundle.min.js"></script>
-    <script src="js/txadmin/dark.js"></script>
+    <script src="js/txadmin/base.js"></script>
     <script>
         window.history.pushState(null, 'txAdmin', '/auth');
-        $(".profile-pic").on("error", function() {
-            if($(this).attr('src') != 'img/default_avatar.png'){
-                $(this).attr('src', 'img/default_avatar.png');
-            }
-        });
     </script>
 </body>
 

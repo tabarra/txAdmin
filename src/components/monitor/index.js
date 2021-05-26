@@ -3,7 +3,7 @@ const modulename = 'Monitor';
 const axios = require('axios');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
-const HostCPUStatus = require('./hostCPUStatus');
+const getHostStats = require('./getHostStats');
 
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -38,8 +38,7 @@ module.exports = class Monitor {
         };
 
         //Setting up
-        // logOk('Started');
-        this.cpuStatusProvider = new HostCPUStatus();
+        this.hostStats = null;
         this.schedule = null;
         this.resetMonitorStats();
         this.buildSchedule();
@@ -49,6 +48,9 @@ module.exports = class Monitor {
             this.sendHealthCheck();
             this.refreshServerStatus();
         }, 1000);
+        setInterval(async () => {
+            this.hostStats = await getHostStats();
+        }, 5000);
         setInterval(() => {
             this.checkRestartSchedule();
         }, 60 * 1000);

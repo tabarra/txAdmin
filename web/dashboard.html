@@ -84,8 +84,10 @@
 </style>
 
 <!-- Title & outdated message: -->
-<div class="text-center mb-4">
-    <h2>{{it.serverName}} Dashboard</h2>
+<div class="text-center {{[(it.isWebInterface || it.txAdminOutdated), 'mb-4', '']|ternary}}">
+    {{@if(it.isWebInterface)}}
+        <h2>{{it.serverName}} Dashboard</h2>
+    {{/if}}
     {{@if(it.txAdminOutdated)}}
         <h2 class="text-danger">This version of txAdmin is outdated. Please update now.</h2>
         <h5 class="text-muted">
@@ -288,12 +290,12 @@
         if (action !== 'start' && !window.confirm('Are you sure you want to ' + action + ' the server?')) {
             return;
         }
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
-        $.ajax({
+        const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        txAdminAPI({
             url: '/fxserver/controls/' + action,
             type: "GET",
             dataType: "json",
-            timeout: timeoutLong,
+            timeout: REQ_TIMEOUT_LONG,
             success: function (data) {
                 if (data.logout) {
                     window.location = '/auth?logout';
@@ -328,11 +330,10 @@
         }
         if(message == null) return;
 
-        var notify = $.notify({ message: 'Executing Command...' }, {});
-        $.ajax({
+        const notify = $.notify({ message: 'Executing Command...' }, {});
+        txAdminAPI({
             type: "POST",
             url: '/fxserver/commands',
-            timeout: timeoutMedium,
             data: {
                 action,
                 parameter: message

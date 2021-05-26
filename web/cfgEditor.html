@@ -68,10 +68,9 @@
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/cfgEditor/save',
-            timeout: timeoutMedium,
             data: {cfgData},
             dataType: 'json',
             success: function (data) {

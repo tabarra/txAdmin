@@ -1,6 +1,18 @@
 ## TODO v4.0.0
 - [x] fixed perf chart labels
-- [ ] xxxxxxxx
+- [x] reorganize web js files
+- [x] remove all `var` from web and core
+- [x] core: optimize host stats collection
+- [x] web: prepare html/js for nui mode (remove elements)
+- [X] web: create `txAdminAPI` and replace all `$.ajax`
+- [x] increase page timeouts
+- [ ] xxx
+- [ ] xxx
+- [ ] diagnostics: use `globals.monitor.hostStats` instead of `systeminformation`
+- [ ] add html file caching
+- [ ] master actions deveria aparecer, mas desabilitado
+- [ ] srvCmdBuffer needs to strip the color escape characters
+
 
 
 quando falta convar

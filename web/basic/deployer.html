@@ -36,6 +36,9 @@
             font-size: large;
         }
     </style>
+    
+    <!-- injected consts -->
+    <script>{{it.jsInjection|safe}}</script>
 </head>
 
 <body class="c-app flex-row align-items-center {{it.uiTheme}}">
@@ -308,7 +311,7 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/coreui.bundle.min.js"></script>
     <script src="js/bootstrap-notify.min.js"></script>
-    <script src="js/txadmin/dark.js"></script>
+    <script src="js/txadmin/base.js"></script>
 
     <!-- JS -->
     <script src="js/codeEditor/codemirror.js"></script>
@@ -320,30 +323,8 @@
         const currentStep = '{{it.step}}';
         const isPlaceholderRecipe = ('{{it.isPlaceholderRecipe}}' === 'true');
         const codeMirrorTarget = document.getElementById("codeMirrorTarget");
-        const timeoutLong = 4000;
-
-        const checkDoLogoutRefresh = (data) => {
-            if(data.logout === true){
-                window.location = '/auth?logout';
-                return true;
-            }else if(data.refresh === true){
-                window.location.reload(true);
-                return true;
-            }
-            return false;
-        }
 
         window.onload = function () {
-            $.notifyDefaults({
-                z_index: 2000,
-                mouse_over: 'pause',
-                placement: {
-                    align: 'center'
-                },
-                offset: {
-                    y: 64
-                },
-            });
             if(currentStep == 'review' || currentStep == 'configure'){
                 window.CMInstance = CodeMirror.fromTextArea(codeMirrorTarget, {
                     mode: (currentStep == 'review')? 'yaml' : 'fivem-cfg',
@@ -369,10 +350,10 @@
             }
             const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-            $.ajax({
+            txAdminAPI({
                 type: "POST",
                 url: '/deployer/recipe/confirmRecipe',
-                timeout: timeoutLong,
+                timeout: REQ_TIMEOUT_LONG,
                 data: {recipe},
                 dataType: 'json',
                 success: function (data) {
@@ -445,10 +426,10 @@
             }
 
             const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
-            $.ajax({
+            txAdminAPI({
                 type: "POST",
                 url: '/deployer/recipe/setVariables',
-                timeout: timeoutLong,
+                timeout: REQ_TIMEOUT_LONG,
                 data: postData,
                 dataType: 'json',
                 success: function (data) {
@@ -479,10 +460,10 @@
             nextButton: document.getElementById('step3NextButton'),
         }
         const refreshStatus = async () => {
-            $.ajax({
+            txAdminAPI({
                 type: "GET",
                 url: '/deployer/status',
-                timeout: timeoutLong,
+                timeout: REQ_TIMEOUT_LONG,
                 success: function (data) {
                     if(checkDoLogoutRefresh(data)) return;
                     step3elements.error.classList.add('d-none');
@@ -535,10 +516,10 @@
                 return $.notify({ message: `Please change the <strong>sv_licenseKey</strong>.` }, { type: 'danger' });
             }
 
-            $.ajax({
+            txAdminAPI({
                 type: "POST",
                 url: '/deployer/recipe/commit',
-                timeout: timeoutLong,
+                timeout: REQ_TIMEOUT_LONG,
                 data: {serverCFG},
                 dataType: 'json',
                 success: function (data) {
@@ -562,10 +543,10 @@
         //============================================== cancel action
         function cancelAction(){
             const notify = $.notify({ message: '<p class="text-center">Cancelling...</p>' }, {});
-            $.ajax({
+            txAdminAPI({
                 type: "POST",
                 url: '/deployer/recipe/cancel',
-                timeout: timeoutLong,
+                timeout: REQ_TIMEOUT_LONG,
                 success: function (data) {
                     if(checkDoLogoutRefresh(data)) return;
                     if (data.success == true){

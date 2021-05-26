@@ -304,6 +304,7 @@ end
 
 -- Player connecting handler
 function handleConnections(name, skr, d)
+    local player = source
     if GetConvar("txAdmin-checkPlayerJoin", "invalid") == "true" then
         d.defer()
         Wait(0)
@@ -312,7 +313,7 @@ function handleConnections(name, skr, d)
         local url = "http://"..apiHost.."/intercom/checkPlayerJoin"
         local exData = {
             txAdminToken = apiToken,
-            identifiers = GetPlayerIdentifiers(source),
+            identifiers = GetPlayerIdentifiers(player),
             name = name
         }
         if #exData.identifiers <= 1 then
