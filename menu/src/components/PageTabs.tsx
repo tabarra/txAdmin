@@ -44,7 +44,7 @@ export const PageTabs: React.FC = () => {
         />
         <Tab
           className={classes.tab}
-          label="TXAdmin"
+          label="txAdmin"
           wrapped
           disableFocusRipple
         />

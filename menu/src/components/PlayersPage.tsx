@@ -47,7 +47,7 @@ export const PlayersPage: React.FC<{ visible: boolean }> = ({ visible }) => {
       mb={10}
       pt={4}
       px={4}
-      visibility={visible ? "visible" : "hidden"}
+      display={visible ? "initial" : "none"}
     >
       <PlayerPageHeader />
       <Box className={classes.grid}>
