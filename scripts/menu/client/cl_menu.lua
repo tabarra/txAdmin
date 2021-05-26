@@ -156,6 +156,8 @@ RegisterNUICallback('fixVehicle', function(_, cb)
 end)
 
 --[[ Player list sync ]]
+-- This is the easiest way to do it, it can technically be optimized
+-- by only sending player state when it changes but meh
 RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
   -- process data to add distance, remove pos
   for i in ipairs(data) do

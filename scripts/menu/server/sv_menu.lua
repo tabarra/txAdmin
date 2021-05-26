@@ -167,6 +167,7 @@ CreateThread(function()
         vehicleStatus = vehClass,
         pos = GetEntityCoords(ped),
         username = GetPlayerName(serverID),
+        identifiers = GetPlayerIdentifiers(serverID)
       }
       -- Lets yield for a tick so we don't have hitch issues
       Wait(0)
