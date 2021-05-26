@@ -5,8 +5,8 @@
 //Settings & constants
 const TX_BASE_PATH = '';
 const REQ_TIMEOUT_SHORT = 1500;
-const REQ_TIMEOUT_MEDIUM = 2500;
-const REQ_TIMEOUT_LONG = 4000; //FIXME: na setup era 5000
+const REQ_TIMEOUT_MEDIUM = 5000;
+const REQ_TIMEOUT_LONG = 9000;
 const BUFFER_TRIM_SIZE = 128 * 1024; // 128kb
 const STATUS_REFRESH_INTERVAL = (isWebInterface) ? 1000 : 5000;
 const SPINNER_HTML = '<div class="txSpinner">Loading...</div>';

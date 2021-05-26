@@ -5,7 +5,7 @@
 - [x] core: optimize host stats collection
 - [x] web: prepare html/js for nui mode (remove elements)
 - [X] web: create `txAdminAPI` and replace all `$.ajax`
-- [ ] increase page timeouts
+- [x] increase page timeouts
 - [ ] xxx
 - [ ] xxx
 - [ ] diagnostics: use `globals.monitor.hostStats` instead of `systeminformation`
