@@ -6,8 +6,9 @@
     "restarter": {
         "start_timeout": "palvelin ei käynnistynyt ajoissa.",
         "crash_detected": "Kaatuminen havaittu",
-        "partial_crash_warn": "Osittaisen kaatumisen vuoksi palvelin käynnistyy uudelleen minuutin kuluttua. Poistukaa palvelimelta nyt!",
-        "partial_crash_warn_discord": "Osittaisen kaatumisen vuoksi **%{servername}** käynnistyy uudelleen minuutin kuluttua.",
+        "hang_detected": "hang detected",
+        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
+        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
         "schedule_reason": "Ajoitettu uudelleenkäynnistys kello %{time}",
         "schedule_warn": "Palvelin on ajoitettu käynnistymään uudelleen minuutin kuluttua. Poistu palvelimelta nyt! |||| Palvelin on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua.",
         "schedule_warn_discord": "**%{servername}** on uudelleenkäynnistymässä %{smart_count} minuutin kuluttua. |||| **%{servername}** on ajoitettu käynnistymään uudelleen %{smart_count} minuutin kuluttua."

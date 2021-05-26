@@ -110,6 +110,9 @@ module.exports = async function AdvancedActions(ctx) {
     } else if (action == 'resetConvars') {
         globals.fxRunner.resetConvars();
         return ctx.send({refresh:true});
+    } else if (action == 'backupdb') {
+        await globals.playerController.db.backupDatabase();
+        return ctx.send({type: 'success', message: 'backing it up'});
     }
 
 

@@ -12,9 +12,6 @@ export const MenuTheme = createMuiTheme({
     error: {
       main: "rgba(184,14,36,0.87)",
     },
-    warning: {
-      main: "rgba(219, 44, 67,0.87)",
-    },
     info: {
       main: "rgba(9,96,186,0.87)",
     },

@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+
 import {
   Button,
   Dialog,
@@ -23,6 +24,7 @@ import { Create } from "@material-ui/icons";
 import { useKeyboardNavContext } from "./KeyboardNavProvider";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
+import { useSetDisableTab } from "../state/tab.state";
 
 interface InputDialogProps {
   title: string;
@@ -60,6 +62,8 @@ export const DialogProvider: React.FC = ({ children }) => {
 
   const theme = useTheme();
 
+  const setDisableTabs = useSetDisableTab()
+
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const [dialogProps, setDialogProps] = useState<InputDialogProps>(
@@ -77,10 +81,12 @@ export const DialogProvider: React.FC = ({ children }) => {
   useEffect(() => {
     if (dialogOpen) {
       setDisabledKeyNav(true);
+      setDisableTabs(true)
     } else {
       setDisabledKeyNav(false);
+      setDisableTabs(false)
     }
-  }, [dialogOpen, setDisabledKeyNav]);
+  }, [dialogOpen, setDisabledKeyNav, setDisableTabs]);
 
   const handleDialogSubmit = () => {
 
@@ -105,8 +111,12 @@ export const DialogProvider: React.FC = ({ children }) => {
 
   const handleDialogClose = useCallback(() => {
     setDialogOpen(false);
-    setDialogProps(defaultDialogState)
   }, []);
+
+  // We reset default state after the animation is complete
+  const handleOnExited = () => {
+    setDialogProps(defaultDialogState)
+  }
 
   return (
     <DialogContext.Provider
@@ -118,6 +128,7 @@ export const DialogProvider: React.FC = ({ children }) => {
       <Dialog
         onEscapeKeyDown={handleDialogClose}
         open={dialogOpen}
+        onExited={handleOnExited}
         fullWidth
         PaperProps={{
           style: {

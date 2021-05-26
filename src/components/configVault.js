@@ -8,8 +8,8 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const toDefault = (input, defVal) => { return (isUndefined(input)) ? defVal : input; };
 const removeNulls = (obj) => {
-    var isArray = obj instanceof Array;
-    for (var k in obj) {
+    const isArray = obj instanceof Array;
+    for (let k in obj) {
         if (obj[k] === null) isArray ? obj.splice(k, 1) : delete obj[k];
         else if (typeof obj[k] == 'object') removeNulls(obj[k]);
         if (isArray && obj.length == k) removeNulls(obj);
@@ -98,9 +98,7 @@ module.exports = class ConfigVault {
             global: null,
             logger: null,
             monitor: null,
-            statsCollector: null,
             playerController: null,
-            authenticator: null,
             webServer: null,
             discordBot: null,
             fxRunner: null,
@@ -126,7 +124,6 @@ module.exports = class ConfigVault {
                 cooldown: toDefault(cfg.monitor.cooldown, null), //not in template
                 disableChatWarnings: toDefault(cfg.monitor.disableChatWarnings, null), //not in template
             };
-            out.statsCollector = {};
             out.playerController = {
                 onJoinCheckBan: toDefault(cfg.playerController.onJoinCheckBan, true),
                 onJoinCheckWhitelist: toDefault(cfg.playerController.onJoinCheckWhitelist, false),
@@ -136,9 +133,6 @@ module.exports = class ConfigVault {
                     'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour Request ID: <id>',
                 ),
                 wipePendingWLOnStart: toDefault(cfg.playerController.wipePendingWLOnStart, true),
-            };
-            out.authenticator = {
-                refreshInterval: toDefault(cfg.authenticator.refreshInterval, null), //not in template
             };
             out.webServer = {
                 bufferTime: toDefault(cfg.webServer.bufferTime, null), //not in template - deprecate?
@@ -165,7 +159,7 @@ module.exports = class ConfigVault {
                 autostart: toDefault(cfg.fxRunner.autostart, null),
                 autostartDelay: toDefault(cfg.fxRunner.autostartDelay, null), //not in template
                 restartDelay: toDefault(cfg.fxRunner.restartDelay, null), //not in template
-                quiet: toDefault(cfg.fxRunner.quiet, null),
+                quiet: toDefault(cfg.fxRunner.quiet, (GlobalData.osType === 'windows')),
             };
         } catch (error) {
             if (GlobalData.verbose) dir(error);
@@ -199,18 +193,12 @@ module.exports = class ConfigVault {
             cfg.monitor.cooldown = parseInt(cfg.monitor.cooldown) || 60; //not in template - 45 > 60 > 90 -> 60 after fixing the "extra time" logic
             cfg.monitor.disableChatWarnings = (cfg.monitor.disableChatWarnings === 'true' || cfg.monitor.disableChatWarnings === true);
 
-            //StatsCollector
-            //nothing here /shrug
-
             //Player Controller
             cfg.playerController.onJoinCheckBan = (cfg.playerController.onJoinCheckBan === null) ? true : (cfg.playerController.onJoinCheckBan === 'true' || cfg.playerController.onJoinCheckBan === true);
             cfg.playerController.onJoinCheckWhitelist = (cfg.playerController.onJoinCheckWhitelist === null) ? false : (cfg.playerController.onJoinCheckWhitelist === 'true' || cfg.playerController.onJoinCheckWhitelist === true);
             cfg.playerController.minSessionTime = parseInt(cfg.playerController.minSessionTime) || 15;
             cfg.playerController.whitelistRejectionMessage = cfg.playerController.whitelistRejectionMessage || 'You are not yet whitelisted in this server.\nPlease join http://discord.gg/example.\nYour Request ID: <id>';
             cfg.playerController.wipePendingWLOnStart = (cfg.playerController.wipePendingWLOnStart === null) ? true : (cfg.playerController.wipePendingWLOnStart === 'true' || cfg.playerController.wipePendingWLOnStart === true);
-
-            //Authenticator
-            cfg.authenticator.refreshInterval = parseInt(cfg.authenticator.refreshInterval) || 15000; //not in template
 
             //WebServer
             cfg.webServer.bufferTime = parseInt(cfg.webServer.bufferTime) || 1500; //not in template - deprecate?
@@ -295,9 +283,7 @@ module.exports = class ConfigVault {
             global: cfg.global,
             logger: cfg.logger,
             monitor: cfg.monitor,
-            statsCollector: cfg.statsCollector,
             playerController: cfg.playerController,
-            authenticator: cfg.authenticator,
             webServer: cfg.webServer,
             discordBot: cfg.discordBot,
             fxRunner: cfg.fxRunner,

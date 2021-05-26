@@ -5,7 +5,7 @@
 author 'Tabarra'
 description 'Remotely Manage & Monitor your GTA5 FiveM Server'
 repository 'https://github.com/tabarra/txAdmin'
-version '3.7.0'
+version '4.0.0-dev'
 
 rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aware my resources *will* become incompatible once RedM ships.'
 fx_version 'cerulean'
@@ -23,6 +23,10 @@ shared_scripts {
 
 client_scripts {
     'scripts/**/cl_*.lua',
+    'scripts/menu/vendor/freecam/utils.lua',
+    'scripts/menu/vendor/freecam/config.lua',
+    'scripts/menu/vendor/freecam/main.lua',
+    'scripts/menu/vendor/freecam/camera.lua',
 }
 
 ui_page 'scripts/menu/nui/index.html'

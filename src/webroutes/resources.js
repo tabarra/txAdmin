@@ -8,13 +8,13 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const breakPath = (inPath) => {return slash(path.normalize(inPath)).split('/').filter(String);};
 const dynamicSort = (prop) => {
-    var sortOrder = 1;
+    let sortOrder = 1;
     if (prop[0] === '-') {
         sortOrder = -1;
         prop = prop.substr(1);
     }
     return function (a, b) {
-        var result = (a[prop] < b[prop]) ? -1 : (a[prop] > b[prop]) ? 1 : 0;
+        const result = (a[prop] < b[prop]) ? -1 : (a[prop] > b[prop]) ? 1 : 0;
         return result * sortOrder;
     };
 };
@@ -45,14 +45,20 @@ const getResourceSubPath = (resPath) => {
  * @param {object} ctx
  */
 module.exports = async function Resources(ctx) {
-    let timeoutMessage = `<strong>Couldn't load the resources list.</strong> <br>
+    if (globals.fxRunner.fxChild === null) {
+        return ctx.utils.render('basic/generic', {
+            message: '<strong>The resources list is only available when the server is online.</strong>',
+        });
+    }
+
+    const timeoutMessage = `<strong>Couldn't load the resources list.</strong> <br>
     - Make sure the server is online (try to join it). <br>
-    - Make sure your fxserver is build/artifact 1550 or above. <br>
     - Make sure you don't have more than 200 resources. <br>
-    - Make sure you are not running the fxserver outside txAdmin.`;
+    - Make sure you are not running the fxserver outside txAdmin. <br>
+    - Check <a href="/console">Live Console</a> for any errors. They may indicate that some resource has a malformed <code>fxmanifest</code> file.`;
 
     //Send command request
-    let cmdSuccess = globals.fxRunner.srvCmd('txaReportResources');
+    const cmdSuccess = globals.fxRunner.srvCmd('txaReportResources');
     if (!cmdSuccess) {
         return ctx.utils.render('basic/generic', {message: timeoutMessage});
     }
@@ -69,8 +75,8 @@ module.exports = async function Resources(ctx) {
             ) {
                 clearTimeout(tListTimer);
                 clearTimeout(tErrorTimer);
-                let resGroups = processResources(globals.databus.resourcesList.data);
-                let renderData = {
+                const resGroups = processResources(globals.databus.resourcesList.data);
+                const renderData = {
                     headerTitle: 'Resources',
                     resGroupsJS: JSON.stringify(resGroups),
                     resGroups,
@@ -90,7 +96,7 @@ module.exports = async function Resources(ctx) {
     });
 
     //Start race and give output
-    let [view, renderData] = await Promise.race([tList, tError]);
+    const [view, renderData] = await Promise.race([tList, tError]);
     return ctx.utils.render(view, renderData);
 };
 

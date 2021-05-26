@@ -137,7 +137,10 @@ async function handleValidateLocalDeployPath(ctx) {
     }
     const deployPath = slash(path.normalize(ctx.request.body.deployPath.trim()));
     if (deployPath.includes(' ')) {
-        return ctx.send({success: false, message: 'The path cannot contain spaces.'});
+        return ctx.send({
+            success: false,
+            message: 'The path cannot contain spaces (the space character that separate words).',
+        });
     }
 
     //Perform path checking
@@ -161,7 +164,7 @@ async function handleValidateLocalDataFolder(ctx) {
     }
     const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim() + '/'));
     if (dataFolderPath.includes(' ')) {
-        return ctx.send({success: false, message: 'The path cannot contain spaces.'});
+        return ctx.send({success: false, message: 'The path cannot contain spaces (the space character that separate words).'});
     }
 
     try {
@@ -232,7 +235,7 @@ async function handleValidateCFGFile(ctx) {
     const cfgFilePathNormalized = slash(path.normalize(ctx.request.body.cfgFile.trim()));
     const cfgFilePath = helpers.resolveCFGFilePath(cfgFilePathNormalized, dataFolderPath);
     if (cfgFilePath.includes(' ')) {
-        return ctx.send({success: false, message: 'The path cannot contain spaces.'});
+        return ctx.send({success: false, message: 'The path cannot contain spaces (the space character that separate words).'});
     }
 
     //Try to read file
@@ -279,7 +282,7 @@ async function handleSaveLocal(ctx) {
 
     //Validating path spaces
     if (cfg.dataFolder.includes(' ') || cfg.cfgFile.includes(' ')) {
-        return ctx.send({success: false, message: 'The paths cannot contain spaces.'});
+        return ctx.send({success: false, message: 'The paths cannot contain spaces (the space character that separate words).'});
     }
 
     //Validating Base Path
@@ -387,6 +390,7 @@ async function handleSaveDeployerImport(ctx) {
 
     //Checking save and redirecting
     if (saveGlobalStatus) {
+        globals.config = globals.configVault.getScoped('global');
         ctx.utils.logAction('Changing global settings via setup stepper and started Deployer.');
         return ctx.send({success: true});
     } else {
@@ -433,6 +437,7 @@ async function handleSaveDeployerCustom(ctx) {
 
     //Checking save and redirecting
     if (saveGlobalStatus) {
+        globals.config = globals.configVault.getScoped('global');
         ctx.utils.logAction('Changing global settings via setup stepper and started Deployer.');
         return ctx.send({success: true});
     } else {

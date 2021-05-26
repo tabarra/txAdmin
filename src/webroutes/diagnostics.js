@@ -248,14 +248,17 @@ async function gettxAdminData() {
         cfxUrl: (GlobalData.cfxUrl) ? `https://${GlobalData.cfxUrl}/` : '--',
         banlistEnabled: controllerConfigs.onJoinCheckBan.toString(),
         whitelistEnabled: controllerConfigs.onJoinCheckWhitelist.toString(),
-        fullCrashes: globals.monitor.globalCounters.fullCrashes,
-        partialCrashes: globals.monitor.globalCounters.partialCrashes,
         httpCounterLog: httpCounter.log.join(', ') || '--',
         httpCounterMax: httpCounter.max || '--',
-        hbFD3Fails: globals.databus.txStatsData.heartBeatStats.fd3Failed,
-        hbHTTPFails: globals.databus.txStatsData.heartBeatStats.httpFailed,
-        hbBootSeconds: globals.databus.txStatsData.bootSeconds.join(', ') || '--',
-        freezeSeconds: globals.databus.txStatsData.freezeSeconds.join(', ') || '--',
+        monitorRestarts: {
+            close: globals.databus.txStatsData.monitorStats.restartReasons.close,
+            heartBeat: globals.databus.txStatsData.monitorStats.restartReasons.heartBeat,
+            healthCheck: globals.databus.txStatsData.monitorStats.restartReasons.healthCheck,
+        },
+        hbFD3Fails: globals.databus.txStatsData.monitorStats.heartBeatStats.fd3Failed,
+        hbHTTPFails: globals.databus.txStatsData.monitorStats.heartBeatStats.httpFailed,
+        hbBootSeconds: globals.databus.txStatsData.monitorStats.bootSeconds.join(', ') || '--',
+        freezeSeconds: globals.databus.txStatsData.monitorStats.freezeSeconds.join(', ') || '--',
         logFileSize,
 
         //Possible memory leaks:

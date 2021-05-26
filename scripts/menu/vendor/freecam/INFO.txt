@@ -1,0 +1,4 @@
+The original source code for freecam by Deltanic is available at this repository:
+    https://github.com/Deltanic/fivem-freecam/
+    
+This code contains modifications and performance improvements, and is re-released under the MIT license.

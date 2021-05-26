@@ -5,7 +5,7 @@ First and foremost check if you are using the most recent version of txAdmin and
 ## Problems running txAdmin  
 When executing txAdmin, it might show you some errors. Example of an [error](https://i.imgur.com/2huiyBf.png), example of a [successful startup](https://i.imgur.com/QLCBZBm.png).
 
-### [txAdmin:Authenticator] Unable to load admins.
+### [txAdmin:AdminVault] Unable to load admins.
 If you get `cannot read file`, it means the admin file `txData/admins.json` doesn't exist or txAdmin doesn't have permission to read it.  
 Any other error message means you somehow broke the admins file, delete it and restart txAdmin to generate a new one.
 

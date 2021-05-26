@@ -1,11 +1,6 @@
 //Requires
 const modulename = 'WebServer:GetStatus';
-const os = require('os');
-const si = require('systeminformation');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
-const Cache = require('../extras/dataCache');
-
-const hostDataCache = new Cache(5);
 
 
 /**
@@ -14,15 +9,9 @@ const hostDataCache = new Cache(5);
  * @param {object} ctx
  */
 module.exports = async function GetStatus(ctx) {
-    let hostData = hostDataCache.get();
-    if (hostData === false) {
-        hostData = await prepareHostData();
-        hostDataCache.set(hostData);
-    }
-
     return ctx.send({
         meta: prepareMetaData(),
-        host: hostData,
+        host: prepareHostData(),
         status: prepareServerStatus(),
         players: preparePlayersData(),
     });
@@ -34,28 +23,6 @@ module.exports = async function GetStatus(ctx) {
  * Returns the fxserver's data
  */
 function prepareServerStatus() {
-    // //processing hitches
-    // let fxServerHitches = cloneDeep(globals.monitor.globalCounters.hitches);
-    // let now = (Date.now() / 1000).toFixed();
-    // let hitchTimeSum = 0;
-    // fxServerHitches.forEach((hitch, key) => {
-    //     if (now - hitch.ts < 60) {
-    //         hitchTimeSum += hitch.hitchTime;
-    //     } else {
-    //         delete (fxServerHitches[key]);
-    //     }
-    // });
-
-    // //preparing hitch output string
-    // let hitches;
-    // if (hitchTimeSum > 5000) {
-    //     let secs = (hitchTimeSum / 1000).toFixed();
-    //     let pct = ((secs / 60) * 100).toFixed();
-    //     hitches = `${secs}s/min (${pct}%)`;
-    // } else {
-    //     hitches = hitchTimeSum + 'ms/min';
-    // }
-
     //Discord status
     const discordClient = globals.discordBot.client;
     let discordStatus;
@@ -105,50 +72,22 @@ function prepareServerStatus() {
 /**
  * Returns the host's usage
  */
-async function prepareHostData() {
-    try {
-        const giga = 1024 * 1024 * 1024;
-        let memFree, memTotal, memUsed;
-        if (GlobalData.osType === 'linux') {
-            const memoryData = await si.mem();
-            memFree = (memoryData.available / giga).toFixed(2);
-            memTotal = (memoryData.total / giga).toFixed(2);
-            memUsed = (memoryData.active / giga).toFixed(2);
-        } else {
-            memFree = (os.freemem() / giga).toFixed(2);
-            memTotal = (os.totalmem() / giga).toFixed(2);
-            memUsed = (memTotal - memFree).toFixed(2);
-        }
-
-        const memUsage = ((memUsed / memTotal) * 100).toFixed(0);
-        const cpus = os.cpus();
-        const cpuStatus = globals.monitor.cpuStatusProvider.getUsageStats();
-        const cpuUsage = cpuStatus.last10 || cpuStatus.full;
-
-        //returning output output
+function prepareHostData() {
+    const stats = globals.monitor.hostStats;
+    if (!stats) {
         return {
-            memory: {
-                pct: memUsage,
-                text: `${memUsage}% (${memUsed}/${memTotal} GB)`,
-            },
-            cpu:{
-                pct: cpuUsage,
-                text: `${cpuUsage}% of ${cpus.length}x ${cpus[0].speed} MHz`,
-            },
+            memory: {pct: 0, text: 'not available'},
+            cpu: {pct: 0, text: 'not available'},
         };
-    } catch (error) {
-        if (GlobalData.verbose) {
-            logError('Failed to execute prepareHostData()');
-            dir(error);
-        }
+    } else {
         return {
             memory: {
-                pct: 0,
-                text: 'error',
+                pct: stats.memory.usage,
+                text: `${stats.memory.usage}% (${stats.memory.used.toFixed(2)}/${stats.memory.total.toFixed(2)} GB)`,
             },
             cpu:{
-                pct: 0,
-                text: 'error',
+                pct: stats.cpu.usage,
+                text: `${stats.cpu.usage}% of ${stats.cpu.count}x ${stats.cpu.speed} MHz`,
             },
         };
     }

@@ -1,5 +1,5 @@
 //Requires
-const modulename = 'Authenticator:CitizenFXProvider';
+const modulename = 'AdminVault:CitizenFXProvider';
 const crypto  = require('crypto');
 const { Issuer, custom } = require('openid-client');
 const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);

@@ -3,6 +3,8 @@ local menuIsAccessible
 -- Since the menu yields/receives keyboard
 -- focus we need to store that the menu is already visible
 local isMenuVisible
+-- Last location stored in a vec3
+local lastTp
 
 RegisterKeyMapping('txAdmin:openMenu', 'Open the txAdmin Menu', 'keyboard', 'f1')
 
@@ -52,9 +54,10 @@ end
 ---@param key string An unique ID for this alert
 ---@param level string The level for the alert
 ---@param message string The message for this alert
-local function sendPersistentAlert(key, level, message)
+---@param isTranslationKey boolean Whether the message is a translation key
+local function sendPersistentAlert(key, level, message, isTranslationKey)
   debugPrint(('Sending persistent alert, key: %s, level: %s, message: %s'):format(key, level, message))
-  sendMenuMessage('setPersistentAlert', { key = key, level = level, message = message })
+  sendMenuMessage('setPersistentAlert', { key = key, level = level, message = message, isTranslationKey = isTranslationKey })
 end
 
 --- Clear a persistent alert on screen
@@ -76,7 +79,6 @@ RegisterCommand('txAdmin:openMenu', function()
   end
 end)
 
-
 --[[
   NUI Callbacks from the menu
  ]]
@@ -96,18 +98,119 @@ RegisterNUICallback('closeMenu', function(_, cb)
   cb({})
 end)
 
+local SoundEnum = {
+  move = 'NAV_UP_DOWN',
+  enter = 'SELECT'
+}
+
+RegisterNUICallback('playSound', function(sound, cb)
+  PlaySoundFrontend(-1, SoundEnum[sound], 'HUD_FRONTEND_DEFAULT_SOUNDSET', 1)
+  cb({})
+end)
+
 -- CB From Menu
 -- Data is a object with x, y, z
+
 RegisterNUICallback('tpToCoords', function(data, cb)
   debugPrint(json.encode(data))
   TriggerServerEvent('txAdmin:menu:tpToCoords', data.x + 0.0, data.y + 0.0, data.z + 0.0)
   cb({})
 end)
 
+-- Handle teleport to waypoint
+RegisterNUICallback('tpToWaypoint', function(_, cb)
+  TriggerServerEvent('txAdmin:menu:tpToWaypoint')
+  cb({})
+end)
+
+RegisterNUICallback('tpBack', function(_, cb)
+  if lastTp then
+    TriggerServerEvent('txAdmin:menu:tpToCoords', lastTp.x, lastTp.y, lastTp.z)
+    cb({})
+  else
+    cb({ e = true })
+  end
+end)
+
+local function toggleGodMode(enabled)
+  if enabled then
+    sendPersistentAlert('godModeEnabled', 'info', 'nui_menu.page_main.player_mode.dialog_success_godmode', true)
+  else
+    clearPersistentAlert('godModeEnabled')
+  end
+  SetEntityInvincible(PlayerPedId(), enabled)
+end
+
+local function toggleFreecam(enabled)
+  local ped = PlayerPedId()
+  SetPlayerInvincible(ped, enabled)
+  local veh = GetVehiclePedIsIn(ped, true)
+  if veh == 0 then veh = nil end
+  
+  local function enableNoClip()
+    lastTp = GetEntityCoords(ped)
+    
+    SetFreecamActive(true)
+    StartFreecamThread()
+    
+    NetworkSetEntityInvisibleToNetwork(ped, true)
+    if veh then NetworkSetEntityInvisibleToNetwork(veh, true) end
+    
+    Citizen.CreateThread(function()
+      while IsFreecamActive() do
+        SetEntityLocallyInvisible(ped)
+        if veh then SetEntityLocallyInvisible(veh) end
+        Wait(1)
+      end
+      
+      if veh and veh > 0 then
+        local coords = GetEntityCoords(ped)
+        SetEntityCoords(veh, coords[1], coords[2], coords[3])
+        SetPedIntoVehicle(ped, veh, -1)
+      end
+    end)
+  end
+  
+  local function disableNoClip()
+    SetFreecamActive(false)
+    NetworkSetEntityInvisibleToNetwork(ped, false)
+    if veh then NetworkSetEntityInvisibleToNetwork(veh, false) end
+    SetGameplayCamRelativeHeading(0)
+  end
+  
+  if not IsFreecamActive() and enabled then
+    sendPersistentAlert('noClipEnabled', 'info', 'nui_menu.page_main.player_mode.dialog_success_noclip', true)
+    enableNoClip()
+  end
+  
+  if IsFreecamActive() and not enabled then
+    clearPersistentAlert('noClipEnabled')
+    disableNoClip()
+  end
+end
+
 -- This will trigger everytime the playerMode in the main menu is changed
--- it will send an object with label and value.
-RegisterNUICallback('playerModeChanged', function(data, cb)
-  debugPrint(json.encode(data))
+-- it will send the mode
+RegisterNUICallback('playerModeChanged', function(mode, cb)
+  debugPrint(json.encode(mode))
+  if mode == 'godmode' then
+    toggleGodMode(true)
+    toggleFreecam(false)
+  elseif mode == 'noclip' then
+    toggleGodMode(false)
+    toggleFreecam(true)
+  elseif mode == 'none' then
+    toggleGodMode(false)
+    toggleFreecam(false)
+  end
+  cb({})
+end)
+
+RegisterNUICallback('spawnWeapon', function(weapon, cb)
+  debugPrint("Spawning weapon: " .. weapon)
+  local playerPed = PlayerPedId()
+  local weaponHash = GetHashKey(weapon)
+  GiveWeaponToPed(playerPed, weaponHash, 500, false, true)
   cb({})
 end)
 
@@ -126,6 +229,11 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
 end)
 
 -- CB From Menu
+RegisterNUICallback('healMyself', function(_, cb)
+  TriggerServerEvent('txAdmin:menu:healMyself')
+  cb({})
+end)
+
 RegisterNUICallback('healAllPlayers', function(data, cb)
   debugPrint(data)
   TriggerServerEvent('txAdmin:menu:healAllPlayers')
@@ -155,9 +263,13 @@ RegisterNUICallback('fixVehicle', function(_, cb)
   cb({})
 end)
 
+-- Used to trigger the help alert
+AddEventHandler('playerSpawned', function()
+  Wait(60000)
+  sendMenuMessage('showMenuHelpInfo', {})
+end)
+
 --[[ Player list sync ]]
--- This is the easiest way to do it, it can technically be optimized
--- by only sending player state when it changes but meh
 RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
   -- process data to add distance, remove pos
   for i in ipairs(data) do
@@ -181,18 +293,76 @@ end)
 ---@param z number
 RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   local ped = PlayerPedId()
+  lastTp = GetEntityCoords(ped)
+  
+  DoScreenFadeOut(200)
+  while not IsScreenFadedOut() do Wait(1) end
+  
   debugPrint('Teleporting to coords')
-  debugPrint(json.encode({ x, y, z }))
+  if z == 0 then
+    for i = 0, 1000, 10 do
+      SetPedCoordsKeepVehicle(ped, x, y, i)
+      local zFound, _z = GetGroundZFor_3dCoord(x + 0.0, y + 0.0, i + 0.0)
+      if zFound then
+        debugPrint("3D ground found: " .. json.encode({ zFound, _z }))
+        z = _z
+        break
+      end
+      Wait(0)
+    end
+  end
   RequestCollisionAtCoord(x, y, z)
+  RequestAdditionalCollisionAtCoord(x, y, z)
   SetPedCoordsKeepVehicle(ped, x, y, z)
-  local veh = GetVehiclePedIsIn(ped, false)
-  if veh and veh > 0 then SetVehicleOnGroundProperly(veh) end
+  DoScreenFadeIn(500)
+  SetGameplayCamRelativeHeading(0)
+end)
+
+-- [[ Teleport to the current waypoint ]]
+RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
+  local waypoint = GetFirstBlipInfoId(GetWaypointBlipEnumId())
+  if waypoint and waypoint > 0 then
+    local ped = PlayerPedId()
+    lastTp = GetEntityCoords(ped)
+    
+    DoScreenFadeOut(200)
+    while not IsScreenFadedOut() do Wait(1) end
+    
+    local blipCoords = GetBlipInfoIdCoord(waypoint)
+    debugPrint("waypoint blip: " .. json.encode(blipCoords))
+    local x = blipCoords[1]
+    local y = blipCoords[2]
+    local z = blipCoords[3]
+    for i = 0, 1000, 10 do
+      SetPedCoordsKeepVehicle(ped, x, y, i)
+      local zFound, _z = GetGroundZFor_3dCoord(x, y, i + 0.0)
+      if zFound then
+        debugPrint("3D ground found: " .. json.encode({ zFound, _z }))
+        z = _z
+        break
+      end
+      Wait(0)
+    end
+    RequestCollisionAtCoord(x, y, z)
+    RequestAdditionalCollisionAtCoord(x, y, z)
+    SetPedCoordsKeepVehicle(ped, x, y, z)
+    DoScreenFadeIn(500)
+    SetGameplayCamRelativeHeading(0)
+  else
+    sendSnackbarMessage("error", "You have no waypoint set!")
+  end
 end)
 
 --[[ Heal all players ]]
 RegisterNetEvent('txAdmin:menu:healed', function()
   debugPrint('Received heal event, healing to full')
   local ped = PlayerPedId()
+  local pos = GetEntityCoords(ped)
+  if IsEntityDead(ped) then
+    ResurrectPed(ped)
+    ped = PlayerPedId()
+    SetEntityCoords(ped, pos[1], pos[2], pos[3])
+  end
   SetEntityHealth(ped, GetEntityMaxHealth(ped))
 end)
 
@@ -205,6 +375,7 @@ RegisterNetEvent('txAdmin:menu:fixVehicle', function()
     SetVehicleFixed(veh)
     SetVehicleEngineOn(veh, true, false)
     SetVehicleDirtLevel(veh, 0.0)
+    SetVehicleOnGroundProperly(veh)
   end
 end)
 
@@ -249,3 +420,35 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(netID)
     SetVehicleForwardSpeed(veh, oldVel)
   end
 end)
+
+local isRDR = not TerraingridActivate and true or false
+local dismissKey = isRDR and 0xD9D0E1C0 or 22
+local dismissKeyGroup = isRDR and 1 or 0
+
+local function openWarningHandler(author, reason)
+  sendMenuMessage('setWarnOpen', {
+    reason = reason,
+    warnedBy = author
+  })
+
+  CreateThread(function()
+    local countLimit = 100 --10 seconds
+    local count = 0
+    while true do
+      Wait(100)
+      if IsControlPressed(dismissKeyGroup, dismissKey) then
+        count = count +1
+        if count >= countLimit then
+          sendMenuMessage('closeWarning')
+          return
+        elseif math.fmod(count, 10) == 0 then
+          sendMenuMessage('pulseWarning')
+        end
+      else
+        count = 0
+      end
+    end
+  end)
+end
+
+RegisterNetEvent('txAdminClient:warn', openWarningHandler)

@@ -9,9 +9,10 @@ const { printBanner } = require('./extras/banner');
 const cleanPath = (x) => { return slash(path.normalize(x)); };
 
 
-//FIXME: I should be using dependency injection or something
+// Long ago I wanted to replace this with dependency injection.
+// I Totally gave up.
 globals = {
-    authenticator: null,
+    adminVault: null,
     discordBot: null,
     fxRunner: null,
     logger: null,
@@ -38,29 +39,38 @@ globals = {
         txStatsData: {
             playerDBStats: null,
             lastFD3Error: '',
-            heartBeatStats: {
-                httpFailed: 0,
-                fd3Failed: 0,
+            monitorStats: {
+                heartBeatStats: {
+                    httpFailed: 0,
+                    fd3Failed: 0,
+                },
+                restartReasons: {
+                    close: 0,
+                    heartBeat: 0,
+                    healthCheck: 0,
+                },
+                bootSeconds: [],
+                freezeSeconds: [],
             },
-            bootSeconds: [],
-            freezeSeconds: [],
             pageViews: {},
             httpCounter: {
                 current: 0,
                 max: 0,
                 log: [],
             },
-            loginOrigins: {
-                localhost: 0,
-                cfxre: 0,
-                ip: 0,
-                other: 0,
-            },
-            loginMethods: {
-                discord: 0,
-                citizenfx: 0,
-                password: 0,
-                zap: 0,
+            login: {
+                origins: {
+                    localhost: 0,
+                    cfxre: 0,
+                    ip: 0,
+                    other: 0,
+                },
+                methods: {
+                    discord: 0,
+                    citizenfx: 0,
+                    password: 0,
+                    zap: 0,
+                },
             },
         },
     },
@@ -100,8 +110,8 @@ module.exports = class txAdmin {
         }
 
         //Start all modules
-        this.startAuthenticator(profileConfig.authenticator).catch((err) => {
-            HandleFatalError(err, 'Authenticator');
+        this.startAdminVault().catch((err) => {
+            HandleFatalError(err, 'AdminVault');
         });
         this.startDiscordBot(profileConfig.discordBot).catch((err) => {
             HandleFatalError(err, 'DiscordBot');
@@ -136,6 +146,7 @@ module.exports = class txAdmin {
 
         //NOTE: dependency order
         //  - translator before monitor
+        //  - adminVault before webserver
         //  - translator before fxrunner (for the locale string)
         //  - authenticator before webserver
 
@@ -147,9 +158,9 @@ module.exports = class txAdmin {
 
 
     //==============================================================
-    async startAuthenticator(config) {
-        const Authenticator = require('./components/authenticator');
-        globals.authenticator = new Authenticator(config);
+    async startAdminVault() {
+        const AdminVault = require('./components/adminVault');
+        globals.adminVault = new AdminVault();
     }
 
     //==============================================================

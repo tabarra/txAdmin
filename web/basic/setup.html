@@ -87,6 +87,9 @@
             content: "⭐";
         }
     </style>
+    
+    <!-- injected consts -->
+    <script>{{it.jsInjection|safe}}</script>
 </head>
 
 <body class="c-app flex-row align-items-center {{it.uiTheme}}">
@@ -378,20 +381,20 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/coreui.bundle.min.js"></script>
     <script src="js/bootstrap-notify.min.js"></script>
-    <script src="js/txadmin/dark.js"></script>
+    <script src="js/txadmin/base.js"></script>
 
     <!-- JS -->
     <script src="https://unpkg.com/materialize-stepper@3.1.0/dist/js/mstepper.js"></script>
     <script>
-        //Constants & vars
+        //Constants
         const recipesIndexURL = 'https://raw.githubusercontent.com/tabarra/txAdmin-recipes/main/indexv3.json';
         const txDataPath = '{{it.txDataPath}}';
         const deployerEngineVersion = parseInt('{{it.deployerEngineVersion}}');
         const isReset = ('{{it.isReset}}' === 'true');
-        const timeoutLong = 5000;
-        // const spinnerHTML = '<div style="min-height: 250px;" class="txSpinner">Loading...</div>';
-        const spinnerHTML = '<div style="min-height: 250px; margin: auto;"><div class="txSpinner">Loading...</div></div>';
+        const SPINNER_HTMLSized = `<div style="min-height: 250px; margin: auto;">${SPINNER_HTML}</div>`;
         const connectErrorMessage = `<b>Unable to connect to txAdmin.</b> <br> If you closed it, please start again and retry.`;
+
+        //Vars
         const suggestions = {};
         let loadedTemplates = [];
         let selectedTemplateIndex;
@@ -405,20 +408,10 @@
             showFeedbackPreloader: true,
             stepTitleNavigation: false,
             firstActive: (isReset)? 2 : 0,
-            feedbackPreloader: spinnerHTML,
+            feedbackPreloader: SPINNER_HTMLSized,
         });
 
         //Functions
-        const checkDoLogoutRefresh = (data) => {
-            if(data.logout === true){
-                window.location = '/auth?logout';
-                return true;
-            }else if(data.refresh === true){
-                window.location.reload(true);
-                return true;
-            }
-            return false;
-        }
         const buildDeployName = (templateName) => {
             const treatedName = templateName.replace(/[^a-zA-Z0-9\.\-_]/g, '');
             const shortName = (treatedName.length < 3)? 'DumbName' : treatedName;
@@ -521,7 +514,7 @@
                 s5Title.textContent = "Data Location";
                 finishButton.textContent = "Go to Recipe Deployer";
                 finishMessage.textContent = "We are almost there!";
-                s4PopularTemplateRow.innerHTML = spinnerHTML;
+                s4PopularTemplateRow.innerHTML = SPINNER_HTMLSized;
                 s4CustomTemplateDiv.classList.add('d-none');
                 s4LocalDataPathDiv.classList.add('d-none');
                 s5DeployerTargetDiv.classList.remove('d-none');
@@ -658,10 +651,10 @@
             s4RemoteTemplateInput.classList.remove('is-invalid', 'is-valid');
             s4RemoteTemplateInputError.classList.add('d-none');
 
-            $.ajax({
+            txAdminAPI({
                 type: "POST",
                 url: '/setup/validateRecipeURL',
-                timeout: timeoutLong,
+                timeout: REQ_TIMEOUT_LONG,
                 data: {recipeURL: s4RemoteTemplateInput.value.trim()},
                 dataType: 'json',
                 success: function (data) {
@@ -699,10 +692,10 @@
             s5DeployerTargetInput.classList.remove('is-invalid', 'is-valid');
             s5DeployerTargetError.classList.add('d-none');
 
-            $.ajax({
+            txAdminAPI({
                 type: "POST",
                 url: '/setup/validateLocalDeployPath',
-                timeout: timeoutLong,
+                timeout: REQ_TIMEOUT_LONG,
                 data: {deployPath: s5DeployerTargetInput.value.trim()},
                 dataType: 'json',
                 success: function (data) {
@@ -740,10 +733,10 @@
             s5ServerCFGError.classList.add('d-none');
             s5ServerCFGInput.value = '';
 
-            $.ajax({
+            txAdminAPI({
                 type: "POST",
                 url: '/setup/validateLocalDataFolder',
-                timeout: timeoutLong,
+                timeout: REQ_TIMEOUT_LONG,
                 data: {dataFolder: s4LocalDataPathInput.value.trim()},
                 dataType: 'json',
                 success: function (data) {
@@ -789,10 +782,10 @@
                 cfgFile: s5ServerCFGInput.value.trim(),
             };
             
-            $.ajax({
+            txAdminAPI({
                 type: "POST",
                 url: '/setup/validateCFGFile',
-                timeout: timeoutLong,
+                timeout: REQ_TIMEOUT_LONG,
                 data: outData,
                 dataType: 'json',
                 success: function (data) {
@@ -851,10 +844,10 @@
                 return alert('Unknown deployment type')
             }
             
-            $.ajax({
+            txAdminAPI({
                 type: "POST",
                 url: '/setup/save',
-                timeout: timeoutLong,
+                timeout: REQ_TIMEOUT_LONG,
                 data: outData,
                 dataType: 'json',
                 success: function (data) {

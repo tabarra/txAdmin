@@ -45,7 +45,7 @@ const requestAuth = (epType) => {
         if (isValidAuth) {
             await next();
         } else {
-            socket.session.auth = {}; //a bit redundant but it wont hurt anyone
+            if (socket.session) socket.session.auth = {}; //a bit redundant but it wont hurt anyone
             socket.disconnect(0);
             if (GlobalData.verbose) logWarn('Auth denied when creating session');
             next(new Error('Authentication Denied'));
@@ -85,7 +85,7 @@ const authLogic = (sess, perm, epType) => {
         let now = Math.round(Date.now() / 1000);
         if (sess.auth.expires_at === false || now < sess.auth.expires_at) {
             try {
-                let admin = globals.authenticator.getAdminByName(sess.auth.username);
+                let admin = globals.adminVault.getAdminByName(sess.auth.username);
                 if (admin) {
                     if (
                         typeof sess.auth.password_hash == 'string'

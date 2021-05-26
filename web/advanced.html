@@ -75,13 +75,13 @@
             action: document.getElementById('magicActionInput').value.trim(),
             parameter: false
         }
-        var magicPre = document.getElementById("magicPre");
+        const magicPre = document.getElementById("magicPre");
         magicPre.innerText = 'doing magic';
-        var notify = $.notify({ message: '<p class="text-center">Performing Magic...</p>' }, {});
-        $.ajax({
+        const notify = $.notify({ message: '<p class="text-center">Performing Magic...</p>' }, {});
+        txAdminAPI({
             type: "POST",
             url: '/advanced',
-            timeout: timeoutLong,
+            timeout: REQ_TIMEOUT_LONG,
             data: data,
             success: function (data) {
                 if(data.type === 'success'){
@@ -110,11 +110,10 @@
             action: 'change_verbosity',
             parameter: desiredState
         }
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
-        $.ajax({
+        const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        txAdminAPI({
             type: "POST",
             url: '/advanced',
-            timeout: timeoutMedium,
             data: data,
             success: function (data) {
                 if(data.refresh === true){
@@ -140,11 +139,10 @@
             action: 'profile_monitor',
             parameter: false
         }
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
-        $.ajax({
+        const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        txAdminAPI({
             type: "POST",
             url: '/fxserver/commands',
-            timeout: timeoutMedium,
             data: data,
             success: function (data) {
                 notify.update('progress', 0);

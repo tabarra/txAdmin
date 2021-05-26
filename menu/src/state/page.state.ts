@@ -8,7 +8,7 @@ import {
 export enum txAdminMenuPage {
   Main,
   Players,
-  txAdmin,
+  IFrame,
 }
 
 const pageState = atom<txAdminMenuPage>({

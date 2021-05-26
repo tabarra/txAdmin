@@ -8,7 +8,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
 
-//HACK search button doesn't actually work :facepalm:
+
 /**
  * Returns the output page containing the action log, and the console log
  *
@@ -30,7 +30,6 @@ module.exports = async function PlayerList(ctx) {
 };
 
 
-//================================================================
 /**
  * Handles the search functionality.
  *
@@ -151,7 +150,6 @@ async function handleSearch(ctx, dbo) {
 }
 
 
-//================================================================
 /**
  * Handles the default page rendering (index).
  * @param {object} ctx
@@ -175,8 +173,9 @@ async function handleDefault(ctx, dbo) {
         disableBans: !controllerConfigs.onJoinCheckBan,
         disableWhitelist: !controllerConfigs.onJoinCheckWhitelist,
         permsDisable: {
-            whitelist: !ctx.utils.checkPermission('players.whitelist', modulename, false),
             ban: !ctx.utils.checkPermission('players.ban', modulename, false),
+            warn: !ctx.utils.checkPermission('players.warn', modulename, false),
+            whitelist: !ctx.utils.checkPermission('players.whitelist', modulename, false),
         },
     };
 
@@ -187,7 +186,6 @@ async function handleDefault(ctx, dbo) {
 }
 
 
-//================================================================
 /**
  * Get the last entries of the pending whitelist table, sorted by timestamp.
  * @param {object} dbo
@@ -257,7 +255,6 @@ async function getStats(dbo) {
 }
 
 
-//================================================================
 /**
  * Get the last entries of the pending whitelist table, sorted by timestamp.
  * @param {object} dbo
@@ -301,7 +298,6 @@ async function getPendingWL(dbo, limit) {
 }
 
 
-//================================================================
 /**
  * Get the last actions from the end of the list.
  * NOTE: this is not being sorted by timestamp, we are assuming its ordered.
@@ -325,7 +321,6 @@ async function getLastActions(dbo, limit) {
 }
 
 
-//================================================================
 /**
  * Get the last actions from the end of the list.
  * NOTE: this is not being sorted by timestamp, we are assuming its ordered.
@@ -349,7 +344,6 @@ async function getLastPlayers(dbo, limit) {
 }
 
 
-//================================================================
 /**
  * Processes an action list and returns a templatization array.
  * @param {array} list
@@ -407,7 +401,6 @@ async function processActionList(list) {
 }
 
 
-//================================================================
 /**
  * Processes an player list and returns a templatization array.
  * @param {array} list
