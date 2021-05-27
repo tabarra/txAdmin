@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect } from "react";
 import { Box, makeStyles, Theme } from "@material-ui/core";
-import { IFramePostData, useIFrameCtx } from '../../provider/IFrameProvider';
-import { debugLog } from '../../utils/debugLog';
+import { IFramePostData, useIFrameCtx } from "../../provider/IFrameProvider";
+import { debugLog } from "../../utils/debugLog";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -10,11 +10,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     borderRadius: 15,
   },
   iframe: {
-    border: '0px',
+    border: "0px",
     borderRadius: 15,
-    height: '100%',
-    width: '100%',
-  }
+    height: "100%",
+    width: "100%",
+  },
 }));
 
 export const IFramePage: React.FC<{ visible: boolean }> = ({ visible }) => {
@@ -25,18 +25,20 @@ export const IFramePage: React.FC<{ visible: boolean }> = ({ visible }) => {
   // Handles listening for postMessage requests from iFrame
   useEffect(() => {
     const handler = (event: MessageEvent) => {
-      const data: IFramePostData = JSON.parse(event.data)
-      if (!data?.__isFromChild) return
+      const data: IFramePostData =
+        typeof event.data === "string" ? JSON.parse(event.data) : event.data;
 
-      debugLog('Post from iFrame', data)
+      if (!data?.__isFromChild) return;
 
-      handleChildPost(data)
-    }
+      debugLog("Post from iFrame", data);
 
-    window.addEventListener('message', handler)
+      handleChildPost(data);
+    };
 
-    return () => window.removeEventListener('message', handler)
-  }, [handleChildPost])
+    window.addEventListener("message", handler);
+
+    return () => window.removeEventListener("message", handler);
+  }, [handleChildPost]);
 
   return (
     <Box
