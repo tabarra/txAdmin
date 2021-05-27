@@ -46,6 +46,7 @@ module.exports = (config) => {
     router.get('/auth/:provider/redirect', authLimiter, webRoutes.auth.providerRedirect);
     router.get('/auth/:provider/callback', authLimiter, webRoutes.auth.providerCallback);
     router.get('/auth/zap', authLimiter, webRoutes.auth.verifyZapToken);
+    router.get('/auth/nui', authLimiter, webRoutes.auth.verifyNuiAuth);
     router.post('/auth/password', authLimiter, webRoutes.auth.verifyPassword);
     router.post('/changePassword', requestAuth('web'), webRoutes.auth.changePassword);
 

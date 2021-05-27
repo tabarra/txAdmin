@@ -3,7 +3,6 @@
 //============================================= Settings & Helpers
 //================================================================
 //Settings & constants
-const TX_BASE_PATH = '';
 const REQ_TIMEOUT_SHORT = 1500;
 const REQ_TIMEOUT_MEDIUM = 5000;
 const REQ_TIMEOUT_LONG = 9000;
@@ -77,7 +76,7 @@ const txAdminAPI = ({type, url, data, dataType, timeout, success, error}) => {
     timeout = timeout || REQ_TIMEOUT_MEDIUM;
     success = success || (() => {});
     error = error || (() => {});
-    console.log({type, url, timeout, data, dataType, success, error});
+    // console.log(`txAdminAPI Req to: ${url}`);
     return $.ajax({type, url, timeout, data, dataType, success, error});
 };
 

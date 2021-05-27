@@ -15,6 +15,40 @@
 
 
 
+
+Client flow:
+- nui loads
+- nui calls /auth/nui
+- lua client > lua server
+- lua server > tx
+- tx check identifiers and replies with either:
+    - non-200
+    - 200 and permissions array
+- lua server caches the permissions for this source id
+- lua server > lua client
+- lua client saves the "isMenuAllowed" state to prevent F1 from opening the nui
+- lua client > nui
+- nui saves the session cookie if it's authorized
+
+On admin change:
+- tx will trigger an event
+- lua server will wipe its permission cache
+- lua server will relay this event to the clients
+- lua client will send message to nui
+- nui will try to reauth
+- follow the flow above
+
+
+
+
+
+nota:
+- precisamos garantir que uma sessão criada via NUI seja só usada com nui
+- criar um novo token, mudar no primeiro tick
+- desabilitar master actions pra quando for NUI
+
+
+
 quando falta convar
 set sv_listingIPOverride "109.230.238.70"
 isZapHosting, forceInterface,

@@ -25,6 +25,8 @@ if GetCurrentResourceName() ~= "monitor" then
     logError('This resource should not be installed separately, it already comes with fxserver.')
     return
 end
+--Erasing the token convar
+-- SetConvar("txAdmin-apiToken", "removed") //FIXME:
 
 
 -- Setup threads and commands
@@ -357,3 +359,54 @@ function handleConnections(name, skr, d)
 
     end
 end
+
+
+
+-- Web UI proxy
+RegisterNetEvent('txAdmin:WebPipe')
+AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, body)
+    local s = source
+
+    headers['X-TxAdmin-Token'] = apiToken
+    headers['X-TxAdmin-Identifiers'] = table.concat(GetPlayerIdentifiers(s), ', ')
+
+    local url = "http://"..apiHost..path
+    -- log("["..callbackId.."]>> "..url)
+    -- log("["..callbackId.."]Headers "..json.encode(headers))
+
+    PerformHttpRequest(url, function(httpCode, data, resultHeaders)
+        -- fixing body for error pages (eg 404)
+        -- this is likely because of how json.encode() interprets null and an empty table
+        data = data or ''
+        resultHeaders['x-badcast-fix'] = 'ignorethis'
+
+        -- fixing redirects
+        if resultHeaders.Location then
+            if resultHeaders.Location:sub(1, 1) == '/' then
+                resultHeaders.Location = '/WebPipe' .. resultHeaders.Location
+            end
+        end
+
+        -- fixing cookies
+        if resultHeaders['Set-Cookie'] then
+			local cookieHeader = resultHeaders['Set-Cookie']
+			local cookies = type(cookieHeader) == 'table' and cookieHeader or { cookieHeader }
+			
+			for k in pairs(cookies) do
+				cookies[k] = cookies[k] .. '; SameSite=None; Secure'
+			end
+			
+			resultHeaders['Set-Cookie'] = cookies
+        end
+
+        -- TODO: get x-txadmin-perms from headers and save on a server-side cache
+        -- print(resultHeaders['x-txadmin-perms'])
+
+
+        -- log("["..callbackId.."]<< "..httpCode)
+        -- log("["..callbackId.."]<< "..httpCode..': '..json.encode(resultHeaders))
+        TriggerClientEvent('txAdmin:WebPipe', s, callbackId, httpCode, data, resultHeaders)
+    end, method, body, headers, {
+        followLocation = false
+    })
+end)
