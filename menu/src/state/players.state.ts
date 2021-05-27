@@ -59,13 +59,9 @@ const playersState = {
 
       switch (sortType) {
         case PlayerDataSort.DistanceClosest:
-          return [...playerStates].sort((a, b) =>
-            a.distance > b.distance ? 1 : -1
-          );
+          return [...playerStates].sort((a, b) => a.distance > b.distance ? 1 : -1);
         case PlayerDataSort.DistanceFarthest:
-          return [...playerStates].sort((a, b) =>
-            a.distance < b.distance ? 1 : -1
-          );
+          return [...playerStates].sort((a, b) => a.distance < b.distance ? 1 : -1);
         case PlayerDataSort.IdJoinedFirst:
           return [...playerStates].sort((a, b) => (a.id > b.id ? 1 : -1));
         case PlayerDataSort.IdJoinedLast:
