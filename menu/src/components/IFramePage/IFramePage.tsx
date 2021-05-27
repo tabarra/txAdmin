@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from 'react';
 import { Box, makeStyles, Theme } from "@material-ui/core";
+import { IFramePostData, useIFrameCtx } from '../../provider/IFrameProvider';
+import { debugLog } from '../../utils/debugLog';
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
@@ -18,6 +20,24 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const IFramePage: React.FC<{ visible: boolean }> = ({ visible }) => {
   const classes = useStyles();
 
+  const { getFullFrameSrc, handleChildPost } = useIFrameCtx();
+
+  // Handles listening for postMessage requests from iFrame
+  useEffect(() => {
+    const handler = (event: MessageEvent) => {
+      const data: IFramePostData = JSON.parse(event.data)
+      if (!data?.__isFromChild) return
+
+      debugLog('Post from iFrame', data)
+
+      handleChildPost(data)
+    }
+
+    window.addEventListener('message', handler)
+
+    return () => window.removeEventListener('message', handler)
+  }, [handleChildPost])
+
   return (
     <Box
       className={classes.root}
@@ -25,7 +45,7 @@ export const IFramePage: React.FC<{ visible: boolean }> = ({ visible }) => {
       mb={10}
       display={visible ? "initial" : "none"}
     >
-      <iframe src="http://localhost:40120/" className={classes.iframe} />
+      <iframe src={getFullFrameSrc()} className={classes.iframe} />
     </Box>
   );
 };
