@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./App";
+import MenuWrapper from "./MenuWrapper";
 import "./index.css";
 import { MuiThemeProvider } from "@material-ui/core";
 import { MenuTheme } from "./styles/theme";
@@ -17,7 +17,7 @@ ReactDOM.render(
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
           disableWindowBlurListener={true}
         >
-          <App />
+          <MenuWrapper />
         </SnackbarProvider>
       </KeyboardNavProvider>
     </MuiThemeProvider>
