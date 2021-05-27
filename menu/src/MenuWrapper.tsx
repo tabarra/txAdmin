@@ -12,6 +12,7 @@ import { useServerCtxValue } from "./state/server.state";
 import { getLocale } from "./utils/getLocale";
 import { WarnPage } from "./components/WarnPage/WarnPage";
 import { IFrameProvider } from "./provider/IFrameProvider";
+import { usesCheckCredentials } from './hooks/useCheckCredentials';
 
 debugData([
   {
@@ -26,6 +27,7 @@ const MenuWrapper: React.FC = () => {
   // These hooks don't ever unmount
   useExitListener();
   useNuiListenerService();
+  usesCheckCredentials();
 
   const localeSelected = useMemo(() => getLocale(serverCtx.locale), [
     serverCtx.locale,
