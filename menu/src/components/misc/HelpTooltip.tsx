@@ -15,7 +15,7 @@ import {
 import { txAdminMenuPage, usePageValue } from "../../state/page.state";
 import { useIsMenuVisible } from "../../state/visibility.state";
 
-const RANDOM_CHANGE_TIME = 7000;
+const RANDOM_CHANGE_TIME = 12000;
 const TIME_FOR_TOOLTIP_TO_APPEAR = 3000;
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -106,6 +106,8 @@ export const HelpTooltip: React.FC = ({ children }) => {
         setTooltipContent(tooltip);
         changeMsgTimeRef.current = null;
       }, RANDOM_CHANGE_TIME);
+    } else {
+      changeMsgTimeRef.current = null
     }
 
     return () => {
