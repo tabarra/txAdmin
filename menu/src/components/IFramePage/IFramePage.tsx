@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const IFramePage: React.FC<{ visible: boolean }> = ({ visible }) => {
   const classes = useStyles();
 
-  const { getFullFrameSrc, handleChildPost } = useIFrameCtx();
+  const { fullFrameSrc, handleChildPost } = useIFrameCtx();
 
   // Handles listening for postMessage requests from iFrame
   useEffect(() => {
@@ -47,7 +47,7 @@ export const IFramePage: React.FC<{ visible: boolean }> = ({ visible }) => {
       mb={10}
       display={visible ? "initial" : "none"}
     >
-      <iframe src={getFullFrameSrc()} className={classes.iframe} />
+      <iframe src={fullFrameSrc} className={classes.iframe} />
     </Box>
   );
 };
