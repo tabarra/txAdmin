@@ -6,7 +6,7 @@ local isMenuVisible
 -- Last location stored in a vec3
 local lastTp
 
-RegisterKeyMapping('txAdmin:openMenu', 'Open the txAdmin Menu', 'keyboard', 'f1')
+RegisterKeyMapping('txadmin', 'Keybind for quickly opening the txAdmin Menu', 'keyboard', '')
 
 --- Send data to the NUI frame
 ---@param action string Action
@@ -68,7 +68,7 @@ local function clearPersistentAlert(key)
 end
 
 -- Command to be used with the register key mapping
-RegisterCommand('txAdmin:openMenu', function()
+RegisterCommand('txadmin', function()
   if menuIsAccessible and not isMenuVisible then
     isMenuVisible = true
     -- Lets update before we open the menu

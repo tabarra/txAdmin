@@ -1,12 +1,9 @@
 -- Vars
-local isAdmin = true
-local open = false
 local pipeReturnCallbacks = {}
 local pipeCallbackCounter = 1
 -- FIXME: add callback timeouts on 9000ms
 -- FIXME: control the pipeReturnCallbacks to prevent memory leak
 -- FIXME: check what happens if the pipeCallbackCounter gets too big 
-
 
 -- catching all NUI requests for https://monitor/WebPipe/
 RegisterRawNuiCallback('WebPipe', function(req, cb)
@@ -39,39 +36,4 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, statusCode, body, header
         headers = headers
     })
     -- FIXME: do we need pipeReturnCallbacks[callbackId] = nil in here?
-end)
-
-
--- open/close the menu
-RegisterCommand('txAdmin', function()
-    if open then
-        SendNUIMessage({
-            type = 'closeWebUI'
-        })
-
-        SetNuiFocus(false, false)
-        open = false
-    else
-        SendNUIMessage({
-            type = 'openWebUI'
-        })
-
-        if isAdmin then
-            SetNuiFocus(true, true)
-            open = true
-        end
-    end
-end)
-RegisterNUICallback('close', function(data, cb)
-    open = false
-    SetNuiFocus(false, false)
-    cb(true)
-end)
-
-
--- extra stuff
-AddEventHandler('onClientResourceStart', function()
-    Wait(750)
-
-    TriggerEvent('chat:removeSuggestion', '/txAdmin')
 end)
