@@ -217,6 +217,9 @@ export const MainPageList: React.FC = () => {
     });
   };
 
+  // This is where we keep a memoized list of all actions, can be dynamically
+  // set in the future for third party resource integration. For now here for
+  // simplicity
   const menuListItems = useMemo(
     () => [
       {
@@ -225,6 +228,7 @@ export const MainPageList: React.FC = () => {
         secondary: t("nui_menu.page_main.player_mode.list_secondary", {
           mode: "NoClip",
         }),
+        requiredPermission: 'players.playermode',
         showCurrentPrefix: true,
         isMultiAction: true,
         initialValue: playerMode,
@@ -264,6 +268,7 @@ export const MainPageList: React.FC = () => {
         icon: <LocationSearching />,
         primary: t("nui_menu.page_main.teleport.list_primary"),
         isMultiAction: true,
+        requiredPermission: 'players.teleport',
         initialValue: teleportMode,
         actions: [
           {
@@ -293,6 +298,7 @@ export const MainPageList: React.FC = () => {
       },
       {
         icon: <DirectionsCar />,
+        requiredPermission: 'menu.vehicle',
         primary: t("nui_menu.page_main.spawn_veh.list_primary"),
         secondary: t("nui_menu.page_main.spawn_veh.list_secondary"),
         onSelect: handleSpawnVehicle,
@@ -301,12 +307,14 @@ export const MainPageList: React.FC = () => {
         icon: <Build />,
         primary: t("nui_menu.page_main.fix_vehicle.list_primary"),
         secondary: t("nui_menu.page_main.fix_vehicle.list_secondary"),
+        requiredPermission: 'menu.vehicle',
         onSelect: handleFixVehicle,
       },
       {
         primary: t("nui_menu.page_main.heal_myself.list_primary"),
         isMultiAction: true,
         initialValue: healMode,
+        requiredPermission: 'players.heal',
         actions: [
           {
             label: t("nui_menu.page_main.heal_myself.list_secondary"),
@@ -331,6 +339,7 @@ export const MainPageList: React.FC = () => {
       },
       {
         icon: <Announcement />,
+        requiredPermission: 'players.message',
         primary: t("nui_menu.page_main.send_announce.list_primary"),
         secondary: t("nui_menu.page_main.send_announce.list_secondary"),
         onSelect: handleAnnounceMessage,

@@ -10,6 +10,7 @@ import {
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { Code } from "@material-ui/icons";
 import { fetchNui } from '../../utils/fetchNui';
+import { ResolvablePermission, usePermissionsValue } from '../../state/permissions.state';
 
 export interface MenuListItemProps {
   icon: JSX.Element;
@@ -17,6 +18,7 @@ export interface MenuListItemProps {
   secondary: string;
   onSelect: () => void;
   selected: boolean;
+  requiredPermission: ResolvablePermission
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -31,14 +33,19 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: 16,
   },
 }));
-
+// TODO: Actually do disabled item styling right now it will only remove
+// enter from working
 export const MenuListItem: React.FC<MenuListItemProps> = memo(
-  ({ icon, primary, onSelect, secondary, selected }) => {
+  ({ icon, primary, onSelect, secondary, selected, requiredPermission }) => {
     const classes = useStyles();
     const divRef = useRef<HTMLDivElement | null>(null);
+    const userPerms = usePermissionsValue()
 
-    const handleEnter = () => {
+    const handleEnter = (): void => {
       if (selected) {
+        // Simple cancel if user doesn't have the permission
+        if (!userPerms.permission.includes(requiredPermission)) return
+
         fetchNui('playSound', 'enter')
         onSelect()
       }
@@ -95,13 +102,15 @@ export interface MenuListItemMultiProps {
   selected: boolean;
   primary: string;
   icon: JSX.Element;
+  requiredPermission: ResolvablePermission
   showCurrentPrefix: boolean
 }
 
 export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
-  ({ selected, primary, actions, icon, initialValue, showCurrentPrefix }) => {
+  ({ selected, primary, actions, icon, initialValue, showCurrentPrefix, requiredPermission }) => {
     const classes = useStyles();
     const [curState, setCurState] = useState(0);
+    const userPerms = usePermissionsValue()
 
     const compMounted = useRef(false);
 
@@ -132,6 +141,9 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
 
     const handleLeftArrow = () => {
       if (!selected) return;
+      // Simple cancel if user doesn't have the permission
+      if (!userPerms.permission.includes(requiredPermission)) return;
+
       fetchNui('playSound', 'move')
       const nextEstimatedItem = curState - 1;
       const nextItem =
@@ -141,6 +153,8 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
 
     const handleRightArrow = () => {
       if (!selected) return;
+      // Simple cancel if user doesn't have the permission
+      if (!userPerms.permission.includes(requiredPermission)) return
       fetchNui('playSound', 'move')
       const nextEstimatedItem = curState + 1;
       const nextItem =
@@ -150,6 +164,8 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
 
     const handleEnter = () => {
       if (selected) {
+        // Simple cancel if user doesn't have the permission
+        if (!userPerms.permission.includes(requiredPermission)) return
         fetchNui('playSound', 'enter')
         actions[curState].onSelect();
       }
