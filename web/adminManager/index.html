@@ -161,15 +161,32 @@
 
 
 <script>
+    //============================================== Form Autofill
+    // Example: #autofill&name=nome%20idk&citizenfx=aaaaaa&discord=11111111111111
+    // NOTE: please encode the name with something like slug(name, '_')
+    let autofill = false;
+    const urlHash = decodeURI(location.hash.substr(1).trim());
+    if(typeof urlHash === 'string' && urlHash.length && urlHash.startsWith('autofill')){
+        const params = new URLSearchParams(urlHash);
+        autofill = {
+            name: params.get('name'),
+            citizenfxID: params.get('citizenfx'),
+            discordID: params.get('discord'),
+        }
+        location.hash = ''
+        getAdminModal();
+    }
+
+    
     //============================================== Show Admin Modal
     function getAdminModal(name){
-        let newTitle, urlAction, data;
+        let urlAction, data;
         if(name){
-            newTitle = 'Edit Admin';
+            $('#modAdminTitle').html('Edit Admin');
             urlAction = 'getEditModal';
             data = {name}
         }else{
-            newTitle = 'New Admin';
+            $('#modAdminTitle').html('New Admin');
             urlAction = 'getAddModal';
         }
         txAdminAPI({
@@ -177,14 +194,20 @@
             url: `/adminManager/${urlAction}`,
             data: data,
             success: function (data) {
-                $('#modAdminTitle').html(newTitle);
                 $('#modAdmin-body').html(data);
+                if(!name && autofill){
+                    $('#modAdmin-name').val(autofill.name);
+                    $('#modAdmin-citizenfxID').val(autofill.citizenfxID);
+                    $('#modAdmin-discordID').val(autofill.discordID);
+                    autofill = false;
+                }
                 $('#modAdmin').modal('show');
             },
             error: function (xmlhttprequest, textstatus, message) {
-                $('#modAdmin-body').html(`<div class="col-sm-9 text-center pt-2">
+                $('#modAdmin-body').html(`<div class="text-center pt-2">
                     <h5 class="text-secondary">action failed, please refresh the page and try again</h5>
                 </div>`);
+                $('#modAdmin').modal('show');
             }
         });
     }
