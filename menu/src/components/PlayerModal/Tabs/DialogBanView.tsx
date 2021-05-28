@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Box, Button, DialogContent, DialogContentText, MenuItem, TextField } from "@material-ui/core";
-import { usePlayerDetails } from "../../../state/players.state";
+import { usePlayerDetailsValue } from '../../../state/playerDetails.state';
 
 const DialogBanView: React.FC = () => {
-  const player = usePlayerDetails();
+  const player = usePlayerDetailsValue();
 
   const [reason, setReason] = useState('');
   const [duration, setDuration] = useState('2 hours');

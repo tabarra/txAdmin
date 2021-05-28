@@ -1,70 +1,53 @@
 import React, { useState, useCallback } from 'react';
 import { Box, DialogContent, Typography, useTheme } from "@material-ui/core";
 import { useStyles } from "../modal.styles";
-import { usePlayerDetails } from "../../../state/players.state";
-
-interface HistoryProps {
-  date: string;
-  type: 'warn' | 'kick' | 'ban',
-  reason: string;
-  createdBy: string;
-}
+import { usePlayerDetailsValue } from '../../../state/playerDetails.state';
 
 const actionTypes = {
-  warn: {
-    title: 'warned',
+  WARN: {
+    title: 'WARNED',
     color: '#f1c40f'
   },
-  kick: {
-    title: 'kicked',
+  'WARN-REVOKED': {
+    title: 'REVOKED the WARN for',
+    color: 'gray'
+  },
+  KICK: {
+    title: 'KICKED',
     color: '#e67e22'
   },
-  ban: {
-    title: 'banned',
+  BAN: {
+    title: 'BANNED',
     color: '#c2293e'
+  },
+  'BAN-REVOKED': {
+    title: 'REVOKED the BAN for',
+    color: 'gray'
+  },
+  WHITELIST: {
+    title: 'WHITELISTED',
+    color: '#c2293e'
+  },
+  'WHITELIST-REVOKED': {
+    title: 'REVOKED the WHITELIST for',
+    color: 'gray'
   }
 }
 
+
 const DialogHistoryView: React.FC = () => {
   const classes = useStyles();
-  const player = usePlayerDetails();
+  const player = usePlayerDetailsValue();
   const theme = useTheme();
-
-  const [history, setHistory] = useState<HistoryProps[]>([
-    {
-      date: '5/25 | 7.20pm',
-      type: 'warn',
-      reason: 'Trolling and causing mayhem',
-      createdBy: 'chip'
-    },
-    {
-      date: '4/25 | 7.20pm',
-      type: 'kick',
-      reason: 'RDM',
-      createdBy: 'rp admin'
-    },
-    {
-      date: '2/25 | 7.20pm',
-      type: 'ban',
-      reason: 'Trolling and causing mayhem',
-      createdBy: 'chip'
-    },
-    {
-      date: '9/25 | 7.20pm',
-      type: 'warn',
-      reason: 'Trolling and causing mayhem',
-      createdBy: 'chip'
-    },
-  ])
 
   return (
     <DialogContent>
       <Typography variant="h6" style={{ paddingBottom: 5 }}>Related History</Typography>
       <Box>
-        {history.map((h) => (
-          <Box className={classes.historyItem} borderLeft={`solid 2px ${actionTypes[h.type]['color']}`}>
+        {player.actionHistory.map((h, index) => (
+          <Box className={classes.historyItem} borderLeft={`solid 2px ${actionTypes[h.action]['color']}`} key={index}>
             <Box>
-              <Typography>{h.createdBy} {actionTypes[h.type]['title']} {player.username}</Typography>
+              <Typography>{h.author} {actionTypes[h.action].title} {player.name}</Typography>
               <Typography style={{ color: theme.palette.text.secondary }}>{h.reason}</Typography>
             </Box>
             <Box>

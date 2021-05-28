@@ -13,6 +13,8 @@ import { getLocale } from "./utils/getLocale";
 import { WarnPage } from "./components/WarnPage/WarnPage";
 import { IFrameProvider } from "./provider/IFrameProvider";
 import { usesCheckCredentials } from './hooks/useCheckCredentials';
+import PlayerModal from './components/PlayerModal/PlayerModal';
+import { PlayerModalProvider } from './provider/PlayerModalProvider';
 
 debugData([
   {
@@ -41,11 +43,13 @@ const MenuWrapper: React.FC = () => {
         allowMissing={false}
       >
         <IFrameProvider>
-          <DialogProvider>
-            <div className="App" style={visible ? { opacity: 1 } : undefined}>
-              <MenuRoot />
-            </div>
-          </DialogProvider>
+          <PlayerModalProvider>
+            <DialogProvider>
+              <div className="App" style={visible ? { opacity: 1 } : undefined}>
+                <MenuRoot />
+              </div>
+            </DialogProvider>
+          </PlayerModalProvider>
           <WarnPage />
         </IFrameProvider>
       </I18n>

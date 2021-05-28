@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Box,
   Dialog,
@@ -10,33 +10,31 @@ import {
   IconButton,
   ListItemIcon
 } from "@material-ui/core";
-import { Close, Person, Block, FormatListBulleted, MenuBook, FlashOn, TerrainTwoTone } from '@material-ui/icons'
-import { usePlayerDetails } from "../../state/players.state";
-import { usePlayerModal, useTabs } from "../../provider/PlayerProvider";
+import { Close, Person, Block, FormatListBulleted, MenuBook, FlashOn } from '@material-ui/icons'
+import { usePlayerModalContext } from '../../provider/PlayerModalProvider';
 import DialogBanView from "./Tabs/DialogBanView";
 import DialogActionView from "./Tabs/DialogActionView";
 import DialogInfoView from "./Tabs/DialogInfoView";
 import { useDialogStyles, useStyles } from "./modal.styles";
 import DialogIdView from "./Tabs/DialogIdView";
 import DialogHistoryView from "./Tabs/DialogHistoryView";
+import { usePlayerDetailsValue } from '../../state/playerDetails.state';
+
 
 const PlayerModal: React.FC = () => {
-  const player = usePlayerDetails();
-  const { tab } = useTabs();
-  const { modal, setModal } = usePlayerModal();
+  const player = usePlayerDetailsValue();
+  const { tab, isModalOpen, setModalOpen } = usePlayerModalContext();
   const theme = useTheme();
   const classes = useStyles();
 
-  if (!player) return null;
-
-  const handleClose = (e) => {
-    setModal(false)
+  const handleClose = () => {
+    setModalOpen(false)
   }
 
   return (
     <Dialog
       disableEscapeKeyDown
-      open={modal}
+      open={isModalOpen}
       fullWidth
       onClose={handleClose}
       maxWidth="md"
@@ -50,7 +48,7 @@ const PlayerModal: React.FC = () => {
       }}
     >
       <DialogTitle style={{ borderBottom: '1px solid rgba(221,221,221,0.54)' }}>
-        [{player.id}] {player.username}
+        [{player.id}] {player.name}
         <IconButton onClick={handleClose} className={classes.closeButton}><Close/></IconButton>
       </DialogTitle>
       <Box display="flex" px={2} pb={2} pt={2} flexGrow={1}>
@@ -70,7 +68,7 @@ const PlayerModal: React.FC = () => {
 }
 
 const DialogList: React.FC = () => {
-  const { tab, setTab } = useTabs();
+  const { tab, setTab } = usePlayerModalContext()
   const classes = useDialogStyles();
   return (
     <List>

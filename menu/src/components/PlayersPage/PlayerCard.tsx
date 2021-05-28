@@ -15,6 +15,7 @@ import {
   MoreVert,
   Motorcycle,
 } from "@material-ui/icons";
+import { usePlayerModalContext } from '../../provider/PlayerModalProvider';
 import { PlayerData, VehicleStatus } from "../../state/players.state";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -48,12 +49,18 @@ const PlayerCard: React.FC<PlayerData> = ({
   vehicleStatus,
 }) => {
   const classes = useStyles();
+  const { setModalOpen, isModalOpen } = usePlayerModalContext();
 
-  const statusIcon: {[K in VehicleStatus]: JSX.Element} = {
+  const statusIcon: { [K in VehicleStatus]: JSX.Element } = {
     walking: <DirectionsWalk color="inherit" />,
     driving: <DriveEta color="inherit" />,
     boating: <DirectionsBoat color="inherit" />,
     biking: <Motorcycle color="inherit" />,
+  };
+
+  const handlePlayerClick = () => {
+    console.log(isModalOpen)
+    setModalOpen(true);
   };
 
   const upperCaseStatus =
@@ -64,9 +71,14 @@ const PlayerCard: React.FC<PlayerData> = ({
       <Paper className={classes.paper}>
         <Box display="flex" alignItems="center" pb="5px">
           <Box flexGrow={1} display="flex">
-            <Tooltip title={upperCaseStatus} placement="top" arrow classes={{
-              tooltip: classes.tooltipOverride
-            }}>
+            <Tooltip
+              title={upperCaseStatus}
+              placement="top"
+              arrow
+              classes={{
+                tooltip: classes.tooltipOverride,
+              }}
+            >
               <span className={classes.icon}>{statusIcon[vehicleStatus]}</span>
             </Tooltip>
             <Typography
@@ -88,12 +100,17 @@ const PlayerCard: React.FC<PlayerData> = ({
               {username}
             </Typography>
           </Box>
-          <IconButton>{<MoreVert />}</IconButton>
+          <IconButton onClick={handlePlayerClick}>{<MoreVert />}</IconButton>
         </Box>
         <div>
-          <Tooltip title={`${health}% health`} placement="bottom" arrow classes={{
-            tooltip: classes.tooltipOverride
-          }}>
+          <Tooltip
+            title={`${health}% health`}
+            placement="bottom"
+            arrow
+            classes={{
+              tooltip: classes.tooltipOverride,
+            }}
+          >
             <div className={classes.barBackground}>
               <Box className={classes.barInner} width={`${health}%`} />
             </div>

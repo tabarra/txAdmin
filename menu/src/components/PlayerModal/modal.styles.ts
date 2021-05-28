@@ -24,9 +24,6 @@ export const useStyles = makeStyles((theme: Theme) => ({
   },
   historyItem: {
     background: theme.palette.background.paper,
-    borderRadius: 8,
-    borderTopLeftRadius: 0,
-    borderBottomLeftRadius: 0,
     padding: '10px 10px',
     marginBottom: 7,
     display: 'flex',

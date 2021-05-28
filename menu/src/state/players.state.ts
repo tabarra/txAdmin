@@ -37,10 +37,6 @@ const playersState = {
     default: [],
     key: "playerStates",
   }),
-  playerDetails: atom({
-    default: null,
-    key: 'playerDetails'
-  }),
   playerSortType: atom<PlayerDataSort | null>({
     default: PlayerDataSort.IdJoinedFirst,
     key: "playerSortType",
@@ -106,12 +102,6 @@ export const usePlayersFilter = () =>
 
 export const useFilteredSortedPlayers = (): PlayerData[] =>
   useRecoilValue(playersState.sortedAndFilteredPlayerData);
-
-export const usePlayerDetails= (): PlayerData  =>
-  useRecoilValue(playersState.playerDetails);
-
-export const useSetPlayerDetails = () =>
-  useSetRecoilState(playersState.playerDetails);
 
 debugData<PlayerData[]>([
   {
