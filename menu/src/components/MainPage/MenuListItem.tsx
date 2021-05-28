@@ -44,7 +44,9 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
     const handleEnter = (): void => {
       if (selected) {
         // Simple cancel if user doesn't have the permission
-        if (!userPerms.permission.includes(requiredPermission)) return
+        // console.dir(userPerms)
+        if (!(userPerms.permission || []).includes(requiredPermission) &&
+          !(userPerms.permission || []).includes('all_permissions')) return
 
         fetchNui('playSound', 'enter')
         onSelect()
@@ -142,7 +144,8 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     const handleLeftArrow = () => {
       if (!selected) return;
       // Simple cancel if user doesn't have the permission
-      if (!userPerms.permission.includes(requiredPermission)) return;
+      if (!(userPerms.permission || []).includes(requiredPermission) &&
+        !(userPerms.permission || []).includes('all_permissions')) return;
 
       fetchNui('playSound', 'move')
       const nextEstimatedItem = curState - 1;
@@ -154,7 +157,8 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     const handleRightArrow = () => {
       if (!selected) return;
       // Simple cancel if user doesn't have the permission
-      if (!userPerms.permission.includes(requiredPermission)) return
+      if (!(userPerms.permission || []).includes(requiredPermission) &&
+        !(userPerms.permission || []).includes('all_permissions')) return;
       fetchNui('playSound', 'move')
       const nextEstimatedItem = curState + 1;
       const nextItem =
@@ -165,7 +169,8 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     const handleEnter = () => {
       if (selected) {
         // Simple cancel if user doesn't have the permission
-        if (!userPerms.permission.includes(requiredPermission)) return
+        if (!(userPerms.permission || []).includes(requiredPermission) &&
+          !(userPerms.permission || []).includes('all_permissions')) return;
         fetchNui('playSound', 'enter')
         actions[curState].onSelect();
       }

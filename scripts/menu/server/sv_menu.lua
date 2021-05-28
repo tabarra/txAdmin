@@ -33,8 +33,8 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
   end
   
   local url = "http://" .. apiHost .. path:gsub("//", "/")
-  debugPrint("[" .. callbackId .. "]>> " .. url)
-  debugPrint("[" .. callbackId .. "] Headers: " .. json.encode(headers))
+  --debugPrint("[" .. callbackId .. "]>> " .. url)
+  --debugPrint("[" .. callbackId .. "] Headers: " .. json.encode(headers))
   
 
   PerformHttpRequest(url, function(httpCode, data, resultHeaders)
@@ -72,9 +72,9 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
       end
     end
   
-    debugPrint("[" .. callbackId .. "] Perms: " .. json.encode(adminPermissions[s]))
-    debugPrint("[" .. callbackId .. "]<< " .. httpCode)
-    debugPrint("[" .. callbackId .. "]<< " .. httpCode .. ': ' .. json.encode(resultHeaders))
+    --debugPrint("[" .. callbackId .. "] Perms: " .. json.encode(adminPermissions[s]))
+    --debugPrint("[" .. callbackId .. "]<< " .. httpCode)
+    --debugPrint("[" .. callbackId .. "]<< " .. httpCode .. ': ' .. json.encode(resultHeaders))
     TriggerClientEvent('txAdmin:WebPipe', s, callbackId, httpCode, data, resultHeaders)
   end, method, body, headers, {
     followLocation = false

@@ -46,9 +46,11 @@ module.exports = async function VerifyNuiAuth(ctx) {
             //FIXME: Tabarra needs to build security around this value
         };
         log(`Admin ${admin.name} logged into the in-game UI`);
+        //dir(admin);
+        const permissions = admin.master ? ['all_permissions'] : admin.permissions;
         ctx.send({
             isAdmin: true,
-            permissions: admin.permissions,
+            permissions,
             expiration: Date.now() + sessDuration,
         });
 
