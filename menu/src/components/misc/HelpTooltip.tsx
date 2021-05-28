@@ -79,6 +79,10 @@ export const HelpTooltip: React.FC = ({ children }) => {
   const curPage = usePageValue();
 
   useEffect(() => {
+    if (!isMenuVisible) setTooltipOpen(false)
+  }, [isMenuVisible])
+
+  useEffect(() => {
     if (!isMenuVisible) return;
 
     if (curPage === txAdminMenuPage.Main) {
