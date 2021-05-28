@@ -177,13 +177,24 @@ module.exports = class PlayerController {
 
 
     /**
-     * Searches for a player in the database by the license
-     * @param {string} license
+     * Searches for a player in the database by the license or id
+     * @param {string} reference
      * @returns {object|null|false} object if player is found, null if not found, false if error occurs
      */
-    async getPlayer(license) {
+    async getPlayer(reference) {
+        //Infering filter type
+        let filter;
+        if (/[0-9A-Fa-f]{40}/.test(reference)) {
+            filter = {license: reference};
+        } else if (/\d{1,6}/.test(reference)) {
+            filter = {id: parseInt(reference, 10)};
+        } else {
+            throw new Error('Invalid reference type');
+        }
+
+        //Performing search
         try {
-            const p = await this.db.obj.get('players').find({license: license}).cloneDeep().value();
+            const p = await this.db.obj.get('players').find(filter).cloneDeep().value();
             return (typeof p === 'undefined') ? null : p;
         } catch (error) {
             if (GlobalData.verbose) logError(`Failed to search for a player in the database with error: ${error.message}`);
@@ -455,7 +466,7 @@ module.exports = class PlayerController {
 
 
     /**
-     * Whitelists a player from its license or wl pending id
+     * Whitelists a player from it's license or wl pending id
      *
      * NOTE: I'm only getting the first matched pending, but removing all patching
      * NOTE: maybe I should add a trycatch inside here

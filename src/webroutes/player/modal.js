@@ -18,10 +18,10 @@ const now = () => { return Math.round(Date.now() / 1000); };
  */
 module.exports = async function PlayerModal(ctx) {
     //Sanity check
-    if (typeof ctx.params.license === 'undefined') {
+    if (typeof ctx.params.reference === 'undefined') {
         return ctx.utils.error(400, 'Invalid Request');
     }
-    const license = ctx.params.license;
+    const reference = ctx.params.reference;
 
     //Helper function
     const getHistory = async (idArray) => {
@@ -58,8 +58,20 @@ module.exports = async function PlayerModal(ctx) {
         }
     };
 
+    //Infering filter type
+    let filterFunction, filterType;
+    if (/[0-9A-Fa-f]{40}/.test(reference)) {
+        filterFunction = (player) => player.license === reference;
+        filterType = 'license';
+    } else if (/\d{1,6}/.test(reference)) {
+        filterFunction = (player) => player.id === parseInt(reference, 10);
+        filterType = 'id';
+    } else {
+        throw new Error('Invalid reference type');
+    }
+
     //Locating player
-    const activePlayer = cloneDeep(globals.playerController.activePlayers).find((player) => player.license === license);
+    const activePlayer = cloneDeep(globals.playerController.activePlayers).find(filterFunction);
 
     //Setting up output
     const controllerConfigs = globals.playerController.config;
@@ -82,15 +94,18 @@ module.exports = async function PlayerModal(ctx) {
         out.isTmp = activePlayer.isTmp;
         playerData = activePlayer;
     } else {
+        if (filterType !== 'license') {
+            return ctx.send({type: 'offline', message: 'Player offline, search by id is only available for.'});
+        }
         //FIXME: for actions, look just for the license
         //TODO: when we start registering all associated identifiers, we could use that for the search
-        let dbPlayer = await globals.playerController.getPlayer(license);
+        let dbPlayer = await globals.playerController.getPlayer(reference);
         if (!dbPlayer) return ctx.send({type: 'offline', message: 'Player offline and not in database.'});
         if (GlobalData.verbose) dir(dbPlayer); //DEBUG
 
         out.id = false;
-        out.license = license;
-        out.identifiers = [`license:${license}`];
+        out.license = reference;
+        out.identifiers = [`license:${reference}`];
         out.isTmp = false;
         playerData = dbPlayer;
     }

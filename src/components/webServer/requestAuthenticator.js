@@ -71,7 +71,7 @@ const requestAuth = (epType) => {
  * Autentication & authorization logic used in both websocket and webserver
  * @param {*} sess
  * @param {*} perm
- * @param {*} ctx
+ * @param {*} epType
  */
 const authLogic = (sess, perm, epType) => {
     let isValidAuth = false;
