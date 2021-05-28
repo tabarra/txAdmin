@@ -1,5 +1,6 @@
 import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 
+// TODO: Make an enum
 export type ResolvablePermission =
   | "all_permissions"
   | "manage.admins"
@@ -24,7 +25,7 @@ export type ResolvablePermission =
 
 export interface PermCheckServerResp {
   isAdmin: boolean;
-  permission?: ResolvablePermission[];
+  permissions?: ResolvablePermission[];
   expiration?: number;
 }
 

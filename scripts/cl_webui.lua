@@ -38,14 +38,7 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, statusCode, body, header
             print("^1Invalid NUI auth response received: " .. (body or "nil"))
         else
             menuIsAccessible = resp.isAdmin
-            SendNUIMessage({
-                action = 'setPermissionsState',
-                data = {
-                    isAdmin = resp.isAdmin,
-                    permission = resp.permissions,
-                    expiration = resp.expiration,
-                }
-            })
+            ret.cb(resp)
         end
     end
     
