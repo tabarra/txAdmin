@@ -1,12 +1,12 @@
 -- Variable that determines whether a player can even access the menu
-local menuIsAccessible
+menuIsAccessible = false
 -- Since the menu yields/receives keyboard
 -- focus we need to store that the menu is already visible
 local isMenuVisible
 -- Last location stored in a vec3
 local lastTp
 
-RegisterKeyMapping('txadmin', 'Keybind for quickly opening the txAdmin Menu', 'keyboard', '')
+RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
 
 --- Send data to the NUI frame
 ---@param action string Action
@@ -28,17 +28,9 @@ local function updateServerCtx()
   sendMenuMessage('setServerCtx', GlobalState.txAdminServerCtx)
 end
 
---- Authentication logic
-RegisterNetEvent('txAdmin:menu:setAccessible', function(canAccess)
-  if type(canAccess) ~= 'boolean' then error() end
-  debugPrint('Menu Accessible: ' .. tostring(canAccess))
-  menuIsAccessible = canAccess
-end)
-
 CreateThread(function()
   Wait(0)
   updateServerCtx()
-  TriggerServerEvent("txAdmin:menu:checkAccess")
 end)
 
 --- Snackbar message

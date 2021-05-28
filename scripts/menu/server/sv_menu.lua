@@ -31,16 +31,17 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
   else
     headers['X-TxAdmin-Token'] = 'not_required' -- so it's easy to detect webpipes
   end
-
-  local url = "http://"..apiHost..path
-  -- log("["..callbackId.."]>> "..url)
-  -- log("["..callbackId.."] Headers: "..json.encode(headers))
+  
+  local url = "http://" .. apiHost .. path:gsub("//", "/")
+  debugPrint("[" .. callbackId .. "]>> " .. url)
+  debugPrint("[" .. callbackId .. "] Headers: " .. json.encode(headers))
+  
 
   PerformHttpRequest(url, function(httpCode, data, resultHeaders)
     -- fixing body for error pages (eg 404)
     -- this is likely because of how json.encode() interprets null and an empty table
     data = data or ''
-    resultHeaders['x-badcast-fix'] = 'ignorethis' --likely fixed in artifact v3996
+    resultHeaders['x-badcast-fix'] = 'https://youtu.be/LDU_Txk06tM' -- fixed in artifact v3996
 
     -- fixing redirects
     if resultHeaders.Location then
@@ -64,17 +65,16 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
     -- Sniff permissions out of the auth request
     if path == '/auth/nui' and httpCode == 200 then
       local resp = json.decode(data)
-      if resp.isAdmin then
+      if resp and resp.isAdmin then
         adminPermissions[s] = resp.permissions
       else
         adminPermissions[s] = nil
       end
     end
-    -- log("["..callbackId.."] Perms: "..json.encode(adminPermissions[s]))
-
-
-    -- log("["..callbackId.."]<< "..httpCode)
-    -- log("["..callbackId.."]<< "..httpCode..': '..json.encode(resultHeaders))
+  
+    debugPrint("[" .. callbackId .. "] Perms: " .. json.encode(adminPermissions[s]))
+    debugPrint("[" .. callbackId .. "]<< " .. httpCode)
+    debugPrint("[" .. callbackId .. "]<< " .. httpCode .. ': ' .. json.encode(resultHeaders))
     TriggerClientEvent('txAdmin:WebPipe', s, callbackId, httpCode, data, resultHeaders)
   end, method, body, headers, {
     followLocation = false
@@ -137,18 +137,6 @@ end)
 RegisterServerEvent('txAdmin:menu:getServerCtx', function()
   local src = source
   TriggerClientEvent('txAdmin:menu:sendServerCtx', src, serverCtxObj)
-end)
-
-RegisterServerEvent('txAdmin:menu:checkAccess', function()
-  local src = source
-  
-  -- TODO: Make this NOT constant
-  local canAccess = true
-  if false then canAccess = false end
-  
-  debugPrint((canAccess and "^2" or "^1") .. GetPlayerName(src) ..
-               " does " .. (canAccess and "" or "NOT ") .. "have menu permission.")
-  TriggerClientEvent('txAdmin:menu:setAccessible', src, canAccess)
 end)
 
 RegisterServerEvent('txAdmin:menu:healMyself', function()
@@ -245,7 +233,6 @@ CreateThread(function()
     for _, serverID in ipairs(players) do
       local ped = GetPlayerPed(serverID)
 
-      local veh = GetVehiclePedIsIn(ped, false)
       local vehClass = "walking"
       -- TODO: Goat GetVehicleClass isn't available as a server side native or RPC, this breaks
       -- if you are in a vehicle

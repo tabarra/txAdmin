@@ -11,13 +11,15 @@ RegisterRawNuiCallback('WebPipe', function(req, cb)
     local headers = req.headers
     local body = req.body
     local method = req.method
-    -- print(method..": "..path)
-    -- print(pipeCallbackCounter..": "..json.encode(headers))
+    debugPrint(method .. ": " .. path)
+    debugPrint(pipeCallbackCounter .. ": " .. json.encode(headers))
 
     local id = pipeCallbackCounter
-    pipeReturnCallbacks[id] = cb
+    pipeReturnCallbacks[id] = { cb = cb, path = path }
     pipeCallbackCounter = pipeCallbackCounter + 1
-    -- FIXME: if id > 2048 then id = 1 ????
+    if pipeCallbackCounter > 2048 then
+        pipeCallbackCounter = 1
+    end
 
     TriggerServerEvent('txAdmin:WebPipe', id, method, path, headers, body or '')
 end)
@@ -27,13 +29,24 @@ end)
 RegisterNetEvent('txAdmin:WebPipe')
 AddEventHandler('txAdmin:WebPipe', function(callbackId, statusCode, body, headers)
     local ret = pipeReturnCallbacks[callbackId]
-
+    debugPrint("WebPipe["..callbackId.."] recv=" .. json.encode(ret))
     if not ret then return end
-
-    ret({
+    
+    if ret.path == '/auth/nui' and statusCode == 200 then
+        local resp = json.decode(body)
+        if not resp then
+            print("Invalid NUI auth response received: " .. (body or "nil"))
+        else
+            menuIsAccessible = resp.isAdmin
+        end
+    end
+    
+    ret.cb({
         status = statusCode,
         body = body,
         headers = headers
     })
-    -- FIXME: do we need pipeReturnCallbacks[callbackId] = nil in here?
+    
+    pipeReturnCallbacks[callbackId] = nil
+    debugPrint("Freed web pipe " .. callbackId)
 end)
