@@ -2,14 +2,16 @@ const WEBPIPE_PATH = 'https://monitor/WebPipe'
 
 type ValidPath = `/${string}`
 
-const REQ_TIMEOUT_SHORT = 1500;
-const REQ_TIMEOUT_MEDIUM = 5000;
-const REQ_TIMEOUT_LONG = 9000;
+enum PipeTimeout {
+  SHORT = 1500,
+  MEDIUM = 5000,
+  LONG = 9000
+}
 
 interface fetchWebPipeOpts {
   method?: 'GET' | 'POST',
-  reqTimeoutLength?: number
-  data: unknown
+  timeout?: PipeTimeout
+  data?: unknown
 }
 /**
  * A wrapper around fetch for HTTP reqs to the txAdminPipe
@@ -18,7 +20,7 @@ interface fetchWebPipeOpts {
  **/
 export const fetchWebPipe = async <T = any>(path: ValidPath, options?: fetchWebPipeOpts): Promise<T> => {
   const reqPath = WEBPIPE_PATH + path
-  const timeout = options?.reqTimeoutLength || REQ_TIMEOUT_MEDIUM
+  const timeout = options?.timeout || PipeTimeout.MEDIUM
 
   const abortionController = new AbortController();
   const timeoutId = setTimeout(() => abortionController.abort(), timeout)
