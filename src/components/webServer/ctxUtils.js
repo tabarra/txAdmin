@@ -27,6 +27,12 @@ const getWebViewPath = (view) => {
     if (view.includes('..')) throw new Error('Path Traversal?');
     return path.join(GlobalData.txAdminResourcePath, 'web', view + '.html');
 };
+const getJavascriptConsts = (allConsts = []) => {
+    return Object.entries(allConsts)
+        .map(([name, val]) => `const ${name} = ${JSON.stringify(val)};`)
+        .join(' ');
+};
+
 
 //Squirrelly Filters
 sqrl.filters.define('isSelected', (x) => {
@@ -65,6 +71,7 @@ sqrl.filters.define('ternary', (x) => {
  */
 async function renderMasterView(view, reqSess, data, txVars) {
     if (isUndefined(data)) data = {};
+    data.isWebInterface = txVars.isWebInterface;
     data.uiTheme = (txVars.darkMode) ? 'theme--dark' : '';
     data.headerTitle = (!isUndefined(data.headerTitle)) ? `${data.headerTitle} - txAdmin` : 'txAdmin';
     data.serverProfile = globals.info.serverProfile;
@@ -77,7 +84,10 @@ async function renderMasterView(view, reqSess, data, txVars) {
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
     data.isLinux = (GlobalData.osType == 'linux');
     data.showAdvanced = (GlobalData.isAdvancedUser || GlobalData.verbose);
-    data.dynamicAd = globals.dynamicAds.pick('main');
+    data.dynamicAd = txVars.isWebInterface && globals.dynamicAds.pick('main');
+    data.jsInjection = getJavascriptConsts({
+        isWebInterface: txVars.isWebInterface,
+    });
 
     let out;
     try {
@@ -110,6 +120,7 @@ async function renderMasterView(view, reqSess, data, txVars) {
  */
 async function renderLoginView(data, txVars) {
     if (isUndefined(data)) data = {};
+    data.isWebInterface = txVars.isWebInterface;
     data.uiTheme = (txVars.darkMode) ? 'theme--dark' : '';
     data.logoURL = (GlobalData.loginPageLogo) ? GlobalData.loginPageLogo : 'img/txadmin.png';
     data.isMatrix = (Math.random() <= 0.05);
@@ -123,6 +134,9 @@ async function renderLoginView(data, txVars) {
     data.fxServerVersion = (GlobalData.isZapHosting) ? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion;
     data.serverName = globals.config.serverName || globals.info.serverProfile;
     data.dynamicAd = globals.dynamicAds.pick('login');
+    data.jsInjection = getJavascriptConsts({
+        isWebInterface: txVars.isWebInterface,
+    });
 
     let out;
     try {
@@ -151,7 +165,11 @@ async function renderLoginView(data, txVars) {
  */
 async function renderSoloView(view, data, txVars) {
     if (isUndefined(data)) data = {};
+    data.isWebInterface = txVars.isWebInterface;
     data.uiTheme = (txVars.darkMode) ? 'theme--dark' : '';
+    data.jsInjection = getJavascriptConsts({
+        isWebInterface: txVars.isWebInterface,
+    });
     let out;
     try {
         let rawView = await fs.readFile(getWebViewPath(view), 'utf8');
@@ -226,8 +244,10 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true) {
 //================================================================
 module.exports = async function WebCtxUtils(ctx, next) {
     //Prepare variables
+    const isWebInterface = (typeof ctx.headers['x-txadmin-token'] !== 'string');
     ctx.txVars = {
-        darkMode: (ctx.cookies.get('txAdmin-darkMode') === 'true'),
+        isWebInterface,
+        darkMode: (ctx.cookies.get('txAdmin-darkMode') === 'true' || !isWebInterface),
     };
     const host = ctx.request.host || 'none';
     if (host.startsWith('127.0.0.1') || host.startsWith('localhost')) {
@@ -251,7 +271,6 @@ module.exports = async function WebCtxUtils(ctx, next) {
             globals.databus.txStatsData.pageViews[view]++;
         }
 
-        //TODO: fix this atrocity
         const soloViews = ['adminManager/editModal', 'basic/404'];
         if (view == 'login') {
             ctx.body = await renderLoginView(viewData, ctx.txVars);

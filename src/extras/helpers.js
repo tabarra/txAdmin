@@ -181,7 +181,6 @@ function getFXServerPort(rawCfgFile) {
     const oneUDPEndpoint = endpoints.find((m) => (m.type === 'udp'));
     if (!oneUDPEndpoint) throw new Error('You MUST have at least one <code>endpoint_add_udp</code> in your config');
 
-    //FIXME: Think of something to make this work:
     const firstPort = endpoints[0].port;
     endpoints.forEach((m) => {
         if (m.port !== firstPort) throw new Error('All <code>endpoint_add_*</code> MUST have the same port');

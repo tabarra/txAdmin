@@ -107,9 +107,15 @@ module.exports = async function AdvancedActions(ctx) {
     } else if (action == 'freeze') {
         logWarn('Freezing process for 50 seconds.');
         Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 50 * 1000);
+<<<<<<< HEAD
     } else if (action == 'resetConvars') {
         globals.fxRunner.resetConvars();
         return ctx.send({refresh:true});
+=======
+    } else if (action == 'backupdb') {
+        await globals.playerController.db.backupDatabase();
+        return ctx.send({type: 'success', message: 'backing it up'});
+>>>>>>> c3e7ecacc029e50febf085a1daa392590b428a62
     }
 
 

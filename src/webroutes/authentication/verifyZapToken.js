@@ -41,7 +41,7 @@ module.exports = async function AuthVerify(ctx) {
     const renderData = {
         template: 'normal',
         message: 'Invalid token. Please login using one of the options above.',
-        citizenfxDisabled: !globals.authenticator.providers.citizenfx.ready,
+        citizenfxDisabled: !globals.adminVault.providers.citizenfx.ready,
         discordDisabled: true,
     };
 
@@ -99,7 +99,7 @@ module.exports = async function AuthVerify(ctx) {
 
     try {
         //Checking admin
-        const admin = globals.authenticator.getAdminByName(jwtData.sub);
+        const admin = globals.adminVault.getAdminByName(jwtData.sub);
         if (!admin) {
             logWarn(`${errorPrefix} Wrong username from ${ctx.ip}`);
             return ctx.utils.render('login', renderData);
@@ -127,8 +127,8 @@ module.exports = async function AuthVerify(ctx) {
         };
 
         log(`Admin ${admin.name} logged in from ${ctx.ip} via zap token`);
-        globals.databus.txStatsData.loginOrigins[ctx.txVars.hostType]++;
-        globals.databus.txStatsData.loginMethods.zap++;
+        globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;
+        globals.databus.txStatsData.login.methods.zap++;
     } catch (error) {
         logWarn(`Failed to authenticate ${ctx.request.body.username} with error: ${error.message}`);
         if (GlobalData.verbose) dir(error);

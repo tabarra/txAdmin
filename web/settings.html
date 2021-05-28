@@ -144,7 +144,7 @@
                             </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmFXServer-commandLine" value="{{it.fxserver.commandLine|undef}}"
-                                    placeholder="+exec private.cfg" {{it.readOnly|isDisabled}}>
+                                    placeholder="+set sv_enforceGameBuild 2060" {{it.readOnly|isDisabled}}>
                                 <span class="form-text text-muted">
                                     Additional command-line arguments to pass to the FXServer instance. <br>
                                     For example, you can add <code>+set</code> and <code>+exec</code> commands. <br>
@@ -526,12 +526,11 @@
         if(!window.confirm(`Are you sure you want to Reset FXServer Settings?`)){
             return;
         }
-        var notify = $.notify({ message: '<p class="text-center">Executing...</p>' }, {});
-
-        $.ajax({
+        const notify = $.notify({ message: '<p class="text-center">Executing...</p>' }, {});
+        
+        txAdminAPI({
             type: "POST",
             url: `/masterActions/${action}`,
-            timeout: timeoutMedium,
             data: {},
             dataType: 'json',
             success: function (data) {
@@ -561,15 +560,13 @@
             verbose: $('#frmGlobal-verbose').is(':checked')
         }
         if (!data.serverName.length) {
-            var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
-            return;
+            return $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
         }
-        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/settings/save/global',
-            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -597,15 +594,13 @@
             quiet: $('#frmFXServer-quiet').is(':checked')
         }
         if (!data.serverDataPath.length || !data.cfgPath.length) {
-            var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
-            return;
+            return $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
         }
-        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/settings/save/fxserver',
-            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -632,15 +627,13 @@
             wipePendingWLOnStart: $('#frmPlayerManager-wipePendingWLOnStart').is(':checked'),
         }
         if (!data.minSessionTime.length || !data.whitelistRejectionMessage.length) {
-            var notify = $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
-            return;
+            return $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
         }
-        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/settings/save/playerController',
-            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -664,12 +657,11 @@
             restarterScheduleWarnings: $('#frmMonitor-restarterScheduleWarnings').val().trim(),
             disableChatWarnings: ($('#frmMonitor-chatMessages').is(':checked') === true),
         }
-        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/settings/save/monitor',
-            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {
@@ -696,15 +688,13 @@
             statusMessage: $('#frmDiscord-statusMessage').val().trim()
         };
         if (data.enabled && (!data.token.length || !data.prefix.length || !data.statusMessage.length)) {
-            var notify = $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
-            return;
+            return $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
         }
-        var notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
-        $.ajax({
+        txAdminAPI({
             type: "POST",
             url: '/settings/save/discord',
-            timeout: timeoutMedium,
             data: data,
             dataType: 'json',
             success: function (data) {

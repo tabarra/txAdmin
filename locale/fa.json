@@ -6,8 +6,9 @@
     "restarter": {
         "start_timeout": "Failed to start in time",
         "crash_detected": "Crash Shenasaee Shod!",
-        "partial_crash_warn": "Be dalil shenasaee yek moshkel, Server ta 1 daghighe digar restart mishavad. Lotfan Disconnect Konid.",
-        "partial_crash_warn_discord": "Be dalil shenasaee yek moshkel, **%{servername}** ta 1 daghighe digar restart mishavad.",
+        "hang_detected": "hang detected",
+        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
+        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
         "schedule_reason": "Restart Dar Saat: %{time}",
         "schedule_warn": "Server ta %{smart_count} daghighe digar restart mishavad. Lotfan Disconnect Konid. |||| Server ta %{smart_count} daghighe digar restart mishavad.",
         "schedule_warn_discord": "**%{servername}** ta %{smart_count} daghighe digar restart mishavad. |||| **%{servername}** ta %{smart_count} daghighe digar restart mishavad."

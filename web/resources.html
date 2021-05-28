@@ -139,11 +139,11 @@
 
     //============================================== Refresh List
     $('#btnRefresh').click(function () {
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
-        $.ajax({
+        const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        txAdminAPI({
             type: "POST",
             url: '/fxserver/commands',
-            timeout: timeoutLong,
+            timeout: REQ_TIMEOUT_LONG,
             data: { action: 'refresh_res', parameter: '' },
             success: function (data) {
                 if(data.type !== 'danger'){
@@ -165,11 +165,10 @@
 
     //============================================== Refresh button
     function btnCommand(action, parameter) {
-        var notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
-        $.ajax({
+        const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+        txAdminAPI({
             type: "POST",
             url: '/fxserver/commands',
-            timeout: timeoutMedium,
             data: { action, parameter },
             success: function (data) {
                 if(data.type !== 'danger'){
@@ -190,9 +189,8 @@
 
     //============================================== Search function
     function findResource() {
-        var input, filter;
-        input = document.getElementById("resourceInput");
-        filter = input.value.toUpperCase();
+        const inputEl = document.getElementById("resourceInput");
+        const filter = inputEl.value.toUpperCase();
 
         resGroupsJS.forEach(folder => {
             let hidden = 0;

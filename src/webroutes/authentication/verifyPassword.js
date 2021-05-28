@@ -16,19 +16,19 @@ module.exports = async function AuthVerify(ctx) {
     const renderData = {
         template: 'normal',
         message: null,
-        citizenfxDisabled: !globals.authenticator.providers.citizenfx.ready,
+        citizenfxDisabled: !globals.adminVault.providers.citizenfx.ready,
         discordDisabled: true,
     };
 
     try {
         //Checking admin
-        let admin = globals.authenticator.getAdminByName(ctx.request.body.username);
+        let admin = globals.adminVault.getAdminByName(ctx.request.body.username);
         if (!admin) {
             logWarn(`Wrong username for from: ${ctx.ip}`);
             renderData.message = 'Wrong Password!';
             return ctx.utils.render('login', renderData);
         }
-        if (!VerifyPasswordHash(ctx.request.body.password, admin.password_hash)) {
+        if (!VerifyPasswordHash(ctx.request.body.password.trim(), admin.password_hash)) {
             logWarn(`Wrong password for from: ${ctx.ip}`);
             renderData.message = 'Wrong Password!';
             return ctx.utils.render('login', renderData);
@@ -44,8 +44,8 @@ module.exports = async function AuthVerify(ctx) {
         };
 
         log(`Admin ${admin.name} logged in from ${ctx.ip}`);
-        globals.databus.txStatsData.loginOrigins[ctx.txVars.hostType]++;
-        globals.databus.txStatsData.loginMethods.password++;
+        globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;
+        globals.databus.txStatsData.login.methods.password++;
     } catch (error) {
         logWarn(`Failed to authenticate ${ctx.request.body.username} with error: ${error.message}`);
         if (GlobalData.verbose) dir(error);

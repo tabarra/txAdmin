@@ -105,9 +105,9 @@ const awaitHttp = new Promise((resolve, reject) => {
 
 const awaitMasterPin = new Promise((resolve, reject) => {
     const interval = setInterval(() => {
-        if (globals.authenticator && globals.authenticator.admins !== null) {
+        if (globals.adminVault && globals.adminVault.admins !== null) {
             clearInterval(interval);
-            const pin = (globals.authenticator.admins === false) ? globals.authenticator.addMasterPin : false;
+            const pin = (globals.adminVault.admins === false) ? globals.adminVault.addMasterPin : false;
             resolve(pin);
         }
     }, 150);
@@ -141,7 +141,7 @@ module.exports.printBanner = async () => {
             '', 'Use the PIN below to register:',
             chalk.inverse(` ${adminPinRes.value} `),
         ];
-        urlSuffix = `#${globals.authenticator.addMasterPin}`;
+        urlSuffix = `#${globals.adminVault.addMasterPin}`;
     }
 
     //Printing stuff

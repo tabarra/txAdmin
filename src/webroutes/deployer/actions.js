@@ -131,7 +131,7 @@ async function handleSetVariables(ctx) {
     }
 
     //Setting identifiers array
-    const admin = globals.authenticator.getAdminByName(ctx.session.auth.username);
+    const admin = globals.adminVault.getAdminByName(ctx.session.auth.username);
     if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
     const addPrincipalLines = [];
     Object.keys(admin.providers).forEach((providerName) => {
@@ -141,7 +141,7 @@ async function handleSetVariables(ctx) {
     });
     userVars.addPrincipalsMaster = (addPrincipalLines.length)
         ? addPrincipalLines.join('\n')
-        : '# Deployer Note: this admin master has no identifiers to be automatically added.';
+        : '# Deployer Note: this admin master has no identifiers to be automatically added.\n# add_principal identifier.discord.111111111111111111 group.admin #example';
 
     //Start deployer
     try {

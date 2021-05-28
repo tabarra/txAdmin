@@ -1,19 +1,28 @@
 //Requires
 const modulename = 'PlayerController';
-const low = require('lowdb');
-const FileAsync = require('lowdb/adapters/FileAsync');
 const { customAlphabet } = require('nanoid');
 const humanizeDuration = require('humanize-duration'); //FIXME: remove, this controller is not the right place for interface stuff
 const xss = require('../../extras/xss')(); //FIXME: same as above
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+const { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } = require('./database.js');
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
 
 //Consts
 const validActions = ['ban', 'warn', 'whitelist'];
-const currentDatabaseVersion = 1;
 
+
+
+/*
+    TODO:
+    Move the following to another file:
+    - getRegisteredActions
+    - registerAction
+    - revokeAction
+    - approveWhitelist
+    - checkPlayerJoin
+*/
 
 /**
  * Provide a central database for players, as well as assist with access control.
@@ -51,11 +60,9 @@ const currentDatabaseVersion = 1;
  */
 module.exports = class PlayerController {
     constructor(config) {
-        // logOk('Started');
         this.config = config;
-        this.dbo = null;
         this.activePlayers = [];
-        this.writePending = false;
+        this.db = new Database(config.wipePendingWLOnStart);
 
         //Config check
         if (this.config.minSessionTime < 1 || this.config.minSessionTime > 60) throw new Error('The playerController.minSessionTime setting must be between 1 and 60 minutes.');
@@ -66,42 +73,24 @@ module.exports = class PlayerController {
             this.playerlistGenerator = new PlayerlistGenerator();
         }
 
-        //Start database instance
-        this.setupDatabase();
-
         //Cron functions
-        setInterval(async () => {
+        setInterval(() => {
             //Check if the database is ready
-            if (this.dbo === null) {
+            if (this.db.obj === null) {
                 if (GlobalData.verbose) logWarn('Database still not ready for processing.');
                 return;
             }
-            await this.processActive();
-
-            try {
-                const timeStart = new Date();
-                if (this.writePending) {
-                    await this.dbo.write();
-                    this.writePending = false;
-                    const timeElapsed = new Date() - timeStart;
-                    if (GlobalData.verbose) logOk(`DB file saved, took ${timeElapsed}ms.`);
-                } else {
-                    // if(GlobalData.verbose) logOk('Nothing to write to DB file');
-                }
-            } catch (error) {
-                logError(`Failed to save players database with error: ${error.message}`);
-                if (GlobalData.verbose) dir(error);
-            }
+            this.processActive();
         }, 15 * 1000);
     }
 
 
-    //================================================================
     /**
      * Refresh PlayerController configurations
      */
     refreshConfig() {
         this.config = globals.configVault.getScoped('playerController');
+<<<<<<< HEAD
         globals.fxRunner.resetConvars();
     }//Final refreshConfig()
 
@@ -152,39 +141,17 @@ module.exports = class PlayerController {
                 if (GlobalData.verbose) dir(error);
             }
             process.exit();
+=======
+        const cmd = 'txAdmin-checkPlayerJoin ' + (this.config.onJoinCheckBan || this.config.onJoinCheckWhitelist).toString();
+        try {
+            globals.fxRunner.srvCmd(cmd);
+        } catch (error) {
+            if (GlobalData.verbose) dir(error);
+>>>>>>> c3e7ecacc029e50febf085a1daa392590b428a62
         }
     }
 
 
-    //================================================================
-    /**
-     * Handles the migration of the database
-     * @param {object} dbo
-     * @param {string} oldVersion
-     * @returns {object} lodash database
-     */
-    async migrateDB(dbo, oldVersion) {
-        if (typeof oldVersion !== 'number') {
-            logError('Your players database version is not a number!');
-            process.exit();
-        }
-        if (oldVersion < 1) {
-            logWarn(`Migrating your players database from v${oldVersion} to v1. Wiping all the data.`);
-            await dbo.set('version', currentDatabaseVersion)
-                .set('players', [])
-                .set('actions', [])
-                .set('pendingWL', [])
-                .write();
-        } else {
-            logError(`Your players database is on v${oldVersion}, which is different from this version of txAdmin.`);
-            logError('Since there is currently no migration method ready for the migration, txAdmin will attempt to use it anyways.');
-            logError('Please make sure your txAdmin is on the most updated version!');
-        }
-        return dbo;
-    }
-
-
-    //================================================================
     /**
      * Returns the entire lowdb object. Please be careful with it :)
      *
@@ -193,11 +160,10 @@ module.exports = class PlayerController {
      * @returns {object} lodash database
      */
     getDB() {
-        return this.dbo;
+        return this.db.obj;
     }
 
 
-    //================================================================
     /**
      * Processes the active players for playtime/sessiontime and sets to the database
      *
@@ -213,13 +179,13 @@ module.exports = class PlayerController {
 
         try {
             this.activePlayers.forEach(async (p) => {
-                let sessionTime = now() - p.tsConnected;
+                const sessionTime = now() - p.tsConnected;
 
                 //If its time to add this player to the database
                 if (p.isTmp && sessionTime >= this.config.minSessionTime) {
                     if (p.license == '3333333333333333333333deadbeef0000nosave') return; //DEBUG
 
-                    this.writePending = true; //low
+                    this.db.writeFlag(SAVE_PRIORITY_LOW);
                     p.isTmp = false;
                     p.playTime = Math.round(sessionTime / 60);
                     p.notes = {
@@ -227,7 +193,7 @@ module.exports = class PlayerController {
                         lastAdmin: null,
                         tsLastEdit: null,
                     };
-                    let toDB = {
+                    const toDB = {
                         license: p.license,
                         name: p.name,
                         playTime: p.playTime,
@@ -235,16 +201,16 @@ module.exports = class PlayerController {
                         tsLastConnection: p.tsConnected,
                         notes: p.notes,
                     };
-                    await this.dbo.get('players')
+                    await this.db.obj.get('players')
                         .push(toDB)
                         .value();
                     if (GlobalData.verbose) logOk(`Adding '${p.name}' to players database.`);
 
-                //If its time to update this player's play time
+                //If it's time to update this player's play time
                 } else if (!p.isTmp && checkMinuteElapsed(sessionTime)) {
-                    this.writePending = true; //low
+                    this.db.writeFlag(SAVE_PRIORITY_LOW);
                     p.playTime += 1;
-                    await this.dbo.get('players')
+                    await this.db.obj.get('players')
                         .find({license: p.license})
                         .assign({
                             name: p.name,
@@ -263,7 +229,6 @@ module.exports = class PlayerController {
     }
 
 
-    //================================================================
     /**
      * Searches for a player in the database by the license
      * @param {string} license
@@ -271,7 +236,7 @@ module.exports = class PlayerController {
      */
     async getPlayer(license) {
         try {
-            let p = await this.dbo.get('players').find({license: license}).cloneDeep().value();
+            const p = await this.db.obj.get('players').find({license: license}).cloneDeep().value();
             return (typeof p === 'undefined') ? null : p;
         } catch (error) {
             if (GlobalData.verbose) logError(`Failed to search for a player in the database with error: ${error.message}`);
@@ -280,7 +245,6 @@ module.exports = class PlayerController {
     }
 
 
-    //================================================================
     /**
      * Searches for a registered action in the database by a list of identifiers and optional filters
      * Usage example: getRegisteredActions(['license:xxx'], {type: 'ban', revocation.timestamp: null})
@@ -294,7 +258,7 @@ module.exports = class PlayerController {
     async getRegisteredActions(idArray, filter = {}) {
         if (!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
         try {
-            return await this.dbo.get('actions')
+            return await this.db.obj.get('actions')
                 .filter(filter)
                 .filter((a) => idArray.some((fi) => a.identifiers.includes(fi)))
                 .cloneDeep()
@@ -307,7 +271,6 @@ module.exports = class PlayerController {
     }
 
 
-    //================================================================
     /**
      * Processes an playerConnecting validation request
      *
@@ -389,7 +352,7 @@ module.exports = class PlayerController {
                     if (!license) return {allow: false, reason: 'the whitelist module requires a license identifier.'};
                     license = license.substring(8);
                     //Check for pending WL requests
-                    const pending = await this.dbo.get('pendingWL').find({license: license}).value();
+                    const pending = await this.db.obj.get('pendingWL').find({license: license}).value();
                     let whitelistID;
                     if (pending) {
                         pending.name = playerName;
@@ -403,9 +366,9 @@ module.exports = class PlayerController {
                             license: license,
                             tsLastAttempt: now(),
                         };
-                        await this.dbo.get('pendingWL').push(toDB).value();
+                        await this.db.obj.get('pendingWL').push(toDB).value();
                     }
-                    this.writePending = true; //medium
+                    this.db.writeFlag(SAVE_PRIORITY_LOW);
 
                     //Clean rejection message
                     const xssRejectMessage = require('../../extras/xss')({
@@ -429,7 +392,6 @@ module.exports = class PlayerController {
     }
 
 
-    //================================================================
     /**
      * Registers an action (ban, warn, whitelist)
      * @param {array|number} reference identifiers array or server id
@@ -492,10 +454,10 @@ module.exports = class PlayerController {
             },
         };
         try {
-            await this.dbo.get('actions')
+            await this.db.obj.get('actions')
                 .push(toDB)
                 .value();
-            this.writePending = true; //high
+            this.db.writeFlag(SAVE_PRIORITY_HIGH);
         } catch (error) {
             let msg = `Failed to register event to database with message: ${error.message}`;
             logError(msg);
@@ -508,7 +470,6 @@ module.exports = class PlayerController {
     }
 
 
-    //================================================================
     /**
      * Revoke an action (ban, warn, whitelist)
      * @param {string} action_id action id
@@ -521,11 +482,10 @@ module.exports = class PlayerController {
         if (typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
         if (allowedTypes !== true && !Array.isArray(allowedTypes)) throw new Error('Invalid allowedTypes.');
         try {
-            const action = await this.dbo.get('actions')
+            const action = await this.db.obj.get('actions')
                 .find({id: action_id})
                 .value();
             if (action) {
-                if (action.type === 'warn') return 'cannot revoke warns';
                 if (allowedTypes !== true && !allowedTypes.includes(action.type)) {
                     return 'you do not have permission to revoke this action';
                 }
@@ -533,7 +493,7 @@ module.exports = class PlayerController {
                     timestamp: now(),
                     author,
                 };
-                this.writePending = true; //high
+                this.db.writeFlag(SAVE_PRIORITY_HIGH);
                 return null;
             } else {
                 return 'action not found';
@@ -547,7 +507,6 @@ module.exports = class PlayerController {
     }
 
 
-    //================================================================
     /**
      * Whitelists a player from its license or wl pending id
      *
@@ -571,11 +530,11 @@ module.exports = class PlayerController {
         if (/[0-9A-Fa-f]{40}/.test(reference)) {
             pendingFilter = {license: reference};
             saveReference = [`license:${reference}`];
-            const pending = await this.dbo.get('pendingWL').find(pendingFilter).value();
+            const pending = await this.db.obj.get('pendingWL').find(pendingFilter).value();
             if (pending) playerName = pending.name;
         } else if (GlobalData.regexWhitelistReqID.test(reference)) {
             pendingFilter = {id: reference};
-            const pending = await this.dbo.get('pendingWL').find(pendingFilter).value();
+            const pending = await this.db.obj.get('pendingWL').find(pendingFilter).value();
             if (!pending) throw new Error('Pending ID not found in database');
             saveReference = [`license:${pending.license}`];
             playerName = pending.name;
@@ -586,18 +545,17 @@ module.exports = class PlayerController {
         //Register whitelist
         const actionID = await this.registerAction(saveReference, 'whitelist', author, null, false, playerName);
         if (!actionID) throw new Error('Failed to whitelist player');
-        this.writePending = true; //high
+        this.db.writeFlag(SAVE_PRIORITY_HIGH);
 
         //Remove from the pending list
         if (playerName) {
-            await this.dbo.get('pendingWL').remove(pendingFilter).value();
+            await this.db.obj.get('pendingWL').remove(pendingFilter).value();
         }
 
         return actionID;
     }
 
 
-    //================================================================
     /**
      * Saves a player notes and returns true/false
      * Usage example: setPlayerNote('xxx', 'super awesome player', 'tabarra')
@@ -617,7 +575,7 @@ module.exports = class PlayerController {
             if (ap) {
                 target = ap;
             } else {
-                let dbp = await this.dbo.get('players').find({license: license}).value();
+                let dbp = await this.db.obj.get('players').find({license: license}).value();
                 if (!dbp) return false;
                 target = dbp;
             }
@@ -637,7 +595,6 @@ module.exports = class PlayerController {
     }
 
 
-    //================================================================
     /**
      * Returns a mostly /players.json compatible playerlist based on the activePlayers
      *
@@ -664,7 +621,6 @@ module.exports = class PlayerController {
     }
 
 
-    //================================================================
     /**
      * Processes the monitor heartbeat to update internal active playerlist.
      * Macro view of this function:
@@ -672,7 +628,7 @@ module.exports = class PlayerController {
      *  -For all new players:
      *      - search for them in the db
      *      - add them to the active players containing:
-     *          - some prop to indicate if its present in the database
+     *          - some prop to indicate if it's present in the database
      *          - tsConnected
      *
      * NOTE:  This code was written this way to improve performance in exchange of readability
@@ -680,6 +636,8 @@ module.exports = class PlayerController {
      * TODO: To prevent retaliation from the gods, consider making the activePlayers a Map instead of an Array.
      *
      * FIXME: I'm guaranteeing there are not two players with the same License, but not ID.
+     *
+     * NOTE: currently being called every 3 seconds
      *
      * @param {array} players
      */
@@ -692,12 +650,11 @@ module.exports = class PlayerController {
             if (!Array.isArray(players)) throw new Error('expected array');
 
             //Validate & filter players then extract ids and license
-            let pCount = players.length; //Optimization only, although V8 is probably smart enough
-            let hbPlayers = new Map();
+            const hbPlayers = new Map();
             let invalids = 0;
             let duplicated = 0;
-            for (let i = 0; i < pCount; i++) {
-                let p = Object.assign({}, players[i]);
+            for (let i = 0; i < players.length; i++) {
+                const p = Object.assign({}, players[i]);
 
                 //Basic struct
                 if (
@@ -739,14 +696,13 @@ module.exports = class PlayerController {
 
 
             //Processing active players list, creating the removed list, creating new active list without removed players
-            let apCount = this.activePlayers.length;  //Optimization only, although V8 is probably smart enough
-            let disconnectedPlayers = [];
-            let activePlayerLicenses = []; //Optimization only
-            let newActivePlayers = [];
-            for (let i = 0; i < apCount; i++) {
-                let hbPlayerData = hbPlayers.get(this.activePlayers[i].license);
+            const disconnectedPlayers = [];
+            const activePlayerLicenses = []; //Optimization only
+            const newActivePlayers = [];
+            for (let i = 0; i < this.activePlayers.length; i++) {
+                const hbPlayerData = hbPlayers.get(this.activePlayers[i].license);
                 if (hbPlayerData) {
-                    let updatedPlayer = Object.assign(
+                    const updatedPlayer = Object.assign(
                         this.activePlayers[i],
                         {
                             id: hbPlayerData.id, //NOTE: possibly the solution to the double player issue?
@@ -770,10 +726,10 @@ module.exports = class PlayerController {
                         return Object.values(GlobalData.validIdentifiers).some((vf) => vf.test(id));
                     });
                     //Check if he is already on the database
-                    let dbPlayer = await this.getPlayer(license);
+                    const dbPlayer = await this.getPlayer(license);
                     if (dbPlayer) {
                         //TODO: create a AllAssocIds for the players, containing all intersecting identifiers
-                        let newPlayer = Object.assign({}, player, {
+                        const newPlayer = Object.assign({}, player, {
                             tsJoined: dbPlayer.tsJoined,
                             playTime: dbPlayer.playTime,
                             tsConnected: now(),
@@ -782,7 +738,7 @@ module.exports = class PlayerController {
                         });
                         newActivePlayers.push(newPlayer);
                     } else {
-                        let tsNow = now();
+                        const tsNow = now(); //FIXME: pra fora do loop?
                         player.tsJoined = tsNow;
                         player.tsConnected = tsNow;
                         player.isTmp = true;
@@ -793,10 +749,12 @@ module.exports = class PlayerController {
 
             //Committing disconnected players data
             //NOTE: I'm only assigning the notes because that's currently the only thing that can change between saves.
-            if (disconnectedPlayers.length) this.writePending = true; //low
+            if (disconnectedPlayers.length) this.db.writeFlag(SAVE_PRIORITY_LOW);
             disconnectedPlayers.forEach(async (p) => {
                 try {
-                    await this.dbo.get('players')
+                    //p.sessions.push({ts: now(), time: p.playTime})
+                    // some code here to save the p.playTime
+                    await this.db.obj.get('players')
                         .find({license: p.license})
                         .assign({
                             notes: p.notes,
@@ -817,4 +775,4 @@ module.exports = class PlayerController {
             }
         }
     }//Fim processHeartBeat()
-}; //Fim Database()
+}; //Fim PlayerController()

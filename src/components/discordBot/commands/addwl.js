@@ -14,7 +14,7 @@ module.exports = {
     async execute(message, args) {
         //Check permissions
         //TODO: generalize this to other commands?
-        const admin = globals.authenticator.getAdminByProviderUID(message.author.id);
+        const admin = globals.adminVault.getAdminByProviderUID(message.author.id);
         if (!admin) {
             return await message.reply('your Discord ID is not registered in txAdmin :face_with_monocle:');
         }

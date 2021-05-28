@@ -4,7 +4,8 @@ const translate = (x, y) => {
 
 //FIXME: remove this
 // const yLabels = ['0.005', '0.010', '0.025', '0.050', '0.075', '0.100', '0.250', '0.500', '0.750', '1.000', '2.500', '5.000', '7.500', '10.000', '+Inf'];
-const yLabels = ['5 μs', '10 μs', '25 μs', '50 μs', '75 μs', '100 μs', '250 μs', '500 μs', '750 μs', '1.0 ms', '2.5 ms', '5.0 ms', '7.5 ms', '10 ms', '+Inf'];
+const yLabels = ['5 ms', '10 ms', '25 ms', '50 ms', '75 ms', '100 ms', '250 ms', '500 ms', '750 ms', '1.0 s', '2.5 s', '5.0 s', '7.5 s', '10 s', '+Inf'];
+// const yLabels = ['200 FPS', '100 FPS', '40 FPS', '20 FPS', '13 FPS', '10 FPS', '4 FPS', '2 FPS', '1.3 FPS', '1.0 FPS', '0.4 FPS', '0.2 FPS', '0.13 FPS', '0.1 FPS', '+Inf'];
 
 
 const drawHeatmap = (d3Container, perfData, options = {}) => {

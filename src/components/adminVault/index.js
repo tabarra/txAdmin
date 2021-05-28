@@ -1,15 +1,13 @@
 //Requires
-const modulename = 'Authenticator';
+const modulename = 'AdminVault';
 const fs = require('fs-extra');
 const cloneDeep = require('lodash/cloneDeep');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const CitizenFXProvider = require('./providers/CitizenFX');
 
 
-module.exports = class Authenticator {
-    constructor(config) {
-        // logOk('Started');
-        this.config = config;
+module.exports = class AdminVault {
+    constructor() {
         this.adminsFile = `${GlobalData.dataPath}/admins.json`;
         this.admins = null;
         this.refreshRoutine = null;
@@ -30,11 +28,15 @@ module.exports = class Authenticator {
             'settings.write': 'Settings: Change',
             'txadmin.log.view': 'View txAdmin Log',
         };
+        this.hardConfigs = {
+            refreshInterval: 15e3,
+        };
+
 
         //Load providers
         try {
             this.providers = {
-                discord: 'xxxxx',
+                discord: false,
                 citizenfx: new CitizenFXProvider(null),
             };
         } catch (error) {
@@ -72,7 +74,7 @@ module.exports = class Authenticator {
     setupRefreshRoutine() {
         this.refreshRoutine = setInterval(() => {
             this.refreshAdmins();
-        }, this.config.refreshInterval);
+        }, this.hardConfigs.refreshInterval);
     }
 
 
@@ -427,4 +429,4 @@ module.exports = class Authenticator {
         this.admins = jsonData;
         return true;
     }
-}; //Fim Authenticator()
+}; //Fim AdminVault()

@@ -7,7 +7,8 @@ In the client script, add the following event call inside the command function:
 ```lua
 TriggerServerEvent('txaLogger:CommandExecuted', rawCommand)
 ```
-Where `rawCommand` is a variable containing the full command with parameters.
+Where `rawCommand` is a variable containing the full command with parameters.  
+You don't NEED to pass `rawCommand`, you can edit this string or pass anything you want.
   
 ### Example
 In this example, we will log data from the `/car` command from the `CarCommand` script.

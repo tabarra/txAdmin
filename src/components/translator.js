@@ -103,11 +103,11 @@ module.exports = class Translator {
         } else if (lang === 'custom') {
             try {
                 return JSON.parse(fs.readFileSync(
-                    `${GlobalData.dataPath}/locale/custom.json`,
+                    `${GlobalData.dataPath}/locale.json`,
                     'utf8',
                 ));
             } catch (error) {
-                throw new Error(`Failed to load '${GlobalData.dataPath}/locale/custom.json'. (${error.message})`);
+                throw new Error(`Failed to load '${GlobalData.dataPath}/locale.json'. (${error.message})`);
             }
 
         //If its an invalid language

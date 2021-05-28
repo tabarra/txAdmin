@@ -131,7 +131,7 @@ function handleFXServer(ctx) {
         cfg.serverDataPath.includes(' ')
         || cfg.cfgPath.includes(' ')
     ) {
-        return ctx.send({type: 'danger', message: 'The paths cannot contain spaces.'});
+        return ctx.send({type: 'danger', message: 'The paths cannot contain spaces (the space character that separate words).'});
     }
 
     //Validating Base Path
