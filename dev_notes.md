@@ -61,6 +61,8 @@ isZapHosting, forceInterface,
 
 
 stuff:
+- [ ] Unrecognized event: playerJoining -- we are using playerjoining but should probably change that
+
 - [ ] break `playerController` actions stuff to another file
 - [ ] do the sv_listingIPOverride thing
 - [ ] maybe remove the sv_maxclients enforcement in the cfg file

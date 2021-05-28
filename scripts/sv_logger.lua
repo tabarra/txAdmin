@@ -64,9 +64,9 @@ AddEventHandler('playerConnecting', function()
     logger(source, 'playerConnecting')
 end)
 
-RegisterNetEvent('playerJoining', function()
-    logger(source, 'playerJoining')
-end)
+-- RegisterNetEvent('playerJoining', function()
+--     logger(source, 'playerJoining')
+-- end)
 
 AddEventHandler('playerDropped', function()
     logger(source, 'playerDropped')

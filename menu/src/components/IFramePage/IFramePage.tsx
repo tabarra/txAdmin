@@ -5,7 +5,7 @@ import { debugLog } from "../../utils/debugLog";
 
 const useStyles = makeStyles((theme: Theme) => ({
   root: {
-    backgroundColor: theme.palette.background.default,
+    backgroundColor: '#171718',
     height: "100%",
     borderRadius: 15,
   },

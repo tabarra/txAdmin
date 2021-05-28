@@ -452,21 +452,15 @@
     </div>
 </div>
 
-{{@if(it.adminIsMaster)}}
-    <div class="row justify-content-md-center">
-        <div class="col-md-7 mw-col8">
-            <div class="card border-danger">
-                <div class="card-header text-center">
-                    <h5 class="d-inline">Master Actions</h5>
-                </div>
-                <div class="card-body">
-                    {{@if(!it.isWebInterface)}}
-                    <div class="row justify-content-center text-center">
-                        <h3 class="mt-3 text-secondary">Master Actions are Disabled</h3>
-                        <p class="text-muted">Please use the web panel in your browser if you would like to backup your database, 
-                            import bans, or reset FXServer.</p>
-                    </div>
-                    {{#else}}
+<!-- Master actions -->
+<div class="row justify-content-md-center">
+    <div class="col-md-7 mw-col8">
+        <div class="card border-danger">
+            <div class="card-header text-center">
+                <h5 class="d-inline">Master Actions</h5>
+            </div>
+            <div class="card-body">
+                {{@if(it.isWebInterface && it.adminIsMaster)}}
                     <!-- Backup Database -->
                     <div class="row text-center pt-2">
                         <div class="col-lg-9 text-lg-left mb-2">
@@ -507,12 +501,24 @@
                         </div>
                     </div>
                     <!-- <hr class="m-1"> -->
-                    {{/if}}
-                </div>
+                {{#else}}
+                    <div class="row justify-content-center text-center">
+                        <h3 class="mt-3 text-secondary">Master Actions Disabled</h3>
+                        <p class="text-muted">
+                            {{@if(it.adminIsMaster)}}
+                                Please use the web panel in your browser if you would like to backup your database, 
+                                import bans, or reset FXServer settings.
+                            {{#else}}
+                                Only the admin master can perform actions like backup the database, import bans, or
+                                reset FXServer settings.
+                            {{/if}}
+                        </p>
+                    </div>
+                {{/if}}
             </div>
         </div>
     </div>
-{{/if}}
+</div>
 
 {{@include("footer", it)/}}
 
