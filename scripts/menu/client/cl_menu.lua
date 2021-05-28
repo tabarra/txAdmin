@@ -268,8 +268,32 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
     local row = data[i]
     local targetVec = vec3(row.pos.x, row.pos.y, row.pos.z)
     local dist = #(GetEntityCoords(PlayerPedId()) - targetVec)
-    row.pos = nil
+      
+    -- calculate the vehicle status
+    local vehicleStatus = 'walking'
+    if row.veh then
+      local veh = NetToVeh(row.veh)
+      if veh and veh > 0 then
+        local vehClass = GetVehicleClass(veh)
+        if vehClass == 8 then
+          vehicleStatus = 'biking'
+        elseif vehClass == 14 then
+          vehicleStatus = 'boating'
+        --elseif vehClass == 15 then
+        --  vehicleStatus = 'floating'
+        --elseif vehClass == 16 then
+        --  vehicleStatus = 'flying'
+        else
+          vehicleStatus = 'driving'
+        end
+      end
+    end
+    
+    row.vehicleStatus = vehicleStatus
     row.distance = dist
+    -- remove unneeded values
+    row.pos = nil
+    row.veh = nil
   end
 
   debugPrint(json.encode(data))

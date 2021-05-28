@@ -15,7 +15,7 @@ import {
   MoreVert,
   Motorcycle,
 } from "@material-ui/icons";
-import { PlayerData } from "../../state/players.state";
+import { PlayerData, VehicleStatus } from "../../state/players.state";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -49,7 +49,7 @@ const PlayerCard: React.FC<PlayerData> = ({
 }) => {
   const classes = useStyles();
 
-  const statusIcon = {
+  const statusIcon: {[K in VehicleStatus]: JSX.Element} = {
     walking: <DirectionsWalk color="inherit" />,
     driving: <DriveEta color="inherit" />,
     boating: <DirectionsBoat color="inherit" />,

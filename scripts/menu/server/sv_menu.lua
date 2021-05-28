@@ -228,49 +228,27 @@ CreateThread(function()
   while true do
     local found = {}
     
-    -- TODO: Uncomment live code
     local players = GetPlayers()
     for _, serverID in ipairs(players) do
       local ped = GetPlayerPed(serverID)
-
-      local vehClass = "walking"
-      -- TODO: Goat GetVehicleClass isn't available as a server side native or RPC, this breaks
-      -- if you are in a vehicle
-
-      --if veh and veh > 0 then
-      --  local class = GetVehicleClass(veh)
-      --  if class == 8 then
-      --    vehClass = "biking"
-      --  elseif class == 14 then
-      --    vehClass = "boating"
-      --  else
-      --    vehClass = "driving"
-      --  end
-      --end
+      local veh = GetVehiclePedIsIn(ped)
+      if veh and veh > 0 then
+        veh = NetworkGetNetworkIdFromEntity(veh)
+      else
+        veh = nil
+      end
 
       found[#found + 1] = {
         id = serverID,
         health = GetEntityHealth(ped),
-        vehicleStatus = vehClass,
+        veh = veh,
         pos = GetEntityCoords(ped),
         username = GetPlayerName(serverID),
       }
-      -- Lets yield for a tick so we don't have hitch issues
+      
+      -- Lets wait a tick so we don't have hitch issues
       Wait(0)
     end
-    
-    -- TODO: remove test data
-    --for i = 1, 1000 do
-    --  local data = {
-    --    id = i,
-    --    vehicleStatus = "walking",
-    --    health = math.random(0, 200),
-    --    distance = math.random(1, 5000),
-    --    username = 'skeleboi' .. i,
-    --    pos = vec3(0, 0, 0)
-    --  }
-    --  table.insert(found, data)
-    --end
     
     TriggerClientEvent('txAdmin:menu:setPlayerState', -1, found)
     Wait(1000 * 15)
