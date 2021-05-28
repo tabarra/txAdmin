@@ -151,8 +151,17 @@ export const MainPageList: React.FC = () => {
     openDialog({
       description: t("nui_menu.page_main.spawn_veh.dialog_desc"),
       title: t("nui_menu.page_main.spawn_veh.dialog_title"),
-      placeholder: "Adder",
+      placeholder: "car, bike, heli, boat, Adder, Buzzard, etc",
       onSubmit: (modelName: string) => {
+        if(modelName === 'car'){
+          modelName = (Math.random() > 0.05) ? 'nero' : 'caddy';
+        } else if(modelName === 'bike'){
+          modelName = (Math.random() > 0.05) ? 'esskey' : 'tribike2';
+        } else if(modelName === 'heli'){
+          modelName = (Math.random() > 0.05) ? 'buzzard2' : 'havok';
+        }  else if(modelName === 'boat'){
+          modelName = 'seashark';
+        } 
         fetchNui("spawnVehicle", { model: modelName }).then(({ e }) => {
           e
             ? enqueueSnackbar(
