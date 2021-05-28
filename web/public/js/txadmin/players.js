@@ -348,20 +348,20 @@ modPlayer.Main.notes.addEventListener('keydown', (event) => {
 // Redirect to player search page
 function searchPlayer() {
     modPlayer.Modal.hide();
-    if (modPlayer.curr.identifiers == false) return;
+    if (!modPlayer.curr.identifiers) return;
     const idsString = modPlayer.curr.identifiers.join(';');
-    if (window.location.pathname == '/player/list') {
+    if (window.location.pathname == TX_BASE_PATH + 'player/list') {
         searchInput.value = idsString;
         performSearch();
     } else {
-        window.location = '/player/list#' + encodeURI(idsString);
+        window.location = TX_BASE_PATH + 'player/list#' + encodeURI(idsString);
     }
 }
 
 
 // Message player
 function messagePlayer() {
-    if (modPlayer.curr.id == false) return;
+    if (!modPlayer.curr.id) return;
     let message = prompt('Type your message.');
     if (!message || message.length === 0) return;
 

@@ -12,27 +12,25 @@ const sessDuration = 60 * 60 * 1000; //one hour
  */
 // FIXME: add logging
 module.exports = async function VerifyNuiAuth(ctx) {
-    // return ctx.send({isAdmin: false});
-    return ctx.send({
-        isAdmin: true,
-        permissions: ['all_permissions'],
-        expiration: Date.now() + sessDuration,
-    });
+    const unsafeIdentifiers = ctx.request.headers['x-txadmin-identifiers'] || '';
 
-    dir(ctx.request.headers['x-txadmin-identifiers']);
-    // return ctx.response.redirect('/setup');
+    // reject sus ips
+    if (!['::1', '127.0.0.1', '127.0.1.1'].includes(ctx.ip)) {
+        return ctx.utils.error(400, 'Invalid Request');
+    }
+
     if (isUndefined(ctx.request.headers['x-txadmin-token']) || isUndefined(ctx.request.headers['x-txadmin-identifiers'])) {
         return ctx.utils.error(400, 'Invalid Request');
     }
 
     // token?
-    if (ctx.request.headers['x-txadmin-token'] !== globals.webServer.intercomToken) {
+    if (ctx.request.headers['x-txadmin-token'] !== globals.webServer.fxWebPipeToken) {
         return ctx.utils.error(401, 'invalid token');
     }
 
     try {
-        //FIXME: use identifiers
-        let admin = globals.adminVault.getAdminByName('test_account');
+        const identifiers = unsafeIdentifiers.split(',');
+        let admin = globals.adminVault.getAdminByIdentifiers(identifiers);
         if (!admin) {
             return ctx.send({isAdmin: false});
         }
@@ -43,48 +41,20 @@ module.exports = async function VerifyNuiAuth(ctx) {
             username: admin.name,
             picture: (providerWithPicture) ? providerWithPicture.data.picture : undefined,
             password_hash: admin.password_hash,
-            expires_at: false,
-            isWebInterface: false, //FIXME:
+            expires_at: Math.ceil((+new Date + sessDuration) / 1000),
+            isWebInterface: false,
+            //FIXME: Tabarra needs to build security around this value
         };
-        log(`Admin ${admin.name} logged in from ${ctx.ip}`);
+        log(`Admin ${admin.name} logged into the in-game UI`);
+        ctx.send({
+            isAdmin: true,
+            permissions: admin.permissions,
+            expiration: Date.now() + sessDuration,
+        });
 
-        // return ctx.response.redirect('/');
-        ctx.set('x-txadmin-perms', admin.permissions.join(';'));
-        return ctx.send({isAdmin: true});
-
-
-        // globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;
-        // globals.databus.txStatsData.login.methods.password++;
-
-        // let admin = null;
-        // for (const identifier of ctx.request.headers['x-txadmin-identifiers'].split(', ')) {
-        //     admin = globals.authenticator.getAdminByIdentifier(identifier);
-
-        //     if (admin) {
-        //         break;
-        //     }
-        // }
-        // //Admin exists?
-        // if (!admin) {
-        //     ctx.body = ' ';
-        //     return;
-        // }
-
-
-        //Setting up session
-        // ctx.session.auth = {
-        //     provider: 'citizenfx', // tentative
-        //     provider_uid: admin.providers['citizenfx'].id,
-        //     username: admin.name,
-        //     picture: (providerWithPicture) ? providerWithPicture.data.picture : undefined,
-        //     expires_at: Math.round(Date.now() / 1000) + 86400,
-        // };
-
-        // log(`Admin ${admin.name} logged in from in-game UI`);
+        // FIXME: tabarra
         // globals.databus.txStatsData.loginOrigins[ctx.txVars.hostType]++;
         // globals.databus.txStatsData.loginMethods.password++;
-
-        // return ctx.response.redirect('/');
     } catch (error) {
         logWarn(`Failed to authenticate NUI user with error: ${error.message}`);
         if (GlobalData.verbose) dir(error);

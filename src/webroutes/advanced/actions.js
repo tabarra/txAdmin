@@ -113,8 +113,10 @@ module.exports = async function AdvancedActions(ctx) {
     } else if (action == 'backupdb') {
         await globals.playerController.db.backupDatabase();
         return ctx.send({type: 'success', message: 'backing it up'});
+    } else if (action == 'reauth') {
+        // FIXME: test data
+        return globals.fxRunner.sendEvent('adminChange', [1, 5, 7]);
     }
-
 
     //Catch all
     return ctx.send({type: 'danger', message: '<strong>Unknown action :(</strong>'});

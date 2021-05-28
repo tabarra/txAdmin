@@ -150,7 +150,7 @@
 
                 </div> <!-- End Row -->
             </div> <!-- End Modal Body -->
-            <div class="modal-footer d-flex align-items-end">
+            <div class="modal-footer align-items-end {{[(!it.isWebInterface), 'd-none', 'd-flex']|ternary}}">
                 <button type="button" class="btn btn-outline-info mr-auto"
                     id="modPlayerButtons-search" onclick="searchPlayer()">
                     <i class="icon-info"></i> Search
