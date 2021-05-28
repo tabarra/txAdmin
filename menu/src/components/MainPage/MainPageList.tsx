@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {Box, List, makeStyles, Theme} from "@material-ui/core";
 import { MenuListItem, MenuListItemMulti } from "./MenuListItem";
 import {
@@ -7,7 +7,6 @@ import {
   Build,
   ControlCamera,
   DirectionsCar,
-  ExpandMore,
   Favorite,
   GpsFixed,
   LocalHospital,
@@ -15,16 +14,16 @@ import {
   Restore,
   Security,
 } from "@material-ui/icons";
-import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation";
-import { useDialogContext } from "../provider/DialogProvider";
-import { fetchNui } from "../utils/fetchNui";
-import { useKeyboardNavContext } from "../provider/KeyboardNavProvider";
+import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
+import { useDialogContext } from "../../provider/DialogProvider";
+import { fetchNui } from "../../utils/fetchNui";
+import { useKeyboardNavContext } from "../../provider/KeyboardNavProvider";
 import { useTranslate } from "react-polyglot";
 import { useSnackbar } from "notistack";
-import { PlayerMode, usePlayerMode } from "../state/playermode.state";
-import { useIsMenuVisible } from "../state/visibility.state";
-import { TeleportMode, useTeleportMode } from "../state/teleportmode.state";
-import { HealMode, useHealMode } from "../state/healmode.state";
+import { PlayerMode, usePlayerMode } from "../../state/playermode.state";
+import { useIsMenuVisible } from "../../state/visibility.state";
+import { TeleportMode, useTeleportMode } from "../../state/teleportmode.state";
+import { HealMode, useHealMode } from "../../state/healmode.state";
 
 const fadeHeight = 20;
 const listHeight = 388;
@@ -55,6 +54,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+// TODO: This component is kinda getting out of hand, might want to split it somehow
 export const MainPageList: React.FC = () => {
   const { openDialog } = useDialogContext();
   const { setDisabledKeyNav } = useKeyboardNavContext();
@@ -68,19 +68,17 @@ export const MainPageList: React.FC = () => {
   const classes = useStyles();
 
   // the directions are inverted
-  const handleArrowDown = () => {
+  const handleArrowDown = useCallback(() => {
     const next = curSelected + 1;
-    fetchNui('playSound', 'move')
+    fetchNui('playSound', 'move');
     setCurSelected(next >= menuListItems.length ? 0 : next);
-    console.log(next >= menuListItems.length ? 0 : next, menuListItems.length)
-  };
+  },[curSelected]);
 
-  const handleArrowUp = () => {
+  const handleArrowUp = useCallback(() => {
     const next = curSelected - 1;
-    fetchNui('playSound', 'move')
+    fetchNui('playSound', 'move');
     setCurSelected(next < 0 ? menuListItems.length - 1 : next);
-    console.log(next < 0 ? menuListItems.length - 1 : next, menuListItems.length)
-  };
+  }, [curSelected]);
 
   useEffect(() => {
     setDisabledKeyNav(false);
@@ -108,7 +106,7 @@ export const MainPageList: React.FC = () => {
         // {x = -1.01; y= 2.02; z=3.03}
         // -1, 2, 3
         const [x, y, z] = Array.from(
-          coords.matchAll(/-?\d{1,4}(?:\.\d{1,9})?/g), 
+          coords.matchAll(/-?\d{1,4}(?:\.\d{1,9})?/g),
           m => parseFloat(m[0])
         );
 
@@ -207,7 +205,7 @@ export const MainPageList: React.FC = () => {
       variant: "success",
     });
   }
-
+  // This is here for when I am bored developing
   const handleSpawnWeapon = () => {
     openDialog({
       title: t("nui_menu.page_main.spawn_wep.dialog_title"),
@@ -219,6 +217,9 @@ export const MainPageList: React.FC = () => {
     });
   };
 
+  // This is where we keep a memoized list of all actions, can be dynamically
+  // set in the future for third party resource integration. For now here for
+  // simplicity
   const menuListItems = useMemo(
     () => [
       {
@@ -227,6 +228,7 @@ export const MainPageList: React.FC = () => {
         secondary: t("nui_menu.page_main.player_mode.list_secondary", {
           mode: "NoClip",
         }),
+        requiredPermission: 'players.playermode',
         showCurrentPrefix: true,
         isMultiAction: true,
         initialValue: playerMode,
@@ -266,6 +268,7 @@ export const MainPageList: React.FC = () => {
         icon: <LocationSearching />,
         primary: t("nui_menu.page_main.teleport.list_primary"),
         isMultiAction: true,
+        requiredPermission: 'players.teleport',
         initialValue: teleportMode,
         actions: [
           {
@@ -295,6 +298,7 @@ export const MainPageList: React.FC = () => {
       },
       {
         icon: <DirectionsCar />,
+        requiredPermission: 'menu.vehicle',
         primary: t("nui_menu.page_main.spawn_veh.list_primary"),
         secondary: t("nui_menu.page_main.spawn_veh.list_secondary"),
         onSelect: handleSpawnVehicle,
@@ -303,12 +307,14 @@ export const MainPageList: React.FC = () => {
         icon: <Build />,
         primary: t("nui_menu.page_main.fix_vehicle.list_primary"),
         secondary: t("nui_menu.page_main.fix_vehicle.list_secondary"),
+        requiredPermission: 'menu.vehicle',
         onSelect: handleFixVehicle,
       },
       {
         primary: t("nui_menu.page_main.heal_myself.list_primary"),
         isMultiAction: true,
         initialValue: healMode,
+        requiredPermission: 'players.heal',
         actions: [
           {
             label: t("nui_menu.page_main.heal_myself.list_secondary"),
@@ -333,6 +339,7 @@ export const MainPageList: React.FC = () => {
       },
       {
         icon: <Announcement />,
+        requiredPermission: 'players.message',
         primary: t("nui_menu.page_main.send_announce.list_primary"),
         secondary: t("nui_menu.page_main.send_announce.list_secondary"),
         onSelect: handleAnnounceMessage,

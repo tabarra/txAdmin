@@ -27,6 +27,7 @@ module.exports = class WebServer {
     constructor(config) {
         this.config = config;
         this.intercomToken = nanoid();
+        this.fxWebPipeToken = nanoid();
         this.koaSessionKey = `txAdmin:${globals.info.serverProfile}:sess`;
         this.webConsole = null;
         this.isListening = false;
@@ -147,6 +148,15 @@ module.exports = class WebServer {
             }
         });
         this.koaCallback = this.app.callback();
+    }
+
+
+    //================================================================
+    //Resetting tokens - called by fxRunner on spawnServer()
+    resetTokens() {
+        this.intercomToken = nanoid();
+        this.fxWebPipeToken = nanoid();
+        if (GlobalData.verbose) log('Intercom and WebPipe tokens reset.');
     }
 
 

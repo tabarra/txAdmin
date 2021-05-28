@@ -6,12 +6,47 @@
 - [x] web: prepare html/js for nui mode (remove elements)
 - [X] web: create `txAdminAPI` and replace all `$.ajax`
 - [x] increase page timeouts
+- [x] change webserver token every time the server starts
 - [ ] xxx
 - [ ] xxx
 - [ ] diagnostics: use `globals.monitor.hostStats` instead of `systeminformation`
 - [ ] add html file caching
 - [ ] master actions deveria aparecer, mas desabilitado
 - [ ] srvCmdBuffer needs to strip the color escape characters
+
+
+
+
+Client flow:
+- nui loads
+- nui calls /auth/nui
+- lua client > lua server
+- lua server > tx
+- tx check identifiers and replies with either:
+    - non-200
+    - 200 and permissions array
+- lua server caches the permissions for this source id
+- lua server > lua client
+- lua client saves the "isMenuAllowed" state to prevent F1 from opening the nui
+- lua client > nui
+- nui saves the session cookie if it's authorized
+
+On admin change:
+- tx will trigger an event
+- lua server will wipe its permission cache
+- lua server will relay this event to the clients
+- lua client will send message to nui
+- nui will try to reauth
+- follow the flow above
+
+
+
+
+
+nota:
+- precisamos garantir que uma sessão criada via NUI seja só usada com nui
+- criar um novo token, mudar no primeiro tick
+- desabilitar master actions pra quando for NUI
 
 
 
@@ -62,7 +97,6 @@ stuff:
 - [ ] add ban server-side ban cache (last 500 bans?), updated on every ban change 
 - [ ] add a commend system?
 - [ ] add stopwatch (or something) to the db functions and print on `/diagnostics`
-- [ ] change webserver token every time the server starts
 
 > Soon™® (hopefully in two months or so)
 - [ ] tweak dashboard update checker behavior

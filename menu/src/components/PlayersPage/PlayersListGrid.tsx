@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useFilteredSortedPlayers } from "../state/players.state";
+import { useFilteredSortedPlayers } from "../../state/players.state";
 import PlayerCard from "./PlayerCard";
 import { Box, CircularProgress, makeStyles } from "@material-ui/core";
 

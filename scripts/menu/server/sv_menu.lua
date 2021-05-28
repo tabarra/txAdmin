@@ -1,6 +1,87 @@
+--Check Environment
 if GetConvar('txAdmin-serverMode', 'false') ~= 'true' then
   return
 end
+local apiHost = GetConvar("txAdmin-apiHost", "invalid")
+local pipeToken = GetConvar("txAdmin-pipeToken", "invalid")
+if apiHost == "invalid" or pipeToken == "invalid" then
+  logError('API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
+  return
+end
+
+--Erasing the token convar for security reasons
+if (GetConvar('TXADMIN_MENU_DEBUG', 'false') ~= 'true') then
+  SetConvar("txAdmin-pipeToken", "removed")
+end
+
+
+-- Vars
+local adminPermissions = {}
+
+
+-- Web UI proxy
+RegisterNetEvent('txAdmin:WebPipe')
+AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, body)
+  local s = source
+
+  -- Adding auth information
+  if path == '/auth/nui' then
+    headers['X-TxAdmin-Token'] = pipeToken
+    headers['X-TxAdmin-Identifiers'] = table.concat(GetPlayerIdentifiers(s), ', ')
+  else
+    headers['X-TxAdmin-Token'] = 'not_required' -- so it's easy to detect webpipes
+  end
+  
+  local url = "http://" .. apiHost .. path:gsub("//", "/")
+  --debugPrint("[" .. callbackId .. "]>> " .. url)
+  --debugPrint("[" .. callbackId .. "] Headers: " .. json.encode(headers))
+  
+
+  PerformHttpRequest(url, function(httpCode, data, resultHeaders)
+    -- fixing body for error pages (eg 404)
+    -- this is likely because of how json.encode() interprets null and an empty table
+    data = data or ''
+    resultHeaders['x-badcast-fix'] = 'https://youtu.be/LDU_Txk06tM' -- fixed in artifact v3996
+
+    -- fixing redirects
+    if resultHeaders.Location then
+      if resultHeaders.Location:sub(1, 1) == '/' then
+        resultHeaders.Location = '/WebPipe' .. resultHeaders.Location
+      end
+    end
+
+    -- fixing cookies
+    if resultHeaders['Set-Cookie'] then
+      local cookieHeader = resultHeaders['Set-Cookie']
+      local cookies = type(cookieHeader) == 'table' and cookieHeader or { cookieHeader }
+      
+      for k in pairs(cookies) do
+        cookies[k] = cookies[k] .. '; SameSite=None; Secure'
+      end
+      
+      resultHeaders['Set-Cookie'] = cookies
+    end
+
+    -- Sniff permissions out of the auth request
+    if path == '/auth/nui' and httpCode == 200 then
+      local resp = json.decode(data)
+      if resp and resp.isAdmin then
+        adminPermissions[s] = resp.permissions
+      else
+        adminPermissions[s] = nil
+      end
+    end
+  
+    --debugPrint("[" .. callbackId .. "] Perms: " .. json.encode(adminPermissions[s]))
+    --debugPrint("[" .. callbackId .. "]<< " .. httpCode)
+    --debugPrint("[" .. callbackId .. "]<< " .. httpCode .. ': ' .. json.encode(resultHeaders))
+    TriggerClientEvent('txAdmin:WebPipe', s, callbackId, httpCode, data, resultHeaders)
+  end, method, body, headers, {
+    followLocation = false
+  })
+end)
+
+
 
 local ServerCtxObj = {
   oneSync = {
@@ -69,6 +150,16 @@ RegisterServerEvent('txAdmin:menu:checkAccess', function()
                " does " .. (canAccess and "" or "NOT ") .. "have menu permission.")
   TriggerClientEvent('txAdmin:menu:setAccessible', src, canAccess)
 end)
+
+RegisterServerEvent('txAdmin:menu:healMyself', function()
+  local src = source
+
+  if false then return end
+
+  debugPrint("^2" .. GetPlayerName(src) .. " healed themselves")
+  TriggerClientEvent('txAdmin:menu:healed', src)
+end)
+
 
 RegisterServerEvent('txAdmin:menu:healAllPlayers', function()
   local src = source
@@ -140,51 +231,28 @@ CreateThread(function()
   while true do
     local found = {}
     
-    -- TODO: Uncomment live code
     local players = GetPlayers()
     for _, serverID in ipairs(players) do
       local ped = GetPlayerPed(serverID)
-
-      local veh = GetVehiclePedIsIn(ped, false)
-      local vehClass = "walking"
-      -- TODO: Goat GetVehicleClass isn't available as a server side native or RPC, this breaks
-      -- if you are in a vehicle
-
-      --if veh and veh > 0 then
-      --  local class = GetVehicleClass(veh)
-      --  if class == 8 then
-      --    vehClass = "biking"
-      --  elseif class == 14 then
-      --    vehClass = "boating"
-      --  else
-      --    vehClass = "driving"
-      --  end
-      --end
+      local veh = GetVehiclePedIsIn(ped)
+      if veh and veh > 0 then
+        veh = NetworkGetNetworkIdFromEntity(veh)
+      else
+        veh = nil
+      end
 
       found[#found + 1] = {
         id = serverID,
         health = GetEntityHealth(ped),
-        vehicleStatus = vehClass,
+        veh = veh,
         pos = GetEntityCoords(ped),
         username = GetPlayerName(serverID),
         identifiers = GetPlayerIdentifiers(serverID)
       }
-      -- Lets yield for a tick so we don't have hitch issues
+      
+      -- Lets wait a tick so we don't have hitch issues
       Wait(0)
     end
-    
-    -- TODO: remove test data
-    --for i = 1, 1000 do
-    --  local data = {
-    --    id = i,
-    --    vehicleStatus = "walking",
-    --    health = math.random(0, 200),
-    --    distance = math.random(1, 5000),
-    --    username = 'skeleboi' .. i,
-    --    pos = vec3(0, 0, 0)
-    --  }
-    --  table.insert(found, data)
-    --end
     
     TriggerClientEvent('txAdmin:menu:setPlayerState', -1, found)
     Wait(1000 * 15)

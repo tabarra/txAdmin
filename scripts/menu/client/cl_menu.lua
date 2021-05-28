@@ -1,12 +1,12 @@
 -- Variable that determines whether a player can even access the menu
-local menuIsAccessible
+menuIsAccessible = false
 -- Since the menu yields/receives keyboard
 -- focus we need to store that the menu is already visible
 local isMenuVisible
 -- Last location stored in a vec3
 local lastTp
 
-RegisterKeyMapping('txAdmin:openMenu', 'Open the txAdmin Menu', 'keyboard', 'f1')
+RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
 
 --- Send data to the NUI frame
 ---@param action string Action
@@ -28,17 +28,9 @@ local function updateServerCtx()
   sendMenuMessage('setServerCtx', GlobalState.txAdminServerCtx)
 end
 
---- Authentication logic
-RegisterNetEvent('txAdmin:menu:setAccessible', function(canAccess)
-  if type(canAccess) ~= 'boolean' then error() end
-  debugPrint('Menu Accessible: ' .. tostring(canAccess))
-  menuIsAccessible = canAccess
-end)
-
 CreateThread(function()
   Wait(0)
   updateServerCtx()
-  TriggerServerEvent("txAdmin:menu:checkAccess")
 end)
 
 --- Snackbar message
@@ -68,7 +60,7 @@ local function clearPersistentAlert(key)
 end
 
 -- Command to be used with the register key mapping
-RegisterCommand('txAdmin:openMenu', function()
+RegisterCommand('txadmin', function()
   if menuIsAccessible and not isMenuVisible then
     isMenuVisible = true
     -- Lets update before we open the menu
@@ -276,8 +268,32 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
     local row = data[i]
     local targetVec = vec3(row.pos.x, row.pos.y, row.pos.z)
     local dist = #(GetEntityCoords(PlayerPedId()) - targetVec)
-    row.pos = nil
+      
+    -- calculate the vehicle status
+    local vehicleStatus = 'walking'
+    if row.veh then
+      local veh = NetToVeh(row.veh)
+      if veh and veh > 0 then
+        local vehClass = GetVehicleClass(veh)
+        if vehClass == 8 then
+          vehicleStatus = 'biking'
+        elseif vehClass == 14 then
+          vehicleStatus = 'boating'
+        --elseif vehClass == 15 then
+        --  vehicleStatus = 'floating'
+        --elseif vehClass == 16 then
+        --  vehicleStatus = 'flying'
+        else
+          vehicleStatus = 'driving'
+        end
+      end
+    end
+    
+    row.vehicleStatus = vehicleStatus
     row.distance = dist
+    -- remove unneeded values
+    row.pos = nil
+    row.veh = nil
   end
 
   debugPrint(json.encode(data))

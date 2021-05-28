@@ -153,10 +153,12 @@
                     {{it.perms.controls}}>STOP</button>
                 <br>
 
+                {{@if(it.isWebInterface)}}
                 <button onclick="controlCommand('admin_broadcast')" class="btn btn-outline-dark btn-md mx-auto m-2"
                     type="button" id="ctrl-stop" {{it.perms.commandMessage}}>Announcement</button> &nbsp;
                 <button onclick="controlCommand('kick_all')" class="btn btn-outline-dark btn-md mx-auto m-2"
                     type="button" id="ctrl-stop" {{it.perms.commandKick}}>Kick All Players</button>
+                {{/if}}
             </div>
         </div>
     </div>
@@ -205,7 +207,7 @@
 
 <script src="https://d3js.org/d3.v6.min.js"></script>
 <script type="module">
-    import { drawHeatmap } from "/js/txadmin/chart.js";
+    import { drawHeatmap } from "{{it.basePath}}js/txadmin/chart.js";
 
     //Elements & vars
     let perfData;
@@ -242,7 +244,7 @@
         chartThreadSelectBtn.textContent = thread;
         perfData = false;
         try {
-            const rawPerfData = await fetch(`/chartData?thread=${thread}`);
+            const rawPerfData = await fetch(TX_BASE_PATH + `chartData?thread=${thread}`);
             const parsedPerfData = JSON.parse(await rawPerfData.text());
             if(Array.isArray(parsedPerfData)){
                 perfData = parsedPerfData;

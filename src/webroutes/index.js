@@ -14,6 +14,7 @@ exports.auth = {
     providerRedirect: require('./authentication/providerRedirect'),
     providerCallback: require('./authentication/providerCallback'),
     verifyZapToken: require('./authentication/verifyZapToken'),
+    verifyNuiAuth: require('./authentication/verifyNuiAuth'),
     verifyPassword: require('./authentication/verifyPassword'),
     changePassword: require('./authentication/changePassword'),
 };

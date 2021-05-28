@@ -87,6 +87,7 @@ module.exports = class FXRunner {
             getConvars(true),
             extraArgs,
             '+set', 'onesync', this.config.onesync,
+            '+set', 'txAdmin-pipeToken', globals.webServer.fxWebPipeToken,
             '+exec', this.config.cfgPath,
         ].flat(2);
 
@@ -123,6 +124,7 @@ module.exports = class FXRunner {
      */
     spawnServer(announce) {
         //Setup variables
+        globals.webServer.resetTokens();
         this.setupVariables();
         if (GlobalData.verbose) {
             log('Spawn Variables: ' + this.spawnVariables.args.join(' '));

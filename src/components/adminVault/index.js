@@ -166,12 +166,28 @@ module.exports = class AdminVault {
      * @param {string} uname
      */
     getAdminByName(uname) {
-        if (this.admins == false) return false;
+        if (!this.admins) return false;
         const username = uname.trim().toLowerCase();
         if (!username.length) return false;
         const admin = this.admins.find((user) => {
             return (username === user.name.toLowerCase());
         });
+        return (admin) ? cloneDeep(admin) : false;
+    }
+
+
+    //================================================================
+    /**
+     * Returns all data from an admin by game identifier, or false
+     * @param {string[]} identifiers
+     */
+    getAdminByIdentifiers(identifiers) {
+        if (!this.admins) return false;
+        identifiers = identifiers.map((i) => i.trim().toLowerCase());
+        let admin = this.admins.find((user) =>
+            identifiers.find((identifier) =>
+                Object.keys(user.providers).find((provider) =>
+                    (identifier === user.providers[provider].identifier.toLowerCase()))));
         return (admin) ? cloneDeep(admin) : false;
     }
 

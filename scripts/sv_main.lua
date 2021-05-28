@@ -25,6 +25,8 @@ if GetCurrentResourceName() ~= "monitor" then
     logError('This resource should not be installed separately, it already comes with fxserver.')
     return
 end
+--Erasing the token convar
+-- SetConvar("txAdmin-apiToken", "removed") //FIXME:
 
 
 -- Setup threads and commands

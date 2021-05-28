@@ -7,7 +7,7 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@material-ui/core";
-import { fetchNui } from "../utils/fetchNui";
+import { fetchNui } from "../../utils/fetchNui";
 
 interface ErrorCompState {
   hasError: boolean;

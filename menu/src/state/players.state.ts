@@ -7,9 +7,11 @@ import {
 } from "recoil";
 import { debugData } from "../utils/debugLog";
 
-enum VehicleStatus {
+export enum VehicleStatus {
   Walking = "walking",
   Driving = "driving",
+  // Hovering = "hovering", // helicopter
+  // Flying = "flying",
   Boat = "boating",
   Biking = "biking",
 }

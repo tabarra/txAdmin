@@ -63,6 +63,12 @@ sqrl.filters.define('ternary', (x) => {
     return (x[0]) ? x[1] : x[2];
 });
 
+
+//Consts
+const WEBPIPE_PATH = 'https://monitor/WebPipe/';
+const THEME_DARK = 'theme--dark';
+const DEFAULT_AVATAR = 'img/default_avatar.png';
+
 //================================================================
 /**
  * Renders the master page including header and footer
@@ -72,7 +78,8 @@ sqrl.filters.define('ternary', (x) => {
 async function renderMasterView(view, reqSess, data, txVars) {
     if (isUndefined(data)) data = {};
     data.isWebInterface = txVars.isWebInterface;
-    data.uiTheme = (txVars.darkMode) ? 'theme--dark' : '';
+    data.uiTheme = (txVars.darkMode) ? THEME_DARK : '';
+    data.basePath = (txVars.isWebInterface) ? '/' : WEBPIPE_PATH;
     data.headerTitle = (!isUndefined(data.headerTitle)) ? `${data.headerTitle} - txAdmin` : 'txAdmin';
     data.serverProfile = globals.info.serverProfile;
     data.txAdminVersion = GlobalData.txAdminVersion;
@@ -80,13 +87,14 @@ async function renderMasterView(view, reqSess, data, txVars) {
     data.fxServerVersion = (GlobalData.isZapHosting) ? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion;
     data.adminIsMaster = (reqSess && reqSess.auth && reqSess.auth.username && reqSess.auth.master === true);
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username) ? reqSess.auth.username : 'unknown user';
-    data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture) ? reqSess.auth.picture : 'img/default_avatar.png';
+    data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture) ? reqSess.auth.picture : DEFAULT_AVATAR;
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
     data.isLinux = (GlobalData.osType == 'linux');
     data.showAdvanced = (GlobalData.isAdvancedUser || GlobalData.verbose);
     data.dynamicAd = txVars.isWebInterface && globals.dynamicAds.pick('main');
     data.jsInjection = getJavascriptConsts({
         isWebInterface: txVars.isWebInterface,
+        TX_BASE_PATH: (txVars.isWebInterface) ? '' : WEBPIPE_PATH,
     });
 
     let out;
@@ -121,7 +129,8 @@ async function renderMasterView(view, reqSess, data, txVars) {
 async function renderLoginView(data, txVars) {
     if (isUndefined(data)) data = {};
     data.isWebInterface = txVars.isWebInterface;
-    data.uiTheme = (txVars.darkMode) ? 'theme--dark' : '';
+    data.uiTheme = (txVars.darkMode) ? THEME_DARK : '';
+    data.basePath = (txVars.isWebInterface) ? '/' : WEBPIPE_PATH;
     data.logoURL = (GlobalData.loginPageLogo) ? GlobalData.loginPageLogo : 'img/txadmin.png';
     data.isMatrix = (Math.random() <= 0.05);
     data.ascii = helpers.txAdminASCII();
@@ -136,6 +145,7 @@ async function renderLoginView(data, txVars) {
     data.dynamicAd = globals.dynamicAds.pick('login');
     data.jsInjection = getJavascriptConsts({
         isWebInterface: txVars.isWebInterface,
+        TX_BASE_PATH: (txVars.isWebInterface) ? '' : WEBPIPE_PATH,
     });
 
     let out;
@@ -166,9 +176,11 @@ async function renderLoginView(data, txVars) {
 async function renderSoloView(view, data, txVars) {
     if (isUndefined(data)) data = {};
     data.isWebInterface = txVars.isWebInterface;
-    data.uiTheme = (txVars.darkMode) ? 'theme--dark' : '';
+    data.uiTheme = (txVars.darkMode) ? THEME_DARK : '';
+    data.basePath = (txVars.isWebInterface) ? '/' : WEBPIPE_PATH;
     data.jsInjection = getJavascriptConsts({
         isWebInterface: txVars.isWebInterface,
+        TX_BASE_PATH: (txVars.isWebInterface) ? '' : WEBPIPE_PATH,
     });
     let out;
     try {

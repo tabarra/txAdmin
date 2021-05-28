@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef, useState } from "react";
+import React, { memo, useEffect, useRef, useState } from 'react';
 import {
   ListItem,
   ListItemIcon,
@@ -7,9 +7,12 @@ import {
   makeStyles,
   Theme,
 } from "@material-ui/core";
-import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation";
+import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { Code } from "@material-ui/icons";
-import { fetchNui } from '../utils/fetchNui';
+import { fetchNui } from '../../utils/fetchNui';
+import { ResolvablePermission, usePermissionsValue } from '../../state/permissions.state';
+import { userHasPerm } from '../../utils/miscUtils';
+import { useSnackbar } from 'notistack';
 
 export interface MenuListItemProps {
   icon: JSX.Element;
@@ -17,6 +20,7 @@ export interface MenuListItemProps {
   secondary: string;
   onSelect: () => void;
   selected: boolean;
+  requiredPermission: ResolvablePermission
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -31,17 +35,32 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: 16,
   },
 }));
-
+// TODO: Actually do disabled item styling right now it will only remove
+// enter from working
 export const MenuListItem: React.FC<MenuListItemProps> = memo(
-  ({ icon, primary, onSelect, secondary, selected }) => {
+  ({ icon, primary, onSelect, secondary, selected, requiredPermission }) => {
     const classes = useStyles();
     const divRef = useRef<HTMLDivElement | null>(null);
+    const userPerms = usePermissionsValue()
+    const isUserAllowed = userHasPerm(requiredPermission, userPerms)
+    const { enqueueSnackbar } = useSnackbar()
 
-    const handleEnter = () => {
-      if (selected) {
-        fetchNui('playSound', 'enter')
-        onSelect()
+    const handleEnter = (): void => {
+      if (!selected) return
+
+      if (!isUserAllowed) {
+        enqueueSnackbar('You are not allowed to use this!', {
+          variant: 'error',
+          anchorOrigin: {
+            horizontal: 'center',
+            vertical: 'bottom'
+          }
+        })
+        return
       }
+
+      fetchNui('playSound', 'enter')
+      onSelect()
     }
 
     useEffect(() => {
@@ -95,17 +114,33 @@ export interface MenuListItemMultiProps {
   selected: boolean;
   primary: string;
   icon: JSX.Element;
+  requiredPermission: ResolvablePermission
   showCurrentPrefix: boolean
 }
 
 export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
-  ({ selected, primary, actions, icon, initialValue, showCurrentPrefix }) => {
+  ({ selected, primary, actions, icon, initialValue, showCurrentPrefix, requiredPermission }) => {
     const classes = useStyles();
     const [curState, setCurState] = useState(0);
+    const userPerms = usePermissionsValue();
+    const { enqueueSnackbar } = useSnackbar();
+
+    const isUserAllowed = userHasPerm(requiredPermission, userPerms)
 
     const compMounted = useRef(false);
 
     const divRef = useRef<HTMLDivElement | null>(null);
+
+    const showNotAllowedAlert = () => {
+      enqueueSnackbar('You are not allowed to use this!', {
+        variant: 'error',
+        anchorOrigin: {
+          horizontal: 'center',
+          vertical: 'bottom'
+        }
+      })
+    }
+
 
     useEffect(() => {
       if (selected && divRef) {
@@ -132,6 +167,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
 
     const handleLeftArrow = () => {
       if (!selected) return;
+
       fetchNui('playSound', 'move')
       const nextEstimatedItem = curState - 1;
       const nextItem =
@@ -141,18 +177,22 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
 
     const handleRightArrow = () => {
       if (!selected) return;
+      if (!isUserAllowed) return showNotAllowedAlert()
+
       fetchNui('playSound', 'move')
+
       const nextEstimatedItem = curState + 1;
       const nextItem =
         nextEstimatedItem >= actions.length ? 0 : nextEstimatedItem;
       setCurState(nextItem);
-    };
+    }
 
     const handleEnter = () => {
-      if (selected) {
+        if (!selected) return;
+        if (!isUserAllowed) return showNotAllowedAlert()
+
         fetchNui('playSound', 'enter')
         actions[curState].onSelect();
-      }
     }
 
     useKeyboardNavigation({

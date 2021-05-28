@@ -12,10 +12,11 @@ import {
   Tooltip,
   Typography,
 } from "@material-ui/core";
-import { txAdminMenuPage, usePageValue } from "../state/page.state";
-import { useIsMenuVisible } from "../state/visibility.state";
+import { txAdminMenuPage, usePageValue } from "../../state/page.state";
+import { useIsMenuVisible } from "../../state/visibility.state";
+import { useDialogContext } from '../../provider/DialogProvider';
 
-const RANDOM_CHANGE_TIME = 7000;
+const RANDOM_CHANGE_TIME = 12000;
 const TIME_FOR_TOOLTIP_TO_APPEAR = 3000;
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -54,11 +55,12 @@ export const HelpTooltip: React.FC = ({ children }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipContent, setTooltipContent] = useState("");
   const isMenuVisible = useIsMenuVisible();
+  const { isDialogOpen } = useDialogContext()
 
   const TooltipMessages = useMemo(
     () => [
       "Use [TAB] to switch pages & the arrow keys to navigate menu items",
-      "Certain menu items have sub options which can be sected using the left & right arrow keys",
+      "Certain menu items have sub options which can be selected using the left & right arrow keys",
       "Other help tip",
     ],
     []
@@ -77,6 +79,14 @@ export const HelpTooltip: React.FC = ({ children }) => {
   }, [TooltipMessages]);
 
   const curPage = usePageValue();
+
+  useEffect(() => {
+    if (!isMenuVisible) setTooltipOpen(false)
+  }, [isMenuVisible])
+
+  useEffect(() => {
+    if (isDialogOpen) setTooltipOpen(false)
+  }, [isDialogOpen])
 
   useEffect(() => {
     if (!isMenuVisible) return;
@@ -104,8 +114,10 @@ export const HelpTooltip: React.FC = ({ children }) => {
       changeMsgTimeRef.current = setInterval(() => {
         const tooltip = getNewTooltip();
         setTooltipContent(tooltip);
-        changeMsgTimeRef.current = null
+        changeMsgTimeRef.current = null;
       }, RANDOM_CHANGE_TIME);
+    } else {
+      changeMsgTimeRef.current = null
     }
 
     return () => {
@@ -120,7 +132,7 @@ export const HelpTooltip: React.FC = ({ children }) => {
     <Tooltip
       open={tooltipOpen}
       title={
-        <Typography variant='caption' align='center'>
+        <Typography variant="caption" align="center">
           {tooltipContent}
         </Typography>
       }
