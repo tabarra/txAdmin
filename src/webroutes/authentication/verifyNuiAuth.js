@@ -4,6 +4,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
+const sessDuration = 60 * 60 * 1000; //one hour
 
 /**
  * Verify login
@@ -11,10 +12,13 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
  */
 // FIXME: add logging
 module.exports = async function VerifyNuiAuth(ctx) {
-    return ctx.send({isAdmin: false});
+    // return ctx.send({isAdmin: false});
+    return ctx.send({
+        isAdmin: true,
+        permissions: ['all_permissions'],
+        expiration: Date.now() + sessDuration,
+    });
 
-
-    
     dir(ctx.request.headers['x-txadmin-identifiers']);
     // return ctx.response.redirect('/setup');
     if (isUndefined(ctx.request.headers['x-txadmin-token']) || isUndefined(ctx.request.headers['x-txadmin-identifiers'])) {

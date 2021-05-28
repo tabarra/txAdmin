@@ -1,6 +1,87 @@
+--Check Environment
 if GetConvar('txAdmin-serverMode', 'false') ~= 'true' then
   return
 end
+local apiHost = GetConvar("txAdmin-apiHost", "invalid")
+local pipeToken = GetConvar("txAdmin-pipeToken", "invalid")
+if apiHost == "invalid" or pipeToken == "invalid" then
+  logError('API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
+  return
+end
+
+--Erasing the token convar for security reasons
+if (GetConvar('TXADMIN_MENU_DEBUG', 'false') ~= 'true') then
+  SetConvar("txAdmin-pipeToken", "removed")
+end
+
+
+-- Vars
+local adminPermissions = {}
+
+
+-- Web UI proxy
+RegisterNetEvent('txAdmin:WebPipe')
+AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, body)
+  local s = source
+
+  -- Adding auth information
+  if path == '/auth/nui' then
+    headers['X-TxAdmin-Token'] = pipeToken
+    headers['X-TxAdmin-Identifiers'] = table.concat(GetPlayerIdentifiers(s), ', ')
+  else
+    headers['X-TxAdmin-Token'] = 'not_required' -- so it's easy to detect webpipes
+  end
+
+  local url = "http://"..apiHost..path
+  -- log("["..callbackId.."]>> "..url)
+  -- log("["..callbackId.."] Headers: "..json.encode(headers))
+
+  PerformHttpRequest(url, function(httpCode, data, resultHeaders)
+    -- fixing body for error pages (eg 404)
+    -- this is likely because of how json.encode() interprets null and an empty table
+    data = data or ''
+    resultHeaders['x-badcast-fix'] = 'ignorethis' --likely fixed in artifact v3996
+
+    -- fixing redirects
+    if resultHeaders.Location then
+      if resultHeaders.Location:sub(1, 1) == '/' then
+        resultHeaders.Location = '/WebPipe' .. resultHeaders.Location
+      end
+    end
+
+    -- fixing cookies
+    if resultHeaders['Set-Cookie'] then
+      local cookieHeader = resultHeaders['Set-Cookie']
+      local cookies = type(cookieHeader) == 'table' and cookieHeader or { cookieHeader }
+      
+      for k in pairs(cookies) do
+        cookies[k] = cookies[k] .. '; SameSite=None; Secure'
+      end
+      
+      resultHeaders['Set-Cookie'] = cookies
+    end
+
+    -- Sniff permissions out of the auth request
+    if path == '/auth/nui' and httpCode == 200 then
+      local resp = json.decode(data)
+      if resp.isAdmin then
+        adminPermissions[s] = resp.permissions
+      else
+        adminPermissions[s] = nil
+      end
+    end
+    -- log("["..callbackId.."] Perms: "..json.encode(adminPermissions[s]))
+
+
+    -- log("["..callbackId.."]<< "..httpCode)
+    -- log("["..callbackId.."]<< "..httpCode..': '..json.encode(resultHeaders))
+    TriggerClientEvent('txAdmin:WebPipe', s, callbackId, httpCode, data, resultHeaders)
+  end, method, body, headers, {
+    followLocation = false
+  })
+end)
+
+
 
 local ServerCtxObj = {
   oneSync = {
