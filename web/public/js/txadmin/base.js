@@ -69,6 +69,9 @@ const checkDoLogoutRefresh = (data) => {
 //TODO: use the function above for all calls
 //NOTE: datatype is the expected return, we can probably remove it
 //NOTE: still one $.ajax at setup.html > setFavTemplatesCards
+//NOTE: to send json:
+//  data: JSON.stringify(data)
+//  contentType: 'application/json'
 const txAdminAPI = ({type, url, data, dataType, timeout, success, error}) => {
     if (anyUndefined(type, url)) return false;
 

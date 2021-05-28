@@ -1,0 +1,83 @@
+<!-- Field: Username -->
+<div class="form-group row">
+    <label for="modAdmin-name" class="col-sm-3 col-form-label">
+        Username
+        {{@if(it.isNewAdmin)}}
+            <small class="text-danger">(required)</small>
+        {{/if}}
+    </label>
+    <div class="col-sm-9">
+        <div class="input-group">
+            <input type="text" class="form-control" id="modAdmin-name" 
+                value="{{it.username}}" {{[(it.isNewAdmin), 'required', 'readonly']|ternary}}>
+        </div>
+    </div>
+</div>
+
+<!-- Field: CitizenFX -->
+<div class="form-group row">
+    <label for="modAdmin-citizenfxID" class="col-sm-3 col-form-label">
+        CitizenFX ID <br>
+        <small class="text-muted">(optional)</small>
+    </label>
+    <div class="col-sm-9">
+        <div class="input-group">
+            <input type="text" class="form-control" id="modAdmin-citizenfxID" maxlength="20"
+                autocomplete="off" value="{{it.citizenfx_id}}">
+        </div>
+        <span class="form-text text-muted">
+            The admin's CitizenFX Forum username.
+        </span>
+    </div>
+</div>
+
+<!-- Field: Discord -->
+<div class="form-group row">
+    <label for="modAdmin-discordID" class="col-sm-3 col-form-label">
+        Discord ID <br>
+        <small class="text-muted">(optional)</small>
+    </label>
+    <div class="col-sm-9">
+        <div class="input-group">
+            <input type="number" class="form-control" id="modAdmin-discordID" autocomplete="off" value="{{it.discord_id}}">
+        </div>
+        <span class="form-text text-muted">
+            The admin's Discord User ID. Follow <a href="https://support.discordapp.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID" target="_blank">this guide</a> if you don't know how to get the User ID.
+        </span>
+    </div>
+</div>
+
+<!-- Permissions -->
+<hr>
+<div class="form-group justify-content-center row">
+    <h5>Permissions</h5>
+</div>
+<div class="form-group row">
+    {{@if(it.editingSelf)}}
+        <div class="col-sm-12 text-center pt-2">
+            <h5 class="text-secondary">you cannot edit your own permissions</h5>
+        </div>
+    {{#else}}
+        <div class="col-sm-6">
+            {{@each(it.permsMenu) => perm, key}}
+            <div class="form-check checkbox">
+                <input class="form-check-input permsCheckbox" id="modAdmin-permsMenu-{{key}}" type="checkbox" name="modAdmin-permissions[]"
+                    value="{{perm.id}}" {{perm.checked}}>
+                <label class="form-check-label {{[(perm.dangerous), 'text-danger', '']|ternary}}" for="modAdmin-permsMenu-{{key}}">{{perm.desc}}</label>
+            </div>
+            {{/each}}
+        </div>
+        <div class="col-sm-6">
+            {{@each(it.permsGeneral) => perm, key}}
+            <div class="form-check checkbox">
+                <input class="form-check-input permsCheckbox" id="modAdmin-permsGeneral-{{key}}" type="checkbox" name="modAdmin-permissions[]"
+                    value="{{perm.id}}" {{perm.checked}}>
+                <label class="form-check-label {{[(perm.dangerous), 'text-danger', '']|ternary}}" for="modAdmin-permsGeneral-{{key}}">{{perm.desc}}</label>
+            </div>
+            {{/each}}
+        </div>
+    {{/if}}
+</div>
+
+<!-- Just signaling for the save action -->
+<input type="hidden" id="modAdmin-isNewAdmin" value="{{it.isNewAdmin}}">

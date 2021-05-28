@@ -96,6 +96,9 @@ option:disabled {
 .attentionText {
     /* background-color: #a7d4ff !important; */
 }
+.permsCheckbox:checked+label {
+    font-weight: bold;
+}
 
 
 /* Theme dependant */

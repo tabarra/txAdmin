@@ -11,6 +11,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const citizenfxIDRegex = /^\w[\w.-]{1,18}\w$/;
 const discordIDRegex = /^\d{7,20}$/;
 const nameRegex = citizenfxIDRegex;
+const dangerousPerms = ['all_permissions', 'manage.admins', 'console.write', 'settings.write'];
 
 
 /**
@@ -39,8 +40,10 @@ module.exports = async function AdminManagerActions(ctx) {
         return await handleEdit(ctx);
     } else if (action == 'delete') {
         return await handleDelete(ctx);
-    } else if (action == 'getModal') {
-        return await handleGetModal(ctx);
+    } else if (action == 'getAddModal') {
+        return await handleGetModal(ctx, true);
+    } else if (action == 'getEditModal') {
+        return await handleGetModal(ctx, false);
     } else {
         return ctx.send({
             type: 'danger',
@@ -111,7 +114,7 @@ async function handleAdd(ctx) {
     try {
         await globals.adminVault.addAdmin(name, citizenfxData, discordData, password, permissions);
         ctx.utils.logAction(`Adding admin '${name}'.`);
-        return ctx.send({type: 'modalrefresh', password});
+        return ctx.send({type: 'showPassword', password});
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
     }
@@ -245,16 +248,46 @@ async function handleDelete(ctx) {
  * Handle Get Modal
  * @param {object} ctx
  */
-async function handleGetModal(ctx) {
+async function handleGetModal(ctx, isNewAdmin) {
+    const allPermissions = Object.entries(globals.adminVault.getPermissionsList());
+
+    //Helper function
+    const getPerms = (checkPerms) => {
+        let permsGeneral = [];
+        let permsMenu = [];
+        allPermissions.forEach(([id, desc]) => {
+            const bucket = (id.startsWith('players.') || id.startsWith('menu.')) ? permsGeneral : permsMenu;
+            bucket.push({
+                id,
+                desc,
+                checked: (checkPerms.includes(id)) ? 'checked' : '',
+                dangerous: dangerousPerms.includes(id),
+            });
+        });
+        return [permsGeneral, permsMenu];
+    };
+
+    //If it's a modal for new admin, all fields will be empty
+    if (isNewAdmin) {
+        const [permsGeneral, permsMenu] = getPerms([]);
+        const renderData = {
+            isNewAdmin: true,
+            editingSelf: false,
+            username: '',
+            citizenfx_id: '',
+            discord_id: '',
+            permsGeneral,
+            permsMenu,
+        };
+        return ctx.utils.render('adminManager/modal', renderData);
+    }
+
+
     //Sanity check
-    if (
-        isUndefined(ctx.request.body.name)
-        || typeof ctx.request.body.name !== 'string'
-    ) {
+    if (typeof ctx.request.body.name !== 'string') {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const name = ctx.request.body.name.trim();
-    const editingSelf = (ctx.session.auth.username.toLowerCase() === name.toLowerCase());
 
     //Get admin data
     const admin = globals.adminVault.getAdminByName(name);
@@ -266,28 +299,19 @@ async function handleGetModal(ctx) {
     }
 
     //Prepare permissions
-    let permissions;
-    if (!editingSelf) {
-        const allPermissions = Object.entries(globals.adminVault.getPermissionsList());
-        permissions = allPermissions.map((perm) => {
-            return {
-                id: perm[0],
-                name: perm[1],
-                checked: (admin.permissions.includes(perm[0])) ? 'checked' : '',
-            };
-        });
-    }
+    const [permsGeneral, permsMenu] = getPerms(admin.permissions);
 
     //Set render data
     const renderData = {
-        headerTitle: 'Admin Manager',
+        isNewAdmin: false,
         username: admin.name,
         citizenfx_id: (admin.providers.citizenfx) ? admin.providers.citizenfx.id : '',
         discord_id: (admin.providers.discord) ? admin.providers.discord.id : '',
-        permissions,
-        editingSelf,
+        editingSelf: (ctx.session.auth.username.toLowerCase() === name.toLowerCase()),
+        permsGeneral,
+        permsMenu,
     };
 
     //Give output
-    return ctx.utils.render('adminManager/editModal', renderData);
+    return ctx.utils.render('adminManager/modal', renderData);
 }

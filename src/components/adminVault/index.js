@@ -11,22 +11,30 @@ module.exports = class AdminVault {
         this.adminsFile = `${GlobalData.dataPath}/admins.json`;
         this.admins = null;
         this.refreshRoutine = null;
+
+        //Not alphabetical order, but that's fine
         this.registeredPermissions = {
             'all_permissions': 'All Permissions',
-            'manage.admins': 'Manage Admins',
-            'commands.resources': 'Start/Stop Resources (start/stop)',
-            'players.ban': 'Players: Ban',
-            'players.kick': 'Players: Kick',
-            'players.message': 'Players: DM',
-            'players.warn': 'Players: Warn',
-            'players.whitelist': 'Players: Whitelist',
+            'manage.admins': 'Manage Admins', //will enable the "set admin" button in the player modal
+            'settings.view': 'Settings: View (no tokens)',
+            'settings.write': 'Settings: Change',
             'console.view': 'Console: View',
             'console.write': 'Console: Write',
             'control.server': 'Start/Stop/Restart Server',
-            'server.cfg.editor': 'Read/Write Server CFG file',
-            'settings.view': 'Settings: View (except tokens)',
-            'settings.write': 'Settings: Change',
+            'commands.resources': 'Start/Stop Resources',
+            'server.cfg.editor': 'Read/Write server.cfg',
             'txadmin.log.view': 'View txAdmin Log',
+
+            'menu.vehicle': 'Spawn / Fix Vehicles',
+            'players.message': 'Announcement / DM', //enable/disable the dm button on modal as well
+            'players.whitelist': 'Whitelist',
+            'players.warn': 'Warn',
+            'players.kick': 'Kick',
+            'players.ban': 'Ban',
+            'players.heal': 'Heal', //self, everyone, and the "heal" button in player modal
+            'players.playermode': 'NoClip / God / Spectate', //self playermode, and also the player spectate option
+            'players.teleport': 'Teleport', //self teleport, and the bring/go to on player modal
+            'players.trollmenu': 'Troll Menu', //all the troll options in the player modal
         };
         this.hardConfigs = {
             refreshInterval: 15e3,
