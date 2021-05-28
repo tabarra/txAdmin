@@ -6,6 +6,7 @@
 - [x] web: prepare html/js for nui mode (remove elements)
 - [X] web: create `txAdminAPI` and replace all `$.ajax`
 - [x] increase page timeouts
+- [x] change webserver token every time the server starts
 - [ ] xxx
 - [ ] xxx
 - [ ] diagnostics: use `globals.monitor.hostStats` instead of `systeminformation`
@@ -96,7 +97,6 @@ stuff:
 - [ ] add ban server-side ban cache (last 500 bans?), updated on every ban change 
 - [ ] add a commend system?
 - [ ] add stopwatch (or something) to the db functions and print on `/diagnostics`
-- [ ] change webserver token every time the server starts
 
 > Soon™® (hopefully in two months or so)
 - [ ] tweak dashboard update checker behavior
