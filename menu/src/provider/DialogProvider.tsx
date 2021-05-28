@@ -37,6 +37,7 @@ interface InputDialogProps {
 interface DialogProviderContext {
   openDialog: (dialogProps: InputDialogProps) => void;
   closeDialog: () => void;
+  isDialogOpen: boolean
 }
 
 const DialogContext = createContext(null);
@@ -123,6 +124,7 @@ export const DialogProvider: React.FC = ({ children }) => {
       value={{
         openDialog,
         closeDialog: handleDialogClose,
+        isDialogOpen: dialogOpen
       }}
     >
       <Dialog

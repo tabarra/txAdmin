@@ -14,6 +14,7 @@ import {
 } from "@material-ui/core";
 import { txAdminMenuPage, usePageValue } from "../../state/page.state";
 import { useIsMenuVisible } from "../../state/visibility.state";
+import { useDialogContext } from '../../provider/DialogProvider';
 
 const RANDOM_CHANGE_TIME = 12000;
 const TIME_FOR_TOOLTIP_TO_APPEAR = 3000;
@@ -54,6 +55,7 @@ export const HelpTooltip: React.FC = ({ children }) => {
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipContent, setTooltipContent] = useState("");
   const isMenuVisible = useIsMenuVisible();
+  const { isDialogOpen } = useDialogContext()
 
   const TooltipMessages = useMemo(
     () => [
@@ -81,6 +83,10 @@ export const HelpTooltip: React.FC = ({ children }) => {
   useEffect(() => {
     if (!isMenuVisible) setTooltipOpen(false)
   }, [isMenuVisible])
+
+  useEffect(() => {
+    if (isDialogOpen) setTooltipOpen(false)
+  }, [isDialogOpen])
 
   useEffect(() => {
     if (!isMenuVisible) return;
