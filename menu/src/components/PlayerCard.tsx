@@ -47,6 +47,7 @@ const PlayerCard: React.FC<PlayerData> = ({
   username,
   health,
   vehicleStatus,
+  identifiers
 }) => {
   const classes = useStyles();
   const setPlayerDetails = useSetPlayerDetails();
@@ -63,7 +64,7 @@ const PlayerCard: React.FC<PlayerData> = ({
     vehicleStatus.charAt(0).toUpperCase() + vehicleStatus.slice(1);
 
   const openPlayeModal = () => {
-    setPlayerDetails({ id, username, health, vehicleStatus });
+    setPlayerDetails({ id, username, health, vehicleStatus, identifiers });
     setModal(true)
   }
 

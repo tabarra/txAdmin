@@ -27,8 +27,11 @@ const PlayerModal: React.FC = () => {
   const theme = useTheme();
   const classes = useStyles();
 
+  
   if (!player) return null;
-
+  
+  
+  
   const handleClose = (e) => {
     setModal(false)
   }

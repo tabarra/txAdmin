@@ -29,6 +29,33 @@ export enum PlayerDataSort {
   DistanceClosest = "distanceClosest",
   DistanceFarthest = "distanceFarthest",
 }
+export interface PlayerHistoryProps {
+  action: string;
+  date: string;
+  reason: string;
+  author: string;
+  color?: string;
+}
+
+export interface PlayerModalProps {
+  funcDisabled: {
+    message: string;
+    kick: string;
+    warn: string;
+    ban: boolean;
+  }
+  id: boolean;
+  license: string;
+  identifiers: string[];
+  isTmp: boolean;
+  name: string;
+  actionHistory: PlayerHistoryProps[]
+  joinDate: string;
+  sessionTime: string;
+  playTime: string;
+  notesLog: string;
+  notes: string;
+}
 
 const playersState = {
   playerData: atom<PlayerData[]>({
