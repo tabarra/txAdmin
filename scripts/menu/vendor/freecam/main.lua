@@ -91,6 +91,73 @@ function StartFreecamThread()
       UpdateCamera()
     end
   end)
+  
+  local function InstructionalButton(controlButton, text)
+    ScaleformMovieMethodAddParamPlayerNameString(controlButton)
+    BeginTextCommandScaleformString("STRING")
+    AddTextComponentScaleform(text)
+    EndTextCommandScaleformString()
+  end
+  
+  Citizen.CreateThread(function()
+    -- yay, scaleforms
+    local scaleform = RequestScaleformMovie("instructional_buttons")
+    while not HasScaleformMovieLoaded(scaleform) do
+      Wait(1)
+    end
+    PushScaleformMovieFunction(scaleform, "CLEAR_ALL")
+    PopScaleformMovieFunctionVoid()
+    
+    PushScaleformMovieFunction(scaleform, "SET_CLEAR_SPACE")
+    PushScaleformMovieFunctionParameterInt(200)
+    PopScaleformMovieFunctionVoid()
+  
+    PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
+    PushScaleformMovieFunctionParameterInt(0)
+    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_FAST, 1), "Faster")
+    PopScaleformMovieFunctionVoid()
+      
+    PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
+    PushScaleformMovieFunctionParameterInt(1)
+    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_SLOW, 1), "Slower")
+    PopScaleformMovieFunctionVoid()
+      
+    PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
+    PushScaleformMovieFunctionParameterInt(2)
+    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_X, 1), "Fwd/Back")
+    PopScaleformMovieFunctionVoid()
+      
+    PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
+    PushScaleformMovieFunctionParameterInt(3)
+    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_Y, 1), "Left/Right")
+    PopScaleformMovieFunctionVoid()
+  
+    PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
+    PushScaleformMovieFunctionParameterInt(4)
+    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_Z[2], 1), "Down")
+    PopScaleformMovieFunctionVoid()
+  
+    PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
+    PushScaleformMovieFunctionParameterInt(5)
+    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_Z[1], 1), "Up")
+    PopScaleformMovieFunctionVoid()
+  
+    PushScaleformMovieFunction(scaleform, "DRAW_INSTRUCTIONAL_BUTTONS")
+    PopScaleformMovieFunctionVoid()
+  
+    PushScaleformMovieFunction(scaleform, "SET_BACKGROUND_COLOUR")
+    PushScaleformMovieFunctionParameterInt(0)
+    PushScaleformMovieFunctionParameterInt(0)
+    PushScaleformMovieFunctionParameterInt(0)
+    PushScaleformMovieFunctionParameterInt(80)
+    PopScaleformMovieFunctionVoid()
+  
+    while IsFreecamActive() do
+      DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255, 0)
+      Wait(0)
+    end
+    SetScaleformMovieAsNoLongerNeeded()
+  end)
 end
 
 --------------------------------------------------------------------------------
