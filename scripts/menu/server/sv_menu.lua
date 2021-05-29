@@ -333,6 +333,14 @@ RegisterServerEvent('txAdmin:menu:spawnVehicle', function(model)
   end
 end)
 
+local function getPlayersLicense(src)
+  for _, v in ipairs(GetPlayerIdentifiers(src)) do
+    if string.sub(v, 1, string.len("license:")) == "license:" then
+      return v:sub(string.len("license:") + 1)
+    end
+  end
+end
+
 --[[ Emit player list to clients ]]
 CreateThread(function()
   while true do
@@ -354,7 +362,7 @@ CreateThread(function()
         veh = veh,
         pos = GetEntityCoords(ped),
         username = GetPlayerName(serverID),
-        identifiers = GetPlayerIdentifiers(serverID)
+        license = getPlayersLicense(serverID)
       }
       
       -- Lets wait a tick so we don't have hitch issues
