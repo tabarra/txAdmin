@@ -93,6 +93,45 @@ AddEventHandler('explosionEvent', function(source, ev)
     logger(source, 'explosionEvent', ev)
 end)
 
+-- An internal server handler, this is NOT exposed to the client
+AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
+    local message
+    if event == 'healSelf' then
+        message = "healing themself"
+    elseif event == 'healAll' then
+        message = "healing all players!"
+    elseif event == 'teleportCoords' then
+        local x = data.x
+        local y = data.y
+        local z = data.z
+        message = string.format("teleporting to coordinates (x=%.3f, y=%0.3f, z=%0.3f)",
+          x or 0.0, y or 0.0, z or 0.0)
+    elseif event == 'teleportWaypoint' then
+        message = "teleporting to a waypoint"
+    elseif event == 'announcement' then
+        message = "making a server-wide announcement: " .. data
+    elseif event == 'vehicleRepair' then
+        message = "repairing their vehicle"
+    elseif event == 'spawnVehicle' then
+        message = "spawning a vehicle (model: " .. data .. ")"
+    elseif event == 'playerModeChanged' then
+        if data == 'godmode' then
+            message = "enabling invincibility"
+        elseif data == 'noclip' then
+            message = "enabling noclip"
+        elseif data == 'none' then
+            message = "becoming mortal (standard mode)"
+        else
+            message = "invalid player mode"
+        end
+    else
+        return
+    end
+    
+    local event_data = { message = message, allowed = allowed }
+    logger(source, 'MenuEvent', event_data)
+end)
+
 RegisterNetEvent('txaLogger:DeathNotice', function(killer, cause)
     local killerData
     if killer then

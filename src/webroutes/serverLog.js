@@ -129,6 +129,9 @@ function processEventTypes(event) {
     } else if (event.action === 'DebugMessage') {
         let message = event.data || 'unknown';
         return `txAdminClient Debug Message: <span class="text-warning">${xss(message)}</span>`;
+    } else if (event.action === 'MenuEvent') {
+        let data = event.data || {event: 'unknown', allowed: false};
+        return !data.allowed ? `was blocked from ${data.message}` : `is ${data.message}`;
     } else {
         if (GlobalData.verbose) {
             logWarn(`Unrecognized event: ${event.action}`);

@@ -151,15 +151,29 @@ RegisterServerEvent('txAdmin:menu:checkAccess', function()
   TriggerClientEvent('txAdmin:menu:setAccessible', src, canAccess)
 end)
 
-RegisterServerEvent('txAdmin:menu:healMyself', function()
+RegisterServerEvent('txAdmin:menu:playerModeChanged', function(mode)
   local src = source
-
+  if mode ~= 'godmode' and mode ~= 'noclip' and mode ~= 'none' then
+    debugPrint("Invalid player mode requested by " .. GetPlayerName(src) .. " (mode: " .. (mode or 'nil'))
+    return
+  end
+  
+  -- TODO: Security, permission check
   if false then return end
-
-  debugPrint("^2" .. GetPlayerName(src) .. " healed themselves")
-  TriggerClientEvent('txAdmin:menu:healed', src)
+  
+  TriggerEvent("txaLogger:menuEvent", src, "playerModeChanged", true, mode)
+  TriggerClientEvent('txAdmin:menu:playerModeChanged', src, mode)
 end)
 
+RegisterServerEvent('txAdmin:menu:healMyself', function()
+  local src = source
+  
+  -- TODO: Security, permission check
+  if false then return end
+  
+  TriggerEvent("txaLogger:menuEvent", src, "healSelf", true)
+  TriggerClientEvent('txAdmin:menu:healed', src)
+end)
 
 RegisterServerEvent('txAdmin:menu:healAllPlayers', function()
   local src = source
@@ -167,7 +181,7 @@ RegisterServerEvent('txAdmin:menu:healAllPlayers', function()
   -- TODO: Security, permission check
   if false then return end
   
-  debugPrint("^2" .. GetPlayerName(src) .. " healed all players!")
+  TriggerEvent("txaLogger:menuEvent", src, "healAll", true)
   TriggerClientEvent('txAdmin:menu:healed', -1)
 end)
 
@@ -183,8 +197,22 @@ RegisterServerEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   -- TODO: Security, permission check
   if false then return end
   
-  debugPrint("Teleporting " .. GetPlayerName(src) .. " to " .. x .. ", " .. y .. ", " .. z)
+  TriggerEvent("txaLogger:menuEvent", src, "teleportCoords", true, { x = x, y = y, z = z })
   TriggerClientEvent('txAdmin:menu:tpToCoords', src, x, y, z)
+end)
+
+RegisterServerEvent('txAdmin:menu:tpToWaypoint', function()
+  local src = source
+  
+  -- TODO: Security, permission check
+  if false then return end
+  
+  TriggerClientEvent('txAdmin:menu:tpToWaypoint', src)
+  
+  Wait(250)
+  local coords = GetEntityCoords(GetPlayerPed(src))
+  TriggerEvent("txaLogger:menuEvent", src, "teleportWaypoint", true,
+    { x = coords[1], y = coords[2], z = coords[3] })
 end)
 
 RegisterServerEvent('txAdmin:menu:sendAnnouncement', function(message)
@@ -193,12 +221,7 @@ RegisterServerEvent('txAdmin:menu:sendAnnouncement', function(message)
   -- TODO: Security, permission check
   if false then return end
   
-  debugPrint("Player ^2" .. GetPlayerName(src) .. "^0 sent announcement: ^4" .. message)
-  --TriggerClientEvent('chat:addMessage', -1, {
-  --  color = { 255, 0, 0 },
-  --  multiline = true,
-  --  args = { "Announcement", message }
-  --})
+  TriggerEvent("txaLogger:menuEvent", src, "announcement", true, message)
   TriggerClientEvent('txAdmin:receiveAnnounce', -1, message)
 end)
 
@@ -208,7 +231,7 @@ RegisterServerEvent('txAdmin:menu:fixVehicle', function()
   -- TODO: Security, permission check
   if false then return end
   
-  debugPrint("Player " .. GetPlayerName(src) .. " repaired their vehicle!")
+  TriggerEvent("txaLogger:menuEvent", src, "vehicleRepair", true)
   TriggerClientEvent('txAdmin:menu:fixVehicle', src)
 end)
 
@@ -220,9 +243,9 @@ RegisterServerEvent('txAdmin:menu:spawnVehicle', function(model)
   -- TODO: Security, permission check
   if false then return end
   
-  debugPrint("Player " .. GetPlayerName(src) .. " spawned a ^2" .. model .. "^0!")
   local ped = GetPlayerPed(src)
   local veh = Citizen.InvokeNative(CREATE_AUTOMOBILE, GetHashKey(model), GetEntityCoords(ped));
+  TriggerEvent("txaLogger:menuEvent", src, "spawnVehicle", true, model)
   TriggerClientEvent('txAdmin:menu:spawnVehicle', src, NetworkGetNetworkIdFromEntity(veh))
 end)
 

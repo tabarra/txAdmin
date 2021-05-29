@@ -184,7 +184,13 @@ end
 -- This will trigger everytime the playerMode in the main menu is changed
 -- it will send the mode
 RegisterNUICallback('playerModeChanged', function(mode, cb)
-  debugPrint(json.encode(mode))
+  debugPrint("player mode requested: " .. (mode or 'nil'))
+  TriggerServerEvent('txAdmin:menu:playerModeChanged', mode)
+  cb({})
+end)
+
+-- [[ Player mode changed cb event ]]
+RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode)
   if mode == 'godmode' then
     toggleGodMode(true)
     toggleFreecam(false)
@@ -195,7 +201,6 @@ RegisterNUICallback('playerModeChanged', function(mode, cb)
     toggleGodMode(false)
     toggleFreecam(false)
   end
-  cb({})
 end)
 
 RegisterNUICallback('spawnWeapon', function(weapon, cb)
@@ -209,10 +214,8 @@ end)
 -- CB From Menu
 RegisterNUICallback('spawnVehicle', function(data, cb)
   local model = data.model
-  debugPrint("Model requested: " .. model)
-  
   if not IsModelValid(model) then
-    debugPrint("^1Invalid vehicle model: " .. model)
+    debugPrint("^1Invalid vehicle model requested: " .. model)
     cb({ e = true })
   else
     TriggerServerEvent('txAdmin:menu:spawnVehicle', model)
@@ -227,7 +230,6 @@ RegisterNUICallback('healMyself', function(_, cb)
 end)
 
 RegisterNUICallback('healAllPlayers', function(data, cb)
-  debugPrint(data)
   TriggerServerEvent('txAdmin:menu:healAllPlayers')
   cb({})
 end)
