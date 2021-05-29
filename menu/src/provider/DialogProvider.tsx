@@ -25,6 +25,7 @@ import { useKeyboardNavContext } from "./KeyboardNavProvider";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
 import { useSetDisableTab } from "../state/tab.state";
+import { txAdminMenuPage, usePageValue } from "../state/page.state";
 
 interface InputDialogProps {
   title: string;
@@ -77,15 +78,14 @@ export const DialogProvider: React.FC = ({ children }) => {
 
   const { enqueueSnackbar } = useSnackbar();
 
+  const curPage = usePageValue()
+
   const t = useTranslate();
 
   useEffect(() => {
-    if (dialogOpen) {
-      setDisabledKeyNav(true);
-      setDisableTabs(true)
-    } else {
-      setDisabledKeyNav(false);
-      setDisableTabs(false)
+    if (curPage === txAdminMenuPage.Main) {
+      setDisabledKeyNav(dialogOpen);
+      setDisableTabs(dialogOpen)
     }
   }, [dialogOpen, setDisabledKeyNav, setDisableTabs]);
 
