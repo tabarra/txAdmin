@@ -10,11 +10,13 @@ import {
 import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
 import { fetchWebPipe } from "../../../utils/fetchWebPipe";
 import { useSnackbar } from "notistack";
+import { useTranslate } from "react-polyglot";
 
 const DialogInfoView: React.FC = () => {
   const [note, setNote] = useState("");
   const player = usePlayerDetailsValue();
   const { enqueueSnackbar } = useSnackbar();
+  const t = useTranslate();
 
   const theme = useTheme();
 
@@ -33,21 +35,17 @@ const DialogInfoView: React.FC = () => {
 
   return (
     <DialogContent>
-      <Typography variant="h6">Player Info</Typography>
+      <Typography variant="h6">{t("nui_menu.player_modal.info.title")}</Typography>
       <Typography>
-        Session Time:{" "}
-        <span style={{ color: theme.palette.text.secondary }}>
-          {player.sessionTime}
-        </span>
+        {t("nui_menu.player_modal.info.session_time")}:{" "}
+        <span style={{ color: theme.palette.text.secondary }}>0 minutes</span>
       </Typography>
       <Typography>
-        Play time:{" "}
-        <span style={{ color: theme.palette.text.secondary }}>
-          {player.playTime}
-        </span>
+      {t("nui_menu.player_modal.info.play_time")}:{" "}
+        <span style={{ color: theme.palette.text.secondary }}>--</span>
       </Typography>
       <Typography>
-        Joined:{" "}
+      {t("nui_menu.player_modal.info.joined")}:{" "}
         <span style={{ color: theme.palette.text.secondary }}>
           {player.joinDate}
         </span>

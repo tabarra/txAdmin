@@ -10,6 +10,7 @@ import { useIFrameCtx} from "../../../provider/IFrameProvider";
 import slug from 'slug'
 import { usePlayerModalContext } from '../../../provider/PlayerModalProvider';
 import { translateAlertType } from '../../../utils/miscUtils';
+import { useTranslate } from "react-polyglot";
 
 export type TxAdminActionRespType = 'success' | 'warning' | 'danger'
 
@@ -24,8 +25,7 @@ const DialogActionView: React.FC = () => {
   const playerDetails = usePlayerDetailsValue()
   const assocPlayer = useAssociatedPlayerValue()
   const { enqueueSnackbar } = useSnackbar()
-  const { goToFramePage } = useIFrameCtx()
-  const { setModalOpen } = usePlayerModalContext()
+  const t = useTranslate();
 
   const handleDM = () => {
     openDialog({
@@ -135,7 +135,7 @@ const DialogActionView: React.FC = () => {
         <Button variant="outlined" color="primary" onClick={handleKick}>Kick</Button>
         <Button variant="outlined" color="primary" onClick={handleSetAdmin}>Set Admin</Button>
       </Box>
-      <Typography style={{ paddingBottom: 5 }}>Interaction</Typography>
+      <Typography style={{ paddingBottom: 5 }}>{t("nui_menu.player_modal.actions.interaction.category_title_2")}</Typography>
       <Box className={classes.actionGrid}>
         <Button variant="outlined" color="primary" onClick={handleHeal}>Heal</Button>
         <Button variant="outlined" color="primary" onClick={handleGoTo}>Go to</Button>

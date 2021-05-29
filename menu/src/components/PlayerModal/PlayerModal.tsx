@@ -13,17 +13,11 @@ import {
   Theme,
   CircularProgress,
 } from "@material-ui/core";
-import {
-  Close,
-  Person,
-  Block,
-  FormatListBulleted,
-  MenuBook,
-  FlashOn,
-} from "@material-ui/icons";
-import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
+import { Close, Person, Block, FormatListBulleted, MenuBook, FlashOn } from '@material-ui/icons'
+import { usePlayerModalContext } from '../../provider/PlayerModalProvider';
 import { useStyles } from "./modal.styles";
-import { useAssociatedPlayerValue } from "../../state/playerDetails.state";
+import { useAssociatedPlayerValue } from '../../state/playerDetails.state';
+import { useTranslate } from "react-polyglot";
 import { DialogBaseView } from "./Tabs/DialogBaseView";
 
 const LoadingModal: React.FC = () => (
@@ -107,8 +101,10 @@ const useListStyles = makeStyles((theme: Theme) => ({
 }));
 
 const DialogList: React.FC = () => {
-  const { tab, setTab } = usePlayerModalContext();
+  const { tab, setTab } = usePlayerModalContext()
   const classes = useListStyles();
+  const t = useTranslate();
+
   return (
     <List>
       <ListItem
@@ -118,10 +114,8 @@ const DialogList: React.FC = () => {
         selected={tab === 1 && true}
         classes={{ root: classes.root, selected: classes.selected }}
       >
-        <ListItemIcon>
-          <FlashOn />
-        </ListItemIcon>
-        <ListItemText primary="Actions" />
+        <ListItemIcon><FlashOn/></ListItemIcon>
+        <ListItemText primary={t("nui_menu.player_modal.tabs.actions")} />
       </ListItem>
       <ListItem
         className={classes.listItem}
@@ -130,10 +124,8 @@ const DialogList: React.FC = () => {
         selected={tab === 2 && true}
         classes={{ root: classes.root, selected: classes.selected }}
       >
-        <ListItemIcon>
-          <Person />
-        </ListItemIcon>
-        <ListItemText primary="Info" />
+        <ListItemIcon><Person/></ListItemIcon>
+        <ListItemText primary={t("nui_menu.player_modal.tabs.info")} />
       </ListItem>
       <ListItem
         className={classes.listItem}
@@ -142,10 +134,8 @@ const DialogList: React.FC = () => {
         selected={tab === 3 && true}
         classes={{ root: classes.root, selected: classes.selected }}
       >
-        <ListItemIcon>
-          <FormatListBulleted />
-        </ListItemIcon>
-        <ListItemText primary="IDs" />
+        <ListItemIcon><FormatListBulleted/></ListItemIcon>
+        <ListItemText primary={t("nui_menu.player_modal.tabs.ids")} />
       </ListItem>
       <ListItem
         className={classes.listItem}
@@ -154,10 +144,8 @@ const DialogList: React.FC = () => {
         selected={tab === 4 && true}
         classes={{ root: classes.root, selected: classes.selected }}
       >
-        <ListItemIcon>
-          <MenuBook />
-        </ListItemIcon>
-        <ListItemText primary="History" />
+        <ListItemIcon><MenuBook/></ListItemIcon>
+        <ListItemText primary={t("nui_menu.player_modal.tabs.history")} />
       </ListItem>
       <ListItem
         className={classes.listItem}
@@ -166,10 +154,8 @@ const DialogList: React.FC = () => {
         selected={tab === 5 && true}
         classes={{ root: classes.banRoot, selected: classes.selected }}
       >
-        <ListItemIcon>
-          <Block />
-        </ListItemIcon>
-        <ListItemText primary="Ban" />
+        <ListItemIcon><Block/></ListItemIcon>
+        <ListItemText primary={t("nui_menu.player_modal.tabs.ban")} />
       </ListItem>
     </List>
   );
