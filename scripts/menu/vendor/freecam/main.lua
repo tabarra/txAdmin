@@ -124,12 +124,12 @@ function StartFreecamThread()
       
     PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
     PushScaleformMovieFunctionParameterInt(2)
-    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_X, 1), "Fwd/Back")
+    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_Y, 1), "Fwd/Back")
     PopScaleformMovieFunctionVoid()
       
     PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
     PushScaleformMovieFunctionParameterInt(3)
-    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_Y, 1), "Left/Right")
+    InstructionalButton(GetControlInstructionalButton(0, CONTROLS.MOVE_X, 1), "Left/Right")
     PopScaleformMovieFunctionVoid()
   
     PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
