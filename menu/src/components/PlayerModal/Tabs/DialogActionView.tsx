@@ -39,7 +39,7 @@ const DialogActionView: React.FC = () => {
           method: 'POST',
           data: {
             id: assocPlayer.id,
-            reason: reason
+            message: reason
           }
         }).then(resp => {
           enqueueSnackbar(resp.message, { variant: translateAlertType(resp.type) })
