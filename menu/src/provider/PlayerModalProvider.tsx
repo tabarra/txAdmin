@@ -1,4 +1,4 @@
-import React, { useContext, createContext, useState } from 'react';
+import React, { useContext, createContext, useState, useCallback } from 'react';
 import PlayerModal from '../components/PlayerModal/PlayerModal';
 
 const PlayerContext = createContext(null);

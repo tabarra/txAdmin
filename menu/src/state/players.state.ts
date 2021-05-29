@@ -22,7 +22,7 @@ export interface PlayerData {
   id: number;
   distance: number;
   username: string;
-  identifiers: string[];
+  license: string;
 }
 
 export enum PlayerDataSort {
@@ -113,13 +113,7 @@ debugData<PlayerData[]>([
         id: 1,
         distance: 500,
         health: 80,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Driving,
@@ -127,13 +121,7 @@ debugData<PlayerData[]>([
         id: 2,
         distance: 500,
         health: 50,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Boat,
@@ -141,13 +129,7 @@ debugData<PlayerData[]>([
         id: 3,
         distance: 500,
         health: 10,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Boat,
@@ -155,13 +137,7 @@ debugData<PlayerData[]>([
         id: 4,
         distance: 500,
         health: 100,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Boat,
@@ -169,13 +145,7 @@ debugData<PlayerData[]>([
         id: 5,
         distance: 500,
         health: 70,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Boat,
@@ -183,13 +153,7 @@ debugData<PlayerData[]>([
         id: 6,
         distance: 500,
         health: 100,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Boat,
@@ -197,13 +161,7 @@ debugData<PlayerData[]>([
         id: 7,
         distance: 500,
         health: 40,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Boat,
@@ -211,13 +169,7 @@ debugData<PlayerData[]>([
         id: 8,
         distance: 500,
         health: 40,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Boat,
@@ -225,13 +177,7 @@ debugData<PlayerData[]>([
         id: 9,
         distance: 500,
         health: 40,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Boat,
@@ -239,13 +185,7 @@ debugData<PlayerData[]>([
         id: 10,
         distance: 500,
         health: 40,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Boat,
@@ -253,13 +193,7 @@ debugData<PlayerData[]>([
         id: 11,
         distance: 500,
         health: 40,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Boat,
@@ -267,13 +201,7 @@ debugData<PlayerData[]>([
         id: 12,
         distance: 500,
         health: 40,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Boat,
@@ -281,13 +209,7 @@ debugData<PlayerData[]>([
         id: 13,
         distance: 500,
         health: 40,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Boat,
@@ -295,13 +217,7 @@ debugData<PlayerData[]>([
         id: 14,
         distance: 500,
         health: 40,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Boat,
@@ -309,13 +225,7 @@ debugData<PlayerData[]>([
         id: 15,
         distance: 500,
         health: 40,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
       {
         vehicleStatus: VehicleStatus.Boat,
@@ -323,13 +233,7 @@ debugData<PlayerData[]>([
         id: 16,
         distance: 500,
         health: 40,
-        identifiers: [
-          "steam:110000105f69e4f",
-          "license:3333333333333333333333deadbeef0000nosave",
-          "xbl:2533274847262987",
-          "live:1055520781163621",
-          "discord:528461397500100609"
-        ],
+        license: "3333333333333333333333deadbeef0000nosave",
       },
     ],
   },

@@ -17,6 +17,7 @@ import {
 } from "@material-ui/icons";
 import { usePlayerModalContext } from '../../provider/PlayerModalProvider';
 import { PlayerData, VehicleStatus } from "../../state/players.state";
+import { useSetAssociatedPlayer } from '../../state/playerDetails.state';
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -42,14 +43,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   }
 }));
 
-const PlayerCard: React.FC<PlayerData> = ({
-  id,
-  username,
-  health,
-  vehicleStatus,
-}) => {
+const PlayerCard: React.FC<{playerData: PlayerData}> = ({playerData}) => {
   const classes = useStyles();
-  const { setModalOpen, isModalOpen } = usePlayerModalContext();
+  const { setModalOpen } = usePlayerModalContext();
+  const setAssociatedPlayer = useSetAssociatedPlayer();
 
   const statusIcon: { [K in VehicleStatus]: JSX.Element } = {
     walking: <DirectionsWalk color="inherit" />,
@@ -59,12 +56,12 @@ const PlayerCard: React.FC<PlayerData> = ({
   };
 
   const handlePlayerClick = () => {
-    console.log(isModalOpen)
     setModalOpen(true);
+    setAssociatedPlayer(playerData)
   };
 
   const upperCaseStatus =
-    vehicleStatus.charAt(0).toUpperCase() + vehicleStatus.slice(1);
+    playerData.vehicleStatus.charAt(0).toUpperCase() + playerData.vehicleStatus.slice(1);
 
   return (
     <Box p={2}>
@@ -79,14 +76,14 @@ const PlayerCard: React.FC<PlayerData> = ({
                 tooltip: classes.tooltipOverride,
               }}
             >
-              <span className={classes.icon}>{statusIcon[vehicleStatus]}</span>
+              <span className={classes.icon}>{statusIcon[playerData.vehicleStatus]}</span>
             </Tooltip>
             <Typography
               style={{ marginRight: 5 }}
               variant="subtitle1"
               color="textSecondary"
             >
-              {id}
+              {playerData.id}
             </Typography>
             <Typography variant="subtitle1" color="textSecondary">
               |
@@ -97,14 +94,14 @@ const PlayerCard: React.FC<PlayerData> = ({
               variant="subtitle1"
               color="textPrimary"
             >
-              {username}
+              {playerData.username}
             </Typography>
           </Box>
           <IconButton onClick={handlePlayerClick}>{<MoreVert />}</IconButton>
         </Box>
         <div>
           <Tooltip
-            title={`${health}% health`}
+            title={`${playerData.health}% health`}
             placement="bottom"
             arrow
             classes={{
@@ -112,7 +109,7 @@ const PlayerCard: React.FC<PlayerData> = ({
             }}
           >
             <div className={classes.barBackground}>
-              <Box className={classes.barInner} width={`${health}%`} />
+              <Box className={classes.barInner} width={`${playerData.health}%`} />
             </div>
           </Tooltip>
         </div>

@@ -1,4 +1,8 @@
-import { atom, useRecoilValue, useSetRecoilState } from 'recoil';
+import { atom, selector, useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { PlayerData } from './players.state';
+import { fetchWebPipe } from '../utils/fetchWebPipe';
+import { debugLog } from '../utils/debugLog';
+import { MockedPlayerDetails } from '../utils/constants';
 
 interface PlayerHistoryItem {
   id: string;
@@ -19,14 +23,14 @@ enum HistoryActionType {
   WhitelistRevoked = 'WHITELIST-REVOKED'
 }
 
-interface TxAdminAPIResp {
+interface TxAdminPlayerAPIResp {
   funcDisabled: {
     message: string;
     kick: string;
     warn: string;
     ban: boolean;
   }
-  id: boolean;
+  id: number | boolean;
   license: string;
   identifiers: string[];
   isTmp: boolean;
@@ -39,221 +43,38 @@ interface TxAdminAPIResp {
   notes: string;
 }
 
-const MockDataState = {
-  "funcDisabled": {
-    "message": "disabled",
-    "kick": "disabled",
-    "warn": "disabled",
-    "ban": false
-  },
-  "id": false,
-  "license": "9b9fc300cc65d22ad3b536175a4d15c0e4933753",
-  "identifiers": [
-    "license:9b9fc300cc65d22ad3b536175a4d15c0e4933753"
-  ],
-  "isTmp": false,
-  "name": "Soneca",
-  "actionHistory": [
-    {
-      "id": "ADX9-C61Y",
-      "action": "BAN-REVOKED",
-      "date": "30/05",
-      "reason": "sdfsdfsdf",
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "id": "BPGZ-HL53",
-      "action": "WHITELIST-REVOKED",
-      "date": "30/05",
-      "reason": null,
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "BAN-REVOKED",
-      "date": "30/05",
-      "reason": "efrdgdfdf",
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "WARN",
-      "date": "31/05",
-      "reason": "warningggggggggggg",
-      "author": "tabarra",
-      "color": "warning"
-    },
-    {
-      "action": "BAN-REVOKED",
-      "date": "31/05",
-      "reason": "ban test",
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "BAN-REVOKED",
-      "date": "31/05",
-      "reason": "aaaaaaaaaaaaaaaaaa",
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "WHITELIST-REVOKED",
-      "date": "14/06",
-      "reason": null,
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "WARN",
-      "date": "14/06",
-      "reason": "🆃🆇🅰🅳🅼🅸🅽",
-      "author": "tabarra",
-      "color": "warning"
-    },
-    {
-      "action": "WHITELIST-REVOKED",
-      "date": "30/06",
-      "reason": null,
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "WHITELIST-REVOKED",
-      "date": "30/06",
-      "reason": null,
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "WHITELIST-REVOKED",
-      "date": "30/06",
-      "reason": null,
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "WARN",
-      "date": "30/06",
-      "reason": "zxc",
-      "author": "tabarra",
-      "color": "warning"
-    },
-    {
-      "action": "BAN-REVOKED",
-      "date": "30/06",
-      "reason": "dsfdfs",
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "BAN-REVOKED",
-      "date": "30/06",
-      "reason": "sadf sadf asdf asd",
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "BAN-REVOKED",
-      "date": "30/06",
-      "reason": "msgmsgmsgmsg msg",
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "BAN-REVOKED",
-      "date": "30/06",
-      "reason": "sdf sdf dsf ds",
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "WHITELIST",
-      "date": "30/06",
-      "reason": null,
-      "author": "tabarra",
-      "color": "success"
-    },
-    {
-      "action": "BAN-REVOKED",
-      "date": "30/06",
-      "reason": "asdasd",
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "BAN-REVOKED",
-      "date": "30/06",
-      "reason": "sadf",
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "BAN-REVOKED",
-      "date": "30/06",
-      "reason": "zdfgdfg dfg dfg dfdfg",
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "WARN",
-      "date": "07/07",
-      "reason": "dfsg",
-      "author": "tabarra",
-      "color": "warning"
-    },
-    {
-      "action": "WARN",
-      "date": "07/07",
-      "reason": "fds",
-      "author": "tabarra",
-      "color": "warning"
-    },
-    {
-      "action": "WARN-REVOKED",
-      "date": "07/07",
-      "reason": "sdf",
-      "author": "tabarra",
-      "color": "dark"
-    },
-    {
-      "action": "WARN",
-      "date": "07/07",
-      "reason": "yuiyiu",
-      "author": "tabarra",
-      "color": "warning"
-    },
-    {
-      "action": "BAN",
-      "date": "25/05",
-      "reason": "ssss",
-      "author": "tabarra",
-      "color": "danger"
-    }
-  ],
-  "joinDate": "May 30, 2020 - 01:27:49",
-  "sessionTime": "0 minutes",
-  "playTime": "1 hour, 57 minutes",
-  "notesLog": "",
-  "notes": ""
-}
-
 const playerDetails = {
-  data: atom<TxAdminAPIResp | null>({
+  selectedPlayerData: selector<TxAdminPlayerAPIResp>({
     key: 'selectedPlayerDetails',
-    default: MockDataState
+    get: async ({ get }) => {
+      const assocPlayer = get(playerDetails.associatedPlayer)
+      const assocPlayerLicense = assocPlayer.license
+
+      try {
+        return await fetchWebPipe<TxAdminPlayerAPIResp>(`/player/${assocPlayerLicense}`)
+      } catch (e) {
+        if (!process.env.IN_GAME) {
+          debugLog('GetPlayerDetails', 'Detected browser env, dispatching mock data', 'WebPipeReq')
+          return MockedPlayerDetails
+        }
+        throw e
+      }
+    }
   }),
   loading: atom({
     key: 'selectedPlayerDetailsLoading',
     default: true
+  }),
+  associatedPlayer: atom<PlayerData | null>({
+    key: 'associatedPlayerDetails',
+    default: null
   })
 }
 
-export const usePlayerDetailsValue = () => useRecoilValue(playerDetails.data)
+export const usePlayerDetailsValue = () => useRecoilValue<TxAdminPlayerAPIResp>(playerDetails.selectedPlayerData)
 
-export const useSetPlayerDetails = () => useSetRecoilState(playerDetails.data)
+export const usePlayerDetails = () => useRecoilState(playerDetails.selectedPlayerData)
 
-export const usePlayerDetailsLoading = () => useRecoilValue(playerDetails.loading)
+export const useAssociatedPlayerValue = () => useRecoilValue<PlayerData>(playerDetails.associatedPlayer)
 
-export const useSetPlayerDetailsLoading = () => useSetRecoilState(playerDetails.loading)
+export const useSetAssociatedPlayer = () => useSetRecoilState(playerDetails.associatedPlayer)

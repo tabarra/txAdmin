@@ -8,28 +8,32 @@ import {
   ListItemText,
   useTheme,
   IconButton,
-  ListItemIcon
-} from "@material-ui/core";
+  ListItemIcon, makeStyles, Theme, CircularProgress
+} from '@material-ui/core';
 import { Close, Person, Block, FormatListBulleted, MenuBook, FlashOn } from '@material-ui/icons'
 import { usePlayerModalContext } from '../../provider/PlayerModalProvider';
-import DialogBanView from "./Tabs/DialogBanView";
-import DialogActionView from "./Tabs/DialogActionView";
-import DialogInfoView from "./Tabs/DialogInfoView";
-import { useDialogStyles, useStyles } from "./modal.styles";
-import DialogIdView from "./Tabs/DialogIdView";
-import DialogHistoryView from "./Tabs/DialogHistoryView";
-import { usePlayerDetailsValue } from '../../state/playerDetails.state';
+import { useStyles } from "./modal.styles";
+import { useAssociatedPlayerValue } from '../../state/playerDetails.state';
+import { DialogBaseView } from './Tabs/DialogBaseView';
 
+const LoadingModal: React.FC = () => (
+  <Box display="flex" flexGrow={1} width="100%" justifyContent="center" alignItems="center">
+    <CircularProgress />
+  </Box>
+)
 
 const PlayerModal: React.FC = () => {
-  const player = usePlayerDetailsValue();
-  const { tab, isModalOpen, setModalOpen } = usePlayerModalContext();
-  const theme = useTheme();
   const classes = useStyles();
+  const { setModalOpen, isModalOpen } = usePlayerModalContext();
+  const assocPlayer = useAssociatedPlayerValue()
+  const theme = useTheme();
 
+  // Actually fetch the details for this particular ID
   const handleClose = () => {
     setModalOpen(false)
   }
+
+  if (!assocPlayer) return null;
 
   return (
     <Dialog
@@ -48,32 +52,45 @@ const PlayerModal: React.FC = () => {
       }}
     >
       <DialogTitle style={{ borderBottom: '1px solid rgba(221,221,221,0.54)' }}>
-        [{player.id}] {player.name}
+        [{assocPlayer.id}] {assocPlayer.username}
         <IconButton onClick={handleClose} className={classes.closeButton}><Close/></IconButton>
       </DialogTitle>
       <Box display="flex" px={2} pb={2} pt={2} flexGrow={1}>
         <Box minWidth={200} pr={2} borderRight="1px solid rgba(221,221,221,0.54)">
           <DialogList/>
         </Box>
-        <Box flexGrow={1} mt={-2}>
-          {tab == 1 && <DialogActionView />}
-          {tab == 2 && <DialogInfoView />}
-          {tab == 3 && <DialogIdView />}
-          {tab == 4 && <DialogHistoryView />}
-          {tab == 5 && <DialogBanView />}
-        </Box>
+        <React.Suspense fallback={<LoadingModal />}>
+          <DialogBaseView />
+        </React.Suspense>
       </Box>
     </Dialog>
   )
 }
 
+const useListStyles = makeStyles((theme: Theme) => ({
+  listItem: {
+    borderRadius: 8
+  },
+  root: {
+    '&$selected, &$selected:hover': {
+      background: theme.palette.primary.main,
+    }
+  },
+  banRoot: {
+    '&$selected, &$selected:hover': {
+      background: theme.palette.warning.main,
+    }
+  },
+  selected: {}
+}));
+
 const DialogList: React.FC = () => {
   const { tab, setTab } = usePlayerModalContext()
-  const classes = useDialogStyles();
+  const classes = useListStyles();
   return (
     <List>
       <ListItem
-        style={{ borderRadius: 8 }}
+        className={classes.listItem}
         button
         onClick={() => setTab(1)}
         selected={tab === 1 && true}
@@ -83,7 +100,7 @@ const DialogList: React.FC = () => {
         <ListItemText primary="Actions"/>
       </ListItem>
       <ListItem
-        style={{ borderRadius: 8 }}
+        className={classes.listItem}
         button
         onClick={() => setTab(2)} selected={tab === 2 && true}
         classes={{ root: classes.root, selected: classes.selected }}
@@ -92,7 +109,7 @@ const DialogList: React.FC = () => {
         <ListItemText primary="Info"/>
       </ListItem>
       <ListItem
-        style={{ borderRadius: 8 }}
+        className={classes.listItem}
         button
         onClick={() => setTab(3)}
         selected={tab === 3 && true}
@@ -102,7 +119,7 @@ const DialogList: React.FC = () => {
         <ListItemText primary="IDs"/>
       </ListItem>
       <ListItem
-        style={{ borderRadius: 8 }}
+        className={classes.listItem}
         button
         onClick={() => setTab(4)}
         selected={tab === 4 && true}
@@ -112,7 +129,7 @@ const DialogList: React.FC = () => {
         <ListItemText primary="History"/>
       </ListItem>
       <ListItem
-        style={{ borderRadius: 8 }}
+        className={classes.listItem}
         button
         onClick={() => setTab(5)}
         selected={tab === 5 && true}

@@ -30,17 +30,3 @@ export const useStyles = makeStyles((theme: Theme) => ({
     justifyContent: 'space-between'
   }
 }))
-
-export const useDialogStyles = makeStyles((theme: Theme) => ({
-  root: {
-    '&$selected, &$selected:hover': {
-      background: theme.palette.primary.main,
-    }
-  },
-  banRoot: {
-    '&$selected, &$selected:hover': {
-      background: theme.palette.warning.main,
-    }
-  },
-  selected: {}
-}))
