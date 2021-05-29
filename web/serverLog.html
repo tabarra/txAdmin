@@ -46,7 +46,7 @@
     function getNewData(){
         txAdminAPI({
             type: "GET",
-            url: `/serverLog?offset=${currOffset}`,
+            url: `/serverLog/${currOffset}`,
             success: function (data) {
                 //FIXME: temporary before database
                 //NOTE: /\ that was a lie :)

@@ -17,7 +17,7 @@ module.exports = async function chartData(ctx) {
 
     //Process data & filter thread
     const availableThreads = ['svNetwork', 'svSync', 'svMain'];
-    const threadName = (availableThreads.includes(ctx.query.thread)) ? ctx.query.thread : 'svMain';
+    const threadName = (availableThreads.includes(ctx.params.thread)) ? ctx.params.thread : 'svMain';
     // const maxDeltaTime = 288; //5*288 = 1440 = 1 day
     const maxDeltaTime = 360; //5*360 = 30 hours
     let outData;

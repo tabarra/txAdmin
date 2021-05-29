@@ -12,29 +12,34 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
  * @param {object} ctx
  */
 module.exports = async function ServerLog(ctx) {
+    const offset = (ctx.params && typeof ctx.params.offset === 'string')
+        ? parseInt(ctx.params.offset)
+        : false;
+    const serverLog = globals.databus.serverLog; //shorthand
+
     //If page
-    if (isUndefined(ctx.query.offset)) {
-        let log = processLog(globals.databus.serverLog.slice(-100));
-        let renderData = {
+    if (!offset) {
+        const log = processLog(serverLog.slice(-100));
+        const renderData = {
             headerTitle: 'Server Log',
-            offset: globals.databus.serverLog.length,
+            offset: serverLog.length,
             log,
         };
         return ctx.utils.render('serverLog', renderData);
 
     //If offset
-    } else if (!isNaN(parseInt(ctx.query.offset))) {
-        if (ctx.query.offset === globals.databus.serverLog.length) {
-            return ctx.send({offset: globals.databus.serverLog.length, log : false});
+    } else if (!isNaN(offset)) {
+        if (offset === serverLog.length) {
+            return ctx.send({offset: serverLog.length, log : false});
         } else {
-            let log = processLog(globals.databus.serverLog.slice(ctx.query.offset));
-            return ctx.send({offset: globals.databus.serverLog.length, log});
+            const log = processLog(serverLog.slice(offset));
+            return ctx.send({offset: serverLog.length, log});
         }
 
     //If null
     } else {
-        let log = processLog(globals.databus.serverLog.slice(-100));
-        return ctx.send({offset: globals.databus.serverLog.length, log});
+        const log = processLog(serverLog.slice(-100));
+        return ctx.send({offset: serverLog.length, log});
     }
 };
 
@@ -55,9 +60,9 @@ function processLog(logArray) {
         ) {
             return;
         }
-        let time = new Date(parseInt(event.timestamp) * 1000).toLocaleTimeString();
-        let source = processPlayerData(event.source);
-        let eventMessage = processEventTypes(event);
+        const time = new Date(parseInt(event.timestamp) * 1000).toLocaleTimeString();
+        const source = processPlayerData(event.source);
+        const eventMessage = processEventTypes(event);
         out += `[${time}] ${source} ${eventMessage}\n`;
     });
 

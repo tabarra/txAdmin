@@ -157,7 +157,7 @@
                         {{@if(it.template == 'justMessage')}}
                             <h4 class="text-danger">{{it.errorTitle}}</h4>
                             <p class="font-weight-bold">{{it.errorMessage}}</p>
-                            <a href="/auth" class="btn btn-primary px-4 mt-3" role="submit">Back</a>
+                            <a href="auth" class="btn btn-primary px-4 mt-3" role="submit">Back</a>
                         {{/if}}
                         {{@if(it.template == 'noMaster')}}
                             <h3 class="mb-4">No <code>CitizenFX</code> Account Linked</h3>
@@ -236,12 +236,12 @@
                         {{@if(it.template == 'normal')}}
                             <h1 class="mb-3">Login</h1>
                             <a class="btn btn-brand btn-stack-overflow {{it.citizenfxDisabled|isDisabled}}"
-                                role="button" href="/auth/citizenfx/redirect">
+                                role="button" href="auth/citizenfx/redirect">
                                 <i class="logo-image"><svg><use href="#fivem-icon"></use></svg></i>
                                 <span>CitizenFX</span>
                             </a>
                             <div class="hrsep">OR</div>
-                            <form action="/auth/password" method="post">
+                            <form action="auth/password" method="post">
                                 <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">

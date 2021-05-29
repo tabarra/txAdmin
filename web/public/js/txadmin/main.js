@@ -3,8 +3,9 @@
 //============================================== Dynamic Stats
 //================================================================
 function refreshData() {
+    const scope = (isWebInterface) ? 'web' : 'iframe';
     txAdminAPI({
-        url: '/status',
+        url: `status/${scope}`,
         type: 'GET',
         timeout: REQ_TIMEOUT_SHORT,
         success: function (data) {

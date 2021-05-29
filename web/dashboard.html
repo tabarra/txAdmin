@@ -244,7 +244,7 @@
         chartThreadSelectBtn.textContent = thread;
         perfData = false;
         try {
-            const rawPerfData = await fetch(TX_BASE_PATH + `chartData?thread=${thread}`);
+            const rawPerfData = await fetch(TX_BASE_PATH + `chartData/${thread}`);
             const parsedPerfData = JSON.parse(await rawPerfData.text());
             if(Array.isArray(parsedPerfData)){
                 perfData = parsedPerfData;

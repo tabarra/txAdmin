@@ -9,12 +9,15 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
  * @param {object} ctx
  */
 module.exports = async function GetStatus(ctx) {
-    return ctx.send({
+    const out = {
         meta: prepareMetaData(),
-        host: prepareHostData(),
-        status: prepareServerStatus(),
-        players: preparePlayersData(),
-    });
+    };
+    if (ctx.params.scope === 'web') {
+        out.host = prepareHostData();
+        out.status = prepareServerStatus();
+        out.players = preparePlayersData();
+    }
+    return ctx.send(out);
 };
 
 
@@ -121,6 +124,8 @@ function prepareMetaData() {
     }
     return {
         favicon,
-        title: (globals.monitor.currentStatus == 'ONLINE') ? `(${globals.playerController.activePlayers.length}) txAdmin` : 'txAdmin',
+        title: (globals.monitor.currentStatus == 'ONLINE')
+            ? `(${globals.playerController.activePlayers.length}) txAdmin`
+            : 'txAdmin',
     };
 }

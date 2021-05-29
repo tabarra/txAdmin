@@ -87,13 +87,13 @@ module.exports = (config) => {
 
     //Data routes
     router.get('/txAdminLog', requestAuth('web'), webRoutes.txAdminLog);
-    router.get('/serverLog', requestAuth('web'), webRoutes.serverLog);
-    router.get('/status', requestAuth('api'), webRoutes.status);
-    router.get('/chartData', webRoutes.chartData);
+    router.get('/serverLog/:offset?', requestAuth('web'), webRoutes.serverLog); //FIXME: param fix due to missing search
+    router.get('/status/:scope?', requestAuth('api'), webRoutes.status); //FIXME: param fix due to missing search
+    router.get('/chartData/:thread?', webRoutes.chartData); //FIXME: param fix due to missing search
 
     //Player routes
     router.get('/player/list', requestAuth('web'), webRoutes.player.list);
-    router.get('/player/:license', requestAuth('api'), webRoutes.player.modal);
+    router.get('/player/:reference', requestAuth('api'), webRoutes.player.modal);
     router.post('/player/:action', requestAuth('api'), webRoutes.player.actions);
 
     //Index & generic
