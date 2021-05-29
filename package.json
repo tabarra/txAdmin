@@ -4,6 +4,7 @@
   "description": "FiveM FXServer Admin - remotely manage your GTA5 FiveM Server",
   "main": "src/index.js",
   "scripts": {
+    "prepare": "husky install",
     "build:all": "rimraf dist && npm run build:menu && npm run build:txadmin",
     "build:txadmin": "webpack --config webpack.config.js --progress",
     "build:menu": "rimraf scripts/menu/nui && webpack --config ./menu/webpack/webpack.prod.js --progress",
@@ -13,7 +14,7 @@
     "lint": "eslint ./src/**",
     "lint:count": "eslint ./src/** -f ./lint-formatter.js",
     "lint:fix": "eslint ./src/** --fix",
-    "prepare": "husky install"
+    "locale:rebase": "node locale/_rebase.js"
   },
   "repository": {
     "type": "git",
