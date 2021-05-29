@@ -201,6 +201,22 @@ RegisterServerEvent('txAdmin:menu:healMyself', function()
   end
 end)
 
+RegisterServerEvent('txAdmin:menu:healPlayer', function(id)
+  local src = source
+  if not id and type(id) ~= 'number' then
+    return
+  end
+  local allow = PlayerHasTxPermission(src, 'players.heal')
+  local playerName = GetPlayerName(id) or "unknown"
+  TriggerEvent('txaLogger:menuEvent', src, "healPlayer", allow, playerName)
+  if allow then
+    local ped = GetPlayerPed(id)
+    if ped then
+      TriggerClientEvent('txAdmin:menu:healed', id)
+    end
+  end
+end)
+
 RegisterServerEvent('txAdmin:menu:healAllPlayers', function()
   local src = source
   local allow = PlayerHasTxPermission(src, 'players.heal')
@@ -222,6 +238,46 @@ RegisterServerEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   if allow then
     TriggerClientEvent('txAdmin:menu:tpToCoords', src, x, y, z)
   end
+end)
+
+RegisterServerEvent('txAdmin:menu:tpToPlayer', function(id)
+  local src = source
+  if not id or type(id) ~= 'number' then
+    return
+  end
+  local allow = PlayerHasTxPermission(src, 'players.teleport')
+  local data = { x = nil, y = nil, z = nil, playerName = nil }
+  data.playerName = GetPlayerName(id)
+  if allow then
+    -- ensure the player ped exists
+    local ped = GetPlayerPed(id)
+    if ped then
+      local coords = GetEntityCoords(ped)
+      data.x = coords[1]
+      data.y = coords[2]
+      data.z = coords[3]
+      TriggerClientEvent('txAdmin:menu:tpToCoords', src, data.x, data.y, data.z)
+    end
+  end
+  TriggerEvent('txaLogger:menuEvent', src, 'teleportPlayer', allow, data)
+end)
+
+RegisterServerEvent('txAdmin:menu:summonPlayer', function(id)
+  local src = source
+  if not id or type(id) ~= 'number' then
+    return
+  end
+  local allow = PlayerHasTxPermission(src, 'players.teleport')
+  if allow then
+    -- ensure the player ped exists
+    local ped = GetPlayerPed(src)
+    if ped then
+      local coords = GetEntityCoords(ped)
+      TriggerClientEvent('txAdmin:menu:tpToCoords', id, coords[1], coords[2], coords[3])
+    end
+  end
+  local playerName = GetPlayerName(id)
+  TriggerEvent('txaLogger:menuEvent', src, 'summonPlayer', allow, playerName)
 end)
 
 RegisterServerEvent('txAdmin:menu:tpToWaypoint', function()

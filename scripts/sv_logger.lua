@@ -124,6 +124,14 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
         else
             message = "invalid player mode"
         end
+    elseif event == 'teleportPlayer' then
+        local playerName = data.playerName
+        local x = data.x
+        local y = data.y
+        local z = data.z
+        message = string.format("teleporting to player %s (x=%.3f, y=%.3f, z=%.3f)", playerName, x, y, z)
+    elseif event == 'healPlayer' then
+        message = "healing player " .. (data or 'unknown?')
     else
         return
     end

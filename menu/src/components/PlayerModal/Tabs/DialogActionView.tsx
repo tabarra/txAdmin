@@ -89,11 +89,11 @@ const DialogActionView: React.FC = () => {
   }
 
   const handleGoTo = () => {
-    fetchNui('goToPlayer', { id: assocPlayer.id })
+    fetchNui('tpToPlayer', { id: assocPlayer.id })
   }
 
   const handleBring = () => {
-    fetchNui('bringPlayer', { id: assocPlayer.id })
+    fetchNui('summonPlayer', { id: assocPlayer.id })
   }
 
 

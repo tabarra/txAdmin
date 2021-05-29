@@ -115,6 +115,11 @@ RegisterNUICallback('tpToWaypoint', function(_, cb)
   cb({})
 end)
 
+RegisterNUICallback('tpToPlayer', function(id, cb)
+  TriggerServerEvent('txAdmin:menu:tpToPlayer', id)
+  cb({})
+end)
+
 RegisterNUICallback('tpBack', function(_, cb)
   if lastTp then
     TriggerServerEvent('txAdmin:menu:tpToCoords', lastTp.x, lastTp.y, lastTp.z)
@@ -122,6 +127,11 @@ RegisterNUICallback('tpBack', function(_, cb)
   else
     cb({ e = true })
   end
+end)
+
+RegisterNUICallback('summonPlayer', function(id, cb)
+  TriggerServerEvent('txAdmin:menu:summonPlayer', id)
+  cb({})
 end)
 
 local function toggleGodMode(enabled)
@@ -224,6 +234,11 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
 end)
 
 -- CB From Menu
+RegisterNUICallback('healPlayer', function(id, cb)
+  TriggerServerEvent('txAdmin:menu:healPlayer', id)
+  cb({})
+end)
+
 RegisterNUICallback('healMyself', function(_, cb)
   TriggerServerEvent('txAdmin:menu:healMyself')
   cb({})
