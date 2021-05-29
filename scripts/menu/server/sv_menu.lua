@@ -55,9 +55,8 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
   end
   
   local url = "http://" .. apiHost .. path:gsub("//", "/")
-  --debugPrint("[" .. callbackId .. "]>> " .. url)
-  --debugPrint("[" .. callbackId .. "] Headers: " .. json.encode(headers))
-  
+  debugPrint(string.format("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6%s", s, callbackId, url))
+  debugPrint(string.format("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6Headers: %s", s, callbackId, json.encode(headers)))
 
   PerformHttpRequest(url, function(httpCode, data, resultHeaders)
     -- fixing body for error pages (eg 404)
@@ -95,9 +94,15 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
       end
     end
   
-    --debugPrint("[" .. callbackId .. "] Perms: " .. json.encode(adminPermissions[s]))
-    --debugPrint("[" .. callbackId .. "]<< " .. httpCode)
-    --debugPrint("[" .. callbackId .. "]<< " .. httpCode .. ': ' .. json.encode(resultHeaders))
+    local errorCode = tonumber(httpCode) >= 400
+    local resultColor = errorCode and '^1' or '^2'
+    debugPrint(string.format(
+      "^3WebPipe[^5%d^0:^1%d^3]^0 %s<< %s ^4%s", s, callbackId, resultColor, httpCode, path))
+    if errorCode then
+      debugPrint(string.format(
+        "^3WebPipe[^5%d^0:^1%d^3]^0 %s<< Headers: %s", s, callbackId, resultColor, json.encode(resultHeaders)))
+    end
+    
     TriggerClientEvent('txAdmin:WebPipe', s, callbackId, httpCode, data, resultHeaders)
   end, method, body, headers, {
     followLocation = false

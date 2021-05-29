@@ -11,8 +11,7 @@ RegisterRawNuiCallback('WebPipe', function(req, cb)
     local headers = req.headers
     local body = req.body
     local method = req.method
-    debugPrint("^3WebPipe[^1" .. pipeCallbackCounter .. "^3]^0 " .. method .. " " .. path)
-    debugPrint("^3WebPipe[^1" .. pipeCallbackCounter .. "^3]^0 " .. json.encode(headers))
+    debugPrint("^3WebPipe[^1" .. pipeCallbackCounter .. "^3]^0 ^2" .. method .. " ^4" .. path)
 
     local id = pipeCallbackCounter
     pipeReturnCallbacks[id] = { cb = cb, path = path }
@@ -29,7 +28,6 @@ end)
 RegisterNetEvent('txAdmin:WebPipe')
 AddEventHandler('txAdmin:WebPipe', function(callbackId, statusCode, body, headers)
     local ret = pipeReturnCallbacks[callbackId]
-    debugPrint("^3WebPipe[^1" .. callbackId .. "^3]^0 recv=" .. json.encode(ret))
     if not ret then return end
     
     if ret.path == '/auth/nui' and statusCode == 200 then
@@ -49,5 +47,5 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, statusCode, body, header
     })
     
     pipeReturnCallbacks[callbackId] = nil
-    debugPrint("^3WebPipe[^1" .. callbackId .. "^3]^0 closed (" .. #pipeReturnCallbacks .. " open)")
+    debugPrint("^3WebPipe[^1" .. callbackId .. "^3]^0 ^2finished^0 (" .. #pipeReturnCallbacks .. " open)")
 end)
