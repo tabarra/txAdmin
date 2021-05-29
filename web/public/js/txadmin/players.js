@@ -229,7 +229,7 @@ function showPlayer(license, altName = 'unknown', altIDs = '') {
 
     //Perform request
     txAdminAPI({
-        url: 'player/' + license,
+        url: '/player/' + license,
         type: 'GET',
         dataType: 'json',
         success: function (data) {
