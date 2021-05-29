@@ -19,7 +19,7 @@ local function getPlayerData(src)
         src = tonumber(src)
     end
 
-    if src == 0 then return {name = 'console', identifiers = {}} end
+    if src <= 0 then return {name = 'console', identifiers = {}} end
 
     return {
         name = GetPlayerName(src),

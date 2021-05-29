@@ -6,6 +6,20 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 
+//DEBUG testing stuff
+// let cnt = 0;
+// setInterval(() => {
+//     cnt++;
+//     if (cnt > 100) cnt = 1;
+//     const test = {
+//         timestamp: Math.round(Date.now() / 1000),
+//         action: 'DebugMessage',
+//         source: {name: 'console', identifiers: []},
+//         data: cnt + '='.repeat(cnt),
+//     };
+//     globals.databus.serverLog.push(test);
+// }, 750);
+
 
 /**
  * Returns the output page containing the admin log.

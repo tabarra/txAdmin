@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "prepare": "husky install",
-    "build:all": "rimraf dist && npm run build:menu && npm run build:txadmin",
+    "build": "rimraf dist && npm run build:menu && npm run build:txadmin",
     "build:txadmin": "webpack --config webpack.config.js --progress",
     "build:menu": "rimraf scripts/menu/nui && webpack --config ./menu/webpack/webpack.prod.js --progress",
     "dev:menu": "rimraf scripts/menu/nui && webpack-dev-server --config ./menu/webpack/webpack.dev.js",

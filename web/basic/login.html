@@ -141,12 +141,14 @@
     <div class="container">
 
         <!-- Logo Row -->
-        {{@if(it.isMatrix)}}
-            <div class="row justify-content-center mb-4"><pre><b>{{it.ascii}}</b></pre></div>
-        {{#else}}
-            <div class="row justify-content-center mb-4">
-                <img src="{{it.logoURL}}" alt="txAdmin Logo">
-            </div>
+        {{@if(it.isWebInterface)}}
+            {{@if(it.isMatrix)}}
+                <div class="row justify-content-center mb-4"><pre><b>{{it.ascii}}</b></pre></div>
+            {{#else}}
+                <div class="row justify-content-center mb-4">
+                    <img src="{{it.logoURL}}" alt="txAdmin Logo">
+                </div>
+            {{/if}}
         {{/if}}
 
         <!-- Card Row -->
@@ -306,14 +308,17 @@
                     </div>
                 </div>
 
-                <div style="text-align: center">
-                    <svg class="c-sidebar-nav-icon d-none" id="darkToggleLight">
-                        <use href="img/coreui_icons.svg#cil-sun"></use>
-                    </svg>
-                    <svg class="c-sidebar-nav-icon" id="darkToggleDark">
-                        <use href="img/coreui_icons.svg#cil-moon"></use>
-                    </svg>
-                </div>
+                <!-- Dark/Light mode toggle -->
+                {{@if(it.isWebInterface)}}
+                    <div style="text-align: center">
+                        <svg class="c-sidebar-nav-icon d-none" id="darkToggleLight">
+                            <use href="img/coreui_icons.svg#cil-sun"></use>
+                        </svg>
+                        <svg class="c-sidebar-nav-icon" id="darkToggleDark">
+                            <use href="img/coreui_icons.svg#cil-moon"></use>
+                        </svg>
+                    </div>
+                {{/if}}
             </div>
         </div>
         {{@if(it.isMatrix)}}

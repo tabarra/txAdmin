@@ -142,7 +142,7 @@ async function renderLoginView(data, txVars) {
     data.txAdminVersion = GlobalData.txAdminVersion;
     data.fxServerVersion = (GlobalData.isZapHosting) ? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion;
     data.serverName = globals.config.serverName || globals.info.serverProfile;
-    data.dynamicAd = globals.dynamicAds.pick('login');
+    data.dynamicAd = txVars.isWebInterface && globals.dynamicAds.pick('login');
     data.jsInjection = getJavascriptConsts({
         isWebInterface: txVars.isWebInterface,
         TX_BASE_PATH: (txVars.isWebInterface) ? '' : WEBPIPE_PATH,
@@ -169,7 +169,7 @@ async function renderLoginView(data, txVars) {
 //================================================================
 /**
  * Renders a solo view.
- * NOTE: not used
+ * NOTE: used only in adminManager/modal and basic/404
  * @param {string} view
  * @param {string} data
  */
@@ -283,7 +283,7 @@ module.exports = async function WebCtxUtils(ctx, next) {
             globals.databus.txStatsData.pageViews[view]++;
         }
 
-        const soloViews = ['adminManager/editModal', 'basic/404'];
+        const soloViews = ['adminManager/modal', 'basic/404'];
         if (view == 'login') {
             ctx.body = await renderLoginView(viewData, ctx.txVars);
         } else if (soloViews.includes(view)) {

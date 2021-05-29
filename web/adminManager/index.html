@@ -162,18 +162,17 @@
 
 <script>
     //============================================== Form Autofill
-    // Example: #autofill&name=nome%20idk&citizenfx=aaaaaa&discord=11111111111111
+    // Example: ?autofill&name=tabarra&citizenfx=aaaaaa&discord=11111111111111
     // NOTE: please encode the name with something like slug(name, '_')
     let autofill = false;
-    const urlHash = decodeURI(location.hash.substr(1).trim());
-    if(typeof urlHash === 'string' && urlHash.length && urlHash.startsWith('autofill')){
-        const params = new URLSearchParams(urlHash);
+    if(typeof location.search === 'string' && location.search.startsWith('?autofill')){
+        const params = new URLSearchParams(location.search);
         autofill = {
             name: params.get('name'),
             citizenfxID: params.get('citizenfx'),
             discordID: params.get('discord'),
         }
-        location.hash = ''
+        window.history.pushState(null, 'txAdmin', 'adminManager?');
         getAdminModal();
     }
 
