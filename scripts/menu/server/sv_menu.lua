@@ -139,6 +139,18 @@ RegisterServerEvent('txAdmin:menu:getServerCtx', function()
   TriggerClientEvent('txAdmin:menu:sendServerCtx', src, serverCtxObj)
 end)
 
+RegisterServerEvent('txAdmin:menu:checkAccess', function()
+  local src = source
+  
+  -- TODO: Make this NOT constant
+  local canAccess = true
+  if false then canAccess = false end
+  
+  debugPrint((canAccess and "^2" or "^1") .. GetPlayerName(src) ..
+               " does " .. (canAccess and "" or "NOT ") .. "have menu permission.")
+  TriggerClientEvent('txAdmin:menu:setAccessible', src, canAccess)
+end)
+
 RegisterServerEvent('txAdmin:menu:healMyself', function()
   local src = source
 
@@ -173,15 +185,6 @@ RegisterServerEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   
   debugPrint("Teleporting " .. GetPlayerName(src) .. " to " .. x .. ", " .. y .. ", " .. z)
   TriggerClientEvent('txAdmin:menu:tpToCoords', src, x, y, z)
-end)
-
-RegisterServerEvent('txAdmin:menu:tpToWaypoint', function()
-  local src = source
-  
-  -- TODO: Security, permission check
-  if false then return end
-  
-  TriggerClientEvent('txAdmin:menu:tpToWaypoint', src)
 end)
 
 RegisterServerEvent('txAdmin:menu:sendAnnouncement', function(message)
@@ -244,6 +247,7 @@ CreateThread(function()
         veh = veh,
         pos = GetEntityCoords(ped),
         username = GetPlayerName(serverID),
+        identifiers = GetPlayerIdentifiers(serverID)
       }
       
       -- Lets wait a tick so we don't have hitch issues

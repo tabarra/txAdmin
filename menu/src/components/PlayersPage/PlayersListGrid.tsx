@@ -69,7 +69,7 @@ export const PlayersListGrid: React.FC = () => {
         gridTemplateColumns="repeat(auto-fill, minmax(300px, 1fr))"
       >
         {slicedPlayers.map((player) => (
-          <PlayerCard {...player} key={player.id} />
+          <PlayerCard playerData={player} key={player.id} />
         ))}
       </Box>
       <div ref={containerRef} className={classes.loadTrigger} />
