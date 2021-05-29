@@ -88,6 +88,7 @@
     "xss": "^1.0.8"
   },
   "devDependencies": {
+    "@types/slug": "^5.0.0",
     "@commitlint/cli": "^12.1.1",
     "@commitlint/config-conventional": "^12.1.1",
     "@types/node": "^15.0.0",
