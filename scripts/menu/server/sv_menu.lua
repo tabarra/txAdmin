@@ -360,8 +360,12 @@ CreateThread(function()
       -- Lets wait a tick so we don't have hitch issues
       Wait(0)
     end
-    
-    TriggerClientEvent('txAdmin:menu:setPlayerState', -1, found)
+  
+    -- get the list of all players to send to
+    debugPrint("^4Sending ^3" .. #found .. "^4 users details to ^3" .. #adminPermissions .. "^4 admins")
+    for id, _ in pairs(adminPermissions) do
+      TriggerClientEvent('txAdmin:menu:setPlayerState', id, found)
+    end
     Wait(1000 * 15)
   end
 end)
