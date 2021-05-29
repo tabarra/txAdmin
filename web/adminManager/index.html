@@ -162,7 +162,7 @@
 
 <script>
     //============================================== Form Autofill
-    // Example: ?autofill&name=tabarra&citizenfx=aaaaaa&discord=11111111111111
+    // Example: ?autofill&name=tabarra&citizenfx=fivem:271816&discord=discord:272800190639898628
     // NOTE: please encode the name with something like slug(name, '_')
     let autofill = false;
     if(typeof location.search === 'string' && location.search.startsWith('?autofill')){
@@ -170,7 +170,7 @@
         autofill = {
             name: params.get('name'),
             citizenfxID: params.get('citizenfx'),
-            discordID: params.get('discord'),
+            discordID: params.get('discord').split(':')[1],
         }
         window.history.pushState(null, 'txAdmin', 'adminManager?');
         getAdminModal();
@@ -187,10 +187,11 @@
         }else{
             $('#modAdminTitle').html('New Admin');
             urlAction = 'getAddModal';
+            data = {autofill: true}
         }
         txAdminAPI({
             type: "POST",
-            url: `/adminManager/${urlAction}`,
+            url: `adminManager/${urlAction}`,
             data: data,
             success: function (data) {
                 $('#modAdmin-body').html(data);

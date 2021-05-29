@@ -17,30 +17,6 @@
 
 
 
-Client flow:
-- nui loads
-- nui calls /auth/nui
-- lua client > lua server
-- lua server > tx
-- tx check identifiers and replies with either:
-    - non-200
-    - 200 and permissions array
-- lua server caches the permissions for this source id
-- lua server > lua client
-- lua client saves the "isMenuAllowed" state to prevent F1 from opening the nui
-- lua client > nui
-- nui saves the session cookie if it's authorized
-
-On admin change:
-- tx will trigger an event
-- lua server will wipe its permission cache
-- lua server will relay this event to the clients
-- lua client will send message to nui
-- nui will try to reauth
-- follow the flow above
-
-
-
 
 
 nota:
@@ -62,6 +38,8 @@ isZapHosting, forceInterface,
 
 stuff:
 - [ ] Unrecognized event: playerJoining -- we are using playerjoining but should probably change that
+- [ ] make the commands (kick, warn, etc) return success or danger, then edit DialogActionView.tsx
+    - can be done by adding a randid to the command, then making the cmdBuffer match for `<id><OK|NOK>` 
 
 - [ ] break `playerController` actions stuff to another file
 - [ ] do the sv_listingIPOverride thing
@@ -73,9 +51,9 @@ stuff:
 > ASAP!:
 - [ ] a way to create admins file without cfx.re 
 - [ ] add discord group whitelist (whitelist switch becomes a select box that will enable guildID and roleID)
-        - Manual Approval (default)
-        - Discord: be in guild
-        - Discord: have a role in guild
+    - Manual Approval (default)
+    - Discord: be in guild
+    - Discord: have a role in guild
 - [ ] persistent discord status message that is set up by `/statusfixed`:
     - this will trigger a big status message to be sent in that channel
     - this message id can be stored in the config file

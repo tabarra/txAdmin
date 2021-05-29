@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'WebServer:AdminManagerActions';
-const axios = require('axios');
+const got = require('got');
 const { customAlphabet } = require('nanoid');
 const dict51 = require('nanoid-dictionary/nolookalikes');
 const nanoid = customAlphabet(dict51, 20);
@@ -78,29 +78,44 @@ async function handleAdd(ctx) {
     permissions = permissions.filter((x) => { return typeof x === 'string';});
     if (permissions.includes('all_permissions')) permissions = ['all_permissions'];
 
-    //Validate & process fields
+
+    //Validate name
     if (!nameRegex.test(name)) {
         return ctx.send({type: 'danger', message: 'Invalid username, must have between 3 and 20 characters.'});
     }
+
+    //Validate & translate FiveM ID
     let citizenfxData = false;
     if (citizenfxID.length) {
-        if (!citizenfxIDRegex.test(citizenfxID)) return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID'});
         try {
-            const res = await axios({
-                url: `https://forum.cfx.re/u/${citizenfxID}.json`,
-                method: 'get',
-                responseType: 'json',
-                responseEncoding: 'utf8',
-                timeout: 4000,
-            });
-            citizenfxData = {
-                id: citizenfxID,
-                identifier: `fivem:${res.data.user.id}`,
-            };
+            if (GlobalData.validIdentifiers.fivem.test(citizenfxID)) {
+                const id = citizenfxID.split(':')[1];
+                const res = await got(`https://policy-live.fivem.net/api/getUserInfo/${id}`, {timeout: 6000}).json();
+                if (!res.username || !res.username.length) {
+                    return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID1'});
+                }
+                citizenfxData = {
+                    id: res.username,
+                    identifier: citizenfxID,
+                };
+            } else if (citizenfxIDRegex.test(citizenfxID)) {
+                const res = await got(`https://forum.cfx.re/u/${citizenfxID}.json`, {timeout: 6000}).json();
+                if (!res.user || typeof res.user.id !== 'number') {
+                    return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID2'});
+                }
+                citizenfxData = {
+                    id: citizenfxID,
+                    identifier: `fivem:${res.user.id}`,
+                };
+            } else {
+                return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID3'});
+            }
         } catch (error) {
             logError(`Failed to resolve CitizenFX ID to game identifier with error: ${error.message}`);
         }
     }
+
+    //Validate Discord ID
     let discordData = false;
     if (discordID.length) {
         if (!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
@@ -154,26 +169,38 @@ async function handleEdit(ctx) {
         permissions = undefined;
     }
 
-    //Validate & process fields
+    //Validate & translate FiveM ID
     let citizenfxData = false;
     if (citizenfxID.length) {
-        if (!citizenfxIDRegex.test(citizenfxID)) return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID'});
         try {
-            const res = await axios({
-                url: `https://forum.cfx.re/u/${citizenfxID}.json`,
-                method: 'get',
-                responseType: 'json',
-                responseEncoding: 'utf8',
-                timeout: 4000,
-            });
-            citizenfxData = {
-                id: citizenfxID,
-                identifier: `fivem:${res.data.user.id}`,
-            };
+            if (GlobalData.validIdentifiers.fivem.test(citizenfxID)) {
+                const id = citizenfxID.split(':')[1];
+                const res = await got(`https://policy-live.fivem.net/api/getUserInfo/${id}`, {timeout: 6000}).json();
+                if (!res.username || !res.username.length) {
+                    return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID1'});
+                }
+                citizenfxData = {
+                    id: res.username,
+                    identifier: citizenfxID,
+                };
+            } else if (citizenfxIDRegex.test(citizenfxID)) {
+                const res = await got(`https://forum.cfx.re/u/${citizenfxID}.json`, {timeout: 6000}).json();
+                if (!res.user || typeof res.user.id !== 'number') {
+                    return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID2'});
+                }
+                citizenfxData = {
+                    id: citizenfxID,
+                    identifier: `fivem:${res.user.id}`,
+                };
+            } else {
+                return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID3'});
+            }
         } catch (error) {
             logError(`Failed to resolve CitizenFX ID to game identifier with error: ${error.message}`);
         }
     }
+
+    //Validate Discord ID
     let discordData = false;
     if (discordID.length) {
         if (!discordIDRegex.test(discordID)) return ctx.send({type: 'danger', message: 'Invalid Discord ID'});
