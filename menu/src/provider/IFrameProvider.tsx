@@ -30,7 +30,7 @@ export interface IFramePostData {
 
 export const BASE_IFRAME_PATH = "https://monitor/WebPipe";
 
-export const PATH_ON_PAGE_LOAD = "/txAdminLog";
+export const PATH_ON_PAGE_LOAD = "/serverLog";
 
 export const useIFrameCtx = () => useContext<iFrameContextValue>(iFrameCtx);
 
