@@ -67,15 +67,15 @@ const DialogActionView: React.FC = () => {
         <Button variant="outlined" color="primary">Heal</Button>
         <Button variant="outlined" color="primary">Go to</Button>
         <Button variant="outlined" color="primary">Bring</Button>
-        <Button variant="outlined" color="primary">Spectate</Button>
+        {/*<Button variant="outlined" color="primary">Spectate</Button>*/}
       </Box>
-      <Typography style={{ paddingBottom: 5 }}>Troll</Typography>
-      <Box className={classes.actionGrid}>
-        <Button variant="outlined" color="primary">Kill</Button>
-        <Button variant="outlined" color="primary">Fire</Button>
-        <Button variant="outlined" color="primary">Drunk</Button>
-        <Button variant="outlined" color="primary">Wild attack</Button>
-      </Box>
+      {/*<Typography style={{ paddingBottom: 5 }}>Troll</Typography>*/}
+      {/*<Box className={classes.actionGrid}>*/}
+      {/*  <Button variant="outlined" color="primary">Kill</Button>*/}
+      {/*  <Button variant="outlined" color="primary">Fire</Button>*/}
+      {/*  <Button variant="outlined" color="primary">Drunk</Button>*/}
+      {/*  <Button variant="outlined" color="primary">Wild attack</Button>*/}
+      {/*</Box>*/}
     </DialogContent>
   )
 }
