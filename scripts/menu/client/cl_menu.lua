@@ -61,13 +61,13 @@ end
 
 -- Command to be used with the register key mapping
 RegisterCommand('txadmin', function()
-  if menuIsAccessible and not isMenuVisible then
-    isMenuVisible = true
+  if menuIsAccessible then
     -- Lets update before we open the menu
     updateServerCtx()
-    SetNuiFocus(true, false)
-    SetNuiFocusKeepInput(true)
-    sendMenuMessage('setVisible', true)
+    isMenuVisible = not isMenuVisible
+    SetNuiFocus(isMenuVisible, false)
+    SetNuiFocusKeepInput(isMenuVisible)
+    sendMenuMessage('setVisible', isMenuVisible)
   end
 end)
 
