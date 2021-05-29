@@ -1,9 +1,5 @@
 debugModeEnabled = false
 
-CreateThread(function() 
-  debugModeEnabled = (GetConvar('TXADMIN_MENU_DEBUG', 'false') == 'true') 
-end)
-
 function debugPrint(...)
   local args = {...}
   local appendedStr = ''
@@ -16,3 +12,7 @@ function debugPrint(...)
     print(msg)
   end
 end
+
+CreateThread(function()
+  debugModeEnabled = (GetConvar('TXADMIN_MENU_DEBUG', 'false') == 'true')
+end)
