@@ -19,7 +19,29 @@ end
 local adminPermissions = {}
 
 
--- Web UI proxy
+--- Determine if a source has a given permission
+---@param source number
+---@param permission string
+---@return boolean
+local function PlayerHasTxPermission(source, permission)
+  local allow = false
+  local perms = adminPermissions[source]
+  if perms then
+    for _, perm in pairs(perms) do
+      if perm == 'all_permissions' or permission == perm then
+        allow = true
+        break
+      end
+    end
+  end
+  debugPrint(string.format("permission check (src=^3%d^0, perm=^4%s^0, result=%s^0)",
+    source, permission, (allow and '^2true' or '^1false')))
+  return allow
+end
+
+-- 
+-- [[ WebPipe Proxy ]]
+--
 RegisterNetEvent('txAdmin:WebPipe')
 AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, body)
   local s = source
@@ -66,6 +88,7 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
     if path == '/auth/nui' and httpCode == 200 then
       local resp = json.decode(data)
       if resp and resp.isAdmin then
+        debugPrint("Caching admin " .. s .. " permissions: " .. json.encode(resp.permissions))
         adminPermissions[s] = resp.permissions
       else
         adminPermissions[s] = nil
@@ -80,9 +103,13 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
     followLocation = false
   })
 end)
+--
+-- [[ End WebPipe ]]
+--
 
-
-
+--
+-- [[ ServerCtxObj ]]
+--
 local ServerCtxObj = {
   oneSync = {
     type = nil,
@@ -138,14 +165,14 @@ RegisterServerEvent('txAdmin:menu:getServerCtx', function()
   local src = source
   TriggerClientEvent('txAdmin:menu:sendServerCtx', src, serverCtxObj)
 end)
+--
+-- [[ End ServerCtxObj ]]
+--
+
 
 RegisterServerEvent('txAdmin:menu:checkAccess', function()
   local src = source
-  
-  -- TODO: Make this NOT constant
-  local canAccess = true
-  if false then canAccess = false end
-  
+  local canAccess = not (adminPermissions[src] == nil)
   debugPrint((canAccess and "^2" or "^1") .. GetPlayerName(src) ..
                " does " .. (canAccess and "" or "NOT ") .. "have menu permission.")
   TriggerClientEvent('txAdmin:menu:setAccessible', src, canAccess)
@@ -158,31 +185,29 @@ RegisterServerEvent('txAdmin:menu:playerModeChanged', function(mode)
     return
   end
   
-  -- TODO: Security, permission check
-  if false then return end
-  
-  TriggerEvent("txaLogger:menuEvent", src, "playerModeChanged", true, mode)
-  TriggerClientEvent('txAdmin:menu:playerModeChanged', src, mode)
+  local allow = PlayerHasTxPermission(src, 'players.playermode')
+  TriggerEvent("txaLogger:menuEvent", src, "playerModeChanged", allow, mode)
+  if allow then
+    TriggerClientEvent('txAdmin:menu:playerModeChanged', src, mode)
+  end
 end)
 
 RegisterServerEvent('txAdmin:menu:healMyself', function()
   local src = source
-  
-  -- TODO: Security, permission check
-  if false then return end
-  
-  TriggerEvent("txaLogger:menuEvent", src, "healSelf", true)
-  TriggerClientEvent('txAdmin:menu:healed', src)
+  local allow = PlayerHasTxPermission(src, 'players.heal')
+  TriggerEvent("txaLogger:menuEvent", src, "healSelf", allow)
+  if allow then
+    TriggerClientEvent('txAdmin:menu:healed', src)
+  end
 end)
 
 RegisterServerEvent('txAdmin:menu:healAllPlayers', function()
   local src = source
-  
-  -- TODO: Security, permission check
-  if false then return end
-  
+  local allow = PlayerHasTxPermission(src, 'players.heal')
   TriggerEvent("txaLogger:menuEvent", src, "healAll", true)
-  TriggerClientEvent('txAdmin:menu:healed', -1)
+  if allow then
+    TriggerClientEvent('txAdmin:menu:healed', -1)
+  end
 end)
 
 ---@param x number|nil
@@ -190,63 +215,61 @@ end)
 ---@param z number|nil
 RegisterServerEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   local src = source
-  
-  -- sanity check
   if type(x) ~= 'number' or type(y) ~= 'number' or type(z) ~= 'number' then return end
-  
-  -- TODO: Security, permission check
-  if false then return end
-  
+    
+  local allow = PlayerHasTxPermission(src, 'players.teleport')
   TriggerEvent("txaLogger:menuEvent", src, "teleportCoords", true, { x = x, y = y, z = z })
-  TriggerClientEvent('txAdmin:menu:tpToCoords', src, x, y, z)
+  if allow then
+    TriggerClientEvent('txAdmin:menu:tpToCoords', src, x, y, z)
+  end
 end)
 
 RegisterServerEvent('txAdmin:menu:tpToWaypoint', function()
   local src = source
-  
-  -- TODO: Security, permission check
-  if false then return end
-  
-  TriggerClientEvent('txAdmin:menu:tpToWaypoint', src)
-  
-  Wait(250)
-  local coords = GetEntityCoords(GetPlayerPed(src))
-  TriggerEvent("txaLogger:menuEvent", src, "teleportWaypoint", true,
-    { x = coords[1], y = coords[2], z = coords[3] })
+  local allow = PlayerHasTxPermission(src, 'players.teleport')
+  if allow then
+    TriggerClientEvent('txAdmin:menu:tpToWaypoint', src)
+    Wait(250)
+    local coords = GetEntityCoords(GetPlayerPed(src))
+    TriggerEvent("txaLogger:menuEvent", src, "teleportWaypoint", true,
+      { x = coords[1], y = coords[2], z = coords[3] })
+  else
+    TriggerEvent("txaLogger:menuEvent", src, "teleportWaypoint", false)
+  end
 end)
 
 RegisterServerEvent('txAdmin:menu:sendAnnouncement', function(message)
   local src = source
-  
-  -- TODO: Security, permission check
-  if false then return end
-  
-  TriggerEvent("txaLogger:menuEvent", src, "announcement", true, message)
-  TriggerClientEvent('txAdmin:receiveAnnounce', -1, message)
+  local allow = PlayerHasTxPermission(src, 'players.message')
+  TriggerEvent("txaLogger:menuEvent", src, "announcement", allow, message)
+  if allow then
+    TriggerClientEvent('txAdmin:receiveAnnounce', -1, message)
+  end
 end)
 
 RegisterServerEvent('txAdmin:menu:fixVehicle', function()
   local src = source
-  
-  -- TODO: Security, permission check
-  if false then return end
-  
-  TriggerEvent("txaLogger:menuEvent", src, "vehicleRepair", true)
-  TriggerClientEvent('txAdmin:menu:fixVehicle', src)
+  local allow = PlayerHasTxPermission(src, 'menu.vehicle')
+  TriggerEvent("txaLogger:menuEvent", src, "vehicleRepair", allow)
+  if allow then
+    TriggerClientEvent('txAdmin:menu:fixVehicle', src)
+  end
 end)
 
 local CREATE_AUTOMOBILE = GetHashKey("CREATE_AUTOMOBILE")
 RegisterServerEvent('txAdmin:menu:spawnVehicle', function(model)
   local src = source
-  if type(model) ~= 'string' then error() end
+  if type(model) ~= 'string' then
+    error()
+  end
   
-  -- TODO: Security, permission check
-  if false then return end
-  
-  local ped = GetPlayerPed(src)
-  local veh = Citizen.InvokeNative(CREATE_AUTOMOBILE, GetHashKey(model), GetEntityCoords(ped));
-  TriggerEvent("txaLogger:menuEvent", src, "spawnVehicle", true, model)
-  TriggerClientEvent('txAdmin:menu:spawnVehicle', src, NetworkGetNetworkIdFromEntity(veh))
+  local allow = PlayerHasTxPermission(src, 'menu.vehicle')
+  TriggerEvent("txaLogger:menuEvent", src, "spawnVehicle", allow, model)
+  if allow then
+    local ped = GetPlayerPed(src)
+    local veh = Citizen.InvokeNative(CREATE_AUTOMOBILE, GetHashKey(model), GetEntityCoords(ped));
+    TriggerClientEvent('txAdmin:menu:spawnVehicle', src, NetworkGetNetworkIdFromEntity(veh))
+  end
 end)
 
 --[[ Emit player list to clients ]]
