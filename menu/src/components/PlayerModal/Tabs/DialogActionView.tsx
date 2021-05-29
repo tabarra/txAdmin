@@ -26,6 +26,8 @@ const DialogActionView: React.FC = () => {
   const assocPlayer = useAssociatedPlayerValue()
   const { enqueueSnackbar } = useSnackbar()
   const t = useTranslate();
+  const { goToFramePage } = useIFrameCtx()
+  const { setModalOpen } = usePlayerModalContext()
 
   const handleDM = () => {
     openDialog({
