@@ -35,7 +35,7 @@ const DialogActionView: React.FC = () => {
       description: 'What is the reason for direct messaging this player?',
       placeholder: 'Reason...',
       onSubmit: (reason: string) => {
-        fetchWebPipe<txAdminActionResp>('/player/kick', {
+        fetchWebPipe<txAdminActionResp>('/player/message', {
           method: 'POST',
           data: {
             id: assocPlayer.id,
@@ -57,7 +57,7 @@ const DialogActionView: React.FC = () => {
       description: 'What is the reason for direct warning this player?',
       placeholder: 'Reason...',
       onSubmit: (reason: string) => {
-        fetchWebPipe('/player/kick', {
+        fetchWebPipe('/player/warn', {
           method: 'POST',
           data: {
             id: assocPlayer.id,
