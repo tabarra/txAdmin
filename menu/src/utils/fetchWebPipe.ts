@@ -26,6 +26,9 @@ export const fetchWebPipe = async <T = any>(path: ValidPath, options?: fetchWebP
   const timeoutId = setTimeout(() => abortionController.abort(), timeout)
 
   const fetchOpts: RequestInit = {
+    headers: {
+      "Content-Type": "application/json; charset=UTF-8",
+    },
     method: options?.method,
     body: JSON.stringify(options?.data),
     signal: abortionController.signal
