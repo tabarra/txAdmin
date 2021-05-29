@@ -19,7 +19,7 @@ const DialogInfoView: React.FC = () => {
   const theme = useTheme();
 
   const handleSaveNote = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
       enqueueSnackbar("Saved Note", {
         variant: "success",
@@ -69,7 +69,12 @@ const DialogInfoView: React.FC = () => {
             rowsMax={4}
             fullWidth
           />
-          <Button type="submit" color="primary" variant="outlined" style={{ right: 0 }}>
+          <Button
+            type="submit"
+            color="primary"
+            variant="outlined"
+            style={{ right: 0 }}
+          >
             Save Note
           </Button>
         </Box>

@@ -1,16 +1,16 @@
-import React from 'react';
-import DialogActionView from './DialogActionView';
-import DialogInfoView from './DialogInfoView';
-import DialogIdView from './DialogIdView';
-import DialogHistoryView from './DialogHistoryView';
-import DialogBanView from './DialogBanView';
-import { Box } from '@material-ui/core';
-import { usePlayerModalContext } from '../../../provider/PlayerModalProvider';
+import React from "react";
+import DialogActionView from "./DialogActionView";
+import DialogInfoView from "./DialogInfoView";
+import DialogIdView from "./DialogIdView";
+import DialogHistoryView from "./DialogHistoryView";
+import DialogBanView from "./DialogBanView";
+import { Box } from "@material-ui/core";
+import { usePlayerModalContext } from "../../../provider/PlayerModalProvider";
 
 export const DialogBaseView: React.FC = () => {
   const { tab } = usePlayerModalContext();
 
-  return(
+  return (
     <Box flexGrow={1} mt={-2}>
       {tab == 1 && <DialogActionView />}
       {tab == 2 && <DialogInfoView />}
@@ -18,5 +18,5 @@ export const DialogBaseView: React.FC = () => {
       {tab == 4 && <DialogHistoryView />}
       {tab == 5 && <DialogBanView />}
     </Box>
-  )
-}
+  );
+};

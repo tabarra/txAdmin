@@ -10,7 +10,7 @@ import {
 } from "@material-ui/core";
 import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
 import { fetchWebPipe } from "../../../utils/fetchWebPipe";
-import { useSnackbar } from 'notistack';
+import { useSnackbar } from "notistack";
 
 const DialogBanView: React.FC = () => {
   const player = usePlayerDetailsValue();
@@ -20,10 +20,10 @@ const DialogBanView: React.FC = () => {
   const [customDuration, setCustomDuration] = useState("hours");
   const [customDurLength, setCustomDurLength] = useState("1");
 
-  const { enqueueSnackbar } = useSnackbar()
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleBan = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     const actualDuration =
       duration === "custom" ? `${customDurLength} ${customDuration}` : duration;
     // Should do something with the res eventually
@@ -36,9 +36,9 @@ const DialogBanView: React.FC = () => {
           reference: player.id,
         },
       });
-      enqueueSnackbar('Player was banned!', { variant: "success"})
+      enqueueSnackbar("Player was banned!", { variant: "success" });
     } catch (e) {
-      enqueueSnackbar('Ban failed: ', { variant: 'error'})
+      enqueueSnackbar("Ban failed: ", { variant: "error" });
     }
   };
 
