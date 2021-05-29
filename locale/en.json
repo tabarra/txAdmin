@@ -37,7 +37,8 @@
     },
     "nui_menu": {
         "misc": {
-            "help_message": "txAdmin has gotten an in-game menu, use the F1 key to try it out!"
+            "help_message": "txAdmin has gotten an in-game menu, use the F1 key to try it out!",
+            "menu_not_allowed": "You are not registered as an admin!"
         },
         "common": {
             "cancel": "Cancel",

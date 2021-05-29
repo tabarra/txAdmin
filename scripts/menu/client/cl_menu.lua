@@ -36,9 +36,9 @@ end)
 --- Snackbar message
 ---@param level string The severity of the message can be 'info', 'error', or 'warning'
 ---@param message string Message to display with snackbar
-local function sendSnackbarMessage(level, message)
-  debugPrint(('Sending snackbar message, level: %s, message: %s'):format(level, message))
-  sendMenuMessage('setSnackbarAlert', { level = level, message = message })
+local function sendSnackbarMessage(level, message, isTranslationKey)
+  debugPrint(('Sending snackbar message, level: %s, message: %s, isTranslationKey: %s'):format(level, message, isTranslationKey))
+  sendMenuMessage('setSnackbarAlert', { level = level, message = message, isTranslationKey = isTranslationKey })
 end
 
 
@@ -68,6 +68,8 @@ RegisterCommand('txadmin', function()
     SetNuiFocus(isMenuVisible, false)
     SetNuiFocusKeepInput(isMenuVisible)
     sendMenuMessage('setVisible', isMenuVisible)
+  else
+    sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
   end
 end)
 
