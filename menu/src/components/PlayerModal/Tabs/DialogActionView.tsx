@@ -114,14 +114,17 @@ const DialogActionView: React.FC = () => {
 
   const handleHeal = () => {
     fetchNui('healPlayer', { id: assocPlayer.id })
+    enqueueSnackbar('Healing player', {variant: 'success'})
   }
 
   const handleGoTo = () => {
     fetchNui('tpToPlayer', { id: assocPlayer.id })
+    enqueueSnackbar('Teleporting to player', {variant: 'success'})
   }
 
   const handleBring = () => {
     fetchNui('summonPlayer', { id: assocPlayer.id })
+    enqueueSnackbar('Summoning player.', {variant: 'success'})
   }
 
 

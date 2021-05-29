@@ -134,8 +134,8 @@ RegisterNUICallback('tpToWaypoint', function(_, cb)
   cb({})
 end)
 
-RegisterNUICallback('tpToPlayer', function(id, cb)
-  TriggerServerEvent('txAdmin:menu:tpToPlayer', id)
+RegisterNUICallback('tpToPlayer', function(data, cb)
+  TriggerServerEvent('txAdmin:menu:tpToPlayer', data.id)
   cb({})
 end)
 
@@ -148,8 +148,8 @@ RegisterNUICallback('tpBack', function(_, cb)
   end
 end)
 
-RegisterNUICallback('summonPlayer', function(id, cb)
-  TriggerServerEvent('txAdmin:menu:summonPlayer', id)
+RegisterNUICallback('summonPlayer', function(data, cb)
+  TriggerServerEvent('txAdmin:menu:summonPlayer', data.id)
   cb({})
 end)
 
@@ -253,8 +253,8 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
 end)
 
 -- CB From Menu
-RegisterNUICallback('healPlayer', function(id, cb)
-  TriggerServerEvent('txAdmin:menu:healPlayer', id)
+RegisterNUICallback('healPlayer', function(data, cb)
+  TriggerServerEvent('txAdmin:menu:healPlayer', data.id)
   cb({})
 end)
 
@@ -263,7 +263,7 @@ RegisterNUICallback('healMyself', function(_, cb)
   cb({})
 end)
 
-RegisterNUICallback('healAllPlayers', function(data, cb)
+RegisterNUICallback('healAllPlayers', function(_, cb)
   TriggerServerEvent('txAdmin:menu:healAllPlayers')
   cb({})
 end)
