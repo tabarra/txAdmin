@@ -6,6 +6,17 @@ import { fetchWebPipe } from '../../../utils/fetchWebPipe';
 import { fetchNui } from '../../../utils/fetchNui';
 import { useDialogContext } from '../../../provider/DialogProvider';
 import { useSnackbar } from 'notistack';
+import { useIFrameCtx} from "../../../provider/IFrameProvider";
+import slug from 'slug'
+import { usePlayerModalContext } from '../../../provider/PlayerModalProvider';
+import { translateAlertType } from '../../../utils/miscUtils';
+
+export type TxAdminActionRespType = 'success' | 'warning' | 'danger'
+
+interface txAdminActionResp {
+  type: TxAdminActionRespType
+  message: string
+}
 
 const DialogActionView: React.FC = () => {
   const classes = useStyles();
@@ -13,6 +24,8 @@ const DialogActionView: React.FC = () => {
   const playerDetails = usePlayerDetailsValue()
   const assocPlayer = useAssociatedPlayerValue()
   const { enqueueSnackbar } = useSnackbar()
+  const { goToFramePage } = useIFrameCtx()
+  const { setModalOpen } = usePlayerModalContext()
 
   const handleDM = () => {
     openDialog({
@@ -20,17 +33,17 @@ const DialogActionView: React.FC = () => {
       description: 'What is the reason for direct messaging this player?',
       placeholder: 'Reason...',
       onSubmit: (reason: string) => {
-        fetchWebPipe('/player/kick', {
+        fetchWebPipe<txAdminActionResp>('/player/kick', {
           method: 'POST',
           data: {
             id: assocPlayer.id,
             reason: reason
           }
         }).then(resp => {
-          // TODO: Handle response
-          enqueueSnackbar('Warned player!', { variant: 'success' })
+          enqueueSnackbar(resp.message, { variant: translateAlertType(resp.type) })
         }).catch(e => {
-          enqueueSnackbar('Warned player!', { variant: 'success' })
+          enqueueSnackbar('An unknown error occurred', { variant: 'error' })
+          console.error(e)
         })
       }
     })
@@ -50,9 +63,10 @@ const DialogActionView: React.FC = () => {
           }
         }).then(resp => {
           // TODO: Handle response
-          enqueueSnackbar('Warned player!', { variant: 'success' })
+          enqueueSnackbar(resp.message, { variant: translateAlertType(resp.type) })
         }).catch(e => {
-          enqueueSnackbar('Warned player!', { variant: 'success' })
+          enqueueSnackbar('An unknown error occurred', { variant: 'error' })
+          console.error(e)
         })
       }
     })
@@ -72,9 +86,10 @@ const DialogActionView: React.FC = () => {
           }
         }).then(resp => {
           // TODO: Handle response
-          enqueueSnackbar('Kicked player!', { variant: 'success' })
+          enqueueSnackbar(resp.message, { variant: translateAlertType(resp.type) })
         }).catch(e => {
-
+          enqueueSnackbar('An unknown error has occured', { variant: 'error' })
+          console.error(e)
         })
       }
     })
@@ -82,6 +97,17 @@ const DialogActionView: React.FC = () => {
 
   const handleSetAdmin = () => {
     // TODO: Change iFrame Src through Provider?
+    const discordIdent = playerDetails.identifiers.find(ident => ident.includes('discord:')).split(':')[1]
+    const fivemIdent = playerDetails.identifiers.find(ident => ident.includes('fivem:')).split(':')[1]
+
+    const sluggedName = slug(assocPlayer.username, '_')
+
+    let adminManagerPath = `?autofill&name=${sluggedName}`
+    if (discordIdent) adminManagerPath = adminManagerPath + `&discord=${discordIdent}`
+    if (fivemIdent) adminManagerPath = adminManagerPath + `&fivem=${fivemIdent}`
+
+    goToFramePage(`/adminManager/${adminManagerPath}`)
+    setModalOpen(false)
   }
 
   const handleHeal = () => {
@@ -107,7 +133,7 @@ const DialogActionView: React.FC = () => {
         <Button variant="outlined" color="primary" onClick={handleDM}>DM</Button>
         <Button variant="outlined" color="primary" onClick={handleWarn}>Warn</Button>
         <Button variant="outlined" color="primary" onClick={handleKick}>Kick</Button>
-        <Button variant="outlined" color="primary">Set Admin</Button>
+        <Button variant="outlined" color="primary" onClick={handleSetAdmin}>Set Admin</Button>
       </Box>
       <Typography style={{ paddingBottom: 5 }}>Interaction</Typography>
       <Box className={classes.actionGrid}>
