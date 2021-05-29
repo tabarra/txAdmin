@@ -99,8 +99,8 @@ const DialogActionView: React.FC = () => {
 
   const handleSetAdmin = () => {
     // TODO: Change iFrame Src through Provider?
-    const discordIdent = playerDetails.identifiers.find(ident => ident.includes('discord:')).split(':')[1]
-    const fivemIdent = playerDetails.identifiers.find(ident => ident.includes('fivem:')).split(':')[1]
+    const discordIdent = playerDetails.identifiers.find(ident => ident.includes('discord:'))
+    const fivemIdent = playerDetails.identifiers.find(ident => ident.includes('fivem:'))
 
     const sluggedName = slug(assocPlayer.username, '_')
 
