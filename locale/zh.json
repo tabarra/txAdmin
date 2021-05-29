@@ -70,10 +70,10 @@
                 "list_primary": "Player Mode",
                 "list_secondary": "Current: %{mode}",
                 "item_none": "Normal",
-                "item_noclip": "No-clip",
+                "item_noclip": "Noclip",
                 "item_godmode": "God Mode",
                 "dialog_success_none": "Returned to default player mode",
-                "dialog_success_noclip": "No-clip enabled",
+                "dialog_success_noclip": "Noclip enabled",
                 "dialog_success_godmode": "God mode enabled"
             },
             "spawn_wep": {
