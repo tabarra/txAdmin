@@ -2,10 +2,13 @@ import React, {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
 } from "react";
 import { txAdminMenuPage, usePage } from "../state/page.state";
+import { useIsMenuVisible } from "../state/visibility.state";
+import { usePermissionsValue } from "../state/permissions.state";
 
 const iFrameCtx = createContext(null);
 
@@ -27,13 +30,28 @@ export interface IFramePostData {
 
 export const BASE_IFRAME_PATH = "https://monitor/WebPipe";
 
+export const PATH_ON_PAGE_LOAD = "/txAdminLog";
+
 export const useIFrameCtx = () => useContext<iFrameContextValue>(iFrameCtx);
 
 // This allows for global control of the iFrame from other components
 export const IFrameProvider: React.FC = ({ children }) => {
-  const [curFramePg, setCurFramePg] = useState<ValidPath>("/");
+  const [curFramePg, setCurFramePg] = useState<ValidPath | null>(null);
   const [menuPage, setMenuPage] = usePage();
-  // Stored in a state for now but can just be a constant probably
+  const isMenuVisible = useIsMenuVisible();
+  const curPerms = usePermissionsValue();
+
+  useEffect(() => {
+    if (curPerms) {
+    }
+  }, [curPerms]);
+
+  // Will reset the iFrame page to server logs everytime
+  useEffect(() => {
+    if (isMenuVisible) {
+      setCurFramePg(PATH_ON_PAGE_LOAD);
+    }
+  }, [isMenuVisible]);
 
   // Call if you need to both navigate to iFrame page & set the iFrame path
   const goToFramePage = useCallback(

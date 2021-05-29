@@ -12,6 +12,7 @@ import { IFramePage } from "./IFramePage/IFramePage";
 import { txAdminMenuPage, usePageValue } from "../state/page.state";
 import { useHudListenersService } from "../hooks/useHudListenersService";
 import { HelpTooltip } from './misc/HelpTooltip';
+import { usePermissionsValue } from '../state/permissions.state';
 
 
 const TxAdminLogo: React.FC = () => (
@@ -34,11 +35,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const MenuRoot: React.FC = () => {
   const classes = useStyles();
+  const perms = usePermissionsValue()
   // We need to mount this here so we can get access to
   // the translation context
   useHudListenersService();
 
   const curPage = usePageValue();
+
+  if (!perms) return null
 
   return (
     <>

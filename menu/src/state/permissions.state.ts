@@ -1,4 +1,4 @@
-import { atom, useRecoilValue, useSetRecoilState } from "recoil";
+import {atom, selector, useRecoilValue, useSetRecoilState} from "recoil";
 
 // TODO: Make an enum
 export type ResolvablePermission =
@@ -31,9 +31,7 @@ export interface PermCheckServerResp {
 
 const permissionState = atom<PermCheckServerResp>({
   key: "permissionsState",
-  default: {
-    isAdmin: false
-  },
+  default: null
 });
 
 export const usePermissionsValue = () => useRecoilValue(permissionState);

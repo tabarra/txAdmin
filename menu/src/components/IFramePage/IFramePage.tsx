@@ -2,8 +2,9 @@ import React, { useEffect } from "react";
 import { Box, makeStyles, Theme } from "@material-ui/core";
 import { IFramePostData, useIFrameCtx } from "../../provider/IFrameProvider";
 import { debugLog } from "../../utils/debugLog";
+import { usePermissionsValue } from '../../state/permissions.state';
 
-const useStyles = makeStyles((theme: Theme) => ({
+const useStyles = makeStyles({
   root: {
     backgroundColor: '#171718',
     height: "100%",
@@ -15,12 +16,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     height: "100%",
     width: "100%",
   },
-}));
+});
 
 export const IFramePage: React.FC<{ visible: boolean }> = ({ visible }) => {
   const classes = useStyles();
-
   const { fullFrameSrc, handleChildPost } = useIFrameCtx();
+  const userPerms = usePermissionsValue()
+
+  // We will only use the provider's src value if the permissions
+  // have been sucessfully fetched
+  const trueFrameSource = Boolean(userPerms) ? fullFrameSrc : 'about:blank'
 
   // Handles listening for postMessage requests from iFrame
   useEffect(() => {
@@ -47,7 +52,7 @@ export const IFramePage: React.FC<{ visible: boolean }> = ({ visible }) => {
       mb={10}
       display={visible ? "initial" : "none"}
     >
-      <iframe src={fullFrameSrc} className={classes.iframe} />
+      <iframe src={trueFrameSource} className={classes.iframe} />
     </Box>
   );
 };
