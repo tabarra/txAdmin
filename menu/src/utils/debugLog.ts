@@ -1,5 +1,3 @@
-import config from "../utils/config.json";
-
 /**
  * Simple debug logger for development use.
  * Used in `fetchNui` and `useNuiEvent`.
@@ -13,7 +11,7 @@ export const debugLog = (
   data: unknown,
   context: string = "Unknown"
 ) => {
-  if (config.debugMode) {
+  if (process.env.NODE_ENV === 'development' || (window as any).__MenuDebugMode) {
     console.group(`${context} | Action: ${action}`);
     console.dir(data);
     console.groupEnd();

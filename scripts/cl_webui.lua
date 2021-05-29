@@ -3,7 +3,7 @@ local pipeReturnCallbacks = {}
 local pipeCallbackCounter = 1
 -- FIXME: add callback timeouts on 9000ms
 -- FIXME: control the pipeReturnCallbacks to prevent memory leak
--- FIXME: check what happens if the pipeCallbackCounter gets too big 
+-- FIXME: check what happens if the pipeCallbackCounter gets too big
 
 -- catching all NUI requests for https://monitor/WebPipe/
 RegisterRawNuiCallback('WebPipe', function(req, cb)
@@ -36,6 +36,8 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, statusCode, body, header
             print("^1Invalid NUI auth response received: " .. (body or "nil"))
         else
             menuIsAccessible = resp.isAdmin
+            -- Also update debug status on first HTTP cb
+            sendMenuMessage('setDebugMode', isMenuDebug)
             ret.cb(resp)
         end
     end

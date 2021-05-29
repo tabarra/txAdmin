@@ -12,6 +12,9 @@ export const useNuiListenerService = () => {
   const setMenuPage = useSetPage();
   const setServerCtx = useSetServerCtx();
 
+  useNuiEvent<boolean>("setDebugMode", (debugMode) => {
+    (window as any).__MenuDebugMode = debugMode
+  })
   useNuiEvent<boolean>("setVisible", setVisible);
   useNuiEvent<PlayerData[]>("setPlayerState", setPlayerState);
   useNuiEvent<txAdminMenuPage>("setMenuPage", setMenuPage);

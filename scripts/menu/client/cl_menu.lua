@@ -1,5 +1,11 @@
 -- Variable that determines whether a player can even access the menu
 menuIsAccessible = false
+isMenuDebug = false
+
+CreateThread(function()
+  isMenuDebug = (GetConvar('TXADMIN_MENU_DEBUG', 'false') == 'true')
+end)
+
 -- Since the menu yields/receives keyboard
 -- focus we need to store that the menu is already visible
 local isMenuVisible
@@ -11,7 +17,7 @@ RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
 --- Send data to the NUI frame
 ---@param action string Action
 ---@param data any Data corresponding to action
-local function sendMenuMessage(action, data)
+function sendMenuMessage(action, data)
   SendNUIMessage({
     action = action,
     data = data
@@ -64,6 +70,7 @@ RegisterCommand('txadmin', function()
   if menuIsAccessible then
     -- Lets update before we open the menu
     updateServerCtx()
+    sendMenuMessage('setDebugMode', isMenuDebug)
     isMenuVisible = not isMenuVisible
     SetNuiFocus(isMenuVisible, false)
     SetNuiFocusKeepInput(isMenuVisible)
