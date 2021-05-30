@@ -242,19 +242,16 @@ end)
 
 RegisterServerEvent('txAdmin:menu:healPlayer', function(id)
   local src = source
-  local parseId = type(id) == 'string' and tonumber(id) or id
-  if not parseId then
-    return
-  end
+  if type(id) ~= 'string' and type(id) ~= 'number' then return end
+  id = tonumber(id)
   local allow = PlayerHasTxPermission(src, 'players.heal')
-  local playerName = GetPlayerName(id) or "unknown"
-  TriggerEvent('txaLogger:menuEvent', src, "healPlayer", allow, playerName)
+  local playerName = "unknown"
   if allow then
-    local ped = GetPlayerPed(parseId)
-    if ped then
-      TriggerClientEvent('txAdmin:menu:healed', parseId)
-    end
+    local ped = GetPlayerPed(id)
+    if ped then TriggerClientEvent('txAdmin:menu:healed', id) end
+    playerName = GetPlayerName(id)
   end
+  TriggerEvent('txaLogger:menuEvent', src, "healPlayer", allow, playerName)
 end)
 
 RegisterServerEvent('txAdmin:menu:healAllPlayers', function()
@@ -282,18 +279,17 @@ end)
 
 RegisterServerEvent('txAdmin:menu:tpToPlayer', function(id)
   local src = source
-  local parseId = type(id) == 'string' and tonumber(id) or id
-  if not parseId then
-    return
-  end
-
+  if type(id) ~= 'number' then return end
+    
   local allow = PlayerHasTxPermission(src, 'players.teleport')
   local data = { x = nil, y = nil, z = nil, playerName = nil }
-  data.playerName = GetPlayerName(parseId)
+    
+  data.playerName = "unknown"
   if allow then
     -- ensure the player ped exists
-    local ped = GetPlayerPed(parseId)
+    local ped = GetPlayerPed(id)
     if ped then
+      data.playerName = GetPlayerName(id)
       local coords = GetEntityCoords(ped)
       data.x = coords[1]
       data.y = coords[2]
@@ -301,25 +297,24 @@ RegisterServerEvent('txAdmin:menu:tpToPlayer', function(id)
       TriggerClientEvent('txAdmin:menu:tpToCoords', src, data.x, data.y, data.z)
     end
   end
+  
   TriggerEvent('txaLogger:menuEvent', src, 'teleportPlayer', allow, data)
 end)
 
 RegisterServerEvent('txAdmin:menu:summonPlayer', function(id)
   local src = source
-  local parseId = type(id) == 'string' and tonumber(id) or id
-  if not parseId then
-    return
-  end
+  if type(id) ~= 'number' then return end
   local allow = PlayerHasTxPermission(src, 'players.teleport')
+  local playerName = "unknown"
   if allow then
-    -- ensure the player ped exists
-    local ped = GetPlayerPed(src)
+    -- ensure the target player ped exists
+    local ped = GetPlayerPed(id)
     if ped then
-      local coords = GetEntityCoords(ped)
-      TriggerClientEvent('txAdmin:menu:tpToCoords', parseId, coords[1], coords[2], coords[3])
+      local coords = GetEntityCoords(GetPlayerPed(src))
+      TriggerClientEvent('txAdmin:menu:tpToCoords', id, coords[1], coords[2], coords[3])
+      playerName = GetPlayerName(id)
     end
   end
-  local playerName = GetPlayerName(parseId)
   TriggerEvent('txaLogger:menuEvent', src, 'summonPlayer', allow, playerName)
 end)
 
@@ -339,6 +334,7 @@ end)
 
 RegisterServerEvent('txAdmin:menu:sendAnnouncement', function(message)
   local src = source
+  if type(message) ~= 'string' then return end
   local allow = PlayerHasTxPermission(src, 'players.message')
   TriggerEvent("txaLogger:menuEvent", src, "announcement", allow, message)
   if allow then
