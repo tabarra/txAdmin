@@ -11,6 +11,7 @@ console.log('Rebasing language files on \'en.json\' for missing keys');
 langFiles.forEach((fName) => {
     const fPath = path.join(__dirname, fName);
     const target = JSON.parse(fs.readFileSync(fPath, 'utf8'));
+    // target.nui_menu = undefined;
     const synced = defaultsDeep(target, defaultLang);
     const out = JSON.stringify(synced, null, 4) + '\n';
     fs.writeFileSync(fPath, out);

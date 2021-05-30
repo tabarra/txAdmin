@@ -306,7 +306,9 @@ end)
 -- Used to trigger the help alert
 AddEventHandler('playerSpawned', function()
   Wait(60000)
-  sendMenuMessage('showMenuHelpInfo', {})
+  if menuIsAccessible then
+    sendMenuMessage('showMenuHelpInfo', {})
+  end
 end)
 
 --[[ Reauth ]]

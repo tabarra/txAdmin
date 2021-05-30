@@ -37,8 +37,8 @@
     },
     "nui_menu": {
         "misc": {
-            "help_message": "txAdmin has gotten an in-game menu!\n\nBind [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] to try it out!",
-            "menu_not_allowed": "You are not registered as an admin!"
+            "help_message": "txAdmin has gotten an in-game menu!\nBind [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] to try it out!",
+            "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved."
         },
         "common": {
             "cancel": "Cancel",
@@ -129,67 +129,66 @@
                 "closest": "Closest",
                 "farthest": "Farthest"
             }
-
         },
         "player_modal": {
-          "tabs": {
-            "actions": "Actions",
-            "info": "Info",
-            "ids": "IDs",
-            "history": "History",
-            "ban": "Ban"
-          },
-          "actions": {
-            "moderation": {
-              "category_title_1": "Moderation",
-              "options": {
-                "dm": "Dm",
-                "warn": "Warn",
-                "kick": "Kick",
-                "set_admin": "Set admin"
-              }
+            "tabs": {
+                "actions": "Actions",
+                "info": "Info",
+                "ids": "IDs",
+                "history": "History",
+                "ban": "Ban"
             },
-            "interaction": {
-              "category_title_2": "Interaction",
-              "options": {
-                "heal": "Heal",
-                "go_to": "Go to",
-                "bring": "Bring",
-                "spectate": "Spectate"
-              }
+            "actions": {
+                "moderation": {
+                    "category_title_1": "Moderation",
+                    "options": {
+                        "dm": "Dm",
+                        "warn": "Warn",
+                        "kick": "Kick",
+                        "set_admin": "Set admin"
+                    }
+                },
+                "interaction": {
+                    "category_title_2": "Interaction",
+                    "options": {
+                        "heal": "Heal",
+                        "go_to": "Go to",
+                        "bring": "Bring",
+                        "spectate": "Spectate"
+                    }
+                },
+                "troll": {
+                    "category_title_3": "Troll",
+                    "options": {
+                        "kill": "Kill",
+                        "fire": "Fire",
+                        "drunk": "Drunk",
+                        "wild_attack": "Wild attack"
+                    }
+                }
             },
-            "troll": {
-              "category_title_3": "Troll",
-              "options": {
-                "kill": "Kill",
-                "fire": "Fire",
-                "drunk": "Drunk",
-                "wild_attack": "Wild attack"
-              }
+            "info": {
+                "title": "Player info",
+                "session_time": "Session Time",
+                "play_time": "Play time",
+                "joined": "Joined",
+                "notes_placeholder": "Notes about this player"
+            },
+            "history": {
+                "title": "Related history"
+            },
+            "ban": {
+                "title": "Ban player",
+                "reason_placeholder": "Reason",
+                "duration_placeholder": "Duration",
+                "hours": "hours",
+                "days": "days",
+                "weeks": "weeks",
+                "months": "months",
+                "perm": "Permanent",
+                "custom": "Custom",
+                "helper_text": "Please select an duration"
             }
-          },
-          "info": {
-            "title": "Player info",
-            "session_time": "Session Time",
-            "play_time": "Play time",
-            "joined": "Joined",
-            "notes_placeholder": "Notes about this player"
-          },
-          "history": {
-            "title": "Related history"
-          },
-          "ban": {
-            "title": "Ban player",
-            "reason_placeholder": "Reason",
-            "duration_placeholder": "Duration",
-            "hours": "hours",
-            "days": "days",
-            "weeks": "weeks",
-            "months": "months",
-            "perm": "Permanent",
-            "custom": "Custom",
-            "helper_text": "Please select an duration"
-          }
         }
     }
 }
