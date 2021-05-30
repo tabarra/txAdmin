@@ -42,12 +42,21 @@ end
 AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
   debugPrint('^3Admins changed. Online admins: ' .. json.encode(onlineAdminIDs) .. "^0")
   
+  -- Collect old and new admin IDs
+  local refreshAdminIds = {}
+  for id, _ in pairs(adminPermissions) do
+    refreshAdminIds[id] = id
+  end
+  for newId, _ in pairs(adminPermissions) do
+    refreshAdminIds[newId] = newId
+  end
+  
   -- Resetting all admin permissions
   adminPermissions = {}
   
   -- Informing clients that they need to reauth
-  for id, _ in pairs(onlineAdminIDs) do
-    TriggerClientEvent('txAdmin:menu:reAuth', id, found)
+  for id, _ in pairs(refreshAdminIds) do
+    TriggerClientEvent('txAdmin:menu:reAuth', id)
   end
 end)
 

@@ -66,21 +66,31 @@ local function clearPersistentAlert(key)
 end
 
 --- Toggle visibility of the txAdmin NUI menu
-local function toggleVisibility()
-  if not isMenuVisible and IsPauseMenuActive() then
+function toggleMenuVisibility(visible)
+  if (visible == true and isMenuVisible) or (visible == false and not isMenuVisible) then
     return
+  end
+  if visible == nil then
+    if not isMenuVisible and IsPauseMenuActive() then
+      return
+    end
   end
   -- Lets update before we open the menu
   updateServerCtx()
   sendMenuMessage('setDebugMode', isMenuDebug)
-  isMenuVisible = not isMenuVisible
-  sendMenuMessage('setVisible', isMenuVisible)
+  if visible ~= nil then
+    isMenuVisible = visible
+    sendMenuMessage('setVisible', visible)
+  else
+    isMenuVisible = not isMenuVisible
+    sendMenuMessage('setVisible', isMenuVisible)
+  end
 end
 
 -- Command to be used with the register key mapping
 RegisterCommand('txadmin', function()
   if menuIsAccessible then
-    toggleVisibility()
+    toggleMenuVisibility()
   else
     sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
   end
@@ -535,7 +545,7 @@ end
 CreateThread(function()
   while true do
     if isMenuVisible and IsPauseMenuActive() then
-      toggleVisibility()
+      toggleMenuVisibility()
     end
     Wait(250)
   end
