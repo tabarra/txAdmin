@@ -460,9 +460,8 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(netID)
   -- only delete if the new vehicle is found
   if oldVeh and IsPedInVehicle(ped, oldVeh, true) then
     debugPrint("Deleting existing vehicle (" .. oldVeh .. ")")
-    DeleteVehicle(oldVeh)
     SetEntityAsMissionEntity(oldVeh, true, true)
-    Citizen.InvokeNative(0xEA386986E786A54F, Citizen.PointerValueIntInitialized(oldVeh))
+    DeleteVehicle(oldVeh)
   end
   
   local tries = 0
