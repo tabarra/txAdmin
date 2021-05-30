@@ -17,6 +17,8 @@ end
 
 -- Vars
 local adminPermissions = {}
+local EMIT_BITRATE = 30000
+local LAST_PLAYER_DATA = {}
 
 
 --- Determine if a source has a given permission
@@ -400,11 +402,17 @@ end
 
 --[[ Emit player list to clients ]]
 CreateThread(function()
+  local ceil = math.ceil
+  local sub = string.sub
+  local pairs = pairs
+  
   while true do
-    local found = {}
+    Wait(5000)
     
+    local found = {}
     local players = GetPlayers()
-    for _, serverID in ipairs(players) do
+    for i = 1, #players do
+      local serverID = players[i]
       local ped = GetPlayerPed(serverID)
       local veh = GetVehiclePedIsIn(ped)
       if veh and veh > 0 then
@@ -412,26 +420,41 @@ CreateThread(function()
       else
         veh = nil
       end
-  
-      local health = math.ceil(((GetEntityHealth(ped) - 100) / 100) * 100)
-      found[#found + 1] = {
-        id = serverID,
-        health = health,
-        veh = veh,
-        pos = GetEntityCoords(ped),
-        username = GetPlayerName(serverID),
-        license = getPlayersLicense(serverID)
-      }
       
-      -- Lets wait a tick so we don't have hitch issues
+      local health = ceil(((GetEntityHealth(ped) - 100) / 100) * 100)
+      -- trim to prevent long usernames from impacting event deliverance
+      local username = sub(GetPlayerName(serverID), 1, 75)
+      local coords = GetEntityCoords(ped)
+      
+      local lastData = LAST_PLAYER_DATA[serverID] or {}
+      if type(LAST_PLAYER_DATA[serverID]) ~= 'table' then
+        LAST_PLAYER_DATA[serverID] = {}
+      end
+      local sendAll = (lastData.i == nil)
+      
+      local emitData = {}
+      emitData.i = serverID
+      if sendAll or lastData.h ~= health then emitData.h = health end
+      if sendAll or lastData.v ~= veh then emitData.v = veh end
+      if sendAll or lastData.u ~= username then emitData.u = username end
+      if sendAll or lastData.c ~= coords then emitData.c = coords end
+      if sendAll then emitData.l = getPlayersLicense(serverID) end
+      for k, v in pairs(emitData) do
+        LAST_PLAYER_DATA[serverID][k] = v
+        --debugPrint(string.format("^2emitting ^3%s^2 (^3%s^2) for ^6%d", k, v, serverID))
+      end
+      found[#found + 1] = emitData
       Wait(0)
     end
-  
+    
+    -- calculate the number of admins
+    local totalAdmins = 0
+    for _ in pairs(adminPermissions) do totalAdmins = totalAdmins + 1 end
+    
     -- get the list of all players to send to
-    debugPrint("^4Sending ^3" .. #found .. "^4 users details to ^3" .. #adminPermissions .. "^4 admins^0")
+    debugPrint("^4Sending ^3" .. #found .. "^4 users details to ^3" .. totalAdmins .. "^4 admins^0")
     for id, _ in pairs(adminPermissions) do
-      TriggerClientEvent('txAdmin:menu:setPlayerState', id, found)
+      TriggerLatentClientEvent('txAdmin:menu:setPlayerState', id, EMIT_BITRATE, found)
     end
-    Wait(1000 * 5)
   end
 end)

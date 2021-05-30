@@ -341,18 +341,36 @@ if debugModeEnabled then
 end
 
 --[[ Player list sync ]]
+local posCache = {}
 RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
+  local NetToVeh = NetToVeh
+  local GetVehicleClass = GetVehicleClass
+  
+  if type(data) ~= 'table' then
+    print("^1Invalid player state data provided (was type: " .. type(data) .. ")")
+    return
+  end
+  
   -- process data to add distance, remove pos
   local pedCoords = GetEntityCoords(PlayerPedId())
   for i in ipairs(data) do
     local row = data[i]
-    local targetVec = vec3(row.pos.x, row.pos.y, row.pos.z)
-    local dist = #(pedCoords - targetVec)
-      
+    
+    -- position cache
+    if type(row.c) == 'vector3' then posCache[row.i] = row.c end
+    local pos = posCache[row.i]
+    local dist
+    if pos ~= nil then
+      local targetVec = vec3(pos[1], pos[2], pos[3])
+      dist = #(pedCoords - targetVec)
+    else
+      dist = -1
+    end
+    
     -- calculate the vehicle status
     local vehicleStatus = 'walking'
-    if row.veh then
-      local vehEntity = NetToVeh(row.veh)
+    if row.v then
+      local vehEntity = NetToVeh(row.v)
       if not vehEntity or vehEntity == 0 then
         vehicleStatus = 'unknown'
       else
@@ -371,19 +389,22 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
       end
     end
     
-    row.vehicleStatus = vehicleStatus
-    row.distance = dist
-    -- remove unneeded values
-    row.pos = nil
-    row.veh = nil
+    data[i] = {
+      id = row.i,
+      health = row.h,
+      vehicleStatus = vehicleStatus,
+      distance = dist,
+      username = row.u,
+      license = row.l
+    }
   end
-
-  debugPrint(json.encode(data))
+  
   SendNUIMessage({
     action = 'setPlayerState',
     data = data
   })
 end)
+--[[ End player sync ]]
 
 --- Calculate a safe Z coordinate based off the (X, Y)
 ---@param x number
