@@ -54,7 +54,7 @@ export const useHudListenersService = () => {
   useNuiEvent('showMenuHelpInfo', () => {
     const showAlert = shouldHelpAlertShow()
     if (showAlert) {
-      enqueueSnackbar(t('nui_menu.misc.help_message'), {
+      enqueueSnackbar(<span style={{whiteSpace: 'pre-wrap'}}>{t('nui_menu.misc.help_message')}</span>, {
         variant: 'info',
         anchorOrigin: {
           horizontal: 'center',
@@ -63,7 +63,7 @@ export const useHudListenersService = () => {
         autoHideDuration: 10000
       })
     }
-  })
+  });
 
   useNuiEvent<SnackbarPersistentAlert>(
     "setPersistentAlert",
