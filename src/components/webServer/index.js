@@ -180,7 +180,7 @@ module.exports = class WebServer {
 
     //================================================================
     httpCallbackHandler(source, req, res) {
-        //Rewrite source ip if it comes from nucleus reverse proxy
+        //Rewrite source IP if it comes from nucleus reverse proxy
         const ipsrcRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}:\d{1,5}$/;
         if (source == 'citizenfx' && ipsrcRegex.test(req.headers['x-cfx-source-ip'])) {
             req.connection.remoteAddress = req.headers['x-cfx-source-ip'].split(':')[0];

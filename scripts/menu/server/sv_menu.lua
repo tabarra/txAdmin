@@ -1,5 +1,5 @@
 --Check Environment
-if GetConvar('txAdmin-serverMode', 'false') ~= 'true' then
+if GetConvar('txAdminServerMode', 'false') ~= 'true' then
   return
 end
 local apiHost = GetConvar("txAdmin-apiHost", "invalid")

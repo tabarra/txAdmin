@@ -32,7 +32,7 @@ const getConvars = (isCmdLine = false) => {
         [`${p}set`, 'txAdmin-apiHost', txAdminInterface],
         [`${p}set`, 'txAdmin-apiToken', globals.webServer.intercomToken],
         [`${p}set`, 'txAdmin-checkPlayerJoin', checkPlayerJoin],
-        [`${p}set`, 'txAdmin-serverMode', 'true'],
+        [`${p}set`, 'txAdminServerMode', 'true'], //Can't change this one due to fxserver code compatibility
     ];
 };
 

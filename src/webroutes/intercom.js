@@ -26,7 +26,7 @@ module.exports = async function Intercom(ctx) {
         try {
             globals.monitor.handleHeartBeat('http', postData);
             const extractData = {
-                '$statsVersion': 4,
+                '$statsVersion': 5,
                 isZapHosting: GlobalData.isZapHosting,
                 txAdminVersion: GlobalData.txAdminVersion,
                 txAdminIsDefaultPort: (GlobalData.txAdminPort == 40120),

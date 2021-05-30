@@ -38,7 +38,8 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin has gotten an in-game menu!\nBind [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] to try it out!",
-            "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved."
+            "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
+            "action_unauthorized": "You do not have this permission."
         },
         "common": {
             "cancel": "Cancel",

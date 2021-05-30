@@ -10,6 +10,7 @@ import {
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { Code } from "@material-ui/icons";
 import { fetchNui } from '../../utils/fetchNui';
+import { useTranslate } from "react-polyglot";
 import { ResolvablePermission, usePermissionsValue } from '../../state/permissions.state';
 import { userHasPerm } from '../../utils/miscUtils';
 import { useSnackbar } from 'notistack';
@@ -40,6 +41,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 export const MenuListItem: React.FC<MenuListItemProps> = memo(
   ({ icon, primary, onSelect, secondary, selected, requiredPermission }) => {
     const classes = useStyles();
+    const t = useTranslate();
     const divRef = useRef<HTMLDivElement | null>(null);
     const userPerms = usePermissionsValue()
     const isUserAllowed = userHasPerm(requiredPermission, userPerms)
@@ -49,7 +51,7 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
       if (!selected) return
 
       if (!isUserAllowed) {
-        enqueueSnackbar('You are not allowed to use this!', {
+        enqueueSnackbar(t('nui_menu.misc.action_unauthorized'), {
           variant: 'error',
           anchorOrigin: {
             horizontal: 'center',
@@ -121,6 +123,7 @@ export interface MenuListItemMultiProps {
 export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
   ({ selected, primary, actions, icon, initialValue, showCurrentPrefix, requiredPermission }) => {
     const classes = useStyles();
+    const t = useTranslate();
     const [curState, setCurState] = useState(0);
     const userPerms = usePermissionsValue();
     const { enqueueSnackbar } = useSnackbar();
@@ -132,7 +135,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     const divRef = useRef<HTMLDivElement | null>(null);
 
     const showNotAllowedAlert = () => {
-      enqueueSnackbar('You are not allowed to use this!', {
+      enqueueSnackbar(t('nui_menu.misc.action_unauthorized'), {
         variant: 'error',
         anchorOrigin: {
           horizontal: 'center',
@@ -177,10 +180,8 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
 
     const handleRightArrow = () => {
       if (!selected) return;
-      if (!isUserAllowed) return showNotAllowedAlert()
 
       fetchNui('playSound', 'move')
-
       const nextEstimatedItem = curState + 1;
       const nextItem =
         nextEstimatedItem >= actions.length ? 0 : nextEstimatedItem;

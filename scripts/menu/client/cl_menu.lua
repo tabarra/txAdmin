@@ -2,6 +2,11 @@
 menuIsAccessible = false
 isMenuDebug = false
 
+local SoundEnum = {
+  move = 'NAV_UP_DOWN',
+  enter = 'SELECT'
+}
+
 CreateThread(function()
   isMenuDebug = (GetConvar('TXADMIN_MENU_DEBUG', 'false') == 'true')
 end)
@@ -85,6 +90,7 @@ function toggleMenuVisibility(visible)
     isMenuVisible = not isMenuVisible
     sendMenuMessage('setVisible', isMenuVisible)
   end
+  PlaySoundFrontend(-1, SoundEnum['enter'], 'HUD_FRONTEND_DEFAULT_SOUNDSET', 1)
 end
 
 -- Command to be used with the register key mapping
@@ -126,10 +132,6 @@ RegisterNUICallback('closeMenu', function(_, cb)
   cb({})
 end)
 
-local SoundEnum = {
-  move = 'NAV_UP_DOWN',
-  enter = 'SELECT'
-}
 
 RegisterNUICallback('playSound', function(sound, cb)
   PlaySoundFrontend(-1, SoundEnum[sound], 'HUD_FRONTEND_DEFAULT_SOUNDSET', 1)
