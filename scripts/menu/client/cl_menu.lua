@@ -335,7 +335,7 @@ end)
 if debugModeEnabled then
   -- Debugging command
   RegisterCommand('txAdmin-reauth', function()
-    print("re-authing")
+    debugPrint("re-authing")
     TriggerEvent('txAdmin:menu:reAuth')
   end)
 end
@@ -399,10 +399,8 @@ local function FindZForCoords(x, y)
       z = _z + 0.0
     end
     found = _found
-    print(json.encode({found, z}))
     Wait(0)
   end
-  print('found Z: ' .. z)
   if z == START_Z then return nil end
   return z + 0.0
 end
