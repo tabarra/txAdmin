@@ -456,11 +456,11 @@ RegisterNetEvent('txAdmin:menu:healed', function()
   debugPrint('Received heal event, healing to full')
   local ped = PlayerPedId()
   local pos = GetEntityCoords(ped)
+  local heading = GetEntityHeading(ped)
   if IsEntityDead(ped) then
-    ResurrectPed(ped)
-    ped = PlayerPedId()
-    SetEntityCoords(ped, pos[1], pos[2], pos[3])
+    NetworkResurrectLocalPlayer(pos[1], pos[2], pos[3], heading, false, false)
   end
+  ped = PlayerPedId()
   SetEntityHealth(ped, GetEntityMaxHealth(ped))
 end)
 
