@@ -47,7 +47,6 @@ const PlayerModal: React.FC = () => {
 
   return (
     <Dialog
-      disableEscapeKeyDown
       open={isModalOpen}
       fullWidth
       onClose={handleClose}

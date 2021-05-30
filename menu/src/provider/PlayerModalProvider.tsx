@@ -1,5 +1,6 @@
-import React, { useContext, createContext, useState, useCallback } from 'react';
+import React, { useContext, createContext, useState, useCallback, useEffect } from 'react';
 import PlayerModal from '../components/PlayerModal/PlayerModal';
+import { useSetDisableTab, useSetListenForExit } from '../state/keys.state';
 
 const PlayerContext = createContext(null);
 
@@ -12,15 +13,22 @@ interface PlayerProviderCtx {
 
 export const PlayerModalProvider: React.FC = ({ children }) => {
   const [tab, setTab] = useState(1);
-  const [modal, setModal] = useState(true);
+  const [modalOpen, setModalOpen] = useState(true);
+  const setDisableTabNav = useSetDisableTab()
+  const setListenForExit = useSetListenForExit()
+
+  useEffect(() => {
+    setDisableTabNav(modalOpen)
+    setListenForExit(!modalOpen)
+  }, [modalOpen])
 
   return (
     <PlayerContext.Provider
       value={{
         tab,
         setTab,
-        isModalOpen: modal,
-        setModalOpen: setModal
+        isModalOpen: modalOpen,
+        setModalOpen
       }}
     >
       <>
