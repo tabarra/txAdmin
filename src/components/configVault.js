@@ -214,7 +214,7 @@ module.exports = class ConfigVault {
             //FXRunner
             cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
-            cfg.fxRunner.autostartDelay = parseInt(cfg.fxRunner.autostartDelay) || 4; //not in template
+            cfg.fxRunner.autostartDelay = parseInt(cfg.fxRunner.autostartDelay) || 6; //not in template
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in templater
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
             //FXRunner - Converting from old OneSync (build 2751)

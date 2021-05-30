@@ -11,6 +11,7 @@ module.exports = class AdminVault {
         this.adminsFile = `${GlobalData.dataPath}/admins.json`;
         this.admins = null;
         this.refreshRoutine = null;
+        this.lastAdminFile = '';
 
         //Not alphabetical order, but that's fine
         this.registeredPermissions = {
@@ -34,7 +35,7 @@ module.exports = class AdminVault {
             'players.heal': 'Heal', //self, everyone, and the "heal" button in player modal
             'players.playermode': 'NoClip / God / Spectate', //self playermode, and also the player spectate option
             'players.teleport': 'Teleport', //self teleport, and the bring/go to on player modal
-            'players.trollmenu': 'Troll Menu', //all the troll options in the player modal
+            // 'players.trollmenu': 'Troll Menu', //all the troll options in the player modal
         };
         this.hardConfigs = {
             refreshInterval: 15e3,
@@ -257,6 +258,7 @@ module.exports = class AdminVault {
 
         //Saving admin file
         this.admins.push(admin);
+        this.refreshOnlineAdmins().catch((e) => {});
         try {
             await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
@@ -316,6 +318,7 @@ module.exports = class AdminVault {
         if (typeof permissions !== 'undefined') this.admins[adminIndex].permissions = permissions;
 
         //Saving admin file
+        this.refreshOnlineAdmins().catch((e) => {});
         try {
             await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return (password !== null) ? this.admins[adminIndex].password_hash : true;
@@ -350,6 +353,7 @@ module.exports = class AdminVault {
         this.admins[adminIndex].providers[provider].data = providerData;
 
         //Saving admin file
+        this.refreshOnlineAdmins().catch((e) => {});
         try {
             await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
         } catch (error) {
@@ -381,6 +385,7 @@ module.exports = class AdminVault {
         if (!found) throw new Error('Admin not found');
 
         //Saving admin file
+        this.refreshOnlineAdmins().catch((e) => {});
         try {
             await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
@@ -409,6 +414,11 @@ module.exports = class AdminVault {
 
         try {
             raw = await fs.readFile(this.adminsFile, 'utf8');
+            if (raw === this.lastAdminFile) {
+                if (GlobalData.verbose) log('Admin file didn\'t change, skipping.');
+                return;
+            }
+            this.lastAdminFile = raw;
         } catch (error) {
             return callError('cannot read file');
         }
@@ -431,6 +441,7 @@ module.exports = class AdminVault {
             let providersTest = Object.keys(x.providers).some((y) => {
                 if (!Object.keys(this.providers).includes(y)) return true;
                 if (typeof x.providers[y].id !== 'string' || x.providers[y].id.length < 3) return true;
+                if (typeof x.providers[y].identifier !== 'string' || x.providers[y].identifier.length < 3) return true;
                 if (typeof x.providers[y].data !== 'object') return true;
             });
             if (providersTest) return true;
@@ -451,6 +462,37 @@ module.exports = class AdminVault {
         }
 
         this.admins = jsonData;
+        this.refreshOnlineAdmins().catch((e) => {});
         return true;
+    }
+
+
+    //================================================================
+    /**
+     * Notify game server about admin changes
+     */
+    async refreshOnlineAdmins() {
+        if (globals.playerController === null) return;
+
+        try {
+            //Getting all admin identifiers
+            const adminIDs = this.admins.reduce((ids, adm) => {
+                const adminIDs = Object.keys(adm.providers).map((pName) => adm.providers[pName].identifier);
+                return ids.concat(adminIDs);
+            }, []);
+
+            //Finding online admins
+            const playerList = globals.playerController.getPlayerList();
+            const onlineIDs = playerList.filter((p) => {
+                return p.identifiers.some((i) => adminIDs.includes(i));
+            }).map((p) => p.id);
+
+            return globals.fxRunner.sendEvent('adminsUpdated', onlineIDs);
+        } catch (error) {
+            if (GlobalData.verbose) {
+                logError('Failed to refreshOnlineAdmins() with error:');
+                dir(error);
+            }
+        }
     }
 }; //Fim AdminVault()
