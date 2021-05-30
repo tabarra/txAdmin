@@ -88,6 +88,7 @@ end)
 CreateThread(function()
   TriggerEvent('chat:addSuggestion', '/txadmin', 'Open the txAdmin menu', {})
   TriggerEvent('chat:addSuggestion', '/tx', 'Open the txAdmin menu', {})
+  SetNuiFocus(false, false)
 end)
 
 --[[
