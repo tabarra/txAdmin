@@ -10,7 +10,7 @@ import { useListenForExitValue } from '../state/keys.state';
 export const useExitListener = () => {
   const setVisible = useSetIsMenuVisible();
 
-  const shouldListen  = useListenForExitValue()
+  const shouldListen = useListenForExitValue()
 
   useEffect(() => {
     const keyHandler = (e: KeyboardEvent) => {

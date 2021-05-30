@@ -14,13 +14,13 @@ interface PlayerProviderCtx {
 export const PlayerModalProvider: React.FC = ({ children }) => {
   const [tab, setTab] = useState(1);
   const [modalOpen, setModalOpen] = useState(true);
-  const setDisableTabNav = useSetDisableTab()
-  const setListenForExit = useSetListenForExit()
+  // const setDisableTabNav = useSetDisableTab()
+  // const setListenForExit = useSetListenForExit()
 
-  useEffect(() => {
-    setDisableTabNav(modalOpen)
-    setListenForExit(!modalOpen)
-  }, [modalOpen])
+  // useEffect(() => {
+  //   setDisableTabNav(!modalOpen)
+  //   setListenForExit(modalOpen)
+  // }, [modalOpen])
 
   return (
     <PlayerContext.Provider
