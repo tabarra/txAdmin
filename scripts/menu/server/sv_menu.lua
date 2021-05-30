@@ -47,9 +47,10 @@ AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
   for id, _ in pairs(adminPermissions) do
     refreshAdminIds[id] = id
   end
-  for newId, _ in pairs(adminPermissions) do
+  for _, newId in pairs(onlineAdminIDs) do
     refreshAdminIds[newId] = newId
   end
+  debugPrint('^3Forcing ' .. #refreshAdminIds .. ' clients to re-auth')
   
   -- Resetting all admin permissions
   adminPermissions = {}
