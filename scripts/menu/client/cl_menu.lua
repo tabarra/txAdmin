@@ -343,10 +343,11 @@ end
 --[[ Player list sync ]]
 RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
   -- process data to add distance, remove pos
+  local pedCoords = GetEntityCoords(PlayerPedId())
   for i in ipairs(data) do
     local row = data[i]
     local targetVec = vec3(row.pos.x, row.pos.y, row.pos.z)
-    local dist = #(GetEntityCoords(PlayerPedId()) - targetVec)
+    local dist = #(pedCoords - targetVec)
       
     -- calculate the vehicle status
     local vehicleStatus = 'walking'
