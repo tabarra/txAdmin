@@ -487,7 +487,6 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(netID)
   -- only delete if the new vehicle is found
   if oldVeh and IsPedInVehicle(ped, oldVeh, true) then
     debugPrint("Deleting existing vehicle (" .. oldVeh .. ")")
-    SetEntityAsMissionEntity(oldVeh, true, true)
     DeleteVehicle(oldVeh)
   end
   
