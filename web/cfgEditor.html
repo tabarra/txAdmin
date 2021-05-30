@@ -12,6 +12,11 @@
     }
 </style>
 
+<!-- Hacky hack but ok, no time to do it better: -->
+{{@if(!it.isWebInterface)}}
+    <style>.CodeMirror{height: calc(100vh - 150px);}</style>
+{{/if}}
+
 <!-- Title -->
 <div class="text-center mb-4">
     <h3>Server Config File Editor</h3>

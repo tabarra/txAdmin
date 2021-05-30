@@ -147,6 +147,7 @@ export const MainPageList: React.FC = () => {
       title: t("nui_menu.page_main.spawn_veh.dialog_title"),
       placeholder: "car, bike, heli, boat, Adder, Buzzard, etc",
       onSubmit: (modelName: string) => {
+        modelName = modelName.toLowerCase();
         if(modelName === 'car'){
           modelName = (Math.random() > 0.05) ? 'nero' : 'caddy';
         } else if(modelName === 'bike'){

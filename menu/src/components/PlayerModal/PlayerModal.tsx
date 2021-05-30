@@ -93,7 +93,7 @@ const useListStyles = makeStyles((theme: Theme) => ({
   },
   banRoot: {
     "&$selected, &$selected:hover": {
-      background: theme.palette.warning.main,
+      background: theme.palette.error.main,
     },
   },
   selected: {},

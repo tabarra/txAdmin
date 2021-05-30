@@ -6,6 +6,9 @@
         height: calc(100vh - 252px);
         margin-bottom: 0;
     }
+    .nui-height{
+        height: calc(100vh - 152px);
+    }
 </style>
 
 <div>
@@ -18,7 +21,7 @@
 </div>
 <div class="card border-primary">
     <div class="card-body">
-        <div class="tab-content" id="nav-tabContent">
+        <div class="tab-content {{[(it.isWebInterface), '', 'nui-height']|ternary}}" id="nav-tabContent">
             <div class="tab-pane fade active show" id="nav-console" role="tabpanel">
                 <pre id="consoleLog" class="thin-scroll pre-log-content">{{it.consoleLog|safe}}</pre>
             </div>

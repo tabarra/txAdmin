@@ -114,8 +114,8 @@ module.exports = async function AdvancedActions(ctx) {
         await globals.playerController.db.backupDatabase();
         return ctx.send({type: 'success', message: 'backing it up'});
     } else if (action == 'reauth') {
-        // FIXME: test data
-        return globals.fxRunner.sendEvent('adminChange', [1, 5, 7]);
+        // txaEvent "adminsUpdated" "[1,5,7]"
+        return globals.fxRunner.sendEvent('adminsUpdated', [1, 5, 7]);
     }
 
     //Catch all
