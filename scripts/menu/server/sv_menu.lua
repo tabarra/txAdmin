@@ -371,10 +371,11 @@ CreateThread(function()
       else
         veh = nil
       end
-
+  
+      local health = math.ceil(((GetEntityHealth(ped) - 100) / 100) * 100)
       found[#found + 1] = {
         id = serverID,
-        health = GetEntityHealth(ped),
+        health = health,
         veh = veh,
         pos = GetEntityCoords(ped),
         username = GetPlayerName(serverID),
@@ -390,6 +391,6 @@ CreateThread(function()
     for id, _ in pairs(adminPermissions) do
       TriggerClientEvent('txAdmin:menu:setPlayerState', id, found)
     end
-    Wait(1000 * 15)
+    Wait(1000 * 5)
   end
 end)
