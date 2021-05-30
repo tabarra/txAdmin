@@ -9,9 +9,9 @@ export const userHasPerm = (perm: ResolvablePermission, permsState: PermCheckSer
 
 export const formatDistance = (distance: number): string => {
   let unit = 'm'
-  let roundedDistance = (distance * 1000) / 1000;
-  if (roundedDistance > 1000) {
-    roundedDistance = roundedDistance / 1000;
+  let roundedDistance = Math.round(distance);
+  if (roundedDistance >= 1000) {
+    roundedDistance = +(roundedDistance / 1000).toFixed(1)
     unit = 'km'
   }
   return `${roundedDistance.toLocaleString()} ${unit}`
