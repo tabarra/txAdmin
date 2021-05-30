@@ -353,12 +353,10 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
   
   -- process data to add distance, remove pos
   local pedCoords = GetEntityCoords(PlayerPedId())
-  for i in ipairs(data) do
-    local row = data[i]
-    
+  for serverId, row in pairs(data) do
     -- position cache
-    if type(row.c) == 'vector3' then posCache[row.i] = row.c end
-    local pos = posCache[row.i]
+    if type(row.c) == 'vector3' then posCache[serverId] = row.c end
+    local pos = posCache[serverId]
     local dist
     if pos ~= nil then
       local targetVec = vec3(pos[1], pos[2], pos[3])
@@ -389,8 +387,7 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
       end
     end
     
-    data[i] = {
-      id = row.i,
+    data[serverId] = {
       health = row.h,
       vehicleStatus = vehicleStatus,
       distance = dist,

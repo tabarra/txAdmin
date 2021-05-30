@@ -17,10 +17,10 @@ export enum VehicleStatus {
   Biking = "biking",
 }
 
-export type PlayerData = Required<PlayerDataPartial>;
+export type PlayerData = Required<PlayerDataPartial> & { id: number };
+export type PlayerDataSetPartial = { [serverID: number]: PlayerDataPartial };
 
 export interface PlayerDataPartial {
-  id: number;
   vehicleStatus: VehicleStatus;
   distance: number;
   health?: number;

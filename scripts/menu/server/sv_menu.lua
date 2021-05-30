@@ -411,8 +411,7 @@ CreateThread(function()
     
     local found = {}
     local players = GetPlayers()
-    for i = 1, #players do
-      local serverID = players[i]
+    for _, serverID in pairs(players) do
       local ped = GetPlayerPed(serverID)
       local veh = GetVehiclePedIsIn(ped)
       if veh and veh > 0 then
@@ -433,7 +432,7 @@ CreateThread(function()
       local sendAll = (lastData.i == nil)
       
       local emitData = {}
-      emitData.i = serverID
+      emitData.i = serverID -- set so it is stored
       if sendAll or lastData.h ~= health then emitData.h = health end
       if sendAll or lastData.v ~= veh then emitData.v = veh end
       if sendAll or lastData.u ~= username then emitData.u = username end
@@ -443,7 +442,8 @@ CreateThread(function()
         LAST_PLAYER_DATA[serverID][k] = v
         --debugPrint(string.format("^2emitting ^3%s^2 (^3%s^2) for ^6%d", k, v, serverID))
       end
-      found[#found + 1] = emitData
+      emitData.i = nil -- unneeded
+      found[serverID] = emitData
       Wait(0)
     end
     
