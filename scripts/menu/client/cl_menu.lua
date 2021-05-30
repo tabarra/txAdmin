@@ -300,6 +300,20 @@ AddEventHandler('playerSpawned', function()
   sendMenuMessage('showMenuHelpInfo', {})
 end)
 
+--[[ Reauth ]]
+RegisterNetEvent('txAdmin:menu:reAuth', function()
+  menuIsAccessible = false
+  sendMenuMessage('reAuth')
+end)
+
+if debugModeEnabled then
+  -- Debugging command
+  RegisterCommand('txAdmin-reauth', function()
+    print("re-authing")
+    TriggerEvent('txAdmin:menu:reAuth')
+  end)
+end
+
 --[[ Player list sync ]]
 RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
   -- process data to add distance, remove pos

@@ -39,6 +39,18 @@ local function PlayerHasTxPermission(source, permission)
   return allow
 end
 
+AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
+  debugPrint('^3Admins changed. Online admins: ' .. json.encode(onlineAdminIDs) .. "^0")
+  
+  -- Resetting all admin permissions
+  adminPermissions = {}
+  
+  -- Informing clients that they need to reauth
+  for id, _ in pairs(onlineAdminIDs) do
+    TriggerClientEvent('txAdmin:menu:reAuth', id, found)
+  end
+end)
+
 -- 
 -- [[ WebPipe Proxy ]]
 --
