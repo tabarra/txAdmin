@@ -265,12 +265,16 @@ end)
 
 -- CB From Menu
 RegisterNUICallback('spawnVehicle', function(data, cb)
+  if type(data) ~= 'table' then error("Invalid spawnVehicle NUI callback data") end
   local model = data.model
-  if not IsModelValid(model) then
+  if type(model) ~= 'string' then return end
+  if not IsModelValid(model) or not IsModelAVehicle(model) then
     debugPrint("^1Invalid vehicle model requested: " .. model)
     cb({ e = true })
   else
-    TriggerServerEvent('txAdmin:menu:spawnVehicle', model)
+    local isAutomobile = IsThisModelACar(model)
+    if isAutomobile ~= false then isAutomobile = true end
+    TriggerServerEvent('txAdmin:menu:spawnVehicle', model, isAutomobile)
     cb({})
   end
 end)
@@ -474,10 +478,6 @@ end)
 
 --[[ Spawn vehicles, with support for entity lockdown ]]
 RegisterNetEvent('txAdmin:menu:spawnVehicle', function(netID)
-  debugPrint(json.encode({ netID = netID }))
-  SetNetworkIdExistsOnAllMachines(netID, true)
-  SetNetworkIdCanMigrate(netID, true)
-  
   -- get current veh and speed
   local ped = PlayerPedId()
   local oldVeh = GetVehiclePedIsIn(ped, false)
@@ -491,22 +491,15 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(netID)
   end
   
   local tries = 0
-  while NetworkGetEntityFromNetworkId(netID) == 0 do
-    if tries > 50 then
-      debugPrint("^1Vehicle (net ID " .. netID .. ") did not become networked for this client in time ("
-              .. (tries * 25) .. "ms)")
-      return
-    end
-    debugPrint("Waiting for vehicle networking...")
+  while not NetworkDoesEntityExistWithNetworkId(netID) do
     tries = tries + 1
-    Wait(50)
+    if tries > 250 then break end
+    Wait(10)
   end
-  
   local veh = NetworkGetEntityFromNetworkId(netID)
-  debugPrint("Found networked vehicle " .. netID .. " (entity " .. veh .. ")")
-  SetVehicleHasBeenOwnedByPlayer(veh, true)
-  TaskWarpPedIntoVehicle(ped, veh, -1)
-  SetEntityHeading(veh, GetEntityHeading(ped))
+  if not veh or veh == 0 then error("Vehicle did not spawn") end
+  
+  SetPedIntoVehicle(ped, veh, -1)
   if oldVel > 0.0 then
     SetVehicleEngineOn(veh, true, true, false)
     SetVehicleForwardSpeed(veh, oldVel)
