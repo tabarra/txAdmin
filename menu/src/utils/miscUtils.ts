@@ -7,6 +7,16 @@ export const userHasPerm = (perm: ResolvablePermission, permsState: PermCheckSer
   return (userPerms).includes(perm) || (userPerms).includes('all_permissions')
 }
 
+export const formatDistance = (distance: number): string => {
+  let unit = 'm'
+  let roundedDistance = (distance * 1000) / 1000;
+  if (roundedDistance > 1000) {
+    roundedDistance = roundedDistance / 1000;
+    unit = 'km'
+  }
+  return `${roundedDistance.toLocaleString()} ${unit}`
+}
+
 const lookupTable: Record<string, VariantType> = {
   success: 'success',
   danger: 'error',

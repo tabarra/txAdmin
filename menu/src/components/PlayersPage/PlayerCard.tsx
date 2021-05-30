@@ -17,6 +17,7 @@ import {
 import { usePlayerModalContext } from '../../provider/PlayerModalProvider';
 import { PlayerData, VehicleStatus } from "../../state/players.state";
 import { useSetAssociatedPlayer } from '../../state/playerDetails.state';
+import { formatDistance } from "../../utils/miscUtils";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -102,7 +103,7 @@ const PlayerCard: React.FC<{playerData: PlayerData}> = ({playerData}) => {
               variant="subtitle1"
               color="textSecondary"
             >
-              {Math.round((playerData.distance * 1000) / 1000).toLocaleString()} m
+              {formatDistance(playerData.distance)}
             </Typography>
           </Box>
           <IconButton onClick={handlePlayerClick}>{<MoreVert />}</IconButton>
