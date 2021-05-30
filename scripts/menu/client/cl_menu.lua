@@ -65,14 +65,22 @@ local function clearPersistentAlert(key)
   sendMenuMessage('clearPersistentAlert', { key = key })
 end
 
+--- Toggle visibility of the txAdmin NUI menu
+local function toggleVisibility()
+  if not isMenuVisible and IsPauseMenuActive() then
+    return
+  end
+  -- Lets update before we open the menu
+  updateServerCtx()
+  sendMenuMessage('setDebugMode', isMenuDebug)
+  isMenuVisible = not isMenuVisible
+  sendMenuMessage('setVisible', isMenuVisible)
+end
+
 -- Command to be used with the register key mapping
 RegisterCommand('txadmin', function()
   if menuIsAccessible then
-    -- Lets update before we open the menu
-    updateServerCtx()
-    sendMenuMessage('setDebugMode', isMenuDebug)
-    isMenuVisible = not isMenuVisible
-    sendMenuMessage('setVisible', isMenuVisible)
+    toggleVisibility()
   else
     sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
   end
@@ -516,5 +524,14 @@ local function openWarningHandler(author, reason)
     end
   end)
 end
+
+CreateThread(function()
+  while true do
+    if isMenuVisible and IsPauseMenuActive() then
+      toggleVisibility()
+    end
+    Wait(250)
+  end
+end)
 
 RegisterNetEvent('txAdminClient:warn', openWarningHandler)
