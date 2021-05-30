@@ -171,20 +171,25 @@ end
 
 local function toggleFreecam(enabled)
   local ped = PlayerPedId()
+  SetEntityVisible(ped, not enabled)
   SetPlayerInvincible(ped, enabled)
   FreezeEntityPosition(ped, enabled)
+  NetworkSetEntityInvisibleToNetwork(ped, enabled)
+  SetEntityCollision(ped, not enabled, not enabled)
   
   local veh = GetVehiclePedIsIn(ped, true)
-  if veh == 0 then veh = nil end
+  if veh == 0 then
+    veh = nil
+  else
+    NetworkSetEntityInvisibleToNetwork(veh, enabled)
+    SetEntityCollision(veh, not enabled, not enabled)
+  end
   
   local function enableNoClip()
     lastTp = GetEntityCoords(ped)
     
     SetFreecamActive(true)
     StartFreecamThread()
-    
-    NetworkSetEntityInvisibleToNetwork(ped, true)
-    if veh then NetworkSetEntityInvisibleToNetwork(veh, true) end
     
     Citizen.CreateThread(function()
       while IsFreecamActive() do
@@ -203,8 +208,6 @@ local function toggleFreecam(enabled)
   
   local function disableNoClip()
     SetFreecamActive(false)
-    NetworkSetEntityInvisibleToNetwork(ped, false)
-    if veh then NetworkSetEntityInvisibleToNetwork(veh, false) end
     SetGameplayCamRelativeHeading(0)
   end
   
