@@ -374,7 +374,7 @@ CreateThread(function()
     end
   
     -- get the list of all players to send to
-    debugPrint("^4Sending ^3" .. #found .. "^4 users details to ^3" .. #adminPermissions .. "^4 admins")
+    debugPrint("^4Sending ^3" .. #found .. "^4 users details to ^3" .. #adminPermissions .. "^4 admins^0")
     for id, _ in pairs(adminPermissions) do
       TriggerClientEvent('txAdmin:menu:setPlayerState', id, found)
     end
