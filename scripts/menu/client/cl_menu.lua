@@ -166,6 +166,8 @@ end
 local function toggleFreecam(enabled)
   local ped = PlayerPedId()
   SetPlayerInvincible(ped, enabled)
+  FreezeEntityPosition(ped, enabled)
+  
   local veh = GetVehiclePedIsIn(ped, true)
   if veh == 0 then veh = nil end
   
