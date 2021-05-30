@@ -64,10 +64,27 @@ end)
 -- 
 -- [[ WebPipe Proxy ]]
 --
+local _pipeLastReject
 RegisterNetEvent('txAdmin:WebPipe')
 AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, body)
   local s = source
-
+  if type(callbackId) ~= 'number' or type(headers) ~= 'table' then return end
+  if type(method) ~= 'string' or type(path) ~= 'string' or type(body) ~= 'string' then return end
+  
+  -- Reject requests from un-authed players
+  if path ~= '/auth/nui' and not adminPermissions[s] then
+    if _pipeLastReject ~= nil then
+      if (GetGameTimer() - _pipeLastReject) < 250 then
+        _pipeLastReject = GetGameTimer()
+        return
+      end
+    end
+    debugPrint(string.format(
+      "^3WebPipe[^5%d^0:^1%d^3]^0 ^1rejected request from ^3%s^1 for ^5%s^0", s, callbackId, s, path))
+    TriggerClientEvent('txAdmin:WebPipe', s, callbackId, 403, "{}", {})
+    return
+  end
+  
   -- Adding auth information
   if path == '/auth/nui' then
     headers['X-TxAdmin-Token'] = pipeToken
