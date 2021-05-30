@@ -204,11 +204,6 @@ CreateThread(function()
   Wait(0)
   syncServerCtx()
 end)
-
-RegisterServerEvent('txAdmin:menu:getServerCtx', function()
-  local src = source
-  TriggerClientEvent('txAdmin:menu:sendServerCtx', src, serverCtxObj)
-end)
 --
 -- [[ End ServerCtxObj ]]
 --
