@@ -1,3 +1,4 @@
+
 -- Variable that determines whether a player can even access the menu
 menuIsAccessible = false
 isMenuDebug = false
@@ -94,24 +95,22 @@ function toggleMenuVisibility(visible)
 end
 
 -- Command to be used with the register key mapping
-RegisterCommand('txadmin', function()
+local function txadmin()
   if menuIsAccessible then
     toggleMenuVisibility()
   else
     sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
   end
-end)
-
--- alias
-RegisterCommand('tx', function()
-  ExecuteCommand('txadmin')
-end)
+end
+RegisterCommand('txadmin', txadmin)
+RegisterCommand('tx', txadmin)
 
 CreateThread(function()
-  TriggerEvent('chat:addSuggestion', '/txadmin', 'Open the txAdmin menu', {})
-  TriggerEvent('chat:addSuggestion', '/tx', 'Open the txAdmin menu', {})
-  SetNuiFocus(false, false)
+  TriggerEvent('chat:removeSuggestion', '/txadmin')
+  TriggerEvent('chat:removeSuggestion', '/tx')
 end)
+-- end commands
+
 
 --[[
   NUI Callbacks from the menu
