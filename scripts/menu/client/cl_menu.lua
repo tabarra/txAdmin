@@ -385,6 +385,28 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
   })
 end)
 
+--- Calculate a safe Z coordinate based off the (X, Y)
+---@param x number
+---@param y number
+---@return number|nil
+local function FindZForCoords(x, y)
+  local found = true
+  local START_Z = 1500
+  local z = START_Z
+  while found and z > 0 do
+    local _found, _z = GetGroundZFor_3dCoord(x + 0.0, y + 0.0, z - 1.0)
+    if _found then
+      z = _z + 0.0
+    end
+    found = _found
+    print(json.encode({found, z}))
+    Wait(0)
+  end
+  print('found Z: ' .. z)
+  if z == START_Z then return nil end
+  return z + 0.0
+end
+
 --[[ Teleport the player to the coordinates ]]
 ---@param x number
 ---@param y number
@@ -393,24 +415,13 @@ RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   local ped = PlayerPedId()
   lastTp = GetEntityCoords(ped)
   
-  DoScreenFadeOut(200)
+  DoScreenFadeOut(500)
   while not IsScreenFadedOut() do Wait(0) end
-  
-  debugPrint('Teleporting to coords')
+  ped = PlayerPedId()
   if z == 0 then
-    for i = 0, 1000, 10 do
-      SetPedCoordsKeepVehicle(ped, x, y, i)
-      local zFound, _z = GetGroundZFor_3dCoord(x + 0.0, y + 0.0, i + 0.0)
-      if zFound then
-        debugPrint("3D ground found: " .. json.encode({ zFound, _z }))
-        z = _z
-        break
-      end
-      Wait(0)
-    end
+    local _z = FindZForCoords(x, y)
+    if _z ~= nil then z = _z end
   end
-  RequestCollisionAtCoord(x, y, z)
-  RequestAdditionalCollisionAtCoord(x, y, z)
   SetPedCoordsKeepVehicle(ped, x, y, z)
   DoScreenFadeIn(500)
   SetGameplayCamRelativeHeading(0)
@@ -423,26 +434,15 @@ RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
     local ped = PlayerPedId()
     lastTp = GetEntityCoords(ped)
     
-    DoScreenFadeOut(200)
+    DoScreenFadeOut(500)
     while not IsScreenFadedOut() do Wait(0) end
     
     local blipCoords = GetBlipInfoIdCoord(waypoint)
-    debugPrint("waypoint blip: " .. json.encode(blipCoords))
     local x = blipCoords[1]
     local y = blipCoords[2]
-    local z = blipCoords[3]
-    for i = 0, 1000, 10 do
-      SetPedCoordsKeepVehicle(ped, x, y, i)
-      local zFound, _z = GetGroundZFor_3dCoord(x, y, i + 0.0)
-      if zFound then
-        debugPrint("3D ground found: " .. json.encode({ zFound, _z }))
-        z = _z
-        break
-      end
-      Wait(0)
-    end
-    RequestCollisionAtCoord(x, y, z)
-    RequestAdditionalCollisionAtCoord(x, y, z)
+    local z = 0
+    local _z = FindZForCoords(x, y)
+    if _z ~= nil then z = _z end
     SetPedCoordsKeepVehicle(ped, x, y, z)
     DoScreenFadeIn(500)
     SetGameplayCamRelativeHeading(0)
