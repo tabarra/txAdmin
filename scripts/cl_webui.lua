@@ -11,7 +11,7 @@ RegisterRawNuiCallback('WebPipe', function(req, cb)
     local headers = req.headers
     local body = req.body
     local method = req.method
-    debugPrint("^3WebPipe[^1" .. pipeCallbackCounter .. "^3]^0 ^2" .. method .. " ^4" .. path)
+    debugPrint("^3WebPipe[^1" .. pipeCallbackCounter .. "^3]^0 ^2" .. method .. " ^4" .. path .. "^0")
 
     local id = pipeCallbackCounter
     pipeReturnCallbacks[id] = { cb = cb, path = path }
