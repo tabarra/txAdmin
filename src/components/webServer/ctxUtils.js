@@ -259,8 +259,11 @@ module.exports = async function WebCtxUtils(ctx, next) {
     const isWebInterface = (typeof ctx.headers['x-txadmin-token'] !== 'string');
     ctx.txVars = {
         isWebInterface,
+        realIP: ctx.ip,
         darkMode: (ctx.cookies.get('txAdmin-darkMode') === 'true' || !isWebInterface),
     };
+
+    //Setting up the user's host type
     const host = ctx.request.host || 'none';
     if (host.startsWith('127.0.0.1') || host.startsWith('localhost')) {
         ctx.txVars.hostType = 'localhost';
@@ -270,6 +273,24 @@ module.exports = async function WebCtxUtils(ctx, next) {
         ctx.txVars.hostType = 'ip';
     } else {
         ctx.txVars.hostType = 'other';
+    }
+
+    //Setting up the user's real ip from the webpipe
+    if (
+        typeof ctx.headers['x-txadmin-identifiers'] === 'string'
+        && typeof ctx.headers['x-txadmin-token'] === 'string'
+        && ctx.headers['x-txadmin-token'] === globals.webServer.fxWebPipeToken
+        && ['::1', '127.0.0.1', '127.0.1.1'].includes(ctx.ip)
+    ) {
+        const ipIdentifier = ctx.headers['x-txadmin-identifiers']
+            .split(', ')
+            .find((i) => i.startsWith('ip:'));
+        if (typeof ipIdentifier === 'string') {
+            const srcIP = ipIdentifier.substr(3);
+            if (GlobalData.regexValidIP.test(srcIP)) {
+                ctx.txVars.realIP = srcIP;
+            }
+        }
     }
 
     //Functions

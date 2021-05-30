@@ -260,6 +260,7 @@ GlobalData = {
         discord: /^discord:\d{7,20}$/,
         fivem: /^fivem:\d{1,8}$/,
     },
+    regexValidIP: /^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/,
     regexActionID: new RegExp(`^[${noLookAlikesAlphabet}]{4}-[${noLookAlikesAlphabet}]{4}$`),
     regexWhitelistReqID: new RegExp(`R[${noLookAlikesAlphabet}]{4}`),
     noLookAlikesAlphabet,

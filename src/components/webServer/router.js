@@ -38,6 +38,16 @@ module.exports = (config) => {
             </html>`,
         max: config.limiterAttempts,
         disableHeader: true,
+        id: (ctx) => ctx.txVars.realIP,
+    });
+    const authLimiterNUI = KoaRateLimit({
+        driver: 'memory',
+        db: new Map(),
+        max: 50,
+        duration: 5 * 60 * 1000,
+        errorMessage: JSON.stringify({isAdmin: false, message: 'too many requests'}),
+        disableHeader: true,
+        id: (ctx) => ctx.txVars.realIP,
     });
 
     //Authentication
@@ -46,7 +56,7 @@ module.exports = (config) => {
     router.get('/auth/:provider/redirect', authLimiter, webRoutes.auth.providerRedirect);
     router.get('/auth/:provider/callback', authLimiter, webRoutes.auth.providerCallback);
     router.get('/auth/zap', authLimiter, webRoutes.auth.verifyZapToken);
-    router.get('/auth/nui', authLimiter, webRoutes.auth.verifyNuiAuth);
+    router.get('/auth/nui', authLimiterNUI, webRoutes.auth.verifyNuiAuth);
     router.post('/auth/password', authLimiter, webRoutes.auth.verifyPassword);
     router.post('/changePassword', requestAuth('web'), webRoutes.auth.changePassword);
 
