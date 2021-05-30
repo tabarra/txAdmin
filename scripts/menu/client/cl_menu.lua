@@ -336,17 +336,19 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
     -- calculate the vehicle status
     local vehicleStatus = 'walking'
     if row.veh then
-      local veh = NetToVeh(row.veh)
-      if veh and veh > 0 then
-        local vehClass = GetVehicleClass(veh)
+      local vehEntity = NetToVeh(row.veh)
+      if not vehEntity or vehEntity == 0 then
+        vehicleStatus = 'unknown'
+      else
+        local vehClass = GetVehicleClass(vehEntity)
         if vehClass == 8 then
           vehicleStatus = 'biking'
         elseif vehClass == 14 then
           vehicleStatus = 'boating'
-        --elseif vehClass == 15 then
-        --  vehicleStatus = 'floating'
-        --elseif vehClass == 16 then
-        --  vehicleStatus = 'flying'
+          --elseif vehClass == 15 then
+          --  vehicleStatus = 'floating'
+          --elseif vehClass == 16 then
+          --  vehicleStatus = 'flying'
         else
           vehicleStatus = 'driving'
         end
