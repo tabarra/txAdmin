@@ -206,7 +206,7 @@ local function toggleFreecam(enabled)
       while IsFreecamActive() do
         SetEntityLocallyInvisible(ped)
         if veh then SetEntityLocallyInvisible(veh) end
-        Wait(1)
+        Wait(0)
       end
       
       if veh and veh > 0 then
@@ -394,7 +394,7 @@ RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   lastTp = GetEntityCoords(ped)
   
   DoScreenFadeOut(200)
-  while not IsScreenFadedOut() do Wait(1) end
+  while not IsScreenFadedOut() do Wait(0) end
   
   debugPrint('Teleporting to coords')
   if z == 0 then
@@ -424,7 +424,7 @@ RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
     lastTp = GetEntityCoords(ped)
     
     DoScreenFadeOut(200)
-    while not IsScreenFadedOut() do Wait(1) end
+    while not IsScreenFadedOut() do Wait(0) end
     
     local blipCoords = GetBlipInfoIdCoord(waypoint)
     debugPrint("waypoint blip: " .. json.encode(blipCoords))
