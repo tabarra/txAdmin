@@ -57,7 +57,6 @@ const useStyles = makeStyles((theme: Theme) => ({
 // TODO: This component is kinda getting out of hand, might want to split it somehow
 export const MainPageList: React.FC = () => {
   const { openDialog } = useDialogContext();
-  const { setDisabledKeyNav } = useKeyboardNavContext();
   const [curSelected, setCurSelected] = useState(0);
   const t = useTranslate();
   const { enqueueSnackbar } = useSnackbar();
@@ -79,11 +78,6 @@ export const MainPageList: React.FC = () => {
     fetchNui('playSound', 'move');
     setCurSelected(next < 0 ? menuListItems.length - 1 : next);
   }, [curSelected]);
-
-  useEffect(() => {
-    setDisabledKeyNav(false);
-    return () => setDisabledKeyNav(true);
-  }, [setDisabledKeyNav]);
 
   useEffect(() => {
     setCurSelected(0)
@@ -161,7 +155,7 @@ export const MainPageList: React.FC = () => {
           modelName = (Math.random() > 0.05) ? 'buzzard2' : 'havok';
         }  else if(modelName === 'boat'){
           modelName = 'seashark';
-        } 
+        }
         fetchNui("spawnVehicle", { model: modelName }).then(({ e }) => {
           e
             ? enqueueSnackbar(

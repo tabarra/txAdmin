@@ -72,8 +72,6 @@ RegisterCommand('txadmin', function()
     updateServerCtx()
     sendMenuMessage('setDebugMode', isMenuDebug)
     isMenuVisible = not isMenuVisible
-    SetNuiFocus(isMenuVisible, false)
-    SetNuiFocusKeepInput(isMenuVisible)
     sendMenuMessage('setVisible', isMenuVisible)
   else
     sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)

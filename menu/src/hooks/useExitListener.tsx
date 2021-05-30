@@ -1,21 +1,21 @@
 import { useEffect } from "react";
 import { fetchNui } from "../utils/fetchNui";
 import { useSetIsMenuVisible } from "../state/visibility.state";
-import { useKeyboardNavContext } from "../provider/KeyboardNavProvider";
+import { useListenForExitValue } from '../state/keys.state';
 
 /**
- * Attach a keyboard listener for escape, which will close the menu
+ * Attach a keyboard listener for escape & backspace, which will close the menu
+ *
  */
 export const useExitListener = () => {
   const setVisible = useSetIsMenuVisible();
 
-  const { disabledKeyNav } = useKeyboardNavContext()
+  const shouldListen  = useListenForExitValue()
 
   useEffect(() => {
     const keyHandler = (e: KeyboardEvent) => {
-      if (disabledKeyNav) return
+      if (!shouldListen) return;
       if (["Escape", "Backspace"].includes(e.code)) {
-
         if (!process.env.DEV_IN_GAME && process.env.NODE_ENV === "development") return
 
         setVisible(false);
@@ -26,5 +26,5 @@ export const useExitListener = () => {
     window.addEventListener("keydown", keyHandler);
 
     return () => window.removeEventListener("keydown", keyHandler);
-  }, [setVisible, disabledKeyNav]);
+  }, [setVisible, shouldListen]);
 };

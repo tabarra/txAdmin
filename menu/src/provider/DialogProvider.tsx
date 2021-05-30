@@ -1,6 +1,7 @@
 import React, {
   ChangeEvent,
   createContext,
+  ReactEventHandler,
   useCallback,
   useContext,
   useEffect,
@@ -24,7 +25,7 @@ import { Create } from "@material-ui/icons";
 import { useKeyboardNavContext } from "./KeyboardNavProvider";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
-import { useSetDisableTab } from "../state/tab.state";
+import { useSetDisableTab, useSetListenForExit } from "../state/keys.state";
 import { txAdminMenuPage, usePageValue } from "../state/page.state";
 
 interface InputDialogProps {
@@ -38,7 +39,7 @@ interface InputDialogProps {
 interface DialogProviderContext {
   openDialog: (dialogProps: InputDialogProps) => void;
   closeDialog: () => void;
-  isDialogOpen: boolean
+  isDialogOpen: boolean;
 }
 
 const DialogContext = createContext(null);
@@ -61,38 +62,37 @@ const defaultDialogState = {
 
 export const DialogProvider: React.FC = ({ children }) => {
   const classes = useStyles();
-
   const theme = useTheme();
 
-  const setDisableTabs = useSetDisableTab()
+  const setDisableTabs = useSetDisableTab();
+  const { setDisabledKeyNav } = useKeyboardNavContext();
+  const setListenForExit = useSetListenForExit();
 
   const [dialogOpen, setDialogOpen] = useState(false);
-
   const [dialogProps, setDialogProps] = useState<InputDialogProps>(
     defaultDialogState
   );
-
-  const { setDisabledKeyNav } = useKeyboardNavContext();
-
   const [dialogInputVal, setDialogInputVal] = useState<string>("");
-
   const { enqueueSnackbar } = useSnackbar();
-
-  const curPage = usePageValue()
-
+  const curPage = usePageValue();
   const t = useTranslate();
 
   useEffect(() => {
     if (curPage === txAdminMenuPage.Main) {
       setDisabledKeyNav(dialogOpen);
-      setDisableTabs(dialogOpen)
+      setDisableTabs(dialogOpen);
     }
   }, [dialogOpen, setDisabledKeyNav, setDisableTabs]);
 
-  const handleDialogSubmit = () => {
+  useEffect(() => {
+    if (dialogOpen) setListenForExit(false);
+  }, [dialogOpen]);
 
+  const handleDialogSubmit = () => {
     if (!dialogInputVal.trim()) {
-      return enqueueSnackbar("You cannot have an empty input", { variant: "error" });
+      return enqueueSnackbar("You cannot have an empty input", {
+        variant: "error",
+      });
     }
 
     dialogProps.onSubmit(dialogInputVal);
@@ -110,21 +110,22 @@ export const DialogProvider: React.FC = ({ children }) => {
     setDialogOpen(true);
   }, []);
 
-  const handleDialogClose = useCallback(() => {
+  const handleDialogClose: ReactEventHandler<{}> = useCallback((e) => {
+    e.stopPropagation();
     setDialogOpen(false);
   }, []);
 
   // We reset default state after the animation is complete
   const handleOnExited = () => {
-    setDialogProps(defaultDialogState)
-  }
+    setDialogProps(defaultDialogState);
+  };
 
   return (
     <DialogContext.Provider
       value={{
         openDialog,
         closeDialog: handleDialogClose,
-        isDialogOpen: dialogOpen
+        isDialogOpen: dialogOpen,
       }}
     >
       <Dialog
