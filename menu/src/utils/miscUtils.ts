@@ -17,6 +17,10 @@ export const formatDistance = (distance: number): string => {
   return `${roundedDistance.toLocaleString()} ${unit}`
 }
 
+export const arrayRandom = <T>(arr: T[]): T => {
+  return arr[Math.round(Math.random() * (arr.length - 1))]
+}
+
 const lookupTable: Record<string, VariantType> = {
   success: 'success',
   danger: 'error',

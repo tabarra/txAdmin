@@ -17,13 +17,13 @@ import {
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { useDialogContext } from "../../provider/DialogProvider";
 import { fetchNui } from "../../utils/fetchNui";
-import { useKeyboardNavContext } from "../../provider/KeyboardNavProvider";
 import { useTranslate } from "react-polyglot";
 import { useSnackbar } from "notistack";
 import { PlayerMode, usePlayerMode } from "../../state/playermode.state";
 import { useIsMenuVisible } from "../../state/visibility.state";
 import { TeleportMode, useTeleportMode } from "../../state/teleportmode.state";
 import { HealMode, useHealMode } from "../../state/healmode.state";
+import { arrayRandom } from "../../utils/miscUtils";
 
 const fadeHeight = 20;
 const listHeight = 388;
@@ -148,14 +148,15 @@ export const MainPageList: React.FC = () => {
       placeholder: "car, bike, heli, boat, Adder, Buzzard, etc",
       onSubmit: (modelName: string) => {
         modelName = modelName.toLowerCase();
-        if(modelName === 'car'){
-          modelName = (Math.random() > 0.05) ? 'nero' : 'caddy';
-        } else if(modelName === 'bike'){
-          modelName = (Math.random() > 0.05) ? 'esskey' : 'tribike2';
-        } else if(modelName === 'heli'){
-          modelName = (Math.random() > 0.05) ? 'buzzard2' : 'havok';
-        }  else if(modelName === 'boat'){
-          modelName = 'seashark';
+        if (modelName === 'car') {
+          modelName = (Math.random() < 0.05) ? 'caddy' 
+            : arrayRandom(['comet2', 'coquette', 'monroe', 'lynx', 'f620', 'infernus2', 'sc1', 'toros']);
+        } else if (modelName === 'bike') {
+          modelName = (Math.random() < 0.05) ? 'tribike2' : arrayRandom(['esskey', 'bmx', 'cruiser']);
+        } else if (modelName === 'heli') {
+          modelName = (Math.random() < 0.05) ? 'havok' : arrayRandom(['buzzard2', 'volatus']);
+        } else if (modelName === 'boat') {
+          modelName = (Math.random() < 0.05) ? 'seashark' : arrayRandom(['dinghy', 'toro2']);
         }
         fetchNui("spawnVehicle", { model: modelName }).then(({ e }) => {
           e
