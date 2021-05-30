@@ -152,9 +152,9 @@ export const MainPageList: React.FC = () => {
           modelName = (Math.random() < 0.05) ? 'caddy' 
             : arrayRandom(['comet2', 'coquette', 'monroe', 'lynx', 'f620', 'infernus2', 'sc1', 'toros']);
         } else if (modelName === 'bike') {
-          modelName = (Math.random() < 0.05) ? 'tribike2' : arrayRandom(['esskey', 'bmx', 'cruiser']);
+          modelName = (Math.random() < 0.05) ? 'bmx' : arrayRandom(['esskey', 'nemesis', 'cruiser']);
         } else if (modelName === 'heli') {
-          modelName = (Math.random() < 0.05) ? 'havok' : arrayRandom(['buzzard2', 'volatus']);
+          modelName = (Math.random() < 0.05) ? 'havok' : arrayRandom(['buzzard', 'volatus']);
         } else if (modelName === 'boat') {
           modelName = (Math.random() < 0.05) ? 'seashark' : arrayRandom(['dinghy', 'toro2']);
         }
@@ -210,6 +210,20 @@ export const MainPageList: React.FC = () => {
       variant: "success",
     });
   }
+
+  const handlePlayermodeToggle = (targetMode) => {
+    if(targetMode === playerMode || targetMode === PlayerMode.DEFAULT){
+      setPlayerMode(PlayerMode.DEFAULT);
+      fetchNui("playerModeChanged", PlayerMode.DEFAULT);
+      enqueueSnackbar(t("nui_menu.page_main.player_mode.dialog_success_none"), {
+        variant: "success",
+      });
+    }else{
+      setPlayerMode(targetMode);
+      fetchNui("playerModeChanged", targetMode);
+    }
+  };
+
   // This is here for when I am bored developing
   const handleSpawnWeapon = () => {
     openDialog({
@@ -241,31 +255,19 @@ export const MainPageList: React.FC = () => {
           {
             label: t("nui_menu.page_main.player_mode.item_none"),
             value: PlayerMode.DEFAULT,
-            onSelect: () => {
-              setPlayerMode(PlayerMode.DEFAULT);
-              fetchNui("playerModeChanged", PlayerMode.DEFAULT);
-              enqueueSnackbar(t("nui_menu.page_main.player_mode.dialog_success_none"), {
-                variant: "success",
-              });
-            },
+            onSelect: () => {handlePlayermodeToggle(PlayerMode.DEFAULT)},
           },
           {
             label: t("nui_menu.page_main.player_mode.item_noclip"),
             value: PlayerMode.NOCLIP,
             icon: <ControlCamera />,
-            onSelect: () => {
-              setPlayerMode(PlayerMode.NOCLIP);
-              fetchNui("playerModeChanged", PlayerMode.NOCLIP);
-            },
+            onSelect: () => {handlePlayermodeToggle(PlayerMode.NOCLIP)},
           },
           {
             label: t("nui_menu.page_main.player_mode.item_godmode"),
             value: PlayerMode.GOD_MODE,
             icon: <Security />,
-            onSelect: () => {
-              setPlayerMode(PlayerMode.GOD_MODE);
-              fetchNui("playerModeChanged", PlayerMode.GOD_MODE);
-            },
+            onSelect: () => {handlePlayermodeToggle(PlayerMode.GOD_MODE)},
           },
         ],
       },
@@ -356,7 +358,7 @@ export const MainPageList: React.FC = () => {
       //   onSelect: handleSpawnWeapon,
       // },
     ],
-    []
+    [playerMode]
   );
 
   return (

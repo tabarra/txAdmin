@@ -17,7 +17,7 @@ import { usePermissionsValue } from '../state/permissions.state';
 
 const TxAdminLogo: React.FC = () => (
   <Box my={1} display="flex" justifyContent="center">
-    <img src="assets/images/txadmin.png" alt="txadmin bro" />
+    <img src="assets/images/txadmin_beta.png" alt="txadmin bro" />
   </Box>
 );
 
