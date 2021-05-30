@@ -167,7 +167,7 @@ RegisterNUICallback('tpBack', function(_, cb)
 end)
 
 RegisterNUICallback('summonPlayer', function(data, cb)
-  TriggerServerEvent('txAdmin:menu:summonPlayer', data.id)
+  TriggerServerEvent('txAdmin:menu:summonPlayer', tonumber(data.id))
   cb({})
 end)
 
@@ -281,7 +281,7 @@ end)
 
 -- CB From Menu
 RegisterNUICallback('healPlayer', function(data, cb)
-  TriggerServerEvent('txAdmin:menu:healPlayer', data.id)
+  TriggerServerEvent('txAdmin:menu:healPlayer', tonumber(data.id))
   cb({})
 end)
 
