@@ -1,4 +1,4 @@
-import React, { FormEventHandler, useState } from "react";
+import React, { FormEventHandler, useEffect, useState } from 'react';
 import {
   Box,
   Button,
@@ -7,7 +7,7 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
-import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
+import { useForcePlayerRefresh, usePlayerDetailsValue } from '../../../state/playerDetails.state';
 import { fetchWebPipe } from "../../../utils/fetchWebPipe";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
@@ -16,22 +16,38 @@ const DialogInfoView: React.FC = () => {
   const [note, setNote] = useState("");
   const player = usePlayerDetailsValue();
   const { enqueueSnackbar } = useSnackbar();
+  const playerDetails = usePlayerDetailsValue()
+  const forceRefresh = useForcePlayerRefresh()
+
   const t = useTranslate();
 
   const theme = useTheme();
 
-  const handleSaveNote = async (e) => {
+  const handleSaveNote: FormEventHandler = async (e) => {
     e.preventDefault();
     try {
+      const resp = await fetchWebPipe('/player/save_note', {
+        method: 'POST',
+        data: {
+          license: playerDetails.license,
+          note: note,
+        }
+      })
       enqueueSnackbar("Saved Note", {
         variant: "success",
       });
+      forceRefresh(val => val + 1)
     } catch (e) {
+      console.error(e)
       enqueueSnackbar("An error ocurred saving the note", {
         variant: "error",
       });
     }
   };
+
+  useEffect(() => {
+    setNote(playerDetails.notes || "")
+  }, [playerDetails])
 
   return (
     <DialogContent>

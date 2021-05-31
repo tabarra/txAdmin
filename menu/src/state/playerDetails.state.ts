@@ -47,6 +47,7 @@ const playerDetails = {
   selectedPlayerData: selector<TxAdminPlayerAPIResp>({
     key: 'selectedPlayerDetails',
     get: async ({ get }) => {
+      get(playerDetails.forcePlayerRefresh)
       const assocPlayer = get(playerDetails.associatedPlayer)
       const assocPlayerLicense = assocPlayer.license
 
@@ -61,9 +62,9 @@ const playerDetails = {
       }
     }
   }),
-  loading: atom({
-    key: 'selectedPlayerDetailsLoading',
-    default: true
+  forcePlayerRefresh: atom({
+    key: 'forcePlayerRefresh',
+    default: 0
   }),
   associatedPlayer: atom<PlayerData | null>({
     key: 'associatedPlayerDetails',
@@ -73,7 +74,9 @@ const playerDetails = {
 
 export const usePlayerDetailsValue = () => useRecoilValue<TxAdminPlayerAPIResp>(playerDetails.selectedPlayerData)
 
-export const usePlayerDetails = () => useRecoilState(playerDetails.selectedPlayerData)
+export const useForcePlayerRefresh = () => useSetRecoilState(playerDetails.forcePlayerRefresh)
+
+export const usePlayerDetails = () => useRecoilState<TxAdminPlayerAPIResp>(playerDetails.selectedPlayerData)
 
 export const useAssociatedPlayerValue = () => useRecoilValue<PlayerData>(playerDetails.associatedPlayer)
 
