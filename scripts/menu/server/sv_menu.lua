@@ -41,6 +41,14 @@ local function PlayerHasTxPermission(source, permission)
   return allow
 end
 
+---@param id string
+---@param data table|nil
+local function sendFullClientData(id, data)
+  data = data or LAST_PLAYER_DATA
+  TriggerLatentClientEvent('txAdmin:menu:setPlayerState', id, EMIT_BITRATE, data)
+end
+
+---@param onlineAdminIDs table<number>
 AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
   debugPrint('^3Admins changed. Online admins: ' .. json.encode(onlineAdminIDs) .. "^0")
   
@@ -130,6 +138,7 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
       if resp and resp.isAdmin then
         debugPrint("Caching admin " .. s .. " permissions: " .. json.encode(resp.permissions))
         adminPermissions[s] = resp.permissions
+        sendFullClientData(s)
       else
         adminPermissions[s] = nil
       end
@@ -452,7 +461,7 @@ CreateThread(function()
     -- get the list of all players to send to
     debugPrint("^4Sending ^3" .. #found .. "^4 users details to ^3" .. totalAdmins .. "^4 admins^0")
     for id, _ in pairs(adminPermissions) do
-      TriggerLatentClientEvent('txAdmin:menu:setPlayerState', id, EMIT_BITRATE, found)
+      sendFullClientData(id, found)
     end
   end
 end)
