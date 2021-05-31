@@ -121,7 +121,7 @@ const DialogBanView: React.FC = () => {
           variant="outlined"
           value={duration}
           onChange={(e) => setDuration(e.target.value)}
-          helperText={t("nui_meni.player_modal.ban.helper_text")}
+          helperText={t("nui_menu.player_modal.ban.helper_text")}
           fullWidth
         >
           {banDurations.map((option) => (

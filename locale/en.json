@@ -188,7 +188,7 @@
                 "months": "months",
                 "perm": "Permanent",
                 "custom": "Custom",
-                "helper_text": "Please select an duration"
+                "helper_text": "Please select a duration"
             }
         }
     }
