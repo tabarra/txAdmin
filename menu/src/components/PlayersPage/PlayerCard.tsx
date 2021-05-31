@@ -103,7 +103,7 @@ const PlayerCard: React.FC<{playerData: PlayerData}> = ({playerData}) => {
               variant="subtitle1"
               color="textSecondary"
             >
-              {formatDistance(playerData.distance)}
+              {playerData.distance < 0 ? `?? m` : formatDistance(playerData.distance)}
             </Typography>
           </Box>
           <IconButton onClick={handlePlayerClick}>{<MoreVert />}</IconButton>
