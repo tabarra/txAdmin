@@ -188,7 +188,7 @@ local function toggleFreecam(enabled)
   NetworkSetEntityInvisibleToNetwork(ped, enabled)
   SetEntityCollision(ped, not enabled, not enabled)
   
-  local veh = GetVehiclePedIsIn(ped, true)
+  local veh = GetVehiclePedIsIn(ped, false)
   if veh == 0 then
     veh = nil
   else
