@@ -18,7 +18,7 @@ export enum VehicleStatus {
 }
 
 export type PlayerData = Required<PlayerDataPartial> & { id: number };
-export type PlayerDataSetPartial = { [serverID: number]: PlayerDataPartial };
+export type PlayerDataSetPartial = { [serverID: string]: PlayerDataPartial };
 
 export interface PlayerDataPartial {
   vehicleStatus: VehicleStatus;

@@ -33,7 +33,7 @@ export const useNuiListenerService = () => {
             oldStateMap[id][k] = v
           }
         }
-        oldStateMap[id].id = id
+        oldStateMap[id].id = +id
       })
       return Object.values(oldStateMap)
     })
