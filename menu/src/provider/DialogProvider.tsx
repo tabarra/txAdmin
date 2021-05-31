@@ -84,10 +84,6 @@ export const DialogProvider: React.FC = ({ children }) => {
     }
   }, [dialogOpen, setDisabledKeyNav, setDisableTabs]);
 
-  useEffect(() => {
-    if (dialogOpen) setListenForExit(false);
-  }, [dialogOpen]);
-
   const handleDialogSubmit = () => {
     if (!dialogInputVal.trim()) {
       return enqueueSnackbar("You cannot have an empty input", {
@@ -97,8 +93,7 @@ export const DialogProvider: React.FC = ({ children }) => {
 
     dialogProps.onSubmit(dialogInputVal);
 
-    setDialogOpen(false);
-    setDialogInputVal("");
+    setListenForExit(true)
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -108,11 +103,13 @@ export const DialogProvider: React.FC = ({ children }) => {
   const openDialog = useCallback((dialogProps: InputDialogProps) => {
     setDialogProps(dialogProps);
     setDialogOpen(true);
+    setListenForExit(false)
   }, []);
 
   const handleDialogClose: ReactEventHandler<{}> = useCallback((e) => {
     e.stopPropagation();
     setDialogOpen(false);
+    setListenForExit(true)
   }, []);
 
   // We reset default state after the animation is complete
