@@ -14,12 +14,6 @@ if (GetConvar('TXADMIN_MENU_DEBUG', 'false') ~= 'true') then
   SetConvar("txAdmin-pipeToken", "removed")
 end
 
---BETA BETA BETA BETA BETA BETA BETA BETA BETA BETA BETA 
-if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
-  print('txAdmin beta menu disabled.')
-  return
-end
-
 
 -- Vars
 local adminPermissions = {}

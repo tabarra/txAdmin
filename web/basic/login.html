@@ -240,12 +240,19 @@
                         {{/if}}
                         {{@if(it.template == 'normal')}}
                             <h1 class="mb-3">Login</h1>
-                            <a class="btn btn-brand btn-stack-overflow {{it.citizenfxDisabled|isDisabled}}"
-                                role="button" href="auth/citizenfx/redirect">
-                                <i class="logo-image"><svg><use href="#fivem-icon"></use></svg></i>
-                                <span>CitizenFX</span>
-                            </a>
+                            {{@if(it.isWebInterface)}}
+                                <a class="btn btn-brand btn-stack-overflow {{it.citizenfxDisabled|isDisabled}}"
+                                    role="button" href="auth/citizenfx/redirect">
+                                    <i class="logo-image"><svg><use href="#fivem-icon"></use></svg></i>
+                                    <span>CitizenFX</span>
+                                </a>
+                            {{#else}}
+                                <h5 class="text-secondary">
+                                    Automatic login failed, re-open the menu or login using your username/password below.
+                                </h5>
+                            {{/if}}
                             <div class="hrsep">OR</div>
+
                             <form action="auth/password" method="post">
                                 <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
                                     <div class="input-group-prepend">
