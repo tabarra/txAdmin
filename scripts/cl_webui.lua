@@ -60,7 +60,8 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, statusCode, body, header
     local sub = string.sub
     if sub(ret.path, 1, 5) == '/css/' or
       sub(ret.path, 1, 4) == '/js/' or
-      sub(ret.path, 1, 5) == '/img/' then
+      sub(ret.path, 1, 5) == '/img/' or
+      sub(ret.path, 1, 7) == '/fonts/' then
         staticCacheData[ret.path] = {
             body = body,
             headers = headers,

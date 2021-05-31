@@ -180,7 +180,7 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
   
     -- cache response if it is a static file
     local sub = string.sub
-    if httpCode == 200 and (sub(path, 1, 5) == '/css/' or sub(path, 1, 4) == '/js/' or sub(path, 1, 5) == '/img/') then
+    if httpCode == 200 and (sub(path, 1, 5) == '/css/' or sub(path, 1, 4) == '/js/' or sub(path, 1, 5) == '/img/' or sub(path, 1, 7) == '/fonts/') then
       -- remove query params from path, so people can't consume memory by spamming cache-busters
       for safePath in path:gmatch("([^?]+)") do
         local slimHeaders = {}
@@ -236,7 +236,9 @@ local function syncServerCtx()
   local svMaxClients = GetConvarInt('sv_maxclients', 30)
   ServerCtxObj.maxClients = svMaxClients
 
-  local txAdminLocale = GetConvar('txAdmin-locale', 'en')
+  -- FIXME: temporarily disabled;
+  -- local txAdminLocale = GetConvar('txAdmin-locale', 'en')
+  txAdminLocale = 'en'
   ServerCtxObj.locale = txAdminLocale
 
   debugPrint('Server CTX assigned to GlobalState, CTX:')

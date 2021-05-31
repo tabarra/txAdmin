@@ -493,7 +493,9 @@
     })
     searchInput.addEventListener('keyup', (e) => {
         if(e.keyCode !== 13){
-            searchButton.innerHTML = getSVG('magnifying-glass') + ` Search`;
+            if(!searchButton.innerHTML.includes('magnifying-glass')){
+                searchButton.innerHTML = getSVG('magnifying-glass') + ` Search`;
+            }
         }else{
             if(searchInput.value.length){
                 performSearch();

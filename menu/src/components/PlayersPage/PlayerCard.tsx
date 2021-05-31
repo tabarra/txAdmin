@@ -58,7 +58,7 @@ const PlayerCard: React.FC<{playerData: PlayerData}> = ({playerData}) => {
 
   const handlePlayerClick = () => {
     setModalOpen(true);
-    setAssociatedPlayer(playerData)
+    setAssociatedPlayer(playerData);
   };
 
   const upperCaseStatus =
