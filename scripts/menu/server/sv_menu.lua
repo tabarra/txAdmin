@@ -75,6 +75,28 @@ end)
 -- [[ WebPipe Proxy ]]
 --
 local _pipeLastReject
+local _pipeFastCache = {}
+
+---@param src string
+---@param callbackId number
+---@param statusCode number
+---@param path string
+---@param body string
+---@param headers table
+---@param cached boolean|nil
+local function sendResponse(src, callbackId, statusCode, path, body, headers, cached)
+  local errorCode = tonumber(statusCode) >= 400
+  local resultColor = errorCode and '^1' or '^2'
+  local cachedStr = cached and " ^1(cached)^0" or ""
+  debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 %s<< %s ^4%s%s^0"):format(
+    src, callbackId, resultColor, statusCode, path, cachedStr))
+  if errorCode then
+    debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 %s<< Headers: %s^0"):format(
+      src, callbackId, resultColor, json.encode(headers)))
+  end
+  TriggerLatentClientEvent('txAdmin:WebPipe', src, 125000, callbackId, statusCode, body, headers)
+end
+
 RegisterNetEvent('txAdmin:WebPipe')
 AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, body)
   local s = source
@@ -92,6 +114,13 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
     debugPrint(string.format(
       "^3WebPipe[^5%d^0:^1%d^3]^0 ^1rejected request from ^3%s^1 for ^5%s^0", s, callbackId, s, path))
     TriggerClientEvent('txAdmin:WebPipe', s, callbackId, 403, "{}", {})
+    return
+  end
+  
+  -- Return fast cache
+  if _pipeFastCache[path] ~= nil then
+    local cachedData = _pipeFastCache[path]
+    sendResponse(s, callbackId, 200, path, cachedData.data, cachedData.headers, true)
     return
   end
   
@@ -144,16 +173,24 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
       end
     end
   
-    local errorCode = tonumber(httpCode) >= 400
-    local resultColor = errorCode and '^1' or '^2'
-    debugPrint(string.format(
-      "^3WebPipe[^5%d^0:^1%d^3]^0 %s<< %s ^4%s^0", s, callbackId, resultColor, httpCode, path))
-    if errorCode then
-      debugPrint(string.format(
-        "^3WebPipe[^5%d^0:^1%d^3]^0 %s<< Headers: %s^0", s, callbackId, resultColor, json.encode(resultHeaders)))
+    -- cache response if it is a static file
+    local sub = string.sub
+    if httpCode == 200 and (sub(path, 1, 5) == '/css/' or sub(path, 1, 4) == '/js/' or sub(path, 1, 5) == '/img/') then
+      -- remove query params from path, so people can't consume memory by spamming cache-busters
+      for safePath in path:gmatch("([^?]+)") do
+        local slimHeaders = {}
+        for k, v in pairs(resultHeaders) do
+          if k ~= 'Set-Cookie' then
+            slimHeaders[k] = v
+          end
+        end
+        _pipeFastCache[safePath] = { data = data, headers = slimHeaders }
+        debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^5cached ^4%s^0"):format(s, callbackId, safePath))
+        break
+      end
     end
-    
-    TriggerClientEvent('txAdmin:WebPipe', s, callbackId, httpCode, data, resultHeaders)
+  
+    sendResponse(s, callbackId, httpCode, path, data, resultHeaders)
   end, method, body, headers, {
     followLocation = false
   })
