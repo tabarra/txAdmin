@@ -138,8 +138,8 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
   end
   
   local url = "http://" .. apiHost .. path:gsub("//", "/")
-  debugPrint(string.format("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6%s^0", s, callbackId, url))
-  debugPrint(string.format("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6Headers: %s^0", s, callbackId, json.encode(headers)))
+  debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6%s^0"):format(s, callbackId, url))
+  debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6Headers: %s^0"):format(s, callbackId, json.encode(headers)))
 
   PerformHttpRequest(url, function(httpCode, data, resultHeaders)
     -- fixing body for error pages (eg 404)
@@ -459,7 +459,8 @@ CreateThread(function()
   
   while true do
     Wait(5000)
-    
+  
+    local totalFound = 0
     local found = {}
     local players = GetPlayers()
     for _, serverID in pairs(players) do
@@ -478,21 +479,17 @@ CreateThread(function()
       if type(LAST_PLAYER_DATA[serverID]) ~= 'table' then
         LAST_PLAYER_DATA[serverID] = {}
       end
-      local sendAll = (lastData.i == nil)
-      
+        
       local emitData = {}
-      emitData.i = serverID -- set so it is stored
+      local sendAll = (lastData.u == nil)
       if sendAll or lastData.h ~= health then emitData.h = health end
       if sendAll or lastData.v ~= veh then emitData.v = veh end
       if sendAll or lastData.u ~= username then emitData.u = username end
       if sendAll or lastData.c ~= coords then emitData.c = coords end
       if sendAll then emitData.l = getPlayersLicense(serverID) end
-      for k, v in pairs(emitData) do
-        LAST_PLAYER_DATA[serverID][k] = v
-        --debugPrint(string.format("^2emitting ^3%s^2 (^3%s^2) for ^6%d", k, v, serverID))
-      end
-      emitData.i = nil -- unneeded
+      for k, v in pairs(emitData) do LAST_PLAYER_DATA[serverID][k] = v end
       found[serverID] = emitData
+      totalFound = totalFound + 1
       Wait(0)
     end
     
@@ -501,7 +498,7 @@ CreateThread(function()
     for _ in pairs(adminPermissions) do totalAdmins = totalAdmins + 1 end
     
     -- get the list of all players to send to
-    debugPrint("^4Sending ^3" .. #found .. "^4 users details to ^3" .. totalAdmins .. "^4 admins^0")
+    debugPrint("^4Sending ^3" .. totalFound .. "^4 users details to ^3" .. totalAdmins .. "^4 admins^0")
     for id, _ in pairs(adminPermissions) do
       sendFullClientData(id, found)
     end
