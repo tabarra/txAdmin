@@ -342,6 +342,7 @@ end
 
 --[[ Player list sync ]]
 local posCache = {}
+local vehCache = {}
 RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
   local NetToVeh = NetToVeh
   local GetVehicleClass = GetVehicleClass
@@ -356,7 +357,9 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
   for serverId, row in pairs(data) do
     -- position cache
     if type(row.c) == 'vector3' then posCache[serverId] = row.c end
+    if type(row.v) == 'number' then vehCache[serverId] = row.v end
     local pos = posCache[serverId]
+    local veh = vehCache[serverId]
     local dist
     if pos ~= nil then
       local targetVec = vec3(pos[1], pos[2], pos[3])
@@ -367,8 +370,8 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
     
     -- calculate the vehicle status
     local vehicleStatus = 'walking'
-    if row.v then
-      local vehEntity = NetToVeh(row.v)
+    if veh > 0 then
+      local vehEntity = NetToVeh(veh)
       if not vehEntity or vehEntity == 0 then
         vehicleStatus = 'unknown'
       else

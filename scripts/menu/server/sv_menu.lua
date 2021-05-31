@@ -414,10 +414,8 @@ CreateThread(function()
     for _, serverID in pairs(players) do
       local ped = GetPlayerPed(serverID)
       local veh = GetVehiclePedIsIn(ped)
-      if veh and veh > 0 then
+      if veh > 0 then
         veh = NetworkGetNetworkIdFromEntity(veh)
-      else
-        veh = nil
       end
       
       local health = ceil(((GetEntityHealth(ped) - 100) / 100) * 100)
