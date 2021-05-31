@@ -1,9 +1,13 @@
 -- Vars
 local pipeReturnCallbacks = {}
 local pipeCallbackCounter = 1
--- FIXME: add callback timeouts on 9000ms
--- FIXME: control the pipeReturnCallbacks to prevent memory leak
--- FIXME: check what happens if the pipeCallbackCounter gets too big
+
+---@class StaticCacheEntry
+---@field body string
+---@field headers string
+
+---@class StaticCacheData : table<string, StaticCacheEntry>
+local staticCacheData = {}
 
 -- catching all NUI requests for https://monitor/WebPipe/
 RegisterRawNuiCallback('WebPipe', function(req, cb)
@@ -11,7 +15,18 @@ RegisterRawNuiCallback('WebPipe', function(req, cb)
     local headers = req.headers
     local body = req.body
     local method = req.method
-    debugPrint("^3WebPipe[^1" .. pipeCallbackCounter .. "^3]^0 ^2" .. method .. " ^4" .. path .. "^0")
+    
+    debugPrint(("^3WebPipe[^1%d^3]^0 ^2%s ^4%s^0"):format(pipeCallbackCounter, method, path))
+    if staticCacheData[path] ~= nil then
+        debugPrint(("^3WebPipe[^1%d^3]^0 ^2answered from cache!"):format(pipeCallbackCounter))
+        local cacheEntry = staticCacheData[path]
+        cb({
+            status = 200,
+            body = cacheEntry.body,
+            headers = cacheEntry.headers,
+        })
+        return
+    end
 
     local id = pipeCallbackCounter
     pipeReturnCallbacks[id] = { cb = cb, path = path }
@@ -40,6 +55,16 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, statusCode, body, header
             sendMenuMessage('setDebugMode', isMenuDebug)
             ret.cb(resp)
         end
+    end
+    
+    local sub = string.sub
+    if sub(ret.path, 1, 5) == '/css/' or
+      sub(ret.path, 1, 4) == '/js/' or
+      sub(ret.path, 1, 5) == '/img/' then
+        staticCacheData[ret.path] = {
+            body = body,
+            headers = headers,
+        }
     end
     
     ret.cb({
