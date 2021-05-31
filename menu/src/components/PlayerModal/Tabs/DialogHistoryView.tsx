@@ -33,11 +33,19 @@ const actionTypes = {
     color: "gray",
   },
 };
+// TODO: Make the styling on this nicer
+const NoHistoryBox = () => (
+  <Box>
+    <Typography color="secondary">No history found!</Typography>
+  </Box>
+)
 
 const DialogHistoryView: React.FC = () => {
   const classes = useStyles();
   const player = usePlayerDetailsValue();
   const theme = useTheme();
+
+  const playerActionHistory = player.actionHistory
 
   return (
     <DialogContent>
@@ -45,7 +53,7 @@ const DialogHistoryView: React.FC = () => {
         Related History
       </Typography>
       <Box>
-        {player.actionHistory.map((h, index) => (
+        {playerActionHistory?.length ? playerActionHistory.map((h, index) => (
           <Box
             className={classes.historyItem}
             borderLeft={`solid 2px ${actionTypes[h.action].color}`}
@@ -63,7 +71,9 @@ const DialogHistoryView: React.FC = () => {
               <Typography>{h.date}</Typography>
             </Box>
           </Box>
-        ))}
+        )) : (
+          <NoHistoryBox />
+        )}
       </Box>
     </DialogContent>
   );
