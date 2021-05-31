@@ -506,3 +506,10 @@ CreateThread(function()
     end
   end
 end)
+
+--[[ Handle player disconnects ]]
+AddEventHandler('playerDropped', function()
+  local s = source
+  adminPermissions[s] = nil
+  LAST_PLAYER_DATA[s] = nil
+end)
