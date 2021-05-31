@@ -507,10 +507,22 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(netID)
   local oldVeh = GetVehiclePedIsIn(ped, false)
   local oldVel = DoesEntityExist(oldVeh) and GetEntitySpeed(oldVeh) or 0.0
   
+  -- collect seat positions of all peds  
+  local seatsToPlace = {}
+  
   -- only delete if the new vehicle is found
   if oldVeh and IsPedInVehicle(ped, oldVeh, true) then
+    local maxSeats = GetVehicleMaxNumberOfPassengers(oldVeh)
+    for i = -1, maxSeats do
+      local pedInSeat = GetPedInVehicleSeat(oldVeh, i)
+      if pedInSeat > 0 then
+        seatsToPlace[i] = pedInSeat
+      end
+    end
     debugPrint("Deleting existing vehicle (" .. oldVeh .. ")")
     DeleteVehicle(oldVeh)
+  else
+    seatsToPlace[-1] = ped
   end
   
   local tries = 0
@@ -522,7 +534,10 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(netID)
   local veh = NetworkGetEntityFromNetworkId(netID)
   if not veh or veh == 0 then error("Vehicle did not spawn") end
   
-  SetPedIntoVehicle(ped, veh, -1)
+  for seatIndex, seatPed in pairs(seatsToPlace) do
+    SetPedIntoVehicle(seatPed, veh, seatIndex)
+  end
+    
   if oldVel > 0.0 then
     SetVehicleEngineOn(veh, true, true, false)
     SetVehicleForwardSpeed(veh, oldVel)
