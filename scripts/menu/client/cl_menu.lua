@@ -259,13 +259,14 @@ RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode)
   end
 end)
 
-RegisterNUICallback('spawnWeapon', function(weapon, cb)
-  debugPrint("Spawning weapon: " .. weapon)
-  local playerPed = PlayerPedId()
-  local weaponHash = GetHashKey(weapon)
-  GiveWeaponToPed(playerPed, weaponHash, 500, false, true)
-  cb({})
-end)
+-- [[ Spawn weapon (only in dev, for now) ]]
+if isMenuDebug then
+  RegisterNUICallback('spawnWeapon', function(weapon, cb)
+    debugPrint("Spawning weapon: " .. weapon)
+    GiveWeaponToPed(PlayerPedId(), weapon, 500, false, true)
+    cb({})
+  end)
+end
 
 -- CB From Menu
 RegisterNUICallback('spawnVehicle', function(data, cb)

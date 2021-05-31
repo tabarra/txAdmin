@@ -225,16 +225,16 @@ export const MainPageList: React.FC = () => {
   };
 
   // This is here for when I am bored developing
-  const handleSpawnWeapon = () => {
-    openDialog({
-      title: t("nui_menu.page_main.spawn_wep.dialog_title"),
-      placeholder: "WEAPON_ASSAULTRIFLE",
-      description: t("nui_menu.page_main.spawn_wep.dialog_desc"),
-      onSubmit: (inputValue) => {
-        fetchNui("spawnWeapon", inputValue);
-      },
-    });
-  };
+  // const handleSpawnWeapon = () => {
+  //   openDialog({
+  //     title: t("nui_menu.page_main.spawn_wep.dialog_title"),
+  //     placeholder: "WEAPON_ASSAULTRIFLE",
+  //     description: t("nui_menu.page_main.spawn_wep.dialog_desc"),
+  //     onSubmit: (inputValue) => {
+  //       fetchNui("spawnWeapon", inputValue);
+  //     },
+  //   });
+  // };
 
   // This is where we keep a memoized list of all actions, can be dynamically
   // set in the future for third party resource integration. For now here for
