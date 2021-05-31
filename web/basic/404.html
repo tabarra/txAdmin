@@ -10,10 +10,13 @@
     <meta name="author" content="André Tabarra">
     <title>404 - txAdmin</title>
     <link href="css/simple-line-icons.css" rel="stylesheet">
-    <link href="css/coreui.min.css" rel="stylesheet">
-    <link href="css/dark.css" rel="stylesheet">
-    <link rel="shortcut icon" type="image/png" href="img/favicon_default.png" id="favicon" />
-    <link rel="stylesheet" href="css/txAdmin.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.0/css/simple-line-icons.min.css" 
+        integrity="sha512-yxSQDoat2NPQ9U4mKdYra2YNenVsnRuGxVvyrirmrDKzwOdxKJVqkDEvQ17pL/PJ6B7n2n77Xm6d62bMjCBqCQ==" 
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{it.resourcePath}}css/coreui.min.css">
+    <link rel="stylesheet" href="{{it.resourcePath}}css/txAdmin.css">
+    <link rel="stylesheet" href="{{it.resourcePath}}css/dark.css">
+    <link rel="shortcut icon" href="img/favicon_default.png" type="image/png" id="favicon" />
     <meta name="robots" content="noindex">
 </head>
 
@@ -25,16 +28,18 @@
                     <h1 class="float-left display-3 mr-4">404</h1>
                     <h4 class="pt-3">Oops! You're lost.</h4>
                     <p class="text-muted">The page you are looking for was not found.</p>
-                    <a href="/" role="button" class="btn btn-dark">Go Back</a>
+                    <a href="{{it.basePath}}" role="button" class="btn btn-dark">Go Back</a>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- CoreUI and necessary plugins-->
-    <script src="js/jquery.min.js"></script>
-    <script src="js/coreui.bundle.min.js"></script>
-    <script src="js/bootstrap-notify.min.js"></script>
+    <!-- <script src="js/jquery.min.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" 
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" 
+        crossorigin="anonymous"></script>
+    <script src="{{it.resourcePath}}js/coreui.bundle.min.js"></script>
 </body>
 
 </html>

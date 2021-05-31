@@ -13,7 +13,7 @@
 - [ ] add html file caching
 - [ ] master actions deveria aparecer, mas desabilitado
 - [ ] srvCmdBuffer needs to strip the color escape characters
-
+- [ ] um monte de vars de render no ctxutils são iguais nos 3 casos de render, centralizar em uma função só
 
 
 

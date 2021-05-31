@@ -150,7 +150,7 @@ export const MainPageList: React.FC = () => {
         modelName = modelName.toLowerCase();
         if (modelName === 'car') {
           modelName = (Math.random() < 0.05) ? 'caddy' 
-            : arrayRandom(['comet2', 'coquette', 'monroe', 'lynx', 'f620', 'infernus2', 'sc1', 'toros']);
+            : arrayRandom(['comet2', 'coquette', 'monroe', 'lynx', 'f620', 'nero', 'sc1', 'toros']);
         } else if (modelName === 'bike') {
           modelName = (Math.random() < 0.05) ? 'bmx' : arrayRandom(['esskey', 'nemesis', 'cruiser']);
         } else if (modelName === 'heli') {

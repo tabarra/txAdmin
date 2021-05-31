@@ -66,6 +66,7 @@ sqrl.filters.define('ternary', (x) => {
 
 //Consts
 const WEBPIPE_PATH = 'https://monitor/WebPipe/';
+const RESOURCE_PATH = 'nui://monitor/web/public/';
 const THEME_DARK = 'theme--dark';
 const DEFAULT_AVATAR = 'img/default_avatar.png';
 
@@ -80,6 +81,7 @@ async function renderMasterView(view, reqSess, data, txVars) {
     data.isWebInterface = txVars.isWebInterface;
     data.uiTheme = (txVars.darkMode) ? THEME_DARK : '';
     data.basePath = (txVars.isWebInterface) ? '/' : WEBPIPE_PATH;
+    data.resourcePath = (txVars.isWebInterface) ? '' : RESOURCE_PATH;
     data.headerTitle = (!isUndefined(data.headerTitle)) ? `${data.headerTitle} - txAdmin` : 'txAdmin';
     data.serverProfile = globals.info.serverProfile;
     data.txAdminVersion = GlobalData.txAdminVersion;
@@ -131,6 +133,7 @@ async function renderLoginView(data, txVars) {
     data.isWebInterface = txVars.isWebInterface;
     data.uiTheme = (txVars.darkMode) ? THEME_DARK : '';
     data.basePath = (txVars.isWebInterface) ? '/' : WEBPIPE_PATH;
+    data.resourcePath = (txVars.isWebInterface) ? '' : RESOURCE_PATH;
     data.logoURL = (GlobalData.loginPageLogo) ? GlobalData.loginPageLogo : 'img/txadmin.png';
     data.isMatrix = (Math.random() <= 0.05);
     data.ascii = helpers.txAdminASCII();
@@ -178,6 +181,7 @@ async function renderSoloView(view, data, txVars) {
     data.isWebInterface = txVars.isWebInterface;
     data.uiTheme = (txVars.darkMode) ? THEME_DARK : '';
     data.basePath = (txVars.isWebInterface) ? '/' : WEBPIPE_PATH;
+    data.resourcePath = (txVars.isWebInterface) ? '' : RESOURCE_PATH;
     data.jsInjection = getJavascriptConsts({
         isWebInterface: txVars.isWebInterface,
         TX_BASE_PATH: (txVars.isWebInterface) ? '' : WEBPIPE_PATH,

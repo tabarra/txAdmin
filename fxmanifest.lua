@@ -33,5 +33,16 @@ ui_page 'scripts/menu/nui/index.html'
 
 files {
     'scripts/menu/nui/index.html',
-    'scripts/menu/nui/**/*'
+    'scripts/menu/nui/**/*',
+
+    -- WebPipe optimization:
+    'web/public/css/coreui.min.css',
+    'web/public/css/txAdmin.css',
+    'web/public/css/dark.css',
+    'web/public/js/coreui.bundle.min.js',
+    'web/public/js/bootstrap-notify.min.js',
+    'web/public/js/txadmin/base.js',
+    'web/public/js/txadmin/main.js',
+    'web/public/js/txadmin/players.js',
+    -- 'web/public/**/*',
 }

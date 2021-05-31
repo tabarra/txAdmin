@@ -10,10 +10,12 @@
     <meta name="author" content="André Tabarra">
     <title>{{it.headerTitle}}</title>
     <!--style-->
-    <link rel="stylesheet" href="css/simple-line-icons.css">
-    <link rel="stylesheet" href="css/coreui.min.css">
-    <link rel="stylesheet" href="css/txAdmin.css">
-    <link rel="stylesheet" href="css/dark.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.0/css/simple-line-icons.min.css" 
+        integrity="sha512-yxSQDoat2NPQ9U4mKdYra2YNenVsnRuGxVvyrirmrDKzwOdxKJVqkDEvQ17pL/PJ6B7n2n77Xm6d62bMjCBqCQ==" 
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{it.resourcePath}}css/coreui.min.css">
+    <link rel="stylesheet" href="{{it.resourcePath}}css/txAdmin.css">
+    <link rel="stylesheet" href="{{it.resourcePath}}css/dark.css">
     <link rel="shortcut icon" href="img/favicon_default.png" type="image/png" id="favicon" />
     <style>
         .zapAdContainer {
@@ -109,7 +111,9 @@
             </li>
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="serverLog">
-                    <i class="c-sidebar-nav-icon nav-icon icon-eye"></i> Server Log
+                    <svg class="c-sidebar-nav-icon">
+                        <use href="img/coreui_icons.svg#cil-excerpt"></use>
+                    </svg> Server Log
                 </a>
             </li>
             <li class="c-sidebar-nav-item">
