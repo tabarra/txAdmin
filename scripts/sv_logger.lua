@@ -101,18 +101,20 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
     elseif event == 'healAll' then
         message = "healing all players!"
     elseif event == 'teleportCoords' then
+        if type(data) ~= 'table' then return end
         local x = data.x
         local y = data.y
         local z = data.z
-        message = string.format("teleporting to coordinates (x=%.3f, y=%0.3f, z=%0.3f)",
-          x or 0.0, y or 0.0, z or 0.0)
+        message = ("teleporting to coordinates (x=%.3f, y=%0.3f, z=%0.3f)"):format(x or 0.0, y or 0.0, z or 0.0)
     elseif event == 'teleportWaypoint' then
         message = "teleporting to a waypoint"
     elseif event == 'announcement' then
+        if type(data) ~= 'string' then return end
         message = "making a server-wide announcement: " .. data
     elseif event == 'vehicleRepair' then
         message = "repairing their vehicle"
     elseif event == 'spawnVehicle' then
+        if type(data) ~= 'string' then return end
         message = "spawning a vehicle (model: " .. data .. ")"
     elseif event == 'playerModeChanged' then
         if data == 'godmode' then
@@ -125,13 +127,19 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
             message = "invalid player mode"
         end
     elseif event == 'teleportPlayer' then
+        if type(data) ~= 'table' then return end
         local playerName = data.playerName
-        local x = data.x
-        local y = data.y
-        local z = data.z
-        message = string.format("teleporting to player %s (x=%.3f, y=%.3f, z=%.3f)", playerName, x, y, z)
+        if type(playerName) ~= 'string' then return end
+        local x = data.x or 0.0
+        local y = data.y or 0.0
+        local z = data.z or 0.0
+        message = ("teleporting to player %s (x=%.3f, y=%.3f, z=%.3f)"):format(playerName, x, y, z)
     elseif event == 'healPlayer' then
-        message = "healing player " .. (data or 'unknown?')
+        if type(data) ~= 'string' then return end
+        message = "healing player " .. data
+    elseif event == 'summonPlayer' then
+        if type(data) ~= 'string' then return end
+        message = "summoning player " .. data
     else
         return
     end
