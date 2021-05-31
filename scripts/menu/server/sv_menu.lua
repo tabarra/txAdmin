@@ -511,5 +511,5 @@ end)
 AddEventHandler('playerDropped', function()
   local s = source
   adminPermissions[s] = nil
-  LAST_PLAYER_DATA[s] = nil
+  LAST_PLAYER_DATA[tostring(s)] = nil
 end)
