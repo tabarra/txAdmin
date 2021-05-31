@@ -94,6 +94,7 @@ export const DialogProvider: React.FC = ({ children }) => {
     dialogProps.onSubmit(dialogInputVal);
 
     setListenForExit(true)
+    setDialogOpen(false)
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
