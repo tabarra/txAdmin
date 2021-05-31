@@ -66,7 +66,7 @@ export const PlayerPageHeader: React.FC = () => {
           {t("nui_menu.page_players.misc.online_players")}
         </Typography>
         <Typography className={classes.playerCount}>
-          {`${allPlayers.length}/${serverCtx.maxClients} ${t('nui_menu.page_players.misc.players')} - OneSync (${serverCtx.oneSync.type})`}
+          {`${allPlayers.length}/${serverCtx.maxClients} ${t('nui_menu.page_players.misc.players')} - OneSync (${serverCtx.oneSync.type || 'unknown'})`}
         </Typography>
       </Box>
       <Box display="flex" alignItems="center" justifyContent="center">
