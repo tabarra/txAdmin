@@ -153,7 +153,7 @@ RegisterNUICallback('tpToWaypoint', function(_, cb)
 end)
 
 RegisterNUICallback('tpToPlayer', function(data, cb)
-  TriggerServerEvent('txAdmin:menu:tpToPlayer', data.id)
+  TriggerServerEvent('txAdmin:menu:tpToPlayer', tonumber(data.id))
   cb({})
 end)
 
