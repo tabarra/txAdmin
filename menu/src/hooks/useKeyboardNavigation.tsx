@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useKeyboardNavContext } from "../provider/KeyboardNavProvider";
+import { useIsMenuVisible } from '../state/visibility.state';
 
 interface KeyCallbacks {
   onLeftDown?: () => void;
@@ -32,11 +33,17 @@ export const useKeyboardNavigation = ({
   disableOnFocused = false
 }: KeyCallbacks) => {
   const { disabledKeyNav } = useKeyboardNavContext();
+  const isMenuVisible = useIsMenuVisible()
+
 
   useEffect(() => {
     // Our basic handler function for keydown events
     const keyHandler = (e: KeyboardEvent) => {
-      if (disableOnFocused && disabledKeyNav) return
+      if (disableOnFocused && disabledKeyNav) return;
+
+      // Fix for menu still having focus when it shouldn't
+      if (!isMenuVisible) return;
+
       switch (e.code) {
         case "ArrowLeft":
           e.preventDefault()
@@ -73,6 +80,7 @@ export const useKeyboardNavigation = ({
     onDownDown,
     onEnterDown,
     disabledKeyNav,
-    disableOnFocused
+    disableOnFocused,
+    isMenuVisible
   ]);
 };
