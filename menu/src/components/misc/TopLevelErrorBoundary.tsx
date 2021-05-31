@@ -35,6 +35,7 @@ export class TopLevelErrorBoundary extends Component<{}, ErrorCompState> {
   }
 
   handleReloadClick() {
+    fetchNui('focusInputs', false)
     window.location.reload();
   }
 
