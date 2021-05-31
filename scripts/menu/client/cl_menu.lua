@@ -12,10 +12,6 @@ CreateThread(function()
   isMenuDebug = (GetConvar('TXADMIN_MENU_DEBUG', 'false') == 'true')
 end)
 
-
-
-
-
 local isRDR = not TerraingridActivate and true or false
 local dismissKey = isRDR and 0xD9D0E1C0 or 22
 local dismissKeyGroup = isRDR and 1 or 0
@@ -185,6 +181,7 @@ RegisterNUICallback('playSound', function(sound, cb)
   PlaySoundFrontend(-1, SoundEnum[sound], 'HUD_FRONTEND_DEFAULT_SOUNDSET', 1)
   cb({})
 end)
+
 
 -- CB From Menu
 -- Data is a object with x, y, z

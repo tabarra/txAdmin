@@ -11,6 +11,7 @@ export interface ServerCtx {
   projectName: null | string,
   maxClients: number
   locale: string
+  switchPageKey: string
 }
 
 const serverCtx = atom<ServerCtx>({

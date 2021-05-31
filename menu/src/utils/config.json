@@ -6,6 +6,7 @@
       "status": true
     },
     "projectName": "Project Taso",
-    "maxClients": 32
+    "maxClients": 32,
+    "switchPageKey": "Tab"
   }
 }

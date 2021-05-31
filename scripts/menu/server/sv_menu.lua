@@ -212,9 +212,11 @@ local ServerCtxObj = {
     type = nil,
     status = false
   },
+
   projectName = nil,
   maxClients = 30,
-  locale = nil
+  locale = nil,
+  switchPageKey = ''
 }
 
 local function syncServerCtx()
@@ -225,6 +227,10 @@ local function syncServerCtx()
   elseif oneSyncConvar == 'off' then
     ServerCtxObj.oneSyncStatus = false
   end
+  -- Convar must match the event.code *EXACTLY* as shown on this site
+  -- https://keycode.info/
+  local switchPageKey = GetConvar('txAdmin:Menu:PageKey', 'Tab')
+  ServerCtxObj.switchPageKey = switchPageKey
 
   -- Default '' in fxServer
   local svProjectName = GetConvar('sv_projectname', '')
