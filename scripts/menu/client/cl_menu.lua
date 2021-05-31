@@ -118,6 +118,10 @@ end)
 
 -- Triggered whenever we require full focus, cursor and keyboard
 RegisterNUICallback('focusInputs', function(shouldFocus, cb)
+  -- Will prevent mouse focus on initial menu mount as the useEffect emits there
+  if not menuIsAccessible then
+    return
+  end
   SetNuiFocus(true, shouldFocus)
   SetNuiFocusKeepInput(not shouldFocus)
   cb({})
