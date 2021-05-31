@@ -226,20 +226,19 @@ local function toggleGodMode(enabled)
   SetEntityInvincible(PlayerPedId(), enabled)
 end
 
+local freecamVeh = 0
 local function toggleFreecam(enabled)
   local ped = PlayerPedId()
   SetEntityVisible(ped, not enabled)
   SetPlayerInvincible(ped, enabled)
   FreezeEntityPosition(ped, enabled)
-  NetworkSetEntityInvisibleToNetwork(ped, enabled)
-  SetEntityCollision(ped, not enabled, not enabled)
   
-  local veh = GetVehiclePedIsIn(ped, false)
-  if veh == 0 then
-    veh = nil
-  else
-    NetworkSetEntityInvisibleToNetwork(veh, enabled)
-    SetEntityCollision(veh, not enabled, not enabled)
+  if enabled then
+    freecamVeh = GetVehiclePedIsIn(ped, false)
+    if freecamVeh > 0 then
+      NetworkSetEntityInvisibleToNetwork(freecamVeh, true)
+      SetEntityCollision(freecamVeh, false, false)
+    end
   end
   
   local function enableNoClip()
@@ -251,14 +250,26 @@ local function toggleFreecam(enabled)
     Citizen.CreateThread(function()
       while IsFreecamActive() do
         SetEntityLocallyInvisible(ped)
-        if veh then SetEntityLocallyInvisible(veh) end
+        if freecamVeh > 0 then
+          if DoesEntityExist(freecamVeh) then
+            SetEntityLocallyInvisible(freecamVeh)
+          else
+            freecamVeh = 0
+          end
+        end
         Wait(0)
       end
       
-      if veh and veh > 0 then
+      if not DoesEntityExist(freecamVeh) then
+        freecamVeh = 0
+      end
+      if freecamVeh > 0 then
         local coords = GetEntityCoords(ped)
-        SetEntityCoords(veh, coords[1], coords[2], coords[3])
-        SetPedIntoVehicle(ped, veh, -1)
+        NetworkSetEntityInvisibleToNetwork(freecamVeh, false)
+        SetEntityCollision(freecamVeh, true, true)
+        SetEntityCoords(freecamVeh, coords[1], coords[2], coords[3])
+        SetPedIntoVehicle(ped, freecamVeh, -1)
+        freecamVeh = 0
       end
     end)
   end
