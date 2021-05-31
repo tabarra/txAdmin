@@ -55,7 +55,7 @@ module.exports = async function VerifyNuiAuth(ctx) {
         });
 
         // FIXME: tabarra
-        globals.databus.txStatsData.login.origins[ctx.txVars.webpipe]++;
+        globals.databus.txStatsData.login.origins.webpipe++;
         globals.databus.txStatsData.login.methods.nui++;
     } catch (error) {
         logWarn(`Failed to authenticate NUI user with error: ${error.message}`);
