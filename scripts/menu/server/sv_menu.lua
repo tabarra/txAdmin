@@ -496,9 +496,11 @@ CreateThread(function()
     -- calculate the number of admins
     local totalAdmins = 0
     for _ in pairs(adminPermissions) do totalAdmins = totalAdmins + 1 end
-    
-    -- get the list of all players to send to
-    debugPrint("^4Sending ^3" .. totalFound .. "^4 users details to ^3" .. totalAdmins .. "^4 admins^0")
+  
+    if totalAdmins > 0 and totalFound > 0 then
+      debugPrint("^4Sending ^3" .. totalFound .. "^4 users details to ^3" .. totalAdmins .. "^4 admins^0")
+    end
+      
     for id, _ in pairs(adminPermissions) do
       sendFullClientData(id, found)
     end
