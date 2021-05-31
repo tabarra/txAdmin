@@ -42,7 +42,7 @@ const DialogActionView: React.FC = () => {
             message: reason
           }
         }).then(resp => {
-          enqueueSnackbar(resp.message, { variant: translateAlertType(resp.type) })
+          enqueueSnackbar('Your DM has been sent!', { variant: translateAlertType(resp.type) })
         }).catch(e => {
           enqueueSnackbar('An unknown error occurred', { variant: 'error' })
           console.error(e)
@@ -64,8 +64,7 @@ const DialogActionView: React.FC = () => {
             reason: reason
           }
         }).then(resp => {
-          // TODO: Handle response
-          enqueueSnackbar(resp.message, { variant: translateAlertType(resp.type) })
+          enqueueSnackbar('The player was warned!', { variant: translateAlertType(resp.type) })
         }).catch(e => {
           enqueueSnackbar('An unknown error occurred', { variant: 'error' })
           console.error(e)
@@ -87,10 +86,9 @@ const DialogActionView: React.FC = () => {
             reason: reason
           }
         }).then(resp => {
-          // TODO: Handle response
-          enqueueSnackbar(resp.message, { variant: translateAlertType(resp.type) })
+          enqueueSnackbar('The player was kicked!', { variant: translateAlertType(resp.type) })
         }).catch(e => {
-          enqueueSnackbar('An unknown error has occured', { variant: 'error' })
+          enqueueSnackbar('An unknown error has occurred', { variant: 'error' })
           console.error(e)
         })
       }
