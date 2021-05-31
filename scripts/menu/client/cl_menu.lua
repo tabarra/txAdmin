@@ -12,13 +12,14 @@ CreateThread(function()
   isMenuDebug = (GetConvar('TXADMIN_MENU_DEBUG', 'false') == 'true')
 end)
 
--- Since the menu yields/receives keyboard
--- focus we need to store that the menu is already visible
-local isMenuVisible
--- Last location stored in a vec3
-local lastTp
 
-RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
+
+
+
+local isRDR = not TerraingridActivate and true or false
+local dismissKey = isRDR and 0xD9D0E1C0 or 22
+local dismissKeyGroup = isRDR and 1 or 0
+
 
 --- Send data to the NUI frame
 ---@param action string Action
@@ -29,6 +30,50 @@ function sendMenuMessage(action, data)
     data = data
   })
 end
+
+local function openWarningHandler(author, reason)
+  sendMenuMessage('setWarnOpen', {
+    reason = reason,
+    warnedBy = author
+  })
+
+  CreateThread(function()
+    local countLimit = 100 --10 seconds
+    local count = 0
+    while true do
+      Wait(100)
+      if IsControlPressed(dismissKeyGroup, dismissKey) then
+        count = count +1
+        if count >= countLimit then
+          sendMenuMessage('closeWarning')
+          return
+        elseif math.fmod(count, 10) == 0 then
+          sendMenuMessage('pulseWarning')
+        end
+      else
+        count = 0
+      end
+    end
+  end)
+end
+
+RegisterNetEvent('txAdminClient:warn', openWarningHandler)
+
+
+--BETA BETA BETA BETA BETA BETA BETA BETA BETA BETA BETA 
+if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+  print('txAdmin beta menu disabled.')
+  return
+end
+
+
+-- Since the menu yields/receives keyboard
+-- focus we need to store that the menu is already visible
+local isMenuVisible
+-- Last location stored in a vec3
+local lastTp
+
+RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
 
 --- Will update ServerCtx based on GlobalState and will send it to NUI
 local function updateServerCtx()
@@ -545,35 +590,6 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(netID)
   end
 end)
 
-local isRDR = not TerraingridActivate and true or false
-local dismissKey = isRDR and 0xD9D0E1C0 or 22
-local dismissKeyGroup = isRDR and 1 or 0
-
-local function openWarningHandler(author, reason)
-  sendMenuMessage('setWarnOpen', {
-    reason = reason,
-    warnedBy = author
-  })
-
-  CreateThread(function()
-    local countLimit = 100 --10 seconds
-    local count = 0
-    while true do
-      Wait(100)
-      if IsControlPressed(dismissKeyGroup, dismissKey) then
-        count = count +1
-        if count >= countLimit then
-          sendMenuMessage('closeWarning')
-          return
-        elseif math.fmod(count, 10) == 0 then
-          sendMenuMessage('pulseWarning')
-        end
-      else
-        count = 0
-      end
-    end
-  end)
-end
 
 CreateThread(function()
   while true do
@@ -584,4 +600,4 @@ CreateThread(function()
   end
 end)
 
-RegisterNetEvent('txAdminClient:warn', openWarningHandler)
+

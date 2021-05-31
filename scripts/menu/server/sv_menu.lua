@@ -5,13 +5,19 @@ end
 local apiHost = GetConvar("txAdmin-apiHost", "invalid")
 local pipeToken = GetConvar("txAdmin-pipeToken", "invalid")
 if apiHost == "invalid" or pipeToken == "invalid" then
-  logError('API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
+  print('API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
   return
 end
 
 --Erasing the token convar for security reasons
 if (GetConvar('TXADMIN_MENU_DEBUG', 'false') ~= 'true') then
   SetConvar("txAdmin-pipeToken", "removed")
+end
+
+--BETA BETA BETA BETA BETA BETA BETA BETA BETA BETA BETA 
+if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+  print('txAdmin beta menu disabled.')
+  return
 end
 
 
