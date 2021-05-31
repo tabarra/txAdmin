@@ -103,6 +103,11 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
   if type(callbackId) ~= 'number' or type(headers) ~= 'table' then return end
   if type(method) ~= 'string' or type(path) ~= 'string' or type(body) ~= 'string' then return end
   
+  -- Reject large paths as we use regex
+  if #path > 300 then 
+    return sendResponse(s, callbackId, 400, (path):sub(1, 300), "{}", {}) 
+  end
+  
   -- Reject requests from un-authed players
   if path ~= '/auth/nui' and not adminPermissions[s] then
     if _pipeLastReject ~= nil then
