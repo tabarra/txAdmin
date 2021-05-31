@@ -39,7 +39,7 @@ const DialogInfoView: React.FC = () => {
       forceRefresh(val => val + 1)
     } catch (e) {
       console.error(e)
-      enqueueSnackbar("An error ocurred saving the note", {
+      enqueueSnackbar("An error occurred saving the note", {
         variant: "error",
       });
     }
