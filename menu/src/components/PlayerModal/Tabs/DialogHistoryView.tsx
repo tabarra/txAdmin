@@ -45,7 +45,7 @@ const DialogHistoryView: React.FC = () => {
   const player = usePlayerDetailsValue();
   const theme = useTheme();
 
-  const playerActionHistory = player.actionHistory
+  const playerActionHistory = player?.actionHistory
 
   return (
     <DialogContent>
