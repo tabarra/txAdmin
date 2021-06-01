@@ -341,7 +341,7 @@ RegisterServerEvent('txAdmin:menu:spectatePlayer', function(id)
     if not target then return end
 
     local tgtCoords = GetEntityCoords(target)
-    TriggerClientEvent('txAdmin:menu:specPlayerResp', src, 1, tgtCoords)
+    TriggerClientEvent('txAdmin:menu:specPlayerResp', src, id, tgtCoords)
   end
   TriggerEvent('txaLogger:menuEvent', src, 'spectatePlayer', allow, id)
 end)
