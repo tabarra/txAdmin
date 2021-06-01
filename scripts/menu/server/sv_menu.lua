@@ -237,7 +237,7 @@ local function syncServerCtx()
   local switchPageKey = GetConvar('txAdmin:Menu:PageKey', 'Tab')
   ServerCtxObj.switchPageKey = switchPageKey
 
-  local txAdminVersion = GetConvar('txAdmin-version', '4.0.0')
+  local txAdminVersion = GetConvar('txAdmin-version', '0.0.0')
   ServerCtxObj.txAdminVersion = txAdminVersion
   -- Default '' in fxServer
   local svProjectName = GetConvar('sv_projectname', '')
