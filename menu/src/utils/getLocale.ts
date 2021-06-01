@@ -59,10 +59,11 @@ const localeMap = {
   // th,
   // tr,
   // zh,
-}
+};
 
 export const getLocale = (localeCode: string) => {
-  const locale = localeMap[localeCode]
-  if (!locale) throw new Error(`Unable to find a locale with code ${localeCode} in cache`)
-  return locale
-}
+  const locale = localeMap[localeCode];
+  if (!locale)
+    throw new Error(`Unable to find a locale with code ${localeCode} in cache`);
+  return locale;
+};

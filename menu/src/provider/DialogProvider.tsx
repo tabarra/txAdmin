@@ -93,8 +93,8 @@ export const DialogProvider: React.FC = ({ children }) => {
 
     dialogProps.onSubmit(dialogInputVal);
 
-    setListenForExit(true)
-    setDialogOpen(false)
+    setListenForExit(true);
+    setDialogOpen(false);
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -104,13 +104,13 @@ export const DialogProvider: React.FC = ({ children }) => {
   const openDialog = useCallback((dialogProps: InputDialogProps) => {
     setDialogProps(dialogProps);
     setDialogOpen(true);
-    setListenForExit(false)
+    setListenForExit(false);
   }, []);
 
   const handleDialogClose: ReactEventHandler<{}> = useCallback((e) => {
     e.stopPropagation();
     setDialogOpen(false);
-    setListenForExit(true)
+    setListenForExit(true);
   }, []);
 
   // We reset default state after the animation is complete

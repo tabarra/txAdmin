@@ -30,7 +30,7 @@ const DialogBanView: React.FC = () => {
   const handleBan = async (e) => {
     e.preventDefault();
 
-    if (!userHasPerm('players.ban', playerPerms)) return showNoPerms('Ban')
+    if (!userHasPerm("players.ban", playerPerms)) return showNoPerms("Ban");
 
     const actualDuration =
       duration === "custom" ? `${customDurLength} ${customDuration}` : duration;

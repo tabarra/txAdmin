@@ -49,7 +49,7 @@ export const IFrameProvider: React.FC = ({ children }) => {
   // Will reset the iFrame page to server logs everytime
   useEffect(() => {
     if (isMenuVisible) {
-      const refreshBuster = Math.random().toString().padStart(8, '0').slice(-8);
+      const refreshBuster = Math.random().toString().padStart(8, "0").slice(-8);
       setCurFramePg(`/${PATH_ON_PAGE_LOAD}?refresh${refreshBuster}`);
     }
   }, [isMenuVisible]);

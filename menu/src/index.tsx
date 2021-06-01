@@ -5,7 +5,7 @@ import "./index.css";
 import { MuiThemeProvider } from "@material-ui/core";
 import { MenuTheme } from "./styles/theme";
 import { RecoilRoot } from "recoil";
-import {KeyboardNavProvider} from "./provider/KeyboardNavProvider";
+import { KeyboardNavProvider } from "./provider/KeyboardNavProvider";
 import { SnackbarProvider } from "notistack";
 
 ReactDOM.render(

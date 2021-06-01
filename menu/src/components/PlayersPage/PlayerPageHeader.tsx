@@ -17,7 +17,7 @@ import {
 import { useDebounce } from "../../hooks/useDebouce";
 import { useServerCtxValue } from "../../state/server.state";
 import { useTranslate } from "react-polyglot";
-import { TextField } from '../misc/TextField';
+import { TextField } from "../misc/TextField";
 
 const useStyles = makeStyles((theme: Theme) => ({
   title: {
@@ -66,7 +66,9 @@ export const PlayerPageHeader: React.FC = () => {
           {t("nui_menu.page_players.misc.online_players")}
         </Typography>
         <Typography className={classes.playerCount}>
-          {`${allPlayers.length}/${serverCtx.maxClients} ${t('nui_menu.page_players.misc.players')} - OneSync (${serverCtx.oneSync.type || 'unknown'})`}
+          {`${allPlayers.length}/${serverCtx.maxClients} ${t(
+            "nui_menu.page_players.misc.players"
+          )} - OneSync (${serverCtx.oneSync.type || "unknown"})`}
         </Typography>
       </Box>
       <Box display="flex" alignItems="center" justifyContent="center">

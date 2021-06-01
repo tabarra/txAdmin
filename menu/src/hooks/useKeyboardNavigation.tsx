@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useKeyboardNavContext } from "../provider/KeyboardNavProvider";
-import { useIsMenuVisible } from '../state/visibility.state';
+import { useIsMenuVisible } from "../state/visibility.state";
 
 interface KeyCallbacks {
   onLeftDown?: () => void;
@@ -8,7 +8,7 @@ interface KeyCallbacks {
   onUpDown?: () => void;
   onDownDown?: () => void;
   onEnterDown?: () => void;
-  disableOnFocused?: boolean
+  disableOnFocused?: boolean;
 }
 
 /**
@@ -30,11 +30,10 @@ export const useKeyboardNavigation = ({
   onUpDown,
   onDownDown,
   onEnterDown,
-  disableOnFocused = false
+  disableOnFocused = false,
 }: KeyCallbacks) => {
   const { disabledKeyNav } = useKeyboardNavContext();
-  const isMenuVisible = useIsMenuVisible()
-
+  const isMenuVisible = useIsMenuVisible();
 
   useEffect(() => {
     // Our basic handler function for keydown events
@@ -46,23 +45,23 @@ export const useKeyboardNavigation = ({
 
       switch (e.code) {
         case "ArrowLeft":
-          e.preventDefault()
+          e.preventDefault();
           onLeftDown && onLeftDown();
           break;
         case "ArrowRight":
-          e.preventDefault()
+          e.preventDefault();
           onRightDown && onRightDown();
           break;
         case "ArrowUp":
-          e.preventDefault()
+          e.preventDefault();
           onUpDown && onUpDown();
           break;
         case "ArrowDown":
-          e.preventDefault()
+          e.preventDefault();
           onDownDown && onDownDown();
           break;
         case "Enter":
-          e.preventDefault()
+          e.preventDefault();
           onEnterDown && onEnterDown();
           break;
       }
@@ -81,6 +80,6 @@ export const useKeyboardNavigation = ({
     onEnterDown,
     disabledKeyNav,
     disableOnFocused,
-    isMenuVisible
+    isMenuVisible,
   ]);
 };

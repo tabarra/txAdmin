@@ -15,7 +15,6 @@ import { IFrameProvider } from "./provider/IFrameProvider";
 import { usesCheckCredentials } from "./hooks/useCheckCredentials";
 import { PlayerModalProvider } from "./provider/PlayerModalProvider";
 import { txAdminMenuPage, useSetPage } from "./state/page.state";
-import { Typography } from '@material-ui/core';
 
 debugData([
   {
@@ -33,7 +32,7 @@ const MenuWrapper: React.FC = () => {
   useNuiListenerService();
   usesCheckCredentials();
 
-  //Change page back to Main when closed  
+  //Change page back to Main when closed
   useEffect(() => {
     if (visible) return;
     const changeTimer = setTimeout(() => {
@@ -46,7 +45,7 @@ const MenuWrapper: React.FC = () => {
     serverCtx.locale,
   ]);
 
-  const styled = visible ? { opacity: 1 } : undefined
+  const styled = visible ? { opacity: 1 } : undefined;
 
   return (
     <TopLevelErrorBoundary>

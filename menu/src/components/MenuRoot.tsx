@@ -1,19 +1,13 @@
 import React from "react";
-import {
-  Box,
-  Collapse,
-  makeStyles,
-  Theme,
-} from "@material-ui/core";
+import { Box, Collapse, makeStyles, Theme } from "@material-ui/core";
 import { PageTabs } from "./misc/PageTabs";
 import { MainPageList } from "./MainPage/MainPageList";
 import { PlayersPage } from "./PlayersPage/PlayersPage";
 import { IFramePage } from "./IFramePage/IFramePage";
 import { txAdminMenuPage, usePageValue } from "../state/page.state";
 import { useHudListenersService } from "../hooks/useHudListenersService";
-import { HelpTooltip } from './misc/HelpTooltip';
-import { usePermissionsValue } from '../state/permissions.state';
-
+import { HelpTooltip } from "./misc/HelpTooltip";
+import { usePermissionsValue } from "../state/permissions.state";
 
 const TxAdminLogo: React.FC = () => (
   <Box my={1} display="flex" justifyContent="center">
@@ -35,14 +29,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 const MenuRoot: React.FC = () => {
   const classes = useStyles();
-  const perms = usePermissionsValue()
+  const perms = usePermissionsValue();
   // We need to mount this here so we can get access to
   // the translation context
   useHudListenersService();
 
   const curPage = usePageValue();
 
-  if (!perms) return null
+  if (!perms) return null;
 
   return (
     <>

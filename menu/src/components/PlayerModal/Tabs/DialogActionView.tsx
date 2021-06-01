@@ -8,7 +8,7 @@ import { useDialogContext } from '../../../provider/DialogProvider';
 import { useSnackbar } from 'notistack';
 import { useIFrameCtx} from "../../../provider/IFrameProvider";
 import slug from 'slug'
-import { usePlayerModalContext } from '../../../provider/PlayerModalProvider';
+import { usePlayerModalContext } from "../../../provider/PlayerModalProvider";
 import { translateAlertType, userHasPerm } from '../../../utils/miscUtils';
 import { useTranslate } from "react-polyglot";
 import { usePermissionsValue } from '../../../state/permissions.state';

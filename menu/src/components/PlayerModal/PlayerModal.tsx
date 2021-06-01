@@ -13,10 +13,17 @@ import {
   Theme,
   CircularProgress,
 } from "@material-ui/core";
-import { Close, Person, Block, FormatListBulleted, MenuBook, FlashOn } from '@material-ui/icons'
-import { usePlayerModalContext } from '../../provider/PlayerModalProvider';
+import {
+  Close,
+  Person,
+  Block,
+  FormatListBulleted,
+  MenuBook,
+  FlashOn,
+} from "@material-ui/icons";
+import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
 import { useStyles } from "./modal.styles";
-import { useAssociatedPlayerValue } from '../../state/playerDetails.state';
+import { useAssociatedPlayerValue } from "../../state/playerDetails.state";
 import { useTranslate } from "react-polyglot";
 import { DialogBaseView } from "./Tabs/DialogBaseView";
 
@@ -38,7 +45,6 @@ const PlayerModal: React.FC = () => {
   const assocPlayer = useAssociatedPlayerValue();
   const theme = useTheme();
 
-  // Actually fetch the details for this particular ID
   const handleClose = () => {
     setModalOpen(false);
   };
@@ -100,7 +106,7 @@ const useListStyles = makeStyles((theme: Theme) => ({
 }));
 
 const DialogList: React.FC = () => {
-  const { tab, setTab } = usePlayerModalContext()
+  const { tab, setTab } = usePlayerModalContext();
   const classes = useListStyles();
   const t = useTranslate();
 
@@ -110,50 +116,60 @@ const DialogList: React.FC = () => {
         className={classes.listItem}
         button
         onClick={() => setTab(1)}
-        selected={tab === 1 && true}
+        selected={tab === 1}
         classes={{ root: classes.root, selected: classes.selected }}
       >
-        <ListItemIcon><FlashOn/></ListItemIcon>
+        <ListItemIcon>
+          <FlashOn />
+        </ListItemIcon>
         <ListItemText primary={t("nui_menu.player_modal.tabs.actions")} />
       </ListItem>
       <ListItem
         className={classes.listItem}
         button
         onClick={() => setTab(2)}
-        selected={tab === 2 && true}
+        selected={tab === 2}
         classes={{ root: classes.root, selected: classes.selected }}
       >
-        <ListItemIcon><Person/></ListItemIcon>
+        <ListItemIcon>
+          <Person />
+        </ListItemIcon>
         <ListItemText primary={t("nui_menu.player_modal.tabs.info")} />
       </ListItem>
       <ListItem
         className={classes.listItem}
         button
         onClick={() => setTab(3)}
-        selected={tab === 3 && true}
+        selected={tab === 3}
         classes={{ root: classes.root, selected: classes.selected }}
       >
-        <ListItemIcon><FormatListBulleted/></ListItemIcon>
+        <ListItemIcon>
+          <FormatListBulleted />
+        </ListItemIcon>
         <ListItemText primary={t("nui_menu.player_modal.tabs.ids")} />
       </ListItem>
       <ListItem
         className={classes.listItem}
         button
         onClick={() => setTab(4)}
-        selected={tab === 4 && true}
+        selected={tab === 4}
         classes={{ root: classes.root, selected: classes.selected }}
       >
-        <ListItemIcon><MenuBook/></ListItemIcon>
+        <ListItemIcon>
+          <MenuBook />
+        </ListItemIcon>
         <ListItemText primary={t("nui_menu.player_modal.tabs.history")} />
       </ListItem>
       <ListItem
         className={classes.listItem}
         button
         onClick={() => setTab(5)}
-        selected={tab === 5 && true}
+        selected={tab === 5}
         classes={{ root: classes.banRoot, selected: classes.selected }}
       >
-        <ListItemIcon><Block/></ListItemIcon>
+        <ListItemIcon>
+          <Block />
+        </ListItemIcon>
         <ListItemText primary={t("nui_menu.player_modal.tabs.ban")} />
       </ListItem>
     </List>

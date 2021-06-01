@@ -38,14 +38,14 @@ const NoHistoryBox = () => (
   <Box>
     <Typography color="secondary">No history found!</Typography>
   </Box>
-)
+);
 
 const DialogHistoryView: React.FC = () => {
   const classes = useStyles();
   const player = usePlayerDetailsValue();
   const theme = useTheme();
 
-  const playerActionHistory = player?.actionHistory
+  const playerActionHistory = player?.actionHistory;
 
   return (
     <DialogContent>
@@ -53,25 +53,27 @@ const DialogHistoryView: React.FC = () => {
         Related History
       </Typography>
       <Box>
-        {playerActionHistory?.length ? playerActionHistory.map((h, index) => (
-          <Box
-            className={classes.historyItem}
-            borderLeft={`solid 2px ${actionTypes[h.action].color}`}
-            key={index}
-          >
-            <Box>
-              <Typography>
-                {h.author} {actionTypes[h.action].title} {player.name}
-              </Typography>
-              <Typography style={{ color: theme.palette.text.secondary }}>
-                {h.reason}
-              </Typography>
+        {playerActionHistory?.length ? (
+          playerActionHistory.map((h, index) => (
+            <Box
+              className={classes.historyItem}
+              borderLeft={`solid 2px ${actionTypes[h.action].color}`}
+              key={index}
+            >
+              <Box>
+                <Typography>
+                  {h.author} {actionTypes[h.action].title} {player.name}
+                </Typography>
+                <Typography style={{ color: theme.palette.text.secondary }}>
+                  {h.reason}
+                </Typography>
+              </Box>
+              <Box>
+                <Typography>{h.date}</Typography>
+              </Box>
             </Box>
-            <Box>
-              <Typography>{h.date}</Typography>
-            </Box>
-          </Box>
-        )) : (
+          ))
+        ) : (
           <NoHistoryBox />
         )}
       </Box>

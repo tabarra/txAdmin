@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { Box, List, makeStyles, Theme, Typography } from '@material-ui/core';
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Box, List, makeStyles, Theme, Typography } from "@material-ui/core";
 import { MenuListItem, MenuListItemMulti } from "./MenuListItem";
 import {
   AccessibilityNew,
@@ -24,7 +24,7 @@ import { useIsMenuVisible } from "../../state/visibility.state";
 import { TeleportMode, useTeleportMode } from "../../state/teleportmode.state";
 import { HealMode, useHealMode } from "../../state/healmode.state";
 import { arrayRandom } from "../../utils/miscUtils";
-import { useServerCtxValue } from '../../state/server.state';
+import { useServerCtxValue } from "../../state/server.state";
 
 const fadeHeight = 20;
 const listHeight = 388;
@@ -39,19 +39,19 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   fadeTop: {
     backgroundImage: `linear-gradient(to top, transparent, ${theme.palette.background.default})`,
-    position: 'relative',
+    position: "relative",
     bottom: listHeight + fadeHeight - 4, //the 2 comes from the tab selector
     height: fadeHeight,
   },
   fadeBottom: {
     backgroundImage: `linear-gradient(to bottom, transparent, ${theme.palette.background.default})`,
-    position: 'relative',
-    bottom: fadeHeight*2,
+    position: "relative",
+    bottom: fadeHeight * 2,
     height: fadeHeight,
   },
   icon: {
     color: theme.palette.text.secondary,
-    marginTop: -(fadeHeight*2)
+    marginTop: -(fadeHeight * 2),
   },
 }));
 
@@ -71,19 +71,19 @@ export const MainPageList: React.FC = () => {
   // the directions are inverted
   const handleArrowDown = useCallback(() => {
     const next = curSelected + 1;
-    fetchNui('playSound', 'move');
+    fetchNui("playSound", "move");
     setCurSelected(next >= menuListItems.length ? 0 : next);
-  },[curSelected]);
+  }, [curSelected]);
 
   const handleArrowUp = useCallback(() => {
     const next = curSelected - 1;
-    fetchNui('playSound', 'move');
+    fetchNui("playSound", "move");
     setCurSelected(next < 0 ? menuListItems.length - 1 : next);
   }, [curSelected]);
 
   useEffect(() => {
-    setCurSelected(0)
-  }, [menuVisible])
+    setCurSelected(0);
+  }, [menuVisible]);
 
   useKeyboardNavigation({
     onDownDown: handleArrowDown,
@@ -103,7 +103,7 @@ export const MainPageList: React.FC = () => {
         // -1, 2, 3
         const [x, y, z] = Array.from(
           coords.matchAll(/-?\d{1,4}(?:\.\d{1,9})?/g),
-          m => parseFloat(m[0])
+          (m) => parseFloat(m[0])
         );
 
         if ([x, y, z].every((n) => typeof n === "number")) {
@@ -121,10 +121,14 @@ export const MainPageList: React.FC = () => {
   };
 
   const handleTeleportBack = () => {
-    fetchNui("tpBack").then(({e}) => {
+    fetchNui("tpBack").then(({ e }) => {
       e
-        ? enqueueSnackbar(t("nui_menu.page_main.teleport_back.error"), { variant: 'error' })
-        : enqueueSnackbar(t("nui_menu.page_main.teleport_back.success"), { variant: 'success' })
+        ? enqueueSnackbar(t("nui_menu.page_main.teleport_back.error"), {
+            variant: "error",
+          })
+        : enqueueSnackbar(t("nui_menu.page_main.teleport_back.success"), {
+            variant: "success",
+          });
     });
   };
 
@@ -150,15 +154,36 @@ export const MainPageList: React.FC = () => {
       placeholder: "car, bike, heli, boat, Adder, Buzzard, etc",
       onSubmit: (modelName: string) => {
         modelName = modelName.toLowerCase();
-        if (modelName === 'car') {
-          modelName = (Math.random() < 0.05) ? 'caddy' 
-            : arrayRandom(['comet2', 'coquette', 'trophytruck', 'issi5', 'f620', 'nero', 'sc1', 'toros', 'tyrant']);
-        } else if (modelName === 'bike') {
-          modelName = (Math.random() < 0.05) ? 'bmx' : arrayRandom(['esskey', 'nemesis', 'cruiser']);
-        } else if (modelName === 'heli') {
-          modelName = (Math.random() < 0.05) ? 'havok' : arrayRandom(['buzzard2', 'volatus']);
-        } else if (modelName === 'boat') {
-          modelName = (Math.random() < 0.05) ? 'seashark' : arrayRandom(['dinghy', 'toro2']);
+        if (modelName === "car") {
+          modelName =
+            Math.random() < 0.05
+              ? "caddy"
+              : arrayRandom([
+                  "comet2",
+                  "coquette",
+                  "trophytruck",
+                  "issi5",
+                  "f620",
+                  "nero",
+                  "sc1",
+                  "toros",
+                  "tyrant",
+                ]);
+        } else if (modelName === "bike") {
+          modelName =
+            Math.random() < 0.05
+              ? "bmx"
+              : arrayRandom(["esskey", "nemesis", "cruiser"]);
+        } else if (modelName === "heli") {
+          modelName =
+            Math.random() < 0.05
+              ? "havok"
+              : arrayRandom(["buzzard2", "volatus"]);
+        } else if (modelName === "boat") {
+          modelName =
+            Math.random() < 0.05
+              ? "seashark"
+              : arrayRandom(["dinghy", "toro2"]);
         }
         fetchNui("spawnVehicle", { model: modelName }).then(({ e }) => {
           e
@@ -206,21 +231,21 @@ export const MainPageList: React.FC = () => {
       t("nui_menu.page_main.heal_myself.dialog_success_1"),
       t("nui_menu.page_main.heal_myself.dialog_success_2"),
       t("nui_menu.page_main.heal_myself.dialog_success_3"),
-    ].filter(v => !!(v && v.length))
-    const msg = messages[Math.round((messages.length-1) * Math.random())]
+    ].filter((v) => !!(v && v.length));
+    const msg = messages[Math.round((messages.length - 1) * Math.random())];
     enqueueSnackbar(msg, {
       variant: "success",
     });
-  }
+  };
 
   const handlePlayermodeToggle = (targetMode) => {
-    if(targetMode === playerMode || targetMode === PlayerMode.DEFAULT){
+    if (targetMode === playerMode || targetMode === PlayerMode.DEFAULT) {
       setPlayerMode(PlayerMode.DEFAULT);
       fetchNui("playerModeChanged", PlayerMode.DEFAULT);
       enqueueSnackbar(t("nui_menu.page_main.player_mode.dialog_success_none"), {
         variant: "success",
       });
-    }else{
+    } else {
       setPlayerMode(targetMode);
       fetchNui("playerModeChanged", targetMode);
     }
@@ -249,7 +274,7 @@ export const MainPageList: React.FC = () => {
         secondary: t("nui_menu.page_main.player_mode.list_secondary", {
           mode: "NoClip",
         }),
-        requiredPermission: 'players.playermode',
+        requiredPermission: "players.playermode",
         showCurrentPrefix: true,
         isMultiAction: true,
         initialValue: playerMode,
@@ -257,19 +282,25 @@ export const MainPageList: React.FC = () => {
           {
             label: t("nui_menu.page_main.player_mode.item_none"),
             value: PlayerMode.DEFAULT,
-            onSelect: () => {handlePlayermodeToggle(PlayerMode.DEFAULT)},
+            onSelect: () => {
+              handlePlayermodeToggle(PlayerMode.DEFAULT);
+            },
           },
           {
             label: t("nui_menu.page_main.player_mode.item_noclip"),
             value: PlayerMode.NOCLIP,
             icon: <ControlCamera />,
-            onSelect: () => {handlePlayermodeToggle(PlayerMode.NOCLIP)},
+            onSelect: () => {
+              handlePlayermodeToggle(PlayerMode.NOCLIP);
+            },
           },
           {
             label: t("nui_menu.page_main.player_mode.item_godmode"),
             value: PlayerMode.GOD_MODE,
             icon: <Security />,
-            onSelect: () => {handlePlayermodeToggle(PlayerMode.GOD_MODE)},
+            onSelect: () => {
+              handlePlayermodeToggle(PlayerMode.GOD_MODE);
+            },
           },
         ],
       },
@@ -277,7 +308,7 @@ export const MainPageList: React.FC = () => {
         icon: <LocationSearching />,
         primary: t("nui_menu.page_main.teleport.list_primary"),
         isMultiAction: true,
-        requiredPermission: 'players.teleport',
+        requiredPermission: "players.teleport",
         initialValue: teleportMode,
         actions: [
           {
@@ -287,7 +318,7 @@ export const MainPageList: React.FC = () => {
               setTeleportMode(TeleportMode.WAYPOINT);
               fetchNui("tpToWaypoint", {});
             },
-            icon: <GpsFixed />
+            icon: <GpsFixed />,
           },
           {
             label: t("nui_menu.page_main.teleport.item_coords"),
@@ -295,19 +326,19 @@ export const MainPageList: React.FC = () => {
             onSelect: () => {
               setTeleportMode(TeleportMode.COORDINATES);
               handleTeleport();
-            }
+            },
           },
           {
             label: t("nui_menu.page_main.teleport.item_previous"),
             value: TeleportMode.PREVIOUS,
             onSelect: handleTeleportBack,
-            icon: <Restore />
-          }
+            icon: <Restore />,
+          },
         ],
       },
       {
         icon: <DirectionsCar />,
-        requiredPermission: 'menu.vehicle',
+        requiredPermission: "menu.vehicle",
         primary: t("nui_menu.page_main.spawn_veh.list_primary"),
         secondary: t("nui_menu.page_main.spawn_veh.list_secondary"),
         onSelect: handleSpawnVehicle,
@@ -316,14 +347,14 @@ export const MainPageList: React.FC = () => {
         icon: <Build />,
         primary: t("nui_menu.page_main.fix_vehicle.list_primary"),
         secondary: t("nui_menu.page_main.fix_vehicle.list_secondary"),
-        requiredPermission: 'menu.vehicle',
+        requiredPermission: "menu.vehicle",
         onSelect: handleFixVehicle,
       },
       {
         primary: t("nui_menu.page_main.heal_myself.list_primary"),
         isMultiAction: true,
         initialValue: healMode,
-        requiredPermission: 'players.heal',
+        requiredPermission: "players.heal",
         actions: [
           {
             label: t("nui_menu.page_main.heal_myself.list_secondary"),
@@ -343,12 +374,12 @@ export const MainPageList: React.FC = () => {
               setHealMode(HealMode.ALL);
               handleHealAllPlayers();
             },
-          }
-        ]
+          },
+        ],
       },
       {
         icon: <Announcement />,
-        requiredPermission: 'players.message',
+        requiredPermission: "players.message",
         primary: t("nui_menu.page_main.send_announce.list_primary"),
         secondary: t("nui_menu.page_main.send_announce.list_secondary"),
         onSelect: handleAnnounceMessage,
@@ -385,27 +416,25 @@ export const MainPageList: React.FC = () => {
         )}
       </List>
       <Typography
-        color='textSecondary'
+        color="textSecondary"
         style={{
           fontWeight: 500,
           marginTop: -10,
-          textAlign: 'center',
-          fontSize: 12
+          textAlign: "center",
+          fontSize: 12,
         }}
       >
         v{serverCtx.txAdminVersion}
       </Typography>
       {/*<Box className={classes.fadeTop} style={{opacity: curSelected <= 1 ? 0 : 1}}/>*/}
       {/*<Box className={classes.fadeBottom} style={{opacity: curSelected >= 6 ? 0 : 1}}/>*/}
-      {
-      /*
+      {/*
         This arrow was used for a scrollable main item list, if it becomes scrollable again
         reuse this
       */
       /*<Box className={classes.icon} display="flex" justifyContent="center">*/
       /*  <ExpandMore />*/
-      /*</Box>*/
-      }
+      /*</Box>*/}
     </Box>
   );
 };

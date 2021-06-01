@@ -1,4 +1,4 @@
-import React, { FormEventHandler, useEffect, useState } from 'react';
+import React, { FormEventHandler, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -7,7 +7,10 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
-import { useForcePlayerRefresh, usePlayerDetailsValue } from '../../../state/playerDetails.state';
+import {
+  useForcePlayerRefresh,
+  usePlayerDetailsValue,
+} from "../../../state/playerDetails.state";
 import { fetchWebPipe } from "../../../utils/fetchWebPipe";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
@@ -16,8 +19,8 @@ const DialogInfoView: React.FC = () => {
   const [note, setNote] = useState("");
   const player = usePlayerDetailsValue();
   const { enqueueSnackbar } = useSnackbar();
-  const playerDetails = usePlayerDetailsValue()
-  const forceRefresh = useForcePlayerRefresh()
+  const playerDetails = usePlayerDetailsValue();
+  const forceRefresh = useForcePlayerRefresh();
 
   const t = useTranslate();
 
@@ -26,19 +29,19 @@ const DialogInfoView: React.FC = () => {
   const handleSaveNote: FormEventHandler = async (e) => {
     e.preventDefault();
     try {
-      const resp = await fetchWebPipe('/player/save_note', {
-        method: 'POST',
+      const resp = await fetchWebPipe("/player/save_note", {
+        method: "POST",
         data: {
           license: playerDetails.license,
           note: note,
-        }
-      })
+        },
+      });
       enqueueSnackbar("Saved Note", {
         variant: "success",
       });
-      forceRefresh(val => val + 1)
+      forceRefresh((val) => val + 1);
     } catch (e) {
-      console.error(e)
+      console.error(e);
       enqueueSnackbar("An error occurred saving the note", {
         variant: "error",
       });
@@ -46,22 +49,28 @@ const DialogInfoView: React.FC = () => {
   };
 
   useEffect(() => {
-    setNote(playerDetails.notes || "")
-  }, [playerDetails])
+    setNote(playerDetails.notes || "");
+  }, [playerDetails]);
 
   return (
     <DialogContent>
-      <Typography variant="h6">{t("nui_menu.player_modal.info.title")}</Typography>
+      <Typography variant="h6">
+        {t("nui_menu.player_modal.info.title")}
+      </Typography>
       <Typography>
         {t("nui_menu.player_modal.info.session_time")}:{" "}
-        <span style={{ color: theme.palette.text.secondary }}>{playerDetails.sessionTime}</span>
+        <span style={{ color: theme.palette.text.secondary }}>
+          {playerDetails.sessionTime}
+        </span>
       </Typography>
       <Typography>
-      {t("nui_menu.player_modal.info.play_time")}:{" "}
-        <span style={{ color: theme.palette.text.secondary }}>{playerDetails.playTime}</span>
+        {t("nui_menu.player_modal.info.play_time")}:{" "}
+        <span style={{ color: theme.palette.text.secondary }}>
+          {playerDetails.playTime}
+        </span>
       </Typography>
       <Typography>
-      {t("nui_menu.player_modal.info.joined")}:{" "}
+        {t("nui_menu.player_modal.info.joined")}:{" "}
         <span style={{ color: theme.palette.text.secondary }}>
           {player.joinDate}
         </span>

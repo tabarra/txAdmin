@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { fetchNui } from "../utils/fetchNui";
 import { useSetIsMenuVisible } from "../state/visibility.state";
-import { useListenForExitValue } from '../state/keys.state';
+import { useListenForExitValue } from "../state/keys.state";
 
 /**
  * Attach a keyboard listener for escape & backspace, which will close the menu
@@ -10,7 +10,7 @@ import { useListenForExitValue } from '../state/keys.state';
 export const useExitListener = () => {
   const setVisible = useSetIsMenuVisible();
 
-  const shouldListen = useListenForExitValue()
+  const shouldListen = useListenForExitValue();
 
   useEffect(() => {
     const keyHandler = (e: KeyboardEvent) => {
