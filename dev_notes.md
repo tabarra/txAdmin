@@ -19,6 +19,11 @@
 
 
 
+
++set svgui_disable true +set TXADMIN_MENU_DEBUG true +setr txEnableMenuBeta true
+
+
+
 nota:
 - precisamos garantir que uma sessão criada via NUI seja só usada com nui
 - criar um novo token, mudar no primeiro tick
