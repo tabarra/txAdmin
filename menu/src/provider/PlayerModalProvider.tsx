@@ -3,6 +3,7 @@ import PlayerModal from '../components/PlayerModal/PlayerModal';
 import { useSetDisableTab, useSetListenForExit } from '../state/keys.state';
 import { useSetIsMenuVisible } from '../state/visibility.state';
 import { fetchNui } from '../utils/fetchNui';
+import { useSnackbar } from 'notistack';
 
 const PlayerContext = createContext(null);
 
@@ -12,6 +13,7 @@ interface PlayerProviderCtx {
   setModalOpen: (bool: boolean) => void
   setTab: (tab: number) => void
   closeMenu: () => void
+  showNoPerms: (opt: string) => void
 }
 
 export const PlayerModalProvider: React.FC = ({ children }) => {
@@ -20,6 +22,7 @@ export const PlayerModalProvider: React.FC = ({ children }) => {
   const setDisableTabNav = useSetDisableTab()
   const setListenForExit = useSetListenForExit()
   const setMenuVisible = useSetIsMenuVisible()
+  const { enqueueSnackbar } = useSnackbar()
 
   useEffect(() => {
     setDisableTabNav(modalOpen)
@@ -33,6 +36,10 @@ export const PlayerModalProvider: React.FC = ({ children }) => {
     fetchNui('closeMenu')
   }, [])
 
+  const showNoPerms = useCallback((opt: string) => {
+    enqueueSnackbar(`You do not have permissions for "${opt}"`, { variant: 'error' })
+  }, [])
+
   return (
     <PlayerContext.Provider
       value={{
@@ -40,7 +47,8 @@ export const PlayerModalProvider: React.FC = ({ children }) => {
         setTab,
         isModalOpen: modalOpen,
         setModalOpen,
-        closeMenu
+        closeMenu,
+        showNoPerms
       }}
     >
       <>

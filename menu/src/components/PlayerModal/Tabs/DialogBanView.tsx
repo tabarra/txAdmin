@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   DialogContent,
-  DialogContentText,
   MenuItem,
   TextField,
   Typography,
@@ -12,6 +11,9 @@ import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
 import { fetchWebPipe } from "../../../utils/fetchWebPipe";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
+import { usePlayerModalContext } from '../../../provider/PlayerModalProvider';
+import { userHasPerm } from '../../../utils/miscUtils';
+import { usePermissionsValue } from '../../../state/permissions.state';
 
 const DialogBanView: React.FC = () => {
   const player = usePlayerDetailsValue();
@@ -22,9 +24,14 @@ const DialogBanView: React.FC = () => {
   const [customDurLength, setCustomDurLength] = useState('1');
   const t = useTranslate();
   const { enqueueSnackbar } = useSnackbar();
+  const { showNoPerms } = usePlayerModalContext();
+  const playerPerms = usePermissionsValue()
 
   const handleBan = async (e) => {
     e.preventDefault();
+
+    if (!userHasPerm('players.ban', playerPerms)) return showNoPerms('Ban')
+
     const actualDuration =
       duration === "custom" ? `${customDurLength} ${customDuration}` : duration;
     // Should do something with the res eventually

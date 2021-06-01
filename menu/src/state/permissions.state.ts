@@ -1,4 +1,4 @@
-import {atom, selector, useRecoilValue, useSetRecoilState} from "recoil";
+import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 
 // TODO: Make an enum
 export type ResolvablePermission =
@@ -16,12 +16,13 @@ export type ResolvablePermission =
   | "players.whitelist"
   | "console.view"
   | "console.write"
-  | 'control.server'
+  | "control.server"
   | "server.cfg.editor"
   | "settings.view"
   | "settings.write"
   | "txadmin.log.view"
-  | "menu.vehicle";
+  | "menu.vehicle"
+  | "players.spectate";
 
 export interface PermCheckServerResp {
   isAdmin: boolean;
@@ -31,7 +32,7 @@ export interface PermCheckServerResp {
 
 const permissionState = atom<PermCheckServerResp>({
   key: "permissionsState",
-  default: null
+  default: null,
 });
 
 export const usePermissionsValue = () => useRecoilValue(permissionState);

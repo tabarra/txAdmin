@@ -9,8 +9,9 @@ import { useSnackbar } from 'notistack';
 import { useIFrameCtx} from "../../../provider/IFrameProvider";
 import slug from 'slug'
 import { usePlayerModalContext } from '../../../provider/PlayerModalProvider';
-import { translateAlertType } from '../../../utils/miscUtils';
+import { translateAlertType, userHasPerm } from '../../../utils/miscUtils';
 import { useTranslate } from "react-polyglot";
+import { usePermissionsValue } from '../../../state/permissions.state';
 
 export type TxAdminActionRespType = 'success' | 'warning' | 'danger'
 
@@ -27,9 +28,12 @@ const DialogActionView: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar()
   const t = useTranslate();
   const { goToFramePage } = useIFrameCtx()
-  const { setModalOpen, closeMenu } = usePlayerModalContext()
+  const playerPerms = usePermissionsValue()
+  const { setModalOpen, closeMenu, showNoPerms } = usePlayerModalContext()
 
   const handleDM = () => {
+    if (!userHasPerm('players.message', playerPerms)) return showNoPerms('Message')
+
     openDialog({
       title: `Direct Message ${assocPlayer.username}`,
       description: 'What is the reason for direct messaging this player?',
@@ -52,6 +56,8 @@ const DialogActionView: React.FC = () => {
   }
 
   const handleWarn = () => {
+    if (!userHasPerm('players.warn', playerPerms)) return showNoPerms('Warn')
+
     openDialog({
       title: `Warn ${assocPlayer.username}`,
       description: 'What is the reason for direct warning this player?',
@@ -74,6 +80,8 @@ const DialogActionView: React.FC = () => {
   }
 
   const handleKick = () => {
+    if (!userHasPerm('players.kick', playerPerms)) return showNoPerms('Kick')
+
     openDialog({
       title: `Kick ${assocPlayer.username}`,
       description: 'What is the reason for kicking this player?',
@@ -96,6 +104,8 @@ const DialogActionView: React.FC = () => {
   }
 
   const handleSetAdmin = () => {
+    if (!userHasPerm('manage.admins', playerPerms)) return showNoPerms('Manage Admins')
+
     // TODO: Change iFrame Src through Provider?
     const discordIdent = playerDetails.identifiers.find(ident => ident.includes('discord:'))
     const fivemIdent = playerDetails.identifiers.find(ident => ident.includes('fivem:'))
@@ -111,21 +121,29 @@ const DialogActionView: React.FC = () => {
   }
 
   const handleHeal = () => {
+    if (!userHasPerm('players.heal', playerPerms)) return showNoPerms('Heal')
+
     fetchNui('healPlayer', { id: assocPlayer.id })
     enqueueSnackbar('Healing player', {variant: 'success'})
   }
 
   const handleGoTo = () => {
+    if (!userHasPerm('players.teleport', playerPerms)) return showNoPerms('Teleport')
+
     fetchNui('tpToPlayer', { id: assocPlayer.id })
     enqueueSnackbar('Teleporting to player', {variant: 'success'})
   }
 
   const handleBring = () => {
+    if (!userHasPerm('players.teleport', playerPerms)) return showNoPerms('Teleport')
+
     fetchNui('summonPlayer', { id: assocPlayer.id })
     enqueueSnackbar('Summoning player.', {variant: 'success'})
   }
 
   const handleSpectate = () => {
+    if (!userHasPerm('players.spectate', playerPerms)) return showNoPerms('Spectate')
+
     closeMenu()
     fetchNui('spectatePlayer', { id: assocPlayer.id })
   }
