@@ -5,10 +5,10 @@
     },
     "restarter": {
         "start_timeout": "Der Server konnte nicht rechtzeitig hochfahren.",
-        "crash_detected": "Absturz registriert",
-        "hang_detected": "hang detected",
-        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
-        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
+        "crash_detected": "Absturz erkannt",
+        "hang_detected": "Absturz erkannt",
+        "partial_hang_warn": "Durch einen Serverabsturz, wird dieser in 1 minute neugestartet. Bitte trenne die Verbindung jetzt.",
+        "partial_hang_warn_discord": "Durch einen Serverabsturz wird **%{servername}** in 1 minute neugestartet.",
         "schedule_reason": "Automatisierter Neustart um %{time}",
         "schedule_warn": "Der Server wird in einer Minute neu gestartet. Bitte trenne die Verbindung jetzt. |||| Der Server wird in %{smart_count} Minuten neu gestartet.",
         "schedule_warn_discord": "**%{servername}** wird in einer Minute neu gestartet. |||| **%{servername}** wird in %{smart_count} Minuten neu gestartet."
