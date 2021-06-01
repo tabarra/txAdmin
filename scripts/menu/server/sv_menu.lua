@@ -31,7 +31,7 @@ local LAST_PLAYER_DATA = {}
 ---@return boolean
 local function PlayerHasTxPermission(source, permission)
   local allow = false
-  local perms = adminPermissions[source]
+  local perms = adminPermissions[tostring(source)]
   if perms then
     for _, perm in pairs(perms) do
       if perm == 'all_permissions' or permission == perm then
@@ -59,10 +59,10 @@ AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
   -- Collect old and new admin IDs
   local refreshAdminIds = {}
   for id, _ in pairs(adminPermissions) do
-    refreshAdminIds[id] = id
+    refreshAdminIds[#refreshAdminIds + 1] = id
   end
   for _, newId in pairs(onlineAdminIDs) do
-    refreshAdminIds[newId] = newId
+    refreshAdminIds[#refreshAdminIds + 1] = newId
   end
   debugPrint('^3Forcing ' .. #refreshAdminIds .. ' clients to re-auth')
   
@@ -104,6 +104,7 @@ end
 RegisterNetEvent('txAdmin:WebPipe')
 AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, body)
   local s = source
+  local src = tostring(s)
   if type(callbackId) ~= 'number' or type(headers) ~= 'table' then return end
   if type(method) ~= 'string' or type(path) ~= 'string' or type(body) ~= 'string' then return end
   
@@ -113,7 +114,7 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
   end
   
   -- Reject requests from un-authed players
-  if path ~= '/auth/nui' and not adminPermissions[s] then
+  if path ~= '/auth/nui' and not adminPermissions[src] then
     if _pipeLastReject ~= nil then
       if (GetGameTimer() - _pipeLastReject) < 250 then
         _pipeLastReject = GetGameTimer()
@@ -175,10 +176,10 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
       local resp = json.decode(data)
       if resp and resp.isAdmin then
         debugPrint("Caching admin " .. s .. " permissions: " .. json.encode(resp.permissions))
-        adminPermissions[s] = resp.permissions
+        adminPermissions[src] = resp.permissions
         sendFullClientData(s)
       else
-        adminPermissions[s] = nil
+        adminPermissions[src] = nil
       end
     end
   
@@ -285,7 +286,7 @@ end)
 
 RegisterServerEvent('txAdmin:menu:checkAccess', function()
   local src = source
-  local canAccess = not (adminPermissions[src] == nil)
+  local canAccess = not (adminPermissions[tostring(src)] == nil)
   debugPrint((canAccess and "^2" or "^1") .. GetPlayerName(src) ..
                " does " .. (canAccess and "" or "NOT ") .. "have menu permission.")
   TriggerClientEvent('txAdmin:menu:setAccessible', src, canAccess)
@@ -535,14 +536,18 @@ CreateThread(function()
       end
         
       local emitData = {}
-      local sendAll = (lastData.u == nil)
+      local sendAll = (lastData.i == nil)
       if sendAll or lastData.h ~= health then emitData.h = health end
       if sendAll or lastData.v ~= veh then emitData.v = veh end
       if sendAll or lastData.u ~= username then emitData.u = username end
       if sendAll or lastData.c ~= coords then emitData.c = coords end
       if sendAll then emitData.l = getPlayersLicense(serverID) end
-      for k, v in pairs(emitData) do LAST_PLAYER_DATA[serverID][k] = v end
-      found[serverID] = emitData
+      emitData.i = serverID
+      for k, v in pairs(emitData) do
+        LAST_PLAYER_DATA[serverID][k] = v
+        debugPrint(("^1emit ^4%d :: ^2%s^1 = ^3%s^0"):format(serverID, k, v))
+      end
+      found[#found + 1] = emitData
       totalFound = totalFound + 1
       Wait(0)
     end
@@ -564,6 +569,6 @@ end)
 --[[ Handle player disconnects ]]
 AddEventHandler('playerDropped', function()
   local s = source
-  adminPermissions[s] = nil
+  adminPermissions[tostring(s)] = nil
   LAST_PLAYER_DATA[tostring(s)] = nil
 end)

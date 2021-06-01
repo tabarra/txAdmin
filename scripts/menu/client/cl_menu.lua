@@ -443,14 +443,15 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
   
   -- process data to add distance, remove pos
   local pedCoords = GetEntityCoords(PlayerPedId())
-  for serverId, row in pairs(data) do
-    -- position cache
-    if type(row.c) == 'vector3' then posCache[serverId] = row.c end
+  local fullData = {}
+  for _, row in pairs(data) do
+    local serverId = row.i
+    if type(row.c) == 'vector3' or type(row.c) == 'number' then posCache[serverId] = row.c end
     if type(row.v) == 'number' then vehCache[serverId] = row.v end
     local pos = posCache[serverId]
     local veh = vehCache[serverId]
     local dist
-    if pos ~= nil then
+    if pos ~= nil and pos ~= -1 and type(pos) == 'vector3' then
       local targetVec = vec3(pos[1], pos[2], pos[3])
       dist = #(pedCoords - targetVec)
     else
@@ -459,7 +460,7 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
     
     -- calculate the vehicle status
     local vehicleStatus = 'walking'
-    if veh > 0 then
+    if veh and veh > 0 then
       local vehEntity = NetToVeh(veh)
       if not vehEntity or vehEntity == 0 then
         vehicleStatus = 'unknown'
@@ -478,8 +479,9 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
         end
       end
     end
-    
-    data[serverId] = {
+  
+    fullData[#fullData + 1] = {
+      id = tonumber(row.i),
       health = row.h,
       vehicleStatus = vehicleStatus,
       distance = dist,
@@ -488,9 +490,11 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
     }
   end
   
+  debugPrint(("^2received ^3%d^2 players from state event"):format(#fullData))
+  
   SendNUIMessage({
     action = 'setPlayerState',
-    data = data
+    data = fullData
   })
 end)
 --[[ End player sync ]]

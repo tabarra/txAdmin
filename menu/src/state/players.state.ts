@@ -21,6 +21,7 @@ export type PlayerData = Required<PlayerDataPartial> & { id: number };
 export type PlayerDataSetPartial = { [serverID: string]: PlayerDataPartial };
 
 export interface PlayerDataPartial {
+  id: number;
   vehicleStatus: VehicleStatus;
   distance: number;
   health?: number;

@@ -30,22 +30,29 @@ export const useNuiListenerService = () => {
     setPlayerState((playerState) => {
       // merge the objects
       const oldStateMap: { [serverID: number]: PlayerData } = {};
-      playerState.forEach(
-        (playerData) => (oldStateMap[playerData.id] = { ...playerData })
-      );
-      Object.entries(stateUpdate).forEach(([id, playerData]) => {
+      const foundIDs: number[] = [];
+      
+      playerState.forEach(playerData => oldStateMap[playerData.id] = {...playerData})
+      Object.values(stateUpdate).forEach((playerData) => {
+        const id = playerData.id
         if (!oldStateMap[id]) {
-          oldStateMap[id] = playerData as PlayerData;
+          oldStateMap[id] = playerData as PlayerData
         } else {
           for (const [k, v] of Object.entries(playerData)) {
-            if (typeof v === "undefined") continue;
-            oldStateMap[id][k] = v;
+            if (typeof v === 'undefined') continue;
+            oldStateMap[id][k] = v
           }
         }
-        oldStateMap[id].id = +id;
-      });
-      return Object.values(oldStateMap);
-    });
+        foundIDs.push(+id)
+        oldStateMap[id].id = +id
+      })
+      
+      // remove players that have left
+      Object.keys(oldStateMap).filter(id => !foundIDs.includes(+id))
+        .forEach(id => delete oldStateMap[id]);
+      
+      return Object.values(oldStateMap)
+    })
   });
   useNuiEvent<txAdminMenuPage>("setMenuPage", setMenuPage);
   useNuiEvent<PermCheckServerResp>("reAuth", () => {
