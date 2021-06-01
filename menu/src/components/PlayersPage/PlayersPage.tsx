@@ -32,7 +32,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: "flex",
     flexWrap: "wrap",
     flexGrow: 1,
-    overflow: "auto",
+    overflowX: 'hidden',
+    overflowY: "auto",
   },
 }));
 
