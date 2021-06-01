@@ -22,11 +22,4 @@ export const useStyles = makeStyles((theme: Theme) => ({
   codeBlockText: {
     fontFamily: "monospace"
   },
-  historyItem: {
-    background: theme.palette.background.paper,
-    padding: '10px 10px',
-    marginBottom: 7,
-    display: 'flex',
-    justifyContent: 'space-between'
-  }
 }))

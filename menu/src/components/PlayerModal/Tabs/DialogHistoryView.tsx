@@ -1,6 +1,11 @@
 import React from "react";
-import { Box, DialogContent, Typography, useTheme } from "@material-ui/core";
-import { useStyles } from "../modal.styles";
+import {
+  Box,
+  makeStyles,
+  Theme,
+  Typography,
+  useTheme,
+} from "@material-ui/core";
 import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
 
 const actionTypes = {
@@ -36,9 +41,21 @@ const actionTypes = {
 // TODO: Make the styling on this nicer
 const NoHistoryBox = () => (
   <Box>
-    <Typography color="secondary">No history found!</Typography>
+    <Typography color="textSecondary">
+      No history found for this player
+    </Typography>
   </Box>
 );
+
+const useStyles = makeStyles((theme: Theme) => ({
+  historyItem: {
+    background: theme.palette.background.paper,
+    padding: "10px 10px",
+    marginBottom: 7,
+    display: "flex",
+    justifyContent: "space-between",
+  },
+}));
 
 const DialogHistoryView: React.FC = () => {
   const classes = useStyles();
@@ -48,12 +65,12 @@ const DialogHistoryView: React.FC = () => {
   const playerActionHistory = player?.actionHistory;
 
   return (
-    <DialogContent>
+    <Box p={2} height="100%" display="flex" flexDirection="column">
       <Typography variant="h6" style={{ paddingBottom: 5 }}>
         Related History
       </Typography>
-      <Box>
-        {playerActionHistory?.length ? (
+      <Box flexGrow={1} overflow="auto" pr={1}>
+        {!playerActionHistory?.length ? (
           playerActionHistory.map((h, index) => (
             <Box
               className={classes.historyItem}
@@ -77,7 +94,7 @@ const DialogHistoryView: React.FC = () => {
           <NoHistoryBox />
         )}
       </Box>
-    </DialogContent>
+    </Box>
   );
 };
 

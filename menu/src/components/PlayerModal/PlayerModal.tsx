@@ -72,7 +72,7 @@ const PlayerModal: React.FC = () => {
           <Close />
         </IconButton>
       </DialogTitle>
-      <Box display="flex" px={2} pb={2} pt={2} flexGrow={1}>
+      <Box display="flex" px={2} pb={2} pt={2} flexGrow={1} overflow="hidden">
         <Box
           minWidth={200}
           pr={2}
