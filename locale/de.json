@@ -6,18 +6,18 @@
     "restarter": {
         "start_timeout": "Der Server konnte nicht rechtzeitig hochfahren.",
         "crash_detected": "Absturz erkannt",
-        "hang_detected": "Absturz erkannt",
-        "partial_hang_warn": "Durch einen Serverabsturz, wird dieser in 1 minute neugestartet. Bitte trenne die Verbindung jetzt.",
-        "partial_hang_warn_discord": "Durch einen Serverabsturz wird **%{servername}** in 1 minute neugestartet.",
+        "hang_detected": "Zeitweiliges Aufhängen des Servers erkannt",
+        "partial_hang_warn": "Aufgrund von zeitweiligen Server Lags startet dieser Server in 1 Minute neu. Bitte trenne die Verbindung jetzt.",
+        "partial_hang_warn_discord": "Aufgrund von zeitweiligen Server Lags startet **%{servername}** in 1 Minute neu.",
         "schedule_reason": "Automatisierter Neustart um %{time}",
         "schedule_warn": "Der Server wird in einer Minute neu gestartet. Bitte trenne die Verbindung jetzt. |||| Der Server wird in %{smart_count} Minuten neu gestartet.",
         "schedule_warn_discord": "**%{servername}** wird in einer Minute neu gestartet. |||| **%{servername}** wird in %{smart_count} Minuten neu gestartet."
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) Du wurdest von diesem Server für %{expiration} gebannt. Grund: \"%{reason}\".",
-        "kick_permanent": "(%{author}) Du wurdest von diesem Server permanent gebannt. Grund: \"%{reason}\".",
+        "kick_permanent": "(%{author}) Du wurdest permanent von diesem Server gebannt. Grund: \"%{reason}\".",
         "reject_temporary": "Du wurdest von diesem Server gebannt.\nDein Bann läuft ab in: %{expiration}.\nBann ID: %{id}.\nGrund: %{reason}.\nGebannt von: %{author}.",
-        "reject_permanent": "Du wurdest von diesem Server permanent gebannt.\nBann ID: %{id}.\nGrund: %{reason}.\nGebannt von: %{author}."
+        "reject_permanent": "Du wurdest permanent von diesem Server gebannt.\nBann ID: %{id}.\nGrund: %{reason}.\nGebannt von: %{author}."
     },
     "server_actions": {
         "restarting": "Server Restart (%{reason}).",
