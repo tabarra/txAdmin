@@ -329,6 +329,23 @@ RegisterServerEvent('txAdmin:menu:healPlayer', function(id)
   TriggerEvent('txaLogger:menuEvent', src, "healPlayer", allow, playerName)
 end)
 
+RegisterServerEvent('txAdmin:menu:spectatePlayer', function(id)
+  local src = source
+  -- Sanity as this is still converted tonumber on client side
+  if type(id) ~= 'string' and type(id) ~= 'number' then return end
+  id = tonumber(id)
+  local allow = PlayerHasTxPermission(src, 'players.spectate')
+  if allow then
+    local target = GetPlayerPed(id)
+    -- Lets exit if the target doesn't exist
+    if not target then return end
+
+    local tgtCoords = GetEntityCoords(target)
+    TriggerClientEvent('txAdmin:menu:specPlayerResp', src, 1, tgtCoords)
+  end
+  TriggerEvent('txaLogger:menuEvent', src, 'spectatePlayer', allow, id)
+end)
+
 RegisterServerEvent('txAdmin:menu:healAllPlayers', function()
   local src = source
   local allow = PlayerHasTxPermission(src, 'players.heal')

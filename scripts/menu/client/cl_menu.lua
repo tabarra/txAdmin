@@ -69,6 +69,9 @@ local isMenuVisible
 -- Last location stored in a vec3
 local lastTp
 
+-- Last spectate location stored in a vec3
+local lastSpectateLocation
+
 RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
 
 -- ===============
@@ -342,6 +345,11 @@ if isMenuDebug then
   end)
 end
 
+RegisterNUICallback('spectatePlayer', function(data, cb)
+  TriggerServerEvent('txAdmin:menu:spectatePlayer', tonumber(data.id))
+  cb({})
+end)
+
 -- CB From Menu
 local oldVehVelocity = 0.0
 RegisterNUICallback('spawnVehicle', function(data, cb)
@@ -612,6 +620,86 @@ RegisterNetEvent('txAdmin:events:queueSeatInVehicle', function(vehNetID, seat)
     end
   end
   oldVehVelocity = 0.0
+end)
+
+local isSpectateEnabled = false
+
+local function freezePlayer(bool)
+  local playerPed = PlayerPedId()
+  FreezeEntityPosition(playerPed, bool)
+end
+
+local storedTargetPed = nil
+--- Will toggle spectate for a targeted ped
+--- @param targetPed nil|number - The target ped when toggling on, can be nil when toggling off
+local function toggleSpectate(targetPed)
+  local playerPed = PlayerPedId()
+
+  if not storedTargetPed and isSpectateEnabled then
+    error('Target ped was not found stored')
+  end
+
+  if isSpectateEnabled then
+    isSpectateEnabled = false
+
+    if not lastSpectateLocation then
+      error('Last location previous to spectate was not stored properly')
+    end
+
+    RequestCollisionAtCoord(lastSpectateLocation.x, lastSpectateLocation.y, lastSpectateLocation.z)
+    SetEntityCoords(playerPed, lastSpectateLocation.x, lastSpectateLocation.y, lastSpectateLocation.z)
+    -- The player is still frozen while we wait for collisions to load
+    while not HasCollisionLoadedAroundEntity(playerPed) do
+      Wait(5)
+    end
+    debugPrint('Collisions loaded around player')
+
+    freezePlayer(false)
+    debugPrint('Unfreezing current player')
+
+    NetworkSetInSpectatorMode(false, storedTargetPed)
+    debugPrint(('Set spectate to false for targetPed (%s)'):format(storedTargetPed))
+  else
+    isSpectateEnabled = true
+    storedTargetPed = targetPed
+    local targetCoords = GetEntityCoords(targetPed)
+    debugPrint(('Targets coords = x: %f, y: %f, z: %f'):format(targetCoords.x, targetCoords.y, targetCoords.z))
+
+    RequestCollisionAtCoord(targetCoords.x, targetCoords.y, targetCoords.z)
+    while not HasCollisionLoadedAroundEntity(targetPed) do
+      Wait(5)
+    end
+    debugPrint(('Collisions loaded around TargetPed (%s)'):format(targetPed))
+
+    NetworkSetInSpectatorMode(true, targetPed)
+    debugPrint(('Now spectating TargetPed (%s)'):format(targetPed))
+  end
+end
+
+
+RegisterCommand('endSpectate', function()
+  toggleSpectate()
+end)
+
+
+RegisterNetEvent('txAdmin:menu:specPlayerResp', function(playerId, coords)
+  local playerPed = PlayerPedId()
+  lastSpectateLocation = GetEntityCoords(playerPed)
+
+  SetEntityCoords(playerPed, coords.x, coords.y, coords.z - 15.0, 0, 0, 0, false)
+  freezePlayer(true)
+
+  local clientPlayerId = GetPlayerFromServerId(playerId)
+  -- We need to wait to make sure that the player is actually available once we teleport
+  -- this can take some time so we do this
+  repeat
+    Wait(50)
+    debugPrint('Waiting for player to resolve')
+    clientPlayerId = GetPlayerFromServerId(playerId)
+  until (GetPlayerPed(clientPlayerId) > 0) and clientPlayerId ~= -1
+  debugPrint('Target Ped sucessfully found!')
+
+  toggleSpectate(GetPlayerPed(clientPlayerId))
 end)
 
 
