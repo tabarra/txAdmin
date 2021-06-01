@@ -7,6 +7,7 @@
     },
     "projectName": "Project Taso",
     "maxClients": 32,
-    "switchPageKey": "Tab"
+    "switchPageKey": "Tab",
+    "version": "v4.0.2"
   }
 }

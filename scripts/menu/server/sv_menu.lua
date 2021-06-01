@@ -216,7 +216,8 @@ local ServerCtxObj = {
   projectName = nil,
   maxClients = 30,
   locale = nil,
-  switchPageKey = ''
+  switchPageKey = '',
+  txAdminVersion = ''
 }
 
 local function syncServerCtx()
@@ -232,6 +233,8 @@ local function syncServerCtx()
   local switchPageKey = GetConvar('txAdmin:Menu:PageKey', 'Tab')
   ServerCtxObj.switchPageKey = switchPageKey
 
+  local txAdminVersion = GetConvar('txAdmin-version', '4.0.0')
+  ServerCtxObj.txAdminVersion = txAdminVersion
   -- Default '' in fxServer
   local svProjectName = GetConvar('sv_projectname', '')
   if svProjectName ~= '' then

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import {Box, List, makeStyles, Theme} from "@material-ui/core";
+import { Box, List, makeStyles, Theme, Typography } from '@material-ui/core';
 import { MenuListItem, MenuListItemMulti } from "./MenuListItem";
 import {
   AccessibilityNew,
@@ -24,6 +24,7 @@ import { useIsMenuVisible } from "../../state/visibility.state";
 import { TeleportMode, useTeleportMode } from "../../state/teleportmode.state";
 import { HealMode, useHealMode } from "../../state/healmode.state";
 import { arrayRandom } from "../../utils/miscUtils";
+import { useServerCtxValue } from '../../state/server.state';
 
 const fadeHeight = 20;
 const listHeight = 388;
@@ -63,7 +64,8 @@ export const MainPageList: React.FC = () => {
   const [playerMode, setPlayerMode] = usePlayerMode();
   const [teleportMode, setTeleportMode] = useTeleportMode();
   const [healMode, setHealMode] = useHealMode();
-  const menuVisible = useIsMenuVisible()
+  const menuVisible = useIsMenuVisible();
+  const serverCtx = useServerCtxValue();
   const classes = useStyles();
 
   // the directions are inverted
@@ -382,6 +384,17 @@ export const MainPageList: React.FC = () => {
           )
         )}
       </List>
+      <Typography
+        color='textSecondary'
+        style={{
+          fontWeight: 500,
+          marginTop: -10,
+          textAlign: 'center',
+          fontSize: 12
+        }}
+      >
+        v{serverCtx.txAdminVersion}
+      </Typography>
       {/*<Box className={classes.fadeTop} style={{opacity: curSelected <= 1 ? 0 : 1}}/>*/}
       {/*<Box className={classes.fadeBottom} style={{opacity: curSelected >= 6 ? 0 : 1}}/>*/}
       {

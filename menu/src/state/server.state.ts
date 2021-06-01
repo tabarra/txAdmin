@@ -12,6 +12,7 @@ export interface ServerCtx {
   maxClients: number
   locale: string
   switchPageKey: string
+  txAdminVersion: string
 }
 
 const serverCtx = atom<ServerCtx>({

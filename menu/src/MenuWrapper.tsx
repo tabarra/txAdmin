@@ -15,6 +15,7 @@ import { IFrameProvider } from "./provider/IFrameProvider";
 import { usesCheckCredentials } from "./hooks/useCheckCredentials";
 import { PlayerModalProvider } from "./provider/PlayerModalProvider";
 import { txAdminMenuPage, useSetPage } from "./state/page.state";
+import { Typography } from '@material-ui/core';
 
 debugData([
   {
@@ -45,6 +46,8 @@ const MenuWrapper: React.FC = () => {
     serverCtx.locale,
   ]);
 
+  const styled = visible ? { opacity: 1 } : undefined
+
   return (
     <TopLevelErrorBoundary>
       <I18n
@@ -55,7 +58,7 @@ const MenuWrapper: React.FC = () => {
         <IFrameProvider>
           <DialogProvider>
             <PlayerModalProvider>
-              <div className="App" style={visible ? { opacity: 1 } : undefined}>
+              <div className="App" style={styled}>
                 <MenuRoot />
               </div>
             </PlayerModalProvider>
