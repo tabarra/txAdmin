@@ -54,11 +54,11 @@ const DialogInfoView: React.FC = () => {
       <Typography variant="h6">{t("nui_menu.player_modal.info.title")}</Typography>
       <Typography>
         {t("nui_menu.player_modal.info.session_time")}:{" "}
-        <span style={{ color: theme.palette.text.secondary }}>0 minutes</span>
+        <span style={{ color: theme.palette.text.secondary }}>{playerDetails.sessionTime}</span>
       </Typography>
       <Typography>
       {t("nui_menu.player_modal.info.play_time")}:{" "}
-        <span style={{ color: theme.palette.text.secondary }}>--</span>
+        <span style={{ color: theme.palette.text.secondary }}>{playerDetails.playTime}</span>
       </Typography>
       <Typography>
       {t("nui_menu.player_modal.info.joined")}:{" "}
