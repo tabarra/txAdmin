@@ -27,7 +27,7 @@ const DialogActionView: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar()
   const t = useTranslate();
   const { goToFramePage } = useIFrameCtx()
-  const { setModalOpen } = usePlayerModalContext()
+  const { setModalOpen, closeMenu } = usePlayerModalContext()
 
   const handleDM = () => {
     openDialog({
@@ -125,6 +125,10 @@ const DialogActionView: React.FC = () => {
     enqueueSnackbar('Summoning player.', {variant: 'success'})
   }
 
+  const handleSpectate = () => {
+    closeMenu()
+    fetchNui('spectatePlayer', { id: assocPlayer.id })
+  }
 
   return (
     <DialogContent>
@@ -143,7 +147,7 @@ const DialogActionView: React.FC = () => {
         <Button variant="outlined" color="primary" onClick={handleHeal}>Heal</Button>
         <Button variant="outlined" color="primary" onClick={handleGoTo}>Go to</Button>
         <Button variant="outlined" color="primary" onClick={handleBring}>Bring</Button>
-        {/*<Button variant="outlined" color="primary">Spectate</Button>*/}
+        <Button variant="outlined" color="primary" onClick={handleSpectate}>Spectate</Button>
       </Box>
       {/*<Typography style={{ paddingBottom: 5 }}>Troll</Typography>*/}
       {/*<Box className={classes.actionGrid}>*/}
