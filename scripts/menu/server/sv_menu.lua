@@ -226,11 +226,12 @@ local ServerCtxObj = {
 
 local function syncServerCtx()
   local oneSyncConvar = GetConvar('onesync', 'off')
-  if oneSyncConvar == ('on' or 'legacy') then
+  if oneSyncConvar == 'on' or oneSyncConvar == 'legacy' then
     ServerCtxObj.oneSync.type = oneSyncConvar
-    ServerCtxObj.status = true
+    ServerCtxObj.oneSync.status = true
   elseif oneSyncConvar == 'off' then
-    ServerCtxObj.oneSyncStatus = false
+    ServerCtxObj.oneSync.type = nil
+    ServerCtxObj.oneSync.status = false
   end
   -- Convar must match the event.code *EXACTLY* as shown on this site
   -- https://keycode.info/
@@ -258,6 +259,11 @@ local function syncServerCtx()
   debugPrint(json.encode(ServerCtxObj))
   GlobalState.txAdminServerCtx = ServerCtxObj
 end
+
+RegisterNetEvent('txAdmin:events:getServerCtx', function()
+  local src = source
+  TriggerClientEvent('txAdmin:events:setServerCtx', src, ServerCtxObj)
+end)
 
 -- Everytime the txAdmin convars are changed this event will fire
 -- Therefore, lets update global state with that.
@@ -488,7 +494,12 @@ CreateThread(function()
       local health = ceil(((GetEntityHealth(ped) - 100) / 100) * 100)
       -- trim to prevent long usernames from impacting event deliverance
       local username = sub(GetPlayerName(serverID), 1, 75)
-      local coords = GetEntityCoords(ped)
+      local coords
+      if ServerCtxObj.oneSync.status == true then
+        coords = GetEntityCoords(ped)
+      else
+        coords = -1
+      end
       
       local lastData = LAST_PLAYER_DATA[serverID] or {}
       if type(LAST_PLAYER_DATA[serverID]) ~= 'table' then

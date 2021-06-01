@@ -71,20 +71,41 @@ local lastTp
 
 RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
 
+-- ===============
+--  ServerCtx
+-- ===============
+
+local ServerCtx
 --- Will update ServerCtx based on GlobalState and will send it to NUI
 local function updateServerCtx()
-  local ServerCtx = GlobalState.txAdminServerCtx
-  debugPrint('Checking for ServerCtx')
-  debugPrint(json.encode(ServerCtx))
-
-  -- Dispatch ctx to React state
-  sendMenuMessage('setServerCtx', GlobalState.txAdminServerCtx)
+  _ServerCtx = GlobalState.txAdminServerCtx
+  if _ServerCtx == nil then
+    debugPrint('^3ServerCtx fallback support activated')
+    TriggerServerEvent('txAdmin:events:getServerCtx')
+  else
+    ServerCtx = _ServerCtx
+  end
 end
+
+RegisterNetEvent('txAdmin:events:setServerCtx', function(ctx)
+  if type(ctx) ~= 'table' then return end
+  ServerCtx = ctx
+  debugPrint('^2ServerCtx updated from server event')
+end)
 
 CreateThread(function()
   Wait(0)
   updateServerCtx()
+  while ServerCtx == nil do Wait(0) end
+  debugPrint(json.encode(ServerCtx))
+  
+  -- Dispatch ctx to React state
+  sendMenuMessage('setServerCtx', ServerCtx)
 end)
+
+-- ===============
+--  End ServerCtx
+-- ===============
 
 --- Snackbar message
 ---@param level string The severity of the message can be 'info', 'error', or 'warning'
