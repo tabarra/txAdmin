@@ -9,6 +9,10 @@ if apiHost == "invalid" or pipeToken == "invalid" then
   return
 end
 
+-- How many MS is the interval for the update time
+-- Up this to bump client performance at the cost of player page updates
+local intervalUpdateTime = GetConvarInt('txAdminMenu-updateInterval', 5000)
+
 --Erasing the token convar for security reasons
 if (GetConvar('TXADMIN_MENU_DEBUG', 'false') ~= 'true') then
   SetConvar("txAdmin-pipeToken", "removed")
@@ -469,7 +473,7 @@ CreateThread(function()
   local pairs = pairs
   
   while true do
-    Wait(5000)
+    Wait(intervalUpdateTime)
   
     local totalFound = 0
     local found = {}
