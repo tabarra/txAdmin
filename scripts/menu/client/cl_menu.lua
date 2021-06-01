@@ -234,7 +234,8 @@ local function toggleFreecam(enabled)
   FreezeEntityPosition(ped, enabled)
   
   if enabled then
-    freecamVeh = GetVehiclePedIsIn(ped, false)
+    freecamVeh = Get
+    PedIsIn(ped, false)
     if freecamVeh > 0 then
       NetworkSetEntityInvisibleToNetwork(freecamVeh, true)
       SetEntityCollision(freecamVeh, false, false)
@@ -546,6 +547,10 @@ RegisterNetEvent('txAdmin:menu:fixVehicle', function()
   local ped = PlayerPedId()
   local veh = GetVehiclePedIsIn(ped, false)
   if veh and veh > 0 then
+    NetworkRequestControlOfEntity(vehicle)
+    while not NetworkHasControlOfEntity(vehicle) do
+     Wait(5)
+    end
     SetVehicleUndriveable(veh, false)
     SetVehicleFixed(veh)
     SetVehicleEngineOn(veh, true, false)
