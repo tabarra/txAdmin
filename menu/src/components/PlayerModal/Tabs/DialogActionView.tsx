@@ -70,15 +70,6 @@ const DialogActionView: React.FC = () => {
           enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.dm_dialog.unknown_error"), { variant: 'error' })
           console.error(e)
         })
-          .then((resp) => {
-            enqueueSnackbar("Your DM has been sent!", {
-              variant: translateAlertType(resp.type),
-            });
-          })
-          .catch((e) => {
-            enqueueSnackbar("An unknown error occurred", { variant: "error" });
-            console.error(e);
-          });
       },
     });
   };
@@ -103,15 +94,6 @@ const DialogActionView: React.FC = () => {
           enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.warn_dialog.unknown_error"), { variant: 'error' })
           console.error(e)
         })
-          .then((resp) => {
-            enqueueSnackbar("The player was warned!", {
-              variant: translateAlertType(resp.type),
-            });
-          })
-          .catch((e) => {
-            enqueueSnackbar("An unknown error occurred", { variant: "error" });
-            console.error(e);
-          });
       },
     });
   };
@@ -131,22 +113,11 @@ const DialogActionView: React.FC = () => {
             reason: reason
           }
         }).then(resp => {
-          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.warn_dialog.kick_sent"), { variant: translateAlertType(resp.type) })
+          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.kick_dialog.kick_sent"), { variant: translateAlertType(resp.type) })
         }).catch(e => {
-          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.warn_dialog.unknown_error"), { variant: 'error' })
+          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.kick_dialog.unknown_error"), { variant: 'error' })
           console.error(e)
         })
-          .then((resp) => {
-            enqueueSnackbar("The player was kicked!", {
-              variant: translateAlertType(resp.type),
-            });
-          })
-          .catch((e) => {
-            enqueueSnackbar("An unknown error has occurred", {
-              variant: "error",
-            });
-            console.error(e);
-          });
       },
     });
   };
