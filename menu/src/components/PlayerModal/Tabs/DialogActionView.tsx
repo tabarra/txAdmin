@@ -35,9 +35,9 @@ const DialogActionView: React.FC = () => {
     if (!userHasPerm('players.message', playerPerms)) return showNoPerms('Message')
 
     openDialog({
-      title: `Direct Message ${assocPlayer.username}`,
-      description: 'What is the reason for direct messaging this player?',
-      placeholder: 'Reason...',
+      title: `${t("nui_menu.player_modal.actions.moderation.dm_dialog.title")} ${assocPlayer.username}`,
+      description: t("nui_menu.player_modal.actions.moderation.dm_dialog.description"),
+      placeholder: t("nui_menu.player_modal.actions.moderation.dm_dialog.placeholder"),
       onSubmit: (reason: string) => {
         fetchWebPipe<txAdminActionResp>('/player/message', {
           method: 'POST',
@@ -46,9 +46,9 @@ const DialogActionView: React.FC = () => {
             message: reason
           }
         }).then(resp => {
-          enqueueSnackbar('Your DM has been sent!', { variant: translateAlertType(resp.type) })
+          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.dm_dialog.dm_sent"), { variant: translateAlertType(resp.type) })
         }).catch(e => {
-          enqueueSnackbar('An unknown error occurred', { variant: 'error' })
+          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.dm_dialog.unknown_error"), { variant: 'error' })
           console.error(e)
         })
       }
@@ -59,8 +59,8 @@ const DialogActionView: React.FC = () => {
     if (!userHasPerm('players.warn', playerPerms)) return showNoPerms('Warn')
 
     openDialog({
-      title: `Warn ${assocPlayer.username}`,
-      description: 'What is the reason for direct warning this player?',
+      title: `${t("nui_menu.player_modal.actions.moderation.warn_dialog.title")} ${assocPlayer.username}`,
+      description: t("nui_menu.player_modal.actions.moderation.warn_dialog.description"),
       placeholder: 'Reason...',
       onSubmit: (reason: string) => {
         fetchWebPipe('/player/warn', {
@@ -70,9 +70,9 @@ const DialogActionView: React.FC = () => {
             reason: reason
           }
         }).then(resp => {
-          enqueueSnackbar('The player was warned!', { variant: translateAlertType(resp.type) })
+          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.warn_dialog.warn_sent"), { variant: translateAlertType(resp.type) })
         }).catch(e => {
-          enqueueSnackbar('An unknown error occurred', { variant: 'error' })
+          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.warn_dialog.unknown_error"), { variant: 'error' })
           console.error(e)
         })
       }
@@ -83,9 +83,9 @@ const DialogActionView: React.FC = () => {
     if (!userHasPerm('players.kick', playerPerms)) return showNoPerms('Kick')
 
     openDialog({
-      title: `Kick ${assocPlayer.username}`,
-      description: 'What is the reason for kicking this player?',
-      placeholder: 'Reason...',
+      title: `${t("nui_menu.player_modal.actions.moderation.kick_dialog.title")} ${assocPlayer.username}`,
+      description: t("nui_menu.player_modal.actions.moderation.kick_dialog.description"),
+      placeholder: t("nui_menu.player_modal.actions.moderation.kick_dialog.placeholder"),
       onSubmit: (reason: string) => {
         fetchWebPipe('/player/kick', {
           method: 'POST',
@@ -94,9 +94,9 @@ const DialogActionView: React.FC = () => {
             reason: reason
           }
         }).then(resp => {
-          enqueueSnackbar('The player was kicked!', { variant: translateAlertType(resp.type) })
+          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.warn_dialog.kick_sent"), { variant: translateAlertType(resp.type) })
         }).catch(e => {
-          enqueueSnackbar('An unknown error has occurred', { variant: 'error' })
+          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.warn_dialog.unknown_error"), { variant: 'error' })
           console.error(e)
         })
       }
@@ -124,21 +124,21 @@ const DialogActionView: React.FC = () => {
     if (!userHasPerm('players.heal', playerPerms)) return showNoPerms('Heal')
 
     fetchNui('healPlayer', { id: assocPlayer.id })
-    enqueueSnackbar('Healing player', {variant: 'success'})
+    enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.action_notifications.heal_player"), {variant: 'success'})
   }
 
   const handleGoTo = () => {
     if (!userHasPerm('players.teleport', playerPerms)) return showNoPerms('Teleport')
 
     fetchNui('tpToPlayer', { id: assocPlayer.id })
-    enqueueSnackbar('Teleporting to player', {variant: 'success'})
+    enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.action_notifications.tp_player"), {variant: 'success'})
   }
 
   const handleBring = () => {
     if (!userHasPerm('players.teleport', playerPerms)) return showNoPerms('Teleport')
 
     fetchNui('summonPlayer', { id: assocPlayer.id })
-    enqueueSnackbar('Summoning player.', {variant: 'success'})
+    enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.action_notifications.bring_player"), {variant: 'success'})
   }
 
   const handleSpectate = () => {
@@ -155,17 +155,17 @@ const DialogActionView: React.FC = () => {
       </Box>
       <Typography style={{ paddingBottom: 5 }}>Moderation</Typography>
       <Box className={classes.actionGrid}>
-        <Button variant="outlined" color="primary" onClick={handleDM}>DM</Button>
-        <Button variant="outlined" color="primary" onClick={handleWarn}>Warn</Button>
-        <Button variant="outlined" color="primary" onClick={handleKick}>Kick</Button>
-        <Button variant="outlined" color="primary" onClick={handleSetAdmin}>Set Admin</Button>
+        <Button variant="outlined" color="primary" onClick={handleDM}>{t("nui_menu.player_modal.actions.moderation.options.dm")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleWarn}>{t("nui_menu.player_modal.actions.moderation.options.warn")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleKick}>{t("nui_menu.player_modal.actions.moderation.options.kick")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleSetAdmin}>{t("nui_menu.player_modal.actions.moderation.options.set_admin")}</Button>
       </Box>
       <Typography style={{ paddingBottom: 5 }}>{t("nui_menu.player_modal.actions.interaction.category_title_2")}</Typography>
       <Box className={classes.actionGrid}>
-        <Button variant="outlined" color="primary" onClick={handleHeal}>Heal</Button>
-        <Button variant="outlined" color="primary" onClick={handleGoTo}>Go to</Button>
-        <Button variant="outlined" color="primary" onClick={handleBring}>Bring</Button>
-        <Button variant="outlined" color="primary" onClick={handleSpectate}>Spectate</Button>
+        <Button variant="outlined" color="primary" onClick={handleHeal}>{t("nui_menu.player_modal.actions.moderation.options.heal")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleGoTo}>{t("nui_menu.player_modal.actions.moderation.options.go_to")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleBring}>{t("nui_menu.player_modal.actions.moderation.options.bring")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleSpectate}>{t("nui_menu.player_modal.actions.moderation.options.spectate")}</Button>
       </Box>
       {/*<Typography style={{ paddingBottom: 5 }}>Troll</Typography>*/}
       {/*<Box className={classes.actionGrid}>*/}

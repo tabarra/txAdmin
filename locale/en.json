@@ -141,12 +141,42 @@
             },
             "actions": {
                 "moderation": {
+                    "dm_dialog": {
+                        "title": "Direct Message",
+                        "description": "What is the reason for direct messaging this player?",
+                        "placeholder": "Reason...",
+                        "dm_sent": "Your DM has been sent!",
+                        "unknown_error": "An unknown error occurred"
+                    },
+                    "warn_dialog": {
+                        "title": "Warn",
+                        "description": "What is the reason for direct warning this player?",
+                        "placeholder": "Reason...",
+                        "warn_sent": "The player was warned!",
+                        "unknown_error": "An unknown error occurred"
+                    },
+                    "kick_dialog": {
+                        "title": "Kick",
+                        "description": "What is the reason for kicking this player?",
+                        "placeholder": "Reason...",
+                        "kick_sent": "The player was kicked!",
+                        "unknown_error": "An unknown error occurred"
+                    },
                     "category_title_1": "Moderation",
                     "options": {
                         "dm": "DM",
                         "warn": "Warn",
                         "kick": "Kick",
-                        "set_admin": "Give Admin"
+                        "set_admin": "Give Admin",
+                        "heal": "Heal",
+                        "go_to": "Go to",
+                        "bring": "Bring",
+                        "spectate": "Spectate"
+                    },
+                    "action_notifications": {
+                        "heal_player": "Healing player",
+                        "tp_player": "Teleporting to player",
+                        "bring_player": "Summoning player"
                     }
                 },
                 "interaction": {
