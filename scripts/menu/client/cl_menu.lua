@@ -234,7 +234,7 @@ local function toggleFreecam(enabled)
   FreezeEntityPosition(ped, enabled)
   
   if enabled then
-    freecamVeh = Get
+    freecamVeh = GetVehiclePedIsIn(ped, false)
     PedIsIn(ped, false)
     if freecamVeh > 0 then
       NetworkSetEntityInvisibleToNetwork(freecamVeh, true)
