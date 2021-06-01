@@ -22,7 +22,6 @@ import {
   FlashOn,
 } from "@material-ui/icons";
 import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
-import { useStyles } from "./modal.styles";
 import { useAssociatedPlayerValue } from "../../state/playerDetails.state";
 import { useTranslate } from "react-polyglot";
 import { DialogBaseView } from "./Tabs/DialogBaseView";
@@ -38,6 +37,14 @@ const LoadingModal: React.FC = () => (
     <CircularProgress />
   </Box>
 );
+
+const useStyles = makeStyles((theme: Theme) => ({
+  closeButton: {
+    position: "absolute",
+    top: theme.spacing(1),
+    right: theme.spacing(2),
+  },
+}))
 
 const PlayerModal: React.FC = () => {
   const classes = useStyles();
