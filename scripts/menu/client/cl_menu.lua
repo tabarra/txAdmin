@@ -343,6 +343,7 @@ if isMenuDebug then
 end
 
 -- CB From Menu
+local oldVehVelocity = 0.0
 RegisterNUICallback('spawnVehicle', function(data, cb)
   if type(data) ~= 'table' then error("Invalid spawnVehicle NUI callback data") end
   local model = data.model
@@ -353,6 +354,15 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
   else
     local isAutomobile = IsThisModelACar(model)
     if isAutomobile ~= false then isAutomobile = true end
+    
+    -- collect the old velocity
+    local ped = PlayerPedId()
+    local oldVeh = GetVehiclePedIsIn(ped, false)
+    if oldVeh and oldVeh > 0 then
+      oldVehVelocity = GetEntityVelocity(oldVeh)
+      DeleteVehicle(oldVeh)
+    end
+    
     TriggerServerEvent('txAdmin:menu:spawnVehicle', model, isAutomobile)
     cb({})
   end
@@ -576,47 +586,28 @@ RegisterNetEvent('txAdmin:menu:fixVehicle', function()
 end)
 
 --[[ Spawn vehicles, with support for entity lockdown ]]
-RegisterNetEvent('txAdmin:menu:spawnVehicle', function(netID)
-  -- get current veh and speed
-  local ped = PlayerPedId()
-  local oldVeh = GetVehiclePedIsIn(ped, false)
-  local oldVel = DoesEntityExist(oldVeh) and GetEntitySpeed(oldVeh) or 0.0
-  
-  -- collect seat positions of all peds  
-  local seatsToPlace = {}
-  
-  -- only delete if the new vehicle is found
-  if oldVeh and IsPedInVehicle(ped, oldVeh, true) then
-    local maxSeats = GetVehicleMaxNumberOfPassengers(oldVeh)
-    for i = -1, maxSeats do
-      local pedInSeat = GetPedInVehicleSeat(oldVeh, i)
-      if pedInSeat > 0 then
-        seatsToPlace[i] = pedInSeat
-      end
-    end
-    debugPrint("Deleting existing vehicle (" .. oldVeh .. ")")
-    DeleteVehicle(oldVeh)
-  else
-    seatsToPlace[-1] = ped
-  end
+RegisterNetEvent('txAdmin:events:queueSeatInVehicle', function(vehNetID, seat)
+  if type(vehNetID) ~= 'number' then return end
+  if type(seat) ~= 'number' then return end
   
   local tries = 0
-  while not NetworkDoesEntityExistWithNetworkId(netID) do
-    tries = tries + 1
-    if tries > 250 then break end
-    Wait(10)
+  while not NetworkDoesEntityExistWithNetworkId(vehNetID) and tries < 1000 do Wait(0) end
+  if tries >= 1000 then
+    print("^1Failed to seat into vehicle (net=" .. vehNetID .. ")")
+    return
   end
-  local veh = NetworkGetEntityFromNetworkId(netID)
-  if not veh or veh == 0 then error("Vehicle did not spawn") end
   
-  for seatIndex, seatPed in pairs(seatsToPlace) do
-    SetPedIntoVehicle(seatPed, veh, seatIndex)
+  local veh = NetToVeh(vehNetID)
+  if veh and veh > 0 then
+    SetPedIntoVehicle(PlayerPedId(), veh, seat)
+    if seat == -1 then
+      SetVehicleEngineOn(veh, true, true, false)
+      SetEntityVelocity(veh, oldVehVelocity)
+      --SetVehicleForwardSpeed(veh, #(oldVehVelocity[1] + oldVehVelocity[2]))
+      SetVehicleOnGroundProperly(veh)
+    end
   end
-    
-  if oldVel > 0.0 then
-    SetVehicleEngineOn(veh, true, true, false)
-    SetVehicleForwardSpeed(veh, oldVel)
-  end
+  oldVehVelocity = 0.0
 end)
 
 

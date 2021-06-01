@@ -441,6 +441,20 @@ RegisterServerEvent('txAdmin:menu:spawnVehicle', function(model, isAutomobile)
     local ped = GetPlayerPed(src)
     local coords = GetEntityCoords(ped)
     local heading = GetEntityHeading(ped)
+  
+    local seatsToPlace = {}
+    local oldVeh = GetVehiclePedIsIn(ped, false)
+    if oldVeh and oldVeh > 0 then
+      for i = 6, -1, -1 do
+        local pedInSeat = GetPedInVehicleSeat(oldVeh, i)
+        if pedInSeat > 0 then
+          seatsToPlace[i] = pedInSeat
+        end
+      end
+    else
+      seatsToPlace[-1] = ped
+    end
+    
     local veh
     if isAutomobile then
       coords = vec4(coords[1], coords[2], coords[3], heading) 
@@ -459,8 +473,22 @@ RegisterServerEvent('txAdmin:menu:spawnVehicle', function(model, isAutomobile)
     local netID = NetworkGetNetworkIdFromEntity(veh)
     debugPrint(string.format("spawn vehicle (src=^3%d^0, model=^4%s^0, isAuto=%s^0, netID=^3%s^0)", src, model,
       (isAutomobile and '^2yes' or '^3no'), netID))
-      
-    TriggerClientEvent('txAdmin:menu:spawnVehicle', src, netID)
+
+    -- map all player ids to peds
+    local players = GetPlayers()
+    local pedMap = {}
+    for _, id in pairs(players) do
+      local pedId = GetPlayerPed(id)
+      pedMap[pedId] = id
+    end
+
+    for seatIndex, seatPed in pairs(seatsToPlace) do
+      debugPrint(("setting %d into seat index %d"):format(seatPed, seatIndex))
+      local targetSrc = pedMap[seatPed]
+      if type(targetSrc) == 'string' then
+        TriggerClientEvent('txAdmin:events:queueSeatInVehicle', targetSrc, netID, seatIndex)
+      end
+    end
   end
 end)
 
