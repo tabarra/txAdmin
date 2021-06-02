@@ -52,6 +52,14 @@ local function sendFullClientData(id, data)
   TriggerLatentClientEvent('txAdmin:menu:setPlayerState', id, EMIT_BITRATE, data)
 end
 
+RegisterServerEvent('txAdmin:events:enableDebug', function()
+  local src = source
+  if not PlayerHasTxPermission(src, 'control.server') then return end
+  debugModeEnabled = true
+  debugPrint("^1!! Debug mode enabled by ^2" .. GetPlayerName(src) .. "^1 !!^0")
+  TriggerClientEvent('txAdmin:events:enableDebug', -1)
+end)
+
 ---@param onlineAdminIDs table<number>
 AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
   debugPrint('^3Admins changed. Online admins: ' .. json.encode(onlineAdminIDs) .. "^0")

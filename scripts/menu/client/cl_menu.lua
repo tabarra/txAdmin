@@ -165,10 +165,12 @@ local function txadmin()
 end
 RegisterCommand('txadmin', txadmin)
 RegisterCommand('tx', txadmin)
+RegisterCommand('txAdmin-debug', function() TriggerServerEvent('txAdmin:events:enableDebug') end)
 
 CreateThread(function()
   TriggerEvent('chat:removeSuggestion', '/txadmin')
   TriggerEvent('chat:removeSuggestion', '/tx')
+  TriggerEvent('chat:removeSuggestion', '/txAdmin-debug')
 end)
 -- end commands
 
@@ -611,6 +613,11 @@ RegisterNetEvent('txAdmin:events:queueSeatInVehicle', function(vehNetID, seat)
     end
   end
   oldVehVelocity = 0.0
+end)
+
+--[[ Enable debugging ]]
+RegisterNetEvent('txAdmin:events:enableDebug', function()
+  debugModeEnabled = true
 end)
 
 CreateThread(function()
