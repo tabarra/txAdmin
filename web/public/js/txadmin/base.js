@@ -18,7 +18,6 @@ const xss = (x) => {
     return tmp.innerHTML;
 };
 
-
 //================================================================
 //================================================= Event Handlers
 //================================================================
@@ -35,6 +34,18 @@ document.addEventListener('DOMContentLoaded', function(event) {
                 y: 64,
             },
         });
+        const theme = document.body.classList.contains('theme--dark') ? 'dark' : 'light';
+
+        jconfirm.defaults = {
+            theme: theme,
+            draggable: false,
+            useBootstrap: false,
+            escapeKey: true,
+            type: 'red',
+            typeAnimated: false,
+            boxWidth: '500px',
+            backgroundDismiss: true,
+        };
     }
 });
 

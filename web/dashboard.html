@@ -142,13 +142,13 @@
                 <h5 class="d-inline">Server Control</h5>
             </div>
             <div class="card-body text-center align-middle">
-                <button onclick="controlAction('start')"
+                <button onclick="confirmPrompt('start')"
                     class="btn btn-outline-{{it.perms.controlsClass}} btn-lg mx-auto m-2" type="button" id="ctrl-start"
                     {{it.perms.controls}}>START</button> &nbsp;
-                <button onclick="controlAction('restart')"
+                <button onclick="confirmPrompt('restart')"
                     class="btn btn-outline-{{it.perms.controlsClass}} btn-lg mx-auto m-2" type="button"
                     id="ctrl-restart" {{it.perms.controls}}>RESTART</button> &nbsp;
-                <button onclick="controlAction('stop')"
+                <button onclick="confirmPrompt('stop')"
                     class="btn btn-outline-{{it.perms.controlsClass}} btn-lg mx-auto m-2" type="button" id="ctrl-stop"
                     {{it.perms.controls}}>STOP</button>
                 <br>
@@ -288,10 +288,30 @@
 
 <script>
     //============================================== Controls (start/restart/stop)
+    function confirmPrompt(action) {
+        $.confirm({
+            title: `Confirm Server Action`,
+            animation: 'scale',
+
+            escapeKey: true,
+            closeIcon: true,
+            content: `Are you sure you would like to <b>${action}</b> the server?`,
+            buttons: {
+                cancel: function() {
+                    // no op
+                },
+                confirm:  {
+                    btnClass: 'btn-red',
+                    action: function () {
+                        controlAction(action)
+                    }
+                }
+            }
+        })
+    }
+
+
     function controlAction(action) {
-        if (action !== 'start' && !window.confirm('Are you sure you want to ' + action + ' the server?')) {
-            return;
-        }
         const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         txAdminAPI({
             url: '/fxserver/controls/' + action,

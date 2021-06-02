@@ -285,7 +285,7 @@
                 }
             },
             error: function (xmlhttprequest, textstatus, message) {
-                alert("Error processing request.");
+                $.notify({ message: '<p class="text-center">Error deleting admin</p>' })
             }
         });
     }

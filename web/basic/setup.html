@@ -487,7 +487,26 @@
         const s5ServerCFGAutofill = document.getElementById("s5ServerCFGAutofill");
         const s5ServerCFGError = document.getElementById("s5ServerCFGError");
         s5ServerCFGInput.addEventListener("keyup", inputKeyUp);
-        
+
+        const recipeEngineError = (errorMsg) => {
+            $.alert({
+                title: 'Recipe Engine Error Encountered',
+                backgroundDismiss: false,
+                content: `An error was encountered while running.<br><br><span style='color: #e55353'>"${errorMsg}"</span>`,
+                buttons: {
+                    reload: {
+                        text: 'Refresh',
+                        btnClass: 'btn-red',
+                        action: function() {
+                            this.close()
+                        }
+                    }
+                },
+                onClose: () => {
+                    window.location.reload(true);
+                }
+            })
+        }
         
         // Server Name step validation
         function validateName(destroyFeedback) {
@@ -522,7 +541,7 @@
                 s4LocalDataPathDiv.classList.add('d-none');
                 s5DeployerTargetDiv.classList.remove('d-none');
                 s5ServerCFGDiv.classList.add('d-none');
-                
+
                 if(depType == 'popular'){
                     s4PopularTemplateDiv.classList.remove('d-none');
                     s4RemoteTemplateDiv.classList.add('d-none');
@@ -547,7 +566,7 @@
                 s4LocalDataPathDiv.classList.add('d-none');
                 s5DeployerTargetDiv.classList.remove('d-none');
                 s5ServerCFGDiv.classList.add('d-none');
-                
+
             }else if(depType == 'local'){
                 s4Title.textContent = "Local Server Data";
                 s5Title.textContent = "Server CFG File";
@@ -560,8 +579,7 @@
                 s5DeployerTargetDiv.classList.add('d-none');
                 s5ServerCFGDiv.classList.remove('d-none');
             }else{
-                alert('Unknown deployment type!');
-                window.location.reload(true);
+
             }
         }
 
@@ -640,7 +658,7 @@
         function selectTemplate(key){
             selectedTemplateIndex = key;
             if(!loadedTemplates[key]){
-                return alert('Invalid Template');
+                return recipeEngineError('Invalid Template');
             }
             const deployData = buildDeployName(loadedTemplates[key].name);
             s5DeployerTargetInput.value = deployData.path;
@@ -844,7 +862,7 @@
                 outData.cfgFile = s5ServerCFGInput.value.trim();
                 
             }else{
-                return alert('Unknown deployment type')
+                return recipeEngineError('Unknown deployment type')
             }
             
             txAdminAPI({
