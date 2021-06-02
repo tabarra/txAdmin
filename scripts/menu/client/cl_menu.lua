@@ -69,11 +69,7 @@ local isMenuVisible
 -- Last location stored in a vec3
 local lastTp
 
--- Last spectate location stored in a vec3
-local lastSpectateLocation
-
 RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
-RegisterKeyMapping('txAdmin:menu:endSpectate', 'End spectating a player', 'keyboard', 'BACK')
 -- ===============
 --  ServerCtx
 -- ===============
@@ -113,7 +109,7 @@ end)
 --- Snackbar message
 ---@param level string The severity of the message can be 'info', 'error', or 'warning'
 ---@param message string Message to display with snackbar
-local function sendSnackbarMessage(level, message, isTranslationKey)
+function sendSnackbarMessage(level, message, isTranslationKey)
   debugPrint(('Sending snackbar message, level: %s, message: %s, isTranslationKey: %s'):format(level, message, isTranslationKey))
   sendMenuMessage('setSnackbarAlert', { level = level, message = message, isTranslationKey = isTranslationKey })
 end
@@ -344,11 +340,6 @@ if isMenuDebug then
     cb({})
   end)
 end
-
-RegisterNUICallback('spectatePlayer', function(data, cb)
-  TriggerServerEvent('txAdmin:menu:spectatePlayer', tonumber(data.id))
-  cb({})
-end)
 
 -- CB From Menu
 local oldVehVelocity = 0.0
@@ -622,130 +613,12 @@ RegisterNetEvent('txAdmin:events:queueSeatInVehicle', function(vehNetID, seat)
   oldVehVelocity = 0.0
 end)
 
-local isSpectateEnabled = false
-local storedTargetPed = nil
-local storedTargetPlayerId
-local storedGameTag = nil
-
-local function createGamerTagInfo()
-  if storedGameTag and IsMpGamerTagActive(storedGameTag) then return end
-  local nameTag = ('[%d] %s'):format(GetPlayerServerId(storedTargetPlayerId), GetPlayerName(storedTargetPlayerId))
-  storedGameTag = CreateFakeMpGamerTag(storedTargetPed, nameTag, false, false, '', 0, 0, 0, 0)
-  SetMpGamerTagVisibility(storedGameTag, 2, 1)  --set the visibility of component 2(healthArmour) to true
-  SetMpGamerTagAlpha(storedGameTag, 2, 255) --set the alpha of component 2(healthArmour) to 255
-  SetMpGamerTagHealthBarColor(storedGameTag, 129) --set component 2(healthArmour) color to 129(HUD_COLOUR_YOGA)
-  SetMpGamerTagVisibility(storedGameTag, 4, NetworkIsPlayerTalking(i))
-  --debugPrint(('Created gamer tag for ped (%s), TargetPlayerID (%s)'):format(storedTargetPlayerId, storedTargetPlayerId))
-end
-
-local function clearGamerTagInfo()
-  if not storedGameTag then return end
-  RemoveMpGamerTag(storedGameTag)
-  storedGameTag = nil
-end
-
---- Will freeze the player and set the entity to invisible
---- @param bool boolean - Whether we should prepare or cleanup
-local function preparePlayerForSpec(bool)
-  local playerPed = PlayerPedId()
-  FreezeEntityPosition(playerPed, bool)
-end
-
---- Will toggle spectate for a targeted ped
---- @param targetPed nil|number - The target ped when toggling on, can be nil when toggling off
-local function toggleSpectate(targetPed, targetPlayerId)
-  local playerPed = PlayerPedId()
-
-  if isSpectateEnabled then
-    isSpectateEnabled = false
-
-    if not lastSpectateLocation then
-      error('Last location previous to spectate was not stored properly')
-    end
-
-    if not storedTargetPed then
-      error('Target ped was not stored to unspectate')
-    end
-
-    RequestCollisionAtCoord(lastSpectateLocation.x, lastSpectateLocation.y, lastSpectateLocation.z)
-    SetEntityCoords(playerPed, lastSpectateLocation.x, lastSpectateLocation.y, lastSpectateLocation.z)
-    -- The player is still frozen while we wait for collisions to load
-    while not HasCollisionLoadedAroundEntity(playerPed) do
-      Wait(5)
-    end
-    debugPrint('Collisions loaded around player')
-
-    preparePlayerForSpec(false)
-    debugPrint('Unfreezing current player')
-
-    NetworkSetInSpectatorMode(false, storedTargetPed)
-    debugPrint(('Set spectate to false for targetPed (%s)'):format(storedTargetPed))
-    clearGamerTagInfo()
-
-    storedTargetPed = nil
-  else
-    storedTargetPed = targetPed
-    storedTargetPlayerId = targetPlayerId
-    local targetCoords = GetEntityCoords(targetPed)
-    debugPrint(('Targets coords = x: %f, y: %f, z: %f'):format(targetCoords.x, targetCoords.y, targetCoords.z))
-
-    RequestCollisionAtCoord(targetCoords.x, targetCoords.y, targetCoords.z)
-    while not HasCollisionLoadedAroundEntity(targetPed) do
-      Wait(5)
-    end
-    debugPrint(('Collisions loaded around TargetPed (%s)'):format(targetPed))
-
-    NetworkSetInSpectatorMode(true, targetPed)
-    debugPrint(('Now spectating TargetPed (%s)'):format(targetPed))
-    isSpectateEnabled = true
-  end
-end
-
-
-RegisterCommand('txAdmin:menu:endSpectate', function()
-  if isSpectateEnabled then
-    toggleSpectate(storedTargetPed)
-    preparePlayerForSpec(false)
-  end
-end)
-
-RegisterNetEvent('txAdmin:menu:specPlayerResp', function(playerId, coords)
-  local playerPed = PlayerPedId()
-  lastSpectateLocation = GetEntityCoords(playerPed)
-
-  SetEntityCoords(playerPed, coords.x, coords.y, coords.z - 15.0, 0, 0, 0, false)
-  preparePlayerForSpec(true)
-
-  local clientPlayerId = GetPlayerFromServerId(playerId)
-  ---- We need to wait to make sure that the player is actually available once we teleport
-  ---- this can take some time so we do this
-  repeat
-    Wait(50)
-    debugPrint('Waiting for player to resolve')
-    clientPlayerId = GetPlayerFromServerId(playerId)
-  until (GetPlayerPed(clientPlayerId) > 0) and clientPlayerId ~= -1
-
-  debugPrint('Target Ped sucessfully found!')
-  toggleSpectate(GetPlayerPed(clientPlayerId), clientPlayerId)
-end)
-
 CreateThread(function()
   while true do
     if isMenuVisible and IsPauseMenuActive() then
       toggleMenuVisibility()
     end
     Wait(250)
-  end
-end)
-
-CreateThread(function()
-  while true do
-    if isSpectateEnabled then
-      createGamerTagInfo()
-    else
-      clearGamerTagInfo()
-    end
-    Wait(50)
   end
 end)
 
