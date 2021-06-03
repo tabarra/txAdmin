@@ -7,20 +7,20 @@ local gamerTagCompsEnum = {
     GamerName = 0,
     CrewTag = 1,
     HealthArmour = 2,
-    BigText = 4,
-    AudioIcon = 5,
-    UsingMenu = 6,
-    PassiveMode = 7,
-    WantedStars = 8,
-    Driver = 9,
-    CoDriver = 10,
-    Tagged = 11,
-    GamerNameNearby = 12,
-    Arrow = 13,
-    Packages = 14,
-    InvIfPedIsFollowing = 15,
-    RankText = 16,
-    Typing = 17
+    BigText = 3,
+    AudioIcon = 4,
+    UsingMenu = 5,
+    PassiveMode = 6,
+    WantedStars = 7,
+    Driver = 8,
+    CoDriver = 9,
+    Tagged = 12,
+    GamerNameNearby = 13,
+    Arrow = 14,
+    Packages = 15,
+    InvIfPedIsFollowing = 16,
+    RankText = 17,
+    Typing = 18
 }
 
 local function cleanUpGamerTags()
@@ -35,12 +35,14 @@ end
 
 local function showGamerTags()
     local curCoords = GetEntityCoords(PlayerPedId())
+    -- Per infinity this will only return players within 300m
     local allActivePlayers = GetActivePlayers()
 
     for _, i in ipairs(allActivePlayers) do
         local targetPed = GetPlayerPed(i)
         local playerStr = '[' .. GetPlayerServerId(i) .. ']' .. ' ' .. GetPlayerName(i)
 
+        -- If we have not yet indexed this player or their tag has somehow dissapeared (pause, etc)
         if not playerGamerTags[i] or not IsMpGamerTagActive(playerGamerTags[i].gamerTag) then
             playerGamerTags[i] = {
                 gamerTag = CreateFakeMpGamerTag(targetPed, playerStr, false, false, 0),
@@ -54,13 +56,24 @@ local function showGamerTags()
 
         -- Distance Check
         if #(targetPedCoords - curCoords) <= distanceToCheck then
+            -- Setup name
+            SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.GamerName, 1)
+
+            -- Setup AudioIcon
+            SetMpGamerTagAlpha(targetTag, gamerTagCompsEnum.AudioIcon, 255)
+            -- Set audio to red when player is talking
+            SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.AudioIcon, NetworkIsPlayerTalking(i))
             -- Setup Health
             SetMpGamerTagHealthBarColor(targetTag, 129)
             SetMpGamerTagAlpha(targetTag, gamerTagCompsEnum.HealthArmour, 255)
             SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.HealthArmour, 1)
         else
+            -- Cleanup name
+            SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.GamerName, 0)
             -- Cleanup Health
             SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.HealthArmour, 0)
+            -- Cleanup AudioIcon
+            SetMpGamerTagVisibility(targetTag, gamerTagCompsEnum.AudioIcon, 0)
         end
     end
 end
@@ -68,12 +81,14 @@ end
 RegisterNUICallback('togglePlayerIDs', function(_, cb)
     isPlayerIDActive = not isPlayerIDActive
 
+    cb({ isShowing = isPlayerIDActive })
+
     if not isPlayerIDActive then
+        -- Remove all gamer tags and clear out active table
         cleanUpGamerTags()
     end
 
     debugPrint('Show Player IDs Status: ' .. tostring(isPlayerIDActive))
-    cb({})
 end)
 
 CreateThread(function()

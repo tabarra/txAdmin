@@ -112,6 +112,12 @@
                 "dialog_title": "Send Announcement",
                 "dialog_desc": "Send an announcement to all online players",
                 "dialog_success": "Sending the announcement"
+            },
+            "player_ids": {
+                "list_primary": "Toggle Player ID's",
+                "list_secondary": "Will display nearby players NetID's",
+                "alert_show": "Showing nearby player NetID's",
+                "alert_hide": "Hiding nearby player NetID's"
             }
         },
         "page_players": {

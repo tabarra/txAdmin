@@ -14,8 +14,8 @@ import {
   LocationSearching,
   PermIdentity,
   Restore,
-  Security
-} from '@material-ui/icons';
+  Security,
+} from "@material-ui/icons";
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { useDialogContext } from "../../provider/DialogProvider";
 import { fetchNui } from "../../utils/fetchNui";
@@ -150,8 +150,16 @@ export const MainPageList: React.FC = () => {
   };
 
   const handleTogglePlayerIds = () => {
-    fetchNui("togglePlayerIDs")
-  }
+    fetchNui("togglePlayerIDs").then(({ isShowing }) => {
+      isShowing
+        ? enqueueSnackbar(t("nui_menu.page_main.player_ids.alert_show"), {
+            variant: "info",
+          })
+        : enqueueSnackbar(t("nui_menu.page_main.player_ids.alert_hide"), {
+            variant: "info",
+          });
+    });
+  };
 
   const handleSpawnVehicle = () => {
     openDialog({
@@ -392,8 +400,8 @@ export const MainPageList: React.FC = () => {
       },
       {
         icon: <PermIdentity />,
-        primary: "Toggle Player ID's",
-        secondary: "Will display nearby players Net ID",
+        primary: t("nui_menu.page_main.player_ids.list_primary"),
+        secondary: t("nui_menu.page_main.player_ids.list_secondary"),
         onSelect: handleTogglePlayerIds,
       },
       // {
@@ -427,8 +435,14 @@ export const MainPageList: React.FC = () => {
           )
         )}
       </List>
-      <Box className={classes.fadeTop} style={{opacity: curSelected <= 1 ? 0 : 1}}/>
-      <Box className={classes.fadeBottom} style={{opacity: curSelected >= 6 ? 0 : 1}}/>
+      <Box
+        className={classes.fadeTop}
+        style={{ opacity: curSelected <= 1 ? 0 : 1 }}
+      />
+      <Box
+        className={classes.fadeBottom}
+        style={{ opacity: curSelected >= 6 ? 0 : 1 }}
+      />
       <Box className={classes.icon} display="flex" justifyContent="center">
         <ExpandMore />
       </Box>
