@@ -7,13 +7,15 @@ import {
   Build,
   ControlCamera,
   DirectionsCar,
+  ExpandMore,
   Favorite,
   GpsFixed,
   LocalHospital,
   LocationSearching,
+  PermIdentity,
   Restore,
-  Security,
-} from "@material-ui/icons";
+  Security
+} from '@material-ui/icons';
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { useDialogContext } from "../../provider/DialogProvider";
 import { fetchNui } from "../../utils/fetchNui";
@@ -146,6 +148,10 @@ export const MainPageList: React.FC = () => {
       },
     });
   };
+
+  const handleTogglePlayerIds = () => {
+    fetchNui("togglePlayerIDs")
+  }
 
   const handleSpawnVehicle = () => {
     openDialog({
@@ -384,6 +390,13 @@ export const MainPageList: React.FC = () => {
         secondary: t("nui_menu.page_main.send_announce.list_secondary"),
         onSelect: handleAnnounceMessage,
       },
+      {
+        icon: <PermIdentity />,
+        requiredPermission: "players.message",
+        primary: "Toggle Player ID's",
+        secondary: "Will display nearby players Net ID",
+        onSelect: handleTogglePlayerIds,
+      },
       // {
       //   icon: <Gavel />,
       //   primary: t("nui_menu.page_main.spawn_wep.list_primary"),
@@ -415,26 +428,22 @@ export const MainPageList: React.FC = () => {
           )
         )}
       </List>
-      <Typography
-        color="textSecondary"
-        style={{
-          fontWeight: 500,
-          marginTop: -10,
-          textAlign: "center",
-          fontSize: 12,
-        }}
-      >
-        v{serverCtx.txAdminVersion}
-      </Typography>
-      {/*<Box className={classes.fadeTop} style={{opacity: curSelected <= 1 ? 0 : 1}}/>*/}
-      {/*<Box className={classes.fadeBottom} style={{opacity: curSelected >= 6 ? 0 : 1}}/>*/}
-      {/*
-        This arrow was used for a scrollable main item list, if it becomes scrollable again
-        reuse this
-      */
-      /*<Box className={classes.icon} display="flex" justifyContent="center">*/
-      /*  <ExpandMore />*/
-      /*</Box>*/}
+      <Box className={classes.fadeTop} style={{opacity: curSelected <= 1 ? 0 : 1}}/>
+      <Box className={classes.fadeBottom} style={{opacity: curSelected >= 6 ? 0 : 1}}/>
+      <Box className={classes.icon} display="flex" justifyContent="center">
+        <ExpandMore />
+      </Box>
+      {/*<Typography*/}
+      {/*  color="textSecondary"*/}
+      {/*  style={{*/}
+      {/*    fontWeight: 500,*/}
+      {/*    marginTop: -10,*/}
+      {/*    textAlign: "center",*/}
+      {/*    fontSize: 12,*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  v{serverCtx.txAdminVersion}*/}
+      {/*</Typography>*/}
     </Box>
   );
 };
