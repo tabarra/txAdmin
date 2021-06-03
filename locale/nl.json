@@ -4,11 +4,11 @@
         "humanizer_language": "nl"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
+        "start_timeout": "Kon niet op tijd starten",
         "crash_detected": "Crash geconstateerd",
-        "hang_detected": "hang detected",
-        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
-        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
+        "hang_detected": "De server is vastgelopen",
+        "partial_hang_warn": "De server is vastgelopen en zal over 1 minuut herstarten. Verlaat de server nu.",
+        "partial_hang_warn_discord": "**%{servername}** is vastgelopen en zal over 1 minuut herstarten.",
         "schedule_reason": "Geplande restart om %{time}",
         "schedule_warn": "De server heeft een geplande restart over %{smart_count} minuut. Verlaat de server. |||| De server heeft een geplande restart over %{smart_count} minuten.",
         "schedule_warn_discord": "**%{servername}** heeft een geplande restart over %{smart_count} minuut. |||| **%{servername}** heeft een geplande restart over %{smart_count} minuten."
