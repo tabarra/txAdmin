@@ -34,17 +34,24 @@ document.addEventListener('DOMContentLoaded', function(event) {
                 y: 64,
             },
         });
-        const theme = document.body.classList.contains('theme--dark') ? 'dark' : 'light';
+    }
 
+    if (typeof jconfirm !== 'undefined') {
         jconfirm.defaults = {
-            theme: theme,
+            title: 'Confirm:',
+
             draggable: false,
-            useBootstrap: false,
             escapeKey: true,
-            type: 'red',
-            typeAnimated: false,
-            boxWidth: '500px',
+            closeIcon: true,
             backgroundDismiss: true,
+
+            typeAnimated: false,
+            animation: 'scale',
+
+            type: 'red',
+            boxWidth: '500px',
+            useBootstrap: false,
+            theme: document.body.classList.contains('theme--dark') ? 'dark' : 'light',
         };
     }
 });
@@ -92,6 +99,60 @@ const txAdminAPI = ({type, url, data, dataType, timeout, success, error}) => {
     error = error || (() => {});
     // console.log(`txAdminAPI Req to: ${url}`);
     return $.ajax({type, url, timeout, data, dataType, success, error});
+};
+
+const txAdminConfirm = ({content, confirmBtnClass, modalColor}) => {
+    return new Promise((resolve, reject) => {
+        $.confirm({
+            content: content,
+            type: modalColor || 'red',
+            buttons: {
+                cancel: () => {resolve(false);},
+                confirm:  {
+                    btnClass: confirmBtnClass || 'btn-red',
+                    keys: ['enter'],
+                    action: () => {resolve(true);},
+                },
+            },
+            onClose: () => {resolve(false);},
+        });
+    });
+};
+
+const txAdminPrompt = ({confirmBtnClass, modalColor, title, description, placeholder}) => {
+    return new Promise((resolve, reject) => {
+        $.confirm({
+            title,
+            type: modalColor || 'green',
+            content: `
+                <form action="">
+                    <div class="form-group">
+                        <label>${description}</label>
+                        <input type="text" placeholder="${placeholder}" class="inputField form-control" required />
+                    </div>
+                </form>`,
+            buttons: {
+                cancel: () => {resolve(false);},
+                formSubmit: {
+                    text: 'Submit',
+                    btnClass: confirmBtnClass || 'btn-green',
+                    action: function () {
+                        resolve(this.$content.find('.inputField').val());
+                    },
+                },
+            },
+            onClose: () => {
+                resolve(false);
+            },
+            onContentReady: function () {
+                var jc = this;
+                this.$content.find('form').on('submit', function (e) {
+                    e.preventDefault();
+                    jc.$$formSubmit.trigger('click');
+                });
+            },
+        });
+    });
 };
 
 
