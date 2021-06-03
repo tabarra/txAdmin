@@ -288,10 +288,12 @@
 
 <script>
     //============================================== Controls (start/restart/stop)
-    function controlAction(action) {
-        if (action !== 'start' && !window.confirm('Are you sure you want to ' + action + ' the server?')) {
+    async function controlAction(action) {
+        const confirmOptions = {content: `Are you sure you would like to <b>${action}</b> the server?`};
+        if(action !== 'start' && !await txAdminConfirm(confirmOptions)){
             return;
         }
+
         const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         txAdminAPI({
             url: '/fxserver/controls/' + action,

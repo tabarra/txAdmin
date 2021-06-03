@@ -415,13 +415,16 @@
 
 
     //============================================== Whitelist an ID via prompt or button click
-    function whitelistID(reference){
+    async function whitelistID(reference){
         if(!reference){
-            reference = prompt('Type in the whitelist Request ID (R####) or License Identifier.');
+            reference = await txAdminPrompt({
+                title: 'Whitelist player',
+                description: 'Type in the whitelist Request ID (R####) or License Identifier.', 
+                placeholder: 'R1234'
+            });
             if(!reference) return;
             reference = reference.trim();
         }
-        console.dir(reference)
         
         //Treat input to improve UX
         if(reference.length == 5){
