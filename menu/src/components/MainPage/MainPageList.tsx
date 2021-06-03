@@ -392,7 +392,6 @@ export const MainPageList: React.FC = () => {
       },
       {
         icon: <PermIdentity />,
-        requiredPermission: "players.message",
         primary: "Toggle Player ID's",
         secondary: "Will display nearby players Net ID",
         onSelect: handleTogglePlayerIds,
