@@ -24,7 +24,7 @@ export interface MenuListItemProps {
   secondary: string;
   onSelect: () => void;
   selected: boolean;
-  requiredPermission: ResolvablePermission;
+  requiredPermission?: ResolvablePermission;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -47,7 +47,7 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
     const t = useTranslate();
     const divRef = useRef<HTMLDivElement | null>(null);
     const userPerms = usePermissionsValue();
-    const isUserAllowed = userHasPerm(requiredPermission, userPerms);
+    const isUserAllowed = requiredPermission ? userHasPerm(requiredPermission, userPerms) : true;
     const { enqueueSnackbar } = useSnackbar();
 
     const handleEnter = (): void => {
@@ -119,7 +119,7 @@ export interface MenuListItemMultiProps {
   selected: boolean;
   primary: string;
   icon: JSX.Element;
-  requiredPermission: ResolvablePermission;
+  requiredPermission?: ResolvablePermission;
   showCurrentPrefix: boolean;
 }
 
@@ -139,7 +139,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     const userPerms = usePermissionsValue();
     const { enqueueSnackbar } = useSnackbar();
 
-    const isUserAllowed = userHasPerm(requiredPermission, userPerms);
+    const isUserAllowed = requiredPermission ? userHasPerm(requiredPermission, userPerms) : true;
 
     const compMounted = useRef(false);
 
