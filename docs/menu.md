@@ -73,6 +73,6 @@ of the menu
 **txAdmin-reauth**
 * Description: Will retrigger the reauthentication process. **This only works if the server is 
   started with Debug Mode**
-* Usage: `/txAdmin-debug [0 | 1]`
+* Usage: `/txAdmin-reauth`
 * Required Perm: `none`
 
