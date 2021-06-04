@@ -82,13 +82,16 @@ const DialogActionView: React.FC = () => {
       description: t("nui_menu.player_modal.actions.moderation.warn_dialog.description"),
       placeholder: 'Reason...',
       onSubmit: (reason: string) => {
-        fetchWebPipe("/player/warn", {
+        fetchWebPipe<TxAdminAPIResp>("/player/warn", {
           method: "POST",
           data: {
             id: assocPlayer.id,
             reason: reason
           }
         }).then(resp => {
+          if (resp.type === 'danger') {
+            return enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.warn_dialog.unknown_error"), { variant: 'error' })
+          }
           enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.warn_dialog.warn_sent"), { variant: translateAlertType(resp.type) })
         }).catch(e => {
           enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.warn_dialog.unknown_error"), { variant: 'error' })
@@ -106,13 +109,16 @@ const DialogActionView: React.FC = () => {
       description: t("nui_menu.player_modal.actions.moderation.kick_dialog.description"),
       placeholder: t("nui_menu.player_modal.actions.moderation.kick_dialog.placeholder"),
       onSubmit: (reason: string) => {
-        fetchWebPipe("/player/kick", {
+        fetchWebPipe<TxAdminAPIResp>("/player/kick", {
           method: "POST",
           data: {
             id: assocPlayer.id,
             reason: reason
           }
         }).then(resp => {
+          if (resp.type === 'danger') {
+            return enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.kick_dialog.unknown_error"), { variant: 'error' })
+          }
           enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.kick_dialog.kick_sent"), { variant: translateAlertType(resp.type) })
         }).catch(e => {
           enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.kick_dialog.unknown_error"), { variant: 'error' })
