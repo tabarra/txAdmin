@@ -9,6 +9,7 @@ module.exports = (options) => ({
         path: path.join(processCWD, 'scripts/menu/nui'),
         filename: options.mode === 'production' ? '[hash].js' : 'index.js',
     },
+    optimization: options.optimization,
     devServer: options.devServer,
     module: {
         rules: [
@@ -25,18 +26,8 @@ module.exports = (options) => ({
                 exclude: /node_modules/,
             },
             {
-                test: /\.jsx?$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                },
-            },
-            {
                 test: /\.css$/,
-                use: [
-                    'style-loader',
-                    'css-loader',
-                ],
+                use: ['style-loader', 'css-loader'],
             },
         ],
     },

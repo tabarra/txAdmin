@@ -89,13 +89,12 @@
     "xss": "^1.0.8"
   },
   "devDependencies": {
-    "@types/slug": "^5.0.0",
     "@commitlint/cli": "^12.1.1",
     "@commitlint/config-conventional": "^12.1.1",
     "@types/node": "^15.0.0",
     "@types/react": "^17.0.4",
     "@types/react-dom": "^17.0.3",
-    "babel-loader": "^8.2.2",
+    "@types/slug": "^5.0.0",
     "copy-webpack-plugin": "^6.2.0",
     "css-loader": "^5.2.4",
     "eslint": "^7.2.0",
