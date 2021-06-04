@@ -7,6 +7,10 @@
         margin: 0;
     }
 
+    .nui-height{
+        height: calc(100vh - 230px);
+    }
+
     .console-input {
         max-width: 24rem !important;
         width: 100% !important;
@@ -66,7 +70,7 @@
 </div>
 <div class="card bg-dark">
     <div class="card-body p-3">
-        <pre id="console" class="thin-scroll console-content text-white"></pre>
+        <pre id="console" class="thin-scroll console-content text-white {{[(it.isWebInterface), '', 'nui-height']|ternary}}"></pre>
     </div>
     <div class="card-footer bg-dark">
         <div class="row">
@@ -141,7 +145,12 @@
     (function () {
         //Preparing variables
         const commandHistoryLimit = 12;
-        const socket = io({path: '/socket.io', transports: ['polling'], upgrade: false});
+        let socket;
+        if (isWebInterface) {
+            socket = io({path: '/socket.io', transports: ['polling'], upgrade: false});
+        }else{
+            socket = io('monitor', {path: '/WebPipe/socket.io', transports: ['polling'], upgrade: false});
+        }
         
         //NOTE: when using namespaces:
         // const socket = io('/console', {path: '/socket.io', transports: ['polling'], upgrade: false});

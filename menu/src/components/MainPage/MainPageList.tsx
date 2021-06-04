@@ -153,7 +153,7 @@ export const MainPageList: React.FC = () => {
       title: t("nui_menu.page_main.spawn_veh.dialog_title"),
       placeholder: "car, bike, heli, boat, Adder, Buzzard, etc",
       onSubmit: (modelName: string) => {
-        modelName = modelName.toLowerCase();
+        modelName = modelName.trim().toLowerCase();
         if (modelName === "car") {
           modelName =
             Math.random() < 0.05
@@ -173,7 +173,7 @@ export const MainPageList: React.FC = () => {
           modelName =
             Math.random() < 0.05
               ? "bmx"
-              : arrayRandom(["esskey", "nemesis", "cruiser"]);
+              : arrayRandom(["esskey", "nemesis", "sanchez"]);
         } else if (modelName === "heli") {
           modelName =
             Math.random() < 0.05
