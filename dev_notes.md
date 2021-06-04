@@ -20,7 +20,7 @@
 
 
 
-+set svgui_disable true +set TXADMIN_MENU_DEBUG true +setr txEnableMenuBeta true
++set svgui_disable true +set txAdminMenu-debugMode true +setr txEnableMenuBeta true
 
 
 

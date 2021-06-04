@@ -9,7 +9,7 @@ local SoundEnum = {
 }
 
 CreateThread(function()
-  isMenuDebug = (GetConvar('TXADMIN_MENU_DEBUG', 'false') == 'true')
+  isMenuDebug = (GetConvar('txAdminMenu-debugMode', 'false') == 'true')
 end)
 
 local isRDR = not TerraingridActivate and true or false

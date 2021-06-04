@@ -14,7 +14,7 @@ end
 local intervalUpdateTime = GetConvarInt('txAdminMenu-updateInterval', 5000)
 
 --Erasing the token convar for security reasons
-if (GetConvar('TXADMIN_MENU_DEBUG', 'false') ~= 'true') then
+if (GetConvar('txAdminMenu-debugMode', 'false') ~= 'true') then
   SetConvar("txAdmin-pipeToken", "removed")
 end
 
@@ -244,7 +244,7 @@ local function syncServerCtx()
   end
   -- Convar must match the event.code *EXACTLY* as shown on this site
   -- https://keycode.info/
-  local switchPageKey = GetConvar('txAdmin:Menu:PageKey', 'Tab')
+  local switchPageKey = GetConvar('txAdminMenu-pageKey', 'Tab')
   ServerCtxObj.switchPageKey = switchPageKey
 
   local txAdminVersion = GetConvar('txAdmin-version', '0.0.0')
