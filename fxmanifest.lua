@@ -5,7 +5,7 @@
 author 'Tabarra'
 description 'Remotely Manage & Monitor your GTA5 FiveM Server'
 repository 'https://github.com/tabarra/txAdmin'
-version '4.0.1'
+version '4.1.0'
 
 rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aware my resources *will* become incompatible once RedM ships.'
 fx_version 'cerulean'
@@ -37,10 +37,12 @@ files {
 
     -- WebPipe optimization:
     'web/public/css/coreui.min.css',
+    'web/public/css/jquery-confirm.min.css',
     'web/public/css/txAdmin.css',
     'web/public/css/dark.css',
     'web/public/js/coreui.bundle.min.js',
     'web/public/js/bootstrap-notify.min.js',
+    'web/public/js/jquery-confirm.min.js',
     'web/public/js/txadmin/base.js',
     'web/public/js/txadmin/main.js',
     'web/public/js/txadmin/players.js',

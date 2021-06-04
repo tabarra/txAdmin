@@ -11,7 +11,7 @@ export const DialogBaseView: React.FC = () => {
   const { tab } = usePlayerModalContext();
 
   return (
-    <Box flexGrow={1} mt={-2}>
+    <Box flexGrow={1} mt={-2} overflow="hidden">
       {tab == 1 && <DialogActionView />}
       {tab == 2 && <DialogInfoView />}
       {tab == 3 && <DialogIdView />}

@@ -9,7 +9,7 @@ import { debugLog } from "./debugLog";
  */
 export async function fetchNui<T = any>(
   eventName: string,
-  data?: any
+  data?: unknown
 ): Promise<T> {
   const options = {
     method: "post",

@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import "./App.css";
 import { useIsMenuVisible } from "./state/visibility.state";
 import MenuRoot from "./components/MenuRoot";
@@ -12,8 +12,9 @@ import { useServerCtxValue } from "./state/server.state";
 import { getLocale } from "./utils/getLocale";
 import { WarnPage } from "./components/WarnPage/WarnPage";
 import { IFrameProvider } from "./provider/IFrameProvider";
-import { usesCheckCredentials } from "./hooks/useCheckCredentials";
+import { useCheckCredentials } from "./hooks/useCheckCredentials";
 import { PlayerModalProvider } from "./provider/PlayerModalProvider";
+import { txAdminMenuPage, useSetPage } from "./state/page.state";
 
 debugData([
   {
@@ -25,14 +26,26 @@ debugData([
 const MenuWrapper: React.FC = () => {
   const visible = useIsMenuVisible();
   const serverCtx = useServerCtxValue();
+  const setPage = useSetPage();
   // These hooks don't ever unmount
   useExitListener();
   useNuiListenerService();
-  usesCheckCredentials();
+  useCheckCredentials();
+
+  //Change page back to Main when closed
+  useEffect(() => {
+    if (visible) return;
+    const changeTimer = setTimeout(() => {
+      setPage(txAdminMenuPage.Main);
+    }, 750);
+    return () => clearInterval(changeTimer);
+  }, [visible]);
 
   const localeSelected = useMemo(() => getLocale(serverCtx.locale), [
     serverCtx.locale,
   ]);
+
+  const styled = visible ? { opacity: 1 } : undefined;
 
   return (
     <TopLevelErrorBoundary>
@@ -44,7 +57,7 @@ const MenuWrapper: React.FC = () => {
         <IFrameProvider>
           <DialogProvider>
             <PlayerModalProvider>
-              <div className="App" style={visible ? { opacity: 1 } : undefined}>
+              <div className="App" style={styled}>
                 <MenuRoot />
               </div>
             </PlayerModalProvider>

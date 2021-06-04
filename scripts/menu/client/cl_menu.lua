@@ -9,12 +9,8 @@ local SoundEnum = {
 }
 
 CreateThread(function()
-  isMenuDebug = (GetConvar('TXADMIN_MENU_DEBUG', 'false') == 'true')
+  isMenuDebug = (GetConvar('txAdminMenu-debugMode', 'false') == 'true')
 end)
-
-
-
-
 
 local isRDR = not TerraingridActivate and true or false
 local dismissKey = isRDR and 0xD9D0E1C0 or 22
@@ -74,26 +70,46 @@ local isMenuVisible
 local lastTp
 
 RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
+-- ===============
+--  ServerCtx
+-- ===============
 
+local ServerCtx
 --- Will update ServerCtx based on GlobalState and will send it to NUI
 local function updateServerCtx()
-  local ServerCtx = GlobalState.txAdminServerCtx
-  debugPrint('Checking for ServerCtx')
-  debugPrint(json.encode(ServerCtx))
-
-  -- Dispatch ctx to React state
-  sendMenuMessage('setServerCtx', GlobalState.txAdminServerCtx)
+  _ServerCtx = GlobalState.txAdminServerCtx
+  if _ServerCtx == nil then
+    debugPrint('^3ServerCtx fallback support activated')
+    TriggerServerEvent('txAdmin:events:getServerCtx')
+  else
+    ServerCtx = _ServerCtx
+  end
 end
+
+RegisterNetEvent('txAdmin:events:setServerCtx', function(ctx)
+  if type(ctx) ~= 'table' then return end
+  ServerCtx = ctx
+  debugPrint('^2ServerCtx updated from server event')
+end)
 
 CreateThread(function()
   Wait(0)
   updateServerCtx()
+  while ServerCtx == nil do Wait(0) end
+  debugPrint(json.encode(ServerCtx))
+  
+  -- Dispatch ctx to React state
+  sendMenuMessage('setServerCtx', ServerCtx)
 end)
+
+-- ===============
+--  End ServerCtx
+-- ===============
 
 --- Snackbar message
 ---@param level string The severity of the message can be 'info', 'error', or 'warning'
 ---@param message string Message to display with snackbar
-local function sendSnackbarMessage(level, message, isTranslationKey)
+function sendSnackbarMessage(level, message, isTranslationKey)
   debugPrint(('Sending snackbar message, level: %s, message: %s, isTranslationKey: %s'):format(level, message, isTranslationKey))
   sendMenuMessage('setSnackbarAlert', { level = level, message = message, isTranslationKey = isTranslationKey })
 end
@@ -186,6 +202,7 @@ RegisterNUICallback('playSound', function(sound, cb)
   cb({})
 end)
 
+
 -- CB From Menu
 -- Data is a object with x, y, z
 
@@ -229,20 +246,19 @@ local function toggleGodMode(enabled)
   SetEntityInvincible(PlayerPedId(), enabled)
 end
 
+local freecamVeh = 0
 local function toggleFreecam(enabled)
   local ped = PlayerPedId()
   SetEntityVisible(ped, not enabled)
   SetPlayerInvincible(ped, enabled)
   FreezeEntityPosition(ped, enabled)
-  NetworkSetEntityInvisibleToNetwork(ped, enabled)
-  SetEntityCollision(ped, not enabled, not enabled)
   
-  local veh = GetVehiclePedIsIn(ped, false)
-  if veh == 0 then
-    veh = nil
-  else
-    NetworkSetEntityInvisibleToNetwork(veh, enabled)
-    SetEntityCollision(veh, not enabled, not enabled)
+  if enabled then
+    freecamVeh = GetVehiclePedIsIn(ped, false)
+    if freecamVeh > 0 then
+      NetworkSetEntityInvisibleToNetwork(freecamVeh, true)
+      SetEntityCollision(freecamVeh, false, false)
+    end
   end
   
   local function enableNoClip()
@@ -254,14 +270,26 @@ local function toggleFreecam(enabled)
     Citizen.CreateThread(function()
       while IsFreecamActive() do
         SetEntityLocallyInvisible(ped)
-        if veh then SetEntityLocallyInvisible(veh) end
+        if freecamVeh > 0 then
+          if DoesEntityExist(freecamVeh) then
+            SetEntityLocallyInvisible(freecamVeh)
+          else
+            freecamVeh = 0
+          end
+        end
         Wait(0)
       end
       
-      if veh and veh > 0 then
+      if not DoesEntityExist(freecamVeh) then
+        freecamVeh = 0
+      end
+      if freecamVeh > 0 then
         local coords = GetEntityCoords(ped)
-        SetEntityCoords(veh, coords[1], coords[2], coords[3])
-        SetPedIntoVehicle(ped, veh, -1)
+        NetworkSetEntityInvisibleToNetwork(freecamVeh, false)
+        SetEntityCollision(freecamVeh, true, true)
+        SetEntityCoords(freecamVeh, coords[1], coords[2], coords[3])
+        SetPedIntoVehicle(ped, freecamVeh, -1)
+        freecamVeh = 0
       end
     end)
   end
@@ -314,6 +342,7 @@ if isMenuDebug then
 end
 
 -- CB From Menu
+local oldVehVelocity = 0.0
 RegisterNUICallback('spawnVehicle', function(data, cb)
   if type(data) ~= 'table' then error("Invalid spawnVehicle NUI callback data") end
   local model = data.model
@@ -324,6 +353,15 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
   else
     local isAutomobile = IsThisModelACar(model)
     if isAutomobile ~= false then isAutomobile = true end
+    
+    -- collect the old velocity
+    local ped = PlayerPedId()
+    local oldVeh = GetVehiclePedIsIn(ped, false)
+    if oldVeh and oldVeh > 0 then
+      oldVehVelocity = GetEntityVelocity(oldVeh)
+      DeleteVehicle(oldVeh)
+    end
+    
     TriggerServerEvent('txAdmin:menu:spawnVehicle', model, isAutomobile)
     cb({})
   end
@@ -404,14 +442,15 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
   
   -- process data to add distance, remove pos
   local pedCoords = GetEntityCoords(PlayerPedId())
-  for serverId, row in pairs(data) do
-    -- position cache
-    if type(row.c) == 'vector3' then posCache[serverId] = row.c end
+  local fullData = {}
+  for _, row in pairs(data) do
+    local serverId = row.i
+    if type(row.c) == 'vector3' or type(row.c) == 'number' then posCache[serverId] = row.c end
     if type(row.v) == 'number' then vehCache[serverId] = row.v end
     local pos = posCache[serverId]
     local veh = vehCache[serverId]
     local dist
-    if pos ~= nil then
+    if pos ~= nil and pos ~= -1 and type(pos) == 'vector3' then
       local targetVec = vec3(pos[1], pos[2], pos[3])
       dist = #(pedCoords - targetVec)
     else
@@ -420,7 +459,7 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
     
     -- calculate the vehicle status
     local vehicleStatus = 'walking'
-    if veh > 0 then
+    if veh and veh > 0 then
       local vehEntity = NetToVeh(veh)
       if not vehEntity or vehEntity == 0 then
         vehicleStatus = 'unknown'
@@ -439,8 +478,9 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
         end
       end
     end
-    
-    data[serverId] = {
+  
+    fullData[#fullData + 1] = {
+      id = tonumber(row.i),
       health = row.h,
       vehicleStatus = vehicleStatus,
       distance = dist,
@@ -449,9 +489,11 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
     }
   end
   
+  debugPrint(("^2received ^3%d^2 players from state event"):format(#fullData))
+  
   SendNUIMessage({
     action = 'setPlayerState',
-    data = data
+    data = fullData
   })
 end)
 --[[ End player sync ]]
@@ -547,49 +589,34 @@ RegisterNetEvent('txAdmin:menu:fixVehicle', function()
 end)
 
 --[[ Spawn vehicles, with support for entity lockdown ]]
-RegisterNetEvent('txAdmin:menu:spawnVehicle', function(netID)
-  -- get current veh and speed
-  local ped = PlayerPedId()
-  local oldVeh = GetVehiclePedIsIn(ped, false)
-  local oldVel = DoesEntityExist(oldVeh) and GetEntitySpeed(oldVeh) or 0.0
-  
-  -- collect seat positions of all peds  
-  local seatsToPlace = {}
-  
-  -- only delete if the new vehicle is found
-  if oldVeh and IsPedInVehicle(ped, oldVeh, true) then
-    local maxSeats = GetVehicleMaxNumberOfPassengers(oldVeh)
-    for i = -1, maxSeats do
-      local pedInSeat = GetPedInVehicleSeat(oldVeh, i)
-      if pedInSeat > 0 then
-        seatsToPlace[i] = pedInSeat
-      end
-    end
-    debugPrint("Deleting existing vehicle (" .. oldVeh .. ")")
-    DeleteVehicle(oldVeh)
-  else
-    seatsToPlace[-1] = ped
-  end
+RegisterNetEvent('txAdmin:events:queueSeatInVehicle', function(vehNetID, seat)
+  if type(vehNetID) ~= 'number' then return end
+  if type(seat) ~= 'number' then return end
   
   local tries = 0
-  while not NetworkDoesEntityExistWithNetworkId(netID) do
-    tries = tries + 1
-    if tries > 250 then break end
-    Wait(10)
+  while not NetworkDoesEntityExistWithNetworkId(vehNetID) and tries < 1000 do Wait(0) end
+  if tries >= 1000 then
+    print("^1Failed to seat into vehicle (net=" .. vehNetID .. ")")
+    return
   end
-  local veh = NetworkGetEntityFromNetworkId(netID)
-  if not veh or veh == 0 then error("Vehicle did not spawn") end
   
-  for seatIndex, seatPed in pairs(seatsToPlace) do
-    SetPedIntoVehicle(seatPed, veh, seatIndex)
+  local veh = NetToVeh(vehNetID)
+  if veh and veh > 0 then
+    SetPedIntoVehicle(PlayerPedId(), veh, seat)
+    if seat == -1 then
+      SetVehicleEngineOn(veh, true, true, false)
+      SetEntityVelocity(veh, oldVehVelocity)
+      --SetVehicleForwardSpeed(veh, #(oldVehVelocity[1] + oldVehVelocity[2]))
+      SetVehicleOnGroundProperly(veh)
+    end
   end
-    
-  if oldVel > 0.0 then
-    SetVehicleEngineOn(veh, true, true, false)
-    SetVehicleForwardSpeed(veh, oldVel)
-  end
+  oldVehVelocity = 0.0
 end)
 
+--[[ Enable debugging ]]
+RegisterNetEvent('txAdmin:events:enableDebug', function(enabled)
+  debugModeEnabled = enabled
+end)
 
 CreateThread(function()
   while true do

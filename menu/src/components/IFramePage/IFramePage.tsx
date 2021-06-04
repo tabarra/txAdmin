@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Box, makeStyles, Theme } from "@material-ui/core";
+import { Box, makeStyles } from "@material-ui/core";
 import { IFramePostData, useIFrameCtx } from "../../provider/IFrameProvider";
 import { debugLog } from "../../utils/debugLog";
 import { usePermissionsValue } from '../../state/permissions.state';
@@ -24,7 +24,7 @@ export const IFramePage: React.FC<{ visible: boolean }> = ({ visible }) => {
   const userPerms = usePermissionsValue()
 
   // We will only use the provider's src value if the permissions
-  // have been sucessfully fetched
+  // have been successfully fetched
   const trueFrameSource = Boolean(userPerms) ? fullFrameSrc : 'about:blank'
 
   // Handles listening for postMessage requests from iFrame

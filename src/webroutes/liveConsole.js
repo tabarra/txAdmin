@@ -13,11 +13,6 @@ module.exports = async function LiveConsole(ctx) {
         return ctx.utils.render('basic/generic', {message: 'You don\'t have permission to view this page.'});
     }
 
-    //Check environment
-    if (!ctx.txVars.isWebInterface) {
-        return ctx.utils.render('basic/generic', {message: 'The Live Console is only available when using txAdmin on the web browser.'});
-    }
-
     const renderData = {
         headerTitle: 'Console',
         disableCommand: (ctx.utils.checkPermission('console.write', modulename, false)) ? 'autofocus' : 'disabled',

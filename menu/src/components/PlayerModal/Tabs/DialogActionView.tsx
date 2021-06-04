@@ -1,130 +1,187 @@
 import React from "react";
-import { Box, Button, DialogContent, Typography } from "@material-ui/core";
-import { useStyles } from "../modal.styles";
-import { useAssociatedPlayerValue, usePlayerDetailsValue } from '../../../state/playerDetails.state';
-import { fetchWebPipe } from '../../../utils/fetchWebPipe';
-import { fetchNui } from '../../../utils/fetchNui';
-import { useDialogContext } from '../../../provider/DialogProvider';
-import { useSnackbar } from 'notistack';
-import { useIFrameCtx} from "../../../provider/IFrameProvider";
-import slug from 'slug'
-import { usePlayerModalContext } from '../../../provider/PlayerModalProvider';
-import { translateAlertType } from '../../../utils/miscUtils';
+import {
+  Box,
+  Button,
+  DialogContent,
+  makeStyles,
+  Typography,
+} from "@material-ui/core";
+import {
+  useAssociatedPlayerValue,
+  usePlayerDetailsValue,
+} from "../../../state/playerDetails.state";
+import { fetchWebPipe } from "../../../utils/fetchWebPipe";
+import { fetchNui } from "../../../utils/fetchNui";
+import { useDialogContext } from "../../../provider/DialogProvider";
+import { useSnackbar } from "notistack";
+import { useIFrameCtx } from "../../../provider/IFrameProvider";
+import slug from "slug";
+import { usePlayerModalContext } from "../../../provider/PlayerModalProvider";
+import { translateAlertType, userHasPerm } from "../../../utils/miscUtils";
 import { useTranslate } from "react-polyglot";
+import { usePermissionsValue } from "../../../state/permissions.state";
 
-export type TxAdminActionRespType = 'success' | 'warning' | 'danger'
+export type TxAdminActionRespType = "success" | "warning" | "danger";
 
-interface txAdminActionResp {
-  type: TxAdminActionRespType
-  message: string
+export interface TxAdminAPIResp {
+  type: TxAdminActionRespType;
+  message: string;
 }
+
+const useStyles = makeStyles({
+  actionGrid: {
+    display: "grid",
+    gridTemplateColumns: "80px 80px 80px 130px",
+    columnGap: 10,
+    rowGap: 10,
+    paddingBottom: 15,
+  },
+});
 
 const DialogActionView: React.FC = () => {
   const classes = useStyles();
-  const { openDialog } = useDialogContext()
-  const playerDetails = usePlayerDetailsValue()
-  const assocPlayer = useAssociatedPlayerValue()
-  const { enqueueSnackbar } = useSnackbar()
+  const { openDialog } = useDialogContext();
+  const playerDetails = usePlayerDetailsValue();
+  const assocPlayer = useAssociatedPlayerValue();
+  const { enqueueSnackbar } = useSnackbar();
   const t = useTranslate();
-  const { goToFramePage } = useIFrameCtx()
-  const { setModalOpen } = usePlayerModalContext()
+  const { goToFramePage } = useIFrameCtx();
+  const playerPerms = usePermissionsValue();
+  const { setModalOpen, closeMenu, showNoPerms } = usePlayerModalContext();
 
   const handleDM = () => {
+    if (!userHasPerm("players.message", playerPerms))
+      return showNoPerms("Message");
+
     openDialog({
-      title: `Direct Message ${assocPlayer.username}`,
-      description: 'What is the reason for direct messaging this player?',
-      placeholder: 'Reason...',
+      title: `${t("nui_menu.player_modal.actions.moderation.dm_dialog.title")} ${assocPlayer.username}`,
+      description: t("nui_menu.player_modal.actions.moderation.dm_dialog.description"),
+      placeholder: t("nui_menu.player_modal.actions.moderation.dm_dialog.placeholder"),
       onSubmit: (reason: string) => {
-        fetchWebPipe<txAdminActionResp>('/player/message', {
-          method: 'POST',
+        fetchWebPipe<TxAdminAPIResp>("/player/message", {
+          method: "POST",
           data: {
             id: assocPlayer.id,
             message: reason
           }
         }).then(resp => {
-          enqueueSnackbar('Your DM has been sent!', { variant: translateAlertType(resp.type) })
+          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.dm_dialog.dm_sent"), { variant: translateAlertType(resp.type) })
         }).catch(e => {
-          enqueueSnackbar('An unknown error occurred', { variant: 'error' })
+          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.dm_dialog.unknown_error"), { variant: 'error' })
           console.error(e)
         })
-      }
-    })
-  }
+      },
+    });
+  };
 
   const handleWarn = () => {
+    if (!userHasPerm("players.warn", playerPerms)) return showNoPerms("Warn");
+
     openDialog({
-      title: `Warn ${assocPlayer.username}`,
-      description: 'What is the reason for direct warning this player?',
+      title: `${t("nui_menu.player_modal.actions.moderation.warn_dialog.title")} ${assocPlayer.username}`,
+      description: t("nui_menu.player_modal.actions.moderation.warn_dialog.description"),
       placeholder: 'Reason...',
       onSubmit: (reason: string) => {
-        fetchWebPipe('/player/warn', {
-          method: 'POST',
+        fetchWebPipe<TxAdminAPIResp>("/player/warn", {
+          method: "POST",
           data: {
             id: assocPlayer.id,
             reason: reason
           }
         }).then(resp => {
-          enqueueSnackbar('The player was warned!', { variant: translateAlertType(resp.type) })
+          if (resp.type === 'danger') {
+            return enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.warn_dialog.unknown_error"), { variant: 'error' })
+          }
+          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.warn_dialog.warn_sent"), { variant: translateAlertType(resp.type) })
         }).catch(e => {
-          enqueueSnackbar('An unknown error occurred', { variant: 'error' })
+          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.warn_dialog.unknown_error"), { variant: 'error' })
           console.error(e)
         })
-      }
-    })
-  }
+      },
+    });
+  };
 
   const handleKick = () => {
+    if (!userHasPerm("players.kick", playerPerms)) return showNoPerms("Kick");
+
     openDialog({
-      title: `Kick ${assocPlayer.username}`,
-      description: 'What is the reason for kicking this player?',
-      placeholder: 'Reason...',
+      title: `${t("nui_menu.player_modal.actions.moderation.kick_dialog.title")} ${assocPlayer.username}`,
+      description: t("nui_menu.player_modal.actions.moderation.kick_dialog.description"),
+      placeholder: t("nui_menu.player_modal.actions.moderation.kick_dialog.placeholder"),
       onSubmit: (reason: string) => {
-        fetchWebPipe('/player/kick', {
-          method: 'POST',
+        fetchWebPipe<TxAdminAPIResp>("/player/kick", {
+          method: "POST",
           data: {
             id: assocPlayer.id,
             reason: reason
           }
         }).then(resp => {
-          enqueueSnackbar('The player was kicked!', { variant: translateAlertType(resp.type) })
+          if (resp.type === 'danger') {
+            return enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.kick_dialog.unknown_error"), { variant: 'error' })
+          }
+          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.kick_dialog.kick_sent"), { variant: translateAlertType(resp.type) })
         }).catch(e => {
-          enqueueSnackbar('An unknown error has occurred', { variant: 'error' })
+          enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.kick_dialog.unknown_error"), { variant: 'error' })
           console.error(e)
         })
-      }
-    })
-  }
+      },
+    });
+  };
 
   const handleSetAdmin = () => {
+    if (!userHasPerm("manage.admins", playerPerms))
+      return showNoPerms("Manage Admins");
+
     // TODO: Change iFrame Src through Provider?
-    const discordIdent = playerDetails.identifiers.find(ident => ident.includes('discord:'))
-    const fivemIdent = playerDetails.identifiers.find(ident => ident.includes('fivem:'))
+    const discordIdent = playerDetails.identifiers.find((ident) =>
+      ident.includes("discord:")
+    );
+    const fivemIdent = playerDetails.identifiers.find((ident) =>
+      ident.includes("fivem:")
+    );
 
-    const sluggedName = slug(assocPlayer.username, '_')
+    const sluggedName = slug(assocPlayer.username, "_");
 
-    let adminManagerPath = `?autofill&name=${sluggedName}`
-    if (discordIdent) adminManagerPath = adminManagerPath + `&discord=${discordIdent}`
-    if (fivemIdent) adminManagerPath = adminManagerPath + `&fivem=${fivemIdent}`
+    let adminManagerPath = `?autofill&name=${sluggedName}`;
+    if (discordIdent)
+      adminManagerPath = adminManagerPath + `&discord=${discordIdent}`;
+    if (fivemIdent)
+      adminManagerPath = adminManagerPath + `&fivem=${fivemIdent}`;
 
-    goToFramePage(`/adminManager/${adminManagerPath}`)
-    setModalOpen(false)
-  }
+    goToFramePage(`/adminManager/${adminManagerPath}`);
+    setModalOpen(false);
+  };
 
   const handleHeal = () => {
+    if (!userHasPerm("players.heal", playerPerms)) return showNoPerms("Heal");
+
     fetchNui('healPlayer', { id: assocPlayer.id })
-    enqueueSnackbar('Healing player', {variant: 'success'})
+    enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.action_notifications.heal_player"), {variant: 'success'})
   }
 
   const handleGoTo = () => {
+    if (!userHasPerm("players.teleport", playerPerms))
+      return showNoPerms("Teleport");
+
     fetchNui('tpToPlayer', { id: assocPlayer.id })
-    enqueueSnackbar('Teleporting to player', {variant: 'success'})
+    enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.action_notifications.tp_player"), {variant: 'success'})
   }
 
   const handleBring = () => {
+    if (!userHasPerm("players.teleport", playerPerms))
+      return showNoPerms("Teleport");
+
     fetchNui('summonPlayer', { id: assocPlayer.id })
-    enqueueSnackbar('Summoning player.', {variant: 'success'})
+    enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.action_notifications.bring_player"), {variant: 'success'})
   }
 
+  const handleSpectate = () => {
+    if (!userHasPerm("players.spectate", playerPerms))
+      return showNoPerms("Spectate");
+
+    closeMenu();
+    fetchNui("spectatePlayer", { id: assocPlayer.id });
+  };
 
   return (
     <DialogContent>
@@ -133,17 +190,19 @@ const DialogActionView: React.FC = () => {
       </Box>
       <Typography style={{ paddingBottom: 5 }}>Moderation</Typography>
       <Box className={classes.actionGrid}>
-        <Button variant="outlined" color="primary" onClick={handleDM}>DM</Button>
-        <Button variant="outlined" color="primary" onClick={handleWarn}>Warn</Button>
-        <Button variant="outlined" color="primary" onClick={handleKick}>Kick</Button>
-        <Button variant="outlined" color="primary" onClick={handleSetAdmin}>Set Admin</Button>
+        <Button variant="outlined" color="primary" onClick={handleDM}>{t("nui_menu.player_modal.actions.moderation.options.dm")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleWarn}>{t("nui_menu.player_modal.actions.moderation.options.warn")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleKick}>{t("nui_menu.player_modal.actions.moderation.options.kick")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleSetAdmin}>{t("nui_menu.player_modal.actions.moderation.options.set_admin")}</Button>
       </Box>
-      <Typography style={{ paddingBottom: 5 }}>{t("nui_menu.player_modal.actions.interaction.category_title_2")}</Typography>
+      <Typography style={{ paddingBottom: 5 }}>
+        {t("nui_menu.player_modal.actions.interaction.category_title_2")}
+      </Typography>
       <Box className={classes.actionGrid}>
-        <Button variant="outlined" color="primary" onClick={handleHeal}>Heal</Button>
-        <Button variant="outlined" color="primary" onClick={handleGoTo}>Go to</Button>
-        <Button variant="outlined" color="primary" onClick={handleBring}>Bring</Button>
-        {/*<Button variant="outlined" color="primary">Spectate</Button>*/}
+        <Button variant="outlined" color="primary" onClick={handleHeal}>{t("nui_menu.player_modal.actions.moderation.options.heal")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleGoTo}>{t("nui_menu.player_modal.actions.moderation.options.go_to")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleBring}>{t("nui_menu.player_modal.actions.moderation.options.bring")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleSpectate}>{t("nui_menu.player_modal.actions.moderation.options.spectate")}</Button>
       </Box>
       {/*<Typography style={{ paddingBottom: 5 }}>Troll</Typography>*/}
       {/*<Box className={classes.actionGrid}>*/}
@@ -153,7 +212,7 @@ const DialogActionView: React.FC = () => {
       {/*  <Button variant="outlined" color="primary">Wild attack</Button>*/}
       {/*</Box>*/}
     </DialogContent>
-  )
-}
+  );
+};
 
 export default DialogActionView;

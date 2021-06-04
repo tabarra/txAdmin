@@ -265,10 +265,11 @@
 
 
     //============================================== Delete Admin
-    function deleteAdmin(name){
-        if(!window.confirm('Are you sure you want to delete "' + name + '"?')){
-            return;
-        }
+    async function deleteAdmin(name){
+        const confirmation = await txAdminConfirm({
+            content: `Are you sure you want to delete <b>${xss(name)}</b>?`
+        })
+        if(!confirmation) return;
 
         const notify = $.notify({ message: '<p class="text-center">Deleting...</p>' }, {});
         txAdminAPI({
@@ -285,7 +286,7 @@
                 }
             },
             error: function (xmlhttprequest, textstatus, message) {
-                alert("Error processing request.");
+                $.notify({ message: '<p class="text-center">Error deleting admin</p>' })
             }
         });
     }

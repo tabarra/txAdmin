@@ -4,6 +4,7 @@ import { usePage } from "../../state/page.state";
 import { useKey } from "../../hooks/useKey";
 import { useTabDisabledValue } from "../../state/keys.state";
 import { useIsMenuVisible } from "../../state/visibility.state";
+import { useServerCtxValue } from "../../state/server.state";
 
 const useStyles = makeStyles({
   tab: {
@@ -16,8 +17,9 @@ export const PageTabs: React.FC = () => {
   const [page, setPage] = usePage();
   const tabDisabled = useTabDisabledValue();
   const visible = useIsMenuVisible();
+  const serverCtx = useServerCtxValue();
 
-  const handleChange = (event: ChangeEvent<{}>, newValue: number) => {
+  const handleChange = (event: ChangeEvent<Record<string, never>>, newValue: number) => {
     setPage(newValue);
   };
 
@@ -26,7 +28,7 @@ export const PageTabs: React.FC = () => {
     setPage((prevState) => (prevState + 1 > 2 ? 0 : prevState + 1));
   }, [tabDisabled, visible]);
 
-  useKey("Tab", handleTabPress);
+  useKey(serverCtx.switchPageKey, handleTabPress);
 
   return (
     <Box width="100%">

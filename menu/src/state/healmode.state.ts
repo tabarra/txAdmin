@@ -1,4 +1,4 @@
-import {atom, useRecoilState} from "recoil";
+import { atom, useRecoilState } from "recoil";
 
 export enum HealMode {
   SELF,
@@ -6,8 +6,8 @@ export enum HealMode {
 }
 
 const healMode = atom({
-  key: 'healModeState',
+  key: "healModeState",
   default: HealMode.SELF,
-})
+});
 
-export const useHealMode = () => useRecoilState(healMode)
+export const useHealMode = () => useRecoilState(healMode);

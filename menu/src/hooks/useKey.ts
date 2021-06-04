@@ -11,5 +11,5 @@ export const useKey = (key: string, handler: () => void) => {
 
     window.addEventListener("keydown", keyListener);
     return () => window.removeEventListener("keydown", keyListener);
-  }, [handler]);
+  }, [handler, key]);
 };

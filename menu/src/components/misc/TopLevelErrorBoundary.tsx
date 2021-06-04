@@ -14,7 +14,7 @@ interface ErrorCompState {
   error: Error | null;
 }
 
-export class TopLevelErrorBoundary extends Component<{}, ErrorCompState> {
+export class TopLevelErrorBoundary extends Component<Record<string, never>, ErrorCompState> {
   state = {
     hasError: false,
     error: null,
@@ -25,9 +25,8 @@ export class TopLevelErrorBoundary extends Component<{}, ErrorCompState> {
     this.handleReloadClick.bind(this);
   }
 
-  componentDidUpdate(
-  ) {
-    if (this.state.hasError) fetchNui('focusInputs', true);
+  componentDidUpdate() {
+    if (this.state.hasError) fetchNui("focusInputs", true);
   }
 
   static getDerivedStateFromError(error) {
@@ -35,6 +34,7 @@ export class TopLevelErrorBoundary extends Component<{}, ErrorCompState> {
   }
 
   handleReloadClick() {
+    fetchNui("focusInputs", false);
     window.location.reload();
   }
 

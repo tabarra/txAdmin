@@ -1,20 +1,25 @@
-import { TextFieldProps, TextField as MuiTextField } from '@material-ui/core';
-import React, { FocusEventHandler } from 'react';
-import { useSetListenForExit } from '../../state/keys.state';
+import { TextFieldProps, TextField as MuiTextField } from "@material-ui/core";
+import React, { FocusEventHandler } from "react";
+import { useSetListenForExit } from "../../state/keys.state";
 
 export const TextField: React.FC<TextFieldProps> = (props) => {
-  const setListenForExit = useSetListenForExit()
+  const setListenForExit = useSetListenForExit();
 
-  const handleOnFocusExit: FocusEventHandler<HTMLInputElement> = (e) => {
+  const handleOnFocusExit: FocusEventHandler<HTMLInputElement> = () => {
     // Forward if they exist on props
+    setListenForExit(true);
+  };
 
-    setListenForExit(true)
-  }
-
-  const handleOnFocusEnter: FocusEventHandler<HTMLInputElement> = (e) => {
+  const handleOnFocusEnter: FocusEventHandler<HTMLInputElement> = () => {
     // Forward if they exist on props
-    setListenForExit(false)
-  }
+    setListenForExit(false);
+  };
 
-  return <MuiTextField onBlur={handleOnFocusExit} onFocus={handleOnFocusEnter} {...props} />
-}
+  return (
+    <MuiTextField
+      onBlur={handleOnFocusExit}
+      onFocus={handleOnFocusEnter}
+      {...props}
+    />
+  );
+};

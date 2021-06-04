@@ -11,12 +11,14 @@ import {
 import {
   DirectionsBoat,
   DirectionsWalk,
-  DriveEta, LiveHelp,
-  MoreVert, Motorcycle, 
+  DriveEta,
+  LiveHelp,
+  MoreVert,
+  Motorcycle,
 } from "@material-ui/icons";
-import { usePlayerModalContext } from '../../provider/PlayerModalProvider';
+import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
 import { PlayerData, VehicleStatus } from "../../state/players.state";
-import { useSetAssociatedPlayer } from '../../state/playerDetails.state';
+import { useSetAssociatedPlayer } from "../../state/playerDetails.state";
 import { formatDistance } from "../../utils/miscUtils";
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -39,11 +41,11 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: theme.palette.primary.main,
   },
   tooltipOverride: {
-    fontSize: 12
-  }
+    fontSize: 12,
+  },
 }));
 
-const PlayerCard: React.FC<{playerData: PlayerData}> = ({playerData}) => {
+const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
   const classes = useStyles();
   const { setModalOpen } = usePlayerModalContext();
   const setAssociatedPlayer = useSetAssociatedPlayer();
@@ -62,13 +64,14 @@ const PlayerCard: React.FC<{playerData: PlayerData}> = ({playerData}) => {
   };
 
   const upperCaseStatus =
-    playerData.vehicleStatus.charAt(0).toUpperCase() + playerData.vehicleStatus.slice(1);
+    playerData.vehicleStatus.charAt(0).toUpperCase() +
+    playerData.vehicleStatus.slice(1);
 
   return (
     <Box p={2}>
       <Paper className={classes.paper}>
         <Box display="flex" alignItems="center" pb="5px">
-          <Box flexGrow={1} display="flex">
+          <Box flexGrow={1} display="flex" overflow="hidden">
             <Tooltip
               title={upperCaseStatus}
               placement="top"
@@ -77,7 +80,9 @@ const PlayerCard: React.FC<{playerData: PlayerData}> = ({playerData}) => {
                 tooltip: classes.tooltipOverride,
               }}
             >
-              <span className={classes.icon}>{statusIcon[playerData.vehicleStatus]}</span>
+              <span className={classes.icon}>
+                {statusIcon[playerData.vehicleStatus]}
+              </span>
             </Tooltip>
             <Typography
               style={{ marginRight: 5 }}
@@ -89,21 +94,32 @@ const PlayerCard: React.FC<{playerData: PlayerData}> = ({playerData}) => {
             <Typography variant="subtitle1" color="textSecondary">
               |
             </Typography>
-            <Typography
-              style={{ marginLeft: 5 }}
-              noWrap
-              variant="subtitle1"
-              color="textPrimary"
+            <Tooltip
+              title={playerData.username}
+              placement="top"
+              arrow
+              classes={{
+                tooltip: classes.tooltipOverride,
+              }}
             >
-              {playerData.username}
-            </Typography>
+              <Typography
+                style={{ marginLeft: 5 }}
+                noWrap
+                variant="subtitle1"
+                color="textPrimary"
+              >
+                {playerData.username}
+              </Typography>
+            </Tooltip>
             <Typography
-              style={{ marginLeft: 7 }}
+              style={{ marginLeft: 7, minWidth: "fit-content" }}
               noWrap
               variant="subtitle1"
               color="textSecondary"
             >
-              {playerData.distance < 0 ? `?? m` : formatDistance(playerData.distance)}
+              {playerData.distance < 0
+                ? `?? m`
+                : formatDistance(playerData.distance)}
             </Typography>
           </Box>
           <IconButton onClick={handlePlayerClick}>{<MoreVert />}</IconButton>
@@ -118,7 +134,10 @@ const PlayerCard: React.FC<{playerData: PlayerData}> = ({playerData}) => {
             }}
           >
             <div className={classes.barBackground}>
-              <Box className={classes.barInner} width={`${playerData.health}%`} />
+              <Box
+                className={classes.barInner}
+                width={`${playerData.health}%`}
+              />
             </div>
           </Tooltip>
         </div>

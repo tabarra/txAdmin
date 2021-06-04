@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from "react";
 import {
   ListItem,
   ListItemIcon,
@@ -9,11 +9,14 @@ import {
 } from "@material-ui/core";
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { Code } from "@material-ui/icons";
-import { fetchNui } from '../../utils/fetchNui';
+import { fetchNui } from "../../utils/fetchNui";
 import { useTranslate } from "react-polyglot";
-import { ResolvablePermission, usePermissionsValue } from '../../state/permissions.state';
-import { userHasPerm } from '../../utils/miscUtils';
-import { useSnackbar } from 'notistack';
+import {
+  ResolvablePermission,
+  usePermissionsValue,
+} from "../../state/permissions.state";
+import { userHasPerm } from "../../utils/miscUtils";
+import { useSnackbar } from "notistack";
 
 export interface MenuListItemProps {
   icon: JSX.Element;
@@ -21,7 +24,7 @@ export interface MenuListItemProps {
   secondary: string;
   onSelect: () => void;
   selected: boolean;
-  requiredPermission: ResolvablePermission
+  requiredPermission?: ResolvablePermission;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -43,42 +46,42 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
     const classes = useStyles();
     const t = useTranslate();
     const divRef = useRef<HTMLDivElement | null>(null);
-    const userPerms = usePermissionsValue()
-    const isUserAllowed = userHasPerm(requiredPermission, userPerms)
-    const { enqueueSnackbar } = useSnackbar()
+    const userPerms = usePermissionsValue();
+    const isUserAllowed = requiredPermission ? userHasPerm(requiredPermission, userPerms) : true;
+    const { enqueueSnackbar } = useSnackbar();
 
     const handleEnter = (): void => {
-      if (!selected) return
+      if (!selected) return;
 
       if (!isUserAllowed) {
-        enqueueSnackbar(t('nui_menu.misc.action_unauthorized'), {
-          variant: 'error',
+        enqueueSnackbar(t("nui_menu.misc.action_unauthorized"), {
+          variant: "error",
           anchorOrigin: {
-            horizontal: 'center',
-            vertical: 'bottom'
-          }
-        })
-        return
+            horizontal: "center",
+            vertical: "bottom",
+          },
+        });
+        return;
       }
 
-      fetchNui('playSound', 'enter')
-      onSelect()
-    }
+      fetchNui("playSound", "enter");
+      onSelect();
+    };
 
     useEffect(() => {
       if (selected && divRef) {
         divRef.current.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-          inline: 'start'
-        })
+          behavior: "smooth",
+          block: "nearest",
+          inline: "start",
+        });
       }
-    }, [selected])
+    }, [selected]);
 
     useKeyboardNavigation({
       onEnterDown: handleEnter,
-      disableOnFocused: true
-    })
+      disableOnFocused: true,
+    });
 
     return (
       <div ref={divRef}>
@@ -116,44 +119,51 @@ export interface MenuListItemMultiProps {
   selected: boolean;
   primary: string;
   icon: JSX.Element;
-  requiredPermission: ResolvablePermission
-  showCurrentPrefix: boolean
+  requiredPermission?: ResolvablePermission;
+  showCurrentPrefix: boolean;
 }
 
 export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
-  ({ selected, primary, actions, icon, initialValue, showCurrentPrefix, requiredPermission }) => {
+  ({
+    selected,
+    primary,
+    actions,
+    icon,
+    initialValue,
+    showCurrentPrefix,
+    requiredPermission,
+  }) => {
     const classes = useStyles();
     const t = useTranslate();
     const [curState, setCurState] = useState(0);
     const userPerms = usePermissionsValue();
     const { enqueueSnackbar } = useSnackbar();
 
-    const isUserAllowed = userHasPerm(requiredPermission, userPerms)
+    const isUserAllowed = requiredPermission ? userHasPerm(requiredPermission, userPerms) : true;
 
     const compMounted = useRef(false);
 
     const divRef = useRef<HTMLDivElement | null>(null);
 
     const showNotAllowedAlert = () => {
-      enqueueSnackbar(t('nui_menu.misc.action_unauthorized'), {
-        variant: 'error',
+      enqueueSnackbar(t("nui_menu.misc.action_unauthorized"), {
+        variant: "error",
         anchorOrigin: {
-          horizontal: 'center',
-          vertical: 'bottom'
-        }
-      })
-    }
-
+          horizontal: "center",
+          vertical: "bottom",
+        },
+      });
+    };
 
     useEffect(() => {
       if (selected && divRef) {
         divRef.current.scrollIntoView({
-          behavior: 'smooth',
-          block: 'nearest',
-          inline: 'start'
-        })
+          behavior: "smooth",
+          block: "nearest",
+          inline: "start",
+        });
       }
-    }, [selected])
+    }, [selected]);
 
     // Mount/unmount detection
     // We will only run this hook after initial mount
@@ -171,7 +181,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     const handleLeftArrow = () => {
       if (!selected) return;
 
-      fetchNui('playSound', 'move')
+      fetchNui("playSound", "move");
       const nextEstimatedItem = curState - 1;
       const nextItem =
         nextEstimatedItem < 0 ? actions.length - 1 : nextEstimatedItem;
@@ -181,35 +191,39 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     const handleRightArrow = () => {
       if (!selected) return;
 
-      fetchNui('playSound', 'move')
+      fetchNui("playSound", "move");
       const nextEstimatedItem = curState + 1;
       const nextItem =
         nextEstimatedItem >= actions.length ? 0 : nextEstimatedItem;
       setCurState(nextItem);
-    }
+    };
 
     const handleEnter = () => {
-        if (!selected) return;
-        if (!isUserAllowed) return showNotAllowedAlert()
+      if (!selected) return;
+      if (!isUserAllowed) return showNotAllowedAlert();
 
-        fetchNui('playSound', 'enter')
-        actions[curState].onSelect();
-    }
+      fetchNui("playSound", "enter");
+      actions[curState].onSelect();
+    };
 
     useKeyboardNavigation({
       onRightDown: handleRightArrow,
       onLeftDown: handleLeftArrow,
       onEnterDown: handleEnter,
-      disableOnFocused: true
+      disableOnFocused: true,
     });
 
     return (
       <div ref={divRef}>
         <ListItem className={classes.root} dense selected={selected}>
-          <ListItemIcon className={classes.icon}>{actions[curState]?.icon || icon}</ListItemIcon>
+          <ListItemIcon className={classes.icon}>
+            {actions[curState]?.icon || icon}
+          </ListItemIcon>
           <ListItemText
             primary={actions[curState]?.primary || primary}
-            secondary={`${showCurrentPrefix ? "Current: " : ""}${actions[curState]?.label || "Unknown"}`}
+            secondary={`${showCurrentPrefix ? "Current: " : ""}${
+              actions[curState]?.label || "Unknown"
+            }`}
             classes={{
               primary: classes.overrideText,
             }}

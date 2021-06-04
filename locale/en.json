@@ -43,7 +43,9 @@
         },
         "common": {
             "cancel": "Cancel",
-            "submit": "Submit"
+            "submit": "Submit",
+            "error": "An error occurred",
+            "copied": "Copied to clipboard"
         },
         "page_main": {
             "fix_vehicle": {
@@ -112,6 +114,12 @@
                 "dialog_title": "Send Announcement",
                 "dialog_desc": "Send an announcement to all online players",
                 "dialog_success": "Sending the announcement"
+            },
+            "player_ids": {
+                "list_primary": "Toggle Player ID's",
+                "list_secondary": "Will display nearby players NetID's",
+                "alert_show": "Showing nearby player NetID's",
+                "alert_hide": "Hiding nearby player NetID's"
             }
         },
         "page_players": {
@@ -141,12 +149,42 @@
             },
             "actions": {
                 "moderation": {
+                    "dm_dialog": {
+                        "title": "Direct Message",
+                        "description": "What is the reason for direct messaging this player?",
+                        "placeholder": "Reason...",
+                        "dm_sent": "Your DM has been sent!",
+                        "unknown_error": "An unknown error occurred"
+                    },
+                    "warn_dialog": {
+                        "title": "Warn",
+                        "description": "What is the reason for direct warning this player?",
+                        "placeholder": "Reason...",
+                        "warn_sent": "The player was warned!",
+                        "unknown_error": "An unknown error occurred"
+                    },
+                    "kick_dialog": {
+                        "title": "Kick",
+                        "description": "What is the reason for kicking this player?",
+                        "placeholder": "Reason...",
+                        "kick_sent": "The player was kicked!",
+                        "unknown_error": "An unknown error occurred"
+                    },
                     "category_title_1": "Moderation",
                     "options": {
                         "dm": "DM",
                         "warn": "Warn",
                         "kick": "Kick",
-                        "set_admin": "Give Admin"
+                        "set_admin": "Give Admin",
+                        "heal": "Heal",
+                        "go_to": "Go to",
+                        "bring": "Bring",
+                        "spectate": "Spectate"
+                    },
+                    "action_notifications": {
+                        "heal_player": "Healing player",
+                        "tp_player": "Teleporting to player",
+                        "bring_player": "Summoning player"
                     }
                 },
                 "interaction": {

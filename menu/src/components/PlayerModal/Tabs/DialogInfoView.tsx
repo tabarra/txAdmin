@@ -1,4 +1,4 @@
-import React, { FormEventHandler, useState } from "react";
+import React, { FormEventHandler, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -7,45 +7,68 @@ import {
   Typography,
   useTheme,
 } from "@material-ui/core";
-import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
+import {
+  useForcePlayerRefresh,
+  usePlayerDetailsValue,
+} from "../../../state/playerDetails.state";
 import { fetchWebPipe } from "../../../utils/fetchWebPipe";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
+import { TxAdminAPIResp } from "./DialogActionView";
+import { translateAlertType } from "../../../utils/miscUtils";
 
 const DialogInfoView: React.FC = () => {
   const [note, setNote] = useState("");
   const player = usePlayerDetailsValue();
   const { enqueueSnackbar } = useSnackbar();
+  const playerDetails = usePlayerDetailsValue();
+  const forceRefresh = useForcePlayerRefresh();
+
   const t = useTranslate();
 
   const theme = useTheme();
 
-  const handleSaveNote = async (e) => {
+  const handleSaveNote: FormEventHandler = async (e) => {
     e.preventDefault();
     try {
-      enqueueSnackbar("Saved Note", {
-        variant: "success",
+      const resp = await fetchWebPipe<TxAdminAPIResp>("/player/save_note", {
+        method: "POST",
+        data: {
+          license: playerDetails.license,
+          note: note,
+        },
       });
+      forceRefresh((val) => val + 1);
+      enqueueSnackbar(resp.message, { variant: translateAlertType(resp.type) });
     } catch (e) {
-      enqueueSnackbar("An error ocurred saving the note", {
-        variant: "error",
-      });
+      enqueueSnackbar(t("nui_menu.common.error"), { variant: "error" });
+      console.error(e);
     }
   };
 
+  useEffect(() => {
+    setNote(playerDetails.notes || "");
+  }, [playerDetails]);
+
   return (
     <DialogContent>
-      <Typography variant="h6">{t("nui_menu.player_modal.info.title")}</Typography>
+      <Typography variant="h6">
+        {t("nui_menu.player_modal.info.title")}
+      </Typography>
       <Typography>
         {t("nui_menu.player_modal.info.session_time")}:{" "}
-        <span style={{ color: theme.palette.text.secondary }}>0 minutes</span>
+        <span style={{ color: theme.palette.text.secondary }}>
+          {playerDetails.sessionTime}
+        </span>
       </Typography>
       <Typography>
-      {t("nui_menu.player_modal.info.play_time")}:{" "}
-        <span style={{ color: theme.palette.text.secondary }}>--</span>
+        {t("nui_menu.player_modal.info.play_time")}:{" "}
+        <span style={{ color: theme.palette.text.secondary }}>
+          {playerDetails.playTime}
+        </span>
       </Typography>
       <Typography>
-      {t("nui_menu.player_modal.info.joined")}:{" "}
+        {t("nui_menu.player_modal.info.joined")}:{" "}
         <span style={{ color: theme.palette.text.secondary }}>
           {player.joinDate}
         </span>

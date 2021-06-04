@@ -9,8 +9,12 @@ if apiHost == "invalid" or pipeToken == "invalid" then
   return
 end
 
+-- How many MS is the interval for the update time
+-- Up this to bump client performance at the cost of player page updates
+local intervalUpdateTime = GetConvarInt('txAdminMenu-updateInterval', 5000)
+
 --Erasing the token convar for security reasons
-if (GetConvar('TXADMIN_MENU_DEBUG', 'false') ~= 'true') then
+if (GetConvar('txAdminMenu-debugMode', 'false') ~= 'true') then
   SetConvar("txAdmin-pipeToken", "removed")
 end
 
@@ -27,7 +31,7 @@ local LAST_PLAYER_DATA = {}
 ---@return boolean
 local function PlayerHasTxPermission(source, permission)
   local allow = false
-  local perms = adminPermissions[source]
+  local perms = adminPermissions[tostring(source)]
   if perms then
     for _, perm in pairs(perms) do
       if perm == 'all_permissions' or permission == perm then
@@ -48,6 +52,26 @@ local function sendFullClientData(id, data)
   TriggerLatentClientEvent('txAdmin:menu:setPlayerState', id, EMIT_BITRATE, data)
 end
 
+RegisterCommand('txAdmin-debug', function(src, args)
+  if src > 0 then
+    if not PlayerHasTxPermission(src, 'control.server') then return end
+  end
+
+  local playerName = (src > 0) and GetPlayerName(src) or 'Console'
+
+  if not args[1] then return end
+
+  if args[1] == '1' then
+    debugModeEnabled = true
+    debugPrint("^1!! Debug mode enabled by ^2" .. playerName .. "^1 !!^0")
+    TriggerClientEvent('txAdmin:events:enableDebug', -1, true)
+  elseif args[1] == '0' then
+    debugPrint("^1!! Debug mode disabled by ^2" .. playerName .. "^1 !!^0")
+    debugModeEnabled = false
+    TriggerClientEvent('txAdmin:events:enableDebug', -1, false)
+  end
+end)
+
 ---@param onlineAdminIDs table<number>
 AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
   debugPrint('^3Admins changed. Online admins: ' .. json.encode(onlineAdminIDs) .. "^0")
@@ -55,10 +79,10 @@ AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
   -- Collect old and new admin IDs
   local refreshAdminIds = {}
   for id, _ in pairs(adminPermissions) do
-    refreshAdminIds[id] = id
+    refreshAdminIds[#refreshAdminIds + 1] = id
   end
   for _, newId in pairs(onlineAdminIDs) do
-    refreshAdminIds[newId] = newId
+    refreshAdminIds[#refreshAdminIds + 1] = newId
   end
   debugPrint('^3Forcing ' .. #refreshAdminIds .. ' clients to re-auth')
   
@@ -100,6 +124,7 @@ end
 RegisterNetEvent('txAdmin:WebPipe')
 AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, body)
   local s = source
+  local src = tostring(s)
   if type(callbackId) ~= 'number' or type(headers) ~= 'table' then return end
   if type(method) ~= 'string' or type(path) ~= 'string' or type(body) ~= 'string' then return end
   
@@ -109,7 +134,7 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
   end
   
   -- Reject requests from un-authed players
-  if path ~= '/auth/nui' and not adminPermissions[s] then
+  if path ~= '/auth/nui' and not adminPermissions[src] then
     if _pipeLastReject ~= nil then
       if (GetGameTimer() - _pipeLastReject) < 250 then
         _pipeLastReject = GetGameTimer()
@@ -171,10 +196,10 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
       local resp = json.decode(data)
       if resp and resp.isAdmin then
         debugPrint("Caching admin " .. s .. " permissions: " .. json.encode(resp.permissions))
-        adminPermissions[s] = resp.permissions
+        adminPermissions[src] = resp.permissions
         sendFullClientData(s)
       else
-        adminPermissions[s] = nil
+        adminPermissions[src] = nil
       end
     end
   
@@ -212,20 +237,30 @@ local ServerCtxObj = {
     type = nil,
     status = false
   },
+
   projectName = nil,
   maxClients = 30,
-  locale = nil
+  locale = nil,
+  switchPageKey = '',
+  txAdminVersion = ''
 }
 
 local function syncServerCtx()
   local oneSyncConvar = GetConvar('onesync', 'off')
-  if oneSyncConvar == ('on' or 'legacy') then
+  if oneSyncConvar == 'on' or oneSyncConvar == 'legacy' then
     ServerCtxObj.oneSync.type = oneSyncConvar
-    ServerCtxObj.status = true
+    ServerCtxObj.oneSync.status = true
   elseif oneSyncConvar == 'off' then
-    ServerCtxObj.oneSyncStatus = false
+    ServerCtxObj.oneSync.type = nil
+    ServerCtxObj.oneSync.status = false
   end
+  -- Convar must match the event.code *EXACTLY* as shown on this site
+  -- https://keycode.info/
+  local switchPageKey = GetConvar('txAdminMenu-pageKey', 'Tab')
+  ServerCtxObj.switchPageKey = switchPageKey
 
+  local txAdminVersion = GetConvar('txAdmin-version', '0.0.0')
+  ServerCtxObj.txAdminVersion = txAdminVersion
   -- Default '' in fxServer
   local svProjectName = GetConvar('sv_projectname', '')
   if svProjectName ~= '' then
@@ -245,6 +280,11 @@ local function syncServerCtx()
   debugPrint(json.encode(ServerCtxObj))
   GlobalState.txAdminServerCtx = ServerCtxObj
 end
+
+RegisterNetEvent('txAdmin:events:getServerCtx', function()
+  local src = source
+  TriggerClientEvent('txAdmin:events:setServerCtx', src, ServerCtxObj)
+end)
 
 -- Everytime the txAdmin convars are changed this event will fire
 -- Therefore, lets update global state with that.
@@ -266,7 +306,7 @@ end)
 
 RegisterServerEvent('txAdmin:menu:checkAccess', function()
   local src = source
-  local canAccess = not (adminPermissions[src] == nil)
+  local canAccess = not (adminPermissions[tostring(src)] == nil)
   debugPrint((canAccess and "^2" or "^1") .. GetPlayerName(src) ..
                " does " .. (canAccess and "" or "NOT ") .. "have menu permission.")
   TriggerClientEvent('txAdmin:menu:setAccessible', src, canAccess)
@@ -307,6 +347,23 @@ RegisterServerEvent('txAdmin:menu:healPlayer', function(id)
     playerName = GetPlayerName(id)
   end
   TriggerEvent('txaLogger:menuEvent', src, "healPlayer", allow, playerName)
+end)
+
+RegisterServerEvent('txAdmin:menu:spectatePlayer', function(id)
+  local src = source
+  -- Sanity as this is still converted tonumber on client side
+  if type(id) ~= 'string' and type(id) ~= 'number' then return end
+  id = tonumber(id)
+  local allow = PlayerHasTxPermission(src, 'players.spectate')
+  if allow then
+    local target = GetPlayerPed(id)
+    -- Lets exit if the target doesn't exist
+    if not target then return end
+
+    local tgtCoords = GetEntityCoords(target)
+    TriggerClientEvent('txAdmin:menu:specPlayerResp', src, id, tgtCoords)
+  end
+  TriggerEvent('txaLogger:menuEvent', src, 'spectatePlayer', allow, id)
 end)
 
 RegisterServerEvent('txAdmin:menu:healAllPlayers', function()
@@ -422,6 +479,20 @@ RegisterServerEvent('txAdmin:menu:spawnVehicle', function(model, isAutomobile)
     local ped = GetPlayerPed(src)
     local coords = GetEntityCoords(ped)
     local heading = GetEntityHeading(ped)
+  
+    local seatsToPlace = {}
+    local oldVeh = GetVehiclePedIsIn(ped, false)
+    if oldVeh and oldVeh > 0 then
+      for i = 6, -1, -1 do
+        local pedInSeat = GetPedInVehicleSeat(oldVeh, i)
+        if pedInSeat > 0 then
+          seatsToPlace[i] = pedInSeat
+        end
+      end
+    else
+      seatsToPlace[-1] = ped
+    end
+    
     local veh
     if isAutomobile then
       coords = vec4(coords[1], coords[2], coords[3], heading) 
@@ -440,8 +511,22 @@ RegisterServerEvent('txAdmin:menu:spawnVehicle', function(model, isAutomobile)
     local netID = NetworkGetNetworkIdFromEntity(veh)
     debugPrint(string.format("spawn vehicle (src=^3%d^0, model=^4%s^0, isAuto=%s^0, netID=^3%s^0)", src, model,
       (isAutomobile and '^2yes' or '^3no'), netID))
-      
-    TriggerClientEvent('txAdmin:menu:spawnVehicle', src, netID)
+
+    -- map all player ids to peds
+    local players = GetPlayers()
+    local pedMap = {}
+    for _, id in pairs(players) do
+      local pedId = GetPlayerPed(id)
+      pedMap[pedId] = id
+    end
+
+    for seatIndex, seatPed in pairs(seatsToPlace) do
+      debugPrint(("setting %d into seat index %d"):format(seatPed, seatIndex))
+      local targetSrc = pedMap[seatPed]
+      if type(targetSrc) == 'string' then
+        TriggerClientEvent('txAdmin:events:queueSeatInVehicle', targetSrc, netID, seatIndex)
+      end
+    end
   end
 end)
 
@@ -460,7 +545,7 @@ CreateThread(function()
   local pairs = pairs
   
   while true do
-    Wait(5000)
+    Wait(intervalUpdateTime)
   
     local totalFound = 0
     local found = {}
@@ -475,7 +560,12 @@ CreateThread(function()
       local health = ceil(((GetEntityHealth(ped) - 100) / 100) * 100)
       -- trim to prevent long usernames from impacting event deliverance
       local username = sub(GetPlayerName(serverID), 1, 75)
-      local coords = GetEntityCoords(ped)
+      local coords
+      if ServerCtxObj.oneSync.status == true then
+        coords = GetEntityCoords(ped)
+      else
+        coords = -1
+      end
       
       local lastData = LAST_PLAYER_DATA[serverID] or {}
       if type(LAST_PLAYER_DATA[serverID]) ~= 'table' then
@@ -483,14 +573,18 @@ CreateThread(function()
       end
         
       local emitData = {}
-      local sendAll = (lastData.u == nil)
+      local sendAll = (lastData.i == nil)
       if sendAll or lastData.h ~= health then emitData.h = health end
       if sendAll or lastData.v ~= veh then emitData.v = veh end
       if sendAll or lastData.u ~= username then emitData.u = username end
       if sendAll or lastData.c ~= coords then emitData.c = coords end
       if sendAll then emitData.l = getPlayersLicense(serverID) end
-      for k, v in pairs(emitData) do LAST_PLAYER_DATA[serverID][k] = v end
-      found[serverID] = emitData
+      emitData.i = serverID
+      for k, v in pairs(emitData) do
+        LAST_PLAYER_DATA[serverID][k] = v
+        debugPrint(("^1emit ^4%d :: ^2%s^1 = ^3%s^0"):format(serverID, k, v))
+      end
+      found[#found + 1] = emitData
       totalFound = totalFound + 1
       Wait(0)
     end
@@ -512,6 +606,6 @@ end)
 --[[ Handle player disconnects ]]
 AddEventHandler('playerDropped', function()
   local s = source
-  adminPermissions[s] = nil
+  adminPermissions[tostring(s)] = nil
   LAST_PLAYER_DATA[tostring(s)] = nil
 end)

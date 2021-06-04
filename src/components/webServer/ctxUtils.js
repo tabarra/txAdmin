@@ -77,16 +77,8 @@ const DEFAULT_AVATAR = 'img/default_avatar.png';
  * @param {string} data
  */
 async function renderMasterView(view, reqSess, data, txVars) {
-    if (isUndefined(data)) data = {};
-    data.isWebInterface = txVars.isWebInterface;
-    data.uiTheme = (txVars.darkMode) ? THEME_DARK : '';
-    data.basePath = (txVars.isWebInterface) ? '/' : WEBPIPE_PATH;
-    data.resourcePath = (txVars.isWebInterface) ? '' : RESOURCE_PATH;
     data.headerTitle = (!isUndefined(data.headerTitle)) ? `${data.headerTitle} - txAdmin` : 'txAdmin';
-    data.serverProfile = globals.info.serverProfile;
-    data.txAdminVersion = GlobalData.txAdminVersion;
     data.txAdminOutdated = (now() > GlobalData.txAdminVersionBestBy);
-    data.fxServerVersion = (GlobalData.isZapHosting) ? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion;
     data.adminIsMaster = (reqSess && reqSess.auth && reqSess.auth.username && reqSess.auth.master === true);
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username) ? reqSess.auth.username : 'unknown user';
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture) ? reqSess.auth.picture : DEFAULT_AVATAR;
@@ -94,10 +86,6 @@ async function renderMasterView(view, reqSess, data, txVars) {
     data.isLinux = (GlobalData.osType == 'linux');
     data.showAdvanced = (GlobalData.isAdvancedUser || GlobalData.verbose);
     data.dynamicAd = txVars.isWebInterface && globals.dynamicAds.pick('main');
-    data.jsInjection = getJavascriptConsts({
-        isWebInterface: txVars.isWebInterface,
-        TX_BASE_PATH: (txVars.isWebInterface) ? '' : WEBPIPE_PATH,
-    });
 
     let out;
     try {
@@ -129,11 +117,6 @@ async function renderMasterView(view, reqSess, data, txVars) {
  * @param {string} message
  */
 async function renderLoginView(data, txVars) {
-    if (isUndefined(data)) data = {};
-    data.isWebInterface = txVars.isWebInterface;
-    data.uiTheme = (txVars.darkMode) ? THEME_DARK : '';
-    data.basePath = (txVars.isWebInterface) ? '/' : WEBPIPE_PATH;
-    data.resourcePath = (txVars.isWebInterface) ? '' : RESOURCE_PATH;
     data.logoURL = (GlobalData.loginPageLogo) ? GlobalData.loginPageLogo : 'img/txadmin.png';
     data.isMatrix = (Math.random() <= 0.05);
     data.ascii = helpers.txAdminASCII();
@@ -141,15 +124,8 @@ async function renderLoginView(data, txVars) {
     data.errorTitle = data.errorTitle || 'Warning:';
     data.errorMessage = data.errorMessage || '';
     data.template = data.template || 'normal';
-    data.serverProfile = globals.info.serverProfile;
-    data.txAdminVersion = GlobalData.txAdminVersion;
-    data.fxServerVersion = (GlobalData.isZapHosting) ? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion;
     data.serverName = globals.config.serverName || globals.info.serverProfile;
     data.dynamicAd = txVars.isWebInterface && globals.dynamicAds.pick('login');
-    data.jsInjection = getJavascriptConsts({
-        isWebInterface: txVars.isWebInterface,
-        TX_BASE_PATH: (txVars.isWebInterface) ? '' : WEBPIPE_PATH,
-    });
 
     let out;
     try {
@@ -177,15 +153,6 @@ async function renderLoginView(data, txVars) {
  * @param {string} data
  */
 async function renderSoloView(view, data, txVars) {
-    if (isUndefined(data)) data = {};
-    data.isWebInterface = txVars.isWebInterface;
-    data.uiTheme = (txVars.darkMode) ? THEME_DARK : '';
-    data.basePath = (txVars.isWebInterface) ? '/' : WEBPIPE_PATH;
-    data.resourcePath = (txVars.isWebInterface) ? '' : RESOURCE_PATH;
-    data.jsInjection = getJavascriptConsts({
-        isWebInterface: txVars.isWebInterface,
-        TX_BASE_PATH: (txVars.isWebInterface) ? '' : WEBPIPE_PATH,
-    });
     let out;
     try {
         let rawView = await fs.readFile(getWebViewPath(view), 'utf8');
@@ -264,7 +231,6 @@ module.exports = async function WebCtxUtils(ctx, next) {
     ctx.txVars = {
         isWebInterface,
         realIP: ctx.ip,
-        darkMode: (ctx.cookies.get('txAdmin-darkMode') === 'true' || !isWebInterface),
     };
 
     //Setting up the user's host type
@@ -300,7 +266,7 @@ module.exports = async function WebCtxUtils(ctx, next) {
     //Functions
     ctx.send = (data) => { ctx.body = data; };
     ctx.utils = {};
-    ctx.utils.render = async (view, viewData) => {
+    ctx.utils.render = async (view, data) => {
         //Usage stats
         if (!globals.databus.txStatsData.pageViews[view]) {
             globals.databus.txStatsData.pageViews[view] = 1;
@@ -308,13 +274,29 @@ module.exports = async function WebCtxUtils(ctx, next) {
             globals.databus.txStatsData.pageViews[view]++;
         }
 
+        // Setting up default render data:
+        const baseViewData = {
+            basePath: (isWebInterface) ? '/' : WEBPIPE_PATH,
+            fxServerVersion: (GlobalData.isZapHosting) ? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion,
+            isWebInterface: isWebInterface,
+            resourcePath: (isWebInterface) ? '' : RESOURCE_PATH,
+            serverProfile: globals.info.serverProfile,
+            txAdminVersion: GlobalData.txAdminVersion,
+            uiTheme: (ctx.cookies.get('txAdmin-darkMode') === 'true' || !isWebInterface) ? THEME_DARK : '',
+            jsInjection: getJavascriptConsts({
+                isWebInterface: isWebInterface,
+                TX_BASE_PATH: (isWebInterface) ? '' : WEBPIPE_PATH,
+            }),
+        };
+
+        const renderData = Object.assign(baseViewData, data);
         const soloViews = ['adminManager/modal', 'basic/404'];
         if (view == 'login') {
-            ctx.body = await renderLoginView(viewData, ctx.txVars);
+            ctx.body = await renderLoginView(renderData, ctx.txVars);
         } else if (soloViews.includes(view)) {
-            ctx.body = await renderSoloView(view, viewData, ctx.txVars);
+            ctx.body = await renderSoloView(view, renderData, ctx.txVars);
         } else {
-            ctx.body = await renderMasterView(view, ctx.session, viewData, ctx.txVars);
+            ctx.body = await renderMasterView(view, ctx.session, renderData, ctx.txVars);
         }
         ctx.type = 'text/html';
     };

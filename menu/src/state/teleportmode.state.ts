@@ -1,14 +1,14 @@
-import {atom, useRecoilState} from "recoil";
+import { atom, useRecoilState } from "recoil";
 
 export enum TeleportMode {
-  WAYPOINT = 'waypoint',
-  COORDINATES = 'coords',
-  PREVIOUS = 'previous'
+  WAYPOINT = "waypoint",
+  COORDINATES = "coords",
+  PREVIOUS = "previous",
 }
 
 const teleportMode = atom({
-  key: 'teleportModeState',
+  key: "teleportModeState",
   default: TeleportMode.WAYPOINT,
-})
+});
 
-export const useTeleportMode = () => useRecoilState(teleportMode)
+export const useTeleportMode = () => useRecoilState(teleportMode);

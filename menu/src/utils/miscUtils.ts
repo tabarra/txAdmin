@@ -1,29 +1,37 @@
-import { PermCheckServerResp, ResolvablePermission } from '../state/permissions.state';
-import { TxAdminActionRespType } from '../components/PlayerModal/Tabs/DialogActionView';
-import { VariantType } from 'notistack';
+import {
+  PermCheckServerResp,
+  ResolvablePermission,
+} from "../state/permissions.state";
+import { TxAdminActionRespType } from "../components/PlayerModal/Tabs/DialogActionView";
+import { VariantType } from "notistack";
 
-export const userHasPerm = (perm: ResolvablePermission, permsState: PermCheckServerResp): boolean => {
-  const userPerms = permsState.permissions || []
-  return (userPerms).includes(perm) || (userPerms).includes('all_permissions')
-}
+export const userHasPerm = (
+  perm: ResolvablePermission,
+  permsState: PermCheckServerResp
+): boolean => {
+  const userPerms = permsState.permissions || [];
+  return userPerms.includes(perm) || userPerms.includes("all_permissions");
+};
 
 export const formatDistance = (distance: number): string => {
-  let unit = 'm'
+  let unit = "m";
   let roundedDistance = Math.round(distance);
   if (roundedDistance >= 1000) {
-    roundedDistance = +(roundedDistance / 1000).toFixed(1)
-    unit = 'km'
+    roundedDistance = +(roundedDistance / 1000).toFixed(1);
+    unit = "km";
   }
-  return `${roundedDistance.toLocaleString()} ${unit}`
-}
+  return `${roundedDistance.toLocaleString()} ${unit}`;
+};
 
 export const arrayRandom = <T>(arr: T[]): T => {
-  return arr[Math.round(Math.random() * (arr.length - 1))]
-}
+  return arr[Math.round(Math.random() * (arr.length - 1))];
+};
 
 const lookupTable: Record<string, VariantType> = {
-  success: 'success',
-  danger: 'error',
-  warning: 'warning'
-}
-export const translateAlertType = (txAdminType: TxAdminActionRespType): VariantType => lookupTable[txAdminType]
+  success: "success",
+  danger: "error",
+  warning: "warning",
+};
+export const translateAlertType = (
+  txAdminType: TxAdminActionRespType
+): VariantType => lookupTable[txAdminType];

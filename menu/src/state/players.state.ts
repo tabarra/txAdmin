@@ -21,6 +21,7 @@ export type PlayerData = Required<PlayerDataPartial> & { id: number };
 export type PlayerDataSetPartial = { [serverID: string]: PlayerDataPartial };
 
 export interface PlayerDataPartial {
+  id: number;
   vehicleStatus: VehicleStatus;
   distance: number;
   health?: number;
@@ -51,14 +52,12 @@ const playersState = {
       const filteredValueInput = get(playersState.filterPlayerDataInput);
       const unfilteredPlayerStates = get(playersState.playerData);
 
-      const formattedInput = filteredValueInput.trim().toLowerCase()
+      const formattedInput = filteredValueInput.trim().toLowerCase();
 
       const playerStates: PlayerData[] = filteredValueInput
         ? unfilteredPlayerStates.filter(
             (player) =>
-              player.username
-                .toLowerCase()
-                .includes(formattedInput) ||
+              player.username.toLowerCase().includes(formattedInput) ||
               player.id.toString().includes(formattedInput)
           )
         : unfilteredPlayerStates;
@@ -92,7 +91,8 @@ export const usePlayersState = () => useRecoilValue(playersState.playerData);
 export const useSetPlayersState = () =>
   useSetRecoilState(playersState.playerData);
 
-export const useSetPlayerFilter = () => useSetRecoilState(playersState.filterPlayerDataInput)
+export const useSetPlayerFilter = () =>
+  useSetRecoilState(playersState.filterPlayerDataInput);
 
 export const usePlayersSortedValue = () =>
   useRecoilValue(playersState.sortedAndFilteredPlayerData);
@@ -143,7 +143,7 @@ debugData<PlayerData[]>([
         license: "3333333333333333333333deadbeef0000nosave",
       },
       {
-        vehicleStatus: VehicleStatus.Boat,
+        vehicleStatus: VehicleStatus.Unknown,
         username: "Death",
         id: 5,
         distance: 500,
@@ -151,7 +151,7 @@ debugData<PlayerData[]>([
         license: "3333333333333333333333deadbeef0000nosave",
       },
       {
-        vehicleStatus: VehicleStatus.Boat,
+        vehicleStatus: VehicleStatus.Walking,
         username: "Death",
         id: 6,
         distance: 500,
@@ -159,7 +159,7 @@ debugData<PlayerData[]>([
         license: "3333333333333333333333deadbeef0000nosave",
       },
       {
-        vehicleStatus: VehicleStatus.Boat,
+        vehicleStatus: VehicleStatus.Biking,
         username: "Death",
         id: 7,
         distance: 500,

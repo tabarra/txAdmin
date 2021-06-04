@@ -33,7 +33,8 @@ module.exports = class AdminVault {
             'players.kick': 'Kick',
             'players.ban': 'Ban',
             'players.heal': 'Heal', //self, everyone, and the "heal" button in player modal
-            'players.playermode': 'NoClip / God / Spectate', //self playermode, and also the player spectate option
+            'players.playermode': 'NoClip / God Mode', //self playermode, and also the player spectate option
+            'players.spectate': 'Spectate', //self playermode, and also the player spectate option
             'players.teleport': 'Teleport', //self teleport, and the bring/go to on player modal
             // 'players.trollmenu': 'Troll Menu', //all the troll options in the player modal
         };
