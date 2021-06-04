@@ -3,7 +3,7 @@ import { debugLog } from "../utils/debugLog";
 import { useEffect } from "react";
 import { fetchNuiAuth } from "../utils/fetchNuiAuth";
 
-export const usesCheckCredentials = () => {
+export const useCheckCredentials = () => {
   const setPermsState = useSetPermissions();
   useEffect(() => {
     fetchNuiAuth()

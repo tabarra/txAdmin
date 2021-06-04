@@ -61,7 +61,9 @@ const localeMap = {
   // zh,
 };
 
-export const getLocale = (localeCode: string) => {
+
+
+export const getLocale = (localeCode: string): unknown => {
   const locale = localeMap[localeCode];
   if (!locale)
     throw new Error(`Unable to find a locale with code ${localeCode} in cache`);

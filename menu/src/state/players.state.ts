@@ -143,7 +143,7 @@ debugData<PlayerData[]>([
         license: "3333333333333333333333deadbeef0000nosave",
       },
       {
-        vehicleStatus: VehicleStatus.Boat,
+        vehicleStatus: VehicleStatus.Unknown,
         username: "Death",
         id: 5,
         distance: 500,
@@ -151,7 +151,7 @@ debugData<PlayerData[]>([
         license: "3333333333333333333333deadbeef0000nosave",
       },
       {
-        vehicleStatus: VehicleStatus.Boat,
+        vehicleStatus: VehicleStatus.Walking,
         username: "Death",
         id: 6,
         distance: 500,
@@ -159,7 +159,7 @@ debugData<PlayerData[]>([
         license: "3333333333333333333333deadbeef0000nosave",
       },
       {
-        vehicleStatus: VehicleStatus.Boat,
+        vehicleStatus: VehicleStatus.Biking,
         username: "Death",
         id: 7,
         distance: 500,

@@ -19,7 +19,7 @@ export const PageTabs: React.FC = () => {
   const visible = useIsMenuVisible();
   const serverCtx = useServerCtxValue();
 
-  const handleChange = (event: ChangeEvent<{}>, newValue: number) => {
+  const handleChange = (event: ChangeEvent<Record<string, never>>, newValue: number) => {
     setPage(newValue);
   };
 

@@ -2,7 +2,7 @@
 // we need to use the old school method.
 // NOTE: Since the only place we use this is in the player-modal. This is
 // currently targeting the wrapper element for where it appends
-export const copyToClipboard = (value: string) => {
+export const copyToClipboard = (value: string): void => {
   const targetElement = document.getElementById('player-modal-container')
   const clipElem = document.createElement("input");
   clipElem.value = value;

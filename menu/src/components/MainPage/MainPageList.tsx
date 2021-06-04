@@ -26,7 +26,6 @@ import { useIsMenuVisible } from "../../state/visibility.state";
 import { TeleportMode, useTeleportMode } from "../../state/teleportmode.state";
 import { HealMode, useHealMode } from "../../state/healmode.state";
 import { arrayRandom } from "../../utils/miscUtils";
-import { useServerCtxValue } from "../../state/server.state";
 
 const fadeHeight = 20;
 const listHeight = 388;
@@ -67,7 +66,6 @@ export const MainPageList: React.FC = () => {
   const [teleportMode, setTeleportMode] = useTeleportMode();
   const [healMode, setHealMode] = useHealMode();
   const menuVisible = useIsMenuVisible();
-  const serverCtx = useServerCtxValue();
   const classes = useStyles();
 
   // the directions are inverted

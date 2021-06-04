@@ -12,7 +12,6 @@ import {
   useSetPermissions,
 } from "../state/permissions.state";
 import { fetchNuiAuth } from "../utils/fetchNuiAuth";
-import React from "react";
 
 // Passive Message Event Listeners & Handlers for global state
 export const useNuiListenerService = () => {
