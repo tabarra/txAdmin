@@ -52,12 +52,24 @@ local function sendFullClientData(id, data)
   TriggerLatentClientEvent('txAdmin:menu:setPlayerState', id, EMIT_BITRATE, data)
 end
 
-RegisterServerEvent('txAdmin:events:enableDebug', function()
-  local src = source
-  if not PlayerHasTxPermission(src, 'control.server') then return end
-  debugModeEnabled = true
-  debugPrint("^1!! Debug mode enabled by ^2" .. GetPlayerName(src) .. "^1 !!^0")
-  TriggerClientEvent('txAdmin:events:enableDebug', -1)
+RegisterCommand('txAdmin-debug', function(src, args)
+  if src > 0 then
+    if not PlayerHasTxPermission(src, 'control.server') then return end
+  end
+
+  local playerName = (src > 0) and GetPlayerName(src) or 'Console'
+
+  if not args[1] then return end
+
+  if args[1] == '1' then
+    debugModeEnabled = true
+    debugPrint("^1!! Debug mode enabled by ^2" .. playerName .. "^1 !!^0")
+    TriggerClientEvent('txAdmin:events:enableDebug', -1, true)
+  elseif args[1] == '0' then
+    debugPrint("^1!! Debug mode disabled by ^2" .. playerName .. "^1 !!^0")
+    debugModeEnabled = false
+    TriggerClientEvent('txAdmin:events:enableDebug', -1, false)
+  end
 end)
 
 ---@param onlineAdminIDs table<number>
