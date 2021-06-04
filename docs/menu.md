@@ -3,7 +3,7 @@
 txAdmin v4.0.0 introduced an in-game menu equipped with common admin functionality, 
 an online player browser, and a slightly trimmed down version of the web panel.
 
-You can find a short preview video [here](https://www.youtube.com/watch?v=ZoTpqNwXdMk)
+You can find a short preview video [here](https://www.youtube.com/watch?v=jWKg0VQK0sc)
 
 ### Beta Instructions
 
