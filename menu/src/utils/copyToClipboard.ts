@@ -1,12 +1,13 @@
 // Because we don't have access to Clipboard API in FiveM's CEF,
-// we need to use the old school method
+// we need to use the old school method.
+// NOTE: Since the only place we use this is in the player-modal. This is
+// currently targeting the wrapper element for where it appends
 export const copyToClipboard = (value: string) => {
+  const targetElement = document.getElementById('player-modal-container')
   const clipElem = document.createElement("input");
-  clipElem.style.opacity = "0";
-  clipElem.style.zIndex = "-1";
   clipElem.value = value;
-  document.body.appendChild(clipElem);
+  targetElement.appendChild(clipElem);
   clipElem.select();
   document.execCommand("copy");
-  document.body.removeChild(clipElem);
+  targetElement.removeChild(clipElem);
 };

@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   codeBlock: {
     background: theme.palette.background.paper,
     borderRadius: 8,
-    padding: "10px 10px",
+    padding: "5px 5px",
     marginBottom: 7,
     display: "flex",
     alignItems: "center",
@@ -30,21 +30,21 @@ const useStyles = makeStyles((theme: Theme) => ({
 const DialogIdView: React.FC = () => {
   const classes = useStyles();
   const player = usePlayerDetailsValue();
-  // const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
 
-  // const handleCopyToClipboard = (value: string) => {
-  //   copyToClipboard(value);
-  //   enqueueSnackbar("Copied to clipboard!", { variant: "info" });
-  // };
+  const handleCopyToClipboard = (value: string) => {
+    copyToClipboard(value);
+    enqueueSnackbar("Copied to clipboard!", { variant: "info" });
+  };
 
   return (
     <DialogContent>
       {player.identifiers.map((ident) => (
         <Box className={classes.codeBlock} key={ident}>
           <Typography className={classes.codeBlockText}>{ident}</Typography>
-          {/*<IconButton onClick={() => handleCopyToClipboard(ident)}>*/}
-          {/*  <FileCopy />*/}
-          {/*</IconButton>*/}
+          <IconButton onClick={() => handleCopyToClipboard(ident)}>
+            <FileCopy />
+          </IconButton>
         </Box>
       ))}
     </DialogContent>

@@ -71,6 +71,7 @@ const PlayerModal: React.FC = () => {
           maxHeight: 450,
           borderRadius: 15,
         },
+        id: 'player-modal-container'
       }}
     >
       <DialogTitle style={{ borderBottom: "1px solid rgba(221,221,221,0.54)" }}>
