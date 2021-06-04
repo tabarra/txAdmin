@@ -70,7 +70,7 @@ const DialogHistoryView: React.FC = () => {
         Related History
       </Typography>
       <Box flexGrow={1} overflow="auto" pr={1}>
-        {!playerActionHistory?.length ? (
+        {playerActionHistory?.length ? (
           playerActionHistory.map((h, index) => (
             <Box
               className={classes.historyItem}

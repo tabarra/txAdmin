@@ -58,9 +58,12 @@ const playerDetails = {
       const assocPlayerLicense = assocPlayer.license;
 
       try {
-        return await fetchWebPipe<TxAdminPlayerAPIResp>(
+        const res =  await fetchWebPipe<TxAdminPlayerAPIResp>(
           `/player/${assocPlayerLicense}`
         );
+
+        debugLog('FetchWebPipe', res, 'PlayerFetch')
+        return res
       } catch (e) {
         if (!process.env.IN_GAME) {
           debugLog(
