@@ -14,6 +14,8 @@ import {
 import { fetchWebPipe } from "../../../utils/fetchWebPipe";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
+import { TxAdminAPIResp } from "./DialogActionView";
+import { translateAlertType } from "../../../utils/miscUtils";
 
 const DialogInfoView: React.FC = () => {
   const [note, setNote] = useState("");
@@ -29,22 +31,18 @@ const DialogInfoView: React.FC = () => {
   const handleSaveNote: FormEventHandler = async (e) => {
     e.preventDefault();
     try {
-      const resp = await fetchWebPipe("/player/save_note", {
+      const resp = await fetchWebPipe<TxAdminAPIResp>("/player/save_note", {
         method: "POST",
         data: {
           license: playerDetails.license,
           note: note,
         },
       });
-      enqueueSnackbar("Saved Note", {
-        variant: "success",
-      });
       forceRefresh((val) => val + 1);
+      enqueueSnackbar(resp.message, { variant: translateAlertType(resp.type) });
     } catch (e) {
+      enqueueSnackbar(t("nui_menu.common.error"), { variant: "error" });
       console.error(e);
-      enqueueSnackbar("An error occurred saving the note", {
-        variant: "error",
-      });
     }
   };
 

@@ -12,8 +12,10 @@ import { fetchWebPipe } from "../../../utils/fetchWebPipe";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
 import { usePlayerModalContext } from '../../../provider/PlayerModalProvider';
-import { userHasPerm } from '../../../utils/miscUtils';
+import { translateAlertType, userHasPerm } from '../../../utils/miscUtils';
 import { usePermissionsValue } from '../../../state/permissions.state';
+import xss from 'xss'
+import { TxAdminAPIResp } from './DialogActionView';
 
 const DialogBanView: React.FC = () => {
   const player = usePlayerDetailsValue();
@@ -36,7 +38,7 @@ const DialogBanView: React.FC = () => {
       duration === "custom" ? `${customDurLength} ${customDuration}` : duration;
     // Should do something with the res eventually
     try {
-      const res = await fetchWebPipe("/player/ban", {
+      const resp = await fetchWebPipe<TxAdminAPIResp>("/player/ban", {
         method: "POST",
         data: {
           reason,
@@ -44,9 +46,13 @@ const DialogBanView: React.FC = () => {
           reference: player.id,
         },
       });
-      enqueueSnackbar("Player was banned!", { variant: "success" });
+      // We need to clean the response as it contains html
+      const cleanedMsg = xss(resp.message)
+
+      enqueueSnackbar(cleanedMsg, { variant: translateAlertType(resp.type) });
     } catch (e) {
-      enqueueSnackbar("Ban failed: ", { variant: "error" });
+      enqueueSnackbar(t('nui_menu.common.error'), { variant: "error" });
+      console.error(e)
     }
   };
 

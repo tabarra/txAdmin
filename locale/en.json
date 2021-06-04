@@ -43,7 +43,9 @@
         },
         "common": {
             "cancel": "Cancel",
-            "submit": "Submit"
+            "submit": "Submit",
+            "error": "An error occurred",
+            "copied": "Copied to clipboard"
         },
         "page_main": {
             "fix_vehicle": {

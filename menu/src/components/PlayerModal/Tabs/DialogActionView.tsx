@@ -23,7 +23,7 @@ import { usePermissionsValue } from "../../../state/permissions.state";
 
 export type TxAdminActionRespType = "success" | "warning" | "danger";
 
-interface txAdminActionResp {
+export interface TxAdminAPIResp {
   type: TxAdminActionRespType;
   message: string;
 }
@@ -58,7 +58,7 @@ const DialogActionView: React.FC = () => {
       description: t("nui_menu.player_modal.actions.moderation.dm_dialog.description"),
       placeholder: t("nui_menu.player_modal.actions.moderation.dm_dialog.placeholder"),
       onSubmit: (reason: string) => {
-        fetchWebPipe<txAdminActionResp>("/player/message", {
+        fetchWebPipe<TxAdminAPIResp>("/player/message", {
           method: "POST",
           data: {
             id: assocPlayer.id,
