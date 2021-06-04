@@ -76,3 +76,29 @@ of the menu
 * Usage: `/txAdmin-reauth`
 * Required Perm: `none`
 
+### Development
+
+The txAdmin Menu is a Lua + TypeScript React project. Ensure you have all the dependencies by running 
+`npm i` in the root directory. 
+
+#### Hot Reloading Dev Environments
+
+To run the menu in the browser you can use the `dev:menu` script. This will hot reload, everytime
+a change is made.
+
+```bash
+npm run dev:menu
+```
+
+To run the menu in game you can use the `dev:menu:game` script, this will also hot reload the 
+build process, but you must also manually restart the monitor resource each time.
+```bash
+npm run dev:menu:game
+```
+
+#### General Structure
+
+**Lua**: You can find the majority of the relevant Lua scripts in the `scripts/menu` directory.
+
+**React/Typescript**: The source code for the React application can be found in the `./menu`
+directory.
