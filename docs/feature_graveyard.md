@@ -1,4 +1,4 @@
-### Feature Graveyard
+## Feature Graveyard
 In txAdmin codebase, we try to keep things lean, this is one of the few reasons after one year of project, our code base is not *that* bad.  
 And as part of the process, we "retired" many features and parts of our code base, here is a relation of the majority of them and the reason why:
 
