@@ -163,6 +163,7 @@ const DialogActionView: React.FC = () => {
     if (!userHasPerm("players.teleport", playerPerms))
       return showNoPerms("Teleport");
 
+    closeMenu();
     fetchNui('tpToPlayer', { id: assocPlayer.id })
     enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.action_notifications.tp_player"), {variant: 'success'})
   }
@@ -171,6 +172,7 @@ const DialogActionView: React.FC = () => {
     if (!userHasPerm("players.teleport", playerPerms))
       return showNoPerms("Teleport");
 
+    closeMenu();
     fetchNui('summonPlayer', { id: assocPlayer.id })
     enqueueSnackbar(t("nui_menu.player_modal.actions.moderation.action_notifications.bring_player"), {variant: 'success'})
   }
