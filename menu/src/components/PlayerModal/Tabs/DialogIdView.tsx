@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Box,
-  DialogContent,
   IconButton,
   makeStyles,
   Theme,
@@ -38,7 +37,7 @@ const DialogIdView: React.FC = () => {
   };
 
   return (
-    <DialogContent>
+    <Box overflow="auto" height="100%" padding="8px 24px">
       {player.identifiers.map((ident) => (
         <Box className={classes.codeBlock} key={ident}>
           <Typography className={classes.codeBlockText}>{ident}</Typography>
@@ -47,7 +46,7 @@ const DialogIdView: React.FC = () => {
           </IconButton>
         </Box>
       ))}
-    </DialogContent>
+    </Box>
   );
 };
 

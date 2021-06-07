@@ -7,7 +7,15 @@ export const MockedPlayerDetails = {
   },
   id: false,
   license: "9b9fc300cc65d22ad3b536175a4d15c0e4933753",
-  identifiers: ["license:9b9fc300cc65d22ad3b536175a4d15c0e4933753"],
+  identifiers: [
+    "license:9b9fc300cc65d22ad3b536175a4d15c0e4933753",
+    "license2:9b9fc300cc65d22ad3b536175a4d15c0e4933753",
+    "steam:765611981462241080",
+    "xbl:2535431930771985",
+    "live:914798250090349",
+    "discord:188181246600282113",
+    "fivem:226041",
+  ],
   isTmp: false,
   name: "Soneca",
   actionHistory: [
