@@ -148,6 +148,11 @@
                 "ban": "Ban"
             },
             "actions": {
+                "sections": {
+                    "moderation": "Moderation",
+                    "interaction": "Interaction",
+                    "troll": "Troll"
+                },
                 "moderation": {
                     "dm_dialog": {
                         "title": "Direct Message",
@@ -170,7 +175,6 @@
                         "kick_sent": "The player was kicked!",
                         "unknown_error": "An unknown error occurred"
                     },
-                    "category_title_1": "Moderation",
                     "options": {
                         "dm": "DM",
                         "warn": "Warn",
@@ -188,7 +192,6 @@
                     }
                 },
                 "interaction": {
-                    "category_title_2": "Interaction",
                     "options": {
                         "heal": "Heal",
                         "go_to": "Go to",
@@ -197,9 +200,8 @@
                     }
                 },
                 "troll": {
-                    "category_title_3": "Troll",
                     "options": {
-                        "kill": "Kill",
+                        "weed": "Weed",
                         "fire": "Fire",
                         "drunk": "Drunk",
                         "wild_attack": "Wild attack"

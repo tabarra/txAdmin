@@ -140,6 +140,12 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
     elseif event == 'summonPlayer' then
         if type(data) ~= 'string' then return end
         message = "summoning player " .. data
+    elseif event == 'weedEffect' then
+        if type(data) ~= 'string' then return end
+        message = "triggering weed on" .. data
+    elseif event == 'drunkEffect' then
+        if type(data) ~= 'string' then return end
+        message = "triggering drunk on" .. data
     else
         return
     end

@@ -29,7 +29,7 @@ local LAST_PLAYER_DATA = {}
 ---@param source number
 ---@param permission string
 ---@return boolean
-local function PlayerHasTxPermission(source, permission)
+function PlayerHasTxPermission(source, permission)
   local allow = false
   local perms = adminPermissions[tostring(source)]
   if perms then

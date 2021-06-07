@@ -185,10 +185,36 @@ const DialogActionView: React.FC = () => {
     fetchNui("spectatePlayer", { id: assocPlayer.id });
   };
 
+  const handleWeed = () => {
+    if (!userHasPerm("players.troll", playerPerms))
+      return showNoPerms("Troll");
+    fetchNui('weedEffectPlayer', { id: assocPlayer.id })
+  }
+
+  const handleDrunk = () => {
+    if (!userHasPerm("players.troll", playerPerms))
+      return showNoPerms("Troll");
+    fetchNui('drunkEffectPlayer', { id: assocPlayer.id })
+  }
+
+  const handleSetOnFire = () => {
+    if (!userHasPerm("players.troll", playerPerms))
+      return showNoPerms("Troll");
+
+    fetchNui('setOnFire', { id: assocPlayer.id })
+  }
+
+  const handleWildAttack = () => {
+    if (!userHasPerm("players.troll", playerPerms))
+      return showNoPerms("Troll");
+
+    fetchNui('wildAttack', { id: assocPlayer.id })
+  }
+
   return (
     <DialogContent>
       <Box pb={1}>
-        <Typography variant="h6">Player Actions</Typography>
+        <Typography variant="h6">{t("nui_menu.player_modal.actions.sections.moderation")}</Typography>
       </Box>
       <Typography style={{ paddingBottom: 5 }}>Moderation</Typography>
       <Box className={classes.actionGrid}>
@@ -198,7 +224,7 @@ const DialogActionView: React.FC = () => {
         <Button variant="outlined" color="primary" onClick={handleSetAdmin}>{t("nui_menu.player_modal.actions.moderation.options.set_admin")}</Button>
       </Box>
       <Typography style={{ paddingBottom: 5 }}>
-        {t("nui_menu.player_modal.actions.interaction.category_title_2")}
+        {t("nui_menu.player_modal.actions.sections.interaction")}
       </Typography>
       <Box className={classes.actionGrid}>
         <Button variant="outlined" color="primary" onClick={handleHeal}>{t("nui_menu.player_modal.actions.moderation.options.heal")}</Button>
@@ -206,13 +232,13 @@ const DialogActionView: React.FC = () => {
         <Button variant="outlined" color="primary" onClick={handleBring}>{t("nui_menu.player_modal.actions.moderation.options.bring")}</Button>
         <Button variant="outlined" color="primary" onClick={handleSpectate}>{t("nui_menu.player_modal.actions.moderation.options.spectate")}</Button>
       </Box>
-      {/*<Typography style={{ paddingBottom: 5 }}>Troll</Typography>*/}
-      {/*<Box className={classes.actionGrid}>*/}
-      {/*  <Button variant="outlined" color="primary">Kill</Button>*/}
-      {/*  <Button variant="outlined" color="primary">Fire</Button>*/}
-      {/*  <Button variant="outlined" color="primary">Drunk</Button>*/}
-      {/*  <Button variant="outlined" color="primary">Wild attack</Button>*/}
-      {/*</Box>*/}
+      <Typography style={{ paddingBottom: 5 }}>{t("nui_menu.player_modal.actions.sections.troll")}</Typography>
+      <Box className={classes.actionGrid}>
+        <Button variant="outlined" color="primary" onClick={handleWeed}>{t("nui_menu.player_modal.actions.troll.options.weed")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleSetOnFire}>{t("nui_menu.player_modal.actions.troll.options.fire")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleDrunk}>{t("nui_menu.player_modal.actions.troll.options.drunk")}</Button>
+        <Button variant="outlined" color="primary" onClick={handleWildAttack}>{t("nui_menu.player_modal.actions.troll.options.wild_attack")}</Button>
+      </Box>
     </DialogContent>
   );
 };
