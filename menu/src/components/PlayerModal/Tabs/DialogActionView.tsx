@@ -214,9 +214,9 @@ const DialogActionView: React.FC = () => {
   return (
     <DialogContent>
       <Box pb={1}>
-        <Typography variant="h6">{t("nui_menu.player_modal.actions.sections.moderation")}</Typography>
+        <Typography variant="h6">{t("nui_menu.player_modal.actions.title")}</Typography>
       </Box>
-      <Typography style={{ paddingBottom: 5 }}>Moderation</Typography>
+      <Typography style={{ paddingBottom: 5 }}>{t("nui_menu.player_modal.actions.sections.moderation")}</Typography>
       <Box className={classes.actionGrid}>
         <Button variant="outlined" color="primary" onClick={handleDM}>{t("nui_menu.player_modal.actions.moderation.options.dm")}</Button>
         <Button variant="outlined" color="primary" onClick={handleWarn}>{t("nui_menu.player_modal.actions.moderation.options.warn")}</Button>

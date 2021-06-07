@@ -148,6 +148,7 @@
                 "ban": "Ban"
             },
             "actions": {
+                "title": "Player Actions",
                 "sections": {
                     "moderation": "Moderation",
                     "interaction": "Interaction",
