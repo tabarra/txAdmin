@@ -10,6 +10,7 @@ import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
 import { FileCopy } from "@material-ui/icons";
 import { copyToClipboard } from "../../../utils/copyToClipboard";
 import { useSnackbar } from "notistack";
+import { useTranslate } from "react-polyglot";
 
 const useStyles = makeStyles((theme: Theme) => ({
   codeBlock: {
@@ -30,10 +31,11 @@ const DialogIdView: React.FC = () => {
   const classes = useStyles();
   const player = usePlayerDetailsValue();
   const { enqueueSnackbar } = useSnackbar();
+  const t = useTranslate();
 
   const handleCopyToClipboard = (value: string) => {
-    copyToClipboard(value);
-    enqueueSnackbar("Copied to clipboard!", { variant: "info" });
+    copyToClipboard(value, true);
+    enqueueSnackbar(t("nui_menu.common.copied"), { variant: "info" });
   };
 
   return (

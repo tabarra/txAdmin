@@ -318,6 +318,13 @@ RegisterNUICallback('playerModeChanged', function(mode, cb)
   cb({})
 end)
 
+RegisterNUICallback('copyCurrentCoords', function(_, cb)
+  local curCoords = GetEntityCoords(PlayerPedId())
+  -- We will cut coords to 4 decimal points
+  local stringCoords = ('%.4f, %.4f, %.4f'):format(curCoords.x, curCoords.y, curCoords.z)
+  cb({ coords = stringCoords })
+end)
+
 -- [[ Player mode changed cb event ]]
 RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode)
   if mode == 'godmode' then

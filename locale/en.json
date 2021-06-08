@@ -120,6 +120,10 @@
                 "list_secondary": "Will display nearby players NetID's",
                 "alert_show": "Showing nearby player NetID's",
                 "alert_hide": "Hiding nearby player NetID's"
+            },
+            "copy_coords": {
+                "list_primary": "Copy Coords",
+                "list_secondary": "Copies current coords to clipboard"
             }
         },
         "page_players": {
