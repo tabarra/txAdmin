@@ -18,7 +18,7 @@ import xss from 'xss'
 import { TxAdminAPIResp } from './DialogActionView';
 
 const DialogBanView: React.FC = () => {
-  const player = usePlayerDetailsValue();
+  const assocPlayer = usePlayerDetailsValue();
 
   const [reason, setReason] = useState('');
   const [duration, setDuration] = useState('2 hours');
@@ -42,8 +42,8 @@ const DialogBanView: React.FC = () => {
         method: "POST",
         data: {
           reason,
-          actualDuration,
-          reference: player.id,
+          duration: actualDuration,
+          reference: assocPlayer.identifiers,
         },
       });
       // We need to clean the response as it contains html
@@ -90,7 +90,7 @@ const DialogBanView: React.FC = () => {
       label: t('nui_menu.player_modal.ban.custom')
     }
   ]
-  
+
   const customBanLength = [
     {
       value: 'hours',
