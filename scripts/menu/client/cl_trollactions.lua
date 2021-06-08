@@ -77,44 +77,43 @@ local function weedEffect()
     RemoveAnimSet(WEED_ANIM_SET)
 end
 
-local mountainLionHash = 307287994
 
+--[[ Wild Attack command ]]
+local attackAnimalHashes = {
+    GetHashKey("a_c_chimp"),
+    GetHashKey("a_c_rottweiler"),
+    GetHashKey("a_c_coyote")
+}
 local animalGroupHash = GetHashKey("Animal")
-
 local playerGroupHash = GetHashKey("PLAYER")
 
--- TODO: This logic needs to be taken a looken at
--- Whenever the lion ped spawns all it does is just flee, no idea why.
 local function startWildAttack()
+    -- Consts
     local playerPed = PlayerPedId()
-
-    local coordsBehindPlayer = GetOffsetFromEntityInWorldCoords(playerPed, 0, -25.0, 0)
-
+    local animalHash = attackAnimalHashes[math.random(#attackAnimalHashes)]
+    local coordsBehindPlayer = GetOffsetFromEntityInWorldCoords(playerPed, 100, -15.0, 0)
     local playerHeading = GetEntityHeading(playerPed)
-
     local belowGround, groundZ, vec3OnFloor = GetGroundZAndNormalFor_3dCoord(coordsBehindPlayer.x, coordsBehindPlayer.y, coordsBehindPlayer.z)
 
-    debugPrint(groundZ)
-
-    RequestModel(mountainLionHash)
-    while not HasModelLoaded(mountainLionHash) do
+    -- Requesting model
+    RequestModel(animalHash)
+    while not HasModelLoaded(animalHash) do
         Wait(5)
     end
+    SetModelAsNoLongerNeeded(animalHash)
 
-    SetModelAsNoLongerNeeded(mountainLionHash)
-
-    local lionPed = CreatePed(1, mountainLionHash, coordsBehindPlayer.x, coordsBehindPlayer.y, groundZ, playerHeading, true, false)
-    SetPedFleeAttributes(lionPed, 0, 0)
-    SetPedRelationshipGroupHash(lionPed, animalGroupHash)
-    TaskSetBlockingOfNonTemporaryEvents(lionPed, true)
-    TaskCombatHatedTargetsAroundPed(lionPed, 30.0, 0)
-    ClearPedTasks(lionPed)
-
-    TaskPutPedDirectlyIntoMelee(lionPed, playerPed, 0.0, -1.0, 0.0, 0)
-
+    -- Creating Animal & setting player as enemy
+    local animalPed = CreatePed(1, animalHash, coordsBehindPlayer.x, coordsBehindPlayer.y, groundZ, playerHeading, true, false)
+    SetPedFleeAttributes(animalPed, 0, 0)
+    SetPedRelationshipGroupHash(animalPed, animalGroupHash)
+    TaskSetBlockingOfNonTemporaryEvents(animalPed, true)
+    TaskCombatHatedTargetsAroundPed(animalPed, 30.0, 0)
+    ClearPedTasks(animalPed)
+    TaskPutPedDirectlyIntoMelee(animalPed, playerPed, 0.0, -1.0, 0.0, 0)
     SetRelationshipBetweenGroups(5, animalGroupHash, playerGroupHash)
     SetRelationshipBetweenGroups(5, playerGroupHash, animalGroupHash)
 end
+-- RegisterCommand('atk', startWildAttack)
 
 --[[
  Net Events
