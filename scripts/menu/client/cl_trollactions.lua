@@ -36,7 +36,7 @@ local function drunkThread()
     CreateThread(function()
         while isDrunk do
             local vehPedIsIn = GetVehiclePedIsIn(playerPed)
-            local isPedInVehicleAndDriving = GetVehiclePedIsIn(playerPed,false) and (GetPedInVehicleSeat(vehPedIsIn, -1) == playerPed)
+            local isPedInVehicleAndDriving = (vehPedIsIn ~= 0) and (GetPedInVehicleSeat(vehPedIsIn, -1) == playerPed)
 
             if isPedInVehicleAndDriving then
                 local randomTask = getRandomDrunkCarTask()
