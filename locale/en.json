@@ -203,9 +203,13 @@
                 "troll": {
                     "options": {
                         "weed": "Weed",
+                        "weed_desc": "Will apply a 'weed' effect to the player",
                         "fire": "Fire",
+                        "fire_desc": "Will set the player on fire",
                         "drunk": "Drunk",
-                        "wild_attack": "Wild attack"
+                        "drunk_desc": "Will apply a 'drunk' effect to the player",
+                        "wild_attack": "Wild attack",
+                        "wild_attack_desc": "Will spawn a random wild animal to attack the player"
                     }
                 }
             },
