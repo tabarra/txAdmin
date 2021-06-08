@@ -41,6 +41,9 @@ const useStyles = makeStyles({
   tooltipOverride: {
     fontSize: 12,
   },
+  sectionTitle: {
+    paddingBottom: 5,
+  },
 });
 
 const DialogActionView: React.FC = () => {
@@ -208,10 +211,8 @@ const DialogActionView: React.FC = () => {
     const sluggedName = slug(assocPlayer.username, "_");
 
     let adminManagerPath = `?autofill&name=${sluggedName}`;
-    if (discordIdent)
-      adminManagerPath = adminManagerPath + `&discord=${discordIdent}`;
-    if (fivemIdent)
-      adminManagerPath = adminManagerPath + `&fivem=${fivemIdent}`;
+    if (discordIdent) adminManagerPath += `&discord=${discordIdent}`;
+    if (fivemIdent) adminManagerPath += `&fivem=${fivemIdent}`;
 
     goToFramePage(`/adminManager/${adminManagerPath}`);
     setModalOpen(false);
@@ -305,7 +306,7 @@ const DialogActionView: React.FC = () => {
           {t("nui_menu.player_modal.actions.title")}
         </Typography>
       </Box>
-      <Typography style={{ paddingBottom: 5 }}>
+      <Typography className={classes.sectionTitle}>
         {t("nui_menu.player_modal.actions.sections.moderation")}
       </Typography>
       <Box className={classes.actionGrid}>
@@ -322,7 +323,7 @@ const DialogActionView: React.FC = () => {
           {t("nui_menu.player_modal.actions.moderation.options.set_admin")}
         </Button>
       </Box>
-      <Typography style={{ paddingBottom: 5 }}>
+      <Typography className={classes.sectionTitle}>
         {t("nui_menu.player_modal.actions.sections.interaction")}
       </Typography>
       <Box className={classes.actionGrid}>
@@ -339,7 +340,7 @@ const DialogActionView: React.FC = () => {
           {t("nui_menu.player_modal.actions.moderation.options.spectate")}
         </Button>
       </Box>
-      <Typography style={{ paddingBottom: 5 }}>
+      <Typography className={classes.sectionTitle}>
         {t("nui_menu.player_modal.actions.sections.troll")}
       </Typography>
       <Box className={classes.actionGrid}>
