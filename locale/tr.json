@@ -10,7 +10,7 @@
         "partial_hang_warn": "Takılma nedeniyle bu sunucu 1 dakika içinde yeniden başlayacak. Lütfen şimdi bağlantıyı kesin.",
         "partial_hang_warn_discord": "Takılma nedeniyle **%{servername}** 1 dakika içinde yeniden başlayacak.",
         "schedule_reason": "Zamanlanmış yeniden başlatma %{time}",
-        "schedule_warn": "Sunucu %{smart_count} dakika içerisinde zamanlanmış şekilde yeniden başlatılacaktır. Lütfen çıkış yapın. |||| Sunucu %{smart_count} dakika içerisinde zamanlamış şekilde yeniden başlatılacaktır.",
+        "schedule_warn": "Sunucu %{smart_count} dakika içerisinde zamanlanmış şekilde yeniden başlatılacaktır. Lütfen çıkış yapın. |||| Sunucu %{smart_count} dakika içerisinde zamanlanmış şekilde yeniden başlatılacaktır.",
         "schedule_warn_discord": "**%{servername}** sunucusu %{smart_count} dakika içerisinde yeniden başlatılmaya zamanlandı. |||| **%{servername}** sunucusu %{smart_count} dakika içerisinde yeniden başlatılmaya zamanlandı."
     },
     "ban_messages": {
