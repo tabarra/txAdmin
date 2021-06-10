@@ -34,5 +34,200 @@
         "title": "VAROITUS",
         "warned_by": "Sinua varoitti:",
         "instruction": "Pidä välilyöntiä pohjassa 10 sekuntia jatkaaksesi."
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "txAdmin has gotten an in-game menu!\nBind [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] to try it out!",
+            "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
+            "action_unauthorized": "You do not have this permission."
+        },
+        "common": {
+            "cancel": "Cancel",
+            "submit": "Submit",
+            "error": "An error occurred",
+            "copied": "Copied to clipboard"
+        },
+        "page_main": {
+            "fix_vehicle": {
+                "list_primary": "Fix Vehicle",
+                "list_secondary": "Set current vehicle health to 100%",
+                "dialog_success": "Vehicle fixed!",
+                "dialog_error": "You are not currently in a vehicle!"
+            },
+            "teleport": {
+                "list_primary": "Teleport",
+                "item_waypoint": "To: Waypoint",
+                "item_coords": "To: Coordinates",
+                "item_previous": "To: Previous Location",
+                "dialog_title": "Teleport",
+                "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole",
+                "dialog_success": "Sent you into the wormhole!",
+                "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33"
+            },
+            "teleport_back": {
+                "list_primary": "Go Back",
+                "list_secondary": "Teleport to your last location",
+                "error": "You don't have a last location to teleport to!",
+                "success": "Returning through the wormhole!"
+            },
+            "player_mode": {
+                "list_primary": "Player Mode",
+                "list_secondary": "Current: %{mode}",
+                "item_none": "Normal",
+                "item_noclip": "Noclip",
+                "item_godmode": "God Mode",
+                "dialog_success_none": "Returned to default player mode",
+                "dialog_success_noclip": "Noclip enabled",
+                "dialog_success_godmode": "God mode enabled"
+            },
+            "spawn_wep": {
+                "list_primary": "Spawn Weapon",
+                "list_secondary": "Add a weapon to yourself",
+                "dialog_title": "Spawn Weapon",
+                "dialog_desc": "Spawn a weapon using its model name."
+            },
+            "spawn_veh": {
+                "list_primary": "Spawn Vehicle",
+                "list_secondary": "Spawn a vehicle by model name",
+                "dialog_title": "Spawn Vehicle",
+                "dialog_desc": "Enter in the model name of the vehicle you want to spawn",
+                "dialog_success": "Vehicle spawned!",
+                "dialog_error": "The vehicle model name '%{modelName}' does not exist!",
+                "dialog_info": "Trying to spawn %{modelName}"
+            },
+            "heal_all": {
+                "list_primary": "Heal All Players",
+                "list_secondary": "Will heal & revive all players",
+                "dialog_success": "Healed and revived all players"
+            },
+            "heal_myself": {
+                "list_primary": "Heal Self",
+                "list_secondary": "Restores your health",
+                "dialog_success_0": "All healed up!",
+                "dialog_success_1": "You should be feeling good now!",
+                "dialog_success_2": "Restored to full!",
+                "dialog_success_3": "Ouchies fixed!"
+            },
+            "send_announce": {
+                "list_primary": "Send Announcement",
+                "list_secondary": "Announce a message",
+                "dialog_title": "Send Announcement",
+                "dialog_desc": "Send an announcement to all online players",
+                "dialog_success": "Sending the announcement"
+            },
+            "player_ids": {
+                "list_primary": "Toggle Player ID's",
+                "list_secondary": "Will display nearby players NetID's",
+                "alert_show": "Showing nearby player NetID's",
+                "alert_hide": "Hiding nearby player NetID's"
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "Online Players",
+                "players": "Players",
+                "search": "Search",
+                "zero_players": "No players found"
+            },
+            "sort": {
+                "label": "Sort by",
+                "distance": "Distance",
+                "id": "ID",
+                "joined_first": "Joined First",
+                "joined_last": "Joined Last",
+                "closest": "Closest",
+                "farthest": "Farthest"
+            }
+        },
+        "player_modal": {
+            "tabs": {
+                "actions": "Actions",
+                "info": "Info",
+                "ids": "IDs",
+                "history": "History",
+                "ban": "Ban"
+            },
+            "actions": {
+                "moderation": {
+                    "dm_dialog": {
+                        "title": "Direct Message",
+                        "description": "What is the reason for direct messaging this player?",
+                        "placeholder": "Reason...",
+                        "dm_sent": "Your DM has been sent!",
+                        "unknown_error": "An unknown error occurred"
+                    },
+                    "warn_dialog": {
+                        "title": "Warn",
+                        "description": "What is the reason for direct warning this player?",
+                        "placeholder": "Reason...",
+                        "warn_sent": "The player was warned!",
+                        "unknown_error": "An unknown error occurred"
+                    },
+                    "kick_dialog": {
+                        "title": "Kick",
+                        "description": "What is the reason for kicking this player?",
+                        "placeholder": "Reason...",
+                        "kick_sent": "The player was kicked!",
+                        "unknown_error": "An unknown error occurred"
+                    },
+                    "category_title_1": "Moderation",
+                    "options": {
+                        "dm": "DM",
+                        "warn": "Warn",
+                        "kick": "Kick",
+                        "set_admin": "Give Admin",
+                        "heal": "Heal",
+                        "go_to": "Go to",
+                        "bring": "Bring",
+                        "spectate": "Spectate"
+                    },
+                    "action_notifications": {
+                        "heal_player": "Healing player",
+                        "tp_player": "Teleporting to player",
+                        "bring_player": "Summoning player"
+                    }
+                },
+                "interaction": {
+                    "category_title_2": "Interaction",
+                    "options": {
+                        "heal": "Heal",
+                        "go_to": "Go to",
+                        "bring": "Bring",
+                        "spectate": "Spectate"
+                    }
+                },
+                "troll": {
+                    "category_title_3": "Troll",
+                    "options": {
+                        "kill": "Kill",
+                        "fire": "Fire",
+                        "drunk": "Drunk",
+                        "wild_attack": "Wild attack"
+                    }
+                }
+            },
+            "info": {
+                "title": "Player info",
+                "session_time": "Session Time",
+                "play_time": "Play time",
+                "joined": "Joined",
+                "notes_placeholder": "Notes about this player"
+            },
+            "history": {
+                "title": "Related history"
+            },
+            "ban": {
+                "title": "Ban player",
+                "reason_placeholder": "Reason",
+                "duration_placeholder": "Duration",
+                "hours": "hours",
+                "days": "days",
+                "weeks": "weeks",
+                "months": "months",
+                "perm": "Permanent",
+                "custom": "Custom",
+                "helper_text": "Please select a duration"
+            }
+        }
     }
 }
