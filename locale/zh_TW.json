@@ -1,7 +1,7 @@
 {
     "$meta": {
         "label": "Chinese_Traditional",
-        "humanizer_language": "zh_HK"
+        "humanizer_language": "zh_TW"
     },
     "restarter": {
         "start_timeout": "伺服器啟動超時",

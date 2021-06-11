@@ -32,7 +32,7 @@ const languages = {
     th: require('../../locale/th.json'),
     tr: require('../../locale/tr.json'),
     zh: require('../../locale/zh.json'),
-    zh_HK: require('../../locale/zh_HK.json'),
+    zh_TW: require('../../locale/zh_TW.json'),
 };
 
 /**
