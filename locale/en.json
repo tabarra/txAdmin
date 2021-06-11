@@ -228,6 +228,15 @@
                 "title": "Related history"
             },
             "ban": {
+                "action_types": {
+                    "warn": "WARNED",
+                    "warn_revoked": "REVOKED the WARN for",
+                    "kick": "KICKED",
+                    "ban": "BANNED",
+                    "ban_revoked": "REVOKED the BAN for",
+                    "whitelist": "WHITELIST",
+                    "whitelist_revoked": "REVOKED the WHITELIST for"
+                },
                 "title": "Ban player",
                 "reason_placeholder": "Reason",
                 "duration_placeholder": "Duration",

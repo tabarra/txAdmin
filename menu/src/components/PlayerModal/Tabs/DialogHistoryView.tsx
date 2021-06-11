@@ -7,37 +7,9 @@ import {
   useTheme,
 } from "@material-ui/core";
 import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
+import { useTranslate } from "react-polyglot";
 
-const actionTypes = {
-  WARN: {
-    title: "WARNED",
-    color: "#f1c40f",
-  },
-  "WARN-REVOKED": {
-    title: "REVOKED the WARN for",
-    color: "gray",
-  },
-  KICK: {
-    title: "KICKED",
-    color: "#e67e22",
-  },
-  BAN: {
-    title: "BANNED",
-    color: "#c2293e",
-  },
-  "BAN-REVOKED": {
-    title: "REVOKED the BAN for",
-    color: "gray",
-  },
-  WHITELIST: {
-    title: "WHITELISTED",
-    color: "#c2293e",
-  },
-  "WHITELIST-REVOKED": {
-    title: "REVOKED the WHITELIST for",
-    color: "gray",
-  },
-};
+
 // TODO: Make the styling on this nicer
 const NoHistoryBox = () => (
   <Box>
@@ -61,8 +33,40 @@ const DialogHistoryView: React.FC = () => {
   const classes = useStyles();
   const player = usePlayerDetailsValue();
   const theme = useTheme();
+  const t = useTranslate();
 
   const playerActionHistory = player?.actionHistory;
+
+  const actionTypes = {
+    WARN: {
+      title: t("nui_menu.player_modal.ban.action_types.warn"),
+      color: "#f1c40f",
+    },
+    "WARN-REVOKED": {
+      title: t("nui_menu.player_modal.ban.action_types.warn_revoked"),
+      color: "gray",
+    },
+    KICK: {
+      title: t("nui_menu.player_modal.ban.action_types.kick"),
+      color: "#e67e22",
+    },
+    BAN: {
+      title: t("nui_menu.player_modal.ban.action_types.ban"),
+      color: "#c2293e",
+    },
+    "BAN-REVOKED": {
+      title: t("nui_menu.player_modal.ban.action_types.ban_revoked"),
+      color: "gray",
+    },
+    WHITELIST: {
+      title: t("nui_menu.player_modal.ban.action_types.whitelist"),
+      color: "#c2293e",
+    },
+    "WHITELIST-REVOKED": {
+      title: t("nui_menu.player_modal.ban.action_types.whitelist_revoked"),
+      color: "gray",
+    },
+  };
 
   return (
     <Box p={2} height="100%" display="flex" flexDirection="column">
