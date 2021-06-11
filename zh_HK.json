@@ -1,0 +1,233 @@
+{
+    "$meta": {
+        "label": "Chinese_Traditional",
+        "humanizer_language": "zh_HK"
+    },
+    "restarter": {
+        "start_timeout": "伺服器啟動超時",
+        "crash_detected": "伺服器被偵測得到已癱瘓",
+        "hang_detected": "伺服器被偵測得到已經當機",
+        "partial_hang_warn": "由於伺服器已經當機一段時間，伺服器將會在一分鐘後重新啟動，請立即離開伺服器。",
+        "partial_hang_warn_discord": "由於伺服器已經當機一段時間，**%{servername}** 將會在一分鐘後重新啟動。",
+        "schedule_reason": "預計 %{time}重啟",
+        "schedule_warn": "伺服器將於 %{smart_count} 分鐘後重新啟動， 請立即離開伺服器。 |||| 伺服器將於 %{smart_count} 分鐘後重新啟動。",
+        "schedule_warn_discord": "**%{servername}** 將於 %{smart_count} 分鐘後重新啟動。 |||| **%{servername}** 將於 %{smart_count} 分鐘後重新啟動。"
+    },
+    "ban_messages": {
+        "kick_temporary": "[%{author}] 由於你 \"%{reason}\"，所以已經被伺服器暫時封鎖。封鎖時間尚餘: %{expiration} 。",
+        "kick_permanent": "[%{author}] 由於你 \"%{reason}\"，所以已經被伺服器永久封鎖。",
+        "reject_temporary": "你已經被伺服器暫時封鎖。\n封鎖時間尚餘: %{expiration}。\n封鎖 ID: %{id}。\n封鎖原因: %{reason}。\n判決人: %{author}。",
+        "reject_permanent": "你已經被伺服器永久封鎖。\n封鎖 ID: %{id}。\n封鎖原因: %{reason}。\n判決人: %{author}。"
+    },
+    "server_actions": {
+        "restarting": "伺服器正在重啟 (%{reason})。",
+        "restarting_discord": "**%{servername}** 正在重新啟動 (%{reason})。",
+        "stopping": "伺服器正在關閉 (%{reason})。",
+        "stopping_discord": "**%{servername}** 正在關閉 (%{reason})。",
+        "spawning_discord": "**%{servername}** 正在重啟。"
+    },
+    "discord": {
+        "status_online": "**%{servername}** 目前 **在線**!",
+        "status_offline": "**%{servername}** 目前 **離線**!"
+    },
+    "nui_warning": {
+        "title": "警告",
+        "warned_by": "警告者:",
+        "instruction": "按住 [SPACE] 10秒關閉警告。"
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "txAdmin 已經推出游戲嵌入介面 !\n可以到 [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] 綁定按鍵，嘗試全新的介面 !",
+            "menu_not_allowed": "你的帳戶尚未在 txAdmin 進行申請。\n如果你已經在 txAdmin 進行了申請， 請到 Admin Manager 確保你的個人資料已經儲存。",
+            "action_unauthorized": "權限不足。"
+        },
+        "common": {
+            "cancel": "取消",
+            "submit": "確認",
+            "error": "發生錯誤",
+            "copied": "複製至剪貼簿"
+        },
+        "page_main": {
+            "fix_vehicle": {
+                "list_primary": "修理載具",
+                "list_secondary": "設定載具耐久值至 100%",
+                "dialog_success": "載具已經修理 !",
+                "dialog_error": "你並未在任何載具裏面!"
+            },
+            "teleport": {
+                "list_primary": "傳送",
+                "item_waypoint": "至: 導航點",
+                "item_coords": "至: 坐標",
+                "item_previous": "至: 上一個方位",
+                "dialog_title": "傳送",
+                "dialog_desc": "請提供 x, y, z 坐標進行傳送",
+                "dialog_success": "傳送進行中...",
+                "dialog_error": "坐標錯誤。 請跟隨坐標格式: 111, 222, 33"
+            },
+            "teleport_back": {
+                "list_primary": "返回",
+                "list_secondary": "傳送至上一個方位",
+                "error": "沒有找到上一個方位可以進行傳送!",
+                "success": "正在傳送至上一個方位..."
+            },
+            "player_mode": {
+                "list_primary": "玩家模式",
+                "list_secondary": "模式: %{mode}",
+                "item_none": "正常",
+                "item_noclip": "NoClip",
+                "item_godmode": "上帝模式 (無敵)",
+                "dialog_success_none": "返回預設玩家模式",
+                "dialog_success_noclip": "已啟動 NoClip",
+                "dialog_success_godmode": "已啟動 上帝模式 (無敵)"
+            },
+            "spawn_wep": {
+                "list_primary": "生成武器",
+                "list_secondary": "給自己一把武器",
+                "dialog_title": "生成武器",
+                "dialog_desc": "使用武器名稱生成。"
+            },
+            "spawn_veh": {
+                "list_primary": "生成車輛",
+                "list_secondary": "使用車輛名稱生成",
+                "dialog_title": "生成車輛",
+                "dialog_desc": "請輸入車輛模型名稱進行生成",
+                "dialog_success": "車輛已生成!",
+                "dialog_error": "車輛模型名稱: '%{modelName}' 並不存在!",
+                "dialog_info": "正在嘗試生成 %{modelName}"
+            },
+            "heal_all": {
+                "list_primary": "治癒所有玩家",
+                "list_secondary": "將會治癒及救活所有玩家",
+                "dialog_success": "已經治癒及救活所有玩家"
+            },
+            "heal_myself": {
+                "list_primary": "治癒自己",
+                "list_secondary": "恢復生命值",
+                "dialog_success_0": "你已被治癒!",
+                "dialog_success_1": "感覺是不是好了一些 ?",
+                "dialog_success_2": "生命值爆滿!",
+                "dialog_success_3": "回復原狀!"
+            },
+            "send_announce": {
+                "list_primary": "發佈通知",
+                "list_secondary": "發布一個通知信息",
+                "dialog_title": "發佈通知",
+                "dialog_desc": "發布通知至所有玩家",
+                "dialog_success": "通知正在發佈..."
+            },
+            "player_ids": {
+                "list_primary": "顯示玩家 ID",
+                "list_secondary": "顯示附近玩家 NetID",
+                "alert_show": "正在顯示附近玩家 NetID",
+                "alert_hide": "正在隱藏附近玩家 NetID"
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "在線玩家",
+                "players": "玩家",
+                "search": "搜尋",
+                "zero_players": "搜尋不到任何玩家"
+            },
+            "sort": {
+                "label": "排序: ",
+                "distance": "距離",
+                "id": "ID",
+                "joined_first": "最早加入",
+                "joined_last": "最遲加入",
+                "closest": "最近",
+                "farthest": "最遠"
+            }
+        },
+        "player_modal": {
+            "tabs": {
+                "actions": "基本功能",
+                "info": "資訊",
+                "ids": "IDs",
+                "history": "歷史",
+                "ban": "封鎖"
+            },
+            "actions": {
+                "moderation": {
+                    "dm_dialog": {
+                        "title": "私人訊息",
+                        "description": "為何要發私人訊息給該玩家?",
+                        "placeholder": "原因...",
+                        "dm_sent": "訊息已經發出!",
+                        "unknown_error": "發生未知錯誤"
+                    },
+                    "warn_dialog": {
+                        "title": "警告",
+                        "description": "為何要警告該玩家?",
+                        "placeholder": "原因...",
+                        "warn_sent": "該玩家已被警告!",
+                        "unknown_error": "發生未知錯誤"
+                    },
+                    "kick_dialog": {
+                        "title": "踢除",
+                        "description": "為何要踢除該玩家?",
+                        "placeholder": "原因...",
+                        "kick_sent": "該玩家已被踢除!",
+                        "unknown_error": "發生未知錯誤"
+                    },
+                    "category_title_1": "管理",
+                    "options": {
+                        "dm": "私人訊息",
+                        "warn": "警告",
+                        "kick": "踢除",
+                        "set_admin": "給予管理員權限",
+                        "heal": "治癒",
+                        "go_to": "傳送自己",
+                        "bring": "帶別人來",
+                        "spectate": "旁觀"
+                    },
+                    "action_notifications": {
+                        "heal_player": "正在治癒玩家",
+                        "tp_player": "正在傳送玩家",
+                        "bring_player": "正在帶玩家來"
+                    }
+                },
+                "interaction": {
+                    "category_title_2": "互動",
+                    "options": {
+                        "heal": "治癒",
+                        "go_to": "傳送自己",
+                        "bring": "帶別人來",
+                        "spectate": "旁觀"
+                    }
+                },
+                "troll": {
+                    "category_title_3": "戲弄",
+                    "options": {
+                        "kill": "誅殺",
+                        "fire": "點燃",
+                        "drunk": "醉酒",
+                        "wild_attack": "荒野之狂襲"
+                    }
+                }
+            },
+            "info": {
+                "title": "玩家資料",
+                "session_time": "協定時間",
+                "play_time": "遊玩時間",
+                "joined": "加入",
+                "notes_placeholder": "玩家備註"
+            },
+            "history": {
+                "title": "相關歷史"
+            },
+            "ban": {
+                "title": "封鎖玩家",
+                "reason_placeholder": "原因",
+                "duration_placeholder": "時效",
+                "hours": "小時",
+                "days": "日",
+                "weeks": "星期",
+                "months": "個月",
+                "perm": "永久",
+                "custom": "自訂",
+                "helper_text": "請選擇時效"
+            }
+        }
+    }
+}
