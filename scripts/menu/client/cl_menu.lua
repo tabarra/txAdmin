@@ -69,7 +69,14 @@ local isMenuVisible
 -- Last location stored in a vec3
 local lastTp
 
-RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
+function registerTxKeybinds()
+  -- Only register keybinds for authed users
+  if menuIsAccessible then
+    RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
+    RegisterKeyMapping('txAdmin:menu:endSpectate', 'Exit spectate mode', 'keyboard', 'BACK')
+  end
+end
+
 -- ===============
 --  ServerCtx
 -- ===============
