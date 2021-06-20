@@ -53,6 +53,7 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, statusCode, body, header
             menuIsAccessible = resp.isAdmin
             -- Also update debug status on first HTTP cb
             sendMenuMessage('setDebugMode', isMenuDebug)
+            registerTxKeybinds()
             ret.cb(resp)
         end
     end
