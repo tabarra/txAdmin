@@ -87,9 +87,7 @@ const DialogActionView: React.FC = () => {
           })
           .catch((e) => {
             enqueueSnackbar(
-              t(
-                "nui_menu.player_modal.actions.moderation.dm_dialog.unknown_error"
-              ),
+              t("nui_menu.misc.unknown_error"),
               { variant: "error" }
             );
             console.error(e);
@@ -120,9 +118,7 @@ const DialogActionView: React.FC = () => {
           .then((resp) => {
             if (resp.type === "danger") {
               return enqueueSnackbar(
-                t(
-                  "nui_menu.player_modal.actions.moderation.warn_dialog.unknown_error"
-                ),
+                t("nui_menu.misc.unknown_error"),
                 { variant: "error" }
               );
             }
@@ -135,9 +131,7 @@ const DialogActionView: React.FC = () => {
           })
           .catch((e) => {
             enqueueSnackbar(
-              t(
-                "nui_menu.player_modal.actions.moderation.warn_dialog.unknown_error"
-              ),
+              t("nui_menu.misc.unknown_error"),
               { variant: "error" }
             );
             console.error(e);
@@ -170,9 +164,7 @@ const DialogActionView: React.FC = () => {
           .then((resp) => {
             if (resp.type === "danger") {
               return enqueueSnackbar(
-                t(
-                  "nui_menu.player_modal.actions.moderation.kick_dialog.unknown_error"
-                ),
+                t("nui_menu.misc.unknown_error"),
                 { variant: "error" }
               );
             }
@@ -185,9 +177,7 @@ const DialogActionView: React.FC = () => {
           })
           .catch((e) => {
             enqueueSnackbar(
-              t(
-                "nui_menu.player_modal.actions.moderation.kick_dialog.unknown_error"
-              ),
+              t("nui_menu.misc.unknown_error"),
               { variant: "error" }
             );
             console.error(e);
@@ -269,23 +259,25 @@ const DialogActionView: React.FC = () => {
   const handleWeed = () => {
     if (!userHasPerm("players.troll", playerPerms)) return showNoPerms("Troll");
     fetchNui("weedEffectPlayer", { id: assocPlayer.id });
+    enqueueSnackbar(t("nui_menu.player_modal.actions.command_sent"));
   };
 
   const handleDrunk = () => {
     if (!userHasPerm("players.troll", playerPerms)) return showNoPerms("Troll");
     fetchNui("drunkEffectPlayer", { id: assocPlayer.id });
+    enqueueSnackbar(t("nui_menu.player_modal.actions.command_sent"));
   };
 
   const handleSetOnFire = () => {
     if (!userHasPerm("players.troll", playerPerms)) return showNoPerms("Troll");
-
     fetchNui("setOnFire", { id: assocPlayer.id });
+    enqueueSnackbar(t("nui_menu.player_modal.actions.command_sent"));
   };
 
   const handleWildAttack = () => {
     if (!userHasPerm("players.troll", playerPerms)) return showNoPerms("Troll");
-
     fetchNui("wildAttack", { id: assocPlayer.id });
+    enqueueSnackbar(t("nui_menu.player_modal.actions.command_sent"));
   };
 
   const TooltipOverride: React.FC<TooltipProps> = (props) => (

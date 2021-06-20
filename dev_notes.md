@@ -3,6 +3,7 @@
   - fix sv_menu sub name error
   - fix sv_logger explosion source
   - remove spectate keybind
+- [x] add logging and confirmation snackbars to troll actions
 - [ ] menu: fix zap auth
 - [ ] menu: sync playerlist via http
 

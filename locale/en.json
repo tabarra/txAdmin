@@ -39,7 +39,8 @@
         "misc": {
             "help_message": "txAdmin has gotten an in-game menu!\nBind [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] to try it out!",
             "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
-            "action_unauthorized": "You do not have this permission."
+            "action_unauthorized": "You do not have this permission.",
+            "unknown_error": "An unknown error occurred."
         },
         "common": {
             "cancel": "Cancel",
@@ -153,6 +154,7 @@
             },
             "actions": {
                 "title": "Player Actions",
+                "command_sent": "Command sent!",
                 "sections": {
                     "moderation": "Moderation",
                     "interaction": "Interaction",
@@ -163,22 +165,19 @@
                         "title": "Direct Message",
                         "description": "What is the reason for direct messaging this player?",
                         "placeholder": "Reason...",
-                        "dm_sent": "Your DM has been sent!",
-                        "unknown_error": "An unknown error occurred"
+                        "dm_sent": "Your DM has been sent!"
                     },
                     "warn_dialog": {
                         "title": "Warn",
                         "description": "What is the reason for direct warning this player?",
                         "placeholder": "Reason...",
-                        "warn_sent": "The player was warned!",
-                        "unknown_error": "An unknown error occurred"
+                        "warn_sent": "The player was warned!"
                     },
                     "kick_dialog": {
                         "title": "Kick",
                         "description": "What is the reason for kicking this player?",
                         "placeholder": "Reason...",
-                        "kick_sent": "The player was kicked!",
-                        "unknown_error": "An unknown error occurred"
+                        "kick_sent": "The player was kicked!"
                     },
                     "options": {
                         "dm": "DM",
