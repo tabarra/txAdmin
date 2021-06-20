@@ -246,6 +246,7 @@ module.exports = async function WebCtxUtils(ctx, next) {
     }
 
     //Setting up the user's real ip from the webpipe
+    //NOTE: not yet being used
     if (
         typeof ctx.headers['x-txadmin-identifiers'] === 'string'
         && typeof ctx.headers['x-txadmin-token'] === 'string'

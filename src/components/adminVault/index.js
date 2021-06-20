@@ -434,12 +434,12 @@ module.exports = class AdminVault {
             return callError('not an array');
         }
 
-        let structureIntegrityTest = jsonData.some((x) => {
+        const structureIntegrityTest = jsonData.some((x) => {
             if (typeof x.name !== 'string' || x.name.length < 3) return true;
             if (typeof x.master !== 'boolean') return true;
             if (typeof x.password_hash !== 'string' || !x.password_hash.startsWith('$2')) return true;
             if (typeof x.providers !== 'object') return true;
-            let providersTest = Object.keys(x.providers).some((y) => {
+            const providersTest = Object.keys(x.providers).some((y) => {
                 if (!Object.keys(this.providers).includes(y)) return true;
                 if (typeof x.providers[y].id !== 'string' || x.providers[y].id.length < 3) return true;
                 if (typeof x.providers[y].identifier !== 'string' || x.providers[y].identifier.length < 3) return true;
@@ -453,8 +453,8 @@ module.exports = class AdminVault {
             return callError('invalid data in the admins file');
         }
 
-        let masterCount = jsonData.filter((x) => { return x.master; }).length;
-        if (masterCount !== 1) {
+        const masters = jsonData.filter((x) => { return x.master; });
+        if (masters.length !== 1) {
             return callError('must have exactly 1 master account');
         }
 

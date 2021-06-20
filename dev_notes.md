@@ -1,27 +1,27 @@
-## TODO v4.0.0
-- [x] fixed perf chart labels
-- [x] reorganize web js files
-- [x] remove all `var` from web and core
-- [x] core: optimize host stats collection
-- [x] web: prepare html/js for nui mode (remove elements)
-- [X] web: create `txAdminAPI` and replace all `$.ajax`
-- [x] increase page timeouts
-- [x] change webserver token every time the server starts
-- [ ] xxx
-- [ ] xxx
-- [ ] diagnostics: use `globals.monitor.hostStats` instead of `systeminformation`
-- [ ] add html file caching
-- [ ] master actions deveria aparecer, mas desabilitado
-- [ ] srvCmdBuffer needs to strip the color escape characters
-- [ ] um monte de vars de render no ctxutils são iguais nos 3 casos de render, centralizar em uma função só
+## TODO v4.2.0
+- [ ] menu: fix zap auth
+- [ ] menu: sync playerlist via http
 
 
+['::1', '127.0.0.1', '127.0.1.1'].includes(ctx.ip) doesn't work
+editar no webctxutils tb
+nao funciona no zap
 
+
+### Things to Look Out For
+* We are curious to see how the player ID's feature performs on
+  large non-onesync infinity servers. If you are able to provide any
+  metrics please do.
+* There occasionally seems to be API calls where the NUI is not
+  dealing with cookies correctly. This may result in the dreaded `Cannot read
+  property 'map' of undefined`. This is being addressed, for now just
+  click the reload dialog that pops up.
+* If you ever get stuck in a state where the players page is not updating.
+  try setting the txAdminMenu-updateInterval higher.
 
 
 
 +set svgui_disable true +set txAdminMenu-debugMode true +setr txEnableMenuBeta true
-
 
 
 nota:
@@ -36,13 +36,13 @@ set sv_listingIPOverride "109.230.238.70"
 isZapHosting, forceInterface,
 
 
-// 1619440000 v3.7 -- 31/05 09:30 AM
-// 1621233333 v3.8 -- 07/06 03:30 AM
-
-
 
 stuff:
-- [ ] Unrecognized event: playerJoining -- we are using playerjoining but should probably change that
+- [ ] diagnostics: use `globals.monitor.hostStats` instead of `systeminformation`
+- [ ] add html file caching
+- [ ] master actions deveria aparecer, mas desabilitado
+- [ ] srvCmdBuffer needs to strip the color escape characters
+- [ ] logger: `Unrecognized event: playerJoining` -- we are using playerConnecting but should probably change that
 - [ ] make the commands (kick, warn, etc) return success or danger, then edit DialogActionView.tsx
     - can be done by adding a randid to the command, then making the cmdBuffer match for `<id><OK|NOK>` 
 
@@ -251,6 +251,7 @@ alias cdmon="cd /e/FiveM/builds/$CURR_FX_VERSION/citizen/system_resources/monito
 nodemon +set txDebugPlayerlistGenerator truex +set txAdminVerbose truex
 nodemon +set txDebugPlayerlistGenerator true +set txAdminRTS "deadbeef00deadbeef00deadbeef00deadbeef00deadbeef" +set txAdminVerbose truex
 nodemon +set txDebugPlayerlistGenerator true +set txDebugExternalSource "x.x.x.x:30120" +set txAdminVerbose truex
+npm run dev:menu:game
 
 # build
 rm -rf dist && npm run build && explorer dist
