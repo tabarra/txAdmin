@@ -4,20 +4,20 @@
         "humanizer_language": "lt"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
+        "start_timeout": "nepavyko paleisti",
         "crash_detected": "aptiktas serverio nulūžimas",
-        "hang_detected": "hang detected",
-        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
-        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
+        "hang_detected": "aptiktas serverio pakibimas",
+        "partial_hang_warn": "Dėl pakibimo, serveris persijungs automatiškai po 1 min. Atsijunkite nedelsiant.",
+        "partial_hang_warn_discord": "Dėl pakibimo, **%{servername}** serveris persijungs po 1 min.",
         "schedule_reason": "automatinis %{time} perkrovimas",
-        "schedule_warn": "Serveris persikraus už %{smart_count} minutes. Prašome atsijungti. |||| Serveris persikraus už %{smart_count} minuciu. Prašome atsijungti.",
-        "schedule_warn_discord": "**%{servername}** automatiškai persikraus už %{smart_count} minutės. |||| **%{servername}** automatiškai persikraus už %{smart_count} minučių."
+        "schedule_warn": "Serveris persikraus už %{smart_count} min. Prašome atsijungti. |||| Serveris persikraus už %{smart_count} min. Prašome atsijungti.",
+        "schedule_warn_discord": "**%{servername}** automatiškai persikraus už %{smart_count} min. |||| **%{servername}** automatiškai persikraus už %{smart_count} min."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) Buvote užblokuotas iš serverio dėl \"%{reason}\". Blokavimas bus baigtas: %{expiration}.",
+        "kick_permanent": "(%{author}) Buvote užblokuotas iš serverio visam laikui dėl \"%{reason}\".",
+        "reject_temporary": "Esate užblokuotas.\nBlokavimas baigsis: %{expiration}.\nBan ID: %{id}.\nPriežastis: %{reason}.\nUžblokavo: %{author}.",
+        "reject_permanent": "Esate užblokuotas visam laikui.\nBan ID: %{id}.\nPriežastis: %{reason}.\nUžblokavo: %{author}."
     },
     "server_actions": {
         "restarting": "Serverio perkrovimas (%{reason}).",
@@ -31,8 +31,8 @@
         "status_offline": "**%{servername}** dabar **neveikia**!"
     },
     "nui_warning": {
-        "title": "WARNING",
-        "warned_by": "Warned by:",
-        "instruction": "Hold [SPACE] for 10 seconds to dismiss this message."
+        "title": "ĮSPĖJIMAS",
+        "warned_by": "Įspėjimą skyrė:",
+        "instruction": "Laikyk [SPACE] 10 sekundžių, kad išjungtum šį pranešimą."
     }
 }
