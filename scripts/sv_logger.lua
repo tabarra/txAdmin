@@ -11,12 +11,12 @@ local function round(num)
 end
 
 local function getPlayerData(src)
-    if not src then
-        return false
-    end
-
     if type(src) == 'string' then
         src = tonumber(src)
+    end
+
+    if not src then
+        return false
     end
 
     if src <= 0 then return {name = 'console', identifiers = {}} end

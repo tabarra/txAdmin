@@ -1,4 +1,8 @@
 ## TODO v4.2.0
+- [x] lua small fixes
+  - fix sv_menu sub name error
+  - fix sv_logger explosion source
+  - remove spectate keybind
 - [ ] menu: fix zap auth
 - [ ] menu: sync playerlist via http
 

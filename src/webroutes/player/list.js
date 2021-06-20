@@ -216,12 +216,13 @@ async function getStats(dbo) {
         const playTimeSeconds = playerStats.playTime * 60 * 1000;
         let humanizeOptions = {
             round: true,
-            units: ['d', 'h'],
+            units: ['y', 'd', 'h'],
             largest: 2,
             spacer: '',
             language: 'shortEn',
             languages: {
                 shortEn: {
+                    y: () => 'y',
                     d: () => 'd',
                     h: () => 'h',
                 },

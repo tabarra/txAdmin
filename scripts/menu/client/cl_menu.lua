@@ -640,5 +640,3 @@ CreateThread(function()
     Wait(250)
   end
 end)
-
-

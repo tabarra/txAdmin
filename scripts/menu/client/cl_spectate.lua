@@ -9,7 +9,6 @@ local storedTargetPlayerId
 -- Spectated players associated GameTag
 local storedGameTag = nil
 
-RegisterKeyMapping('txAdmin:menu:endSpectate', 'Exit spectate mode', 'keyboard', 'BACK')
 
 RegisterNUICallback('spectatePlayer', function(data, cb)
     TriggerServerEvent('txAdmin:menu:spectatePlayer', tonumber(data.id))

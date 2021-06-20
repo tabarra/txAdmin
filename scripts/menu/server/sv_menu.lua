@@ -559,7 +559,7 @@ CreateThread(function()
       
       local health = ceil(((GetEntityHealth(ped) - 100) / 100) * 100)
       -- trim to prevent long usernames from impacting event deliverance
-      local username = sub(GetPlayerName(serverID), 1, 75)
+      local username = sub(GetPlayerName(serverID) or "unknown", 1, 75)
       local coords
       if ServerCtxObj.oneSync.status == true then
         coords = GetEntityCoords(ped)

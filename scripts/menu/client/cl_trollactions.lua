@@ -115,6 +115,7 @@ local function startWildAttack()
 end
 -- RegisterCommand('atk', startWildAttack)
 
+
 --[[
  Net Events
 ]]
@@ -132,9 +133,7 @@ RegisterNetEvent('txAdmin:menu:wildAttack', function()
     startWildAttack()
 end)
 
---RegisterCommand('wildAttack', function()
---    startWildAttack()
---end)
+
 --[[
  NUI Callbacks
 ]]
