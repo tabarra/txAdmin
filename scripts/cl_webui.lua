@@ -45,17 +45,25 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, statusCode, body, header
     local ret = pipeReturnCallbacks[callbackId]
     if not ret then return end
     
-    if ret.path == '/auth/nui' and statusCode == 200 then
+    if ret.path == '/auth/nui' then
         local resp = json.decode(body)
         if not resp then
-            print("^1Invalid NUI auth response received: " .. (body or "nil"))
+            print("^1[AUTH] invalid JSON: " .. (body or "nil"))
+            menuIsAccessible = false
         else
-            menuIsAccessible = resp.isAdmin
-            -- Also update debug status on first HTTP cb
-            sendMenuMessage('setDebugMode', isMenuDebug)
-            registerTxKeybinds()
-            ret.cb(resp)
+            if statusCode == 200 and resp.isAdmin then
+                print("^2[AUTH] accepted with permissions: " .. json.encode(resp.permissions or "nil"))
+                menuIsAccessible = true
+            else
+                print("^1[AUTH] rejected with reason: " .. json.encode(resp.reason or "nil"))
+                menuIsAccessible = false
+            end
         end
+
+        -- Also update debug status on first HTTP cb
+        sendMenuMessage('setDebugMode', isMenuDebug)
+        registerTxKeybinds()
+        ret.cb(resp)
     end
     
     local sub = string.sub

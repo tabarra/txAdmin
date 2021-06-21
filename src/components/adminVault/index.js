@@ -193,8 +193,11 @@ module.exports = class AdminVault {
      */
     getAdminByIdentifiers(identifiers) {
         if (!this.admins) return false;
-        identifiers = identifiers.map((i) => i.trim().toLowerCase());
-        let admin = this.admins.find((user) =>
+        identifiers = identifiers
+            .map((i) => i.trim().toLowerCase())
+            .filter((i) => i.length);
+        if (!identifiers.length) return false;
+        const admin = this.admins.find((user) =>
             identifiers.find((identifier) =>
                 Object.keys(user.providers).find((provider) =>
                     (identifier === user.providers[provider].identifier.toLowerCase()))));

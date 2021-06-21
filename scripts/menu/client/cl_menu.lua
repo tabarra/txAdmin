@@ -77,10 +77,26 @@ function registerTxKeybinds()
   end
 end
 
+--[[ Reauth ]]
+RegisterCommand('txAdmin-reauth', function()
+  if debugModeEnabled then
+    debugPrint("re-authing")
+    TriggerEvent('txAdmin:menu:reAuth')
+  end
+end)
+RegisterNetEvent('txAdmin:menu:reAuth', function()
+  menuIsAccessible = false
+  sendMenuMessage('reAuth')
+end)
+
+--[[ Enable debugging ]]
+RegisterNetEvent('txAdmin:events:enableDebug', function(enabled)
+  debugModeEnabled = enabled
+end)
+
 -- ===============
 --  ServerCtx
 -- ===============
-
 local ServerCtx
 --- Will update ServerCtx based on GlobalState and will send it to NUI
 local function updateServerCtx()
@@ -428,20 +444,7 @@ AddEventHandler('playerSpawned', function()
   end
 end)
 
---[[ Reauth ]]
-RegisterNetEvent('txAdmin:menu:reAuth', function()
-  menuIsAccessible = false
-  sendMenuMessage('reAuth')
-end)
-
-if debugModeEnabled then
-  -- Debugging command
-  RegisterCommand('txAdmin-reauth', function()
-    debugPrint("re-authing")
-    TriggerEvent('txAdmin:menu:reAuth')
-  end)
-end
-
+  
 --[[ Player list sync ]]
 local posCache = {}
 local vehCache = {}
@@ -627,10 +630,6 @@ RegisterNetEvent('txAdmin:events:queueSeatInVehicle', function(vehNetID, seat)
   oldVehVelocity = 0.0
 end)
 
---[[ Enable debugging ]]
-RegisterNetEvent('txAdmin:events:enableDebug', function(enabled)
-  debugModeEnabled = enabled
-end)
 
 CreateThread(function()
   while true do

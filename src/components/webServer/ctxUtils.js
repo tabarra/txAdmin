@@ -251,7 +251,7 @@ module.exports = async function WebCtxUtils(ctx, next) {
         typeof ctx.headers['x-txadmin-identifiers'] === 'string'
         && typeof ctx.headers['x-txadmin-token'] === 'string'
         && ctx.headers['x-txadmin-token'] === globals.webServer.fxWebPipeToken
-        && ['::1', '127.0.0.1', '127.0.1.1'].includes(ctx.ip)
+        && GlobalData.loopbackInterfaces.includes(ctx.ip)
     ) {
         const ipIdentifier = ctx.headers['x-txadmin-identifiers']
             .split(', ')

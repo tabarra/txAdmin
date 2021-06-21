@@ -129,6 +129,7 @@ const debugExternalSource = (txDebugExternalSourceConvar !== 'false') ? txDebugE
 //Checking for Zap Configuration file
 const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
 let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, defaultMasterAccount, runtimeSecret, deployerDefaults;
+const loopbackInterfaces = ['::1', '127.0.0.1', '127.0.1.1'];
 if (fs.existsSync(zapCfgFile)) {
     log('Loading Zap-Hosting configuration file.');
     try {
@@ -164,6 +165,8 @@ if (fs.existsSync(zapCfgFile)) {
         } else {
             runtimeSecret = false;
         }
+
+        loopbackInterfaces.push(forceInterface);
 
         if (!isAdvancedUser) fs.unlinkSync(zapCfgFile);
     } catch (error) {
@@ -251,6 +254,7 @@ GlobalData = {
     defaultMasterAccount,
     runtimeSecret,
     deployerDefaults,
+    loopbackInterfaces,
 
     //Consts
     validIdentifiers:{
