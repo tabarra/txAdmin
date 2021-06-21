@@ -5,6 +5,21 @@ const cloneDeep = require('lodash/cloneDeep');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const CitizenFXProvider = require('./providers/CitizenFX');
 
+//Helpers
+const migrateProviderIdentifiers = (providerName, providerData) => {
+    if (providerName === 'citizenfx') {
+        // data may be empty, or nameid may be invalid
+        try {
+            const res = /\/user\/(\d{1,8})/.exec(providerData.data.nameid);
+            providerData.identifier = `fivem:${res[1]}`;
+        } catch (error) {
+            providerData.identifier = 'fivem:00000000';
+        }
+    } else if (providerName === 'discord') {
+        providerData.identifier = `discord:${providerData.id}`;
+    }
+};
+
 
 module.exports = class AdminVault {
     constructor() {
@@ -408,6 +423,7 @@ module.exports = class AdminVault {
     async refreshAdmins(isFirstTime = false) {
         let raw = null;
         let jsonData = null;
+        let migrated = false;
 
         const callError = (x) => {
             logError(`Unable to load admins. (${x}, please read the documentation)`);
@@ -445,8 +461,13 @@ module.exports = class AdminVault {
             const providersTest = Object.keys(x.providers).some((y) => {
                 if (!Object.keys(this.providers).includes(y)) return true;
                 if (typeof x.providers[y].id !== 'string' || x.providers[y].id.length < 3) return true;
-                if (typeof x.providers[y].identifier !== 'string' || x.providers[y].identifier.length < 3) return true;
                 if (typeof x.providers[y].data !== 'object') return true;
+                if (typeof x.providers[y].identifier === 'string') {
+                    if (x.providers[y].identifier.length < 3) return true;
+                } else {
+                    migrateProviderIdentifiers(y, x.providers[y]);
+                    migrated = true;
+                }
             });
             if (providersTest) return true;
             if (!Array.isArray(x.permissions)) return true;
@@ -467,6 +488,15 @@ module.exports = class AdminVault {
 
         this.admins = jsonData;
         this.refreshOnlineAdmins().catch((e) => {});
+        if (migrated) {
+            try {
+                await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
+                logOk('The admins.json file was migrated to a new version.');
+            } catch (error) {
+                logError(`Failed to migrate admins.json with error: ${error.message}`);
+            }
+        }
+
         return true;
     }
 
