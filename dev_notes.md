@@ -4,13 +4,12 @@
   - fix sv_logger explosion source
   - remove spectate keybind
 - [x] add logging and confirmation snackbars to troll actions
-- [ ] menu: fix zap auth
+- [x] menu: fix zap auth
+- [x] fix old admins.json breaking on the identifiers validation
+- [x] revert: don't open url when admins are configured
 - [ ] menu: sync playerlist via http
 
 
-['::1', '127.0.0.1', '127.0.1.1'].includes(ctx.ip) doesn't work
-editar no webctxutils tb
-nao funciona no zap
 
 
 ### Things to Look Out For

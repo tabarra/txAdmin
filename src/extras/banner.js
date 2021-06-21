@@ -135,13 +135,11 @@ module.exports.printBanner = async () => {
 
     //Admin PIN
     let adminPinLines = [];
-    let urlSuffix = '';
     if (adminPinRes.value) {
         adminPinLines = [
             '', 'Use the PIN below to register:',
             chalk.inverse(` ${adminPinRes.value} `),
         ];
-        urlSuffix = `#${globals.adminVault.addMasterPin}`;
     }
 
     //Printing stuff
@@ -163,10 +161,7 @@ module.exports.printBanner = async () => {
     }
 
     //Opening page
-    if (
-        GlobalData.osType === 'windows'
-        && (urlSuffix || !GlobalData.isAdvancedUser)
-    ) {
-        open(`http://localhost:${GlobalData.txAdminPort}/auth${urlSuffix}`).catch();
+    if (GlobalData.osType === 'windows' && adminPinRes.value) {
+        open(`http://localhost:${GlobalData.txAdminPort}/auth#${adminPinRes.value}`).catch();
     }
 };
