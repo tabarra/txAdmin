@@ -39,7 +39,8 @@
         "misc": {
             "help_message": "txAdmin 已經推出游戲嵌入介面 !\n可以到 [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] 綁定按鍵，嘗試全新的介面 !",
             "menu_not_allowed": "你的帳戶尚未在 txAdmin 進行申請。\n如果你已經在 txAdmin 進行了申請， 請到 Admin Manager 確保你的個人資料已經儲存。",
-            "action_unauthorized": "權限不足。"
+            "action_unauthorized": "權限不足。",
+            "unknown_error": "發生未知錯誤。"
         },
         "common": {
             "cancel": "取消",
@@ -120,6 +121,10 @@
                 "list_secondary": "顯示附近玩家 NetID",
                 "alert_show": "正在顯示附近玩家 NetID",
                 "alert_hide": "正在隱藏附近玩家 NetID"
+            },
+            "copy_coords": {
+                "list_primary": "複製座標",
+                "list_secondary": "座標已複製到剪貼簿"
             }
         },
         "page_players": {
@@ -148,29 +153,32 @@
                 "ban": "封鎖"
             },
             "actions": {
+                "title": "對玩家指令",
+                "command_sent": "指令已發送!",
+                "sections": {
+                    "moderation": "管理",
+                    "interaction": "互動",
+                    "troll": "玩嘢"
+                },
                 "moderation": {
                     "dm_dialog": {
                         "title": "私人訊息",
                         "description": "為何要發私人訊息給該玩家?",
                         "placeholder": "原因...",
-                        "dm_sent": "訊息已經發出!",
-                        "unknown_error": "發生未知錯誤"
+                        "dm_sent": "訊息已經發出!"
                     },
                     "warn_dialog": {
                         "title": "警告",
                         "description": "為何要警告該玩家?",
                         "placeholder": "原因...",
-                        "warn_sent": "該玩家已被警告!",
-                        "unknown_error": "發生未知錯誤"
+                        "warn_sent": "該玩家已被警告!"
                     },
                     "kick_dialog": {
                         "title": "踢除",
                         "description": "為何要踢除該玩家?",
                         "placeholder": "原因...",
-                        "kick_sent": "該玩家已被踢除!",
-                        "unknown_error": "發生未知錯誤"
+                        "kick_sent": "該玩家已被踢除!"
                     },
-                    "category_title_1": "管理",
                     "options": {
                         "dm": "私人訊息",
                         "warn": "警告",
@@ -188,7 +196,6 @@
                     }
                 },
                 "interaction": {
-                    "category_title_2": "互動",
                     "options": {
                         "heal": "治癒",
                         "go_to": "傳送自己",
@@ -197,12 +204,15 @@
                     }
                 },
                 "troll": {
-                    "category_title_3": "戲弄",
                     "options": {
-                        "kill": "誅殺",
                         "fire": "點燃",
                         "drunk": "醉酒",
-                        "wild_attack": "荒野之狂襲"
+                        "wild_attack": "荒野之狂襲",
+                        "weed": "迷幻",
+                        "weed_desc": "給予玩家迷幻效果",
+                        "fire_desc": "點燃玩家",
+                        "drunk_desc": "給予玩家醉酒效果",
+                        "wild_attack_desc": "整個野生界會以該玩家為敵"
                     }
                 }
             },
@@ -226,7 +236,16 @@
                 "months": "個月",
                 "perm": "永久",
                 "custom": "自訂",
-                "helper_text": "請選擇時效"
+                "helper_text": "請選擇時效",
+                "action_types": {
+                    "warn": "警告",
+                    "warn_revoked": "警告已被撤回，原因: ",
+                    "kick": "踢除",
+                    "ban": "封鎖",
+                    "ban_revoked": "封鎖已被撤回，原因: ",
+                    "whitelist": "白名單",
+                    "whitelist_revoked": "白名單已被撤回，原因: "
+                }
             }
         }
     }
