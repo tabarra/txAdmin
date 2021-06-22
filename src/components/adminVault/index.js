@@ -5,6 +5,21 @@ const cloneDeep = require('lodash/cloneDeep');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const CitizenFXProvider = require('./providers/CitizenFX');
 
+//Helpers
+const migrateProviderIdentifiers = (providerName, providerData) => {
+    if (providerName === 'citizenfx') {
+        // data may be empty, or nameid may be invalid
+        try {
+            const res = /\/user\/(\d{1,8})/.exec(providerData.data.nameid);
+            providerData.identifier = `fivem:${res[1]}`;
+        } catch (error) {
+            providerData.identifier = 'fivem:00000000';
+        }
+    } else if (providerName === 'discord') {
+        providerData.identifier = `discord:${providerData.id}`;
+    }
+};
+
 
 module.exports = class AdminVault {
     constructor() {
@@ -36,7 +51,7 @@ module.exports = class AdminVault {
             'players.playermode': 'NoClip / God Mode', //self playermode, and also the player spectate option
             'players.spectate': 'Spectate', //self playermode, and also the player spectate option
             'players.teleport': 'Teleport', //self teleport, and the bring/go to on player modal
-            // 'players.trollmenu': 'Troll Menu', //all the troll options in the player modal
+            'players.troll': 'Troll Actions', //all the troll options in the player modal
         };
         this.hardConfigs = {
             refreshInterval: 15e3,
@@ -193,8 +208,11 @@ module.exports = class AdminVault {
      */
     getAdminByIdentifiers(identifiers) {
         if (!this.admins) return false;
-        identifiers = identifiers.map((i) => i.trim().toLowerCase());
-        let admin = this.admins.find((user) =>
+        identifiers = identifiers
+            .map((i) => i.trim().toLowerCase())
+            .filter((i) => i.length);
+        if (!identifiers.length) return false;
+        const admin = this.admins.find((user) =>
             identifiers.find((identifier) =>
                 Object.keys(user.providers).find((provider) =>
                     (identifier === user.providers[provider].identifier.toLowerCase()))));
@@ -405,6 +423,7 @@ module.exports = class AdminVault {
     async refreshAdmins(isFirstTime = false) {
         let raw = null;
         let jsonData = null;
+        let migrated = false;
 
         const callError = (x) => {
             logError(`Unable to load admins. (${x}, please read the documentation)`);
@@ -434,16 +453,21 @@ module.exports = class AdminVault {
             return callError('not an array');
         }
 
-        let structureIntegrityTest = jsonData.some((x) => {
+        const structureIntegrityTest = jsonData.some((x) => {
             if (typeof x.name !== 'string' || x.name.length < 3) return true;
             if (typeof x.master !== 'boolean') return true;
             if (typeof x.password_hash !== 'string' || !x.password_hash.startsWith('$2')) return true;
             if (typeof x.providers !== 'object') return true;
-            let providersTest = Object.keys(x.providers).some((y) => {
+            const providersTest = Object.keys(x.providers).some((y) => {
                 if (!Object.keys(this.providers).includes(y)) return true;
                 if (typeof x.providers[y].id !== 'string' || x.providers[y].id.length < 3) return true;
-                if (typeof x.providers[y].identifier !== 'string' || x.providers[y].identifier.length < 3) return true;
                 if (typeof x.providers[y].data !== 'object') return true;
+                if (typeof x.providers[y].identifier === 'string') {
+                    if (x.providers[y].identifier.length < 3) return true;
+                } else {
+                    migrateProviderIdentifiers(y, x.providers[y]);
+                    migrated = true;
+                }
             });
             if (providersTest) return true;
             if (!Array.isArray(x.permissions)) return true;
@@ -453,8 +477,8 @@ module.exports = class AdminVault {
             return callError('invalid data in the admins file');
         }
 
-        let masterCount = jsonData.filter((x) => { return x.master; }).length;
-        if (masterCount !== 1) {
+        const masters = jsonData.filter((x) => { return x.master; });
+        if (masters.length !== 1) {
             return callError('must have exactly 1 master account');
         }
 
@@ -464,6 +488,15 @@ module.exports = class AdminVault {
 
         this.admins = jsonData;
         this.refreshOnlineAdmins().catch((e) => {});
+        if (migrated) {
+            try {
+                await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
+                logOk('The admins.json file was migrated to a new version.');
+            } catch (error) {
+                logError(`Failed to migrate admins.json with error: ${error.message}`);
+            }
+        }
+
         return true;
     }
 

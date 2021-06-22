@@ -129,6 +129,7 @@ const debugExternalSource = (txDebugExternalSourceConvar !== 'false') ? txDebugE
 //Checking for Zap Configuration file
 const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
 let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, defaultMasterAccount, runtimeSecret, deployerDefaults;
+const loopbackInterfaces = ['::1', '127.0.0.1', '127.0.1.1'];
 if (fs.existsSync(zapCfgFile)) {
     log('Loading Zap-Hosting configuration file.');
     try {
@@ -165,6 +166,8 @@ if (fs.existsSync(zapCfgFile)) {
             runtimeSecret = false;
         }
 
+        loopbackInterfaces.push(forceInterface);
+
         if (!isAdvancedUser) fs.unlinkSync(zapCfgFile);
     } catch (error) {
         logDie(`Failed to load with Zap-Hosting configuration error: ${error.message}`);
@@ -195,7 +198,7 @@ if (verbose) dir({isZapHosting, forceInterface, forceFXServerPort, txAdminPort, 
 //Check if this version of txAdmin is too outdated to be considered safe to use in prod
 //NOTE: Only valid if its being very actively maintained.
 //          Use 30d for patch 0, or 45~60d otherwise
-const txVerBBLastUpdate = 1622456789;
+const txVerBBLastUpdate = 1624287000;
 const txVerBBDelta = 21 + ((isZapHosting) ? 10 : 0);
 const txAdminVersionBestBy = txVerBBLastUpdate + (txVerBBDelta * 86400);
 // dir({
@@ -251,6 +254,7 @@ GlobalData = {
     defaultMasterAccount,
     runtimeSecret,
     deployerDefaults,
+    loopbackInterfaces,
 
     //Consts
     validIdentifiers:{

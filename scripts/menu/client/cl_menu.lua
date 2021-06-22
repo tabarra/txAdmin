@@ -69,11 +69,34 @@ local isMenuVisible
 -- Last location stored in a vec3
 local lastTp
 
-RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
+function registerTxKeybinds()
+  -- Only register keybinds for authed users
+  if menuIsAccessible then
+    RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
+    RegisterKeyMapping('txAdmin:menu:endSpectate', 'Exit spectate mode', 'keyboard', 'BACK')
+  end
+end
+
+--[[ Reauth ]]
+RegisterCommand('txAdmin-reauth', function()
+  if debugModeEnabled then
+    debugPrint("re-authing")
+    TriggerEvent('txAdmin:menu:reAuth')
+  end
+end)
+RegisterNetEvent('txAdmin:menu:reAuth', function()
+  menuIsAccessible = false
+  sendMenuMessage('reAuth')
+end)
+
+--[[ Enable debugging ]]
+RegisterNetEvent('txAdmin:events:enableDebug', function(enabled)
+  debugModeEnabled = enabled
+end)
+
 -- ===============
 --  ServerCtx
 -- ===============
-
 local ServerCtx
 --- Will update ServerCtx based on GlobalState and will send it to NUI
 local function updateServerCtx()
@@ -318,6 +341,13 @@ RegisterNUICallback('playerModeChanged', function(mode, cb)
   cb({})
 end)
 
+RegisterNUICallback('copyCurrentCoords', function(_, cb)
+  local curCoords = GetEntityCoords(PlayerPedId())
+  -- We will cut coords to 4 decimal points
+  local stringCoords = ('%.4f, %.4f, %.4f'):format(curCoords.x, curCoords.y, curCoords.z)
+  cb({ coords = stringCoords })
+end)
+
 -- [[ Player mode changed cb event ]]
 RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode)
   if mode == 'godmode' then
@@ -414,20 +444,7 @@ AddEventHandler('playerSpawned', function()
   end
 end)
 
---[[ Reauth ]]
-RegisterNetEvent('txAdmin:menu:reAuth', function()
-  menuIsAccessible = false
-  sendMenuMessage('reAuth')
-end)
-
-if debugModeEnabled then
-  -- Debugging command
-  RegisterCommand('txAdmin-reauth', function()
-    debugPrint("re-authing")
-    TriggerEvent('txAdmin:menu:reAuth')
-  end)
-end
-
+  
 --[[ Player list sync ]]
 local posCache = {}
 local vehCache = {}
@@ -613,10 +630,6 @@ RegisterNetEvent('txAdmin:events:queueSeatInVehicle', function(vehNetID, seat)
   oldVehVelocity = 0.0
 end)
 
---[[ Enable debugging ]]
-RegisterNetEvent('txAdmin:events:enableDebug', function(enabled)
-  debugModeEnabled = enabled
-end)
 
 CreateThread(function()
   while true do
@@ -626,5 +639,3 @@ CreateThread(function()
     Wait(250)
   end
 end)
-
-

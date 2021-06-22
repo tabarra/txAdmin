@@ -9,6 +9,7 @@ import {
   DirectionsCar,
   ExpandMore,
   Favorite,
+  FileCopy,
   GpsFixed,
   LocalHospital,
   LocationSearching,
@@ -26,6 +27,7 @@ import { useIsMenuVisible } from "../../state/visibility.state";
 import { TeleportMode, useTeleportMode } from "../../state/teleportmode.state";
 import { HealMode, useHealMode } from "../../state/healmode.state";
 import { arrayRandom } from "../../utils/miscUtils";
+import { copyToClipboard } from "../../utils/copyToClipboard";
 
 const fadeHeight = 20;
 const listHeight = 388;
@@ -263,6 +265,13 @@ export const MainPageList: React.FC = () => {
     }
   };
 
+  const handleCopyCoords = () => {
+    fetchNui<{ coords: string }>("copyCurrentCoords").then(({ coords }) => {
+      copyToClipboard(coords);
+      enqueueSnackbar(t("nui_menu.common.copied"), { variant: "success" });
+    });
+  };
+
   // This is here for when I am bored developing
   // const handleSpawnWeapon = () => {
   //   openDialog({
@@ -401,6 +410,12 @@ export const MainPageList: React.FC = () => {
         primary: t("nui_menu.page_main.player_ids.list_primary"),
         secondary: t("nui_menu.page_main.player_ids.list_secondary"),
         onSelect: handleTogglePlayerIds,
+      },
+      {
+        icon: <FileCopy />,
+        primary: t("nui_menu.page_main.copy_coords.list_primary"),
+        secondary: t("nui_menu.page_main.copy_coords.list_secondary"),
+        onSelect: handleCopyCoords,
       },
       // {
       //   icon: <Gavel />,

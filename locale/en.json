@@ -39,7 +39,8 @@
         "misc": {
             "help_message": "txAdmin has gotten an in-game menu!\nBind [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] to try it out!",
             "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
-            "action_unauthorized": "You do not have this permission."
+            "action_unauthorized": "You do not have this permission.",
+            "unknown_error": "An unknown error occurred."
         },
         "common": {
             "cancel": "Cancel",
@@ -120,6 +121,10 @@
                 "list_secondary": "Will display nearby players NetID's",
                 "alert_show": "Showing nearby player NetID's",
                 "alert_hide": "Hiding nearby player NetID's"
+            },
+            "copy_coords": {
+                "list_primary": "Copy Coords",
+                "list_secondary": "Copies current coords to clipboard"
             }
         },
         "page_players": {
@@ -148,29 +153,32 @@
                 "ban": "Ban"
             },
             "actions": {
+                "title": "Player Actions",
+                "command_sent": "Command sent!",
+                "sections": {
+                    "moderation": "Moderation",
+                    "interaction": "Interaction",
+                    "troll": "Troll"
+                },
                 "moderation": {
                     "dm_dialog": {
                         "title": "Direct Message",
                         "description": "What is the reason for direct messaging this player?",
                         "placeholder": "Reason...",
-                        "dm_sent": "Your DM has been sent!",
-                        "unknown_error": "An unknown error occurred"
+                        "dm_sent": "Your DM has been sent!"
                     },
                     "warn_dialog": {
                         "title": "Warn",
                         "description": "What is the reason for direct warning this player?",
                         "placeholder": "Reason...",
-                        "warn_sent": "The player was warned!",
-                        "unknown_error": "An unknown error occurred"
+                        "warn_sent": "The player was warned!"
                     },
                     "kick_dialog": {
                         "title": "Kick",
                         "description": "What is the reason for kicking this player?",
                         "placeholder": "Reason...",
-                        "kick_sent": "The player was kicked!",
-                        "unknown_error": "An unknown error occurred"
+                        "kick_sent": "The player was kicked!"
                     },
-                    "category_title_1": "Moderation",
                     "options": {
                         "dm": "DM",
                         "warn": "Warn",
@@ -188,7 +196,6 @@
                     }
                 },
                 "interaction": {
-                    "category_title_2": "Interaction",
                     "options": {
                         "heal": "Heal",
                         "go_to": "Go to",
@@ -197,12 +204,15 @@
                     }
                 },
                 "troll": {
-                    "category_title_3": "Troll",
                     "options": {
-                        "kill": "Kill",
+                        "weed": "Weed",
+                        "weed_desc": "Will apply a 'weed' effect to the player",
                         "fire": "Fire",
+                        "fire_desc": "Will set the player on fire",
                         "drunk": "Drunk",
-                        "wild_attack": "Wild attack"
+                        "drunk_desc": "Will apply a 'drunk' effect to the player",
+                        "wild_attack": "Wild attack",
+                        "wild_attack_desc": "Will spawn a random wild animal to attack the player"
                     }
                 }
             },
@@ -217,6 +227,15 @@
                 "title": "Related history"
             },
             "ban": {
+                "action_types": {
+                    "warn": "WARNED",
+                    "warn_revoked": "REVOKED the WARN for",
+                    "kick": "KICKED",
+                    "ban": "BANNED",
+                    "ban_revoked": "REVOKED the BAN for",
+                    "whitelist": "WHITELIST",
+                    "whitelist_revoked": "REVOKED the WHITELIST for"
+                },
                 "title": "Ban player",
                 "reason_placeholder": "Reason",
                 "duration_placeholder": "Duration",

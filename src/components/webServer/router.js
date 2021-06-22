@@ -45,7 +45,7 @@ module.exports = (config) => {
         db: new Map(),
         max: 50,
         duration: 5 * 60 * 1000,
-        errorMessage: JSON.stringify({isAdmin: false, message: 'too many requests'}),
+        errorMessage: JSON.stringify({isAdmin: false, reason: 'too many requests'}),
         disableHeader: true,
         id: (ctx) => ctx.txVars.realIP,
     });

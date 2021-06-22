@@ -463,7 +463,31 @@ More:
 - [x] remove the discord login option
 - [x] version bump
 > v3.8.0
-
+- [x] fixed perf chart labels
+- [x] reorganize web js files
+- [x] remove all `var` from web and core
+- [x] core: optimize host stats collection
+- [x] web: prepare html/js for nui mode (remove elements)
+- [X] web: create `txAdminAPI` and replace all `$.ajax`
+- [x] increase page timeouts
+- [x] change webserver token every time the server starts
+- [x] ADDED MENU, TOO MANY CHANGES TO KEEP TRACK
+> v4.0.0
+- [x] fixed menu not working due to unreplicated convar at first tick
+> v4.0.0
+- [x] Fixed OneSync Legacy issues;
+- [x] Fixed Focus issues (No more bugs with chat, vMenu, etc);
+- [x] Fixed NoClip on vehicle causing physics collision to break;
+- [x] Fixed escape/backspace not closing menu;
+- [x] Fixed an issue that broke restart/stop the server, as well as whitelist players on in-game txAdmin page;
+- [x] Many player modal issues solved (notes, styling, data displayed, etc).
+- [x] Enabled Live Console for the in-game page;
+- [x] Added a spectate action to the player modal (requires the new player.spectate permission);
+- [x] Added option to see Player IDs;
+- [x] Improved the vehicle spawn handling of car occupants;
+- [x] Added the convars txAdminMenu-updateInterval and txAdminMenu-pageKey, as well as the command /txAdmin-debug. Please read the docs for more information.
+- [x] ctxUtils: centralize basic render vars
+> v4.1.0
 
 ------------------------------
 > NOTE: this was an attempt to get the help from the community around september 2019

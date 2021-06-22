@@ -1,7 +1,6 @@
 import React from "react";
 import {
   Box,
-  DialogContent,
   IconButton,
   makeStyles,
   Theme,
@@ -11,6 +10,7 @@ import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
 import { FileCopy } from "@material-ui/icons";
 import { copyToClipboard } from "../../../utils/copyToClipboard";
 import { useSnackbar } from "notistack";
+import { useTranslate } from "react-polyglot";
 
 const useStyles = makeStyles((theme: Theme) => ({
   codeBlock: {
@@ -31,14 +31,15 @@ const DialogIdView: React.FC = () => {
   const classes = useStyles();
   const player = usePlayerDetailsValue();
   const { enqueueSnackbar } = useSnackbar();
+  const t = useTranslate();
 
   const handleCopyToClipboard = (value: string) => {
-    copyToClipboard(value);
-    enqueueSnackbar("Copied to clipboard!", { variant: "info" });
+    copyToClipboard(value, true);
+    enqueueSnackbar(t("nui_menu.common.copied"), { variant: "info" });
   };
 
   return (
-    <DialogContent>
+    <Box overflow="auto" height="100%" padding="8px 24px">
       {player.identifiers.map((ident) => (
         <Box className={classes.codeBlock} key={ident}>
           <Typography className={classes.codeBlockText}>{ident}</Typography>
@@ -47,7 +48,7 @@ const DialogIdView: React.FC = () => {
           </IconButton>
         </Box>
       ))}
-    </DialogContent>
+    </Box>
   );
 };
 

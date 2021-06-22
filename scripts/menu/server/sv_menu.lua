@@ -29,7 +29,7 @@ local LAST_PLAYER_DATA = {}
 ---@param source number
 ---@param permission string
 ---@return boolean
-local function PlayerHasTxPermission(source, permission)
+function PlayerHasTxPermission(source, permission)
   local allow = false
   local perms = adminPermissions[tostring(source)]
   if perms then
@@ -559,7 +559,7 @@ CreateThread(function()
       
       local health = ceil(((GetEntityHealth(ped) - 100) / 100) * 100)
       -- trim to prevent long usernames from impacting event deliverance
-      local username = sub(GetPlayerName(serverID), 1, 75)
+      local username = sub(GetPlayerName(serverID) or "unknown", 1, 75)
       local coords
       if ServerCtxObj.oneSync.status == true then
         coords = GetEntityCoords(ped)

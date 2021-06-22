@@ -76,6 +76,14 @@ of the menu
 * Usage: `/txAdmin-reauth`
 * Required Perm: `none`
 
+### Troubleshooting menu access
+
+If you type `/tx` and nothing happens, your menu is probably disabled.  
+If you see a red message like [this](https://i.imgur.com/G83uTNC.png) and you are registered on txAdmin, do the following:
+- In txAdmin Live Console, type `txAdmin-debug 1`;
+- In your game F8 console, type `txAdmin-reauth`;
+- Read the message printed on console for more information.
+
 ### Development
 
 The txAdmin Menu is a Lua + TypeScript React project. Ensure you have all the dependencies by running 

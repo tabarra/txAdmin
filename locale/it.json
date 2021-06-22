@@ -6,12 +6,12 @@
     "restarter": {
         "start_timeout": "Avviato fallito nel tempo previsto",
         "crash_detected": "rilevato crash",
-        "hang_detected": "hang detected",
-        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
-        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
+        "hang_detected": "blocco rilevato",
+        "partial_hang_warn": "A causa di un blocco parziale, questo server verrà riavviato tra 1 minuto. Si prega di disconnettersi ora.",
+        "partial_hang_warn_discord": "A causa di un blocco parziale, **%{servername}** si riavvierà tra 1 minuto.",
         "schedule_reason": "Riavvio programmato alle %{time}",
         "schedule_warn": "Questo server è programmato per riavviarsi in %{smart_count} minuti. Per cortesia uscite ora! |||| Questo server è programmato per riavviarsi in %{smart_count} minuti.",
-        "schedule_warn_discord": "**%{servername}** è programmato per riavviarsi inn %{smart_count} minuti. |||| **%{servername}** è programmato per riavviarsi in %{smart_count} minuti."
+        "schedule_warn_discord": "**%{servername}** è programmato per riavviarsi in %{smart_count} minuti. |||| **%{servername}** è programmato per riavviarsi in %{smart_count} minuti."
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) Sei stato bannato da questo server per \"%{reason}\". Il tuo ban scadrà in: %{expiration}.",

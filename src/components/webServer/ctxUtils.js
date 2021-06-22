@@ -246,11 +246,12 @@ module.exports = async function WebCtxUtils(ctx, next) {
     }
 
     //Setting up the user's real ip from the webpipe
+    //NOTE: not yet being used
     if (
         typeof ctx.headers['x-txadmin-identifiers'] === 'string'
         && typeof ctx.headers['x-txadmin-token'] === 'string'
         && ctx.headers['x-txadmin-token'] === globals.webServer.fxWebPipeToken
-        && ['::1', '127.0.0.1', '127.0.1.1'].includes(ctx.ip)
+        && GlobalData.loopbackInterfaces.includes(ctx.ip)
     ) {
         const ipIdentifier = ctx.headers['x-txadmin-identifiers']
             .split(', ')

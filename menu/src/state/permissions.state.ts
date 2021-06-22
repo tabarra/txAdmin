@@ -22,12 +22,14 @@ export type ResolvablePermission =
   | "settings.write"
   | "txadmin.log.view"
   | "menu.vehicle"
-  | "players.spectate";
+  | "players.spectate"
+  | "players.troll";
 
 export interface PermCheckServerResp {
   isAdmin: boolean;
   permissions?: ResolvablePermission[];
   expiration?: number;
+  logout?: boolean;
 }
 
 const permissionState = atom<PermCheckServerResp>({

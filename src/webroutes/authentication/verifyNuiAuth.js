@@ -3,7 +3,6 @@ const modulename = 'WebServer:VerifyNuiAuth';
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
-const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const sessDuration = 60 * 60 * 1000; //one hour
 
 /**
@@ -12,27 +11,37 @@ const sessDuration = 60 * 60 * 1000; //one hour
  */
 // FIXME: add logging
 module.exports = async function VerifyNuiAuth(ctx) {
-    const unsafeIdentifiers = ctx.request.headers['x-txadmin-identifiers'] || '';
-
-    // reject sus ips
-    if (!['::1', '127.0.0.1', '127.0.1.1'].includes(ctx.ip)) {
-        return ctx.utils.error(400, 'Invalid Request');
+    // Check sus IPs
+    if (!GlobalData.loopbackInterfaces.includes(ctx.ip)) {
+        return ctx.send({isAdmin: false, reason: 'Invalid Request: source'});
     }
 
-    if (isUndefined(ctx.request.headers['x-txadmin-token']) || isUndefined(ctx.request.headers['x-txadmin-identifiers'])) {
-        return ctx.utils.error(400, 'Invalid Request');
+    // Check missing headers
+    if (typeof ctx.request.headers['x-txadmin-token'] !== 'string') {
+        return ctx.send({isAdmin: false, reason: 'Invalid Request: token header'});
+    }
+    if (typeof ctx.request.headers['x-txadmin-identifiers'] !== 'string') {
+        return ctx.send({isAdmin: false, reason: 'Invalid Request: identifiers header'});
     }
 
-    // token?
+    // Check token value
     if (ctx.request.headers['x-txadmin-token'] !== globals.webServer.fxWebPipeToken) {
-        return ctx.utils.error(401, 'invalid token');
+        return ctx.send({isAdmin: false, reason: 'Unauthorized: token value'});
+    }
+
+    // Check identifier array
+    const identifiers = ctx.request.headers['x-txadmin-identifiers']
+        .split(',')
+        .map((i) => i.trim().toLowerCase())
+        .filter((i) => i.length);
+    if (!identifiers.length) {
+        return ctx.send({isAdmin: false, reason: 'Unauthorized: empty identifier array'});
     }
 
     try {
-        const identifiers = unsafeIdentifiers.split(',');
-        let admin = globals.adminVault.getAdminByIdentifiers(identifiers);
+        const admin = globals.adminVault.getAdminByIdentifiers(identifiers);
         if (!admin) {
-            return ctx.send({isAdmin: false});
+            return ctx.send({isAdmin: false, reason: 'Unauthorized: admin not found'});
         }
 
         //Setting up session
@@ -60,6 +69,6 @@ module.exports = async function VerifyNuiAuth(ctx) {
     } catch (error) {
         logWarn(`Failed to authenticate NUI user with error: ${error.message}`);
         if (GlobalData.verbose) dir(error);
-        return ctx.utils.error(500, 'internal error');
+        return ctx.send({isAdmin: false, reason: 'internal error'});
     }
 };

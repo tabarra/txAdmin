@@ -11,12 +11,12 @@ local function round(num)
 end
 
 local function getPlayerData(src)
-    if not src then
-        return false
-    end
-
     if type(src) == 'string' then
         src = tonumber(src)
+    end
+
+    if not src then
+        return false
     end
 
     if src <= 0 then return {name = 'console', identifiers = {}} end
@@ -98,24 +98,31 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
     local message
     if event == 'healSelf' then
         message = "healing themself"
+
     elseif event == 'healAll' then
         message = "healing all players!"
+
     elseif event == 'teleportCoords' then
         if type(data) ~= 'table' then return end
         local x = data.x
         local y = data.y
         local z = data.z
         message = ("teleporting to coordinates (x=%.3f, y=%0.3f, z=%0.3f)"):format(x or 0.0, y or 0.0, z or 0.0)
+
     elseif event == 'teleportWaypoint' then
         message = "teleporting to a waypoint"
+
     elseif event == 'announcement' then
         if type(data) ~= 'string' then return end
         message = "making a server-wide announcement: " .. data
+
     elseif event == 'vehicleRepair' then
         message = "repairing their vehicle"
+
     elseif event == 'spawnVehicle' then
         if type(data) ~= 'string' then return end
         message = "spawning a vehicle (model: " .. data .. ")"
+
     elseif event == 'playerModeChanged' then
         if data == 'godmode' then
             message = "enabling invincibility"
@@ -126,6 +133,7 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
         else
             message = "invalid player mode"
         end
+
     elseif event == 'teleportPlayer' then
         if type(data) ~= 'table' then return end
         local playerName = data.playerName
@@ -134,13 +142,33 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
         local y = data.y or 0.0
         local z = data.z or 0.0
         message = ("teleporting to player %s (x=%.3f, y=%.3f, z=%.3f)"):format(playerName, x, y, z)
+
     elseif event == 'healPlayer' then
         if type(data) ~= 'string' then return end
         message = "healing player " .. data
+
     elseif event == 'summonPlayer' then
         if type(data) ~= 'string' then return end
         message = "summoning player " .. data
+
+    elseif event == 'weedEffect' then
+        if type(data) ~= 'string' then return end
+        message = "triggering weed effect on " .. data
+
+    elseif event == 'drunkEffect' then
+        if type(data) ~= 'string' then return end
+        message = "triggering drunk effect on " .. data
+
+    elseif event == 'wildAttack' then
+        if type(data) ~= 'string' then return end
+        message = "triggering wild attack on " .. data
+
+    elseif event == 'setOnFire' then
+        if type(data) ~= 'string' then return end
+        message = "setting ".. data .." on fire" 
+    
     else
+        logger(source, 'DebugMessage', "unknown menu event "..event)
         return
     end
     
