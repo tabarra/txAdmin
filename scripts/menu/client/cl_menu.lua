@@ -55,8 +55,31 @@ end
 
 RegisterNetEvent('txAdminClient:warn', openWarningHandler)
 
+-- Command to be used with the register key mapping
+local function txadmin()
+  -- Check if we have an available ref to the global function
+  if not registerTxKeybinds then
+    return sendSnackbarMessage('error', 'nui_menu.misc.not_enabled', true)
+  end
 
---BETA BETA BETA BETA BETA BETA BETA BETA BETA BETA BETA 
+  if menuIsAccessible then
+    toggleMenuVisibility()
+  else
+    sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
+  end
+end
+RegisterCommand('txadmin', txadmin)
+RegisterCommand('tx', txadmin)
+
+--- Snackbar message
+---@param level string The severity of the message can be 'info', 'error', or 'warning'
+---@param message string Message to display with snackbar
+function sendSnackbarMessage(level, message, isTranslationKey)
+  debugPrint(('Sending snackbar message, level: %s, message: %s, isTranslationKey: %s'):format(level, message, isTranslationKey))
+  sendMenuMessage('setSnackbarAlert', { level = level, message = message, isTranslationKey = isTranslationKey })
+end
+
+-- The rest of the file will not be run if convar isn't set
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
   print('^3[txAdminMenu]^0 Menu Disabled')
   return
@@ -129,14 +152,6 @@ end)
 --  End ServerCtx
 -- ===============
 
---- Snackbar message
----@param level string The severity of the message can be 'info', 'error', or 'warning'
----@param message string Message to display with snackbar
-function sendSnackbarMessage(level, message, isTranslationKey)
-  debugPrint(('Sending snackbar message, level: %s, message: %s, isTranslationKey: %s'):format(level, message, isTranslationKey))
-  sendMenuMessage('setSnackbarAlert', { level = level, message = message, isTranslationKey = isTranslationKey })
-end
-
 
 --- Send a persistent alert to NUI
 ---@param key string An unique ID for this alert
@@ -177,17 +192,6 @@ function toggleMenuVisibility(visible)
   end
   PlaySoundFrontend(-1, SoundEnum['enter'], 'HUD_FRONTEND_DEFAULT_SOUNDSET', 1)
 end
-
--- Command to be used with the register key mapping
-local function txadmin()
-  if menuIsAccessible then
-    toggleMenuVisibility()
-  else
-    sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
-  end
-end
-RegisterCommand('txadmin', txadmin)
-RegisterCommand('tx', txadmin)
 
 CreateThread(function()
   TriggerEvent('chat:removeSuggestion', '/txadmin')
