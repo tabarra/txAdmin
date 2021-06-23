@@ -1,3 +1,7 @@
+if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+    return
+end
+
 local EFFECT_TIME_MS = GetConvarInt('txAdminMenu-trollDuration', 30000)
 local DRUNK_ANIM_SET = "move_m@drunk@verydrunk"
 local WEED_ANIM_SET = "move_m@drunk@moderatedrunk"

@@ -58,7 +58,7 @@ RegisterNetEvent('txAdminClient:warn', openWarningHandler)
 
 --BETA BETA BETA BETA BETA BETA BETA BETA BETA BETA BETA 
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
-  print('txAdmin beta menu disabled.')
+  print('^3[txAdminMenu]^0 Menu Disabled')
   return
 end
 

@@ -1,3 +1,6 @@
+if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+    return
+end
 -- Vars
 local pipeReturnCallbacks = {}
 local pipeCallbackCounter = 1

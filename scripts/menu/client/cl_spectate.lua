@@ -1,3 +1,6 @@
+if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+    return
+end
 -- Last spectate location stored in a vec3
 local lastSpectateLocation
 -- Spectate mode

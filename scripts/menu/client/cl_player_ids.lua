@@ -1,6 +1,10 @@
 local isPlayerIDActive = false
 local playerGamerTags = {}
 
+if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+    return
+end
+
 local distanceToCheck = GetConvarInt('txAdminMenu-playerIdDistance', 150)
 
 local gamerTagCompsEnum = {
