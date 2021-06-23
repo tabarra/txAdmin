@@ -94,7 +94,8 @@
                 "dialog_desc": "Enter in the model name of the vehicle you want to spawn",
                 "dialog_success": "Vehicle spawned!",
                 "dialog_error": "The vehicle model name '%{modelName}' does not exist!",
-                "dialog_info": "Trying to spawn %{modelName}"
+                "dialog_info": "Trying to spawn %{modelName}",
+                "onesync_error": "This option requires that OneSync be on for server side spawning"
             },
             "heal_all": {
                 "list_primary": "Heal All Players",

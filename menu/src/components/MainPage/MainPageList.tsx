@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Box, List, makeStyles, Theme, Typography } from "@material-ui/core";
+import { Box, List, makeStyles, Theme } from "@material-ui/core";
 import { MenuListItem, MenuListItemMulti } from "./MenuListItem";
 import {
   AccessibilityNew,
@@ -28,6 +28,7 @@ import { TeleportMode, useTeleportMode } from "../../state/teleportmode.state";
 import { HealMode, useHealMode } from "../../state/healmode.state";
 import { arrayRandom } from "../../utils/miscUtils";
 import { copyToClipboard } from "../../utils/copyToClipboard";
+import { useServerCtxValue } from '../../state/server.state';
 
 const fadeHeight = 20;
 const listHeight = 388;
@@ -67,6 +68,7 @@ export const MainPageList: React.FC = () => {
   const [playerMode, setPlayerMode] = usePlayerMode();
   const [teleportMode, setTeleportMode] = useTeleportMode();
   const [healMode, setHealMode] = useHealMode();
+  const serverCtx = useServerCtxValue()
   const menuVisible = useIsMenuVisible();
   const classes = useStyles();
 
@@ -162,6 +164,13 @@ export const MainPageList: React.FC = () => {
   };
 
   const handleSpawnVehicle = () => {
+    // Since we depend on server side gamestate awareness
+    // we disable this function from being used if onesync
+    // isn't on
+    if (!serverCtx.oneSync.status) {
+      return enqueueSnackbar(t('nui_menu.page_main.spawn_veh.onesync_error'), { variant: 'error' })
+    }
+
     openDialog({
       description: t("nui_menu.page_main.spawn_veh.dialog_desc"),
       title: t("nui_menu.page_main.spawn_veh.dialog_title"),
