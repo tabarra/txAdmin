@@ -35,3 +35,8 @@ const lookupTable: Record<string, VariantType> = {
 export const translateAlertType = (
   txAdminType: TxAdminActionRespType
 ): VariantType => lookupTable[txAdminType];
+
+/**
+ * Returns whether we are in browser or in NUI
+ **/
+export const isBrowserEnv = (): boolean => !(window as any).invokeNative

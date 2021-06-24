@@ -1,5 +1,8 @@
-import { atom, useRecoilValue, useSetRecoilState } from "recoil";
+import { atom, selector, useRecoilValue } from 'recoil';
 import config from "../utils/config.json";
+import { fetchNui } from '../utils/fetchNui';
+import { debugLog } from '../utils/debugLog';
+import { isBrowserEnv } from '../utils/miscUtils';
 
 interface OneSyncCtx {
   type: null | string;
@@ -16,10 +19,21 @@ export interface ServerCtx {
 }
 
 const serverCtx = atom<ServerCtx>({
-  default: config.serverCtx,
   key: "serverCtx",
+  default: selector<ServerCtx>({
+    key: 'serverCtxFetch',
+    get: async () => {
+      try {
+        const serverCtx = await fetchNui<ServerCtx>('getServerCtx')
+        debugLog('GetServerCtx', serverCtx)
+        return serverCtx
+      } catch (e) {
+        if (isBrowserEnv()) return config.serverCtx
+        console.error(e)
+        throw e
+      }
+    }
+  })
 });
 
 export const useServerCtxValue = () => useRecoilValue(serverCtx);
-
-export const useSetServerCtx = () => useSetRecoilState(serverCtx);

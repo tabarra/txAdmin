@@ -114,6 +114,16 @@ RegisterNUICallback('playSound', function(sound, cb)
   cb({})
 end)
 
+RegisterNUICallback('getServerCtx', function(_, cb)
+  CreateThread(function()
+    updateServerCtx()
+    while ServerCtx == nil do Wait(0) end
+    debugPrint('Server CTX:')
+    debugPrint(json.encode(ServerCtx))
+    cb(ServerCtx)
+  end)
+end)
+
 --[[ Threads ]]
 
 CreateThread(function()
@@ -123,17 +133,6 @@ CreateThread(function()
     end
     Wait(250)
   end
-end)
-
-CreateThread(function()
-  Wait(500)
-  updateServerCtx()
-  while ServerCtx == nil do Wait(0) end
-  debugPrint('Server CTX:')
-  debugPrint(json.encode(ServerCtx))
-
-  -- Dispatch ctx to React state
-  sendMenuMessage('setServerCtx', ServerCtx)
 end)
 
 CreateThread(function()
