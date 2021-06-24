@@ -90,7 +90,7 @@ end)
 
 -- Triggered whenever we require full focus, cursor and keyboard
 RegisterNUICallback('focusInputs', function(shouldFocus, cb)
-  debugPrint('Focusing: ' .. tostring(shouldFocus))
+  debugPrint('NUI Focus + Keep Input ' .. tostring(shouldFocus))
   -- Will prevent mouse focus on initial menu mount as the useEffect emits there
   if not isMenuVisible then
     return
@@ -103,7 +103,7 @@ end)
 -- When the escape key is pressed in menu
 RegisterNUICallback('closeMenu', function(_, cb)
   isMenuVisible = false
-  debugPrint('Focus: false')
+  debugPrint('Releasing all NUI Focus')
   SetNuiFocus(false)
   SetNuiFocusKeepInput(false)
   cb({})
