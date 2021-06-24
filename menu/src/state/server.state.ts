@@ -28,9 +28,8 @@ const serverCtx = atom<ServerCtx>({
         debugLog('GetServerCtx', serverCtx)
         return serverCtx
       } catch (e) {
-        if (isBrowserEnv()) return config.serverCtx
         console.error(e)
-        throw e
+        return config.serverCtx
       }
     }
   })

@@ -13,6 +13,22 @@ CreateThread(function()
   isMenuDebug = (GetConvar('txAdminMenu-debugMode', 'false') == 'true')
 end)
 
+-- Command to be used with the register key mapping
+local function txadmin()
+  -- Check if we have an available ref to the global function
+  if not registerTxKeybinds then
+    return sendSnackbarMessage('error', 'nui_menu.misc.not_enabled', true)
+  end
+
+  if menuIsAccessible then
+    toggleMenuVisibility()
+  else
+    sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
+  end
+end
+RegisterCommand('txadmin', txadmin)
+RegisterCommand('tx', txadmin)
+
 -- The rest of the file will not be run if convar isn't set
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
   print('^3[txAdminMenu]^0 Menu Disabled')
@@ -49,22 +65,6 @@ end)
 RegisterNetEvent('txAdmin:events:enableDebug', function(enabled)
   debugModeEnabled = enabled
 end)
-
--- Command to be used with the register key mapping
-local function txadmin()
-  -- Check if we have an available ref to the global function
-  if not registerTxKeybinds then
-    return sendSnackbarMessage('error', 'nui_menu.misc.not_enabled', true)
-  end
-
-  if menuIsAccessible then
-    toggleMenuVisibility()
-  else
-    sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
-  end
-end
-RegisterCommand('txadmin', txadmin)
-RegisterCommand('tx', txadmin)
 
 -- ===============
 --  ServerCtx

@@ -20,6 +20,14 @@ function clearPersistentAlert(key)
     sendMenuMessage('clearPersistentAlert', { key = key })
 end
 
+--- Snackbar message
+---@param level string The severity of the message can be 'info', 'error', or 'warning'
+---@param message string Message to display with snackbar
+function sendSnackbarMessage(level, message, isTranslationKey)
+    debugPrint(('Sending snackbar message, level: %s, message: %s, isTranslationKey: %s'):format(level, message, isTranslationKey))
+    sendMenuMessage('setSnackbarAlert', { level = level, message = message, isTranslationKey = isTranslationKey })
+end
+
 --- Send data to the NUI frame
 ---@param action string Action
 ---@param data any Data corresponding to action
