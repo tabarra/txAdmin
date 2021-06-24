@@ -253,7 +253,7 @@
                 "days": "days",
                 "weeks": "weeks",
                 "months": "months",
-                "perm": "Permanent",
+                "permanent": "Permanent",
                 "custom": "Custom",
                 "helper_text": "Please select a duration"
             }

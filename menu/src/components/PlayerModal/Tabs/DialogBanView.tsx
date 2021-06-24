@@ -82,8 +82,8 @@ const DialogBanView: React.FC = () => {
       label: `2 ${t('nui_menu.player_modal.ban.weeks')}`
     },
     {
-      value: 'perma',
-      label: t('nui_menu.player_modal.ban.perm')
+      value: 'permanent',
+      label: t('nui_menu.player_modal.ban.permanent')
     },
     {
       value: 'custom',
@@ -127,7 +127,6 @@ const DialogBanView: React.FC = () => {
           onChange={(e) => setReason(e.currentTarget.value)}
         />
         <TextField
-          autoFocus
           margin="dense"
           select
           label={t("nui_menu.player_modal.ban.duration_placeholder")}
