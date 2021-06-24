@@ -63,7 +63,7 @@ const localeMap = {
 
 
 
-export const getLocale = (localeCode: string): unknown => {
+export const getLocale = (localeCode: string): Object => {
   const locale = localeMap[localeCode];
   if (!locale)
     throw new Error(`Unable to find a locale with code ${localeCode} in cache`);

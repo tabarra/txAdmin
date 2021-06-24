@@ -14,7 +14,7 @@ interface ErrorCompState {
   error: Error | null;
 }
 
-export class TopLevelErrorBoundary extends Component<Record<string, never>, ErrorCompState> {
+export class TopLevelErrorBoundary extends Component<any, ErrorCompState> {
   state = {
     hasError: false,
     error: null,
