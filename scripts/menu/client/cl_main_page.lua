@@ -3,6 +3,10 @@
 --  own file (mainly simpler logic)
 -- =============================================
 
+if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+    return
+end
+
 -- Last location stored in a vec3
 local lastTp
 
