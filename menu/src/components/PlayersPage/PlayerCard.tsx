@@ -128,7 +128,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
         </Box>
         <div>
           <Tooltip
-            title={t('nui_menu.page_players.card', { percentHealth: playerData.health})}
+            title={t('nui_menu.page_players.card.health', { percentHealth: playerData.health})}
             placement="bottom"
             arrow
             classes={{
