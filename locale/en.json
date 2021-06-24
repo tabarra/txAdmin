@@ -50,6 +50,10 @@
             "copied": "Copied to clipboard"
         },
         "page_main": {
+            "tooltips": {
+                "tooltip_1": "Use %{key} to switch pages & the arrow keys to navigate menu items",
+                "tooltip_2": "Certain menu items have sub options which can be selected using the left & right arrow keys"
+            },
             "fix_vehicle": {
                 "list_primary": "Fix Vehicle",
                 "list_secondary": "Set current vehicle health to 100%",
