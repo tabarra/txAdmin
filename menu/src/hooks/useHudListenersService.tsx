@@ -5,6 +5,7 @@ import { Box, Typography } from "@material-ui/core";
 import { useTranslate } from "react-polyglot";
 import { shouldHelpAlertShow } from "../utils/shouldHelpAlertShow";
 import { debugData } from "../utils/debugLog";
+import { getNotiDuration } from '../utils/getNotiDuration';
 
 type SnackbarAlertSeverities = "success" | "error" | "warning" | "info";
 
@@ -105,6 +106,7 @@ export const useHudListenersService = () => {
     enqueueSnackbar(<AnnounceMessage message={message} />, {
       variant: "warning",
       title: "Server Announcement",
+      autoHideDuration: getNotiDuration(message),
       anchorOrigin: {
         horizontal: "right",
         vertical: "top",
