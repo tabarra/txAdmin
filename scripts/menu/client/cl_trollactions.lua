@@ -1,3 +1,7 @@
+-- =============================================
+--  Troll action logic from the player modal is located here (callbacks, events)
+-- =============================================
+
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
     return
 end

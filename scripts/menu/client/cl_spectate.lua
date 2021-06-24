@@ -1,3 +1,7 @@
+-- =============================================
+--  Contains all spectate related logic
+-- =============================================
+
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
     return
 end
@@ -6,11 +10,11 @@ local lastSpectateLocation
 -- Spectate mode
 local isSpectateEnabled = false
 -- Spectated ped
-local storedTargetPed = nil
+local storedTargetPed
 -- Spectated player's client ID
 local storedTargetPlayerId
 -- Spectated players associated GameTag
-local storedGameTag = nil
+local storedGameTag
 
 
 RegisterNUICallback('spectatePlayer', function(data, cb)
@@ -189,7 +193,7 @@ CreateThread(function()
 
     while true do
         if isSpectateEnabled then
-           DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 0)
+            DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 0)
         end
         Wait(0)
     end

@@ -17,7 +17,9 @@ ReactDOM.render(
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
           disableWindowBlurListener={true}
         >
-          <MenuWrapper />
+          <React.Suspense fallback={<></>}>
+            <MenuWrapper />
+          </React.Suspense>
         </SnackbarProvider>
       </KeyboardNavProvider>
     </MuiThemeProvider>

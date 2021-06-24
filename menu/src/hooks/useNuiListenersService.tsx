@@ -6,7 +6,6 @@ import {
 } from "../state/players.state";
 import { txAdminMenuPage, useSetPage } from "../state/page.state";
 import { useNuiEvent } from "./useNuiEvent";
-import { useSetServerCtx } from "../state/server.state";
 import {
   PermCheckServerResp,
   useSetPermissions,
@@ -18,7 +17,6 @@ export const useNuiListenerService = () => {
   const setVisible = useSetIsMenuVisible();
   const setPlayerState = useSetPlayersState();
   const setMenuPage = useSetPage();
-  const setServerCtx = useSetServerCtx();
   const setPermsState = useSetPermissions();
 
   useNuiEvent<boolean>("setDebugMode", (debugMode) => {
@@ -57,5 +55,4 @@ export const useNuiListenerService = () => {
   useNuiEvent<PermCheckServerResp>("reAuth", () => {
     fetchNuiAuth().then(setPermsState);
   });
-  useNuiEvent("setServerCtx", setServerCtx);
 };
