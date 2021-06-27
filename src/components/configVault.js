@@ -159,7 +159,7 @@ module.exports = class ConfigVault {
                 autostart: toDefault(cfg.fxRunner.autostart, null),
                 autostartDelay: toDefault(cfg.fxRunner.autostartDelay, null), //not in template
                 restartDelay: toDefault(cfg.fxRunner.restartDelay, null), //not in template
-                quiet: toDefault(cfg.fxRunner.quiet, (GlobalData.osType === 'windows')),
+                quiet: toDefault(cfg.fxRunner.quiet, null),
             };
         } catch (error) {
             if (GlobalData.verbose) dir(error);
