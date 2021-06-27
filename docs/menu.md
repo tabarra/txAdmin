@@ -59,6 +59,11 @@ of the menu
 * Default: false
 * Usage: `+setr txAdminMenu-debugMode true`
 
+**txAdminMenu-playerIdDistance**
+* Description: The distance in which Player IDs become visible, if toggled on.
+* Default: 150
+* Usage: `+setr txAdminMenu-playerIdDistance 100`
+
 ### Commands
 **tx | txadmin**
 * Description: Will toggle the in-game menu

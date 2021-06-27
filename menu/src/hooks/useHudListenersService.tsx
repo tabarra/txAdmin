@@ -5,6 +5,7 @@ import { Box, Typography } from "@material-ui/core";
 import { useTranslate } from "react-polyglot";
 import { shouldHelpAlertShow } from "../utils/shouldHelpAlertShow";
 import { debugData } from "../utils/debugLog";
+import { getNotiDuration } from '../utils/getNotiDuration';
 
 type SnackbarAlertSeverities = "success" | "error" | "warning" | "info";
 
@@ -104,7 +105,8 @@ export const useHudListenersService = () => {
   useNuiEvent("addAnnounceMessage", ({ message }: { message: string }) => {
     enqueueSnackbar(<AnnounceMessage message={message} />, {
       variant: "warning",
-      title: "Server Announcement",
+      title: t('nui_menu.misc.announcement_title'),
+      autoHideDuration: getNotiDuration(message),
       anchorOrigin: {
         horizontal: "right",
         vertical: "top",

@@ -42,7 +42,7 @@ const MenuRoot: React.FC = () => {
     <>
       <Box style={{ width: "fit-content" }}>
         <HelpTooltip>
-          <Box p={2} pb={0} className={classes.root}>
+          <Box p={2} pb={1} className={classes.root}>
             <TxAdminLogo />
             <PageTabs />
             <Collapse

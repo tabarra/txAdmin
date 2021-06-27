@@ -1,10 +1,19 @@
 ## TODO:
-- [x] accept the new license format 
+- [x] fix(menu): Disable all files if convar isn't set
+- [x] refactor(scripts/menu): Break cl_main into several files
+- [x] feat(menu/announce): Dynamic announce duration based on length
+- [x] fix(menu): Fix race condition between NUI and scripts for ServerCtx
+- [x] fix(menu/main): Disable vehicle spawning if OneSync is off
+- [x] fix(menu/modal): fix permanent ban not working
+- [x] fix(scripts/menu): Fix NoClip setting disable game controls override
+- [x] fix: accept the new license format 
 - [x] diagnostics: use `globals.monitor.hostStats` instead of `systeminformation`
+- [x] many small fixes and tweaks
 - [ ] menu: sync playerlist via http
-
-
-
+- [ ] menu: make `/tx` print useful information (eg menu disabled, auth fail reason, etc)
+- [ ] menu: make txadmin-reauth more useful
+- [ ] login page auto retry auth one time
+- [ ] menu: fix player modal not handling 401/403
 
 
 
@@ -18,7 +27,9 @@ nota:
 
 
 Small Stuff:
-- [ ] add noclip key binding
+- [ ] menu: visually disable options when no permission
+- [ ] menu: fix heal self/server behavior inconsistent with player mode and teleport
+- [ ] menu: add noclip key binding
 - [ ] block execution if GetCurrentResourceName() != 'monitor'
 - [ ] player modal should show if the user is banned/whitelisted or not, and an easy way to revoke it
 - [ ] check EOL and warn user - new Date('2021-09-14T07:38:51+00:00').getTime()
