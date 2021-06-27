@@ -488,6 +488,21 @@ More:
 - [x] Added the convars txAdminMenu-updateInterval and txAdminMenu-pageKey, as well as the command /txAdmin-debug. Please read the docs for more information.
 - [x] ctxUtils: centralize basic render vars
 > v4.1.0
+- [x] updated turkish, lithuanian, italian
+- [x] Added troll actions (weed/drunk/fire/wild attack)
+- [x] Added button to copy current coords
+- [x] Fixed player ban not working in the menu
+- [x] lua small fixes
+  - fix sv_menu sub name error
+  - fix sv_logger explosion source
+  - remove spectate keybind
+- [x] add logging and confirmation snackbars to troll actions
+- [x] menu: fix zap auth
+- [x] fix old admins.json breaking on the identifiers validation
+- [x] revert: don't open url when admins are configured
+> v4.2.0
+
+
 
 ------------------------------
 > NOTE: this was an attempt to get the help from the community around september 2019

@@ -1,31 +1,14 @@
-## TODO v4.2.0
-- [x] lua small fixes
-  - fix sv_menu sub name error
-  - fix sv_logger explosion source
-  - remove spectate keybind
-- [x] add logging and confirmation snackbars to troll actions
-- [x] menu: fix zap auth
-- [x] fix old admins.json breaking on the identifiers validation
-- [x] revert: don't open url when admins are configured
+## TODO:
+- [x] accept the new license format 
+- [x] diagnostics: use `globals.monitor.hostStats` instead of `systeminformation`
 - [ ] menu: sync playerlist via http
 
 
 
 
-### Things to Look Out For
-* We are curious to see how the player ID's feature performs on
-  large non-onesync infinity servers. If you are able to provide any
-  metrics please do.
-* There occasionally seems to be API calls where the NUI is not
-  dealing with cookies correctly. This may result in the dreaded `Cannot read
-  property 'map' of undefined`. This is being addressed, for now just
-  click the reload dialog that pops up.
-* If you ever get stuck in a state where the players page is not updating.
-  try setting the txAdminMenu-updateInterval higher.
 
 
 
-+set svgui_disable true +set txAdminMenu-debugMode true +setr txEnableMenuBeta true
 
 
 nota:
@@ -34,24 +17,20 @@ nota:
 - desabilitar master actions pra quando for NUI
 
 
-
-quando falta convar
-set sv_listingIPOverride "109.230.238.70"
-isZapHosting, forceInterface,
-
-
-
-stuff:
-- [ ] diagnostics: use `globals.monitor.hostStats` instead of `systeminformation`
-- [ ] add html file caching
-- [ ] master actions deveria aparecer, mas desabilitado
+Small Stuff:
+- [ ] add noclip key binding
+- [ ] block execution if GetCurrentResourceName() != 'monitor'
+- [ ] player modal should show if the user is banned/whitelisted or not, and an easy way to revoke it
+- [ ] check EOL and warn user - new Date('2021-09-14T07:38:51+00:00').getTime()
+- [ ] on recipe import, check if indexOf('<html>')
+- [ ] enable squirrelly file caching via `renderFile()`
 - [ ] srvCmdBuffer needs to strip the color escape characters
 - [ ] logger: `Unrecognized event: playerJoining` -- we are using playerConnecting but should probably change that
 - [ ] make the commands (kick, warn, etc) return success or danger, then edit DialogActionView.tsx
     - can be done by adding a randid to the command, then making the cmdBuffer match for `<id><OK|NOK>` 
 
 - [ ] break `playerController` actions stuff to another file
-- [ ] do the sv_listingIPOverride thing
+- [ ] if isZapHosting && forceInterface, add `set sv_listingIPOverride "xxx.xxx.xxx.xxx"` in deployer
 - [ ] maybe remove the sv_maxclients enforcement in the cfg file
 - [ ] fix the interface enforcement without port being set as zap server?
 - [ ] consolidate the log pages
@@ -97,55 +76,6 @@ stuff:
 
 =======================================
 
-## NUI commands
-While the menu is open, show `ID | PlayerName` above nearby player heads.
-The first thing selected is the tab selector, which can be operated using the arrows.
-The Main menu will be fully arrow operated, but the player and txAdmin tab need to be mouse-operated
-
-- Main Menu:
-    - Teleport (submenu):
-        - TP to coords (use regex)
-        - TP to Marker
-        - Send back (<name>) (me to my last, or player to his last)
-    - Player mode (selector):
-        - Nornal
-        - NoClip/Invisible
-        - God Mode
-    - Heal Myself 
-    - Spawn Car
-    - Fix+Wash Car
-    - Revive/Heal all players (temp)
-    - Send Announcement (temp)
-- Player Tab:
-    - search box
-    - sort options
-    - player cards:
-        - basic modal (DM, Warn, Kick, Ban)
-        - Heal
-        - TP Player to me
-        - TP to Player
-        - Spectate
-        - Troll commands????
-            - Kill
-            - Set on fire
-            - Wild animal attack
-            - make drunk
-- txAdmin Tab:
-    - iframe containing txAdmin's web with some customizations:
-        - menu starts collapsed
-        - no logo/header
-        - no footer
-
-High-level roadmap:
-- Write the lua+js code to pipe the traffic + authenticate the user
-- Make HTML changes to accept iframe
-- Have the react stuff done
-- Do all the Lua admin stuff (spawn cars, heal people & etc)
-- Do all the txAdmin backend code to support those functions
-- Finish the interface (Look & Feel)
-
-=======================================
-
 ## Database Management page
 - erase all whitelists
 - erase all bans
@@ -160,7 +90,7 @@ Pre calculate all counts
 
 =======================================
 
-## Structured traces
+## FXServer Stuff + TODOs
 
 ### Rate limiter
 We could be more sensible when restarting the server and pushing an event to alert other resources thatm ight want to auto block it.
@@ -169,12 +99,66 @@ netsh advfirewall firewall add rule name="txAdmin_block_XXXX" dir=in interface=a
 netsh advfirewall firewall show rule name="txAdmin_block_XXXX"
 netsh advfirewall firewall delete rule name="txAdmin_block_XXXX"
 ```
+https://github.com/citizenfx/fivem/search?q=KeyedRateLimiter
+
 
 ### Oversized resources streams
 We could wait for the server to finish loading, as well as print in the interface somewhere an descending ordered list of large resource assets
 https://github.com/citizenfx/fivem/blob/649dac8e9c9702cc3e293f8b6a48105a9378b3f5/code/components/citizen-server-impl/src/ResourceStreamComponent.cpp#L435
 
-### Crash dumps
+
+### State bags?
+https://docs.fivem.net/docs/scripting-manual/networking/state-bags/
+
+
+### the ace permissions editor thing
+https://discordapp.com/channels/192358910387159041/450373719974477835/724266730024861717
+maybe playerConnecting and then set permission by ID?
+https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
+
+
+### Log Stuff:
+https://www.npmjs.com/package/rotating-file-stream
+https://www.npmjs.com/package/file-stream-rotator
+https://www.npmjs.com/package/simple-node-logger
+https://www.npmjs.com/package/infinite-scroll
+
+
+### Git clone using isomorphic-git
+https://github.com/isomorphic-git/isomorphic-git
+
+
+### HWID tokens
+https://github.com/citizenfx/fivem/commit/f52b4b994a316e1f89423b97c92d73b624bea731
+```lua
+local pid = 1
+local hwids = {}
+local max = GetNumPlayerTokens(pid)
+for i = 0, max do
+    hwids[i+1] = GetPlayerToken(pid, i)
+end
+print(json.encode(hwids))
+```
+
+
+
+=======================================
+
+## Bot Commands:
+DONE:
+/addwl <wl req id>
+/addwl <license>
+
+TODO: Bot commands (in dev order):
+/kick <mention>
+/log <mention> - shows the last 5 log entries for an discord identifier (make it clear its only looking for the ID)
+/ban <mention> <time> <reason>
+/unban <ban-id>
+
+/info - shows your info like join date and play time
+/info <mention> - shows someone else's info
+/addwl <mention>
+/removewl <mention>
 
 =======================================
 
@@ -228,25 +212,48 @@ Target: average txAdmin users
 
 =======================================
 
-## Bot Commands:
-DONE:
-/addwl <wl req id>
-/addwl <license>
+## References
 
-TODO: Bot commands (in dev order):
-/kick <mention>
-/log <mention> - shows the last 5 log entries for an discord identifier (make it clear its only looking for the ID)
-/ban <mention> <time> <reason>
-/unban <ban-id>
+### CoreUI Stuff + Things I use
+https://simplelineicons.github.io
+https://coreui.io/demo/3.1.0/#icons/coreui-icons-free.html
+https://coreui.io/demo/3.0.0/#colors.html
+https://coreui.io/docs/content/typography/
 
-/info - shows your info like join date and play time
-/info <mention> - shows someone else's info
-/addwl <mention>
-/removewl <mention>
+https://www.npmjs.com/package/humanize-duration
+https://kinark.github.io/Materialize-stepper/
+
+https://www.science.co.il/language/Locale-codes.php
+
 
 =======================================
 
 ## CLTR+C+V
+```json
+{
+    "interface": "192.168.0.123",
+    "fxServerPort": 30120,
+    "txAdminPort": 40120,
+    "loginPageLogo": "https://github.com/tabarra/txAdmin/raw/master/docs/banner.png",
+    "defaults": {
+        "license": "cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx",
+        "maxClients": 48,
+        "mysqlHost": "xxxxxxxxxx",
+        "mysqlUser": "xxxxxxxxxx",
+        "mysqlPassword": "xxxxxxxxxx",
+        "mysqlDatabase": "xxxxxxxxxx"
+    },
+    "customer": {
+        "name": "tabarra",
+        "password_hash": "$2y$12$WNuN6IxozL4CjgScsLvmGOmxtskg8EcPe67HtUw0ENeCCSaZ.z3AW"
+    },
+
+    "interface-": false,
+    "loginPageLogo-": false,
+    "customer-": false
+}
+```
+
 ```bash
 # run
 export CURR_FX_VERSION="3247"
@@ -263,9 +270,10 @@ rm -rf dist && npm run build && explorer dist
 rm -rf dist && npm run build && tar.exe -cvf dist/monitor.zip dist/* && explorer dist
 
 # other stuff
-export TXADMIN_DEFAULT_LICENSE="YourKeyYourKeyYourKeyYourKeyYour"
+export TXADMIN_DEFAULT_LICENSE="cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx"
 npm-upgrade
 con_miniconChannels script:monitor*
++set svgui_disable true +set txAdminMenu-debugMode true +setr txEnableMenuBeta true
 
 # eslint stuff
 npx eslint ./src/**
@@ -277,110 +285,3 @@ console.log('hanging the thread for 60s');
 Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 60 * 1000);
 console.log('done');
 ```
-
-```json
-{
-    "interface": "192.168.0.123",
-    "fxServerPort": 30120,
-    "txAdminPort": 40120,
-    "loginPageLogo": "https://github.com/tabarra/txAdmin/raw/master/docs/banner.png",
-    "defaults": {
-        "license": "YourKeyYourKeyYourKeyYourKeyYour",
-        "maxClients": 10,
-        "mysqlHost": "mysql-mariadb-20-104.zap-hosting.com",
-        "mysqlUser": "xxxxxxxxxx",
-        "mysqlPassword": "xxxxxxxxxx",
-        "mysqlDatabase": "xxxxxxxxxx"
-    },
-    "customer": {
-        "name": "tabarra",
-        "password_hash": "$2y$12$WNuN6IxozL4CjgScsLvmGOmxtskg8EcPe67HtUw0ENeCCSaZ.z3AW"
-    },
-
-    "interface-": false,
-    "loginPageLogo-": false,
-    "customer-": false
-}
-
-```
-
-=======================================
-
-## Links + Random Stuff
-
-### CoreUI Stuff + Things I use
-https://simplelineicons.github.io
-https://coreui.io/demo/3.1.0/#icons/coreui-icons-free.html
-https://coreui.io/demo/3.0.0/#colors.html
-https://coreui.io/docs/content/typography/
-
-https://www.npmjs.com/package/humanize-duration
-https://kinark.github.io/Materialize-stepper/
-
-
-### Reference stuff
-https://www.science.co.il/language/Locale-codes.php
-
-
-### Log Stuff:
-https://www.npmjs.com/package/rotating-file-stream
-https://www.npmjs.com/package/file-stream-rotator
-https://www.npmjs.com/package/simple-node-logger
-https://www.npmjs.com/package/infinite-scroll
-
-
-### "Look into it"
-https://www.reddit.com/r/javascript/comments/91a3tp/why_is_there_no_small_sane_nodejs_tool_for/
-
-"State bag" support for C#
-https://github.com/citizenfx/fivem/pull/516
-https://github.com/citizenfx/fivem/pull/539
-
-
-### server deployer original idea
-https://discordapp.com/channels/192358910387159041/450373719974477835/701336723589955654
-
-### the ace permissions editor thing
-https://discordapp.com/channels/192358910387159041/450373719974477835/724266730024861717
-maybe playerConnecting and then set permission by ID?
-https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
-
-### the fun command thing
-https://github.com/VenomXNL/XNLRideAnimals/blob/master/XNLRideAnimals/client.lua
-https://docs.fivem.net/docs/game-references/ped-models/#animals
-https://github.com/SFL-Master/Peds/blob/master/client/main.lua
-https://forum.cfx.re/t/peds-attack-players/3467/4
-https://forum.cfx.re/t/request-how-to-create-aggressive-npcs/583370
-https://forum.cfx.re/t/i-want-to-make-a-spawned-npc-attack-players/462463
-
-
-=======================================
-
-### Global vs Individual Modules
-- Global
-    - authenticator
-    - discordBOT
-    - logger
-    - webserver
-    - translator
-    - players db (new)
-    - config global (new)
-
-- Individual
-    - fxrunner
-    - monitor
-    - configvault
-
-### Global vs Individual Pages
-- Full Dashboard: Each row will be be one server, with: controls, stats (players, hitches, status), player chart
-- Players
-- Diagnostics: host + processes + multiple individual server info
-- Admin Manager
-- txAdmin Log
-- Global Settings
-- Servers:
-    - live console
-    - resources
-    - log
-    - cfg editor
-...and maybe more, but now I'm going to sleep
