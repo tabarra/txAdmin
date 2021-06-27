@@ -11,7 +11,11 @@ const cpus = os.cpus();
 module.exports = getHostStats = async () => {
     const out = {
         memory: {usage: 0, used: 0, total: 0},
-        cpu: {count: 0, speed: 0, load: 0},
+        cpu: {
+            count: cpus.length,
+            speed: cpus[0].speed,
+            usage: 0,
+        },
     };
 
     //Getting memory usage
@@ -42,11 +46,7 @@ module.exports = getHostStats = async () => {
     //Getting CPU usage
     try {
         const loads = await si.currentLoad();
-        out.cpu = {
-            count: cpus.length,
-            speed: cpus[0].speed,
-            usage: Math.round(loads.currentLoad),
-        };
+        out.cpu.usage = Math.round(loads.currentLoad);
     } catch (error) {
         if (GlobalData.verbose) {
             logError('Failed to get CPU usage.');

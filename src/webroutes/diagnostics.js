@@ -1,7 +1,6 @@
 //Requires
 const modulename = 'WebServer:Diagnostics';
 const os = require('os');
-const si = require('systeminformation');
 const axios = require('axios');
 const bytes = require('bytes');
 const pidusageTree = require('pidusage-tree');
@@ -179,49 +178,36 @@ async function getFXServerData() {
  * Gets the Host Data.
  */
 async function getHostData() {
-    const hostData = {};
     try {
-        const giga = 1024 * 1024 * 1024;
-        let memFree, memTotal, memUsed;
-
-        if (GlobalData.osType === 'linux') {
-            const memoryData = await si.mem();
-            memFree = (memoryData.available / giga).toFixed(2);
-            memTotal = (memoryData.total / giga).toFixed(2);
-            memUsed = (memoryData.active / giga).toFixed(2);
-        } else {
-            memFree = (os.freemem() / giga).toFixed(2);
-            memTotal = (os.totalmem() / giga).toFixed(2);
-            memUsed = (memTotal - memFree).toFixed(2);
-        }
-
-        const memUsage = ((memUsed / memTotal) * 100).toFixed(0);
         const userInfo = os.userInfo();
-        const cpus = os.cpus();
+        const hostData = {
+            nodeVersion: process.version,
+            osDistro: GlobalData.osDistro || GlobalData.osType,
+            username: `${userInfo.username}`,
+            memory: 'not available',
+            cpus: 'not available',
+            clockWarning: '',
+            error: false,
+        };
 
-        let clockWarning = '';
-        if (cpus.length < 8) {
-            if (cpus[0].speed <= 2400) {
-                clockWarning = '<span class="badge badge-danger"> VERY SLOW! </span>';
-            } else if (cpus[0].speed < 3000) {
-                clockWarning = '<span class="badge badge-warning"> SLOW </span>';
+        const stats = globals.monitor.hostStats;
+        if (stats) {
+            hostData.memory = `${stats.memory.usage}% (${stats.memory.used.toFixed(2)}/${stats.memory.total.toFixed(2)} GB)`;
+            hostData.cpus = `${stats.cpu.usage}% of ${stats.cpu.count}x ${stats.cpu.speed} MHz`;
+            if (stats.cpu.count < 8) {
+                if (stats.cpu.speed <= 2400) {
+                    hostData.clockWarning = '<span class="badge badge-danger"> VERY SLOW! </span>';
+                } else if (stats.cpu.speed < 3000) {
+                    hostData.clockWarning = '<span class="badge badge-warning"> SLOW </span>';
+                }
             }
         }
-
-        hostData.nodeVersion = process.version;
-        hostData.osDistro = GlobalData.osDistro || GlobalData.osType;
-        hostData.username = `${userInfo.username}`;
-        hostData.clockWarning = clockWarning;
-        hostData.cpus = `${cpus.length}x ${cpus[0].speed} MHz`;
-        hostData.memory = `${memUsage}% (${memUsed}/${memTotal} GB)`;
-        hostData.error  = false;
+        return hostData;
     } catch (error) {
         logError('Error getting Host data');
         if (GlobalData.verbose) dir(error);
-        hostData.error = 'Failed to retrieve host data. <br>Check the terminal for more information (if verbosity is enabled)';
+        return {error: 'Failed to retrieve host data. <br>Check the terminal for more information (if verbosity is enabled)'};
     }
-
-    return hostData;
 }
 
 
@@ -268,7 +254,7 @@ async function gettxAdminData() {
         //Settings
         cooldown: globals.monitor.config.cooldown,
         schedule: globals.monitor.config.restarterSchedule.join(', ') || '--',
-        commandLine: globals.fxRunner.config.commandLine,
+        commandLine: (globals.fxRunner.config.commandLine.length) ? globals.fxRunner.config.commandLine : '--',
         fxServerPath: GlobalData.fxServerPath,
         serverDataPath: globals.fxRunner.config.serverDataPath,
         cfgPath: globals.fxRunner.config.cfgPath,
