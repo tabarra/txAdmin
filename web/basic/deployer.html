@@ -117,7 +117,7 @@
                                     </label>
                                     <div class="col-sm-9">
                                         <input type="text" class="form-control blur-input" id="step2-svLicense" maxlength="32" 
-                                            autocomplete="off" placeholder="YourKeyYourKeyYourKeyYourKeyYour" 
+                                            autocomplete="off" placeholder="cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx" 
                                             value="{{it.defaults.license}}" required autofocus>
                                         <span class="form-text text-muted">
                                             The license key for your server obtained in <a href="https://keymaster.fivem.net/" target="_blank" rel="noopener noreferrer">Keymaster</a>.
@@ -408,9 +408,6 @@
             if(!step2elements.form.reportValidity()) return;
             const postData = {
                 svLicense: step2elements.svLicense.value.trim()
-            }
-            if(!/^\w{32}$/.test(postData.svLicense)){
-                return $.notify({ message: `The Server License does not appear to be valid.` }, { type: 'warning' });
             }
             if(requireDBConfig){
                 postData.dbHost = step2elements.dbHost.value.trim();
