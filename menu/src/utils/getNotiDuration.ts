@@ -13,5 +13,5 @@ export const getNotiDuration = (text: string): number => {
   if (idealSeconds < minDuration) return minDuration;
   if (idealSeconds > maxDuration) return maxDuration;
 
-  return idealSeconds * 1000;
+  return idealSeconds;
 };
