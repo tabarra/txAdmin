@@ -9,6 +9,7 @@
 - [x] fix: accept the new license format 
 - [x] diagnostics: use `globals.monitor.hostStats` instead of `systeminformation`
 - [x] many small fixes and tweaks
+> v4.3.0
 - [ ] menu: sync playerlist via http
 - [ ] menu: make `/tx` print useful information (eg menu disabled, auth fail reason, etc)
 - [ ] menu: make txadmin-reauth more useful

@@ -31,7 +31,7 @@ RegisterCommand('tx', txadmin)
 
 -- The rest of the file will not be run if convar isn't set
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
-  print('^3[txAdminMenu]^0 Menu Disabled')
+  print('^3[txAdminMenu]^0 Beta Menu not enabled.')
   return
 end
 

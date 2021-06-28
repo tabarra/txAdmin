@@ -41,7 +41,7 @@
             "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
             "action_unauthorized": "You do not have this permission.",
             "unknown_error": "An unknown error occurred.",
-            "not_enabled": "The txAdmin Menu is not enabled! Please check the docs for more info",
+            "not_enabled": "The txAdmin Menu is not enabled! Please check the docs for more info.",
             "announcement_title": "Server Announcement"
         },
         "common": {
