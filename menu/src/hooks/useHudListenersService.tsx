@@ -87,7 +87,7 @@ export const useHudListenersService = () => {
           variant: level,
           persist: true,
           anchorOrigin: {
-            horizontal: "right",
+            horizontal: "center",
             vertical: "top",
           },
         }

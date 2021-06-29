@@ -10,6 +10,9 @@
 - [x] diagnostics: use `globals.monitor.hostStats` instead of `systeminformation`
 - [x] many small fixes and tweaks
 > v4.3.0
+- [x] menu: fixed announcements duration
+- [x] menu: changed playermode snackbar to center
+> v4.3.1
 - [ ] menu: sync playerlist via http
 - [ ] menu: make `/tx` print useful information (eg menu disabled, auth fail reason, etc)
 - [ ] menu: make txadmin-reauth more useful
@@ -28,6 +31,7 @@ nota:
 
 
 Small Stuff:
+- [ ] menu: noclip should set ped heading when exiting freecam
 - [ ] menu: visually disable options when no permission
 - [ ] menu: fix heal self/server behavior inconsistent with player mode and teleport
 - [ ] menu: add noclip key binding
