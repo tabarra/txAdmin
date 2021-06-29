@@ -172,6 +172,11 @@ RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
         if _z ~= nil then z = _z end
     end
     SetPedCoordsKeepVehicle(ped, x, y, z)
+    if not HasCollisionLoadedAroundEntity(ped) then
+        FreezeEntityPosition(ped, true)
+        while not HasCollisionLoadedAroundEntity(ped) do Wait(50) end
+        FreezeEntityPosition(ped, false)
+    end
     DoScreenFadeIn(500)
     SetGameplayCamRelativeHeading(0)
 end)
@@ -193,6 +198,11 @@ RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
         local _z = FindZForCoords(x, y)
         if _z ~= nil then z = _z end
         SetPedCoordsKeepVehicle(ped, x, y, z)
+        if not HasCollisionLoadedAroundEntity(ped) then
+		    FreezeEntityPosition(ped, true)
+            while not HasCollisionLoadedAroundEntity(ped) do Wait(50) end
+            FreezeEntityPosition(ped, false)
+        end
         DoScreenFadeIn(500)
         SetGameplayCamRelativeHeading(0)
     else
