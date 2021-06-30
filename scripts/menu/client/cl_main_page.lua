@@ -44,9 +44,11 @@ RegisterNUICallback('summonPlayer', function(data, cb)
 end)
 
 RegisterNUICallback('copyCurrentCoords', function(_, cb)
-    local curCoords = GetEntityCoords(PlayerPedId())
+    local ped = PlayerPedId()
+    local curCoords = GetEntityCoords(ped)
+    local currHeading = GetEntityHeading(ped)
     -- We will cut coords to 4 decimal points
-    local stringCoords = ('%.4f, %.4f, %.4f'):format(curCoords.x, curCoords.y, curCoords.z)
+    local stringCoords = ('%.4f, %.4f, %.4f, %.4f'):format(curCoords.x, curCoords.y, curCoords.z, currHeading)
     cb({ coords = stringCoords })
 end)
 
