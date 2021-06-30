@@ -101,6 +101,8 @@ export const MainPageList: React.FC = () => {
       title: t("nui_menu.page_main.teleport.dialog_title"),
       placeholder: "340, 480, 12",
       onSubmit: (coords: string) => {
+        // TODO: accept X, Y and calculate Z
+        // TODO: accept heading
         // Testing examples:
         // {x: -1; y: 2; z:3}
         // {x = -1.01; y= 2.02; z=3.03}
