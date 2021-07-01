@@ -57,6 +57,7 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, statusCode, body, header
             if statusCode == 200 and resp.isAdmin then
                 print("^2[AUTH] accepted with permissions: " .. json.encode(resp.permissions or "nil"))
                 menuIsAccessible = true
+                menuPermissions = resp.permissions
             else
                 print("^1[AUTH] rejected with reason: " .. json.encode(resp.reason or "nil"))
                 menuIsAccessible = false

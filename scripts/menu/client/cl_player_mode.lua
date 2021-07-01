@@ -7,6 +7,8 @@ if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
     return
 end
 
+local noClipEnabled = false
+
 local function toggleGodMode(enabled)
     if enabled then
         sendPersistentAlert('godModeEnabled', 'info', 'nui_menu.page_main.player_mode.dialog_success_godmode', true)
@@ -18,6 +20,7 @@ end
 
 local freecamVeh = 0
 local function toggleFreecam(enabled)
+    noClipEnabled = enabled
     local ped = PlayerPedId()
     SetEntityVisible(ped, not enabled)
     SetPlayerInvincible(ped, enabled)
@@ -79,6 +82,24 @@ local function toggleFreecam(enabled)
         disableNoClip()
     end
 end
+
+RegisterKeyMapping('txAdmin:menu:noClipToggle', 'NoClip Shortcut', 'keyboard', '')
+
+RegisterCommand('txAdmin:menu:noClipToggle', function()
+    local doesPlayerHavePerm = DoesPlayerHavePerm(menuPermissions, 'player.playermode')
+    if not doesPlayerHavePerm then
+        return sendSnackbarMessage('error', 'nui_menu.misc.general_no_perms', true)
+    end
+
+    debugPrint("NoClip toggled:" .. tostring(not noClipEnabled))
+
+    -- Toggling behavior
+    if noClipEnabled then
+        TriggerServerEvent('txAdmin:menu:playerModeChanged', "none")
+    else
+        TriggerServerEvent('txAdmin:menu:playerModeChanged', "noclip")
+    end
+end)
 
 -- This will trigger everytime the playerMode in the main menu is changed
 -- it will send the mode

@@ -7,6 +7,7 @@
 menuIsAccessible = false
 isMenuDebug = false
 isMenuVisible = false
+menuPermissions = {}
 ServerCtx = {}
 
 CreateThread(function()

@@ -90,3 +90,18 @@ function DisplayHelpTxtThisFrame(msg)
     AddTextComponentSubstringTextLabel(msg)
     EndTextCommandDisplayHelp(0, 1, 0, -1);
 end
+
+--- Used for local feedback and permission checks. Checks are still
+--- performed on the server.
+---@param perms table Array of all player permissions
+---@param perm string The specific permission
+---@return boolean
+function DoesPlayerHavePerm(perms, perm)
+    for _, v in pairs(perms) do
+        if v == perm or v == 'all_permissions' then
+            return true
+        end
+    end
+
+    return false
+end

@@ -42,7 +42,8 @@
             "action_unauthorized": "You do not have this permission.",
             "unknown_error": "An unknown error occurred.",
             "not_enabled": "The txAdmin Menu is not enabled! Please check the docs for more info.",
-            "announcement_title": "Server Announcement:"
+            "announcement_title": "Server Announcement:",
+            "general_no_perms": "You do not have permissions for this!"
         },
         "common": {
             "cancel": "Cancel",
