@@ -17,7 +17,7 @@ import en from "../../../locale/en.json";
 // import es from "../../../locale/es.json";
 // import fa from "../../../locale/fa.json";
 // import fi from "../../../locale/fi.json";
-// import hu from "../../../locale/hu.json";
+ import hu from "../../../locale/hu.json";
 // import it from "../../../locale/it.json";
 // import lt from "../../../locale/lt.json";
 // import lv from "../../../locale/lv.json";
@@ -44,7 +44,7 @@ const localeMap = {
   // es,
   // fa,
   // fi,
-  // hu,
+   hu,
   // it,
   // lt,
   // lv,

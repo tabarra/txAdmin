@@ -49,6 +49,10 @@
             "copied": "Másolva a vágólapra"
         },
         "page_main": {
+            "tooltips": {
+                "tooltip_1": "Használd a %{key} gombot az oldalak váltásához & a nyilakat hogy fel-le menj",
+                "tooltip_2": "Néhány menü elemnek vannak kisebb ablakai, ezt  jobb és bal nyilakkal tudod előhozni"
+            },
             "fix_vehicle": {
                 "list_primary": "Jármű megjavítása",
                 "list_secondary": "Jelenlegi jármű életének beállítása 100%-ra",
@@ -130,7 +134,7 @@
         "page_players": {
             "misc": {
                 "online_players": "Online játékosok",
-                "játékosok": "Játékosok",
+                "players": "Játékosok",
                 "search": "Keresés",
                 "zero_players": "Nem találtunk játékosokat"
             },
