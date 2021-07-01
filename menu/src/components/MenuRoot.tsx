@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Collapse, makeStyles, Theme } from "@material-ui/core";
+import { Box, Collapse, makeStyles, Theme, Typography } from "@material-ui/core";
 import { PageTabs } from "./misc/PageTabs";
 import { MainPageList } from "./MainPage/MainPageList";
 import { PlayersPage } from "./PlayersPage/PlayersPage";
@@ -8,6 +8,7 @@ import { txAdminMenuPage, usePageValue } from "../state/page.state";
 import { useHudListenersService } from "../hooks/useHudListenersService";
 import { HelpTooltip } from "./misc/HelpTooltip";
 import { usePermissionsValue } from "../state/permissions.state";
+import { useServerCtxValue } from '../state/server.state';
 
 const TxAdminLogo: React.FC = () => (
   <Box my={1} display="flex" justifyContent="center">
@@ -30,6 +31,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const MenuRoot: React.FC = () => {
   const classes = useStyles();
   const perms = usePermissionsValue();
+  const serverCtx = useServerCtxValue()
   // We need to mount this here so we can get access to
   // the translation context
   useHudListenersService();
@@ -44,6 +46,17 @@ const MenuRoot: React.FC = () => {
         <HelpTooltip>
           <Box p={2} pb={1} className={classes.root}>
             <TxAdminLogo />
+            <Typography
+              color="textSecondary"
+              style={{
+                fontWeight: 500,
+                marginTop: -20,
+                textAlign: "right",
+                fontSize: 12,
+              }}
+            >
+              v{serverCtx.txAdminVersion}
+            </Typography>
             <PageTabs />
             <Collapse
               in={curPage === txAdminMenuPage.Main}

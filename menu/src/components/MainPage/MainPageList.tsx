@@ -439,7 +439,8 @@ export const MainPageList: React.FC = () => {
   );
 
   return (
-    <Box pb={2}>
+    // add pb={2} if we don't have that arrow at the bottom
+    <Box>
       <List className={classes.list}>
         {menuListItems.map((item, index) =>
           item.isMultiAction ? (
@@ -470,17 +471,17 @@ export const MainPageList: React.FC = () => {
       <Box className={classes.icon} display="flex" justifyContent="center">
         <ExpandMore />
       </Box>
-      {/*<Typography*/}
-      {/*  color="textSecondary"*/}
-      {/*  style={{*/}
-      {/*    fontWeight: 500,*/}
-      {/*    marginTop: -10,*/}
-      {/*    textAlign: "center",*/}
-      {/*    fontSize: 12,*/}
-      {/*  }}*/}
-      {/*>*/}
-      {/*  v{serverCtx.txAdminVersion}*/}
-      {/*</Typography>*/}
+      {/* <Typography
+        color="textSecondary"
+        style={{
+          fontWeight: 500,
+          marginTop: -20,
+          textAlign: "left",
+          fontSize: 12,
+        }}
+      >
+        v{serverCtx.txAdminVersion}
+      </Typography>  */}
     </Box>
   );
 };
