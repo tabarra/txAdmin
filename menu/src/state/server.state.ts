@@ -2,7 +2,6 @@ import { atom, selector, useRecoilValue } from 'recoil';
 import config from "../utils/config.json";
 import { fetchNui } from '../utils/fetchNui';
 import { debugLog } from '../utils/debugLog';
-import { isBrowserEnv } from '../utils/miscUtils';
 
 interface OneSyncCtx {
   type: null | string;
@@ -28,7 +27,9 @@ const serverCtx = atom<ServerCtx>({
         debugLog('GetServerCtx', serverCtx)
         return serverCtx
       } catch (e) {
-        console.error(e)
+        // This will error whenever the menu is disabled, so lets just silently
+        // deal with it for now.
+        // console.error(e)
         return config.serverCtx
       }
     }
