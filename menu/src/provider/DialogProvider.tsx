@@ -63,6 +63,7 @@ const defaultDialogState = {
 export const DialogProvider: React.FC = ({ children }) => {
   const classes = useStyles();
   const theme = useTheme();
+  const [canSubmit, setCanSubmit] = useState(true)
 
   const setDisableTabs = useSetDisableTab();
   const { setDisabledKeyNav } = useKeyboardNavContext();
@@ -91,7 +92,11 @@ export const DialogProvider: React.FC = ({ children }) => {
       });
     }
 
+    if (!canSubmit) return
+
     dialogProps.onSubmit(dialogInputVal);
+
+    setCanSubmit(false)
 
     setListenForExit(true);
     setDialogOpen(false);
@@ -116,6 +121,7 @@ export const DialogProvider: React.FC = ({ children }) => {
   // We reset default state after the animation is complete
   const handleOnExited = () => {
     setDialogProps(defaultDialogState);
+    setCanSubmit(true)
   };
 
   return (
