@@ -122,6 +122,7 @@ export const DialogProvider: React.FC = ({ children }) => {
   const handleOnExited = () => {
     setDialogProps(defaultDialogState);
     setCanSubmit(true)
+    setDialogInputVal('')
   };
 
   return (
