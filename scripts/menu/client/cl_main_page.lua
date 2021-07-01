@@ -164,6 +164,7 @@ end)
 ---@param z number
 RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
     local ped = PlayerPedId()
+    local veh = GetVehiclePedIsIn(ped, false)
     lastTp = GetEntityCoords(ped)
 
     DoScreenFadeOut(500)
@@ -174,6 +175,11 @@ RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
         if _z ~= nil then z = _z end
     end
     SetPedCoordsKeepVehicle(ped, x, y, z)
+    if not HasCollisionLoadedAroundEntity(ped) then
+        FreezeEntityPosition(veh or ped, true)
+        while not HasCollisionLoadedAroundEntity(ped) do Wait(50) end
+        FreezeEntityPosition(veh or ped, false)
+    end
     DoScreenFadeIn(500)
     SetGameplayCamRelativeHeading(0)
 end)
@@ -183,6 +189,7 @@ RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
     local waypoint = GetFirstBlipInfoId(GetWaypointBlipEnumId())
     if waypoint and waypoint > 0 then
         local ped = PlayerPedId()
+        local veh = GetVehiclePedIsIn(ped, false)
         lastTp = GetEntityCoords(ped)
 
         DoScreenFadeOut(500)
@@ -195,6 +202,11 @@ RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
         local _z = FindZForCoords(x, y)
         if _z ~= nil then z = _z end
         SetPedCoordsKeepVehicle(ped, x, y, z)
+        if not HasCollisionLoadedAroundEntity(ped) then
+            FreezeEntityPosition(veh or ped, true)
+            while not HasCollisionLoadedAroundEntity(ped) do Wait(50) end
+            FreezeEntityPosition(veh or ped, false)
+        end
         DoScreenFadeIn(500)
         SetGameplayCamRelativeHeading(0)
     else
