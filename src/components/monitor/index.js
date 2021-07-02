@@ -251,7 +251,7 @@ module.exports = class Monitor {
             const maxClients = parseInt(dynamicResp.sv_maxclients);
             if (!isNaN(maxClients) && maxClients > GlobalData.deployerDefaults.maxClients) {
                 globals.fxRunner.srvCmdBuffer(`sv_maxclients ${GlobalData.deployerDefaults.maxClients} ##ZAP-Hosting: please don't modify`);
-                logError(`Zap-Hosting: Detected that the server has sv_maxclients above the limit (${GlobalData.deployerDefaults.maxClients}). Changing back to the default value.`);
+                logError(`ZAP-Hosting: Detected that the server has sv_maxclients above the limit (${GlobalData.deployerDefaults.maxClients}). Changing back to the default value.`);
                 globals.logger.append(`[SYSTEM] changing sv_maxclients back to ${GlobalData.deployerDefaults.maxClients}`);
             }
         }

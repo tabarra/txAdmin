@@ -168,10 +168,10 @@ function getFXServerPort(rawCfgFile) {
     //Checking for the maxClients
     if (GlobalData.deployerDefaults && GlobalData.deployerDefaults.maxClients) {
         if (!maxClients.length) {
-            throw new Error(`Zap-Hosting: please add 'sv_maxclients ${GlobalData.deployerDefaults.maxClients}' to your server.cfg.`);
+            throw new Error(`ZAP-Hosting: please add 'sv_maxclients ${GlobalData.deployerDefaults.maxClients}' to your server.cfg.`);
         }
         if (maxClients.some((mc) => mc > GlobalData.deployerDefaults.maxClients)) {
-            throw new Error(`Zap-Hosting: your 'sv_maxclients' MUST be less or equal than ${GlobalData.deployerDefaults.maxClients}.`);
+            throw new Error(`ZAP-Hosting: your 'sv_maxclients' MUST be less or equal than ${GlobalData.deployerDefaults.maxClients}.`);
         }
     }
 
@@ -190,7 +190,7 @@ function getFXServerPort(rawCfgFile) {
         throw new Error(`The port ${firstPort} is dedicated for txAdmin and can not be used for FXServer, please edit your <code>endpoint_add_*</code>`);
     }
 
-    //IF Zap-hosting interface bind enforcement
+    //IF ZAP-hosting interface bind enforcement
     if (GlobalData.forceInterface) {
         const stdMessage = [
             'Remove all lines containing <code>endpoint_add</code> and add the lines below to the top of your file.',
@@ -200,12 +200,12 @@ function getFXServerPort(rawCfgFile) {
 
         //Check if all ports are the ones being forced
         if (firstPort !== GlobalData.forceFXServerPort) {
-            throw new Error(`Zap-Hosting: invalid port found.<br>\n ${stdMessage}`);
+            throw new Error(`ZAP-Hosting: invalid port found.<br>\n ${stdMessage}`);
         }
 
         //Check if all interfaces are the ones being forced
         const invalidInterface = endpoints.find((match) => match.iface !== GlobalData.forceInterface);
-        if (invalidInterface) throw new Error(`Zap-Hosting: invalid interface '${invalidInterface.iface}'.<br>\n${stdMessage}`);
+        if (invalidInterface) throw new Error(`ZAP-Hosting: invalid interface '${invalidInterface.iface}'.<br>\n${stdMessage}`);
     } else {
         const validTCPEndpoint = endpoints.find((match) => {
             return (match.type === 'tcp' && (match.iface === '0.0.0.0' || match.iface === '127.0.0.1'));

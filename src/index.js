@@ -131,7 +131,7 @@ const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
 let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, defaultMasterAccount, runtimeSecret, deployerDefaults;
 const loopbackInterfaces = ['::1', '127.0.0.1', '127.0.1.1'];
 if (fs.existsSync(zapCfgFile)) {
-    log('Loading Zap-Hosting configuration file.');
+    log('Loading ZAP-Hosting configuration file.');
     try {
         zapCfgData = JSON.parse(fs.readFileSync(zapCfgFile));
         isZapHosting = true;
@@ -170,7 +170,7 @@ if (fs.existsSync(zapCfgFile)) {
 
         if (!isAdvancedUser) fs.unlinkSync(zapCfgFile);
     } catch (error) {
-        logDie(`Failed to load with Zap-Hosting configuration error: ${error.message}`);
+        logDie(`Failed to load with ZAP-Hosting configuration error: ${error.message}`);
     }
 } else {
     isZapHosting = false;
