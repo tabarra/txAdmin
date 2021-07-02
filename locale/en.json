@@ -40,7 +40,9 @@
             "help_message": "txAdmin has gotten an in-game menu!\nBind [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] to try it out!",
             "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
             "action_unauthorized": "You do not have this permission.",
-            "unknown_error": "An unknown error occurred."
+            "unknown_error": "An unknown error occurred.",
+            "not_enabled": "The txAdmin Menu is not enabled! Please check the docs for more info.",
+            "announcement_title": "Server Announcement:"
         },
         "common": {
             "cancel": "Cancel",
@@ -49,6 +51,10 @@
             "copied": "Copied to clipboard"
         },
         "page_main": {
+            "tooltips": {
+                "tooltip_1": "Use %{key} to switch pages & the arrow keys to navigate menu items",
+                "tooltip_2": "Certain menu items have sub options which can be selected using the left & right arrow keys"
+            },
             "fix_vehicle": {
                 "list_primary": "Fix Vehicle",
                 "list_secondary": "Set current vehicle health to 100%",
@@ -94,7 +100,8 @@
                 "dialog_desc": "Enter in the model name of the vehicle you want to spawn",
                 "dialog_success": "Vehicle spawned!",
                 "dialog_error": "The vehicle model name '%{modelName}' does not exist!",
-                "dialog_info": "Trying to spawn %{modelName}"
+                "dialog_info": "Trying to spawn %{modelName}",
+                "onesync_error": "This option requires that OneSync be on for server side spawning"
             },
             "heal_all": {
                 "list_primary": "Heal All Players",
@@ -142,6 +149,9 @@
                 "joined_last": "Joined Last",
                 "closest": "Closest",
                 "farthest": "Farthest"
+            },
+            "card": {
+                "health": "%{percentHealth}% health"
             }
         },
         "player_modal": {
@@ -243,7 +253,7 @@
                 "days": "days",
                 "weeks": "weeks",
                 "months": "months",
-                "perm": "Permanent",
+                "permanent": "Permanent",
                 "custom": "Custom",
                 "helper_text": "Please select a duration"
             }

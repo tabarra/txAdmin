@@ -2,8 +2,8 @@
   "serverCtx": {
     "locale": "en",
     "oneSync": {
-      "type": "Infinity",
-      "status": true
+      "type": null,
+      "status": false
     },
     "projectName": "Project Taso",
     "maxClients": 32,

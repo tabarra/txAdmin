@@ -6,9 +6,9 @@
     "restarter": {
         "start_timeout": "Se ha agotado el tiempo de espera para el arranque.",
         "crash_detected": "Caída del servidor detectada.",
-        "hang_detected": "hang detected",
-        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
-        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
+        "hang_detected": "Suspensión detectada",
+        "partial_hang_warn": "Debido a una suspensión parcial, el servidor se reiniciará en 1 minutos. Por favor, desconectate ahora.",
+        "partial_hang_warn_discord": "Debido a una suspensión parcial, **%{servername}** se reiniciará en un minuto.",
         "schedule_reason": "Reinicio programado a las %{time}",
         "schedule_warn": "El servidor se va a reiniciar en %{smart_count} minutos. Por favor desconéctense. |||| El servidor se va a reiniciar en %{smart_count} minutos.",
         "schedule_warn_discord": "**%{servername}** El servidor se va a reiniciar en %{smart_count} minutos. |||| **%{servername}** El servidor se va a reiniciar en %{smart_count} minutos."

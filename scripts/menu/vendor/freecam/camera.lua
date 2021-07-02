@@ -146,6 +146,5 @@ function SetFreecamActive(active)
     TriggerEvent('freecam:onExit')
   end
 
-  SetPlayerControl(PlayerId(), not active)
   RenderScriptCams(active, enableEasing, easingDuration)
 end

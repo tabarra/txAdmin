@@ -5,6 +5,7 @@ import { Box, Typography } from "@material-ui/core";
 import { useTranslate } from "react-polyglot";
 import { shouldHelpAlertShow } from "../utils/shouldHelpAlertShow";
 import { debugData } from "../utils/debugLog";
+import { getNotiDuration } from '../utils/getNotiDuration';
 
 type SnackbarAlertSeverities = "success" | "error" | "warning" | "info";
 
@@ -19,12 +20,13 @@ interface SnackbarPersistentAlert extends SnackbarAlert {
 }
 
 interface AnnounceMessageProps {
+  title: string;
   message: string;
 }
 
-const AnnounceMessage: React.FC<AnnounceMessageProps> = ({ message }) => (
+const AnnounceMessage: React.FC<AnnounceMessageProps> = ({ title, message }) => (
   <Box maxWidth={200}>
-    <Typography style={{ fontWeight: "bold" }}>Server Announcement</Typography>
+    <Typography style={{ fontWeight: "bold" }}>{title}</Typography>
     {message}
   </Box>
 );
@@ -85,7 +87,7 @@ export const useHudListenersService = () => {
           variant: level,
           persist: true,
           anchorOrigin: {
-            horizontal: "right",
+            horizontal: "center",
             vertical: "top",
           },
         }
@@ -102,9 +104,9 @@ export const useHudListenersService = () => {
   });
 
   useNuiEvent("addAnnounceMessage", ({ message }: { message: string }) => {
-    enqueueSnackbar(<AnnounceMessage message={message} />, {
-      variant: "warning",
-      title: "Server Announcement",
+    enqueueSnackbar(<AnnounceMessage message={message} title={t('nui_menu.misc.announcement_title')} />, {
+      variant: "info",
+      autoHideDuration: getNotiDuration(message) * 1000,
       anchorOrigin: {
         horizontal: "right",
         vertical: "top",

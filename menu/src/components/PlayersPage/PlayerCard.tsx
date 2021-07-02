@@ -20,6 +20,7 @@ import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
 import { PlayerData, VehicleStatus } from "../../state/players.state";
 import { useSetAssociatedPlayer } from "../../state/playerDetails.state";
 import { formatDistance } from "../../utils/miscUtils";
+import { useTranslate } from 'react-polyglot';
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -49,6 +50,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
   const classes = useStyles();
   const { setModalOpen } = usePlayerModalContext();
   const setAssociatedPlayer = useSetAssociatedPlayer();
+  const t = useTranslate()
 
   const statusIcon: { [K in VehicleStatus]: JSX.Element } = {
     unknown: <LiveHelp color="inherit" />,
@@ -126,7 +128,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
         </Box>
         <div>
           <Tooltip
-            title={`${playerData.health}% health`}
+            title={t('nui_menu.page_players.card.health', { percentHealth: playerData.health})}
             placement="bottom"
             arrow
             classes={{

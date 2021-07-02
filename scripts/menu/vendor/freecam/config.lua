@@ -47,7 +47,7 @@ local BASE_CAMERA_SETTINGS = protect({
 
   -- On enable/disable
   ENABLE_EASING = true,
-  EASING_DURATION = 1000,
+  EASING_DURATION = 250,
 
   -- Keep position/rotation
   KEEP_POSITION = false,

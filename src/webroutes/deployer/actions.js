@@ -86,6 +86,14 @@ async function handleSetVariables(ctx) {
     }
     const userVars = cloneDeep(ctx.request.body);
 
+    //Validating sv_licenseKey
+    if (
+        !GlobalData.regexSvLicenseNew.test(userVars.svLicense)
+        && !GlobalData.regexSvLicenseOld.test(userVars.svLicense)
+    ) {
+        return ctx.send({type: 'danger', message: 'The Server License does not appear to be valid.'});
+    }
+
     //DB Stuff
     if (typeof userVars.dbDelete !== 'undefined') {
         //Testing the db config

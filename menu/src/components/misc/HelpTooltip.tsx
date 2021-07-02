@@ -15,6 +15,8 @@ import {
 import { txAdminMenuPage, usePageValue } from "../../state/page.state";
 import { useIsMenuVisible } from "../../state/visibility.state";
 import { useDialogContext } from "../../provider/DialogProvider";
+import { useTranslate } from 'react-polyglot';
+import { useServerCtxValue } from '../../state/server.state';
 
 const RANDOM_CHANGE_TIME = 12000;
 const TIME_FOR_TOOLTIP_TO_APPEAR = 3000;
@@ -51,23 +53,27 @@ export const HelpTooltip: React.FC = ({ children }) => {
   const classes = useStyles();
   const timeTillOpenRef = useRef<NodeJS.Timer | null>(null);
   const changeMsgTimeRef = useRef<NodeJS.Timer | null>();
-
-  const [tooltipOpen, setTooltipOpen] = useState(false);
-  const [tooltipContent, setTooltipContent] = useState("");
+  const t = useTranslate()
+  const serverCtx = useServerCtxValue()
   const isMenuVisible = useIsMenuVisible();
   const { isDialogOpen } = useDialogContext();
 
-  const TooltipMessages = useMemo(
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const [tooltipContent, setTooltipContent] = useState("");
+
+  const formattedPageKey = `[${serverCtx.switchPageKey.toUpperCase()}]`
+
+  const toolTipMessages = useMemo(
     () => [
-      "Use [TAB] to switch pages & the arrow keys to navigate menu items",
-      "Certain menu items have sub options which can be selected using the left & right arrow keys",
+      t('nui_menu.page_main.tooltips.tooltip_1', { key: formattedPageKey }),
+      t('nui_menu.page_main.tooltips.tooltip_2'),
     ],
-    []
+    [t, formattedPageKey]
   );
 
   const getNewTooltip = useCallback((): string => {
     const generateNewTooltipRandomly = () =>
-      TooltipMessages[Math.floor(Math.random() * TooltipMessages.length)];
+      toolTipMessages[Math.floor(Math.random() * toolTipMessages.length)];
 
     let newTooltip = generateNewTooltipRandomly();
     while (newTooltip === tooltipContent) {
@@ -75,7 +81,7 @@ export const HelpTooltip: React.FC = ({ children }) => {
     }
 
     return newTooltip;
-  }, [TooltipMessages]);
+  }, [toolTipMessages]);
 
   const curPage = usePageValue();
 

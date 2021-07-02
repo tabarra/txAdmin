@@ -67,7 +67,7 @@ export const PlayerPageHeader: React.FC = () => {
         </Typography>
         <Typography className={classes.playerCount}>
           {`${allPlayers.length}/${serverCtx.maxClients} ${t('nui_menu.page_players.misc.players')} - ${
-            serverCtx.oneSync.status ? `OneSync (${serverCtx.oneSync.type})` : `Legacy`}`}
+            serverCtx.oneSync.status ? `OneSync (${serverCtx.oneSync.type})` : `OneSync Off`}`}
         </Typography>
       </Box>
       <Box display="flex" alignItems="center" justifyContent="center">
