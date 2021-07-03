@@ -20,7 +20,7 @@
 - [ ] menu: fix player modal not handling `logout: true` (look for fetchWebPipe)
 
 FreezeEntityPosition need to get the veh
-
+debugModeEnabled and isMenuDebug are redundant, should probably just use the one from shared
 
 ## Client code:
     let playerlist;
@@ -351,7 +351,7 @@ rm -rf dist && npm run build && tar.exe -cvf dist/monitor.zip dist/* && explorer
 export TXADMIN_DEFAULT_LICENSE="cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx"
 npm-upgrade
 con_miniconChannels script:monitor*
-+set svgui_disable true +set txAdminMenu-debugMode true +setr txEnableMenuBeta true
++set svgui_disable true +setr txAdminMenu-debugMode true +setr txEnableMenuBeta true
 
 # eslint stuff
 npx eslint ./src/**

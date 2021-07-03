@@ -28,7 +28,7 @@ local function getPlayerData(src)
 end
 
 local loggerBuffer = {}
-local PRINT_STRUCTURED_TRACE = GetHashKey('PRINT_STRUCTURED_TRACE')
+local PRINT_STRUCTURED_TRACE = GetHashKey('PRINT_STRUCTURED_TRACE') & 0xFFFFFFFF
 --- function logger
 --- Sends logs through fd3 to the server & displays the logs on the panel.
 ---@param src number the source of the player who did the action
@@ -52,7 +52,7 @@ CreateThread(function()
                 type = 'txAdminLogData',
                 logs = loggerBuffer
             })
-            Citizen.InvokeNative(PRINT_STRUCTURED_TRACE & 0xFFFFFFFF, payload)
+            Citizen.InvokeNative(PRINT_STRUCTURED_TRACE, payload)
             loggerBuffer = {}
         end
     end

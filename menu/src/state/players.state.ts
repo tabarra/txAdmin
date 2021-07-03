@@ -11,8 +11,7 @@ export enum VehicleStatus {
   Unknown = "unknown",
   Walking = "walking",
   Driving = "driving",
-  // Hovering = "hovering", // helicopter
-  // Flying = "flying",
+  Flying = "flying", //planes or heli
   Boat = "boating",
   Biking = "biking",
 }

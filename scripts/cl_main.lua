@@ -39,8 +39,6 @@ end)
 
 
 
-
-local debugPrint = print -- FIXME: remover
 -- Self data reporting thread
 CreateThread(function()
     local ceil = math.ceil

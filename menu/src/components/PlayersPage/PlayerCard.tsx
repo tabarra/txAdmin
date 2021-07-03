@@ -15,6 +15,7 @@ import {
   LiveHelp,
   MoreVert,
   Motorcycle,
+  Flight
 } from "@material-ui/icons";
 import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
 import { PlayerData, VehicleStatus } from "../../state/players.state";
@@ -58,6 +59,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
     driving: <DriveEta color="inherit" />,
     boating: <DirectionsBoat color="inherit" />,
     biking: <Motorcycle color="inherit" />,
+    flying: <Flight color="inherit" />,
   };
 
   const handlePlayerClick = () => {

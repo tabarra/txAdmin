@@ -5,24 +5,34 @@ end
 local apiHost = GetConvar("txAdmin-apiHost", "invalid")
 local pipeToken = GetConvar("txAdmin-pipeToken", "invalid")
 if apiHost == "invalid" or pipeToken == "invalid" then
-  print('API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
+  print('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
+  return
+end
+if pipeToken == "removed" then
+  print('^1Please do not restart the monitor resource.')
   return
 end
 
--- How many MS is the interval for the update time
--- Up this to bump client performance at the cost of player page updates
-local intervalUpdateTime = GetConvarInt('txAdminMenu-updateInterval', 5000)
+-- Erasing the token convar for security reasons, and then restoring it if debug mode
+-- The convar needs to be reset on first tick to prevent other resources from reading it.
+SetConvar("txAdmin-pipeToken", "removed")
+CreateThread(function()
+  if (GetConvar('txAdminMenu-debugMode', 'false') == 'true') then
+    print("^5 restoring token restoring token restoring token restoring token restoring token restoring token restoring token restoring token")
+    SetConvar("txAdmin-pipeToken", pipeToken)
+  end
+end)
 
---Erasing the token convar for security reasons
-if (GetConvar('txAdminMenu-debugMode', 'false') ~= 'true') then
-  SetConvar("txAdmin-pipeToken", "removed")
-end
 
 
 -- Vars
 local adminPermissions = {}
 local EMIT_BITRATE = 30000
 local LAST_PLAYER_DATA = {}
+
+-- How many MS is the interval for the update time
+-- Up this to bump client performance at the cost of player page updates
+local intervalUpdateTime = GetConvarInt('txAdminMenu-updateInterval', 5000)
 
 --- Determine if a source has a given permission
 ---@param source number
