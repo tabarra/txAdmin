@@ -8,6 +8,7 @@ menuIsAccessible = false
 isMenuDebug = false
 isMenuVisible = false
 menuPermissions = {}
+lastTpCoords = false;
 
 CreateThread(function()
   isMenuDebug = (GetConvar('txAdminMenu-debugMode', 'false') == 'true')

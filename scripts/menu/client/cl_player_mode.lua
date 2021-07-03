@@ -35,7 +35,7 @@ local function toggleFreecam(enabled)
     end
 
     local function enableNoClip()
-        lastTp = GetEntityCoords(ped)
+        lastTpCoords = GetEntityCoords(ped)
 
         SetFreecamActive(true)
         StartFreecamThread()

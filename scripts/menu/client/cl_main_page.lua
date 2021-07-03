@@ -7,8 +7,6 @@ if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
     return
 end
 
--- Last location stored in a vec3
-local lastTp
 
 --[[ NUI CALLBACKS ]]
 
@@ -30,8 +28,8 @@ RegisterNUICallback('tpToPlayer', function(data, cb)
 end)
 
 RegisterNUICallback('tpBack', function(_, cb)
-    if lastTp then
-        TriggerServerEvent('txAdmin:menu:tpToCoords', lastTp.x, lastTp.y, lastTp.z)
+    if lastTpCoords then
+        TriggerServerEvent('txAdmin:menu:tpToCoords', lastTpCoords.x, lastTpCoords.y, lastTpCoords.z)
         cb({})
     else
         cb({ e = true })
@@ -165,7 +163,7 @@ end)
 RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
-    lastTp = GetEntityCoords(ped)
+    lastTpCoords = GetEntityCoords(ped)
 
     DoScreenFadeOut(500)
     while not IsScreenFadedOut() do Wait(0) end
@@ -190,7 +188,7 @@ RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
     if waypoint and waypoint > 0 then
         local ped = PlayerPedId()
         local veh = GetVehiclePedIsIn(ped, false)
-        lastTp = GetEntityCoords(ped)
+        lastTpCoords = GetEntityCoords(ped)
 
         DoScreenFadeOut(500)
         while not IsScreenFadedOut() do Wait(0) end
