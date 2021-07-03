@@ -10,6 +10,7 @@ end
 local posCache = {}
 local vehCache = {}
 RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
+    -- print(json.encode(data))
     local NetToVeh = NetToVeh
     local GetVehicleClass = GetVehicleClass
 

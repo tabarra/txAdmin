@@ -8,7 +8,6 @@ menuIsAccessible = false
 isMenuDebug = false
 isMenuVisible = false
 menuPermissions = {}
-ServerCtx = {}
 
 CreateThread(function()
   isMenuDebug = (GetConvar('txAdminMenu-debugMode', 'false') == 'true')
@@ -67,25 +66,7 @@ RegisterNetEvent('txAdmin:events:enableDebug', function(enabled)
   debugModeEnabled = enabled
 end)
 
--- ===============
---  ServerCtx
--- ===============
---- Will update ServerCtx based on GlobalState and will send it to NUI
-function updateServerCtx()
-  _ServerCtx = GlobalState.txAdminServerCtx
-  if _ServerCtx == nil then
-    debugPrint('^3ServerCtx fallback support activated')
-    TriggerServerEvent('txAdmin:events:getServerCtx')
-  else
-    ServerCtx = _ServerCtx
-  end
-end
 
-RegisterNetEvent('txAdmin:events:setServerCtx', function(ctx)
-  if type(ctx) ~= 'table' then return end
-  ServerCtx = ctx
-  debugPrint('^2ServerCtx updated from server event')
-end)
 
 --[[ NUI Callbacks ]]
 
@@ -115,15 +96,6 @@ RegisterNUICallback('playSound', function(sound, cb)
   cb({})
 end)
 
-RegisterNUICallback('getServerCtx', function(_, cb)
-  CreateThread(function()
-    updateServerCtx()
-    while ServerCtx == nil do Wait(0) end
-    debugPrint('Server CTX:')
-    debugPrint(json.encode(ServerCtx))
-    cb(ServerCtx)
-  end)
-end)
 
 --[[ Threads ]]
 

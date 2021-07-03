@@ -15,6 +15,7 @@ export interface ServerCtx {
   locale: string;
   switchPageKey: string;
   txAdminVersion: string;
+  endpoint: string;
 }
 
 const serverCtx = atom<ServerCtx>({
