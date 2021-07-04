@@ -282,7 +282,7 @@ module.exports = class Monitor {
         if (this.lastRefreshStatus !== null && elapsedRefreshStatus > 10) {
             globals.databus.txStatsData.monitorStats.freezeSeconds.push(elapsedRefreshStatus - 1);
             if (globals.databus.txStatsData.monitorStats.freezeSeconds.length > 30) globals.databus.txStatsData.monitorStats.freezeSeconds.shift();
-            logError(`Due to VPS issues or DDoS, this FXServer was frozen for ${elapsedRefreshStatus - 1} seconds.`);
+            logError(`FXServer was frozen for ${elapsedRefreshStatus - 1} seconds for unknown reason (random issue, VPS Lag, DDoS, etc).`);
             logError('Don\'t worry, txAdmin is preventing the server from being restarted.');
             this.lastRefreshStatus = currTimestamp;
             return;
