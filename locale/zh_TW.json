@@ -40,7 +40,9 @@
             "help_message": "txAdmin 已經推出游戲嵌入介面 !\n可以到 [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] 綁定按鍵，嘗試全新的介面 !",
             "menu_not_allowed": "你的帳戶尚未在 txAdmin 進行申請。\n如果你已經在 txAdmin 進行了申請， 請到 Admin Manager 確保你的個人資料已經儲存。",
             "action_unauthorized": "權限不足。",
-            "unknown_error": "發生未知錯誤。"
+            "unknown_error": "發生未知錯誤。",
+            "not_enabled": "txAdmin 選單尚未啟用! 請查看相關文件去取得更多資訊。",
+            "announcement_title": "伺服器公告:"
         },
         "common": {
             "cancel": "取消",
@@ -94,7 +96,8 @@
                 "dialog_desc": "請輸入車輛模型名稱進行生成",
                 "dialog_success": "車輛已生成!",
                 "dialog_error": "車輛模型名稱: '%{modelName}' 並不存在!",
-                "dialog_info": "正在嘗試生成 %{modelName}"
+                "dialog_info": "正在嘗試生成 %{modelName}",
+                "onesync_error": "這個選項需要 OneSync 為開啟的狀態，從而實行伺服器端生成"
             },
             "heal_all": {
                 "list_primary": "治癒所有玩家",
@@ -125,6 +128,10 @@
             "copy_coords": {
                 "list_primary": "複製座標",
                 "list_secondary": "座標已複製到剪貼簿"
+            },
+            "tooltips": {
+                "tooltip_1": "按 %{key} 更換頁面以及使用方向鍵去選擇選單選項",
+                "tooltip_2": "某些選項擁有多重選項，你可以使用左右方向鍵切換該選項"
             }
         },
         "page_players": {
@@ -142,6 +149,9 @@
                 "joined_last": "最遲加入",
                 "closest": "最近",
                 "farthest": "最遠"
+            },
+            "card": {
+                "health": "%{percentHealth}% 生命值"
             }
         },
         "player_modal": {
@@ -227,16 +237,6 @@
                 "title": "相關歷史"
             },
             "ban": {
-                "title": "封鎖玩家",
-                "reason_placeholder": "原因",
-                "duration_placeholder": "時效",
-                "hours": "小時",
-                "days": "日",
-                "weeks": "星期",
-                "months": "個月",
-                "perm": "永久",
-                "custom": "自訂",
-                "helper_text": "請選擇時效",
                 "action_types": {
                     "warn": "警告",
                     "warn_revoked": "警告已被撤回，原因: ",
@@ -245,7 +245,17 @@
                     "ban_revoked": "封鎖已被撤回，原因: ",
                     "whitelist": "白名單",
                     "whitelist_revoked": "白名單已被撤回，原因: "
-                }
+                },
+                "title": "封鎖玩家",
+                "reason_placeholder": "原因",
+                "duration_placeholder": "時效",
+                "hours": "小時",
+                "days": "日",
+                "weeks": "星期",
+                "months": "個月",
+                "permanent": "永久",
+                "custom": "自訂",
+                "helper_text": "請選擇時效"
             }
         }
     }
