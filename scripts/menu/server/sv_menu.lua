@@ -320,7 +320,7 @@ end)
 --
 
 
-RegisterServerEvent('txAdmin:menu:checkAccess', function()
+RegisterNetEvent('txAdmin:menu:checkAccess', function()
   local src = source
   local canAccess = not (adminPermissions[tostring(src)] == nil)
   debugPrint((canAccess and "^2" or "^1") .. GetPlayerName(src) ..
@@ -328,7 +328,7 @@ RegisterServerEvent('txAdmin:menu:checkAccess', function()
   TriggerClientEvent('txAdmin:menu:setAccessible', src, canAccess)
 end)
 
-RegisterServerEvent('txAdmin:menu:playerModeChanged', function(mode)
+RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode)
   local src = source
   if mode ~= 'godmode' and mode ~= 'noclip' and mode ~= 'none' then
     debugPrint("Invalid player mode requested by " .. GetPlayerName(src) .. " (mode: " .. (mode or 'nil'))
@@ -342,7 +342,7 @@ RegisterServerEvent('txAdmin:menu:playerModeChanged', function(mode)
   end
 end)
 
-RegisterServerEvent('txAdmin:menu:healMyself', function()
+RegisterNetEvent('txAdmin:menu:healMyself', function()
   local src = source
   local allow = PlayerHasTxPermission(src, 'players.heal')
   TriggerEvent("txaLogger:menuEvent", src, "healSelf", allow)
@@ -351,7 +351,7 @@ RegisterServerEvent('txAdmin:menu:healMyself', function()
   end
 end)
 
-RegisterServerEvent('txAdmin:menu:healPlayer', function(id)
+RegisterNetEvent('txAdmin:menu:healPlayer', function(id)
   local src = source
   if type(id) ~= 'string' and type(id) ~= 'number' then
     return
@@ -369,7 +369,7 @@ RegisterServerEvent('txAdmin:menu:healPlayer', function(id)
   TriggerEvent('txaLogger:menuEvent', src, "healPlayer", allow, playerName)
 end)
 
-RegisterServerEvent('txAdmin:menu:spectatePlayer', function(id)
+RegisterNetEvent('txAdmin:menu:spectatePlayer', function(id)
   local src = source
   -- Sanity as this is still converted tonumber on client side
   if type(id) ~= 'string' and type(id) ~= 'number' then
@@ -390,7 +390,7 @@ RegisterServerEvent('txAdmin:menu:spectatePlayer', function(id)
   TriggerEvent('txaLogger:menuEvent', src, 'spectatePlayer', allow, id)
 end)
 
-RegisterServerEvent('txAdmin:menu:healAllPlayers', function()
+RegisterNetEvent('txAdmin:menu:healAllPlayers', function()
   local src = source
   local allow = PlayerHasTxPermission(src, 'players.heal')
   TriggerEvent("txaLogger:menuEvent", src, "healAll", true)
@@ -402,7 +402,7 @@ end)
 ---@param x number|nil
 ---@param y number|nil
 ---@param z number|nil
-RegisterServerEvent('txAdmin:menu:tpToCoords', function(x, y, z)
+RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   local src = source
   if type(x) ~= 'number' or type(y) ~= 'number' or type(z) ~= 'number' then
     return
@@ -415,7 +415,7 @@ RegisterServerEvent('txAdmin:menu:tpToCoords', function(x, y, z)
   end
 end)
 
-RegisterServerEvent('txAdmin:menu:tpToPlayer', function(id)
+RegisterNetEvent('txAdmin:menu:tpToPlayer', function(id)
   local src = source
   if type(id) ~= 'number' then
     return
@@ -441,7 +441,7 @@ RegisterServerEvent('txAdmin:menu:tpToPlayer', function(id)
   TriggerEvent('txaLogger:menuEvent', src, 'teleportPlayer', allow, data)
 end)
 
-RegisterServerEvent('txAdmin:menu:summonPlayer', function(id)
+RegisterNetEvent('txAdmin:menu:summonPlayer', function(id)
   local src = source
   if type(id) ~= 'number' then
     return
@@ -460,7 +460,7 @@ RegisterServerEvent('txAdmin:menu:summonPlayer', function(id)
   TriggerEvent('txaLogger:menuEvent', src, 'summonPlayer', allow, playerName)
 end)
 
-RegisterServerEvent('txAdmin:menu:tpToWaypoint', function()
+RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
   local src = source
   local allow = PlayerHasTxPermission(src, 'players.teleport')
   if allow then
@@ -474,7 +474,7 @@ RegisterServerEvent('txAdmin:menu:tpToWaypoint', function()
   end
 end)
 
-RegisterServerEvent('txAdmin:menu:sendAnnouncement', function(message)
+RegisterNetEvent('txAdmin:menu:sendAnnouncement', function(message)
   local src = source
   if type(message) ~= 'string' then
     return
@@ -486,7 +486,7 @@ RegisterServerEvent('txAdmin:menu:sendAnnouncement', function(message)
   end
 end)
 
-RegisterServerEvent('txAdmin:menu:fixVehicle', function()
+RegisterNetEvent('txAdmin:menu:fixVehicle', function()
   local src = source
   local allow = PlayerHasTxPermission(src, 'menu.vehicle')
   TriggerEvent("txaLogger:menuEvent", src, "vehicleRepair", allow)
@@ -500,7 +500,7 @@ local CREATE_AUTOMOBILE = GetHashKey('CREATE_AUTOMOBILE')
 --- Spawn a vehicle on the server at the request of a client
 ---@param model string
 ---@param isAutomobile boolean
-RegisterServerEvent('txAdmin:menu:spawnVehicle', function(model, isAutomobile)
+RegisterNetEvent('txAdmin:menu:spawnVehicle', function(model, isAutomobile)
   local src = source
   if type(model) ~= 'string' then
     return

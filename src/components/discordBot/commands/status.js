@@ -17,7 +17,7 @@ module.exports = {
             replaces.players = (Array.isArray(globals.playerController.activePlayers)) ? globals.playerController.activePlayers.length : '--';
             replaces.port = (globals.config.forceFXServerPort) ? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
         } else {
-            cardColor = 0xF000FF;
+            cardColor = 0xFF001E;
             cardTitle = globals.translator.t('discord.status_offline', {servername: globals.config.serverName});
             replaces.players = '--';
             replaces.port = '--';

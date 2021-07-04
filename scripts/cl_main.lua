@@ -38,7 +38,6 @@ RegisterNUICallback('getServerCtx', function(_, cb)
 end)
 
 
-
 -- Self data reporting thread
 CreateThread(function()
     local ceil = math.ceil
@@ -52,10 +51,8 @@ CreateThread(function()
         end
 
         if onesyncEnabled then
-            print("sending onesync on")
             TriggerServerEvent('txAdmin:selfDataReport', vehClass)
         else
-            print("sending onesync off")
             local health = ceil(((GetEntityHealth(ped) - 100) / 100) * 100)
             local coords = GetEntityCoords(ped) or -1
             TriggerServerEvent('txAdmin:selfDataReport', vehClass, health, coords)
