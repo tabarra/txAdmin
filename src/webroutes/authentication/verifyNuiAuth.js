@@ -13,6 +13,9 @@ const sessDuration = 60 * 60 * 1000; //one hour
 module.exports = async function VerifyNuiAuth(ctx) {
     // Check sus IPs
     if (!GlobalData.loopbackInterfaces.includes(ctx.ip)) {
+        if (GlobalData.verbose) {
+            logWarn(`NUI Auth Failed: ctx.ip (${ctx.ip}) not in ${JSON.stringify(GlobalData.loopbackInterfaces)}.`);
+        }
         return ctx.send({isAdmin: false, reason: 'Invalid Request: source'});
     }
 
@@ -26,6 +29,9 @@ module.exports = async function VerifyNuiAuth(ctx) {
 
     // Check token value
     if (ctx.request.headers['x-txadmin-token'] !== globals.webServer.fxWebPipeToken) {
+        if (GlobalData.verbose) {
+            logWarn(`NUI Auth Failed: token received ${ctx.request.headers['x-txadmin-token']} !== expected ${globals.webServer.fxWebPipeToken}.`);
+        }
         return ctx.send({isAdmin: false, reason: 'Unauthorized: token value'});
     }
 
@@ -41,6 +47,9 @@ module.exports = async function VerifyNuiAuth(ctx) {
     try {
         const admin = globals.adminVault.getAdminByIdentifiers(identifiers);
         if (!admin) {
+            if (GlobalData.verbose) {
+                logWarn(`NUI Auth Failed: no admin found with identifiers ${JSON.stringify(identifiers)}.`);
+            }
             return ctx.send({isAdmin: false, reason: 'Unauthorized: admin not found'});
         }
 
