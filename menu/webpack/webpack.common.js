@@ -7,7 +7,7 @@ module.exports = (options) => ({
     entry: './menu/src/index.tsx',
     output: {
         path: path.join(processCWD, 'scripts/menu/nui'),
-        filename: options.mode === 'production' ? '[hash].js' : 'index.js',
+        filename: 'index.js',
     },
     optimization: options.optimization,
     devServer: options.devServer,
