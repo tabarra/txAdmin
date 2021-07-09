@@ -99,10 +99,18 @@ end
 
 -- HTTP request handler
 function handleHttp(req, res)
+    res.writeHead(200, {["Content-Type"]="application/json"})
+
     if req.path == '/stats.json' then
         return res.send(hbReturnData)
+    elseif req.path == '/players.json' then
+        if txHttpPlayerlistHandler ~= nil then
+            return txHttpPlayerlistHandler(req, res)
+        else
+            return res.send(json.encode({error = 'handler not found'}))
+        end
     else
-        return res.send('')
+        return res.send(json.encode({error = 'route not found'}))
     end
 end
 

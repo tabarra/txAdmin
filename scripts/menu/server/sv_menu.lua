@@ -585,6 +585,7 @@ local function getPlayersLicense(src)
 end
 
 --[[ Emit player list to clients ]]
+-- FIXME: old playerlist, remove
 CreateThread(function()
   local ceil = math.ceil
   local sub = string.sub
@@ -638,7 +639,7 @@ CreateThread(function()
       emitData.i = serverID
       for k, v in pairs(emitData) do
         LAST_PLAYER_DATA[serverID][k] = v
-        debugPrint(("^1emit ^4%d :: ^2%s^1 = ^3%s^0"):format(serverID, k, v))
+        -- debugPrint(("^1emit ^4%d :: ^2%s^1 = ^3%s^0"):format(serverID, k, v))
       end
       found[#found + 1] = emitData
       totalFound = totalFound + 1
@@ -652,13 +653,15 @@ CreateThread(function()
     end
 
     if totalAdmins > 0 and totalFound > 0 then
-      debugPrint("^4Sending ^3" .. totalFound .. "^4 users details to ^3" .. totalAdmins .. "^4 admins^0")
+      -- debugPrint("^4Sending ^3" .. totalFound .. "^4 users details to ^3" .. totalAdmins .. "^4 admins^0")
     end
 
     for id, _ in pairs(ADMIN_DATA) do
       sendFullClientData(id, found)
     end
-  end
+
+
+  end --end while true
 end)
 
 --[[ Handle player disconnects ]]

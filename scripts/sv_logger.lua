@@ -28,7 +28,7 @@ local function getPlayerData(src)
 end
 
 local loggerBuffer = {}
-local PRINT_STRUCTURED_TRACE = GetHashKey('PRINT_STRUCTURED_TRACE') & 0xFFFFFFFF
+local PRINT_STRUCTURED_TRACE = `PRINT_STRUCTURED_TRACE` & 0xFFFFFFFF
 --- function logger
 --- Sends logs through fd3 to the server & displays the logs on the panel.
 ---@param src number the source of the player who did the action

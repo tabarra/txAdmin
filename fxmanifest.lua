@@ -21,6 +21,7 @@ server_scripts {
     'main.js',
     'scripts/sv_main.lua',
     'scripts/sv_logger.lua',
+    'scripts/sv_playerlist.lua',
     'scripts/menu/server/sv_menu.lua',
     'scripts/menu/server/sv_trollactions.lua',
 }
