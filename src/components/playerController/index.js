@@ -4,6 +4,7 @@ const { customAlphabet } = require('nanoid');
 const humanizeDuration = require('humanize-duration'); //FIXME: remove, this controller is not the right place for interface stuff
 const xss = require('../../extras/xss')(); //FIXME: same as above
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+// eslint-disable-next-line no-unused-vars
 const { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } = require('./database.js');
 
 //Helpers
