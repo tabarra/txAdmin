@@ -13,12 +13,14 @@ if pipeToken == "removed" then
   return
 end
 
--- Erasing the token convar for security reasons, and then restoring it if debug mode
+-- Erasing the token convar for security reasons, and then restoring it if debug mode.
 -- The convar needs to be reset on first tick to prevent other resources from reading it.
+-- We actually need to wait two frames: one for convar replication, one for debugPrint.
 SetConvar("txAdmin-pipeToken", "removed")
 CreateThread(function()
-  if (GetConvar('txAdminMenu-debugMode', 'false') == 'true') then
-    print("^5 restoring token restoring token restoring token restoring token restoring token restoring token restoring token restoring token")
+  Wait(0) 
+  if debugModeEnabled then
+    debugPrint("Restoring txAdmin-pipeToken for next monitor restart")
     SetConvar("txAdmin-pipeToken", pipeToken)
   end
 end)
@@ -26,7 +28,7 @@ end)
 
 
 -- Vars
-local adminPermissions = {}
+ADMIN_DATA = {}
 local EMIT_BITRATE = 30000
 local LAST_PLAYER_DATA = {}
 
@@ -38,19 +40,19 @@ local intervalUpdateTime = GetConvarInt('txAdminMenu-updateInterval', 5000)
 ---@param source number
 ---@param permission string
 ---@return boolean
-function PlayerHasTxPermission(source, permission)
+function PlayerHasTxPermission(source, reqPerm)
   local allow = false
-  local perms = adminPermissions[tostring(source)]
-  if perms then
-    for _, perm in pairs(perms) do
-      if perm == 'all_permissions' or permission == perm then
+  local admin = ADMIN_DATA[tostring(source)]
+  if admin and admin.perms then
+    for _, perm in pairs(admin.perms) do
+      if perm == 'all_permissions' or reqPerm == perm then
         allow = true
         break
       end
     end
   end
   debugPrint(string.format("permission check (src=^3%d^0, perm=^4%s^0, result=%s^0)",
-      source, permission, (allow and '^2true' or '^1false')))
+  source, reqPerm, (allow and '^2true' or '^1false')))
   return allow
 end
 
@@ -91,7 +93,7 @@ AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
 
   -- Collect old and new admin IDs
   local refreshAdminIds = {}
-  for id, _ in pairs(adminPermissions) do
+  for id, _ in pairs(ADMIN_DATA) do
     refreshAdminIds[#refreshAdminIds + 1] = id
   end
   for _, newId in pairs(onlineAdminIDs) do
@@ -100,7 +102,7 @@ AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
   debugPrint('^3Forcing ' .. #refreshAdminIds .. ' clients to re-auth')
 
   -- Resetting all admin permissions
-  adminPermissions = {}
+  ADMIN_DATA = {}
 
   -- Informing clients that they need to reauth
   for id, _ in pairs(refreshAdminIds) do
@@ -151,7 +153,7 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
   end
 
   -- Reject requests from un-authed players
-  if path ~= '/auth/nui' and not adminPermissions[src] then
+  if path ~= '/auth/nui' and not ADMIN_DATA[src] then
     if _pipeLastReject ~= nil then
       if (GetGameTimer() - _pipeLastReject) < 250 then
         _pipeLastReject = GetGameTimer()
@@ -212,11 +214,19 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, method, path, headers, b
     if path == '/auth/nui' and httpCode == 200 then
       local resp = json.decode(data)
       if resp and resp.isAdmin then
-        debugPrint("Caching admin " .. s .. " permissions: " .. json.encode(resp.permissions))
-        adminPermissions[src] = resp.permissions
-        sendFullClientData(s)
+        if type(resp.permissions) == 'table' and type(resp.luaToken) == 'string' and string.len(resp.luaToken) == 20 then
+          debugPrint(("Authenticated admin %s with permissions %s and token %s."):format(src, json.encode(resp.permissions), resp.luaToken))
+          ADMIN_DATA[src] = {
+            perms = resp.permissions,
+            token = resp.luaToken
+          }
+          sendFullClientData(s)
+        else
+          debugPrint("Auth failed for admin %s due to response validation.")
+          ADMIN_DATA[src] = nil
+        end
       else
-        adminPermissions[src] = nil
+        ADMIN_DATA[src] = nil
       end
     end
 
@@ -322,7 +332,7 @@ end)
 
 RegisterNetEvent('txAdmin:menu:checkAccess', function()
   local src = source
-  local canAccess = not (adminPermissions[tostring(src)] == nil)
+  local canAccess = not (ADMIN_DATA[tostring(src)] == nil)
   debugPrint((canAccess and "^2" or "^1") .. GetPlayerName(src) ..
       " does " .. (canAccess and "" or "NOT ") .. "have menu permission.")
   TriggerClientEvent('txAdmin:menu:setAccessible', src, canAccess)
@@ -637,7 +647,7 @@ CreateThread(function()
 
     -- calculate the number of admins
     local totalAdmins = 0
-    for _ in pairs(adminPermissions) do
+    for _ in pairs(ADMIN_DATA) do
       totalAdmins = totalAdmins + 1
     end
 
@@ -645,7 +655,7 @@ CreateThread(function()
       debugPrint("^4Sending ^3" .. totalFound .. "^4 users details to ^3" .. totalAdmins .. "^4 admins^0")
     end
 
-    for id, _ in pairs(adminPermissions) do
+    for id, _ in pairs(ADMIN_DATA) do
       sendFullClientData(id, found)
     end
   end
@@ -654,6 +664,6 @@ end)
 --[[ Handle player disconnects ]]
 AddEventHandler('playerDropped', function()
   local s = source
-  adminPermissions[tostring(s)] = nil
+  ADMIN_DATA[tostring(s)] = nil
   LAST_PLAYER_DATA[tostring(s)] = nil
 end)

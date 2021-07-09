@@ -29,6 +29,7 @@ export interface PermCheckServerResp {
   isAdmin: boolean;
   permissions?: ResolvablePermission[];
   expiration?: number;
+  luaToken: string;
   logout?: boolean;
 }
 

@@ -19,6 +19,7 @@ export const useCheckCredentials = () => {
             expiration: 100000,
             isAdmin: true,
             permissions: ["all_permissions"],
+            luaToken: "xxxx_Debug_Token_xxx",
           });
           return;
         }

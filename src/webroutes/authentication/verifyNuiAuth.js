@@ -1,5 +1,8 @@
 //Requires
 const modulename = 'WebServer:VerifyNuiAuth';
+const { customAlphabet } = require('nanoid');
+const dict51 = require('nanoid-dictionary/nolookalikes');
+const nanoid = customAlphabet(dict51, 20);
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
@@ -70,6 +73,7 @@ module.exports = async function VerifyNuiAuth(ctx) {
             isAdmin: true,
             permissions,
             expiration: Date.now() + sessDuration,
+            luaToken: nanoid(),
         });
 
         // FIXME: tabarra
