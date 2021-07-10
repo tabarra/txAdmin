@@ -58,7 +58,7 @@ CreateThread(function()
                 health = playerSelfReportData[serverID].health or health
                 coords = playerSelfReportData[serverID].coords or coords
             end
-            
+
             -- from server
             if onesyncEnabled == true then
                 local ped = GetPlayerPed(serverID)
@@ -80,7 +80,7 @@ CreateThread(function()
                 TX_PLAYERLIST[serverID].c = coords
                 TX_PLAYERLIST[serverID].v = vehClass
             end
-      
+
             -- We actually need this locally, can't do tmpPlayerlist[serverID] = TX_PLAYERLIST[serverID]  
             tmpPlayerlist[serverID] = {
                 name = TX_PLAYERLIST[serverID].name,

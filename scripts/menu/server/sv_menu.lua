@@ -18,7 +18,7 @@ end
 -- We actually need to wait two frames: one for convar replication, one for debugPrint.
 SetConvar("txAdmin-pipeToken", "removed")
 CreateThread(function()
-  Wait(0) 
+  Wait(0)
   if debugModeEnabled then
     debugPrint("Restoring txAdmin-pipeToken for next monitor restart")
     SetConvar("txAdmin-pipeToken", pipeToken)
@@ -38,7 +38,7 @@ local intervalUpdateTime = GetConvarInt('txAdminMenu-updateInterval', 5000)
 
 --- Determine if a source has a given permission
 ---@param source number
----@param permission string
+---@param reqPerm string
 ---@return boolean
 function PlayerHasTxPermission(source, reqPerm)
   local allow = false
@@ -87,7 +87,7 @@ RegisterCommand('txAdmin-debug', function(src, args)
   end
 end)
 
----@param onlineAdminIDs table<number>
+---@param onlineAdminIDs table
 AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
   debugPrint('^3Admins changed. Online admins: ' .. json.encode(onlineAdminIDs) .. "^0")
 
@@ -110,7 +110,7 @@ AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
   end
 end)
 
--- 
+--
 -- [[ WebPipe Proxy ]]
 --
 local _pipeLastReject
