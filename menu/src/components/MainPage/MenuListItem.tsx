@@ -31,6 +31,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   root: {
     borderRadius: 15,
   },
+  rootDisabled: {
+    borderRadius: 15,
+    opacity: 0.3
+  },
   icon: {
     color: theme.palette.text.secondary,
   },
@@ -87,7 +91,7 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
       <div ref={divRef}>
         <ListItem
           onClick={() => onSelect()}
-          className={classes.root}
+          className={isUserAllowed ? classes.root : classes.rootDisabled}
           dense
           selected={selected}
         >
@@ -215,7 +219,11 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
 
     return (
       <div ref={divRef}>
-        <ListItem className={classes.root} dense selected={selected}>
+        <ListItem 
+          className={isUserAllowed ? classes.root : classes.rootDisabled}
+          dense 
+          selected={selected}
+        >
           <ListItemIcon className={classes.icon}>
             {actions[curState]?.icon || icon}
           </ListItemIcon>
