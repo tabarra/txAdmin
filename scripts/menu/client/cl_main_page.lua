@@ -167,6 +167,8 @@ RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
 
     DoScreenFadeOut(500)
     while not IsScreenFadedOut() do Wait(0) end
+    -- refresh
+    ped = PlayerPedId()
     SetPedCoordsKeepVehicle(ped, x, y, 100.0)
     if veh > 0 then
         FreezeEntityPosition(veh, true)
@@ -195,7 +197,7 @@ RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
             z = _finalZ
         end
     end
-    -- update ped just in case
+    -- update ped again
     ped = PlayerPedId()
     SetPedCoordsKeepVehicle(ped, x, y, z)
     if veh > 0 then
