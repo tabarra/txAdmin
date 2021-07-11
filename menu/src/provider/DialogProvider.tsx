@@ -134,10 +134,12 @@ export const DialogProvider: React.FC = ({ children }) => {
       }}
     >
       <Dialog
-        onEscapeKeyDown={handleDialogClose}
+        onClose={handleDialogClose}
         open={dialogOpen}
-        onExited={handleOnExited}
         fullWidth
+        TransitionProps={{
+          onExited: handleOnExited
+        }}
         PaperProps={{
           style: {
             backgroundColor: theme.palette.background.default,
