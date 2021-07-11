@@ -156,15 +156,16 @@ RegisterNetEvent('txAdmin:events:queueSeatInVehicle', function(vehNetID, seat)
     oldVehVelocity = 0.0
 end)
 
--- Teleport the player to the coordinates
----@param x number
----@param y number
----@param z number
-RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
+---@param coords vec3
+local function teleportToCoords(coords)
+    if type(coords) ~= 'vector3' then print("^1Invalid coords") end
+    local x = coords[1]
+    local y = coords[2]
+    local z = coords[3]
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
     lastTpCoords = GetEntityCoords(ped)
-
+    
     DoScreenFadeOut(500)
     while not IsScreenFadedOut() do Wait(0) end
     -- refresh
@@ -207,33 +208,22 @@ RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
     end
     DoScreenFadeIn(500)
     SetGameplayCamRelativeHeading(0)
+end
+
+-- Teleport the player to the coordinates
+---@param x number
+---@param y number
+---@param z number
+RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
+    teleportToCoords(vec3(x, y, z))
 end)
 
 -- Teleport to the current waypoint
 RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
     local waypoint = GetFirstBlipInfoId(GetWaypointBlipEnumId())
     if waypoint and waypoint > 0 then
-        local ped = PlayerPedId()
-        local veh = GetVehiclePedIsIn(ped, false)
-        lastTpCoords = GetEntityCoords(ped)
-
-        DoScreenFadeOut(500)
-        while not IsScreenFadedOut() do Wait(0) end
-
         local blipCoords = GetBlipInfoIdCoord(waypoint)
-        local x = blipCoords[1]
-        local y = blipCoords[2]
-        local z = 0
-        local _z = FindZForCoords(x, y)
-        if _z ~= nil then z = _z end
-        SetPedCoordsKeepVehicle(ped, x, y, z)
-        if not HasCollisionLoadedAroundEntity(ped) then
-            FreezeEntityPosition(veh or ped, true)
-            while not HasCollisionLoadedAroundEntity(ped) do Wait(50) end
-            FreezeEntityPosition(veh or ped, false)
-        end
-        DoScreenFadeIn(500)
-        SetGameplayCamRelativeHeading(0)
+        teleportToCoords(vec3(blipCoords[1], blipCoords[2], 0))
     else
         sendSnackbarMessage("error", "You have no waypoint set!")
     end
