@@ -167,16 +167,41 @@ RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
 
     DoScreenFadeOut(500)
     while not IsScreenFadedOut() do Wait(0) end
-    ped = PlayerPedId()
-    if z == 0 then
-        local _z = FindZForCoords(x, y)
-        if _z ~= nil then z = _z end
+    SetPedCoordsKeepVehicle(ped, x, y, 100.0)
+    if veh > 0 then
+        FreezeEntityPosition(veh, true)
+    else
+        FreezeEntityPosition(ped, true)
     end
+    while IsEntityWaitingForWorldCollision(ped) do
+        debugPrint("waiting for collision...")
+        Wait(100)
+    end
+    
+    if z == 0 then
+        local _finalZ
+        for i = 1, 4 do
+            if _finalZ ~= nil then break end
+            debugPrint("Z calc attempt #" .. i .. " (" .. (i * 500) .. "ms)")
+            local _z = FindZForCoords(x, y)
+            if _z ~= nil then
+                debugPrint("Resolved Z = " .. _z)
+                _finalZ = _z
+            else
+                Wait(500)
+            end
+        end
+        if _finalZ ~= nil then
+            z = _finalZ
+        end
+    end
+    -- update ped just in case
+    ped = PlayerPedId()
     SetPedCoordsKeepVehicle(ped, x, y, z)
-    if not HasCollisionLoadedAroundEntity(ped) then
-        FreezeEntityPosition(veh or ped, true)
-        while not HasCollisionLoadedAroundEntity(ped) do Wait(50) end
-        FreezeEntityPosition(veh or ped, false)
+    if veh > 0 then
+        FreezeEntityPosition(veh, false)
+    else
+        FreezeEntityPosition(ped, false)
     end
     DoScreenFadeIn(500)
     SetGameplayCamRelativeHeading(0)
