@@ -180,17 +180,17 @@ RegisterNetEvent('txAdmin:menu:tpToCoords', function(x, y, z)
         Wait(100)
     end
     
+    -- Automatically calculate ground Z
     if z == 0 then
         local _finalZ
-        for i = 1, 4 do
+        local DELAY = 500
+        for i = 1, 5 do
             if _finalZ ~= nil then break end
-            debugPrint("Z calc attempt #" .. i .. " (" .. (i * 500) .. "ms)")
-            local _z = FindZForCoords(x, y)
-            if _z ~= nil then
-                debugPrint("Resolved Z = " .. _z)
-                _finalZ = _z
-            else
-                Wait(500)
+            debugPrint("Z calc attempt #" .. i .. " (" .. (i * DELAY) .. "ms)")
+            _finalZ = FindZForCoords(x, y)
+            if _z == nil then
+                debugPrint("Didn't resolve! Trying again in " .. DELAY)
+                Wait(DELAY)
             end
         end
         if _finalZ ~= nil then
