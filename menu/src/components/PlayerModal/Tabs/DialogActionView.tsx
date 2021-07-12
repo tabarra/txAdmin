@@ -306,16 +306,16 @@ const DialogActionView: React.FC = () => {
         {t("nui_menu.player_modal.actions.sections.moderation")}
       </Typography>
       <Box className={classes.actionGrid}>
-        <Button variant="outlined" color="primary" onClick={handleDM}>
+        <Button variant="outlined" color="primary" onClick={handleDM} disabled={!userHasPerm("players.message", playerPerms)}>
           {t("nui_menu.player_modal.actions.moderation.options.dm")}
         </Button>
-        <Button variant="outlined" color="primary" onClick={handleWarn}>
+        <Button variant="outlined" color="primary" onClick={handleWarn} disabled={!userHasPerm("players.warn", playerPerms)}>
           {t("nui_menu.player_modal.actions.moderation.options.warn")}
         </Button>
-        <Button variant="outlined" color="primary" onClick={handleKick}>
+        <Button variant="outlined" color="primary" onClick={handleKick} disabled={!userHasPerm("players.kick", playerPerms)}>
           {t("nui_menu.player_modal.actions.moderation.options.kick")}
         </Button>
-        <Button variant="outlined" color="primary" onClick={handleSetAdmin}>
+        <Button variant="outlined" color="primary" onClick={handleSetAdmin} disabled={!userHasPerm("manage.admins", playerPerms)}>
           {t("nui_menu.player_modal.actions.moderation.options.set_admin")}
         </Button>
       </Box>
@@ -323,16 +323,16 @@ const DialogActionView: React.FC = () => {
         {t("nui_menu.player_modal.actions.sections.interaction")}
       </Typography>
       <Box className={classes.actionGrid}>
-        <Button variant="outlined" color="primary" onClick={handleHeal}>
+        <Button variant="outlined" color="primary" onClick={handleHeal} disabled={!userHasPerm("players.heal", playerPerms)}>
           {t("nui_menu.player_modal.actions.moderation.options.heal")}
         </Button>
-        <Button variant="outlined" color="primary" onClick={handleGoTo}>
+        <Button variant="outlined" color="primary" onClick={handleGoTo} disabled={!userHasPerm("players.teleport", playerPerms)}>
           {t("nui_menu.player_modal.actions.moderation.options.go_to")}
         </Button>
-        <Button variant="outlined" color="primary" onClick={handleBring}>
+        <Button variant="outlined" color="primary" onClick={handleBring} disabled={!userHasPerm("players.teleport", playerPerms)}>
           {t("nui_menu.player_modal.actions.moderation.options.bring")}
         </Button>
-        <Button variant="outlined" color="primary" onClick={handleSpectate}>
+        <Button variant="outlined" color="primary" onClick={handleSpectate} disabled={!userHasPerm("players.spectate", playerPerms)}>
           {t("nui_menu.player_modal.actions.moderation.options.spectate")}
         </Button>
       </Box>
@@ -343,21 +343,21 @@ const DialogActionView: React.FC = () => {
         <TooltipOverride
           title={t("nui_menu.player_modal.actions.troll.options.weed_desc")}
         >
-          <Button variant="outlined" color="primary" onClick={handleWeed}>
+          <Button variant="outlined" color="primary" onClick={handleWeed} disabled={!userHasPerm("players.troll", playerPerms)}>
             {t("nui_menu.player_modal.actions.troll.options.weed")}
           </Button>
         </TooltipOverride>
         <TooltipOverride
           title={t("nui_menu.player_modal.actions.troll.options.fire_desc")}
         >
-          <Button variant="outlined" color="primary" onClick={handleSetOnFire}>
+          <Button variant="outlined" color="primary" onClick={handleSetOnFire} disabled={!userHasPerm("players.troll", playerPerms)}>
             {t("nui_menu.player_modal.actions.troll.options.fire")}
           </Button>
         </TooltipOverride>
         <TooltipOverride
           title={t("nui_menu.player_modal.actions.troll.options.drunk_desc")}
         >
-          <Button variant="outlined" color="primary" onClick={handleDrunk}>
+          <Button variant="outlined" color="primary" onClick={handleDrunk} disabled={!userHasPerm("players.troll", playerPerms)}>
             {t("nui_menu.player_modal.actions.troll.options.drunk")}
           </Button>
         </TooltipOverride>
@@ -366,7 +366,7 @@ const DialogActionView: React.FC = () => {
             "nui_menu.player_modal.actions.troll.options.wild_attack_desc"
           )}
         >
-          <Button variant="outlined" color="primary" onClick={handleWildAttack}>
+          <Button variant="outlined" color="primary" onClick={handleWildAttack} disabled={!userHasPerm("players.troll", playerPerms)}>
             {t("nui_menu.player_modal.actions.troll.options.wild_attack")}
           </Button>
         </TooltipOverride>

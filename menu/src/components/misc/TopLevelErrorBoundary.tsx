@@ -55,7 +55,7 @@ export class TopLevelErrorBoundary extends Component<any, ErrorCompState> {
           </DialogContent>
           <DialogActions>
             <Button color="primary" onClick={this.handleReloadClick}>
-              Reload Page
+              Reload Menu
             </Button>
           </DialogActions>
         </Dialog>
