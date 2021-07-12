@@ -63,7 +63,7 @@ const playerDetails = {
         );
 
         debugLog('FetchWebPipe', res, 'PlayerFetch')
-        return res
+        return (res.logout !== true) ? res : false;
       } catch (e) {
         if (process.env.DEV_MODE === 'browser') {
           debugLog(
@@ -73,7 +73,7 @@ const playerDetails = {
           );
           return MockedPlayerDetails;
         }
-        throw e;
+        return false;
       }
     },
   }),

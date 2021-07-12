@@ -11,6 +11,7 @@ import { FileCopy } from "@material-ui/icons";
 import { copyToClipboard } from "../../../utils/copyToClipboard";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
+import { DialogLoadError } from "./DialogLoadError";
 
 const useStyles = makeStyles((theme: Theme) => ({
   codeBlock: {
@@ -32,6 +33,10 @@ const DialogIdView: React.FC = () => {
   const player = usePlayerDetailsValue();
   const { enqueueSnackbar } = useSnackbar();
   const t = useTranslate();
+
+  if(typeof player !== 'object'){
+    return <DialogLoadError />;
+  }
 
   const handleCopyToClipboard = (value: string) => {
     copyToClipboard(value, true);

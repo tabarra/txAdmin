@@ -190,20 +190,24 @@ const DialogActionView: React.FC = () => {
     if (!userHasPerm("manage.admins", playerPerms))
       return showNoPerms("Manage Admins");
 
-    // TODO: Change iFrame Src through Provider?
-    const discordIdent = playerDetails.identifiers.find((ident) =>
-      ident.includes("discord:")
-    );
-    const fivemIdent = playerDetails.identifiers.find((ident) =>
-      ident.includes("fivem:")
-    );
-
+    //FIXME: use bubble's .normalize('NFKD') instead of slug()
     const sluggedName = slug(assocPlayer.username, "_");
-
     let adminManagerPath = `?autofill&name=${sluggedName}`;
-    if (discordIdent) adminManagerPath += `&discord=${discordIdent}`;
-    if (fivemIdent) adminManagerPath += `&fivem=${fivemIdent}`;
 
+    //If the playerDetails is available 
+    if(typeof playerDetails === 'object'){
+      const discordIdent = playerDetails.identifiers.find((ident) =>
+        ident.includes("discord:")
+      );
+      const fivemIdent = playerDetails.identifiers.find((ident) =>
+        ident.includes("fivem:")
+      );
+
+      if (discordIdent) adminManagerPath += `&discord=${discordIdent}`;
+      if (fivemIdent) adminManagerPath += `&fivem=${fivemIdent}`;
+    }
+
+    // TODO: Change iFrame Src through Provider?
     goToFramePage(`/adminManager/${adminManagerPath}`);
     setModalOpen(false);
   };

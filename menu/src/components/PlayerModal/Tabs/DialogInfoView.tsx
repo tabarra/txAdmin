@@ -16,6 +16,7 @@ import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
 import { TxAdminAPIResp } from "./DialogActionView";
 import { translateAlertType } from "../../../utils/miscUtils";
+import { DialogLoadError } from "./DialogLoadError";
 
 const DialogInfoView: React.FC = () => {
   const [note, setNote] = useState("");
@@ -23,10 +24,12 @@ const DialogInfoView: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const playerDetails = usePlayerDetailsValue();
   const forceRefresh = useForcePlayerRefresh();
-
   const t = useTranslate();
-
   const theme = useTheme();
+
+  if(typeof playerDetails !== 'object'){
+    return <DialogLoadError />;
+  }
 
   const handleSaveNote: FormEventHandler = async (e) => {
     e.preventDefault();

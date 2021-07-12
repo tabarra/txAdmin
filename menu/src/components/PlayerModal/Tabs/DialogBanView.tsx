@@ -16,6 +16,7 @@ import { translateAlertType, userHasPerm } from '../../../utils/miscUtils';
 import { usePermissionsValue } from '../../../state/permissions.state';
 import xss from 'xss'
 import { TxAdminAPIResp } from './DialogActionView';
+import { DialogLoadError } from "./DialogLoadError";
 
 const DialogBanView: React.FC = () => {
   const assocPlayer = usePlayerDetailsValue();
@@ -27,7 +28,11 @@ const DialogBanView: React.FC = () => {
   const t = useTranslate();
   const { enqueueSnackbar } = useSnackbar();
   const { showNoPerms } = usePlayerModalContext();
-  const playerPerms = usePermissionsValue()
+  const playerPerms = usePermissionsValue();
+
+  if(typeof assocPlayer !== 'object'){
+    return <DialogLoadError />;
+  }
 
   const handleBan = async (e) => {
     e.preventDefault();

@@ -8,6 +8,7 @@ import {
 } from "@material-ui/core";
 import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
 import { useTranslate } from "react-polyglot";
+import { DialogLoadError } from "./DialogLoadError";
 
 
 // TODO: Make the styling on this nicer
@@ -34,6 +35,10 @@ const DialogHistoryView: React.FC = () => {
   const player = usePlayerDetailsValue();
   const theme = useTheme();
   const t = useTranslate();
+
+  if(typeof player !== 'object'){
+    return <DialogLoadError />;
+  }
 
   const playerActionHistory = player?.actionHistory;
 
