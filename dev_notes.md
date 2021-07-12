@@ -19,68 +19,10 @@
 - [ ] login page auto retry auth one time
 - [ ] menu: fix player modal not handling `logout: true` (look for fetchWebPipe)
 
+warn auto dismiss 15s
 FreezeEntityPosition need to get the veh
 debugModeEnabled and isMenuDebug are redundant, should probably just use the one from shared
-
-## Client code:
-    let playerlist;
-    let currEpoch = false;
-    Every X seconds:
-        const data = await GET /playerlist?epoch=${currEpoch}
-        if(data.epochTimestamp < currEpoch) throw new Error('Out-of-order reply');
-        if(data.isEpoch){
-            currEpoch = data.epochTimestamp
-            playerlist = data.playerlist
-        }else{
-            if(!currEpoch) throw new Error('Expected epoch, got diff');
-            playerlist = _.defaultsDeep(playerlist, data.playerlist); //maybe not lodash idk
-        }
-
-## Server code:
-    let currEpochTimestamp, currEpochData, epochDiff;
-    Every X seconds:
-        if(now - currEpochTimestamp > 60s){
-            epochDiff = false;
-            currEpochTimestamp = now;
-            currEpochData = magicGetPlayerlistData();
-        }else{
-            const playerlist = magicGetPlayerlistData();
-            epochDiff = magicallyDiffObjects(currEpochData, playerlist);
-        }
-
-    HTTP /playerlist handler:
-        if(req.query.epoch == currEpochTimestamp && epochDiff){
-            res.send({
-                epochTimestamp: currEpochTimestamp,
-                isEpoch: false,
-                playerlist: epochDiff
-            })
-        }else{
-            res.send({
-                epochTimestamp: currEpochTimestamp,
-                isEpoch: true,
-                playerlist: currEpochData
-            })
-        }
-
-## Known issues: 
-1. On client's first request, its _likely_ that it will come with stale data, which will be refreshed in the next request (so doesn't matter).
-2. On the diff, need to set some flag to remove players that disconnected.
-
-
-Talvez seja possível nem ter epochs:
-- server sempre salva o total e diff entre o anterior e o atual total
-- server recebe o ts do último, se for o ts do último dele, ele envia o diff, caso contrário o total
-talvez seja melhor 
-
-o objetivo da otimização é só não mandar os identifiers junto dos epochs de sync
-
-
-players:{
-    epochTimestamp: number,
-    isEpoch: bool,
-    playerlist: [...]
-}
+https://i.imgur.com/PiqM8Nq.png
 
 
 
@@ -337,6 +279,27 @@ https://www.science.co.il/language/Locale-codes.php
 export CURR_FX_VERSION="3247"
 alias cdmon="cd /e/FiveM/builds/$CURR_FX_VERSION/citizen/system_resources/monitor"
 
+
+
+
+Do we even use @material-ui/lab?
+
+Test:
+adm-zip
+https://github.com/cthackers/adm-zip/compare/3d8bfc7a86da066131b2208a77148d2970e6234f...9a1ca460e18af17849542c6c136bd0c5861029f7
+
+Meh:
+windows/linux detection
+sessions in general
+nui snackbars
+oauth login
+socket.io
+fd3
+
+
+
+
+nodemon +set txAdminVerbose truex
 nodemon +set txDebugPlayerlistGenerator truex +set txAdminVerbose truex
 nodemon +set txDebugPlayerlistGenerator true +set txAdminRTS "deadbeef00deadbeef00deadbeef00deadbeef00deadbeef" +set txAdminVerbose truex
 nodemon +set txDebugPlayerlistGenerator true +set txDebugExternalSource "x.x.x.x:30120" +set txAdminVerbose truex
