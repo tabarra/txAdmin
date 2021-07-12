@@ -9,7 +9,7 @@ export const useCheckCredentials = () => {
     fetchNuiAuth()
       .then(setPermsState)
       .catch((e) => {
-        if (!process.env.IN_GAME) {
+        if (process.env.DEV_MODE === 'browser') {
           debugLog(
             "Browser AuthData",
             "Detected browser mode, dispatching mock auth data",

@@ -11,10 +11,7 @@ export const debugLog = (
   data: unknown,
   context = "Unknown"
 ): void => {
-  if (
-    process.env.NODE_ENV === "development" ||
-    (window as any).__MenuDebugMode
-  ) {
+  if (process.env.DEV_MODE || (window as any).__MenuDebugMode) {
     console.group(`${context} | Action: ${action}`);
     console.dir(data);
     console.groupEnd();
@@ -32,7 +29,7 @@ interface DebugEvent<T = any> {
  * @param timer - How long until it should trigger (ms)
  */
 export const debugData = <P>(events: DebugEvent<P>[], timer = 1000): void => {
-  if (process.env.NODE_ENV === "development" && !process.env.DEV_IN_GAME) {
+  if (process.env.DEV_MODE === 'browser') {
     for (const event of events) {
       setTimeout(() => {
         window.dispatchEvent(

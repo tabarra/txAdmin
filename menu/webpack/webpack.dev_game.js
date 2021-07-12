@@ -1,7 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CommonWebpack = require('./webpack.common');
 const CopyPlugin = require('copy-webpack-plugin');
-const { EnvironmentPlugin  } = require('webpack');
+const { DefinePlugin  } = require('webpack');
 
 const path = require('path');
 
@@ -15,8 +15,10 @@ module.exports = CommonWebpack({
         writeToDisk: true,
     },
     plugins: [
-        new EnvironmentPlugin ({
-            DEV_IN_GAME: true,
+        new DefinePlugin({
+            'process.env': {
+                DEV_MODE: JSON.stringify('game'),
+            },
         }),
         new CopyPlugin({
             patterns: [

@@ -58,14 +58,14 @@ const playerDetails = {
       const assocPlayerLicense = assocPlayer.license;
 
       try {
-        const res =  await fetchWebPipe<TxAdminPlayerAPIResp>(
+        const res = await fetchWebPipe<TxAdminPlayerAPIResp>(
           `/player/${assocPlayerLicense}`
         );
 
         debugLog('FetchWebPipe', res, 'PlayerFetch')
         return res
       } catch (e) {
-        if (!process.env.IN_GAME) {
+        if (process.env.DEV_MODE === 'browser') {
           debugLog(
             "GetPlayerDetails",
             "Detected browser env, dispatching mock data",
