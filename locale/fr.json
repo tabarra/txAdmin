@@ -4,7 +4,7 @@
         "humanizer_language": "fr"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
+        "start_timeout": "Démarrage dans les temps raté",
         "crash_detected": "le serveur a planté",
         "hang_detected": "hang detected",
         "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
@@ -12,27 +12,252 @@
         "schedule_reason": "redémarage prévu à %{time}",
         "schedule_warn": "Le serveur redémarrera dans %{smart_count} minute. Merci de vous déconnecter. |||| Le serveur redémarrera dans %{smart_count} minutes.",
         "schedule_warn_discord": "**%{servername}** redémarrera dans %{smart_count} minute. |||| **%{servername}** redémarrera dans %{smart_count} minutes."
-    },
+        },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) Tu as été bannis du serveur pour la raison : \"%{reason}\". Votre bannissement expirera : %{expiration}.",
+        "kick_permanent": "(%{author}) Vous avez été bannis de façon permanente pour la raison : \"%{reason}\".",
+        "reject_temporary": "Vous avez été bannis temporaire du serveur.\nVotre ban expire dans : %{expiration}.\nID du ban: %{id}.\nRaison du ban: %{reason}.\nBanni par: %{author}.",
+        "reject_permanent": "Vous avez été bannis de façon permanente.\nId du ban: %{id}.\nRaison du ban: %{reason}.\nBanni par: %{author}."
     },
     "server_actions": {
         "restarting": "Le serveur redémarre (%{reason}).",
         "restarting_discord": "**%{servername}** redémarre (%{reason}).",
-        "stopping": "Fermeture du serveur (%{reason}).",
-        "stopping_discord": "**%{servername}** est en train de fermer (%{reason}).",
+        "stopping": "Arrêt du serveur (%{reason}).",
+        "stopping_discord": "**%{servername}** est en train de s'arrêter (%{reason}).",
         "spawning_discord": "**%{servername}** est en train de démarrer."
     },
     "discord": {
         "status_online": "**%{servername}** est actuellement **Ouvert**!",
-        "status_offline": "**%{servername}** est actuellement **Fermer**!"
+        "status_offline": "**%{servername}** est actuellement **Fermé**!"
     },
     "nui_warning": {
         "title": "AVERTISSEMENT",
         "warned_by": "Avertis par:",
         "instruction": "Maintenir [ESPACE] pendant 10 secondes pour cacher ce message."
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "txAdmin possède un menu en jeu!\nMettez en raccourci la touche  [Paramètres du jeu > Raccourcis clavier > FiveM > Open the txAdmin Menu] pour l'essayer!",
+            "menu_not_allowed": "Votre identifiant n'est pas dans les admins du txAdmin.\nSi vous êtes enregistré sur txAdmin, allez dans la gestion des admins et vérifiez votre identifiant.",
+            "action_unauthorized": "Vous n'avez pas les droits.",
+            "unknown_error": "Une erreur inconnue s'est produite.",
+            "not_enabled": "Le menu txAdmin n'est pas activé! Vérifiez la documentation pour l'activer.",
+            "announcement_title": "Annonce serveur:",
+            "general_no_perms": "Vous n'avez pas les droits pour ceci!"
+        },
+        "common": {
+            "cancel": "Annuler",
+            "submit": "Envoyer",
+            "error": "Une erreur s'est produite",
+            "copied": "Copié dans vos presse-papiers"
+        },
+        "page_main": {
+            "tooltips": {
+                "tooltip_1": "Utilisez %{key} pour changer de page & les touches directionnels pour naviguer dans les menus",
+                "tooltip_2": "Certains éléments de menu ont des options sélectionnables avec les touches directionnels."
+            },
+            "fix_vehicle": {
+                "list_primary": "Réparer Véhicule",
+                "list_secondary": "Mettre la vie du véhicule à 100%",
+                "dialog_success": "Véhicule répairé!",
+                "dialog_error": "Vous n'êtes pas dans un véhicule!"
+            },
+            "teleport": {
+                "list_primary": "Se téléporter",
+                "item_waypoint": "au: point sur la carte",
+                "item_coords": "aux: coordonnées",
+                "item_previous": "à: la précédente localisation",
+                "dialog_title": "Se téléporter",
+                "dialog_desc": "Le format des coordonnées sont en x, y, z et en Vecteur",
+                "dialog_success": "Vous avez été envoyé dans le vortex !",
+                "dialog_error": "Coordonnées invalides. Elles doivent être en: 111, 222, 33"
+            },
+            "teleport_back": {
+                "list_primary": "Revenir en arrière",
+                "list_secondary": "Se téléporter à son ancienne coordonnée",
+                "error": "Vous n'avez pas d'ancienne localisation!",
+                "success": "Vous êtes revenu dans le vortex !"
+            },
+            "player_mode": {
+                "list_primary": "Player Mode",
+                "list_secondary": "Actuellement: %{mode}",
+                "item_none": "Normal",
+                "item_noclip": "Noclip",
+                "item_godmode": "God Mode",
+                "dialog_success_none": "Retourner au player mode par défaut",
+                "dialog_success_noclip": "Noclip activé",
+                "dialog_success_godmode": "God Mode activé"
+            },
+            "spawn_wep": {
+                "list_primary": "Faire apparaître une arme",
+                "list_secondary": "Se donner une arme",
+                "dialog_title": "Faire apparaître une arme",
+                "dialog_desc": "Utilisez le modèle de l'arme."
+            },
+            "spawn_veh": {
+                "list_primary": "Déployer un véhicule",
+                "list_secondary": "Déployer un véhicule par son nom de modèle",
+                "dialog_title": "Déployer un véhicule",
+                "dialog_desc": "Entrez le nom du modèle que vous souhaitez faire déployer",
+                "dialog_success": "Véhicule déployé!",
+                "dialog_error": "Le modèle '%{modelName}'  du véhicule n'existe pas!",
+                "dialog_info": "Tentative de déploiement du %{modelName}",
+                "onesync_error": "Cette option nécessite One sync pour déployer un véhicule"
+            },
+            "heal_all": {
+                "list_primary": "Soigner tous les joueurs",
+                "list_secondary": "Soigne et ré-anime tous les joueurs",
+                "dialog_success": "Tous les jours ont étés soignés et ré-animés"
+            },
+            "heal_myself": {
+                "list_primary": "Se soigner",
+                "list_secondary": "Se restaurer la vie",
+                "dialog_success_0": "Toute la santée est revenue!",
+                "dialog_success_1": "Tu devrais te sentir mieux!",
+                "dialog_success_2": "restauré à fond!",
+                "dialog_success_3": "Vie restaurée!"
+            },
+            "send_announce": {
+                "list_primary": "Envoyer une annonce",
+                "list_secondary": "Annoncer un message",
+                "dialog_title": "Envoyer une annonce",
+                "dialog_desc": "Envoyer un message à tous les joueurs en ligne",
+                "dialog_success": "Annonce envoyée"
+            },
+            "player_ids": {
+                "list_primary": "Afficher les ID joueurs",
+                "list_secondary": "Affiche les ID des joueurs proche de vous",
+                "alert_show": "ID affichés",
+                "alert_hide": "ID cachés"
+            },
+            "copy_coords": {
+                "list_primary": "Copier les coordonnées",
+                "list_secondary": "Copie des coordonnées dans le presse-papier"
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "Joueurs en ligne",
+                "players": "Joueurs",
+                "search": "Rechercher",
+                "zero_players": "Aucuns joueurs trouvés"
+            },
+            "sort": {
+                "label": "Trier par",
+                "distance": "Distance",
+                "id": "ID",
+                "joined_first": "Premiers arrivés",
+                "joined_last": "Derniers arrivés",
+                "closest": "Plus proche",
+                "farthest": "plus loin"
+            },
+            "card": {
+                "health": "%{percentHealth}% de vie"
+            }
+        },
+        "player_modal": {
+            "tabs": {
+                "actions": "Actions",
+                "info": "Info",
+                "ids": "IDs",
+                "history": "Historique",
+                "ban": "Ban"
+            },
+            "actions": {
+                "title": "Player Actions",
+                "command_sent": "Commande envoyé!",
+                "sections": {
+                    "moderation": "Modération",
+                    "interaction": "Intéraction",
+                    "troll": "Troll"
+                },
+                "moderation": {
+                    "dm_dialog": {
+                        "title": "Message privé",
+                        "description": "Quel est la raison de ce message privé pour le joueur?",
+                        "placeholder": "Raison...",
+                        "dm_sent": "Message privé envoyé"
+                    },
+                    "warn_dialog": {
+                        "title": "Avertissement",
+                        "description": "Quel est la raison de l'avertissement du joueur?",
+                        "placeholder": "Raison...",
+                        "warn_sent": "Le joueur a été avertis!"
+                    },
+                    "kick_dialog": {
+                        "title": "Expulser",
+                        "description": "Quel est la raison pour expulser le joueur?",
+                        "placeholder": "Raison...",
+                        "kick_sent": "Le joueur a été expulsé!"
+                    },
+                    "options": {
+                        "dm": "PM",
+                        "warn": "Avertissement",
+                        "kick": "Expulser",
+                        "set_admin": "Mettre Admin",
+                        "heal": "Soigner",
+                        "go_to": "Aller à",
+                        "bring": "Récupérer",
+                        "spectate": "Spectateur"
+                    },
+                    "action_notifications": {
+                        "heal_player": "Soigner joueur",
+                        "tp_player": "Se téléporter à un joueur",
+                        "bring_player": "Récupérer un joueur"
+                    }
+                },
+                "interaction": {
+                    "options": {
+                        "heal": "Soigner",
+                        "go_to": "Aller à",
+                        "bring": "Récupérer",
+                        "spectate": "Spectateur"
+                    }
+                },
+                "troll": {
+                    "options": {
+                        "weed": "Drogue",
+                        "weed_desc": "Met un effet de drogue à un joueur",
+                        "fire": "Feu",
+                        "fire_desc": "Met le feu à un joueur",
+                        "drunk": "ivresse",
+                        "drunk_desc": "Met un effet d'ivresse au joueur",
+                        "wild_attack": "Attaque sauvage",
+                        "wild_attack_desc": "Fait apparaître un animal qui attaquera le joueur"
+                    }
+                }
+            },
+            "info": {
+                "title": "Info Joueur",
+                "session_time": "Temps de la session",
+                "play_time": "Temps de jeu",
+                "joined": "A rejoint",
+                "notes_placeholder": "Notes à propos du joueur"
+            },
+            "history": {
+                "title": "Hitorique lié"
+            },
+            "ban": {
+                "action_types": {
+                    "warn": "AVERTIS",
+                    "warn_revoked": "REVOQUER UN AVERTISSEMENT POUR",
+                    "kick": "EXPULSE",
+                    "ban": "BANNIS",
+                    "ban_revoked": "REVOQUER UN BANISSEMENT pour",
+                    "whitelist": "LISTE BLANCHE",
+                    "whitelist_revoked": "REVOQUER LA LISTE BLANCHE pour"
+                },
+                "title": "Joueur à bannir",
+                "reason_placeholder": "Raison",
+                "duration_placeholder": "Durée",
+                "hours": "heures",
+                "days": "jours",
+                "weeks": "semaines",
+                "months": "mois",
+                "permanent": "Permanent",
+                "custom": "Personalisé",
+                "helper_text": "Sélectionnez une durée"
+            }
+        }
     }
 }
