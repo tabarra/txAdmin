@@ -254,7 +254,9 @@ async function gettxAdminData() {
         //Settings
         cooldown: globals.monitor.config.cooldown,
         schedule: globals.monitor.config.restarterSchedule.join(', ') || '--',
-        commandLine: (globals.fxRunner.config.commandLine.length) ? globals.fxRunner.config.commandLine : '--',
+        commandLine: (globals.fxRunner.config.commandLine && globals.fxRunner.config.commandLine.length)
+            ? globals.fxRunner.config.commandLine
+            : '--',
         fxServerPath: GlobalData.fxServerPath,
         serverDataPath: globals.fxRunner.config.serverDataPath,
         cfgPath: globals.fxRunner.config.cfgPath,
