@@ -4,13 +4,13 @@
         "humanizer_language": "nl"
     },
     "restarter": {
-        "start_timeout": "Kon niet op tijd starten",
-        "crash_detected": "Crash geconstateerd",
-        "hang_detected": "De server is vastgelopen",
-        "partial_hang_warn": "De server is vastgelopen en zal over 1 minuut herstarten. Verlaat de server nu.",
-        "partial_hang_warn_discord": "**%{servername}** is vastgelopen en zal over 1 minuut herstarten.",
+        "start_timeout": "kon server niet tijdelijk starten",
+        "crash_detected": "server crash gedecteerd",
+        "hang_detected": "de server is vastgelopen",
+        "partial_hang_warn": "De server is gedeeltelijk vastgelopen en zal over 1 minuut herstarten. Gelieve de server nu te verlaten.",
+        "partial_hang_warn_discord": "**%{servername}** is gedeeltelijk vastgelopen en zal over 1 minuut herstarten.",
         "schedule_reason": "Geplande restart om %{time}",
-        "schedule_warn": "De server heeft een geplande restart over %{smart_count} minuut. Verlaat de server. |||| De server heeft een geplande restart over %{smart_count} minuten.",
+        "schedule_warn": "De server heeft een geplande restart over %{smart_count} minuut. Gelieve de server te verlaten. |||| De server heeft een geplande restart over %{smart_count} minuten.",
         "schedule_warn_discord": "**%{servername}** heeft een geplande restart over %{smart_count} minuut. |||| **%{servername}** heeft een geplande restart over %{smart_count} minuten."
     },
     "ban_messages": {
@@ -22,7 +22,7 @@
     "server_actions": {
         "restarting": "Server wordt herstart (%{reason}).",
         "restarting_discord": "**%{servername}** is aan het herstarten (%{reason}).",
-        "stopping": "Server wordt uitgezet (%{reason}).",
+        "stopping": "Server wordt uitgeschakeld (%{reason}).",
         "stopping_discord": "**%{servername}** is aan het stoppen (%{reason}).",
         "spawning_discord": "**%{servername}** is aan het opstarten."
     },
@@ -33,6 +33,231 @@
     "nui_warning": {
         "title": "WAARSCHUWING",
         "warned_by": "Gewaarschuwd door:",
-        "instruction": "Houd [SPATIE] 10 seconden ingedrukt om dit bericht te negeren."
+        "instruction": "Houd [SPATIE] voor 10 seconden ingedrukt om dit bericht te negeren."
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "txAdmin heeft een in-game menu!\nBind [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] om het uit te proberen!",
+            "menu_not_allowed": "Jouw identifiers komen niet overeen met de geregistreerde identifiers in txAdmin.\nAls je geregistreerd bent in txAdmin, ga dan naar de Admin Manager en controleer als je identifiers correct zijn opgeslagen.",
+            "action_unauthorized": "Jij hebt deze permissie helaas niet.",
+            "unknown_error": "Een onbekende fout is opgetreden.",
+            "not_enabled": "Het txAdmin Menu is niet ingeschakeld! Bekijk de documentatie voor extra informatie.",
+            "announcement_title": "Server Mededeling:",
+            "general_no_perms": "Je hebt hier helaas niet de juiste permissies voor!"
+        },
+        "common": {
+            "cancel": "Annuleer",
+            "submit": "Indienen",
+            "error": "Een fout is opgetreden",
+            "copied": "Succesvol gekopieerd naar het klembord"
+        },
+        "page_main": {
+            "tooltips": {
+                "tooltip_1": "Gebruik %{key} om tussen de pagina's te wisselen, en gebruik de pijltjes om te navigeren in het menu",
+                "tooltip_2": "Bepaalde opties in het menu hebben extra opties die geselecteerd kunnen worden door middel van de linker- en rechterpijltjes"
+            },
+            "fix_vehicle": {
+                "list_primary": "Repareer Voertuig",
+                "list_secondary": "Repareer voertuig naar 100%",
+                "dialog_success": "Voertuig succesvol gerepareerd!",
+                "dialog_error": "Je bent momenteel niet in een voertuig!"
+            },
+            "teleport": {
+                "list_primary": "Teleporteer",
+                "item_waypoint": "Naar: Waypoint",
+                "item_coords": "Naar: Coördinaten",
+                "item_previous": "Naar: Vorige Locatie",
+                "dialog_title": "Teleporteer",
+                "dialog_desc": "Gelieve speciefiek een X, Y, Z-formaat op te geven",
+                "dialog_success": "Succesvol geteleporteerd!",
+                "dialog_error": "Ongeldige coördinaten. Gelieve het juiste formaat te gebruiken: 111, 222, 33"
+            },
+            "teleport_back": {
+                "list_primary": "Ga Terug",
+                "list_secondary": "Teleporteer naar je laatste locatie",
+                "error": "Actie niet mogelijk. Je hebt geen laatste locatie om naar terug te teleporteren!",
+                "success": "Succesvol terug geteleporteerd!"
+            },
+            "player_mode": {
+                "list_primary": "Speler Modus",
+                "list_secondary": "Modus: %{mode}",
+                "item_none": "Normaal",
+                "item_noclip": "Noclip",
+                "item_godmode": "God Modus",
+                "dialog_success_none": "Succesvol teruggezet naar de speler modus",
+                "dialog_success_noclip": "Noclip is ingeschakeld",
+                "dialog_success_godmode": "God modus is ingeschakeld"
+            },
+            "spawn_wep": {
+                "list_primary": "Spawn Wapen",
+                "list_secondary": "Geef een wapen aan jezelf",
+                "dialog_title": "Spawn Wapen",
+                "dialog_desc": "Spawn een specifiek wapen door middel van een wapen zijn modelnaam op te geven."
+            },
+            "spawn_veh": {
+                "list_primary": "Spawn Voertuig",
+                "list_secondary": "Spawn een voertuig door het voertuig zijn modelnaam op te geven",
+                "dialog_title": "Spawn Voertuig",
+                "dialog_desc": "Gelieve een modelnaam op te geven van het voertuig dat je wilt inspawnen",
+                "dialog_success": "Voertuig succesvol ingespawned!",
+                "dialog_error": "Het voertuig met modelnaam '%{modelName}' is onbekend!",
+                "dialog_info": "Aan het proberen om %{modelName} in te spawnen...",
+                "onesync_error": "Deze optie vereist dat OneSync is ingeschakeld"
+            },
+            "heal_all": {
+                "list_primary": "Genees Alle Spelers",
+                "list_secondary": "Deze optie zal alle spelers genezen & reviven",
+                "dialog_success": "Succesvol alle spelers genezen en gerevived"
+            },
+            "heal_myself": {
+                "list_primary": "Genees Jezelf",
+                "list_secondary": "Genees jezelf compleet",
+                "dialog_success_0": "Je bent succesvol genezen!",
+                "dialog_success_1": "Je zou je weer supér moeten voelen",
+                "dialog_success_2": "Succesvol de pijn weggehaald!",
+                "dialog_success_3": "Je hebt een magische pil ingenomen en bent weer helemaal in orde!"
+            },
+            "send_announce": {
+                "list_primary": "Stuur Mededeling",
+                "list_secondary": "Maak een mededeling",
+                "dialog_title": "Stuur Mededeling",
+                "dialog_desc": "Maak een mededeling naar alle spelers die online zijn",
+                "dialog_success": "Mededeling wordt verstuurd"
+            },
+            "player_ids": {
+                "list_primary": "Toggle Spelers hun ID",
+                "list_secondary": "Zal de NetID's van nabije spelers laten zien/verbergen",
+                "alert_show": "Nabije spelers hun NetID's zijn zichtbaar",
+                "alert_hide": "Nabije spelers hun NetID's zijn niet meer zichtbaar"
+            },
+            "copy_coords": {
+                "list_primary": "Kopieer Coördinaten",
+                "list_secondary": "Kopieer jouw momentele Coördinaten naar je klembord"
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "Online Spelers",
+                "players": "Spelers",
+                "search": "Zoek",
+                "zero_players": "Geen spelers gevonden"
+            },
+            "sort": {
+                "label": "Sorteer op",
+                "distance": "Afstand",
+                "id": "ID",
+                "joined_first": "Eerst Server Betreden",
+                "joined_last": "Laatst Server Betreden",
+                "closest": "Dichtstbij",
+                "farthest": "Verst weg"
+            },
+            "card": {
+                "health": "%{percentHealth}% HP"
+            }
+        },
+        "player_modal": {
+            "tabs": {
+                "actions": "ACTIES",
+                "info": "Info",
+                "ids": "IDs",
+                "history": "Geschiedenis",
+                "ban": "Ban"
+            },
+            "actions": {
+                "title": "Speler Acties",
+                "command_sent": "Commando verzonden!",
+                "sections": {
+                    "moderation": "Moderatie",
+                    "interaction": "Interacties",
+                    "troll": "Troll"
+                },
+                "moderation": {
+                    "dm_dialog": {
+                        "title": "Privé Bericht",
+                        "description": "Wat is de reden om een privé bericht te sturen?",
+                        "placeholder": "Reden...",
+                        "dm_sent": "Bericht succesvol verzonden!"
+                    },
+                    "warn_dialog": {
+                        "title": "Waarschuwing",
+                        "description": "Wat is de reden voor deze waarschuwing?",
+                        "placeholder": "Reden...",
+                        "warn_sent": "De speler is gewaarschuwd!"
+                    },
+                    "kick_dialog": {
+                        "title": "Kick",
+                        "description": "Wat is de reden om deze speler te kicken?",
+                        "placeholder": "Reden...",
+                        "kick_sent": "De speler is gekickt!"
+                    },
+                    "options": {
+                        "dm": "Privé Bericht",
+                        "warn": "Waarschuwen",
+                        "kick": "Kick",
+                        "set_admin": "Geef Admin",
+                        "heal": "Genees",
+                        "go_to": "Gaan",
+                        "bring": "Brengen",
+                        "spectate": "Observeer"
+                    },
+                    "action_notifications": {
+                        "heal_player": "Speler wordt genezen",
+                        "tp_player": "Teleporteren naar speler",
+                        "bring_player": "Speler wordt gebracht"
+                    }
+                },
+                "interaction": {
+                    "options": {
+                        "heal": "Genees",
+                        "go_to": "Gaan",
+                        "bring": "Brengen",
+                        "spectate": "Observeer"
+                    }
+                },
+                "troll": {
+                    "options": {
+                        "weed": "Wiet",
+                        "weed_desc": "Zal een 'wiet' effect toepassen op de speler",
+                        "fire": "Vuur",
+                        "fire_desc": "Zal de speler in vuur en vlam zetten",
+                        "drunk": "Dronken",
+                        "drunk_desc": "Zal een 'dronken' effect toepassen op speler. Burrp!",
+                        "wild_attack": "Wildernis aanval",
+                        "wild_attack_desc": "De speler zal aangevallen worden door willekeurige, wilde dieren"
+                    }
+                }
+            },
+            "info": {
+                "title": "Speler Informatie",
+                "session_time": "Sessietijd",
+                "play_time": "Speeltijd",
+                "joined": "Betreden op",
+                "notes_placeholder": "Notities over deze speler"
+            },
+            "history": {
+                "title": "Gerelateerde geschiedenis"
+            },
+            "ban": {
+                "action_types": {
+                    "warn": "GEWAARSCHUWD",
+                    "warn_revoked": "WAARSCHUWING INGETROKKEN met rede",
+                    "kick": "GEKICKT",
+                    "ban": "VERBANNEN",
+                    "ban_revoked": "BAN INGETROKKEN met rede",
+                    "whitelist": "WHITELIST",
+                    "whitelist_revoked": "WHITELIST INGETROKKEN met rede"
+                },
+                "title": "Verban Speler",
+                "reason_placeholder": "Reden",
+                "duration_placeholder": "Duratie",
+                "hours": "uren",
+                "days": "dagen",
+                "weeks": "weken",
+                "months": "maanden",
+                "permanent": "Permanent",
+                "custom": "Custom",
+                "helper_text": "Gelieve een duratie te selecteren"
+            }
+        }
     }
 }
