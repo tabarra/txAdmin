@@ -17,6 +17,7 @@ import en from "../../../locale/en.json";
 import es from "../../../locale/es.json";
 import fa from "../../../locale/fa.json";
 import fi from "../../../locale/fi.json";
+import fr from "../../../locale/fr.json";
 import hu from "../../../locale/hu.json";
 import it from "../../../locale/it.json";
 import lt from "../../../locale/lt.json";
@@ -44,6 +45,7 @@ const localeMap = {
   es,
   fa,
   fi,
+  fr,
   hu,
   it,
   lt,
@@ -65,7 +67,9 @@ const localeMap = {
 
 export const getLocale = (localeCode: string): Object => {
   const locale = localeMap[localeCode];
-  if (!locale)
-    throw new Error(`Unable to find a locale with code ${localeCode} in cache`);
+  if (!locale){
+    console.log(`Unable to find a locale with code ${localeCode} in cache, using English`);
+    return localeMap.en;
+  }
   return locale;
 };

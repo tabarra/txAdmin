@@ -37,6 +37,8 @@ const MenuRoot: React.FC = () => {
   useHudListenersService();
 
   const curPage = usePageValue();
+  const padSize = Math.max(0, 9-serverCtx.txAdminVersion.length);
+  const versionPad = '\u0020\u205F'.repeat(padSize);
 
   if (!perms) return null;
 
@@ -55,7 +57,7 @@ const MenuRoot: React.FC = () => {
                 fontSize: 12,
               }}
             >
-              v{serverCtx.txAdminVersion}
+              v{serverCtx.txAdminVersion}{versionPad}
             </Typography>
             <PageTabs />
             <Collapse

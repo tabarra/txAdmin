@@ -41,9 +41,10 @@ const MenuWrapper: React.FC = () => {
     return () => clearInterval(changeTimer);
   }, [visible]);
 
-  const localeSelected = useMemo(() => getLocale(serverCtx.locale), [
-    serverCtx.locale,
-  ]);
+  const localeSelected = useMemo(
+    () => getLocale(serverCtx.locale), 
+    [serverCtx.locale]
+  );
 
   const styled = visible ? { opacity: 1 } : undefined;
 

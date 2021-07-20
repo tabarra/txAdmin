@@ -25,6 +25,19 @@ debugModeEnabled and isMenuDebug are redundant, should probably just use the one
 https://i.imgur.com/PiqM8Nq.png
 
 
+Test:
+adm-zip
+https://github.com/cthackers/adm-zip/compare/3d8bfc7a86da066131b2208a77148d2970e6234f...9a1ca460e18af17849542c6c136bd0c5861029f7
+
+Meh:
+windows/linux detection
+sessions in general
+nui snackbars
+oauth login
+socket.io
+fd3
+
+
 
 
 nota:
@@ -278,26 +291,6 @@ https://www.science.co.il/language/Locale-codes.php
 # run
 export CURR_FX_VERSION="3247"
 alias cdmon="cd /e/FiveM/builds/$CURR_FX_VERSION/citizen/system_resources/monitor"
-
-
-
-
-Do we even use @material-ui/lab?
-
-Test:
-adm-zip
-https://github.com/cthackers/adm-zip/compare/3d8bfc7a86da066131b2208a77148d2970e6234f...9a1ca460e18af17849542c6c136bd0c5861029f7
-
-Meh:
-windows/linux detection
-sessions in general
-nui snackbars
-oauth login
-socket.io
-fd3
-
-
-
 
 nodemon +set txAdminVerbose truex
 nodemon +set txDebugPlayerlistGenerator truex +set txAdminVerbose truex
