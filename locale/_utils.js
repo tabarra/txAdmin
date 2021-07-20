@@ -24,8 +24,8 @@ const langs = langFiles.map((fName) => {
 const rebaseCommand = () => {
     console.log('Rebasing language files on \'en.json\' for missing keys');
     langs.forEach(({name, path, data}) => {
-        // data.nui_menu = undefined;
         const synced = defaultsDeep(data, defaultLang);
+        //synced.nui_menu = undefined;
         const out = JSON.stringify(synced, null, 4) + '\n';
         fs.writeFileSync(path, out);
         console.log(`Edited file: ${name}`);

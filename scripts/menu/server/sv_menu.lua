@@ -299,7 +299,8 @@ local function syncServerCtx()
   ServerCtxObj.maxClients = svMaxClients
 
   -- FIXME: temporarily disabled;
-  local txAdminLocale = GetConvar('txAdmin-locale', 'en')
+  -- FIXME: we cannot reenable while the custom locale doesn't work!
+  local txAdminLocale = 'en' -- GetConvar('txAdmin-locale', 'en')
   ServerCtxObj.locale = txAdminLocale
 
   debugPrint('Server CTX assigned to GlobalState, CTX:')
