@@ -25,6 +25,7 @@ import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
 import { useAssociatedPlayerValue } from "../../state/playerDetails.state";
 import { useTranslate } from "react-polyglot";
 import { DialogBaseView } from "./Tabs/DialogBaseView";
+import { PlayerModalErrorBoundary } from "./ErrorHandling/PlayerModalErrorBoundary";
 
 const LoadingModal: React.FC = () => (
   <Box
@@ -44,7 +45,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     top: theme.spacing(1),
     right: theme.spacing(2),
   },
-}))
+}));
 
 const PlayerModal: React.FC = () => {
   const classes = useStyles();
@@ -71,7 +72,7 @@ const PlayerModal: React.FC = () => {
           maxHeight: 450,
           borderRadius: 15,
         },
-        id: 'player-modal-container'
+        id: "player-modal-container",
       }}
     >
       <DialogTitle style={{ borderBottom: "1px solid rgba(221,221,221,0.54)" }}>
@@ -81,16 +82,18 @@ const PlayerModal: React.FC = () => {
         </IconButton>
       </DialogTitle>
       <Box display="flex" px={2} pb={2} pt={2} flexGrow={1} overflow="hidden">
-        <Box
-          minWidth={200}
-          pr={2}
-          borderRight="1px solid rgba(221,221,221,0.54)"
-        >
-          <DialogList />
-        </Box>
-        <React.Suspense fallback={<LoadingModal />}>
-          <DialogBaseView />
-        </React.Suspense>
+        <PlayerModalErrorBoundary>
+          <Box
+            minWidth={200}
+            pr={2}
+            borderRight="1px solid rgba(221,221,221,0.54)"
+          >
+            <DialogList />
+          </Box>
+          <React.Suspense fallback={<LoadingModal />}>
+            <DialogBaseView />
+          </React.Suspense>
+        </PlayerModalErrorBoundary>
       </Box>
     </Dialog>
   );

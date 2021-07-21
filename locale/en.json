@@ -156,6 +156,9 @@
             }
         },
         "player_modal": {
+            "misc": {
+                "error": "An error occurred fetching this users details. The error is shown below:"
+            },
             "tabs": {
                 "actions": "Actions",
                 "info": "Info",
