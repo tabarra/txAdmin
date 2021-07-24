@@ -6,7 +6,7 @@ import { DialogProvider } from "./provider/DialogProvider";
 import { useExitListener } from "./hooks/useExitListener";
 import { useNuiListenerService } from "./hooks/useNuiListenersService";
 import { TopLevelErrorBoundary } from "./components/misc/TopLevelErrorBoundary";
-import { debugData } from "./utils/debugLog";
+import { debugData } from "./utils/debugData";
 import { I18n } from "react-polyglot";
 import { useServerCtxValue } from "./state/server.state";
 import { getLocale } from "./utils/getLocale";
@@ -42,7 +42,7 @@ const MenuWrapper: React.FC = () => {
   }, [visible]);
 
   const localeSelected = useMemo(
-    () => getLocale(serverCtx.locale), 
+    () => getLocale(serverCtx.locale),
     [serverCtx.locale]
   );
 

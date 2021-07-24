@@ -5,7 +5,7 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from "recoil";
-import { debugData } from "../utils/debugLog";
+import { debugData } from "../utils/debugData";
 
 export enum VehicleStatus {
   Unknown = "unknown",
