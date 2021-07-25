@@ -1,6 +1,8 @@
 //Requires
 const fs = require('fs');
 const path = require('path');
+const xss = require('./xss')();
+//const log = (x) => process.stdout.write(JSON.stringify(x, null, 2) + '\n');
 
 
 //================================================================
@@ -135,19 +137,18 @@ function resolveCFGFilePath(cfgPath, serverDataPath) {
  *  - no endpoints found
  *  - endpoints that are not 0.0.0.0:xxx
  *  - port mismatch
- *  - "stop monitor"
+ *  - "stop/start/ensure/restart txAdmin/monitor"
  *  - if endpoint on 40120~40130
  *  - zap-hosting iface and port enforcement
  * @param {string} rawCfgFile
  */
 function getFXServerPort(rawCfgFile) {
-    if (rawCfgFile.includes('stop monitor')) throw new Error('Remove "stop monitor" from your config');
-
-    const maxClientsRegex = /^\s*sv_maxclients\s+(\d+).*$/gim;
     const endpointsRegex = /^\s*endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):([0-9]{1,5})["']?.*$/gim;
-    // const endpointsRegex = /endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})\:([0-9]{1,5})["']?.*/gi;
-    let endpoints = [];
-    let maxClients = [];
+    const maxClientsRegex = /^\s*sv_maxclients\s+(\d+).*$/gim;
+    const txResCommandsRegex = /^\s*(start|stop|ensure|restart)\s+(monitor|txadmin).*$/gim;
+    const endpoints = [];
+    const maxClients = [];
+    const txResCommandsLines = [];
     try {
         let match;
         while ((match = endpointsRegex.exec(rawCfgFile))) {
@@ -161,6 +162,9 @@ function getFXServerPort(rawCfgFile) {
         while ((match = maxClientsRegex.exec(rawCfgFile))) {
             maxClients.push(parseInt(match[1]));
         }
+        while ((match = txResCommandsRegex.exec(rawCfgFile))) {
+            txResCommandsLines.push(xss(match[0].trim()));
+        }
     } catch (error) {
         throw new Error('Regex Match Error');
     }
@@ -173,6 +177,15 @@ function getFXServerPort(rawCfgFile) {
         if (maxClients.some((mc) => mc > GlobalData.deployerDefaults.maxClients)) {
             throw new Error(`ZAP-Hosting: your 'sv_maxclients' MUST be less or equal than ${GlobalData.deployerDefaults.maxClients}.`);
         }
+    }
+
+    //Checking for stop/start/ensure/restart txAdmin/monitor
+    if (txResCommandsLines.length) {
+        throw new Error([
+            `Remove the following line${txResCommandsLines.length > 1 ? 's' : ''} from your config file:<code>`,
+            ...txResCommandsLines,
+            '</code>',
+        ].join('\n<br>'));
     }
 
     //Checking if endpoints present at all
