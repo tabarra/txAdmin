@@ -11,11 +11,6 @@
 	<p align="center">
 		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM/RedM Server remotely, in use by over <strong>SEVEN</strong> thousand servers worldwide at any given time.
 	</p>
-	<p align="center">
-		<a href="https://zap-hosting.com/txadmin4" target="_blank" rel="noopener">
-			<img src="docs/zaphosting.png" alt="zap-hosting"></img>
-		</a>
-	</p>
 </p>
 
 <br/>
