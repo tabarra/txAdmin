@@ -296,19 +296,6 @@
                         </a>
                     </h5>
                     
-                    {{@if(it.dynamicAd)}}
-                        <div class="hrsep hrsep-small">Ad</div>
-                        <a class="zapAdContainer" href="{{it.dynamicAd.link}}" target="_blank" rel="noopener noreferrer">
-                            <img class="zapLogo show-dark-mode" alt="zap hosting" src="{{it.dynamicAd.logoDarkMode}}">
-                            <img class="zapLogo show-light-mode" alt="zap hosting" src="{{it.dynamicAd.logoLightMode}}">
-                            <div class="zapText attentionText">
-                                {{it.dynamicAd.text|safe}}
-                                <svg class="c-icon zapTextIcon">
-                                    <use href="img/coreui_icons.svg#cil-external-link"></use>
-                                </svg>
-                            </div>
-                        </a>
-                    {{/if}}
 
                     <div class="hrsep hrsep-small">Info</div>
                     <div class="text-muted">
