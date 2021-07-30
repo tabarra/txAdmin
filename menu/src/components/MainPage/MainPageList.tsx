@@ -228,6 +228,11 @@ export const MainPageList: React.FC = () => {
   };
 
   const handleDeleteVehicle = () => {
+    // If onesync is disabled, show an error due to server side entity handling
+    if (!serverCtx.oneSync.status) {
+      return enqueueSnackbar(t('nui_menu.page_main.delete_veh.onesync_error'), { variant: 'error' })
+    }
+
     fetchNui("deleteVehicle").then(({ e }) => {
       if (e) {
         return enqueueSnackbar(
