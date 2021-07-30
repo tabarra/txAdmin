@@ -110,7 +110,8 @@
             "delete_veh": {
                 "list_secondary": "Delete your vehicle",
                 "dialog_success": "Vehicle Deleted!",
-                "dialog_error": "You are not currently in a vehicle!"
+                "dialog_error": "You are not currently in a vehicle!",
+                "onesync_error": "This option requires that OneSync be on for server entity handling"
             },
             "heal_all": {
                 "list_primary": "Heal All Players",
