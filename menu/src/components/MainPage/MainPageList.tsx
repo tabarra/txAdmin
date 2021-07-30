@@ -29,6 +29,7 @@ import { HealMode, useHealMode } from "../../state/healmode.state";
 import { arrayRandom } from "../../utils/miscUtils";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import { useServerCtxValue } from '../../state/server.state';
+import { VehicleMode, useVehicleMode } from '../../state/vehiclemode.state';
 
 const fadeHeight = 20;
 const listHeight = 388;
@@ -68,6 +69,7 @@ export const MainPageList: React.FC = () => {
   const [playerMode, setPlayerMode] = usePlayerMode();
   const [teleportMode, setTeleportMode] = useTeleportMode();
   const [healMode, setHealMode] = useHealMode();
+  const [vehicleMode, setVehicleMode] = useVehicleMode();
   const serverCtx = useServerCtxValue()
   const menuVisible = useIsMenuVisible();
   const classes = useStyles();
@@ -225,6 +227,23 @@ export const MainPageList: React.FC = () => {
     });
   };
 
+  const handleDeleteVehicle = () => {
+    fetchNui("deleteVehicle").then(({ e }) => {
+      if (e) {
+        return enqueueSnackbar(
+          t("nui_menu.page_main.delete_veh.dialog_error"),
+          {
+            variant: "error",
+          }
+        );
+      }
+
+      enqueueSnackbar(t("nui_menu.page_main.delete_veh.dialog_success"), {
+        variant: "info",
+      });
+    });
+  }
+
   const handleFixVehicle = () => {
     fetchNui("fixVehicle").then(({ e }) => {
       if (e) {
@@ -370,10 +389,30 @@ export const MainPageList: React.FC = () => {
       },
       {
         icon: <DirectionsCar />,
+        primary: t("nui_menu.page_main.car_options.list_primary"),
+        isMultiAction: true,
         requiredPermission: "menu.vehicle",
-        primary: t("nui_menu.page_main.spawn_veh.list_primary"),
-        secondary: t("nui_menu.page_main.spawn_veh.list_secondary"),
-        onSelect: handleSpawnVehicle,
+        initialValue: vehicleMode,
+        actions: [
+          {
+            label: t("nui_menu.page_main.spawn_veh.list_secondary"),
+            value: VehicleMode.SPAWN,
+            onSelect: () => {
+              setVehicleMode(VehicleMode.SPAWN);
+              handleSpawnVehicle();
+            },
+            icon: <DirectionsCar />,
+          },
+          {
+            label: t("nui_menu.page_main.delete_veh.list_secondary"),
+            value: VehicleMode.DELETE,
+            onSelect: () => {
+              setVehicleMode(VehicleMode.DELETE);
+              handleDeleteVehicle();
+            },
+            icon: <DirectionsCar />,
+          },
+        ],
       },
       {
         icon: <Build />,
