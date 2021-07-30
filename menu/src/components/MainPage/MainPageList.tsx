@@ -172,7 +172,7 @@ export const MainPageList: React.FC = () => {
     // we disable this function from being used if onesync
     // isn't on
     if (!serverCtx.oneSync.status) {
-      return enqueueSnackbar(t('nui_menu.page_main.spawn_veh.onesync_error'), { variant: 'error' })
+      return enqueueSnackbar(t('nui_menu.page_main.car_options.onesync_error'), { variant: 'error' })
     }
 
     openDialog({
@@ -230,7 +230,7 @@ export const MainPageList: React.FC = () => {
   const handleDeleteVehicle = () => {
     // If onesync is disabled, show an error due to server side entity handling
     if (!serverCtx.oneSync.status) {
-      return enqueueSnackbar(t('nui_menu.page_main.delete_veh.onesync_error'), { variant: 'error' })
+      return enqueueSnackbar(t('nui_menu.page_main.car_options.onesync_error'), { variant: 'error' })
     }
 
     fetchNui("deleteVehicle").then(({ e }) => {

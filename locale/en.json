@@ -95,7 +95,8 @@
                 "dialog_desc": "Spawn a weapon using its model name."
             },
             "car_options": {
-                "list_primary": "Vehicle Options"
+                "list_primary": "Vehicle Options",
+                "onesync_error": "This option requires that OneSync be on for server entity handling"
             },
             "spawn_veh": {
                 "list_primary": "Spawn Vehicle",
@@ -104,14 +105,12 @@
                 "dialog_desc": "Enter in the model name of the vehicle you want to spawn",
                 "dialog_success": "Vehicle spawned!",
                 "dialog_error": "The vehicle model name '%{modelName}' does not exist!",
-                "dialog_info": "Trying to spawn %{modelName}",
-                "onesync_error": "This option requires that OneSync be on for server side spawning"
+                "dialog_info": "Trying to spawn %{modelName}"
             },
             "delete_veh": {
                 "list_secondary": "Delete your vehicle",
                 "dialog_success": "Vehicle Deleted!",
-                "dialog_error": "You are not currently in a vehicle!",
-                "onesync_error": "This option requires that OneSync be on for server entity handling"
+                "dialog_error": "You are not currently in a vehicle!"
             },
             "heal_all": {
                 "list_primary": "Heal All Players",
