@@ -506,6 +506,14 @@ RegisterNetEvent('txAdmin:menu:fixVehicle', function()
   end
 end)
 
+RegisterNetEvent('txAdmin:menu:clearArea', function(radius)
+  local src = source
+  local allow = PlayerHasTxPermission(src, 'menu.clear_area')
+  if allow then
+    TriggerClientEvent('txAdmin:menu:clearArea', src, radius)
+  end
+end)
+
 local CREATE_AUTOMOBILE = GetHashKey('CREATE_AUTOMOBILE')
 
 --- Spawn a vehicle on the server at the request of a client
