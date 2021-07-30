@@ -577,6 +577,17 @@ RegisterNetEvent('txAdmin:menu:spawnVehicle', function(model, isAutomobile)
   end
 end)
 
+--- Deletes the vehicle the player is currently in
+--- @param netId int 
+RegisterNetEvent("txAdmin:menu:deleteVehicle", function(netId)
+  local src = source
+  local allow = PlayerHasTxPermission(src, 'menu.vehicle')
+  if allow then
+    local vehicle = NetworkGetEntityFromNetworkId(netId)
+    DeleteEntity(vehicle)
+  end
+end)
+
 local function getPlayersLicense(src)
   for _, v in ipairs(GetPlayerIdentifiers(src)) do
     if string.sub(v, 1, string.len("license:")) == "license:" then

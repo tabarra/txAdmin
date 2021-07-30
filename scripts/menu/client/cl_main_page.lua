@@ -84,6 +84,19 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
     end
 end)
 
+RegisterNUICallback("deleteVehicle", function(data, cb)
+    local ped = PlayerPedId()
+    local veh = GetVehiclePedIsIn(ped, false)
+    if veh and veh > 0 then
+        local netId = NetworkGetNetworkIdFromEntity(veh)
+        TriggerServerEvent("txAdmin:menu:deleteVehicle", netId)
+
+        cb({})
+    else
+        cb({ e = true })
+    end
+end)
+
 RegisterNUICallback('healPlayer', function(data, cb)
     TriggerServerEvent('txAdmin:menu:healPlayer', tonumber(data.id))
     cb({})
