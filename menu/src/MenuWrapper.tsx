@@ -16,12 +16,15 @@ import { useCheckCredentials } from "./hooks/useCheckCredentials";
 import { PlayerModalProvider } from "./provider/PlayerModalProvider";
 import { txAdminMenuPage, useSetPage } from "./state/page.state";
 
-debugData([
-  {
-    action: "setVisible",
-    data: true,
-  },
-]);
+debugData(
+  [
+    {
+      action: "setVisible",
+      data: true,
+    },
+  ],
+  3000
+);
 
 const MenuWrapper: React.FC = () => {
   const visible = useIsMenuVisible();
@@ -41,10 +44,9 @@ const MenuWrapper: React.FC = () => {
     return () => clearInterval(changeTimer);
   }, [visible]);
 
-  const localeSelected = useMemo(
-    () => getLocale(serverCtx.locale),
-    [serverCtx.locale]
-  );
+  const localeSelected = useMemo(() => getLocale(serverCtx.locale), [
+    serverCtx.locale,
+  ]);
 
   const styled = visible ? { opacity: 1 } : undefined;
 

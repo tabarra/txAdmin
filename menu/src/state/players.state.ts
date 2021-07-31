@@ -105,138 +105,189 @@ export const usePlayersFilter = () =>
 export const useFilteredSortedPlayers = (): PlayerData[] =>
   useRecoilValue(playersState.sortedAndFilteredPlayerData);
 
-debugData<PlayerData[]>([
-  {
-    action: "setPlayerState",
-    data: [
-      {
-        vehicleStatus: VehicleStatus.Walking,
-        username: "Chip",
-        id: 1,
-        distance: 500,
-        health: 80,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Driving,
-        username: "Taso",
-        id: 2,
-        distance: 500,
-        health: 50,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Boat,
-        username: "Tabarra",
-        id: 3,
-        distance: 500,
-        health: 10,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Boat,
-        username: "Death",
-        id: 4,
-        distance: 500,
-        health: 100,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Unknown,
-        username: "Death",
-        id: 5,
-        distance: 500,
-        health: 70,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Walking,
-        username: "Death",
-        id: 6,
-        distance: 500,
-        health: 100,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Biking,
-        username: "Death",
-        id: 7,
-        distance: 500,
-        health: 40,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Boat,
-        username: "Death",
-        id: 8,
-        distance: 500,
-        health: 40,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Boat,
-        username: "Death",
-        id: 9,
-        distance: 500,
-        health: 40,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Boat,
-        username: "Death",
-        id: 10,
-        distance: 500,
-        health: 40,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Boat,
-        username: "Death",
-        id: 11,
-        distance: 500,
-        health: 40,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Boat,
-        username: "Death",
-        id: 12,
-        distance: 500,
-        health: 40,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Boat,
-        username: "Death",
-        id: 13,
-        distance: 500,
-        health: 40,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Boat,
-        username: "Death",
-        id: 14,
-        distance: 500,
-        health: 40,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Boat,
-        username: "Death",
-        id: 15,
-        distance: 500,
-        health: 40,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-      {
-        vehicleStatus: VehicleStatus.Boat,
-        username: "Death",
-        id: 16,
-        distance: 500,
-        health: 40,
-        license: "3333333333333333333333deadbeef0000nosave",
-      },
-    ],
-  },
-]);
+debugData<PlayerData[]>(
+  [
+    {
+      action: "setPlayerState",
+      data: [
+        {
+          vehicleStatus: VehicleStatus.Walking,
+          username: "Chip",
+          id: 1,
+          distance: 500,
+          health: 80,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Driving,
+          username: "Taso",
+          id: 2,
+          distance: 500,
+          health: 50,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Boat,
+          username: "Tabarra",
+          id: 3,
+          distance: 500,
+          health: 10,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Boat,
+          username: "Death",
+          id: 4,
+          distance: 500,
+          health: 100,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Unknown,
+          username: "Death",
+          id: 5,
+          distance: 500,
+          health: 70,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Walking,
+          username: "Death",
+          id: 6,
+          distance: 500,
+          health: 100,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Biking,
+          username: "Death",
+          id: 7,
+          distance: 500,
+          health: 40,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Boat,
+          username: "Death",
+          id: 8,
+          distance: 500,
+          health: 40,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Boat,
+          username: "Death",
+          id: 9,
+          distance: 500,
+          health: 40,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Boat,
+          username: "Death",
+          id: 10,
+          distance: 500,
+          health: 40,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Boat,
+          username: "Death",
+          id: 11,
+          distance: 500,
+          health: 40,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Boat,
+          username: "Death",
+          id: 12,
+          distance: 500,
+          health: 40,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Boat,
+          username: "Death",
+          id: 13,
+          distance: 500,
+          health: 40,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Boat,
+          username: "Death",
+          id: 14,
+          distance: 500,
+          health: 40,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Boat,
+          username: "Death",
+          id: 15,
+          distance: 500,
+          health: 40,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+        {
+          vehicleStatus: VehicleStatus.Boat,
+          username: "Death",
+          id: 16,
+          distance: 500,
+          health: 40,
+          license: "3333333333333333333333deadbeef0000nosave",
+        },
+      ],
+    },
+  ],
+  3000
+);
+
+function mockData() {
+  const randomUsernames = [
+    "hamy",
+    "taso",
+    "tabarra",
+    "hype",
+    "chip",
+    "goat",
+    "siege",
+    "wowjesus",
+    "noodles",
+    "plok",
+    "kiwi",
+    "monke",
+  ];
+
+  const MAX_PLAYERS = 500;
+  const playerData: PlayerData[] = [];
+  const statuses: VehicleStatus[] = [
+    VehicleStatus.Biking,
+    VehicleStatus.Boat,
+    VehicleStatus.Unknown,
+    VehicleStatus.Unknown,
+    VehicleStatus.Walking,
+  ];
+
+  for (let i = 0; i < MAX_PLAYERS; i++) {
+    const randomDist = Math.random() * 5000;
+    const randomUsername =
+      randomUsernames[Math.floor(Math.random() * randomUsernames.length)];
+    const randomStatusIdx = Math.floor(Math.random() * 5);
+    const randomStatus = statuses[randomStatusIdx];
+
+    playerData.push({
+      id: i + 1,
+      distance: randomDist,
+      health: 100,
+      license: "licensething",
+      username: randomUsername,
+      vehicleStatus: randomStatus,
+    });
+  }
+
+  console.log(playerData);
+
+  return playerData;
+}
