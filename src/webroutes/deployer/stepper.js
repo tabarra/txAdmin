@@ -45,6 +45,7 @@ module.exports = async function DeployerStepper(ctx) {
                 mysqlHost: GlobalData.deployerDefaults.mysqlHost || 'localhost',
                 mysqlUser: GlobalData.deployerDefaults.mysqlUser || 'root',
                 mysqlPassword: GlobalData.deployerDefaults.mysqlPassword || '',
+                mysqlPort: GlobalData.deployerDefaults.mysqlPort || '3306',
                 mysqlDatabase: GlobalData.deployerDefaults.mysqlDatabase || globals.deployer.deploymentID,
             };
         } else {
@@ -53,6 +54,7 @@ module.exports = async function DeployerStepper(ctx) {
                 license: process.env.TXADMIN_DEFAULT_LICENSE || '',
                 mysqlHost: 'localhost',
                 mysqlUser: 'root',
+                mysqlPort: '3306',
                 mysqlPassword: '',
                 mysqlDatabase: globals.deployer.deploymentID,
             };
