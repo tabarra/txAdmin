@@ -260,7 +260,7 @@ end)
 --
 -- [[ ServerCtxObj ]]
 --
-local ServerCtxObj = {
+ServerCtx = {
   oneSync = {
     type = nil,
     status = false
@@ -276,42 +276,42 @@ local ServerCtxObj = {
 local function syncServerCtx()
   local oneSyncConvar = GetConvar('onesync', 'off')
   if oneSyncConvar == 'on' or oneSyncConvar == 'legacy' then
-    ServerCtxObj.oneSync.type = oneSyncConvar
-    ServerCtxObj.oneSync.status = true
+    ServerCtx.oneSync.type = oneSyncConvar
+    ServerCtx.oneSync.status = true
   elseif oneSyncConvar == 'off' then
-    ServerCtxObj.oneSync.type = nil
-    ServerCtxObj.oneSync.status = false
+    ServerCtx.oneSync.type = nil
+    ServerCtx.oneSync.status = false
   end
   -- Convar must match the event.code *EXACTLY* as shown on this site
   -- https://keycode.info/
   local switchPageKey = GetConvar('txAdminMenu-pageKey', 'Tab')
-  ServerCtxObj.switchPageKey = switchPageKey
+  ServerCtx.switchPageKey = switchPageKey
 
   local txAdminVersion = GetConvar('txAdmin-version', '0.0.0')
-  ServerCtxObj.txAdminVersion = txAdminVersion
+  ServerCtx.txAdminVersion = txAdminVersion
   -- Default '' in fxServer
   local svProjectName = GetConvar('sv_projectname', '')
   if svProjectName ~= '' then
-    ServerCtxObj.projectName = svProjectName
+    ServerCtx.projectName = svProjectName
   end
 
   -- Default 30 in fxServer
   local svMaxClients = GetConvarInt('sv_maxclients', 30)
-  ServerCtxObj.maxClients = svMaxClients
+  ServerCtx.maxClients = svMaxClients
 
   -- FIXME: temporarily disabled;
   -- FIXME: we cannot reenable while the custom locale doesn't work!
   local txAdminLocale = 'en' -- GetConvar('txAdmin-locale', 'en')
-  ServerCtxObj.locale = txAdminLocale
+  ServerCtx.locale = txAdminLocale
 
   debugPrint('Server CTX assigned to GlobalState, CTX:')
-  debugPrint(json.encode(ServerCtxObj))
-  GlobalState.txAdminServerCtx = ServerCtxObj
+  debugPrint(json.encode(ServerCtx))
+  GlobalState.txAdminServerCtx = ServerCtx
 end
 
 RegisterNetEvent('txAdmin:events:getServerCtx', function()
   local src = source
-  TriggerClientEvent('txAdmin:events:setServerCtx', src, ServerCtxObj)
+  TriggerClientEvent('txAdmin:events:setServerCtx', src, ServerCtx)
 end)
 
 -- Everytime the txAdmin convars are changed this event will fire
@@ -507,11 +507,49 @@ RegisterNetEvent('txAdmin:menu:fixVehicle', function()
   end
 end)
 
+--- @param radius {number} The radius to clear server side objects within
+--- @param src {number} The source of the player triggering the event
+local function clearAreaWithinRadius(radius, src)
+  local playerPed = GetPlayerPed(src)
+  local playerCoords = GetEntityCoords(playerPed)
+
+  local vehicles = GetAllVehicles()
+  local objects = GetAllObjects()
+
+  -- I would have done these loops in a coroutine for those servers
+  -- with terrible hardware or ones with huge veh and obj numbers
+  -- but handles are so variable tick to tick that this wouldn't be possible
+
+  -- Vehicles
+  for i=1, #vehicles do
+    local veh = vehicles[i]
+    local vehicleCoords = GetEntityCoords(veh)
+    if #(playerCoords - vehicleCoords) <= radius then
+      debugPrint('Found vehicle to delete, h: ' .. tostring(veh))
+      DeleteEntity(veh)
+    end
+  end
+
+  -- Objects. This may result in less than ideal behavior but we will
+  -- see
+  for i=1, #objects do
+    local obj = objects[i]
+    local objectCoords = GetEntityCoords(obj)
+    if #(playerCoords - objectCoords) <= radius then
+      debugLog('Found obj to delete within rad, h: ' .. tostring(veh))
+      DeleteEntity(obj)
+    end
+  end
+end
+
 RegisterNetEvent('txAdmin:menu:clearArea', function(radius)
   local src = source
   local allow = PlayerHasTxPermission(src, 'menu.clear_area')
   TriggerEvent("txaLogger:menuEvent", src, "clearArea", allow, radius)
   if allow then
+    if ServerCtx.oneSync.type ~= 'off' then
+      clearAreaWithinRadius(radius, src)
+    end
     TriggerClientEvent('txAdmin:menu:clearArea', src, radius)
   end
 end)
@@ -631,7 +669,7 @@ CreateThread(function()
       -- trim to prevent long usernames from impacting event deliverance
       local username = sub(GetPlayerName(serverID) or "unknown", 1, 75)
       local coords
-      if ServerCtxObj.oneSync.status == true then
+      if ServerCtx.oneSync.status == true then
         coords = GetEntityCoords(ped)
       else
         coords = -1
