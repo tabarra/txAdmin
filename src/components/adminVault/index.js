@@ -42,6 +42,7 @@ module.exports = class AdminVault {
             'txadmin.log.view': 'View txAdmin Log',
 
             'menu.vehicle': 'Spawn / Fix Vehicles',
+            'menu.clear_area': 'Reset world area',
             'players.message': 'Announcement / DM', //enable/disable the dm button on modal as well
             'players.whitelist': 'Whitelist',
             'players.warn': 'Warn',

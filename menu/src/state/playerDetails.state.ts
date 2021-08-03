@@ -47,6 +47,8 @@ interface TxAdminPlayerAPIResp {
   playTime: string;
   notesLog: string;
   notes: string;
+  type?: string;
+  message?: string;
 }
 
 const playerDetails = {
@@ -62,10 +64,13 @@ const playerDetails = {
           `/player/${assocPlayerLicense}`
         );
 
-        debugLog('FetchWebPipe', res, 'PlayerFetch')
-        return (res.logout !== true) ? res : false;
+        debugLog("FetchWebPipe", res, "PlayerFetch");
+
+        if (res.type === "offline") new Error(res.message);
+
+        return res.logout !== true ? res : false;
       } catch (e) {
-        if (process.env.DEV_MODE === 'browser') {
+        if (process.env.DEV_MODE === "browser") {
           debugLog(
             "GetPlayerDetails",
             "Detected browser env, dispatching mock data",
@@ -73,7 +78,7 @@ const playerDetails = {
           );
           return MockedPlayerDetails;
         }
-        return false;
+        throw e;
       }
     },
   }),
