@@ -60,7 +60,8 @@ end
 ---@param data table|nil
 local function sendFullClientData(id, data)
   data = data or LAST_PLAYER_DATA
-  TriggerLatentClientEvent('txAdmin:menu:setPlayerState', id, EMIT_BITRATE, data)
+  -- TriggerLatentClientEvent('txAdmin:menu:setPlayerState', id, EMIT_BITRATE, data)
+  TriggerClientEvent('txAdmin:menu:setPlayerState', id, data)
 end
 
 RegisterCommand('txAdmin-debug', function(src, args)
