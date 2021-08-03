@@ -48,7 +48,7 @@ Default variables:
 - `deploymentID`: composed by the shortened recipe name with a hex timestamp which will look something like `PlumeESX_BBC957`.
 - `serverName`: The name of the server specified in the setup page.
 - `recipeName`, `recipeAuthor`, `recipeVersion`, `recipeDescription`: Populated from the recipe metadata, if available.
-- `dbHost`, `dbUsername`, `dbPassword`, `dbName`, `dbDelete`, `dbConnectionString`: Populated from the database configuration user input, if available.
+- `dbHost`, `dbPort`, `dbUsername`, `dbPassword`, `dbName`, `dbDelete`, `dbConnectionString`: Populated from the database configuration user input, if available.
 - `svLicense`: Required variable, inputed in the deployer step 2. The deployer will automatically replace `{{svLicense}}` in the `server.cfg` at the end of the deployment.
 - `serverEndpoints`: The `endpoint_add_xxxx` for the server. The deployer will set this with the defaults (`0.0.0.0:30120`) or using the appropriate ZAP-Hosting configuration.
 - `maxClients`: The number of max clients for the server. The deployer will set this with the default 48 slots or using the appropriate ZAP-Hosting configuration.

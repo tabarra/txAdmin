@@ -5,13 +5,13 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 
 /**
- * Returns the output page containing the live console
+ * Returns the output page containing the deployer stepper page (all 3 stages)
  * @param {object} ctx
  */
 module.exports = async function DeployerStepper(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
-        return ctx.utils.render('main/message', {message: 'You need to be the admin master to use the deployer.'});
+        return ctx.utils.render('main/message', { message: 'You need to be the admin master to use the deployer.' });
     }
 
     //Check if this is the correct state for the deployer
@@ -48,6 +48,7 @@ module.exports = async function DeployerStepper(ctx) {
                 autofilled: true,
                 license: GlobalData.deployerDefaults.license || '',
                 mysqlHost: GlobalData.deployerDefaults.mysqlHost || 'localhost',
+                mysqlPort: GlobalData.deployerDefaults.mysqlPort || '3306',
                 mysqlUser: GlobalData.deployerDefaults.mysqlUser || 'root',
                 mysqlPassword: GlobalData.deployerDefaults.mysqlPassword || '',
                 mysqlDatabase: GlobalData.deployerDefaults.mysqlDatabase || globals.deployer.deploymentID,
@@ -58,6 +59,7 @@ module.exports = async function DeployerStepper(ctx) {
                 license: process.env.TXADMIN_DEFAULT_LICENSE || '',
                 mysqlHost: 'localhost',
                 mysqlUser: 'root',
+                mysqlPort: '3306',
                 mysqlPassword: '',
                 mysqlDatabase: globals.deployer.deploymentID,
             };
@@ -89,7 +91,7 @@ Make sure everything is correct in the recipe and try again.`;
             renderData.serverCFG = errorMessage;
         }
     } else {
-        return ctx.utils.render('main/message', {message: 'Unknown Deployer step, please report this bug and restart txAdmin.'});
+        return ctx.utils.render('main/message', { message: 'Unknown Deployer step, please report this bug and restart txAdmin.' });
     }
 
     return ctx.utils.render('standalone/deployer', renderData);

@@ -151,6 +151,7 @@ if (fs.existsSync(zapCfgFile)) {
             license: zapCfgData.defaults.license,
             maxClients: zapCfgData.defaults.maxClients,
             mysqlHost: zapCfgData.defaults.mysqlHost,
+            mysqlPort: zapCfgData.defaults.mysqlPort,
             mysqlUser: zapCfgData.defaults.mysqlUser,
             mysqlPassword: zapCfgData.defaults.mysqlPassword,
             mysqlDatabase: zapCfgData.defaults.mysqlDatabase,

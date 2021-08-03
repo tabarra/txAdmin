@@ -124,7 +124,7 @@ const parseValidateRecipe = (rawRecipe) => {
 
     //Process inputs
     outRecipe.requireDBConfig = recipe.tasks.some((t) => t.action.includes('database'));
-    const protectedVarNames = ['licenseKey', 'dbHost', 'dbUsername', 'dbPassword', 'dbName', 'dbConnection'];
+    const protectedVarNames = ['licenseKey', 'dbHost', 'dbUsername', 'dbPassword', 'dbName', 'dbConnection', 'dbPort'];
     if (typeof recipe.variables == 'object' && recipe.variables !== null) {
         const varNames = Object.keys(recipe.variables);
         if (varNames.some((n) => protectedVarNames.includes(n))) {
