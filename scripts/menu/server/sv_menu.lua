@@ -510,6 +510,7 @@ end)
 RegisterNetEvent('txAdmin:menu:clearArea', function(radius)
   local src = source
   local allow = PlayerHasTxPermission(src, 'menu.clear_area')
+  TriggerEvent("txaLogger:menuEvent", src, "clearArea", allow, radius)
   if allow then
     TriggerClientEvent('txAdmin:menu:clearArea', src, radius)
   end
