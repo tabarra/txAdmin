@@ -5,6 +5,7 @@ import {
   AccessibilityNew,
   Announcement,
   Build,
+  ClearAll,
   ControlCamera,
   DirectionsCar,
   ExpandMore,
@@ -30,6 +31,7 @@ import { arrayRandom } from "../../utils/miscUtils";
 import { copyToClipboard } from "../../utils/copyToClipboard";
 import { useServerCtxValue } from '../../state/server.state';
 import { VehicleMode, useVehicleMode } from '../../state/vehiclemode.state';
+
 
 const fadeHeight = 20;
 const listHeight = 388;
@@ -307,6 +309,35 @@ export const MainPageList: React.FC = () => {
     });
   };
 
+  const handleClearArea = () => {
+    openDialog({
+      title: t("nui_menu.page_main.clear_area.list_primary"),
+      description: t("nui_menu.page_main.clear_area.dialog_description"),
+      placeholder: "300",
+      onSubmit: (msg) => {
+        const parsedRadius = parseInt(msg);
+
+        if (isNaN(parsedRadius) || parsedRadius > 300 || parsedRadius < 0) {
+          return enqueueSnackbar(
+            t("nui_menu.page_main.clear_area.dialog_error"),
+            { variant: "error" }
+          );
+        }
+
+        fetchNui("clearArea", parsedRadius).then(() => {
+          enqueueSnackbar(
+            t("nui_menu.page_main.clear_area.dialog_success", {
+              radius: parsedRadius,
+            }),
+            {
+              variant: "success",
+            }
+          );
+        });
+      },
+    });
+  };
+
   // This is here for when I am bored developing
   // const handleSpawnWeapon = () => {
   //   openDialog({
@@ -471,6 +502,13 @@ export const MainPageList: React.FC = () => {
         primary: t("nui_menu.page_main.copy_coords.list_primary"),
         secondary: t("nui_menu.page_main.copy_coords.list_secondary"),
         onSelect: handleCopyCoords,
+      },
+      {
+        icon: <ClearAll />,
+        primary: t("nui_menu.page_main.clear_area.list_primary"),
+        secondary: t("nui_menu.page_main.clear_area.list_secondary"),
+        onSelect: handleClearArea,
+        requiredPermission: "menu.clear_area",
       },
       // {
       //   icon: <Gavel />,

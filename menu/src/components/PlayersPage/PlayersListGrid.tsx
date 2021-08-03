@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFilteredSortedPlayers } from "../../state/players.state";
 import PlayerCard from "./PlayerCard";
 import { Box, CircularProgress, makeStyles } from "@material-ui/core";
@@ -31,12 +31,30 @@ export const PlayersListGrid: React.FC = () => {
     setBucket((prevState) => (prevState > 1 ? 1 : prevState));
   }, [filteredPlayers]);
 
-  // Setup our intersection observer on mount
+  const slicedPlayers = filteredPlayers.slice(0, MAX_PER_BUCKET * bucket);
+
+  const handleObserver = useCallback(
+    (entities) => {
+      const lastEntry = entities[0];
+      if (
+        lastEntry.isIntersecting &&
+        filteredPlayers.length > slicedPlayers.length
+      ) {
+        setFakeLoading(true);
+        setTimeout(() => {
+          setBucket((prevState) => prevState + 1);
+          setFakeLoading(false);
+        }, FAKE_LOAD_TIME);
+      }
+    },
+    [filteredPlayers, slicedPlayers]
+  );
+
   useEffect(() => {
     const observer = new IntersectionObserver(handleObserver, {
       root: null,
-      rootMargin: "40px",
-      threshold: 1.0,
+      rootMargin: "10px",
+      threshold: 0.9,
     });
 
     if (containerRef.current) observer.observe(containerRef.current);
@@ -44,23 +62,7 @@ export const PlayersListGrid: React.FC = () => {
     return () => {
       if (containerRef.current) observer.unobserve(containerRef.current);
     };
-  }, []);
-
-  const slicedPlayers = filteredPlayers.slice(0, MAX_PER_BUCKET * bucket);
-
-  const handleObserver = (entities) => {
-    const lastEntry = entities[0];
-    if (
-      lastEntry.isIntersecting &&
-      filteredPlayers.length > slicedPlayers.length
-    ) {
-      setFakeLoading(true);
-      setTimeout(() => {
-        setBucket((prevState) => prevState + 1);
-        setFakeLoading(false);
-      }, FAKE_LOAD_TIME);
-    }
-  };
+  }, [handleObserver]);
 
   return (
     <div className={classes.wrapper}>

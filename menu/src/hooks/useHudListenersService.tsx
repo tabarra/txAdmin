@@ -4,7 +4,7 @@ import { useNuiEvent } from "./useNuiEvent";
 import { Box, Typography } from "@material-ui/core";
 import { useTranslate } from "react-polyglot";
 import { shouldHelpAlertShow } from "../utils/shouldHelpAlertShow";
-import { debugData } from "../utils/debugLog";
+import { debugData } from "../utils/debugData";
 import { getNotiDuration } from '../utils/getNotiDuration';
 
 type SnackbarAlertSeverities = "success" | "error" | "warning" | "info";

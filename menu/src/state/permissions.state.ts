@@ -22,6 +22,7 @@ export type ResolvablePermission =
   | "settings.write"
   | "txadmin.log.view"
   | "menu.vehicle"
+  | "menu.clear_area"
   | "players.spectate"
   | "players.troll";
 

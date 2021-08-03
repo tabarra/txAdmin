@@ -141,6 +141,13 @@
             "copy_coords": {
                 "list_primary": "Copy Coords",
                 "list_secondary": "Copies current coords to clipboard"
+            },
+            "clear_area": {
+                "list_primary": "Reset Area",
+                "list_secondary": "Will attempt to reset a world area to default state",
+                "dialog_description": "Please enter the radius where you wish to reset entities in (0-300). Note: This will not clear entities spawned server side",
+                "dialog_error": "Invalid radius input. Try again",
+                "dialog_success": "Clearing area with radius of %{radius}m"
             }
         },
         "page_players": {
@@ -164,6 +171,9 @@
             }
         },
         "player_modal": {
+            "misc": {
+                "error": "An error occurred fetching this users details. The error is shown below:"
+            },
             "tabs": {
                 "actions": "Actions",
                 "info": "Info",
