@@ -5,11 +5,11 @@
     },
     "restarter": {
         "start_timeout": "Se ha agotado el tiempo de espera para el arranque.",
-        "crash_detected": "Caída del servidor detectada.",
+        "crash_detected": "Caida del servidor detectada",
         "hang_detected": "Suspensión detectada",
         "partial_hang_warn": "Debido a una suspensión parcial, el servidor se reiniciará en 1 minutos. Por favor, desconectate ahora.",
         "partial_hang_warn_discord": "Debido a una suspensión parcial, **%{servername}** se reiniciará en un minuto.",
-        "schedule_reason": "Reinicio programado a las %{time}",
+        "schedule_reason": "reinicio programado a las %{time}",
         "schedule_warn": "El servidor se va a reiniciar en %{smart_count} minutos. Por favor desconéctense. |||| El servidor se va a reiniciar en %{smart_count} minutos.",
         "schedule_warn_discord": "**%{servername}** El servidor se va a reiniciar en %{smart_count} minutos. |||| **%{servername}** El servidor se va a reiniciar en %{smart_count} minutos."
     },
@@ -34,5 +34,248 @@
         "title": "ADVERTENCIA",
         "warned_by": "Advertido por:",
         "instruction": "Presione [ESPACIO] durante 10 segundos para descartar este mensaje."
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "¡txAdmin tiene ahora un menu en el juego!\n¡Vincula [Ajustes del juego > Ajustes de teclas > FiveM > Abrid el menu de txadmin] para probarlo!",
+            "menu_not_allowed": "Tus identificadores no concuerdan con ninguno registrado en txAdmin.\nSi estas registrado en txAdmin, ve a gestor de Administradores y aseguraten que tus identificadores estan guardados.",
+            "action_unauthorized": "No tienes ese permiso.",
+            "unknown_error": "Ha ocurrido un error desconocido.",
+            "not_enabled": "¡El menu de txAdmin no esta activado! Por favor comprueba la documentacion para mas información.",
+            "announcement_title": "Anuncio del servidor:",
+            "general_no_perms": "¡No tienes permisos para hacer eso!"
+        },
+        "common": {
+            "cancel": "Cancelar",
+            "submit": "Aceptar",
+            "error": "Ha ocurrido un error",
+            "copied": "Copiado al portapapeles"
+        },
+        "page_main": {
+            "tooltips": {
+                "tooltip_1": "Usa %{key} para cambiar entre paginas y usa las flechas para navegar por el menu.",
+                "tooltip_2": "Algunas opciones del menu tiene opciones secundarias que pueden ser seleccionadas con las flechas Izquierda y Derecha."
+            },
+            "fix_vehicle": {
+                "list_primary": "Arreglar Vehiculo",
+                "list_secondary": "Pone la vida del vehiculo al 100%",
+                "dialog_success": "¡Vehiculo arreglado!",
+                "dialog_error": "¡No estas en ningún vehiculo!"
+            },
+            "teleport": {
+                "list_primary": "Teletransportarse",
+                "item_waypoint": "Ir A: Marcador",
+                "item_coords": "Ir A: Coordenadas",
+                "item_previous": "Ir A: Localización Anterior",
+                "dialog_title": "Teletransportarse",
+                "dialog_desc": "Pon unas coordenadas en formato x, y, z para atravesar el espacio tiempo",
+                "dialog_success": "¡Viajando!",
+                "dialog_error": "Coordenadas invalidas. Deben estar en este formato: 111, 222, 33"
+            },
+            "teleport_back": {
+                "list_primary": "Volver",
+                "list_secondary": "Teletransportarte a la ultima localización",
+                "error": "¡No tienes una ultima localización a la que transportarte!",
+                "success": "¡Volviendo por el espacio tiempo!"
+            },
+            "player_mode": {
+                "list_primary": "Modo del Jugador",
+                "list_secondary": "Actual: %{mode}",
+                "item_none": "Normal",
+                "item_noclip": "Noclip",
+                "item_godmode": "God Mode",
+                "dialog_success_none": "Volviendo al modo Normal",
+                "dialog_success_noclip": "Noclip activado",
+                "dialog_success_godmode": "God mode activado"
+            },
+            "spawn_wep": {
+                "list_primary": "Dar Arma",
+                "list_secondary": "Date un arma a ti mismo",
+                "dialog_title": "Dar arma",
+                "dialog_desc": "Date un arma usando su nombre de modelo."
+            },
+            "car_options": {
+                "list_primary": "Opciones de Vehiculos",
+                "onesync_error": "Esta opción requiere OneSync activado para manejar las entidades del servidor."
+            },
+            "spawn_veh": {
+                "list_primary": "Sacar Vehiculo",
+                "list_secondary": "Saca un vehiculo usando su nombre de modelo",
+                "dialog_title": "Sacar Vehiculo",
+                "dialog_desc": "Introduce el nombre de modelo del vehiculo que quieras sacar.",
+                "dialog_success": "¡Vehiculo generado!",
+                "dialog_error": "¡El vehiculo '%{modelName}' no existe!",
+                "dialog_info": "Intentado generar %{modelName}"
+            },
+            "delete_veh": {
+                "list_secondary": "Borra el vehiculo",
+                "dialog_success": "¡Vehiculo borrado!",
+                "dialog_error": "¡No estas en ningun vehiculo!"
+            },
+            "heal_all": {
+                "list_primary": "Cura a todos los jugadores",
+                "list_secondary": "Curará y revivirá a todos los jugadores",
+                "dialog_success": "Todos los jugadores revividos y curados."
+            },
+            "heal_myself": {
+                "list_primary": "Curate a ti mismo",
+                "list_secondary": "Restaura toda tu vida",
+                "dialog_success_0": "¡Todo listo!",
+                "dialog_success_1": "¡Deberias sentirte mejor!",
+                "dialog_success_2": "¡A tope!",
+                "dialog_success_3": "¡Sana sana, culo de rana!"
+            },
+            "send_announce": {
+                "list_primary": "Enviar Anuncio",
+                "list_secondary": "Anuncia un mensaje",
+                "dialog_title": "Enviar Anuncio",
+                "dialog_desc": "Manda un anuncio a todos los jugadores",
+                "dialog_success": "Enviando el anuncio"
+            },
+            "player_ids": {
+                "list_primary": "Muestra o no la ID de jugadores",
+                "list_secondary": "Mostrara las NetID's de los jugadores cercanos",
+                "alert_show": "Enseñando las NetID's de los jugadores cercanos",
+                "alert_hide": "Ocultando las NetID's de jugadores cercanos"
+            },
+            "copy_coords": {
+                "list_primary": "Copiar Coordenadas",
+                "list_secondary": "Copia las coordenadas al portapapeles"
+            },
+            "clear_area": {
+                "list_primary": "Reinicia la Zona",
+                "list_secondary": "Intentara reiniciar la zona al por defecto del mundo",
+                "dialog_description": "Por favor introduce un radio entre (0-300). Nota: esto no borrará las entidades generadas por el servidor.",
+                "dialog_error": "Radio invalido. Prueba otra vez",
+                "dialog_success": "Limpiando un area de %{radius}m"
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "Jugadores conectados",
+                "players": "Jugadores",
+                "search": "Buscar",
+                "zero_players": "No se ha encontrado a ningun jugador"
+            },
+            "sort": {
+                "label": "Ordenar por",
+                "distance": "Distancia",
+                "id": "ID",
+                "joined_first": "Unidos mas recientes primero",
+                "joined_last": "Unidos mas antiguos primero",
+                "closest": "Mas cercanos primero",
+                "farthest": "Mas lejanos primero"
+            },
+            "card": {
+                "health": "Salud al %{percentHealth}%"
+            }
+        },
+        "player_modal": {
+            "misc": {
+                "error": "Ha ocurrido un error mostrando los datos del jugador. El error se explica abajo:"
+            },
+            "tabs": {
+                "actions": "Acciones",
+                "info": "Info",
+                "ids": "IDs",
+                "history": "Historial",
+                "ban": "Ban"
+            },
+            "actions": {
+                "title": "Acciones del jugador",
+                "command_sent": "¡Comando enviado!",
+                "sections": {
+                    "moderation": "Moderación",
+                    "interaction": "Interacción",
+                    "troll": "Troll"
+                },
+                "moderation": {
+                    "dm_dialog": {
+                        "title": "Mensaje Directo",
+                        "description": "¿Por que estas enviando un mensaje a este jugador?",
+                        "placeholder": "Razón...",
+                        "dm_sent": "¡Tu mensaje ha sido enviado!"
+                    },
+                    "warn_dialog": {
+                        "title": "Advertencia",
+                        "description": "¿Por que adviertes a este jugador?",
+                        "placeholder": "Razón...",
+                        "warn_sent": "¡El jugador ha sido advertido!"
+                    },
+                    "kick_dialog": {
+                        "title": "Expulsar",
+                        "description": "¿Por que vas a expulsar a este jugador?",
+                        "placeholder": "Razón...",
+                        "kick_sent": "¡El jugador ha sido expulsado!"
+                    },
+                    "options": {
+                        "dm": "DM",
+                        "warn": "Advertir",
+                        "kick": "Expulsar",
+                        "set_admin": "Poner como Admin",
+                        "heal": "Curar",
+                        "go_to": "Ir a el",
+                        "bring": "Traer a ti",
+                        "spectate": "Observar"
+                    },
+                    "action_notifications": {
+                        "heal_player": "Curando jugador",
+                        "tp_player": "Teletransportandote a jugador",
+                        "bring_player": "Trayendo jugador"
+                    }
+                },
+                "interaction": {
+                    "options": {
+                        "heal": "Curar",
+                        "go_to": "Ir a el",
+                        "bring": "Traer a ti",
+                        "spectate": "Observar"
+                    }
+                },
+                "troll": {
+                    "options": {
+                        "weed": "Fumeta",
+                        "weed_desc": "Pondra un efecto de fumado al jugador",
+                        "fire": "En llamas!",
+                        "fire_desc": "Prenderá fuego al jugador",
+                        "drunk": "Borrachin",
+                        "drunk_desc": "Pondra un efecto de embriaguez al jugador",
+                        "wild_attack": "Ataque Salvaje",
+                        "wild_attack_desc": "Generará un animal aleatorio para atacarle"
+                    }
+                }
+            },
+            "info": {
+                "title": "Informacion del jugador",
+                "session_time": "Tiempo de sesión",
+                "play_time": "Tiempo de juego",
+                "joined": "Unido",
+                "notes_placeholder": "Notas sobre este jugador"
+            },
+            "history": {
+                "title": "Historial relacionado"
+            },
+            "ban": {
+                "action_types": {
+                    "warn": "ADVERTIDO",
+                    "warn_revoked": "QUITADA la ADVERTENCIA por",
+                    "kick": "EXPULSADO",
+                    "ban": "BANEADO",
+                    "ban_revoked": "QUITADO el BAN por",
+                    "whitelist": "WHITELIST",
+                    "whitelist_revoked": "QUITADO de WHITELIST por"
+                },
+                "title": "Banear jugador",
+                "reason_placeholder": "Razón",
+                "duration_placeholder": "Duración",
+                "hours": "horas",
+                "days": "dias",
+                "weeks": "semanas",
+                "months": "meses",
+                "permanent": "Permanenete",
+                "custom": "Personalizado",
+                "helper_text": "Por favor elige una duración"
+            }
+        }
     }
 }
