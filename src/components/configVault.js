@@ -219,7 +219,7 @@ module.exports = class ConfigVault {
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
             //FXRunner - Converting from old OneSync (build 2751)
             if (isUndefined(cfg.fxRunner.onesync) || cfg.fxRunner.onesync === null) {
-                cfg.fxRunner.onesync = 'off';
+                cfg.fxRunner.onesync = 'on';
             } else if (typeof cfg.fxRunner.onesync == 'boolean') {
                 cfg.fxRunner.onesync = (cfg.fxRunner.onesync) ? 'on' : 'off';
             } else if (!['on', 'legacy', 'off'].includes(cfg.fxRunner.onesync)) {
