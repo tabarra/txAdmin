@@ -150,12 +150,14 @@ function processEventTypes(event) {
         return `txAdminClient Debug Message: <span class="text-warning">${xss(message)}</span>`;
     } else if (event.action === 'MenuEvent') {
         let data = event.data || {event: 'unknown', allowed: false};
-        return !data.allowed ? `was blocked from ${data.message}` : `is ${data.message}`;
+        const message = xss(data.message);
+        return !data.allowed ? `was blocked from ${message}` : `is ${message}`;
     } else {
+        const action = xss(event.action);
         if (GlobalData.verbose) {
-            logWarn(`Unrecognized event: ${event.action}`);
+            logWarn(`Unrecognized event: ${action}`);
             dir(event);
         }
-        return `${event.action}`;
+        return `${action}`;
     }
 }
