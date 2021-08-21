@@ -210,8 +210,8 @@ Replaces a string in the target file or files array based on a search string and
 - action: replace_string
   mode: all_vars
   file: 
-    - ./server.cfg
-    - ./doesntexist/config.json
+    - ./resources/blah.cfg
+    - ./something/config.json
 
 # Replace all variables
 - action: replace_string

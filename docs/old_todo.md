@@ -501,7 +501,39 @@ More:
 - [x] fix old admins.json breaking on the identifiers validation
 - [x] revert: don't open url when admins are configured
 > v4.2.0
-
+- [x] fix(menu): Disable all files if convar isn't set
+- [x] refactor(scripts/menu): Break cl_main into several files
+- [x] feat(menu/announce): Dynamic announce duration based on length
+- [x] fix(menu): Fix race condition between NUI and scripts for ServerCtx
+- [x] fix(menu/main): Disable vehicle spawning if OneSync is off
+- [x] fix(menu/modal): fix permanent ban not working
+- [x] fix(scripts/menu): Fix NoClip setting disable game controls override
+- [x] fix: accept the new license format 
+- [x] diagnostics: use `globals.monitor.hostStats` instead of `systeminformation`
+- [x] many small fixes and tweaks
+> v4.3.0
+- [x] menu: fixed announcements duration
+- [x] menu: changed playermode snackbar to center
+> v4.3.1
+- [x] fixed: actions executing twice caused by build issues and fxmanifest globbing (eg spawning two cars);
+- [x] fixed: teleporting under the ground;
+- [x] fixed: noclip camera going crazy when using kashacters;
+- [x] fixed: holding enter would execute the same action multiple times;
+- [x] added heading to the copy coords command;
+- [x] added keybind for NoClip (in FiveM settings);
+- [x] added visual indication of which options you do not have permission for;
+- [x] improved error handling on the player's modal;
+- [x] many small fixed and tweaks, as well as package updates.
+> v4.4.0
+- [x] tweak(menu): added weird padding for version tag
+- [x] fix(menu/lua): fixed noclip toggle permission
+- [x] tweak(menu): temporarily disabled locale, again
+> v4.4.1
+- [x] fixed diagnostics page not rendering in some pages;
+- [x] added "clear area" command (for now, doesn't clear server-spawned entities);
+- [x] possibly fixed the menu playerlist sync issues;
+- [x] a few small fixes and tweaks.
+> v4.4.2
 
 
 ------------------------------

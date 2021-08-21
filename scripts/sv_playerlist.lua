@@ -34,7 +34,7 @@ local pairs = pairs
 
 --[[ Emit player list to clients ]]
 CreateThread(function()
-    while true do
+    while false do
         Wait(intervalUpdateTime)
         local rightNow = os.time()
         local tmpPlayerlist = {}
