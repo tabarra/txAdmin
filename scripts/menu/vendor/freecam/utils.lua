@@ -53,14 +53,14 @@ function IsGamepadControl()
 end
 
 function GetSmartControlNormal(control)
-    if type(control) == 'table' then
-      local normal1 = GetDisabledControlNormal(0, control[1])
-      local normal2 = GetDisabledControlNormal(0, control[2])
-      return normal1 - normal2
-    end
-
-    return GetDisabledControlNormal(0, control)
+  if type(control) == 'table' then
+    local normal1 = GetDisabledControlNormal(0, control[1])
+    local normal2 = GetDisabledControlNormal(0, control[2])
+    return normal1 - normal2
   end
+
+  return GetDisabledControlNormal(0, control)
+end
 
 function EulerToMatrix(rotX, rotY, rotZ)
   local radX = rad(rotX)

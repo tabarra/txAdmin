@@ -64,19 +64,12 @@ local function UpdateCamera()
     SetFreecamPosition(pos.x, pos.y, pos.z)
     SetFreecamRotation(rot.x, rot.y, rot.z)
   
-    -- Update ped
-    local ped = PlayerPedId()
-    SetEntityCoords(ped, pos.x, pos.y, pos.z)
-    -- Update veh
-    local veh = GetVehiclePedIsIn(ped, false)
-    if veh and veh > 0 then 
-      SetEntityCoords(veh, pos.x, pos.y, pos.z)
-    end
+    return pos, rotZ
   end
 
   -- Trigger a tick event. Resources depending on the freecam position can
   -- make use of this event.
-  TriggerEvent('freecam:onTick')
+  -- TriggerEvent('freecam:onTick')
 end
 
 -------------------------------------------------------------------------------
@@ -86,9 +79,26 @@ function StartFreecamThread()
     local ped = PlayerPedId()
     local pos = GetEntityCoords(ped)
     SetFreecamPosition(pos[1], pos[2], pos[3])
+
+    local frameCounter = 0
     while IsFreecamActive() do
       Wait(0)
-      UpdateCamera()
+      local pos, rotZ = UpdateCamera()
+
+      frameCounter = frameCounter + 1
+      if frameCounter > 100 then
+        frameCounter = 0
+        if pos ~= nil and rotZ ~= nil then
+          -- Update ped
+          SetEntityCoords(ped, pos.x, pos.y, pos.z)
+          SetEntityHeading(ped, rotZ)
+          -- Update veh
+          local veh = GetVehiclePedIsIn(ped, false)
+          if veh and veh > 0 then 
+            SetEntityCoords(veh, pos.x, pos.y, pos.z)
+          end
+        end
+      end
     end
   end)
   
