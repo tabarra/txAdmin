@@ -52,6 +52,10 @@
             "copied": "複製至剪貼簿"
         },
         "page_main": {
+            "tooltips": {
+                "tooltip_1": "按 %{key} 更換頁面以及使用方向鍵去選擇選單選項",
+                "tooltip_2": "某些選項擁有多重選項，你可以使用左右方向鍵切換該選項"
+            },
             "fix_vehicle": {
                 "list_primary": "修理載具",
                 "list_secondary": "設定載具耐久值至 100%",
@@ -130,9 +134,12 @@
                 "list_primary": "複製座標",
                 "list_secondary": "座標已複製到剪貼簿"
             },
-            "tooltips": {
-                "tooltip_1": "按 %{key} 更換頁面以及使用方向鍵去選擇選單選項",
-                "tooltip_2": "某些選項擁有多重選項，你可以使用左右方向鍵切換該選項"
+            "clear_area": {
+                "list_primary": "重設地圖",
+                "list_secondary": "將會重設整個世界的地圖至到預設狀態",
+                "dialog_description": "請輸入你想重設的半徑範圍 (0-300). 提示: 這不會清除伺服器端所生成的物件",
+                "dialog_error": "半徑範圍輸入錯誤。 請再試一次",
+                "dialog_success": "正在重設 %{radius}m 半徑範圍至到預設狀態"
             }
         },
         "page_players": {
@@ -156,6 +163,9 @@
             }
         },
         "player_modal": {
+            "misc": {
+                "error": "查詢玩家資料時發生錯誤。錯誤:"
+            },
             "tabs": {
                 "actions": "基本功能",
                 "info": "資訊",
