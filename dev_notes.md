@@ -1,23 +1,7 @@
 ## TODO:
-- [x] fix(menu): Disable all files if convar isn't set
-- [x] refactor(scripts/menu): Break cl_main into several files
-- [x] feat(menu/announce): Dynamic announce duration based on length
-- [x] fix(menu): Fix race condition between NUI and scripts for ServerCtx
-- [x] fix(menu/main): Disable vehicle spawning if OneSync is off
-- [x] fix(menu/modal): fix permanent ban not working
-- [x] fix(scripts/menu): Fix NoClip setting disable game controls override
-- [x] fix: accept the new license format 
-- [x] diagnostics: use `globals.monitor.hostStats` instead of `systeminformation`
-- [x] many small fixes and tweaks
-> v4.3.0
-- [x] menu: fixed announcements duration
-- [x] menu: changed playermode snackbar to center
-> v4.3.1
-- [ ] menu: sync playerlist via http
-- [ ] menu: make `/tx` print useful information (eg menu disabled, auth fail reason, etc)
-- [ ] menu: make txadmin-reauth more useful
-- [ ] login page auto retry auth one time
-- [ ] menu: fix player modal not handling `logout: true` (look for fetchWebPipe)
+- [x] changed onesync to be "on" by default
+- [x] noclip: update heading automatically + optimization
+
 
 warn auto dismiss 15s
 FreezeEntityPosition need to get the veh
@@ -36,6 +20,25 @@ nui snackbars
 oauth login
 socket.io
 fd3
+
+
+When someone joins/leaves:
+- sv_playerlist sends {id, false} or {id, name, license} via event for the connected admins
+- client atualiza sua playerlist interna
+
+
+Client every 5 seconds:
+- if isMenuVisible TriggerServerEvent("gimmeDetailedPlayerlist")
+
+Server on gimmeDetailedPlayerlist
+- get requester's coords
+
+
+
+recipe engine todo:
+- checksum for downloaded files
+- remove_path accept array?
+- every X download_github wait some time - maybe check if ref or not, to be smarter
 
 
 

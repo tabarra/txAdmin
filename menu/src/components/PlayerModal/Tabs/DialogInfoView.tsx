@@ -90,7 +90,7 @@ const DialogInfoView: React.FC = () => {
             variant="outlined"
             multiline
             rows={4}
-            rowsMax={4}
+            maxRows={4}
             fullWidth
           />
           <Button

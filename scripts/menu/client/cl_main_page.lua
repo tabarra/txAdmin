@@ -50,6 +50,11 @@ RegisterNUICallback('copyCurrentCoords', function(_, cb)
     cb({ coords = stringCoords })
 end)
 
+RegisterNUICallback('clearArea', function(radius, cb)
+    TriggerServerEvent('txAdmin:menu:clearArea', radius)
+    cb({})
+end)
+
 -- [[ Spawn weapon (only in dev, for now) ]]
 if isMenuDebug then
     RegisterNUICallback('spawnWeapon', function(weapon, cb)
@@ -154,6 +159,13 @@ RegisterNetEvent('txAdmin:events:queueSeatInVehicle', function(vehNetID, seat)
         end
     end
     oldVehVelocity = 0.0
+end)
+
+RegisterNetEvent('txAdmin:menu:clearArea', function(radius)
+    local curCoords = GetEntityCoords(PlayerPedId())
+    local radiusToFloat = radius + 0.0
+    debugPrint(('Radius to clear %d'):format(radius))
+    ClearArea(curCoords.x, curCoords.y, curCoords.z, radiusToFloat, false, false, false, false, false)
 end)
 
 ---@param coords vec3
