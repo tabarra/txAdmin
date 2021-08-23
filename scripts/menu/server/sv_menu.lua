@@ -60,7 +60,8 @@ end
 ---@param data table|nil
 local function sendFullClientData(id, data)
   data = data or LAST_PLAYER_DATA
-  TriggerLatentClientEvent('txAdmin:menu:setPlayerState', id, EMIT_BITRATE, data)
+  -- TriggerLatentClientEvent('txAdmin:menu:setPlayerState', id, EMIT_BITRATE, data)
+  TriggerClientEvent('txAdmin:menu:setPlayerState', id, data)
 end
 
 RegisterCommand('txAdmin-debug', function(src, args)
@@ -503,6 +504,15 @@ RegisterNetEvent('txAdmin:menu:fixVehicle', function()
   TriggerEvent("txaLogger:menuEvent", src, "vehicleRepair", allow)
   if allow then
     TriggerClientEvent('txAdmin:menu:fixVehicle', src)
+  end
+end)
+
+RegisterNetEvent('txAdmin:menu:clearArea', function(radius)
+  local src = source
+  local allow = PlayerHasTxPermission(src, 'menu.clear_area')
+  TriggerEvent("txaLogger:menuEvent", src, "clearArea", allow, radius)
+  if allow then
+    TriggerClientEvent('txAdmin:menu:clearArea', src, radius)
   end
 end)
 

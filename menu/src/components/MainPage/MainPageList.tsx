@@ -5,6 +5,7 @@ import {
   AccessibilityNew,
   Announcement,
   Build,
+  ClearAll,
   ControlCamera,
   DirectionsCar,
   ExpandMore,
@@ -28,7 +29,7 @@ import { TeleportMode, useTeleportMode } from "../../state/teleportmode.state";
 import { HealMode, useHealMode } from "../../state/healmode.state";
 import { arrayRandom } from "../../utils/miscUtils";
 import { copyToClipboard } from "../../utils/copyToClipboard";
-import { useServerCtxValue } from '../../state/server.state';
+import { useServerCtxValue } from "../../state/server.state";
 
 const fadeHeight = 20;
 const listHeight = 388;
@@ -68,7 +69,7 @@ export const MainPageList: React.FC = () => {
   const [playerMode, setPlayerMode] = usePlayerMode();
   const [teleportMode, setTeleportMode] = useTeleportMode();
   const [healMode, setHealMode] = useHealMode();
-  const serverCtx = useServerCtxValue()
+  const serverCtx = useServerCtxValue();
   const menuVisible = useIsMenuVisible();
   const classes = useStyles();
 
@@ -170,7 +171,9 @@ export const MainPageList: React.FC = () => {
     // we disable this function from being used if onesync
     // isn't on
     if (!serverCtx.oneSync.status) {
-      return enqueueSnackbar(t('nui_menu.page_main.spawn_veh.onesync_error'), { variant: 'error' })
+      return enqueueSnackbar(t("nui_menu.page_main.spawn_veh.onesync_error"), {
+        variant: "error",
+      });
     }
 
     openDialog({
@@ -280,6 +283,35 @@ export const MainPageList: React.FC = () => {
     fetchNui<{ coords: string }>("copyCurrentCoords").then(({ coords }) => {
       copyToClipboard(coords);
       enqueueSnackbar(t("nui_menu.common.copied"), { variant: "success" });
+    });
+  };
+
+  const handleClearArea = () => {
+    openDialog({
+      title: t("nui_menu.page_main.clear_area.list_primary"),
+      description: t("nui_menu.page_main.clear_area.dialog_description"),
+      placeholder: "300",
+      onSubmit: (msg) => {
+        const parsedRadius = parseInt(msg);
+
+        if (isNaN(parsedRadius) || parsedRadius > 300 || parsedRadius < 0) {
+          return enqueueSnackbar(
+            t("nui_menu.page_main.clear_area.dialog_error"),
+            { variant: "error" }
+          );
+        }
+
+        fetchNui("clearArea", parsedRadius).then(() => {
+          enqueueSnackbar(
+            t("nui_menu.page_main.clear_area.dialog_success", {
+              radius: parsedRadius,
+            }),
+            {
+              variant: "success",
+            }
+          );
+        });
+      },
     });
   };
 
@@ -427,6 +459,13 @@ export const MainPageList: React.FC = () => {
         primary: t("nui_menu.page_main.copy_coords.list_primary"),
         secondary: t("nui_menu.page_main.copy_coords.list_secondary"),
         onSelect: handleCopyCoords,
+      },
+      {
+        icon: <ClearAll />,
+        primary: t("nui_menu.page_main.clear_area.list_primary"),
+        secondary: t("nui_menu.page_main.clear_area.list_secondary"),
+        onSelect: handleClearArea,
+        requiredPermission: "menu.clear_area",
       },
       // {
       //   icon: <Gavel />,

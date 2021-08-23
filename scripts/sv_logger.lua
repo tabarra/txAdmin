@@ -166,7 +166,11 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
     elseif event == 'setOnFire' then
         if type(data) ~= 'string' then return end
         message = "setting ".. data .." on fire" 
-    
+
+    elseif event == 'clearArea' then
+        if type(data) ~= 'number' then return end
+        message = "clearing an area with ".. data .."m radius"
+
     else
         logger(source, 'DebugMessage', "unknown menu event "..event)
         return
