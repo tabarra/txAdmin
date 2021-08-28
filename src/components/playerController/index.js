@@ -469,7 +469,7 @@ module.exports = class PlayerController {
     /**
      * Whitelists a player from it's license or wl pending id
      *
-     * NOTE: I'm only getting the first matched pending, but removing all patching
+     * NOTE: I'm only getting the first matched pending, but removing all matching
      * NOTE: maybe I should add a trycatch inside here
      *
      * @param {string} reference "license:" prefixed license or pending id

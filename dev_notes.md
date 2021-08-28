@@ -34,6 +34,33 @@ Server on gimmeDetailedPlayerlist
 - get requester's coords
 
 
+pagina de adicionar admin precisa depois do modal, mostrar mais info:
+username, senha, potencialmente link, instruções de login
+
+
+
+
+Novo log:
+- manter array de objetos em memória
+- limitar array para 16k elementos, isso deve dar 1h em servidores muito grandes (266 eventos por minuto)
+- o identificador nos objetos fica o nome e id do jogador junto do mutex do server
+- interface quando receber, transforma o username em clicável
+- server mantem em memória todos os ids de todos os mutex desde que o tx iniciou playerIds = {"mutex": {"id": [...]}} 
+- quando chegar, já coloca em um buffer que dumpa pra logfile com nome serverlog_timestamp.log, totalmente human readable
+- quando player entrar, jogar no logfile "player joined {mutex|id} Nome [...identifiers], assim da pra dar um ctrl+f
+- quando iniciar o tx pegar todos os logs da pasta e ir deletando os mais antigos até que o peso total da pasta seja menor que 2gb?
+- na página não sei como fazer scroll pra cima
+lembrar de pingar o squizer e falar que finalmente, assim como encerrar o issue e o PR
+
+
+
+
+Diagnostics page:
+On additionalArguments.replace(/licenseKey\s+(cfxk_\w{1,60}_\w{1,20}|\w{32})/gi, 'licenseKey [redacted cfx token]')
+same for steam api and tebex keys
+
+
+
 
 recipe engine todo:
 - checksum for downloaded files
