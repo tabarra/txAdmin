@@ -125,6 +125,15 @@
                                     </div>
                                 </div>
                                 {{@if(it.requireDBConfig)}}
+                                <div class="row justify-content-center m-2">
+                                    <a class="btn btn-small btn-outline-secondary" data-toggle="collapse" href="#collapseDbOptions" aria-expanded="true"  aria-controls="collapseDbOptions">
+                                        <svg class="c-sidebar-nav-icon ml-1" id="darkToggleLight">
+                                            <use href="img/coreui_icons.svg#cil-settings"></use>
+                                        </svg>
+                                        Show/Hide Database options (advanced)
+                                    </a>
+                                </div>
+                                <div class="collapse" id="collapseDbOptions">
                                     <div class="form-group row">
                                         <label for="step2-dbHost" class="col-sm-3 col-form-label">
                                             Database Host
@@ -191,6 +200,7 @@
                                             </span>
                                         </div>
                                     </div>
+                                </div>
                                 {{/if}}
                                 {{@if(it.inputVars.length)}}
                                     <div class="hrsep hrsep-small mb-3">Custom Variables</div>
@@ -207,7 +217,7 @@
                                     {{/each}}
                                 {{/if}}
                             </form>
-                            <div class="row justify-content-center m-2">
+                            <div class="row justify-content-center m-2 mt-3">
                                 <button class="btn btn-outline-danger" type="button" 
                                     onclick="cancelAction()">Cancel and Return to Setup</button>
                                 &nbsp; &nbsp;
