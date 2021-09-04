@@ -4,6 +4,8 @@
 - [x] tweak: error logging stuff
 - [x] feat: chart data rate limit
 - [x] feat(web/diagnostics): redacting cfx/steam/tebex keys
+- [x] feat: prevent noobs from messing setup/deploy opts
+- [x] tweak(core): removed space checking in fx paths
 - [ ] fix(nui): auth source for zap servers
 - [ ] fix(core): memory leak on server log 
 - [ ] deployer: collapse database options into "advanced"
@@ -69,6 +71,7 @@ nota:
 
 
 Small Stuff:
+- [ ] rever o espaço no path, procurar por "tabSpaceDisabledThingy" que vai marcar os lugares
 - [ ] menu: add debouncer for main options keydown
 - [ ] menu: noclip should set ped heading when exiting freecam
 - [ ] menu: visually disable options when no permission

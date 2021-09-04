@@ -43,7 +43,8 @@ const engineVersion = 3;
  * @param {*} path
  */
 const validateTargetPath = async (deployPath) => {
-    if (deployPath.includes(' ')) throw new Error('The paths cannot contain spaces (the space character that separate words).');
+    // if (deployPath.includes(' ')) throw new Error('The paths cannot contain spaces (the space character that separate words).');
+    //tabSpaceDisabledThingy
 
     if (await fs.pathExists(deployPath)) {
         const pathFiles = await fs.readdir(deployPath);

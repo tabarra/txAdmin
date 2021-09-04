@@ -62,7 +62,7 @@ module.exports = (osType, fxServerPath, fxServerVersion, serverProfile, profileP
     if (osType == 'windows') {
         try {
             const batData = `@echo off
-${fxServerPath}/FXServer.exe +set serverProfile "${serverProfile}"
+"${fxServerPath}/FXServer.exe" +set serverProfile "${serverProfile}"
 pause`;
             const batFolder = path.resolve(fxServerPath, '..');
             const batPath  = path.join(batFolder, `start_${fxServerVersion}_${serverProfile}.bat`);
