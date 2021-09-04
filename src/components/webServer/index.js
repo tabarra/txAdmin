@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'WebServer';
+const crypto = require('crypto');
 const path = require('path');
 const HttpClass  = require('http');
 
@@ -28,10 +29,16 @@ module.exports = class WebServer {
         this.config = config;
         this.intercomToken = nanoid();
         this.fxWebPipeToken = nanoid();
-        this.koaSessionKey = `txAdmin:${globals.info.serverProfile}:sess`;
         this.webConsole = null;
         this.isListening = false;
 
+        //Generate cookie key
+        const pathHash = crypto.createHash('shake256', { outputLength: 6 })
+            .update(globals.info.serverProfilePath)
+            .digest('hex');
+        this.koaSessionKey = `tx:${globals.info.serverProfile}:${pathHash}`;
+
+        //Setup services
         this.setupKoa();
         this.setupWebsocket();
         this.setupServerCallbacks();

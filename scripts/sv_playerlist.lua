@@ -31,7 +31,7 @@ local tonumber = tonumber
 local tostring = tostring
 local pairs = pairs
 
-
+--FIXME: https://github.com/tabarra/txAdmin/pull/434/files is for the old function only, apply here
 --[[ Emit player list to clients ]]
 CreateThread(function()
     while false do
