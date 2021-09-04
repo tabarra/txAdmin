@@ -7,6 +7,7 @@ const pidusageTree = require('pidusage-tree');
 const humanizeDuration = require('humanize-duration');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 const Cache = require('../extras/dataCache');
+const helpers = require('../extras/helpers');
 
 const cache = new Cache(5);
 
@@ -255,7 +256,7 @@ async function gettxAdminData() {
         cooldown: globals.monitor.config.cooldown,
         schedule: globals.monitor.config.restarterSchedule.join(', ') || '--',
         commandLine: (globals.fxRunner.config.commandLine && globals.fxRunner.config.commandLine.length)
-            ? globals.fxRunner.config.commandLine
+            ? helpers.redactApiKeys(globals.fxRunner.config.commandLine)
             : '--',
         fxServerPath: GlobalData.fxServerPath,
         serverDataPath: globals.fxRunner.config.serverDataPath,

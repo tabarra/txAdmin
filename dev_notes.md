@@ -1,12 +1,16 @@
 ## TODO:
 - [x] changed onesync to be "on" by default
 - [x] noclip: update heading automatically + optimization
-
+- [x] tweak: error logging stuff
+- [x] feat: chart data rate limit
+- [x] feat(web/diagnostics): redacting cfx/steam/tebex keys
+- [ ] fix(nui): auth source for zap servers
+- [ ] fix(core): memory leak on server log 
+- [ ] deployer: collapse database options into "advanced"
 
 warn auto dismiss 15s
 FreezeEntityPosition need to get the veh
 debugModeEnabled and isMenuDebug are redundant, should probably just use the one from shared
-https://i.imgur.com/PiqM8Nq.png
 
 
 Test:
@@ -14,12 +18,7 @@ adm-zip
 https://github.com/cthackers/adm-zip/compare/3d8bfc7a86da066131b2208a77148d2970e6234f...9a1ca460e18af17849542c6c136bd0c5861029f7
 
 Meh:
-windows/linux detection
-sessions in general
-nui snackbars
-oauth login
-socket.io
-fd3
+nui snackbars (last updated fucked some spacing/padding or something)
 
 
 When someone joins/leaves:
@@ -51,13 +50,6 @@ Novo log:
 - quando iniciar o tx pegar todos os logs da pasta e ir deletando os mais antigos até que o peso total da pasta seja menor que 2gb?
 - na página não sei como fazer scroll pra cima
 lembrar de pingar o squizer e falar que finalmente, assim como encerrar o issue e o PR
-
-
-
-
-Diagnostics page:
-On additionalArguments.replace(/licenseKey\s+(cfxk_\w{1,60}_\w{1,20}|\w{32})/gi, 'licenseKey [redacted cfx token]')
-same for steam api and tebex keys
 
 
 
