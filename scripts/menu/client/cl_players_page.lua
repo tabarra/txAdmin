@@ -39,10 +39,10 @@ RegisterNetEvent('txAdmin:menu:setPlayerState', function(data)
         -- calculate the vehicle status
         local vehicleStatus = 'walking'
         if veh and veh > 0 then
-            local vehEntity = NetToVeh(veh)
-            if not vehEntity or vehEntity == 0 then
+            if not NetworkDoesEntityExistWithNetworkId(veh) then
                 vehicleStatus = 'unknown'
             else
+                local vehEntity = NetToVeh(veh)
                 local vehClass = GetVehicleClass(vehEntity)
                 if vehClass == 8 then
                     vehicleStatus = 'biking'
