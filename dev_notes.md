@@ -203,6 +203,20 @@ end
 print(json.encode(hwids))
 ```
 
+### Spectating with routing bucket:
+Message from bubble:
+> the obvious 'approach' works well enough:
+> - get target routing bucket on server
+> - save old source
+> - teleport source player to in scope
+> - send event to source client
+> ------- client -------
+> - set focus pos and vel, less shit than 'xd teleport' and should trip server to cull anyway
+> - make self invisible/such
+> - wait for target player to exist
+> - use spectate native
+> and when stopping spectating do the opposite of that
+
 
 
 =======================================

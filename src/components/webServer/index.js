@@ -110,23 +110,40 @@ module.exports = class WebServer {
                     return ctx.body = '[no output from route]';
                 }
             } catch (error) {
-                //TODO: we should also have a koa-bodyparser generic error handler
-                // sending broken json will cause internal server error even without the route being called
+                const prefix = `[txAdmin v${GlobalData.txAdminVersion}]`;
+                const reqPath = (ctx.path.length > 100) ? `${ctx.path.slice(0, 97)}...` : ctx.path;
                 const methodName = (error.stack && error.stack[0] && error.stack[0].name) ? error.stack[0].name : 'anonym';
+
+                //NOTE: I couldn't force xss on path message, but just in case I'm forcing it here
+                //but it is overwritten by koa when we set the body to an object, which is fine
+                ctx.type = 'text/plain';
+                ctx.set('X-Content-Type-Options', 'nosniff');
+
+                //NOTE: not using HTTP logger endpoint anymore, FD3 only
                 if (error.type === 'entity.too.large') {
-                    const desc = `Entity too large for: ${ctx.path}`;
+                    const desc = `Entity too large for: ${reqPath}`;
                     if (GlobalData.verbose) logError(desc, methodName);
                     ctx.status = 413;
                     ctx.body = {error: desc};
                 } else if (ctx.state.timeout) {
-                    const desc = `[txAdmin v${GlobalData.txAdminVersion}] Route timed out: ${ctx.path}`;
+                    const desc = `${prefix} Route timed out: ${reqPath}`;
                     logError(desc, methodName);
                     ctx.status = 408;
                     ctx.body = desc;
+                } else if (error.message === 'Malicious Path') {
+                    const desc = `${prefix} Malicious Path: ${reqPath}`;
+                    if (GlobalData.verbose) logError(desc, methodName);
+                    ctx.status = 406;
+                    ctx.body = desc;
+                } else if (error.message.match(/^Unexpected token .+ in JSON at position \d+$/)) {
+                    const desc = `${prefix} Invalid JSON for: ${reqPath}`;
+                    if (GlobalData.verbose) logError(desc, methodName);
+                    ctx.status = 400;
+                    ctx.body = {error: desc};
                 } else {
-                    const desc = `[txAdmin v${GlobalData.txAdminVersion}] Internal Error\n`
+                    const desc = `${prefix} Internal Error\n`
                                  + `Message: ${error.message}\n`
-                                 + `Route: ${ctx.path}\n`
+                                 + `Route: ${reqPath}\n`
                                  + 'Make sure your txAdmin is updated.';
                     logError(desc, methodName);
                     if (GlobalData.verbose) dir(error);
