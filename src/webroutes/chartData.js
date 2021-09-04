@@ -1,6 +1,13 @@
 //Requires
 const modulename = 'WebServer:ChartData';
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+const Cache = require('../extras/dataCache');
+
+const caches = {
+    svNetwork: new Cache(30),
+    svSync: new Cache(30),
+    svMain: new Cache(30),
+};
 
 
 /**
@@ -18,10 +25,18 @@ module.exports = async function chartData(ctx) {
     //Process data & filter thread
     const availableThreads = ['svNetwork', 'svSync', 'svMain'];
     const threadName = (availableThreads.includes(ctx.params.thread)) ? ctx.params.thread : 'svMain';
-    // const maxDeltaTime = 288; //5*288 = 1440 = 1 day
-    const maxDeltaTime = 360; //5*360 = 30 hours
+
+    //If cache available
+    const cachedData = caches[threadName].get();
+    if (cachedData !== false) {
+        return ctx.send(cachedData);
+    }
+
+    //Process log
     let outData;
     try {
+        // const maxDeltaTime = 288; //5*288 = 1440 = 1 day
+        const maxDeltaTime = 360; //5*360 = 30 hours
         outData = globals.statsCollector.perfSeries.slice(-maxDeltaTime).map((s) => {
             return {
                 ts: s.ts,
@@ -36,5 +51,6 @@ module.exports = async function chartData(ctx) {
     }
 
     //Output
+    caches[threadName].set(outData);
     return ctx.send(outData);
 };
