@@ -5,9 +5,11 @@ const dateFormat = require('dateformat');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 
+let txInstance;
 module.exports = class Logger {
-    constructor(config) {
+    constructor(config, serverProfile) {
         this.config = config;
+        txInstance = globals[serverProfile];
 
         //Writing Log Header
         let sep = '='.repeat(64);

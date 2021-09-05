@@ -127,7 +127,7 @@ async function handleAdd(ctx) {
 
     //Add admin and give output
     try {
-        await globals.adminVault.addAdmin(name, citizenfxData, discordData, password, permissions);
+        await universal.adminVault.addAdmin(name, citizenfxData, discordData, password, permissions);
         ctx.utils.logAction(`Adding admin '${name}'.`);
         return ctx.send({type: 'showPassword', password});
     } catch (error) {
@@ -211,7 +211,7 @@ async function handleEdit(ctx) {
     }
 
     //Check if admin exists
-    const admin = globals.adminVault.getAdminByName(name);
+    const admin = universal.adminVault.getAdminByName(name);
     if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
 
     //Check if editing an master admin
@@ -221,7 +221,7 @@ async function handleEdit(ctx) {
 
     //Add admin and give output
     try {
-        await globals.adminVault.editAdmin(name, null, citizenfxData, discordData, permissions);
+        await universal.adminVault.editAdmin(name, null, citizenfxData, discordData, permissions);
         ctx.utils.logAction(`Editing user '${name}'.`);
         return ctx.send({type: 'success', message: 'refresh'});
     } catch (error) {
@@ -251,7 +251,7 @@ async function handleDelete(ctx) {
     }
 
     //Check if admin exists
-    let admin = globals.adminVault.getAdminByName(name);
+    let admin = universal.adminVault.getAdminByName(name);
     if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
 
     //Check if editing an master admin
@@ -261,7 +261,7 @@ async function handleDelete(ctx) {
 
     //Delete admin and give output
     try {
-        await globals.adminVault.deleteAdmin(name);
+        await universal.adminVault.deleteAdmin(name);
         ctx.utils.logAction(`Deleting user '${name}'.`);
         return ctx.send({type: 'success', message: 'refresh'});
     } catch (error) {
@@ -276,7 +276,7 @@ async function handleDelete(ctx) {
  * @param {object} ctx
  */
 async function handleGetModal(ctx, isNewAdmin) {
-    const allPermissions = Object.entries(globals.adminVault.getPermissionsList());
+    const allPermissions = Object.entries(universal.adminVault.getPermissionsList());
 
     //Helper function
     const getPerms = (checkPerms) => {
@@ -317,7 +317,7 @@ async function handleGetModal(ctx, isNewAdmin) {
     const name = ctx.request.body.name.trim();
 
     //Get admin data
-    const admin = globals.adminVault.getAdminByName(name);
+    const admin = universal.adminVault.getAdminByName(name);
     if (!admin) return ctx.send('Admin not found');
 
     //Check if editing an master admin

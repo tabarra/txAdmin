@@ -44,7 +44,7 @@ module.exports = class webConsole {
         socket.on('consoleCommand', this.handleSocketMessages.bind(this, socket));
 
         try {
-            socket.emit('consoleData', xss(globals.fxRunner.outputHandler.webConsoleBuffer));
+            socket.emit('consoleData', xss(globals['sv1.profile'].fxRunner.outputHandler.webConsoleBuffer));
         } catch (error) {
             if (GlobalData.verbose) logWarn(`Error sending sending old buffer: ${error.message}`);
         }
@@ -113,7 +113,7 @@ module.exports = class webConsole {
 
         //Executing command
         log(`${socket.session.auth.username} executing ` + chalk.inverse(' ' + msg + ' '), 'SocketIO');
-        globals.logger.append(`[${getIP(socket)}][${socket.session.auth.username}] ${msg}`);
-        globals.fxRunner.srvCmd(msg);
+        globals['sv1.profile'].logger.append(`[${getIP(socket)}][${socket.session.auth.username}] ${msg}`);
+        globals['sv1.profile'].fxRunner.srvCmd(msg);
     }
 }; //Fim webConsole()

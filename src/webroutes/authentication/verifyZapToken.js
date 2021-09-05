@@ -41,7 +41,7 @@ module.exports = async function AuthVerify(ctx) {
     const renderData = {
         template: 'normal',
         message: 'Invalid token. Please login using one of the options above.',
-        citizenfxDisabled: !globals.adminVault.providers.citizenfx.ready,
+        citizenfxDisabled: !universal.adminVault.providers.citizenfx.ready,
         discordDisabled: true,
     };
 
@@ -99,7 +99,7 @@ module.exports = async function AuthVerify(ctx) {
 
     try {
         //Checking admin
-        const admin = globals.adminVault.getAdminByName(jwtData.sub);
+        const admin = universal.adminVault.getAdminByName(jwtData.sub);
         if (!admin) {
             logWarn(`${errorPrefix} Wrong username from ${ctx.ip}`);
             return ctx.utils.render('login', renderData);

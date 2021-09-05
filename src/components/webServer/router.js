@@ -117,7 +117,7 @@ module.exports = (config) => {
 
     //Index & generic
     router.get('/resources', requestAuth('web'), webRoutes.resources);
-    router.get('/', requestAuth('web'), webRoutes.dashboard);
+    router.get('/:profile?', requestAuth('web'), webRoutes.dashboard);
 
     //Return router
     return router;

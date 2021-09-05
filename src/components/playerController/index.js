@@ -59,11 +59,13 @@ const validActions = ['ban', 'warn', 'whitelist'];
  *      - name
  *      - tsLastAttempt
  */
+let txInstance;
 module.exports = class PlayerController {
-    constructor(config) {
+    constructor(config, serverProfile) {
         this.config = config;
+        txInstance = globals[serverProfile];
         this.activePlayers = [];
-        this.db = new Database(config.wipePendingWLOnStart);
+        this.db = new Database(serverProfile, config.wipePendingWLOnStart);
 
         //Config check
         if (this.config.minSessionTime < 1 || this.config.minSessionTime > 60) throw new Error('The playerController.minSessionTime setting must be between 1 and 60 minutes.');
@@ -90,10 +92,10 @@ module.exports = class PlayerController {
      * Refresh PlayerController configurations
      */
     refreshConfig() {
-        this.config = globals.configVault.getScoped('playerController');
+        this.config = txInstance.configVault.getScoped('playerController');
         const cmd = 'txAdmin-checkPlayerJoin ' + (this.config.onJoinCheckBan || this.config.onJoinCheckWhitelist).toString();
         try {
-            globals.fxRunner.srvCmd(cmd);
+            txInstance.fxRunner.srvCmd(cmd);
         } catch (error) {
             if (GlobalData.verbose) dir(error);
         }
@@ -253,8 +255,8 @@ module.exports = class PlayerController {
             playerName,
             idArray,
         };
-        globals.databus.joinCheckHistory.push(toLog);
-        if (globals.databus.joinCheckHistory.length > 25) globals.databus.joinCheckHistory.shift();
+        txInstance.databus.joinCheckHistory.push(toLog);
+        if (txInstance.databus.joinCheckHistory.length > 25) txInstance.databus.joinCheckHistory.shift();
 
         //Sanity checks
         if (typeof playerName !== 'string') throw new Error('playerName should be an string.');
@@ -288,14 +290,14 @@ module.exports = class PlayerController {
                     };
                     if (ban.expiration) {
                         const humanizeOptions = {
-                            language: globals.translator.t('$meta.humanizer_language'),
+                            language: universal.translator.t('$meta.humanizer_language'),
                             round: true,
                             units: ['d', 'h'],
                         };
                         tOptions.expiration = humanizeDuration((ban.expiration - ts) * 1000, humanizeOptions);
-                        msg = globals.translator.t('ban_messages.reject_temporary', tOptions);
+                        msg = universal.translator.t('ban_messages.reject_temporary', tOptions);
                     } else {
-                        msg = globals.translator.t('ban_messages.reject_permanent', tOptions);
+                        msg = universal.translator.t('ban_messages.reject_permanent', tOptions);
                     }
 
                     return {allow: false, reason: msg};

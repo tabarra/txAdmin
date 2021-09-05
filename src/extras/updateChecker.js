@@ -34,7 +34,7 @@ module.exports = async () => {
 
         //fill in databus
         const osTypeRepoUrl = (GlobalData.osType == 'windows') ? 'server_windows' : 'proot_linux';
-        globals.databus.updateChecker = {
+        globals['sv1.profile'].databus.updateChecker = {
             artifactsLink: `https://runtime.fivem.net/artifacts/fivem/build_${osTypeRepoUrl}/master/?${cacheBuster}`,
             recommended: parseInt(changelog.recommended),
             optional: parseInt(changelog.optional),
@@ -43,6 +43,6 @@ module.exports = async () => {
         };
     } catch (error) {
         if (GlobalData.verbose) logWarn(`Failed to retrieve FXServer update data with error: ${error.message}`);
-        if (globals.databus.updateChecker === null) globals.databus.updateChecker = false;
+        if (globals['sv1.profile'].databus.updateChecker === null) globals['sv1.profile'].databus.updateChecker = false;
     }
 };

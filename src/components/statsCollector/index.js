@@ -14,12 +14,14 @@ const getEpoch = (mod, ts = false) => {
 };
 
 
+let txInstance;
 module.exports = class StatsCollector {
-    constructor() {
-        // this.playersTimeSeries = new TimeSeries(`${globals.info.serverProfilePath}/data/players.json`, 10, 60*60*24);
+    constructor(config, serverProfile) { //n usamos o config
+        txInstance = globals[serverProfile];
+        // this.playersTimeSeries = new TimeSeries(`${txInstance.info.serverProfilePath}/data/players.json`, 10, 60*60*24);
         this.hardConfigs = {
-            heatmapDataFile: `${globals.info.serverProfilePath}/data/stats_heatmapData_v1.json`,
-            playerCountFile: `${globals.info.serverProfilePath}/data/stats_playerCount_v1.json`,
+            heatmapDataFile: `${txInstance.info.serverProfilePath}/data/stats_heatmapData_v1.json`,
+            playerCountFile: `${txInstance.info.serverProfilePath}/data/stats_playerCount_v1.json`,
             performance: {
                 resolution: 5,
                 // lenthCap: 288, //5*288 = 1440 = 1 day
@@ -99,7 +101,7 @@ module.exports = class StatsCollector {
 
         //     })
         // }
-        // const playerlist = globals.playerController.getPlayerList();
+        // const playerlist = txInstance.playerController.getPlayerList();
         // this.playersTimeSeries.add(playerlist.length);
         // dir(playerlist.length)
     }
@@ -124,7 +126,7 @@ module.exports = class StatsCollector {
     async collectPerformance() {
         //Check pre-condition
         if (this.perfSeries === null) return;
-        if (globals.fxRunner.fxChild === null) return;
+        if (txInstance.fxRunner.fxChild === null) return;
 
         //Commom vars
         const now = Date.now();
@@ -142,7 +144,7 @@ module.exports = class StatsCollector {
         }
 
         //Get performance data
-        const sourceURL = (GlobalData.debugExternalSource) ? GlobalData.debugExternalSource : globals.fxRunner.fxServerHost;
+        const sourceURL = (GlobalData.debugExternalSource) ? GlobalData.debugExternalSource : txInstance.fxRunner.fxServerHost;
         const currPerfRaw = await got(`http://${sourceURL}/perf/`, {timeout: 1500}).text();
         const currPerfData = parsePerf(currPerfRaw);
         if (
@@ -173,7 +175,7 @@ module.exports = class StatsCollector {
             ts: now,
             skipped: !islinear,
             mainTickCounter: currPerfData.svMain.count,
-            clients: globals.playerController.getPlayerList().length,
+            clients: txInstance.playerController.getPlayerList().length,
             perfSrc: currPerfData,
             perf: currPerfDiff,
         };

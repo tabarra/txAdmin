@@ -18,7 +18,7 @@ const formatCommand = (cmd, ...params) => {
 };
 const getConvars = (isCmdLine = false) => {
     const p = isCmdLine ? '+' : '';
-    const controllerConfigs = globals.playerController.config;
+    const controllerConfigs = txInstance.playerController.config;
     const checkPlayerJoin = (controllerConfigs.onJoinCheckBan || controllerConfigs.onJoinCheckWhitelist);
     const txAdminInterface = (GlobalData.forceInterface)
         ? `${GlobalData.forceInterface}:${GlobalData.txAdminPort}`
@@ -27,37 +27,39 @@ const getConvars = (isCmdLine = false) => {
     return [
         //type, name, value
         [`${p}sets`, 'txAdmin-version', GlobalData.txAdminVersion],
-        [`${p}setr`, 'txAdmin-locale', globals.translator.language || 'en'],
+        [`${p}setr`, 'txAdmin-locale', universal.translator.language || 'en'],
         [`${p}setr`, 'txAdmin-verbose', GlobalData.verbose],
         [`${p}set`, 'txAdmin-apiHost', txAdminInterface],
-        [`${p}set`, 'txAdmin-apiToken', globals.webServer.intercomToken],
+        [`${p}set`, 'txAdmin-apiToken', universal.webServer.intercomToken],
         [`${p}set`, 'txAdmin-checkPlayerJoin', checkPlayerJoin],
         [`${p}set`, 'txAdminServerMode', 'true'], //Can't change this one due to fxserver code compatibility
     ];
 };
 
 
+let txInstance;
 module.exports = class FXRunner {
-    constructor(config) {
+    constructor(config, serverProfile) {
         // logOk('Started');
         this.config = config;
+        txInstance = globals[serverProfile];
         this.spawnVariables = null;
         this.fxChild = null;
         this.restartDelayOverride == false;
         this.history = [];
         this.fxServerPort = null;
         this.fxServerHost = null;
-        this.outputHandler = new OutputHandler(this.config.logPath, 10);
+        this.outputHandler = new OutputHandler(serverProfile, this.config.logPath, 10);
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
         if (config.autostart && this.config.serverDataPath !== null && this.config.cfgPath !== null) {
             setTimeout(() => {
-                if (globals.adminVault && globals.adminVault.admins) {
+                if (universal.adminVault && universal.adminVault.admins) {
                     this.spawnServer(true);
                 } else {
                     logWarn('The server will not auto start because there are no admins configured.');
                 }
-            }, config.autostartDelay * 1000);
+            }, 1 * 1000);
         }
     }
 
@@ -67,7 +69,7 @@ module.exports = class FXRunner {
      * Refresh fxRunner configurations
      */
     refreshConfig() {
-        this.config = globals.configVault.getScoped('fxRunner');
+        this.config = txInstance.configVault.getScoped('fxRunner');
     }//Final refreshConfig()
 
 
@@ -87,7 +89,7 @@ module.exports = class FXRunner {
             getConvars(true),
             extraArgs,
             '+set', 'onesync', this.config.onesync,
-            '+set', 'txAdmin-pipeToken', globals.webServer.fxWebPipeToken,
+            '+set', 'txAdmin-pipeToken', universal.webServer.fxWebPipeToken,
             '+exec', this.config.cfgPath,
         ].flat(2);
 
@@ -124,7 +126,7 @@ module.exports = class FXRunner {
      */
     spawnServer(announce) {
         //Setup variables
-        globals.webServer.resetTokens();
+        universal.webServer.resetTokens();
         this.setupVariables();
         if (GlobalData.verbose) {
             log('Spawn Variables: ' + this.spawnVariables.args.join(' '));
@@ -166,8 +168,8 @@ module.exports = class FXRunner {
             const cleanedErrorMessage = error.message.replace(/<\/?code>/gi, '').replace(/<br>/gi, '');
             const outMsg = logError(`server.cfg error: \n${cleanedErrorMessage}`);
             //the IF below is only a way to disable the endpoint check
-            if (globals.config.forceFXServerPort) {
-                this.fxServerPort = globals.config.forceFXServerPort;
+            if (txInstance.config.forceFXServerPort) {
+                this.fxServerPort = txInstance.config.forceFXServerPort;
             } else {
                 return outMsg;
             }
@@ -177,12 +179,12 @@ module.exports = class FXRunner {
             : `127.0.0.1:${this.fxServerPort}`;
 
         //Reseting monitor stats
-        globals.monitor.resetMonitorStats();
+        txInstance.monitor.resetMonitorStats();
 
         //Announcing
         if (announce === 'true' || announce === true) {
-            let discordMessage = globals.translator.t('server_actions.spawning_discord', {servername: globals.config.serverName});
-            globals.discordBot.sendAnnouncement(discordMessage);
+            let discordMessage = universal.translator.t('server_actions.spawning_discord', {servername: txInstance.config.serverName});
+            universal.discordBot.sendAnnouncement(discordMessage);
         }
 
         //Starting server
@@ -257,7 +259,7 @@ module.exports = class FXRunner {
         const tracePipe = this.fxChild.stdio[3].pipe(StreamValues.withParser());
         tracePipe.on('error', (data) => {
             if (GlobalData.verbose) logWarn(`FD3 decode error: ${data.message}`);
-            globals.databus.txStatsData.lastFD3Error = data.message;
+            txInstance.databus.txStatsData.lastFD3Error = data.message;
         });
         tracePipe.on('data', this.outputHandler.trace.bind(this.outputHandler));
 
@@ -275,13 +277,13 @@ module.exports = class FXRunner {
             //If a reason is provided, announce restart on discord, kick all players and wait 750ms
             if (typeof tReason === 'string') {
                 const tOptions = {
-                    servername: globals.config.serverName,
+                    servername: txInstance.config.serverName,
                     reason: tReason,
                 };
-                const kickMessage = globals.translator.t('server_actions.restarting', tOptions);
+                const kickMessage = universal.translator.t('server_actions.restarting', tOptions);
                 this.srvCmd(formatCommand('quit', kickMessage));
-                const discordMessage = globals.translator.t('server_actions.restarting_discord', tOptions);
-                globals.discordBot.sendAnnouncement(discordMessage);
+                const discordMessage = universal.translator.t('server_actions.restarting_discord', tOptions);
+                universal.discordBot.sendAnnouncement(discordMessage);
                 await sleep(750);
             }
 
@@ -312,12 +314,12 @@ module.exports = class FXRunner {
             //If a reason is provided, announce restart on discord, kick all players and wait 500ms
             if (typeof tReason === 'string') {
                 let tOptions = {
-                    servername: globals.config.serverName,
+                    servername: txInstance.config.serverName,
                     reason: tReason,
                 };
-                let discordMessage = globals.translator.t('server_actions.stopping_discord', tOptions);
-                globals.discordBot.sendAnnouncement(discordMessage);
-                let kickMessage = globals.translator.t('server_actions.stopping', tOptions);
+                let discordMessage = universal.translator.t('server_actions.stopping_discord', tOptions);
+                universal.discordBot.sendAnnouncement(discordMessage);
+                let kickMessage = universal.translator.t('server_actions.stopping', tOptions);
                 this.srvCmd(formatCommand('quit', kickMessage));
                 await sleep(500);
             }
@@ -399,7 +401,7 @@ module.exports = class FXRunner {
         if (this.fxChild === null) return false;
         try {
             const success = this.fxChild.stdin.write(command + '\n');
-            globals.webServer.webConsole.buffer(command, 'command');
+            universal.webServer.webConsole.buffer(command, 'command');
             return success;
         } catch (error) {
             if (GlobalData.verbose) {

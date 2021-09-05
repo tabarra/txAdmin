@@ -9,7 +9,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
  */
 module.exports = async function AdminManagerGet(ctx) {
     //Prepare admin array
-    const admins = globals.adminVault.getAdminsList().map((admin) => {
+    const admins = universal.adminVault.getAdminsList().map((admin) => {
         let perms;
         if (admin.master == true) {
             perms = 'master account';

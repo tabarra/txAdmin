@@ -91,7 +91,7 @@ let dataPath;
 const txDataPathConvar = GetConvar('txDataPath', 'false');
 if (txDataPathConvar == 'false') {
     const dataPathSuffix = (osType == 'windows') ? '..' : '../../../';
-    dataPath = cleanPath(path.join(fxServerPath, dataPathSuffix, 'txData'));
+    dataPath = cleanPath(path.join(fxServerPath, dataPathSuffix, 'txDataM'));
 } else {
     dataPath = cleanPath(txDataPathConvar);
 }
@@ -283,7 +283,13 @@ GlobalData = {
 //Starting txAdmin (have fun :p)
 setTTYTitle(txAdminVersion, serverProfile);
 const txAdmin = require('./txAdmin.js');
-new txAdmin(serverProfile);
+universal = {};
+globals = {
+    'sv1.profile': null,
+    'sv2.profile': null,
+};
+new txAdmin('sv1.profile');
+new txAdmin('sv2.profile');
 
 
 //==============================================================

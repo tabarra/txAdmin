@@ -8,11 +8,12 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
  * @param {object} ctx
  */
 module.exports = async function Dashboard(ctx) {
+    const profile = ctx.params.profile || 'sv1.profile';
     // Check if the deployer is running or setup is pending
-    if (globals.deployer !== null) {
+    if (globals[profile].deployer !== null) {
         return ctx.response.redirect('/deployer');
     }
-    if (!globals.fxRunner.config.serverDataPath || !globals.fxRunner.config.cfgPath) {
+    if (!globals[profile].fxRunner.config.serverDataPath || !globals[profile].fxRunner.config.cfgPath) {
         return ctx.response.redirect('/setup');
     }
 
@@ -23,8 +24,8 @@ module.exports = async function Dashboard(ctx) {
 
     //Preparing render data
     const renderData = {
-        serverName: globals.config.serverName,
-        versionData: getVersionData(),
+        serverName: globals[profile].config.serverName,
+        versionData: getVersionData(profile),
         perms:{
             commandMessage: getPermDisable('players.message'),
             commandKick: getPermDisable('players.kick'),
@@ -58,10 +59,10 @@ module.exports = async function Dashboard(ctx) {
  *   ex: all versions up to critical are danger, then warning, info and secondary for the above optional
  *
  */
-function getVersionData() {
+function getVersionData(profile) {
     // Prepping vars & checking if there is data available
     const curr = GlobalData.fxServerVersion;
-    const rVer = globals.databus.updateChecker;
+    const rVer = globals[profile].databus.updateChecker;
     if (!rVer) {
         return {
             artifactsLink: false,

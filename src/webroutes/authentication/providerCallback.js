@@ -43,7 +43,7 @@ module.exports = async function ProviderCallback(ctx) {
     let tokenSet;
     try {
         const currentURL = ctx.protocol + '://' + ctx.get('host') + `/auth/${provider}/callback`;
-        tokenSet = await globals.adminVault.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
+        tokenSet = await universal.adminVault.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
         logWarn(`Code Exchange error: ${error.message}`);
         if (!isUndefined(error.tolerance)) {
@@ -72,7 +72,7 @@ module.exports = async function ProviderCallback(ctx) {
     //Get userinfo
     let userInfo;
     try {
-        userInfo = await globals.adminVault.providers.citizenfx.getUserInfo(tokenSet.access_token);
+        userInfo = await universal.adminVault.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
         if (GlobalData.verbose) logError(`Get UserInfo error: ${error.message}`);
         return returnJustMessage(ctx, 'Get UserInfo error:', error.message);
@@ -93,7 +93,7 @@ module.exports = async function ProviderCallback(ctx) {
 
     //Check & Login user
     try {
-        const admin = globals.adminVault.getAdminByProviderUID(userInfo.name);
+        const admin = universal.adminVault.getAdminByProviderUID(userInfo.name);
         if (!admin) {
             ctx.session.auth = {};
             return returnJustMessage(
@@ -104,11 +104,11 @@ module.exports = async function ProviderCallback(ctx) {
         }
 
         //Setting session
-        ctx.session.auth = await globals.adminVault.providers.citizenfx.getUserSession(tokenSet, userInfo);
+        ctx.session.auth = await universal.adminVault.providers.citizenfx.getUserSession(tokenSet, userInfo);
         ctx.session.auth.username = admin.name;
 
         //Save the updated provider identifier & data to the admins file
-        await globals.adminVault.refreshAdminSocialData(admin.name, 'citizenfx', identifier, userInfo);
+        await universal.adminVault.refreshAdminSocialData(admin.name, 'citizenfx', identifier, userInfo);
 
         log(`Admin ${admin.name} logged in from ${ctx.ip}`);
         globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;

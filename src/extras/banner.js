@@ -90,7 +90,7 @@ const awaitHttp = new Promise((resolve, reject) => {
     let interval;
     const check = () => {
         counter++;
-        if (globals.webServer && globals.webServer.isListening) {
+        if (universal.webServer && universal.webServer.isListening) {
             clearInterval(interval);
             resolve(true);
         } else if (counter == tickLimit) {
@@ -105,9 +105,9 @@ const awaitHttp = new Promise((resolve, reject) => {
 
 const awaitMasterPin = new Promise((resolve, reject) => {
     const interval = setInterval(() => {
-        if (globals.adminVault && globals.adminVault.admins !== null) {
+        if (universal.adminVault && universal.adminVault.admins !== null) {
             clearInterval(interval);
-            const pin = (globals.adminVault.admins === false) ? globals.adminVault.addMasterPin : false;
+            const pin = (universal.adminVault.admins === false) ? universal.adminVault.addMasterPin : false;
             resolve(pin);
         }
     }, 150);

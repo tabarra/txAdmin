@@ -32,10 +32,10 @@ module.exports = async function Intercom(ctx) {
                 txAdminIsDefaultPort: (GlobalData.txAdminPort == 40120),
                 txAdminUptime: Math.round(process.uptime()),
                 fxServerUptime: globals.fxRunner.getUptime(),
-                discordBotStats: (globals.discordBot.config.enabled) ? globals.discordBot.usageStats : false,
+                discordBotStats: (universal.discordBot.config.enabled) ? universal.discordBot.usageStats : false,
                 banlistEnabled: globals.playerController.config.onJoinCheckBan,
                 whitelistEnabled: globals.playerController.config.onJoinCheckWhitelist,
-                admins: (globals.adminVault.admins) ? globals.adminVault.admins.length : 1,
+                admins: (universal.adminVault.admins) ? universal.adminVault.admins.length : 1,
                 tmpLooksLikeRecipe: (globals.fxRunner.config.serverDataPath || '').includes('.base'),
             };
             const outData = Object.assign(extractData, globals.databus.txStatsData);

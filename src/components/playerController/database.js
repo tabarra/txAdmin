@@ -31,9 +31,10 @@ const ldbSerializer = (process.env.APP_ENV === 'webpack') ? ldbProdSerializer : 
  */
 
 class Database {
-    constructor(wipePendingWLOnStart) {
-        this.dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
-        this.backupPath = `${globals.info.serverProfilePath}/data/playersDB.backup.json`;
+    constructor(serverProfile, wipePendingWLOnStart) {
+        this.serverProfile = serverProfile;
+        this.dbPath = `${globals[serverProfile].info.serverProfilePath}/data/playersDB.json`;
+        this.backupPath = `${globals[serverProfile].info.serverProfilePath}/data/playersDB.backup.json`;
         this.writePending = SAVE_STANDBY;
         this.lastWrite = 0;
         this.obj = null;

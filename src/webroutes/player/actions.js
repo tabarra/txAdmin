@@ -209,9 +209,9 @@ async function handleWarning(ctx) {
         id,
         ctx.session.auth.username,
         reason,
-        globals.translator.t('nui_warning.title'),
-        globals.translator.t('nui_warning.warned_by'),
-        globals.translator.t('nui_warning.instruction'),
+        universal.translator.t('nui_warning.title'),
+        universal.translator.t('nui_warning.warned_by'),
+        universal.translator.t('nui_warning.instruction'),
     );
     let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
 
@@ -302,14 +302,14 @@ async function handleBan(ctx) {
     };
     if (expiration !== false) {
         const humanizeOptions = {
-            language: globals.translator.t('$meta.humanizer_language'),
+            language: universal.translator.t('$meta.humanizer_language'),
             round: true,
             units: ['d', 'h'],
         };
         tOptions.expiration = humanizeDuration((duration) * 1000, humanizeOptions);
-        msg = '[txAdmin] ' + globals.translator.t('ban_messages.kick_temporary', tOptions);
+        msg = '[txAdmin] ' + universal.translator.t('ban_messages.kick_temporary', tOptions);
     } else {
-        msg = '[txAdmin] ' + globals.translator.t('ban_messages.kick_permanent', tOptions);
+        msg = '[txAdmin] ' + universal.translator.t('ban_messages.kick_permanent', tOptions);
     }
 
     let cmd;

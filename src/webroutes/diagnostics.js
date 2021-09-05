@@ -250,7 +250,7 @@ async function gettxAdminData() {
 
         //Possible memory leaks:
         serverLogSize: globals.databus.serverLog.length || '--',
-        koaSessions: Object.keys(globals.webServer.koaSessionMemoryStore.sessions).length || '--',
+        koaSessions: Object.keys(universal.webServer.koaSessionMemoryStore.sessions).length || '--',
 
         //Settings
         cooldown: globals.monitor.config.cooldown,

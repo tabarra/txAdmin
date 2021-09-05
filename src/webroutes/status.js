@@ -27,7 +27,7 @@ module.exports = async function GetStatus(ctx) {
  */
 function prepareServerStatus() {
     //Discord status
-    const discordClient = globals.discordBot.client;
+    const discordClient = universal.discordBot.client;
     let discordStatus;
     let discordStatusClass;
     const discStatusCodes = [

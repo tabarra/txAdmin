@@ -41,7 +41,7 @@ const languages = {
 module.exports = class Translator {
     constructor() {
         // logOk('Started');
-        this.language = globals.config.language;
+        this.language = globals['sv1.profile'].config.language;
         this.polyglot = null;
 
         //Load language
@@ -78,13 +78,13 @@ module.exports = class Translator {
      */
     refreshConfig() {
         //Change config and restart polyglot
-        this.language = globals.config.language;
+        this.language = globals['sv1.profile'].config.language;
         this.setupTranslator(false);
 
         //Rebuild Monitor's schedule with new text and refreshes fxserver convars
         try {
-            globals.monitor.buildSchedule();
-            globals.fxRunner.resetConvars();
+            globals['sv1.profile'].monitor.buildSchedule();
+            globals['sv1.profile'].fxRunner.resetConvars();
         } catch (error) {}
     }
 

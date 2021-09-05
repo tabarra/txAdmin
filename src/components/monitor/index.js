@@ -13,9 +13,11 @@ const formatCommand = (cmd, ...params) => {
     return `${cmd} "` + [...params].map(escape).join('" "') + '"';
 };
 
+let txInstance;
 module.exports = class Monitor {
-    constructor(config) {
+    constructor(config, serverProfile) {
         this.config = config;
+        txInstance = globals[serverProfile];
 
         //Checking config validity
         if (this.config.cooldown < 15) throw new Error('The monitor.cooldown setting must be 15 seconds or higher.');
@@ -62,7 +64,7 @@ module.exports = class Monitor {
      * Refresh Monitor configurations
      */
     refreshConfig() {
-        this.config = globals.configVault.getScoped('monitor');
+        this.config = txInstance.configVault.getScoped('monitor');
         this.buildSchedule();
     }//Final refreshConfig()
 
@@ -84,7 +86,7 @@ module.exports = class Monitor {
 
             const tOptions = {
                 smart_count: sub,
-                servername: globals.config.serverName,
+                servername: txInstance.config.serverName,
             };
             return {
                 hour: time.getHours(),
@@ -92,8 +94,8 @@ module.exports = class Monitor {
                 remaining: sub,
                 restart: false,
                 messages: (!sendMessage) ? false : {
-                    chat: globals.translator.t('restarter.schedule_warn', tOptions),
-                    discord: globals.translator.t('restarter.schedule_warn_discord', tOptions),
+                    chat: universal.translator.t('restarter.schedule_warn', tOptions),
+                    discord: universal.translator.t('restarter.schedule_warn_discord', tOptions),
                 },
             };
         };
@@ -135,7 +137,7 @@ module.exports = class Monitor {
      */
     checkRestartSchedule() {
         if (!Array.isArray(this.schedule)) return;
-        if (globals.fxRunner.fxChild === null) return;
+        if (txInstance.fxRunner.fxChild === null) return;
 
         try {
             //Check schedule for current time
@@ -148,7 +150,7 @@ module.exports = class Monitor {
             if (!action) return;
 
             // Dispatch `txAdmin:events:scheduledRestart`
-            globals.fxRunner.sendEvent('scheduledRestart', {
+            txInstance.fxRunner.sendEvent('scheduledRestart', {
                 secondsRemaining: action.remaining * 60,
             });
 
@@ -157,13 +159,13 @@ module.exports = class Monitor {
                 const currTimestamp = currTime.getHours().toString().padStart(2, '0') + ':' + currTime.getMinutes().toString().padStart(2, '0');
                 this.restartFXServer(
                     `scheduled restart at ${currTimestamp}`,
-                    globals.translator.t('restarter.schedule_reason', {time: currTimestamp}),
+                    universal.translator.t('restarter.schedule_reason', {time: currTimestamp}),
                 );
             } else if (action.messages) {
-                globals.discordBot.sendAnnouncement(action.messages.discord);
+                universal.discordBot.sendAnnouncement(action.messages.discord);
                 if (!this.config.disableChatWarnings) {
                     // TODO: deprecate txaBroadcast, carefull to also show it on the Server Log
-                    globals.fxRunner.srvCmd(formatCommand('txaBroadcast', 'txAdmin', action.messages.chat));
+                    txInstance.fxRunner.srvCmd(formatCommand('txaBroadcast', 'txAdmin', action.messages.chat));
                 }
             }
         } catch (error) {
@@ -180,16 +182,16 @@ module.exports = class Monitor {
      */
     async restartFXServer(reason, reasonTranslated) {
         //sanity check
-        if (globals.fxRunner.fxChild === null) {
+        if (txInstance.fxRunner.fxChild === null) {
             logWarn('Server not started, no need to restart');
             return false;
         }
 
         //Restart server
         const logMessage = `Restarting server (${reason}).`;
-        globals.logger.append(`[MONITOR] ${logMessage}`);
+        txInstance.logger.append(`[MONITOR] ${logMessage}`);
         logWarn(logMessage);
-        globals.fxRunner.restartServer(reasonTranslated);
+        txInstance.fxRunner.restartServer(reasonTranslated);
     }
 
 
@@ -210,18 +212,18 @@ module.exports = class Monitor {
         this.hasServerStartedYet = false;
 
         //to reset active player list (if module is already loaded)
-        if (globals.playerController) globals.playerController.processHeartBeat([]);
+        if (txInstance.playerController) txInstance.playerController.processHeartBeat([]);
     }
 
 
     //================================================================
     async sendHealthCheck() {
         //Check if the server is supposed to be offline
-        if (globals.fxRunner.fxChild === null || globals.fxRunner.fxServerPort === null) return;
+        if (txInstance.fxRunner.fxChild === null || txInstance.fxRunner.fxServerPort === null) return;
 
         //Setup do request e variáveis iniciais
         let requestOptions = {
-            url: `http://${globals.fxRunner.fxServerHost}/dynamic.json`,
+            url: `http://${txInstance.fxRunner.fxServerHost}/dynamic.json`,
             method: 'get',
             responseType: 'json',
             responseEncoding: 'utf8',
@@ -250,9 +252,9 @@ module.exports = class Monitor {
         ) {
             const maxClients = parseInt(dynamicResp.sv_maxclients);
             if (!isNaN(maxClients) && maxClients > GlobalData.deployerDefaults.maxClients) {
-                globals.fxRunner.srvCmdBuffer(`sv_maxclients ${GlobalData.deployerDefaults.maxClients} ##ZAP-Hosting: please don't modify`);
+                txInstance.fxRunner.srvCmdBuffer(`sv_maxclients ${GlobalData.deployerDefaults.maxClients} ##ZAP-Hosting: please don't modify`);
                 logError(`ZAP-Hosting: Detected that the server has sv_maxclients above the limit (${GlobalData.deployerDefaults.maxClients}). Changing back to the default value.`);
-                globals.logger.append(`[SYSTEM] changing sv_maxclients back to ${GlobalData.deployerDefaults.maxClients}`);
+                txInstance.logger.append(`[SYSTEM] changing sv_maxclients back to ${GlobalData.deployerDefaults.maxClients}`);
             }
         }
 
@@ -271,7 +273,7 @@ module.exports = class Monitor {
      */
     refreshServerStatus() {
         //Check if the server is supposed to be offline
-        if (globals.fxRunner.fxChild === null) return this.resetMonitorStats();
+        if (txInstance.fxRunner.fxChild === null) return this.resetMonitorStats();
 
         //Helper func
         const cleanET = (et) => {return (et > 99999) ? '--' : et;};
@@ -280,8 +282,8 @@ module.exports = class Monitor {
         const currTimestamp = now();
         const elapsedRefreshStatus = currTimestamp - this.lastRefreshStatus;
         if (this.lastRefreshStatus !== null && elapsedRefreshStatus > 10) {
-            globals.databus.txStatsData.monitorStats.freezeSeconds.push(elapsedRefreshStatus - 1);
-            if (globals.databus.txStatsData.monitorStats.freezeSeconds.length > 30) globals.databus.txStatsData.monitorStats.freezeSeconds.shift();
+            txInstance.databus.txStatsData.monitorStats.freezeSeconds.push(elapsedRefreshStatus - 1);
+            if (txInstance.databus.txStatsData.monitorStats.freezeSeconds.length > 30) txInstance.databus.txStatsData.monitorStats.freezeSeconds.shift();
             logError(`FXServer was frozen for ${elapsedRefreshStatus - 1} seconds for unknown reason (random issue, VPS Lag, DDoS, etc).`);
             logError('Don\'t worry, txAdmin is preventing the server from being restarted.');
             this.lastRefreshStatus = currTimestamp;
@@ -295,7 +297,7 @@ module.exports = class Monitor {
         const anySuccessfulHeartBeat = (this.lastSuccessfulFD3HeartBeat !== null || this.lastSuccessfulHTTPHeartBeat !== null);
         const elapsedHeartBeat = currTimestamp - Math.max(this.lastSuccessfulFD3HeartBeat, this.lastSuccessfulHTTPHeartBeat);
         const heartBeatFailed = (elapsedHeartBeat > this.hardConfigs.heartBeat.failThreshold);
-        const processUptime = globals.fxRunner.getUptime();
+        const processUptime = txInstance.fxRunner.getUptime();
 
         //Check if its online and return
         if (
@@ -307,7 +309,7 @@ module.exports = class Monitor {
             this.currentStatus = 'ONLINE';
             if (this.hasServerStartedYet == false) {
                 this.hasServerStartedYet = true;
-                globals.databus.txStatsData.monitorStats.bootSeconds.push(processUptime);
+                txInstance.databus.txStatsData.monitorStats.bootSeconds.push(processUptime);
             }
             return;
         }
@@ -336,12 +338,12 @@ module.exports = class Monitor {
         }
 
         //Check if fxChild is closed, in this case no need to wait the failure count
-        const processStatus = globals.fxRunner.getStatus();
+        const processStatus = txInstance.fxRunner.getStatus();
         if (processStatus == 'closed') {
-            globals.databus.txStatsData.monitorStats.restartReasons.close++;
+            txInstance.databus.txStatsData.monitorStats.restartReasons.close++;
             this.restartFXServer(
                 'server close detected',
-                globals.translator.t('restarter.crash_detected'),
+                universal.translator.t('restarter.crash_detected'),
             );
             return;
         }
@@ -352,12 +354,12 @@ module.exports = class Monitor {
             && !this.healthCheckRestartWarningIssued
             && elapsedHealthCheck > (this.hardConfigs.healthCheck.failLimit - 60)
         ) {
-            globals.discordBot.sendAnnouncement(globals.translator.t(
+            universal.discordBot.sendAnnouncement(universal.translator.t(
                 'restarter.partial_hang_warn_discord',
-                {servername: globals.config.serverName},
+                {servername: txInstance.config.serverName},
             ));
-            const chatMsg = globals.translator.t('restarter.partial_hang_warn');
-            globals.fxRunner.srvCmd(formatCommand('txaBroadcast', 'txAdmin', chatMsg));
+            const chatMsg = universal.translator.t('restarter.partial_hang_warn');
+            txInstance.fxRunner.srvCmd(formatCommand('txaBroadcast', 'txAdmin', chatMsg));
             this.healthCheckRestartWarningIssued = currTimestamp;
         }
 
@@ -378,22 +380,22 @@ module.exports = class Monitor {
             || elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit
         ) {
             if (anySuccessfulHeartBeat === false) {
-                globals.databus.txStatsData.monitorStats.bootSeconds.push(false);
+                gtxInstance.databus.txStatsData.monitorStats.bootSeconds.push(false);
                 this.restartFXServer(
                     `server failed to start within ${this.hardConfigs.maxHBCooldownTolerance} seconds`,
-                    globals.translator.t('restarter.start_timeout'),
+                    universal.translator.t('restarter.start_timeout'),
                 );
             } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {
-                globals.databus.txStatsData.monitorStats.restartReasons.healthCheck++;
+                txInstance.databus.txStatsData.monitorStats.restartReasons.healthCheck++;
                 this.restartFXServer(
                     'server partial hang detected',
-                    globals.translator.t('restarter.hang_detected'),
+                    universal.translator.t('restarter.hang_detected'),
                 );
             } else {
-                globals.databus.txStatsData.monitorStats.restartReasons.heartBeat++;
+                txInstance.databus.txStatsData.monitorStats.restartReasons.heartBeat++;
                 this.restartFXServer(
                     'server hang detected',
-                    globals.translator.t('restarter.hang_detected'),
+                    universal.translator.t('restarter.hang_detected'),
                 );
             }
         }
@@ -410,7 +412,7 @@ module.exports = class Monitor {
                 && tsNow - this.lastSuccessfulHTTPHeartBeat > 15
                 && tsNow - this.lastSuccessfulFD3HeartBeat < 5
             ) {
-                globals.databus.txStatsData.monitorStats.heartBeatStats.httpFailed++;
+                txInstance.databus.txStatsData.monitorStats.heartBeatStats.httpFailed++;
             }
             this.lastSuccessfulFD3HeartBeat = tsNow;
         } else if (source === 'http') {
@@ -425,7 +427,7 @@ module.exports = class Monitor {
                 player.id = parseInt(player.id);
                 return player;
             });
-            globals.playerController.processHeartBeat(playerList);
+            txInstance.playerController.processHeartBeat(playerList);
 
             //Processing stats
             if (
@@ -433,7 +435,7 @@ module.exports = class Monitor {
                 && tsNow - this.lastSuccessfulFD3HeartBeat > 15
                 && tsNow - this.lastSuccessfulHTTPHeartBeat < 5
             ) {
-                globals.databus.txStatsData.monitorStats.heartBeatStats.fd3Failed++;
+                txInstance.databus.txStatsData.monitorStats.heartBeatStats.fd3Failed++;
             }
             this.lastSuccessfulHTTPHeartBeat = tsNow;
         }

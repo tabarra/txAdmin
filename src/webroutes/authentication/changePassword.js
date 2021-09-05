@@ -23,7 +23,7 @@ module.exports = async function AuthChangePassword(ctx) {
     //Validate fields
     let newPassword = ctx.request.body.newPassword.trim();
     if (!ctx.session.auth.isTempPassword && !isUndefined(ctx.request.body.oldPassword)) {
-        let admin = globals.adminVault.getAdminByName(ctx.session.auth.username);
+        let admin = universal.adminVault.getAdminByName(ctx.session.auth.username);
         if (!admin) throw new Error('Wait, what? Where is that admin?');
         let oldPassword = ctx.request.body.oldPassword.trim();
         if (!VerifyPasswordHash(oldPassword, admin.password_hash)) {
@@ -36,7 +36,7 @@ module.exports = async function AuthChangePassword(ctx) {
 
     //Add admin and give output
     try {
-        let newHash = await globals.adminVault.editAdmin(ctx.session.auth.username, newPassword);
+        let newHash = await universal.adminVault.editAdmin(ctx.session.auth.username, newPassword);
         if (typeof ctx.session.auth.password_hash == 'string') ctx.session.auth.password_hash = newHash;
         ctx.utils.logAction('Changing own password.');
         ctx.session.auth.password = newPassword;

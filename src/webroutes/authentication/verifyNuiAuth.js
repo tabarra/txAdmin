@@ -31,9 +31,9 @@ module.exports = async function VerifyNuiAuth(ctx) {
     }
 
     // Check token value
-    if (ctx.request.headers['x-txadmin-token'] !== globals.webServer.fxWebPipeToken) {
+    if (ctx.request.headers['x-txadmin-token'] !== universal.webServer.fxWebPipeToken) {
         if (GlobalData.verbose) {
-            logWarn(`NUI Auth Failed: token received ${ctx.request.headers['x-txadmin-token']} !== expected ${globals.webServer.fxWebPipeToken}.`);
+            logWarn(`NUI Auth Failed: token received ${ctx.request.headers['x-txadmin-token']} !== expected ${universal.webServer.fxWebPipeToken}.`);
         }
         return ctx.send({isAdmin: false, reason: 'Unauthorized: token value'});
     }
@@ -48,7 +48,7 @@ module.exports = async function VerifyNuiAuth(ctx) {
     }
 
     try {
-        const admin = globals.adminVault.getAdminByIdentifiers(identifiers);
+        const admin = universal.adminVault.getAdminByIdentifiers(identifiers);
         if (!admin) {
             if (GlobalData.verbose) {
                 logWarn(`NUI Auth Failed: no admin found with identifiers ${JSON.stringify(identifiers)}.`);

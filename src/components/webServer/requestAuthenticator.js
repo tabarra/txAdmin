@@ -11,7 +11,7 @@ const requestAuth = (epType) => {
     const intercomAuth = async (ctx, next) => {
         if (
             typeof ctx.request.body.txAdminToken !== 'undefined'
-            && ctx.request.body.txAdminToken === globals.webServer.intercomToken
+            && ctx.request.body.txAdminToken === universal.webServer.intercomToken
         ) {
             await next();
         } else {
@@ -85,7 +85,7 @@ const authLogic = (sess, perm, epType) => {
         let now = Math.round(Date.now() / 1000);
         if (sess.auth.expires_at === false || now < sess.auth.expires_at) {
             try {
-                let admin = globals.adminVault.getAdminByName(sess.auth.username);
+                let admin = universal.adminVault.getAdminByName(sess.auth.username);
                 if (admin) {
                     if (
                         typeof sess.auth.password_hash == 'string'

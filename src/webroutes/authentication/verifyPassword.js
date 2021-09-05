@@ -16,13 +16,13 @@ module.exports = async function AuthVerify(ctx) {
     const renderData = {
         template: 'normal',
         message: null,
-        citizenfxDisabled: !globals.adminVault.providers.citizenfx.ready,
+        citizenfxDisabled: !universal.adminVault.providers.citizenfx.ready,
         discordDisabled: true,
     };
 
     try {
         //Checking admin
-        let admin = globals.adminVault.getAdminByName(ctx.request.body.username);
+        let admin = universal.adminVault.getAdminByName(ctx.request.body.username);
         if (!admin) {
             logWarn(`Wrong username for from: ${ctx.ip}`);
             renderData.message = 'Wrong Password!';
@@ -44,8 +44,8 @@ module.exports = async function AuthVerify(ctx) {
         };
 
         log(`Admin ${admin.name} logged in from ${ctx.ip}`);
-        globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;
-        globals.databus.txStatsData.login.methods.password++;
+        globals['sv1.profile'].databus.txStatsData.login.origins[ctx.txVars.hostType]++;
+        globals['sv1.profile'].databus.txStatsData.login.methods.password++;
     } catch (error) {
         logWarn(`Failed to authenticate ${ctx.request.body.username} with error: ${error.message}`);
         if (GlobalData.verbose) dir(error);

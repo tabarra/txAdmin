@@ -22,7 +22,8 @@ const deferError = (m, t = 500) => {
  * @param {int} saveInterval
  */
 module.exports = class OutputHandler {
-    constructor(logPath, saveInterval) {
+    constructor(serverProfile, logPath, saveInterval) {
+        this.serverProfile = serverProfile;
         this.logFileSize = null;
         this.logPath = logPath;
         this.enableCmdBuffer = false;
@@ -67,13 +68,13 @@ module.exports = class OutputHandler {
         //Handle bind errors
         if (channel == 'citizen-server-impl' && data.type == 'bind_error') {
             try {
-                if (!globals.fxRunner.restartDelayOverride) {
-                    globals.fxRunner.restartDelayOverride = 10000;
-                } else if (globals.fxRunner.restartDelayOverride <= 45000) {
-                    globals.fxRunner.restartDelayOverride += 5000;
+                if (!globals[this.serverProfile].fxRunner.restartDelayOverride) {
+                    globals[this.serverProfile].fxRunner.restartDelayOverride = 10000;
+                } else if (globals[this.serverProfile].fxRunner.restartDelayOverride <= 45000) {
+                    globals[this.serverProfile].fxRunner.restartDelayOverride += 5000;
                 }
                 const [_ip, port] = data.address.split(':');
-                deferError(`Detected FXServer error: Port ${port} is busy! Increasing restart delay to ${globals.fxRunner.restartDelayOverride}.`);
+                deferError(`Detected FXServer error: Port ${port} is busy! Increasing restart delay to ${globals[this.serverProfile].fxRunner.restartDelayOverride}.`);
             } catch (e) {}
             return;
         }
@@ -92,9 +93,9 @@ module.exports = class OutputHandler {
         if (channel == 'citizen-server-impl' && data.type == 'script_structured_trace') {
             // dir(data.payload)
             if (data.payload.type === 'txAdminHeartBeat') {
-                globals.monitor.handleHeartBeat('fd3');
+                globals[this.serverProfile].monitor.handleHeartBeat('fd3');
             } else if (data.payload.type === 'txAdminLogData') {
-                globals.databus.serverLog = globals.databus.serverLog.concat(data.payload.logs);
+                globals[this.serverProfile].databus.serverLog = globals[this.serverProfile].databus.serverLog.concat(data.payload.logs);
             }
         }
     }
@@ -110,13 +111,13 @@ module.exports = class OutputHandler {
         //NOTE: not sure how this would throw any errors, but anyways...
         data = data.toString();
         try {
-            globals.webServer.webConsole.buffer(data, markType);
+            universal.webServer.webConsole.buffer(data, markType);
 
             //NOTE: There used to be a rule "\x0B-\x1F" that was replaced with "x0B-\x1A\x1C-\x1F" to allow the \x1B terminal escape character.
             //This is neccessary for the terminal to have color, but beware of side effects.
             //This regex was done in the first place to prevent fxserver output to be interpreted as txAdmin output by the host terminal
             //IIRC the issue was that one user with a TM on their nick was making txAdmin's console to close or freeze. I couldn't reproduce the issue.
-            if (!globals.fxRunner.config.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ''));
+            if (!globals[this.serverProfile].fxRunner.config.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ''));
         } catch (error) {
             if (GlobalData.verbose) logError(`Buffer write error: ${error.message}`);
         }
@@ -141,8 +142,8 @@ module.exports = class OutputHandler {
         //FIXME: this should be saving to a file, and should be persistent to the web console
         data = data.toString();
         try {
-            globals.webServer.webConsole.buffer(data, 'error');
-            if (!globals.fxRunner.config.quiet) process.stdout.write(chalk.red(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, '')));
+            universal.webServer.webConsole.buffer(data, 'error');
+            if (!globals[this.serverProfile].fxRunner.config.quiet) process.stdout.write(chalk.red(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, '')));
         } catch (error) {
             if (GlobalData.verbose) logError(`Buffer write error: ${error.message}`);
         }

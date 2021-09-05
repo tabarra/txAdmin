@@ -20,7 +20,7 @@ module.exports = async function AddMaster(ctx) {
     const action = ctx.params.action;
 
     //Check if there are no master admins set up
-    if (globals.adminVault.admins !== false) {
+    if (universal.adminVault.admins !== false) {
         return returnJustMessage(
             ctx,
             'Master account already set.',
@@ -59,7 +59,7 @@ async function handlePin(ctx) {
     }
 
     //Checking the PIN
-    if (ctx.request.body.pin !== globals.adminVault.addMasterPin) {
+    if (ctx.request.body.pin !== universal.adminVault.addMasterPin) {
         logWarn(`Wrong PIN for from: ${ctx.ip}`);
         const message = 'Wrong PIN.';
         return ctx.utils.render('login', {template: 'noMaster', message});
@@ -71,7 +71,7 @@ async function handlePin(ctx) {
     //Generate URL
     try {
         const callback = ctx.protocol + '://' + ctx.get('host') + '/auth/addMaster/callback';
-        const url = await globals.adminVault.providers.citizenfx.getAuthURL(callback, ctx.session._sessCtx.externalKey);
+        const url = await universal.adminVault.providers.citizenfx.getAuthURL(callback, ctx.session._sessCtx.externalKey);
         return ctx.response.redirect(url);
     } catch (error) {
         return returnJustMessage(
@@ -98,7 +98,7 @@ async function handleCallback(ctx) {
     let tokenSet;
     try {
         const currentURL = ctx.protocol + '://' + ctx.get('host') + '/auth/addMaster/callback';
-        tokenSet = await globals.adminVault.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
+        tokenSet = await universal.adminVault.providers.citizenfx.processCallback(ctx, currentURL, ctx.session._sessCtx.externalKey);
     } catch (error) {
         logWarn(`Code Exchange error: ${error.message}`);
         if (!isUndefined(error.tolerance)) {
@@ -127,7 +127,7 @@ async function handleCallback(ctx) {
     //Get userinfo
     let userInfo;
     try {
-        userInfo = await globals.adminVault.providers.citizenfx.getUserInfo(tokenSet.access_token);
+        userInfo = await universal.adminVault.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
         logError(`Get UserInfo error: ${error.message}`);
         return returnJustMessage(
@@ -204,7 +204,7 @@ async function handleSave(ctx) {
 
     //Creating admins file
     try {
-        globals.adminVault.createAdminsFile(ctx.session.tmpAddMasterUserInfo.name, identifier, ctx.session.tmpAddMasterUserInfo, password, true);
+        universal.adminVault.createAdminsFile(ctx.session.tmpAddMasterUserInfo.name, identifier, ctx.session.tmpAddMasterUserInfo, password, true);
     } catch (error) {
         return returnJustMessage(
             ctx,
@@ -215,7 +215,7 @@ async function handleSave(ctx) {
 
     //Login user
     try {
-        ctx.session.auth = await globals.adminVault.providers.citizenfx.getUserSession(
+        ctx.session.auth = await universal.adminVault.providers.citizenfx.getUserSession(
             ctx.session.tmpAddMasterTokenSet,
             ctx.session.tmpAddMasterUserInfo,
         );

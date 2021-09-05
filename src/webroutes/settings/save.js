@@ -73,7 +73,7 @@ function handleGlobal(ctx) {
 
     //Trying to load language file
     try {
-        globals.translator.getLanguagePhrases(cfg.language);
+        universal.translator.getLanguagePhrases(cfg.language);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<strong>Language error:</strong> ${error.message}`});
     }
@@ -87,7 +87,7 @@ function handleGlobal(ctx) {
     //Sending output
     if (saveStatus) {
         globals.config = globals.configVault.getScoped('global');
-        globals.translator.refreshConfig();
+        universal.translator.refreshConfig();
         ctx.utils.logAction('Changing global settings.');
         return ctx.send({type: 'success', message: '<strong>Global configuration saved!</strong>'});
     } else {
@@ -356,7 +356,7 @@ function handleDiscord(ctx) {
 
     //Sending output
     if (saveStatus) {
-        globals.discordBot.refreshConfig();
+        universal.discordBot.refreshConfig();
         ctx.utils.logAction('Changing discordBot settings.');
         if (newConfig.enabled) {
             return ctx.send({type: 'warning', message: '<strong>Discord configuration saved. Check terminal to make sure the token is valid.</strong>'});

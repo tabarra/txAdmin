@@ -33,10 +33,10 @@ module.exports = class WebServer {
         this.isListening = false;
 
         //Generate cookie key
-        const pathHash = crypto.createHash('shake256', { outputLength: 6 })
-            .update(globals.info.serverProfilePath)
-            .digest('hex');
-        this.koaSessionKey = `tx:${globals.info.serverProfile}:${pathHash}`;
+        // const pathHash = crypto.createHash('shake256', { outputLength: 6 })
+        //     .update(globals.info.serverProfilePath)
+        //     .digest('hex');
+        this.koaSessionKey = `tx:universal`;
 
         //Setup services
         this.setupKoa();
@@ -45,7 +45,7 @@ module.exports = class WebServer {
 
         //Cron function
         setInterval(() => {
-            const httpCounter = globals.databus.txStatsData.httpCounter;
+            const httpCounter = globals['sv1.profile'].databus.txStatsData.httpCounter;
             httpCounter.log.push(httpCounter.current);
             if (httpCounter.log.length > 10) httpCounter.log.shift();
             if (httpCounter.current > httpCounter.max) httpCounter.max = httpCounter.current;
@@ -153,7 +153,7 @@ module.exports = class WebServer {
                                  + `Route: ${reqPath}\n`
                                  + 'Make sure your txAdmin is updated.';
                     logError(desc, methodName);
-                    if (GlobalData.verbose) dir(error);
+                    dir(error);
                     ctx.status = 500;
                     ctx.body = desc;
                 }
@@ -217,7 +217,7 @@ module.exports = class WebServer {
 
         //Calls the appropriate callback
         try {
-            globals.databus.txStatsData.httpCounter.current++;
+            globals['sv1.profile'].databus.txStatsData.httpCounter.current++;
             if (req.url.startsWith('/socket.io')) {
                 this.io.engine.handleRequest(req, res);
             } else {

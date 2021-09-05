@@ -507,7 +507,7 @@ module.exports = class AdminVault {
      * Notify game server about admin changes
      */
     async refreshOnlineAdmins() {
-        if (globals.playerController === null) return;
+        if (globals['sv1.profile'].playerController === null) return;
 
         try {
             //Getting all admin identifiers
@@ -517,12 +517,12 @@ module.exports = class AdminVault {
             }, []);
 
             //Finding online admins
-            const playerList = globals.playerController.getPlayerList();
+            const playerList = globals['sv1.profile'].playerController.getPlayerList();
             const onlineIDs = playerList.filter((p) => {
                 return p.identifiers.some((i) => adminIDs.includes(i));
             }).map((p) => p.id);
 
-            return globals.fxRunner.sendEvent('adminsUpdated', onlineIDs);
+            return globals['sv1.profile'].fxRunner.sendEvent('adminsUpdated', onlineIDs);
         } catch (error) {
             if (GlobalData.verbose) {
                 logError('Failed to refreshOnlineAdmins() with error:');

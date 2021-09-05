@@ -14,10 +14,10 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
 module.exports = async function AuthGet(ctx) {
     //Set template type
     let template;
-    if (globals.adminVault.admins === false) {
+    if (universal.adminVault.admins === false) {
         template = 'noMaster';
-        if (globals.adminVault.addMasterPin) {
-            log('Use this PIN to add a new master account: ' + chalk.inverse(` ${globals.adminVault.addMasterPin} `));
+        if (universal.adminVault.addMasterPin) {
+            log('Use this PIN to add a new master account: ' + chalk.inverse(` ${universal.adminVault.addMasterPin} `));
         }
     } else {
         template = 'normal';
@@ -27,7 +27,7 @@ module.exports = async function AuthGet(ctx) {
     if (!isUndefined(ctx.query.logout)) ctx.session.auth = {};
 
     //If admins file was deleted
-    if (Array.isArray(globals.adminVault.admins) && !globals.adminVault.admins.length) {
+    if (Array.isArray(universal.adminVault.admins) && !universal.adminVault.admins.length) {
         return ctx.utils.render('login', {
             template: 'justMessage',
             errorTitle: 'No admins configured.',
@@ -39,7 +39,7 @@ module.exports = async function AuthGet(ctx) {
     const renderData = {
         template,
         message: (!isUndefined(ctx.query.logout)) ? 'Logged Out' : '',
-        citizenfxDisabled: !globals.adminVault.providers.citizenfx.ready,
+        citizenfxDisabled: !universal.adminVault.providers.citizenfx.ready,
         discordDisabled: true,
     };
     return ctx.utils.render('login', renderData);

@@ -85,7 +85,7 @@ async function renderMasterView(view, reqSess, data, txVars) {
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
     data.isLinux = (GlobalData.osType == 'linux');
     data.showAdvanced = (GlobalData.isAdvancedUser || GlobalData.verbose);
-    data.dynamicAd = txVars.isWebInterface && globals.dynamicAds.pick('main');
+    data.dynamicAd = txVars.isWebInterface && universal.dynamicAds.pick('main');
 
     let out;
     try {
@@ -124,8 +124,8 @@ async function renderLoginView(data, txVars) {
     data.errorTitle = data.errorTitle || 'Warning:';
     data.errorMessage = data.errorMessage || '';
     data.template = data.template || 'normal';
-    data.serverName = globals.config.serverName || globals.info.serverProfile;
-    data.dynamicAd = txVars.isWebInterface && globals.dynamicAds.pick('login');
+    data.serverName = globals['sv1.profile'].config.serverName || globals['sv1.profile'].info.serverProfile;
+    data.dynamicAd = txVars.isWebInterface && universal.dynamicAds.pick('login');
 
     let out;
     try {
@@ -173,7 +173,7 @@ async function renderSoloView(view, data, txVars) {
  */
 function logCommand(ctx, data) {
     log(`${ctx.session.auth.username} executing: ` + chalk.inverse(' ' + data + ' '));
-    globals.logger.append(`[${ctx.ip}][${ctx.session.auth.username}] ${data}`);
+    globals['sv1.profile'].logger.append(`[${ctx.ip}][${ctx.session.auth.username}] ${data}`);
 }
 
 
@@ -185,7 +185,7 @@ function logCommand(ctx, data) {
  */
 function logAction(ctx, data) {
     log(`[${ctx.session.auth.username}] ${data}`);
-    globals.logger.append(`[${ctx.ip}][${ctx.session.auth.username}] ${data}`);
+    globals['sv1.profile'].logger.append(`[${ctx.ip}][${ctx.session.auth.username}] ${data}`);
 }
 
 
@@ -250,7 +250,7 @@ module.exports = async function WebCtxUtils(ctx, next) {
     if (
         typeof ctx.headers['x-txadmin-identifiers'] === 'string'
         && typeof ctx.headers['x-txadmin-token'] === 'string'
-        && ctx.headers['x-txadmin-token'] === globals.webServer.fxWebPipeToken
+        && ctx.headers['x-txadmin-token'] === universal.webServer.fxWebPipeToken
         && GlobalData.loopbackInterfaces.includes(ctx.ip)
     ) {
         const ipIdentifier = ctx.headers['x-txadmin-identifiers']
@@ -269,10 +269,10 @@ module.exports = async function WebCtxUtils(ctx, next) {
     ctx.utils = {};
     ctx.utils.render = async (view, data) => {
         //Usage stats
-        if (!globals.databus.txStatsData.pageViews[view]) {
-            globals.databus.txStatsData.pageViews[view] = 1;
+        if (!globals['sv1.profile'].databus.txStatsData.pageViews[view]) {
+            globals['sv1.profile'].databus.txStatsData.pageViews[view] = 1;
         } else {
-            globals.databus.txStatsData.pageViews[view]++;
+            globals['sv1.profile'].databus.txStatsData.pageViews[view]++;
         }
 
         // Setting up default render data:
@@ -281,7 +281,7 @@ module.exports = async function WebCtxUtils(ctx, next) {
             fxServerVersion: (GlobalData.isZapHosting) ? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion,
             isWebInterface: isWebInterface,
             resourcePath: (isWebInterface) ? '' : RESOURCE_PATH,
-            serverProfile: globals.info.serverProfile,
+            serverProfile: globals['sv1.profile'].info.serverProfile,
             txAdminVersion: GlobalData.txAdminVersion,
             uiTheme: (ctx.cookies.get('txAdmin-darkMode') === 'true' || !isWebInterface) ? THEME_DARK : '',
             jsInjection: getJavascriptConsts({
