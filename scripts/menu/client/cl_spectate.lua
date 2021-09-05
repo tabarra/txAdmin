@@ -44,7 +44,7 @@ local function setupScaleform()
 
     PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
     PushScaleformMovieFunctionParameterInt(1)
-    InstructionalButton("~INPUT_417C207D~", "Exit Spectate Mode")
+    InstructionalButton(GetControlInstructionalButton(1, 194), "Exit Spectate Mode")
     PopScaleformMovieFunctionVoid()
 
 
@@ -59,6 +59,10 @@ local function setupScaleform()
     PopScaleformMovieFunctionVoid()
 
     return scaleform
+end
+
+local function calculateSpectatorCoords(coords)
+    return vec3(coords[1], coords[2], coords[3] - 15.0)
 end
 
 --- Called every 50 frames in SpectateMode to determine whether or not to recreate the GamerTag
@@ -85,6 +89,35 @@ end
 local function preparePlayerForSpec(bool)
     local playerPed = PlayerPedId()
     FreezeEntityPosition(playerPed, bool)
+end
+
+local function createSpectatorTeleportThread()
+    debugPrint('Starting teleporting follower thread')
+    CreateThread(function()
+        while isSpectateEnabled do
+            Wait(500)
+            
+            -- Check if ped still exists
+            if not DoesEntityExist(storedTargetPed) then
+                local _ped = GetPlayerPed(storedTargetPlayerId)
+                if _ped > 0 then
+                    if _ped ~= storedTargetPed then
+                        debugPrint(("Spectated player (%s) changed ped to %s"):format(storedTargetPlayerId, _ped))
+                        storedTargetPed = _ped
+                    end
+                    storedTargetPed = _ped
+                else
+                    debugPrint(("Spectated player (%s) no longer exists, ending spectate..."):format(storedTargetPlayerId))
+                    toggleSpectate(storedTargetPed, storedTargetPlayerId)
+                    break
+                end
+            end
+            
+            -- Update Teleport
+            local newSpectateCoords = calculateSpectatorCoords(GetEntityCoords(storedTargetPed))
+            SetEntityCoords(PlayerPedId(), newSpectateCoords.x, newSpectateCoords.y, newSpectateCoords.z, 0, 0, 0, false)
+        end
+    end)
 end
 
 --- Will toggle spectate for a targeted ped
@@ -139,9 +172,9 @@ local function toggleSpectate(targetPed, targetPlayerId)
         DoScreenFadeIn(500)
         debugPrint(('Now spectating TargetPed (%s)'):format(targetPed))
         isSpectateEnabled = true
+        createSpectatorTeleportThread()
     end
 end
-
 
 RegisterCommand('txAdmin:menu:endSpectate', function()
     if isSpectateEnabled then
@@ -150,19 +183,21 @@ RegisterCommand('txAdmin:menu:endSpectate', function()
     end
 end)
 
-RegisterNetEvent('txAdmin:menu:specPlayerResp', function(playerId, coords)
-    local playerPed = PlayerPedId()
-    lastSpectateLocation = GetEntityCoords(playerPed)
+-- Client-side event handler for an authorized spectate request
+RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, coords)
+    local spectatorPed = PlayerPedId()
+    lastSpectateLocation = GetEntityCoords(spectatorPed)
 
-    local clientPlayerId = GetPlayerFromServerId(playerId)
-    if clientPlayerId == PlayerId() then
+    local targetPlayerId = GetPlayerFromServerId(targetServerId)
+    if targetPlayerId == PlayerId() then
         return sendSnackbarMessage('error', 'You cannot spectate yourself!')
     end
 
     DoScreenFadeOut(500)
     while not IsScreenFadedOut() do Wait(0) end
 
-    SetEntityCoords(playerPed, coords.x, coords.y, coords.z - 15.0, 0, 0, 0, false)
+    local tpCoords = calculateSpectatorCoords(coords)
+    SetEntityCoords(spectatorPed, tpCoords.x, tpCoords.y, tpCoords.z, 0, 0, 0, false)
     preparePlayerForSpec(true)
 
     ---- We need to wait to make sure that the player is actually available once we teleport
@@ -170,11 +205,11 @@ RegisterNetEvent('txAdmin:menu:specPlayerResp', function(playerId, coords)
     repeat
         Wait(50)
         debugPrint('Waiting for player to resolve')
-        clientPlayerId = GetPlayerFromServerId(playerId)
-    until (GetPlayerPed(clientPlayerId) > 0) and clientPlayerId ~= -1
+        targetPlayerId = GetPlayerFromServerId(targetServerId)
+    until (GetPlayerPed(targetPlayerId) > 0) and targetPlayerId ~= -1
 
-    debugPrint('Target Ped sucessfully found!')
-    toggleSpectate(GetPlayerPed(clientPlayerId), clientPlayerId)
+    debugPrint('Target Ped successfully found!')
+    toggleSpectate(GetPlayerPed(targetPlayerId), targetPlayerId)
 end)
 
 CreateThread(function()
