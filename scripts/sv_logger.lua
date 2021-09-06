@@ -123,6 +123,9 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
         if type(data) ~= 'string' then return end
         message = "spawning a vehicle (model: " .. data .. ")"
 
+    elseif event == 'deleteVehicle' then
+        message = "deleting a vehicle"
+
     elseif event == 'playerModeChanged' then
         if data == 'godmode' then
             message = "enabling invincibility"

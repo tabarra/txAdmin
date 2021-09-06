@@ -592,6 +592,7 @@ end)
 RegisterNetEvent("txAdmin:menu:deleteVehicle", function(netId)
   local src = source
   local allow = PlayerHasTxPermission(src, 'menu.vehicle')
+  TriggerEvent("txaLogger:menuEvent", src, "deleteVehicle", allow)
   if allow then
     local vehicle = NetworkGetEntityFromNetworkId(netId)
     DeleteEntity(vehicle)
