@@ -366,13 +366,6 @@ export const MainPageList: React.FC = () => {
         initialValue: playerMode,
         actions: [
           {
-            label: t("nui_menu.page_main.player_mode.item_none"),
-            value: PlayerMode.DEFAULT,
-            onSelect: () => {
-              handlePlayermodeToggle(PlayerMode.DEFAULT);
-            },
-          },
-          {
             label: t("nui_menu.page_main.player_mode.item_noclip"),
             value: PlayerMode.NOCLIP,
             icon: <ControlCamera />,
@@ -386,6 +379,13 @@ export const MainPageList: React.FC = () => {
             icon: <Security />,
             onSelect: () => {
               handlePlayermodeToggle(PlayerMode.GOD_MODE);
+            },
+          },
+          {
+            label: t("nui_menu.page_main.player_mode.item_none"),
+            value: PlayerMode.DEFAULT,
+            onSelect: () => {
+              handlePlayermodeToggle(PlayerMode.DEFAULT);
             },
           },
         ],

@@ -6,9 +6,13 @@
 - [x] feat(web/diagnostics): redacting cfx/steam/tebex keys
 - [x] feat: prevent noobs from messing setup/deploy opts
 - [x] tweak(core): removed space checking in fx paths
+- [x] fix(menu/spectate): fix for audio / texture loss when spectating a moving player 
+- [x] feat: allow two tx on same browser (closes #395)
+- [x] fix(client/state): fix not properly checking for netId existing, closes #443
+- [x] feat(menu/main): delete vehicle sub option
+- [ ] chore: updated a few dependencies
 - [ ] fix(nui): auth source for zap servers
 - [ ] fix(core): memory leak on server log 
-- [ ] deployer: collapse database options into "advanced"
 
 warn auto dismiss 15s
 FreezeEntityPosition need to get the veh
