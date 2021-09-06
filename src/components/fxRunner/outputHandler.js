@@ -95,6 +95,11 @@ module.exports = class OutputHandler {
                 globals.monitor.handleHeartBeat('fd3');
             } else if (data.payload.type === 'txAdminLogData') {
                 globals.databus.serverLog = globals.databus.serverLog.concat(data.payload.logs);
+
+                //NOTE: limiting to 16k requests which should be about 1h to big server (266 events/min)
+                // if (globals.databus.serverLog.length > 128e3) globals.databus.serverLog.shift();
+                //FIXME: this is super wrong
+                if (globals.databus.serverLog.length > 64e3) globals.databus.serverLog = globals.databus.serverLog.slice(-100);
             }
         }
     }

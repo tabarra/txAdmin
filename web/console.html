@@ -110,7 +110,7 @@
 
 
 <script src="js/ansi_up.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.1/socket.io.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.min.js"></script>
 <script>
     //============================================== Controls (start/restart/stop)
     async function controlAction(action) {
@@ -145,11 +145,18 @@
     (function () {
         //Preparing variables
         const commandHistoryLimit = 12;
+        const defaultOpts = {
+            transports: ['polling'],
+            upgrade: false,
+            query: {
+                room: 'liveconsole'
+            }
+        }
         let socket;
         if (isWebInterface) {
-            socket = io({path: '/socket.io', transports: ['polling'], upgrade: false});
+            socket = io({...defaultOpts, path: '/socket.io'});
         }else{
-            socket = io('monitor', {path: '/WebPipe/socket.io', transports: ['polling'], upgrade: false});
+            socket = io('monitor', {...defaultOpts, path: '/WebPipe/socket.io'});
         }
         
         //NOTE: when using namespaces:
@@ -202,7 +209,10 @@
             console.dir(error)
         });
         socket.on('connect', () => {
-            console.log("Socket.io Connected!")
+            console.log("Socket.IO Connected.");
+        });
+        socket.on('disconnect', () => {
+            console.log("Socket.IO Disonnected.");
         });
         socket.on('logout', (error) => {
             window.location = '/auth?logout';

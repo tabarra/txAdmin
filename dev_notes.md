@@ -56,7 +56,22 @@ Novo log:
 - quando iniciar o tx pegar todos os logs da pasta e ir deletando os mais antigos até que o peso total da pasta seja menor que 2gb?
 - na página não sei como fazer scroll pra cima
 lembrar de pingar o squizer e falar que finalmente, assim como encerrar o issue e o PR
+### Log Stuff:
+https://www.npmjs.com/package/rotating-file-stream
+https://www.npmjs.com/package/file-stream-rotator
+https://www.npmjs.com/package/simple-node-logger
 
+
+Olhar links acima, caso nada ajude fazer:
+- os registros ficam lá na memória com um timestamp
+- página do server log via socket.io channels (tem que mudar live console tb) assim ele n precisa nunca ter o problema de fetch atualizações
+- no topo do log tem duas opções: real time e older log
+na opção older log, não há nenhum tipo de live ou socket.io, é só fazer paginação normal ou inline (ai os registros são inseridos por meio de uma div de página, e essa div pode ser deletada pra salvar memória)
+- quando clicar na paginação, ele faz um search no log passando "older than X" ou "newer than X", e limita XXX entradas
+
+os botões de prev e next podem ser `data-timestamp="xxx" onclick="seekOlder(this)"` e a função pega o this, le o parametro, depois remove o elemento na hora de inserir os novos dados
+
+mover os logs do lua pra dentro do js, e parar de logar perm denied, só printar no console do child fxserver
 
 
 
@@ -177,13 +192,6 @@ https://docs.fivem.net/docs/scripting-manual/networking/state-bags/
 https://discordapp.com/channels/192358910387159041/450373719974477835/724266730024861717
 maybe playerConnecting and then set permission by ID?
 https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
-
-
-### Log Stuff:
-https://www.npmjs.com/package/rotating-file-stream
-https://www.npmjs.com/package/file-stream-rotator
-https://www.npmjs.com/package/simple-node-logger
-https://www.npmjs.com/package/infinite-scroll
 
 
 ### Git clone using isomorphic-git

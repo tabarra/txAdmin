@@ -21,7 +21,7 @@ module.exports = class webConsole {
         this.io = io;
         this.dataBuffer = '';
 
-        setInterval(this.flushBuffer.bind(this), 250);
+        setInterval(this.flushBuffers.bind(this), 250);
     }
 
 
@@ -30,23 +30,42 @@ module.exports = class webConsole {
     // handleConnection(socket, next)
     handleConnection(socket) {
         try {
+            //Testing auth
+            if (
+                !socket
+                || !socket.session
+                || !socket.session.auth
+                || !socket.session.auth.username
+            ) {
+                if (GlobalData.verbose) log('dropping new connection without auth', 'SocketIO');
+                socket.disconnect();
+            }
+
+            //Joining room
+            if (socket.handshake.query.room === 'liveconsole') {
+                socket.join('liveconsole');
+                socket.emit('consoleData', xss(globals.fxRunner.outputHandler.webConsoleBuffer));
+            } else if (socket.handshake.query.room === 'serverlog') {
+                socket.join('serverlog');
+                // socket.emit('logData', xss(globals.fxRunner.xxxxxx));
+            } else {
+                if (GlobalData.verbose) log('dropping new connection without query.room', 'SocketIO');
+                socket.disconnect();
+            }
+
+            //General events
+            socket.on('disconnect', (reason) => {
+                if (GlobalData.verbose) log(`Client disconnected with reason: ${reason}`, 'SocketIO');
+            });
+            socket.on('error', (error) => {
+                if (GlobalData.verbose) log(`Socket error with message: ${error.message}`, 'SocketIO');
+            });
+            socket.on('consoleCommand', this.handleSocketMessages.bind(this, socket));
+
             log(`Connected: ${socket.session.auth.username} from ${getIP(socket)}`, 'SocketIO');
         } catch (error) {
-            log('Connected: new connection with unknown source', 'SocketIO');
-        }
-
-        socket.on('disconnect', (reason) => {
-            if (GlobalData.verbose) log(`Client disconnected with reason: ${reason}`, 'SocketIO');
-        });
-        socket.on('error', (error) => {
-            if (GlobalData.verbose) log(`Socket error with message: ${error.message}`, 'SocketIO');
-        });
-        socket.on('consoleCommand', this.handleSocketMessages.bind(this, socket));
-
-        try {
-            socket.emit('consoleData', xss(globals.fxRunner.outputHandler.webConsoleBuffer));
-        } catch (error) {
-            if (GlobalData.verbose) logWarn(`Error sending sending old buffer: ${error.message}`);
+            log(`Error handling new connection: ${error.message}`, 'SocketIO');
+            socket.disconnect();
         }
     }
 
@@ -68,15 +87,15 @@ module.exports = class webConsole {
 
     //================================================================
     /**
-     * Flushes the data buffer
+     * Flushes the data buffers
      * NOTE: this will also send data to users that no longer have the permission console.view
      * @param {string} data
      */
-    flushBuffer() {
+    flushBuffers() {
         if (!this.dataBuffer.length) return;
 
         try {
-            this.io.emit('consoleData', xss(this.dataBuffer));
+            this.io.to('liveconsole').emit('consoleData', xss(this.dataBuffer));
             this.dataBuffer = '';
         } catch (error) {
             logWarn('Message not sent');

@@ -18,6 +18,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
 //         data: cnt + '='.repeat(cnt),
 //     };
 //     globals.databus.serverLog.push(test);
+//     if (globals.databus.serverLog.length > 64) globals.databus.serverLog = globals.databus.serverLog.slice(-10);
 // }, 750);
 
 
