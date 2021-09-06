@@ -10,9 +10,14 @@
 - [x] feat: allow two tx on same browser (closes #395)
 - [x] fix(client/state): fix not properly checking for netId existing, closes #443
 - [x] feat(menu/main): delete vehicle sub option
-- [ ] chore: updated a few dependencies
-- [ ] fix(nui): auth source for zap servers
-- [ ] fix(core): memory leak on server log 
+- [x] fix(core): memory leak on server log 
+- [x] fix(nui): auth source for zap servers
+- [x] chore: updated a few dependencies
+> v4.5.0
+- [ ] review mem leak and auth src from zap
+
+
+
 
 warn auto dismiss 15s
 FreezeEntityPosition need to get the veh
