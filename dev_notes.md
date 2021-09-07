@@ -18,39 +18,7 @@
 
 
 
-
-warn auto dismiss 15s
-FreezeEntityPosition need to get the veh
-debugModeEnabled and isMenuDebug are redundant, should probably just use the one from shared
-
-
-Test:
-adm-zip
-https://github.com/cthackers/adm-zip/compare/3d8bfc7a86da066131b2208a77148d2970e6234f...9a1ca460e18af17849542c6c136bd0c5861029f7
-
-Meh:
-nui snackbars (last updated fucked some spacing/padding or something)
-
-
-When someone joins/leaves:
-- sv_playerlist sends {id, false} or {id, name, license} via event for the connected admins
-- client atualiza sua playerlist interna
-
-
-Client every 5 seconds:
-- if isMenuVisible TriggerServerEvent("gimmeDetailedPlayerlist")
-
-Server on gimmeDetailedPlayerlist
-- get requester's coords
-
-
-pagina de adicionar admin precisa depois do modal, mostrar mais info:
-username, senha, potencialmente link, instruções de login
-
-
-
-
-Novo log:
+### Log Stuff:
 - manter array de objetos em memória
 - limitar array para 16k elementos, isso deve dar 1h em servidores muito grandes (266 eventos por minuto)
 - o identificador nos objetos fica o nome e id do jogador junto do mutex do server
@@ -61,11 +29,9 @@ Novo log:
 - quando iniciar o tx pegar todos os logs da pasta e ir deletando os mais antigos até que o peso total da pasta seja menor que 2gb?
 - na página não sei como fazer scroll pra cima
 lembrar de pingar o squizer e falar que finalmente, assim como encerrar o issue e o PR
-### Log Stuff:
 https://www.npmjs.com/package/rotating-file-stream
 https://www.npmjs.com/package/file-stream-rotator
 https://www.npmjs.com/package/simple-node-logger
-
 
 Olhar links acima, caso nada ajude fazer:
 - os registros ficam lá na memória com um timestamp
@@ -80,19 +46,95 @@ mover os logs do lua pra dentro do js, e parar de logar perm denied, só printar
 
 
 
-recipe engine todo:
+### Menu playerlist fix
+When someone joins/leaves:
+- sv_playerlist sends {id, false} or {id, name, license} via event for the connected admins
+- client atualiza sua playerlist interna
+
+Client every 5 seconds:
+- if isMenuVisible TriggerServerEvent("gimmeDetailedPlayerlist")
+
+Server on gimmeDetailedPlayerlist
+- get requester's coords
+
+
+
+### Database Management page
+- erase all whitelists
+- erase all bans
+- erase all warnings
+- Prune Database:
+    All options will be select boxes containing 3 options: none, conservative, aggressive
+    - Players (without notes) innactive for xxx days: 60, 30
+    - Warns older than xx days: 30, 7
+    - Bans: revoked, revoked or expired
+Add a note that to erase the entire database, the user should delete the `playersDB.json` (full path) file and restart txAdmin.
+Pre calculate all counts
+
+
+
+### txAdmin API/integrations:
+- ban/warn/whitelist + revoke action: probavly exports with GetInvokingResource() for perms 
+- get player info (history, playtime, joindate, etc): state bags
+- events: keep the way it is
+> Note: confirm with bubble
+> Don't forget to add a integrations doc page + to the readme
+> for menu and internal stuff to use token-based rest api: ok, just make sure to use the webpipe proxy
+
+> querying user info: in-server monitor resource should set specific state keys (non-replicated), which get properly specified so other resources can also populate any 'generic' fields. thinking of kubernetes-style namespaces as java-style namespaces are disgusting (playerdata.cfx.re/firstjoin or so)
+> bans: some sort of generic event/provide-stuff api. generic event spec format is needed for a lot of things, i don't want 'xd another api no other resource uses', i just want all resources from X on to do things proper event-y way
+> --bubble
+https://docs.fivem.net/docs/scripting-manual/networking/state-bags/
+
+
+### Admin ACE sync:
+On server start, or admins permission change:
+- write a `txData/<profile>/txAcePerms.cfg` with:
+    - remove_ace/remove_principal to wipe old permissions (would need something like `remove_ace identifier.xxx:xx txadmin.* any`)
+    - add_ace/add_principal for each admin
+- stdin> `exec xxx.cfg; txaBroadcast xxxxx`
+
+- We should be able to get rid of our menu state management, mainly the part that sends to lua what are the admin ids when something changes
+To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
+> Don't use, but I'll leave it saved here: https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
+
+
+
+
+### Admin gun
+An "admin gun" where you point a gun to a player and when you point it to a player it shows this player's info, and when you "shoot it" it opens that player's modal.
+If not a custom gun model, just use the point animation and make sure we have a crosshair
+
+
+### recipe engine todo:
 - checksum for downloaded files
 - remove_path accept array?
 - every X download_github wait some time - maybe check if ref or not, to be smarter
 
+### Todozinhos:
+pagina de adicionar admin precisa depois do modal, mostrar mais info:
+username, senha, potencialmente link, instruções de login
+
+warn auto dismiss 15s
+FreezeEntityPosition need to get the veh
+debugModeEnabled and isMenuDebug are redundant, should probably just use the one from shared
+
+Test:
+adm-zip
+https://github.com/cthackers/adm-zip/compare/3d8bfc7a86da066131b2208a77148d2970e6234f...9a1ca460e18af17849542c6c136bd0c5861029f7
+
+Meh:
+nui snackbars (last updated fucked some spacing/padding or something)
 
 
 
-nota:
+
+
+=======================================
+### old stuff:::
 - precisamos garantir que uma sessão criada via NUI seja só usada com nui
 - criar um novo token, mudar no primeiro tick
 - desabilitar master actions pra quando for NUI
-
 
 Small Stuff:
 - [ ] rever o espaço no path, procurar por "tabSpaceDisabledThingy" que vai marcar os lugares
@@ -158,20 +200,6 @@ Small Stuff:
 
 =======================================
 
-## Database Management page
-- erase all whitelists
-- erase all bans
-- erase all warnings
-- Prune Database:
-    All options will be select boxes containing 3 options: none, conservative, aggressive
-    - Players (without notes) innactive for xxx days: 60, 30
-    - Warns older than xx days: 30, 7
-    - Bans: revoked, revoked or expired
-Add a note that to erase the entire database, the user should delete the `playersDB.json` (full path) file and restart txAdmin.
-Pre calculate all counts
-
-=======================================
-
 ## FXServer Stuff + TODOs
 
 ### Rate limiter
@@ -187,16 +215,6 @@ https://github.com/citizenfx/fivem/search?q=KeyedRateLimiter
 ### Oversized resources streams
 We could wait for the server to finish loading, as well as print in the interface somewhere an descending ordered list of large resource assets
 https://github.com/citizenfx/fivem/blob/649dac8e9c9702cc3e293f8b6a48105a9378b3f5/code/components/citizen-server-impl/src/ResourceStreamComponent.cpp#L435
-
-
-### State bags?
-https://docs.fivem.net/docs/scripting-manual/networking/state-bags/
-
-
-### the ace permissions editor thing
-https://discordapp.com/channels/192358910387159041/450373719974477835/724266730024861717
-maybe playerConnecting and then set permission by ID?
-https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
 
 
 ### Git clone using isomorphic-git
