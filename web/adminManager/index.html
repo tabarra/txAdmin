@@ -58,13 +58,24 @@
                             <tr>
                                 <td>{{admin.name}}</td>
                                 <td>
-                                    {{@if(admin.hasCitizenFX == true)}}
-                                        <i class="admin-icon"><svg><use href="#fivem-icon"></use></svg></i>
-                                    {{/if}}
-                                    {{@if(admin.hasDiscord)}}
-                                        <i class="admin-icon"><svg><use href="#discord-icon"></use></svg></i>
-                                    {{/if}}
-                                    <i class="admin-icon"><svg><use href="#password-icon"></use></svg></i>
+                                    <i class="admin-icon">
+                                        <svg>
+                                            <title>Password Authentication</title>
+                                            <use href="#password-icon"></use>
+                                        </svg>
+                                    </i>
+                                    <i class="admin-icon" style="opacity: {{[(admin.hasCitizenFX), '1', '0.09']|ternary}};">
+                                        <svg>
+                                            <title>CitizenFX Authentication</title>
+                                            <use href="#fivem-icon"></use>
+                                        </svg>
+                                    </i>
+                                    <i class="admin-icon" style="opacity: {{[(admin.hasDiscord), '1', '0.09']|ternary}};">
+                                        <svg>
+                                            <title>Discord Authentication</title>
+                                            <use href="#discord-icon"></use>
+                                        </svg>
+                                    </i>
                                 </td>
                                 <td>{{admin.perms}}</td>
                                 <td class="tableActions">
