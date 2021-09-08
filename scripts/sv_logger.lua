@@ -34,10 +34,18 @@ local PRINT_STRUCTURED_TRACE = `PRINT_STRUCTURED_TRACE` & 0xFFFFFFFF
 ---@param src number the source of the player who did the action
 ---@param action string the action type
 ---@param data table|boolean will take a table, or a boolean if there is no data.
+---NOTE: local fakeMsCounter = 0
 local function logger(src, action, data)
+    ---NOTE: fakeMsCounter+1
+    ---NOTE: if fakeMsCounter == 1000 then fakeMsCounter = 0
+    ---NOTE: ts = os_time() + fakeMsCounter
+    ---FIXME: this is actually bad cuz if we have multiple requests in a second we can break log linearity 
+    ---FIXME: we need to reset counter to 000 every time the ts changes, and then cap at 999 without rolling back
+    ---FIXME: big servers have 5 events/sec, for this to break, only with over 60k events/sec
+    
     loggerBuffer[#loggerBuffer+1] = {
         timestamp = round(os_time()),
-        source = getPlayerData(src),
+        source = getPlayerData(src), --FIXME: send only the id
         action = action,
         data = data or false
     }

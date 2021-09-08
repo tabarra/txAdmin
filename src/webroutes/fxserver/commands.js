@@ -49,8 +49,8 @@ module.exports = async function FXServerCommands(ctx) {
         if (!ensurePermission(ctx, 'all_permissions')) return false;
         ctx.utils.logAction('Profiling txAdmin instance.');
 
-        let profSeconds = 5;
-        let savePath = `${globals.info.serverProfilePath}/data/txProfile.bin`;
+        const profSeconds = 5;
+        const savePath = `${globals.info.serverProfilePath}/data/txProfile.bin`;
         ExecuteCommand('profiler record start');
         setTimeout(async () => {
             ExecuteCommand('profiler record stop');
@@ -58,8 +58,7 @@ module.exports = async function FXServerCommands(ctx) {
                 ExecuteCommand(`profiler save "${escape(savePath)}"`);
                 setTimeout(async () => {
                     logOk(`Profile saved to: ${savePath}`);
-                    let cmd = `profiler view "${escape(savePath)}"`;
-                    globals.fxRunner.srvCmdBuffer(cmd);
+                    globals.fxRunner.srvCmd(`profiler view "${escape(savePath)}"`);
                 }, 150);
             }, 150);
         }, profSeconds * 1000);

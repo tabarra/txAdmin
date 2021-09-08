@@ -12,7 +12,7 @@ const KoaSessionMemoryStoreClass = require('koa-session-memory');
 
 const SocketIO = require('socket.io');
 const SessionIO = require('koa-session-socketio');
-const WebConsole = require('./webConsole');
+const WebSocket = require('./webSocket');
 
 const { customAlphabet } = require('nanoid');
 const dict51 = require('nanoid-dictionary/nolookalikes');
@@ -29,7 +29,7 @@ module.exports = class WebServer {
         this.config = config;
         this.intercomToken = nanoid();
         this.fxWebPipeToken = nanoid();
-        this.webConsole = null;
+        this.webSocket = null;
         this.isListening = false;
 
         //Generate cookie key
@@ -40,7 +40,7 @@ module.exports = class WebServer {
 
         //Setup services
         this.setupKoa();
-        this.setupWebsocket();
+        this.setupWebSocket();
         this.setupServerCallbacks();
 
         //Cron function
@@ -189,20 +189,20 @@ module.exports = class WebServer {
 
 
     //================================================================
-    setupWebsocket() {
+    setupWebSocket() {
         //Start SocketIO
         this.io = SocketIO(HttpClass.createServer(), { serveClient: false });
         this.io.use(SessionIO(this.koaSessionKey, this.koaSessionMemoryStore));
         this.io.use(requestAuth('socket'));
 
-        //Setting up WebConsole
-        this.webConsole = new WebConsole(this.io);
-        this.io.on('connection', this.webConsole.handleConnection.bind(this.webConsole));
+        //Setting up webSocket
+        this.webSocket = new WebSocket(this.io);
+        this.io.on('connection', this.webSocket.handleConnection.bind(this.webSocket));
         //NOTE: when using namespaces:
         // this.io.on('connection', client => {
         //     logError('Triggered when not using any type of namespace.')
         // });
-        // this.io.of('/console').use(this.webConsole.handleConnection.bind(this.webConsole));
+        // this.io.of('/console').use(this.webSocket.handleConnection.bind(this.webSocket));
     }
 
 

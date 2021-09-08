@@ -214,8 +214,8 @@
         socket.on('disconnect', () => {
             console.log("Socket.IO Disonnected.");
         });
-        socket.on('logout', (error) => {
-            window.location = '/auth?logout';
+        socket.on('goDashboard', (error) => {
+            window.location = '/';
         });
         socket.on('consoleData', function (msg) {
             let _consoleData = consoleElement.innerHTML + ansi_up.ansi_to_html(msg);

@@ -27,10 +27,8 @@
 - quando chegar, já coloca em um buffer que dumpa pra logfile com nome serverlog_timestamp.log, totalmente human readable
 - quando player entrar, jogar no logfile "player joined {mutex|id} Nome [...identifiers], assim da pra dar um ctrl+f
 - quando iniciar o tx pegar todos os logs da pasta e ir deletando os mais antigos até que o peso total da pasta seja menor que 2gb?
-- na página não sei como fazer scroll pra cima
-lembrar de pingar o squizer e falar que finalmente, assim como encerrar o issue e o PR
-https://www.npmjs.com/package/rotating-file-stream
 https://www.npmjs.com/package/file-stream-rotator
+https://www.npmjs.com/package/rotating-file-stream
 https://www.npmjs.com/package/simple-node-logger
 
 Olhar links acima, caso nada ajude fazer:
@@ -43,6 +41,39 @@ na opção older log, não há nenhum tipo de live ou socket.io, é só fazer pa
 os botões de prev e next podem ser `data-timestamp="xxx" onclick="seekOlder(this)"` e a função pega o this, le o parametro, depois remove o elemento na hora de inserir os novos dados
 
 mover os logs do lua pra dentro do js, e parar de logar perm denied, só printar no console do child fxserver
+
+no histórico, mostrar 500 linhas por vez
+
+
+Order of operations:
+- Change webConsole to webSocket and generalize functions
+- edit serverlog.html to listen to the socket
+- 
+
+
+
+
+
+```js
+//NOTE: could be optimized by a a for loop skipping 1k, reading single src[i] and stopping
+// after it doesn't satisfy search function, then do a slice and only then run the findindex
+function sliceLogNewer(source, timestamp, sliceLength) {
+    const limitIndex = source.findIndex((x) => x.ts > timestamp);
+    return events.slice(limitIndex, limitIndex + sliceLength);
+}
+function sliceLogOlder(source, timestamp, sliceLength) {
+    const limitIndex = source.findIndex((x) => x.ts >= timestamp);
+
+    //everything is older, return last few
+    if (limitIndex === -1) {
+        return events.slice(-sliceLength);
+
+    //not everything is older
+    } else {
+        return events.slice(Math.max(0, limitIndex - sliceLength), limitIndex);
+    }
+}
+```
 
 
 
@@ -80,6 +111,10 @@ Pre calculate all counts
 > Note: confirm with bubble
 > Don't forget to add a integrations doc page + to the readme
 > for menu and internal stuff to use token-based rest api: ok, just make sure to use the webpipe proxy
+> for resource permissions, use resource.* ace thing, which also works for exports
+
+> for ban things, bubble wants a generic thing that is not just for txadmin, so any resource could implement it
+> so its not exports.txadmin.xxxx, but some other generic thing that bubble would need to expose
 
 > querying user info: in-server monitor resource should set specific state keys (non-replicated), which get properly specified so other resources can also populate any 'generic' fields. thinking of kubernetes-style namespaces as java-style namespaces are disgusting (playerdata.cfx.re/firstjoin or so)
 > bans: some sort of generic event/provide-stuff api. generic event spec format is needed for a lot of things, i don't want 'xd another api no other resource uses', i just want all resources from X on to do things proper event-y way

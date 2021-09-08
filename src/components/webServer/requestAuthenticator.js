@@ -4,7 +4,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 /**
  * Returns a session authenticator function
- * @param {string} epType type of consumer
+ * @param {string} epType endpoint type
  */
 const requestAuth = (epType) => {
     //Intercom auth function
@@ -38,7 +38,7 @@ const requestAuth = (epType) => {
         }
     };
 
-    //Socket auth function
+    //Socket auth function (used as middleware for all incoming socket.io connections)
     const socketAuth = async (socket, next) => {
         const {isValidAuth} = authLogic(socket.session, true, epType);
 
@@ -69,9 +69,9 @@ const requestAuth = (epType) => {
 
 /**
  * Autentication & authorization logic used in both websocket and webserver
- * @param {*} sess
- * @param {*} perm
- * @param {*} epType
+ * @param {object} sess
+ * @param {string} perm
+ * @param {string} epType endpoint type
  */
 const authLogic = (sess, perm, epType) => {
     let isValidAuth = false;
@@ -111,8 +111,10 @@ const authLogic = (sess, perm, epType) => {
                     ));
                 }
             } catch (error) {
-                if (GlobalData.verbose) logError('Error validating session data:', epType);
-                if (GlobalData.verbose) dir(error);
+                if (GlobalData.verbose) {
+                    logError('Error validating session data:', epType);
+                    dir(error);
+                }
             }
         } else {
             if (GlobalData.verbose) logWarn(`Expired session from ${sess.auth.username}`, epType);
