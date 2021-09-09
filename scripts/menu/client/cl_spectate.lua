@@ -183,6 +183,23 @@ RegisterCommand('txAdmin:menu:endSpectate', function()
     end
 end)
 
+-- Run whenever we failed to resolve a target player to spectate
+local function cleanupFailedResolve()
+    local playerPed = PlayerPedId()
+
+    RequestCollisionAtCoord(lastSpectateLocation.x, lastSpectateLocation.y, lastSpectateLocation.z)
+    SetEntityCoords(playerPed, lastSpectateLocation.x, lastSpectateLocation.y, lastSpectateLocation.z)
+    -- The player is still frozen while we wait for collisions to load
+    while not HasCollisionLoadedAroundEntity(playerPed) do
+        Wait(5)
+    end
+    preparePlayerForSpec(false)
+
+    DoScreenFadeIn(500)
+
+    sendSnackbarMessage('error', 'nui_menu.misc.failed_to_spectate', true)
+end
+
 -- Client-side event handler for an authorized spectate request
 RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, coords)
     local spectatorPed = PlayerPedId()
@@ -200,13 +217,26 @@ RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, coords)
     SetEntityCoords(spectatorPed, tpCoords.x, tpCoords.y, tpCoords.z, 0, 0, 0, false)
     preparePlayerForSpec(true)
 
-    ---- We need to wait to make sure that the player is actually available once we teleport
-    ---- this can take some time so we do this
+    --- We need to wait to make sure that the player is actually available once we teleport
+    --- this can take some time so we do this. Automatically breaks if a player isn't resolved
+    --- within 5 seconds.
+    local resolvePlayerAttempts = 0
+    local resolvePlayerFailed
+
     repeat
+        if resolvePlayerAttempts > 100 then
+            resolvePlayerFailed = true
+            break;
+        end
         Wait(50)
         debugPrint('Waiting for player to resolve')
         targetPlayerId = GetPlayerFromServerId(targetServerId)
+        resolvePlayerAttempts = resolvePlayerAttempts + 1
     until (GetPlayerPed(targetPlayerId) > 0) and targetPlayerId ~= -1
+
+    if resolvePlayerFailed then
+        return cleanupFailedResolve()
+    end
 
     debugPrint('Target Ped successfully found!')
     toggleSpectate(GetPlayerPed(targetPlayerId), targetPlayerId)
