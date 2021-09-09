@@ -1,5 +1,6 @@
 import React from "react";
-import { Box, Collapse, makeStyles, Theme, Typography } from "@material-ui/core";
+import { Box, Collapse, Theme, Typography } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { PageTabs } from "./misc/PageTabs";
 import { MainPageList } from "./MainPage/MainPageList";
 import { PlayersPage } from "./PlayersPage/PlayersPage";

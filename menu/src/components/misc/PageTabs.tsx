@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useCallback } from "react";
-import { Box, makeStyles, Tab, Tabs } from "@material-ui/core";
+import { Box, Tab, Tabs } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { usePage } from "../../state/page.state";
 import { useKey } from "../../hooks/useKey";
 import { useTabDisabledValue } from "../../state/keys.state";

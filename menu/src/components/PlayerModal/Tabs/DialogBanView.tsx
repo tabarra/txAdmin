@@ -6,7 +6,7 @@ import {
   MenuItem,
   TextField,
   Typography
-} from '@material-ui/core';
+} from '@mui/material';
 import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
 import { fetchWebPipe } from "../../../utils/fetchWebPipe";
 import { useSnackbar } from "notistack";

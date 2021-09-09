@@ -9,10 +9,10 @@ import {
   useTheme,
   IconButton,
   ListItemIcon,
-  makeStyles,
   Theme,
   CircularProgress,
-} from "@material-ui/core";
+} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import {
   Close,
   Person,
@@ -20,7 +20,7 @@ import {
   FormatListBulleted,
   MenuBook,
   FlashOn,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
 import { useAssociatedPlayerValue } from "../../state/playerDetails.state";
 import { useTranslate } from "react-polyglot";
@@ -77,7 +77,7 @@ const PlayerModal: React.FC = () => {
     >
       <DialogTitle style={{ borderBottom: "1px solid rgba(221,221,221,0.54)" }}>
         [{assocPlayer.id}] {assocPlayer.username}
-        <IconButton onClick={handleClose} className={classes.closeButton}>
+        <IconButton onClick={handleClose} className={classes.closeButton} size="large">
           <Close />
         </IconButton>
       </DialogTitle>

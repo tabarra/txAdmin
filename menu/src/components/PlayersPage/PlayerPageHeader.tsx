@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  Box,
-  InputAdornment,
-  makeStyles,
-  MenuItem,
-  Theme,
-  Typography,
-} from "@material-ui/core";
-import { Search, SortByAlpha } from "@material-ui/icons";
+import { Box, InputAdornment, MenuItem, Theme, Typography } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
+import { Search, SortByAlpha } from "@mui/icons-material";
 import {
   PlayerDataSort,
   usePlayersSortBy,

@@ -1,7 +1,6 @@
 .App {
   height: 100%;
   display: flex;
-  margin: 20px 40px;
   flex-direction: column;
   opacity: 0;
   transition: opacity 0.15s linear;

@@ -1,13 +1,6 @@
 import React from "react";
-import {
-  Box,
-  Button,
-  DialogContent,
-  makeStyles,
-  Tooltip,
-  TooltipProps,
-  Typography,
-} from "@material-ui/core";
+import { Box, Button, DialogContent, Tooltip, TooltipProps, Typography } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import {
   useAssociatedPlayerValue,
   usePlayerDetailsValue,

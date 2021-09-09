@@ -1,11 +1,6 @@
 import React from "react";
-import {
-  Box,
-  makeStyles,
-  Theme,
-  Typography,
-  useTheme,
-} from "@material-ui/core";
+import { Box, Theme, Typography, useTheme } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
 import { useTranslate } from "react-polyglot";
 import { DialogLoadError } from "./DialogLoadError";

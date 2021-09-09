@@ -1,7 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFilteredSortedPlayers } from "../../state/players.state";
 import PlayerCard from "./PlayerCard";
-import { Box, CircularProgress, makeStyles } from "@material-ui/core";
+import { Box, CircularProgress } from "@mui/material";
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const MAX_PER_BUCKET = 40;
 const FAKE_LOAD_TIME = 1000;

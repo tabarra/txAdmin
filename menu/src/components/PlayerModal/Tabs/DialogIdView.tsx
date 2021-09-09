@@ -1,13 +1,8 @@
 import React from "react";
-import {
-  Box,
-  IconButton,
-  makeStyles,
-  Theme,
-  Typography,
-} from "@material-ui/core";
+import { Box, IconButton, Theme, Typography } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
-import { FileCopy } from "@material-ui/icons";
+import { FileCopy } from "@mui/icons-material";
 import { copyToClipboard } from "../../../utils/copyToClipboard";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
@@ -48,7 +43,7 @@ const DialogIdView: React.FC = () => {
       {player.identifiers.map((ident) => (
         <Box className={classes.codeBlock} key={ident}>
           <Typography className={classes.codeBlockText}>{ident}</Typography>
-          <IconButton onClick={() => handleCopyToClipboard(ident)}>
+          <IconButton onClick={() => handleCopyToClipboard(ident)} size="large">
             <FileCopy />
           </IconButton>
         </Box>

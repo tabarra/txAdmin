@@ -16,12 +16,12 @@ import {
   DialogContentText,
   DialogTitle,
   InputAdornment,
-  makeStyles,
   TextField,
   Theme,
   useTheme,
-} from "@material-ui/core";
-import { Create } from "@material-ui/icons";
+} from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
+import { Create } from "@mui/icons-material";
 import { useKeyboardNavContext } from "./KeyboardNavProvider";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";

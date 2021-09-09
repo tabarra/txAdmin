@@ -5,13 +5,8 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  Fade,
-  makeStyles,
-  Theme,
-  Tooltip,
-  Typography,
-} from "@material-ui/core";
+import { Fade, Theme, Tooltip, Typography } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { txAdminMenuPage, usePageValue } from "../../state/page.state";
 import { useIsMenuVisible } from "../../state/visibility.state";
 import { useDialogContext } from "../../provider/DialogProvider";
@@ -48,6 +43,8 @@ const useStyles = makeStyles((theme: Theme) => ({
     },
   },
 }));
+
+const rootEl = document.getElementById('#root')
 
 export const HelpTooltip: React.FC = ({ children }) => {
   const classes = useStyles();
@@ -141,6 +138,9 @@ export const HelpTooltip: React.FC = ({ children }) => {
           {tooltipContent}
         </Typography>
       }
+      PopperProps={{
+        container: rootEl
+      }}
       arrow
       TransitionComponent={Fade}
       TransitionProps={{

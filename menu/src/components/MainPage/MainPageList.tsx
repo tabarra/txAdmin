@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Box, List, makeStyles, Theme } from "@material-ui/core";
+import { Box, List, Theme } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { MenuListItem, MenuListItemMulti } from "./MenuListItem";
 import {
   AccessibilityNew,
@@ -17,7 +18,7 @@ import {
   PermIdentity,
   Restore,
   Security,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { useDialogContext } from "../../provider/DialogProvider";
 import { fetchNui } from "../../utils/fetchNui";
