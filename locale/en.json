@@ -46,6 +46,11 @@
             "general_no_perms": "You do not have permissions for this!",
             "failed_to_spectate": "Failed to resolve the target! Exiting spectate."
         },
+        "frozen": {
+            "froze_player": "You have frozen the player's ped!",
+            "unfroze_player": "You have unfrozen the player's ped!",
+            "was_frozen": "You have been frozen by a server admin!"
+        },
         "common": {
             "cancel": "Cancel",
             "submit": "Submit",
@@ -216,20 +221,13 @@
                         "heal": "Heal",
                         "go_to": "Go to",
                         "bring": "Bring",
-                        "spectate": "Spectate"
+                        "spectate": "Spectate",
+                        "toggle_freeze": "Toggle Freeze"
                     },
                     "action_notifications": {
                         "heal_player": "Healing player",
                         "tp_player": "Teleporting to player",
                         "bring_player": "Summoning player"
-                    }
-                },
-                "interaction": {
-                    "options": {
-                        "heal": "Heal",
-                        "go_to": "Go to",
-                        "bring": "Bring",
-                        "spectate": "Spectate"
                     }
                 },
                 "troll": {

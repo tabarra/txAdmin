@@ -48,6 +48,7 @@ module.exports = class AdminVault {
             'players.warn': 'Warn',
             'players.kick': 'Kick',
             'players.ban': 'Ban',
+            'players.freeze': 'Freeze Players',
             'players.heal': 'Heal', //self, everyone, and the "heal" button in player modal
             'players.playermode': 'NoClip / God Mode', //self playermode, and also the player spectate option
             'players.spectate': 'Spectate', //self playermode, and also the player spectate option

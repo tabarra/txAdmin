@@ -145,6 +145,10 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
             message = "invalid player mode"
         end
 
+    elseif event == 'freezePlayer' then
+        if type(data) ~= 'string' or type(data) ~= 'number' then return end
+        message = 'toggled freeze on id: ' .. data
+
     elseif event == 'teleportPlayer' then
         if type(data) ~= 'table' then return end
         local playerName = data.playerName

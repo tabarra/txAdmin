@@ -23,6 +23,7 @@ server_scripts {
     'scripts/sv_logger.lua',
     'scripts/sv_playerlist.lua',
     'scripts/menu/server/sv_menu.lua',
+    'scripts/menu/server/sv_freeze_player.lua',
     'scripts/menu/server/sv_trollactions.lua',
 }
 
@@ -40,6 +41,7 @@ client_scripts {
     'scripts/menu/client/cl_spectate.lua',
     'scripts/menu/client/cl_trollactions.lua',
     'scripts/menu/client/cl_warn.lua',
+    'scripts/menu/client/cl_freeze.lua',
     'scripts/menu/vendor/freecam/utils.lua',
     'scripts/menu/vendor/freecam/config.lua',
     'scripts/menu/vendor/freecam/main.lua',

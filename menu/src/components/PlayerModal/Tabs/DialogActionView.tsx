@@ -32,8 +32,7 @@ export interface TxAdminAPIResp {
 
 const useStyles = makeStyles({
   actionGrid: {
-    display: "grid",
-    gridTemplateColumns: "80px 80px 80px 130px",
+    display: "flex",
     columnGap: 10,
     rowGap: 10,
     paddingBottom: 15,
@@ -260,6 +259,12 @@ const DialogActionView: React.FC = () => {
     fetchNui("spectatePlayer", { id: assocPlayer.id });
   };
 
+  const handleFreeze = () => {
+    if (!userHasPerm("players.freeze", playerPerms))
+      return showNoPerms("Freeze");
+    fetchNui("togglePlayerFreeze", { id: assocPlayer.id });
+  }
+
   const handleWeed = () => {
     if (!userHasPerm("players.troll", playerPerms)) return showNoPerms("Troll");
     fetchNui("weedEffectPlayer", { id: assocPlayer.id });
@@ -334,6 +339,9 @@ const DialogActionView: React.FC = () => {
         </Button>
         <Button variant="outlined" color="primary" onClick={handleSpectate} disabled={!userHasPerm("players.spectate", playerPerms)}>
           {t("nui_menu.player_modal.actions.moderation.options.spectate")}
+        </Button>
+        <Button variant="outlined" color="primary" onClick={handleFreeze} disabled={!userHasPerm("players.spectate", playerPerms)}>
+          {t("nui_menu.player_modal.actions.moderation.options.toggle_freeze")}
         </Button>
       </Box>
       <Typography className={classes.sectionTitle}>
