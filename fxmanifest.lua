@@ -22,15 +22,20 @@ server_scripts {
     'scripts/sv_main.lua',
     'scripts/sv_logger.lua',
     'scripts/sv_playerlist.lua',
-    'scripts/menu/server/sv_menu.lua',
+    'scripts/menu/server/sv_webpipe.lua',
+    'scripts/menu/server/sv_base.lua',
+    'scripts/menu/server/sv_functions.lua',
+    'scripts/menu/server/sv_main_page.lua',
     'scripts/menu/server/sv_freeze_player.lua',
     'scripts/menu/server/sv_trollactions.lua',
+    'scripts/menu/server/sv_old_playerlist.lua',
+    'scripts/menu/server/sv_player_modal.lua'
 }
 
 client_scripts {
     'scripts/cl_main.lua',
     'scripts/cl_logger.lua',
-    'scripts/cl_webui.lua',
+    'scripts/menu/client/cl_webpipe.lua',
     'scripts/menu/client/cl_base.lua',
     'scripts/menu/client/cl_functions.lua',
     'scripts/menu/client/cl_main_page.lua',

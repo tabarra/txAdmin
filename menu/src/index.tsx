@@ -14,7 +14,6 @@ ReactDOM.render(
       <KeyboardNavProvider>
         <SnackbarProvider
           maxSnack={3}
-          style={{ pointerEvents: "all", margin: 0.5 * 8 }}
           anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
           disableWindowBlurListener={true}
         >

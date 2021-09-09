@@ -1,3 +1,8 @@
+--Check Environment
+if GetConvar('txAdminServerMode', 'false') ~= 'true' then
+  return
+end
+
 local frozenPlayers = {}
 
 local function isPlayerFrozen(targetId)
