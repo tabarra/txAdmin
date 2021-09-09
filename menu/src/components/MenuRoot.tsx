@@ -50,7 +50,7 @@ const MenuRoot: React.FC = () => {
           alignSelf: serverCtx.menuAlignRight ? 'flex-end' : 'auto'
         }}>
         <HelpTooltip>
-          <Box p={2} pb={1} className={classes.root} id="nice">
+          <Box p={2} pb={1} className={classes.root}>
             <TxAdminLogo />
             <Typography
               color="textSecondary"
