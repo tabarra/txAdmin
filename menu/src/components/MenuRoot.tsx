@@ -44,9 +44,13 @@ const MenuRoot: React.FC = () => {
 
   return (
     <>
-      <Box style={{ width: "fit-content" }}>
+      <Box
+        style={{
+          width: "fit-content",
+          alignSelf: serverCtx.menuAlignRight ? 'flex-end' : 'auto'
+        }}>
         <HelpTooltip>
-          <Box p={2} pb={1} className={classes.root}>
+          <Box p={2} pb={1} className={classes.root} id="nice">
             <TxAdminLogo />
             <Typography
               color="textSecondary"

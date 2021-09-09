@@ -64,6 +64,11 @@ of the menu
 * Default: 150
 * Usage: `+setr txAdminMenu-playerIdDistance 100`
 
+**txAdminMenu-alignMenuRight**
+* Description: Whether to align the menu to the right of the screen instead of the left.
+* Default: 0
+* Usage: `+set txAdminMenu-alignMenuRight 1`
+
 ### Commands
 **tx | txadmin**
 * Description: Will toggle the in-game menu
