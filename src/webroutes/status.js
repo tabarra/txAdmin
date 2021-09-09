@@ -124,7 +124,7 @@ function prepareMetaData() {
     return {
         favicon,
         title: (globals.monitor.currentStatus == 'ONLINE')
-            ? `(${globals.playerController.activePlayers.length}) txAdmin`
-            : 'txAdmin',
+            ? `(${globals.playerController.activePlayers.length}) ${globals.info.serverProfile} | txAdmin`
+            : `${globals.info.serverProfile} | txAdmin`,
     };
 }
