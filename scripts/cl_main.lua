@@ -37,27 +37,29 @@ RegisterNUICallback('getServerCtx', function(_, cb)
     end)
 end)
 
+-- Disabled for the moment until player list can be investigated
+-- fully
 
 -- Self data reporting thread
-CreateThread(function()
-    local ceil = math.ceil
-    
-    while true do
-        local ped = PlayerPedId()
-        local vehClass = 0
-        local veh = GetVehiclePedIsIn(ped)
-        if veh and veh > 0 then
-            vehClass = GetVehicleClass(veh)
-        end
-
-        if onesyncEnabled then
-            TriggerServerEvent('txAdmin:selfDataReport', vehClass)
-        else
-            local health = ceil(((GetEntityHealth(ped) - 100) / 100) * 100)
-            local coords = GetEntityCoords(ped) or -1
-            TriggerServerEvent('txAdmin:selfDataReport', vehClass, health, coords)
-        end
-
-        Wait(5000)
-    end
-end)
+--CreateThread(function()
+--    local ceil = math.ceil
+--
+--    while true do
+--        local ped = PlayerPedId()
+--        local vehClass = 0
+--        local veh = GetVehiclePedIsIn(ped)
+--        if veh and veh > 0 then
+--            vehClass = GetVehicleClass(veh)
+--        end
+--
+--        if onesyncEnabled then
+--            TriggerServerEvent('txAdmin:selfDataReport', vehClass)
+--        else
+--            local health = ceil(((GetEntityHealth(ped) - 100) / 100) * 100)
+--            local coords = GetEntityCoords(ped) or -1
+--            TriggerServerEvent('txAdmin:selfDataReport', vehClass, health, coords)
+--        end
+--
+--        Wait(5000)
+--    end
+--end)
