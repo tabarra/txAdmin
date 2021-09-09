@@ -1,0 +1,49 @@
+---
+name: Feature Request
+description: Request a feature or enhancement
+title: "[Feature]: <short description>"
+labels: [enhancement, feature]
+
+body:
+- type: markdown
+  attributes:
+    value: |
+      ## Thank you for filling out this feature/enhancement request
+      Please fill out this short template to the best of your ability.
+- type: dropdown
+  id: scope
+  attributes:
+    label: Scope
+    description: What part of txAdmin is this feature targeting?
+    options:
+      - Web
+      - In-Game Menu
+      - Developer API
+  validations:
+      required: true
+- type: textarea
+  id: feat-description
+  attributes:
+    label: Feature Description
+    description: Please provide a short and concise description of the feature you are suggesting?
+  validations:
+    required: true
+- type: textarea
+  id: use-case
+  attributes:
+    label: Use Case
+    description: |
+      What use-case (a scenario where you want to do "x", but are limited) do
+      you have for requesting this feature?
+    placeholder: Ex. I wanted to do `x` but was unable too...
+- type: textarea
+  id: solution
+  attributes:
+    label: Proposed Solution
+    description: Do you have an idea for a proposed solution. If so, please describe it.
+- type: textarea
+  attributes:
+    label: Additional Info
+    description: |
+      Is there any additional information you would like to provide?
+    placeholder: Screenshots, logs, etc
