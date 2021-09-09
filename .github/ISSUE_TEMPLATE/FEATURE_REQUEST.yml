@@ -1,7 +1,7 @@
 ---
 name: Feature Request
 description: Request a feature or enhancement
-title: "[Feature]: "
+title: "[Feature]: <short description>"
 labels: [enhancement, feature]
 
 body:
