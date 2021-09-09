@@ -17,6 +17,7 @@ export const TextField: React.FC<TextFieldProps> = (props) => {
 
   return (
     <MuiTextField
+      variant={props?.variant ?? 'standard'}
       onBlur={handleOnFocusExit}
       onFocus={handleOnFocusEnter}
       {...props}

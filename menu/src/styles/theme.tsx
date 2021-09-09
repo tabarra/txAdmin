@@ -30,4 +30,19 @@ export const MenuTheme = createTheme(adaptV4Theme({
       primary: "#fff",
     },
   },
-}));
+}), {
+  components: {
+    MuiListItem: {
+        styleOverrides: {
+          root: {
+            '&.Mui-selected': {
+              backgroundColor: "rgba(255, 255, 255, 0.08)"
+            }
+          }
+        }
+    },
+    MuiPaper: {
+      styleOverrides: { root: { backgroundImage: 'unset' } },
+    },
+  }
+});

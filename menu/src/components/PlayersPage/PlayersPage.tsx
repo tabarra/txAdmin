@@ -11,7 +11,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.background.default,
     height: "50vh",
     borderRadius: 15,
-    displayFlex: "column",
     flex: 1,
   },
   overrideWrapper: {
