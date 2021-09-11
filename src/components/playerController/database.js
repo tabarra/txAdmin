@@ -27,9 +27,17 @@ const ldbSerializer = (process.env.APP_ENV === 'webpack') ? ldbProdSerializer : 
 
 
 /**
+ * FIXME: Optimization:
+ * https://www.npmjs.com/package/bfj
+ * https://www.npmjs.com/package/JSONStream
+ * https://www.npmjs.com/package/json-stream-stringify
  *
+ * Test:
+ * - write a players.json simulating 300k players array
+ * - write a standalone code to load lowdb file, filter it once, then write it
+ * - execute `/usr/bin/time -v node test.js`
+ * - do that with variation of updated lowdb and then using a json stream
  */
-
 class Database {
     constructor(wipePendingWLOnStart) {
         this.dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;

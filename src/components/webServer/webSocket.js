@@ -78,9 +78,8 @@ module.exports = class WebSocket {
             //Setting up event handlers
             Object.keys(room.commands).forEach((commandName) => {
                 socket.on(commandName, (...cmdArgs) => {
-                    log(`Processing ${commandName}`);
                     const {isValidAuth, isValidPerm} = authLogic(socket.session, room.commands[commandName].permission, logPrefix);
-                    dir({isValidAuth, isValidPerm, perms: socket.session.auth.permissions});
+
                     if (!isValidAuth || !isValidPerm) {
                         if (GlobalData.verbose) log('dropping existing connection due to missing auth/permissionnew', logPrefix);
                         return terminateSession(socket);

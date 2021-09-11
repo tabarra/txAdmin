@@ -159,8 +159,6 @@
             socket = io('monitor', {...defaultOpts, path: '/WebPipe/socket.io'});
         }
         
-        //NOTE: when using namespaces:
-        // const socket = io('/console', {path: '/socket.io', transports: ['polling'], upgrade: false});
         const ansi_up = new AnsiUp;
         ansi_up.escape_for_html = false;
         const input = document.getElementById("cmdInput");

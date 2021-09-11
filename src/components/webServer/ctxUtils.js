@@ -246,7 +246,8 @@ module.exports = async function WebCtxUtils(ctx, next) {
     }
 
     //Setting up the user's real ip from the webpipe
-    //NOTE: not yet being used
+    //NOTE: not used anywhere except rate limiter, and
+    // should be kept this way. When auth changes, delete this shit;
     if (
         typeof ctx.headers['x-txadmin-identifiers'] === 'string'
         && typeof ctx.headers['x-txadmin-token'] === 'string'

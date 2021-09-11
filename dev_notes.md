@@ -36,19 +36,17 @@ Olhar links acima, caso nada ajude fazer:
 - página do server log via socket.io channels (tem que mudar live console tb) assim ele n precisa nunca ter o problema de fetch atualizações
 - no topo do log tem duas opções: real time e older log
 na opção older log, não há nenhum tipo de live ou socket.io, é só fazer paginação normal ou inline (ai os registros são inseridos por meio de uma div de página, e essa div pode ser deletada pra salvar memória)
-- quando clicar na paginação, ele faz um search no log passando "older than X" ou "newer than X", e limita XXX entradas
 
-os botões de prev e next podem ser `data-timestamp="xxx" onclick="seekOlder(this)"` e a função pega o this, le o parametro, depois remove o elemento na hora de inserir os novos dados
+> provavelmente não: os botões de prev e next podem ser `data-timestamp="xxx" onclick="seekOlder(this)"` e a função pega o this, le o parametro, depois remove o elemento na hora de inserir os novos dados
 
 mover os logs do lua pra dentro do js, e parar de logar perm denied, só printar no console do child fxserver
 
-no histórico, mostrar 500 linhas por vez
 
 
-Order of operations:
-- Change webConsole to webSocket and generalize functions
-- edit serverlog.html to listen to the socket
-- 
+Página de log:
+- 500 items limite, tanto live quanto histórico
+- quando clicar na paginação, ele faz um search no log passando "older than X" ou "newer than X", e limita 500 entradas
+
 
 
 
@@ -75,7 +73,8 @@ function sliceLogOlder(source, timestamp, sliceLength) {
 }
 ```
 
-
+optimization do lowdb
+atualizar pacotes!
 
 ### Menu playerlist fix
 When someone joins/leaves:

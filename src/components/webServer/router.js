@@ -32,7 +32,7 @@ module.exports = (config) => {
                     </style>
                 </head>
                 <body>
-                    <h1>Too many attempts, enjoy your ${config.limiterMinutes} minutes of cooldown.</h1>
+                    <h1>Too many authentication attempts, enjoy your ${config.limiterMinutes} minutes of cooldown.</h1>
                     <iframe width="560" height="315" src="https://www.youtube.com/embed/otCpCn0l4Wo?start=15" frameborder="0" allow="accelerometer; autoplay="1"; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </body>
             </html>`,
