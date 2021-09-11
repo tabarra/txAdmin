@@ -335,7 +335,7 @@ async function handleSaveLocal(ctx) {
             return ctx.send({success: true});
         }
     } else {
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global/fxserver settings via setup stepper.`);
+        logWarn(`[${ctx.session.auth.username}] Error changing global/fxserver settings via setup stepper.`);
         return ctx.send({success: false, message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
@@ -398,7 +398,7 @@ async function handleSaveDeployerImport(ctx) {
         ctx.utils.logAction('Changing global settings via setup stepper and started Deployer.');
         return ctx.send({success: true});
     } else {
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
+        logWarn(`[${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
         return ctx.send({success: false, message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
@@ -445,7 +445,7 @@ async function handleSaveDeployerCustom(ctx) {
         ctx.utils.logAction('Changing global settings via setup stepper and started Deployer.');
         return ctx.send({success: true});
     } else {
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
+        logWarn(`[${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
         return ctx.send({success: false, message: '<strong>Error saving the configuration file.</strong>'});
     }
 }

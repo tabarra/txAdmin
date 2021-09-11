@@ -53,5 +53,5 @@ function handleBackupDatabase(ctx) {
     const now = (new Date() / 1000).toFixed();
     ctx.attachment(`playersDB_${now}.json`);
     ctx.body = readFile;
-    log(`[${ctx.ip}][${ctx.session.auth.username}] Downloading player database.`);
+    log(`[${ctx.session.auth.username}] Downloading player database.`);
 }

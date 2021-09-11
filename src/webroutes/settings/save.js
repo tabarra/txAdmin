@@ -91,7 +91,7 @@ function handleGlobal(ctx) {
         ctx.utils.logAction('Changing global settings.');
         return ctx.send({type: 'success', message: '<strong>Global configuration saved!</strong>'});
     } else {
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings.`);
+        logWarn(`[${ctx.session.auth.username}] Error changing global settings.`);
         return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
@@ -173,7 +173,7 @@ function handleFXServer(ctx) {
         ctx.utils.logAction('Changing fxRunner settings.');
         return ctx.send({type: 'success', message: '<strong>FXServer configuration saved!</strong>'});
     } else {
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing fxRunner settings.`);
+        logWarn(`[${ctx.session.auth.username}] Error changing fxRunner settings.`);
         return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
@@ -231,7 +231,7 @@ function handlePlayerController(ctx) {
         ctx.utils.logAction('Changing Player Controller settings.');
         return ctx.send({type: 'success', message: '<strong>Player Controller configuration saved!</strong>'});
     } else {
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing Player Controller settings.`);
+        logWarn(`[${ctx.session.auth.username}] Error changing Player Controller settings.`);
         return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
@@ -313,7 +313,7 @@ function handleMonitor(ctx) {
         ctx.utils.logAction('Changing monitor settings.');
         return ctx.send({type: 'success', message: '<strong>Monitor/Restarter configuration saved!</strong>'});
     } else {
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing monitor settings.`);
+        logWarn(`[${ctx.session.auth.username}] Error changing monitor settings.`);
         return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
@@ -364,7 +364,7 @@ function handleDiscord(ctx) {
             return ctx.send({type: 'success', message: '<strong>Discord configuration saved!</strong>'});
         }
     } else {
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing discordBot settings.`);
+        logWarn(`[${ctx.session.auth.username}] Error changing discordBot settings.`);
         return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }

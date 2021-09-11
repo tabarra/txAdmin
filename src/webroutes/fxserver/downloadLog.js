@@ -25,5 +25,5 @@ module.exports = async function FXServerDownloadLog(ctx) {
     const now = (new Date() / 1000).toFixed();
     ctx.attachment(`fxserver_${now}.log`);
     ctx.body = readFile;
-    log(`[${ctx.ip}][${ctx.session.auth.username}] Downloading console log file.`);
+    log(`[${ctx.session.auth.username}] Downloading console log file.`);
 };

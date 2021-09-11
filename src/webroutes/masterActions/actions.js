@@ -79,7 +79,7 @@ function handleResetFXServer(ctx) {
         ctx.utils.logAction('Resetting fxRunner settings.');
         return ctx.send({success: true});
     } else {
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error resetting fxRunner settings.`);
+        logWarn(`[${ctx.session.auth.username}] Error resetting fxRunner settings.`);
         return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
