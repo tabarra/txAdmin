@@ -43,7 +43,7 @@ module.exports = async function AuthVerify(ctx) {
             expires_at: false,
         };
 
-        log(`Admin ${admin.name} logged in from ${ctx.ip}`);
+        ctx.utils.logAction(`logged in from ${ctx.ip} via password`);
         globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;
         globals.databus.txStatsData.login.methods.password++;
     } catch (error) {

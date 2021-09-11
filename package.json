@@ -77,6 +77,7 @@
     "pidusage-tree": "^2.0.5",
     "react-polyglot": "^0.7.1",
     "recoil": "^0.4.1",
+    "rotating-file-stream": "^2.1.5",
     "slash": "^3.0.0",
     "slug": "^5.1.0",
     "socket.io": "^4.2.0",

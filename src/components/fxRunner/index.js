@@ -420,7 +420,7 @@ module.exports = class FXRunner {
      */
     liveConsoleCmdHandler(session, command) {
         log(`${session.auth.username} executing ` + chalk.inverse(' ' + command + ' '), 'SocketIO');
-        globals.logger.append(`[${session.auth.username}] ${command}`);
+        globals.logger.admin.write(`[${session.auth.username}] ${command}`);
         globals.fxRunner.srvCmd(command);
     }
 

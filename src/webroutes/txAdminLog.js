@@ -26,7 +26,7 @@ module.exports = async function txAdminLog(ctx) {
     const consoleLog = consoleLogLines.join('\n');
 
     //Actions
-    const actionLog = xss(await globals.logger.get());
+    const actionLog = xss(await globals.logger.admin.getRecentBuffer());
 
     //Output
     return ctx.utils.render('txAdminLog', {headerTitle: 'txAdmin Log', consoleLog, actionLog});
