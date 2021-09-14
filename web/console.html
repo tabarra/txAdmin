@@ -144,6 +144,7 @@
     //============================================== Live Console stuff
     (function () {
         //Preparing variables
+        const BUFFER_TRIM_SIZE = 128 * 1024; // 128kb
         const commandHistoryLimit = 12;
         const defaultOpts = {
             transports: ['polling'],
@@ -216,11 +217,17 @@
             window.location = '/';
         });
         socket.on('consoleData', function (msg) {
-            let _consoleData = consoleElement.innerHTML + ansi_up.ansi_to_html(msg);
+            const cleanMsg = xss(msg)
+                .replace('<br>', '\n')
+                .replace(/{txMarker-(\w+)}/g, '<mark class="consoleMark-$1">')
+                .replace(/{\/txMarker}/g, '</mark>');
+
+            let _consoleData = consoleElement.innerHTML + ansi_up.ansi_to_html(cleanMsg);
             _consoleData = (_consoleData.length > BUFFER_TRIM_SIZE)
                 ? _consoleData.slice(-0.5 * BUFFER_TRIM_SIZE) // grab the last half
                 : _consoleData; // no need to trim
             consoleElement.innerHTML = _consoleData.substr(_consoleData.indexOf("\n"));
+
             if (autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight;
         });
 

@@ -48,7 +48,7 @@ module.exports = class FXRunner {
         this.history = [];
         this.fxServerPort = null;
         this.fxServerHost = null;
-        this.outputHandler = new OutputHandler(this.config.logPath, 10);
+        this.outputHandler = new OutputHandler();
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
         if (config.autostart && this.config.serverDataPath !== null && this.config.cfgPath !== null) {
@@ -203,7 +203,7 @@ module.exports = class FXRunner {
             }
             pid = this.fxChild.pid.toString();
             logOk(`>> [${pid}] FXServer Started!`);
-            this.outputHandler.writeHeader();
+            globals.logger.fxserver.writeMarker('starting');
             this.history.push({
                 pid: pid,
                 timestamps: {
@@ -250,10 +250,10 @@ module.exports = class FXRunner {
         this.fxChild.stdin.on('data', () => {});
 
         this.fxChild.stdout.on('error', () => {});
-        this.fxChild.stdout.on('data', this.outputHandler.write.bind(this.outputHandler));
+        this.fxChild.stdout.on('data', this.outputHandler.write.bind(this.outputHandler, 'stdout'));
 
         this.fxChild.stderr.on('error', () => {});
-        this.fxChild.stderr.on('data', this.outputHandler.writeError.bind(this.outputHandler));
+        this.fxChild.stderr.on('data', this.outputHandler.write.bind(this.outputHandler, 'stderr'));
 
         const tracePipe = this.fxChild.stdio[3].pipe(StreamValues.withParser());
         tracePipe.on('error', (data) => {
@@ -400,7 +400,7 @@ module.exports = class FXRunner {
         if (this.fxChild === null) return false;
         try {
             const success = this.fxChild.stdin.write(command + '\n');
-            globals.webServer.webSocket.buffer('liveconsole', command, 'command');
+            globals.logger.fxserver.writeMarker('command', command);
             return success;
         } catch (error) {
             if (GlobalData.verbose) {

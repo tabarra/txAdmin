@@ -1,8 +1,5 @@
 //Requires
 const modulename = 'OutputHandler';
-const fs = require('fs');
-const chalk = require('chalk');
-const bytes = require('bytes');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helpers
@@ -15,31 +12,12 @@ const deferError = (m, t = 500) => {
 
 
 /**
- * FXServer output buffer helper.
- *
- * FIXME: optimize this, we can have only one buffer using offset variables
- * @param {string} logPath
- * @param {int} saveInterval
+ * FXServer output helper that mostly relays to other components.
  */
 module.exports = class OutputHandler {
-    constructor(logPath, saveInterval) {
-        this.logFileSize = null;
-        this.logPath = logPath;
+    constructor() {
         this.enableCmdBuffer = false;
         this.cmdBuffer = '';
-        this.webConsoleBuffer = '';
-        this.webConsoleBufferSize = 128 * 1024; //128kb
-        this.fileBuffer = '';
-
-        //Start log file
-        try {
-            fs.writeFileSync(this.logPath, '');
-        } catch (error) {
-            logError(`Failed to create log file '${this.logPath}' with error: ${error.message}`);
-        }
-
-        //Cron Function
-        setInterval(this.saveLog.bind(this), saveInterval * 1000);
     }
 
 
@@ -51,7 +29,7 @@ module.exports = class OutputHandler {
      *   watchdog_bark
      *   bind_error
      *   script_log
-     *   script_structured_trace (not used)
+     *   script_structured_trace (handled by server logger)
      *
      * @param {object} data
      */
@@ -94,7 +72,14 @@ module.exports = class OutputHandler {
             if (data.payload.type === 'txAdminHeartBeat') {
                 globals.monitor.handleHeartBeat('fd3');
             } else if (data.payload.type === 'txAdminLogData') {
+                //FIXME: send everything to globals.logger.server.write() and let it handle everything
+
+
+                //FIXME: this is super wrong
                 globals.databus.serverLog = globals.databus.serverLog.concat(data.payload.logs);
+                globals.webServer.webSocket.buffer('serverlog', data.payload.logs);
+
+                if (globals.databus.serverLog.length > 64e3) globals.databus.serverLog = globals.databus.serverLog.slice(-100);
 
                 /*
                 NOTE: Expected time cap based on log size cap to prevent memory leak
@@ -124,91 +109,15 @@ module.exports = class OutputHandler {
 
                 //NOTE: limiting to 16k requests which should be about 1h to big server (266 events/min)
                 // if (globals.databus.serverLog.length > 128e3) globals.databus.serverLog.shift();
-                //FIXME: this is super wrong
-                if (globals.databus.serverLog.length > 64e3) globals.databus.serverLog = globals.databus.serverLog.slice(-100);
             }
         }
     }
 
-
-    /**
-     * Write data to all buffers
-     * @param {string} data
-     * @param {string} markType
-     */
-    write(data, markType = false) {
-        //NOTE: not sure how this would throw any errors, but anyways...
+    write(source, data) {
         data = data.toString();
-        try {
-            globals.webServer.webSocket.buffer('liveconsole', data, markType);
+        globals.logger.fxserver.writeStdIO(source, data);
 
-            //NOTE: There used to be a rule "\x0B-\x1F" that was replaced with "x0B-\x1A\x1C-\x1F" to allow the \x1B terminal escape character.
-            //This is neccessary for the terminal to have color, but beware of side effects.
-            //This regex was done in the first place to prevent fxserver output to be interpreted as txAdmin output by the host terminal
-            //IIRC the issue was that one user with a TM on their nick was making txAdmin's console to close or freeze. I couldn't reproduce the issue.
-            if (!globals.fxRunner.config.quiet) process.stdout.write(data.replace(/[\x00-\x08\x0B-\x1A\x1C-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, ''));
-        } catch (error) {
-            if (GlobalData.verbose) logError(`Buffer write error: ${error.message}`);
-        }
-
-        //Adding data to the buffers
-        if (this.enableCmdBuffer) this.cmdBuffer += data;
-        this.fileBuffer += data;
-
-        this.webConsoleBuffer = this.webConsoleBuffer + data;
-        if (this.webConsoleBuffer.length > this.webConsoleBufferSize) {
-            this.webConsoleBuffer = this.webConsoleBuffer.slice(-0.5 * this.webConsoleBufferSize);
-            this.webConsoleBuffer = this.webConsoleBuffer.substr(this.webConsoleBuffer.indexOf('\n'));
-        }
-    }
-
-
-    /**
-     * Print fxChild's stderr to the webconsole and to the terminal
-     * @param {string} data
-     */
-    writeError(data) {
-        //FIXME: this should be saving to a file, and should be persistent to the web console
-        data = data.toString();
-        try {
-            globals.webServer.webSocket.buffer('liveconsole', data, 'error');
-            if (!globals.fxRunner.config.quiet) process.stdout.write(chalk.red(data.replace(/[\x00-\x08\x0B-\x1F\x7F-\x9F\x80-\x9F\u2122]/g, '')));
-        } catch (error) {
-            if (GlobalData.verbose) logError(`Buffer write error: ${error.message}`);
-        }
-    }
-
-
-    /**
-     * Save the log file and clear buffer
-     */
-    writeHeader() {
-        let sep = '='.repeat(64);
-        let timestamp = new Date().toLocaleString();
-        let header = `\r\n${sep}\r\n======== FXServer starting - ${timestamp}\r\n${sep}\r\n`;
-        this.write(header, 'info');
-    }
-
-
-    /**
-     * Save the log file and clear buffer
-     */
-    saveLog() {
-        if (!this.fileBuffer.length) return;
-        let cleanBuff = this.fileBuffer.replace(/\u001b\[\d+(;\d)?m/g, '');
-        fs.appendFile(this.logPath, cleanBuff, {encoding: 'utf8'}, (error) => {
-            if (error) {
-                if (GlobalData.verbose) logError(`File Write Buffer error: ${error.message}`);
-            } else {
-                this.fileBuffer = '';
-            }
-        });
-        fs.stat(this.logPath, (error, stats) => {
-            if (error) {
-                if (GlobalData.verbose) logError(`Log File get stats error: ${error.message}`);
-            } else {
-                this.logFileSize = bytes(stats.size);
-            }
-        });
+        //FIXME: deprecate this whenever
+        if (this.enableCmdBuffer) this.cmdBuffer += data.replace(/\u001b\[\d+(;\d)?m/g, '');
     }
 }; //Fim OutputHandler()

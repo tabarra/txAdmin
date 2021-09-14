@@ -2,7 +2,7 @@
 const modulename = 'Logger';
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const AdminLogger = require('./handlers/admin');
-// const FXServerLogger = require('./handlers/fxserver');
+const FXServerLogger = require('./handlers/fxserver');
 
 // NOTE: to turn this into an universal class outside txAdmin() instance
 // when a txAdmin profile starts, it does universal.logger.start(profilename)
@@ -22,10 +22,7 @@ module.exports = class Logger {
 
         //Starting handlers
         this.admin = new AdminLogger(this.basePath, this.config.admin);
-        // this.fxserver = new FXServerLogger(this.basePath, this.config.fxserver);
-        // setInterval(() => {
-        //     this.fxserver.write('stdout', 'lorem ipsum dolor sit amet\n');
-        // }, 50);
+        this.fxserver = new FXServerLogger(this.basePath, this.config.fxserver);
         // this.server = null;
         // this.console = null;
     }

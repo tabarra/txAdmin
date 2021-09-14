@@ -31,7 +31,7 @@ module.exports = class WebSocket {
                 permission: 'console.view',
                 eventName: 'consoleData',
                 outBuffer: '',
-                initialData: () => xss(globals.fxRunner.outputHandler.webConsoleBuffer),
+                initialData: () => globals.logger.fxserver.getRecentBuffer(),
                 commands: {
                     consoleCommand: {
                         permission: 'console.write',
@@ -52,8 +52,13 @@ module.exports = class WebSocket {
     }
 
 
-    //================================================================
-    //NOTE: For now the user MUST join a room, needs additional logic for 'web' room
+    /**
+     * Handles incoming connection requests,
+     * NOTE: For now the user MUST join a room, needs additional logic for 'web' room
+     *
+     * @param {*} socket
+     * @returns nothing relevant
+     */
     handleConnection(socket) {
         try {
             //Check if joining any room
@@ -113,10 +118,8 @@ module.exports = class WebSocket {
     //================================================================
     /**
      * Adds data to the buffer
-     * FIXME: logica de xss não é responsabilidade do websocket, devia estar no logger do fxserver
      * @param {string} roomName
      * @param {string} data
-     * @param {string} markType //FIXME: remover
      */
     buffer(roomName, data, markType) {
         const room = this.rooms[roomName];
@@ -125,12 +128,7 @@ module.exports = class WebSocket {
         if (Array.isArray(room.outBuffer)) {
             room.outBuffer.push(data);
         } else if (typeof room.outBuffer === 'string') {
-            // room.outBuffer += data;
-            if (typeof markType === 'string') {
-                room.outBuffer += xss(`\n<mark class="consoleMark-${markType}">${data}</mark>\n`);
-            } else {
-                room.outBuffer += xss(data);
-            }
+            room.outBuffer += data;
         }
     }
 
@@ -155,4 +153,4 @@ module.exports = class WebSocket {
             }
         });
     }
-}; //Fim webConsole()
+}; //Fim WebSocket()
