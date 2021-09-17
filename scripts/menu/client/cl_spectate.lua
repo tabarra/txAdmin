@@ -29,36 +29,42 @@ local function InstructionalButton(controlButton, text)
     EndTextCommandScaleformString()
 end
 
-local function setupScaleform()
-    -- yay, scaleforms
-    local scaleform = RequestScaleformMovie("instructional_buttons")
-    while not HasScaleformMovieLoaded(scaleform) do
-        Wait(1)
-    end
-    PushScaleformMovieFunction(scaleform, "CLEAR_ALL")
-    PopScaleformMovieFunctionVoid()
-
-    PushScaleformMovieFunction(scaleform, "SET_CLEAR_SPACE")
-    PushScaleformMovieFunctionParameterInt(200)
-    PopScaleformMovieFunctionVoid()
-
-    PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
-    PushScaleformMovieFunctionParameterInt(1)
-    InstructionalButton(GetControlInstructionalButton(1, 194), "Exit Spectate Mode")
-    PopScaleformMovieFunctionVoid()
-
-
-    PushScaleformMovieFunction(scaleform, "DRAW_INSTRUCTIONAL_BUTTONS")
-    PopScaleformMovieFunctionVoid()
-
-    PushScaleformMovieFunction(scaleform, "SET_BACKGROUND_COLOUR")
-    PushScaleformMovieFunctionParameterInt(0)
-    PushScaleformMovieFunctionParameterInt(0)
-    PushScaleformMovieFunctionParameterInt(0)
-    PushScaleformMovieFunctionParameterInt(80)
-    PopScaleformMovieFunctionVoid()
-
-    return scaleform
+local function createScaleformThread()
+    CreateThread(function()
+        -- yay, scaleforms
+        local scaleform = RequestScaleformMovie("instructional_buttons")
+        while not HasScaleformMovieLoaded(scaleform) do
+            Wait(1)
+        end
+        PushScaleformMovieFunction(scaleform, "CLEAR_ALL")
+        PopScaleformMovieFunctionVoid()
+    
+        PushScaleformMovieFunction(scaleform, "SET_CLEAR_SPACE")
+        PushScaleformMovieFunctionParameterInt(200)
+        PopScaleformMovieFunctionVoid()
+    
+        PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
+        PushScaleformMovieFunctionParameterInt(1)
+        InstructionalButton(GetControlInstructionalButton(1, 194), "Exit Spectate Mode")
+        PopScaleformMovieFunctionVoid()
+    
+    
+        PushScaleformMovieFunction(scaleform, "DRAW_INSTRUCTIONAL_BUTTONS")
+        PopScaleformMovieFunctionVoid()
+    
+        PushScaleformMovieFunction(scaleform, "SET_BACKGROUND_COLOUR")
+        PushScaleformMovieFunctionParameterInt(0)
+        PushScaleformMovieFunctionParameterInt(0)
+        PushScaleformMovieFunctionParameterInt(0)
+        PushScaleformMovieFunctionParameterInt(80)
+        PopScaleformMovieFunctionVoid()
+    
+        while isSpectateEnabled do
+            DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255, 0)
+            Wait(0)
+        end
+        SetScaleformMovieAsNoLongerNeeded()
+    end)
 end
 
 local function calculateSpectatorCoords(coords)
@@ -173,6 +179,7 @@ local function toggleSpectate(targetPed, targetPlayerId)
         debugPrint(('Now spectating TargetPed (%s)'):format(targetPed))
         isSpectateEnabled = true
         createSpectatorTeleportThread()
+        createScaleformThread()
     end
 end
 
@@ -250,16 +257,5 @@ CreateThread(function()
             clearGamerTagInfo()
         end
         Wait(50)
-    end
-end)
-
-CreateThread(function()
-    local scaleform = setupScaleform()
-
-    while true do
-        if isSpectateEnabled then
-            DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 0)
-        end
-        Wait(0)
     end
 end)
