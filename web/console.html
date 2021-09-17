@@ -62,6 +62,68 @@
         color: rgb(183, 189, 199)!important;
         border: 1px solid rgb(183, 189, 199);
     }
+
+    /* AutoScroll Toggler */
+    #scrollerDiv {
+        position: absolute; 
+        bottom: calc((24px * 3) + 12px);
+        right: calc(1rem + 24px + 18px);
+    }
+    #scrollerDiv a {
+        padding-top: 80px;
+    }
+    #scrollerDiv a span {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 24px;
+        height: 24px;
+        margin-left: -12px;
+        border-left: 1px solid #fff;
+        border-bottom: 1px solid #fff;
+        -webkit-transform: rotate(-45deg);
+        transform: rotate(-45deg);
+        -webkit-animation: sdb07 2s infinite;
+        animation: sdb07 2s infinite;
+        opacity: 0;
+        box-sizing: border-box;
+    }
+    #scrollerDiv a span:nth-of-type(1) {
+        -webkit-animation-delay: 0s;
+        animation-delay: 0s;
+    }
+    #scrollerDiv a span:nth-of-type(2) {
+        top: 16px;
+        -webkit-animation-delay: .15s;
+        animation-delay: .15s;
+    }
+    #scrollerDiv a span:nth-of-type(3) {
+        top: 32px;
+        -webkit-animation-delay: .3s;
+        animation-delay: .3s;
+    }
+    @-webkit-keyframes sdb07 {
+        0% {
+            opacity: 0;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+    @keyframes sdb07 {
+        0% {
+            opacity: 0;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
 </style>
 
 
@@ -69,8 +131,11 @@
     <h3>FXServer Console</h3>
 </div>
 <div class="card bg-dark">
-    <div class="card-body p-3">
+    <div class="card-body p-3" style="position: relative">
         <pre id="console" class="thin-scroll console-content text-white {{[(it.isWebInterface), '', 'nui-height']|ternary}}"></pre>
+        <div id="scrollerDiv">
+            <a id="scrollerBtn" class="d-none" href="#"><span></span><span></span><span></span></a>
+        </div>
     </div>
     <div class="card-footer bg-dark">
         <div class="row">
@@ -83,14 +148,17 @@
                                    autocomplete="off" autocorrect="off" autocapitalize="off"
                                    spellcheck="false" {{it.disableCommand}}>
                         </div>
-                        <button type="button" id="clearConsole"
-                                class="btn btn-outline-light btn-sm mb-2">Clear Console
+                        <button type="button" id="clearConsole" class="btn btn-outline-light btn-sm mb-2">
+                            Clear Console
                         </button>
-                        <button type="button" id="toggleAutoScroll"
-                                class="btn btn-outline-light btn-sm mb-2">Disable Scroll
+                        <button type="button" id="announcementBtn" class="btn btn-outline-light btn-sm mb-2"
+                            {{[it.isWebInterface, '', 'disabled']|ternary}}>
+                            Announcement
                         </button>
-                        <a href="fxserver/downloadLog" target="_blank"
-                           class="btn btn-outline-light btn-sm mb-2">Download Log</a>
+                        <a href="fxserver/downloadLog" target="_blank" 
+                            class="btn btn-outline-light btn-sm mb-2 {{[it.isWebInterface, '', 'disabled']|ternary}}">
+                            Download Log
+                        </a>
                         <button onclick="controlAction('restart')" class="btn btn-outline-{{it.restartBtnClass}} btn-sm mb-2"
                                 type="button" id="ctrl-restart" {{it.disableRestart}}>RESTART</button> &nbsp;
                     </div>
@@ -167,7 +235,8 @@
         const consoleForm = document.getElementById("frmConsole");
         const historyDiv = document.getElementById('cmdHistoryDiv');
         const historyElement = document.getElementById('cmdHistory');
-        const autoScrollToggle = document.getElementById("toggleAutoScroll");
+        const scrollerBtn = document.getElementById("scrollerBtn");
+        const announcementBtn = document.getElementById("announcementBtn");
         let commandHistory = [];
         let commandCache = [];
         let autoScroll = true;
@@ -190,6 +259,19 @@
             historyElement.appendChild(node);
         }
 
+        const scrollBottom = () => {
+            if (autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight;
+        }
+
+        const autoscrollToggle = (status) => {
+            autoScroll = status
+            if(autoScroll){
+                scrollerBtn.classList.add('d-none');
+            }else{
+                scrollerBtn.classList.remove('d-none');
+            }
+            scrollBottom();
+        }
 
         //Load command history from local storage
         if(typeof window.localStorage.liveConsoleCommandHistory !== 'undefined'){
@@ -218,7 +300,7 @@
         });
         socket.on('consoleData', function (msg) {
             const cleanMsg = xss(msg)
-                .replace('<br>', '\n')
+                .replace(/<br>/g, '\n')
                 .replace(/{txMarker-(\w+)}/g, '<mark class="consoleMark-$1">')
                 .replace(/{\/txMarker}/g, '</mark>');
 
@@ -228,8 +310,23 @@
                 : _consoleData; // no need to trim
             consoleElement.innerHTML = _consoleData.substr(_consoleData.indexOf("\n"));
 
-            if (autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight;
+            scrollBottom();
         });
+
+        consoleElement.addEventListener('scroll',function(){
+                const scrollTop = consoleElement.scrollTop;
+                const scrollHeight = consoleElement.scrollHeight;
+                const offsetHeight = consoleElement.offsetHeight;
+                const contentHeight = scrollHeight - offsetHeight;
+                if (scrollTop < contentHeight) {
+                    console.log('Auto scroll disabled.');
+                    autoscrollToggle(false);
+                } else if(scrollTop === contentHeight){
+                    console.log('Auto scroll enabled.');
+                    autoscrollToggle(true);
+                }
+            }
+        )
 
 
         //Form
@@ -242,9 +339,7 @@
             commandCache.unshift(command);
             socket.emit('consoleCommand', command);
 
-            autoScroll = true;
-            consoleElement.scrollTop = consoleElement.scrollHeight;
-            autoScrollToggle.innerText = "Disable Scroll";
+            autoscrollToggle(true);
 
             if(!commandHistory.includes(command)){
                 addCommandHistoryEntry(command);
@@ -287,10 +382,39 @@
         });
 
         //Buttons
-        autoScrollToggle.addEventListener("click", function () {
-            autoScroll = !autoScroll;
-            autoScrollToggle.innerText = (autoScroll ? "Disable Scroll" : "Enable Scroll");
-            if(autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight;
+        announcementBtn.addEventListener("click", (event) => {
+            let message = prompt('Type the message to be broadcasted to all players');
+            if(message.length <= 6){
+                $.notify({ message: 'This message is too short!'}, {type: 'danger'});
+                return;
+            }
+
+            if(message == null) return;
+
+            const notify = $.notify({ message: 'Executing Command...' }, {});
+            txAdminAPI({
+                type: "POST",
+                url: '/fxserver/commands',
+                data: {
+                    action: 'admin_broadcast',
+                    parameter: message
+                },
+                success: function (data) {
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    notify.update('progress', 0);
+                    notify.update('type', 'danger');
+                    notify.update('message', message);
+                }
+            });
+        });
+
+        scrollerBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            autoscrollToggle(true);
         });
 
         document.getElementById("clearConsole").addEventListener("click", function () {
