@@ -87,7 +87,7 @@ export const DialogProvider: React.FC = ({ children }) => {
 
   const handleDialogSubmit = () => {
     if (!dialogInputVal.trim()) {
-      return enqueueSnackbar("You cannot have an empty input", {
+      return enqueueSnackbar(t("nui_menu.misc.dialog_empty_input"), {
         variant: "error",
       });
     }

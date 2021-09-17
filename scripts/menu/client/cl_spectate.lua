@@ -204,7 +204,7 @@ local function cleanupFailedResolve()
 
     DoScreenFadeIn(500)
 
-    sendSnackbarMessage('error', 'nui_menu.misc.failed_to_spectate', true)
+    sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.spectate_failed', true)
 end
 
 -- Client-side event handler for an authorized spectate request
@@ -214,7 +214,7 @@ RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, coords)
 
     local targetPlayerId = GetPlayerFromServerId(targetServerId)
     if targetPlayerId == PlayerId() then
-        return sendSnackbarMessage('error', 'You cannot spectate yourself!')
+        return sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.spectate_yourself', true)
     end
 
     DoScreenFadeOut(500)
