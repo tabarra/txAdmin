@@ -11,7 +11,12 @@ local function sendFreezeAlert(isFrozen)
 end
 
 RegisterNUICallback('togglePlayerFreeze', function(data, cb)
-  TriggerServerEvent('txAdmin:menu:freezePlayer', tonumber(data.id))
+  local targetPlayerId = tonumber(data.id)
+  if targetPlayerId == GetPlayerServerId(PlayerId()) then
+      return sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.spectate_yourself', true)
+  end
+
+  TriggerServerEvent('txAdmin:menu:freezePlayer', targetPlayerId)
   cb({})
 end)
 
