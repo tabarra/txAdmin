@@ -16,7 +16,7 @@ ServerCtxObj = {
   locale = nil,
   switchPageKey = '',
   txAdminVersion = '',
-  menuAlignRight = false
+  alignRight = false
 }
 
 
@@ -81,8 +81,8 @@ local function syncServerCtx()
   local switchPageKey = GetConvar('txAdminMenu-pageKey', 'Tab')
   ServerCtxObj.switchPageKey = switchPageKey
 
-  local menuAlignRight = GetConvarInt('txAdminMenu-menuAlignRight', 0) > 0
-  ServerCtxObj.menuAlignRight = menuAlignRight
+  local alignRight = GetConvarInt('txAdminMenu-alignRight', 0) > 0
+  ServerCtxObj.alignRight = alignRight
 
   local txAdminVersion = GetConvar('txAdmin-version', '0.0.0')
   ServerCtxObj.txAdminVersion = txAdminVersion

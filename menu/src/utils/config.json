@@ -9,6 +9,6 @@
     "maxClients": 32,
     "switchPageKey": "Tab",
     "txAdminVersion": "9.9.9",
-    "menuAlignRight": false
+    "alignRight": false
   }
 }

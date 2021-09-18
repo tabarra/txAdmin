@@ -47,7 +47,7 @@ const MenuRoot: React.FC = () => {
       <Box
         style={{
           width: "fit-content",
-          alignSelf: serverCtx.menuAlignRight ? 'flex-end' : 'auto'
+          alignSelf: serverCtx.alignRight ? 'flex-end' : 'auto'
         }}>
         <HelpTooltip>
           <Box p={2} pb={1} className={classes.root}>
