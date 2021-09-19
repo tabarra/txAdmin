@@ -224,7 +224,7 @@ async function gettxAdminData() {
 
     const controllerConfigs = globals.playerController.config;
     const httpCounter = globals.databus.txStatsData.httpCounter;
-    const logFileSize = (
+    const logFileSize = 'FIXME:' || (
         globals.fxRunner
         && globals.fxRunner.outputHandler
         && globals.fxRunner.outputHandler.logFileSize
@@ -249,7 +249,7 @@ async function gettxAdminData() {
         logFileSize,
 
         //Possible memory leaks:
-        serverLogSize: globals.databus.serverLog.length || '--',
+        serverLogSize: 'FIXME:' || globals.databus.serverLog.length || '--',
         koaSessions: Object.keys(globals.webServer.koaSessionMemoryStore.sessions).length || '--',
 
         //Settings

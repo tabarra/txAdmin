@@ -31,7 +31,6 @@ globals = {
     databus: {
         //internal
         resourcesList: null,
-        serverLog: [],
         updateChecker: null,
         joinCheckHistory: [],
 

@@ -3,6 +3,7 @@ const modulename = 'Logger';
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const AdminLogger = require('./handlers/admin');
 const FXServerLogger = require('./handlers/fxserver');
+const ServerLogger = require('./handlers/server');
 
 // NOTE: to turn this into an universal class outside txAdmin() instance
 // when a txAdmin profile starts, it does universal.logger.start(profilename)
@@ -23,7 +24,7 @@ module.exports = class Logger {
         //Starting handlers
         this.admin = new AdminLogger(this.basePath, this.config.admin);
         this.fxserver = new FXServerLogger(this.basePath, this.config.fxserver);
-        // this.server = null;
+        this.server = new ServerLogger(this.basePath, this.config.server);
         // this.console = null;
     }
 
@@ -41,4 +42,3 @@ module.exports = class Logger {
         throw new Error('Not yet implemented.');
     }
 }; //Fim Logger()
-

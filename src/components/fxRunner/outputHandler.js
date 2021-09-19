@@ -72,43 +72,7 @@ module.exports = class OutputHandler {
             if (data.payload.type === 'txAdminHeartBeat') {
                 globals.monitor.handleHeartBeat('fd3');
             } else if (data.payload.type === 'txAdminLogData') {
-                //FIXME: send everything to globals.logger.server.write() and let it handle everything
-
-
-                //FIXME: this is super wrong
-                globals.databus.serverLog = globals.databus.serverLog.concat(data.payload.logs);
-                globals.webServer.webSocket.buffer('serverlog', data.payload.logs);
-
-                if (globals.databus.serverLog.length > 64e3) globals.databus.serverLog = globals.databus.serverLog.slice(-100);
-
-                /*
-                NOTE: Expected time cap based on log size cap to prevent memory leak
-
-                Big server: 300 events/min (freeroam/dm with 100+ players)
-                Medium servers: 30 events/min (rp with up to 64 players)
-
-                64k cap: 3.5h big, 35.5h medium, 24mb, 620ms/1000 seek time
-                32k cap: 1.7h big, 17.7h medium, 12mb, 307ms/1000 seek time
-                16k cap: 0.9h big, 9h medium, 6mb, 150ms/1000 seek time
-
-                > Seek time based on getting 500 items older than cap - 1000 (so near the end of the array) run 1k times
-                > Memory calculated with process.memoryUsage().heapTotal considering every event about 300 bytes
-
-                FIXME: after testing, I could not reproduce just with log array the memory leak numbers seen in issues.
-                Investigate if there are other memory leaks, or maybe if the array.concat(payload) is the issue
-                To match the issue on issue #427, we would need 300k events to be a 470mb increase in rss and I
-                measured only 94mb worst case scenario
-
-                NOTE: Although we could comfortably do 64k cap, even if showing 500 lines per page, nobody would
-                navigate through 128 pages, so let's do 16k cap since there is not even a way for the admin to skip
-                pages since it's all relative (older/newer) just like github's tags/releases page.
-
-                NOTE: maybe a way to let big servers filter what is logged or not? That would be an export in fxs,
-                before sending it to fd3
-                */
-
-                //NOTE: limiting to 16k requests which should be about 1h to big server (266 events/min)
-                // if (globals.databus.serverLog.length > 128e3) globals.databus.serverLog.shift();
+                globals.logger.server.write(data.payload.logs);
             }
         }
     }

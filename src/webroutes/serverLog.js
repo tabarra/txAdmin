@@ -27,35 +27,10 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
  * @param {object} ctx
  */
 module.exports = async function ServerLog(ctx) {
-    const offset = (ctx.params && typeof ctx.params.offset === 'string')
-        ? parseInt(ctx.params.offset)
-        : false;
-    const serverLog = globals.databus.serverLog; //shorthand
-
-    //If page
-    if (!offset) {
-        const log = processLog(serverLog.slice(-100));
-        const renderData = {
-            headerTitle: 'Server Log',
-            offset: serverLog.length,
-            log,
-        };
-        return ctx.utils.render('serverLog', renderData);
-
-    //If offset
-    } else if (!isNaN(offset)) {
-        if (offset === serverLog.length) {
-            return ctx.send({offset: serverLog.length, log : false});
-        } else {
-            const log = processLog(serverLog.slice(offset));
-            return ctx.send({offset: serverLog.length, log});
-        }
-
-    //If null
-    } else {
-        const log = processLog(serverLog.slice(-100));
-        return ctx.send({offset: serverLog.length, log});
-    }
+    const renderData = {
+        headerTitle: 'Server Log',
+    };
+    return ctx.utils.render('serverLog', renderData);
 };
 
 
@@ -116,8 +91,8 @@ function processPlayerData(src) {
  */
 function processEventTypes(event) {
     //TODO: normalize/padronize actions
-    if (event.action === 'playerConnecting') {
-        return 'connected';
+    if (event.action === 'playerJoining') {
+        return 'joined';
     } else if (event.action === 'playerDropped') {
         return 'disconnected';
     } else if (event.action === 'ChatMessage') {

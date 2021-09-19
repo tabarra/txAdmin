@@ -4,28 +4,13 @@ if GetConvar('txAdminServerMode', 'false') ~= 'true' then
 end
 
 -- micro optimization
+local sub = string.sub
 local os_time = os.time
 -- http://lua-users.org/wiki/SimpleRound
 local function round(num)
     return tonumber(string.format("%.2f", num))
 end
 
-local function getPlayerData(src)
-    if type(src) == 'string' then
-        src = tonumber(src)
-    end
-
-    if not src then
-        return false
-    end
-
-    if src <= 0 then return {name = 'console', identifiers = {}} end
-
-    return {
-        name = GetPlayerName(src),
-        identifiers = GetPlayerIdentifiers(src)
-    }
-end
 
 local loggerBuffer = {}
 local PRINT_STRUCTURED_TRACE = `PRINT_STRUCTURED_TRACE` & 0xFFFFFFFF
@@ -35,7 +20,7 @@ local PRINT_STRUCTURED_TRACE = `PRINT_STRUCTURED_TRACE` & 0xFFFFFFFF
 ---@param action string the action type
 ---@param data table|boolean will take a table, or a boolean if there is no data.
 ---NOTE: local fakeMsCounter = 0
-local function logger(src, action, data)
+local function logger(src, type, data)
     ---NOTE: fakeMsCounter+1
     ---NOTE: if fakeMsCounter == 1000 then fakeMsCounter = 0
     ---NOTE: ts = os_time() + fakeMsCounter
@@ -44,9 +29,9 @@ local function logger(src, action, data)
     ---FIXME: big servers have 5 events/sec, for this to break, only with over 60k events/sec
     
     loggerBuffer[#loggerBuffer+1] = {
-        timestamp = round(os_time()),
-        source = getPlayerData(src), --FIXME: send only the id
-        action = action,
+        ts = round(os_time()),
+        src = src,
+        type = type,
         data = data or false
     }
 end
@@ -68,18 +53,37 @@ end)
 
 logger(-1, 'txAdminClient:Started')
 
-AddEventHandler('playerConnecting', function()
-    logger(source, 'playerConnecting')
-end)
 
--- RegisterNetEvent('playerJoining', function()
---     logger(source, 'playerJoining')
--- end)
+-- Player joining/leaving handlers
+AddEventHandler('playerJoining', function()
+    local outData
+    if source <= 0 then 
+        outData = {
+            id = source,
+            name = 'unknown',
+            identifiers = {}
+        }
+    else
+        outData = {
+            name = sub(GetPlayerName(source) or "unknown", 1, 75),
+            ids = GetPlayerIdentifiers(source),
+            hwids = {}
+        }
+        local maxTokens = GetNumPlayerTokens(source)
+        for i = 0, maxTokens do
+            outData.hwids[i+1] = GetPlayerToken(source, i)
+        end
+    end
+
+    logger(source, 'playerJoining', outData)
+end)
 
 AddEventHandler('playerDropped', function()
     logger(source, 'playerDropped')
 end)
 
+
+-- Explosion handler
 local function isInvalid(property, invalidType)
     return (property == nil or property == invalidType)
 end
@@ -100,6 +104,7 @@ AddEventHandler('explosionEvent', function(source, ev)
 
     logger(source, 'explosionEvent', ev)
 end)
+
 
 -- An internal server handler, this is NOT exposed to the client
 AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
@@ -195,14 +200,11 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
     logger(source, 'MenuEvent', event_data)
 end)
 
+-- Extra handlers
 RegisterNetEvent('txaLogger:DeathNotice', function(killer, cause)
-    local killerData
-    if killer then
-        killerData = getPlayerData(killer)
-    end
     local logData = {
         cause = cause,
-        killer = killerData
+        killer = killer
     }
     logger(source, 'DeathNotice', logData)
 end)

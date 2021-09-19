@@ -14,7 +14,28 @@
 - [x] fix(nui): auth source for zap servers
 - [x] chore: updated a few dependencies
 > v4.5.0
-- [ ] review mem leak and auth src from zap
+- [x] FIXME: bunch of missing stuff here
+- [ ] new server log
+- [ ] new console log
+- [ ] fix logging data on diagnostics page
+- [ ] document new log thing
+- [ ] clean this file
+- [ ] update dev env to fxs/node16 
+- [ ] update packages & test
+- [ ] update lowdb
+- [ ] try json stream on lowdb
+- [ ] write db optimization functions
+- [ ] merge mui5 pr
+- [ ] somehow still manage to fix the playerlist?
+- [ ] change CitizenFX to Cfx.re as per branding consistency (ask the elements)
+- [ ] fix dashboard stats not working on iframe mode (#438)
+
+
+
+
+
+
+when admin use txadmin for first time, system ask him to change password, if he change it, all admins must restart to get txadmin working again
 
 
 
@@ -73,8 +94,15 @@ function sliceLogOlder(source, timestamp, sliceLength) {
 }
 ```
 
-optimization do lowdb
-atualizar pacotes!
+
+
+TODO: we could totally do like a "jump in time" feature for the log page.
+A slider with 500 steps, and an array with 500 timestamps
+this array can be done by dividing the serverLog.length to get the step, then a for loop to get the timestamps
+
+>/**/
+
+
 
 ### Menu playerlist fix
 When someone joins/leaves:
@@ -120,6 +148,8 @@ Pre calculate all counts
 > --bubble
 https://docs.fivem.net/docs/scripting-manual/networking/state-bags/
 
+ps.: need to also include the external events reporting thing
+
 
 ### Admin ACE sync:
 On server start, or admins permission change:
@@ -153,13 +183,6 @@ warn auto dismiss 15s
 FreezeEntityPosition need to get the veh
 debugModeEnabled and isMenuDebug are redundant, should probably just use the one from shared
 
-Test:
-adm-zip
-https://github.com/cthackers/adm-zip/compare/3d8bfc7a86da066131b2208a77148d2970e6234f...9a1ca460e18af17849542c6c136bd0c5861029f7
-
-Meh:
-nui snackbars (last updated fucked some spacing/padding or something)
-
 
 
 
@@ -171,7 +194,6 @@ nui snackbars (last updated fucked some spacing/padding or something)
 - desabilitar master actions pra quando for NUI
 
 Small Stuff:
-- [ ] rever o espaço no path, procurar por "tabSpaceDisabledThingy" que vai marcar os lugares
 - [ ] menu: add debouncer for main options keydown
 - [ ] menu: noclip should set ped heading when exiting freecam
 - [ ] menu: visually disable options when no permission
@@ -220,7 +242,11 @@ Small Stuff:
 - [ ] add stats enc?
 - [ ] apply the new action log html to the modal
 - [ ] add `<fivem://connect/xxxxx>` to `/status` by getting `web_baseUrl` maybe from the heartbeat
-- [ ] add ban server-side ban cache (last 500 bans?), updated on every ban change 
+- [ ] add ban/whitelist fxs-side cache (last 1000 bans + 1000 whitelists), automatically updated
+    - before starting the server, get last 1k bans/whitelists and write to a json file
+    - quen monitor starts, it will read the file and load to memory
+    - start sending the affected identifiers for the events `txAdmin:events:*` whitelisted, banned, and create a new for action revoked (type, action id).
+    - monitor listens to the event, and when it happens either add it to the cache, or erase from cache
 - [ ] add a commend system?
 - [ ] add stopwatch (or something) to the db functions and print on `/diagnostics`
 

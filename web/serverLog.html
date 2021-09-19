@@ -2,36 +2,157 @@
 
 
 <style>
-    .pre-log-content{
+    .pre-log-content {
         height: calc(100vh - 270px); /* -251px */
         margin-bottom: 0;
         font-size: 100%;
     }
-    .nui-height{
+
+    .nui-height {
         height: calc(100vh - 170px);
     }
 
-    .event-source{
+    .card {
+        height: 100%;
+    }
+
+    .event-source {
         font-weight: 900 !important;
         text-decoration: none !important;
         cursor: pointer;
     }
-
-    /* Experimental */
-    .highlight-player{
-        background-color: #ffeaa7;
-        color: rgb(27, 27, 27) !important;
-    }
 </style>
 
-
+<!-- No pre: {{[(it.isWebInterface), '', 'nui-height']|ternary}} -->
 <div class="text-center" style="margin-bottom: 5px">
     <h3>Server Log</h3>
-    <span>You can log custom commands like <code>/car</code>. Read the <a href="https://github.com/tabarra/txAdmin/blob/master/docs/extra_logging.md" target="_blank">docs</a> for more information.</span>
 </div>
-<div class="card border-primary">
-    <div class="card-body">
-        <pre id="console" class="thin-scroll pre-log-content {{[(it.isWebInterface), '', 'nui-height']|ternary}}">{{it.log|safe}}</pre>
+<div class="row">
+    <div class="col-xl-3 col-lg-12 pb-2" style="min-width: 235px;">
+        <div class="card border-primary" >
+            <div class="card-body text-center">
+                <div id="cardstatus-live" class="d-nonex">
+                    <h4>Mode: <span class="text-success">LIVE</span></h4>
+                    <button type="button" id="clearConsole"
+                            class="btn btn-outline-dark btn-sm mb-2">View Older
+                    </button>
+                    <button type="button" id="clearConsole"
+                            class="btn btn-outline-dark btn-sm mb-2">Clear Console
+                    </button>
+                    <button type="button" id="toggleAutoScroll"
+                            class="btn btn-outline-dark btn-sm mb-2">Download Log
+                    </button>
+                </div>
+
+                <div id="cardstatus-history" class="d-nonex">
+                    <h4>Mode: <span class="text-warning">HISTORY</span></h4>
+                    <p>
+                        <strong>From:</strong> Tuesday, 01:02 AM <br>
+                        <strong>To:</strong> Tuesday, 09:28 AM <br>
+                    </p>
+                    <button type="button" id="clearConsole"
+                            class="btn btn-outline-dark btn-sm mb-2">View Older
+                    </button>
+                    <button type="button" id="clearConsole"
+                            class="btn btn-outline-dark btn-sm mb-2">View Newer
+                    </button>
+                    <button type="button" id="toggleAutoScroll"
+                            class="btn btn-outline-dark btn-sm mb-2">Download Log
+                    </button>
+                </div>
+                <hr class="border-primary">
+
+                <h4>Filters:</h4>
+
+
+
+                <div class="form-group row mb-1">
+                    <label class="col-sm-8 col-form-label">Player join/leave</label>
+                    <div class="col-sm-4">
+                        <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group row mb-1">
+                    <label class="col-sm-8 col-form-label">Chat Messages</label>
+                    <div class="col-sm-4">
+                        <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group row mb-1">
+                    <label class="col-sm-8 col-form-label">Player Death</label>
+                    <div class="col-sm-4">
+                        <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group row mb-1">
+                    <label class="col-sm-8 col-form-label">Menu Actions</label>
+                    <div class="col-sm-4">
+                        <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group row mb-1">
+                    <label class="col-sm-8 col-form-label">Explosions</label>
+                    <div class="col-sm-4">
+                        <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group row mb-1">
+                    <label class="col-sm-8 col-form-label">Commands</label>
+                    <div class="col-sm-4">
+                        <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group row mb-1">
+                    <label class="col-sm-8 col-form-label">System Events</label>
+                    <div class="col-sm-4">
+                        <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group row mb-1">
+                    <label class="col-sm-8 col-form-label">Other Events</label>
+                    <div class="col-sm-4">
+                        <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                        </label>
+                    </div>
+                </div>
+                
+
+
+
+
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-9 col-lg-12">
+        <div class="card border-primary">
+            <div class="card-body">
+                <pre id="logContainer"
+                    class="thin-scroll pre-log-content"></pre>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -39,54 +160,62 @@
 {{@include("footer", it)/}}
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.min.js"></script>
 <script>
-    $(document).ready(function () {
-        scrollToBottom();
-        setupHovers();
-    });
-
-    setInterval(getNewData, 5000);
-
-    let currOffset = '{{it.offset}}';
-    function getNewData(){
-        txAdminAPI({
-            type: "GET",
-            url: `serverLog/${currOffset}`,
-            success: function (data) {
-                //FIXME: temporary before database
-                //NOTE: /\ that was a lie :)
-                if(typeof data.offset !== 'undefined') currOffset = data.offset;
-                if(typeof data.log !== 'undefined' && data.log !== false && data.log.length){
-                    const consoleElement = document.getElementById("console");
-                    let _tempContent = consoleElement.innerHTML + data.log;
-                    _tempContent = (_tempContent.length > BUFFER_TRIM_SIZE)
-                        ? _tempContent.slice(-0.5 * BUFFER_TRIM_SIZE)
-                        : _tempContent;
-                    consoleElement.innerHTML = _tempContent.substr(_tempContent.indexOf("\n"));
-                    scrollToBottom();
-                    setupHovers();
-                }
-            },
-            error: function (xmlhttprequest, textstatus, message) {
-                console.log(`Error refreshing server log: ${message}`)
+    //============================================== Server Log stuff
+    (function () {
+        //Preparing variables
+        const logContainer = document.getElementById("logContainer");
+        const defaultOpts = {
+            transports: ['polling'],
+            upgrade: false,
+            query: {
+                room: 'serverlog'
             }
-        });
-    }
+        }
+        let autoScroll = true;
+        let socket;
+        if (isWebInterface) {
+            socket = io({ ...defaultOpts, path: '/socket.io' });
+        } else {
+            socket = io('monitor', { ...defaultOpts, path: '/WebPipe/socket.io' });
+        }
 
-    function scrollToBottom(){
-        try {
-            $("#console").scrollTop($("#console")[0].scrollHeight);
-        } catch (error) {}
-    }
 
-    //Player name click function
-    function setupHovers(){
-        $('.event-source').click(function(e){
-            const ids = $(this).data('player-identifiers');
-            if(!ids) return;
-            const name = $(this).data('player-name') || 'unknown';
-            const license = ids.split(';').find(x => x.substring(0,8) == 'license:').substring(8);
-            showPlayer(license, name, ids);
+
+        //Events
+        socket.on('error', (error) => {
+            console.dir(error)
         });
-    }
+        socket.on('connect', () => {
+            console.log("Socket.IO Connected.");
+        });
+        socket.on('disconnect', () => {
+            console.log("Socket.IO Disonnected.");
+        });
+        socket.on('goDashboard', (error) => {
+            window.location = '/';
+        });
+        socket.on('logData', processLog);
+
+
+        //Buttons
+        autoScrollToggle.addEventListener("click", function () {
+            autoScroll = !autoScroll;
+            autoScrollToggle.innerText = (autoScroll ? "Disable Scroll" : "Enable Scroll");
+            if (autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight;
+        });
+
+        document.getElementById("clearConsole").addEventListener("click", function () {
+            consoleElement.innerHTML = "";
+        });
+
+        //Log processor
+        function processLog(events) {
+            for (let i = 0; i < events.length; i++) {
+                const event = events[i];
+                logContainer.innerText += '\n'+JSON.stringify(event)
+            }
+        }
+    })();
 </script>
