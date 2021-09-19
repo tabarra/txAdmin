@@ -1,9 +1,8 @@
 //Requires
 const modulename = 'Logger:FXServer';
-const chalk = require('chalk'); //FIXME: NEEDED?
+const chalk = require('chalk');
 const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
 const { LoggerBase, separator } = require('../loggerUtils');
-// const xss = require('../../extras/xss')({mark:['class']}); //FIXME: NEEDED?
 
 
 //NOTE: There used to be a rule "\x0B-\x1F" that was replaced with "x0B-\x1A\x1C-\x1F" to allow the \x1B terminal escape character.
@@ -60,7 +59,7 @@ module.exports = class FXServerLogger extends LoggerBase {
 
 
     /***
-     * Returns the recent fxserver bufgfer containing HTML markers, and not XSS escaped.
+     * Returns the recent fxserver buffer containing HTML markers, and not XSS escaped.
      * The size of this buffer is usually above 64kb, never above 128kb.
      */
     getRecentBuffer() {

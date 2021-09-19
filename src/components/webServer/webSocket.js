@@ -121,7 +121,7 @@ module.exports = class WebSocket {
      * @param {string} roomName
      * @param {string} data
      */
-    buffer(roomName, data, markType) {
+    buffer(roomName, data) {
         const room = this.rooms[roomName];
         if (!room) throw new Error('Room not found');
 

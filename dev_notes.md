@@ -15,6 +15,7 @@
 - [x] chore: updated a few dependencies
 > v4.5.0
 - [x] FIXME: bunch of missing stuff here
+- [ ] fix cause of death being always suicide (commit 9434d427)
 - [ ] new server log
 - [ ] new console log
 - [ ] fix logging data on diagnostics page
