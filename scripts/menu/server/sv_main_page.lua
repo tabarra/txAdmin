@@ -140,6 +140,9 @@ RegisterNetEvent('txAdmin:menu:healAllPlayers', function()
   local allow = PlayerHasTxPermission(src, 'players.heal')
   TriggerEvent("txaLogger:menuEvent", src, "healAll", true)
   if allow then
+    -- For use with third party resources that handle players
+    -- 'revive state' standalone from health (esx-ambulancejob, qb-ambulancejob, etc)
+    TriggerEvent('txAdmin:healedPlayer', -1)
     TriggerClientEvent('txAdmin:menu:healed', -1)
   end
 end)
@@ -163,6 +166,9 @@ RegisterNetEvent('txAdmin:menu:healMyself', function()
   local allow = PlayerHasTxPermission(src, 'players.heal')
   TriggerEvent("txaLogger:menuEvent", src, "healSelf", allow)
   if allow then
+    -- For use with third party resources that handle players
+    -- 'revive state' standalone from health (esx-ambulancejob, qb-ambulancejob, etc)
+    TriggerEvent('txAdmin:healedPlayer', id)
     TriggerClientEvent('txAdmin:menu:healed', src)
   end
 end)
@@ -178,6 +184,9 @@ RegisterNetEvent('txAdmin:menu:healPlayer', function(id)
   if allow then
     local ped = GetPlayerPed(id)
     if ped then
+      -- For use with third party resources that handle players
+      -- 'revive state' standalone from health (esx-ambulancejob, qb-ambulancejob, etc)
+      TriggerEvent('txAdmin:healedPlayer', id)
       TriggerClientEvent('txAdmin:menu:healed', id)
     end
     playerName = GetPlayerName(id)
