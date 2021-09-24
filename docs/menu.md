@@ -105,7 +105,7 @@ To run the menu in the browser you can use the `dev:menu` script. This will hot 
 a change is made.
 
 ```bash
-npm run dev:menu
+npm run dev:menu:browser
 ```
 
 To run the menu in game you can use the `dev:menu:game` script, this will also hot reload the 
@@ -113,6 +113,9 @@ build process, but you must also manually restart the monitor resource each time
 ```bash
 npm run dev:menu:game
 ```
+
+**Note**: For in-game development, you must have a txAdmin development instance instance running as well as
+the `dev:menu:game` script *(You can easily start one by running `npm run watch`)*.
 
 #### General Structure
 
