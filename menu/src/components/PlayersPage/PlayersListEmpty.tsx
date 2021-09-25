@@ -1,6 +1,7 @@
 import React from "react";
-import { Box, makeStyles, Typography } from "@material-ui/core";
-import { Error } from "@material-ui/icons";
+import { Box, Typography } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
+import { Error } from "@mui/icons-material";
 import { useTranslate } from "react-polyglot";
 
 const useStyles = makeStyles((theme) => ({

@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { Box, makeStyles } from "@material-ui/core";
+import { Box } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { IFramePostData, useIFrameCtx } from "../../provider/IFrameProvider";
 import { debugLog } from "../../utils/debugLog";
 import { usePermissionsValue } from '../../state/permissions.state';

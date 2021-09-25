@@ -1,9 +1,10 @@
 import React, { useRef, useState } from "react";
-import { Box, Fade, makeStyles, Typography } from "@material-ui/core";
+import { Box, Fade, Typography } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { useNuiEvent } from "../../hooks/useNuiEvent";
 import { useTranslate } from "react-polyglot";
 // import { debugData } from "../../utils/debugLog";
-import { ReportProblemOutlined } from "@material-ui/icons";
+import { ReportProblemOutlined } from "@mui/icons-material";
 
 const useWarnInnerStyles = makeStyles({
   root: {

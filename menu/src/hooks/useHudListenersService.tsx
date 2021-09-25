@@ -1,7 +1,7 @@
 import React from "react";
 import { SnackbarKey, useSnackbar } from "notistack";
 import { useNuiEvent } from "./useNuiEvent";
-import { Box, Typography } from "@material-ui/core";
+import { Box, Typography } from "@mui/material";
 import { useTranslate } from "react-polyglot";
 import { shouldHelpAlertShow } from "../utils/shouldHelpAlertShow";
 import { debugData } from "../utils/debugData";
