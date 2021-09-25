@@ -1,8 +1,8 @@
+/* eslint-disable padded-blocks */
 //Requires
 const modulename = 'Logger:Server';
 const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
 const { LoggerBase, separator } = require('../loggerUtils');
-// const xss = require('../../extras/xss')({mark:['class']}); //FIXME: NEEDED?
 
 /*
 NOTE: Expected time cap based on log size cap to prevent memory leak
@@ -45,6 +45,7 @@ module.exports = class ServerLogger extends LoggerBase {
 
         };
         super(basePath, 'server', lrDefaultOptions, lrProfileConfig);
+        this.lrStream.write(`\n${separator('txAdmin Starting')}\n`);
         this.lrStream.on('rotated', (filename) => {
             this.lrStream.write(`\n${separator('Log Rotated')}\n`);
             if (GlobalData.verbose) log(`Rotated file ${filename}`);
@@ -53,6 +54,7 @@ module.exports = class ServerLogger extends LoggerBase {
 
         this.recentBuffer = [];
         this.recentBufferMaxSize = 32e3;
+        this.cachedPlayers = new Map(); //TODO: maybe move to playerController in the future
     }
 
 
@@ -60,6 +62,8 @@ module.exports = class ServerLogger extends LoggerBase {
      * Returns a string with short usage stats
      */
     getUsageStats() {
+        // include this.cachedPlayers.size
+        // calculate events per minute moving average 10 && peak
         return `Errors: ${this.lrErrors}`;
     }
 
@@ -75,9 +79,10 @@ module.exports = class ServerLogger extends LoggerBase {
 
     /**
      * Processes the FD3 log array
+     * @param {String} mutex
      * @param {Array} data
      */
-    write(data) {
+    write(mutex, data) {
         if (!Array.isArray(data)) {
             if (GlobalData.verbose) logWarn(`write() expected array, got ${typeof data}`);
             return false;
@@ -85,35 +90,158 @@ module.exports = class ServerLogger extends LoggerBase {
 
         //Processing events
         for (let i = 0; i < data.length; i++) {
-            const {eventObject, eventString} = this.processEvent(data[i]);
-            if (!eventObject || !eventString) {
-                if (GlobalData.verbose) {
-                    logWarn('Failed to parse event:');
-                    dir(data[i]);
+            logError(`loop ${i}:`);
+            // dir(data[i]); //DEBUG
+            // continue;
+            try {
+                const {eventObject, eventString} = this.processEvent(mutex, data[i]);
+                // dir({eventObject, eventString});
+                if (!eventObject || !eventString) {
+                    if (GlobalData.verbose) {
+                        logWarn('Failed to parse event:');
+                        dir(data[i]);
+                    }
+                    continue;
                 }
-                continue;
+
+                //Add to recent buffer
+                this.recentBuffer.push(eventObject);
+                if (this.recentBuffer.length > this.recentBufferMaxSize) this.recentBuffer.shift();
+
+                //Send to websocket
+                globals.webServer.webSocket.buffer('serverlog', eventObject);
+
+                //Write to file
+                this.lrStream.write(`${eventString}\n`);
+            } catch (error) {
+                if (GlobalData.verbose) {
+                    logError('Error processing FD3 txAdminLogData:');
+                    dir(error);
+                }
             }
-
-            //Add to recent buffer
-            this.recentBuffer.push(eventObject);
-            if (this.recentBuffer.length > this.recentBufferMaxSize) this.recentBuffer.shift();
-
-            //Send to websocket
-            globals.webServer.webSocket.buffer('serverlog', eventObject);
-
-            //Write to file
-            this.lrStream.write(eventString);
         }
     }
 
     /**
-     *
-     * @param {Object} data
+     * Processes an event and returns both the string for log file, and object for the web ui
+     * @param {String} mutex
+     * @param {Object} eventData
      */
-    processEvent(data) {
+    processEvent(mutex, eventData) {
+        //Get source + handle playerJoining
+        let srcObject, srcString, eventMessage;
+        if (eventData.src === 'tx') {
+            srcObject = {id: false, name: 'txAdmin'};
+            srcString = 'txAdmin';
+
+        } else if (typeof eventData.src === 0) {
+            srcObject = {id: false, name: 'CONSOLE'};
+            srcString = 'CONSOLE';
+
+        } else if (typeof eventData.src === 'number' && eventData.src > 0) {
+            const playerID = `${mutex}#${eventData.src}`;
+            let playerData = this.cachedPlayers.get(playerID);
+            if (playerData) {
+                srcObject = {id: playerID, name: playerData.name};
+                srcString = `[${playerID}] ${playerData.name}`;
+            } else {
+                if (eventData.type === 'playerJoining') {
+                    if (eventData.data.name && Array.isArray(eventData.data.ids)) {
+                        playerData = eventData.data;
+                        playerData.ids = playerData.ids.filter((id) => !id.startsWith('ip:'));
+                        this.cachedPlayers.set(playerID, playerData);
+                        srcObject = {id: playerID, name: playerData.name};
+                        srcString = `[${playerID}] ${playerData.name}`;
+                        eventMessage = `joined with identifiers [${playerData.ids.join('; ')};]`;
+                    } else {
+                        srcObject = {id: false, name: 'UNKNOWN PLAYER'};
+                        srcString = 'UNKNOWN PLAYER';
+                        eventMessage = 'joined with unknown identifiers.';
+                        if (GlobalData.verbose) {
+                            logWarn('playerJoining: Unknown numeric event source from object:');
+                            dir(eventData);
+                        }
+                    }
+                } else {
+                    srcObject = {id: false, name: 'UNKNOWN PLAYER'};
+                    srcString = 'UNKNOWN PLAYER';
+                    if (GlobalData.verbose) {
+                        logWarn('Unknown numeric event source from object:');
+                        dir(eventData);
+                    }
+                }
+            }
+
+        } else {
+            srcObject = {id: false, name: 'UNKNOWN'};
+            srcString = 'UNKNOWN';
+        }
+
+
+        //Process event types (except playerJoining)
+        //TODO: normalize/padronize actions
+        if (eventData.type === 'playerDropped') {
+            eventMessage = 'disconnected';
+
+        } else if (eventData.type === 'ChatMessage') {
+            const text = (typeof eventData.data.text === 'string') ? eventData.data.text.replace(/\^([0-9])/g, '') : 'unknown message';
+            eventMessage = (typeof eventData.data.author === 'string' && eventData.data.author !== srcObject.name)
+                ? `(${eventData.data.author}): said "${text}"`
+                : `said "${text}"`;
+
+        } else if (eventData.type === 'DeathNotice') {
+            const cause = eventData.data.cause || 'unknown';
+            if (typeof eventData.data.killer === 'number' && eventData.data.killer > 0) {
+                const killer = this.cachedPlayers.get(`${mutex}#${eventData.data.killer}`);
+                if (killer) {
+                    eventMessage = `died from ${cause} by ${killer.name}`;
+                } else {
+                    eventMessage = `died from ${cause} by unknown killer`;
+                }
+            } else {
+                eventMessage = `died from ${cause}`;
+            }
+
+        } else if (eventData.type === 'explosionEvent') {
+            const expType = eventData.data.explosionType || 'UNKNOWN';
+            eventMessage = `caused an explosion (${expType})`;
+
+        } else if (eventData.type === 'CommandExecuted') {
+            const command = eventData.data || 'unknown';
+            eventMessage = `executed: /${command}`;
+
+        } else if (eventData.type === 'txAdminClient:Started') { //DONE
+            eventMessage = 'Logger started';
+
+        } else if (eventData.type === 'DebugMessage') {
+            eventMessage = (typeof eventData.data === 'string')
+                ? `Debug Message: ${eventData.data}`
+                : 'Debug Message: unknown';
+
+        } else if (eventData.type === 'MenuEvent') {
+            eventMessage = (typeof eventData.data === 'string')
+                ? `${eventData.data}`
+                : 'did unknown action';
+
+        } else if (eventData.type !== 'playerJoining') {
+            if (GlobalData.verbose) {
+                logWarn(`Unrecognized event: ${eventData.type}`);
+                dir(eventData);
+            }
+            eventMessage = eventData.type;
+        }
+
+
+        //Prepare output
+        const localeTime = new Date(eventData.ts).toLocaleTimeString();
+        eventMessage = eventMessage.replace(/\n/g, '\t'); //Just to make sure no event is injecting line breaks
         return {
-            eventObject: data,
-            eventString: 'xxxxx',
+            eventObject: {
+                ts: eventData.ts,
+                src: srcObject,
+                msg: eventMessage,
+            },
+            eventString: `[${localeTime}] ${srcString}: ${eventMessage}`,
         };
     }
 

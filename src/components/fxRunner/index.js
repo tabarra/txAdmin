@@ -10,6 +10,10 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 const helpers = require('../../extras/helpers');
 const OutputHandler = require('./outputHandler');
 
+const { customAlphabet } = require('nanoid');
+const dict51 = require('nanoid-dictionary/nolookalikes');
+const genMutex = customAlphabet(dict51, 5);
+
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -48,6 +52,7 @@ module.exports = class FXRunner {
         this.history = [];
         this.fxServerPort = null;
         this.fxServerHost = null;
+        this.currentMutex = null;
         this.outputHandler = new OutputHandler();
 
         //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
@@ -82,6 +87,9 @@ module.exports = class FXRunner {
         if (typeof this.config.commandLine === 'string' && this.config.commandLine.length) {
             extraArgs = parseArgsStringToArgv(this.config.commandLine);
         }
+
+        //Generate new mutex
+        this.currentMutex = genMutex();
 
         // Prepare default args
         const cmdArgs = [
@@ -250,17 +258,17 @@ module.exports = class FXRunner {
         this.fxChild.stdin.on('data', () => {});
 
         this.fxChild.stdout.on('error', () => {});
-        this.fxChild.stdout.on('data', this.outputHandler.write.bind(this.outputHandler, 'stdout'));
+        this.fxChild.stdout.on('data', this.outputHandler.write.bind(this.outputHandler, 'stdout', this.currentMutex));
 
         this.fxChild.stderr.on('error', () => {});
-        this.fxChild.stderr.on('data', this.outputHandler.write.bind(this.outputHandler, 'stderr'));
+        this.fxChild.stderr.on('data', this.outputHandler.write.bind(this.outputHandler, 'stderr', this.currentMutex));
 
         const tracePipe = this.fxChild.stdio[3].pipe(StreamValues.withParser());
         tracePipe.on('error', (data) => {
             if (GlobalData.verbose) logWarn(`FD3 decode error: ${data.message}`);
             globals.databus.txStatsData.lastFD3Error = data.message;
         });
-        tracePipe.on('data', this.outputHandler.trace.bind(this.outputHandler));
+        tracePipe.on('data', this.outputHandler.trace.bind(this.outputHandler, this.currentMutex));
 
         return null;
     }//Final spawnServer()
