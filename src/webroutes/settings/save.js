@@ -126,15 +126,6 @@ function handleFXServer(ctx) {
         quiet: (ctx.request.body.quiet === 'true'),
     };
 
-    //Validating path spaces
-    if (
-        cfg.serverDataPath.includes(' ')
-        || cfg.cfgPath.includes(' ')
-    ) {
-        // return ctx.send({type: 'danger', message: 'The paths cannot contain spaces (the space character that separate words).'});
-        //tabSpaceDisabledThingy
-    }
-
     //Validating Base Path
     try {
         if (!fs.existsSync(path.join(cfg.serverDataPath, 'resources'))) {
