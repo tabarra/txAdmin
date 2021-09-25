@@ -1,4 +1,4 @@
-$txadmin-dark-900: #29292A;
+$txadmin-dark-900: #151a1f;
 $txadmin-dark-800: lighten($txadmin-dark-900, 8%);
 $txadmin-dark-700: lighten($txadmin-dark-800, 8%);
 $txadmin-dark-600: lighten($txadmin-dark-700, 8%);
@@ -47,7 +47,7 @@ body.theme--dark {
   // ----- Core Styles
   //   Shape CoreUI in the darkness
   &, .c-app, .c-main, .c-footer, .c-header {
-    background: darken($txadmin-dark-900, 7%);
+    background: darken($txadmin-dark-900, 3%);
     color: $txadmin-text-color;
   }
 
