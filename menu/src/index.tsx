@@ -14,7 +14,7 @@ ReactDOM.render(
       <ThemeProvider theme={MenuTheme}>
         <KeyboardNavProvider>
           <SnackbarProvider
-            maxSnack={3}
+            maxSnack={5}
             anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
             disableWindowBlurListener={true}
           >
