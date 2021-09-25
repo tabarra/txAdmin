@@ -199,7 +199,7 @@ Small Stuff:
 - [ ] menu: add debouncer for main options keydown
 - [ ] menu: fix heal self/server behavior inconsistent with player mode and teleport
 - [ ] block execution if GetCurrentResourceName() != 'monitor'
-- [ ] player modal should show if the user is banned/whitelisted or not, and an easy way to revoke it
+- [ ] player modal must show if the user is banned/whitelisted or not, and an easy way to revoke it
 - [ ] check EOL and warn user - new Date('2021-09-14T07:38:51+00:00').getTime()
 - [ ] on recipe import, check if indexOf('<html>')
 - [ ] enable squirrelly file caching via `renderFile()`

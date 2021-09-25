@@ -148,19 +148,21 @@
                                    autocomplete="off" autocorrect="off" autocapitalize="off"
                                    spellcheck="false" {{it.disableCommand}}>
                         </div>
-                        <button type="button" id="clearConsole" class="btn btn-outline-light btn-sm mb-2">
-                            Clear Console
-                        </button>
-                        <button type="button" id="announcementBtn" class="btn btn-outline-light btn-sm mb-2"
-                            {{[it.isWebInterface, '', 'disabled']|ternary}}>
-                            Announcement
-                        </button>
                         <a href="fxserver/downloadLog" target="_blank" 
                             class="btn btn-outline-light btn-sm mb-2 {{[it.isWebInterface, '', 'disabled']|ternary}}">
                             Download Log
                         </a>
-                        <button onclick="controlAction('restart')" class="btn btn-outline-{{it.restartBtnClass}} btn-sm mb-2"
-                                type="button" id="ctrl-restart" {{it.disableRestart}}>RESTART</button> &nbsp;
+                        <button type="button" id="clearConsole" class="btn btn-outline-light btn-sm mb-2">
+                            Clear Console
+                        </button>
+                        <button type="button" id="announcementBtn" class="btn btn-outline-warning btn-sm mb-2"
+                            {{[it.isWebInterface, '', 'disabled']|ternary}}>
+                            Announcement
+                        </button>
+                        <button type="button" id="ctrl-restart" class="btn btn-outline-{{it.restartBtnClass}} btn-sm mb-2" 
+                            onclick="controlAction('restart')" {{it.disableRestart}}>
+                                RESTART
+                        </button>
                     </div>
                 </form>
             </div>
