@@ -15,7 +15,9 @@
 - [x] chore: updated a few dependencies
 > v4.5.0
 - [x] FIXME: bunch of missing stuff here
-- [ ] fix cause of death being always suicide (commit 9434d427)
+- [x] fix cause of death being always suicide (commit 9434d427)
+- [x] update material ui to v5
+- [x] fix(core): removed ansi color escape from srvCmdBuffer
 - [ ] new server log
 - [ ] new console log
 - [ ] fix logging data on diagnostics page
@@ -26,7 +28,6 @@
 - [ ] update lowdb
 - [ ] try json stream on lowdb
 - [ ] write db optimization functions
-- [ ] merge mui5 pr
 - [ ] somehow still manage to fix the playerlist?
 - [ ] change CitizenFX to Cfx.re as per branding consistency (ask the elements)
 - [ ] fix dashboard stats not working on iframe mode (#438)
@@ -196,17 +197,12 @@ debugModeEnabled and isMenuDebug are redundant, should probably just use the one
 
 Small Stuff:
 - [ ] menu: add debouncer for main options keydown
-- [ ] menu: noclip should set ped heading when exiting freecam
-- [ ] menu: visually disable options when no permission
 - [ ] menu: fix heal self/server behavior inconsistent with player mode and teleport
-- [ ] menu: add noclip key binding
 - [ ] block execution if GetCurrentResourceName() != 'monitor'
 - [ ] player modal should show if the user is banned/whitelisted or not, and an easy way to revoke it
 - [ ] check EOL and warn user - new Date('2021-09-14T07:38:51+00:00').getTime()
 - [ ] on recipe import, check if indexOf('<html>')
 - [ ] enable squirrelly file caching via `renderFile()`
-- [ ] srvCmdBuffer needs to strip the color escape characters
-- [ ] logger: `Unrecognized event: playerJoining` -- we are using playerConnecting but should probably change that
 - [ ] make the commands (kick, warn, etc) return success or danger, then edit DialogActionView.tsx
     - can be done by adding a randid to the command, then making the cmdBuffer match for `<id><OK|NOK>` 
 
@@ -214,7 +210,6 @@ Small Stuff:
 - [ ] if isZapHosting && forceInterface, add `set sv_listingIPOverride "xxx.xxx.xxx.xxx"` in deployer
 - [ ] maybe remove the sv_maxclients enforcement in the cfg file
 - [ ] fix the interface enforcement without port being set as zap server?
-- [ ] consolidate the log pages
 
 
 > ASAP!:
@@ -313,6 +308,8 @@ Message from bubble:
 =======================================
 
 ## Bot Commands:
+https://www.npmjs.com/package/eris - avarianknight recommended
+
 DONE:
 /addwl <wl req id>
 /addwl <license>

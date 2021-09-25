@@ -82,6 +82,6 @@ module.exports = class OutputHandler {
         globals.logger.fxserver.writeStdIO(source, data);
 
         //FIXME: deprecate this whenever
-        if (this.enableCmdBuffer) this.cmdBuffer += data.replace(/\u001b\[\d+(;\d)?m/g, '');
+        if (this.enableCmdBuffer) this.cmdBuffer += data.replace(/\u001b[^m]*?m/g, '');
     }
 }; //Fim OutputHandler()
