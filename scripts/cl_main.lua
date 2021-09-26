@@ -39,6 +39,7 @@ end)
 
 -- Removing unwanted chat suggestions
 -- We only want suggestion for: /tx, /txAdmin-debug, /txAdmin-reauth
+-- The suggestion is added after 500ms, so we need to wait more
 CreateThread(function()
     Wait(1000)
     TriggerEvent('chat:removeSuggestion', '/txadmin') --too spammy
@@ -61,6 +62,8 @@ CreateThread(function()
     TriggerEvent('chat:removeSuggestion', '/txAdmin-checkPlayerJoin')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-pipeToken')
     TriggerEvent('chat:removeSuggestion', '/txAdminServerMode')
+    TriggerEvent('chat:removeSuggestion', '/txAdminMenu-debugMode')
+    TriggerEvent('chat:removeSuggestion', '/txEnableMenuBeta')
 end)
 
 
