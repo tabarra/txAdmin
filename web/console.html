@@ -216,7 +216,7 @@
         //Preparing variables
         const BUFFER_TRIM_SIZE = 128 * 1024; // 128kb
         const commandHistoryLimit = 12;
-        const defaultOpts = {
+        const defaultSocketOpts = {
             transports: ['polling'],
             upgrade: false,
             query: {
@@ -225,9 +225,9 @@
         }
         let socket;
         if (isWebInterface) {
-            socket = io({...defaultOpts, path: '/socket.io'});
+            socket = io({...defaultSocketOpts, path: '/socket.io'});
         }else{
-            socket = io('monitor', {...defaultOpts, path: '/WebPipe/socket.io'});
+            socket = io('monitor', {...defaultSocketOpts, path: '/WebPipe/socket.io'});
         }
         
         const ansi_up = new AnsiUp;

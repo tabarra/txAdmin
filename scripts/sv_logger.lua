@@ -52,7 +52,7 @@ CreateThread(function()
         end
     end
 end)
-logger('tx', 'txAdminClient:Started')
+logger('tx', 'LoggerStarted')
 
 
 -- Player joining/leaving handlers

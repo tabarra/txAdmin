@@ -152,7 +152,7 @@ module.exports = class ServerLogger extends LoggerBase {
                         this.cachedPlayers.set(playerID, playerData);
                         srcObject = {id: playerID, name: playerData.name};
                         srcString = `[${playerID}] ${playerData.name}`;
-                        eventMessage = `joined with identifiers [${playerData.ids.join('; ')};]`;
+                        eventMessage = `joined with identifiers [${playerData.ids.join('; ')}]`;
                     } else {
                         srcObject = {id: false, name: 'UNKNOWN PLAYER'};
                         srcString = 'UNKNOWN PLAYER';
@@ -210,7 +210,7 @@ module.exports = class ServerLogger extends LoggerBase {
             const command = eventData.data || 'unknown';
             eventMessage = `executed: /${command}`;
 
-        } else if (eventData.type === 'txAdminClient:Started') { //DONE
+        } else if (eventData.type === 'LoggerStarted') { //DONE
             eventMessage = 'Logger started';
 
         } else if (eventData.type === 'DebugMessage') {
@@ -238,6 +238,7 @@ module.exports = class ServerLogger extends LoggerBase {
         return {
             eventObject: {
                 ts: eventData.ts,
+                type: eventData.type,
                 src: srcObject,
                 msg: eventMessage,
             },

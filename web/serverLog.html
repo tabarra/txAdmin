@@ -16,10 +16,22 @@
         height: 100%;
     }
 
-    .event-source {
+    .e-src{
+        color: var(--dark);
         font-weight: 900 !important;
-        text-decoration: none !important;
+        padding: .15rem;
+        margin-left: .25rem;
+        margin-right: .25rem;
+    }
+    .e-src-player{
+        color: var(--primary);
+        font-weight: 900 !important;
         cursor: pointer;
+    }
+    .e-src-player:hover{
+        /* color: var(--warning); */
+        color: var(--light);
+        background-color: var(--dark);
     }
 </style>
 
@@ -33,28 +45,28 @@
             <div class="card-body text-center">
                 <div id="cardstatus-live" class="d-nonex">
                     <h4>Mode: <span class="text-success">LIVE</span></h4>
-                    <button type="button" id="clearConsole"
-                            class="btn btn-outline-dark btn-sm mb-2">View Older
+                    <button type="button" class="btn btn-outline-dark btn-sm mb-2">
+                        View Older
                     </button>
-                    <button type="button" id="clearConsole"
-                            class="btn btn-outline-dark btn-sm mb-2">Clear Console
+                    <button type="button" id="clearConsole" class="btn btn-outline-dark btn-sm mb-2">
+                        Clear Console
                     </button>
-                    <button type="button" id="toggleAutoScroll"
-                            class="btn btn-outline-dark btn-sm mb-2">Download Log
+                    <button type="button" id="toggleAutoScroll" class="btn btn-outline-dark btn-sm mb-2">
+                        Download Log
                     </button>
                 </div>
 
                 <div id="cardstatus-history" class="d-nonex">
                     <h4>Mode: <span class="text-warning">HISTORY</span></h4>
                     <p>
-                        <strong>From:</strong> Tuesday, 01:02 AM <br>
-                        <strong>To:</strong> Tuesday, 09:28 AM <br>
+                        <strong>From:</strong> <span id="histLogStart">--</span> <br>
+                        <strong>To:</strong> <span id="histLogEnd">--</span> <br>
                     </p>
-                    <button type="button" id="clearConsole"
-                            class="btn btn-outline-dark btn-sm mb-2">View Older
+                    <button type="button" class="btn btn-outline-dark btn-sm mb-2">
+                        View Older
                     </button>
-                    <button type="button" id="clearConsole"
-                            class="btn btn-outline-dark btn-sm mb-2">View Newer
+                    <button type="button" class="btn btn-outline-dark btn-sm mb-2">
+                        View Newer
                     </button>
                     <button type="button" id="toggleAutoScroll"
                             class="btn btn-outline-dark btn-sm mb-2">Download Log
@@ -63,14 +75,11 @@
                 <hr class="border-primary">
 
                 <h4>Filters:</h4>
-
-
-
                 <div class="form-group row mb-1">
                     <label class="col-sm-8 col-form-label">Player join/leave</label>
                     <div class="col-sm-4">
                         <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="PlayerJoinLeave">
                             <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                         </label>
                     </div>
@@ -79,7 +88,7 @@
                     <label class="col-sm-8 col-form-label">Chat Messages</label>
                     <div class="col-sm-4">
                         <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="ChatMessage">
                             <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                         </label>
                     </div>
@@ -88,7 +97,7 @@
                     <label class="col-sm-8 col-form-label">Player Death</label>
                     <div class="col-sm-4">
                         <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="DeathNotice">
                             <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                         </label>
                     </div>
@@ -97,7 +106,7 @@
                     <label class="col-sm-8 col-form-label">Menu Actions</label>
                     <div class="col-sm-4">
                         <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="MenuEvent">
                             <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                         </label>
                     </div>
@@ -106,7 +115,7 @@
                     <label class="col-sm-8 col-form-label">Explosions</label>
                     <div class="col-sm-4">
                         <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="explosionEvent">
                             <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                         </label>
                     </div>
@@ -115,7 +124,7 @@
                     <label class="col-sm-8 col-form-label">Commands</label>
                     <div class="col-sm-4">
                         <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="CommandExecuted">
                             <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                         </label>
                     </div>
@@ -124,20 +133,20 @@
                     <label class="col-sm-8 col-form-label">System Events</label>
                     <div class="col-sm-4">
                         <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="System">
                             <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                         </label>
                     </div>
                 </div>
-                <div class="form-group row mb-1">
+                <!-- <div class="form-group row mb-1">
                     <label class="col-sm-8 col-form-label">Other Events</label>
                     <div class="col-sm-4">
                         <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
-                            <input class="c-switch-input" type="checkbox" id="xxxxxxxx" checked>
+                            <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="other">
                             <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                         </label>
                     </div>
-                </div>
+                </div> -->
                 
 
 
@@ -149,8 +158,7 @@
     <div class="col-xl-9 col-lg-12">
         <div class="card border-primary">
             <div class="card-body">
-                <pre id="logContainer"
-                    class="thin-scroll pre-log-content"></pre>
+                <pre id="logContainer" class="thin-scroll pre-log-content"></pre>
             </div>
         </div>
     </div>
@@ -166,29 +174,39 @@
     (function () {
         //Preparing variables
         const logContainer = document.getElementById("logContainer");
-        const defaultOpts = {
+        logContainer.innerHTML = `<div style="height: 90%;" class="d-flex"><div style="margin: auto;">${SPINNER_HTML}</div></div>`;
+        const histLogStart = document.getElementById("histLogStart");
+        const histLogEnd = document.getElementById("histLogEnd");
+        const MAX_HISTORY_SIZE = 500;
+        const frameTimeOptions = {weekday: 'long', hour: '2-digit', minute: '2-digit'};
+        const eventTimeOptions = {hour: '2-digit', minute: '2-digit', second: '2-digit'};
+        const defaultSocketOpts = {
             transports: ['polling'],
             upgrade: false,
             query: {
                 room: 'serverlog'
             }
         }
+        let logStartTs, logEndTs;
+        let eventFilters = {};
         let autoScroll = true;
+
+
+        //Socket things
         let socket;
         if (isWebInterface) {
-            socket = io({ ...defaultOpts, path: '/socket.io' });
+            socket = io({ ...defaultSocketOpts, path: '/socket.io' });
+            // socket = {on:()=>{}}
         } else {
-            socket = io('monitor', { ...defaultOpts, path: '/WebPipe/socket.io' });
+            socket = io('monitor', { ...defaultSocketOpts, path: '/WebPipe/socket.io' });
         }
 
-
-
-        //Events
         socket.on('error', (error) => {
             console.dir(error)
         });
         socket.on('connect', () => {
             console.log("Socket.IO Connected.");
+            logContainer.innerHTML = '';
         });
         socket.on('disconnect', () => {
             console.log("Socket.IO Disonnected.");
@@ -199,23 +217,119 @@
         socket.on('logData', processLog);
 
 
-        //Buttons
-        autoScrollToggle.addEventListener("click", function () {
-            autoScroll = !autoScroll;
-            autoScrollToggle.innerText = (autoScroll ? "Disable Scroll" : "Enable Scroll");
-            if (autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight;
+        //Handling filters
+        if(typeof window.localStorage.eventFilters !== 'undefined'){
+            try {
+                const fromStorage = JSON.parse(window.localStorage.eventFilters);
+                console.log('Filters from storage:', fromStorage);
+                if(typeof fromStorage === 'object' && fromStorage !== null) {
+                    eventFilters = fromStorage;
+                }
+            } catch (error) {
+                console.error('Failed to process window.localStorage.eventFilters');
+            }
+        }
+
+        const allSwitches = document.querySelectorAll('.e-filter-sw');
+        allSwitches.forEach((sw) => {
+            sw.addEventListener('change', eventFiltersChanged);
+            if(typeof eventFilters[sw.dataset.eType] === 'undefined'){
+                eventFilters[sw.dataset.eType] = true;
+            }
+            sw.checked = eventFilters[sw.dataset.eType];
         });
+        window.localStorage.eventFilters = JSON.stringify(eventFilters);
+
+        const getShowTypes = () => Object.keys(eventFilters)
+            .filter(fn => eventFilters[fn])
+            .flatMap(fn => {
+                if (fn === 'PlayerJoinLeave') return ['playerJoining', 'playerDropped'];
+                if(fn === 'System') return ['LoggerStarted', 'DebugMessage'];
+                return fn;
+            });
+        
+        function eventFiltersChanged(caller){
+            eventFilters[caller.target.dataset.eType] = caller.target.checked;
+            window.localStorage.eventFilters = JSON.stringify(eventFilters);
+            const showTypes = getShowTypes();
+            console.log('showTypes:', showTypes);
+
+            logContainer.childNodes.forEach(line => {
+                if(showTypes.includes(line.dataset.eType)){
+                    line.classList.remove('d-none');
+                }else{
+                    line.classList.add('d-none');
+                }
+            });
+        }
+
+
+
+        //Buttons
+        //FIXME: copy autoScroll from console page
+        // autoScrollToggle.addEventListener("click", function () {
+        //     autoScroll = !autoScroll;
+        //     autoScrollToggle.innerText = (autoScroll ? "Disable Scroll" : "Enable Scroll");
+        //     if (autoScroll) logContainer.scrollTop = logContainer.scrollHeight;
+        // });
 
         document.getElementById("clearConsole").addEventListener("click", function () {
-            consoleElement.innerHTML = "";
+            logContainer.innerHTML = "";
         });
+
 
         //Log processor
         function processLog(events) {
+            const showTypes = getShowTypes();
+            //For every new entry
             for (let i = 0; i < events.length; i++) {
                 const event = events[i];
-                logContainer.innerText += '\n'+JSON.stringify(event)
+                logEndTs = event.ts;
+
+                //Line
+                const lineElement = document.createElement('div');
+                lineElement.dataset.eTs = event.ts;
+                lineElement.dataset.eType = event.type;
+                if(!showTypes.includes(event.type)){
+                    lineElement.classList.add('d-none');
+                }
+
+                //Time
+                const localeTime = new Date(event.ts).toLocaleTimeString(window.navigator.language, eventTimeOptions);
+                const timeNode = document.createElement('span');
+                timeNode.textContent = `[${localeTime}]`;
+                timeNode.classList.add('text-muted');
+                lineElement.appendChild(timeNode);
+
+                //Source
+                const sourceNode = document.createElement('strong');
+                sourceNode.textContent = event.src.name;
+                sourceNode.classList.add('e-src');
+                if(event.src.id) sourceNode.classList.add('e-src-player');
+                sourceNode.addEventListener('click', ()=>{ showPlayer(event.src.id.replace(/#/, '_')) });
+                lineElement.appendChild(sourceNode);
+
+                //Message
+                const msgNode = document.createTextNode(event.msg);
+                lineElement.appendChild(msgNode);
+                
+                //Appending & capping log
+                logContainer.appendChild(lineElement)
+                if(logContainer.childNodes.length > MAX_HISTORY_SIZE){
+                    logContainer.removeChild(logContainer.childNodes[0])
+                }
             }
+
+            //Process times
+            logStartTs = parseInt(logContainer.childNodes[0].dataset.eTs);
+            const logStartDate = new Date(logStartTs);
+            const logEndDate = new Date(logEndTs);
+            histLogStart.textContent = logStartDate.toLocaleString(window.navigator.language, frameTimeOptions);
+            histLogEnd.textContent = logEndDate.toLocaleString(window.navigator.language, frameTimeOptions);
+
+            //AutoScroll
+            // FIXME: copy autoScroll from console page
+            logContainer.scrollTop = logContainer.scrollHeight;
         }
     })();
 </script>
