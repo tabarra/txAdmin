@@ -6,6 +6,7 @@
         height: calc(100vh - 270px); /* -251px */
         margin-bottom: 0;
         font-size: 100%;
+        /* word-break: break-all; */
     }
 
     .nui-height {
@@ -35,7 +36,6 @@
     }
 </style>
 
-<!-- No pre: {{[(it.isWebInterface), '', 'nui-height']|ternary}} -->
 <div class="text-center" style="margin-bottom: 5px">
     <h3>Server Log</h3>
 </div>
@@ -147,18 +147,17 @@
                         </label>
                     </div>
                 </div> -->
-                
-
-
-
 
             </div>
         </div>
     </div>
     <div class="col-xl-9 col-lg-12">
         <div class="card border-primary">
-            <div class="card-body">
-                <pre id="logContainer" class="thin-scroll pre-log-content"></pre>
+            <div class="card-body p-3" style="position: relative">
+                <pre id="logContainer" class="thin-scroll pre-log-content text-white {{[(it.isWebInterface), '', 'nui-height']|ternary}}"></pre>
+                <div id="autoScrollDiv">
+                    <a id="autoScrollBtn" class="d-none" href="#"><span></span><span></span><span></span></a>
+                </div>
             </div>
         </div>
     </div>
@@ -173,8 +172,8 @@
     //============================================== Server Log stuff
     (function () {
         //Preparing variables
+        const autoScrollBtn = document.getElementById("autoScrollBtn");
         const logContainer = document.getElementById("logContainer");
-        logContainer.innerHTML = `<div style="height: 90%;" class="d-flex"><div style="margin: auto;">${SPINNER_HTML}</div></div>`;
         const histLogStart = document.getElementById("histLogStart");
         const histLogEnd = document.getElementById("histLogEnd");
         const MAX_HISTORY_SIZE = 500;
@@ -190,7 +189,8 @@
         let logStartTs, logEndTs;
         let eventFilters = {};
         let autoScroll = true;
-
+        logContainer.innerHTML = `<div style="height: 90%;" class="d-flex"><div style="margin: auto;">${SPINNER_HTML}</div></div>`;
+        
 
         //Socket things
         let socket;
@@ -264,15 +264,40 @@
         }
 
 
+        //AutoScroll Things
+        const scrollBottom = () => {
+            if (autoScroll) logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        const autoscrollToggle = (status) => {
+            autoScroll = status
+            if(autoScroll){
+                autoScrollBtn.classList.add('d-none');
+            }else{
+                autoScrollBtn.classList.remove('d-none');
+            }
+            scrollBottom();
+        }
+        logContainer.addEventListener('scroll',function(){
+                const scrollTop = logContainer.scrollTop;
+                const scrollHeight = logContainer.scrollHeight;
+                const offsetHeight = logContainer.offsetHeight;
+                const contentHeight = scrollHeight - offsetHeight;
+                if (scrollTop < contentHeight) {
+                    console.log('Auto scroll disabled.');
+                    autoscrollToggle(false);
+                } else if(scrollTop === contentHeight){
+                    console.log('Auto scroll enabled.');
+                    autoscrollToggle(true);
+                }
+            }
+        )
+        autoScrollBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            autoscrollToggle(true);
+        });
+
 
         //Buttons
-        //FIXME: copy autoScroll from console page
-        // autoScrollToggle.addEventListener("click", function () {
-        //     autoScroll = !autoScroll;
-        //     autoScrollToggle.innerText = (autoScroll ? "Disable Scroll" : "Enable Scroll");
-        //     if (autoScroll) logContainer.scrollTop = logContainer.scrollHeight;
-        // });
-
         document.getElementById("clearConsole").addEventListener("click", function () {
             logContainer.innerHTML = "";
         });
@@ -328,8 +353,7 @@
             histLogEnd.textContent = logEndDate.toLocaleString(window.navigator.language, frameTimeOptions);
 
             //AutoScroll
-            // FIXME: copy autoScroll from console page
-            logContainer.scrollTop = logContainer.scrollHeight;
+            scrollBottom();
         }
     })();
 </script>

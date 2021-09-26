@@ -62,68 +62,6 @@
         color: rgb(183, 189, 199)!important;
         border: 1px solid rgb(183, 189, 199);
     }
-
-    /* AutoScroll Toggler */
-    #scrollerDiv {
-        position: absolute; 
-        bottom: calc((24px * 3) + 12px);
-        right: calc(1rem + 24px + 18px);
-    }
-    #scrollerDiv a {
-        padding-top: 80px;
-    }
-    #scrollerDiv a span {
-        position: absolute;
-        top: 0;
-        left: 50%;
-        width: 24px;
-        height: 24px;
-        margin-left: -12px;
-        border-left: 1px solid #fff;
-        border-bottom: 1px solid #fff;
-        -webkit-transform: rotate(-45deg);
-        transform: rotate(-45deg);
-        -webkit-animation: sdb07 2s infinite;
-        animation: sdb07 2s infinite;
-        opacity: 0;
-        box-sizing: border-box;
-    }
-    #scrollerDiv a span:nth-of-type(1) {
-        -webkit-animation-delay: 0s;
-        animation-delay: 0s;
-    }
-    #scrollerDiv a span:nth-of-type(2) {
-        top: 16px;
-        -webkit-animation-delay: .15s;
-        animation-delay: .15s;
-    }
-    #scrollerDiv a span:nth-of-type(3) {
-        top: 32px;
-        -webkit-animation-delay: .3s;
-        animation-delay: .3s;
-    }
-    @-webkit-keyframes sdb07 {
-        0% {
-            opacity: 0;
-        }
-        50% {
-            opacity: 1;
-        }
-        100% {
-            opacity: 0;
-        }
-    }
-    @keyframes sdb07 {
-        0% {
-            opacity: 0;
-        }
-        50% {
-            opacity: 1;
-        }
-        100% {
-            opacity: 0;
-        }
-    }
 </style>
 
 
@@ -133,8 +71,8 @@
 <div class="card bg-dark">
     <div class="card-body p-3" style="position: relative">
         <pre id="console" class="thin-scroll console-content text-white {{[(it.isWebInterface), '', 'nui-height']|ternary}}"></pre>
-        <div id="scrollerDiv">
-            <a id="scrollerBtn" class="d-none" href="#"><span></span><span></span><span></span></a>
+        <div id="autoScrollDiv">
+            <a id="autoScrollBtn" class="d-none" href="#"><span></span><span></span><span></span></a>
         </div>
     </div>
     <div class="card-footer bg-dark">
@@ -237,7 +175,7 @@
         const consoleForm = document.getElementById("frmConsole");
         const historyDiv = document.getElementById('cmdHistoryDiv');
         const historyElement = document.getElementById('cmdHistory');
-        const scrollerBtn = document.getElementById("scrollerBtn");
+        const autoScrollBtn = document.getElementById("autoScrollBtn");
         const announcementBtn = document.getElementById("announcementBtn");
         let commandHistory = [];
         let commandCache = [];
@@ -268,9 +206,9 @@
         const autoscrollToggle = (status) => {
             autoScroll = status
             if(autoScroll){
-                scrollerBtn.classList.add('d-none');
+                autoScrollBtn.classList.add('d-none');
             }else{
-                scrollerBtn.classList.remove('d-none');
+                autoScrollBtn.classList.remove('d-none');
             }
             scrollBottom();
         }
@@ -414,7 +352,7 @@
             });
         });
 
-        scrollerBtn.addEventListener("click", (event) => {
+        autoScrollBtn.addEventListener("click", (event) => {
             event.preventDefault();
             autoscrollToggle(true);
         });
