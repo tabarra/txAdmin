@@ -33,8 +33,17 @@ local function txadmin(_, args)
   end
 end
 
+local suggestionDesc = 'Opens the main txAdmin Menu or specific for a player.';
+local suggestionParams = {
+  { name="player id", help="(Optional) Open player modal for specific ID." }
+}
+
 RegisterCommand('txadmin', txadmin)
+TriggerEvent('chat:addSuggestion', '/txadmin', suggestionDesc, suggestionParams)
 RegisterCommand('tx', txadmin)
+TriggerEvent('chat:addSuggestion', '/tx', suggestionDesc, suggestionParams)
+
+
 
 -- The rest of the file will not be run if convar isn't set
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
@@ -113,9 +122,4 @@ CreateThread(function()
     end
     Wait(250)
   end
-end)
-
-CreateThread(function()
-  TriggerEvent('chat:removeSuggestion', '/txadmin')
-  TriggerEvent('chat:removeSuggestion', '/tx')
 end)
