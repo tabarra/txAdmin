@@ -22,10 +22,10 @@ local function txadmin(_, args)
   end
 
   if menuIsAccessible then
-    local targetPlayer = args[1] and tonumber(args[1])
     toggleMenuVisibility()
     -- Shortcut to open a specific players profile
-    if isMenuVisible and targetPlayer then
+    if isMenuVisible and #args >= 1 then
+      local targetPlayer = table.concat(args, ' ')
       sendMenuMessage('openPlayerModal', targetPlayer)
     end
   else

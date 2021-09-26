@@ -179,7 +179,7 @@
         "player_modal": {
             "misc": {
                 "error": "An error occurred fetching this users details. The error is shown below:",
-                "target_not_found": "Was unable to find an online player with ID %{targetId}"
+                "target_not_found": "Was unable to find an online player with ID or an username %{target}"
             },
             "tabs": {
                 "actions": "Actions",

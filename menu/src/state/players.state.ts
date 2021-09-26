@@ -55,10 +55,10 @@ const playersState = {
 
       const playerStates: PlayerData[] = filteredValueInput
         ? unfilteredPlayerStates.filter(
-            (player) =>
-              player.username.toLowerCase().includes(formattedInput) ||
-              player.id.toString().includes(formattedInput)
-          )
+          (player) =>
+            player.username.toLowerCase().includes(formattedInput) ||
+            player.id.toString().includes(formattedInput)
+        )
         : unfilteredPlayerStates;
 
       switch (sortType) {
@@ -83,6 +83,11 @@ const playersState = {
     key: "filterPlayerDataInput",
     default: "",
   }),
+  // If true, player data filter will reset on page switch
+  filterPlayerDataIsTemp: atom({
+    key: "filterPlayerDataIsTemp",
+    default: false,
+  }),
 };
 
 export const usePlayersState = () => useRecoilValue(playersState.playerData);
@@ -93,6 +98,9 @@ export const useSetPlayersState = () =>
 export const useSetPlayerFilter = () =>
   useSetRecoilState(playersState.filterPlayerDataInput);
 
+export const useSetPlayersFilterIsTemp = () =>
+  useSetRecoilState(playersState.filterPlayerDataIsTemp);
+
 export const usePlayersSortedValue = () =>
   useRecoilValue(playersState.sortedAndFilteredPlayerData);
 
@@ -101,6 +109,9 @@ export const usePlayersSortBy = () =>
 
 export const usePlayersFilter = () =>
   useRecoilState(playersState.filterPlayerDataInput);
+
+export const usePlayersFilterIsTemp = () =>
+  useRecoilState(playersState.filterPlayerDataIsTemp);
 
 export const useFilteredSortedPlayers = (): PlayerData[] =>
   useRecoilValue(playersState.sortedAndFilteredPlayerData);
@@ -244,7 +255,7 @@ debugData<PlayerData[]>(
   3000
 );
 
-function mockData() {
+function mockData () {
   const randomUsernames = [
     "hamy",
     "taso",
