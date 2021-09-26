@@ -15,6 +15,7 @@ import { IFrameProvider } from "./provider/IFrameProvider";
 import { useCheckCredentials } from "./hooks/useCheckCredentials";
 import { PlayerModalProvider } from "./provider/PlayerModalProvider";
 import { txAdminMenuPage, useSetPage } from "./state/page.state";
+import { useListenerForSomething } from "./hooks/useListenerForSomething";
 
 debugData(
   [
@@ -47,6 +48,8 @@ const MenuWrapper: React.FC = () => {
   const localeSelected = useMemo(() => getLocale(serverCtx.locale), [
     serverCtx.locale,
   ]);
+
+  useListenerForSomething();
 
   const styled = visible ? { opacity: 1 } : undefined;
 
