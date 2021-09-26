@@ -6,7 +6,6 @@ const { LoggerBase, separator } = require('../loggerUtils');
 
 /*
 NOTE: Expected time cap based on log size cap to prevent memory leak
-
 Big server: 300 events/min (freeroam/dm with 100+ players)
 Medium servers: 30 events/min (rp with up to 64 players)
 
@@ -21,15 +20,30 @@ NOTE: Although we could comfortably do 64k cap, even if showing 500 lines per pa
 navigate through 128 pages, so let's do 16k cap since there is not even a way for the admin to skip
 pages since it's all relative (older/newer) just like github's tags/releases page.
 
+NOTE: Final code after 2.5h at 2400 events/min with websocket client the memory usage was 135mb
 
-FIXME: after testing, I could not reproduce just with log array the memory leak numbers seen in issues.
-Investigate if there are other memory leaks, or maybe if the array.concat(payload) is the issue
-To match the issue on issue #427, we would need 300k events to be a 470mb increase in rss and I
-measured only 94mb worst case scenario
 
 TODO: maybe a way to let big servers filter what is logged or not? That would be an export in fxs,
 before sending it to fd3
 */
+
+//DEBUG testing stuff
+// let cnt = 0;
+// setInterval(() => {
+//     cnt++;
+//     if (cnt > 84) cnt = 1;
+//     const mtx = globals.fxRunner.currentMutex || 'lmao';
+//     const payload = [
+//         {
+//             src: 'tx',
+//             ts: Date.now(),
+//             type: 'DebugMessage',
+//             data: cnt + '='.repeat(cnt),
+//         },
+//     ];
+//     globals.logger.server.write(mtx, payload);
+// }, 750);
+
 
 module.exports = class ServerLogger extends LoggerBase {
     constructor(basePath, lrProfileConfig) {
@@ -51,7 +65,6 @@ module.exports = class ServerLogger extends LoggerBase {
             if (GlobalData.verbose) log(`Rotated file ${filename}`);
         });
 
-
         this.recentBuffer = [];
         this.recentBufferMaxSize = 32e3;
         this.cachedPlayers = new Map(); //TODO: maybe move to playerController in the future
@@ -63,6 +76,7 @@ module.exports = class ServerLogger extends LoggerBase {
      */
     getUsageStats() {
         // include this.cachedPlayers.size
+        // this.recentBuffer.length - same for the other loggers
         // calculate events per minute moving average 10 && peak
         return `Errors: ${this.lrErrors}`;
     }
@@ -90,9 +104,7 @@ module.exports = class ServerLogger extends LoggerBase {
 
         //Processing events
         for (let i = 0; i < data.length; i++) {
-            logError(`loop ${i}:`);
-            // dir(data[i]); //DEBUG
-            // continue;
+            // logError(`loop ${i}:`); dir(data[i]); //DEBUG
             try {
                 const {eventObject, eventString} = this.processEvent(mutex, data[i]);
                 // dir({eventObject, eventString});
@@ -210,7 +222,7 @@ module.exports = class ServerLogger extends LoggerBase {
             const command = eventData.data || 'unknown';
             eventMessage = `executed: /${command}`;
 
-        } else if (eventData.type === 'LoggerStarted') { //DONE
+        } else if (eventData.type === 'LoggerStarted') {
             eventMessage = 'Logger started';
 
         } else if (eventData.type === 'DebugMessage') {
@@ -248,43 +260,36 @@ module.exports = class ServerLogger extends LoggerBase {
 
 
     /**
-     * FIXME: ???
-     * @param {*} timestamp
-     * @param {*} sliceLength
-     * @returns
+     * Returns a slice of the recent buffer OLDER than a reference timestamp.
+     * @param {Number} timestamp
+     * @param {Number} sliceLength
      */
     readPartialNewer(timestamp, sliceLength) {
-        throw new Error('Not yet implemented.');
-
-        const limitIndex = source.findIndex((x) => x.ts > timestamp);
-        return events.slice(limitIndex, limitIndex + sliceLength);
+        const limitIndex = this.recentBuffer.findIndex((x) => x.ts > timestamp);
+        return this.recentBuffer.slice(limitIndex, limitIndex + sliceLength);
     }
 
 
     /**
-     * FIXME: ???
-     * @param {*} timestamp
-     * @param {*} sliceLength
-     * @returns
+     * Returns a slice of the recent buffer NEWER than a reference timestamp.
+     * @param {Number} timestamp
+     * @param {Number} sliceLength
      */
     readPartialOlder(timestamp, sliceLength) {
-        throw new Error('Not yet implemented.');
-
-        const limitIndex = source.findIndex((x) => x.ts >= timestamp);
+        const limitIndex = this.recentBuffer.findIndex((x) => x.ts >= timestamp);
 
         //everything is older, return last few
         if (limitIndex === -1) {
-            return events.slice(-sliceLength);
-
+            return this.recentBuffer.slice(-sliceLength);
         //not everything is older
         } else {
-            return events.slice(Math.max(0, limitIndex - sliceLength), limitIndex);
+            return this.recentBuffer.slice(Math.max(0, limitIndex - sliceLength), limitIndex);
         }
     }
 
 
     /**
-     * FIXME: ???
+     * TODO: filter function, so we can search for all log from a specific player
      */
     readFiltered() {
         throw new Error('Not yet implemented.');

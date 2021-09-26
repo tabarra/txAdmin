@@ -259,10 +259,8 @@
                 const offsetHeight = consoleElement.offsetHeight;
                 const contentHeight = scrollHeight - offsetHeight;
                 if (scrollTop < contentHeight) {
-                    console.log('Auto scroll disabled.');
                     autoscrollToggle(false);
                 } else if(scrollTop === contentHeight){
-                    console.log('Auto scroll enabled.');
                     autoscrollToggle(true);
                 }
             }

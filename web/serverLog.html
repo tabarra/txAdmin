@@ -43,35 +43,28 @@
     <div class="col-xl-3 col-lg-12 pb-2" style="min-width: 235px;">
         <div class="card border-primary" >
             <div class="card-body text-center">
-                <div id="cardstatus-live" class="d-nonex">
-                    <h4>Mode: <span class="text-success">LIVE</span></h4>
-                    <button type="button" class="btn btn-outline-dark btn-sm mb-2">
-                        View Older
-                    </button>
-                    <button type="button" id="clearConsole" class="btn btn-outline-dark btn-sm mb-2">
-                        Clear Console
-                    </button>
-                    <button type="button" id="toggleAutoScroll" class="btn btn-outline-dark btn-sm mb-2">
-                        Download Log
-                    </button>
-                </div>
-
-                <div id="cardstatus-history" class="d-nonex">
-                    <h4>Mode: <span class="text-warning">HISTORY</span></h4>
+                <div id="cardstatus" class="d-nonex">
+                    <h4>Mode: <span class="text-success" id="modeLabel">LIVE</span></h4>
                     <p>
                         <strong>From:</strong> <span id="histLogStart">--</span> <br>
                         <strong>To:</strong> <span id="histLogEnd">--</span> <br>
                     </p>
-                    <button type="button" class="btn btn-outline-dark btn-sm mb-2">
-                        View Older
+                    <button type="button" class="btn btn-outline-dark btn-sm mb-2" id="viewOlderBtn">
+                        &lt; View Older
                     </button>
-                    <button type="button" class="btn btn-outline-dark btn-sm mb-2">
-                        View Newer
+                    <button type="button" class="btn btn-outline-dark btn-sm mb-2" id="viewNewerBtn">
+                        View Newer &gt;
                     </button>
-                    <button type="button" id="toggleAutoScroll"
-                            class="btn btn-outline-dark btn-sm mb-2">Download Log
+                    <br>
+                    <button type="button" id="clearConsole" class="btn btn-outline-dark btn-sm mb-2">
+                        Clear Console
+                    </button>
+                    <!-- TODO: add modal -->
+                    <button type="button" id="showLogsModalBtn" class="btn btn-outline-dark btn-sm mb-2 d-none">
+                        Download Log
                     </button>
                 </div>
+
                 <hr class="border-primary">
 
                 <h4>Filters:</h4>
@@ -169,13 +162,15 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.min.js"></script>
 <script>
-    //============================================== Server Log stuff
     (function () {
-        //Preparing variables
+        //============================================== Preparing variables
         const autoScrollBtn = document.getElementById("autoScrollBtn");
         const logContainer = document.getElementById("logContainer");
+        const modeLabel = document.getElementById("modeLabel");
         const histLogStart = document.getElementById("histLogStart");
         const histLogEnd = document.getElementById("histLogEnd");
+        const viewOlderBtn = document.getElementById("viewOlderBtn");
+        const viewNewerBtn = document.getElementById("viewNewerBtn");
         const MAX_HISTORY_SIZE = 500;
         const frameTimeOptions = {weekday: 'long', hour: '2-digit', minute: '2-digit'};
         const eventTimeOptions = {hour: '2-digit', minute: '2-digit', second: '2-digit'};
@@ -189,35 +184,98 @@
         let logStartTs, logEndTs;
         let eventFilters = {};
         let autoScroll = true;
-        logContainer.innerHTML = `<div style="height: 90%;" class="d-flex"><div style="margin: auto;">${SPINNER_HTML}</div></div>`;
+        let socket;
+        const logContainerSpinner = `<div style="height: 90%;" class="d-flex"><div style="margin: auto;">${SPINNER_HTML}</div></div>`;
         
 
-        //Socket things
-        let socket;
-        if (isWebInterface) {
-            socket = io({ ...defaultSocketOpts, path: '/socket.io' });
-            // socket = {on:()=>{}}
-        } else {
-            socket = io('monitor', { ...defaultSocketOpts, path: '/WebPipe/socket.io' });
+        //============================================== Mode selection
+        function goLive() {
+            logContainer.innerHTML = logContainerSpinner;
+            modeLabel.classList.remove('text-warning');
+            modeLabel.classList.add('text-success');
+            modeLabel.textContent = 'LIVE';
+            viewOlderBtn.disabled = false;
+            viewNewerBtn.disabled = true;
+
+            if (isWebInterface) {
+                socket = io({ ...defaultSocketOpts, path: '/socket.io' });
+                // socket = {on:()=>{}}
+            } else {
+                socket = io('monitor', { ...defaultSocketOpts, path: '/WebPipe/socket.io' });
+            }
+            socket.on('error', (error) => {
+                console.dir(error)
+            });
+            socket.on('connect', () => {
+                console.log("Socket.IO Connected.");
+                logContainer.innerHTML = '';
+            });
+            socket.on('disconnect', () => {
+                console.log("Socket.IO Disonnected.");
+            });
+            socket.on('goDashboard', (error) => {
+                window.location = '/';
+            });
+            socket.on('logData', processLog);
         }
 
-        socket.on('error', (error) => {
-            console.dir(error)
-        });
-        socket.on('connect', () => {
-            console.log("Socket.IO Connected.");
-            logContainer.innerHTML = '';
-        });
-        socket.on('disconnect', () => {
-            console.log("Socket.IO Disonnected.");
-        });
-        socket.on('goDashboard', (error) => {
-            window.location = '/';
-        });
-        socket.on('logData', processLog);
+        function goHistory(direction) {
+            let ref;
+            if(direction === 'older'){
+                ref = logStartTs;
+            }else if(direction === 'newer'){
+                ref = logEndTs;
+            }else{
+                throw new Error(`unknown direction`);
+            }
+            socket.disconnect();
+            logContainer.innerHTML = logContainerSpinner;
+            modeLabel.classList.add('text-warning');
+            modeLabel.classList.remove('text-success');
+            modeLabel.textContent = 'LOG';
+            viewOlderBtn.disabled = false;
+            viewNewerBtn.disabled = false;
 
+            //Get log from API
+            txAdminAPI({
+                url: `/serverLog/partial?dir=${direction}&ref=${ref}`,
+                type: 'GET',
+                timeout: REQ_TIMEOUT_MEDIUM,
+                success: function (data) {
+                    logContainer.innerHTML = '';
+                    if(!Array.isArray(data.log)){
+                        logContainer.innerHTML = 'Failed to load log. Please refresh the page and try again.';
+                        return;
+                    }
+                    //FIXME: reorganize this mess
+                    if(data.boundry){
+                        if(direction === 'older'){
+                            if(!data.log.length){
+                                logContainer.innerHTML = 'No more log entries to show.';
+                            }else{
+                                processLog(data.log);
+                            }
+                            viewOlderBtn.disabled = true;
+                        }else{
+                            goLive();
+                        }
+                        return;
+                    }
+                    processLog(data.log);
 
-        //Handling filters
+                    // TODO: da até pra depois do processLog() adicionar um <a> pra ir older ou newer
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    logContainer.innerHTML = 'Failed to load log. Please refresh the page and try again.';
+                },
+            });
+        }
+
+        // TODO: check if search string then do goLive() or goHistory()
+        goLive();
+        
+
+        //============================================== Handling filters
         if(typeof window.localStorage.eventFilters !== 'undefined'){
             try {
                 const fromStorage = JSON.parse(window.localStorage.eventFilters);
@@ -264,7 +322,7 @@
         }
 
 
-        //AutoScroll Things
+        //============================================== AutoScroll Things
         const scrollBottom = () => {
             if (autoScroll) logContainer.scrollTop = logContainer.scrollHeight;
         }
@@ -283,10 +341,8 @@
                 const offsetHeight = logContainer.offsetHeight;
                 const contentHeight = scrollHeight - offsetHeight;
                 if (scrollTop < contentHeight) {
-                    console.log('Auto scroll disabled.');
                     autoscrollToggle(false);
                 } else if(scrollTop === contentHeight){
-                    console.log('Auto scroll enabled.');
                     autoscrollToggle(true);
                 }
             }
@@ -297,13 +353,22 @@
         });
 
 
-        //Buttons
+        //============================================== Buttons
+        document.getElementById("viewOlderBtn").addEventListener("click", function () {
+            goHistory('older');
+        });
+        document.getElementById("viewNewerBtn").addEventListener("click", function () {
+            goHistory('newer');
+        });
         document.getElementById("clearConsole").addEventListener("click", function () {
             logContainer.innerHTML = "";
         });
+        document.getElementById("showLogsModalBtn").addEventListener("click", function () {
+            //TODO: add modal stuff
+        });
 
 
-        //Log processor
+        //============================================== Log processor
         function processLog(events) {
             const showTypes = getShowTypes();
             //For every new entry

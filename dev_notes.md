@@ -18,7 +18,8 @@
 - [x] fix cause of death being always suicide (commit 9434d427)
 - [x] update material ui to v5
 - [x] fix(core): removed ansi color escape from srvCmdBuffer
-- [ ] new server log
+- [x] new server log with pagination and filter
+- [ ] fix player modal for new server log
 - [ ] new console log
 - [ ] fix logging data on diagnostics page
 - [ ] document new log thing
@@ -450,4 +451,9 @@ npx eslint ./src/** --fix
 console.log('hanging the thread for 60s');
 Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 60 * 1000);
 console.log('done');
+
+# check chart
+cdt
+cd web/public/
+curl -o svMain.json http://localhost:40120/chartData/svMain
 ```

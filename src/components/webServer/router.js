@@ -106,9 +106,18 @@ module.exports = (config) => {
 
     //Data routes
     router.get('/txAdminLog', requestAuth('web'), webRoutes.txAdminLog);
-    router.get('/serverLog/:offset?', requestAuth('web'), webRoutes.serverLog); //FIXME: param fix due to missing search
+    router.get('/serverLog', requestAuth('web'), webRoutes.serverLog);
+    router.get('/serverLog/partial', requestAuth('api'), webRoutes.serverLogPartial);
     router.get('/status/:scope?', requestAuth('api'), webRoutes.status); //FIXME: param fix due to missing search
     router.get('/chartData/:thread?', chartDataLimiter, webRoutes.chartData); //FIXME: param fix due to missing search
+
+    /*
+        FIXME: reorganizar TODAS rotas de logs, incluindo listagem e download
+        /logs/:logpage - WEB
+        /logs/:log/list - API
+        /logs/:log/partial - API
+        /logs/:log/download - WEB
+    */
 
     //Player routes
     router.get('/player/list', requestAuth('web'), webRoutes.player.list);

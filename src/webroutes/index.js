@@ -3,7 +3,6 @@ exports.diagnostics = require('./diagnostics.js');
 exports.intercom = require('./intercom.js');
 exports.liveConsole = require('./liveConsole.js');
 exports.resources = require('./resources.js');
-exports.serverLog = require('./serverLog.js');
 exports.status = require('./status.js');
 exports.chartData = require('./chartData.js');
 exports.txAdminLog = require('./txAdminLog.js');
@@ -55,6 +54,10 @@ exports.fxserver = {
     controls: require('./fxserver/controls'),
     downloadLog: require('./fxserver/downloadLog'),
 };
+
+//FIXME: reorganizar TODAS rotas de logs, incluindo listagem e download
+exports.serverLog = require('./serverLog.js');
+exports.serverLogPartial = require('./serverLogPartial.js');
 
 exports.player = {
     list: require('./player/list'),
