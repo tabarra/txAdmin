@@ -39,7 +39,6 @@ local suggestionParams = {
 }
 
 RegisterCommand('txadmin', txadmin)
-TriggerEvent('chat:addSuggestion', '/txadmin', suggestionDesc, suggestionParams)
 RegisterCommand('tx', txadmin)
 TriggerEvent('chat:addSuggestion', '/tx', suggestionDesc, suggestionParams)
 

@@ -37,6 +37,33 @@ RegisterNUICallback('getServerCtx', function(_, cb)
     end)
 end)
 
+-- Removing unwanted chat suggestions
+-- We only want suggestion for: /tx, /txAdmin-debug, /txAdmin-reauth
+CreateThread(function()
+    Wait(1000)
+    TriggerEvent('chat:removeSuggestion', '/txadmin') --too spammy
+    TriggerEvent('chat:removeSuggestion', '/txaPing')
+    TriggerEvent('chat:removeSuggestion', '/txaWarnID')
+    TriggerEvent('chat:removeSuggestion', '/txaKickAll')
+    TriggerEvent('chat:removeSuggestion', '/txaKickID')
+    TriggerEvent('chat:removeSuggestion', '/txaDropIdentifiers')
+    TriggerEvent('chat:removeSuggestion', '/txaBroadcast')
+    TriggerEvent('chat:removeSuggestion', '/txaEvent')
+    TriggerEvent('chat:removeSuggestion', '/txaSendDM')
+    TriggerEvent('chat:removeSuggestion', '/txaReportResources')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:noClipToggle')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:endSpectate')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-version')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-locale')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-verbose')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-apiHost')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-apiToken')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-checkPlayerJoin')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-pipeToken')
+    TriggerEvent('chat:removeSuggestion', '/txAdminServerMode')
+end)
+
+
 -- Disabled for the moment until player list can be investigated
 -- fully
 
