@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Box, InputAdornment, MenuItem, Theme, Typography } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import {
+  Box,
+  InputAdornment,
+  MenuItem,
+  styled,
+  Theme,
+  Typography,
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { Search, SortByAlpha } from "@mui/icons-material";
 import {
   PlayerDataSort,
@@ -13,24 +20,24 @@ import { useServerCtxValue } from "../../state/server.state";
 import { useTranslate } from "react-polyglot";
 import { TextField } from "../misc/TextField";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  title: {
-    fontWeight: 600,
-  },
-  playerCount: {
-    color: theme.palette.text.secondary,
-    fontWeight: 500,
-  },
-  icon: {
-    color: theme.palette.text.secondary,
-  },
-  inputs: {
-    minWidth: 150,
-  },
+const TypographyTitle = styled(Typography)(({ theme }) => ({
+  fontWeight: 600,
 }));
 
+const TypographyPlayerCount = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  fontWeight: 500,
+}));
+
+const InputAdornmentIcon = styled(InputAdornment)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+}));
+
+const TextFieldInputs = styled(TextField)({
+  minWidth: 150,
+});
+
 export const PlayerPageHeader: React.FC = () => {
-  const classes = useStyles();
   const [sortType, setSortType] = usePlayersSortBy();
   const setPlayerFilter = useSetPlayerFilter();
   const allPlayers = usePlayersState();
@@ -56,40 +63,43 @@ export const PlayerPageHeader: React.FC = () => {
   return (
     <Box display="flex" justifyContent="space-between">
       <Box px={2}>
-        <Typography variant="h5" color="primary" className={classes.title}>
+        <TypographyTitle variant="h5" color="primary">
           {t("nui_menu.page_players.misc.online_players")}
-        </Typography>
-        <Typography className={classes.playerCount}>
-          {`${allPlayers.length}/${serverCtx.maxClients} ${t('nui_menu.page_players.misc.players')} - ${
-            serverCtx.oneSync.status ? `OneSync (${serverCtx.oneSync.type})` : `OneSync Off`}`}
-        </Typography>
+        </TypographyTitle>
+        <TypographyPlayerCount>
+          {`${allPlayers.length}/${serverCtx.maxClients} ${t(
+            "nui_menu.page_players.misc.players"
+          )} - ${
+            serverCtx.oneSync.status
+              ? `OneSync (${serverCtx.oneSync.type})`
+              : `OneSync Off`
+          }`}
+        </TypographyPlayerCount>
       </Box>
       <Box display="flex" alignItems="center" justifyContent="center">
-        <TextField
+        <TextFieldInputs
           label={t("nui_menu.page_players.misc.search")}
           value={searchVal}
           onChange={handleSearchChange}
-          className={classes.inputs}
           InputProps={{
             startAdornment: (
-              <InputAdornment position="start" className={classes.icon}>
+              <InputAdornmentIcon position="start">
                 <Search color="inherit" />
-              </InputAdornment>
+              </InputAdornmentIcon>
             ),
           }}
           style={{ marginRight: 20 }}
         />
-        <TextField
+        <TextFieldInputs
           label={t("nui_menu.page_players.sort.label")}
           select
-          className={classes.inputs}
           onChange={handleSortData}
           value={sortType}
           InputProps={{
             startAdornment: (
-              <InputAdornment position="start" className={classes.icon}>
+              <InputAdornmentIcon position="start">
                 <SortByAlpha color="inherit" />
-              </InputAdornment>
+              </InputAdornmentIcon>
             ),
           }}
         >
@@ -113,7 +123,7 @@ export const PlayerPageHeader: React.FC = () => {
               "nui_menu.page_players.sort.farthest"
             )})`}
           </MenuItem>
-        </TextField>
+        </TextFieldInputs>
       </Box>
     </Box>
   );

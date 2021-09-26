@@ -1,28 +1,25 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useFilteredSortedPlayers } from "../../state/players.state";
 import PlayerCard from "./PlayerCard";
-import { Box, CircularProgress } from "@mui/material";
-
-import makeStyles from '@mui/styles/makeStyles';
+import { Box, CircularProgress, styled } from "@mui/material";
 
 const MAX_PER_BUCKET = 40;
 const FAKE_LOAD_TIME = 1000;
 
-const useStyles = makeStyles({
-  wrapper: {
-    overflow: "auto",
-  },
-  loadTrigger: {
-    height: 50,
-  },
-  loadingSpinner: {
-    display: "flex",
-    justifyContent: "center",
-  },
+const DivWrapper = styled("div")({
+  overflow: "auto",
+});
+
+const DivLoadTrigger = styled("div")({
+  height: 50,
+});
+
+const BoxLoadingSpinner = styled(Box)({
+  display: "flex",
+  justifyContent: "center",
 });
 
 export const PlayersListGrid: React.FC = () => {
-  const classes = useStyles();
   const filteredPlayers = useFilteredSortedPlayers();
   const [bucket, setBucket] = useState(1);
   const [fakeLoading, setFakeLoading] = useState(false);
@@ -67,7 +64,7 @@ export const PlayersListGrid: React.FC = () => {
   }, [handleObserver]);
 
   return (
-    <div className={classes.wrapper}>
+    <DivWrapper>
       <Box
         display="grid"
         gridTemplateColumns="repeat(auto-fill, minmax(300px, 1fr))"
@@ -76,12 +73,12 @@ export const PlayersListGrid: React.FC = () => {
           <PlayerCard playerData={player} key={player.id} />
         ))}
       </Box>
-      <div ref={containerRef} className={classes.loadTrigger} />
+      <DivLoadTrigger ref={containerRef} />
       {fakeLoading && (
-        <Box className={classes.loadingSpinner}>
+        <BoxLoadingSpinner>
           <CircularProgress />
-        </Box>
+        </BoxLoadingSpinner>
       )}
-    </div>
+    </DivWrapper>
   );
 };
