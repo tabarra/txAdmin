@@ -32,16 +32,8 @@ local function txadmin(_, args)
     sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
   end
 end
-
-local suggestionDesc = 'Opens the main txAdmin Menu or specific for a player.';
-local suggestionParams = {
-  { name="player id", help="(Optional) Open player modal for specific ID." }
-}
-
 RegisterCommand('txadmin', txadmin)
 RegisterCommand('tx', txadmin)
-TriggerEvent('chat:addSuggestion', '/tx', suggestionDesc, suggestionParams)
-
 
 
 -- The rest of the file will not be run if convar isn't set
@@ -69,6 +61,25 @@ RegisterCommand('txAdmin-reauth', function()
     TriggerEvent('txAdmin:menu:reAuth')
   end
 end)
+
+-- Register chat suggestions
+TriggerEvent(
+  'chat:addSuggestion', 
+  '/tx', 
+  'Opens the main txAdmin Menu or specific for a player.', 
+  {{ name="player id", help="(Optional) Open player modal for specific ID." }}
+)
+TriggerEvent(
+  'chat:addSuggestion', 
+  '/txAdmin-reauth', 
+  'Retries to authenticate the menu NUI. Requires debug mode to be on.'
+)
+TriggerEvent(
+  'chat:addSuggestion', 
+  '/txAdmin-debug', 
+  'Enables or disables the debug mode. Requires \'control.server\' permission.',
+  {{ name="1|0", help="1 to enable, 0 to disable" }}
+)
 
 -- Triggers reauth process
 RegisterNetEvent('txAdmin:menu:reAuth', function()
