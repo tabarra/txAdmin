@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useKeyboardNavContext } from "../provider/KeyboardNavProvider";
-import { useIsMenuVisible } from "../state/visibility.state";
+import { useIsMenuVisibleValue } from "../state/visibility.state";
 
 interface KeyCallbacks {
   onLeftDown?: () => void;
@@ -33,7 +33,7 @@ export const useKeyboardNavigation = ({
   disableOnFocused = false,
 }: KeyCallbacks) => {
   const { disabledKeyNav } = useKeyboardNavContext();
-  const isMenuVisible = useIsMenuVisible();
+  const isMenuVisible = useIsMenuVisibleValue();
 
   useEffect(() => {
     // Our basic handler function for keydown events

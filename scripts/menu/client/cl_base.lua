@@ -15,18 +15,24 @@ CreateThread(function()
 end)
 
 -- Command to be used with the register key mapping
-local function txadmin()
+local function txadmin(_, args)
   -- Check if we have an available ref to the global function
   if not registerTxKeybinds then
     return sendSnackbarMessage('error', 'nui_menu.misc.not_enabled', true)
   end
 
   if menuIsAccessible then
+    local targetPlayer = args[1] and tonumber(args[1])
     toggleMenuVisibility()
+    -- Shortcut to open a specific players profile
+    if isMenuVisible and targetPlayer then
+      sendMenuMessage('openPlayerModal', targetPlayer)
+    end
   else
     sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
   end
 end
+
 RegisterCommand('txadmin', txadmin)
 RegisterCommand('tx', txadmin)
 

@@ -5,7 +5,11 @@ import { Box, Typography } from "@mui/material";
 import { useTranslate } from "react-polyglot";
 import { shouldHelpAlertShow } from "../utils/shouldHelpAlertShow";
 import { debugData } from "../utils/debugData";
-import { getNotiDuration } from '../utils/getNotiDuration';
+import { getNotiDuration } from "../utils/getNotiDuration";
+import { usePlayersState } from "../state/players.state";
+import { usePlayerModalContext } from "../provider/PlayerModalProvider";
+import { useSetAssociatedPlayer } from "../state/playerDetails.state";
+import { txAdminMenuPage, useSetPage } from "../state/page.state";
 
 type SnackbarAlertSeverities = "success" | "error" | "warning" | "info";
 
@@ -24,7 +28,10 @@ interface AnnounceMessageProps {
   message: string;
 }
 
-const AnnounceMessage: React.FC<AnnounceMessageProps> = ({ title, message }) => (
+const AnnounceMessage: React.FC<AnnounceMessageProps> = ({
+  title,
+  message,
+}) => (
   <Box maxWidth={200}>
     <Typography style={{ fontWeight: "bold" }}>{title}</Typography>
     {message}
@@ -46,6 +53,10 @@ debugData(
 export const useHudListenersService = () => {
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
   const t = useTranslate();
+  const onlinePlayers = usePlayersState();
+  const setAssocPlayer = useSetAssociatedPlayer();
+  const { setModalOpen } = usePlayerModalContext();
+  const setPage = useSetPage();
 
   const snackFormat = (m) => (
     <span style={{ whiteSpace: "pre-wrap" }}>{m}</span>
@@ -103,14 +114,37 @@ export const useHudListenersService = () => {
     alertMap.delete(key);
   });
 
+  // Handler for dynamically opening the player page & player modal with target
+  useNuiEvent<number>("openPlayerModal", (targetId) => {
+    const targetPlayer = onlinePlayers.find(
+      (playerData) => playerData.id === targetId
+    );
+
+    if (!targetPlayer)
+      return enqueueSnackbar(
+        t("nui_menu.player_modal.misc.target_not_found", { targetId }),
+        { variant: "error" }
+      );
+
+    setPage(txAdminMenuPage.Players);
+    setAssocPlayer(targetPlayer);
+    setModalOpen(true);
+  });
+
   useNuiEvent("addAnnounceMessage", ({ message }: { message: string }) => {
-    enqueueSnackbar(<AnnounceMessage message={message} title={t('nui_menu.misc.announcement_title')} />, {
-      variant: "info",
-      autoHideDuration: getNotiDuration(message) * 1000,
-      anchorOrigin: {
-        horizontal: "right",
-        vertical: "top",
-      },
-    });
+    enqueueSnackbar(
+      <AnnounceMessage
+        message={message}
+        title={t("nui_menu.misc.announcement_title")}
+      />,
+      {
+        variant: "info",
+        autoHideDuration: getNotiDuration(message) * 1000,
+        anchorOrigin: {
+          horizontal: "right",
+          vertical: "top",
+        },
+      }
+    );
   });
 };

@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Box, List, Theme } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import { MenuListItem, MenuListItemMulti } from "./MenuListItem";
 import {
   AccessibilityNew,
@@ -25,13 +25,13 @@ import { fetchNui } from "../../utils/fetchNui";
 import { useTranslate } from "react-polyglot";
 import { useSnackbar } from "notistack";
 import { PlayerMode, usePlayerMode } from "../../state/playermode.state";
-import { useIsMenuVisible } from "../../state/visibility.state";
+import { useIsMenuVisibleValue } from "../../state/visibility.state";
 import { TeleportMode, useTeleportMode } from "../../state/teleportmode.state";
 import { HealMode, useHealMode } from "../../state/healmode.state";
 import { arrayRandom } from "../../utils/miscUtils";
 import { copyToClipboard } from "../../utils/copyToClipboard";
-import { useServerCtxValue } from '../../state/server.state';
-import { VehicleMode, useVehicleMode } from '../../state/vehiclemode.state';
+import { useServerCtxValue } from "../../state/server.state";
+import { VehicleMode, useVehicleMode } from "../../state/vehiclemode.state";
 
 const fadeHeight = 20;
 const listHeight = 388;
@@ -72,8 +72,8 @@ export const MainPageList: React.FC = () => {
   const [teleportMode, setTeleportMode] = useTeleportMode();
   const [healMode, setHealMode] = useHealMode();
   const [vehicleMode, setVehicleMode] = useVehicleMode();
-  const serverCtx = useServerCtxValue()
-  const menuVisible = useIsMenuVisible();
+  const serverCtx = useServerCtxValue();
+  const menuVisible = useIsMenuVisibleValue();
   const classes = useStyles();
 
   // the directions are inverted
@@ -174,7 +174,10 @@ export const MainPageList: React.FC = () => {
     // we disable this function from being used if onesync
     // isn't on
     if (!serverCtx.oneSync.status) {
-      return enqueueSnackbar(t('nui_menu.page_main.car_options.onesync_error'), { variant: 'error' })
+      return enqueueSnackbar(
+        t("nui_menu.page_main.car_options.onesync_error"),
+        { variant: "error" }
+      );
     }
 
     openDialog({
@@ -232,7 +235,10 @@ export const MainPageList: React.FC = () => {
   const handleDeleteVehicle = () => {
     // If onesync is disabled, show an error due to server side entity handling
     if (!serverCtx.oneSync.status) {
-      return enqueueSnackbar(t('nui_menu.page_main.car_options.onesync_error'), { variant: 'error' })
+      return enqueueSnackbar(
+        t("nui_menu.page_main.car_options.onesync_error"),
+        { variant: "error" }
+      );
     }
 
     fetchNui("deleteVehicle").then(({ e }) => {
@@ -249,7 +255,7 @@ export const MainPageList: React.FC = () => {
         variant: "info",
       });
     });
-  }
+  };
 
   const handleFixVehicle = () => {
     fetchNui("fixVehicle").then(({ e }) => {

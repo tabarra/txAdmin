@@ -1,10 +1,10 @@
 import React, { ChangeEvent, useCallback } from "react";
 import { Box, Tab, Tabs } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import { usePage } from "../../state/page.state";
 import { useKey } from "../../hooks/useKey";
 import { useTabDisabledValue } from "../../state/keys.state";
-import { useIsMenuVisible } from "../../state/visibility.state";
+import { useIsMenuVisibleValue } from "../../state/visibility.state";
 import { useServerCtxValue } from "../../state/server.state";
 
 const useStyles = makeStyles({
@@ -17,10 +17,13 @@ export const PageTabs: React.FC = () => {
   const classes = useStyles();
   const [page, setPage] = usePage();
   const tabDisabled = useTabDisabledValue();
-  const visible = useIsMenuVisible();
+  const visible = useIsMenuVisibleValue();
   const serverCtx = useServerCtxValue();
 
-  const handleChange = (event: ChangeEvent<Record<string, never>>, newValue: number) => {
+  const handleChange = (
+    event: ChangeEvent<Record<string, never>>,
+    newValue: number
+  ) => {
     setPage(newValue);
   };
 

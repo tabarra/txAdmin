@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import "./App.css";
-import { useIsMenuVisible } from "./state/visibility.state";
+import { useIsMenuVisibleValue } from "./state/visibility.state";
 import MenuRoot from "./components/MenuRoot";
 import { DialogProvider } from "./provider/DialogProvider";
 import { useExitListener } from "./hooks/useExitListener";
@@ -27,7 +27,7 @@ debugData(
 );
 
 const MenuWrapper: React.FC = () => {
-  const visible = useIsMenuVisible();
+  const visible = useIsMenuVisibleValue();
   const serverCtx = useServerCtxValue();
   const setPage = useSetPage();
   // These hooks don't ever unmount

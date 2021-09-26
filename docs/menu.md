@@ -71,8 +71,9 @@ of the menu
 
 ### Commands
 **tx | txadmin**
-* Description: Will toggle the in-game menu
-* Usage: `/tx`, `/txadmin`
+* Description: Will toggle the in-game menu. This command has an optional argument of a player id that will 
+quickly open up the target player's info modal.
+* Usage: `/tx (playerID)`, `/txadmin (playerID)`
 * Required Perm: `Must be an admin registered in the Admin Manager`
 
 **txAdmin-debug**
