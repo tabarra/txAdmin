@@ -161,7 +161,7 @@ module.exports = class ConfigVault {
             };
         } catch (error) {
             if (GlobalData.verbose) dir(error);
-            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`);
+            throw new Error(`Malformed configuration file! Make sure your txAdmin is updated!\nOriginal error: ${error.message}`);
         }
 
         return out;

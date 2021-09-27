@@ -1,32 +1,18 @@
 ## TODO:
-- [x] changed onesync to be "on" by default
-- [x] noclip: update heading automatically + optimization
-- [x] tweak: error logging stuff
-- [x] feat: chart data rate limit
-- [x] feat(web/diagnostics): redacting cfx/steam/tebex keys
-- [x] feat: prevent noobs from messing setup/deploy opts
-- [x] tweak(core): removed space checking in fx paths
-- [x] fix(menu/spectate): fix for audio / texture loss when spectating a moving player 
-- [x] feat: allow two tx on same browser (closes #395)
-- [x] fix(client/state): fix not properly checking for netId existing, closes #443
-- [x] feat(menu/main): delete vehicle sub option
-- [x] fix(core): memory leak on server log 
-- [x] fix(nui): auth source for zap servers
-- [x] chore: updated a few dependencies
 > v4.5.0
 - [x] FIXME: bunch of missing stuff here
 - [x] fix cause of death being always suicide (commit 9434d427)
 - [x] update material ui to v5
 - [x] fix(core): removed ansi color escape from srvCmdBuffer
 - [x] new server log with pagination and filter
-- [ ] fix player modal for new server log
-- [ ] new console log
-- [ ] fix logging data on diagnostics page
-- [ ] document new log thing
-- [ ] clean this file
+- [x] document new log thing
+- [x] clean this file
 - [ ] update dev env to fxs/node16 
 - [ ] update packages & test
 - [ ] update lowdb
+- [ ] fix player modal for new server log
+- [ ] new console log
+- [ ] fix logging data on diagnostics page
 - [ ] try json stream on lowdb
 - [ ] write db optimization functions
 - [ ] somehow still manage to fix the playerlist?
@@ -35,75 +21,14 @@
 
 
 
+> User report: when admin use txadmin for first time, system ask him to change password, if he change it, all admins must restart to get txadmin working again
+
+> We could totally do like a "jump in time" feature for the log page.
+> A slider with 500 steps, and an array with 500 timestamps
+> this array can be done by dividing the serverLog.length to get the step, then a for loop to get the timestamps
 
 
 
-when admin use txadmin for first time, system ask him to change password, if he change it, all admins must restart to get txadmin working again
-
-
-
-### Log Stuff:
-- manter array de objetos em memória
-- limitar array para 16k elementos, isso deve dar 1h em servidores muito grandes (266 eventos por minuto)
-- o identificador nos objetos fica o nome e id do jogador junto do mutex do server
-- interface quando receber, transforma o username em clicável
-- server mantem em memória todos os ids de todos os mutex desde que o tx iniciou playerIds = {"mutex": {"id": [...]}} 
-- quando chegar, já coloca em um buffer que dumpa pra logfile com nome serverlog_timestamp.log, totalmente human readable
-- quando player entrar, jogar no logfile "player joined {mutex|id} Nome [...identifiers], assim da pra dar um ctrl+f
-- quando iniciar o tx pegar todos os logs da pasta e ir deletando os mais antigos até que o peso total da pasta seja menor que 2gb?
-https://www.npmjs.com/package/file-stream-rotator
-https://www.npmjs.com/package/rotating-file-stream
-https://www.npmjs.com/package/simple-node-logger
-
-Olhar links acima, caso nada ajude fazer:
-- os registros ficam lá na memória com um timestamp
-- página do server log via socket.io channels (tem que mudar live console tb) assim ele n precisa nunca ter o problema de fetch atualizações
-- no topo do log tem duas opções: real time e older log
-na opção older log, não há nenhum tipo de live ou socket.io, é só fazer paginação normal ou inline (ai os registros são inseridos por meio de uma div de página, e essa div pode ser deletada pra salvar memória)
-
-> provavelmente não: os botões de prev e next podem ser `data-timestamp="xxx" onclick="seekOlder(this)"` e a função pega o this, le o parametro, depois remove o elemento na hora de inserir os novos dados
-
-mover os logs do lua pra dentro do js, e parar de logar perm denied, só printar no console do child fxserver
-
-
-
-Página de log:
-- 500 items limite, tanto live quanto histórico
-- quando clicar na paginação, ele faz um search no log passando "older than X" ou "newer than X", e limita 500 entradas
-
-
-
-
-
-
-```js
-//NOTE: could be optimized by a a for loop skipping 1k, reading single src[i] and stopping
-// after it doesn't satisfy search function, then do a slice and only then run the findindex
-function sliceLogNewer(source, timestamp, sliceLength) {
-    const limitIndex = source.findIndex((x) => x.ts > timestamp);
-    return events.slice(limitIndex, limitIndex + sliceLength);
-}
-function sliceLogOlder(source, timestamp, sliceLength) {
-    const limitIndex = source.findIndex((x) => x.ts >= timestamp);
-
-    //everything is older, return last few
-    if (limitIndex === -1) {
-        return events.slice(-sliceLength);
-
-    //not everything is older
-    } else {
-        return events.slice(Math.max(0, limitIndex - sliceLength), limitIndex);
-    }
-}
-```
-
-
-
-TODO: we could totally do like a "jump in time" feature for the log page.
-A slider with 500 steps, and an array with 500 timestamps
-this array can be done by dividing the serverLog.length to get the step, then a for loop to get the timestamps
-
->/**/
 
 
 
@@ -166,8 +91,6 @@ To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 > Don't use, but I'll leave it saved here: https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
 
 
-
-
 ### Admin gun
 An "admin gun" where you point a gun to a player and when you point it to a player it shows this player's info, and when you "shoot it" it opens that player's modal.
 If not a custom gun model, just use the point animation and make sure we have a crosshair
@@ -177,6 +100,9 @@ If not a custom gun model, just use the point animation and make sure we have a 
 - checksum for downloaded files
 - remove_path accept array?
 - every X download_github wait some time - maybe check if ref or not, to be smarter
+- https://github.com/isomorphic-git/isomorphic-git
+- easy recipe tester
+- fully automated deploy process via CLI. You just set the recipe file path, as well as the required variables, and you can get your server running without any user interaction .
 
 ### Todozinhos:
 pagina de adicionar admin precisa depois do modal, mostrar mais info:
@@ -273,22 +199,6 @@ https://github.com/citizenfx/fivem/search?q=KeyedRateLimiter
 We could wait for the server to finish loading, as well as print in the interface somewhere an descending ordered list of large resource assets
 https://github.com/citizenfx/fivem/blob/649dac8e9c9702cc3e293f8b6a48105a9378b3f5/code/components/citizen-server-impl/src/ResourceStreamComponent.cpp#L435
 
-
-### Git clone using isomorphic-git
-https://github.com/isomorphic-git/isomorphic-git
-
-
-### HWID tokens
-https://github.com/citizenfx/fivem/commit/f52b4b994a316e1f89423b97c92d73b624bea731
-```lua
-local pid = 1
-local hwids = {}
-local max = GetNumPlayerTokens(pid)
-for i = 0, max do
-    hwids[i+1] = GetPlayerToken(pid, i)
-end
-print(json.encode(hwids))
-```
 
 ### Spectating with routing bucket:
 Message from bubble:
