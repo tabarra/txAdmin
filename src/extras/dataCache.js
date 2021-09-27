@@ -3,7 +3,7 @@ const cloneDeep = require('lodash/cloneDeep');
 
 module.exports = class Cache {
     constructor(cacheTime) {
-        this.cacheTime = cacheTime;
+        this.cacheTime = cacheTime * 1000; //converting to ms
         this.dataTimestamp = null;
         this.data = false;
     }
@@ -13,7 +13,7 @@ module.exports = class Cache {
      * @param {*} data
      */
     set(data) {
-        this.dataTimestamp = Math.round(Date.now() / 1000);
+        this.dataTimestamp = Date.now();
         this.data = data;
     }
 
@@ -21,7 +21,7 @@ module.exports = class Cache {
      * Returns the cache if valid, or false
      */
     get() {
-        const now = Math.round(Date.now() / 1000);
+        const now = Date.now();
         if (now - this.dataTimestamp < this.cacheTime) {
             return cloneDeep(this.data);
         } else {

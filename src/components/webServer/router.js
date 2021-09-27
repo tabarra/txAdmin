@@ -49,6 +49,15 @@ module.exports = (config) => {
         disableHeader: true,
         id: (ctx) => ctx.txVars.realIP,
     });
+    const chartDataLimiter = KoaRateLimit({
+        driver: 'memory',
+        db: new Map(),
+        max: 10,
+        duration: 30 * 1000,
+        errorMessage: JSON.stringify({failReason: 'rate_limiter'}),
+        disableHeader: true,
+        id: (ctx) => ctx.txVars.realIP,
+    });
 
     //Authentication
     router.get('/auth', webRoutes.auth.get);
@@ -99,7 +108,7 @@ module.exports = (config) => {
     router.get('/txAdminLog', requestAuth('web'), webRoutes.txAdminLog);
     router.get('/serverLog/:offset?', requestAuth('web'), webRoutes.serverLog); //FIXME: param fix due to missing search
     router.get('/status/:scope?', requestAuth('api'), webRoutes.status); //FIXME: param fix due to missing search
-    router.get('/chartData/:thread?', webRoutes.chartData); //FIXME: param fix due to missing search
+    router.get('/chartData/:thread?', chartDataLimiter, webRoutes.chartData); //FIXME: param fix due to missing search
 
     //Player routes
     router.get('/player/list', requestAuth('web'), webRoutes.player.list);

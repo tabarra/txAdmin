@@ -89,6 +89,19 @@ RegisterNUICallback('spawnVehicle', function(data, cb)
     end
 end)
 
+RegisterNUICallback("deleteVehicle", function(data, cb)
+    local ped = PlayerPedId()
+    local veh = GetVehiclePedIsIn(ped, false)
+    if veh and veh > 0 then
+        local netId = NetworkGetNetworkIdFromEntity(veh)
+        TriggerServerEvent("txAdmin:menu:deleteVehicle", netId)
+
+        cb({})
+    else
+        cb({ e = true })
+    end
+end)
+
 RegisterNUICallback('healPlayer', function(data, cb)
     TriggerServerEvent('txAdmin:menu:healPlayer', tonumber(data.id))
     cb({})
@@ -165,7 +178,10 @@ RegisterNetEvent('txAdmin:menu:clearArea', function(radius)
     local curCoords = GetEntityCoords(PlayerPedId())
     local radiusToFloat = radius + 0.0
     debugPrint(('Radius to clear %d'):format(radius))
-    ClearArea(curCoords.x, curCoords.y, curCoords.z, radiusToFloat, false, false, false, false, false)
+    -- WTF?: User reports that this native actually clears dead peds compared to
+    -- ClearArea? Weird considering Gottfried updated this native from _CLEAR_AREA_OF_EVERYTHING
+    -- after found nativedb info. Maybe needs research lmao?
+    ClearAreaLeaveVehicleHealth(curCoords.x, curCoords.y, curCoords.z, radiusToFloat, false, false, false, false, false)
 end)
 
 ---@param coords vec3

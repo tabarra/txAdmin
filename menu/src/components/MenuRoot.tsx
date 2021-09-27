@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const MenuRoot: React.FC = () => {
   const classes = useStyles();
   const perms = usePermissionsValue();
-  const serverCtx = useServerCtxValue()
+  const serverCtx = useServerCtxValue();
   // We need to mount this here so we can get access to
   // the translation context
   useHudListenersService();

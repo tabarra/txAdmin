@@ -54,11 +54,6 @@ module.exports = async function Intercom(ctx) {
             timestamp: new Date(),
             data: postData.resources,
         };
-    } else if (scope == 'logger') {
-        if (!Array.isArray(postData.log)) {
-            return ctx.utils.error(400, 'Invalid Request');
-        }
-        globals.databus.serverLog = globals.databus.serverLog.concat(postData.log);
     } else if (scope == 'checkPlayerJoin') {
         if (!Array.isArray(postData.identifiers) || typeof postData.name !== 'string') {
             return ctx.utils.error(400, 'Invalid Request');
