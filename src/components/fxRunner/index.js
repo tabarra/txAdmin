@@ -2,6 +2,7 @@
 const modulename = 'FXRunner';
 const { spawn } = require('child_process');
 const path = require('path');
+const chalk = require('chalk');
 const sleep = require('util').promisify((a, f) => setTimeout(f, a));
 const { parseArgsStringToArgv } = require('string-argv');
 const StreamValues = require('stream-json/streamers/StreamValues');
@@ -399,7 +400,7 @@ module.exports = class FXRunner {
         if (this.fxChild === null) return false;
         try {
             const success = this.fxChild.stdin.write(command + '\n');
-            globals.webServer.webConsole.buffer(command, 'command');
+            globals.webServer.webSocket.buffer('liveconsole', command, 'command');
             return success;
         } catch (error) {
             if (GlobalData.verbose) {
@@ -413,18 +414,35 @@ module.exports = class FXRunner {
 
     //================================================================
     /**
+     * Handles a live console command input
+     * @param {object} session
+     * @param {string} command
+     */
+    liveConsoleCmdHandler(session, command) {
+        log(`${session.auth.username} executing ` + chalk.inverse(' ' + command + ' '), 'SocketIO');
+        globals.logger.append(`[${session.auth.username}] ${command}`);
+        globals.fxRunner.srvCmd(command);
+    }
+
+
+    //================================================================
+    /**
      * Pipe a string into FXServer's stdin (aka executes a cfx's command) and returns the stdout output.
+     * NOTE: used only in webroutes\fxserver\commands.js and webroutes\player\actions.js
+     * FIXME: deprecate this with a promise that resolves or rejects.
+     * we can create a promise with settimeout to reject, and create a function that resolves it
+     * and set this function in a map with the cmd id, and the resolve function as value
+     * the internal functions should fd3 {id, message?} and outputhandler do Map.get(id)(message)
      * @param {*} command
      * @param {*} bufferTime the size of the buffer in milliseconds
      * @returns {string} buffer
      */
-    async srvCmdBuffer(command, bufferTime) {
+    async srvCmdBuffer(command, bufferTime = 1500) {
         if (typeof command !== 'string') throw new Error('Expected String!');
         if (this.fxChild === null) return false;
-        bufferTime = (bufferTime !== undefined) ? bufferTime : 1500;
         this.outputHandler.cmdBuffer = '';
         this.outputHandler.enableCmdBuffer = true;
-        let result = this.srvCmd(command);
+        const result = this.srvCmd(command);
         if (!result) return false;
         await sleep(bufferTime);
         this.outputHandler.enableCmdBuffer = false;

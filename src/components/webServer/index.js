@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'WebServer';
+const crypto = require('crypto');
 const path = require('path');
 const HttpClass  = require('http');
 
@@ -11,7 +12,7 @@ const KoaSessionMemoryStoreClass = require('koa-session-memory');
 
 const SocketIO = require('socket.io');
 const SessionIO = require('koa-session-socketio');
-const WebConsole = require('./webConsole');
+const WebSocket = require('./webSocket');
 
 const { customAlphabet } = require('nanoid');
 const dict51 = require('nanoid-dictionary/nolookalikes');
@@ -28,12 +29,18 @@ module.exports = class WebServer {
         this.config = config;
         this.intercomToken = nanoid();
         this.fxWebPipeToken = nanoid();
-        this.koaSessionKey = `txAdmin:${globals.info.serverProfile}:sess`;
-        this.webConsole = null;
+        this.webSocket = null;
         this.isListening = false;
 
+        //Generate cookie key
+        const pathHash = crypto.createHash('shake256', { outputLength: 6 })
+            .update(globals.info.serverProfilePath)
+            .digest('hex');
+        this.koaSessionKey = `tx:${globals.info.serverProfile}:${pathHash}`;
+
+        //Setup services
         this.setupKoa();
-        this.setupWebsocket();
+        this.setupWebSocket();
         this.setupServerCallbacks();
 
         //Cron function
@@ -110,23 +117,40 @@ module.exports = class WebServer {
                     return ctx.body = '[no output from route]';
                 }
             } catch (error) {
-                //TODO: we should also have a koa-bodyparser generic error handler
-                // sending broken json will cause internal server error even without the route being called
+                const prefix = `[txAdmin v${GlobalData.txAdminVersion}]`;
+                const reqPath = (ctx.path.length > 100) ? `${ctx.path.slice(0, 97)}...` : ctx.path;
                 const methodName = (error.stack && error.stack[0] && error.stack[0].name) ? error.stack[0].name : 'anonym';
+
+                //NOTE: I couldn't force xss on path message, but just in case I'm forcing it here
+                //but it is overwritten by koa when we set the body to an object, which is fine
+                ctx.type = 'text/plain';
+                ctx.set('X-Content-Type-Options', 'nosniff');
+
+                //NOTE: not using HTTP logger endpoint anymore, FD3 only
                 if (error.type === 'entity.too.large') {
-                    const desc = `Entity too large for: ${ctx.path}`;
+                    const desc = `Entity too large for: ${reqPath}`;
                     if (GlobalData.verbose) logError(desc, methodName);
                     ctx.status = 413;
                     ctx.body = {error: desc};
                 } else if (ctx.state.timeout) {
-                    const desc = `[txAdmin v${GlobalData.txAdminVersion}] Route timed out: ${ctx.path}`;
+                    const desc = `${prefix} Route timed out: ${reqPath}`;
                     logError(desc, methodName);
                     ctx.status = 408;
                     ctx.body = desc;
+                } else if (error.message === 'Malicious Path') {
+                    const desc = `${prefix} Malicious Path: ${reqPath}`;
+                    if (GlobalData.verbose) logError(desc, methodName);
+                    ctx.status = 406;
+                    ctx.body = desc;
+                } else if (error.message.match(/^Unexpected token .+ in JSON at position \d+$/)) {
+                    const desc = `${prefix} Invalid JSON for: ${reqPath}`;
+                    if (GlobalData.verbose) logError(desc, methodName);
+                    ctx.status = 400;
+                    ctx.body = {error: desc};
                 } else {
-                    const desc = `[txAdmin v${GlobalData.txAdminVersion}] Internal Error\n`
+                    const desc = `${prefix} Internal Error\n`
                                  + `Message: ${error.message}\n`
-                                 + `Route: ${ctx.path}\n`
+                                 + `Route: ${reqPath}\n`
                                  + 'Make sure your txAdmin is updated.';
                     logError(desc, methodName);
                     if (GlobalData.verbose) dir(error);
@@ -165,20 +189,20 @@ module.exports = class WebServer {
 
 
     //================================================================
-    setupWebsocket() {
+    setupWebSocket() {
         //Start SocketIO
         this.io = SocketIO(HttpClass.createServer(), { serveClient: false });
         this.io.use(SessionIO(this.koaSessionKey, this.koaSessionMemoryStore));
         this.io.use(requestAuth('socket'));
 
-        //Setting up WebConsole
-        this.webConsole = new WebConsole(this.io);
-        this.io.on('connection', this.webConsole.handleConnection.bind(this.webConsole));
+        //Setting up webSocket
+        this.webSocket = new WebSocket(this.io);
+        this.io.on('connection', this.webSocket.handleConnection.bind(this.webSocket));
         //NOTE: when using namespaces:
         // this.io.on('connection', client => {
         //     logError('Triggered when not using any type of namespace.')
         // });
-        // this.io.of('/console').use(this.webConsole.handleConnection.bind(this.webConsole));
+        // this.io.of('/console').use(this.webSocket.handleConnection.bind(this.webSocket));
     }
 
 

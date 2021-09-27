@@ -288,9 +288,15 @@
                                         {{@if(it.isZapHosting)}}
                                             <span class="font-weight-bold">ZAP-Hosting warning: this path must start with <code>{{it.txDataPath}}</code>.</span> <br>
                                         {{/if}}
-                                        <strong>We strongly recommend using the path suggested below.</strong>
-                                        <input type="text" class="form-control mt-2" id="s5DeployerTargetInput"
-                                            placeholder="C:/Users/Admin/Desktop/server01/server.cfg">
+                                        <strong>We strongly recommend using the path suggested below.</strong>                     
+                                        <div class="input-group mt-2">
+                                            <input type="text" class="form-control" id="s5DeployerTargetInput"
+                                                placeholder="C:/Users/Admin/Desktop/server01/server.cfg" disabled>
+                                            <span class="input-group-append">
+                                                <button class="btn btn-sm btn-outline-dark" type="button" id="s5DeployerTargetChangeBtn"
+                                                    onclick="s5DeployerTargetEnablePath()">Change Path</button>
+                                            </span>
+                                        </div>
                                         <span id="s5DeployerTargetError" class="text-danger fade-in d-none"></span>
                                         <div class="step-actions">
                                             <button class="btn btn-pill btn-secondary previous-step"
@@ -479,6 +485,7 @@
         const s5DeployerTargetDiv = document.getElementById("s5DeployerTargetDiv");
         const s5ServerCFGDiv = document.getElementById("s5ServerCFGDiv");
         
+        const s5DeployerTargetChangeBtn = document.getElementById("s5DeployerTargetChangeBtn");
         const s5DeployerTargetInput = document.getElementById("s5DeployerTargetInput");
         const s5DeployerTargetError = document.getElementById("s5DeployerTargetError");
         s5DeployerTargetInput.addEventListener("keyup", inputKeyUp);
@@ -645,6 +652,8 @@
             const deployData = buildDeployName(loadedTemplates[key].name);
             s5DeployerTargetInput.value = deployData.path;
             deploymentID = deployData.id;
+            s5DeployerTargetInput.disabled = true;
+            s5DeployerTargetChangeBtn.classList.remove('d-none');
             stepperInstace.nextStep();
         }
 
@@ -686,6 +695,14 @@
                     destroyFeedback(false);
                 }
             });
+        }
+
+
+        //Local deploy path enable
+        function s5DeployerTargetEnablePath(){
+            s5DeployerTargetInput.disabled = false;
+            s5DeployerTargetInput.focus();
+            s5DeployerTargetChangeBtn.classList.add('d-none');
         }
 
         

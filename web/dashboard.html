@@ -256,6 +256,8 @@
                     draw('Players & Performance chart will be available in an hour.');
                 }else if(parsedPerfData.failReason == 'data_processing'){
                     draw('chart data processing failed');
+                }else if(parsedPerfData.failReason == 'rate_limiter'){
+                    draw('too many chart requests');
                 }else{
                     draw('invalid chart data');
                 }

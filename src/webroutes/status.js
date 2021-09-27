@@ -12,6 +12,7 @@ module.exports = async function GetStatus(ctx) {
     const out = {
         meta: prepareMetaData(),
     };
+    //FIXME: this is useless, iframe only needs serverStatus, and not metadata
     if (ctx.params.scope === 'web') {
         out.host = prepareHostData();
         out.status = prepareServerStatus();
@@ -63,11 +64,9 @@ function prepareServerStatus() {
     }
     const processStatus = globals.fxRunner.getStatus();
 
-    let out = `Discord Bot Status: <span class="badge badge-${discordStatusClass}"> ${discordStatus} </span> <br>
+    return `Discord Bot Status: <span class="badge badge-${discordStatusClass}"> ${discordStatus} </span> <br>
         Server Status: <span class="badge badge-${monitorStatusClass}"> ${monitorStatus} </span> <br>
         Process Status: <span class="font-weight-light">${processStatus}</span>`;
-
-    return out;
 }
 
 

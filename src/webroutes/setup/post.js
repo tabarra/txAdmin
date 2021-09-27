@@ -137,10 +137,11 @@ async function handleValidateLocalDeployPath(ctx) {
     }
     const deployPath = slash(path.normalize(ctx.request.body.deployPath.trim()));
     if (deployPath.includes(' ')) {
-        return ctx.send({
-            success: false,
-            message: 'The path cannot contain spaces (the space character that separate words).',
-        });
+        // return ctx.send({
+        //     success: false,
+        //     message: 'The path cannot contain spaces (the space character that separate words).',
+        // });
+        //tabSpaceDisabledThingy
     }
 
     //Perform path checking
@@ -164,7 +165,8 @@ async function handleValidateLocalDataFolder(ctx) {
     }
     const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim() + '/'));
     if (dataFolderPath.includes(' ')) {
-        return ctx.send({success: false, message: 'The path cannot contain spaces (the space character that separate words).'});
+        // return ctx.send({success: false, message: 'The path cannot contain spaces (the space character that separate words).'});
+        //tabSpaceDisabledThingy
     }
 
     try {
@@ -235,7 +237,8 @@ async function handleValidateCFGFile(ctx) {
     const cfgFilePathNormalized = slash(path.normalize(ctx.request.body.cfgFile.trim()));
     const cfgFilePath = helpers.resolveCFGFilePath(cfgFilePathNormalized, dataFolderPath);
     if (cfgFilePath.includes(' ')) {
-        return ctx.send({success: false, message: 'The path cannot contain spaces (the space character that separate words).'});
+        // return ctx.send({success: false, message: 'The path cannot contain spaces (the space character that separate words).'});
+        //tabSpaceDisabledThingy
     }
 
     //Try to read file
@@ -282,7 +285,8 @@ async function handleSaveLocal(ctx) {
 
     //Validating path spaces
     if (cfg.dataFolder.includes(' ') || cfg.cfgFile.includes(' ')) {
-        return ctx.send({success: false, message: 'The paths cannot contain spaces (the space character that separate words).'});
+        // return ctx.send({success: false, message: 'The paths cannot contain spaces (the space character that separate words).'});
+        //tabSpaceDisabledThingy
     }
 
     //Validating Base Path

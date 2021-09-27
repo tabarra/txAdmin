@@ -15,7 +15,7 @@ const sessDuration = 60 * 60 * 1000; //one hour
 // FIXME: add logging
 module.exports = async function VerifyNuiAuth(ctx) {
     // Check sus IPs
-    if (!GlobalData.loopbackInterfaces.includes(ctx.ip)) {
+    if (!GlobalData.loopbackInterfaces.includes(ctx.ip) && !GlobalData.isZapHosting) {
         if (GlobalData.verbose) {
             logWarn(`NUI Auth Failed: ctx.ip (${ctx.ip}) not in ${JSON.stringify(GlobalData.loopbackInterfaces)}.`);
         }

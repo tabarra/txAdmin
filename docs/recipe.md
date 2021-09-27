@@ -87,6 +87,7 @@ If the directory structure does not exist, it is created.
 - `ref`: *(optional)* The git reference to be fownloaded. This can be a branch, a tag, or a commit hash. If none is set, the recipe engine will query GitHub's API to get the default branch name (usually `master` or `main`).
 - `subpath`: *(optional)* When specified, copies a subpath of the repository.
 - `dest`: The destination path for the downloaded file.
+> Note: If you have more than 30 of this action, it is recommended to set the ref, otherwise users will may end up getting download errors (401/403 instead of 429) due to the number of times txAdmin calls the GitHub API.
 ```yaml
 # Example with subpath and reference
 - action: download_github
