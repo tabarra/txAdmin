@@ -13,7 +13,8 @@ import {
   PlayerDataSort,
   usePlayersSortBy,
   usePlayersState,
-  useSetPlayerFilter,
+  usePlayersFilter,
+  useSetPlayersFilterIsTemp
 } from "../../state/players.state";
 import { useDebounce } from "../../hooks/useDebouce";
 import { useServerCtxValue } from "../../state/server.state";
@@ -39,9 +40,10 @@ const TextFieldInputs = styled(TextField)({
 
 export const PlayerPageHeader: React.FC = () => {
   const [sortType, setSortType] = usePlayersSortBy();
-  const setPlayerFilter = useSetPlayerFilter();
+  const [playerFilter, setPlayerFilter] = usePlayersFilter();
   const allPlayers = usePlayersState();
   const [searchVal, setSearchVal] = useState("");
+  const setPlayersFilterIsTemp = useSetPlayersFilterIsTemp();
   const serverCtx = useServerCtxValue();
   const t = useTranslate();
 
@@ -54,11 +56,17 @@ export const PlayerPageHeader: React.FC = () => {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchVal(e.target.value);
+    setPlayersFilterIsTemp(false);
   };
 
   useEffect(() => {
     setPlayerFilter(debouncedInput as string);
   }, [debouncedInput, setPlayerFilter]);
+
+  // Synchronize filter from player state, used for optional args in /tx
+  useEffect(() => {
+    setSearchVal(playerFilter);
+  }, [playerFilter])
 
   return (
     <Box display="flex" justifyContent="space-between">
@@ -69,11 +77,10 @@ export const PlayerPageHeader: React.FC = () => {
         <TypographyPlayerCount>
           {`${allPlayers.length}/${serverCtx.maxClients} ${t(
             "nui_menu.page_players.misc.players"
-          )} - ${
-            serverCtx.oneSync.status
-              ? `OneSync (${serverCtx.oneSync.type})`
-              : `OneSync Off`
-          }`}
+          )} - ${serverCtx.oneSync.status
+            ? `OneSync (${serverCtx.oneSync.type})`
+            : `OneSync Off`
+            }`}
         </TypographyPlayerCount>
       </Box>
       <Box display="flex" alignItems="center" justifyContent="center">
