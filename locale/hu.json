@@ -11,7 +11,7 @@
         "partial_hang_warn_discord": "Részleges lefagyás miatt, a **%{servername}** 1 perc múlva újraindul.",
         "schedule_reason": "ütemezett újraindítás %{time}",
         "schedule_warn": "A szerver ütemezett újraindítás miatt, %{smart_count} percen belül újraindul. Kérjük, lépj ki!. |||| A szerver ütemezetten újra indul %{smart_count} perc múlva.",
-        "schedule_warn_discord": "A **%{servername}** ütemezetten újraindul %{smart_count} perc múlva. |||| **%{servername}** ütemezetten újraindul %{smart_count} perc múlva."
+        "schedule_warn_discord": "A(z) **%{servername}** ütemezetten újraindul %{smart_count} perc múlva. |||| **%{servername}** ütemezetten újraindul %{smart_count} perc múlva."
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) Ki lettél tiltva a szerverről. Indok: \"%{reason}\". Lejár: %{expiration}.",
@@ -21,9 +21,9 @@
     },
     "server_actions": {
         "restarting": "Szerver újraindítása: (%{reason}).",
-        "restarting_discord": "**%{servername}** újraindul: (%{reason}).",
+        "restarting_discord": "**%{servername}** újraindul (%{reason}).",
         "stopping": "A szerver leáll (%{reason}).",
-        "stopping_discord": "**%{servername}**-t leállítják: (%{reason}).",
+        "stopping_discord": "**%{servername}**-t leállítják (%{reason}).",
         "spawning_discord": "**%{servername}** indul."
     },
     "discord": {
