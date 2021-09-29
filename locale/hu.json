@@ -8,7 +8,7 @@
         "crash_detected": "összeomlás észlelve",
         "hang_detected": "lefagyás észlelve",
         "partial_hang_warn": "Részleges lefagyás miatt a szerver 1 perc múlva újraindul. Kérjük, lépj ki.",
-        "partial_hang_warn_discord": "Részleges lefagyás miatt a **%{servername}** 1 perc múlva újraindul.",
+        "partial_hang_warn_discord": "Részleges lefagyás miatt, a **%{servername}** 1 perc múlva újraindul.",
         "schedule_reason": "ütemezett újraindítás %{time}",
         "schedule_warn": "A szerver ütemezett újraindítás miatt, %{smart_count} percen belül újraindul. Kérjük, lépj ki!. |||| A szerver ütemezetten újra indul %{smart_count} perc múlva.",
         "schedule_warn_discord": "A **%{servername}** ütemezetten újraindul %{smart_count} perc múlva. |||| **%{servername}** ütemezetten újraindul %{smart_count} perc múlva."
@@ -16,8 +16,8 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Ki lettél tiltva a szerverről. Indok: \"%{reason}\". Lejár: %{expiration}.",
         "kick_permanent": "(%{author}) Véglegesen ki lettél tiltva a szerverről. Indok: \"%{reason}\".",
-        "reject_temporary": "Ki lettét tiltva a szerverről.\nLejár: %{expiration}.\nBan ID: %{id}.\nIndok: %{reason}.\Kitiltó admin: %{author}.",
-        "reject_permanent": "Véglegesen ki lettél tiltva a szerverről..\nBan ID: %{id}.\nIndok: %{reason}.\Kitiltó admin: %{author}."
+        "reject_temporary": "Ki lettét tiltva a szerverről.\nLejár: %{expiration}.\nBan ID: %{id}.\nIndok: %{reason}.\nKitiltó admin: %{author}.",
+        "reject_permanent": "Véglegesen ki lettél tiltva a szerverről..\nBan ID: %{id}.\nIndok: %{reason}.\nKitiltó admin: %{author}."
     },
     "server_actions": {
         "restarting": "Szerver újraindítása: (%{reason}).",
