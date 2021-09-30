@@ -133,7 +133,8 @@ RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, 
           debugPrint(("Authenticated admin %s with permissions %s and token %s."):format(src, json.encode(resp.permissions), resp.luaToken))
           ADMIN_DATA[src] = {
             perms = resp.permissions,
-            token = resp.luaToken
+            token = resp.luaToken,
+            bucket = 0
           }
           sendFullClientData(s)
         else

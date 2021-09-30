@@ -68,9 +68,25 @@ RegisterNetEvent('txAdmin:menu:spectatePlayer', function(id)
     if not target then
       return
     end
+    local tgtBucket = GetPlayerRoutingBucket(id)
+    local srcBucket = GetPlayerRoutingBucket(src)
+    if tgtBucket ~= srcBucket then 
+      ADMIN_DATA[tostring(src)].bucket = srcBucket
+      SetPlayerRoutingBucket(src, tgtBucket)
+    end
 
     local tgtCoords = GetEntityCoords(target)
     TriggerClientEvent('txAdmin:menu:specPlayerResp', src, id, tgtCoords)
   end
   TriggerEvent('txaLogger:menuEvent', src, 'spectatePlayer', allow, id)
+end)
+
+
+
+RegisterNetEvent('txAdmin:menu:endSpectate', function()
+  local src = source 
+  if ADMIN_DATA[tostring(src)].bucket then 
+    SetPlayerRoutingBucket(src, ADMIN_DATA[tostring(src)].bucket)
+    ADMIN_DATA[tostring(src)].bucket = 0 
+  end
 end)
