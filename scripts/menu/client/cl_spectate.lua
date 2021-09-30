@@ -180,6 +180,7 @@ RegisterCommand('txAdmin:menu:endSpectate', function()
     if isSpectateEnabled then
         toggleSpectate(storedTargetPed)
         preparePlayerForSpec(false)
+        TriggerServerEvent('txAdmin:menu:endSpectate')
     end
 end)
 
