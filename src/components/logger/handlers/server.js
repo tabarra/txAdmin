@@ -85,9 +85,11 @@ module.exports = class ServerLogger extends LoggerBase {
     /***
      * Returns the recent fxserver buffer containing HTML markers, and not XSS escaped.
      * The size of this buffer is usually above 64kb, never above 128kb.
+     * @param {Number} lastN
+     * @returns the recent buffer, optionally only the last N elements
      */
-    getRecentBuffer() {
-        return this.recentBuffer;
+    getRecentBuffer(lastN) {
+        return (lastN) ? this.recentBuffer.slice(-lastN) : this.recentBuffer;
     }
 
 

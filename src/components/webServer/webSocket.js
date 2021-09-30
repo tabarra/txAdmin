@@ -43,7 +43,7 @@ module.exports = class WebSocket {
                 permission: true, //everyone can see it
                 eventName: 'logData',
                 outBuffer: [],
-                initialData: () => globals.logger.server.getRecentBuffer(),
+                initialData: () => globals.logger.server.getRecentBuffer(500),
                 commands: {},
             },
         };
