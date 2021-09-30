@@ -220,6 +220,8 @@
         const viewOlderBtn = document.getElementById("viewOlderBtn");
         const viewNewerBtn = document.getElementById("viewNewerBtn");
         const MAX_HISTORY_SIZE = 500;
+        let eventBuffer = [];
+        const bufferProcessInterval = 500;
         const frameTimeOptions = {weekday: 'long', hour: '2-digit', minute: '2-digit'};
         const eventTimeOptions = {hour: '2-digit', minute: '2-digit', second: '2-digit'};
         const defaultSocketOpts = {
@@ -267,6 +269,22 @@
             socket.on('logData', processLog);
         }
 
+        const mql = window.matchMedia('(max-width: 992px)');
+
+        const targetEl = document.getElementById('filter-control-container');
+
+        if (mql.matches) {
+          targetEl.classList.add('collapse');
+        }
+
+        mql.addEventListener("change", (e) => {
+            if (e.matches && !targetEl.classList.contains('collapse')) {
+              return targetEl.classList.add('collapse');
+            }
+
+            if (targetEl.classList.contains('collapse')) targetEl.classList.remove('collapse');
+        })
+
         function goHistory(direction) {
             let ref;
             if(direction === 'older'){
@@ -277,6 +295,8 @@
                 throw new Error(`unknown direction`);
             }
             socket.disconnect();
+
+            eventBuffer = []
             logContainer.innerHTML = logContainerSpinner;
             modeLabel.classList.add('text-warning');
             modeLabel.classList.remove('text-success');
@@ -321,7 +341,7 @@
 
         // TODO: check if search string then do goLive() or goHistory()
         goLive();
-        
+
 
         //============================================== Handling filters
         if(typeof window.localStorage.eventFilters !== 'undefined'){
@@ -353,7 +373,7 @@
                 if(fn === 'System') return ['LoggerStarted', 'DebugMessage'];
                 return fn;
             });
-        
+
         function eventFiltersChanged(caller){
             eventFilters[caller.target.dataset.eType] = caller.target.checked;
             window.localStorage.eventFilters = JSON.stringify(eventFilters);
@@ -415,11 +435,47 @@
             //TODO: add modal stuff
         });
 
+        function ensureLogContainerLength() {
+            if (logContainer.childNodes.length > MAX_HISTORY_SIZE) {
+                logContainer.removeChild(logContainer.childNodes[0])
+            }
+        }
+
+        function processTimes() {
+            logStartTs = parseInt(logContainer.childNodes[0].dataset.eTs);
+            const logStartDate = new Date(logStartTs);
+            const logEndDate = new Date(logEndTs);
+            histLogStart.textContent = logStartDate.toLocaleString(window.navigator.language, frameTimeOptions);
+            histLogEnd.textContent = logEndDate.toLocaleString(window.navigator.language, frameTimeOptions);
+        }
+
+
+
+        setInterval(() => {
+            // nothing in the buffer to process
+            if (!eventBuffer.length) return;
+            const targetTask = eventBuffer[0]
+
+            if (!targetTask) return;
+
+            for (const el of targetTask) {
+                logContainer.append(el)
+            }
+
+            ensureLogContainerLength()
+            scrollBottom();
+
+            eventBuffer.splice(0, 1)
+        }, bufferProcessInterval)
 
         //============================================== Log processor
         function processLog(events) {
             const showTypes = getShowTypes();
             //For every new entry
+            const tempCache = []
+
+            const shouldSkipBuffer = events.length < 10 && !eventBuffer.length
+
             for (let i = 0; i < events.length; i++) {
                 const event = events[i];
                 logEndTs = event.ts;
@@ -450,23 +506,35 @@
                 //Message
                 const msgNode = document.createTextNode(event.msg);
                 lineElement.appendChild(msgNode);
-                
-                //Appending & capping log
-                logContainer.appendChild(lineElement)
-                if(logContainer.childNodes.length > MAX_HISTORY_SIZE){
-                    logContainer.removeChild(logContainer.childNodes[0])
+
+                // if (events.length >= 50) {
+                //     console.log('Skipping buffer')
+                //
+                // }
+
+                if (!shouldSkipBuffer) {
+                    logContainer.append(lineElement)
+                    processTimes()
+                    ensureLogContainerLength()
+                    scrollBottom();
+                } else {
+                    tempCache.push(lineElement)
                 }
             }
+            const CHUNK_SIZE = 30
 
-            //Process times
-            logStartTs = parseInt(logContainer.childNodes[0].dataset.eTs);
-            const logStartDate = new Date(logStartTs);
-            const logEndDate = new Date(logEndTs);
-            histLogStart.textContent = logStartDate.toLocaleString(window.navigator.language, frameTimeOptions);
-            histLogEnd.textContent = logEndDate.toLocaleString(window.navigator.language, frameTimeOptions);
+            const chunkArray = (arr, size) => {
+              let result = []
+              for (let i = 0; i < arr.length; i += size) {
+                let chunk = arr.slice(i, i + size)
+                result.push(chunk)
+              }
+              return result
+            }
 
-            //AutoScroll
-            scrollBottom();
+            const chunkedArr = chunkArray(tempCache, CHUNK_SIZE)
+
+            eventBuffer = eventBuffer.concat(chunkedArr)
         }
     })();
 </script>
