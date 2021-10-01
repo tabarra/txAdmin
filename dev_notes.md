@@ -7,18 +7,59 @@
 - [x] new server log with pagination and filter
 - [x] document new log thing
 - [x] clean this file
-- [ ] update dev env to fxs/node16 
-- [ ] update packages & test
-- [ ] update lowdb
+- [x] update dev env to fxs/node16 
+- [x] update packages & test
 - [ ] fix player modal for new server log
-- [ ] new console log
 - [ ] fix logging data on diagnostics page
-- [ ] try json stream on lowdb
 - [ ] write db optimization functions
-- [ ] somehow still manage to fix the playerlist?
-- [ ] change CitizenFX to Cfx.re as per branding consistency (ask the elements)
 - [ ] fix dashboard stats not working on iframe mode (#438)
 
+Carryover:
+- [ ] update lowdb
+- [ ] new console log
+- [ ] try json stream on lowdb
+- [ ] change CitizenFX to Cfx.re as per branding consistency (ask the elements)
+- [ ] somehow still manage to fix the playerlist?
+
+
+Updated:
+@koa/router   ^10.0.0   →   ^10.1.1
+adm-zip        ^0.5.5   →    ^0.5.6     test win/linux
+axios         ^0.21.1   →   ^0.21.4
+boxen          ^5.0.1   →    ^5.1.2
+chalk          ^4.1.1   →    ^4.1.2
+fs-extra       ^9.1.0   →   ^10.0.0
+@mui/material                            ^5.0.1   →     ^5.0.2
+koa                                     ^2.13.1   →    ^2.13.3
+koa-ratelimit                            ^5.0.0   →     ^5.0.1
+mysql2                                   ^2.2.5   →     ^2.3.0
+nanoid                                  ^3.1.23   →    ^3.1.28
+node-polyglot                            ^2.4.0   →     ^2.4.2
+notistack                         ^1.0.6-next.3   →     ^2.0.2
+openid-client                            ^4.7.4   →     ^4.9.0
+react-polyglot                           ^0.7.1   →     ^0.7.2
+rotating-file-stream                     ^2.1.5   →     ^2.1.6
+stream-json                              ^1.7.2   →     ^1.7.3
+systeminformation                        ^5.7.7   →     ^5.9.4
+@commitlint/cli                         ^12.1.4   →    ^13.2.0
+@commitlint/config-conventional         ^12.1.4   →    ^13.2.0
+@types/node                            ^16.7.10   →   ^16.10.2
+@types/react                           ^17.0.20   →   ^17.0.26
+eslint                                  ^7.30.0   →    ^7.32.0
+husky                                    ^6.0.0   →     ^7.0.2
+nodemon                                 ^2.0.10   →    ^2.0.13
+typescript                              ^4.3.5   →   ^4.4.3
+
+
+Not updated:
+dateformat      esm
+boxen           esm
+jose            apparently cjs is available, but does zap even plan on using it?
+lowdb           esm - complicated
+slash           esm
+windows-release esm
+
+https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
 
 
 > User report: when admin use txadmin for first time, system ask him to change password, if he change it, all admins must restart to get txadmin working again
