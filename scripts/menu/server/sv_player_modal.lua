@@ -85,8 +85,11 @@ end)
 
 RegisterNetEvent('txAdmin:menu:endSpectate', function()
   local src = source 
-  if ADMIN_DATA[tostring(src)].bucket then 
-    SetPlayerRoutingBucket(src, ADMIN_DATA[tostring(src)].bucket)
-    ADMIN_DATA[tostring(src)].bucket = 0 
+  local allow = PlayerHasTxPermission(src, 'players.spectate')
+  if allow then 
+    if ADMIN_DATA[tostring(src)].bucket then 
+      SetPlayerRoutingBucket(src, ADMIN_DATA[tostring(src)].bucket)
+      ADMIN_DATA[tostring(src)].bucket = 0 
+    end
   end
 end)
