@@ -6,7 +6,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../../extras/console'
  * Usage options:
  *  /addwl <wl req id>
  *  /addwl <license>
- *  /addwl <mention> ???
+ *  /addwl <mention>
  */
 module.exports = {
     description: 'Adds a players to the whitelist',
@@ -34,10 +34,11 @@ module.exports = {
         //Check usage
         if (args.length !== 1) {
             const msgLines = [
-                'Type in the whitelist Request ID (R####) or License Identifier.',
+                'Type in the whitelist Request ID (R####) or License Identifier or mention them.',
                 'Example:',
                 `\`${globals.discordBot.config.prefix}addwl R1234\``,
                 `\`${globals.discordBot.config.prefix}addwl license:65a97df7ab8208b531f5b7a9cb91c3b853095f1d\``,
+                `\`${globals.discordBot.config.prefix}addwl @Tabarra or 272800190639898628\``,    
                 'An option to whitelist using other identifiers will soon be available.',
             ];
             return await message.reply(msgLines.join('\n'));
@@ -51,14 +52,21 @@ module.exports = {
             reference = reference.toLowerCase();
         } else if (reference.length == 48) {
             reference = reference.substring(8).toLowerCase();
+        } else {
+            if (message.mentions.members.first()) {
+                reference = user.id
+        
+            } else {
+                reference = args[0]
+            }
         }
 
         //Check input validity
         if (
             !GlobalData.regexWhitelistReqID.test(reference)
-            && !/[0-9A-Fa-f]{40}/.test(reference)
+            && !/[0-9A-Fa-f]{40}/.test(reference) && !/[0-9A-Fa-f]{18}/.test(reference)
         ) {
-            return await message.reply('The value inserted is not a valid Whitelist Request ID (R####) nor a license identifier.');
+            return await message.reply('The value inserted is not a valid Whitelist Request ID (R####), license identifier nor a mention.');
         }
 
         //Whitelist reference

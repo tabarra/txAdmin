@@ -58,6 +58,7 @@ const validActions = ['ban', 'warn', 'whitelist'];
  *      - license
  *      - name
  *      - tsLastAttempt
+ *      - discord
  */
 module.exports = class PlayerController {
     constructor(config) {
@@ -310,12 +311,18 @@ module.exports = class PlayerController {
                     let license = idArray.find((id) => id.substring(0, 8) == 'license:');
                     if (!license) return {allow: false, reason: 'the whitelist module requires a license identifier.'};
                     license = license.substring(8);
+
+                    let discord = idArray.find((id) => id.substring(0, 8) == 'discord:');
+                    if (!discord) {discord = NULL}
+                    discord = discord.substring(8);
+
                     //Check for pending WL requests
                     const pending = await this.db.obj.get('pendingWL').find({license: license}).value();
                     let whitelistID;
                     if (pending) {
                         pending.name = playerName;
                         pending.tsLastAttempt = now();
+                        pending.discord = discord
                         whitelistID = pending.id;
                     } else {
                         whitelistID = 'R' + customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
@@ -324,6 +331,7 @@ module.exports = class PlayerController {
                             name: playerName,
                             license: license,
                             tsLastAttempt: now(),
+                            discord: discord,
                         };
                         await this.db.obj.get('pendingWL').push(toDB).value();
                     }
@@ -497,6 +505,11 @@ module.exports = class PlayerController {
             if (!pending) throw new Error('Pending ID not found in database');
             saveReference = [`license:${pending.license}`];
             playerName = pending.name;
+        } else if (/[0-9A-Fa-f]{18}/.test(reference)) {
+            pendingFilter = {discord: reference};
+            saveReference = [`discord:${reference}`];
+            const pending = await this.db.obj.get('pendingWL').find(pendingFilter).value();
+            if (pending) playerName = pending.name;
         } else {
             throw new Error('Invalid reference type');
         }
