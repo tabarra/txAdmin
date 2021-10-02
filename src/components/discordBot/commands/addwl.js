@@ -54,7 +54,7 @@ module.exports = {
             reference = reference.substring(8).toLowerCase();
         } else {
             if (message.mentions.members.first()) {
-                reference = user.id
+                reference = message.mentions.members.first().id
         
             } else {
                 reference = args[0]
