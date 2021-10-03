@@ -9,26 +9,25 @@
 - [x] clean this file
 - [x] update dev env to fxs/node16 
 - [x] update packages & test
-- [ ] fix player modal for new server log
+- [x] feat: database management page
 - [ ] fix logging data on diagnostics page
-- [ ] write db optimization functions
+- [ ] fix player modal for new server log
 - [ ] fix dashboard stats not working on iframe mode (#438)
 
 Carryover:
-- [ ] update lowdb
+- [ ] remove the "NEW" tag from `header.html` and `masterActions.html`
 - [ ] new console log
-- [ ] try json stream on lowdb
 - [ ] change CitizenFX to Cfx.re as per branding consistency (ask the elements)
 - [ ] somehow still manage to fix the playerlist?
 
 
 Updated:
-@koa/router   ^10.0.0   →   ^10.1.1
-adm-zip        ^0.5.5   →    ^0.5.6     test win/linux
-axios         ^0.21.1   →   ^0.21.4
-boxen          ^5.0.1   →    ^5.1.2
-chalk          ^4.1.1   →    ^4.1.2
-fs-extra       ^9.1.0   →   ^10.0.0
+@koa/router                             ^10.0.0   →    ^10.1.1
+adm-zip                                  ^0.5.5   →     ^0.5.6     test win/linux
+axios                                   ^0.21.1   →    ^0.21.4
+boxen                                    ^5.0.1   →     ^5.1.2
+chalk                                    ^4.1.1   →     ^4.1.2
+fs-extra                                 ^9.1.0   →    ^10.0.0
 @mui/material                            ^5.0.1   →     ^5.0.2
 koa                                     ^2.13.1   →    ^2.13.3
 koa-ratelimit                            ^5.0.0   →     ^5.0.1
@@ -48,7 +47,7 @@ systeminformation                        ^5.7.7   →     ^5.9.4
 eslint                                  ^7.30.0   →    ^7.32.0
 husky                                    ^6.0.0   →     ^7.0.2
 nodemon                                 ^2.0.10   →    ^2.0.13
-typescript                              ^4.3.5   →   ^4.4.3
+typescript                              ^4.3.5    →     ^4.4.3
 
 
 Not updated:
@@ -69,39 +68,57 @@ https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
 > this array can be done by dividing the serverLog.length to get the step, then a for loop to get the timestamps
 
 
-
+https://cdn.discordapp.com/attachments/589106731376836608/892124286360383488/unknown.png
+remover o \s?
 
 
 
 ### Menu playerlist fix
-When someone joins/leaves:
-- sv_playerlist sends {id, false} or {id, name, license} via event for the connected admins
-- client atualiza sua playerlist interna
+Server:
+- Will have it's own playerlist with {id, name, health, vehClass, coords}
+- Every 2.5s run through the playerlist updating {health, vehClass, coords}
+- On player Join/Leave:
+    - Add {id, name, 0, 0, 0} to playerlist or remove from playerlist
+    - TriggerClientEvent "updatePlayerlist" with [id, name] or [id, false] to all admins
+- On admin join/auth:
+    - Send event "setInitialPlaylist" with [[id, name]]
+- On gimmeDetailedPlayerlist event:
+    - check if admin
+    - get source coords
+    - for each player, get dist from source (cast to integer)
+    - reply with event setDetailedPlayerlist and payload [{id, health, vehClass, dist}]
 
-Client every 5 seconds:
-- if isMenuVisible TriggerServerEvent("gimmeDetailedPlayerlist")
+Client:
+- Updates playerlist on setInitialPlaylist/updatePlayerlist/setDetailedPlayerlist
+- On player tab open: getDetailedPlayerlist()
+- Every 5 seconds when player tab is opened: getDetailedPlayerlist()
+- Maybe: when the player tab is mounted, add a message that says "updating playerlist" and hide after first detailed playerlist arrives
 
-Server on gimmeDetailedPlayerlist
-- get requester's coords
+NOTE: delay based on function https://www.desmos.com/calculator/ls0lfokshc
+```lua
+local minDelay = 2000
+local maxDelay = 5000
+local maxPlayersDelayCeil = 150 --at this number, the delay won't increase more
 
+local hDiff = maxDelay - minDelay
+local calcDelay = (hDiff/maxPlayersDelayCeil) * playerCount + minDelay
+local delay = math.min(calcDelay, maxDelay)
+```
 
+NOTE: send everything as array? 
+[1234,"namenamenamename"]
+{"i":1234,"n":"namenamenamename"}
+[1234,200,1,9999]
+{"i":1234,"h":200,"v":1,"d":9999}
 
-### Database Management page
-- erase all whitelists
-- erase all bans
-- erase all warnings
-- Prune Database:
-    All options will be select boxes containing 3 options: none, conservative, aggressive
-    - Players (without notes) innactive for xxx days: 60, 30
-    - Warns older than xx days: 30, 7
-    - Bans: revoked, revoked or expired
-Add a note that to erase the entire database, the user should delete the `playersDB.json` (full path) file and restart txAdmin.
-Pre calculate all counts
+FIXME: update min fxserver version to the one where bubble exposed the GetVehClass to the server
+
+TODO: For now we can do this way, but probably better to set a linear function to get the interval from 2.5s to 5s (both client and server) based on the number of players
 
 
 
 ### txAdmin API/integrations:
-- ban/warn/whitelist + revoke action: probavly exports with GetInvokingResource() for perms 
+- ban/warn/whitelist + revoke action: probably exports with GetInvokingResource() for perms 
 - get player info (history, playtime, joindate, etc): state bags
 - events: keep the way it is
 > Note: confirm with bubble
@@ -164,6 +181,7 @@ debugModeEnabled and isMenuDebug are redundant, should probably just use the one
 - desabilitar master actions pra quando for NUI
 
 Small Stuff:
+- [ ] try json stream on lowdb
 - [ ] menu: add debouncer for main options keydown
 - [ ] menu: fix heal self/server behavior inconsistent with player mode and teleport
 - [ ] block execution if GetCurrentResourceName() != 'monitor'

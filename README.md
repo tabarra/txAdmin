@@ -48,6 +48,7 @@
 	- Keep track of player's play and session time
 	- Import bans from EasyAdmin, BanSQL, vMenu, vRP, el_bwh
 	- Self-contained player database with backup tool (no MySQL required!)
+	- Clean/Optimize the database by removing old players, or bans/warns/whitelists
 - Real-time playerlist
 - Scheduled restarts with warning announcements and custom events ([more info](docs/events.md))
 - Translation Support ([more info](docs/translation.md))

@@ -41,6 +41,7 @@ exports.settings = {
 
 exports.masterActions = {
     get: require('./masterActions/get'),
+    getBackup: require('./masterActions/getBackup'),
     actions: require('./masterActions/actions'),
 };
 

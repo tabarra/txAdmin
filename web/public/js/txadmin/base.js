@@ -100,9 +100,10 @@ const txAdminAPI = ({type, url, data, dataType, timeout, success, error}) => {
     return $.ajax({type, url, timeout, data, dataType, success, error});
 };
 
-const txAdminConfirm = ({content, confirmBtnClass, modalColor}) => {
+const txAdminConfirm = ({content, confirmBtnClass, modalColor, title}) => {
     return new Promise((resolve, reject) => {
         $.confirm({
+            title,
             content: content,
             type: modalColor || 'red',
             buttons: {

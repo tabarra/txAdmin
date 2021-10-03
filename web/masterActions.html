@@ -1,0 +1,423 @@
+{{@include("header", it)/}}
+
+
+<div class="text-center mb-4">
+    <h2>Master Actions</h2>
+</div>
+<div class="row justify-content-md-center">
+    <div class="col-lg-6 col-md-8 col-sm-12">
+        {{@if(!it.adminIsMaster)}}
+            <div class="alert alert-warning text-center" role="alert">
+                <strong>Warning:</strong> You MUST be the Master Admin to be able to use the options below.
+            </div>
+        {{/if}}
+        {{@if(!it.isWebInterface)}}
+            <div class="alert alert-warning text-center" role="alert">
+                <strong>Warning:</strong> These functions are disabled for the in-game menu, please use the Web version.
+            </div>
+        {{/if}}
+    </div>
+</div>
+
+
+<div class="row justify-content-md-center">
+    <div class="col-md-7 mw-col8">
+
+        <!-- Settings Card -->
+        <div class="card card-accent-danger">
+            <div class="card-header font-weight-bold" style="border-bottom: 0px;">
+                <ul class="nav nav-tabs card-header-tabs">
+                    <li class="nav-item">
+                        <a class="nav-item nav-link active" id="nav-general-tab" data-toggle="tab" href="#nav-general"
+                            role="tab" aria-controls="nav-general" aria-selected="true">
+                            General
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-item nav-link" id="nav-importbans-tab" data-toggle="tab" href="#nav-importbans"
+                            role="tab" aria-controls="nav-importbans" aria-selected="true">
+                            Import Bans
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-item nav-link" id="nav-cleandb-tab" data-toggle="tab" href="#nav-cleandb"
+                            role="tab" aria-controls="nav-cleandb" aria-selected="true">
+                            Clean Database &nbsp;
+                            <span class="badge badge-danger">NEW</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card-body settings-card">
+                <div class="tab-content" id="nav-tabContent">
+
+                    <!-- General Tab -->
+                    <div class="tab-pane fade active show" id="nav-general" role="tabpanel" aria-labelledby="nav-general-tab">
+                        <!-- Reset FXServer -->
+                        <div class="row text-center pb-2">
+                            <div class="col-lg-9 text-lg-left">
+                                <h5>Reset FXServer</h5>
+                                In the FXServer tab you can change the server data path, but if you want to use
+                                the Deployer again, you will need to use this option. <br>
+                                None of your files or databases will be deleted by this action.
+                            </div>
+                            <div class="col-lg-3 text-lg-right">
+                                <button class="btn btn-sm btn-outline-danger" type="button" 
+                                id="general-btnResetFXServer" {{(!it.isWebInterface || !it.adminIsMaster)|isDisabled}}>
+                                    Reset FXServer
+                                </button>
+                            </div>
+                        </div>
+                        <hr class="m-1">
+
+                        <!-- Backup Database -->
+                        <div class="row text-center pt-2">
+                            <div class="col-lg-9 text-lg-left">
+                                <h5>Backup Database</h5>
+                                Download a copy of the <code>playersDB.json</code> file containing all players and actions (bans, warns and whitelists).  
+                                You should do this every once in a while.
+                            </div>
+                            <div class="col-lg-3 text-lg-right">
+                                <button class="btn btn-sm btn-outline-danger" type="button" 
+                                id="general-btnBackupDatabase" {{(!it.isWebInterface || !it.adminIsMaster)|isDisabled}}>
+                                    Backup Database
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /General Tab -->
+
+                    <!-- Import Bans Tab -->
+                    <div class="tab-pane fade" id="nav-importbans" role="tabpanel" aria-labelledby="nav-importbans-tab">
+                        <div class="alert alert-warning text-center" role="alert">
+                            <strong>Warning:</strong> those databases are not <i>fully</i> compatible with txAdmin, meaning that some information might be missing on the ban log. We strongly suggest you save a backup of the database first.
+                        </div>
+                        <form action="/masterActions/importBans" method="post" id="importbans-main">
+                            <div class="form-group row">
+                                <label for="importbans-dbType" class="col-sm-3 col-form-label">
+                                    Source
+                                    <span class="text-danger">*</span>
+                                </label>
+                                <div class="col-sm-9">
+                                    <select id="importbans-dbType" name="dbType" class="form-control" required>
+                                        <option value="" disabled selected>&gt; SELECT</option>
+                                        <option value="easyadmin">EasyAdmin</option>
+                                        <option value="vmenu">vMenu</option>
+                                        <option value="bansql">BanSQL</option>
+                                        <option value="vrp">vRP</option>
+                                        <option value="el_bwh">el_bwh</option> 
+                                    </select>
+                                    <span class="form-text text-muted">
+                                        The database source type.
+                                    </span>
+                                </div>
+                            </div>
+        
+                            <!-- Ban via File -->
+                            <div class="d-none" id="importbans-fileDiv">
+                                <div class="form-group row">
+                                    <label for="importbans-banFile" class="col-sm-3 col-form-label">
+                                        Bans File
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="importbans-banFile" name="banFile"
+                                            placeholder="{{it.dbFilePathSuggestion}}" value="{{it.dbFilePathSuggestion}}" required>
+                                        <span class="form-text text-muted">
+                                            The path to the bans file you want to import. <br>
+                                            <strong>EasyAdmin:</strong> The <code>banlist.json</code> file inside the EasyAdmin resource folder. <br>
+                                            <strong>vMenu:</strong> If your database is <code>vmenu_bans.db</code> then first use <a href="https://vespura.com/vmenu/migrate/" target="_blank" rel="noopener noreferrer">Vespura's Tool</a> to convert it to JSON. <br>
+                                            <small>This page doesn't contain a file upload option due to the lack of maintenance of some dependency libraries.</small>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+        
+                            <!-- Ban via DBMS -->
+                            <div class="d-none" id="importbans-dbmsDiv">
+                                <div class="form-group row">
+                                    <label for="importbans-dbHost" class="col-sm-3 col-form-label">
+                                        DB Host
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="importbans-dbHost" name="dbHost"
+                                            placeholder="localhost" value="localhost" required>
+                                        <span class="form-text text-muted">
+                                            The IP/Hostname of the database server (usually <code>localhost</code>).
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="importbans-dbUsername" class="col-sm-3 col-form-label">
+                                        DB Username
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="importbans-dbUsername" name="dbUsername"
+                                            placeholder="root" value="root" required>
+                                        <span class="form-text text-muted">
+                                            The database username (usually <code>root</code>).
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="importbans-dbPassword" class="col-sm-3 col-form-label">
+                                        DB Password
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control blur-input" id="importbans-dbPassword" name="dbPassword"
+                                            autocomplete="off" placeholder="empty" value="">
+                                        <span class="form-text text-muted">
+                                            The database password (usually empty).
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="importbans-dbName" class="col-sm-3 col-form-label">
+                                        DB Name
+                                        <span class="text-danger">*</span>
+                                    </label>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" id="importbans-dbName" name="dbName"
+                                            placeholder="" value="" required>
+                                        <span class="form-text text-muted">
+                                            The name of the database where the bans are stored is present.
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+        
+                            <div class="text-center mt-4">
+                                <button class="btn btn-sm btn-outline-danger" type="submit" id="importbans-submitButton"
+                                {{(!it.isWebInterface || !it.adminIsMaster)|isDisabled}}>
+                                    <i class="icon-check"></i> Import Bans
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /Import Bans Tab -->
+                    
+                    <!-- Clean Database Tab -->
+                    <div class="tab-pane fade" id="nav-cleandb" role="tabpanel" aria-labelledby="nav-cleandb-tab">
+                        <div class="alert alert-warning text-center" role="alert">
+                            <strong>Warning:</strong> this action is irreversible and we strongly suggest that you save a database backup first.
+                        </div>
+                        <form action="/masterActions/cleanDatabase" method="post" id="cleandb-main">
+                            <div class="form-group row">
+                                <label for="cleandb-players" class="col-sm-3 col-form-label">
+                                    Players
+                                </label>
+                                <div class="col-sm-9">
+                                    <select id="cleandb-players" name="players" class="form-control" required>
+                                        <option value="none">none</option>
+                                        <option value="60d" selected>inactive over 60 days</option>
+                                        <option value="30d">inactive over 30 days</option>
+                                        <option value="15d">inactive over 15 days</option>
+                                    </select>
+                                    <span class="form-text text-muted">
+                                        Remove from the database players based on how much time since they last connected to the server.
+                                        This will not remove players with saved notes, neither will erase bans/warns/whtelist logs.
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="cleandb-bans" class="col-sm-3 col-form-label">
+                                    Bans
+                                </label>
+                                <div class="col-sm-9">
+                                    <select id="cleandb-bans" name="bans" class="form-control" required>
+                                        <option value="none">none</option>
+                                        <option value="revoked" selected>revoked</option>
+                                        <option value="revokedExpired">revoked or expired</option>
+                                        <option value="all" class="font-weight-bold text-danger">REMOVE ALL BANS</option>
+                                    </select>
+                                    <span class="form-text text-muted">
+                                        Remove expired or revoked bans from the database.
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="cleandb-warns" class="col-sm-3 col-form-label">
+                                    Warns
+                                </label>
+                                <div class="col-sm-9">
+                                    <select id="cleandb-warns" name="warns" class="form-control" required>
+                                        <option value="none" >none</option>
+                                        <option value="30d" selected>older than 30 days</option>
+                                        <option value="15d">older than 15 days</option>
+                                        <option value="7d">older than 7 days</option>
+                                        <option value="all" class="font-weight-bold text-danger">REMOVE ALL WARNS</option>
+                                    </select>
+                                    <span class="form-text text-muted">
+                                        Remove old warns from the database.
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <label for="cleandb-whitelists" class="col-sm-3 col-form-label">
+                                    Whitelist
+                                </label>
+                                <div class="col-sm-9">
+                                    <select id="cleandb-whitelists" name="whitelists" class="form-control" required>
+                                        <option value="none">none</option>
+                                        <option value="30d" selected>older than 30 days</option>
+                                        <option value="15d">older than 15 days</option>
+                                        <option value="all" class="font-weight-bold text-danger">REMOVE ALL WHITELISTS</option>
+                                    </select>
+                                    <span class="form-text text-muted">
+                                        Remove old whitelists from the database.
+                                    </span>
+                                </div>
+                            </div>
+        
+                            
+                            <div class="text-center mt-4">
+                                <button class="btn btn-sm btn-outline-danger" type="submit" id="cleandb-submitButton"
+                                    {{(!it.isWebInterface || !it.adminIsMaster)|isDisabled}}>
+                                    <i class="icon-check"></i> Clean Database
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    <!-- /Clean Database Tab -->
+
+                </div>
+            </div>
+
+
+        </div>
+
+    </div>
+</div>
+
+
+{{@include("footer", it)/}}
+
+
+<script>
+    //============================================== General
+    (()=>{
+        const generalBtnBackupDatabase = document.getElementById('general-btnBackupDatabase');
+        const generalBtnResetFXServer = document.getElementById('general-btnResetFXServer');
+
+        generalBtnBackupDatabase.onclick = async () => {
+            window.location = 'masterActions/backupDatabase';
+        }
+
+        generalBtnResetFXServer.onclick = async () => {
+            const confirmOptions = {content: `Are you sure you would like to Reset FXServer settings?`};
+            if(!await txAdminConfirm(confirmOptions)){
+                return;
+            }
+
+            const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+            txAdminAPI({
+                type: "POST",
+                url: `/masterActions/reset_fxserver`,
+                data: {},
+                dataType: 'json',
+                success: function (data) {
+                    if(data.success == true){
+                        window.location = '/setup';
+                        return;
+                    }else{
+                        notify.update('progress', 0);
+                        notify.update('type', data.type);
+                        notify.update('message', data.message);
+                    }
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    notify.update('progress', 0);
+                    notify.update('type', 'danger');
+                    notify.update('message', message);
+                }
+            });
+        }
+    })();
+
+
+    //============================================== Import Bans
+    (()=>{
+        const dbType = document.getElementById('importbans-dbType');
+        const fileDiv = document.getElementById('importbans-fileDiv');
+        const dbmsDiv = document.getElementById('importbans-dbmsDiv');
+        const banFile = document.getElementById('importbans-banFile');
+        const dbHost = document.getElementById('importbans-dbHost');
+        const dbUsername = document.getElementById('importbans-dbUsername');
+        const dbPassword = document.getElementById('importbans-dbPassword'); //never required
+        const dbName = document.getElementById('importbans-dbName');
+        const importbansSubmitBtn = document.getElementById('importbans-submitButton');
+
+        const fileDbTypes = ['easyadmin', 'vmenu'];
+        const dbmsDbTypes = ['bansql', 'vrp', 'el_bwh'];
+
+        dbType.onchange = () => {
+            if(fileDbTypes.includes(dbType.value)){
+                fileDiv.classList.remove('d-none');
+                dbmsDiv.classList.add('d-none');
+                banFile.required = true;
+                dbHost.required = false;
+                dbUsername.required = false;
+                dbName.required = false;
+
+            }else if(dbmsDbTypes.includes(dbType.value)){
+                fileDiv.classList.add('d-none');
+                dbmsDiv.classList.remove('d-none');
+                banFile.required = false;
+                dbHost.required = true;
+                dbUsername.required = true;
+                dbName.required = true;
+            }
+        }
+    })();
+
+
+    //============================================== Clean Database
+    (()=>{
+        const frmPlayers = document.getElementById('cleandb-players');
+        const frmBans = document.getElementById('cleandb-bans');
+        const frmWarns = document.getElementById('cleandb-warns');
+        const frmWhitelists = document.getElementById('cleandb-whitelists');
+        const cleandbSubmitBtn = document.getElementById('cleandb-submitButton');
+        const cleandbForm = document.getElementById('cleandb-main');
+
+        cleandbSubmitBtn.onclick = async (event) => {
+            event.preventDefault();
+
+            const changes = [];
+            if(frmPlayers.value !== 'none'){
+                changes.push(`Remove players ${frmPlayers.options[frmPlayers.selectedIndex].text}.`);
+            }
+            if(frmBans.value !== 'none'){
+                changes.push(`Remove bans ${frmBans.options[frmBans.selectedIndex].text}.`);
+            }
+            if(frmWarns.value !== 'none'){
+                changes.push(`Remove warns ${frmWarns.options[frmWarns.selectedIndex].text}.`);
+            }
+            if(frmWhitelists.value !== 'none'){
+                changes.push(`Remove whitelists ${frmWhitelists.options[frmWhitelists.selectedIndex].text}.`);
+            }
+
+            if(!changes.length){
+                return $.notify({ message: 'You need to select at least one option.' }, {type: 'danger'});
+            }
+
+            const confirmOptions = {
+                title: 'Are you sure wou want to:',
+                content: '<ul>' + changes.map(x => `<li>${x}</li>`).join('\n') + '</ul>'
+            }
+            if(!await txAdminConfirm(confirmOptions)){
+                return;
+            }
+            cleandbForm.submit();
+        }
+    })();
+    
+
+</script>
