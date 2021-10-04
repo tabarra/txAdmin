@@ -4,27 +4,27 @@
         "humanizer_language": "hu"
     },
     "restarter": {
-        "start_timeout": "sikertelen indítás a megadott időn belül",
+        "start_timeout": "sikertelen indítás a megadott idő intervallumon belül",
         "crash_detected": "összeomlás észlelve",
         "hang_detected": "lefagyás észlelve",
         "partial_hang_warn": "Részleges lefagyás miatt a szerver 1 perc múlva újraindul. Kérjük, lépj ki.",
-        "partial_hang_warn_discord": "Részleges lefagyás miatt, **%{servername}** 1 perc múlva újraindul.",
+        "partial_hang_warn_discord": "Részleges lefagyás miatt, a **%{servername}** 1 perc múlva újraindul.",
         "schedule_reason": "ütemezett újraindítás %{time}",
-        "schedule_warn": "A szerver ütemezetten újraindul %{smart_count} perc múlva. Kérjük hagyd el a szervert!. |||| A szerver ütemezetten újra indul %{smart_count} perc múlva.",
-        "schedule_warn_discord": "A **%{servername}** szerver ütemezetten újraindul %{smart_count} perc múlva. |||| **%{servername}** szerver ütemezetten újraindul %{smart_count} perc múlva."
+        "schedule_warn": "A szerver ütemezett újraindítás miatt, %{smart_count} percen belül újraindul. Kérjük, lépj ki!. |||| A szerver ütemezetten újra indul %{smart_count} perc múlva.",
+        "schedule_warn_discord": "A(z) **%{servername}** ütemezetten újraindul %{smart_count} perc múlva. |||| **%{servername}** ütemezetten újraindul %{smart_count} perc múlva."
     },
     "ban_messages": {
         "kick_temporary": "(%{author}) Ki lettél tiltva a szerverről. Indok: \"%{reason}\". Lejár: %{expiration}.",
         "kick_permanent": "(%{author}) Véglegesen ki lettél tiltva a szerverről. Indok: \"%{reason}\".",
-        "reject_temporary": "Jelenleg ki vagy tiltva a szerverről.\nLejár: %{expiration}.\nBan ID: %{id}.\nIndok: %{reason}.\nBannoló: %{author}.",
-        "reject_permanent": "Erről a szerverről véglegesen ki vagy tiltva.\nBan ID: %{id}.\nIndok: %{reason}.\nBannoló: %{author}."
+        "reject_temporary": "Ki lettét tiltva a szerverről.\nLejár: %{expiration}.\nBan ID: %{id}.\nIndok: %{reason}.\nKitiltó admin: %{author}.",
+        "reject_permanent": "Véglegesen ki lettél tiltva a szerverről..\nBan ID: %{id}.\nIndok: %{reason}.\nKitiltó admin: %{author}."
     },
     "server_actions": {
         "restarting": "Szerver újraindítása: (%{reason}).",
-        "restarting_discord": "**%{servername}** újraindul: (%{reason}).",
-        "stopping": "Szerver leállítás (%{reason}).",
-        "stopping_discord": "**%{servername}** szervert leállítják: (%{reason}).",
-        "spawning_discord": "**%{servername}** szerver indul."
+        "restarting_discord": "**%{servername}** újraindul (%{reason}).",
+        "stopping": "A szerver leáll (%{reason}).",
+        "stopping_discord": "**%{servername}**-t leállítják (%{reason}).",
+        "spawning_discord": "**%{servername}** indul."
     },
     "discord": {
         "status_online": "**%{servername}** jelenleg **Elérhető**!",
@@ -33,6 +33,6 @@
     "nui_warning": {
         "title": "FIGYELEM",
         "warned_by": "Figyelmeztet:",
-        "instruction": "Tartsd nyomva a [SPACE] 10 másodpercig, hogy eltüntesd az üzenetet."
+        "instruction": "Tartsd nyomva a [SPACE]-t 10 másodpercig, hogy eltüntesd az üzenetet."
     }
 }
