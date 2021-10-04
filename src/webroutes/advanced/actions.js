@@ -116,6 +116,13 @@ module.exports = async function AdvancedActions(ctx) {
     } else if (action == 'reauth') {
         // txaEvent "adminsUpdated" "[1,5,7]"
         return globals.fxRunner.sendEvent('adminsUpdated', [1, 5, 7]);
+    } else if (action == 'getLoggerErrors') {
+        const outData = {
+            admin: globals.logger.admin.lrLastError,
+            fxserver: globals.logger.fxserver.lrLastError,
+            server: globals.logger.server.lrLastError,
+        };
+        return ctx.send({type: 'success', message: JSON.stringify(outData, null, 2)});
     }
 
     //Catch all

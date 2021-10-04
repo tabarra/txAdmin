@@ -2,8 +2,7 @@
 --  Server PlayerList handler
 -- =============================================
 
--- Disabled for the moment until player list can be investigated
--- fully
+-- Disabled for the moment until player list can be investigated fully
 
 ----Check Environment
 --if GetConvar('txAdminServerMode', 'false') ~= 'true' then
