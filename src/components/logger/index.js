@@ -4,6 +4,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 const AdminLogger = require('./handlers/admin');
 const FXServerLogger = require('./handlers/fxserver');
 const ServerLogger = require('./handlers/server');
+const { getLogSizes } = require('./loggerUtils');
 
 // NOTE: to turn this into an universal class outside txAdmin() instance
 // when a txAdmin profile starts, it does universal.logger.start(profilename)
@@ -37,8 +38,14 @@ module.exports = class Logger {
 
 
     //================================================================
-    getStorageSize() {
-        // {total: xxx, loggers: [{loggerName: sizeSum}]}
-        throw new Error('Not yet implemented.');
+    /**
+     * Return the total size of the log files used.
+     * FIXME: this regex is kinda redundant with the one from loggerUtils.js
+     */
+    async getStorageSize() {
+        return await getLogSizes(
+            this.basePath,
+            /^(admin|fxserver|server)(_\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}(_\d+)?)?.log$/,
+        );
     }
 }; //Fim Logger()

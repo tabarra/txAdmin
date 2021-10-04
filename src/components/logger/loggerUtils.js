@@ -13,7 +13,6 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
  * Returns an associative array of files in the log folder and it's sizes (human readable)
  * @param {String} basePath
  * @param {RegExp} filterRegex
- * @returns
  */
 module.exports.getLogSizes = async (basePath, filterRegex) => {
     //Reading path
@@ -29,13 +28,18 @@ module.exports.getLogSizes = async (basePath, filterRegex) => {
     }
 
     //Processing files
+    let totalBytes = 0;
     const fileStatsSizes = await Promise.allSettled(statOps);
     const fileStatsArray = fileStatsSizes.map((op, index) => {
+        totalBytes += op.value.size;
         return (op.status === 'fulfilled')
             ? [statNames[index], bytes(op.value.size)]
             : [statNames[index], false];
     });
-    return Object.fromEntries(fileStatsArray);
+    return {
+        total: bytes(totalBytes),
+        files: Object.fromEntries(fileStatsArray),
+    };
 };
 
 
@@ -54,7 +58,7 @@ module.exports.LoggerBase = class LoggerBase {
         //Sanity check
         if (!basePath || !logName) throw new Error('Missing LoggerBase constructor parameters');
         this.basePath = basePath;
-        this.logNameRegex = new RegExp(`^${logName}(_\\d{4}-\\d{2}-\\d{2}_\\d{2}-\\d{2}-\\d{2}(_\d+)?)?.log$`);
+        this.logNameRegex = new RegExp(`^${logName}(_\\d{4}-\\d{2}-\\d{2}_\\d{2}-\\d{2}-\\d{2}(_\\d+)?)?.log$`);
 
         //If disabled
         if (lrProfileConfig === false) {

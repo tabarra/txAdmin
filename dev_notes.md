@@ -10,7 +10,7 @@
 - [x] update dev env to fxs/node16 
 - [x] update packages & test
 - [x] feat: database management page
-- [ ] fix logging data on diagnostics page
+- [x] fix logging data on diagnostics page
 - [ ] fix player modal for new server log
 - [ ] fix dashboard stats not working on iframe mode (#438)
 

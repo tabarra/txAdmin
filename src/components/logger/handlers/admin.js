@@ -31,7 +31,7 @@ module.exports = class AdminLogger extends LoggerBase {
      * Returns a string with short usage stats
      */
     getUsageStats() {
-        return `Writes: ${this.writeCounter}, Errors: ${this.lrErrors}`;
+        return `Writes: ${this.writeCounter}, lrErrors: ${this.lrErrors}`;
     }
 
     /**

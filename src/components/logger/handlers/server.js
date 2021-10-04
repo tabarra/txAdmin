@@ -73,12 +73,10 @@ module.exports = class ServerLogger extends LoggerBase {
 
     /**
      * Returns a string with short usage stats
+     * TODO: calculate events per minute moving average 10 && peak
      */
     getUsageStats() {
-        // include this.cachedPlayers.size
-        // this.recentBuffer.length - same for the other loggers
-        // calculate events per minute moving average 10 && peak
-        return `Errors: ${this.lrErrors}`;
+        return `Buffer: ${this.recentBuffer.length}, cachedPlayers: ${this.cachedPlayers.size},  lrErrors: ${this.lrErrors}`;
     }
 
 

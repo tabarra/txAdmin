@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'Logger:FXServer';
+const bytes = require('bytes');
 const chalk = require('chalk');
 const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
 const { LoggerBase, separator } = require('../loggerUtils');
@@ -54,7 +55,7 @@ module.exports = class FXServerLogger extends LoggerBase {
      * Returns a string with short usage stats
      */
     getUsageStats() {
-        return `Errors: ${this.lrErrors}`;
+        return `Buffer: ${bytes(this.recentBuffer.length)}, lrErrors: ${this.lrErrors}`;
     }
 
 
