@@ -11,8 +11,8 @@
 - [x] update packages & test
 - [x] feat: database management page
 - [x] fix logging data on diagnostics page
+- [x] fix dashboard stats not working on iframe mode (closes #438)
 - [ ] fix player modal for new server log
-- [ ] fix dashboard stats not working on iframe mode (#438)
 
 Carryover:
 - [ ] remove the "NEW" tag from `header.html` and `masterActions.html`
