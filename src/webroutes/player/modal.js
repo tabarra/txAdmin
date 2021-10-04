@@ -21,7 +21,7 @@ module.exports = async function PlayerModal(ctx) {
     if (typeof ctx.params.reference === 'undefined') {
         return ctx.utils.error(400, 'Invalid Request');
     }
-    const reference = ctx.params.reference;
+    let reference = ctx.params.reference;
 
     //Helper function
     const getHistory = async (idArray) => {
@@ -60,12 +60,25 @@ module.exports = async function PlayerModal(ctx) {
 
     //Infering filter type
     let filterFunction, filterType;
-    if (/[0-9A-Fa-f]{40}/.test(reference)) {
+    if (/^[0-9A-Fa-f]{40}$/.test(reference)) {
         filterFunction = (player) => player.license === reference;
         filterType = 'license';
-    } else if (/\d{1,6}/.test(reference)) {
+    } else if (/^\d{1,6}$/.test(reference)) {
         filterFunction = (player) => player.id === parseInt(reference, 10);
         filterType = 'id';
+    } else if (/^\w{5}_\d{1,6}$/.test(reference)) {
+        //FIXME: this was done way too late at night, please fix
+        const cachedPlayer = globals.logger.server.cachedPlayers.get(reference.replace(/_/, '#'));
+        if (!cachedPlayer) {
+            return ctx.send({type: 'offline', message: 'Player not found in cache.'});
+        }
+        const pLicenseID = cachedPlayer.ids.find((id) => id.substring(0, 8) == 'license:');
+        if (!pLicenseID) {
+            return ctx.send({type: 'offline', message: 'Cached player has no license.'});
+        }
+        reference = pLicenseID.substring(8);
+        filterFunction = (player) => player.license === reference;
+        filterType = 'license';
     } else {
         throw new Error('Invalid reference type');
     }
@@ -95,7 +108,7 @@ module.exports = async function PlayerModal(ctx) {
         playerData = activePlayer;
     } else {
         if (filterType !== 'license') {
-            return ctx.send({type: 'offline', message: 'Player offline, search by id is only available for.'});
+            return ctx.send({type: 'offline', message: 'Player offline, search by id is only available for online players.'});
         }
         //FIXME: for actions, look just for the license
         //TODO: when we start registering all associated identifiers, we could use that for the search
