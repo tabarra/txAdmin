@@ -333,7 +333,7 @@ const DialogActionView: React.FC = () => {
         <Button variant="outlined" color="primary" onClick={handleSpectate} disabled={!userHasPerm("players.spectate", playerPerms)}>
           {t("nui_menu.player_modal.actions.moderation.options.spectate")}
         </Button>
-        <Button variant="outlined" color="primary" onClick={handleFreeze} disabled={!userHasPerm("players.spectate", playerPerms)}>
+        <Button variant="outlined" color="primary" onClick={handleFreeze} disabled={!userHasPerm("players.freeze", playerPerms)}>
           {t("nui_menu.player_modal.actions.moderation.options.toggle_freeze")}
         </Button>
       </Box>
