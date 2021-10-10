@@ -342,6 +342,8 @@ async function handleCleanDatabase(ctx) {
     let warnsFilter;
     if (warns === 'none') {
         warnsFilter = (x) => false;
+    } else if (warns === 'revoked') {
+        warnsFilter = (x) => x.type === 'warn' && x.revocation.timestamp;
     } else if (warns === '30d') {
         warnsFilter = (x) => x.type === 'warn' && x.timestamp < (currTs - 30 * daySecs);
     } else if (warns === '15d') {
