@@ -27,6 +27,9 @@ end)
 
 RegisterNetEvent('txAdmin:menu:freezePlayer', function(isFrozen)
   debugPrint('Frozen: ' .. tostring(isFrozen))
+	if IsPedInVehicle(PlayerPedId()) then
+     DisableControlAction(0, 23, isFrozen)
+  end
   FreezeEntityPosition(PlayerPedId(), isFrozen)
   sendFreezeAlert(isFrozen)
 end)
