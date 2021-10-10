@@ -234,7 +234,8 @@
                 },
                 "interaction": {
                     "spectate_failed": "Failed to resolve the target! Exiting spectate.",
-                    "spectate_yourself": "You cannot spectate yourself."
+                    "spectate_yourself": "You cannot spectate yourself.",
+                    "freeze_yourself": "You cannot freeze yourself."
                 },
                 "troll": {
                     "options": {
