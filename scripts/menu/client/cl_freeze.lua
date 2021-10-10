@@ -27,6 +27,10 @@ end)
 
 RegisterNetEvent('txAdmin:menu:freezePlayer', function(isFrozen)
   debugPrint('Frozen: ' .. tostring(isFrozen))
-  FreezeEntityPosition(PlayerPedId(), isFrozen)
+  local playerPed = PlayerPedId()
+  if IsPedInAnyVehicle(playerPed) then
+    TaskLeaveAnyVehicle(playerPed)
+  end
+  FreezeEntityPosition(playerPed, isFrozen)
   sendFreezeAlert(isFrozen)
 end)
