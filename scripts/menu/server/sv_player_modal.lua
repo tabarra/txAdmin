@@ -8,7 +8,7 @@ end
 --  related to actions defined within Menu's
 --  "Player Modal"
 -- =============================================
-local oldBucket = 0
+
 
 RegisterNetEvent('txAdmin:menu:tpToPlayer', function(id)
   local src = source
@@ -71,11 +71,10 @@ RegisterNetEvent('txAdmin:menu:spectatePlayer', function(id)
     end
     local tgtBucket = GetPlayerRoutingBucket(id)
     local srcBucket = GetPlayerRoutingBucket(src)
-    if tgtBucket ~= srcBucket then 
-      oldBucket = srcBucket
+   
+      ADMIN_DATA[tostring(src)].bucket = srcBucket
       SetPlayerRoutingBucket(src, tgtBucket)
-    end
-
+   
     local tgtCoords = GetEntityCoords(target)
     TriggerClientEvent('txAdmin:menu:specPlayerResp', src, id, tgtCoords)
   end
@@ -89,8 +88,7 @@ RegisterNetEvent('txAdmin:menu:endSpectate', function()
   local allow = PlayerHasTxPermission(src, 'players.spectate')
   if allow then 
    
-      SetPlayerRoutingBucket(src, oldBucket)
-oldBucket = 0 
+      SetPlayerRoutingBucket(src,  ADMIN_DATA[tostring(src)].bucket)
     
   end
 end)
