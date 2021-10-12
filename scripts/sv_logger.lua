@@ -109,6 +109,15 @@ end)
 
 
 -- An internal server handler, this is NOT exposed to the client
+local function getLogPlayerName(src)
+    if type(src) == 'number' then 
+        local name = sub(GetPlayerName(src) or "unknown", 1, 75)
+        return '[#'..src..'] '..name
+    else
+        return '[??] '.. (src or "unknown")
+    end
+end
+
 AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
     if not allowed then return end
 
@@ -154,9 +163,11 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
             message = "changed playermode to unknown"
         end
 
+    elseif event == 'spectatePlayer' then
+        message = 'started spectating player ' .. getLogPlayerName(data)
+
     elseif event == 'freezePlayer' then
-        if type(data) ~= 'string' or type(data) ~= 'number' then return end
-        message = 'toggled freeze on id: ' .. data
+        message = 'toggled freeze on player ' .. getLogPlayerName(data)
 
     elseif event == 'teleportPlayer' then
         if type(data) ~= 'table' then return end

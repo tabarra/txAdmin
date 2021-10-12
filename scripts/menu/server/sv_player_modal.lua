@@ -62,6 +62,7 @@ RegisterNetEvent('txAdmin:menu:spectatePlayer', function(id)
   end
   id = tonumber(id)
   local allow = PlayerHasTxPermission(src, 'players.spectate')
+  TriggerEvent('txaLogger:menuEvent', src, 'spectatePlayer', allow, id)
   if allow then
     local target = GetPlayerPed(id)
     -- Lets exit if the target doesn't exist
@@ -78,7 +79,6 @@ RegisterNetEvent('txAdmin:menu:spectatePlayer', function(id)
     local tgtCoords = GetEntityCoords(target)
     TriggerClientEvent('txAdmin:menu:specPlayerResp', src, id, tgtCoords)
   end
-  TriggerEvent('txaLogger:menuEvent', src, 'spectatePlayer', allow, id)
 end)
 
 
