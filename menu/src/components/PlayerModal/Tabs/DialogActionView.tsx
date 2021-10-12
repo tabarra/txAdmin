@@ -342,6 +342,13 @@ const DialogActionView: React.FC = () => {
       </Typography>
       <Box className={classes.actionGrid}>
         <TooltipOverride
+          title={t("nui_menu.player_modal.actions.troll.options.drunk_desc")}
+        >
+          <Button variant="outlined" color="primary" onClick={handleDrunk} disabled={!userHasPerm("players.troll", playerPerms)}>
+            {t("nui_menu.player_modal.actions.troll.options.drunk")}
+          </Button>
+        </TooltipOverride>
+        <TooltipOverride
           title={t("nui_menu.player_modal.actions.troll.options.weed_desc")}
         >
           <Button variant="outlined" color="primary" onClick={handleWeed} disabled={!userHasPerm("players.troll", playerPerms)}>
@@ -353,13 +360,6 @@ const DialogActionView: React.FC = () => {
         >
           <Button variant="outlined" color="primary" onClick={handleSetOnFire} disabled={!userHasPerm("players.troll", playerPerms)}>
             {t("nui_menu.player_modal.actions.troll.options.fire")}
-          </Button>
-        </TooltipOverride>
-        <TooltipOverride
-          title={t("nui_menu.player_modal.actions.troll.options.drunk_desc")}
-        >
-          <Button variant="outlined" color="primary" onClick={handleDrunk} disabled={!userHasPerm("players.troll", playerPerms)}>
-            {t("nui_menu.player_modal.actions.troll.options.drunk")}
           </Button>
         </TooltipOverride>
         <TooltipOverride

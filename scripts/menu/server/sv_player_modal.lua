@@ -16,14 +16,12 @@ RegisterNetEvent('txAdmin:menu:tpToPlayer', function(id)
   end
 
   local allow = PlayerHasTxPermission(src, 'players.teleport')
-  local data = { x = nil, y = nil, z = nil, playerName = nil }
+  local data = { x = nil, y = nil, z = nil, target = id }
 
-  data.playerName = "unknown"
   if allow then
     -- ensure the player ped exists
     local ped = GetPlayerPed(id)
     if ped then
-      data.playerName = GetPlayerName(id)
       local coords = GetEntityCoords(ped)
       data.x = coords[1]
       data.y = coords[2]
@@ -41,17 +39,15 @@ RegisterNetEvent('txAdmin:menu:summonPlayer', function(id)
     return
   end
   local allow = PlayerHasTxPermission(src, 'players.teleport')
-  local playerName = "unknown"
   if allow then
     -- ensure the target player ped exists
     local ped = GetPlayerPed(id)
     if ped then
       local coords = GetEntityCoords(GetPlayerPed(src))
       TriggerClientEvent('txAdmin:menu:tpToCoords', id, coords[1], coords[2], coords[3])
-      playerName = GetPlayerName(id)
     end
   end
-  TriggerEvent('txaLogger:menuEvent', src, 'summonPlayer', allow, playerName)
+  TriggerEvent('txaLogger:menuEvent', src, 'summonPlayer', allow, id)
 end)
 
 RegisterNetEvent('txAdmin:menu:spectatePlayer', function(id)
