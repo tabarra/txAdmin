@@ -25,7 +25,6 @@ module.exports = async function DeployerStepper(ctx) {
         step: globals.deployer.step,
         serverProfile: globals.info.serverProfile,
         deploymentID: globals.deployer.deploymentID,
-        isPlaceholderRecipe: (globals.deployer === false),
     };
     if (globals.deployer.step === 'review') {
         renderData.recipe = {
