@@ -21,7 +21,6 @@ server_scripts {
     'main.js',
     'scripts/sv_main.lua',
     'scripts/sv_logger.lua',
-    'scripts/sv_playerlist.lua',
     'scripts/menu/server/sv_webpipe.lua',
     'scripts/menu/server/sv_base.lua',
     'scripts/menu/server/sv_functions.lua',
@@ -29,7 +28,9 @@ server_scripts {
     'scripts/menu/server/sv_freeze_player.lua',
     'scripts/menu/server/sv_trollactions.lua',
     'scripts/menu/server/sv_old_playerlist.lua',
-    'scripts/menu/server/sv_player_modal.lua'
+    'scripts/menu/server/sv_player_modal.lua',
+
+    'scripts/sv_playerlist_new.lua', -- DEBUG
 }
 
 client_scripts {
@@ -51,6 +52,8 @@ client_scripts {
     'scripts/menu/vendor/freecam/config.lua',
     'scripts/menu/vendor/freecam/main.lua',
     'scripts/menu/vendor/freecam/camera.lua',
+
+    'scripts/cl_playerlist_new.lua', -- DEBUG
 }
 
 ui_page 'scripts/menu/nui/index.html'
