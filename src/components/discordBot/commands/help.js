@@ -8,7 +8,7 @@ module.exports = {
     async execute(message, args) {
         //Prepare description
         let cmdDescs = [];
-        globals.discordBot.commands.each((cmd, name) => {
+        globals.discordBot.commands.forEach((cmd, name) => {
             cmdDescs.push(`${globals.discordBot.config.prefix}${name}: ${cmd.description}`);
         });
         const descLines = [

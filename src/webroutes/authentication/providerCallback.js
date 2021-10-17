@@ -110,7 +110,7 @@ module.exports = async function ProviderCallback(ctx) {
         //Save the updated provider identifier & data to the admins file
         await globals.adminVault.refreshAdminSocialData(admin.name, 'citizenfx', identifier, userInfo);
 
-        log(`Admin ${admin.name} logged in from ${ctx.ip}`);
+        ctx.utils.logAction(`logged in from ${ctx.ip} via citizenfx`);
         globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;
         globals.databus.txStatsData.login.methods.citizenfx++;
         return ctx.response.redirect('/');

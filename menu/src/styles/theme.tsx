@@ -1,8 +1,8 @@
-import { createTheme } from "@material-ui/core";
+import { createTheme, adaptV4Theme } from "@mui/material";
 
-export const MenuTheme = createTheme({
+export const MenuTheme = createTheme(adaptV4Theme({
   palette: {
-    type: "dark",
+    mode: "dark",
     primary: {
       main: "rgba(0,197,140,0.87)",
     },
@@ -30,4 +30,19 @@ export const MenuTheme = createTheme({
       primary: "#fff",
     },
   },
+}), {
+  components: {
+    MuiListItem: {
+        styleOverrides: {
+          root: {
+            '&.Mui-selected': {
+              backgroundColor: "rgba(255, 255, 255, 0.08)"
+            }
+          }
+        }
+    },
+    MuiPaper: {
+      styleOverrides: { root: { backgroundImage: 'unset' } },
+    },
+  }
 });

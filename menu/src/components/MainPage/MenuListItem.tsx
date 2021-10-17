@@ -1,14 +1,8 @@
 import React, { memo, useEffect, useRef, useState } from "react";
-import {
-  ListItem,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListItemText,
-  makeStyles,
-  Theme,
-} from "@material-ui/core";
+import { ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, Theme } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
-import { Code } from "@material-ui/icons";
+import { Code } from "@mui/icons-material";
 import { fetchNui } from "../../utils/fetchNui";
 import { useTranslate } from "react-polyglot";
 import {

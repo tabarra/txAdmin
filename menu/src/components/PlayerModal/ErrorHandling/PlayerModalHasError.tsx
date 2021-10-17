@@ -1,16 +1,15 @@
 import React from "react";
 import { useTranslate } from "react-polyglot";
-import { Box, makeStyles, Typography } from "@material-ui/core";
-import { Error } from "@material-ui/icons";
+import { Box, styled, Typography } from "@mui/material";
+import { Error } from "@mui/icons-material";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    color: theme.palette.text.secondary,
-    fontWeight: 300,
-  },
-  icon: {
-    paddingRight: theme.spacing(2),
-  },
+const BoxRoot = styled(Box)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  fontWeight: 300,
+}));
+
+const ErrorIcon = styled(Error)(({ theme }) => ({
+  paddingRight: theme.spacing(2),
 }));
 
 interface PlayerModalHasErrorProps {
@@ -21,11 +20,9 @@ export const PlayerModalHasError: React.FC<PlayerModalHasErrorProps> = ({
   msg,
 }) => {
   const t = useTranslate();
-  const classes = useStyles();
 
   return (
-    <Box
-      className={classes.root}
+    <BoxRoot
       flexGrow={1}
       mt={-2}
       display="flex"
@@ -34,13 +31,13 @@ export const PlayerModalHasError: React.FC<PlayerModalHasErrorProps> = ({
       justifyContent="center"
     >
       <Box display="flex">
-        <Error fontSize="large" color="inherit" className={classes.icon} />
+        <ErrorIcon fontSize="large" color="inherit" />
         <Typography color="inherit" variant="h6">
           {t("nui_menu.player_modal.misc.error")}
         </Typography>
       </Box>
       <br />
       <code style={{ color: "red" }}>{msg}</code>
-    </Box>
+    </BoxRoot>
   );
 };

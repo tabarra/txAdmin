@@ -1,5 +1,6 @@
 import React from "react";
-import { Box, makeStyles, Theme } from "@material-ui/core";
+import { Box, Theme } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import { PlayerPageHeader } from "./PlayerPageHeader";
 import { useFilteredSortedPlayers } from "../../state/players.state";
 import { PlayersListEmpty } from "./PlayersListEmpty";
@@ -10,7 +11,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     backgroundColor: theme.palette.background.default,
     height: "50vh",
     borderRadius: 15,
-    displayFlex: "column",
     flex: 1,
   },
   overrideWrapper: {

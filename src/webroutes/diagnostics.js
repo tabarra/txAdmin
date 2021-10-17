@@ -224,11 +224,6 @@ async function gettxAdminData() {
 
     const controllerConfigs = globals.playerController.config;
     const httpCounter = globals.databus.txStatsData.httpCounter;
-    const logFileSize = (
-        globals.fxRunner
-        && globals.fxRunner.outputHandler
-        && globals.fxRunner.outputHandler.logFileSize
-    ) ? globals.fxRunner.outputHandler.logFileSize : '--';
     return {
         //Stats
         uptime: humanizeDuration(process.uptime() * 1000, humanizeOptions),
@@ -246,11 +241,13 @@ async function gettxAdminData() {
         hbHTTPFails: globals.databus.txStatsData.monitorStats.heartBeatStats.httpFailed,
         hbBootSeconds: globals.databus.txStatsData.monitorStats.bootSeconds.join(', ') || '--',
         freezeSeconds: globals.databus.txStatsData.monitorStats.freezeSeconds.join(', ') || '--',
-        logFileSize,
-
-        //Possible memory leaks:
-        serverLogSize: globals.databus.serverLog.length || '--',
         koaSessions: Object.keys(globals.webServer.koaSessionMemoryStore.sessions).length || '--',
+
+        //Log stuff:
+        logStorageSize: (await globals.logger.getStorageSize()).total,
+        loggerStatusAdmin: globals.logger.admin.getUsageStats(),
+        loggerStatusFXServer: globals.logger.fxserver.getUsageStats(),
+        loggerStatusServer: globals.logger.server.getUsageStats(),
 
         //Settings
         cooldown: globals.monitor.config.cooldown,

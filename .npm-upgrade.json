@@ -1,0 +1,8 @@
+{
+  "ignore": {
+    "open": {
+      "versions": "> 7.1.0",
+      "reason": "Doesn't work when powershell is not in PATH or something like that."
+    }
+  }
+}

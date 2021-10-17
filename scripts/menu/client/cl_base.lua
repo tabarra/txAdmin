@@ -15,7 +15,7 @@ CreateThread(function()
 end)
 
 -- Command to be used with the register key mapping
-local function txadmin()
+local function txadmin(_, args)
   -- Check if we have an available ref to the global function
   if not registerTxKeybinds then
     return sendSnackbarMessage('error', 'nui_menu.misc.not_enabled', true)
@@ -23,12 +23,18 @@ local function txadmin()
 
   if menuIsAccessible then
     toggleMenuVisibility()
+    -- Shortcut to open a specific players profile
+    if isMenuVisible and #args >= 1 then
+      local targetPlayer = table.concat(args, ' ')
+      sendMenuMessage('openPlayerModal', targetPlayer)
+    end
   else
     sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
   end
 end
 RegisterCommand('txadmin', txadmin)
 RegisterCommand('tx', txadmin)
+
 
 -- The rest of the file will not be run if convar isn't set
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
@@ -55,6 +61,25 @@ RegisterCommand('txAdmin-reauth', function()
     TriggerEvent('txAdmin:menu:reAuth')
   end
 end)
+
+-- Register chat suggestions
+TriggerEvent(
+  'chat:addSuggestion', 
+  '/tx', 
+  'Opens the main txAdmin Menu or specific for a player.', 
+  {{ name="player id", help="(Optional) Open player modal for specific ID." }}
+)
+TriggerEvent(
+  'chat:addSuggestion', 
+  '/txAdmin-reauth', 
+  'Retries to authenticate the menu NUI. Requires debug mode to be on.'
+)
+TriggerEvent(
+  'chat:addSuggestion', 
+  '/txAdmin-debug', 
+  'Enables or disables the debug mode. Requires \'control.server\' permission.',
+  {{ name="1|0", help="1 to enable, 0 to disable" }}
+)
 
 -- Triggers reauth process
 RegisterNetEvent('txAdmin:menu:reAuth', function()
@@ -107,9 +132,4 @@ CreateThread(function()
     end
     Wait(250)
   end
-end)
-
-CreateThread(function()
-  TriggerEvent('chat:removeSuggestion', '/txadmin')
-  TriggerEvent('chat:removeSuggestion', '/tx')
 end)

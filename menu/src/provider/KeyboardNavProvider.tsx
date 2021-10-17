@@ -6,7 +6,7 @@ import React, {
   useState,
 } from "react";
 import { fetchNui } from "../utils/fetchNui";
-import { useIsMenuVisible } from "../state/visibility.state";
+import { useIsMenuVisibleValue } from "../state/visibility.state";
 import { txAdminMenuPage, usePageValue } from "../state/page.state";
 
 const KeyboardNavContext = createContext(null);
@@ -14,7 +14,7 @@ const KeyboardNavContext = createContext(null);
 // TODO: For the love of god I should rename some of the variables in this provider, was I high?
 export const KeyboardNavProvider: React.FC = ({ children }) => {
   const [disabledKeyNav, setDisabledKeyNav] = useState(false);
-  const isMenuVisible = useIsMenuVisible();
+  const isMenuVisible = useIsMenuVisibleValue();
   const curPage = usePageValue();
 
   const handleSetDisabledInputs = useCallback((bool: boolean) => {

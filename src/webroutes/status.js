@@ -10,12 +10,11 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
  */
 module.exports = async function GetStatus(ctx) {
     const out = {
-        meta: prepareMetaData(),
+        status: prepareServerStatus(),
     };
-    //FIXME: this is useless, iframe only needs serverStatus, and not metadata
     if (ctx.params.scope === 'web') {
         out.host = prepareHostData();
-        out.status = prepareServerStatus();
+        out.meta = prepareMetaData();
         out.players = preparePlayersData();
     }
     return ctx.send(out);

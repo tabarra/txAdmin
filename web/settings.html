@@ -455,116 +455,19 @@
     </div>
 </div>
 
-<!-- Master actions -->
-<div class="row justify-content-md-center">
-    <div class="col-md-7 mw-col8">
-        <div class="card border-danger">
-            <div class="card-header text-center">
-                <h5 class="d-inline">Master Actions</h5>
-            </div>
-            <div class="card-body">
-                {{@if(it.isWebInterface && it.adminIsMaster)}}
-                    <!-- Backup Database -->
-                    <div class="row text-center pt-2">
-                        <div class="col-lg-9 text-lg-left mb-2">
-                            <h5>Backup Database</h5>
-                            Download a copy of the <code>playersDB.json</code> file containing all players and actions (bans, warns and whitelists).  
-                            You should do this every once in a while.
-                        </div>
-                        <div class="col-lg-3 text-lg-right">
-                            <a class="btn btn-sm btn-outline-danger" target="_blank" href="masterActions/backupDatabase">Backup Database</a>
-                        </div>
-                    </div>
-                    <hr class="m-1">
-
-                    <!-- Import bans -->
-                    <div class="row text-center pt-2">
-                        <div class="col-lg-9 text-lg-left mb-2">
-                            <h5>Import Bans</h5>
-                            If you wish to migrate from another ban system, use this tool to import existing bans. <br>
-                            Supported systems: EasyAdmin, BanSQL, vMenu, vRP, el_bwh.
-                        </div>
-                        <div class="col-lg-3 text-lg-right">
-                            <a class="btn btn-sm btn-outline-danger" href="masterActions/importBans">Import Bans</a>
-                        </div>
-                    </div>
-                    <hr class="m-1">
-
-                    <!-- Reset FXServer -->
-                    <div class="row text-center">
-                        <div class="col-lg-9 text-lg-left mb-2">
-                            <h5>Reset FXServer</h5>
-                            In the FXServer tab you can change the server data path, but if you want to use
-                            the Deployer again, you will need to use this option. <br>
-                            None of your files or databases will be deleted by doing that.
-                        </div>
-                        <div class="col-lg-3 text-lg-right">
-                            <button class="btn btn-sm btn-outline-danger" type="button" 
-                                onclick="masterActionsActions('reset_fxserver');">Reset FXServer</button>
-                        </div>
-                    </div>
-                    <!-- <hr class="m-1"> -->
-                {{#else}}
-                    <div class="row justify-content-center text-center d-block">
-                        <h3 class="mt-3 text-secondary">Master Actions Disabled</h3>
-                        <p class="text-muted">
-                            {{@if(it.adminIsMaster)}}
-                                Please use the web panel in your browser if you would like to backup your database, 
-                                import bans, or reset FXServer settings.
-                            {{#else}}
-                                Only the admin master can perform actions like backup the database, import bans, or
-                                reset FXServer settings.
-                            {{/if}}
-                        </p>
-                    </div>
-                {{/if}}
-            </div>
-        </div>
-    </div>
-</div>
 
 {{@include("footer", it)/}}
 
 
 <script>
     //============================================== General
-    let serverTimezone = "{{it.serverTimezone}}";
-    let browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const serverTimezone = "{{it.serverTimezone}}";
+    const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if(serverTimezone !== browserTimezone){
-        let msg = `Server's timezone: <b>${serverTimezone}</b> <br>
+        const msg = `Server's timezone: <b>${serverTimezone}</b> <br>
             Your timezone: <b>${browserTimezone}</b> <br>
             Make sure to adjust the times to match your expectations.`;
         $('#frmMonitor-timezoneAlert').html(msg);
-    }
-
-    //============================================== Master Actions
-    function masterActionsActions(action){
-        if(!window.confirm(`Are you sure you want to Reset FXServer Settings?`)){
-            return;
-        }
-        const notify = $.notify({ message: '<p class="text-center">Executing...</p>' }, {});
-        
-        txAdminAPI({
-            type: "POST",
-            url: `/masterActions/${action}`,
-            data: {},
-            dataType: 'json',
-            success: function (data) {
-                if(action == 'reset_fxserver' && data.success == true){
-                    window.location = '/setup';
-                    return;
-                }else{
-                    notify.update('progress', 0);
-                    notify.update('type', data.type);
-                    notify.update('message', data.message);
-                }
-            },
-            error: function (xmlhttprequest, textstatus, message) {
-                notify.update('progress', 0);
-                notify.update('type', 'danger');
-                notify.update('message', message);
-            }
-        });
     }
 
 

@@ -117,8 +117,7 @@ option:disabled {
 
 /* Console/Log marks */
 /* https://flatuicolors.com/palette/us */
-.consoleMark-command {background-color: #ffeaa7;}
-.consoleMark-warn {background-color: #ffeaa7;}
+.consoleMark-cmd {background-color: #ffeaa7;}
 .consoleMark-error {background-color: #ffbfa7;}
 .consoleMark-info {background-color: #a7d4ff;}
 .consoleMark-ok {background-color: #a7ffae;}
@@ -357,4 +356,67 @@ mark {background-color: #ffeaa7;}
 }
 pre.thin-scroll{
     white-space: pre-wrap;
+}
+
+
+/* AutoScroll Toggler */
+#autoScrollDiv {
+    position: absolute; 
+    bottom: calc((24px * 3) + 12px);
+    right: calc(1rem + 24px + 18px);
+}
+#autoScrollDiv a {
+    padding-top: 80px;
+}
+#autoScrollDiv a span {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 24px;
+    height: 24px;
+    margin-left: -12px;
+    border-left: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+    -webkit-transform: rotate(-45deg);
+    transform: rotate(-45deg);
+    -webkit-animation: autoScrollBtnAnimation 2s infinite;
+    animation: autoScrollBtnAnimation 2s infinite;
+    opacity: 0;
+    box-sizing: border-box;
+}
+#autoScrollDiv a span:nth-of-type(1) {
+    -webkit-animation-delay: 0s;
+    animation-delay: 0s;
+}
+#autoScrollDiv a span:nth-of-type(2) {
+    top: 16px;
+    -webkit-animation-delay: .15s;
+    animation-delay: .15s;
+}
+#autoScrollDiv a span:nth-of-type(3) {
+    top: 32px;
+    -webkit-animation-delay: .3s;
+    animation-delay: .3s;
+}
+@-webkit-keyframes autoScrollBtnAnimation {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@keyframes autoScrollBtnAnimation {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
 }

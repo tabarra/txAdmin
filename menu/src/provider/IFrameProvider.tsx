@@ -7,7 +7,7 @@ import React, {
   useState,
 } from "react";
 import { txAdminMenuPage, usePage } from "../state/page.state";
-import { useIsMenuVisible } from "../state/visibility.state";
+import { useIsMenuVisibleValue } from "../state/visibility.state";
 import { usePermissionsValue } from "../state/permissions.state";
 
 const iFrameCtx = createContext(null);
@@ -38,7 +38,7 @@ export const useIFrameCtx = () => useContext<iFrameContextValue>(iFrameCtx);
 export const IFrameProvider: React.FC = ({ children }) => {
   const [curFramePg, setCurFramePg] = useState<ValidPath | null>(null);
   const [menuPage, setMenuPage] = usePage();
-  const isMenuVisible = useIsMenuVisible();
+  const isMenuVisible = useIsMenuVisibleValue();
   const curPerms = usePermissionsValue();
 
   useEffect(() => {

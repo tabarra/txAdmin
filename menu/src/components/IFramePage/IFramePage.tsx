@@ -1,31 +1,29 @@
 import React, { useEffect } from "react";
-import { Box, makeStyles } from "@material-ui/core";
+import { Box, styled } from "@mui/material";
 import { IFramePostData, useIFrameCtx } from "../../provider/IFrameProvider";
 import { debugLog } from "../../utils/debugLog";
-import { usePermissionsValue } from '../../state/permissions.state';
+import { usePermissionsValue } from "../../state/permissions.state";
 
-const useStyles = makeStyles({
-  root: {
-    backgroundColor: '#171718',
-    height: "100%",
-    borderRadius: 15,
-  },
-  iframe: {
-    border: "0px",
-    borderRadius: 15,
-    height: "100%",
-    width: "100%",
-  },
+const StyledIFrame = styled("iframe")({
+  border: "0px",
+  borderRadius: 15,
+  height: "100%",
+  width: "100%",
+});
+
+const StyledRoot = styled(Box)({
+  backgroundColor: "#171718",
+  height: "100%",
+  borderRadius: 15,
 });
 
 export const IFramePage: React.FC<{ visible: boolean }> = ({ visible }) => {
-  const classes = useStyles();
   const { fullFrameSrc, handleChildPost } = useIFrameCtx();
-  const userPerms = usePermissionsValue()
+  const userPerms = usePermissionsValue();
 
   // We will only use the provider's src value if the permissions
   // have been successfully fetched
-  const trueFrameSource = Boolean(userPerms) ? fullFrameSrc : 'about:blank'
+  const trueFrameSource = Boolean(userPerms) ? fullFrameSrc : "about:blank";
 
   // Handles listening for postMessage requests from iFrame
   useEffect(() => {
@@ -46,13 +44,8 @@ export const IFramePage: React.FC<{ visible: boolean }> = ({ visible }) => {
   }, [handleChildPost]);
 
   return (
-    <Box
-      className={classes.root}
-      mt={2}
-      mb={10}
-      display={visible ? "initial" : "none"}
-    >
-      {visible && <iframe src={trueFrameSource} className={classes.iframe} />}
-    </Box>
+    <StyledRoot mt={2} mb={10} display={visible ? "initial" : "none"}>
+      {visible && <StyledIFrame src={trueFrameSource} />}
+    </StyledRoot>
   );
 };

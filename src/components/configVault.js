@@ -89,7 +89,7 @@ module.exports = class ConfigVault {
 
     //================================================================
     /**
-     * Setup the this.config variable based on the config file data
+     * ????????????
      * @param {object} cfgData
      */
     setupConfigStructure(cfgData) {
@@ -115,9 +115,7 @@ module.exports = class ConfigVault {
                 language: toDefault(cfg.global.language, null),
                 forceFXServerPort: toDefault(cfg.global.forceFXServerPort, null), //not in template
             };
-            out.logger = {
-                logPath: toDefault(cfg.logger.logPath, null), //not in template
-            };
+            out.logger = toDefault(cfg.logger, {}); //not in template
             out.monitor = {
                 restarterSchedule: toDefault(cfg.monitor.restarterSchedule, null),
                 restarterScheduleWarnings: toDefault(cfg.monitor.restarterScheduleWarnings, [30, 15, 10, 5, 4, 3, 2, 1]), //not in template
@@ -163,7 +161,7 @@ module.exports = class ConfigVault {
             };
         } catch (error) {
             if (GlobalData.verbose) dir(error);
-            throw new Error(`Malformed configuration file! Please copy server-template.json and try again.\nOriginal error: ${error.message}`);
+            throw new Error(`Malformed configuration file! Make sure your txAdmin is updated!\nOriginal error: ${error.message}`);
         }
 
         return out;
@@ -184,8 +182,11 @@ module.exports = class ConfigVault {
             cfg.global.serverName = cfg.global.serverName || 'change-me';
             cfg.global.language = cfg.global.language || 'en'; //TODO: move to GlobalData
 
-            //Logger
-            cfg.logger.logPath = cfg.logger.logPath || `${this.serverProfilePath}/logs/admin.log`; //not in template
+            //Logger - NOTE: this one default's i'm doing directly into the class
+            cfg.logger.fxserver = toDefault(cfg.logger.fxserver, {});
+            cfg.logger.server = toDefault(cfg.logger.server, {});
+            cfg.logger.admin = toDefault(cfg.logger.admin, {});
+            cfg.logger.console = toDefault(cfg.logger.console, {});
 
             //Monitor
             cfg.monitor.restarterSchedule = cfg.monitor.restarterSchedule || [];

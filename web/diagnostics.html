@@ -4,9 +4,9 @@
 <div class="row justify-content-md-center">
     <div class="col-lg-8 col-xl-5 mw-col6">
 
-        <!-- Host Machine Card -->
+        <!-- Environment Card -->
         <div class="card card-accent-danger" style="min-height: 160px;">
-            <div class="card-header font-weight-bold">Host Machine:</div>
+            <div class="card-header font-weight-bold">Environment:</div>
             <div class="card-body">
                 {{@if(it.host.error !== false)}}
                     {{it.host.error|safe}}
@@ -43,9 +43,12 @@
                     <code>HTTP {{it.txadmin.hbHTTPFails}}</code> / <code>FD3 {{it.txadmin.hbFD3Fails}}</code> <br>
                 <strong>Boot Seconds:</strong> <code>{{it.txadmin.hbBootSeconds}}</code> <br>
                 <strong>Freeze Seconds:</strong> <code>{{it.txadmin.freezeSeconds}}</code> <br>
-                <strong>FXServer Log Size:</strong> <code>{{it.txadmin.logFileSize}}</code> <br>
-                <strong>Server Log Size:</strong> <code>{{it.txadmin.serverLogSize}}</code> <br>
                 <strong>Koa Sessions:</strong> <code>{{it.txadmin.koaSessions}}</code> <br>
+                <strong>Logs Storage Size:</strong> <code>{{it.txadmin.logStorageSize}}</code> <br>
+                <strong>Logger Status:</strong> <br>
+                ├─ Admin: <code>{{it.txadmin.loggerStatusAdmin}}</code> <br>
+                ├─ FXServer: <code>{{it.txadmin.loggerStatusFXServer}}</code> <br>
+                └─ Server: <code>{{it.txadmin.loggerStatusServer}}</code> <br>
                 <hr>
                 <h5>Settings:</h5>
                 <strong>Schedule:</strong> <code>{{it.txadmin.schedule}}</code> <br>

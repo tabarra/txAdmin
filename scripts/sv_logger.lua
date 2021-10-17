@@ -3,59 +3,46 @@ if GetConvar('txAdminServerMode', 'false') ~= 'true' then
     return
 end
 
--- micro optimization
-local os_time = os.time
--- http://lua-users.org/wiki/SimpleRound
-local function round(num)
-    return tonumber(string.format("%.2f", num))
-end
-
-local function getPlayerData(src)
-    if type(src) == 'string' then
-        src = tonumber(src)
-    end
-
-    if not src then
-        return false
-    end
-
-    if src <= 0 then return {name = 'console', identifiers = {}} end
-
-    return {
-        name = GetPlayerName(src),
-        identifiers = GetPlayerIdentifiers(src)
-    }
-end
-
+-- Micro optimization & variables
+local sub = string.sub
+local ostime = os.time
+local tonumber = tonumber
 local loggerBuffer = {}
-local PRINT_STRUCTURED_TRACE = `PRINT_STRUCTURED_TRACE` & 0xFFFFFFFF
+
+
 --- function logger
 --- Sends logs through fd3 to the server & displays the logs on the panel.
----@param src number the source of the player who did the action
----@param action string the action type
----@param data table|boolean will take a table, or a boolean if there is no data.
----NOTE: local fakeMsCounter = 0
-local function logger(src, action, data)
-    ---NOTE: fakeMsCounter+1
-    ---NOTE: if fakeMsCounter == 1000 then fakeMsCounter = 0
-    ---NOTE: ts = os_time() + fakeMsCounter
-    ---FIXME: this is actually bad cuz if we have multiple requests in a second we can break log linearity 
-    ---FIXME: we need to reset counter to 000 every time the ts changes, and then cap at 999 without rolling back
-    ---FIXME: big servers have 5 events/sec, for this to break, only with over 60k events/sec
-    
+---@param src number the source of the player who did the action, or 'tx' if internal
+---@param type string the action type
+---@param data table|nil the event data
+local function logger(src, type, data)
     loggerBuffer[#loggerBuffer+1] = {
-        timestamp = round(os_time()),
-        source = getPlayerData(src), --FIXME: send only the id
-        action = action,
+        src = src,
+        type = type,
         data = data or false
     }
 end
 
+
 -- send all of the buffered logs every second
+--TODO: check if PrintStructuredTrace() is already available
+-- https://github.com/citizenfx/fivem/commit/9d0eec43ca7d3e63bb905cc50c115905b0e9ae8b
+local PRINT_STRUCTURED_TRACE = `PRINT_STRUCTURED_TRACE` & 0xFFFFFFFF
 CreateThread(function()
     while true do
         Wait(1000)
         if #loggerBuffer > 0 then
+            -- Adding timestamp with fake ms to log entries
+            local ts = ostime() * 1000
+            for i = 1, #loggerBuffer do
+                if i <= 999 then
+                    loggerBuffer[i].ts = ts + i-1
+                else
+                    loggerBuffer[i].ts = ts + 999
+                end
+            end
+
+            --Sending logs via FD3 and resetting buffer
             local payload = json.encode({
                 type = 'txAdminLogData',
                 logs = loggerBuffer
@@ -65,21 +52,40 @@ CreateThread(function()
         end
     end
 end)
+logger('tx', 'LoggerStarted')
 
-logger(-1, 'txAdminClient:Started')
 
-AddEventHandler('playerConnecting', function()
-    logger(source, 'playerConnecting')
+-- Player joining/leaving handlers
+-- TODO: support hwid tokens Soon™
+AddEventHandler('playerJoining', function()
+    local outData
+    if source <= 0 then 
+        outData = {
+            id = source,
+            name = 'unknown',
+            identifiers = {}
+        }
+    else
+        outData = {
+            name = sub(GetPlayerName(source) or "unknown", 1, 75),
+            ids = GetPlayerIdentifiers(source),
+            -- hwids = {}
+        }
+        -- local maxTokens = GetNumPlayerTokens(source)
+        -- for i = 0, maxTokens do
+        --     outData.hwids[i+1] = GetPlayerToken(source, i)
+        -- end
+    end
+
+    logger(source, 'playerJoining', outData)
 end)
-
--- RegisterNetEvent('playerJoining', function()
---     logger(source, 'playerJoining')
--- end)
 
 AddEventHandler('playerDropped', function()
     logger(source, 'playerDropped')
 end)
 
+
+-- Explosion handler
 local function isInvalid(property, invalidType)
     return (property == nil or property == invalidType)
 end
@@ -98,52 +104,59 @@ AddEventHandler('explosionEvent', function(source, ev)
         ev.explosionType = explosionTypes[ev.explosionType + 1]
     end
 
-    logger(source, 'explosionEvent', ev)
+    logger(tonumber(source), 'explosionEvent', ev)
 end)
+
 
 -- An internal server handler, this is NOT exposed to the client
 AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
+    if not allowed then return end
+
     local message
     if event == 'healSelf' then
-        message = "healing themself"
+        message = "healed themself"
 
     elseif event == 'healAll' then
-        message = "healing all players!"
+        message = "healed all players!"
 
     elseif event == 'teleportCoords' then
         if type(data) ~= 'table' then return end
         local x = data.x
         local y = data.y
         local z = data.z
-        message = ("teleporting to coordinates (x=%.3f, y=%0.3f, z=%0.3f)"):format(x or 0.0, y or 0.0, z or 0.0)
+        message = ("teleported to coordinates (x=%.3f, y=%0.3f, z=%0.3f)"):format(x or 0.0, y or 0.0, z or 0.0)
 
     elseif event == 'teleportWaypoint' then
-        message = "teleporting to a waypoint"
+        message = "teleported to a waypoint"
 
     elseif event == 'announcement' then
         if type(data) ~= 'string' then return end
-        message = "making a server-wide announcement: " .. data
+        message = "made a server-wide announcement: " .. data
 
     elseif event == 'vehicleRepair' then
-        message = "repairing their vehicle"
+        message = "repaired their vehicle"
 
     elseif event == 'spawnVehicle' then
         if type(data) ~= 'string' then return end
-        message = "spawning a vehicle (model: " .. data .. ")"
+        message = "spawned a vehicle (model: " .. data .. ")"
 
     elseif event == 'deleteVehicle' then
-        message = "deleting a vehicle"
+        message = "deleted a vehicle"
 
     elseif event == 'playerModeChanged' then
         if data == 'godmode' then
-            message = "enabling invincibility"
+            message = "enabled god mode"
         elseif data == 'noclip' then
-            message = "enabling noclip"
+            message = "enabled noclip"
         elseif data == 'none' then
-            message = "becoming mortal (standard mode)"
+            message = "became mortal (standard mode)"
         else
-            message = "invalid player mode"
+            message = "changed playermode to unknown"
         end
+
+    elseif event == 'freezePlayer' then
+        if type(data) ~= 'string' or type(data) ~= 'number' then return end
+        message = 'toggled freeze on id: ' .. data
 
     elseif event == 'teleportPlayer' then
         if type(data) ~= 'table' then return end
@@ -152,53 +165,49 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
         local x = data.x or 0.0
         local y = data.y or 0.0
         local z = data.z or 0.0
-        message = ("teleporting to player %s (x=%.3f, y=%.3f, z=%.3f)"):format(playerName, x, y, z)
+        message = ("teleported to player %s (x=%.3f, y=%.3f, z=%.3f)"):format(playerName, x, y, z)
 
     elseif event == 'healPlayer' then
         if type(data) ~= 'string' then return end
-        message = "healing player " .. data
+        message = "healed player " .. data
 
     elseif event == 'summonPlayer' then
         if type(data) ~= 'string' then return end
-        message = "summoning player " .. data
+        message = "summoned player " .. data
 
     elseif event == 'weedEffect' then
         if type(data) ~= 'string' then return end
-        message = "triggering weed effect on " .. data
+        message = "triggered weed effect on " .. data
 
     elseif event == 'drunkEffect' then
         if type(data) ~= 'string' then return end
-        message = "triggering drunk effect on " .. data
+        message = "triggered drunk effect on " .. data
 
     elseif event == 'wildAttack' then
         if type(data) ~= 'string' then return end
-        message = "triggering wild attack on " .. data
+        message = "triggered wild attack on " .. data
 
     elseif event == 'setOnFire' then
         if type(data) ~= 'string' then return end
-        message = "setting ".. data .." on fire" 
+        message = "set ".. data .." on fire" 
 
     elseif event == 'clearArea' then
         if type(data) ~= 'number' then return end
-        message = "clearing an area with ".. data .."m radius"
+        message = "cleared an area with ".. data .."m radius"
 
     else
         logger(source, 'DebugMessage', "unknown menu event "..event)
         return
     end
-    
-    local event_data = { message = message, allowed = allowed }
-    logger(source, 'MenuEvent', event_data)
+
+    logger(source, 'MenuEvent', message)
 end)
 
+-- Extra handlers
 RegisterNetEvent('txaLogger:DeathNotice', function(killer, cause)
-    local killerData
-    if killer then
-        killerData = getPlayerData(killer)
-    end
     local logData = {
         cause = cause,
-        killer = killerData
+        killer = killer
     }
     logger(source, 'DeathNotice', logData)
 end)

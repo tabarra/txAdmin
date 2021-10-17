@@ -20,19 +20,16 @@
     <link rel="shortcut icon" href="img/favicon_default.png" type="image/png" id="favicon" />
     <style>
         .zapAdContainer {
-            /* background-color: darkslategray; */
             padding-left: 1em;
             display: flex;
             color: unset !important;
         }
         .zapLogo {
-            /* background-color: salmon; */
             height: 26px;
             margin-top: auto;
             margin-bottom: auto;
         } 
         .zapText {
-            /* background-color: royalblue; */
             font-size: 0.85em;
             font-weight: 700;
             padding-left: 8px;
@@ -106,7 +103,7 @@
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link" href="resources">
                     <svg class="c-sidebar-nav-icon">
-                        <use href="img/coreui_icons.svg#cil-bolt"></use>
+                        <use href="img/coreui_icons.svg#cil-3d"></use>
                     </svg> Resources
                 </a>
             </li>
@@ -114,7 +111,7 @@
                 <a class="c-sidebar-nav-link" href="serverLog">
                     <svg class="c-sidebar-nav-icon">
                         <use href="img/coreui_icons.svg#cil-excerpt"></use>
-                    </svg> Server Log
+                    </svg> Server Log <span class="badge badge-danger">NEW</span>
                 </a>
             </li>
             <li class="c-sidebar-nav-item">
@@ -150,6 +147,13 @@
                     <svg class="c-sidebar-nav-icon">
                         <use href="img/coreui_icons.svg#cil-settings"></use>
                     </svg> Settings
+                </a>
+            </li>
+            <li class="c-sidebar-nav-item">
+                <a class="c-sidebar-nav-link" href="masterActions">
+                    <svg class="c-sidebar-nav-icon">
+                        <use href="img/coreui_icons.svg#cil-bolt"></use>
+                    </svg> Master Actions <span class="badge badge-danger">NEW</span>
                 </a>
             </li>
             {{@if(it.showAdvanced)}}

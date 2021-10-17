@@ -240,7 +240,7 @@ function txaBroadcast(source, args)
             },
             color = {255, 0, 0}
         })
-        TriggerEvent('txaLogger:internalChatMessage', -1, "(Broadcast) "..args[1], args[2])
+        TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) "..args[1], args[2])
     else
         logError('Invalid arguments for txaBroadcast')
     end

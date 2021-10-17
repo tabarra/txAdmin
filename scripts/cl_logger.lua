@@ -116,14 +116,7 @@ local deathHashTable = {
 local function processDeath(ped)
     local killerPed = GetPedSourceOfDeath(ped)
     local causeHash = GetPedCauseOfDeath(ped)
-    local killer
-
-    local deathReason = deathHashTable[causeHash] or 'unknown'
-    if deathReason ~= "unknown" then
-        deathReason = "suicide (" .. deathReason .. ")"
-    else
-        deathReason = "suicide"
-    end
+    local killer = false
 
     if killerPed == ped then
         killer = false
@@ -134,17 +127,19 @@ local function processDeath(ped)
             local drivingPed = GetPedInVehicleSeat(killerPed, -1)
             if IsEntityAPed(drivingPed) == 1 and IsPedAPlayer(drivingPed) then
                 killer = NetworkGetPlayerIndexFromPed(drivingPed)
-            else
-                killer = false
             end
-        elseif not IsPedAPlayer(killerPed) then
-            killer = false
         end
     end
 
-    if killer == nil then
-        killer = false
-    elseif killer then
+    local deathReason = deathHashTable[causeHash] or 'unknown'
+
+    if not killer then
+        if deathReason ~= "unknown" then
+            deathReason = "suicide (" .. deathReason .. ")"
+        else
+            deathReason = "suicide"
+        end
+    else
         killer = GetPlayerServerId(killer)
     end
 

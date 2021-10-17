@@ -105,4 +105,4 @@ export const useAssociatedPlayerValue = () =>
   useRecoilValue<PlayerData>(playerDetails.associatedPlayer);
 
 export const useSetAssociatedPlayer = () =>
-  useSetRecoilState(playerDetails.associatedPlayer);
+  useSetRecoilState<PlayerData>(playerDetails.associatedPlayer);

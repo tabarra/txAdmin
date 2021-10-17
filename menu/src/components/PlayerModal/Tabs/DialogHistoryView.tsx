@@ -1,15 +1,9 @@
 import React from "react";
-import {
-  Box,
-  makeStyles,
-  Theme,
-  Typography,
-  useTheme,
-} from "@material-ui/core";
+import { Box, styled, Theme, Typography, useTheme } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
 import { useTranslate } from "react-polyglot";
 import { DialogLoadError } from "./DialogLoadError";
-
 
 // TODO: Make the styling on this nicer
 const NoHistoryBox = () => (
@@ -21,22 +15,23 @@ const NoHistoryBox = () => (
 );
 
 const useStyles = makeStyles((theme: Theme) => ({
-  historyItem: {
-    background: theme.palette.background.paper,
-    padding: "10px 10px",
-    marginBottom: 7,
-    display: "flex",
-    justifyContent: "space-between",
-  },
+  historyItem: {},
+}));
+
+const StyledHistoryItem = styled(Box)(({ theme }) => ({
+  background: theme.palette.background.paper,
+  padding: "10px 10px",
+  marginBottom: 7,
+  display: "flex",
+  justifyContent: "space-between",
 }));
 
 const DialogHistoryView: React.FC = () => {
-  const classes = useStyles();
   const player = usePlayerDetailsValue();
   const theme = useTheme();
   const t = useTranslate();
 
-  if(typeof player !== 'object'){
+  if (typeof player !== "object") {
     return <DialogLoadError />;
   }
 
@@ -81,8 +76,7 @@ const DialogHistoryView: React.FC = () => {
       <Box flexGrow={1} overflow="auto" pr={1}>
         {playerActionHistory?.length ? (
           playerActionHistory.map((h, index) => (
-            <Box
-              className={classes.historyItem}
+            <StyledHistoryItem
               borderLeft={`solid 2px ${actionTypes[h.action].color}`}
               key={index}
             >
@@ -97,7 +91,7 @@ const DialogHistoryView: React.FC = () => {
               <Box>
                 <Typography>{h.date}</Typography>
               </Box>
-            </Box>
+            </StyledHistoryItem>
           ))
         ) : (
           <NoHistoryBox />

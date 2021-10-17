@@ -555,6 +555,30 @@ module.exports = class PlayerController {
 
 
     /**
+     * Cleans the database by removing every entry that matches the provided filter function.
+     *
+     * @param {String} table identifiers array
+     * @param {function} filter lodash-compatible filter function
+     * @returns {number|error} number of removed items
+     */
+    async cleanDatabase(tableName, filterFunc) {
+        if (tableName !== 'players' && tableName !== 'actions') throw new Error('Unknown tableName.');
+        if (typeof filterFunc !== 'function') throw new Error('filterFunc must be a function.');
+
+        try {
+            const removed = await this.db.obj.get(tableName)
+                .remove(filterFunc)
+                .value();
+            return removed.length;
+        } catch (error) {
+            const msg = `Failed to clean database with error: ${error.message}`;
+            if (GlobalData.verbose) logError(msg);
+            throw new Error(msg);
+        }
+    }
+
+
+    /**
      * Returns a mostly /players.json compatible playerlist based on the activePlayers
      *
      * NOTE: ATM only used by the /status endpoint.

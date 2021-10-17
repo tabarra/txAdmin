@@ -25,7 +25,7 @@ body:
   id: feat-description
   attributes:
     label: Feature Description
-    description: Please provide a short and concise description of the feature you are suggesting?
+    description: Please provide a short and concise description of the feature you are suggesting.
   validations:
     required: true
 - type: textarea

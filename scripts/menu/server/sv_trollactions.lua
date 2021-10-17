@@ -1,3 +1,8 @@
+--Check Environment
+if GetConvar('txAdminServerMode', 'false') ~= 'true' then
+    return
+end
+
 RegisterNetEvent('txAdmin:menu:weedEffectPlayer', function(id)
     local src = source
     local allow = PlayerHasTxPermission(src, 'players.troll')

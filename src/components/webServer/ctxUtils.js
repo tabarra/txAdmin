@@ -173,7 +173,7 @@ async function renderSoloView(view, data, txVars) {
  */
 function logCommand(ctx, data) {
     log(`${ctx.session.auth.username} executing: ` + chalk.inverse(' ' + data + ' '));
-    globals.logger.append(`[${ctx.ip}][${ctx.session.auth.username}] ${data}`);
+    globals.logger.admin.write(`[${ctx.session.auth.username}] ${data}`);
 }
 
 
@@ -185,7 +185,7 @@ function logCommand(ctx, data) {
  */
 function logAction(ctx, data) {
     log(`[${ctx.session.auth.username}] ${data}`);
-    globals.logger.append(`[${ctx.ip}][${ctx.session.auth.username}] ${data}`);
+    globals.logger.admin.write(`[${ctx.session.auth.username}] ${data}`);
 }
 
 
@@ -201,7 +201,7 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true) {
     try {
         //For master permission
         if (perm === 'master' && ctx.session.auth.master !== true) {
-            if (GlobalData.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
+            if (GlobalData.verbose && printWarn) logWarn(`[${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
 
@@ -213,7 +213,7 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true) {
         ) {
             return true;
         } else {
-            if (GlobalData.verbose && printWarn) logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
+            if (GlobalData.verbose && printWarn) logWarn(`[${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
     } catch (error) {
@@ -246,7 +246,8 @@ module.exports = async function WebCtxUtils(ctx, next) {
     }
 
     //Setting up the user's real ip from the webpipe
-    //NOTE: not yet being used
+    //NOTE: not used anywhere except rate limiter, and
+    // should be kept this way. When auth changes, delete this shit;
     if (
         typeof ctx.headers['x-txadmin-identifiers'] === 'string'
         && typeof ctx.headers['x-txadmin-token'] === 'string'

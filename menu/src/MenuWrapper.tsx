@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import "./App.css";
-import { useIsMenuVisible } from "./state/visibility.state";
+import { useIsMenuVisibleValue } from "./state/visibility.state";
 import MenuRoot from "./components/MenuRoot";
 import { DialogProvider } from "./provider/DialogProvider";
 import { useExitListener } from "./hooks/useExitListener";
@@ -15,6 +15,8 @@ import { IFrameProvider } from "./provider/IFrameProvider";
 import { useCheckCredentials } from "./hooks/useCheckCredentials";
 import { PlayerModalProvider } from "./provider/PlayerModalProvider";
 import { txAdminMenuPage, useSetPage } from "./state/page.state";
+import { useListenerForSomething } from "./hooks/useListenerForSomething";
+import { usePlayersFilterIsTemp, useSetPlayerFilter } from "./state/players.state";
 
 debugData(
   [
@@ -27,8 +29,11 @@ debugData(
 );
 
 const MenuWrapper: React.FC = () => {
-  const visible = useIsMenuVisible();
+  const visible = useIsMenuVisibleValue();
   const serverCtx = useServerCtxValue();
+  const [playersFilterIsTemp, setPlayersFilterIsTemp] = usePlayersFilterIsTemp();
+  const setPlayerFilter = useSetPlayerFilter();
+
   const setPage = useSetPage();
   // These hooks don't ever unmount
   useExitListener();
@@ -38,15 +43,24 @@ const MenuWrapper: React.FC = () => {
   //Change page back to Main when closed
   useEffect(() => {
     if (visible) return;
+
     const changeTimer = setTimeout(() => {
       setPage(txAdminMenuPage.Main);
     }, 750);
+
+    if (playersFilterIsTemp) {
+      setPlayerFilter("");
+      setPlayersFilterIsTemp(false);
+    }
+
     return () => clearInterval(changeTimer);
-  }, [visible]);
+  }, [visible, playersFilterIsTemp]);
 
   const localeSelected = useMemo(() => getLocale(serverCtx.locale), [
     serverCtx.locale,
   ]);
+
+  useListenerForSomething();
 
   const styled = visible ? { opacity: 1 } : undefined;
 

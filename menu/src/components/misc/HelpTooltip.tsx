@@ -5,18 +5,13 @@ import React, {
   useRef,
   useState,
 } from "react";
-import {
-  Fade,
-  makeStyles,
-  Theme,
-  Tooltip,
-  Typography,
-} from "@material-ui/core";
+import { Fade, Theme, Tooltip, Typography } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { txAdminMenuPage, usePageValue } from "../../state/page.state";
-import { useIsMenuVisible } from "../../state/visibility.state";
+import { useIsMenuVisibleValue } from "../../state/visibility.state";
 import { useDialogContext } from "../../provider/DialogProvider";
-import { useTranslate } from 'react-polyglot';
-import { useServerCtxValue } from '../../state/server.state';
+import { useTranslate } from "react-polyglot";
+import { useServerCtxValue } from "../../state/server.state";
 
 const RANDOM_CHANGE_TIME = 12000;
 const TIME_FOR_TOOLTIP_TO_APPEAR = 3000;
@@ -49,24 +44,26 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const rootEl = document.getElementById("#root");
+
 export const HelpTooltip: React.FC = ({ children }) => {
   const classes = useStyles();
   const timeTillOpenRef = useRef<NodeJS.Timer | null>(null);
   const changeMsgTimeRef = useRef<NodeJS.Timer | null>();
-  const t = useTranslate()
-  const serverCtx = useServerCtxValue()
-  const isMenuVisible = useIsMenuVisible();
+  const t = useTranslate();
+  const serverCtx = useServerCtxValue();
+  const isMenuVisible = useIsMenuVisibleValue();
   const { isDialogOpen } = useDialogContext();
 
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const [tooltipContent, setTooltipContent] = useState("");
 
-  const formattedPageKey = `[${serverCtx.switchPageKey.toUpperCase()}]`
+  const formattedPageKey = `[${serverCtx.switchPageKey.toUpperCase()}]`;
 
   const toolTipMessages = useMemo(
     () => [
-      t('nui_menu.page_main.tooltips.tooltip_1', { key: formattedPageKey }),
-      t('nui_menu.page_main.tooltips.tooltip_2'),
+      t("nui_menu.page_main.tooltips.tooltip_1", { key: formattedPageKey }),
+      t("nui_menu.page_main.tooltips.tooltip_2"),
     ],
     [t, formattedPageKey]
   );
@@ -141,6 +138,9 @@ export const HelpTooltip: React.FC = ({ children }) => {
           {tooltipContent}
         </Typography>
       }
+      PopperProps={{
+        container: rootEl,
+      }}
       arrow
       TransitionComponent={Fade}
       TransitionProps={{

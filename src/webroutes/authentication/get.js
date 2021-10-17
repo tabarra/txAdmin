@@ -13,7 +13,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
  */
 module.exports = async function AuthGet(ctx) {
     //Set template type
-    let template;
+    let template, altPasswordMessage;
     if (globals.adminVault.admins === false) {
         template = 'noMaster';
         if (globals.adminVault.addMasterPin) {
@@ -21,6 +21,9 @@ module.exports = async function AuthGet(ctx) {
         }
     } else {
         template = 'normal';
+        altPasswordMessage = (Math.random() < 0.1)
+            ? 'OR YOU CAN JUST USE YOUR PASSWORD 🤣👏🤣'
+            : 'OR';
     }
 
     //Destroy session? And start a new one
@@ -38,6 +41,7 @@ module.exports = async function AuthGet(ctx) {
     //Render page
     const renderData = {
         template,
+        altPasswordMessage,
         message: (!isUndefined(ctx.query.logout)) ? 'Logged Out' : '',
         citizenfxDisabled: !globals.adminVault.providers.citizenfx.ready,
         discordDisabled: true,

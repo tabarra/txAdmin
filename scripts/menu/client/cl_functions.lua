@@ -59,6 +59,11 @@ function toggleMenuVisibility(visible)
         isMenuVisible = not isMenuVisible
         sendMenuMessage('setVisible', isMenuVisible)
     end
+    -- check if noclip and spectate still works with menu closed
+    if not isMenuVisible then
+        SetNuiFocus(false)
+        SetNuiFocusKeepInput(false)
+    end
     PlaySoundFrontend(-1, SoundEnum['enter'], 'HUD_FRONTEND_DEFAULT_SOUNDSET', 1)
 end
 

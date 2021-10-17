@@ -69,8 +69,11 @@
     <h3>FXServer Console</h3>
 </div>
 <div class="card bg-dark">
-    <div class="card-body p-3">
+    <div class="card-body p-3" style="position: relative">
         <pre id="console" class="thin-scroll console-content text-white {{[(it.isWebInterface), '', 'nui-height']|ternary}}"></pre>
+        <div id="autoScrollDiv">
+            <a id="autoScrollBtn" class="d-none" href="#"><span></span><span></span><span></span></a>
+        </div>
     </div>
     <div class="card-footer bg-dark">
         <div class="row">
@@ -83,16 +86,21 @@
                                    autocomplete="off" autocorrect="off" autocapitalize="off"
                                    spellcheck="false" {{it.disableCommand}}>
                         </div>
-                        <button type="button" id="clearConsole"
-                                class="btn btn-outline-light btn-sm mb-2">Clear Console
+                        <a href="fxserver/downloadLog" target="_blank" 
+                            class="btn btn-outline-light btn-sm mb-2 {{[it.isWebInterface, '', 'disabled']|ternary}}">
+                            Download Log
+                        </a>
+                        <button type="button" id="clearConsole" class="btn btn-outline-light btn-sm mb-2">
+                            Clear Console
                         </button>
-                        <button type="button" id="toggleAutoScroll"
-                                class="btn btn-outline-light btn-sm mb-2">Disable Scroll
+                        <button type="button" id="announcementBtn" class="btn btn-outline-warning btn-sm mb-2"
+                            {{[it.isWebInterface, '', 'disabled']|ternary}}>
+                            Announcement
                         </button>
-                        <a href="fxserver/downloadLog" target="_blank"
-                           class="btn btn-outline-light btn-sm mb-2">Download Log</a>
-                        <button onclick="controlAction('restart')" class="btn btn-outline-{{it.restartBtnClass}} btn-sm mb-2"
-                                type="button" id="ctrl-restart" {{it.disableRestart}}>RESTART</button> &nbsp;
+                        <button type="button" id="ctrl-restart" class="btn btn-outline-{{it.restartBtnClass}} btn-sm mb-2" 
+                            onclick="controlAction('restart')" {{it.disableRestart}}>
+                                RESTART
+                        </button>
                     </div>
                 </form>
             </div>
@@ -144,8 +152,9 @@
     //============================================== Live Console stuff
     (function () {
         //Preparing variables
+        const BUFFER_TRIM_SIZE = 128 * 1024; // 128kb
         const commandHistoryLimit = 12;
-        const defaultOpts = {
+        const defaultSocketOpts = {
             transports: ['polling'],
             upgrade: false,
             query: {
@@ -154,13 +163,11 @@
         }
         let socket;
         if (isWebInterface) {
-            socket = io({...defaultOpts, path: '/socket.io'});
+            socket = io({...defaultSocketOpts, path: '/socket.io'});
         }else{
-            socket = io('monitor', {...defaultOpts, path: '/WebPipe/socket.io'});
+            socket = io('monitor', {...defaultSocketOpts, path: '/WebPipe/socket.io'});
         }
         
-        //NOTE: when using namespaces:
-        // const socket = io('/console', {path: '/socket.io', transports: ['polling'], upgrade: false});
         const ansi_up = new AnsiUp;
         ansi_up.escape_for_html = false;
         const input = document.getElementById("cmdInput");
@@ -168,7 +175,8 @@
         const consoleForm = document.getElementById("frmConsole");
         const historyDiv = document.getElementById('cmdHistoryDiv');
         const historyElement = document.getElementById('cmdHistory');
-        const autoScrollToggle = document.getElementById("toggleAutoScroll");
+        const autoScrollBtn = document.getElementById("autoScrollBtn");
+        const announcementBtn = document.getElementById("announcementBtn");
         let commandHistory = [];
         let commandCache = [];
         let autoScroll = true;
@@ -191,6 +199,19 @@
             historyElement.appendChild(node);
         }
 
+        const scrollBottom = () => {
+            if (autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight;
+        }
+
+        const autoscrollToggle = (status) => {
+            autoScroll = status
+            if(autoScroll){
+                autoScrollBtn.classList.add('d-none');
+            }else{
+                autoScrollBtn.classList.remove('d-none');
+            }
+            scrollBottom();
+        }
 
         //Load command history from local storage
         if(typeof window.localStorage.liveConsoleCommandHistory !== 'undefined'){
@@ -218,13 +239,32 @@
             window.location = '/';
         });
         socket.on('consoleData', function (msg) {
-            let _consoleData = consoleElement.innerHTML + ansi_up.ansi_to_html(msg);
+            const cleanMsg = xss(msg)
+                .replace(/<br>/g, '\n')
+                .replace(/{txMarker-(\w+)}/g, '<mark class="consoleMark-$1">')
+                .replace(/{\/txMarker}/g, '</mark>');
+
+            let _consoleData = consoleElement.innerHTML + ansi_up.ansi_to_html(cleanMsg);
             _consoleData = (_consoleData.length > BUFFER_TRIM_SIZE)
                 ? _consoleData.slice(-0.5 * BUFFER_TRIM_SIZE) // grab the last half
                 : _consoleData; // no need to trim
             consoleElement.innerHTML = _consoleData.substr(_consoleData.indexOf("\n"));
-            if (autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight;
+
+            scrollBottom();
         });
+
+        consoleElement.addEventListener('scroll',function(){
+                const scrollTop = consoleElement.scrollTop;
+                const scrollHeight = consoleElement.scrollHeight;
+                const offsetHeight = consoleElement.offsetHeight;
+                const contentHeight = scrollHeight - offsetHeight;
+                if (scrollTop < contentHeight) {
+                    autoscrollToggle(false);
+                } else if(scrollTop === contentHeight){
+                    autoscrollToggle(true);
+                }
+            }
+        )
 
 
         //Form
@@ -237,9 +277,7 @@
             commandCache.unshift(command);
             socket.emit('consoleCommand', command);
 
-            autoScroll = true;
-            consoleElement.scrollTop = consoleElement.scrollHeight;
-            autoScrollToggle.innerText = "Disable Scroll";
+            autoscrollToggle(true);
 
             if(!commandHistory.includes(command)){
                 addCommandHistoryEntry(command);
@@ -282,10 +320,39 @@
         });
 
         //Buttons
-        autoScrollToggle.addEventListener("click", function () {
-            autoScroll = !autoScroll;
-            autoScrollToggle.innerText = (autoScroll ? "Disable Scroll" : "Enable Scroll");
-            if(autoScroll) consoleElement.scrollTop = consoleElement.scrollHeight;
+        announcementBtn.addEventListener("click", (event) => {
+            let message = prompt('Type the message to be broadcasted to all players');
+            if(message.length <= 6){
+                $.notify({ message: 'This message is too short!'}, {type: 'danger'});
+                return;
+            }
+
+            if(message == null) return;
+
+            const notify = $.notify({ message: 'Executing Command...' }, {});
+            txAdminAPI({
+                type: "POST",
+                url: '/fxserver/commands',
+                data: {
+                    action: 'admin_broadcast',
+                    parameter: message
+                },
+                success: function (data) {
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    notify.update('progress', 0);
+                    notify.update('type', 'danger');
+                    notify.update('message', message);
+                }
+            });
+        });
+
+        autoScrollBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            autoscrollToggle(true);
         });
 
         document.getElementById("clearConsole").addEventListener("click", function () {
