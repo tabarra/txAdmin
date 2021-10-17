@@ -29,36 +29,42 @@ local function InstructionalButton(controlButton, text)
     EndTextCommandScaleformString()
 end
 
-local function setupScaleform()
-    -- yay, scaleforms
-    local scaleform = RequestScaleformMovie("instructional_buttons")
-    while not HasScaleformMovieLoaded(scaleform) do
-        Wait(1)
-    end
-    PushScaleformMovieFunction(scaleform, "CLEAR_ALL")
-    PopScaleformMovieFunctionVoid()
-
-    PushScaleformMovieFunction(scaleform, "SET_CLEAR_SPACE")
-    PushScaleformMovieFunctionParameterInt(200)
-    PopScaleformMovieFunctionVoid()
-
-    PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
-    PushScaleformMovieFunctionParameterInt(1)
-    InstructionalButton(GetControlInstructionalButton(1, 194), "Exit Spectate Mode")
-    PopScaleformMovieFunctionVoid()
-
-
-    PushScaleformMovieFunction(scaleform, "DRAW_INSTRUCTIONAL_BUTTONS")
-    PopScaleformMovieFunctionVoid()
-
-    PushScaleformMovieFunction(scaleform, "SET_BACKGROUND_COLOUR")
-    PushScaleformMovieFunctionParameterInt(0)
-    PushScaleformMovieFunctionParameterInt(0)
-    PushScaleformMovieFunctionParameterInt(0)
-    PushScaleformMovieFunctionParameterInt(80)
-    PopScaleformMovieFunctionVoid()
-
-    return scaleform
+local function createScaleformThread()
+    CreateThread(function()
+        -- yay, scaleforms
+        local scaleform = RequestScaleformMovie("instructional_buttons")
+        while not HasScaleformMovieLoaded(scaleform) do
+            Wait(1)
+        end
+        PushScaleformMovieFunction(scaleform, "CLEAR_ALL")
+        PopScaleformMovieFunctionVoid()
+    
+        PushScaleformMovieFunction(scaleform, "SET_CLEAR_SPACE")
+        PushScaleformMovieFunctionParameterInt(200)
+        PopScaleformMovieFunctionVoid()
+    
+        PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
+        PushScaleformMovieFunctionParameterInt(1)
+        InstructionalButton(GetControlInstructionalButton(1, 194), "Exit Spectate Mode")
+        PopScaleformMovieFunctionVoid()
+    
+    
+        PushScaleformMovieFunction(scaleform, "DRAW_INSTRUCTIONAL_BUTTONS")
+        PopScaleformMovieFunctionVoid()
+    
+        PushScaleformMovieFunction(scaleform, "SET_BACKGROUND_COLOUR")
+        PushScaleformMovieFunctionParameterInt(0)
+        PushScaleformMovieFunctionParameterInt(0)
+        PushScaleformMovieFunctionParameterInt(0)
+        PushScaleformMovieFunctionParameterInt(80)
+        PopScaleformMovieFunctionVoid()
+    
+        while isSpectateEnabled do
+            DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255, 0)
+            Wait(0)
+        end
+        SetScaleformMovieAsNoLongerNeeded()
+    end)
 end
 
 local function calculateSpectatorCoords(coords)
@@ -173,6 +179,7 @@ local function toggleSpectate(targetPed, targetPlayerId)
         debugPrint(('Now spectating TargetPed (%s)'):format(targetPed))
         isSpectateEnabled = true
         createSpectatorTeleportThread()
+        createScaleformThread()
     end
 end
 
@@ -180,8 +187,26 @@ RegisterCommand('txAdmin:menu:endSpectate', function()
     if isSpectateEnabled then
         toggleSpectate(storedTargetPed)
         preparePlayerForSpec(false)
+        TriggerServerEvent('txAdmin:menu:endSpectate')
     end
 end)
+
+-- Run whenever we failed to resolve a target player to spectate
+local function cleanupFailedResolve()
+    local playerPed = PlayerPedId()
+
+    RequestCollisionAtCoord(lastSpectateLocation.x, lastSpectateLocation.y, lastSpectateLocation.z)
+    SetEntityCoords(playerPed, lastSpectateLocation.x, lastSpectateLocation.y, lastSpectateLocation.z)
+    -- The player is still frozen while we wait for collisions to load
+    while not HasCollisionLoadedAroundEntity(playerPed) do
+        Wait(5)
+    end
+    preparePlayerForSpec(false)
+
+    DoScreenFadeIn(500)
+
+    sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.spectate_failed', true)
+end
 
 -- Client-side event handler for an authorized spectate request
 RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, coords)
@@ -190,7 +215,7 @@ RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, coords)
 
     local targetPlayerId = GetPlayerFromServerId(targetServerId)
     if targetPlayerId == PlayerId() then
-        return sendSnackbarMessage('error', 'You cannot spectate yourself!')
+        return sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.spectate_yourself', true)
     end
 
     DoScreenFadeOut(500)
@@ -200,13 +225,26 @@ RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, coords)
     SetEntityCoords(spectatorPed, tpCoords.x, tpCoords.y, tpCoords.z, 0, 0, 0, false)
     preparePlayerForSpec(true)
 
-    ---- We need to wait to make sure that the player is actually available once we teleport
-    ---- this can take some time so we do this
+    --- We need to wait to make sure that the player is actually available once we teleport
+    --- this can take some time so we do this. Automatically breaks if a player isn't resolved
+    --- within 5 seconds.
+    local resolvePlayerAttempts = 0
+    local resolvePlayerFailed
+
     repeat
+        if resolvePlayerAttempts > 100 then
+            resolvePlayerFailed = true
+            break;
+        end
         Wait(50)
         debugPrint('Waiting for player to resolve')
         targetPlayerId = GetPlayerFromServerId(targetServerId)
+        resolvePlayerAttempts = resolvePlayerAttempts + 1
     until (GetPlayerPed(targetPlayerId) > 0) and targetPlayerId ~= -1
+
+    if resolvePlayerFailed then
+        return cleanupFailedResolve()
+    end
 
     debugPrint('Target Ped successfully found!')
     toggleSpectate(GetPlayerPed(targetPlayerId), targetPlayerId)
@@ -220,16 +258,5 @@ CreateThread(function()
             clearGamerTagInfo()
         end
         Wait(50)
-    end
-end)
-
-CreateThread(function()
-    local scaleform = setupScaleform()
-
-    while true do
-        if isSpectateEnabled then
-            DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 0)
-        end
-        Wait(0)
     end
 end)

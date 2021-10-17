@@ -2,36 +2,205 @@
 
 
 <style>
-    .pre-log-content{
+    .pre-log-content {
         height: calc(100vh - 270px); /* -251px */
         margin-bottom: 0;
         font-size: 100%;
+        /* word-break: break-all; */
     }
-    .nui-height{
+
+    .nui-height {
         height: calc(100vh - 170px);
     }
 
-    .event-source{
+    .card {
+        height: 100%;
+        margin-bottom: 0 !important;
+    }
+
+    .e-src{
+        color: var(--dark);
         font-weight: 900 !important;
-        text-decoration: none !important;
+        padding: .15rem;
+        margin-left: .25rem;
+        margin-right: .25rem;
+    }
+    .e-src-player{
+        color: var(--primary);
+        font-weight: 900 !important;
         cursor: pointer;
     }
-
-    /* Experimental */
-    .highlight-player{
-        background-color: #ffeaa7;
-        color: rgb(27, 27, 27) !important;
+    .e-src-player:hover{
+        /* color: var(--warning); */
+        color: var(--light);
+        background-color: var(--dark);
     }
+
+    .filter-controls-container {
+        margin-top: 10px;
+    }
+
+    .filter-show-toggle {
+      display: none;
+    }
+
+    @media only screen and (max-width: 1200px) {
+        .card-containers {
+            margin-bottom: 20px;
+        }
+
+        .filter-show-toggle {
+          display: flex;
+        }
+
+        .section-title {
+            display: flex;
+            flex-basis: 0 ;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+
+    @media (min-width: 1250px) and (max-width: 1450px)  {
+        .override-bootstrap {
+            flex: 0 0 auto !important;
+            max-width: 65% !important;
+        }
+    }
+
+
 </style>
 
-
-<div class="text-center" style="margin-bottom: 5px">
+<div class="text-center" style="margin-bottom: 15px">
     <h3>Server Log</h3>
-    <span>You can log custom commands like <code>/car</code>. Read the <a href="https://github.com/tabarra/txAdmin/blob/master/docs/extra_logging.md" target="_blank">docs</a> for more information.</span>
 </div>
-<div class="card border-primary">
-    <div class="card-body">
-        <pre id="console" class="thin-scroll pre-log-content {{[(it.isWebInterface), '', 'nui-height']|ternary}}">{{it.log|safe}}</pre>
+<div class="row">
+    <div class="col-xl-3 col-lg-12 card-containers" style="min-width: 235px;">
+        <div class="card border-primary" >
+            <div class="card-body text-center">
+                <div id="cardstatus" class="d-nonex">
+                    <h4>Mode: <span class="text-success" id="modeLabel">LIVE</span></h4>
+                    <p>
+                        <strong>From:</strong> <span id="histLogStart">--</span> <br>
+                        <strong>To:</strong> <span id="histLogEnd">--</span> <br>
+                    </p>
+                    <button type="button" class="btn btn-outline-dark btn-sm mb-2" id="viewOlderBtn">
+                        &lt; View Older
+                    </button>
+                    <button type="button" class="btn btn-outline-dark btn-sm mb-2" id="viewNewerBtn">
+                        View Newer &gt;
+                    </button>
+                    <br>
+                    <button type="button" id="clearConsole" class="btn btn-outline-dark btn-sm mb-2">
+                        Clear Console
+                    </button>
+                    <!-- TODO: add modal -->
+                    <button type="button" id="showLogsModalBtn" class="btn btn-outline-dark btn-sm mb-2 d-none">
+                        Download Log
+                    </button>
+                </div>
+
+                <hr class="border-primary">
+                <div class='section-title'>
+                    <button
+                      style='margin-left: 10px;'
+                      class='btn btn-info filter-show-toggle rounded'
+                      data-toggle='collapse'
+                      href="#filter-control-container"
+                      role='button'
+                      aria-expanded='false'
+                      aria-controls='collapseControls'>
+                        Show Log Filters
+                    </button>
+                </div>
+                <div class='filter-controls-container' id='filter-control-container'>
+                    <h4>Logger Filters</h4>
+                    <div class="form-group row mb-1">
+                        <label class="col-sm-8 col-form-label">Player join/leave</label>
+                        <div class="col-sm-4">
+                            <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="PlayerJoinLeave">
+                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-1">
+                        <label class="col-sm-8 col-form-label">Chat Messages</label>
+                        <div class="col-sm-4">
+                            <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="ChatMessage">
+                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-1">
+                        <label class="col-sm-8 col-form-label">Player Death</label>
+                        <div class="col-sm-4">
+                            <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="DeathNotice">
+                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-1">
+                        <label class="col-sm-8 col-form-label">Menu Actions</label>
+                        <div class="col-sm-4">
+                            <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="MenuEvent">
+                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-1">
+                        <label class="col-sm-8 col-form-label">Explosions</label>
+                        <div class="col-sm-4">
+                            <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="explosionEvent">
+                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-1">
+                        <label class="col-sm-8 col-form-label">Commands</label>
+                        <div class="col-sm-4">
+                            <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="CommandExecuted">
+                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-1">
+                        <label class="col-sm-8 col-form-label">System Events</label>
+                        <div class="col-sm-4">
+                            <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="System">
+                                <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="form-group row mb-1">
+                    <label class="col-sm-8 col-form-label">Other Events</label>
+                    <div class="col-sm-4">
+                        <label class="c-switch c-switch-sm c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                            <input class="c-switch-input e-filter-sw" type="checkbox" checked data-e-type="other">
+                            <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                        </label>
+                    </div>
+                </div> -->
+
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-9 col-lg-12 card-containers override-bootstrap">
+        <div class="card border-primary">
+            <div class="card-body p-3" style="position: relative">
+                <pre id="logContainer" class="thin-scroll pre-log-content text-white {{[(it.isWebInterface), '', 'nui-height']|ternary}}"></pre>
+                <div id="autoScrollDiv">
+                    <a id="autoScrollBtn" class="d-none" href="#"><span></span><span></span><span></span></a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -39,54 +208,282 @@
 {{@include("footer", it)/}}
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.min.js"></script>
 <script>
-    $(document).ready(function () {
-        scrollToBottom();
-        setupHovers();
-    });
-
-    setInterval(getNewData, 5000);
-
-    let currOffset = '{{it.offset}}';
-    function getNewData(){
-        txAdminAPI({
-            type: "GET",
-            url: `serverLog/${currOffset}`,
-            success: function (data) {
-                //FIXME: temporary before database
-                //NOTE: /\ that was a lie :)
-                if(typeof data.offset !== 'undefined') currOffset = data.offset;
-                if(typeof data.log !== 'undefined' && data.log !== false && data.log.length){
-                    const consoleElement = document.getElementById("console");
-                    let _tempContent = consoleElement.innerHTML + data.log;
-                    _tempContent = (_tempContent.length > BUFFER_TRIM_SIZE)
-                        ? _tempContent.slice(-0.5 * BUFFER_TRIM_SIZE)
-                        : _tempContent;
-                    consoleElement.innerHTML = _tempContent.substr(_tempContent.indexOf("\n"));
-                    scrollToBottom();
-                    setupHovers();
-                }
-            },
-            error: function (xmlhttprequest, textstatus, message) {
-                console.log(`Error refreshing server log: ${message}`)
+    (function () {
+        //============================================== Preparing variables
+        const autoScrollBtn = document.getElementById("autoScrollBtn");
+        const logContainer = document.getElementById("logContainer");
+        const modeLabel = document.getElementById("modeLabel");
+        const histLogStart = document.getElementById("histLogStart");
+        const histLogEnd = document.getElementById("histLogEnd");
+        const viewOlderBtn = document.getElementById("viewOlderBtn");
+        const viewNewerBtn = document.getElementById("viewNewerBtn");
+        const MAX_HISTORY_SIZE = 500;
+        const frameTimeOptions = {weekday: 'long', hour: '2-digit', minute: '2-digit'};
+        const eventTimeOptions = {hour: '2-digit', minute: '2-digit', second: '2-digit'};
+        const defaultSocketOpts = {
+            transports: ['polling'],
+            upgrade: false,
+            query: {
+                room: 'serverlog'
             }
-        });
-    }
+        }
+        let logStartTs, logEndTs;
+        let eventFilters = {};
+        let autoScroll = true;
+        let socket;
+        const logContainerSpinner = `<div style="height: 90%;" class="d-flex"><div style="margin: auto;">${SPINNER_HTML}</div></div>`;
 
-    function scrollToBottom(){
-        try {
-            $("#console").scrollTop($("#console")[0].scrollHeight);
-        } catch (error) {}
-    }
 
-    //Player name click function
-    function setupHovers(){
-        $('.event-source').click(function(e){
-            const ids = $(this).data('player-identifiers');
-            if(!ids) return;
-            const name = $(this).data('player-name') || 'unknown';
-            const license = ids.split(';').find(x => x.substring(0,8) == 'license:').substring(8);
-            showPlayer(license, name, ids);
+        //============================================== Responsivity stuff
+        const mql = window.matchMedia('(max-width: 992px)');
+        const targetEl = document.getElementById('filter-control-container');
+        if (mql.matches) {
+          targetEl.classList.add('collapse');
+        }
+
+        mql.addEventListener("change", (e) => {
+            if (e.matches && !targetEl.classList.contains('collapse')) {
+              return targetEl.classList.add('collapse');
+            }
+
+            if (targetEl.classList.contains('collapse')) targetEl.classList.remove('collapse');
+        })
+        
+
+        //============================================== Mode selection
+        function goLive() {
+            logContainer.innerHTML = logContainerSpinner;
+            modeLabel.classList.remove('text-warning');
+            modeLabel.classList.add('text-success');
+            modeLabel.textContent = 'LIVE';
+            viewOlderBtn.disabled = false;
+            viewNewerBtn.disabled = true;
+
+            if (isWebInterface) {
+                socket = io({ ...defaultSocketOpts, path: '/socket.io' });
+                // socket = {on:()=>{}}
+            } else {
+                socket = io('monitor', { ...defaultSocketOpts, path: '/WebPipe/socket.io' });
+            }
+            socket.on('error', (error) => {
+                console.dir(error)
+            });
+            socket.on('connect', () => {
+                console.log("Socket.IO Connected.");
+                logContainer.innerHTML = '';
+            });
+            socket.on('disconnect', () => {
+                console.log("Socket.IO Disonnected.");
+            });
+            socket.on('goDashboard', (error) => {
+                window.location = '/';
+            });
+            socket.on('logData', processLog);
+        }
+
+        function goHistory(direction) {
+            let ref;
+            if(direction === 'older'){
+                ref = logStartTs;
+            }else if(direction === 'newer'){
+                ref = logEndTs;
+            }else{
+                throw new Error(`unknown direction`);
+            }
+            socket.disconnect();
+            logContainer.innerHTML = logContainerSpinner;
+            modeLabel.classList.add('text-warning');
+            modeLabel.classList.remove('text-success');
+            modeLabel.textContent = 'LOG';
+            viewOlderBtn.disabled = false;
+            viewNewerBtn.disabled = false;
+
+            //Get log from API
+            txAdminAPI({
+                url: `/serverLog/partial?dir=${direction}&ref=${ref}`,
+                type: 'GET',
+                timeout: REQ_TIMEOUT_MEDIUM,
+                success: function (data) {
+                    logContainer.innerHTML = '';
+                    if(!Array.isArray(data.log)){
+                        logContainer.innerHTML = 'Failed to load log. Please refresh the page and try again.';
+                        return;
+                    }
+                    //FIXME: reorganize this mess
+                    if(data.boundry){
+                        if(direction === 'older'){
+                            if(!data.log.length){
+                                logContainer.innerHTML = 'No more log entries to show.';
+                            }else{
+                                processLog(data.log);
+                            }
+                            viewOlderBtn.disabled = true;
+                        }else{
+                            goLive();
+                        }
+                        return;
+                    }
+                    processLog(data.log);
+
+                    // TODO: da até pra depois do processLog() adicionar um <a> pra ir older ou newer
+                },
+                error: function (xmlhttprequest, textstatus, message) {
+                    logContainer.innerHTML = 'Failed to load log. Please refresh the page and try again.';
+                },
+            });
+        }
+
+        // TODO: check if search string then do goLive() or goHistory()
+        goLive();
+        
+
+        //============================================== Handling filters
+        if(typeof window.localStorage.eventFilters !== 'undefined'){
+            try {
+                const fromStorage = JSON.parse(window.localStorage.eventFilters);
+                console.log('Filters from storage:', fromStorage);
+                if(typeof fromStorage === 'object' && fromStorage !== null) {
+                    eventFilters = fromStorage;
+                }
+            } catch (error) {
+                console.error('Failed to process window.localStorage.eventFilters');
+            }
+        }
+
+        const allSwitches = document.querySelectorAll('.e-filter-sw');
+        allSwitches.forEach((sw) => {
+            sw.addEventListener('change', eventFiltersChanged);
+            if(typeof eventFilters[sw.dataset.eType] === 'undefined'){
+                eventFilters[sw.dataset.eType] = true;
+            }
+            sw.checked = eventFilters[sw.dataset.eType];
         });
-    }
+        window.localStorage.eventFilters = JSON.stringify(eventFilters);
+
+        const getShowTypes = () => Object.keys(eventFilters)
+            .filter(fn => eventFilters[fn])
+            .flatMap(fn => {
+                if (fn === 'PlayerJoinLeave') return ['playerJoining', 'playerDropped'];
+                if(fn === 'System') return ['LoggerStarted', 'DebugMessage'];
+                return fn;
+            });
+        
+        function eventFiltersChanged(caller){
+            eventFilters[caller.target.dataset.eType] = caller.target.checked;
+            window.localStorage.eventFilters = JSON.stringify(eventFilters);
+            const showTypes = getShowTypes();
+            console.log('showTypes:', showTypes);
+
+            logContainer.childNodes.forEach(line => {
+                if(showTypes.includes(line.dataset.eType)){
+                    line.classList.remove('d-none');
+                }else{
+                    line.classList.add('d-none');
+                }
+            });
+        }
+
+
+        //============================================== AutoScroll Things
+        const scrollBottom = () => {
+            if (autoScroll) logContainer.scrollTop = logContainer.scrollHeight;
+        }
+        const autoscrollToggle = (status) => {
+            autoScroll = status
+            if(autoScroll){
+                autoScrollBtn.classList.add('d-none');
+            }else{
+                autoScrollBtn.classList.remove('d-none');
+            }
+            scrollBottom();
+        }
+        logContainer.addEventListener('scroll',function(){
+                const scrollTop = logContainer.scrollTop;
+                const scrollHeight = logContainer.scrollHeight;
+                const offsetHeight = logContainer.offsetHeight;
+                const contentHeight = scrollHeight - offsetHeight;
+                if (scrollTop < contentHeight) {
+                    autoscrollToggle(false);
+                } else if(scrollTop === contentHeight){
+                    autoscrollToggle(true);
+                }
+            }
+        )
+        autoScrollBtn.addEventListener("click", (event) => {
+            event.preventDefault();
+            autoscrollToggle(true);
+        });
+
+
+        //============================================== Buttons
+        document.getElementById("viewOlderBtn").addEventListener("click", function () {
+            goHistory('older');
+        });
+        document.getElementById("viewNewerBtn").addEventListener("click", function () {
+            goHistory('newer');
+        });
+        document.getElementById("clearConsole").addEventListener("click", function () {
+            logContainer.innerHTML = "";
+        });
+        document.getElementById("showLogsModalBtn").addEventListener("click", function () {
+            //TODO: add modal stuff
+        });
+
+
+        //============================================== Log processor
+        function processLog(events) {
+            console.log(`Events: ${events.length}`);
+            const showTypes = getShowTypes();
+            //For every new entry
+            for (let i = 0; i < events.length; i++) {
+                const event = events[i];
+                logEndTs = event.ts;
+
+                //Line
+                const lineElement = document.createElement('div');
+                lineElement.dataset.eTs = event.ts;
+                lineElement.dataset.eType = event.type;
+                if(!showTypes.includes(event.type)){
+                    lineElement.classList.add('d-none');
+                }
+
+                //Time
+                const localeTime = new Date(event.ts).toLocaleTimeString(window.navigator.language, eventTimeOptions);
+                const timeNode = document.createElement('span');
+                timeNode.textContent = `[${localeTime}]`;
+                timeNode.classList.add('text-muted');
+                lineElement.appendChild(timeNode);
+
+                //Source
+                const sourceNode = document.createElement('strong');
+                sourceNode.textContent = event.src.name;
+                sourceNode.classList.add('e-src');
+                if(event.src.id) sourceNode.classList.add('e-src-player');
+                sourceNode.addEventListener('click', ()=>{ showPlayer(event.src.id.replace(/#/, '_')) });
+                lineElement.appendChild(sourceNode);
+
+                //Message
+                const msgNode = document.createTextNode(event.msg);
+                lineElement.appendChild(msgNode);
+                
+                //Appending & capping log
+                logContainer.appendChild(lineElement)
+                if(logContainer.childNodes.length > MAX_HISTORY_SIZE){
+                    logContainer.removeChild(logContainer.childNodes[0])
+                }
+            }
+
+            //Process times
+            logStartTs = parseInt(logContainer.childNodes[0].dataset.eTs);
+            const logStartDate = new Date(logStartTs);
+            const logEndDate = new Date(logEndTs);
+            histLogStart.textContent = logStartDate.toLocaleString(window.navigator.language, frameTimeOptions);
+            histLogEnd.textContent = logEndDate.toLocaleString(window.navigator.language, frameTimeOptions);
+
+            //AutoScroll
+            scrollBottom();
+        }
+    })();
 </script>

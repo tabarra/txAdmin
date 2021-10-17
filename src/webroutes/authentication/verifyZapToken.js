@@ -126,7 +126,7 @@ module.exports = async function AuthVerify(ctx) {
             expires_at: false,
         };
 
-        log(`Admin ${admin.name} logged in from ${ctx.ip} via zap token`);
+        ctx.utils.logAction(`logged in from ${ctx.ip} via zap token`);
         globals.databus.txStatsData.login.origins[ctx.txVars.hostType]++;
         globals.databus.txStatsData.login.methods.zap++;
     } catch (error) {

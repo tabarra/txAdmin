@@ -8,6 +8,7 @@
     "projectName": "Project Taso",
     "maxClients": 32,
     "switchPageKey": "Tab",
-    "txAdminVersion": "9.9.9"
+    "txAdminVersion": "9.9.9",
+    "alignRight": false
   }
 }

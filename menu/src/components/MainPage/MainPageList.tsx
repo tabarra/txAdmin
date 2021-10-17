@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Box, List, makeStyles, Theme } from "@material-ui/core";
+import { Box, List, styled, Theme } from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { MenuListItem, MenuListItemMulti } from "./MenuListItem";
 import {
   AccessibilityNew,
@@ -17,49 +18,52 @@ import {
   PermIdentity,
   Restore,
   Security,
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { useDialogContext } from "../../provider/DialogProvider";
 import { fetchNui } from "../../utils/fetchNui";
 import { useTranslate } from "react-polyglot";
 import { useSnackbar } from "notistack";
 import { PlayerMode, usePlayerMode } from "../../state/playermode.state";
-import { useIsMenuVisible } from "../../state/visibility.state";
+import { useIsMenuVisibleValue } from "../../state/visibility.state";
 import { TeleportMode, useTeleportMode } from "../../state/teleportmode.state";
 import { HealMode, useHealMode } from "../../state/healmode.state";
 import { arrayRandom } from "../../utils/miscUtils";
 import { copyToClipboard } from "../../utils/copyToClipboard";
-import { useServerCtxValue } from '../../state/server.state';
-import { VehicleMode, useVehicleMode } from '../../state/vehiclemode.state';
+import { useServerCtxValue } from "../../state/server.state";
+import { VehicleMode, useVehicleMode } from "../../state/vehiclemode.state";
 
 const fadeHeight = 20;
 const listHeight = 388;
 
-const useStyles = makeStyles((theme: Theme) => ({
-  list: {
-    maxHeight: listHeight,
-    overflow: "auto",
-    "&::-webkit-scrollbar": {
-      display: "none",
-    },
-  },
-  fadeTop: {
-    backgroundImage: `linear-gradient(to top, transparent, ${theme.palette.background.default})`,
-    position: "relative",
-    bottom: listHeight + fadeHeight - 4, //the 2 comes from the tab selector
-    height: fadeHeight,
-  },
-  fadeBottom: {
-    backgroundImage: `linear-gradient(to bottom, transparent, ${theme.palette.background.default})`,
-    position: "relative",
-    bottom: fadeHeight * 2,
-    height: fadeHeight,
-  },
-  icon: {
-    color: theme.palette.text.secondary,
-    marginTop: -(fadeHeight * 2),
-  },
+const BoxFadeTop = styled(Box)(({ theme }) => ({
+  backgroundImage: `linear-gradient(to top, transparent, ${theme.palette.background.default})`,
+  position: "relative",
+  bottom: listHeight + fadeHeight - 4,
+  height: fadeHeight,
 }));
+
+const BoxFadeBottom = styled(Box)(({ theme }) => ({
+  backgroundImage: `linear-gradient(to bottom, transparent, ${theme.palette.background.default})`,
+  position: "relative",
+  height: fadeHeight,
+  bottom: fadeHeight * 2,
+}));
+
+const BoxIcon = styled(Box)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  marginTop: -(fadeHeight * 2),
+  display: "flex",
+  justifyContent: "center",
+}));
+
+const StyledList = styled(List)({
+  maxHeight: listHeight,
+  overflow: "auto",
+  "&::-webkit-scrollbar": {
+    display: "none",
+  },
+});
 
 // TODO: This component is kinda getting out of hand, might want to split it somehow
 export const MainPageList: React.FC = () => {
@@ -71,9 +75,8 @@ export const MainPageList: React.FC = () => {
   const [teleportMode, setTeleportMode] = useTeleportMode();
   const [healMode, setHealMode] = useHealMode();
   const [vehicleMode, setVehicleMode] = useVehicleMode();
-  const serverCtx = useServerCtxValue()
-  const menuVisible = useIsMenuVisible();
-  const classes = useStyles();
+  const serverCtx = useServerCtxValue();
+  const menuVisible = useIsMenuVisibleValue();
 
   // the directions are inverted
   const handleArrowDown = useCallback(() => {
@@ -173,7 +176,10 @@ export const MainPageList: React.FC = () => {
     // we disable this function from being used if onesync
     // isn't on
     if (!serverCtx.oneSync.status) {
-      return enqueueSnackbar(t('nui_menu.page_main.car_options.onesync_error'), { variant: 'error' })
+      return enqueueSnackbar(
+        t("nui_menu.page_main.car_options.onesync_error"),
+        { variant: "error" }
+      );
     }
 
     openDialog({
@@ -231,7 +237,10 @@ export const MainPageList: React.FC = () => {
   const handleDeleteVehicle = () => {
     // If onesync is disabled, show an error due to server side entity handling
     if (!serverCtx.oneSync.status) {
-      return enqueueSnackbar(t('nui_menu.page_main.car_options.onesync_error'), { variant: 'error' })
+      return enqueueSnackbar(
+        t("nui_menu.page_main.car_options.onesync_error"),
+        { variant: "error" }
+      );
     }
 
     fetchNui("deleteVehicle").then(({ e }) => {
@@ -248,7 +257,7 @@ export const MainPageList: React.FC = () => {
         variant: "info",
       });
     });
-  }
+  };
 
   const handleFixVehicle = () => {
     fetchNui("fixVehicle").then(({ e }) => {
@@ -522,7 +531,7 @@ export const MainPageList: React.FC = () => {
   return (
     // add pb={2} if we don't have that arrow at the bottom
     <Box>
-      <List className={classes.list}>
+      <StyledList>
         {menuListItems.map((item, index) =>
           item.isMultiAction ? (
             // @ts-ignore
@@ -540,18 +549,12 @@ export const MainPageList: React.FC = () => {
             />
           )
         )}
-      </List>
-      <Box
-        className={classes.fadeTop}
-        style={{ opacity: curSelected <= 1 ? 0 : 1 }}
-      />
-      <Box
-        className={classes.fadeBottom}
-        style={{ opacity: curSelected >= 6 ? 0 : 1 }}
-      />
-      <Box className={classes.icon} display="flex" justifyContent="center">
+      </StyledList>
+      <BoxFadeTop style={{ opacity: curSelected <= 1 ? 0 : 1 }} />
+      <BoxFadeBottom style={{ opacity: curSelected >= 6 ? 0 : 1 }} />
+      <BoxIcon display="flex" justifyContent="center">
         <ExpandMore />
-      </Box>
+      </BoxIcon>
       {/* <Typography
         color="textSecondary"
         style={{

@@ -43,7 +43,13 @@
             "unknown_error": "An unknown error occurred.",
             "not_enabled": "The txAdmin Menu is not enabled! Please check the docs for more info.",
             "announcement_title": "Server Announcement:",
-            "general_no_perms": "You do not have permissions for this!"
+            "general_no_perms": "You do not have permissions for this!",
+            "dialog_empty_input": "You cannot have an empty input."
+        },
+        "frozen": {
+            "froze_player": "You have frozen the player!",
+            "unfroze_player": "You have unfrozen the player!",
+            "was_frozen": "You have been frozen by a server admin!"
         },
         "common": {
             "cancel": "Cancel",
@@ -70,7 +76,8 @@
                 "dialog_title": "Teleport",
                 "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole",
                 "dialog_success": "Sent you into the wormhole!",
-                "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33"
+                "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33",
+                "no_waypoint_error": "You have no waypoint set."
             },
             "teleport_back": {
                 "list_primary": "Go Back",
@@ -171,7 +178,8 @@
         },
         "player_modal": {
             "misc": {
-                "error": "An error occurred fetching this users details. The error is shown below:"
+                "error": "An error occurred fetching this users details. The error is shown below:",
+                "target_not_found": "Was unable to find an online player with ID or an username of %{target}"
             },
             "tabs": {
                 "actions": "Actions",
@@ -215,7 +223,8 @@
                         "heal": "Heal",
                         "go_to": "Go to",
                         "bring": "Bring",
-                        "spectate": "Spectate"
+                        "spectate": "Spectate",
+                        "toggle_freeze": "Toggle Freeze"
                     },
                     "action_notifications": {
                         "heal_player": "Healing player",
@@ -224,12 +233,8 @@
                     }
                 },
                 "interaction": {
-                    "options": {
-                        "heal": "Heal",
-                        "go_to": "Go to",
-                        "bring": "Bring",
-                        "spectate": "Spectate"
-                    }
+                    "spectate_failed": "Failed to resolve the target! Exiting spectate.",
+                    "spectate_yourself": "You cannot spectate yourself."
                 },
                 "troll": {
                     "options": {

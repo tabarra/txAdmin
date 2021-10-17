@@ -1,35 +1,32 @@
 import React from "react";
-import { Box, makeStyles, Typography } from "@material-ui/core";
-import { Error } from "@material-ui/icons";
+import { Box, styled, Typography } from "@mui/material";
+import { Error } from "@mui/icons-material";
 import { useTranslate } from "react-polyglot";
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    color: theme.palette.text.secondary,
-    fontWeight: 300,
-  },
-  icon: {
-    paddingRight: theme.spacing(2),
-  },
+const BoxRoot = styled(Box)(({ theme }) => ({
+  color: theme.palette.text.secondary,
+  fontWeight: 300,
+}));
+
+const ErrorIcon = styled(Error)(({ theme }) => ({
+  paddingRight: theme.spacing(2),
 }));
 
 export const PlayersListEmpty: React.FC = () => {
-  const classes = useStyles();
   const t = useTranslate();
 
   return (
-    <Box
+    <BoxRoot
       display="flex"
       // flexDirection="column"
       height="100%"
       justifyContent="center"
       alignItems="center"
-      className={classes.root}
     >
-      <Error fontSize="large" color="inherit" className={classes.icon} />
+      <ErrorIcon fontSize="large" color="inherit" />
       <Typography color="inherit" variant="h6">
         {t("nui_menu.page_players.misc.zero_players")}
       </Typography>
-    </Box>
+    </BoxRoot>
   );
 };

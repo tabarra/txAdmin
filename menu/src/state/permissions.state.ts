@@ -24,7 +24,8 @@ export type ResolvablePermission =
   | "menu.vehicle"
   | "menu.clear_area"
   | "players.spectate"
-  | "players.troll";
+  | "players.troll"
+  | "players.freeze";
 
 export interface PermCheckServerResp {
   isAdmin: boolean;

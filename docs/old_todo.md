@@ -534,7 +534,21 @@ More:
 - [x] possibly fixed the menu playerlist sync issues;
 - [x] a few small fixes and tweaks.
 > v4.4.2
-
+- [x] changed onesync to be "on" by default
+- [x] noclip: update heading automatically + optimization
+- [x] tweak: error logging stuff
+- [x] feat: chart data rate limit
+- [x] feat(web/diagnostics): redacting cfx/steam/tebex keys
+- [x] feat: prevent noobs from messing setup/deploy opts
+- [x] tweak(core): removed space checking in fx paths
+- [x] fix(menu/spectate): fix for audio / texture loss when spectating a moving player 
+- [x] feat: allow two tx on same browser (closes #395)
+- [x] fix(client/state): fix not properly checking for netId existing, closes #443
+- [x] feat(menu/main): delete vehicle sub option
+- [x] fix(core): memory leak on server log 
+- [x] fix(nui): auth source for zap servers
+- [x] chore: updated a few dependencies
+> v4.5.0
 
 ------------------------------
 > NOTE: this was an attempt to get the help from the community around september 2019

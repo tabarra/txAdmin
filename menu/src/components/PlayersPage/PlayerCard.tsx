@@ -1,22 +1,15 @@
 import React, { memo } from "react";
-import {
-  Box,
-  IconButton,
-  makeStyles,
-  Paper,
-  Theme,
-  Tooltip,
-  Typography,
-} from "@material-ui/core";
+import { Box, IconButton, Paper, Theme, Tooltip, Typography } from "@mui/material";
+import makeStyles from '@mui/styles/makeStyles';
 import {
   DirectionsBoat,
   DirectionsWalk,
   DriveEta,
   LiveHelp,
   MoreVert,
-  Motorcycle,
+  BikeScooter,
   Flight
-} from "@material-ui/icons";
+} from "@mui/icons-material";
 import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
 import { PlayerData, VehicleStatus } from "../../state/players.state";
 import { useSetAssociatedPlayer } from "../../state/playerDetails.state";
@@ -58,7 +51,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
     walking: <DirectionsWalk color="inherit" />,
     driving: <DriveEta color="inherit" />,
     boating: <DirectionsBoat color="inherit" />,
-    biking: <Motorcycle color="inherit" />,
+    biking: <BikeScooter color="inherit" />,
     flying: <Flight color="inherit" />,
   };
 
@@ -126,7 +119,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
                 : formatDistance(playerData.distance)}
             </Typography>
           </Box>
-          <IconButton onClick={handlePlayerClick}>{<MoreVert />}</IconButton>
+          <IconButton onClick={handlePlayerClick} size="large">{<MoreVert />}</IconButton>
         </Box>
         <div>
           <Tooltip

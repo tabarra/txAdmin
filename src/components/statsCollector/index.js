@@ -3,7 +3,7 @@ const modulename = 'StatsCollector';
 const fs = require('fs-extra');
 const got = require('got');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } = require('./utils.js');
+const { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } = require('./statsUtils.js');
 // const TimeSeries = require('./timeSeries'); //NOTE: may still use for the player counter
 
 //Helper functions

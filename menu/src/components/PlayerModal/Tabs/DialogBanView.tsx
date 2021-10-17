@@ -5,32 +5,32 @@ import {
   DialogContent,
   MenuItem,
   TextField,
-  Typography
-} from '@material-ui/core';
+  Typography,
+} from "@mui/material";
 import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
 import { fetchWebPipe } from "../../../utils/fetchWebPipe";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
-import { usePlayerModalContext } from '../../../provider/PlayerModalProvider';
-import { translateAlertType, userHasPerm } from '../../../utils/miscUtils';
-import { usePermissionsValue } from '../../../state/permissions.state';
-import xss from 'xss'
-import { TxAdminAPIResp } from './DialogActionView';
+import { usePlayerModalContext } from "../../../provider/PlayerModalProvider";
+import { translateAlertType, userHasPerm } from "../../../utils/miscUtils";
+import { usePermissionsValue } from "../../../state/permissions.state";
+import xss from "xss";
+import { TxAdminAPIResp } from "./DialogActionView";
 import { DialogLoadError } from "./DialogLoadError";
 
 const DialogBanView: React.FC = () => {
   const assocPlayer = usePlayerDetailsValue();
 
-  const [reason, setReason] = useState('');
-  const [duration, setDuration] = useState('2 hours');
-  const [customDuration, setCustomDuration] = useState('hours')
-  const [customDurLength, setCustomDurLength] = useState('1');
+  const [reason, setReason] = useState("");
+  const [duration, setDuration] = useState("2 hours");
+  const [customDuration, setCustomDuration] = useState("hours");
+  const [customDurLength, setCustomDurLength] = useState("1");
   const t = useTranslate();
   const { enqueueSnackbar } = useSnackbar();
   const { showNoPerms } = usePlayerModalContext();
   const playerPerms = usePermissionsValue();
 
-  if(typeof assocPlayer !== 'object'){
+  if (typeof assocPlayer !== "object") {
     return <DialogLoadError />;
   }
 
@@ -52,76 +52,76 @@ const DialogBanView: React.FC = () => {
         },
       });
       // We need to clean the response as it contains html
-      const cleanedMsg = xss(resp.message)
+      const cleanedMsg = xss(resp.message);
 
       enqueueSnackbar(cleanedMsg, { variant: translateAlertType(resp.type) });
     } catch (e) {
-      enqueueSnackbar(t('nui_menu.common.error'), { variant: "error" });
-      console.error(e)
+      enqueueSnackbar(t("nui_menu.common.error"), { variant: "error" });
+      console.error(e);
     }
   };
 
   const banDurations = [
     {
-      value: '2 hours',
-      label: `2 ${t('nui_menu.player_modal.ban.hours')}`
+      value: "2 hours",
+      label: `2 ${t("nui_menu.player_modal.ban.hours")}`,
     },
     {
-      value: '8 hours',
-      label: `8 ${t('nui_menu.player_modal.ban.hours')}`
+      value: "8 hours",
+      label: `8 ${t("nui_menu.player_modal.ban.hours")}`,
     },
     {
-      value: '1 day',
-      label: `1 ${t('nui_menu.player_modal.ban.days')}`
+      value: "1 day",
+      label: `1 ${t("nui_menu.player_modal.ban.days")}`,
     },
     {
-      value: '2 days',
-      label: `2 ${t('nui_menu.player_modal.ban.days')}`
+      value: "2 days",
+      label: `2 ${t("nui_menu.player_modal.ban.days")}`,
     },
     {
-      value: '1 week',
-      label: `1 ${t('nui_menu.player_modal.ban.weeks')}`
+      value: "1 week",
+      label: `1 ${t("nui_menu.player_modal.ban.weeks")}`,
     },
     {
-      value: '2 weeks',
-      label: `2 ${t('nui_menu.player_modal.ban.weeks')}`
+      value: "2 weeks",
+      label: `2 ${t("nui_menu.player_modal.ban.weeks")}`,
     },
     {
-      value: 'permanent',
-      label: t('nui_menu.player_modal.ban.permanent')
+      value: "permanent",
+      label: t("nui_menu.player_modal.ban.permanent"),
     },
     {
-      value: 'custom',
-      label: t('nui_menu.player_modal.ban.custom')
-    }
-  ]
+      value: "custom",
+      label: t("nui_menu.player_modal.ban.custom"),
+    },
+  ];
 
   const customBanLength = [
     {
-      value: 'hours',
-      label: 'Hours'
+      value: "hours",
+      label: "Hours",
     },
     {
-      value: 'days',
-      label: 'Days'
+      value: "days",
+      label: "Days",
     },
     {
-      value: 'weeks',
-      label: 'Week'
+      value: "weeks",
+      label: "Week",
     },
     {
-      value: 'months',
-      label: 'Months'
-    }
-  ]
+      value: "months",
+      label: "Months",
+    },
+  ];
 
   return (
     <DialogContent>
-      <Typography variant="h6">Ban Player</Typography>
+      <Typography variant="h6" sx={{mb: 2}}>Ban Player</Typography>
       <form onSubmit={handleBan}>
         <TextField
           autoFocus
-          margin="dense"
+          size="small"
           id="name"
           label={t("nui_menu.player_modal.ban.reason_placeholder")}
           required
@@ -132,8 +132,10 @@ const DialogBanView: React.FC = () => {
           onChange={(e) => setReason(e.currentTarget.value)}
         />
         <TextField
-          margin="dense"
+          size="small"
           select
+          required
+          sx={{ mt: 2 }}
           label={t("nui_menu.player_modal.ban.duration_placeholder")}
           variant="outlined"
           value={duration}
@@ -154,7 +156,7 @@ const DialogBanView: React.FC = () => {
                 type="number"
                 placeholder="1"
                 variant="outlined"
-                margin="dense"
+                size="small"
                 value={customDurLength}
                 onChange={(e) => setCustomDurLength(e.target.value)}
               />
@@ -162,8 +164,8 @@ const DialogBanView: React.FC = () => {
             <Box flexGrow={1}>
               <TextField
                 select
+                size="small"
                 variant="outlined"
-                margin="dense"
                 fullWidth
                 value={customDuration}
                 onChange={(e) => setCustomDuration(e.target.value)}
@@ -181,7 +183,7 @@ const DialogBanView: React.FC = () => {
           variant="contained"
           type="submit"
           color="primary"
-          style={{ marginTop: 2 }}
+          sx={{ mt: 2 }}
           onClick={handleBan}
         >
           Ban
@@ -190,6 +192,5 @@ const DialogBanView: React.FC = () => {
     </DialogContent>
   );
 };
-
 
 export default DialogBanView;

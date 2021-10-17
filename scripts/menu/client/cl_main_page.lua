@@ -253,6 +253,6 @@ RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
         local blipCoords = GetBlipInfoIdCoord(waypoint)
         teleportToCoords(vec3(blipCoords[1], blipCoords[2], 0))
     else
-        sendSnackbarMessage("error", "You have no waypoint set!")
+        sendSnackbarMessage('error', 'nui_menu.page_main.teleport.no_waypoint_error', true)
     end
 end)

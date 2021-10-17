@@ -350,11 +350,11 @@ function searchPlayer() {
     modPlayer.Modal.hide();
     if (!modPlayer.curr.identifiers) return;
     const idsString = modPlayer.curr.identifiers.join(';');
-    if (window.location.pathname == TX_BASE_PATH + 'player/list') {
+    if (window.location.pathname == TX_BASE_PATH + '/player/list') {
         searchInput.value = idsString;
         performSearch();
     } else {
-        window.location = TX_BASE_PATH + 'player/list#' + encodeURI(idsString);
+        window.location = TX_BASE_PATH + '/player/list#' + encodeURI(idsString);
     }
 }
 

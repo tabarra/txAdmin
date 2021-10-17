@@ -136,13 +136,6 @@ async function handleValidateLocalDeployPath(ctx) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const deployPath = slash(path.normalize(ctx.request.body.deployPath.trim()));
-    if (deployPath.includes(' ')) {
-        // return ctx.send({
-        //     success: false,
-        //     message: 'The path cannot contain spaces (the space character that separate words).',
-        // });
-        //tabSpaceDisabledThingy
-    }
 
     //Perform path checking
     try {
@@ -164,10 +157,6 @@ async function handleValidateLocalDataFolder(ctx) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
     const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim() + '/'));
-    if (dataFolderPath.includes(' ')) {
-        // return ctx.send({success: false, message: 'The path cannot contain spaces (the space character that separate words).'});
-        //tabSpaceDisabledThingy
-    }
 
     try {
         if (!fs.existsSync(path.join(dataFolderPath, 'resources'))) {
@@ -236,10 +225,6 @@ async function handleValidateCFGFile(ctx) {
     const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim()));
     const cfgFilePathNormalized = slash(path.normalize(ctx.request.body.cfgFile.trim()));
     const cfgFilePath = helpers.resolveCFGFilePath(cfgFilePathNormalized, dataFolderPath);
-    if (cfgFilePath.includes(' ')) {
-        // return ctx.send({success: false, message: 'The path cannot contain spaces (the space character that separate words).'});
-        //tabSpaceDisabledThingy
-    }
 
     //Try to read file
     let rawCfgFile;
@@ -282,12 +267,6 @@ async function handleSaveLocal(ctx) {
         dataFolder: slash(path.normalize(ctx.request.body.dataFolder + '/')),
         cfgFile: slash(path.normalize(ctx.request.body.cfgFile)),
     };
-
-    //Validating path spaces
-    if (cfg.dataFolder.includes(' ') || cfg.cfgFile.includes(' ')) {
-        // return ctx.send({success: false, message: 'The paths cannot contain spaces (the space character that separate words).'});
-        //tabSpaceDisabledThingy
-    }
 
     //Validating Base Path
     try {
@@ -335,7 +314,7 @@ async function handleSaveLocal(ctx) {
             return ctx.send({success: true});
         }
     } else {
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global/fxserver settings via setup stepper.`);
+        logWarn(`[${ctx.session.auth.username}] Error changing global/fxserver settings via setup stepper.`);
         return ctx.send({success: false, message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
@@ -398,7 +377,7 @@ async function handleSaveDeployerImport(ctx) {
         ctx.utils.logAction('Changing global settings via setup stepper and started Deployer.');
         return ctx.send({success: true});
     } else {
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
+        logWarn(`[${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
         return ctx.send({success: false, message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
@@ -445,7 +424,7 @@ async function handleSaveDeployerCustom(ctx) {
         ctx.utils.logAction('Changing global settings via setup stepper and started Deployer.');
         return ctx.send({success: true});
     } else {
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
+        logWarn(`[${ctx.session.auth.username}] Error changing global settings via setup stepper.`);
         return ctx.send({success: false, message: '<strong>Error saving the configuration file.</strong>'});
     }
 }

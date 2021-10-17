@@ -35,7 +35,7 @@ const rebaseCommand = () => {
 
 
 /**
- * Adds missing tags to files based on en.json
+ * Parses a locale file by "unfolding" it into an object of objects instead of strings
  */
 function parseLocale(input, prefix = '') {
     let result = {};

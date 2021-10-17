@@ -1,7 +1,6 @@
 //Requires
 const modulename = 'DiscordBot';
 const Discord = require('@tabarra/discord');
-const Collection = require('@discordjs/collection');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
@@ -27,7 +26,7 @@ module.exports = class DiscordBot {
         };
 
         //NOTE: setting them up statically due to webpack requirements
-        this.commands = new Collection([
+        this.commands = new Map([
             ['addwl', require('./commands/addwl.js')],
             ['help', require('./commands/help.js')],
             ['status', require('./commands/status.js')],
@@ -36,7 +35,7 @@ module.exports = class DiscordBot {
             //FIXME: first we need to have player ids in the players db
             // ['info', require('./commands/info.js')],
         ]);
-        this.cooldowns = new Collection();
+        this.cooldowns = new Map();
 
         if (!this.config.enabled) {
             // logOk('Disabled by the config file.');

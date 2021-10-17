@@ -1,4 +1,4 @@
-## Installing & Building it (Windows/Linux)
+# Installing & Building it (Windows/Linux)
   
 **Attention: NOT RECOMMENDED for most users.**  
 Actually I moved this to a separate file just so people stop copying the commands without reading that you don't need to do this anymore.  

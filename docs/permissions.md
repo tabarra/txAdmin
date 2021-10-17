@@ -25,3 +25,4 @@ The permissions are saved in the `txData/admins.json` file and can be edited thr
 - `players.spectate`: Spectate player;
 - `players.teleport`: Teleport self or player;
 - `players.trollmenu`: Troll Menu (*not yet available*);
+- `players.freeze`: Freeze a players ped;

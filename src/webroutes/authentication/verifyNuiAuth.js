@@ -10,9 +10,15 @@ const sessDuration = 60 * 60 * 1000; //one hour
 
 /**
  * Verify login
+ *
+ * NOTE: good part of the header validation (including origin) is already in
+ * ctxUtils.js, but here we are way more verbose with the errors, and strict
+ * with our validations.
+ *
+ * FIXME: add better logging
+ * FIXME: will this method be deprecated?
  * @param {object} ctx
  */
-// FIXME: add logging
 module.exports = async function VerifyNuiAuth(ctx) {
     // Check sus IPs
     if (!GlobalData.loopbackInterfaces.includes(ctx.ip) && !GlobalData.isZapHosting) {
@@ -66,7 +72,7 @@ module.exports = async function VerifyNuiAuth(ctx) {
             isWebInterface: false,
             //FIXME: Tabarra needs to build security around this value
         };
-        log(`Admin ${admin.name} logged into the in-game UI`);
+
         //dir(admin);
         const permissions = admin.master ? ['all_permissions'] : admin.permissions;
         ctx.send({
@@ -76,7 +82,7 @@ module.exports = async function VerifyNuiAuth(ctx) {
             luaToken: nanoid(),
         });
 
-        // FIXME: tabarra
+        ctx.utils.logAction(`logged in from ${ctx.ip} via in-game ui`);
         globals.databus.txStatsData.login.origins.webpipe++;
         globals.databus.txStatsData.login.methods.nui++;
     } catch (error) {

@@ -4,7 +4,7 @@ import DialogInfoView from "./DialogInfoView";
 import DialogIdView from "./DialogIdView";
 import DialogHistoryView from "./DialogHistoryView";
 import DialogBanView from "./DialogBanView";
-import { Box } from "@material-ui/core";
+import { Box } from "@mui/material";
 import { usePlayerModalContext } from "../../../provider/PlayerModalProvider";
 
 export const DialogBaseView: React.FC = () => {

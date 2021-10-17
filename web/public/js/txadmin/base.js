@@ -6,7 +6,6 @@
 const REQ_TIMEOUT_SHORT = 1500;
 const REQ_TIMEOUT_MEDIUM = 5000;
 const REQ_TIMEOUT_LONG = 9000;
-const BUFFER_TRIM_SIZE = 128 * 1024; // 128kb
 const STATUS_REFRESH_INTERVAL = (isWebInterface) ? 1000 : 5000;
 const SPINNER_HTML = '<div class="txSpinner">Loading...</div>';
 
@@ -101,9 +100,10 @@ const txAdminAPI = ({type, url, data, dataType, timeout, success, error}) => {
     return $.ajax({type, url, timeout, data, dataType, success, error});
 };
 
-const txAdminConfirm = ({content, confirmBtnClass, modalColor}) => {
+const txAdminConfirm = ({content, confirmBtnClass, modalColor, title}) => {
     return new Promise((resolve, reject) => {
         $.confirm({
+            title,
             content: content,
             type: modalColor || 'red',
             buttons: {

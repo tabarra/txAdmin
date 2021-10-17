@@ -69,7 +69,7 @@ module.exports = {
         }
 
         const logMessage = `[DISCORD][${admin.name}] Whitelisted ${reference}`;
-        globals.logger.append(logMessage);
+        globals.logger.admin.write(logMessage);
         logOk(logMessage);
         return await message.reply('Player added to the whitelist :white_check_mark:');
     },

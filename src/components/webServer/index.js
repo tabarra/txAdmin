@@ -137,7 +137,7 @@ module.exports = class WebServer {
                     logError(desc, methodName);
                     ctx.status = 408;
                     ctx.body = desc;
-                } else if (error.message === 'Malicious Path') {
+                } else if (error.message === 'Malicious Path' || error.message === 'failed to decode') {
                     const desc = `${prefix} Malicious Path: ${reqPath}`;
                     if (GlobalData.verbose) logError(desc, methodName);
                     ctx.status = 406;

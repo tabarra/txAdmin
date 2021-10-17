@@ -49,13 +49,11 @@
             color: unset !important;
         }
         .zapLogo {
-            /* background-color: salmon; */
             height: 44px;
             margin-top: auto;
             margin-bottom: auto;
         }
         .zapText {
-            /* background-color: royalblue; */
             font-size: 1.25em;
             font-weight: 700;
             width: 100%;
@@ -251,7 +249,7 @@
                                     Automatic login failed, re-open the menu or login using your username/password below.
                                 </h5>
                             {{/if}}
-                            <div class="hrsep">OR</div>
+                            <div class="hrsep">{{it.altPasswordMessage}}</div>
 
                             <form action="auth/password" method="post">
                                 <div class="input-group mb-2 mx-auto" style="max-width: 280px;">

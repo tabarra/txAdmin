@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 //Requires
 const modulename = 'WebServer:MasterActions:Action';
 const fs = require('fs-extra');
@@ -5,6 +6,7 @@ const mysql = require('mysql2/promise');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
+const now = () => { return Math.round(Date.now() / 1000); };
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const anyUndefined = (...args) => { return [...args].some((x) => (typeof x === 'undefined')); };
 const filterIdentifiers = (idArr) => idArr.filter((id) => {
@@ -25,10 +27,10 @@ module.exports = async function MasterActionsAction(ctx) {
 
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
-        return ctx.send({
-            type: 'danger',
-            message: 'Only the master account has permission to view/use this page.',
-        });
+        return ctx.utils.render('basic/generic', {message: 'Only the master account has permission to view/use this page.',});
+    }
+    if (!ctx.txVars.isWebInterface) {
+        return ctx.utils.render('basic/generic', {message: 'This functionality cannot be used by the in-game menu, please use the web version of txAdmin.'});
     }
 
     //Delegate to the specific action functions
@@ -44,6 +46,8 @@ module.exports = async function MasterActionsAction(ctx) {
         } else {
             return ctx.send({type: 'danger', message: 'Invalid database type.'});
         }
+    } else if (action == 'cleanDatabase') {
+        return handleCleanDatabase(ctx);
     } else {
         return ctx.send({
             type: 'danger',
@@ -55,7 +59,7 @@ module.exports = async function MasterActionsAction(ctx) {
 
 //================================================================
 /**
- * Handle FXServer settinga reset nad resurn to setup
+ * Handle FXServer settings reset nad resurn to setup
  * @param {object} ctx
  */
 function handleResetFXServer(ctx) {
@@ -79,7 +83,7 @@ function handleResetFXServer(ctx) {
         ctx.utils.logAction('Resetting fxRunner settings.');
         return ctx.send({success: true});
     } else {
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error resetting fxRunner settings.`);
+        logWarn(`[${ctx.session.auth.username}] Error resetting fxRunner settings.`);
         return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
@@ -104,7 +108,7 @@ async function handleImportBansFile(ctx, dbType) {
         const rawFile = await fs.readFile(banFilePath);
         inBans = JSON.parse(rawFile);
     } catch (error) {
-        return ctx.utils.render('basic/generic', {message: `Failed to import bans with error: ${error.message}`});
+        return ctx.utils.render('basic/generic', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});
     }
 
     let invalid = 0;
@@ -151,7 +155,7 @@ async function handleImportBansFile(ctx, dbType) {
         }// end for()
     } catch (error) {
         if (GlobalData.verbose) dir(error);
-        return ctx.utils.render('basic/generic', {message: `Failed to import bans with error: ${error.message}`});
+        return ctx.utils.render('basic/generic', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});
     }
 
     const outMessage = `<b>Process finished!</b> <br>
@@ -163,7 +167,7 @@ async function handleImportBansFile(ctx, dbType) {
 
 //================================================================
 /**
- * Handle the ban import via dbms
+ * Handle the ban import via DBMS
  * @param {object} ctx
  * @param {string} dbType
  */
@@ -179,13 +183,18 @@ async function handleImportBansDBMS(ctx, dbType) {
     }
 
     // Connect to the database
-    const mysqlOptions = {
-        host: ctx.request.body.dbHost.trim(),
-        user: ctx.request.body.dbUsername.trim(),
-        password: ctx.request.body.dbPassword.trim(),
-        database: ctx.request.body.dbName.trim(),
-    };
-    const dbConnection = await mysql.createConnection(mysqlOptions);
+    let dbConnection;
+    try {
+        const mysqlOptions = {
+            host: ctx.request.body.dbHost.trim(),
+            user: ctx.request.body.dbUsername.trim(),
+            password: ctx.request.body.dbPassword.trim(),
+            database: ctx.request.body.dbName.trim(),
+        };
+        dbConnection = await mysql.createConnection(mysqlOptions);
+    } catch (error) {
+        return ctx.utils.render('basic/generic', {message: `<b>Database connection failed:</b><br> ${error.message}`});
+    }
 
     let imported = 0;
     let invalid = 0;
@@ -272,11 +281,114 @@ async function handleImportBansDBMS(ctx, dbType) {
         }
     } catch (error) {
         if (GlobalData.verbose) dir(error);
-        return ctx.utils.render('basic/generic', {message: `Failed to import bans with error: ${error.message}`});
+        return ctx.utils.render('basic/generic', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});
     }
 
     const outMessage = `<b>Process finished!</b> <br>
         Imported bans: ${imported} <br>
         Invalid bans: ${invalid}  <br>`;
+    return ctx.utils.render('basic/generic', {message: outMessage});
+}
+
+
+//================================================================
+/**
+ * Handle clean database request
+ * @param {object} ctx
+ */
+async function handleCleanDatabase(ctx) {
+    //Sanity check
+    if (
+        typeof ctx.request.body.players !== 'string'
+        || typeof ctx.request.body.bans !== 'string'
+        || typeof ctx.request.body.warns !== 'string'
+        || typeof ctx.request.body.whitelists !== 'string'
+    ) {
+        return ctx.utils.error(400, 'Invalid Request');
+    }
+    const players = ctx.request.body.players;
+    const bans = ctx.request.body.bans;
+    const warns = ctx.request.body.warns;
+    const whitelists = ctx.request.body.whitelists;
+    const daySecs = 86400;
+    const currTs = now();
+
+    let playersFilter;
+    if (players === 'none') {
+        playersFilter = (x) => false;
+    } else if (players === '60d') {
+        playersFilter = (x) => x.tsLastConnection < (currTs - 60 * daySecs) && !x.notes.text.length;
+    } else if (players === '30d') {
+        playersFilter = (x) => x.tsLastConnection < (currTs - 30 * daySecs) && !x.notes.text.length;
+    } else if (players === '15d') {
+        playersFilter = (x) => x.tsLastConnection < (currTs - 15 * daySecs) && !x.notes.text.length;
+    } else {
+        return ctx.utils.error(400, 'Invalid players filter type.');
+    }
+
+    let bansFilter;
+    if (bans === 'none') {
+        bansFilter = (x) => false;
+    } else if (bans === 'revoked') {
+        bansFilter = (x) => x.type === 'ban' && x.revocation.timestamp;
+    } else if (bans === 'revokedExpired') {
+        bansFilter = (x) => x.type === 'ban' && (x.revocation.timestamp || (x.expiration && x.expiration < currTs));
+    } else if (bans === 'all') {
+        bansFilter = (x) => x.type === 'ban';
+    } else {
+        return ctx.utils.error(400, 'Invalid bans filter type.');
+    }
+
+    let warnsFilter;
+    if (warns === 'none') {
+        warnsFilter = (x) => false;
+    } else if (warns === '30d') {
+        warnsFilter = (x) => x.type === 'warn' && x.timestamp < (currTs - 30 * daySecs);
+    } else if (warns === '15d') {
+        warnsFilter = (x) => x.type === 'warn' && x.timestamp < (currTs - 15 * daySecs);
+    } else if (warns === '7d') {
+        warnsFilter = (x) => x.type === 'warn' && x.timestamp < (currTs - 7 * daySecs);
+    } else if (warns === 'all') {
+        warnsFilter = (x) => x.type === 'warn';
+    } else {
+        return ctx.utils.error(400, 'Invalid warns filter type.');
+    }
+
+    let whitelistsFilter;
+    if (whitelists === 'none') {
+        whitelistsFilter = (x) => false;
+    } else if (whitelists === '30d') {
+        whitelistsFilter = (x) => x.type === 'whitelist' && x.timestamp < (currTs - 30 * daySecs);
+    } else if (whitelists === '15d') {
+        whitelistsFilter = (x) => x.type === 'whitelist' && x.timestamp < (currTs - 15 * daySecs);
+    } else if (whitelists === 'all') {
+        whitelistsFilter = (x) => x.type == 'whitelist';
+    } else {
+        return ctx.utils.error(400, 'Invalid whitelists filter type.');
+    }
+    const actionsFilter = (x) => {
+        return bansFilter(x) || warnsFilter(x) || whitelistsFilter(x);
+    };
+
+
+    const tsStart = new Date();
+    let playersRemoved = 0;
+    try {
+        playersRemoved = await globals.playerController.cleanDatabase('players', playersFilter);
+    } catch (error) {
+        return ctx.utils.render('basic/generic', {message: `<b>Failed to clean players with error:</b><br>${error.message}`});
+    }
+
+    let actionsRemoved = 0;
+    try {
+        actionsRemoved = await globals.playerController.cleanDatabase('actions', actionsFilter);
+    } catch (error) {
+        return ctx.utils.render('basic/generic', {message: `<b>Failed to clean actions with error:</b><br>${error.message}`});
+    }
+
+    const tsElapsed = new Date() - tsStart;
+    const outMessage = `<b>Process finished in ${tsElapsed}ms.</b> <br>
+        Players deleted: ${playersRemoved} <br>
+        Actions deleted: ${actionsRemoved}  <br>`;
     return ctx.utils.render('basic/generic', {message: outMessage});
 }

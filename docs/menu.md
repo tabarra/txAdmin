@@ -1,11 +1,11 @@
-## In-Game Menu
+# In-Game Menu
 
 txAdmin v4.0.0 introduced an in-game menu equipped with common admin functionality, 
 an online player browser, and a slightly trimmed down version of the web panel.
 
 You can find a short preview video [here](https://www.youtube.com/watch?v=jWKg0VQK0sc)
 
-### Beta Instructions
+## Beta Instructions
 
 There are currently a couple of requirements that your server must 
 meet in order to test the menu while in beta, these requirements *may* change
@@ -18,13 +18,13 @@ before the beta is concluded.
 If you encounter any bugs that you wish to report, please visit our Discord and use the
 `#menu-feedback` channel.
 
-### Accessing the Menu
+## Accessing the Menu
 
 You can access the menu in-game by using the command `/tx` or `/txadmin`, alternatively
 you can also assign a keybind by going to Settings > Key Bindings > FiveM and assigning 
 a keybind to the option with `Open the txAdmin Menu (monitor)`.
 
-#### Permissions
+### Permissions
 Anybody who you would like to give permissions to open the menu in-game, must have a txAdmin
 account with either their Discord or FiveM identifiers tied to it.
 
@@ -36,7 +36,7 @@ in the admin manager as shown below
 
 ![img](https://i.tasoagc.dev/qdt9)
 
-### Convars
+## Convars
 The txAdmin menu has a variety of different convars that can alter the default behavior
 of the menu
 
@@ -64,10 +64,16 @@ of the menu
 * Default: 150
 * Usage: `+setr txAdminMenu-playerIdDistance 100`
 
-### Commands
+**txAdminMenu-alignRight**
+* Description: Whether to align the menu to the right of the screen instead of the left.
+* Default: 0
+* Usage: `+set txAdminMenu-alignRight 1`
+
+## Commands
 **tx | txadmin**
-* Description: Will toggle the in-game menu
-* Usage: `/tx`, `/txadmin`
+* Description: Will toggle the in-game menu. This command has an optional argument of a player id that will 
+quickly open up the target player's info modal.
+* Usage: `/tx (playerID)`, `/txadmin (playerID)`
 * Required Perm: `Must be an admin registered in the Admin Manager`
 
 **txAdmin-debug**
@@ -81,7 +87,7 @@ of the menu
 * Usage: `/txAdmin-reauth`
 * Required Perm: `none`
 
-### Troubleshooting menu access
+## Troubleshooting menu access
 
 If you type `/tx` and nothing happens, your menu is probably disabled.  
 If you see a red message like [this](https://i.imgur.com/G83uTNC.png) and you are registered on txAdmin, do the following:
@@ -89,18 +95,18 @@ If you see a red message like [this](https://i.imgur.com/G83uTNC.png) and you ar
 - In your game F8 console, type `txAdmin-reauth`;
 - Read the message printed on console for more information.
 
-### Development
+## Development
 
 The txAdmin Menu is a Lua + TypeScript React project. Ensure you have all the dependencies by running 
 `npm i` in the root directory. 
 
-#### Hot Reloading Dev Environments
+### Hot Reloading Dev Environments
 
 To run the menu in the browser you can use the `dev:menu` script. This will hot reload, everytime
 a change is made.
 
 ```bash
-npm run dev:menu
+npm run dev:menu:browser
 ```
 
 To run the menu in game you can use the `dev:menu:game` script, this will also hot reload the 
@@ -109,7 +115,10 @@ build process, but you must also manually restart the monitor resource each time
 npm run dev:menu:game
 ```
 
-#### General Structure
+**Note**: For in-game development, you must have a txAdmin development instance instance running as well as
+the `dev:menu:game` script *(You can easily start one by running `npm run watch`)*.
+
+### General Structure
 
 **Lua**: You can find the majority of the relevant Lua scripts in the `scripts/menu` directory.
 

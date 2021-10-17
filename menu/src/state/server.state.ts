@@ -16,6 +16,7 @@ export interface ServerCtx {
   switchPageKey: string;
   txAdminVersion: string;
   endpoint: string;
+  alignRight: boolean;
 }
 
 const serverCtx = atom<ServerCtx>({

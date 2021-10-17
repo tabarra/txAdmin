@@ -31,7 +31,6 @@ globals = {
     databus: {
         //internal
         resourcesList: null,
-        serverLog: [],
         updateChecker: null,
         joinCheckHistory: [],
 
@@ -118,14 +117,14 @@ module.exports = class txAdmin {
         this.startDiscordBot(profileConfig.discordBot).catch((err) => {
             HandleFatalError(err, 'DiscordBot');
         });
+        this.startLogger(profileConfig.logger).catch((err) => {
+            HandleFatalError(err, 'Logger');
+        });
         this.startTranslator().catch((err) => {
             HandleFatalError(err, 'Translator');
         });
         this.startFXRunner(profileConfig.fxRunner).catch((err) => {
             HandleFatalError(err, 'FXRunner');
-        });
-        this.startLogger(profileConfig.logger).catch((err) => {
-            HandleFatalError(err, 'Logger');
         });
         this.startDynamicAds().catch((err) => {
             HandleFatalError(err, 'DynamicAds');
@@ -149,6 +148,7 @@ module.exports = class txAdmin {
         //NOTE: dependency order
         //  - translator before monitor
         //  - adminVault before webserver
+        //  - logger before fxrunner
         //  - translator before fxrunner (for the locale string)
         //  - authenticator before webserver
 
@@ -172,15 +172,21 @@ module.exports = class txAdmin {
     }
 
     //==============================================================
-    async startFXRunner(config) {
-        const FXRunner = require('./components/fxRunner');
-        globals.fxRunner = new FXRunner(config);
-    }
-
-    //==============================================================
     async startLogger(config) {
         const Logger = require('./components/logger');
         globals.logger = new Logger(config);
+    }
+
+    //==============================================================
+    async startTranslator() {
+        const Translator = require('./components/translator');
+        globals.translator = new Translator();
+    }
+
+    //==============================================================
+    async startFXRunner(config) {
+        const FXRunner = require('./components/fxRunner');
+        globals.fxRunner = new FXRunner(config);
     }
 
     //==============================================================
@@ -199,12 +205,6 @@ module.exports = class txAdmin {
     async startStatsCollector(config) {
         const StatsCollector = require('./components/statsCollector');
         globals.statsCollector = new StatsCollector(config);
-    }
-
-    //==============================================================
-    async startTranslator() {
-        const Translator = require('./components/translator');
-        globals.translator = new Translator();
     }
 
     //==============================================================

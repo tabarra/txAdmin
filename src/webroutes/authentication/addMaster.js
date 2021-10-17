@@ -232,6 +232,6 @@ async function handleSave(ctx) {
         );
     }
 
-    log('Admin file created! You can now login normally.');
+    ctx.utils.logAction('created admins file');
     return ctx.response.redirect('/');
 }

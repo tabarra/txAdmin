@@ -224,7 +224,7 @@ async function handleSaveConfig(ctx) {
             return ctx.send({success: true});
         }
     } else {
-        logWarn(`[${ctx.ip}][${ctx.session.auth.username}] Error changing fxserver settings via deployer.`);
+        logWarn(`[${ctx.session.auth.username}] Error changing fxserver settings via deployer.`);
         return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
