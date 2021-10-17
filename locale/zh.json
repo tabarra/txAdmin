@@ -43,7 +43,8 @@
             "unknown_error": "發生未知錯誤。",
             "not_enabled": "txAdmin 選單尚未啟用! 請查看相關文件去取得更多資訊。",
             "announcement_title": "伺服器公告:",
-            "general_no_perms": "權限不足 !"
+            "general_no_perms": "權限不足 !",
+            "dialog_empty_input": "請不要輸入空白值"
         },
         "common": {
             "cancel": "取消",
@@ -70,7 +71,8 @@
                 "dialog_title": "傳送",
                 "dialog_desc": "請提供 x, y, z 坐標進行傳送",
                 "dialog_success": "傳送進行中...",
-                "dialog_error": "坐標錯誤。 請跟隨坐標格式: 111, 222, 33"
+                "dialog_error": "坐標錯誤。 請跟隨坐標格式: 111, 222, 33",
+                "no_waypoint_error": "導航點尚未設定"
             },
             "teleport_back": {
                 "list_primary": "返回",
@@ -140,6 +142,15 @@
                 "dialog_description": "請輸入你想重設的半徑範圍 (0-300). 提示: 這不會清除伺服器端所生成的物件",
                 "dialog_error": "半徑範圍輸入錯誤。 請再試一次",
                 "dialog_success": "正在重設 %{radius}m 半徑範圍至到預設狀態"
+            },
+            "car_options": {
+                "list_primary": "載具",
+                "onesync_error": "這個選項需要啟用 OneSync 用於伺服器實體處理"
+            },
+            "delete_veh": {
+                "list_secondary": "刪除載具",
+                "dialog_success": "載具已經刪除!",
+                "dialog_error": "你並不在任何載具之中!"
             }
         },
         "page_players": {
@@ -164,7 +175,8 @@
         },
         "player_modal": {
             "misc": {
-                "error": "查詢玩家資料時發生錯誤。錯誤:"
+                "error": "查詢玩家資料時發生錯誤。錯誤:",
+                "target_not_found": "該 ID 或 名字 %{target} 找不到線上玩家"
             },
             "tabs": {
                 "actions": "基本功能",
@@ -208,7 +220,8 @@
                         "heal": "治癒",
                         "go_to": "傳送自己",
                         "bring": "帶別人來",
-                        "spectate": "旁觀"
+                        "spectate": "旁觀",
+                        "toggle_freeze": "切換凍結"
                     },
                     "action_notifications": {
                         "heal_player": "正在治癒玩家",
@@ -222,7 +235,9 @@
                         "go_to": "傳送自己",
                         "bring": "帶別人來",
                         "spectate": "旁觀"
-                    }
+                    },
+                    "spectate_failed": "讀取目標失敗! 正在離開旁觀視角",
+                    "spectate_yourself": "你並不能旁觀自己"
                 },
                 "troll": {
                     "options": {
@@ -268,6 +283,11 @@
                 "custom": "自訂",
                 "helper_text": "請選擇時效"
             }
+        },
+        "frozen": {
+            "froze_player": "你凍結了玩家!",
+            "unfroze_player": "你解凍了玩家!",
+            "was_frozen": "你被伺服器管理員凍結了!"
         }
     }
 }
