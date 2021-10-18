@@ -1,6 +1,7 @@
 -- =============================================
 --  Client PlayerList handler
 -- =============================================
+local floor = math.floor
 LOCAL_PLAYERLIST = {} -- available globally in tx
 local vTypeMap = {
     ["0"] = "walking",
@@ -8,7 +9,7 @@ local vTypeMap = {
     ["2"] = "biking",
     ["3"] = "boating",
     ["4"] = "flying", --heli
-    ["5x"] = "flying", --plane
+    ["5"] = "flying", --plane
     ["6"] = "boating", --submarine
     ["7"] = "driving", --trailer
     ["8"] = "driving", --train
@@ -27,7 +28,7 @@ RegisterNetEvent('txcl:setInitialPlayerlist', function(payload)
         LOCAL_PLAYERLIST[pids] = {
             name = playerData[2],
             health = 0,
-            dist = 0,
+            dist = -1,
             vType = "unknown"
         }
     end
@@ -76,7 +77,7 @@ RegisterNetEvent('txcl:setDetailedPlayerlist', function(payload)
             else
                 local remotePed = GetPlayerPed(remotePlayer)
                 local remoteCoords = GetEntityCoords(remotePed)
-                LOCAL_PLAYERLIST[pids].dist = #(myCoords - remoteCoords)
+                LOCAL_PLAYERLIST[pids].dist = floor(#(myCoords - remoteCoords))
             end
         end
     end
@@ -100,7 +101,7 @@ RegisterNetEvent('txcl:updatePlayer', function(id, data)
         LOCAL_PLAYERLIST[pids] = {
             name = data,
             health = 0,
-            dist = 0,
+            dist = -1,
             vType = "unknown"
         }
     end
@@ -125,9 +126,9 @@ RegisterCommand('tprint', function()
     print(json.encode(LOCAL_PLAYERLIST, {indent = true}))
     print("------------------------------------")
 end)
--- CreateThread(function()
---     while true do
---         TriggerServerEvent("txsv:getDetailedPlayerlist")
---         Wait(2500)
---     end
--- end)
+CreateThread(function()
+    while true do
+        TriggerServerEvent("txsv:getDetailedPlayerlist")
+        Wait(2500)
+    end
+end)

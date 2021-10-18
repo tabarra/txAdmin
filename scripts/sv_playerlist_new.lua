@@ -10,6 +10,7 @@ local onesyncEnabled = oneSyncConvar == 'on' or oneSyncConvar == 'legacy'
 
 
 -- Optimizations
+local floor = math.floor
 local max = math.max
 local min = math.min
 local sub = string.sub
@@ -20,9 +21,9 @@ local pairs = pairs
 
 -- Variables & Consts
 TX_PLAYERLIST = {} -- available globally in tx
-local refreshMinDelay = 2000
+local refreshMinDelay = 1500
 local refreshMaxDelay = 5000
-local maxPlayersDelayCeil = 150 --at this number, the delay won't increase more
+local maxPlayersDelayCeil = 300 --at this number, the delay won't increase more
 local intervalYieldLimit = 50
 local vTypeMap = {
     ["nil"] = -1,
@@ -44,7 +45,6 @@ CreateThread(function()
         -- For each player
         local players = GetPlayers()
         for yieldCounter, serverID in pairs(players) do
-            debugPrint('Refreshing player:', yieldCounter, serverID) --DEBUG
             -- Updating player vehicle/health
             -- NOTE: after testing this seem not to need any error handling
             local health = 0
@@ -94,15 +94,15 @@ CreateThread(function()
         end
        
         -- DEBUG
-        print(json.encode(TX_PLAYERLIST, {indent = true}))
-        debugPrint("====================================")
+        -- debugPrint("====================================")
+        -- print(json.encode(TX_PLAYERLIST, {indent = true}))
+        -- debugPrint("====================================")
 
-        -- FIXME: Refresh interval with linear function
-        -- local hDiff = refreshMaxDelay - refreshMinDelay
-        -- local calcDelay = (hDiff/maxPlayersDelayCeil) * (#players) + refreshMinDelay
-        -- local delay = math.min(calcDelay, refreshMaxDelay)
-        -- Wait(delay)
-        Wait(2500) --DEBUG
+        -- Refresh interval with linear function
+        local hDiff = refreshMaxDelay - refreshMinDelay
+        local calcDelay = (hDiff/maxPlayersDelayCeil) * (#players) + refreshMinDelay
+        local delay = floor(min(calcDelay, refreshMaxDelay))
+        Wait(delay)
     end --end while true
 end)
 
@@ -110,13 +110,11 @@ end)
 --[[ Handle player Join or Leave ]]
 AddEventHandler('playerJoining', function()
     local playerName = sub(GetPlayerName(source) or "unknown", 1, 75)
-    debugPrint('>>>>>>>>>>>>>>>>>>>>> JOIN: '.. playerName .. ' ' .. source) --DEBUG
     for adminID, _ in pairs(ADMIN_DATA) do
         TriggerClientEvent('txcl:updatePlayer', adminID, source, playerName)
     end
 end)
 AddEventHandler('playerDropped', function()
-    debugPrint('>>>>>>>>>>>>>>>>>>>>> LEAVE: '.. source) --DEBUG
     for adminID, _ in pairs(ADMIN_DATA) do
         TriggerClientEvent('txcl:updatePlayer', adminID, source, false)
     end
@@ -124,7 +122,7 @@ end)
 
 
 -- Handle getDetailedPlayerlist
--- This event is only called when the meny "players" tab is opened, and every 5s after that
+-- This event is only called when the meny "players" tab is opened, and every 5s while the tab is open
 RegisterNetEvent('txsv:getDetailedPlayerlist', function()
     if ADMIN_DATA[tostring(source)] == nil then
         debugPrint('Ignoring unauthenticated getDetailedPlayerlist() by ' .. source)
