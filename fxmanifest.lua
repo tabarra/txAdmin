@@ -17,7 +17,7 @@ shared_scripts {
     'scripts/menu/shared.lua'
 }
 
-server_scripts { 
+server_scripts {
     'main.js',
     'scripts/sv_main.lua',
     'scripts/sv_logger.lua',
@@ -28,7 +28,9 @@ server_scripts {
     'scripts/menu/server/sv_main_page.lua',
     'scripts/menu/server/sv_freeze_player.lua',
     'scripts/menu/server/sv_trollactions.lua',
+    'scripts/menu/server/sv_old_playerlist.lua',
     'scripts/menu/server/sv_player_modal.lua',
+    'scripts/menu/server/sv_spectate.lua'
 }
 
 client_scripts {
