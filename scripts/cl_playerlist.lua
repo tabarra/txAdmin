@@ -1,6 +1,10 @@
 -- =============================================
 --  Client PlayerList handler
 -- =============================================
+if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+    return
+end
+
 local floor = math.floor
 LOCAL_PLAYERLIST = {} -- available globally in tx
 local vTypeMap = {
@@ -92,12 +96,12 @@ end)
 -- Triggered on player join/leave
 -- add/remove specific id to playerlist
 RegisterNetEvent('txcl:updatePlayer', function(id, data)
-    -- print("========== EVENT updatePlayer")
-    -- print(json.encode({id, data}))
     local pids = tostring(id)
     if data == false then
+        debugPrint("^2txcl:updatePlayer: ^3"..id.."^2 disconnected")
         LOCAL_PLAYERLIST[pids] = nil
     else
+        debugPrint("^2txcl:updatePlayer: ^3"..id.."^2 connected")
         LOCAL_PLAYERLIST[pids] = {
             name = data,
             health = 0,
@@ -126,9 +130,10 @@ RegisterCommand('tprint', function()
     print(json.encode(LOCAL_PLAYERLIST, {indent = true}))
     print("------------------------------------")
 end)
-CreateThread(function()
-    while true do
-        TriggerServerEvent("txsv:getDetailedPlayerlist")
-        Wait(2500)
-    end
-end)
+-- CreateThread(function()
+--     while true do
+--         TriggerServerEvent("txsv:getDetailedPlayerlist")
+--         Wait(2500)
+--     end
+-- end)
+

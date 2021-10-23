@@ -21,21 +21,20 @@ server_scripts {
     'main.js',
     'scripts/sv_main.lua',
     'scripts/sv_logger.lua',
+    'scripts/sv_playerlist.lua',
     'scripts/menu/server/sv_webpipe.lua',
     'scripts/menu/server/sv_base.lua',
     'scripts/menu/server/sv_functions.lua',
     'scripts/menu/server/sv_main_page.lua',
     'scripts/menu/server/sv_freeze_player.lua',
     'scripts/menu/server/sv_trollactions.lua',
-    'scripts/menu/server/sv_old_playerlist.lua',
     'scripts/menu/server/sv_player_modal.lua',
-
-    'scripts/sv_playerlist_new.lua', -- DEBUG
 }
 
 client_scripts {
     'scripts/cl_main.lua',
     'scripts/cl_logger.lua',
+    'scripts/cl_playerlist.lua',
     'scripts/menu/client/cl_webpipe.lua',
     'scripts/menu/client/cl_base.lua',
     'scripts/menu/client/cl_functions.lua',
@@ -43,7 +42,6 @@ client_scripts {
     'scripts/menu/client/cl_misc.lua',
     'scripts/menu/client/cl_player_ids.lua',
     'scripts/menu/client/cl_player_mode.lua',
-    'scripts/menu/client/cl_players_page.lua',
     'scripts/menu/client/cl_spectate.lua',
     'scripts/menu/client/cl_trollactions.lua',
     'scripts/menu/client/cl_warn.lua',
@@ -52,8 +50,6 @@ client_scripts {
     'scripts/menu/vendor/freecam/config.lua',
     'scripts/menu/vendor/freecam/main.lua',
     'scripts/menu/vendor/freecam/camera.lua',
-
-    'scripts/cl_playerlist_new.lua', -- DEBUG
 }
 
 ui_page 'scripts/menu/nui/index.html'

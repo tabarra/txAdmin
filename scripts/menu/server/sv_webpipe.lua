@@ -136,7 +136,6 @@ RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, 
             token = resp.luaToken,
             bucket = 0
           }
-          sendFullClientData(s)
           sendInitialPlayerlist(s)
         else
           debugPrint("Auth failed for admin %s due to response validation.")
