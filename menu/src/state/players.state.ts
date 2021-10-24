@@ -5,16 +5,11 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from "recoil";
+import {
+  ActivePlayersMap,
+  VehicleStatus,
+} from "../hooks/usePlayerListListener";
 import { debugData } from "../utils/debugData";
-
-export enum VehicleStatus {
-  Unknown = "unknown",
-  Walking = "walking",
-  Driving = "driving",
-  Flying = "flying", //planes or heli
-  Boat = "boating",
-  Biking = "biking",
-}
 
 export type PlayerData = Required<PlayerDataPartial> & { id: number };
 export type PlayerDataSetPartial = { [serverID: string]: PlayerDataPartial };
@@ -35,9 +30,17 @@ export enum PlayerDataSort {
   DistanceFarthest = "distanceFarthest",
 }
 
+const transformPlayerMap = (playerMap: ActivePlayersMap) => {
+  const playerStates = [];
+  for (const [k, v] of Object.entries(playerMap)) {
+    playerStates.push({ id: k, ...v });
+  }
+  return playerStates;
+};
+
 const playersState = {
-  playerData: atom<PlayerData[]>({
-    default: [],
+  playerData: atom<ActivePlayersMap>({
+    default: {},
     key: "playerStates",
   }),
   playerSortType: atom<PlayerDataSort | null>({
@@ -52,13 +55,17 @@ const playersState = {
       const unfilteredPlayerStates = get(playersState.playerData);
 
       const formattedInput = filteredValueInput.trim().toLowerCase();
+      // This data type conversion and transformation is inefficient
+      // but makes it easier to filter data.
+      // should probably revisit.
+      const transformPlayerArray = transformPlayerMap(unfilteredPlayerStates);
 
       const playerStates: PlayerData[] = filteredValueInput
-        ? unfilteredPlayerStates.filter(
-          (player) =>
-            player.username.toLowerCase().includes(formattedInput) ||
-            player.id.toString().includes(formattedInput)
-        )
+        ? transformPlayerArray.filter(
+            (player) =>
+              player.username.toLowerCase().includes(formattedInput) ||
+              player.id.toString().includes(formattedInput)
+          )
         : unfilteredPlayerStates;
 
       switch (sortType) {
@@ -255,7 +262,7 @@ debugData<PlayerData[]>(
   3000
 );
 
-function mockData () {
+function mockData() {
   const randomUsernames = [
     "hamy",
     "taso",
