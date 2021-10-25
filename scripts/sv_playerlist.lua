@@ -57,7 +57,10 @@ CreateThread(function()
                 else
                     vType = vTypeMap["walking"]
                 end
-                health = min(max(GetEntityHealth(ped), 0), 200)
+                -- Its extremely hard to normalize this value to actually reflect
+                -- it as a percentage of the current users max health depending on the server
+                -- Therefore, lets just handle for base case of maxHealth 175 and health range from 100-175
+                health = floor((GetEntityHealth(ped) - 100) / (GetEntityMaxHealth(ped) - 100) * 100)
             end
 
             -- Updating TX_PLAYERLIST
@@ -90,7 +93,7 @@ CreateThread(function()
                 TX_PLAYERLIST[playerID] = nil
             end
         end
-       
+
         -- DEBUG
         -- debugPrint("====================================")
         -- print(json.encode(TX_PLAYERLIST, {indent = true}))
