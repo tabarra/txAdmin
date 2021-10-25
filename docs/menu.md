@@ -96,4 +96,4 @@ If you see a red message like [this](https://i.imgur.com/G83uTNC.png) and you ar
 - Read the message printed on console for more information.
 
 ## Development
-You can find development instructions regarding the Menu [here](https://github.com/tabarra/txAdmin/blob/master/docs/development.md#menu-development)
+You can find development instructions regarding the menu [here.](https://github.com/tabarra/txAdmin/blob/develop/docs/development.md#menu-development)
