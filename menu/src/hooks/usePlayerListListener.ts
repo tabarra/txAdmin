@@ -41,31 +41,25 @@ export interface PlayerData {
 
 export const usePlayerListListener = () => {
   const curPage = usePageValue();
-  const setPlayerList = useSetPlayersState();
+  const setPlayerlist = useSetPlayersState();
 
-  useNuiEvent<PlayerData[]>("setPlayerList", setPlayerList);
+  useNuiEvent<PlayerData[]>("setPlayerlist", setPlayerlist);
 
   useEffect(() => {
     // Since our player list is never technically unmounted,
     // we target page changes as our interval entrance technique
     if (curPage !== txAdminMenuPage.Players) return;
 
-    const controller = new AbortController();
+    // Getting detailed playerlist
+    fetchNui("signalPlayersPageOpen", {}).catch();
 
-    const interv = window.setInterval(() => {
-      // Lets silently catch any failures that
-      fetchNui(
-        "requestServerPlayerlistDetails",
-        {},
-        { signal: controller.signal }
-      ).catch();
+    // Getting detailed playerlist every 5 seconds
+    const updaterInterval = window.setInterval(() => {
+      fetchNui("signalPlayersPageOpen", {}).catch();
     }, 5000);
 
     return () => {
-      // In case we have any pending http reqs on page change,
-      // we cancel
-      controller.abort();
-      window.clearInterval(interv);
+      window.clearInterval(updaterInterval);
     };
   }, [curPage]);
 };

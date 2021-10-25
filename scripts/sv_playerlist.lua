@@ -85,7 +85,6 @@ CreateThread(function()
         --Check if player disconnected
         for playerID, playerData in pairs(TX_PLAYERLIST) do
             if playerData.foundLastCheck == true then
-                debugPrint('Checking', playerID, 'found')
                 playerData.foundLastCheck = false
             else
                 debugPrint('Checking', playerID, 'removing')
@@ -94,9 +93,9 @@ CreateThread(function()
         end
        
         -- DEBUG
-        debugPrint("====================================")
-        print(json.encode(TX_PLAYERLIST, {indent = true}))
-        debugPrint("====================================")
+        -- debugPrint("====================================")
+        -- print(json.encode(TX_PLAYERLIST, {indent = true}))
+        -- debugPrint("====================================")
 
         -- Refresh interval with linear function
         local hDiff = refreshMaxDelay - refreshMinDelay

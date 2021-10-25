@@ -27,7 +27,7 @@ local vTypeMap = {
 
 -- Transforms the playerlist and sends to react
 -- The playerlist is converted to an object array to save refactor time
-local function sendReactPlayerlist()
+function sendReactPlayerlist()
     local upload = {}
     for pids, playerData in pairs(LOCAL_PLAYERLIST) do
         upload[#upload + 1] = {
@@ -140,22 +140,22 @@ end)
 
 
 -- Triggered when the "player" tab opens in the menu, and every 5s after that
-RegisterNUICallback('iNeedPlayerlistDetails', function(_, cb)
-    sendReactPlayerlist() --send outdated to NUI
+RegisterNUICallback('signalPlayersPageOpen', function(_, cb)
+    print('got signalPlayersPageOpen')
     TriggerServerEvent("txsv:getDetailedPlayerlist") --request latest from server
     cb({})
 end)
 
 
 -- DEBUG only
-RegisterCommand('tnew', function()
-    TriggerServerEvent("txsv:getDetailedPlayerlist")
-end)
-RegisterCommand('tprint', function()
-    print("------------------------------------")
-    print(json.encode(LOCAL_PLAYERLIST, {indent = true}))
-    print("------------------------------------")
-end)
+-- RegisterCommand('tnew', function()
+--     TriggerServerEvent("txsv:getDetailedPlayerlist")
+-- end)
+-- RegisterCommand('tprint', function()
+--     print("------------------------------------")
+--     print(json.encode(LOCAL_PLAYERLIST, {indent = true}))
+--     print("------------------------------------")
+-- end)
 -- CreateThread(function()
 --     while true do
 --         TriggerServerEvent("txsv:getDetailedPlayerlist")
