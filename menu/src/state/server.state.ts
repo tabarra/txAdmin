@@ -15,7 +15,6 @@ export interface ServerCtx {
   locale: string;
   switchPageKey: string;
   txAdminVersion: string;
-  endpoint: string;
   alignRight: boolean;
 }
 
@@ -25,7 +24,13 @@ const serverCtx = atom<ServerCtx>({
     key: "serverCtxFetch",
     get: async () => {
       try {
-        const serverCtx = await fetchNui<ServerCtx>("getServerCtx");
+        const serverCtx = await fetchNui<ServerCtx>(
+          "getServerCtx",
+          {},
+          {
+            mockResp: config.serverCtx,
+          }
+        );
         debugLog("GetServerCtx", serverCtx);
         return serverCtx;
       } catch (e) {
