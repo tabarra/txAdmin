@@ -38,7 +38,6 @@ function sendReactPlayerlist()
             vType = playerData.vType
         }
     end
-    -- DEBUG
     -- print("========== function sendReactPlayerlist()")
     -- print(json.encode(upload))
     -- print("------------------------------------")
@@ -141,7 +140,6 @@ end)
 
 -- Triggered when the "player" tab opens in the menu, and every 5s after that
 RegisterNUICallback('signalPlayersPageOpen', function(_, cb)
-    print('got signalPlayersPageOpen')
     TriggerServerEvent("txsv:getDetailedPlayerlist") --request latest from server
     cb({})
 end)

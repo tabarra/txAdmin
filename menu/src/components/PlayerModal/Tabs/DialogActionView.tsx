@@ -56,7 +56,7 @@ const DialogActionView: React.FC = () => {
     openDialog({
       title: `${t(
         "nui_menu.player_modal.actions.moderation.dm_dialog.title"
-      )} ${assocPlayer.username}`,
+      )} ${assocPlayer.name}`,
       description: t(
         "nui_menu.player_modal.actions.moderation.dm_dialog.description"
       ),
@@ -94,7 +94,7 @@ const DialogActionView: React.FC = () => {
     openDialog({
       title: `${t(
         "nui_menu.player_modal.actions.moderation.warn_dialog.title"
-      )} ${assocPlayer.username}`,
+      )} ${assocPlayer.name}`,
       description: t(
         "nui_menu.player_modal.actions.moderation.warn_dialog.description"
       ),
@@ -138,7 +138,7 @@ const DialogActionView: React.FC = () => {
     openDialog({
       title: `${t(
         "nui_menu.player_modal.actions.moderation.kick_dialog.title"
-      )} ${assocPlayer.username}`,
+      )} ${assocPlayer.name}`,
       description: t(
         "nui_menu.player_modal.actions.moderation.kick_dialog.description"
       ),
@@ -183,7 +183,7 @@ const DialogActionView: React.FC = () => {
       return showNoPerms("Manage Admins");
 
     //FIXME: use bubble's .normalize('NFKD') instead of slug()
-    const sluggedName = slug(assocPlayer.username, "_");
+    const sluggedName = slug(assocPlayer.name, "_");
     let adminManagerPath = `?autofill&name=${sluggedName}`;
 
     //If the playerDetails is available 

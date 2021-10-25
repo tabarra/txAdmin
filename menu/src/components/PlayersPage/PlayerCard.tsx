@@ -141,7 +141,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
             <div className={classes.barBackground}>
               <Box
                 className={classes.barInner}
-                width={`${playerData.health}%`}
+                width={`${playerData.health - 100}%`}
               />
             </div>
           </Tooltip>
