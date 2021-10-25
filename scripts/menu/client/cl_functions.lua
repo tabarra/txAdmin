@@ -52,6 +52,7 @@ function toggleMenuVisibility(visible)
     -- Lets update before we open the menu
     updateServerCtx()
     sendMenuMessage('setDebugMode', isMenuDebug)
+    sendReactPlayerlist()
     if visible ~= nil then
         isMenuVisible = visible
         sendMenuMessage('setVisible', visible)

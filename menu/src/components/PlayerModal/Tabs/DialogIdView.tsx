@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   codeBlock: {
     background: theme.palette.background.paper,
     borderRadius: 8,
-    padding: "5px 5px",
+    padding: "0px 15px",
     marginBottom: 7,
     display: "flex",
     alignItems: "center",
