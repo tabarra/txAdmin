@@ -3,6 +3,7 @@ import {
   Box,
   IconButton,
   Paper,
+  styled,
   Theme,
   Tooltip,
   Typography,
@@ -45,6 +46,20 @@ const useStyles = makeStyles((theme: Theme) => ({
   tooltipOverride: {
     fontSize: 12,
   },
+}));
+
+const determineHealthColor = (val: number, theme: Theme) => {
+  if (val <= 20) return theme.palette.error.light;
+  else return theme.palette.primary.light;
+};
+
+const HealthBarBackground = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "healthVal",
+})<{ healthVal: number }>(({ theme, healthVal }) => ({
+  background: determineHealthColor(healthVal, theme),
+  height: 5,
+  borderRadius: 10,
+  overflow: "hidden",
 }));
 
 const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
@@ -139,9 +154,9 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
             }}
           >
             <div className={classes.barBackground}>
-              <Box
-                className={classes.barInner}
-                width={`${playerData.health - 100}%`}
+              <HealthBarBackground
+                width={`${playerData.health}%`}
+                healthVal={playerData.health}
               />
             </div>
           </Tooltip>
