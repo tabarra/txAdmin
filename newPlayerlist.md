@@ -34,7 +34,7 @@ Client:
 
 ## Taso Specs
 - React updates it's internal playerlist when receives the `setPlayerlist` event;
-- React calls `getPlayerlist` when the "tabs page" is opened, and then every 5s while it's open;
+- React calls `iNeedPlayerlistDetails` when the "tabs page" is opened, and then every 5s while it's open;
 - When the "players" tab open, it's okay to show the existing (outdated) playerlist, but need to show in yellow somewhere "updating playerlist..." and then remove it on the first `setPlayerlist` received after opening the page;
 - The playerlist will always have the 4 values;
 - `vType` can be one of: `unknown, walking, driving, biking, boating, flying`;

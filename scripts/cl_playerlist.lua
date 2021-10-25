@@ -5,7 +5,12 @@ if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
     return
 end
 
+-- Optimizations
+local tonumber = tonumber
+local tostring = tostring
 local floor = math.floor
+
+-- Variables & Consts
 LOCAL_PLAYERLIST = {} -- available globally in tx
 local vTypeMap = {
     ["0"] = "walking",
@@ -18,6 +23,27 @@ local vTypeMap = {
     ["7"] = "driving", --trailer
     ["8"] = "driving", --train
 }
+
+
+-- Transforms the playerlist and sends to react
+-- The playerlist is converted to an object array to save refactor time
+local function sendReactPlayerlist()
+    local upload = {}
+    for pids, playerData in pairs(LOCAL_PLAYERLIST) do
+        upload[#upload + 1] = {
+            id = tonumber(pids),
+            name = playerData.name,
+            health = playerData.health,
+            dist = playerData.dist,
+            vType = playerData.vType
+        }
+    end
+    -- DEBUG
+    -- print("========== function sendReactPlayerlist()")
+    -- print(json.encode(upload))
+    -- print("------------------------------------")
+    sendMenuMessage('setPlayerlist', upload)
+end
 
 
 -- Triggered when the admin authenticates
@@ -39,7 +65,7 @@ RegisterNetEvent('txcl:setInitialPlayerlist', function(payload)
     -- print("------------------------------------")
     -- print(json.encode(LOCAL_PLAYERLIST, {indent = true}))
     -- print("------------------------------------")
-    sendMenuMessage('setPlayerlist', LOCAL_PLAYERLIST)
+    sendReactPlayerlist()
 end)
 
 
@@ -89,7 +115,7 @@ RegisterNetEvent('txcl:setDetailedPlayerlist', function(payload)
     -- print("------------------------------------")
     -- print(json.encode(LOCAL_PLAYERLIST, {indent = true}))
     -- print("------------------------------------")
-    sendMenuMessage('setPlayerlist', LOCAL_PLAYERLIST)
+    sendReactPlayerlist()
 end)
 
 
@@ -109,13 +135,13 @@ RegisterNetEvent('txcl:updatePlayer', function(id, data)
             vType = "unknown"
         }
     end
-    sendMenuMessage('setPlayerlist', LOCAL_PLAYERLIST)
+    sendReactPlayerlist()
 end)
 
 
 -- Triggered when the "player" tab opens in the menu, and every 5s after that
-RegisterNUICallback('getPlayerlist', function(_, cb)
-    sendMenuMessage('setPlayerlist', LOCAL_PLAYERLIST) --send outdated to NUI
+RegisterNUICallback('iNeedPlayerlistDetails', function(_, cb)
+    sendReactPlayerlist() --send outdated to NUI
     TriggerServerEvent("txsv:getDetailedPlayerlist") --request latest from server
     cb({})
 end)
