@@ -112,5 +112,5 @@ You can find development instructions regarding the menu [here.](https://github.
 - **Q**: Why don't the 'Heal' options revive a player when using MY_RANDOM_FRAMEWORK_HERE?
 - **A**: Many frameworks independently handle a "dead" state for a player, meaning
   the menu is unable to reset this state in an resource agnostic form directly. To establish compatibility 
-  with any framework, txAdmin will emit an [event](https://github.com/tabarra/txAdmin/blob/develop/docs/development.md#menu-development) 
+  with any framework, txAdmin will emit an [event](https://github.com/tabarra/txAdmin/blob/develop/docs/development.md#events) 
   for developers to handle.
