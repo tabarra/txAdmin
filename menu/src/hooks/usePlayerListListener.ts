@@ -13,7 +13,11 @@ export enum VehicleStatus {
   Biking = "biking",
 }
 
-interface FullPlayerData {
+export interface PlayerData {
+  /**
+   * Players server ID
+   **/
+  id: number;
   /**
    * No default value representing unknown state, this should always
    * reflect the player's actual name.
@@ -35,20 +39,11 @@ interface FullPlayerData {
   health: number;
 }
 
-export interface ActivePlayersMap {
-  /**
-   * Map is indexed by the player's server id
-   */
-  [id: string]: FullPlayerData;
-}
-
 export const usePlayerListListener = () => {
   const curPage = usePageValue();
   const setPlayerList = useSetPlayersState();
 
-  useNuiEvent<ActivePlayersMap>("setPlayerList", (respMap) => {
-    setPlayerList(respMap);
-  });
+  useNuiEvent<PlayerData[]>("setPlayerList", setPlayerList);
 
   useEffect(() => {
     // Since our player list is never technically unmounted,
@@ -59,7 +54,7 @@ export const usePlayerListListener = () => {
 
     const interv = window.setInterval(() => {
       // Lets silently catch any failures that
-      fetchNui<ActivePlayersMap>(
+      fetchNui(
         "requestServerPlayerlistDetails",
         {},
         { signal: controller.signal }
