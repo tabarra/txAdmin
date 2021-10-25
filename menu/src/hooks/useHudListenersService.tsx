@@ -6,7 +6,11 @@ import { useTranslate } from "react-polyglot";
 import { shouldHelpAlertShow } from "../utils/shouldHelpAlertShow";
 import { debugData } from "../utils/debugData";
 import { getNotiDuration } from "../utils/getNotiDuration";
-import { usePlayersState, useSetPlayerFilter, useSetPlayersFilterIsTemp } from "../state/players.state";
+import {
+  usePlayersState,
+  useSetPlayerFilter,
+  useSetPlayersFilterIsTemp,
+} from "../state/players.state";
 import { usePlayerModalContext } from "../provider/PlayerModalProvider";
 import { useSetAssociatedPlayer } from "../state/playerDetails.state";
 import { txAdminMenuPage, useSetPage } from "../state/page.state";
@@ -118,20 +122,19 @@ export const useHudListenersService = () => {
 
   // Handler for dynamically opening the player page & player modal with target
   useNuiEvent<string>("openPlayerModal", (target) => {
-    let targetPlayer
-    const targetId = parseInt(target)
+    let targetPlayer;
+    const targetId = parseInt(target);
 
     if (targetId) {
       targetPlayer = onlinePlayers.find(
         (playerData) => playerData.id === targetId
       );
     } else {
-      const foundPlayers = onlinePlayers.filter(
-        (playerData) => playerData.username.toLowerCase().includes(target.toLowerCase())
+      const foundPlayers = onlinePlayers.filter((playerData) =>
+        playerData.name.toLowerCase().includes(target.toLowerCase())
       );
 
-      if (foundPlayers.length === 1)
-        targetPlayer = foundPlayers[0]
+      if (foundPlayers.length === 1) targetPlayer = foundPlayers[0];
       else if (foundPlayers.length > 1) {
         setPlayerFilter(target);
         setPage(txAdminMenuPage.Players);
