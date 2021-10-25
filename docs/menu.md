@@ -40,13 +40,6 @@ in the admin manager as shown below
 The txAdmin menu has a variety of different convars that can alter the default behavior
 of the menu
 
-**txAdminMenu-updateInterval**
-* Description: Controls the interval in which players are updated for each online 
-  admin. *Increasing this can improve client performance but will make updates to 
-  the players page slower*
-* Default: 5000 
-* Usage: `+set txAdminMenu-updateInterval 10000`
-
 **txAdminMenu-pageKey**
 * Description: Will change the key used for changing pages in the menu. This value must be 
   the exact browser key code for your preferred key. You can use [this](https://keycode.info/) 
@@ -68,6 +61,18 @@ of the menu
 * Description: Whether to align the menu to the right of the screen instead of the left.
 * Default: 0
 * Usage: `+set txAdminMenu-alignRight 1`
+
+### Legacy Convars
+ConVar's that were previously available in older versions but have been
+removed. They are here for developer reference but you should **not**,
+try and utilize them.
+
+**txAdminMenu-updateInterval (removed in v4.7.0)**
+* Description: Controls the interval in which players are updated for each online
+  admin. *Increasing this can improve client performance but will make updates to
+  the players page slower*
+* Default: 5000
+* Usage: `+set txAdminMenu-updateInterval 10000`
 
 ## Commands
 **tx | txadmin**
