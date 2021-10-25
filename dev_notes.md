@@ -25,51 +25,19 @@ remover o \s?
 
 
 
-### Menu playerlist fix
-Server:
-- Will have it's own playerlist with {id, name, health, vehClass, coords}
-- Every 2.5s run through the playerlist updating {health, vehClass, coords} (`Wait(0)` on every 25 players?)
-- On player Join/Leave:
-    - Add {id, name, 0, 0, 0} to playerlist or remove from playerlist
-    - TriggerClientEvent "updatePlayerlist" with [id, name] or [id, false] to all admins
-- On admin join/auth:
-    - Send event "setInitialPlaylist" with [[id, name]]
-- On gimmeDetailedPlayerlist event:
-    - check if admin
-    - get source coords
-    - for each player, get dist from source (cast to integer)
-    - reply with event setDetailedPlayerlist and payload [{id, health, vehClass, dist}]
+### Menu auth fix
+- o `/auth/nui` vira um middleware requestAuth('nui')
+- esse middleware cria uma variável de contexto que não é ctx.session pra nao ficar criando sessões koa
+- usar handlers normais (webRoutes.player.*), e dentro delas fazer `const sess = ctx.nuiSess || ctx.session` 
+- criar rotas novas com prefixo diferente tipo `/nui/xxx`
+- webpipe adicionar headers com identifiers quando tiver path começar com `/nui/`
 
-Client:
-- Updates playerlist on setInitialPlaylist/updatePlayerlist/setDetailedPlayerlist
-- On player tab open: getDetailedPlayerlist()
-- Every 5 seconds when player tab is opened: getDetailedPlayerlist()
-- Maybe: when the player tab is mounted, add a message that says "updating playerlist" and hide after first detailed playerlist arrives
+- o sv agora vai ter que começar a chamar algo tipo `/nui/identify` no join pra saber se esse o client é admin 
+- remover `/auth/nui` existente
+- fazer o react parar de chamar e depender do `/auth/nui`
+- iframe iniciar com uma rota especial que ou gera o ctx.session (como o `/auth/nui`), ou já chama o handler do serverlog get
 
-NOTE: delay based on function https://www.desmos.com/calculator/ls0lfokshc
-```lua
-local minDelay = 2000
-local maxDelay = 5000
-local maxPlayersDelayCeil = 150 --at this number, the delay won't increase more
-
-local hDiff = maxDelay - minDelay
-local calcDelay = (hDiff/maxPlayersDelayCeil) * playerCount + minDelay
-local delay = math.min(calcDelay, maxDelay)
-```
-
-NOTE: send everything as array!  
-[1234,"namenamenamename"]
-{"i":1234,"n":"namenamenamename"}
-[1234,200,1,9999]
-{"i":1234,"h":200,"v":1,"d":9999}
-
-NOTE: expected max sizes for 1k players:
-- initial per player: `[1234, "namenamenamename"],` = 26.3kb
-- on menu open per player: `[1234,200,1],` = 12.7kb
-
-FIXME: update min fxserver version to the one where bubble exposed the GetVehClass to the server
-
-TODO: For now we can do this way, but probably better to set a linear function to get the interval from 2.5s to 5s (both client and server) based on the number of players
+- talvez cachear os identifiers pra nao ficar pegando toda vez? talvez no primeiro `/nui/identify` retornar um token que pode ser reusado sem ter que ficar buscando admin com mesmo id? idk
 
 
 
