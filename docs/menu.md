@@ -87,6 +87,16 @@ quickly open up the target player's info modal.
 * Usage: `/txAdmin-reauth`
 * Required Perm: `none`
 
+## Events
+**txAdmin:healedPlayer**
+- Domain: `Server`
+- Handler Arguments: `playerId: string`
+- Description: This event is emitted whenever a heal event is triggered for
+  a player/whole server. It will pass an argument containing the targets server 
+  ID.
+
+*Note: Whenever txAdmin is targeting healing on all players, it will emit -1 for serverId*
+
 ## Troubleshooting menu access
 
 If you type `/tx` and nothing happens, your menu is probably disabled.  
@@ -96,4 +106,11 @@ If you see a red message like [this](https://i.imgur.com/G83uTNC.png) and you ar
 - Read the message printed on console for more information.
 
 ## Development
-You can find development instructions regarding the menu [here.](https://github.com/tabarra/txAdmin/blob/develop/docs/development.md#menu-development)
+You can find development instructions regarding the menu [here.](https://github.com/tabarra/txAdmin/blob/master/docs/development.md#menu-development)
+
+## FAQ
+- **Q**: Why don't the 'Heal' options revive a player when using MY_RANDOM_FRAMEWORK_HERE?
+- **A**: Many frameworks independently handle a "dead" state for a player, meaning
+  the menu is unable to reset this state in an resource agnostic form directly. To establish compatibility 
+  with any framework, txAdmin will emit an [event](https://github.com/tabarra/txAdmin/blob/develop/docs/development.md#menu-development) 
+  for developers to handle.
