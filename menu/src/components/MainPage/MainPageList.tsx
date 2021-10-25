@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Box, List, styled, Theme } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { Box, List, styled } from "@mui/material";
 import { MenuListItem, MenuListItemMulti } from "./MenuListItem";
 import {
   AccessibilityNew,
@@ -81,13 +80,13 @@ export const MainPageList: React.FC = () => {
   // the directions are inverted
   const handleArrowDown = useCallback(() => {
     const next = curSelected + 1;
-    fetchNui("playSound", "move");
+    fetchNui("playSound", "move").catch();
     setCurSelected(next >= menuListItems.length ? 0 : next);
   }, [curSelected]);
 
   const handleArrowUp = useCallback(() => {
     const next = curSelected - 1;
-    fetchNui("playSound", "move");
+    fetchNui("playSound", "move").catch();
     setCurSelected(next < 0 ? menuListItems.length - 1 : next);
   }, [curSelected]);
 

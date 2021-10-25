@@ -1,6 +1,12 @@
 import React, { memo, useEffect, useRef, useState } from "react";
-import { ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, Theme } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import {
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+  Theme,
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { Code } from "@mui/icons-material";
 import { fetchNui } from "../../utils/fetchNui";
@@ -27,7 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
   rootDisabled: {
     borderRadius: 15,
-    opacity: 0.3
+    opacity: 0.3,
   },
   icon: {
     color: theme.palette.text.secondary,
@@ -45,7 +51,9 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
     const t = useTranslate();
     const divRef = useRef<HTMLDivElement | null>(null);
     const userPerms = usePermissionsValue();
-    const isUserAllowed = requiredPermission ? userHasPerm(requiredPermission, userPerms) : true;
+    const isUserAllowed = requiredPermission
+      ? userHasPerm(requiredPermission, userPerms)
+      : true;
     const { enqueueSnackbar } = useSnackbar();
 
     const handleEnter = (): void => {
@@ -137,7 +145,9 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     const userPerms = usePermissionsValue();
     const { enqueueSnackbar } = useSnackbar();
 
-    const isUserAllowed = requiredPermission ? userHasPerm(requiredPermission, userPerms) : true;
+    const isUserAllowed = requiredPermission
+      ? userHasPerm(requiredPermission, userPerms)
+      : true;
 
     const compMounted = useRef(false);
 
@@ -179,7 +189,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     const handleLeftArrow = () => {
       if (!selected) return;
 
-      fetchNui("playSound", "move");
+      fetchNui("playSound", "move").catch();
       const nextEstimatedItem = curState - 1;
       const nextItem =
         nextEstimatedItem < 0 ? actions.length - 1 : nextEstimatedItem;
@@ -200,7 +210,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
       if (!selected) return;
       if (!isUserAllowed) return showNotAllowedAlert();
 
-      fetchNui("playSound", "enter");
+      fetchNui("playSound", "enter").catch();
       actions[curState].onSelect();
     };
 
@@ -213,9 +223,9 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
 
     return (
       <div ref={divRef}>
-        <ListItem 
+        <ListItem
           className={isUserAllowed ? classes.root : classes.rootDisabled}
-          dense 
+          dense
           selected={selected}
         >
           <ListItemIcon className={classes.icon}>

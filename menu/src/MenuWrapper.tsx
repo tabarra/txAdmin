@@ -16,7 +16,11 @@ import { useCheckCredentials } from "./hooks/useCheckCredentials";
 import { PlayerModalProvider } from "./provider/PlayerModalProvider";
 import { txAdminMenuPage, useSetPage } from "./state/page.state";
 import { useListenerForSomething } from "./hooks/useListenerForSomething";
-import { usePlayersFilterIsTemp, useSetPlayerFilter } from "./state/players.state";
+import {
+  usePlayersFilterIsTemp,
+  useSetPlayerFilter,
+} from "./state/players.state";
+import { Box, styled } from "@mui/material";
 
 debugData(
   [
@@ -28,10 +32,19 @@ debugData(
   3000
 );
 
+interface AppWrapperProps {
+  visible: boolean;
+}
+
+const AppWrapper = styled("div")<AppWrapperProps>(({ theme, visible }) => ({
+  opacity: visible ? 1 : 0,
+}));
+
 const MenuWrapper: React.FC = () => {
   const visible = useIsMenuVisibleValue();
   const serverCtx = useServerCtxValue();
-  const [playersFilterIsTemp, setPlayersFilterIsTemp] = usePlayersFilterIsTemp();
+  const [playersFilterIsTemp, setPlayersFilterIsTemp] =
+    usePlayersFilterIsTemp();
   const setPlayerFilter = useSetPlayerFilter();
 
   const setPage = useSetPage();
@@ -56,13 +69,12 @@ const MenuWrapper: React.FC = () => {
     return () => clearInterval(changeTimer);
   }, [visible, playersFilterIsTemp]);
 
-  const localeSelected = useMemo(() => getLocale(serverCtx.locale), [
-    serverCtx.locale,
-  ]);
+  const localeSelected = useMemo(
+    () => getLocale(serverCtx.locale),
+    [serverCtx.locale]
+  );
 
   useListenerForSomething();
-
-  const styled = visible ? { opacity: 1 } : undefined;
 
   return (
     <TopLevelErrorBoundary>
@@ -74,9 +86,14 @@ const MenuWrapper: React.FC = () => {
         <IFrameProvider>
           <DialogProvider>
             <PlayerModalProvider>
-              <div className="App" style={styled}>
+              <Box
+                className="App"
+                sx={{
+                  opacity: visible ? 1 : 0,
+                }}
+              >
                 <MenuRoot />
-              </div>
+              </Box>
             </PlayerModalProvider>
           </DialogProvider>
           <WarnPage />

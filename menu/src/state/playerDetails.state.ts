@@ -59,27 +59,16 @@ const playerDetails = {
       const assocPlayer = get(playerDetails.associatedPlayer);
       const assocPlayerId = assocPlayer.id;
 
-      try {
-        const res = await fetchWebPipe<TxAdminPlayerAPIResp>(
-          `/player/${assocPlayerId}`
-        );
+      const res = await fetchWebPipe<TxAdminPlayerAPIResp>(
+        `/player/${assocPlayerId}`,
+        { mockData: MockedPlayerDetails }
+      );
 
-        debugLog("FetchWebPipe", res, "PlayerFetch");
+      debugLog("FetchWebPipe", res, "PlayerFetch");
 
-        if (res.type === "offline") new Error(res.message);
+      if (res.type === "offline") new Error(res.message);
 
-        return res.logout !== true ? res : false;
-      } catch (e) {
-        if (process.env.DEV_MODE === "browser") {
-          debugLog(
-            "GetPlayerDetails",
-            "Detected browser env, dispatching mock data",
-            "WebPipeReq"
-          );
-          return MockedPlayerDetails;
-        }
-        throw e;
-      }
+      return res.logout !== true ? res : false;
     },
   }),
   forcePlayerRefresh: atom({
