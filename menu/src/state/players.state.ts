@@ -43,7 +43,14 @@ const playersState = {
 
       switch (sortType) {
         case PlayerDataSort.DistanceClosest:
-          return [...playerStates].sort((a, b) => (a.dist > b.dist ? 1 : -1));
+          // Since our distance can come back as -1 when unknown, we need to explicitly
+          // move to the end of the sorted array.
+          return [...playerStates].sort((a, b) => {
+            if (b.dist < 0) return -1;
+            if (a.dist < 0) return 1;
+
+            return a.dist > b.dist ? 1 : -1;
+          });
         case PlayerDataSort.DistanceFarthest:
           return [...playerStates].sort((a, b) => (a.dist < b.dist ? 1 : -1));
         case PlayerDataSort.IdJoinedFirst:
@@ -95,7 +102,7 @@ export const useFilteredSortedPlayers = (): PlayerData[] =>
 debugData<PlayerData[]>(
   [
     {
-      action: "setPlayerState",
+      action: "setPlayerList",
       data: [
         {
           vType: VehicleStatus.Walking,
