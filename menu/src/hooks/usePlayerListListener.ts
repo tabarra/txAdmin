@@ -41,9 +41,9 @@ export interface PlayerData {
 
 export const usePlayerListListener = () => {
   const curPage = usePageValue();
-  const setPlayerlist = useSetPlayersState();
+  const setPlayerList = useSetPlayersState();
 
-  useNuiEvent<PlayerData[]>("setPlayerlist", setPlayerlist);
+  useNuiEvent<PlayerData[]>("setPlayerList", setPlayerList);
 
   useEffect(() => {
     // Since our player list is never technically unmounted,

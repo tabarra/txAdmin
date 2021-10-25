@@ -41,7 +41,7 @@ function sendReactPlayerlist()
     -- print("========== function sendReactPlayerlist()")
     -- print(json.encode(upload))
     -- print("------------------------------------")
-    sendMenuMessage('setPlayerlist', upload)
+    sendMenuMessage('setPlayerList', upload)
 end
 
 
