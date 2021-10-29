@@ -237,7 +237,8 @@
                         "spectate": "旁觀"
                     },
                     "spectate_failed": "讀取目標失敗! 正在離開旁觀視角",
-                    "spectate_yourself": "你並不能旁觀自己"
+                    "spectate_yourself": "你並不能旁觀自己",
+                    "freeze_yourself": "你不能凍結自己."
                 },
                 "troll": {
                     "options": {
