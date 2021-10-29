@@ -180,7 +180,6 @@ RegisterNetEvent('txAdmin:menu:healPlayer', function(id)
   end
   id = tonumber(id)
   local allow = PlayerHasTxPermission(src, 'players.heal')
-  local playerName = "unknown"
   if allow then
     local ped = GetPlayerPed(id)
     if ped then
@@ -189,9 +188,8 @@ RegisterNetEvent('txAdmin:menu:healPlayer', function(id)
       TriggerEvent('txAdmin:healedPlayer', id)
       TriggerClientEvent('txAdmin:menu:healed', id)
     end
-    playerName = GetPlayerName(id)
   end
-  TriggerEvent('txaLogger:menuEvent', src, "healPlayer", allow, playerName)
+  TriggerEvent('txaLogger:menuEvent', src, "healPlayer", allow, id)
 end)
 
 ---@param x number|nil

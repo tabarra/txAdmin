@@ -76,7 +76,7 @@ const PlayerModal: React.FC = () => {
       }}
     >
       <DialogTitle style={{ borderBottom: "1px solid rgba(221,221,221,0.54)" }}>
-        [{assocPlayer.id}] {assocPlayer.username}
+        [{assocPlayer.id}] {assocPlayer.name}
         <IconButton onClick={handleClose} className={classes.closeButton} size="large">
           <Close />
         </IconButton>

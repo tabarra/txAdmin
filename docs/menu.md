@@ -96,31 +96,4 @@ If you see a red message like [this](https://i.imgur.com/G83uTNC.png) and you ar
 - Read the message printed on console for more information.
 
 ## Development
-
-The txAdmin Menu is a Lua + TypeScript React project. Ensure you have all the dependencies by running 
-`npm i` in the root directory. 
-
-### Hot Reloading Dev Environments
-
-To run the menu in the browser you can use the `dev:menu` script. This will hot reload, everytime
-a change is made.
-
-```bash
-npm run dev:menu:browser
-```
-
-To run the menu in game you can use the `dev:menu:game` script, this will also hot reload the 
-build process, but you must also manually restart the monitor resource each time.
-```bash
-npm run dev:menu:game
-```
-
-**Note**: For in-game development, you must have a txAdmin development instance instance running as well as
-the `dev:menu:game` script *(You can easily start one by running `npm run watch`)*.
-
-### General Structure
-
-**Lua**: You can find the majority of the relevant Lua scripts in the `scripts/menu` directory.
-
-**React/Typescript**: The source code for the React application can be found in the `./menu`
-directory.
+You can find development instructions regarding the menu [here.](https://github.com/tabarra/txAdmin/blob/develop/docs/development.md#menu-development)

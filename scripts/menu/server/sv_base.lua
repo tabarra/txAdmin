@@ -131,7 +131,6 @@ end)
 AddEventHandler('playerDropped', function()
   local s = source
   ADMIN_DATA[tostring(s)] = nil
-  LAST_PLAYER_DATA[tostring(s)] = nil
 end)
 
 CreateThread(function()

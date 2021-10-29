@@ -234,16 +234,17 @@
                 },
                 "interaction": {
                     "spectate_failed": "Failed to resolve the target! Exiting spectate.",
-                    "spectate_yourself": "You cannot spectate yourself."
+                    "spectate_yourself": "You cannot spectate yourself.",
+                    "freeze_yourself": "You cannot freeze yourself."
                 },
                 "troll": {
                     "options": {
+                        "drunk": "Drunk",
+                        "drunk_desc": "Will apply a 'drunk' effect to the player",
                         "weed": "Weed",
                         "weed_desc": "Will apply a 'weed' effect to the player",
                         "fire": "Fire",
                         "fire_desc": "Will set the player on fire",
-                        "drunk": "Drunk",
-                        "drunk_desc": "Will apply a 'drunk' effect to the player",
                         "wild_attack": "Wild attack",
                         "wild_attack_desc": "Will spawn a random wild animal to attack the player"
                     }

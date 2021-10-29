@@ -56,12 +56,14 @@ if (osTypeVar == 'Windows_NT') {
 const resourceName = GetCurrentResourceName();
 
 //Getting fxserver version
+//4380 = when GetVehicleType was exposed server-side
+const minFXServerVersion = 4380;
 const fxServerVersion = getBuild(GetConvar('version', 'false'));
 if (!fxServerVersion) {
-    logDie('This version of FXServer is NOT compatible with txAdmin v2. Please update it to build 2524 or above. (version convar not set or in the wrong format)');
+    logDie(`This version of FXServer is NOT compatible with txAdmin v2. Please update it to build ${minFXServerVersion} or above. (version convar not set or in the wrong format)`);
 }
-if (fxServerVersion < 2524) {
-    logDie('This version of FXServer is too outdated and NOT compatible with txAdmin, please update.');
+if (fxServerVersion < minFXServerVersion) {
+    logDie(`This version of FXServer is too outdated and NOT compatible with txAdmin, please update to artifact/build ${minFXServerVersion} or newer!`);
 }
 
 //Getting txAdmin version
@@ -199,8 +201,8 @@ if (verbose) dir({isZapHosting, forceInterface, forceFXServerPort, txAdminPort, 
 //NOTE: Only valid if its being very actively maintained.
 //          Use 30d for patch 0, or 45~60d otherwise
 //      Objective is to update every 2~3 weeks, always on monday ~15:00
-const txVerBBLastUpdate = 1633370000;
-const txVerBBDelta = 21 + ((isZapHosting) ? 10 : 0);
+const txVerBBLastUpdate = 1635181500;
+const txVerBBDelta = 14 + ((isZapHosting) ? 10 : 0);
 const txAdminVersionBestBy = txVerBBLastUpdate + (txVerBBDelta * 86400);
 // dir({
 //     updateDelta: txVerBBDelta,

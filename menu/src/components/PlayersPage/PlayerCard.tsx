@@ -1,6 +1,13 @@
 import React, { memo } from "react";
-import { Box, IconButton, Paper, Theme, Tooltip, Typography } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import {
+  Box,
+  IconButton,
+  Paper,
+  Theme,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import makeStyles from "@mui/styles/makeStyles";
 import {
   DirectionsBoat,
   DirectionsWalk,
@@ -8,13 +15,13 @@ import {
   LiveHelp,
   MoreVert,
   BikeScooter,
-  Flight
+  Flight,
 } from "@mui/icons-material";
 import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
-import { PlayerData, VehicleStatus } from "../../state/players.state";
 import { useSetAssociatedPlayer } from "../../state/playerDetails.state";
 import { formatDistance } from "../../utils/miscUtils";
-import { useTranslate } from 'react-polyglot';
+import { useTranslate } from "react-polyglot";
+import { PlayerData, VehicleStatus } from "../../hooks/usePlayerListListener";
 
 const useStyles = makeStyles((theme: Theme) => ({
   paper: {
@@ -44,7 +51,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
   const classes = useStyles();
   const { setModalOpen } = usePlayerModalContext();
   const setAssociatedPlayer = useSetAssociatedPlayer();
-  const t = useTranslate()
+  const t = useTranslate();
 
   const statusIcon: { [K in VehicleStatus]: JSX.Element } = {
     unknown: <LiveHelp color="inherit" />,
@@ -61,8 +68,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
   };
 
   const upperCaseStatus =
-    playerData.vehicleStatus.charAt(0).toUpperCase() +
-    playerData.vehicleStatus.slice(1);
+    playerData.vType.charAt(0).toUpperCase() + playerData.vType.slice(1);
 
   return (
     <Box p={2}>
@@ -78,7 +84,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
               }}
             >
               <span className={classes.icon}>
-                {statusIcon[playerData.vehicleStatus]}
+                {statusIcon[playerData.vType]}
               </span>
             </Tooltip>
             <Typography
@@ -92,7 +98,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
               |
             </Typography>
             <Tooltip
-              title={playerData.username}
+              title={playerData.name}
               placement="top"
               arrow
               classes={{
@@ -105,7 +111,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
                 variant="subtitle1"
                 color="textPrimary"
               >
-                {playerData.username}
+                {playerData.name}
               </Typography>
             </Tooltip>
             <Typography
@@ -114,16 +120,18 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
               variant="subtitle1"
               color="textSecondary"
             >
-              {playerData.distance < 0
-                ? `?? m`
-                : formatDistance(playerData.distance)}
+              {playerData.dist < 0 ? `?? m` : formatDistance(playerData.dist)}
             </Typography>
           </Box>
-          <IconButton onClick={handlePlayerClick} size="large">{<MoreVert />}</IconButton>
+          <IconButton onClick={handlePlayerClick} size="large">
+            {<MoreVert />}
+          </IconButton>
         </Box>
         <div>
           <Tooltip
-            title={t('nui_menu.page_players.card.health', { percentHealth: playerData.health})}
+            title={t("nui_menu.page_players.card.health", {
+              percentHealth: playerData.health,
+            })}
             placement="bottom"
             arrow
             classes={{
@@ -133,7 +141,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
             <div className={classes.barBackground}>
               <Box
                 className={classes.barInner}
-                width={`${playerData.health}%`}
+                width={`${playerData.health - 100}%`}
               />
             </div>
           </Tooltip>

@@ -63,23 +63,27 @@ RegisterCommand('txAdmin-reauth', function()
 end)
 
 -- Register chat suggestions
-TriggerEvent(
-  'chat:addSuggestion', 
-  '/tx', 
-  'Opens the main txAdmin Menu or specific for a player.', 
-  {{ name="player id", help="(Optional) Open player modal for specific ID." }}
-)
-TriggerEvent(
-  'chat:addSuggestion', 
-  '/txAdmin-reauth', 
-  'Retries to authenticate the menu NUI. Requires debug mode to be on.'
-)
-TriggerEvent(
-  'chat:addSuggestion', 
-  '/txAdmin-debug', 
-  'Enables or disables the debug mode. Requires \'control.server\' permission.',
-  {{ name="1|0", help="1 to enable, 0 to disable" }}
-)
+-- NOTE: txAdmin starts before the chat resource, so we need to wait a bit
+CreateThread(function()
+  Wait(1000)
+  TriggerEvent(
+    'chat:addSuggestion', 
+    '/tx', 
+    'Opens the main txAdmin Menu or specific for a player.', 
+    {{ name="player ID/name", help="(Optional) Open player modal for specific ID or name." }}
+  )
+  TriggerEvent(
+    'chat:addSuggestion', 
+    '/txAdmin-reauth', 
+    'Retries to authenticate the menu NUI. Requires debug mode to be on.'
+  )
+  TriggerEvent(
+    'chat:addSuggestion', 
+    '/txAdmin-debug', 
+    'Enables or disables the debug mode. Requires \'control.server\' permission.',
+    {{ name="1|0", help="1 to enable, 0 to disable" }}
+  )
+end)
 
 -- Triggers reauth process
 RegisterNetEvent('txAdmin:menu:reAuth', function()

@@ -5,7 +5,7 @@
 author 'Tabarra'
 description 'Remotely Manage & Monitor your GTA5 FiveM Server'
 repository 'https://github.com/tabarra/txAdmin'
-version '4.6.1'
+version '4.7.0'
 
 rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aware my resources *will* become incompatible once RedM ships.'
 fx_version 'cerulean'
@@ -17,7 +17,7 @@ shared_scripts {
     'scripts/menu/shared.lua'
 }
 
-server_scripts { 
+server_scripts {
     'main.js',
     'scripts/sv_main.lua',
     'scripts/sv_logger.lua',
@@ -28,13 +28,14 @@ server_scripts {
     'scripts/menu/server/sv_main_page.lua',
     'scripts/menu/server/sv_freeze_player.lua',
     'scripts/menu/server/sv_trollactions.lua',
-    'scripts/menu/server/sv_old_playerlist.lua',
-    'scripts/menu/server/sv_player_modal.lua'
+    'scripts/menu/server/sv_player_modal.lua',
+    'scripts/menu/server/sv_spectate.lua'
 }
 
 client_scripts {
     'scripts/cl_main.lua',
     'scripts/cl_logger.lua',
+    'scripts/cl_playerlist.lua',
     'scripts/menu/client/cl_webpipe.lua',
     'scripts/menu/client/cl_base.lua',
     'scripts/menu/client/cl_functions.lua',
@@ -42,7 +43,6 @@ client_scripts {
     'scripts/menu/client/cl_misc.lua',
     'scripts/menu/client/cl_player_ids.lua',
     'scripts/menu/client/cl_player_mode.lua',
-    'scripts/menu/client/cl_players_page.lua',
     'scripts/menu/client/cl_spectate.lua',
     'scripts/menu/client/cl_trollactions.lua',
     'scripts/menu/client/cl_warn.lua',
