@@ -3,7 +3,8 @@ const modulename = 'RecipeEngine';
 const path = require('path');
 const util = require('util');
 const fs = require('fs-extra');
-const AdmZip = require('adm-zip');
+const fsp = require('fs').promises; //starting to replace fse
+const StreamZip = require('node-stream-zip');
 const axios = require('axios');
 const cloneDeep = require('lodash/cloneDeep');
 const escapeRegExp = require('lodash/escapeRegExp');
@@ -115,8 +116,8 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     //Preparing vars
     const downURL = `https://api.github.com/repos/${repoOwner}/${repoName}/zipball/${reference}`;
     const tmpFileName = `${repoName}${reference}-` + (Date.now() % 100000000).toString(16);
-    const tmpFileDir = path.join(basePath, `${tmpFileName}`);
-    const tmpFilePath = path.join(basePath, `${tmpFileName}.download`);
+    const tmpFileDir = path.join(basePath, `.${tmpFileName}`);
+    const tmpFilePath = path.join(basePath, `.${tmpFileName}.download`);
     const destPath = safePath(basePath, options.dest);
 
     //Downloading file
@@ -132,15 +133,15 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
         outStream.on('error', reject); // don't forget this!
     });
 
-    //Extracting file
-    const zip = new AdmZip(tmpFilePath);
-    const zipEntries = zip.getEntries();
-    if (!zipEntries.length || !zipEntries[0].isDirectory) throw new Error('unexpected zip structure');
-    const extract = util.promisify(zip.extractAllToAsync);
-    await extract(tmpFileDir, true);
+    await fsp.mkdir(tmpFileDir, {recursive: true});
+    const zip = new StreamZip.async({ file: tmpFilePath });
+    const entries = Object.values(await zip.entries());
+    if (!entries.length || !entries[0].isDirectory) throw new Error('unexpected zip structure');
+    await zip.extract(null, tmpFileDir);
+    await zip.close();
 
     //Moving path
-    const moveSrc = path.join(tmpFileDir, zipEntries[0].entryName, options.subpath || '');
+    const moveSrc = path.join(tmpFileDir, entries[0].name, options.subpath || '');
     await fs.move(moveSrc, destPath, {
         overwrite: (options.overwrite === 'true' || options.overwrite === true),
     });
@@ -192,11 +193,19 @@ const taskEnsureDir = async (options, basePath, deployerCtx) => {
 /**
  * Extracts a ZIP file to a targt folder.
  * NOTE: wow that was not easy to pick a library!
- *          - extract-zip: throws deprecation warnings
- *          - decompress: super super super slow!
- *          - adm-zip: bad docs, not promise-native, full of issues on github
- *          - tar << não abre zip
- *          - unzipper << não testei ainda
+ *  - tar: no zip files
+ *  - minizlib: terrible docs, probably too low level
+ *  - yauzl: deprecation warning, slow
+ *  - extract-zip: deprecation warning, slow due to yauzl
+ *  - jszip: it's more a browser thing than node, doesn't appear to have an extract option
+ *  - archiver: no extract
+ *  - zip-stream: no extract
+ *  - adm-zip: 50ms the old one, shitty
+ *  - node-stream-zip: 180ms, acceptable
+ *  - unzip: last update 7 years ago
+ *  - unzipper: haven't tested
+ *  - fflate: haven't tested
+ *  - decompress-zip: haven't tested
  */
 const validatorUnzip = (options) => {
     return (
@@ -208,12 +217,13 @@ const taskUnzip = async (options, basePath, deployerCtx) => {
     if (!validatorUnzip(options)) throw new Error('invalid options');
 
     const srcPath = safePath(basePath, options.src);
-    //maybe ensure dest doesn't seem to be an issue?
     const destPath = safePath(basePath, options.dest);
+    await fsp.mkdir(destPath, {recursive: true});
 
-    const zip = new AdmZip(srcPath);
-    const extract = util.promisify(zip.extractAllToAsync);
-    await extract(destPath, true);
+    const zip = new StreamZip.async({ file: srcPath });
+    const count = await zip.extract(null, destPath);
+    console.log(`Extracted ${count} entries`);
+    await zip.close();
 };
 
 

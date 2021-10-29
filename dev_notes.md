@@ -1,64 +1,16 @@
 ## TODO:
-> v4.5.0
-- [x] FIXME: bunch of missing stuff here
-- [x] fix cause of death being always suicide (commit 9434d427)
-- [x] update material ui to v5
-- [x] fix(core): removed ansi color escape from srvCmdBuffer
-- [x] new server log with pagination and filter
-- [x] document new log thing
-- [x] clean this file
-- [x] update dev env to fxs/node16 
-- [x] update packages & test
-- [x] feat: database management page
-- [x] fix logging data on diagnostics page
-- [x] fix dashboard stats not working on iframe mode (closes #438)
-- [x] fix player modal for new server log
-
-Carryover:
-- [ ] remove the "NEW" tag from `header.html` and `masterActions.html`
+- [x] fixed server log text invisible on light theme
+- [ ] xxxxxxxxxxxxx
+- [ ] xxxxxxxxxxxxx
+- [ ] xxxxxxxxxxxxx
+- [ ] xxxxxxxxxxxxx
 - [ ] new console log
 - [ ] change CitizenFX to Cfx.re as per branding consistency (ask the elements)
-- [ ] somehow still manage to fix the playerlist?
+- [ ] fix menu playerlist
+- [ ] fix menu auth
+- [ ] MAYBE: remove the "NEW" tag from `header.html` and `masterActions.html`
 
 
-Updated:
-@koa/router                             ^10.0.0   →    ^10.1.1
-adm-zip                                  ^0.5.5   →     ^0.5.6     test win/linux
-axios                                   ^0.21.1   →    ^0.21.4
-boxen                                    ^5.0.1   →     ^5.1.2
-chalk                                    ^4.1.1   →     ^4.1.2
-fs-extra                                 ^9.1.0   →    ^10.0.0
-@mui/material                            ^5.0.1   →     ^5.0.2
-koa                                     ^2.13.1   →    ^2.13.3
-koa-ratelimit                            ^5.0.0   →     ^5.0.1
-mysql2                                   ^2.2.5   →     ^2.3.0
-nanoid                                  ^3.1.23   →    ^3.1.28
-node-polyglot                            ^2.4.0   →     ^2.4.2
-notistack                         ^1.0.6-next.3   →     ^2.0.2
-openid-client                            ^4.7.4   →     ^4.9.0
-react-polyglot                           ^0.7.1   →     ^0.7.2
-rotating-file-stream                     ^2.1.5   →     ^2.1.6
-stream-json                              ^1.7.2   →     ^1.7.3
-systeminformation                        ^5.7.7   →     ^5.9.4
-@commitlint/cli                         ^12.1.4   →    ^13.2.0
-@commitlint/config-conventional         ^12.1.4   →    ^13.2.0
-@types/node                            ^16.7.10   →   ^16.10.2
-@types/react                           ^17.0.20   →   ^17.0.26
-eslint                                  ^7.30.0   →    ^7.32.0
-husky                                    ^6.0.0   →     ^7.0.2
-nodemon                                 ^2.0.10   →    ^2.0.13
-typescript                              ^4.3.5    →     ^4.4.3
-
-
-Not updated:
-dateformat      esm
-boxen           esm
-jose            apparently cjs is available, but does zap even plan on using it?
-lowdb           esm - complicated
-slash           esm
-windows-release esm
-
-https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
 
 
 > User report: when admin use txadmin for first time, system ask him to change password, if he change it, all admins must restart to get txadmin working again
@@ -73,47 +25,19 @@ remover o \s?
 
 
 
-### Menu playerlist fix
-Server:
-- Will have it's own playerlist with {id, name, health, vehClass, coords}
-- Every 2.5s run through the playerlist updating {health, vehClass, coords}
-- On player Join/Leave:
-    - Add {id, name, 0, 0, 0} to playerlist or remove from playerlist
-    - TriggerClientEvent "updatePlayerlist" with [id, name] or [id, false] to all admins
-- On admin join/auth:
-    - Send event "setInitialPlaylist" with [[id, name]]
-- On gimmeDetailedPlayerlist event:
-    - check if admin
-    - get source coords
-    - for each player, get dist from source (cast to integer)
-    - reply with event setDetailedPlayerlist and payload [{id, health, vehClass, dist}]
+### Menu auth fix
+- o `/auth/nui` vira um middleware requestAuth('nui')
+- esse middleware cria uma variável de contexto que não é ctx.session pra nao ficar criando sessões koa
+- usar handlers normais (webRoutes.player.*), e dentro delas fazer `const sess = ctx.nuiSess || ctx.session` 
+- criar rotas novas com prefixo diferente tipo `/nui/xxx`
+- webpipe adicionar headers com identifiers quando tiver path começar com `/nui/`
 
-Client:
-- Updates playerlist on setInitialPlaylist/updatePlayerlist/setDetailedPlayerlist
-- On player tab open: getDetailedPlayerlist()
-- Every 5 seconds when player tab is opened: getDetailedPlayerlist()
-- Maybe: when the player tab is mounted, add a message that says "updating playerlist" and hide after first detailed playerlist arrives
+- o sv agora vai ter que começar a chamar algo tipo `/nui/identify` no join pra saber se esse o client é admin 
+- remover `/auth/nui` existente
+- fazer o react parar de chamar e depender do `/auth/nui`
+- iframe iniciar com uma rota especial que ou gera o ctx.session (como o `/auth/nui`), ou já chama o handler do serverlog get
 
-NOTE: delay based on function https://www.desmos.com/calculator/ls0lfokshc
-```lua
-local minDelay = 2000
-local maxDelay = 5000
-local maxPlayersDelayCeil = 150 --at this number, the delay won't increase more
-
-local hDiff = maxDelay - minDelay
-local calcDelay = (hDiff/maxPlayersDelayCeil) * playerCount + minDelay
-local delay = math.min(calcDelay, maxDelay)
-```
-
-NOTE: send everything as array? 
-[1234,"namenamenamename"]
-{"i":1234,"n":"namenamenamename"}
-[1234,200,1,9999]
-{"i":1234,"h":200,"v":1,"d":9999}
-
-FIXME: update min fxserver version to the one where bubble exposed the GetVehClass to the server
-
-TODO: For now we can do this way, but probably better to set a linear function to get the interval from 2.5s to 5s (both client and server) based on the number of players
+- talvez cachear os identifiers pra nao ficar pegando toda vez? talvez no primeiro `/nui/identify` retornar um token que pode ser reusado sem ter que ficar buscando admin com mesmo id? idk
 
 
 
@@ -152,6 +76,16 @@ To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 ### Admin gun
 An "admin gun" where you point a gun to a player and when you point it to a player it shows this player's info, and when you "shoot it" it opens that player's modal.
 If not a custom gun model, just use the point animation and make sure we have a crosshair
+
+
+### ESM updates
+dateformat      esm
+boxen           esm
+jose            apparently cjs is available, but does zap even plan on using it?
+lowdb           esm - complicated
+slash           esm
+windows-release esm
+NOTE: nice guide https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
 
 
 ### recipe engine todo:
@@ -426,3 +360,10 @@ cdt
 cd web/public/
 curl -o svMain.json http://localhost:40120/chartData/svMain
 ```
+Don't commit:
+ver se o bubble já criou source tracking no fd3
+o problema é que um recurso malicioso pode spammar log
+ou então fazer um playerJoining fake com ids fake
+pelo menos garantir que dois playerJoining no mesmo id não vai sobrescrever
+devido ao logger buffer, outro recurso pode mandar o mesmo id antes
+talvez checar se já existe, e nesse caso pegar os IDs do playercontroller e salvar em log a discrepancia?

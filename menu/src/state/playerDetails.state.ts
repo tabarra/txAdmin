@@ -5,10 +5,10 @@ import {
   useRecoilValue,
   useSetRecoilState,
 } from "recoil";
-import { PlayerData } from "./players.state";
 import { fetchWebPipe } from "../utils/fetchWebPipe";
 import { debugLog } from "../utils/debugLog";
 import { MockedPlayerDetails } from "../utils/constants";
+import { PlayerData } from "../hooks/usePlayerListListener";
 
 interface PlayerHistoryItem {
   id: string;
@@ -57,11 +57,11 @@ const playerDetails = {
     get: async ({ get }) => {
       get(playerDetails.forcePlayerRefresh);
       const assocPlayer = get(playerDetails.associatedPlayer);
-      const assocPlayerLicense = assocPlayer.license;
+      const assocPlayerId = assocPlayer.id;
 
       try {
         const res = await fetchWebPipe<TxAdminPlayerAPIResp>(
-          `/player/${assocPlayerLicense}`
+          `/player/${assocPlayerId}`
         );
 
         debugLog("FetchWebPipe", res, "PlayerFetch");

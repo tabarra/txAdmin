@@ -248,13 +248,14 @@
                                 <div class="col-sm-9">
                                     <select id="cleandb-warns" name="warns" class="form-control" required>
                                         <option value="none" >none</option>
+                                        <option value="revoked">revoked</option>
                                         <option value="30d" selected>older than 30 days</option>
                                         <option value="15d">older than 15 days</option>
                                         <option value="7d">older than 7 days</option>
                                         <option value="all" class="font-weight-bold text-danger">REMOVE ALL WARNS</option>
                                     </select>
                                     <span class="form-text text-muted">
-                                        Remove old warns from the database.
+                                        Remove old or revoked warns from the database.
                                     </span>
                                 </div>
                             </div>

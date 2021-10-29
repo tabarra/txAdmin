@@ -26,6 +26,7 @@ const canCreateFile = async (targetPath) => {
 const makeTemplateRecipe = (serverName, author) => `name: ${serverName}
 author: ${author}
 
+# This is just a placeholder, please don't run it!
 tasks: 
     - action: waste_time
       seconds: 5

@@ -549,6 +549,29 @@ More:
 - [x] fix(nui): auth source for zap servers
 - [x] chore: updated a few dependencies
 > v4.5.0
+- [x] potentially fixed spectate black screen
+- [x] added player freeze option
+- [x] added option for right align of the menu
+- [x] removed ip logging
+- [x] fixed persistent focus after menu close by /tx
+- [x] fixed spectate with wrong scaleform instructions after noclip
+- [x] fixed noclip moving player back
+- [x] added announcement button to console page (#403)
+- [x] fix cause of death being always suicide (commit 9434d427)
+- [x] update material ui to v5
+- [x] fix(core): removed ansi color escape from srvCmdBuffer
+- [x] new server log with pagination and filter
+- [x] document new log thing
+- [x] clean this file
+- [x] update dev env to fxs/node16 
+- [x] update packages & test
+- [x] feat: database management page
+- [x] fix logging data on diagnostics page
+- [x] fix dashboard stats not working on iframe mode (closes #438)
+- [x] fix player modal for new server log
+> v4.6.0
+- [x] rolled back fs-extra to v9.1.0
+> v4.6.1
 
 ------------------------------
 > NOTE: this was an attempt to get the help from the community around september 2019
