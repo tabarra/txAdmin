@@ -7,6 +7,7 @@ const execa = require('execa');
 
 // Reference: https://www.gaijin.at/en/lstwinver.php
 const names = new Map([
+    ['11.0', '11'],
     ['10.0', '10'],
     ['6.3', '8.1'],
     ['6.2', '8'],
