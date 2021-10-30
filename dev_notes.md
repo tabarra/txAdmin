@@ -41,7 +41,7 @@ remover o \s?
 
 
 
-
+-- Why both have the same debug data? https://i.imgur.com/WGawiyr.png
 
 -- Fazer o announcement web (txaBroadcast) usar NUI via txaEvent e adicionar no events.md
 `TriggerClientEvent("txAdmin:receiveAnnounce", -1, 'sdfsdfsdfsdfdsf')`

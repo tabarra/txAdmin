@@ -110,6 +110,7 @@ debugData<PlayerData[]>(
           id: 1,
           dist: 0,
           health: 80,
+          admin: false,
         },
         {
           vType: VehicleStatus.Driving,
@@ -117,6 +118,7 @@ debugData<PlayerData[]>(
           id: 2,
           dist: 20,
           health: 50,
+          admin: true,
         },
         {
           vType: VehicleStatus.Boat,
@@ -124,6 +126,7 @@ debugData<PlayerData[]>(
           id: 3,
           dist: 700,
           health: 10,
+          admin: true,
         },
         {
           vType: VehicleStatus.Boat,
@@ -131,6 +134,7 @@ debugData<PlayerData[]>(
           id: 4,
           dist: 100,
           health: 100,
+          admin: false,
         },
         {
           vType: VehicleStatus.Unknown,
@@ -138,6 +142,7 @@ debugData<PlayerData[]>(
           id: 5,
           dist: -1,
           health: 70,
+          admin: false,
         },
         {
           vType: VehicleStatus.Walking,
@@ -145,6 +150,7 @@ debugData<PlayerData[]>(
           id: 6,
           dist: 500,
           health: 100,
+          admin: false,
         },
         {
           vType: VehicleStatus.Biking,
@@ -152,6 +158,7 @@ debugData<PlayerData[]>(
           id: 7,
           dist: 300,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
@@ -159,6 +166,7 @@ debugData<PlayerData[]>(
           id: 8,
           dist: -1,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
@@ -166,6 +174,7 @@ debugData<PlayerData[]>(
           id: 9,
           dist: -1,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
@@ -173,6 +182,7 @@ debugData<PlayerData[]>(
           id: 10,
           dist: 50,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
@@ -180,6 +190,7 @@ debugData<PlayerData[]>(
           id: 11,
           dist: 90,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
@@ -187,6 +198,7 @@ debugData<PlayerData[]>(
           id: 12,
           dist: 500,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
@@ -194,6 +206,7 @@ debugData<PlayerData[]>(
           id: 13,
           dist: 500,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
@@ -201,6 +214,7 @@ debugData<PlayerData[]>(
           id: 14,
           dist: 500,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
@@ -208,6 +222,7 @@ debugData<PlayerData[]>(
           id: 15,
           dist: 500,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
@@ -215,6 +230,7 @@ debugData<PlayerData[]>(
           id: 16,
           dist: 500,
           health: 40,
+          admin: false,
         },
       ],
     },

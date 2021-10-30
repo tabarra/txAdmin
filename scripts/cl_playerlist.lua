@@ -35,7 +35,8 @@ function sendReactPlayerlist()
             name = playerData.name,
             health = playerData.health,
             dist = playerData.dist,
-            vType = playerData.vType
+            vType = playerData.vType,
+            admin = playerData.admin
         }
     end
     -- print("========== function sendReactPlayerlist()")
@@ -58,7 +59,8 @@ RegisterNetEvent('txcl:setInitialPlayerlist', function(payload)
             name = playerData[2],
             health = 0,
             dist = -1,
-            vType = "unknown"
+            vType = "unknown",
+            admin = false
         }
     end
     -- print("------------------------------------")
@@ -72,14 +74,14 @@ end)
 --  > run through inbound playerlist updating existing data
 --  > try to get the dist from all players (susceptible to area culling, but that's fine)
 --  > TODO: decide what to do in case of missing or extra ids (missed updatePlayer?)
-RegisterNetEvent('txcl:setDetailedPlayerlist', function(payload)
+RegisterNetEvent('txcl:setDetailedPlayerlist', function(players, admins)
     -- print("========== EVENT setDetailedPlayerlist")
-    -- print(json.encode(payload)) -- [[id, health, vType]]
+    -- print(json.encode(players)) -- [[id, health, vType]]
     -- print("------------------------------------")
     local myID = GetPlayerServerId(PlayerId())
     local myCoords = GetEntityCoords(PlayerPedId())
 
-    for _, playerData in pairs(payload) do
+    for _, playerData in pairs(players) do
         local pid = playerData[1]
         local pids = tostring(playerData[1])
         local admin = LOCAL_PLAYERLIST[pids]
@@ -89,7 +91,8 @@ RegisterNetEvent('txcl:setDetailedPlayerlist', function(payload)
             LOCAL_PLAYERLIST[pids] = {
                 name = "unknown",
                 health = playerData[2],
-                vType = vTypeMap[tostring(playerData[3])] or "unknown"
+                vType = vTypeMap[tostring(playerData[3])] or "unknown",
+                admin = false
             }
         else
             LOCAL_PLAYERLIST[pids].health = playerData[2]
@@ -108,6 +111,14 @@ RegisterNetEvent('txcl:setDetailedPlayerlist', function(payload)
                 local remoteCoords = GetEntityCoords(remotePed)
                 LOCAL_PLAYERLIST[pids].dist = floor(#(myCoords - remoteCoords))
             end
+        end
+    end
+
+    -- Mark admins
+    for _, adminID in pairs(admins) do
+        local id = tostring(adminID)
+        if LOCAL_PLAYERLIST[id] ~= nil then
+            LOCAL_PLAYERLIST[id].admin = true
         end
     end
 
@@ -131,7 +142,8 @@ RegisterNetEvent('txcl:updatePlayer', function(id, data)
             name = data,
             health = 0,
             dist = -1,
-            vType = "unknown"
+            vType = "unknown",
+            admin = false
         }
     end
     sendReactPlayerlist()

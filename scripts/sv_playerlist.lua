@@ -130,11 +130,15 @@ RegisterNetEvent('txsv:getDetailedPlayerlist', function()
         return
     end
 
-    local payload = {}
+    local players = {}
     for playerID, playerData in pairs(TX_PLAYERLIST) do
-        payload[#payload + 1] = {tonumber(playerID), playerData.health, playerData.vType}
+        players[#players + 1] = {tonumber(playerID), playerData.health, playerData.vType}
     end
-    TriggerClientEvent('txcl:setDetailedPlayerlist', source, payload)
+    local admins = {}
+    for adminID, _ in pairs(ADMIN_DATA) do
+        admins[#admins + 1] = tonumber(adminID)
+    end
+    TriggerClientEvent('txcl:setDetailedPlayerlist', source, players, admins)
 end)
 
 

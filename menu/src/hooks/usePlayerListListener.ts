@@ -37,6 +37,10 @@ export interface PlayerData {
    * Can be only be 0-200
    **/
   health: number;
+  /**
+   * If this player is an admin
+   **/
+  admin: boolean;
 }
 
 export const usePlayerListListener = () => {
