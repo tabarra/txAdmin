@@ -1,17 +1,24 @@
 ## TODO:
-- [x] fixed server log text invisible on light theme
-- [ ] xxxxxxxxxxxxx
-- [ ] xxxxxxxxxxxxx
-- [ ] xxxxxxxxxxxxx
-- [ ] xxxxxxxxxxxxx
-- [ ] new console log
-- [ ] change CitizenFX to Cfx.re as per branding consistency (ask the elements)
-- [ ] fix menu playerlist
-- [ ] fix menu auth
-- [ ] MAYBE: remove the "NEW" tag from `header.html` and `masterActions.html`
+- [x] fix(menu/players-page): fix sorting unknown distances higher than known
+- [x] tweak(menu/players-page): reflect players low health with color change
+- [x] fix(scripts/player-list): normalize health to percentage
+- [ ] Implement new menu auth method
+- [ ] Reorganize menu buttons
+- [ ] Enable custom locale for menu
+- [ ] Add keybind for opening players page
+- [ ] Add keybind for toggling player IDs
+- [ ] Fix the manage admins perm issue
+- [ ] xxxx
+
+- [ ] Migrate console log to new logger
+- [ ] Change CitizenFX to Cfx.re as per branding consistency (ask the elements)
+- [ ] Remove the "NEW" tag from `header.html` and `masterActions.html` after v4.6+ goes recommended
 
 
 
+-- chungus command !key that will tell the user how to change the TAB and all the bindable options like noclip and etc
+
+> User report: If you give warn from menu then it won't log in tx plz fix this (he said it's only after the second)
 
 > User report: when admin use txadmin for first time, system ask him to change password, if he change it, all admins must restart to get txadmin working again
 
@@ -73,9 +80,12 @@ To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 > Don't use, but I'll leave it saved here: https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
 
 
-### Admin gun
-An "admin gun" where you point a gun to a player and when you point it to a player it shows this player's info, and when you "shoot it" it opens that player's modal.
-If not a custom gun model, just use the point animation and make sure we have a crosshair
+### txBanana Admin Gun
+- banana as a gun, txBanana
+- preferably without taking away inventory from user
+- keybind to toggle gun (grab or put away)
+- when you point at player, show above head some info
+- when you "shoot" it will open the player menu and hopefully fire a laser or something
 
 
 ### ESM updates
@@ -94,7 +104,7 @@ NOTE: nice guide https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc
 - every X download_github wait some time - maybe check if ref or not, to be smarter
 - https://github.com/isomorphic-git/isomorphic-git
 - easy recipe tester
-- fully automated deploy process via CLI. You just set the recipe file path, as well as the required variables, and you can get your server running without any user interaction .
+- fully automated deploy process via CLI. You just set the recipe file path, as well as the required variables, and you can get your server running without any user interaction.
 
 ### Todozinhos:
 pagina de adicionar admin precisa depois do modal, mostrar mais info:

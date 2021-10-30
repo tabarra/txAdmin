@@ -572,6 +572,19 @@ More:
 > v4.6.0
 - [x] rolled back fs-extra to v9.1.0
 > v4.6.1
+- [x] fixed text visibility on light theme
+- [x] fixed wrong freeze yourself message
+- [x] allow removal of revoked warns
+- [x] fixed chat suggestions not working
+- [x] spectate and freeze not showing in log
+- [x] improved action logging names + reorder
+- [x] fixed placeholder recipe detection
+- [x] menu: new playerlist
+- [x] properly handle freezing peds in vehicles
+- [x] fix(scripts/spectate): handling for primary routing buckets not being 0
+- [x] fix(deployer): changed zip library to solve errors
+- [x] chore: updated some packages
+> v4.7.0
 
 ------------------------------
 > NOTE: this was an attempt to get the help from the community around september 2019
