@@ -1,3 +1,6 @@
+-- =============================================
+--  This file contains all player freeze logic
+-- =============================================
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
   return
 end

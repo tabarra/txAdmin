@@ -1,3 +1,7 @@
+-- =============================================
+--  This file contains all Client WebPipe logic.
+--  It is used to pass NUI HTTP reqs to txAdmin
+-- =============================================
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
     return
 end
@@ -48,6 +52,7 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, statusCode, body, header
     local ret = pipeReturnCallbacks[callbackId]
     if not ret then return end
     
+    --FIXME: remove
     if ret.path == '/auth/nui' then
         local resp = json.decode(body)
         if not resp then

@@ -45,7 +45,6 @@ client_scripts {
     'scripts/menu/client/cl_player_mode.lua',
     'scripts/menu/client/cl_spectate.lua',
     'scripts/menu/client/cl_trollactions.lua',
-    'scripts/menu/client/cl_warn.lua',
     'scripts/menu/client/cl_freeze.lua',
     'scripts/menu/vendor/freecam/utils.lua',
     'scripts/menu/vendor/freecam/config.lua',

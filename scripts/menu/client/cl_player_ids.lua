@@ -1,7 +1,6 @@
 -- =============================================
 --  This file contains all overhead player ID logic
 -- =============================================
-
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
     return
 end

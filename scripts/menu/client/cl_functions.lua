@@ -1,6 +1,7 @@
 -- =============================================
 --  This file contains any strictly *pure* functions
 --  that are utilized by the rest of the menu.
+--  Many of them need to be available with menu disabled
 -- =============================================
 
 --- Send a persistent alert to NUI

@@ -1,49 +1,59 @@
 -- =============================================
---  This file is for base menu functionality (visibility,
---  keybinds, focus callbacks's, threads, etc)
+--  This file is for base menu functionality (admin status,
+--  visibility, keybinds, focus callbacks's, threads, etc)
 -- =============================================
 
--- Variable that determines whether a player can even access the menu
+-- Global Variables
+-- TODO: they should be upper case
 menuIsAccessible = false
 isMenuDebug = false
 isMenuVisible = false
 menuPermissions = {}
 lastTpCoords = false;
+local isMenuEnabled = (GetConvar('txEnableMenuBeta', 'false') == 'true')
 
+
+-- Check if menu is in debug mode 
 CreateThread(function()
   isMenuDebug = (GetConvar('txAdminMenu-debugMode', 'false') == 'true')
 end)
 
--- Command to be used with the register key mapping
+
+-- Register txAdmin command
 local function txadmin(_, args)
-  -- Check if we have an available ref to the global function
-  if not registerTxKeybinds then
+  if not isMenuEnabled then
     return sendSnackbarMessage('error', 'nui_menu.misc.not_enabled', true)
   end
+  if not menuIsAccessible then
+    return sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
+  end
 
-  if menuIsAccessible then
-    toggleMenuVisibility()
-    -- Shortcut to open a specific players profile
-    if isMenuVisible and #args >= 1 then
-      local targetPlayer = table.concat(args, ' ')
-      sendMenuMessage('openPlayerModal', targetPlayer)
-    end
-  else
-    sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
+  -- Make visible
+  toggleMenuVisibility()
+
+  -- Shortcut to open a specific players profile
+  if isMenuVisible and #args >= 1 then
+    local targetPlayer = table.concat(args, ' ')
+    sendMenuMessage('openPlayerModal', targetPlayer)
   end
 end
 RegisterCommand('txadmin', txadmin)
 RegisterCommand('tx', txadmin)
 
 
--- The rest of the file will not be run if convar isn't set
-if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
-  -- print('^3[txAdminMenu]^0 Beta Menu not enabled.')
+
+-- =============================================
+--  The rest of the file will only run if menu is enabled
+-- =============================================
+if not isMenuEnabled then
   return
 end
 
--- Since the menu yields/receives keyboard
--- focus we need to store that the menu is already visible
+-- Checking with server if we are an admin
+TriggerServerEvent('txsv:checkAdminStatus')
+
+--FIXME: run this when the server replies with "you are an admin, setup menu"
+-- then remove reference in the cl_webpipe auth
 function registerTxKeybinds()
   -- Only register keybinds for authed users
   if menuIsAccessible then
@@ -52,9 +62,10 @@ function registerTxKeybinds()
   end
 end
 
---[[ Debug Events / Commands ]]
 
+--[[ Debug Events / Commands ]]
 -- Manual reauth command
+--FIXME: remove debug requirement, make sure server rate limits it
 RegisterCommand('txAdmin-reauth', function()
   if debugModeEnabled then
     debugPrint("re-authing")
@@ -63,7 +74,7 @@ RegisterCommand('txAdmin-reauth', function()
 end)
 
 -- Register chat suggestions
--- NOTE: txAdmin starts before the chat resource, so we need to wait a bit
+-- txAdmin starts before the chat resource, so we need to wait a bit
 CreateThread(function()
   Wait(1000)
   TriggerEvent(
@@ -86,6 +97,7 @@ CreateThread(function()
 end)
 
 -- Triggers reauth process
+-- FIXME: adapt to new auth
 RegisterNetEvent('txAdmin:menu:reAuth', function()
   menuIsAccessible = false
   sendMenuMessage('reAuth')
@@ -97,9 +109,7 @@ RegisterNetEvent('txAdmin:events:enableDebug', function(enabled)
 end)
 
 
-
 --[[ NUI Callbacks ]]
-
 -- Triggered whenever we require full focus, cursor and keyboard
 RegisterNUICallback('focusInputs', function(shouldFocus, cb)
   debugPrint('NUI Focus + Keep Input ' .. tostring(shouldFocus))
@@ -121,14 +131,8 @@ RegisterNUICallback('closeMenu', function(_, cb)
   cb({})
 end)
 
-RegisterNUICallback('playSound', function(sound, cb)
-  PlaySoundFrontend(-1, SoundEnum[sound], 'HUD_FRONTEND_DEFAULT_SOUNDSET', 1)
-  cb({})
-end)
-
 
 --[[ Threads ]]
-
 CreateThread(function()
   while true do
     if isMenuVisible and IsPauseMenuActive() then

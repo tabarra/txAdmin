@@ -4,7 +4,8 @@
 - [x] fix(scripts/player-list): normalize health to percentage
 - [x] Remove the "NEW" tag from `header.html` and `masterActions.html`
 - [ ] Implement new menu auth method
-- [ ] Reorganize menu buttons
+- [ ] Reorganize menu buttons.
+- [ ] Do we need to migrate warn before enabling custom locale?
 - [ ] Enable custom locale for menu
 - [ ] Add keybind for opening players page
 - [ ] Add keybind for toggling player IDs
@@ -20,6 +21,7 @@
     - In config vault remove `+setr txEnableMenuBeta true` from fxrunner settings string
     - In settings page, remove additional arguments doc on the menu
     - Remove the "BETA" in the menu logo
+    - Change `nui_menu.misc.not_enabled` to say "go to tx settings to enable it"
 
 
 
@@ -36,6 +38,13 @@
 
 https://cdn.discordapp.com/attachments/589106731376836608/892124286360383488/unknown.png
 remover o \s?
+
+
+
+
+
+-- Fazer o announcement web (txaBroadcast) usar NUI via txaEvent e adicionar no events.md
+`TriggerClientEvent("txAdmin:receiveAnnounce", -1, 'sdfsdfsdfsdfdsf')`
 
 
 
