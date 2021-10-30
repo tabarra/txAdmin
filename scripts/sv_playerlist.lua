@@ -20,7 +20,6 @@ local pairs = pairs
 
 
 -- Variables & Consts
-TX_PLAYERLIST = {} -- available globally in tx
 local refreshMinDelay = 1500
 local refreshMaxDelay = 5000
 local maxPlayersDelayCeil = 300 --at this number, the delay won't increase more

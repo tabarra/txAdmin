@@ -21,23 +21,16 @@ const escape = (x) => {return x.toString().replace(/"/g, '\uff02');};
 const formatCommand = (cmd, ...params) => {
     return `${cmd} "` + [...params].map(escape).join('" "') + '"';
 };
-const getConvars = (isCmdLine = false) => {
+const getMutableConvars = (isCmdLine = false) => {
     const p = isCmdLine ? '+' : '';
     const controllerConfigs = globals.playerController.config;
     const checkPlayerJoin = (controllerConfigs.onJoinCheckBan || controllerConfigs.onJoinCheckWhitelist);
-    const txAdminInterface = (GlobalData.forceInterface)
-        ? `${GlobalData.forceInterface}:${GlobalData.txAdminPort}`
-        : `127.0.0.1:${GlobalData.txAdminPort}`;
 
     return [
         //type, name, value
-        [`${p}sets`, 'txAdmin-version', GlobalData.txAdminVersion],
         [`${p}setr`, 'txAdmin-locale', globals.translator.language || 'en'],
         [`${p}setr`, 'txAdmin-verbose', GlobalData.verbose],
-        [`${p}set`, 'txAdmin-apiHost', txAdminInterface],
-        [`${p}set`, 'txAdmin-apiToken', globals.webServer.intercomToken],
         [`${p}set`, 'txAdmin-checkPlayerJoin', checkPlayerJoin],
-        [`${p}set`, 'txAdminServerMode', 'true'], //Can't change this one due to fxserver code compatibility
     ];
 };
 
@@ -91,12 +84,18 @@ module.exports = class FXRunner {
         //Generate new mutex
         this.currentMutex = genMutex();
 
-        // Prepare default args
+        // Prepare default args (these convars can't change without restart)
+        const txAdminInterface = (GlobalData.forceInterface)
+            ? `${GlobalData.forceInterface}:${GlobalData.txAdminPort}`
+            : `127.0.0.1:${GlobalData.txAdminPort}`;
         const cmdArgs = [
-            getConvars(true),
+            getMutableConvars(true),
             extraArgs,
             '+set', 'onesync', this.config.onesync,
-            '+set', 'txAdmin-pipeToken', globals.webServer.fxWebPipeToken,
+            '+sets', 'txAdmin-version', GlobalData.txAdminVersion,
+            '+set', 'txAdmin-luaComHost', txAdminInterface,
+            '+set', 'txAdmin-luaComToken', globals.webServer.luaComToken,
+            '+set', 'txAdminServerMode', 'true', //Can't change this one due to fxserver code compatibility
             '+exec', this.config.cfgPath,
         ].flat(2);
 
@@ -133,7 +132,7 @@ module.exports = class FXRunner {
      */
     spawnServer(announce) {
         //Setup variables
-        globals.webServer.resetTokens();
+        globals.webServer.resetToken();
         this.setupVariables();
         if (GlobalData.verbose) {
             log('Spawn Variables: ' + this.spawnVariables.args.join(' '));
@@ -356,7 +355,7 @@ module.exports = class FXRunner {
     resetConvars() {
         log('Refreshing fxserver convars.');
         try {
-            const convarList = getConvars(false);
+            const convarList = getMutableConvars(false);
             if (GlobalData.verbose) dir(convarList);
             convarList.forEach(([type, name, value]) => {
                 this.srvCmd(formatCommand(type, name, value));

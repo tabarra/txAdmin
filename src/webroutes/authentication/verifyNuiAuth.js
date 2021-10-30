@@ -37,9 +37,9 @@ module.exports = async function VerifyNuiAuth(ctx) {
     }
 
     // Check token value
-    if (ctx.request.headers['x-txadmin-token'] !== globals.webServer.fxWebPipeToken) {
+    if (ctx.request.headers['x-txadmin-token'] !== globals.webServer.luaComToken) {
         if (GlobalData.verbose) {
-            logWarn(`NUI Auth Failed: token received ${ctx.request.headers['x-txadmin-token']} !== expected ${globals.webServer.fxWebPipeToken}.`);
+            logWarn(`NUI Auth Failed: token received ${ctx.request.headers['x-txadmin-token']} !== expected ${globals.webServer.luaComToken}.`);
         }
         return ctx.send({isAdmin: false, reason: 'Unauthorized: token value'});
     }

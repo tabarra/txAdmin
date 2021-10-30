@@ -27,8 +27,7 @@ const ctxUtils = require('./ctxUtils.js');
 module.exports = class WebServer {
     constructor(config) {
         this.config = config;
-        this.intercomToken = nanoid();
-        this.fxWebPipeToken = nanoid();
+        this.luaComToken = nanoid();
         this.webSocket = null;
         this.isListening = false;
 
@@ -180,11 +179,10 @@ module.exports = class WebServer {
 
 
     //================================================================
-    //Resetting tokens - called by fxRunner on spawnServer()
-    resetTokens() {
-        this.intercomToken = nanoid();
-        this.fxWebPipeToken = nanoid();
-        if (GlobalData.verbose) log('Intercom and WebPipe tokens reset.');
+    //Resetting lua comms token - called by fxRunner on spawnServer()
+    resetToken() {
+        this.luaComToken = nanoid();
+        if (GlobalData.verbose) log('Resetting luaComToken.');
     }
 
 

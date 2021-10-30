@@ -3,30 +3,16 @@ if GetConvar('txAdminServerMode', 'false') ~= 'true' then
   return
 end
 
-local apiHost = GetConvar("txAdmin-apiHost", "invalid")
-local pipeToken = GetConvar("txAdmin-pipeToken", "invalid")
-
-if apiHost == "invalid" or pipeToken == "invalid" then
-  print('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
+-- Checking convars (sv_main MUST run first)
+if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
+  log('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
+  return
+end
+if TX_LUACOMTOKEN == "removed" then
+  log('^1Please do not restart the monitor resource.')
   return
 end
 
-if pipeToken == "removed" then
-  print('^1Please do not restart the monitor resource.')
-  return
-end
-
--- Erasing the token convar for security reasons, and then restoring it if debug mode.
--- The convar needs to be reset on first tick to prevent other resources from reading it.
--- We actually need to wait two frames: one for convar replication, one for debugPrint.
-SetConvar("txAdmin-pipeToken", "removed")
-CreateThread(function()
-  Wait(0)
-  if debugModeEnabled then
-    debugPrint("Restoring txAdmin-pipeToken for next monitor restart")
-    SetConvar("txAdmin-pipeToken", pipeToken)
-  end
-end)
 --
 -- [[ WebPipe Proxy ]]
 --
@@ -91,13 +77,13 @@ RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, 
 
   -- Adding auth information
   if path == '/auth/nui' then
-    headers['X-TxAdmin-Token'] = pipeToken
+    headers['X-TxAdmin-Token'] = TX_LUACOMTOKEN
     headers['X-TxAdmin-Identifiers'] = table.concat(GetPlayerIdentifiers(s), ', ')
   else
     headers['X-TxAdmin-Token'] = 'not_required' -- so it's easy to detect webpipes
   end
 
-  local url = "http://" .. apiHost .. path:gsub("//", "/")
+  local url = "http://" .. TX_LUACOMHOST .. path:gsub("//", "/")
   debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6%s^0"):format(s, callbackId, url))
   debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6Headers: %s^0"):format(s, callbackId, json.encode(headers)))
 

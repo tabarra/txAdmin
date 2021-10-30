@@ -251,7 +251,7 @@ module.exports = async function WebCtxUtils(ctx, next) {
     if (
         typeof ctx.headers['x-txadmin-identifiers'] === 'string'
         && typeof ctx.headers['x-txadmin-token'] === 'string'
-        && ctx.headers['x-txadmin-token'] === globals.webServer.fxWebPipeToken
+        && ctx.headers['x-txadmin-token'] === globals.webServer.luaComToken
         && GlobalData.loopbackInterfaces.includes(ctx.ip)
     ) {
         const ipIdentifier = ctx.headers['x-txadmin-identifiers']

@@ -11,7 +11,7 @@ const requestAuth = (epType) => {
     const intercomAuth = async (ctx, next) => {
         if (
             typeof ctx.request.body.txAdminToken !== 'undefined'
-            && ctx.request.body.txAdminToken === globals.webServer.intercomToken
+            && ctx.request.body.txAdminToken === globals.webServer.luaComToken
         ) {
             await next();
         } else {
