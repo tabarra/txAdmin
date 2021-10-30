@@ -2,17 +2,24 @@
 - [x] fix(menu/players-page): fix sorting unknown distances higher than known
 - [x] tweak(menu/players-page): reflect players low health with color change
 - [x] fix(scripts/player-list): normalize health to percentage
+- [x] Remove the "NEW" tag from `header.html` and `masterActions.html`
 - [ ] Implement new menu auth method
 - [ ] Reorganize menu buttons
 - [ ] Enable custom locale for menu
 - [ ] Add keybind for opening players page
 - [ ] Add keybind for toggling player IDs
 - [ ] Fix the manage admins perm issue
+- [ ] Fix menu healthbar colors
 - [ ] xxxx
 
 - [ ] Migrate console log to new logger
 - [ ] Change CitizenFX to Cfx.re as per branding consistency (ask the elements)
-- [ ] Remove the "NEW" tag from `header.html` and `masterActions.html` after v4.6+ goes recommended
+- [ ] When taking menu our of beta:
+    - Create a "menu" tab in settings page with options for: enable, tab key, screen side
+    - Add "NEW" tag for settings page and menu tab
+    - In config vault remove `+setr txEnableMenuBeta true` from fxrunner settings string
+    - In settings page, remove additional arguments doc on the menu
+    - Remove the "BETA" in the menu logo
 
 
 
