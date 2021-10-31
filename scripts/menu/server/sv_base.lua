@@ -35,11 +35,11 @@ RegisterCommand('txAdmin-debug', function(src, args)
   if args[1] == '1' then
     debugModeEnabled = true
     debugPrint("^1!! Debug mode enabled by ^2" .. playerName .. "^1 !!^0")
-    TriggerClientEvent('txAdmin:events:enableDebug', -1, true)
+    TriggerClientEvent('txAdmin:events:setDebugMode', -1, true)
   elseif args[1] == '0' then
     debugPrint("^1!! Debug mode disabled by ^2" .. playerName .. "^1 !!^0")
     debugModeEnabled = false
-    TriggerClientEvent('txAdmin:events:enableDebug', -1, false)
+    TriggerClientEvent('txAdmin:events:setDebugMode', -1, false)
   end
 end)
 

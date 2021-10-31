@@ -65,18 +65,21 @@ RegisterNetEvent('txcl:setAdmin', function(perms, rejectReason)
     menuIsAccessible = false
   end
   sendMenuMessage('setDebugMode', isMenuDebug)
+  --FIXME: tell react our auth status + perms
 end)
 
 
 --[[ Debug Events / Commands ]]
--- Manual reauth command
---FIXME: remove debug requirement, make sure server rate limits it
-RegisterCommand('txAdmin-reauth', function()
-  if debugModeEnabled then
-    debugPrint("re-authing")
-    TriggerEvent('txAdmin:menu:reAuth')
-  end
-end)
+-- Command/event to trigger a authentication attempt
+local function retryAuthentication()
+  print("^5[AUTH] Retrying menu authentication.")
+  menuIsAccessible = false
+  --FIXME: tell react we are no longer authenticated
+  TriggerServerEvent('txsv:checkAdminStatus')
+end
+RegisterCommand('txAdmin-reauth', retryAuthentication)
+RegisterNetEvent('txAdmin:menu:reAuth', retryAuthentication)
+
 
 -- Register chat suggestions
 -- txAdmin starts before the chat resource, so we need to wait a bit
@@ -91,25 +94,19 @@ CreateThread(function()
   TriggerEvent(
     'chat:addSuggestion', 
     '/txAdmin-reauth', 
-    'Retries to authenticate the menu NUI. Requires debug mode to be on.'
+    'Retries to authenticate the menu NUI.'
   )
   TriggerEvent(
     'chat:addSuggestion', 
-    '/txAdmin-debug', 
+    '/txAdmin-debug',  -- on /scripts/menu/server/sv_base.lua
     'Enables or disables the debug mode. Requires \'control.server\' permission.',
     {{ name="1|0", help="1 to enable, 0 to disable" }}
   )
 end)
 
--- Triggers reauth process
--- FIXME: adapt to new auth
-RegisterNetEvent('txAdmin:menu:reAuth', function()
-  menuIsAccessible = false
-  sendMenuMessage('reAuth')
-end)
 
 -- Will toggle debug logging
-RegisterNetEvent('txAdmin:events:enableDebug', function(enabled)
+RegisterNetEvent('txAdmin:events:setDebugMode', function(enabled)
   debugModeEnabled = enabled
 end)
 
