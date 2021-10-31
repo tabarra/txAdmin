@@ -71,6 +71,7 @@ globals = {
                     password: 0,
                     zap: 0,
                     nui: 0,
+                    iframe: 0,
                 },
             },
         },
