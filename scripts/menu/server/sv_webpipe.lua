@@ -33,10 +33,10 @@ local function sendResponse(src, callbackId, statusCode, path, body, headers, ca
   local resultColor = errorCode and '^1' or '^2'
   local cachedStr = cached and " ^1(cached)^0" or ""
   debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 %s<< %s ^4%s%s^0"):format(
-      src, callbackId, resultColor, statusCode, path, cachedStr))
+    src, callbackId, resultColor, statusCode, path, cachedStr))
   if errorCode then
     debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 %s<< Headers: %s^0"):format(
-        src, callbackId, resultColor, json.encode(headers)))
+      src, callbackId, resultColor, json.encode(headers)))
   end
   TriggerLatentClientEvent('txAdmin:WebPipe', src, 125000, callbackId, statusCode, body, headers)
 end
@@ -60,7 +60,7 @@ RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, 
   local url = "http://" .. (TX_LUACOMHOST .. '/' .. path):gsub("//+", "/")
 
   -- Reject requests from un-authed players
-  if path ~= '/auth/nui' and not ADMIN_DATA[src] then
+  if not TX_ADMINS[src] then
     if _pipeLastReject ~= nil then
       if (GetGameTimer() - _pipeLastReject) < 250 then
         _pipeLastReject = GetGameTimer()
@@ -117,36 +117,15 @@ RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, 
       resultHeaders['Set-Cookie'] = cookies
     end
 
-    -- Sniff permissions out of the auth request
-    if path == '/auth/nui' and httpCode == 200 then
-      local resp = json.decode(data)
-      if resp and resp.isAdmin then
-        if type(resp.permissions) == 'table' and type(resp.luaToken) == 'string' and string.len(resp.luaToken) == 20 then
-          debugPrint(("Authenticated admin %s with permissions %s and token %s."):format(src, json.encode(resp.permissions), resp.luaToken))
-          ADMIN_DATA[src] = {
-            perms = resp.permissions,
-            token = resp.luaToken,
-            bucket = 0
-          }
-          sendInitialPlayerlist(s)
-        else
-          debugPrint("Auth failed for admin %s due to response validation.")
-          ADMIN_DATA[src] = nil
-        end
-      else
-        ADMIN_DATA[src] = nil
-      end
-    end
-
     -- cache response if it is a static file
     local sub = string.sub
     if 
       httpCode == 200 and 
       (
-        path:sub(1, 5) == '/css/' or 
-        path:sub(1, 4) == '/js/' or 
-        path:sub(1, 5) == '/img/' or 
-        path:sub(1, 7) == '/fonts/'
+        sub(path, 1, 5) == '/css/' or 
+        sub(path, 1, 4) == '/js/' or 
+        sub(path, 1, 5) == '/img/' or 
+        sub(path, 1, 7) == '/fonts/'
       ) 
     then
       -- remove query params from path, so people can't consume memory by spamming cache-busters

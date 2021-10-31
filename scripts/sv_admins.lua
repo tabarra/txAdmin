@@ -16,7 +16,6 @@ end
 
 
 -- Variables & Consts
-ADMIN_DATA = {} --FIXME: use TX_ADMINS from sv_main.lua
 local failedAuths = {}
 local attemptCooldown = 15000
 
@@ -24,7 +23,7 @@ local attemptCooldown = 15000
 -- Handle auth failures
 local function handleAuthFail(src, reason)
     local srcString = tostring(src)
-    ADMIN_DATA[srcString] = nil
+    TX_ADMINS[srcString] = nil
     failedAuths[srcString] = GetGameTimer()
     reason = reason or "unknown"
     debugPrint("Auth rejected #"..srcString.." ("..reason..")")
@@ -66,7 +65,7 @@ RegisterNetEvent('txsv:checkAdminStatus', function()
 
         -- Setting up admin
         debugPrint("^2Authenticated admin #"..srcString.." with permissions: "..json.encode(resp.permissions))
-        ADMIN_DATA[srcString] = {
+        TX_ADMINS[srcString] = {
             perms = resp.permissions,
             bucket = 0
         }
@@ -76,35 +75,32 @@ RegisterNetEvent('txsv:checkAdminStatus', function()
 end)
 
 
--- Handle player disconnection
---FIXME: validate
+-- Remove admin from table when disconnected
 AddEventHandler('playerDropped', function()
-    ADMIN_DATA[tostring(source)] = nil
+    TX_ADMINS[tostring(source)] = nil
 end)
 
 
 -- Handle updated admin list
---FIXME: migrate
---FIXME: pretty sure the same admin can get the event twice if in ADMIN_DATA and onlineAdminIDs
 AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
-    debugPrint('^3Admins changed. Online admins: ' .. json.encode(onlineAdminIDs) .. "^0")
+    debugPrint('^3Admins list updated. Online admins: ' .. json.encode(onlineAdminIDs))
 
-    -- Collect old and new admin IDs
+    -- Collect old and new admin IDs as key to prevent duplicate
     local refreshAdminIds = {}
-    for id, _ in pairs(ADMIN_DATA) do
-        refreshAdminIds[#refreshAdminIds + 1] = id
+    for id, _ in pairs(TX_ADMINS) do
+        refreshAdminIds[id] = true
     end
-    for _, newId in pairs(onlineAdminIDs) do
-        refreshAdminIds[#refreshAdminIds + 1] = newId
+    for _, id in pairs(onlineAdminIDs) do
+        refreshAdminIds[tostring(id)] = true
     end
-    debugPrint('^3Forcing ' .. #refreshAdminIds .. ' clients to re-auth')
+    debugPrint('^3Forcing clients to re-auth')
 
     -- Resetting all admin permissions and rate limiter
-    ADMIN_DATA = {}
+    TX_ADMINS = {}
     failedAuths = {}
 
     -- Informing clients that they need to reauth
     for id, _ in pairs(refreshAdminIds) do
-        TriggerClientEvent('txAdmin:menu:reAuth', id) 
+        TriggerClientEvent('txAdmin:menu:reAuth', tonumber(id))
     end
 end)

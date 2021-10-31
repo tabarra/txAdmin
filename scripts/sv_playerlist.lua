@@ -110,12 +110,12 @@ end)
 --[[ Handle player Join or Leave ]]
 AddEventHandler('playerJoining', function()
     local playerName = sub(GetPlayerName(source) or "unknown", 1, 75)
-    for adminID, _ in pairs(ADMIN_DATA) do
+    for adminID, _ in pairs(TX_ADMINS) do
         TriggerClientEvent('txcl:updatePlayer', adminID, source, playerName)
     end
 end)
 AddEventHandler('playerDropped', function()
-    for adminID, _ in pairs(ADMIN_DATA) do
+    for adminID, _ in pairs(TX_ADMINS) do
         TriggerClientEvent('txcl:updatePlayer', adminID, source, false)
     end
 end)
@@ -124,7 +124,7 @@ end)
 -- Handle getDetailedPlayerlist
 -- This event is only called when the meny "players" tab is opened, and every 5s while the tab is open
 RegisterNetEvent('txsv:getDetailedPlayerlist', function()
-    if ADMIN_DATA[tostring(source)] == nil then
+    if TX_ADMINS[tostring(source)] == nil then
         debugPrint('Ignoring unauthenticated getDetailedPlayerlist() by ' .. source)
         return
     end
@@ -134,7 +134,7 @@ RegisterNetEvent('txsv:getDetailedPlayerlist', function()
         players[#players + 1] = {tonumber(playerID), playerData.health, playerData.vType}
     end
     local admins = {}
-    for adminID, _ in pairs(ADMIN_DATA) do
+    for adminID, _ in pairs(TX_ADMINS) do
         admins[#admins + 1] = tonumber(adminID)
     end
     TriggerClientEvent('txcl:setDetailedPlayerlist', source, players, admins)

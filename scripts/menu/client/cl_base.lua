@@ -58,22 +58,14 @@ RegisterNetEvent('txcl:setAdmin', function(perms, rejectReason)
     print("^2[AUTH] accepted with permissions: " .. json.encode(perms or "nil"))
     menuIsAccessible = true
     menuPermissions = perms
+    RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
+    RegisterKeyMapping('txAdmin:menu:endSpectate', 'Exit spectate mode', 'keyboard', 'BACK')
   else
     print("^3[AUTH] rejected (" .. tostring(rejectReason) ..")")
     menuIsAccessible = false
   end
+  sendMenuMessage('setDebugMode', isMenuDebug)
 end)
-
-
---FIXME: run this when the server replies with "you are an admin, setup menu"
--- then remove reference in the cl_webpipe auth
-function registerTxKeybinds()
-  -- Only register keybinds for authed users
-  if menuIsAccessible then
-    RegisterKeyMapping('txadmin', 'Open the txAdmin Menu', 'keyboard', '')
-    RegisterKeyMapping('txAdmin:menu:endSpectate', 'Exit spectate mode', 'keyboard', 'BACK')
-  end
-end
 
 
 --[[ Debug Events / Commands ]]
