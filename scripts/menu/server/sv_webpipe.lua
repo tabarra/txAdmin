@@ -52,9 +52,12 @@ RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, 
   end
 
   -- Reject large paths as we use regex
-  if #path > 300 then
-    return sendResponse(s, callbackId, 400, (path):sub(1, 300), "{}", {})
+  if #path > 500 then
+    return sendResponse(s, callbackId, 400, path:sub(1, 300), "{}", {})
   end
+
+  -- Treat path slashes
+  local url = "http://" .. (TX_LUACOMHOST .. '/' .. path):gsub("//+", "/")
 
   -- Reject requests from un-authed players
   if path ~= '/auth/nui' and not ADMIN_DATA[src] then
@@ -77,15 +80,15 @@ RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, 
     return
   end
 
-  -- Adding auth information
-  if path == '/auth/nui' then
+  -- Adding auth information for NUI routes
+  if path:sub(1, 5) == '/nui/' then
     headers['X-TxAdmin-Token'] = TX_LUACOMTOKEN
     headers['X-TxAdmin-Identifiers'] = table.concat(GetPlayerIdentifiers(s), ', ')
   else
     headers['X-TxAdmin-Token'] = 'not_required' -- so it's easy to detect webpipes
   end
 
-  local url = "http://" .. TX_LUACOMHOST .. path:gsub("//", "/")
+  
   debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6%s^0"):format(s, callbackId, url))
   debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6Headers: %s^0"):format(s, callbackId, json.encode(headers)))
 
@@ -137,7 +140,15 @@ RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, 
 
     -- cache response if it is a static file
     local sub = string.sub
-    if httpCode == 200 and (sub(path, 1, 5) == '/css/' or sub(path, 1, 4) == '/js/' or sub(path, 1, 5) == '/img/' or sub(path, 1, 7) == '/fonts/') then
+    if 
+      httpCode == 200 and 
+      (
+        path:sub(1, 5) == '/css/' or 
+        path:sub(1, 4) == '/js/' or 
+        path:sub(1, 5) == '/img/' or 
+        path:sub(1, 7) == '/fonts/'
+      ) 
+    then
       -- remove query params from path, so people can't consume memory by spamming cache-busters
       for safePath in path:gmatch("([^?]+)") do
         local slimHeaders = {}
@@ -153,7 +164,5 @@ RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, 
     end
 
     sendResponse(s, callbackId, httpCode, path, data, resultHeaders)
-  end, method, body, headers, {
-    followLocation = false
-  })
+  end, method, body, headers, {followLocation = false})
 end)

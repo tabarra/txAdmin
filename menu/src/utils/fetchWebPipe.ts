@@ -1,6 +1,6 @@
 import { isBrowserEnv } from "./miscUtils";
 
-const WEBPIPE_PATH = "https://monitor/WebPipe";
+const WEBPIPE_PATH = "https://monitor/WebPipe/nui";
 
 type ValidPath = `/${string}`;
 
