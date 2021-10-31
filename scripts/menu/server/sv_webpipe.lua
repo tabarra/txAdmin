@@ -1,9 +1,11 @@
---Check Environment
+-- =============================================
+--  This file is responsible for all the webpipe
+--  handling and caching.
+-- =============================================
+-- Checking Environment (sv_main MUST run first)
 if GetConvar('txAdminServerMode', 'false') ~= 'true' then
   return
 end
-
--- Checking convars (sv_main MUST run first)
 if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
   log('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
   return

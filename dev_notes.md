@@ -14,6 +14,8 @@
 - [ ] xxxx
 
 - [ ] Migrate console log to new logger
+- [ ] Migrate all log routes
+- [ ] Add download modal to log pages
 - [ ] Change CitizenFX to Cfx.re as per branding consistency (ask the elements)
 - [ ] When taking menu our of beta:
     - Create a "menu" tab in settings page with options for: enable, tab key, screen side
@@ -51,12 +53,13 @@ remover o \s?
 ### Menu auth fix
 - o `/auth/nui` vira um middleware requestAuth('nui')
 - esse middleware cria uma variável de contexto que não é ctx.session pra nao ficar criando sessões koa
-- usar handlers normais (webRoutes.player.*), e dentro delas fazer `const sess = ctx.nuiSess || ctx.session` 
+- usar handlers normais (webRoutes.player.*), e dentro delas fazer `const sess = ctx.nuiSession || ctx.session` 
 - criar rotas novas com prefixo diferente tipo `/nui/xxx`
 - webpipe adicionar headers com identifiers quando tiver path começar com `/nui/`
 
 - o sv agora vai ter que começar a chamar algo tipo `/nui/identify` no join pra saber se esse o client é admin 
 - remover `/auth/nui` existente
+- wepipe deve bloquear chamada para `/nui/identify`
 - fazer o react parar de chamar e depender do `/auth/nui`
 - iframe iniciar com uma rota especial que ou gera o ctx.session (como o `/auth/nui`), ou já chama o handler do serverlog get
 

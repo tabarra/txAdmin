@@ -52,6 +52,19 @@ end
 -- Checking with server if we are an admin
 TriggerServerEvent('txsv:checkAdminStatus')
 
+-- Triggered as callback of txsv:checkAdminStatus
+RegisterNetEvent('txcl:setAdmin', function(perms, rejectReason)
+  if type(perms) == 'table' then
+    print("^2[AUTH] accepted with permissions: " .. json.encode(perms or "nil"))
+    menuIsAccessible = true
+    menuPermissions = perms
+  else
+    print("^3[AUTH] rejected (" .. tostring(rejectReason) ..")")
+    menuIsAccessible = false
+  end
+end)
+
+
 --FIXME: run this when the server replies with "you are an admin, setup menu"
 -- then remove reference in the cl_webpipe auth
 function registerTxKeybinds()

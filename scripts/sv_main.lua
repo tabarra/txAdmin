@@ -30,12 +30,12 @@ TX_VERSION = GetResourceMetadata(GetCurrentResourceName(), 'version') -- for now
 
 -- Checking convars
 if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
-  log('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
-  return
+    log('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
+    return
 end
 if TX_LUACOMTOKEN == "removed" then
-  log('^1Please do not restart the monitor resource.')
-  return
+    log('^1Please do not restart the monitor resource.')
+    return
 end
 
 -- Erasing the token convar for security reasons, and then restoring it if debug mode.
@@ -43,11 +43,11 @@ end
 -- We actually need to wait two frames: one for convar replication, one for debugPrint.
 SetConvar("txAdmin-luaComToken", "removed")
 CreateThread(function()
-  Wait(0)
-  if debugModeEnabled then
-    debugPrint("Restoring txAdmin-luaComToken for next monitor restart")
-    SetConvar("txAdmin-luaComToken", TX_LUACOMTOKEN)
-  end
+    Wait(0)
+    if debugModeEnabled then
+        debugPrint("Restoring txAdmin-luaComToken for next monitor restart")
+        SetConvar("txAdmin-luaComToken", TX_LUACOMTOKEN)
+    end
 end)
 
 
