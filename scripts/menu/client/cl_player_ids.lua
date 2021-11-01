@@ -87,18 +87,27 @@ local function showGamerTags()
     end
 end
 
-RegisterNUICallback('togglePlayerIDs', function(_, cb)
+local function togglePlayerIDsHandler()
     isPlayerIDActive = not isPlayerIDActive
 
-    cb({ isShowing = isPlayerIDActive })
-
     if not isPlayerIDActive then
+        sendSnackbarMessage('info', 'nui_menu.page_main.player_ids.alert_hide', true)
         -- Remove all gamer tags and clear out active table
         cleanUpGamerTags()
+    else
+        sendSnackbarMessage('info', 'nui_menu.page_main.player_ids.alert_show', true)
     end
 
     debugPrint('Show Player IDs Status: ' .. tostring(isPlayerIDActive))
+end
+
+RegisterNUICallback('togglePlayerIDs', function(_, cb)
+    togglePlayerIDsHandler()
+    cb({})
 end)
+
+RegisterCommand('txAdmin:menu:togglePlayerIDs', togglePlayerIDsHandler)
+RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'Toggle displaying player IDs', 'KEYBOARD', '')
 
 CreateThread(function()
     local sleep = 150

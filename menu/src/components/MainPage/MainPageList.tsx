@@ -159,15 +159,7 @@ export const MainPageList: React.FC = () => {
   };
 
   const handleTogglePlayerIds = () => {
-    fetchNui("togglePlayerIDs").then(({ isShowing }) => {
-      isShowing
-        ? enqueueSnackbar(t("nui_menu.page_main.player_ids.alert_show"), {
-            variant: "info",
-          })
-        : enqueueSnackbar(t("nui_menu.page_main.player_ids.alert_hide"), {
-            variant: "info",
-          });
-    });
+    fetchNui("togglePlayerIDs");
   };
 
   const handleSpawnVehicle = () => {

@@ -45,6 +45,7 @@ end
 RegisterCommand('txAdmin:menu:openPlayersPage', function()
   sendMenuMessage('setMenuPage', 1)
   sendMenuMessage('setVisible', true)
+  SetNuiFocus(true, true)
 end)
 
 RegisterKeyMapping('txAdmin:menu:openPlayersPage', 'Open the Menu\'s Players page', 'KEYBOARD', '')
