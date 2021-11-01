@@ -5,7 +5,6 @@ import {
   ResolvablePermission,
   useSetPermissions,
 } from "../state/permissions.state";
-import { fetchNuiAuth } from "../utils/fetchNuiAuth";
 
 // Passive Message Event Listeners & Handlers for global state
 export const useNuiListenerService = () => {
@@ -19,7 +18,4 @@ export const useNuiListenerService = () => {
   useNuiEvent<boolean>("setVisible", setVisible);
   useNuiEvent<ResolvablePermission[]>("setPermissions", setPermsState);
   useNuiEvent<txAdminMenuPage>("setMenuPage", setMenuPage);
-  useNuiEvent<any>("reAuth", () => {
-    fetchNuiAuth().then(setPermsState);
-  });
 };

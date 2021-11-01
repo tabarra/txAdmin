@@ -12,7 +12,6 @@ import { useServerCtxValue } from "./state/server.state";
 import { getLocale } from "./utils/getLocale";
 import { WarnPage } from "./components/WarnPage/WarnPage";
 import { IFrameProvider } from "./provider/IFrameProvider";
-import { useCheckCredentials } from "./hooks/useCheckCredentials";
 import { PlayerModalProvider } from "./provider/PlayerModalProvider";
 import { txAdminMenuPage, useSetPage } from "./state/page.state";
 import { useListenerForSomething } from "./hooks/useListenerForSomething";
@@ -51,7 +50,6 @@ const MenuWrapper: React.FC = () => {
   // These hooks don't ever unmount
   useExitListener();
   useNuiListenerService();
-  useCheckCredentials();
 
   //Change page back to Main when closed
   useEffect(() => {
