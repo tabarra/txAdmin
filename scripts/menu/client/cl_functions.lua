@@ -104,6 +104,10 @@ end
 ---@param perm string The specific permission
 ---@return boolean
 function DoesPlayerHavePerm(perms, perm)
+    if type(perms) ~= 'table' then
+        return false
+    end
+    
     for _, v in pairs(perms) do
         if v == perm or v == 'all_permissions' then
             return true

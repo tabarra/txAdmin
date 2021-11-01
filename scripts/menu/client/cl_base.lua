@@ -63,9 +63,10 @@ RegisterNetEvent('txcl:setAdmin', function(perms, rejectReason)
   else
     print("^3[AUTH] rejected (" .. tostring(rejectReason) ..")")
     menuIsAccessible = false
+    menuPermissions = {}
   end
   sendMenuMessage('setDebugMode', isMenuDebug)
-  --FIXME: tell react our auth status + perms
+  sendMenuMessage('setPermissions', menuPermissions)
 end)
 
 

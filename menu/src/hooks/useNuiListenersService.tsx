@@ -2,7 +2,7 @@ import { useSetIsMenuVisible } from "../state/visibility.state";
 import { txAdminMenuPage, useSetPage } from "../state/page.state";
 import { useNuiEvent } from "./useNuiEvent";
 import {
-  PermCheckServerResp,
+  ResolvablePermission,
   useSetPermissions,
 } from "../state/permissions.state";
 import { fetchNuiAuth } from "../utils/fetchNuiAuth";
@@ -17,8 +17,9 @@ export const useNuiListenerService = () => {
     (window as any).__MenuDebugMode = debugMode;
   });
   useNuiEvent<boolean>("setVisible", setVisible);
+  useNuiEvent<ResolvablePermission[]>("setPermissions", setPermsState);
   useNuiEvent<txAdminMenuPage>("setMenuPage", setMenuPage);
-  useNuiEvent<PermCheckServerResp>("reAuth", () => {
+  useNuiEvent<any>("reAuth", () => {
     fetchNuiAuth().then(setPermsState);
   });
 };

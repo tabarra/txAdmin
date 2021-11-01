@@ -27,17 +27,9 @@ export type ResolvablePermission =
   | "players.troll"
   | "players.freeze";
 
-export interface PermCheckServerResp {
-  isAdmin: boolean;
-  permissions?: ResolvablePermission[];
-  expiration?: number;
-  luaToken: string;
-  logout?: boolean;
-}
-
-const permissionState = atom<PermCheckServerResp>({
+const permissionState = atom<ResolvablePermission[]>({
   key: "permissionsState",
-  default: null,
+  default: [],
 });
 
 export const usePermissionsValue = () => useRecoilValue(permissionState);

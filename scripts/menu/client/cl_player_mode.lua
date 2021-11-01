@@ -85,8 +85,7 @@ end
 RegisterKeyMapping('txAdmin:menu:noClipToggle', 'NoClip Shortcut', 'keyboard', '')
 
 RegisterCommand('txAdmin:menu:noClipToggle', function()
-    local doesPlayerHavePerm = DoesPlayerHavePerm(menuPermissions, 'players.playermode')
-    if not doesPlayerHavePerm then
+    if not DoesPlayerHavePerm(menuPermissions, 'players.playermode') then
         return sendSnackbarMessage('error', 'nui_menu.misc.general_no_perms', true)
     end
 
