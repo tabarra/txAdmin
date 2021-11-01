@@ -22,6 +22,7 @@ module.exports = async function PlayerModal(ctx) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     let reference = ctx.params.reference;
+    const sess = ctx.nuiSession ?? ctx.session;
 
     //Helper function
     const getHistory = async (idArray) => {

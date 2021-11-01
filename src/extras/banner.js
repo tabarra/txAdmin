@@ -128,7 +128,10 @@ module.exports.printBanner = async () => {
         addrs = [
             (GlobalData.osType === 'linux') ? 'your-public-ip' : 'localhost',
         ];
-        if (ipRes.value) addrs.push(ipRes.value);
+        if (ipRes.value) {
+            addrs.push(ipRes.value);
+            GlobalData.loopbackInterfaces.push(ipRes.value);
+        }
     } else {
         addrs = [GlobalData.forceInterface];
     }

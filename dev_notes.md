@@ -4,15 +4,18 @@
 - [x] fix(scripts/player-list): normalize health to percentage
 - [x] Remove the "NEW" tag from `header.html` and `masterActions.html`
 - [ ] Implement new menu auth method
-- [ ] Reorganize menu buttons
+- [ ] Reorganize menu buttons.
+- [ ] Do we need to migrate warn before enabling custom locale?
 - [ ] Enable custom locale for menu
 - [ ] Add keybind for opening players page
 - [ ] Add keybind for toggling player IDs
 - [ ] Fix the manage admins perm issue
 - [ ] Fix menu healthbar colors
-- [ ] xxxx
+- [ ] Test new NUI Auth on ZAP server 
 
 - [ ] Migrate console log to new logger
+- [ ] Migrate all log routes
+- [ ] Add download modal to log pages
 - [ ] Change CitizenFX to Cfx.re as per branding consistency (ask the elements)
 - [ ] When taking menu our of beta:
     - Create a "menu" tab in settings page with options for: enable, tab key, screen side
@@ -20,8 +23,11 @@
     - In config vault remove `+setr txEnableMenuBeta true` from fxrunner settings string
     - In settings page, remove additional arguments doc on the menu
     - Remove the "BETA" in the menu logo
+    - Change `nui_menu.misc.not_enabled` to say "go to tx settings to enable it"
 
 
+
+-- announcements need sound!
 
 -- chungus command !key that will tell the user how to change the TAB and all the bindable options like noclip and etc
 
@@ -39,19 +45,10 @@ remover o \s?
 
 
 
-### Menu auth fix
-- o `/auth/nui` vira um middleware requestAuth('nui')
-- esse middleware cria uma variável de contexto que não é ctx.session pra nao ficar criando sessões koa
-- usar handlers normais (webRoutes.player.*), e dentro delas fazer `const sess = ctx.nuiSess || ctx.session` 
-- criar rotas novas com prefixo diferente tipo `/nui/xxx`
-- webpipe adicionar headers com identifiers quando tiver path começar com `/nui/`
+-- Why both have the same debug data? https://i.imgur.com/WGawiyr.png
 
-- o sv agora vai ter que começar a chamar algo tipo `/nui/identify` no join pra saber se esse o client é admin 
-- remover `/auth/nui` existente
-- fazer o react parar de chamar e depender do `/auth/nui`
-- iframe iniciar com uma rota especial que ou gera o ctx.session (como o `/auth/nui`), ou já chama o handler do serverlog get
-
-- talvez cachear os identifiers pra nao ficar pegando toda vez? talvez no primeiro `/nui/identify` retornar um token que pode ser reusado sem ter que ficar buscando admin com mesmo id? idk
+-- Fazer o announcement web (txaBroadcast) usar NUI via txaEvent e adicionar no events.md
+`TriggerClientEvent("txAdmin:receiveAnnounce", -1, 'sdfsdfsdfsdfdsf')`
 
 
 
@@ -112,6 +109,24 @@ NOTE: nice guide https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc
 - https://github.com/isomorphic-git/isomorphic-git
 - easy recipe tester
 - fully automated deploy process via CLI. You just set the recipe file path, as well as the required variables, and you can get your server running without any user interaction.
+
+
+### Report System (random ideas)
+- persistent, save in database?
+- have two different status: visited (arr of admins), closed (admin that closed)
+- this one is worth having discordwebhook
+
+References (get usage count):
+https://forum.cfx.re/t/release-admin-reply-report-command/73894
+https://forum.cfx.re/t/release-esx-ban-warning-help-assist-system/786080
+https://forum.cfx.re/t/release-badgerreports-reports-through-discord-and-in-game/1145714/1
+https://forum.cfx.re/t/release-fivem-advanced-reports-system/1798535
+https://forum.cfx.re/t/esx-advanced-report/1636000
+https://forum.cfx.re/t/standalone-esx-reportsystem-a-completely-innovative-report-system-paid/3710522
+https://forum.cfx.re/t/free-esx-simple-mysql-reports-system/3555465
+https://forum.cfx.re/t/paid-esx-new-advanced-report-system/4774382
+https://forum.cfx.re/t/standalone-advanced-report-system/4774403/1
+
 
 ### Todozinhos:
 pagina de adicionar admin precisa depois do modal, mostrar mais info:

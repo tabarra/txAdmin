@@ -1,3 +1,4 @@
+--Check Environment
 if GetConvar('txAdminServerMode', 'false') ~= 'true' then
   return
 end
@@ -8,7 +9,7 @@ end
 ---@return boolean
 function PlayerHasTxPermission(source, reqPerm)
   local allow = false
-  local admin = ADMIN_DATA[tostring(source)]
+  local admin = TX_ADMINS[tostring(source)]
   if admin and admin.perms then
     for _, perm in pairs(admin.perms) do
       if perm == 'all_permissions' or reqPerm == perm then

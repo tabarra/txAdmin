@@ -1,6 +1,7 @@
 -- =============================================
 --  This file contains any strictly *pure* functions
 --  that are utilized by the rest of the menu.
+--  Many of them need to be available with menu disabled
 -- =============================================
 
 --- Send a persistent alert to NUI
@@ -40,7 +41,6 @@ end
 
 --- Toggle visibility of the txAdmin NUI menu
 function toggleMenuVisibility(visible)
-    debugPrint(isMenuVisible)
     if (visible == true and isMenuVisible) or (visible == false and not isMenuVisible) then
         return
     end
@@ -49,9 +49,7 @@ function toggleMenuVisibility(visible)
             return
         end
     end
-    -- Lets update before we open the menu
-    updateServerCtx()
-    sendMenuMessage('setDebugMode', isMenuDebug)
+
     sendReactPlayerlist()
     if visible ~= nil then
         isMenuVisible = visible
@@ -103,6 +101,10 @@ end
 ---@param perm string The specific permission
 ---@return boolean
 function DoesPlayerHavePerm(perms, perm)
+    if type(perms) ~= 'table' then
+        return false
+    end
+    
     for _, v in pairs(perms) do
         if v == perm or v == 'all_permissions' then
             return true

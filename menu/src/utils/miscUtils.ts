@@ -1,15 +1,12 @@
-import {
-  PermCheckServerResp,
-  ResolvablePermission,
-} from "../state/permissions.state";
+import { ResolvablePermission } from "../state/permissions.state";
 import { TxAdminActionRespType } from "../components/PlayerModal/Tabs/DialogActionView";
 import { VariantType } from "notistack";
 
 export const userHasPerm = (
   perm: ResolvablePermission,
-  permsState: PermCheckServerResp
+  permsState: ResolvablePermission[]
 ): boolean => {
-  const userPerms = permsState.permissions || [];
+  const userPerms = permsState ?? [];
   return userPerms.includes(perm) || userPerms.includes("all_permissions");
 };
 

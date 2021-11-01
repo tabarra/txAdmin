@@ -10,28 +10,50 @@ function unDeQuote(x)
     return new
 end
 
+
 --Check Environment
-local apiHost = GetConvar("txAdmin-apiHost", "invalid")
-local apiToken = GetConvar("txAdmin-apiToken", "invalid")
-local txAdminClientVersion = GetResourceMetadata(GetCurrentResourceName(), 'version')
 if GetConvar('txAdminServerMode', 'false') ~= 'true' then
-    return
-end
-if apiHost == "invalid" or apiToken == "invalid" then
-    logError('API Host or Token ConVars not found. Do not start this resource if not using txAdmin.')
     return
 end
 if GetCurrentResourceName() ~= "monitor" then
     logError('This resource should not be installed separately, it already comes with fxserver.')
     return
 end
---Erasing the token convar
--- SetConvar("txAdmin-apiToken", "removed") //FIXME:
+
+
+-- Global Vars
+TX_ADMINS = {}
+TX_PLAYERLIST = {}
+TX_LUACOMHOST = GetConvar("txAdmin-luaComHost", "invalid")
+TX_LUACOMTOKEN = GetConvar("txAdmin-luaComToken", "invalid")
+TX_VERSION = GetResourceMetadata(GetCurrentResourceName(), 'version') -- for now, only used in the start print
+
+-- Checking convars
+if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
+    log('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
+    return
+end
+if TX_LUACOMTOKEN == "removed" then
+    log('^1Please do not restart the monitor resource.')
+    return
+end
+
+-- Erasing the token convar for security reasons, and then restoring it if debug mode.
+-- The convar needs to be reset on first tick to prevent other resources from reading it.
+-- We actually need to wait two frames: one for convar replication, one for debugPrint.
+SetConvar("txAdmin-luaComToken", "removed")
+CreateThread(function()
+    Wait(0)
+    if debugModeEnabled then
+        debugPrint("Restoring txAdmin-luaComToken for next monitor restart")
+        SetConvar("txAdmin-luaComToken", TX_LUACOMTOKEN)
+    end
+end)
 
 
 -- Setup threads and commands
 local hbReturnData = 'no-data'
-log("Version "..txAdminClientVersion.." starting...")
+log("Version "..TX_VERSION.." starting...")
 CreateThread(function()
     RegisterCommand("txaPing", txaPing, true)
     RegisterCommand("txaWarnID", txaWarnID, true)
@@ -76,9 +98,9 @@ function HTTPHeartBeat()
         }
     end
 
-    local url = "http://"..apiHost.."/intercom/monitor"
+    local url = "http://"..TX_LUACOMHOST.."/intercom/monitor"
     local exData = {
-        txAdminToken = apiToken,
+        txAdminToken = TX_LUACOMTOKEN,
         players = curPlyData
     }
     PerformHttpRequest(url, function(httpCode, data, resultHeaders)
@@ -298,9 +320,9 @@ function txaReportResources(source, args)
     end
 
     --Send to txAdmin
-    local url = "http://"..apiHost.."/intercom/resources"
+    local url = "http://"..TX_LUACOMHOST.."/intercom/resources"
     local exData = {
-        txAdminToken = apiToken,
+        txAdminToken = TX_LUACOMTOKEN,
         resources = resources
     }
     log('Sending resources list to txAdmin.')
@@ -320,9 +342,9 @@ function handleConnections(name, skr, d)
         Wait(0)
 
         --Preparing vars and making sure we do have indentifiers
-        local url = "http://"..apiHost.."/intercom/checkPlayerJoin"
+        local url = "http://"..TX_LUACOMHOST.."/intercom/checkPlayerJoin"
         local exData = {
-            txAdminToken = apiToken,
+            txAdminToken = TX_LUACOMTOKEN,
             identifiers = GetPlayerIdentifiers(player),
             name = name
         }

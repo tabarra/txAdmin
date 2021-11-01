@@ -40,15 +40,6 @@ module.exports = (config) => {
         disableHeader: true,
         id: (ctx) => ctx.txVars.realIP,
     });
-    const authLimiterNUI = KoaRateLimit({
-        driver: 'memory',
-        db: new Map(),
-        max: 50,
-        duration: 5 * 60 * 1000,
-        errorMessage: JSON.stringify({isAdmin: false, reason: 'too many requests'}),
-        disableHeader: true,
-        id: (ctx) => ctx.txVars.realIP,
-    });
     const chartDataLimiter = KoaRateLimit({
         driver: 'memory',
         db: new Map(),
@@ -65,7 +56,6 @@ module.exports = (config) => {
     router.get('/auth/:provider/redirect', authLimiter, webRoutes.auth.providerRedirect);
     router.get('/auth/:provider/callback', authLimiter, webRoutes.auth.providerCallback);
     router.get('/auth/zap', authLimiter, webRoutes.auth.verifyZapToken);
-    router.get('/auth/nui', authLimiterNUI, webRoutes.auth.verifyNuiAuth);
     router.post('/auth/password', authLimiter, webRoutes.auth.verifyPassword);
     router.post('/changePassword', requestAuth('web'), webRoutes.auth.changePassword);
 
@@ -128,6 +118,18 @@ module.exports = (config) => {
     //Index & generic
     router.get('/resources', requestAuth('web'), webRoutes.resources);
     router.get('/', requestAuth('web'), webRoutes.dashboard);
+
+    //NUI specific routes
+    router.get('/nui/auth', requestAuth('nui'), webRoutes.auth.nui);
+    router.get('/nui/player/:reference', requestAuth('nui'), webRoutes.player.modal);
+    router.post('/nui/player/:action', requestAuth('nui'), webRoutes.player.actions);
+    router.get('/nui/start/:route?', requestAuth('nuiStart'), async (ctx, next) => {
+        if (ctx.params.route === 'adminManager') {
+            return await webRoutes.adminManager.get(ctx, next);
+        } else {
+            return await webRoutes.serverLog(ctx, next);
+        }
+    });
 
     //Return router
     return router;

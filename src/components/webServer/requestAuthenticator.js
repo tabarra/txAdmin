@@ -11,7 +11,7 @@ const requestAuth = (epType) => {
     const intercomAuth = async (ctx, next) => {
         if (
             typeof ctx.request.body.txAdminToken !== 'undefined'
-            && ctx.request.body.txAdminToken === globals.webServer.intercomToken
+            && ctx.request.body.txAdminToken === globals.webServer.luaComToken
         ) {
             await next();
         } else {
@@ -19,8 +19,8 @@ const requestAuth = (epType) => {
         }
     };
 
-    //Normal auth function
-    const normalAuth = async (ctx, next) => {
+    //Default auth function
+    const defaultAuth = async (ctx, next) => {
         const {isValidAuth} = authLogic(ctx.session, true, epType);
 
         if (!isValidAuth) {
@@ -30,10 +30,53 @@ const requestAuth = (epType) => {
                 return ctx.response.redirect('/auth?logout');
             } else if (epType === 'api') {
                 return ctx.send({logout:true});
+            } else if (epType === 'nuiStart') {
+                const {isValidAuth, admin} = nuiAuthLogic(ctx.ip, ctx.request.headers);
+
+                if (!isValidAuth) {
+                    return ctx.response.redirect('/auth?logout');
+                } else {
+                    const providerWithPicture = Object.values(admin.providers).find((provider) => provider.data && provider.data.picture);
+                    ctx.session.auth = {
+                        username: admin.name,
+                        picture: (providerWithPicture) ? providerWithPicture.data.picture : undefined,
+                        password_hash: admin.password_hash,
+                        master: admin.master,
+                        permissions: admin.permissions,
+                        expires_at: false,
+                        isWebInterface: false,
+                        //Note: we actually need permissions/master because the first request doesn't
+                        // go through authLogic() which sets them up
+                    };
+                    ctx.utils.logAction('logged in from via NUI iframe');
+                    globals.databus.txStatsData.login.origins.webpipe++;
+                    globals.databus.txStatsData.login.methods.iframe++;
+                    await next();
+                }
             } else {
                 return () => {throw new Error('Unknown auth type');};
             }
         } else {
+            await next();
+        }
+    };
+
+    //NUI auth function
+    const nuiAuth = async (ctx, next) => {
+        const {isValidAuth, rejectReason, admin} = nuiAuthLogic(ctx.ip, ctx.request.headers);
+
+        if (!isValidAuth) {
+            return ctx.send({isAdmin:false, reason: rejectReason});
+        } else {
+            ctx.nuiSession = {
+                auth: {
+                    username: admin.name,
+                    permissions: admin.permissions,
+                    master: admin.master,
+                    isWebInterface: false,
+                    //Doesn't apply: picture, password_hash, expires_at, isTempPassword
+                },
+            };
             await next();
         }
     };
@@ -56,9 +99,13 @@ const requestAuth = (epType) => {
     if (epType === 'intercom') {
         return intercomAuth;
     } else if (epType === 'web') {
-        return normalAuth;
+        return defaultAuth;
     } else if (epType === 'api') {
-        return normalAuth;
+        return defaultAuth;
+    } else if (epType === 'nuiStart') {
+        return defaultAuth;
+    } else if (epType === 'nui') {
+        return nuiAuth;
     } else if (epType === 'socket') {
         return socketAuth;
     } else {
@@ -122,6 +169,65 @@ const authLogic = (sess, perm, epType) => {
     }
 
     return {isValidAuth, isValidPerm};
+};
+
+
+/**
+ * Autentication & authorization logic used in for nui requests
+ * @param {string} reqIP
+ * @param {object} reqHeader
+ */
+const nuiAuthLogic = (reqIP, reqHeader) => {
+    // Check sus IPs
+    //  && !GlobalData.isZapHosting
+    //FIXME: test on ZAP game server
+    if (!GlobalData.loopbackInterfaces.includes(reqIP)) {
+        if (GlobalData.verbose) {
+            logWarn(`NUI Auth Failed: reqIP (${reqIP}) not in ${JSON.stringify(GlobalData.loopbackInterfaces)}.`);
+        }
+        return {isValidAuth: false, rejectReason: 'Invalid Request: source'};
+    }
+
+    // Check missing headers
+    if (typeof reqHeader['x-txadmin-token'] !== 'string') {
+        return {isValidAuth: false, rejectReason: 'Invalid Request: token header'};
+    }
+    if (typeof reqHeader['x-txadmin-identifiers'] !== 'string') {
+        return {isValidAuth: false, rejectReason: 'Invalid Request: identifiers header'};
+    }
+
+    // Check token value
+    if (reqHeader['x-txadmin-token'] !== globals.webServer.luaComToken) {
+        if (GlobalData.verbose) {
+            logWarn(`NUI Auth Failed: token received ${reqHeader['x-txadmin-token']} !== expected ${globals.webServer.luaComToken}.`);
+        }
+        return {isValidAuth: false, rejectReason: 'Unauthorized: token value'};
+    }
+
+    // Check identifier array
+    const identifiers = reqHeader['x-txadmin-identifiers']
+        .split(',')
+        .map((i) => i.trim().toLowerCase())
+        .filter((i) => i.length);
+    if (!identifiers.length) {
+        return {isValidAuth: false, rejectReason: 'Unauthorized: empty identifier array'};
+    }
+
+    // Find admin
+    try {
+        const admin = globals.adminVault.getAdminByIdentifiers(identifiers);
+        if (!admin) {
+            if (GlobalData.verbose) {
+                logWarn(`NUI Auth Failed: no admin found with identifiers ${JSON.stringify(identifiers)}.`);
+            }
+            return {isValidAuth: false, rejectReason: 'Unauthorized: admin not found'};
+        }
+        return {isValidAuth: true, admin};
+    } catch (error) {
+        logWarn(`Failed to authenticate NUI user with error: ${error.message}`);
+        if (GlobalData.verbose) dir(error);
+        return {isValidAuth: false, rejectReason: 'internal error'};
+    }
 };
 
 

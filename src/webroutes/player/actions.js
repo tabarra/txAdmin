@@ -34,29 +34,31 @@ function sendAlertOutput(ctx, toResp, header = 'Output:') {
 /**
  * Returns the output page containing the bans experiment
  * @param {object} ctx
+ * @param {object} sess
  */
 module.exports = async function PlayerActions(ctx) {
     //Sanity check
     if (anyUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');
     }
-    let action = ctx.params.action;
+    const action = ctx.params.action;
+    const sess = ctx.nuiSession ?? ctx.session;
 
     //Delegate to the specific action handler
     if (action === 'save_note') {
-        return await handleSaveNote(ctx);
+        return await handleSaveNote(ctx, sess);
     } else if (action === 'message') {
-        return await handleMessage(ctx);
+        return await handleMessage(ctx, sess);
     } else if (action === 'kick') {
-        return await handleKick(ctx);
+        return await handleKick(ctx, sess);
     } else if (action === 'warn') {
-        return await handleWarning(ctx);
+        return await handleWarning(ctx, sess);
     } else if (action === 'ban') {
-        return await handleBan(ctx);
+        return await handleBan(ctx, sess);
     } else if (action === 'whitelist') {
-        return await handleWhitelist(ctx);
+        return await handleWhitelist(ctx, sess);
     } else if (action === 'revoke_action') {
-        return await handleRevokeAction(ctx);
+        return await handleRevokeAction(ctx, sess);
     } else {
         return ctx.send({
             type: 'danger',
@@ -68,13 +70,11 @@ module.exports = async function PlayerActions(ctx) {
 
 //================================================================
 /**
- * Handle Save Note
- *
- * NOTE: open to all admins
- *
+ * Handle Save Note (open to all admins)
  * @param {object} ctx
+ * @param {object} sess
  */
-async function handleSaveNote(ctx) {
+async function handleSaveNote(ctx, sess) {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -83,11 +83,11 @@ async function handleSaveNote(ctx) {
     )) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
-    let license = ctx.request.body.license.trim();
-    let note = ctx.request.body.note.trim();
+    const license = ctx.request.body.license.trim();
+    const note = ctx.request.body.note.trim();
 
     try {
-        let success = await globals.playerController.setPlayerNote(license, note, ctx.session.auth.username);
+        const success = await globals.playerController.setPlayerNote(license, note, sess.auth.username);
         if (success) {
             return ctx.send({
                 type: 'success',
@@ -112,8 +112,9 @@ async function handleSaveNote(ctx) {
 /**
  * Handle Send Message (admin dm)
  * @param {object} ctx
+ * @param {object} sess
  */
-async function handleMessage(ctx) {
+async function handleMessage(ctx, sess) {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -122,16 +123,16 @@ async function handleMessage(ctx) {
     )) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
-    let id = ctx.request.body.id;
-    let message = ctx.request.body.message.trim();
+    const id = ctx.request.body.id;
+    const message = ctx.request.body.message.trim();
 
     //Check permissions
     if (!ensurePermission(ctx, 'players.message')) return false;
 
     //Prepare and send command
     ctx.utils.logAction(`DM to #${id}: ${message}`);
-    let cmd = formatCommand('txaSendDM', id, ctx.session.auth.username, message);
-    let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+    const cmd = formatCommand('txaSendDM', id, sess.auth.username, message);
+    const toResp = await globals.fxRunner.srvCmdBuffer(cmd);
     return sendAlertOutput(ctx, toResp);
 }
 
@@ -140,8 +141,9 @@ async function handleMessage(ctx) {
 /**
  * Handle Kick Player
  * @param {object} ctx
+ * @param {object} sess
  */
-async function handleKick(ctx) {
+async function handleKick(ctx, sess) {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -158,14 +160,14 @@ async function handleKick(ctx) {
 
     //Prepare and send command
     ctx.utils.logAction(`Kicked #${id}: ${reason}`);
-    const msg = `[txAdmin] (${xss(ctx.session.auth.username)}) Kick reason: ${xss(reason)}`;
+    const msg = `[txAdmin] (${xss(sess.auth.username)}) Kick reason: ${xss(reason)}`;
     const cmd = formatCommand('txaKickID', id, msg);
     const toResp = await globals.fxRunner.srvCmdBuffer(cmd);
 
     // Dispatch `txAdmin:events:playerKicked`
     globals.fxRunner.sendEvent('playerKicked', {
         target: id,
-        author: ctx.session.auth.username,
+        author: sess.auth.username,
         reason,
     });
 
@@ -177,8 +179,9 @@ async function handleKick(ctx) {
 /**
  * Handle Send Warning
  * @param {object} ctx
+ * @param {object} sess
  */
-async function handleWarning(ctx) {
+async function handleWarning(ctx, sess) {
     //Checking request
     if (anyUndefined(
         ctx.request.body,
@@ -187,9 +190,9 @@ async function handleWarning(ctx) {
     )) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
-    let id = parseInt(ctx.request.body.id);
+    const id = parseInt(ctx.request.body.id);
     if (Number.isNaN(id)) return ctx.send({type: 'danger', message: 'Invalid ID.'});
-    let reason = ctx.request.body.reason.trim();
+    const reason = ctx.request.body.reason.trim();
 
     //Check permissions
     if (!ensurePermission(ctx, 'players.warn')) return false;
@@ -197,28 +200,28 @@ async function handleWarning(ctx) {
     //Register action (and checks if player is online)
     let actionId;
     try {
-        actionId = await globals.playerController.registerAction(id, 'warn', ctx.session.auth.username, reason);
+        actionId = await globals.playerController.registerAction(id, 'warn', sess.auth.username, reason);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
 
     //Prepare and send command
     ctx.utils.logAction(`Warned #${id}: ${reason}`);
-    let cmd = formatCommand(
+    const cmd = formatCommand(
         'txaWarnID',
         id,
-        ctx.session.auth.username,
+        sess.auth.username,
         reason,
         globals.translator.t('nui_warning.title'),
         globals.translator.t('nui_warning.warned_by'),
         globals.translator.t('nui_warning.instruction'),
     );
-    let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
+    const toResp = await globals.fxRunner.srvCmdBuffer(cmd);
 
     // Dispatch `txAdmin:events:playerWarned`
     globals.fxRunner.sendEvent('playerWarned', {
         target: id,
-        author: ctx.session.auth.username,
+        author: sess.auth.username,
         reason,
         actionId,
     });
@@ -230,8 +233,9 @@ async function handleWarning(ctx) {
 /**
  * Handle Banning command
  * @param {object} ctx
+ * @param {object} sess
  */
-async function handleBan(ctx) {
+async function handleBan(ctx, sess) {
     //Checking request & identifiers
     if (
         anyUndefined(
@@ -249,7 +253,7 @@ async function handleBan(ctx) {
 
     //Converting ID to int
     if (typeof reference === 'string') {
-        let intID = parseInt(reference);
+        const intID = parseInt(reference);
         if (isNaN(intID)) {
             return ctx.send({type: 'danger', message: 'You must send at least one identifier.'});
         } else {
@@ -289,7 +293,7 @@ async function handleBan(ctx) {
     //Register action (and checks if player is online)
     let actionId;
     try {
-        actionId = await globals.playerController.registerAction(reference, 'ban', ctx.session.auth.username, reason, expiration);
+        actionId = await globals.playerController.registerAction(reference, 'ban', sess.auth.username, reason, expiration);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
@@ -297,7 +301,7 @@ async function handleBan(ctx) {
     //Prepare and send command
     let msg;
     const tOptions = {
-        author: xss(ctx.session.auth.username),
+        author: xss(sess.auth.username),
         reason: xss(reason),
     };
     if (expiration !== false) {
@@ -325,7 +329,7 @@ async function handleBan(ctx) {
 
     // Dispatch `txAdmin:events:playerBanned`
     globals.fxRunner.sendEvent('playerBanned', {
-        author: ctx.session.auth.username,
+        author: sess.auth.username,
         reason,
         actionId,
         target: reference,
@@ -340,13 +344,14 @@ async function handleBan(ctx) {
 /**
  * Handle Whitelist Action
  * @param {object} ctx
+ * @param {object} sess
  */
-async function handleWhitelist(ctx) {
+async function handleWhitelist(ctx, sess) {
     //Checking request
     if (anyUndefined(ctx.request.body.reference)) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
-    let reference = ctx.request.body.reference.trim();
+    const reference = ctx.request.body.reference.trim();
 
     //Check permissions
     if (!ensurePermission(ctx, 'players.whitelist')) return false;
@@ -354,7 +359,7 @@ async function handleWhitelist(ctx) {
     //Whitelist reference
     let actionId;
     try {
-        actionId = await globals.playerController.approveWhitelist(reference, ctx.session.auth.username);
+        actionId = await globals.playerController.approveWhitelist(reference, sess.auth.username);
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
@@ -362,7 +367,7 @@ async function handleWhitelist(ctx) {
     // Dispatch `txAdmin:events:playerWhitelisted`
     globals.fxRunner.sendEvent('playerWhitelisted', {
         target: reference,
-        author: ctx.session.auth.username,
+        author: sess.auth.username,
         actionId,
     });
 
@@ -375,23 +380,24 @@ async function handleWhitelist(ctx) {
 /**
  * Handle Revoke Action
  * @param {object} ctx
+ * @param {object} sess
  */
-async function handleRevokeAction(ctx) {
+async function handleRevokeAction(ctx, sess) {
     //Checking request
     if (anyUndefined(ctx.request.body.action_id)) {
         return ctx.send({type: 'danger', message: 'Invalid request.'});
     }
-    let action_id = ctx.request.body.action_id.trim();
+    const action_id = ctx.request.body.action_id.trim();
 
     //Check permissions
-    let perms = [];
+    const perms = [];
     if (ensurePermission(ctx, 'players.ban')) perms.push('ban');
     if (ensurePermission(ctx, 'players.warn')) perms.push('warn');
     if (ensurePermission(ctx, 'players.whitelist')) perms.push('whitelist');
 
     //Revoke action
     try {
-        let errorMsg = await globals.playerController.revokeAction(action_id, ctx.session.auth.username, perms);
+        const errorMsg = await globals.playerController.revokeAction(action_id, sess.auth.username, perms);
         if (errorMsg !== null) {
             return ctx.send({type: 'danger', message: `<b>Error:</b> ${errorMsg}`});
         }

@@ -200,7 +200,7 @@ const DialogActionView: React.FC = () => {
     }
 
     // TODO: Change iFrame Src through Provider?
-    goToFramePage(`/adminManager/${adminManagerPath}`);
+    goToFramePage(`/nui/start/adminManager${adminManagerPath}`);
     setModalOpen(false);
   };
 

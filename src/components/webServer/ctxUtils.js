@@ -184,8 +184,9 @@ function logCommand(ctx, data) {
  * @param {string} data
  */
 function logAction(ctx, data) {
-    log(`[${ctx.session.auth.username}] ${data}`);
-    globals.logger.admin.write(`[${ctx.session.auth.username}] ${data}`);
+    const sess = ctx.nuiSession ?? ctx.session;
+    log(`[${sess.auth.username}] ${data}`);
+    globals.logger.admin.write(`[${sess.auth.username}] ${data}`);
 }
 
 
@@ -199,21 +200,23 @@ function logAction(ctx, data) {
  */
 function checkPermission(ctx, perm, fromCtx, printWarn = true) {
     try {
+        const sess = ctx.nuiSession ?? ctx.session;
+
         //For master permission
-        if (perm === 'master' && ctx.session.auth.master !== true) {
-            if (GlobalData.verbose && printWarn) logWarn(`[${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
+        if (perm === 'master' && sess.auth.master !== true) {
+            if (GlobalData.verbose && printWarn) logWarn(`[${sess.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
 
         //For all other permissions
         if (
-            ctx.session.auth.master === true
-            || ctx.session.auth.permissions.includes('all_permissions')
-            || ctx.session.auth.permissions.includes(perm)
+            sess.auth.master === true
+            || sess.auth.permissions.includes('all_permissions')
+            || sess.auth.permissions.includes(perm)
         ) {
             return true;
         } else {
-            if (GlobalData.verbose && printWarn) logWarn(`[${ctx.session.auth.username}] Permission '${perm}' denied.`, fromCtx);
+            if (GlobalData.verbose && printWarn) logWarn(`[${sess.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
     } catch (error) {
@@ -251,7 +254,7 @@ module.exports = async function WebCtxUtils(ctx, next) {
     if (
         typeof ctx.headers['x-txadmin-identifiers'] === 'string'
         && typeof ctx.headers['x-txadmin-token'] === 'string'
-        && ctx.headers['x-txadmin-token'] === globals.webServer.fxWebPipeToken
+        && ctx.headers['x-txadmin-token'] === globals.webServer.luaComToken
         && GlobalData.loopbackInterfaces.includes(ctx.ip)
     ) {
         const ipIdentifier = ctx.headers['x-txadmin-identifiers']

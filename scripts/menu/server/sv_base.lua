@@ -3,7 +3,6 @@ if GetConvar('txAdminServerMode', 'false') ~= 'true' then
   return
 end
 
-ADMIN_DATA = {}
 
 ServerCtxObj = {
   oneSync = {
@@ -36,36 +35,15 @@ RegisterCommand('txAdmin-debug', function(src, args)
   if args[1] == '1' then
     debugModeEnabled = true
     debugPrint("^1!! Debug mode enabled by ^2" .. playerName .. "^1 !!^0")
-    TriggerClientEvent('txAdmin:events:enableDebug', -1, true)
+    TriggerClientEvent('txAdmin:events:setDebugMode', -1, true)
   elseif args[1] == '0' then
     debugPrint("^1!! Debug mode disabled by ^2" .. playerName .. "^1 !!^0")
     debugModeEnabled = false
-    TriggerClientEvent('txAdmin:events:enableDebug', -1, false)
+    TriggerClientEvent('txAdmin:events:setDebugMode', -1, false)
   end
 end)
 
----@param onlineAdminIDs table
-AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
-  debugPrint('^3Admins changed. Online admins: ' .. json.encode(onlineAdminIDs) .. "^0")
 
-  -- Collect old and new admin IDs
-  local refreshAdminIds = {}
-  for id, _ in pairs(ADMIN_DATA) do
-    refreshAdminIds[#refreshAdminIds + 1] = id
-  end
-  for _, newId in pairs(onlineAdminIDs) do
-    refreshAdminIds[#refreshAdminIds + 1] = newId
-  end
-  debugPrint('^3Forcing ' .. #refreshAdminIds .. ' clients to re-auth')
-
-  -- Resetting all admin permissions
-  ADMIN_DATA = {}
-
-  -- Informing clients that they need to reauth
-  for id, _ in pairs(refreshAdminIds) do
-    TriggerClientEvent('txAdmin:menu:reAuth', id)
-  end
-end)
 
 local function syncServerCtx()
   local oneSyncConvar = GetConvar('onesync', 'off')
@@ -104,6 +82,11 @@ local function syncServerCtx()
   debugPrint('Server CTX assigned to GlobalState, CTX:')
   debugPrint(json.encode(ServerCtxObj))
   GlobalState.txAdminServerCtx = ServerCtxObj
+
+  -- Telling admins that the server context changed
+  for adminID, _ in pairs(TX_ADMINS) do
+    TriggerClientEvent('txAdmin:events:setServerCtx', adminID, ServerCtxObj)
+  end
 end
 
 RegisterNetEvent('txAdmin:events:getServerCtx', function()
@@ -118,20 +101,6 @@ AddEventHandler('txAdmin:events:configChanged', function()
   syncServerCtx()
 end)
 
-
-RegisterNetEvent('txAdmin:menu:checkAccess', function()
-  local src = source
-  local canAccess = not (ADMIN_DATA[tostring(src)] == nil)
-  debugPrint((canAccess and "^2" or "^1") .. GetPlayerName(src) ..
-      " does " .. (canAccess and "" or "NOT ") .. "have menu permission.")
-  TriggerClientEvent('txAdmin:menu:setAccessible', src, canAccess)
-end)
-
---[[ Handle player disconnects ]]
-AddEventHandler('playerDropped', function()
-  local s = source
-  ADMIN_DATA[tostring(s)] = nil
-end)
 
 CreateThread(function()
   -- If we don't wait for a tick there is some race condition that

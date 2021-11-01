@@ -142,7 +142,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
                 variant="subtitle1"
                 color="textPrimary"
               >
-                {playerData.name}
+                {playerData.admin && '🛡️'} {playerData.name}
               </Typography>
             </Tooltip>
             <Typography

@@ -1,24 +1,23 @@
 -- =============================================
---  This file contains mainly all player events like
---  heal or announce, as well as some global constants. Also contains some
---  misc functionality.
+--  This file contains misc stuff, maybe deprecate?
 -- =============================================
+if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+    return
+end
 
---[[ Constants ]]
-
+-- Consts
 SoundEnum = {
     move = 'NAV_UP_DOWN',
     enter = 'SELECT'
 }
 
-RegisterNetEvent('txAdmin:receiveAnnounce', function(message)
-    sendMenuMessage('addAnnounceMessage', { message = message })
+-- Audio play callback
+RegisterNUICallback('playSound', function(sound, cb)
+    PlaySoundFrontend(-1, SoundEnum[sound], 'HUD_FRONTEND_DEFAULT_SOUNDSET', 1)
+    cb({})
 end)
 
-if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
-    return
-end
-
+-- Heals local player
 RegisterNetEvent('txAdmin:menu:healed', function()
     debugPrint('Received heal event, healing to full')
     local ped = PlayerPedId()
@@ -27,11 +26,10 @@ RegisterNetEvent('txAdmin:menu:healed', function()
     if IsEntityDead(ped) then
         NetworkResurrectLocalPlayer(pos[1], pos[2], pos[3], heading, false, false)
     end
-    ped = PlayerPedId()
     SetEntityHealth(ped, GetEntityMaxHealth(ped))
 end)
 
--- Used to trigger the help alert
+-- Tell the user he is an admin
 AddEventHandler('playerSpawned', function()
     Wait(60000)
     if menuIsAccessible then

@@ -1,7 +1,6 @@
 -- =============================================
 --  Contains all spectate related logic
 -- =============================================
-
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
     return
 end

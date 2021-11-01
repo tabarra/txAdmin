@@ -1,7 +1,6 @@
 -- =============================================
 --  This file contains all overhead player ID logic
 -- =============================================
-
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
     return
 end
@@ -107,7 +106,6 @@ RegisterNUICallback('togglePlayerIDs', function(_, cb)
 end)
 
 RegisterCommand('txAdmin:menu:togglePlayerIDs', togglePlayerIDsHandler)
-RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'Toggle displaying player IDs', 'KEYBOARD', '')
 
 CreateThread(function()
     local sleep = 150

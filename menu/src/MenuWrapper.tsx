@@ -12,7 +12,6 @@ import { useServerCtxValue } from "./state/server.state";
 import { getLocale } from "./utils/getLocale";
 import { WarnPage } from "./components/WarnPage/WarnPage";
 import { IFrameProvider } from "./provider/IFrameProvider";
-import { useCheckCredentials } from "./hooks/useCheckCredentials";
 import { PlayerModalProvider } from "./provider/PlayerModalProvider";
 import { txAdminMenuPage, useSetPage } from "./state/page.state";
 import { useListenerForSomething } from "./hooks/useListenerForSomething";
@@ -21,9 +20,16 @@ import {
   useSetPlayerFilter,
 } from "./state/players.state";
 import { Box, styled } from "@mui/material";
+import { fetchNui } from "./utils/fetchNui";
 
+
+//Mock events for browser development
 debugData(
   [
+    {
+      action: "setPermissions",
+      data: ["all_permissions"],
+    },
     {
       action: "setVisible",
       data: true,
@@ -31,14 +37,6 @@ debugData(
   ],
   3000
 );
-
-interface AppWrapperProps {
-  visible: boolean;
-}
-
-const AppWrapper = styled("div")<AppWrapperProps>(({ theme, visible }) => ({
-  opacity: visible ? 1 : 0,
-}));
 
 const MenuWrapper: React.FC = () => {
   const visible = useIsMenuVisibleValue();
@@ -51,7 +49,6 @@ const MenuWrapper: React.FC = () => {
   // These hooks don't ever unmount
   useExitListener();
   useNuiListenerService();
-  useCheckCredentials();
 
   //Change page back to Main when closed
   useEffect(() => {
@@ -73,6 +70,11 @@ const MenuWrapper: React.FC = () => {
     () => getLocale(serverCtx.locale),
     [serverCtx.locale]
   );
+  
+  //Inform Lua that we are ready to get all variables (server ctx, permissions, debug, etc)
+  useEffect(() => {
+    fetchNui('reactLoaded').catch(()=>{});
+  }, []);
 
   useListenerForSomething();
 
