@@ -12,7 +12,6 @@ function updateServerCtx()
         TriggerServerEvent('txAdmin:events:getServerCtx')
     else
         ServerCtx = _ServerCtx
-        ServerCtx.endpoint = GetCurrentServerEndpoint()
         debugPrint('^2ServerCtx updated from global state')
     end
 end
@@ -20,8 +19,8 @@ end
 RegisterNetEvent('txAdmin:events:setServerCtx', function(ctx)
     if type(ctx) ~= 'table' then return end
     ServerCtx = ctx
-    ServerCtx.endpoint = GetCurrentServerEndpoint()
     debugPrint('^2ServerCtx updated from server event')
+    sendMenuMessage('setServerCtx', ServerCtx)
 end)
 
 RegisterNUICallback('getServerCtx', function(_, cb)

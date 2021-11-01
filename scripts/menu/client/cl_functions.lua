@@ -41,7 +41,6 @@ end
 
 --- Toggle visibility of the txAdmin NUI menu
 function toggleMenuVisibility(visible)
-    debugPrint(isMenuVisible)
     if (visible == true and isMenuVisible) or (visible == false and not isMenuVisible) then
         return
     end
@@ -50,9 +49,7 @@ function toggleMenuVisibility(visible)
             return
         end
     end
-    -- Lets update before we open the menu
-    updateServerCtx()
-    sendMenuMessage('setDebugMode', isMenuDebug)
+
     sendReactPlayerlist()
     if visible ~= nil then
         isMenuVisible = visible

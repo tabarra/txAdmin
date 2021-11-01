@@ -82,6 +82,11 @@ local function syncServerCtx()
   debugPrint('Server CTX assigned to GlobalState, CTX:')
   debugPrint(json.encode(ServerCtxObj))
   GlobalState.txAdminServerCtx = ServerCtxObj
+
+  -- Telling admins that the server context changed
+  for adminID, _ in pairs(TX_ADMINS) do
+    TriggerClientEvent('txAdmin:events:setServerCtx', adminID, ServerCtxObj)
+  end
 end
 
 RegisterNetEvent('txAdmin:events:getServerCtx', function()

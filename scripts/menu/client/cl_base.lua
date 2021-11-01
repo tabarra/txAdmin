@@ -65,7 +65,6 @@ RegisterNetEvent('txcl:setAdmin', function(perms, rejectReason)
     menuIsAccessible = false
     menuPermissions = {}
   end
-  sendMenuMessage('setDebugMode', isMenuDebug)
   sendMenuMessage('setPermissions', menuPermissions)
 end)
 
@@ -75,7 +74,8 @@ end)
 local function retryAuthentication()
   print("^5[AUTH] Retrying menu authentication.")
   menuIsAccessible = false
-  --FIXME: tell react we are no longer authenticated
+  menuPermissions = {}
+  sendMenuMessage('setPermissions', menuPermissions)
   TriggerServerEvent('txsv:checkAdminStatus')
 end
 RegisterCommand('txAdmin-reauth', retryAuthentication)
@@ -108,7 +108,8 @@ end)
 
 -- Will toggle debug logging
 RegisterNetEvent('txAdmin:events:setDebugMode', function(enabled)
-  debugModeEnabled = enabled
+  isMenuDebug = enabled
+  sendMenuMessage('setDebugMode', isMenuDebug)
 end)
 
 
@@ -122,6 +123,23 @@ RegisterNUICallback('focusInputs', function(shouldFocus, cb)
   end
   SetNuiFocus(true, shouldFocus)
   SetNuiFocusKeepInput(not shouldFocus)
+  cb({})
+end)
+
+
+RegisterNUICallback('reactLoaded', function(aaa, cb)
+  print("Got reactLoaded:")
+  sendMenuMessage('setDebugMode', isMenuDebug)
+  sendMenuMessage('setPermissions', menuPermissions)
+  
+  CreateThread(function()
+    updateServerCtx()
+    while ServerCtx == false do Wait(0) end
+    debugPrint('Server CTX:')
+    debugPrint(json.encode(ServerCtx))
+    sendMenuMessage('setServerCtx', ServerCtx)
+  end)
+
   cb({})
 end)
 

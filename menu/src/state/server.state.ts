@@ -1,7 +1,5 @@
-import { atom, selector, useRecoilValue } from "recoil";
+import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import config from "../utils/config.json";
-import { fetchNui } from "../utils/fetchNui";
-import { debugLog } from "../utils/debugLog";
 
 interface OneSyncCtx {
   type: null | string;
@@ -20,27 +18,9 @@ export interface ServerCtx {
 
 const serverCtx = atom<ServerCtx>({
   key: "serverCtx",
-  default: selector<ServerCtx>({
-    key: "serverCtxFetch",
-    get: async () => {
-      try {
-        const serverCtx = await fetchNui<ServerCtx>(
-          "getServerCtx",
-          {},
-          {
-            mockResp: config.serverCtx,
-          }
-        );
-        debugLog("GetServerCtx", serverCtx);
-        return serverCtx;
-      } catch (e) {
-        // This will error whenever the menu is disabled, so lets just silently
-        // deal with it for now.
-        // console.error(e)
-        return <ServerCtx>config.serverCtx;
-      }
-    },
-  }),
+  default: config.serverCtx,
 });
 
 export const useServerCtxValue = () => useRecoilValue(serverCtx);
+
+export const useSetServerCtx = () => useSetRecoilState(serverCtx);
