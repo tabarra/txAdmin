@@ -48,12 +48,28 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const determineHealthBGColor = (val: number) => {
+  if (val <= 20) return "#4a151b";
+  else if (val <= 60) return "#624d18";
+  else return "#097052";
+};
+
 const determineHealthColor = (val: number, theme: Theme) => {
   if (val <= 20) return theme.palette.error.light;
+  else if (val <= 60) return theme.palette.warning.light;
   else return theme.palette.primary.light;
 };
 
 const HealthBarBackground = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "healthVal",
+})<{ healthVal: number }>(({ healthVal }) => ({
+  background: determineHealthBGColor(healthVal),
+  height: 5,
+  borderRadius: 10,
+  overflow: "hidden",
+}));
+
+const HealthBar = styled(Box, {
   shouldForwardProp: (prop) => prop !== "healthVal",
 })<{ healthVal: number }>(({ theme, healthVal }) => ({
   background: determineHealthColor(healthVal, theme),
@@ -153,12 +169,12 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
               tooltip: classes.tooltipOverride,
             }}
           >
-            <div className={classes.barBackground}>
-              <HealthBarBackground
+            <HealthBarBackground healthVal={playerData.health}>
+              <HealthBar
                 width={`${playerData.health}%`}
                 healthVal={playerData.health}
               />
-            </div>
+            </HealthBarBackground>
           </Tooltip>
         </div>
       </Paper>
