@@ -42,6 +42,13 @@ if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
   return
 end
 
+RegisterCommand('txAdmin:menu:openPlayersPage', function()
+  sendMenuMessage('setMenuPage', 1)
+  sendMenuMessage('setVisible', true)
+end)
+
+RegisterKeyMapping('txAdmin:menu:openPlayersPage', 'Open the Menu\'s Players page', 'KEYBOARD', '')
+
 -- Since the menu yields/receives keyboard
 -- focus we need to store that the menu is already visible
 function registerTxKeybinds()
@@ -67,19 +74,19 @@ end)
 CreateThread(function()
   Wait(1000)
   TriggerEvent(
-    'chat:addSuggestion', 
-    '/tx', 
-    'Opens the main txAdmin Menu or specific for a player.', 
+    'chat:addSuggestion',
+    '/tx',
+    'Opens the main txAdmin Menu or specific for a player.',
     {{ name="player ID/name", help="(Optional) Open player modal for specific ID or name." }}
   )
   TriggerEvent(
-    'chat:addSuggestion', 
-    '/txAdmin-reauth', 
+    'chat:addSuggestion',
+    '/txAdmin-reauth',
     'Retries to authenticate the menu NUI. Requires debug mode to be on.'
   )
   TriggerEvent(
-    'chat:addSuggestion', 
-    '/txAdmin-debug', 
+    'chat:addSuggestion',
+    '/txAdmin-debug',
     'Enables or disables the debug mode. Requires \'control.server\' permission.',
     {{ name="1|0", help="1 to enable, 0 to disable" }}
   )
