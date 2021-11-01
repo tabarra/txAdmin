@@ -148,9 +148,9 @@ module.exports = class WebServer {
                     ctx.body = {error: desc};
                 } else {
                     const desc = `${prefix} Internal Error\n`
-                                 + `Message: ${error.message}\n`
-                                 + `Route: ${reqPath}\n`
-                                 + 'Make sure your txAdmin is updated.';
+                                + `Message: ${error.message}\n`
+                                + `Route: ${reqPath}\n`
+                                + 'Make sure your txAdmin is updated.';
                     logError(desc, methodName);
                     if (GlobalData.verbose) dir(error);
                     ctx.status = 500;

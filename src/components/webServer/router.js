@@ -121,9 +121,15 @@ module.exports = (config) => {
 
     //NUI specific routes
     router.get('/nui/auth', requestAuth('nui'), webRoutes.auth.nui);
-    router.get('/nui/start', requestAuth('nuiStart'), webRoutes.serverLog);
     router.get('/nui/player/:reference', requestAuth('nui'), webRoutes.player.modal);
     router.post('/nui/player/:action', requestAuth('nui'), webRoutes.player.actions);
+    router.get('/nui/start/:route?', requestAuth('nuiStart'), async (ctx, next) => {
+        if (ctx.params.route === 'adminManager') {
+            return await webRoutes.adminManager.get(ctx, next);
+        } else {
+            return await webRoutes.serverLog(ctx, next);
+        }
+    });
 
     //Return router
     return router;

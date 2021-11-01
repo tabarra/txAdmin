@@ -41,8 +41,12 @@ const requestAuth = (epType) => {
                         username: admin.name,
                         picture: (providerWithPicture) ? providerWithPicture.data.picture : undefined,
                         password_hash: admin.password_hash,
+                        master: admin.master,
+                        permissions: admin.permissions,
                         expires_at: false,
                         isWebInterface: false,
+                        //Note: we actually need permissions/master because the first request doesn't
+                        // go through authLogic() which sets them up
                     };
                     ctx.utils.logAction('logged in from via NUI iframe');
                     globals.databus.txStatsData.login.origins.webpipe++;
