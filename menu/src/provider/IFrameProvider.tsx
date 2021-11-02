@@ -37,12 +37,6 @@ export const IFrameProvider: React.FC = ({ children }) => {
   const [curFramePg, setCurFramePg] = useState<ValidPath | null>(null);
   const [menuPage, setMenuPage] = usePage();
   const isMenuVisible = useIsMenuVisibleValue();
-  const curPerms = usePermissionsValue();
-
-  useEffect(() => {
-    if (curPerms) {
-    }
-  }, [curPerms]);
 
   // Will reset the iFrame page to server logs everytime
   useEffect(() => {

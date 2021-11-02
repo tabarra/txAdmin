@@ -3,7 +3,7 @@
 -- =============================================
 --Check Environment
 if GetConvar('txAdminServerMode', 'false') ~= 'true' then
-   return
+    return
 end
 local oneSyncConvar = GetConvar('onesync', 'off')
 local onesyncEnabled = oneSyncConvar == 'on' or oneSyncConvar == 'legacy'

@@ -24,7 +24,7 @@ import { fetchNui } from "./utils/fetchNui";
 
 
 //Mock events for browser development
-debugData(
+debugData<any>(
   [
     {
       action: "setPermissions",
