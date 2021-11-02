@@ -7,9 +7,9 @@
 - [x] Add keybind for opening players page
 - [x] Add keybind for toggling player IDs
 - [x] Fix menu healthbar colors
+- [x] Enable custom locale for menu
 - [ ] Reorganize menu buttons.
 - [ ] Do we need to migrate warn before enabling custom locale?
-- [ ] Enable custom locale for menu
 - [ ] Fix the manage admins perm issue
 - [ ] Test new NUI Auth on ZAP server 
 
@@ -129,12 +129,11 @@ https://forum.cfx.re/t/standalone-advanced-report-system/4774403/1
 
 
 ### Todozinhos:
-pagina de adicionar admin precisa depois do modal, mostrar mais info:
-username, senha, potencialmente link, instruções de login
-
-warn auto dismiss 15s
-FreezeEntityPosition need to get the veh
-debugModeEnabled and isMenuDebug are redundant, should probably just use the one from shared
+- pagina de adicionar admin precisa depois do modal, mostrar mais info:
+    - username, senha, potencialmente link, instruções de login
+- FreezeEntityPosition need to get the veh
+    - já foi feito? tem issue aberto, e já teve um pr feito
+- começar a ler o ui_label dos manifests e usar na página de resources
 
 
 

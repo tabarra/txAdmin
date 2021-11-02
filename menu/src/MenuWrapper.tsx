@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import { useIsMenuVisibleValue } from "./state/visibility.state";
 import MenuRoot from "./components/MenuRoot";
@@ -9,7 +9,6 @@ import { TopLevelErrorBoundary } from "./components/misc/TopLevelErrorBoundary";
 import { debugData } from "./utils/debugData";
 import { I18n } from "react-polyglot";
 import { useServerCtxValue } from "./state/server.state";
-import { getLocale } from "./utils/getLocale";
 import { WarnPage } from "./components/WarnPage/WarnPage";
 import { IFrameProvider } from "./provider/IFrameProvider";
 import { PlayerModalProvider } from "./provider/PlayerModalProvider";
@@ -19,7 +18,7 @@ import {
   usePlayersFilterIsTemp,
   useSetPlayerFilter,
 } from "./state/players.state";
-import { Box, styled } from "@mui/material";
+import { Box } from "@mui/material";
 import { fetchNui } from "./utils/fetchNui";
 import { useLocale } from "./hooks/useLocale";
 
