@@ -6,7 +6,7 @@ interface OneSyncCtx {
   status: boolean;
 }
 
-interface CustomLocaleData {
+export interface CustomLocaleData {
   $meta: Record<string, unknown>;
   nui_menu: Record<string, unknown>;
   nui_warning: Record<string, unknown>;

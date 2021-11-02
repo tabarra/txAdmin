@@ -516,7 +516,7 @@ export const MainPageList: React.FC = () => {
       //   onSelect: handleSpawnWeapon,
       // },
     ],
-    [playerMode]
+    [playerMode, serverCtx.locale]
   );
 
   return (

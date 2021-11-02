@@ -1,8 +1,29 @@
 import { isBrowserEnv } from "./miscUtils";
 import { debugData } from "./debugData";
 import { VehicleStatus } from "../hooks/usePlayerListListener";
+import { CustomLocaleData, ServerCtx } from "../state/server.state";
 
 const MenuObject = {
+  setCustomLocale: (localeObj: CustomLocaleData) => {
+    debugData<ServerCtx>([
+      {
+        action: "setServerCtx",
+        data: {
+          projectName: "",
+          locale: "custom",
+          localeData: localeObj,
+          alignRight: false,
+          maxClients: 32,
+          oneSync: {
+            status: true,
+            type: "Infinity",
+          },
+          switchPageKey: "Tab",
+          txAdminVersion: "9.9.9",
+        },
+      },
+    ]);
+  },
   setVisible: (bool: boolean = true) => {
     debugData(
       [
