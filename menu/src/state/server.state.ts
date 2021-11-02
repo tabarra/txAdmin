@@ -7,9 +7,9 @@ interface OneSyncCtx {
 }
 
 interface CustomLocaleData {
-  $meta: object;
-  nui_menu: object;
-  nui_warning: object;
+  $meta: Record<string, unknown>;
+  nui_menu: Record<string, unknown>;
+  nui_warning: Record<string, unknown>;
 }
 
 export interface ServerCtx {
@@ -17,7 +17,7 @@ export interface ServerCtx {
   projectName: null | string;
   maxClients: number;
   locale: string;
-  localeData: CustomLocaleData | boolean;
+  localeData: CustomLocaleData | false;
   switchPageKey: string;
   txAdminVersion: string;
   alignRight: boolean;

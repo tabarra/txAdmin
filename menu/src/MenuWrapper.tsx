@@ -21,7 +21,7 @@ import {
 } from "./state/players.state";
 import { Box, styled } from "@mui/material";
 import { fetchNui } from "./utils/fetchNui";
-
+import { useLocale } from "./hooks/useLocale";
 
 //Mock events for browser development
 debugData<any>(
@@ -66,14 +66,10 @@ const MenuWrapper: React.FC = () => {
     return () => clearInterval(changeTimer);
   }, [visible, playersFilterIsTemp]);
 
-  const localeSelected = useMemo(
-    () => getLocale(serverCtx.locale),
-    [serverCtx.locale]
-  );
-  
+  const localeSelected = useLocale();
   //Inform Lua that we are ready to get all variables (server ctx, permissions, debug, etc)
   useEffect(() => {
-    fetchNui('reactLoaded').catch(()=>{});
+    fetchNui("reactLoaded").catch(() => {});
   }, []);
 
   useListenerForSomething();
