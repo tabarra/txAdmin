@@ -72,8 +72,8 @@ export const MainPageList: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [playerMode, setPlayerMode] = usePlayerMode();
   const [teleportMode, setTeleportMode] = useTeleportMode();
-  const [healMode, setHealMode] = useHealMode();
   const [vehicleMode, setVehicleMode] = useVehicleMode();
+  const [healMode, setHealMode] = useHealMode();
   const serverCtx = useServerCtxValue();
   const menuVisible = useIsMenuVisibleValue();
 
@@ -91,7 +91,12 @@ export const MainPageList: React.FC = () => {
   }, [curSelected]);
 
   useEffect(() => {
+    if(menuVisible) return;
     setCurSelected(0);
+    setPlayerMode(PlayerMode.NOCLIP);
+    setTeleportMode(TeleportMode.WAYPOINT);
+    setVehicleMode(VehicleMode.SPAWN);
+    setHealMode(HealMode.SELF);
   }, [menuVisible]);
 
   useKeyboardNavigation({
@@ -516,7 +521,7 @@ export const MainPageList: React.FC = () => {
       //   onSelect: handleSpawnWeapon,
       // },
     ],
-    [playerMode, serverCtx.locale]
+    [playerMode, teleportMode, vehicleMode, healMode, serverCtx.locale]
   );
 
   return (
