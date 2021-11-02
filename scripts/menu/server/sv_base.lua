@@ -13,6 +13,7 @@ ServerCtxObj = {
   projectName = nil,
   maxClients = 30,
   locale = nil,
+  localeData = nil,
   switchPageKey = '',
   txAdminVersion = '',
   alignRight = false
@@ -44,6 +45,43 @@ RegisterCommand('txAdmin-debug', function(src, args)
 end)
 
 
+local function getCustomLocaleData()
+  --Get convar
+  local filePath = GetConvar('txAdmin-localeFile', 'false')
+  if filePath == 'false' then
+    return false
+  end
+
+  -- Get file data
+  local fileHandle = io.open(filePath, "rb")
+  if not fileHandle then 
+    print('^1WARNING: failed to load custom locale from path: '..filePath)
+    return false 
+  end
+  local fileData = fileHandle:read "*a"
+  fileHandle:close()
+
+  -- Parse and validate data
+  local locale = json.decode(fileData)
+  if 
+    not locale 
+    or type(locale['$meta']) ~= "table"
+    or type(locale['nui_warning']) ~= "table"
+    or type(locale['nui_menu']) ~= "table"
+  then
+    print('^1WARNING: load or validate custom locale JSON data from path: '..filePath)
+    return false 
+  end
+
+  -- Build response
+  debugPrint('^2Loaded custom locale file.')
+  return {
+    ['$meta'] = locale['$meta'],
+    ['nui_warning'] = locale['nui_warning'],
+    ['nui_menu'] = locale['nui_menu'],
+  }
+end
+
 
 local function syncServerCtx()
   local oneSyncConvar = GetConvar('onesync', 'off')
@@ -54,6 +92,7 @@ local function syncServerCtx()
     ServerCtxObj.oneSync.type = nil
     ServerCtxObj.oneSync.status = false
   end
+
   -- Convar must match the event.code *EXACTLY* as shown on this site
   -- https://keycode.info/
   local switchPageKey = GetConvar('txAdminMenu-pageKey', 'Tab')
@@ -64,6 +103,7 @@ local function syncServerCtx()
 
   local txAdminVersion = GetConvar('txAdmin-version', '0.0.0')
   ServerCtxObj.txAdminVersion = txAdminVersion
+
   -- Default '' in fxServer
   local svProjectName = GetConvar('sv_projectname', '')
   if svProjectName ~= '' then
@@ -74,13 +114,16 @@ local function syncServerCtx()
   local svMaxClients = GetConvarInt('sv_maxclients', 30)
   ServerCtxObj.maxClients = svMaxClients
 
-  -- FIXME: temporarily disabled;
-  -- FIXME: we cannot reenable while the custom locale doesn't work!
-  local txAdminLocale = 'en' -- GetConvar('txAdmin-locale', 'en')
+  -- Custom locale
+  local txAdminLocale = GetConvar('txAdmin-locale', 'en')
   ServerCtxObj.locale = txAdminLocale
+  if txAdminLocale == 'custom' then
+    ServerCtxObj.localeData = getCustomLocaleData()
+  else
+    ServerCtxObj.localeData = false
+  end
 
-  debugPrint('Server CTX assigned to GlobalState, CTX:')
-  debugPrint(json.encode(ServerCtxObj))
+  debugPrint('Updated ServerCtx.')
   GlobalState.txAdminServerCtx = ServerCtxObj
 
   -- Telling admins that the server context changed

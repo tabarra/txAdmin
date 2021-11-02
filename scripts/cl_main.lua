@@ -23,15 +23,6 @@ RegisterNetEvent('txAdmin:events:setServerCtx', function(ctx)
     sendMenuMessage('setServerCtx', ServerCtx)
 end)
 
-RegisterNUICallback('getServerCtx', function(_, cb)
-    CreateThread(function()
-        updateServerCtx()
-        while ServerCtx == false do Wait(0) end
-        debugPrint('Server CTX:')
-        debugPrint(json.encode(ServerCtx))
-        cb(ServerCtx)
-    end)
-end)
 
 
 -- =============================================

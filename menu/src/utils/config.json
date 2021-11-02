@@ -1,6 +1,7 @@
 {
   "serverCtx": {
     "locale": "en",
+    "localeData": false,
     "oneSync": {
       "type": null,
       "status": false

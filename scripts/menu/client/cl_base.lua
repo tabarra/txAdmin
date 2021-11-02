@@ -137,15 +137,13 @@ end)
 
 
 RegisterNUICallback('reactLoaded', function(aaa, cb)
-  print("Got reactLoaded:")
+  print("React loaded, sending variables.")
   sendMenuMessage('setDebugMode', isMenuDebug)
   sendMenuMessage('setPermissions', menuPermissions)
   
   CreateThread(function()
     updateServerCtx()
     while ServerCtx == false do Wait(0) end
-    debugPrint('Server CTX:')
-    debugPrint(json.encode(ServerCtx))
     sendMenuMessage('setServerCtx', ServerCtx)
   end)
 
