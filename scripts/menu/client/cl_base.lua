@@ -64,11 +64,11 @@ RegisterNetEvent('txcl:setAdmin', function(perms, rejectReason)
     print("^2[AUTH] accepted with permissions: " .. json.encode(perms or "nil"))
     menuIsAccessible = true
     menuPermissions = perms
-    RegisterKeyMapping('txadmin', 'txMenu: Open Main Page', 'keyboard', '')
-    RegisterKeyMapping('txAdmin:menu:openPlayersPage', 'txMenu: Open Players page', 'KEYBOARD', '')
-    RegisterKeyMapping('txAdmin:menu:noClipToggle', 'txMenu: Toggle NoClip', 'keyboard', '')
-    RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'txMenu: Toggle Player IDs', 'KEYBOARD', '')
-    RegisterKeyMapping('txAdmin:menu:endSpectate', 'txMenu: Exit spectate mode', 'keyboard', 'BACK')
+    RegisterKeyMapping('txadmin', 'Menu: Open Main Page', 'keyboard', '')
+    RegisterKeyMapping('txAdmin:menu:openPlayersPage', 'Menu: Open Players page', 'KEYBOARD', '')
+    RegisterKeyMapping('txAdmin:menu:noClipToggle', 'Menu: Toggle NoClip', 'keyboard', '')
+    RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'Menu: Toggle Player IDs', 'KEYBOARD', '')
+    RegisterKeyMapping('txAdmin:menu:endSpectate', 'Menu: Exit spectate mode', 'keyboard', 'BACK')
   else
     print("^3[AUTH] rejected (" .. tostring(rejectReason) ..")")
     menuIsAccessible = false
