@@ -59,7 +59,7 @@ CreateThread(function()
                 -- Its extremely hard to normalize this value to actually reflect
                 -- it as a percentage of the current users max health depending on the server
                 -- Therefore, lets just handle for base case of maxHealth 175 and health range from 100-175
-                health = floor((GetEntityHealth(ped) - 100) / (GetEntityMaxHealth(ped) - 100) * 100)
+                health = floor((GetEntityHealth(ped)-100) / (GetPedMaxHealth(ped)-100))*100
             end
 
             -- Updating TX_PLAYERLIST
