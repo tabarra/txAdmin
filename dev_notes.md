@@ -8,7 +8,7 @@
 - [x] Add keybind for toggling player IDs
 - [x] Fix menu healthbar colors
 - [x] Enable custom locale for menu
-- [ ] Reorganize menu buttons.
+- [x] Reorganize menu buttons.
 - [ ] Do we need to migrate warn before enabling custom locale?
 - [ ] Fix the manage admins perm issue
 - [ ] Test new NUI Auth on ZAP server 
@@ -17,7 +17,7 @@
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
 - [ ] Change CitizenFX to Cfx.re as per branding consistency (ask aurum)
-- [ ] When taking menu our of beta:
+- [ ] When taking menu out of beta:
     - Create a "menu" tab in settings page with options for: enable, tab key, screen side
     - Add "NEW" tag for settings page and menu tab
     - In config vault remove `+setr txEnableMenuBeta true` from fxrunner settings string

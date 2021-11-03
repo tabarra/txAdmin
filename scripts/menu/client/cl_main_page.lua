@@ -249,9 +249,10 @@ end)
 RegisterNetEvent('txAdmin:menu:tpToWaypoint', function()
     local waypoint = GetFirstBlipInfoId(GetWaypointBlipEnumId())
     if waypoint and waypoint > 0 then
+        sendSnackbarMessage('success', 'nui_menu.page_main.teleport.generic_success', true)
         local blipCoords = GetBlipInfoIdCoord(waypoint)
         teleportToCoords(vec3(blipCoords[1], blipCoords[2], 0))
     else
-        sendSnackbarMessage('error', 'nui_menu.page_main.teleport.no_waypoint_error', true)
+        sendSnackbarMessage('error', 'nui_menu.page_main.teleport.waypoint.error', true)
     end
 end)

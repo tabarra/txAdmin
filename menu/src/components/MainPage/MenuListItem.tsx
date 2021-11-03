@@ -5,6 +5,7 @@ import {
   ListItemSecondaryAction,
   ListItemText,
   Theme,
+  Typography,
 } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
@@ -19,12 +20,12 @@ import { userHasPerm } from "../../utils/miscUtils";
 import { useSnackbar } from "notistack";
 
 export interface MenuListItemProps {
-  icon: JSX.Element;
-  primary: string;
-  secondary: string;
-  onSelect: () => void;
-  selected: boolean;
+  title: string;
+  label: string;
   requiredPermission?: ResolvablePermission;
+  icon: JSX.Element;
+  selected: boolean;
+  onSelect: () => void;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -46,7 +47,14 @@ const useStyles = makeStyles((theme: Theme) => ({
 // TODO: Actually do disabled item styling right now it will only remove
 // enter from working
 export const MenuListItem: React.FC<MenuListItemProps> = memo(
-  ({ icon, primary, onSelect, secondary, selected, requiredPermission }) => {
+  ({ 
+    title,
+    label,
+    requiredPermission,
+    icon,
+    selected,
+    onSelect,
+  }) => {
     const classes = useStyles();
     const t = useTranslate();
     const divRef = useRef<HTMLDivElement | null>(null);
@@ -99,8 +107,8 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
         >
           <ListItemIcon className={classes.icon}>{icon}</ListItemIcon>
           <ListItemText
-            primary={primary}
-            secondary={secondary}
+            primary={title}
+            secondary={label}
             classes={{
               primary: classes.overrideText,
             }}
@@ -112,31 +120,29 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
 );
 
 interface MenuListItemMultiAction {
+  name?: string | JSX.Element;
   label: string;
   value: string | number | boolean;
-  onSelect: () => void;
   icon?: JSX.Element;
-  primary?: string | JSX.Element;
+  onSelect: () => void;
 }
 
 export interface MenuListItemMultiProps {
-  actions: MenuListItemMultiAction[];
+  title: string;
+  requiredPermission?: ResolvablePermission;
   initialValue?: MenuListItemMultiAction;
   selected: boolean;
-  primary: string;
   icon: JSX.Element;
-  requiredPermission?: ResolvablePermission;
-  showCurrentPrefix: boolean;
+  actions: MenuListItemMultiAction[];
 }
 
 export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
   ({
     selected,
-    primary,
+    title,
     actions,
     icon,
     initialValue,
-    showCurrentPrefix,
     requiredPermission,
   }) => {
     const classes = useStyles();
@@ -229,13 +235,21 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
           selected={selected}
         >
           <ListItemIcon className={classes.icon}>
-            {actions[curState]?.icon || icon}
+            {actions[curState]?.icon ?? icon}
           </ListItemIcon>
           <ListItemText
-            primary={actions[curState]?.primary || primary}
-            secondary={`${showCurrentPrefix ? "Current: " : ""}${
-              actions[curState]?.label || "Unknown"
-            }`}
+            primary={
+              <>
+                {title}:&nbsp;
+                <Typography
+                  component="span"
+                  color="text.secondary"
+                >
+                  {actions[curState]?.name ?? "???"}
+                </Typography>
+              </>
+            }
+            secondary={actions[curState]?.label ?? "???"}
             classes={{
               primary: classes.overrideText,
             }}
