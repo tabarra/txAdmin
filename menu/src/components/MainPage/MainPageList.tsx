@@ -79,19 +79,6 @@ export const MainPageList: React.FC = () => {
   const serverCtx = useServerCtxValue();
   const menuVisible = useIsMenuVisibleValue();
 
-  // the directions are inverted
-  const handleArrowDown = useCallback(() => {
-    const next = curSelected + 1;
-    fetchNui("playSound", "move").catch();
-    setCurSelected(next >= menuListItems.length ? 0 : next);
-  }, [curSelected]);
-
-  const handleArrowUp = useCallback(() => {
-    const next = curSelected - 1;
-    fetchNui("playSound", "move").catch();
-    setCurSelected(next < 0 ? menuListItems.length - 1 : next);
-  }, [curSelected]);
-
   //FIXME: this is so the menu resets multi selectors when we close it
   // but it is not working, and when I do this the first time we press
   // noclip it will actually think we are changing back to normal.
@@ -105,12 +92,42 @@ export const MainPageList: React.FC = () => {
     // setHealMode(HealMode.SELF);
   }, [menuVisible]);
 
+
+  //=============================================
+  const handleArrowDown = useCallback(() => {
+    const next = curSelected + 1;
+    fetchNui("playSound", "move").catch();
+    setCurSelected(next >= menuListItems.length ? 0 : next);
+  }, [curSelected]);
+
+  const handleArrowUp = useCallback(() => {
+    const next = curSelected - 1;
+    fetchNui("playSound", "move").catch();
+    setCurSelected(next < 0 ? menuListItems.length - 1 : next);
+  }, [curSelected]);
+
   useKeyboardNavigation({
     onDownDown: handleArrowDown,
     onUpDown: handleArrowUp,
     disableOnFocused: true,
   });
 
+  //=============================================
+  const handlePlayermodeToggle = (targetMode) => {
+    if (targetMode === playerMode || targetMode === PlayerMode.DEFAULT) {
+      setPlayerMode(PlayerMode.DEFAULT);
+      fetchNui("playerModeChanged", PlayerMode.DEFAULT);
+      enqueueSnackbar(t("nui_menu.page_main.player_mode.normal.success"), {
+        variant: "success",
+      });
+    } else {
+      setPlayerMode(targetMode);
+      fetchNui("playerModeChanged", targetMode);
+    }
+  };
+
+
+  //=============================================
   const handleTeleportCoords = () => {
     openDialog({
       title: t("nui_menu.page_main.teleport.coords.dialog_title"),
@@ -154,25 +171,15 @@ export const MainPageList: React.FC = () => {
     });
   };
 
-  const handleAnnounceMessage = () => {
-    openDialog({
-      title: t("nui_menu.page_main.announcement.title"),
-      description: t("nui_menu.page_main.announcement.dialog_desc"),
-      placeholder: "Your announcement...",
-      onSubmit: (message: string) => {
-        // Post up to client with announcement message
-        enqueueSnackbar(t("nui_menu.page_main.announcement.dialog_success"), {
-          variant: "success",
-        });
-        fetchNui("sendAnnouncement", { message });
-      },
+  const handleCopyCoords = () => {
+    fetchNui<{ coords: string }>("copyCurrentCoords").then(({ coords }) => {
+      copyToClipboard(coords);
+      enqueueSnackbar(t("nui_menu.common.copied"), { variant: "success" });
     });
   };
 
-  const handleTogglePlayerIds = () => {
-    fetchNui("togglePlayerIDs");
-  };
 
+  //=============================================
   const handleSpawnVehicle = () => {
     // Since we depend on server side gamestate awareness
     // we disable this function from being used if onesync
@@ -236,6 +243,22 @@ export const MainPageList: React.FC = () => {
     });
   };
 
+  const handleFixVehicle = () => {
+    fetchNui("fixVehicle").then(({ e }) => {
+      if (e) {
+        return enqueueSnackbar(
+          t("nui_menu.page_main.vehicle.not_in_veh_error"),
+          {
+            variant: "error",
+          }
+        );
+      }
+      enqueueSnackbar(t("nui_menu.page_main.vehicle.fix.success"), {
+        variant: "info",
+      });
+    });
+  };
+
   const handleDeleteVehicle = () => {
     // If onesync is disabled, show an error due to server side entity handling
     if (!serverCtx.oneSync.status) {
@@ -260,29 +283,8 @@ export const MainPageList: React.FC = () => {
     });
   };
 
-  const handleFixVehicle = () => {
-    fetchNui("fixVehicle").then(({ e }) => {
-      if (e) {
-        return enqueueSnackbar(
-          t("nui_menu.page_main.vehicle.not_in_veh_error"),
-          {
-            variant: "error",
-          }
-        );
-      }
-      enqueueSnackbar(t("nui_menu.page_main.vehicle.fix.success"), {
-        variant: "info",
-      });
-    });
-  };
 
-  const handleHealAllPlayers = () => {
-    fetchNui("healAllPlayers");
-    enqueueSnackbar(t("nui_menu.page_main.heal.everyone.success"), {
-      variant: "info",
-    });
-  };
-
+  //=============================================
   const handleHealMyself = () => {
     fetchNui("healMyself");
     const messages = [
@@ -297,23 +299,26 @@ export const MainPageList: React.FC = () => {
     });
   };
 
-  const handlePlayermodeToggle = (targetMode) => {
-    if (targetMode === playerMode || targetMode === PlayerMode.DEFAULT) {
-      setPlayerMode(PlayerMode.DEFAULT);
-      fetchNui("playerModeChanged", PlayerMode.DEFAULT);
-      enqueueSnackbar(t("nui_menu.page_main.player_mode.normal.success"), {
-        variant: "success",
-      });
-    } else {
-      setPlayerMode(targetMode);
-      fetchNui("playerModeChanged", targetMode);
-    }
+  const handleHealAllPlayers = () => {
+    fetchNui("healAllPlayers");
+    enqueueSnackbar(t("nui_menu.page_main.heal.everyone.success"), {
+      variant: "info",
+    });
   };
 
-  const handleCopyCoords = () => {
-    fetchNui<{ coords: string }>("copyCurrentCoords").then(({ coords }) => {
-      copyToClipboard(coords);
-      enqueueSnackbar(t("nui_menu.common.copied"), { variant: "success" });
+
+  //=============================================
+  const handleAnnounceMessage = () => {
+    openDialog({
+      title: t("nui_menu.page_main.announcement.title"),
+      description: t("nui_menu.page_main.announcement.dialog_desc"),
+      placeholder: "Your announcement...",
+      onSubmit: (message: string) => {
+        enqueueSnackbar(t("nui_menu.page_main.announcement.dialog_success"), {
+          variant: "success",
+        });
+        fetchNui("sendAnnouncement", { message });
+      },
     });
   };
 
@@ -346,12 +351,16 @@ export const MainPageList: React.FC = () => {
     });
   };
 
+  const handleTogglePlayerIds = () => {
+    fetchNui("togglePlayerIDs");
+  };
+  
   // This is here for when I am bored developing
   // const handleSpawnWeapon = () => {
   //   openDialog({
-  //     title: t("nui_menu.page_main.spawn_wep.dialog_title"),
+  //     title: "Spawn Weapon",
   //     placeholder: "WEAPON_ASSAULTRIFLE",
-  //     description: t("nui_menu.page_main.spawn_wep.dialog_desc"),
+  //     description: "Type in the model name for the weapon you want to spawn.",
   //     onSubmit: (inputValue) => {
   //       fetchNui("spawnWeapon", inputValue);
   //     },
