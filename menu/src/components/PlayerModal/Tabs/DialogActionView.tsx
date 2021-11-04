@@ -98,7 +98,9 @@ const DialogActionView: React.FC = () => {
       description: t(
         "nui_menu.player_modal.actions.moderation.warn_dialog.description"
       ),
-      placeholder: "Reason...",
+      placeholder: t(
+        "nui_menu.player_modal.actions.moderation.warn_dialog.placeholder"
+      ),
       onSubmit: (reason: string) => {
         fetchWebPipe<TxAdminAPIResp>("/player/warn", {
           method: "POST",

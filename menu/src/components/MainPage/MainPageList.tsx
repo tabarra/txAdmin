@@ -312,7 +312,7 @@ export const MainPageList: React.FC = () => {
     openDialog({
       title: t("nui_menu.page_main.announcement.title"),
       description: t("nui_menu.page_main.announcement.dialog_desc"),
-      placeholder: "Your announcement...",
+      placeholder: t("nui_menu.page_main.announcement.dialog_placeholder"),
       onSubmit: (message: string) => {
         enqueueSnackbar(t("nui_menu.page_main.announcement.dialog_success"), {
           variant: "success",

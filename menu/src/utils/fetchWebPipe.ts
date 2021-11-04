@@ -14,7 +14,7 @@ interface fetchWebPipeOpts<T> {
   method?: "GET" | "POST";
   timeout?: PipeTimeout;
   data?: unknown;
-  mockData: T;
+  mockData?: T;
 }
 /**
  * A wrapper around fetch for HTTP reqs to the txAdminPipe
