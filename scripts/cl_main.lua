@@ -8,30 +8,21 @@ ServerCtx = false
 function updateServerCtx()
     _ServerCtx = GlobalState.txAdminServerCtx
     if _ServerCtx == nil then
-        debugPrint('^3ServerCtx fallback support activated')
+        print('^3ServerCtx fallback support activated.')
         TriggerServerEvent('txAdmin:events:getServerCtx')
     else
         ServerCtx = _ServerCtx
-        debugPrint('^2ServerCtx updated from global state')
+        print('^2ServerCtx updated from global state')
     end
 end
 
 RegisterNetEvent('txAdmin:events:setServerCtx', function(ctx)
     if type(ctx) ~= 'table' then return end
     ServerCtx = ctx
-    debugPrint('^2ServerCtx updated from server event')
+    print('^2ServerCtx updated from server event.')
     sendMenuMessage('setServerCtx', ServerCtx)
 end)
 
-RegisterNUICallback('getServerCtx', function(_, cb)
-    CreateThread(function()
-        updateServerCtx()
-        while ServerCtx == false do Wait(0) end
-        debugPrint('Server CTX:')
-        debugPrint(json.encode(ServerCtx))
-        cb(ServerCtx)
-    end)
-end)
 
 
 -- =============================================

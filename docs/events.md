@@ -60,3 +60,8 @@ Event Data:
 - `author`: The name of the admin.
 - `actionId`: The ID of this action.
 - `target`: The reference of this whitelist. Can be "license:" prefixed license or a whitelist request ID.
+
+## txAdmin:event:configChanged (v4.0)
+Called when the txAdmin settings change in a way that could be relevant for the server.  
+Event Data: this event has no data.  
+At the moment, this is only used to signal the txAdmin in-game Menu if the configured language has changed, and can be used to easily test custom language files without requiring a server restart. 

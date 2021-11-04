@@ -15,7 +15,7 @@ import {
   DriveEta,
   LiveHelp,
   MoreVert,
-  BikeScooter,
+  TwoWheeler,
   Flight,
 } from "@mui/icons-material";
 import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
@@ -89,7 +89,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
     walking: <DirectionsWalk color="inherit" />,
     driving: <DriveEta color="inherit" />,
     boating: <DirectionsBoat color="inherit" />,
-    biking: <BikeScooter color="inherit" />,
+    biking: <TwoWheeler color="inherit" />,
     flying: <Flight color="inherit" />,
   };
 

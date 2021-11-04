@@ -3,21 +3,21 @@
 - [x] tweak(menu/players-page): reflect players low health with color change
 - [x] fix(scripts/player-list): normalize health to percentage
 - [x] Remove the "NEW" tag from `header.html` and `masterActions.html`
-- [ ] Implement new menu auth method
-- [ ] Reorganize menu buttons.
+- [x] Implement new menu auth method
+- [x] Add keybind for opening players page
+- [x] Add keybind for toggling player IDs
+- [x] Fix menu healthbar colors
+- [x] Enable custom locale for menu
+- [x] Reorganize menu buttons.
 - [ ] Do we need to migrate warn before enabling custom locale?
-- [ ] Enable custom locale for menu
-- [ ] Add keybind for opening players page
-- [ ] Add keybind for toggling player IDs
 - [ ] Fix the manage admins perm issue
-- [ ] Fix menu healthbar colors
 - [ ] Test new NUI Auth on ZAP server 
 
 - [ ] Migrate console log to new logger
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
-- [ ] Change CitizenFX to Cfx.re as per branding consistency (ask the elements)
-- [ ] When taking menu our of beta:
+- [ ] Change CitizenFX to Cfx.re as per branding consistency (ask aurum)
+- [ ] When taking menu out of beta:
     - Create a "menu" tab in settings page with options for: enable, tab key, screen side
     - Add "NEW" tag for settings page and menu tab
     - In config vault remove `+setr txEnableMenuBeta true` from fxrunner settings string
@@ -129,12 +129,11 @@ https://forum.cfx.re/t/standalone-advanced-report-system/4774403/1
 
 
 ### Todozinhos:
-pagina de adicionar admin precisa depois do modal, mostrar mais info:
-username, senha, potencialmente link, instruções de login
-
-warn auto dismiss 15s
-FreezeEntityPosition need to get the veh
-debugModeEnabled and isMenuDebug are redundant, should probably just use the one from shared
+- pagina de adicionar admin precisa depois do modal, mostrar mais info:
+    - username, senha, potencialmente link, instruções de login
+- FreezeEntityPosition need to get the veh
+    - já foi feito? tem issue aberto, e já teve um pr feito
+- começar a ler o ui_label dos manifests e usar na página de resources
 
 
 

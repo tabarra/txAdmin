@@ -28,7 +28,8 @@ const getMutableConvars = (isCmdLine = false) => {
 
     return [
         //type, name, value
-        [`${p}setr`, 'txAdmin-locale', globals.translator.language || 'en'],
+        [`${p}setr`, 'txAdmin-locale', globals.translator.language ?? 'en'],
+        [`${p}set`, 'txAdmin-localeFile', globals.translator.customLocalePath ?? 'false'],
         [`${p}setr`, 'txAdmin-verbose', GlobalData.verbose],
         [`${p}set`, 'txAdmin-checkPlayerJoin', checkPlayerJoin],
     ];

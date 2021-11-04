@@ -6,11 +6,18 @@ interface OneSyncCtx {
   status: boolean;
 }
 
+export interface CustomLocaleData {
+  $meta: Record<string, unknown>;
+  nui_menu: Record<string, unknown>;
+  nui_warning: Record<string, unknown>;
+}
+
 export interface ServerCtx {
   oneSync: OneSyncCtx;
   projectName: null | string;
   maxClients: number;
   locale: string;
+  localeData: CustomLocaleData | false;
   switchPageKey: string;
   txAdminVersion: string;
   alignRight: boolean;
@@ -18,7 +25,7 @@ export interface ServerCtx {
 
 const serverCtx = atom<ServerCtx>({
   key: "serverCtx",
-  default: config.serverCtx,
+  default: <ServerCtx>config.serverCtx,
 });
 
 export const useServerCtxValue = () => useRecoilValue(serverCtx);

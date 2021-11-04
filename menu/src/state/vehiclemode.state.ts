@@ -2,6 +2,7 @@ import { atom, useRecoilState } from "recoil";
 
 export enum VehicleMode {
   SPAWN = "spawn",
+  FIX = "fix",
   DELETE = "delete",
 }
 

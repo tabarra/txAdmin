@@ -10,7 +10,7 @@ local noClipEnabled = false
 
 local function toggleGodMode(enabled)
     if enabled then
-        sendPersistentAlert('godModeEnabled', 'info', 'nui_menu.page_main.player_mode.dialog_success_godmode', true)
+        sendPersistentAlert('godModeEnabled', 'info', 'nui_menu.page_main.player_mode.godmode.success', true)
     else
         clearPersistentAlert('godModeEnabled')
     end
@@ -72,7 +72,7 @@ local function toggleFreecam(enabled)
     end
 
     if not IsFreecamActive() and enabled then
-        sendPersistentAlert('noClipEnabled', 'info', 'nui_menu.page_main.player_mode.dialog_success_noclip', true)
+        sendPersistentAlert('noClipEnabled', 'info', 'nui_menu.page_main.player_mode.noclip.success', true)
         enableNoClip()
     end
 
