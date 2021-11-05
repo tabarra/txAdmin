@@ -1,63 +1,53 @@
-<p align="center">
-	<h1 align="center">
-		txAdmin for FiveM
-	</h1>
-	<p align="center">
-		<img width="420" height="237" src="docs/banner.png">
-	</p>
-	<h4 align="center">
-		Join our Discord Server: &nbsp; <a href="https://discord.gg/AFAAXzq"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
-	</h4>
-	<p align="center">
-		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM/RedM Server remotely, in use by over <strong>10000</strong> servers worldwide at any given time.
-	</p>
-	<p align="center">
-		<a href="https://zap-hosting.com/txadmin4" target="_blank" rel="noopener">
-			<img src="docs/zaphosting.png" alt="zap-hosting"></img>
-		</a>
-	</p>
-</p>
+<div align="center">
 
-<br/>
+<a href="https://discord.gg/AFAAXzq"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield">
+# txAdmin for FiveM
 
+<img width="420" height="237" src="docs/banner.png">
+
+[![Image](docs/zaphosting.png)](https://zap-hosting.com/txadmin4 "Zap Hosting with txAdmin")
+</div>
+
+## What's txAdmin?
+- txAdmin is a fullly featured web panel to manage and monitor your FiveM/RedM server remotely with ease. We're actively being used by over ten thousand servers worldwide at any given moment in time.
 
 ## Main Features
-- Recipe-based Server Deployer: create a server in under 60 seconds! ([more info](docs/recipe.md))
-- Start/Stop/Restart your server instance or resources
-- Server Performance Chart (all 3 threads) ([example](https://i.imgur.com/VG8hpzr.gif))
-- Access control:
-	- Login via Password or CitizenFX
-	- Admin permission system ([more info](docs/permissions.md))
-	- Action logging
+- Recipe-based server deployer to create a server in under 60 seconds! ([learn more](docs/recipe.md))
+- Start/Stop or Restart your server instance or resources
+- Server Performance Chart with all 3 threads ([example](https://i.imgur.com/VG8hpzr.gif))
+- Access Control:
+	- Admin permission system ([learn more](docs/permissions.md))
+	- Login via password or CitizenFX
 	- Brute-force protection
+	- Action logging
 - Discord Integration:
-	- Server status command (`/status`)
 	- Add to Whitelist command  (`/addwl`)
+	- Server status command (`/status`)
 	- Command spam prevention
 - Monitoring:
-	- Auto Restart FXServer on crash
-	- Server’s CPU/RAM consumption
-	- Live Console (with log file and command history)
-	- Online players chart
 	- Server Activity Log (connections/disconnections, kills, chat, explosions and [custom commands](docs/custom_serverlog.md))
+	- Live console (with log file and command history)
+	- Auto-restart FXServer on crash
+	- Server’s CPU/RAM consumption
+	- Online players chart
 - Player Manager:
-	- [Warning system](https://www.youtube.com/watch?v=DeE0-5vtZ4E)
-	- Ban (temporary or permanently) system
-	- Whitelist system
-	- Take notes about players
-	- Keep track of player's play and session time
-	- Import bans from EasyAdmin, BanSQL, vMenu, vRP, el_bwh
-	- Self-contained player database with backup tool (no MySQL required!)
 	- Clean/Optimize the database by removing old players, or bans/warns/whitelists
-- Real-time playerlist
+	- Self-contained player database with backup tool (MySQL not required)
+	- Import bans from EasyAdmin, BanSQL, vMenu, vRP, el_bwh
+	- Ban (temporary or permanently) system
+	- Keep track of player's play and session time
+	- Take notes about players
+	- Whitelist system
+	- [Warning system](https://www.youtube.com/watch?v=DeE0-5vtZ4E)
 - Scheduled restarts with warning announcements and custom events ([more info](docs/events.md))
-- Translation Support ([more info](docs/translation.md))
-- FiveM's Server CFG editor
-- Responsive web interface with Dark Mode 😎
+- Responsive web interface with a soothing dark mode
+- Translation support ([more info](docs/translation.md))
+- Real-time playerlist
+- FiveM's CFG editor
 
-Also, check our [Feature Graveyard](docs/feature_graveyard.md) for the features that are no longer among us (RIP).
+You can check out our [Feature Graveyard](docs/feature_graveyard.md) for the previous features that are no longer among us. May they rest in peace.
 
-## Running (Windows/Linux)
+## Running (Windows and Linux)
 Currently **txAdmin is included in all FXServer builds** above 2524, so to run it for the first time simply do the following:
 - Update FXServer to the latest artifact/build (2524 or superior)
 - If Windows, run FXServer.exe | If Linux, run `screen ./run.sh`
