@@ -39,9 +39,9 @@
 	- Take notes about players
 	- Whitelist system
 	- [Warning system](https://www.youtube.com/watch?v=DeE0-5vtZ4E)
-- Scheduled restarts with warning announcements and custom events ([more info](docs/events.md))
+- Scheduled restarts with warning announcements and custom events ([learn more](docs/events.md))
 - Responsive web interface with a soothing dark mode
-- Translation support ([more info](docs/translation.md))
+- Translation support ([learn more](docs/translation.md))
 - Real-time playerlist
 - FiveM's CFG editor
 
@@ -73,7 +73,7 @@ ConVar usage **example** for different port and profile:
 ./run.sh +set serverProfile dev_server +set txAdminPort 40121
 ```
 
-### Installing & Building it (NOT RECOMMENDED)
+### Installing & Building Manually (NOT RECOMMENDED)
 If you want to run it from source, or build it yourself, please do read [this](docs/building.md).
 
 
