@@ -49,6 +49,7 @@ const DialogActionView: React.FC = () => {
   const playerPerms = usePermissionsValue();
   const { setModalOpen, closeMenu, showNoPerms } = usePlayerModalContext();
 
+  //Moderation
   const handleDM = () => {
     if (!userHasPerm("players.message", playerPerms))
       return showNoPerms("Message");
@@ -206,6 +207,7 @@ const DialogActionView: React.FC = () => {
     setModalOpen(false);
   };
 
+  //Interaction
   const handleHeal = () => {
     if (!userHasPerm("players.heal", playerPerms)) return showNoPerms("Heal");
 
@@ -260,12 +262,7 @@ const DialogActionView: React.FC = () => {
     fetchNui("togglePlayerFreeze", { id: assocPlayer.id });
   }
 
-  const handleWeed = () => {
-    if (!userHasPerm("players.troll", playerPerms)) return showNoPerms("Troll");
-    fetchNui("weedEffectPlayer", { id: assocPlayer.id });
-    enqueueSnackbar(t("nui_menu.player_modal.actions.command_sent"));
-  };
-
+  //Troll
   const handleDrunk = () => {
     if (!userHasPerm("players.troll", playerPerms)) return showNoPerms("Troll");
     fetchNui("drunkEffectPlayer", { id: assocPlayer.id });
@@ -345,9 +342,6 @@ const DialogActionView: React.FC = () => {
       <Box className={classes.actionGrid}>
         <Button variant="outlined" color="primary" onClick={handleDrunk} disabled={!userHasPerm("players.troll", playerPerms)}>
           {t("nui_menu.player_modal.actions.troll.options.drunk")}
-        </Button>
-        <Button variant="outlined" color="primary" onClick={handleWeed} disabled={!userHasPerm("players.troll", playerPerms)}>
-          {t("nui_menu.player_modal.actions.troll.options.weed")}
         </Button>
         <Button variant="outlined" color="primary" onClick={handleSetOnFire} disabled={!userHasPerm("players.troll", playerPerms)}>
           {t("nui_menu.player_modal.actions.troll.options.fire")}

@@ -7,7 +7,6 @@ end
 
 local EFFECT_TIME_MS = GetConvarInt('txAdminMenu-trollDuration', 30000)
 local DRUNK_ANIM_SET = "move_m@drunk@verydrunk"
-local WEED_ANIM_SET = "move_m@drunk@moderatedrunk"
 
 local DRUNK_DRIVING_EFFECTS = {
     1, -- brake
@@ -64,26 +63,6 @@ local function drunkThread()
     RemoveAnimSet(DRUNK_ANIM_SET)
 end
 
-local function weedEffect()
-    debugPrint('Starting weed effect')
-    RequestAnimSet(WEED_ANIM_SET)
-    while not HasAnimSetLoaded(WEED_ANIM_SET) do
-        Wait(5)
-    end
-
-    SetPedMovementClipset(playerPed, WEED_ANIM_SET)
-    ShakeGameplayCam("DRUNK_SHAKE", 1.0)
-    SetTransitionTimecycleModifier("spectator5", 10.00)
-
-    Wait(EFFECT_TIME_MS)
-
-    debugPrint('Cleaning up weed effect')
-    SetTransitionTimecycleModifier("default", 10.00)
-    StopGameplayCamShaking(true)
-    ResetPedMovementClipset(playerPed)
-    RemoveAnimSet(WEED_ANIM_SET)
-end
-
 
 --[[ Wild Attack command ]]
 local attackAnimalHashes = {
@@ -123,11 +102,7 @@ end
 -- RegisterCommand('atk', startWildAttack)
 
 
---[[
- Net Events
-]]
-RegisterNetEvent('txAdmin:menu:weedEffect', weedEffect)
-
+--[[ Net Events ]]
 RegisterNetEvent('txAdmin:menu:drunkEffect', drunkThread)
 
 RegisterNetEvent('txAdmin:menu:setOnFire', function()
@@ -141,25 +116,18 @@ RegisterNetEvent('txAdmin:menu:wildAttack', function()
 end)
 
 
---[[
- NUI Callbacks
-]]
-RegisterNUICallback('weedEffectPlayer', function(data, cb)
-    TriggerServerEvent('txAdmin:menu:weedEffectPlayer', tonumber(data.id))
-    cb({})
-end)
-
+--[[ NUI Callbacks ]]
 RegisterNUICallback('drunkEffectPlayer', function(data, cb)
     TriggerServerEvent('txAdmin:menu:drunkEffectPlayer', tonumber(data.id))
     cb({})
 end)
 
-RegisterNUICallback('wildAttack', function(data, cb)
-    TriggerServerEvent('txAdmin:menu:wildAttack', tonumber(data.id))
+RegisterNUICallback('setOnFire', function(data, cb)
+    TriggerServerEvent('txAdmin:menu:setOnFire', tonumber(data.id))
     cb({})
 end)
 
-RegisterNUICallback('setOnFire', function(data, cb)
-    TriggerServerEvent('txAdmin:menu:setOnFire', tonumber(data.id))
+RegisterNUICallback('wildAttack', function(data, cb)
+    TriggerServerEvent('txAdmin:menu:wildAttack', tonumber(data.id))
     cb({})
 end)

@@ -247,7 +247,6 @@
                     "title": "Troll",
                     "options": {
                         "drunk": "Make Drunk",
-                        "weed": "Weed",
                         "fire": "Set Fire",
                         "wild_attack": "Wild attack"
                     }

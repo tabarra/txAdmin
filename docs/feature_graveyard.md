@@ -11,6 +11,7 @@ And as part of the process, we "retired" many features and parts of our code bas
 - **Experiments:** Well... not much to experience with right now;
 - **Discord static commands:** I don't think anyone ever used it since they can do it with basically any other bot;
 - **Set process priority:** Although it was quite requested in the beginning, people just don't seem to use it;
+- **Menu Weed troll effect:** It was just too similar to the drunk effect one, not worth keeping.
   
 Don't cry because they are gone.  
 Smile because they existed :)
