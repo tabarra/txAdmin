@@ -10,6 +10,7 @@ import {
   ServerCtx,
   useSetServerCtx,
 } from "../state/server.state";
+import { fetchWebPipe } from "../utils/fetchWebPipe";
 
 // Passive Message Event Listeners & Handlers for global state
 export const useNuiListenerService = () => {
@@ -25,4 +26,7 @@ export const useNuiListenerService = () => {
   useNuiEvent<ResolvablePermission[]>("setPermissions", setPermsState);
   useNuiEvent<ServerCtx>("setServerCtx", setServerCtxState);
   useNuiEvent<txAdminMenuPage>("setMenuPage", setMenuPage);
+  useNuiEvent("resetSession", ()=>{
+    fetchWebPipe<string>("/resetSession").catch();
+  });
 };
