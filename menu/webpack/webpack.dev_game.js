@@ -11,8 +11,10 @@ module.exports = CommonWebpack({
     devServer: {
         contentBase: path.join(process.cwd(), 'menu/public'),
         watchContentBase: true,
-        host: 'localhost',
         writeToDisk: true,
+        hot: false,
+        inline: false,
+        liveReload: false,
     },
     plugins: [
         new DefinePlugin({
