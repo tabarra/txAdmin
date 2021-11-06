@@ -56,7 +56,6 @@ local hbReturnData = 'no-data'
 log("Version "..TX_VERSION.." starting...")
 CreateThread(function()
     RegisterCommand("txaPing", txaPing, true)
-    RegisterCommand("txaWarnID", txaWarnID, true)
     RegisterCommand("txaKickAll", txaKickAll, true)
     RegisterCommand("txaKickID", txaKickID, true)
     RegisterCommand("txaDropIdentifiers", txaDropIdentifiers, true)
@@ -142,26 +141,6 @@ function txaPing(source, args)
     CancelEvent()
 end
 
--- Warn specific player via server ID
-function txaWarnID(source, args)
-    if #args == 6 then
-        for k,v in pairs(args) do
-            args[k] = unDeQuote(v)
-        end
-        local id, author, reason, tTitle, tWarnedBy, tInstruction = table.unpack(args)
-        local pName = GetPlayerName(id)
-        if pName ~= nil then
-            TriggerClientEvent('txAdminClient:warn', id, author, reason, tTitle, tWarnedBy, tInstruction)
-            log("Warning "..pName.." with reason: "..reason)
-        else
-            logError('txaWarnID: player not found')
-        end
-    else
-        logError('Invalid arguments for txaWarnID')
-    end
-    CancelEvent()
-end
-
 -- Kick all players
 function txaKickAll(source, args)
     if args[1] == nil then
@@ -235,15 +214,35 @@ function txaDropIdentifiers(_, args)
     CancelEvent()
 end
 
--- Fire server event
--- FIXME: check source to make sure its from the console
-function txaEvent(source, args)
-    if args[1] ~= nil and args[2] ~= nil then
-        local eventName = unDeQuote(args[1])
-        local eventData = unDeQuote(args[2])
-        TriggerEvent("txAdmin:events:" .. eventName, json.decode(eventData))
+-- Warn specific player via server ID
+-- This function is triggered by txaEvent
+local function handleWarnEvent(eventData)
+    -- target, author, reason, actionId
+    local pName = GetPlayerName(eventData.target)
+    if pName ~= nil then
+        TriggerClientEvent('txAdminClient:warn', eventData.target, eventData.author, eventData.reason)
+        log("Warning "..pName.." with reason: "..eventData.reason)
     else
-        logError('Invalid arguments for txaEvent')
+        logError('txaWarnID: player not found')
+    end
+end
+
+-- Fire server event
+function txaEvent(source, args)
+    -- sanity check
+    if type(args[1]) ~= 'string' or type(args[2]) ~= 'string' then
+        return logError('Invalid arguments for txaEvent')
+    end
+    -- prevent execution from admins or resources
+    if source ~= 0 or GetInvokingResource() ~= nil then return end
+
+    -- processing event
+    local eventName = unDeQuote(args[1])
+    local eventData = json.decode(unDeQuote(args[2]))
+    TriggerEvent("txAdmin:events:" .. eventName, eventData)
+
+    if eventName == 'playerWarned' then 
+        return handleWarnEvent(eventData)
     end
     CancelEvent()
 end

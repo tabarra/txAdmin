@@ -204,28 +204,20 @@ async function handleWarning(ctx, sess) {
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
-
-    //Prepare and send command
     ctx.utils.logAction(`Warned #${id}: ${reason}`);
-    const cmd = formatCommand(
-        'txaWarnID',
-        id,
-        sess.auth.username,
-        reason,
-        globals.translator.t('nui_warning.title'),
-        globals.translator.t('nui_warning.warned_by'),
-        globals.translator.t('nui_warning.instruction'),
-    );
-    const toResp = await globals.fxRunner.srvCmdBuffer(cmd);
 
     // Dispatch `txAdmin:events:playerWarned`
-    globals.fxRunner.sendEvent('playerWarned', {
+    const cmdOk = globals.fxRunner.sendEvent('playerWarned', {
         target: id,
         author: sess.auth.username,
         reason,
         actionId,
     });
-    return sendAlertOutput(ctx, toResp);
+
+    return ctx.send({
+        type: cmdOk ? 'success' : 'danger',
+        message: `Command sent!`,
+    });
 }
 
 

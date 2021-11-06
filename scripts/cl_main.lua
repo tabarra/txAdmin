@@ -73,7 +73,6 @@ CreateThread(function()
     Wait(1000)
     TriggerEvent('chat:removeSuggestion', '/txadmin') --too spammy
     TriggerEvent('chat:removeSuggestion', '/txaPing')
-    TriggerEvent('chat:removeSuggestion', '/txaWarnID')
     TriggerEvent('chat:removeSuggestion', '/txaKickAll')
     TriggerEvent('chat:removeSuggestion', '/txaKickID')
     TriggerEvent('chat:removeSuggestion', '/txaDropIdentifiers')

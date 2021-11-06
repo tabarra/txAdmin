@@ -9,7 +9,8 @@
 - [x] Fix menu healthbar colors
 - [x] Enable custom locale for menu
 - [x] Reorganize menu buttons.
-- [ ] Do we need to migrate warn before enabling custom locale?
+- [x] Reorganize all translation keys
+- [x] Migrate warn to use the event + react translation
 - [ ] Fix the manage admins perm issue
 - [ ] Test new NUI Auth on ZAP server 
 
