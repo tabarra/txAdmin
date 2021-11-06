@@ -148,6 +148,7 @@
             "announcement": {
                 "title": "Send Announcement",
                 "dialog_desc": "Send an announcement to all online players.",
+                "dialog_placeholder": "Your announcement...",
                 "dialog_success": "Sending the announcement."
             },
             "clear_area": {
@@ -197,62 +198,58 @@
             "actions": {
                 "title": "Player Actions",
                 "command_sent": "Command sent!",
-                "sections": {
-                    "moderation": "Moderation",
-                    "interaction": "Interaction",
-                    "troll": "Troll"
-                },
                 "moderation": {
+                    "title": "Moderation",
+                    "options": {
+                        "dm": "DM",
+                        "warn": "Warn",
+                        "kick": "Kick",
+                        "set_admin": "Give Admin"
+                    },
                     "dm_dialog": {
                         "title": "Direct Message",
                         "description": "What is the reason for direct messaging this player?",
                         "placeholder": "Reason...",
-                        "dm_sent": "Your DM has been sent!"
+                        "success": "Your DM has been sent!"
                     },
                     "warn_dialog": {
                         "title": "Warn",
                         "description": "What is the reason for direct warning this player?",
                         "placeholder": "Reason...",
-                        "warn_sent": "The player was warned!"
+                        "success": "The player was warned!"
                     },
                     "kick_dialog": {
                         "title": "Kick",
                         "description": "What is the reason for kicking this player?",
                         "placeholder": "Reason...",
-                        "kick_sent": "The player was kicked!"
-                    },
+                        "success": "The player was kicked!"
+                    }
+                },
+                "interaction": {
+                    "title": "Interaction",
                     "options": {
-                        "dm": "DM",
-                        "warn": "Warn",
-                        "kick": "Kick",
-                        "set_admin": "Give Admin",
                         "heal": "Heal",
                         "go_to": "Go to",
                         "bring": "Bring",
                         "spectate": "Spectate",
                         "toggle_freeze": "Toggle Freeze"
                     },
-                    "action_notifications": {
+                    "notifications": {
                         "heal_player": "Healing player",
                         "tp_player": "Teleporting to player",
-                        "bring_player": "Summoning player"
+                        "bring_player": "Summoning player",
+                        "spectate_failed": "Failed to resolve the target! Exiting spectate.",
+                        "spectate_yourself": "You cannot spectate yourself.",
+                        "freeze_yourself": "You cannot freeze yourself."
                     }
                 },
-                "interaction": {
-                    "spectate_failed": "Failed to resolve the target! Exiting spectate.",
-                    "spectate_yourself": "You cannot spectate yourself.",
-                    "freeze_yourself": "You cannot freeze yourself."
-                },
                 "troll": {
+                    "title": "Troll",
                     "options": {
-                        "drunk": "Drunk",
-                        "drunk_desc": "Will apply a 'drunk' effect to the player",
+                        "drunk": "Make Drunk",
                         "weed": "Weed",
-                        "weed_desc": "Will apply a 'weed' effect to the player",
-                        "fire": "Fire",
-                        "fire_desc": "Will set the player on fire",
-                        "wild_attack": "Wild attack",
-                        "wild_attack_desc": "Will spawn a random wild animal to attack the player"
+                        "fire": "Set Fire",
+                        "wild_attack": "Wild attack"
                     }
                 }
             },
@@ -264,18 +261,17 @@
                 "notes_placeholder": "Notes about this player"
             },
             "history": {
-                "title": "Related history"
-            },
-            "ban": {
+                "title": "Related history",
                 "action_types": {
                     "warn": "WARNED",
                     "warn_revoked": "REVOKED the WARN for",
-                    "kick": "KICKED",
                     "ban": "BANNED",
                     "ban_revoked": "REVOKED the BAN for",
                     "whitelist": "WHITELIST",
                     "whitelist_revoked": "REVOKED the WHITELIST for"
-                },
+                }
+            },
+            "ban": {
                 "title": "Ban player",
                 "reason_placeholder": "Reason",
                 "duration_placeholder": "Duration",

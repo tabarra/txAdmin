@@ -73,7 +73,7 @@ const DialogActionView: React.FC = () => {
         })
           .then((resp) => {
             enqueueSnackbar(
-              t("nui_menu.player_modal.actions.moderation.dm_dialog.dm_sent"),
+              t("nui_menu.player_modal.actions.moderation.dm_dialog.success"),
               { variant: translateAlertType(resp.type) }
             );
           })
@@ -118,7 +118,7 @@ const DialogActionView: React.FC = () => {
             }
             enqueueSnackbar(
               t(
-                "nui_menu.player_modal.actions.moderation.warn_dialog.warn_sent"
+                "nui_menu.player_modal.actions.moderation.warn_dialog.success"
               ),
               { variant: translateAlertType(resp.type) }
             );
@@ -164,7 +164,7 @@ const DialogActionView: React.FC = () => {
             }
             enqueueSnackbar(
               t(
-                "nui_menu.player_modal.actions.moderation.kick_dialog.kick_sent"
+                "nui_menu.player_modal.actions.moderation.kick_dialog.success"
               ),
               { variant: translateAlertType(resp.type) }
             );
@@ -212,7 +212,7 @@ const DialogActionView: React.FC = () => {
     fetchNui("healPlayer", { id: assocPlayer.id });
     enqueueSnackbar(
       t(
-        "nui_menu.player_modal.actions.moderation.action_notifications.heal_player"
+        "nui_menu.player_modal.actions.interaction.notifications.heal_player"
       ),
       { variant: "success" }
     );
@@ -226,7 +226,7 @@ const DialogActionView: React.FC = () => {
     fetchNui("tpToPlayer", { id: assocPlayer.id });
     enqueueSnackbar(
       t(
-        "nui_menu.player_modal.actions.moderation.action_notifications.tp_player"
+        "nui_menu.player_modal.actions.interaction.notifications.tp_player"
       ),
       { variant: "success" }
     );
@@ -240,7 +240,7 @@ const DialogActionView: React.FC = () => {
     fetchNui("summonPlayer", { id: assocPlayer.id });
     enqueueSnackbar(
       t(
-        "nui_menu.player_modal.actions.moderation.action_notifications.bring_player"
+        "nui_menu.player_modal.actions.interaction.notifications.bring_player"
       ),
       { variant: "success" }
     );
@@ -303,7 +303,7 @@ const DialogActionView: React.FC = () => {
         </Typography>
       </Box>
       <Typography className={classes.sectionTitle}>
-        {t("nui_menu.player_modal.actions.sections.moderation")}
+        {t("nui_menu.player_modal.actions.moderation.title")}
       </Typography>
       <Box className={classes.actionGrid}>
         <Button variant="outlined" color="primary" onClick={handleDM} disabled={!userHasPerm("players.message", playerPerms)}>
@@ -320,59 +320,41 @@ const DialogActionView: React.FC = () => {
         </Button>
       </Box>
       <Typography className={classes.sectionTitle}>
-        {t("nui_menu.player_modal.actions.sections.interaction")}
+        {t("nui_menu.player_modal.actions.interaction.title")}
       </Typography>
       <Box className={classes.actionGrid}>
         <Button variant="outlined" color="primary" onClick={handleHeal} disabled={!userHasPerm("players.heal", playerPerms)}>
-          {t("nui_menu.player_modal.actions.moderation.options.heal")}
+          {t("nui_menu.player_modal.actions.interaction.options.heal")}
         </Button>
         <Button variant="outlined" color="primary" onClick={handleGoTo} disabled={!userHasPerm("players.teleport", playerPerms)}>
-          {t("nui_menu.player_modal.actions.moderation.options.go_to")}
+          {t("nui_menu.player_modal.actions.interaction.options.go_to")}
         </Button>
         <Button variant="outlined" color="primary" onClick={handleBring} disabled={!userHasPerm("players.teleport", playerPerms)}>
-          {t("nui_menu.player_modal.actions.moderation.options.bring")}
+          {t("nui_menu.player_modal.actions.interaction.options.bring")}
         </Button>
         <Button variant="outlined" color="primary" onClick={handleSpectate} disabled={!userHasPerm("players.spectate", playerPerms)}>
-          {t("nui_menu.player_modal.actions.moderation.options.spectate")}
+          {t("nui_menu.player_modal.actions.interaction.options.spectate")}
         </Button>
         <Button variant="outlined" color="primary" onClick={handleFreeze} disabled={!userHasPerm("players.freeze", playerPerms)}>
-          {t("nui_menu.player_modal.actions.moderation.options.toggle_freeze")}
+          {t("nui_menu.player_modal.actions.interaction.options.toggle_freeze")}
         </Button>
       </Box>
       <Typography className={classes.sectionTitle}>
-        {t("nui_menu.player_modal.actions.sections.troll")}
+        {t("nui_menu.player_modal.actions.troll.title")}
       </Typography>
       <Box className={classes.actionGrid}>
-        <TooltipOverride
-          title={t("nui_menu.player_modal.actions.troll.options.drunk_desc")}
-        >
-          <Button variant="outlined" color="primary" onClick={handleDrunk} disabled={!userHasPerm("players.troll", playerPerms)}>
-            {t("nui_menu.player_modal.actions.troll.options.drunk")}
-          </Button>
-        </TooltipOverride>
-        <TooltipOverride
-          title={t("nui_menu.player_modal.actions.troll.options.weed_desc")}
-        >
-          <Button variant="outlined" color="primary" onClick={handleWeed} disabled={!userHasPerm("players.troll", playerPerms)}>
-            {t("nui_menu.player_modal.actions.troll.options.weed")}
-          </Button>
-        </TooltipOverride>
-        <TooltipOverride
-          title={t("nui_menu.player_modal.actions.troll.options.fire_desc")}
-        >
-          <Button variant="outlined" color="primary" onClick={handleSetOnFire} disabled={!userHasPerm("players.troll", playerPerms)}>
-            {t("nui_menu.player_modal.actions.troll.options.fire")}
-          </Button>
-        </TooltipOverride>
-        <TooltipOverride
-          title={t(
-            "nui_menu.player_modal.actions.troll.options.wild_attack_desc"
-          )}
-        >
-          <Button variant="outlined" color="primary" onClick={handleWildAttack} disabled={!userHasPerm("players.troll", playerPerms)}>
-            {t("nui_menu.player_modal.actions.troll.options.wild_attack")}
-          </Button>
-        </TooltipOverride>
+        <Button variant="outlined" color="primary" onClick={handleDrunk} disabled={!userHasPerm("players.troll", playerPerms)}>
+          {t("nui_menu.player_modal.actions.troll.options.drunk")}
+        </Button>
+        <Button variant="outlined" color="primary" onClick={handleWeed} disabled={!userHasPerm("players.troll", playerPerms)}>
+          {t("nui_menu.player_modal.actions.troll.options.weed")}
+        </Button>
+        <Button variant="outlined" color="primary" onClick={handleSetOnFire} disabled={!userHasPerm("players.troll", playerPerms)}>
+          {t("nui_menu.player_modal.actions.troll.options.fire")}
+        </Button>
+        <Button variant="outlined" color="primary" onClick={handleWildAttack} disabled={!userHasPerm("players.troll", playerPerms)}>
+          {t("nui_menu.player_modal.actions.troll.options.wild_attack")}
+        </Button>
       </Box>
     </DialogContent>
   );

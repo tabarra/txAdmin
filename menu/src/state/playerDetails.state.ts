@@ -10,23 +10,22 @@ import { debugLog } from "../utils/debugLog";
 import { MockedPlayerDetails } from "../utils/constants";
 import { PlayerData } from "../hooks/usePlayerListListener";
 
-interface PlayerHistoryItem {
-  id: string;
-  action: string;
-  date: string;
-  reason: string;
-  author: string;
-  color?: string;
-}
-
 enum HistoryActionType {
   Warn = "WARN",
   WarnRevoked = "WARN-REVOKED",
-  Kick = "KICK",
   Ban = "BAN",
   BanRevoked = "BAN-REVOKED",
   Whitelist = "WHITELIST",
   WhitelistRevoked = "WHITELIST-REVOKED",
+}
+
+interface PlayerHistoryItem {
+  id: string;
+  action: HistoryActionType;
+  date: string;
+  reason: string;
+  author: string;
+  color?: string;
 }
 
 interface TxAdminPlayerAPIResp {
