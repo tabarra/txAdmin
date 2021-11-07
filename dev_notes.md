@@ -11,7 +11,8 @@
 - [x] Reorganize menu buttons.
 - [x] Reorganize all translation keys
 - [x] Migrate warn to use the event + react translation
-- [ ] Fix the manage admins perm issue
+- [x] Solve sticky cookie after reauth issue
+- [x] Fix the manage admins perm issue
 - [ ] Test new NUI Auth on ZAP server 
 
 - [ ] Migrate console log to new logger
