@@ -32,8 +32,10 @@ module.exports = {
     target: 'node',
     entry: './main.js',
     output: {
-        path: path.resolve(__dirname, 'dist'),
         filename: 'main.js'
+    },
+    node: {
+        __dirname: true
     },
     externals: {
         // discord.js

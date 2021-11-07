@@ -1,6 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CommonWebpack = require('./webpack.common');
-const { DefinePlugin  } = require('webpack');
+const { DefinePlugin } = require('webpack');
 const path = require('path');
 
 module.exports = CommonWebpack({
@@ -13,9 +13,7 @@ module.exports = CommonWebpack({
     },
     plugins: [
         new DefinePlugin({
-            'process.env': {
-                DEV_MODE: JSON.stringify('browser'),
-            },
+            'PROCESS_DEV_MODE': JSON.stringify('browser'),
         }),
         new HtmlWebpackPlugin({
             template: './menu/public/index.html',
