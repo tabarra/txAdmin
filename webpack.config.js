@@ -39,6 +39,7 @@ module.exports = {
     },
     externals: {
         // discord.js
+        '@discordjs/uws': 'empty',
         '@discordjs/opus': 'empty',
         'node-opus': 'empty',
         'opusscript': 'empty',

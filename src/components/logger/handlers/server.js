@@ -52,7 +52,7 @@ module.exports = class ServerLogger extends LoggerBase {
             intervalBoundary: true,
             initialRotation: true,
             history: 'server.history',
-            // compress: 'gzip', //don't forget to do `mv filename filename.gz`
+            // compress: 'gzip',
             interval: '1d',
             maxFiles: 7,
             maxSize: '10G',
