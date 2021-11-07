@@ -1,0 +1,286 @@
+{
+    "$meta": {
+        "label": "Slovak",
+        "humanizer_language": "sk"
+    },
+    "restarter": {
+        "start_timeout": "server sa nepodarilo spustiť v požadovanom čase",
+        "crash_detected": "detekujem pád",
+        "hang_detected": "detekujem chybu pri načítavaní",
+        "partial_hang_warn": "Z dôvodu chyby pri načítavaní sa tento server reštartuje o 1 minútu. Odpojte sa už teraz, prosím.",
+        "partial_hang_warn_discord": "Z dôvodu chyby pri načítavení sa **%{servername}** reštartuje o 1 minútu.",
+        "schedule_reason": "plánovaný reštart o %{time}",
+        "schedule_warn": "Tento server má plánovaný reštart o %{smart_count} minút. Odpojte sa už teraz, prosím. |||| Tento server má plánovaný reštart o %{smart_count} minút.",
+        "schedule_warn_discord": "**%{servername}** má plánovaný reštart o %{smart_count} mintút. |||| **%{servername}** má planovaný reštart o %{smart_count} minút."
+    },
+    "ban_messages": {
+        "kick_temporary": "(%{author}), bol si zabanovaný na tomto serveri, z dôvodu \"%{reason}\". Tvoj ban vyprší: %{expiration}.",
+        "kick_permanent": "(%{author}), bol si permanentne zabanovaný na tomto serveri, z dôvodu \"%{reason}\".",
+        "reject_temporary": "Bol si zabanovaný na tomto serveri.\nTvoj ban vyprší: %{expiration}.\nBan ID: %{id}.\nDôvod Banu: %{reason}.\nUdelené: %{author}.",
+        "reject_permanent": "Bol si permanentne zabanovaný na tomto serveri.\nBan ID: %{id}.\nDôvodu Banu: %{reason}.\nUdelené: %{author}."
+    },
+    "server_actions": {
+        "restarting": "Server sa reštartuje z dôvodu (%{reason}).",
+        "restarting_discord": "**%{servername}** sa reštartuje z dôvodu (%{reason}).",
+        "stopping": "Server sa vypína z dôvodu (%{reason}).",
+        "stopping_discord": "**%{servername}** sa vypína z dôvodu (%{reason}).",
+        "spawning_discord": "**%{servername}** sa zapína."
+    },
+    "discord": {
+        "status_online": "**%{servername}** je aktuálne **Zapnutý**!",
+        "status_offline": "**%{servername}** je aktuálne **Vypnutý**!"
+    },
+    "nui_warning": {
+        "title": "VAROVANIE",
+        "warned_by": "Udelený:",
+        "instruction": "Podrž tlačídlo [SPACE] 10 sekúnd pre zmazanie tejto správy."
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "txAdmin momenálne obsahuje aj in-game menu!\nBind [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu], vyskúšaj si to!",
+            "menu_not_allowed": "Tvoja identifikácia sa nezhoduje so žiadnym adminom v databáze txAdmina.\nAk si myslíš, že nastala chyba tak choď do Admin Manager, a skontroluj či máš uložené informácie.",
+            "action_unauthorized": "Na toto nemáš práva!",
+            "unknown_error": "Vyskytla sa neznáma chyba.",
+            "not_enabled": "txAdmin Menu nie je povolené! Pozri txAdmin dokumentáciu pre návod k povoleniu, prosím.",
+            "announcement_title": "Oznámenie:",
+            "general_no_perms": "Na toto nemáš práva!",
+            "dialog_empty_input": "Nemôžeš mať prázdny vstup."
+        },
+        "frozen": {
+            "froze_player": "Zamrazil si hráča!",
+            "unfroze_player": "Odmrazil si hráča!",
+            "was_frozen": "Bol si zamrazený adminom!"
+        },
+        "common": {
+            "cancel": "Zrušiť",
+            "submit": "Potvrdiť",
+            "error": "Vyskytla sa neznáma chyba",
+            "copied": "Skopírované"
+        },
+        "page_main": {
+            "tooltips": {
+                "tooltip_1": "Použi %{key} pre prechádzanie stránok a šípky pre navigáciu v položkách ponuky",
+                "tooltip_2": "Niektoré položky ponuky majú podmožnosti, ktoré si možeš vybrať pomocou šípkou doľava a doprava"
+            },
+            "fix_vehicle": {
+                "list_primary": "Opraviť vozidlo",
+                "list_secondary": "Nastaviť aktuálny stav vozidla 100%",
+                "dialog_success": "Vozidlo bolo opravené!",
+                "dialog_error": "Nie si vo vozidle!"
+            },
+            "teleport": {
+                "list_primary": "Teleport",
+                "item_waypoint": "Na: Označený bod",
+                "item_coords": "Na: Súradnice",
+                "item_previous": "Na: Predchadzajúcu lokáciu",
+                "dialog_title": "Teleport",
+                "dialog_desc": "Urč súradnice vo formáte x, y, z, pre prejdenie červou dierou",
+                "dialog_success": "Posielam ťa do červej diery!",
+                "dialog_error": "Neplatné súradnice. Formát musí byť nasledujúci: 111, 222, 33",
+                "no_waypoint_error": "Nemáš označený žiaden bod."
+            },
+            "teleport_back": {
+                "list_primary": "Vrátiť sa",
+                "list_secondary": "Vrátiť sa na poslednú lokáciu",
+                "error": "Nemáš žiadnu poslednú lokáciu pre teleport!",
+                "success": "Vraciam ta späť cez červiu dieru!"
+            },
+            "player_mode": {
+                "list_primary": "Režim hráča",
+                "list_secondary": "Aktuálne: %{mode}",
+                "item_none": "Normal",
+                "item_noclip": "Noclip",
+                "item_godmode": "God Mode",
+                "dialog_success_none": "Vrátenie do režimu hráča",
+                "dialog_success_noclip": "Noclip bol zapnutý",
+                "dialog_success_godmode": "God mode bol zapnutý"
+            },
+            "spawn_wep": {
+                "list_primary": "Spawnúť zbraň",
+                "list_secondary": "Spawni si zbraň",
+                "dialog_title": "Spawnúť zbraň",
+                "dialog_desc": "Spawnútie zbrani pomocou zadanie názvy modelu."
+            },
+            "car_options": {
+                "list_primary": "Vozidlo",
+                "onesync_error": "Táto možnosť vyžaduje, aby bol OneSync zapnutý pre spracovanie entít servera"
+            },
+            "spawn_veh": {
+                "list_secondary": "Spawnúť vozidlo",
+                "dialog_title": "Spawnúť vozidlo",
+                "dialog_desc": "Zadajte názov modelu vozidla, ktoré chcete spawnúť",
+                "dialog_success": "Vozidlo bolo spawnuté!",
+                "dialog_error": "Vozidlo s týmto názvom modela '%{modelName}' neexistuje!",
+                "dialog_info": "Pokušam sa spawnúť %{modelName}"
+            },
+            "delete_veh": {
+                "list_secondary": "Vymazať aktuálne vozidlo",
+                "dialog_success": "Vozidlo bolo vymazané!",
+                "dialog_error": "Nie si vo vozidle!"
+            },
+            "heal_all": {
+                "list_primary": "Uzdraviť všetkých hráčov",
+                "list_secondary": "Uzdraví a oživí všetkých hráčov",
+                "dialog_success": "Úspešne si uzdravil a oživil všetkých hráčov"
+            },
+            "heal_myself": {
+                "list_primary": "Uzdraviť sa",
+                "list_secondary": "Obnoví tvoje zdravie",
+                "dialog_success_0": "Uzdravil si sa!",
+                "dialog_success_1": "Teraz by si sa mal cítiť lepšie!",
+                "dialog_success_2": "Zdravie bolo obnovené až do plna!",
+                "dialog_success_3": "Auvajs opravené!"
+            },
+            "send_announce": {
+                "list_primary": "Poslať oznámenie",
+                "list_secondary": "Oznámi tvoju správu",
+                "dialog_title": "Poslať oznámenie",
+                "dialog_desc": "Pošle oznámenie všetkým online hráčom",
+                "dialog_success": "Posielam oznámenie"
+            },
+            "player_ids": {
+                "list_primary": "Zapnúť zobrazenie ID hráčov",
+                "list_secondary": "Zobrazí NetID najbližších hráčov",
+                "alert_show": "Zobrazujem NetID najbližších hráčov",
+                "alert_hide": "Skrývam NetID najbližších hráčov"
+            },
+            "copy_coords": {
+                "list_primary": "Kopírujem súradnice",
+                "list_secondary": "Skopírovať aktuálne súradnice"
+            },
+            "clear_area": {
+                "list_primary": "Obnoviť oblasť",
+                "list_secondary": "Pokúsi sa obnoviť oblasť do predvoleného stavu",
+                "dialog_description": "Zadajte okruh, v ktorom chcete entity resetovať (0-300). Pounámka: Toto nevymaže entity vytvorené na strane servera",
+                "dialog_error": "Neplatný vstup okruhu. Skúste to znova",
+                "dialog_success": "Čistím plochu s polomerom %{radius}m"
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "Online hráči",
+                "players": "Hráči",
+                "search": "Hľadať",
+                "zero_players": "Nenašiel som žiadného hráča"
+            },
+            "sort": {
+                "label": "Triediť podľa",
+                "distance": "Vzdialenosť",
+                "id": "ID",
+                "joined_first": "Prvého pripojenia",
+                "joined_last": "Posledného pripojenai",
+                "closest": "Najbližšie",
+                "farthest": "Najďalej"
+            },
+            "card": {
+                "health": "%{percentHealth}% zdravia"
+            }
+        },
+        "player_modal": {
+            "misc": {
+                "error": "Pri načítavaní podrobností tohto hráča sa vyskytla chyba. Podrobnosti chyby sú nižšie:",
+                "target_not_found": "Nepodarilo sa nájsť online hráča s ID alebo používateľským menom %{target}"
+            },
+            "tabs": {
+                "actions": "Akcie",
+                "info": "Info",
+                "ids": "IDs",
+                "history": "História",
+                "ban": "Ban"
+            },
+            "actions": {
+                "title": "Akcie hráča",
+                "command_sent": "Príkaz odoslaný!",
+                "sections": {
+                    "moderation": "Moderácia",
+                    "interaction": "Interakcia",
+                    "troll": "Troll"
+                },
+                "moderation": {
+                    "dm_dialog": {
+                        "title": "Súkromná správa",
+                        "description": "Aký je dôvod zasielania súkromnej správy hráčovi?",
+                        "placeholder": "Dôvod...",
+                        "dm_sent": "Súkromná správa bola odoslaná!"
+                    },
+                    "warn_dialog": {
+                        "title": "Varovanie",
+                        "description": "Aká je dôvod varovania tohto hráča?",
+                        "placeholder": "Dôvod...",
+                        "warn_sent": "Hráč bol varovaný!"
+                    },
+                    "kick_dialog": {
+                        "title": "Vyhodenie",
+                        "description": "Aká je dôvod vyhodenia tohto hráča?",
+                        "placeholder": "Dôvod...",
+                        "kick_sent": "Hráč bol vyhodený!"
+                    },
+                    "options": {
+                        "dm": "Súkromná správa",
+                        "warn": "Varovanie",
+                        "kick": "Vyhodenie",
+                        "set_admin": "Nastaviť Admina",
+                        "heal": "Uzdraviť",
+                        "go_to": "Ísť na",
+                        "bring": "Privolať",
+                        "spectate": "Spectate",
+                        "toggle_freeze": "Zamraziť"
+                    },
+                    "action_notifications": {
+                        "heal_player": "Uzdravujem hráča",
+                        "tp_player": "Teleportujem k hráčovi",
+                        "bring_player": "Teleportujem k tebe hráča"
+                    }
+                },
+                "interaction": {
+                    "spectate_failed": "Cieľ sa nepodarilo vyriešiť! Odíjdi zo spectate módu.",
+                    "spectate_yourself": "Nemôžeš spectatovať sám seba.",
+                    "freeze_yourself": "Nemôžeš zamraziť sám seba."
+                },
+                "troll": {
+                    "options": {
+                        "drunk": "Opiť",
+                        "drunk_desc": "Uplatní na hráčoví efekt 'optia'",
+                        "weed": "Zhuliť",
+                        "weed_desc": "Uplatní na hráčovi efekt 'zhulenia'",
+                        "fire": "Zapáliť",
+                        "fire_desc": "Zapáli hráča",
+                        "wild_attack": "Divoký útok",
+                        "wild_attack_desc": "Spawne náhodné divé zviera, ktoré napadne hráča"
+                    }
+                }
+            },
+            "info": {
+                "title": "Informácie o hráčovi",
+                "session_time": "Čas relácie",
+                "play_time": "Odohraný čas",
+                "joined": "Pripojenie",
+                "notes_placeholder": "Poznámky o tomto hráčovi"
+            },
+            "history": {
+                "title": "Súvisiaca história"
+            },
+            "ban": {
+                "action_types": {
+                    "warn": "VAROVANIE",
+                    "warn_revoked": "ODVOLAL VAROVANIE pre",
+                    "kick": "VYHODENIE",
+                    "ban": "ZABANOVANIE",
+                    "ban_revoked": "ODVOLAL BAN pre",
+                    "whitelist": "WHITELIST",
+                    "whitelist_revoked": "ODVOLAL WHITELIST pre"
+                },
+                "title": "Zabanovať hráča",
+                "reason_placeholder": "Dôvod",
+                "duration_placeholder": "Trvanie",
+                "hours": "hodín",
+                "days": "dní",
+                "weeks": "týždňov",
+                "months": "mesiacov",
+                "permanent": "Permanentne",
+                "custom": "Vlastné",
+                "helper_text": "Zvoľ trvanie, prosím"
+            }
+        }
+    }
+}
