@@ -64,13 +64,19 @@ RegisterNetEvent('txsv:checkAdminStatus', function()
         end
 
         -- Setting up admin
-        debugPrint("^2Authenticated admin #"..srcString.." with permissions: "..json.encode(resp.permissions))
+        local adminTag = "[#"..src.."] "..resp.username
+        debugPrint(("^2Authenticated admin ^5%s^2 with permissions: %s"):format(
+            src,
+            adminTag,
+            json.encode(resp.permissions)
+        ))
         TX_ADMINS[srcString] = {
+            tag = adminTag,
             perms = resp.permissions,
             bucket = 0
         }
         sendInitialPlayerlist(src)
-        TriggerClientEvent('txcl:setAdmin', src, resp.permissions)
+        TriggerClientEvent('txcl:setAdmin', src, resp.username, resp.permissions)
     end, 'GET', '', headers)
 end)
 

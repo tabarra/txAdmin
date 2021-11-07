@@ -59,9 +59,9 @@ end
 TriggerServerEvent('txsv:checkAdminStatus')
 
 -- Triggered as callback of txsv:checkAdminStatus
-RegisterNetEvent('txcl:setAdmin', function(perms, rejectReason)
+RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
   if type(perms) == 'table' then
-    print("^2[AUTH] accepted with permissions: " .. json.encode(perms or "nil"))
+    print("^2[AUTH] logged in as '"..username.."' with perms: " .. json.encode(perms or "nil"))
     menuIsAccessible = true
     menuPermissions = perms
     RegisterKeyMapping('txadmin', 'Menu: Open Main Page', 'keyboard', '')

@@ -14,6 +14,7 @@ module.exports = async function nuiAuth(ctx) {
 
     ctx.send({
         isAdmin: true,
+        username: ctx.nuiSession.auth.username,
         permissions: ctx.nuiSession.auth.master ? ['all_permissions'] : ctx.nuiSession.auth.permissions,
     });
 };
