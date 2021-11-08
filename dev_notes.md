@@ -20,6 +20,7 @@
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
 - [ ] Change CitizenFX to Cfx.re as per branding consistency (ask aurum)
+
 - [ ] When taking menu out of beta:
     - Create a "menu" tab in settings page with options for: enable, tab key, screen side
     - Add "NEW" tag for settings page and menu tab
@@ -30,9 +31,37 @@
 
 
 
+
+TODO::
+- Atualizar !events, !translate e !key
+- chungus command !key that will tell the user how to change the TAB and all the bindable options like noclip and etc
+
+
+Pro debug da playerlist:
+- comando pra printar: [primeiro,ultimo,count,sum]
+- comando get initial
+- comando get full
+- algum tipo de print quando as coisas acontecerem vai ser necessário
+- nao esquecer de remover a suggestion 
+
+
+
+FIXME: sendMenuMessage('setServerCtx', ServerCtx)
+
+FIXME: quando o menu abrir, deveria voltar os list item pro default deles
+
+
+
+
+Master sem fivem:
+- Na página de pin, ter 2 botões, um pra criar conta com e outro sem fivem
+- addMaster:handlePin() pegar parametro e ou jogar pro idm, ou pra pagina addmaster mas com o login habilitado e obrigatório
+- não tem como colocar isso sem termos o modal que fica aparecendo pedindo pro admin inserir ou fivem, ou discord, ou marcar que essa conta não vai ter admin ingame
+
+
+
 -- announcements need sound!
 
--- chungus command !key that will tell the user how to change the TAB and all the bindable options like noclip and etc
 
 > User report: If you give warn from menu then it won't log in tx plz fix this (he said it's only after the second)
 
@@ -50,8 +79,6 @@ remover o \s?
 
 -- Why both have the same debug data? https://i.imgur.com/WGawiyr.png
 
--- Fazer o announcement web (txaBroadcast) usar NUI via txaEvent e adicionar no events.md
-`TriggerClientEvent("txAdmin:receiveAnnounce", -1, 'sdfsdfsdfsdfdsf')`
 
 
 
