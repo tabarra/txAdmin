@@ -29,8 +29,15 @@ end)
 --  Warn & Announcement handling
 -- =============================================
 -- Dispatch Announcements
-RegisterNetEvent('txAdmin:receiveAnnounce', function(message)
-    sendMenuMessage('addAnnounceMessage', { message = message })
+RegisterNetEvent('txAdmin:receiveAnnounce', function(message, author)
+    print('txAdmin:receiveAnnounce', message)
+    sendMenuMessage(
+        'addAnnounceMessage',
+        { 
+            message = message,
+            author = author
+        }
+    )
 end)
 
 -- TODO: remove [SPACE] holding requirement?
@@ -76,7 +83,6 @@ CreateThread(function()
     TriggerEvent('chat:removeSuggestion', '/txaKickAll')
     TriggerEvent('chat:removeSuggestion', '/txaKickID')
     TriggerEvent('chat:removeSuggestion', '/txaDropIdentifiers')
-    TriggerEvent('chat:removeSuggestion', '/txaBroadcast')
     TriggerEvent('chat:removeSuggestion', '/txaEvent')
     TriggerEvent('chat:removeSuggestion', '/txaSendDM')
     TriggerEvent('chat:removeSuggestion', '/txaReportResources')

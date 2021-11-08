@@ -59,7 +59,6 @@ CreateThread(function()
     RegisterCommand("txaKickAll", txaKickAll, true)
     RegisterCommand("txaKickID", txaKickID, true)
     RegisterCommand("txaDropIdentifiers", txaDropIdentifiers, true)
-    RegisterCommand("txaBroadcast", txaBroadcast, true)
     RegisterCommand("txaEvent", txaEvent, true)
     RegisterCommand("txaSendDM", txaSendDM, true)
     RegisterCommand("txaReportResources", txaReportResources, true)
@@ -214,6 +213,14 @@ function txaDropIdentifiers(_, args)
     CancelEvent()
 end
 
+-- Broadcast admin message to all players
+-- This function is triggered by txaEvent
+local function handleAnnouncementEvent(eventData)
+    print('handleAnnouncementEvent')
+    TriggerClientEvent("txAdmin:receiveAnnounce", -1, eventData.message, eventData.author)
+    TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) "..eventData.author, eventData.message)
+end
+
 -- Warn specific player via server ID
 -- This function is triggered by txaEvent
 local function handleWarnEvent(eventData)
@@ -243,30 +250,12 @@ function txaEvent(source, args)
 
     if eventName == 'playerWarned' then 
         return handleWarnEvent(eventData)
+    elseif eventName == 'announcement' then 
+        return handleAnnouncementEvent(eventData)
     end
     CancelEvent()
 end
 
--- Broadcast admin message to all players
--- TODO: deprecate txaBroadcast, carefull to also show it on the Server Log
-function txaBroadcast(source, args)
-    if args[1] ~= nil and args[2] ~= nil then
-        args[1] = unDeQuote(args[1])
-        args[2] = unDeQuote(args[2])
-        log("Admin Broadcast - "..args[1]..": "..args[2])
-        TriggerClientEvent("chat:addMessage", -1, {
-            args = {
-                "(Broadcast) "..args[1],
-                args[2],
-            },
-            color = {255, 0, 0}
-        })
-        TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) "..args[1], args[2])
-    else
-        logError('Invalid arguments for txaBroadcast')
-    end
-    CancelEvent()
-end
 
 -- Send admin direct message to specific player
 function txaSendDM(source, args)

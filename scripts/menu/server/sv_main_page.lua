@@ -30,7 +30,8 @@ RegisterNetEvent('txAdmin:menu:sendAnnouncement', function(message)
   local allow = PlayerHasTxPermission(src, 'players.message')
   TriggerEvent("txaLogger:menuEvent", src, "announcement", allow, message)
   if allow then
-    TriggerClientEvent('txAdmin:receiveAnnounce', -1, message)
+    local author = TX_ADMINS[tostring(src)].tag
+    TriggerClientEvent("txAdmin:receiveAnnounce", -1, message, author)
   end
 end)
 
