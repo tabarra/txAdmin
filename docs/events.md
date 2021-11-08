@@ -65,3 +65,9 @@ Event Data:
 Called when the txAdmin settings change in a way that could be relevant for the server.  
 Event Data: this event has no data.  
 At the moment, this is only used to signal the txAdmin in-game Menu if the configured language has changed, and can be used to easily test custom language files without requiring a server restart. 
+
+## txAdmin:events:healedPlayer (v4.8)
+Called when a heal event is triggered for a player/whole server.  
+This is most useful for servers running "ambulance job" or other resources that keep a player unconscious even after the health being restored to 100%;
+Event Data:
+- `id`: The ID of the healed player, or `-1` if the entire server was healed.

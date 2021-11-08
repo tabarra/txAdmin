@@ -1,5 +1,5 @@
-const minDuration = 5;
-const maxDuration = 20;
+const minDuration = 7.5;
+const maxDuration = 30;
 const avgWordSize = 5.5; //We could count words, but this is probably better.
 const avgWordReadingTime = 60 / 150; //Assuming slow-reading speeds
 

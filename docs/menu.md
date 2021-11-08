@@ -62,17 +62,11 @@ of the menu
 * Default: 0
 * Usage: `+set txAdminMenu-alignRight 1`
 
-### Legacy Convars
-ConVar's that were previously available in older versions but have been
-removed. They are here for developer reference but you should **not**,
-try and utilize them.
+**txAdminMenu-drunkDuration**
+* Description: How many seconds the drunk effect (troll action) should last.
+* Default: 30
+* Usage: `+setr txAdminMenu-drunkDuration 120`
 
-**txAdminMenu-updateInterval (removed in v4.7.0)**
-* Description: Controls the interval in which players are updated for each online
-  admin. *Increasing this can improve client performance but will make updates to
-  the players page slower*
-* Default: 5000
-* Usage: `+set txAdminMenu-updateInterval 10000`
 
 ## Commands
 **tx | txadmin**
@@ -92,23 +86,11 @@ quickly open up the target player's info modal.
 * Usage: `/txAdmin-reauth`
 * Required Perm: `none`
 
-## Events
-**txAdmin:healedPlayer**
-- Domain: `Server`
-- Handler Arguments: `playerId: string`
-- Description: This event is emitted whenever a heal event is triggered for
-  a player/whole server. It will pass an argument containing the targets server 
-  ID.
-
-*Note: Whenever txAdmin is targeting healing on all players, it will emit -1 for serverId*
-
 ## Troubleshooting menu access
 
 If you type `/tx` and nothing happens, your menu is probably disabled.  
-If you see a red message like [this](https://i.imgur.com/G83uTNC.png) and you are registered on txAdmin, do the following:
-- In txAdmin Live Console, type `txAdmin-debug 1`;
-- In your game F8 console, type `txAdmin-reauth`;
-- Read the message printed on console for more information.
+If you see a red message like [this](https://i.imgur.com/G83uTNC.png) and you are registered on txAdmin, you can type `/txAdmin-reauth` in the chat to retry the authentication.  
+> Note: The entire menu auth system was rewritten in version v4.8.0 to solve issues related to the NUI authentication.
 
 ## Development
 You can find development instructions regarding the menu [here.](https://github.com/tabarra/txAdmin/blob/master/docs/development.md#menu-development)

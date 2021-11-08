@@ -164,7 +164,7 @@ export const useHudListenersService = () => {
         variant: "info",
         autoHideDuration: getNotiDuration(message) * 1000,
         anchorOrigin: {
-          horizontal: "right",
+          horizontal: "center",
           vertical: "top",
         },
       }
