@@ -325,6 +325,7 @@ async function handleBan(ctx, sess) {
         reason,
         actionId,
         target: reference,
+        duration
     });
 
     const toResp = await globals.fxRunner.srvCmdBuffer(cmd);
