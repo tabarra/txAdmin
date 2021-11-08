@@ -30,7 +30,7 @@ const windowsReleaseAsync = async (release) => {
 
     const ver = (version || [])[0];
 
-    // Server 2008, 2012, 2016, and 2019 versions are ambiguous with desktop versions and must be detected at runtime.
+    // Server 2008, 2012, 2016, 2019 and 2022 versions are ambiguous with desktop versions and must be detected at runtime.
     // If `release` is omitted or we're on a Windows system, and the version number is an ambiguous version
     // then use `wmic` to get the OS caption: https://msdn.microsoft.com/en-us/library/aa394531(v=vs.85).aspx
     // If `wmic` is obsolete (later versions of Windows 10), use PowerShell instead.
@@ -45,7 +45,11 @@ const windowsReleaseAsync = async (release) => {
             stdout = out.stdout || '';
         }
 
-        const year = (stdout.match(/2008|2012|2016|2019/) || [])[0];
+        if (stdout.includes('Windows 11')) {
+            return '11';
+        }
+
+        const year = (stdout.match(/2008|2012|2016|2019|2022/) || [])[0];
 
         if (year) {
             return `Server ${year}`;
