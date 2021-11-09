@@ -59,11 +59,7 @@ Note that the Linux version of FXServer is only provided as a courtesy port due 
 - Create a new folder (for example mkdir -p /home/username/FXServer/server), this will be used for the server binaries.
 - Download the current recommended master branch build for Linux from the [artifacts server](https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/) (copy the URL for the latest server version and use wget <url> to download it).
 - Extract the build to the directory that was previously created, using cd /home/username/FXServer/server && tar xf fx.tar.xz (you need to have xz installed, on Debian/Ubuntu this is in the xz-utils package).
-- Clone [cfx-server-data](https://github.com/citizenfx/cfx-server-data) in a new folder outside of your server binaries folder.
-- 4b. For example git clone https://github.com/citizenfx/cfx-server-data.git /home/username/FXServer/server-data 5. Make a server.cfg file in your server-data folder (copy the example server.cfg file below into that file). 6. Set the license key in your server.cfg using sv_licenseKey "licenseKeyGoesHere". 7. Run the server from the server-data folder.
-7b. bash /home/username/FXServer/server/run.sh +exec server.cfg
-
-For further information, consult the [FiveM docs - Linux](https://docs.fivem.net/docs/server-manual/setting-up-a-server/#linux).
+- Run the server with ./run.sh
 
 ### Additional Information
 - Learn more about manually building txAdmin at [building.md](docs/building.md).
