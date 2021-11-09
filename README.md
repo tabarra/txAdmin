@@ -12,7 +12,7 @@
 ## What's txAdmin?
 - txAdmin is a fully featured web panel to manage and monitor your FiveM/RedM server remotely with ease. We're actively being used by over ten thousand servers worldwide at any given moment in time.
 
-## Unique Characteristic
+## Unique Characteristics
 - [Recipe-based](docs/recipe.md) deployer to create a FiveM server in under 60 seconds.
 - Scheduled restarts with warning announcements and [custom events](docs/events.md).
 - Instantly start, stop and restart your server instance or resources.
