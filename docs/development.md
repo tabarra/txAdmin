@@ -78,9 +78,6 @@ Then copy the `src/css/style.css` to txAdmin's folder.
 The txAdmin Menu is a Lua + TypeScript React project. Ensure you have all the dependencies by running
 `npm i` in the root directory.
 
-The txAdmin Menu is a Lua + TypeScript React project. Ensure you have all the dependencies by running
-`npm i` in the root directory.
-
 #### Hot Reloading Dev Environments
 
 To run the menu in the browser you can use the `dev:menu` script. This will hot reload, everytime
