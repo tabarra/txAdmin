@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import "./App.css";
 import { useIsMenuVisibleValue } from "./state/visibility.state";
 import MenuRoot from "./components/MenuRoot";
@@ -9,17 +9,26 @@ import { TopLevelErrorBoundary } from "./components/misc/TopLevelErrorBoundary";
 import { debugData } from "./utils/debugData";
 import { I18n } from "react-polyglot";
 import { useServerCtxValue } from "./state/server.state";
-import { getLocale } from "./utils/getLocale";
 import { WarnPage } from "./components/WarnPage/WarnPage";
 import { IFrameProvider } from "./provider/IFrameProvider";
-import { useCheckCredentials } from "./hooks/useCheckCredentials";
 import { PlayerModalProvider } from "./provider/PlayerModalProvider";
 import { txAdminMenuPage, useSetPage } from "./state/page.state";
 import { useListenerForSomething } from "./hooks/useListenerForSomething";
-import { usePlayersFilterIsTemp, useSetPlayerFilter } from "./state/players.state";
+import {
+  usePlayersFilterIsTemp,
+  useSetPlayerFilter,
+} from "./state/players.state";
+import { Box } from "@mui/material";
+import { fetchNui } from "./utils/fetchNui";
+import { useLocale } from "./hooks/useLocale";
 
-debugData(
+//Mock events for browser development
+debugData<any>(
   [
+    {
+      action: "setPermissions",
+      data: ["all_permissions"],
+    },
     {
       action: "setVisible",
       data: true,
@@ -31,14 +40,14 @@ debugData(
 const MenuWrapper: React.FC = () => {
   const visible = useIsMenuVisibleValue();
   const serverCtx = useServerCtxValue();
-  const [playersFilterIsTemp, setPlayersFilterIsTemp] = usePlayersFilterIsTemp();
+  const [playersFilterIsTemp, setPlayersFilterIsTemp] =
+    usePlayersFilterIsTemp();
   const setPlayerFilter = useSetPlayerFilter();
 
   const setPage = useSetPage();
   // These hooks don't ever unmount
   useExitListener();
   useNuiListenerService();
-  useCheckCredentials();
 
   //Change page back to Main when closed
   useEffect(() => {
@@ -56,13 +65,13 @@ const MenuWrapper: React.FC = () => {
     return () => clearInterval(changeTimer);
   }, [visible, playersFilterIsTemp]);
 
-  const localeSelected = useMemo(() => getLocale(serverCtx.locale), [
-    serverCtx.locale,
-  ]);
+  const localeSelected = useLocale();
+  //Inform Lua that we are ready to get all variables (server ctx, permissions, debug, etc)
+  useEffect(() => {
+    fetchNui("reactLoaded").catch(() => {});
+  }, []);
 
   useListenerForSomething();
-
-  const styled = visible ? { opacity: 1 } : undefined;
 
   return (
     <TopLevelErrorBoundary>
@@ -74,9 +83,14 @@ const MenuWrapper: React.FC = () => {
         <IFrameProvider>
           <DialogProvider>
             <PlayerModalProvider>
-              <div className="App" style={styled}>
+              <Box
+                className="App"
+                sx={{
+                  opacity: visible ? 1 : 0,
+                }}
+              >
                 <MenuRoot />
-              </div>
+              </Box>
             </PlayerModalProvider>
           </DialogProvider>
           <WarnPage />

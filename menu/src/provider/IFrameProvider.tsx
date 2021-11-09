@@ -30,8 +30,6 @@ export interface IFramePostData {
 
 export const BASE_IFRAME_PATH = "https://monitor/WebPipe";
 
-export const PATH_ON_PAGE_LOAD = "/serverLog";
-
 export const useIFrameCtx = () => useContext<iFrameContextValue>(iFrameCtx);
 
 // This allows for global control of the iFrame from other components
@@ -39,18 +37,12 @@ export const IFrameProvider: React.FC = ({ children }) => {
   const [curFramePg, setCurFramePg] = useState<ValidPath | null>(null);
   const [menuPage, setMenuPage] = usePage();
   const isMenuVisible = useIsMenuVisibleValue();
-  const curPerms = usePermissionsValue();
-
-  useEffect(() => {
-    if (curPerms) {
-    }
-  }, [curPerms]);
 
   // Will reset the iFrame page to server logs everytime
   useEffect(() => {
     if (isMenuVisible) {
       const refreshBuster = Math.random().toString().padStart(8, "0").slice(-8);
-      setCurFramePg(`/${PATH_ON_PAGE_LOAD}?refresh${refreshBuster}`);
+      setCurFramePg(`/nui/start?refresh${refreshBuster}`);
     }
   }, [isMenuVisible]);
 

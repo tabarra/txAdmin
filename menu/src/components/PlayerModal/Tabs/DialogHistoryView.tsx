@@ -39,31 +39,27 @@ const DialogHistoryView: React.FC = () => {
 
   const actionTypes = {
     WARN: {
-      title: t("nui_menu.player_modal.ban.action_types.warn"),
+      title: t("nui_menu.player_modal.history.action_types.warn"),
       color: "#f1c40f",
     },
     "WARN-REVOKED": {
-      title: t("nui_menu.player_modal.ban.action_types.warn_revoked"),
+      title: t("nui_menu.player_modal.history.action_types.warn_revoked"),
       color: "gray",
     },
-    KICK: {
-      title: t("nui_menu.player_modal.ban.action_types.kick"),
-      color: "#e67e22",
-    },
     BAN: {
-      title: t("nui_menu.player_modal.ban.action_types.ban"),
+      title: t("nui_menu.player_modal.history.action_types.ban"),
       color: "#c2293e",
     },
     "BAN-REVOKED": {
-      title: t("nui_menu.player_modal.ban.action_types.ban_revoked"),
+      title: t("nui_menu.player_modal.history.action_types.ban_revoked"),
       color: "gray",
     },
     WHITELIST: {
-      title: t("nui_menu.player_modal.ban.action_types.whitelist"),
+      title: t("nui_menu.player_modal.history.action_types.whitelist"),
       color: "#c2293e",
     },
     "WHITELIST-REVOKED": {
-      title: t("nui_menu.player_modal.ban.action_types.whitelist_revoked"),
+      title: t("nui_menu.player_modal.history.action_types.whitelist_revoked"),
       color: "gray",
     },
   };

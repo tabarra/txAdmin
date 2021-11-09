@@ -7,6 +7,9 @@ import { MenuTheme } from "./styles/theme";
 import { RecoilRoot } from "recoil";
 import { KeyboardNavProvider } from "./provider/KeyboardNavProvider";
 import { SnackbarProvider } from "notistack";
+import { registerDebugFunctions } from "./utils/registerDebugFunctions";
+
+registerDebugFunctions();
 
 ReactDOM.render(
   <RecoilRoot>

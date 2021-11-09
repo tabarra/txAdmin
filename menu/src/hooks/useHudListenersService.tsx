@@ -36,7 +36,7 @@ const AnnounceMessage: React.FC<AnnounceMessageProps> = ({
   title,
   message,
 }) => (
-  <Box maxWidth={200}>
+  <Box maxWidth={400} style={{fontSize: "large"}}>
     <Typography style={{ fontWeight: "bold" }}>{title}</Typography>
     {message}
   </Box>
@@ -154,17 +154,17 @@ export const useHudListenersService = () => {
     setModalOpen(true);
   });
 
-  useNuiEvent("addAnnounceMessage", ({ message }: { message: string }) => {
+  useNuiEvent("addAnnounceMessage", ({ message, author }: { message: string, author: string }) => {
     enqueueSnackbar(
       <AnnounceMessage
         message={message}
-        title={t("nui_menu.misc.announcement_title")}
+        title={t("nui_menu.misc.announcement_title", { author })}
       />,
       {
-        variant: "info",
+        variant: "warning",
         autoHideDuration: getNotiDuration(message) * 1000,
         anchorOrigin: {
-          horizontal: "right",
+          horizontal: "center",
           vertical: "top",
         },
       }

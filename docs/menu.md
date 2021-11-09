@@ -40,13 +40,6 @@ in the admin manager as shown below
 The txAdmin menu has a variety of different convars that can alter the default behavior
 of the menu
 
-**txAdminMenu-updateInterval**
-* Description: Controls the interval in which players are updated for each online 
-  admin. *Increasing this can improve client performance but will make updates to 
-  the players page slower*
-* Default: 5000 
-* Usage: `+set txAdminMenu-updateInterval 10000`
-
 **txAdminMenu-pageKey**
 * Description: Will change the key used for changing pages in the menu. This value must be 
   the exact browser key code for your preferred key. You can use [this](https://keycode.info/) 
@@ -69,6 +62,12 @@ of the menu
 * Default: 0
 * Usage: `+set txAdminMenu-alignRight 1`
 
+**txAdminMenu-drunkDuration**
+* Description: How many seconds the drunk effect (troll action) should last.
+* Default: 30
+* Usage: `+setr txAdminMenu-drunkDuration 120`
+
+
 ## Commands
 **tx | txadmin**
 * Description: Will toggle the in-game menu. This command has an optional argument of a player id that will 
@@ -90,10 +89,15 @@ quickly open up the target player's info modal.
 ## Troubleshooting menu access
 
 If you type `/tx` and nothing happens, your menu is probably disabled.  
-If you see a red message like [this](https://i.imgur.com/G83uTNC.png) and you are registered on txAdmin, do the following:
-- In txAdmin Live Console, type `txAdmin-debug 1`;
-- In your game F8 console, type `txAdmin-reauth`;
-- Read the message printed on console for more information.
+If you see a red message like [this](https://i.imgur.com/G83uTNC.png) and you are registered on txAdmin, you can type `/txAdmin-reauth` in the chat to retry the authentication.  
+> Note: The entire menu auth system was rewritten in version v4.8.0 to solve issues related to the NUI authentication.
 
 ## Development
-You can find development instructions regarding the menu [here.](https://github.com/tabarra/txAdmin/blob/develop/docs/development.md#menu-development)
+You can find development instructions regarding the menu [here.](https://github.com/tabarra/txAdmin/blob/master/docs/development.md#menu-development)
+
+## FAQ
+- **Q**: Why don't the 'Heal' options revive a player when using MY_RANDOM_FRAMEWORK_HERE?
+- **A**: Many frameworks independently handle a "dead" state for a player, meaning
+  the menu is unable to reset this state in an resource agnostic form directly. To establish compatibility 
+  with any framework, txAdmin will emit an [event](https://github.com/tabarra/txAdmin/blob/develop/docs/development.md#events) 
+  for developers to handle.

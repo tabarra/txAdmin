@@ -43,7 +43,14 @@ const playersState = {
 
       switch (sortType) {
         case PlayerDataSort.DistanceClosest:
-          return [...playerStates].sort((a, b) => (a.dist > b.dist ? 1 : -1));
+          // Since our distance can come back as -1 when unknown, we need to explicitly
+          // move to the end of the sorted array.
+          return [...playerStates].sort((a, b) => {
+            if (b.dist < 0) return -1;
+            if (a.dist < 0) return 1;
+
+            return a.dist > b.dist ? 1 : -1;
+          });
         case PlayerDataSort.DistanceFarthest:
           return [...playerStates].sort((a, b) => (a.dist < b.dist ? 1 : -1));
         case PlayerDataSort.IdJoinedFirst:
@@ -95,42 +102,47 @@ export const useFilteredSortedPlayers = (): PlayerData[] =>
 debugData<PlayerData[]>(
   [
     {
-      action: "setPlayerState",
+      action: "setPlayerList",
       data: [
         {
           vType: VehicleStatus.Walking,
           name: "Chip",
           id: 1,
-          dist: 500,
+          dist: 0,
           health: 80,
+          admin: false,
         },
         {
           vType: VehicleStatus.Driving,
           name: "Taso",
           id: 2,
-          dist: 500,
+          dist: 20,
           health: 50,
+          admin: true,
         },
         {
           vType: VehicleStatus.Boat,
           name: "Tabarra",
           id: 3,
-          dist: 500,
+          dist: 700,
           health: 10,
+          admin: true,
         },
         {
           vType: VehicleStatus.Boat,
           name: "Death",
           id: 4,
-          dist: 500,
+          dist: 100,
           health: 100,
+          admin: false,
         },
         {
           vType: VehicleStatus.Unknown,
           name: "Death",
           id: 5,
-          dist: 500,
+          dist: -1,
           health: 70,
+          admin: false,
         },
         {
           vType: VehicleStatus.Walking,
@@ -138,41 +150,47 @@ debugData<PlayerData[]>(
           id: 6,
           dist: 500,
           health: 100,
+          admin: false,
         },
         {
           vType: VehicleStatus.Biking,
           name: "Death",
           id: 7,
-          dist: 500,
+          dist: 300,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
           name: "Death",
           id: 8,
-          dist: 500,
+          dist: -1,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
           name: "Death",
           id: 9,
-          dist: 500,
+          dist: -1,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
           name: "Death",
           id: 10,
-          dist: 500,
+          dist: 50,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
           name: "Death",
           id: 11,
-          dist: 500,
+          dist: 90,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
@@ -180,6 +198,7 @@ debugData<PlayerData[]>(
           id: 12,
           dist: 500,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
@@ -187,6 +206,7 @@ debugData<PlayerData[]>(
           id: 13,
           dist: 500,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
@@ -194,6 +214,7 @@ debugData<PlayerData[]>(
           id: 14,
           dist: 500,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
@@ -201,6 +222,7 @@ debugData<PlayerData[]>(
           id: 15,
           dist: 500,
           health: 40,
+          admin: false,
         },
         {
           vType: VehicleStatus.Boat,
@@ -208,6 +230,7 @@ debugData<PlayerData[]>(
           id: 16,
           dist: 500,
           health: 40,
+          admin: false,
         },
       ],
     },

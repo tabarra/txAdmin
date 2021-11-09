@@ -99,19 +99,19 @@ const DialogBanView: React.FC = () => {
   const customBanLength = [
     {
       value: "hours",
-      label: "Hours",
+      label: t("nui_menu.player_modal.ban.hours"),
     },
     {
       value: "days",
-      label: "Days",
+      label: t("nui_menu.player_modal.ban.days"),
     },
     {
       value: "weeks",
-      label: "Week",
+      label: t("nui_menu.player_modal.ban.weeks"),
     },
     {
       value: "months",
-      label: "Months",
+      label: t("nui_menu.player_modal.ban.months"),
     },
   ];
 

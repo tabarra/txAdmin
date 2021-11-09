@@ -1,7 +1,6 @@
 -- =============================================
 --  Contains all spectate related logic
 -- =============================================
-
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
     return
 end
@@ -205,7 +204,7 @@ local function cleanupFailedResolve()
 
     DoScreenFadeIn(500)
 
-    sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.spectate_failed', true)
+    sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.notifications.spectate_failed', true)
 end
 
 -- Client-side event handler for an authorized spectate request
@@ -215,7 +214,7 @@ RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, coords)
 
     local targetPlayerId = GetPlayerFromServerId(targetServerId)
     if targetPlayerId == PlayerId() then
-        return sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.spectate_yourself', true)
+        return sendSnackbarMessage('error', 'nui_menu.player_modal.actions.interaction.notifications.spectate_yourself', true)
     end
 
     DoScreenFadeOut(500)

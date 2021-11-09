@@ -90,11 +90,11 @@
                                     <option value="tr" {{it.global.language=='tr'|isSelected}}>Turkish</option>
                                     <option value="zh" {{it.global.language=='zh'|isSelected}}>Chinese</option>
 
-                                    <option value="custom" {{it.global.language=='custom'|isSelected}}>Custom (read the documentation)</option>
+                                    <option value="custom" {{it.global.language=='custom'|isSelected}}>Custom (txData/locale.json)</option>
                                 </select>
                                 <span class="form-text text-muted">
                                     The language to use on Chat/Discord messages. <br>
-                                    <b>Note:</b> For the Custom option, read the documentation.
+                                    <b>Note:</b> For the Custom option, read the <a href="https://github.com/tabarra/txAdmin/blob/master/docs/translation.md" target="_blank" rel="noopener noreferrer">documentation</a>.
                                 </span>
                             </div>
                         </div>
@@ -166,7 +166,8 @@
                                 </select>
                                 <span class="form-text text-muted">
                                     Required if your server has more than 48 slots. <br>
-                                    <b>Note:</b> Setting to <code>on</code> will override <code>onesync_enableInfinity</code> if set as an Additional Argument above.
+                                    <b>Note:</b> Setting to <code>on</code> will override <code>onesync_enableInfinity</code> if set as an Additional Argument above. <br>
+                                    <b>Note:</b> Setting onesync in your <code>server.cfg</code> will override this configuration.
                                 </span>
                             </div>
                         </div>
@@ -514,6 +515,9 @@
         }
         if (!data.serverDataPath.length || !data.cfgPath.length) {
             return $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
+        }
+        if (data.commandLine.includes(' onesync ')){
+            return $.notify({ message: 'You cannot set onesync in Additional Arguments. Please use the selectbox below it.' }, { type: 'warning' });
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 

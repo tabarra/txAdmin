@@ -38,7 +38,7 @@ export const KeyboardNavProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     if (!isMenuVisible) return;
-    fetchNui("focusInputs", disabledKeyNav);
+    fetchNui("focusInputs", disabledKeyNav, { mockResp: {} });
   }, [disabledKeyNav, isMenuVisible]);
 
   return (

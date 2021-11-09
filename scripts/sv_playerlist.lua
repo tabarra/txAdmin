@@ -3,7 +3,7 @@
 -- =============================================
 --Check Environment
 if GetConvar('txAdminServerMode', 'false') ~= 'true' then
-   return
+    return
 end
 local oneSyncConvar = GetConvar('onesync', 'off')
 local onesyncEnabled = oneSyncConvar == 'on' or oneSyncConvar == 'legacy'
@@ -20,7 +20,6 @@ local pairs = pairs
 
 
 -- Variables & Consts
-TX_PLAYERLIST = {} -- available globally in tx
 local refreshMinDelay = 1500
 local refreshMaxDelay = 5000
 local maxPlayersDelayCeil = 300 --at this number, the delay won't increase more
@@ -57,7 +56,10 @@ CreateThread(function()
                 else
                     vType = vTypeMap["walking"]
                 end
-                health = min(max(GetEntityHealth(ped), 0), 200)
+                -- Its extremely hard to normalize this value to actually reflect
+                -- it as a percentage of the current users max health depending on the server
+                -- Therefore, lets just handle for base case of maxHealth 175 and health range from 100-175
+                health = floor((GetEntityHealth(ped) - 100) / (GetEntityMaxHealth(ped) - 100) * 100)
             end
 
             -- Updating TX_PLAYERLIST
@@ -90,7 +92,7 @@ CreateThread(function()
                 TX_PLAYERLIST[playerID] = nil
             end
         end
-       
+
         -- DEBUG
         -- debugPrint("====================================")
         -- print(json.encode(TX_PLAYERLIST, {indent = true}))
@@ -108,12 +110,12 @@ end)
 --[[ Handle player Join or Leave ]]
 AddEventHandler('playerJoining', function()
     local playerName = sub(GetPlayerName(source) or "unknown", 1, 75)
-    for adminID, _ in pairs(ADMIN_DATA) do
+    for adminID, _ in pairs(TX_ADMINS) do
         TriggerClientEvent('txcl:updatePlayer', adminID, source, playerName)
     end
 end)
 AddEventHandler('playerDropped', function()
-    for adminID, _ in pairs(ADMIN_DATA) do
+    for adminID, _ in pairs(TX_ADMINS) do
         TriggerClientEvent('txcl:updatePlayer', adminID, source, false)
     end
 end)
@@ -122,16 +124,20 @@ end)
 -- Handle getDetailedPlayerlist
 -- This event is only called when the meny "players" tab is opened, and every 5s while the tab is open
 RegisterNetEvent('txsv:getDetailedPlayerlist', function()
-    if ADMIN_DATA[tostring(source)] == nil then
+    if TX_ADMINS[tostring(source)] == nil then
         debugPrint('Ignoring unauthenticated getDetailedPlayerlist() by ' .. source)
         return
     end
 
-    local payload = {}
+    local players = {}
     for playerID, playerData in pairs(TX_PLAYERLIST) do
-        payload[#payload + 1] = {tonumber(playerID), playerData.health, playerData.vType}
+        players[#players + 1] = {tonumber(playerID), playerData.health, playerData.vType}
     end
-    TriggerClientEvent('txcl:setDetailedPlayerlist', source, payload)
+    local admins = {}
+    for adminID, _ in pairs(TX_ADMINS) do
+        admins[#admins + 1] = tonumber(adminID)
+    end
+    TriggerClientEvent('txcl:setDetailedPlayerlist', source, players, admins)
 end)
 
 

@@ -10,23 +10,22 @@ import { debugLog } from "../utils/debugLog";
 import { MockedPlayerDetails } from "../utils/constants";
 import { PlayerData } from "../hooks/usePlayerListListener";
 
-interface PlayerHistoryItem {
-  id: string;
-  action: string;
-  date: string;
-  reason: string;
-  author: string;
-  color?: string;
-}
-
 enum HistoryActionType {
   Warn = "WARN",
   WarnRevoked = "WARN-REVOKED",
-  Kick = "KICK",
   Ban = "BAN",
   BanRevoked = "BAN-REVOKED",
   Whitelist = "WHITELIST",
   WhitelistRevoked = "WHITELIST-REVOKED",
+}
+
+interface PlayerHistoryItem {
+  id: string;
+  action: HistoryActionType;
+  date: string;
+  reason: string;
+  author: string;
+  color?: string;
 }
 
 interface TxAdminPlayerAPIResp {
@@ -59,27 +58,16 @@ const playerDetails = {
       const assocPlayer = get(playerDetails.associatedPlayer);
       const assocPlayerId = assocPlayer.id;
 
-      try {
-        const res = await fetchWebPipe<TxAdminPlayerAPIResp>(
-          `/player/${assocPlayerId}`
-        );
+      const res = await fetchWebPipe<TxAdminPlayerAPIResp>(
+        `/player/${assocPlayerId}`,
+        { mockData: MockedPlayerDetails }
+      );
 
-        debugLog("FetchWebPipe", res, "PlayerFetch");
+      debugLog("FetchWebPipe", res, "PlayerFetch");
 
-        if (res.type === "offline") new Error(res.message);
+      if (res.type === "offline") new Error(res.message);
 
-        return res.logout !== true ? res : false;
-      } catch (e) {
-        if (process.env.DEV_MODE === "browser") {
-          debugLog(
-            "GetPlayerDetails",
-            "Detected browser env, dispatching mock data",
-            "WebPipeReq"
-          );
-          return MockedPlayerDetails;
-        }
-        throw e;
-      }
+      return res.logout !== true ? res : false;
     },
   }),
   forcePlayerRefresh: atom({

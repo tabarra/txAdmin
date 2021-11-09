@@ -5,7 +5,6 @@ import { PlayerPageHeader } from "./PlayerPageHeader";
 import { useFilteredSortedPlayers } from "../../state/players.state";
 import { PlayersListEmpty } from "./PlayersListEmpty";
 import { PlayersListGrid } from "./PlayersListGrid";
-import { txAdminMenuPage, usePageValue } from "../../state/page.state";
 import { usePlayerListListener } from "../../hooks/usePlayerListListener";
 
 const useStyles = makeStyles((theme: Theme) => ({

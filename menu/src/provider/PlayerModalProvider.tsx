@@ -7,10 +7,7 @@ import React, {
 } from "react";
 import PlayerModal from "../components/PlayerModal/PlayerModal";
 import { useSetDisableTab, useSetListenForExit } from "../state/keys.state";
-import {
-  useIsMenuVisible,
-  useSetIsMenuVisible,
-} from "../state/visibility.state";
+import { useIsMenuVisible } from "../state/visibility.state";
 import { fetchNui } from "../utils/fetchNui";
 import { useSnackbar } from "notistack";
 

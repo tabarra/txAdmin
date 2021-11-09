@@ -3,7 +3,6 @@ if GetConvar('txAdminServerMode', 'false') ~= 'true' then
   return
 end
 
-ADMIN_DATA = {}
 
 ServerCtxObj = {
   oneSync = {
@@ -14,6 +13,7 @@ ServerCtxObj = {
   projectName = nil,
   maxClients = 30,
   locale = nil,
+  localeData = nil,
   switchPageKey = '',
   txAdminVersion = '',
   alignRight = false
@@ -36,36 +36,52 @@ RegisterCommand('txAdmin-debug', function(src, args)
   if args[1] == '1' then
     debugModeEnabled = true
     debugPrint("^1!! Debug mode enabled by ^2" .. playerName .. "^1 !!^0")
-    TriggerClientEvent('txAdmin:events:enableDebug', -1, true)
+    TriggerClientEvent('txAdmin:events:setDebugMode', -1, true)
   elseif args[1] == '0' then
     debugPrint("^1!! Debug mode disabled by ^2" .. playerName .. "^1 !!^0")
     debugModeEnabled = false
-    TriggerClientEvent('txAdmin:events:enableDebug', -1, false)
+    TriggerClientEvent('txAdmin:events:setDebugMode', -1, false)
   end
 end)
 
----@param onlineAdminIDs table
-AddEventHandler('txAdmin:events:adminsUpdated', function(onlineAdminIDs)
-  debugPrint('^3Admins changed. Online admins: ' .. json.encode(onlineAdminIDs) .. "^0")
 
-  -- Collect old and new admin IDs
-  local refreshAdminIds = {}
-  for id, _ in pairs(ADMIN_DATA) do
-    refreshAdminIds[#refreshAdminIds + 1] = id
+local function getCustomLocaleData()
+  --Get convar
+  local filePath = GetConvar('txAdmin-localeFile', 'false')
+  if filePath == 'false' then
+    return false
   end
-  for _, newId in pairs(onlineAdminIDs) do
-    refreshAdminIds[#refreshAdminIds + 1] = newId
-  end
-  debugPrint('^3Forcing ' .. #refreshAdminIds .. ' clients to re-auth')
 
-  -- Resetting all admin permissions
-  ADMIN_DATA = {}
-
-  -- Informing clients that they need to reauth
-  for id, _ in pairs(refreshAdminIds) do
-    TriggerClientEvent('txAdmin:menu:reAuth', id)
+  -- Get file data
+  local fileHandle = io.open(filePath, "rb")
+  if not fileHandle then 
+    print('^1WARNING: failed to load custom locale from path: '..filePath)
+    return false 
   end
-end)
+  local fileData = fileHandle:read "*a"
+  fileHandle:close()
+
+  -- Parse and validate data
+  local locale = json.decode(fileData)
+  if 
+    not locale 
+    or type(locale['$meta']) ~= "table"
+    or type(locale['nui_warning']) ~= "table"
+    or type(locale['nui_menu']) ~= "table"
+  then
+    print('^1WARNING: load or validate custom locale JSON data from path: '..filePath)
+    return false 
+  end
+
+  -- Build response
+  debugPrint('^2Loaded custom locale file.')
+  return {
+    ['$meta'] = locale['$meta'],
+    ['nui_warning'] = locale['nui_warning'],
+    ['nui_menu'] = locale['nui_menu'],
+  }
+end
+
 
 local function syncServerCtx()
   local oneSyncConvar = GetConvar('onesync', 'off')
@@ -76,6 +92,7 @@ local function syncServerCtx()
     ServerCtxObj.oneSync.type = nil
     ServerCtxObj.oneSync.status = false
   end
+
   -- Convar must match the event.code *EXACTLY* as shown on this site
   -- https://keycode.info/
   local switchPageKey = GetConvar('txAdminMenu-pageKey', 'Tab')
@@ -86,6 +103,7 @@ local function syncServerCtx()
 
   local txAdminVersion = GetConvar('txAdmin-version', '0.0.0')
   ServerCtxObj.txAdminVersion = txAdminVersion
+
   -- Default '' in fxServer
   local svProjectName = GetConvar('sv_projectname', '')
   if svProjectName ~= '' then
@@ -96,14 +114,22 @@ local function syncServerCtx()
   local svMaxClients = GetConvarInt('sv_maxclients', 30)
   ServerCtxObj.maxClients = svMaxClients
 
-  -- FIXME: temporarily disabled;
-  -- FIXME: we cannot reenable while the custom locale doesn't work!
-  local txAdminLocale = 'en' -- GetConvar('txAdmin-locale', 'en')
+  -- Custom locale
+  local txAdminLocale = GetConvar('txAdmin-locale', 'en')
   ServerCtxObj.locale = txAdminLocale
+  if txAdminLocale == 'custom' then
+    ServerCtxObj.localeData = getCustomLocaleData()
+  else
+    ServerCtxObj.localeData = false
+  end
 
-  debugPrint('Server CTX assigned to GlobalState, CTX:')
-  debugPrint(json.encode(ServerCtxObj))
+  debugPrint('Updated ServerCtx.')
   GlobalState.txAdminServerCtx = ServerCtxObj
+
+  -- Telling admins that the server context changed
+  for adminID, _ in pairs(TX_ADMINS) do
+    TriggerClientEvent('txAdmin:events:setServerCtx', adminID, ServerCtxObj)
+  end
 end
 
 RegisterNetEvent('txAdmin:events:getServerCtx', function()
@@ -118,20 +144,6 @@ AddEventHandler('txAdmin:events:configChanged', function()
   syncServerCtx()
 end)
 
-
-RegisterNetEvent('txAdmin:menu:checkAccess', function()
-  local src = source
-  local canAccess = not (ADMIN_DATA[tostring(src)] == nil)
-  debugPrint((canAccess and "^2" or "^1") .. GetPlayerName(src) ..
-      " does " .. (canAccess and "" or "NOT ") .. "have menu permission.")
-  TriggerClientEvent('txAdmin:menu:setAccessible', src, canAccess)
-end)
-
---[[ Handle player disconnects ]]
-AddEventHandler('playerDropped', function()
-  local s = source
-  ADMIN_DATA[tostring(s)] = nil
-end)
 
 CreateThread(function()
   -- If we don't wait for a tick there is some race condition that

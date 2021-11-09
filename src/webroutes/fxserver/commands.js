@@ -67,11 +67,17 @@ module.exports = async function FXServerCommands(ctx) {
     //==============================================
     } else if (action == 'admin_broadcast') {
         if (!ensurePermission(ctx, 'players.message')) return false;
-        // TODO: deprecate txaBroadcast, carefull to also show it on the Server Log
-        let cmd = formatCommand('txaBroadcast', ctx.session.auth.username, parameter);
-        ctx.utils.logCommand(cmd);
-        let toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-        return sendAlertOutput(ctx, toResp);
+        // Dispatch `txAdmin:events:announcement`
+        const cmdOk = globals.fxRunner.sendEvent('announcement', {
+            author: ctx.session.auth.username,
+            message: (parameter ?? '').trim(),
+        });
+        ctx.utils.logAction(`Sending announcement: ${parameter}`);
+
+        return ctx.send({
+            type: cmdOk ? 'success' : 'danger',
+            message: 'Announcement sent!',
+        });
 
     //==============================================
     } else if (action == 'kick_all') {

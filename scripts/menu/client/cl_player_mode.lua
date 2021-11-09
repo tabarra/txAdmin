@@ -2,7 +2,6 @@
 --  This file contains functionality purely related
 --  to player modes (noclip, godmode)
 -- ===============
-
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
     return
 end
@@ -11,7 +10,7 @@ local noClipEnabled = false
 
 local function toggleGodMode(enabled)
     if enabled then
-        sendPersistentAlert('godModeEnabled', 'info', 'nui_menu.page_main.player_mode.dialog_success_godmode', true)
+        sendPersistentAlert('godModeEnabled', 'info', 'nui_menu.page_main.player_mode.godmode.success', true)
     else
         clearPersistentAlert('godModeEnabled')
     end
@@ -73,7 +72,7 @@ local function toggleFreecam(enabled)
     end
 
     if not IsFreecamActive() and enabled then
-        sendPersistentAlert('noClipEnabled', 'info', 'nui_menu.page_main.player_mode.dialog_success_noclip', true)
+        sendPersistentAlert('noClipEnabled', 'info', 'nui_menu.page_main.player_mode.noclip.success', true)
         enableNoClip()
     end
 
@@ -83,11 +82,9 @@ local function toggleFreecam(enabled)
     end
 end
 
-RegisterKeyMapping('txAdmin:menu:noClipToggle', 'NoClip Shortcut', 'keyboard', '')
 
 RegisterCommand('txAdmin:menu:noClipToggle', function()
-    local doesPlayerHavePerm = DoesPlayerHavePerm(menuPermissions, 'players.playermode')
-    if not doesPlayerHavePerm then
+    if not DoesPlayerHavePerm(menuPermissions, 'players.playermode') then
         return sendSnackbarMessage('error', 'nui_menu.misc.general_no_perms', true)
     end
 

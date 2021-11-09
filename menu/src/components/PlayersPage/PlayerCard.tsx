@@ -3,6 +3,7 @@ import {
   Box,
   IconButton,
   Paper,
+  styled,
   Theme,
   Tooltip,
   Typography,
@@ -14,7 +15,7 @@ import {
   DriveEta,
   LiveHelp,
   MoreVert,
-  BikeScooter,
+  TwoWheeler,
   Flight,
 } from "@mui/icons-material";
 import { usePlayerModalContext } from "../../provider/PlayerModalProvider";
@@ -47,6 +48,36 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
+const determineHealthBGColor = (val: number) => {
+  if (val <= 20) return "#4a151b";
+  else if (val <= 60) return "#624d18";
+  else return "#097052";
+};
+
+const determineHealthColor = (val: number, theme: Theme) => {
+  if (val <= 20) return theme.palette.error.light;
+  else if (val <= 60) return theme.palette.warning.light;
+  else return theme.palette.primary.light;
+};
+
+const HealthBarBackground = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "healthVal",
+})<{ healthVal: number }>(({ healthVal }) => ({
+  background: determineHealthBGColor(healthVal),
+  height: 5,
+  borderRadius: 10,
+  overflow: "hidden",
+}));
+
+const HealthBar = styled(Box, {
+  shouldForwardProp: (prop) => prop !== "healthVal",
+})<{ healthVal: number }>(({ theme, healthVal }) => ({
+  background: determineHealthColor(healthVal, theme),
+  height: 5,
+  borderRadius: 10,
+  overflow: "hidden",
+}));
+
 const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
   const classes = useStyles();
   const { setModalOpen } = usePlayerModalContext();
@@ -58,7 +89,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
     walking: <DirectionsWalk color="inherit" />,
     driving: <DriveEta color="inherit" />,
     boating: <DirectionsBoat color="inherit" />,
-    biking: <BikeScooter color="inherit" />,
+    biking: <TwoWheeler color="inherit" />,
     flying: <Flight color="inherit" />,
   };
 
@@ -111,7 +142,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
                 variant="subtitle1"
                 color="textPrimary"
               >
-                {playerData.name}
+                {playerData.admin && '🛡️'} {playerData.name}
               </Typography>
             </Tooltip>
             <Typography
@@ -138,12 +169,12 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
               tooltip: classes.tooltipOverride,
             }}
           >
-            <div className={classes.barBackground}>
-              <Box
-                className={classes.barInner}
-                width={`${playerData.health - 100}%`}
+            <HealthBarBackground healthVal={playerData.health}>
+              <HealthBar
+                width={`${playerData.health}%`}
+                healthVal={playerData.health}
               />
-            </div>
+            </HealthBarBackground>
           </Tooltip>
         </div>
       </Paper>

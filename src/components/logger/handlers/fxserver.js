@@ -33,7 +33,7 @@ module.exports = class FXServerLogger extends LoggerBase {
             intervalBoundary: true,
             initialRotation: true,
             history: 'fxserver.history',
-            // compress: 'gzip', //don't forget to do `mv filename filename.gz`
+            // compress: 'gzip',
             interval: '1d',
             maxFiles: 7,
             maxSize: '5G',

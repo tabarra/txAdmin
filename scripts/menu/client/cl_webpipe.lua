@@ -1,3 +1,7 @@
+-- =============================================
+--  This file contains all Client WebPipe logic.
+--  It is used to pass NUI HTTP reqs to txAdmin
+-- =============================================
 if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
     return
 end
@@ -31,6 +35,30 @@ RegisterRawNuiCallback('WebPipe', function(req, cb)
         return
     end
 
+    -- Cookie wiper to prevent sticky cookie sessions after reauth
+    if path == '/nui/resetSession' then
+        if type(headers['Cookie']) ~= 'string' then
+            return cb({
+                status = 200,
+                body = '{}',
+            })
+        else
+            local cookies = {}
+            for cookie in headers['Cookie']:gmatch('(tx:[^=]+)') do 
+                cookies[#cookies +1] = cookie.."=deleted; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT; httponly; SameSite=None; Secure"
+            end
+            return cb({
+                status = 200,
+                body = '{}',
+                headers = {
+                    ['Connection'] = "close",
+                    ['Content-Type'] = "text/plain",
+                    ['Set-Cookie'] = cookies
+                }
+            })
+        end
+    end
+
     local id = pipeCallbackCounter
     pipeReturnCallbacks[id] = { cb = cb, path = path }
     pipeCallbackCounter = pipeCallbackCounter + 1
@@ -48,33 +76,13 @@ AddEventHandler('txAdmin:WebPipe', function(callbackId, statusCode, body, header
     local ret = pipeReturnCallbacks[callbackId]
     if not ret then return end
     
-    if ret.path == '/auth/nui' then
-        local resp = json.decode(body)
-        if not resp then
-            print("^1[AUTH] invalid JSON: " .. (body or "nil"))
-            menuIsAccessible = false
-        else
-            if statusCode == 200 and resp.isAdmin then
-                print("^2[AUTH] accepted with permissions: " .. json.encode(resp.permissions or "nil"))
-                menuIsAccessible = true
-                menuPermissions = resp.permissions
-            else
-                print("^1[AUTH] rejected with reason: " .. json.encode(resp.reason or "nil"))
-                menuIsAccessible = false
-            end
-        end
-
-        -- Also update debug status on first HTTP cb
-        sendMenuMessage('setDebugMode', isMenuDebug)
-        registerTxKeybinds()
-        ret.cb(resp)
-    end
-    
     local sub = string.sub
-    if sub(ret.path, 1, 5) == '/css/' or
-      sub(ret.path, 1, 4) == '/js/' or
-      sub(ret.path, 1, 5) == '/img/' or
-      sub(ret.path, 1, 7) == '/fonts/' then
+    if 
+        sub(ret.path, 1, 5) == '/css/' or
+        sub(ret.path, 1, 4) == '/js/' or
+        sub(ret.path, 1, 5) == '/img/' or
+        sub(ret.path, 1, 7) == '/fonts/'
+    then
         staticCacheData[ret.path] = {
             body = body,
             headers = headers,

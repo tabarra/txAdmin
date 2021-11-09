@@ -7,11 +7,6 @@ const CWD = process.cwd();
 
 module.exports = CommonWebpack({
     mode: 'production',
-    optimization: {
-        splitChunks: {
-            chunks: 'all',
-        },
-    },
     plugins: [
         new HtmlWebpackPlugin({
             template: './menu/public/index.html',

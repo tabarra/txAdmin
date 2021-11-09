@@ -1,31 +1,20 @@
+-- =============================================
+--  This file is responsible for all the webpipe
+--  handling and caching.
+-- =============================================
+-- Checking Environment (sv_main MUST run first)
 if GetConvar('txAdminServerMode', 'false') ~= 'true' then
   return
 end
-
-local apiHost = GetConvar("txAdmin-apiHost", "invalid")
-local pipeToken = GetConvar("txAdmin-pipeToken", "invalid")
-
-if apiHost == "invalid" or pipeToken == "invalid" then
-  print('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
+if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then
+  log('^1API Host or Pipe Token ConVars not found. Do not start this resource if not using txAdmin.')
+  return
+end
+if TX_LUACOMTOKEN == "removed" then
+  log('^1Please do not restart the monitor resource.')
   return
 end
 
-if pipeToken == "removed" then
-  print('^1Please do not restart the monitor resource.')
-  return
-end
-
--- Erasing the token convar for security reasons, and then restoring it if debug mode.
--- The convar needs to be reset on first tick to prevent other resources from reading it.
--- We actually need to wait two frames: one for convar replication, one for debugPrint.
-SetConvar("txAdmin-pipeToken", "removed")
-CreateThread(function()
-  Wait(0)
-  if debugModeEnabled then
-    debugPrint("Restoring txAdmin-pipeToken for next monitor restart")
-    SetConvar("txAdmin-pipeToken", pipeToken)
-  end
-end)
 --
 -- [[ WebPipe Proxy ]]
 --
@@ -44,10 +33,10 @@ local function sendResponse(src, callbackId, statusCode, path, body, headers, ca
   local resultColor = errorCode and '^1' or '^2'
   local cachedStr = cached and " ^1(cached)^0" or ""
   debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 %s<< %s ^4%s%s^0"):format(
-      src, callbackId, resultColor, statusCode, path, cachedStr))
+    src, callbackId, resultColor, statusCode, path, cachedStr))
   if errorCode then
     debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 %s<< Headers: %s^0"):format(
-        src, callbackId, resultColor, json.encode(headers)))
+      src, callbackId, resultColor, json.encode(headers)))
   end
   TriggerLatentClientEvent('txAdmin:WebPipe', src, 125000, callbackId, statusCode, body, headers)
 end
@@ -63,12 +52,15 @@ RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, 
   end
 
   -- Reject large paths as we use regex
-  if #path > 300 then
-    return sendResponse(s, callbackId, 400, (path):sub(1, 300), "{}", {})
+  if #path > 500 then
+    return sendResponse(s, callbackId, 400, path:sub(1, 300), "{}", {})
   end
 
+  -- Treat path slashes
+  local url = "http://" .. (TX_LUACOMHOST .. '/' .. path):gsub("//+", "/")
+
   -- Reject requests from un-authed players
-  if path ~= '/auth/nui' and not ADMIN_DATA[src] then
+  if not TX_ADMINS[src] then
     if _pipeLastReject ~= nil then
       if (GetGameTimer() - _pipeLastReject) < 250 then
         _pipeLastReject = GetGameTimer()
@@ -88,15 +80,15 @@ RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, 
     return
   end
 
-  -- Adding auth information
-  if path == '/auth/nui' then
-    headers['X-TxAdmin-Token'] = pipeToken
+  -- Adding auth information for NUI routes
+  if path:sub(1, 5) == '/nui/' then
+    headers['X-TxAdmin-Token'] = TX_LUACOMTOKEN
     headers['X-TxAdmin-Identifiers'] = table.concat(GetPlayerIdentifiers(s), ', ')
   else
     headers['X-TxAdmin-Token'] = 'not_required' -- so it's easy to detect webpipes
   end
 
-  local url = "http://" .. apiHost .. path:gsub("//", "/")
+  
   debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6%s^0"):format(s, callbackId, url))
   debugPrint(("^3WebPipe[^5%d^0:^1%d^3]^0 ^4>>^0 ^6Headers: %s^0"):format(s, callbackId, json.encode(headers)))
 
@@ -125,30 +117,17 @@ RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, 
       resultHeaders['Set-Cookie'] = cookies
     end
 
-    -- Sniff permissions out of the auth request
-    if path == '/auth/nui' and httpCode == 200 then
-      local resp = json.decode(data)
-      if resp and resp.isAdmin then
-        if type(resp.permissions) == 'table' and type(resp.luaToken) == 'string' and string.len(resp.luaToken) == 20 then
-          debugPrint(("Authenticated admin %s with permissions %s and token %s."):format(src, json.encode(resp.permissions), resp.luaToken))
-          ADMIN_DATA[src] = {
-            perms = resp.permissions,
-            token = resp.luaToken,
-            bucket = 0
-          }
-          sendInitialPlayerlist(s)
-        else
-          debugPrint("Auth failed for admin %s due to response validation.")
-          ADMIN_DATA[src] = nil
-        end
-      else
-        ADMIN_DATA[src] = nil
-      end
-    end
-
     -- cache response if it is a static file
     local sub = string.sub
-    if httpCode == 200 and (sub(path, 1, 5) == '/css/' or sub(path, 1, 4) == '/js/' or sub(path, 1, 5) == '/img/' or sub(path, 1, 7) == '/fonts/') then
+    if 
+      httpCode == 200 and 
+      (
+        sub(path, 1, 5) == '/css/' or 
+        sub(path, 1, 4) == '/js/' or 
+        sub(path, 1, 5) == '/img/' or 
+        sub(path, 1, 7) == '/fonts/'
+      ) 
+    then
       -- remove query params from path, so people can't consume memory by spamming cache-busters
       for safePath in path:gmatch("([^?]+)") do
         local slimHeaders = {}
@@ -164,7 +143,5 @@ RegisterNetEvent('txAdmin:WebPipe', function(callbackId, method, path, headers, 
     end
 
     sendResponse(s, callbackId, httpCode, path, data, resultHeaders)
-  end, method, body, headers, {
-    followLocation = false
-  })
+  end, method, body, headers, {followLocation = false})
 end)

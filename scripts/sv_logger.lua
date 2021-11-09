@@ -193,9 +193,6 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
     elseif event == 'drunkEffect' then
         message = "triggered drunk effect on " .. getLogPlayerName(data)
 
-    elseif event == 'weedEffect' then
-        message = "triggered weed effect on " .. getLogPlayerName(data)
-
     elseif event == 'setOnFire' then
         message = "set ".. getLogPlayerName(data) .." on fire" 
 

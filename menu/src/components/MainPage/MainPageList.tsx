@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Box, List, styled, Theme } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import { Box, List, styled } from "@mui/material";
 import { MenuListItem, MenuListItemMulti } from "./MenuListItem";
 import {
   AccessibilityNew,
   Announcement,
   Build,
-  ClearAll,
+  CenterFocusWeak,
   ControlCamera,
   DirectionsCar,
   ExpandMore,
@@ -14,10 +13,12 @@ import {
   FileCopy,
   GpsFixed,
   LocalHospital,
-  LocationSearching,
-  PermIdentity,
+  PersonPinCircle,
+  Groups,
   Restore,
   Security,
+  DeleteForever,
+  // Stream //Spawn Weapon action
 } from "@mui/icons-material";
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { useDialogContext } from "../../provider/DialogProvider";
@@ -73,27 +74,37 @@ export const MainPageList: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [playerMode, setPlayerMode] = usePlayerMode();
   const [teleportMode, setTeleportMode] = useTeleportMode();
-  const [healMode, setHealMode] = useHealMode();
   const [vehicleMode, setVehicleMode] = useVehicleMode();
+  const [healMode, setHealMode] = useHealMode();
   const serverCtx = useServerCtxValue();
   const menuVisible = useIsMenuVisibleValue();
 
-  // the directions are inverted
+  //FIXME: this is so the menu resets multi selectors when we close it
+  // but it is not working, and when I do this the first time we press
+  // noclip it will actually think we are changing back to normal.
+  // We need to review handlePlayermodeToggle()
+  useEffect(() => {
+    if(menuVisible) return;
+    setCurSelected(0);
+    // setPlayerMode(PlayerMode.NOCLIP);
+    // setTeleportMode(TeleportMode.WAYPOINT);
+    // setVehicleMode(VehicleMode.SPAWN);
+    // setHealMode(HealMode.SELF);
+  }, [menuVisible]);
+
+
+  //=============================================
   const handleArrowDown = useCallback(() => {
     const next = curSelected + 1;
-    fetchNui("playSound", "move");
+    fetchNui("playSound", "move").catch();
     setCurSelected(next >= menuListItems.length ? 0 : next);
   }, [curSelected]);
 
   const handleArrowUp = useCallback(() => {
     const next = curSelected - 1;
-    fetchNui("playSound", "move");
+    fetchNui("playSound", "move").catch();
     setCurSelected(next < 0 ? menuListItems.length - 1 : next);
   }, [curSelected]);
-
-  useEffect(() => {
-    setCurSelected(0);
-  }, [menuVisible]);
 
   useKeyboardNavigation({
     onDownDown: handleArrowDown,
@@ -101,10 +112,26 @@ export const MainPageList: React.FC = () => {
     disableOnFocused: true,
   });
 
-  const handleTeleport = () => {
+  //=============================================
+  const handlePlayermodeToggle = (targetMode) => {
+    if (targetMode === playerMode || targetMode === PlayerMode.DEFAULT) {
+      setPlayerMode(PlayerMode.DEFAULT);
+      fetchNui("playerModeChanged", PlayerMode.DEFAULT);
+      enqueueSnackbar(t("nui_menu.page_main.player_mode.normal.success"), {
+        variant: "success",
+      });
+    } else {
+      setPlayerMode(targetMode);
+      fetchNui("playerModeChanged", targetMode);
+    }
+  };
+
+
+  //=============================================
+  const handleTeleportCoords = () => {
     openDialog({
-      description: t("nui_menu.page_main.teleport.dialog_desc"),
-      title: t("nui_menu.page_main.teleport.dialog_title"),
+      title: t("nui_menu.page_main.teleport.coords.dialog_title"),
+      description: t("nui_menu.page_main.teleport.coords.dialog_desc"),
       placeholder: "340, 480, 12",
       onSubmit: (coords: string) => {
         // TODO: accept X, Y and calculate Z
@@ -119,12 +146,12 @@ export const MainPageList: React.FC = () => {
         );
 
         if ([x, y, z].every((n) => typeof n === "number")) {
-          enqueueSnackbar(t("nui_menu.page_main.teleport.dialog_success"), {
+          enqueueSnackbar(t("nui_menu.page_main.teleport.generic_success"), {
             variant: "success",
           });
           fetchNui("tpToCoords", { x, y, z });
         } else {
-          enqueueSnackbar(t("nui_menu.page_main.teleport.dialog_error"), {
+          enqueueSnackbar(t("nui_menu.page_main.teleport.coords.dialog_error"), {
             variant: "error",
           });
         }
@@ -135,56 +162,38 @@ export const MainPageList: React.FC = () => {
   const handleTeleportBack = () => {
     fetchNui("tpBack").then(({ e }) => {
       e
-        ? enqueueSnackbar(t("nui_menu.page_main.teleport_back.error"), {
+        ? enqueueSnackbar(t("nui_menu.page_main.teleport.back.error"), {
             variant: "error",
           })
-        : enqueueSnackbar(t("nui_menu.page_main.teleport_back.success"), {
+        : enqueueSnackbar(t("nui_menu.page_main.teleport.generic_success"), {
             variant: "success",
           });
     });
   };
 
-  const handleAnnounceMessage = () => {
-    openDialog({
-      description: t("nui_menu.page_main.send_announce.dialog_desc"),
-      title: t("nui_menu.page_main.send_announce.dialog_title"),
-      placeholder: "Your announcement...",
-      onSubmit: (message: string) => {
-        // Post up to client with announcement message
-        enqueueSnackbar(t("nui_menu.page_main.send_announce.dialog_success"), {
-          variant: "success",
-        });
-        fetchNui("sendAnnouncement", { message });
-      },
+  const handleCopyCoords = () => {
+    fetchNui<{ coords: string }>("copyCurrentCoords").then(({ coords }) => {
+      copyToClipboard(coords);
+      enqueueSnackbar(t("nui_menu.common.copied"), { variant: "success" });
     });
   };
 
-  const handleTogglePlayerIds = () => {
-    fetchNui("togglePlayerIDs").then(({ isShowing }) => {
-      isShowing
-        ? enqueueSnackbar(t("nui_menu.page_main.player_ids.alert_show"), {
-            variant: "info",
-          })
-        : enqueueSnackbar(t("nui_menu.page_main.player_ids.alert_hide"), {
-            variant: "info",
-          });
-    });
-  };
 
+  //=============================================
   const handleSpawnVehicle = () => {
     // Since we depend on server side gamestate awareness
     // we disable this function from being used if onesync
     // isn't on
     if (!serverCtx.oneSync.status) {
       return enqueueSnackbar(
-        t("nui_menu.page_main.car_options.onesync_error"),
+        t("nui_menu.page_main.vehicle.onesync_error"),
         { variant: "error" }
       );
     }
 
     openDialog({
-      description: t("nui_menu.page_main.spawn_veh.dialog_desc"),
-      title: t("nui_menu.page_main.spawn_veh.dialog_title"),
+      title: t("nui_menu.page_main.vehicle.spawn.dialog_title"),
+      description: t("nui_menu.page_main.vehicle.spawn.dialog_desc"),
       placeholder: "car, bike, heli, boat, Adder, Buzzard, etc",
       onSubmit: (modelName: string) => {
         modelName = modelName.trim().toLowerCase();
@@ -222,11 +231,11 @@ export const MainPageList: React.FC = () => {
         fetchNui("spawnVehicle", { model: modelName }).then(({ e }) => {
           e
             ? enqueueSnackbar(
-                t("nui_menu.page_main.spawn_veh.dialog_error", { modelName }),
+                t("nui_menu.page_main.vehicle.spawn.dialog_error", { modelName }),
                 { variant: "error" }
               )
             : enqueueSnackbar(
-                t("nui_menu.page_main.spawn_veh.dialog_success"),
+                t("nui_menu.page_main.vehicle.spawn.dialog_success"),
                 { variant: "success" }
               );
         });
@@ -234,11 +243,27 @@ export const MainPageList: React.FC = () => {
     });
   };
 
+  const handleFixVehicle = () => {
+    fetchNui("fixVehicle").then(({ e }) => {
+      if (e) {
+        return enqueueSnackbar(
+          t("nui_menu.page_main.vehicle.not_in_veh_error"),
+          {
+            variant: "error",
+          }
+        );
+      }
+      enqueueSnackbar(t("nui_menu.page_main.vehicle.fix.success"), {
+        variant: "info",
+      });
+    });
+  };
+
   const handleDeleteVehicle = () => {
     // If onesync is disabled, show an error due to server side entity handling
     if (!serverCtx.oneSync.status) {
       return enqueueSnackbar(
-        t("nui_menu.page_main.car_options.onesync_error"),
+        t("nui_menu.page_main.vehicle.onesync_error"),
         { variant: "error" }
       );
     }
@@ -246,50 +271,27 @@ export const MainPageList: React.FC = () => {
     fetchNui("deleteVehicle").then(({ e }) => {
       if (e) {
         return enqueueSnackbar(
-          t("nui_menu.page_main.delete_veh.dialog_error"),
+          t("nui_menu.page_main.vehicle.not_in_veh_error"),
           {
             variant: "error",
           }
         );
       }
-
-      enqueueSnackbar(t("nui_menu.page_main.delete_veh.dialog_success"), {
+      enqueueSnackbar(t("nui_menu.page_main.vehicle.delete.success"), {
         variant: "info",
       });
     });
   };
 
-  const handleFixVehicle = () => {
-    fetchNui("fixVehicle").then(({ e }) => {
-      if (e) {
-        return enqueueSnackbar(
-          t("nui_menu.page_main.fix_vehicle.dialog_error"),
-          {
-            variant: "error",
-          }
-        );
-      }
 
-      enqueueSnackbar(t("nui_menu.page_main.fix_vehicle.dialog_success"), {
-        variant: "info",
-      });
-    });
-  };
-
-  const handleHealAllPlayers = () => {
-    fetchNui("healAllPlayers");
-    enqueueSnackbar(t("nui_menu.page_main.heal_all.dialog_success"), {
-      variant: "info",
-    });
-  };
-
+  //=============================================
   const handleHealMyself = () => {
     fetchNui("healMyself");
     const messages = [
-      t("nui_menu.page_main.heal_myself.dialog_success_0"),
-      t("nui_menu.page_main.heal_myself.dialog_success_1"),
-      t("nui_menu.page_main.heal_myself.dialog_success_2"),
-      t("nui_menu.page_main.heal_myself.dialog_success_3"),
+      t("nui_menu.page_main.heal.myself.success_0"),
+      t("nui_menu.page_main.heal.myself.success_1"),
+      t("nui_menu.page_main.heal.myself.success_2"),
+      t("nui_menu.page_main.heal.myself.success_3"),
     ].filter((v) => !!(v && v.length));
     const msg = messages[Math.round((messages.length - 1) * Math.random())];
     enqueueSnackbar(msg, {
@@ -297,29 +299,32 @@ export const MainPageList: React.FC = () => {
     });
   };
 
-  const handlePlayermodeToggle = (targetMode) => {
-    if (targetMode === playerMode || targetMode === PlayerMode.DEFAULT) {
-      setPlayerMode(PlayerMode.DEFAULT);
-      fetchNui("playerModeChanged", PlayerMode.DEFAULT);
-      enqueueSnackbar(t("nui_menu.page_main.player_mode.dialog_success_none"), {
-        variant: "success",
-      });
-    } else {
-      setPlayerMode(targetMode);
-      fetchNui("playerModeChanged", targetMode);
-    }
+  const handleHealAllPlayers = () => {
+    fetchNui("healAllPlayers");
+    enqueueSnackbar(t("nui_menu.page_main.heal.everyone.success"), {
+      variant: "info",
+    });
   };
 
-  const handleCopyCoords = () => {
-    fetchNui<{ coords: string }>("copyCurrentCoords").then(({ coords }) => {
-      copyToClipboard(coords);
-      enqueueSnackbar(t("nui_menu.common.copied"), { variant: "success" });
+
+  //=============================================
+  const handleAnnounceMessage = () => {
+    openDialog({
+      title: t("nui_menu.page_main.announcement.title"),
+      description: t("nui_menu.page_main.announcement.dialog_desc"),
+      placeholder: t("nui_menu.page_main.announcement.dialog_placeholder"),
+      onSubmit: (message: string) => {
+        enqueueSnackbar(t("nui_menu.page_main.announcement.dialog_success"), {
+          variant: "success",
+        });
+        fetchNui("sendAnnouncement", { message });
+      },
     });
   };
 
   const handleClearArea = () => {
     openDialog({
-      title: t("nui_menu.page_main.clear_area.list_primary"),
+      title: t("nui_menu.page_main.clear_area.title"),
       description: t("nui_menu.page_main.clear_area.dialog_description"),
       placeholder: "300",
       onSubmit: (msg) => {
@@ -346,12 +351,16 @@ export const MainPageList: React.FC = () => {
     });
   };
 
+  const handleTogglePlayerIds = () => {
+    fetchNui("togglePlayerIDs");
+  };
+  
   // This is here for when I am bored developing
   // const handleSpawnWeapon = () => {
   //   openDialog({
-  //     title: t("nui_menu.page_main.spawn_wep.dialog_title"),
+  //     title: "Spawn Weapon",
   //     placeholder: "WEAPON_ASSAULTRIFLE",
-  //     description: t("nui_menu.page_main.spawn_wep.dialog_desc"),
+  //     description: "Type in the model name for the weapon you want to spawn.",
   //     onSubmit: (inputValue) => {
   //       fetchNui("spawnWeapon", inputValue);
   //     },
@@ -363,19 +372,16 @@ export const MainPageList: React.FC = () => {
   // simplicity
   const menuListItems = useMemo(
     () => [
+      //PLAYER MODE
       {
-        icon: <AccessibilityNew />,
-        primary: t("nui_menu.page_main.player_mode.list_primary"),
-        secondary: t("nui_menu.page_main.player_mode.list_secondary", {
-          mode: "NoClip",
-        }),
+        title: t("nui_menu.page_main.player_mode.title"),
         requiredPermission: "players.playermode",
-        showCurrentPrefix: true,
         isMultiAction: true,
         initialValue: playerMode,
         actions: [
           {
-            label: t("nui_menu.page_main.player_mode.item_noclip"),
+            name: t("nui_menu.page_main.player_mode.noclip.title"),
+            label: t("nui_menu.page_main.player_mode.noclip.label"),
             value: PlayerMode.NOCLIP,
             icon: <ControlCamera />,
             onSelect: () => {
@@ -383,7 +389,8 @@ export const MainPageList: React.FC = () => {
             },
           },
           {
-            label: t("nui_menu.page_main.player_mode.item_godmode"),
+            name: t("nui_menu.page_main.player_mode.godmode.title"),
+            label: t("nui_menu.page_main.player_mode.godmode.label"),
             value: PlayerMode.GOD_MODE,
             icon: <Security />,
             onSelect: () => {
@@ -391,88 +398,112 @@ export const MainPageList: React.FC = () => {
             },
           },
           {
-            label: t("nui_menu.page_main.player_mode.item_none"),
+            name: t("nui_menu.page_main.player_mode.normal.title"),
+            label: t("nui_menu.page_main.player_mode.normal.label"),
             value: PlayerMode.DEFAULT,
+            icon: <AccessibilityNew />,
             onSelect: () => {
               handlePlayermodeToggle(PlayerMode.DEFAULT);
             },
           },
         ],
       },
+
+      //TELEPORT
       {
-        icon: <LocationSearching />,
-        primary: t("nui_menu.page_main.teleport.list_primary"),
-        isMultiAction: true,
+        title: t("nui_menu.page_main.teleport.title"),
         requiredPermission: "players.teleport",
+        isMultiAction: true,
         initialValue: teleportMode,
         actions: [
           {
-            label: t("nui_menu.page_main.teleport.item_waypoint"),
+            name: t("nui_menu.page_main.teleport.waypoint.title"),
+            label: t("nui_menu.page_main.teleport.waypoint.label"),
             value: TeleportMode.WAYPOINT,
+            icon: <PersonPinCircle />,
             onSelect: () => {
               setTeleportMode(TeleportMode.WAYPOINT);
               fetchNui("tpToWaypoint", {});
             },
-            icon: <GpsFixed />,
+            
           },
           {
-            label: t("nui_menu.page_main.teleport.item_coords"),
+            name: t("nui_menu.page_main.teleport.coords.title"),
+            label: t("nui_menu.page_main.teleport.coords.label"),
             value: TeleportMode.COORDINATES,
+            icon: <GpsFixed />,
             onSelect: () => {
               setTeleportMode(TeleportMode.COORDINATES);
-              handleTeleport();
+              handleTeleportCoords();
             },
           },
           {
-            label: t("nui_menu.page_main.teleport.item_previous"),
+            name: t("nui_menu.page_main.teleport.back.title"),
+            label: t("nui_menu.page_main.teleport.back.label"),
             value: TeleportMode.PREVIOUS,
-            onSelect: handleTeleportBack,
             icon: <Restore />,
+            onSelect: handleTeleportBack,
+          },
+          {
+            name: t("nui_menu.page_main.teleport.copy.title"),
+            label: t("nui_menu.page_main.teleport.copy.label"),
+            value: TeleportMode.COPY,
+            icon: <FileCopy />,
+            onSelect: handleCopyCoords,
           },
         ],
       },
+
+      //VEHICLE
       {
-        icon: <DirectionsCar />,
-        primary: t("nui_menu.page_main.car_options.list_primary"),
-        isMultiAction: true,
+        title: t("nui_menu.page_main.vehicle.title"),
         requiredPermission: "menu.vehicle",
+        isMultiAction: true,
         initialValue: vehicleMode,
         actions: [
           {
-            label: t("nui_menu.page_main.spawn_veh.list_secondary"),
+            name: t("nui_menu.page_main.vehicle.spawn.title"),
+            label: t("nui_menu.page_main.vehicle.spawn.label"),
             value: VehicleMode.SPAWN,
+            icon: <DirectionsCar />,
             onSelect: () => {
               setVehicleMode(VehicleMode.SPAWN);
               handleSpawnVehicle();
             },
-            icon: <DirectionsCar />,
           },
           {
-            label: t("nui_menu.page_main.delete_veh.list_secondary"),
+            name: t("nui_menu.page_main.vehicle.fix.title"),
+            label: t("nui_menu.page_main.vehicle.fix.label"),
+            value: VehicleMode.FIX,
+            icon: <Build />,
+            onSelect: () => {
+              setVehicleMode(VehicleMode.FIX);
+              handleFixVehicle();
+            },
+          },
+          {
+            name: t("nui_menu.page_main.vehicle.delete.title"),
+            label: t("nui_menu.page_main.vehicle.delete.label"),
             value: VehicleMode.DELETE,
+            icon: <DeleteForever />,
             onSelect: () => {
               setVehicleMode(VehicleMode.DELETE);
               handleDeleteVehicle();
             },
-            icon: <DirectionsCar />,
           },
         ],
       },
+
+      //HEAL
       {
-        icon: <Build />,
-        primary: t("nui_menu.page_main.fix_vehicle.list_primary"),
-        secondary: t("nui_menu.page_main.fix_vehicle.list_secondary"),
-        requiredPermission: "menu.vehicle",
-        onSelect: handleFixVehicle,
-      },
-      {
-        primary: t("nui_menu.page_main.heal_myself.list_primary"),
+        title: t("nui_menu.page_main.heal.title"),
+        requiredPermission: "players.heal",
         isMultiAction: true,
         initialValue: healMode,
-        requiredPermission: "players.heal",
         actions: [
           {
-            label: t("nui_menu.page_main.heal_myself.list_secondary"),
+            name: t("nui_menu.page_main.heal.myself.title"),
+            label: t("nui_menu.page_main.heal.myself.label"),
             value: HealMode.SELF,
             icon: <Favorite />,
             onSelect: () => {
@@ -481,8 +512,8 @@ export const MainPageList: React.FC = () => {
             },
           },
           {
-            primary: t("nui_menu.page_main.heal_all.list_primary"),
-            label: t("nui_menu.page_main.heal_all.list_secondary"),
+            name: t("nui_menu.page_main.heal.everyone.title"),
+            label: t("nui_menu.page_main.heal.everyone.label"),
             value: HealMode.ALL,
             icon: <LocalHospital />,
             onSelect: () => {
@@ -492,40 +523,33 @@ export const MainPageList: React.FC = () => {
           },
         ],
       },
+
+      //MISC
       {
-        icon: <Announcement />,
+        title: t("nui_menu.page_main.announcement.title"),
         requiredPermission: "players.message",
-        primary: t("nui_menu.page_main.send_announce.list_primary"),
-        secondary: t("nui_menu.page_main.send_announce.list_secondary"),
+        icon: <Announcement />,
         onSelect: handleAnnounceMessage,
       },
       {
-        icon: <PermIdentity />,
-        primary: t("nui_menu.page_main.player_ids.list_primary"),
-        secondary: t("nui_menu.page_main.player_ids.list_secondary"),
+        title: t("nui_menu.page_main.clear_area.title"),
+        requiredPermission: "menu.clear_area",
+        icon: <CenterFocusWeak />,
+        onSelect: handleClearArea,
+        
+      },
+      {
+        title: t("nui_menu.page_main.player_ids.title"),
+        icon: <Groups />,
         onSelect: handleTogglePlayerIds,
       },
-      {
-        icon: <FileCopy />,
-        primary: t("nui_menu.page_main.copy_coords.list_primary"),
-        secondary: t("nui_menu.page_main.copy_coords.list_secondary"),
-        onSelect: handleCopyCoords,
-      },
-      {
-        icon: <ClearAll />,
-        primary: t("nui_menu.page_main.clear_area.list_primary"),
-        secondary: t("nui_menu.page_main.clear_area.list_secondary"),
-        onSelect: handleClearArea,
-        requiredPermission: "menu.clear_area",
-      },
       // {
-      //   icon: <Gavel />,
-      //   primary: t("nui_menu.page_main.spawn_wep.list_primary"),
-      //   secondary: t("nui_menu.page_main.spawn_wep.list_secondary"),
+      //   title: "Spawn Weapon",
+      //   icon: <Stream />,
       //   onSelect: handleSpawnWeapon,
       // },
     ],
-    [playerMode]
+    [playerMode, teleportMode, vehicleMode, healMode, serverCtx.locale]
   );
 
   return (

@@ -27,30 +27,6 @@
     "windows-release": {
       "versions": ">4",
       "reason": "esm"
-    },
-    "copy-webpack-plugin": {
-      "versions": ">6",
-      "reason": "untested"
-    },
-    "html-webpack-plugin": {
-      "versions": ">4",
-      "reason": "untested"
-    },
-    "terser-webpack-plugin": {
-      "versions": ">4",
-      "reason": "untested"
-    },
-    "webpack": {
-      "versions": ">4",
-      "reason": "untested"
-    },
-    "webpack-cli": {
-      "versions": ">3",
-      "reason": "untested"
-    },
-    "webpack-dev-server": {
-      "versions": ">3",
-      "reason": "untested"
     }
   }
 }

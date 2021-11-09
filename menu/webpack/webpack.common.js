@@ -1,12 +1,12 @@
 const path = require('path');
-const processCWD = process.cwd();
+const CWD = process.cwd();
 
 
 module.exports = (options) => ({
     mode: options.mode,
     entry: './menu/src/index.tsx',
     output: {
-        path: path.join(processCWD, 'scripts/menu/nui'),
+        path: path.join(CWD, 'scripts/menu/nui'),
         filename: 'index.js',
     },
     optimization: options.optimization,
@@ -33,7 +33,7 @@ module.exports = (options) => ({
     },
     plugins: options.plugins,
     resolve: {
-        modules: ['node_modules', path.join(processCWD, 'menu/src')],
+        modules: ['node_modules', path.join(CWD, 'menu/src')],
         extensions: ['.ts', '.tsx', '.js', '.jsx'],
     },
 });

@@ -162,8 +162,11 @@ module.exports = class Monitor {
             } else if (action.messages) {
                 globals.discordBot.sendAnnouncement(action.messages.discord);
                 if (!this.config.disableChatWarnings) {
-                    // TODO: deprecate txaBroadcast, carefull to also show it on the Server Log
-                    globals.fxRunner.srvCmd(formatCommand('txaBroadcast', 'txAdmin', action.messages.chat));
+                    // Dispatch `txAdmin:events:announcement`
+                    const cmdOk = globals.fxRunner.sendEvent('announcement', {
+                        author: 'txAdmin',
+                        message: action.messages.chat,
+                    });
                 }
             }
         } catch (error) {
@@ -356,8 +359,12 @@ module.exports = class Monitor {
                 'restarter.partial_hang_warn_discord',
                 {servername: globals.config.serverName},
             ));
-            const chatMsg = globals.translator.t('restarter.partial_hang_warn');
-            globals.fxRunner.srvCmd(formatCommand('txaBroadcast', 'txAdmin', chatMsg));
+            // Dispatch `txAdmin:events:announcement`
+            const cmdOk = globals.fxRunner.sendEvent('announcement', {
+                author: 'txAdmin',
+                message: globals.translator.t('restarter.partial_hang_warn'),
+            });
+
             this.healthCheckRestartWarningIssued = currTimestamp;
         }
 

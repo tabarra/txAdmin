@@ -1,4 +1,7 @@
 import { debugLog } from "./debugLog";
+import { isBrowserEnv } from "./miscUtils";
+
+type OptsWithMockData<T> = Partial<RequestInit & { mockResp: T }>;
 
 /**
  * Simple wrapper around fetch API tailored for CEF/NUI use.
@@ -10,7 +13,7 @@ import { debugLog } from "./debugLog";
 export async function fetchNui<T = any>(
   eventName: string,
   data: unknown = {},
-  opts?: Partial<RequestInit>
+  opts?: OptsWithMockData<T>
 ): Promise<T> {
   const options = {
     ...opts,
@@ -22,6 +25,10 @@ export async function fetchNui<T = any>(
   };
 
   debugLog(eventName, data, "PostToScripts");
+
+  // If we are in browser and mockResp option is defined, we can
+  // bail out of having to make failing HTTP reqs, speeding up data dispatching.
+  if (isBrowserEnv() && opts?.mockResp) return opts.mockResp;
 
   const resp = await fetch(`https://monitor/${eventName}`, options);
 

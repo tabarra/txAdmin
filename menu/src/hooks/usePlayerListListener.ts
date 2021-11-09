@@ -37,13 +37,17 @@ export interface PlayerData {
    * Can be only be 0-200
    **/
   health: number;
+  /**
+   * If this player is an admin
+   **/
+  admin: boolean;
 }
 
 export const usePlayerListListener = () => {
   const curPage = usePageValue();
-  const setPlayerlist = useSetPlayersState();
+  const setPlayerList = useSetPlayersState();
 
-  useNuiEvent<PlayerData[]>("setPlayerlist", setPlayerlist);
+  useNuiEvent<PlayerData[]>("setPlayerList", setPlayerList);
 
   useEffect(() => {
     // Since our player list is never technically unmounted,
@@ -51,11 +55,11 @@ export const usePlayerListListener = () => {
     if (curPage !== txAdminMenuPage.Players) return;
 
     // Getting detailed playerlist
-    fetchNui("signalPlayersPageOpen", {}).catch();
+    fetchNui("signalPlayersPageOpen", {}, { mockResp: {} }).catch();
 
     // Getting detailed playerlist every 5 seconds
     const updaterInterval = window.setInterval(() => {
-      fetchNui("signalPlayersPageOpen", {}).catch();
+      fetchNui("signalPlayersPageOpen", {}, { mockResp: {} }).catch();
     }, 5000);
 
     return () => {

@@ -1,17 +1,69 @@
 ## TODO:
-- [x] fixed server log text invisible on light theme
-- [ ] xxxxxxxxxxxxx
-- [ ] xxxxxxxxxxxxx
-- [ ] xxxxxxxxxxxxx
-- [ ] xxxxxxxxxxxxx
-- [ ] new console log
-- [ ] change CitizenFX to Cfx.re as per branding consistency (ask the elements)
-- [ ] fix menu playerlist
-- [ ] fix menu auth
-- [ ] MAYBE: remove the "NEW" tag from `header.html` and `masterActions.html`
+- [x] fix(menu/players-page): fix sorting unknown distances higher than known
+- [x] tweak(menu/players-page): reflect players low health with color change
+- [x] fix(scripts/player-list): normalize health to percentage
+- [x] Remove the "NEW" tag from `header.html` and `masterActions.html`
+- [x] Implement new menu auth method
+- [x] Add keybind for opening players page
+- [x] Add keybind for toggling player IDs
+- [x] Fix menu healthbar colors
+- [x] Enable custom locale for menu
+- [x] Reorganize menu buttons.
+- [x] Reorganize all translation keys
+- [x] Migrate warn to use the event + react translation
+- [x] Solve sticky cookie after reauth issue
+- [x] Fix the manage admins perm issue
+- [x] Update packages
+- [ ] Test new NUI Auth on ZAP server 
+
+- [ ] Migrate console log to new logger
+- [ ] Migrate all log routes
+- [ ] Add download modal to log pages
+- [ ] Change CitizenFX to Cfx.re as per branding consistency (ask aurum)
+
+- [ ] When taking menu out of beta:
+    - Create a "menu" tab in settings page with options for: enable, tab key, screen side
+    - Add "NEW" tag for settings page and menu tab
+    - In config vault remove `+setr txEnableMenuBeta true` from fxrunner settings string
+    - In settings page, remove additional arguments doc on the menu
+    - Remove the "BETA" in the menu logo
+    - Change `nui_menu.misc.not_enabled` to say "go to tx settings to enable it"
 
 
 
+
+TODO::
+- Atualizar !events, !translate e !key
+- chungus command !key that will tell the user how to change the TAB and all the bindable options like noclip and etc
+
+
+Pro debug da playerlist:
+- comando pra printar: [primeiro,ultimo,count,sum]
+- comando get initial
+- comando get full
+- algum tipo de print quando as coisas acontecerem vai ser necessário
+- nao esquecer de remover a suggestion 
+
+
+
+FIXME: sendMenuMessage('setServerCtx', ServerCtx)
+
+FIXME: quando o menu abrir, deveria voltar os list item pro default deles
+
+
+
+
+Master sem fivem:
+- Na página de pin, ter 2 botões, um pra criar conta com e outro sem fivem
+- addMaster:handlePin() pegar parametro e ou jogar pro idm, ou pra pagina addmaster mas com o login habilitado e obrigatório
+- não tem como colocar isso sem termos o modal que fica aparecendo pedindo pro admin inserir ou fivem, ou discord, ou marcar que essa conta não vai ter admin ingame
+
+
+
+-- announcements need sound!
+
+
+> User report: If you give warn from menu then it won't log in tx plz fix this (he said it's only after the second)
 
 > User report: when admin use txadmin for first time, system ask him to change password, if he change it, all admins must restart to get txadmin working again
 
@@ -25,19 +77,8 @@ remover o \s?
 
 
 
-### Menu auth fix
-- o `/auth/nui` vira um middleware requestAuth('nui')
-- esse middleware cria uma variável de contexto que não é ctx.session pra nao ficar criando sessões koa
-- usar handlers normais (webRoutes.player.*), e dentro delas fazer `const sess = ctx.nuiSess || ctx.session` 
-- criar rotas novas com prefixo diferente tipo `/nui/xxx`
-- webpipe adicionar headers com identifiers quando tiver path começar com `/nui/`
+-- Why both have the same debug data? https://i.imgur.com/WGawiyr.png
 
-- o sv agora vai ter que começar a chamar algo tipo `/nui/identify` no join pra saber se esse o client é admin 
-- remover `/auth/nui` existente
-- fazer o react parar de chamar e depender do `/auth/nui`
-- iframe iniciar com uma rota especial que ou gera o ctx.session (como o `/auth/nui`), ou já chama o handler do serverlog get
-
-- talvez cachear os identifiers pra nao ficar pegando toda vez? talvez no primeiro `/nui/identify` retornar um token que pode ser reusado sem ter que ficar buscando admin com mesmo id? idk
 
 
 
@@ -73,9 +114,12 @@ To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 > Don't use, but I'll leave it saved here: https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
 
 
-### Admin gun
-An "admin gun" where you point a gun to a player and when you point it to a player it shows this player's info, and when you "shoot it" it opens that player's modal.
-If not a custom gun model, just use the point animation and make sure we have a crosshair
+### txBanana Admin Gun
+- banana as a gun, txBanana
+- preferably without taking away inventory from user
+- keybind to toggle gun (grab or put away)
+- when you point at player, show above head some info
+- when you "shoot" it will open the player menu and hopefully fire a laser or something
 
 
 ### ESM updates
@@ -94,15 +138,32 @@ NOTE: nice guide https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc
 - every X download_github wait some time - maybe check if ref or not, to be smarter
 - https://github.com/isomorphic-git/isomorphic-git
 - easy recipe tester
-- fully automated deploy process via CLI. You just set the recipe file path, as well as the required variables, and you can get your server running without any user interaction .
+- fully automated deploy process via CLI. You just set the recipe file path, as well as the required variables, and you can get your server running without any user interaction.
+
+
+### Report System (random ideas)
+- persistent, save in database?
+- have two different status: visited (arr of admins), closed (admin that closed)
+- this one is worth having discordwebhook
+
+References (get usage count):
+https://forum.cfx.re/t/release-admin-reply-report-command/73894
+https://forum.cfx.re/t/release-esx-ban-warning-help-assist-system/786080
+https://forum.cfx.re/t/release-badgerreports-reports-through-discord-and-in-game/1145714/1
+https://forum.cfx.re/t/release-fivem-advanced-reports-system/1798535
+https://forum.cfx.re/t/esx-advanced-report/1636000
+https://forum.cfx.re/t/standalone-esx-reportsystem-a-completely-innovative-report-system-paid/3710522
+https://forum.cfx.re/t/free-esx-simple-mysql-reports-system/3555465
+https://forum.cfx.re/t/paid-esx-new-advanced-report-system/4774382
+https://forum.cfx.re/t/standalone-advanced-report-system/4774403/1
+
 
 ### Todozinhos:
-pagina de adicionar admin precisa depois do modal, mostrar mais info:
-username, senha, potencialmente link, instruções de login
-
-warn auto dismiss 15s
-FreezeEntityPosition need to get the veh
-debugModeEnabled and isMenuDebug are redundant, should probably just use the one from shared
+- pagina de adicionar admin precisa depois do modal, mostrar mais info:
+    - username, senha, potencialmente link, instruções de login
+- FreezeEntityPosition need to get the veh
+    - já foi feito? tem issue aberto, e já teve um pr feito
+- começar a ler o ui_label dos manifests e usar na página de resources
 
 
 

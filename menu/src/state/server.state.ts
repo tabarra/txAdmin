@@ -1,11 +1,15 @@
-import { atom, selector, useRecoilValue } from "recoil";
+import { atom, useRecoilValue, useSetRecoilState } from "recoil";
 import config from "../utils/config.json";
-import { fetchNui } from "../utils/fetchNui";
-import { debugLog } from "../utils/debugLog";
 
 interface OneSyncCtx {
   type: null | string;
   status: boolean;
+}
+
+export interface CustomLocaleData {
+  $meta: Record<string, unknown>;
+  nui_menu: Record<string, unknown>;
+  nui_warning: Record<string, unknown>;
 }
 
 export interface ServerCtx {
@@ -13,29 +17,17 @@ export interface ServerCtx {
   projectName: null | string;
   maxClients: number;
   locale: string;
+  localeData: CustomLocaleData | false;
   switchPageKey: string;
   txAdminVersion: string;
-  endpoint: string;
   alignRight: boolean;
 }
 
 const serverCtx = atom<ServerCtx>({
   key: "serverCtx",
-  default: selector<ServerCtx>({
-    key: "serverCtxFetch",
-    get: async () => {
-      try {
-        const serverCtx = await fetchNui<ServerCtx>("getServerCtx");
-        debugLog("GetServerCtx", serverCtx);
-        return serverCtx;
-      } catch (e) {
-        // This will error whenever the menu is disabled, so lets just silently
-        // deal with it for now.
-        // console.error(e)
-        return <ServerCtx>config.serverCtx;
-      }
-    },
-  }),
+  default: <ServerCtx>config.serverCtx,
 });
 
 export const useServerCtxValue = () => useRecoilValue(serverCtx);
+
+export const useSetServerCtx = () => useSetRecoilState(serverCtx);
