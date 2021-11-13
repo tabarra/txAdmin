@@ -585,6 +585,23 @@ More:
 - [x] fix(deployer): changed zip library to solve errors
 - [x] chore: updated some packages
 > v4.7.0
+- [x] fix(menu/players-page): fix sorting unknown distances higher than known
+- [x] tweak(menu/players-page): reflect players low health with color change
+- [x] fix(scripts/player-list): normalize health to percentage
+- [x] Remove the "NEW" tag from `header.html` and `masterActions.html`
+- [x] Implement new menu auth method
+- [x] Add keybind for opening players page
+- [x] Add keybind for toggling player IDs
+- [x] Fix menu healthbar colors
+- [x] Enable custom locale for menu
+- [x] Reorganize menu buttons.
+- [x] Reorganize all translation keys
+- [x] Migrate warn to use the event + react translation
+- [x] Solve sticky cookie after reauth issue
+- [x] Fix the manage admins perm issue
+- [x] Update packages
+- [x] Test new NUI Auth on ZAP server
+> v4.8.0
 
 ------------------------------
 > NOTE: this was an attempt to get the help from the community around september 2019

@@ -48,17 +48,6 @@ module.exports = class FXRunner {
         this.fxServerHost = null;
         this.currentMutex = null;
         this.outputHandler = new OutputHandler();
-
-        //The setTimeout is not strictly necessary, but it's nice to have other errors in the top before fxserver starts.
-        if (config.autostart && this.config.serverDataPath !== null && this.config.cfgPath !== null) {
-            setTimeout(() => {
-                if (globals.adminVault && globals.adminVault.admins) {
-                    this.spawnServer(true);
-                } else {
-                    logWarn('The server will not auto start because there are no admins configured.');
-                }
-            }, config.autostartDelay * 1000);
-        }
     }
 
 
@@ -69,6 +58,25 @@ module.exports = class FXRunner {
     refreshConfig() {
         this.config = globals.configVault.getScoped('fxRunner');
     }//Final refreshConfig()
+
+
+    //================================================================
+    /**
+     * Receives the signal that all the start banner was already printed and other modules loaded
+     */
+    signalStartReady() {
+        if(!this.config.autostart) return;
+
+        if(this.config.serverDataPath === null || this.config.cfgPath === null){
+            return logWarn('Please open txAdmin on the browser to configure your server.');
+        }
+
+        if(!globals.adminVault || !globals.adminVault.admins){
+            return logWarn('The server will not auto start because there are no admins configured.');
+        }
+
+        this.spawnServer(true);
+    }//Final signalStartReady()
 
 
     //================================================================
