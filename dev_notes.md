@@ -1,6 +1,7 @@
 ## TODO:
 - [x] server start after banner
-- [ ] remove rofl+clap easter egg from login page
+- [x] remove rofl+clap easter egg from login page
+- [x] Change CitizenFX to Cfx.re as per branding consistency (ask aurum)
 - [ ] fix admin manager all_permissions issue
 - [ ] fix open menu & player id permissions
 - [ ] dm via snackbar
@@ -12,7 +13,6 @@
 - [ ] Migrate console log to new logger
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
-- [ ] Change CitizenFX to Cfx.re as per branding consistency (ask aurum)
 
 - [ ] When taking menu out of beta:
     - Create a "menu" tab in settings page with options for: enable, tab key, screen side

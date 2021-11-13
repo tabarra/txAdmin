@@ -249,7 +249,7 @@ module.exports = class WebServer {
         try {
             setHttpCallback(this.httpCallbackHandler.bind(this, 'citizenfx'));
         } catch (error) {
-            logError('Failed to start CitizenFX Reverse Proxy Callback with error:');
+            logError('Failed to start Cfx.re Reverse Proxy Callback with error:');
             dir(error);
         }
 

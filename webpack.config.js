@@ -15,7 +15,7 @@ try {
         separator,
         `Author: André Tabarra (https://github.com/tabarra)`,
         `Repository: https://github.com/tabarra/txAdmin`,
-        `Written with ❤️ for the CitizenFX Collective.`,
+        `Written with ❤️ for Cfx.re`,
         separator,
         fs.readFileSync(path.resolve(__dirname, 'LICENSE'), 'utf8').trim(),
         separator,
