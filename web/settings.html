@@ -1,5 +1,28 @@
 {{@include("header", it)/}}
 
+<style>
+    .expandable-textarea {
+        border: 1px solid #ccc;
+        font-family: inherit;
+        font-size: inherit;
+        padding: 1px 6px;
+
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        resize: vertical;
+        height: max-content;
+        min-height: 40px;
+        line-height: 20px;
+        white-space: break-spaces;
+    }
+    .expandable-textarea[contenteditable]:empty::before {
+        color: gray;
+    }
+    .expandable-textarea[disabled] {
+        background-color: #d8dbe0;
+    }
+</style>
 
 <div class="text-center mb-4">
     <h2>Settings</h2>
@@ -143,8 +166,13 @@
                                 Additional Arguments
                             </label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmFXServer-commandLine" value="{{it.fxserver.commandLine|undef}}"
-                                    placeholder="+set sv_enforceGameBuild 2189" {{it.readOnly|isDisabled}}>
+                                <style>
+                                    .ph-fxs-cmdline:empty::before {
+                                        content: "+set sv_enforceGameBuild 2189";
+                                    }
+                                </style>
+                                <span class="expandable-textarea form-control ph-fxs-cmdline" role="textbox" id="frmFXServer-commandLine" {{[it.readOnly, "disabled", "contenteditable"]|ternary}}>{{it.fxserver.commandLine|undef}}</span>
+
                                 <span class="form-text text-primary">
                                     To enable the Beta In-game, add <code>+setr txEnableMenuBeta true</code> above.
                                 </span>
@@ -323,9 +351,12 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <textarea class="form-control" id="frmPlayerManager-whitelistRejectionMessage" rows="4" 
-                                    placeholder="You are not yet whitelisted in this server.&#10;Please join http://discord.gg/example.&#10;Your Request ID: &lt;id&gt;" 
-                                    maxlength="256" {{it.readOnly|isDisabled}}>{{it.playerController.whitelistRejectionMessage|undef}}</textarea>
+                                <style>
+                                    .ph-playermanager-rejectmsg:empty::before {
+                                        content: "You are not yet whitelisted in this server.\a Please join http://discord.gg/example.\a Your Request ID: <id>";
+                                    }
+                                </style>
+                                <span class="expandable-textarea form-control ph-playermanager-rejectmsg" role="textbox" id="frmPlayerManager-whitelistRejectionMessage" {{[it.readOnly, "disabled", "contenteditable"]|ternary}}>{{it.playerController.whitelistRejectionMessage|undef}}</span>
                                 <span class="form-text text-muted">
                                     The message that will be returned to the player if he is not whitelisted. <br>
                                     Use <code>&lt;id&gt;&#10;</code> as a placeholder for the whitelist request ID.
@@ -429,8 +460,12 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <textarea class="form-control" id="frmDiscord-statusMessage" rows="4" 
-                                    placeholder="**IP:** `connect cfx.re/join/xxxxxx`&#10;**Players:** &lt;players&gt;&#10;**Uptime:** &lt;uptime&gt;" {{it.readOnly|isDisabled}}>{{it.discord.statusMessage|undef}}</textarea>
+                                <style>
+                                    .ph-discord-statusmsg:empty::before {
+                                        content: "**Join:** `connect cfx.re/join/xxxxxx`\a**Players:** <players>\a**Uptime:** <uptime>";
+                                    }
+                                </style>
+                                <span class="expandable-textarea form-control ph-discord-statusmsg" role="textbox" id="frmDiscord-statusMessage" {{[it.readOnly, "disabled", "contenteditable"]|ternary}}>{{it.discord.statusMessage|undef}}</span>
                                 <span class="form-text text-muted">
                                     The response to the <code>/status</code> command. <br>
                                     Supported placeholders: <code>players</code>, <code>port</code>, <code>uptime</code>.
@@ -508,7 +543,7 @@
         let data = {
             serverDataPath: $('#frmFXServer-serverDataPath').val().trim(),
             cfgPath: $('#frmFXServer-cfgPath').val().trim(),
-            commandLine: $('#frmFXServer-commandLine').val().trim(),
+            commandLine: document.getElementById('frmFXServer-commandLine').textContent.trim(),
             onesync: $('#frmFXServer-onesync').val(),
             autostart: $('#frmFXServer-autostart').is(':checked'),
             quiet: $('#frmFXServer-quiet').is(':checked')
@@ -546,7 +581,7 @@
             onJoinCheckBan: $('#frmPlayerManager-onJoinCheckBan').is(':checked'),
             onJoinCheckWhitelist: $('#frmPlayerManager-onJoinCheckWhitelist').is(':checked'),
             minSessionTime: $('#frmPlayerManager-minSessionTime').val().trim(),
-            whitelistRejectionMessage: $('#frmPlayerManager-whitelistRejectionMessage').val().trim(),
+            whitelistRejectionMessage: document.getElementById('frmPlayerManager-whitelistRejectionMessage').textContent.trim(),
             wipePendingWLOnStart: $('#frmPlayerManager-wipePendingWLOnStart').is(':checked'),
         }
         if (!data.minSessionTime.length || !data.whitelistRejectionMessage.length) {
@@ -608,7 +643,7 @@
             token: $('#frmDiscord-token').val().trim(),
             announceChannel: $('#frmDiscord-announceChannel').val().trim(),
             prefix: $('#frmDiscord-prefix').val().trim(),
-            statusMessage: $('#frmDiscord-statusMessage').val().trim()
+            statusMessage: document.getElementById('frmDiscord-statusMessage').textContent.trim(),
         };
         if (data.enabled && (!data.token.length || !data.prefix.length || !data.statusMessage.length)) {
             return $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
