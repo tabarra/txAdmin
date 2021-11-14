@@ -1,12 +1,13 @@
 ## TODO:
 - [x] server start after banner
 - [x] remove rofl+clap easter egg from login page
+- [x] fix server started banner printing on quiet mode
 - [x] Change CitizenFX to Cfx.re as per branding consistency (ask aurum)
 - [x] fix admin manager all_permissions issue
 - [x] fix open menu & player id permissions
+- [x] fix menu onesync detection
 - [ ] dm via snackbar
 - [ ] wav for announcements
-- [ ] fix server started banner printing on quiet mode
 - [ ] xxxxx
 - [ ] xxxxx
 

@@ -549,7 +549,7 @@ export const MainPageList: React.FC = () => {
       //   onSelect: handleSpawnWeapon,
       // },
     ],
-    [playerMode, teleportMode, vehicleMode, healMode, serverCtx.locale]
+    [playerMode, teleportMode, vehicleMode, healMode, serverCtx]
   );
 
   return (

@@ -16,7 +16,7 @@ For that you will need to:
 - The `$meta.label` must be the language name in English (eg `Spanish` instead of `Español`);
 - Do a [Pull Request](https://github.com/tabarra/txAdmin/pulls) posting a few screenshots of evidence that you tested what you changed in-game.
 
-> **Pro Tip:** To quickly test your changes, you can edit the `locale.json` file and then in the settings page click "Save Global Settings" again to see the changes in the game menu without needing to restart txAdmin or the server. For the menu main page you may need to press [TAB] for it to load the changes.
+> **Pro Tip:** To quickly test your changes, you can edit the `locale.json` file and then in the settings page click "Save Global Settings" again to see the changes in the game menu without needing to restart txAdmin or the server.
 
 > **Pro Tip2:** To make sure you didn't miss anything in the locale file, you can download the txAdmin source code, execute `npm i`, move the `locale.json` to inside the `txAdmin/locale` folder and run `npm run locale:diff`. This will tell you about missing or extra keys.
 
