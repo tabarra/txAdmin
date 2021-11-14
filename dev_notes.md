@@ -3,7 +3,7 @@
 - [x] remove rofl+clap easter egg from login page
 - [x] Change CitizenFX to Cfx.re as per branding consistency (ask aurum)
 - [x] fix admin manager all_permissions issue
-- [ ] fix open menu & player id permissions
+- [x] fix open menu & player id permissions
 - [ ] dm via snackbar
 - [ ] wav for announcements
 - [ ] fix server started banner printing on quiet mode
