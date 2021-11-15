@@ -1,7 +1,7 @@
 -- =============================================
 --  This file contains all overhead player ID logic
 -- =============================================
-if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
     return
 end
 
@@ -9,7 +9,7 @@ local isPlayerIDActive = false
 local playerGamerTags = {}
 
 -- Convar used to determine the distance in which player ID's are visible
-local distanceToCheck = GetConvarInt('txAdminMenu-playerIdDistance', 150)
+local distanceToCheck = GetConvarInt('txAdmin-menuPlayerIdDistance', 150)
 
 local gamerTagCompsEnum = {
     GamerName = 0,

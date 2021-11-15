@@ -78,6 +78,7 @@ end)
 -- The suggestion is added after 500ms, so we need to wait more
 CreateThread(function()
     Wait(1000)
+    --Commands
     TriggerEvent('chat:removeSuggestion', '/txadmin') --too spammy
     TriggerEvent('chat:removeSuggestion', '/txaPing')
     TriggerEvent('chat:removeSuggestion', '/txaKickAll')
@@ -86,19 +87,30 @@ CreateThread(function()
     TriggerEvent('chat:removeSuggestion', '/txaEvent')
     TriggerEvent('chat:removeSuggestion', '/txaSendDM')
     TriggerEvent('chat:removeSuggestion', '/txaReportResources')
+
+    --Keybinds
     TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:noClipToggle')
     TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:endSpectate')
     TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:openPlayersPage')
     TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:togglePlayerIDs')
+
+    --Convars
     TriggerEvent('chat:removeSuggestion', '/txAdmin-version')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-locale')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-localeFile')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-verbose')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-apiHost')
-    TriggerEvent('chat:removeSuggestion', '/txAdmin-apiToken')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-luaComHost')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-luaComToken')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-checkPlayerJoin')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-pipeToken')
     TriggerEvent('chat:removeSuggestion', '/txAdminServerMode')
-    TriggerEvent('chat:removeSuggestion', '/txAdminMenu-debugMode')
-    TriggerEvent('chat:removeSuggestion', '/txEnableMenuBeta')
+
+    --Menu convars
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuEnabled')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuAlignRight')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuPageKey')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuDebug')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-playerIdDistance')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuDrunkDuration')
 end)
 

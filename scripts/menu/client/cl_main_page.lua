@@ -2,7 +2,7 @@
 --  This file is for all main page logic not controlled in its
 --  own file (mainly simpler logic)
 -- =============================================
-if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
     return
 end
 

@@ -32,6 +32,8 @@ const getMutableConvars = (isCmdLine = false) => {
         [`${p}set`, 'txAdmin-localeFile', globals.translator.customLocalePath ?? 'false'],
         [`${p}setr`, 'txAdmin-verbose', GlobalData.verbose],
         [`${p}set`, 'txAdmin-checkPlayerJoin', checkPlayerJoin],
+        [`${p}set`, 'txAdmin-menuAlignRight', globals.config.menuAlignRight],
+        [`${p}set`, 'txAdmin-menuPageKey', globals.config.menuPageKey],
     ];
 };
 
@@ -102,6 +104,7 @@ module.exports = class FXRunner {
             extraArgs,
             '+set', 'onesync', this.config.onesync,
             '+sets', 'txAdmin-version', GlobalData.txAdminVersion,
+            '+setr', 'txAdmin-menuEnabled', globals.config.menuEnabled,
             '+set', 'txAdmin-luaComHost', txAdminInterface,
             '+set', 'txAdmin-luaComToken', globals.webServer.luaComToken,
             '+set', 'txAdminServerMode', 'true', //Can't change this one due to fxserver code compatibility

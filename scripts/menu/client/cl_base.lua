@@ -10,12 +10,12 @@ isMenuDebug = false
 isMenuVisible = false
 menuPermissions = {}
 lastTpCoords = false;
-local isMenuEnabled = (GetConvar('txEnableMenuBeta', 'false') == 'true')
+local isMenuEnabled = (GetConvar('txAdmin-menuEnabled', 'false') == 'true')
 
 
 -- Check if menu is in debug mode 
 CreateThread(function()
-  isMenuDebug = (GetConvar('txAdminMenu-debugMode', 'false') == 'true')
+  isMenuDebug = (GetConvar('txAdmin-menuDebug', 'false') == 'true')
 end)
 
 local function checkMenuAccessible()

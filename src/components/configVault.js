@@ -114,6 +114,9 @@ module.exports = class ConfigVault {
                 serverName: toDefault(cfg.global.serverName, null),
                 language: toDefault(cfg.global.language, null),
                 forceFXServerPort: toDefault(cfg.global.forceFXServerPort, null), //not in template
+                menuEnabled: toDefault(cfg.global.menuEnabled, true),
+                menuAlignRight: toDefault(cfg.global.menuAlignRight, false),
+                menuPageKey: toDefault(cfg.global.menuPageKey, 'Tab'),
             };
             out.logger = toDefault(cfg.logger, {}); //not in template
             out.monitor = {
@@ -149,7 +152,7 @@ module.exports = class ConfigVault {
                 commandCooldown: toDefault(cfg.discordBot.commandCooldown, null), //not in template
             };
             out.fxRunner = {
-                serverDataPath: toDefault(cfg.fxRunner.serverDataPath, null) || toDefault(cfg.fxRunner.basePath, null), //converting old variable
+                serverDataPath: toDefault(cfg.fxRunner.serverDataPath, null),
                 cfgPath: toDefault(cfg.fxRunner.cfgPath, null),
                 commandLine: toDefault(cfg.fxRunner.commandLine, null),
                 logPath: toDefault(cfg.fxRunner.logPath, null), //not in template
@@ -158,6 +161,9 @@ module.exports = class ConfigVault {
                 restartDelay: toDefault(cfg.fxRunner.restartDelay, null), //not in template
                 quiet: toDefault(cfg.fxRunner.quiet, null),
             };
+
+            //Removing menu beta convar (v4.9)
+            out.fxRunner.commandLine = out.fxRunner.commandLine?.replace(/\+?setr? txEnableMenuBeta true\s?/gi, '');
         } catch (error) {
             if (GlobalData.verbose) dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated!\nOriginal error: ${error.message}`);
@@ -180,6 +186,9 @@ module.exports = class ConfigVault {
             //Global
             cfg.global.serverName = cfg.global.serverName || 'change-me';
             cfg.global.language = cfg.global.language || 'en'; //TODO: move to GlobalData
+            cfg.global.menuEnabled = (cfg.global.menuEnabled === 'true' || cfg.global.menuEnabled === true);
+            cfg.global.menuAlignRight = (cfg.global.menuAlignRight === 'true' || cfg.global.menuAlignRight === true);
+            cfg.global.menuPageKey = cfg.global.menuPageKey || 'Tab';
 
             //Logger - NOTE: this one default's i'm doing directly into the class
             cfg.logger.fxserver = toDefault(cfg.logger.fxserver, {});
@@ -216,14 +225,6 @@ module.exports = class ConfigVault {
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in templater
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
-            //FXRunner - Converting from old OneSync (build 2751)
-            if (isUndefined(cfg.fxRunner.onesync) || cfg.fxRunner.onesync === null) {
-                cfg.fxRunner.onesync = 'on';
-            } else if (typeof cfg.fxRunner.onesync == 'boolean') {
-                cfg.fxRunner.onesync = (cfg.fxRunner.onesync) ? 'on' : 'off';
-            } else if (!['on', 'legacy', 'off'].includes(cfg.fxRunner.onesync)) {
-                throw new Error('Invalid OneSync type.');
-            }
         } catch (error) {
             if (GlobalData.verbose) dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated.\nOriginal error: ${error.message}`);

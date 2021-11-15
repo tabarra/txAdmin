@@ -1,7 +1,7 @@
 -- =============================================
 --  This file contains all player freeze logic
 -- =============================================
-if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
   return
 end
 

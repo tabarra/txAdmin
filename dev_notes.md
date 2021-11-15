@@ -6,29 +6,25 @@
 - [x] fix admin manager all_permissions issue
 - [x] fix open menu & player id permissions
 - [x] fix menu onesync detection
+- [x] Take menu out of beta:
+    - [x] In settings page, remove additional arguments doc on the menu
+    - [x] Remove the "BETA" in the menu logo
+    - [x] Change `nui_menu.misc.not_enabled` to say "go to tx settings to enable it"
+    - [x] Create a "menu" tab in settings page with options for: enable, tab key, screen side
+    - [x] Add "NEW" tag for settings page and menu tab
+    - [x] In configVault/settings remove `+setr txEnableMenuBeta true` from fxrunner settings string
+    - [x] Update the menu code to use new convar
+    - [x] Test update/new config scenarios
+    - [x] Update `menu.md`
 - [ ] dm via snackbar
 - [ ] wav for announcements
-- [ ] xxxxx
+- [ ] update `README.md`
 - [ ] xxxxx
 
 - [ ] Migrate console log to new logger
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
 
-- [ ] When taking menu out of beta:
-    - Create a "menu" tab in settings page with options for: enable, tab key, screen side
-    - Add "NEW" tag for settings page and menu tab
-    - In config vault remove `+setr txEnableMenuBeta true` from fxrunner settings string
-    - In settings page, remove additional arguments doc on the menu
-    - Remove the "BETA" in the menu logo
-    - Change `nui_menu.misc.not_enabled` to say "go to tx settings to enable it"
-
-
-
-
-TODO::
-- Atualizar !events, !translate e !key
-- chungus command !key that will tell the user how to change the TAB and all the bindable options like noclip and etc
 
 
 Pro debug da playerlist:
@@ -44,6 +40,7 @@ FIXME: sendMenuMessage('setServerCtx', ServerCtx)
 
 FIXME: quando o menu abrir, deveria voltar os list item pro default deles
 
+-- Adapt `txAdmin:beta:deathLog` as well as add cusstom commands and logs
 
 
 
@@ -56,10 +53,12 @@ Master sem fivem:
 
 -- announcements need sound!
 
-
-> User report: If you give warn from menu then it won't log in tx plz fix this (he said it's only after the second)
-
-> User report: when admin use txadmin for first time, system ask him to change password, if he change it, all admins must restart to get txadmin working again
+Copy key Scenarios:
+- Following random tutorial exactly
+- Following host-specific tutorial exactly
+- Copying files to another host/path
+- Copying files to cloned image
+- Pterodactyl
 
 > We could totally do like a "jump in time" feature for the log page.
 > A slider with 500 steps, and an array with 500 timestamps
@@ -398,7 +397,7 @@ rm -rf dist && npm run build && tar.exe -cvf dist/monitor.zip dist/* && explorer
 export TXADMIN_DEFAULT_LICENSE="cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx"
 npm-upgrade
 con_miniconChannels script:monitor*
-+set svgui_disable true +setr txAdminMenu-debugMode true +setr txEnableMenuBeta true
++set svgui_disable true +setr txAdmin-menuDebug true +setr txEnableMenuBeta true
 
 # eslint stuff
 npx eslint ./src/**

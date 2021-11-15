@@ -1,11 +1,11 @@
 -- =============================================
 --  Troll action logic from the player modal is located here (callbacks, events)
 -- =============================================
-if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
     return
 end
 
-local EFFECT_TIME_MS = GetConvarInt('txAdminMenu-drunkDuration', 30)*1000
+local EFFECT_TIME_MS = GetConvarInt('txAdmin-menuDrunkDuration', 30)*1000
 local DRUNK_ANIM_SET = "move_m@drunk@verydrunk"
 
 local DRUNK_DRIVING_EFFECTS = {

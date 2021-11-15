@@ -12,7 +12,7 @@ import { useServerCtxValue } from '../state/server.state';
 
 const TxAdminLogo: React.FC = () => (
   <Box my={1} display="flex" justifyContent="center">
-    <img src="assets/images/txadmin_beta.png" alt="txadmin logo" />
+    <img src="assets/images/txadmin.png" alt="txAdmin logo" />
   </Box>
 );
 

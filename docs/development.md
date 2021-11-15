@@ -9,7 +9,7 @@ are at least a little bit familiar with the basics of Node ecosystem
 it is expected you know how to clone a repository to a specific location*
 
 ## Requirements
-* Node v12 or higher
+* Node v16 to match the one in FXServer.
 
 ## Getting Started
 
@@ -78,9 +78,6 @@ Then copy the `src/css/style.css` to txAdmin's folder.
 The txAdmin Menu is a Lua + TypeScript React project. Ensure you have all the dependencies by running
 `npm i` in the root directory.
 
-The txAdmin Menu is a Lua + TypeScript React project. Ensure you have all the dependencies by running
-`npm i` in the root directory.
-
 #### Hot Reloading Dev Environments
 
 To run the menu in the browser you can use the `dev:menu` script. This will hot reload, everytime
@@ -101,7 +98,6 @@ the `dev:menu:game` script *(You can easily start one by running `npm run watch`
 
 #### General Structure
 
-**Lua**: You can find the majority of the relevant Lua scripts in the `scripts/menu` directory.
+**Lua**: You can find the majority of the relevant Lua scripts in the `./scripts/menu` directory.
 
-**React/Typescript**: The source code for the React application can be found in the `./menu`
-directory.
+**React/Typescript**: The source code for the React application can be found in the `./menu` directory.

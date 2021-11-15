@@ -1,7 +1,7 @@
 -- =============================================
 --  Client PlayerList handler
 -- =============================================
-if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
     return
 end
 

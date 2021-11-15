@@ -95,10 +95,10 @@ local function syncServerCtx()
 
   -- Convar must match the event.code *EXACTLY* as shown on this site
   -- https://keycode.info/
-  local switchPageKey = GetConvar('txAdminMenu-pageKey', 'Tab')
+  local switchPageKey = GetConvar('txAdmin-menuPageKey', 'Tab')
   ServerCtxObj.switchPageKey = switchPageKey
 
-  local alignRight = GetConvarInt('txAdminMenu-alignRight', 0) > 0
+  local alignRight = (GetConvar('txAdmin-menuAlignRight', 'false') == 'true')
   ServerCtxObj.alignRight = alignRight
 
   local txAdminVersion = GetConvar('txAdmin-version', '0.0.0')

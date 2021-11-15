@@ -40,6 +40,8 @@ module.exports = async function SettingsSave(ctx) {
         return handleMonitor(ctx);
     } else if (scope == 'discord') {
         return handleDiscord(ctx);
+    } else if (scope == 'menu') {
+        return handleMenu(ctx);
     } else {
         return ctx.send({
             type: 'danger',
@@ -59,7 +61,6 @@ function handleGlobal(ctx) {
     if (
         isUndefined(ctx.request.body.serverName)
         || isUndefined(ctx.request.body.language)
-        || isUndefined(ctx.request.body.verbose)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -68,7 +69,6 @@ function handleGlobal(ctx) {
     let cfg = {
         serverName: ctx.request.body.serverName.trim(),
         language: ctx.request.body.language.trim(),
-        verbose: (ctx.request.body.verbose === 'true'),
     };
 
     //Trying to load language file
@@ -162,7 +162,7 @@ function handleFXServer(ctx) {
     if (saveStatus) {
         globals.fxRunner.refreshConfig();
         ctx.utils.logAction('Changing fxRunner settings.');
-        return ctx.send({type: 'success', message: '<strong>FXServer configuration saved!</strong>'});
+        return ctx.send({type: 'success', message: '<strong>FXServer configuration saved!<br>You need to restart the server for the changes to take effect.</strong>'});
     } else {
         logWarn(`[${ctx.session.auth.username}] Error changing fxRunner settings.`);
         return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
@@ -220,7 +220,7 @@ function handlePlayerController(ctx) {
     if (saveStatus) {
         globals.playerController.refreshConfig();
         ctx.utils.logAction('Changing Player Controller settings.');
-        return ctx.send({type: 'success', message: '<strong>Player Controller configuration saved!</strong>'});
+        return ctx.send({type: 'success', message: '<strong>Player Controller configuration saved!<br>You need to restart the server for the changes to take effect.</strong>'});
     } else {
         logWarn(`[${ctx.session.auth.username}] Error changing Player Controller settings.`);
         return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
@@ -356,6 +356,49 @@ function handleDiscord(ctx) {
         }
     } else {
         logWarn(`[${ctx.session.auth.username}] Error changing discordBot settings.`);
+        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
+    }
+}
+
+
+//================================================================
+/**
+ * Handle Menu settings
+ * NOTE: scoped inside global settings
+ * @param {object} ctx
+ */
+function handleMenu(ctx) {
+    //Sanity check
+    if (
+        isUndefined(ctx.request.body.menuEnabled)
+        || isUndefined(ctx.request.body.menuAlignRight)
+        || isUndefined(ctx.request.body.menuPageKey)
+    ) {
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
+    }
+
+    //Prepare body input
+    const cfg = {
+        menuEnabled: (ctx.request.body.menuEnabled === 'true'),
+        menuAlignRight: (ctx.request.body.menuAlignRight === 'true'),
+        menuPageKey: ctx.request.body.menuPageKey.trim(),
+    };
+
+    //Preparing & saving config
+    const newConfig = globals.configVault.getScopedStructure('global');
+    newConfig.menuEnabled = cfg.menuEnabled;
+    newConfig.menuAlignRight = cfg.menuAlignRight;
+    newConfig.menuPageKey = cfg.menuPageKey;
+    const saveStatus = globals.configVault.saveProfile('global', newConfig);
+
+    //Sending output
+    if (saveStatus) {
+        globals.config = globals.configVault.getScoped('global');
+        globals.fxRunner.resetConvars();
+        ctx.utils.logAction('Changing menu settings.');
+        return ctx.send({type: 'success', message: '<strong>Menu configuration saved!<br>You need to restart the server for the changes to take effect.</strong>'});
+    } else {
+        logWarn(`[${ctx.session.auth.username}] Error changing menu settings.`);
         return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
