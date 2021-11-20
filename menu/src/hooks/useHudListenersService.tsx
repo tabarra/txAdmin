@@ -32,6 +32,11 @@ interface AnnounceMessageProps {
   message: string;
 }
 
+export interface AddAnnounceData {
+  message: string;
+  author: string;
+}
+
 const AnnounceMessage: React.FC<AnnounceMessageProps> = ({
   title,
   message,
@@ -154,7 +159,7 @@ export const useHudListenersService = () => {
     setModalOpen(true);
   });
 
-  useNuiEvent("addAnnounceMessage", ({ message, author }: { message: string, author: string }) => {
+  useNuiEvent<AddAnnounceData>("addAnnounceMessage", ({ message, author }) => {
     enqueueSnackbar(
       <AnnounceMessage
         message={message}

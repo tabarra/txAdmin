@@ -2,8 +2,48 @@ import { isBrowserEnv } from "./miscUtils";
 import { debugData } from "./debugData";
 import { VehicleStatus } from "../hooks/usePlayerListListener";
 import { CustomLocaleData, ServerCtx } from "../state/server.state";
+import { SetWarnOpenData } from "../components/WarnPage/WarnPage";
+import { AddAnnounceData } from "../hooks/useHudListenersService";
 
 const MenuObject = {
+  warnSelf: (reason: string) => {
+    debugData<SetWarnOpenData>([
+      {
+        action: "setWarnOpen",
+        data: {
+          reason: reason,
+          warnedBy: "Taso",
+        },
+      },
+    ]);
+  },
+  warnPulse: () => {
+    debugData([
+      {
+        action: "pulseWarning",
+        data: {},
+      },
+    ]);
+  },
+  closeWarn: () => {
+    debugData([
+      {
+        action: "closeWarning",
+        data: {},
+      },
+    ]);
+  },
+  announceMsg: ({ message, author }: AddAnnounceData) => {
+    debugData([
+      {
+        action: "addAnnounceMessage",
+        data: {
+          message,
+          author,
+        },
+      },
+    ]);
+  },
   setCustomLocale: (localeObj: CustomLocaleData) => {
     debugData<ServerCtx>([
       {
