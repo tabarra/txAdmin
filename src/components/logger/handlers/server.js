@@ -222,6 +222,10 @@ module.exports = class ServerLogger extends LoggerBase {
             const command = eventData.data || 'unknown';
             eventMessage = `executed: /${command}`;
 
+        } else if (eventData.type === 'CustomLog') {
+            const message = eventData.data || 'unknown';
+            eventMessage = message;
+
         } else if (eventData.type === 'LoggerStarted') {
             eventMessage = 'Logger started';
 

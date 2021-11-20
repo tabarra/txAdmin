@@ -221,6 +221,10 @@ RegisterNetEvent('txaLogger:CommandExecuted', function(data)
     logger(source, 'CommandExecuted', data)
 end)
 
+RegisterNetEvent('txaLogger:CustomLog', function(data)
+    logger(source, 'CustomLog', data)
+end)
+
 RegisterNetEvent('txaLogger:DebugMessage', function(data)
     logger(source, 'DebugMessage', data)
 end)
