@@ -61,6 +61,7 @@ export const useKeyboardNavigation = ({
           onDownDown && onDownDown();
           break;
         case "Enter":
+          if(e.repeat) return;
           e.preventDefault();
           onEnterDown && onEnterDown();
           break;
