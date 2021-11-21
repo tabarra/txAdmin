@@ -114,7 +114,7 @@ end
 
 function FD3HeartBeat()
     local payload = json.encode({type = 'txAdminHeartBeat'})
-    Citizen.InvokeNative(`PRINT_STRUCTURED_TRACE` & 0xFFFFFFFF, payload)
+    PrintStructuredTrace(payload)
 end
 
 -- HTTP request handler
