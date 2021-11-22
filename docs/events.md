@@ -52,6 +52,7 @@ Event Data:
 - `author`: The name of the admin.
 - `reason`: The reason of the ban.
 - `actionId`: The ID of this action.
+- `expiration`: The timestamp for this ban expiration, for `false` if permanent. Added in txAdmin v4.9.
 
 
 ## txAdmin:events:playerWhitelisted (v3.7)

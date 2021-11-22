@@ -16,11 +16,11 @@
     - [x] Update the menu code to use new convar
     - [x] Test update/new config scenarios
     - [x] Update `menu.md`
+
 - [ ] dm via snackbar
 - [ ] wav for announcements
 - [ ] update `README.md`
-- [ ] xxxxx
-
+- [ ] replace `txaDropIdentifiers` with `txAdmin:events:playerBanned` hook
 - [ ] Migrate console log to new logger
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
@@ -51,7 +51,6 @@ Master sem fivem:
 
 
 
--- announcements need sound!
 
 Copy key Scenarios:
 - Following random tutorial exactly
@@ -163,15 +162,9 @@ https://forum.cfx.re/t/standalone-advanced-report-system/4774403/1
 
 
 =======================================
-### old stuff:::
-- precisamos garantir que uma sessão criada via NUI seja só usada com nui
-- criar um novo token, mudar no primeiro tick
-- desabilitar master actions pra quando for NUI
 
 Small Stuff:
 - [ ] try json stream on lowdb
-- [ ] menu: add debouncer for main options keydown
-- [ ] menu: fix heal self/server behavior inconsistent with player mode and teleport
 - [ ] block execution if GetCurrentResourceName() != 'monitor'
 - [ ] player modal must show if the user is banned/whitelisted or not, and an easy way to revoke it
 - [ ] check EOL and warn user - new Date('2021-09-14T07:38:51+00:00').getTime()
