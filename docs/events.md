@@ -73,8 +73,7 @@ Event Data:
 - `id`: The ID of the healed player, or `-1` if the entire server was healed.
 
 ## txAdmin:events:announcement (v4.8)
-Called when a heal event is triggered for a player/whole server.  
-This is most useful for servers running "ambulance job" or other resources that keep a player unconscious even after the health being restored to 100%;
+Called when an announcement is made using txAdmin.  
 Event Data:
 - `author`: The name of the admin or `txAdmin`.
 - `message`: The message of the broadcast.
