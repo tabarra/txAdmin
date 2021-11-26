@@ -17,7 +17,7 @@
         "kick_temporary": "(%{author}) Vous avez été banni pour: \"%{reason}\". Votre bannissement expirera dans: %{expiration}.",
         "kick_permanent": "(%{author}) Vous avez été définitivement banni de ce serveur pour: \"%{reason}\".",
         "reject_temporary": "Vous avez été banni de ce serveur.\nVotre bannissement expirera dans: %{expiration}.\nBan ID: %{id}.\nRaison du Ban: %{reason}.\nBanni par: %{author}.",
-        "reject_permanent": "Vous avez été définitivement banni de ce serveur pour.\nBan ID: %{id}.\nRaison du Ban: %{reason}.\nBanni par: %{author}."
+        "reject_permanent": "Vous avez été définitivement banni de ce serveur.\nBan ID: %{id}.\nRaison du Ban: %{reason}.\nBanni par: %{author}."
     },
     "server_actions": {
         "restarting": "Le serveur redémarre (%{reason}).",
