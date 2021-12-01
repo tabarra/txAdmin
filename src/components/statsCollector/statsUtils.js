@@ -1,6 +1,6 @@
 //Constants
-const perfBuckets = ['0.005000', '0.010000', '0.025000', '0.050000', '0.075000', '0.100000', '0.250000', '0.500000', '0.750000', '1.000000', '2.500000', '5.000000', '7.500000', '10.000000', '+Inf'];
-const perfLineRegex = /tickTime_(count|sum|bucket)\{name="(svSync|svNetwork|svMain)"(,le="(\d+\.\d+|\+Inf)")?\}\s(\S+)/;
+const refBuckets = [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10, '+Inf'];
+const perfLineRegex = /tickTime_(count|sum|bucket)\{name="(svSync|svNetwork|svMain)"(,le="(\d+(\.\d+)?|\+Inf)")?\}\s(\S+)/;
 
 
 /**
@@ -31,7 +31,7 @@ const parsePerf = (raw) => {
         const regType = parsed[1];
         const thread = parsed[2];
         const bucket = parsed[4];
-        const value = parsed[5];
+        const value = parsed[6];
 
         if (regType == 'count') {
             const count = parseInt(value);
@@ -40,7 +40,12 @@ const parsePerf = (raw) => {
             const sum = parseFloat(value);
             if (!isNaN(sum)) metrics[thread].sum = sum;
         } else if (regType == 'bucket') {
-            if (bucket !== perfBuckets[metrics[thread].buckets.length]) throw new Error(`unexpected bucket ${bucket} at position ${metrics[thread].buckets.length}`);
+            const bucketIndex = metrics[thread].buckets.length;
+            if (bucketIndex === 14 && bucket !== refBuckets[14]) {
+                throw new Error(`unexpected bucket ${refBuckets[14]} at index 14 and got ${bucket}`);
+            } else if (bucketIndex !== 14 && parseFloat(bucket) !== refBuckets[bucketIndex]) {
+                throw new Error(`unexpected bucket ${bucket} at position ${bucketIndex}`);
+            }
             metrics[thread].buckets.push(parseInt(value));
         }
     }
@@ -50,7 +55,7 @@ const parsePerf = (raw) => {
         return (
             !Number.isInteger(thread.count)
             || !Number.isFinite(thread.sum)
-            || thread.buckets.length !== perfBuckets.length - 1
+            || thread.buckets.length !== refBuckets.length - 1
         );
     });
     if (invalid.length) throw new Error(`there are ${invalid.length} invalid threads in /perf/ data`);
@@ -136,7 +141,7 @@ const validatePerfCacheData = (perfCache) => {
 
 
 module.exports = {
-    perfBuckets,
+    refBuckets,
     parsePerf,
     diffPerfs,
     validatePerfThreadData,
