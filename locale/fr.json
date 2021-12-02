@@ -210,7 +210,7 @@
                         "title": "Message privé",
                         "description": "Que souhaitez-vous envoyer à ce joueur ?",
                         "placeholder": "Message",
-                        "success": "Votre message a été envoyé!"
+                        "success": "Votre message a été envoyé !"
                     },
                     "warn_dialog": {
                         "title": "Avertir",
