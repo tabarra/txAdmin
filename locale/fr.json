@@ -28,7 +28,7 @@
     },
     "discord": {
         "status_online": "**%{servername}** est actuellement **Ouvert** !",
-        "status_offline": "**%{servername}** est actuellement **Fermer** !"
+        "status_offline": "**%{servername}** est actuellement **Fermé** !"
     },
     "nui_warning": {
         "title": "AVERTISSEMENT",
