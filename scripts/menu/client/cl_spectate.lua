@@ -37,27 +37,27 @@ local function createScaleformThread()
         end
         PushScaleformMovieFunction(scaleform, "CLEAR_ALL")
         PopScaleformMovieFunctionVoid()
-    
+
         PushScaleformMovieFunction(scaleform, "SET_CLEAR_SPACE")
         PushScaleformMovieFunctionParameterInt(200)
         PopScaleformMovieFunctionVoid()
-    
+
         PushScaleformMovieFunction(scaleform, "SET_DATA_SLOT")
         PushScaleformMovieFunctionParameterInt(1)
         InstructionalButton(GetControlInstructionalButton(1, 194), "Exit Spectate Mode")
         PopScaleformMovieFunctionVoid()
-    
-    
+
+
         PushScaleformMovieFunction(scaleform, "DRAW_INSTRUCTIONAL_BUTTONS")
         PopScaleformMovieFunctionVoid()
-    
+
         PushScaleformMovieFunction(scaleform, "SET_BACKGROUND_COLOUR")
         PushScaleformMovieFunctionParameterInt(0)
         PushScaleformMovieFunctionParameterInt(0)
         PushScaleformMovieFunctionParameterInt(0)
         PushScaleformMovieFunctionParameterInt(80)
         PopScaleformMovieFunctionVoid()
-    
+
         while isSpectateEnabled do
             DrawScaleformMovieFullscreen(scaleform, 255, 255, 255, 255, 0)
             Wait(0)
@@ -94,6 +94,7 @@ end
 local function preparePlayerForSpec(bool)
     local playerPed = PlayerPedId()
     FreezeEntityPosition(playerPed, bool)
+    SetEntityVisible(playerPed, not bool, 0)
 end
 
 local function createSpectatorTeleportThread()
@@ -101,7 +102,7 @@ local function createSpectatorTeleportThread()
     CreateThread(function()
         while isSpectateEnabled do
             Wait(500)
-            
+
             -- Check if ped still exists
             if not DoesEntityExist(storedTargetPed) then
                 local _ped = GetPlayerPed(storedTargetPlayerId)
@@ -117,7 +118,7 @@ local function createSpectatorTeleportThread()
                     break
                 end
             end
-            
+
             -- Update Teleport
             local newSpectateCoords = calculateSpectatorCoords(GetEntityCoords(storedTargetPed))
             SetEntityCoords(PlayerPedId(), newSpectateCoords.x, newSpectateCoords.y, newSpectateCoords.z, 0, 0, 0, false)
