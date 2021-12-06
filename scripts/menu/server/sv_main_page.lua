@@ -148,20 +148,6 @@ RegisterNetEvent('txAdmin:menu:healAllPlayers', function()
   end
 end)
 
-RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode)
-  local src = source
-  if mode ~= 'godmode' and mode ~= 'noclip' and mode ~= 'none' then
-    debugPrint("Invalid player mode requested by " .. GetPlayerName(src) .. " (mode: " .. (mode or 'nil'))
-    return
-  end
-
-  local allow = PlayerHasTxPermission(src, 'players.playermode')
-  TriggerEvent("txaLogger:menuEvent", src, "playerModeChanged", allow, mode)
-  if allow then
-    TriggerClientEvent('txAdmin:menu:playerModeChanged', src, mode)
-  end
-end)
-
 RegisterNetEvent('txAdmin:menu:healMyself', function()
   local src = source
   local allow = PlayerHasTxPermission(src, 'players.heal')

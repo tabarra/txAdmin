@@ -53,6 +53,10 @@ Convars configured in the settings page should not be set manually.
 - Default: 30
 - Usage: `+setr txAdmin-menuDrunkDuration 120`
 
+**txAdmin-menuPtfxDisable**
+- Description: Determine whether to not play particles whenever an admin's player mode is changed.
+- Default: 0
+- Usage: `+setr txAdmin-menuPtfxDisable 1`
 
 ## Commands
 **tx | txadmin**
