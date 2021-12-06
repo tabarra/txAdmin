@@ -24,6 +24,7 @@ module.exports = async function AdminManagerGet(ctx) {
         return {
             hasCitizenFX: (admin.providers.includes('citizenfx')),
             hasDiscord: (admin.providers.includes('discord')),
+            hasSteam: (admin.providers.includes('steam')),
             name: admin.name,
             perms: perms,
             disableEdit: !ctx.session.auth.master && admin.master,

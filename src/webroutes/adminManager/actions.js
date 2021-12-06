@@ -125,6 +125,16 @@ async function handleAdd(ctx) {
         };
     }
 
+    //Validate Steam ID
+    let steamData = false;
+    if (steamID.length) {
+        if (!isNaN(parseInt(steamID, 16))) return ctx.send({type: 'danger', message: 'Invalid Steam ID'});
+        steamData = {
+            id: steamID,
+            identifier: `steam:${steamID}`,
+        };
+    }
+
     //Check for privilege escalation
     if (!ctx.session.auth.master && !ctx.session.auth.permissions.includes('all_permissions')) {
         const deniedPerms = permissions.filter((x) => !ctx.session.auth.permissions.includes(x));
@@ -138,7 +148,7 @@ async function handleAdd(ctx) {
 
     //Add admin and give output
     try {
-        await globals.adminVault.addAdmin(name, citizenfxData, discordData, password, permissions);
+        await globals.adminVault.addAdmin(name, citizenfxData, discordData, steamData, password, permissions);
         ctx.utils.logAction(`Adding admin '${name}'.`);
         return ctx.send({type: 'showPassword', password});
     } catch (error) {
@@ -158,6 +168,7 @@ async function handleEdit(ctx) {
         typeof ctx.request.body.name !== 'string'
         || typeof ctx.request.body.citizenfxID !== 'string'
         || typeof ctx.request.body.discordID !== 'string'
+        || typeof ctx.request.body.steamID !== 'string'
         || isUndefined(ctx.request.body.permissions)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
@@ -167,6 +178,7 @@ async function handleEdit(ctx) {
     const name = ctx.request.body.name.trim();
     const citizenfxID = ctx.request.body.citizenfxID.trim();
     const discordID = ctx.request.body.discordID.trim();
+    const steamID = ctx.request.body.steamID.trim();
     const editingSelf = (ctx.session.auth.username.toLowerCase() === name.toLowerCase());
     let permissions;
     if (!editingSelf) {
@@ -221,6 +233,16 @@ async function handleEdit(ctx) {
         };
     }
 
+    //Validate Steam ID
+    let steamData = false;
+    if (steamID.length) {
+        if (!isNaN(parseInt(steamID, 16))) return ctx.send({type: 'danger', message: 'Invalid Steam ID'});
+        steamData = {
+            id: steamID,
+            identifier: `steam:${steamID}`,
+        };
+    }
+
     //Check if admin exists
     const admin = globals.adminVault.getAdminByName(name);
     if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
@@ -243,7 +265,7 @@ async function handleEdit(ctx) {
 
     //Add admin and give output
     try {
-        await globals.adminVault.editAdmin(name, null, citizenfxData, discordData, permissions);
+        await globals.adminVault.editAdmin(name, null, citizenfxData, discordData, steamData, permissions);
         ctx.utils.logAction(`Editing user '${name}'.`);
         return ctx.send({type: 'success', message: 'refresh'});
     } catch (error) {
@@ -325,6 +347,7 @@ async function handleGetModal(ctx, isNewAdmin) {
             username: '',
             citizenfx_id: '',
             discord_id: '',
+            steam_id: '',
             permsGeneral,
             permsMenu,
         };
@@ -356,6 +379,7 @@ async function handleGetModal(ctx, isNewAdmin) {
         username: admin.name,
         citizenfx_id: (admin.providers.citizenfx) ? admin.providers.citizenfx.id : '',
         discord_id: (admin.providers.discord) ? admin.providers.discord.id : '',
+        steam_id: (admin.providers.steam) ? admin.providers.steam.id : '',
         editingSelf: (ctx.session.auth.username.toLowerCase() === name.toLowerCase()),
         permsGeneral,
         permsMenu,

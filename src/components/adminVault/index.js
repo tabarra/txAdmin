@@ -17,6 +17,8 @@ const migrateProviderIdentifiers = (providerName, providerData) => {
         }
     } else if (providerName === 'discord') {
         providerData.identifier = `discord:${providerData.id}`;
+    } else if (providerName === 'steam') {
+        providerData.identifier = `steam:${providerData.id}`;
     }
 };
 
@@ -63,6 +65,7 @@ module.exports = class AdminVault {
         //Load providers
         try {
             this.providers = {
+                steam: false,
                 discord: false,
                 citizenfx: new CitizenFXProvider(null),
             };
@@ -241,7 +244,7 @@ module.exports = class AdminVault {
      * @param {string} password
      * @param {array} permissions
      */
-    async addAdmin(name, citizenfxData, discordData, password, permissions) {
+    async addAdmin(name, citizenfxData, discordData, steamData, password, permissions) {
         if (this.admins == false) throw new Error('Admins not set');
 
         //Check if username is already taken
@@ -276,6 +279,15 @@ module.exports = class AdminVault {
                 data: {},
             };
         }
+        if (steamData) {
+            const existingSteam = this.getAdminByProviderUID(steamData.id);
+            if (existingSteam) throw new Error('Steam ID already taken');
+            admin.providers.steam = {
+                id: steamData.id,
+                identifier: steamData.identifier,
+                data: {},
+            };
+        }
 
         //Saving admin file
         this.admins.push(admin);
@@ -299,7 +311,7 @@ module.exports = class AdminVault {
      * @param {object} discordData or false
      * @param {array} permissions
      */
-    async editAdmin(name, password, citizenfxData, discordData, permissions) {
+    async editAdmin(name, password, citizenfxData, discordData, steamData, permissions) {
         if (this.admins == false) throw new Error('Admins not set');
 
         //Find admin index
@@ -332,6 +344,17 @@ module.exports = class AdminVault {
                 this.admins[adminIndex].providers.discord = {
                     id: discordData.id,
                     identifier: discordData.identifier,
+                    data: {},
+                };
+            }
+        }
+        if (typeof steamData !== 'undefined') {
+            if (!steamData) {
+                delete this.admins[adminIndex].providers.steam;
+            } else {
+                this.admins[adminIndex].providers.steam = {
+                    id: steamData.id,
+                    identifier: steamData.identifier,
                     data: {},
                 };
             }
@@ -456,6 +479,7 @@ module.exports = class AdminVault {
         }
 
         const structureIntegrityTest = jsonData.some((x) => {
+            console.log(x)
             if (typeof x.name !== 'string' || x.name.length < 3) return true;
             if (typeof x.master !== 'boolean') return true;
             if (typeof x.password_hash !== 'string' || !x.password_hash.startsWith('$2')) return true;
