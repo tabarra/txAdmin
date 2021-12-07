@@ -98,8 +98,8 @@ RegisterCommand('txAdmin:menu:noClipToggle', function()
     end
 end)
 
-local PTFX_ASSET = 'scr_firework_xmas_burst_rgw'
-local PTFX_DICT = 'proj_xmas_firework'
+local PTFX_ASSET = 'ent_dst_elec_fire_sp'
+local PTFX_DICT = 'core'
 local LOOP_AMOUNT = 25
 local PTFX_DURATION = 1000
 
@@ -120,7 +120,7 @@ local function createPlayerModePtfxLoop(tgtPedId)
 
         for i=0, LOOP_AMOUNT do
             UseParticleFxAssetNextCall(PTFX_DICT)
-            local partiResult = StartParticleFxLoopedOnEntity(PTFX_ASSET, playerPed, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.15, false, false, false)
+            local partiResult = StartParticleFxLoopedOnEntity(PTFX_ASSET, playerPed, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, false, false, false)
             particleTbl[#particleTbl + 1] = partiResult
             Wait(0)
         end
