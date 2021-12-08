@@ -165,7 +165,7 @@
         },
         "page_players": {
             "misc": {
-                "online_players": "Elérhető játékosok",
+                "online_players": "Játékban lévő játékosok",
                 "players": "Játékosok",
                 "search": "Keresés",
                 "zero_players": "Nem található játékos"
