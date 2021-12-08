@@ -4,9 +4,9 @@
         "humanizer_language": "hu"
     },
     "restarter": {
-        "start_timeout": "Sikertelen indítás a megadott idő intervallumon belül",
-        "crash_detected": "A szerver összeomlott",
-        "hang_detected": "A szerver lefagyott",
+        "start_timeout": "sikertelen indítás a megadott idő intervallumon belül",
+        "crash_detected": "összeomlás észlelve",
+        "hang_detected": "lefagyás észlelve",
         "partial_hang_warn": "Részleges lefagyás miatt a szerver 1 perc múlva újraindul. Kérjük, lépj ki.",
         "partial_hang_warn_discord": "Részleges lefagyás miatt, a **%{servername}** 1 perc múlva újraindul.",
         "schedule_reason": "Ütemezett újraindítás %{time}",
@@ -37,10 +37,10 @@
     },
     "nui_menu": {
         "misc": {
-            "help_message": "A txAdmin rendelkezik játékon bellüli menüvel!\\\\nGyorsgomb [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] Próbáld ki!",
+            "help_message": "A txAdmin rendelkezik játékon belüli menüvel!\\\\nGyorsgomb [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] Próbáld ki!",
             "menu_not_allowed": "Az azonosítód nem egyezik a txAdminban található admin azonosítókkal.\nHa regisztrálva vagy txAdminban, bizonyosodj meg róla hogy el van mentve az Admin Managerben.",
             "action_unauthorized": "Ehhez nincs engedélyed.",
-            "unknown_error": "Váratlan hiba lépett fel.",
+            "unknown_error": "Ismeretlen hiba lépett fel.",
             "not_enabled": "A txAdmin menü nincs engedélyezve! Engedélyezheted a txAdmin beállítások fülön.",
             "announcement_title": "Szerver felhívás %{author}:",
             "general_no_perms": "Ehhez nincs engedélyed!",
@@ -60,7 +60,7 @@
         "page_main": {
             "tooltips": {
                 "tooltip_1": "%{key} a lapozáshoz és [NYILAK] a menüben való navigáláshoz",
-                "tooltip_2": "Néhány menü rendelkezik al opcióval  mely a bal és jobb nyíllal választható"
+                "tooltip_2": "Néhány menü rendelkezik al-opcióval  melyek a bal és jobb nyíllal választható"
             },
             "player_mode": {
                 "title": "Játékos mód",
@@ -84,15 +84,15 @@
                 "title": "Teleportálás",
                 "generic_success": "Átléptél egy féreglyukon!",
                 "waypoint": {
-                    "title": "Célpont",
-                    "label": "Teleportálás a célponthoz",
-                    "error": "Nincs célpont kijelölve."
+                    "title": "Úticél",
+                    "label": "Teleportálás az úticélhoz",
+                    "error": "Nincs úticél kijelölve."
                 },
                 "coords": {
                     "title": "Koordináták",
-                    "label": "Menj egy speciális koordinátára",
+                    "label": "Menj egy megadott koordinátára",
                     "dialog_title": "Teleportálás",
-                    "dialog_desc": "A koordinátát x, y, z formában kell megadnod.",
+                    "dialog_desc": "A koordinátákat x, y, z formában kell megadnod.",
                     "dialog_error": "Hibás koordináta. Ilyen formát használj: 111, 222, 33"
                 },
                 "back": {
@@ -107,7 +107,7 @@
             },
             "vehicle": {
                 "title": "Jármű",
-                "onesync_error": "Ez a beállítás használatához a OneSync-nek engedélyezve kell lennie",
+                "onesync_error": "Ezen beállítás használatához, engedélyezd a OneSync-et.",
                 "not_in_veh_error": "Jelenleg nem ülsz járműben!",
                 "spawn": {
                     "title": "Lehívás",
@@ -159,8 +159,8 @@
             },
             "player_ids": {
                 "title": "ID mód váltása",
-                "alert_show": "Közeli játékosok ID mutatása.",
-                "alert_hide": "Közeli játékosok ID elrejtése."
+                "alert_show": "Közeli játékosok ID-jének mutatása.",
+                "alert_hide": "Közeli játékosok ID-jének elrejtése."
             }
         },
         "page_players": {
@@ -176,8 +176,8 @@
                 "id": "ID",
                 "joined_first": "Legkorábbi csatlakozás",
                 "joined_last": "Legkésőbbi csatlakozás",
-                "closest": "Legközelebb",
-                "farthest": "Legtávolabb"
+                "closest": "Legközelebbi",
+                "farthest": "Legtávolabbi"
             },
             "card": {
                 "health": "%{percentHealth}% HP"
