@@ -116,7 +116,7 @@
                     "dialog_desc": "Add meg a modell nevét amit le szeretnél hívni.",
                     "dialog_success": "Jármű lehívva!",
                     "dialog_error": "Jármű ezzel a modell névvel '%{modelName}' nem létezik!",
-                    "dialog_info": "Megpróbálás lehívni %{modelName}."
+                    "dialog_info": "%{modelName} lehívása..."
                 },
                 "fix": {
                     "title": "Javítás",
