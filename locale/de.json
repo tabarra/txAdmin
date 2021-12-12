@@ -203,8 +203,8 @@
                     "title": "Moderation",
                     "options": {
                         "dm": "DM",
-                        "warn": "Warnung",
-                        "kick": "Kick",
+                        "warn": "Verwarnen",
+                        "kick": "Kicken",
                         "set_admin": "Admin geben"
                     },
                     "dm_dialog": {
