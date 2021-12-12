@@ -159,7 +159,7 @@
                 "dialog_error": "Ungültiger Radius. Versuche es erneut."
             },
             "player_ids": {
-                "title": "Aktiviere/Deaktivere Spieler-ID's",
+                "title": "Aktiviere/Deaktiviere Spieler-ID's",
                 "alert_show": "Zeigt die in der Nähe befindlichen Spieler-ID's.",
                 "alert_hide": "Versteckt die in der Nähe befindlichen Spieler-ID's."
             }
