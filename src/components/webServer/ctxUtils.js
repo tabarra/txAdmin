@@ -124,7 +124,6 @@ async function renderLoginView(data, txVars) {
     data.errorTitle = data.errorTitle || 'Warning:';
     data.errorMessage = data.errorMessage || '';
     data.template = data.template || 'normal';
-    data.serverName = globals.config.serverName || globals.info.serverProfile;
     data.dynamicAd = txVars.isWebInterface && globals.dynamicAds.pick('login');
 
     let out;
@@ -281,6 +280,7 @@ module.exports = async function WebCtxUtils(ctx, next) {
 
         // Setting up default render data:
         const baseViewData = {
+            serverName: globals.config.serverName || globals.info.serverProfile,
             basePath: (isWebInterface) ? '/' : WEBPIPE_PATH,
             fxServerVersion: (GlobalData.isZapHosting) ? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion,
             isWebInterface: isWebInterface,

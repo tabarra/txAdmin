@@ -23,7 +23,6 @@ module.exports = async function Dashboard(ctx) {
 
     //Preparing render data
     const renderData = {
-        serverName: globals.config.serverName,
         versionData: getVersionData(),
         perms:{
             commandMessage: getPermDisable('players.message'),
