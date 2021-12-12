@@ -2,6 +2,7 @@
 const modulename = 'WebServer:Resources';
 const path = require('path');
 const slash = require('slash');
+const slug = require('slug');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 //Helper functions
@@ -108,15 +109,15 @@ module.exports = async function Resources(ctx) {
  */
 function processResources(resList) {
     //Clean resource data and add it so an object separated by subpaths
-    let resGroupList = {};
+    const resGroupList = {};
     resList.forEach((resource) => {
         if (isUndefined(resource.name) || isUndefined(resource.status) || isUndefined(resource.path) || resource.path === '') {
             return;
         }
-        let subPath = getResourceSubPath(resource.path);
-        let resData = {
+        const subPath = getResourceSubPath(resource.path);
+        const resData = {
             name: resource.name,
-            divName: resource.name.replace(/%/g, ''),
+            divName: slug(resource.name),
             status: resource.status,
             statusClass: (resource.status === 'started') ? 'success' : 'danger',
             // path: slash(path.normalize(resource.path)),
@@ -133,11 +134,11 @@ function processResources(resList) {
     });
 
     //Generate final array with subpaths and div ids
-    let finalList = [];
+    const finalList = [];
     Object.keys(resGroupList).forEach((subPath) => {
-        let subPathData = {
+        const subPathData = {
             subPath: subPath,
-            divName: subPath.replace(/[\W%]/g, ''),
+            divName: slug(subPath),
             resources: resGroupList[subPath].sort(dynamicSort('name')),
         };
         finalList.push(subPathData);
