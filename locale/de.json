@@ -1,3 +1,4 @@
+
 {
     "$meta": {
         "label": "German",
@@ -37,7 +38,7 @@
     },
     "nui_menu": {
         "misc": {
-            "help_message": "txAdmin hat ein Ingame-Menü bekommen!\nErstelle einen Hotkey [Spiele Einstellungen > Tastenbelegung > FiveM > Open the txAdmin Menu] um es zu testen!",
+            "help_message": "txAdmin hat ein Ingame-Menü bekommen!\nErstelle einen Hotkey [Einstellungen > Tastenbelegung > FiveM > Open the txAdmin Menu] um es zu testen!",
             "menu_not_allowed": "Deine ID's stimmen mit keiner der in txAdmin registriereten Admin-ID's überein.\nWenn du in txAdmin registriert bist, öffne den Adminmanager und stelle sicher, dass deine ID's gespeichert sind.",
             "action_unauthorized": "Du hast für diese Aktion keine Berechtigung.",
             "unknown_error": "Ein unbekannter Fehler ist aufgetreten.",
@@ -71,7 +72,7 @@
                 },
                 "godmode": {
                     "title": "GodMode",
-                    "label": "Unsichtbar",
+                    "label": "Sei unbesiegbar",
                     "success": "GodMode aktiviert"
                 },
                 "normal": {
@@ -101,7 +102,7 @@
                     "error": "Du hast keine letzte Location!"
                 },
                 "copy": {
-                    "title": "Kopiere die Koordinaten",
+                    "title": "Koordinaten kopieren",
                     "label": "Koordinaten in die Zwischenablage kopiert."
                 }
             },
@@ -111,7 +112,7 @@
                 "not_in_veh_error": "Du befindest dich aktuell in keinem Fahrzeug!",
                 "spawn": {
                     "title": "Spawnen",
-                    "label": "Spawne ein Fahrzeug per Fahrzeugnamen",
+                    "label": "Spawne ein Fahrzeug",
                     "dialog_title": "Spawne Fahrzeug",
                     "dialog_desc": "Gebe den Namen des Fahrzeugs ein, welches du spawnen möchtest.",
                     "dialog_success": "Fahrzeug gespawned!",
@@ -120,12 +121,12 @@
                 },
                 "fix": {
                     "title": "Reparieren",
-                    "label": "Repariere das aktuelle Fahrzeug",
+                    "label": "Repariere dein aktuelles Fahrzeug",
                     "success": "Fahrzeug repariert!"
                 },
                 "delete": {
                     "title": "Löschen",
-                    "label": "Lösche das aktuelle Fahrzeug",
+                    "label": "Lösche dein aktuelles Fahrzeug",
                     "success": "Fahrzeug gelöscht!"
                 }
             },
@@ -153,7 +154,7 @@
             },
             "clear_area": {
                 "title": "Weltbereich zurücksetzen",
-                "dialog_description": "Bitte gebe einen Radius ein (0-300), in welchem alle Objekte zurückgesetzt werden sollen. Diese Funktion löscht keine vom Server plazierten Objekte",
+                "dialog_description": "Bitte gebe einen Radius ein (0-300), in welchem alle Objekte zurückgesetzt werden sollen. Diese Funktion löscht keine vom Server plazierten Objekte.",
                 "dialog_success": "Säubere Bereich mit dem Radius von %{radius}m",
                 "dialog_error": "Ungültiger Radius. Versuche es erneut."
             },
@@ -228,11 +229,11 @@
                 "interaction": {
                     "title": "Interaktionen",
                     "options": {
-                        "heal": "Heilen",
-                        "go_to": "Hintelepotieren",
-                        "bring": "Hertelepotieren",
-                        "spectate": "Beobachten",
-                        "toggle_freeze": "Freezen/Unfreezen"
+                        "heal": "Spieler heilen",
+                        "go_to": "Zu Spieler teleportieren",
+                        "bring": "Spieler zu mir teleportieren",
+                        "spectate": "Spieler Beobachten",
+                        "toggle_freeze": "Freezen (an/aus)"
                     },
                     "notifications": {
                         "heal_player": "Heile Spieler",
@@ -244,7 +245,7 @@
                     }
                 },
                 "troll": {
-                    "title": "Veraschen",
+                    "title": "Verarschen",
                     "options": {
                         "drunk": "Betrunken machen",
                         "fire": "Anbrennen",
@@ -260,14 +261,14 @@
                 "notes_placeholder": "Notizen über diesen Spieler"
             },
             "history": {
-                "title": "Zusammenhängende Geschichte",
+                "title": "Geschichte",
                 "action_types": {
                     "warn": "verwarnte",
-                    "warn_revoked": "Zog Verwarnung zurück für",
-                    "ban": "BANNED",
-                    "ban_revoked": "Zog Bann zurück für",
+                    "warn_revoked": "zog Verwarnung zurück für",
+                    "ban": "bannte",
+                    "ban_revoked": "zog Bann zurück für",
                     "whitelist": "whitelistete",
-                    "whitelist_revoked": "Zog Whitelist zurück für"
+                    "whitelist_revoked": "zog Whitelist zurück für"
                 }
             },
             "ban": {
