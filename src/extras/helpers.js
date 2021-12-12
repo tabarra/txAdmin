@@ -138,6 +138,7 @@ function resolveCFGFilePath(cfgPath, serverDataPath) {
  *  - endpoints that are not 0.0.0.0:xxx
  *  - port mismatch
  *  - "stop/start/ensure/restart txAdmin/monitor"
+ *  - if endpoint on txAdmin port
  *  - if endpoint on 40120~40130
  *  - zap-hosting iface and port enforcement
  * @param {string} rawCfgFile
@@ -199,8 +200,12 @@ function getFXServerPort(rawCfgFile) {
         if (m.port !== firstPort) throw new Error('All <code>endpoint_add_*</code> MUST have the same port');
     });
 
-    if (firstPort >= 40120 && firstPort <= 40130) {
+    //Check if the port is valid
+    if (firstPort >= 40120 && firstPort <= 40150) {
         throw new Error(`The port ${firstPort} is dedicated for txAdmin and can not be used for FXServer, please edit your <code>endpoint_add_*</code>`);
+    }
+    if (firstPort === GlobalData.txAdminPort) {
+        throw new Error(`The port ${firstPort} is being used by txAdmin and can not be used for FXServer at the same time, please edit your <code>endpoint_add_*</code>`);
     }
 
     //IF ZAP-hosting interface bind enforcement
