@@ -133,7 +133,7 @@
             "heal": {
                 "title": "Heilen",
                 "myself": {
-                    "title": "Mich selber",
+                    "title": "Mich selbst",
                     "label": "Fülle dein Leben auf",
                     "success_0": "Alle wurden geheilt!",
                     "success_1": "Du solltest dich nun gut fühlen!",
