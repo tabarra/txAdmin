@@ -101,8 +101,8 @@
                     "error": "Vous n'avez aucune dernière position !"
                 },
                 "copy": {
-                    "title": "Copier les Coordonnées",
-                    "label": "Copiez les coordonnées dans votre presse-papier"
+                    "title": "Copier",
+                    "label": "Copiez votre possition"
                 }
             },
             "vehicle": {
@@ -111,7 +111,7 @@
                 "not_in_veh_error": "Vous n'êtes pas dans un véhicule !",
                 "spawn": {
                     "title": "Spawn",
-                    "label": "Créez un vehicule par nom de modèle",
+                    "label": "Créez un véhicule par modèle",
                     "dialog_title": "Faire apparaître un vehicule",
                     "dialog_desc": "Entrer le nom du véhicule que vous voulez faire apparaître.",
                     "dialog_success": "Véhicule apparu !",
@@ -141,7 +141,7 @@
                 },
                 "everyone": {
                     "title": "Tous les joueurs",
-                    "label": "Soignez & réanimez tous les joueurs",
+                    "label": "Soignez & réanimez",
                     "success": "Tous les joueurs ont été soigné et réanimé."
                 }
             },
