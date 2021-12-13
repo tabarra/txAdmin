@@ -4,20 +4,20 @@
         "humanizer_language": "fr"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
+        "start_timeout": "Impossible de démarrer le serveur dans les temps",
         "crash_detected": "le serveur a planté",
-        "hang_detected": "hang detected",
-        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
-        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
+        "hang_detected": "Blocage detecté",
+        "partial_hang_warn": "En raison d'un blocage partiel, le serveur redémarrera dans 1 minute. Veuillez vous déconnecter maintenant.",
+        "partial_hang_warn_discord": "En raison d'un blocage partiel, **%{servername}** redémarrera dans 1 minute.",
         "schedule_reason": "redémarage prévu à %{time}",
         "schedule_warn": "Le serveur redémarrera dans %{smart_count} minute. Merci de vous déconnecter. |||| Le serveur redémarrera dans %{smart_count} minutes.",
         "schedule_warn_discord": "**%{servername}** redémarrera dans %{smart_count} minute. |||| **%{servername}** redémarrera dans %{smart_count} minutes."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) Vous avez été banni pour: \"%{reason}\". Votre bannissement expirera dans: %{expiration}.",
+        "kick_permanent": "(%{author}) Vous avez été définitivement banni de ce serveur pour: \"%{reason}\".",
+        "reject_temporary": "Vous avez été banni de ce serveur.\nVotre bannissement expirera dans: %{expiration}.\nBan ID: %{id}.\nRaison du Ban: %{reason}.\nBanni par: %{author}.",
+        "reject_permanent": "Vous avez été définitivement banni de ce serveur.\nBan ID: %{id}.\nRaison du Ban: %{reason}.\nBanni par: %{author}."
     },
     "server_actions": {
         "restarting": "Le serveur redémarre (%{reason}).",
@@ -27,8 +27,8 @@
         "spawning_discord": "**%{servername}** est en train de démarrer."
     },
     "discord": {
-        "status_online": "**%{servername}** est actuellement **Ouvert**!",
-        "status_offline": "**%{servername}** est actuellement **Fermer**!"
+        "status_online": "**%{servername}** est actuellement **Ouvert** !",
+        "status_offline": "**%{servername}** est actuellement **Fermé** !"
     },
     "nui_warning": {
         "title": "AVERTISSEMENT",
@@ -37,250 +37,250 @@
     },
     "nui_menu": {
         "misc": {
-            "help_message": "txAdmin Menu enabled, type /tx to open it.\nYou can also configure a keybind at [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
-            "action_unauthorized": "You do not have this permission.",
-            "unknown_error": "An unknown error occurred.",
-            "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
-            "announcement_title": "Server Announcement by %{author}:",
-            "general_no_perms": "You do not have permissions for this!",
-            "dialog_empty_input": "You cannot have an empty input."
+            "help_message": "Menu txAdmin activé, ecrivez /tx pour l'ouvrir.\nVous pouvez aussi configurer une touche [Paramètre du Jeu > Configuration des touches > FiveM > Menu: Open Main Page].",
+            "menu_not_allowed": "Votre identifiant ne coïncide avec aucun identifiant d'un administrateur sur txAdmin.\nSi vous êtes enregistré(e) sur txAdmin, allez dans Admin Manager et assurez-vous que votre identifiant est bien enregistré.",
+            "action_unauthorized": "Vous n'avez pas les permissions suffisantes.",
+            "unknown_error": "Une erreur inconnue s'est produite.",
+            "not_enabled": "Le Menu txAdmin n'est pas activé ! Vous pouvez l'activer dans les paramètres de txAdmin.",
+            "announcement_title": "Annonce serveur par %{author}:",
+            "general_no_perms": "Vous n'avez pas la permission de faire ça !",
+            "dialog_empty_input": "Vous ne pouvez pas avoir un champ vide."
         },
         "frozen": {
-            "froze_player": "You have frozen the player!",
-            "unfroze_player": "You have unfrozen the player!",
-            "was_frozen": "You have been frozen by a server admin!"
+            "froze_player": "Vous avez gelé le joueur !",
+            "unfroze_player": "Vous avez dégelé le joueur !",
+            "was_frozen": "Vous avez été gelé par un administrateur du serveur !"
         },
         "common": {
-            "cancel": "Cancel",
-            "submit": "Submit",
-            "error": "An error occurred",
-            "copied": "Copied to clipboard."
+            "cancel": "Annuler",
+            "submit": "Soumettre",
+            "error": "Une erreur s'est produite",
+            "copied": "Copié dans le presse-papier."
         },
         "page_main": {
             "tooltips": {
-                "tooltip_1": "Use %{key} to switch pages & the arrow keys to navigate menu items",
-                "tooltip_2": "Certain menu items have sub options which can be selected using the left & right arrow keys"
+                "tooltip_1": "Utilisez %{key} pour changer de pages & et les flèches pour naviguer dans le menu",
+                "tooltip_2": "Certains éléments de menu ont des sous-options qui peuvent être sélectionnées à l'aide des fléches gauche et droite"
             },
             "player_mode": {
-                "title": "Player Mode",
+                "title": "Mode du joueur",
                 "noclip": {
                     "title": "NoClip",
-                    "label": "Fly around",
-                    "success": "NoClip enabled"
+                    "label": "Volez comme un oiseau",
+                    "success": "NoClip activé"
                 },
                 "godmode": {
-                    "title": "God",
-                    "label": "Invincible",
-                    "success": "God Mode enabled"
+                    "title": "Invincible",
+                    "label": "Devenez invincible",
+                    "success": "Invincibilité activée"
                 },
                 "normal": {
                     "title": "Normal",
-                    "label": "Default mode",
-                    "success": "Returned to default player mode."
+                    "label": "Mode par défaut",
+                    "success": "Vous êtes de nouveau normal"
                 }
             },
             "teleport": {
-                "title": "Teleport",
-                "generic_success": "Sent you into the wormhole!",
+                "title": "Téléportation",
+                "generic_success": "Vous avez été téléporté !",
                 "waypoint": {
-                    "title": "Waypoint",
-                    "label": "Go to waypoint set",
-                    "error": "You have no waypoint set."
+                    "title": "GPS",
+                    "label": "Téléportez-vous à votre point GPS",
+                    "error": "Aucun point GPS définit."
                 },
                 "coords": {
-                    "title": "Coords",
-                    "label": "Go to specified coords",
-                    "dialog_title": "Teleport",
-                    "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole.",
-                    "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33"
+                    "title": "Coordonnées",
+                    "label": "Téléportez-vous à des coordonnées",
+                    "dialog_title": "Téléportation",
+                    "dialog_desc": "Fournissez des coordonnées au format x, y, z pour vous téléporter.",
+                    "dialog_error": "Coordonnées invalide. Elles doivent être sous le format suivant: 111, 222, 33"
                 },
                 "back": {
-                    "title": "Back",
-                    "label": "Go back to last location",
-                    "error": "You don't have a last location to go back to!"
+                    "title": "Retour",
+                    "label": "Retournez à votre ancienne position",
+                    "error": "Vous n'avez aucune dernière position !"
                 },
                 "copy": {
-                    "title": "Copy Coords",
-                    "label": "Copy coords to clipboard."
+                    "title": "Copier les Coordonnées",
+                    "label": "Copiez les coordonnées dans votre presse-papier"
                 }
             },
             "vehicle": {
-                "title": "Vehicle",
-                "onesync_error": "This option requires that OneSync be on for server entity handling",
-                "not_in_veh_error": "You are not currently in a vehicle!",
+                "title": "Vehicule",
+                "onesync_error": "Cette option nécessite que OneSync soit activé pour la gestion des entités du serveur",
+                "not_in_veh_error": "Vous n'êtes pas dans un véhicule !",
                 "spawn": {
                     "title": "Spawn",
-                    "label": "Spawn vehicle by model name",
-                    "dialog_title": "Spawn vehicle",
-                    "dialog_desc": "Enter in the model name of the vehicle you want to spawn.",
-                    "dialog_success": "Vehicle spawned!",
-                    "dialog_error": "The vehicle model name '%{modelName}' does not exist!",
-                    "dialog_info": "Trying to spawn %{modelName}."
+                    "label": "Créez un vehicule par nom de modèle",
+                    "dialog_title": "Faire apparaître un vehicule",
+                    "dialog_desc": "Entrer le nom du véhicule que vous voulez faire apparaître.",
+                    "dialog_success": "Véhicule apparu !",
+                    "dialog_error": "Le modèle de véhicule '%{modelName}' n'existe pas !",
+                    "dialog_info": "Tentative de faire apparaître %{modelName}."
                 },
                 "fix": {
-                    "title": "Fix",
-                    "label": "Fix the current vehicle",
-                    "success": "Vehicle fixed!"
+                    "title": "Réparer",
+                    "label": "Réparez le véhicule",
+                    "success": "Véhicule réparé !"
                 },
                 "delete": {
-                    "title": "Delete",
-                    "label": "Delete the current vehicle",
-                    "success": "Vehicle deleted!"
+                    "title": "Supprimer",
+                    "label": "Supprimez le véhicule",
+                    "success": "Véhicule supprimé !"
                 }
             },
             "heal": {
-                "title": "Heal",
+                "title": "Soigner",
                 "myself": {
-                    "title": "Myself",
-                    "label": "Restores your health",
-                    "success_0": "All healed up!",
-                    "success_1": "You should be feeling good now!",
-                    "success_2": "Restored to full!",
-                    "success_3": "Ouchies fixed!"
+                    "title": "Moi",
+                    "label": "Restaurez votre vie",
+                    "success_0": "Santé mise à 100% !",
+                    "success_1": "Vous avez été soigné !",
+                    "success_2": "Vous êtes désormais en pleine forme !",
+                    "success_3": "Vos bobos ont été soigné !"
                 },
                 "everyone": {
-                    "title": "Everyone",
-                    "label": "Will heal & revive all players",
-                    "success": "Healed and revived all players."
+                    "title": "Tous les joueurs",
+                    "label": "Soignez & réanimez tous les joueurs",
+                    "success": "Tous les joueurs ont été soigné et réanimé."
                 }
             },
             "announcement": {
-                "title": "Send Announcement",
-                "dialog_desc": "Send an announcement to all online players.",
-                "dialog_placeholder": "Your announcement...",
-                "dialog_success": "Sending the announcement."
+                "title": "Faire une annonce",
+                "dialog_desc": "Faire une annonce pour tous les joueurs actuellement connectés",
+                "dialog_placeholder": "Message",
+                "dialog_success": "L'annonce est en train d'être envoyé."
             },
             "clear_area": {
-                "title": "Reset World Area",
-                "dialog_description": "Please enter the radius where you wish to reset entities in (0-300). This will not clear entities spawned server side",
-                "dialog_success": "Clearing area with radius of %{radius}m",
-                "dialog_error": "Invalid radius input. Try again."
+                "title": "Nettoyer la zone",
+                "dialog_description": "Entrez un rayon où vous souhaitez que les entités soient supprimées (0-300). Cela ne va pas supprimer les entités créées par le serveur.",
+                "dialog_success": "Suppression des entités dans un rayon de %{radius} m",
+                "dialog_error": "Rayon invalide. Veuillez réessayer."
             },
             "player_ids": {
-                "title": "Toggle Player IDs",
-                "alert_show": "Showing nearby player NetIDs.",
-                "alert_hide": "Hiding nearby player NetIDs."
+                "title": "Afficher les ID des joueurs",
+                "alert_show": "Les ID des joueurs sont affichés.",
+                "alert_hide": "Les ID des joueurs ne sont plus affichés."
             }
         },
         "page_players": {
             "misc": {
-                "online_players": "Online Players",
-                "players": "Players",
-                "search": "Search",
-                "zero_players": "No players found"
+                "online_players": "Joueur(s) en ligne",
+                "players": "Joueur(s)",
+                "search": "Rechercher",
+                "zero_players": "Aucun joueur trouvé"
             },
             "sort": {
-                "label": "Sort by",
+                "label": "Trier par",
                 "distance": "Distance",
                 "id": "ID",
-                "joined_first": "Joined First",
-                "joined_last": "Joined Last",
-                "closest": "Closest",
-                "farthest": "Farthest"
+                "joined_first": "Premières connexions",
+                "joined_last": "Dernières connexions",
+                "closest": "Le - loin",
+                "farthest": "Le + loin"
             },
             "card": {
-                "health": "%{percentHealth}% health"
+                "health": "Vie: %{percentHealth}%"
             }
         },
         "player_modal": {
             "misc": {
-                "error": "An error occurred fetching this users details. The error is shown below:",
-                "target_not_found": "Was unable to find an online player with ID or an username of %{target}"
+                "error": "Une erreur s'est produite lors de la récupération des détails de cet utilisateur. L'erreur est indiquée ci-dessous:",
+                "target_not_found": "Impossible de trouver un joueur en ligne avec cet ID ou le pseudo de %{target}"
             },
             "tabs": {
                 "actions": "Actions",
-                "info": "Info",
-                "ids": "IDs",
-                "history": "History",
-                "ban": "Ban"
+                "info": "Infos",
+                "ids": "Identifiants",
+                "history": "Historique",
+                "ban": "Bannir"
             },
             "actions": {
-                "title": "Player Actions",
-                "command_sent": "Command sent!",
+                "title": "Actions du joueur",
+                "command_sent": "Commande envoyée !",
                 "moderation": {
-                    "title": "Moderation",
+                    "title": "Modération",
                     "options": {
-                        "dm": "DM",
-                        "warn": "Warn",
-                        "kick": "Kick",
-                        "set_admin": "Give Admin"
+                        "dm": "PM",
+                        "warn": "Avertir",
+                        "kick": "Exclure",
+                        "set_admin": "Donner droits admin"
                     },
                     "dm_dialog": {
-                        "title": "Direct Message",
-                        "description": "What is the reason for direct messaging this player?",
-                        "placeholder": "Reason...",
-                        "success": "Your DM has been sent!"
+                        "title": "Message privé",
+                        "description": "Que souhaitez-vous envoyer à ce joueur ?",
+                        "placeholder": "Message",
+                        "success": "Votre message a été envoyé !"
                     },
                     "warn_dialog": {
-                        "title": "Warn",
-                        "description": "What is the reason for direct warning this player?",
-                        "placeholder": "Reason...",
-                        "success": "The player was warned!"
+                        "title": "Avertir",
+                        "description": "Pour quelle(s) raison(s) souhaitez-vous avertir ce joueur ?",
+                        "placeholder": "Raison",
+                        "success": "Le joueur a été averti !"
                     },
                     "kick_dialog": {
-                        "title": "Kick",
-                        "description": "What is the reason for kicking this player?",
-                        "placeholder": "Reason...",
-                        "success": "The player was kicked!"
+                        "title": "Exclure",
+                        "description": "Pour quelle(s) raison(s) souhaitez-vous exclure ce joueur ?",
+                        "placeholder": "Raison",
+                        "success": "Le joueur a été exclu !"
                     }
                 },
                 "interaction": {
-                    "title": "Interaction",
+                    "title": "Intéractions",
                     "options": {
-                        "heal": "Heal",
-                        "go_to": "Go to",
-                        "bring": "Bring",
-                        "spectate": "Spectate",
-                        "toggle_freeze": "Toggle Freeze"
+                        "heal": "Soigner",
+                        "go_to": "TP à lui",
+                        "bring": "TP à soi",
+                        "spectate": "Surveiller",
+                        "toggle_freeze": "Geler/Dégeler"
                     },
                     "notifications": {
-                        "heal_player": "Healing player",
-                        "tp_player": "Teleporting to player",
-                        "bring_player": "Summoning player",
-                        "spectate_failed": "Failed to resolve the target! Exiting spectate.",
-                        "spectate_yourself": "You cannot spectate yourself.",
-                        "freeze_yourself": "You cannot freeze yourself."
+                        "heal_player": "Le joueur a été soigné",
+                        "tp_player": "Téléportation au joueur",
+                        "bring_player": "Le joueur a été téléporté à vous",
+                        "spectate_failed": "Impossible de trouver le joueur ! Désactivation du mode surveillance.",
+                        "spectate_yourself": "Vous ne pouvez pas vous surveiller vous-même.",
+                        "freeze_yourself": "Vous ne pouvez pas vous geler vous-même."
                     }
                 },
                 "troll": {
                     "title": "Troll",
                     "options": {
-                        "drunk": "Make Drunk",
-                        "fire": "Set Fire",
-                        "wild_attack": "Wild attack"
+                        "drunk": "Saouler",
+                        "fire": "Enflammer",
+                        "wild_attack": "Attaque sauvage"
                     }
                 }
             },
             "info": {
-                "title": "Player info",
-                "session_time": "Session Time",
-                "play_time": "Play time",
-                "joined": "Joined",
-                "notes_placeholder": "Notes about this player"
+                "title": "Informations du joueur",
+                "session_time": "Durée de la session",
+                "play_time": "Temps de jeu",
+                "joined": "Connecté le ",
+                "notes_placeholder": "Notes à propos du joueur"
             },
             "history": {
-                "title": "Related history",
+                "title": "Historique",
                 "action_types": {
-                    "warn": "WARNED",
-                    "warn_revoked": "REVOKED the WARN for",
-                    "ban": "BANNED",
-                    "ban_revoked": "REVOKED the BAN for",
-                    "whitelist": "WHITELIST",
-                    "whitelist_revoked": "REVOKED the WHITELIST for"
+                    "warn": "a AVERTI",
+                    "warn_revoked": "a REVOQUÉ l'AVERTISSEMENT de",
+                    "ban": "a BANNI",
+                    "ban_revoked": "a REVOQUÉ le BANNISEMENT de",
+                    "whitelist": "a AUTORISÉ (WL)",
+                    "whitelist_revoked": "a RETIRÉ de la LISTE BLANCHE pour"
                 }
             },
             "ban": {
-                "title": "Ban player",
-                "reason_placeholder": "Reason",
-                "duration_placeholder": "Duration",
-                "hours": "hours",
-                "days": "days",
-                "weeks": "weeks",
-                "months": "months",
-                "permanent": "Permanent",
-                "custom": "Custom",
-                "helper_text": "Please select a duration"
+                "title": "Bannir le joueur",
+                "reason_placeholder": "Raison",
+                "duration_placeholder": "Durée",
+                "hours": "heure(s)",
+                "days": "jour(s)",
+                "weeks": "semaine(s)",
+                "months": "mois",
+                "permanent": "Permanente",
+                "custom": "Personnalisée",
+                "helper_text": "Selectionnez une durée"
             }
         }
     }
