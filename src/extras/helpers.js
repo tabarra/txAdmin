@@ -141,6 +141,8 @@ function resolveCFGFilePath(cfgPath, serverDataPath) {
  *  - if endpoint on txAdmin port
  *  - if endpoint on 40120~40130
  *  - zap-hosting iface and port enforcement
+ *
+ * NOTE: stopping monitor on external cfg files will result in the !300 issue
  * @param {string} rawCfgFile
  */
 function getFXServerPort(rawCfgFile) {

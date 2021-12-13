@@ -170,8 +170,7 @@ module.exports = class DiscordBot {
         const commandName = args.shift().toLowerCase();
 
         //Check if its a recognized command
-        const command = this.commands.get(commandName)
-                        || this.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
+        const command = this.commands.get(commandName);
         if (!command) return;
 
         //Check spam limiter
