@@ -31,7 +31,8 @@ server_scripts {
     'scripts/menu/server/sv_freeze_player.lua',
     'scripts/menu/server/sv_trollactions.lua',
     'scripts/menu/server/sv_player_modal.lua',
-    'scripts/menu/server/sv_spectate.lua'
+    'scripts/menu/server/sv_spectate.lua',
+    'scripts/menu/server/sv_player_mode.lua'
 }
 
 client_scripts {

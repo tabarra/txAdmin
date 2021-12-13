@@ -40,7 +40,7 @@ Convars configured in the settings page should not be set manually.
 
 **txAdmin-menuDebug**
 - Description: Will toggle debug printing on the server and client.
-- Default: false
+- Default: `false`
 - Usage: `+setr txAdmin-menuDebug true`
 
 **txAdmin-menuPlayerIdDistance**
@@ -53,6 +53,10 @@ Convars configured in the settings page should not be set manually.
 - Default: 30
 - Usage: `+setr txAdmin-menuDrunkDuration 120`
 
+**txAdmin-menuPtfxDisable**
+- Description: Determine whether to not play particles effects whenever an admin's player mode is changed.
+- Default: `false`
+- Usage: `+set txAdmin-menuPtfxDisable true`
 
 ## Commands
 **tx | txadmin**
