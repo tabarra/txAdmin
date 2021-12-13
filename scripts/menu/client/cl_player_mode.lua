@@ -84,6 +84,8 @@ end
 
 
 RegisterCommand('txAdmin:menu:noClipToggle', function()
+    if not menuIsAccessible then return end
+
     if not DoesPlayerHavePerm(menuPermissions, 'players.playermode') then
         return sendSnackbarMessage('error', 'nui_menu.misc.general_no_perms', true)
     end
