@@ -204,7 +204,7 @@ if (verbose) dir({isZapHosting, forceInterface, forceFXServerPort, txAdminPort, 
 //NOTE: Only valid if its being very actively maintained.
 //          Use 30d for patch 0, or 45~60d otherwise
 //      Objective is to update every 2~3 weeks, always on monday ~15:00
-const txVerBBLastUpdate = 1637600000;
+const txVerBBLastUpdate = 1639500000;
 const txVerBBDelta = 21 + ((isZapHosting) ? 10 : 0);
 const txAdminVersionBestBy = txVerBBLastUpdate + (txVerBBDelta * 86400);
 // dir({

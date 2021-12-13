@@ -27,6 +27,18 @@
 
 
 
+here's a 2500 frames one https://filetransfer.io/data-package/S8DoFJg8#link 
+
+
+
+> If you're in no-clip you should be put in god mode. NPCs still know you're there and shoot you.
+The code to set godmode is there, but not working
+
+
+
+
+
+
 Pro debug da playerlist:
 - comando pra printar: [primeiro,ultimo,count,sum]
 - comando get initial
@@ -43,6 +55,21 @@ FIXME: quando o menu abrir, deveria voltar os list item pro default deles
 -- Adapt `txAdmin:beta:deathLog` as well as add cusstom commands and logs
 
 
+
+### TP:
+https://freesound.org/search/?q=teleport&page=6#sound
+    https://freesound.org/people/Dpoggioli/sounds/196907/
+    https://freesound.org/people/DWOBoyle/sounds/474179/
+    https://freesound.org/people/DWOBoyle/sounds/474180/
+    https://freesound.org/people/michael_kur95/sounds/254541/
+
+
+### Gun:
+https://freesound.org/search/?q=toy+gun&f=&s=score+desc&advanced=0&g=1
+https://freesound.org/browse/tags/laser/?page=5#sound
+    https://freesound.org/people/nsstudios/sounds/344276/
+    https://freesound.org/people/HadaHector/sounds/446383/
+    https://freesound.org/people/unfa/sounds/193427/
 
 Master sem fivem:
 - Na página de pin, ter 2 botões, um pra criar conta com e outro sem fivem

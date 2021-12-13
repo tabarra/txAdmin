@@ -17,6 +17,13 @@ const langs = langFiles.map((fName) => {
     };
 });
 
+// const customLocale = 'E://FiveM//BUILDS//txData//locale.json';
+// langs.push({
+//     name: 'custom',
+//     path: customLocale,
+//     data: JSON.parse(fs.readFileSync(customLocale, 'utf8')),
+// });
+
 
 /**
  * Adds missing tags to files based on en.json
