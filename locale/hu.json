@@ -89,7 +89,7 @@
                     "error": "Nincs úticél kijelölve."
                 },
                 "coords": {
-                    "title": "Koordináták",
+                    "title": "Koordináta",
                     "label": "Menj egy megadott koordinátára",
                     "dialog_title": "Teleportálás",
                     "dialog_desc": "A koordinátákat x, y, z formában kell megadnod.",
@@ -101,7 +101,7 @@
                     "error": "Nincs hová visszamenned!"
                 },
                 "copy": {
-                    "title": "Koordináta másolása",
+                    "title": "Másolás",
                     "label": "Jelenlegi koordináta vágólapra másolása."
                 }
             },
@@ -111,7 +111,7 @@
                 "not_in_veh_error": "Jelenleg nem ülsz járműben!",
                 "spawn": {
                     "title": "Lehívás",
-                    "label": "Jármű lehívása modell név alapján",
+                    "label": "Jármű lehívása név alapján",
                     "dialog_title": "Jármű lehívása",
                     "dialog_desc": "Add meg a modell nevét amit le szeretnél hívni.",
                     "dialog_success": "Jármű lehívva!",
@@ -141,7 +141,7 @@
                 },
                 "everyone": {
                     "title": "Mindenki",
-                    "label": "Mindenkit meggyógyít és feléleszt",
+                    "label": "Mindenkit meggyógyít/feléleszt",
                     "success": "Mindenki meggyógyítva és felélesztve."
                 }
             },
