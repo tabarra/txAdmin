@@ -6,18 +6,18 @@
     "restarter": {
         "start_timeout": "не удалось запустить сервер вовремя",
         "crash_detected": "Обнаружен сбой",
-        "hang_detected": "hang detected",
-        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
-        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
+        "hang_detected": "обнаружено зависание",
+        "partial_hang_warn": "Из-за частичного зависания этот сервер перезагрузится через 1 минуту. Пожалуйста, отключитесь сейчас же.",
+        "partial_hang_warn_discord": "Из-за частичного зависания, **%{servername}** перезагрузится через 1 минуту.",
         "schedule_reason": "перезагрузка %{time}",
         "schedule_warn": "Сервер будет перезагружен через %{smart_count} минуту. Пожалуйста, отключитесь от сервера. |||| Сервер будет перезагружен через %{smart_count} минут.",
         "schedule_warn_discord": "**%{servername}** будет перезагружен через %{smart_count} минуту. |||| **%{servername}** будет перезагружен через %{smart_count} минут."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) Вы были заблокированы на этом сервере в течение \"%{reason}\". Срок вашего запрета истечет в: %{expiration}.",
+        "kick_permanent": "(%{author}) Вы были навсегда заблокированы на этом сервере за \"%{reason}\".",
+        "reject_temporary": "Вы были заблокированы на этом сервере.\nСрок вашего запрета истечет в: %{expiration}.\nИдентификатор запрета: %{id}.\nПричина запрета: %{reason}.\nЗапрещенный: %{author}.",
+        "reject_permanent": "Вы были навсегда заблокированы на этом сервере.\nИдентификатор запрета: %{id}.\nПричина запрета: %{reason}.\nЗапрещенный: %{author}."
     },
     "server_actions": {
         "restarting": "Сервер перезагружается (%{reason}).",
@@ -37,250 +37,250 @@
     },
     "nui_menu": {
         "misc": {
-            "help_message": "txAdmin Menu enabled, type /tx to open it.\nYou can also configure a keybind at [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
-            "action_unauthorized": "You do not have this permission.",
-            "unknown_error": "An unknown error occurred.",
-            "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
-            "announcement_title": "Server Announcement by %{author}:",
-            "general_no_perms": "You do not have permissions for this!",
-            "dialog_empty_input": "You cannot have an empty input."
+            "help_message": "txAdmin меню включено, введите /tx чтобы открыть его.\nВы также можете настроить привязку ключей по адресу [Настройки игры > Привязки клавиш > FiveM > меню: Открыть Главную Страницу].",
+            "menu_not_allowed": "Ваши идентификаторы не совпадают ни с одним администратором, зарегистрированным на txAdmin.\nЕсли вы зарегистрированы на txAdmin, перейдите к администратору и убедитесь, что ваши идентификаторы сохранены.",
+            "action_unauthorized": "У вас нет такого разрешения.",
+            "unknown_error": "Произошла неизвестная ошибка.",
+            "not_enabled": "То txAdmin Меню не включено! Вы можете включить его в txAdmin страница настроек.",
+            "announcement_title": "Объявление сервера с помощью %{author}:",
+            "general_no_perms": "У вас нет разрешений для этого!",
+            "dialog_empty_input": "У вас не может быть пустого ввода."
         },
         "frozen": {
-            "froze_player": "You have frozen the player!",
-            "unfroze_player": "You have unfrozen the player!",
-            "was_frozen": "You have been frozen by a server admin!"
+            "froze_player": "Вы заморозили игрока!",
+            "unfroze_player": "Вы разморозили плеер!",
+            "was_frozen": "Вы были заморожены администратором сервера!"
         },
         "common": {
-            "cancel": "Cancel",
-            "submit": "Submit",
-            "error": "An error occurred",
-            "copied": "Copied to clipboard."
+            "cancel": "Отменить",
+            "submit": "Представить",
+            "error": "Произошла ошибка",
+            "copied": "Скопировано в буфер обмена."
         },
         "page_main": {
             "tooltips": {
-                "tooltip_1": "Use %{key} to switch pages & the arrow keys to navigate menu items",
-                "tooltip_2": "Certain menu items have sub options which can be selected using the left & right arrow keys"
+                "tooltip_1": "Воспользуйся %{key} для переключения страниц и клавиш со стрелками для навигации по пунктам меню",
+                "tooltip_2": "Некоторые пункты меню имеют дополнительные опции, которые можно выбрать с помощью клавиш со стрелками влево и вправо"
             },
             "player_mode": {
-                "title": "Player Mode",
+                "title": "Режим игрока",
                 "noclip": {
-                    "title": "NoClip",
-                    "label": "Fly around",
-                    "success": "NoClip enabled"
+                    "title": "НетЗажим",
+                    "label": "Летать вокруг",
+                    "success": "НетЗажим включен"
                 },
                 "godmode": {
-                    "title": "God",
-                    "label": "Invincible",
-                    "success": "God Mode enabled"
+                    "title": "Бог",
+                    "label": "Непобедимый",
+                    "success": "Режим Бога включен"
                 },
                 "normal": {
-                    "title": "Normal",
-                    "label": "Default mode",
-                    "success": "Returned to default player mode."
+                    "title": "Обычный",
+                    "label": "Режим по умолчанию",
+                    "success": "Возвращен в режим проигрывателя по умолчанию."
                 }
             },
             "teleport": {
-                "title": "Teleport",
-                "generic_success": "Sent you into the wormhole!",
+                "title": "Телепортироваться",
+                "generic_success": "Отправил тебя в червоточину!",
                 "waypoint": {
-                    "title": "Waypoint",
-                    "label": "Go to waypoint set",
-                    "error": "You have no waypoint set."
+                    "title": "Путевая точка",
+                    "label": "Перейдите к заданию путевой точки",
+                    "error": "У вас нет установленной путевой точки."
                 },
                 "coords": {
-                    "title": "Coords",
-                    "label": "Go to specified coords",
-                    "dialog_title": "Teleport",
-                    "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole.",
-                    "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33"
+                    "title": "Координаты",
+                    "label": "Перейти к указанным координатам",
+                    "dialog_title": "Телепортироваться",
+                    "dialog_desc": "Предоставьте координаты в X, Y, Z формат для прохождения через червоточину.",
+                    "dialog_error": "Неверные координаты. Должно быть в формате: 111, 222, 33"
                 },
                 "back": {
-                    "title": "Back",
-                    "label": "Go back to last location",
-                    "error": "You don't have a last location to go back to!"
+                    "title": "Назад",
+                    "label": "Вернитесь к последнему местоположению",
+                    "error": "У вас нет последнего места, куда можно вернуться!"
                 },
                 "copy": {
-                    "title": "Copy Coords",
-                    "label": "Copy coords to clipboard."
+                    "title": "Копировать Координаты",
+                    "label": "Копирование координат в буфер обмена."
                 }
             },
             "vehicle": {
-                "title": "Vehicle",
-                "onesync_error": "This option requires that OneSync be on for server entity handling",
-                "not_in_veh_error": "You are not currently in a vehicle!",
+                "title": "Транспортное средство",
+                "onesync_error": "Этот вариант требует, чтобы OneSync быть включенным для обработки объектов сервера",
+                "not_in_veh_error": "В данный момент вы не находитесь в транспортном средстве!",
                 "spawn": {
-                    "title": "Spawn",
-                    "label": "Spawn vehicle by model name",
-                    "dialog_title": "Spawn vehicle",
-                    "dialog_desc": "Enter in the model name of the vehicle you want to spawn.",
-                    "dialog_success": "Vehicle spawned!",
-                    "dialog_error": "The vehicle model name '%{modelName}' does not exist!",
-                    "dialog_info": "Trying to spawn %{modelName}."
+                    "title": "Порождение",
+                    "label": "Создавайте транспортное средство по названию модели",
+                    "dialog_title": "Транспортное средство для возрождения",
+                    "dialog_desc": "Введите название модели транспортного средства, которое вы хотите создать.",
+                    "dialog_success": "Транспортное средство породило!",
+                    "dialog_error": "Название модели транспортного средства '%{modelName}' не существует!",
+                    "dialog_info": "Пытаясь породить %{modelName}."
                 },
                 "fix": {
-                    "title": "Fix",
-                    "label": "Fix the current vehicle",
-                    "success": "Vehicle fixed!"
+                    "title": "Чинить",
+                    "label": "Исправьте текущее транспортное средство",
+                    "success": "Транспортное средство исправлено!"
                 },
                 "delete": {
-                    "title": "Delete",
-                    "label": "Delete the current vehicle",
-                    "success": "Vehicle deleted!"
+                    "title": "Удалить",
+                    "label": "Удалить текущее транспортное средство",
+                    "success": "Транспортное средство удалено!"
                 }
             },
             "heal": {
-                "title": "Heal",
+                "title": "Лечить",
                 "myself": {
-                    "title": "Myself",
-                    "label": "Restores your health",
-                    "success_0": "All healed up!",
-                    "success_1": "You should be feeling good now!",
-                    "success_2": "Restored to full!",
-                    "success_3": "Ouchies fixed!"
+                    "title": "Я сам",
+                    "label": "Восстанавливает ваше здоровье",
+                    "success_0": "Все зажило!",
+                    "success_1": "Сейчас ты должна чувствовать себя хорошо!",
+                    "success_2": "Восстановлен в полном объеме!",
+                    "success_3": "Ой, починили!"
                 },
                 "everyone": {
-                    "title": "Everyone",
-                    "label": "Will heal & revive all players",
-                    "success": "Healed and revived all players."
+                    "title": "Каждый",
+                    "label": "Исцелит и оживит всех игроков",
+                    "success": "Исцелил и оживил всех игроков."
                 }
             },
             "announcement": {
-                "title": "Send Announcement",
-                "dialog_desc": "Send an announcement to all online players.",
-                "dialog_placeholder": "Your announcement...",
-                "dialog_success": "Sending the announcement."
+                "title": "Отправить Объявление",
+                "dialog_desc": "Отправить объявление всем онлайн-игрокам.",
+                "dialog_placeholder": "Ваше объявление...",
+                "dialog_success": "Отправка объявления."
             },
             "clear_area": {
-                "title": "Reset World Area",
-                "dialog_description": "Please enter the radius where you wish to reset entities in (0-300). This will not clear entities spawned server side",
-                "dialog_success": "Clearing area with radius of %{radius}m",
-                "dialog_error": "Invalid radius input. Try again."
+                "title": "Сбросить Мировую область",
+                "dialog_description": "Пожалуйста, введите радиус, в котором вы хотите сбросить объекты в (0-300). Это не приведет к очистке объектов, созданных на стороне сервера",
+                "dialog_success": "Площадь расчистки с радиусом %{radius}m",
+                "dialog_error": "Неверный ввод радиуса. Пробовать снова."
             },
             "player_ids": {
-                "title": "Toggle Player IDs",
-                "alert_show": "Showing nearby player NetIDs.",
-                "alert_hide": "Hiding nearby player NetIDs."
+                "title": "Переключать идентификаторы игроков",
+                "alert_show": "Отображаются сетевые идентификаторы ближайших игроков.",
+                "alert_hide": "Скрытие идентификаторов ближайших игроков в сети."
             }
         },
         "page_players": {
             "misc": {
-                "online_players": "Online Players",
-                "players": "Players",
-                "search": "Search",
-                "zero_players": "No players found"
+                "online_players": "Онлайн-Игроки",
+                "players": "Игроки",
+                "search": "Поиск",
+                "zero_players": "Игроки не найдены"
             },
             "sort": {
-                "label": "Sort by",
-                "distance": "Distance",
-                "id": "ID",
-                "joined_first": "Joined First",
-                "joined_last": "Joined Last",
-                "closest": "Closest",
-                "farthest": "Farthest"
+                "label": "Сортировать по",
+                "distance": "Расстояние",
+                "id": "Идентификатор",
+                "joined_first": "Присоединился Первым",
+                "joined_last": "Присоединился Последним",
+                "closest": "Ближайший",
+                "farthest": "Самый дальний"
             },
             "card": {
-                "health": "%{percentHealth}% health"
+                "health": "%{percentHealth}% здоровье"
             }
         },
         "player_modal": {
             "misc": {
-                "error": "An error occurred fetching this users details. The error is shown below:",
-                "target_not_found": "Was unable to find an online player with ID or an username of %{target}"
+                "error": "Произошла ошибка при получении сведений об этом пользователе. Ошибка показана ниже:",
+                "target_not_found": "Не удалось найти онлайн-игрока с идентификатором или именем пользователя %{target}"
             },
             "tabs": {
-                "actions": "Actions",
-                "info": "Info",
-                "ids": "IDs",
-                "history": "History",
-                "ban": "Ban"
+                "actions": "Действия",
+                "info": "Инфо",
+                "ids": "Идентификаторы",
+                "history": "История",
+                "ban": "Запрет"
             },
             "actions": {
-                "title": "Player Actions",
-                "command_sent": "Command sent!",
+                "title": "Действия игрока",
+                "command_sent": "Отправленная команда!",
                 "moderation": {
-                    "title": "Moderation",
+                    "title": "Умеренность",
                     "options": {
-                        "dm": "DM",
-                        "warn": "Warn",
-                        "kick": "Kick",
-                        "set_admin": "Give Admin"
+                        "dm": "ДМ",
+                        "warn": "Предупреждать",
+                        "kick": "Удар",
+                        "set_admin": "Дайте Администратору"
                     },
                     "dm_dialog": {
-                        "title": "Direct Message",
-                        "description": "What is the reason for direct messaging this player?",
-                        "placeholder": "Reason...",
-                        "success": "Your DM has been sent!"
+                        "title": "Прямое Сообщение",
+                        "description": "В чем причина прямого обмена сообщениями с этим игроком?",
+                        "placeholder": "Причина...",
+                        "success": "Ваш ДМ был отправлен!"
                     },
                     "warn_dialog": {
-                        "title": "Warn",
-                        "description": "What is the reason for direct warning this player?",
-                        "placeholder": "Reason...",
-                        "success": "The player was warned!"
+                        "title": "Предупреждать",
+                        "description": "В чем причина прямого предупреждения этому игроку?",
+                        "placeholder": "Причина...",
+                        "success": "Игрок был предупрежден!"
                     },
                     "kick_dialog": {
-                        "title": "Kick",
-                        "description": "What is the reason for kicking this player?",
-                        "placeholder": "Reason...",
-                        "success": "The player was kicked!"
+                        "title": "Удар",
+                        "description": "В чем причина того, чтобы пнуть этого игрока?",
+                        "placeholder": "Причина...",
+                        "success": "Игрока ударили ногой!"
                     }
                 },
                 "interaction": {
-                    "title": "Interaction",
+                    "title": "Взаимодействие",
                     "options": {
-                        "heal": "Heal",
-                        "go_to": "Go to",
-                        "bring": "Bring",
-                        "spectate": "Spectate",
-                        "toggle_freeze": "Toggle Freeze"
+                        "heal": "Лечить",
+                        "go_to": "Идти к",
+                        "bring": "Приносить",
+                        "spectate": "Наблюдать",
+                        "toggle_freeze": "Переключить Замораживание"
                     },
                     "notifications": {
-                        "heal_player": "Healing player",
-                        "tp_player": "Teleporting to player",
-                        "bring_player": "Summoning player",
-                        "spectate_failed": "Failed to resolve the target! Exiting spectate.",
-                        "spectate_yourself": "You cannot spectate yourself.",
-                        "freeze_yourself": "You cannot freeze yourself."
+                        "heal_player": "Исцеляющая молитва",
+                        "tp_player": "Телепортация к игроку",
+                        "bring_player": "Вызывающий игрок",
+                        "spectate_failed": "Не удалось решить задачу! Выходящий зритель.",
+                        "spectate_yourself": "Вы не можете наблюдать за самим собой.",
+                        "freeze_yourself": "Вы не можете заморозить себя."
                     }
                 },
                 "troll": {
-                    "title": "Troll",
+                    "title": "Тролль",
                     "options": {
-                        "drunk": "Make Drunk",
-                        "fire": "Set Fire",
-                        "wild_attack": "Wild attack"
+                        "drunk": "Напоить",
+                        "fire": "Поджечь",
+                        "wild_attack": "Дикая атака"
                     }
                 }
             },
             "info": {
-                "title": "Player info",
-                "session_time": "Session Time",
-                "play_time": "Play time",
-                "joined": "Joined",
-                "notes_placeholder": "Notes about this player"
+                "title": "Информация об игроке",
+                "session_time": "Время сеанса",
+                "play_time": "Время игры",
+                "joined": "Присоединился",
+                "notes_placeholder": "Заметки об этом игроке"
             },
             "history": {
-                "title": "Related history",
+                "title": "Связанная история",
                 "action_types": {
-                    "warn": "WARNED",
-                    "warn_revoked": "REVOKED the WARN for",
-                    "ban": "BANNED",
-                    "ban_revoked": "REVOKED the BAN for",
-                    "whitelist": "WHITELIST",
-                    "whitelist_revoked": "REVOKED the WHITELIST for"
+                    "warn": "предупрежденный",
+                    "warn_revoked": "ОТМЕНИЛ ПРЕДУПРЕЖДЕНИЕ за",
+                    "ban": "запрещенный",
+                    "ban_revoked": "ОТМЕНИЛ ЗАПРЕТ на",
+                    "whitelist": "БЕЛЫЙ СПИСОК",
+                    "whitelist_revoked": "ОТОЗВАЛ БЕЛЫЙ СПИСОК для"
                 }
             },
             "ban": {
-                "title": "Ban player",
-                "reason_placeholder": "Reason",
-                "duration_placeholder": "Duration",
-                "hours": "hours",
-                "days": "days",
-                "weeks": "weeks",
-                "months": "months",
-                "permanent": "Permanent",
-                "custom": "Custom",
-                "helper_text": "Please select a duration"
+                "title": "Забанить игрока",
+                "reason_placeholder": "Причина",
+                "duration_placeholder": "Продолжительность",
+                "hours": "часы",
+                "days": "дни",
+                "weeks": "недели",
+                "months": "месяцы",
+                "permanent": "Постоянный",
+                "custom": "Обычай",
+                "helper_text": "Пожалуйста, выберите продолжительность"
             }
         }
     }
