@@ -559,6 +559,14 @@
         $('#frmMonitor-timezoneAlert').html(msg);
     }
 
+    const expandables = document.getElementsByClassName('expandable-textarea');
+    for (const el of expandables) {
+        console.log(el.name)
+        el.onkeyup = () =>{
+            el.textContent = el.textContent;
+        }
+    }
+
 
     //============================================== Global Settings
     $('#frmGlobal-save').click(function () {
@@ -591,11 +599,12 @@
 
 
     //============================================== FXServer Settings
+    const fxsCmdLineEl = document.getElementById('frmFXServer-commandLine');
     $('#frmFXServer-save').click(function () {
         let data = {
             serverDataPath: $('#frmFXServer-serverDataPath').val().trim(),
             cfgPath: $('#frmFXServer-cfgPath').val().trim(),
-            commandLine: document.getElementById('frmFXServer-commandLine').textContent.trim(),
+            commandLine: fxsCmdLineEl.textContent.trim(),
             onesync: $('#frmFXServer-onesync').val(),
             autostart: $('#frmFXServer-autostart').is(':checked'),
             quiet: $('#frmFXServer-quiet').is(':checked')
@@ -630,12 +639,13 @@
 
 
     //============================================== Player Manager Settings
+    const pmWlRejectMsgEl = document.getElementById('frmPlayerManager-whitelistRejectionMessage');
     $('#frmPlayerManager-save').click(function () {
         let data = {
             onJoinCheckBan: $('#frmPlayerManager-onJoinCheckBan').is(':checked'),
             onJoinCheckWhitelist: $('#frmPlayerManager-onJoinCheckWhitelist').is(':checked'),
             minSessionTime: $('#frmPlayerManager-minSessionTime').val().trim(),
-            whitelistRejectionMessage: document.getElementById('frmPlayerManager-whitelistRejectionMessage').textContent.trim(),
+            whitelistRejectionMessage: pmWlRejectMsgEl.textContent.trim(),
             wipePendingWLOnStart: $('#frmPlayerManager-wipePendingWLOnStart').is(':checked'),
         }
         if (!data.minSessionTime.length || !data.whitelistRejectionMessage.length) {
@@ -691,13 +701,14 @@
 
 
     //============================================== Discord Settings
+    const dcStatusMsgEl = document.getElementById('frmDiscord-statusMessage');
     $('#frmDiscord-save').click(function () {
         let data = {
             enabled: ($('#frmDiscord-enabled').is(':checked') === true),
             token: $('#frmDiscord-token').val().trim(),
             announceChannel: $('#frmDiscord-announceChannel').val().trim(),
             prefix: $('#frmDiscord-prefix').val().trim(),
-            statusMessage: document.getElementById('frmDiscord-statusMessage').textContent.trim(),
+            statusMessage: dcStatusMsgEltextContent.trim(),
         };
         if (data.enabled && (!data.token.length || !data.prefix.length || !data.statusMessage.length)) {
             return $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
