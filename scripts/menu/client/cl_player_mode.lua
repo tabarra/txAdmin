@@ -153,8 +153,11 @@ RegisterNUICallback('playerModeChanged', function(mode, cb)
 end)
 
 -- [[ Player mode changed cb event ]]
-RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode)
-    createPlayerModePtfxLoop()
+RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode, ptfx)
+    if ptfx then 
+        createPlayerModePtfxLoop()
+    end
+
     if mode == 'godmode' then
         toggleFreecam(false)
         toggleGodMode(true)

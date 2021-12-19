@@ -15,7 +15,7 @@ RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode, nearbyPlayers)
   local allow = PlayerHasTxPermission(src, 'players.playermode')
   TriggerEvent("txaLogger:menuEvent", src, "playerModeChanged", allow, mode)
   if allow then
-    TriggerClientEvent('txAdmin:menu:playerModeChanged', src, mode)
+    TriggerClientEvent('txAdmin:menu:playerModeChanged', src, mode, not IS_PTFX_DISABLED)
 
     if not IS_PTFX_DISABLED then
       for _, v in ipairs(nearbyPlayers) do
