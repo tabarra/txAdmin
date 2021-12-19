@@ -89,8 +89,8 @@
                     "error": "Nincs úticél kijelölve."
                 },
                 "coords": {
-                    "title": "Koordináták",
-                    "label": "Menj egy megadott koordinátára",
+                    "title": "Koordináta",
+                    "label": "Teleportálás koordinátára",
                     "dialog_title": "Teleportálás",
                     "dialog_desc": "A koordinátákat x, y, z formában kell megadnod.",
                     "dialog_error": "Hibás koordináta. Ilyen formát használj: 111, 222, 33"
@@ -101,8 +101,8 @@
                     "error": "Nincs hová visszamenned!"
                 },
                 "copy": {
-                    "title": "Koordináta másolása",
-                    "label": "Jelenlegi koordináta vágólapra másolása."
+                    "title": "Másolás",
+                    "label": "Jelenlegi koordináta másolása"
                 }
             },
             "vehicle": {
@@ -111,7 +111,7 @@
                 "not_in_veh_error": "Jelenleg nem ülsz járműben!",
                 "spawn": {
                     "title": "Lehívás",
-                    "label": "Jármű lehívása modell név alapján",
+                    "label": "Jármű lehívása név alapján",
                     "dialog_title": "Jármű lehívása",
                     "dialog_desc": "Add meg a modell nevét amit le szeretnél hívni.",
                     "dialog_success": "Jármű lehívva!",
@@ -141,7 +141,7 @@
                 },
                 "everyone": {
                     "title": "Mindenki",
-                    "label": "Mindenkit meggyógyít és feléleszt",
+                    "label": "Mindenkit meggyógyít/feléleszt",
                     "success": "Mindenki meggyógyítva és felélesztve."
                 }
             },
@@ -229,10 +229,10 @@
                     "title": "Interakció",
                     "options": {
                         "heal": "Gyógyítás",
-                        "go_to": "TP játékoshoz",
+                        "go_to": "Teleportálás",
                         "bring": "Megidézés",
                         "spectate": "Megfigyelés",
-                        "toggle_freeze": "Fagyasztás ki/be"
+                        "toggle_freeze": "Fagyasztás"
                     },
                     "notifications": {
                         "heal_player": "Játékos gyógyítása",
