@@ -91,6 +91,7 @@
                 "coords": {
                     "title": "Koordináta",
                     "label": "Teleportálás koordinátára",
+                    "label": "Menj egy megadott koordinátára",
                     "dialog_title": "Teleportálás",
                     "dialog_desc": "A koordinátákat x, y, z formában kell megadnod.",
                     "dialog_error": "Hibás koordináta. Ilyen formát használj: 111, 222, 33"

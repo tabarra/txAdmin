@@ -90,7 +90,7 @@
                 },
                 "coords": {
                     "title": "Coordenadas",
-                    "label": "Ve a las coordenadas especificadas",
+                    "label": "Ir a coordenadas",
                     "dialog_title": "Teletransporte",
                     "dialog_desc": "Proporciona unas coordenadas en formato x, y, z para ir por el agujero de gusano.",
                     "dialog_error": "Coordenadas inválidas. El formato debe ser: 111, 222, 33"
@@ -111,7 +111,7 @@
                 "not_in_veh_error": "¡No estas en ningún vehículo!",
                 "spawn": {
                     "title": "Generar",
-                    "label": "Genera un vehículo por su nombre de modelo",
+                    "label": "Genera un vehículo",
                     "dialog_title": "Generar vehículo",
                     "dialog_desc": "Escrible el nombre de modelo del vehículo que quieres generar.",
                     "dialog_success": "¡Vehiculo generado!",
@@ -141,7 +141,7 @@
                 },
                 "everyone": {
                     "title": "A todos",
-                    "label": "Curará y revivirá a todos los jugadores",
+                    "label": "Cura y revive a todos",
                     "success": "Todos los jugadores revividos y curados."
                 }
             },
