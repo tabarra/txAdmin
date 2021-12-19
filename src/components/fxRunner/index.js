@@ -417,9 +417,10 @@ module.exports = class FXRunner {
     srvCmd(command) {
         if (typeof command !== 'string') throw new Error('Expected String!');
         if (this.fxChild === null) return false;
+        const sanitized = command.replaceAll(/\n/g, ' ');
         try {
-            const success = this.fxChild.stdin.write(command + '\n');
-            globals.logger.fxserver.writeMarker('command', command);
+            const success = this.fxChild.stdin.write(sanitized + '\n');
+            globals.logger.fxserver.writeMarker('command', sanitized);
             return success;
         } catch (error) {
             if (GlobalData.verbose) {

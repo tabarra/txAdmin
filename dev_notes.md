@@ -24,6 +24,11 @@
 - [ ] Migrate console log to new logger
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
+- [ ] replace all fxRunner.srvCmd* and only expose:
+    - sync fxRunner.srvRawCmd(string) - to be used by live console
+    - async fxRunner.srvCmd(array, timeout) - to be awaited with the status response
+
+
 
 
 
