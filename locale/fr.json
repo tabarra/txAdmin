@@ -85,24 +85,24 @@
                 "generic_success": "Vous avez été téléporté !",
                 "waypoint": {
                     "title": "GPS",
-                    "label": "Téléportez-vous à votre point GPS",
+                    "label": "TP sur votre point GPS",
                     "error": "Aucun point GPS définit."
                 },
                 "coords": {
                     "title": "Coordonnées",
-                    "label": "Téléportez-vous à des coordonnées",
+                    "label": "TP sur coordonnées",
                     "dialog_title": "Téléportation",
                     "dialog_desc": "Fournissez des coordonnées au format x, y, z pour vous téléporter.",
                     "dialog_error": "Coordonnées invalide. Elles doivent être sous le format suivant: 111, 222, 33"
                 },
                 "back": {
                     "title": "Retour",
-                    "label": "Retournez à votre ancienne position",
+                    "label": "TP sur ancienne position",
                     "error": "Vous n'avez aucune dernière position !"
                 },
                 "copy": {
-                    "title": "Copier les Coordonnées",
-                    "label": "Copiez les coordonnées dans votre presse-papier"
+                    "title": "Copier",
+                    "label": "Copiez votre position"
                 }
             },
             "vehicle": {
@@ -111,7 +111,7 @@
                 "not_in_veh_error": "Vous n'êtes pas dans un véhicule !",
                 "spawn": {
                     "title": "Spawn",
-                    "label": "Créez un vehicule par nom de modèle",
+                    "label": "Créez un véhicule par modèle",
                     "dialog_title": "Faire apparaître un vehicule",
                     "dialog_desc": "Entrer le nom du véhicule que vous voulez faire apparaître.",
                     "dialog_success": "Véhicule apparu !",
@@ -141,7 +141,7 @@
                 },
                 "everyone": {
                     "title": "Tous les joueurs",
-                    "label": "Soignez & réanimez tous les joueurs",
+                    "label": "Soignez & réanimez",
                     "success": "Tous les joueurs ont été soigné et réanimé."
                 }
             },
