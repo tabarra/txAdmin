@@ -125,6 +125,8 @@ if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
 //Get Debug/Dev convars
 const txAdminVerboseConvar = GetConvar('txAdminVerbose', 'false').trim();
 const verbose = (['true', '1', 'on'].includes(txAdminVerboseConvar));
+const txAdminProxyConvar = GetConvar('txAdminProxy', 'false').trim();
+const isProxy = (['true', '1', 'on'].includes(txAdminProxyConvar));
 const txDebugPlayerlistGeneratorConvar = GetConvar('txDebugPlayerlistGenerator', 'false').trim();
 const debugPlayerlistGenerator = (['true', '1', 'on'].includes(txDebugPlayerlistGeneratorConvar));
 const txDebugExternalSourceConvar = GetConvar('txDebugExternalSource', 'false').trim();
@@ -249,6 +251,7 @@ GlobalData = {
     dataPath,
     //Convars - Debug
     verbose,
+    isProxy,
     debugPlayerlistGenerator,
     debugExternalSource,
     //Convars - zap dependant
