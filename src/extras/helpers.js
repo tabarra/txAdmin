@@ -214,18 +214,18 @@ function getFXServerPort(rawCfgFile) {
     if (GlobalData.forceInterface) {
         const stdMessage = [
             'Remove all lines containing <code>endpoint_add</code> and add the lines below to the top of your file.',
-            `<code>endpoint_add_tcp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}"`,
-            `endpoint_add_udp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}"</code>`,
+            `<code>endpoint_add_tcp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort || 30120}"`,
+            `endpoint_add_udp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort || 30120}"</code>`,
         ].join('\n<br>');
 
         //Check if all ports are the ones being forced
-        if (firstPort !== GlobalData.forceFXServerPort) {
-            throw new Error(`ZAP-Hosting: invalid port found.<br>\n ${stdMessage}`);
+        if (GlobalData.forceFXServerPort && firstPort !== GlobalData.forceFXServerPort) {
+            throw new Error(`invalid port found.<br>\n ${stdMessage}`);
         }
 
         //Check if all interfaces are the ones being forced
         const invalidInterface = endpoints.find((match) => match.iface !== GlobalData.forceInterface);
-        if (invalidInterface) throw new Error(`ZAP-Hosting: invalid interface '${invalidInterface.iface}'.<br>\n${stdMessage}`);
+        if (invalidInterface) throw new Error(`invalid interface '${invalidInterface.iface}'.<br>\n${stdMessage}`);
     } else {
         const validTCPEndpoint = endpoints.find((match) => {
             return (match.type === 'tcp' && (match.iface === '0.0.0.0' || match.iface === '127.0.0.1'));
