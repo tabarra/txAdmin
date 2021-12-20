@@ -108,6 +108,7 @@ CreateThread(function()
     --Menu convars
     TriggerEvent('chat:removeSuggestion', '/txAdmin-menuEnabled')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-menuAlignRight')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin-menuPtfxDisable')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-menuPageKey')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-menuDebug')
     TriggerEvent('chat:removeSuggestion', '/txAdmin-playerIdDistance')

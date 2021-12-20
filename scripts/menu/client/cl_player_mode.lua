@@ -7,6 +7,7 @@ if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
 end
 
 local noClipEnabled = false
+local IS_PTFX_DISABLED = (GetConvar('txAdmin-menuPtfxDisable', 'false') == 'true')
 
 local function toggleGodMode(enabled)
     if enabled then
@@ -90,6 +91,9 @@ local PTFX_DURATION = 1000
 
 -- Applies the particle effect to a ped
 local function createPlayerModePtfxLoop(tgtPedId)
+    -- Don't show particles if disabled
+    if IS_PTFX_DISABLED then return end
+	
     CreateThread(function()
         RequestNamedPtfxAsset(PTFX_DICT)
         local playerPed = tgtPedId or PlayerPedId()

@@ -116,6 +116,7 @@ module.exports = class ConfigVault {
                 forceFXServerPort: toDefault(cfg.global.forceFXServerPort, null), //not in template
                 menuEnabled: toDefault(cfg.global.menuEnabled, true),
                 menuAlignRight: toDefault(cfg.global.menuAlignRight, false),
+                menuPtfxDisable: toDefault(cfg.global.menuPtfxDisable, false),
                 menuPageKey: toDefault(cfg.global.menuPageKey, 'Tab'),
             };
             out.logger = toDefault(cfg.logger, {}); //not in template
@@ -188,6 +189,7 @@ module.exports = class ConfigVault {
             cfg.global.language = cfg.global.language || 'en'; //TODO: move to GlobalData
             cfg.global.menuEnabled = (cfg.global.menuEnabled === 'true' || cfg.global.menuEnabled === true);
             cfg.global.menuAlignRight = (cfg.global.menuAlignRight === 'true' || cfg.global.menuAlignRight === true);
+            cfg.global.menuPtfxDisable = (cfg.global.menuPtfxDisable === 'true' || cfg.global.menuPtfxDisable === true);
             cfg.global.menuPageKey = cfg.global.menuPageKey || 'Tab';
 
             //Logger - NOTE: this one default's i'm doing directly into the class

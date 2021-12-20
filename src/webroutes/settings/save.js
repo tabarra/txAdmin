@@ -372,6 +372,7 @@ function handleMenu(ctx) {
     if (
         isUndefined(ctx.request.body.menuEnabled)
         || isUndefined(ctx.request.body.menuAlignRight)
+        || isUndefined(ctx.request.body.menuPtfxDisable)
         || isUndefined(ctx.request.body.menuPageKey)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
@@ -381,6 +382,7 @@ function handleMenu(ctx) {
     const cfg = {
         menuEnabled: (ctx.request.body.menuEnabled === 'true'),
         menuAlignRight: (ctx.request.body.menuAlignRight === 'true'),
+        menuPtfxDisable: (ctx.request.body.menuPtfxDisable === 'true'),
         menuPageKey: ctx.request.body.menuPageKey.trim(),
     };
 
@@ -388,6 +390,7 @@ function handleMenu(ctx) {
     const newConfig = globals.configVault.getScopedStructure('global');
     newConfig.menuEnabled = cfg.menuEnabled;
     newConfig.menuAlignRight = cfg.menuAlignRight;
+    newConfig.menuPtfxDisable = cfg.menuPtfxDisable;
     newConfig.menuPageKey = cfg.menuPageKey;
     const saveStatus = globals.configVault.saveProfile('global', newConfig);
 

@@ -56,7 +56,7 @@ Convars configured in the settings page should not be set manually.
 **txAdmin-menuPtfxDisable**
 - Description: Determine whether to not play particles effects whenever an admin's player mode is changed.
 - Default: `false`
-- Usage: `+set txAdmin-menuPtfxDisable true`
+- Usage: `+setr txAdmin-menuPtfxDisable true`
 
 ## Commands
 **tx | txadmin**

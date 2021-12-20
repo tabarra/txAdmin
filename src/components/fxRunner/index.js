@@ -33,6 +33,7 @@ const getMutableConvars = (isCmdLine = false) => {
         [`${p}setr`, 'txAdmin-verbose', GlobalData.verbose],
         [`${p}set`, 'txAdmin-checkPlayerJoin', checkPlayerJoin],
         [`${p}set`, 'txAdmin-menuAlignRight', globals.config.menuAlignRight],
+        [`${p}setr`, 'txAdmin-menuPtfxDisable', globals.config.menuPtfxDisable],
         [`${p}set`, 'txAdmin-menuPageKey', globals.config.menuPageKey],
     ];
 };
