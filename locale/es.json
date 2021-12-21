@@ -59,7 +59,7 @@
         },
         "page_main": {
             "tooltips": {
-                "tooltip_1": "Pulsa %{key} para cambiar entre páginas & y las flechas para cambiar entre las opciones del menú",
+                "tooltip_1": "Pulsa %{key} para cambiar entre páginas y las flechas para cambiar entre las opciones del menú",
                 "tooltip_2": "Algunos elementos del menu tienen sub-opciones que pueden ser seleccionadas usando las flechas izquierda y derecha."
             },
             "player_mode": {
