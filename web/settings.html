@@ -559,7 +559,6 @@
 
     const expandables = document.getElementsByClassName('expandable-textarea');
     for (const el of expandables) {
-        console.log(el.name)
         el.onkeyup = () =>{
             el.textContent = el.textContent;
         }
@@ -706,7 +705,7 @@
             token: $('#frmDiscord-token').val().trim(),
             announceChannel: $('#frmDiscord-announceChannel').val().trim(),
             prefix: $('#frmDiscord-prefix').val().trim(),
-            statusMessage: dcStatusMsgEltextContent.trim(),
+            statusMessage: dcStatusMsgEl.textContent.trim(),
         };
         if (data.enabled && (!data.token.length || !data.prefix.length || !data.statusMessage.length)) {
             return $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
