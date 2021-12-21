@@ -39,11 +39,11 @@
         "misc": {
             "help_message": "txAdmin Menu enabled, type /tx to open it.\nYou can also configure a keybind at [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
             "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
-            "action_unauthorized": "You do not have this permission.",
+            "action_unauthorized": "Sinulla ei ole oikeuksia tähän.",
             "unknown_error": "An unknown error occurred.",
             "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
-            "announcement_title": "Server Announcement by %{author}:",
-            "general_no_perms": "You do not have permissions for this!",
+            "announcement_title": "Palvelimen ilmoitus henkilöltä %{author}:",
+            "general_no_perms": "Sinulla ei ole vaadittavia oikeuksia!",
             "dialog_empty_input": "You cannot have an empty input."
         },
         "frozen": {
@@ -52,10 +52,10 @@
             "was_frozen": "You have been frozen by a server admin!"
         },
         "common": {
-            "cancel": "Cancel",
+            "cancel": "Peruuta",
             "submit": "Submit",
-            "error": "An error occurred",
-            "copied": "Copied to clipboard."
+            "error": "Virhe tapahtui",
+            "copied": "Kopioitu leikepöydälle."
         },
         "page_main": {
             "tooltips": {
@@ -119,14 +119,14 @@
                     "dialog_info": "Trying to spawn %{modelName}."
                 },
                 "fix": {
-                    "title": "Fix",
-                    "label": "Fix the current vehicle",
-                    "success": "Vehicle fixed!"
+                    "title": "Korjaa",
+                    "label": "Korjaa nykyinen ajoneuvo",
+                    "success": "Ajoneuvo korjattu!"
                 },
                 "delete": {
-                    "title": "Delete",
-                    "label": "Delete the current vehicle",
-                    "success": "Vehicle deleted!"
+                    "title": "Poista",
+                    "label": "Poista nykyinen ajoneuvo",
+                    "success": "Ajoneuvo poistettu!"
                 }
             },
             "heal": {
@@ -146,10 +146,10 @@
                 }
             },
             "announcement": {
-                "title": "Send Announcement",
-                "dialog_desc": "Send an announcement to all online players.",
-                "dialog_placeholder": "Your announcement...",
-                "dialog_success": "Sending the announcement."
+                "title": "Lähetä ilmoitus",
+                "dialog_desc": "Lähetä ilmoitus kaikille pelaajille.",
+                "dialog_placeholder": "Sinun ilmoitus...",
+                "dialog_success": "Lähetetään ilmoitus."
             },
             "clear_area": {
                 "title": "Reset World Area",
