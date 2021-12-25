@@ -42,20 +42,20 @@
             "action_unauthorized": "Du hast diese Berechtigung nicht.",
             "unknown_error": "Ein unbekannter Fehler ist aufgetreten.",
             "not_enabled": "Das txAdmin Menü ist nicht aktiviert! Du kannst es in den txAdmin Einstellungen aktivieren.",
-            "announcement_title": "Server Ankündigung von %{author}:",
+            "announcement_title": "Serverweite Ankündigung von %{author}:",
             "general_no_perms": "Du hast keine Berechtigung dafür!",
             "dialog_empty_input": "Du kannst keine leere Eingabe haben."
         },
         "frozen": {
             "froze_player": "Du hast den Spieler eingefroren!",
             "unfroze_player": "Du hast den Spieler entfroren!",
-            "was_frozen": "Du wurdest von einem Admin eingefroren!"
+            "was_frozen": "Du wurdest von einem Teammitglied eingefroren!"
         },
         "common": {
             "cancel": "Abbrechen",
             "submit": "Senden",
             "error": "Ein Fehler ist aufgetreten.",
-            "copied": "In Zwischenablage kopiert."
+            "copied": "In die Zwischenablage kopiert."
         },
         "page_main": {
             "tooltips": {
@@ -85,14 +85,14 @@
                 "generic_success": "Spieler teleportiert",
                 "waypoint": {
                     "title": "Wegpunkt",
-                    "label": "Teleportieren zu Wegpunkt",
+                    "label": "Teleportiere zu Wegpunkt",
                     "error": "Du hast keinen Wegpunkt gesetzt!"
                 },
                 "coords": {
                     "title": "Koordinaten",
                     "label": "Teleportiere zu Koordinaten",
                     "dialog_title": "Teleportieren",
-                    "dialog_desc": "Koordinaten im x, y, z Format eingeben.",
+                    "dialog_desc": "Koordinaten im Format x, y, z eingeben.",
                     "dialog_error": "Ungültige Koordinaten. Muss im Format 111, 222, 33 sein!"
                 },
                 "back": {
@@ -102,18 +102,18 @@
                 },
                 "copy": {
                     "title": "Koordinaten Kopieren",
-                    "label": "Kopiere in Zwischenablage"
+                    "label": "Kopiere in die Zwischenablage"
                 }
             },
             "vehicle": {
                 "title": "Fahzeug",
-                "onesync_error": "Diese Option erfordert, dass OneSync für die Behandlung von Server Objekten aktiviert ist",
-                "not_in_veh_error": "Du bist gerade in keinem Fahrzeug!",
+                "onesync_error": "Diese Option erfordert, dass OneSync für die Verarbeitung von Server Objekten aktiviert ist",
+                "not_in_veh_error": "Du befindest dich in keinem Fahrzeug!",
                 "spawn": {
                     "title": "Spawn",
                     "label": "Spawnname eingeben",
                     "dialog_title": "Fahrzeug spawnen",
-                    "dialog_desc": "Geben Sie den Spawnname des Fahrzeugs ein, das Sie spawnen möchten.",
+                    "dialog_desc": "Gebe den Spawnname des Fahrzeugs ein, dass du spawnen möchtest.",
                     "dialog_success": "Fahrzeug gespawnt!",
                     "dialog_error": "Der Spawnname '%{modelName}' existiert nicht!",
                     "dialog_info": "Versuche %{modelName} zu spawnen."
@@ -185,7 +185,7 @@
         },
         "player_modal": {
             "misc": {
-                "error": "Beim Abrufen der Benutzerdetails ist ein Fehler aufgetreten. Der Fehler wird unten angezeigt:",
+                "error": "Beim Abrufen der Spielerdetails ist ein Fehler aufgetreten. Der Fehler wird unten angezeigt:",
                 "target_not_found": "Konnte keinen Spieler mit der ID oder dem Nutzernamen von %{target} finden"
             },
             "tabs": {
@@ -280,7 +280,7 @@
                 "months": "Monate",
                 "permanent": "Permanent",
                 "custom": "Benutzerdefiniert",
-                "helper_text": "Bitte eine Dauer wählen"
+                "helper_text": "Bitte eine Dauer angeben"
             }
         }
     }
