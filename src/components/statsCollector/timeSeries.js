@@ -33,7 +33,7 @@ module.exports = class TimeSeries {
                 fs.writeFileSync(file, '[]');
                 rawFile = '[]';
             } catch (error) {
-                throw new Error('Unnable to create timeseries file.');
+                throw new Error('Unable to create timeseries file.');
             }
         }
 
