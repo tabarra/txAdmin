@@ -18,6 +18,7 @@ import {
 } from "../../state/permissions.state";
 import { userHasPerm } from "../../utils/miscUtils";
 import { useSnackbar } from "notistack";
+import { useTooltip } from '../../provider/TooltipProvider';
 
 export interface MenuListItemProps {
   title: string;
@@ -47,7 +48,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 // TODO: Actually do disabled item styling right now it will only remove
 // enter from working
 export const MenuListItem: React.FC<MenuListItemProps> = memo(
-  ({ 
+  ({
     title,
     label,
     requiredPermission,
@@ -63,6 +64,7 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
       ? userHasPerm(requiredPermission, userPerms)
       : true;
     const { enqueueSnackbar } = useSnackbar();
+    const { setTooltipText } = useTooltip();
 
     const handleEnter = (): void => {
       if (!selected) return;
@@ -92,6 +94,12 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
       }
     }, [selected]);
 
+    useEffect(() => {
+      if (selected) {
+        setTooltipText(label);
+      }
+    }, [selected])
+
     useKeyboardNavigation({
       onEnterDown: handleEnter,
       disableOnFocused: true,
@@ -108,7 +116,6 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
           <ListItemIcon className={classes.icon}>{icon}</ListItemIcon>
           <ListItemText
             primary={title}
-            secondary={label}
             classes={{
               primary: classes.overrideText,
             }}
@@ -150,6 +157,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     const [curState, setCurState] = useState(0);
     const userPerms = usePermissionsValue();
     const { enqueueSnackbar } = useSnackbar();
+    const { setTooltipText } = useTooltip()
 
     const isUserAllowed = requiredPermission
       ? userHasPerm(requiredPermission, userPerms)
@@ -191,6 +199,12 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
         setCurState(index > -1 ? index : 0);
       }
     }, [curState]);
+
+    useEffect(() => {
+      if (actions[curState]?.label && selected) {
+        setTooltipText(actions[curState]?.label);
+      }
+    }, [curState, selected]);
 
     const handleLeftArrow = () => {
       if (!selected) return;
@@ -249,7 +263,6 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
                 </Typography>
               </>
             }
-            secondary={actions[curState]?.label ?? "???"}
             classes={{
               primary: classes.overrideText,
             }}

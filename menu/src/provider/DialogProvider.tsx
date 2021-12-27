@@ -158,6 +158,7 @@ export const DialogProvider: React.FC = ({ children }) => {
           <DialogContent>
             <DialogContentText>{dialogProps.description}</DialogContentText>
             <TextField
+              sx={{pt: 1}}
               variant="standard"
               autoFocus
               fullWidth

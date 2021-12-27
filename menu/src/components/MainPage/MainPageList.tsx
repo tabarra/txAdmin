@@ -84,14 +84,13 @@ export const MainPageList: React.FC = () => {
   // noclip it will actually think we are changing back to normal.
   // We need to review handlePlayermodeToggle()
   useEffect(() => {
-    if(menuVisible) return;
+    if (menuVisible) return;
     setCurSelected(0);
     // setPlayerMode(PlayerMode.NOCLIP);
     // setTeleportMode(TeleportMode.WAYPOINT);
     // setVehicleMode(VehicleMode.SPAWN);
     // setHealMode(HealMode.SELF);
   }, [menuVisible]);
-
 
   //=============================================
   const handleArrowDown = useCallback(() => {
@@ -126,7 +125,6 @@ export const MainPageList: React.FC = () => {
     }
   };
 
-
   //=============================================
   const handleTeleportCoords = () => {
     openDialog({
@@ -151,9 +149,12 @@ export const MainPageList: React.FC = () => {
           });
           fetchNui("tpToCoords", { x, y, z });
         } else {
-          enqueueSnackbar(t("nui_menu.page_main.teleport.coords.dialog_error"), {
-            variant: "error",
-          });
+          enqueueSnackbar(
+            t("nui_menu.page_main.teleport.coords.dialog_error"),
+            {
+              variant: "error",
+            }
+          );
         }
       },
     });
@@ -178,17 +179,15 @@ export const MainPageList: React.FC = () => {
     });
   };
 
-
   //=============================================
   const handleSpawnVehicle = () => {
     // Since we depend on server side gamestate awareness
     // we disable this function from being used if onesync
     // isn't on
     if (!serverCtx.oneSync.status) {
-      return enqueueSnackbar(
-        t("nui_menu.page_main.vehicle.onesync_error"),
-        { variant: "error" }
-      );
+      return enqueueSnackbar(t("nui_menu.page_main.vehicle.onesync_error"), {
+        variant: "error",
+      });
     }
 
     openDialog({
@@ -231,7 +230,9 @@ export const MainPageList: React.FC = () => {
         fetchNui("spawnVehicle", { model: modelName }).then(({ e }) => {
           e
             ? enqueueSnackbar(
-                t("nui_menu.page_main.vehicle.spawn.dialog_error", { modelName }),
+                t("nui_menu.page_main.vehicle.spawn.dialog_error", {
+                  modelName,
+                }),
                 { variant: "error" }
               )
             : enqueueSnackbar(
@@ -262,10 +263,9 @@ export const MainPageList: React.FC = () => {
   const handleDeleteVehicle = () => {
     // If onesync is disabled, show an error due to server side entity handling
     if (!serverCtx.oneSync.status) {
-      return enqueueSnackbar(
-        t("nui_menu.page_main.vehicle.onesync_error"),
-        { variant: "error" }
-      );
+      return enqueueSnackbar(t("nui_menu.page_main.vehicle.onesync_error"), {
+        variant: "error",
+      });
     }
 
     fetchNui("deleteVehicle").then(({ e }) => {
@@ -282,7 +282,6 @@ export const MainPageList: React.FC = () => {
       });
     });
   };
-
 
   //=============================================
   const handleHealMyself = () => {
@@ -305,7 +304,6 @@ export const MainPageList: React.FC = () => {
       variant: "info",
     });
   };
-
 
   //=============================================
   const handleAnnounceMessage = () => {
@@ -354,7 +352,7 @@ export const MainPageList: React.FC = () => {
   const handleTogglePlayerIds = () => {
     fetchNui("togglePlayerIDs");
   };
-  
+
   // This is here for when I am bored developing
   // const handleSpawnWeapon = () => {
   //   openDialog({
@@ -425,7 +423,6 @@ export const MainPageList: React.FC = () => {
               setTeleportMode(TeleportMode.WAYPOINT);
               fetchNui("tpToWaypoint", {});
             },
-            
           },
           {
             name: t("nui_menu.page_main.teleport.coords.title"),
@@ -527,19 +524,21 @@ export const MainPageList: React.FC = () => {
       //MISC
       {
         title: t("nui_menu.page_main.announcement.title"),
+        label: t("nui_menu.page_main.announcement.dialog_desc"),
         requiredPermission: "players.message",
         icon: <Announcement />,
         onSelect: handleAnnounceMessage,
       },
       {
         title: t("nui_menu.page_main.clear_area.title"),
+        label: t("nui_menu.page_main.clear_area.label"),
         requiredPermission: "menu.clear_area",
         icon: <CenterFocusWeak />,
         onSelect: handleClearArea,
-        
       },
       {
         title: t("nui_menu.page_main.player_ids.title"),
+        label: t("nui_menu.page_main.player_ids.label"),
         icon: <Groups />,
         onSelect: handleTogglePlayerIds,
       },

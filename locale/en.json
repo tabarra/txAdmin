@@ -66,17 +66,17 @@
                 "title": "Player Mode",
                 "noclip": {
                     "title": "NoClip",
-                    "label": "Fly around",
+                    "label": "Toggle NoClip, allowing you to move through walls and other objects",
                     "success": "NoClip enabled"
                 },
                 "godmode": {
                     "title": "God",
-                    "label": "Invincible",
+                    "label": "Toggle invincibility, preventing you from taking damage",
                     "success": "God Mode enabled"
                 },
                 "normal": {
                     "title": "Normal",
-                    "label": "Default mode",
+                    "label": "Returns yourself back to the default/normal player mode",
                     "success": "Returned to default player mode."
                 }
             },
@@ -85,24 +85,24 @@
                 "generic_success": "Sent you into the wormhole!",
                 "waypoint": {
                     "title": "Waypoint",
-                    "label": "Go to waypoint set",
+                    "label": "Teleport to the custom waypoint set on the map",
                     "error": "You have no waypoint set."
                 },
                 "coords": {
                     "title": "Coords",
-                    "label": "Go to specified coords",
+                    "label": "Teleport to the provided coordinates",
                     "dialog_title": "Teleport",
                     "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole.",
                     "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33"
                 },
                 "back": {
                     "title": "Back",
-                    "label": "Go back to last location",
+                    "label": "Returns to the location prior to last teleport",
                     "error": "You don't have a last location to go back to!"
                 },
                 "copy": {
                     "title": "Copy Coords",
-                    "label": "Copy coords to clipboard."
+                    "label": "Copy the current world coordinates to your clipboard"
                 }
             },
             "vehicle":{
@@ -111,7 +111,7 @@
                 "not_in_veh_error": "You are not currently in a vehicle!",
                 "spawn": {
                     "title": "Spawn",
-                    "label": "Spawn vehicle by model name",
+                    "label": "Spawn a given vehicle from its model name",
                     "dialog_title": "Spawn vehicle",
                     "dialog_desc": "Enter in the model name of the vehicle you want to spawn.",
                     "dialog_success": "Vehicle spawned!",
@@ -120,12 +120,12 @@
                 },
                 "fix": {
                     "title": "Fix",
-                    "label": "Fix the current vehicle",
+                    "label": "Will repair the vehicle to its maximum health",
                     "success": "Vehicle fixed!"
                 },
                 "delete": {
                     "title": "Delete",
-                    "label": "Delete the current vehicle",
+                    "label": "Deletes the vehicle the player is currently in",
                     "success": "Vehicle deleted!"
                 }
             },
@@ -133,7 +133,7 @@
                 "title": "Heal",
                 "myself": {
                     "title": "Myself",
-                    "label": "Restores your health",
+                    "label": "Will heal yourself to the current ped's maximum",
                     "success_0": "All healed up!",
                     "success_1": "You should be feeling good now!",
                     "success_2": "Restored to full!",
@@ -141,7 +141,7 @@
                 },
                 "everyone": {
                     "title": "Everyone",
-                    "label": "Will heal & revive all players",
+                    "label": "Will heal & revive all connected players",
                     "success": "Healed and revived all players."
                 }
             },
@@ -153,12 +153,14 @@
             },
             "clear_area": {
                 "title": "Reset World Area",
+                "label": "Reset a specified world area to its default state",
                 "dialog_description": "Please enter the radius where you wish to reset entities in (0-300). This will not clear entities spawned server side",
                 "dialog_success": "Clearing area with radius of %{radius}m",
                 "dialog_error": "Invalid radius input. Try again."
             },
             "player_ids": {
                 "title": "Toggle Player IDs",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
                 "alert_show": "Showing nearby player NetIDs.",
                 "alert_hide": "Hiding nearby player NetIDs."
             }
