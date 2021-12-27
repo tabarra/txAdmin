@@ -183,20 +183,9 @@ RegisterNetEvent('txAdmin:menu:clearArea', function(radius)
     ClearAreaLeaveVehicleHealth(curCoords.x, curCoords.y, curCoords.z, radiusToFloat, false, false, false, false, false)
 end)
 
----@param coords vec3
-local function teleportToCoords(coords)
-    if type(coords) ~= 'vector3' then print("^1Invalid coords") end
-    local x = coords[1]
-    local y = coords[2]
-    local z = coords[3]
+local function handleTpNormally(x, y, z)
     local ped = PlayerPedId()
     local veh = GetVehiclePedIsIn(ped, false)
-    lastTpCoords = GetEntityCoords(ped)
-    
-    DoScreenFadeOut(500)
-    while not IsScreenFadedOut() do Wait(0) end
-    -- refresh
-    ped = PlayerPedId()
     SetPedCoordsKeepVehicle(ped, x, y, 100.0)
     if veh > 0 then
         FreezeEntityPosition(veh, true)
@@ -207,7 +196,7 @@ local function teleportToCoords(coords)
         debugPrint("waiting for collision...")
         Wait(100)
     end
-    
+
     -- Automatically calculate ground Z
     if z == 0 then
         local _finalZ
@@ -233,8 +222,43 @@ local function teleportToCoords(coords)
     else
         FreezeEntityPosition(ped, false)
     end
-    DoScreenFadeIn(500)
+
     SetGameplayCamRelativeHeading(0)
+end
+
+local function handleTpForFreecam(x, y, z)
+    debugPrint("Handling TP for freecam")
+    local ped = PlayerPedId()
+    -- As we allow the freecam to have a vehicle attached. We need to make
+    -- sure to teleport this as well
+    local veh = GetVehiclePedIsIn(ped, false)
+    debugPrint('Freecam has vehicle attached: ' .. tostring(veh))
+    if veh and veh > 0 then
+        SetEntityCoords(veh, x, y, z)
+    end
+    SetFreecamPosition(x, y, z)
+end
+
+local function teleportToCoords(coords)
+    if type(coords) ~= 'vector3' then print("^1Invalid coords") end
+    local x = coords[1]
+    local y = coords[2]
+    local z = coords[3]
+    local ped = PlayerPedId()
+
+    DoScreenFadeOut(500)
+    while not IsScreenFadedOut() do Wait(0) end
+
+    if IsFreecamActive() then
+        local curCamPos = GetFreecamPosition()
+        lastTpCoords = curCamPos
+        handleTpForFreecam(x, y, z)
+    else
+        lastTpCoords = GetEntityCoords(ped)
+        handleTpNormally(x, y, z)
+    end
+
+    DoScreenFadeIn(500)
 end
 
 -- Teleport the player to the coordinates
