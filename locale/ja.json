@@ -1,0 +1,287 @@
+{
+    "$meta": {
+        "label": "Japanese",
+        "humanizer_language": "ja"
+    },
+    "restarter": {
+        "start_timeout": "時間内に開始できませんでした",
+        "crash_detected": "クラッシュが検出されました",
+        "hang_detected": "ハングが検出されました",
+        "partial_hang_warn": "",
+        "partial_hang_warn_discord": "部分的なハングにより、このサーバーは 1 分後に再起動します。今すぐ切断してください。",
+        "schedule_reason": "スケジュールされた再起動の予定 %{time}",
+        "schedule_warn": "このサーバーは、 %{smart_count} 分。. 今すぐ切断してください。 |||| このサーバーは、 %{smart_count} 議事録.",
+        "schedule_warn_discord": "**%{servername}** で再起動する予定です %{smart_count} 分. |||| **%{servername}** で再起動する予定です %{smart_count} 議事録."
+    },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) このサーバーからは、このサーバーを禁止されています \"%{reason}\". 禁止期間は次の期間で期限切れになります。 %{expiration}.",
+        "kick_permanent": "(%{author}) このサーバーから永久に禁止されています。 \"%{reason}\".",
+        "reject_temporary": "このサーバーから禁止されています.\n禁止期間は次の期間で期限切れになります。 %{expiration}.\n禁止 ID: %{id}.\n禁止理由: %{reason}.\n禁止: %{author}.",
+        "reject_permanent": "このサーバーから永久に禁止されています。\n禁止 ID: %{id}.\n禁止理由: %{reason}.\n禁止: %{author}."
+    },
+    "server_actions": {
+        "restarting": "サーバーの再起動 (%{reason}).",
+        "restarting_discord": "**%{servername}** 再起動中 (%{reason}).",
+        "stopping": "サーバーのシャットダウン (%{reason}).",
+        "stopping_discord": "**%{servername}** シャットダウン中 (%{reason}).",
+        "spawning_discord": "**%{servername}** 開始中."
+    },
+    "discord": {
+        "status_online": "**%{servername}** 現在は **オンライン**!",
+        "status_offline": "**%{servername}** 現在は **オフライン**!"
+    },
+    "nui_warning": {
+        "title": "警告",
+        "warned_by": "によって警告:",
+        "instruction": "持つ [SPACE] このメッセージを 10 秒間閉じる."
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "txAdmin メニューが有効で、/tx と入力して開きます。\n [ゲーム設定>キーバインド>ファイブM >メニュー: メインページを開く]でキーバインドを設定することもできます。",
+            "menu_not_allowed": "id は、txAdmin に登録されている管理者と一致しません。\ntxAdmin に登録されている場合は、管理者マネージャに移動し、識別子が保存されていることを確認します。",
+            "action_unauthorized": "このアクセス許可がありません。",
+            "unknown_error": "不明なエラーが発生しました。",
+            "not_enabled": "txAdmin メニューが有効になっていません!txAdmin 設定ページで有効にすることができます。",
+            "announcement_title": "サーバーのお知らせ %{author}:",
+            "general_no_perms": "この権限がありません。",
+            "dialog_empty_input": "空の入力を設定することはできません。"
+        },
+        "frozen": {
+            "froze_player": "あなたは、プレイヤーを凍結しました!",
+            "unfroze_player": "あなたはプレーヤーを凍結解除しました!",
+            "was_frozen": "サーバー管理者によって凍結されました。"
+        },
+        "common": {
+            "cancel": "キャンセル",
+            "submit": "送信",
+            "error": "エラーが発生しました",
+            "copied": "クリップボードにコピーされます。"
+        },
+        "page_main": {
+            "tooltips": {
+                "tooltip_1": "使う %{key} メニュー項目をナビゲートするためにページと矢印キーを切り替える",
+                "tooltip_2": "一部のメニュー項目には、左矢印キーと右矢印キーを使用して選択できるサブオプションがあります。"
+            },
+            "player_mode": {
+                "title": "プレイヤーモード",
+                "noclip": {
+                    "title": "ノークリップ",
+                    "label": "飛び回る",
+                    "success": "クリップなし有効"
+                },
+                "godmode": {
+                    "title": "神",
+                    "label": "無敵",
+                    "success": "ゴッドモードが有効"
+                },
+                "normal": {
+                    "title": "正常",
+                    "label": "デフォルトモード",
+                    "success": "デフォルトのプレーヤーモードに戻りました。"
+                }
+            },
+            "teleport": {
+                "title": "テレポート",
+                "generic_success": "ワームホールにあなたを送った!",
+                "waypoint": {
+                    "title": "ウェイポイント",
+                    "label": "ウェイポイントセットに移動",
+                    "error": "ウェイポイントが設定されていない。"
+                },
+                "coords": {
+                    "title": "クアーズ",
+                    "label": "指定されたコーディネートに移動",
+                    "dialog_title": "テレポート",
+                    "dialog_desc": "x、y、z 形式で座標を指定して、ワームホールを通過します。",
+                    "dialog_error": "座標が無効です。111、222、33 の形式でなければなりません。"
+                },
+                "back": {
+                    "title": "戻る",
+                    "label": "最後の場所に戻る",
+                    "error": "あなたは戻る最後の場所を持っていません!"
+                },
+                "copy": {
+                    "title": "コッドのコピー",
+                    "label": "クリップボードにコーディネートをコピーします。"
+                }
+            },
+            "vehicle":{
+                "title": "車",
+                "onesync_error": "このオプションでは、サーバー エンティティの処理に OneSync がオンである必要があります",
+                "not_in_veh_error": "あなたは現在、車両に乗っていません!",
+                "spawn": {
+                    "title": "卵",
+                    "label": "モデル名で車両をスポーン",
+                    "dialog_title": "スポーン車両",
+                    "dialog_desc": "スポーンする車両のモデル名を入力します。",
+                    "dialog_success": "Vehicle spawned!",
+                    "dialog_error": "車両モデル名 '%{modelName}' does not exist!",
+                    "dialog_info": "Trying to spawn %{modelName}."
+                },
+                "fix": {
+                    "title": "修理する",
+                    "label": "現在の車両を修正",
+                    "success": "車両固定!"
+                },
+                "delete": {
+                    "title": "削除",
+                    "label": "現在の車両を削除する",
+                    "success": "車両が削除されました!"
+                }
+            },
+            "heal": {
+                "title": "治る",
+                "myself": {
+                    "title": "自分",
+                    "label": "あなたの健康を回復します",
+                    "success_0": "すべてが癒されました!",
+                    "success_1": "あなたは今、気分が良いはずです!",
+                    "success_2": "完全に復元!",
+                    "success_3": "痛み固定!"
+                },
+                "everyone": {
+                    "title": "皆さん",
+                    "label": "すべてのプレイヤーを癒し、復活させる",
+                    "success": "すべてのプレイヤーを癒し、復活しました。"
+                }
+            },
+            "announcement": {
+                "title": "お知らせを送信",
+                "dialog_desc": "すべてのオンラインプレーヤーにアナウンスを送信します。",
+                "dialog_placeholder": "あなたの発表.",
+                "dialog_success": "お知らせの送信."
+            },
+            "clear_area": {
+                "title": "ワールド領域のリセット",
+                "dialog_description": "(0~300)でエンティティをリセットする半径を入力してください。これにより、エンティティがサーバー側で生成された場合は、削除されません。",
+                "dialog_success": "半径が指定されたクリアエリア %{radius}m",
+                "dialog_error": "半径入力が無効です。もう一度やり直してください。"
+            },
+            "player_ids": {
+                "title": "プレーヤー ID の切り替え",
+                "alert_show": "近くのプレイヤーのNetIDを表示しています。",
+                "alert_hide": "近くのプレイヤーネットIDを隠す。"
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "オンラインプレイヤー",
+                "players": "選手",
+                "search": "捜索",
+                "zero_players": "プレイヤーが見つかりません"
+            },
+            "sort": {
+                "label": "並べ替え順",
+                "distance": "距離",
+                "id": "身分証明書",
+                "joined_first": "最初に参加しました",
+                "joined_last": "最後に参加しました",
+                "closest": "最も 近い",
+                "farthest": "遠い"
+            },
+            "card": {
+                "health": "%{percentHealth}% 健康"
+            }
+        },
+        "player_modal": {
+            "misc": {
+                "error": "このユーザーの詳細を取得中にエラーが発生しました。エラーは以下の通りです:",
+                "target_not_found": "ID またはユーザー名を持つオンライン プレーヤーが見つかりませんでした。%{target}"
+            },
+            "tabs": {
+                "actions": "アクション",
+                "info": "情報",
+                "ids": "ID",
+                "history": "歴史",
+                "ban": "禁止"
+            },
+            "actions": {
+                "title": "プレイヤーのアクション",
+                "command_sent": "Command sent!",
+                "moderation": {
+                    "title": "節度",
+                    "options": {
+                        "dm": "DM",
+                        "warn": "警告する",
+                        "kick": "蹴る",
+                        "set_admin": "管理者に付与する"
+                    },
+                    "dm_dialog": {
+                        "title": "ダイレクトメッセージ",
+                        "description": "このプレイヤーに直接メッセージを送る理由は何ですか?",
+                        "placeholder": "理由...",
+                        "success": "DM が送信されました!"
+                    },
+                    "warn_dialog": {
+                        "title": "警告する",
+                        "description": "このプレイヤーに直接警告する理由は何ですか?",
+                        "placeholder": "理由...",
+                        "success": "プレイヤーは警告を受けました!"
+                    },
+                    "kick_dialog": {
+                        "title": "蹴る",
+                        "description": "この選手を蹴る理由は何ですか?",
+                        "placeholder": "理由...",
+                        "success": "プレイヤーは蹴られました!"
+                    }
+                },
+                "interaction": {
+                    "title": "相互作用",
+                    "options": {
+                        "heal": "治る",
+                        "go_to": "行きます",
+                        "bring": "持って来る",
+                        "spectate": "スペクテート",
+                        "toggle_freeze": "フリーズを切り替える"
+                    },
+                    "notifications": {
+                        "heal_player": "ヒーリングプレーヤー",
+                        "tp_player": "プレイヤーへのテレポート",
+                        "bring_player": "召喚プレイヤー",
+                        "spectate_failed": "ターゲットの解決に失敗しました。スペクテートを終了します。.",
+                        "spectate_yourself": "あなたは自分自身を見ることはできません。",
+                        "freeze_yourself": "あなたは自分自身を凍結することはできません。"
+                    }
+                },
+                "troll": {
+                    "title": "トロール",
+                    "options": {
+                        "drunk": "酔っぱらいを作る",
+                        "fire": "セットファイア",
+                        "wild_attack": "野生の攻撃"
+                    }
+                }
+            },
+            "info": {
+                "title": "プレイヤー情報",
+                "session_time": "セッション時間",
+                "play_time": "再生時間",
+                "joined": "しんにゅう",
+                "notes_placeholder": "このプレーヤーに関する注意事項"
+            },
+            "history": {
+                "title": "関連する履歴",
+                "action_types": {
+                    "warn": "警告",
+                    "warn_revoked": "警告を取り消した",
+                    "ban": "禁止",
+                    "ban_revoked": "の禁止を取り消した",
+                    "whitelist": "ホワイトリスト",
+                    "whitelist_revoked": "ホワイトリストを取り消した"
+                }
+            },
+            "ban": {
+                "title": "プレイヤーを禁止する",
+                "reason_placeholder": "理由",
+                "duration_placeholder": "期間",
+                "hours": "時間",
+                "days": "日",
+                "weeks": "週間",
+                "months": "月",
+                "permanent": "パーマネント",
+                "custom": "習慣",
+                "helper_text": "期間を選択してください"
+            }
+        }
+    }
+}
