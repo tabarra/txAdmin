@@ -8,7 +8,7 @@
         "crash_detected": "クラッシュが検出されました",
         "hang_detected": "ハングが検出されました",
         "partial_hang_warn": "",
-        "partial_hang_warn_discord": "部分的なハングにより、このサーバーは 1 分後に再起動します。今すぐ切断してください。",
+        "partial_hang_warn_discord": "部分的なハングのために、 **%{servername}** 1分後に再起動します。",
         "schedule_reason": "スケジュールされた再起動の予定 %{time}",
         "schedule_warn": "このサーバーは、 %{smart_count} 分。. 今すぐ切断してください。 |||| このサーバーは、 %{smart_count} 議事録.",
         "schedule_warn_discord": "**%{servername}** で再起動する予定です %{smart_count} 分. |||| **%{servername}** で再起動する予定です %{smart_count} 議事録."
