@@ -56,7 +56,7 @@ const DialogHistoryView: React.FC = () => {
     },
     WHITELIST: {
       title: t("nui_menu.player_modal.history.action_types.whitelist"),
-      color: "#c2293e",
+      color: "#86c012",
     },
     "WHITELIST-REVOKED": {
       title: t("nui_menu.player_modal.history.action_types.whitelist_revoked"),

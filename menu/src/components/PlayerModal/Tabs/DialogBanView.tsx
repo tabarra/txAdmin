@@ -117,7 +117,7 @@ const DialogBanView: React.FC = () => {
 
   return (
     <DialogContent>
-      <Typography variant="h6" sx={{mb: 2}}>Ban Player</Typography>
+      <Typography variant="h6" sx={{mb: 2}}>{t("nui_menu.player_modal.ban.title")}</Typography>
       <form onSubmit={handleBan}>
         <TextField
           autoFocus

@@ -41,9 +41,6 @@ The code to set godmode is there, but not working
 
 
 
-
-
-
 Pro debug da playerlist:
 - comando pra printar: [primeiro,ultimo,count,sum]
 - comando get initial
