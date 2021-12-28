@@ -197,23 +197,6 @@ local function handleTpNormally(x, y, z)
         Wait(100)
     end
 
-    -- Automatically calculate ground Z
-    if z == 0 then
-        local _finalZ
-        local DELAY = 500
-        for i = 1, 5 do
-            if _finalZ ~= nil then break end
-            debugPrint("Z calc attempt #" .. i .. " (" .. (i * DELAY) .. "ms)")
-            _finalZ = FindZForCoords(x, y)
-            if _z == nil then
-                debugPrint("Didn't resolve! Trying again in " .. DELAY)
-                Wait(DELAY)
-            end
-        end
-        if _finalZ ~= nil then
-            z = _finalZ
-        end
-    end
     -- update ped again
     ped = PlayerPedId()
     SetPedCoordsKeepVehicle(ped, x, y, z)
@@ -248,6 +231,24 @@ local function teleportToCoords(coords)
 
     DoScreenFadeOut(500)
     while not IsScreenFadedOut() do Wait(0) end
+
+    -- Automatically calculate ground Z
+    if z == 0 then
+        local _finalZ
+        local DELAY = 500
+        for i = 1, 5 do
+            if _finalZ ~= nil then break end
+            debugPrint("Z calc attempt #" .. i .. " (" .. (i * DELAY) .. "ms)")
+            _finalZ = FindZForCoords(x, y)
+            if _z == nil then
+                debugPrint("Didn't resolve! Trying again in " .. DELAY)
+                Wait(DELAY)
+            end
+        end
+        if _finalZ ~= nil then
+            z = _finalZ
+        end
+    end
 
     if IsFreecamActive() then
         local curCamPos = GetFreecamPosition()
