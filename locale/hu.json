@@ -39,11 +39,10 @@
         "misc": {
             "help_message": "A txAdmin rendelkezik játékon belüli menüvel!\nGyorsgomb [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] Próbáld ki!",
             "menu_not_allowed": "Az azonosítód nem egyezik a txAdminban található admin azonosítókkal.\nHa regisztrálva vagy txAdminban, bizonyosodj meg róla hogy el van mentve az Admin Managerben.",
-            "action_unauthorized": "Ehhez nincs engedélyed.",
+            "no_perms": "Ehhez nincs engedélyed.",
             "unknown_error": "Ismeretlen hiba lépett fel.",
             "not_enabled": "A txAdmin menü nincs engedélyezve! Engedélyezheted a txAdmin beállítások fülön.",
             "announcement_title": "Szerver felhívás %{author}:",
-            "general_no_perms": "Ehhez nincs engedélyed!",
             "dialog_empty_input": "Nem lehet üresen hagyni."
         },
         "frozen": {
@@ -90,7 +89,6 @@
                 },
                 "coords": {
                     "title": "Koordináta",
-                    "label": "Teleportálás koordinátára",
                     "label": "Menj egy megadott koordinátára",
                     "dialog_title": "Teleportálás",
                     "dialog_desc": "A koordinátákat x, y, z formában kell megadnod.",
@@ -148,18 +146,21 @@
             },
             "announcement": {
                 "title": "Felhívás küldése",
-                "dialog_desc": "Felhívás küldése minden elérhető játékosnak.",
+                "label": "Felhívás küldése minden elérhető játékosnak.",
+                "dialog_desc": "Enter the message you want to broadcast to all players.",
                 "dialog_placeholder": "Felhívás...",
                 "dialog_success": "Felhívás elküldve."
             },
             "clear_area": {
                 "title": "Terület visszaállítása",
-                "dialog_description": "Állítsd be a sugarát annak a területnek ahol az entitásokat visszaállítanád (0-300). A szerver oldali entitások nem kerülnek visszaállításra",
+                "label": "Reset a specified world area to its default state",
+                "dialog_desc": "Állítsd be a sugarát annak a területnek ahol az entitásokat visszaállítanád (0-300). A szerver oldali entitások nem kerülnek visszaállításra",
                 "dialog_success": "Terület visszaállítása %{radius}m sugárban",
                 "dialog_error": "Érvénytelen sugár bevitel. Próbáld újra."
             },
             "player_ids": {
                 "title": "ID mód váltása",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
                 "alert_show": "Közeli játékosok ID-jének mutatása.",
                 "alert_hide": "Közeli játékosok ID-jének elrejtése."
             }
@@ -281,7 +282,8 @@
                 "months": "Hónap",
                 "permanent": "Végleges",
                 "custom": "Egyedi",
-                "helper_text": "Kérlek válassz időtartamot"
+                "helper_text": "Kérlek válassz időtartamot",
+                "submit": "Apply ban"
             }
         }
     }

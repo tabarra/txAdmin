@@ -323,7 +323,7 @@ export const MainPageList: React.FC = () => {
   const handleClearArea = () => {
     openDialog({
       title: t("nui_menu.page_main.clear_area.title"),
-      description: t("nui_menu.page_main.clear_area.dialog_description"),
+      description: t("nui_menu.page_main.clear_area.dialog_desc"),
       placeholder: "300",
       onSubmit: (msg) => {
         const parsedRadius = parseInt(msg);

@@ -70,7 +70,7 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
       if (!selected) return;
 
       if (!isUserAllowed) {
-        enqueueSnackbar(t("nui_menu.misc.action_unauthorized"), {
+        enqueueSnackbar(t("nui_menu.misc.no_perms"), {
           variant: "error",
           anchorOrigin: {
             horizontal: "center",
@@ -168,7 +168,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     const divRef = useRef<HTMLDivElement | null>(null);
 
     const showNotAllowedAlert = () => {
-      enqueueSnackbar(t("nui_menu.misc.action_unauthorized"), {
+      enqueueSnackbar(t("nui_menu.misc.no_perms"), {
         variant: "error",
         anchorOrigin: {
           horizontal: "center",

@@ -56,7 +56,7 @@ const DialogBanView: React.FC = () => {
 
       enqueueSnackbar(cleanedMsg, { variant: translateAlertType(resp.type) });
     } catch (e) {
-      enqueueSnackbar(t("nui_menu.common.error"), { variant: "error" });
+      enqueueSnackbar(t("nui_menu.misc.unknown_error"), { variant: "error" });
       console.error(e);
     }
   };
@@ -186,7 +186,7 @@ const DialogBanView: React.FC = () => {
           sx={{ mt: 2 }}
           onClick={handleBan}
         >
-          Ban
+          {t("nui_menu.player_modal.ban.submit")}
         </Button>
       </form>
     </DialogContent>

@@ -39,11 +39,10 @@
         "misc": {
             "help_message": "txAdmin Menü aktiviert, tippe /tx ein, um es zu öffnen.\nDu kannst zusätzlich in den Einstellungen eine Taste zuweisen [Einstellungen > Steuerung > FiveM > txAdmin].",
             "menu_not_allowed": "Deine IDs stimmen mit keiner bei txAdmin registrierten überein.\n Wenn du bei txAdmin registriert bist, stelle sicher, dass die richtigen IDs gespeichert sind.",
-            "action_unauthorized": "Du hast diese Berechtigung nicht.",
+            "no_perms": "Du hast diese Berechtigung nicht.",
             "unknown_error": "Ein unbekannter Fehler ist aufgetreten.",
             "not_enabled": "Das txAdmin Menü ist nicht aktiviert! Du kannst es in den txAdmin Einstellungen aktivieren.",
             "announcement_title": "Serverweite Ankündigung von %{author}:",
-            "general_no_perms": "Du hast keine Berechtigung dafür!",
             "dialog_empty_input": "Du kannst keine leere Eingabe haben."
         },
         "frozen": {
@@ -147,18 +146,21 @@
             },
             "announcement": {
                 "title": "Ankündigung schicken",
-                "dialog_desc": "Ankündigung an alle Spieler schicken.",
+                "label": "Ankündigung an alle Spieler schicken.",
+                "dialog_desc": "Enter the message you want to broadcast to all players.",
                 "dialog_placeholder": "Deine Ankündigung ...",
                 "dialog_success": "Versenden der Ankündigung!"
             },
             "clear_area": {
                 "title": "Weltbereich zurücksetzen",
-                "dialog_description": "Bitte gib einen Radius (0-300) ein, in dem du alle Objekte zurücksetzen möchtest. Dadurch werden nicht serverseitig erzeugte Objekte gelöscht",
+                "label": "Reset a specified world area to its default state",
+                "dialog_desc": "Bitte gib einen Radius (0-300) ein, in dem du alle Objekte zurücksetzen möchtest. Dadurch werden nicht serverseitig erzeugte Objekte gelöscht",
                 "dialog_success": "Zurücksetzen im Radius von %{radius}m",
                 "dialog_error": "Ungültiger Radius! Gib einen Radius zwischen 0 und 300 ein."
             },
             "player_ids": {
                 "title": "Spieler IDs (NameTags)",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
                 "alert_show": "Spieler IDs (NameTags) aktiviert.",
                 "alert_hide": "Spieler IDs (NameTags) deaktiviert."
             }
@@ -280,7 +282,8 @@
                 "months": "Monate",
                 "permanent": "Permanent",
                 "custom": "Benutzerdefiniert",
-                "helper_text": "Bitte eine Dauer angeben"
+                "helper_text": "Bitte eine Dauer angeben",
+                "submit": "Apply ban"
             }
         }
     }

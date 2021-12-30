@@ -39,11 +39,10 @@
         "misc": {
             "help_message": "txAdmin Menu attivato, scrivi /tx per aprirlo.\nPuoi bindare un tasto in [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
             "menu_not_allowed": "I tuoi identifiers non corrispondono ad un admin registrato nel txAdmin.\nSe sei registrato al txAdmin, vai nella sezione Admin Manager e controlla che siano presenti i tuoi identifiers.",
-            "action_unauthorized": "Non hai questo permesso.",
+            "no_perms": "Non hai questo permesso.",
             "unknown_error": "Si è verificato un errore sconosciuto.",
             "not_enabled": "Il menu txAdmin non è attivo! Puoi attivarlo dalle impostazioni del txAdmin.",
             "announcement_title": "Annuncio da %{author}:",
-            "general_no_perms": "Non hai il permesso per fare questo!",
             "dialog_empty_input": "Non puoi dare un input vuoto."
         },
         "frozen": {
@@ -147,18 +146,21 @@
             },
             "announcement": {
                 "title": "Manda Annuncio",
-                "dialog_desc": "Manda un annuncio a tutti i player online.",
+                "label": "Manda un annuncio a tutti i player online.",
+                "dialog_desc": "Enter the message you want to broadcast to all players.",
                 "dialog_placeholder": "Il tuo annuncio...",
                 "dialog_success": "Inviando l'annuncio."
             },
             "clear_area": {
                 "title": "Resetta l'area",
-                "dialog_description": "Inserisci il raggio in cui desideri reimpostare le entità (0-300). Questo non cancellerà le entità generate sul lato server",
+                "label": "Reset a specified world area to its default state",
+                "dialog_desc": "Inserisci il raggio in cui desideri reimpostare le entità (0-300). Questo non cancellerà le entità generate sul lato server",
                 "dialog_success": "Pulendo l'area in un raggio di %{radius}m",
                 "dialog_error": "Inserimento raggio non valido. Riprova."
             },
             "player_ids": {
                 "title": "Toggle ID dei Player",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
                 "alert_show": "Mostra gli ID dei player vicini.",
                 "alert_hide": "Nascondi gli ID dei player vicini."
             }
@@ -280,7 +282,8 @@
                 "months": "mesi",
                 "permanent": "Permanentemente",
                 "custom": "Personalizzato",
-                "helper_text": "Seleziona una durata"
+                "helper_text": "Seleziona una durata",
+                "submit": "Apply ban"
             }
         }
     }

@@ -39,11 +39,10 @@
         "misc": {
             "help_message": "txAdmin Menu ingeschakeld, type /tx om het te openen.\nJe kan ook een keybind registreren in [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
             "menu_not_allowed": "Jouw identifiers zijn niet gelijk aan degenen die in txAdmin zijn geregistreerd.\nAls je wel geregistreerd staat bij txAdmin, ga naar Admin Manager en sla je identifiers op.",
-            "action_unauthorized": "Je hebt hier geen permissie voor.",
+            "no_perms": "Je hebt hier geen permissie voor.",
             "unknown_error": "Er is een onbekende error opgetreden.",
             "not_enabled": "Het txAdmin Menu is uitgeschakeld! Je kan hem inschakelen bij de txAdmin instellingen pagina.",
             "announcement_title": "Server Mededeling door %{author}:",
-            "general_no_perms": "Je hebt geen permissies!",
             "dialog_empty_input": "Je kan niet niks invullen."
         },
         "frozen": {
@@ -147,18 +146,21 @@
             },
             "announcement": {
                 "title": "Verstuur Mededeling",
-                "dialog_desc": "Stuur een mededeling aan alle online spelers.",
+                "label": "Stuur een mededeling aan alle online spelers",
+                "dialog_desc": "Enter the message you want to broadcast to all players.",
                 "dialog_placeholder": "Jouw mededeling...",
                 "dialog_success": "Mededeling aan het verzenden."
             },
             "clear_area": {
                 "title": "Herstel de wereld",
-                "dialog_description": "Kies een radius (0-300), om alle entities van te verwijderen. Dit verwijderd geen server sided gespawnede entities",
+                "label": "Reset a specified world area to its default state",
+                "dialog_desc": "Kies een radius (0-300), om alle entities van te verwijderen. Dit verwijderd geen server sided gespawnede entities",
                 "dialog_success": "Gebied met de radius %{radius}m aan het herstellen",
                 "dialog_error": "Ongeldige invoer. Probeer het opnieuw."
             },
             "player_ids": {
                 "title": "Schakel Speler IDs in/uit",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
                 "alert_show": "Toon de NetIDs van spelers in jouw buurt.",
                 "alert_hide": "Verberg NetIDs van spelers in jouw buurt."
             }
@@ -280,7 +282,8 @@
                 "months": "maanden",
                 "permanent": "Permanent",
                 "custom": "Custom",
-                "helper_text": "Selecteer een lengte"
+                "helper_text": "Selecteer een lengte",
+                "submit": "Apply ban"
             }
         }
     }

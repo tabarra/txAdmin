@@ -39,11 +39,10 @@
         "misc": {
             "help_message": "txAdmin Meniu iįjungtas, rašykite /tx norėdami jį atidaryti.\nMygtuką galite priskirti ar pakeisti [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
             "menu_not_allowed": "Jūsų identifikavimas txAdmin sistemai nebuvo rastas.\nJei esate užregistruotas txAdmin sistemoje, eikite į Admin Manager ir įsitikinkite, kad jūsų atpažinimas išsaugotas.",
-            "action_unauthorized": "Neturite tam teisių.",
+            "no_perms": "Neturite tam teisių.",
             "unknown_error": "Nežinoma klaida.",
             "not_enabled": "txAdmin meniu nėra įjungtas! Tai galite padaryti per txAdmin nustatymų (settings) puslapį.",
             "announcement_title": "Serverio pranešimas nuo: %{author}:",
-            "general_no_perms": "Neturite tam teisių!",
             "dialog_empty_input": "Turite užpildyti įvesties laukelius."
         },
         "frozen": {
@@ -147,18 +146,21 @@
             },
             "announcement": {
                 "title": "Siųsti pranešimą",
-                "dialog_desc": "Siųsti pranešimą visiems serverio žaidėjams.",
+                "label": "Siųsti pranešimą visiems serverio žaidėjams.",
+                "dialog_desc": "Enter the message you want to broadcast to all players.",
                 "dialog_placeholder": "Jūsų pranešimas...",
                 "dialog_success": "Siunčiamas pranešimas."
             },
             "clear_area": {
                 "title": "Atstatyti pasaulio aplinką",
-                "dialog_description": "Įveskite kokiu spinduliu norėtumėte atstatyti objektus (0-300). Šis pasirinkimas neištrins serverio sukurtų objektų",
+                "label": "Reset a specified world area to its default state",
+                "dialog_desc": "Įveskite kokiu spinduliu norėtumėte atstatyti objektus (0-300). Šis pasirinkimas neištrins serverio sukurtų objektų",
                 "dialog_success": "Ištrinami objektai %{radius} metrų spinduliu",
                 "dialog_error": "Netinkamas skaičius."
             },
             "player_ids": {
                 "title": "Žaidėjų ID rodymas",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
                 "alert_show": "Žaidėjų NetID rodomi.",
                 "alert_hide": "Žaidėjų NetID paslėpti."
             }
@@ -280,7 +282,8 @@
                 "months": "mėnesiai",
                 "permanent": "Visam laikui",
                 "custom": "Custom",
-                "helper_text": "Pasirinkti laiką"
+                "helper_text": "Pasirinkti laiką",
+                "submit": "Apply ban"
             }
         }
     }

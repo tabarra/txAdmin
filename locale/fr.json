@@ -39,11 +39,10 @@
         "misc": {
             "help_message": "Menu txAdmin activé, ecrivez /tx pour l'ouvrir.\nVous pouvez aussi configurer une touche [Paramètre du Jeu > Configuration des touches > FiveM > Menu: Open Main Page].",
             "menu_not_allowed": "Votre identifiant ne coïncide avec aucun identifiant d'un administrateur sur txAdmin.\nSi vous êtes enregistré(e) sur txAdmin, allez dans Admin Manager et assurez-vous que votre identifiant est bien enregistré.",
-            "action_unauthorized": "Vous n'avez pas les permissions suffisantes.",
+            "no_perms": "Vous n'avez pas les permissions suffisantes.",
             "unknown_error": "Une erreur inconnue s'est produite.",
             "not_enabled": "Le Menu txAdmin n'est pas activé ! Vous pouvez l'activer dans les paramètres de txAdmin.",
             "announcement_title": "Annonce serveur par %{author}:",
-            "general_no_perms": "Vous n'avez pas la permission de faire ça !",
             "dialog_empty_input": "Vous ne pouvez pas avoir un champ vide."
         },
         "frozen": {
@@ -147,18 +146,21 @@
             },
             "announcement": {
                 "title": "Faire une annonce",
-                "dialog_desc": "Faire une annonce pour tous les joueurs actuellement connectés",
+                "label": "Faire une annonce pour tous les joueurs actuellement connectés.",
+                "dialog_desc": "Enter the message you want to broadcast to all players.",
                 "dialog_placeholder": "Message",
                 "dialog_success": "L'annonce est en train d'être envoyé."
             },
             "clear_area": {
                 "title": "Nettoyer la zone",
-                "dialog_description": "Entrez un rayon où vous souhaitez que les entités soient supprimées (0-300). Cela ne va pas supprimer les entités créées par le serveur.",
+                "label": "Reset a specified world area to its default state",
+                "dialog_desc": "Entrez un rayon où vous souhaitez que les entités soient supprimées (0-300). Cela ne va pas supprimer les entités créées par le serveur.",
                 "dialog_success": "Suppression des entités dans un rayon de %{radius} m",
                 "dialog_error": "Rayon invalide. Veuillez réessayer."
             },
             "player_ids": {
                 "title": "Afficher les ID des joueurs",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
                 "alert_show": "Les ID des joueurs sont affichés.",
                 "alert_hide": "Les ID des joueurs ne sont plus affichés."
             }
@@ -280,7 +282,8 @@
                 "months": "mois",
                 "permanent": "Permanente",
                 "custom": "Personnalisée",
-                "helper_text": "Selectionnez une durée"
+                "helper_text": "Selectionnez une durée",
+                "submit": "Apply ban"
             }
         }
     }

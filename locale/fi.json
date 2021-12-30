@@ -39,11 +39,10 @@
         "misc": {
             "help_message": "txAdmin Menu päällä. Kirjoita /tx avataksesi.\nVoit myös asettaa menulle oman näppäimen: [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
             "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
-            "action_unauthorized": "Sinulla ei ole oikeuksia tähän.",
+            "no_perms": "Sinulla ei ole oikeuksia tähän.",
             "unknown_error": "Tuntematon virhe",
             "not_enabled": "txAdmin Menu ei ole käytössä! Voit ottaa sen käyttöön txAdminin asetuksista.",
             "announcement_title": "Palvelinilmoitus henkilöltä %{author}:",
-            "general_no_perms": "Sinulla ei ole oikeuksia tähän!",
             "dialog_empty_input": "Tekstikenttä ei voi olla tyhjä."
         },
         "frozen": {
@@ -147,18 +146,21 @@
             },
             "announcement": {
                 "title": "Lähetä ilmoitus",
-                "dialog_desc": "Lähetä ilmoitus kaikille pelaajille.",
+                "label": "Lähetä ilmoitus kaikille pelaajille.",
+                "dialog_desc": "Enter the message you want to broadcast to all players.",
                 "dialog_placeholder": "Ilmoituksesi....",
                 "dialog_success": "Lähetetään ilmoitusta."
             },
             "clear_area": {
                 "title": "Tyhjennä alue",
-                "dialog_description": "Aseta haluttu etäisyys väliltä (0-300). Tämä toiminto ei poista palvelimen puolelta (server side) luotuja asioita.",
+                "label": "Reset a specified world area to its default state",
+                "dialog_desc": "Aseta haluttu etäisyys väliltä (0-300). Tämä toiminto ei poista palvelimen puolelta (server side) luotuja asioita.",
                 "dialog_success": "Tyjennetään alueelta: %{radius}m",
                 "dialog_error": "Virheellinen alue, yritä uudelleen."
             },
             "player_ids": {
                 "title": "Näytä pelaajien ID:t",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
                 "alert_show": "Showing nearby player NetIDs.",
                 "alert_hide": "Hiding nearby player NetIDs."
             }
@@ -280,7 +282,8 @@
                 "months": "kuukautta",
                 "permanent": "Ikuinen",
                 "custom": "Custom",
-                "helper_text": "Aseta porttikiellon kesto"
+                "helper_text": "Aseta porttikiellon kesto",
+                "submit": "Apply ban"
             }
         }
     }

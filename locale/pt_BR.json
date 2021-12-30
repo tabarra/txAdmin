@@ -39,11 +39,10 @@
         "misc": {
             "help_message": "txAdmin Menu habilitado, digite /tx para abri-lo.\nVocê também pode configurar uma tecla atalho [Configurações do jogo > Key Bindings > FiveM > Menu: Open Main Page].",
             "menu_not_allowed": "Seus IDs não estão cadastrados como administrador no txAdmin.\nSe você tiver acesso ao txAdmin web, acesse a página Admin Manager e adicione seus IDs pro seu usuário.",
-            "action_unauthorized": "Você não tem permissão para esta atividade.",
+            "no_perms": "Você não tem permissão para esta atividade.",
             "unknown_error": "Ocorreu um erro inesperado.",
             "not_enabled": "O menu do txAdmin não está habilitado! Você pode habilita-lo na página de configurações do txAdmin web.",
             "announcement_title": "Aviso ao servidor por %{author}:",
-            "general_no_perms": "Você não tem permissão para esta atividade!",
             "dialog_empty_input": "Você precisa digitar alguma coisa."
         },
         "frozen": {
@@ -147,18 +146,21 @@
             },
             "announcement": {
                 "title": "Enviar Aviso Global",
+                "label": "Envia uma mensagem para todos os jogadores online",
                 "dialog_desc": "Insira a mensagem a ser enviada para todos os jogadores.",
                 "dialog_placeholder": "Seu aviso...",
                 "dialog_success": "Enviando anúncio."
             },
             "clear_area": {
                 "title": "Resetar Área",
-                "dialog_description": "Insira a distância a qual deseja limpar entidades (0-300). Esta ação não vai remover entidades criadas no servidor.",
+                "label": "Limpa as entidades do jogo próximas ao jogador.",
+                "dialog_desc": "Insira a distância a qual deseja limpar entidades (0-300). Esta ação não vai remover entidades criadas no servidor.",
                 "dialog_success": "Limpando entidades dentro de %{radius}m",
                 "dialog_error": "Distância inválida."
             },
             "player_ids": {
                 "title": "Mostrar/Esconder IDs",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
                 "alert_show": "Mostrando os NetIDs próximos.",
                 "alert_hide": "Escondendo os NetIDs próximos."
             }
@@ -280,7 +282,8 @@
                 "months": "meses",
                 "permanent": "Permanente",
                 "custom": "Customizado",
-                "helper_text": "Por favor selecione a duração"
+                "helper_text": "Por favor selecione a duração",
+                "submit": "Aplicar ban"
             }
         }
     }

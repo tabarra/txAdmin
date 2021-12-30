@@ -39,11 +39,10 @@
         "misc": {
             "help_message": "txAdmin Menu enabled, type /tx to open it.\nYou can also configure a keybind at [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
             "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
-            "action_unauthorized": "You do not have this permission.",
+            "no_perms": "You do not have this permission.",
             "unknown_error": "An unknown error occurred.",
             "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
             "announcement_title": "Server Announcement by %{author}:",
-            "general_no_perms": "You do not have permissions for this!",
             "dialog_empty_input": "You cannot have an empty input."
         },
         "frozen": {
@@ -147,18 +146,21 @@
             },
             "announcement": {
                 "title": "Send Announcement",
+                "label": "Send an announcement to all online players.",
                 "dialog_desc": "Send an announcement to all online players.",
                 "dialog_placeholder": "Your announcement...",
                 "dialog_success": "Sending the announcement."
             },
             "clear_area": {
                 "title": "Reset World Area",
-                "dialog_description": "Please enter the radius where you wish to reset entities in (0-300). This will not clear entities spawned server side",
+                "label": "Reset a specified world area to its default state",
+                "dialog_desc": "Please enter the radius where you wish to reset entities in (0-300). This will not clear entities spawned server side.",
                 "dialog_success": "Clearing area with radius of %{radius}m",
                 "dialog_error": "Invalid radius input. Try again."
             },
             "player_ids": {
                 "title": "Toggle Player IDs",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
                 "alert_show": "Showing nearby player NetIDs.",
                 "alert_hide": "Hiding nearby player NetIDs."
             }
@@ -280,7 +282,8 @@
                 "months": "months",
                 "permanent": "Permanent",
                 "custom": "Custom",
-                "helper_text": "Please select a duration"
+                "helper_text": "Please select a duration",
+                "submit": "Apply ban"
             }
         }
     }

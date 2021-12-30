@@ -30,7 +30,16 @@
 
 
 
-
+Quando terminar de importar as traduções:
+[x] Remover redundantes:
+    - nui_menu.misc.general_no_perms, nui_menu.misc.action_unauthorized -> no_perms
+    - nui_menu.common.error -> nui_menu.misc.unknown_error
+[x] Renomear clear_area.dialog_description -> clear_area.dialog_desc
+[x] sync new labels
+[x] Adicionar tradução pro botão BAN do `DialogBanView.tsx`
+[ ] Mergir pt (migration no vault)
+[ ] Quebrar snackbar de not adim em dois, um se confirmado que o problema são os identifiers, outro pra qualquer outro tipo de problema
+[ ] the kick/warn/dm reason modal title should have the username as key in the translation
 
 here's a 2500 frames one https://filetransfer.io/data-package/S8DoFJg8#link 
 

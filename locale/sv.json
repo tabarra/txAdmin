@@ -39,11 +39,10 @@
         "misc": {
             "help_message": "txAdmin Menyn är aktiverad, skriv /tx i chatten för att öppna den.\nDu kan ändra knapp på [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
             "menu_not_allowed": "Dina id stämmer inte överns med dom som är registerade i txAdmin regisrtert.\nOm du är registerad på Txadmin,gå till administratör hanteraren och dubbelkolla att id:en är korrekta.",
-            "action_unauthorized": "Du har inte behörighet för detta.",
+            "no_perms": "Du har inte behörighet för detta.",
             "unknown_error": "Ett okänt problem har uppstått",
             "not_enabled": "Txadmin menyn är inte aktiverad! Du kan aktivera den på Txadmin panelen.",
             "announcement_title": "Server meddelande skickat av %{author}:",
-            "general_no_perms": "Du har inte behörighet för detta",
             "dialog_empty_input": "Du kan inte ha ett tomt fält."
         },
         "frozen": {
@@ -147,18 +146,21 @@
             },
             "announcement": {
                 "title": "Skicka ut medelande",
-                "dialog_desc": "Skicka ett medelande till alla spelare inne på servern.",
+                "label": "Skicka ett meddelande till alla spelare inne på servern",
+                "dialog_desc": "Enter the message you want to broadcast to all players.",
                 "dialog_placeholder": "Ditt Medelande... ",
                 "dialog_success": "Skickar ut ditt medelande."
             },
             "clear_area": {
                 "title": "Återställ världs arean",
-                "dialog_description": "Vänligen skriv in radien du vill rensa objekt i (0-300). Detta kommer inte rensa saker servern har spawnat",
+                "label": "Reset a specified world area to its default state",
+                "dialog_desc": "Vänligen skriv in radien du vill rensa objekt i (0-300). Detta kommer inte rensa saker servern har spawnat",
                 "dialog_success": "Rensar area med %{radius}m",
                 "dialog_error": "Ogiltig radie,försök igen."
             },
             "player_ids": {
                 "title": "Sätt på spelares id",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
                 "alert_show": "Visa spelares id i närheten.",
                 "alert_hide": "Dölj spelares id i närheten."
             }
@@ -280,7 +282,8 @@
                 "months": "Månader",
                 "permanent": "Permanent",
                 "custom": "Skräddasydd",
-                "helper_text": "vänligen välj en varaktighet"
+                "helper_text": "vänligen välj en varaktighet",
+                "submit": "Apply ban"
             }
         }
     }
