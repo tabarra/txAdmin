@@ -147,7 +147,8 @@
             },
             "announcement": {
                 "title": "Send Announcement",
-                "dialog_desc": "Send an announcement to all online players.",
+                "label": "Send an announcement to all online players.",
+                "dialog_desc": "Enter the message do you want to broadcast to all players",
                 "dialog_placeholder": "Your announcement...",
                 "dialog_success": "Sending the announcement."
             },
