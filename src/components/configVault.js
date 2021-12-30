@@ -162,8 +162,14 @@ module.exports = class ConfigVault {
                 quiet: toDefault(cfg.fxRunner.quiet, null),
             };
 
+            //Migrations
             //Removing menu beta convar (v4.9)
             out.fxRunner.commandLine = out.fxRunner.commandLine?.replace(/\+?setr? txEnableMenuBeta true\s?/gi, '');
+
+            //Merging portuguese
+            if (out.global.language === 'pt_PT' || out.global.language === 'pt_BR'){
+                out.global.language = 'pt';
+            }
         } catch (error) {
             if (GlobalData.verbose) dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated!\nOriginal error: ${error.message}`);
