@@ -52,16 +52,31 @@ const printDiagnostics = async () => {
 };
 
 /**
+ * Check in a storage weather the ID is unique or not.
+ * @param {Set|Object} storage the Set or lowdb instance
+ * @param {String} id
+ * @param {String} lowdbTable
+ * @returns {Boolean} if is unique
+ */
+const checkUniqueness = async (storage, id, lowdbTable) => {
+    if (storage instanceof Set) {
+        return !storage.has(id);
+    } else {
+        return !storage.get(lowdbTable).find({ id }).value();
+    }
+};
+
+/**
  * Generates an unique whitelist ID, or throws an error
- * @param {Object} db lowdb instance
+ * @param {Set|Object} storage set or lowdb instance
  * @returns {String} id
  */
-module.exports.genWhitelistID = async (db) => {
+module.exports.genWhitelistID = async (storage) => {
     let attempts = 0;
     while (attempts < maxAttempts) {
         attempts++;
         const id = 'R' + nanoidSecure.customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
-        if (!await db.get('pendingWL').find({ id }).value()) {
+        if (await checkUniqueness(storage, id, 'pendingWL')) {
             return id;
         }
     }
@@ -72,11 +87,11 @@ module.exports.genWhitelistID = async (db) => {
 
 /**
  * Generates an unique action ID, or throws an error
- * @param {Object} db lowdb instance
+ * @param {Set|Object} storage set or lowdb instance
  * @param {String} actionType [warn, ban, whitelist]
  * @returns {String} id
  */
-module.exports.genActionID = async (db, actionType) => {
+module.exports.genActionID = async (storage, actionType) => {
     const actionPrefix = ((actionType == 'warn') ? 'a' : actionType[0]).toUpperCase();
     let attempts = 0;
     while (attempts < maxAttempts) {
@@ -85,7 +100,7 @@ module.exports.genActionID = async (db, actionType) => {
             + nanoidSecure.customAlphabet(GlobalData.noLookAlikesAlphabet, 3)()
             + '-'
             + nanoidSecure.customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
-        if (!await db.get('actions').find({ id }).value()) {
+        if (await checkUniqueness(storage, id, 'actions')) {
             return id;
         }
     }
