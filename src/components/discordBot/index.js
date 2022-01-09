@@ -81,7 +81,7 @@ module.exports = class DiscordBot {
         }
 
         try {
-            this.announceChannel.send(message);
+            await this.announceChannel.send(message);
         } catch (error) {
             logError(`Error sending Discord announcement: ${error.message}`);
         }
