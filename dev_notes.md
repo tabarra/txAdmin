@@ -41,7 +41,16 @@ Quando terminar de importar as traduções:
 [ ] Quebrar snackbar de not admin em dois, um se confirmado que o problema são os identifiers, outro pra qualquer outro tipo de problema
 [ ] the kick/warn/dm reason modal title should have the username as key in the translation
 
-here's a 2500 frames one https://filetransfer.io/data-package/S8DoFJg8#link 
+
+
+CreateThread(function()
+  local Wait = Wait
+  local id = PlayerId()
+  while true do
+    SetSuperJumpThisFrame(id)
+    Wait(0)
+  end
+end)
 
 
 
