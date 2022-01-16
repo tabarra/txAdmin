@@ -262,14 +262,14 @@
                 "notes_placeholder": "Anteckningar om denna spelare"
             },
             "history": {
-                "title": "Related historia",
+                "title": "Relaterad historia",
                 "action_types": {
                     "warn": "Varnad",
-                    "warn_revoked": "Dra tillbaka varningen för",
+                    "warn_revoked": "Återkalla varningen för",
                     "ban": "Bannad",
-                    "ban_revoked": "Dra tillbaka ban för",
-                    "whitelist": "Vit listning",
-                    "whitelist_revoked": "Tillbaka dragen vit listning för att"
+                    "ban_revoked": "Återkalla bann för",
+                    "whitelist": "Vit-listning",
+                    "whitelist_revoked": "Återkalla vit-listning för att"
                 }
             },
             "ban": {
@@ -277,13 +277,13 @@
                 "reason_placeholder": "Anledning",
                 "duration_placeholder": "Varighet",
                 "hours": "Timmar",
-                "days": "dagar",
+                "days": "Dagar",
                 "weeks": "Veckor",
                 "months": "Månader",
                 "permanent": "Permanent",
                 "custom": "Skräddasydd",
-                "helper_text": "vänligen välj en varaktighet",
-                "submit": "Apply ban"
+                "helper_text": "Vänligen välj en varaktighet",
+                "submit": "Tillämpa bann"
             }
         }
     }
