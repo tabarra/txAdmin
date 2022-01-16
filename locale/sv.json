@@ -4,11 +4,11 @@
         "humanizer_language": "sv"
     },
     "restarter": {
-        "start_timeout": "Misslyckad start i tid",
-        "crash_detected": "Server krasch upptäckt",
-        "hang_detected": "hang detected",
-        "partial_hang_warn": "På grund av partial hang, Servern kommer startas om inom en minut. Vänligen lämmna nu.",
-        "partial_hang_warn_discord": "På grund av partial hang, **%{servername}** kommer startas om inom en minut.",
+        "start_timeout": "Kunde inte starta i tid",
+        "crash_detected": "Krasch upptäckt",
+        "hang_detected": "Lagg upptäckt",
+        "partial_hang_warn": "På grund av ett partiellt lagg, Servern kommer startas om inom en minut. Vänligen lämmna nu.",
+        "partial_hang_warn_discord": "På grund av partiellt lagg, **%{servername}** kommer startas om inom en minut.",
         "schedule_reason": "Schemalagd restart %{time}",
         "schedule_warn": "Den här servern kommer startas om inom %{smart_count} minuter. Vänligen lämna. |||| Den här servern kommer startas om inom %{smart_count} minuter.",
         "schedule_warn_discord": "**%{servername}** är schemalagd att startas om inom %{smart_count} minuter. |||| **%{servername}** är schemalagd att startas om inom %{smart_count} minuter."
@@ -95,7 +95,7 @@
                     "dialog_error": "Ogiltiga kordinater. Det måste vara i formatet: 111, 222, 33"
                 },
                 "back": {
-                    "title": "Back",
+                    "title": "Tillbaka",
                     "label": "Gå tillbaka till senaste positionen",
                     "error": "Du har ingen senaste position"
                 },
@@ -105,7 +105,7 @@
                 }
             },
             "vehicle": {
-                "title": "Vehicle",
+                "title": "Fordon",
                 "onesync_error": "Detta alternativ kräver OneSync för fordon hantering",
                 "not_in_veh_error": "Du är för tillfället inte i fordonet!",
                 "spawn": {
@@ -118,9 +118,9 @@
                     "dialog_info": "Försöker spawna %{modelName}."
                 },
                 "fix": {
-                    "title": "Fixa",
-                    "label": "Fixa nuvarande fordon",
-                    "success": "Fordon fixat!"
+                    "title": "Laga",
+                    "label": "Laga nuvarande fordon",
+                    "success": "Fordon lagat!"
                 },
                 "delete": {
                     "title": "Ta bort",
@@ -129,7 +129,7 @@
                 }
             },
             "heal": {
-                "title": "Hela",
+                "title": "Hälsa",
                 "myself": {
                     "title": "Dig själv",
                     "label": "Återställer din hälsa",
