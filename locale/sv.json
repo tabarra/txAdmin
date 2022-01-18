@@ -4,12 +4,12 @@
         "humanizer_language": "sv"
     },
     "restarter": {
-        "start_timeout": "Kunde inte starta i tid",
+        "start_timeout": "Servern kunde inte starta i tid.",
         "crash_detected": "Krasch upptäckt",
-        "hang_detected": "Lagg upptäckt",
-        "partial_hang_warn": "På grund av ett partiellt lagg, Servern kommer startas om inom en minut. Vänligen lämmna nu.",
-        "partial_hang_warn_discord": "På grund av partiellt lagg, **%{servername}** kommer startas om inom en minut.",
-        "schedule_reason": "Schemalagd restart %{time}",
+        "hang_detected": "Fördröjning upptäckt",
+        "partial_hang_warn": "På grund av fördröjningar startar servern om. Vänligen koppla från nu.",
+        "partial_hang_warn_discord": "På grund av fördröjningar startar **%{servernamn}** om inom en minut.",
+        "schedule_reason": "Schemalagd omstart om %{time}",
         "schedule_warn": "Den här servern kommer startas om inom %{smart_count} minuter. Vänligen lämna. |||| Den här servern kommer startas om inom %{smart_count} minuter.",
         "schedule_warn_discord": "**%{servername}** är schemalagd att startas om inom %{smart_count} minuter. |||| **%{servername}** är schemalagd att startas om inom %{smart_count} minuter."
     },
@@ -20,7 +20,7 @@
         "reject_permanent": "Du har blivit permanent bannlyst från denna server på grund av.\nBanlysnings ID: %{id}.\nBanlysning anledning: %{reason}.\nBanlyst av: %{author}."
     },
     "server_actions": {
-        "restarting": "Servern startar om (%{reason}).",
+        "restarting": "Servern omstart (%{reason}).",
         "restarting_discord": "**%{servername}** startas om (%{reason}).",
         "stopping": "Servern stängs av (%{reason}).",
         "stopping_discord": "**%{servername}** håller på att stängas av (%{reason}).",
