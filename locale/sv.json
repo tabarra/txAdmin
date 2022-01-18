@@ -129,7 +129,7 @@
                 }
             },
             "heal": {
-                "title": "Hälsa",
+                "title": "Läka",
                 "myself": {
                     "title": "Dig själv",
                     "label": "Återställer din hälsa",
@@ -147,16 +147,16 @@
             "announcement": {
                 "title": "Skicka ut medelande",
                 "label": "Skicka ett meddelande till alla spelare inne på servern",
-                "dialog_desc": "Enter the message you want to broadcast to all players.",
+                "dialog_desc": "Skriv in meddelandet du vill skicka till alla spelare.",
                 "dialog_placeholder": "Ditt Medelande... ",
                 "dialog_success": "Skickar ut ditt medelande."
             },
             "clear_area": {
                 "title": "Återställ världs arean",
-                "label": "Reset a specified world area to its default state",
+                "label": "Återställ ett angivet världsområde till dess standardläge",
                 "dialog_desc": "Vänligen skriv in radien du vill rensa objekt i (0-300). Detta kommer inte rensa saker servern har spawnat",
                 "dialog_success": "Rensar area med %{radius}m",
-                "dialog_error": "Ogiltig radie,försök igen."
+                "dialog_error": "Ogiltig radie, försök igen."
             },
             "player_ids": {
                 "title": "Sätt på spelares id",
@@ -215,7 +215,7 @@
                         "success": "Ditt direktmeddelande har skickats"
                     },
                     "warn_dialog": {
-                        "title": "Warn",
+                        "title": "Varna",
                         "description": "Vad är anledningen till att du varnar spelaren?",
                         "placeholder": "Anlednig",
                         "success": "Spelaren är varnad!"
@@ -250,7 +250,7 @@
                     "options": {
                         "drunk": "Gör full",
                         "fire": "Tänd Eld",
-                        "wild_attack": "Vild Djurattack"
+                        "wild_attack": "Vild Djursattack"
                     }
                 }
             },
@@ -258,30 +258,30 @@
                 "title": "Spelar information",
                 "session_time": "Session tid",
                 "play_time": "Speltid",
-                "joined": "Gick med",
+                "joined": "Anslöt",
                 "notes_placeholder": "Anteckningar om denna spelare"
             },
             "history": {
                 "title": "Relaterad historia",
                 "action_types": {
-                    "warn": "Varnad",
-                    "warn_revoked": "Återkalla varningen för",
-                    "ban": "Bannad",
-                    "ban_revoked": "Återkalla bann för",
-                    "whitelist": "Vit-listning",
-                    "whitelist_revoked": "Återkalla vit-listning för att"
+                    "warn": "VARNING",
+                    "warn_revoked": "ÅTERKALLA VARNINGEN för",
+                    "ban": "BANNAD",
+                    "ban_revoked": "ÅTERKALLA BANN för",
+                    "whitelist": "VITLISTA",
+                    "whitelist_revoked": "ÅTERKALLA VITLISTNING för"
                 }
             },
             "ban": {
-                "title": "Bannlys spelare",
+                "title": "Banna spelare",
                 "reason_placeholder": "Anledning",
-                "duration_placeholder": "Varighet",
+                "duration_placeholder": "Varaktighet",
                 "hours": "Timmar",
                 "days": "Dagar",
                 "weeks": "Veckor",
                 "months": "Månader",
                 "permanent": "Permanent",
-                "custom": "Skräddasydd",
+                "custom": "Anpassad",
                 "helper_text": "Vänligen välj en varaktighet",
                 "submit": "Tillämpa bann"
             }
