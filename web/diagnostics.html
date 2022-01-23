@@ -1,4 +1,4 @@
-{{@include("header", it)/}}
+<%- await include('basic/header.html', locals) %>
 
 
 <div class="row justify-content-md-center">
@@ -8,15 +8,15 @@
         <div class="card card-accent-danger" style="min-height: 160px;">
             <div class="card-header font-weight-bold">Environment:</div>
             <div class="card-body">
-                {{@if(it.host.error !== false)}}
-                    {{it.host.error|safe}}
-                {{#else}}
-                    <strong>Node:</strong> {{it.host.nodeVersion}} <br>
-                    <strong>OS:</strong> {{it.host.osDistro}} <br>
-                    <strong>Username:</strong> {{it.host.username}} <br>
-                    <strong>Host CPUs:</strong> {{it.host.cpus}} {{it.host.clockWarning|safe}}<br>
-                    <strong>Host Memory:</strong> {{it.host.memory}}
-                {{/if}}
+                <% if (host.error !== false) { %>
+                    <%- host.error %>
+                <% } else { %>
+                    <strong>Node:</strong> <%= host.nodeVersion %> <br>
+                    <strong>OS:</strong> <%= host.osDistro %> <br>
+                    <strong>Username:</strong> <%= host.username %> <br>
+                    <strong>Host CPUs:</strong> <%= host.cpus %> <%- host.clockWarning %><br>
+                    <strong>Host Memory:</strong> <%= host.memory %>
+                <% } %>
             </div>
         </div>
 
@@ -26,37 +26,37 @@
             <div class="card-body">
                 <h5>Stats:</h5>
                 <strong>Versions:</strong> 
-                    <code>v{{it.txAdminVersion}}</code> / <code>{{it.fxServerVersion}}</code> <br>
-                <strong>Uptime:</strong> <code>{{it.txadmin.uptime}}</code> <br>
+                    <code>v<%= txAdminVersion %></code> / <code><%= fxServerVersion %></code> <br>
+                <strong>Uptime:</strong> <code><%= txadmin.uptime %></code> <br>
                 <strong>Cfx.re URL:</strong> 
-                    <a href="{{it.txadmin.cfxUrl}}" target="_blank" rel="noopener noreferrer">{{it.txadmin.cfxUrl}}</a> <br>
+                    <a href="<%= txadmin.cfxUrl %>" target="_blank" rel="noopener noreferrer"><%= txadmin.cfxUrl %></a> <br>
                 <strong>Ban/Whitelist Checking:</strong> 
-                    <code>{{it.txadmin.banlistEnabled}}</code>, 
-                    <code>{{it.txadmin.whitelistEnabled}}</code> <br>
+                    <code><%= txadmin.banlistEnabled %></code>, 
+                    <code><%= txadmin.whitelistEnabled %></code> <br>
                 <strong>HTTP Counter:</strong> 
-                    <code>{{it.txadmin.httpCounterLog}}</code> &lt; <code>{{it.txadmin.httpCounterMax}}</code> <br>
+                    <code><%= txadmin.httpCounterLog %></code> &lt; <code><%= txadmin.httpCounterMax %></code> <br>
                 <strong>Monitor Restarts:</strong> 
-                    <code>CL {{it.txadmin.monitorRestarts.close}}</code> /
-                    <code>HB {{it.txadmin.monitorRestarts.heartBeat}}</code> / 
-                    <code>HC {{it.txadmin.monitorRestarts.healthCheck}}</code> <br>
-                <strong>HB Fails:</strong> 
-                    <code>HTTP {{it.txadmin.hbHTTPFails}}</code> / <code>FD3 {{it.txadmin.hbFD3Fails}}</code> <br>
-                <strong>Boot Seconds:</strong> <code>{{it.txadmin.hbBootSeconds}}</code> <br>
-                <strong>Freeze Seconds:</strong> <code>{{it.txadmin.freezeSeconds}}</code> <br>
-                <strong>Koa Sessions:</strong> <code>{{it.txadmin.koaSessions}}</code> <br>
-                <strong>Logs Storage Size:</strong> <code>{{it.txadmin.logStorageSize}}</code> <br>
+                    <code>CL <%= txadmin.monitorRestarts.close %></code> /
+                    <code>HB <%= txadmin.monitorRestarts.heartBeat %></code> / 
+                    <code>HC <%= txadmin.monitorRestarts.healthCheck %></code> <br>
+                <strong>HB Fails:</strong>
+                    <code>HTTP <%= txadmin.hbHTTPFails %></code> / <code>FD3 <%= txadmin.hbFD3Fails %></code> <br>
+                <strong>Boot Seconds:</strong> <code><%= txadmin.hbBootSeconds %></code> <br>
+                <strong>Freeze Seconds:</strong> <code><%= txadmin.freezeSeconds %></code> <br>
+                <strong>Koa Sessions:</strong> <code><%= txadmin.koaSessions %></code> <br>
+                <strong>Logs Storage Size:</strong> <code><%= txadmin.logStorageSize %></code> <br>
                 <strong>Logger Status:</strong> <br>
-                ├─ Admin: <code>{{it.txadmin.loggerStatusAdmin}}</code> <br>
-                ├─ FXServer: <code>{{it.txadmin.loggerStatusFXServer}}</code> <br>
-                └─ Server: <code>{{it.txadmin.loggerStatusServer}}</code> <br>
+                ├─ Admin: <code><%= txadmin.loggerStatusAdmin %></code> <br>
+                ├─ FXServer: <code><%= txadmin.loggerStatusFXServer %></code> <br>
+                └─ Server: <code><%= txadmin.loggerStatusServer %></code> <br>
                 <hr>
                 <h5>Settings:</h5>
-                <strong>Schedule:</strong> <code>{{it.txadmin.schedule}}</code> <br>
-                <strong>Cooldown:</strong> <code>{{it.txadmin.cooldown}}</code> <br>
-                <strong>Additional Arguments:</strong> <code>{{it.txadmin.commandLine}}</code> <br>
-                <strong>FXServer Path:</strong> <code>{{it.txadmin.fxServerPath}}</code> <br>
-                <strong>Server Data Path:</strong> <code>{{it.txadmin.serverDataPath}}</code><br>
-                <strong>CFG Path:</strong> <code>{{it.txadmin.cfgPath}}</code>
+                <strong>Schedule:</strong> <code><%= txadmin.schedule %></code> <br>
+                <strong>Cooldown:</strong> <code><%= txadmin.cooldown %></code> <br>
+                <strong>Additional Arguments:</strong> <code><%= txadmin.commandLine %></code> <br>
+                <strong>FXServer Path:</strong> <code><%= txadmin.fxServerPath %></code> <br>
+                <strong>Server Data Path:</strong> <code><%= txadmin.serverDataPath %></code><br>
+                <strong>CFG Path:</strong> <code><%= txadmin.cfgPath %></code>
             </div>
         </div>
 
@@ -70,23 +70,23 @@
         <div class="card card-accent-info" style="min-height: 160px;">
             <div class="card-header font-weight-bold">FXServer /info.json:</div>
             <div class="card-body">
-                {{@if(it.fxserver.versionMismatch)}}
+                <% if (fxserver.versionMismatch) { %>
                     <div class="alert alert-danger text-center" role="alert">
                         <strong>This version doesn't match txAdmin's version!</strong><br>
                         If you just updated FXServer, restart txAdmin. <br>
                         Otherwise, it means FXServer was already running before txAdmin started, and nothing is going to work properly.
                     </div>
-                {{/if}}
-                {{@if(it.fxserver.error !== false)}}
-                    {{it.fxserver.error|safe}}
-                {{#else}}
-                    <strong>Status: <span class="badge badge-{{it.fxserver.statusColor}}">{{it.fxserver.status}}</span></strong> <br>
-                    <strong>Version:</strong> {{it.fxserver.version}} <br>
-                    <strong>Resources:</strong> {{it.fxserver.resources}} {{it.fxserver.resourcesWarning|safe}} <br>
-                    <strong>OneSync:</strong> {{it.fxserver.onesync}} <br>
-                    <strong>Max Clients:</strong> {{it.fxserver.maxClients}} <br>
-                    <strong>txAdmin Version:</strong> {{it.fxserver.txAdminVersion}} <br>
-                {{/if}}
+                <% } %>
+                <% if (fxserver.error !== false) { %>
+                    <%- fxserver.error %>
+                <% } else { %>
+                    <strong>Status: <span class="badge badge-<%= fxserver.statusColor %>"><%= fxserver.status %></span></strong> <br>
+                    <strong>Version:</strong> <%= fxserver.version %> <br>
+                    <strong>Resources:</strong> <%= fxserver.resources %> <%- fxserver.resourcesWarning %> <br>
+                    <strong>OneSync:</strong> <%= fxserver.onesync %> <br>
+                    <strong>Max Clients:</strong> <%= fxserver.maxClients %> <br>
+                    <strong>txAdmin Version:</strong> <%= fxserver.txAdminVersion %> <br>
+                <% } %>
             </div>
         </div>
 
@@ -94,28 +94,28 @@
         <div class="card card-accent-info">
             <div class="card-header font-weight-bold">Processes:</div>
             <div class="card-body">
-                {{@if(!it.proccesses.length)}}
+                <% if (!proccesses.length) { %>
                     Failed to retrieve processed data. <br>
                     Check the terminal for more information (if verbosity is enabled)
-                {{#else}}
-                    {{@each(it.proccesses) => proc}}
-                        <strong>Process:</strong> ({{proc.pid}}) {{proc.name}} <br>
-                        <strong>Parent:</strong> {{proc.ppid}} <br>
-                        <strong>Memory:</strong> {{proc.memory}} <br>
-                        <strong>CPU:</strong> {{proc.cpu}} <br>
+                <% } else { %>
+                    <% for (const process of proccesses) { %>
+                        <strong>Process:</strong> (<%= process.pid %>) <%= process.name %> <br>
+                        <strong>Parent:</strong> <%= process.ppid %> <br>
+                        <strong>Memory:</strong> <%= process.memory %> <br>
+                        <strong>CPU:</strong> <%= process.cpu %> <br>
                         <br>
-                    {{/each}}
-                {{/if}}
+                    <% } %>
+                <% } %>
             </div>
         </div>
 
         <!-- Execution time -->
         <div class="text-center mb-4">
-            <small class="text-muted">{{it.message|safe}}</small>
+            <small class="text-muted"><%- message %></small>
         </div>
 
     </div>
     <!-- /.col-->
 </div>
 
-{{@include("footer", it)/}}
+<%- await include('basic/footer.html', locals) %>

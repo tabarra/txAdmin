@@ -1,4 +1,4 @@
-{{@include("header", it)/}}
+<%- await include('basic/header.html', locals) %>
 
 
 <div class="text-center mb-4">
@@ -14,27 +14,27 @@
             <div class="card-header font-weight-bold" style="border-bottom: 0px;">
                 <ul class="nav nav-tabs card-header-tabs" id="tabSelector">
                     <li class="nav-item">
-                        <a class="nav-item nav-link {{it.activeTab=='global'|isActive}}" id="nav-global-tab" data-toggle="tab" href="#nav-global"
+                        <a class="nav-item nav-link <%= activeTab === 'global' ? 'active' : '' %>" id="nav-global-tab" data-toggle="tab" href="#nav-global"
                             role="tab" aria-controls="nav-global" aria-selected="true">Global</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item nav-link {{it.activeTab=='fxserver'|isActive}}" id="nav-fxserver-tab" data-toggle="tab" href="#nav-fxserver"
+                        <a class="nav-item nav-link <%= activeTab === 'fxserver' ? 'active' : '' %>" id="nav-fxserver-tab" data-toggle="tab" href="#nav-fxserver"
                             role="tab" aria-controls="nav-fxserver" aria-selected="true">FXServer</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item nav-link {{it.activeTab=='monitor'|isActive}}" id="nav-monitor-tab" data-toggle="tab" href="#nav-monitor"
+                        <a class="nav-item nav-link <%= activeTab === 'monitor' ? 'active' : '' %>" id="nav-monitor-tab" data-toggle="tab" href="#nav-monitor"
                             role="tab" aria-controls="nav-monitor" aria-selected="true">Restarter</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item nav-link {{it.activeTab=='playerManager'|isActive}}" id="nav-playerManager-tab" data-toggle="tab" href="#nav-playerManager"
+                        <a class="nav-item nav-link <%= activeTab === 'playerManager' ? 'active' : '' %>" id="nav-playerManager-tab" data-toggle="tab" href="#nav-playerManager"
                             role="tab" aria-controls="nav-playerManager" aria-selected="true">Player Manager</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item nav-link {{it.activeTab=='discord'|isActive}}" id="nav-discord-tab" data-toggle="tab" href="#nav-discord"
+                        <a class="nav-item nav-link <%= activeTab === 'discord' ? 'active' : '' %>" id="nav-discord-tab" data-toggle="tab" href="#nav-discord"
                             role="tab" aria-controls="nav-discord" aria-selected="true">Discord</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-item nav-link {{it.activeTab=='menu'|isActive}}" id="nav-menu-tab" data-toggle="tab" href="#nav-menu" role="tab" aria-controls="nav-menu" aria-selected="true">Menu</a>
+                        <a class="nav-item nav-link <%= activeTab === 'menu' ? 'active' : '' %>" id="nav-menu-tab" data-toggle="tab" href="#nav-menu" role="tab" aria-controls="nav-menu" aria-selected="true">Menu</a>
                     </li>
                 </ul>
             </div>
@@ -43,7 +43,7 @@
                 <div class="tab-content" id="nav-tabContent">
 
                     <!-- Global Tab -->
-                    <div class="tab-pane fade {{it.activeTab=='global'|isActive|tShow}}" id="nav-global" role="tabpanel"
+                    <div class="tab-pane fade <%= activeTab === 'global' ? 'active show' : '' %>" id="nav-global" role="tabpanel"
                         aria-labelledby="nav-global-tab">
                         <div class="form-group row">
                             <label for="frmGlobal-serverName" class="col-sm-3 col-form-label">
@@ -52,9 +52,9 @@
                             </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmGlobal-serverName"
-                                    value="{{it.global.serverName|undef}}" maxlength="24" placeholder="server name" {{it.readOnly|isDisabled}}>
+                                    value="<%= (global.serverName !== 'undefined') ? global.serverName : '' %>" maxlength="24" placeholder="server name" <%= readOnly ? 'disabled' : '' %>>
                                 <span class="form-text text-muted">
-                                    A <strong>short</strong> server name to be used in txAdmin interface and Chat/Discord messages.
+                                   A <strong>short</strong> server name to be used in txAdmin interface and Chat/Discord messages.
                                 </span>
                             </div>
                         </div>
@@ -64,35 +64,35 @@
                                 Language
                             </label>
                             <div class="col-sm-9">
-                                <select class="form-control" id="frmGlobal-language" {{it.readOnly|isDisabled}}>
-                                    <option value="en" {{it.global.language=='en'|isSelected}}>English (default)</option>
+                                <select class="form-control" id="frmGlobal-language" <%= readOnly ? 'disabled' : '' %>>
+                                    <option value="en" <%= global.language === 'en' ? 'selected' : '' %>>English (default)</option>
 
-                                    <option value="ar" {{it.global.language=='ar'|isSelected}}>Arabic</option>
-                                    <option value="bs" {{it.global.language=='bs'|isSelected}}>Bosnian</option>
-                                    <option value="cs" {{it.global.language=='cs'|isSelected}}>Czech</option>
-                                    <option value="da" {{it.global.language=='da'|isSelected}}>Danish</option>
-                                    <option value="de" {{it.global.language=='de'|isSelected}}>German</option>
-                                    <option value="el" {{it.global.language=='el'|isSelected}}>Greek</option>
-                                    <option value="es" {{it.global.language=='es'|isSelected}}>Spanish</option>
-                                    <option value="fa" {{it.global.language=='fa'|isSelected}}>Farsi - Persian</option>
-                                    <option value="fi" {{it.global.language=='fi'|isSelected}}>Finnish</option>
-                                    <option value="fr" {{it.global.language=='fr'|isSelected}}>French</option>
-                                    <option value="hu" {{it.global.language=='hu'|isSelected}}>Hungarian</option>
-                                    <option value="it" {{it.global.language=='it'|isSelected}}>Italian</option>
-                                    <option value="lt" {{it.global.language=='lt'|isSelected}}>Lithuanian</option>
-                                    <option value="lv" {{it.global.language=='lv'|isSelected}}>Latvian</option>
-                                    <option value="nl" {{it.global.language=='nl'|isSelected}}>Dutch</option>
-                                    <option value="no" {{it.global.language=='no'|isSelected}}>Norwegian</option>
-                                    <option value="pl" {{it.global.language=='pl'|isSelected}}>Polish</option>
-                                    <option value="pt" {{it.global.language=='pt'|isSelected}}>Portuguese</option>
-                                    <option value="ro" {{it.global.language=='ro'|isSelected}}>Romanian</option>
-                                    <option value="ru" {{it.global.language=='ru'|isSelected}}>Russian</option>
-                                    <option value="sv" {{it.global.language=='sv'|isSelected}}>Swedish</option>
-                                    <option value="th" {{it.global.language=='th'|isSelected}}>Thai</option>
-                                    <option value="tr" {{it.global.language=='tr'|isSelected}}>Turkish</option>
-                                    <option value="zh" {{it.global.language=='zh'|isSelected}}>Chinese</option>
+                                    <option value="ar" <%= global.language === 'ar' ? 'selected' : '' %>>Arabic</option>
+                                    <option value="bs" <%= global.language === 'bs' ? 'selected' : '' %>>Bosnian</option>
+                                    <option value="cs" <%= global.language === 'cs' ? 'selected' : '' %>>Czech</option>
+                                    <option value="da" <%= global.language === 'da' ? 'selected' : '' %>>Danish</option>
+                                    <option value="de" <%= global.language === 'de' ? 'selected' : '' %>>German</option>
+                                    <option value="el" <%= global.language === 'el' ? 'selected' : '' %>>Greek</option>
+                                    <option value="es" <%= global.language === 'es' ? 'selected' : '' %>>Spanish</option>
+                                    <option value="fa" <%= global.language === 'fa' ? 'selected' : '' %>>Farsi - Persian</option>
+                                    <option value="fi" <%= global.language === 'fi' ? 'selected' : '' %>>Finnish</option>
+                                    <option value="fr" <%= global.language === 'fr' ? 'selected' : '' %>>French</option>
+                                    <option value="hu" <%= global.language === 'hu' ? 'selected' : '' %>>Hungarian</option>
+                                    <option value="it" <%= global.language === 'it' ? 'selected' : '' %>>Italian</option>
+                                    <option value="lt" <%= global.language === 'lt' ? 'selected' : '' %>>Lithuanian</option>
+                                    <option value="lv" <%= global.language === 'lv' ? 'selected' : '' %>>Latvian</option>
+                                    <option value="nl" <%= global.language === 'nl' ? 'selected' : '' %>>Dutch</option>
+                                    <option value="no" <%= global.language === 'no' ? 'selected' : '' %>>Norwegian</option>
+                                    <option value="pl" <%= global.language === 'pl' ? 'selected' : '' %>>Polish</option>
+                                    <option value="pt" <%= global.language === 'pt' ? 'selected' : '' %>>Portuguese</option>
+                                    <option value="ro" <%= global.language === 'ro' ? 'selected' : '' %>>Romanian</option>
+                                    <option value="ru" <%= global.language === 'ru' ? 'selected' : '' %>>Russian</option>
+                                    <option value="sv" <%= global.language === 'sv' ? 'selected' : '' %>>Swedish</option>
+                                    <option value="th" <%= global.language === 'th' ? 'selected' : '' %>>Thai</option>
+                                    <option value="tr" <%= global.language === 'tr' ? 'selected' : '' %>>Turkish</option>
+                                    <option value="zh" <%= global.language === 'zh' ? 'selected' : '' %>>Chinese</option>
 
-                                    <option value="custom" {{it.global.language=='custom'|isSelected}}>Custom (txData/locale.json)</option>
+                                    <option value="custom" <%= global.language === 'custom' ? 'selected' : '' %>>Custom (txData/locale.json)</option>
                                 </select>
                                 <span class="form-text text-muted">
                                     The language to use on Chat/Discord messages. <br>
@@ -102,7 +102,7 @@
                         </div>
 
                         <div class="text-center mt-4">
-                            <button class="btn btn-sm btn-primary" type="submit" id="frmGlobal-save" {{it.readOnly|isDisabled}}>
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmGlobal-save" <%= readOnly ? 'disabled' : '' %>>
                                 <i class="icon-check"></i> Save Global Settings
                             </button>
                         </div>
@@ -110,19 +110,19 @@
                     <!-- /Global Tab -->
 
                     <!-- FXServer Tab -->
-                    <div class="tab-pane fade {{it.activeTab=='fxserver'|isActive|tShow}}" id="nav-fxserver" role="tabpanel" aria-labelledby="nav-fxserver-tab">
+                    <div class="tab-pane fade <%= activeTab === 'fxServer' ? 'active show' : '' %>" id="nav-fxserver" role="tabpanel" aria-labelledby="nav-fxserver-tab">
                         <div class="form-group row">
                             <label for="frmFXServer-serverDataPath" class="col-sm-3 col-form-label">Server Data Folder
                                 <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmFXServer-serverDataPath" value="{{it.fxserver.serverDataPath|undef}}"
-                                    placeholder="C:/Users/Admin/Desktop/server01" {{it.readOnly|isDisabled}}>
+                                <input type="text" class="form-control" id="frmFXServer-serverDataPath" value="<%= fxserver.serverDataPath || '' %>"
+                                    placeholder="C:/Users/Admin/Desktop/server01" <%= readOnly ? 'disabled' : '' %>>
                                 <span class="form-text text-muted">
                                     The folder that <strong>contains</strong> the <code>resources</code> and
                                     <code>cache</code> folders, usually it's where you put your <code>server.cfg</code>. <br>
-                                    {{@if(it.isZapHosting)}}
-                                        <span class="font-weight-bold">ZAP-Hosting warning: this path must start with <code>{{it.txDataPath}}</code>.</span>
-                                    {{/if}}
+                                    <% if (isZapHosting) { %>
+                                        <span class="font-weight-bold">ZAP-Hosting warning: this path must start with <code><%= txDataPath %></code>.</span>
+                                    <% } %>
                                 </span>
                             </div>
                         </div>
@@ -131,8 +131,8 @@
                             <label for="frmFXServer-cfgPath" class="col-sm-3 col-form-label">CFG File Path
                                 <span class="text-danger">*</span></label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmFXServer-cfgPath" value="{{it.fxserver.cfgPath|undef}}"
-                                    placeholder="C:/Users/Admin/Desktop/server01/server.cfg" {{it.readOnly|isDisabled}}>
+                                <input type="text" class="form-control" id="frmFXServer-cfgPath" value="<%= fxserver.cfgPath || '' %>"
+                                    placeholder="C:/Users/Admin/Desktop/server01/server.cfg" <%= readOnly ? 'disabled' : '' %>>
                                 <span class="form-text text-muted">
                                     The path to your server config file, usually named <code>server.cfg</code>. <br>
                                     This can either be absolute, or relative to the Server Data folder.
@@ -145,7 +145,7 @@
                                 Additional Arguments
                             </label>
                             <div class="col-sm-9">
-                                <textarea id="frmFXServer-commandLine" rows="1" class="form-control expandable-textarea" placeholder="+set sv_enforceGameBuild 2545" {{it.readOnly|isDisabled}}>{{it.fxserver.commandLine|undef}}</textarea>
+                                <textarea id="frmFXServer-commandLine" rows="1" class="form-control expandable-textarea" placeholder="+set sv_enforceGameBuild 2545" <%= readOnly ? 'disabled' : '' %>><%= fxserver.commandLine || '' %></textarea>
                                 <span class="form-text text-muted">
                                     Additional command-line arguments to pass to the FXServer instance. <br>
                                     For example, you can add <code>+set</code> and <code>+exec</code> commands. <br>
@@ -157,10 +157,10 @@
                         <div class="form-group row">
                             <label for="frmFXServer-onesync" class="col-sm-3 col-form-label">OneSync</label>
                             <div class="col-sm-9">
-                                <select class="form-control" id="frmFXServer-onesync" {{it.readOnly|isDisabled}}>
-                                    <option value="off" {{it.fxserver.onesync=='off'|isSelected}}>Off (default)</option>
-                                    <option value="legacy" {{it.fxserver.onesync=='legacy'|isSelected}}>Legacy (without infinity)</option>
-                                    <option value="on" {{it.fxserver.onesync=='on'|isSelected}}>On (with infinity)</option>
+                                <select class="form-control" id="frmFXServer-onesync" <%= readOnly ? 'disabled' : '' %>>
+                                    <option value="off" <%= fxserver.onesync === 'off' ? 'selected' : '' %>>Off (default)</option>
+                                    <option value="legacy" <%= fxserver.onesync === 'legacy' ? 'selected' : '' %>>Legacy (without infinity)</option>
+                                    <option value="on" <%= fxserver.onesync === 'on' ? 'selected' : '' %>>On (with infinity)</option>
                                 </select>
                                 <span class="form-text text-muted">
                                     Required if your server has more than 48 slots. <br>
@@ -175,7 +175,7 @@
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmFXServer-autostart"
-                                        {{it.fxserver.autostart|undef}} {{it.readOnly|isDisabled}}>
+                                        <%= fxserver.autostart || '' %> <%= readOnly ? 'disabled' : '' %>>
                                     <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                                 </label>
                                 <span class="form-text text-muted">
@@ -189,7 +189,7 @@
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmFXServer-quiet"
-                                        {{it.fxserver.quiet|undef}} {{it.readOnly|isDisabled}}>
+                                        <%= fxserver.quiet || '' %> <%= readOnly ? 'disabled' : '' %>>
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
@@ -200,7 +200,7 @@
                         </div>
 
                         <div class="text-center mt-4">
-                            <button class="btn btn-sm btn-primary" type="submit" id="frmFXServer-save" {{it.readOnly|isDisabled}}>
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmFXServer-save" <%= readOnly ? 'disabled' : '' %>>
                                 <i class="icon-check"></i> Save FXServer Settings
                             </button>
                         </div>
@@ -208,12 +208,12 @@
                     <!-- /FXServer Tab -->
 
                     <!-- Restarter Tab -->
-                    <div class="tab-pane fade {{it.activeTab=='monitor'|isActive|tShow}}" id="nav-monitor" role="tabpanel" aria-labelledby="nav-monitor-tab">
+                    <div class="tab-pane fade <%= activeTab === 'monitor' ? 'active show' : '' %>" id="nav-monitor" role="tabpanel" aria-labelledby="nav-monitor-tab">
                         <div class="form-group row">
                             <label for="frmMonitor-restarterSchedule" class="col-sm-3 col-form-label">Scheduled Restarts</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmMonitor-restarterSchedule" value="{{it.monitor.restarterSchedule|undef}}"
-                                    placeholder="05:00, 13:00" {{it.readOnly|isDisabled}}>
+                                <input type="text" class="form-control" id="frmMonitor-restarterSchedule" value="<%= monitor.restarterSchedule || '' %>"
+                                    placeholder="05:00, 13:00" <%= readOnly ? 'disabled' : '' %>>
                                 <span class="form-text text-danger" id="frmMonitor-timezoneAlert"></span>
                                 <span class="form-text text-muted">
                                     At which times of day to restart the server. Leave it blank to disable this feature. <br>
@@ -231,7 +231,7 @@
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmMonitor-chatMessages"
-                                        {{it.monitor.disableChatWarnings|undef}} {{it.readOnly|isDisabled}}>
+                                        <%= monitor.disableChatWarnings || '' %> <%= readOnly ? 'disabled' : '' %>>
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
@@ -243,8 +243,8 @@
                         <div class="form-group row">
                             <label for="frmMonitor-restarterScheduleWarnings" class="col-sm-3 col-form-label">Restart Warnings</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmMonitor-restarterScheduleWarnings" value="{{it.monitor.restarterScheduleWarnings|undef}}"
-                                    placeholder="30, 15, 10, 5, 4, 3, 2, 1" {{it.readOnly|isDisabled}}>
+                                <input type="text" class="form-control" id="frmMonitor-restarterScheduleWarnings" value="<%= monitor.restarterScheduleWarnings || '' %>"
+                                    placeholder="30, 15, 10, 5, 4, 3, 2, 1" <%= readOnly ? 'disabled' : '' %>>
                                 <span class="form-text text-muted">
                                     Minutes before restarts to trigger chat warnings <br>
                                     All the minutes must be between 1 and 360 minutes and be separated by commas. <br>
@@ -254,7 +254,7 @@
                         </div>
 
                         <div class="text-center mt-4">
-                            <button class="btn btn-sm btn-primary" type="submit" id="frmMonitor-save" {{it.readOnly|isDisabled}}>
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmMonitor-save" <%= readOnly ? 'disabled' : '' %>>
                                 <i class="icon-check"></i> Save Monitor/Restarter Settings
                             </button>
                         </div>
@@ -262,7 +262,7 @@
                     <!-- /Restarter Tab -->
                     
                     <!-- Player Manager Tab -->
-                    <div class="tab-pane fade {{it.activeTab=='playerManager'|isActive|tShow}}" id="nav-playerManager" role="tabpanel" aria-labelledby="nav-playerManager-tab">
+                    <div class="tab-pane fade <%= activeTab === 'playerManager' ? 'active show' : '' %>" id="nav-playerManager" role="tabpanel" aria-labelledby="nav-playerManager-tab">
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">
                                 Enable Banlist
@@ -270,7 +270,7 @@
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckBan"
-                                        {{it.playerController.onJoinCheckBan|undef}} {{it.readOnly|isDisabled}}>
+                                        <%= playerController.onJoinCheckBan || '' %> <%= readOnly ? 'disabled' : '' %>>
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
@@ -287,7 +287,7 @@
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckWhitelist"
-                                        {{it.playerController.onJoinCheckWhitelist|undef}} {{it.readOnly|isDisabled}}>
+                                        <%= playerController.onJoinCheckWhitelist || '' %> <%= readOnly ? 'disabled' : '' %>>
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
@@ -306,7 +306,7 @@
                             </label>
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" id="frmPlayerManager-minSessionTime"
-                                    value="{{it.playerController.minSessionTime|undef}}" placeholder="15" min="1" max="60" {{it.readOnly|isDisabled}}>
+                                    value="<%= playerController.minSessionTime || '' %>" placeholder="15" min="1" max="60" <%= readOnly ? 'disabled' : '' %>>
                                 <span class="form-text text-muted">
                                     The minimum amount of minutes a player needs to be in the server before it gets saved to the database. <br>
                                     This is done to prevent the database from getting too big. <br>
@@ -321,7 +321,7 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <textarea id="frmPlayerManager-whitelistRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="You are not yet whitelisted in this server.&#10;Please join http://discord.gg/example.&#10;Your Request ID: <id>" {{it.readOnly|isDisabled}}>{{it.playerController.whitelistRejectionMessage|undef}}</textarea>
+                                <textarea id="frmPlayerManager-whitelistRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="You are not yet whitelisted in this server.&#10;Please join http://discord.gg/example.&#10;Your Request ID: <id>" <%= readOnly ? 'disabled' : '' %>><%= playerController.whitelistRejectionMessage || '' %></textarea>
                                 <span class="form-text text-muted">
                                     The message that will be returned to the player if he is not whitelisted. <br>
                                     Use <code>&lt;id&gt;&#10;</code> as a placeholder for the whitelist request ID.
@@ -337,7 +337,7 @@
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmPlayerManager-wipePendingWLOnStart"
-                                        {{it.playerController.wipePendingWLOnStart|undef}} {{it.readOnly|isDisabled}}>
+                                        <%= playerController.wipePendingWLOnStart || '' %> <%= readOnly ? 'disabled' : '' %>>
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
@@ -348,7 +348,7 @@
                         </div>
 
                         <div class="text-center mt-4">
-                            <button class="btn btn-sm btn-primary" type="submit" id="frmPlayerManager-save" {{it.readOnly|isDisabled}}>
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmPlayerManager-save" <%= readOnly ? 'disabled' : '' %>>
                                 <i class="icon-check"></i> Save Player Manager Settings
                             </button>
                         </div>
@@ -356,13 +356,13 @@
                     <!-- /Player Manager Tab -->
 
                     <!-- Discord Tab -->
-                    <div class="tab-pane fade {{it.activeTab=='discord'|isActive|tShow}}" id="nav-discord" role="tabpanel" aria-labelledby="nav-discord-tab">
+                    <div class="tab-pane fade <%= activeTab === 'discord' ? 'active show' : '' %>" id="nav-discord" role="tabpanel" aria-labelledby="nav-discord-tab">
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Enable Bot</label>
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmDiscord-enabled"
-                                        {{it.discord.enabled|undef}} {{it.readOnly|isDisabled}}>
+                                        <%= discord.enabled || '' %> <%= readOnly ? 'disabled' : '' %>>
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
@@ -376,9 +376,9 @@
                                     class="text-danger">*</span></label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control blur-input" id="frmDiscord-token" 
-                                    value="{{@if(!it.readOnly)}}{{it.discord.token|undef}}{{#else}}[redacted]{{/if}}"
+                                    value="<%= readOnly ? '[redacted]' : (discord.token || '') %>"
                                     placeholder="CXPcWbxKOHpwlUBaYKznIfkz.ExpTAB.NX-3YxfmVIGUJLGbPamViXGAEiY"
-                                    maxlength="96" autocomplete="off" {{it.readOnly|isDisabled}}>
+                                    maxlength="96" autocomplete="off" <%= readOnly ? 'disabled' : '' %>>
                                 <span class="form-text text-muted">
                                     To get a token and the bot to join your server, follow these two guides:
                                     <a href="https://discordjs.guide/preparations/setting-up-a-bot-application.html"
@@ -393,8 +393,8 @@
                             <label for="frmDiscord-announceChannel" class="col-sm-3 col-form-label">Announcements <br>Channel ID</label>
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" id="frmDiscord-announceChannel"
-                                    value="{{it.discord.announceChannel|undef}}" 
-                                    placeholder="578045190955335691" {{it.readOnly|isDisabled}}>
+                                    value="<%= discord.announceChannel || '' %>" 
+                                    placeholder="578045190955335691" <%= readOnly ? 'disabled' : '' %>>
                                 <span class="form-text text-muted">
                                     The ID of the channel to send Announcements (eg server restarts). <br>
                                     Leave it blank to disable this feature. <br>
@@ -411,8 +411,8 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmDiscord-prefix" value="{{it.discord.prefix|undef}}"
-                                    placeholder="/" maxlength="1" {{it.readOnly|isDisabled}}>
+                                <input type="text" class="form-control" id="frmDiscord-prefix" value="<%= discord.prefix || '' %>"
+                                    placeholder="/" maxlength="1" <%= readOnly ? 'disabled' : '' %>>
                                 <span class="form-text text-muted">
                                     The prefix for all commands.
                                 </span>
@@ -425,7 +425,7 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <textarea id="frmDiscord-statusMessage" rows="3" class="form-control expandable-textarea" placeholder="**Join:** `connect cfx.re/join/xxxxxx`&#10;**Players:** &lt;players&gt;&#10;**Uptime:** &lt;uptime&gt;" {{it.readOnly|isDisabled}}>{{it.discord.statusMessage|undef}}</textarea>
+                                <textarea id="frmDiscord-statusMessage" rows="3" class="form-control expandable-textarea" placeholder="**Join:** `connect cfx.re/join/xxxxxx`&#10;**Players:** &lt;players&gt;&#10;**Uptime:** &lt;uptime&gt;" <%= readOnly ? 'disabled' : '' %>><%= discord.statusMessage || '' %></textarea>
                                 <span class="form-text text-muted">
                                     The response to the <code>/status</code> command. <br>
                                     Supported placeholders: <code>players</code>, <code>port</code>, <code>uptime</code>.
@@ -435,7 +435,7 @@
 
 
                         <div class="text-center mt-4">
-                            <button class="btn btn-sm btn-primary" type="submit" id="frmDiscord-save" {{it.readOnly|isDisabled}}>
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmDiscord-save" <%= readOnly ? 'disabled' : '' %>>
                                 <i class="icon-check"></i> Save Discord Settings
                             </button>
                         </div>
@@ -443,13 +443,13 @@
                     <!-- /Discord Tab -->
 
                     <!-- Menu Tab -->
-                    <div class="tab-pane fade {{it.activeTab=='menu'|isActive|tShow}}" id="nav-menu" role="tabpanel" aria-labelledby="nav-menu-tab">
+                    <div class="tab-pane fade <%= activeTab === 'menu' ? 'active show' : '' %>" id="nav-menu" role="tabpanel" aria-labelledby="nav-menu-tab">
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">Enable Menu</label>
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmMenu-enabled"
-                                        {{it.global.menuEnabled|undef}} {{it.readOnly|isDisabled}}>
+                                        <%= global.menuEnabled || '' %> <%= readOnly ? 'disabled' : '' %>>
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
@@ -463,7 +463,7 @@
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmMenu-alignRight"
-                                        {{it.global.menuAlignRight|undef}} {{it.readOnly|isDisabled}}>
+                                        <%= global.menuAlignRight || '' %> <%= readOnly ? 'disabled' : '' %>>
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
@@ -476,8 +476,8 @@
                             <label for="frmMenu-pageKey" class="col-sm-3 col-form-label">Page Switch Key</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmMenu-pageKey"
-                                    value="{{it.global.menuPageKey|undef}}" 
-                                    placeholder="578045190955335691" {{it.readOnly|isDisabled}}>
+                                    value="<%= global.menuPageKey || '' %>"
+                                    placeholder="578045190955335691" <%= readOnly ? 'disabled' : '' %>>
                                 <span class="form-text text-muted">
                                     The key used to to switch tabs in the menu. <br>
                                     Click above and press any key to change the configuration. <br>
@@ -487,7 +487,7 @@
                         </div>
 
                         <div class="text-center mt-4">
-                            <button class="btn btn-sm btn-primary" type="submit" id="frmMenu-save" {{it.readOnly|isDisabled}}>
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmMenu-save" <%= readOnly ? 'disabled' : '' %>>
                                 <i class="icon-check"></i> Save Menu Settings
                             </button>
                         </div>
@@ -504,12 +504,12 @@
 </div>
 
 
-{{@include("footer", it)/}}
+<%- await include('basic/footer.html', locals) %>
 
 
 <script>
     //============================================== General
-    const serverTimezone = "{{it.serverTimezone}}";
+    const serverTimezone = "<%= serverTimezone %>";
     const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     if(serverTimezone !== browserTimezone){
         const msg = `Server's timezone: <b>${serverTimezone}</b> <br>

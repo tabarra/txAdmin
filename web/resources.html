@@ -1,4 +1,4 @@
-{{@include("header", it)/}}
+<%- await include('basic/header.html', locals) %>
 
 <div class="text-center mb-4">
     <h2>Resources List</h2>
@@ -10,7 +10,7 @@
         <div class="card card-accent-info">
             <div class="card-header float-left">
                 <span style="font-size: large">All Resources</span>
-                <button class="btn btn-sm btn-primary float-right" type="button" id="btnRefresh" {{it.disableActions}}>
+                <button class="btn btn-sm btn-primary float-right" type="button" id="btnRefresh" <%= disableActions %>>
                     <i class="icon-refresh"></i> Reload & Refresh
                 </button>
                 <input class="form-control" type="text" name="resource" id="resourceInput" onkeyup="findResource()"
@@ -33,68 +33,70 @@
     <div class="col-sm-12 col-lg-7 mw-col8">
         <div class="card card-accent-info table-responsive-sm">
             <table class="table table-hover table-outline mb-0">
-                {{@each(it.resGroups) => resGroup}}
-                    <thead class="thead-light" id="resList-card-{{resGroup.divName}}">
+                <% for (const resGroup of resGroups) { %>
+                    <thead class="thead-light" id="resList-card-<%= resGroup.divName %>">
                         <tr>
-                            <th class="text-break text-center" colspan="2">{{resGroup.subPath}}</th>
+                            <th class="text-break text-center" colspan="2"><%= resGroup.subPath %></th>
                         </tr>
                     </thead>
-                    <tbody id="resList-cardBody-{{resGroup.divName}}"
-                        aria-labelledby="resList-cardHeader-{{resGroup.divName}}">
-                        {{@each(resGroup.resources) => resource}}
-                            <tr id="res-{{resource.divName}}">
+                    <tbody id="resList-cardBody-<%= resGroup.divName %>"
+                        aria-labelledby="resList-cardHeader-<%= resGroup.divName %>">
+                        <% for (const resource of resGroup.resources) { %>
+                            <tr id="res-<%= resource.divName %>">
                                 <td>
-                                    <strong style="word-wrap: break-word;">{{resource.name}}</strong>
-                                    {{@if(resource.version!='')}}
-                                        <em>{{resource.version}}</em>
-                                    {{/if}}
-                                    {{@if(resource.author!='')}}
-                                        by {{resource.author}}
-                                    {{/if}}
-                                    {{@if(resource.description!='')}}
-                                        <br>
-                                        {{resource.description}}
-                                    {{/if}}
+                                    <strong style="word-wrap: break-word;"><%= resource.name %></strong>
+                                    <% if (resource.version !== '') { %>
+                                        <em><%= resource.version %></em>
+                                    <% } %>
+                                    <% if (resource.author !== '') { %>
+                                        by <%= resource.author %>
+                                    <% } %>
+                                    <% if (resource.description !== '') { %>
+                                        <br/>
+                                        <%= resource.description %>
+                                    <% } %>
                                 </td>
 
                                 <td class="tableActions">
-                                    {{@if(resource.status=='started')}}
-                                    <a class="btn btn-sm btn-outline-warning d-block d-md-inline-block mr-md-1 mb-1 mb-md-0 {{it.disableActions}}"
+                                    <% if (resource.status === 'started') { %>
+                                    <a class="btn btn-sm btn-outline-warning d-block d-md-inline-block mr-md-1 mb-1 mb-md-0 <%= disableActions %>"
                                         href="#"
-                                        onclick="btnCommand('ensure_res', '{{resource.name}}'); event.preventDefault();" {{it.disableActions}}>
+                                        onclick="btnCommand('ensure_res', '<%= resource.name %>'); event.preventDefault();" <%= disableActions %>>
                                         Restart
                                     </a>
-                                    <a class="btn btn-sm btn-outline-danger d-block d-md-inline-block m-0 {{it.disableActions}}"
+                                    <a class="btn btn-sm btn-outline-danger d-block d-md-inline-block m-0 <%= disableActions %>"
                                         href="#"
-                                        onclick="btnCommand('stop_res', '{{resource.name}}'); event.preventDefault();" {{it.disableActions}}>
+                                        onclick="btnCommand('stop_res', '<%= resource.name %>'); event.preventDefault();" <%= disableActions %>>
                                         Stop
                                     </a>
-                                    {{#else}}
-                                    <a class="btn btn-sm btn-outline-success d-block d-md-inline-block {{it.disableActions}}"
+                                    <% } else { %>
+                                    <a class="btn btn-sm btn-outline-success d-block d-md-inline-block <%= disableActions %>"
                                         href="#"
-                                        onclick="btnCommand('ensure_res', '{{resource.name}}'); event.preventDefault();" {{it.disableActions}}>
+                                        onclick="btnCommand('ensure_res', '<%= resource.name %>'); event.preventDefault();" <%= disableActions %>>
                                         Start
                                     </a>
-                                    {{/if}}
+                                    <% } %>
                                 </td>
                             </tr>
-                        {{/each}}
+                        <% } %> 
+                        <%# End individual resource loop %>
                     </tbody>
-                {{/each}}
+                <% } %>
+                <%# End resource group loop %>
             </table>
         </div>
     </div>
 </div>
 
 
-{{@include("footer", it)/}}
+<%- await include('basic/footer.html', locals) %>
 
 
 
 
 <script>
     //NOTE: this is hacky af, but whatever
-    const resGroupsJS = JSON.parse(atob(`{{it.resGroupsJS|base64}}`));
+    const resGroupsJS = JSON.parse(atob(`<%= (Buffer.from(resGroupsJS).toString('base64')) %>`));
     
     const defaultResources = [
         "baseevents",

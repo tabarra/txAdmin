@@ -2,13 +2,13 @@
 <html lang="en">
 
 <head>
-    <base href="{{it.basePath}}">
+    <base href="<%= basePath %>">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <meta name="description" content="txAdmin - remotely Manage & Monitor your GTA5 FiveM Server">
     <meta name="author" content="André Tabarra">
-    <title>{{it.headerTitle}}</title>
+    <title><%= headerTitle %></title>
     <link href="css/simple-line-icons.css" rel="stylesheet">
     <link href="css/coreui.min.css" rel="stylesheet">
     <link href="css/dark.css" rel="stylesheet">
@@ -89,10 +89,10 @@
     </style>
     
     <!-- injected consts -->
-    <script>{{it.jsInjection|safe}}</script>
+    <script><%- jsInjection %></script>
 </head>
 
-<body class="c-app flex-row align-items-center {{it.uiTheme}}">
+<body class="c-app flex-row align-items-center <%= uiTheme %>">
 
     <div class="container">
 
@@ -109,19 +109,19 @@
                         <ul class="stepper linear">
 
                             <!-- Welcome -->
-                            <li class="step {{@if(it.isReset)}}done{{#else}}active{{/if}}">
-                                <div class="step-title waves-effect">Welcome, {{it.adminUsername}}!</div>
+                            <li class="step <%= isReset ? 'done' : 'active' %>">
+                                <div class="step-title waves-effect">Welcome, <%= adminUsername %>!</div>
                                 <div class="step-content">
-                                    {{@if(it.serverProfile == 'default')}}
+                                    <% if (serverProfile === 'default') { %>
                                         Since you didn't select any profile when starting txAdmin, we selected
                                         <code>default</code> for you.
-                                    {{#else}}
-                                        You selected the profile <code>{{it.serverProfile}}</code>.
-                                    {{/if}}
+                                    <% } else { %>
+                                        You selected the profile <code><%= serverProfile %></code>.
+                                    <% } %>
                                     <br>
-                                    {{@if(!it.isReset)}}
+                                    <% if (!isReset) { %>
                                         This profile is not configured yet, let's do this now?
-                                    {{/if}}
+                                    <% } %>
                                     <div class="step-actions">
                                         <button class="btn btn-pill btn-info next-step" type="button">Next</button>
                                     </div>
@@ -130,13 +130,13 @@
 
 
                             <!-- Server Name -->
-                            <li class="step {{@if(it.isReset)}}done{{/if}}">
+                            <li class="step <%= isReset ? 'done' : '' %>">
                                 <div class="step-title waves-effect">Server Name</div>
                                 <div class="step-content">
                                     A <strong>short</strong> server name to be used in txAdmin interface and
                                     Chat/Discord messages.
                                     <input type="text" class="form-control mt-2" id="frmName" maxlength="22"
-                                        minlength="3" placeholder="Happy Server" value="{{it.serverName}}" required>
+                                        minlength="3" placeholder="Happy Server" value="<%= serverName %>" required>
                                     <span id="frmNameError" class="text-danger fade-in d-none"></span>
                                     <div class="step-actions">
                                         <button class="btn btn-pill btn-secondary previous-step"
@@ -255,9 +255,9 @@
                                         The folder that <strong>contains</strong> the <code>resources</code> and
                                         <code>cache</code> folders, usually it's here that you put your <code>server.cfg</code>. <br>
                                         Also known as Base Folder. <br>
-                                        {{@if(it.isZapHosting)}}
-                                            <span class="font-weight-bold">ZAP-Hosting warning: this path must start with <code>{{it.txDataPath}}</code>.</span>
-                                        {{/if}}
+                                        <% if (isZapHosting) { %>
+                                            <span class="font-weight-bold">ZAP-Hosting warning: this path must start with <code><%= txDataPath %></code>.</span>
+                                        <% } %>
                                         <input type="text" class="form-control mt-2" id="s4LocalDataPathInput"
                                             placeholder="C:/Users/Admin/Desktop/server01">
                                         <span id="s4LocalDataPathInputError" class="text-danger fade-in d-none"></span>
@@ -285,9 +285,9 @@
                                     <div class="d-none" id="s5DeployerTargetDiv">
                                         The folder where the server will be deployed to. <br>
                                         This folder will contain all your resources and configuration files. <br>
-                                        {{@if(it.isZapHosting)}}
-                                            <span class="font-weight-bold">ZAP-Hosting warning: this path must start with <code>{{it.txDataPath}}</code>.</span> <br>
-                                        {{/if}}
+                                        <% if (isZapHosting) { %>
+                                            <span class="font-weight-bold">ZAP-Hosting warning: this path must start with <code><%= txDataPath %></code>.</span> <br>
+                                        <% } %>
                                         <strong>We strongly recommend using the path suggested below.</strong>                     
                                         <div class="input-group mt-2">
                                             <input type="text" class="form-control" id="s5DeployerTargetInput"
@@ -335,10 +335,10 @@
                                 <div class="step-title waves-effect">Finish</div>
                                 <div class="step-content">
                                     <h4 id="finishMessage">We are all set!</h4>
-                                    {{@if(it.windowsBatPath)}}
+                                    <% if (windowsBatPath) { %>
                                         You can run this profile by executing: <br>
-                                        <code>{{it.windowsBatPath}}</code> <br>
-                                    {{/if}}
+                                        <code><%= windowsBatPath %></code> <br>
+                                    <% } %>
                                     <span id="saveError" class="text-danger fade-in d-none"></span>
                                     <div class="step-actions">
                                         <button class="btn btn-pill btn-success next-step" type="button" 
@@ -358,9 +358,9 @@
         <div class="row justify-content-center">
             <div class="col-md-4 ">
                 <div class="alert alert-secondary text-center small" style="min-width: 280px;" role="alert">
-                    <strong>Server profile:</strong> {{it.serverProfile}} <br>
-                    <strong>txAdmin version:</strong> {{it.txAdminVersion}} <br>
-                    <strong>FXServer build:</strong> {{it.fxServerVersion}} 
+                    <strong>Server profile:</strong> <%= serverProfile %> <br>
+                    <strong>txAdmin version:</strong> <%= txAdminVersion %> <br>
+                    <strong>FXServer build:</strong> <%= fxServerVersion %>
                     <div class="hrsep hrsep-small">//</div>
                     <h5 class="text-muted">
                         <strong>txAdmin</strong> Official Discord: <br>
@@ -396,9 +396,9 @@
     <script>
         //Constants
         const recipesIndexURL = 'https://raw.githubusercontent.com/tabarra/txAdmin-recipes/main/indexv3.json';
-        const txDataPath = '{{it.txDataPath}}';
-        const deployerEngineVersion = parseInt('{{it.deployerEngineVersion}}');
-        const isReset = ('{{it.isReset}}' === 'true');
+        const txDataPath = '<%= txDataPath %>';
+        const deployerEngineVersion = parseInt('<%= deployerEngineVersion %>');
+        const isReset = ('<%= isReset %>' === 'true');
         const SPINNER_HTMLSized = `<div style="min-height: 250px; margin: auto;">${SPINNER_HTML}</div>`;
         const connectErrorMessage = `<b>Unable to connect to txAdmin.</b> <br> If you closed it, please start again and retry.`;
 

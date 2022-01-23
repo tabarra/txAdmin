@@ -1,5 +1,4 @@
-{{@include("header", it)/}}
-
+<%- await include('basic/header.html', locals) %>
 
 <style>
     .pre-log-content{
@@ -21,19 +20,19 @@
 </div>
 <div class="card border-primary">
     <div class="card-body">
-        <div class="tab-content {{[(it.isWebInterface), '', 'nui-height']|ternary}}" id="nav-tabContent">
+        <div class="tab-content <%= isWebInterface ? '' : 'nui-height' %>" id="nav-tabContent">
             <div class="tab-pane fade active show" id="nav-console" role="tabpanel">
-                <pre id="consoleLog" class="thin-scroll pre-log-content">{{it.consoleLog|safe}}</pre>
+                <pre id="consoleLog" class="thin-scroll pre-log-content"><%- consoleLog %></pre>
             </div>
             <div class="tab-pane fade" id="nav-actions" role="tabpanel">
-                <pre id="actionsLog" class="thin-scroll pre-log-content">{{it.actionLog|safe}}</pre>
+                <pre id="actionsLog" class="thin-scroll pre-log-content"><%- actionLog %></pre>
             </div>
         </div>
     </div>
 </div>
 
 
-{{@include("footer", it)/}}
+<%- await include('basic/footer.html', locals) %>
 
 
 <script>

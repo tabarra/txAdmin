@@ -1,5 +1,4 @@
-{{@include("header", it)/}}
-
+<%- await include("basic/header.html", locals) %>
 
 <style>
     /* Chart stuff */
@@ -82,11 +81,11 @@
 </style>
 
 <!-- Title & outdated message: -->
-<div class="text-center {{[(it.isWebInterface || it.txAdminOutdated), 'mb-4', '']|ternary}}">
-    {{@if(it.isWebInterface)}}
-        <h2>{{it.serverName}} Dashboard</h2>
-    {{/if}}
-    {{@if(it.txAdminOutdated)}}
+<div class="text-center <%= (isWebInterface || txAdminOutdated) ? 'mb-4' : '' %>">
+    <% if (isWebInterface) { %>
+        <h2><%= serverName %> Dashboard</h2>
+    <% } %>
+    <% if (txAdminOutdated) { %>
         <h2 class="text-danger">This version of txAdmin is outdated. Please update now.</h2>
         <h5 class="text-muted">
             Updating is <i>very</i> easy! Support Discord:
@@ -94,7 +93,7 @@
                 <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
             </a>
         </h5>
-    {{/if}}
+    <% } %>
 </div>
 
 
@@ -141,22 +140,22 @@
             </div>
             <div class="card-body text-center align-middle">
                 <button onclick="controlAction('start')"
-                    class="btn btn-outline-{{it.perms.controlsClass}} btn-lg mx-auto m-2" type="button" id="ctrl-start"
-                    {{it.perms.controls}}>START</button> &nbsp;
+                    class="btn btn-outline-<%= perms.controlsClass %> btn-lg mx-auto m-2" type="button" id="ctrl-start"
+                    <%= perms.controls %>>START</button> &nbsp;
                 <button onclick="controlAction('restart')"
-                    class="btn btn-outline-{{it.perms.controlsClass}} btn-lg mx-auto m-2" type="button"
-                    id="ctrl-restart" {{it.perms.controls}}>RESTART</button> &nbsp;
+                    class="btn btn-outline-<%= perms.controlsClass %> btn-lg mx-auto m-2" type="button"
+                    id="ctrl-restart" <%= perms.controls %>>RESTART</button> &nbsp;
                 <button onclick="controlAction('stop')"
-                    class="btn btn-outline-{{it.perms.controlsClass}} btn-lg mx-auto m-2" type="button" id="ctrl-stop"
-                    {{it.perms.controls}}>STOP</button>
+                    class="btn btn-outline-<%= perms.controlsClass %> btn-lg mx-auto m-2" type="button" id="ctrl-stop"
+                    <%= perms.controls %>>STOP</button>
                 <br>
 
-                {{@if(it.isWebInterface)}}
+                <% if (isWebInterface) { %>
                 <button onclick="controlCommand('admin_broadcast')" class="btn btn-outline-dark btn-md mx-auto m-2"
-                    type="button" id="ctrl-stop" {{it.perms.commandMessage}}>Announcement</button> &nbsp;
+                    type="button" id="ctrl-announce" <%= perms.commandMessage %>>Announcement</button> &nbsp;
                 <button onclick="controlCommand('kick_all')" class="btn btn-outline-dark btn-md mx-auto m-2"
-                    type="button" id="ctrl-stop" {{it.perms.commandKick}}>Kick All Players</button>
-                {{/if}}
+                    type="button" id="ctrl-kick-all" <%= perms.commandKick %>>Kick All Players</button>
+                <% } %>
             </div>
         </div>
     </div>
@@ -184,28 +183,28 @@
     <div class="col-md-6 text-center">
         <small id="perfDiagnosticsMessage" class="text-muted"></small>
         <br>
-        {{@if(it.versionData.message)}}
-            <div class="alert alert-{{it.versionData.color}} border-{{it.versionData.color}}" role="alert">
-                <a href="{{it.versionData.artifactsLink}}" target="_blank" class="alert-link">{{it.versionData.message}}</a>
+        <% if (versionData.message) { %>
+            <div class="alert alert-<%= versionData.color %> border-<%= versionData.color %>" role="alert">
+                <a href="<%= versionData.artifactsLink %>" target="_blank" class="alert-link"><%= versionData.message %></a>
                 <br>
-                {{it.versionData.subtext}}
+                <%= versionData.subtext %>
             </div>
-        {{/if}}
-        {{@if(it.txAdminVersion.includes('-'))}}
+        <% } %>
+        <% if (txAdminVersion.includes('-')) { %>
             <span class="text-danger font-weight-bold">
                 You are using a pre-release version of txAdmin destined for developers and beta testers only! <br>
                 Your server stability might be impacted by this.
             </span>
-        {{/if}}
+        <% } %>
     </div>
 </div>
 
 
-{{@include("footer", it)/}}
+<%- await include("basic/footer.html", locals) %>
 
 <script src="https://d3js.org/d3.v6.min.js"></script>
 <script type="module">
-    import { drawHeatmap } from "{{it.basePath}}js/txadmin/chart.js";
+    import { drawHeatmap } from "<%= basePath %>js/txadmin/chart.js";
 
     //Elements & vars
     let perfData;
@@ -213,7 +212,7 @@
     const perfDiagnosticsMessage = document.getElementById('perfDiagnosticsMessage');
     const d3Container = document.getElementById('d3-container');
     const chartOptions = {
-        // colorScheme: d3[`{{[it.uiTheme, 'interpolateViridis', 'interpolateTurbo']|ternary}}`],
+        // colorScheme: d3[`<%= uiTheme ? 'interpolateViridis' : 'interpolateTurbo' %>`],
         // colorScheme: d3.interpolateInferno,
         // colorScheme: d3.interpolateTurbo,
         colorScheme: d3.interpolateViridis,

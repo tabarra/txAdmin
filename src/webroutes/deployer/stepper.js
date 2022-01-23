@@ -25,7 +25,12 @@ module.exports = async function DeployerStepper(ctx) {
         step: globals.deployer.step,
         serverProfile: globals.info.serverProfile,
         deploymentID: globals.deployer.deploymentID,
+        requireDBConfig: false,
+        defaultLicenseKey: '',
+        recipe: undefined,
+        defaults: {},
     };
+
     if (globals.deployer.step === 'review') {
         renderData.recipe = {
             isTrustedSource: globals.deployer.isTrustedSource,

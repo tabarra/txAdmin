@@ -1,11 +1,16 @@
 //Requires
 const modulename = 'WebCtxUtils';
 const fs = require('fs-extra');
+const ejs = require('ejs');
 const path = require('path');
 const chalk = require('chalk');
-const sqrl = require('squirrelly');
 const helpers = require('../../extras/helpers');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+
+/**
+ * Preload essential templates to prevent multiple file reads
+ */
+let _templateCache = {}
 
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -33,42 +38,49 @@ const getJavascriptConsts = (allConsts = []) => {
         .join(' ');
 };
 
-
-//Squirrelly Filters
-sqrl.filters.define('isSelected', (x) => {
-    return (x) ? 'selected' : '';
-});
-sqrl.filters.define('isActive', (x) => {
-    return (x) ? 'active' : '';
-});
-sqrl.filters.define('tShow', (x) => {
-    return (x) ? `show ${x}` : '';
-});
-sqrl.filters.define('isDisabled', (x) => {
-    return (x) ? 'disabled' : '';
-});
-sqrl.filters.define('undef', (x) => {
-    return (isUndefined(x) || x == 'undefined') ? '' : x;
-});
-sqrl.filters.define('unnull', (x) => {
-    return (isUndefined(x) || x == 'null') ? '' : x;
-});
-sqrl.filters.define('escapeBackTick', (x) => {
-    return x.replace(/`/, '\\`');
-});
-sqrl.filters.define('base64', (x) => {
-    return Buffer.from(x).toString('base64');
-});
-sqrl.filters.define('ternary', (x) => {
-    return (x[0]) ? x[1] : x[2];
-});
-
-
 //Consts
 const WEBPIPE_PATH = 'https://monitor/WebPipe/';
 const RESOURCE_PATH = 'nui://monitor/web/public/';
 const THEME_DARK = 'theme--dark';
 const DEFAULT_AVATAR = 'img/default_avatar.png';
+
+function getEjsOptions(filePath) {
+    const webTemplateRoot = path.resolve(GlobalData.txAdminResourcePath, 'web')
+    const webCacheDir = path.resolve(GlobalData.txAdminResourcePath, 'web-cache', filePath)
+    return {
+        cache: true,
+        filename: webCacheDir,
+        root: webTemplateRoot,
+        views: [webTemplateRoot],
+        rmWhitespace: true,
+        async: true,
+    }
+}
+
+//================================================================
+
+/**
+ * Loads re-usable base templates
+ * @param {String} name
+ * @returns {Promise<void>}
+ */
+async function loadWebTemplate(name) {
+    if (!_templateCache[name]) {
+        try {
+            const rawTemplate = await fs.readFile(getWebViewPath(name), 'utf-8');
+            _templateCache[name] = ejs.compile(rawTemplate, getEjsOptions(name + '.html'));
+        } catch (e) {
+            if (e.code == 'ENOENT') {
+                e = new Error(`The '${name}' template was not found:\n` +
+                    `You probably deleted the 'citizen/system_resources/monitor/web/${name}.html' file, or the folders above it.`, undefined, e)
+            }
+            logError(e)
+        }
+    }
+
+    return _templateCache[name];
+}
+
 
 //================================================================
 /**
@@ -89,22 +101,9 @@ async function renderMasterView(view, reqSess, data, txVars) {
 
     let out;
     try {
-        const [rawHeader, rawFooter, rawView] = await Promise.all([
-            fs.readFile(getWebViewPath('basic/header'), 'utf8'),
-            fs.readFile(getWebViewPath('basic/footer'), 'utf8'),
-            fs.readFile(getWebViewPath(view), 'utf8'),
-        ]);
-        sqrl.templates.define('header', sqrl.compile(rawHeader));
-        sqrl.templates.define('footer', sqrl.compile(rawFooter));
-        out = sqrl.render(rawView, data);
+        out = await loadWebTemplate(view).then(template => template(data))
     } catch (error) {
-        if (error.code == 'ENOENT') {
-            out = '<pre>\n';
-            out += `The '${view}' page file was not found.\n`;
-            out += 'You probably deleted the \'citizen/system_resources/monitor/web/\' folder or the folders above it.\n';
-        } else {
-            out = getRenderErrorText(view, error, data);
-        }
+        out = getRenderErrorText(view, error, data);
     }
 
     return out;
@@ -117,7 +116,7 @@ async function renderMasterView(view, reqSess, data, txVars) {
  * @param {string} message
  */
 async function renderLoginView(data, txVars) {
-    data.logoURL = (GlobalData.loginPageLogo) ? GlobalData.loginPageLogo : 'img/txadmin.png';
+    data.logoURL = GlobalData.loginPageLogo || 'img/txadmin.png';
     data.isMatrix = (Math.random() <= 0.05);
     data.ascii = helpers.txAdminASCII();
     data.message = data.message || '';
@@ -128,16 +127,10 @@ async function renderLoginView(data, txVars) {
 
     let out;
     try {
-        const rawView = await fs.readFile(getWebViewPath('basic/login'), 'utf8');
-        out = sqrl.render(rawView, data);
+        out = await loadWebTemplate('basic/login').then(template => template(data))
     } catch (error) {
-        if (error.code == 'ENOENT') {
-            out = '<pre>\n';
-            out += 'The login page file was not found.\n';
-            out += 'You probably deleted the \'citizen/system_resources/monitor/web/basic/login.html\' file or the folders above it.\n';
-        } else {
-            out = getRenderErrorText('Login', error, data);
-        }
+        logError(error)
+        out = getRenderErrorText('Login', error, data);
     }
 
     return out;
@@ -154,8 +147,7 @@ async function renderLoginView(data, txVars) {
 async function renderSoloView(view, data, txVars) {
     let out;
     try {
-        let rawView = await fs.readFile(getWebViewPath(view), 'utf8');
-        out = sqrl.render(rawView, data);
+        out = await loadWebTemplate(view).then(template => template(data))
     } catch (error) {
         out = getRenderErrorText(view, error, data);
     }

@@ -2,14 +2,14 @@
 <div class="form-group row">
     <label for="modAdmin-name" class="col-sm-3 col-form-label">
         Username
-        {{@if(it.isNewAdmin)}}
+        <% if (isNewAdmin) { %>
             <small class="text-danger">(required)</small>
-        {{/if}}
+        <% } %>
     </label>
     <div class="col-sm-9">
         <div class="input-group">
             <input type="text" class="form-control" id="modAdmin-name" 
-                value="{{it.username}}" {{[(it.isNewAdmin), 'required', 'readonly']|ternary}}>
+                value="<%= username %>" <%= isNewAdmin ? 'required' : 'readonly' %>>
         </div>
     </div>
 </div>
@@ -23,7 +23,7 @@
     <div class="col-sm-9">
         <div class="input-group">
             <input type="text" class="form-control" id="modAdmin-citizenfxID" maxlength="20"
-                autocomplete="off" value="{{it.citizenfx_id}}">
+                autocomplete="off" value="<%= citizenfx_id %>">
         </div>
         <span class="form-text text-muted">
             The admin's <a href="https://forum.cfx.re/" target="_blank" rel="noopener noreferrer">https://forum.cfx.re/</a>  username.
@@ -39,7 +39,7 @@
     </label>
     <div class="col-sm-9">
         <div class="input-group">
-            <input type="number" class="form-control" id="modAdmin-discordID" autocomplete="off" value="{{it.discord_id}}">
+            <input type="number" class="form-control" id="modAdmin-discordID" autocomplete="off" value="<%= discord_id %>">
         </div>
         <span class="form-text text-muted">
             The admin's Discord User ID. Follow <a href="https://support.discordapp.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID" target="_blank">this guide</a> if you don't know how to get the User ID.
@@ -53,31 +53,31 @@
     <h5>Permissions</h5>
 </div>
 <div class="form-group row">
-    {{@if(it.editingSelf)}}
+    <% if (editingSelf) { %>
         <div class="col-sm-12 text-center pt-2">
             <h5 class="text-secondary">you cannot edit your own permissions</h5>
         </div>
-    {{#else}}
+    <% } else { %>
         <div class="col-sm-6">
-            {{@each(it.permsMenu) => perm, key}}
+            <% for (const [key, perm] of permsMenu.entries()) { %>
             <div class="form-check checkbox">
-                <input class="form-check-input permsCheckbox" id="modAdmin-permsMenu-{{key}}" type="checkbox" name="modAdmin-permissions[]"
-                    value="{{perm.id}}" {{perm.checked}}>
-                <label class="form-check-label {{[(perm.dangerous), 'text-danger', '']|ternary}}" for="modAdmin-permsMenu-{{key}}">{{perm.desc}}</label>
+                <input class="form-check-input permsCheckbox" id="modAdmin-permsMenu-<%= perm.id %>-<%= key %>" type="checkbox" name="modAdmin-permissions[]"
+                    value="<%= perm.id %>" <%= perm.checked %>>
+                <label class="form-check-label <%= perm.dangerous ? 'text-danger' : '' %>" for="modAdmin-permsMenu-<%= perm.id %>-<%= key %>"><%= perm.desc %></label>
             </div>
-            {{/each}}
+            <% } %>
         </div>
         <div class="col-sm-6">
-            {{@each(it.permsGeneral) => perm, key}}
+            <% for (const [key, perm] of permsGeneral.entries()) { %>
             <div class="form-check checkbox">
-                <input class="form-check-input permsCheckbox" id="modAdmin-permsGeneral-{{key}}" type="checkbox" name="modAdmin-permissions[]"
-                    value="{{perm.id}}" {{perm.checked}}>
-                <label class="form-check-label {{[(perm.dangerous), 'text-danger', '']|ternary}}" for="modAdmin-permsGeneral-{{key}}">{{perm.desc}}</label>
+                <input class="form-check-input permsCheckbox" id="modAdmin-permsGeneral-<%= perm.id %>-<%= key %>" type="checkbox" name="modAdmin-permissions[]"
+                    value="<%= perm.id %>" <%= perm.checked %>>
+                <label class="form-check-label <%= perm.dangerous ? 'text-danger' : '' %>" for="modAdmin-permsGeneral-<%= perm.id %>-<%= key %>"><%= perm.desc %></label>
             </div>
-            {{/each}}
+            <% } %>
         </div>
-    {{/if}}
+    <% } %>
 </div>
 
 <!-- Just signaling for the save action -->
-<input type="hidden" id="modAdmin-isNewAdmin" value="{{it.isNewAdmin}}">
+<input type="hidden" id="modAdmin-isNewAdmin" value="<%= isNewAdmin %>">
