@@ -131,7 +131,7 @@
             "heal": {
                 "title": "Elvytä",
                 "myself": {
-                    "title": "Minä",
+                    "title": "Minut",
                     "label": "Elvyttää sinut",
                     "success_0": "Elvytetty!",
                     "success_1": "Kaikki on taas hyvin!",
@@ -147,20 +147,20 @@
             "announcement": {
                 "title": "Lähetä ilmoitus",
                 "label": "Lähetä ilmoitus kaikille pelaajille.",
-                "dialog_desc": "Enter the message you want to broadcast to all players.",
+                "dialog_desc": "Syötä viesti, jonka haluat pelaajille lähetettävän.",
                 "dialog_placeholder": "Ilmoituksesi....",
                 "dialog_success": "Lähetetään ilmoitusta."
             },
             "clear_area": {
                 "title": "Tyhjennä alue",
-                "label": "Reset a specified world area to its default state",
+                "label": "Tyhjennä valittu alue",
                 "dialog_desc": "Aseta haluttu etäisyys väliltä (0-300). Tämä toiminto ei poista palvelimen puolelta (server side) luotuja asioita.",
                 "dialog_success": "Tyjennetään alueelta: %{radius}m",
                 "dialog_error": "Virheellinen alue, yritä uudelleen."
             },
             "player_ids": {
                 "title": "Näytä pelaajien ID:t",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                "label": "Näytä lähellä olevien pelaajien ID:t",
                 "alert_show": "Showing nearby player NetIDs.",
                 "alert_hide": "Hiding nearby player NetIDs."
             }
@@ -201,7 +201,7 @@
                 "title": "Pelaajan toiminnot",
                 "command_sent": "Toiminto suoritettu!",
                 "moderation": {
-                    "title": "Hallinnoini",
+                    "title": "Hallinnointi",
                     "options": {
                         "dm": "Yksityisviesti",
                         "warn": "Varoita",
@@ -228,7 +228,7 @@
                     }
                 },
                 "interaction": {
-                    "title": "Interaction",
+                    "title": "Toiminnot",
                     "options": {
                         "heal": "Elvytä",
                         "go_to": "Mene pelaajan luokse",
@@ -264,9 +264,9 @@
             "history": {
                 "title": "Historia",
                 "action_types": {
-                    "warn": "WARNED",
+                    "warn": "VALOITTI",
                     "warn_revoked": "REVOKED the WARN for",
-                    "ban": "BANNED",
+                    "ban": "ANTOI PORTTIKIELLON",
                     "ban_revoked": "REVOKED the BAN for",
                     "whitelist": "WHITELIST",
                     "whitelist_revoked": "REVOKED the WHITELIST for"
@@ -283,7 +283,7 @@
                 "permanent": "Ikuinen",
                 "custom": "Custom",
                 "helper_text": "Aseta porttikiellon kesto",
-                "submit": "Apply ban"
+                "submit": "Aseta porttikielto"
             }
         }
     }
