@@ -1,7 +1,7 @@
 //Requires
 const fs = require('fs');
 const path = require('path');
-const xss = require('./xss')();
+let xss; //can't be required before the dependency check
 //const log = (x) => process.stdout.write(JSON.stringify(x, null, 2) + '\n');
 
 
@@ -146,6 +146,8 @@ function resolveCFGFilePath(cfgPath, serverDataPath) {
  * @param {string} rawCfgFile
  */
 function getFXServerPort(rawCfgFile) {
+    if (!xss) xss = require('./xss')();
+
     const endpointsRegex = /^\s*endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):([0-9]{1,5})["']?.*$/gim;
     const maxClientsRegex = /^\s*sv_maxclients\s+(\d+).*$/gim;
     const txResCommandsRegex = /^\s*(start|stop|ensure|restart)\s+(monitor|txadmin).*$/gim;
@@ -257,7 +259,7 @@ function findLikelyCFGPath(serverDataPath) {
         try {
             getCFGFileData(cfgPath);
             return cfgPath;
-        } catch (error) {}
+        } catch (error) { }
     }
     return false;
 }

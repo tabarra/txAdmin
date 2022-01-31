@@ -43,6 +43,12 @@ Quando terminar de importar as traduções:
 
 
 
+
+verificar o pq heartbeat as vezes é lento
+
+Random issue diagnostics:
+- https://media.discordapp.net/attachments/589106731376836608/932035916812390430/unknown.png
+
 CreateThread(function()
   local Wait = Wait
   local id = PlayerId()
