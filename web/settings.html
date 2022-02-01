@@ -12,7 +12,7 @@
         <!-- Settings Card -->
         <div class="card card-accent-danger">
             <div class="card-header font-weight-bold" style="border-bottom: 0px;">
-                <ul class="nav nav-tabs card-header-tabs">
+                <ul class="nav nav-tabs card-header-tabs" id="tabSelector">
                     <li class="nav-item">
                         <a class="nav-item nav-link {{it.activeTab=='global'|isActive}}" id="nav-global-tab" data-toggle="tab" href="#nav-global"
                             role="tab" aria-controls="nav-global" aria-selected="true">Global</a>
@@ -32,6 +32,9 @@
                     <li class="nav-item">
                         <a class="nav-item nav-link {{it.activeTab=='discord'|isActive}}" id="nav-discord-tab" data-toggle="tab" href="#nav-discord"
                             role="tab" aria-controls="nav-discord" aria-selected="true">Discord</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-item nav-link {{it.activeTab=='menu'|isActive}}" id="nav-menu-tab" data-toggle="tab" href="#nav-menu" role="tab" aria-controls="nav-menu" aria-selected="true">Menu</a>
                     </li>
                 </ul>
             </div>
@@ -81,8 +84,7 @@
                                     <option value="nl" {{it.global.language=='nl'|isSelected}}>Dutch</option>
                                     <option value="no" {{it.global.language=='no'|isSelected}}>Norwegian</option>
                                     <option value="pl" {{it.global.language=='pl'|isSelected}}>Polish</option>
-                                    <option value="pt_BR" {{it.global.language=='pt_BR'|isSelected}}>Portuguese (Brazil)</option>
-                                    <option value="pt_PT" {{it.global.language=='pt_PT'|isSelected}}>Portuguese (Portugal)</option>
+                                    <option value="pt" {{it.global.language=='pt'|isSelected}}>Portuguese</option>
                                     <option value="ro" {{it.global.language=='ro'|isSelected}}>Romanian</option>
                                     <option value="ru" {{it.global.language=='ru'|isSelected}}>Russian</option>
                                     <option value="sv" {{it.global.language=='sv'|isSelected}}>Swedish</option>
@@ -143,11 +145,7 @@
                                 Additional Arguments
                             </label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmFXServer-commandLine" value="{{it.fxserver.commandLine|undef}}"
-                                    placeholder="+set sv_enforceGameBuild 2189" {{it.readOnly|isDisabled}}>
-                                <span class="form-text text-primary">
-                                    To enable the Beta In-game, add <code>+setr txEnableMenuBeta true</code> above.
-                                </span>
+                                <textarea id="frmFXServer-commandLine" rows="1" class="form-control expandable-textarea" placeholder="+set sv_enforceGameBuild 2545" {{it.readOnly|isDisabled}}>{{it.fxserver.commandLine|undef}}</textarea>
                                 <span class="form-text text-muted">
                                     Additional command-line arguments to pass to the FXServer instance. <br>
                                     For example, you can add <code>+set</code> and <code>+exec</code> commands. <br>
@@ -187,12 +185,12 @@
                         </div>
 
                         <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Quiet</label>
+                            <label class="col-sm-3 col-form-label">Quiet Mode</label>
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmFXServer-quiet"
                                         {{it.fxserver.quiet|undef}} {{it.readOnly|isDisabled}}>
-                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
                                     Do not print FXServer's output to the terminal. <br>
@@ -234,7 +232,7 @@
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmMonitor-chatMessages"
                                         {{it.monitor.disableChatWarnings|undef}} {{it.readOnly|isDisabled}}>
-                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
                                     Check this if you want to disable broadcast chat warning messages in game before each scheduled restart.
@@ -273,7 +271,7 @@
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckBan"
                                         {{it.playerController.onJoinCheckBan|undef}} {{it.readOnly|isDisabled}}>
-                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
                                     Enable checking for <strong>Ban</strong> status on player join. <br>
@@ -290,7 +288,7 @@
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmPlayerManager-onJoinCheckWhitelist"
                                         {{it.playerController.onJoinCheckWhitelist|undef}} {{it.readOnly|isDisabled}}>
-                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
                                     Enable checking for <strong>Whitelist</strong> status on player join. <br>
@@ -323,9 +321,7 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <textarea class="form-control" id="frmPlayerManager-whitelistRejectionMessage" rows="4" 
-                                    placeholder="You are not yet whitelisted in this server.&#10;Please join http://discord.gg/example.&#10;Your Request ID: &lt;id&gt;" 
-                                    maxlength="256" {{it.readOnly|isDisabled}}>{{it.playerController.whitelistRejectionMessage|undef}}</textarea>
+                                <textarea id="frmPlayerManager-whitelistRejectionMessage" rows="3" class="form-control expandable-textarea" placeholder="You are not yet whitelisted in this server.&#10;Please join http://discord.gg/example.&#10;Your Request ID: <id>" {{it.readOnly|isDisabled}}>{{it.playerController.whitelistRejectionMessage|undef}}</textarea>
                                 <span class="form-text text-muted">
                                     The message that will be returned to the player if he is not whitelisted. <br>
                                     Use <code>&lt;id&gt;&#10;</code> as a placeholder for the whitelist request ID.
@@ -342,7 +338,7 @@
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmPlayerManager-wipePendingWLOnStart"
                                         {{it.playerController.wipePendingWLOnStart|undef}} {{it.readOnly|isDisabled}}>
-                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
                                     When enabled, the pending whitelist will be wiped every time txAdmin starts <br>
@@ -367,7 +363,7 @@
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                                     <input class="c-switch-input" type="checkbox" id="frmDiscord-enabled"
                                         {{it.discord.enabled|undef}} {{it.readOnly|isDisabled}}>
-                                    <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
                                     Enable Discord Integration.
@@ -429,8 +425,7 @@
                                 <span class="text-danger">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <textarea class="form-control" id="frmDiscord-statusMessage" rows="4" 
-                                    placeholder="**IP:** `connect cfx.re/join/xxxxxx`&#10;**Players:** &lt;players&gt;&#10;**Uptime:** &lt;uptime&gt;" {{it.readOnly|isDisabled}}>{{it.discord.statusMessage|undef}}</textarea>
+                                <textarea id="frmDiscord-statusMessage" rows="3" class="form-control expandable-textarea" placeholder="**Join:** `connect cfx.re/join/xxxxxx`&#10;**Players:** &lt;players&gt;&#10;**Uptime:** &lt;uptime&gt;" {{it.readOnly|isDisabled}}>{{it.discord.statusMessage|undef}}</textarea>
                                 <span class="form-text text-muted">
                                     The response to the <code>/status</code> command. <br>
                                     Supported placeholders: <code>players</code>, <code>port</code>, <code>uptime</code>.
@@ -446,6 +441,58 @@
                         </div>
                     </div>
                     <!-- /Discord Tab -->
+
+                    <!-- Menu Tab -->
+                    <div class="tab-pane fade {{it.activeTab=='menu'|isActive|tShow}}" id="nav-menu" role="tabpanel" aria-labelledby="nav-menu-tab">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Enable Menu</label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMenu-enabled"
+                                        {{it.global.menuEnabled|undef}} {{it.readOnly|isDisabled}}>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    When enabled, admins will be able to open the menu by typing <code>/tx</code> or using the keybind configured in the FiveM settings.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Align Right</label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmMenu-alignRight"
+                                        {{it.global.menuAlignRight|undef}} {{it.readOnly|isDisabled}}>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Move menu to the right side of the screen.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="frmMenu-pageKey" class="col-sm-3 col-form-label">Page Switch Key</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmMenu-pageKey"
+                                    value="{{it.global.menuPageKey|undef}}" 
+                                    placeholder="578045190955335691" {{it.readOnly|isDisabled}}>
+                                <span class="form-text text-muted">
+                                    The key used to to switch tabs in the menu. <br>
+                                    Click above and press any key to change the configuration. <br>
+                                    <strong>Note:</strong> The default is <code>Tab</code>, and you cannot use <code>Escape</code> or <code>Backspace</code>.
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmMenu-save" {{it.readOnly|isDisabled}}>
+                                <i class="icon-check"></i> Save Menu Settings
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /Menu Tab -->
 
                 </div>
             </div>
@@ -472,12 +519,38 @@
     }
 
 
+    const resizeTextArea = (el) => {
+        el.style.height = "auto";
+        el.style.height = `${el.scrollHeight+2}px`;
+    }
+
+    const expandables = document.getElementsByClassName('expandable-textarea');
+    for (const el of expandables) {
+        el.onkeyup = (ev) =>{
+            resizeTextArea(el);
+        }
+        el.onfocus = (ev) =>{
+            resizeTextArea(el);
+        }
+    }
+
+    const tabChangers = document.querySelectorAll('#tabSelector > li > a');
+    for (const el of tabChangers) {
+        el.onclick = (ev) => {
+            setTimeout(() => {
+                const visibleExpandables = document.querySelectorAll('#nav-tabContent .show .expandable-textarea');
+                for (const el of visibleExpandables) {
+                    resizeTextArea(el);
+                }
+            }, 500);
+        }
+    }
+
     //============================================== Global Settings
     $('#frmGlobal-save').click(function () {
         let data = {
             serverName: $('#frmGlobal-serverName').val().trim(),
             language: $('#frmGlobal-language').val(),
-            verbose: $('#frmGlobal-verbose').is(':checked')
         }
         if (!data.serverName.length) {
             return $.notify({ message: 'The fields with "*" are required.' }, { type: 'warning' });
@@ -519,6 +592,8 @@
         if (data.commandLine.includes(' onesync ')){
             return $.notify({ message: 'You cannot set onesync in Additional Arguments. Please use the selectbox below it.' }, { type: 'warning' });
         }
+        //Removing menu beta convar (v4.9)
+        data.commandLine = data.commandLine.replace(/\+?setr? txEnableMenuBeta true\s?/gi, '');
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
 
         txAdminAPI({
@@ -608,7 +683,7 @@
             token: $('#frmDiscord-token').val().trim(),
             announceChannel: $('#frmDiscord-announceChannel').val().trim(),
             prefix: $('#frmDiscord-prefix').val().trim(),
-            statusMessage: $('#frmDiscord-statusMessage').val().trim()
+            statusMessage: $('#frmDiscord-statusMessage').val().trim(),
         };
         if (data.enabled && (!data.token.length || !data.prefix.length || !data.statusMessage.length)) {
             return $.notify({ message: 'The fields with "*" are required when the bot is enabled.' }, { type: 'warning' });
@@ -618,6 +693,45 @@
         txAdminAPI({
             type: "POST",
             url: '/settings/save/discord',
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    });
+
+
+    //============================================== Menu Settings
+    const pageKeyEl = document.getElementById('frmMenu-pageKey');
+    pageKeyEl.onkeydown = (e) => {
+        if (!e.metaKey) e.preventDefault();
+
+        if(["Escape", "Backspace"].includes(e.code)){
+            pageKeyEl.value = 'Tab';
+        }else{
+            pageKeyEl.value = e.code;
+        }
+    }
+
+    $('#frmMenu-save').click(function () {
+        let data = {
+            menuEnabled: ($('#frmMenu-enabled').is(':checked') === true),
+            menuAlignRight: ($('#frmMenu-alignRight').is(':checked') === true),
+            menuPageKey: $('#frmMenu-pageKey').val().trim()
+        };
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+
+        txAdminAPI({
+            type: "POST",
+            url: '/settings/save/menu',
             data: data,
             dataType: 'json',
             success: function (data) {

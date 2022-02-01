@@ -122,7 +122,7 @@ end)
 
 
 -- Handle getDetailedPlayerlist
--- This event is only called when the meny "players" tab is opened, and every 5s while the tab is open
+-- This event is only called when the menu "players" tab is opened, and every 5s while the tab is open
 RegisterNetEvent('txsv:getDetailedPlayerlist', function()
     if TX_ADMINS[tostring(source)] == nil then
         debugPrint('Ignoring unauthenticated getDetailedPlayerlist() by ' .. source)

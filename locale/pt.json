@@ -1,0 +1,290 @@
+{
+    "$meta": {
+        "label": "Portuguese",
+        "humanizer_language": "pt"
+    },
+    "restarter": {
+        "start_timeout": "não iniciou a tempo",
+        "crash_detected": "crash detectado",
+        "hang_detected": "congelamento detectado",
+        "partial_hang_warn": "Devido a um congelamento parcial, este servidor será reiniciado em 1 minuto. Por favor se disconecte agora.",
+        "partial_hang_warn_discord": "Devido a um congelamento parcial, **%{servername}** será reiniciado em 1 minuto.",
+        "schedule_reason": "agendado para %{time}",
+        "schedule_warn": "Este servidor está agendado para reiniciar em %{smart_count} minuto. Por favor se disconecte agora. |||| Este servidor está agendado para reiniciar em %{smart_count} minutos.",
+        "schedule_warn_discord": "**%{servername}** está agendado para reiniciar em %{smart_count} minuto. |||| **%{servername}** está agendado para reiniciar em %{smart_count} minutos."
+    },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) Você foi banido deste servidor por \"%{reason}\". Seu ban vai expirar em: %{expiration}.",
+        "kick_permanent": "(%{author}) Você foi permanentemente banido deste servidor por \"%{reason}\".",
+        "reject_temporary": "Você foi banido deste servidor.\nSeu ban vai expirar em: %{expiration}.\nID: %{id}.\nMotivo: %{reason}.\nAutor: %{author}.",
+        "reject_permanent": "Você foi permanentemente banido deste servidor.\nID: %{id}.\nMotivo: %{reason}.\nAutor: %{author}."
+    },
+    "server_actions": {
+        "restarting": "Servidor reiniciando (%{reason}).",
+        "restarting_discord": "**%{servername}** está reiniciando (%{reason}).",
+        "stopping": "Servidor desligando (%{reason}).",
+        "stopping_discord": "**%{servername}** está desligando (%{reason}).",
+        "spawning_discord": "**%{servername}** está iniciando."
+    },
+    "discord": {
+        "status_online": "**%{servername}** está **Online**!",
+        "status_offline": "**%{servername}** está **Offline**!"
+    },
+    "nui_warning": {
+        "title": "ADVERTÊNCIA",
+        "warned_by": "Advertido por:",
+        "instruction": "Aperte [ESPAÇO] por 10 segundos para fechar esta advertência."
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "txAdmin Menu habilitado, digite /tx para abri-lo.\nVocê também pode configurar uma tecla atalho [Configurações do jogo > Key Bindings > FiveM > Menu: Open Main Page].",
+            "menu_not_allowed": "Seus IDs não estão cadastrados como administrador no txAdmin.\nSe você tiver acesso ao txAdmin web, acesse a página Admin Manager e adicione seus IDs pro seu usuário.",
+            "no_perms": "Você não tem permissão para esta atividade.",
+            "unknown_error": "Ocorreu um erro inesperado.",
+            "not_enabled": "O menu do txAdmin não está habilitado! Você pode habilita-lo na página de configurações do txAdmin web.",
+            "announcement_title": "Aviso ao servidor por %{author}:",
+            "dialog_empty_input": "Você precisa digitar alguma coisa."
+        },
+        "frozen": {
+            "froze_player": "Jogador congelado!",
+            "unfroze_player": "Jogador descongelado!",
+            "was_frozen": "Você foi congelado por um administrador!"
+        },
+        "common": {
+            "cancel": "Cancelar",
+            "submit": "Enviar",
+            "error": "Ocorreu um erro inesperado.",
+            "copied": "Copiado para a área de transferência."
+        },
+        "page_main": {
+            "tooltips": {
+                "tooltip_1": "Aperte %{key} para mudar para a próxima aba, e as setinhas para navegar no menu.",
+                "tooltip_2": "Algumas opções do menu podem ser selecionadas com as setinhas da esquerda/direita."
+            },
+            "player_mode": {
+                "title": "Modo do Jogador",
+                "noclip": {
+                    "title": "NoClip",
+                    "label": "Voe pelo mapa",
+                    "success": "NoClip habilitado."
+                },
+                "godmode": {
+                    "title": "Deus",
+                    "label": "Invencível",
+                    "success": "Modo Deus habilitado."
+                },
+                "normal": {
+                    "title": "Normal",
+                    "label": "Modo padrão",
+                    "success": "Jogador retornou ao modo normal."
+                }
+            },
+            "teleport": {
+                "title": "Teleportar",
+                "generic_success": "Entrando no buraco negro!",
+                "waypoint": {
+                    "title": "Marcador",
+                    "label": "Ir para posição no mapa",
+                    "error": "Você não tem nenhuma posição marcada no mapa."
+                },
+                "coords": {
+                    "title": "Coords",
+                    "label": "Ir para coordenadas",
+                    "dialog_title": "Teleport",
+                    "dialog_desc": "Insira coordenadas no formato x, y, z para ser teleportado.",
+                    "dialog_error": "Coordenadas inválidas. Elas precisam estar no formato: 111, 222, 33"
+                },
+                "back": {
+                    "title": "Voltar",
+                    "label": "Voltar para última posição",
+                    "error": "Você não possui nenhuma posição anterior salva."
+                },
+                "copy": {
+                    "title": "Copiar Coords",
+                    "label": "Copiar coordenadas para área de transferência"
+                }
+            },
+            "vehicle": {
+                "title": "Veículo",
+                "onesync_error": "Esta opção requer que OneSync esteja habilitado para sincronizar as entidades no servidor.",
+                "not_in_veh_error": "Você não está em um veículo",
+                "spawn": {
+                    "title": "Criar",
+                    "label": "Criar um veículo pelo nome",
+                    "dialog_title": "Criar veículo",
+                    "dialog_desc": "Insira o nome do modelo do veículo que deseja criar.",
+                    "dialog_success": "Veículo criado!",
+                    "dialog_error": "Não existe um veículo com modelo '%{modelName}'!",
+                    "dialog_info": "Criando %{modelName}."
+                },
+                "fix": {
+                    "title": "Consertar",
+                    "label": "Consertar veículo atual",
+                    "success": "Veículo consertado!"
+                },
+                "delete": {
+                    "title": "Deletar",
+                    "label": "Deletar veículo atual",
+                    "success": "Veículo deletado!"
+                }
+            },
+            "heal": {
+                "title": "Curar",
+                "myself": {
+                    "title": "Eu Mesmo",
+                    "label": "Restaura a sua vida.",
+                    "success_0": "Personagem curado!",
+                    "success_1": "Você já deve estar se sentindo melhor!",
+                    "success_2": "Vida restaurada!",
+                    "success_3": "Dodói já passou!"
+                },
+                "everyone": {
+                    "title": "Todo Mundo",
+                    "label": "Cura e revive todos os jogadores",
+                    "success": "Todos os jogadores foram curados."
+                }
+            },
+            "announcement": {
+                "title": "Enviar Aviso Global",
+                "label": "Envia uma mensagem para todos os jogadores online",
+                "dialog_desc": "Insira a mensagem a ser enviada para todos os jogadores.",
+                "dialog_placeholder": "Seu aviso...",
+                "dialog_success": "Enviando anúncio."
+            },
+            "clear_area": {
+                "title": "Resetar Área",
+                "label": "Limpa as entidades do jogo próximas ao jogador.",
+                "dialog_desc": "Insira a distância a qual deseja limpar entidades (0-300). Esta ação não vai remover entidades criadas no servidor.",
+                "dialog_success": "Limpando entidades dentro de %{radius}m",
+                "dialog_error": "Distância inválida."
+            },
+            "player_ids": {
+                "title": "Mostrar/Esconder IDs",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                "alert_show": "Mostrando os NetIDs próximos.",
+                "alert_hide": "Escondendo os NetIDs próximos."
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "Jogadores Online",
+                "players": "Jogadores",
+                "search": "Buscar",
+                "zero_players": "Nenhum jogador encontrado"
+            },
+            "sort": {
+                "label": "Ordenar por",
+                "distance": "Distância",
+                "id": "ID",
+                "joined_first": "Conectou primeiro",
+                "joined_last": "Conectou por último",
+                "closest": "Mais próximo",
+                "farthest": "Mais distante"
+            },
+            "card": {
+                "health": "Vida em %{percentHealth}%"
+            }
+        },
+        "player_modal": {
+            "misc": {
+                "error": "Erro ao buscar os dos dados do jogador:",
+                "target_not_found": "Não foi possível encontrar um jogador online com ID ou username %{target}"
+            },
+            "tabs": {
+                "actions": "Ações",
+                "info": "Informações",
+                "ids": "IDs",
+                "history": "Histórico",
+                "ban": "Banir"
+            },
+            "actions": {
+                "title": "Ações do Jogador",
+                "command_sent": "Comando enviado!",
+                "moderation": {
+                    "title": "Moderação",
+                    "options": {
+                        "dm": "DM",
+                        "warn": "Advertir",
+                        "kick": "Kickar",
+                        "set_admin": "Dar Admin"
+                    },
+                    "dm_dialog": {
+                        "title": "Mensagem Privada para",
+                        "description": "O que deseja enviar ao jogador?",
+                        "placeholder": "Alguma mensagem...",
+                        "success": "Sua mensagem privada foi enviada!"
+                    },
+                    "warn_dialog": {
+                        "title": "Advertir",
+                        "description": "Qual a razão para advertir este jogador?",
+                        "placeholder": "Razão...",
+                        "success": "O jogador foi advertido!"
+                    },
+                    "kick_dialog": {
+                        "title": "Kickar (expulsar)",
+                        "description": "Qual a razão para expulsar este jogador?",
+                        "placeholder": "Razão...",
+                        "success": "O jogador foi expulso!"
+                    }
+                },
+                "interaction": {
+                    "title": "Interação",
+                    "options": {
+                        "heal": "Curar",
+                        "go_to": "Ir Até",
+                        "bring": "Trazer",
+                        "spectate": "Observar",
+                        "toggle_freeze": "Congelar"
+                    },
+                    "notifications": {
+                        "heal_player": "Curando jogador",
+                        "tp_player": "Teleportando ao jogador",
+                        "bring_player": "Trazendo o jogador",
+                        "spectate_failed": "Erro ao resolver o alvo! Cancelando modo observar.",
+                        "spectate_yourself": "Você não pode observar você mesmo.",
+                        "freeze_yourself": "Você não pode congelar você mesmo."
+                    }
+                },
+                "troll": {
+                    "title": "Troll",
+                    "options": {
+                        "drunk": "Deixar Bêbado",
+                        "fire": "Atear Fogo",
+                        "wild_attack": "Ataque Selvagem"
+                    }
+                }
+            },
+            "info": {
+                "title": "Informações do Jogador",
+                "session_time": "Tempo de sessão",
+                "play_time": "Tempo no servidor",
+                "joined": "Primeira conexão",
+                "notes_placeholder": "Notas sobre este jogador"
+            },
+            "history": {
+                "title": "Histórico Relacionado",
+                "action_types": {
+                    "warn": "ADVERTIU",
+                    "warn_revoked": "REVOGOU a ADVERTÊNCIA do",
+                    "ban": "BANIU",
+                    "ban_revoked": "REVOGOU o BAN do",
+                    "whitelist": "APROVOU WHITELIST do",
+                    "whitelist_revoked": "REVOGOU o WHITELIST do"
+                }
+            },
+            "ban": {
+                "title": "Banir Jogador",
+                "reason_placeholder": "Razão",
+                "duration_placeholder": "Duração",
+                "hours": "horas",
+                "days": "dias",
+                "weeks": "semanas",
+                "months": "meses",
+                "permanent": "Permanente",
+                "custom": "Customizado",
+                "helper_text": "Por favor selecione a duração",
+                "submit": "Aplicar ban"
+            }
+        }
+    }
+}

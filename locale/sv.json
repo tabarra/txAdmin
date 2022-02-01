@@ -4,23 +4,23 @@
         "humanizer_language": "sv"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
-        "crash_detected": "Server krasch upptäckt",
-        "hang_detected": "hang detected",
-        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
-        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
-        "schedule_reason": "Schemalagd restart %{time}",
-        "schedule_warn": "Den här servern kommer startas om inom %{smart_count} minuter. Snälla lämna. |||| Den här servern kommer startas om inom %{smart_count} minuter.",
+        "start_timeout": "Servern kunde inte starta i tid.",
+        "crash_detected": "Krasch upptäckt",
+        "hang_detected": "Fördröjning upptäckt",
+        "partial_hang_warn": "På grund av fördröjningar startar servern om. Vänligen koppla från nu.",
+        "partial_hang_warn_discord": "På grund av fördröjningar startar **%{servername}** om inom en minut.",
+        "schedule_reason": "Schemalagd omstart om %{time}",
+        "schedule_warn": "Den här servern kommer startas om inom %{smart_count} minuter. Vänligen lämna. |||| Den här servern kommer startas om inom %{smart_count} minuter.",
         "schedule_warn_discord": "**%{servername}** är schemalagd att startas om inom %{smart_count} minuter. |||| **%{servername}** är schemalagd att startas om inom %{smart_count} minuter."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) Du har blivit bannad från denna server på grund av \"%{reason}\". Din bannlysning går ut : %{expiration}.",
+        "kick_permanent": "(%{author}) Du har blivit permanent bannlyst från denna server på grund av \"%{reason}\".",
+        "reject_temporary": "Du har blivit bannad från denna server.\nDin banlysning kommer gå ut: %{expiration}.\nBanlysnings ID: %{id}.\nBanlysnings anleding: %{reason}.\nBanlyst av: %{author}.",
+        "reject_permanent": "Du har blivit permanent bannlyst från denna server på grund av.\nBanlysnings ID: %{id}.\nBanlysning anledning: %{reason}.\nBanlyst av: %{author}."
     },
     "server_actions": {
-        "restarting": "Servern startar om (%{reason}).",
+        "restarting": "Servern omstart (%{reason}).",
         "restarting_discord": "**%{servername}** startas om (%{reason}).",
         "stopping": "Servern stängs av (%{reason}).",
         "stopping_discord": "**%{servername}** håller på att stängas av (%{reason}).",
@@ -33,254 +33,257 @@
     "nui_warning": {
         "title": "VARNING",
         "warned_by": "Varnad av:",
-        "instruction": "Håll [SPACE] i 10 sekunder för att dölja detta meddelande."
+        "instruction": "Håll in [SPACE] i 10 sekunder för att dölja detta meddelande."
     },
     "nui_menu": {
         "misc": {
-            "help_message": "txAdmin has gotten an in-game menu!\nBind [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] to try it out!",
-            "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
-            "action_unauthorized": "You do not have this permission.",
-            "unknown_error": "An unknown error occurred.",
-            "not_enabled": "The txAdmin Menu is not enabled! Please check the docs for more info.",
-            "announcement_title": "Server Announcement by %{author}:",
-            "general_no_perms": "You do not have permissions for this!",
-            "dialog_empty_input": "You cannot have an empty input."
+            "help_message": "txAdmin Menyn är aktiverad, skriv /tx i chatten för att öppna den.\nDu kan ändra knapp på [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
+            "menu_not_allowed": "Dina id stämmer inte överns med dom som är registerade i txAdmin regisrtert.\nOm du är registerad på Txadmin,gå till administratör hanteraren och dubbelkolla att id:en är korrekta.",
+            "no_perms": "Du har inte behörighet för detta.",
+            "unknown_error": "Ett okänt problem har uppstått",
+            "not_enabled": "Txadmin menyn är inte aktiverad! Du kan aktivera den på Txadmin panelen.",
+            "announcement_title": "Server meddelande skickat av %{author}:",
+            "dialog_empty_input": "Du kan inte ha ett tomt fält."
         },
         "frozen": {
-            "froze_player": "You have frozen the player!",
-            "unfroze_player": "You have unfrozen the player!",
-            "was_frozen": "You have been frozen by a server admin!"
+            "froze_player": "Du har frusit spelaren",
+            "unfroze_player": "Du har avfrusit spelaren",
+            "was_frozen": "Du har blivit frusen av en Server administratör"
         },
         "common": {
-            "cancel": "Cancel",
-            "submit": "Submit",
-            "error": "An error occurred",
-            "copied": "Copied to clipboard."
+            "cancel": "Avbryt",
+            "submit": "Överlämmna",
+            "error": "Ett fel har uppstått",
+            "copied": "Kopierat till urklipp."
         },
         "page_main": {
             "tooltips": {
-                "tooltip_1": "Use %{key} to switch pages & the arrow keys to navigate menu items",
-                "tooltip_2": "Certain menu items have sub options which can be selected using the left & right arrow keys"
+                "tooltip_1": "Använd %{key} för att ändra sida & piltangeterna för att navigera mellan menyernas alternativ",
+                "tooltip_2": "Visa menyer har under kationriger vilket kan användas med hjälp av piltangernterna"
             },
             "player_mode": {
-                "title": "Player Mode",
+                "title": "Spelar läge",
                 "noclip": {
-                    "title": "NoClip",
-                    "label": "Fly around",
-                    "success": "NoClip enabled"
+                    "title": "Noclip",
+                    "label": "Flyga runt",
+                    "success": "Ingen Noclip"
                 },
                 "godmode": {
-                    "title": "God",
-                    "label": "Invincible",
-                    "success": "God Mode enabled"
+                    "title": "Gud",
+                    "label": "Oförstörbar",
+                    "success": "Gudläge aktiverat"
                 },
                 "normal": {
-                    "title": "Normal",
-                    "label": "Default mode",
-                    "success": "Returned to default player mode."
+                    "title": "Vanlig",
+                    "label": "Vanlig spelare",
+                    "success": "Återvände till vanlig spelare."
                 }
             },
             "teleport": {
-                "title": "Teleport",
-                "generic_success": "Sent you into the wormhole!",
+                "title": "Teleportera",
+                "generic_success": "Skickat dig genom en tunnel!",
                 "waypoint": {
-                    "title": "Waypoint",
-                    "label": "Go to waypoint set",
-                    "error": "You have no waypoint set."
+                    "title": "Position",
+                    "label": "Gå till positionen satt",
+                    "error": "Du har ingen position utmärkt."
                 },
                 "coords": {
-                    "title": "Coords",
-                    "label": "Go to specified coords",
-                    "dialog_title": "Teleport",
-                    "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole.",
-                    "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33"
+                    "title": "Kordinater",
+                    "label": "Gå till spesifika kordinater",
+                    "dialog_title": "Teleportera",
+                    "dialog_desc": "Skriv kordinaterna i x, y, z format för att kunna teleportera.",
+                    "dialog_error": "Ogiltiga kordinater. Det måste vara i formatet: 111, 222, 33"
                 },
                 "back": {
-                    "title": "Back",
-                    "label": "Go back to last location",
-                    "error": "You don't have a last location to go back to!"
+                    "title": "Tillbaka",
+                    "label": "Gå tillbaka till senaste positionen",
+                    "error": "Du har ingen senaste position"
                 },
                 "copy": {
-                    "title": "Copy Coords",
-                    "label": "Copy coords to clipboard."
+                    "title": "Kopiera kordinaterna",
+                    "label": "Kopiera kordinaterna till urklipp."
                 }
             },
             "vehicle": {
-                "title": "Vehicle",
-                "onesync_error": "This option requires that OneSync be on for server entity handling",
-                "not_in_veh_error": "You are not currently in a vehicle!",
+                "title": "Fordon",
+                "onesync_error": "Detta alternativ kräver OneSync för fordon hantering",
+                "not_in_veh_error": "Du är för tillfället inte i fordonet!",
                 "spawn": {
-                    "title": "Spawn",
-                    "label": "Spawn vehicle by model name",
-                    "dialog_title": "Spawn vehicle",
-                    "dialog_desc": "Enter in the model name of the vehicle you want to spawn.",
-                    "dialog_success": "Vehicle spawned!",
-                    "dialog_error": "The vehicle model name '%{modelName}' does not exist!",
-                    "dialog_info": "Trying to spawn %{modelName}."
+                    "title": "Ta fram",
+                    "label": "Ta fram fordon med moddel namn",
+                    "dialog_title": "Ta fram fordon",
+                    "dialog_desc": "Skriv in moddel namnet på fordonet du vill ta fram.",
+                    "dialog_success": "Fordon spawnat!",
+                    "dialog_error": "Fordonet '%{modelName}' finns inte!",
+                    "dialog_info": "Försöker spawna %{modelName}."
                 },
                 "fix": {
-                    "title": "Fix",
-                    "label": "Fix the current vehicle",
-                    "success": "Vehicle fixed!"
+                    "title": "Laga",
+                    "label": "Laga nuvarande fordon",
+                    "success": "Fordon lagat!"
                 },
                 "delete": {
-                    "title": "Delete",
-                    "label": "Delete the current vehicle",
-                    "success": "Vehicle deleted!"
+                    "title": "Ta bort",
+                    "label": "Ta bort nuvarande fordon",
+                    "success": "Fordon bortaget!"
                 }
             },
             "heal": {
-                "title": "Heal",
+                "title": "Läka",
                 "myself": {
-                    "title": "Myself",
-                    "label": "Restores your health",
-                    "success_0": "All healed up!",
-                    "success_1": "You should be feeling good now!",
-                    "success_2": "Restored to full!",
-                    "success_3": "Ouchies fixed!"
+                    "title": "Dig själv",
+                    "label": "Återställer din hälsa",
+                    "success_0": "Alla är helade!",
+                    "success_1": "Du bör må bra nu!",
+                    "success_2": "Återställd till max!",
+                    "success_3": "Smärtan fixad!"
                 },
                 "everyone": {
-                    "title": "Everyone",
-                    "label": "Will heal & revive all players",
-                    "success": "Healed and revived all players."
+                    "title": "Alla",
+                    "label": "Detta kommer hela och återuppliva alla spelare",
+                    "success": "Helad och återupplivade alla spelare."
                 }
             },
             "announcement": {
-                "title": "Send Announcement",
-                "dialog_desc": "Send an announcement to all online players.",
-                "dialog_placeholder": "Your announcement...",
-                "dialog_success": "Sending the announcement."
+                "title": "Skicka ut medelande",
+                "label": "Skicka ett meddelande till alla spelare inne på servern",
+                "dialog_desc": "Skriv in meddelandet du vill skicka till alla spelare.",
+                "dialog_placeholder": "Ditt Medelande... ",
+                "dialog_success": "Skickar ut ditt medelande."
             },
             "clear_area": {
-                "title": "Reset World Area",
-                "dialog_description": "Please enter the radius where you wish to reset entities in (0-300). This will not clear entities spawned server side",
-                "dialog_success": "Clearing area with radius of %{radius}m",
-                "dialog_error": "Invalid radius input. Try again."
+                "title": "Återställ världs arean",
+                "label": "Återställ ett angivet världsområde till dess standardläge",
+                "dialog_desc": "Vänligen skriv in radien du vill rensa objekt i (0-300). Detta kommer inte rensa saker servern har spawnat",
+                "dialog_success": "Rensar area med %{radius}m",
+                "dialog_error": "Ogiltig radie, försök igen."
             },
             "player_ids": {
-                "title": "Toggle Player IDs",
-                "alert_show": "Showing nearby player NetIDs.",
-                "alert_hide": "Hiding nearby player NetIDs."
+                "title": "Sätt på spelares id",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                "alert_show": "Visa spelares id i närheten.",
+                "alert_hide": "Dölj spelares id i närheten."
             }
         },
         "page_players": {
             "misc": {
-                "online_players": "Online Players",
-                "players": "Players",
-                "search": "Search",
-                "zero_players": "No players found"
+                "online_players": "Spelare inne",
+                "players": "Spelare",
+                "search": "Sök",
+                "zero_players": "Inga spelare funna"
             },
             "sort": {
-                "label": "Sort by",
-                "distance": "Distance",
+                "label": "Sortera efter",
+                "distance": "Avstånd",
                 "id": "ID",
-                "joined_first": "Joined First",
-                "joined_last": "Joined Last",
-                "closest": "Closest",
-                "farthest": "Farthest"
+                "joined_first": "Gick med först",
+                "joined_last": "Gick med senast",
+                "closest": "Närmast",
+                "farthest": "Längst"
             },
             "card": {
-                "health": "%{percentHealth}% health"
+                "health": "%{percentHealth}% Hälsa"
             }
         },
         "player_modal": {
             "misc": {
-                "error": "An error occurred fetching this users details. The error is shown below:",
-                "target_not_found": "Was unable to find an online player with ID or an username of %{target}"
+                "error": "Kunde inte ta emot spelarens information. Felkod syns nedan:",
+                "target_not_found": "Kunde inte hitta en spelare med det id:et %{target}"
             },
             "tabs": {
-                "actions": "Actions",
+                "actions": "Alternativ",
                 "info": "Info",
                 "ids": "IDs",
-                "history": "History",
-                "ban": "Ban"
+                "history": "Historia",
+                "ban": "Bannlys"
             },
             "actions": {
-                "title": "Player Actions",
-                "command_sent": "Command sent!",
+                "title": "Spelare alternativ",
+                "command_sent": "Kommando skickat ",
                 "moderation": {
                     "title": "Moderation",
                     "options": {
-                        "dm": "DM",
-                        "warn": "Warn",
-                        "kick": "Kick",
-                        "set_admin": "Give Admin"
+                        "dm": "Direktmeddelande",
+                        "warn": "Varna",
+                        "kick": "Sparka",
+                        "set_admin": "Ge administratör "
                     },
                     "dm_dialog": {
-                        "title": "Direct Message",
-                        "description": "What is the reason for direct messaging this player?",
-                        "placeholder": "Reason...",
-                        "success": "Your DM has been sent!"
+                        "title": "Direktmeddelande",
+                        "description": "Vad vill du skriva i ditt direktmeddelande till spelaren ",
+                        "placeholder": "Anledning",
+                        "success": "Ditt direktmeddelande har skickats"
                     },
                     "warn_dialog": {
-                        "title": "Warn",
-                        "description": "What is the reason for direct warning this player?",
-                        "placeholder": "Reason...",
-                        "success": "The player was warned!"
+                        "title": "Varna",
+                        "description": "Vad är anledningen till att du varnar spelaren?",
+                        "placeholder": "Anlednig",
+                        "success": "Spelaren är varnad!"
                     },
                     "kick_dialog": {
-                        "title": "Kick",
-                        "description": "What is the reason for kicking this player?",
-                        "placeholder": "Reason...",
-                        "success": "The player was kicked!"
+                        "title": "Sparka",
+                        "description": "Varför vill du sparka denna spelare",
+                        "placeholder": "Anledning",
+                        "success": "Spelaren är sparkad!"
                     }
                 },
                 "interaction": {
-                    "title": "Interaction",
+                    "title": "Samspelsfunktioner",
                     "options": {
-                        "heal": "Heal",
-                        "go_to": "Go to",
-                        "bring": "Bring",
-                        "spectate": "Spectate",
-                        "toggle_freeze": "Toggle Freeze"
+                        "heal": "Läk",
+                        "go_to": "Gå till",
+                        "bring": "Ta spelare till mig",
+                        "spectate": "Åskåda",
+                        "toggle_freeze": "Växla frysläge"
                     },
                     "notifications": {
-                        "heal_player": "Healing player",
-                        "tp_player": "Teleporting to player",
-                        "bring_player": "Summoning player",
-                        "spectate_failed": "Failed to resolve the target! Exiting spectate.",
-                        "spectate_yourself": "You cannot spectate yourself.",
-                        "freeze_yourself": "You cannot freeze yourself."
+                        "heal_player": "Läk spelare",
+                        "tp_player": "Teleporterna till spelare",
+                        "bring_player": "Ta spelare till dig",
+                        "spectate_failed": "Misslyckades att hitta spelaren, avslutar åskådarläget.",
+                        "spectate_yourself": "Du kan inte åskåda dig själv.",
+                        "freeze_yourself": "Du kan inte frysa dig själv."
                     }
                 },
                 "troll": {
-                    "title": "Troll",
+                    "title": "Trolla",
                     "options": {
-                        "drunk": "Make Drunk",
-                        "fire": "Set Fire",
-                        "wild_attack": "Wild attack"
+                        "drunk": "Gör full",
+                        "fire": "Tänd Eld",
+                        "wild_attack": "Vild Djursattack"
                     }
                 }
             },
             "info": {
-                "title": "Player info",
-                "session_time": "Session Time",
-                "play_time": "Play time",
-                "joined": "Joined",
-                "notes_placeholder": "Notes about this player"
+                "title": "Spelar information",
+                "session_time": "Session tid",
+                "play_time": "Speltid",
+                "joined": "Anslöt",
+                "notes_placeholder": "Anteckningar om denna spelare"
             },
             "history": {
-                "title": "Related history",
+                "title": "Relaterad historia",
                 "action_types": {
-                    "warn": "WARNED",
-                    "warn_revoked": "REVOKED the WARN for",
-                    "ban": "BANNED",
-                    "ban_revoked": "REVOKED the BAN for",
-                    "whitelist": "WHITELIST",
-                    "whitelist_revoked": "REVOKED the WHITELIST for"
+                    "warn": "VARNING",
+                    "warn_revoked": "ÅTERKALLA VARNINGEN för",
+                    "ban": "BANNAD",
+                    "ban_revoked": "ÅTERKALLA BANN för",
+                    "whitelist": "VITLISTA",
+                    "whitelist_revoked": "ÅTERKALLA VITLISTNING för"
                 }
             },
             "ban": {
-                "title": "Ban player",
-                "reason_placeholder": "Reason",
-                "duration_placeholder": "Duration",
-                "hours": "hours",
-                "days": "days",
-                "weeks": "weeks",
-                "months": "months",
+                "title": "Banna spelare",
+                "reason_placeholder": "Anledning",
+                "duration_placeholder": "Varaktighet",
+                "hours": "Timmar",
+                "days": "Dagar",
+                "weeks": "Veckor",
+                "months": "Månader",
                 "permanent": "Permanent",
-                "custom": "Custom",
-                "helper_text": "Please select a duration"
+                "custom": "Anpassad",
+                "helper_text": "Vänligen välj en varaktighet",
+                "submit": "Tillämpa bann"
             }
         }
     }

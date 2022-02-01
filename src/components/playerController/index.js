@@ -1,18 +1,18 @@
 //Requires
 const modulename = 'PlayerController';
-const { customAlphabet } = require('nanoid');
 const humanizeDuration = require('humanize-duration'); //FIXME: remove, this controller is not the right place for interface stuff
 const xss = require('../../extras/xss')(); //FIXME: same as above
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 // eslint-disable-next-line no-unused-vars
 const { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } = require('./database.js');
+const idGen = require('./idGenerator.js');
+
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
 
 //Consts
 const validActions = ['ban', 'warn', 'whitelist'];
-
 
 
 /*
@@ -159,7 +159,7 @@ module.exports = class PlayerController {
                     this.db.writeFlag(SAVE_PRIORITY_LOW);
                     p.playTime += 1;
                     await this.db.obj.get('players')
-                        .find({license: p.license})
+                        .find({ license: p.license })
                         .assign({
                             name: p.name,
                             playTime: p.playTime,
@@ -186,9 +186,9 @@ module.exports = class PlayerController {
         //Infering filter type
         let filter;
         if (/[0-9A-Fa-f]{40}/.test(reference)) {
-            filter = {license: reference};
+            filter = { license: reference };
         } else if (/\d{1,6}/.test(reference)) {
-            filter = {id: parseInt(reference, 10)};
+            filter = { id: parseInt(reference, 10) };
         } else {
             throw new Error('Invalid reference type');
         }
@@ -244,7 +244,7 @@ module.exports = class PlayerController {
     async checkPlayerJoin(idArray, playerName) {
         //Check if required
         if (!this.config.onJoinCheckBan && !this.config.onJoinCheckWhitelist) {
-            return {allow: true, reason: 'checks disabled'};
+            return { allow: true, reason: 'checks disabled' };
         }
 
         //DEBUG: save join log
@@ -298,7 +298,7 @@ module.exports = class PlayerController {
                         msg = globals.translator.t('ban_messages.reject_permanent', tOptions);
                     }
 
-                    return {allow: false, reason: msg};
+                    return { allow: false, reason: msg };
                 }
             }
 
@@ -308,17 +308,17 @@ module.exports = class PlayerController {
                 if (!wl) {
                     //Get license
                     let license = idArray.find((id) => id.substring(0, 8) == 'license:');
-                    if (!license) return {allow: false, reason: 'the whitelist module requires a license identifier.'};
+                    if (!license) return { allow: false, reason: 'the whitelist module requires a license identifier.' };
                     license = license.substring(8);
                     //Check for pending WL requests
-                    const pending = await this.db.obj.get('pendingWL').find({license: license}).value();
+                    const pending = await this.db.obj.get('pendingWL').find({ license: license }).value();
                     let whitelistID;
                     if (pending) {
                         pending.name = playerName;
                         pending.tsLastAttempt = now();
                         whitelistID = pending.id;
                     } else {
-                        whitelistID = 'R' + customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
+                        whitelistID = await idGen.genWhitelistID(this.db.obj);
                         const toDB = {
                             id: whitelistID,
                             name: playerName,
@@ -337,16 +337,16 @@ module.exports = class PlayerController {
                     const reason = xssRejectMessage(this.config.whitelistRejectionMessage)
                         .replace(/<\/?strong>/g, '')
                         .replace(/<id>/g, whitelistID);
-                    return {allow: false, reason};
+                    return { allow: false, reason };
                 }
             }
 
-            return {allow: true, reason: null};
+            return { allow: true, reason: null };
         } catch (error) {
             const msg = `Failed to check whitelist/blacklist: ${error.message}`;
             logError(msg);
             if (GlobalData.verbose) dir(error);
-            return {allow: false, reason: msg};
+            return { allow: false, reason: msg };
         }
     }
 
@@ -393,39 +393,33 @@ module.exports = class PlayerController {
         }
 
         //Saves it to the database
-        const actionPrefix = (type == 'warn') ? 'a' : type[0];
-        const actionID = actionPrefix.toUpperCase()
-            + customAlphabet(GlobalData.noLookAlikesAlphabet, 3)()
-            + '-'
-            + customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
-        const toDB = {
-            id: actionID,
-            type,
-            author,
-            reason,
-            expiration,
-            timestamp,
-            playerName,
-            identifiers,
-            revocation: {
-                timestamp: null,
-                author: null,
-            },
-        };
         try {
+            const actionID = await idGen.genActionID(this.db.obj, type);
+            const toDB = {
+                id: actionID,
+                type,
+                author,
+                reason,
+                expiration,
+                timestamp,
+                playerName,
+                identifiers,
+                revocation: {
+                    timestamp: null,
+                    author: null,
+                },
+            };
             await this.db.obj.get('actions')
                 .push(toDB)
                 .value();
             this.db.writeFlag(SAVE_PRIORITY_HIGH);
+            return actionID;
         } catch (error) {
             let msg = `Failed to register event to database with message: ${error.message}`;
             logError(msg);
             if (GlobalData.verbose) dir(error);
             throw new Error(msg);
         }
-
-
-        return actionID;
     }
 
 
@@ -442,7 +436,7 @@ module.exports = class PlayerController {
         if (allowedTypes !== true && !Array.isArray(allowedTypes)) throw new Error('Invalid allowedTypes.');
         try {
             const action = await this.db.obj.get('actions')
-                .find({id: action_id})
+                .find({ id: action_id })
                 .value();
             if (action) {
                 if (allowedTypes !== true && !allowedTypes.includes(action.type)) {
@@ -487,12 +481,12 @@ module.exports = class PlayerController {
         let saveReference;
         let playerName = false;
         if (/[0-9A-Fa-f]{40}/.test(reference)) {
-            pendingFilter = {license: reference};
+            pendingFilter = { license: reference };
             saveReference = [`license:${reference}`];
             const pending = await this.db.obj.get('pendingWL').find(pendingFilter).value();
             if (pending) playerName = pending.name;
         } else if (GlobalData.regexWhitelistReqID.test(reference)) {
-            pendingFilter = {id: reference};
+            pendingFilter = { id: reference };
             const pending = await this.db.obj.get('pendingWL').find(pendingFilter).value();
             if (!pending) throw new Error('Pending ID not found in database');
             saveReference = [`license:${pending.license}`];
@@ -534,7 +528,7 @@ module.exports = class PlayerController {
             if (ap) {
                 target = ap;
             } else {
-                let dbp = await this.db.obj.get('players').find({license: license}).value();
+                let dbp = await this.db.obj.get('players').find({ license: license }).value();
                 if (!dbp) return false;
                 target = dbp;
             }
@@ -738,7 +732,7 @@ module.exports = class PlayerController {
                     //p.sessions.push({ts: now(), time: p.playTime})
                     // some code here to save the p.playTime
                     await this.db.obj.get('players')
-                        .find({license: p.license})
+                        .find({ license: p.license })
                         .assign({
                             notes: p.notes,
                         })

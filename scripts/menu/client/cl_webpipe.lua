@@ -2,7 +2,7 @@
 --  This file contains all Client WebPipe logic.
 --  It is used to pass NUI HTTP reqs to txAdmin
 -- =============================================
-if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
     return
 end
 -- Vars

@@ -27,7 +27,7 @@ local function handleAuthFail(src, reason)
     failedAuths[srcString] = GetGameTimer()
     reason = reason or "unknown"
     debugPrint("Auth rejected #"..srcString.." ("..reason..")")
-    TriggerClientEvent('txcl:setAdmin', src, false, reason)
+    TriggerClientEvent('txcl:setAdmin', src, false, false, reason)
 end
 
 -- Handle menu auth requests

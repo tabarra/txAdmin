@@ -77,7 +77,9 @@ module.exports = class FXServerLogger extends LoggerBase {
         if (type === 'starting') {
             const msg = separator('FXServer Starting');
             this.lrStream.write(`\n${msg}\n`);
-            process.stdout.write(`\n${chalk.bgBlue(msg)}\n`);
+            if (!globals.fxRunner.config.quiet) {
+                process.stdout.write(`\n${chalk.bgBlue(msg)}\n`);
+            }
             const coloredMarkData = `\n\n${markLines(msg, 'info')}\n`;
             globals.webServer.webSocket.buffer('liveconsole', coloredMarkData);
             this.appendRecent(coloredMarkData);

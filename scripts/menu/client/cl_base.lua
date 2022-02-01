@@ -10,23 +10,31 @@ isMenuDebug = false
 isMenuVisible = false
 menuPermissions = {}
 lastTpCoords = false;
-local isMenuEnabled = (GetConvar('txEnableMenuBeta', 'false') == 'true')
+local isMenuEnabled = (GetConvar('txAdmin-menuEnabled', 'false') == 'true')
 
 
 -- Check if menu is in debug mode 
 CreateThread(function()
-  isMenuDebug = (GetConvar('txAdminMenu-debugMode', 'false') == 'true')
+  isMenuDebug = (GetConvar('txAdmin-menuDebug', 'false') == 'true')
 end)
+
+local function checkMenuAccessible()
+  if not isMenuEnabled then
+    sendSnackbarMessage('error', 'nui_menu.misc.not_enabled', true)
+    return false
+  end
+  if not menuIsAccessible then
+    sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
+    return false
+  end
+
+  return true
+end
 
 
 -- Register txAdmin command
 local function txadmin(_, args)
-  if not isMenuEnabled then
-    return sendSnackbarMessage('error', 'nui_menu.misc.not_enabled', true)
-  end
-  if not menuIsAccessible then
-    return sendSnackbarMessage('error', 'nui_menu.misc.menu_not_allowed', true)
-  end
+  if not checkMenuAccessible() then return end
 
   -- Make visible
   toggleMenuVisibility()
@@ -41,6 +49,7 @@ RegisterCommand('txadmin', txadmin)
 RegisterCommand('tx', txadmin)
 
 RegisterCommand('txAdmin:menu:openPlayersPage', function()
+  if not checkMenuAccessible() then return end
   sendMenuMessage('setMenuPage', 1)
   toggleMenuVisibility(true)
   SetNuiFocus(true, true)

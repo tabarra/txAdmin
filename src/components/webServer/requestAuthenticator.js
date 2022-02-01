@@ -179,9 +179,7 @@ const authLogic = (sess, perm, epType) => {
  */
 const nuiAuthLogic = (reqIP, reqHeader) => {
     // Check sus IPs
-    //  && !GlobalData.isZapHosting
-    //FIXME: test on ZAP game server
-    if (!GlobalData.loopbackInterfaces.includes(reqIP)) {
+    if (!GlobalData.loopbackInterfaces.includes(reqIP) && !GlobalData.isZapHosting) {
         if (GlobalData.verbose) {
             logWarn(`NUI Auth Failed: reqIP (${reqIP}) not in ${JSON.stringify(GlobalData.loopbackInterfaces)}.`);
         }

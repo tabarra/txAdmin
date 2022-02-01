@@ -25,7 +25,7 @@ module.exports = async function AuthVerify(ctx) {
         let admin = globals.adminVault.getAdminByName(ctx.request.body.username);
         if (!admin) {
             logWarn(`Wrong username for from: ${ctx.ip}`);
-            renderData.message = 'Wrong Password!';
+            renderData.message = 'Wrong Username!';
             return ctx.utils.render('login', renderData);
         }
         if (!VerifyPasswordHash(ctx.request.body.password.trim(), admin.password_hash)) {

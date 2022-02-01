@@ -167,4 +167,7 @@ module.exports.printBanner = async () => {
     if (GlobalData.osType === 'windows' && adminPinRes.value) {
         open(`http://localhost:${GlobalData.txAdminPort}/auth#${adminPinRes.value}`).catch();
     }
+
+    //Starting server
+    globals.fxRunner.signalStartReady();
 };

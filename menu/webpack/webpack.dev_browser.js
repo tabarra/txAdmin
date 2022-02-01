@@ -7,8 +7,7 @@ module.exports = CommonWebpack({
     mode: 'development',
     devtool: 'source-map',
     devServer: {
-        contentBase: path.join(process.cwd(), 'menu/public'),
-        watchContentBase: true,
+        static: path.join(process.cwd(), 'menu/public'),
         host: 'localhost',
     },
     plugins: [

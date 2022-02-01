@@ -126,7 +126,7 @@ async function handleAdd(ctx) {
     }
 
     //Check for privilege escalation
-    if (!ctx.session.auth.master) {
+    if (!ctx.session.auth.master && !ctx.session.auth.permissions.includes('all_permissions')) {
         const deniedPerms = permissions.filter((x) => !ctx.session.auth.permissions.includes(x));
         if (deniedPerms.length) {
             return ctx.send({
@@ -231,7 +231,7 @@ async function handleEdit(ctx) {
     }
 
     //Check for privilege escalation
-    if (!ctx.session.auth.master) {
+    if (!ctx.session.auth.master && !ctx.session.auth.permissions.includes('all_permissions')) {
         const deniedPerms = permissions.filter((x) => !ctx.session.auth.permissions.includes(x));
         if (deniedPerms.length) {
             return ctx.send({

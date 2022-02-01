@@ -27,6 +27,18 @@
     "windows-release": {
       "versions": ">4",
       "reason": "esm"
+    },
+    "chalk": {
+      "versions": ">4",
+      "reason": "esm"
+    },
+    "execa": {
+      "versions": ">5",
+      "reason": "esm"
+    },
+    "got": {
+      "versions": ">11",
+      "reason": "esm"
     }
   }
 }

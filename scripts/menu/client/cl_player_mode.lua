@@ -2,7 +2,7 @@
 --  This file contains functionality purely related
 --  to player modes (noclip, godmode)
 -- ===============
-if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
     return
 end
 
@@ -83,31 +83,81 @@ local function toggleFreecam(enabled)
 end
 
 
-RegisterCommand('txAdmin:menu:noClipToggle', function()
-    if not DoesPlayerHavePerm(menuPermissions, 'players.playermode') then
-        return sendSnackbarMessage('error', 'nui_menu.misc.general_no_perms', true)
-    end
+local PTFX_ASSET = 'ent_dst_elec_fire_sp'
+local PTFX_DICT = 'core'
+local LOOP_AMOUNT = 25
+local PTFX_DURATION = 1000
 
-    debugPrint("NoClip toggled:" .. tostring(not noClipEnabled))
+-- Applies the particle effect to a ped
+local function createPlayerModePtfxLoop(tgtPedId)
+    CreateThread(function()
+        RequestNamedPtfxAsset(PTFX_DICT)
+        local playerPed = tgtPedId or PlayerPedId()
 
-    -- Toggling behavior
-    if noClipEnabled then
-        TriggerServerEvent('txAdmin:menu:playerModeChanged', "none")
-    else
-        TriggerServerEvent('txAdmin:menu:playerModeChanged', "noclip")
-    end
+        -- Wait until it's done loading.
+        while not HasNamedPtfxAssetLoaded(PTFX_DICT) do
+            Wait(0)
+        end
+
+        local particleTbl = {}
+
+        for i=0, LOOP_AMOUNT do
+            UseParticleFxAssetNextCall(PTFX_DICT)
+            local partiResult = StartParticleFxLoopedOnEntity(PTFX_ASSET, playerPed, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, false, false, false)
+            particleTbl[#particleTbl + 1] = partiResult
+            Wait(0)
+        end
+
+        Wait(PTFX_DURATION)
+        for _, parti in ipairs(particleTbl) do
+            StopParticleFxLooped(parti, true)
+        end
+    end)
+end
+
+RegisterNetEvent('txcl:syncPtfxEffect', function(tgtSrc)
+    debugPrint('Syncing particle effect for target netId')
+    local tgtPlayer = GetPlayerFromServerId(tgtSrc)
+    local tgtPlayerPed = GetPlayerPed(tgtPlayer)
+    if tgtSrc == 0 then return end
+    createPlayerModePtfxLoop(tgtPlayerPed)
 end)
 
--- This will trigger everytime the playerMode in the main menu is changed
--- it will send the mode
+-- Ask server for playermode change and sends nearby playerlist
+local function askChangePlayerMode(mode)
+    debugPrint("Requesting player mode change to " .. mode)
+
+    -- get nearby players to receive the ptfx sync event
+    local players = GetActivePlayers()
+    local nearbyPlayers = {}
+    for _, player in ipairs(players) do
+        nearbyPlayers[#nearbyPlayers + 1] = GetPlayerServerId(player)
+    end
+
+    TriggerServerEvent('txAdmin:menu:playerModeChanged', mode, nearbyPlayers)
+end
+
+-- NoClip toggle keybind
+RegisterCommand('txAdmin:menu:noClipToggle', function()
+    if not menuIsAccessible then return end
+    if not DoesPlayerHavePerm(menuPermissions, 'players.playermode') then
+        return sendSnackbarMessage('error', 'nui_menu.misc.no_perms', true)
+    end
+    askChangePlayerMode(noClipEnabled and 'none' or 'noclip')
+end)
+
+-- Menu callback to change the player mode
 RegisterNUICallback('playerModeChanged', function(mode, cb)
-    debugPrint("player mode requested: " .. (mode or 'nil'))
-    TriggerServerEvent('txAdmin:menu:playerModeChanged', mode)
+    askChangePlayerMode(mode)
     cb({})
 end)
 
 -- [[ Player mode changed cb event ]]
-RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode)
+RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode, ptfx)
+    if ptfx then 
+        createPlayerModePtfxLoop()
+    end
+
     if mode == 'godmode' then
         toggleFreecam(false)
         toggleGodMode(true)

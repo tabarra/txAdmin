@@ -71,7 +71,7 @@ module.exports = class ConfigVault {
         try {
             rawFile = fs.readFileSync(this.configFilePath, 'utf8');
         } catch (error) {
-            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. (cannot read file, please read the documentation)\nOriginal error: ${error.message}`);
+            throw new Error(`Unable to load configuration file '${this.configFilePath}'. (cannot read file, please read the documentation)\nOriginal error: ${error.message}`);
         }
 
         //Try to parse config file
@@ -80,7 +80,7 @@ module.exports = class ConfigVault {
             cfgData = JSON.parse(rawFile);
         } catch (error) {
             if (rawFile.includes('\\')) logError(`Note: your 'txData/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`);
-            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. \nOriginal error: ${error.message}`);
+            throw new Error(`Unable to load configuration file '${this.configFilePath}'. \nOriginal error: ${error.message}`);
         }
 
         return cfgData;
@@ -114,6 +114,9 @@ module.exports = class ConfigVault {
                 serverName: toDefault(cfg.global.serverName, null),
                 language: toDefault(cfg.global.language, null),
                 forceFXServerPort: toDefault(cfg.global.forceFXServerPort, null), //not in template
+                menuEnabled: toDefault(cfg.global.menuEnabled, true),
+                menuAlignRight: toDefault(cfg.global.menuAlignRight, false),
+                menuPageKey: toDefault(cfg.global.menuPageKey, 'Tab'),
             };
             out.logger = toDefault(cfg.logger, {}); //not in template
             out.monitor = {
@@ -149,16 +152,24 @@ module.exports = class ConfigVault {
                 commandCooldown: toDefault(cfg.discordBot.commandCooldown, null), //not in template
             };
             out.fxRunner = {
-                serverDataPath: toDefault(cfg.fxRunner.serverDataPath, null) || toDefault(cfg.fxRunner.basePath, null), //converting old variable
+                serverDataPath: toDefault(cfg.fxRunner.serverDataPath, null),
                 cfgPath: toDefault(cfg.fxRunner.cfgPath, null),
                 commandLine: toDefault(cfg.fxRunner.commandLine, null),
                 logPath: toDefault(cfg.fxRunner.logPath, null), //not in template
                 onesync: toDefault(cfg.fxRunner.onesync, null),
                 autostart: toDefault(cfg.fxRunner.autostart, null),
-                autostartDelay: toDefault(cfg.fxRunner.autostartDelay, null), //not in template
                 restartDelay: toDefault(cfg.fxRunner.restartDelay, null), //not in template
                 quiet: toDefault(cfg.fxRunner.quiet, null),
             };
+
+            //Migrations
+            //Removing menu beta convar (v4.9)
+            out.fxRunner.commandLine = out.fxRunner.commandLine?.replace(/\+?setr? txEnableMenuBeta true\s?/gi, '');
+
+            //Merging portuguese
+            if (out.global.language === 'pt_PT' || out.global.language === 'pt_BR'){
+                out.global.language = 'pt';
+            }
         } catch (error) {
             if (GlobalData.verbose) dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated!\nOriginal error: ${error.message}`);
@@ -181,6 +192,9 @@ module.exports = class ConfigVault {
             //Global
             cfg.global.serverName = cfg.global.serverName || 'change-me';
             cfg.global.language = cfg.global.language || 'en'; //TODO: move to GlobalData
+            cfg.global.menuEnabled = (cfg.global.menuEnabled === 'true' || cfg.global.menuEnabled === true);
+            cfg.global.menuAlignRight = (cfg.global.menuAlignRight === 'true' || cfg.global.menuAlignRight === true);
+            cfg.global.menuPageKey = cfg.global.menuPageKey || 'Tab';
 
             //Logger - NOTE: this one default's i'm doing directly into the class
             cfg.logger.fxserver = toDefault(cfg.logger.fxserver, {});
@@ -209,23 +223,14 @@ module.exports = class ConfigVault {
             //DiscordBot
             cfg.discordBot.enabled = (cfg.discordBot.enabled === 'true' || cfg.discordBot.enabled === true);
             cfg.discordBot.prefix = cfg.discordBot.prefix || '/';
-            cfg.discordBot.statusMessage = cfg.discordBot.statusMessage || '**IP:** `change-me:<port>`\n**Players:** <players>\n**Uptime:** <uptime>';
+            cfg.discordBot.statusMessage = cfg.discordBot.statusMessage || '**Join:** `change-me:<port>`\n**Players:** <players>\n**Uptime:** <uptime>';
             cfg.discordBot.commandCooldown = parseInt(cfg.discordBot.commandCooldown) || 30; //not in template
 
             //FXRunner
             cfg.fxRunner.logPath = cfg.fxRunner.logPath || `${this.serverProfilePath}/logs/fxserver.log`; //not in template
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
-            cfg.fxRunner.autostartDelay = parseInt(cfg.fxRunner.autostartDelay) || 6; //not in template
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in templater
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
-            //FXRunner - Converting from old OneSync (build 2751)
-            if (isUndefined(cfg.fxRunner.onesync) || cfg.fxRunner.onesync === null) {
-                cfg.fxRunner.onesync = 'on';
-            } else if (typeof cfg.fxRunner.onesync == 'boolean') {
-                cfg.fxRunner.onesync = (cfg.fxRunner.onesync) ? 'on' : 'off';
-            } else if (!['on', 'legacy', 'off'].includes(cfg.fxRunner.onesync)) {
-                throw new Error('Invalid OneSync type.');
-            }
         } catch (error) {
             if (GlobalData.verbose) dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated.\nOriginal error: ${error.message}`);

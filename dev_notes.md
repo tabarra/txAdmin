@@ -1,40 +1,68 @@
 ## TODO:
-- [x] fix(menu/players-page): fix sorting unknown distances higher than known
-- [x] tweak(menu/players-page): reflect players low health with color change
-- [x] fix(scripts/player-list): normalize health to percentage
-- [x] Remove the "NEW" tag from `header.html` and `masterActions.html`
-- [x] Implement new menu auth method
-- [x] Add keybind for opening players page
-- [x] Add keybind for toggling player IDs
-- [x] Fix menu healthbar colors
-- [x] Enable custom locale for menu
-- [x] Reorganize menu buttons.
-- [x] Reorganize all translation keys
-- [x] Migrate warn to use the event + react translation
-- [x] Solve sticky cookie after reauth issue
-- [x] Fix the manage admins perm issue
-- [x] Update packages
-- [ ] Test new NUI Auth on ZAP server 
+- [x] server start after banner
+- [x] remove rofl+clap easter egg from login page
+- [x] fix server started banner printing on quiet mode
+- [x] Change CitizenFX to Cfx.re as per branding consistency (ask aurum)
+- [x] fix admin manager all_permissions issue
+- [x] fix open menu & player id permissions
+- [x] fix menu onesync detection
+- [x] Take menu out of beta:
+    - [x] In settings page, remove additional arguments doc on the menu
+    - [x] Remove the "BETA" in the menu logo
+    - [x] Change `nui_menu.misc.not_enabled` to say "go to tx settings to enable it"
+    - [x] Create a "menu" tab in settings page with options for: enable, tab key, screen side
+    - [x] Add "NEW" tag for settings page and menu tab
+    - [x] In configVault/settings remove `+setr txEnableMenuBeta true` from fxrunner settings string
+    - [x] Update the menu code to use new convar
+    - [x] Test update/new config scenarios
+    - [x] Update `menu.md`
 
+- [ ] dm via snackbar
+- [ ] wav for announcements
+- [ ] update `README.md`
+- [ ] replace `txaDropIdentifiers` with `txAdmin:events:playerBanned` hook
 - [ ] Migrate console log to new logger
 - [ ] Migrate all log routes
 - [ ] Add download modal to log pages
-- [ ] Change CitizenFX to Cfx.re as per branding consistency (ask aurum)
-
-- [ ] When taking menu out of beta:
-    - Create a "menu" tab in settings page with options for: enable, tab key, screen side
-    - Add "NEW" tag for settings page and menu tab
-    - In config vault remove `+setr txEnableMenuBeta true` from fxrunner settings string
-    - In settings page, remove additional arguments doc on the menu
-    - Remove the "BETA" in the menu logo
-    - Change `nui_menu.misc.not_enabled` to say "go to tx settings to enable it"
+- [ ] replace all fxRunner.srvCmd* and only expose:
+    - sync fxRunner.srvRawCmd(string) - to be used by live console
+    - async fxRunner.srvCmd(array, timeout) - to be awaited with the status response
 
 
 
+Quando terminar de importar as traduções:
+[x] Remover redundantes:
+    - nui_menu.misc.general_no_perms, nui_menu.misc.action_unauthorized -> no_perms
+    - nui_menu.common.error -> nui_menu.misc.unknown_error
+[x] Renomear clear_area.dialog_description -> clear_area.dialog_desc
+[x] sync new labels
+[x] Adicionar tradução pro botão BAN do `DialogBanView.tsx`
+[x] Mergir pt (migration no vault)
+[ ] Quebrar snackbar de not admin em dois, um se confirmado que o problema são os identifiers, outro pra qualquer outro tipo de problema
+[ ] the kick/warn/dm reason modal title should have the username as key in the translation
 
-TODO::
-- Atualizar !events, !translate e !key
-- chungus command !key that will tell the user how to change the TAB and all the bindable options like noclip and etc
+
+
+
+verificar o pq heartbeat as vezes é lento
+
+Random issue diagnostics:
+- https://media.discordapp.net/attachments/589106731376836608/932035916812390430/unknown.png
+
+CreateThread(function()
+  local Wait = Wait
+  local id = PlayerId()
+  while true do
+    SetSuperJumpThisFrame(id)
+    Wait(0)
+  end
+end)
+
+
+
+> If you're in no-clip you should be put in god mode. NPCs still know you're there and shoot you.
+The code to set godmode is there, but not working
+
 
 
 Pro debug da playerlist:
@@ -50,8 +78,24 @@ FIXME: sendMenuMessage('setServerCtx', ServerCtx)
 
 FIXME: quando o menu abrir, deveria voltar os list item pro default deles
 
+-- Adapt `txAdmin:beta:deathLog` as well as add cusstom commands and logs
 
 
+
+### TP:
+https://freesound.org/search/?q=teleport&page=6#sound
+    https://freesound.org/people/Dpoggioli/sounds/196907/
+    https://freesound.org/people/DWOBoyle/sounds/474179/
+    https://freesound.org/people/DWOBoyle/sounds/474180/
+    https://freesound.org/people/michael_kur95/sounds/254541/
+
+
+### Gun:
+https://freesound.org/search/?q=toy+gun&f=&s=score+desc&advanced=0&g=1
+https://freesound.org/browse/tags/laser/?page=5#sound
+    https://freesound.org/people/nsstudios/sounds/344276/
+    https://freesound.org/people/HadaHector/sounds/446383/
+    https://freesound.org/people/unfa/sounds/193427/
 
 Master sem fivem:
 - Na página de pin, ter 2 botões, um pra criar conta com e outro sem fivem
@@ -60,12 +104,13 @@ Master sem fivem:
 
 
 
--- announcements need sound!
 
-
-> User report: If you give warn from menu then it won't log in tx plz fix this (he said it's only after the second)
-
-> User report: when admin use txadmin for first time, system ask him to change password, if he change it, all admins must restart to get txadmin working again
+Copy key Scenarios:
+- Following random tutorial exactly
+- Following host-specific tutorial exactly
+- Copying files to another host/path
+- Copying files to cloned image
+- Pterodactyl
 
 > We could totally do like a "jump in time" feature for the log page.
 > A slider with 500 steps, and an array with 500 timestamps
@@ -170,15 +215,9 @@ https://forum.cfx.re/t/standalone-advanced-report-system/4774403/1
 
 
 =======================================
-### old stuff:::
-- precisamos garantir que uma sessão criada via NUI seja só usada com nui
-- criar um novo token, mudar no primeiro tick
-- desabilitar master actions pra quando for NUI
 
 Small Stuff:
 - [ ] try json stream on lowdb
-- [ ] menu: add debouncer for main options keydown
-- [ ] menu: fix heal self/server behavior inconsistent with player mode and teleport
 - [ ] block execution if GetCurrentResourceName() != 'monitor'
 - [ ] player modal must show if the user is banned/whitelisted or not, and an easy way to revoke it
 - [ ] check EOL and warn user - new Date('2021-09-14T07:38:51+00:00').getTime()
@@ -404,7 +443,7 @@ rm -rf dist && npm run build && tar.exe -cvf dist/monitor.zip dist/* && explorer
 export TXADMIN_DEFAULT_LICENSE="cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx"
 npm-upgrade
 con_miniconChannels script:monitor*
-+set svgui_disable true +setr txAdminMenu-debugMode true +setr txEnableMenuBeta true
++set svgui_disable true +setr txAdmin-menuDebug true +setr txEnableMenuBeta true
 
 # eslint stuff
 npx eslint ./src/**

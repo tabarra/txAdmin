@@ -1,7 +1,7 @@
 -- =============================================
 --  This file contains misc stuff, maybe deprecate?
 -- =============================================
-if (GetConvar('txEnableMenuBeta', 'false') ~= 'true') then
+if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
     return
 end
 
@@ -29,9 +29,9 @@ RegisterNetEvent('txAdmin:menu:healed', function()
     SetEntityHealth(ped, GetEntityMaxHealth(ped))
 end)
 
--- Tell the user he is an admin
+-- Tell the user he is an admin and that /tx is available
 AddEventHandler('playerSpawned', function()
-    Wait(60000)
+    Wait(15000)
     if menuIsAccessible then
         sendMenuMessage('showMenuHelpInfo', {})
     end

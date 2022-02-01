@@ -128,7 +128,7 @@ const useMainPageStyles = makeStyles({
   },
 });
 
-interface SetWarnOpenData {
+export interface SetWarnOpenData {
   reason: string;
   warnedBy: string;
 }

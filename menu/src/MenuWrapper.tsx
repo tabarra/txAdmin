@@ -21,6 +21,7 @@ import {
 import { Box } from "@mui/material";
 import { fetchNui } from "./utils/fetchNui";
 import { useLocale } from "./hooks/useLocale";
+import { TooltipProvider } from "./provider/TooltipProvider";
 
 //Mock events for browser development
 debugData<any>(
@@ -83,14 +84,17 @@ const MenuWrapper: React.FC = () => {
         <IFrameProvider>
           <DialogProvider>
             <PlayerModalProvider>
-              <Box
-                className="App"
-                sx={{
-                  opacity: visible ? 1 : 0,
-                }}
-              >
-                <MenuRoot />
-              </Box>
+              <TooltipProvider>
+                <Box
+                  id="menu-root"
+                  className="App"
+                  sx={{
+                    opacity: visible ? 1 : 0,
+                  }}
+                >
+                  <MenuRoot />
+                </Box>
+              </TooltipProvider>
             </PlayerModalProvider>
           </DialogProvider>
           <WarnPage />

@@ -67,8 +67,7 @@ module.exports = class OutputHandler {
             }
 
             //Handle script traces
-            if (channel == 'citizen-server-impl' && data.type == 'script_structured_trace') {
-                // dir(data.payload)
+            if (channel == 'citizen-server-impl' && data.type == 'script_structured_trace' && data.resource === 'monitor') {
                 if (data.payload.type === 'txAdminHeartBeat') {
                     globals.monitor.handleHeartBeat('fd3');
                 } else if (data.payload.type === 'txAdminLogData') {

@@ -2,6 +2,7 @@
 const modulename = 'WebServer:SettingsGet';
 const cloneDeep = require('lodash/cloneDeep');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+const { redactApiKeys } = require('../../extras/helpers');
 
 
 /**
@@ -27,6 +28,10 @@ module.exports = async function SettingsGet(ctx) {
         isZapHosting: GlobalData.isZapHosting,
         txDataPath: GlobalData.dataPath,
     };
+
+    if (renderData.readOnly) {
+        renderData.fxserver.commandLine = redactApiKeys(renderData.fxserver.commandLine);
+    }
 
     return ctx.utils.render('settings', renderData);
 };

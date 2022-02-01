@@ -25,9 +25,6 @@ end
 
 
 -- send all of the buffered logs every second
---TODO: check if PrintStructuredTrace() is already available
--- https://github.com/citizenfx/fivem/commit/9d0eec43ca7d3e63bb905cc50c115905b0e9ae8b
-local PRINT_STRUCTURED_TRACE = `PRINT_STRUCTURED_TRACE` & 0xFFFFFFFF
 CreateThread(function()
     while true do
         Wait(1000)
@@ -47,7 +44,7 @@ CreateThread(function()
                 type = 'txAdminLogData',
                 logs = loggerBuffer
             })
-            Citizen.InvokeNative(PRINT_STRUCTURED_TRACE, payload)
+            PrintStructuredTrace(payload)
             loggerBuffer = {}
         end
     end

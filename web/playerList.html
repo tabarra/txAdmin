@@ -675,8 +675,8 @@
             const notify = $.notify({ message: 'The identifiers and reason fields are required.' }, { type: 'warning' });
             return;
         }
-        if (data.reason.length < 8) {
-            const notify = $.notify({ message: 'The reason must be at least 8 characters.' }, { type: 'warning' });
+        if (data.reason.length < 3) {
+            const notify = $.notify({ message: 'The reason must be at least 3 characters.' }, { type: 'warning' });
             return;
         }
         data.reference = frmIdentifiers.split(/[,;'"\s]+/).filter(x => x.length);

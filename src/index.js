@@ -56,8 +56,11 @@ if (osTypeVar == 'Windows_NT') {
 const resourceName = GetCurrentResourceName();
 
 //Getting fxserver version
-//4380 = when GetVehicleType was exposed server-side
-const minFXServerVersion = 4380;
+//4380 = GetVehicleType was exposed server-side
+//4548 = more or less when node v16 was added
+//4574 = add missing PRINT_STRUCTURED_TRACE declaration
+//4574 = add resource field to PRINT_STRUCTURED_TRACE
+const minFXServerVersion = 4574;
 const fxServerVersion = getBuild(GetConvar('version', 'false'));
 if (!fxServerVersion) {
     logDie(`This version of FXServer is NOT compatible with txAdmin. Please update it to build ${minFXServerVersion} or above. (version convar not set or in the wrong format)`);
@@ -201,7 +204,7 @@ if (verbose) dir({isZapHosting, forceInterface, forceFXServerPort, txAdminPort, 
 //NOTE: Only valid if its being very actively maintained.
 //          Use 30d for patch 0, or 45~60d otherwise
 //      Objective is to update every 2~3 weeks, always on monday ~15:00
-const txVerBBLastUpdate = 1636388888;
+const txVerBBLastUpdate = 1643646592;
 const txVerBBDelta = 21 + ((isZapHosting) ? 10 : 0);
 const txAdminVersionBestBy = txVerBBLastUpdate + (txVerBBDelta * 86400);
 // dir({
