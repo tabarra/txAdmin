@@ -38,7 +38,7 @@
     "nui_menu": {
         "misc": {
             "help_message": "txAdmin Menu päällä. Kirjoita /tx avataksesi.\nVoit myös asettaa menulle oman näppäimen: [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
+            "menu_not_allowed": "Tietosi eivät vastaa yhtäkään txAdminiin rekisteröityä ylläpitäjää.\nMikäli olet rekisteröitynyt txAdminiin, siirry kohtaan [Admin Manager] ja varmista että tietosi ovat tallennettu.",
             "no_perms": "Sinulla ei ole oikeuksia tähän.",
             "unknown_error": "Tuntematon virhe",
             "not_enabled": "txAdmin Menu ei ole käytössä! Voit ottaa sen käyttöön txAdminin asetuksista.",
@@ -81,7 +81,7 @@
             },
             "teleport": {
                 "title": "Teleport",
-                "generic_success": "Sent you into the wormhole!",
+                "generic_success": "Lähetin sinut madonreikään!",
                 "waypoint": {
                     "title": "Waypoint",
                     "label": "Siirry valittuun pisteeseen",
@@ -97,7 +97,7 @@
                 "back": {
                     "title": "Takaisin",
                     "label": "Siirry viimeisimpään paikkaan",
-                    "error": "You don't have a last location to go back to!"
+                    "error": "Viimeisintä paikkaa ei löytynyt!"
                 },
                 "copy": {
                     "title": "Kopioi koordinaatit",
@@ -135,7 +135,7 @@
                     "label": "Elvyttää sinut",
                     "success_0": "Elvytetty!",
                     "success_1": "Kaikki on taas hyvin!",
-                    "success_2": "Ei kuolleena ollutkaan niin kivaa!",
+                    "success_2": "Onneks aina voi nostaa!",
                     "success_3": "Elossa ollaan taas!"
                 },
                 "everyone": {
@@ -161,8 +161,8 @@
             "player_ids": {
                 "title": "Näytä pelaajien ID:t",
                 "label": "Näytä lähellä olevien pelaajien ID:t",
-                "alert_show": "Showing nearby player NetIDs.",
-                "alert_hide": "Hiding nearby player NetIDs."
+                "alert_show": "Näytetään lähellä olevien pelaajien ID:t.",
+                "alert_hide": "Piilotetaan lähellä olevien pelaajien ID:t."
             }
         },
         "page_players": {
@@ -187,8 +187,8 @@
         },
         "player_modal": {
             "misc": {
-                "error": "An error occurred fetching this users details. The error is shown below:",
-                "target_not_found": "Was unable to find an online player with ID or an username of %{target}"
+                "error": "Käyttäjätietojen haussa tapahtui virhe. Lisätietoja alhaalla:",
+                "target_not_found": "Virhe löytäessä pelaajaa ID:llä tai käyttäjänimellä (%{target})"
             },
             "tabs": {
                 "actions": "Toiminnot",
@@ -240,7 +240,7 @@
                         "heal_player": "Elvytetään pelaaja",
                         "tp_player": "Mennään pelaajan luokse",
                         "bring_player": "Tuodaan pelaaja",
-                        "spectate_failed": "Failed to resolve the target! Exiting spectate.",
+                        "spectate_failed": "Virhe kohteen tavoittamisessa!",
                         "spectate_yourself": "Et voi katsoa itseäsi.",
                         "freeze_yourself": "Et voi jäädyttää itseäsi."
                     }
@@ -248,28 +248,28 @@
                 "troll": {
                     "title": "Troll",
                     "options": {
-                        "drunk": "Make Drunk",
-                        "fire": "Set Fire",
+                        "drunk": "Humalluta",
+                        "fire": "Aseta tuleen",
                         "wild_attack": "Wild attack"
                     }
                 }
             },
             "info": {
-                "title": "Player info",
-                "session_time": "Session Time",
-                "play_time": "Play time",
+                "title": "Pelaajatiedot",
+                "session_time": "Session pituus",
+                "play_time": "Peliaika",
                 "joined": "Liittynyt",
                 "notes_placeholder": "Muistiinpanot"
             },
             "history": {
                 "title": "Historia",
                 "action_types": {
-                    "warn": "VALOITTI",
-                    "warn_revoked": "REVOKED the WARN for",
-                    "ban": "ANTOI PORTTIKIELLON",
-                    "ban_revoked": "REVOKED the BAN for",
+                    "warn": "VAROITTI pelaajaa",
+                    "warn_revoked": "KUMOSI VAROITUKSEN pelaajalta",
+                    "ban": "ANTOI PORTTIKIELLON pelaajalle",
+                    "ban_revoked": "KUMOSI PORTTIKIELLON pelaajalta",
                     "whitelist": "WHITELIST",
-                    "whitelist_revoked": "REVOKED the WHITELIST for"
+                    "whitelist_revoked": "KUMOSI PÄÄSYN PALVELIMELLE pelaajalta"
                 }
             },
             "ban": {
