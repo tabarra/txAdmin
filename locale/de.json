@@ -283,7 +283,7 @@
                 "permanent": "Permanent",
                 "custom": "Benutzerdefiniert",
                 "helper_text": "Bitte eine Dauer angeben",
-                "submit": "Apply ban"
+                "submit": "Ban ausführen"
             }
         }
     }
