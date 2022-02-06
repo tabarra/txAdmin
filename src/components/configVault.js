@@ -160,6 +160,7 @@ module.exports = class ConfigVault {
                 autostart: toDefault(cfg.fxRunner.autostart, null),
                 restartDelay: toDefault(cfg.fxRunner.restartDelay, null), //not in template
                 quiet: toDefault(cfg.fxRunner.quiet, null),
+                preLaunchScript: toDefault(cfg.fxRunner.preLaunchScript, null),
             };
 
             //Migrations
@@ -231,6 +232,7 @@ module.exports = class ConfigVault {
             cfg.fxRunner.autostart = (cfg.fxRunner.autostart === 'true' || cfg.fxRunner.autostart === true);
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in templater
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
+            cfg.fxRunner.preLaunchScript = (cfg.fxRunner.preLaunchScript || false)
         } catch (error) {
             if (GlobalData.verbose) dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated.\nOriginal error: ${error.message}`);
@@ -293,6 +295,7 @@ module.exports = class ConfigVault {
             webServer: cfg.webServer,
             discordBot: cfg.discordBot,
             fxRunner: cfg.fxRunner,
+            scripts: cfg.scripts,
         });
     }
 

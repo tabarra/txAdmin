@@ -42,6 +42,8 @@ module.exports = async function SettingsSave(ctx) {
         return handleDiscord(ctx);
     } else if (scope == 'menu') {
         return handleMenu(ctx);
+    } else if (scope == 'scripts') {
+        return handleScripts(ctx);
     } else {
         return ctx.send({
             type: 'danger',
@@ -399,6 +401,33 @@ function handleMenu(ctx) {
         return ctx.send({type: 'success', message: '<strong>Menu configuration saved!<br>You need to restart the server for the changes to take effect.</strong>'});
     } else {
         logWarn(`[${ctx.session.auth.username}] Error changing menu settings.`);
+        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
+    }
+}
+
+//================================================================
+/**
+ * Handle Script settings
+ * @param {object} ctx
+ */
+function handleScripts(ctx) {
+    //Prepare body input
+    let cfg = {
+        preLaunchScript: ctx.request.body.preLaunchScript?.trim(),
+    };
+
+    //Preparing & saving config
+    let newConfig = globals.configVault.getScopedStructure('fxRunner');
+    newConfig.preLaunchScript = cfg.preLaunchScript;
+    let saveStatus = globals.configVault.saveProfile('fxRunner', newConfig);
+
+    //Sending output
+    if (saveStatus) {
+        globals.fxRunner.refreshConfig();
+        ctx.utils.logAction('Changing script settings.');
+        return ctx.send({type: 'success', message: '<strong>FXServer script configuration saved!<br>You need to restart the server for the changes to take effect.</strong>'});
+    } else {
+        logWarn(`[${ctx.session.auth.username}] Error changing script settings.`);
         return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
     }
 }

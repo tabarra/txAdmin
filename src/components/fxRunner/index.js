@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'FXRunner';
-const { spawn } = require('child_process');
+const { spawn, spawnSync } = require('child_process');
 const path = require('path');
 const chalk = require('chalk');
 const sleep = require('util').promisify((a, f) => setTimeout(f, a));
@@ -203,6 +203,13 @@ module.exports = class FXRunner {
         if (announce === 'true' || announce === true) {
             let discordMessage = globals.translator.t('server_actions.spawning_discord', {servername: globals.config.serverName});
             globals.discordBot.sendAnnouncement(discordMessage);
+        }
+
+        // Pre-launch
+        if (this.config.preLaunchScript) {
+            logOk("Running pre-launch script: " + this.config.preLaunchScript)
+            const output = spawnSync(this.config.preLaunchScript)
+            logOk(output.stdout)
         }
 
         //Starting server

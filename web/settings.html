@@ -36,6 +36,9 @@
                     <li class="nav-item">
                         <a class="nav-item nav-link {{it.activeTab=='menu'|isActive}}" id="nav-menu-tab" data-toggle="tab" href="#nav-menu" role="tab" aria-controls="nav-menu" aria-selected="true">Menu</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-item nav-link {{it.activeTab=='scripts'|isActive}}" id="nav-scripts-tab" data-toggle="tab" href="#nav-scripts" role="tab" aria-controls="nav-scripts" aria-selected="true">Scripts</a>
+                    </li>
                 </ul>
             </div>
 
@@ -494,6 +497,30 @@
                     </div>
                     <!-- /Menu Tab -->
 
+                    <!-- Scripts Tab -->
+                    <div class="tab-pane fade {{it.activeTab=='scripts'|isActive|tShow}}" id="nav-scripts" role="tabpanel"
+                        aria-labelledby="nav-scripts-tab">
+                        <div class="form-group row">
+                            <label for="frmScripts-preLaunchScript" class="col-sm-3 col-form-label">
+                                Pre-Launch Script
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmScripts-preLaunchScript"
+                                    value="{{it.fxserver.preLaunchScript|undef}}" maxlength="256" placeholder="path/to/script.bat" {{it.readOnly|isDisabled}}>
+                                <span class="form-text text-muted">
+                                    A script to run before the server is launched
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmScripts-save" {{it.readOnly|isDisabled}}>
+                                <i class="icon-check"></i> Save Global Settings
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /Scripts Tab -->
                 </div>
             </div>
 
@@ -732,6 +759,31 @@
         txAdminAPI({
             type: "POST",
             url: '/settings/save/menu',
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    });
+
+    //============================================== Scripts Settings
+    $('#frmScripts-save').click(function () {
+        let data = {
+            preLaunchScript: $('#frmScripts-preLaunchScript').val().trim()
+        };
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+
+        txAdminAPI({
+            type: "POST",
+            url: '/settings/save/scripts',
             data: data,
             dataType: 'json',
             success: function (data) {
