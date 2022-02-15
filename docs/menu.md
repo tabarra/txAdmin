@@ -58,6 +58,12 @@ Convars configured in the settings page should not be set manually.
 - Default: `false`
 - Usage: `+set txAdmin-menuPtfxDisable true`
 
+**txAdmin-announce**
+- Description: Determines the location of the txAdmin announcement notification. This **must** use one of the following valid 
+positions, `top-center`, `top-left`, `top-right`, `bottom-center`, `bottom-left`, `bottom-right`.
+- Default: `top-center`
+- Usage: `+set txAdmin-announceNotiPos top-right`
+
 ## Commands
 **tx | txadmin**
 - Description: Will toggle the in-game menu. This command has an optional argument of a player id that will quickly open up the target player's info modal.
