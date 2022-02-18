@@ -9,17 +9,21 @@ let xss; //can't be required before the dependency check
 /**
  * txAdmin in ASCII
  */
+let __ascii;
 function txAdminASCII() {
     //NOTE: precalculating the ascii art for efficiency
     // const figlet = require('figlet');
     // let ascii = figlet.textSync('txAdmin');
     // let b64 = Buffer.from(ascii).toString('base64');
     // console.log(b64);
-    const preCalculated = `ICBfICAgICAgICAgICAgXyAgICAgICBfICAgICAgICAgICBfICAgICAgIAogfCB8X19fICBfX
+    if (!__ascii) {
+        const preCalculated = `ICBfICAgICAgICAgICAgXyAgICAgICBfICAgICAgICAgICBfICAgICAgIAogfCB8X19fICBfX
     yAgIC8gXCAgIF9ffCB8XyBfXyBfX18gKF8pXyBfXyAgCiB8IF9fXCBcLyAvICAvIF8gXCAvIF9gIHwgJ18gYCBfIFx8IHwg
     J18gXCAKIHwgfF8gPiAgPCAgLyBfX18gXCAoX3wgfCB8IHwgfCB8IHwgfCB8IHwgfAogIFxfXy9fL1xfXC9fLyAgIFxfXF9
     fLF98X3wgfF98IHxffF98X3wgfF98CiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICA=`;
-    return Buffer.from(preCalculated, 'base64').toString('ascii');
+        __ascii = Buffer.from(preCalculated, 'base64').toString('ascii');
+    }
+    return __ascii;
 }
 
 

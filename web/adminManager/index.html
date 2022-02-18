@@ -1,4 +1,4 @@
-{{@include("header", it)/}}
+<%- await include('basic/header.html', locals) %>
 
 <style>
     .admin-icon {
@@ -65,9 +65,9 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{@each(it.admins) => admin}}
+                            <% for (const admin of admins) { %>
                             <tr>
-                                <td>{{admin.name}}</td>
+                                <td><%= admin.name %></td>
                                 <td>
                                     <i class="admin-icon">
                                         <svg>
@@ -75,45 +75,45 @@
                                             <use href="#password-icon"></use>
                                         </svg>
                                     </i>
-                                    <i class="admin-icon" style="opacity: {{[(admin.hasCitizenFX), '1', '0.09']|ternary}};">
+                                    <i class="admin-icon" style="opacity: <%= admin.hasCitizenFX ? '1' : '0.09' %>;">
                                         <svg>
                                             <title>Cfx.re Authentication</title>
                                             <use href="#cfxre-icon"></use>
                                         </svg>
                                     </i>
-                                    <i class="admin-icon" style="opacity: {{[(admin.hasDiscord), '1', '0.09']|ternary}};">
+                                    <i class="admin-icon" style="opacity: <%= admin.hasDiscord ? '1' : '0.09' %>;">
                                         <svg>
                                             <title>Discord Authentication</title>
                                             <use href="#discord-icon"></use>
                                         </svg>
                                     </i>
                                 </td>
-                                <td>{{admin.perms}}</td>
+                                <td><%= admin.perms %></td>
                                 <td class="tableActions">
-                                    {{@if(admin.disableEdit)}}
+                                    <% if (admin.disableEdit) { %>
                                         <button class="btn btn-sm btn-outline-secondary" disabled>
                                             <i class="icon-pencil"></i> Edit
                                         </button>
-                                    {{#else}}
+                                    <% } else { %>
                                         <button class="btn btn-sm btn-outline-primary"
-                                            onclick="getAdminModal('{{admin.name}}')">
+                                            onclick="getAdminModal('<%= admin.name %>')">
                                             <i class="icon-pencil"></i> Edit
                                         </button>
-                                    {{/if}}
+                                    <% } %>
                                     &nbsp;
-                                    {{@if(admin.disableDelete)}}
+                                    <% if (admin.disableDelete) { %>
                                         <button class="btn btn-sm btn-outline-secondary" disabled>
                                             <i class="icon-trash"></i> Delete
                                         </button>
-                                    {{#else}}
+                                    <% } else { %>
                                         <button class="btn btn-sm btn-outline-danger"
-                                            onclick="deleteAdmin('{{admin.name}}')">
+                                            onclick="deleteAdmin('<%= admin.name %>')">
                                             <i class="icon-trash"></i> Delete
                                         </button>
-                                    {{/if}}
+                                    <% } %>
                                 </td>
                             </tr>
-                            {{/each}}
+                            <% } %>
                         </tbody>
                     </table>
                 </div>
@@ -124,7 +124,7 @@
 </div>
 
 
-{{@include("footer", it)/}}
+<%- await include('basic/footer.html', locals) %>
 
 <!-- Add Admin Copy Password Modal -->
 <div class="modal fade" id="modAdminPassword" tabindex="-1" role="dialog" aria-labelledby="modAdminPasswordTitle"

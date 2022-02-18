@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <base href="{{it.basePath}}">
+    <base href="<%= basePath %>">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
@@ -41,10 +41,10 @@
     </style>
     
     <!-- injected consts -->
-    <script>{{it.jsInjection|safe}}</script>
+    <script><%- jsInjection %></script>
 </head>
 
-<body class="c-app flex-row align-items-center {{it.uiTheme}}">
+<body class="c-app flex-row align-items-center <%= uiTheme %>">
 
     <div class="container">
 
@@ -57,7 +57,7 @@
         <div class="row justify-content-center">
             <div class="col-md-9">
                 <div class="card fade-in deployer-stepper">
-                    {{@if(it.step == 'review')}}
+                    <% if (step === 'review') { %>
                         <div class="card-header font-weight-bold">Step 1: Review Recipe</div>
                         <div class="card-body">
                             <div class="row mb-1 mt-0 text-center">
@@ -65,26 +65,26 @@
                                     Please review the Recipe below and apply any changes you want, <br>
                                     then press the <strong>Run Recipe</strong> button below.
         
-                                    {{@if(!it.recipe.isTrustedSource)}}
+                                    <% if (!recipe.isTrustedSource) { %>
                                         <br><span class="text-danger font-weight-bold">Warning: Only run Recipes from trusted sources!</span>
-                                    {{/if}}
+                                    <% } %>
                                 </div>
                             </div>
                             <p class="mb-1">
-                                <strong style="word-wrap: break-word;">{{it.recipe.name}}</strong>
-                                {{@if(it.recipe.version != '')}}
-                                    <em>{{it.recipe.version}}</em>
-                                {{/if}}
-                                {{@if(it.recipe.author != '')}}
-                                    by {{it.recipe.author}}
-                                {{/if}}
-                                {{@if(it.recipe.description != '')}}
+                                <strong style="word-wrap: break-word;"><%= recipe.name %></strong>
+                                <% if (recipe.version !== '') { %>
+                                    <em><%= recipe.version %></em>
+                                <% } %>
+                                <% if (recipe.author !== '') { %>
+                                    by <%= recipe.author %>
+                                <% } %>
+                                <% if (recipe.description !== '') { %>
                                     <br>
-                                    {{it.recipe.description}}
-                                {{/if}}
+                                    <%= recipe.description %>
+                                <% } %>
                             </p>
         
-                            <textarea id="codeMirrorTarget" style="width: 100%;" class="cms-s-lucario" name="code">{{it.recipe.raw}}</textarea>
+                            <textarea id="codeMirrorTarget" style="width: 100%;" class="cms-s-lucario" name="code"><%= recipe.raw %></textarea>
                             <div class="row justify-content-center m-2">
                                 <button class="btn btn-outline-danger" type="button" 
                                     onclick="cancelAction()">Cancel and Return to Setup</button>
@@ -97,18 +97,18 @@
                         <div class="card-footer text-muted">Step 3: Run Recipe</div>
                         <div class="card-footer text-muted">Step 4: Configure server.cfg</div>
         
-                    {{#elif(it.step == 'input')}}
+                    <% } else if (step === 'input') { %>
                         <div class="card-header">Step 1: Review Recipe ✔️</div>
                         <div class="card-header font-weight-bold ">Step 2: Input Parameters</div>
                         <div class="card-body">
-                            {{@if(it.defaults.autofilled)}}
+                            <% if (defaults.autofilled) { %>
                                 <div class="row mb-3 mt-0 text-center">
                                     <div class="col-8 mx-auto card d-block border-warning p-2 mb-1">
                                         <strong>Note:</strong> The following config was autofilled by <strong>ZAP-Hosting</strong>. <br>
                                         You <i>may</i> edit those, but it's strongly disencouraged.
                                     </div>
                                 </div>
-                            {{/if}}
+                            <% } %>
                             <form id="step2-form">
                                 <div class="form-group row">
                                     <label for="step2-svLicense" class="col-sm-3 col-form-label">
@@ -118,13 +118,13 @@
                                     <div class="col-sm-9">
                                         <input type="text" class="form-control blur-input" id="step2-svLicense" maxlength="86" 
                                             autocomplete="off" placeholder="cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx" 
-                                            value="{{it.defaults.license}}" required autofocus>
+                                            value="<%= defaults.license %>" required autofocus>
                                         <span class="form-text text-muted">
                                             The license key for your server can be obtained in <a href="https://keymaster.fivem.net/" target="_blank" rel="noopener noreferrer">Keymaster</a>.
                                         </span>
                                     </div>
                                 </div>
-                                {{@if(it.requireDBConfig)}}
+                                <% if (requireDBConfig) { %>
                                 <div class="row justify-content-center m-2">
                                     <a class="btn btn-small btn-outline-secondary" data-toggle="collapse" href="#collapseDbOptions" aria-expanded="true"  aria-controls="collapseDbOptions">
                                         <svg class="c-sidebar-nav-icon ml-1" id="darkToggleLight">
@@ -141,7 +141,7 @@
                                         </label>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control" id="step2-dbHost"
-                                                placeholder="{{it.defaults.mysqlHost}}" value="{{it.defaults.mysqlHost}}" required>
+                                                placeholder="<%= defaults.mysqlHost %>" value="<%= defaults.mysqlHost %>" required>
                                             <span class="form-text text-muted">
                                                 The IP/Hostname of the database server (usually <code>localhost</code>).
                                             </span>
@@ -154,7 +154,7 @@
                                         </label>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control" id="step2-dbUsername"
-                                                placeholder="{{it.defaults.mysqlUser}}" value="{{it.defaults.mysqlUser}}" required>
+                                                placeholder="<%= defaults.mysqlUser %>" value="<%= defaults.mysqlUser %>" required>
                                             <span class="form-text text-muted">
                                                 The database username (usually <code>root</code>).
                                             </span>
@@ -166,7 +166,7 @@
                                         </label>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control blur-input" id="step2-dbPassword"
-                                                autocomplete="off" placeholder="leave it blank" value="{{it.defaults.mysqlPassword}}">
+                                                autocomplete="off" placeholder="leave it blank" value="<%= defaults.mysqlPassword %>">
                                             <span class="form-text text-muted">
                                                 The database password (usually blank).
                                             </span>
@@ -178,10 +178,10 @@
                                         </label>
                                         <div class="col-sm-9">
                                             <input type="text" class="form-control" id="step2-dbName"
-                                                placeholder="{{it.defaults.mysqlDatabase}}" value="{{it.defaults.mysqlDatabase}}">
+                                                placeholder="<%= defaults.mysqlDatabase %>" value="<%= defaults.mysqlDatabase %>">
                                             <span class="form-text text-muted">
                                                 The name of the database to be used or created. <br>
-                                                If left empty, the deployment ID (<code>{{it.deploymentID}}</code>) will be used instead.
+                                                If left empty, the deployment ID (<code><%= deploymentID %></code>) will be used instead.
                                             </span>
                                         </div>
                                     </div>
@@ -201,21 +201,21 @@
                                         </div>
                                     </div>
                                 </div>
-                                {{/if}}
-                                {{@if(it.inputVars.length)}}
+                                <% } %>
+                                <% if (inputVars.length) { %>
                                     <div class="hrsep hrsep-small mb-3">Custom Variables</div>
-                                    {{@each(it.inputVars) => inputVar, key}}
+                                    <% for (const [key, inputVar] of inputVars.entries()) { %>
                                         <div class="form-group row">
-                                            <label for="step2-customVar{{key}}" class="col-sm-3 col-form-label">
-                                                {{inputVar.name}}
+                                            <label for="step2-customVar<%= key %>" class="col-sm-3 col-form-label">
+                                                <%= inputVar.name %>
                                             </label>
                                             <div class="col-sm-9">
-                                                <input type="text" class="form-control customRecipeVars" id="step2-customVar{{key}}" 
-                                                    data-varName="{{inputVar.name}}" placeholder="{{inputVar.value}}" value="{{inputVar.value}}">
+                                                <input type="text" class="form-control customRecipeVars" id="step2-customVar<%= key %>" 
+                                                    data-varName="<%= inputVar.name %>" placeholder="<%= inputVar.value %>" value="<%= inputVar.value %>">
                                             </div>
                                         </div>
-                                    {{/each}}
-                                {{/if}}
+                                    <% } %>
+                                <% } %>
                             </form>
                             <div class="row justify-content-center m-2 mt-3">
                                 <button class="btn btn-outline-danger" type="button" 
@@ -228,7 +228,7 @@
                         <div class="card-footer text-muted">Step 3: Run Recipe</div>
                         <div class="card-footer text-muted">Step 4: Configure server.cfg</div>
 
-                    {{#elif(it.step == 'run')}}
+                    <% } else if (step === 'run') { %>
                         <div class="card-header">Step 1: Review Recipe ✔️</div>
                         <div class="card-header">Step 2: Input Parameters ✔️</div>
                         <div class="card-header font-weight-bold ">Step 3: Run Recipe</div>
@@ -236,7 +236,7 @@
                             <div class="row mb-1 mt-0 text-center">
                                 <div class="col-8 mx-auto card d-block border-primary p-2 mb-1">
                                     Your recipe is being executed, the server will be deployed to: <br>
-                                    <code class="inline-code">{{it.deployPath}}</code>
+                                    <code class="inline-code"><%= deployPath %></code>
                                 </div>
                             </div>
                             <div class="row mb-3">
@@ -261,7 +261,7 @@
                         </div>
                         <div class="card-footer text-muted">Step 3: Configure server.cfg</div>
         
-                    {{#elif(it.step == 'configure')}}
+                    <% } else if (step === 'configure') { %>
                         <div class="card-header">Step 1: Review Recipe ✔️</div>
                         <div class="card-header">Step 2: Input Parameters ✔️</div>
                         <div class="card-header">Step 3: Run Recipe ✔️</div>
@@ -274,7 +274,7 @@
                                 </div>
                             </div>
         
-                            <textarea id="codeMirrorTarget" style="width: 100%;" class="cms-s-lucario" name="code">{{it.serverCFG}}</textarea>
+                            <textarea id="codeMirrorTarget" style="width: 100%;" class="cms-s-lucario" name="code"><%= serverCFG %></textarea>
                             <div class="row justify-content-center m-2">
                                 <button class="btn btn-outline-danger" type="button" onclick="cancelAction()">Cancel and Return to Setup</button>
                                 &nbsp; &nbsp;
@@ -282,11 +282,11 @@
                             </div>
                         </div>
         
-                    {{#else}}
+                    <% } else { %>
                         <div class="card-body text-center">
-                            Somethign is wrong 🤔
+                            Something is wrong 🤔
                         </div>
-                    {{/if}}
+                    <% } %>
                 </div>
             </div>
         </div>
@@ -295,9 +295,9 @@
         <div class="row justify-content-center">
             <div class="col-md-4 ">
                 <div class="alert alert-secondary text-center small" style="min-width: 280px;" role="alert">
-                    <strong>Server profile:</strong> {{it.serverProfile}} <br>
-                    <strong>txAdmin version:</strong> {{it.txAdminVersion}} <br>
-                    <strong>FXServer build:</strong> {{it.fxServerVersion}} 
+                    <strong>Server profile:</strong> <%= serverProfile %> <br>
+                    <strong>txAdmin version:</strong> <%= txAdminVersion %> <br>
+                    <strong>FXServer build:</strong> <%= fxServerVersion %> 
                     <div class="hrsep hrsep-small">//</div>
                     <h5 class="text-muted">
                         <strong>txAdmin</strong> Official Discord: <br>
@@ -338,7 +338,7 @@
     <script src="js/codeEditor/mode/yaml.js"></script>
     <script>
         //============================================== CodeMirror & Page Setup
-        const currentStep = '{{it.step}}';
+        const currentStep = '<%= step %>';
         const codeMirrorTarget = document.getElementById("codeMirrorTarget");
 
         window.onload = function () {
@@ -393,7 +393,7 @@
         }
 
         //============================================== Step2 action
-        const requireDBConfig = ('{{it.requireDBConfig}}' == 'true');
+        const requireDBConfig = ('<%= requireDBConfig %>' == 'true');
         const step2elements = {
             form: document.getElementById('step2-form'),
             svLicense: document.getElementById('step2-svLicense'),
