@@ -30,10 +30,9 @@ end)
 -- =============================================
 -- Dispatch Announcements
 RegisterNetEvent('txAdmin:receiveAnnounce', function(message, author)
-    print('txAdmin:receiveAnnounce', message)
     sendMenuMessage(
         'addAnnounceMessage',
-        { 
+        {
             message = message,
             author = author
         }
