@@ -17,9 +17,7 @@ ServerCtxObj = {
   switchPageKey = '',
   txAdminVersion = '',
   alignRight = false,
-  -- possible states
-  -- top-center, top-right, top-left, bottom-center, bottom-right, bottom-left
-  announceNotiPos = '',
+  announceNotiPos = '', -- top-center, top-right, top-left, bottom-center, bottom-right, bottom-left
 }
 
 
@@ -125,14 +123,14 @@ local function syncServerCtx()
     ServerCtxObj.localeData = false
   end
 
-  local announceNotiPos = GetConvar('txAdmin-announceNotiPos', 'top-center')
+  local announceNotiPos = GetConvar('txAdmin-menuAnnounceNotiPos', 'top-center')
   -- verify we have a valid position type
   if announceNotiPos == 'top-center' or announceNotiPos == 'top-right' or announceNotiPos == 'top-left' or announceNotiPos == 'bottom-center' or announceNotiPos == 'bottom-right' or announceNotiPos == 'bottom-left' then
     ServerCtxObj.announceNotiPos = announceNotiPos
   else
     local errorMsg = ('^1Invalid notification position: %s, this must match one of the following "top-center, top-left, top-right, bottom-left, bottom-right, bottom-center" defaulting to "top-center"'):format(announceNotiPos)
     txPrint(errorMsg)
-    ServerCtxObj.notificationPosition = 'top-center'
+    ServerCtxObj.announceNotiPos = 'top-center'
   end
 
   debugPrint('Updated ServerCtx.')

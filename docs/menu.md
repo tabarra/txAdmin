@@ -58,11 +58,11 @@ Convars configured in the settings page should not be set manually.
 - Default: `false`
 - Usage: `+set txAdmin-menuPtfxDisable true`
 
-**txAdmin-announce**
+**txAdmin-menuAnnounceNotiPos**
 - Description: Determines the location of the txAdmin announcement notification. This **must** use one of the following valid 
 positions, `top-center`, `top-left`, `top-right`, `bottom-center`, `bottom-left`, `bottom-right`.
 - Default: `top-center`
-- Usage: `+set txAdmin-announceNotiPos top-right`
+- Usage: `+set txAdmin-menuAnnounceNotiPos top-right`
 
 ## Commands
 **tx | txadmin**
