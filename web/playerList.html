@@ -337,7 +337,7 @@
                                                     <% if (!permsDisable.ban || !permsDisable.whitelist) { %>
                                                         <% if (
                                                             action.isRevoked ||
-                                                            (action.type === 'warn' && permsDisableWarn) ||
+                                                            (action.type === 'warn' && permsDisable.warn) ||
                                                             (action.type === 'ban' && permsDisable.ban) ||
                                                             (action.type === 'whitelist' && permsDisable.whitelist)
                                                         ) { %>

@@ -24,7 +24,7 @@ module.exports = async function Dashboard(ctx) {
     //Preparing render data
     const renderData = {
         versionData: getVersionData(),
-        perms:{
+        perms: {
             commandMessage: getPermDisable('players.message'),
             commandKick: getPermDisable('players.kick'),
             commandResources: getPermDisable('commands.resources'),

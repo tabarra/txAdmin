@@ -1,3 +1,5 @@
+<%- await include('basic/header.html', locals) %>
+
 <div class="text-center mb-4">
     <h2>Message</h2>
 </div>
@@ -13,3 +15,6 @@
 <script>
     window.history.pushState(null, 'txAdmin', '/');
 </script>
+
+
+<%- await include('basic/footer.html', locals) %>

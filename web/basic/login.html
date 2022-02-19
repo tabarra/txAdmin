@@ -175,8 +175,8 @@
                 <div class="card ">
                     <div class="card-body text-center p-4">
                         <% if (template === 'justMessage') { %>
-                            <h4 class="text-danger"><% errorTitle %></h4>
-                            <p class="font-weight-bold"><% errorMessage %></p>
+                            <h4 class="text-danger"><%= errorTitle %></h4>
+                            <p class="font-weight-bold"><%= errorMessage %></p>
                             <a href="auth" class="btn btn-primary px-4 mt-3" role="submit">Back</a>
                         <% } %>
                         <% if (template === 'noMaster') { %>
