@@ -30,6 +30,7 @@ module.exports = async function SetupGet(ctx) {
         serverProfile: globals.info.serverProfile,
         txDataPath: GlobalData.dataPath,
         isZapHosting: GlobalData.isZapHosting,
+        windowsBatPath: null,
     };
 
     if (GlobalData.osType == 'windows') {
