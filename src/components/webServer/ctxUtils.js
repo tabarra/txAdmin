@@ -7,10 +7,6 @@ const chalk = require('chalk');
 const helpers = require('../../extras/helpers');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
-/**
- * Preload essential templates to prevent multiple file reads
- */
-let _templateCache = {}
 
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -39,6 +35,7 @@ const getJavascriptConsts = (allConsts = []) => {
 };
 
 //Consts
+const templateCache = new Map();
 const WEBPIPE_PATH = 'https://monitor/WebPipe/';
 const RESOURCE_PATH = 'nui://monitor/web/public/';
 const THEME_DARK = 'theme--dark';
@@ -65,10 +62,11 @@ function getEjsOptions(filePath) {
  * @returns {Promise<void>}
  */
 async function loadWebTemplate(name) {
-    if (!_templateCache[name]) {
+    if (GlobalData.isDeveloperMode || !templateCache.has(name)) {
         try {
             const rawTemplate = await fs.readFile(getWebViewPath(name), 'utf-8');
-            _templateCache[name] = ejs.compile(rawTemplate, getEjsOptions(name + '.html'));
+            const compiled = ejs.compile(rawTemplate, getEjsOptions(name + '.html'));
+            templateCache.set(name, compiled);
         } catch (e) {
             if (e.code == 'ENOENT') {
                 e = new Error(`The '${name}' template was not found:\n` +
@@ -78,7 +76,7 @@ async function loadWebTemplate(name) {
         }
     }
 
-    return _templateCache[name];
+    return templateCache.get(name);
 }
 
 
@@ -96,7 +94,7 @@ async function renderMasterView(view, reqSess, data, txVars) {
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture) ? reqSess.auth.picture : DEFAULT_AVATAR;
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
     data.isLinux = (GlobalData.osType == 'linux');
-    data.showAdvanced = (GlobalData.isAdvancedUser || GlobalData.verbose);
+    data.showAdvanced = (GlobalData.isDeveloperMode || GlobalData.verbose);
     data.dynamicAd = txVars.isWebInterface && globals.dynamicAds.pick('main');
 
     let out;

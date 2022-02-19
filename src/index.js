@@ -39,7 +39,7 @@ if (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar !== 'IKnowWhatImDoing
     logError('Looks like you don\'t know what you are doing.');
     logDie('Please use the compiled release from GitHub or the version that comes with the latest FXServer.');
 }
-const isAdvancedUser = (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar == 'IKnowWhatImDoing');
+const isDeveloperMode = (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar == 'IKnowWhatImDoing');
 
 //Get OSType
 const osTypeVar = os.type();
@@ -173,7 +173,7 @@ if (fs.existsSync(zapCfgFile)) {
 
         loopbackInterfaces.push(forceInterface);
 
-        if (!isAdvancedUser) fs.unlinkSync(zapCfgFile);
+        if (!isDeveloperMode) fs.unlinkSync(zapCfgFile);
     } catch (error) {
         logDie(`Failed to load with ZAP-Hosting configuration error: ${error.message}`);
     }
@@ -236,7 +236,7 @@ if (!serverProfile.length) {
 const noLookAlikesAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 GlobalData = {
     //Env
-    isAdvancedUser,
+    isDeveloperMode,
     osType,
     resourceName,
     fxServerVersion,
