@@ -60,10 +60,6 @@ end)
 
 
 
-> If you're in no-clip you should be put in god mode. NPCs still know you're there and shoot you.
-The code to set godmode is there, but not working
-
-
 
 Pro debug da playerlist:
 - comando pra printar: [primeiro,ultimo,count,sum]

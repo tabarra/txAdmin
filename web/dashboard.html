@@ -1,6 +1,32 @@
 <%- await include("basic/header.html", locals) %>
 
 <style>
+    /* Discord Live Event stuff */
+    .event-time {
+        background-color: rgba(0, 0, 0, 0.075);
+        padding: 0px 6px;
+        border-radius: 4px;
+    }
+    .event-footer {
+        font-weight: 700;
+        vertical-align: text-bottom;
+    }
+    .event-footer img {
+        vertical-align: middle;
+    }
+
+    .alert-success.event-live-glow {
+        animation: alertGlow 1s infinite alternate;
+    }
+    @keyframes alertGlow {
+        from {
+            box-shadow: 0 0 8px 0px rgb(34, 128, 25);
+        }
+        to {
+            box-shadow: 0 0 8px 4px rgb(34, 128, 25);
+        }
+    }
+
     /* Chart stuff */
     #d3-container {
         height: 340px;
@@ -96,6 +122,28 @@
     <% } %>
 </div>
 
+<% if (discordEvent) { %>
+    <div class="row justify-content-md-center">
+        <div class="col-md-6 text-center">
+            <div class="alert <%= (discordEvent.isLive ? 'alert-success border-success' : 'alert-warning border-warning') %> event-live-glow" role="alert">
+                <h5 style="margin-bottom: 0px;">
+                    <svg class="c-iconx" width="24" height="24">
+                        <use href="img/coreui_icons.svg#cil-discord-event"></use>
+                    </svg>
+                    <%= (discordEvent.isLive ? 'The Discord Live Event started' : 'A Discord Live Event will start in') %>:
+                    <span class="event-time" title="<%= (new Date(discordEvent.timestamp)).toString() %>"><%= discordEvent.time %></span>
+                </h5>
+                <i><%= discordEvent.description %></i>
+                <div class="event-footer">
+                    Join now:
+                    <a href="<%= discordEvent.joinLink %>" target="_blank" >
+                        <img src="<%= discordEvent.imgSrc %>"></img>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } %>
 
 <!-- Chart stuff -->
 <div class="row justify-content-center">
