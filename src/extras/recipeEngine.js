@@ -1,7 +1,7 @@
 //Requires
 const modulename = 'RecipeEngine';
 const path = require('path');
-const util = require('util');
+const slash = require('slash');
 const fs = require('fs-extra');
 const fsp = require('fs').promises; //starting to replace fse
 const StreamZip = require('node-stream-zip');
@@ -115,9 +115,7 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
 
     //Preparing vars
     const downURL = `https://api.github.com/repos/${repoOwner}/${repoName}/zipball/${reference}`;
-    const tmpFileName = `${repoName}${reference}-` + (Date.now() % 100000000).toString(16);
-    const tmpFileDir = path.join(basePath, `.${tmpFileName}`);
-    const tmpFilePath = path.join(basePath, `.${tmpFileName}.download`);
+    const tmpFilePath = path.join(basePath, `.${(Date.now() % 100000000).toString(36)}.download`);
     const destPath = safePath(basePath, options.dest);
 
     //Downloading file
@@ -133,22 +131,17 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
         outStream.on('error', reject); // don't forget this!
     });
 
-    await fsp.mkdir(tmpFileDir, {recursive: true});
+    //Extracting files
     const zip = new StreamZip.async({ file: tmpFilePath });
     const entries = Object.values(await zip.entries());
     if (!entries.length || !entries[0].isDirectory) throw new Error('unexpected zip structure');
-    await zip.extract(null, tmpFileDir);
+    const zipSubPath = path.posix.join(entries[0].name, options.subpath || '');
+    await fsp.mkdir(destPath, {recursive: true});
+    await zip.extract(zipSubPath, destPath);
     await zip.close();
 
-    //Moving path
-    const moveSrc = path.join(tmpFileDir, entries[0].name, options.subpath || '');
-    await fs.move(moveSrc, destPath, {
-        overwrite: (options.overwrite === 'true' || options.overwrite === true),
-    });
-
-    //Removing temp paths
+    //Removing temp path
     await fs.remove(tmpFilePath);
-    await fs.remove(tmpFileDir);
 };
 
 
