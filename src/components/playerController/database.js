@@ -121,10 +121,20 @@ class Database {
      * @returns {object} lodash database
      */
     async migrateDB(dbo, currVersion) {
+        if (currVersion === DATABASE_VERSION) {
+            return dbo;
+        }
         if (typeof currVersion !== 'number') {
             logError('Your players database version is not a number!');
             process.exit();
         }
+        if (currVersion > DATABASE_VERSION) {
+            logError(`Your players database is on v${currVersion}, and this txAdmin supports up to v${DATABASE_VERSION}.`);
+            logError('This means you likely downgraded your txAdmin version. Please update txAdmin.');
+            process.exit(1);
+        }
+
+        //Migrate database
         if (currVersion < 1) {
             logWarn(`Migrating your players database from v${currVersion} to v1. Wiping all the data.`);
             await dbo.set('version', 1)
@@ -160,7 +170,7 @@ class Database {
         }
 
         if (currVersion !== DATABASE_VERSION) {
-            logError(`Your players database is on v${currVersion}, which is different from this version of txAdmin.`);
+            logError(`Your players database is on v${currVersion}, which is different from this version of txAdmin (v${DATABASE_VERSION}).`);
             logError('Since there is currently no migration method ready for the migration, txAdmin will attempt to use it anyways.');
             logError('Please make sure your txAdmin is on the most updated version!');
             process.exit(1);

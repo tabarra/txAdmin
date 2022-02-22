@@ -10,9 +10,9 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 const helpers = require('../../extras/helpers');
 const OutputHandler = require('./outputHandler');
 
-const { customAlphabet } = require('nanoid');
+const { customAlphabet } = require('nanoid/non-secure');
 const dict51 = require('nanoid-dictionary/nolookalikes');
-const genMutex = customAlphabet(dict51, 5);
+const genMutex = customAlphabet(dict51, 8);
 
 
 //Helpers

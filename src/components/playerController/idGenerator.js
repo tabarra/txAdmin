@@ -75,7 +75,9 @@ module.exports.genWhitelistID = async (storage) => {
     let attempts = 0;
     while (attempts < maxAttempts) {
         attempts++;
-        const id = 'R' + nanoidSecure.customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
+        if (attempts > 5) globals.databus.txStatsData.randIDFailures++;
+        const randFunc = (attempts <= 5) ? nanoidSecure : nanoidNonSecure;
+        const id = 'R' + randFunc.customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
         if (await checkUniqueness(storage, id, 'pendingWL')) {
             return id;
         }
@@ -96,10 +98,12 @@ module.exports.genActionID = async (storage, actionType) => {
     let attempts = 0;
     while (attempts < maxAttempts) {
         attempts++;
+        if (attempts > 5) globals.databus.txStatsData.randIDFailures++;
+        const randFunc = (attempts <= 5) ? nanoidSecure : nanoidNonSecure;
         const id = actionPrefix
-            + nanoidSecure.customAlphabet(GlobalData.noLookAlikesAlphabet, 3)()
+            + randFunc.customAlphabet(GlobalData.noLookAlikesAlphabet, 3)()
             + '-'
-            + nanoidSecure.customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
+            + randFunc.customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
         if (await checkUniqueness(storage, id, 'actions')) {
             return id;
         }
