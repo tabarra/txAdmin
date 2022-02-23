@@ -5,7 +5,7 @@ function debugPrint(...)
   local appendedStr = ''
   if debugModeEnabled then
     for _, v in ipairs(args) do
-      appendedStr = appendedStr .. ' ' .. tostring(v)
+      appendedStr = appendedStr .. ' ' .. (type(v)=="table" and json.encode(v) or tostring(v))
     end
     local msgTemplate = '^3[txAdminMenu]^0%s^0'
     local msg = msgTemplate:format(appendedStr)

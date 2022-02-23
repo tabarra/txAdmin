@@ -128,6 +128,7 @@ end)
 -- Will toggle debug logging
 RegisterNetEvent('txAdmin:events:setDebugMode', function(enabled)
   isMenuDebug = enabled
+  debugModeEnabled = enabled
   sendMenuMessage('setDebugMode', isMenuDebug)
 end)
 

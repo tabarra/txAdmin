@@ -12,7 +12,7 @@ const OutputHandler = require('./outputHandler');
 
 const { customAlphabet } = require('nanoid/non-secure');
 const dict51 = require('nanoid-dictionary/nolookalikes');
-const genMutex = customAlphabet(dict51, 8);
+const genMutex = customAlphabet(dict51, 5);
 
 
 //Helpers
