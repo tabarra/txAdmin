@@ -29,3 +29,13 @@ end
 CreateThread(function()
   debugModeEnabled = (GetConvar('txAdmin-menuDebug', 'false') == 'true')
 end)
+
+function tableIndexOf(tgtTable, value)
+  for i=1, #tgtTable do
+    debugPrint(('tgtTableVal: %s, value: %s'):format(tgtTable[i], value))
+    if tgtTable[i] == value then
+      return i
+    end
+  end
+  return -1
+end
