@@ -41,7 +41,7 @@
             "menu_not_allowed": "Identificatorii dvs. nu se potrivesc cu niciun administrator înregistrat pe txAdmin.\nDacă sunteți înregistrat pe txAdmin, accesați Admin Manager și asigurați-vă că identificatorii dvs. bine configurați.",
             "no_perms": "Nu ai această permisie.",
             "unknown_error": "A apărut o eroare necunoscută.",
-            "not_enabled": "Meniul txAdmin nu este activat! You can enable it in the txAdmin settings page.",
+            "not_enabled": "Meniul txAdmin nu este activat! Puteți să o activați din pagina de setări txAdmin.",
             "announcement_title": "Anunț de la %{author}:",
             "dialog_empty_input": "Nu poți avea un input gol."
         },
@@ -65,17 +65,17 @@
                 "title": "Mod Jucător",
                 "noclip": {
                     "title": "NoClip",
-                    "label": "Fly around",
+                    "label": "Zboară",
                     "success": "NoClip activat"
                 },
                 "godmode": {
                     "title": "God",
-                    "label": "Invincible",
+                    "label": "Invincibilitate",
                     "success": "God Mode activat"
                 },
                 "normal": {
                     "title": "Normal",
-                    "label": "Default mode",
+                    "label": "Mod Normal",
                     "success": "Ai revenit la modul de jucător."
                 }
             },
@@ -273,7 +273,7 @@
                 }
             },
             "ban": {
-                "title": "Baneaza jucător",
+                "title": "Banează jucător",
                 "reason_placeholder": "Motiv",
                 "duration_placeholder": "Durată",
                 "hours": "ore",
