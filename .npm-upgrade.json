@@ -39,6 +39,10 @@
     "got": {
       "versions": ">11",
       "reason": "esm"
+    },
+    "fs-extra": {
+      "versions": ">9",
+      "reason": "recipe errors on some OSs"
     }
   }
 }
