@@ -366,20 +366,33 @@
 
 
     //============================================== Commands
-    function controlCommand(action) {
+    async function controlCommand(action) {
         let message = null;
         if(action == 'admin_broadcast'){
-            message = prompt('Type the message to be broadcasted to all players');
+            message = await txAdminPrompt({
+                modalColor: 'orange',
+                confirmBtnClass: 'btn-orange',
+                title: 'Announcement',
+                description: 'Type the message to be broadcasted to all players.', 
+                placeholder: 'the server will restart in xxx minutes...'
+            });
+
             if(message.length <= 6){
                 $.notify({ message: 'This message is too short!'}, {type: 'danger'});
                 return;
             }
         }else if(action == 'kick_all'){
-            message = prompt('Type the kick reason or leave it blank (press enter)');
+            message = await txAdminPrompt({
+                modalColor: 'red',
+                confirmBtnClass: 'btn-red',
+                title: 'Kick All Players',
+                description: 'Type the kick reason or leave it blank (press enter)',
+                required: false,
+            });
         }else{
             return;
         }
-        if(message == null) return;
+        if(message === null || message === false) return;
 
         const notify = $.notify({ message: 'Executing Command...' }, {});
         txAdminAPI({

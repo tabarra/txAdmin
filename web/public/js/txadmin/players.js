@@ -360,9 +360,13 @@ function searchPlayer() {
 
 
 // Message player
-function messagePlayer() {
+async function messagePlayer() {
     if (!modPlayer.curr.id) return;
-    let message = prompt('Type your message.');
+    modPlayer.Modal.hide();
+    const message = await txAdminPrompt({
+        title: 'Direct Message',
+        description: 'Type direct message below:',
+    });
     if (!message || message.length === 0) return;
 
     const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
@@ -391,10 +395,17 @@ function messagePlayer() {
 }
 
 // Kick Player
-function kickPlayer() {
+async function kickPlayer() {
     if (modPlayer.curr.id == false) return;
-    let reason = prompt('Type the kick reason or leave it blank (press enter)');
-    if (reason == null) return;
+    modPlayer.Modal.hide();
+    const reason = await txAdminPrompt({
+        modalColor: 'red',
+        confirmBtnClass: 'btn-red',
+        title: 'Kick Player',
+        description: 'Type the kick reason or leave it blank (press enter)',
+        required: false,
+    });
+    if (reason === false) return;
 
     const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
@@ -423,11 +434,16 @@ function kickPlayer() {
 }
 
 //Warn Player
-function warnPlayer() {
+async function warnPlayer() {
     if (modPlayer.curr.id == false) return;
-    let reason = prompt('Type the warn reason.');
-    if (reason == null) return;
-    reason = reason.trim();
+    modPlayer.Modal.hide();
+    const reason = await txAdminPrompt({
+        modalColor: 'orange',
+        confirmBtnClass: 'btn-orange',
+        title: 'Warn Player',
+        description: 'Type the warn reason.',
+    });
+    if (reason === false) return;
 
     if (!reason.length) {
         return $.notify({ message: '<p class="text-center">The warn reason is required.</p>'}, {type: 'danger'});

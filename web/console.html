@@ -92,11 +92,10 @@
                         <button type="button" id="clearConsole" class="btn btn-outline-light btn-sm mb-2">
                             Clear Console
                         </button>
-                        <button type="button" id="announcementBtn" class="btn btn-outline-warning btn-sm mb-2"
-                            <%= (isWebInterface ? '' : 'disabled') %>>
+                        <button type="button" id="announcementBtn" class="btn btn-outline-warning btn-sm mb-2" <%= disableAnnouncement %>>
                             Announcement
                         </button>
-                        <button type="button" id="ctrl-restart" class="btn btn-outline-<%= restartBtnClass %> btn-sm mb-2" 
+                        <button type="button" id="ctrl-restart" class="btn btn-outline-danger btn-sm mb-2" 
                             onclick="controlAction('restart')" <%= disableRestart %>>
                                 RESTART
                         </button>
@@ -319,14 +318,20 @@
         });
 
         //Buttons
-        announcementBtn.addEventListener("click", (event) => {
-            let message = prompt('Type the message to be broadcasted to all players');
+        announcementBtn.addEventListener("click", async (event) => {
+            const message = await txAdminPrompt({
+                modalColor: 'orange',
+                confirmBtnClass: 'btn-warning',
+                title: 'Announcement',
+                description: 'Type the message to be broadcasted to all players.', 
+                placeholder: 'the server will restart in xxx minutes...'
+            });
+
+            if(message == false) return;
             if(message.length <= 6){
                 $.notify({ message: 'This message is too short!'}, {type: 'danger'});
                 return;
             }
-
-            if(message == null) return;
 
             const notify = $.notify({ message: 'Executing Command...' }, {});
             txAdminAPI({

@@ -48,8 +48,7 @@ document.addEventListener('DOMContentLoaded', function(event) {
             animation: 'scale',
 
             type: 'red',
-            boxWidth: '500px',
-            useBootstrap: false,
+            columnClass: 'medium',
             theme: document.body.classList.contains('theme--dark') ? 'dark' : 'light',
         };
     }
@@ -119,23 +118,30 @@ const txAdminConfirm = ({content, confirmBtnClass, modalColor, title}) => {
     });
 };
 
-const txAdminPrompt = ({confirmBtnClass, modalColor, title, description, placeholder}) => {
+const txAdminPrompt = ({
+    confirmBtnClass = 'btn-blue',
+    modalColor = 'blue',
+    title = '',
+    description = '',
+    placeholder = '',
+    required = true,
+}) => {
     return new Promise((resolve, reject) => {
         $.confirm({
             title,
-            type: modalColor || 'green',
+            type: modalColor,
             content: `
                 <form action="">
                     <div class="form-group">
                         <label>${description}</label>
-                        <input type="text" placeholder="${placeholder}" class="inputField form-control" required />
+                        <input type="text" placeholder="${placeholder}" class="inputField form-control" ${required && 'required'} />
                     </div>
                 </form>`,
             buttons: {
                 cancel: () => {resolve(false);},
                 formSubmit: {
                     text: 'Submit',
-                    btnClass: confirmBtnClass || 'btn-green',
+                    btnClass: confirmBtnClass,
                     action: function () {
                         resolve(this.$content.find('.inputField').val());
                     },
@@ -145,11 +151,12 @@ const txAdminPrompt = ({confirmBtnClass, modalColor, title, description, placeho
                 resolve(false);
             },
             onContentReady: function () {
-                var jc = this;
+                const jc = this;
                 this.$content.find('form').on('submit', function (e) {
                     e.preventDefault();
                     jc.$$formSubmit.trigger('click');
                 });
+                this.$content.find('input').focus();
             },
         });
     });

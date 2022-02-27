@@ -419,6 +419,8 @@
     async function whitelistID(reference){
         if(!reference){
             reference = await txAdminPrompt({
+                modalColor: 'green',
+                confirmBtnClass: 'btn-green',
                 title: 'Whitelist player',
                 description: 'Type in the whitelist Request ID (R####) or License Identifier.', 
                 placeholder: 'R1234'
