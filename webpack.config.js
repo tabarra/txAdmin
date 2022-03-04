@@ -44,6 +44,18 @@ module.exports = {
         'node-opus': 'empty',
         'opusscript': 'empty',
         'osx-temperature-sensor': 'empty',
+        'erlpack': 'empty',
+        'utf-8-validate' : 'utf-8-validate',
+        'bufferutil': 'bufferutil',
+        'cardinal': 'empty',
+        'ffmpeg-static': 'empty',
+        'ffmpeg-binaries': 'empty',
+
+
+    },
+    resolve: {
+        extensions: [".js"],
+        mainFields: ["main"],
     },
     stats: 'errors-warnings',
     plugins: [
