@@ -43,6 +43,9 @@ Quando terminar de importar as traduções:
 
 
 
+Change pls the expired ban color to red or something else, because the must people dont know if the ban now expired or be revoked
+
+
 
 verificar o pq heartbeat as vezes é lento
 

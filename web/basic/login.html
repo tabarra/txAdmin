@@ -123,6 +123,11 @@
                 border-top: 2px solid lawngreen;
             }
 
+            a {
+                color: lawngreen;
+                font-weight: 700;
+            }
+
             input,
             .btn-stack-overflow,
             .btn-linkedin,
@@ -196,7 +201,7 @@
                                 </form>
                             </div>
                             <script>
-                                if(/^#\d{4}$/.test(window.location.hash)) {
+                                if (/^#\d{4}$/.test(window.location.hash)) {
                                     const label = document.getElementById('noMaster-autofill');
                                     const pinInput = document.getElementById('noMaster-pin');
 
@@ -214,8 +219,9 @@
                             <img class="profile-pic" src="<%= addMaster_picture %>" alt="avatar">
                             <h5 class="mt-2 mb-3 text-muted"><%= addMaster_name %></h5>
 
-                            <h5>Type in the <i>backup</i> password:</h5>
-                            <form action="/auth/addMaster/save" method="post">
+                            <h5>Create <i>backup</i> password:</h5>
+                            <span class="text-muted">You will be able to login using this password in case the connection with Cfx.re's auth provider fails.</span>
+                            <form action="/auth/addMaster/save" method="post" class="mt-2">
                                 <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">
@@ -237,11 +243,24 @@
                                 <span class="form-text text-muted mb-4">
                                     Must be between 6 and 24 characters.
                                 </span>
-                                <button class="btn btn-primary px-4" type="submit">Save</button>
+
+                                <div class="input-group mx-auto mb-2" style="max-width: 280px;">
+                                    <div class="form-check">
+                                        <input class="form-check-input" name="checkboxAcceptToS" id="checkboxAcceptToS" type="checkbox" required>
+                                        <label class="form-check-label" for="checkboxAcceptToS">
+                                            I have read and agree to the
+                                            <a href="https://fivem.net/terms" target="_blank" rel="noopener noreferrer">Cfx.re ToS</a>
+                                            as well as the
+                                            <a href="https://github.com/tabarra/txAdmin/blob/master/LICENSE" target="_blank" rel="noopener noreferrer">txAdmin License</a>.
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-primary px-4" id="btnCreateMaster" type="submit" disabled>Create Master Account</button>
                             </form>
                             <script>
-                                let password = document.getElementById("password")
-                                let password2 = document.getElementById("password2");
+                                const password = document.getElementById("password");
+                                const password2 = document.getElementById("password2");
                                 function validatePassword(){
                                     if(password.value != password2.value) {
                                         password2.setCustomValidity("Passwords Don't Match");
@@ -251,6 +270,12 @@
                                 }
                                 password.onchange = validatePassword;
                                 password2.onkeyup = validatePassword;
+
+                                const checkboxAcceptToS = document.getElementById("checkboxAcceptToS");
+                                const btnCreateMaster = document.getElementById("btnCreateMaster");
+                                checkboxAcceptToS.onchange = () => {
+                                    btnCreateMaster.disabled = !checkboxAcceptToS.checked;
+                                }
                             </script>
                         <% } %>
                         <% if (template === 'normal') { %>
