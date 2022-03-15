@@ -188,7 +188,7 @@ async function handleEdit(ctx) {
                 const id = citizenfxID.split(':')[1];
                 const res = await got(`https://policy-live.fivem.net/api/getUserInfo/${id}`, {timeout: 6000}).json();
                 if (!res.username || !res.username.length) {
-                    return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID1'});
+                    return ctx.send({type: 'danger', message: '(ERR1) Invalid CitizenFX ID'});
                 }
                 citizenfxData = {
                     id: res.username,
@@ -197,14 +197,14 @@ async function handleEdit(ctx) {
             } else if (citizenfxIDRegex.test(citizenfxID)) {
                 const res = await got(`https://forum.cfx.re/u/${citizenfxID}.json`, {timeout: 6000}).json();
                 if (!res.user || typeof res.user.id !== 'number') {
-                    return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID2'});
+                    return ctx.send({type: 'danger', message: '(ERR2) Invalid CitizenFX ID'});
                 }
                 citizenfxData = {
                     id: citizenfxID,
                     identifier: `fivem:${res.user.id}`,
                 };
             } else {
-                return ctx.send({type: 'danger', message: 'Invalid CitizenFX ID3'});
+                return ctx.send({type: 'danger', message: '(ERR3) Invalid CitizenFX ID'});
             }
         } catch (error) {
             logError(`Failed to resolve CitizenFX ID to game identifier with error: ${error.message}`);
@@ -231,7 +231,7 @@ async function handleEdit(ctx) {
     }
 
     //Check for privilege escalation
-    if (!ctx.session.auth.master && !ctx.session.auth.permissions.includes('all_permissions')) {
+    if (permissions && !ctx.session.auth.master && !ctx.session.auth.permissions.includes('all_permissions')) {
         const deniedPerms = permissions.filter((x) => !ctx.session.auth.permissions.includes(x));
         if (deniedPerms.length) {
             return ctx.send({
