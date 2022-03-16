@@ -37,12 +37,18 @@ const usedTokens = new Set();
  * @param {object} ctx
  */
 module.exports = async function AuthVerify(ctx) {
+    //FIXME: disabled for now
+    return ctx.utils.render('login', {
+        template: 'normal',
+        message: 'ZAP one-click-login temporarily disabled.',
+        citizenfxDisabled: !globals.adminVault.providers.citizenfx.ready,
+    });
+
     const errorPrefix = 'Zap JWT error:';
     const renderData = {
         template: 'normal',
         message: 'Invalid token. Please login using one of the options above.',
         citizenfxDisabled: !globals.adminVault.providers.citizenfx.ready,
-        discordDisabled: true,
     };
 
     //Sanity check
