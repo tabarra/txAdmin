@@ -1,7 +1,6 @@
 //Requires
 const modulename = 'RecipeEngine';
 const path = require('path');
-const slash = require('slash');
 const fs = require('fs-extra');
 const fsp = require('fs').promises; //starting to replace fse
 const StreamZip = require('node-stream-zip');
@@ -90,8 +89,10 @@ const validatorDownloadGithub = (options) => {
 };
 const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     if (!validatorDownloadGithub(options)) throw new Error('invalid options');
+    //FIXME: caso seja eperm, tentar criar um arquivo na pasta e checar se funciona
 
     //Parsing source
+    deployerCtx.$step = 'task start';
     const srcMatch = options.src.match(githubRepoSourceRegex);
     if (!srcMatch || !srcMatch[3] || !srcMatch[4]) throw new Error('invalid repository');
     const repoOwner = srcMatch[3];
@@ -106,12 +107,14 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
             method: 'get',
             url: `https://api.github.com/repos/${repoOwner}/${repoName}`,
             responseType: 'json',
+            timeout: 15e3,
         });
         if (!res.data || !res.data.default_branch) {
             throw new Error('reference not set, and wasn ot able to detect using github\'s api');
         }
         reference = res.data.default_branch;
     }
+    deployerCtx.$step = 'ref set';
 
     //Preparing vars
     const downURL = `https://api.github.com/repos/${repoOwner}/${repoName}/zipball/${reference}`;
@@ -123,25 +126,33 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
         method: 'get',
         url: downURL,
         responseType: 'stream',
+        timeout: 150e3,
     });
+    deployerCtx.$step = 'before stream';
     await new Promise((resolve, reject) => {
         const outStream = fs.createWriteStream(tmpFilePath);
         res.data.pipe(outStream);
         outStream.on('finish', resolve);
         outStream.on('error', reject); // don't forget this!
     });
+    deployerCtx.$step = 'after stream';
 
     //Extracting files
     const zip = new StreamZip.async({ file: tmpFilePath });
     const entries = Object.values(await zip.entries());
     if (!entries.length || !entries[0].isDirectory) throw new Error('unexpected zip structure');
     const zipSubPath = path.posix.join(entries[0].name, options.subpath || '');
+    deployerCtx.$step = 'zip parsed';
     await fsp.mkdir(destPath, {recursive: true});
+    deployerCtx.$step = 'dest path created';
     await zip.extract(zipSubPath, destPath);
+    deployerCtx.$step = 'zip extracted';
     await zip.close();
+    deployerCtx.$step = 'zip closed';
 
     //Removing temp path
     await fs.remove(tmpFilePath);
+    deployerCtx.$step = 'task finished';
 };
 
 
@@ -441,9 +452,6 @@ const taskDumpVars = async (options, basePath, deployerCtx) => {
 
 /*
 DONE:
-    - waste_time (DEBUG)
-    - fail_test (DEBUG)
-    - dump_vars (DEBUG)
     - download_file
     - remove_path (file or folder)
     - ensure_dir
@@ -457,6 +465,11 @@ DONE:
     - download_github (with ref and subpath)
     - load_vars
 
+DEBUG:
+    - waste_time
+    - fail_test
+    - dump_vars
+
 TODO:
     - ??????
 */
@@ -467,63 +480,78 @@ module.exports = {
     download_file:{
         validate: validatorDownloadFile,
         run: taskDownloadFile,
+        timeoutSeconds: 180,
     },
     download_github:{
         validate: validatorDownloadGithub,
         run: taskDownloadGithub,
+        timeoutSeconds: 180,
     },
     remove_path:{
         validate: validatorRemovePath,
         run: taskRemovePath,
+        timeoutSeconds: 15,
     },
     ensure_dir:{
         validate: validatorEnsureDir,
         run: taskEnsureDir,
+        timeoutSeconds: 15,
     },
     unzip:{
         validate: validatorUnzip,
         run: taskUnzip,
+        timeoutSeconds: 180,
     },
     move_path:{
         validate: validatorMovePath,
         run: taskMovePath,
+        timeoutSeconds: 180,
     },
     copy_path:{
         validate: validatorCopyPath,
         run: taskCopyPath,
+        timeoutSeconds: 180,
     },
     write_file:{
         validate: validatorWriteFile,
         run: taskWriteFile,
+        timeoutSeconds: 15,
     },
     replace_string:{
         validate: validatorReplaceString,
         run: taskReplaceString,
+        timeoutSeconds: 15,
     },
     connect_database:{
         validate: validatorConnectDatabase,
         run: taskConnectDatabase,
+        timeoutSeconds: 30,
     },
     query_database:{
         validate: validatorQueryDatabase,
         run: taskQueryDatabase,
+        timeoutSeconds: 90,
     },
     load_vars: {
         validate: validatorLoadVars,
         run: taskLoadVars,
+        timeoutSeconds: 5,
     },
 
-    //DEBUG mock only
+    //DEBUG only
     waste_time:{
         validate: validatorWasteTime,
         run: taskWasteTime,
+        timeoutSeconds: 300,
     },
     fail_test:{
         validate: (() => true),
         run: taskFailTest,
+        timeoutSeconds: 300,
     },
     dump_vars:{
         validate: (() => true),
         run: taskDumpVars,
+        timeoutSeconds: 5,
     },
 };

@@ -65,6 +65,7 @@ variables:
 ## Tasks
 Tasks/actions are executed sequentially, and any failure in the chain stops the process.  
 Attention: careful with the number of spaces used in the indentation.  
+Every task can contain a `timeoutSeconds` option to increase it's defautl value.
 
 **Available Actions:**
 - [download_github](#download_github)
