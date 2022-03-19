@@ -10,6 +10,11 @@ const escapeRegExp = require('lodash/escapeRegExp');
 const mysql = require('mysql2/promise');
 const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
 
+//Got stream attempt:
+const stream = require('stream');
+const { promisify } = require('util');
+const got = require('got');
+
 //Helper functions
 const safePath = (base, suffix) => {
     const safeSuffix = path.normalize(suffix).replace(/^(\.\.(\/|\\|$))+/, '');
@@ -122,19 +127,35 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     const destPath = safePath(basePath, options.dest);
 
     //Downloading file
-    const res = await axios({
-        method: 'get',
-        url: downURL,
-        responseType: 'stream',
-        timeout: 150e3,
-    });
+    // const res = await axios({
+    //     method: 'get',
+    //     url: downURL,
+    //     responseType: 'stream',
+    //     timeout: 150e3,
+    // });
+    // deployerCtx.$step = 'before stream';
+    // await new Promise((resolve, reject) => {
+    //     const outStream = fs.createWriteStream(tmpFilePath);
+    //     res.data.pipe(outStream);
+    //     outStream.on('finish', resolve);
+    //     outStream.on('error', reject); // don't forget this!
+    // });
+    // deployerCtx.$step = 'after stream';
+
     deployerCtx.$step = 'before stream';
-    await new Promise((resolve, reject) => {
-        const outStream = fs.createWriteStream(tmpFilePath);
-        res.data.pipe(outStream);
-        outStream.on('finish', resolve);
-        outStream.on('error', reject); // don't forget this!
+    const gotOptions = {
+        timeout: { request: 150e3 },
+        retry: { limit: 5 },
+    };
+    const gotStream = got.stream(downURL, gotOptions);
+    gotStream.on('downloadProgress', (progress) => {
+        deployerCtx.$step = `downloading ${Math.round(progress.percent * 100)}%`;
     });
+    const pipeline = promisify(stream.pipeline);
+    await pipeline(
+        gotStream,
+        fs.createWriteStream(tmpFilePath),
+    );
     deployerCtx.$step = 'after stream';
 
     //Extracting files
@@ -143,7 +164,7 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     if (!entries.length || !entries[0].isDirectory) throw new Error('unexpected zip structure');
     const zipSubPath = path.posix.join(entries[0].name, options.subpath || '');
     deployerCtx.$step = 'zip parsed';
-    await fsp.mkdir(destPath, {recursive: true});
+    await fsp.mkdir(destPath, { recursive: true });
     deployerCtx.$step = 'dest path created';
     await zip.extract(zipSubPath, destPath);
     deployerCtx.$step = 'zip extracted';
@@ -222,7 +243,7 @@ const taskUnzip = async (options, basePath, deployerCtx) => {
 
     const srcPath = safePath(basePath, options.src);
     const destPath = safePath(basePath, options.dest);
-    await fsp.mkdir(destPath, {recursive: true});
+    await fsp.mkdir(destPath, { recursive: true });
 
     const zip = new StreamZip.async({ file: srcPath });
     const count = await zip.extract(null, destPath);
@@ -477,57 +498,57 @@ TODO:
 
 //Exports
 module.exports = {
-    download_file:{
+    download_file: {
         validate: validatorDownloadFile,
         run: taskDownloadFile,
         timeoutSeconds: 180,
     },
-    download_github:{
+    download_github: {
         validate: validatorDownloadGithub,
         run: taskDownloadGithub,
         timeoutSeconds: 180,
     },
-    remove_path:{
+    remove_path: {
         validate: validatorRemovePath,
         run: taskRemovePath,
         timeoutSeconds: 15,
     },
-    ensure_dir:{
+    ensure_dir: {
         validate: validatorEnsureDir,
         run: taskEnsureDir,
         timeoutSeconds: 15,
     },
-    unzip:{
+    unzip: {
         validate: validatorUnzip,
         run: taskUnzip,
         timeoutSeconds: 180,
     },
-    move_path:{
+    move_path: {
         validate: validatorMovePath,
         run: taskMovePath,
         timeoutSeconds: 180,
     },
-    copy_path:{
+    copy_path: {
         validate: validatorCopyPath,
         run: taskCopyPath,
         timeoutSeconds: 180,
     },
-    write_file:{
+    write_file: {
         validate: validatorWriteFile,
         run: taskWriteFile,
         timeoutSeconds: 15,
     },
-    replace_string:{
+    replace_string: {
         validate: validatorReplaceString,
         run: taskReplaceString,
         timeoutSeconds: 15,
     },
-    connect_database:{
+    connect_database: {
         validate: validatorConnectDatabase,
         run: taskConnectDatabase,
         timeoutSeconds: 30,
     },
-    query_database:{
+    query_database: {
         validate: validatorQueryDatabase,
         run: taskQueryDatabase,
         timeoutSeconds: 90,
@@ -539,17 +560,17 @@ module.exports = {
     },
 
     //DEBUG only
-    waste_time:{
+    waste_time: {
         validate: validatorWasteTime,
         run: taskWasteTime,
         timeoutSeconds: 300,
     },
-    fail_test:{
+    fail_test: {
         validate: (() => true),
         run: taskFailTest,
         timeoutSeconds: 300,
     },
-    dump_vars:{
+    dump_vars: {
         validate: (() => true),
         run: taskDumpVars,
         timeoutSeconds: 5,
