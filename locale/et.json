@@ -1,0 +1,290 @@
+{
+    "$meta": {
+        "label": "Estonian",
+        "humanizer_language": "et"
+    },
+    "restarter": {
+        "start_timeout": "Ei õnnestunud õigel ajal alustada",
+        "crash_detected": "crash tuvastatud",
+        "hang_detected": "hang tuvastatud",
+        "partial_hang_warn": "Osalise hangumise tõttu taaskäivitub see server 1 minuti pärast. Palun lahkuge serverist kohe.",
+        "partial_hang_warn_discord": "Osalise hangumise tõttu taaskäivitub **%{servername}** 1 minuti pärast.",
+        "schedule_reason": "Plaanitud taaskäivitamine kell %{time}",
+        "schedule_warn": "See server taaskäivitub %{smart_count} minuti pärast. Palun katkestage ühendus kohe. |||| See server taaskäivitub %{smart_count} minuti pärast.",
+        "schedule_warn_discord": "**%{servername}** taaskäivitub %{smart_count} minuti pärast. |||| **%{servername}** taaskäivitub %{smart_count} minuti pärast."
+    },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) Teid on sellest serverist keelustatud \"%{reason}\". Teie keelustamine aegub: %{expiration}.",
+        "kick_permanent": " (%{author}) Teid on sellest serverist jäädavalt keelustatud \"%{reason}\" tõttu.",
+        "reject_temporary": "Teid on sellest serverist keelustatud.\nTeie keeld aegub: %{expiration}.\nBänni ID: %{id}.\nKeelustamise põhjus: %{reason}.\nBKeelustaja: %{author}.",
+        "reject_permanent": "Teid on sellest serverist jäädavalt keelustatud.\nBänni ID: %{id}.\nKeelustuse põhjus: %{reason}.\nKeelustaja: %{author}."
+    },
+    "server_actions": {
+        "restarting": "Serveri taaskäivitamine (%{reason}).",
+        "restarting_discord": "**%{servername}** taaskäivitub (%{reason}).",
+        "stopping": "Server suletakse (%{reason}).",
+        "stopping_discord": "**%{servername}** suletakse (%{reason}).",
+        "spawning_discord": "**%{servername}** käivitub."
+    },
+    "discord": {
+        "status_online": "**%{servername}** on praegu **Üleval**!",
+        "status_offline": "**%{servername}** on praegu **Kinni**!"
+    },
+    "nui_warning": {
+        "title": "HOIATUS",
+        "warned_by": "Hoiatas:",
+        "instruction": "Sellest sõnumist loobumiseks hoidke klahvi [SPACE] 10 sekundit all."
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "Menüü txAdmin on lubatud, selle avamiseks tippige /tx.\nSaate konfigureerida ka klahvide sidumise menüüs [Mängu seaded > Klahvide sidumised > FiveM > Menüü: ava põhileht].",
+            "menu_not_allowed": "Teie identifikaatorid ei ühti ühegi txAdminis registreeritud administraatoriga.\nKui olete txAdminis registreeritud, minge administraatorihaldurisse ja veenduge, et teie identifikaatorid on salvestatud.",
+            "no_perms": "Teil pole seda luba.",
+            "unknown_error": "Ilmnes tundmatu viga.",
+            "not_enabled": "Menüü txAdmin pole lubatud! Saate selle lubada txAdmini seadete lehel.",
+            "announcement_title": "Serveri teadaanne %{author}:",
+            "dialog_empty_input": "Sul ei saa olla tühi sisend."
+        },
+        "frozen": {
+            "froze_player": "Olete mängija külmutanud!",
+            "unfroze_player": "Olete mängija lahti külmutanud!",
+            "was_frozen": "Serveri administraator külmutas teid!"
+        },
+        "common": {
+            "cancel": "Tühista",
+            "submit": "Esita",
+            "error": "Ilmnes viga",
+            "copied": "Kopeeriti lõikelauale."
+        },
+        "page_main": {
+            "tooltips": {
+                "tooltip_1": "Kasuta %{key} lehekülgede vahetamiseks ja nooleklahve menüüelementide liikumiseks",
+                "tooltip_2": "Teatud menüüelementidel on alamvalikud, mida saab valida vasak- ja paremnooleklahvide abil"
+            },
+            "player_mode": {
+                "title": "Mängija režiim",
+                "noclip": {
+                    "title": "NoClip",
+                    "label": "Toggeli NoClip, mis võimaldab teil liikuda läbi seinte ja muude objektide",
+                    "success": "NoClip käivitatud"
+                },
+                "godmode": {
+                    "title": "God",
+                    "label": "Lülitage GodMode sisse, vältides kahju tekitamist",
+                    "success": "GodMode käivitatud"
+                },
+                "normal": {
+                    "title": "Normaalne",
+                    "label": "Naaseb vaike-/tavalise mängija režiimi",
+                    "success": "Naastatud mängija vaikerežiimile."
+                }
+            },
+            "teleport": {
+                "title": "Teleporteeru",
+                "generic_success": "Saatis su ussiauku!",
+                "waypoint": {
+                    "title": "Waypoint",
+                    "label": "Teleportige kaardil määratud kohandatud teekonnapunkti",
+                    "error": "Teil pole punkti määratud."
+                },
+                "coords": {
+                    "title": "Koordinaadid",
+                    "label": "Teleportige antud koordinaatidele",
+                    "dialog_title": "Teleport",
+                    "dialog_desc": "Ussiaugu läbimiseks esitage koordinaadid x, y, z vormingus.",
+                    "dialog_error": "Valed koordinaadid. Peab olema vormingus: 111, 222, 33"
+                },
+                "back": {
+                    "title": "Tagasi",
+                    "label": "Naaseb asukohta enne viimast teleporti",
+                    "error": "Teil pole viimast asukohta, kuhu tagasi minna!"
+                },
+                "copy": {
+                    "title": "Kopeeri koordinaadid",
+                    "label": "Kopeerige praegused maailma koordinaadid"
+                }
+            },
+            "vehicle":{
+                "title": "Masinad",
+                "onesync_error": "See suvand nõuab, et OneSync oleks serveri olemi haldamiseks sisse lülitatud",
+                "not_in_veh_error": "Te ei ole praegu sõidukis!",
+                "spawn": {
+                    "title": "Loo",
+                    "label": "Looge antud sõiduk selle mudelinime järgi",
+                    "dialog_title": "Loo masin",
+                    "dialog_desc": "Sisestage selle sõiduki mudeli nimi, mida soovite luua.",
+                    "dialog_success": "Sõiduk loodud!",
+                    "dialog_error": "Sõiduki mudeli nime '%{modelName}' ei eksisteeri!",
+                    "dialog_info": "Proovin luua %{modelName}."
+                },
+                "fix": {
+                    "title": "Paranda",
+                    "label": "Parandab sõiduki maksimaalselt tervenisti",
+                    "success": "Sõiduk korda tehtud!"
+                },
+                "delete": {
+                    "title": "Kustuta",
+                    "label": "Kustutab sõiduki, milles mängija parasjagu viibib",
+                    "success": "Sõiduk kustutatud!"
+                }
+            },
+            "heal": {
+                "title": "Tervenda",
+                "myself": {
+                    "title": "Ennast",
+                    "label": "Ravib end praeguse ped-i maksimumini",
+                    "success_0": "Kõik paranenud!",
+                    "success_1": "Sa peaksid end praegu hästi tundma!",
+                    "success_2": "Täielikult taastatud!",
+                    "success_3": "Valud parandatud!"
+                },
+                "everyone": {
+                    "title": "Kõik",
+                    "label": "Ravib ja elustab kõik ühendatud mängijad",
+                    "success": "Tervendas ja elustas kõik mängijad."
+                }
+            },
+            "announcement": {
+                "title": "Saada teadaanne",
+                "label": "Saatke kõigile võrgumängijatele teadaanne.",
+                "dialog_desc": "Sisestage sõnum, mida soovite kõigile mängijatele edastada.",
+                "dialog_placeholder": "Teie teadaanne...",
+                "dialog_success": "Teadaannde saatmine."
+            },
+            "clear_area": {
+                "title": "Lähtesta maailmapiirkond",
+                "label": "Lähtestage määratud maailmaala vaikeolekusse",
+                "dialog_desc": "Sisestage raadius, kuhu soovite olemid lähtestada (0-300). See ei puhasta olemeid, mille serveri pool tekkis.",
+                "dialog_success": "Puhastusala raadiusega %{radius}m",
+                "dialog_error": "Vale raadiuse sisestus. Proovi uuesti."
+            },
+            "player_ids": {
+                "title": "Mängija ID sisse- ja väljalülitamine",
+                "label": "Lülitage mängija ID-de (ja muu teabe) kuvamine kõigi läheduses asuvate mängijate pea kohal",
+                "alert_show": "Kuvatakse lähedalasuvate mängijate NetID-d.",
+                "alert_hide": "Lähedal asuva mängija NetID-de peitmine."
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "Hetkesed mängijad",
+                "players": "Mängijad",
+                "search": "Otsi",
+                "zero_players": "Mängijat ei leitud"
+            },
+            "sort": {
+                "label": "Sorteeri",
+                "distance": "Kaugus",
+                "id": "ID",
+                "joined_first": "Liitus esimest korda",
+                "joined_last": "Liitus viimati",
+                "closest": "Lähim",
+                "farthest": "Kõige kaugemal"
+            },
+            "card": {
+                "health": "%{percentHealth}% tervis"
+            }
+        },
+        "player_modal": {
+            "misc": {
+                "error": "Selle kasutaja üksikasjade toomisel ilmnes viga. Viga on näidatud allpool:",
+                "target_not_found": "%{target} ID või kasutajanimega võrgumängijat ei õnnestunud leida"
+            },
+            "tabs": {
+                "actions": "Tegevused",
+                "info": "Info",
+                "ids": "IDs",
+                "history": "Ajalugu",
+                "ban": "Keelusta"
+            },
+            "actions": {
+                "title": "Mängija toimingud",
+                "command_sent": "Käsk saadetud!",
+                "moderation": {
+                    "title": "Moderation",
+                    "options": {
+                        "dm": "DM",
+                        "warn": "Hoiata",
+                        "kick": "Kick",
+                        "set_admin": "Anna administraatori õigused"
+                    },
+                    "dm_dialog": {
+                        "title": "Direct Message",
+                        "description": "Mis on selle mängijaga otsesõnumi saatmise põhjus?",
+                        "placeholder": "Põhjus...",
+                        "success": "Teie DM on saadetud!"
+                    },
+                    "warn_dialog": {
+                        "title": "Hoiata",
+                        "description": "Mis on selle mängija otsese hoiatamise põhjus?",
+                        "placeholder": "Põhjus...",
+                        "success": "Mängijat hoiatati!"
+                    },
+                    "kick_dialog": {
+                        "title": "Kick",
+                        "description": "Mis on selle mängija kickimise põhjus?",
+                        "placeholder": "Põhjus...",
+                        "success": "Mängija kickiti!"
+                    }
+                },
+                "interaction": {
+                    "title": "Interaktsioon",
+                    "options": {
+                        "heal": "Heal",
+                        "go_to": "Goto",
+                        "bring": "Bring",
+                        "spectate": "Spectate",
+                        "toggle_freeze": "Külmuta"
+                    },
+                    "notifications": {
+                        "heal_player": "Tervendad mängija",
+                        "tp_player": "Teleportid mängija juurde",
+                        "bring_player": "Lähed mängija juurde",
+                        "spectate_failed": "Eesmärki ei õnnestunud lahendada! Lahkun Specatatest.",
+                        "spectate_yourself": "Sa ei saa ennast specateda.",
+                        "freeze_yourself": "Te ei saa ennast külmutada."
+                    }
+                },
+                "troll": {
+                    "title": "Troll",
+                    "options": {
+                        "drunk": "Tee purju",
+                        "fire": "Pane mängija põlema",
+                        "wild_attack": "Metsik rünnak"
+                    }
+                }
+            },
+            "info": {
+                "title": "Mängija info",
+                "session_time": "Seansi aeg",
+                "play_time": "Mängimise aeg",
+                "joined": "Ühines",
+                "notes_placeholder": "Märkused selle mängija kohta"
+            },
+            "history": {
+                "title": "Seotud ajalugu",
+                "action_types": {
+                    "warn": "HOIATATUD",
+                    "warn_revoked": "TÜHISTADES HOIATUS",
+                    "ban": "KEELUSTATUD",
+                    "ban_revoked": "KEELU TÜHISTAMINE",
+                    "whitelist": "ALLOWLIST",
+                    "whitelist_revoked": "ALLOWLISTIST EEMALDAMINE"
+                }
+            },
+            "ban": {
+                "title": "Keelusta mängija",
+                "reason_placeholder": "Põhjus",
+                "duration_placeholder": "Kestvus",
+                "hours": "Tunnid",
+                "days": "Päevad",
+                "weeks": "Nädalad",
+                "months": "Kuud",
+                "permanent": "Igavesti",
+                "custom": "Custom",
+                "helper_text": "Valige kestus",
+                "submit": "Rakenda keeld"
+            }
+        }
+    }
+}
