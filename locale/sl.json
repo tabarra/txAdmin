@@ -1,0 +1,290 @@
+{
+    "$meta": {
+        "label": "Slovenian",
+        "humanizer_language": "sl"
+    },
+    "restarter": {
+        "start_timeout": "strežnika ni uspelo zagnati v določenem času",
+        "crash_detected": "zaznan crash strežnika",
+        "hang_detected": "zaznan crash strežnika",
+        "partial_hang_warn": "Zaradi delnega crasha strežnika, se bo avtomatsko ponovno zagnal čez 1 minuto. Prosimo, zapustite strežnik.",
+        "partial_hang_warn_discord": "Zaradi delnega crasha strežnika, se bo **%{servername}** ponovno zagnal čez 1 minuto.",
+        "schedule_reason": "načrtovan restart čez %{time}",
+        "schedule_warn": "Ta strežnik se bo ponovno zagnal čez %{smart_count} minuto. Prosimo, zapustite strežnik. |||| Ta strežnik se bo ponovno zagnal čez %{smart_count} minut/i/e.",
+        "schedule_warn_discord": "**%{servername}** se bo ponovno zagnal čez %{smart_count} minuto. |||| **%{servername}** se bo ponovno zagnal čez %{smart_count} minut/i/e."
+    },
+    "ban_messages": {
+        "kick_temporary": "(%{author}) Bil si odstranjen iz strežnika zaradi \"%{reason}\". Tvoj BAN se izteče čez: %{expiration}.",
+        "kick_permanent": "(%{author}) Bil si odstranjen iz strežnika za vedno  \"%{reason}\".",
+        "reject_temporary": "Bil si odstranjen iz strežnika.\nIzteče se: %{expiration}.\nBan ID: %{id}.\nRazlog odstranitve: %{reason}.\nOdstranjen s strani: %{author}.",
+        "reject_permanent": "Bil si odstranjen iz strežnika za vedno.\nBan ID: %{id}.\nRazlog odstranitve: %{reason}.\nOdstranjen s strani: %{author}."
+    },
+    "server_actions": {
+        "restarting": "Ponovni zagon strežnika (%{reason}).",
+        "restarting_discord": "**%{servername}** se ponovno zaganja (%{reason}).",
+        "stopping": "Strežnik je bil zaustavljen (%{reason}).",
+        "stopping_discord": "**%{servername}** se zaustavlja (%{reason}).",
+        "spawning_discord": "**%{servername}** se zaganja."
+    },
+    "discord": {
+        "status_online": "**%{servername}** je trenutno **Dostopen**!",
+        "status_offline": "**%{servername}** je trenutno **Nedostopen**!"
+    },
+    "nui_warning": {
+        "title": "OPOZORILO",
+        "warned_by": "Opozorjen s strani:",
+        "instruction": "Drži [SPACE] za 10 sekund, da to sporočilo izgine."
+    },
+    "nui_menu": {
+        "misc": {
+            "help_message": "txAdmin Meni omogočen, napiši /tx da ga odpreš.\nTipko za txAdmin Meni lahko tudi spremeniš [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
+            "menu_not_allowed": "Tvoji podatki se ne ujemajo z nobenim obstoječim txAdmin profilom.\nČe si registriran na txAdminu, pojdi v upravitelja administratorjev in se prepričaj, da so tvoji podatki pravilni shranjeni.",
+            "no_perms": "Nimaš tega dovoljenja.",
+            "unknown_error": "Prišlo je do neznane težave.",
+            "not_enabled": "txAdmin Meni ni omogočen! Lahko ga omogočiš v txAdmin nastavitvah.",
+            "announcement_title": "Obvestilo od %{author}:",
+            "dialog_empty_input": "Ne moreš imeti praznega vnosa."
+        },
+        "frozen": {
+            "froze_player": "Zamrznil si igralca!",
+            "unfroze_player": "Odmrznil si igralca!",
+            "was_frozen": "Bil si zamrznjen s strani administratorja!"
+        },
+        "common": {
+            "cancel": "Prekliči",
+            "submit": "Potrdi",
+            "error": "Pojavila se je napaka",
+            "copied": "Kopirano v odložišče."
+        },
+        "page_main": {
+            "tooltips": {
+                "tooltip_1": "Uporabi %{key} da izbiraš med stranmi in puščične tipke za krmarjenje po elementih menija",
+                "tooltip_2": "Nekateri elementi menija imajo podmožnosti, ki jih je mogoče izbrati z levo in desno puščično tipko "
+            },
+            "player_mode": {
+                "title": "Tvoje možnosti",
+                "noclip": {
+                    "title": "NoClip",
+                    "label": "Uporabi NoClip, ko se želiš premikati skozi stene in druge predmete",
+                    "success": "NoClip omogočen"
+                },
+                "godmode": {
+                    "title": "God",
+                    "label": "Uporabi God Mode, da postaneš nesmrten",
+                    "success": "God Mode omogočen"
+                },
+                "normal": {
+                    "title": "Normal",
+                    "label": "Vrne se nazaj v privzeti/običajni način igralca",
+                    "success": "Vrnil si se na privzeti način."
+                }
+            },
+            "teleport": {
+                "title": "Teleportacija",
+                "generic_success": "Uspešna teleportacija!",
+                "waypoint": {
+                    "title": "Točka",
+                    "label": "Teleportiraj se do točke po meri",
+                    "error": "Nimaš določene točke teleportacije."
+                },
+                "coords": {
+                    "title": "Koordinati",
+                    "label": "Teleportiraj se do danih koordinatov",
+                    "dialog_title": "Teleportacija",
+                    "dialog_desc": "Zapiši koordinate v x, y, z formatu, da se teleportiraš do tiste lokacije.",
+                    "dialog_error": "Neveljavni koordinati. Mora biti v formatu kot je: 111, 222, 33"
+                },
+                "back": {
+                    "title": "Nazaj",
+                    "label": "Vrneš se na lokacijo pred zadnjo teleportacijo ",
+                    "error": "Nimaš zadnje lokacije, kamor bi se lahko vrnil!"
+                },
+                "copy": {
+                    "title": "Kopiraj koordinate",
+                    "label": "Kopiraj trenutne koordinate v odložišče"
+                }
+            },
+            "vehicle":{
+                "title": "Vozila",
+                "onesync_error": "Ta možnost zahteva, da je OneSync vklopljen za ravnanje s »entity handling«",
+                "not_in_veh_error": "Trenutno nisi v vozilu!",
+                "spawn": {
+                    "title": "Spawn",
+                    "label": "Spawnaj vozilo z imenom modela",
+                    "dialog_title": "Spawnaj vozilo",
+                    "dialog_desc": "Vstavi ime modela vozila, ki bi ga rad spawnal.",
+                    "dialog_success": "Vozilo spawnano!",
+                    "dialog_error": "Ime modela vozila '%{modelName}' ne obstaja!",
+                    "dialog_info": "Spawnanje vozila %{modelName}."
+                },
+                "fix": {
+                    "title": "Popravi",
+                    "label": "Popravi vozilo",
+                    "success": "Vozilo popravljeno!"
+                },
+                "delete": {
+                    "title": "Izbriši",
+                    "label": "Izbriše vozilo, v katerem se trenutno nahajaš",
+                    "success": "Vozilo izbrisano!"
+                }
+            },
+            "heal": {
+                "title": "Ozdravi",
+                "myself": {
+                    "title": "Sebe",
+                    "label": "Te bo ozdravilo in dodalo max hrano/pijačo",
+                    "success_0": "Ozdravljen!",
+                    "success_1": "Zdaj bi se moral počutiti dobro!",
+                    "success_2": "Izgledaš kot prerojen!",
+                    "success_3": "Zdaj si zdrav kot riba!"
+                },
+                "everyone": {
+                    "title": "Vse",
+                    "label": "Ozdravi in oživi vse igralce",
+                    "success": "Vsi igralci so bili ozdravljeni in oživljeni."
+                }
+            },
+            "announcement": {
+                "title": "Pošlji obvestilo",
+                "label": "Pošlji obvestilo vsem igralcem na strežniku.",
+                "dialog_desc": "Napiši sporočilo, za katerega želiš, da ga vidijo vsi igralci na strežniku.",
+                "dialog_placeholder": "Tvoje obvestilo...",
+                "dialog_success": "Pošiljam obvestilo."
+            },
+            "clear_area": {
+                "title": "Resetiraj območje mape",
+                "label": "Ponastavi določeno območje mape na privzeto stanje",
+                "dialog_desc": "Vnesi polmer v katerem želiš ponastaviti območje (0-300). To NE BO izbrisalo stvari spawnanih s strani strežnika.",
+                "dialog_success": "Resetirano območje v polmeru %{radius}m",
+                "dialog_error": "Neveljavni polmer. Poskusi ponovno."
+            },
+            "player_ids": {
+                "title": "Prižgi IDje igralcev",
+                "label": "Prižgani IDji igralcev (in ostale informacije) nad glavo vseh bližnjih igralcev",
+                "alert_show": "IDji bližnjih igralcev vklopljeni.",
+                "alert_hide": "IDji bližnjih igralcev izklopljeni."
+            }
+        },
+        "page_players": {
+            "misc": {
+                "online_players": "Trenutni igralci",
+                "players": "Igralci",
+                "search": "Išči",
+                "zero_players": "Najden ni bil noben igralec"
+            },
+            "sort": {
+                "label": "Razvrsti po",
+                "distance": "Dolžina",
+                "id": "ID",
+                "joined_first": "Najmanjši ID prvo",
+                "joined_last": "Največji ID prvo",
+                "closest": "Najbližji igralci",
+                "farthest": "Igralci najdlje stran"
+            },
+            "card": {
+                "health": "%{percentHealth}% zdravje"
+            }
+        },
+        "player_modal": {
+            "misc": {
+                "error": "Pri pridobivanju podatkov o tem uporabniku je prišlo do napake. Napaka je opisana spodaj:",
+                "target_not_found": "Ni bilo najdenega igralca z danim IDjem ali steam imenom: %{target}"
+            },
+            "tabs": {
+                "actions": "Dejanja",
+                "info": "Informacije",
+                "ids": "IDji",
+                "history": "Zgodovina",
+                "ban": "Ban"
+            },
+            "actions": {
+                "title": "Dejanja igralca",
+                "command_sent": "Komanda poslana!",
+                "moderation": {
+                    "title": "Moderiranje",
+                    "options": {
+                        "dm": "DM",
+                        "warn": "Opozorilo",
+                        "kick": "Kick",
+                        "set_admin": "Daj admina"
+                    },
+                    "dm_dialog": {
+                        "title": "Neposredno sporočilo",
+                        "description": "Kaj je razlog za neposredno sporočanje temu igralcu?",
+                        "placeholder": "Razlog...",
+                        "success": "Tvoj DM je bil poslan!"
+                    },
+                    "warn_dialog": {
+                        "title": "Opozorilo",
+                        "description": "Kaj je razlog za neposredno opozorilo tega igralca?",
+                        "placeholder": "Razlog...",
+                        "success": "Igralec je bil opozorjen!"
+                    },
+                    "kick_dialog": {
+                        "title": "Kick",
+                        "description": "Kaj je razlog za neposreden kick tega igralca?",
+                        "placeholder": "Razlog...",
+                        "success": "Igralec je bil Kick-an!"
+                    }
+                },
+                "interaction": {
+                    "title": "Interakcija",
+                    "options": {
+                        "heal": "Heal",
+                        "go_to": "TP nanj",
+                        "bring": "TP sem",
+                        "spectate": "Spectate",
+                        "toggle_freeze": "Zamrzni"
+                    },
+                    "notifications": {
+                        "heal_player": "Ozdravljam igralca",
+                        "tp_player": "Teleportiram do igralca",
+                        "bring_player": "TPjam igralca",
+                        "spectate_failed": "Igralca več ni bilo mogoče najti! Izstopam iz Spectate načina.",
+                        "spectate_yourself": "Ne moreš spectate-at sam sebe.",
+                        "freeze_yourself": "Sam sebe ne moreš zamrzniti."
+                    }
+                },
+                "troll": {
+                    "title": "Troll",
+                    "options": {
+                        "drunk": "Pijan",
+                        "fire": "Ogenj",
+                        "wild_attack": "Divji napad"
+                    }
+                }
+            },
+            "info": {
+                "title": "Informacije o igralcu",
+                "session_time": "Čas seje",
+                "play_time": "Čas igranja",
+                "joined": "Vstopil",
+                "notes_placeholder": "Opombe o tem igralcu"
+            },
+            "history": {
+                "title": "Povezana zgodovina",
+                "action_types": {
+                    "warn": "OPOZORJEN",
+                    "warn_revoked": "PREKLICANO opozorilo za",
+                    "ban": "BANNAN",
+                    "ban_revoked": "PREKLICAN ban za",
+                    "whitelist": "WHITELIST",
+                    "whitelist_revoked": "PREKLICAN whitelist za"
+                }
+            },
+            "ban": {
+                "title": "Odstrani igralca",
+                "reason_placeholder": "Razlog",
+                "duration_placeholder": "Čas bana",
+                "hours": "ur",
+                "days": "dni",
+                "weeks": "tednov",
+                "months": "mesecev",
+                "permanent": "Za vedno",
+                "custom": "Po meri",
+                "helper_text": "Prosim, izberite trajanje",
+                "submit": "Potrdi odstranitev"
+            }
+        }
+    }
+}

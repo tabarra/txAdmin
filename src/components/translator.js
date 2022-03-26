@@ -28,6 +28,7 @@ const languages = {
     pt: require('../../locale/pt.json'),
     ro: require('../../locale/ro.json'),
     ru: require('../../locale/ru.json'),
+    sl: require('../../locale/sl.json'),
     sv: require('../../locale/sv.json'),
     th: require('../../locale/th.json'),
     tr: require('../../locale/tr.json'),

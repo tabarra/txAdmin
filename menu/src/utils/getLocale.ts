@@ -28,6 +28,7 @@ import pl from "../../../locale/pl.json";
 import pt from "../../../locale/pt.json";
 import ro from "../../../locale/ro.json";
 import ru from "../../../locale/ru.json";
+import sl from "../../../locale/sl.json";
 import sv from "../../../locale/sv.json";
 import th from "../../../locale/th.json";
 import tr from "../../../locale/tr.json";
@@ -55,6 +56,7 @@ const localeMap = {
   pt,
   ro,
   ru,
+  sl,
   sv,
   th,
   tr,
