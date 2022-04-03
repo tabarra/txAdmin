@@ -151,6 +151,11 @@ async function handleSetVariables(ctx) {
         ? addPrincipalLines.join('\n')
         : '# Deployer Note: this admin master has no identifiers to be automatically added.\n# add_principal identifier.discord.111111111111111111 group.admin #example';
 
+    // Master Principal Identifier
+    userVars.principalMasterIdentifier = (admin.providers.length)
+        ? admin.providers[1]
+        : 'none:none';
+
     //Start deployer
     try {
         ctx.utils.logAction('Running recipe.');
