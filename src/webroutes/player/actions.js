@@ -397,6 +397,12 @@ async function handleRevokeAction(ctx, sess) {
     } catch (error) {
         return ctx.send({type: 'danger', message: `<b>Error:</b> ${error.message}`});
     }
+
+    // Dispatch `txAdmin:events:actionRevoked`
+    globals.fxRunner.sendEvent('actionRevoked', {
+        actionId: action_id,
+    });
+
     ctx.utils.logAction(`Revoked ${action_id}`);
     return ctx.send({refresh: true});
 }
