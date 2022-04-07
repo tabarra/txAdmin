@@ -4,8 +4,6 @@
 if (GetConvar('txAdmin-menuEnabled', 'false') ~= 'true') then
     return
 end
--- Last spectate location stored in a vec3
-local lastSpectateLocation
 -- Spectate mode
 local isSpectateEnabled = false
 -- Spectated ped
@@ -121,7 +119,7 @@ local function createSpectatorTeleportThread()
 
             -- Update Teleport
             local newSpectateCoords = calculateSpectatorCoords(GetEntityCoords(storedTargetPed))
-            SetEntityCoords(PlayerPedId(), newSpectateCoords.x, newSpectateCoords.y, newSpectateCoords.z, 0, 0, 0, false)
+            SetFocusPosAndVel(newSpectateCoords.x, newSpectateCoords.y, newSpectateCoords.z)
         end
     end)
 end
@@ -134,9 +132,6 @@ local function toggleSpectate(targetPed, targetPlayerId)
     if isSpectateEnabled then
         isSpectateEnabled = false
 
-        if not lastSpectateLocation then
-            error('Last location previous to spectate was not stored properly')
-        end
 
         if not storedTargetPed then
             error('Target ped was not stored to unspectate')
@@ -144,17 +139,6 @@ local function toggleSpectate(targetPed, targetPlayerId)
 
         DoScreenFadeOut(500)
         while not IsScreenFadedOut() do Wait(0) end
-
-        RequestCollisionAtCoord(lastSpectateLocation.x, lastSpectateLocation.y, lastSpectateLocation.z)
-        SetEntityCoords(playerPed, lastSpectateLocation.x, lastSpectateLocation.y, lastSpectateLocation.z)
-        -- The player is still frozen while we wait for collisions to load
-        while not HasCollisionLoadedAroundEntity(playerPed) do
-            Wait(5)
-        end
-        debugPrint('Collisions loaded around player')
-
-        preparePlayerForSpec(false)
-        debugPrint('Unfreezing current player')
 
         NetworkSetInSpectatorMode(false, storedTargetPed)
         debugPrint(('Set spectate to false for targetPed (%s)'):format(storedTargetPed))
@@ -165,15 +149,6 @@ local function toggleSpectate(targetPed, targetPlayerId)
     else
         storedTargetPed = targetPed
         storedTargetPlayerId = targetPlayerId
-        local targetCoords = GetEntityCoords(targetPed)
-        debugPrint(('Targets coords = x: %f, y: %f, z: %f'):format(targetCoords.x, targetCoords.y, targetCoords.z))
-
-        RequestCollisionAtCoord(targetCoords.x, targetCoords.y, targetCoords.z)
-        while not HasCollisionLoadedAroundEntity(targetPed) do
-            Wait(5)
-        end
-        debugPrint(('Collisions loaded around TargetPed (%s)'):format(targetPed))
-
         NetworkSetInSpectatorMode(true, targetPed)
         DoScreenFadeIn(500)
         debugPrint(('Now spectating TargetPed (%s)'):format(targetPed))
@@ -185,6 +160,7 @@ end
 
 RegisterCommand('txAdmin:menu:endSpectate', function()
     if isSpectateEnabled then
+        ClearFocus()
         toggleSpectate(storedTargetPed)
         preparePlayerForSpec(false)
         TriggerServerEvent('txAdmin:menu:endSpectate')
@@ -193,14 +169,6 @@ end)
 
 -- Run whenever we failed to resolve a target player to spectate
 local function cleanupFailedResolve()
-    local playerPed = PlayerPedId()
-
-    RequestCollisionAtCoord(lastSpectateLocation.x, lastSpectateLocation.y, lastSpectateLocation.z)
-    SetEntityCoords(playerPed, lastSpectateLocation.x, lastSpectateLocation.y, lastSpectateLocation.z)
-    -- The player is still frozen while we wait for collisions to load
-    while not HasCollisionLoadedAroundEntity(playerPed) do
-        Wait(5)
-    end
     preparePlayerForSpec(false)
 
     DoScreenFadeIn(500)
@@ -211,7 +179,6 @@ end
 -- Client-side event handler for an authorized spectate request
 RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, coords)
     local spectatorPed = PlayerPedId()
-    lastSpectateLocation = GetEntityCoords(spectatorPed)
 
     local targetPlayerId = GetPlayerFromServerId(targetServerId)
     if targetPlayerId == PlayerId() then
@@ -221,8 +188,6 @@ RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, coords)
     DoScreenFadeOut(500)
     while not IsScreenFadedOut() do Wait(0) end
 
-    local tpCoords = calculateSpectatorCoords(coords)
-    SetEntityCoords(spectatorPed, tpCoords.x, tpCoords.y, tpCoords.z, 0, 0, 0, false)
     preparePlayerForSpec(true)
 
     --- We need to wait to make sure that the player is actually available once we teleport
