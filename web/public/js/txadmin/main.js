@@ -77,8 +77,20 @@ document.getElementById('modChangePassword-save').onclick = (e) => {
             errors.push('The new password must be different than the old one.');
         }
     }
-    if (form.newPassword.length < 6 || form.newPassword.length > 24) {
-        errors.push('The new password has to be between 6 and 24 characters.');
+    if (form.newPassword.length < 8 || form.newPassword.length > 24) {
+        errors.push('The new password has to be between 8 and 24 characters.');
+    }
+    if (!form.newPassword.match(/(?=.*[a-z])/)) {
+        errors.push('The new password must contain at least one lowercase letter');
+    }
+    if (!form.newPassword.match(/(?=.*[A-Z])/)) {
+        errors.push('The new password must contain at least one uppercase letter');
+    }
+    if (!form.newPassword.match(/(?=.*\d)/)) {
+        errors.push('The new password must contain at least one number');
+    }
+    if (!form.newPassword.match(/(?=.*[#$@!%&*?])/)) {
+        errors.push('The new password must contain at least one special character');
     }
     if (errors.length) {
         return $.notify({ message: '<b>Errors:</b><br> - ' + errors.join(' <br>\n - ') }, { type: 'warning' });

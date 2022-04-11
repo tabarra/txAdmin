@@ -30,8 +30,20 @@ module.exports = async function AuthChangePassword(ctx) {
             return ctx.send({type: 'danger', message: 'Wrong current password'});
         }
     }
-    if (newPassword.length < 6 || newPassword.length > 32) {
-        return ctx.send({type: 'danger', message: 'Invalid new password'});
+    if (newPassword.length < 8 || newPassword.length > 24) {
+        return ctx.send({type: 'danger', message: 'The new password has to be between 8 and 24 characters.'});
+    }
+    if (!newPassword.match(/(?=.*[a-z])/)) {
+        return ctx.send({type: 'danger', message: 'The new password must contain at least one lowercase letter'});
+    }
+    if (!newPassword.match(/(?=.*[A-Z])/)) {
+        return ctx.send({type: 'danger', message: 'The new password must contain at least one uppercase letter'});
+    }
+    if (!newPassword.match(/(?=.*\d)/)) {
+        return ctx.send({type: 'danger', message: 'The new password must contain at least one number'});
+    }
+    if (!newPassword.match(/(?=.*[#$@!%&*?])/)) {
+        return ctx.send({type: 'danger', message: 'The new password must contain at least one special character'});
     }
 
     //Add admin and give output
