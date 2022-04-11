@@ -268,6 +268,17 @@ module.exports = async function WebCtxUtils(ctx, next) {
             globals.databus.txStatsData.pageViews[view]++;
         }
 
+        // Get config global scope, to get password settings
+        const cfg = globals.configVault.getScoped('global');
+        const password = {  
+            minLength: cfg.passwordMinLength,
+            maxLength: cfg.passwordMaxLength,
+            lowercaseLetter: cfg.passwordLowercaseLetter,
+            uppercaseLetter: cfg.passwordUppercaseLetter,
+            number: cfg.passwordNumber,
+            specialCharacter: cfg.passwordSpecialCharacter,
+        };
+
         // Setting up default render data:
         const baseViewData = {
             serverName: globals.config.serverName || globals.info.serverProfile,
@@ -278,6 +289,7 @@ module.exports = async function WebCtxUtils(ctx, next) {
             serverProfile: globals.info.serverProfile,
             txAdminVersion: GlobalData.txAdminVersion,
             uiTheme: (ctx.cookies.get('txAdmin-darkMode') === 'true' || !isWebInterface) ? THEME_DARK : '',
+            passwordRequirements: password,
             jsInjection: getJavascriptConsts({
                 isWebInterface: isWebInterface,
                 TX_BASE_PATH: (isWebInterface) ? '' : WEBPIPE_PATH,

@@ -229,7 +229,7 @@
                                         </span>
                                     </div>
                                     <input class="form-control" type="password" name="password" id="password"
-                                        placeholder="Password" autocomplete="new-password" minlength="6" maxlength="24" autofocus required>
+                                        placeholder="Password" autocomplete="new-password" minlength="<%= passwordRequirements.minLength %>" maxlength="<%= passwordRequirements.maxLength %>" oninput="onPasswordChange('password')" autofocus required>
                                 </div>
                                 <div class="input-group mx-auto" style="max-width: 280px;">
                                     <div class="input-group-prepend">
@@ -241,7 +241,22 @@
                                         placeholder="Confirm Password" autocomplete="new-password" required>
                                 </div>
                                 <span class="form-text text-muted mb-4">
-                                    The new password has to be between 8 and 24 characters. Also must contain at least: one lowercase letter, one uppercase letter, one number and one special character.
+                                    <p class="form-text text-muted text-left mt-3">Password requirements (you can change password and password requirements later):</p>
+                                    <ul class="form-text text-muted text-left">
+                                        <li id="password-length" class="text-danger">Password length between <span id="password-minLength"><%= passwordRequirements.minLength %></span> and <span id="password-maxLength"><%= passwordRequirements.maxLength %></span> characters</li>
+                                        <% if (passwordRequirements.lowercaseLetter) { %>
+                                            <li id="password-lowercaseLetter" class="text-danger">One lowercase letter</li>
+                                        <% } %>
+                                        <% if (passwordRequirements.uppercaseLetter) { %>
+                                            <li id="password-uppercaseLetter" class="text-danger">One uppercase letter</li>
+                                        <% } %>
+                                        <% if (passwordRequirements.number) { %>
+                                            <li id="password-number" class="text-danger">One number</li>
+                                        <% } %>
+                                        <% if (passwordRequirements.specialCharacter) { %>
+                                            <li id="password-specialCharacter" class="text-danger">One special charater</li>
+                                        <% } %>
+                                    </ul>
                                 </span>
 
                                 <div class="input-group mx-auto mb-2" style="max-width: 280px;">

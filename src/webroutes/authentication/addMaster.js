@@ -166,11 +166,33 @@ async function handleSave(ctx) {
     //Sanity check2: Electric Boogaloo (Validating password)
     const password = ctx.request.body.password.trim();
     const password2 = ctx.request.body.password2.trim();
-    if (password != password2 || password.length < 6 || password.length > 24) {
+    if (password != password2) {
         return returnJustMessage(
             ctx,
-            'Invalid Password.',
+            'Passwords do not match.',
         );
+    }
+
+    const cfg = globals.configVault.getScoped('global');
+
+    if (password.length < cfg.passwordMinLength || password.length > cfg.passwordMaxLength) {
+        return returnJustMessage(ctx, `The new password has to be between ${cfg.passwordMinLength} and ${cfg.passwordMaxLength} characters.`);
+    }
+
+    if (cfg.passwordLowercaseLetter && !password.match(/(?=.*[a-z])/)) {
+        return returnJustMessage(ctx, 'The new password must contain at least one lowercase letter.');
+    }
+
+    if (cfg.passwordUppercaseLetter && !password.match(/(?=.*[A-Z])/)) {
+        return returnJustMessage(ctx, 'The new password must contain at least one uppercase letter.');
+    }
+
+    if (cfg.passwordNumber && !password.match(/(?=.*\d)/)) {
+        return returnJustMessage(ctx, 'The new password must contain at least one number.');
+    }
+
+    if (cfg.passwordSpecialCharacter && !password.match(/(?=.*[#$@!%&*?])/)) {
+        return returnJustMessage(ctx, 'The new password must contain at least one special character.');
     }
 
     //Checking if ToS/License accepted

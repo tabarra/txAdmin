@@ -61,7 +61,10 @@ document.getElementById('modChangePassword-save').onclick = (e) => {
     };
 
     //Validity Checking
+    const minLength = Number($('#password-minLength').text().trim());
+    const maxLength = Number($('#password-maxLength').text().trim());
     const errors = [];
+
     if (!form.newPassword.length || !form.confirmPassword.length) {
         errors.push('The new password fields are required.');
     }
@@ -77,19 +80,19 @@ document.getElementById('modChangePassword-save').onclick = (e) => {
             errors.push('The new password must be different than the old one.');
         }
     }
-    if (form.newPassword.length < 8 || form.newPassword.length > 24) {
-        errors.push('The new password has to be between 8 and 24 characters.');
+    if (form.newPassword.length < minLength || form.newPassword.length > maxLength) {
+        errors.push(`The new password has to be between ${minLength} and ${maxLength} characters.`);
     }
-    if (!form.newPassword.match(/(?=.*[a-z])/)) {
+    if ($('#password-lowercaseLetter').length && !form.newPassword.match(/(?=.*[a-z])/)) {
         errors.push('The new password must contain at least one lowercase letter');
     }
-    if (!form.newPassword.match(/(?=.*[A-Z])/)) {
+    if ($('#password-uppercaseLetter').length && !form.newPassword.match(/(?=.*[A-Z])/)) {
         errors.push('The new password must contain at least one uppercase letter');
     }
-    if (!form.newPassword.match(/(?=.*\d)/)) {
+    if ($('#password-number').length && !form.newPassword.match(/(?=.*\d)/)) {
         errors.push('The new password must contain at least one number');
     }
-    if (!form.newPassword.match(/(?=.*[#$@!%&*?])/)) {
+    if ($('#password-specialCharacter').length && !form.newPassword.match(/(?=.*[#$@!%&*?])/)) {
         errors.push('The new password must contain at least one special character');
     }
     if (errors.length) {
@@ -127,7 +130,7 @@ document.getElementById('modChangePassword-save').onclick = (e) => {
 //================================================================
 //=================================================== On Page Load
 //================================================================
-document.addEventListener('DOMContentLoaded', function(event) {
+document.addEventListener('DOMContentLoaded', function (event) {
     //Setting up status refresh
     refreshData();
     setInterval(refreshData, STATUS_REFRESH_INTERVAL);

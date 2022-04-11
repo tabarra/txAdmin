@@ -42,6 +42,8 @@ module.exports = async function SettingsSave(ctx) {
         return handleDiscord(ctx);
     } else if (scope == 'menu') {
         return handleMenu(ctx);
+    } else if (scope == 'password') {
+        return handlePassword(ctx);
     } else {
         return ctx.send({
             type: 'danger',
@@ -397,6 +399,71 @@ function handleMenu(ctx) {
         globals.fxRunner.resetConvars();
         ctx.utils.logAction('Changing menu settings.');
         return ctx.send({type: 'success', message: '<strong>Menu configuration saved!<br>You need to restart the server for the changes to take effect.</strong>'});
+    } else {
+        logWarn(`[${ctx.session.auth.username}] Error changing menu settings.`);
+        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
+    }
+}
+
+
+//================================================================
+/**
+ * Handle Passwords settings
+ * NOTE: scoped inside global settings
+ * @param {object} ctx
+ */
+function handlePassword(ctx) {
+    //Sanity check
+    if (
+        isUndefined(ctx.request.body.minLength)
+        || isUndefined(ctx.request.body.maxLength)
+        || isUndefined(ctx.request.body.lowercaseLetter)
+        || isUndefined(ctx.request.body.uppercaseLetter)
+        || isUndefined(ctx.request.body.number)
+        || isUndefined(ctx.request.body.specialCharacter)
+    ) {
+        return ctx.utils.error(400, 'Invalid Request - missing parameters');
+    }
+
+    //Prepare body input
+    const cfg = {
+        minLength: ctx.request.body.minLength.trim(),
+        maxLength: ctx.request.body.maxLength.trim(),
+        lowercaseLetter: (ctx.request.body.lowercaseLetter === 'true'),
+        uppercaseLetter: (ctx.request.body.uppercaseLetter === 'true'),
+        number: (ctx.request.body.number === 'true'),
+        specialCharacter: (ctx.request.body.specialCharacter === 'true'),
+    };
+
+    //Parse and validate data
+    cfg.minLength = Number(cfg.minLength);
+    cfg.maxLength = Number(cfg.maxLength);
+
+    if (isNaN(cfg.minLength) || isNaN(cfg.maxLength)) {
+        return ctx.send({type: 'danger', message: `<strong>Field ${isNaN(cfg.minLength) ? 'minimal length of password' : 'maximum length of password'} must be number!</strong>`});
+    }
+    if (cfg.minLength < 1) {
+        return ctx.send({type: 'danger', message: '<strong>Minimal length of password cannot be lower than 1!</strong>'});
+    }
+    if (cfg.minLength > cfg.maxLength) {
+        return ctx.send({type: 'danger', message: '<strong>Minimal length of password cannot be higer than maximum length!</strong>'});
+    }
+
+    //Preparing & saving config
+    const newConfig = globals.configVault.getScopedStructure('global');
+    newConfig.passwordMinLength = cfg.minLength;
+    newConfig.passwordMaxLength = cfg.maxLength;
+    newConfig.passwordLowercaseLetter = cfg.lowercaseLetter;
+    newConfig.passwordUppercaseLetter = cfg.uppercaseLetter;
+    newConfig.passwordNumber = cfg.number;
+    newConfig.passwordSpecialCharacter = cfg.specialCharacter;
+    const saveStatus = globals.configVault.saveProfile('global', newConfig);
+
+    //Sending output
+    if (saveStatus) {
+        globals.config = globals.configVault.getScoped('global');
+        ctx.utils.logAction('Changing passwords settings.');
+        return ctx.send({type: 'success', message: '<strong>Password configuration saved!</strong>'});
     } else {
         logWarn(`[${ctx.session.auth.username}] Error changing menu settings.`);
         return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});

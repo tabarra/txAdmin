@@ -117,6 +117,12 @@ module.exports = class ConfigVault {
                 menuEnabled: toDefault(cfg.global.menuEnabled, true),
                 menuAlignRight: toDefault(cfg.global.menuAlignRight, false),
                 menuPageKey: toDefault(cfg.global.menuPageKey, 'Tab'),
+                passwordMinLength: toDefault(cfg.global.passwordMinLength, 8),
+                passwordMaxLength: toDefault(cfg.global.passwordMaxLength, 24),
+                passwordLowercaseLetter: toDefault(cfg.global.passwordLowercaseLetter, true),
+                passwordUppercaseLetter: toDefault(cfg.global.passwordUppercaseLetter, true),
+                passwordNumber: toDefault(cfg.global.passwordNumber, true),
+                passwordSpecialCharacter: toDefault(cfg.global.passwordSpecialCharacter, false),
             };
             out.logger = toDefault(cfg.logger, {}); //not in template
             out.monitor = {
@@ -194,7 +200,12 @@ module.exports = class ConfigVault {
             cfg.global.language = cfg.global.language || 'en'; //TODO: move to GlobalData
             cfg.global.menuEnabled = (cfg.global.menuEnabled === 'true' || cfg.global.menuEnabled === true);
             cfg.global.menuAlignRight = (cfg.global.menuAlignRight === 'true' || cfg.global.menuAlignRight === true);
-            cfg.global.menuPageKey = cfg.global.menuPageKey || 'Tab';
+            cfg.global.passwordMinLength = toDefault(cfg.global.passwordMinLength, 8);
+            cfg.global.passwordMaxLength = toDefault(cfg.global.passwordMaxLength, 24);
+            cfg.global.passwordLowercaseLetter = toDefault(cfg.global.passwordLowercaseLetter, true);
+            cfg.global.passwordUppercaseLetter = toDefault(cfg.global.passwordUppercaseLetter, true);
+            cfg.global.passwordNumber = toDefault(cfg.global.passwordNumber, true);
+            cfg.global.passwordSpecialCharacter = toDefault(cfg.global.passwordSpecialCharacter, false);
 
             //Logger - NOTE: this one default's i'm doing directly into the class
             cfg.logger.fxserver = toDefault(cfg.logger.fxserver, {});

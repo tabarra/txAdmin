@@ -221,3 +221,70 @@ const txAdminPrompt = ({
     toggle1.addEventListener('click', handlerFn);
     toggle2.addEventListener('click', handlerFn);
 })();
+
+//================================================================
+//===================================== Change Password Validation
+//================================================================
+// Btw. placed here, because while in setup only this js file is used
+function onPasswordChange(passwordElement) {
+    const password = $(`#${passwordElement}`).val().trim();
+
+    const minLength = Number($('#password-minLength').text().trim());
+    const maxLength = Number($('#password-maxLength').text().trim());
+
+    const elementLength = $('#password-length');
+    const elementLowercaseLetter = $('#password-lowercaseLetter');
+    const elementUppercaseLetter = $('#password-uppercaseLetter');
+    const elementNumber = $('#password-number');
+    const elementSpecialCharacter = $('#password-specialCharacter');
+
+    if (elementLength.length) {
+        if (password.length >= minLength && password.length <= maxLength) {
+            elementLength.addClass('text-primary');
+            elementLength.removeClass('text-danger');
+        } else {
+            elementLength.addClass('text-danger');
+            elementLength.removeClass('text-primary');
+        }
+    }
+
+    if (elementLowercaseLetter.length) {
+        if (password.match(/(?=.*[a-z])/)) {
+            elementLowercaseLetter.addClass('text-primary');
+            elementLowercaseLetter.removeClass('text-danger');
+        } else {
+            elementLowercaseLetter.addClass('text-danger');
+            elementLowercaseLetter.removeClass('text-primary');
+        }
+    }
+
+    if (elementUppercaseLetter.length) {
+        if (password.match(/(?=.*[A-Z])/)) {
+            elementUppercaseLetter.addClass('text-primary');
+            elementUppercaseLetter.removeClass('text-danger');
+        } else {
+            elementUppercaseLetter.addClass('text-danger');
+            elementUppercaseLetter.removeClass('text-primary');
+        }
+    }
+
+    if (elementNumber.length) {
+        if (password.match(/(?=.*\d)/)) {
+            elementNumber.addClass('text-primary');
+            elementNumber.removeClass('text-danger');
+        } else {
+            elementNumber.addClass('text-danger');
+            elementNumber.removeClass('text-primary');
+        }
+    }
+
+    if (elementSpecialCharacter.length) {
+        if (password.match(/(?=.*[#$@!%&*?])/)) {
+            elementSpecialCharacter.addClass('text-primary');
+            elementSpecialCharacter.removeClass('text-danger');
+        } else {
+            elementSpecialCharacter.addClass('text-danger');
+            elementSpecialCharacter.removeClass('text-primary');
+        }
+    }
+}

@@ -30,20 +30,27 @@ module.exports = async function AuthChangePassword(ctx) {
             return ctx.send({type: 'danger', message: 'Wrong current password'});
         }
     }
-    if (newPassword.length < 8 || newPassword.length > 24) {
-        return ctx.send({type: 'danger', message: 'The new password has to be between 8 and 24 characters.'});
+
+    const cfg = globals.configVault.getScoped('global');
+
+    if (newPassword.length < cfg.passwordMinLength || newPassword.length > cfg.passwordMaxLength) {
+        return ctx.send({type: 'danger', message: `The new password has to be between ${cfg.passwordMinLength} and ${cfg.passwordMaxLength} characters.`});
     }
-    if (!newPassword.match(/(?=.*[a-z])/)) {
-        return ctx.send({type: 'danger', message: 'The new password must contain at least one lowercase letter'});
+
+    if (cfg.passwordLowercaseLetter && !newPassword.match(/(?=.*[a-z])/)) {
+        return ctx.send({type: 'danger', message: 'The new password must contain at least one lowercase letter.'});
     }
-    if (!newPassword.match(/(?=.*[A-Z])/)) {
-        return ctx.send({type: 'danger', message: 'The new password must contain at least one uppercase letter'});
+
+    if (cfg.passwordUppercaseLetter && !newPassword.match(/(?=.*[A-Z])/)) {
+        return ctx.send({type: 'danger', message: 'The new password must contain at least one uppercase letter.'});
     }
-    if (!newPassword.match(/(?=.*\d)/)) {
-        return ctx.send({type: 'danger', message: 'The new password must contain at least one number'});
+
+    if (cfg.passwordNumber && !newPassword.match(/(?=.*\d)/)) {
+        return ctx.send({type: 'danger', message: 'The new password must contain at least one number.'});
     }
-    if (!newPassword.match(/(?=.*[#$@!%&*?])/)) {
-        return ctx.send({type: 'danger', message: 'The new password must contain at least one special character'});
+
+    if (cfg.passwordSpecialCharacter && !newPassword.match(/(?=.*[#$@!%&*?])/)) {
+        return ctx.send({type: 'danger', message: 'The new password must contain at least one special character.'});
     }
 
     //Add admin and give output

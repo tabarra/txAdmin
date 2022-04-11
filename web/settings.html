@@ -36,6 +36,9 @@
                     <li class="nav-item">
                         <a class="nav-item nav-link <%= activeTab === 'menu' ? 'active' : '' %>" id="nav-menu-tab" data-toggle="tab" href="#nav-menu" role="tab" aria-controls="nav-menu" aria-selected="true">Menu</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-item nav-link <%= activeTab === 'password' ? 'active' : '' %>" id="nav-password-tab" data-toggle="tab" href="#nav-password" role="tab" aria-controls="nav-password" aria-selected="true">Passwords</a>
+                    </li>
                 </ul>
             </div>
 
@@ -495,6 +498,96 @@
                     </div>
                     <!-- /Menu Tab -->
 
+                    <!-- Password Tab -->
+                    <div class="tab-pane fade <%= activeTab === 'password' ? 'active show' : '' %>" id="nav-password" role="tabpanel" aria-labelledby="nav-password-tab">
+                        <div class="form-group row">
+                            <label for="frmPassword-minLength" class="col-sm-3 col-form-label">Minimal length of password</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmPassword-minLength"
+                                    value="<%= global.passwordMinLength || '' %>"
+                                    placeholder="8" <%= readOnly ? 'disabled' : '' %>>
+                                <span class="form-text text-muted">
+                                    Whats is the minimum amount of characters in password?
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="frmPassword-maxLength" class="col-sm-3 col-form-label">Maximum length of password</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="frmPassword-maxLength"
+                                    value="<%= global.passwordMaxLength || '' %>"
+                                    placeholder="24" <%= readOnly ? 'disabled' : '' %>>
+                                <span class="form-text text-muted">
+                                    Whats is the maximum amount of characters in password?
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Lowercase letter</label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmPassword-lowercaseLetter"
+                                        <%= global.passwordLowercaseLetter || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Should password must contain at least one lowercase letter?
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Uppercase letter</label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmPassword-uppercaseLetter"
+                                        <%= global.passwordUppercaseLetter || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Should password must contain at least one UPPERCASE letter?
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Number</label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmPassword-number"
+                                        <%= global.passwordNumber || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Should password must contain at least one number?
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Special character</label>
+                            <div class="col-sm-9">
+                                <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                                    <input class="c-switch-input" type="checkbox" id="frmPassword-specialCharacter"
+                                        <%= global.passwordSpecialCharacter || '' %> <%= readOnly ? 'disabled' : '' %>>
+                                    <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
+                                </label>
+                                <span class="form-text text-muted">
+                                    Should password must contain at least one special character?
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button class="btn btn-sm btn-primary" type="submit" id="frmPassword-save" <%= readOnly ? 'disabled' : '' %>>
+                                <i class="icon-check"></i> Save Passwords Settings
+                            </button>
+                        </div>
+                    </div>
+                    <!-- /Passwords Tab -->
+
                 </div>
             </div>
 
@@ -748,4 +841,34 @@
         });
     });
 
+    //============================================== Password Settings
+
+    $('#frmPassword-save').click(function () {
+        let data = {
+            minLength: $('#frmPassword-minLength').val().trim(),
+            maxLength: $('#frmPassword-maxLength').val().trim(),
+            lowercaseLetter: ($('#frmPassword-lowercaseLetter').is(':checked') === true),
+            uppercaseLetter: ($('#frmPassword-uppercaseLetter').is(':checked') === true),
+            number: ($('#frmPassword-number').is(':checked') === true),
+            specialCharacter: ($('#frmPassword-specialCharacter').is(':checked') === true),
+        };
+        const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
+
+        txAdminAPI({
+            type: "POST",
+            url: '/settings/save/password',
+            data: data,
+            dataType: 'json',
+            success: function (data) {
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
+            },
+            error: function (xmlhttprequest, textstatus, message) {
+                notify.update('progress', 0);
+                notify.update('type', 'danger');
+                notify.update('message', message);
+            }
+        });
+    });
 </script>

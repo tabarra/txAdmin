@@ -200,7 +200,7 @@
                             </label>
                             <div class="input-group">
                                 <input type="password" autocomplete="new-password" class="form-control text-center"
-                                    id="modChangePassword-oldPassword" maxlength="64">
+                                    id="modChangePassword-oldPassword">
                             </div>
                         </div>
                         <div class="col-sm-12" style="margin-top: 1.75em;"></div>
@@ -213,7 +213,7 @@
                         </label>
                         <div class="input-group">
                             <input type="password" autocomplete="new-password" class="form-control text-center"
-                                id="modChangePassword-newPassword" maxlength="24">
+                                id="modChangePassword-newPassword" maxlength="<%= passwordRequirements.maxLength %>" oninput="onPasswordChange('modChangePassword-newPassword')">
                         </div>
                     </div>
                     <div class="col-sm-8 mx-auto">
@@ -225,10 +225,23 @@
                                 id="modChangePassword-confirmPassword">
                         </div>
                     </div>
-                    <div class="col-sm-12">
-                        <span class="form-text text-muted text-center">
-                            The new password has to be between 8 and 24 characters. Also must contain at least: one lowercase letter, one uppercase letter, one number and one special character.
-                        </span>
+                    <div class="col-sm-8 mx-auto">
+                        <p class="form-text text-muted text-left mt-3">Password requirements:</p>
+                        <ul class="form-text text-muted text-left">
+                            <li id="password-length" class="text-danger">Password length between <span id="password-minLength"><%= passwordRequirements.minLength %></span> and <span id="password-maxLength"><%= passwordRequirements.maxLength %></span> characters</li>
+                            <% if (passwordRequirements.lowercaseLetter) { %>
+                                <li id="password-lowercaseLetter" class="text-danger">One lowercase letter</li>
+                            <% } %>
+                            <% if (passwordRequirements.uppercaseLetter) { %>
+                                <li id="password-uppercaseLetter" class="text-danger">One uppercase letter</li>
+                            <% } %>
+                            <% if (passwordRequirements.number) { %>
+                                <li id="password-number" class="text-danger">One number</li>
+                            <% } %>
+                            <% if (passwordRequirements.specialCharacter) { %>
+                                <li id="password-specialCharacter" class="text-danger">One special charater</li>
+                            <% } %>
+                        </ul>
                     </div>
                 </div>
             </div>
