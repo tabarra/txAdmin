@@ -1,4 +1,3 @@
-
 //Requires
 const modulename = 'DiscordBot';
 const Discord = require('discord.js');
