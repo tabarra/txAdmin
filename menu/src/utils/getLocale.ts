@@ -15,6 +15,7 @@ import de from "../../../locale/de.json";
 import el from "../../../locale/el.json";
 import en from "../../../locale/en.json";
 import es from "../../../locale/es.json";
+import et from "../../../locale/et.json";
 import fa from "../../../locale/fa.json";
 import fi from "../../../locale/fi.json";
 import fr from "../../../locale/fr.json";
@@ -43,6 +44,7 @@ const localeMap = {
   el,
   en,
   es,
+  et,
   fa,
   fi,
   fr,
