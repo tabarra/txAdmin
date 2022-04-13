@@ -37,13 +37,16 @@ function prepareServerStatus() {
         ['IDLE', 'warning'],
         ['NEARLY', 'warning'],
         ['DISCONNECTED', 'danger'],
+        ['WAITING_FOR_GUILDS', 'warning'],
+        ['IDENTIFYING', 'warning'],
+        ['RESUMING', 'warning'],
     ];
     if (discordClient == null) {
         discordStatus = 'DISABLED';
         discordStatusClass = 'secondary';
-    } else if (discStatusCodes[discordClient.status]) {
-        discordStatus = discStatusCodes[discordClient.status][0];
-        discordStatusClass = discStatusCodes[discordClient.status][1];
+    } else if (discStatusCodes[discordClient.ws?.status]) {
+        discordStatus = discStatusCodes[discordClient.ws?.status][0];
+        discordStatusClass = discStatusCodes[discordClient.ws?.status][1];
     } else {
         discordStatus = 'UNKNOWN';
         discordStatusClass = 'danger';

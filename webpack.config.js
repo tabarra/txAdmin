@@ -38,12 +38,19 @@ module.exports = {
         __dirname: true
     },
     externals: {
-        // discord.js
-        '@discordjs/uws': 'empty',
-        '@discordjs/opus': 'empty',
-        'node-opus': 'empty',
-        'opusscript': 'empty',
-        'osx-temperature-sensor': 'empty',
+        // NOTE: adding those actually cause errors during run time
+        // 'encoding': 'this_resolved_to_nothing', //probably not an issue, will print error at runtime if it is
+        // 'erlpack': 'this_resolved_to_nothing', //not an issue, optional compression
+        // 'zlib-sync': 'this_resolved_to_nothing', //not an issue, for sharding only
+        // 'utf-8-validate': 'this_resolved_to_nothing', //optional
+        // 'cardinal': 'this_resolved_to_nothing', //optional for better printed debug code 
+        // 'osx-temperature-sensor': 'this_resolved_to_nothing', //optional, osx only
+
+        // ./node_modules/keyv/src/index.js => optional external storage conectors
+        // ./src/extras/helpers.js => dyn require.resolve in dependencyChecker() only
+    },
+    resolve: {
+        mainFields: ["main"],
     },
     stats: 'errors-warnings',
     plugins: [
