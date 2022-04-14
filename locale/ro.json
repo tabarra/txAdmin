@@ -4,7 +4,7 @@
         "humanizer_language": "ro"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
+        "start_timeout": "Nu sa reusit sa inceapa la timp",
         "crash_detected": "crash detectat",
         "hang_detected": "hang detectat",
         "partial_hang_warn": "Din cauza unei întreruperi parțiale, acest server va fi repornit în 1 minut. Vă rugăm să vă deconectați acum.",
@@ -239,7 +239,7 @@
                     "notifications": {
                         "heal_player": "Vindecă jucătorul",
                         "tp_player": "Teleportarea către jucător",
-                        "bring_player": "Invocarea jucătorului",
+                        "bring_player": "Teleportarea jucătorului",
                         "spectate_failed": "Nu a reușit comunicarea cu jucătorul! Ieșire din spectatori.",
                         "spectate_yourself": "Nu poți fi spectator tu însuți.",
                         "freeze_yourself": "Nu te poți îngheța."
@@ -249,8 +249,8 @@
                     "title": "Troll",
                     "options": {
                         "drunk": "Îmbată",
-                        "fire": "Dai foc",
-                        "wild_attack": "Atac sălbatic"
+                        "fire": "Arde",
+                        "wild_attack": "Atacu cu animale"
                     }
                 }
             },
@@ -266,7 +266,7 @@
                 "action_types": {
                     "warn": "AVERTIZAT",
                     "warn_revoked": "A REVOCAT WARN-ul pentru",
-                    "ban": "BANAT",
+                    "ban": "INTERZIS",
                     "ban_revoked": "A REVOCAT BAN-ul pentru",
                     "whitelist": "WHITELIST",
                     "whitelist_revoked": "A REVOCAT WHITELIST-ul pentru"
