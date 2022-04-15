@@ -1,7 +1,7 @@
 //Requires
 const modulename = 'DiscordBot';
-const Discord = require('discord.js');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+const Discord = require('@tabarra/discord.js');
+const { dir, log, logOk, logWarn, logError, logDebug } = require('../../extras/console')(modulename);
 
 //NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
 if (typeof URLSearchParams === 'undefined') {
@@ -101,8 +101,8 @@ module.exports = class DiscordBot {
 
         //Setup client
         this.client = new Discord.Client({
-            intents: [ Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES ],
-            autoReconnect:true,
+            intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES],
+            autoReconnect: true,
         });
 
         //Set mutex to prevent spamming /help on reconnections
@@ -111,7 +111,7 @@ module.exports = class DiscordBot {
         //Setup Ready listener
         this.client.on('ready', async () => {
             logOk(`Started and logged in as '${this.client.user.tag}'`);
-            this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
+            this.client.user.setActivity(globals.config.serverName, { type: 'WATCHING' });
             this.announceChannel = this.client.channels.cache.find((x) => x.id === this.config.announceChannel);
             if (!this.announceChannel) {
                 logError(`The announcements channel could not be found. Check the channel ID ${this.config.announceChannel}, or the bot permissions.`);
@@ -132,7 +132,7 @@ module.exports = class DiscordBot {
                     color: 0x4287F5,
                     description: descLines.join('\n'),
                 });
-                this.announceChannel.send({embeds: [msg] });
+                this.announceChannel.send({ embeds: [msg] });
                 this.latestMutex = currentMutex;
             }
         });
@@ -144,8 +144,9 @@ module.exports = class DiscordBot {
         });
         this.client.on('resume', () => {
             if (GlobalData.verbose) logOk('Connection with Discord API server resumed');
-            this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
+            this.client.user.setActivity(globals.config.serverName, { type: 'WATCHING' });
         });
+        this.client.on('debug', logDebug);
 
         //Start bot
         try {
