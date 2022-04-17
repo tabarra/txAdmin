@@ -37,12 +37,12 @@
   },
   "homepage": "https://github.com/tabarra/txAdmin#readme",
   "dependencies": {
+    "@citizenfx/discord.js": "^13.6.1",
     "@citizenfx/http-wrapper": "^0.2.2",
     "@koa/router": "^10.1.1",
     "@mui/icons-material": "^5.6.1",
     "@mui/material": "^5.6.1",
     "@mui/styles": "^5.6.1",
-    "@tabarra/discord.js": "^13.6.0",
     "axios": "^0.26.1",
     "boxen": "^5.1.2",
     "bytes": "^3.1.2",

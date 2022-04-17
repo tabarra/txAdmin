@@ -1,7 +1,7 @@
 //Requires
 const modulename = 'DiscordBot:cmd:status';
 const humanizeDuration = require('humanize-duration');
-const { MessageEmbed } = require('@tabarra/discord.js');
+const { MessageEmbed } = require('@citizenfx/discord.js');
 const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
 
 module.exports = {

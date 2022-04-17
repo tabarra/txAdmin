@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'DiscordBot';
-const Discord = require('@tabarra/discord.js');
+const Discord = require('@citizenfx/discord.js');
 const { dir, log, logOk, logWarn, logError, logDebug } = require('../../extras/console')(modulename);
 
 //NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
