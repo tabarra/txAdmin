@@ -8,48 +8,45 @@
 </div>
 
 ## Main Features
-- Recipe-based Server Deployer: create a server in under 60 seconds! ([more info](docs/recipe.md))
-- Start/Stop/Restart your server instance or resources
-- Server Performance Chart (all 3 threads) ([example](https://i.imgur.com/VG8hpzr.gif))
-- Access control:
-	- Login via Password or CitizenFX
-	- Admin permission system ([more info](docs/permissions.md))
-	- Action logging
-	- Brute-force protection
+- Recipe-based server deployer: create a live server in under 60 seconds [[learn more](docs/recipe.md)].
+- Scheduled restarts with warning announcements and custom events [[learn more](docs/events.md)].
+- Start, stop and restart your server instance or resources.
+- FXServer performance chart for all 3 threads [[example](https://i.imgur.com/VG8hpzr.gif)].
+- Multi language translation support [[learn more](docs/translation.md)].
+- Responsive dark and light mode web interface.
+- FXServer CFG editor.
 - Discord Integration:
-	- Server status command (`/status`)
-	- Add to Whitelist command  (`/addwl`)
-	- Command spam prevention
+	- Add to Whitelist command (`/addwl`);
+	- Server status command (`/status`);
+	- Command spam prevention.
+- Access Control:
+	- Admin permission system [[more info](docs/permissions.md)];
+	- Login via password or CitizenFX;
+	- Brute-force protection;
+	- Action logging.
 - Monitoring:
-	- Auto Restart FXServer on crash
-	- Server’s CPU/RAM consumption
-	- Live Console (with log file and command history)
-	- Online players chart
-	- Server Activity Log (connections/disconnections, kills, chat, explosions and [custom commands](docs/custom_serverlog.md))
+	- Advanced server activity log for connections, disconnections, kills, chat, explosions and [custom commands](docs/custom_serverlog.md);
+	- Live console with a backend log file and command history;
+	- Auto FXServer restart on crash detected;
+	- Server’s CPU/RAM consumption;
+	- Online players chart.
 - Player Manager:
-	- [Warning system](https://www.youtube.com/watch?v=DeE0-5vtZ4E)
-	- Ban (temporary or permanently) system
-	- Whitelist system
-	- Take notes about players
-	- Keep track of player's play and session time
-	- Import bans from EasyAdmin, BanSQL, vMenu, vRP, el_bwh
-	- Self-contained player database with backup tool (no MySQL required!)
-	- Clean/Optimize the database by removing old players, or bans/warns/whitelists
-- Real-time playerlist
-- Scheduled restarts with warning announcements and custom events ([more info](docs/events.md))
-- Translation Support ([more info](docs/translation.md))
-- FiveM's Server CFG editor
-- Responsive web interface with Dark Mode 😎
+	- Clean and optimize your database by removing old players, or bans/warns/whitelists;
+	- Self-contained player database with backup tool that doesn't require MySQL;
+	- Ban imports from EasyAdmin, BanSQL, vMenu, vRP, el_bwh;
+	- Player session time management & notes system;
+	- Temporary or permanent banning system;
+	- Whitelist & [warning system](https://www.youtube.com/watch?v=DeE0-5vtZ4E).
 
 Also, check our [Feature Graveyard](docs/feature_graveyard.md) for the features that are no longer among us (RIP).
 
-## Running (Windows/Linux)
+## Running [Windows & Linux]
 Currently **txAdmin is included in all FXServer builds** above 2524, so to run it for the first time simply do the following:
-- Update FXServer to the latest artifact/build (2524 or superior)
-- If Windows, run FXServer.exe | If Linux, run `screen ./run.sh`
-- Open one of the URLs shown and configure txAdmin
+- Update FXServer to the latest artifact/build (2524 or superior);
+- Windows: run FXServer.exe / Linux:, run `screen ./run.sh`;
+- Open one of the URLs shown and configure txAdmin.
 
-After that you could also run the `start_<build>_<profile>.bat` file created, or call it via cmd/bash if you want to edit the ConVars (ex http port).  
+After that you could also run the `start_<build>_<profile>.bat` file created, or call it via cmd/bash if you want to edit the ConVars (ex HTTP port).  
   
 txAdmin requires to be launched from *inside* FXServer in monitor mode, to do that, just execute the `run.sh` or `FXServer.exe` without **any** `+exec` arguments.  
   
@@ -69,7 +66,7 @@ ConVar usage **example** for different port and profile:
 ./run.sh +set serverProfile dev_server +set txAdminPort 40121
 ```
 
-### Installing & Building it (NOT RECOMMENDED)
+### Installing & Building (NOT RECOMMENDED)
 If you want to run it from source, or build it yourself, please do read [this](docs/building.md).
 
 
