@@ -1,25 +1,11 @@
-<p align="center">
-	<h1 align="center">
-		txAdmin for FiveM
-	</h1>
-	<p align="center">
-		<img width="420" height="237" src="docs/banner.png">
-	</p>
-	<h4 align="center">
-		Join our Discord Server: &nbsp; <a href="https://discord.gg/AFAAXzq"><img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
-	</h4>
-	<p align="center">
-		<b>txAdmin</b> is a <b>full featured</b> web panel to Manage & Monitor your FiveM/RedM Server remotely, in use by over <strong>10000</strong> servers worldwide at any given time.
-	</p>
-	<p align="center">
-		<a href="https://zap-hosting.com/txadmin4" target="_blank" rel="noopener">
-			<img src="docs/zaphosting.png" alt="zap-hosting"></img>
-		</a>
-	</p>
-</p>
-
-<br/>
-
+<div align="center">
+	<img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img></a>
+	<h1>txAdmin for FiveM</h1>
+	<img align="center" width="420" height="237" src="docs/banner.png">
+	<br><a href="https://zap-hosting.com/txadmin4" target="_blank" rel="noopener">
+	<br><img src="docs/zaphosting.png" alt="zap-hosting"></img></a>
+	<br><br>txAdmin is a <b>completely free to use</b>, full-featured <b>web panel</b> to Manage & Monitor your FiveM Server remotely, in use by over <b>TEN thousand servers</b> worldwide at any given time.
+</div>
 
 ## Main Features
 - Recipe-based Server Deployer: create a server in under 60 seconds! ([more info](docs/recipe.md))
