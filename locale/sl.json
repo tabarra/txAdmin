@@ -9,7 +9,7 @@
         "hang_detected": "zaznan crash strežnika",
         "partial_hang_warn": "Zaradi delnega crasha strežnika, se bo avtomatsko ponovno zagnal čez 1 minuto. Prosimo, zapustite strežnik.",
         "partial_hang_warn_discord": "Zaradi delnega crasha strežnika, se bo **%{servername}** ponovno zagnal čez 1 minuto.",
-        "schedule_reason": "načrtovan restart čez %{time}",
+        "schedule_reason": "načrtovan restart ob %{time}",
         "schedule_warn": "Ta strežnik se bo ponovno zagnal čez %{smart_count} minuto. Prosimo, zapustite strežnik. |||| Ta strežnik se bo ponovno zagnal čez %{smart_count} minut/i/e.",
         "schedule_warn_discord": "**%{servername}** se bo ponovno zagnal čez %{smart_count} minuto. |||| **%{servername}** se bo ponovno zagnal čez %{smart_count} minut/i/e."
     },
