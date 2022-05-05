@@ -61,7 +61,7 @@ module.exports = class WebServer {
 
         // Some people might want to enable it, but we are not guaranteeing XFF security
         // due to the many possible ways you can connect to koa.
-        // this.app.proxy = true;
+        this.app.proxy = GlobalData.isProxy;
 
         //Session
         this.koaSessionMemoryStore = new KoaSessionMemoryStoreClass();

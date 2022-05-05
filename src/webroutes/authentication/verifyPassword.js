@@ -17,7 +17,6 @@ module.exports = async function AuthVerify(ctx) {
         template: 'normal',
         message: null,
         citizenfxDisabled: !globals.adminVault.providers.citizenfx.ready,
-        discordDisabled: true,
     };
 
     try {

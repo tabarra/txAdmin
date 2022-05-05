@@ -28,6 +28,10 @@ const useStyles = makeStyles((theme: Theme) => ({
   paper: {
     padding: 20,
     borderRadius: 10,
+    cursor: "pointer",
+    '&:hover': {
+      backgroundColor: "#35393C",
+   },
   },
   barBackground: {
     background: theme.palette.primary.dark,
@@ -102,82 +106,81 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
     playerData.vType.charAt(0).toUpperCase() + playerData.vType.slice(1);
 
   return (
-    <Box p={2}>
-      <Paper className={classes.paper}>
-        <Box display="flex" alignItems="center" pb="5px">
-          <Box flexGrow={1} display="flex" overflow="hidden">
-            <Tooltip
-              title={upperCaseStatus}
-              placement="top"
-              arrow
-              classes={{
-                tooltip: classes.tooltipOverride,
-              }}
-            >
-              <span className={classes.icon}>
-                {statusIcon[playerData.vType]}
-              </span>
-            </Tooltip>
-            <Typography
-              style={{ marginRight: 5 }}
-              variant="subtitle1"
-              color="textSecondary"
-            >
-              {playerData.id}
-            </Typography>
-            <Typography variant="subtitle1" color="textSecondary">
-              |
-            </Typography>
-            <Tooltip
-              title={playerData.name}
-              placement="top"
-              arrow
-              classes={{
-                tooltip: classes.tooltipOverride,
-              }}
-            >
+    <Box p={1}>
+      <div onClick={handlePlayerClick}>
+        <Paper className={classes.paper} >
+          <Box display="flex" alignItems="center" pb="5px">
+            <Box flexGrow={1} display="flex" overflow="hidden">
+              <Tooltip
+                title={upperCaseStatus}
+                placement="top"
+                arrow
+                classes={{
+                  tooltip: classes.tooltipOverride,
+                }}
+              >
+                <span className={classes.icon}>
+                  {statusIcon[playerData.vType]}
+                </span>
+              </Tooltip>
               <Typography
-                style={{ marginLeft: 5 }}
+                style={{ marginRight: 5 }}
+                variant="subtitle1"
+                color="textSecondary"
+              >
+                {playerData.id}
+              </Typography>
+              <Typography variant="subtitle1" color="textSecondary">
+                |
+              </Typography>
+              <Tooltip
+                title={playerData.name}
+                placement="top"
+                arrow
+                classes={{
+                  tooltip: classes.tooltipOverride,
+                }}
+              >
+                <Typography
+                  style={{ marginLeft: 5 }}
+                  noWrap
+                  variant="subtitle1"
+                  color="textPrimary"
+                >
+                  {playerData.admin && '🛡️'} {playerData.name}
+                </Typography>
+              </Tooltip>
+              <Typography
+                style={{ marginLeft: 7, minWidth: "fit-content" }}
                 noWrap
                 variant="subtitle1"
-                color="textPrimary"
+                color="textSecondary"
               >
-                {playerData.admin && '🛡️'} {playerData.name}
+                {playerData.dist < 0 ? `?? m` : formatDistance(playerData.dist)}
               </Typography>
-            </Tooltip>
-            <Typography
-              style={{ marginLeft: 7, minWidth: "fit-content" }}
-              noWrap
-              variant="subtitle1"
-              color="textSecondary"
-            >
-              {playerData.dist < 0 ? `?? m` : formatDistance(playerData.dist)}
-            </Typography>
+            </Box>
           </Box>
-          <IconButton onClick={handlePlayerClick} size="large">
-            {<MoreVert />}
-          </IconButton>
-        </Box>
-        <div>
-          <Tooltip
-            title={t("nui_menu.page_players.card.health", {
-              percentHealth: playerData.health,
-            })}
-            placement="bottom"
-            arrow
-            classes={{
-              tooltip: classes.tooltipOverride,
-            }}
-          >
-            <HealthBarBackground healthVal={playerData.health}>
-              <HealthBar
-                width={`${playerData.health}%`}
-                healthVal={playerData.health}
-              />
-            </HealthBarBackground>
-          </Tooltip>
-        </div>
-      </Paper>
+          <div>
+            <Tooltip
+              title={t("nui_menu.page_players.card.health", {
+                percentHealth: playerData.health,
+              })}
+              placement="bottom"
+              arrow
+              classes={{
+                tooltip: classes.tooltipOverride,
+              }}
+            >
+              <HealthBarBackground healthVal={playerData.health}>
+                <HealthBar
+                  width={`${playerData.health}%`}
+                  healthVal={playerData.health}
+                />
+              </HealthBarBackground>
+            </Tooltip>
+          </div>
+        </Paper>
+      </div>
     </Box>
   );
 };

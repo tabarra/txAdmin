@@ -1,14 +1,14 @@
 //Requires
 const modulename = 'DiscordBot:cmd:status';
 const humanizeDuration = require('humanize-duration');
-const { RichEmbed } = require('@tabarra/discord');
+const { MessageEmbed } = require('@citizenfx/discord.js');
 const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
 
 module.exports = {
     description: 'Prints the server status',
     cooldown: 60,
     async execute(message, args) {
-        //Prepare message's RichEmbed + template variables
+        //Prepare message's MessageEmbed + template variables
         let replaces = {};
         let cardColor, cardTitle;
         if (globals.monitor.currentStatus == 'ONLINE' || globals.monitor.currentStatus == 'PARTIAL') {
@@ -37,12 +37,12 @@ module.exports = {
         });
 
         //Prepare object
-        const outMsg = new RichEmbed({
+        const outMsg = new MessageEmbed({
             color: cardColor,
             title: cardTitle,
             description: desc,
             footer: `Powered by txAdmin v${GlobalData.txAdminVersion}.`,
         });
-        return await message.channel.send(outMsg);
+        return await message.reply({embeds: [outMsg]});
     },
 };
