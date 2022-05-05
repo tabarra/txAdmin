@@ -30,7 +30,7 @@ const langs = langFiles.map((fName) => {
  */
 const rebaseCommand = () => {
     console.log('Rebasing language files on \'en.json\' for missing keys');
-    langs.forEach(({name, path, data}) => {
+    langs.forEach(({ name, path, data }) => {
         const synced = defaultsDeep(data, defaultLang);
         // synced.nui_menu = undefined;
         // synced.nui_menu = defaultLang.nui_menu;
@@ -78,7 +78,7 @@ const diffCommand = () => {
     const defaultLangParsed = parseLocale(defaultLang);
 
     let errors = 0;
-    langs.forEach(({name, data}) => {
+    langs.forEach(({ name, data }) => {
         const parsed = parseLocale(data);
 
         //Testing keys
@@ -106,6 +106,35 @@ const diffCommand = () => {
     }
 };
 
+const processStuff = () => {
+    console.log(defaultLang.nui_menu.page_main.announcement.dialog_desc);
+    langs.forEach(({ name, path, data }) => {
+        // nui_menu.misc.general_no_perms, nui_menu.misc.action_unauthorized
+        // console.log(data.nui_menu.misc.general_no_perms);
+        // console.log(data.nui_menu.misc.action_unauthorized);
+
+        //nui_menu.common.error, nui_menu.misc.unknown_error
+        // console.log(data.nui_menu.common.error);
+        // console.log(data.nui_menu.misc.unknown_error);
+
+        // if (data.nui_menu.page_main.announcement.dialog_desc !== 'Send an announcement to all online players.') {
+        //     console.log(chalk.yellow(`>> ${name}`));
+        //     console.log(data.nui_menu.page_main.announcement.dialog_desc);
+        // }
+        // data.nui_menu.page_main.player_ids = {
+        //     title: data.nui_menu.page_main.player_ids.title,
+        //     label: defaultLang.nui_menu.page_main.player_ids.label,
+        //     alert_show: data.nui_menu.page_main.player_ids.alert_show,
+        //     alert_hide: data.nui_menu.page_main.player_ids.alert_hide,
+        // };
+        // data.nui_menu.player_modal.ban.submit = 'Apply ban';
+
+        // const out = JSON.stringify(data, null, 4) + '\n';
+        // fs.writeFileSync(path, out);
+        // console.log(`Edited file: ${name}`);
+    });
+};
+
 
 /**
  *
@@ -115,6 +144,8 @@ if (command === 'rebase') {
     rebaseCommand();
 } else if (command === 'diff') {
     diffCommand();
+} else if (command === 'processStuff') {
+    processStuff();
 } else {
     console.log('Usage: \'node locale/_utils.json <rebase|diff>\'');
 }

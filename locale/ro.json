@@ -4,27 +4,27 @@
         "humanizer_language": "ro"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
+        "start_timeout": "Nu sa reusit sa inceapa la timp",
         "crash_detected": "crash detectat",
-        "hang_detected": "hang detected",
-        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
-        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
+        "hang_detected": "hang detectat",
+        "partial_hang_warn": "Din cauza unei întreruperi parțiale, acest server va fi repornit în 1 minut. Vă rugăm să vă deconectați acum.",
+        "partial_hang_warn_discord": "Din cauza unei întreruperi parțiale, **%{servername}** se va restarta într-un minut.",
         "schedule_reason": "restartare programata la %{time}",
         "schedule_warn": "Acest server este programat sa se restarteze in %{smart_count} minut. Va rugam sa va deconctati. |||| Acest server este programat sa se restarteze in %{smart_count} minute.",
         "schedule_warn_discord": "**%{servername}** este programat sa se restarteze in %{smart_count} minut. |||| **%{servername}** este programat sa se restarteze in %{smart_count} minute."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) Ai fost interzis de pe acest server pentru \"%{reason}\". Interzicerea ta va expira în: %{expiration}.",
+        "kick_permanent": "(%{author}) Ai fost banat permanent de pe acest server pentru \"%{reason}\".",
+        "reject_temporary": "Accesul tău este interzis.\nInterzicerea expiră în: %{expiration}.\nBan ID: %{id}.\nMotiv: %{reason}.\nBanat de: %{author}.",
+        "reject_permanent": "Accesul tău pe server este interzis permanent.\nBan ID: %{id}.\nMotiv: %{reason}.\nBanat de: %{author}."
     },
     "server_actions": {
         "restarting": "Serverul se restarteaza: (%{reason}).",
         "restarting_discord": "**%{servername}** se restarteaza (%{reason}).",
         "stopping": "Serverul a fost oprit: (%{reason}).",
         "stopping_discord": "**%{servername}** a fost oprit: (%{reason}).",
-        "spawning_discord": "**%{servername}** a fost portnit."
+        "spawning_discord": "**%{servername}** a fost pornit."
     },
     "discord": {
         "status_online": "**%{servername}** este momentan **Pornit**!",
@@ -37,250 +37,253 @@
     },
     "nui_menu": {
         "misc": {
-            "help_message": "txAdmin Menu enabled, type /tx to open it.\nYou can also configure a keybind at [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
-            "action_unauthorized": "You do not have this permission.",
-            "unknown_error": "An unknown error occurred.",
-            "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
-            "announcement_title": "Server Announcement by %{author}:",
-            "general_no_perms": "You do not have permissions for this!",
-            "dialog_empty_input": "You cannot have an empty input."
+            "help_message": "Meniul txAdmin este activat, Scrie /tx pentru a îl deschide.\nPoți reconfigura keybind-ul utilizând [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
+            "menu_not_allowed": "Identificatorii dvs. nu se potrivesc cu niciun administrator înregistrat pe txAdmin.\nDacă sunteți înregistrat pe txAdmin, accesați Admin Manager și asigurați-vă că identificatorii dvs. bine configurați.",
+            "no_perms": "Nu ai această permisie.",
+            "unknown_error": "A apărut o eroare necunoscută.",
+            "not_enabled": "Meniul txAdmin nu este activat! Puteți să o activați din pagina de setări txAdmin.",
+            "announcement_title": "Anunț de la %{author}:",
+            "dialog_empty_input": "Nu poți avea un input gol."
         },
         "frozen": {
-            "froze_player": "You have frozen the player!",
-            "unfroze_player": "You have unfrozen the player!",
-            "was_frozen": "You have been frozen by a server admin!"
+            "froze_player": "Ai înghețat jucătorul!",
+            "unfroze_player": "Ai dezghețat jucătorul!",
+            "was_frozen": "Ai fost înghețat de un administrator!"
         },
         "common": {
-            "cancel": "Cancel",
-            "submit": "Submit",
-            "error": "An error occurred",
-            "copied": "Copied to clipboard."
+            "cancel": "Anulează",
+            "submit": "Trimite",
+            "error": "S-a produs o eroare",
+            "copied": "Copiat în clipboard."
         },
         "page_main": {
             "tooltips": {
-                "tooltip_1": "Use %{key} to switch pages & the arrow keys to navigate menu items",
-                "tooltip_2": "Certain menu items have sub options which can be selected using the left & right arrow keys"
+                "tooltip_1": "Folosește %{key} pentru a comuta paginile și săgețile pentru a naviga prin itemele meniului",
+                "tooltip_2": "Anumite elemente de meniu au subopțiuni care pot fi selectate cu ajutorul tastelor săgeată stânga și dreapta"
             },
             "player_mode": {
-                "title": "Player Mode",
+                "title": "Mod Jucător",
                 "noclip": {
                     "title": "NoClip",
-                    "label": "Fly around",
-                    "success": "NoClip enabled"
+                    "label": "Zboară",
+                    "success": "NoClip activat"
                 },
                 "godmode": {
                     "title": "God",
-                    "label": "Invincible",
-                    "success": "God Mode enabled"
+                    "label": "Invincibilitate",
+                    "success": "God Mode activat"
                 },
                 "normal": {
                     "title": "Normal",
-                    "label": "Default mode",
-                    "success": "Returned to default player mode."
+                    "label": "Mod Normal",
+                    "success": "Ai revenit la modul de jucător."
                 }
             },
             "teleport": {
                 "title": "Teleport",
-                "generic_success": "Sent you into the wormhole!",
+                "generic_success": "Te-ai teleportat cu succes!",
                 "waypoint": {
                     "title": "Waypoint",
-                    "label": "Go to waypoint set",
-                    "error": "You have no waypoint set."
+                    "label": "Mergi la waypoint-ul setat",
+                    "error": "Nu ai setat un waypoint."
                 },
                 "coords": {
-                    "title": "Coords",
-                    "label": "Go to specified coords",
+                    "title": "Coordonate",
+                    "label": "Mergi la coordonatele specifice",
                     "dialog_title": "Teleport",
-                    "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole.",
-                    "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33"
+                    "dialog_desc": "Introdu coordonatele în formatul x, y, z pentru a te teleporta.",
+                    "dialog_error": "Coordonate invalide. Trebuie să fie în formatul: 111, 222, 333"
                 },
                 "back": {
-                    "title": "Back",
-                    "label": "Go back to last location",
-                    "error": "You don't have a last location to go back to!"
+                    "title": "Înapoi",
+                    "label": "Mergi înapoi la ultima ta locație",
+                    "error": "Nu ai o ultimă locație la care să te teleportezi!"
                 },
                 "copy": {
-                    "title": "Copy Coords",
-                    "label": "Copy coords to clipboard."
+                    "title": "Copiază coordonatele",
+                    "label": "Copiază coordonatele în clipboard."
                 }
             },
             "vehicle": {
-                "title": "Vehicle",
-                "onesync_error": "This option requires that OneSync be on for server entity handling",
-                "not_in_veh_error": "You are not currently in a vehicle!",
+                "title": "Vehicul",
+                "onesync_error": "Această opțiune necesită ca OneSync să fie activat pentru gestionarea entităților serverului",
+                "not_in_veh_error": "Nu te aflii într-un vehicul!",
                 "spawn": {
                     "title": "Spawn",
-                    "label": "Spawn vehicle by model name",
-                    "dialog_title": "Spawn vehicle",
-                    "dialog_desc": "Enter in the model name of the vehicle you want to spawn.",
-                    "dialog_success": "Vehicle spawned!",
-                    "dialog_error": "The vehicle model name '%{modelName}' does not exist!",
-                    "dialog_info": "Trying to spawn %{modelName}."
+                    "label": "Spawnează un vehicul după numele modelului",
+                    "dialog_title": "Spawnează vehiculul",
+                    "dialog_desc": "Introduceți numele modelului de vehicul pe care doriți să îl spawnați.",
+                    "dialog_success": "Vehicul spawnat!",
+                    "dialog_error": "Vehiculul cu modelul '%{modelName} nu există!",
+                    "dialog_info": "Încercarea de a spawna %{modelName}."
                 },
                 "fix": {
-                    "title": "Fix",
-                    "label": "Fix the current vehicle",
-                    "success": "Vehicle fixed!"
+                    "title": "Repară",
+                    "label": "Repară vehicul curent",
+                    "success": "Vehiculul a fost reparat!"
                 },
                 "delete": {
-                    "title": "Delete",
-                    "label": "Delete the current vehicle",
-                    "success": "Vehicle deleted!"
+                    "title": "Șterge",
+                    "label": "Șterge vehiculul curent",
+                    "success": "Vechiulul a fost șters!"
                 }
             },
             "heal": {
                 "title": "Heal",
                 "myself": {
-                    "title": "Myself",
-                    "label": "Restores your health",
-                    "success_0": "All healed up!",
-                    "success_1": "You should be feeling good now!",
-                    "success_2": "Restored to full!",
-                    "success_3": "Ouchies fixed!"
+                    "title": "Ție însuti",
+                    "label": "Îți restabilește viața",
+                    "success_0": "Totul s-a vindecat!",
+                    "success_1": "Ar trebui să te simți bine acum!",
+                    "success_2": "Restabilit în totalitate!",
+                    "success_3": "Loviturile au fost vindecate!"
                 },
                 "everyone": {
-                    "title": "Everyone",
-                    "label": "Will heal & revive all players",
-                    "success": "Healed and revived all players."
+                    "title": "Toată Lumea",
+                    "label": "Va vindeca și da revive la toți jucătorii",
+                    "success": "Ai vindecat și dat revive la toți jucătorii."
                 }
             },
             "announcement": {
-                "title": "Send Announcement",
-                "dialog_desc": "Send an announcement to all online players.",
-                "dialog_placeholder": "Your announcement...",
-                "dialog_success": "Sending the announcement."
+                "title": "Trimite un anunț",
+                "label": "Trimiteți un anunț tuturor jucătorilor online.",
+                "dialog_desc": "Trimiteți un anunț tuturor jucătorilor online.",
+                "dialog_placeholder": "Anunțul dumneavoastră...",
+                "dialog_success": "Transmite anunțul."
             },
             "clear_area": {
-                "title": "Reset World Area",
-                "dialog_description": "Please enter the radius where you wish to reset entities in (0-300). This will not clear entities spawned server side",
-                "dialog_success": "Clearing area with radius of %{radius}m",
-                "dialog_error": "Invalid radius input. Try again."
+                "title": "Resetarea zonei",
+                "label": "Resetarea unei zone specifice",
+                "dialog_desc": "Vă rugăm să introduceți raza în care doriți să resetați entitățile (0-300). Acest lucru nu va șterge entitățile generate de server-side.",
+                "dialog_success": "Se curăță zona în raza de %{radius}m",
+                "dialog_error": "Raza nu este validă. Încercați din nou."
             },
             "player_ids": {
-                "title": "Toggle Player IDs",
-                "alert_show": "Showing nearby player NetIDs.",
-                "alert_hide": "Hiding nearby player NetIDs."
+                "title": "Comută ID-urile jucătorilor",
+                "label": "Comutarea afișării ID-urilor jucătorilor deasupra capului tuturor jucătorilor din apropiere",
+                "alert_show": "Afișarea NetID-urilor jucătorilor din apropiere.",
+                "alert_hide": "Ascunderea NetID-urilor jucătorilor din apropiere."
             }
         },
         "page_players": {
             "misc": {
-                "online_players": "Online Players",
-                "players": "Players",
-                "search": "Search",
-                "zero_players": "No players found"
+                "online_players": "Jucători online",
+                "players": "Jucători",
+                "search": "Caută",
+                "zero_players": "Nu ai fost jucători găsiți"
             },
             "sort": {
-                "label": "Sort by",
-                "distance": "Distance",
+                "label": "Sortează",
+                "distance": "Distantă",
                 "id": "ID",
-                "joined_first": "Joined First",
-                "joined_last": "Joined Last",
-                "closest": "Closest",
-                "farthest": "Farthest"
+                "joined_first": "De la intrare",
+                "joined_last": "De la ieșire",
+                "closest": "Apropiere",
+                "farthest": "Depărtare"
             },
             "card": {
-                "health": "%{percentHealth}% health"
+                "health": "%{percentHealth}% viață"
             }
         },
         "player_modal": {
             "misc": {
-                "error": "An error occurred fetching this users details. The error is shown below:",
-                "target_not_found": "Was unable to find an online player with ID or an username of %{target}"
+                "error": "S-a produs o eroare la preluarea detaliilor acestui utilizator. Eroarea este afișată mai jos:",
+                "target_not_found": "Nu am reușit să găsesc un jucător online cu ID-ul sau un nume de utilizator de %{target}"
             },
             "tabs": {
-                "actions": "Actions",
-                "info": "Info",
-                "ids": "IDs",
-                "history": "History",
+                "actions": "Acțiuni",
+                "info": "Informații",
+                "ids": "ID-uri",
+                "history": "Istoric",
                 "ban": "Ban"
             },
             "actions": {
-                "title": "Player Actions",
-                "command_sent": "Command sent!",
+                "title": "Acțiuni jucător",
+                "command_sent": "Comandă trimisă!",
                 "moderation": {
-                    "title": "Moderation",
+                    "title": "Moderare",
                     "options": {
-                        "dm": "DM",
-                        "warn": "Warn",
+                        "dm": "Mesaj Privat",
+                        "warn": "Avertizează",
                         "kick": "Kick",
-                        "set_admin": "Give Admin"
+                        "set_admin": "Oferă Admin"
                     },
                     "dm_dialog": {
-                        "title": "Direct Message",
-                        "description": "What is the reason for direct messaging this player?",
-                        "placeholder": "Reason...",
-                        "success": "Your DM has been sent!"
+                        "title": "Mesaj Privat",
+                        "description": "Care este motivul pentru a trimite mesaje directe acestui jucător?",
+                        "placeholder": "Motiv...",
+                        "success": "Mesajul tău privat a fost trimis!"
                     },
                     "warn_dialog": {
-                        "title": "Warn",
-                        "description": "What is the reason for direct warning this player?",
-                        "placeholder": "Reason...",
-                        "success": "The player was warned!"
+                        "title": "Avertizează",
+                        "description": "Care este motivul pentru care vrei să avertizezi jucătorul?",
+                        "placeholder": "Motiv...",
+                        "success": "Jucătorul a fost avertizat!"
                     },
                     "kick_dialog": {
                         "title": "Kick",
-                        "description": "What is the reason for kicking this player?",
-                        "placeholder": "Reason...",
-                        "success": "The player was kicked!"
+                        "description": "Care este motivul pentru care îi dai kick acestui jucător?",
+                        "placeholder": "Motiv...",
+                        "success": "Jucătorul a fost dat afară!"
                     }
                 },
                 "interaction": {
-                    "title": "Interaction",
+                    "title": "Interacțiuni",
                     "options": {
-                        "heal": "Heal",
-                        "go_to": "Go to",
-                        "bring": "Bring",
+                        "heal": "Oferă viață",
+                        "go_to": "Mergi la",
+                        "bring": "Adu la",
                         "spectate": "Spectate",
-                        "toggle_freeze": "Toggle Freeze"
+                        "toggle_freeze": "Îngheață jucătorul"
                     },
                     "notifications": {
-                        "heal_player": "Healing player",
-                        "tp_player": "Teleporting to player",
-                        "bring_player": "Summoning player",
-                        "spectate_failed": "Failed to resolve the target! Exiting spectate.",
-                        "spectate_yourself": "You cannot spectate yourself.",
-                        "freeze_yourself": "You cannot freeze yourself."
+                        "heal_player": "Vindecă jucătorul",
+                        "tp_player": "Teleportarea către jucător",
+                        "bring_player": "Teleportarea jucătorului",
+                        "spectate_failed": "Nu a reușit comunicarea cu jucătorul! Ieșire din spectatori.",
+                        "spectate_yourself": "Nu poți fi spectator tu însuți.",
+                        "freeze_yourself": "Nu te poți îngheța."
                     }
                 },
                 "troll": {
                     "title": "Troll",
                     "options": {
-                        "drunk": "Make Drunk",
-                        "fire": "Set Fire",
-                        "wild_attack": "Wild attack"
+                        "drunk": "Îmbată",
+                        "fire": "Arde",
+                        "wild_attack": "Atacu cu animale"
                     }
                 }
             },
             "info": {
-                "title": "Player info",
-                "session_time": "Session Time",
-                "play_time": "Play time",
-                "joined": "Joined",
-                "notes_placeholder": "Notes about this player"
+                "title": "Informații jucător",
+                "session_time": "Timp sesiune",
+                "play_time": "Timp jucat",
+                "joined": "Alăturat",
+                "notes_placeholder": "Notițe despre acest jucător"
             },
             "history": {
-                "title": "Related history",
+                "title": "Istoric",
                 "action_types": {
-                    "warn": "WARNED",
-                    "warn_revoked": "REVOKED the WARN for",
-                    "ban": "BANNED",
-                    "ban_revoked": "REVOKED the BAN for",
+                    "warn": "AVERTIZAT",
+                    "warn_revoked": "A REVOCAT WARN-ul pentru",
+                    "ban": "INTERZIS",
+                    "ban_revoked": "A REVOCAT BAN-ul pentru",
                     "whitelist": "WHITELIST",
-                    "whitelist_revoked": "REVOKED the WHITELIST for"
+                    "whitelist_revoked": "A REVOCAT WHITELIST-ul pentru"
                 }
             },
             "ban": {
-                "title": "Ban player",
-                "reason_placeholder": "Reason",
-                "duration_placeholder": "Duration",
-                "hours": "hours",
-                "days": "days",
-                "weeks": "weeks",
-                "months": "months",
+                "title": "Banează jucător",
+                "reason_placeholder": "Motiv",
+                "duration_placeholder": "Durată",
+                "hours": "ore",
+                "days": "zile",
+                "weeks": "săptămâni",
+                "months": "luni",
                 "permanent": "Permanent",
-                "custom": "Custom",
-                "helper_text": "Please select a duration"
+                "custom": "Personalizat",
+                "helper_text": "Vă rugăm să selectați o durată",
+                "submit": "Aplică ban-ul"
             }
         }
     }

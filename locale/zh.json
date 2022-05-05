@@ -4,20 +4,20 @@
         "humanizer_language": "zh_CN"
     },
     "restarter": {
-        "start_timeout": "failed to start in time",
-        "crash_detected": "服务器被检测到已瘫痪",
-        "hang_detected": "hang detected",
-        "partial_hang_warn": "Due to a partial hang, this server will restart in 1 minute. Please disconnect now.",
-        "partial_hang_warn_discord": "Due to a partial hang, **%{servername}** will restart in 1 minute.",
+        "start_timeout": "未能及时启动",
+        "crash_detected": "检测到服务器已奔溃",
+        "hang_detected": "检测到服务器挂起",
+        "partial_hang_warn": "由于部分挂起，此服务器将在 1 分钟后重新启动。请立即断开连接。",
+        "partial_hang_warn_discord": "由于部分挂起, **%{servername}** 将在1分钟后重启",
         "schedule_reason": "预计 %{time}重启",
-        "schedule_warn": "此服务器计划 %{smart_count} 分钟后重新启动， 请立即断开连接。 |||| 此服务器计划 %{smart_count} 分钟后重新启动。",
+        "schedule_warn": "此服务器计划 %{smart_count} 分钟后重新启动， 请立即断开连接。 |||| 服务器计划 %{smart_count} 分钟后重新启动。",
         "schedule_warn_discord": "**%{servername}** 预计 %{smart_count} 分钟后重新启动。 |||| **%{servername}** 预计 %{smart_count} 分钟后重新启动。"
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) You have been banned from this server for \"%{reason}\". Your ban will expire in: %{expiration}.",
-        "kick_permanent": "(%{author}) You have been permanently banned from this server for \"%{reason}\".",
-        "reject_temporary": "You have been banned from this server.\nYour ban will expire in: %{expiration}.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}.",
-        "reject_permanent": "You have been permanently banned from this server.\nBan ID: %{id}.\nBan Reason: %{reason}.\nBanned by: %{author}."
+        "kick_temporary": "(%{author}) 你已被服务器禁止访问，理由： \"%{reason}\". 您的禁令将于: %{expiration} 过期.",
+        "kick_permanent": "(%{author})您已被永久禁止访问此服务器，理由： \"%{reason}\".",
+        "reject_temporary": "你已被服务器禁止访问.\n您的禁令将于: %{expiration}过期.\n禁令ID： %{id}.\n禁止理由: %{reason}.\n操作人: %{author}.",
+        "reject_permanent": "您已被永久禁止访问此服务器.\n禁令ID: %{id}.\n禁止理由: %{reason}.\n操作人: %{author}."
     },
     "server_actions": {
         "restarting": "服务器正在重启 (%{reason})。",
@@ -27,23 +27,22 @@
         "spawning_discord": "**%{servername}** 正在重启。"
     },
     "discord": {
-        "status_online": "**%{servername}** 目前 **在線**!",
-        "status_offline": "**%{servername}** 目前 **離線**!"
+        "status_online": "**%{servername}** 服务器目前 **在线**!",
+        "status_offline": "**%{servername}** 服务器目前 **离线**!"
     },
     "nui_warning": {
         "title": "警告",
         "warned_by": "警告者:",
-        "instruction": "按住 [SPACE] 10秒来关闭这个讯息."
+        "instruction": "按住 [空格] 10秒来关闭这个讯息."
     },
     "nui_menu": {
         "misc": {
-            "help_message": "txAdmin Menu enabled, type /tx to open it.\nYou can also configure a keybind at [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
-            "action_unauthorized": "You do not have this permission.",
+            "help_message": "txAdmin 菜单已启用，键入 /tx 以打开它。\n您也可以在 [游戏设置 > 按键绑定 > FiveM > 菜单：打开主页] 配置按键绑定。",
+            "menu_not_allowed": "您的标识符与在 txAdmin 上注册的任何管理员都不匹配。\n如果您在 txAdmin 上注册，请转到管理员管理器并确保您的标识符已保存",
+            "no_perms": "你没有权限",
             "unknown_error": "An unknown error occurred.",
             "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
             "announcement_title": "Server Announcement by %{author}:",
-            "general_no_perms": "You do not have permissions for this!",
             "dialog_empty_input": "You cannot have an empty input."
         },
         "frozen": {
@@ -147,18 +146,21 @@
             },
             "announcement": {
                 "title": "Send Announcement",
+                "label": "Send an announcement to all online players.",
                 "dialog_desc": "Send an announcement to all online players.",
                 "dialog_placeholder": "Your announcement...",
                 "dialog_success": "Sending the announcement."
             },
             "clear_area": {
                 "title": "Reset World Area",
-                "dialog_description": "Please enter the radius where you wish to reset entities in (0-300). This will not clear entities spawned server side",
+                "label": "Reset a specified world area to its default state",
+                "dialog_desc": "Please enter the radius where you wish to reset entities in (0-300). This will not clear entities spawned server side.",
                 "dialog_success": "Clearing area with radius of %{radius}m",
                 "dialog_error": "Invalid radius input. Try again."
             },
             "player_ids": {
                 "title": "Toggle Player IDs",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
                 "alert_show": "Showing nearby player NetIDs.",
                 "alert_hide": "Hiding nearby player NetIDs."
             }
@@ -280,7 +282,8 @@
                 "months": "months",
                 "permanent": "Permanent",
                 "custom": "Custom",
-                "helper_text": "Please select a duration"
+                "helper_text": "Please select a duration",
+                "submit": "Apply ban"
             }
         }
     }

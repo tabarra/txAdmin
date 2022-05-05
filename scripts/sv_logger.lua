@@ -77,8 +77,8 @@ AddEventHandler('playerJoining', function()
     logger(source, 'playerJoining', outData)
 end)
 
-AddEventHandler('playerDropped', function()
-    logger(source, 'playerDropped')
+AddEventHandler('playerDropped', function(reason)
+    logger(source, 'playerDropped', {reason = reason})
 end)
 
 

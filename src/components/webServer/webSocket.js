@@ -1,8 +1,8 @@
 //Requires
 const modulename = 'WebSocket';
-const xss = require('../../extras/xss')({mark:['class']});
+const xss = require('../../extras/xss')({ mark: ['class'] });
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const {authLogic} = require('./requestAuthenticator');
+const { authLogic } = require('./requestAuthenticator');
 
 //Helpers
 const getIP = (socket) => {
@@ -18,7 +18,7 @@ const terminateSession = (socket) => {
     try {
         socket.emit('goDashboard');
         socket.disconnect(0);
-    } catch (error) {}
+    } catch (error) { }
 };
 
 
@@ -73,7 +73,7 @@ module.exports = class WebSocket {
             const logPrefix = `SocketIO:${roomName}`;
 
             //Checking Auth/Perms
-            const {isValidAuth, isValidPerm} = authLogic(socket.session, room.permission, logPrefix);
+            const { isValidAuth, isValidPerm } = authLogic(socket.session, room.permission, logPrefix);
             if (!isValidAuth || !isValidPerm) {
                 if (GlobalData.verbose) log('dropping new connection without auth or perm', logPrefix);
                 //${getIP(socket)} ???
@@ -83,7 +83,7 @@ module.exports = class WebSocket {
             //Setting up event handlers
             Object.keys(room.commands).forEach((commandName) => {
                 socket.on(commandName, (...cmdArgs) => {
-                    const {isValidAuth, isValidPerm} = authLogic(socket.session, room.commands[commandName].permission, logPrefix);
+                    const { isValidAuth, isValidPerm } = authLogic(socket.session, room.commands[commandName].permission, logPrefix);
 
                     if (!isValidAuth || !isValidPerm) {
                         if (GlobalData.verbose) log('dropping existing connection due to missing auth/permissionnew', logPrefix);
@@ -107,7 +107,7 @@ module.exports = class WebSocket {
                 if (GlobalData.verbose) log(`Socket error with message: ${error.message}`, 'SocketIO');
             });
 
-            log(`Connected: ${socket.session.auth.username} from ${getIP(socket)}`, 'SocketIO');
+            if (GlobalData.verbose) log(`Connected: ${socket.session.auth.username} from ${getIP(socket)}`, 'SocketIO');
         } catch (error) {
             log(`Error handling new connection: ${error.message}`, 'SocketIO');
             socket.disconnect();

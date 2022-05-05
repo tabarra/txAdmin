@@ -16,8 +16,8 @@ module.exports = async function LiveConsole(ctx) {
     const renderData = {
         headerTitle: 'Console',
         disableCommand: (ctx.utils.checkPermission('console.write', modulename, false)) ? 'autofocus' : 'disabled',
+        disableAnnouncement: (ctx.utils.checkPermission('players.message', modulename, false)) ? '' : 'disabled',
         disableRestart: (ctx.utils.checkPermission('control.server', modulename, false)) ? '' : 'disabled',
-        restartBtnClass: (ctx.utils.checkPermission('control.server', modulename, false)) ? 'danger' : 'secondary',
     };
 
     return ctx.utils.render('console', renderData);

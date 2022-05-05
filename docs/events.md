@@ -29,7 +29,7 @@ end)
 
 
 ## txAdmin:events:playerKicked (v3.7)
-Called when a player is kicked using txAdmin.
+Called when a player is kicked using txAdmin.  
 Event Data:
 - `target`: The id of the player that was kicked.
 - `author`: The name of the admin.
@@ -37,7 +37,7 @@ Event Data:
 
 
 ## txAdmin:events:playerWarned (v3.7)
-Called when a player is warned using txAdmin.
+Called when a player is warned using txAdmin.  
 Event Data:
 - `target`: The id of the player that was warned.
 - `author`: The name of the admin.
@@ -46,7 +46,7 @@ Event Data:
 
 
 ## txAdmin:events:playerBanned (v3.7)
-Called when a player is banned using txAdmin.
+Called when a player is banned using txAdmin.  
 Event Data:
 - `target`: The id of the player that was banned.
 - `author`: The name of the admin.
@@ -56,20 +56,20 @@ Event Data:
 
 
 ## txAdmin:events:playerWhitelisted (v3.7)
-Called when a player is whitelisted using txAdmin.
+Called when a player is whitelisted using txAdmin.  
 Event Data:
 - `author`: The name of the admin.
 - `actionId`: The ID of this action.
 - `target`: The reference of this whitelist. Can be "license:" prefixed license or a whitelist request ID.
 
 ## txAdmin:event:configChanged (v4.0)
-Called when the txAdmin settings change in a way that could be relevant for the server.  
+Called when the txAdmin settings change in a way that could be relevant for the server.   
 Event Data: this event has no data.  
 At the moment, this is only used to signal the txAdmin in-game Menu if the configured language has changed, and can be used to easily test custom language files without requiring a server restart. 
 
 ## txAdmin:events:healedPlayer (v4.8)
 Called when a heal event is triggered for a player/whole server.  
-This is most useful for servers running "ambulance job" or other resources that keep a player unconscious even after the health being restored to 100%;
+This is most useful for servers running "ambulance job" or other resources that keep a player unconscious even after the health being restored to 100%;  
 Event Data:
 - `id`: The ID of the healed player, or `-1` if the entire server was healed.
 

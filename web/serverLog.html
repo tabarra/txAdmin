@@ -1,4 +1,4 @@
-{{@include("header", it)/}}
+<%- await include('basic/header.html', locals) %>
 
 
 <style>
@@ -195,7 +195,7 @@
     <div class="col-xl-9 col-lg-12 card-containers override-bootstrap">
         <div class="card border-primary">
             <div class="card-body p-3" style="position: relative">
-                <pre id="logContainer" class="thin-scroll pre-log-content {{[(it.isWebInterface), '', 'nui-height']|ternary}}"></pre>
+                <pre id="logContainer" class="thin-scroll pre-log-content <%= isWebInterface ? '' : 'nui-height' %>"></pre>
                 <div id="autoScrollDiv">
                     <a id="autoScrollBtn" class="d-none" href="#"><span></span><span></span><span></span></a>
                 </div>
@@ -205,7 +205,7 @@
 </div>
 
 
-{{@include("footer", it)/}}
+<%- await include('basic/footer.html', locals) %>
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.min.js"></script>

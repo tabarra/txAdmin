@@ -230,7 +230,7 @@ class Deployer {
         if (this.step !== 'input') throw new Error('expected input step');
         Object.assign(this.recipe.variables, userInputs);
         this.logLines = [];
-        this.log(`Starting deployment of ${this.recipe.name} to ${this.deployPath}`);
+        this.log(`Starting deployment of ${this.recipe.name}.`);
         this.deployFailed = false;
         this.progress = 0;
         this.step = 'run';
@@ -267,16 +267,32 @@ class Deployer {
             const task = this.recipe.tasks[index];
             const taskID = `[task${index + 1}:${task.action}]`;
             this.log(`Running ${taskID}...`);
+            const taskTimeoutSeconds = task.timeoutSeconds ?? recipeEngine[task.action].timeoutSeconds;
 
             try {
-                await recipeEngine[task.action].run(task, this.deployPath, contextVariables);
+                await Promise.race([
+                    recipeEngine[task.action].run(task, this.deployPath, contextVariables),
+                    new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            reject(new Error(`timed out after ${taskTimeoutSeconds}s.`));
+                        }, taskTimeoutSeconds * 1000);
+                    }),
+                ]);
                 this.logLines[this.logLines.length - 1] += ' ✔️';
             } catch (error) {
                 this.logLines[this.logLines.length - 1] += ' ❌';
-                const msg = `${taskID} failed!\n`
-                        + `Message: ${error.message}\n`
+                let msg = `Task Failed: ${error.message}\n`
                         + 'Options: \n'
                         + JSON.stringify(task, null, 2);
+                if(contextVariables.$step){
+                    msg += '\nDebug/Status: '
+                        + JSON.stringify([
+                            GlobalData.txAdminVersion,
+                            GlobalData.osType,
+                            GlobalData.osDistro,
+                            contextVariables.$step
+                        ]);
+                }
                 this.logError(msg);
                 return await this.markFailedDeploy();
             }

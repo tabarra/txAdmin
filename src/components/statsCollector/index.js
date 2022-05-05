@@ -60,7 +60,7 @@ module.exports = class StatsCollector {
                 await fs.writeFile(this.hardConfigs.heatmapDataFile, '[]');
                 this.perfSeries = [];
             } catch (error) {
-                logError(`Unnable to create stats_heatmapData_v1 with error: ${error.message}`);
+                logError(`Unable to create stats_heatmapData_v1 with error: ${error.message}`);
                 process.exit();
             }
         };

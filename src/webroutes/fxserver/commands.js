@@ -67,12 +67,22 @@ module.exports = async function FXServerCommands(ctx) {
     //==============================================
     } else if (action == 'admin_broadcast') {
         if (!ensurePermission(ctx, 'players.message')) return false;
+        const message = (parameter ?? '').trim();
+
         // Dispatch `txAdmin:events:announcement`
         const cmdOk = globals.fxRunner.sendEvent('announcement', {
+            message,
             author: ctx.session.auth.username,
-            message: (parameter ?? '').trim(),
         });
         ctx.utils.logAction(`Sending announcement: ${parameter}`);
+
+        // Sending discord announcement
+        const discMessage = message.replace(/\`/g, '\\`').replace(/\n/g, '\n> ');
+        const discMsgTitle = globals.translator.t(
+            'nui_menu.misc.announcement_title',
+            {author: ctx.session.auth.username}
+        );
+        await globals.discordBot.sendAnnouncement(`${discMsgTitle}\n> ${discMessage}`);
 
         return ctx.send({
             type: cmdOk ? 'success' : 'danger',

@@ -1,4 +1,4 @@
-{{@include("header", it)/}}
+<%- await include('basic/header.html', locals) %>
 
 <!-- Page CSS -->
 <!-- <link rel="stylesheet" href="css/codemirror.css"> -->
@@ -16,9 +16,9 @@
 </style>
 
 <!-- Hacky hack but ok, no time to do it better: -->
-{{@if(!it.isWebInterface)}}
+<% if (!isWebInterface) { %>
     <style>.CodeMirror{height: calc(100vh - 150px);}</style>
-{{/if}}
+<% } %>
 
 <!-- Title -->
 <div class="text-center mb-4">
@@ -29,7 +29,7 @@
 <div class="row justify-content-md-center">
     <div class="col-lg-12 col-xl-11 mw-col8">
         <textarea id="codeMirrorTarget" style="height: calc(100vh - 250px); width: 100%;"
-            class="cms-s-lucario" name="code">{{it.rawFile}}</textarea>
+            class="cms-s-lucario" name="code"><%= rawFile %></textarea>
     </div>
 </div>
 <div class="row justify-content-md-center" style="margin-top: 1em;">
@@ -39,7 +39,7 @@
 </div>
 
 
-{{@include("footer", it)/}}
+<%- await include('basic/footer.html', locals) %>
 
 
 <!-- <script src="js/codeEditor/codemirror.js"></script> -->

@@ -1,7 +1,7 @@
 //Requires
 const modulename = 'DiscordBot';
-const Discord = require('@tabarra/discord');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+const Discord = require('@citizenfx/discord.js');
+const { dir, log, logOk, logWarn, logError, logDebug } = require('../../extras/console')(modulename);
 
 //NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
 if (typeof URLSearchParams === 'undefined') {
@@ -81,7 +81,7 @@ module.exports = class DiscordBot {
         }
 
         try {
-            this.announceChannel.send(message);
+            await this.announceChannel.send(message);
         } catch (error) {
             logError(`Error sending Discord announcement: ${error.message}`);
         }
@@ -101,10 +101,8 @@ module.exports = class DiscordBot {
 
         //Setup client
         this.client = new Discord.Client({
-            autoReconnect:true,
-            http: {
-                host: 'https://discord.com',
-            },
+            intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES],
+            autoReconnect: true,
         });
 
         //Set mutex to prevent spamming /help on reconnections
@@ -113,8 +111,8 @@ module.exports = class DiscordBot {
         //Setup Ready listener
         this.client.on('ready', async () => {
             logOk(`Started and logged in as '${this.client.user.tag}'`);
-            this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
-            this.announceChannel = this.client.channels.find((x) => x.id === this.config.announceChannel);
+            this.client.user.setActivity(globals.config.serverName, { type: 'WATCHING' });
+            this.announceChannel = this.client.channels.cache.find((x) => x.id === this.config.announceChannel);
             if (!this.announceChannel) {
                 logError(`The announcements channel could not be found. Check the channel ID ${this.config.announceChannel}, or the bot permissions.`);
             } else if (currentMutex !== this.latestMutex) {
@@ -130,24 +128,25 @@ module.exports = class DiscordBot {
                     '...more commands to come soon 😮',
                     '```',
                 ];
-                const msg = new Discord.RichEmbed({
+                const msg = new Discord.MessageEmbed({
                     color: 0x4287F5,
                     description: descLines.join('\n'),
                 });
-                this.announceChannel.send(msg);
+                this.announceChannel.send({ embeds: [msg] });
                 this.latestMutex = currentMutex;
             }
         });
 
         //Setup remaining event listeners
-        this.client.on('message', this.handleMessage.bind(this));
+        this.client.on('messageCreate', this.handleMessage.bind(this));
         this.client.on('error', (error) => {
             logError(`Error from Discord.js client: ${error.message}`);
         });
         this.client.on('resume', () => {
             if (GlobalData.verbose) logOk('Connection with Discord API server resumed');
-            this.client.user.setActivity(globals.config.serverName, {type: 'WATCHING'});
+            this.client.user.setActivity(globals.config.serverName, { type: 'WATCHING' });
         });
+        this.client.on('debug', logDebug);
 
         //Start bot
         try {
@@ -162,7 +161,6 @@ module.exports = class DiscordBot {
     async handleMessage(message) {
         //Ignoring bots and DMs
         if (message.author.bot) return;
-        if (message.channel.type !== 'text') return;
         if (!message.content.startsWith(this.config.prefix)) return;
 
         //Parse message

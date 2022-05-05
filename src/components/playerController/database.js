@@ -4,6 +4,7 @@ const fs = require('fs').promises;
 const low = require('lowdb');
 const FileAsync = require('lowdb/adapters/FileAsync');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+const idGen = require('./idGenerator.js');
 
 
 //Consts
@@ -12,7 +13,7 @@ const SAVE_STANDBY = 0;
 const SAVE_PRIORITY_LOW = 1;
 const SAVE_PRIORITY_MEDIUM = 2;
 const SAVE_PRIORITY_HIGH = 3;
-const DATABASE_VERSION = 1;
+const DATABASE_VERSION = 2;
 const SAVE_TIMES = [300e3, 58e3, 28e3, 13e3];
 // considering a 2 sec skew for the setInterval
 // saving every 5 minutes even if nothing changed
@@ -119,22 +120,60 @@ class Database {
      * @param {string} oldVersion
      * @returns {object} lodash database
      */
-    async migrateDB(dbo, oldVersion) {
-        if (typeof oldVersion !== 'number') {
+    async migrateDB(dbo, currVersion) {
+        if (currVersion === DATABASE_VERSION) {
+            return dbo;
+        }
+        if (typeof currVersion !== 'number') {
             logError('Your players database version is not a number!');
             process.exit();
         }
-        if (oldVersion < 1) {
-            logWarn(`Migrating your players database from v${oldVersion} to v1. Wiping all the data.`);
-            await dbo.set('version', DATABASE_VERSION)
+        if (currVersion > DATABASE_VERSION) {
+            logError(`Your players database is on v${currVersion}, and this txAdmin supports up to v${DATABASE_VERSION}.`);
+            logError('This means you likely downgraded your txAdmin version. Please update txAdmin.');
+            process.exit(1);
+        }
+
+        //Migrate database
+        if (currVersion < 1) {
+            logWarn(`Migrating your players database from v${currVersion} to v1. Wiping all the data.`);
+            await dbo.set('version', 1)
                 .set('players', [])
                 .set('actions', [])
                 .set('pendingWL', [])
                 .write();
-        } else {
-            logError(`Your players database is on v${oldVersion}, which is different from this version of txAdmin.`);
+            currVersion = 1;
+        }
+
+        if (currVersion == 1) {
+            logWarn('Migrating your players database from v1 to v2.');
+            logWarn('This process will change any duplicated action ID and wipe pending whitelist.');
+            const actionIDStore = new Set();
+            const actionsToFix = [];
+            await dbo.get('actions').forEach((a) => {
+                if (!actionIDStore.has(a.id)) {
+                    actionIDStore.add(a.id);
+                } else {
+                    actionsToFix.push(a);
+                }
+            }).value();
+            logWarn(`Actions to fix: ${actionsToFix.length}`);
+            for (let i = 0; i < actionsToFix.length; i++) {
+                const action = actionsToFix[i];
+                action.id = await idGen.genActionID(actionIDStore, action.type);
+                actionIDStore.add(action.id);
+            }
+            await dbo.set('version', 2)
+                .set('pendingWL', [])
+                .write();
+            currVersion = 2;
+        }
+
+        if (currVersion !== DATABASE_VERSION) {
+            logError(`Your players database is on v${currVersion}, which is different from this version of txAdmin (v${DATABASE_VERSION}).`);
             logError('Since there is currently no migration method ready for the migration, txAdmin will attempt to use it anyways.');
             logError('Please make sure your txAdmin is on the most updated version!');
+            process.exit(1);
         }
         return dbo;
     }

@@ -14,6 +14,7 @@ import {
 import { usePlayerModalContext } from "../provider/PlayerModalProvider";
 import { useSetAssociatedPlayer } from "../state/playerDetails.state";
 import { txAdminMenuPage, useSetPage } from "../state/page.state";
+import { useAnnounceNotiPosValue } from "../state/server.state";
 
 type SnackbarAlertSeverities = "success" | "error" | "warning" | "info";
 
@@ -32,11 +33,16 @@ interface AnnounceMessageProps {
   message: string;
 }
 
+export interface AddAnnounceData {
+  message: string;
+  author: string;
+}
+
 const AnnounceMessage: React.FC<AnnounceMessageProps> = ({
   title,
   message,
 }) => (
-  <Box maxWidth={400} style={{fontSize: "large"}}>
+  <Box maxWidth={400} style={{ fontSize: "large" }}>
     <Typography style={{ fontWeight: "bold" }}>{title}</Typography>
     {message}
   </Box>
@@ -63,6 +69,7 @@ export const useHudListenersService = () => {
   const setPlayerFilter = useSetPlayerFilter();
   const setPlayersFilterIsTemp = useSetPlayersFilterIsTemp();
   const setPage = useSetPage();
+  const notiPos = useAnnounceNotiPosValue();
 
   const snackFormat = (m) => (
     <span style={{ whiteSpace: "pre-wrap" }}>{m}</span>
@@ -154,7 +161,7 @@ export const useHudListenersService = () => {
     setModalOpen(true);
   });
 
-  useNuiEvent("addAnnounceMessage", ({ message, author }: { message: string, author: string }) => {
+  useNuiEvent<AddAnnounceData>("addAnnounceMessage", ({ message, author }) => {
     enqueueSnackbar(
       <AnnounceMessage
         message={message}
@@ -164,8 +171,8 @@ export const useHudListenersService = () => {
         variant: "warning",
         autoHideDuration: getNotiDuration(message) * 1000,
         anchorOrigin: {
-          horizontal: "center",
-          vertical: "top",
+          horizontal: notiPos.horizontal,
+          vertical: notiPos.vertical,
         },
       }
     );

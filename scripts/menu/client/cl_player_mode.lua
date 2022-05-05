@@ -22,7 +22,7 @@ local function toggleFreecam(enabled)
     noClipEnabled = enabled
     local ped = PlayerPedId()
     SetEntityVisible(ped, not enabled)
-    SetPlayerInvincible(ped, enabled)
+    SetEntityInvincible(ped, enabled)
     FreezeEntityPosition(ped, enabled)
 
     if enabled then
@@ -91,8 +91,8 @@ local PTFX_DURATION = 1000
 -- Applies the particle effect to a ped
 local function createPlayerModePtfxLoop(tgtPedId)
     CreateThread(function()
+        if tgtPedId <= 0 or tgtPedId == nil then return end
         RequestNamedPtfxAsset(PTFX_DICT)
-        local playerPed = tgtPedId or PlayerPedId()
 
         -- Wait until it's done loading.
         while not HasNamedPtfxAssetLoaded(PTFX_DICT) do
@@ -103,7 +103,7 @@ local function createPlayerModePtfxLoop(tgtPedId)
 
         for i=0, LOOP_AMOUNT do
             UseParticleFxAssetNextCall(PTFX_DICT)
-            local partiResult = StartParticleFxLoopedOnEntity(PTFX_ASSET, playerPed, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, false, false, false)
+            local partiResult = StartParticleFxLoopedOnEntity(PTFX_ASSET, tgtPedId, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, false, false, false)
             particleTbl[#particleTbl + 1] = partiResult
             Wait(0)
         end
@@ -118,9 +118,8 @@ end
 RegisterNetEvent('txcl:syncPtfxEffect', function(tgtSrc)
     debugPrint('Syncing particle effect for target netId')
     local tgtPlayer = GetPlayerFromServerId(tgtSrc)
-    local tgtPlayerPed = GetPlayerPed(tgtPlayer)
-    if tgtSrc == 0 then return end
-    createPlayerModePtfxLoop(tgtPlayerPed)
+    if tgtPlayer == -1 then return end
+    createPlayerModePtfxLoop(GetPlayerPed(tgtPlayer))
 end)
 
 -- Ask server for playermode change and sends nearby playerlist
@@ -141,7 +140,7 @@ end
 RegisterCommand('txAdmin:menu:noClipToggle', function()
     if not menuIsAccessible then return end
     if not DoesPlayerHavePerm(menuPermissions, 'players.playermode') then
-        return sendSnackbarMessage('error', 'nui_menu.misc.general_no_perms', true)
+        return sendSnackbarMessage('error', 'nui_menu.misc.no_perms', true)
     end
     askChangePlayerMode(noClipEnabled and 'none' or 'noclip')
 end)
@@ -155,7 +154,7 @@ end)
 -- [[ Player mode changed cb event ]]
 RegisterNetEvent('txAdmin:menu:playerModeChanged', function(mode, ptfx)
     if ptfx then 
-        createPlayerModePtfxLoop()
+        createPlayerModePtfxLoop(PlayerPedId())
     end
 
     if mode == 'godmode' then

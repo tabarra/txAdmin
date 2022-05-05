@@ -1,4 +1,4 @@
-{{@include("header", it)/}}
+<%- await include('basic/header.html', locals) %>
 
 
 <div class="text-center mb-4">
@@ -6,16 +6,16 @@
 </div>
 <div class="row justify-content-md-center">
     <div class="col-lg-6 col-md-8 col-sm-12">
-        {{@if(!it.adminIsMaster)}}
+        <% if (!adminIsMaster) { %>
             <div class="alert alert-warning text-center" role="alert">
                 <strong>Warning:</strong> You MUST be the Master Admin to be able to use the options below.
             </div>
-        {{/if}}
-        {{@if(!it.isWebInterface)}}
+        <% } %>
+        <% if (!isWebInterface) { %>
             <div class="alert alert-warning text-center" role="alert">
                 <strong>Warning:</strong> These functions are disabled for the in-game menu, please use the Web version.
             </div>
-        {{/if}}
+        <% } %>
     </div>
 </div>
 
@@ -63,7 +63,7 @@
                             </div>
                             <div class="col-lg-3 text-lg-right">
                                 <button class="btn btn-sm btn-outline-danger" type="button" 
-                                id="general-btnResetFXServer" {{(!it.isWebInterface || !it.adminIsMaster)|isDisabled}}>
+                                id="general-btnResetFXServer" <%= disableActions %>>
                                     Reset FXServer
                                 </button>
                             </div>
@@ -79,7 +79,7 @@
                             </div>
                             <div class="col-lg-3 text-lg-right">
                                 <button class="btn btn-sm btn-outline-danger" type="button" 
-                                id="general-btnBackupDatabase" {{(!it.isWebInterface || !it.adminIsMaster)|isDisabled}}>
+                                id="general-btnBackupDatabase" <%= disableActions %>>
                                     Backup Database
                                 </button>
                             </div>
@@ -122,7 +122,7 @@
                                     </label>
                                     <div class="col-sm-9">
                                         <input type="text" class="form-control" id="importbans-banFile" name="banFile"
-                                            placeholder="{{it.dbFilePathSuggestion}}" value="{{it.dbFilePathSuggestion}}" required>
+                                            placeholder="<%= dbFilePathSuggestion %>" value="<%= dbFilePathSuggestion %>" required>
                                         <span class="form-text text-muted">
                                             The path to the bans file you want to import. <br>
                                             <strong>EasyAdmin:</strong> The <code>banlist.json</code> file inside the EasyAdmin resource folder. <br>
@@ -190,8 +190,7 @@
                             
         
                             <div class="text-center mt-4">
-                                <button class="btn btn-sm btn-outline-danger" type="submit" id="importbans-submitButton"
-                                {{(!it.isWebInterface || !it.adminIsMaster)|isDisabled}}>
+                                <button class="btn btn-sm btn-outline-danger" type="submit" id="importbans-submitButton" <%= disableActions %>>
                                     <i class="icon-check"></i> Import Bans
                                 </button>
                             </div>
@@ -278,8 +277,7 @@
         
                             
                             <div class="text-center mt-4">
-                                <button class="btn btn-sm btn-outline-danger" type="submit" id="cleandb-submitButton"
-                                    {{(!it.isWebInterface || !it.adminIsMaster)|isDisabled}}>
+                                <button class="btn btn-sm btn-outline-danger" type="submit" id="cleandb-submitButton" <%= disableActions %>>
                                     <i class="icon-check"></i> Clean Database
                                 </button>
                             </div>
@@ -297,7 +295,7 @@
 </div>
 
 
-{{@include("footer", it)/}}
+<%- await include('basic/footer.html', locals) %>
 
 
 <script>

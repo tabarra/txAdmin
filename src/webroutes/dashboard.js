@@ -24,7 +24,18 @@ module.exports = async function Dashboard(ctx) {
     //Preparing render data
     const renderData = {
         versionData: getVersionData(),
-        perms:{
+        discordEvent: false,
+        // discordEvent: {
+        //     timestamp: 1645512230000,
+        //     time: '45 minutes',
+        //     isLive: false,
+        //     time: '15 minutes ago',
+        //     isLive: true,
+        //     description: 'Release of txAdmin v4.14.0 - What\'s New - How to Update - Feature Voting - Giveaway',
+        //     joinLink: 'https://discord.gg/2KpVQX665M',
+        //     imgSrc: 'https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield',
+        // },
+        perms: {
             commandMessage: getPermDisable('players.message'),
             commandKick: getPermDisable('players.kick'),
             commandResources: getPermDisable('commands.resources'),

@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'DiscordBot:cmd:help';
-const { RichEmbed } = require('@tabarra/discord');
+const { MessageEmbed } = require('@citizenfx/discord.js');
 const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
 
 module.exports = {
@@ -18,10 +18,10 @@ module.exports = {
             '...more commands to come soon 😮',
             '```',
         ];
-        const outMsg = new RichEmbed({
+        const outMsg = new MessageEmbed({
             color: 0x4287F5,
             description: descLines.join('\n'),
         });
-        return await message.channel.send(outMsg);
+        return await message.reply({embeds: [outMsg]});
     },
 };

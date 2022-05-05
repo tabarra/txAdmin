@@ -67,6 +67,15 @@ function logError(msg = '', context = null) {
     return `[ERROR][${conCtx}] ${msg}`;
 }
 
+function logDebug(msg = '', context = null) {
+    if (!GlobalData.verbose) return;
+    let conCtx = getConCtx(context);
+    let histCtx = getHistCtx(context);
+    console.log(chalk.bold.bgMagenta(`[${conCtx}]`) + ' ' + msg);
+    toHistory('DEBUG', histCtx, msg);
+    return `[DEBUG][${conCtx}] ${msg}`;
+}
+
 function cleanTerminal() {
     process.stdout.write('.\n'.repeat(80) + '\x1B[2J\x1B[H');
 }
@@ -164,6 +173,7 @@ module.exports = (ctx) => {
         logOk: (x, subCtx = null) => logOk(x, appendSubCtx(subCtx)),
         logWarn: (x, subCtx = null) => logWarn(x, appendSubCtx(subCtx)),
         logError: (x, subCtx = null) => logError(x, appendSubCtx(subCtx)),
+        logDebug: (x, subCtx = null) => logDebug(x, appendSubCtx(subCtx)),
         dir: (x, subCtx = null) => dir(x, appendSubCtx(subCtx)),
         cleanTerminal,
         setTTYTitle,

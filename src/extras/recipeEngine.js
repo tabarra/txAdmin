@@ -1,7 +1,6 @@
 //Requires
 const modulename = 'RecipeEngine';
 const path = require('path');
-const util = require('util');
 const fs = require('fs-extra');
 const fsp = require('fs').promises; //starting to replace fse
 const StreamZip = require('node-stream-zip');
@@ -10,6 +9,11 @@ const cloneDeep = require('lodash/cloneDeep');
 const escapeRegExp = require('lodash/escapeRegExp');
 const mysql = require('mysql2/promise');
 const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
+
+//Got stream attempt:
+const stream = require('stream');
+const { promisify } = require('util');
+const got = require('got');
 
 //Helper functions
 const safePath = (base, suffix) => {
@@ -90,8 +94,10 @@ const validatorDownloadGithub = (options) => {
 };
 const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     if (!validatorDownloadGithub(options)) throw new Error('invalid options');
+    //FIXME: caso seja eperm, tentar criar um arquivo na pasta e checar se funciona
 
     //Parsing source
+    deployerCtx.$step = 'task start';
     const srcMatch = options.src.match(githubRepoSourceRegex);
     if (!srcMatch || !srcMatch[3] || !srcMatch[4]) throw new Error('invalid repository');
     const repoOwner = srcMatch[3];
@@ -106,49 +112,68 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
             method: 'get',
             url: `https://api.github.com/repos/${repoOwner}/${repoName}`,
             responseType: 'json',
+            timeout: 15e3,
         });
         if (!res.data || !res.data.default_branch) {
             throw new Error('reference not set, and wasn ot able to detect using github\'s api');
         }
         reference = res.data.default_branch;
     }
+    deployerCtx.$step = 'ref set';
 
     //Preparing vars
     const downURL = `https://api.github.com/repos/${repoOwner}/${repoName}/zipball/${reference}`;
-    const tmpFileName = `${repoName}${reference}-` + (Date.now() % 100000000).toString(16);
-    const tmpFileDir = path.join(basePath, `.${tmpFileName}`);
-    const tmpFilePath = path.join(basePath, `.${tmpFileName}.download`);
+    const tmpFilePath = path.join(basePath, `.${(Date.now() % 100000000).toString(36)}.download`);
     const destPath = safePath(basePath, options.dest);
 
     //Downloading file
-    const res = await axios({
-        method: 'get',
-        url: downURL,
-        responseType: 'stream',
-    });
-    await new Promise((resolve, reject) => {
-        const outStream = fs.createWriteStream(tmpFilePath);
-        res.data.pipe(outStream);
-        outStream.on('finish', resolve);
-        outStream.on('error', reject); // don't forget this!
-    });
+    // const res = await axios({
+    //     method: 'get',
+    //     url: downURL,
+    //     responseType: 'stream',
+    //     timeout: 150e3,
+    // });
+    // deployerCtx.$step = 'before stream';
+    // await new Promise((resolve, reject) => {
+    //     const outStream = fs.createWriteStream(tmpFilePath);
+    //     res.data.pipe(outStream);
+    //     outStream.on('finish', resolve);
+    //     outStream.on('error', reject); // don't forget this!
+    // });
+    // deployerCtx.$step = 'after stream';
 
-    await fsp.mkdir(tmpFileDir, {recursive: true});
+    deployerCtx.$step = 'before stream';
+    const gotOptions = {
+        timeout: { request: 150e3 },
+        retry: { limit: 5 },
+    };
+    const gotStream = got.stream(downURL, gotOptions);
+    gotStream.on('downloadProgress', (progress) => {
+        deployerCtx.$step = `downloading ${Math.round(progress.percent * 100)}%`;
+    });
+    const pipeline = promisify(stream.pipeline);
+    await pipeline(
+        gotStream,
+        fs.createWriteStream(tmpFilePath),
+    );
+    deployerCtx.$step = 'after stream';
+
+    //Extracting files
     const zip = new StreamZip.async({ file: tmpFilePath });
     const entries = Object.values(await zip.entries());
     if (!entries.length || !entries[0].isDirectory) throw new Error('unexpected zip structure');
-    await zip.extract(null, tmpFileDir);
+    const zipSubPath = path.posix.join(entries[0].name, options.subpath || '');
+    deployerCtx.$step = 'zip parsed';
+    await fsp.mkdir(destPath, { recursive: true });
+    deployerCtx.$step = 'dest path created';
+    await zip.extract(zipSubPath, destPath);
+    deployerCtx.$step = 'zip extracted';
     await zip.close();
+    deployerCtx.$step = 'zip closed';
 
-    //Moving path
-    const moveSrc = path.join(tmpFileDir, entries[0].name, options.subpath || '');
-    await fs.move(moveSrc, destPath, {
-        overwrite: (options.overwrite === 'true' || options.overwrite === true),
-    });
-
-    //Removing temp paths
+    //Removing temp path
     await fs.remove(tmpFilePath);
-    await fs.remove(tmpFileDir);
+    deployerCtx.$step = 'task finished';
 };
 
 
@@ -218,7 +243,7 @@ const taskUnzip = async (options, basePath, deployerCtx) => {
 
     const srcPath = safePath(basePath, options.src);
     const destPath = safePath(basePath, options.dest);
-    await fsp.mkdir(destPath, {recursive: true});
+    await fsp.mkdir(destPath, { recursive: true });
 
     const zip = new StreamZip.async({ file: srcPath });
     const count = await zip.extract(null, destPath);
@@ -448,9 +473,6 @@ const taskDumpVars = async (options, basePath, deployerCtx) => {
 
 /*
 DONE:
-    - waste_time (DEBUG)
-    - fail_test (DEBUG)
-    - dump_vars (DEBUG)
     - download_file
     - remove_path (file or folder)
     - ensure_dir
@@ -464,6 +486,11 @@ DONE:
     - download_github (with ref and subpath)
     - load_vars
 
+DEBUG:
+    - waste_time
+    - fail_test
+    - dump_vars
+
 TODO:
     - ??????
 */
@@ -471,66 +498,81 @@ TODO:
 
 //Exports
 module.exports = {
-    download_file:{
+    download_file: {
         validate: validatorDownloadFile,
         run: taskDownloadFile,
+        timeoutSeconds: 180,
     },
-    download_github:{
+    download_github: {
         validate: validatorDownloadGithub,
         run: taskDownloadGithub,
+        timeoutSeconds: 180,
     },
-    remove_path:{
+    remove_path: {
         validate: validatorRemovePath,
         run: taskRemovePath,
+        timeoutSeconds: 15,
     },
-    ensure_dir:{
+    ensure_dir: {
         validate: validatorEnsureDir,
         run: taskEnsureDir,
+        timeoutSeconds: 15,
     },
-    unzip:{
+    unzip: {
         validate: validatorUnzip,
         run: taskUnzip,
+        timeoutSeconds: 180,
     },
-    move_path:{
+    move_path: {
         validate: validatorMovePath,
         run: taskMovePath,
+        timeoutSeconds: 180,
     },
-    copy_path:{
+    copy_path: {
         validate: validatorCopyPath,
         run: taskCopyPath,
+        timeoutSeconds: 180,
     },
-    write_file:{
+    write_file: {
         validate: validatorWriteFile,
         run: taskWriteFile,
+        timeoutSeconds: 15,
     },
-    replace_string:{
+    replace_string: {
         validate: validatorReplaceString,
         run: taskReplaceString,
+        timeoutSeconds: 15,
     },
-    connect_database:{
+    connect_database: {
         validate: validatorConnectDatabase,
         run: taskConnectDatabase,
+        timeoutSeconds: 30,
     },
-    query_database:{
+    query_database: {
         validate: validatorQueryDatabase,
         run: taskQueryDatabase,
+        timeoutSeconds: 90,
     },
     load_vars: {
         validate: validatorLoadVars,
         run: taskLoadVars,
+        timeoutSeconds: 5,
     },
 
-    //DEBUG mock only
-    waste_time:{
+    //DEBUG only
+    waste_time: {
         validate: validatorWasteTime,
         run: taskWasteTime,
+        timeoutSeconds: 300,
     },
-    fail_test:{
+    fail_test: {
         validate: (() => true),
         run: taskFailTest,
+        timeoutSeconds: 300,
     },
-    dump_vars:{
+    dump_vars: {
         validate: (() => true),
         run: taskDumpVars,
+        timeoutSeconds: 5,
     },
 };

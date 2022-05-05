@@ -40,7 +40,6 @@ module.exports = async function AuthGet(ctx) {
         template,
         message: (!isUndefined(ctx.query.logout)) ? 'Logged Out' : '',
         citizenfxDisabled: !globals.adminVault.providers.citizenfx.ready,
-        discordDisabled: true,
     };
     return ctx.utils.render('login', renderData);
 };

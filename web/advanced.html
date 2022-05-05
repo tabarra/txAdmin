@@ -1,5 +1,4 @@
-{{@include("header", it)/}}
-
+<%- await include('basic/header.html', locals) %>
 
 <div class="row justify-content-md-center">
     <div class="col-lg-10 col-xl-8">
@@ -26,15 +25,15 @@
                     With verbosity enabled, you will see more detailed information on the terminal. <br>
                     Good to help getting information on errors. <br>
                 </span>
-                {{@if(it.verbosityEnabled)}}
+                <% if (verbosityEnabled) { %>
                     <button class="btn btn-md btn-danger mt-2" onclick="doChangeVerbosity(false)">
                         Disable Verbosity
                     </button>
-                {{#else}}
+                <% } else { %>
                     <button class="btn btn-md btn-success mt-2" onclick="doChangeVerbosity(true)">
                         Enable Verbosity
                     </button>
-                {{/if}}
+                <% } %>
                 <hr>
 
                 <!-- Profile Monitor -->
@@ -44,9 +43,6 @@
                 </span>
                 <button class="btn btn-md btn-outline-dark mt-2" onclick="doProfileMonitor()">Profile Monitor</button>
             </div>
-        </div>
-        <div class="text-center">
-            <img src="img/not-meme.jpg" alt="Not A Meme" class="img-fluid" style="max-width: 350px;">
         </div>
     </div>
 
@@ -63,10 +59,12 @@
 
 
 <div class="row justify-content-md-center">
-    
+    <marquee behavior="" direction="">
+        <img src="img/txSnaily2anim_320.png" alt="Not A Meme" class="img-fluid">
+    </marquee>
 </div>
 
-{{@include("footer", it)/}}
+<%- await include('basic/footer.html', locals) %>
 
 <script>
     //============================================== Magic

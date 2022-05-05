@@ -39,11 +39,10 @@
         "misc": {
             "help_message": "txAdmin Menu disponible, escribe /tx para abrirlo.\nTambien puedes configurar una asignación de teclas en [Ajustes > Asignación de teclas > FiveM > Menu: Abrir página principal].",
             "menu_not_allowed": "Tus identificadores no estan registrados en txAdmin.\nSi estas registrado en txAdmin, ve a gestor de administradores y asegurate que tus identificadores estan guardados.",
-            "action_unauthorized": "No tienes este permiso",
+            "no_perms": "No tienes este permiso",
             "unknown_error": "Ha ocurrido un error.",
             "not_enabled": "¡txAdmin Menu no está activado! Puedes activarlo en la página de ajustes de txAdmin.",
             "announcement_title": "Anuncio del servidor de %{author}:",
-            "general_no_perms": "¡No tienes permisos para eso!",
             "dialog_empty_input": "La entrada no puede estar vacía."
         },
         "frozen": {
@@ -59,7 +58,7 @@
         },
         "page_main": {
             "tooltips": {
-                "tooltip_1": "Pulsa %{key} para cambiar entre páginas & y las flechas para cambiar entre las opciones del menú",
+                "tooltip_1": "Pulsa %{key} para cambiar entre páginas y las flechas para cambiar entre las opciones del menú",
                 "tooltip_2": "Algunos elementos del menu tienen sub-opciones que pueden ser seleccionadas usando las flechas izquierda y derecha."
             },
             "player_mode": {
@@ -147,18 +146,21 @@
             },
             "announcement": {
                 "title": "Enviar anuncio",
-                "dialog_desc": "Envia una comunicación a todos los jugadores conectados.",
+                "label": "Envia una comunicación a todos los jugadores conectados.",
+                "dialog_desc": "Enter the message you want to broadcast to all players.",
                 "dialog_placeholder": "Tu comunicación...",
                 "dialog_success": "Enviando el anuncio."
             },
             "clear_area": {
                 "title": "Reiniciar área del mundo",
-                "dialog_description": "Por favor introduce el rádio del area que quieres reiniciar entre (0-300). Esto no borrará entidades creadas por el servidor.",
+                "label": "Reset a specified world area to its default state",
+                "dialog_desc": "Por favor introduce el rádio del area que quieres reiniciar entre (0-300). Esto no borrará entidades creadas por el servidor.",
                 "dialog_success": "Limpiando área con rádio de %{radius}m",
                 "dialog_error": "Rádio inválido. Prueba otra vez."
             },
             "player_ids": {
                 "title": "Altenar IDs de jugadores",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
                 "alert_show": "Enseñado NetIDs de jugadores cercanos.",
                 "alert_hide": "Ocultando NetIDs de jugadores cercanos."
             }
@@ -280,7 +282,8 @@
                 "months": "meses",
                 "permanent": "Permanente",
                 "custom": "Personalizado",
-                "helper_text": "Por favor, elige una duración"
+                "helper_text": "Por favor, elige una duración",
+                "submit": "Apply ban"
             }
         }
     }

@@ -1,7 +1,32 @@
-{{@include("header", it)/}}
-
+<%- await include("basic/header.html", locals) %>
 
 <style>
+    /* Discord Live Event stuff */
+    .event-time {
+        background-color: rgba(0, 0, 0, 0.075);
+        padding: 0px 6px;
+        border-radius: 4px;
+    }
+    .event-footer {
+        font-weight: 700;
+        vertical-align: text-bottom;
+    }
+    .event-footer img {
+        vertical-align: middle;
+    }
+
+    .alert-success.event-live-glow {
+        animation: alertGlow 1s infinite alternate;
+    }
+    @keyframes alertGlow {
+        from {
+            box-shadow: 0 0 8px 0px rgb(34, 128, 25);
+        }
+        to {
+            box-shadow: 0 0 8px 4px rgb(34, 128, 25);
+        }
+    }
+
     /* Chart stuff */
     #d3-container {
         height: 340px;
@@ -82,11 +107,11 @@
 </style>
 
 <!-- Title & outdated message: -->
-<div class="text-center {{[(it.isWebInterface || it.txAdminOutdated), 'mb-4', '']|ternary}}">
-    {{@if(it.isWebInterface)}}
-        <h2>{{it.serverName}} Dashboard</h2>
-    {{/if}}
-    {{@if(it.txAdminOutdated)}}
+<div class="text-center <%= (isWebInterface || txAdminOutdated) ? 'mb-4' : '' %>">
+    <% if (isWebInterface) { %>
+        <h2><%= serverName %> Dashboard</h2>
+    <% } %>
+    <% if (txAdminOutdated) { %>
         <h2 class="text-danger">This version of txAdmin is outdated. Please update now.</h2>
         <h5 class="text-muted">
             Updating is <i>very</i> easy! Support Discord:
@@ -94,9 +119,31 @@
                 <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
             </a>
         </h5>
-    {{/if}}
+    <% } %>
 </div>
 
+<% if (discordEvent) { %>
+    <div class="row justify-content-md-center">
+        <div class="col-md-6 text-center">
+            <div class="alert <%= (discordEvent.isLive ? 'alert-success border-success' : 'alert-warning border-warning') %> event-live-glow" role="alert">
+                <h5 style="margin-bottom: 0px;">
+                    <svg class="c-iconx" width="24" height="24">
+                        <use href="img/coreui_icons.svg#cil-discord-event"></use>
+                    </svg>
+                    <%= (discordEvent.isLive ? 'The Discord Live Event started' : 'A Discord Live Event will start in') %>:
+                    <span class="event-time" title="<%= (new Date(discordEvent.timestamp)).toString() %>"><%= discordEvent.time %></span>
+                </h5>
+                <i><%= discordEvent.description %></i>
+                <div class="event-footer">
+                    Join now:
+                    <a href="<%= discordEvent.joinLink %>" target="_blank" >
+                        <img src="<%= discordEvent.imgSrc %>"></img>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } %>
 
 <!-- Chart stuff -->
 <div class="row justify-content-center">
@@ -141,22 +188,22 @@
             </div>
             <div class="card-body text-center align-middle">
                 <button onclick="controlAction('start')"
-                    class="btn btn-outline-{{it.perms.controlsClass}} btn-lg mx-auto m-2" type="button" id="ctrl-start"
-                    {{it.perms.controls}}>START</button> &nbsp;
+                    class="btn btn-outline-<%= perms.controlsClass %> btn-lg mx-auto m-2" type="button" id="ctrl-start"
+                    <%= perms.controls %>>START</button> &nbsp;
                 <button onclick="controlAction('restart')"
-                    class="btn btn-outline-{{it.perms.controlsClass}} btn-lg mx-auto m-2" type="button"
-                    id="ctrl-restart" {{it.perms.controls}}>RESTART</button> &nbsp;
+                    class="btn btn-outline-<%= perms.controlsClass %> btn-lg mx-auto m-2" type="button"
+                    id="ctrl-restart" <%= perms.controls %>>RESTART</button> &nbsp;
                 <button onclick="controlAction('stop')"
-                    class="btn btn-outline-{{it.perms.controlsClass}} btn-lg mx-auto m-2" type="button" id="ctrl-stop"
-                    {{it.perms.controls}}>STOP</button>
+                    class="btn btn-outline-<%= perms.controlsClass %> btn-lg mx-auto m-2" type="button" id="ctrl-stop"
+                    <%= perms.controls %>>STOP</button>
                 <br>
 
-                {{@if(it.isWebInterface)}}
+                <% if (isWebInterface) { %>
                 <button onclick="controlCommand('admin_broadcast')" class="btn btn-outline-dark btn-md mx-auto m-2"
-                    type="button" id="ctrl-stop" {{it.perms.commandMessage}}>Announcement</button> &nbsp;
+                    type="button" id="ctrl-announce" <%= perms.commandMessage %>>Announcement</button> &nbsp;
                 <button onclick="controlCommand('kick_all')" class="btn btn-outline-dark btn-md mx-auto m-2"
-                    type="button" id="ctrl-stop" {{it.perms.commandKick}}>Kick All Players</button>
-                {{/if}}
+                    type="button" id="ctrl-kick-all" <%= perms.commandKick %>>Kick All Players</button>
+                <% } %>
             </div>
         </div>
     </div>
@@ -184,28 +231,28 @@
     <div class="col-md-6 text-center">
         <small id="perfDiagnosticsMessage" class="text-muted"></small>
         <br>
-        {{@if(it.versionData.message)}}
-            <div class="alert alert-{{it.versionData.color}} border-{{it.versionData.color}}" role="alert">
-                <a href="{{it.versionData.artifactsLink}}" target="_blank" class="alert-link">{{it.versionData.message}}</a>
+        <% if (versionData.message) { %>
+            <div class="alert alert-<%= versionData.color %> border-<%= versionData.color %>" role="alert">
+                <a href="<%= versionData.artifactsLink %>" target="_blank" class="alert-link"><%= versionData.message %></a>
                 <br>
-                {{it.versionData.subtext}}
+                <%= versionData.subtext %>
             </div>
-        {{/if}}
-        {{@if(it.txAdminVersion.includes('-'))}}
+        <% } %>
+        <% if (txAdminVersion.includes('-')) { %>
             <span class="text-danger font-weight-bold">
                 You are using a pre-release version of txAdmin destined for developers and beta testers only! <br>
                 Your server stability might be impacted by this.
             </span>
-        {{/if}}
+        <% } %>
     </div>
 </div>
 
 
-{{@include("footer", it)/}}
+<%- await include("basic/footer.html", locals) %>
 
 <script src="https://d3js.org/d3.v6.min.js"></script>
 <script type="module">
-    import { drawHeatmap } from "{{it.basePath}}js/txadmin/chart.js";
+    import { drawHeatmap } from "<%= basePath %>js/txadmin/chart.js";
 
     //Elements & vars
     let perfData;
@@ -213,7 +260,7 @@
     const perfDiagnosticsMessage = document.getElementById('perfDiagnosticsMessage');
     const d3Container = document.getElementById('d3-container');
     const chartOptions = {
-        // colorScheme: d3[`{{[it.uiTheme, 'interpolateViridis', 'interpolateTurbo']|ternary}}`],
+        // colorScheme: d3[`<%= uiTheme ? 'interpolateViridis' : 'interpolateTurbo' %>`],
         // colorScheme: d3.interpolateInferno,
         // colorScheme: d3.interpolateTurbo,
         colorScheme: d3.interpolateViridis,
@@ -319,20 +366,33 @@
 
 
     //============================================== Commands
-    function controlCommand(action) {
+    async function controlCommand(action) {
         let message = null;
         if(action == 'admin_broadcast'){
-            message = prompt('Type the message to be broadcasted to all players');
+            message = await txAdminPrompt({
+                modalColor: 'orange',
+                confirmBtnClass: 'btn-orange',
+                title: 'Announcement',
+                description: 'Type the message to be broadcasted to all players.', 
+                placeholder: 'the server will restart in xxx minutes...'
+            });
+
             if(message.length <= 6){
                 $.notify({ message: 'This message is too short!'}, {type: 'danger'});
                 return;
             }
         }else if(action == 'kick_all'){
-            message = prompt('Type the kick reason or leave it blank (press enter)');
+            message = await txAdminPrompt({
+                modalColor: 'red',
+                confirmBtnClass: 'btn-red',
+                title: 'Kick All Players',
+                description: 'Type the kick reason or leave it blank (press enter)',
+                required: false,
+            });
         }else{
             return;
         }
-        if(message == null) return;
+        if(message === null || message === false) return;
 
         const notify = $.notify({ message: 'Executing Command...' }, {});
         txAdminAPI({

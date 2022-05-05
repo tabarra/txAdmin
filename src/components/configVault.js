@@ -71,7 +71,7 @@ module.exports = class ConfigVault {
         try {
             rawFile = fs.readFileSync(this.configFilePath, 'utf8');
         } catch (error) {
-            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. (cannot read file, please read the documentation)\nOriginal error: ${error.message}`);
+            throw new Error(`Unable to load configuration file '${this.configFilePath}'. (cannot read file, please read the documentation)\nOriginal error: ${error.message}`);
         }
 
         //Try to parse config file
@@ -80,7 +80,7 @@ module.exports = class ConfigVault {
             cfgData = JSON.parse(rawFile);
         } catch (error) {
             if (rawFile.includes('\\')) logError(`Note: your 'txData/${this.serverProfile}/config.json' file contains '\\', make sure all your paths use only '/'.`);
-            throw new Error(`Unnable to load configuration file '${this.configFilePath}'. \nOriginal error: ${error.message}`);
+            throw new Error(`Unable to load configuration file '${this.configFilePath}'. \nOriginal error: ${error.message}`);
         }
 
         return cfgData;
@@ -162,8 +162,14 @@ module.exports = class ConfigVault {
                 quiet: toDefault(cfg.fxRunner.quiet, null),
             };
 
+            //Migrations
             //Removing menu beta convar (v4.9)
             out.fxRunner.commandLine = out.fxRunner.commandLine?.replace(/\+?setr? txEnableMenuBeta true\s?/gi, '');
+
+            //Merging portuguese
+            if (out.global.language === 'pt_PT' || out.global.language === 'pt_BR'){
+                out.global.language = 'pt';
+            }
         } catch (error) {
             if (GlobalData.verbose) dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated!\nOriginal error: ${error.message}`);

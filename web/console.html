@@ -1,5 +1,4 @@
-{{@include("header", it)/}}
-
+<%- await include('basic/header.html', locals) %>
 
 <style>
     .console-content {
@@ -66,11 +65,11 @@
 
 
 <div class="text-center">
-    <h3>{{it.serverName}} Console</h3>
+    <h3><%= serverName %> Console</h3>
 </div>
 <div class="card bg-dark">
     <div class="card-body p-3" style="position: relative">
-        <pre id="console" class="thin-scroll console-content text-white {{[(it.isWebInterface), '', 'nui-height']|ternary}}"></pre>
+        <pre id="console" class="thin-scroll console-content text-white <%= (isWebInterface ? '' : 'nui-height') %>"></pre>
         <div id="autoScrollDiv">
             <a id="autoScrollBtn" class="d-none" href="#"><span></span><span></span><span></span></a>
         </div>
@@ -84,21 +83,20 @@
                             <input type="text" class="form-control console-input form-control-sm" id="cmdInput"
                                    placeholder="Press enter to send. Up/Down arrows to navigate commands."
                                    autocomplete="off" autocorrect="off" autocapitalize="off"
-                                   spellcheck="false" {{it.disableCommand}}>
+                                   spellcheck="false" <%= disableCommand %>>
                         </div>
                         <a href="fxserver/downloadLog" target="_blank" 
-                            class="btn btn-outline-light btn-sm mb-2 {{[it.isWebInterface, '', 'disabled']|ternary}}">
+                            class="btn btn-outline-light btn-sm mb-2 <%= (isWebInterface ? '' : 'disabled') %>">
                             Download Log
                         </a>
                         <button type="button" id="clearConsole" class="btn btn-outline-light btn-sm mb-2">
                             Clear Console
                         </button>
-                        <button type="button" id="announcementBtn" class="btn btn-outline-warning btn-sm mb-2"
-                            {{[it.isWebInterface, '', 'disabled']|ternary}}>
+                        <button type="button" id="announcementBtn" class="btn btn-outline-warning btn-sm mb-2" <%= disableAnnouncement %>>
                             Announcement
                         </button>
-                        <button type="button" id="ctrl-restart" class="btn btn-outline-{{it.restartBtnClass}} btn-sm mb-2" 
-                            onclick="controlAction('restart')" {{it.disableRestart}}>
+                        <button type="button" id="ctrl-restart" class="btn btn-outline-danger btn-sm mb-2" 
+                            onclick="controlAction('restart')" <%= disableRestart %>>
                                 RESTART
                         </button>
                     </div>
@@ -114,7 +112,7 @@
 </div>
 
 
-{{@include("footer", it)/}}
+<%- await include('basic/footer.html', locals) %>
 
 
 <script src="js/ansi_up.js"></script>
@@ -320,14 +318,20 @@
         });
 
         //Buttons
-        announcementBtn.addEventListener("click", (event) => {
-            let message = prompt('Type the message to be broadcasted to all players');
+        announcementBtn.addEventListener("click", async (event) => {
+            const message = await txAdminPrompt({
+                modalColor: 'orange',
+                confirmBtnClass: 'btn-warning',
+                title: 'Announcement',
+                description: 'Type the message to be broadcasted to all players.', 
+                placeholder: 'the server will restart in xxx minutes...'
+            });
+
+            if(message == false) return;
             if(message.length <= 6){
                 $.notify({ message: 'This message is too short!'}, {type: 'danger'});
                 return;
             }
-
-            if(message == null) return;
 
             const notify = $.notify({ message: 'Executing Command...' }, {});
             txAdminAPI({

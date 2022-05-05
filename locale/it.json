@@ -37,250 +37,253 @@
     },
     "nui_menu": {
         "misc": {
-            "help_message": "txAdmin Menu enabled, type /tx to open it.\nYou can also configure a keybind at [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
-            "menu_not_allowed": "Your identifiers do not match any admin registered on txAdmin.\nIf you are registered on txAdmin, go to Admin Manager and make sure your identifiers are saved.",
-            "action_unauthorized": "You do not have this permission.",
-            "unknown_error": "An unknown error occurred.",
-            "not_enabled": "The txAdmin Menu is not enabled! You can enable it in the txAdmin settings page.",
-            "announcement_title": "Server Announcement by %{author}:",
-            "general_no_perms": "You do not have permissions for this!",
-            "dialog_empty_input": "You cannot have an empty input."
+            "help_message": "txAdmin Menu attivato, scrivi /tx per aprirlo.\nPuoi bindare un tasto in [Game Settings > Key Bindings > FiveM > Menu: Open Main Page].",
+            "menu_not_allowed": "I tuoi identifiers non corrispondono ad un admin registrato nel txAdmin.\nSe sei registrato al txAdmin, vai nella sezione Admin Manager e controlla che siano presenti i tuoi identifiers.",
+            "no_perms": "Non hai questo permesso.",
+            "unknown_error": "Si è verificato un errore sconosciuto.",
+            "not_enabled": "Il menu txAdmin non è attivo! Puoi attivarlo dalle impostazioni del txAdmin.",
+            "announcement_title": "Annuncio da %{author}:",
+            "dialog_empty_input": "Non puoi dare un input vuoto."
         },
         "frozen": {
-            "froze_player": "You have frozen the player!",
-            "unfroze_player": "You have unfrozen the player!",
-            "was_frozen": "You have been frozen by a server admin!"
+            "froze_player": "Hai freezato il player!",
+            "unfroze_player": "Hai unfreezato il player!",
+            "was_frozen": "Sei stato freezato da uno staffer!"
         },
         "common": {
-            "cancel": "Cancel",
-            "submit": "Submit",
-            "error": "An error occurred",
-            "copied": "Copied to clipboard."
+            "cancel": "Cancella",
+            "submit": "Conferma",
+            "error": "Si è verificato un'errore",
+            "copied": "Copiato negli appunti."
         },
         "page_main": {
             "tooltips": {
-                "tooltip_1": "Use %{key} to switch pages & the arrow keys to navigate menu items",
-                "tooltip_2": "Certain menu items have sub options which can be selected using the left & right arrow keys"
+                "tooltip_1": "Usa %{key} per cambiare pagina e le freccette per navigare nel menu",
+                "tooltip_2": "Alcune voci del menu hanno opzioni secondarie che possono essere selezionate utilizzando i tasti freccia sinistra e destra"
             },
             "player_mode": {
-                "title": "Player Mode",
+                "title": "Modalità",
                 "noclip": {
                     "title": "NoClip",
-                    "label": "Fly around",
-                    "success": "NoClip enabled"
+                    "label": "Vola",
+                    "success": "NoClip attivo"
                 },
                 "godmode": {
                     "title": "God",
-                    "label": "Invincible",
-                    "success": "God Mode enabled"
+                    "label": "Invincibilità",
+                    "success": "God Mode attiva"
                 },
                 "normal": {
-                    "title": "Normal",
-                    "label": "Default mode",
-                    "success": "Returned to default player mode."
+                    "title": "Normale",
+                    "label": "Nodalità normale",
+                    "success": "Tornato alla modalità normale."
                 }
             },
             "teleport": {
-                "title": "Teleport",
-                "generic_success": "Sent you into the wormhole!",
+                "title": "Teletrasporto",
+                "generic_success": "Mandato nel wormhole!",
                 "waypoint": {
                     "title": "Waypoint",
-                    "label": "Go to waypoint set",
-                    "error": "You have no waypoint set."
+                    "label": "Vai al waypoint impostato",
+                    "error": "Non hai un waypoint impostato."
                 },
                 "coords": {
-                    "title": "Coords",
-                    "label": "Go to specified coords",
-                    "dialog_title": "Teleport",
-                    "dialog_desc": "Provide coordinates in an x, y, z format to go through the wormhole.",
-                    "dialog_error": "Invalid coordinates. Must be in the format of: 111, 222, 33"
+                    "title": "Coordinate",
+                    "label": "Vai alle coordinate specificate",
+                    "dialog_title": "Teletrasporto",
+                    "dialog_desc": "Fornisci delle coordinate in un formato x, y, z per attraversare il wormhole.",
+                    "dialog_error": "Coordinate errate. Devono essere nel formato: 111, 222, 33"
                 },
                 "back": {
-                    "title": "Back",
-                    "label": "Go back to last location",
-                    "error": "You don't have a last location to go back to!"
+                    "title": "Indietro",
+                    "label": "Torna alla tua ultima posizione",
+                    "error": "Non hai un'ultima posizione in cui andare!"
                 },
                 "copy": {
-                    "title": "Copy Coords",
-                    "label": "Copy coords to clipboard."
+                    "title": "Copia coordinate",
+                    "label": "Copia le coordinate negli appunti."
                 }
             },
             "vehicle": {
-                "title": "Vehicle",
-                "onesync_error": "This option requires that OneSync be on for server entity handling",
-                "not_in_veh_error": "You are not currently in a vehicle!",
+                "title": "Veicolo",
+                "onesync_error": "Questa opzione richiede che OneSync sia attivo",
+                "not_in_veh_error": "Non sei in un veicolo!",
                 "spawn": {
-                    "title": "Spawn",
-                    "label": "Spawn vehicle by model name",
-                    "dialog_title": "Spawn vehicle",
-                    "dialog_desc": "Enter in the model name of the vehicle you want to spawn.",
-                    "dialog_success": "Vehicle spawned!",
-                    "dialog_error": "The vehicle model name '%{modelName}' does not exist!",
-                    "dialog_info": "Trying to spawn %{modelName}."
+                    "title": "Spawna",
+                    "label": "Spawna un veicolo dal nmome",
+                    "dialog_title": "Spawna veicolo",
+                    "dialog_desc": "Inserisci il nome del modello del veicolo che vuoi spawnare.",
+                    "dialog_success": "Veicolo spawnato!",
+                    "dialog_error": "Il modello '%{modelName}' non esiste!",
+                    "dialog_info": "Provando a spawnare %{modelName}."
                 },
                 "fix": {
-                    "title": "Fix",
-                    "label": "Fix the current vehicle",
-                    "success": "Vehicle fixed!"
+                    "title": "Ripara",
+                    "label": "Ripara il veicolo",
+                    "success": "Veicolo riparato!"
                 },
                 "delete": {
-                    "title": "Delete",
-                    "label": "Delete the current vehicle",
-                    "success": "Vehicle deleted!"
+                    "title": "Elimina",
+                    "label": "Elimina il veicolo",
+                    "success": "Veicolo eliminato!"
                 }
             },
             "heal": {
-                "title": "Heal",
+                "title": "Cura",
                 "myself": {
-                    "title": "Myself",
-                    "label": "Restores your health",
-                    "success_0": "All healed up!",
-                    "success_1": "You should be feeling good now!",
-                    "success_2": "Restored to full!",
-                    "success_3": "Ouchies fixed!"
+                    "title": "Te Stesso",
+                    "label": "Cura te stesso",
+                    "success_0": "Tutti curati!",
+                    "success_1": "Dovresti stare bene ora!",
+                    "success_2": "Curato al massimo!",
+                    "success_3": "Ouchies risolto!"
                 },
                 "everyone": {
-                    "title": "Everyone",
-                    "label": "Will heal & revive all players",
-                    "success": "Healed and revived all players."
+                    "title": "Tutti",
+                    "label": "Curerà e Rianimerà tutti i player",
+                    "success": "Curati e rianimati tutti i player."
                 }
             },
             "announcement": {
-                "title": "Send Announcement",
-                "dialog_desc": "Send an announcement to all online players.",
-                "dialog_placeholder": "Your announcement...",
-                "dialog_success": "Sending the announcement."
+                "title": "Manda Annuncio",
+                "label": "Manda un annuncio a tutti i player online.",
+                "dialog_desc": "Enter the message you want to broadcast to all players.",
+                "dialog_placeholder": "Il tuo annuncio...",
+                "dialog_success": "Inviando l'annuncio."
             },
             "clear_area": {
-                "title": "Reset World Area",
-                "dialog_description": "Please enter the radius where you wish to reset entities in (0-300). This will not clear entities spawned server side",
-                "dialog_success": "Clearing area with radius of %{radius}m",
-                "dialog_error": "Invalid radius input. Try again."
+                "title": "Resetta l'area",
+                "label": "Reset a specified world area to its default state",
+                "dialog_desc": "Inserisci il raggio in cui desideri reimpostare le entità (0-300). Questo non cancellerà le entità generate sul lato server",
+                "dialog_success": "Pulendo l'area in un raggio di %{radius}m",
+                "dialog_error": "Inserimento raggio non valido. Riprova."
             },
             "player_ids": {
-                "title": "Toggle Player IDs",
-                "alert_show": "Showing nearby player NetIDs.",
-                "alert_hide": "Hiding nearby player NetIDs."
+                "title": "Toggle ID dei Player",
+                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                "alert_show": "Mostra gli ID dei player vicini.",
+                "alert_hide": "Nascondi gli ID dei player vicini."
             }
         },
         "page_players": {
             "misc": {
-                "online_players": "Online Players",
-                "players": "Players",
-                "search": "Search",
-                "zero_players": "No players found"
+                "online_players": "Giocatori Online",
+                "players": "Giocatori",
+                "search": "Cerca",
+                "zero_players": "Nessun giocatore trovato"
             },
             "sort": {
-                "label": "Sort by",
-                "distance": "Distance",
+                "label": "Ordina per",
+                "distance": "Distanza",
                 "id": "ID",
-                "joined_first": "Joined First",
-                "joined_last": "Joined Last",
-                "closest": "Closest",
-                "farthest": "Farthest"
+                "joined_first": "Entrato Prima",
+                "joined_last": "Entrato Dopo",
+                "closest": "Più Vicino",
+                "farthest": "Più Lontano"
             },
             "card": {
-                "health": "%{percentHealth}% health"
+                "health": "%{percentHealth}% vita"
             }
         },
         "player_modal": {
             "misc": {
-                "error": "An error occurred fetching this users details. The error is shown below:",
-                "target_not_found": "Was unable to find an online player with ID or an username of %{target}"
+                "error": "Si è verificato un errore durante il recupero dei dettagli di questo utente. L'errore è mostrato sotto:",
+                "target_not_found": "Impossibile trovare un giocatore online con ID o nome utente di %{target}"
             },
             "tabs": {
-                "actions": "Actions",
+                "actions": "Azioni",
                 "info": "Info",
                 "ids": "IDs",
-                "history": "History",
+                "history": "Cronologia",
                 "ban": "Ban"
             },
             "actions": {
-                "title": "Player Actions",
-                "command_sent": "Command sent!",
+                "title": "Azioni Player",
+                "command_sent": "Comando inviato!",
                 "moderation": {
-                    "title": "Moderation",
+                    "title": "Moderazione",
                     "options": {
                         "dm": "DM",
                         "warn": "Warn",
                         "kick": "Kick",
-                        "set_admin": "Give Admin"
+                        "set_admin": "Dai Admin"
                     },
                     "dm_dialog": {
-                        "title": "Direct Message",
-                        "description": "What is the reason for direct messaging this player?",
-                        "placeholder": "Reason...",
-                        "success": "Your DM has been sent!"
+                        "title": "Messaggio Diretto",
+                        "description": "Per che motivo stai inviando un messaggio diretto?",
+                        "placeholder": "Motivo...",
+                        "success": "Il tuo messaggio è stato inviato!"
                     },
                     "warn_dialog": {
                         "title": "Warn",
-                        "description": "What is the reason for direct warning this player?",
-                        "placeholder": "Reason...",
-                        "success": "The player was warned!"
+                        "description": "Per che motivo stai warnando questo giocatore?",
+                        "placeholder": "Motivo...",
+                        "success": "Il player è stato warnato!"
                     },
                     "kick_dialog": {
                         "title": "Kick",
-                        "description": "What is the reason for kicking this player?",
-                        "placeholder": "Reason...",
-                        "success": "The player was kicked!"
+                        "description": "Per che motivo stai kickando questo giocatore?",
+                        "placeholder": "Motivo...",
+                        "success": "Il player è stato kickato!"
                     }
                 },
                 "interaction": {
-                    "title": "Interaction",
+                    "title": "Interazioni",
                     "options": {
-                        "heal": "Heal",
-                        "go_to": "Go to",
-                        "bring": "Bring",
-                        "spectate": "Spectate",
+                        "heal": "Cura",
+                        "go_to": "Vai da",
+                        "bring": "Porta da te",
+                        "spectate": "Specta",
                         "toggle_freeze": "Toggle Freeze"
                     },
                     "notifications": {
-                        "heal_player": "Healing player",
-                        "tp_player": "Teleporting to player",
-                        "bring_player": "Summoning player",
-                        "spectate_failed": "Failed to resolve the target! Exiting spectate.",
-                        "spectate_yourself": "You cannot spectate yourself.",
-                        "freeze_yourself": "You cannot freeze yourself."
+                        "heal_player": "Curando il Giocatore",
+                        "tp_player": "Teletrasportandosi dal Giocatore",
+                        "bring_player": "Bringando il Giocatore",
+                        "spectate_failed": "Impossibile risolvere il bersaglio! Uscendo dallo Spectate.",
+                        "spectate_yourself": "Non puoi spectarti da solo.",
+                        "freeze_yourself": "Non puoi freezarti da solo."
                     }
                 },
                 "troll": {
                     "title": "Troll",
                     "options": {
-                        "drunk": "Make Drunk",
-                        "fire": "Set Fire",
-                        "wild_attack": "Wild attack"
+                        "drunk": "Diventa Ubriaco",
+                        "fire": "Dai Fuoco",
+                        "wild_attack": "Attacco di Scimmie"
                     }
                 }
             },
             "info": {
-                "title": "Player info",
-                "session_time": "Session Time",
-                "play_time": "Play time",
-                "joined": "Joined",
-                "notes_placeholder": "Notes about this player"
+                "title": "Info sul Giocatore",
+                "session_time": "Tempo della Sesione",
+                "play_time": "Tempo di Gioco",
+                "joined": "Entrato",
+                "notes_placeholder": "Note riguardo al Giocatore"
             },
             "history": {
-                "title": "Related history",
+                "title": "Cronologia",
                 "action_types": {
-                    "warn": "WARNED",
-                    "warn_revoked": "REVOKED the WARN for",
-                    "ban": "BANNED",
-                    "ban_revoked": "REVOKED the BAN for",
+                    "warn": "WARNATO",
+                    "warn_revoked": "REVOCATO il WARN per",
+                    "ban": "BANNATO",
+                    "ban_revoked": "REVOCATO il BAN per",
                     "whitelist": "WHITELIST",
-                    "whitelist_revoked": "REVOKED the WHITELIST for"
+                    "whitelist_revoked": "REVOCATA la WHITELIS per"
                 }
             },
             "ban": {
-                "title": "Ban player",
-                "reason_placeholder": "Reason",
-                "duration_placeholder": "Duration",
-                "hours": "hours",
-                "days": "days",
-                "weeks": "weeks",
-                "months": "months",
-                "permanent": "Permanent",
-                "custom": "Custom",
-                "helper_text": "Please select a duration"
+                "title": "Banna il Player",
+                "reason_placeholder": "Motivo",
+                "duration_placeholder": "Durata",
+                "hours": "ore",
+                "days": "giorni",
+                "weeks": "settimane",
+                "months": "mesi",
+                "permanent": "Permanentemente",
+                "custom": "Personalizzato",
+                "helper_text": "Seleziona una durata",
+                "submit": "Apply ban"
             }
         }
     }

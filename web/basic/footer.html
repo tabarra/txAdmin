@@ -4,16 +4,19 @@
             </main>
 
             <!-- Footer -->
-            {{@if(it.isWebInterface)}}
+            <% if (isWebInterface) { %>
                 <footer class="c-footer text-center">
-                    <div class="mx-auto d-md-none"> <strong>v{{it.txAdminVersion}}</strong> atop FXServer <strong>{{it.fxServerVersion}}</strong></div>
-                    <div class="d-sm-down-none"> Written with ❤️ by
-                        <a href="https://github.com/tabarra" class="credit-links" target="_blank">Tabarra</a> for
-                        <a href="https://cfx.re" class="credit-links" target="_blank">Cfx.re</a>.
+                    <div class="mx-auto d-md-none"> <strong>v<%= txAdminVersion %></strong> atop FXServer <strong><%= fxServerVersion %></strong></div>
+                    <div class="d-sm-down-none"> 
+                        &copy; 2019-<%= (new Date).getUTCFullYear() %>
+                        <a href="https://github.com/tabarra" class="credit-links" target="_blank">Tabarra</a>, under 
+                        <a href="https://github.com/tabarra/txAdmin/blob/master/LICENSE" class="credit-links" target="_blank">MIT License</a>
                     </div>
-                    <div class="ml-auto d-sm-down-none"> <strong>v{{it.txAdminVersion}}</strong> atop FXServer <strong>{{it.fxServerVersion}}</strong></div>
+                    <div class="ml-auto d-sm-down-none"> 
+                        <strong>v<%= txAdminVersion %></strong> atop FXServer <strong><%= fxServerVersion %></strong>
+                    </div>
                 </footer>
-            {{/if}}
+            <% } %>
         </div>
     </div>
 
@@ -149,7 +152,7 @@
 
                 </div> <!-- End Row -->
             </div> <!-- End Modal Body -->
-            <div class="modal-footer align-items-end {{[(!it.isWebInterface), 'd-none', 'd-flex']|ternary}}">
+            <div class="modal-footer align-items-end <%= (!isWebInterface ? 'd-none' : 'd-flex') %>">
                 <button type="button" class="btn btn-outline-info mr-auto"
                     id="modPlayerButtons-search" onclick="searchPlayer()">
                     <i class="icon-info"></i> Search
@@ -185,12 +188,12 @@
             </div>
             <div class="modal-body text-center" id="modChangePassword-body">
                 <div class="form-group row">
-                    {{@if(it.isTempPassword)}}
+                    <% if (isTempPassword) { %>
                         <script>const isTempPassword = true;</script>
                         <div class="col-sm-8 mx-auto">
                             <h5 class="text-danger mx-auto">Your account has a temporary password that needs to be changed.</h5>
                         </div>
-                    {{#else}}
+                    <% } else { %>
                         <div class="col-sm-8 mx-auto">
                             <label for="modChangePassword-oldPassword" class="col-sm-12 col-form-label">
                                 Enter your <b>current</b> password
@@ -201,7 +204,7 @@
                             </div>
                         </div>
                         <div class="col-sm-12" style="margin-top: 1.75em;"></div>
-                    {{/if}}
+                    <% } %>
 
 
                     <div class="col-sm-8 mx-auto">
@@ -245,11 +248,11 @@
         integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" 
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://unpkg.com/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
-    <script src="{{it.resourcePath}}js/coreui.bundle.min.js"></script>
-    <script src="{{it.resourcePath}}js/bootstrap-notify.min.js"></script>
-    <script src="{{it.resourcePath}}js/jquery-confirm.min.js"></script>
-    <script src="{{it.resourcePath}}js/txadmin/base.js"></script>
-    <script src="{{it.resourcePath}}js/txadmin/main.js"></script>
-    <script src="{{it.resourcePath}}js/txadmin/players.js"></script>
+    <script src="<%= resourcePath %>js/coreui.bundle.min.js"></script>
+    <script src="<%= resourcePath %>js/bootstrap-notify.min.js"></script>
+    <script src="<%= resourcePath %>js/jquery-confirm.min.js"></script>
+    <script src="<%= resourcePath %>js/txadmin/base.js"></script>
+    <script src="<%= resourcePath %>js/txadmin/main.js"></script>
+    <script src="<%= resourcePath %>js/txadmin/players.js"></script>
 </body>
 </html>

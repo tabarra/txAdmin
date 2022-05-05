@@ -2,21 +2,21 @@
 <html lang="en">
 
 <head>
-    <base href="{{it.basePath}}">
+    <base href="<%= basePath %>">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <meta name="description" content="txAdmin - remotely Manage & Monitor your GTA5 FiveM Server">
     <meta name="author" content="André Tabarra">
-    <title>{{it.headerTitle}}</title>
+    <title><%= headerTitle %></title>
     <!--style-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.0/css/simple-line-icons.min.css" 
         integrity="sha512-yxSQDoat2NPQ9U4mKdYra2YNenVsnRuGxVvyrirmrDKzwOdxKJVqkDEvQ17pL/PJ6B7n2n77Xm6d62bMjCBqCQ==" 
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="{{it.resourcePath}}css/coreui.min.css">
-    <link rel="stylesheet" href="{{it.resourcePath}}css/jquery-confirm.min.css">
-    <link rel="stylesheet" href="{{it.resourcePath}}css/txAdmin.css">
-    <link rel="stylesheet" href="{{it.resourcePath}}css/dark.css">
+    <link rel="stylesheet" href="<%= resourcePath %>css/coreui.min.css">
+    <link rel="stylesheet" href="<%= resourcePath %>css/jquery-confirm.min.css">
+    <link rel="stylesheet" href="<%= resourcePath %>css/txAdmin.css">
+    <link rel="stylesheet" href="<%= resourcePath %>css/dark.css">
     <link rel="shortcut icon" href="img/favicon_default.png" type="image/png" id="favicon" />
     <style>
         .zapAdContainer {
@@ -44,28 +44,28 @@
         }
     </style>
     <!-- injected consts -->
-    <script>{{it.jsInjection|safe}}</script>
+    <script><%- jsInjection %></script>
 </head>
 
-<body class="c-app {{it.uiTheme}}">
+<body class="c-app <%= uiTheme %>">
     <!-- Menu -->
     <div id="sidebar" class="c-sidebar c-sidebar-dark c-sidebar-fixed 
-        {{[it.isWebInterface, 'c-sidebar-lg-show', 'c-sidebar-show c-sidebar-minimized']|ternary}}">
-        {{@if(it.isWebInterface)}}
+        <%= (isWebInterface ? 'c-sidebar-lg-show' : 'c-sidebar-show c-sidebar-minimized') %>">
+        <% if (isWebInterface) { %>
             <div class="c-sidebar-brand d-md-down-none">
                 <a href="/">
                     <img class="c-sidebar-brand-full" src="img/txadmin.png" width="118" alt="txAdmin Logo">
                     <img class="c-sidebar-brand-minimized" src="img/tx.png" width="30" height="30" alt="txAdmin Logo">
                 </a>
             </div>
-        {{/if}}
-        <ul class="c-sidebar-nav" style="overflow: visible!important;">
+        <% } %>
+        <ul class="c-sidebar-nav">
             <li class="c-sidebar-nav-title font-size-larger">
-                Profile: {{it.serverProfile}}
+                Profile: <%= serverProfile %>
             </li>
 
             <li class="c-sidebar-nav-item">
-                <a class="c-sidebar-nav-link" href="{{it.basePath}}">
+                <a class="c-sidebar-nav-link" href="<%= basePath %>">
                     <svg class="c-sidebar-nav-icon">
                         <use href="img/coreui_icons.svg#cil-speedometer"></use>
                     </svg> Dashboard
@@ -156,7 +156,7 @@
                     </svg> Master Actions
                 </a>
             </li>
-            {{@if(it.showAdvanced)}}
+            <% if (showAdvanced) { %>
             <li class="c-sidebar-nav-item">
                 <a class="c-sidebar-nav-link text-warning" href="advanced">
                     <svg class="c-sidebar-nav-icon text-warning">
@@ -164,10 +164,10 @@
                     </svg> Advanced
                 </a>
             </li>
-            {{/if}}
+            <% } %>
 
             <!-- Sidebar footer -->
-            {{@if(it.isWebInterface)}}
+            <% if (isWebInterface) { %>
                 <li class="c-sidebar-nav-divider"></li>
                 <li class="c-sidebar-nav-title mt-auto">Host System Usage</li>
                 <li class="c-sidebar-nav-item px-3 d-compact-none c-d-minimized-none">
@@ -194,22 +194,22 @@
                     </div>
                     <small class="text-muted" id="hostusage-memory-text">loading...</small>
                 </li>
-            {{/if}}
+            <% } %>
 
             <!-- Zap Hosting Ad - Mobile -->
-            {{@if(it.dynamicAd)}}
+            <% if (dynamicAd) { %>
                 <li class="c-sidebar-nav-title d-lg-none" style="background-color: rgba(0, 0, 0, 0.178);">
-                    <a class="zapAdContainer" href="{{it.dynamicAd.linkMobile}}" target="_blank" rel="noopener noreferrer">
-                        <img class="zapLogo" alt="zap hosting" src="{{it.dynamicAd.logoDarkMode}}">
+                    <a class="zapAdContainer" href="<%= dynamicAd.linkMobile %>" target="_blank" rel="noopener noreferrer">
+                        <img class="zapLogo" alt="zap hosting" src="<%= dynamicAd.logoDarkMode %>">
                         <div class="zapText text-light">
-                            {{it.dynamicAd.text|safe}}
+                            <%- dynamicAd.text %>
                             <svg class="c-icon zapTextIcon">
                                 <use href="img/coreui_icons.svg#cil-external-link"></use>
                             </svg>
                         </div>
                     </a>
                 </li>
-            {{/if}}
+            <% } %>
 
         </ul>
         <button class="c-sidebar-minimizer c-class-toggler" type="button" data-target="_parent"
@@ -217,7 +217,7 @@
     </div>
 
     <!-- Player List -->
-    {{@if(it.isWebInterface)}}
+    <% if (isWebInterface) { %>
         <div class="c-sidebar c-sidebar-md c-sidebar-light c-sidebar-fixed 
             c-sidebar-right c-sidebar-xl-show playerlist-sidebar" id="plist">
             <div class="tab-pane" role="tabpanel">
@@ -240,26 +240,26 @@
                 </div>
             </div>
         </div>
-    {{/if}}
+    <% } %>
 
     <!-- Center Content -->
     <div class="c-wrapper c-fixed-components">
         <!-- Header -->
-        {{@if(it.isWebInterface)}}
+        <% if (isWebInterface) { %>
             <header class="c-header c-header-light c-header-fixed c-header-with-subheader">
                 <!-- Zap Hosting Ad - Desktop -->
-                {{@if(it.dynamicAd)}}
-                    <a class="zapAdContainer d-md-down-none" href="{{it.dynamicAd.linkDesktop}}" target="_blank" rel="noopener noreferrer">
-                        <img class="zapLogo show-dark-mode" alt="zap hosting" src="{{it.dynamicAd.logoDarkMode}}">
-                        <img class="zapLogo show-light-mode" alt="zap hosting" src="{{it.dynamicAd.logoLightMode}}">
+                <% if (dynamicAd) { %>
+                    <a class="zapAdContainer d-md-down-none" href="<%= dynamicAd.linkDesktop %>" target="_blank" rel="noopener noreferrer">
+                        <img class="zapLogo show-dark-mode" alt="zap hosting" src="<%= dynamicAd.logoDarkMode %>">
+                        <img class="zapLogo show-light-mode" alt="zap hosting" src="<%= dynamicAd.logoLightMode %>">
                         <div class="zapText attentionText">
-                            {{it.dynamicAd.text|safe}}
+                            <%- dynamicAd.text %>
                             <svg class="c-icon zapTextIcon">
                                 <use href="img/coreui_icons.svg#cil-external-link"></use>
                             </svg>
                         </div>
                     </a>
-                {{/if}}
+                <% } %>
 
                 <button class="c-header-toggler c-class-toggler d-lg-none mfe-auto" type="button" data-target="#sidebar"
                     data-class="c-sidebar-show">
@@ -285,9 +285,9 @@
                     <li class="c-header-nav-item dropdown">
                         <a class="c-header-nav-link" data-toggle="dropdown" href="#" role="button" aria-haspopup="true"
                             aria-expanded="false">
-                            <span class="d-md-down-none pr-2">{{it.adminUsername}} </span>
+                            <span class="d-md-down-none pr-2"><%= adminUsername %> </span>
                             <div class="c-avatar">
-                                <img class="c-avatar-img profile-pic" src="{{it.profilePicture}}" alt="{{it.adminUsername}}">
+                                <img class="c-avatar-img profile-pic" src="<%= profilePicture %>" alt="<%= adminUsername %>">
                             </div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right pt-0">
@@ -314,7 +314,7 @@
                     </svg>
                 </button>
             </header>
-        {{/if}}
+        <% } %> <%# end if(isWebInterface) %>
 
         <!-- Actual Body -->
         <div class="c-body">

@@ -2,19 +2,19 @@
 <html lang="en">
 
 <head>
-    <base href="{{it.basePath}}">
+    <base href="<%= basePath %>">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>txAdmin Login</title>
-    <meta name="description" content="Remotely Manage & Monitor your GTA5 FiveM Server with txAdmin v{{it.txAdminVersion}} atop FXServer {{it.fxServerVersion}}">
+    <meta name="description" content="Remotely Manage & Monitor your GTA5 FiveM Server with txAdmin v<%= txAdminVersion %> atop FXServer <%= fxServerVersion %>">
     <meta name="author" content="André Tabarra">
     <meta name="robots" content="noindex">
     <!-- Open Graph Meta Tags -->
     <meta property="og:url" content="https://github.com/tabarra/txAdmin">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="txAdmin - {{it.serverName}}">
-    <meta property="og:description" content="Remotely Manage & Monitor your GTA5 FiveM Server with txAdmin v{{it.txAdminVersion}} atop FXServer {{it.fxServerVersion}}">
+    <meta property="og:title" content="txAdmin - <%= serverName %>">
+    <meta property="og:description" content="Remotely Manage & Monitor your GTA5 FiveM Server with txAdmin v<%= txAdminVersion %> atop FXServer <%= fxServerVersion %>">
     <meta property="og:image" content="https://i.imgur.com/Z3S9q6J.png">
     <!--style-->
     <!-- <link rel="stylesheet" href="css/simple-line-icons.css"> -->
@@ -80,7 +80,7 @@
             font-size: 0.9rem !important;
         }
     </style>
-    {{@if(it.isMatrix)}}
+    <% if (isMatrix) { %>
         <style>
             * {
                 font-family: Consolas, monospace, serif;
@@ -123,6 +123,11 @@
                 border-top: 2px solid lawngreen;
             }
 
+            a {
+                color: lawngreen;
+                font-weight: 700;
+            }
+
             input,
             .btn-stack-overflow,
             .btn-linkedin,
@@ -135,16 +140,15 @@
                 -webkit-text-fill-color: #fff;
                 transition: background-color 5000s ease-in-out 0s;
             }
-
         </style>
-    {{/if}}
+    <% } %>
 
     <!-- injected consts -->
-    <script>{{it.jsInjection|safe}}</script>
+    <script><%- jsInjection %></script>
     
 </head>
 
-<body class="c-app flex-row align-items-center {{it.uiTheme}}">
+<body class="c-app flex-row align-items-center <%= uiTheme %>">
     <svg style="display:none">
         <symbol id="cfxre-icon" viewBox="51.12 12.29 1070.38 231.43">
             <g>
@@ -160,27 +164,27 @@
     <div class="container">
 
         <!-- Logo Row -->
-        {{@if(it.isWebInterface)}}
-            {{@if(it.isMatrix)}}
-                <div class="row justify-content-center mb-4"><pre><b>{{it.ascii}}</b></pre></div>
-            {{#else}}
+        <% if (isWebInterface) { %>
+            <% if (isMatrix) { %>
+                <div class="row justify-content-center mb-4"><pre><b><%= ascii %></b></pre></div>
+            <% } else { %>
                 <div class="row justify-content-center mb-4">
-                    <img src="{{it.logoURL}}" alt="txAdmin Logo">
+                    <img src="<%= logoURL %>" alt="txAdmin Logo">
                 </div>
-            {{/if}}
-        {{/if}}
+            <% } %>
+        <% } %>
 
         <!-- Card Row -->
         <div class="row justify-content-center">
             <div class="col-lg-5">
                 <div class="card ">
                     <div class="card-body text-center p-4">
-                        {{@if(it.template == 'justMessage')}}
-                            <h4 class="text-danger">{{it.errorTitle}}</h4>
-                            <p class="font-weight-bold">{{it.errorMessage}}</p>
+                        <% if (template === 'justMessage') { %>
+                            <h4 class="text-danger"><%= errorTitle %></h4>
+                            <p class="font-weight-bold"><%= errorMessage %></p>
                             <a href="auth" class="btn btn-primary px-4 mt-3" role="submit">Back</a>
-                        {{/if}}
-                        {{@if(it.template == 'noMaster')}}
+                        <% } %>
+                        <% if (template === 'noMaster') { %>
                             <h3 class="mb-4">No <code>Cfx.re</code> Account Linked</h3>
                             <div class="mx-auto">
                                 <h6>Type the PIN from your terminal and click "Link Account".</h6>
@@ -197,7 +201,7 @@
                                 </form>
                             </div>
                             <script>
-                                if(/^#\d{4}$/.test(window.location.hash)) {
+                                if (/^#\d{4}$/.test(window.location.hash)) {
                                     const label = document.getElementById('noMaster-autofill');
                                     const pinInput = document.getElementById('noMaster-pin');
 
@@ -210,13 +214,14 @@
                                     }
                                 }
                             </script>
-                        {{/if}}
-                        {{@if(it.template == 'callback')}}
-                            <img class="profile-pic" src="{{it.addMaster_picture}}" alt="avatar">
-                            <h5 class="mt-2 mb-3 text-muted">{{it.addMaster_name}}</h5>
+                        <% } %>
+                        <% if (template === 'callback') { %>
+                            <img class="profile-pic" src="<%= addMaster_picture %>" alt="avatar">
+                            <h5 class="mt-2 mb-3 text-muted"><%= addMaster_name %></h5>
 
-                            <h5>Type in the <i>backup</i> password:</h5>
-                            <form action="/auth/addMaster/save" method="post">
+                            <h5>Create <i>backup</i> password:</h5>
+                            <span class="text-muted">You will be able to login using this password in case the connection with Cfx.re's auth provider fails.</span>
+                            <form action="/auth/addMaster/save" method="post" class="mt-2">
                                 <div class="input-group mb-2 mx-auto" style="max-width: 280px;">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">
@@ -238,11 +243,24 @@
                                 <span class="form-text text-muted mb-4">
                                     Must be between 6 and 24 characters.
                                 </span>
-                                <button class="btn btn-primary px-4" type="submit">Save</button>
+
+                                <div class="input-group mx-auto mb-2" style="max-width: 280px;">
+                                    <div class="form-check">
+                                        <input class="form-check-input" name="checkboxAcceptToS" id="checkboxAcceptToS" type="checkbox" required>
+                                        <label class="form-check-label" for="checkboxAcceptToS">
+                                            I have read and agree to the
+                                            <a href="https://fivem.net/terms" target="_blank" rel="noopener noreferrer">Cfx.re ToS</a>
+                                            as well as the
+                                            <a href="https://github.com/tabarra/txAdmin/blob/master/LICENSE" target="_blank" rel="noopener noreferrer">txAdmin License</a>.
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button class="btn btn-primary px-4" id="btnCreateMaster" type="submit" disabled>Create Master Account</button>
                             </form>
                             <script>
-                                let password = document.getElementById("password")
-                                let password2 = document.getElementById("password2");
+                                const password = document.getElementById("password");
+                                const password2 = document.getElementById("password2");
                                 function validatePassword(){
                                     if(password.value != password2.value) {
                                         password2.setCustomValidity("Passwords Don't Match");
@@ -252,20 +270,27 @@
                                 }
                                 password.onchange = validatePassword;
                                 password2.onkeyup = validatePassword;
+
+                                const checkboxAcceptToS = document.getElementById("checkboxAcceptToS");
+                                const btnCreateMaster = document.getElementById("btnCreateMaster");
+                                checkboxAcceptToS.onchange = () => {
+                                    btnCreateMaster.disabled = !checkboxAcceptToS.checked;
+                                }
                             </script>
-                        {{/if}}
-                        {{@if(it.template == 'normal')}}
+                        <% } %>
+                        <% if (template === 'normal') { %>
                             <h1 class="mb-3">Login</h1>
-                            {{@if(it.isWebInterface)}}
-                                <a class="btn cfxrebtn {{it.citizenfxDisabled|isDisabled}}"
-                                    role="button" href="auth/citizenfx/redirect">
+                            <% if (isWebInterface) { %>
+                                <a class="btn cfxrebtn<%= citizenfxDisabled ? ' disabled' : '' %>"
+                                   role="button" href="auth/citizenfx/redirect">
                                     <i class="cfxrelogo"><svg><use href="#cfxre-icon"></use></svg></i>
                                 </a>
-                            {{#else}}
+                            <% } else { %>
                                 <h5 class="text-secondary">
                                     Automatic login failed, re-open the menu or login using your username/password below.
                                 </h5>
-                            {{/if}}
+                            <% } %>
+                        
                             <div class="hrsep">OR</div>
 
                             <form action="auth/password" method="post">
@@ -289,13 +314,13 @@
                                     <button class="btn btn-primary px-4" type="submit">Login</button>
                                 </div>
                             </form>
-                        {{/if}}
+                        <% } %>
                     </div>
-                    {{@if(it.message && it.template != 'justMessage')}}
+                    <% if (message && template !== 'justMessage') { %>
                         <div class="card-footer text-center text-danger">
-                            <strong>{{it.message}}</strong>
+                            <strong><%= message %></strong>
                         </div>
-                    {{/if}}
+                    <% } %>
                 </div>
             </div>
         </div>
@@ -311,30 +336,30 @@
                         </a>
                     </h5>
                     
-                    {{@if(it.dynamicAd)}}
+                    <% if (dynamicAd) { %>
                         <div class="hrsep hrsep-small">Ad</div>
-                        <a class="zapAdContainer" href="{{it.dynamicAd.link}}" target="_blank" rel="noopener noreferrer">
-                            <img class="zapLogo show-dark-mode" alt="zap hosting" src="{{it.dynamicAd.logoDarkMode}}">
-                            <img class="zapLogo show-light-mode" alt="zap hosting" src="{{it.dynamicAd.logoLightMode}}">
+                        <a class="zapAdContainer" href="<%= dynamicAd.link %>" target="_blank" rel="noopener noreferrer">
+                            <img class="zapLogo show-dark-mode" alt="zap hosting" src="<%= dynamicAd.logoDarkMode %>">
+                            <img class="zapLogo show-light-mode" alt="zap hosting" src="<%= dynamicAd.logoLightMode %>">
                             <div class="zapText attentionText">
-                                {{it.dynamicAd.text|safe}}
+                                <%- dynamicAd.text %>
                                 <svg class="c-icon zapTextIcon">
                                     <use href="img/coreui_icons.svg#cil-external-link"></use>
                                 </svg>
                             </div>
                         </a>
-                    {{/if}}
+                    <% } %>
 
                     <div class="hrsep hrsep-small">Info</div>
                     <div class="text-muted">
-                        <strong>Server profile:</strong> {{it.serverProfile}} <br>
-                        <strong>txAdmin version:</strong> {{it.txAdminVersion}} <br>
-                        <strong>FXServer build:</strong> {{it.fxServerVersion}} 
+                        <strong>Server profile:</strong> <%= serverProfile %> <br>
+                        <strong>txAdmin version:</strong> <%= txAdminVersion %> <br>
+                        <strong>FXServer build:</strong> <%= fxServerVersion %> 
                     </div>
                 </div>
 
                 <!-- Dark/Light mode toggle -->
-                {{@if(it.isWebInterface)}}
+                <% if (isWebInterface) { %>
                     <div style="text-align: center">
                         <svg class="c-sidebar-nav-icon d-none" id="darkToggleLight">
                             <use href="img/coreui_icons.svg#cil-sun"></use>
@@ -343,25 +368,24 @@
                             <use href="img/coreui_icons.svg#cil-moon"></use>
                         </svg>
                     </div>
-                {{/if}}
+                <% } %>
             </div>
         </div>
-        {{@if(it.isMatrix)}}
+        <% if (isMatrix) { %>
             <div class="row justify-content-center">
                 <div class="col-md-4 text-center pt-3">
                     <h4>The Matrix has you...</h4>
                 </div>
             </div>
-        {{/if}}
-
-
+        <% } %>
     </div>
+    
     <!-- CoreUI and necessary plugins-->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" 
         integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" 
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="{{it.resourcePath}}js/coreui.bundle.min.js"></script>
-    <script src="{{it.resourcePath}}js/txadmin/base.js"></script>
+    <script src="<%= resourcePath %>js/coreui.bundle.min.js"></script>
+    <script src="<%= resourcePath %>js/txadmin/base.js"></script>
     <script>
         window.history.pushState(null, 'txAdmin', '/auth');
     </script>

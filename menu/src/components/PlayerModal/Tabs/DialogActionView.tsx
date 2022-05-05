@@ -29,6 +29,9 @@ const useStyles = makeStyles({
     columnGap: 10,
     rowGap: 10,
     paddingBottom: 15,
+    "& button": {
+      wordBreak: "break-all"
+    }
   },
   tooltipOverride: {
     fontSize: 12,

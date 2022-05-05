@@ -5,7 +5,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const returnJustMessage = (ctx, errorTitle, errorMessage) => {
-    return ctx.utils.render('login', {template: 'justMessage', errorTitle, errorMessage});
+    return ctx.utils.render('login', { template: 'justMessage', errorTitle, errorMessage });
 };
 
 /**
@@ -62,7 +62,7 @@ async function handlePin(ctx) {
     if (ctx.request.body.pin !== globals.adminVault.addMasterPin) {
         logWarn(`Wrong PIN for from: ${ctx.ip}`);
         const message = 'Wrong PIN.';
-        return ctx.utils.render('login', {template: 'noMaster', message});
+        return ctx.utils.render('login', { template: 'noMaster', message });
     }
 
     //Make sure the session is initialized
@@ -170,6 +170,14 @@ async function handleSave(ctx) {
         return returnJustMessage(
             ctx,
             'Invalid Password.',
+        );
+    }
+
+    //Checking if ToS/License accepted
+    if (ctx.request.body.checkboxAcceptToS !== 'on') {
+        return returnJustMessage(
+            ctx,
+            'You are required to accept the Terms of Service and License to proceed.',
         );
     }
 

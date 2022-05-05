@@ -1,5 +1,4 @@
-{{@include("header", it)/}}
-
+<%- await include('basic/header.html', locals) %>
 
 <div class="text-center mb-4">
     <h2>Message</h2>
@@ -8,14 +7,14 @@
 <div class="row justify-content-md-center">
     <div class="col-md-6">
         <div class="alert alert-warning text-center" role="alert">
-            {{it.message|safe}}
+            <%- message %>
         </div>
     </div>
 </div>
 
-
-{{@include("footer", it)/}}
-
 <script>
     window.history.pushState(null, 'txAdmin', '/');
 </script>
+
+
+<%- await include('basic/footer.html', locals) %>

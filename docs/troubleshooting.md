@@ -9,7 +9,7 @@ When executing txAdmin, it might show you some errors. Example of an [error](htt
 If you get `cannot read file`, it means the admin file `txData/admins.json` doesn't exist or txAdmin doesn't have permission to read it.  
 Any other error message means you somehow broke the admins file, delete it and restart txAdmin to generate a new one.
 
-### [txAdmin:ConfigVault] Error: Unnable to load configuration file `txData/<profile>/config.json`
+### [txAdmin:ConfigVault] Error: Unable to load configuration file `txData/<profile>/config.json`
 The selected profile (or `default`) cannot be loaded due to permission issues (eg file owned by the root account), or due to broken JSON.
 
 ## Problems starting the server
