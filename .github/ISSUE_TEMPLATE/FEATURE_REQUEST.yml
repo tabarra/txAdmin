@@ -1,7 +1,7 @@
 ---
 name: Feature Request
 description: Request a feature or enhancement
-title: "[Feature]: <short description>"
+title: "[FEATURE]: type here a short description"
 labels: [enhancement, feature]
 
 body:
@@ -15,6 +15,7 @@ body:
   attributes:
     label: Scope
     description: What part of txAdmin is this feature targeting?
+    multiple: true
     options:
       - Web
       - In-Game Menu
