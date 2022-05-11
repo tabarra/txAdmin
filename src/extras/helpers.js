@@ -152,7 +152,7 @@ function resolveCFGFilePath(cfgPath, serverDataPath) {
 function getFXServerPort(rawCfgFile) {
     if (!xss) xss = require('./xss')();
 
-    const endpointsRegex = /^\s*endpoint_add_(\w+)\s+["']?([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}):([0-9]{1,5})["']?.*$/gim;
+    const endpointsRegex = /^\s*endpoint_add_(\w+)\s+["']?((([0-9]{1,3}\.){3}[0-9]{1,3})|\[(([0-9a-f]{1,4}\:){7}[0-9a-f]{1,4})\]|\[((([0-9a-f]{1,4}(:)?)*::([0-9a-f]{1,4}(:)?)*))\])\:([0-9]{1,5})["']?.*$/gim;
     const maxClientsRegex = /^\s*sv_maxclients\s+(\d+).*$/gim;
     const txResCommandsRegex = /^\s*(start|stop|ensure|restart)\s+(monitor|txadmin).*$/gim;
     const endpoints = [];
@@ -234,7 +234,7 @@ function getFXServerPort(rawCfgFile) {
         if (invalidInterface) throw new Error(`invalid interface '${invalidInterface.iface}'.<br>\n${stdMessage}`);
     } else {
         const validTCPEndpoint = endpoints.find((match) => {
-            return (match.type === 'tcp' && (match.iface === '0.0.0.0' || match.iface === '127.0.0.1'));
+            return (match.type === 'tcp' && (match.iface === '0.0.0.0' || match.iface === '[::]' || match.iface === '127.0.0.1'));
         });
         if (!validTCPEndpoint) throw new Error('You MUST have one <code>endpoint_add_tcp</code> with IP 0.0.0.0 in your config');
     }
