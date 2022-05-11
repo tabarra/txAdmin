@@ -234,7 +234,7 @@ function getFXServerPort(rawCfgFile) {
         if (invalidInterface) throw new Error(`invalid interface '${invalidInterface.iface}'.<br>\n${stdMessage}`);
     } else {
         const validTCPEndpoint = endpoints.find((match) => {
-            return (match.type === 'tcp' && (match.iface === '0.0.0.0' || match.iface === '[::]' || match.iface === '127.0.0.1'));
+            return (match.type === 'tcp' && (match.iface === '0.0.0.0' || match.iface === '127.0.0.1' || match.iface === '[::]' || match.iface === '[::1]'));
         });
         if (!validTCPEndpoint) throw new Error('You MUST have one <code>endpoint_add_tcp</code> with IP 0.0.0.0 in your config');
     }
