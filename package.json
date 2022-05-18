@@ -17,7 +17,8 @@
     "locale:rebase": "node locale/_utils.js rebase",
     "locale:diff": "node locale/_utils.js diff",
     "test": "bash test_build.sh",
-    "rebuild-native-modules": "electron-rebuild -f"
+    "rebuild-native-modules": "electron-rebuild -f",
+    "postinstall": "echo \"TODO\""
   },
   "repository": {
     "type": "git",
