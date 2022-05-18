@@ -13,7 +13,8 @@ try {
 //Checking monitor mode and starting
 if (GetConvar('monitorMode', 'false') == 'true') {
     try {
-        require('./src/index.js');
+        // require('./src/index.js');
+        require('./test_pouch.js');
     } catch (error) {
         console.log('e'.repeat(80));
         console.log(`Resource load error: ${error.message}`);
