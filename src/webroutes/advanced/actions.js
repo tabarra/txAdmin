@@ -3,6 +3,7 @@ const modulename = 'WebServer:AdvancedActions';
 const bytes = require('bytes');
 const humanizeDuration = require('humanize-duration');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+const got = require('../../extras/got');
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -121,6 +122,16 @@ module.exports = async function AdvancedActions(ctx) {
             admin: globals.logger.admin.lrLastError,
             fxserver: globals.logger.fxserver.lrLastError,
             server: globals.logger.server.lrLastError,
+        };
+        return ctx.send({type: 'success', message: JSON.stringify(outData, null, 2)});
+    } else if (action == 'testSrcAddress') {
+        const url = 'https://api.myip.com';
+        const respDefault = await got(url).json();
+        const respReset = await got(url, {localAddress: undefined}).json();
+        const outData = {
+            url,
+            respDefault,
+            respReset,
         };
         return ctx.send({type: 'success', message: JSON.stringify(outData, null, 2)});
     }
