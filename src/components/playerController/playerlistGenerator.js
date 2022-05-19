@@ -1,7 +1,7 @@
 //Requires
 const modulename = 'PlayerlistGenerator';
-const got = require('got');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+const got = require('../../extras/got');
 
 //Helpers
 const randIndex = (arr) => Math.floor(Math.random() * arr.length);
@@ -31,20 +31,20 @@ module.exports = class PlayerlistGenerator {
         //Starting data
         this.indexes = [0, 1, 2, 3, 4, 5, 6, 7];
         this.playerlist = [];
-        const refreshFunc = (GlobalData.debugExternalSource) ? this.refreshPlayersExternal.bind(this) : this.refreshPlayersStatic.bind(this);
+        const refreshFunc = (GlobalData.debugExternalSource)
+            ? this.refreshPlayersExternal.bind(this)
+            : this.refreshPlayersStatic.bind(this);
 
         //Cron functions
         refreshFunc();
-        setInterval(() => {
-            refreshFunc();
-        }, this.config.refreshInterval);
+        setInterval(refreshFunc, this.config.refreshInterval);
     }
 
 
     //================================================================
     async refreshPlayersExternal() {
         try {
-            this.playerlist = await got(`http://${GlobalData.debugExternalSource}/players.json`, {timeout: 1500}).json();
+            this.playerlist = await got(`http://${GlobalData.debugExternalSource}/players.json`).json();
         } catch (error) {
             logError(`External source failed: ${error.message}`);
         }
@@ -72,7 +72,7 @@ module.exports = class PlayerlistGenerator {
         //Update player's pings
         out.forEach((p) => {
             let newPing = p.ping + parseInt(Math.random() * 40) - 20;
-            p.ping  = (newPing > 10) ? newPing : 10;
+            p.ping = (newPing > 10) ? newPing : 10;
         });
 
         //Sets playerlist

@@ -1,8 +1,8 @@
 //Requires
 const modulename = 'StatsCollector';
 const fs = require('fs-extra');
-const got = require('got');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+const got = require('../../extras/got');
 const { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } = require('./statsUtils.js');
 // const TimeSeries = require('./timeSeries'); //NOTE: may still use for the player counter
 
@@ -143,7 +143,7 @@ module.exports = class StatsCollector {
 
         //Get performance data
         const sourceURL = (GlobalData.debugExternalSource) ? GlobalData.debugExternalSource : globals.fxRunner.fxServerHost;
-        const currPerfRaw = await got(`http://${sourceURL}/perf/`, {timeout: 1500}).text();
+        const currPerfRaw = await got(`http://${sourceURL}/perf/`).text();
         const currPerfData = parsePerf(currPerfRaw);
         if (
             !validatePerfThreadData(currPerfData.svSync)

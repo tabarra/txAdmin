@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'WebServer:updateChecker';
-const axios = require('axios');
+const got = require('../extras/got');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
 //Helpers
@@ -21,25 +21,24 @@ module.exports = async () => {
         const osTypeApiUrl = (GlobalData.osType == 'windows') ? 'win32' : 'linux';
         const cacheBuster = Math.floor(now() / 5e3);
         const reqUrl = `https://changelogs-live.fivem.net/api/changelog/versions/${osTypeApiUrl}/server?${cacheBuster}`;
-        const changelogReq = await axios.get(reqUrl);
+        const fxsVersions = await got.get(reqUrl).json();
 
         //check response
-        if (!changelogReq.data) throw new Error('request failed');
-        const changelog = changelogReq.data;
-        if (anyUndefined(changelog.recommended, changelog.optional, changelog.latest, changelog.critical)) {
+        if (typeof fxsVersions !== 'object') throw new Error('request failed');
+        if (anyUndefined(fxsVersions.recommended, fxsVersions.optional, fxsVersions.latest, fxsVersions.critical)) {
             throw new Error('expected values not found');
         }
-        if (GlobalData.verbose) log(`Checked for updates. Latest version is ${changelog.latest}`);
+        if (GlobalData.verbose) log(`Checked for updates. Latest version is ${fxsVersions.latest}`);
         //FIXME: CHECK FOR BROKEN ORDER
 
         //fill in databus
         const osTypeRepoUrl = (GlobalData.osType == 'windows') ? 'server_windows' : 'proot_linux';
         globals.databus.updateChecker = {
             artifactsLink: `https://runtime.fivem.net/artifacts/fivem/build_${osTypeRepoUrl}/master/?${cacheBuster}`,
-            recommended: parseInt(changelog.recommended),
-            optional: parseInt(changelog.optional),
-            latest: parseInt(changelog.latest),
-            critical: parseInt(changelog.critical),
+            recommended: parseInt(fxsVersions.recommended),
+            optional: parseInt(fxsVersions.optional),
+            latest: parseInt(fxsVersions.latest),
+            critical: parseInt(fxsVersions.critical),
         };
     } catch (error) {
         if (GlobalData.verbose) logWarn(`Failed to retrieve FXServer update data with error: ${error.message}`);

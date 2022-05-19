@@ -1,8 +1,8 @@
 //Requires
 const modulename = 'DynamicAds';
-const got = require('got');
 const xss = require('xss');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+const got = require('../extras/got');
 const defaultAds = require('../../dynamicAds.json');
 
 //Helper
