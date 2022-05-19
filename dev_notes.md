@@ -43,6 +43,24 @@ Quando terminar de importar as traduções:
 
 
 
+
+
+
+- BUG: nui menu triggered announcements are not sent to the discord
+
+
+Update event idea:
+- A box similar to the fxserver update one;
+- The major/minor updates will have a discord stage event, patches won't;
+- Will get the next event date + type (major/minor) through some api (maybe a regex-able string in the GH releases page);
+- The pre-event notifications will have a live "in xx time" type countdown
+- 2 days before it will show a yellow warning;
+- 1 hour before it will become a green box (glowing??)
+- 1 hour after the event start it will become a red update box with generic message, or blue if it's just a patch;
+
+
+
+
 Change pls the expired ban color to red or something else, because the must people dont know if the ban now expired or be revoked
 
 
@@ -78,6 +96,15 @@ FIXME: sendMenuMessage('setServerCtx', ServerCtx)
 FIXME: quando o menu abrir, deveria voltar os list item pro default deles
 
 -- Adapt `txAdmin:beta:deathLog` as well as add cusstom commands and logs
+
+
+refactor settings:
+- save only what changed
+- make big settings a class (like TFR)
+- settings.getConfig(); - returns the full config tree with unset props as null
+- settings.get('object.dot.notation');
+- settings.set('object.dot.notation');
+- npm search for "object dot"
 
 
 
@@ -122,6 +149,44 @@ remover o \s?
 
 
 -- Why both have the same debug data? https://i.imgur.com/WGawiyr.png
+
+
+
+
+
+
+
+### New database alternatives:
+> check the chat saved messages on that chat
+- Via lowdb + journal:
+    - Keep players saved the way it is (lowdb, one server only)
+    - create `txData/actions.json` which is an append-only, line delimited json
+    - multiple servers write to this file, use debounced chokidar to read it starting from last offset to reload in-memory state;
+- Via sqlite:
+    - first txadmin to run will instantiate a `txData/actions.sqlite` database (becoming master)
+    - will provide an http endpoint for the slaves to query data
+    - leader election can be done via the first to acquire a lock on a file
+- Via external server process
+    - If server is not running, a standalone server like cockroachdb or rqlite
+    - 
+
+Ideas:
+- Maybe we could use b-trees to index identifiers/hwids somewhere?
+- Maybe we break the separation between players and identifiers, and bans/warns always try to find the respective player
+- Maybe we could go full `mongod.exe`
+    - very mature, great docs
+    - 45mb file, 120mb process
+    - to search for ids we can do `{identifiers: {$in: ['discord:xxxxx', 'fivem:yyyyy']}}`
+
+Databases that i didn't check yet:
+https://github.com/indradb/indradb
+https://github.com/erikgrinaker/toydb
+https://github.com/skytable/skytable
+https://github.com/meilisearch/meilisearch
+https://github.com/redwood/redwood
+https://github.com/arangodb/arangodb
+https://github.com/duckdb/duckdb
+
 
 
 

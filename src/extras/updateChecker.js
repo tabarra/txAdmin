@@ -12,7 +12,11 @@ const anyUndefined = (...args) => { return [...args].some((x) => (typeof x === '
     Create an page with the changelog, that queries for the following endpoint and caches it for 15 minutes:
         https://changelogs-live.fivem.net/api/changelog/versions/2385/2375?tag=server
     Maybe even grab the data from commits:
-        https://changelogs-live.fivem.net/api/changelog/versions/2077
+        https://changelogs-live.fivem.net/api/changelog/versions/5562
+    Other relevant apis:
+        https://changelogs-live.fivem.net/api/changelog/versions/win32/server? (the one being used below)
+        https://changelogs-live.fivem.net/api/changelog/versions
+        https://api.github.com/repos/tabarra/txAdmin/releases (changelog in [].body)
 */
 
 module.exports = async () => {

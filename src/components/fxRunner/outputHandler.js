@@ -60,7 +60,7 @@ module.exports = class OutputHandler {
             if (channel == 'citizen-server-impl' && data.type == 'watchdog_bark') {
                 try {
                     deferError(`Detected FXServer thread ${data.thread} hung with stack:`);
-                    deferError(`\t${data.stack}`);
+                    deferError(`\t${data.stack}`); //TODO: add to diagnostics page
                     deferError('Please check the resource above to prevent further hangs.');
                 } catch (e) {}
                 return;

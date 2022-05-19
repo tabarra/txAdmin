@@ -8,10 +8,6 @@ const getHostStats = require('./getHostStats');
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000); };
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
-const escape = (x) => {return x.replace(/"/g, '\uff02');};
-const formatCommand = (cmd, ...params) => {
-    return `${cmd} "` + [...params].map(escape).join('" "') + '"';
-};
 
 module.exports = class Monitor {
     constructor(config) {
@@ -177,7 +173,7 @@ module.exports = class Monitor {
 
     //================================================================
     /**
-     * Check cooldown and Restart the FXServer
+     * Restart the FXServer and logs everything
      * @param {string} reason
      * @param {string} reasonTranslated
      */
