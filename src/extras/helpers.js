@@ -260,7 +260,7 @@ function findLikelyCFGPath(serverDataPath) {
 
     for (const attempt of attempts) {
         const cfgPath = path.join(serverDataPath, attempt);
-        console.log(cfgPath);
+
         try {
             getCFGFileData(cfgPath);
             return cfgPath;
