@@ -14,7 +14,6 @@ import {
   DirectionsWalk,
   DriveEta,
   LiveHelp,
-  MoreVert,
   TwoWheeler,
   Flight,
 } from "@mui/icons-material";
@@ -29,9 +28,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     padding: 20,
     borderRadius: 10,
     cursor: "pointer",
-    '&:hover': {
+    "&:hover": {
       backgroundColor: "#35393C",
-   },
+    },
   },
   barBackground: {
     background: theme.palette.primary.dark,
@@ -108,7 +107,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
   return (
     <Box p={1}>
       <div onClick={handlePlayerClick}>
-        <Paper className={classes.paper} >
+        <Paper className={classes.paper}>
           <Box display="flex" alignItems="center" pb="5px">
             <Box flexGrow={1} display="flex" overflow="hidden">
               <Tooltip
@@ -147,7 +146,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
                   variant="subtitle1"
                   color="textPrimary"
                 >
-                  {playerData.admin && '🛡️'} {playerData.name}
+                  {playerData.admin && "🛡️"} {playerData.name}
                 </Typography>
               </Tooltip>
               <Typography

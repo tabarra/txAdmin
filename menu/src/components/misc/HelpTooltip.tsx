@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FunctionComponent, ReactNode } from "react";
 import { Fade, Theme, Tooltip, Typography } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 
@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme: Theme) => ({
     transformOrigin: "bottom",
     animationIterationCount: "infinite",
     animationDuration: "2s",
-    animationName: "$bounce-tool-tip",
     animationTimingFunction: "ease",
   },
   arrow: {
@@ -32,7 +31,11 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export const HelpTooltip: React.FC = ({ children }) => {
+interface HelpTooltipProps {
+  children: ReactNode;
+}
+
+export const HelpTooltip: React.FC<HelpTooltipProps> = ({ children }) => {
   const classes = useStyles();
   const { tooltipText, tooltipOpen } = useTooltip();
 

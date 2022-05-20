@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Box,
   Dialog,
@@ -11,8 +10,8 @@ import {
   ListItemIcon,
   Theme,
   CircularProgress,
+  styled,
 } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
 import {
   Close,
   Person,
@@ -28,6 +27,8 @@ import { DialogBaseView } from "./Tabs/DialogBaseView";
 import { PlayerModalErrorBoundary } from "./ErrorHandling/PlayerModalErrorBoundary";
 import { usePermissionsValue } from "../../state/permissions.state";
 import { userHasPerm } from "../../utils/miscUtils";
+import { makeStyles } from "@mui/styles";
+import React from "react";
 
 const LoadingModal: React.FC = () => (
   <Box
@@ -41,16 +42,13 @@ const LoadingModal: React.FC = () => (
   </Box>
 );
 
-const useStyles = makeStyles((theme: Theme) => ({
-  closeButton: {
-    position: "absolute",
-    top: theme.spacing(1),
-    right: theme.spacing(2),
-  },
+const StyledCloseButton = styled(IconButton)(({ theme }) => ({
+  position: "absolute",
+  top: theme.spacing(1),
+  right: theme.spacing(2),
 }));
 
 const PlayerModal: React.FC = () => {
-  const classes = useStyles();
   const { setModalOpen, isModalOpen } = usePlayerModalContext();
   const assocPlayer = useAssociatedPlayerValue();
   const theme = useTheme();
@@ -79,9 +77,9 @@ const PlayerModal: React.FC = () => {
     >
       <DialogTitle style={{ borderBottom: "1px solid rgba(221,221,221,0.54)" }}>
         [{assocPlayer.id}] {assocPlayer.name}
-        <IconButton onClick={handleClose} className={classes.closeButton} size="large">
+        <StyledCloseButton onClick={handleClose} size="large">
           <Close />
-        </IconButton>
+        </StyledCloseButton>
       </DialogTitle>
       <Box display="flex" px={2} pb={2} pt={2} flexGrow={1} overflow="hidden">
         <PlayerModalErrorBoundary>

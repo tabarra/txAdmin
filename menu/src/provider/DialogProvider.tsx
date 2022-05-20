@@ -2,6 +2,7 @@ import React, {
   ChangeEvent,
   createContext,
   ReactEventHandler,
+  ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -20,7 +21,7 @@ import {
   Theme,
   useTheme,
 } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
+import makeStyles from "@mui/styles/makeStyles";
 import { Create } from "@mui/icons-material";
 import { useKeyboardNavContext } from "./KeyboardNavProvider";
 import { useSnackbar } from "notistack";
@@ -60,19 +61,22 @@ const defaultDialogState = {
   title: "Dialog Title",
 };
 
-export const DialogProvider: React.FC = ({ children }) => {
+interface DialogProviderProps {
+  children: ReactNode;
+}
+
+export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
   const classes = useStyles();
   const theme = useTheme();
-  const [canSubmit, setCanSubmit] = useState(true)
+  const [canSubmit, setCanSubmit] = useState(true);
 
   const setDisableTabs = useSetDisableTab();
   const { setDisabledKeyNav } = useKeyboardNavContext();
   const setListenForExit = useSetListenForExit();
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogProps, setDialogProps] = useState<InputDialogProps>(
-    defaultDialogState
-  );
+  const [dialogProps, setDialogProps] =
+    useState<InputDialogProps>(defaultDialogState);
   const [dialogInputVal, setDialogInputVal] = useState<string>("");
   const { enqueueSnackbar } = useSnackbar();
   const curPage = usePageValue();
@@ -92,11 +96,11 @@ export const DialogProvider: React.FC = ({ children }) => {
       });
     }
 
-    if (!canSubmit) return
+    if (!canSubmit) return;
 
     dialogProps.onSubmit(dialogInputVal);
 
-    setCanSubmit(false)
+    setCanSubmit(false);
 
     setListenForExit(true);
     setDialogOpen(false);
@@ -121,8 +125,8 @@ export const DialogProvider: React.FC = ({ children }) => {
   // We reset default state after the animation is complete
   const handleOnExited = () => {
     setDialogProps(defaultDialogState);
-    setCanSubmit(true)
-    setDialogInputVal('')
+    setCanSubmit(true);
+    setDialogInputVal("");
   };
 
   return (
@@ -138,7 +142,7 @@ export const DialogProvider: React.FC = ({ children }) => {
         open={dialogOpen}
         fullWidth
         TransitionProps={{
-          onExited: handleOnExited
+          onExited: handleOnExited,
         }}
         PaperProps={{
           style: {
@@ -158,7 +162,7 @@ export const DialogProvider: React.FC = ({ children }) => {
           <DialogContent>
             <DialogContentText>{dialogProps.description}</DialogContentText>
             <TextField
-              sx={{pt: 1}}
+              sx={{ pt: 1 }}
               variant="standard"
               autoFocus
               fullWidth

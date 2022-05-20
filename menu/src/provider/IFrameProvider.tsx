@@ -1,5 +1,6 @@
 import React, {
   createContext,
+  ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -8,7 +9,6 @@ import React, {
 } from "react";
 import { txAdminMenuPage, usePage } from "../state/page.state";
 import { useIsMenuVisibleValue } from "../state/visibility.state";
-import { usePermissionsValue } from "../state/permissions.state";
 
 const iFrameCtx = createContext(null);
 
@@ -32,8 +32,12 @@ export const BASE_IFRAME_PATH = "https://monitor/WebPipe";
 
 export const useIFrameCtx = () => useContext<iFrameContextValue>(iFrameCtx);
 
+interface IFrameProviderProps {
+  children: ReactNode;
+}
+
 // This allows for global control of the iFrame from other components
-export const IFrameProvider: React.FC = ({ children }) => {
+export const IFrameProvider: React.FC<IFrameProviderProps> = ({ children }) => {
   const [curFramePg, setCurFramePg] = useState<ValidPath | null>(null);
   const [menuPage, setMenuPage] = usePage();
   const isMenuVisible = useIsMenuVisibleValue();
@@ -69,9 +73,10 @@ export const IFrameProvider: React.FC = ({ children }) => {
     console.log("Data received from child:", data);
   }, []);
 
-  const fullFrameSrc = useMemo(() => BASE_IFRAME_PATH + curFramePg, [
-    curFramePg,
-  ]);
+  const fullFrameSrc = useMemo(
+    () => BASE_IFRAME_PATH + curFramePg,
+    [curFramePg]
+  );
 
   return (
     <iFrameCtx.Provider
