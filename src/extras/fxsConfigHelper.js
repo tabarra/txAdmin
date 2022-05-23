@@ -13,20 +13,20 @@ const { dir, log, logOk, logWarn, logError } = require('./console')();
  * @returns 
  */
 const detectNewline = (string) => {
-	if (typeof string !== 'string') {
-		throw new TypeError('Expected a string');
-	}
+    if (typeof string !== 'string') {
+        throw new TypeError('Expected a string');
+    }
 
-	const newlines = string.match(/(?:\r?\n)/g) || [];
+    const newlines = string.match(/(?:\r?\n)/g) || [];
 
-	if (newlines.length === 0) {
-		return;
-	}
+    if (newlines.length === 0) {
+        return;
+    }
 
-	const crlf = newlines.filter(newline => newline === '\r\n').length;
-	const lf = newlines.length - crlf;
+    const crlf = newlines.filter(newline => newline === '\r\n').length;
+    const lf = newlines.length - crlf;
 
-	return crlf > lf ? '\r\n' : '\n';
+    return crlf > lf ? '\r\n' : '\n';
 }
 
 
@@ -475,39 +475,54 @@ const ensureSaveServerConfig = async (cfgInputString, cfgPath, serverDataPath) =
     }
 
     //Commenting out lines or registering them as warnings
+    let wasEntrypointModified = false;
     for (const targetCfgPath in toCommentOut.store) {
         const actions = toCommentOut.store[targetCfgPath];
         try {
-            const cfgRaw = await fsp.readFile(targetCfgPath, 'utf8');
+            //If cfgInputString was provided and this action applies to the entry point file, use the cfgInputString instead of reading the file
+            if (cfgInputString && targetCfgPath === cfgAbsolutePath) {
+                wasEntrypointModified = true;
+                cfgRaw = cfgInputString;
+            } else {
+                cfgRaw = await fsp.readFile(targetCfgPath, 'utf8');
+            }
+
+            //modify the cfg lines
             const fileEOL = detectNewline(cfgRaw);
             const cfgLines = cfgRaw.split(/\r?\n/);
-
             for (const [ln, reason] of actions) {
-                if(typeof cfgLines[ln-1] !== 'string'){
+                if (typeof cfgLines[ln - 1] !== 'string') {
                     throw new Error(`Line ${ln} not found.`);
                 }
-                cfgLines[ln-1] = `## [txAdmin CFG validator]: ${reason}${fileEOL}# ${cfgLines[ln-1]}`;
+                cfgLines[ln - 1] = `## [txAdmin CFG validator]: ${reason}${fileEOL}# ${cfgLines[ln - 1]}`;
                 warnings.add(targetCfgPath, `Commented out line ${ln}: ${reason}`);
             }
+
+            //Saving modified lines
             const newCfg = cfgLines.join(fileEOL);
+            logWarn(`Saving modified file '${targetCfgPath}'`);
             await fsp.writeFile(targetCfgPath, newCfg, 'utf8');
         } catch (error) {
-            if(GlobalData.verbose) logError(error);
+            if (GlobalData.verbose) logError(error);
             for (const [ln, reason] of actions) {
                 errors.add(targetCfgPath, `Please comment out line ${ln}: ${reason}`);
             }
         }
     }
 
-    // return parsedCommands;
+    //If cfgInputString was provided and not modified yet, save file
+    if (cfgInputString && !wasEntrypointModified) {
+        logWarn(`Saving modified file '${cfgAbsolutePath}'`);
+        await fsp.writeFile(cfgAbsolutePath, cfgInputString, 'utf8');
+    }
+
+    //unlike warning, erros should block the server start
     return {
         connectEndpoint,
-        errors, //unlike warning, erros should block the server start
-        warnings,
-        endpoints, //DEBUG: remover
+        errors: Object.entries(errors.store),
+        warnings: Object.entries(warnings.store),
+        // endpoints, //Not being used
     };
-
-    //FIXME: se tiver cfgInputString ou se tiver alguma correção, salvar arquivo(s)
 };
 /*
     fxrunner spawnServer:       recursive validate file, get endpoint
