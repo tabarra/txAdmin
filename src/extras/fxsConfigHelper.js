@@ -1,6 +1,6 @@
 const fsp = require('node:fs/promises');
 const path = require('node:path');
-const { parseArgsStringToArgv } = require('string-argv');
+const isLocalhost = require('is-localhost-ip');
 
 //DEBUG
 const { dir, log, logOk, logWarn, logError } = require('./console')();
@@ -310,8 +310,9 @@ const ensureSaveServerConfig = async (cfgInputString, cfgPath, serverDataPath) =
     //Parsing fxserver config & going through each command
     const cfgAbsolutePath = resolveCFGFilePath(cfgPath, serverDataPath);
     const parsedCommands = await parseRecursiveConfig(cfgInputString, cfgAbsolutePath, serverDataPath);
-
-    const endpointCommands = [];
+    const zapPrefix = (GlobalData.isZapHosting) ? ' [ZAP-Hosting]' : '';
+    const endpoints = {};
+    const checkedInterfaces = new Map();
     const errors = new FileInfoList();
     const warnings = new FileInfoList();
     const toCommentOut = new FileInfoList();
@@ -339,8 +340,8 @@ const ensureSaveServerConfig = async (cfgInputString, cfgPath, serverDataPath) =
         const isMaxClientsString = cmd.getSetForVariable('sv_maxclients');
         if (GlobalData.deployerDefaults?.maxClients && isMaxClientsString) {
             const maxClients = parseInt(isMaxClientsString);
-            if(maxClients > GlobalData.deployerDefaults.maxClients){
-                const msg = `Line ${cmd.line}: [ZAP-Hosting] your 'sv_maxclients' SHOULD be <= ${GlobalData.deployerDefaults.maxClients}.`;
+            if (maxClients > GlobalData.deployerDefaults.maxClients) {
+                const msg = `Line ${cmd.line}:${zapPrefix} your 'sv_maxclients' SHOULD be <= ${GlobalData.deployerDefaults.maxClients}.`;
                 warnings.add(cmd.file, msg);
                 continue;
             }
@@ -350,34 +351,106 @@ const ensureSaveServerConfig = async (cfgInputString, cfgPath, serverDataPath) =
         if (cmd.getSetForVariable('onesync')) {
             toCommentOut.add(
                 cmd.file,
-                [cmd.line, 'onesync should only be set in the txAdmin settings page.']
+                [cmd.line, 'onesync MUST only be set in the txAdmin settings page.']
             );
             continue;
         }
 
         //Extract & process endpoint validity
-        //     if invalid bind endpoint, send error
+        if (cmd.command === 'endpoint_add_tcp' || cmd.command === 'endpoint_add_udp') {
+            //Validating args length
+            if (cmd.args.length !== 1) {
+                const msg = `Line ${cmd.line}: the 'endpoint_add_*' commands MUST have exactly 1 argument (received ${cmd.args.length})`;
+                warnings.add(cmd.file, msg);
+                continue;
+            }
+
+            //Extracting parts & validating format
+            const endpointsRegex = /^\[?(([0-9.]{7,15})|([a-z0-9:]{2,29}))\]?:(\d{1,5})$/gi;
+            const matches = [...cmd.args[0].matchAll(endpointsRegex)];
+            if (!Array.isArray(matches) || !matches.length) {
+                const msg = `Line ${cmd.line}: the '${cmd.command}' interface:port '${cmd.args[0]}' is not in a valid format.`;
+                errors.add(cmd.file, msg);
+                continue;
+            }
+            const [matchedString, interface, ipv4, ipv6, portString] = matches[0];
+
+            //Checking if that interface is available to binding
+            let canBind = checkedInterfaces.get(interface);
+            if (typeof canBind === 'undefined') {
+                canBind = await isLocalhost(interface, true);
+                checkedInterfaces.set(interface, canBind);
+            }
+            if (canBind === false) {
+                const msg = `Line ${cmd.line}: the '${cmd.command}' interface '${interface}' is not available for this host.`;
+                errors.add(cmd.file, msg);
+                continue;
+            }
+            if (GlobalData.forceInterface && interface !== GlobalData.forceInterface) {
+                const msg = `Line ${cmd.line}:${zapPrefix} the '${cmd.command}' interface MUST be '${GlobalData.forceInterface}'.`;
+                errors.add(cmd.file, msg);
+                continue;
+            }
+
+            //Validating port
+            const port = parseInt(portString);
+            if (port >= 40120 && port <= 40150) {
+                const msg = `Line ${cmd.line}: the '${cmd.command}' port '${port}' is dedicated for txAdmin and CAN NOT be used for FXServer.`;
+                errors.add(cmd.file, msg);
+                continue;
+            }
+            if (port === GlobalData.txAdminPort) {
+                const msg = `Line ${cmd.line}: the '${cmd.command}' port '${port}' is being used by txAdmin and CAN NOT be used for FXServer at the same time.`;
+                errors.add(cmd.file, msg);
+                continue;
+            }
+            if (GlobalData.forceFXServerPort && port !== GlobalData.forceFXServerPort) {
+                const msg = `Line ${cmd.line}:${zapPrefix} the '${cmd.command}' port MUST be '${GlobalData.forceFXServerPort}'.`;
+                errors.add(cmd.file, msg);
+                continue;
+            }
+
+            //Add to the endpoint list and check duplicity
+            const endpoint = (ipv4) ? `${ipv4}:${port}` : `[${ipv6}]:${port}`;
+            const protocol = (cmd.command === 'endpoint_add_tcp') ? 'tcp' : 'udp';
+            if (typeof endpoints[endpoint] === 'undefined') {
+                endpoints[endpoint] = {}
+            }
+            if(endpoints[endpoint][protocol]){
+                const msg = `Line ${cmd.line}: you CANNOT execute '${cmd.command}' twice for the interface '${endpoint}'.`;
+                errors.add(cmd.file, msg);
+                continue;
+            }else{
+                endpoints[endpoint][protocol] = true;
+            }
+        }
     }
 
-    //TODO: process endpoints
-    //  if validation fails, send error
-    //  old:
-    //  - no endpoints found
-    //  - endpoints that are not 0.0.0.0:xxx
-    //  - port mismatch
-    //  - "stop/start/ensure/restart txAdmin/monitor"
-    //  - if endpoint on txAdmin port
-    //  - if endpoint on 40120~40130
-    //  - zap-hosting iface and port enforcement
+    //Validating if a valid endpoint was detected
+    if(!Object.keys(endpoints).length){
+        const msg = `Your config file does not specify which IP and port fxserver should run. You can fix this by adding 'endpoint_add_tcp 0.0.0.0:30120; endpoint_add_udp 0.0.0.0:30120' to the start of the file.`;
+        errors.add(cfgAbsolutePath, msg);
+    }
+    let connectEndpoint = false;
+    const tcpudpEndpoint = Object.keys(endpoints).find((ep) => {
+        return endpoints[ep].tcp && endpoints[ep].udp;
+    });
+    if(tcpudpEndpoint){
+        connectEndpoint = tcpudpEndpoint.replace(/(0\.0\.0\.0|\[::\])/, '127.0.0.1');
+    }else{
+        const msg = `Your config file does not not contain a ip:port used in both endpoint_add_tcp and endpoint_add_udp. Players would not be able to connect.`;
+        errors.add(cfgAbsolutePath, msg);
+    }
 
     //FIXME: when trying to fix: success move to warning, fail move to error
 
     // return parsedCommands;
     return {
-        preferredEndpoint: 'xx.xx.xx.xx:yyyy',
+        connectEndpoint,
         errors, //unlike warning, erros should block the server start
         warnings,
         toCommentOut, //DEBUG: remover
+        endpoints, //DEBUG: remover
     };
 
 
