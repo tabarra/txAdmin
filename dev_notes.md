@@ -1,22 +1,4 @@
 ## TODO:
-- [x] server start after banner
-- [x] remove rofl+clap easter egg from login page
-- [x] fix server started banner printing on quiet mode
-- [x] Change CitizenFX to Cfx.re as per branding consistency (ask aurum)
-- [x] fix admin manager all_permissions issue
-- [x] fix open menu & player id permissions
-- [x] fix menu onesync detection
-- [x] Take menu out of beta:
-    - [x] In settings page, remove additional arguments doc on the menu
-    - [x] Remove the "BETA" in the menu logo
-    - [x] Change `nui_menu.misc.not_enabled` to say "go to tx settings to enable it"
-    - [x] Create a "menu" tab in settings page with options for: enable, tab key, screen side
-    - [x] Add "NEW" tag for settings page and menu tab
-    - [x] In configVault/settings remove `+setr txEnableMenuBeta true` from fxrunner settings string
-    - [x] Update the menu code to use new convar
-    - [x] Test update/new config scenarios
-    - [x] Update `menu.md`
-
 - [ ] dm via snackbar
 - [ ] wav for announcements
 - [ ] update `README.md`
@@ -27,23 +9,23 @@
 - [ ] replace all fxRunner.srvCmd* and only expose:
     - sync fxRunner.srvRawCmd(string) - to be used by live console
     - async fxRunner.srvCmd(array, timeout) - to be awaited with the status response
-
-
-
-Quando terminar de importar as traduções:
-[x] Remover redundantes:
-    - nui_menu.misc.general_no_perms, nui_menu.misc.action_unauthorized -> no_perms
-    - nui_menu.common.error -> nui_menu.misc.unknown_error
-[x] Renomear clear_area.dialog_description -> clear_area.dialog_desc
-[x] sync new labels
-[x] Adicionar tradução pro botão BAN do `DialogBanView.tsx`
-[x] Mergir pt (migration no vault)
 [ ] Quebrar snackbar de not admin em dois, um se confirmado que o problema são os identifiers, outro pra qualquer outro tipo de problema
 [ ] the kick/warn/dm reason modal title should have the username as key in the translation
 
+add ram usage to perf chart?
+
+forceFXServerPort problem:
+- There is currently two of them, one in zap config (GlobalData) and the ancient one in the settings
+- we should remove the config.json one and detect it on the server.cfg
+- The correct flow:
+    - use the zap+convar one to force server.cfg config
+    - the helper will detect which is the host:port tx should use
 
 
 
+No docs for:
+- console command "wait <ms>"
+- the JSON parser thing
 
 
 - BUG: nui menu triggered announcements are not sent to the discord
@@ -312,7 +294,6 @@ Small Stuff:
 
 > Hopefully now:
 - [ ] check the places where I'm doing `Object.assign()` for shallow clones
-- [ ] remove the ForceFXServerPort config and do either via `server.cfg` comment, or execute `endpoint_add_tcp "127.0.0.1:random"`
 - [ ] create `admin.useroptions` for dark mode, welcome modals and such
 
 > Soon™ (hopefully the next update)
