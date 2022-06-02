@@ -146,7 +146,7 @@
             },
             "announcement": {
                 "title": "Enviar anuncio",
-                "label": "Envía una comunicación a todos los jugadores conectados.",
+                "label": "Envía un comunicado a todos los jugadores conectados.",
                 "dialog_desc": "Ingrese el mensaje que quiere enviar a todos los jugadores.",
                 "dialog_placeholder": "Tu comunicado...",
                 "dialog_success": "Enviando el anuncio."
