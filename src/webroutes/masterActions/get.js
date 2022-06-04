@@ -13,6 +13,8 @@ module.exports = async function MasterActionsGet(ctx) {
     return ctx.utils.render('masterActions', {
         disableActions,
         isMasterAdmin,
-        dbFilePathSuggestion: path.join(globals.fxRunner.config.serverDataPath, 'resources'),
+        dbFilePathSuggestion: globals.fxRunner.config.serverDataPath
+            ? path.join(globals.fxRunner.config.serverDataPath, 'resources')
+            : '',
     });
 };

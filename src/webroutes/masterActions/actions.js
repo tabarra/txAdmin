@@ -73,8 +73,8 @@ function handleResetFXServer(ctx) {
 
     //Preparing & saving config
     const newConfig = globals.configVault.getScopedStructure('fxRunner');
-    newConfig.serverDataPath = false;
-    newConfig.cfgPath = false;
+    newConfig.serverDataPath = null;
+    newConfig.cfgPath = null;
     const saveStatus = globals.configVault.saveProfile('fxRunner', newConfig);
 
     //Sending output

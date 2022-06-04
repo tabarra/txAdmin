@@ -20,10 +20,10 @@
     <link rel="stylesheet" href="https://unpkg.com/materialize-stepper@3.1.0/dist/css/mstepper.min.css">
 
     <style>
-        code{
+        code:not(.keep-original){
             color: #321fdb!important;
         }
-        body.theme--dark code {
+        body.theme--dark code:not(.keep-original) {
             color: #0d86ff !important;
         }
         .bigbutton{
@@ -158,15 +158,16 @@
                                         <br>
                                         <span class="description">
                                             Select a template from a curated list of community favorites. <br>
-                                            This includes ESX, Freeroam and a Default template for you to customize.
+                                            This includes QBCore, ESX and a Default template for you to customize.
                                         </span>
                                     </div>
                                     <div class="bigbutton deployment-type-card border-dark next-step" onclick="selectDeploymentType('local')">
-                                        <span class="title"><strong>📁 Local Server Data</strong></span>
+                                        <span class="title"><strong>📁 Existing Server Data</strong></span>
                                         <br>
                                         <span class="description">
-                                            Select an existing server-data folder in the VPS. <br>
-                                            This is the option you are already used to.
+                                            Select an existing server data folder in the host. <br>
+                                            Only select this option if you already have a <code class="keep-original">server.cfg</code> and a <code class="keep-original">resources</code> folder. <br>
+                                            If you are not running fxserver in your computer, you need to first upload those files to the server's host.
                                         </span>
                                     </div>
                                     <div class="bigbutton deployment-type-card border-dark next-step" onclick="selectDeploymentType('remote')">
@@ -556,7 +557,7 @@
                 s5ServerCFGDiv.classList.add('d-none');
                 
             }else if(depType == 'local'){
-                s4Title.textContent = "Local Server Data";
+                s4Title.textContent = "Existing Server Data";
                 s5Title.textContent = "Server CFG File";
                 finishButton.textContent = "Save & Start Server";
                 finishMessage.textContent = "We are all set!";
