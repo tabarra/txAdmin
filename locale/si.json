@@ -1,7 +1,7 @@
 {
     "$meta": {
         "label": "Slovenian",
-        "humanizer_language": "sl"
+        "humanizer_language": "si"
     },
     "restarter": {
         "start_timeout": "strežnika ni uspelo zagnati v določenem času",
