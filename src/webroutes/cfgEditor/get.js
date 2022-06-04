@@ -1,7 +1,7 @@
 //Requires
 const modulename = 'WebServer:CFGEditorGet';
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const helpers = require('../../extras/helpers');
+const { resolveCFGFilePath, readRawCFGFile } = require('../../extras/fxsConfigHelper');
 
 
 /**
@@ -23,8 +23,8 @@ module.exports = async function CFGEditorGet(ctx) {
     //Read cfg file
     let rawFile;
     try {
-        let cfgFilePath = helpers.resolveCFGFilePath(globals.fxRunner.config.cfgPath, globals.fxRunner.config.serverDataPath);
-        rawFile = helpers.getCFGFileData(cfgFilePath);
+        let cfgFilePath = resolveCFGFilePath(globals.fxRunner.config.cfgPath, globals.fxRunner.config.serverDataPath);
+        rawFile = await readRawCFGFile(cfgFilePath);
     } catch (error) {
         let message = `Failed to read CFG File with error: ${error.message}`;
         return ctx.utils.render('basic/generic', {message});

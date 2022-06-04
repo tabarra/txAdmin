@@ -191,7 +191,7 @@ async function handleSaveConfig(ctx) {
             type: 'danger',
             success: false,
             markdown: true,
-            message: `**Cannot save \`server.cfg\` because:**\n${error.message}`,
+            message: `**Failed to save \`server.cfg\` with error:**\n${error.message}`,
         });
     }
 

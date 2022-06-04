@@ -581,6 +581,7 @@ const validateModifyServerConfig = async (cfgInputString, cfgPath, serverDataPat
     //If there are any errors
     if (errors.count()) {
         return {
+            success: false,
             errors: errors.toMarkdown(),
             warnings: warnings.toMarkdown(),
         };
@@ -597,7 +598,7 @@ const validateModifyServerConfig = async (cfgInputString, cfgPath, serverDataPat
 
     return {
         success: true,
-        warnings: errors.toMarkdown(),
+        warnings: warnings.toMarkdown(),
     };
 };
 /*

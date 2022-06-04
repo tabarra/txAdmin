@@ -100,7 +100,7 @@ const checkApiLogoutRefresh = (data) => {
  */
 const updateMarkdownNotification = (data, notify) => {
     if (data.markdown === true) {
-        let msgHtml = convertMarkdown(data.message);
+        let msgHtml = convertMarkdown(data.message, true);
         if (data.type === 'danger') {
             msgHtml += `<div class="text-right">
                 <small>

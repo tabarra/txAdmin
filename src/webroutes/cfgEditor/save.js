@@ -2,7 +2,7 @@
 const modulename = 'WebServer:CFGEditorSave';
 const fs = require('fs-extra');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const helpers = require('../../extras/helpers');
+const { validateModifyServerConfig } = require('../../extras/fxsConfigHelper');
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -35,31 +35,42 @@ module.exports = async function CFGEditorSave(ctx) {
         return ctx.send({type: 'danger', message});
     }
 
-    //Validating CFG Data
+
+    //Validating config contents + saving file and backup
+    let result;
     try {
-        const _port = helpers.getFXServerPort(ctx.request.body.cfgData);
+        result = await validateModifyServerConfig(
+            ctx.request.body.cfgData,
+            globals.fxRunner.config.cfgPath,
+            globals.fxRunner.config.serverDataPath,
+        );
+        dir(result)
     } catch (error) {
-        return ctx.send({type: 'danger', message: `<strong>server.cfg error:</strong> <br>${error.message}`});
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Failed to save \`server.cfg\` with error:**\n${error.message}`,
+        });
     }
 
-    //Saving backup file
-    const cfgFilePath = helpers.resolveCFGFilePath(globals.fxRunner.config.cfgPath, globals.fxRunner.config.serverDataPath);
-    try {
-        //NOTE: not moving to make sure we don't screw file permissions.
-        await fs.writeFile(cfgFilePath + '.bkp', helpers.getCFGFileData(cfgFilePath), 'utf8');
-    } catch (error) {
-        const message = `Failed to save BackupCFG file with error: ${error.message}`;
-        if (GlobalData.verbose) logWarn(message);
+    //Handle result
+    if (result.errors) {
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: `**Cannot save \`server.cfg\` due to error(s) in your config file(s):**\n${result.errors}`,
+        });
     }
-
-    //Saving CFG file
-    try {
-        ctx.utils.logAction('Editing server CFG File.');
-        await fs.writeFile(cfgFilePath, ctx.request.body.cfgData, 'utf8');
-        return ctx.send({type: 'success', message: 'File saved.'});
-    } catch (error) {
-        const message = `Failed to save CFG file with error: ${error.message}`;
-        if (GlobalData.verbose) logWarn(message);
-        return ctx.send({type: 'danger', message});
+    if (result.warnings) {
+        return ctx.send({
+            type: 'warning',
+            markdown: true,
+            message: `**File saved, but there are warnings you should pay attention to:**\n${result.warnings}`,
+        });
     }
+    return ctx.send({
+        type: 'success',
+        markdown: true,
+        message: '**File saved.**',
+    });
 };
