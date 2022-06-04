@@ -14,8 +14,19 @@ module.exports = {
         if (globals.monitor.currentStatus == 'ONLINE' || globals.monitor.currentStatus == 'PARTIAL') {
             cardColor = 0x74EE15;
             cardTitle = globals.translator.t('discord.status_online', {servername: globals.config.serverName});
-            replaces.players = (Array.isArray(globals.playerController.activePlayers)) ? globals.playerController.activePlayers.length : '--';
-            replaces.port = (globals.config.forceFXServerPort) ? globals.config.forceFXServerPort : globals.fxRunner.fxServerPort;
+            replaces.players = (Array.isArray(globals.playerController.activePlayers))
+                ? globals.playerController.activePlayers.length
+                : '--';
+            if (globals.fxRunner.fxServerHost) {
+                const hostParts = globals.fxRunner.fxServerHost.split(':');
+                if (hostParts.length >= 2) {
+                    replaces.port = hostParts[hostParts.length - 1];
+                } else {
+                    replaces.port = '--';
+                }
+            } else {
+                replaces.port = '--';
+            }
         } else {
             cardColor = 0xFF001E;
             cardTitle = globals.translator.t('discord.status_offline', {servername: globals.config.serverName});

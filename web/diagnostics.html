@@ -4,22 +4,6 @@
 <div class="row justify-content-md-center">
     <div class="col-lg-8 col-xl-5 mw-col6">
 
-        <!-- Environment Card -->
-        <div class="card card-accent-danger" style="min-height: 160px;">
-            <div class="card-header font-weight-bold">Environment:</div>
-            <div class="card-body">
-                <% if (host.error !== false) { %>
-                    <%- host.error %>
-                <% } else { %>
-                    <strong>Node:</strong> <%= host.nodeVersion %> <br>
-                    <strong>OS:</strong> <%= host.osDistro %> <br>
-                    <strong>Username:</strong> <%= host.username %> <br>
-                    <strong>Host CPUs:</strong> <%= host.cpus %> <%- host.clockWarning %><br>
-                    <strong>Host Memory:</strong> <%= host.memory %>
-                <% } %>
-            </div>
-        </div>
-
         <!-- txAdmin Config Card -->
         <div class="card card-accent-danger" style="min-height: 160px;">
             <div class="card-header font-weight-bold">txAdmin Info:</div>
@@ -53,10 +37,11 @@
                 <h5>Settings:</h5>
                 <strong>Schedule:</strong> <code><%= txadmin.schedule %></code> <br>
                 <strong>Cooldown:</strong> <code><%= txadmin.cooldown %></code> <br>
-                <strong>Additional Arguments:</strong> <code><%= txadmin.commandLine %></code> <br>
                 <strong>FXServer Path:</strong> <code><%= txadmin.fxServerPath %></code> <br>
-                <strong>Server Data Path:</strong> <code><%= txadmin.serverDataPath %></code><br>
-                <strong>CFG Path:</strong> <code><%= txadmin.cfgPath %></code>
+                <strong>Server Data Path:</strong> <code><%= txadmin.serverDataPath %></code> <br>
+                <strong>CFG Path:</strong> <code><%= txadmin.cfgPath %></code> <br>
+                <strong>Connect Endpoint:</strong> <code><%= txadmin.fxServerHost %></code> <br>
+                <strong>Additional Arguments:</strong> <code><%= txadmin.commandLine %></code>
             </div>
         </div>
 
@@ -65,6 +50,22 @@
 
 
     <div class="col-lg-8 col-xl-5 mw-col6">
+
+        <!-- Environment Card -->
+        <div class="card card-accent-danger" style="min-height: 160px;">
+            <div class="card-header font-weight-bold">Environment:</div>
+            <div class="card-body">
+                <% if (host.error !== false) { %>
+                    <%- host.error %>
+                <% } else { %>
+                    <strong>Node:</strong> <%= host.nodeVersion %> <br>
+                    <strong>OS:</strong> <%= host.osDistro %> <br>
+                    <strong>Username:</strong> <%= host.username %> <br>
+                    <strong>Host CPUs:</strong> <%= host.cpus %> <%- host.clockWarning %><br>
+                    <strong>Host Memory:</strong> <%= host.memory %>
+                <% } %>
+            </div>
+        </div>
 
         <!-- FXServer Info Card -->
         <div class="card card-accent-info" style="min-height: 160px;">

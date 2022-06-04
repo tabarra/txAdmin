@@ -14,7 +14,6 @@ const defaultConfig = {
         verbose: false,
         serverName: null,
         language: 'en',
-        forceFXServerPort: null,
     },
     logger: {},
     monitor: {

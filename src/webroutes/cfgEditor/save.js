@@ -44,7 +44,6 @@ module.exports = async function CFGEditorSave(ctx) {
             globals.fxRunner.config.cfgPath,
             globals.fxRunner.config.serverDataPath,
         );
-        dir(result)
     } catch (error) {
         return ctx.send({
             type: 'danger',

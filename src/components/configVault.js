@@ -113,7 +113,6 @@ module.exports = class ConfigVault {
             out.global = {
                 serverName: toDefault(cfg.global.serverName, null),
                 language: toDefault(cfg.global.language, null),
-                forceFXServerPort: toDefault(cfg.global.forceFXServerPort, null), //not in template
                 menuEnabled: toDefault(cfg.global.menuEnabled, true),
                 menuAlignRight: toDefault(cfg.global.menuAlignRight, false),
                 menuPageKey: toDefault(cfg.global.menuPageKey, 'Tab'),

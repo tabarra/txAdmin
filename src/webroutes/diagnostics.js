@@ -96,7 +96,6 @@ async function getProcessesData() {
         return 0;
     });
 
-
     return procList;
 }
 
@@ -107,7 +106,7 @@ async function getProcessesData() {
  */
 async function getFXServerData() {
     //Sanity Check
-    if (!globals.config.forceFXServerPort && !globals.fxRunner.fxServerPort) {
+    if (globals.fxRunner.fxChild === null || globals.fxRunner.fxServerHost === null) {
         return {error: 'Server Offline'};
     }
 
@@ -255,5 +254,8 @@ async function gettxAdminData() {
         fxServerPath: GlobalData.fxServerPath,
         serverDataPath: globals.fxRunner.config.serverDataPath,
         cfgPath: globals.fxRunner.config.cfgPath,
+        fxServerHost: (globals.fxRunner.fxServerHost)
+            ? globals.fxRunner.fxServerHost
+            : '--',
     };
 }
