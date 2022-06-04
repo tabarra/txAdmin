@@ -8,6 +8,7 @@ const { parseArgsStringToArgv } = require('string-argv');
 const StreamValues = require('stream-json/streamers/StreamValues');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
+const { validateFixServerConfig } = require('../../extras/fxsConfigHelper');
 const OutputHandler = require('./outputHandler');
 
 const { customAlphabet } = require('nanoid/non-secure');
@@ -142,7 +143,7 @@ module.exports = class FXRunner {
      * @param {boolean} announce
      * @returns {string} null or error message
      */
-    spawnServer(announce) {
+    async spawnServer(announce) {
         //Setup variables
         globals.webServer.resetToken();
         this.setupVariables();
@@ -167,34 +168,30 @@ module.exports = class FXRunner {
             return logError('The server is already started.');
         }
 
-        //Detecting server.cfg & endpoint port
-        let rawCfgFile;
+        //Validating server.cfg & configuration
         try {
-            const cfgFilePath = helpers.resolveCFGFilePath(this.config.cfgPath, this.config.serverDataPath);
-            rawCfgFile = helpers.getCFGFileData(cfgFilePath);
+            const result = await validateFixServerConfig(null, this.config.cfgPath, this.config.serverDataPath);
+            if(result.errors){
+                const msg = `**Unable to start the server due to error(s) in your config file(s):**\n${result.errors}`;
+                logError(msg);
+                return msg;
+            }
+            if(result.warnings){
+                const msg = `**Warning regarding your configuration file(s):**\n${result.warnings}`;
+                logWarn(msg);
+            }
+
+            this.fxServerHost = result.connectEndpoint;
         } catch (error) {
+            dir(error)
             const errMsg = logError(`server.cfg error: ${error.message}`);
             if (error.message.includes('unreadable')) {
-                logError('You likely copied the txData folder from another server, or moved/deleted your server files.');
-                logError('In txAdmin, please go to "Settings > FXServer" and fix the "Server Data Folder" and "CFX File Path".');
+                logError('That is the file where you configure your server and start resources.');
+                logError('You likely moved/deleted your server files or copied the txData folder from another server.');
+                logError('To fix this issue, open the txAdmin web interface then go to "Settings > FXServer" and fix the "Server Data Folder" and "CFX File Path".');
             }
             return errMsg;
         }
-        try {
-            this.fxServerPort = helpers.getFXServerPort(rawCfgFile);
-        } catch (error) {
-            const cleanedErrorMessage = error.message.replace(/<\/?code>/gi, '').replace(/<br>/gi, '');
-            const outMsg = logError(`server.cfg error: \n${cleanedErrorMessage}`);
-            //the IF below is only a way to disable the endpoint check
-            if (globals.config.forceFXServerPort) {
-                this.fxServerPort = globals.config.forceFXServerPort;
-            } else {
-                return outMsg;
-            }
-        }
-        this.fxServerHost = (GlobalData.forceInterface)
-            ? `${GlobalData.forceInterface}:${this.fxServerPort}`
-            : `127.0.0.1:${this.fxServerPort}`;
 
         //Reseting monitor stats
         globals.monitor.resetMonitorStats();

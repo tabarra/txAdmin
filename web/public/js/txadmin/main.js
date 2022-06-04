@@ -9,10 +9,7 @@ function refreshData() {
         type: 'GET',
         timeout: REQ_TIMEOUT_SHORT,
         success: function (data) {
-            if (data.logout) {
-                window.location = '/auth?logout';
-                return;
-            }
+            if (checkApiLogoutRefresh(data)) return;
             $('#status-card').html(data.status);
             if (isWebInterface) {
                 $('#hostusage-cpu-bar').attr('aria-valuenow', data.host.cpu.pct).css('width', data.host.cpu.pct + '%');
@@ -81,7 +78,7 @@ document.getElementById('modChangePassword-save').onclick = (e) => {
         errors.push('The new password has to be between 6 and 24 characters.');
     }
     if (errors.length) {
-        return $.notify({ message: '<b>Errors:</b><br> - ' + errors.join(' <br>\n - ') }, { type: 'warning' });
+        return $.notify({ message: '<b>Error(s):</b><br> - ' + errors.join(' <br>\n - ') }, { type: 'warning' });
     }
 
     const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});

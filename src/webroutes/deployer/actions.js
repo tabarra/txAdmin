@@ -1,12 +1,11 @@
 //Requires
 const modulename = 'WebServer:DeployerActions';
-const fs = require('fs-extra');
 const path = require('path');
 const cloneDeep = require('lodash/cloneDeep');
 const mysql = require('mysql2/promise');
 const slash = require('slash');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const helpers = require('../../extras/helpers');
+const { validateModifyServerConfig } = require('../../extras/fxsConfigHelper');
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -176,30 +175,24 @@ async function handleSaveConfig(ctx) {
     const serverCFG = ctx.request.body.serverCFG;
     const cfgFilePath = path.join(globals.deployer.deployPath, 'server.cfg');
 
-    //Saving backup file
+    //Validating config contents + saving file and backup
     try {
-        await fs.copy(cfgFilePath, `${cfgFilePath}.bkp`);
+        const result = await validateModifyServerConfig(serverCFG, cfgFilePath, globals.deployer.deployPath);
+        if (result.errors) {
+            return ctx.send({
+                type: 'danger',
+                success: false,
+                markdown: true,
+                message: `**Cannot save \`server.cfg\` due to error(s) in your config file(s):**\n${result.errors}`,
+            });
+        }
     } catch (error) {
-        const message = `Failed to backup 'server.cfg' file with error: ${error.message}`;
-        if (GlobalData.verbose) logWarn(message);
-        return ctx.send({type: 'danger', message});
-    }
-
-    //Validating config contents
-    try {
-        const _port = helpers.getFXServerPort(serverCFG);
-    } catch (error) {
-        return ctx.send({type: 'danger', message: `<strong>server.cfg error:</strong> <br>${error.message}`});
-    }
-
-    //Saving CFG file
-    try {
-        await fs.writeFile(cfgFilePath, serverCFG, 'utf8');
-        ctx.utils.logAction('Configured server.cfg from deployer.');
-    } catch (error) {
-        const message = `Failed to edit 'server.cfg' with error: ${error.message}`;
-        if (GlobalData.verbose) logWarn(message);
-        return ctx.send({type: 'danger', message});
+        return ctx.send({
+            type: 'danger',
+            success: false,
+            markdown: true,
+            message: `**Cannot save \`server.cfg\` because:**\n${error.message}`,
+        });
     }
 
     //Preparing & saving config
@@ -218,14 +211,22 @@ async function handleSaveConfig(ctx) {
         //Starting server
         const spawnMsg = await globals.fxRunner.spawnServer(false);
         if (spawnMsg !== null) {
-            return ctx.send({type: 'danger', message: `Faied to start server with error: <br>\n${spawnMsg}`});
+            return ctx.send({
+                type: 'danger',
+                markdown: true,
+                message: `Config file saved, but faied to start server with error:\n${spawnMsg}`,
+            });
         } else {
             globals.deployer = null;
             return ctx.send({success: true});
         }
     } else {
         logWarn(`[${ctx.session.auth.username}] Error changing fxserver settings via deployer.`);
-        return ctx.send({type: 'danger', message: '<strong>Error saving the configuration file.</strong>'});
+        return ctx.send({
+            type: 'danger',
+            markdown: true,
+            message: '**Error saving the configuration file.**',
+        });
     }
 }
 

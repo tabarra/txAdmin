@@ -30,7 +30,7 @@ module.exports = async function FXServerControls(ctx) {
         } else {
             const restartMsg = await globals.fxRunner.restartServer(ctx.session.auth.username);
             if (restartMsg !== null) {
-                return ctx.send({type: 'danger', message: restartMsg});
+                return ctx.send({type: 'danger', markdown: true, message: restartMsg});
             } else {
                 return ctx.send({type: 'success', message: 'Restarting server...'});
             }
@@ -49,7 +49,7 @@ module.exports = async function FXServerControls(ctx) {
         ctx.utils.logCommand('START SERVER');
         const spawnMsg = await globals.fxRunner.spawnServer(true);
         if (spawnMsg !== null) {
-            return ctx.send({type: 'danger', message: spawnMsg});
+            return ctx.send({type: 'danger', markdown: true, message: spawnMsg});
         } else {
             return ctx.send({type: 'success', message: 'Starting server...'});
         }

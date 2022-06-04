@@ -398,13 +398,10 @@
             data: {action_id},
             dataType: 'json',
             success: function (data) {
-                if(data.refresh === true){
-                    window.location.reload(true);
-                }else{
-                    notify.update('progress', 0);
-                    notify.update('type', data.type);
-                    notify.update('message', data.message);
-                }
+                if (checkApiLogoutRefresh(data)) return;
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);
@@ -454,13 +451,10 @@
             data: {reference},
             dataType: 'json',
             success: function (data) {
-                if(data.refresh === true){
-                    window.location.reload(true);
-                }else{
-                    notify.update('progress', 0);
-                    notify.update('type', data.type);
-                    notify.update('message', data.message);
-                }
+                if (checkApiLogoutRefresh(data)) return;
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);
@@ -695,13 +689,10 @@
             data,
             dataType: 'json',
             success: function (data) {
-                if(data.refresh === true){
-                    window.location.reload(true);
-                }else{
-                    notify.update('progress', 0);
-                    notify.update('type', data.type);
-                    notify.update('message', data.message);
-                }
+                if (checkApiLogoutRefresh(data)) return;
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);

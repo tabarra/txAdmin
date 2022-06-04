@@ -299,13 +299,10 @@
             url: '/adminManager/delete',
             data: {name: name},
             success: function (data) {
-                if(data.message == 'refresh'){
-                    window.location.reload(true);
-                }else{
-                    notify.update('progress', 0);
-                    notify.update('type', data.type);
-                    notify.update('message', data.message);
-                }
+                if (checkApiLogoutRefresh(data)) return;
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
             },
             error: function (xmlhttprequest, textstatus, message) {
                 $.notify({ message: '<p class="text-center">Error deleting admin</p>' })

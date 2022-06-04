@@ -148,13 +148,9 @@
             timeout: REQ_TIMEOUT_LONG,
             data: { action: 'refresh_res', parameter: '' },
             success: function (data) {
-                if(data.type !== 'danger'){
-                    window.location.reload(true);
-                }else{
-                    notify.update('progress', 0);
-                    notify.update('type', data.type);
-                    notify.update('message', data.message);
-                }
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);
@@ -173,13 +169,9 @@
             url: '/fxserver/commands',
             data: { action, parameter },
             success: function (data) {
-                if(data.type !== 'danger'){
-                    window.location.reload(true);
-                }else{
-                    notify.update('progress', 0);
-                    notify.update('type', data.type);
-                    notify.update('message', data.message);
-                }
+                notify.update('progress', 0);
+                notify.update('type', data.type);
+                notify.update('message', data.message);
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);

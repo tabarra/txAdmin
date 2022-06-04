@@ -16,6 +16,16 @@ const xss = (x) => {
     tmp.innerText = x;
     return tmp.innerHTML;
 };
+const convertMarkdown = (input, inline = false) => {
+    const toConvert = xss(input)
+        .replaceAll(/\n/g, '  \n')
+        .replaceAll(/\t/g, '&emsp;');
+    const markedOptions = {
+        breaks: true,
+    };
+    const func = inline ? marked.parseInline : marked.parse;
+    return func(toConvert, markedOptions);
+};
 
 //================================================================
 //================================================= Event Handlers
@@ -66,9 +76,9 @@ for (let pfp of pfpList) {
 
 
 //================================================================
-//================================================= Event Handlers
+//================================================= Helper functions
 //================================================================
-const checkDoLogoutRefresh = (data) => {
+const checkApiLogoutRefresh = (data) => {
     if (data.logout === true) {
         window.location = '/auth?logout';
         return true;
@@ -78,7 +88,42 @@ const checkDoLogoutRefresh = (data) => {
     }
     return false;
 };
-//if(checkDoLogoutRefresh(data)) return;
+//usage: if (checkApiLogoutRefresh(data)) return;
+
+
+/**
+ * To display the markdown errors.
+ * NOTE: likely deprecate when creating default api response handlers
+ * @param {object} data
+ * @param {object} notify
+ * @returns
+ */
+const updateMarkdownNotification = (data, notify) => {
+    if (data.markdown === true) {
+        let msgHtml = convertMarkdown(data.message);
+        if (data.type === 'danger') {
+            msgHtml += `<div class="text-right">
+                <small>
+                    For support, visit <strong><a href="http://discord.gg/txAdmin" target="_blank" class="text-dark">discord.gg/txAdmin</a></strong>.
+                </small>
+            </div>`;
+        }
+
+        notify.update('progress', 0);
+        notify.update('type', data.type);
+        notify.update('message', msgHtml);
+
+        //since we can't change the duration with an update
+        setTimeout(() => {
+            notify.update('progress', 0);
+        }, 5000);
+    } else {
+        notify.update('progress', 0);
+        notify.update('type', data.type);
+        notify.update('message', data.message);
+    }
+    return false;
+};
 
 //Must be as close to a JQuery $.ajax() as possible
 //TODO: abstract a little bit more and use fetch

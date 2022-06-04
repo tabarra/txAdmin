@@ -216,7 +216,7 @@ module.exports = class Monitor {
     //================================================================
     async sendHealthCheck() {
         //Check if the server is supposed to be offline
-        if (globals.fxRunner.fxChild === null || globals.fxRunner.fxServerPort === null) return;
+        if (globals.fxRunner.fxChild === null || globals.fxRunner.fxServerHost === null) return;
 
         //Make request
         let dynamicResp;

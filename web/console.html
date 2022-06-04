@@ -131,13 +131,7 @@
             dataType: "json",
             timeout: REQ_TIMEOUT_LONG,
             success: function (data) {
-                if (data.logout) {
-                    window.location = '/auth?logout';
-                    return;
-                }
-                notify.update('progress', 0);
-                notify.update('type', data.type);
-                notify.update('message', data.message);
+                updateMarkdownNotification(data, notify);
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);

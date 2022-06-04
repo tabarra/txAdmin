@@ -1,6 +1,5 @@
 const fsp = require('node:fs/promises');
 const path = require('node:path');
-const { EOL } = require('os');
 const isLocalhost = require('is-localhost-ip');
 
 //DEBUG
@@ -83,7 +82,7 @@ class ExecRecursionError {
 /**
  * Helper class to store file TODOs, errors and warnings
  */
-class FileInfoList {
+class FilesInfoList {
     constructor() {
         this.store = {}
     }
@@ -94,8 +93,25 @@ class FileInfoList {
             this.store[file] = [info];
         }
     }
+    count() {
+        return Object.keys(this.store).length;
+    }
     toJSON() {
         return this.store;
+    }
+    toMarkdown() {
+        const files = Object.keys(this.store)
+        if (!files) return null;
+
+        const msgLines = [];
+        for (const file of files) {
+            const fileInfos = this.store[file];
+            msgLines.push(`\`${file}\`:`);
+            fileInfos.forEach((msg) => {
+                msgLines.push(`\t${msg}`);
+            })
+        }
+        return msgLines.join('\n');
     }
 }
 
@@ -322,9 +338,9 @@ const validateCommands = async (parsedCommands) => {
 
     //To return
     const endpoints = {};
-    const errors = new FileInfoList();
-    const warnings = new FileInfoList();
-    const toCommentOut = new FileInfoList();
+    const errors = new FilesInfoList();
+    const warnings = new FilesInfoList();
+    const toCommentOut = new FilesInfoList();
 
     for (const cmd of parsedCommands) {
         //In case of error
@@ -441,14 +457,35 @@ const validateCommands = async (parsedCommands) => {
 
 
 /**
+ * Process endpoints object, checks validity, and then returns a connection string
+ * @param {object} endpoints 
+ * @returns {string} connect string
+ */
+const getConnectEndpoint = (endpoints) => {
+    if (!Object.keys(endpoints).length) {
+        throw new Error(`Your config file does not specify which IP and port fxserver should run. You can fix this by adding 'endpoint_add_tcp 0.0.0.0:30120; endpoint_add_udp 0.0.0.0:30120' to the start of the file.`);
+    }
+    const tcpudpEndpoint = Object.keys(endpoints).find((ep) => {
+        return endpoints[ep].tcp && endpoints[ep].udp;
+    });
+    if (!tcpudpEndpoint) {
+        throw new Error(`Your config file does not not contain a ip:port used in both endpoint_add_tcp and endpoint_add_udp. Players would not be able to connect.`);
+    }
+
+    return tcpudpEndpoint.replace(/(0\.0\.0\.0|\[::\])/, '127.0.0.1');
+};
+
+
+/**
  * Validates & ensures correctness in fxserver config file recursively.
+ * Used when trying to start server, or validate the server.cfg.
  *
  * @param {string|null} cfgInputString the cfg string to validate before saving, or null to load from file
  * @param {string} cfgPath
  * @param {string} serverDataPath
  * @returns {object} recursive cfg structure
  */
-const ensureSaveServerConfig = async (cfgInputString, cfgPath, serverDataPath) => {
+const validateFixServerConfig = async (cfgInputString, cfgPath, serverDataPath) => {
     if (typeof cfgInputString !== 'string' && cfgInputString !== null) {
         throw new Error('cfgInputString expected to be string or null');
     }
@@ -459,29 +496,20 @@ const ensureSaveServerConfig = async (cfgInputString, cfgPath, serverDataPath) =
     const { endpoints, errors, warnings, toCommentOut } = await validateCommands(parsedCommands);
 
     //Validating if a valid endpoint was detected
-    if (!Object.keys(endpoints).length) {
-        const msg = `Your config file does not specify which IP and port fxserver should run. You can fix this by adding 'endpoint_add_tcp 0.0.0.0:30120; endpoint_add_udp 0.0.0.0:30120' to the start of the file.`;
-        errors.add(cfgAbsolutePath, msg);
-    }
     let connectEndpoint = false;
-    const tcpudpEndpoint = Object.keys(endpoints).find((ep) => {
-        return endpoints[ep].tcp && endpoints[ep].udp;
-    });
-    if (tcpudpEndpoint) {
-        connectEndpoint = tcpudpEndpoint.replace(/(0\.0\.0\.0|\[::\])/, '127.0.0.1');
-    } else {
-        const msg = `Your config file does not not contain a ip:port used in both endpoint_add_tcp and endpoint_add_udp. Players would not be able to connect.`;
-        errors.add(cfgAbsolutePath, msg);
+    try {
+        connectEndpoint = getConnectEndpoint(endpoints);
+    } catch (error) {
+        errors.add(cfgAbsolutePath, error.message);
     }
 
     //Commenting out lines or registering them as warnings
-    let wasEntrypointModified = false;
     for (const targetCfgPath in toCommentOut.store) {
         const actions = toCommentOut.store[targetCfgPath];
         try {
+            //FIXME: acho que essa função não precisa nem mais de cfgInputString
             //If cfgInputString was provided and this action applies to the entry point file, use the cfgInputString instead of reading the file
             if (cfgInputString && targetCfgPath === cfgAbsolutePath) {
-                wasEntrypointModified = true;
                 cfgRaw = cfgInputString;
             } else {
                 cfgRaw = await fsp.readFile(targetCfgPath, 'utf8');
@@ -510,18 +538,66 @@ const ensureSaveServerConfig = async (cfgInputString, cfgPath, serverDataPath) =
         }
     }
 
-    //If cfgInputString was provided and not modified yet, save file
-    if (cfgInputString && !wasEntrypointModified) {
-        logWarn(`Saving modified file '${cfgAbsolutePath}'`);
-        await fsp.writeFile(cfgAbsolutePath, cfgInputString, 'utf8');
-    }
-
-    //unlike warning, erros should block the server start
+    //Prepare response
     return {
         connectEndpoint,
-        errors: Object.entries(errors.store),
-        warnings: Object.entries(warnings.store),
+        errors: errors.toMarkdown(),
+        warnings: errors.toMarkdown(),
+        // errors: errors.store,
+        // warnings: warnings.store,
         // endpoints, //Not being used
+    };
+};
+
+
+/**
+ * Validating config contents + saving file and backup.
+ * In case of any errors, it does not save the contents.
+ * Does not comment out (fix) bad lines.
+ * Used whenever a user wants to modify server.cfg.
+ *
+ * @param {string} cfgInputString the cfg string to validate before saving
+ * @param {string} cfgPath
+ * @param {string} serverDataPath
+ * @returns {object} recursive cfg structure
+ */
+const validateModifyServerConfig = async (cfgInputString, cfgPath, serverDataPath) => {
+    if (typeof cfgInputString !== 'string') {
+        throw new Error('cfgInputString expected to be string.');
+    }
+
+    //Parsing fxserver config & going through each command
+    const cfgAbsolutePath = resolveCFGFilePath(cfgPath, serverDataPath);
+    const parsedCommands = await parseRecursiveConfig(cfgInputString, cfgAbsolutePath, serverDataPath);
+    const { endpoints, errors, warnings, toCommentOut } = await validateCommands(parsedCommands);
+
+    //Validating if a valid endpoint was detected
+    try {
+        let _connectEndpoint = getConnectEndpoint(endpoints);
+    } catch (error) {
+        errors.add(cfgAbsolutePath, error.message);
+    }
+
+    //If there are any errors
+    if (errors.count()) {
+        return {
+            errors: errors.toMarkdown(),
+            warnings: warnings.toMarkdown(),
+        };
+    }
+    
+    //Save file + backup
+    try {
+        logWarn(`Saving modified file '${cfgAbsolutePath}'`);
+        await fsp.copyFile(cfgAbsolutePath, `${cfgAbsolutePath}.bkp`);
+        await fsp.writeFile(cfgAbsolutePath, cfgInputString, 'utf8');
+    } catch (error) {
+        throw new Error(`Failed to edit 'server.cfg' with error: ${error.message}`);
+    }
+
+    return {
+        success: true,
+        warnings: errors.toMarkdown(),
     };
 };
 /*
@@ -529,6 +605,7 @@ const ensureSaveServerConfig = async (cfgInputString, cfgPath, serverDataPath) =
     settings handleFXServer:    recursive validate file
     setup handleValidateCFGFile:    recursive validate file
     setup handleSaveLocal:      recursive validate file
+
     cfgEditor CFGEditorSave:    validate string, save
     deployer handleSaveConfig:  validate string, save *
 */
@@ -539,7 +616,8 @@ module.exports = {
     readRawCFGFile,
     readLineCommands,
     parseRecursiveConfig,
-    ensureSaveServerConfig,
+    validateFixServerConfig,
+    validateModifyServerConfig,
 };
 
 /*

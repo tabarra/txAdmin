@@ -387,6 +387,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" 
         integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" 
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.16/lib/marked.umd.min.js"></script>
     <script src="js/coreui.bundle.min.js"></script>
     <script src="js/bootstrap-notify.min.js"></script>
     <script src="js/txadmin/base.js"></script>
@@ -669,7 +670,7 @@
                 data: {recipeURL: s4RemoteTemplateInput.value.trim()},
                 dataType: 'json',
                 success: function (data) {
-                    if(checkDoLogoutRefresh(data)) return;
+                    if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
                         const deployData = buildDeployName(data.name);
                         s5DeployerTargetInput.value = deployData.path;
@@ -718,7 +719,7 @@
                 data: {deployPath: s5DeployerTargetInput.value.trim()},
                 dataType: 'json',
                 success: function (data) {
-                    if(checkDoLogoutRefresh(data)) return;
+                    if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
                         currentSteps.active.step.classList.remove('wrong');
                         currentSteps.active.step.classList.add('done');
@@ -759,7 +760,7 @@
                 data: {dataFolder: s4LocalDataPathInput.value.trim()},
                 dataType: 'json',
                 success: function (data) {
-                    if(checkDoLogoutRefresh(data)) return;
+                    if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
                         currentSteps.active.step.classList.remove('wrong');
                         currentSteps.active.step.classList.add('done');
@@ -808,14 +809,14 @@
                 data: outData,
                 dataType: 'json',
                 success: function (data) {
-                    if(checkDoLogoutRefresh(data)) return;
+                    if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
                         currentSteps.active.step.classList.remove('wrong');
                         currentSteps.active.step.classList.add('done');
                         frmName.classList.add('is-valid');
                         destroyFeedback(true)
                     }else{
-                        s5ServerCFGError.innerHTML = data.message;
+                        s5ServerCFGError.innerHTML = convertMarkdown(data.message, true);
                         s5ServerCFGError.classList.remove('d-none');
                         s5ServerCFGInput.classList.add('is-invalid');
                         stepperInstace.wrongStep();
@@ -870,11 +871,11 @@
                 data: outData,
                 dataType: 'json',
                 success: function (data) {
-                    if(checkDoLogoutRefresh(data)) return;
+                    if (checkApiLogoutRefresh(data)) return;
                     if (data.success == true){
                         window.location = (selectedDeploymentType == 'local')? '/console' : '/deployer';
                     }else{
-                        saveError.innerHTML = `${data.message}<br>Please refresh the page and start again.`;
+                        saveError.innerHTML = convertMarkdown(`${data.message}\nPlease refresh the page and start again.`, true);
                         saveError.classList.remove('d-none');
                         stepperInstace.wrongStep();
                         destroyFeedback(false)

@@ -5,7 +5,8 @@ const slash = require('slash');
 const path = require('path');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const { Deployer, validateTargetPath, parseValidateRecipe } = require('../../extras/deployer');
-const helpers = require('../../extras/helpers');
+const { findLikelyCFGPath } = require('../../extras/helpers');
+const { validateFixServerConfig } = require('../../extras/fxsConfigHelper');
 const got = require('../../extras/got');
 
 //Helper functions
@@ -197,7 +198,7 @@ async function handleValidateLocalDataFolder(ctx) {
         } else {
             return ctx.send({
                 success: true,
-                detectedConfig: helpers.findLikelyCFGPath(dataFolderPath),
+                detectedConfig: findLikelyCFGPath(dataFolderPath),
             });
         }
     } catch (error) {
@@ -222,20 +223,16 @@ async function handleValidateCFGFile(ctx) {
 
     const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim()));
     const cfgFilePathNormalized = slash(path.normalize(ctx.request.body.cfgFile.trim()));
-    const cfgFilePath = helpers.resolveCFGFilePath(cfgFilePathNormalized, dataFolderPath);
-
-    //Try to read file
-    let rawCfgFile;
-    try {
-        rawCfgFile = helpers.getCFGFileData(cfgFilePath);
-    } catch (error) {
-        return ctx.send({success: false, message: error.message});
-    }
 
     //Validate file
     try {
-        helpers.getFXServerPort(rawCfgFile);
-        return ctx.send({success: true});
+        const result = await validateFixServerConfig(null, cfgFilePathNormalized, dataFolderPath);
+        if (result.errors) {
+            const message = `**The file path is correct, but there are error(s) in your config file(s):**\n${result.errors}`;
+            return ctx.send({success: false, markdown: true, message});
+        } else {
+            return ctx.send({success: true});
+        }
     } catch (error) {
         const message = `The file path is correct, but: <br>\n ${error.message}.`;
         return ctx.send({success: false, message});
@@ -275,15 +272,6 @@ async function handleSaveLocal(ctx) {
         return ctx.send({success: false, message: `<strong>Server Data Folder error:</strong> ${error.message}`});
     }
 
-    //Validating CFG Path
-    try {
-        const cfgFilePath = helpers.resolveCFGFilePath(cfg.cfgFile, cfg.dataFolder);
-        const rawCfgFile = helpers.getCFGFileData(cfgFilePath);
-        const _port = helpers.getFXServerPort(rawCfgFile);
-    } catch (error) {
-        return ctx.send({success: false, message: `<strong>CFG File error:</strong> ${error.message}`});
-    }
-
     //Preparing & saving config
     const newGlobalConfig = globals.configVault.getScopedStructure('global');
     newGlobalConfig.serverName = cfg.name;
@@ -307,13 +295,13 @@ async function handleSaveLocal(ctx) {
         //Starting server
         const spawnMsg = await globals.fxRunner.spawnServer(false);
         if (spawnMsg !== null) {
-            return ctx.send({success: false, message: `Faied to start server with error: <br>\n${spawnMsg}`});
+            return ctx.send({success: false, markdown: true, message: spawnMsg});
         } else {
             return ctx.send({success: true});
         }
     } else {
         logWarn(`[${ctx.session.auth.username}] Error changing global/fxserver settings via setup stepper.`);
-        return ctx.send({success: false, message: '<strong>Error saving the configuration file.</strong>'});
+        return ctx.send({success: false, markdown: true, message: '**Error saving the configuration file.**'});
     }
 }
 
@@ -423,4 +411,3 @@ async function handleSaveDeployerCustom(ctx) {
         return ctx.send({success: false, message: '<strong>Error saving the configuration file.</strong>'});
     }
 }
-
