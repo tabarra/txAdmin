@@ -1,5 +1,6 @@
 const types = [
     'build',
+    'chore',
     'ci',
     'docs',
     'feat',
@@ -12,7 +13,6 @@ const types = [
 
     //custom
     'tweak',
-    'chore',
     'wip',
 ];
 

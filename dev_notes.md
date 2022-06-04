@@ -1,22 +1,4 @@
 ## TODO:
-- [x] server start after banner
-- [x] remove rofl+clap easter egg from login page
-- [x] fix server started banner printing on quiet mode
-- [x] Change CitizenFX to Cfx.re as per branding consistency (ask aurum)
-- [x] fix admin manager all_permissions issue
-- [x] fix open menu & player id permissions
-- [x] fix menu onesync detection
-- [x] Take menu out of beta:
-    - [x] In settings page, remove additional arguments doc on the menu
-    - [x] Remove the "BETA" in the menu logo
-    - [x] Change `nui_menu.misc.not_enabled` to say "go to tx settings to enable it"
-    - [x] Create a "menu" tab in settings page with options for: enable, tab key, screen side
-    - [x] Add "NEW" tag for settings page and menu tab
-    - [x] In configVault/settings remove `+setr txEnableMenuBeta true` from fxrunner settings string
-    - [x] Update the menu code to use new convar
-    - [x] Test update/new config scenarios
-    - [x] Update `menu.md`
-
 - [ ] dm via snackbar
 - [ ] wav for announcements
 - [ ] update `README.md`
@@ -27,19 +9,37 @@
 - [ ] replace all fxRunner.srvCmd* and only expose:
     - sync fxRunner.srvRawCmd(string) - to be used by live console
     - async fxRunner.srvCmd(array, timeout) - to be awaited with the status response
-
-
-
-Quando terminar de importar as traduções:
-[x] Remover redundantes:
-    - nui_menu.misc.general_no_perms, nui_menu.misc.action_unauthorized -> no_perms
-    - nui_menu.common.error -> nui_menu.misc.unknown_error
-[x] Renomear clear_area.dialog_description -> clear_area.dialog_desc
-[x] sync new labels
-[x] Adicionar tradução pro botão BAN do `DialogBanView.tsx`
-[x] Mergir pt (migration no vault)
 [ ] Quebrar snackbar de not admin em dois, um se confirmado que o problema são os identifiers, outro pra qualquer outro tipo de problema
 [ ] the kick/warn/dm reason modal title should have the username as key in the translation
+
+add ram usage to perf chart?
+
+forceFXServerPort problem:
+- There is currently two of them, one in zap config (GlobalData) and the ancient one in the settings
+- we should remove the config.json one and detect it on the server.cfg
+- The correct flow:
+    - use the zap+convar one to force server.cfg config
+    - the helper will detect which is the host:port tx should use
+
+
+
+No docs for:
+- console command "wait <ms>"
+- the JSON parser thing
+
+
+- BUG: nui menu triggered announcements are not sent to the discord
+
+
+Update event idea:
+- A box similar to the fxserver update one;
+- The major/minor updates will have a discord stage event, patches won't;
+- Will get the next event date + type (major/minor) through some api (maybe a regex-able string in the GH releases page);
+- The pre-event notifications will have a live "in xx time" type countdown
+- 2 days before it will show a yellow warning;
+- 1 hour before it will become a green box (glowing??)
+- 1 hour after the event start it will become a red update box with generic message, or blue if it's just a patch;
+
 
 
 
@@ -78,6 +78,15 @@ FIXME: sendMenuMessage('setServerCtx', ServerCtx)
 FIXME: quando o menu abrir, deveria voltar os list item pro default deles
 
 -- Adapt `txAdmin:beta:deathLog` as well as add cusstom commands and logs
+
+
+refactor settings:
+- save only what changed
+- make big settings a class (like TFR)
+- settings.getConfig(); - returns the full config tree with unset props as null
+- settings.get('object.dot.notation');
+- settings.set('object.dot.notation');
+- npm search for "object dot"
 
 
 
@@ -122,6 +131,44 @@ remover o \s?
 
 
 -- Why both have the same debug data? https://i.imgur.com/WGawiyr.png
+
+
+
+
+
+
+
+### New database alternatives:
+> check the chat saved messages on that chat
+- Via lowdb + journal:
+    - Keep players saved the way it is (lowdb, one server only)
+    - create `txData/actions.json` which is an append-only, line delimited json
+    - multiple servers write to this file, use debounced chokidar to read it starting from last offset to reload in-memory state;
+- Via sqlite:
+    - first txadmin to run will instantiate a `txData/actions.sqlite` database (becoming master)
+    - will provide an http endpoint for the slaves to query data
+    - leader election can be done via the first to acquire a lock on a file
+- Via external server process
+    - If server is not running, a standalone server like cockroachdb or rqlite
+    - 
+
+Ideas:
+- Maybe we could use b-trees to index identifiers/hwids somewhere?
+- Maybe we break the separation between players and identifiers, and bans/warns always try to find the respective player
+- Maybe we could go full `mongod.exe`
+    - very mature, great docs
+    - 45mb file, 120mb process
+    - to search for ids we can do `{identifiers: {$in: ['discord:xxxxx', 'fivem:yyyyy']}}`
+
+Databases that i didn't check yet:
+https://github.com/indradb/indradb
+https://github.com/erikgrinaker/toydb
+https://github.com/skytable/skytable
+https://github.com/meilisearch/meilisearch
+https://github.com/redwood/redwood
+https://github.com/arangodb/arangodb
+https://github.com/duckdb/duckdb
+
 
 
 
@@ -247,7 +294,6 @@ Small Stuff:
 
 > Hopefully now:
 - [ ] check the places where I'm doing `Object.assign()` for shallow clones
-- [ ] remove the ForceFXServerPort config and do either via `server.cfg` comment, or execute `endpoint_add_tcp "127.0.0.1:random"`
 - [ ] create `admin.useroptions` for dark mode, welcome modals and such
 
 > Soon™ (hopefully the next update)

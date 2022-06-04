@@ -1,19 +1,17 @@
 //Requires
 const modulename = 'RecipeEngine';
-const path = require('path');
+const { promisify } = require('util');
 const fs = require('fs-extra');
 const fsp = require('fs').promises; //starting to replace fse
+const path = require('path');
+const stream = require('stream');
 const StreamZip = require('node-stream-zip');
-const axios = require('axios');
 const cloneDeep = require('lodash/cloneDeep');
 const escapeRegExp = require('lodash/escapeRegExp');
 const mysql = require('mysql2/promise');
+const got = require('./got');
 const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
 
-//Got stream attempt:
-const stream = require('stream');
-const { promisify } = require('util');
-const got = require('got');
 
 //Helper functions
 const safePath = (base, suffix) => {
@@ -65,17 +63,21 @@ const taskDownloadFile = async (options, basePath, deployerCtx) => {
     await fs.outputFile(destPath, 'file save attempt, please ignore or remove');
 
     //Start file download and create write stream
-    const res = await axios({
-        method: 'get',
-        url: options.url,
-        responseType: 'stream',
+    deployerCtx.$step = 'before stream';
+    const gotOptions = {
+        timeout: { request: 150e3 },
+        retry: { limit: 5 },
+    };
+    const gotStream = got.stream(options.url, gotOptions);
+    gotStream.on('downloadProgress', (progress) => {
+        deployerCtx.$step = `downloading ${Math.round(progress.percent * 100)}%`;
     });
-    await new Promise((resolve, reject) => {
-        const outStream = fs.createWriteStream(destPath);
-        res.data.pipe(outStream);
-        outStream.on('finish', resolve);
-        outStream.on('error', reject); // don't forget this!
-    });
+    const pipeline = promisify(stream.pipeline);
+    await pipeline(
+        gotStream,
+        fs.createWriteStream(destPath),
+    );
+    deployerCtx.$step = 'after stream';
 };
 
 
@@ -108,16 +110,11 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     if (options.ref) {
         reference = options.ref;
     } else {
-        const res = await axios({
-            method: 'get',
-            url: `https://api.github.com/repos/${repoOwner}/${repoName}`,
-            responseType: 'json',
-            timeout: 15e3,
-        });
-        if (!res.data || !res.data.default_branch) {
+        const data = await got.get(`https://api.github.com/repos/${repoOwner}/${repoName}`, { timeout: 15e3 }).json();
+        if (typeof data !== 'object' || !data.default_branch) {
             throw new Error('reference not set, and wasn ot able to detect using github\'s api');
         }
-        reference = res.data.default_branch;
+        reference = data.default_branch;
     }
     deployerCtx.$step = 'ref set';
 
@@ -127,21 +124,6 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     const destPath = safePath(basePath, options.dest);
 
     //Downloading file
-    // const res = await axios({
-    //     method: 'get',
-    //     url: downURL,
-    //     responseType: 'stream',
-    //     timeout: 150e3,
-    // });
-    // deployerCtx.$step = 'before stream';
-    // await new Promise((resolve, reject) => {
-    //     const outStream = fs.createWriteStream(tmpFilePath);
-    //     res.data.pipe(outStream);
-    //     outStream.on('finish', resolve);
-    //     outStream.on('error', reject); // don't forget this!
-    // });
-    // deployerCtx.$step = 'after stream';
-
     deployerCtx.$step = 'before stream';
     const gotOptions = {
         timeout: { request: 150e3 },

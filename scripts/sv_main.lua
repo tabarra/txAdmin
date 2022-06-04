@@ -27,6 +27,7 @@ TX_PLAYERLIST = {}
 TX_LUACOMHOST = GetConvar("txAdmin-luaComHost", "invalid")
 TX_LUACOMTOKEN = GetConvar("txAdmin-luaComToken", "invalid")
 TX_VERSION = GetResourceMetadata(GetCurrentResourceName(), 'version') -- for now, only used in the start print
+TX_DEBUGMODE = (GetConvar('txAdmin-debugMode', 'false') == 'true') -- TODO: start using this global
 
 -- Checking convars
 if TX_LUACOMHOST == "invalid" or TX_LUACOMTOKEN == "invalid" then

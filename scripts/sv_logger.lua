@@ -214,6 +214,7 @@ RegisterNetEvent('txaLogger:DeathNotice', function(killer, cause)
     logger(source, 'DeathNotice', logData)
 end)
 
+--FIXME: deprecate or allow server commands
 RegisterNetEvent('txaLogger:CommandExecuted', function(data)
     logger(source, 'CommandExecuted', data)
 end)

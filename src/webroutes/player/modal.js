@@ -22,7 +22,6 @@ module.exports = async function PlayerModal(ctx) {
         return ctx.utils.error(400, 'Invalid Request');
     }
     let reference = ctx.params.reference;
-    const sess = ctx.nuiSession ?? ctx.session;
 
     //Helper function
     const getHistory = async (idArray) => {
@@ -62,6 +61,7 @@ module.exports = async function PlayerModal(ctx) {
     //Infering filter type
     let filterFunction, filterType;
     if (/^[0-9A-Fa-f]{40}$/.test(reference)) {
+        //Right now being used by web playerlist
         filterFunction = (player) => player.license === reference;
         filterType = 'license';
     } else if (/^\d{1,6}$/.test(reference)) {
@@ -85,7 +85,7 @@ module.exports = async function PlayerModal(ctx) {
     }
 
     //Locating player
-    const activePlayer = cloneDeep(globals.playerController.activePlayers).find(filterFunction);
+    const activePlayer = cloneDeep(globals.playerController.activePlayers.find(filterFunction));
 
     //Setting up output
     const controllerConfigs = globals.playerController.config;

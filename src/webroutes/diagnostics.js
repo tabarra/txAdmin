@@ -1,13 +1,13 @@
 //Requires
 const modulename = 'WebServer:Diagnostics';
 const os = require('os');
-const axios = require('axios');
 const bytes = require('bytes');
 const pidusageTree = require('pidusage-tree');
 const humanizeDuration = require('humanize-duration');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 const Cache = require('../extras/dataCache');
 const helpers = require('../extras/helpers');
+const got = require('../extras/got');
 
 const cache = new Cache(5);
 
@@ -114,18 +114,15 @@ async function getFXServerData() {
     //Preparing request
     const requestOptions = {
         url: `http://${globals.fxRunner.fxServerHost}/info.json`,
-        method: 'get',
-        responseType: 'json',
-        responseEncoding: 'utf8',
         maxRedirects: 0,
         timeout: globals.monitor.hardConfigs.timeout,
+        retry: {limit: 0},
     };
 
     //Making HTTP Request
     let infoData;
     try {
-        const res = await axios(requestOptions);
-        infoData = res.data;
+        infoData = await got.get(requestOptions).json();
     } catch (error) {
         logWarn('Failed to get FXServer information.');
         if (GlobalData.verbose) dir(error);

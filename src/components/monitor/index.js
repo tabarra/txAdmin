@@ -1,6 +1,6 @@
 //Requires
 const modulename = 'Monitor';
-const axios = require('axios');
+const got = require('../../extras/got');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const helpers = require('../../extras/helpers');
 const getHostStats = require('./getHostStats');
@@ -8,10 +8,6 @@ const getHostStats = require('./getHostStats');
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000); };
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
-const escape = (x) => {return x.replace(/"/g, '\uff02');};
-const formatCommand = (cmd, ...params) => {
-    return `${cmd} "` + [...params].map(escape).join('" "') + '"';
-};
 
 module.exports = class Monitor {
     constructor(config) {
@@ -177,7 +173,7 @@ module.exports = class Monitor {
 
     //================================================================
     /**
-     * Check cooldown and Restart the FXServer
+     * Restart the FXServer and logs everything
      * @param {string} reason
      * @param {string} reasonTranslated
      */
@@ -222,23 +218,19 @@ module.exports = class Monitor {
         //Check if the server is supposed to be offline
         if (globals.fxRunner.fxChild === null || globals.fxRunner.fxServerPort === null) return;
 
-        //Setup do request e variáveis iniciais
-        let requestOptions = {
-            url: `http://${globals.fxRunner.fxServerHost}/dynamic.json`,
-            method: 'get',
-            responseType: 'json',
-            responseEncoding: 'utf8',
-            maxRedirects: 0,
-            timeout: this.hardConfigs.timeout,
-        };
-
         //Make request
         let dynamicResp;
+        const requestOptions = {
+            url: `http://${globals.fxRunner.fxServerHost}/dynamic.json`,
+            timeout: this.hardConfigs.timeout,
+            maxRedirects: 0,
+            retry: {limit: 0},
+        };
         try {
-            const res = await axios(requestOptions);
-            if (typeof res.data !== 'object') throw new Error("FXServer's dynamic endpoint didn't return a JSON object.");
-            if (isUndefined(res.data.hostname) || isUndefined(res.data.clients)) throw new Error("FXServer's dynamic endpoint didn't return complete data.");
-            dynamicResp = res.data;
+            const data = await got.get(requestOptions).json();
+            if (typeof data !== 'object') throw new Error("FXServer's dynamic endpoint didn't return a JSON object.");
+            if (isUndefined(data.hostname) || isUndefined(data.clients)) throw new Error("FXServer's dynamic endpoint didn't return complete data.");
+            dynamicResp = data;
         } catch (error) {
             this.lastHealthCheckErrorMessage = error.message;
             return;

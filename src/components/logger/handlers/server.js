@@ -67,7 +67,10 @@ module.exports = class ServerLogger extends LoggerBase {
 
         this.recentBuffer = [];
         this.recentBufferMaxSize = 32e3;
-        this.cachedPlayers = new Map(); //TODO: maybe move to playerController in the future
+
+        //TODO: maybe move to playerController in the future
+        //FIXME: memory leak
+        this.cachedPlayers = new Map();
     }
 
 

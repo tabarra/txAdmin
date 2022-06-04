@@ -2,9 +2,9 @@
 const os = require('os');
 const boxen = require('boxen');
 const chalk = require('chalk');
-const got = require('got');
 const open = require('open');
 const { dir, log, logOk, logWarn, logError } = require('./console')();
+const got = require('./got');
 const windowsReleaseAsync = require('./windowsReleaseAsync');
 
 // const getTimeout = (timeoutLimit) => {
@@ -16,17 +16,6 @@ const windowsReleaseAsync = require('./windowsReleaseAsync');
 //     });
 // }
 
-//Promise.any polyfill
-// const any = (Promise.any || function ($) {
-//     return new Promise(function (D, E, A, L) {
-//         A = [];
-//         L = $.map(function ($, i) {
-//             return Promise.resolve($).then(D, function (O) {
-//                 return ((A[i] = O), --L) || E({errors: A});
-//             });
-//         }).length;
-//     });
-// });
 
 const printMultiline = (lines, color) => {
     const prefix = color('[txAdmin]');

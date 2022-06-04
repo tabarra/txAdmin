@@ -3,10 +3,10 @@ const modulename = 'WebServer:SetupPost';
 const fs = require('fs-extra');
 const slash = require('slash');
 const path = require('path');
-const axios = require('axios');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const { Deployer, validateTargetPath, parseValidateRecipe } = require('../../extras/deployer');
 const helpers = require('../../extras/helpers');
+const got = require('../../extras/got');
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -110,14 +110,12 @@ async function handleValidateRecipeURL(ctx) {
 
     //Make request & validate recipe
     try {
-        const res = await axios({
+        const recipeText = await got.get({
             url: recipeURL,
-            method: 'get',
-            responseEncoding: 'utf8',
             timeout: 4500,
-        });
-        if (typeof res.data !== 'string') throw new Error('This URL did not return a string.');
-        const recipe = parseValidateRecipe(res.data);
+        }).text();
+        if (typeof recipeText !== 'string') throw new Error('This URL did not return a string.');
+        const recipe = parseValidateRecipe(recipeText);
         return ctx.send({success: true, name: recipe.name});
     } catch (error) {
         return ctx.send({success: false, message: `Recipe error: ${error.message}`});
@@ -345,23 +343,20 @@ async function handleSaveDeployerImport(ctx) {
     const deploymentID = ctx.request.body.deploymentID;
 
     //Get recipe
-    let recipeData;
+    let recipeText;
     try {
-        const res = await axios({
+        recipeText = await got.get({
             url: recipeURL,
-            method: 'get',
-            responseEncoding: 'utf8',
             timeout: 4500,
-        });
-        if (typeof res.data !== 'string') throw new Error('This URL did not return a string.');
-        recipeData = res.data;
+        }).text();
+        if (typeof recipeText !== 'string') throw new Error('This URL did not return a string.');
     } catch (error) {
         return ctx.send({success: false, message: `Recipe download error: ${error.message}`});
     }
 
     //Start deployer (constructor will validate the recipe)
     try {
-        globals.deployer = new Deployer(recipeData, deploymentID, targetPath, isTrustedSource, {serverName});
+        globals.deployer = new Deployer(recipeText, deploymentID, targetPath, isTrustedSource, {serverName});
     } catch (error) {
         return ctx.send({success: false, message: error.message});
     }

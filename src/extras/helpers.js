@@ -258,8 +258,9 @@ function findLikelyCFGPath(serverDataPath) {
         '../server.cfg',
     ];
 
-    for (let i = 0; i < attempts.length; i++) {
-        const cfgPath = path.join(serverDataPath, attempts[i]);
+    for (const attempt of attempts) {
+        const cfgPath = path.join(serverDataPath, attempt);
+
         try {
             getCFGFileData(cfgPath);
             return cfgPath;
