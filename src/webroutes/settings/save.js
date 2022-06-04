@@ -1,10 +1,12 @@
 //Requires
 const modulename = 'WebServer:SettingsSave';
-const fs = require('fs');
+const fsp = require('fs/promises');
 const slash = require('slash');
 const path = require('path');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const helpers = require('../../extras/helpers');
+const { parseSchedule } = require('../../extras/helpers');
+const { resolveCFGFilePath } = require('../../extras/fxsConfigHelper');
+
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -31,17 +33,17 @@ module.exports = async function SettingsSave(ctx) {
 
     //Delegate to the specific scope functions
     if (scope == 'global') {
-        return handleGlobal(ctx);
+        return await handleGlobal(ctx);
     } else if (scope == 'fxserver') {
-        return handleFXServer(ctx);
+        return await handleFXServer(ctx);
     } else if (scope == 'playerController') {
-        return handlePlayerController(ctx);
+        return await handlePlayerController(ctx);
     } else if (scope == 'monitor') {
-        return handleMonitor(ctx);
+        return await handleMonitor(ctx);
     } else if (scope == 'discord') {
-        return handleDiscord(ctx);
+        return await handleDiscord(ctx);
     } else if (scope == 'menu') {
-        return handleMenu(ctx);
+        return await handleMenu(ctx);
     } else {
         return ctx.send({
             type: 'danger',
@@ -56,7 +58,7 @@ module.exports = async function SettingsSave(ctx) {
  * Handle Global settings
  * @param {object} ctx
  */
-function handleGlobal(ctx) {
+async function handleGlobal(ctx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.serverName)
@@ -100,10 +102,9 @@ function handleGlobal(ctx) {
 //================================================================
 /**
  * Handle FXServer settings
- * TODO: it MAY be worth to use helpers.findLikelyServerDataPath() and helpers.findLikelyCFGPath()
  * @param {object} ctx
  */
-function handleFXServer(ctx) {
+async function handleFXServer(ctx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.serverDataPath)
@@ -128,22 +129,25 @@ function handleFXServer(ctx) {
 
     //Validating Base Path
     try {
-        if (!fs.existsSync(path.join(cfg.serverDataPath, 'resources'))) {
-            if (cfg.serverDataPath.includes('resources')) {
-                throw new Error('The base must be the folder that contains the resources folder.');
-            } else {
-                throw new Error("Couldn't locate or read a resources folder inside of the base path.");
-            }
+        const resPath = path.join(cfg.serverDataPath, 'resources');
+        const resStat = await fsp.stat(resPath);
+        if (!resStat.isDirectory()) {
+            throw new Error("Couldn't locate or read a resources folder inside of the base path.");
         }
     } catch (error) {
-        return ctx.send({type: 'danger', message: `<strong>Server Data Folder error:</strong> ${error.message}`});
+        const msg = cfg.serverDataPath.includes('resources')
+            ? 'The base must be the folder that contains the resources folder.'
+            : error.message;
+        return ctx.send({type: 'danger', message: `<strong>Server Data Folder error:</strong> ${msg}`});
     }
 
     //Validating CFG Path
     try {
-        let cfgFilePath = helpers.resolveCFGFilePath(cfg.cfgPath, cfg.serverDataPath);
-        let rawCfgFile = helpers.getCFGFileData(cfgFilePath);
-        let _port = helpers.getFXServerPort(rawCfgFile);
+        const cfgFilePath = resolveCFGFilePath(cfg.cfgPath, cfg.serverDataPath);
+        const cfgFileStat = await fsp.stat(cfgFilePath);
+        if (!cfgFileStat.isFile()) {
+            throw new Error('The path provided is not a file');
+        }
     } catch (error) {
         return ctx.send({type: 'danger', message: `<strong>CFG Path error:</strong> ${error.message}`});
     }
@@ -175,7 +179,7 @@ function handleFXServer(ctx) {
  * Handle Player Controller settings
  * @param {object} ctx
  */
-function handlePlayerController(ctx) {
+async function handlePlayerController(ctx) {
     //Sanity check
     if (anyUndefined(
         ctx.request.body,
@@ -233,7 +237,7 @@ function handlePlayerController(ctx) {
  * Handle Monitor settings
  * @param {object} ctx
  */
-function handleMonitor(ctx) {
+async function handleMonitor(ctx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.restarterSchedule),
@@ -251,7 +255,7 @@ function handleMonitor(ctx) {
     };
 
     //Validating restart times
-    let scheduleTimes = helpers.parseSchedule(cfg.restarterSchedule, false);
+    let scheduleTimes = parseSchedule(cfg.restarterSchedule, false);
     let invalidRestartTimes = [];
     let validRestartTimes = [];
     scheduleTimes.forEach((time) => {
@@ -315,7 +319,7 @@ function handleMonitor(ctx) {
  * Handle Discord settings
  * @param {object} ctx
  */
-function handleDiscord(ctx) {
+async function handleDiscord(ctx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.enabled)
@@ -367,7 +371,7 @@ function handleDiscord(ctx) {
  * NOTE: scoped inside global settings
  * @param {object} ctx
  */
-function handleMenu(ctx) {
+async function handleMenu(ctx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.menuEnabled)

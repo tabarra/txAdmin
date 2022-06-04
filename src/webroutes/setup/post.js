@@ -5,8 +5,7 @@ const slash = require('slash');
 const path = require('path');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const { Deployer, validateTargetPath, parseValidateRecipe } = require('../../extras/deployer');
-const { findLikelyCFGPath } = require('../../extras/helpers');
-const { validateFixServerConfig } = require('../../extras/fxsConfigHelper');
+const { validateFixServerConfig, findLikelyCFGPath } = require('../../extras/fxsConfigHelper');
 const got = require('../../extras/got');
 
 //Helper functions
@@ -226,7 +225,7 @@ async function handleValidateCFGFile(ctx) {
 
     //Validate file
     try {
-        const result = await validateFixServerConfig(null, cfgFilePathNormalized, dataFolderPath);
+        const result = await validateFixServerConfig(cfgFilePathNormalized, dataFolderPath);
         if (result.errors) {
             const message = `**The file path is correct, but there are error(s) in your config file(s):**\n${result.errors}`;
             return ctx.send({success: false, markdown: true, message});

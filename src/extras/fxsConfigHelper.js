@@ -117,6 +117,32 @@ class FilesInfoList {
 
 
 /**
+ * Returns the first likely server.cfg given a server data path, or false
+ * @param {string} serverDataPath
+ */
+ function findLikelyCFGPath(serverDataPath) {
+    const attempts = [
+        'server.cfg',
+        'server.cfg.txt',
+        'server.cfg.cfg',
+        'server.txt',
+        'server',
+        '../server.cfg',
+    ];
+
+    for (const attempt of attempts) {
+        const cfgPath = path.join(serverDataPath, attempt);
+        try {
+            if(fs.lstatSync(cfgPath).isFile()){
+                return cfgPath;
+            }
+        } catch (error) { }
+    }
+    return false;
+}
+
+
+/**
  * Returns the absolute path of the given CFG Path
  * @param {string} cfgPath
  * @param {string} serverDataPath
@@ -480,19 +506,14 @@ const getConnectEndpoint = (endpoints) => {
  * Validates & ensures correctness in fxserver config file recursively.
  * Used when trying to start server, or validate the server.cfg.
  *
- * @param {string|null} cfgInputString the cfg string to validate before saving, or null to load from file
  * @param {string} cfgPath
  * @param {string} serverDataPath
  * @returns {object} recursive cfg structure
  */
-const validateFixServerConfig = async (cfgInputString, cfgPath, serverDataPath) => {
-    if (typeof cfgInputString !== 'string' && cfgInputString !== null) {
-        throw new Error('cfgInputString expected to be string or null');
-    }
-
+const validateFixServerConfig = async (cfgPath, serverDataPath) => {
     //Parsing fxserver config & going through each command
     const cfgAbsolutePath = resolveCFGFilePath(cfgPath, serverDataPath);
-    const parsedCommands = await parseRecursiveConfig(cfgInputString, cfgAbsolutePath, serverDataPath);
+    const parsedCommands = await parseRecursiveConfig(null, cfgAbsolutePath, serverDataPath);
     const { endpoints, errors, warnings, toCommentOut } = await validateCommands(parsedCommands);
 
     //Validating if a valid endpoint was detected
@@ -507,13 +528,7 @@ const validateFixServerConfig = async (cfgInputString, cfgPath, serverDataPath) 
     for (const targetCfgPath in toCommentOut.store) {
         const actions = toCommentOut.store[targetCfgPath];
         try {
-            //FIXME: acho que essa função não precisa nem mais de cfgInputString
-            //If cfgInputString was provided and this action applies to the entry point file, use the cfgInputString instead of reading the file
-            if (cfgInputString && targetCfgPath === cfgAbsolutePath) {
-                cfgRaw = cfgInputString;
-            } else {
-                cfgRaw = await fsp.readFile(targetCfgPath, 'utf8');
-            }
+            const cfgRaw = await fsp.readFile(targetCfgPath, 'utf8');
 
             //modify the cfg lines
             const fileEOL = detectNewline(cfgRaw);
@@ -613,6 +628,7 @@ const validateModifyServerConfig = async (cfgInputString, cfgPath, serverDataPat
 
 
 module.exports = {
+    findLikelyCFGPath,
     resolveCFGFilePath,
     readRawCFGFile,
     readLineCommands,

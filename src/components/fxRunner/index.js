@@ -170,7 +170,7 @@ module.exports = class FXRunner {
 
         //Validating server.cfg & configuration
         try {
-            const result = await validateFixServerConfig(null, this.config.cfgPath, this.config.serverDataPath);
+            const result = await validateFixServerConfig(this.config.cfgPath, this.config.serverDataPath);
             if(result.errors){
                 const msg = `**Unable to start the server due to error(s) in your config file(s):**\n${result.errors}`;
                 logError(msg);
