@@ -14,12 +14,32 @@
 
 add ram usage to perf chart?
 
-forceFXServerPort problem:
-- There is currently two of them, one in zap config (GlobalData) and the ancient one in the settings
-- we should remove the config.json one and detect it on the server.cfg
-- The correct flow:
-    - use the zap+convar one to force server.cfg config
-    - the helper will detect which is the host:port tx should use
+
+# txAdminAPI:
+- Create prop `pendingMessage` to replace `const notify = $.notify({ message: 'xxxxxx' }, {});`
+- Pass `notify` as last argument to `success()` and `error()`
+- Create default `success()` and `error()`
+    - for `success()`: first exec `checkDoLogoutRefresh()`
+    - if `pendingMessage` was set: 
+        - if data.markdown === true > usar markdown
+    - else: send new notify
+
+someday remove the slash() and the ascii restrictions
+
+
+
+# New folder organization:
+menu
+scripts > resource
+src > core
+web
+database
+scripts (test_build.sh, lint-formatter.js, locale-utils.js)
+dev_notes, newPlayerlist -> to docs folder
+
+
+
+
 
 
 
@@ -437,7 +457,7 @@ https://coreui.io/docs/content/typography/
 https://www.npmjs.com/package/humanize-duration
 https://kinark.github.io/Materialize-stepper/
 
-https://www.science.co.il/language/Locale-codes.php
+https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 
 
 =======================================
