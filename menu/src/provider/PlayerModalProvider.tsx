@@ -4,6 +4,7 @@ import React, {
   useState,
   useCallback,
   useEffect,
+  ReactNode,
 } from "react";
 import PlayerModal from "../components/PlayerModal/PlayerModal";
 import { useSetDisableTab, useSetListenForExit } from "../state/keys.state";
@@ -22,7 +23,13 @@ interface PlayerProviderCtx {
   showNoPerms: (opt: string) => void;
 }
 
-export const PlayerModalProvider: React.FC = ({ children }) => {
+interface PlayerModalProviderProps {
+  children: ReactNode;
+}
+
+export const PlayerModalProvider: React.FC<PlayerModalProviderProps> = ({
+  children,
+}) => {
   const [tab, setTab] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
   const setDisableTabNav = useSetDisableTab();

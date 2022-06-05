@@ -1,5 +1,6 @@
 import React, {
   createContext,
+  ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -25,7 +26,13 @@ export const useTooltip = () => useContext<TooltipContextValue>(TooltipCtx);
 
 const HIDE_TOOLTIP_AFTER_MS = 7000;
 
-export const TooltipProvider: React.FC = ({ children }) => {
+interface TooltipProviderProps {
+  children: ReactNode;
+}
+
+export const TooltipProvider: React.FC<TooltipProviderProps> = ({
+  children,
+}) => {
   const [tooltipText, _setTooltipText] = useState("");
   const [_tooltipOpen, setTooltipOpen] = useState(false);
   const isMenuVisible = useIsMenuVisibleValue();

@@ -1,5 +1,7 @@
 import React, { memo, useEffect, useRef, useState } from "react";
 import {
+  Box,
+  BoxProps,
   ListItem,
   ListItemIcon,
   ListItemSecondaryAction,
@@ -18,7 +20,8 @@ import {
 } from "../../state/permissions.state";
 import { userHasPerm } from "../../utils/miscUtils";
 import { useSnackbar } from "notistack";
-import { useTooltip } from '../../provider/TooltipProvider';
+import { useTooltip } from "../../provider/TooltipProvider";
+import { styled } from "@mui/styles";
 
 export interface MenuListItemProps {
   title: string;
@@ -27,6 +30,10 @@ export interface MenuListItemProps {
   icon: JSX.Element;
   selected: boolean;
   onSelect: () => void;
+}
+
+interface StyledRootProps extends BoxProps {
+  isDisabled: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -48,14 +55,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 // TODO: Actually do disabled item styling right now it will only remove
 // enter from working
 export const MenuListItem: React.FC<MenuListItemProps> = memo(
-  ({
-    title,
-    label,
-    requiredPermission,
-    icon,
-    selected,
-    onSelect,
-  }) => {
+  ({ title, label, requiredPermission, icon, selected, onSelect }) => {
     const classes = useStyles();
     const t = useTranslate();
     const divRef = useRef<HTMLDivElement | null>(null);
@@ -98,7 +98,7 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
       if (selected) {
         setTooltipText(label);
       }
-    }, [selected])
+    }, [selected]);
 
     useKeyboardNavigation({
       onEnterDown: handleEnter,
@@ -144,24 +144,16 @@ export interface MenuListItemMultiProps {
 }
 
 export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
-  ({
-    selected,
-    title,
-    actions,
-    icon,
-    initialValue,
-    requiredPermission,
-  }) => {
+  ({ selected, title, actions, icon, initialValue, requiredPermission }) => {
     const classes = useStyles();
     const t = useTranslate();
     const [curState, setCurState] = useState(0);
     const userPerms = usePermissionsValue();
     const { enqueueSnackbar } = useSnackbar();
-    const { setTooltipText } = useTooltip()
+    const { setTooltipText } = useTooltip();
 
-    const isUserAllowed = requiredPermission
-      ? userHasPerm(requiredPermission, userPerms)
-      : true;
+    const isUserAllowed =
+      requiredPermission && userHasPerm(requiredPermission, userPerms);
 
     const compMounted = useRef(false);
 
@@ -244,7 +236,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     return (
       <div ref={divRef}>
         <ListItem
-          className={isUserAllowed ? classes.root : classes.rootDisabled}
+          sx={{ borderRadius: 15, opacity: isUserAllowed ? 1 : 0.3 }}
           dense
           selected={selected}
         >
@@ -255,10 +247,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
             primary={
               <>
                 {title}:&nbsp;
-                <Typography
-                  component="span"
-                  color="text.secondary"
-                >
+                <Typography component="span" color="text.secondary">
                   {actions[curState]?.name ?? "???"}
                 </Typography>
               </>

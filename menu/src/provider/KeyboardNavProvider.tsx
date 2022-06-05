@@ -1,5 +1,6 @@
 import React, {
   createContext,
+  ReactNode,
   useCallback,
   useContext,
   useEffect,
@@ -11,8 +12,13 @@ import { txAdminMenuPage, usePageValue } from "../state/page.state";
 
 const KeyboardNavContext = createContext(null);
 
-// TODO: For the love of god I should rename some of the variables in this provider, was I high?
-export const KeyboardNavProvider: React.FC = ({ children }) => {
+interface KeyboardNavProviderProps {
+  children: ReactNode;
+}
+
+export const KeyboardNavProvider: React.FC<KeyboardNavProviderProps> = ({
+  children,
+}) => {
   const [disabledKeyNav, setDisabledKeyNav] = useState(false);
   const isMenuVisible = useIsMenuVisibleValue();
   const curPage = usePageValue();
