@@ -37,11 +37,11 @@
     },
     "nui_menu": {
         "misc": {
-            "help_message": "txAdmin Menu disponible, escribe /tx para abrirlo.\nTambien puedes configurar una asignación de teclas en [Ajustes > Asignación de teclas > FiveM > Menu: Abrir página principal].",
+            "help_message": "Menú txAdmin disponible, escribe /tx para abrirlo.\nTambien puedes configurar una asignación de teclas en [Ajustes > Asignación de teclas > FiveM > Menu: Abrir página principal].",
             "menu_not_allowed": "Tus identificadores no estan registrados en txAdmin.\nSi estas registrado en txAdmin, ve a gestor de administradores y asegurate que tus identificadores estan guardados.",
             "no_perms": "No tienes este permiso",
             "unknown_error": "Ha ocurrido un error.",
-            "not_enabled": "¡txAdmin Menu no está activado! Puedes activarlo en la página de ajustes de txAdmin.",
+            "not_enabled": "¡Menú txAdmin no está activado! Puedes activarlo en la página de ajustes de txAdmin.",
             "announcement_title": "Anuncio del servidor de %{author}:",
             "dialog_empty_input": "La entrada no puede estar vacía."
         },
@@ -59,7 +59,7 @@
         "page_main": {
             "tooltips": {
                 "tooltip_1": "Pulsa %{key} para cambiar entre páginas y las flechas para cambiar entre las opciones del menú",
-                "tooltip_2": "Algunos elementos del menu tienen sub-opciones que pueden ser seleccionadas usando las flechas izquierda y derecha."
+                "tooltip_2": "Algunos elementos del menú tienen sub-opciones que pueden ser seleccionadas usando las flechas izquierda y derecha."
             },
             "player_mode": {
                 "title": "Modo del jugador",
@@ -106,15 +106,15 @@
             },
             "vehicle": {
                 "title": "Vehículo",
-                "onesync_error": "Esta opcion requiere OneSync On para gestionar las entidades desde el servidor",
-                "not_in_veh_error": "¡No estas en ningún vehículo!",
+                "onesync_error": "Esta opción requiere OneSync On para gestionar las entidades desde el servidor",
+                "not_in_veh_error": "¡No estás en ningún vehículo!",
                 "spawn": {
                     "title": "Generar",
                     "label": "Genera un vehículo",
                     "dialog_title": "Generar vehículo",
-                    "dialog_desc": "Escrible el nombre de modelo del vehículo que quieres generar.",
-                    "dialog_success": "¡Vehiculo generado!",
-                    "dialog_error": "¡El vehiculo '%{modelName}' no existe!",
+                    "dialog_desc": "Escribe el nombre de modelo del vehículo que quieres generar.",
+                    "dialog_success": "¡Vehículo generado!",
+                    "dialog_error": "¡El vehículo '%{modelName}' no existe!",
                     "dialog_info": "Intentando generar %{modelName}."
                 },
                 "fix": {
@@ -124,43 +124,43 @@
                 },
                 "delete": {
                     "title": "Borrar",
-                    "label": "Borra el vehiculo actual",
-                    "success": "¡Vehiculo borrado!"
+                    "label": "Borra el vehículo actual",
+                    "success": "¡Vehículo borrado!"
                 }
             },
             "heal": {
                 "title": "Curar",
                 "myself": {
-                    "title": "A mi mismo",
+                    "title": "A mí mismo",
                     "label": "Regenera tu vida",
                     "success_0": "¡Todo curado!",
-                    "success_1": "¡Deberias sentirte mejor!",
+                    "success_1": "¡Deberías sentirte mejor!",
                     "success_2": "¡A tope!",
                     "success_3": "¡Sana, sana, pata de rana!"
                 },
                 "everyone": {
                     "title": "A todos",
                     "label": "Cura y revive a todos",
-                    "success": "Todos los jugadores revividos y curados."
+                    "success": "Todos los jugadores han sido revividos y curados."
                 }
             },
             "announcement": {
                 "title": "Enviar anuncio",
-                "label": "Envia una comunicación a todos los jugadores conectados.",
-                "dialog_desc": "Enter the message you want to broadcast to all players.",
-                "dialog_placeholder": "Tu comunicación...",
+                "label": "Envía un comunicado a todos los jugadores conectados.",
+                "dialog_desc": "Ingrese el mensaje que quiere enviar a todos los jugadores.",
+                "dialog_placeholder": "Tu comunicado...",
                 "dialog_success": "Enviando el anuncio."
             },
             "clear_area": {
                 "title": "Reiniciar área del mundo",
-                "label": "Reset a specified world area to its default state",
-                "dialog_desc": "Por favor introduce el rádio del area que quieres reiniciar entre (0-300). Esto no borrará entidades creadas por el servidor.",
-                "dialog_success": "Limpiando área con rádio de %{radius}m",
-                "dialog_error": "Rádio inválido. Prueba otra vez."
+                "label": "Reinicia un área específica del mundo a su estado por defecto",
+                "dialog_desc": "Por favor introduce el radio del área que quieres reiniciar entre (0-300). Esto no borrará entidades creadas por el servidor.",
+                "dialog_success": "Limpiando área con radio de %{radius}m",
+                "dialog_error": "Radio inválido. Prueba otra vez."
             },
             "player_ids": {
                 "title": "Altenar IDs de jugadores",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                "label": "Alternar el mostrar los IDs de jugadores (y otra información) sobre la cabeza de los jugadores cercanos",
                 "alert_show": "Enseñado NetIDs de jugadores cercanos.",
                 "alert_hide": "Ocultando NetIDs de jugadores cercanos."
             }
@@ -178,8 +178,8 @@
                 "id": "ID",
                 "joined_first": "Unidos recientes",
                 "joined_last": "Unidos primeros",
-                "closest": "Mas cercanos",
-                "farthest": "Mas lejanos"
+                "closest": "Más cercanos",
+                "farthest": "Más lejanos"
             },
             "card": {
                 "health": "%{percentHealth}% vida"
@@ -216,13 +216,13 @@
                     },
                     "warn_dialog": {
                         "title": "Avisar",
-                        "description": "¿Cual es la razón por la que estas advirtiendo a este jugador?",
+                        "description": "¿Cual es la razón por la que estás advirtiendo a este jugador?",
                         "placeholder": "Razón...",
                         "success": "¡El jugador ha sido avisado!"
                     },
                     "kick_dialog": {
                         "title": "Expulsar",
-                        "description": "¿Cual es la razón por la que estas expulsando a este jugador?",
+                        "description": "¿Cual es la razón por la que estás expulsando a este jugador?",
                         "placeholder": "Razón...",
                         "success": "¡El jugador fué expulsado!"
                     }
@@ -265,11 +265,11 @@
                 "title": "Historial relacionado",
                 "action_types": {
                     "warn": "ADVERTIDO",
-                    "warn_revoked": "REVOCADA la ADVERTENCIA por",
+                    "warn_revoked": "REVOCADA LA ADVERTENCIA POR",
                     "ban": "BANEADO",
-                    "ban_revoked": "REVOCADO el BANEO por",
+                    "ban_revoked": "REVOCADO EL BANEO POR",
                     "whitelist": "WHITELIST",
-                    "whitelist_revoked": "REVOCADA la WHITELIST por"
+                    "whitelist_revoked": "REVOCADA LA WHITELIST POR"
                 }
             },
             "ban": {
@@ -283,7 +283,7 @@
                 "permanent": "Permanente",
                 "custom": "Personalizado",
                 "helper_text": "Por favor, elige una duración",
-                "submit": "Apply ban"
+                "submit": "Aplicar baneo"
             }
         }
     }
