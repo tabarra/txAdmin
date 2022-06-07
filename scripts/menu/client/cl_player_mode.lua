@@ -21,9 +21,13 @@ local freecamVeh = 0
 local function toggleFreecam(enabled)
     noClipEnabled = enabled
     local ped = PlayerPedId()
+    local Player = PlayerId()
     SetEntityVisible(ped, not enabled)
     SetEntityInvincible(ped, enabled)
     FreezeEntityPosition(ped, enabled)
+    SetEntityCompletelyDisableCollision(ped, not enabled, not enabled)
+    SetPedRagdollOnCollision(ped,not enabled)
+    SetEveryoneIgnorePlayer(Player, enabled)
 
     if enabled then
         freecamVeh = GetVehiclePedIsIn(ped, false)
