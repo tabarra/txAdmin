@@ -58,6 +58,8 @@ function toggleMenuVisibility(visible)
         isMenuVisible = not isMenuVisible
         sendMenuMessage('setVisible', isMenuVisible)
     end
+    
+    whileIsMenuVisible()
     -- check if noclip and spectate still works with menu closed
     if not isMenuVisible then
         SetNuiFocus(false)

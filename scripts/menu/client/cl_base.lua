@@ -170,13 +170,14 @@ RegisterNUICallback('closeMenu', function(_, cb)
   cb({})
 end)
 
-
---[[ Threads ]]
-CreateThread(function()
-  while true do
-    if isMenuVisible and IsPauseMenuActive() then
-      toggleMenuVisibility()
+--[[ Threads ]] 
+function whileIsMenuVisible()
+  CreateThread(function()
+    while isMenuVisible do
+      if IsPauseMenuActive() then
+        toggleMenuVisibility()
+      end
+      Wait(250)
     end
-    Wait(250)
-  end
-end)
+  end)
+end
