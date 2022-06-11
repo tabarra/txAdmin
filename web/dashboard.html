@@ -11,8 +11,9 @@
         font-weight: 700;
         vertical-align: text-bottom;
     }
-    .event-footer img {
-        vertical-align: middle;
+    .alert-title-icon {
+        vertical-align: sub;
+        fill: currentColor
     }
 
     .alert-success.event-live-glow {
@@ -107,28 +108,41 @@
 </style>
 
 <!-- Title & outdated message: -->
-<div class="text-center <%= (isWebInterface || txAdminOutdated) ? 'mb-4' : '' %>">
-    <% if (isWebInterface) { %>
+<% if (isWebInterface) { %>
+    <div class="text-center mb-4">
         <h2><%= serverName %> Dashboard</h2>
-    <% } %>
-    <% if (txAdminOutdated) { %>
-        <h2 class="text-danger">This version of txAdmin is outdated. Please update now.</h2>
-        <h5 class="text-muted">
-            Updating is <i>very</i> easy! Support Discord:
-            <a href="https://discord.gg/uAmsGa2" target="_blank" style="vertical-align: text-bottom;">
-                <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
-            </a>
-        </h5>
-    <% } %>
-</div>
+    </div>
+<% } %>
+<% if (txaOutdated) { %>
+    <div class="row justify-content-md-center">
+        <div class="col-md-6 text-center">
+            <div class="alert alert-<%= txaOutdated.color %> border-<%= txaOutdated.color %>" role="alert">
+                <h5 style="margin-bottom: 0px;">
+                    <svg class="alert-title-icon" width="22" height="22">
+                        <use href="img/coreui_icons.svg#cil-cloud-download"></use>
+                    </svg>
+                    This version of txAdmin is outdated.
+                </h5>
+                txAdmin v<%= txaOutdated.latest %> has been released.
+                Please update now, it is <i>very</i> easy!
+                <div class="event-footer">
+                    Support Discord:
+                    <a href="https://discord.gg/uAmsGa2" target="_blank" >
+                        <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+<% } %>
 
 <% if (discordEvent) { %>
     <div class="row justify-content-md-center">
         <div class="col-md-6 text-center">
             <div class="alert <%= (discordEvent.isLive ? 'alert-success border-success' : 'alert-warning border-warning') %> event-live-glow" role="alert">
                 <h5 style="margin-bottom: 0px;">
-                    <svg class="c-iconx" width="24" height="24">
-                        <use href="img/coreui_icons.svg#cil-discord-event"></use>
+                    <svg class="alert-title-icon" width="22" height="22">
+                        <use href="img/coreui_icons.svg#discord-event"></use>
                     </svg>
                     <%= (discordEvent.isLive ? 'The Discord Live Event started' : 'A Discord Live Event will start in') %>:
                     <span class="event-time" title="<%= (new Date(discordEvent.timestamp)).toString() %>"><%= discordEvent.time %></span>
@@ -196,7 +210,7 @@
                 <button onclick="controlAction('stop')"
                     class="btn btn-outline-<%= perms.controlsClass %> btn-lg mx-auto m-2" type="button" id="ctrl-stop"
                     <%= perms.controls %>>STOP</button>
-                <br>
+                <br />
 
                 <% if (isWebInterface) { %>
                 <button onclick="controlCommand('admin_broadcast')" class="btn btn-outline-dark btn-md mx-auto m-2"
@@ -229,13 +243,11 @@
 <!-- Benchmark, update, pre-release messages -->
 <div class="row justify-content-md-center">
     <div class="col-md-6 text-center">
-        <small id="perfDiagnosticsMessage" class="text-muted"></small>
-        <br>
-        <% if (versionData.message) { %>
-            <div class="alert alert-<%= versionData.color %> border-<%= versionData.color %>" role="alert">
-                <a href="<%= versionData.artifactsLink %>" target="_blank" class="alert-link"><%= versionData.message %></a>
+        <% if (fxsOutdated) { %>
+            <div class="alert alert-<%= fxsOutdated.color %> border-<%= fxsOutdated.color %>" role="alert">
+                <a href="<%= fxsOutdated.artifactsLink %>" target="_blank" class="alert-link"><%= fxsOutdated.message %></a>
                 <br>
-                <%= versionData.subtext %>
+                <i><%= fxsOutdated.subtext %></i>
             </div>
         <% } %>
         <% if (txAdminVersion.includes('-')) { %>
@@ -257,7 +269,6 @@
     //Elements & vars
     let perfData;
     const chartThreadSelectBtn = document.getElementById('chartThreadSelectBtn');
-    const perfDiagnosticsMessage = document.getElementById('perfDiagnosticsMessage');
     const d3Container = document.getElementById('d3-container');
     const chartOptions = {
         // colorScheme: d3[`<%= uiTheme ? 'interpolateViridis' : 'interpolateTurbo' %>`],
@@ -272,12 +283,9 @@
             const tsStart = Date.now();
             const rects = drawHeatmap(d3Container, perfData, chartOptions);
             const duration = Date.now() - tsStart;
-            perfDiagnosticsMessage.textContent = `Took ${duration}ms to draw ${rects} rects from ${perfData.length} snapshots.`;
         }else if(typeof data == 'string'){
-            perfDiagnosticsMessage.textContent = '';
             d3Container.innerHTML = `<div class="text-center text-muted p-4" id="d3-container-message">${data}</div>`;
         }else{
-            perfDiagnosticsMessage.textContent = '';
             d3Container.innerHTML = `<div class="text-center text-muted p-4" id="d3-container-message">unknown data type</div>`;
         }
         d3Container.style.opacity = 1;

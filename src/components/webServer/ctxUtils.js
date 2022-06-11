@@ -88,7 +88,6 @@ async function loadWebTemplate(name) {
  */
 async function renderMasterView(view, reqSess, data, txVars) {
     data.headerTitle = (!isUndefined(data.headerTitle)) ? `${data.headerTitle} - txAdmin` : 'txAdmin';
-    data.txAdminOutdated = (now() > GlobalData.txAdminVersionBestBy);
     data.adminIsMaster = (reqSess && reqSess.auth && reqSess.auth.username && reqSess.auth.master === true);
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username) ? reqSess.auth.username : 'unknown user';
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture) ? reqSess.auth.picture : DEFAULT_AVATAR;
@@ -270,14 +269,16 @@ module.exports = async function WebCtxUtils(ctx, next) {
 
         // Setting up default render data:
         const baseViewData = {
-            serverName: globals.config.serverName || globals.info.serverProfile,
-            basePath: (isWebInterface) ? '/' : WEBPIPE_PATH,
-            fxServerVersion: (GlobalData.isZapHosting) ? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion,
             isWebInterface: isWebInterface,
+            basePath: (isWebInterface) ? '/' : WEBPIPE_PATH,
             resourcePath: (isWebInterface) ? '' : RESOURCE_PATH,
             serverProfile: globals.info.serverProfile,
-            txAdminVersion: GlobalData.txAdminVersion,
+            serverName: globals.config.serverName || globals.info.serverProfile,
             uiTheme: (ctx.cookies.get('txAdmin-darkMode') === 'true' || !isWebInterface) ? THEME_DARK : '',
+            fxServerVersion: (GlobalData.isZapHosting) ? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion,
+            txAdminVersion: GlobalData.txAdminVersion,
+            txaOutdated: globals.databus.updateChecker?.txadmin,
+            fxsOutdated: globals.databus.updateChecker?.fxserver,
             jsInjection: getJavascriptConsts({
                 isWebInterface: isWebInterface,
                 TX_BASE_PATH: (isWebInterface) ? '' : WEBPIPE_PATH,

@@ -79,6 +79,7 @@
     "react-polyglot": "^0.7.2",
     "recoil": "^0.7.3",
     "rotating-file-stream": "^3.0.4",
+    "semver": "^7.3.7",
     "slash": "^3.0.0",
     "slug": "^5.3.0",
     "socket.io": "^4.5.1",

@@ -15,7 +15,6 @@ const slash = require('slash');
 const { dir, log, logOk, logWarn, logError, setTTYTitle } = require('./extras/console')();
 
 //Helpers
-const now = () => { return Math.round(Date.now() / 1000); };
 const cleanPath = (x) => { return slash(path.normalize(x)); };
 const logDie = (x) => {
     logError(x);
@@ -200,27 +199,6 @@ if (fs.existsSync(zapCfgFile)) {
 if (verbose) dir({ isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, runtimeSecret, deployerDefaults });
 
 
-//Check if this version of txAdmin is too outdated to be considered safe to use in prod
-//NOTE: Only valid if its being very actively maintained.
-//          Use 30d for patch 0, or 45~60d otherwise
-//      Objective is to update every 2~3 weeks, always on monday ~15:00
-const txVerBBLastUpdate = 1654111111;
-const txVerBBDelta = 28 + ((isZapHosting) ? 10 : 0);
-const txAdminVersionBestBy = txVerBBLastUpdate + (txVerBBDelta * 86400);
-// dir({
-//     updateDelta: txVerBBDelta,
-//     lastUpdate: new Date(txVerBBLastUpdate * 1000).toLocaleString(),
-//     nextUpdate: new Date(txAdminVersionBestBy * 1000).toLocaleString(),
-//     nextUpdateTS: txAdminVersionBestBy,
-//     timeLeft: require('humanize-duration')(((now() - txAdminVersionBestBy) * 1000)),
-// });
-// process.exit();
-if (now() > txAdminVersionBestBy) {
-    logError('This version of txAdmin is outdated.');
-    logError('Please update as soon as possible.');
-}
-
-
 //Get profile name
 const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, '').trim();
 if (serverProfile.endsWith('.base')) {
@@ -241,7 +219,6 @@ GlobalData = {
     resourceName,
     fxServerVersion,
     txAdminVersion,
-    txAdminVersionBestBy,
 
     //Convars - default
     txAdminResourcePath,

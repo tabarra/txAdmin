@@ -51,15 +51,15 @@ No docs for:
 - BUG: nui menu triggered announcements are not sent to the discord
 
 
-Update event idea:
+Update event idea (not yet greenlit):
 - A box similar to the fxserver update one;
 - The major/minor updates will have a discord stage event, patches won't;
 - Will get the next event date + type (major/minor) through some api (maybe a regex-able string in the GH releases page);
 - The pre-event notifications will have a live "in xx time" type countdown
 - 2 days before it will show a yellow warning;
-- 1 hour before it will become a green box (glowing??)
+- 1 hour before it will become a glowing green box;
 - 1 hour after the event start it will become a red update box with generic message, or blue if it's just a patch;
-
+- Note: regarding the changelog part, bubble asked me to ignore for now (may/13) but will talk again somewhen;
 
 
 

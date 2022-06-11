@@ -13,6 +13,9 @@
                         <a href="https://github.com/tabarra/txAdmin/blob/master/LICENSE" class="credit-links" target="_blank">MIT License</a>
                     </div>
                     <div class="ml-auto d-sm-down-none"> 
+                        <% if (txaOutdated || fxsOutdated) { %>
+                            <strong class="text-danger">(outdated)</strong>
+                        <% } %>
                         <strong>v<%= txAdminVersion %></strong> atop FXServer <strong><%= fxServerVersion %></strong>
                     </div>
                 </footer>
