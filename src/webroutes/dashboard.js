@@ -45,5 +45,5 @@ module.exports = async function Dashboard(ctx) {
 
 
     //Rendering the page
-    return ctx.utils.render('dashboard', renderData);
+    return ctx.utils.render('main/dashboard', renderData);
 };

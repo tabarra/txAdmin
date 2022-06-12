@@ -28,7 +28,8 @@ module.exports = async function Intercom(ctx) {
             const extractData = {
                 //Changelog:
                 // 6: added txStatsData.randIDFailures
-                '$statsVersion': 6,
+                // 7: changed web folder paths, which affect txStatsData.pageViews
+                '$statsVersion': 7,
                 isZapHosting: GlobalData.isZapHosting,
                 txAdminVersion: GlobalData.txAdminVersion,
                 txAdminIsDefaultPort: (GlobalData.txAdminPort == 40120),

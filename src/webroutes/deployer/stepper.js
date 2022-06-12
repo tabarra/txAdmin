@@ -11,7 +11,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 module.exports = async function DeployerStepper(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
-        return ctx.utils.render('basic/generic', {message: 'You need to be the admin master to use the deployer.'});
+        return ctx.utils.render('main/message', {message: 'You need to be the admin master to use the deployer.'});
     }
 
     //Check if this is the correct state for the deployer
@@ -89,8 +89,8 @@ Make sure everything is correct in the recipe and try again.`;
             renderData.serverCFG = errorMessage;
         }
     } else {
-        return ctx.utils.render('basic/generic', {message: 'Unknown Deployer step, please report this bug and restart txAdmin.'});
+        return ctx.utils.render('main/message', {message: 'Unknown Deployer step, please report this bug and restart txAdmin.'});
     }
 
-    return ctx.utils.render('basic/deployer', renderData);
+    return ctx.utils.render('standalone/deployer', renderData);
 };

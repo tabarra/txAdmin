@@ -33,7 +33,7 @@ module.exports = async function AdminManagerGet(ctx) {
 
     //Check permission
     if (!ctx.utils.checkPermission('manage.admins', modulename)) {
-        return ctx.utils.render('basic/generic', {message: 'You don\'t have permission to view this page.'});
+        return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
     }
 
     //Set render data
@@ -43,5 +43,5 @@ module.exports = async function AdminManagerGet(ctx) {
     };
 
     //Give output
-    return ctx.utils.render('adminManager/index', renderData);
+    return ctx.utils.render('main/adminManager', renderData);
 };

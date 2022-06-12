@@ -171,7 +171,7 @@ module.exports = class WebServer {
             if (typeof ctx._matchedRoute === 'undefined') {
                 ctx.status = 404;
                 if (GlobalData.verbose) logWarn(`Request 404 error: ${ctx.path}`);
-                return ctx.utils.render('basic/404');
+                return ctx.utils.render('standalone/404');
             }
         });
         this.koaCallback = this.app.callback();

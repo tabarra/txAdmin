@@ -12,10 +12,10 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 module.exports = async function MasterActionsGet(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
-        return ctx.utils.render('basic/generic', {message: 'Only the master account has permission to view/use this page.'});
+        return ctx.utils.render('main/message', {message: 'Only the master account has permission to view/use this page.'});
     }
     if (!ctx.txVars.isWebInterface) {
-        return ctx.utils.render('basic/generic', {message: 'This functionality cannot be used by the in-game menu, please use the web version of txAdmin.'});
+        return ctx.utils.render('main/message', {message: 'This functionality cannot be used by the in-game menu, please use the web version of txAdmin.'});
     }
 
     const dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
@@ -24,7 +24,7 @@ module.exports = async function MasterActionsGet(ctx) {
         readFile = await fsp.readFile(dbPath);
     } catch (error) {
         logError(`Could not read database file ${dbPath}.`);
-        return ctx.utils.render('basic/generic', {message: `Failed to generate backup file with error: ${error.message}`});
+        return ctx.utils.render('main/message', {message: `Failed to generate backup file with error: ${error.message}`});
     }
     const now = dateFormat(new Date(), 'yyyy-mm-dd_HH-MM-ss');
     ctx.attachment(`playersDB_${now}.json`);

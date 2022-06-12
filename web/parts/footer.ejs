@@ -1,0 +1,43 @@
+<!-- End Page Content -->
+                    </div>
+                </div>
+            </main>
+
+            <!-- Footer -->
+            <% if (isWebInterface) { %>
+                <footer class="c-footer text-center">
+                    <div class="mx-auto d-md-none"> <strong>v<%= txAdminVersion %></strong> atop FXServer <strong><%= fxServerVersion %></strong></div>
+                    <div class="d-sm-down-none"> 
+                        &copy; 2019-<%= (new Date).getUTCFullYear() %>
+                        <a href="https://github.com/tabarra" class="credit-links" target="_blank">Tabarra</a>, under 
+                        <a href="https://github.com/tabarra/txAdmin/blob/master/LICENSE" class="credit-links" target="_blank">MIT License</a>
+                    </div>
+                    <div class="ml-auto d-sm-down-none"> 
+                        <% if (txaOutdated || fxsOutdated) { %>
+                            <strong class="text-danger">(outdated)</strong>
+                        <% } %>
+                        <strong>v<%= txAdminVersion %></strong> atop FXServer <strong><%= fxServerVersion %></strong>
+                    </div>
+                </footer>
+            <% } %>
+        </div>
+    </div>
+
+
+<%- await include('parts/playerInfoModal.ejs', locals) %>
+<%- await include('parts/changePasswordModal.ejs', locals) %>
+
+    <!-- CoreUI and necessary plugins-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" 
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" 
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.16/lib/marked.umd.min.js"></script>
+    <script src="<%= resourcePath %>js/coreui.bundle.min.js"></script>
+    <script src="<%= resourcePath %>js/bootstrap-notify.min.js"></script>
+    <script src="<%= resourcePath %>js/jquery-confirm.min.js"></script>
+    <script src="<%= resourcePath %>js/txadmin/base.js"></script>
+    <script src="<%= resourcePath %>js/txadmin/main.js"></script>
+    <script src="<%= resourcePath %>js/txadmin/players.js"></script>
+</body>
+</html>

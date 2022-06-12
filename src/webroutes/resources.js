@@ -47,7 +47,7 @@ const getResourceSubPath = (resPath) => {
  */
 module.exports = async function Resources(ctx) {
     if (globals.fxRunner.fxChild === null) {
-        return ctx.utils.render('basic/generic', {
+        return ctx.utils.render('main/message', {
             message: '<strong>The resources list is only available when the server is online.</strong>',
         });
     }
@@ -61,7 +61,7 @@ module.exports = async function Resources(ctx) {
     //Send command request
     const cmdSuccess = globals.fxRunner.srvCmd('txaReportResources');
     if (!cmdSuccess) {
-        return ctx.utils.render('basic/generic', {message: timeoutMessage});
+        return ctx.utils.render('main/message', {message: timeoutMessage});
     }
 
     //Timer fot list delivery
@@ -83,7 +83,7 @@ module.exports = async function Resources(ctx) {
                     resGroups,
                     disableActions: (ctx.utils.checkPermission('commands.resources')) ? '' : 'disabled',
                 };
-                resolve(['resources', renderData]);
+                resolve(['main/resources', renderData]);
             }
         }, 100);
     });
@@ -92,7 +92,7 @@ module.exports = async function Resources(ctx) {
     const tError = new Promise((resolve, reject) => {
         tErrorTimer = setTimeout(() => {
             clearTimeout(tListTimer);
-            resolve(['basic/generic', {message: timeoutMessage}]);
+            resolve(['main/message', {message: timeoutMessage}]);
         }, 1000);
     });
 

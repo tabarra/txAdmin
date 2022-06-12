@@ -29,13 +29,13 @@ someday remove the slash() and the ascii restrictions
 
 
 # New folder organization:
-menu
-scripts > resource
-src > core
-web
-database
-scripts (test_build.sh, lint-formatter.js, locale-utils.js)
-dev_notes, newPlayerlist -> to docs folder
+- menu
+- scripts > resource
+- src > core
+- web
+- database
+- scripts (test_build.sh, lint-formatter.js, locale-utils.js)
+- dev_notes, newPlayerlist -> to docs folder
 
 
 

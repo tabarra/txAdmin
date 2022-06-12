@@ -10,7 +10,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 module.exports = async function MasterActionsGet(ctx) {
     const isMasterAdmin = (ctx.utils.checkPermission('master', modulename, false));
     const disableActions = (isMasterAdmin && ctx.txVars.isWebInterface) ? '' : 'disabled';
-    return ctx.utils.render('masterActions', {
+    return ctx.utils.render('main/masterActions', {
         disableActions,
         isMasterAdmin,
         dbFilePathSuggestion: globals.fxRunner.config.serverDataPath

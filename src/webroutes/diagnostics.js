@@ -20,7 +20,7 @@ module.exports = async function Diagnostics(ctx) {
     const cachedData = cache.get();
     if (cachedData !== false) {
         cachedData.message = 'This page was cached in the last 5 seconds';
-        return ctx.utils.render('diagnostics', cachedData);
+        return ctx.utils.render('main/diagnostics', cachedData);
     }
 
     const timeStart = Date.now();
@@ -39,7 +39,7 @@ module.exports = async function Diagnostics(ctx) {
     data.message = `Executed in ${timeElapsed} ms`;
 
     cache.set(data);
-    return ctx.utils.render('diagnostics', data);
+    return ctx.utils.render('main/diagnostics', data);
 };
 
 

@@ -9,7 +9,6 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 
 
 //Helper functions
-const now = () => { return Math.round(Date.now() / 1000); };
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const getRenderErrorText = (view, error, data) => {
     logError(`Error rendering ${view}.`);
@@ -26,7 +25,7 @@ const getRenderErrorText = (view, error, data) => {
 };
 const getWebViewPath = (view) => {
     if (view.includes('..')) throw new Error('Path Traversal?');
-    return path.join(GlobalData.txAdminResourcePath, 'web', view + '.html');
+    return path.join(GlobalData.txAdminResourcePath, 'web', view + '.ejs');
 };
 const getJavascriptConsts = (allConsts = []) => {
     return Object.entries(allConsts)
@@ -65,12 +64,12 @@ async function loadWebTemplate(name) {
     if (GlobalData.isDeveloperMode || !templateCache.has(name)) {
         try {
             const rawTemplate = await fs.readFile(getWebViewPath(name), 'utf-8');
-            const compiled = ejs.compile(rawTemplate, getEjsOptions(name + '.html'));
+            const compiled = ejs.compile(rawTemplate, getEjsOptions(name + '.ejs'));
             templateCache.set(name, compiled);
         } catch (e) {
             if (e.code == 'ENOENT') {
                 e = new Error(`The '${name}' template was not found:\n` +
-                    `You probably deleted the 'citizen/system_resources/monitor/web/${name}.html' file, or the folders above it.`, undefined, e)
+                    `You probably deleted the 'citizen/system_resources/monitor/web/${name}.ejs' file, or the folders above it.`, undefined, e)
             }
             logError(e)
         }
@@ -82,11 +81,12 @@ async function loadWebTemplate(name) {
 
 //================================================================
 /**
- * Renders the master page including header and footer
+ * Renders normal views.
+ * Footer and header are configured inside the view template itself.
  * @param {string} view
  * @param {string} data
  */
-async function renderMasterView(view, reqSess, data, txVars) {
+async function renderView(view, reqSess, data, txVars) {
     data.headerTitle = (!isUndefined(data.headerTitle)) ? `${data.headerTitle} - txAdmin` : 'txAdmin';
     data.adminIsMaster = (reqSess && reqSess.auth && reqSess.auth.username && reqSess.auth.master === true);
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username) ? reqSess.auth.username : 'unknown user';
@@ -124,29 +124,10 @@ async function renderLoginView(data, txVars) {
 
     let out;
     try {
-        out = await loadWebTemplate('basic/login').then(template => template(data))
+        out = await loadWebTemplate('standalone/login').then(template => template(data))
     } catch (error) {
         logError(error)
         out = getRenderErrorText('Login', error, data);
-    }
-
-    return out;
-}
-
-
-//================================================================
-/**
- * Renders a solo view.
- * NOTE: used only in adminManager/modal and basic/404
- * @param {string} view
- * @param {string} data
- */
-async function renderSoloView(view, data, txVars) {
-    let out;
-    try {
-        out = await loadWebTemplate(view).then(template => template(data))
-    } catch (error) {
-        out = getRenderErrorText(view, error, data);
     }
 
     return out;
@@ -286,13 +267,10 @@ module.exports = async function WebCtxUtils(ctx, next) {
         };
 
         const renderData = Object.assign(baseViewData, data);
-        const soloViews = ['adminManager/modal', 'basic/404'];
         if (view == 'login') {
             ctx.body = await renderLoginView(renderData, ctx.txVars);
-        } else if (soloViews.includes(view)) {
-            ctx.body = await renderSoloView(view, renderData, ctx.txVars);
         } else {
-            ctx.body = await renderMasterView(view, ctx.session, renderData, ctx.txVars);
+            ctx.body = await renderView(view, ctx.session, renderData, ctx.txVars);
         }
         ctx.type = 'text/html';
     };

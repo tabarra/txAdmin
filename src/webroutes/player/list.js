@@ -182,7 +182,7 @@ async function handleDefault(ctx, dbo) {
     //Output
     const timeElapsed = new Date() - timeStart;
     respData.message = `Executed in ${timeElapsed} ms`;
-    return ctx.utils.render('playerList', respData);
+    return ctx.utils.render('main/playerList', respData);
 }
 
 

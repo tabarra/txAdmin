@@ -11,7 +11,7 @@ const { engineVersion } = require('../../extras/deployer');
 module.exports = async function SetupGet(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
-        return ctx.utils.render('basic/generic', {message: 'You need to be the admin master to use the setup page.'});
+        return ctx.utils.render('main/message', {message: 'You need to be the admin master to use the setup page.'});
     }
 
     // Check if this is the correct state for the setup page
@@ -38,5 +38,5 @@ module.exports = async function SetupGet(ctx) {
         renderData.windowsBatPath  = path.join(batFolder, `start_${GlobalData.fxServerVersion}_${globals.info.serverProfile}.bat`);
     }
 
-    return ctx.utils.render('basic/setup', renderData);
+    return ctx.utils.render('standalone/setup', renderData);
 };

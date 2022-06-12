@@ -27,10 +27,10 @@ module.exports = async function MasterActionsAction(ctx) {
 
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
-        return ctx.utils.render('basic/generic', {message: 'Only the master account has permission to view/use this page.' });
+        return ctx.utils.render('main/message', {message: 'Only the master account has permission to view/use this page.' });
     }
     if (!ctx.txVars.isWebInterface) {
-        return ctx.utils.render('basic/generic', {message: 'This functionality cannot be used by the in-game menu, please use the web version of txAdmin.'});
+        return ctx.utils.render('main/message', {message: 'This functionality cannot be used by the in-game menu, please use the web version of txAdmin.'});
     }
 
     //Delegate to the specific action functions
@@ -108,7 +108,7 @@ async function handleImportBansFile(ctx, dbType) {
         const rawFile = await fs.readFile(banFilePath);
         inBans = JSON.parse(rawFile);
     } catch (error) {
-        return ctx.utils.render('basic/generic', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});
+        return ctx.utils.render('main/message', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});
     }
 
     let invalid = 0;
@@ -155,13 +155,13 @@ async function handleImportBansFile(ctx, dbType) {
         }// end for()
     } catch (error) {
         if (GlobalData.verbose) dir(error);
-        return ctx.utils.render('basic/generic', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});
+        return ctx.utils.render('main/message', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});
     }
 
     const outMessage = `<b>Process finished!</b> <br>
         Imported bans: ${imported} <br>
         Invalid bans: ${invalid}  <br>`;
-    return ctx.utils.render('basic/generic', {message: outMessage});
+    return ctx.utils.render('main/message', {message: outMessage});
 }
 
 
@@ -193,7 +193,7 @@ async function handleImportBansDBMS(ctx, dbType) {
         };
         dbConnection = await mysql.createConnection(mysqlOptions);
     } catch (error) {
-        return ctx.utils.render('basic/generic', {message: `<b>Database connection failed:</b><br> ${error.message}`});
+        return ctx.utils.render('main/message', {message: `<b>Database connection failed:</b><br> ${error.message}`});
     }
 
     let imported = 0;
@@ -281,13 +281,13 @@ async function handleImportBansDBMS(ctx, dbType) {
         }
     } catch (error) {
         if (GlobalData.verbose) dir(error);
-        return ctx.utils.render('basic/generic', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});
+        return ctx.utils.render('main/message', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});
     }
 
     const outMessage = `<b>Process finished!</b> <br>
         Imported bans: ${imported} <br>
         Invalid bans: ${invalid}  <br>`;
-    return ctx.utils.render('basic/generic', {message: outMessage});
+    return ctx.utils.render('main/message', {message: outMessage});
 }
 
 
@@ -378,19 +378,19 @@ async function handleCleanDatabase(ctx) {
     try {
         playersRemoved = await globals.playerController.cleanDatabase('players', playersFilter);
     } catch (error) {
-        return ctx.utils.render('basic/generic', {message: `<b>Failed to clean players with error:</b><br>${error.message}`});
+        return ctx.utils.render('main/message', {message: `<b>Failed to clean players with error:</b><br>${error.message}`});
     }
 
     let actionsRemoved = 0;
     try {
         actionsRemoved = await globals.playerController.cleanDatabase('actions', actionsFilter);
     } catch (error) {
-        return ctx.utils.render('basic/generic', {message: `<b>Failed to clean actions with error:</b><br>${error.message}`});
+        return ctx.utils.render('main/message', {message: `<b>Failed to clean actions with error:</b><br>${error.message}`});
     }
 
     const tsElapsed = new Date() - tsStart;
     const outMessage = `<b>Process finished in ${tsElapsed}ms.</b> <br>
         Players deleted: ${playersRemoved} <br>
         Actions deleted: ${actionsRemoved}  <br>`;
-    return ctx.utils.render('basic/generic', {message: outMessage});
+    return ctx.utils.render('main/message', {message: outMessage});
 }

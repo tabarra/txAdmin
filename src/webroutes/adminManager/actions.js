@@ -328,7 +328,7 @@ async function handleGetModal(ctx, isNewAdmin) {
             permsGeneral,
             permsMenu,
         };
-        return ctx.utils.render('adminManager/modal', renderData);
+        return ctx.utils.render('parts/adminModal', renderData);
     }
 
 
@@ -362,5 +362,5 @@ async function handleGetModal(ctx, isNewAdmin) {
     };
 
     //Give output
-    return ctx.utils.render('adminManager/modal', renderData);
+    return ctx.utils.render('parts/adminModal', renderData);
 }
