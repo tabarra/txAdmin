@@ -202,7 +202,7 @@
                 "command_sent": "Kommando sendt!",
                 "moderation": {
                     "title": "Moderation",
-                    "muligheder": {
+                    "options": {
                         "dm": "DM",
                         "warn": "Advar",
                         "kick": "Kick",
@@ -229,7 +229,7 @@
                 },
                 "interaction": {
                     "title": "Interaktion",
-                    "muligheder": {
+                    "options": {
                         "heal": "helbred",
                         "go_to": "Gå til",
                         "bring": "Bring",
@@ -247,7 +247,7 @@
                 },
                 "troll": {
                     "title": "Troll",
-                    "muligheder": {
+                    "options": {
                         "drunk": "Gør fuld",
                         "fire": "Sæt ild",
                         "wild_attack": "Vildt angreb"
@@ -276,7 +276,7 @@
                 "title": "Forbyd spiller",
                 "reason_placeholder": "Årsag",
                 "duration_placeholder": "Varighed",
-                "timer": "timer",
+                "hours": "timer",
                 "days": "days",
                 "weeks": "uger",
                 "months": "måneder",
