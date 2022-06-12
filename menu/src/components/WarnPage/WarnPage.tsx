@@ -106,6 +106,7 @@ const useMainPageStyles = makeStyles({
     justifyContent: "center",
     alignItems: "center",
   },
+  //FIXME: broken since react 18
   "@keyframes miniBounce": {
     "0%": {
       backgroundColor: "rgba(133, 3, 3, 0.95)",

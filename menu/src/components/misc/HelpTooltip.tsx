@@ -1,4 +1,4 @@
-import React, { FunctionComponent, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { Fade, Theme, Tooltip, Typography } from "@mui/material";
 import makeStyles from "@mui/styles/makeStyles";
 
@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   arrow: {
     color: theme.palette.background.default,
   },
+  //FIXME: broken since react 18
   "@keyframes bounce-tool-tip": {
     "0%": {
       transform: "translateY(0)",

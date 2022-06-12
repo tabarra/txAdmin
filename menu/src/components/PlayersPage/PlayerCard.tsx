@@ -1,7 +1,6 @@
 import React, { memo } from "react";
 import {
   Box,
-  IconButton,
   Paper,
   styled,
   Theme,

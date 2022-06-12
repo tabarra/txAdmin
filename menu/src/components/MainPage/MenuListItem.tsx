@@ -21,7 +21,6 @@ import {
 import { userHasPerm } from "../../utils/miscUtils";
 import { useSnackbar } from "notistack";
 import { useTooltip } from "../../provider/TooltipProvider";
-import { styled } from "@mui/styles";
 
 export interface MenuListItemProps {
   title: string;

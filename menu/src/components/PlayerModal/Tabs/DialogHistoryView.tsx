@@ -1,6 +1,5 @@
 import React from "react";
 import { Box, styled, Theme, Typography, useTheme } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
 import { useTranslate } from "react-polyglot";
 import { DialogLoadError } from "./DialogLoadError";
@@ -13,10 +12,6 @@ const NoHistoryBox = () => (
     </Typography>
   </Box>
 );
-
-const useStyles = makeStyles((theme: Theme) => ({
-  historyItem: {},
-}));
 
 const StyledHistoryItem = styled(Box)(({ theme }) => ({
   background: theme.palette.background.paper,
