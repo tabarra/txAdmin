@@ -20,7 +20,7 @@ module.exports = {
         // 'airbnb',
     ],
     parserOptions: {
-        ecmaVersion: 10,
+        ecmaVersion: 2020,
     },
     ignorePatterns: [
         'webpack.config.js',

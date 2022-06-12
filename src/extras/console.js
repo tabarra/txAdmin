@@ -104,6 +104,8 @@ function dir(data) {
             printData = chalk.keyword('moccasin').italic('> undefined');
         } else if (data instanceof Promise) {
             printData = chalk.keyword('moccasin').italic('> Promise');
+        } else if (data === null) {
+            printData = chalk.keyword('moccasin').italic('> null');
         } else if (typeof data == 'boolean') {
             if (data) {
                 printData = chalk.keyword('lawngreen')('true');
