@@ -15,6 +15,14 @@ local function toggleGodMode(enabled)
         clearPersistentAlert('godModeEnabled')
     end
     SetEntityInvincible(PlayerPedId(), enabled)
+    SetPlayerInvincible(PlayerId(), enabled)
+    SetPedCanRagdoll(PlayerPedId(), not enabled)
+    ClearPedBloodDamage(PlayerPedId())
+    ResetPedVisibleDamage(PlayerPedId())
+    ClearPedLastWeaponDamage(PlayerPedId())
+    SetEntityProofs(PlayerPedId(), enabled, enabled, enabled, enabled, enabled, enabled, enabled, enabled)
+    SetEntityOnlyDamagedByPlayer(PlayerPedId(), not enabled)
+    SetEntityCanBeDamaged(PlayerPedId(), not enabled)
 end
 
 local freecamVeh = 0
