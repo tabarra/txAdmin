@@ -3,8 +3,8 @@ import { useFilteredSortedPlayers } from "../../state/players.state";
 import PlayerCard from "./PlayerCard";
 import { Box, CircularProgress, styled } from "@mui/material";
 
-const MAX_PER_BUCKET = 40;
-const FAKE_LOAD_TIME = 1000;
+const MAX_PER_BUCKET = 60;
+const FAKE_LOAD_TIME = 250;
 
 const DivWrapper = styled("div")({
   overflow: "auto",
