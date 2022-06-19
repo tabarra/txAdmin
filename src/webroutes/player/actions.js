@@ -308,11 +308,13 @@ async function handleBan(ctx, sess) {
         msg = '[txAdmin] ' + globals.translator.t('ban_messages.kick_permanent', tOptions);
     }
 
-    let cmd;
+    let cmd, referenceType;
     if (Array.isArray(reference)) {
+        referenceType = 'Identifiers';
         cmd = formatCommand('txaDropIdentifiers', reference.join(';'), msg);
         ctx.utils.logAction(`Banned <${reference.join(';')}>: ${reason}`);
     } else if (Number.isInteger(reference)) {
+        referenceType = 'Player';
         cmd = formatCommand('txaKickID', reference, msg);
         ctx.utils.logAction(`Banned #${reference}: ${reason}`);
     } else {
@@ -328,8 +330,11 @@ async function handleBan(ctx, sess) {
         expiration
     });
 
-    const toResp = await globals.fxRunner.srvCmdBuffer(cmd);
-    return sendAlertOutput(ctx, toResp, 'Identifiers banned!<br>Kicking players:');
+    const writeResult = await globals.fxRunner.srvCmd(cmd);
+    ctx.send({
+        type: 'success',
+        message: `${referenceType} banned.`,
+    });
 }
 
 
