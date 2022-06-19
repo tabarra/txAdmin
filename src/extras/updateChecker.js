@@ -37,7 +37,7 @@ module.exports = async () => {
         apiResponse = await got.get(reqUrl).json();
 
         //validate response
-        if (typeof apiResponse !== 'object') throw new Error('request failed');
+        if (!apiResponse) throw new Error('request failed');
         const requiredFields = [
             'recommended',
             'recommended_download',
@@ -59,6 +59,7 @@ module.exports = async () => {
     } catch (error) {
         if (GlobalData.verbose) logWarn(`Failed to retrieve FXServer/txAdmin update data with error: ${error.message}`);
         if (globals.databus.updateChecker === null) globals.databus.updateChecker = false;
+        return;
     }
 
     //Checking txAdmin version
@@ -76,7 +77,7 @@ module.exports = async () => {
             };
         }
     } catch (error) {
-        logError('Error checking for txAdmin updates. Enable verbosity for more information.');
+        logWarn('Error checking for txAdmin updates. Enable verbosity for more information.');
         if (GlobalData.verbose) dir(error);
     }
 
@@ -112,7 +113,7 @@ module.exports = async () => {
             };
         }
     } catch (error) {
-        logError('Error checking for FXServer updates. Enable verbosity for more information.');
+        logWarn('Error checking for FXServer updates. Enable verbosity for more information.');
         if (GlobalData.verbose) dir(error);
     }
 
