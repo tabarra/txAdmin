@@ -8,8 +8,8 @@ const { dir, log, logOk, logWarn, logError } = require('./console')();
 /**
  * Detect the dominant newline character of a string.
  * Extracted from https://www.npmjs.com/package/detect-newline
- * @param {*} string 
- * @returns 
+ * @param {*} string
+ * @returns
  */
 const detectNewline = (string) => {
     if (typeof string !== 'string') {
@@ -22,11 +22,11 @@ const detectNewline = (string) => {
         return;
     }
 
-    const crlf = newlines.filter(newline => newline === '\r\n').length;
+    const crlf = newlines.filter((newline) => newline === '\r\n').length;
     const lf = newlines.length - crlf;
 
     return crlf > lf ? '\r\n' : '\n';
-}
+};
 
 
 /**
@@ -84,11 +84,11 @@ class ExecRecursionError {
  */
 class FilesInfoList {
     constructor() {
-        this.store = {}
+        this.store = {};
     }
     add(file, info) {
         if (Array.isArray(this.store[file])) {
-            this.store[file].push(info)
+            this.store[file].push(info);
         } else {
             this.store[file] = [info];
         }
@@ -100,7 +100,7 @@ class FilesInfoList {
         return this.store;
     }
     toMarkdown() {
-        const files = Object.keys(this.store)
+        const files = Object.keys(this.store);
         if (!files) return null;
 
         const msgLines = [];
@@ -109,7 +109,7 @@ class FilesInfoList {
             msgLines.push(`\`${file}\`:`);
             fileInfos.forEach((msg) => {
                 msgLines.push(`\t${msg}`);
-            })
+            });
         }
         return msgLines.join('\n');
     }
@@ -120,7 +120,7 @@ class FilesInfoList {
  * Returns the first likely server.cfg given a server data path, or false
  * @param {string} serverDataPath
  */
- function findLikelyCFGPath(serverDataPath) {
+function findLikelyCFGPath(serverDataPath) {
     const attempts = [
         'server.cfg',
         'server.cfg.txt',
@@ -133,7 +133,7 @@ class FilesInfoList {
     for (const attempt of attempts) {
         const cfgPath = path.join(serverDataPath, attempt);
         try {
-            if(fs.lstatSync(cfgPath).isFile()){
+            if (fs.lstatSync(cfgPath).isFile()) {
                 return cfgPath;
             }
         } catch (error) { }
@@ -291,9 +291,9 @@ const readLineCommands = (input) => {
  * Notable differences: we have recursivity depth limit, and no json parsing
  * Original CFG (console) parser:
  *  fivem/code/client/citicore/console/Console.cpp > Context::ExecuteBuffer
- * 
+ *
  * FIXME: support `@resource/whatever.cfg` syntax
- * 
+ *
  * @param {string|null} cfgInputString the cfg string to validate before saving, or null to load from file
  * @param {string} cfgPath
  * @param {string} serverDataPath
@@ -355,7 +355,7 @@ const parseRecursiveConfig = async (cfgInputString, cfgAbsolutePath, serverDataP
 
 /**
  * Validates a list of parsed commands to return endpoints, errors, warnings and lines to comment out
- * @param {array} parsedCommands 
+ * @param {array} parsedCommands
  * @returns {object}
  */
 const validateCommands = async (parsedCommands) => {
@@ -383,7 +383,7 @@ const validateCommands = async (parsedCommands) => {
         ) {
             toCommentOut.add(
                 cmd.file,
-                [cmd.line, 'you MUST NOT start/stop/ensure txadmin resources.']
+                [cmd.line, 'you MUST NOT start/stop/ensure txadmin resources.'],
             );
             continue;
         }
@@ -403,7 +403,7 @@ const validateCommands = async (parsedCommands) => {
         if (cmd.getSetForVariable('onesync')) {
             toCommentOut.add(
                 cmd.file,
-                [cmd.line, 'onesync MUST only be set in the txAdmin settings page.']
+                [cmd.line, 'onesync MUST only be set in the txAdmin settings page.'],
             );
             continue;
         }
@@ -425,7 +425,7 @@ const validateCommands = async (parsedCommands) => {
                 errors.add(cmd.file, msg);
                 continue;
             }
-            const [matchedString, interface, ipv4, ipv6, portString] = matches[0];
+            const [_matchedString, interface, ipv4, ipv6, portString] = matches[0];
 
             //Checking if that interface is available to binding
             let canBind = checkedInterfaces.get(interface);
@@ -466,7 +466,7 @@ const validateCommands = async (parsedCommands) => {
             const endpoint = (ipv4) ? `${ipv4}:${port}` : `[${ipv6}]:${port}`;
             const protocol = (cmd.command === 'endpoint_add_tcp') ? 'tcp' : 'udp';
             if (typeof endpoints[endpoint] === 'undefined') {
-                endpoints[endpoint] = {}
+                endpoints[endpoint] = {};
             }
             if (endpoints[endpoint][protocol]) {
                 const msg = `Line ${cmd.line}: you CANNOT execute '${cmd.command}' twice for the interface '${endpoint}'.`;
@@ -478,24 +478,24 @@ const validateCommands = async (parsedCommands) => {
         }
     }
 
-    return { endpoints, errors, warnings, toCommentOut }
-}
+    return { endpoints, errors, warnings, toCommentOut };
+};
 
 
 /**
  * Process endpoints object, checks validity, and then returns a connection string
- * @param {object} endpoints 
+ * @param {object} endpoints
  * @returns {string} connect string
  */
 const getConnectEndpoint = (endpoints) => {
     if (!Object.keys(endpoints).length) {
-        throw new Error(`Your config file does not specify which IP and port fxserver should run. You can fix this by adding 'endpoint_add_tcp 0.0.0.0:30120; endpoint_add_udp 0.0.0.0:30120' to the start of the file.`);
+        throw new Error('Your config file does not specify which IP and port fxserver should run. You can fix this by adding \'endpoint_add_tcp 0.0.0.0:30120; endpoint_add_udp 0.0.0.0:30120\' to the start of the file.');
     }
     const tcpudpEndpoint = Object.keys(endpoints).find((ep) => {
         return endpoints[ep].tcp && endpoints[ep].udp;
     });
     if (!tcpudpEndpoint) {
-        throw new Error(`Your config file does not not contain a ip:port used in both endpoint_add_tcp and endpoint_add_udp. Players would not be able to connect.`);
+        throw new Error('Your config file does not not contain a ip:port used in both endpoint_add_tcp and endpoint_add_udp. Players would not be able to connect.');
     }
 
     return tcpudpEndpoint.replace(/(0\.0\.0\.0|\[::\])/, '127.0.0.1');
@@ -584,11 +584,11 @@ const validateModifyServerConfig = async (cfgInputString, cfgPath, serverDataPat
     //Parsing fxserver config & going through each command
     const cfgAbsolutePath = resolveCFGFilePath(cfgPath, serverDataPath);
     const parsedCommands = await parseRecursiveConfig(cfgInputString, cfgAbsolutePath, serverDataPath);
-    const { endpoints, errors, warnings, toCommentOut } = await validateCommands(parsedCommands);
+    const { endpoints, errors, warnings, _toCommentOut } = await validateCommands(parsedCommands);
 
     //Validating if a valid endpoint was detected
     try {
-        let _connectEndpoint = getConnectEndpoint(endpoints);
+        const _connectEndpoint = getConnectEndpoint(endpoints);
     } catch (error) {
         errors.add(cfgAbsolutePath, error.message);
     }
@@ -601,7 +601,7 @@ const validateModifyServerConfig = async (cfgInputString, cfgPath, serverDataPat
             warnings: warnings.toMarkdown(),
         };
     }
-    
+
     //Save file + backup
     try {
         logWarn(`Saving modified file '${cfgAbsolutePath}'`);
