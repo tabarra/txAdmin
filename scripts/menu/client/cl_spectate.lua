@@ -126,6 +126,17 @@ local function createSpectatorTeleportThread()
     end)
 end
 
+local function createSpectatorGamerTagThread()
+    debugPrint('Starting gamer tag follower thread')
+    CreateThread(function()
+        while isSpectateEnabled do
+            createGamerTagInfo()
+            Wait(50)
+        end
+        clearGamerTagInfo()
+    end)
+end
+
 --- Will toggle spectate for a targeted ped
 --- @param targetPed nil|number - The target ped when toggling on, can be nil when toggling off
 local function toggleSpectate(targetPed, targetPlayerId)
@@ -178,6 +189,7 @@ local function toggleSpectate(targetPed, targetPlayerId)
         DoScreenFadeIn(500)
         debugPrint(('Now spectating TargetPed (%s)'):format(targetPed))
         isSpectateEnabled = true
+        createSpectatorGamerTagThread()
         createSpectatorTeleportThread()
         createScaleformThread()
     end
@@ -248,15 +260,4 @@ RegisterNetEvent('txAdmin:menu:specPlayerResp', function(targetServerId, coords)
 
     debugPrint('Target Ped successfully found!')
     toggleSpectate(GetPlayerPed(targetPlayerId), targetPlayerId)
-end)
-
-CreateThread(function()
-    while true do
-        if isSpectateEnabled then
-            createGamerTagInfo()
-        else
-            clearGamerTagInfo()
-        end
-        Wait(50)
-    end
 end)
