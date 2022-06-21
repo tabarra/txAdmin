@@ -16,7 +16,7 @@
     "ban_messages": {
         "kick_temporary": "(%{author}) Teid on sellest serverist keelustatud \"%{reason}\". Teie keelustamine aegub: %{expiration}.",
         "kick_permanent": " (%{author}) Teid on sellest serverist jäädavalt keelustatud \"%{reason}\" tõttu.",
-        "reject_temporary": "Teid on sellest serverist keelustatud.\nTeie keeld aegub: %{expiration}.\nBänni ID: %{id}.\nKeelustamise põhjus: %{reason}.\nBKeelustaja: %{author}.",
+        "reject_temporary": "Teid on sellest serverist keelustatud.\nTeie keeld aegub: %{expiration}.\nBänni ID: %{id}.\nKeelustamise põhjus: %{reason}.\nKeelustaja: %{author}.",
         "reject_permanent": "Teid on sellest serverist jäädavalt keelustatud.\nBänni ID: %{id}.\nKeelustuse põhjus: %{reason}.\nKeelustaja: %{author}."
     },
     "server_actions": {
