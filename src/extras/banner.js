@@ -86,20 +86,30 @@ const awaitHttp = new Promise((resolve, reject) => {
             clearInterval(interval);
             interval = setInterval(check, 2500);
         } else if (counter > tickLimit) {
-            logWarn('The webserver is taking too long to start.');
+            logWarn('The WebServer is taking too long to start.');
         }
     };
     interval = setInterval(check, 150);
 });
 
 const awaitMasterPin = new Promise((resolve, reject) => {
-    const interval = setInterval(() => {
+    const tickLimit = 100; //if over 15 seconds
+    let counter = 0;
+    let interval;
+    const check = () => {
+        counter++;
         if (globals.adminVault && globals.adminVault.admins !== null) {
             clearInterval(interval);
             const pin = (globals.adminVault.admins === false) ? globals.adminVault.addMasterPin : false;
             resolve(pin);
+        } else if (counter == tickLimit) {
+            clearInterval(interval);
+            interval = setInterval(check, 2500);
+        } else if (counter > tickLimit) {
+            logWarn('The AdminVault is taking too long to start.');
         }
-    }, 150);
+    };
+    interval = setInterval(check, 150);
 });
 
 
