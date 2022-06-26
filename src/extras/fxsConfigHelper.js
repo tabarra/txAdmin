@@ -375,6 +375,13 @@ const validateCommands = async (parsedCommands) => {
             continue;
         }
 
+        //Check for +set
+        if (['+set', '+setr', '+setr'].includes(cmd.command)) {
+            const msg = `Line ${cmd.line}: remove the '+' from '${cmd.command}', as this is not an launch parameter.`;
+            warnings.add(cmd.file, msg);
+            continue;
+        }
+
         //Check for start/stop/ensure txAdmin/txAdminClient/monitor
         if (
             ['start', 'stop', 'ensure'].includes(cmd.command)
