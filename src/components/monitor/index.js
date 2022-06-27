@@ -174,10 +174,10 @@ module.exports = class Monitor {
     //================================================================
     /**
      * Restart the FXServer and logs everything
-     * @param {string} reason
+     * @param {string} reasonInternal
      * @param {string} reasonTranslated
      */
-    async restartFXServer(reason, reasonTranslated) {
+    async restartFXServer(reasonInternal, reasonTranslated) {
         //sanity check
         if (globals.fxRunner.fxChild === null) {
             logWarn('Server not started, no need to restart');
@@ -185,10 +185,10 @@ module.exports = class Monitor {
         }
 
         //Restart server
-        const logMessage = `Restarting server (${reason}).`;
+        const logMessage = `Restarting server (${reasonInternal}).`;
         globals.logger.admin.write(`[MONITOR] ${logMessage}`);
         logWarn(logMessage);
-        globals.fxRunner.restartServer(reasonTranslated);
+        globals.fxRunner.restartServer(reasonTranslated, null);
     }
 
 

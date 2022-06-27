@@ -78,3 +78,11 @@ Called when an announcement is made using txAdmin.
 Event Data:
 - `author`: The name of the admin or `txAdmin`.
 - `message`: The message of the broadcast.
+
+## txAdmin:events:serverShuttingDown (v4.15)
+Called when the server is about to shut down.  
+This can be triggered in a scheduled and unscheduled stop or restart, by an admin or by the system.
+Event Data:
+- `delay`: How many milliseconds txAdmin will wait before killing the server process.
+- `author`: The name of the admin or `txAdmin`.
+- `message`: The message of the broadcast.

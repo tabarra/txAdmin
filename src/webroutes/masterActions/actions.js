@@ -35,7 +35,7 @@ module.exports = async function MasterActionsAction(ctx) {
 
     //Delegate to the specific action functions
     if (action == 'reset_fxserver') {
-        return handleResetFXServer(ctx);
+        return await handleResetFXServer(ctx);
     } else if (action == 'importBans') {
         const fileDbTypes = ['easyadmin', 'vmenu'];
         const dbmsDbTypes = ['bansql', 'vrp', 'el_bwh'];
@@ -62,10 +62,10 @@ module.exports = async function MasterActionsAction(ctx) {
  * Handle FXServer settings reset nad resurn to setup
  * @param {object} ctx
  */
-function handleResetFXServer(ctx) {
+async function handleResetFXServer(ctx) {
     if (globals.fxRunner.fxChild !== null) {
         ctx.utils.logCommand('STOP SERVER');
-        globals.fxRunner.killServer(ctx.session.auth.username);
+        await globals.fxRunner.killServer('resetting fxserver config', ctx.session.auth.username, false);
     }
 
     //Making sure the deployer is not running

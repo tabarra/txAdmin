@@ -7,7 +7,6 @@ const sleep = require('util').promisify((a, f) => setTimeout(f, a));
 const { parseArgsStringToArgv } = require('string-argv');
 const StreamValues = require('stream-json/streamers/StreamValues');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const helpers = require('../../extras/helpers');
 const { validateFixServerConfig } = require('../../extras/fxsConfigHelper');
 const OutputHandler = require('./outputHandler');
 
@@ -18,7 +17,7 @@ const genMutex = customAlphabet(dict51, 5);
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
-const escape = (x) => {return x.toString().replace(/"/g, '\uff02');};
+const escape = (x) => { return x.toString().replace(/"/g, '\uff02'); };
 const formatCommand = (cmd, ...params) => {
     return `${cmd} "` + [...params].map(escape).join('" "') + '"';
 };
@@ -37,6 +36,7 @@ const getMutableConvars = (isCmdLine = false) => {
         [`${p}set`, 'txAdmin-menuPageKey', globals.config.menuPageKey],
     ];
 };
+const SHUTDOWN_NOTICE_DELAY = 5000;
 
 
 module.exports = class FXRunner {
@@ -47,6 +47,7 @@ module.exports = class FXRunner {
         this.fxChild = null;
         this.restartDelayOverride == false;
         this.history = [];
+        this.lastKillRequest = 0;
         this.fxServerPort = null;
         this.fxServerHost = null;
         this.currentMutex = null;
@@ -68,13 +69,13 @@ module.exports = class FXRunner {
      * Receives the signal that all the start banner was already printed and other modules loaded
      */
     signalStartReady() {
-        if(!this.config.autostart) return;
+        if (!this.config.autostart) return;
 
-        if(this.config.serverDataPath === null || this.config.cfgPath === null){
+        if (this.config.serverDataPath === null || this.config.cfgPath === null) {
             return logWarn('Please open txAdmin on the browser to configure your server.');
         }
 
-        if(!globals.adminVault || !globals.adminVault.admins){
+        if (!globals.adminVault || !globals.adminVault.admins) {
             return logWarn('The server will not auto start because there are no admins configured.');
         }
 
@@ -92,9 +93,6 @@ module.exports = class FXRunner {
         if (typeof this.config.commandLine === 'string' && this.config.commandLine.length) {
             extraArgs = parseArgsStringToArgv(this.config.commandLine);
         }
-
-        //Generate new mutex
-        this.currentMutex = genMutex();
 
         // Prepare default args (these convars can't change without restart)
         const txAdminInterface = (GlobalData.forceInterface)
@@ -144,8 +142,14 @@ module.exports = class FXRunner {
      * @returns {string} null or error message
      */
     async spawnServer(announce) {
+        //If the server is already alive
+        if (this.fxChild !== null) {
+            return logError('The server is already started.');
+        }
+
         //Setup variables
         globals.webServer.resetToken();
+        this.currentMutex = genMutex();
         this.setupVariables();
         if (GlobalData.verbose) {
             log('Spawn Variables: ' + this.spawnVariables.args.join(' '));
@@ -163,27 +167,21 @@ module.exports = class FXRunner {
             return logError('Cannot start the server with missing configuration (serverDataPath || cfgPath).');
         }
 
-        //If the server is already alive
-        if (this.fxChild !== null) {
-            return logError('The server is already started.');
-        }
-
         //Validating server.cfg & configuration
         try {
             const result = await validateFixServerConfig(this.config.cfgPath, this.config.serverDataPath);
-            if(result.errors){
+            if (result.errors) {
                 const msg = `**Unable to start the server due to error(s) in your config file(s):**\n${result.errors}`;
                 logError(msg);
                 return msg;
             }
-            if(result.warnings){
+            if (result.warnings) {
                 const msg = `**Warning regarding your configuration file(s):**\n${result.warnings}`;
                 logWarn(msg);
             }
 
             this.fxServerHost = result.connectEndpoint;
         } catch (error) {
-            dir(error)
             const errMsg = logError(`server.cfg error: ${error.message}`);
             if (error.message.includes('unreadable')) {
                 logError('That is the file where you configure your server and start resources.');
@@ -198,7 +196,7 @@ module.exports = class FXRunner {
 
         //Announcing
         if (announce === 'true' || announce === true) {
-            let discordMessage = globals.translator.t('server_actions.spawning_discord', {servername: globals.config.serverName});
+            let discordMessage = globals.translator.t('server_actions.spawning_discord', { servername: globals.config.serverName });
             globals.discordBot.sendAnnouncement(discordMessage);
         }
 
@@ -211,7 +209,7 @@ module.exports = class FXRunner {
                 this.spawnVariables.args,
                 {
                     cwd: this.config.serverDataPath,
-                    stdio: [ 'pipe', 'pipe', 'pipe', 'pipe' ],
+                    stdio: ['pipe', 'pipe', 'pipe', 'pipe'],
                 },
             );
             if (typeof this.fxChild.pid === 'undefined') {
@@ -262,13 +260,13 @@ module.exports = class FXRunner {
             }
         }.bind(this));
 
-        this.fxChild.stdin.on('error', () => {});
-        this.fxChild.stdin.on('data', () => {});
+        this.fxChild.stdin.on('error', () => { });
+        this.fxChild.stdin.on('data', () => { });
 
-        this.fxChild.stdout.on('error', () => {});
+        this.fxChild.stdout.on('error', () => { });
         this.fxChild.stdout.on('data', this.outputHandler.write.bind(this.outputHandler, 'stdout', this.currentMutex));
 
-        this.fxChild.stderr.on('error', () => {});
+        this.fxChild.stderr.on('error', () => { });
         this.fxChild.stderr.on('data', this.outputHandler.write.bind(this.outputHandler, 'stderr', this.currentMutex));
 
         const tracePipe = this.fxChild.stdio[3].pipe(StreamValues.withParser());
@@ -285,31 +283,24 @@ module.exports = class FXRunner {
     //================================================================
     /**
      * Restarts the FXServer
-     * @param {string} tReason
+     * @param {string} reason
+     * @param {string} author
      */
-    async restartServer(tReason) {
+    async restartServer(reason = null, author = null) {
         try {
-            //If a reason is provided, announce restart on discord, kick all players and wait 750ms
-            if (typeof tReason === 'string') {
-                const tOptions = {
-                    servername: globals.config.serverName,
-                    reason: tReason,
-                };
-                const kickMessage = globals.translator.t('server_actions.restarting', tOptions);
-                this.srvCmd(formatCommand('quit', kickMessage));
-                const discordMessage = globals.translator.t('server_actions.restarting_discord', tOptions);
-                globals.discordBot.sendAnnouncement(discordMessage);
-                await sleep(750);
-            }
-
             //Restart server
-            await this.killServer();
+            const killError = await this.killServer(reason, author, true);
+            if (killError) return killError;
+
+            //If delay override
             if (this.restartDelayOverride) {
                 logWarn(`Restarting the fxserver with delay override ${this.restartDelayOverride}`);
                 await sleep(this.restartDelayOverride);
             } else {
                 await sleep(this.config.restartDelay);
             }
+
+            //Start server again :)
             return this.spawnServer();
         } catch (error) {
             const errMsg = logError("Couldn't restart the server.");
@@ -322,22 +313,37 @@ module.exports = class FXRunner {
     //================================================================
     /**
      * Kills the FXServer
-     * @param {string} tReason
+     * @param {string} reason
+     * @param {string} author
+     * @param {boolean} isRestarting
      */
-    async killServer(tReason) {
+    async killServer(reason = null, author = null, isRestarting = false) {
         try {
-            //If a reason is provided, announce restart on discord, kick all players and wait 500ms
-            if (typeof tReason === 'string') {
-                let tOptions = {
-                    servername: globals.config.serverName,
-                    reason: tReason,
-                };
-                let discordMessage = globals.translator.t('server_actions.stopping_discord', tOptions);
-                globals.discordBot.sendAnnouncement(discordMessage);
-                let kickMessage = globals.translator.t('server_actions.stopping', tOptions);
-                this.srvCmd(formatCommand('quit', kickMessage));
-                await sleep(500);
+            //Prevent concurrent restart request
+            const msTimestamp = Date.now();
+            if (msTimestamp - this.lastKillRequest < SHUTDOWN_NOTICE_DELAY) {
+                return 'Restart already in progress.';
+            } else {
+                this.lastKillRequest = msTimestamp;
             }
+
+            // Send warningngs
+            const messageType = isRestarting ? 'restarting' : 'stopping';
+            const tOptions = {
+                servername: globals.config.serverName,
+                reason: reason ?? 'no reason provided',
+            };
+            this.sendEvent('serverShuttingDown', {
+                delay: SHUTDOWN_NOTICE_DELAY,
+                author: author ?? 'txAdmin',
+                message: globals.translator.t(`server_actions.${messageType}`, tOptions),
+            });
+            globals.discordBot.sendAnnouncement(
+                globals.translator.t(`server_actions.${messageType}_discord`, tOptions),
+            );
+
+            //Awaiting restart delay
+            await sleep(SHUTDOWN_NOTICE_DELAY);
 
             //Stopping server
             if (this.fxChild !== null) {

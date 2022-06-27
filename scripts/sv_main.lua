@@ -53,6 +53,7 @@ end)
 
 
 -- Setup threads and commands
+local rejectAllConnections = false
 local hbReturnData = 'no-data'
 log("Version "..TX_VERSION.." starting...")
 CreateThread(function()
@@ -225,13 +226,23 @@ end
 -- Warn specific player via server ID
 -- This function is triggered by txaEvent
 local function handleWarnEvent(eventData)
-    -- target, author, reason, actionId
     local pName = GetPlayerName(eventData.target)
     if pName ~= nil then
         TriggerClientEvent('txAdminClient:warn', eventData.target, eventData.author, eventData.reason)
         log("Warning "..pName.." with reason: "..eventData.reason)
     else
         logError('txaWarnID: player not found')
+    end
+end
+
+-- Kicks all players and lock joins in preparation for server shutdown
+-- This function is triggered by txaEvent
+local function handleShutdownEvent(eventData)
+    print('Server shutdown imminent. Kicking all players.')
+    rejectAllConnections = true
+    local players = GetPlayers()
+    for _, serverID in pairs(players) do
+        DropPlayer(serverID, '[txAdmin] ' .. eventData.message)
     end
 end
 
@@ -253,6 +264,8 @@ function txaEvent(source, args)
         return handleWarnEvent(eventData)
     elseif eventName == 'announcement' then 
         return handleAnnouncementEvent(eventData)
+    elseif eventName == 'serverShuttingDown' then 
+        return handleShutdownEvent(eventData)
     end
     CancelEvent()
 end
@@ -324,7 +337,14 @@ function txaReportResources(source, args)
 end
 
 -- Player connecting handler
-function handleConnections(name, skr, d)
+function handleConnections(name, setKickReason, d)
+    -- if server is shutting down
+    if rejectAllConnections then
+        CancelEvent()
+        setKickReason("[txAdmin] Server is shutting down, try again in a few seconds.")
+        return
+    end
+
     local player = source
     if GetConvar("txAdmin-checkPlayerJoin", "invalid") == "true" then
         d.defer()
