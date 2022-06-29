@@ -19,6 +19,10 @@ replace resources thing with an api endpoint
 
 add option to skip or add time to schedules restart
 
+
+recipe name + ptero in endpoint
+
+
 # txAdminAPI:
 - Create prop `pendingMessage` to replace `const notify = $.notify({ message: 'xxxxxx' }, {});`
 - Pass `notify` as last argument to `success()` and `error()`
