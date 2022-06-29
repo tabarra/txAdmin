@@ -351,12 +351,13 @@ module.exports = class FXRunner {
                 this.fxChild = null;
                 this.history[this.history.length - 1].timestamps.kill = now();
             }
-            return true;
+            return null;
         } catch (error) {
-            logError("Couldn't kill the server. Perhaps What Is Dead May Never Die.");
+            const msg = "Couldn't kill the server. Perhaps What Is Dead May Never Die."
+            logError(msg);
             if (GlobalData.verbose) dir(error);
             this.fxChild = null;
-            return false;
+            return msg;
         }
     }
 
