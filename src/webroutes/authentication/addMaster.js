@@ -94,6 +94,14 @@ async function handleCallback(ctx) {
         return ctx.utils.error(400, 'Invalid Request');
     }
 
+    if (typeof ctx.query.error_description === 'string') {
+        return returnJustMessage(
+            ctx,
+            ctx.query.error_description,
+            'Please refresh the page and try again.',
+        );
+    }
+
     //Exchange code for access token
     let tokenSet;
     try {

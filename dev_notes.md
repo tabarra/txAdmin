@@ -15,6 +15,10 @@
 add ram usage to perf chart?
 
 
+replace resources thing with an api endpoint
+
+add option to skip or add time to schedules restart
+
 # txAdminAPI:
 - Create prop `pendingMessage` to replace `const notify = $.notify({ message: 'xxxxxx' }, {});`
 - Pass `notify` as last argument to `success()` and `error()`
@@ -36,7 +40,6 @@ someday remove the slash() and the ascii restrictions
 - database
 - scripts (test_build.sh, lint-formatter.js, locale-utils.js)
 - dev_notes, newPlayerlist -> to docs folder
-
 
 
 

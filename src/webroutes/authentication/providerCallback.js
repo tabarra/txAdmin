@@ -1,12 +1,12 @@
 //Requires
 const modulename = 'WebServer:ProviderCallback';
-const crypto  = require('crypto');
+const crypto = require('crypto');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const returnJustMessage = (ctx, errorTitle, errorMessage) => {
-    return ctx.utils.render('login', {template: 'justMessage', errorTitle, errorMessage});
+    return ctx.utils.render('login', { template: 'justMessage', errorTitle, errorMessage });
 };
 
 /**
@@ -26,6 +26,14 @@ module.exports = async function ProviderCallback(ctx) {
 
     if (provider !== 'citizenfx') {
         return returnJustMessage(ctx, 'Provider not implemented... yet');
+    }
+
+    if (typeof ctx.query.error_description === 'string') {
+        return returnJustMessage(
+            ctx,
+            ctx.query.error_description,
+            'Please refresh the page and try again.',
+        );
     }
 
     //Check the state changed
