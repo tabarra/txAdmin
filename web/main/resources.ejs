@@ -148,9 +148,13 @@
             timeout: REQ_TIMEOUT_LONG,
             data: { action: 'refresh_res', parameter: '' },
             success: function (data) {
-                notify.update('progress', 0);
-                notify.update('type', data.type);
-                notify.update('message', data.message);
+                if(data.type !== 'danger'){
+                    window.location.reload(true);
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);
@@ -161,7 +165,7 @@
     })
 
 
-    //============================================== Refresh button
+    //============================================== Start/Stop/Restart buttons
     function btnCommand(action, parameter) {
         const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         txAdminAPI({
@@ -169,9 +173,13 @@
             url: '/fxserver/commands',
             data: { action, parameter },
             success: function (data) {
-                notify.update('progress', 0);
-                notify.update('type', data.type);
-                notify.update('message', data.message);
+                if(data.type !== 'danger'){
+                    window.location.reload(true);
+                }else{
+                    notify.update('progress', 0);
+                    notify.update('type', data.type);
+                    notify.update('message', data.message);
+                }
             },
             error: function (xmlhttprequest, textstatus, message) {
                 notify.update('progress', 0);
