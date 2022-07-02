@@ -1,6 +1,6 @@
 {
   "name": "txadmin",
-  "version": "0.0.0-check-fxmanifest.lua",
+  "version": "1.0.0",
   "description": "FiveM FXServer Admin - remotely manage your GTA5 FiveM Server",
   "main": "src/index.js",
   "scripts": {

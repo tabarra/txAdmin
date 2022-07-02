@@ -320,6 +320,7 @@
                 url: `/masterActions/reset_fxserver`,
                 data: {},
                 dataType: 'json',
+                timeout: REQ_TIMEOUT_LONG,
                 success: function (data) {
                     if(data.success == true){
                         window.location = '/setup';

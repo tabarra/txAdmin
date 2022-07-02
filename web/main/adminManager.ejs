@@ -271,9 +271,7 @@
                         $('#modAdminPassword-pwd').val(data.password);
                         $('#modAdminPassword').modal('show');
                     }else{
-                        notify.update('progress', 0);
-                        notify.update('type', data.type);
-                        notify.update('message', data.message);
+                        updateMarkdownNotification(data, notify);
                     }
                 }
             },
