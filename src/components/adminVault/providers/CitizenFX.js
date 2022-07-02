@@ -32,7 +32,7 @@ module.exports = class CitizenFXProvider {
             });
             this.client[custom.clock_tolerance] = 2 * 60 * 60; //Two hours due to the DST change. Reduce to 300s.
             custom.setHttpOptionsDefaults({
-                timeout: 4500,
+                timeout: 10000,
             });
             if (GlobalData.verbose) log('CitizenFX Provider configured.');
             this.ready = true;
