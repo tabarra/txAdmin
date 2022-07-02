@@ -5,6 +5,9 @@ try {
     console.log('txAdmin must be run inside fxserver in monitor mode.');
     process.exit();
 }
+if (typeof IS_WEBPACK_ENV === 'undefined') {
+    IS_WEBPACK_ENV = false;
+}
 require('./extras/helpers').dependencyChecker();
 
 //Requires
@@ -34,11 +37,11 @@ const getBuild = (ver) => {
 //==============================================================
 //Make sure this user knows what he is doing...
 const txAdmin1337Convar = GetConvar('txAdmin1337', 'false').trim();
-if (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar !== 'IKnowWhatImDoing') {
+const isDeveloperMode = (!IS_WEBPACK_ENV && txAdmin1337Convar == 'IKnowWhatImDoing');
+if (IS_WEBPACK_ENV && txAdmin1337Convar !== 'IKnowWhatImDoing') {
     logError('Looks like you don\'t know what you are doing.');
     logDie('Please use the compiled release from GitHub or the version that comes with the latest FXServer.');
 }
-const isDeveloperMode = (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar == 'IKnowWhatImDoing');
 
 //Get OSType
 const osTypeVar = os.type();

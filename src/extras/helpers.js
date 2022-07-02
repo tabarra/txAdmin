@@ -1,11 +1,7 @@
 //Requires
 const fs = require('fs');
-const path = require('path');
-let xss; //can't be required before the dependency check
-//const log = (x) => process.stdout.write(JSON.stringify(x, null, 2) + '\n');
 
 
-//================================================================
 /**
  * txAdmin in ASCII
  */
@@ -27,20 +23,17 @@ function txAdminASCII() {
 }
 
 
-//================================================================
 /**
  * Check if the packages in package.json were installed
  */
 function dependencyChecker() {
-    if (process.env.APP_ENV === 'webpack') {
-        return;
-    }
+    if (IS_WEBPACK_ENV) return;
 
     try {
-        let rawFile = fs.readFileSync(GetResourcePath(GetCurrentResourceName()) + '/package.json');
-        let parsedFile = JSON.parse(rawFile);
-        let packages = Object.keys(parsedFile.dependencies);
-        let missing = [];
+        const rawFile = fs.readFileSync(GetResourcePath(GetCurrentResourceName()) + '/package.json');
+        const parsedFile = JSON.parse(rawFile);
+        const packages = Object.keys(parsedFile.dependencies);
+        const missing = [];
         packages.forEach((package) => {
             try {
                 require.resolve(package);
@@ -63,7 +56,6 @@ function dependencyChecker() {
 }
 
 
-//================================================================
 /**
  * Extracts hours and minutes from an string containing times
  * @param {string} schedule
@@ -91,10 +83,6 @@ function parseSchedule(schedule, filter = true) {
 }
 
 
-
-
-
-//================================================================
 /**
  * Redacts sv_licenseKey, steam_webApiKey and sv_tebexSecret from a string
  * @param {string} src
@@ -106,6 +94,7 @@ function redactApiKeys(src) {
         .replace(/steam_webApiKey\s+["']?\w{32}["']?/gi, 'steam_webApiKey [redacted steam token]')
         .replace(/sv_tebexSecret\s+["']?\w{40}["']?/gi, 'sv_tebexSecret [redacted tebex token]');
 }
+
 
 module.exports = {
     txAdminASCII,
