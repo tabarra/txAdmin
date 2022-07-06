@@ -147,20 +147,20 @@
             "announcement": {
                 "title": "Faire une annonce",
                 "label": "Faire une annonce pour tous les joueurs actuellement connectés.",
-                "dialog_desc": "Enter the message you want to broadcast to all players.",
+                "dialog_desc": "Entrer le message que vous voulez diffuser à tous les joueurs.",
                 "dialog_placeholder": "Message",
-                "dialog_success": "L'annonce est en train d'être envoyé."
+                "dialog_success": "L'annonce est en train d'être envoyée."
             },
             "clear_area": {
                 "title": "Nettoyer la zone",
-                "label": "Reset a specified world area to its default state",
+                "label": "Réinitialiser la zone du monde spécifiée à son état par défaut",
                 "dialog_desc": "Entrez un rayon où vous souhaitez que les entités soient supprimées (0-300). Cela ne va pas supprimer les entités créées par le serveur.",
                 "dialog_success": "Suppression des entités dans un rayon de %{radius} m",
                 "dialog_error": "Rayon invalide. Veuillez réessayer."
             },
             "player_ids": {
                 "title": "Afficher les ID des joueurs",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                "label": "Affiche les IDs des joueurs (et autres informations) au dessus des joueurs à proximité",
                 "alert_show": "Les ID des joueurs sont affichés.",
                 "alert_hide": "Les ID des joueurs ne sont plus affichés."
             }
