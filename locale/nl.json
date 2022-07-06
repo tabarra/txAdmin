@@ -147,20 +147,20 @@
             "announcement": {
                 "title": "Verstuur Mededeling",
                 "label": "Stuur een mededeling aan alle online spelers",
-                "dialog_desc": "Enter the message you want to broadcast to all players.",
+                "dialog_desc": "Typ het bericht dat je naar alle spelers wilt versturen.",
                 "dialog_placeholder": "Jouw mededeling...",
                 "dialog_success": "Mededeling aan het verzenden."
             },
             "clear_area": {
                 "title": "Herstel de wereld",
-                "label": "Reset a specified world area to its default state",
+                "label": "Herstel een specifiek deel van de wereld.",
                 "dialog_desc": "Kies een radius (0-300), om alle entities van te verwijderen. Dit verwijderd geen server sided gespawnede entities",
                 "dialog_success": "Gebied met de radius %{radius}m aan het herstellen",
                 "dialog_error": "Ongeldige invoer. Probeer het opnieuw."
             },
             "player_ids": {
                 "title": "Schakel Speler IDs in/uit",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                "label": "Schakel het tonen van Speler IDs (en andere info) boven de hoofden van alle spelers in jouw buurt.",
                 "alert_show": "Toon de NetIDs van spelers in jouw buurt.",
                 "alert_hide": "Verberg NetIDs van spelers in jouw buurt."
             }
