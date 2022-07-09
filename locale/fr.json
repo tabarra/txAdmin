@@ -5,11 +5,11 @@
     },
     "restarter": {
         "start_timeout": "Impossible de démarrer le serveur dans les temps",
-        "crash_detected": "le serveur a planté",
+        "crash_detected": "Le serveur a planté",
         "hang_detected": "Blocage detecté",
         "partial_hang_warn": "En raison d'un blocage partiel, le serveur redémarrera dans 1 minute. Veuillez vous déconnecter maintenant.",
         "partial_hang_warn_discord": "En raison d'un blocage partiel, **%{servername}** redémarrera dans 1 minute.",
-        "schedule_reason": "redémarage prévu à %{time}",
+        "schedule_reason": "Redémarage prévu à %{time}",
         "schedule_warn": "Le serveur redémarrera dans %{smart_count} minute. Merci de vous déconnecter. |||| Le serveur redémarrera dans %{smart_count} minutes.",
         "schedule_warn_discord": "**%{servername}** redémarrera dans %{smart_count} minute. |||| **%{servername}** redémarrera dans %{smart_count} minutes."
     },
@@ -32,7 +32,7 @@
     },
     "nui_warning": {
         "title": "AVERTISSEMENT",
-        "warned_by": "Avertis par:",
+        "warned_by": "Averti par:",
         "instruction": "Maintenir [ESPACE] pendant 10 secondes pour cacher ce message."
     },
     "nui_menu": {
@@ -59,7 +59,7 @@
         "page_main": {
             "tooltips": {
                 "tooltip_1": "Utilisez %{key} pour changer de pages & et les flèches pour naviguer dans le menu",
-                "tooltip_2": "Certains éléments de menu ont des sous-options qui peuvent être sélectionnées à l'aide des fléches gauche et droite"
+                "tooltip_2": "Certains éléments du menu ont des sous-options qui peuvent être sélectionnées à l'aide des fléches gauche et droite"
             },
             "player_mode": {
                 "title": "Mode du joueur",
@@ -84,19 +84,19 @@
                 "generic_success": "Vous avez été téléporté !",
                 "waypoint": {
                     "title": "GPS",
-                    "label": "TP sur votre point GPS",
+                    "label": "Téléportez vous sur votre point GPS",
                     "error": "Aucun point GPS définit."
                 },
                 "coords": {
                     "title": "Coordonnées",
-                    "label": "TP sur coordonnées",
+                    "label": "Téléportez vous à des coordonnées",
                     "dialog_title": "Téléportation",
                     "dialog_desc": "Fournissez des coordonnées au format x, y, z pour vous téléporter.",
                     "dialog_error": "Coordonnées invalide. Elles doivent être sous le format suivant: 111, 222, 33"
                 },
                 "back": {
                     "title": "Retour",
-                    "label": "TP sur ancienne position",
+                    "label": "Téléportez vous sur votre ancienne position",
                     "error": "Vous n'avez aucune dernière position !"
                 },
                 "copy": {
@@ -105,7 +105,7 @@
                 }
             },
             "vehicle": {
-                "title": "Vehicule",
+                "title": "Véhicule",
                 "onesync_error": "Cette option nécessite que OneSync soit activé pour la gestion des entités du serveur",
                 "not_in_veh_error": "Vous n'êtes pas dans un véhicule !",
                 "spawn": {
@@ -140,29 +140,29 @@
                 },
                 "everyone": {
                     "title": "Tous les joueurs",
-                    "label": "Soignez & réanimez",
+                    "label": "Soignez & réanimez tous les joueurs connectés",
                     "success": "Tous les joueurs ont été soigné et réanimé."
                 }
             },
             "announcement": {
                 "title": "Faire une annonce",
                 "label": "Faire une annonce pour tous les joueurs actuellement connectés.",
-                "dialog_desc": "Entrer le message que vous voulez diffuser à tous les joueurs.",
-                "dialog_placeholder": "Message",
+                "dialog_desc": "Entrez le message que vous voulez diffuser à tous les joueurs.",
+                "dialog_placeholder": "Votre annonce...",
                 "dialog_success": "L'annonce est en train d'être envoyée."
             },
             "clear_area": {
                 "title": "Nettoyer la zone",
-                "label": "Réinitialiser la zone du monde spécifiée à son état par défaut",
-                "dialog_desc": "Entrez un rayon où vous souhaitez que les entités soient supprimées (0-300). Cela ne va pas supprimer les entités créées par le serveur.",
+                "label": "Réinitialisez la zone du monde spécifiée à son état par défaut",
+                "dialog_desc": "Entrez le rayon où vous souhaitez que les entités soient supprimées (0-300). Cela ne va pas supprimer les entités créées par le serveur.",
                 "dialog_success": "Suppression des entités dans un rayon de %{radius} m",
                 "dialog_error": "Rayon invalide. Veuillez réessayer."
             },
             "player_ids": {
                 "title": "Afficher les ID des joueurs",
                 "label": "Affiche les IDs des joueurs (et autres informations) au dessus des joueurs à proximité",
-                "alert_show": "Les ID des joueurs sont affichés.",
-                "alert_hide": "Les ID des joueurs ne sont plus affichés."
+                "alert_show": "Les IDs des joueurs sont affichés.",
+                "alert_hide": "Les IDs des joueurs ne sont plus affichés."
             }
         },
         "page_players": {
@@ -176,8 +176,8 @@
                 "label": "Trier par",
                 "distance": "Distance",
                 "id": "ID",
-                "joined_first": "Premières connexions",
-                "joined_last": "Dernières connexions",
+                "joined_first": "Première connexion",
+                "joined_last": "Dernière connexion",
                 "closest": "Le - loin",
                 "farthest": "Le + loin"
             },
@@ -192,7 +192,7 @@
             },
             "tabs": {
                 "actions": "Actions",
-                "info": "Infos",
+                "info": "Informations",
                 "ids": "Identifiants",
                 "history": "Historique",
                 "ban": "Bannir"
@@ -203,45 +203,45 @@
                 "moderation": {
                     "title": "Modération",
                     "options": {
-                        "dm": "PM",
+                        "dm": "Envoyer un message privé",
                         "warn": "Avertir",
                         "kick": "Exclure",
-                        "set_admin": "Donner droits admin"
+                        "set_admin": "Donner les droits administrateurs"
                     },
                     "dm_dialog": {
                         "title": "Message privé",
                         "description": "Que souhaitez-vous envoyer à ce joueur ?",
-                        "placeholder": "Message",
+                        "placeholder": "Message...",
                         "success": "Votre message a été envoyé !"
                     },
                     "warn_dialog": {
                         "title": "Avertir",
                         "description": "Pour quelle(s) raison(s) souhaitez-vous avertir ce joueur ?",
-                        "placeholder": "Raison",
+                        "placeholder": "Raison...",
                         "success": "Le joueur a été averti !"
                     },
                     "kick_dialog": {
                         "title": "Exclure",
                         "description": "Pour quelle(s) raison(s) souhaitez-vous exclure ce joueur ?",
-                        "placeholder": "Raison",
+                        "placeholder": "Raison...",
                         "success": "Le joueur a été exclu !"
                     }
                 },
                 "interaction": {
-                    "title": "Intéractions",
+                    "title": "Interactions",
                     "options": {
-                        "heal": "Soigner",
-                        "go_to": "TP à lui",
-                        "bring": "TP à soi",
-                        "spectate": "Surveiller",
+                        "heal": "Soigner le joueur",
+                        "go_to": "Se téléporter au joueur",
+                        "bring": "Téléporter le joueur à soi",
+                        "spectate": "Regarder (spectate)",
                         "toggle_freeze": "Geler/Dégeler"
                     },
                     "notifications": {
                         "heal_player": "Le joueur a été soigné",
                         "tp_player": "Téléportation au joueur",
                         "bring_player": "Le joueur a été téléporté à vous",
-                        "spectate_failed": "Impossible de trouver le joueur ! Désactivation du mode surveillance.",
-                        "spectate_yourself": "Vous ne pouvez pas vous surveiller vous-même.",
+                        "spectate_failed": "Impossible de trouver le joueur ! Désactivation du mode spectateur.",
+                        "spectate_yourself": "Vous ne pouvez pas vous regarder vous-même.",
                         "freeze_yourself": "Vous ne pouvez pas vous geler vous-même."
                     }
                 },
@@ -258,7 +258,7 @@
                 "title": "Informations du joueur",
                 "session_time": "Durée de la session",
                 "play_time": "Temps de jeu",
-                "joined": "Connecté le ",
+                "joined": "A rejoint le",
                 "notes_placeholder": "Notes à propos du joueur"
             },
             "history": {
@@ -283,7 +283,7 @@
                 "permanent": "Permanente",
                 "custom": "Personnalisée",
                 "helper_text": "Selectionnez une durée",
-                "submit": "Apply ban"
+                "submit": "Confirmer"
             }
         }
     }
