@@ -17,7 +17,6 @@ module.exports = class DiscordBot {
         this.config = config;
         this.client = null;
         this.announceChannel = null;
-        this.latestMutex = null;
         this.usageStats = {
             addwl: 0,
             help: 0,
@@ -105,36 +104,11 @@ module.exports = class DiscordBot {
             autoReconnect: true,
         });
 
-        //Set mutex to prevent spamming /help on reconnections
-        const currentMutex = Math.random();
-
         //Setup Ready listener
         this.client.on('ready', async () => {
             logOk(`Started and logged in as '${this.client.user.tag}'`);
             this.client.user.setActivity(globals.config.serverName, { type: 'WATCHING' });
             this.announceChannel = this.client.channels.cache.find((x) => x.id === this.config.announceChannel);
-            if (!this.announceChannel) {
-                logError(`The announcements channel could not be found. Check the channel ID ${this.config.announceChannel}, or the bot permissions.`);
-            } else if (currentMutex !== this.latestMutex) {
-                let cmdDescs = [];
-                this.commands.forEach((cmd, name) => {
-                    cmdDescs.push(`${this.config.prefix}${name}: ${cmd.description}`);
-                });
-                const descLines = [
-                    `:rocket: **txAdmin** v${GlobalData.txAdminVersion} bot started!`,
-                    ':game_die: **Commands:**',
-                    '```',
-                    ...cmdDescs,
-                    '...more commands to come soon 😮',
-                    '```',
-                ];
-                const msg = new Discord.MessageEmbed({
-                    color: 0x4287F5,
-                    description: descLines.join('\n'),
-                });
-                this.announceChannel.send({ embeds: [msg] });
-                this.latestMutex = currentMutex;
-            }
         });
 
         //Setup remaining event listeners
