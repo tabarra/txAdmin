@@ -329,7 +329,7 @@
         setChartThread(chartThreadSelectBtn.textContent);
     }, 2.5*60*1000);
 
-    //Renders it again when redized
+    //Renders it again when resized
     let redrawTimeout;
     window.addEventListener("resize", () => {
         if(!perfData) return;
