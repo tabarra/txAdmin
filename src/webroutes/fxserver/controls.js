@@ -27,10 +27,10 @@ module.exports = async function FXServerControls(ctx) {
         //TODO: delay override message logic should be on fxserver, but for now keep here
         // as it messages with the sync notification on the UI
         if (globals.fxRunner.restartDelayOverride || globals.fxRunner.restartDelayOverride <= 4000) {
-            globals.fxRunner.restartServer('admin request', ctx.session.auth.username);
+            globals.fxRunner.restartServer(`requested by ${ctx.session.auth.username}`, ctx.session.auth.username);
             return ctx.send({type: 'success', message: `Restarting the fxserver with delay override ${globals.fxRunner.restartDelayOverride}.`});
         } else {
-            const restartMsg = await globals.fxRunner.restartServer('admin request', ctx.session.auth.username);
+            const restartMsg = await globals.fxRunner.restartServer(`requested by ${ctx.session.auth.username}`, ctx.session.auth.username);
             if (restartMsg !== null) {
                 return ctx.send({type: 'danger', markdown: true, message: restartMsg});
             } else {
@@ -42,7 +42,7 @@ module.exports = async function FXServerControls(ctx) {
             return ctx.send({type: 'danger', message: 'The server is already stopped.'});
         }
         ctx.utils.logCommand('STOP SERVER');
-        await globals.fxRunner.killServer('admin request', ctx.session.auth.username, false);
+        await globals.fxRunner.killServer(`requested by ${ctx.session.auth.username}`, ctx.session.auth.username, false);
         return ctx.send({type: 'warning', message: 'Server stopped.'});
     } else if (action == 'start') {
         if (globals.fxRunner.fxChild !== null) {
