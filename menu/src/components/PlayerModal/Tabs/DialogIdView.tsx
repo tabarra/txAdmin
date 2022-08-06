@@ -1,6 +1,6 @@
 import React from "react";
+import { styled } from '@mui/material/styles';
 import { Box, IconButton, Theme, Typography } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
 import { usePlayerDetailsValue } from "../../../state/playerDetails.state";
 import { FileCopy } from "@mui/icons-material";
 import { copyToClipboard } from "../../../utils/copyToClipboard";
@@ -8,8 +8,15 @@ import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
 import { DialogLoadError } from "./DialogLoadError";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  codeBlock: {
+const PREFIX = 'DialogIdView';
+
+const classes = {
+  codeBlock: `${PREFIX}-codeBlock`,
+  codeBlockText: `${PREFIX}-codeBlockText`
+};
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  [`& .${classes.codeBlock}`]: {
     background: theme.palette.background.paper,
     borderRadius: 8,
     padding: "0px 15px",
@@ -17,14 +24,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: "flex",
     alignItems: "center",
   },
-  codeBlockText: {
+
+  [`& .${classes.codeBlockText}`]: {
     flexGrow: 1,
     fontFamily: "monospace",
-  },
+  }
 }));
 
 const DialogIdView: React.FC = () => {
-  const classes = useStyles();
+
   const player = usePlayerDetailsValue();
   const { enqueueSnackbar } = useSnackbar();
   const t = useTranslate();
@@ -39,7 +47,7 @@ const DialogIdView: React.FC = () => {
   };
 
   return (
-    <Box overflow="auto" height="100%" padding="8px 24px">
+    <StyledBox overflow="auto" height="100%" padding="8px 24px">
       {player.identifiers.map((ident) => (
         <Box className={classes.codeBlock} key={ident}>
           <Typography className={classes.codeBlockText}>{ident}</Typography>
@@ -48,7 +56,7 @@ const DialogIdView: React.FC = () => {
           </IconButton>
         </Box>
       ))}
-    </Box>
+    </StyledBox>
   );
 };
 

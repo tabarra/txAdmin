@@ -1,6 +1,6 @@
 import React from "react";
+import { styled } from '@mui/material/styles';
 import { Box, Button, DialogContent, Tooltip, TooltipProps, Typography } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
 import {
   useAssociatedPlayerValue,
   usePlayerDetailsValue,
@@ -16,15 +16,16 @@ import { translateAlertType, userHasPerm } from "../../../utils/miscUtils";
 import { useTranslate } from "react-polyglot";
 import { usePermissionsValue } from "../../../state/permissions.state";
 
-export type TxAdminActionRespType = "success" | "warning" | "danger";
+const PREFIX = 'DialogActionView';
 
-export interface TxAdminAPIResp {
-  type: TxAdminActionRespType;
-  message: string;
-}
+const classes = {
+  actionGrid: `${PREFIX}-actionGrid`,
+  tooltipOverride: `${PREFIX}-tooltipOverride`,
+  sectionTitle: `${PREFIX}-sectionTitle`
+};
 
-const useStyles = makeStyles({
-  actionGrid: {
+const StyledDialogContent = styled(DialogContent)({
+  [`& .${classes.actionGrid}`]: {
     display: "flex",
     columnGap: 10,
     rowGap: 10,
@@ -33,16 +34,23 @@ const useStyles = makeStyles({
       wordBreak: "break-all"
     }
   },
-  tooltipOverride: {
+  [`& .${classes.tooltipOverride}`]: {
     fontSize: 12,
   },
-  sectionTitle: {
+  [`& .${classes.sectionTitle}`]: {
     paddingBottom: 5,
   },
 });
 
+export type TxAdminActionRespType = "success" | "warning" | "danger";
+
+export interface TxAdminAPIResp {
+  type: TxAdminActionRespType;
+  message: string;
+}
+
 const DialogActionView: React.FC = () => {
-  const classes = useStyles();
+
   const { openDialog } = useDialogContext();
   const playerDetails = usePlayerDetailsValue();
   const assocPlayer = useAssociatedPlayerValue();
@@ -296,7 +304,7 @@ const DialogActionView: React.FC = () => {
   );
 
   return (
-    <DialogContent>
+    <StyledDialogContent>
       <Box pb={1}>
         <Typography variant="h6">
           {t("nui_menu.player_modal.actions.title")}
@@ -353,7 +361,7 @@ const DialogActionView: React.FC = () => {
           {t("nui_menu.player_modal.actions.troll.options.wild_attack")}
         </Button>
       </Box>
-    </DialogContent>
+    </StyledDialogContent>
   );
 };
 

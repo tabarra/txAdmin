@@ -1,11 +1,17 @@
 import React, { ReactNode } from "react";
-import { Fade, Theme, Tooltip, Typography } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
+import {Fade, styled, Theme, Tooltip, Typography} from "@mui/material";
 
 import { useTooltip } from "../../provider/TooltipProvider";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  tooltip: {
+const PREFIX = 'HelpTooltip'
+
+const classes = {
+  tooltip: `${PREFIX}-tooltip`,
+  arrow: `${PREFIX}-arrow`,
+}
+
+const StyledHelpTooltip = styled(Tooltip)(({theme}) => ({
+  [`& ${classes.tooltip}`]: {
     backgroundColor: theme.palette.background.default,
     color: theme.palette.text.primary,
     borderRadius: 10,
@@ -15,10 +21,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     animationDuration: "2s",
     animationTimingFunction: "ease",
   },
-  arrow: {
+  [`& ${classes.arrow}`]: {
     color: theme.palette.background.default,
   },
-  //FIXME: broken since react 18
   "@keyframes bounce-tool-tip": {
     "0%": {
       transform: "translateY(0)",
@@ -30,18 +35,17 @@ const useStyles = makeStyles((theme: Theme) => ({
       transform: "translateY(0)",
     },
   },
-}));
+}))
 
 interface HelpTooltipProps {
   children: ReactNode;
 }
 
 export const HelpTooltip: React.FC<HelpTooltipProps> = ({ children }) => {
-  const classes = useStyles();
   const { tooltipText, tooltipOpen } = useTooltip();
 
   return (
-    <Tooltip
+    <StyledHelpTooltip
       open={tooltipOpen}
       title={
         <Typography variant="caption" align="center">
@@ -66,6 +70,6 @@ export const HelpTooltip: React.FC<HelpTooltipProps> = ({ children }) => {
       }}
     >
       <div>{children}</div>
-    </Tooltip>
+    </StyledHelpTooltip>
   );
 };

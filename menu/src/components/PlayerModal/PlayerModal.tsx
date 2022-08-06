@@ -10,8 +10,8 @@ import {
   ListItemIcon,
   Theme,
   CircularProgress,
-  styled,
 } from "@mui/material";
+import { styled } from '@mui/material/styles';
 import {
   Close,
   Person,
@@ -27,8 +27,36 @@ import { DialogBaseView } from "./Tabs/DialogBaseView";
 import { PlayerModalErrorBoundary } from "./ErrorHandling/PlayerModalErrorBoundary";
 import { usePermissionsValue } from "../../state/permissions.state";
 import { userHasPerm } from "../../utils/miscUtils";
-import { makeStyles } from "@mui/styles";
 import React from "react";
+
+const PREFIX = 'PlayerModal';
+
+const classes = {
+  listItem: `${PREFIX}-listItem`,
+  root: `${PREFIX}-root`,
+  banRoot: `${PREFIX}-banRoot`,
+  selected: `${PREFIX}-selected`
+};
+
+const StyledList = styled(List)(({ theme }) => ({
+  [`& .${classes.listItem}`]: {
+    borderRadius: 8,
+  },
+
+  [`& .${classes.root}`]: {
+    "&$selected, &$selected:hover": {
+      background: theme.palette.primary.main,
+    },
+  },
+
+  [`& .${classes.banRoot}`]: {
+    "&$selected, &$selected:hover": {
+      background: theme.palette.error.main,
+    },
+  },
+
+  [`& .${classes.selected}`]: {}
+}));
 
 const LoadingModal: React.FC = () => (
   <Box
@@ -99,31 +127,13 @@ const PlayerModal: React.FC = () => {
   );
 };
 
-const useListStyles = makeStyles((theme: Theme) => ({
-  listItem: {
-    borderRadius: 8,
-  },
-  root: {
-    "&$selected, &$selected:hover": {
-      background: theme.palette.primary.main,
-    },
-  },
-  banRoot: {
-    "&$selected, &$selected:hover": {
-      background: theme.palette.error.main,
-    },
-  },
-  selected: {},
-}));
-
 const DialogList: React.FC = () => {
   const { tab, setTab } = usePlayerModalContext();
-  const classes = useListStyles();
   const t = useTranslate();
   const playerPerms = usePermissionsValue();
 
   return (
-    <List>
+    <StyledList>
       <ListItem
         className={classes.listItem}
         button
@@ -185,7 +195,7 @@ const DialogList: React.FC = () => {
         </ListItemIcon>
         <ListItemText primary={t("nui_menu.player_modal.tabs.ban")} />
       </ListItem>
-    </List>
+    </StyledList>
   );
 };
 

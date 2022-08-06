@@ -1,4 +1,5 @@
 import React, { memo, useEffect, useRef, useState } from "react";
+import { styled } from '@mui/material/styles';
 import {
   Box,
   BoxProps,
@@ -9,7 +10,6 @@ import {
   Theme,
   Typography,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
 import { Code } from "@mui/icons-material";
 import { fetchNui } from "../../utils/fetchNui";
@@ -21,6 +21,35 @@ import {
 import { userHasPerm } from "../../utils/miscUtils";
 import { useSnackbar } from "notistack";
 import { useTooltip } from "../../provider/TooltipProvider";
+
+const PREFIX = 'MenuListItem';
+
+const classes = {
+  root: `${PREFIX}-root`,
+  rootDisabled: `${PREFIX}-rootDisabled`,
+  icon: `${PREFIX}-icon`,
+  overrideText: `${PREFIX}-overrideText`
+};
+
+const Root = styled('div')(({ theme }) => ({
+  [`& .${classes.root}`]: {
+    borderRadius: 15,
+  },
+
+  [`& .${classes.rootDisabled}`]: {
+    borderRadius: 15,
+    opacity: 0.3,
+  },
+
+  [`& .${classes.icon}`]: {
+    color: theme.palette.text.secondary,
+  },
+
+  [`& .${classes.overrideText}`]: {
+    color: theme.palette.text.primary,
+    fontSize: 16,
+  }
+}));
 
 export interface MenuListItemProps {
   title: string;
@@ -35,27 +64,11 @@ interface StyledRootProps extends BoxProps {
   isDisabled: boolean;
 }
 
-const useStyles = makeStyles((theme: Theme) => ({
-  root: {
-    borderRadius: 15,
-  },
-  rootDisabled: {
-    borderRadius: 15,
-    opacity: 0.3,
-  },
-  icon: {
-    color: theme.palette.text.secondary,
-  },
-  overrideText: {
-    color: theme.palette.text.primary,
-    fontSize: 16,
-  },
-}));
 // TODO: Actually do disabled item styling right now it will only remove
 // enter from working
 export const MenuListItem: React.FC<MenuListItemProps> = memo(
   ({ title, label, requiredPermission, icon, selected, onSelect }) => {
-    const classes = useStyles();
+
     const t = useTranslate();
     const divRef = useRef<HTMLDivElement | null>(null);
     const userPerms = usePermissionsValue();
@@ -105,7 +118,7 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
     });
 
     return (
-      <div ref={divRef}>
+      <Root ref={divRef}>
         <ListItem
           onClick={() => onSelect()}
           className={isUserAllowed ? classes.root : classes.rootDisabled}
@@ -120,7 +133,7 @@ export const MenuListItem: React.FC<MenuListItemProps> = memo(
             }}
           />
         </ListItem>
-      </div>
+      </Root>
     );
   }
 );
@@ -144,7 +157,7 @@ export interface MenuListItemMultiProps {
 
 export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
   ({ selected, title, actions, icon, initialValue, requiredPermission }) => {
-    const classes = useStyles();
+
     const t = useTranslate();
     const [curState, setCurState] = useState(0);
     const userPerms = usePermissionsValue();

@@ -1,23 +1,34 @@
-import React, { useRef, useState } from "react";
-import { Box, Fade, Typography } from "@mui/material";
-import makeStyles from '@mui/styles/makeStyles';
-import { useNuiEvent } from "../../hooks/useNuiEvent";
-import { useTranslate } from "react-polyglot";
+import React, {useRef, useState} from "react";
+import {styled} from '@mui/material/styles';
+import {Box, Fade, Typography} from "@mui/material";
+import {useNuiEvent} from "../../hooks/useNuiEvent";
+import {useTranslate} from "react-polyglot";
 // import { debugData } from "../../utils/debugLog";
-import { ReportProblemOutlined } from "@mui/icons-material";
+import {ReportProblemOutlined} from "@mui/icons-material";
 
-const useWarnInnerStyles = makeStyles({
-  root: {
+const PREFIX_WarnPage = 'WarnPage';
+
+const warnClasses = {
+  root: `${PREFIX_WarnPage}-root`,
+  inner: `${PREFIX_WarnPage}-inner`,
+  title: `${PREFIX_WarnPage}-title`,
+  message: `${PREFIX_WarnPage}-message`,
+  author: `${PREFIX_WarnPage}-author`,
+  instruction: `${PREFIX_WarnPage}-instruction`
+};
+
+const WarnInnerStyles = styled(Fade)({
+  [`& .${warnClasses.root}`]: {
     color: "whitesmoke",
     transition: "transform 300ms ease-in-out",
     maxWidth: "700px",
   },
-  inner: {
+  [`& .${warnClasses.inner}`]: {
     padding: 32,
     border: "3px dashed whitesmoke",
     borderRadius: 12,
   },
-  title: {
+  [`& .${warnClasses.title}`]: {
     display: "flex",
     margin: "-20px auto 18px auto",
     width: "max-content",
@@ -25,16 +36,16 @@ const useWarnInnerStyles = makeStyles({
     paddingBottom: 5,
     fontWeight: 700,
   },
-  message: {
+  [`& .${warnClasses.message}`]: {
     fontSize: "1.5em",
   },
-  author: {
+  [`& .${warnClasses.author}`]: {
     textAlign: "right",
     fontSize: "0.8em",
     marginTop: 15,
     marginBottom: -15,
   },
-  instruction: {
+  [`& .${warnClasses.instruction}`]: {
     marginTop: "1em",
     fontSize: "0.85em",
     textAlign: "center",
@@ -58,13 +69,13 @@ const WarningIcon = () => (
 );
 
 const WarnInnerComp: React.FC<WarnInnerComp> = ({ message, warnedBy }) => {
-  const classes = useWarnInnerStyles();
   const t = useTranslate();
 
   return (
-    <Box className={classes.root}>
-      <Box className={classes.inner}>
-        <Box className={classes.title}>
+    <WarnInnerStyles className={warnClasses.root}>
+      <>
+      <Box className={warnClasses.inner}>
+        <Box className={warnClasses.title}>
           <WarningIcon />
           <Typography variant="h3" style={{ fontWeight: 700 }}>
             {t("nui_warning.title")}
@@ -89,13 +100,20 @@ const WarnInnerComp: React.FC<WarnInnerComp> = ({ message, warnedBy }) => {
           {t("nui_warning.warned_by")} {warnedBy}
         </Typography>
       </Box>
-      <Box className={classes.instruction}>{t("nui_warning.instruction")}</Box>
-    </Box>
+      <Box className={warnClasses.instruction}>{t("nui_warning.instruction")}</Box>
+      </>
+    </WarnInnerStyles>
   );
 };
 
-const useMainPageStyles = makeStyles({
-  root: {
+const PREFIX_MainPage = 'MainPage'; 
+const classes = {
+  root: `${PREFIX_MainPage}-root`,
+  miniBounce: `${PREFIX_MainPage}-miniBounce`,
+}
+
+const MainPageStyles = styled('div')(({
+  [`& .${classes.root}`]: {
     top: 0,
     left: 0,
     transition: "background-color 750ms ease-in-out",
@@ -127,7 +145,7 @@ const useMainPageStyles = makeStyles({
   miniBounce: {
     animation: "miniBounce 500ms ease-in-out",
   },
-});
+}));
 
 export interface SetWarnOpenData {
   reason: string;
@@ -145,7 +163,6 @@ export interface SetWarnOpenData {
 // ], 2000)
 
 export const WarnPage: React.FC = ({}) => {
-  const classes = useMainPageStyles();
   const pulseSound = useRef<HTMLAudioElement>(
     new Audio("assets/sounds/warning_pulse.mp3")
   );
@@ -182,20 +199,22 @@ export const WarnPage: React.FC = ({}) => {
   };
 
   return (
-    <Fade in={isOpen} onExit={exitHandler}>
-      <Box
-        bgcolor={isOpen ? "rgba(133, 3, 3, 0.95)" : "transparent"}
-        className={
-          !isMiniBounce ? classes.root : `${classes.root} ${classes.miniBounce}`
-        }
-      >
-        {warnData && (
-          <WarnInnerComp
-            message={warnData.reason}
-            warnedBy={warnData.warnedBy}
-          />
-        )}
-      </Box>
-    </Fade>
+    <MainPageStyles>
+      <Fade in={isOpen} onExit={exitHandler}>
+        <Box
+          bgcolor={isOpen ? "rgba(133, 3, 3, 0.95)" : "transparent"}
+          className={
+            !isMiniBounce ? classes.root : `${classes.root} ${classes.miniBounce}`
+          }
+        >
+          {warnData && (
+            <WarnInnerComp
+              message={warnData.reason}
+              warnedBy={warnData.warnedBy}
+            />
+          )}
+        </Box>
+      </Fade>
+    </MainPageStyles>
   );
 };
