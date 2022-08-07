@@ -14,6 +14,21 @@
 
 add ram usage to perf chart?
 
+by the next update, i'll add a way for you to whitelist other ips in the request
+
+diagnostics: mudar o numero de resources classificado como high
+
+porta pro mysql
+
+aquele merge do GET /status
+
+if connection test fails, check if not default then tell the user ARE YOU SURE YOU KNOW WHAT U DOIN YOU DEFORMED MUFFIN
+
+
+// Your config file does not not contain a ip:port used in both endpoint_add_tcp and endpoint_add_udp. Players would not be able to connect.
+
+sv restart button to the cfg editor page
+
 
 replace resources thing with an api endpoint
 
@@ -22,8 +37,23 @@ add option to skip or add time to schedules restart
 
 recipe name + ptero in endpoint
 
+timeout no save do step2
 
-# txAdminAPI:
+
+playerid permissions?!
+
+
+
+
+
+
+
+tentar usar vite
+react-query usar 100%
+procurar alternativas pro react-router (wouter)
+https://auto-animate.formkit.com
+
+# txAdminAPI interface in base.js:
 - Create prop `pendingMessage` to replace `const notify = $.notify({ message: 'xxxxxx' }, {});`
 - Pass `notify` as last argument to `success()` and `error()`
 - Create default `success()` and `error()`
@@ -46,16 +76,11 @@ someday remove the slash() and the ascii restrictions
 - dev_notes, newPlayerlist -> to docs folder
 
 
-
-
-
-
-No docs for:
-- console command "wait <ms>"
-- the JSON parser thing
-
-
-- BUG: nui menu triggered announcements are not sent to the discord
+# Update Event + Rollout strategy
+This is not compatible with the update events.
+If patch, show update notification immediately (specially important to quick-fix a bug).
+If minor, randomize a delay between 0~24h.
+If patch, randomize a delay 0~72h.
 
 
 Update event idea (not yet greenlit):
@@ -71,7 +96,7 @@ Update event idea (not yet greenlit):
 
 
 Change pls the expired ban color to red or something else, because the must people dont know if the ban now expired or be revoked
-
+- BUG: nui menu triggered announcements are not sent to the discord
 
 
 verificar o pq heartbeat as vezes é lento
@@ -115,6 +140,9 @@ refactor settings:
 - settings.set('object.dot.notation');
 - npm search for "object dot"
 
+### Multiserver:
+- See with bubble if we can use node:worker_threads
+- Or maybe nodejs vm module to keep using global variables
 
 
 ### TP:
@@ -232,12 +260,12 @@ To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 > Don't use, but I'll leave it saved here: https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
 
 
-### txBanana Admin Gun
-- banana as a gun, txBanana
-- preferably without taking away inventory from user
+### txPointing (old txBanana)
+- code prototype with ItsANoBrainer#1337
 - keybind to toggle gun (grab or put away)
 - when you point at player, show above head some info
 - when you "shoot" it will open the player menu and hopefully fire a laser or something
+- when you right click, slap player (ApplyDamageToPed 5 damage + small psysichs push up and x+y random)
 
 
 ### ESM updates

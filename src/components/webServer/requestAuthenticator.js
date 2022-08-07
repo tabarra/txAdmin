@@ -181,7 +181,7 @@ const nuiAuthLogic = (reqIP, reqHeader) => {
     // Check sus IPs
     if (!GlobalData.loopbackInterfaces.includes(reqIP) && !GlobalData.isZapHosting) {
         if (GlobalData.verbose) {
-            logWarn(`NUI Auth Failed: reqIP (${reqIP}) not in ${JSON.stringify(GlobalData.loopbackInterfaces)}.`);
+            logWarn(`NUI Auth Failed: reqIP "${reqIP}" not in ${JSON.stringify(GlobalData.loopbackInterfaces)}.`);
         }
         return {isValidAuth: false, rejectReason: 'Invalid Request: source'};
     }
