@@ -7,7 +7,6 @@ import {
   ListItemIcon,
   ListItemSecondaryAction,
   ListItemText,
-  Theme,
   Typography,
 } from "@mui/material";
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
@@ -60,12 +59,7 @@ export interface MenuListItemProps {
   onSelect: () => void;
 }
 
-interface StyledRootProps extends BoxProps {
-  isDisabled: boolean;
-}
 
-// TODO: Actually do disabled item styling right now it will only remove
-// enter from working
 export const MenuListItem: React.FC<MenuListItemProps> = memo(
   ({ title, label, requiredPermission, icon, selected, onSelect }) => {
 
@@ -164,8 +158,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     const { enqueueSnackbar } = useSnackbar();
     const { setTooltipText } = useTooltip();
 
-    const isUserAllowed =
-      requiredPermission && userHasPerm(requiredPermission, userPerms);
+    const isUserAllowed = requiredPermission && userHasPerm(requiredPermission, userPerms);
 
     const compMounted = useRef(false);
 
@@ -246,9 +239,9 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
     });
 
     return (
-      <div ref={divRef}>
+      <Root ref={divRef}>
         <ListItem
-          sx={{ borderRadius: 15, opacity: isUserAllowed ? 1 : 0.3 }}
+          className={isUserAllowed ? classes.root : classes.rootDisabled}
           dense
           selected={selected}
         >
@@ -272,7 +265,7 @@ export const MenuListItemMulti: React.FC<MenuListItemMultiProps> = memo(
             <Code className={classes.icon} />
           </ListItemSecondaryAction>
         </ListItem>
-      </div>
+      </Root>
     );
   }
 );
