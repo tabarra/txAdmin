@@ -1,13 +1,12 @@
 import React, { memo } from "react";
+import { styled } from '@mui/material/styles';
 import {
   Box,
   Paper,
-  styled,
   Theme,
   Tooltip,
   Typography,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import {
   DirectionsBoat,
   DirectionsWalk,
@@ -22,8 +21,18 @@ import { formatDistance } from "../../utils/miscUtils";
 import { useTranslate } from "react-polyglot";
 import { PlayerData, VehicleStatus } from "../../hooks/usePlayerListListener";
 
-const useStyles = makeStyles((theme: Theme) => ({
-  paper: {
+const PREFIX = 'PlayerCard';
+
+const classes = {
+  paper: `${PREFIX}-paper`,
+  barBackground: `${PREFIX}-barBackground`,
+  barInner: `${PREFIX}-barInner`,
+  icon: `${PREFIX}-icon`,
+  tooltipOverride: `${PREFIX}-tooltipOverride`
+};
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  [`& .${classes.paper}`]: {
     padding: 20,
     borderRadius: 10,
     cursor: "pointer",
@@ -31,23 +40,27 @@ const useStyles = makeStyles((theme: Theme) => ({
       backgroundColor: "#35393C",
     },
   },
-  barBackground: {
+
+  [`& .${classes.barBackground}`]: {
     background: theme.palette.primary.dark,
     height: 5,
     borderRadius: 10,
     overflow: "hidden",
   },
-  barInner: {
+
+  [`& .${classes.barInner}`]: {
     height: "100%",
     background: theme.palette.primary.main,
   },
-  icon: {
+
+  [`& .${classes.icon}`]: {
     paddingRight: 7,
     color: theme.palette.primary.main,
   },
-  tooltipOverride: {
+
+  [`& .${classes.tooltipOverride}`]: {
     fontSize: 12,
-  },
+  }
 }));
 
 const determineHealthBGColor = (val: number) => {
@@ -81,7 +94,7 @@ const HealthBar = styled(Box, {
 }));
 
 const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
-  const classes = useStyles();
+
   const { setModalOpen } = usePlayerModalContext();
   const setAssociatedPlayer = useSetAssociatedPlayer();
   const t = useTranslate();
@@ -104,7 +117,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
     playerData.vType.charAt(0).toUpperCase() + playerData.vType.slice(1);
 
   return (
-    <Box p={1}>
+    <StyledBox p={1}>
       <div onClick={handlePlayerClick}>
         <Paper className={classes.paper}>
           <Box display="flex" alignItems="center" pb="5px">
@@ -179,7 +192,7 @@ const PlayerCard: React.FC<{ playerData: PlayerData }> = ({ playerData }) => {
           </div>
         </Paper>
       </div>
-    </Box>
+    </StyledBox>
   );
 };
 

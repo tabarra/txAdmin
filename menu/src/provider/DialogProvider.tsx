@@ -9,6 +9,8 @@ import React, {
   useState,
 } from "react";
 
+import { styled } from '@mui/material/styles';
+
 import {
   Button,
   Dialog,
@@ -21,13 +23,19 @@ import {
   Theme,
   useTheme,
 } from "@mui/material";
-import makeStyles from "@mui/styles/makeStyles";
 import { Create } from "@mui/icons-material";
 import { useKeyboardNavContext } from "./KeyboardNavProvider";
 import { useSnackbar } from "notistack";
 import { useTranslate } from "react-polyglot";
 import { useSetDisableTab, useSetListenForExit } from "../state/keys.state";
 import { txAdminMenuPage, usePageValue } from "../state/page.state";
+
+const StyledDialogTitle = styled(DialogTitle)(({theme}) => ({
+  color: theme.palette.primary.main,
+}))
+const StyledCreate = styled(Create)(({theme}) => ({
+  color: theme.palette.text.secondary,
+}))
 
 interface InputDialogProps {
   title: string;
@@ -45,15 +53,6 @@ interface DialogProviderContext {
 
 const DialogContext = createContext(null);
 
-const useStyles = makeStyles((theme: Theme) => ({
-  icon: {
-    color: theme.palette.text.secondary,
-  },
-  dialogTitleOverride: {
-    color: theme.palette.primary.main,
-  },
-}));
-
 const defaultDialogState = {
   description: "This is the default description for whatever",
   placeholder: "This is the default placeholder...",
@@ -66,7 +65,6 @@ interface DialogProviderProps {
 }
 
 export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
-  const classes = useStyles();
   const theme = useTheme();
   const [canSubmit, setCanSubmit] = useState(true);
 
@@ -156,9 +154,9 @@ export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
             handleDialogSubmit();
           }}
         >
-          <DialogTitle classes={{ root: classes.dialogTitleOverride }}>
+          <StyledDialogTitle>
             {dialogProps.title}
-          </DialogTitle>
+          </StyledDialogTitle>
           <DialogContent>
             <DialogContentText>{dialogProps.description}</DialogContentText>
             <TextField
@@ -172,7 +170,7 @@ export const DialogProvider: React.FC<DialogProviderProps> = ({ children }) => {
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
-                    <Create className={classes.icon} color="inherit" />
+                    <StyledCreate color="inherit" />
                   </InputAdornment>
                 ),
               }}
