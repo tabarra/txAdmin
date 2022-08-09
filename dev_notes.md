@@ -45,6 +45,20 @@ playerid permissions?!
 
 
 
+  @koa/router           ^10.1.1   →    ^12.0.0
+  openid-client          ^5.1.7   →     ^5.1.8
+  systeminformation    ^5.11.22   →    ^5.12.1
+  @types/node           ^18.0.0   →    ^18.6.3
+  @types/react         ^18.0.14   →   ^18.0.15
+  @types/react-dom      ^18.0.5   →    ^18.0.6
+  eslint                ^8.18.0   →    ^8.21.0
+  nodemon               ^2.0.18   →    ^2.0.19
+  webpack               ^5.73.0   →    ^5.74.0
+  webpack-dev-server     ^4.9.2   →     ^4.9.3
+
+
+
+
 
 
 
