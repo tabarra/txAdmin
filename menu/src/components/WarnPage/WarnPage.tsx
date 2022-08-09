@@ -1,34 +1,35 @@
-import React, {useRef, useState} from "react";
-import {styled} from '@mui/material/styles';
-import {Box, Fade, Typography} from "@mui/material";
-import {useNuiEvent} from "../../hooks/useNuiEvent";
-import {useTranslate} from "react-polyglot";
-// import { debugData } from "../../utils/debugLog";
-import {ReportProblemOutlined} from "@mui/icons-material";
+import React, { useRef, useState } from "react";
+import { styled } from '@mui/material/styles';
+import { Box, Fade, Typography } from "@mui/material";
+import { useNuiEvent } from "../../hooks/useNuiEvent";
+import { useTranslate } from "react-polyglot";
+import { debugData } from "../../utils/debugData";
+import { ReportProblemOutlined } from "@mui/icons-material";
 
-const PREFIX_WarnPage = 'WarnPage';
 
-const warnClasses = {
-  root: `${PREFIX_WarnPage}-root`,
-  inner: `${PREFIX_WarnPage}-inner`,
-  title: `${PREFIX_WarnPage}-title`,
-  message: `${PREFIX_WarnPage}-message`,
-  author: `${PREFIX_WarnPage}-author`,
-  instruction: `${PREFIX_WarnPage}-instruction`
+/**
+ * Warn box
+ */
+const boxClasses = {
+  root: `WarnBox-root`,
+  inner: `WarnBox-inner`,
+  title: `WarnBox-title`,
+  message: `WarnBox-message`,
+  author: `WarnBox-author`,
+  instruction: `WarnBox-instruction`
 };
 
-const WarnInnerStyles = styled(Fade)({
-  [`& .${warnClasses.root}`]: {
-    color: "whitesmoke",
-    transition: "transform 300ms ease-in-out",
-    maxWidth: "700px",
-  },
-  [`& .${warnClasses.inner}`]: {
+const WarnInnerStyles = styled('div')({
+  color: "whitesmoke",
+  transition: "transform 300ms ease-in-out",
+  maxWidth: "700px",
+
+  [`& .${boxClasses.inner}`]: {
     padding: 32,
     border: "3px dashed whitesmoke",
     borderRadius: 12,
   },
-  [`& .${warnClasses.title}`]: {
+  [`& .${boxClasses.title}`]: {
     display: "flex",
     margin: "-20px auto 18px auto",
     width: "max-content",
@@ -36,16 +37,16 @@ const WarnInnerStyles = styled(Fade)({
     paddingBottom: 5,
     fontWeight: 700,
   },
-  [`& .${warnClasses.message}`]: {
+  [`& .${boxClasses.message}`]: {
     fontSize: "1.5em",
   },
-  [`& .${warnClasses.author}`]: {
+  [`& .${boxClasses.author}`]: {
     textAlign: "right",
     fontSize: "0.8em",
     marginTop: 15,
     marginBottom: -15,
   },
-  [`& .${warnClasses.instruction}`]: {
+  [`& .${boxClasses.instruction}`]: {
     marginTop: "1em",
     fontSize: "0.85em",
     textAlign: "center",
@@ -72,10 +73,9 @@ const WarnInnerComp: React.FC<WarnInnerComp> = ({ message, warnedBy }) => {
   const t = useTranslate();
 
   return (
-    <WarnInnerStyles className={warnClasses.root}>
-      <>
-      <Box className={warnClasses.inner}>
-        <Box className={warnClasses.title}>
+    <WarnInnerStyles className={boxClasses.root}>
+      <Box className={boxClasses.inner}>
+        <Box className={boxClasses.title}>
           <WarningIcon />
           <Typography variant="h3" style={{ fontWeight: 700 }}>
             {t("nui_warning.title")}
@@ -100,20 +100,22 @@ const WarnInnerComp: React.FC<WarnInnerComp> = ({ message, warnedBy }) => {
           {t("nui_warning.warned_by")} {warnedBy}
         </Typography>
       </Box>
-      <Box className={warnClasses.instruction}>{t("nui_warning.instruction")}</Box>
-      </>
+      <Box className={boxClasses.instruction}>{t("nui_warning.instruction")}</Box>
     </WarnInnerStyles>
   );
 };
 
-const PREFIX_MainPage = 'MainPage'; 
-const classes = {
-  root: `${PREFIX_MainPage}-root`,
-  miniBounce: `${PREFIX_MainPage}-miniBounce`,
+
+/**
+ * Main warn container (whole page)
+ */
+const mainClasses = {
+  root: `MainWarn-root`,
+  miniBounce: `MainWarn-miniBounce`,
 }
 
 const MainPageStyles = styled('div')(({
-  [`& .${classes.root}`]: {
+  [`& .${mainClasses.root}`]: {
     top: 0,
     left: 0,
     transition: "background-color 750ms ease-in-out",
@@ -123,8 +125,8 @@ const MainPageStyles = styled('div')(({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "rgba(133, 3, 3, 0.95)",
   },
-  //FIXME: broken since react 18
   "@keyframes miniBounce": {
     "0%": {
       backgroundColor: "rgba(133, 3, 3, 0.95)",
@@ -142,7 +144,7 @@ const MainPageStyles = styled('div')(({
       backgroundColor: "rgba(133, 3, 3, 0.95)",
     },
   },
-  miniBounce: {
+  [`& .${mainClasses.miniBounce}`]: {
     animation: "miniBounce 500ms ease-in-out",
   },
 }));
@@ -152,17 +154,7 @@ export interface SetWarnOpenData {
   warnedBy: string;
 }
 
-// debugData([
-//   {
-//     action: 'setWarnOpen',
-//     data: {
-//       reason: 'You suck You suck You suck You suck You suck You suck You suck You suck You suck You suck',
-//       warnedBy: 'Taso'
-//     }
-//   }
-// ], 2000)
-
-export const WarnPage: React.FC = ({}) => {
+export const WarnPage: React.FC = ({ }) => {
   const pulseSound = useRef<HTMLAudioElement>(
     new Audio("assets/sounds/warning_pulse.mp3")
   );
@@ -194,7 +186,6 @@ export const WarnPage: React.FC = ({}) => {
   });
 
   const exitHandler = () => {
-    setWarnData(null);
     pulseSound.current.play();
   };
 
@@ -202,19 +193,43 @@ export const WarnPage: React.FC = ({}) => {
     <MainPageStyles>
       <Fade in={isOpen} onExit={exitHandler}>
         <Box
-          bgcolor={isOpen ? "rgba(133, 3, 3, 0.95)" : "transparent"}
           className={
-            !isMiniBounce ? classes.root : `${classes.root} ${classes.miniBounce}`
+            !isMiniBounce ? mainClasses.root : `${mainClasses.root} ${mainClasses.miniBounce}`
           }
         >
-          {warnData && (
-            <WarnInnerComp
-              message={warnData.reason}
-              warnedBy={warnData.warnedBy}
-            />
-          )}
+          <WarnInnerComp
+            message={warnData?.reason ?? ''}
+            warnedBy={warnData?.warnedBy ?? ''}
+          />
         </Box>
       </Fade>
     </MainPageStyles>
   );
 };
+
+/**
+ * Browser mock
+ */
+debugData([
+  {
+    action: 'setWarnOpen',
+    data: {
+      reason: 'Stop doing bad things 😠',
+      warnedBy: 'Tabby'
+    }
+  }
+], 500)
+// setInterval(() => {
+//   debugData([
+//     {
+//       action: 'pulseWarning',
+//       data: {}
+//     }
+//   ]);
+// }, 1000);
+// debugData([
+//   {
+//     action: 'closeWarning',
+//     data: {}
+//   }
+// ], 2_000);

@@ -35,7 +35,7 @@ debugData<any>(
       data: true,
     },
   ],
-  3000
+  150
 );
 
 const MenuWrapper: React.FC = () => {

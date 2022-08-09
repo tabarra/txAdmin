@@ -44,6 +44,7 @@ local isRDR = not TerraingridActivate and true or false
 local dismissKey = isRDR and 0xD9D0E1C0 or 22
 local dismissKeyGroup = isRDR and 1 or 0
 RegisterNetEvent('txAdminClient:warn', function(author, reason)
+    toggleMenuVisibility(false)
     sendMenuMessage('setWarnOpen', {
         reason = reason,
         warnedBy = author

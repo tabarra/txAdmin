@@ -38,6 +38,9 @@ export const HelpTooltip: React.FC<HelpTooltipProps> = ({ children }) => {
       // PopperProps={{
       //   container: () => document.getElementById("#root"),
       // }}
+      sx={{
+        zIndex: -1,
+      }}
       TransitionComponent={Fade}
       TransitionProps={{
         timeout: {
