@@ -245,7 +245,7 @@ class Deployer {
         try {
             const filePath = path.join(this.deployPath, '_DEPLOY_FAILED_DO_NOT_USE');
             await fs.outputFile(filePath, 'This deploy was failed, please do not use these files.');
-        } catch (error) {}
+        } catch (error) { }
     }
 
     /**
@@ -270,6 +270,7 @@ class Deployer {
             const taskTimeoutSeconds = task.timeoutSeconds ?? recipeEngine[task.action].timeoutSeconds;
 
             try {
+                contextVariables.$step = `loading task ${task.action}`;
                 await Promise.race([
                     recipeEngine[task.action].run(task, this.deployPath, contextVariables),
                     new Promise((resolve, reject) => {
@@ -282,9 +283,9 @@ class Deployer {
             } catch (error) {
                 this.logLines[this.logLines.length - 1] += ' ❌';
                 let msg = `Task Failed: ${error.message}\n`
-                        + 'Options: \n'
-                        + JSON.stringify(task, null, 2);
-                if(contextVariables.$step){
+                    + 'Options: \n'
+                    + JSON.stringify(task, null, 2);
+                if (contextVariables.$step) {
                     msg += '\nDebug/Status: '
                         + JSON.stringify([
                             GlobalData.txAdminVersion,
@@ -332,8 +333,8 @@ class Deployer {
         this.step = 'configure';
         if (GlobalData.osType === 'windows') {
             try {
-                await open(path.normalize(this.deployPath), {app: 'explorer'});
-            } catch (error) {}
+                await open(path.normalize(this.deployPath), { app: 'explorer' });
+            } catch (error) { }
         }
     }
 } //Fim Deployer()

@@ -104,9 +104,10 @@ async function handleSetVariables(ctx) {
 
             const mysqlOptions = {
                 host: userVars.dbHost,
-                port: parseInt(userVars.dbPort),
+                port: userVars.dbPort,
                 user: userVars.dbUsername,
                 password: userVars.dbPassword,
+                connectTimeout: 5000,
             };
             await mysql.createConnection(mysqlOptions);
         } catch (error) {
