@@ -31,9 +31,6 @@
         .cm-s-lucario{
             font-size: 1.05rem !important;
         }
-        .CodeMirror{
-            height: auto;
-        }
         .deployer-stepper > .card-header,
         .deployer-stepper > .card-footer{
             font-size: large;
@@ -63,6 +60,11 @@
             <div class="col-md-9">
                 <div class="card fade-in deployer-stepper">
                     <% if (step === 'review') { %>
+                        <style>
+                            .CodeMirror{
+                                max-height: 300px;
+                            }
+                        </style>
                         <div class="card-header font-weight-bold">Step 1: Review Recipe</div>
                         <div class="card-body">
                             <div class="row mb-1 mt-0 text-center">
@@ -88,8 +90,14 @@
                                     <%= recipe.description %>
                                 <% } %>
                             </p>
-        
-                            <textarea id="codeMirrorTarget" style="width: 100%;" class="cms-s-lucario" name="code"><%= recipe.raw %></textarea>
+                            <textarea 
+                                id="codeMirrorTarget"
+                                style="width: 100%;"
+                                class="cms-s-lucario"
+                                name="code"
+                            >
+                                <%= recipe.raw %>
+                            </textarea>
                             <div class="row justify-content-center m-2">
                                 <button class="btn btn-outline-danger" type="button" 
                                     onclick="cancelAction()">Cancel and Return to Setup</button>
@@ -280,6 +288,11 @@
                         <div class="card-footer text-muted">Step 3: Configure server.cfg</div>
         
                     <% } else if (step === 'configure') { %>
+                        <style>
+                            .CodeMirror{
+                                height: auto;
+                            }
+                        </style>
                         <div class="card-header">Step 1: Review Recipe ✔️</div>
                         <div class="card-header">Step 2: Input Parameters ✔️</div>
                         <div class="card-header">Step 3: Run Recipe ✔️</div>

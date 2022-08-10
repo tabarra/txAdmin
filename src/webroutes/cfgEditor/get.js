@@ -30,5 +30,8 @@ module.exports = async function CFGEditorGet(ctx) {
         return ctx.utils.render('main/message', {message});
     }
 
-    return ctx.utils.render('main/cfgEditor', {rawFile});
+    return ctx.utils.render('main/cfgEditor', {
+        rawFile,
+        disableRestart: (ctx.utils.checkPermission('control.server', modulename, false)) ? '' : 'disabled',
+    });
 };

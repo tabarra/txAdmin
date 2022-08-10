@@ -96,7 +96,7 @@
                             Announcement
                         </button>
                         <button type="button" id="ctrl-restart" class="btn btn-outline-danger btn-sm mb-2" 
-                            onclick="controlAction('restart')" <%= disableRestart %>>
+                            onclick="txApiFxserverControl('restart')" <%= disableRestart %>>
                                 RESTART
                         </button>
                     </div>
@@ -118,29 +118,6 @@
 <script src="js/ansi_up.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.min.js"></script>
 <script>
-    //============================================== Controls (start/restart/stop)
-    async function controlAction(action) {
-        const confirmOptions = {content: `Are you sure you would like to <b>${action}</b> the server?`};
-        if(action !== 'start' && !await txAdminConfirm(confirmOptions)){
-            return;
-        }
-        const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
-        txAdminAPI({
-            url: actionURL = '/fxserver/controls/' + action,
-            type: "GET",
-            dataType: "json",
-            timeout: REQ_TIMEOUT_LONG,
-            success: function (data) {
-                updateMarkdownNotification(data, notify);
-            },
-            error: function (xmlhttprequest, textstatus, message) {
-                notify.update('progress', 0);
-                notify.update('type', 'danger');
-                notify.update('message', message);
-            }
-        });
-    }
-
     //============================================== Live Console stuff
     (function () {
         //Preparing variables

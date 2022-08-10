@@ -14,16 +14,20 @@
 
 Required for this update:
 - [x] cfg parser: change endpoint default message for zap servers
-- [ ] deployer: add option to set mysql port (make sure the error is homer-proof)
-- [ ] deployer: better timeout handling for step 2
+- [x] deployer: add option to set mysql port (make sure the error is homer-proof)
+- [x] deployer: better timeout handling for step 2
+- [x] deployer: collapse recipe by default
+- [x] diagnostics: remove resource warning threshold
+- [x] cfg editor: add server restart button
+- [x] top servers notification
 - [ ] add way to whitelist loopback ips (for NUI auth)
+- [ ] check the !300 issue
 
 Next-ish update:
 - [ ] add ram usage to perf chart?
-- [ ] diagnostics: change resource warning threshold
 - [ ] merge or rewrite the GET /status endpoint (PR #440)
-- [ ] server restart button on cfg editor page
 - [ ] add option to skip or add time to schedules restart
+- [ ] add option to schedule a restart (single shot, non persistent)
 - [ ] add recipe name + if ptero in stats endpoint
 - [ ] add player id view permission
 - [ ] can we use resource events to keep track of which resource crashed the server at boot?
