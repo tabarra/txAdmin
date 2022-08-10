@@ -428,7 +428,7 @@ const validateCommands = async (parsedCommands) => {
             const endpointsRegex = /^\[?(([0-9.]{7,15})|([a-z0-9:]{2,29}))\]?:(\d{1,5})$/gi;
             const matches = [...cmd.args[0].matchAll(endpointsRegex)];
             if (!Array.isArray(matches) || !matches.length) {
-                const msg = `Line ${cmd.line}: the '${cmd.command}' interface:port '${cmd.args[0]}' is not in a valid format.`;
+                const msg = `Line ${cmd.line}: the \`${cmd.args[0]}\` is not in a valid \`ip:port\` format.`;
                 errors.add(cmd.file, msg);
                 continue;
             }
@@ -496,13 +496,25 @@ const validateCommands = async (parsedCommands) => {
  */
 const getConnectEndpoint = (endpoints) => {
     if (!Object.keys(endpoints).length) {
-        throw new Error('Your config file does not specify which IP and port fxserver should run. You can fix this by adding \'endpoint_add_tcp 0.0.0.0:30120; endpoint_add_udp 0.0.0.0:30120\' to the start of the file.');
+        let msg;
+        if (GlobalData.forceInterface && GlobalData.forceFXServerPort) {
+            const desidredEndpoint = `${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}`;
+            msg = `Please delete all \`endpoint_add_*\` lines and add the following to the start of the file:
+\t\`endpoint_add_tcp "${desidredEndpoint}"\`
+\t\`endpoint_add_udp "${desidredEndpoint}"\``;
+        } else {
+            msg = `Your config file does not specify a valid endpoint for fxserver to use.
+\tPlease delete all \`endpoint_add_*\` lines and add the following to the start of the file:
+\t\`endpoint_add_tcp "0.0.0.0:30120"\`
+\t\`endpoint_add_udp "0.0.0.0:30120"\``;
+        }
+        throw new Error(msg);
     }
     const tcpudpEndpoint = Object.keys(endpoints).find((ep) => {
         return endpoints[ep].tcp && endpoints[ep].udp;
     });
     if (!tcpudpEndpoint) {
-        throw new Error('Your config file does not not contain a ip:port used in both endpoint_add_tcp and endpoint_add_udp. Players would not be able to connect.');
+        throw new Error('Your config file does not not contain a ip:port used in both `endpoint_add_tcp` and `endpoint_add_udp`. Players would not be able to connect.');
     }
 
     return tcpudpEndpoint.replace(/(0\.0\.0\.0|\[::\])/, '127.0.0.1');

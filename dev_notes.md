@@ -10,56 +10,24 @@
     - sync fxRunner.srvRawCmd(string) - to be used by live console
     - async fxRunner.srvCmd(array, timeout) - to be awaited with the status response
 [ ] Quebrar snackbar de not admin em dois, um se confirmado que o problema são os identifiers, outro pra qualquer outro tipo de problema
-[ ] the kick/warn/dm reason modal title should have the username as key in the translation
-
-add ram usage to perf chart?
-
-by the next update, i'll add a way for you to whitelist other ips in the request
-
-diagnostics: mudar o numero de resources classificado como high
-
-porta pro mysql
-
-aquele merge do GET /status
-
-if connection test fails, check if not default then tell the user ARE YOU SURE YOU KNOW WHAT U DOIN YOU DEFORMED MUFFIN
 
 
-// Your config file does not not contain a ip:port used in both endpoint_add_tcp and endpoint_add_udp. Players would not be able to connect.
+Required for this update:
+- [x] cfg parser: change endpoint default message for zap servers
+- [ ] deployer: add option to set mysql port (make sure the error is homer-proof)
+- [ ] deployer: better timeout handling for step 2
+- [ ] add way to whitelist loopback ips (for NUI auth)
 
-sv restart button to the cfg editor page
-
-
-replace resources thing with an api endpoint
-
-add option to skip or add time to schedules restart
-
-
-recipe name + ptero in endpoint
-
-timeout no save do step2
-
-
-playerid permissions?!
-
-
-
-
-  @koa/router           ^10.1.1   →    ^12.0.0
-  openid-client          ^5.1.7   →     ^5.1.8
-  systeminformation    ^5.11.22   →    ^5.12.1
-  @types/node           ^18.0.0   →    ^18.6.3
-  @types/react         ^18.0.14   →   ^18.0.15
-  @types/react-dom      ^18.0.5   →    ^18.0.6
-  eslint                ^8.18.0   →    ^8.21.0
-  nodemon               ^2.0.18   →    ^2.0.19
-  webpack               ^5.73.0   →    ^5.74.0
-  webpack-dev-server     ^4.9.2   →     ^4.9.3
-
-
-
-
-
+Next-ish update:
+- [ ] add ram usage to perf chart?
+- [ ] diagnostics: change resource warning threshold
+- [ ] merge or rewrite the GET /status endpoint (PR #440)
+- [ ] server restart button on cfg editor page
+- [ ] add option to skip or add time to schedules restart
+- [ ] add recipe name + if ptero in stats endpoint
+- [ ] add player id view permission
+- [ ] can we use resource events to keep track of which resource crashed the server at boot?
+- [ ] can we use resource events to know if the server is still booting (due to streaming assets)
 
 
 tentar usar vite
