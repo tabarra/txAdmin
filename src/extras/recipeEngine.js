@@ -357,14 +357,15 @@ const validatorConnectDatabase = (options) => {
 const taskConnectDatabase = async (options, basePath, deployerCtx) => {
     if (!validatorConnectDatabase(options)) throw new Error('invalid options');
     if (typeof deployerCtx.dbHost !== 'string') throw new Error('invalid dbHost');
+    if (typeof deployerCtx.dbPort !== 'number') throw new Error('invalid dbPort, should be number');
     if (typeof deployerCtx.dbUsername !== 'string') throw new Error('invalid dbUsername');
     if (typeof deployerCtx.dbPassword !== 'string') throw new Error('dbPassword should be a string');
     if (typeof deployerCtx.dbName !== 'string') throw new Error('dbName should be a string');
     if (typeof deployerCtx.dbDelete !== 'boolean') throw new Error('dbDelete should be a boolean');
-
     //Connect to the database
     const mysqlOptions = {
         host: deployerCtx.dbHost,
+        port: deployerCtx.dbPort,
         user: deployerCtx.dbUsername,
         password: deployerCtx.dbPassword,
         multipleStatements: true,

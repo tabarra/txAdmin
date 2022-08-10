@@ -24,12 +24,12 @@ module.exports = async function DeployerActions(ctx) {
 
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
-        return ctx.send({success: false, refresh: true});
+        return ctx.send({ success: false, refresh: true });
     }
 
     //Check if this is the correct state for the deployer
     if (globals.deployer == null) {
-        return ctx.send({success: false, refresh: true});
+        return ctx.send({ success: false, refresh: true });
     }
 
     //Delegate to the specific action functions
@@ -66,10 +66,10 @@ async function handleConfirmRecipe(ctx) {
         ctx.utils.logAction('Setting recipe.');
         await globals.deployer.confirmRecipe(userEditedRecipe);
     } catch (error) {
-        return ctx.send({type: 'danger', message: error.message});
+        return ctx.send({ type: 'danger', message: error.message });
     }
 
-    return ctx.send({success: true});
+    return ctx.send({ success: true });
 }
 
 
@@ -90,15 +90,21 @@ async function handleSetVariables(ctx) {
         !GlobalData.regexSvLicenseNew.test(userVars.svLicense)
         && !GlobalData.regexSvLicenseOld.test(userVars.svLicense)
     ) {
-        return ctx.send({type: 'danger', message: 'The Server License does not appear to be valid.'});
+        return ctx.send({ type: 'danger', message: 'The Server License does not appear to be valid.' });
     }
 
     //DB Stuff
     if (typeof userVars.dbDelete !== 'undefined') {
         //Testing the db config
         try {
+            userVars.dbPort = parseInt(userVars.dbPort);
+            if (isNaN(userVars.dbPort)) {
+                return ctx.send({ type: 'danger', message: 'The database port is invalid (non-integer). The default is 3306.' });
+            }
+
             const mysqlOptions = {
                 host: userVars.dbHost,
+                port: parseInt(userVars.dbPort),
                 user: userVars.dbUsername,
                 password: userVars.dbPassword,
             };
@@ -106,20 +112,26 @@ async function handleSetVariables(ctx) {
         } catch (error) {
             const msgHeader = `<b>Database connection failed:</b> ${error.message}`;
             if (error.code == 'ECONNREFUSED') {
-                const osSpecific = (GlobalData.osType === 'windows')
+                let specificError = (GlobalData.osType === 'windows')
                     ? 'If you do not have a database installed, you can download and run XAMPP.'
                     : 'If you do not have a database installed, you must download and run MySQL or MariaDB.';
-                return ctx.send({type: 'danger', message: `${msgHeader}<br>\n${osSpecific}`});
+                if (userVars.dbPort !== 3306) {
+                    specificError += '<br>\n<b>You are not using the default DB port 3306, make sure it is correct!</b>';
+                }
+                return ctx.send({ type: 'danger', message: `${msgHeader}<br>\n${specificError}` });
             } else {
-                return ctx.send({type: 'danger', message: msgHeader});
+                return ctx.send({ type: 'danger', message: msgHeader });
             }
         }
 
         //Setting connection string
         userVars.dbDelete = (userVars.dbDelete === 'true');
+        const dbFullHost = (userVars.dbPort === 3306)
+            ? userVars.dbHost
+            : `${userVars.dbHost}:${userVars.dbPort}`;
         userVars.dbConnectionString = (userVars.dbPassword.length)
-            ? `mysql://${userVars.dbUsername}:${userVars.dbPassword}@${userVars.dbHost}/${userVars.dbName}?charset=utf8mb4`
-            : `mysql://${userVars.dbUsername}@${userVars.dbHost}/${userVars.dbName}?charset=utf8mb4`;
+            ? `mysql://${userVars.dbUsername}:${userVars.dbPassword}@${dbFullHost}/${userVars.dbName}?charset=utf8mb4`
+            : `mysql://${userVars.dbUsername}@${dbFullHost}/${userVars.dbName}?charset=utf8mb4`;
     }
 
     //Max Clients & Server Endpoints
@@ -139,7 +151,7 @@ async function handleSetVariables(ctx) {
 
     //Setting identifiers array
     const admin = globals.adminVault.getAdminByName(ctx.session.auth.username);
-    if (!admin) return ctx.send({type: 'danger', message: 'Admin not found.'});
+    if (!admin) return ctx.send({ type: 'danger', message: 'Admin not found.' });
     const addPrincipalLines = [];
     Object.keys(admin.providers).forEach((providerName) => {
         if (admin.providers[providerName].identifier) {
@@ -155,10 +167,10 @@ async function handleSetVariables(ctx) {
         ctx.utils.logAction('Running recipe.');
         globals.deployer.start(userVars);
     } catch (error) {
-        return ctx.send({type: 'danger', message: error.message});
+        return ctx.send({ type: 'danger', message: error.message });
     }
 
-    return ctx.send({success: true});
+    return ctx.send({ success: true });
 }
 
 
@@ -218,7 +230,7 @@ async function handleSaveConfig(ctx) {
             });
         } else {
             globals.deployer = null;
-            return ctx.send({success: true});
+            return ctx.send({ success: true });
         }
     } else {
         logWarn(`[${ctx.session.auth.username}] Error changing fxserver settings via deployer.`);
@@ -238,5 +250,5 @@ async function handleSaveConfig(ctx) {
  */
 async function handleCancel(ctx) {
     globals.deployer = null;
-    return ctx.send({success: true});
+    return ctx.send({ success: true });
 }
