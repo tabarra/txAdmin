@@ -98,6 +98,7 @@ local function togglePlayerIDsHandler()
         sendSnackbarMessage('info', 'nui_menu.page_main.player_ids.alert_show', true)
     end
 
+    TriggerServerEvent('txAdmin:events:togglePlayerIds', isPlayerIDActive)
     debugPrint('Show Player IDs Status: ' .. tostring(isPlayerIDActive))
 end
 
