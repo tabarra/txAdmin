@@ -12,10 +12,6 @@
       "versions": ">4",
       "reason": "esm"
     },
-    "jose": {
-      "versions": ">2",
-      "reason": "esm"
-    },
     "lowdb": {
       "versions": ">1",
       "reason": "esm"

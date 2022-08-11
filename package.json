@@ -55,7 +55,6 @@
     "got": "^11.8.2",
     "humanize-duration": "^3.27.2",
     "is-localhost-ip": "^2.0.0",
-    "jose": "^2.0.5",
     "js-yaml": "^4.1.0",
     "json-colorizer": "^2.2.2",
     "koa": "^2.13.4",

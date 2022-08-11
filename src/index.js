@@ -135,7 +135,7 @@ const debugExternalSource = (txDebugExternalSourceConvar !== 'false') ? txDebugE
 
 //Checking for Zap Configuration file
 const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
-let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, defaultMasterAccount, runtimeSecret, deployerDefaults;
+let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, defaultMasterAccount, deployerDefaults;
 const loopbackInterfaces = ['::1', '127.0.0.1', '127.0.1.1'];
 if (fs.existsSync(zapCfgFile)) {
     log('Loading ZAP-Hosting configuration file.');
@@ -166,13 +166,6 @@ if (fs.existsSync(zapCfgFile)) {
                 password_hash: zapCfgData.customer.password_hash,
             };
         }
-        const runtimeSecretConvar = GetConvar('txAdminRTS', 'false').trim();
-        if (runtimeSecretConvar !== 'false') {
-            if (!/^[0-9a-f]{48}$/i.test(runtimeSecretConvar)) logDie('txAdminRTS is not valid.');
-            runtimeSecret = runtimeSecretConvar;
-        } else {
-            runtimeSecret = false;
-        }
 
         loopbackInterfaces.push(forceInterface);
 
@@ -185,7 +178,6 @@ if (fs.existsSync(zapCfgFile)) {
     forceFXServerPort = false;
     loginPageLogo = false;
     defaultMasterAccount = false;
-    runtimeSecret = false;
     deployerDefaults = false;
 
     const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
@@ -200,7 +192,7 @@ if (fs.existsSync(zapCfgFile)) {
         forceInterface = txAdminInterfaceConvar;
     }
 }
-if (verbose) dir({ isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, runtimeSecret, deployerDefaults });
+if (verbose) dir({ isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults });
 
 
 //Get profile name
@@ -239,7 +231,6 @@ GlobalData = {
     txAdminPort,
     loginPageLogo,
     defaultMasterAccount,
-    runtimeSecret,
     deployerDefaults,
     loopbackInterfaces,
 
