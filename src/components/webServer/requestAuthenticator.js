@@ -179,7 +179,11 @@ const authLogic = (sess, perm, epType) => {
  */
 const nuiAuthLogic = (reqIP, reqHeader) => {
     // Check sus IPs
-    if (!GlobalData.loopbackInterfaces.includes(reqIP) && !GlobalData.isZapHosting) {
+    if (
+        !GlobalData.loopbackInterfaces.includes(reqIP)
+        && !GlobalData.isZapHosting
+        && !globals.webServer.config.disableNuiSourceCheck
+    ) {
         if (GlobalData.verbose) {
             logWarn(`NUI Auth Failed: reqIP "${reqIP}" not in ${JSON.stringify(GlobalData.loopbackInterfaces)}.`);
         }

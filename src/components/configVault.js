@@ -135,7 +135,7 @@ module.exports = class ConfigVault {
                 wipePendingWLOnStart: toDefault(cfg.playerController.wipePendingWLOnStart, true),
             };
             out.webServer = {
-                bufferTime: toDefault(cfg.webServer.bufferTime, null), //not in template - deprecate?
+                disableNuiSourceCheck: toDefault(cfg.webServer.disableNuiSourceCheck, false), //not in template
                 limiterMinutes: toDefault(cfg.webServer.limiterMinutes, null), //not in template
                 limiterAttempts: toDefault(cfg.webServer.limiterAttempts, null), //not in template
             };
@@ -166,7 +166,7 @@ module.exports = class ConfigVault {
             out.fxRunner.commandLine = out.fxRunner.commandLine?.replace(/\+?setr? txEnableMenuBeta true\s?/gi, '');
 
             //Merging portuguese
-            if (out.global.language === 'pt_PT' || out.global.language === 'pt_BR'){
+            if (out.global.language === 'pt_PT' || out.global.language === 'pt_BR') {
                 out.global.language = 'pt';
             }
         } catch (error) {
@@ -215,7 +215,7 @@ module.exports = class ConfigVault {
             cfg.playerController.wipePendingWLOnStart = (cfg.playerController.wipePendingWLOnStart === null) ? true : (cfg.playerController.wipePendingWLOnStart === 'true' || cfg.playerController.wipePendingWLOnStart === true);
 
             //WebServer
-            cfg.webServer.bufferTime = parseInt(cfg.webServer.bufferTime) || 1500; //not in template - deprecate?
+            cfg.webServer.disableNuiSourceCheck = (cfg.webServer.disableNuiSourceCheck === 'true' || cfg.webServer.disableNuiSourceCheck === true);
             cfg.webServer.limiterMinutes = parseInt(cfg.webServer.limiterMinutes) || 15; //not in template
             cfg.webServer.limiterAttempts = parseInt(cfg.webServer.limiterAttempts) || 10; //not in template
 
