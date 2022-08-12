@@ -22,7 +22,7 @@ module.exports = class Monitor {
         this.hardConfigs = {
             timeout: 1500,
             defaultWarningTimes: [30, 15, 10, 5, 4, 3, 2, 1],
-            maxHBCooldownTolerance: 300,
+            // maxHBCooldownTolerance: 180, //FIXME: deprecate?
             healthCheck: {
                 failThreshold: 15,
                 failLimit: 300,
@@ -31,6 +31,9 @@ module.exports = class Monitor {
                 failThreshold: 15,
                 failLimit: 60,
             },
+
+            //if a resource entered "starting" state in the last X seconds, don't restart during boot
+            resourceStartingTolerance: 90,
         };
 
         //Setting up
@@ -153,7 +156,7 @@ module.exports = class Monitor {
                 const currTimestamp = currTime.getHours().toString().padStart(2, '0') + ':' + currTime.getMinutes().toString().padStart(2, '0');
                 this.restartFXServer(
                     `scheduled restart at ${currTimestamp}`,
-                    globals.translator.t('restarter.schedule_reason', {time: currTimestamp}),
+                    globals.translator.t('restarter.schedule_reason', { time: currTimestamp }),
                 );
             } else if (action.messages) {
                 globals.discordBot.sendAnnouncement(action.messages.discord);
@@ -185,6 +188,7 @@ module.exports = class Monitor {
         }
 
         //Restart server
+        this.isAwaitingRestart = true;
         const logMessage = `Restarting server (${reasonInternal}).`;
         globals.logger.admin.write(`[MONITOR] ${logMessage}`);
         logWarn(logMessage);
@@ -200,6 +204,7 @@ module.exports = class Monitor {
         this.lastStatusWarningMessage = null; //to prevent spamming
         this.lastHealthCheckErrorMessage = null; //to print warning
         this.healthCheckRestartWarningIssued = false; //to prevent spamming
+        this.isAwaitingRestart = false; //to prevent spamming while the server restarts (5s)
 
         //to track http vs fd3
         //to see if its above limit
@@ -224,7 +229,7 @@ module.exports = class Monitor {
             url: `http://${globals.fxRunner.fxServerHost}/dynamic.json`,
             timeout: this.hardConfigs.timeout,
             maxRedirects: 0,
-            retry: {limit: 0},
+            retry: { limit: 0 },
         };
         try {
             const data = await got.get(requestOptions).json();
@@ -262,14 +267,17 @@ module.exports = class Monitor {
     /**
      * Refreshes the Server Status and calls for a restart if neccessary.
      *  - HealthCheck: performing an GET to the /dynamic.json file
-     *  - HeartBeat: receiving an intercom POST from txAdminClient containing playerlist
+     *  - HeartBeat: receiving an intercom POST or FD3 txAdminHeartBeat event
      */
     refreshServerStatus() {
         //Check if the server is supposed to be offline
         if (globals.fxRunner.fxChild === null) return this.resetMonitorStats();
 
+        //Ignore check while server is restarting
+        if (this.isAwaitingRestart) return;
+
         //Helper func
-        const cleanET = (et) => {return (et > 99999) ? '--' : et;};
+        const cleanET = (et) => { return (et > 99999) ? '--' : et; };
 
         //Check if process was frozen
         const currTimestamp = now();
@@ -349,10 +357,10 @@ module.exports = class Monitor {
         ) {
             globals.discordBot.sendAnnouncement(globals.translator.t(
                 'restarter.partial_hang_warn_discord',
-                {servername: globals.config.serverName},
+                { servername: globals.config.serverName },
             ));
             // Dispatch `txAdmin:events:announcement`
-            const cmdOk = globals.fxRunner.sendEvent('announcement', {
+            const _cmdOk = globals.fxRunner.sendEvent('announcement', {
                 author: 'txAdmin',
                 message: globals.translator.t('restarter.partial_hang_warn'),
             });
@@ -362,12 +370,25 @@ module.exports = class Monitor {
 
         //Give a bit more time to the very very slow servers to come up
         //They usually start replying to healthchecks way before sending heartbeats
+        //Only logWarn/skip if there is a resource start pending
+        // if (
+        //     anySuccessfulHeartBeat === false
+        //     && processUptime < this.hardConfigs.maxHBCooldownTolerance
+        //     && elapsedHealthCheck < this.hardConfigs.healthCheck.failLimit
+        // ) {
+        //     if (processUptime % 15 == 0) logWarn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
+        //     return;
+        // }
+        const starting = globals.resourcesManager.tmpGetPendingStart();
         if (
             anySuccessfulHeartBeat === false
-            && processUptime < this.hardConfigs.maxHBCooldownTolerance
-            && elapsedHealthCheck < this.hardConfigs.healthCheck.failLimit
+            && starting.elapsedSeconds !== null
+            && starting.elapsedSeconds < this.hardConfigs.resourceStartingTolerance
         ) {
-            if (processUptime % 15 == 0) logWarn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
+            if (processUptime % 15 == 0) {
+                logWarn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
+                logWarn(`The server is currently starting ${starting.resname} (${starting.elapsedSeconds}s ago).`);
+            }
             return;
         }
 
@@ -379,7 +400,7 @@ module.exports = class Monitor {
             if (anySuccessfulHeartBeat === false) {
                 globals.databus.txStatsData.monitorStats.bootSeconds.push(false);
                 this.restartFXServer(
-                    `server failed to start within ${this.hardConfigs.maxHBCooldownTolerance} seconds`,
+                    `server failed to start within time limit - ${this.hardConfigs.resourceStartingTolerance}s max per resource, or ${this.hardConfigs.heartBeat.failLimit}s total`,
                     globals.translator.t('restarter.start_timeout'),
                 );
             } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {

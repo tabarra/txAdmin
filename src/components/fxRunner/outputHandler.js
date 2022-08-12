@@ -38,9 +38,12 @@ module.exports = class OutputHandler {
         try {
             //Filter valid and fresh packages
             if (mutex !== globals.fxRunner.currentMutex) return;
+            // const json = JSON.stringify(trace);
+            // if (json.includes('mapmanager')) {
+            //     dir(trace);
+            // }
             if (anyUndefined(trace, trace.value, trace.value.data, trace.value.channel)) return;
-            const {channel, data} = trace.value;
-            // dir({channel, data});
+            const { channel, data } = trace.value;
 
             //Handle bind errors
             if (channel == 'citizen-server-impl' && data.type == 'bind_error') {
@@ -52,7 +55,7 @@ module.exports = class OutputHandler {
                     }
                     const [_ip, port] = data.address.split(':');
                     deferError(`Detected FXServer error: Port ${port} is busy! Increasing restart delay to ${globals.fxRunner.restartDelayOverride}.`);
-                } catch (e) {}
+                } catch (e) { }
                 return;
             }
 
@@ -62,16 +65,22 @@ module.exports = class OutputHandler {
                     deferError(`Detected FXServer thread ${data.thread} hung with stack:`);
                     deferError(`\t${data.stack}`); //TODO: add to diagnostics page
                     deferError('Please check the resource above to prevent further hangs.');
-                } catch (e) {}
+                } catch (e) { }
                 return;
             }
 
             //Handle script traces
-            if (channel == 'citizen-server-impl' && data.type == 'script_structured_trace' && data.resource === 'monitor') {
+            if (
+                channel == 'citizen-server-impl'
+                && data.type == 'script_structured_trace'
+                && data.resource === 'monitor'
+            ) {
                 if (data.payload.type === 'txAdminHeartBeat') {
                     globals.monitor.handleHeartBeat('fd3');
                 } else if (data.payload.type === 'txAdminLogData') {
                     globals.logger.server.write(mutex, data.payload.logs);
+                } else if (data.payload.type === 'txAdminResourceStatus') {
+                    globals.resourcesManager.handleServerEvents(data.payload);
                 }
             }
         } catch (error) {

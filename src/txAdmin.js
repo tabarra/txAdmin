@@ -22,6 +22,7 @@ globals = {
     translator: null,
     webServer: null,
     playerController: null,
+    resourcesManager: null,
     config: null,
     deployer: null,
     info: {},
@@ -143,6 +144,9 @@ module.exports = class txAdmin {
         this.startPlayerController(profileConfig.playerController).catch((err) => {
             HandleFatalError(err, 'PlayerController');
         });
+        this.startResourcesManager().catch((err) => {
+            HandleFatalError(err, 'ResourcesManager');
+        });
 
         //Once they all finish loading, the function below will print the banner
         printBanner();
@@ -220,6 +224,12 @@ module.exports = class txAdmin {
     async startPlayerController(config) {
         const PlayerController = require('./components/playerController');
         globals.playerController = new PlayerController(config);
+    }
+
+    //==============================================================
+    async startResourcesManager(config) {
+        const startResourcesManager = require('./components/resourcesManager');
+        globals.resourcesManager = new startResourcesManager(config);
     }
 };
 
