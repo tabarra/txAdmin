@@ -301,6 +301,7 @@
         chartThreadSelectBtn.textContent = thread;
         perfData = false;
         try {
+            const rawPerfData = await fetch(TX_BASE_PATH + `chartData/${thread}`);
             const parsedPerfData = JSON.parse(await rawPerfData.text());
             if(Array.isArray(parsedPerfData)){
                 perfData = parsedPerfData;
@@ -325,6 +326,7 @@
             }
         } catch (error) {
             draw('failed to load chart data');
+            console.log(error);
         }
     }
     setChartThread('svMain');

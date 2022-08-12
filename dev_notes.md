@@ -1,4 +1,66 @@
-## TODO:
+# TODO:
+v4.16.0:
+- [x] cfg parser: change endpoint default message for zap servers
+- [x] deployer: add option to set mysql port (make sure the error is homer-proof)
+- [x] deployer: better timeout handling for step 2
+- [x] deployer: collapse recipe by default
+- [x] diagnostics: remove resource warning threshold
+- [x] cfg editor: add server restart button
+- [x] top servers notification
+- [x] add option to disable nui source ip check
+- [x] use resource starting events to replace the 300 seconds boot hard limit
+
+Resource load scenarios:
+- resource lua error:
+    - `onResourceStarting` sourceRes
+    - print lua error
+    - `onResourceStart` sourceRes
+- resource lua crash/hang:
+    - `onResourceStarting` sourceRes
+    - crash/hang
+- dependency missing: 
+    - `onResourceStarting` sourceRes
+    - does not get to `onResourceStart`
+- dependency success:
+    - `onResourceStarting` sourceRes
+    - `onResourceStarting` dependency
+    - `onResourceStart` dependency
+    - `onResourceStart` sourceRes
+- webpack/yarn fail:
+    - `onResourceStarting` sourceRes
+    - does not get to `onResourceStart`
+- webpack/yarn success:
+    - `onResourceStarting` chat
+    - `onResourceStarting` yarn
+    - `onResourceStart` yarn
+    - `onResourceStarting` webpack
+    - `onResourceStart` webpack
+    - server first tick
+    - wait for build
+    - `onResourceStarting` chat
+    - `onResourceStart` chat
+- ensure started resource:
+    - `onResourceStop` sourceRes
+    - `onResourceStarting` sourceRes
+    - `onResourceStart` sourceRes
+    - `onServerResourceStop` sourceRes
+    - `onServerResourceStart` sourceRes
+
+v4.17.0:
+- [ ] print resource name if server crashes with pending resource start
+- [ ] add actionRevoked event (rewrite PR #612)
+- [ ] merge or rewrite the GET /status endpoint (PR #440)
+- [ ] convert txAdmin to ESM
+- [ ] add option to skip or add time to schedules restart
+- [ ] add option to schedule a restart (single shot, non persistent)
+- [ ] stats: add recipe name + if ptero + random collisions
+- [ ] stats: jwe
+- [ ] add player id view permission + logging
+
+
+Up next-ish:
+- 'txaLogger:menuEvent' outros resources conseguem chamar?
+- [ ] add ram usage to perf chart?
 - [ ] dm via snackbar
 - [ ] wav for announcements
 - [ ] update `README.md`
@@ -9,35 +71,13 @@
 - [ ] replace all fxRunner.srvCmd* and only expose:
     - sync fxRunner.srvRawCmd(string) - to be used by live console
     - async fxRunner.srvCmd(array, timeout) - to be awaited with the status response
-[ ] Quebrar snackbar de not admin em dois, um se confirmado que o problema são os identifiers, outro pra qualquer outro tipo de problema
+- [ ] Quebrar snackbar de not admin em dois, um se confirmado que o problema são os identifiers, outro pra qualquer outro tipo de problema
+- [ ] after menu client messages rework, add lua54
 
 
-Required for this update:
-- [x] cfg parser: change endpoint default message for zap servers
-- [x] deployer: add option to set mysql port (make sure the error is homer-proof)
-- [x] deployer: better timeout handling for step 2
-- [x] deployer: collapse recipe by default
-- [x] diagnostics: remove resource warning threshold
-- [x] cfg editor: add server restart button
-- [x] top servers notification
-- [ ] add way to whitelist loopback ips (for NUI auth)
-- [ ] check the !300 issue
-
-Next-ish update:
-- [ ] add ram usage to perf chart?
-- [ ] merge or rewrite the GET /status endpoint (PR #440)
-- [ ] add option to skip or add time to schedules restart
-- [ ] add option to schedule a restart (single shot, non persistent)
-- [ ] add recipe name + if ptero in stats endpoint
-- [ ] add player id view permission
-- [ ] can we use resource events to keep track of which resource crashed the server at boot?
-- [ ] can we use resource events to know if the server is still booting (due to streaming assets)
 
 
-tentar usar vite
-react-query usar 100%
-procurar alternativas pro react-router (wouter)
-https://auto-animate.formkit.com
+
 
 # txAdminAPI interface in base.js:
 - Create prop `pendingMessage` to replace `const notify = $.notify({ message: 'xxxxxx' }, {});`
@@ -60,6 +100,35 @@ someday remove the slash() and the ascii restrictions
 - database
 - scripts (test_build.sh, lint-formatter.js, locale-utils.js)
 - dev_notes, newPlayerlist -> to docs folder
+
+Global:
+- WebServer
+- AdminVault
+- ConfigVault
+- DiscordBot
+- Logger
+- Translator
+- DynamicAds
+- UpdateChecker > CfxUpdateChecker
+
+Instance[]:
+- FXRunner
+- Monitor > HealthMonitor
+- Scheduler
+- PlayerController > PlaylistManager
+- ResourcesManager
+- StatsCollector > StatsManager
+
+Questions:
+- How to make the database interface (currently in playerController)
+- Should break logger and config in 2 or work top->down?
+
+
+# New UI stuff
+tentar usar vite
+react-query usar 100%
+procurar alternativas pro react-router (wouter)
+https://auto-animate.formkit.com
 
 
 # Update Event + Rollout strategy
@@ -257,7 +326,6 @@ To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 ### ESM updates
 dateformat      esm
 boxen           esm
-jose            apparently cjs is available, but does zap even plan on using it?
 lowdb           esm - complicated
 slash           esm
 windows-release esm
