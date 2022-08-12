@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'PlayerlistGenerator';
+const fs = require('node:fs');
 const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
 const got = require('../../extras/got');
 
@@ -19,8 +20,10 @@ const unDups = (arr) => arr.filter((v, i) => arr.indexOf(v) === i);
 module.exports = class PlayerlistGenerator {
     constructor() {
         //Configs
+        const srcPath = './src/components/playerController/playerlist.ignore.json';
         this.config = {
-            srcPlayerlist: require('./playerlist.ignore.json'),
+            // srcPlayerlist: require('./playerlist.ignore.json'),
+            srcPlayerlist: JSON.parse(fs.readFileSync(srcPath)),
             // refreshInterval: 2*60*1000,
             refreshInterval: 10 * 1000,
             shouldAddRemovePlayers: true,

@@ -6,7 +6,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 // eslint-disable-next-line no-unused-vars
 const { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } = require('./database.js');
 const idGen = require('./idGenerator.js');
-
+const PlayerlistGenerator = require('./playerlistGenerator.js');
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -70,7 +70,6 @@ module.exports = class PlayerController {
 
         //Running playerlist generator
         if (GlobalData.isDeveloperMode && GlobalData.debugPlayerlistGenerator) {
-            const PlayerlistGenerator = require('./playerlistGenerator.js');
             this.playerlistGenerator = new PlayerlistGenerator();
         }
 
