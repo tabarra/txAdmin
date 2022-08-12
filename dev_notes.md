@@ -1,4 +1,66 @@
-## TODO:
+# TODO:
+v4.16.0:
+- [x] cfg parser: change endpoint default message for zap servers
+- [x] deployer: add option to set mysql port (make sure the error is homer-proof)
+- [x] deployer: better timeout handling for step 2
+- [x] deployer: collapse recipe by default
+- [x] diagnostics: remove resource warning threshold
+- [x] cfg editor: add server restart button
+- [x] top servers notification
+- [x] add option to disable nui source ip check
+- [x] use resource starting events to replace the 300 seconds boot hard limit
+
+Resource load scenarios:
+- resource lua error:
+    - `onResourceStarting` sourceRes
+    - print lua error
+    - `onResourceStart` sourceRes
+- resource lua crash/hang:
+    - `onResourceStarting` sourceRes
+    - crash/hang
+- dependency missing: 
+    - `onResourceStarting` sourceRes
+    - does not get to `onResourceStart`
+- dependency success:
+    - `onResourceStarting` sourceRes
+    - `onResourceStarting` dependency
+    - `onResourceStart` dependency
+    - `onResourceStart` sourceRes
+- webpack/yarn fail:
+    - `onResourceStarting` sourceRes
+    - does not get to `onResourceStart`
+- webpack/yarn success:
+    - `onResourceStarting` chat
+    - `onResourceStarting` yarn
+    - `onResourceStart` yarn
+    - `onResourceStarting` webpack
+    - `onResourceStart` webpack
+    - server first tick
+    - wait for build
+    - `onResourceStarting` chat
+    - `onResourceStart` chat
+- ensure started resource:
+    - `onResourceStop` sourceRes
+    - `onResourceStarting` sourceRes
+    - `onResourceStart` sourceRes
+    - `onServerResourceStop` sourceRes
+    - `onServerResourceStart` sourceRes
+
+v4.17.0:
+- [ ] print resource name if server crashes with pending resource start
+- [ ] add actionRevoked event (rewrite PR #612)
+- [ ] merge or rewrite the GET /status endpoint (PR #440)
+- [ ] convert txAdmin to ESM
+- [ ] add option to skip or add time to schedules restart
+- [ ] add option to schedule a restart (single shot, non persistent)
+- [ ] stats: add recipe name + if ptero + random collisions
+- [ ] stats: jwe
+- [ ] add player id view permission + logging
+
+
+Up next-ish:
+- 'txaLogger:menuEvent' outros resources conseguem chamar?
+- [ ] add ram usage to perf chart?
 - [ ] dm via snackbar
 - [ ] wav for announcements
 - [ ] update `README.md`
@@ -9,21 +71,15 @@
 - [ ] replace all fxRunner.srvCmd* and only expose:
     - sync fxRunner.srvRawCmd(string) - to be used by live console
     - async fxRunner.srvCmd(array, timeout) - to be awaited with the status response
-[ ] Quebrar snackbar de not admin em dois, um se confirmado que o problema são os identifiers, outro pra qualquer outro tipo de problema
-[ ] the kick/warn/dm reason modal title should have the username as key in the translation
-
-add ram usage to perf chart?
+- [ ] Quebrar snackbar de not admin em dois, um se confirmado que o problema são os identifiers, outro pra qualquer outro tipo de problema
+- [ ] after menu client messages rework, add lua54
 
 
-replace resources thing with an api endpoint
-
-add option to skip or add time to schedules restart
 
 
-recipe name + ptero in endpoint
 
 
-# txAdminAPI:
+# txAdminAPI interface in base.js:
 - Create prop `pendingMessage` to replace `const notify = $.notify({ message: 'xxxxxx' }, {});`
 - Pass `notify` as last argument to `success()` and `error()`
 - Create default `success()` and `error()`
@@ -45,17 +101,41 @@ someday remove the slash() and the ascii restrictions
 - scripts (test_build.sh, lint-formatter.js, locale-utils.js)
 - dev_notes, newPlayerlist -> to docs folder
 
+Global:
+- WebServer
+- AdminVault
+- ConfigVault
+- DiscordBot
+- Logger
+- Translator
+- DynamicAds
+- UpdateChecker > CfxUpdateChecker
+
+Instance[]:
+- FXRunner
+- Monitor > HealthMonitor
+- Scheduler
+- PlayerController > PlaylistManager
+- ResourcesManager
+- StatsCollector > StatsManager
+
+Questions:
+- How to make the database interface (currently in playerController)
+- Should break logger and config in 2 or work top->down?
 
 
+# New UI stuff
+tentar usar vite
+react-query usar 100%
+procurar alternativas pro react-router (wouter)
+https://auto-animate.formkit.com
 
 
-
-No docs for:
-- console command "wait <ms>"
-- the JSON parser thing
-
-
-- BUG: nui menu triggered announcements are not sent to the discord
+# Update Event + Rollout strategy
+This is not compatible with the update events.
+If patch, show update notification immediately (specially important to quick-fix a bug).
+If minor, randomize a delay between 0~24h.
+If patch, randomize a delay 0~72h.
 
 
 Update event idea (not yet greenlit):
@@ -71,7 +151,7 @@ Update event idea (not yet greenlit):
 
 
 Change pls the expired ban color to red or something else, because the must people dont know if the ban now expired or be revoked
-
+- BUG: nui menu triggered announcements are not sent to the discord
 
 
 verificar o pq heartbeat as vezes é lento
@@ -115,6 +195,9 @@ refactor settings:
 - settings.set('object.dot.notation');
 - npm search for "object dot"
 
+### Multiserver:
+- See with bubble if we can use node:worker_threads
+- Or maybe nodejs vm module to keep using global variables
 
 
 ### TP:
@@ -232,18 +315,17 @@ To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 > Don't use, but I'll leave it saved here: https://github.com/citizenfx/fivem/commit/fd3fae946163e8af472b7f739aed6f29eae8105f
 
 
-### txBanana Admin Gun
-- banana as a gun, txBanana
-- preferably without taking away inventory from user
+### txPointing (old txBanana)
+- code prototype with ItsANoBrainer#1337
 - keybind to toggle gun (grab or put away)
 - when you point at player, show above head some info
 - when you "shoot" it will open the player menu and hopefully fire a laser or something
+- when you right click, slap player (ApplyDamageToPed 5 damage + small psysichs push up and x+y random)
 
 
 ### ESM updates
 dateformat      esm
 boxen           esm
-jose            apparently cjs is available, but does zap even plan on using it?
 lowdb           esm - complicated
 slash           esm
 windows-release esm

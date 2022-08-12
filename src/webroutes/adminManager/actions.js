@@ -11,6 +11,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const citizenfxIDRegex = /^\w[\w.-]{1,18}\w$/;
 const discordIDRegex = /^\d{7,20}$/;
 const nameRegex = citizenfxIDRegex;
+const nameRegexDesc = 'up to 18 characters containing only letters, numbers and the characters \`_.-\`';
 const dangerousPerms = ['all_permissions', 'manage.admins', 'console.write', 'settings.write'];
 
 
@@ -81,7 +82,7 @@ async function handleAdd(ctx) {
 
     //Validate name
     if (!nameRegex.test(name)) {
-        return ctx.send({type: 'danger', message: 'Invalid username, must have between 3 and 20 characters.'});
+        return ctx.send({type: 'danger', markdown: true, message: `**Invalid username, it must follow the rule:**\n${nameRegexDesc}`});
     }
 
     //Validate & translate FiveM ID

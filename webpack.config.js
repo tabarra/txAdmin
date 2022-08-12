@@ -55,9 +55,7 @@ module.exports = {
     stats: 'errors-warnings',
     plugins: [
         new webpack.DefinePlugin({
-            'process.env': {
-                APP_ENV: JSON.stringify('webpack')
-            }
+            'IS_WEBPACK_ENV': JSON.stringify(true)
         }),
         new CopyPlugin({
             patterns: [

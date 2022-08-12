@@ -2,10 +2,7 @@ const translate = (x, y) => {
     return `translate(${x}, ${y})`;
 };
 
-//FIXME: remove this
-// const yLabels = ['0.005', '0.010', '0.025', '0.050', '0.075', '0.100', '0.250', '0.500', '0.750', '1.000', '2.500', '5.000', '7.500', '10.000', '+Inf'];
 const yLabels = ['5 ms', '10 ms', '25 ms', '50 ms', '75 ms', '100 ms', '250 ms', '500 ms', '750 ms', '1.0 s', '2.5 s', '5.0 s', '7.5 s', '10 s', '+Inf'];
-// const yLabels = ['200 FPS', '100 FPS', '40 FPS', '20 FPS', '13 FPS', '10 FPS', '4 FPS', '2 FPS', '1.3 FPS', '1.0 FPS', '0.4 FPS', '0.2 FPS', '0.13 FPS', '0.1 FPS', '+Inf'];
 
 
 const drawHeatmap = (d3Container, perfData, options = {}) => {
@@ -19,7 +16,6 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
     };
     const height = options.height || 340;
     const colorScheme = options.colorScheme || d3.interpolateViridis;
-    const bgColor = options.bgColor || '#360043'; //color(0) darken 2
 
     //TODO: make it responsive with screen size
     const tickIntervalMod = Math.min(
@@ -75,6 +71,7 @@ const drawHeatmap = (d3Container, perfData, options = {}) => {
         .domain([0, 1])
     const svg = d3.create("svg")
         .attr("viewBox", [0, 0, width, height]);
+    const bgColor = options.bgColor || d3.color(color(0)).darker(0.35);
 
 
     // X Axis - Time

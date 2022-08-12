@@ -5,6 +5,9 @@ try {
     console.log('txAdmin must be run inside fxserver in monitor mode.');
     process.exit();
 }
+if (typeof IS_WEBPACK_ENV === 'undefined') {
+    IS_WEBPACK_ENV = false;
+}
 require('./extras/helpers').dependencyChecker();
 
 //Requires
@@ -34,11 +37,11 @@ const getBuild = (ver) => {
 //==============================================================
 //Make sure this user knows what he is doing...
 const txAdmin1337Convar = GetConvar('txAdmin1337', 'false').trim();
-if (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar !== 'IKnowWhatImDoing') {
+const isDeveloperMode = (!IS_WEBPACK_ENV && txAdmin1337Convar == 'IKnowWhatImDoing');
+if (IS_WEBPACK_ENV && txAdmin1337Convar !== 'IKnowWhatImDoing') {
     logError('Looks like you don\'t know what you are doing.');
     logDie('Please use the compiled release from GitHub or the version that comes with the latest FXServer.');
 }
-const isDeveloperMode = (process.env.APP_ENV !== 'webpack' && txAdmin1337Convar == 'IKnowWhatImDoing');
 
 //Get OSType
 const osTypeVar = os.type();
@@ -132,7 +135,7 @@ const debugExternalSource = (txDebugExternalSourceConvar !== 'false') ? txDebugE
 
 //Checking for Zap Configuration file
 const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
-let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, defaultMasterAccount, runtimeSecret, deployerDefaults;
+let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, defaultMasterAccount, deployerDefaults;
 const loopbackInterfaces = ['::1', '127.0.0.1', '127.0.1.1'];
 if (fs.existsSync(zapCfgFile)) {
     log('Loading ZAP-Hosting configuration file.');
@@ -148,6 +151,7 @@ if (fs.existsSync(zapCfgFile)) {
             license: zapCfgData.defaults.license,
             maxClients: zapCfgData.defaults.maxClients,
             mysqlHost: zapCfgData.defaults.mysqlHost,
+            mysqlPort: zapCfgData.defaults.mysqlPort,
             mysqlUser: zapCfgData.defaults.mysqlUser,
             mysqlPassword: zapCfgData.defaults.mysqlPassword,
             mysqlDatabase: zapCfgData.defaults.mysqlDatabase,
@@ -162,13 +166,6 @@ if (fs.existsSync(zapCfgFile)) {
                 password_hash: zapCfgData.customer.password_hash,
             };
         }
-        const runtimeSecretConvar = GetConvar('txAdminRTS', 'false').trim();
-        if (runtimeSecretConvar !== 'false') {
-            if (!/^[0-9a-f]{48}$/i.test(runtimeSecretConvar)) logDie('txAdminRTS is not valid.');
-            runtimeSecret = runtimeSecretConvar;
-        } else {
-            runtimeSecret = false;
-        }
 
         loopbackInterfaces.push(forceInterface);
 
@@ -181,7 +178,6 @@ if (fs.existsSync(zapCfgFile)) {
     forceFXServerPort = false;
     loginPageLogo = false;
     defaultMasterAccount = false;
-    runtimeSecret = false;
     deployerDefaults = false;
 
     const txAdminPortConvar = GetConvar('txAdminPort', '40120').trim();
@@ -196,7 +192,7 @@ if (fs.existsSync(zapCfgFile)) {
         forceInterface = txAdminInterfaceConvar;
     }
 }
-if (verbose) dir({ isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, runtimeSecret, deployerDefaults });
+if (verbose) dir({ isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults });
 
 
 //Get profile name
@@ -235,7 +231,6 @@ GlobalData = {
     txAdminPort,
     loginPageLogo,
     defaultMasterAccount,
-    runtimeSecret,
     deployerDefaults,
     loopbackInterfaces,
 

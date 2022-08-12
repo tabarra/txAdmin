@@ -5,7 +5,7 @@
 author 'Tabarra'
 description 'Remotely Manage & Monitor your GTA5 FiveM Server'
 repository 'https://github.com/tabarra/txAdmin'
-version '4.15.1'
+version '4.16.0'
 ui_label 'txAdmin'
 
 rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aware my resources *will* become incompatible once RedM ships.'
@@ -20,9 +20,10 @@ shared_scripts {
 
 server_scripts {
     'main.js',
-    'scripts/sv_main.lua',
+    'scripts/sv_main.lua', --must run first
     'scripts/sv_admins.lua',
     'scripts/sv_logger.lua',
+    'scripts/sv_resources.lua',
     'scripts/sv_playerlist.lua',
     'scripts/menu/server/sv_webpipe.lua',
     'scripts/menu/server/sv_base.lua',

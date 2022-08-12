@@ -31,9 +31,6 @@
         .cm-s-lucario{
             font-size: 1.05rem !important;
         }
-        .CodeMirror{
-            height: auto;
-        }
         .deployer-stepper > .card-header,
         .deployer-stepper > .card-footer{
             font-size: large;
@@ -63,6 +60,11 @@
             <div class="col-md-9">
                 <div class="card fade-in deployer-stepper">
                     <% if (step === 'review') { %>
+                        <style>
+                            .CodeMirror{
+                                max-height: 300px;
+                            }
+                        </style>
                         <div class="card-header font-weight-bold">Step 1: Review Recipe</div>
                         <div class="card-body">
                             <div class="row mb-1 mt-0 text-center">
@@ -88,8 +90,14 @@
                                     <%= recipe.description %>
                                 <% } %>
                             </p>
-        
-                            <textarea id="codeMirrorTarget" style="width: 100%;" class="cms-s-lucario" name="code"><%= recipe.raw %></textarea>
+                            <textarea 
+                                id="codeMirrorTarget"
+                                style="width: 100%;"
+                                class="cms-s-lucario"
+                                name="code"
+                            >
+                                <%= recipe.raw %>
+                            </textarea>
                             <div class="row justify-content-center m-2">
                                 <button class="btn btn-outline-danger" type="button" 
                                     onclick="cancelAction()">Cancel and Return to Setup</button>
@@ -148,7 +156,20 @@
                                             <input type="text" class="form-control" id="step2-dbHost"
                                                 placeholder="<%= defaults.mysqlHost %>" value="<%= defaults.mysqlHost %>" required>
                                             <span class="form-text text-muted">
-                                                The IP/Hostname of the database server (usually <code>localhost</code>).
+                                                The IP/Hostname for the database server (usually <code><%= defaults.mysqlHost %></code>).
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="step2-dbPort" class="col-sm-3 col-form-label">
+                                            Database Port
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-sm-9">
+                                            <input type="number" class="form-control" id="step2-dbPort"
+                                                placeholder="<%= defaults.mysqlPort %>" value="<%= defaults.mysqlPort %>" required>
+                                            <span class="form-text text-muted">
+                                                The port for the database server (usually <code><%= defaults.mysqlPort %></code>).
                                             </span>
                                         </div>
                                     </div>
@@ -267,6 +288,11 @@
                         <div class="card-footer text-muted">Step 3: Configure server.cfg</div>
         
                     <% } else if (step === 'configure') { %>
+                        <style>
+                            .CodeMirror{
+                                height: auto;
+                            }
+                        </style>
                         <div class="card-header">Step 1: Review Recipe ✔️</div>
                         <div class="card-header">Step 2: Input Parameters ✔️</div>
                         <div class="card-header">Step 3: Run Recipe ✔️</div>
@@ -406,6 +432,7 @@
         }
         if(requireDBConfig){
             step2elements.dbHost = document.getElementById('step2-dbHost');
+            step2elements.dbPort = document.getElementById('step2-dbPort');
             step2elements.dbUsername = document.getElementById('step2-dbUsername');
             step2elements.dbPassword = document.getElementById('step2-dbPassword');
             step2elements.dbName = document.getElementById('step2-dbName');
@@ -425,6 +452,7 @@
             }
             if(requireDBConfig){
                 postData.dbHost = step2elements.dbHost.value.trim();
+                postData.dbPort = step2elements.dbPort.value.trim();
                 postData.dbUsername = step2elements.dbUsername.value.trim();
                 postData.dbPassword = step2elements.dbPassword.value.trim();
                 postData.dbName = step2elements.dbName.value.trim();
@@ -433,8 +461,8 @@
                 if(!postData.dbName.length){
                     postData.dbName = step2elements.dbName.placeholder;
                 }
-                if(!postData.dbHost || !postData.dbUsername){
-                    return $.notify({ message: `The database host and username are required.` }, { type: 'warning' });
+                if(!postData.dbHost || !postData.dbPort || !postData.dbUsername){
+                    return $.notify({ message: `The database host, port and username are required.` }, { type: 'warning' });
                 }
             }
 

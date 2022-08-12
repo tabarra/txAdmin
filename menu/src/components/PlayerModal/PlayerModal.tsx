@@ -8,10 +8,9 @@ import {
   useTheme,
   IconButton,
   ListItemIcon,
-  Theme,
   CircularProgress,
-  styled,
 } from "@mui/material";
+import { styled } from '@mui/material/styles';
 import {
   Close,
   Person,
@@ -27,8 +26,32 @@ import { DialogBaseView } from "./Tabs/DialogBaseView";
 import { PlayerModalErrorBoundary } from "./ErrorHandling/PlayerModalErrorBoundary";
 import { usePermissionsValue } from "../../state/permissions.state";
 import { userHasPerm } from "../../utils/miscUtils";
-import { makeStyles } from "@mui/styles";
 import React from "react";
+
+
+const classes = {
+  listItem: `PlayerModal-listItem`,
+  listItemBan: `PlayerModal-listItemBan`,
+};
+
+const StyledList = styled(List)(({ theme }) => ({
+  [`& .${classes.listItem}`]: {
+    borderRadius: 8,
+    '&.Mui-selected:hover': {
+      backgroundColor: "rgba(255, 255, 255, 0.08)",
+    },
+  },
+
+  [`& .${classes.listItemBan}`]: {
+    borderRadius: 8,
+    '&:hover, &.Mui-selected': {
+      background: theme.palette.error.main,
+    },
+    '&.Mui-selected:hover': {
+      backgroundColor: "rgba(194,13,37, 0.8)",
+    },
+  },
+}));
 
 const LoadingModal: React.FC = () => (
   <Box
@@ -99,37 +122,18 @@ const PlayerModal: React.FC = () => {
   );
 };
 
-const useListStyles = makeStyles((theme: Theme) => ({
-  listItem: {
-    borderRadius: 8,
-  },
-  root: {
-    "&$selected, &$selected:hover": {
-      background: theme.palette.primary.main,
-    },
-  },
-  banRoot: {
-    "&$selected, &$selected:hover": {
-      background: theme.palette.error.main,
-    },
-  },
-  selected: {},
-}));
-
 const DialogList: React.FC = () => {
   const { tab, setTab } = usePlayerModalContext();
-  const classes = useListStyles();
   const t = useTranslate();
   const playerPerms = usePermissionsValue();
 
   return (
-    <List>
+    <StyledList>
       <ListItem
         className={classes.listItem}
         button
         onClick={() => setTab(1)}
         selected={tab === 1}
-        classes={{ root: classes.root, selected: classes.selected }}
       >
         <ListItemIcon>
           <FlashOn />
@@ -141,7 +145,6 @@ const DialogList: React.FC = () => {
         button
         onClick={() => setTab(2)}
         selected={tab === 2}
-        classes={{ root: classes.root, selected: classes.selected }}
       >
         <ListItemIcon>
           <Person />
@@ -153,7 +156,6 @@ const DialogList: React.FC = () => {
         button
         onClick={() => setTab(3)}
         selected={tab === 3}
-        classes={{ root: classes.root, selected: classes.selected }}
       >
         <ListItemIcon>
           <FormatListBulleted />
@@ -165,7 +167,6 @@ const DialogList: React.FC = () => {
         button
         onClick={() => setTab(4)}
         selected={tab === 4}
-        classes={{ root: classes.root, selected: classes.selected }}
       >
         <ListItemIcon>
           <MenuBook />
@@ -173,19 +174,18 @@ const DialogList: React.FC = () => {
         <ListItemText primary={t("nui_menu.player_modal.tabs.history")} />
       </ListItem>
       <ListItem
-        className={classes.listItem}
+        className={classes.listItemBan}
         button
         disabled={!userHasPerm("players.ban", playerPerms)}
         onClick={() => setTab(5)}
         selected={tab === 5}
-        classes={{ root: classes.banRoot, selected: classes.selected }}
       >
         <ListItemIcon>
           <Block />
         </ListItemIcon>
         <ListItemText primary={t("nui_menu.player_modal.tabs.ban")} />
       </ListItem>
-    </List>
+    </StyledList>
   );
 };
 

@@ -14,6 +14,7 @@ const types = [
     //custom
     'tweak',
     'wip',
+    'locale',
 ];
 
 module.exports = {

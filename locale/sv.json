@@ -81,7 +81,7 @@
             },
             "teleport": {
                 "title": "Teleportera",
-                "generic_success": "Skickat dig genom en tunnel!",
+                "generic_success": "Teleportering lyckad!",
                 "waypoint": {
                     "title": "Position",
                     "label": "Gå till positionen satt",
@@ -89,15 +89,15 @@
                 },
                 "coords": {
                     "title": "Kordinater",
-                    "label": "Gå till spesifika kordinater",
+                    "label": "Gå till specifika kordinater",
                     "dialog_title": "Teleportera",
                     "dialog_desc": "Skriv kordinaterna i x, y, z format för att kunna teleportera.",
                     "dialog_error": "Ogiltiga kordinater. Det måste vara i formatet: 111, 222, 33"
                 },
                 "back": {
-                    "title": "Tillbaka",
+                    "title": "Gå tillbaka",
                     "label": "Gå tillbaka till senaste positionen",
-                    "error": "Du har ingen senaste position"
+                    "error": "Du har ingen tidigare position"
                 },
                 "copy": {
                     "title": "Kopiera kordinaterna",
@@ -113,9 +113,9 @@
                     "label": "Ta fram fordon med moddel namn",
                     "dialog_title": "Ta fram fordon",
                     "dialog_desc": "Skriv in moddel namnet på fordonet du vill ta fram.",
-                    "dialog_success": "Fordon spawnat!",
+                    "dialog_success": "Fordon framtaget!",
                     "dialog_error": "Fordonet '%{modelName}' finns inte!",
-                    "dialog_info": "Försöker spawna %{modelName}."
+                    "dialog_info": "Försöker ta fram %{modelName}."
                 },
                 "fix": {
                     "title": "Laga",
@@ -133,14 +133,14 @@
                 "myself": {
                     "title": "Dig själv",
                     "label": "Återställer din hälsa",
-                    "success_0": "Alla är helade!",
+                    "success_0": "Alla är läkta!",
                     "success_1": "Du bör må bra nu!",
                     "success_2": "Återställd till max!",
                     "success_3": "Smärtan fixad!"
                 },
                 "everyone": {
                     "title": "Alla",
-                    "label": "Detta kommer hela och återuppliva alla spelare",
+                    "label": "Detta kommer läka och återuppliva alla spelare",
                     "success": "Helad och återupplivade alla spelare."
                 }
             },
@@ -149,18 +149,18 @@
                 "label": "Skicka ett meddelande till alla spelare inne på servern",
                 "dialog_desc": "Skriv in meddelandet du vill skicka till alla spelare.",
                 "dialog_placeholder": "Ditt Medelande... ",
-                "dialog_success": "Skickar ut ditt medelande."
+                "dialog_success": "Ditt medelande är utsickat."
             },
             "clear_area": {
-                "title": "Återställ världs arean",
-                "label": "Återställ ett angivet världsområde till dess standardläge",
+                "title": "Återställ världs ytan",
+                "label": "Återställer ett angivet världsområde till dess standardläge",
                 "dialog_desc": "Vänligen skriv in radien du vill rensa objekt i (0-300). Detta kommer inte rensa saker servern har spawnat",
                 "dialog_success": "Rensar area med %{radius}m",
                 "dialog_error": "Ogiltig radie, försök igen."
             },
             "player_ids": {
                 "title": "Sätt på spelares id",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                "label": "När du sätter på detta kommer du kunna se alla spelares id i närheten.",
                 "alert_show": "Visa spelares id i närheten.",
                 "alert_hide": "Dölj spelares id i närheten."
             }
@@ -194,7 +194,7 @@
                 "actions": "Alternativ",
                 "info": "Info",
                 "ids": "IDs",
-                "history": "Historia",
+                "history": "Historik",
                 "ban": "Bannlys"
             },
             "actions": {
@@ -228,7 +228,7 @@
                     }
                 },
                 "interaction": {
-                    "title": "Samspelsfunktioner",
+                    "title": "Interkationer",
                     "options": {
                         "heal": "Läk",
                         "go_to": "Gå till",
@@ -262,14 +262,14 @@
                 "notes_placeholder": "Anteckningar om denna spelare"
             },
             "history": {
-                "title": "Relaterad historia",
+                "title": "Historik",
                 "action_types": {
                     "warn": "VARNING",
-                    "warn_revoked": "ÅTERKALLA VARNINGEN för",
+                    "warn_revoked": "ÅTERKALLA VARNINGEN",
                     "ban": "BANNAD",
-                    "ban_revoked": "ÅTERKALLA BANN för",
+                    "ban_revoked": "ÅTERKALLA BANNLYSNING",
                     "whitelist": "VITLISTA",
-                    "whitelist_revoked": "ÅTERKALLA VITLISTNING för"
+                    "whitelist_revoked": "ÅTERKALLA VITLISTNING"
                 }
             },
             "ban": {

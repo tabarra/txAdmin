@@ -1,3 +1,6 @@
+-- =============================================
+--  Logger
+-- =============================================
 --Check Environment
 if GetConvar('txAdminServerMode', 'false') ~= 'true' then
     return

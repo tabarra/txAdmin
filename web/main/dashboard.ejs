@@ -201,13 +201,13 @@
                 <h5 class="d-inline">Server Control</h5>
             </div>
             <div class="card-body text-center align-middle">
-                <button onclick="controlAction('start')"
+                <button onclick="txApiFxserverControl('start')"
                     class="btn btn-outline-<%= perms.controlsClass %> btn-lg mx-auto m-2" type="button" id="ctrl-start"
                     <%= perms.controls %>>START</button> &nbsp;
-                <button onclick="controlAction('restart')"
+                <button onclick="txApiFxserverControl('restart')"
                     class="btn btn-outline-<%= perms.controlsClass %> btn-lg mx-auto m-2" type="button"
                     id="ctrl-restart" <%= perms.controls %>>RESTART</button> &nbsp;
-                <button onclick="controlAction('stop')"
+                <button onclick="txApiFxserverControl('stop')"
                     class="btn btn-outline-<%= perms.controlsClass %> btn-lg mx-auto m-2" type="button" id="ctrl-stop"
                     <%= perms.controls %>>STOP</button>
                 <br />
@@ -243,6 +243,10 @@
 <!-- Benchmark, update, pre-release messages -->
 <div class="row justify-content-md-center">
     <div class="col-md-6 text-center">
+        <div id="tsMessage" class="d-none">
+            🏆 With <span id="tsMedianPlayerCount">?</span> median players, your server may be in the worldwide Top 500 servers. <br>
+            Join <strong><a href="https://discord.gg/qmMq79D59T" target="_blank">discord.gg/txAdmin</a></strong> to check the rank and maybe get the <i>TOP SERVER</i> role.
+        </div>
         <% if (fxsOutdated) { %>
             <div class="alert alert-<%= fxsOutdated.color %> border-<%= fxsOutdated.color %>" role="alert">
                 <a href="<%= fxsOutdated.artifactsLink %>" target="_blank" class="alert-link"><%= fxsOutdated.message %></a>
@@ -301,6 +305,11 @@
             const parsedPerfData = JSON.parse(await rawPerfData.text());
             if(Array.isArray(parsedPerfData)){
                 perfData = parsedPerfData;
+                const medianPlayers = d3.median(perfData, x => x.clients);
+                if(medianPlayers > 80){
+                    document.getElementById('tsMedianPlayerCount').textContent = medianPlayers.toFixed(0);
+                    document.getElementById('tsMessage').classList.remove('d-none');
+                }
                 draw(parsedPerfData);
             }else{
                 if(parsedPerfData.failReason == 'not_set'){
@@ -317,6 +326,7 @@
             }
         } catch (error) {
             draw('failed to load chart data');
+            console.log(error);
         }
     }
     setChartThread('svMain');
@@ -329,7 +339,7 @@
         setChartThread(chartThreadSelectBtn.textContent);
     }, 2.5*60*1000);
 
-    //Renders it again when redized
+    //Renders it again when resized
     let redrawTimeout;
     window.addEventListener("resize", () => {
         if(!perfData) return;
@@ -342,31 +352,6 @@
 </script>
 
 <script>
-    //============================================== Controls (start/restart/stop)
-    async function controlAction(action) {
-        const confirmOptions = {content: `Are you sure you would like to <b>${action}</b> the server?`};
-        if(action !== 'start' && !await txAdminConfirm(confirmOptions)){
-            return;
-        }
-
-        const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
-        txAdminAPI({
-            url: '/fxserver/controls/' + action,
-            type: "GET",
-            dataType: "json",
-            timeout: REQ_TIMEOUT_LONG,
-            success: function (data) {
-                updateMarkdownNotification(data, notify);
-            },
-            error: function (xmlhttprequest, textstatus, message) {
-                notify.update('progress', 0);
-                notify.update('type', 'danger');
-                notify.update('message', message);
-            }
-        });
-    }
-
-
     //============================================== Commands
     async function controlCommand(action) {
         let message = null;

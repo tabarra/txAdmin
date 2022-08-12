@@ -112,7 +112,7 @@ document.getElementById('modChangePassword-save').onclick = (e) => {
 //================================================================
 //=================================================== On Page Load
 //================================================================
-document.addEventListener('DOMContentLoaded', function(event) {
+document.addEventListener('DOMContentLoaded', function (event) {
     //Setting up status refresh
     refreshData();
     setInterval(refreshData, STATUS_REFRESH_INTERVAL);
@@ -122,3 +122,29 @@ document.addEventListener('DOMContentLoaded', function(event) {
         $('#modChangePassword').modal('show');
     }
 });
+
+
+//================================================================
+//=================================== Globally Available API Funcs
+//================================================================
+async function txApiFxserverControl(action) {
+    const confirmOptions = { content: `Are you sure you would like to <b>${action}</b> the server?` };
+    if (action !== 'start' && !await txAdminConfirm(confirmOptions)) {
+        return;
+    }
+    const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
+    txAdminAPI({
+        url: '/fxserver/controls/' + action,
+        type: 'GET',
+        dataType: 'json',
+        timeout: REQ_TIMEOUT_LONG,
+        success: function (data) {
+            updateMarkdownNotification(data, notify);
+        },
+        error: function (xmlhttprequest, textstatus, message) {
+            notify.update('progress', 0);
+            notify.update('type', 'danger');
+            notify.update('message', message);
+        },
+    });
+}

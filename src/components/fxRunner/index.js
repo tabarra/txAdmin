@@ -351,6 +351,7 @@ module.exports = class FXRunner {
                 this.fxChild = null;
                 this.history[this.history.length - 1].timestamps.kill = now();
             }
+            globals.resourcesManager.handleServerStop();
             return null;
         } catch (error) {
             const msg = "Couldn't kill the server. Perhaps What Is Dead May Never Die."

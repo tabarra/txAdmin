@@ -1,6 +1,12 @@
 const path = require('path');
 const CWD = process.cwd();
 
+/*
+NOTE: @emotion/react and @emotion/styled are indirectly required by @mui/material
+Although we do not reference them directly, we do need it (or styled-components).
+https://mui.com/material-ui/getting-started/installation/
+*/
+
 
 module.exports = (options) => ({
     mode: options.mode,

@@ -34,7 +34,13 @@
 </div>
 <div class="row justify-content-md-center" style="margin-top: 1em;">
     <div class="mx-auto">
-        <button type="button" id="cfgEditor-save" class="btn btn-outline-dark btn-sm mb-2">Save File</button>
+        <button type="button" id="ctrl-restart" class="btn btn-outline-danger btn-sm mb-2"
+            onclick="txApiFxserverControl('restart')" <%=disableRestart %> >
+            RESTART SERVER
+        </button>
+        <button type="button" id="cfgEditor-save" class="btn btn-outline-dark btn-sm mb-2">
+            Save File
+        </button>
     </div>
 </div>
 

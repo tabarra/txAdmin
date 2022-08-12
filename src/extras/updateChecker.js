@@ -65,11 +65,12 @@ module.exports = async () => {
     //Checking txAdmin version
     let txOutput = false;
     try {
-        const semverDiff = semver.diff(GlobalData.txAdminVersion, apiResponse.latest_txadmin);
-        if (!GlobalData.txAdminVersion.includes('-') && semverDiff) {
+        const isOutdated = semver.lt(GlobalData.txAdminVersion, apiResponse.latest_txadmin);
+        if (isOutdated) {
             logError('This version of txAdmin is outdated.');
             logError('Please update as soon as possible.');
             logError('For more information: https://discord.gg/uAmsGa2');
+            const semverDiff = semver.diff(GlobalData.txAdminVersion, apiResponse.latest_txadmin);
             txOutput = {
                 semverDiff,
                 latest: apiResponse.latest_txadmin,

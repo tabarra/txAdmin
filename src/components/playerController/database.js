@@ -24,7 +24,7 @@ const ldbProdSerializer = {
     serialize: JSON.stringify,
     deserialize: JSON.parse,
 };
-const ldbSerializer = (process.env.APP_ENV === 'webpack') ? ldbProdSerializer : undefined;
+const ldbSerializer = (!GlobalData.isDeveloperMode) ? ldbProdSerializer : undefined;
 
 
 /**

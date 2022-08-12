@@ -106,8 +106,8 @@ module.exports = async function ProviderCallback(ctx) {
             ctx.session.auth = {};
             return returnJustMessage(
                 ctx,
-                `The account '${userInfo.name}' is not an admin.`,
-                'This CitizenFX username is not assigned to any registered account. You can also try to login using your username and backup password.',
+                `The Cfx.re account '${userInfo.name}' is not an admin.`,
+                'This username is not assigned to any registered account. You can also try to login using your username and backup password.',
             );
         }
 

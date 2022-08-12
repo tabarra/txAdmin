@@ -22,6 +22,7 @@ globals = {
     translator: null,
     webServer: null,
     playerController: null,
+    resourcesManager: null,
     config: null,
     deployer: null,
     info: {},
@@ -143,6 +144,9 @@ module.exports = class txAdmin {
         this.startPlayerController(profileConfig.playerController).catch((err) => {
             HandleFatalError(err, 'PlayerController');
         });
+        this.startResourcesManager().catch((err) => {
+            HandleFatalError(err, 'ResourcesManager');
+        });
 
         //Once they all finish loading, the function below will print the banner
         printBanner();
@@ -221,12 +225,18 @@ module.exports = class txAdmin {
         const PlayerController = require('./components/playerController');
         globals.playerController = new PlayerController(config);
     }
+
+    //==============================================================
+    async startResourcesManager(config) {
+        const startResourcesManager = require('./components/resourcesManager');
+        globals.resourcesManager = new startResourcesManager(config);
+    }
 };
 
 
 //==============================================================
 function HandleFatalError(error, componentName) {
-    if (error.message.includes('Cannot find module') && process.env.APP_ENV !== 'webpack') {
+    if (error.message.includes('Cannot find module') && !IS_WEBPACK_ENV) {
         logError(`Error starting '${componentName}' module. Make sure you executed 'npm install'.`);
         if (GlobalData.verbose) dir(error);
     } else {
