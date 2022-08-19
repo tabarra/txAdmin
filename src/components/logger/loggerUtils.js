@@ -109,7 +109,7 @@ module.exports.LoggerBase = class LoggerBase {
 module.exports.separator = (msg) => {
     const sepLine = '='.repeat(64);
     const timestamp = new Date().toLocaleString();
-    return lines = [
+    return [
         sepLine,
         `======== ${msg} - ${timestamp}`.padEnd(64, ' '),
         sepLine,

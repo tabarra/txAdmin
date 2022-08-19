@@ -1,3 +1,8 @@
+--Check Environment
+if GetConvar('txAdminServerMode', 'false') ~= 'true' then
+    return
+end
+
 --Helpers
 function log(x)
     print("^5[txAdminClient]^0 " .. x)
@@ -10,11 +15,6 @@ function unDeQuote(x)
     return new
 end
 
-
---Check Environment
-if GetConvar('txAdminServerMode', 'false') ~= 'true' then
-    return
-end
 if GetCurrentResourceName() ~= "monitor" then
     logError('This resource should not be installed separately, it already comes with fxserver.')
     return

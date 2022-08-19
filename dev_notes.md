@@ -1,61 +1,32 @@
 # TODO:
-v4.16.0:
-- [x] cfg parser: change endpoint default message for zap servers
-- [x] deployer: add option to set mysql port (make sure the error is homer-proof)
-- [x] deployer: better timeout handling for step 2
-- [x] deployer: collapse recipe by default
-- [x] diagnostics: remove resource warning threshold
-- [x] cfg editor: add server restart button
-- [x] top servers notification
-- [x] add option to disable nui source ip check
-- [x] use resource starting events to replace the 300 seconds boot hard limit
-
-Resource load scenarios:
-- resource lua error:
-    - `onResourceStarting` sourceRes
-    - print lua error
-    - `onResourceStart` sourceRes
-- resource lua crash/hang:
-    - `onResourceStarting` sourceRes
-    - crash/hang
-- dependency missing: 
-    - `onResourceStarting` sourceRes
-    - does not get to `onResourceStart`
-- dependency success:
-    - `onResourceStarting` sourceRes
-    - `onResourceStarting` dependency
-    - `onResourceStart` dependency
-    - `onResourceStart` sourceRes
-- webpack/yarn fail:
-    - `onResourceStarting` sourceRes
-    - does not get to `onResourceStart`
-- webpack/yarn success:
-    - `onResourceStarting` chat
-    - `onResourceStarting` yarn
-    - `onResourceStart` yarn
-    - `onResourceStarting` webpack
-    - `onResourceStart` webpack
-    - server first tick
-    - wait for build
-    - `onResourceStarting` chat
-    - `onResourceStart` chat
-- ensure started resource:
-    - `onResourceStop` sourceRes
-    - `onResourceStarting` sourceRes
-    - `onResourceStart` sourceRes
-    - `onServerResourceStop` sourceRes
-    - `onServerResourceStart` sourceRes
-
 v4.17.0:
-- [ ] print resource name if server crashes with pending resource start
-- [ ] add actionRevoked event (rewrite PR #612)
-- [ ] merge or rewrite the GET /status endpoint (PR #440)
+- [ ] reorganize folders
+- [ ] migrate core to esbuild
+- [ ] migrate menu to vite
 - [ ] convert txAdmin to ESM
+- [ ] docs: new structure, building, developing, menu/errors(?)
+- [ ] add option to set the resource load max time
+- [ ] add actionRevoked event (rewrite PR #612)
+- [ ] rewrite the GET /status endpoint (close PR #440)
 - [ ] add option to skip or add time to schedules restart
 - [ ] add option to schedule a restart (single shot, non persistent)
 - [ ] stats: add recipe name + if ptero + random collisions
 - [ ] stats: jwe
 - [ ] add player id view permission + logging
+- [ ] playerlist remove rtl characters
+
+New folder structure:
+- menu > nui
+- scripts > resource
+- src > core
+- web
+- database
+- scripts (test_build.sh, lint-formatter.js, locale-utils.js)
+- dev_notes, newPlayerlist -> to docs folder
+
+NOTE: nice ESM guide https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
+https://github.com/sindresorhus/typescript-definition-style-guide
+
 
 
 Up next-ish:
@@ -75,11 +46,28 @@ Up next-ish:
 - [ ] after menu client messages rework, add lua54
 
 
+### Randoms:
+Change pls the expired ban color to red or something else, because the must people dont know if the ban now expired or be revoked
+- BUG: nui menu triggered announcements are not sent to the discord
+
+-- Why both have the same debug data? https://i.imgur.com/WGawiyr.png
+
+FIXME: sendMenuMessage('setServerCtx', ServerCtx)
+
+FIXME: quando o menu abrir, deveria voltar os list item pro default deles
+
+-- Adapt `txAdmin:beta:deathLog` as well as add cusstom commands and logs
+
+- pagina de adicionar admin precisa depois do modal, mostrar mais info:
+    - username, senha, potencialmente link, instruções de login
+- FreezeEntityPosition need to get the veh
+    - já foi feito? tem issue aberto, e já teve um pr feito
+- começar a ler o ui_label dos manifests e usar na página de resources
 
 
 
 
-# txAdminAPI interface in base.js:
+### txAdminAPI interface in base.js:
 - Create prop `pendingMessage` to replace `const notify = $.notify({ message: 'xxxxxx' }, {});`
 - Pass `notify` as last argument to `success()` and `error()`
 - Create default `success()` and `error()`
@@ -92,15 +80,7 @@ someday remove the slash() and the ascii restrictions
 
 
 
-# New folder organization:
-- menu
-- scripts > resource
-- src > core
-- web
-- database
-- scripts (test_build.sh, lint-formatter.js, locale-utils.js)
-- dev_notes, newPlayerlist -> to docs folder
-
+### Multiserver refactor:
 Global:
 - WebServer
 - AdminVault
@@ -124,14 +104,14 @@ Questions:
 - Should break logger and config in 2 or work top->down?
 
 
-# New UI stuff
+### New UI stuff
 tentar usar vite
 react-query usar 100%
 procurar alternativas pro react-router (wouter)
 https://auto-animate.formkit.com
 
 
-# Update Event + Rollout strategy
+### Update Event + Rollout strategy
 This is not compatible with the update events.
 If patch, show update notification immediately (specially important to quick-fix a bug).
 If minor, randomize a delay between 0~24h.
@@ -149,16 +129,7 @@ Update event idea (not yet greenlit):
 - Note: regarding the changelog part, bubble asked me to ignore for now (may/13) but will talk again somewhen;
 
 
-
-Change pls the expired ban color to red or something else, because the must people dont know if the ban now expired or be revoked
-- BUG: nui menu triggered announcements are not sent to the discord
-
-
-verificar o pq heartbeat as vezes é lento
-
-Random issue diagnostics:
-- https://media.discordapp.net/attachments/589106731376836608/932035916812390430/unknown.png
-
+### Superjump
 CreateThread(function()
   local Wait = Wait
   local id = PlayerId()
@@ -169,35 +140,13 @@ CreateThread(function()
 end)
 
 
-
-
-Pro debug da playerlist:
-- comando pra printar: [primeiro,ultimo,count,sum]
-- comando get initial
-- comando get full
-- algum tipo de print quando as coisas acontecerem vai ser necessário
-- nao esquecer de remover a suggestion 
-
-
-
-FIXME: sendMenuMessage('setServerCtx', ServerCtx)
-
-FIXME: quando o menu abrir, deveria voltar os list item pro default deles
-
--- Adapt `txAdmin:beta:deathLog` as well as add cusstom commands and logs
-
-
-refactor settings:
+### refactor settings:
 - save only what changed
 - make big settings a class (like TFR)
 - settings.getConfig(); - returns the full config tree with unset props as null
 - settings.get('object.dot.notation');
 - settings.set('object.dot.notation');
 - npm search for "object dot"
-
-### Multiserver:
-- See with bubble if we can use node:worker_threads
-- Or maybe nodejs vm module to keep using global variables
 
 
 ### TP:
@@ -215,37 +164,11 @@ https://freesound.org/browse/tags/laser/?page=5#sound
     https://freesound.org/people/HadaHector/sounds/446383/
     https://freesound.org/people/unfa/sounds/193427/
 
-Master sem fivem:
-- Na página de pin, ter 2 botões, um pra criar conta com e outro sem fivem
-- addMaster:handlePin() pegar parametro e ou jogar pro idm, ou pra pagina addmaster mas com o login habilitado e obrigatório
-- não tem como colocar isso sem termos o modal que fica aparecendo pedindo pro admin inserir ou fivem, ou discord, ou marcar que essa conta não vai ter admin ingame
 
-
-
-
-Copy key Scenarios:
-- Following random tutorial exactly
-- Following host-specific tutorial exactly
-- Copying files to another host/path
-- Copying files to cloned image
-- Pterodactyl
-
+### Log page time slider
 > We could totally do like a "jump in time" feature for the log page.
 > A slider with 500 steps, and an array with 500 timestamps
 > this array can be done by dividing the serverLog.length to get the step, then a for loop to get the timestamps
-
-
-https://cdn.discordapp.com/attachments/589106731376836608/892124286360383488/unknown.png
-remover o \s?
-
-
-
--- Why both have the same debug data? https://i.imgur.com/WGawiyr.png
-
-
-
-
-
 
 
 ### New database alternatives:
@@ -323,15 +246,6 @@ To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 - when you right click, slap player (ApplyDamageToPed 5 damage + small psysichs push up and x+y random)
 
 
-### ESM updates
-dateformat      esm
-boxen           esm
-lowdb           esm - complicated
-slash           esm
-windows-release esm
-NOTE: nice guide https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
-
-
 ### recipe engine todo:
 - checksum for downloaded files
 - remove_path accept array?
@@ -356,16 +270,6 @@ https://forum.cfx.re/t/standalone-esx-reportsystem-a-completely-innovative-repor
 https://forum.cfx.re/t/free-esx-simple-mysql-reports-system/3555465
 https://forum.cfx.re/t/paid-esx-new-advanced-report-system/4774382
 https://forum.cfx.re/t/standalone-advanced-report-system/4774403/1
-
-
-### Todozinhos:
-- pagina de adicionar admin precisa depois do modal, mostrar mais info:
-    - username, senha, potencialmente link, instruções de login
-- FreezeEntityPosition need to get the veh
-    - já foi feito? tem issue aberto, e já teve um pr feito
-- começar a ler o ui_label dos manifests e usar na página de resources
-
-
 
 
 

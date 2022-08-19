@@ -8,7 +8,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
 const giga = 1024 * 1024 * 1024;
 const cpus = os.cpus();
 
-module.exports = getHostStats = async () => {
+module.exports = async () => {
     const out = {
         memory: {usage: 0, used: 0, total: 0},
         cpu: {
