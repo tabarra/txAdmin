@@ -1,8 +1,8 @@
 //Requires
 const modulename = 'WebServer:updateChecker';
-const got = require('../extras/got');
+const got = require('./got');
 const semver = require('semver');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };

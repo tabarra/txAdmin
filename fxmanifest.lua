@@ -16,52 +16,52 @@ games { 'gta5', 'rdr3' }
 -- NOTE: Due to global package constraints, js scripts will be loaded from main.js
 -- NOTE: Due to people drag-n-dropping their artifacts, we can't do globbing
 shared_scripts {
-    'scripts/menu/shared.lua'
+    'resource/menu/shared.lua'
 }
 
 server_scripts {
     'main.js',
-    'scripts/sv_main.lua', --must run first
-    'scripts/sv_admins.lua',
-    'scripts/sv_logger.lua',
-    'scripts/sv_resources.lua',
-    'scripts/sv_playerlist.lua',
-    'scripts/menu/server/sv_webpipe.lua',
-    'scripts/menu/server/sv_base.lua',
-    'scripts/menu/server/sv_functions.lua',
-    'scripts/menu/server/sv_main_page.lua',
-    'scripts/menu/server/sv_freeze_player.lua',
-    'scripts/menu/server/sv_trollactions.lua',
-    'scripts/menu/server/sv_player_modal.lua',
-    'scripts/menu/server/sv_spectate.lua',
-    'scripts/menu/server/sv_player_mode.lua'
+    'resource/sv_main.lua', --must run first
+    'resource/sv_admins.lua',
+    'resource/sv_logger.lua',
+    'resource/sv_resources.lua',
+    'resource/sv_playerlist.lua',
+    'resource/menu/server/sv_webpipe.lua',
+    'resource/menu/server/sv_base.lua',
+    'resource/menu/server/sv_functions.lua',
+    'resource/menu/server/sv_main_page.lua',
+    'resource/menu/server/sv_freeze_player.lua',
+    'resource/menu/server/sv_trollactions.lua',
+    'resource/menu/server/sv_player_modal.lua',
+    'resource/menu/server/sv_spectate.lua',
+    'resource/menu/server/sv_player_mode.lua'
 }
 
 client_scripts {
-    'scripts/cl_main.lua',
-    'scripts/cl_logger.lua',
-    'scripts/cl_playerlist.lua',
-    'scripts/menu/client/cl_webpipe.lua',
-    'scripts/menu/client/cl_base.lua',
-    'scripts/menu/client/cl_functions.lua',
-    'scripts/menu/client/cl_main_page.lua',
-    'scripts/menu/client/cl_misc.lua',
-    'scripts/menu/client/cl_player_ids.lua',
-    'scripts/menu/client/cl_player_mode.lua',
-    'scripts/menu/client/cl_spectate.lua',
-    'scripts/menu/client/cl_trollactions.lua',
-    'scripts/menu/client/cl_freeze.lua',
-    'scripts/menu/vendor/freecam/utils.lua',
-    'scripts/menu/vendor/freecam/config.lua',
-    'scripts/menu/vendor/freecam/main.lua',
-    'scripts/menu/vendor/freecam/camera.lua',
+    'resource/cl_main.lua',
+    'resource/cl_logger.lua',
+    'resource/cl_playerlist.lua',
+    'resource/menu/client/cl_webpipe.lua',
+    'resource/menu/client/cl_base.lua',
+    'resource/menu/client/cl_functions.lua',
+    'resource/menu/client/cl_main_page.lua',
+    'resource/menu/client/cl_misc.lua',
+    'resource/menu/client/cl_player_ids.lua',
+    'resource/menu/client/cl_player_mode.lua',
+    'resource/menu/client/cl_spectate.lua',
+    'resource/menu/client/cl_trollactions.lua',
+    'resource/menu/client/cl_freeze.lua',
+    'resource/menu/vendor/freecam/utils.lua',
+    'resource/menu/vendor/freecam/config.lua',
+    'resource/menu/vendor/freecam/main.lua',
+    'resource/menu/vendor/freecam/camera.lua',
 }
 
-ui_page 'scripts/menu/nui/index.html'
+ui_page 'resource/menu/nui/index.html'
 
 files {
-    'scripts/menu/nui/index.html',
-    'scripts/menu/nui/**/*',
+    'resource/menu/nui/index.html',
+    'resource/menu/nui/**/*',
 
     -- WebPipe optimization:
     'web/public/css/coreui.min.css',

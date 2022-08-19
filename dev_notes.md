@@ -1,6 +1,6 @@
 # TODO:
 v4.17.0:
-- [ ] reorganize folders
+- [x] reorganize folders
 - [ ] migrate core to esbuild
 - [ ] migrate menu to vite
 - [ ] convert txAdmin to ESM
@@ -504,9 +504,9 @@ con_miniconChannels script:monitor*
 +set svgui_disable true +setr txAdmin-menuDebug true +setr txEnableMenuBeta true
 
 # eslint stuff
-npx eslint ./src/**
-npx eslint ./src/** -f ./lint-formatter.js
-npx eslint ./src/** --fix
+npx eslint ./core/**
+npx eslint ./core/** -f ./lint-formatter.js
+npx eslint ./core/** --fix
 
 # hang fxserver (runcode)
 console.log('hanging the thread for 60s');
