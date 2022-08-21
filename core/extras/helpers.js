@@ -24,39 +24,6 @@ function txAdminASCII() {
 
 
 /**
- * Check if the packages in package.json were installed
- */
-function dependencyChecker() {
-    if (IS_WEBPACK_ENV) return;
-
-    try {
-        const rawFile = fs.readFileSync(GetResourcePath(GetCurrentResourceName()) + '/package.json');
-        const parsedFile = JSON.parse(rawFile);
-        const packages = Object.keys(parsedFile.dependencies);
-        const missing = [];
-        packages.forEach((package) => {
-            try {
-                require.resolve(package);
-            } catch (error) {
-                missing.push(package);
-            }
-        });
-        if (missing.length) {
-            console.log('[txAdmin:PreCheck] Cannot start txAdmin due to missing dependencies.');
-            console.log('[txAdmin:PreCheck] Make sure you executed \'npm i\'.');
-            console.log('[txAdmin:PreCheck] The following packages are missing: ' + missing.join(', '));
-            console.log();
-            console.log('[txAdmin:PreCheck] GO THE THE GITHUB RELEASES PAGE AND DOWNLOAD THE COMPILED ZIP FILE INSTEAD OF THE SOURCE');
-            process.exit();
-        }
-    } catch (error) {
-        console.log(`[txAdmin:PreCheck] Error reading or parsing package.json: ${error.message}`);
-        process.exit();
-    }
-}
-
-
-/**
  * Extracts hours and minutes from an string containing times
  * @param {string} schedule
  * @param {boolean} filter default true
@@ -98,7 +65,6 @@ function redactApiKeys(src) {
 
 module.exports = {
     txAdminASCII,
-    dependencyChecker,
     parseSchedule,
     redactApiKeys,
 };

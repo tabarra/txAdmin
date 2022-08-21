@@ -5,7 +5,6 @@ try {
     console.log('txAdmin must be run inside fxserver in monitor mode.');
     process.exit();
 }
-require('./extras/helpers').dependencyChecker();
 
 //Requires
 const os = require('os');
@@ -206,7 +205,7 @@ if (!serverProfile.length) {
 
 //Setting Global Data
 const noLookAlikesAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-GlobalData = {
+global.GlobalData = {
     //Env
     isDevMode,
     osType,

@@ -432,20 +432,20 @@ const validateCommands = async (parsedCommands) => {
                 errors.add(cmd.file, msg);
                 continue;
             }
-            const [_matchedString, interface, ipv4, ipv6, portString] = matches[0];
+            const [_matchedString, iface, ipv4, ipv6, portString] = matches[0];
 
             //Checking if that interface is available to binding
-            let canBind = checkedInterfaces.get(interface);
+            let canBind = checkedInterfaces.get(iface);
             if (typeof canBind === 'undefined') {
-                canBind = await isLocalhost(interface, true);
-                checkedInterfaces.set(interface, canBind);
+                canBind = await isLocalhost(iface, true);
+                checkedInterfaces.set(iface, canBind);
             }
             if (canBind === false) {
-                const msg = `Line ${cmd.line}: the '${cmd.command}' interface '${interface}' is not available for this host.`;
+                const msg = `Line ${cmd.line}: the '${cmd.command}' interface '${iface}' is not available for this host.`;
                 errors.add(cmd.file, msg);
                 continue;
             }
-            if (GlobalData.forceInterface && interface !== GlobalData.forceInterface) {
+            if (GlobalData.forceInterface && iface !== GlobalData.forceInterface) {
                 const msg = `Line ${cmd.line}:${zapPrefix} the '${cmd.command}' interface MUST be '${GlobalData.forceInterface}'.`;
                 errors.add(cmd.file, msg);
                 continue;

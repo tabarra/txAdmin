@@ -11,7 +11,7 @@ const cleanPath = (x) => { return slash(path.normalize(x)); };
 
 // Long ago I wanted to replace this with dependency injection.
 // I Totally gave up.
-globals = {
+global.globals = {
     adminVault: null,
     discordBot: null,
     fxRunner: null,
