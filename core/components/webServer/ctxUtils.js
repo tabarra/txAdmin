@@ -61,7 +61,7 @@ function getEjsOptions(filePath) {
  * @returns {Promise<void>}
  */
 async function loadWebTemplate(name) {
-    if (GlobalData.isDeveloperMode || !templateCache.has(name)) {
+    if (GlobalData.isDevMode || !templateCache.has(name)) {
         try {
             const rawTemplate = await fs.readFile(getWebViewPath(name), 'utf-8');
             const compiled = ejs.compile(rawTemplate, getEjsOptions(name + '.ejs'));
@@ -93,7 +93,7 @@ async function renderView(view, reqSess, data, txVars) {
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture) ? reqSess.auth.picture : DEFAULT_AVATAR;
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
     data.isLinux = (GlobalData.osType == 'linux');
-    data.showAdvanced = (GlobalData.isDeveloperMode || GlobalData.verbose);
+    data.showAdvanced = (GlobalData.isDevMode || GlobalData.verbose);
     data.dynamicAd = txVars.isWebInterface && globals.dynamicAds.pick('main');
 
     let out;

@@ -69,7 +69,7 @@ module.exports = class PlayerController {
         if (this.config.minSessionTime < 1 || this.config.minSessionTime > 60) throw new Error('The playerController.minSessionTime setting must be between 1 and 60 minutes.');
 
         //Running playerlist generator
-        if (GlobalData.isDeveloperMode && GlobalData.debugPlayerlistGenerator) {
+        if (GlobalData.isDevMode && GlobalData.debugPlayerlistGenerator) {
             this.playerlistGenerator = new PlayerlistGenerator();
         }
 

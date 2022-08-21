@@ -327,7 +327,7 @@ module.exports = class FXRunner {
                 this.lastKillRequest = msTimestamp;
             }
 
-            // Send warningngs
+            // Send warnings
             const messageType = isRestarting ? 'restarting' : 'stopping';
             const tOptions = {
                 servername: globals.config.serverName,

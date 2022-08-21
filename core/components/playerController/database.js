@@ -24,7 +24,7 @@ const ldbProdSerializer = {
     serialize: JSON.stringify,
     deserialize: JSON.parse,
 };
-const ldbSerializer = (!GlobalData.isDeveloperMode) ? ldbProdSerializer : undefined;
+const ldbSerializer = (!GlobalData.isDevMode) ? ldbProdSerializer : undefined;
 
 
 /**

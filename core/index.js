@@ -5,9 +5,6 @@ try {
     console.log('txAdmin must be run inside fxserver in monitor mode.');
     process.exit();
 }
-if (typeof IS_WEBPACK_ENV === 'undefined') {
-    IS_WEBPACK_ENV = false;
-}
 require('./extras/helpers').dependencyChecker();
 
 //Requires
@@ -33,16 +30,17 @@ const getBuild = (ver) => {
         return 9999;
     }
 };
-
-//==============================================================
-//Make sure this user knows what he is doing...
-const txAdmin1337Convar = GetConvar('txAdmin1337', 'false').trim();
-const isDeveloperMode = (!IS_WEBPACK_ENV && txAdmin1337Convar == 'IKnowWhatImDoing');
-if (!IS_WEBPACK_ENV && txAdmin1337Convar !== 'IKnowWhatImDoing') {
-    logError('Looks like you don\'t know what you are doing.');
-    logDie('Please use the compiled release from GitHub or the version that comes with the latest FXServer.');
+const getConvarBool = (convarName) => {
+    const cvar = GetConvar(convarName, 'false').trim().toLowerCase();
+    return ['true', '1', 'on'].includes(cvar);
+}
+const getConvarString = (convarName) => {
+    const cvar = GetConvar(convarName, 'false').trim();
+    return (cvar === 'false') ? false : cvar;
 }
 
+
+//==============================================================
 //Get OSType
 const osTypeVar = os.type();
 let osType;
@@ -63,7 +61,7 @@ const resourceName = GetCurrentResourceName();
 //4574 = add missing PRINT_STRUCTURED_TRACE declaration
 //4574 = add resource field to PRINT_STRUCTURED_TRACE
 const minFXServerVersion = 4574;
-const fxServerVersion = getBuild(GetConvar('version', 'false'));
+const fxServerVersion = getBuild(getConvarString('version'));
 if (!fxServerVersion) {
     logDie(`This version of FXServer is NOT compatible with txAdmin. Please update it to build ${minFXServerVersion} or above. (version convar not set or in the wrong format)`);
 }
@@ -87,16 +85,16 @@ if (typeof txAdminResourcePathConvar !== 'string' || txAdminResourcePathConvar =
 }
 
 //Get citizen Root
-const citizenRootConvar = GetConvar('citizen_root', 'false');
-if (citizenRootConvar == 'false') {
+const citizenRootConvar = getConvarString('citizen_root');
+if (!citizenRootConvar) {
     logDie('citizen_root convar not set');
 }
 const fxServerPath = cleanPath(citizenRootConvar);
 
 //Setting data path
 let dataPath;
-const txDataPathConvar = GetConvar('txDataPath', 'false');
-if (txDataPathConvar == 'false') {
+const txDataPathConvar = getConvarString('txDataPath');
+if (!txDataPathConvar) {
     const dataPathSuffix = (osType == 'windows') ? '..' : '../../../';
     dataPath = cleanPath(path.join(fxServerPath, dataPathSuffix, 'txData'));
 } else {
@@ -125,12 +123,12 @@ if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
 
 
 //Get Debug/Dev convars
-const txAdminVerboseConvar = GetConvar('txAdminVerbose', 'false').trim();
-const verbose = (['true', '1', 'on'].includes(txAdminVerboseConvar));
-const txDebugPlayerlistGeneratorConvar = GetConvar('txDebugPlayerlistGenerator', 'false').trim();
-const debugPlayerlistGenerator = (['true', '1', 'on'].includes(txDebugPlayerlistGeneratorConvar));
-const txDebugExternalSourceConvar = GetConvar('txDebugExternalSource', 'false').trim();
-const debugExternalSource = (txDebugExternalSourceConvar !== 'false') ? txDebugExternalSourceConvar : false;
+const isDevMode = getConvarBool('txAdminDevMode');
+const verbose = getConvarBool('txAdminVerbose');
+const debugPlayerlistGenerator = getConvarBool('txDebugPlayerlistGenerator');
+const debugExternalSource = getConvarString('txDebugExternalSource');
+dir(isDevMode);
+
 
 
 //Checking for Zap Configuration file
@@ -169,7 +167,7 @@ if (fs.existsSync(zapCfgFile)) {
 
         loopbackInterfaces.push(forceInterface);
 
-        if (!isDeveloperMode) fs.unlinkSync(zapCfgFile);
+        if (!isDevMode) fs.unlinkSync(zapCfgFile);
     } catch (error) {
         logDie(`Failed to load with ZAP-Hosting configuration error: ${error.message}`);
     }
@@ -184,8 +182,8 @@ if (fs.existsSync(zapCfgFile)) {
     if (!/^\d+$/.test(txAdminPortConvar)) logDie('txAdminPort is not valid.');
     txAdminPort = parseInt(txAdminPortConvar);
 
-    const txAdminInterfaceConvar = GetConvar('txAdminInterface', 'false').trim();
-    if (txAdminInterfaceConvar == 'false') {
+    const txAdminInterfaceConvar = getConvarString('txAdminInterface');
+    if (!txAdminInterfaceConvar) {
         forceInterface = false;
     } else {
         if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(txAdminInterfaceConvar)) logDie('txAdminInterface is not valid.');
@@ -198,7 +196,7 @@ if (verbose) dir({ isZapHosting, forceInterface, forceFXServerPort, txAdminPort,
 //Get profile name
 const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, '').trim();
 if (serverProfile.endsWith('.base')) {
-    logDie(`Looks like you the folder named '${serverProfile}' is actually a deployed base instead of a profile.`);
+    logDie(`Looks like the folder named '${serverProfile}' is actually a deployed base instead of a profile.`);
 }
 if (!serverProfile.length) {
     logDie('Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.');
@@ -210,7 +208,7 @@ if (!serverProfile.length) {
 const noLookAlikesAlphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 GlobalData = {
     //Env
-    isDeveloperMode,
+    isDevMode,
     osType,
     resourceName,
     fxServerVersion,
