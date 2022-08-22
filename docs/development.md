@@ -12,8 +12,8 @@ Before starting, please make sure you are familiar with the basics of NodeJS & e
 
 ## Project Structure
 - `core`: Node Backend & Components. This part is transpiled by `tsc` and then bundled with `esbuild`;
-- `resource`: The in-game resource that run under the `monitor` name. These files will be synchronized with the deploy path when running the `dev:main` npm script;
-- `menu`: React source code for the txAdmin's NUI Menu. It is transpiled & built using Vite;
+- `resource`: The in-game resource that runs under the `monitor` name. These files will be synchronized with the deploy path when running the `dev:main` npm script;
+- `menu`: React source code for txAdmin's NUI Menu. It is transpiled & built using Vite;
 - `web`: SSR templates & static assets used for the txAdmin's web panel. Right now this uses EJS as templating engine, which should change soon to also be React with Vite;
 - `scripts`: The scripts used for development only.
 

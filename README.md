@@ -94,7 +94,7 @@ ConVar usage **example** for different port and profile:
 ```
 
 ### Development
-If you want to run it from build & source, please do read [this](docs/building.md).
+If you want to run it from build & source, please do read [this](docs/development.md).
 
 
 ## License, Credits and Thanks

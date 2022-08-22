@@ -236,13 +236,7 @@ module.exports = class txAdmin {
 
 //==============================================================
 function HandleFatalError(error, componentName) {
-    if (error.message.includes('Cannot find module') && !IS_WEBPACK_ENV) {
-        logError(`Error starting '${componentName}' module. Make sure you executed 'npm install'.`);
-        if (GlobalData.verbose) dir(error);
-    } else {
-        logError(`Error starting '${componentName}' module: ${error.message}`);
-        dir(error);
-    }
-
-    process.exit();
+    logError(`Error starting '${componentName}' module: ${error.message}`);
+    dir(error);
+    process.exit(1);
 }
