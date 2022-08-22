@@ -4,12 +4,12 @@ const chalk = require('chalk');
 const { defaults, defaultsDeep, xor } = require('lodash');
 
 //Prepping
-const defaultLang = require('./en.json');
-const langFiles = fs.readdirSync(__dirname, { withFileTypes: true })
+const defaultLang = require('../locale/en.json');
+const langFiles = fs.readdirSync('./locale/', { withFileTypes: true })
     .filter((dirent) => !dirent.isDirectory() && dirent.name.endsWith('.json') && dirent.name !== 'en.json')
     .map((dirent) => dirent.name);
 const langs = langFiles.map((fName) => {
-    const fPath = path.join(__dirname, fName);
+    const fPath = path.join('./locale/', fName);
     return {
         name: fName,
         path: fPath,

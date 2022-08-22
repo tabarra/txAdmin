@@ -14,9 +14,9 @@
     "lint": "eslint ./core/**",
     "lint:count": "eslint ./core/** -f ./lint-formatter.js",
     "lint:fix": "eslint ./core/** --fix",
-    "locale:rebase": "node locale/_utils.js rebase",
-    "locale:diff": "node locale/_utils.js diff",
-    "test": "bash test_build.sh"
+    "locale:rebase": "node scripts/locale-utils.js rebase",
+    "locale:diff": "node scripts/locale-utils.js diff",
+    "test": "bash scripts/test_build.sh"
   },
   "repository": {
     "type": "git",
