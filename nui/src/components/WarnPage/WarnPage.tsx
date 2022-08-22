@@ -156,10 +156,10 @@ export interface SetWarnOpenData {
 
 export const WarnPage: React.FC = ({ }) => {
   const pulseSound = useRef<HTMLAudioElement>(
-    new Audio("assets/sounds/warning_pulse.mp3")
+    new Audio("sounds/warning_pulse.mp3")
   );
   const openSound = useRef<HTMLAudioElement>(
-    new Audio("assets/sounds/warning_open.mp3")
+    new Audio("sounds/warning_open.mp3")
   );
 
   const [isMiniBounce, setIsMiniBounce] = useState(false);

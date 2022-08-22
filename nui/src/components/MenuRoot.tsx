@@ -12,7 +12,7 @@ import { styled } from "@mui/material";
 
 const TxAdminLogo: React.FC = () => (
   <Box my={1} display="flex" justifyContent="center">
-    <img src="assets/images/txadmin.png" alt="txAdmin logo" />
+    <img src="images/txadmin.png" alt="txAdmin logo" />
   </Box>
 );
 
