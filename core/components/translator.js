@@ -5,7 +5,7 @@ const path = require('path');
 const Polyglot = require('node-polyglot');
 const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
 
-//Statically requiring languages because of webpack
+//Statically requiring languages because of esbuild
 const languages = {
     ar: require('../../locale/ar.json'),
     bs: require('../../locale/bs.json'),

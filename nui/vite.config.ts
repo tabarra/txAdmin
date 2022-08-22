@@ -21,8 +21,13 @@ const devDeplyPath = path.join(monitorPath, 'nui')
 export default defineConfig(({ command, mode }) => ({
   build: {
     emptyOutDir: true,
-    sourcemap: (mode === 'development') ? 'inline' : false,
+    reportCompressedSize: false,
     outDir: (mode === 'development') ? devDeplyPath : '../dist/nui',
+    minify: (mode !== 'development'),
+    target: 'chrome91',
+
+    //DEBUG sourcemap is super slow
+    // sourcemap: (mode === 'development') ? 'inline' : false,
 
     //Doing this because fxserver's cicd doesn't wipe the dist folder
     rollupOptions: {

@@ -24,7 +24,19 @@
 ## Main Features
 - Recipe-based Server Deployer: create a server in under 60 seconds! ([more info](docs/recipe.md))
 - Start/Stop/Restart your server instance or resources
-- Server Performance Chart (all 3 threads) ([example](https://i.imgur.com/VG8hpzr.gif))
+- Server tick time performance chart ([example](https://i.imgur.com/VG8hpzr.gif))
+- Full-featured in-game admin menu:
+	- Player Mode: NoClip, God
+	- Teleport:  waypoint, coords and back
+	- Vehicle: Spawn, Fix, Delete
+	- Heal: yourself, everyone
+	- Send Announcements
+	- Reset World Area
+	- Show player IDs
+	- Player search/sort by distance, ID, name
+	- Player interactions: Go To, Bring, Spectate, Freeze
+	- Player troll: make drunk, set fire, wild attack
+	- Player ban
 - Access control:
 	- Login via Password or CitizenFX
 	- Admin permission system ([more info](docs/permissions.md))
@@ -52,19 +64,17 @@
 - Real-time playerlist
 - Scheduled restarts with warning announcements and custom events ([more info](docs/events.md))
 - Translation Support ([more info](docs/translation.md))
-- FiveM's Server CFG editor
+- FiveM's Server CFG editor & validator
 - Responsive web interface with Dark Mode 😎
 
 Also, check our [Feature Graveyard](docs/feature_graveyard.md) for the features that are no longer among us (RIP).
 
 ## Running (Windows/Linux)
-Currently **txAdmin is included in all FXServer builds** above 2524, so to run it for the first time simply do the following:
+**txAdmin is included in all FXServer builds** above 2524, so to run it for the first time simply do the following:
 - Update FXServer to the latest artifact/build (2524 or superior)
 - If Windows, run FXServer.exe | If Linux, run `screen ./run.sh`
 - Open one of the URLs shown and configure txAdmin
 
-After that you could also run the `start_<build>_<profile>.bat` file created, or call it via cmd/bash if you want to edit the ConVars (ex http port).  
-  
 txAdmin requires to be launched from *inside* FXServer in monitor mode, to do that, just execute the `run.sh` or `FXServer.exe` without **any** `+exec` arguments.  
   
 ### ConVars
@@ -83,8 +93,8 @@ ConVar usage **example** for different port and profile:
 ./run.sh +set serverProfile dev_server +set txAdminPort 40121
 ```
 
-### Installing & Building it (NOT RECOMMENDED)
-If you want to run it from source, or build it yourself, please do read [this](docs/building.md).
+### Development
+If you want to run it from build & source, please do read [this](docs/building.md).
 
 
 ## License, Credits and Thanks

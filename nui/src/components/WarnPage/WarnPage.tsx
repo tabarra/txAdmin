@@ -210,15 +210,15 @@ export const WarnPage: React.FC = ({ }) => {
 /**
  * Browser mock
  */
-debugData([
-  {
-    action: 'setWarnOpen',
-    data: {
-      reason: 'Stop doing bad things 😠',
-      warnedBy: 'Tabby'
-    }
-  }
-], 500)
+// debugData([
+//   {
+//     action: 'setWarnOpen',
+//     data: {
+//       reason: 'Stop doing bad things 😠',
+//       warnedBy: 'Tabby'
+//     }
+//   }
+// ], 500)
 // setInterval(() => {
 //   debugData([
 //     {

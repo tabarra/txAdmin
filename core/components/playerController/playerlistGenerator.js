@@ -19,6 +19,7 @@ const unDups = (arr) => arr.filter((v, i) => arr.indexOf(v) === i);
  */
 module.exports = class PlayerlistGenerator {
     constructor() {
+        throw new Error('Disabled, for now');
         //Configs
         const srcPath = './src/components/playerController/playerlist.ignore.json';
         this.config = {

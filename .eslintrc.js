@@ -16,14 +16,11 @@ module.exports = {
         IsDuplicityVersion: 'readonly',
         VerifyPasswordHash: 'readonly',
     },
-    extends: [
-        // 'airbnb',
-    ],
+    extends: [],
     parserOptions: {
-        ecmaVersion: 2020,
+        ecmaVersion: 2021,
     },
     ignorePatterns: [
-        'webpack.config.js',
         '*.ignore.*',
     ],
     rules: {

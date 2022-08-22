@@ -195,6 +195,10 @@ const runDevTask = () => {
     );
 };
 
+
+/**
+ * Main publish task, it will copy static files, transpile and build core
+ */
 const runPublishTask = () => {
     //Copy static files
     console.log('Starting txAdmin Prod Builder.');

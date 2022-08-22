@@ -18,38 +18,6 @@ Optional:
 - [ ] add player id view permission + logging
 - [ ] playerlist remove rtl characters
 
-New folder structure:
-- menu > nui
-- scripts > resource
-- src > core
-- web
-- database
-- scripts (test_build.sh, lint-formatter.js, locale-utils.js)
-- dev_notes, newPlayerlist -> to docs folder
-
-
-Needed features/flows:
-- [ ] full prod build to dist/
-    - [x] `rimraf dist`
-    - [x] `rimraf dist_parts`
-    - [x] `vite build nui/ --mode production`
-    - [x] `node scripts/main-builder.js publish`
-        - [x] copy static + resource files to dist
-        - [x] `time npx tsc --project core/tsconfig.json --listEmittedFiles`
-        - [x] `esbuild.buildSync()`
-- [ ] menu dev browser
-    - [ ] `vite dev nui/`
-- [ ] menu dev game
-    - [ ] `vite build nui/ --watch --mode development`
-- [ ] typecheck menu
-    - [ ] `tsc -p nui/tsconfig.json --noEmit`
-- [ ] typecheck core
-    - [ ] `tsc -p core/tsconfig.json --noEmit`
-- [ ] main dev flow
-    - [x] `node scripts/main-builder.js dev`
-        - [x] start chokidar to sync static + resource files
-        - [x] tsc-watch
-        - [x] start server
 
 
 
@@ -78,10 +46,6 @@ process.exit();
 ```
 
 
-Extra TODOs:
-- npx depcheck .
-
-
 NOTE:
 
 https://medium.com/slackernoon/use-typescript-aliases-to-clean-up-your-import-statements-7210b7ec2af1
@@ -91,6 +55,11 @@ https://github.com/sindresorhus/typescript-definition-style-guide
 
 
 Up next-ish:
+- [ ] Tooling:
+    - [ ] Inline `.deploy.config.js > copy[]` into `main-builder.js`
+    - [ ] Use `dotenv` or something to read FXServer's path from
+    - [ ] Adapt `main-builder.js` to accept txAdmin convars
+    - [ ] Update `development.md`
 - 'txaLogger:menuEvent' outros resources conseguem chamar?
 - [ ] add ram usage to perf chart?
 - [ ] dm via snackbar
@@ -398,7 +367,7 @@ Small Stuff:
 ## FXServer Stuff + TODOs
 
 ### Rate limiter
-We could be more sensible when restarting the server and pushing an event to alert other resources thatm ight want to auto block it.
+We could be more sensible when restarting the server and pushing an event to alert other resources that might want to auto block it.
 ```bat
 netsh advfirewall firewall add rule name="txAdmin_block_XXXX" dir=in interface=any action=block remoteip=198.51.100.108/32
 netsh advfirewall firewall show rule name="txAdmin_block_XXXX"
@@ -543,46 +512,26 @@ https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 ```
 
 ```bash
-# run
-export CURR_FX_VERSION="3247"
-alias cdmon="cd /e/FiveM/builds/$CURR_FX_VERSION/citizen/system_resources/monitor"
-
-nodemon +set txAdminVerbose truex
-nodemon +set txDebugPlayerlistGenerator truex +set txAdminVerbose truex
-nodemon +set txDebugPlayerlistGenerator true +set txAdminRTS "deadbeef00deadbeef00deadbeef00deadbeef00deadbeef" +set txAdminVerbose truex
-nodemon +set txDebugPlayerlistGenerator true +set txDebugExternalSource "x.x.x.x:30120" +set txAdminVerbose truex
-npm run dev:menu:game
-
-# build
-rm -rf dist && npm run build && explorer dist
-# fix this command later, the zip generated is too big and malformed
-rm -rf dist && npm run build && tar.exe -cvf dist/monitor.zip dist/* && explorer dist
+# convars
++set txAdminVerbose true
++set txDebugPlayerlistGenerator true
++set txDebugPlayerlistGenerator true
++set txDebugExternalSource "x.x.x.x:30120"
 
 # other stuff
 export TXADMIN_DEFAULT_LICENSE="cfxk_xxxxxxxxxxxxxxxxxxxx_xxxxx"
+npx depcheck
 npm-upgrade
 con_miniconChannels script:monitor*
-+set svgui_disable true +setr txAdmin-menuDebug true +setr txEnableMenuBeta true
-
-# eslint stuff
-npx eslint ./core/**
-npx eslint ./core/** -f ./lint-formatter.js
-npx eslint ./core/** --fix
++setr txAdmin-menuDebug true
 
 # hang fxserver (runcode)
 console.log('hanging the thread for 60s');
 Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, 60 * 1000);
 console.log('done');
 
-# check chart
+# check external chart
 cdt
 cd web/public/
 curl -o svMain.json http://localhost:40120/chartData/svMain
 ```
-Don't commit:
-ver se o bubble já criou source tracking no fd3
-o problema é que um recurso malicioso pode spammar log
-ou então fazer um playerJoining fake com ids fake
-pelo menos garantir que dois playerJoining no mesmo id não vai sobrescrever
-devido ao logger buffer, outro recurso pode mandar o mesmo id antes
-talvez checar se já existe, e nesse caso pegar os IDs do playercontroller e salvar em log a discrepancia?
