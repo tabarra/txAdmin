@@ -1,8 +1,21 @@
+import path from 'node:path';
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-//FIXME: read config file
-const devDeplyPath = 'E:\\FiveM\\BUILDS\\5811\\citizen\\system_resources\\monitor\\nui';
+import { getFxsPaths } from '../scripts/scripts-utils.js'
+import config from '../.deploy.config.js';
+//FIXME: probably better to use .env with deploypath, sv_licensekey, etc
+
+let monitorPath;
+try {
+  ({ monitorPath } = getFxsPaths(config.fxserverPath));
+} catch (error) {
+  console.error('Could not extract/validate the fxserver and monitor paths.');
+  console.error(error);
+  process.exit(1);
+}
+
+const devDeplyPath = path.join(monitorPath, 'nui')
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => ({

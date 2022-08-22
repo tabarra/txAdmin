@@ -6,7 +6,7 @@ const TscWatchClient = require('tsc-watch/client.js');
 const esbuild = require('esbuild');
 const child_process = require('child_process');
 
-const { licenseBanner } = require('./txAdmin-banners.js');
+const { licenseBanner, getFxsPaths } = require('./scripts-utils.js');
 const txLicenseBanner = licenseBanner();
 
 //FIXME: probably better to use .env with deploypath, sv_licensekey, etc
@@ -31,56 +31,37 @@ const copyStaticFiles = (targetPath, eventName) => {
 
 
 /**
- * Processes a fxserver path to validate it as well as the monitor folder.
- * NOTE: this function is windows only, but could be easily adapted.
- * @param {String} fxserverPath
- * @returns fxServerRootPath, fxsBinPath, monitorPath
- */
-const getFxsPaths = (fxserverPath) => {
-    try {
-        const fxServerRootPath = path.parse(fxserverPath).dir;
-
-        //Process fxserver path
-        const fxsBinPath = path.join(fxServerRootPath, 'FXServer.exe');
-        const fxsBinPathStat = fs.statSync(fxsBinPath);
-        if (!fxsBinPathStat.isFile()) {
-            throw new Error(`${fxsBinPath} is not a file.`);
-        }
-
-        //Process monitor path
-        const monitorPath = path.join(fxServerRootPath, 'citizen', 'system_resources', 'monitor');
-        const monitorPathStat = fs.statSync(monitorPath);
-        if (!monitorPathStat.isDirectory()) {
-            throw new Error(`${monitorPath} is not a directory.`);
-        }
-
-        return { fxServerRootPath, fxsBinPath, monitorPath };
-    } catch (error) {
-        console.error('Could not extract/validate the fxserver and monitor paths.');
-        console.error(error);
-        process.exit(1);
-    }
-};
-
-
-/**
  * Bundles the core files
  * @param {String} destRootPath
  * @returns
  */
 const bundleCore = (destRootPath) => {
-    return esbuild.buildSync({
-        entryPoints: ['./dist_tmpcore/index.js'],
-        bundle: true,
-        outfile: path.join(destRootPath, 'core', 'index.js'),
-        platform: 'node',
-        target: 'node16',
-        minifyWhitespace: true,
-        charset: 'utf8',
-        banner: {
-            js: txLicenseBanner,
-        },
-    });
+    console.log('[BUNDLER] Started.');
+    try {
+        const { errors, _warnings } = esbuild.buildSync({
+            entryPoints: ['./dist_tmpcore/index.js'],
+            bundle: true,
+            outfile: path.join(destRootPath, 'core', 'index.js'),
+            platform: 'node',
+            target: 'node16',
+            minifyWhitespace: true,
+            charset: 'utf8',
+            banner: {
+                js: txLicenseBanner,
+            },
+        });
+        if (errors.length) {
+            console.log(`[BUNDLER] Failed with ${errors.length} errors.`);
+            return { success: false };
+        } else {
+            console.log('[BUNDLER] Finished.');
+            return { success: true };
+        }
+    } catch (error) {
+        return { success: false };
+    } finally {
+        fs.rmSync('./dist_tmpcore/', { recursive: true, force: true });
+    }
 };
 
 
@@ -166,7 +147,14 @@ const runDevTask = () => {
         console.error('config.fxserverPath not configured.');
         process.exit(1);
     }
-    const { fxServerRootPath, fxsBinPath, monitorPath } = getFxsPaths(config.fxserverPath);
+    let fxServerRootPath, fxsBinPath, monitorPath;
+    try {
+        ({ fxServerRootPath, fxsBinPath, monitorPath } = getFxsPaths(config.fxserverPath));
+    } catch (error) {
+        console.error('Could not extract/validate the fxserver and monitor paths.');
+        console.error(error);
+        process.exit(1);
+    }
     console.log(`Starting txAdmin Dev Builder for ${fxServerRootPath}`);
 
     //Sync target path and start chokidar
@@ -191,19 +179,10 @@ const runDevTask = () => {
         txInstance.killServer();
     });
     tscWatcher.on('success', () => {
-        console.log('[BUILDER] running bundler...');
-        try {
-            const { errors, _warnings } = bundleCore(monitorPath);
-            if (errors.length) {
-                console.log(`[BUILDER] Bundler failed with ${errors.length} errors.`);
-                process.exit(1);
-            }
-        } catch (error) {
-            console.log('[BUILDER] Bundler errored out.');
-            console.error(error.message);
-            process.exit(1);
-        } finally {
-            fs.rmSync('./dist_tmpcore/', { recursive: true, force: true });
+        const { success } = bundleCore(monitorPath);
+        if (success) {
+            console.log('Publish task finished.');
+            txInstance.spawnServer();
         }
     });
     tscWatcher.on('compile_errors', () => {
@@ -241,19 +220,11 @@ const runPublishTask = () => {
     }
 
     //Bundle core
-    console.log('[BUILDER] running bundler...');
-    try {
-        const { errors, _warnings } = bundleCore('./dist/');
-        if (errors.length) {
-            console.log(`[BUILDER] Bundler failed with ${errors.length} errors.`);
-            process.exit(1);
-        }
-    } catch (error) {
-        console.log('[BUILDER] Bundler errored out.');
-        console.error(error.message);
+    const { success } = bundleCore('./dist/');
+    if (success) {
+        console.log('Publish task finished.');
+    } else {
         process.exit(1);
-    } finally {
-        fs.rmSync('./dist_tmpcore/', { recursive: true, force: true });
     }
 };
 

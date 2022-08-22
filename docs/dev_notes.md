@@ -32,11 +32,11 @@ Needed features/flows:
 - [ ] full prod build to dist/
     - [x] `rimraf dist`
     - [x] `rimraf dist_parts`
-    - [ ] `vite build nui/ --mode production`
-    - [ ] `node scripts/main-builder.js publish`
-        - [ ] copy static + resource files to dist
-        - [ ] `time npx tsc --project core/tsconfig.json --listEmittedFiles`
-        - [ ] `esbuild.buildSync()`
+    - [x] `vite build nui/ --mode production`
+    - [x] `node scripts/main-builder.js publish`
+        - [x] copy static + resource files to dist
+        - [x] `time npx tsc --project core/tsconfig.json --listEmittedFiles`
+        - [x] `esbuild.buildSync()`
 - [ ] menu dev browser
     - [ ] `vite dev nui/`
 - [ ] menu dev game
