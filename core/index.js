@@ -1,11 +1,3 @@
-//Checking Environment
-try {
-    if (!IsDuplicityVersion()) throw new Error();
-} catch (error) {
-    console.log('txAdmin must be run inside fxserver in monitor mode.');
-    process.exit();
-}
-
 //Requires
 const os = require('os');
 const fs = require('fs');
@@ -126,8 +118,6 @@ const isDevMode = getConvarBool('txAdminDevMode');
 const verbose = getConvarBool('txAdminVerbose');
 const debugPlayerlistGenerator = getConvarBool('txDebugPlayerlistGenerator');
 const debugExternalSource = getConvarString('txDebugExternalSource');
-dir(isDevMode);
-
 
 
 //Checking for Zap Configuration file

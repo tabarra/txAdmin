@@ -5,22 +5,20 @@ const debounce = require('lodash/debounce');
 const TscWatchClient = require('tsc-watch/client.js');
 const esbuild = require('esbuild');
 const child_process = require('child_process');
-const chalk = require('chalk');
 
 const { licenseBanner } = require('./txAdmin-banners.js');
 const txLicenseBanner = licenseBanner();
 
 //FIXME: probably better to use .env with deploypath, sv_licensekey, etc
 const config = require('../.deploy.config.js');
-console.dir(config);
 
 
 /**
  * Sync the files from local path to target path.
  * This function tried to remove the files before copying new ones,
  * therefore, first make sure the path is correct.
- * @param {String} targetPath 
- * @param {String} eventName 
+ * @param {String} targetPath
+ * @param {String} eventName
  */
 const copyStaticFiles = (targetPath, eventName) => {
     console.log(`[COPIER][${eventName}] Syncing ${targetPath}.`);
@@ -29,13 +27,13 @@ const copyStaticFiles = (targetPath, eventName) => {
         fs.rmSync(destPath, { recursive: true, force: true });
         fs.cpSync(srcPath, destPath, { recursive: true });
     }
-}
+};
 
 
 /**
  * Processes a fxserver path to validate it as well as the monitor folder.
  * NOTE: this function is windows only, but could be easily adapted.
- * @param {String} fxserverPath 
+ * @param {String} fxserverPath
  * @returns fxServerRootPath, fxsBinPath, monitorPath
  */
 const getFxsPaths = (fxserverPath) => {
@@ -58,21 +56,21 @@ const getFxsPaths = (fxserverPath) => {
 
         return { fxServerRootPath, fxsBinPath, monitorPath };
     } catch (error) {
-        console.error(`Could not extract/validate the fxserver and monitor paths.`);
+        console.error('Could not extract/validate the fxserver and monitor paths.');
         console.error(error);
         process.exit(1);
     }
-}
+};
 
 
 /**
  * Bundles the core files
- * @param {String} destRootPath 
- * @returns 
+ * @param {String} destRootPath
+ * @returns
  */
 const bundleCore = (destRootPath) => {
     return esbuild.buildSync({
-        entryPoints: ['./dist_parts/core/index.js'],
+        entryPoints: ['./dist_tmpcore/index.js'],
         bundle: true,
         outfile: path.join(destRootPath, 'core', 'index.js'),
         platform: 'node',
@@ -83,7 +81,7 @@ const bundleCore = (destRootPath) => {
             js: txLicenseBanner,
         },
     });
-}
+};
 
 
 /**
@@ -133,15 +131,15 @@ class txAdminRunner {
 
         //Setting up event handlers
         this.fxChild.on('close', (code) => {
-            console.log(`[RUNNER] FXServer Closed.`);
+            console.log('[RUNNER] FXServer Closed.');
         });
         this.fxChild.on('error', (err) => {
-            console.log(`[RUNNER] FXServer Errored:`);
+            console.log('[RUNNER] FXServer Errored:');
             console.dir(err);
         });
         this.fxChild.on('exit', () => {
             process.stdout.write('\n');
-            console.log(`[RUNNER] FXServer Exited.`);
+            console.log('[RUNNER] FXServer Exited.');
         });
     }
 
@@ -180,9 +178,9 @@ const runDevTask = () => {
         persistent: true,
         ignoreInitial: true,
     });
-    watcher.on('add', () => { debouncedCopier(monitorPath, 'add') });
-    watcher.on('change', () => { debouncedCopier(monitorPath, 'change') });
-    watcher.on('unlink', () => { debouncedCopier(monitorPath, 'unlink') });
+    watcher.on('add', () => { debouncedCopier(monitorPath, 'add'); });
+    watcher.on('change', () => { debouncedCopier(monitorPath, 'change'); });
+    watcher.on('unlink', () => { debouncedCopier(monitorPath, 'unlink'); });
 
     //Create txAdmin process runner
     const txInstance = new txAdminRunner(fxServerRootPath, fxsBinPath);
@@ -194,11 +192,18 @@ const runDevTask = () => {
     });
     tscWatcher.on('success', () => {
         console.log('[BUILDER] running bundler...');
-        const { errors, warnings } = bundleCore(monitorPath);
-        if (errors.length) {
+        try {
+            const { errors, _warnings } = bundleCore(monitorPath);
+            if (errors.length) {
+                console.log(`[BUILDER] Bundler failed with ${errors.length} errors.`);
+                process.exit(1);
+            }
+        } catch (error) {
             console.log('[BUILDER] Bundler errored out.');
-        } else {
-            txInstance.spawnServer();
+            console.error(error.message);
+            process.exit(1);
+        } finally {
+            fs.rmSync('./dist_tmpcore/', { recursive: true, force: true });
         }
     });
     tscWatcher.on('compile_errors', () => {
@@ -209,18 +214,48 @@ const runDevTask = () => {
         '--noClear',
         '--pretty',
     );
-}
+};
 
 const runPublishTask = () => {
-    // copy static + resource files to dist
+    //Copy static files
+    console.log('Starting txAdmin Prod Builder.');
     copyStaticFiles('./dist/', 'publish');
 
-    // `time npx tsc --project src/tsconfig.json --listEmittedFiles`
-    // how???
+    //Transpile core
+    const tscPath = path.resolve('node_modules', '.bin', 'tsc');
+    try {
+        child_process.execSync(
+            `${tscPath} --project core/tsconfig.json --listEmittedFiles --noEmitOnError --pretty`,
+            {
+                stdio: 'inherit',
+                env: { ...process.env, TERM: 'xterm-256color', FORCE_COLOR: 3 },
+            },
+        );
+    } catch (error) {
+        console.error('[BUILDER] Failed to transpile core/');
+        console.error(error.message);
+        if (error.output) {
+            console.log(error.output.toString());
+        }
+        process.exit(1);
+    }
 
-    // `esbuild.buildSync()`
-    // todo
-}
+    //Bundle core
+    console.log('[BUILDER] running bundler...');
+    try {
+        const { errors, _warnings } = bundleCore('./dist/');
+        if (errors.length) {
+            console.log(`[BUILDER] Bundler failed with ${errors.length} errors.`);
+            process.exit(1);
+        }
+    } catch (error) {
+        console.log('[BUILDER] Bundler errored out.');
+        console.error(error.message);
+        process.exit(1);
+    } finally {
+        fs.rmSync('./dist_tmpcore/', { recursive: true, force: true });
+    }
+};
 
 
 /**
@@ -233,6 +268,6 @@ if (taskType === 'dev') {
 } else if (taskType === 'publish') {
     runPublishTask();
 } else {
-    console.log(`invalid task type`);
+    console.log('invalid task type');
     process.exit(1);
 }

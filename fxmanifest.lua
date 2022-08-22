@@ -20,7 +20,7 @@ shared_scripts {
 }
 
 server_scripts {
-    'main.js',
+    'entrypoint.js',
     'resource/sv_main.lua', --must run first
     'resource/sv_admins.lua',
     'resource/sv_logger.lua',
@@ -57,11 +57,10 @@ client_scripts {
     'resource/menu/vendor/freecam/camera.lua',
 }
 
-ui_page 'resource/menu/nui/index.html'
+ui_page 'nui/index.html'
 
 files {
-    'resource/menu/nui/index.html',
-    'resource/menu/nui/**/*',
+    'nui/**/*',
 
     -- WebPipe optimization:
     'web/public/css/coreui.min.css',
