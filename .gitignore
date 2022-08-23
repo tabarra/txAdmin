@@ -2,7 +2,7 @@
 db/*
 cache/*
 dist/*
-dist_tmpcore/*
+tmp_core_tsc/*
 *.ignore.*
 /start_*.bat
 monitor-*.zip

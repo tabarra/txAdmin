@@ -2,9 +2,10 @@
   "name": "txadmin",
   "version": "1.0.0",
   "description": "FiveM FXServer Admin - remotely manage your GTA5 FiveM Server",
-  "main": "core/index.js",
+  "module": "./core/index.js",
+  "type": "module",
   "scripts": {
-    "build": "rimraf dist && rimraf dist_tmpcore && npm run build:menu && npm run build:main",
+    "build": "rimraf dist && rimraf tmp_core_tsc && npm run build:menu && npm run build:main",
     "build:menu": "vite build nui/ --mode production",
     "build:main": "node scripts/main-builder.js publish",
     "prepare": "husky install",

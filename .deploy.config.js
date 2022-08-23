@@ -1,4 +1,4 @@
-module.exports = {
+export default {
     fxserverPath: 'E:\\FiveM\\BUILDS\\5811\\fxserver.exe',
     debouncerInterval: 250,
     txAdminArgs: [

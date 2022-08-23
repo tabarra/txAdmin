@@ -1,10 +1,10 @@
 # TODO:
 v4.17.0:
 - [x] reorganize folders
-- [ ] migrate core to esbuild
-- [ ] migrate menu to vite
+- [x] migrate core to esbuild
+- [x] migrate menu to vite
+- [x] docs: new structure, building, developing
 - [ ] convert txAdmin to ESM
-- [ ] docs: new structure, building, developing, menu/errors(?)
 - [ ] add option to set the resource load max time
 - [ ] ask bubble to rm the cicd cache or add a `rm -rf` to the target folder
 
@@ -17,8 +17,17 @@ Optional:
 - [ ] stats: jwe
 - [ ] add player id view permission + logging
 - [ ] playerlist remove rtl characters
+- [ ] create beta release action
 
 
+time npx esbuild ./core \
+    --bundle \
+    --outfile=/e/FiveM/BUILDS/5811/citizen/system_resources/monitor/core/index.js \
+    --platform=node \
+    --target=node16 \
+    --minify-whitespace \
+    --charset=utf8 \
+    --watch
 
 
 ```js
@@ -52,6 +61,9 @@ https://medium.com/slackernoon/use-typescript-aliases-to-clean-up-your-import-st
 nice ESM guide https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
 https://github.com/sindresorhus/typescript-definition-style-guide
 
+## Client game print issue
+https://github.com/citizenfx/fivem/commit/cafd87148a9a47eb267c24c00ec15f96103d4257
+https://github.com/citizenfx/fivem/commit/84f724ed04d07e0b3a765601ad19ce54412f135b
 
 
 Up next-ish:

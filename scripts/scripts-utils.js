@@ -1,12 +1,12 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
 
 
 /**
  * txAdmin in ASCII
  * @returns {String}
  */
-const txAdminASCII = () => {
+export const txAdminASCII = () => {
     //NOTE: precalculating the ascii art for efficiency
     // const figlet = require('figlet');
     // let ascii = figlet.textSync('txAdmin');
@@ -24,7 +24,7 @@ const txAdminASCII = () => {
  * txAdmin + license banner for bundled files
  * @returns {String}
  */
-const licenseBanner = () => {
+export const licenseBanner = () => {
     const licensePath = path.join('.', 'LICENSE');
     const lineSep = '%'.repeat(80);
     const logoPad = ' '.repeat(18);
@@ -51,7 +51,7 @@ const licenseBanner = () => {
  * @param {String} fxserverPath
  * @returns fxServerRootPath, fxsBinPath, monitorPath
  */
-const getFxsPaths = (fxserverPath) => {
+export const getFxsPaths = (fxserverPath) => {
     const fxServerRootPath = path.parse(fxserverPath).dir;
 
     //Process fxserver path
@@ -69,11 +69,4 @@ const getFxsPaths = (fxserverPath) => {
     }
 
     return { fxServerRootPath, fxsBinPath, monitorPath };
-};
-
-
-module.exports = {
-    txAdminASCII,
-    licenseBanner,
-    getFxsPaths,
 };

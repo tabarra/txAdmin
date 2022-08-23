@@ -1,16 +1,16 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const chokidar = require('chokidar');
-const debounce = require('lodash/debounce');
-const TscWatchClient = require('tsc-watch/client.js');
-const esbuild = require('esbuild');
-const child_process = require('child_process');
+import fs from 'node:fs';
+import path from 'node:path';
+import child_process from 'node:child_process';
+import chokidar from 'chokidar';
+import debounce from 'lodash/debounce.js';
+import TscWatchClient from 'tsc-watch/client.js';
+import esbuild from 'esbuild';
 
-const { licenseBanner, getFxsPaths } = require('./scripts-utils.js');
+import { licenseBanner, getFxsPaths } from './scripts-utils.js';
 const txLicenseBanner = licenseBanner();
 
 //FIXME: probably better to use .env with deploypath, sv_licensekey, etc
-const config = require('../.deploy.config.js');
+import config from '../.deploy.config.js';
 
 
 /**
@@ -38,6 +38,10 @@ const copyStaticFiles = (targetPath, eventName) => {
 const bundleCore = (destRootPath) => {
     console.log('[BUNDLER] Started.');
     try {
+        //NOTE: forcing esbuild to interpret the tsc output as cjs
+        fs.writeFileSync('./tmp_core_tsc/package.json', '{"type": "commonjs"}');
+        fs.copyFileSync('./core/tsconfig.json', './tmp_core_tsc/tsconfig.json');
+        
         const { errors, _warnings } = esbuild.buildSync({
             entryPoints: ['./dist_tmpcore/index.js'],
             bundle: true,
@@ -60,7 +64,7 @@ const bundleCore = (destRootPath) => {
     } catch (error) {
         return { success: false };
     } finally {
-        fs.rmSync('./dist_tmpcore/', { recursive: true, force: true });
+        fs.rmSync('./tmp_core_tsc/', { recursive: true, force: true });
     }
 };
 
