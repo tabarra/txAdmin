@@ -19,12 +19,13 @@ const dict51 = require('nanoid-dictionary/nolookalikes');
 const nanoid = customAlphabet(dict51, 20);
 
 const { setHttpCallback } = require('@citizenfx/http-wrapper');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const {requestAuth} = require('./requestAuthenticator');
 const ctxUtils = require('./ctxUtils.js');
 
 
-module.exports = class WebServer {
+export default class WebServer {
     constructor(config) {
         this.config = config;
         this.luaComToken = nanoid();

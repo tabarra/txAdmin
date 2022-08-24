@@ -1,9 +1,12 @@
 //Requires
-const os = require('os');
-const fs = require('fs');
-const path = require('path');
-const slash = require('slash');
-const { dir, log, logOk, logWarn, logError, setTTYTitle } = require('./extras/console')();
+import os from 'node:os';
+import fs from 'node:fs';
+import path from 'node:path';
+import slash from 'slash';
+
+import logger from '@core/extras/console';
+const { dir, log, logOk, logWarn, logError, setTTYTitle } = logger();
+
 
 //Helpers
 const cleanPath = (x) => { return slash(path.normalize(x)); };
@@ -24,11 +27,11 @@ const getBuild = (ver) => {
 const getConvarBool = (convarName) => {
     const cvar = GetConvar(convarName, 'false').trim().toLowerCase();
     return ['true', '1', 'on'].includes(cvar);
-}
+};
 const getConvarString = (convarName) => {
     const cvar = GetConvar(convarName, 'false').trim();
     return (cvar === 'false') ? false : cvar;
-}
+};
 
 
 //==============================================================
@@ -246,8 +249,10 @@ global.GlobalData = {
 //==============================================================
 //Starting txAdmin (have fun :p)
 setTTYTitle(txAdminVersion, serverProfile);
-const txAdmin = require('./txAdmin.js');
-new txAdmin(serverProfile);
+(async () => {
+    const { default: TxAdmin } = await import('./txAdmin');
+    new TxAdmin(serverProfile);
+})();
 
 
 //==============================================================

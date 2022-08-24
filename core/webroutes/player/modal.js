@@ -3,7 +3,8 @@ const modulename = 'WebServer:PlayerModal';
 const cloneDeep = require('lodash/cloneDeep');
 const dateFormat = require('dateformat');
 const humanizeDuration = require('humanize-duration');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -16,7 +17,7 @@ const now = () => { return Math.round(Date.now() / 1000); };
  *
  * @param {object} ctx
  */
-module.exports = async function PlayerModal(ctx) {
+export default async function PlayerModal(ctx) {
     //Sanity check
     if (typeof ctx.params.reference === 'undefined') {
         return ctx.utils.error(400, 'Invalid Request');

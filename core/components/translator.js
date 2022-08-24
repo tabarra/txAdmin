@@ -3,7 +3,8 @@ const modulename = 'Translator';
 const fs = require('fs');
 const path = require('path');
 const Polyglot = require('node-polyglot');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Statically requiring languages because of esbuild
 const languages = {
@@ -40,7 +41,7 @@ const languages = {
  * Small translation module built around Polyglot.js.
  * For the future, its probably a good idea to upgrade to i18next
  */
-module.exports = class Translator {
+export default class Translator {
     constructor() {
         // logOk('Started');
         this.language = globals.config.language;

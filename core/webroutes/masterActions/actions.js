@@ -3,7 +3,8 @@
 const modulename = 'WebServer:MasterActions:Action';
 const fs = require('fs-extra');
 const mysql = require('mysql2/promise');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -18,7 +19,7 @@ const filterIdentifiers = (idArr) => idArr.filter((id) => {
  * Handle all the master actions... actions
  * @param {object} ctx
  */
-module.exports = async function MasterActionsAction(ctx) {
+export default async function MasterActionsAction(ctx) {
     //Sanity check
     if (isUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');

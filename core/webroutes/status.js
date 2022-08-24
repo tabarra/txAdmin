@@ -1,6 +1,7 @@
 //Requires
 const modulename = 'WebServer:GetStatus';
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**
@@ -8,7 +9,7 @@ const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modu
  * The host data is cached for 5 seconds
  * @param {object} ctx
  */
-module.exports = async function GetStatus(ctx) {
+export default async function GetStatus(ctx) {
     const out = {
         status: prepareServerStatus(),
     };

@@ -1,13 +1,14 @@
 //Requires
 const modulename = 'WebServer:ServerLog';
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**
  * Returns the server log page
  * @param {object} ctx
  */
-module.exports = async function ServerLog(ctx) {
+export default async function ServerLog(ctx) {
     const renderData = {
         headerTitle: 'Server Log',
     };

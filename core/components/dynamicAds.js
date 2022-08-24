@@ -1,8 +1,10 @@
 //Requires
 const modulename = 'DynamicAds';
 const xss = require('xss');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
-const got = require('../extras/got');
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import gotInstancer from '@core/extras/got.js';
+const got = gotInstancer();
 const defaultAds = require('../../dynamicAds.json');
 
 //Helper
@@ -14,7 +16,7 @@ const cleanAds = (ads) => {
 };
 
 
-module.exports = class DynamicAds {
+export default class DynamicAds {
     constructor() {
         this.adIndex = {
             login: 0,

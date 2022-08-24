@@ -3,8 +3,10 @@ const modulename = 'WebServer:AdminManagerActions';
 const { customAlphabet } = require('nanoid');
 const dict51 = require('nanoid-dictionary/nolookalikes');
 const nanoid = customAlphabet(dict51, 20);
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const got = require('../../extras/got');
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import gotInstancer from '@core/extras/got.js';
+const got = gotInstancer();
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -19,7 +21,7 @@ const dangerousPerms = ['all_permissions', 'manage.admins', 'console.write', 'se
  * Returns the output page containing the admins.
  * @param {object} ctx
  */
-module.exports = async function AdminManagerActions(ctx) {
+export default async function AdminManagerActions(ctx) {
     //Sanity check
     if (isUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');

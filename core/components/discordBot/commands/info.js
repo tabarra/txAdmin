@@ -1,6 +1,7 @@
 //Requires
 const modulename = 'DiscordBot:cmd:info';
-const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //TODO: this doesn't make sense if we are not saving ot the db the player identifiers
 module.exports = {

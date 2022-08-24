@@ -1,8 +1,9 @@
-//Requires
 const modulename = 'WebServer:updateChecker';
-const got = require('./got');
-const semver = require('semver');
-const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
+import semver from 'semver';
+import gotInstancer from '@core/extras/got.js';
+import logger from '@core/extras/console.js';
+const got = gotInstancer();
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -27,7 +28,7 @@ const now = () => { return Math.round(Date.now() / 1000); };
     if < critical, BIG WARNING
 */
 
-module.exports = async () => {
+export default async () => {
     let apiResponse;
     try {
         //perform request - cache busting every ~1.4h

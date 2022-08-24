@@ -6,7 +6,8 @@ const bytes = require('bytes');
 const dateFormat = require('dateformat');
 const rfs = require('rotating-file-stream');
 const { defaultsDeep, cloneDeep } = require('lodash');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**

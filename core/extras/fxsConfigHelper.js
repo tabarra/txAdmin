@@ -2,8 +2,8 @@ const fsp = require('node:fs/promises');
 const path = require('node:path');
 const isLocalhost = require('is-localhost-ip');
 
-//DEBUG
-const { dir, log, logOk, logWarn, logError } = require('./console')();
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 /**
  * Detect the dominant newline character of a string.

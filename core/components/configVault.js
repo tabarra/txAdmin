@@ -2,7 +2,8 @@
 const modulename = 'ConfigVault';
 const fs = require('fs');
 const cloneDeep = require('lodash/cloneDeep');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -30,7 +31,7 @@ const deepFreeze = (obj) => {
     return obj;
 };
 
-module.exports = class ConfigVault {
+export default class ConfigVault {
     constructor(profilePath, serverProfile) {
         this.serverProfile = serverProfile;
         this.serverProfilePath = profilePath;

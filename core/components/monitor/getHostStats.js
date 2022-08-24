@@ -2,13 +2,14 @@
 const modulename = 'Monitor:HostStatus';
 const os = require('os');
 const si = require('systeminformation');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Const -hopefully
 const giga = 1024 * 1024 * 1024;
 const cpus = os.cpus();
 
-module.exports = async () => {
+export default async () => {
     const out = {
         memory: {usage: 0, used: 0, total: 0},
         cpu: {

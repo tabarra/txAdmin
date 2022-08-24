@@ -2,8 +2,10 @@
 const modulename = 'WebServer:AdvancedActions';
 const bytes = require('bytes');
 const humanizeDuration = require('humanize-duration');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const got = require('../../extras/got');
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import gotInstancer from '@core/extras/got.js';
+const got = gotInstancer();
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -14,7 +16,7 @@ const now = () => { return Math.round(Date.now() / 1000); };
  *
  * @param {object} ctx
  */
-module.exports = async function AdvancedActions(ctx) {
+export default async function AdvancedActions(ctx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.action)

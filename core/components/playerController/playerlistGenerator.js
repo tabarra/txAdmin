@@ -1,8 +1,9 @@
 //Requires
 const modulename = 'PlayerlistGenerator';
 const fs = require('node:fs');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const got = require('../../extras/got');
+import got from 'got'
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
 const randIndex = (arr) => Math.floor(Math.random() * arr.length);
@@ -17,7 +18,7 @@ const unDups = (arr) => arr.filter((v, i) => arr.indexOf(v) === i);
  *  - the json must contain something like 45+ players
  *  - enable this require in monitor component's constructor
  */
-module.exports = class PlayerlistGenerator {
+export default class PlayerlistGenerator {
     constructor() {
         throw new Error('Disabled, for now');
         //Configs

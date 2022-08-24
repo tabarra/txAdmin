@@ -2,7 +2,8 @@
 const modulename = 'Logger:FXServer';
 const bytes = require('bytes');
 const chalk = require('chalk');
-const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { LoggerBase, separator } = require('../loggerUtils');
 
 
@@ -26,7 +27,7 @@ const markLines = (msg, type) => {
 };
 
 
-module.exports = class FXServerLogger extends LoggerBase {
+export default class FXServerLogger extends LoggerBase {
     constructor(basePath, lrProfileConfig) {
         const lrDefaultOptions = {
             path: basePath,

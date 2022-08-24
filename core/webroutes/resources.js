@@ -3,7 +3,8 @@ const modulename = 'WebServer:Resources';
 const path = require('path');
 const slash = require('slash');
 const slug = require('slug');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -45,7 +46,7 @@ const getResourceSubPath = (resPath) => {
  * Returns the resources list
  * @param {object} ctx
  */
-module.exports = async function Resources(ctx) {
+export default async function Resources(ctx) {
     if (globals.fxRunner.fxChild === null) {
         return ctx.utils.render('main/message', {
             message: '<strong>The resources list is only available when the server is online.</strong>',

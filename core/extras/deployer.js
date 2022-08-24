@@ -6,7 +6,8 @@ const dateFormat = require('dateformat');
 const fs = require('fs-extra');
 const open = require('open');
 const YAML = require('js-yaml');
-const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const recipeEngine = require('./recipeEngine');
 
 //Helper functions

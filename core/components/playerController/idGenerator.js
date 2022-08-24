@@ -4,7 +4,8 @@ const fs = require('fs').promises;
 const humanizeDuration = require('humanize-duration');
 const nanoidSecure = require('nanoid');
 const nanoidNonSecure = require('nanoid/non-secure');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Consts
 const maxAttempts = 10;

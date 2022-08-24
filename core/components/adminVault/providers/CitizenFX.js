@@ -2,10 +2,12 @@
 const modulename = 'AdminVault:CitizenFXProvider';
 const crypto  = require('crypto');
 const { Issuer, custom } = require('openid-client');
-const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
+
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
-module.exports = class CitizenFXProvider {
+export default class CitizenFXProvider {
     constructor(config) {
         this.config = config;
         this.client = null;

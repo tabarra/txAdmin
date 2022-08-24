@@ -1,6 +1,7 @@
 //Requires
 const modulename = 'ResourcesManager';
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /*
@@ -41,7 +42,7 @@ NOTE Resource load scenarios knowledge base:
     - `onServerResourceStart` sourceRes
 */
 
-module.exports = class DynamicAds {
+export default class DynamicAds {
     constructor() {
         this.activeStartingTime = null;
         this.activeStartingResource = null;

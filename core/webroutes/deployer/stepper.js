@@ -1,14 +1,15 @@
 //Requires
 const modulename = 'WebServer:DeployerStepper';
 const fs = require('fs-extra');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**
  * Returns the output page containing the deployer stepper page (all 3 stages)
  * @param {object} ctx
  */
-module.exports = async function DeployerStepper(ctx) {
+export default async function DeployerStepper(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
         return ctx.utils.render('main/message', { message: 'You need to be the admin master to use the deployer.' });

@@ -1,7 +1,8 @@
 //Requires
 const modulename = 'WebSocket';
 const xss = require('../../extras/xss')({ mark: ['class'] });
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { authLogic } = require('./requestAuthenticator');
 
 //Helpers
@@ -22,7 +23,7 @@ const terminateSession = (socket) => {
 };
 
 
-module.exports = class WebSocket {
+export default class WebSocket {
     constructor(io) {
         this.io = io;
         this.dataBuffer = '';

@@ -2,7 +2,9 @@
 const modulename = 'AdminVault';
 const fs = require('fs-extra');
 const cloneDeep = require('lodash/cloneDeep');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const CitizenFXProvider = require('./providers/CitizenFX');
 
 //Helpers
@@ -21,7 +23,7 @@ const migrateProviderIdentifiers = (providerName, providerData) => {
 };
 
 
-module.exports = class AdminVault {
+export default class AdminVault {
     constructor() {
         this.adminsFile = `${GlobalData.dataPath}/admins.json`;
         this.admins = null;

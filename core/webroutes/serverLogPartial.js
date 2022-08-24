@@ -1,13 +1,14 @@
 //Requires
 const modulename = 'WebServer:ServerLogPartial';
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**
  * Returns the output page containing the admin log.
  * @param {object} ctx
  */
-module.exports = async function ServerLogPartial(ctx) {
+export default async function ServerLogPartial(ctx) {
     const isDigit = /^\d{13}$/;
     const sliceSize = 500;
 

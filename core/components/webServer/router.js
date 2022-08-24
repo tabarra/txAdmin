@@ -3,7 +3,8 @@ const modulename = 'WebServer:Router';
 const Router = require('@koa/router');
 const KoaRateLimit = require('koa-ratelimit');
 
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const webRoutes = require('../../webroutes');
 const {requestAuth} = require('./requestAuthenticator');
 
@@ -12,7 +13,7 @@ const {requestAuth} = require('./requestAuthenticator');
  * Router factory
  * @param {object} config
  */
-module.exports = (config) => {
+export default (config) => {
     const router = new Router();
     const authLimiter = KoaRateLimit({
         driver: 'memory',

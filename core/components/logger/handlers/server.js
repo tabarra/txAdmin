@@ -1,7 +1,8 @@
 /* eslint-disable padded-blocks */
 //Requires
 const modulename = 'Logger:Server';
-const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { LoggerBase, separator } = require('../loggerUtils');
 
 /*
@@ -45,7 +46,7 @@ before sending it to fd3
 // }, 750);
 
 
-module.exports = class ServerLogger extends LoggerBase {
+export default class ServerLogger extends LoggerBase {
     constructor(basePath, lrProfileConfig) {
         const lrDefaultOptions = {
             path: basePath,

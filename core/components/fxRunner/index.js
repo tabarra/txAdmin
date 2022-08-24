@@ -6,7 +6,9 @@ const chalk = require('chalk');
 const sleep = require('util').promisify((a, f) => setTimeout(f, a));
 const { parseArgsStringToArgv } = require('string-argv');
 const StreamValues = require('stream-json/streamers/StreamValues');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { validateFixServerConfig } = require('../../extras/fxsConfigHelper');
 const OutputHandler = require('./outputHandler');
 
@@ -39,7 +41,7 @@ const getMutableConvars = (isCmdLine = false) => {
 const SHUTDOWN_NOTICE_DELAY = 5000;
 
 
-module.exports = class FXRunner {
+export default class FXRunner {
     constructor(config) {
         // logOk('Started');
         this.config = config;

@@ -1,7 +1,8 @@
 //Requires
 const modulename = 'WebServer:FXServerCommands';
 const xss = require('../../extras/xss')();
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const escape = (x) => {return x.replace(/"/g, '\uff02');};
@@ -14,7 +15,7 @@ const formatCommand = (cmd, ...params) => {
  * Handle all the server commands
  * @param {object} ctx
  */
-module.exports = async function FXServerCommands(ctx) {
+export default async function FXServerCommands(ctx) {
     if (
         typeof ctx.request.body.action === 'undefined'
         || typeof ctx.request.body.parameter === 'undefined'

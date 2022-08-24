@@ -1,7 +1,8 @@
 //Requires
 const modulename = 'TimeSeries';
 const fs = require('fs-extra');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -14,7 +15,7 @@ const now = () => { return Math.round(Date.now() / 1000); };
  * NOTE: Except for the constructor, this class will not return any errors,
  *       and should not be used to anything that requires data consistency.
  */
-module.exports = class TimeSeries {
+export default class TimeSeries {
     constructor(file, resolution, window) {
         if (isUndefined(file) || isUndefined(resolution) || isUndefined(window)) {
             throw new Error('All parameters must be defined');

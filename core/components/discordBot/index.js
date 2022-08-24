@@ -1,7 +1,8 @@
 //Requires
 const modulename = 'DiscordBot';
 const Discord = require('@citizenfx/discord.js');
-const { dir, log, logOk, logWarn, logError, logDebug } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
 if (typeof URLSearchParams === 'undefined') {
@@ -12,7 +13,7 @@ if (typeof URLSearchParams === 'undefined') {
 const now = () => { return Math.round(Date.now() / 1000); };
 
 
-module.exports = class DiscordBot {
+export default class DiscordBot {
     constructor(config) {
         this.config = config;
         this.client = null;

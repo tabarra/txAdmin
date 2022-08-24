@@ -1,7 +1,8 @@
 //Requires
 const modulename = 'WebServer:SettingsGet';
 const cloneDeep = require('lodash/cloneDeep');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);;
 const { redactApiKeys } = require('../../extras/helpers');
 
 
@@ -9,7 +10,7 @@ const { redactApiKeys } = require('../../extras/helpers');
  * Returns the output page containing the live console
  * @param {object} ctx
  */
-module.exports = async function SettingsGet(ctx) {
+export default async function SettingsGet(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('settings.view', modulename)) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});

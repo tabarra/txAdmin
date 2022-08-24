@@ -1,7 +1,8 @@
 //Requires
 const modulename = 'Monitor';
-const got = require('../../extras/got');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import got from 'got'; //we want internal requests to have 127.0.0.1 src
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const helpers = require('../../extras/helpers');
 const getHostStats = require('./getHostStats');
 
@@ -9,7 +10,7 @@ const getHostStats = require('./getHostStats');
 const now = () => { return Math.round(Date.now() / 1000); };
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 
-module.exports = class Monitor {
+export default class Monitor {
     constructor(config) {
         this.config = config;
 

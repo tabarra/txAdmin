@@ -5,8 +5,8 @@ const ejs = require('ejs');
 const path = require('path');
 const chalk = require('chalk');
 const helpers = require('../../extras/helpers');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -197,7 +197,7 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true) {
 //================================================================
 //================================================================
 //================================================================
-module.exports = async function WebCtxUtils(ctx, next) {
+export default async function WebCtxUtils(ctx, next) {
     //Prepare variables
     const isWebInterface = (typeof ctx.headers['x-txadmin-token'] !== 'string');
     ctx.txVars = {

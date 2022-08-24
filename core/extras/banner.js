@@ -1,11 +1,14 @@
-//Requires
-const os = require('os');
-const boxen = require('boxen');
-const chalk = require('chalk');
-const open = require('open');
-const { dir, log, logOk, logWarn, logError } = require('./console')();
-const got = require('./got');
-const windowsReleaseAsync = require('./windowsReleaseAsync');
+import os from 'node:os';
+import boxen from 'boxen';
+import chalk from 'chalk';
+import open from 'open';
+
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger();
+
+import gotInstancer from '@core/extras/got.js';
+const got = gotInstancer();
+import windowsReleaseAsync from '@core/extras/windowsReleaseAsync.js';
 
 // const getTimeout = (timeoutLimit) => {
 //     let timer;
@@ -113,7 +116,7 @@ const awaitMasterPin = new Promise((resolve, reject) => {
 });
 
 
-module.exports.printBanner = async () => {
+export const printBanner = async () => {
     const [ ipRes, msgRes, adminPinRes ] = await Promise.allSettled([
         getIPs(),
         getOSMessage(),

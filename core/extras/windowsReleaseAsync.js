@@ -59,4 +59,4 @@ const windowsReleaseAsync = async (release) => {
     return names.get(ver);
 };
 
-module.exports = windowsReleaseAsync;
+export default windowsReleaseAsync;

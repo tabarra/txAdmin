@@ -1,14 +1,15 @@
 //Requires
 const modulename = 'WebServer:SetupGet';
 const path = require('path');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { engineVersion } = require('../../extras/deployer');
 
 /**
  * Returns the output page containing the live console
  * @param {object} ctx
  */
-module.exports = async function SetupGet(ctx) {
+export default async function SetupGet(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
         return ctx.utils.render('main/message', {message: 'You need to be the admin master to use the setup page.'});

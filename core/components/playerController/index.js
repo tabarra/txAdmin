@@ -2,7 +2,8 @@
 const modulename = 'PlayerController';
 const humanizeDuration = require('humanize-duration'); //FIXME: remove, this controller is not the right place for interface stuff
 const xss = require('../../extras/xss')(); //FIXME: same as above
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 // eslint-disable-next-line no-unused-vars
 const { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } = require('./database.js');
 const idGen = require('./idGenerator.js');
@@ -59,7 +60,7 @@ const validActions = ['ban', 'warn', 'whitelist'];
  *      - name
  *      - tsLastAttempt
  */
-module.exports = class PlayerController {
+export default class PlayerController {
     constructor(config) {
         this.config = config;
         this.activePlayers = [];

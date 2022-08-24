@@ -1,6 +1,7 @@
 //Requires
 const modulename = 'WebServer:AuthChangePassword';
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -9,7 +10,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
  * Returns the output page containing the admins.
  * @param {object} ctx
  */
-module.exports = async function AuthChangePassword(ctx) {
+export default async function AuthChangePassword(ctx) {
     //Sanity check
     if (isUndefined(ctx.request.body.newPassword)) {
         return ctx.utils.error(400, 'Invalid Request');

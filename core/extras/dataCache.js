@@ -1,7 +1,7 @@
 //Requires
 const cloneDeep = require('lodash/cloneDeep');
 
-module.exports = class Cache {
+export default class Cache {
     constructor(cacheTime) {
         this.cacheTime = cacheTime * 1000; //converting to ms
         this.dataTimestamp = null;

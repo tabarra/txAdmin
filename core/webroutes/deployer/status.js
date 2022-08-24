@@ -1,13 +1,14 @@
 //Requires
 const modulename = 'WebServer:DeployerStatus';
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**
  * Returns the output page containing the live console
  * @param {object} ctx
  */
-module.exports = async function DeployerStatus(ctx) {
+export default async function DeployerStatus(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('all_permissions', modulename)) {
         return ctx.send({success: false, refresh: true});

@@ -1,7 +1,8 @@
 //Requires
 const modulename = 'WebServer:ProviderCallback';
 const crypto = require('crypto');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -13,7 +14,7 @@ const returnJustMessage = (ctx, errorTitle, errorMessage) => {
  * Handles the provider login callbacks
  * @param {object} ctx
  */
-module.exports = async function ProviderCallback(ctx) {
+export default async function ProviderCallback(ctx) {
     //Sanity check
     if (
         isUndefined(ctx.params.provider)

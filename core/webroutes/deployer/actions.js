@@ -4,7 +4,8 @@ const path = require('path');
 const cloneDeep = require('lodash/cloneDeep');
 const mysql = require('mysql2/promise');
 const slash = require('slash');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { validateModifyServerConfig } = require('../../extras/fxsConfigHelper');
 
 //Helper functions
@@ -15,7 +16,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
  * Handle all the server control actions
  * @param {object} ctx
  */
-module.exports = async function DeployerActions(ctx) {
+export default async function DeployerActions(ctx) {
     //Sanity check
     if (isUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');

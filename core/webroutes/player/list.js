@@ -3,7 +3,8 @@ const modulename = 'WebServer:PlayerList';
 const dateFormat = require('dateformat');
 const humanizeDuration = require('humanize-duration');
 const xss = require('../../extras/xss')();
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -17,7 +18,7 @@ const now = () => { return Math.round(Date.now() / 1000); };
  *
  * @param {object} ctx
  */
-module.exports = async function PlayerList(ctx) {
+export default async function PlayerList(ctx) {
     //Prepare dbo
     const dbo = globals.playerController.getDB();
 

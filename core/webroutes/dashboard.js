@@ -1,13 +1,13 @@
 //Requires
 const modulename = 'WebServer:Dashboard';
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
-
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 /**
  * Returns the output page containing the Dashboard (index)
  * @param {object} ctx
  */
-module.exports = async function Dashboard(ctx) {
+export default async function Dashboard(ctx) {
     // Check if the deployer is running or setup is pending
     if (globals.deployer !== null) {
         return ctx.response.redirect('/deployer');

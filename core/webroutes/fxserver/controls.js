@@ -1,13 +1,14 @@
 //Requires
 const modulename = 'WebServer:FXServerControls';
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**
  * Handle all the server control actions
  * @param {object} ctx
  */
-module.exports = async function FXServerControls(ctx) {
+export default async function FXServerControls(ctx) {
     //Sanity check
     if (typeof ctx.params.action === 'undefined') {
         return ctx.utils.error(400, 'Invalid Request');

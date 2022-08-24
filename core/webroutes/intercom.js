@@ -1,7 +1,8 @@
 //Requires
 const modulename = 'WebServer:Intercom';
 const cloneDeep = require('lodash/cloneDeep');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -11,7 +12,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
  * Intercommunications endpoint
  * @param {object} ctx
  */
-module.exports = async function Intercom(ctx) {
+export default async function Intercom(ctx) {
     //Sanity check
     if (isUndefined(ctx.params.scope)) {
         return ctx.utils.error(400, 'Invalid Request');

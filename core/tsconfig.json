@@ -71,14 +71,12 @@
     "moduleResolution": "node",
 
     /* Specify the base directory to resolve non-relative module names. */
-    // "baseUrl": "./",
+    "baseUrl": "./",
 
-    
     /* Specify a set of entries that re-map imports to additional lookup locations. */
-    /*NOTE: deletar isso depois de remover os globals*/
-    // "paths": {
-    //   "*": ["./node_modules/*", "./src/types/*"]
-    // },      
+    "paths": {
+      "@core/*": ["./*"]
+    },      
                                 
     /* Allow multiple folders to be treated as one when resolving modules. */
     // "rootDirs": [],
@@ -130,7 +128,7 @@
     // "outFile": "../dist.js",
 
     /* Specify an output folder for all emitted files. */
-    "outDir": "../dist_tmpcore",
+    "outDir": "../tmp_core_tsc",
 
     /* Disable emitting comments. */
     // "removeComments": true,

@@ -3,7 +3,8 @@ const modulename = 'Database';
 const fs = require('fs').promises;
 const low = require('lowdb');
 const FileAsync = require('lowdb/adapters/FileAsync');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const idGen = require('./idGenerator.js');
 
 

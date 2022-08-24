@@ -1,7 +1,8 @@
 //Requires
 const modulename = 'StatsCollector';
 const fs = require('fs-extra');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const got = require('../../extras/got');
 const { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } = require('./statsUtils.js');
 // const TimeSeries = require('./timeSeries'); //NOTE: may still use for the player counter
@@ -14,7 +15,7 @@ const getEpoch = (mod, ts = false) => {
 };
 
 
-module.exports = class StatsCollector {
+export default class StatsCollector {
     constructor() {
         // this.playersTimeSeries = new TimeSeries(`${globals.info.serverProfilePath}/data/players.json`, 10, 60*60*24);
         this.hardConfigs = {

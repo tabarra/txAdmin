@@ -1,6 +1,7 @@
 //Requires
 const modulename = 'DiscordBot:cmd:addwl';
-const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 /**
  * Usage options:

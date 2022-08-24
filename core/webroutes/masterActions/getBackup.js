@@ -2,14 +2,15 @@
 const modulename = 'WebServer:MasterActions:GetBackup';
 const fsp = require('fs').promises;
 const dateFormat = require('dateformat');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**
  * Handles the rendering or delivery of master action resources
  * @param {object} ctx
  */
-module.exports = async function MasterActionsGet(ctx) {
+export default async function MasterActionsGet(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
         return ctx.utils.render('main/message', {message: 'Only the master account has permission to view/use this page.'});

@@ -3,11 +3,12 @@ const modulename = 'Logger:Admin';
 const fsp = require('fs').promises;
 const path = require('path');
 const dateFormat = require('dateformat');
-const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { LoggerBase, separator } = require('../loggerUtils');
 
 
-module.exports = class AdminLogger extends LoggerBase {
+export default class AdminLogger extends LoggerBase {
     constructor(basePath, lrProfileConfig) {
         const lrDefaultOptions = {
             path: basePath,

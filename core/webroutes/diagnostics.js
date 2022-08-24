@@ -4,10 +4,12 @@ const os = require('os');
 const bytes = require('bytes');
 const pidusageTree = require('pidusage-tree');
 const humanizeDuration = require('humanize-duration');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const Cache = require('../extras/dataCache');
 const helpers = require('../extras/helpers');
-const got = require('../extras/got');
+import gotInstancer from '@core/extras/got.js';
+const got = gotInstancer();
 
 const cache = new Cache(5);
 
@@ -16,7 +18,7 @@ const cache = new Cache(5);
  * Returns the output page containing the full report
  * @param {object} ctx
  */
-module.exports = async function Diagnostics(ctx) {
+export default async function Diagnostics(ctx) {
     const cachedData = cache.get();
     if (cachedData !== false) {
         cachedData.message = 'This page was cached in the last 5 seconds';

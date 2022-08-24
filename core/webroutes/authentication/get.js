@@ -1,7 +1,8 @@
 //Requires
 const modulename = 'WebServer:AuthGet';
 const chalk = require('chalk');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 //Helper functions
@@ -11,7 +12,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
  * Gets the login page and destroys session if /auth?logout is defined
  * @param {object} ctx
  */
-module.exports = async function AuthGet(ctx) {
+export default async function AuthGet(ctx) {
     //Set template type
     let template;
     if (globals.adminVault.admins === false) {

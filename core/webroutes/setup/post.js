@@ -3,10 +3,12 @@ const modulename = 'WebServer:SetupPost';
 const fs = require('fs-extra');
 const slash = require('slash');
 const path = require('path');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { Deployer, validateTargetPath, parseValidateRecipe } = require('../../extras/deployer');
 const { validateFixServerConfig, findLikelyCFGPath } = require('../../extras/fxsConfigHelper');
-const got = require('../../extras/got');
+import gotInstancer from '@core/extras/got.js';
+const got = gotInstancer();
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -44,7 +46,7 @@ const getPotentialServerDataFolders = (source) => {
  * Handle all the server control actions
  * @param {object} ctx
  */
-module.exports = async function SetupPost(ctx) {
+export default async function SetupPost(ctx) {
     //Sanity check
     if (isUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');
