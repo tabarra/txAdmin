@@ -3,24 +3,24 @@ import path from 'node:path';
 import slash from 'slash';
 
 import logger from '@core/extras/console';
-import { convars, txEnv } from '@core/globalData.js';
+import { txEnv } from '@core/globalData.js';
 
 import { printBanner } from '@core/extras/banner';
-// import setupProfile from '@core/extras/setupProfile';
-// import updateChecker from '@core/extras/updateChecker';
+import setupProfile from '@core/extras/setupProfile';
+import updateChecker from '@core/extras/updateChecker';
 
-// import AdminVault from '@core/components/adminVault';
-// import ConfigVault from '@core/components/configVault';
-// import DiscordBot from '@core/components/discordBot';
-// import DynamicAds from '@core/components/dynamicAds';
-// import FxRunner from '@core/components/fxRunner';
-// import Logger from '@core/components/logger';
-// import Monitor from '@core/components/monitor';
-// import PlayerController from '@core/components/playerController';
-// import ResourcesManager from '@core/components/resourcesManager';
-// import StatsCollector from '@core/components/statsCollector';
-// import Translator from '@core/components/translator';
-// import WebServer from '@core/components/webServer';
+import AdminVault from '@core/components/adminVault';
+import ConfigVault from '@core/components/configVault';
+import DiscordBot from '@core/components/discordBot';
+import DynamicAds from '@core/components/dynamicAds';
+import FxRunner from '@core/components/fxRunner';
+import Logger from '@core/components/logger';
+import Monitor from '@core/components/monitor';
+import PlayerController from '@core/components/playerController';
+import ResourcesManager from '@core/components/resourcesManager';
+import StatsCollector from '@core/components/statsCollector';
+import Translator from '@core/components/translator';
+import WebServer from '@core/components/webServer';
 
 const { dir, log, logOk, logWarn, logError } = logger(`v${txEnv.txAdminVersion}`);
 
@@ -140,16 +140,16 @@ export default class TxAdmin {
         //  - adminVault before webserver
         try {
             globals.adminVault = new AdminVault();
-            globals.discordBot = new DiscordBot(config.discordBot);
-            globals.logger = new Logger(config.logger);
+            globals.discordBot = new DiscordBot(profileConfig.discordBot);
+            globals.logger = new Logger(profileConfig.logger);
             globals.translator = new Translator();
-            globals.fxRunner = new FxRunner(config.fxRunner);
-            globals.dynamicAds = new DynamicAds(config.dynamicAds);
-            globals.monitor = new Monitor(config.monitor);
-            globals.statsCollector = new StatsCollector(config.statsCollector);
-            globals.webServer = new WebServer(config.webServer);
-            globals.playerController = new PlayerController(config.playerController);
-            globals.resourcesManager = new ResourcesManager(config.resourcesManager);
+            globals.fxRunner = new FxRunner(profileConfig.fxRunner);
+            globals.dynamicAds = new DynamicAds(profileConfig.dynamicAds);
+            globals.monitor = new Monitor(profileConfig.monitor);
+            globals.statsCollector = new StatsCollector(profileConfig.statsCollector);
+            globals.webServer = new WebServer(profileConfig.webServer);
+            globals.playerController = new PlayerController(profileConfig.playerController);
+            globals.resourcesManager = new ResourcesManager(profileConfig.resourcesManager);
         } catch (err) {
             HandleFatalError(err, 'Main Components');
         }

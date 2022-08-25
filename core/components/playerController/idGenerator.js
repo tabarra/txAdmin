@@ -1,8 +1,8 @@
 const modulename = 'IDGen';
 import fsp from 'node:fs/promises';
 import humanizeDuration from 'humanize-duration';
-import nanoidSecure from 'nanoid';
-import nanoidNonSecure from 'nanoid/non-secure';
+import * as nanoidSecure from 'nanoid';
+import * as nanoidNonSecure from 'nanoid/non-secure';
 import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 import getOsDistro from '@core/extras/getOsDistro.js';

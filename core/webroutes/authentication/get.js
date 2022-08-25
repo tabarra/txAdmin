@@ -1,5 +1,5 @@
 const modulename = 'WebServer:AuthGet';
-import chalk from 'chalk/index.js';
+import chalk from 'chalk';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

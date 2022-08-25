@@ -3,7 +3,7 @@ import Discord from '@citizenfx/discord.js'
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData.js';
 import commands from './commands';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+const { dir, log, logOk, logWarn, logError, logDebug } = logger(modulename);
 
 //NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
 //FIXME:MARKER_REVIEW

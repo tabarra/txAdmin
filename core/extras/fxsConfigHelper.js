@@ -4,7 +4,7 @@ import isLocalhost from 'is-localhost-ip';
 
 import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+const { dir, log, logOk, logWarn, logError } = logger();
 
 /**
  * Detect the dominant newline character of a string.

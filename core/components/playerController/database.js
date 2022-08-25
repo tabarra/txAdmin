@@ -4,7 +4,7 @@ import low from 'lowdb';
 import FileAsync from 'lowdb/adapters/FileAsync'
 import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData.js';
-import idGen from './idGenerator.js'
+import { genActionID } from './idGenerator.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
@@ -161,7 +161,7 @@ export class Database {
             logWarn(`Actions to fix: ${actionsToFix.length}`);
             for (let i = 0; i < actionsToFix.length; i++) {
                 const action = actionsToFix[i];
-                action.id = await idGen.genActionID(actionIDStore, action.type);
+                action.id = await genActionID(actionIDStore, action.type);
                 actionIDStore.add(action.id);
             }
             await dbo.set('version', 2)

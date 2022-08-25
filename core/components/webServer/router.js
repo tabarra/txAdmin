@@ -1,11 +1,9 @@
-const modulename = 'WebServer:Router';
 import Router from '@koa/router';
 import KoaRateLimit from 'koa-ratelimit';
 
-import logger from '@core/extras/console.js';
-import webRoutes from '../../webroutes';
+import * as webRoutes from '../../webroutes';
 import { requestAuth } from './requestAuthenticator';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+// dir(Object.keys(webRoutes.adminManager_get));
 
 
 /**

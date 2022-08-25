@@ -4,7 +4,7 @@ import bytes from 'bytes';
 import pidusageTree from 'pidusage-tree';
 import humanizeDuration from 'humanize-duration';
 import logger from '@core/extras/console.js';
-import helpers from '@core/extras/helpers';
+import * as helpers from '@core/extras/helpers';
 import Cache from '../extras/dataCache';
 import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';

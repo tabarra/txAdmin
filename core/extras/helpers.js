@@ -50,7 +50,7 @@ export const parseSchedule = (schedule, filter = true) => {
  * Redacts sv_licenseKey, steam_webApiKey and sv_tebexSecret from a string
  * @param {string} src
  */
-export const redactApiKeys(src) => {
+export const redactApiKeys = (src) => {
     if (typeof src !== 'string' || !src.length) return src;
     return src
         .replace(/licenseKey\s+["']?(cfxk_\w{1,60}_\w{1,20}|\w{32})["']?/gi, 'licenseKey [redacted cfx token]')

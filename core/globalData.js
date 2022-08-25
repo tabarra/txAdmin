@@ -200,7 +200,7 @@ if (verboseConvar) dir({ isZapHosting, forceInterface, forceFXServerPort, txAdmi
 /**
  * Exports
  */
-export const txEnv = {
+export const txEnv = Object.freeze({
     osType,
     isWindows,
     fxServerVersion,
@@ -208,9 +208,9 @@ export const txEnv = {
     txAdminResourcePath,
     fxServerPath,
     dataPath
-};
+});
 
-export const convars = {
+export const convars = Object.freeze({
     //Convars - Debug
     isDevMode,
     debugPlayerlistGenerator,
@@ -224,8 +224,7 @@ export const convars = {
     defaultMasterAccount,
     deployerDefaults,
     loopbackInterfaces,
-};
-console.log('global data set');
+});
 
 //Verbosity can change during execution
 //FIXME: move this to console.js

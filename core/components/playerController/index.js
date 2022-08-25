@@ -6,7 +6,7 @@ import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData.js';
 // eslint-disable-next-line no-unused-vars
 import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database.js';
-import idGen from './idGenerator.js';
+import { genWhitelistID } from './idGenerator.js';
 // import PlayerlistGenerator from './playerlistGenerator.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
@@ -320,7 +320,7 @@ export default class PlayerController {
                         pending.tsLastAttempt = now();
                         whitelistID = pending.id;
                     } else {
-                        whitelistID = await idGen.genWhitelistID(this.db.obj);
+                        whitelistID = await genWhitelistID(this.db.obj);
                         const toDB = {
                             id: whitelistID,
                             name: playerName,

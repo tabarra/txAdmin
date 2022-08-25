@@ -9,12 +9,13 @@ import KoaServe from 'koa-static';
 import KoaSession from 'koa-session';
 import KoaSessionMemoryStoreClass from 'koa-session-memory';
 
-import SocketIO from 'socket.io';
+import { Server as SocketIO } from 'socket.io';
+
 import SessionIO from 'koa-session-socketio';
 import WebSocket from './webSocket';
 
 import { customAlphabet } from 'nanoid';
-import dict51 from 'nanoid-dictionary/nolookalikes'
+import dict51 from 'nanoid-dictionary/nolookalikes';
 
 import { setHttpCallback } from '@citizenfx/http-wrapper';
 import { convars, txEnv, verbose } from '@core/globalData.js';
@@ -134,7 +135,7 @@ export default class WebServer {
                     const desc = `Entity too large for: ${reqPath}`;
                     if (verbose) logError(desc, methodName);
                     ctx.status = 413;
-                    ctx.body = {error: desc};
+                    ctx.body = { error: desc };
                 } else if (ctx.state.timeout) {
                     const desc = `${prefix} Route timed out: ${reqPath}`;
                     logError(desc, methodName);
@@ -149,12 +150,12 @@ export default class WebServer {
                     const desc = `${prefix} Invalid JSON for: ${reqPath}`;
                     if (verbose) logError(desc, methodName);
                     ctx.status = 400;
-                    ctx.body = {error: desc};
+                    ctx.body = { error: desc };
                 } else {
                     const desc = `${prefix} Internal Error\n`
-                                + `Message: ${error.message}\n`
-                                + `Route: ${reqPath}\n`
-                                + 'Make sure your txAdmin is updated.';
+                        + `Message: ${error.message}\n`
+                        + `Route: ${reqPath}\n`
+                        + 'Make sure your txAdmin is updated.';
                     logError(desc, methodName);
                     if (verbose) dir(error);
                     ctx.status = 500;
@@ -163,9 +164,9 @@ export default class WebServer {
             }
         });
         //Setting up additional middlewares:
-        this.app.use(KoaServe(path.join(txEnv.txAdminResourcePath, 'web/public'), {index: false, defer: false}));
+        this.app.use(KoaServe(path.join(txEnv.txAdminResourcePath, 'web/public'), { index: false, defer: false }));
         this.app.use(this.sessionInstance);
-        this.app.use(KoaBodyParser({jsonLimit}));
+        this.app.use(KoaBodyParser({ jsonLimit }));
 
         //Setting up routes
         this.router = router(this.config);
@@ -193,7 +194,7 @@ export default class WebServer {
     //================================================================
     setupWebSocket() {
         //Start SocketIO
-        this.io = SocketIO(HttpClass.createServer(), { serveClient: false });
+        this.io = new SocketIO(HttpClass.createServer(), { serveClient: false });
         this.io.use(SessionIO(this.koaSessionKey, this.koaSessionMemoryStore));
         this.io.use(requestAuth('socket'));
 
@@ -225,7 +226,7 @@ export default class WebServer {
             } else {
                 this.koaCallback(req, res);
             }
-        } catch (error) {}
+        } catch (error) { }
     }
 
 
@@ -242,10 +243,10 @@ export default class WebServer {
                 if (validUrlRegex.test(urlConvar)) {
                     // logOk(`Alternative URL: ` + chalk.inverse(` https://${urlConvar}/ `));
                     logOk(`Cfx.re URL: https://${urlConvar}/`);
-                    thgis.cfxUrl = urlConvar;
+                    this.cfxUrl = urlConvar;
                     clearInterval(getUrlInterval);
                 }
-            } catch (error) {}
+            } catch (error) { }
         }, 500);
 
         //CitizenFX Callback
