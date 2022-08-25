@@ -3,11 +3,11 @@ import path from 'node:path';
 import slash from 'slash';
 
 import logger from '@core/extras/console';
-const { dir, log, logOk, logWarn, logError } = logger(`v${GlobalData.txAdminVersion}`);
+import { txEnv } from '@core/globalData.js';
 
 import { printBanner } from '@core/extras/banner';
-import setupProfile from '@core/extras/setupProfile';
-import updateChecker from '@core/extras/updateChecker';
+// import setupProfile from '@core/extras/setupProfile';
+// import updateChecker from '@core/extras/updateChecker';
 
 // import AdminVault from '@core/components/adminVault';
 // import ConfigVault from '@core/components/configVault';
@@ -21,6 +21,8 @@ import updateChecker from '@core/extras/updateChecker';
 // import StatsCollector from '@core/components/statsCollector';
 // import Translator from '@core/components/translator';
 // import WebServer from '@core/components/webServer';
+
+const { dir, log, logOk, logWarn, logError } = logger(`v${txEnv.txAdminVersion}`);
 
 
 //Helpers
@@ -154,7 +156,7 @@ export default class TxAdmin {
         } catch (err) {
             HandleFatalError(err, 'Main Components');
         }
-        
+
         //Once they all finish loading, the function below will print the banner
         printBanner();
 

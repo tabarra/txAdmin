@@ -4,6 +4,7 @@ const path = require('path');
 const cloneDeep = require('lodash/cloneDeep');
 const mysql = require('mysql2/promise');
 const slash = require('slash');
+import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { validateModifyServerConfig } = require('../../extras/fxsConfigHelper');
@@ -88,8 +89,8 @@ async function handleSetVariables(ctx) {
 
     //Validating sv_licenseKey
     if (
-        !GlobalData.regexSvLicenseNew.test(userVars.svLicense)
-        && !GlobalData.regexSvLicenseOld.test(userVars.svLicense)
+        !consts.regexSvLicenseNew.test(userVars.svLicense)
+        && !consts.regexSvLicenseOld.test(userVars.svLicense)
     ) {
         return ctx.send({ type: 'danger', message: 'The Server License does not appear to be valid.' });
     }

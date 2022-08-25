@@ -8,6 +8,7 @@ const open = require('open');
 const YAML = require('js-yaml');
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import getOsDistro from '@core/extras/getOsDistro.js';
 const recipeEngine = require('./recipeEngine');
 
 //Helper functions
@@ -290,8 +291,7 @@ class Deployer {
                     msg += '\nDebug/Status: '
                         + JSON.stringify([
                             GlobalData.txAdminVersion,
-                            GlobalData.osType,
-                            GlobalData.osDistro,
+                            await getOsDistro(),
                             contextVariables.$step
                         ]);
                 }

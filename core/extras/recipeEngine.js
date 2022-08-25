@@ -9,8 +9,7 @@ const StreamZip = require('node-stream-zip');
 const cloneDeep = require('lodash/cloneDeep');
 const escapeRegExp = require('lodash/escapeRegExp');
 const mysql = require('mysql2/promise');
-import gotInstancer from '@core/extras/got.js';
-const got = gotInstancer();
+import got from '@core/extras/got.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

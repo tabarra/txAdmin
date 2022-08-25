@@ -2,6 +2,7 @@
 const modulename = 'PlayerController';
 const humanizeDuration = require('humanize-duration'); //FIXME: remove, this controller is not the right place for interface stuff
 const xss = require('../../extras/xss')(); //FIXME: same as above
+import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 // eslint-disable-next-line no-unused-vars
@@ -260,7 +261,7 @@ export default class PlayerController {
         if (typeof playerName !== 'string') throw new Error('playerName should be an string.');
         if (!Array.isArray(idArray)) throw new Error('Identifiers should be an array.');
         idArray = idArray.filter((id) => {
-            return Object.values(GlobalData.validIdentifiers).some((vf) => vf.test(id));
+            return Object.values(consts.validIdentifiers).some((vf) => vf.test(id));
         });
         if (idArray.length < 1) throw new Error('Identifiers array must contain at least 1 valid identifier.');
 
@@ -375,7 +376,7 @@ export default class PlayerController {
         if (Array.isArray(reference)) {
             if (!reference.length) throw new Error('You must send at least one identifier');
             const invalids = reference.filter((id) => {
-                return (typeof id !== 'string') || !Object.values(GlobalData.validIdentifiers).some((vf) => vf.test(id));
+                return (typeof id !== 'string') || !Object.values(consts.validIdentifiers).some((vf) => vf.test(id));
             });
             if (invalids.length) {
                 throw new Error('Invalid identifiers: ' + invalids.join(', '));
@@ -485,7 +486,7 @@ export default class PlayerController {
             saveReference = [`license:${reference}`];
             const pending = await this.db.obj.get('pendingWL').find(pendingFilter).value();
             if (pending) playerName = pending.name;
-        } else if (GlobalData.regexWhitelistReqID.test(reference)) {
+        } else if (consts.regexWhitelistReqID.test(reference)) {
             pendingFilter = { id: reference };
             const pending = await this.db.obj.get('pendingWL').find(pendingFilter).value();
             if (!pending) throw new Error('Pending ID not found in database');
@@ -700,7 +701,7 @@ export default class PlayerController {
                 if (!activePlayerLicenses.includes(player.license)) {
                     //Filter to only valid identifiers
                     player.identifiers = player.identifiers.filter((id) => {
-                        return Object.values(GlobalData.validIdentifiers).some((vf) => vf.test(id));
+                        return Object.values(consts.validIdentifiers).some((vf) => vf.test(id));
                     });
                     //Check if he is already on the database
                     const dbPlayer = await this.getPlayer(license);

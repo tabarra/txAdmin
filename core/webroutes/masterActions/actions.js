@@ -3,6 +3,7 @@
 const modulename = 'WebServer:MasterActions:Action';
 const fs = require('fs-extra');
 const mysql = require('mysql2/promise');
+import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -11,7 +12,7 @@ const now = () => { return Math.round(Date.now() / 1000); };
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const anyUndefined = (...args) => { return [...args].some((x) => (typeof x === 'undefined')); };
 const filterIdentifiers = (idArr) => idArr.filter((id) => {
-    return (typeof id == 'string') && Object.values(GlobalData.validIdentifiers).some((vf) => vf.test(id));
+    return (typeof id == 'string') && Object.values(consts.validIdentifiers).some((vf) => vf.test(id));
 });
 
 

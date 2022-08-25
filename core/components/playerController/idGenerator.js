@@ -4,8 +4,10 @@ const fs = require('fs').promises;
 const humanizeDuration = require('humanize-duration');
 const nanoidSecure = require('nanoid');
 const nanoidNonSecure = require('nanoid/non-secure');
+import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
+import getOsDistro from '@core/extras/getOsDistro.js';
 
 //Consts
 const maxAttempts = 10;
@@ -31,21 +33,21 @@ const printDiagnostics = async () => {
 
     const secureStorage = new Set();
     for (let i = 0; i < 100; i++) {
-        const randID = nanoidSecure.customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
+        const randID = nanoidSecure.customAlphabet(consts.noLookAlikesAlphabet, 4)();
         if (!secureStorage.has(randID)) secureStorage.add(randID);
     }
 
     const nonsecureStorage = new Set();
     for (let i = 0; i < 100; i++) {
-        const randID = nanoidNonSecure.customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
+        const randID = nanoidNonSecure.customAlphabet(consts.noLookAlikesAlphabet, 4)();
         if (!nonsecureStorage.has(randID)) nonsecureStorage.add(randID);
     }
 
+    const osDistro = await getOsDistro();
     logError(noIdErrorMessage);
     logError(`Uptime: ${uptime}`);
     logError(`Entropy: ${entropy}`);
-    logError(`Distro: ${GlobalData.osDistro}`);
-    logError(`OS Type: ${GlobalData.osType}`);
+    logError(`Distro: ${osDistro}`);
     logError(`txAdmin: ${GlobalData.txAdminVersion}`);
     logError(`FXServer: ${GlobalData.fxServerVersion}`);
     logError(`ZAP: ${GlobalData.isZapHosting}`);
@@ -78,7 +80,7 @@ module.exports.genWhitelistID = async (storage) => {
         attempts++;
         if (attempts > 5) globals.databus.txStatsData.randIDFailures++;
         const randFunc = (attempts <= 5) ? nanoidSecure : nanoidNonSecure;
-        const id = 'R' + randFunc.customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
+        const id = 'R' + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 4)();
         if (await checkUniqueness(storage, id, 'pendingWL')) {
             return id;
         }
@@ -102,9 +104,9 @@ module.exports.genActionID = async (storage, actionType) => {
         if (attempts > 5) globals.databus.txStatsData.randIDFailures++;
         const randFunc = (attempts <= 5) ? nanoidSecure : nanoidNonSecure;
         const id = actionPrefix
-            + randFunc.customAlphabet(GlobalData.noLookAlikesAlphabet, 3)()
+            + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 3)()
             + '-'
-            + randFunc.customAlphabet(GlobalData.noLookAlikesAlphabet, 4)();
+            + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 4)();
         if (await checkUniqueness(storage, id, 'actions')) {
             return id;
         }

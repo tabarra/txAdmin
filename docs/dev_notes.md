@@ -53,7 +53,7 @@ const console = consoleFactory(modulename)
 
 process.exit();
 ```
-
+remover lodash dep e ficar só com lodash-es?
 
 NOTE:
 

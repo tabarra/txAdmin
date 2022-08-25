@@ -3,10 +3,10 @@ const modulename = 'WebServer:AdminManagerActions';
 const { customAlphabet } = require('nanoid');
 const dict51 = require('nanoid-dictionary/nolookalikes');
 const nanoid = customAlphabet(dict51, 20);
+import got from '@core/extras/got.js';
+import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-import gotInstancer from '@core/extras/got.js';
-const got = gotInstancer();
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -91,7 +91,7 @@ async function handleAdd(ctx) {
     let citizenfxData = false;
     if (citizenfxID.length) {
         try {
-            if (GlobalData.validIdentifiers.fivem.test(citizenfxID)) {
+            if (consts.validIdentifiers.fivem.test(citizenfxID)) {
                 const id = citizenfxID.split(':')[1];
                 const res = await got(`https://policy-live.fivem.net/api/getUserInfo/${id}`, {timeout: 6000}).json();
                 if (!res.username || !res.username.length) {
@@ -187,7 +187,7 @@ async function handleEdit(ctx) {
     let citizenfxData = false;
     if (citizenfxID.length) {
         try {
-            if (GlobalData.validIdentifiers.fivem.test(citizenfxID)) {
+            if (consts.validIdentifiers.fivem.test(citizenfxID)) {
                 const id = citizenfxID.split(':')[1];
                 const res = await got(`https://policy-live.fivem.net/api/getUserInfo/${id}`, {timeout: 6000}).json();
                 if (!res.username || !res.username.length) {

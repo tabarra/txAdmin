@@ -3,8 +3,7 @@ const modulename = 'DynamicAds';
 const xss = require('xss');
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-import gotInstancer from '@core/extras/got.js';
-const got = gotInstancer();
+import got from '@core/extras/got.js';
 const defaultAds = require('../../dynamicAds.json');
 
 //Helper

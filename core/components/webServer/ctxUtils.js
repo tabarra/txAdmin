@@ -5,6 +5,7 @@ const ejs = require('ejs');
 const path = require('path');
 const chalk = require('chalk');
 const helpers = require('../../extras/helpers');
+import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -231,7 +232,7 @@ export default async function WebCtxUtils(ctx, next) {
             .find((i) => i.startsWith('ip:'));
         if (typeof ipIdentifier === 'string') {
             const srcIP = ipIdentifier.substr(3);
-            if (GlobalData.regexValidIP.test(srcIP)) {
+            if (consts.regexValidIP.test(srcIP)) {
                 ctx.txVars.realIP = srcIP;
             }
         }

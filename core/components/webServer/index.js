@@ -31,6 +31,7 @@ export default class WebServer {
         this.luaComToken = nanoid();
         this.webSocket = null;
         this.isListening = false;
+        this.cfxUrl = null;
 
         //Generate cookie key
         const pathHash = crypto.createHash('shake256', { outputLength: 6 })
@@ -232,7 +233,6 @@ export default class WebServer {
         this.isListening = false;
 
         //Print cfx.re url... when available
-        //NOTE: perhaps open the URL automatically with the `open` library
         const validUrlRegex = /\.users\.cfx\.re$/i;
         const getUrlInterval = setInterval(() => {
             try {
@@ -240,7 +240,7 @@ export default class WebServer {
                 if (validUrlRegex.test(urlConvar)) {
                     // logOk(`Alternative URL: ` + chalk.inverse(` https://${urlConvar}/ `));
                     logOk(`Cfx.re URL: https://${urlConvar}/`);
-                    GlobalData.cfxUrl = urlConvar;
+                    thgis.cfxUrl = urlConvar;
                     clearInterval(getUrlInterval);
                 }
             } catch (error) {}

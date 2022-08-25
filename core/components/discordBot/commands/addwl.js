@@ -1,5 +1,6 @@
 //Requires
 const modulename = 'DiscordBot:cmd:addwl';
+import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -56,7 +57,7 @@ module.exports = {
 
         //Check input validity
         if (
-            !GlobalData.regexWhitelistReqID.test(reference)
+            !consts.regexWhitelistReqID.test(reference)
             && !/[0-9A-Fa-f]{40}/.test(reference)
         ) {
             return await message.reply('The value inserted is not a valid Whitelist Request ID (R####) nor a license identifier.');

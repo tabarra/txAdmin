@@ -1,8 +1,7 @@
 const modulename = 'WebServer:updateChecker';
 import semver from 'semver';
-import gotInstancer from '@core/extras/got.js';
+import got from '@core/extras/got.js';
 import logger from '@core/extras/console.js';
-const got = gotInstancer();
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers

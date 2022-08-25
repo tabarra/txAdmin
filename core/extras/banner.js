@@ -1,23 +1,11 @@
-import os from 'node:os';
 import boxen from 'boxen';
 import chalk from 'chalk';
 import open from 'open';
 
+import got from '@core/extras/got.js';
+import getOsDistro from '@core/extras/getOsDistro.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger();
-
-import gotInstancer from '@core/extras/got.js';
-const got = gotInstancer();
-import windowsReleaseAsync from '@core/extras/windowsReleaseAsync.js';
-
-// const getTimeout = (timeoutLimit) => {
-//     let timer;
-//     return new Promise((_, reject) => {
-//         timer = setTimeout(() => {
-//             reject(new Error());
-//         }, timeoutLimit);
-//     });
-// }
 
 
 const printMultiline = (lines, color) => {
@@ -30,10 +18,12 @@ const printMultiline = (lines, color) => {
 const getIPs = async () => {
     const reqOptions = {timeout: 2500};
     const allOps = await Promise.allSettled([
+        // op.value.ip
         got('https://ip.seeip.org/json', reqOptions).json(),
         got('https://api.ipify.org/?format=json', reqOptions).json(),
         got('https://api.myip.com', reqOptions).json(),
-        // Promise.reject()
+
+        // op.value.query
         // got(`http://ip-api.com/json/`, reqOptions).json(),
         // got(`https://extreme-ip-lookup.com/json/`, reqOptions).json(),
     ]);
@@ -58,22 +48,10 @@ const getOSMessage = async () => {
         'We recommend renting a server from ' + chalk.inverse(' https://zap-hosting.com/txAdmin ') + '.',
     ];
 
-    if (GlobalData.osType == 'linux') {
-        GlobalData.osDistro = os.release();
-        return serverMessage;
-    } else {
-        try {
-            const distro = await windowsReleaseAsync();
-            GlobalData.osDistro = `Windows ${distro}`;
-            return (distro.toLowerCase().includes('server')) ? serverMessage : winWorkstationMessage;
-        } catch (error) {
-            if (GlobalData.verbose) {
-                logWarn(`Failed to detect windows version with error: ${error.message}`);
-                dir(error);
-            }
-            return serverMessage;
-        }
-    }
+    const distro = await getOsDistro();
+    return (distro && distro.includes('Linux') || distro.includes('Server'))
+     ? serverMessage
+     : winWorkstationMessage;
 };
 
 const awaitHttp = new Promise((resolve, reject) => {

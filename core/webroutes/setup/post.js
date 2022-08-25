@@ -3,12 +3,11 @@ const modulename = 'WebServer:SetupPost';
 const fs = require('fs-extra');
 const slash = require('slash');
 const path = require('path');
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { Deployer, validateTargetPath, parseValidateRecipe } = require('../../extras/deployer');
 const { validateFixServerConfig, findLikelyCFGPath } = require('../../extras/fxsConfigHelper');
-import gotInstancer from '@core/extras/got.js';
-const got = gotInstancer();
+import got from '@core/extras/got.js';
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };

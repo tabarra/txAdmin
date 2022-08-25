@@ -2,10 +2,9 @@
 const modulename = 'WebServer:AdvancedActions';
 const bytes = require('bytes');
 const humanizeDuration = require('humanize-duration');
+import got from '@core/extras/got.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-import gotInstancer from '@core/extras/got.js';
-const got = gotInstancer();
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };

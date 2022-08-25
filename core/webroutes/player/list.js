@@ -3,6 +3,7 @@ const modulename = 'WebServer:PlayerList';
 const dateFormat = require('dateformat');
 const humanizeDuration = require('humanize-duration');
 const xss = require('../../extras/xss')();
+import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -62,7 +63,7 @@ async function handleSearch(ctx, dbo) {
 
     try {
         //Getting valid identifiers
-        const joinedValidIDKeys = Object.keys(GlobalData.validIdentifiers).join('|');
+        const joinedValidIDKeys = Object.keys(consts.validIdentifiers).join('|');
         const idsRegex = new RegExp(`((${joinedValidIDKeys}):\\w+)`, 'g');
         const idsArray = [...searchString.matchAll(idsRegex)]
             .map((x) => x[0])
@@ -100,7 +101,7 @@ async function handleSearch(ctx, dbo) {
 
 
         //IF searching for an acition ID
-        } else if (GlobalData.regexActionID.test(searchString.toUpperCase())) {
+        } else if (consts.regexActionID.test(searchString.toUpperCase())) {
             const action = await dbo.get('actions')
                 .find({id: searchString.toUpperCase()})
                 .cloneDeep()

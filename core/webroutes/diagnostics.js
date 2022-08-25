@@ -8,8 +8,8 @@ import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const Cache = require('../extras/dataCache');
 const helpers = require('../extras/helpers');
-import gotInstancer from '@core/extras/got.js';
-const got = gotInstancer();
+import got from '@core/extras/got.js';
+import getOsDistro from '@core/extras/getOsDistro.js';
 
 const cache = new Cache(5);
 
@@ -171,7 +171,7 @@ async function getHostData() {
         const userInfo = os.userInfo();
         const hostData = {
             nodeVersion: process.version,
-            osDistro: GlobalData.osDistro || GlobalData.osType,
+            osDistro: await getOsDistro(),
             username: `${userInfo.username}`,
             memory: 'not available',
             cpus: 'not available',
@@ -215,7 +215,7 @@ async function gettxAdminData() {
     return {
         //Stats
         uptime: humanizeDuration(process.uptime() * 1000, humanizeOptions),
-        cfxUrl: (GlobalData.cfxUrl) ? `https://${GlobalData.cfxUrl}/` : '--',
+        cfxUrl: (globals.webServer.cfxUrl) ? `https://${globals.webServer.cfxUrl}/` : '--',
         banlistEnabled: controllerConfigs.onJoinCheckBan.toString(),
         whitelistEnabled: controllerConfigs.onJoinCheckWhitelist.toString(),
         httpCounterLog: httpCounter.log.join(', ') || '--',
