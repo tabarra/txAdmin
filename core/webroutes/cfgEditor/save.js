@@ -1,9 +1,7 @@
-//Requires
 const modulename = 'WebServer:CFGEditorSave';
-const fs = require('fs-extra');
 import logger from '@core/extras/console.js';
+import { validateModifyServerConfig } from '@core/extras/fxsConfigHelper';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const { validateModifyServerConfig } = require('../../extras/fxsConfigHelper');
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };

@@ -1,10 +1,10 @@
-//Requires
 const modulename = 'WebSocket';
-const xss = require('../../extras/xss')({ mark: ['class'] });
-import logger from '@core/extras/console.js';
+import xssInstancer from '@core/extras/xss.js';
+import { authLogic } from './requestAuthenticator';
 import { verbose } from '@core/globalData.js';
+import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const { authLogic } = require('./requestAuthenticator');
+const xss = xssInstancer({ mark: ['class'] });
 
 //Helpers
 const getIP = (socket) => {

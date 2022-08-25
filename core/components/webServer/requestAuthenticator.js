@@ -8,7 +8,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  * Returns a session authenticator function
  * @param {string} epType endpoint type
  */
-const requestAuth = (epType) => {
+export const requestAuth = (epType) => {
     //Intercom auth function
     const intercomAuth = async (ctx, next) => {
         if (
@@ -122,7 +122,7 @@ const requestAuth = (epType) => {
  * @param {string} perm
  * @param {string} epType endpoint type
  */
-const authLogic = (sess, perm, epType) => {
+export const authLogic = (sess, perm, epType) => {
     let isValidAuth = false;
     let isValidPerm = false;
     if (
@@ -232,11 +232,4 @@ const nuiAuthLogic = (reqIP, reqHeader) => {
         if (verbose) dir(error);
         return {isValidAuth: false, rejectReason: 'internal error'};
     }
-};
-
-
-//================================================================
-module.exports = {
-    requestAuth,
-    authLogic,
 };

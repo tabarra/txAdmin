@@ -1,6 +1,5 @@
-//Requires
 const modulename = 'WebServer:Intercom';
-const cloneDeep = require('lodash/cloneDeep');
+import { cloneDeep }  from 'lodash-es';
 import logger from '@core/extras/console.js';
 import { convars, txEnv } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);

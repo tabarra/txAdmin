@@ -1,6 +1,5 @@
-//Requires
 const modulename = 'TimeSeries';
-const fs = require('fs-extra');
+import fse from 'fs-extra';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
@@ -29,10 +28,10 @@ export default class TimeSeries {
         //Load previous data
         let rawFile;
         try {
-            rawFile = fs.readFileSync(file, 'utf8');
+            rawFile = fse.readFileSync(file, 'utf8');
         } catch (error) {
             try {
-                fs.writeFileSync(file, '[]');
+                fse.writeFileSync(file, '[]');
                 rawFile = '[]';
             } catch (error) {
                 throw new Error('Unable to create timeseries file.');
@@ -80,7 +79,7 @@ export default class TimeSeries {
         if (this.log.length > this.maxEntries) this.log.shift();
 
         try {
-            await fs.writeFile(this.file, JSON.stringify(this.log));
+            await fse.writeFile(this.file, JSON.stringify(this.log));
         } catch (error) {
             if (verbose) logWarn('Error writing the player history log file.');
         }

@@ -1,6 +1,5 @@
-//Requires
 const modulename = 'WebServer:DeployerStepper';
-const fs = require('fs-extra');
+import fse from 'fs-extra';
 import logger from '@core/extras/console.js';
 import { convars } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
@@ -81,7 +80,7 @@ export default async function DeployerStepper(ctx) {
 # Please make sure everything is correct, or insert here the contents of the ./server.cfg
 # (╯°□°）╯︵ ┻━┻`;
         try {
-            renderData.serverCFG = await fs.readFile(`${globals.deployer.deployPath}/server.cfg`, 'utf8');
+            renderData.serverCFG = await fse.readFile(`${globals.deployer.deployPath}/server.cfg`, 'utf8');
             if (renderData.serverCFG == '#save_attempt_please_ignore' || !renderData.serverCFG.length) {
                 renderData.serverCFG = errorMessage;
             } else if (renderData.serverCFG.length > 10240) { //10kb

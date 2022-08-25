@@ -1,20 +1,19 @@
-//Requires
 const modulename = 'Database';
-const fs = require('fs').promises;
-const low = require('lowdb');
-const FileAsync = require('lowdb/adapters/FileAsync');
+import fsp from 'node:fs/promises';
+import low from 'lowdb';
+import FileAsync from 'lowdb/adapters/FileAsync'
 import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData.js';
+import idGen from './idGenerator.js'
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const idGen = require('./idGenerator.js');
 
 
 //Consts
+export const SAVE_PRIORITY_LOW = 1;
+export const SAVE_PRIORITY_MEDIUM = 2;
+export const SAVE_PRIORITY_HIGH = 3;
 const BACKUP_INTERVAL = 300e3;
 const SAVE_STANDBY = 0;
-const SAVE_PRIORITY_LOW = 1;
-const SAVE_PRIORITY_MEDIUM = 2;
-const SAVE_PRIORITY_HIGH = 3;
 const DATABASE_VERSION = 2;
 const SAVE_TIMES = [300e3, 58e3, 28e3, 13e3];
 // considering a 2 sec skew for the setInterval
@@ -41,7 +40,7 @@ const ldbSerializer = (!convars.isDevMode) ? ldbProdSerializer : undefined;
  * - execute `/usr/bin/time -v node test.js`
  * - do that with variation of updated lowdb and then using a json stream
  */
-class Database {
+export class Database {
     constructor(wipePendingWLOnStart) {
         this.dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
         this.backupPath = `${globals.info.serverProfilePath}/data/playersDB.backup.json`;
@@ -74,7 +73,7 @@ class Database {
         } catch (errorMain) {
             logError('Your txAdmin player/actions database could not be loaded.');
             try {
-                await fs.copyFile(this.backupPath, this.dbPath);
+                await fsp.copyFile(this.backupPath, this.dbPath);
                 const adapterAsync = new FileAsync(this.dbPath, ldbSerializer);
                 dbo = await low(adapterAsync);
                 logWarn('The database file was restored with the automatic backup file.');
@@ -186,7 +185,7 @@ class Database {
      */
     async backupDatabase() {
         try {
-            await fs.copyFile(this.dbPath, this.backupPath);
+            await fsp.copyFile(this.dbPath, this.backupPath);
             if (verbose) logOk('Database file backed up.');
         } catch (error) {
             logError(`Failed to backup database file '${this.dbPath}'`);
@@ -235,12 +234,4 @@ class Database {
             if (verbose) logOk('Skipping DB file save.');
         }
     }
-} //Fim Database()
-
-
-module.exports = {
-    SAVE_PRIORITY_LOW,
-    SAVE_PRIORITY_MEDIUM,
-    SAVE_PRIORITY_HIGH,
-    Database,
-};
+}

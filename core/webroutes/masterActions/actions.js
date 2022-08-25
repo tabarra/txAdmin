@@ -1,8 +1,7 @@
 /* eslint-disable no-unused-vars */
-//Requires
 const modulename = 'WebServer:MasterActions:Action';
-const fs = require('fs-extra');
-const mysql = require('mysql2/promise');
+import fse from 'fs-extra';
+import mysql from 'mysql2/promise';
 import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData.js';
@@ -108,7 +107,7 @@ async function handleImportBansFile(ctx, dbType) {
     //Read bans database file
     let inBans;
     try {
-        const rawFile = await fs.readFile(banFilePath);
+        const rawFile = await fse.readFile(banFilePath);
         inBans = JSON.parse(rawFile);
     } catch (error) {
         return ctx.utils.render('main/message', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});

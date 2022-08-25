@@ -1,10 +1,9 @@
-//Requires
 const modulename = 'WebCtxUtils';
-const fs = require('fs-extra');
-const ejs = require('ejs');
-const path = require('path');
-const chalk = require('chalk');
-const helpers = require('../../extras/helpers');
+import path from 'path';
+import fse from 'fs-extra';
+import ejs from 'ejs';
+import chalk from 'chalk';
+import helpers from '@core/extras/helpers.js';
 import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 import { convars, txEnv, verbose } from '@core/globalData.js';
@@ -65,7 +64,7 @@ function getEjsOptions(filePath) {
 async function loadWebTemplate(name) {
     if (convars.isDevMode || !templateCache.has(name)) {
         try {
-            const rawTemplate = await fs.readFile(getWebViewPath(name), 'utf-8');
+            const rawTemplate = await fse.readFile(getWebViewPath(name), 'utf-8');
             const compiled = ejs.compile(rawTemplate, getEjsOptions(name + '.ejs'));
             templateCache.set(name, compiled);
         } catch (e) {

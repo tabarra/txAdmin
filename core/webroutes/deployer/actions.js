@@ -1,15 +1,14 @@
-//Requires
 const modulename = 'WebServer:DeployerActions';
-const path = require('path');
-const cloneDeep = require('lodash/cloneDeep');
-const mysql = require('mysql2/promise');
-const slash = require('slash');
+import path from 'path';
+import { cloneDeep }  from 'lodash-es';
+import slash from 'slash';
+import mysql from 'mysql2/promise'
 import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 import { txEnv } from '@core/convars.js';
 import { convars } from '@core/globalData.js';
+import { validateModifyServerConfig } from '../../extras/fxsConfigHelper';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const { validateModifyServerConfig } = require('../../extras/fxsConfigHelper');
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };

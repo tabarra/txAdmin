@@ -1,16 +1,15 @@
-//Requires
 const modulename = 'WebServer:Diagnostics';
-const os = require('os');
-const bytes = require('bytes');
-const pidusageTree = require('pidusage-tree');
-const humanizeDuration = require('humanize-duration');
+import os from 'node:os';
+import bytes from 'bytes';
+import pidusageTree from 'pidusage-tree';
+import humanizeDuration from 'humanize-duration';
 import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const Cache = require('../extras/dataCache');
-const helpers = require('../extras/helpers');
+import helpers from '@core/extras/helpers';
+import Cache from '../extras/dataCache';
 import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import { verbose, txEnv } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 const cache = new Cache(5);
 

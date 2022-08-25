@@ -1,10 +1,9 @@
-//Requires
 const modulename = 'DiscordBot:cmd:info';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //TODO: this doesn't make sense if we are not saving ot the db the player identifiers
-module.exports = {
+export default {
     description: 'Prints info about a player',
     cooldown: 5,
     async execute(message, args) {

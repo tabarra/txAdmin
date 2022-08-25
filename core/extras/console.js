@@ -1,7 +1,7 @@
 import util from 'node:util';
 import chalk from 'chalk';
 import colorize from 'json-colorizer';
-import { verbose } from '@core/globalData.js';
+const verbose = false;
 
 const header = 'txAdmin';
 let logHistory = [];

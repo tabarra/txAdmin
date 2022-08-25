@@ -1,15 +1,15 @@
-//Requires
 const modulename = 'PlayerController';
-const humanizeDuration = require('humanize-duration'); //FIXME: remove, this controller is not the right place for interface stuff
-const xss = require('../../extras/xss')(); //FIXME: same as above
+import humanizeDuration from 'humanize-duration'; //FIXME: remove, this controller is not the right place for interface stuff
+import xssInstancer from '@core/extras/xss.js'; //FIXME: same as above
 import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
 // eslint-disable-next-line no-unused-vars
-const { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } = require('./database.js');
-const idGen = require('./idGenerator.js');
-const PlayerlistGenerator = require('./playerlistGenerator.js');
+import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database.js';
+import idGen from './idGenerator.js';
+// import PlayerlistGenerator from './playerlistGenerator.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
+const xss = xssInstancer();
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -332,7 +332,7 @@ export default class PlayerController {
                     this.db.writeFlag(SAVE_PRIORITY_LOW);
 
                     //Clean rejection message
-                    const xssRejectMessage = require('../../extras/xss')({
+                    const xssRejectMessage = xssInstancer({
                         strong: [],
                         id: [],
                     });

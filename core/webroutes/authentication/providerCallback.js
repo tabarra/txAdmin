@@ -1,6 +1,5 @@
-//Requires
 const modulename = 'WebServer:ProviderCallback';
-const crypto = require('crypto');
+import crypto from 'node:crypto';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);

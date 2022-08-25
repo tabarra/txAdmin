@@ -1,8 +1,8 @@
-//Requires
 const modulename = 'WebServer:FXServerCommands';
-const xss = require('../../extras/xss')();
+import xssInstancer from '@core/extras/xss.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
+const xss = xssInstancer();
 
 //Helper functions
 const escape = (x) => {return x.replace(/"/g, '\uff02');};

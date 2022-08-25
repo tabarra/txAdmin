@@ -197,20 +197,10 @@ if (fs.existsSync(zapCfgFile)) {
 if (verboseConvar) dir({ isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults });
 
 
-//Get profile name
-const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, '').trim();
-if (serverProfile.endsWith('.base')) {
-    logDie(`Looks like the folder named '${serverProfile}' is actually a deployed base instead of a profile.`);
-}
-if (!serverProfile.length) {
-    logDie('Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.');
-}
-
-
 /**
  * Exports
  */
-export const txEnv = Object.freeze({
+export const txEnv = {
     osType,
     isWindows,
     fxServerVersion,
@@ -218,9 +208,9 @@ export const txEnv = Object.freeze({
     txAdminResourcePath,
     fxServerPath,
     dataPath
-});
+};
 
-export const convars = Object.freeze({
+export const convars = {
     //Convars - Debug
     isDevMode,
     debugPlayerlistGenerator,
@@ -234,7 +224,8 @@ export const convars = Object.freeze({
     defaultMasterAccount,
     deployerDefaults,
     loopbackInterfaces,
-});
+};
+console.log('global data set');
 
 //Verbosity can change during execution
 //FIXME: move this to console.js

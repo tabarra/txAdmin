@@ -1,10 +1,9 @@
-//Requires
 const modulename = 'WebServer:SettingsGet';
-const cloneDeep = require('lodash/cloneDeep');
+import { cloneDeep }  from 'lodash-es';
 import logger from '@core/extras/console.js';
 import { convars, txEnv } from '@core/globalData.js';
+import { redactApiKeys } from '../../extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);;
-const { redactApiKeys } = require('../../extras/helpers');
 
 
 /**

@@ -1,7 +1,6 @@
-//Requires
 const modulename = 'DynamicAds';
-const xss = require('xss');
-const defaultAds = require('../../dynamicAds.json');
+import xss from 'xss';
+import defaultAds from '../../dynamicAds.json';
 import { verbose } from '@core/globalData.js';
 import logger from '@core/extras/console.js';
 import got from '@core/extras/got.js';

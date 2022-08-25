@@ -1,7 +1,6 @@
-//Requires
 const modulename = 'WebServer:MasterActions:GetBackup';
-const fsp = require('fs').promises;
-const dateFormat = require('dateformat');
+import fsp from 'node:fs/promises';
+import dateFormat from 'dateformat';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

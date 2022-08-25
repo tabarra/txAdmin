@@ -1,13 +1,15 @@
-//Requires
 const modulename = 'DiscordBot';
-const Discord = require('@citizenfx/discord.js');
+import Discord from '@citizenfx/discord.js'
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData.js';
+import commands from './commands';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
+//FIXME:MARKER_REVIEW
+import { URLSearchParams } from 'url';
 if (typeof URLSearchParams === 'undefined') {
-    global.URLSearchParams = require('url').URLSearchParams;
+    global.URLSearchParams = URLSearchParams;
 }
 
 //Helpers
@@ -26,15 +28,15 @@ export default class DiscordBot {
             txadmin: 0,
         };
 
-        //NOTE: setting them up statically due to webpack requirements
+        //NOTE: setting them up statically due to bundler requirements
         this.commands = new Map([
-            ['addwl', require('./commands/addwl.js')],
-            ['help', require('./commands/help.js')],
-            ['status', require('./commands/status.js')],
-            ['txadmin', require('./commands/txadmin.js')],
+            ['addwl', commands.addwl],
+            ['help', commands.help],
+            ['status', commands.status],
+            ['txadmin', commands.txadmin],
 
             //FIXME: first we need to have player ids in the players db
-            // ['info', require('./commands/info.js')],
+            // ['info', commands.info],
         ]);
         this.cooldowns = new Map();
 

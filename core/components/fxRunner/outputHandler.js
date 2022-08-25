@@ -1,4 +1,3 @@
-//Requires
 const modulename = 'OutputHandler';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData.js';

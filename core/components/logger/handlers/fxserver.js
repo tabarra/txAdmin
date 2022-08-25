@@ -1,11 +1,10 @@
-//Requires
 const modulename = 'Logger:FXServer';
-const bytes = require('bytes');
-const chalk = require('chalk');
+import bytes from 'bytes';
+import chalk from 'chalk';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData.js';
+import { LoggerBase, separator } from '../loggerUtils.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const { LoggerBase, separator } = require('../loggerUtils');
 
 
 //NOTE: There used to be a rule "\x0B-\x1F" that was replaced with "x0B-\x1A\x1C-\x1F" to allow the \x1B terminal escape character.

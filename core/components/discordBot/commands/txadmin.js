@@ -1,11 +1,10 @@
-//Requires
 const modulename = 'DiscordBot:cmd:txadmin';
-const { MessageEmbed } = require('@citizenfx/discord.js');
+import { MessageEmbed } from '@citizenfx/discord.js';
 import logger from '@core/extras/console.js';
 import { txEnv } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
-module.exports = {
+export default {
     description: 'Prints the current txAdmin version',
     async execute(message, args) {
         const outMsg = new MessageEmbed({

@@ -1,71 +1,51 @@
-exports.dashboard = require('./dashboard.js');
-exports.diagnostics = require('./diagnostics.js');
-exports.intercom = require('./intercom.js');
-exports.liveConsole = require('./liveConsole.js');
-exports.resources = require('./resources.js');
-exports.status = require('./status.js');
-exports.chartData = require('./chartData.js');
-exports.txAdminLog = require('./txAdminLog.js');
+export * as dashboard from './dashboard.js';
+export * as diagnostics from './diagnostics.js';
+export * as intercom from './intercom.js';
+export * as liveConsole from './liveConsole.js';
+export * as resources from './resources.js';
+export * as status from './status.js';
+export * as chartData from './chartData.js';
+export * as txAdminLog from './txAdminLog.js';
 
-exports.auth = {
-    get: require('./authentication/get'),
-    addMaster: require('./authentication/addMaster'),
-    providerRedirect: require('./authentication/providerRedirect'),
-    providerCallback: require('./authentication/providerCallback'),
-    verifyPassword: require('./authentication/verifyPassword'),
-    changePassword: require('./authentication/changePassword'),
-    nui: require('./authentication/nui'),
-};
+export * as auth_get from './authentication/get';
+export * as auth_addMaster from './authentication/addMaster';
+export * as auth_providerRedirect from './authentication/providerRedirect';
+export * as auth_providerCallback from './authentication/providerCallback';
+export * as auth_verifyPassword from './authentication/verifyPassword';
+export * as auth_changePassword from './authentication/changePassword';
+export * as auth_nui from './authentication/nui';
 
-exports.adminManager = {
-    get: require('./adminManager/get'),
-    actions: require('./adminManager/actions'),
-};
+export * as adminManager_get from './adminManager/get';
+export * as adminManager_actions from './adminManager/actions';
 
-exports.cfgEditor = {
-    get: require('./cfgEditor/get'),
-    save: require('./cfgEditor/save'),
-};
+export * as cfgEditor_get from './cfgEditor/get';
+export * as cfgEditor_save from './cfgEditor/save';
 
-exports.deployer = {
-    stepper: require('./deployer/stepper'),
-    status: require('./deployer/status'),
-    actions: require('./deployer/actions'),
-};
+export * as deployer_stepper from './deployer/stepper';
+export * as deployer_status from './deployer/status';
+export * as deployer_actions from './deployer/actions';
 
-exports.settings = {
-    get: require('./settings/get'),
-    save: require('./settings/save'),
-};
+export * as settings_get from './settings/get';
+export * as settings_save from './settings/save';
 
-exports.masterActions = {
-    get: require('./masterActions/get'),
-    getBackup: require('./masterActions/getBackup'),
-    actions: require('./masterActions/actions'),
-};
+export * as masterActions_get from './masterActions/get';
+export * as masterActions_getBackup from './masterActions/getBackup';
+export * as masterActions_actions from './masterActions/actions';
 
-exports.setup = {
-    get: require('./setup/get'),
-    post: require('./setup/post'),
-};
+export * as setup_get from './setup/get';
+export * as setup_post from './setup/post';
 
-exports.fxserver = {
-    commands: require('./fxserver/commands'),
-    controls: require('./fxserver/controls'),
-    downloadLog: require('./fxserver/downloadLog'),
-};
+export * as fxserver_commands from './fxserver/commands';
+export * as fxserver_controls from './fxserver/controls';
+export * as fxserver_downloadLog from './fxserver/yyyyy';
+
+export * as player_list from './player/list';
+export * as player_modal from './player/modal';
+export * as player_actions from './player/actions';
+
+export * as advanced_get from './advanced/get';
+export * as advanced_actions from './advanced/actions';
 
 //FIXME: reorganizar TODAS rotas de logs, incluindo listagem e download
-exports.serverLog = require('./serverLog.js');
-exports.serverLogPartial = require('./serverLogPartial.js');
-
-exports.player = {
-    list: require('./player/list'),
-    modal: require('./player/modal'),
-    actions: require('./player/actions'),
-};
-
-exports.advanced = {
-    get: require('./advanced/get'),
-    actions: require('./advanced/actions'),
-};
+export * as serverLog from'./serverLog.js';
+export * as serverLogPartial from './serverLogPartial.js';

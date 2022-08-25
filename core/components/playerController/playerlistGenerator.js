@@ -1,6 +1,5 @@
-//Requires
 const modulename = 'PlayerlistGenerator';
-const fs = require('node:fs');
+import fs from 'node:fs';
 import got from 'got'
 import logger from '@core/extras/console.js';
 import { convars } from '@core/globalData.js';
@@ -25,7 +24,6 @@ export default class PlayerlistGenerator {
         //Configs
         const srcPath = './src/components/playerController/playerlist.ignore.json';
         this.config = {
-            // srcPlayerlist: require('./playerlist.ignore.json'),
             srcPlayerlist: JSON.parse(fs.readFileSync(srcPath)),
             // refreshInterval: 2*60*1000,
             refreshInterval: 10 * 1000,

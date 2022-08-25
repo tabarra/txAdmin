@@ -1,11 +1,10 @@
-//Requires
 const modulename = 'Logger';
+import AdminLogger from './handlers/admin';
+import FXServerLogger from './handlers/fxserver';
+import ServerLogger from './handlers/server';
+import { getLogSizes } from './loggerUtils.js'
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const AdminLogger = require('./handlers/admin');
-const FXServerLogger = require('./handlers/fxserver');
-const ServerLogger = require('./handlers/server');
-const { getLogSizes } = require('./loggerUtils');
 
 // NOTE: to turn this into an universal class outside txAdmin() instance
 // when a txAdmin profile starts, it does universal.logger.start(profilename)

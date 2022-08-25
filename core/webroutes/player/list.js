@@ -1,12 +1,12 @@
-//Requires
 const modulename = 'WebServer:PlayerList';
-const dateFormat = require('dateformat');
-const humanizeDuration = require('humanize-duration');
-const xss = require('../../extras/xss')();
+import dateFormat from 'dateformat';
+import humanizeDuration from 'humanize-duration';
+import xssInstancer from '@core/extras/xss.js';
 import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
+const xss = xssInstancer();
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };

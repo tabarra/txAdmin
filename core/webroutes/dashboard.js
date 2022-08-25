@@ -1,4 +1,3 @@
-//Requires
 const modulename = 'WebServer:Dashboard';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);

@@ -1,8 +1,7 @@
-//Requires
 const modulename = 'WebServer:Resources';
-const path = require('path');
-const slash = require('slash');
-const slug = require('slug');
+import path from 'path';
+import slash from 'slash';
+import slug from 'slug';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

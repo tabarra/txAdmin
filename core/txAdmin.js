@@ -110,18 +110,16 @@ export default class TxAdmin {
         globals.info.serverProfile = serverProfile;
 
         //Check if the profile exists and call setup if it doesn't
-        const profilePath = cleanPath(path.join(convars.dataPath, serverProfile));
+        const profilePath = cleanPath(path.join(txEnv.dataPath, serverProfile));
         if (!fs.existsSync(profilePath)) {
             try {
-                setupProfile(txEnv.osType, convars.fxServerPath, txEnv.fxServerVersion, serverProfile, profilePath);
+                setupProfile(txEnv.osType, txEnv.fxServerPath, txEnv.fxServerVersion, serverProfile, profilePath);
             } catch (error) {
                 logError(`Failed to create profile '${serverProfile}' with error: ${error.message}`);
                 process.exit();
             }
         }
         globals.info.serverProfilePath = profilePath;
-
-        return false; //DEBUG
 
         //Load Config Vault
         let profileConfig;

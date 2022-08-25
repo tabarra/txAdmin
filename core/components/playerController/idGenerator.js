@@ -1,14 +1,13 @@
-//Requires
 const modulename = 'IDGen';
-const fs = require('fs').promises;
-const humanizeDuration = require('humanize-duration');
-const nanoidSecure = require('nanoid');
-const nanoidNonSecure = require('nanoid/non-secure');
+import fsp from 'node:fs/promises';
+import humanizeDuration from 'humanize-duration';
+import nanoidSecure from 'nanoid';
+import nanoidNonSecure from 'nanoid/non-secure';
 import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
 import getOsDistro from '@core/extras/getOsDistro.js';
 import { convars, txEnv } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Consts
 const maxAttempts = 10;
@@ -27,7 +26,7 @@ const printDiagnostics = async () => {
     let entropy;
     try {
         uptime = humanizeDuration(process.uptime() * 1000, humanizeOptions);
-        entropy = (await fs.readFile('/proc/sys/kernel/random/entropy_avail', 'utf8')).trim();
+        entropy = (await fsp.readFile('/proc/sys/kernel/random/entropy_avail', 'utf8')).trim();
     } catch (error) {
         entropy = error.message;
     }
@@ -75,7 +74,7 @@ const checkUniqueness = async (storage, id, lowdbTable) => {
  * @param {Set|Object} storage set or lowdb instance
  * @returns {String} id
  */
-module.exports.genWhitelistID = async (storage) => {
+export const genWhitelistID = async (storage) => {
     let attempts = 0;
     while (attempts < maxAttempts) {
         attempts++;
@@ -97,7 +96,7 @@ module.exports.genWhitelistID = async (storage) => {
  * @param {String} actionType [warn, ban, whitelist]
  * @returns {String} id
  */
-module.exports.genActionID = async (storage, actionType) => {
+export const genActionID = async (storage, actionType) => {
     const actionPrefix = ((actionType == 'warn') ? 'a' : actionType[0]).toUpperCase();
     let attempts = 0;
     while (attempts < maxAttempts) {

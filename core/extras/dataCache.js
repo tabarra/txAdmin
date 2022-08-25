@@ -1,5 +1,4 @@
-//Requires
-const cloneDeep = require('lodash/cloneDeep');
+import { cloneDeep }  from 'lodash-es';
 
 export default class Cache {
     constructor(cacheTime) {

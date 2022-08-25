@@ -1,10 +1,9 @@
 /* eslint-disable padded-blocks */
-//Requires
 const modulename = 'Logger:Server';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData.js';
+import { LoggerBase, separator } from '../loggerUtils.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const { LoggerBase, separator } = require('../loggerUtils');
 
 /*
 NOTE: Expected time cap based on log size cap to prevent memory leak

@@ -1,14 +1,13 @@
-//Requires
 const modulename = 'WebServer:AdminManagerActions';
-const { customAlphabet } = require('nanoid');
-const dict51 = require('nanoid-dictionary/nolookalikes');
-const nanoid = customAlphabet(dict51, 20);
+import { customAlphabet } from 'nanoid';
+import dict51 from 'nanoid-dictionary/nolookalikes'
 import got from '@core/extras/got.js';
 import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
+const nanoid = customAlphabet(dict51, 20);
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const citizenfxIDRegex = /^\w[\w.-]{1,18}\w$/;
 const discordIDRegex = /^\d{7,20}$/;

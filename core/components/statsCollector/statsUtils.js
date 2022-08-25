@@ -1,5 +1,5 @@
 //Constants
-const refBuckets = [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10, '+Inf'];
+export const refBuckets = [0.005, 0.01, 0.025, 0.05, 0.075, 0.1, 0.25, 0.5, 0.75, 1, 2.5, 5, 7.5, 10, '+Inf'];
 const perfLineRegex = /tickTime_(count|sum|bucket)\{name="(svSync|svNetwork|svMain)"(,le="(\d+(\.\d+)?|\+Inf)")?\}\s(\S+)/;
 
 
@@ -7,7 +7,7 @@ const perfLineRegex = /tickTime_(count|sum|bucket)\{name="(svSync|svNetwork|svMa
  * Parses the FXServer /perf/ output in the proteus scrape text format
  * @param {string} raw
  */
-const parsePerf = (raw) => {
+export const parsePerf = (raw) => {
     if (typeof raw !== 'string') throw new Error('string expected');
 
     //Vars
@@ -69,7 +69,7 @@ const parsePerf = (raw) => {
  * @param {object} newPerf
  * @param {object} oldPerf
  */
-const diffPerfs = (newPerf, oldPerf = false) => {
+export const diffPerfs = (newPerf, oldPerf = false) => {
     if (oldPerf === false) {
         const zeros = {
             count: 0,
@@ -106,7 +106,7 @@ const diffPerfs = (newPerf, oldPerf = false) => {
  * Validates a perf thread object validity
  * @param {object} threadData
  */
-const validatePerfThreadData = (threadData) => {
+export const validatePerfThreadData = (threadData) => {
     return (
         threadData
         && typeof threadData == 'object'
@@ -123,7 +123,7 @@ const validatePerfThreadData = (threadData) => {
  * Returns true if all data inside performance history file is valid
  * @param {array} perfCache
  */
-const validatePerfCacheData = (perfCache) => {
+export const validatePerfCacheData = (perfCache) => {
     return perfCache.every((s) => {
         return (
             typeof s.ts == 'number'
@@ -137,13 +137,4 @@ const validatePerfCacheData = (perfCache) => {
             && validatePerfThreadData(s.perf.svMain)
         );
     });
-};
-
-
-module.exports = {
-    refBuckets,
-    parsePerf,
-    diffPerfs,
-    validatePerfThreadData,
-    validatePerfCacheData,
 };

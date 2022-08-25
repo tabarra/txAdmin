@@ -1,10 +1,9 @@
-//Requires
 const modulename = 'WebServer:SetupPost';
-const fs = require('fs-extra');
-const slash = require('slash');
-const path = require('path');
-const { Deployer, validateTargetPath, parseValidateRecipe } = require('../../extras/deployer');
-const { validateFixServerConfig, findLikelyCFGPath } = require('../../extras/fxsConfigHelper');
+import path from 'path';
+import fse from 'fs-extra';
+import slash from 'slash';
+import { Deployer, validateTargetPath, parseValidateRecipe } from '@core/extras/deployer';
+import { validateFixServerConfig, findLikelyCFGPath } from '@core/extras/fxsConfigHelper';
 import got from '@core/extras/got.js';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData.js';
@@ -14,7 +13,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 
 const getDirectories = (source) => {
-    return fs.readdirSync(source, { withFileTypes: true })
+    return fse.readdirSync(source, { withFileTypes: true })
         .filter((dirent) => dirent.isDirectory())
         .map((dirent) => dirent.name);
 };
@@ -159,14 +158,14 @@ async function handleValidateLocalDataFolder(ctx) {
     const dataFolderPath = slash(path.normalize(ctx.request.body.dataFolder.trim() + '/'));
 
     try {
-        if (!fs.existsSync(path.join(dataFolderPath, 'resources'))) {
+        if (!fse.existsSync(path.join(dataFolderPath, 'resources'))) {
             const recoveryTemplate = `The path provided is invalid. <br>
                 But it looks like <code>{{attempt}}</code> is correct. <br>
                 Do you want to use it instead?`;
 
             //Recovery if parent folder
             const attemptIsParent = path.join(dataFolderPath, '..');
-            if (fs.existsSync(path.join(attemptIsParent, 'resources'))) {
+            if (fse.existsSync(path.join(attemptIsParent, 'resources'))) {
                 const message = recoveryTemplate.replace('{{attempt}}', attemptIsParent);
                 return ctx.send({success: false, message, suggestion: attemptIsParent});
             }
@@ -181,7 +180,7 @@ async function handleValidateLocalDataFolder(ctx) {
             //Recovery if resources
             if (dataFolderPath.includes('/resources')) {
                 const attemptRes = dataFolderPath.split('/resources')[0];
-                if (fs.existsSync(path.join(attemptRes, 'resources'))) {
+                if (fse.existsSync(path.join(attemptRes, 'resources'))) {
                     const message = recoveryTemplate.replace('{{attempt}}', attemptRes);
                     return ctx.send({success: false, message, suggestion: attemptRes});
                 }
@@ -266,7 +265,7 @@ async function handleSaveLocal(ctx) {
 
     //Validating Base Path
     try {
-        if (!fs.existsSync(path.join(cfg.dataFolder, 'resources'))) {
+        if (!fse.existsSync(path.join(cfg.dataFolder, 'resources'))) {
             throw new Error('Invalid path');
         }
     } catch (error) {

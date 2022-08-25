@@ -1,9 +1,9 @@
-//Requires
 const modulename = 'WebServer:txAdminLog';
-const dateFormat = require('dateformat');
-const xss = require('../extras/xss')();
+import dateFormat from 'dateformat';
+import xssInstancer from '@core/extras/xss.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
+const xss = xssInstancer();
 
 
 /**

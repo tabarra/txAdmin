@@ -1,29 +1,30 @@
-//Requires
 const modulename = 'WebServer';
-const crypto = require('crypto');
-const path = require('path');
-const HttpClass  = require('http');
+import crypto from 'node:crypto';
+import path from 'node:path';
+import HttpClass from 'node:http';
 
-const Koa = require('koa');
-const KoaBodyParser = require('koa-bodyparser');
-const KoaServe = require('koa-static');
-const KoaSession = require('koa-session');
-const KoaSessionMemoryStoreClass = require('koa-session-memory');
+import Koa from 'koa';
+import KoaBodyParser from 'koa-bodyparser';
+import KoaServe from 'koa-static';
+import KoaSession from 'koa-session';
+import KoaSessionMemoryStoreClass from 'koa-session-memory';
 
-const SocketIO = require('socket.io');
-const SessionIO = require('koa-session-socketio');
-const WebSocket = require('./webSocket');
+import SocketIO from 'socket.io';
+import SessionIO from 'koa-session-socketio';
+import WebSocket from './webSocket';
 
-const { customAlphabet } = require('nanoid');
-const dict51 = require('nanoid-dictionary/nolookalikes');
-const nanoid = customAlphabet(dict51, 20);
+import { customAlphabet } from 'nanoid';
+import dict51 from 'nanoid-dictionary/nolookalikes'
 
-const { setHttpCallback } = require('@citizenfx/http-wrapper');
-import logger from '@core/extras/console.js';
+import { setHttpCallback } from '@citizenfx/http-wrapper';
 import { convars, txEnv, verbose } from '@core/globalData.js';
+import { requestAuth } from './requestAuthenticator.js';
+import WebCtxUtils from './ctxUtils.js';
+import router from './router';
+import logger from '@core/extras/console.js';
+
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const {requestAuth} = require('./requestAuthenticator');
-const ctxUtils = require('./ctxUtils.js');
+const nanoid = customAlphabet(dict51, 20);
 
 
 export default class WebServer {
@@ -77,7 +78,7 @@ export default class WebServer {
 
 
         //Setting up app
-        this.app.use(ctxUtils);
+        this.app.use(WebCtxUtils);
         this.app.on('error', (error, ctx) => {
             if (
                 typeof error.code == 'string'
@@ -167,7 +168,7 @@ export default class WebServer {
         this.app.use(KoaBodyParser({jsonLimit}));
 
         //Setting up routes
-        this.router = require('./router')(this.config);
+        this.router = router(this.config);
         this.app.use(this.router.routes());
         this.app.use(this.router.allowedMethods());
         this.app.use(async (ctx) => {
@@ -209,7 +210,7 @@ export default class WebServer {
 
     //================================================================
     httpCallbackHandler(source, req, res) {
-        //NOTE: setting the webpipe real ip is being done in ctxUtils
+        //NOTE: setting the webpipe real ip is being done in WebCtxUtils
         //Rewrite source IP if it comes from nucleus reverse proxy
         const ipsrcRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}:\d{1,5}$/;
         if (source == 'citizenfx' && ipsrcRegex.test(req.headers['x-cfx-source-ip'])) {

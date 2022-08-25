@@ -1,6 +1,6 @@
-const fsp = require('node:fs/promises');
-const path = require('node:path');
-const isLocalhost = require('is-localhost-ip');
+import fsp from 'node:fs/promises';
+import path from 'node:path';
+import isLocalhost from 'is-localhost-ip';
 
 import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData.js';
@@ -121,7 +121,7 @@ class FilesInfoList {
  * Returns the first likely server.cfg given a server data path, or false
  * @param {string} serverDataPath
  */
-function findLikelyCFGPath(serverDataPath) {
+export const findLikelyCFGPath = (serverDataPath) => {
     const attempts = [
         'server.cfg',
         'server.cfg.txt',
@@ -149,7 +149,7 @@ function findLikelyCFGPath(serverDataPath) {
  * @param {string} serverDataPath
  * @returns {string} cfg file absolute path
  */
-const resolveCFGFilePath = (cfgPath, serverDataPath) => {
+export const resolveCFGFilePath = (cfgPath, serverDataPath) => {
     return (path.isAbsolute(cfgPath)) ? path.normalize(cfgPath) : path.resolve(serverDataPath, cfgPath);
 };
 
@@ -161,7 +161,7 @@ const resolveCFGFilePath = (cfgPath, serverDataPath) => {
  * @param {string} cfgFullPath
  * @returns {string} raw cfg file
  */
-const readRawCFGFile = async (cfgPath) => {
+export const readRawCFGFile = async (cfgPath) => {
     //Validating if the path is absolute
     if (!path.isAbsolute(cfgPath)) {
         throw new Error('File path must be absolute.');
@@ -194,7 +194,7 @@ const readRawCFGFile = async (cfgPath) => {
  * @param {string} input
  * @returns {array} array of commands
  */
-const readLineCommands = (input) => {
+export const readLineCommands = (input) => {
     let inQuote = false;
     let inEscape = false;
     const prevCommands = [];
@@ -263,7 +263,7 @@ const readLineCommands = (input) => {
     return prevCommands;
 };
 //NOTE: tests for the parser above
-// const chalk = require('chalk');
+// import chalk from 'chalk';
 // const testCommands = [
 //     ' \x1B ONE_ARG_WITH_SPACE "part1 part2"',
 //     'TWO_ARGS arg1 arg2',
@@ -301,7 +301,7 @@ const readLineCommands = (input) => {
  * @param {array} stack
  * @returns {object} recursive cfg structure
  */
-const parseRecursiveConfig = async (cfgInputString, cfgAbsolutePath, serverDataPath, stack) => {
+export const parseRecursiveConfig = async (cfgInputString, cfgAbsolutePath, serverDataPath, stack) => {
     if (typeof cfgInputString !== 'string' && cfgInputString !== null) {
         throw new Error('cfgInputString expected to be string or null');
     }
@@ -530,7 +530,7 @@ const getConnectEndpoint = (endpoints) => {
  * @param {string} serverDataPath
  * @returns {object} recursive cfg structure
  */
-const validateFixServerConfig = async (cfgPath, serverDataPath) => {
+export const validateFixServerConfig = async (cfgPath, serverDataPath) => {
     //Parsing fxserver config & going through each command
     const cfgAbsolutePath = resolveCFGFilePath(cfgPath, serverDataPath);
     const parsedCommands = await parseRecursiveConfig(null, cfgAbsolutePath, serverDataPath);
@@ -596,7 +596,7 @@ const validateFixServerConfig = async (cfgPath, serverDataPath) => {
  * @param {string} serverDataPath
  * @returns {object} recursive cfg structure
  */
-const validateModifyServerConfig = async (cfgInputString, cfgPath, serverDataPath) => {
+export const validateModifyServerConfig = async (cfgInputString, cfgPath, serverDataPath) => {
     if (typeof cfgInputString !== 'string') {
         throw new Error('cfgInputString expected to be string.');
     }
@@ -645,17 +645,6 @@ const validateModifyServerConfig = async (cfgInputString, cfgPath, serverDataPat
     cfgEditor CFGEditorSave:    validate string, save
     deployer handleSaveConfig:  validate string, save *
 */
-
-
-module.exports = {
-    findLikelyCFGPath,
-    resolveCFGFilePath,
-    readRawCFGFile,
-    readLineCommands,
-    parseRecursiveConfig,
-    validateFixServerConfig,
-    validateModifyServerConfig,
-};
 
 /*
 

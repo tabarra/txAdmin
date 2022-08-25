@@ -1,9 +1,9 @@
-//Requires
 const modulename = 'WebServer:PlayerActions';
-const humanizeDuration = require('humanize-duration');
-const xss = require('../../extras/xss')();
+import humanizeDuration from 'humanize-duration';
+import xssInstancer from '@core/extras/xss.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
+const xss = xssInstancer();
 
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000); };

@@ -1,14 +1,10 @@
-//Requires
-const fs = require('fs');
-
-
 /**
  * txAdmin in ASCII
  */
 let __ascii;
-function txAdminASCII() {
+export const txAdminASCII = () => {
     //NOTE: precalculating the ascii art for efficiency
-    // const figlet = require('figlet');
+    // import figlet from 'figlet';
     // let ascii = figlet.textSync('txAdmin');
     // let b64 = Buffer.from(ascii).toString('base64');
     // console.log(b64);
@@ -28,7 +24,7 @@ function txAdminASCII() {
  * @param {string} schedule
  * @param {boolean} filter default true
  */
-function parseSchedule(schedule, filter = true) {
+export const parseSchedule = (schedule, filter = true) => {
     const times = (typeof schedule === 'string') ? schedule.split(',') : schedule;
     let out = [];
     times.forEach((time) => {
@@ -54,17 +50,10 @@ function parseSchedule(schedule, filter = true) {
  * Redacts sv_licenseKey, steam_webApiKey and sv_tebexSecret from a string
  * @param {string} src
  */
-function redactApiKeys(src) {
+export const redactApiKeys(src) => {
     if (typeof src !== 'string' || !src.length) return src;
     return src
         .replace(/licenseKey\s+["']?(cfxk_\w{1,60}_\w{1,20}|\w{32})["']?/gi, 'licenseKey [redacted cfx token]')
         .replace(/steam_webApiKey\s+["']?\w{32}["']?/gi, 'steam_webApiKey [redacted steam token]')
         .replace(/sv_tebexSecret\s+["']?\w{40}["']?/gi, 'sv_tebexSecret [redacted tebex token]');
 }
-
-
-module.exports = {
-    txAdminASCII,
-    parseSchedule,
-    redactApiKeys,
-};

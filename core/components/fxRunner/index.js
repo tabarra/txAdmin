@@ -1,24 +1,24 @@
-//Requires
 const modulename = 'FXRunner';
-const { spawn } = require('child_process');
-const path = require('path');
-const chalk = require('chalk');
-const sleep = require('util').promisify((a, f) => setTimeout(f, a));
-const { parseArgsStringToArgv } = require('string-argv');
-const StreamValues = require('stream-json/streamers/StreamValues');
+import { spawn } from 'child_process';
+import path from 'path';
+import chalk from 'chalk';
+import { promisify } from 'util';
+import { parseArgsStringToArgv } from 'string-argv';
+import StreamValues from 'stream-json/streamers/StreamValues';
 
 import logger from '@core/extras/console.js';
 import { convars, txEnv, verbose } from '@core/globalData.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const { validateFixServerConfig } = require('../../extras/fxsConfigHelper');
-const OutputHandler = require('./outputHandler');
+import { validateFixServerConfig } from '@core/extras/fxsConfigHelper';
+import OutputHandler from './outputHandler';
 
-const { customAlphabet } = require('nanoid/non-secure');
-const dict51 = require('nanoid-dictionary/nolookalikes');
+import { customAlphabet } from 'nanoid/non-secure';
+import dict51 from 'nanoid-dictionary/nolookalikes';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const genMutex = customAlphabet(dict51, 5);
 
 
 //Helpers
+const sleep = promisify((a, f) => setTimeout(f, a));
 const now = () => { return Math.round(Date.now() / 1000); };
 const escape = (x) => { return x.toString().replace(/"/g, '\uff02'); };
 const formatCommand = (cmd, ...params) => {

@@ -1,15 +1,22 @@
 import TxAdmin from './txAdmin';
 import logger from '@core/extras/console';
-import { txEnv, convars } from './globalData.js';
+import { txEnv } from './globalData.js';
 const { dir, log, logOk, logWarn, logError, setTTYTitle } = logger();
-
 
 
 /**
  * Starting txAdmin (have fun :p)
  */
-setTTYTitle(txEnv.txAdminVersion, convars.serverProfile);
-new TxAdmin(convars.serverProfile);
+const serverProfile = GetConvar('serverProfile', 'default').replace(/[^a-z0-9._-]/gi, '').trim();
+if (serverProfile.endsWith('.base')) {
+    logDie(`Looks like the folder named '${serverProfile}' is actually a deployed base instead of a profile.`);
+}
+if (!serverProfile.length) {
+    logDie('Invalid server profile name. Are you using Google Translator on the instructions page? Make sure there are no additional spaces in your command.');
+}
+
+setTTYTitle(txEnv.txAdminVersion, serverProfile);
+new TxAdmin(serverProfile);
 // (async () => {
 //     const { default: TxAdmin } = await import('./txAdmin');
 // })();

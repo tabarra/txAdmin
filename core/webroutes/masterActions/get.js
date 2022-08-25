@@ -1,6 +1,5 @@
-//Requires
 const modulename = 'WebServer:MasterActions:Get';
-const path = require('path');
+import path from 'path';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

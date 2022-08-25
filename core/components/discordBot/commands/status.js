@@ -1,12 +1,11 @@
-//Requires
 const modulename = 'DiscordBot:cmd:status';
-const humanizeDuration = require('humanize-duration');
-const { MessageEmbed } = require('@citizenfx/discord.js');
+import humanizeDuration from 'humanize-duration';
+import { MessageEmbed } from '@citizenfx/discord.js';
 import logger from '@core/extras/console.js';
 import { txEnv } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
-module.exports = {
+export default {
     description: 'Prints the server status',
     cooldown: 60,
     async execute(message, args) {

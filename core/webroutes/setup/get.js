@@ -1,10 +1,9 @@
-//Requires
 const modulename = 'WebServer:SetupGet';
-const path = require('path');
+import path from 'path';
 import logger from '@core/extras/console.js';
 import { convars, txEnv } from '@core/globalData.js';
+import { engineVersion } from '../../extras/deployer';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const { engineVersion } = require('../../extras/deployer');
 
 /**
  * Returns the output page containing the live console

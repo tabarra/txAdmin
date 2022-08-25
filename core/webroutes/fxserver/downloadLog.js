@@ -1,6 +1,5 @@
-//Requires
 const modulename = 'WebServer:FXServerDownloadLog';
-const fs = require('fs');
+import fs from 'node:fs';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

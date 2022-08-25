@@ -1,7 +1,6 @@
-//Requires
 const modulename = 'WebServer:AdvancedActions';
-const bytes = require('bytes');
-const humanizeDuration = require('humanize-duration');
+import bytes from 'bytes';
+import humanizeDuration from 'humanize-duration';
 import got from '@core/extras/got.js';
 import logger from '@core/extras/console.js';
 import { setVerbose } from '@core/globalData.js';

@@ -1,12 +1,11 @@
-//Requires
 const modulename = 'WebServer:SettingsSave';
-const fsp = require('fs/promises');
-const slash = require('slash');
-const path = require('path');
+import fsp from 'node:fs/promises';
+import path from 'node:path';
+import slash from 'slash';
 import logger from '@core/extras/console.js';
+import { parseSchedule } from '@core/extras/helpers';
+import { resolveCFGFilePath } from '@core/extras/fxsConfigHelper';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const { parseSchedule } = require('../../extras/helpers');
-const { resolveCFGFilePath } = require('../../extras/fxsConfigHelper');
 
 
 //Helper functions

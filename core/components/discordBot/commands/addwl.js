@@ -1,4 +1,3 @@
-//Requires
 const modulename = 'DiscordBot:cmd:addwl';
 import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
@@ -10,7 +9,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  *  /addwl <license>
  *  /addwl <mention> ???
  */
-module.exports = {
+export default {
     description: 'Adds a players to the whitelist',
     cooldown: 5,
     async execute(message, args) {

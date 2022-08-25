@@ -1,7 +1,6 @@
-//Requires
 const modulename = 'ConfigVault';
-const fs = require('fs');
-const cloneDeep = require('lodash/cloneDeep');
+import fs from 'node:fs';
+import { cloneDeep }  from 'lodash-es';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);

@@ -1,12 +1,11 @@
-//Requires
 const modulename = 'StatsCollector';
-const fs = require('fs-extra');
+import fse from 'fs-extra';
 import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData.js';
+import { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } from './statsUtils.js'
+import got from '@core/extras/got.js';
+// import TimeSeries from './timeSeries.js'; //NOTE: may still use for the player counter
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-const got = require('../../extras/got');
-const { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } = require('./statsUtils.js');
-// const TimeSeries = require('./timeSeries'); //NOTE: may still use for the player counter
 
 //Helper functions
 const getEpoch = (mod, ts = false) => {
@@ -54,12 +53,12 @@ export default class StatsCollector {
     async loadPerformanceHistory() {
         let rawFile = null;
         try {
-            rawFile = await fs.readFile(this.hardConfigs.heatmapDataFile, 'utf8');
+            rawFile = await fse.readFile(this.hardConfigs.heatmapDataFile, 'utf8');
         } catch (error) {}
 
         const setFile = async () => {
             try {
-                await fs.writeFile(this.hardConfigs.heatmapDataFile, '[]');
+                await fse.writeFile(this.hardConfigs.heatmapDataFile, '[]');
                 this.perfSeries = [];
             } catch (error) {
                 logError(`Unable to create stats_heatmapData_v1 with error: ${error.message}`);
@@ -183,7 +182,7 @@ export default class StatsCollector {
         //Push to cache and save it
         this.perfSeries.push(currSnapshot);
         try {
-            await fs.outputJSON(this.hardConfigs.heatmapDataFile, this.perfSeries);
+            await fse.outputJSON(this.hardConfigs.heatmapDataFile, this.perfSeries);
             if (verbose) {
                 logOk(`Collected performance snapshot #${this.perfSeries.length}`);
             }
