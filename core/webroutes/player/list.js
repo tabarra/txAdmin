@@ -5,6 +5,7 @@ const humanizeDuration = require('humanize-duration');
 const xss = require('../../extras/xss')();
 import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
@@ -143,7 +144,7 @@ async function handleSearch(ctx, dbo) {
         //Give output
         return ctx.send(outData);
     } catch (error) {
-        if (GlobalData.verbose) {
+        if (verbose) {
             logError(`handleSearch failed with error: ${error.message}`);
             dir(error);
         }
@@ -252,7 +253,7 @@ async function getStats(dbo) {
         };
     } catch (error) {
         const msg = `getStats failed with error: ${error.message}`;
-        if (GlobalData.verbose) logError(msg);
+        if (verbose) logError(msg);
         return [];
     }
 }
@@ -295,7 +296,7 @@ async function getPendingWL(dbo, limit) {
         return lastWhitelistBlocks;
     } catch (error) {
         const msg = `getPendingWL failed with error: ${error.message}`;
-        if (GlobalData.verbose) logError(msg);
+        if (verbose) logError(msg);
         return [];
     }
 }
@@ -318,7 +319,7 @@ async function getLastActions(dbo, limit) {
         return await processActionList(lastActions);
     } catch (error) {
         const msg = `getLastActions failed with error: ${error.message}`;
-        if (GlobalData.verbose) logError(msg);
+        if (verbose) logError(msg);
         return [];
     }
 }
@@ -341,7 +342,7 @@ async function getLastPlayers(dbo, limit) {
         return await processPlayerList(lastPlayers);
     } catch (error) {
         const msg = `getLastPlayers failed with error: ${error.message}`;
-        if (GlobalData.verbose) logError(msg);
+        if (verbose) logError(msg);
         return [];
     }
 }

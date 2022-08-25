@@ -6,6 +6,8 @@ const mysql = require('mysql2/promise');
 const slash = require('slash');
 import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
+import { txEnv } from '@core/convars.js';
+import { convars } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { validateModifyServerConfig } = require('../../extras/fxsConfigHelper');
 
@@ -115,7 +117,7 @@ async function handleSetVariables(ctx) {
         } catch (error) {
             const msgHeader = `<b>Database connection failed:</b> ${error.message}`;
             if (error.code == 'ECONNREFUSED') {
-                let specificError = (GlobalData.osType === 'windows')
+                let specificError = (txEnv.isWindows)
                     ? 'If you do not have a database installed, you can download and run XAMPP.'
                     : 'If you do not have a database installed, you must download and run MySQL or MariaDB.';
                 if (userVars.dbPort !== 3306) {
@@ -138,12 +140,12 @@ async function handleSetVariables(ctx) {
     }
 
     //Max Clients & Server Endpoints
-    userVars.maxClients = (GlobalData.deployerDefaults && GlobalData.deployerDefaults.maxClients) ? GlobalData.deployerDefaults.maxClients : 48;
-    if (GlobalData.forceInterface) {
+    userVars.maxClients = (convars.deployerDefaults && convars.deployerDefaults.maxClients) ? convars.deployerDefaults.maxClients : 48;
+    if (convars.forceInterface) {
         const suffix = '# zap-hosting: do not modify!';
         userVars.serverEndpoints = [
-            `endpoint_add_tcp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}" ${suffix}`,
-            `endpoint_add_udp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}" ${suffix}`,
+            `endpoint_add_tcp "${convars.forceInterface}:${convars.forceFXServerPort}" ${suffix}`,
+            `endpoint_add_udp "${convars.forceInterface}:${convars.forceFXServerPort}" ${suffix}`,
         ].join('\n');
     } else {
         userVars.serverEndpoints = [

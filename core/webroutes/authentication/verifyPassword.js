@@ -1,6 +1,7 @@
 //Requires
 const modulename = 'WebServer:AuthVerify';
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -48,7 +49,7 @@ export default async function AuthVerify(ctx) {
         globals.databus.txStatsData.login.methods.password++;
     } catch (error) {
         logWarn(`Failed to authenticate ${ctx.request.body.username} with error: ${error.message}`);
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         renderData.message = 'Error autenticating admin.';
         return ctx.utils.render('login', renderData);
     }

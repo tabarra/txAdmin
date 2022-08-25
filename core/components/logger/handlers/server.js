@@ -2,6 +2,7 @@
 //Requires
 const modulename = 'Logger:Server';
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { LoggerBase, separator } = require('../loggerUtils');
 
@@ -63,7 +64,7 @@ export default class ServerLogger extends LoggerBase {
         this.lrStream.write(`\n${separator('txAdmin Starting')}\n`);
         this.lrStream.on('rotated', (filename) => {
             this.lrStream.write(`\n${separator('Log Rotated')}\n`);
-            if (GlobalData.verbose) log(`Rotated file ${filename}`);
+            if (verbose) log(`Rotated file ${filename}`);
         });
 
         this.recentBuffer = [];
@@ -102,7 +103,7 @@ export default class ServerLogger extends LoggerBase {
      */
     write(mutex, data) {
         if (!Array.isArray(data)) {
-            if (GlobalData.verbose) logWarn(`write() expected array, got ${typeof data}`);
+            if (verbose) logWarn(`write() expected array, got ${typeof data}`);
             return false;
         }
 
@@ -113,7 +114,7 @@ export default class ServerLogger extends LoggerBase {
                 const {eventObject, eventString} = this.processEvent(mutex, data[i]);
                 // dir({eventObject, eventString});
                 if (!eventObject || !eventString) {
-                    if (GlobalData.verbose) {
+                    if (verbose) {
                         logWarn('Failed to parse event:');
                         dir(data[i]);
                     }
@@ -130,7 +131,7 @@ export default class ServerLogger extends LoggerBase {
                 //Write to file
                 this.lrStream.write(`${eventString}\n`);
             } catch (error) {
-                if (GlobalData.verbose) {
+                if (verbose) {
                     logError('Error processing FD3 txAdminLogData:');
                     dir(error);
                 }
@@ -173,7 +174,7 @@ export default class ServerLogger extends LoggerBase {
                         srcObject = {id: false, name: 'UNKNOWN PLAYER'};
                         srcString = 'UNKNOWN PLAYER';
                         eventMessage = 'joined with unknown identifiers.';
-                        if (GlobalData.verbose) {
+                        if (verbose) {
                             logWarn('playerJoining: Unknown numeric event source from object:');
                             dir(eventData);
                         }
@@ -181,7 +182,7 @@ export default class ServerLogger extends LoggerBase {
                 } else {
                     srcObject = {id: false, name: 'UNKNOWN PLAYER'};
                     srcString = 'UNKNOWN PLAYER';
-                    if (GlobalData.verbose) {
+                    if (verbose) {
                         logWarn('Unknown numeric event source from object:');
                         dir(eventData);
                     }
@@ -241,7 +242,7 @@ export default class ServerLogger extends LoggerBase {
                 : 'did unknown action';
 
         } else if (eventData.type !== 'playerJoining') {
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logWarn(`Unrecognized event: ${eventData.type}`);
                 dir(eventData);
             }

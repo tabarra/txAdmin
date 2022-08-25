@@ -127,7 +127,7 @@ if (nonASCIIRegex.test(fxServerPath) || nonASCIIRegex.test(dataPath)) {
  * Convars - Debug
  */
 const isDevMode = getConvarBool('txAdminDevMode');
-const verbose = getConvarBool('txAdminVerbose');
+const verboseConvar = getConvarBool('txAdminVerbose');
 const debugPlayerlistGenerator = getConvarBool('txDebugPlayerlistGenerator');
 const debugExternalSource = getConvarString('txDebugExternalSource');
 
@@ -194,7 +194,7 @@ if (fs.existsSync(zapCfgFile)) {
         forceInterface = txAdminInterfaceConvar;
     }
 }
-if (verbose) dir({ isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults });
+if (verboseConvar) dir({ isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults });
 
 
 //Get profile name
@@ -207,8 +207,10 @@ if (!serverProfile.length) {
 }
 
 
-
-export const txEnv = {
+/**
+ * Exports
+ */
+export const txEnv = Object.freeze({
     osType,
     isWindows,
     fxServerVersion,
@@ -216,12 +218,11 @@ export const txEnv = {
     txAdminResourcePath,
     fxServerPath,
     dataPath
-};
+});
 
-export const convars = {
+export const convars = Object.freeze({
     //Convars - Debug
     isDevMode,
-    verbose,
     debugPlayerlistGenerator,
     debugExternalSource,
     //Convars - zap dependant
@@ -233,4 +234,11 @@ export const convars = {
     defaultMasterAccount,
     deployerDefaults,
     loopbackInterfaces,
-};
+});
+
+//Verbosity can change during execution
+//FIXME: move this to console.js
+export let verbose = verboseConvar;
+export const setVerbose = (state) => {
+    verbose = !!state;
+}

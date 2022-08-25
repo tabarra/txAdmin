@@ -2,6 +2,7 @@
 const modulename = 'WebServer:ProviderCallback';
 const crypto = require('crypto');
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -83,7 +84,7 @@ export default async function ProviderCallback(ctx) {
     try {
         userInfo = await globals.adminVault.providers.citizenfx.getUserInfo(tokenSet.access_token);
     } catch (error) {
-        if (GlobalData.verbose) logError(`Get UserInfo error: ${error.message}`);
+        if (verbose) logError(`Get UserInfo error: ${error.message}`);
         return returnJustMessage(ctx, 'Get UserInfo error:', error.message);
     }
 
@@ -125,7 +126,7 @@ export default async function ProviderCallback(ctx) {
         return ctx.response.redirect('/');
     } catch (error) {
         ctx.session.auth = {};
-        if (GlobalData.verbose) logError(`Failed to login: ${error.message}`);
+        if (verbose) logError(`Failed to login: ${error.message}`);
         return returnJustMessage(ctx, 'Failed to login:', error.message);
     }
 };

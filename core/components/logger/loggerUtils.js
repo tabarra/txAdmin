@@ -7,6 +7,7 @@ const dateFormat = require('dateformat');
 const rfs = require('rotating-file-stream');
 const { defaultsDeep, cloneDeep } = require('lodash');
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
@@ -85,7 +86,7 @@ module.exports.LoggerBase = class LoggerBase {
         this.lrStream = rfs.createStream(filenameGenerator, lrOptions);
         this.lrStream.on('error', (error) => {
             if (error.code !== 'ERR_STREAM_DESTROYED') {
-                if (GlobalData.verbose) logError(error, logName);
+                if (verbose) logError(error, logName);
                 this.lrErrors++;
                 this.lrLastError = error.message;
             }

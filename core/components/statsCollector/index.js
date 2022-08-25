@@ -2,6 +2,7 @@
 const modulename = 'StatsCollector';
 const fs = require('fs-extra');
 import logger from '@core/extras/console.js';
+import { convars, verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const got = require('../../extras/got');
 const { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } = require('./statsUtils.js');
@@ -37,7 +38,7 @@ export default class StatsCollector {
             try {
                 await this.collectPerformance();
             } catch (error) {
-                if (GlobalData.verbose) {
+                if (verbose) {
                     logError('Error while collecting fxserver performance data');
                     dir(error);
                 }
@@ -138,12 +139,12 @@ export default class StatsCollector {
             && getEpoch(cfg.resolution, lastSnap.ts) == getEpoch(cfg.resolution)
             && now - lastSnap.ts < cfg.resolution * 60 * 1000
         ) {
-            if (GlobalData.verbose) log('Skipping perf collection due to resolution');
+            if (verbose) log('Skipping perf collection due to resolution');
             return;
         }
 
         //Get performance data
-        const sourceURL = (GlobalData.debugExternalSource) ? GlobalData.debugExternalSource : globals.fxRunner.fxServerHost;
+        const sourceURL = (convars.debugExternalSource) ? convars.debugExternalSource : globals.fxRunner.fxServerHost;
         const currPerfRaw = await got(`http://${sourceURL}/perf/`).text();
         const currPerfData = parsePerf(currPerfRaw);
         if (
@@ -183,11 +184,11 @@ export default class StatsCollector {
         this.perfSeries.push(currSnapshot);
         try {
             await fs.outputJSON(this.hardConfigs.heatmapDataFile, this.perfSeries);
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logOk(`Collected performance snapshot #${this.perfSeries.length}`);
             }
         } catch (error) {
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logWarn('Failed to write the performance history log file with error:');
                 dir(error);
             }

@@ -4,6 +4,7 @@ const cloneDeep = require('lodash/cloneDeep');
 const dateFormat = require('dateformat');
 const humanizeDuration = require('humanize-duration');
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
@@ -51,7 +52,7 @@ export default async function PlayerModal(ctx) {
                 return out;
             });
         } catch (error) {
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logError('Error getting/processing player history');
                 dir(error);
             }
@@ -102,7 +103,7 @@ export default async function PlayerModal(ctx) {
     //If player is active or in the database
     let playerData;
     if (activePlayer) {
-        if (GlobalData.verbose) dir(activePlayer); //DEBUG
+        if (verbose) dir(activePlayer); //DEBUG
         out.id = activePlayer.id;
         out.license = activePlayer.license;
         out.identifiers = activePlayer.identifiers;
@@ -116,7 +117,7 @@ export default async function PlayerModal(ctx) {
         //TODO: when we start registering all associated identifiers, we could use that for the search
         let dbPlayer = await globals.playerController.getPlayer(reference);
         if (!dbPlayer) return ctx.send({type: 'offline', message: 'Player offline and not in database.'});
-        if (GlobalData.verbose) dir(dbPlayer); //DEBUG
+        if (verbose) dir(dbPlayer); //DEBUG
 
         out.id = false;
         out.license = reference;

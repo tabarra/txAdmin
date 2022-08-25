@@ -2,6 +2,7 @@
 const modulename = 'WebServer:SettingsGet';
 const cloneDeep = require('lodash/cloneDeep');
 import logger from '@core/extras/console.js';
+import { convars, txEnv } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);;
 const { redactApiKeys } = require('../../extras/helpers');
 
@@ -26,8 +27,8 @@ export default async function SettingsGet(ctx) {
         readOnly: !ctx.utils.checkPermission('settings.write', modulename, false),
         serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         activeTab: 'global',
-        isZapHosting: GlobalData.isZapHosting,
-        txDataPath: GlobalData.dataPath,
+        isZapHosting: convars.isZapHosting,
+        txDataPath: txEnv.dataPath,
     };
 
     if (renderData.readOnly) {

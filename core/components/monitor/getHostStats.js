@@ -3,6 +3,7 @@ const modulename = 'Monitor:HostStatus';
 const os = require('os');
 const si = require('systeminformation');
 import logger from '@core/extras/console.js';
+import { txEnv, verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Const -hopefully
@@ -22,15 +23,15 @@ export default async () => {
     //Getting memory usage
     try {
         let free, total, used;
-        if (GlobalData.osType === 'linux') {
+        if (txEnv.isWindows) {
+            free = os.freemem() / giga;
+            total = os.totalmem() / giga;
+            used = total - free;
+        } else {
             const memoryData = await si.mem();
             free = memoryData.available / giga;
             total = memoryData.total / giga;
             used = memoryData.active / giga;
-        } else {
-            free = os.freemem() / giga;
-            total = os.totalmem() / giga;
-            used = total - free;
         }
         out.memory = {
             used,
@@ -38,7 +39,7 @@ export default async () => {
             usage: Math.round((used / total) * 100),
         };
     } catch (error) {
-        if (GlobalData.verbose) {
+        if (verbose) {
             logError('Failed to get memory usage.');
             dir(error);
         }
@@ -49,7 +50,7 @@ export default async () => {
         const loads = await si.currentLoad();
         out.cpu.usage = Math.round(loads.currentLoad);
     } catch (error) {
-        if (GlobalData.verbose) {
+        if (verbose) {
             logError('Failed to get CPU usage.');
             dir(error);
         }

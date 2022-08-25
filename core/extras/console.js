@@ -1,6 +1,7 @@
 import util from 'node:util';
 import chalk from 'chalk';
 import colorize from 'json-colorizer';
+import { verbose } from '@core/globalData.js';
 
 const header = 'txAdmin';
 let logHistory = [];
@@ -69,7 +70,7 @@ function logError(msg = '', context = null) {
 }
 
 function logDebug(msg = '', context = null) {
-    if (!GlobalData.verbose) return;
+    if (!verbose) return;
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
     console.log(chalk.bold.bgMagenta(`[${conCtx}]`) + ' ' + msg);

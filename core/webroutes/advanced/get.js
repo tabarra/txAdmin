@@ -1,6 +1,7 @@
 //Requires
 const modulename = 'WebServer:AdvancedGet';
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
@@ -15,6 +16,6 @@ export default async function AdvancedGet(ctx) {
     }
 
     return ctx.utils.render('main/advanced', {
-        verbosityEnabled: GlobalData.verbose,
+        verbosityEnabled: verbose,
     });
 };

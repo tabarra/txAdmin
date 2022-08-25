@@ -3,6 +3,7 @@ const modulename = 'Logger:FXServer';
 const bytes = require('bytes');
 const chalk = require('chalk');
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { LoggerBase, separator } = require('../loggerUtils');
 
@@ -43,7 +44,7 @@ export default class FXServerLogger extends LoggerBase {
         super(basePath, 'fxserver', lrDefaultOptions, lrProfileConfig);
         this.lrStream.on('rotated', (filename) => {
             this.lrStream.write(`\n${separator('Log Rotated')}\n`);
-            if (GlobalData.verbose) log(`Rotated file ${filename}`);
+            if (verbose) log(`Rotated file ${filename}`);
         });
 
 

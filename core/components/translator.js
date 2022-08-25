@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 const Polyglot = require('node-polyglot');
 import logger from '@core/extras/console.js';
+import { txEnv } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Statically requiring languages because of esbuild
@@ -46,7 +47,7 @@ export default class Translator {
         // logOk('Started');
         this.language = globals.config.language;
         this.polyglot = null;
-        this.customLocalePath = path.join(GlobalData.dataPath, 'locale.json');
+        this.customLocalePath = path.join(txEnv.dataPath, 'locale.json');
 
         //Load language
         this.setupTranslator(true);

@@ -3,7 +3,7 @@ import path from 'node:path';
 import slash from 'slash';
 
 import logger from '@core/extras/console';
-import { txEnv } from '@core/globalData.js';
+import { convars, txEnv } from '@core/globalData.js';
 
 import { printBanner } from '@core/extras/banner';
 // import setupProfile from '@core/extras/setupProfile';
@@ -108,13 +108,12 @@ export default class TxAdmin {
     constructor(serverProfile) {
         log(`Profile '${serverProfile}' starting...`);
         globals.info.serverProfile = serverProfile;
-        return false; //DEBUG
 
         //Check if the profile exists and call setup if it doesn't
-        const profilePath = cleanPath(path.join(GlobalData.dataPath, serverProfile));
+        const profilePath = cleanPath(path.join(convars.dataPath, serverProfile));
         if (!fs.existsSync(profilePath)) {
             try {
-                setupProfile(GlobalData.osType, GlobalData.fxServerPath, GlobalData.fxServerVersion, serverProfile, profilePath);
+                setupProfile(txEnv.osType, convars.fxServerPath, txEnv.fxServerVersion, serverProfile, profilePath);
             } catch (error) {
                 logError(`Failed to create profile '${serverProfile}' with error: ${error.message}`);
                 process.exit();

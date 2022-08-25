@@ -2,6 +2,7 @@
 const modulename = 'Monitor';
 import got from 'got'; //we want internal requests to have 127.0.0.1 src
 import logger from '@core/extras/console.js';
+import { convars, verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const helpers = require('../../extras/helpers');
 const getHostStats = require('./getHostStats');
@@ -120,11 +121,11 @@ export default class Monitor {
                 });
             } catch (error) {
                 const timeJSON = JSON.stringify(time);
-                if (GlobalData.verbose) logWarn(`Error building restart schedule for time '${timeJSON}':\n ${error.message}`);
+                if (verbose) logWarn(`Error building restart schedule for time '${timeJSON}':\n ${error.message}`);
             }
         });
 
-        if (GlobalData.verbose) dir(schedule.map((el) => { return el.messages; }));
+        if (verbose) dir(schedule.map((el) => { return el.messages; }));
         this.schedule = (schedule.length) ? schedule : false;
     }
 
@@ -170,7 +171,7 @@ export default class Monitor {
                 }
             }
         } catch (error) {
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
         }
     }
 
@@ -244,16 +245,16 @@ export default class Monitor {
 
         //Checking for the maxClients
         if (
-            GlobalData.deployerDefaults
-            && GlobalData.deployerDefaults.maxClients
+            convars.deployerDefaults
+            && convars.deployerDefaults.maxClients
             && dynamicResp
             && dynamicResp.sv_maxclients
         ) {
             const maxClients = parseInt(dynamicResp.sv_maxclients);
-            if (!isNaN(maxClients) && maxClients > GlobalData.deployerDefaults.maxClients) {
-                globals.fxRunner.srvCmd(`sv_maxclients ${GlobalData.deployerDefaults.maxClients} ##ZAP-Hosting: please don't modify`);
-                logError(`ZAP-Hosting: Detected that the server has sv_maxclients above the limit (${GlobalData.deployerDefaults.maxClients}). Changing back to the limit.`);
-                globals.logger.admin.write(`[SYSTEM] changing sv_maxclients back to ${GlobalData.deployerDefaults.maxClients}`);
+            if (!isNaN(maxClients) && maxClients > convars.deployerDefaults.maxClients) {
+                globals.fxRunner.srvCmd(`sv_maxclients ${convars.deployerDefaults.maxClients} ##ZAP-Hosting: please don't modify`);
+                logError(`ZAP-Hosting: Detected that the server has sv_maxclients above the limit (${convars.deployerDefaults.maxClients}). Changing back to the limit.`);
+                globals.logger.admin.write(`[SYSTEM] changing sv_maxclients back to ${convars.deployerDefaults.maxClients}`);
             }
         }
 
@@ -323,7 +324,7 @@ export default class Monitor {
 
         //Check if still in cooldown
         if (processUptime < this.config.cooldown) {
-            if (GlobalData.verbose && processUptime > 10 && elapsedLastWarning > 10) {
+            if (verbose && processUptime > 10 && elapsedLastWarning > 10) {
                 logWarn(`${timesPrefix} FXServer is not responding. Still in cooldown of ${this.config.cooldown}s.`);
                 this.lastStatusWarningMessage = currTimestamp;
             }
@@ -437,7 +438,7 @@ export default class Monitor {
         } else if (source === 'http') {
             //Sanity Check
             if (!Array.isArray(postData.players)) {
-                if (GlobalData.verbose) logWarn('Received an invalid HeartBeat.');
+                if (verbose) logWarn('Received an invalid HeartBeat.');
                 return;
             }
 

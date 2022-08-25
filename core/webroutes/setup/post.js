@@ -7,6 +7,7 @@ const { Deployer, validateTargetPath, parseValidateRecipe } = require('../../ext
 const { validateFixServerConfig, findLikelyCFGPath } = require('../../extras/fxsConfigHelper');
 import got from '@core/extras/got.js';
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -24,7 +25,7 @@ const getPotentialServerDataFolders = (source) => {
             .filter((dirent) => getDirectories(path.join(source, dirent)).includes('resources'))
             .map((dirent) => slash(path.join(source, dirent)) + '/');
     } catch (error) {
-        if (GlobalData.verbose) logWarn(`Failed to find server data folder with message: ${error.message}`);
+        if (verbose) logWarn(`Failed to find server data folder with message: ${error.message}`);
         return [];
     }
 };

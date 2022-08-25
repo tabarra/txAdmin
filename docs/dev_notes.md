@@ -55,6 +55,9 @@ process.exit();
 ```
 remover lodash dep e ficar só com lodash-es?
 
+Move verbose to be part of the console (after the functional-ish change)
+and then remove the GlobalData from a bunch of files which include it just because of verbosity
+
 NOTE:
 
 https://medium.com/slackernoon/use-typescript-aliases-to-clean-up-your-import-statements-7210b7ec2af1

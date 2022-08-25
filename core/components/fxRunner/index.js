@@ -8,6 +8,7 @@ const { parseArgsStringToArgv } = require('string-argv');
 const StreamValues = require('stream-json/streamers/StreamValues');
 
 import logger from '@core/extras/console.js';
+import { convars, txEnv, verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { validateFixServerConfig } = require('../../extras/fxsConfigHelper');
 const OutputHandler = require('./outputHandler');
@@ -32,7 +33,7 @@ const getMutableConvars = (isCmdLine = false) => {
         //type, name, value
         [`${p}setr`, 'txAdmin-locale', globals.translator.language ?? 'en'],
         [`${p}set`, 'txAdmin-localeFile', globals.translator.customLocalePath ?? 'false'],
-        [`${p}setr`, 'txAdmin-verbose', GlobalData.verbose],
+        [`${p}setr`, 'txAdmin-verbose', verbose],
         [`${p}set`, 'txAdmin-checkPlayerJoin', checkPlayerJoin],
         [`${p}set`, 'txAdmin-menuAlignRight', globals.config.menuAlignRight],
         [`${p}set`, 'txAdmin-menuPageKey', globals.config.menuPageKey],
@@ -97,14 +98,14 @@ export default class FXRunner {
         }
 
         // Prepare default args (these convars can't change without restart)
-        const txAdminInterface = (GlobalData.forceInterface)
-            ? `${GlobalData.forceInterface}:${GlobalData.txAdminPort}`
-            : `127.0.0.1:${GlobalData.txAdminPort}`;
+        const txAdminInterface = (convars.forceInterface)
+            ? `${convars.forceInterface}:${convars.txAdminPort}`
+            : `127.0.0.1:${convars.txAdminPort}`;
         const cmdArgs = [
             getMutableConvars(true),
             extraArgs,
             '+set', 'onesync', this.config.onesync,
-            '+sets', 'txAdmin-version', GlobalData.txAdminVersion,
+            '+sets', 'txAdmin-version', txEnv.txAdminVersion,
             '+setr', 'txAdmin-menuEnabled', globals.config.menuEnabled,
             '+set', 'txAdmin-luaComHost', txAdminInterface,
             '+set', 'txAdmin-luaComToken', globals.webServer.luaComToken,
@@ -113,8 +114,13 @@ export default class FXRunner {
         ].flat(2);
 
         // Configure spawn parameters according to the environment
-        if (GlobalData.osType === 'linux') {
-            const alpinePath = path.resolve(GlobalData.fxServerPath, '../../');
+        if (txEnv.isWindows) {
+            this.spawnVariables = {
+                command: `${txEnv.fxServerPath}/FXServer.exe`,
+                args: cmdArgs,
+            };
+        } else {
+            const alpinePath = path.resolve(txEnv.fxServerPath, '../../');
             this.spawnVariables = {
                 command: `${alpinePath}/opt/cfx-server/ld-musl-x86_64.so.1`,
                 args: [
@@ -125,14 +131,6 @@ export default class FXRunner {
                     ...cmdArgs,
                 ],
             };
-        } else if (GlobalData.osType === 'windows') {
-            this.spawnVariables = {
-                command: `${GlobalData.fxServerPath}/FXServer.exe`,
-                args: cmdArgs,
-            };
-        } else {
-            logError(`OS type not supported: ${GlobalData.osType}`);
-            process.exit();
         }
     }//Final setupVariables()
 
@@ -153,7 +151,7 @@ export default class FXRunner {
         globals.webServer.resetToken();
         this.currentMutex = genMutex();
         this.setupVariables();
-        if (GlobalData.verbose) {
+        if (verbose) {
             log('Spawn Variables: ' + this.spawnVariables.args.join(' '));
         }
         //Sanity Check
@@ -273,7 +271,7 @@ export default class FXRunner {
 
         const tracePipe = this.fxChild.stdio[3].pipe(StreamValues.withParser());
         tracePipe.on('error', (data) => {
-            if (GlobalData.verbose) logWarn(`FD3 decode error: ${data.message}`);
+            if (verbose) logWarn(`FD3 decode error: ${data.message}`);
             globals.databus.txStatsData.lastFD3Error = data.message;
         });
         tracePipe.on('data', this.outputHandler.trace.bind(this.outputHandler, this.currentMutex));
@@ -306,7 +304,7 @@ export default class FXRunner {
             return this.spawnServer();
         } catch (error) {
             const errMsg = logError("Couldn't restart the server.");
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             return errMsg;
         }
     }
@@ -358,7 +356,7 @@ export default class FXRunner {
         } catch (error) {
             const msg = "Couldn't kill the server. Perhaps What Is Dead May Never Die."
             logError(msg);
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             this.fxChild = null;
             return msg;
         }
@@ -375,13 +373,13 @@ export default class FXRunner {
         log('Refreshing fxserver convars.');
         try {
             const convarList = getMutableConvars(false);
-            if (GlobalData.verbose) dir(convarList);
+            if (verbose) dir(convarList);
             convarList.forEach(([type, name, value]) => {
                 this.srvCmd(formatCommand(type, name, value));
             });
             return this.sendEvent('configChanged');
         } catch (error) {
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logError('Error resetting server convars');
                 dir(error);
             }
@@ -406,7 +404,7 @@ export default class FXRunner {
             );
             return this.srvCmd(eventCommand);
         } catch (error) {
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logError(`Error writing firing server event ${eventType}`);
                 dir(error);
             }
@@ -430,7 +428,7 @@ export default class FXRunner {
             globals.logger.fxserver.writeMarker('command', sanitized);
             return success;
         } catch (error) {
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logError('Error writing to fxChild.stdin');
                 dir(error);
             }

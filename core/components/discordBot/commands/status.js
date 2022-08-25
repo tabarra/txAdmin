@@ -3,6 +3,7 @@ const modulename = 'DiscordBot:cmd:status';
 const humanizeDuration = require('humanize-duration');
 const { MessageEmbed } = require('@citizenfx/discord.js');
 import logger from '@core/extras/console.js';
+import { txEnv } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 module.exports = {
@@ -53,7 +54,7 @@ module.exports = {
             color: cardColor,
             title: cardTitle,
             description: desc,
-            footer: `Powered by txAdmin v${GlobalData.txAdminVersion}.`,
+            footer: `Powered by txAdmin v${txEnv.txAdminVersion}.`,
         });
         return await message.reply({embeds: [outMsg]});
     },

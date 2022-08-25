@@ -4,6 +4,7 @@ const crypto  = require('crypto');
 const { Issuer, custom } = require('openid-client');
 
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
@@ -36,7 +37,7 @@ export default class CitizenFXProvider {
             custom.setHttpOptionsDefaults({
                 timeout: 10000,
             });
-            if (GlobalData.verbose) log('CitizenFX Provider configured.');
+            if (verbose) log('CitizenFX Provider configured.');
             this.ready = true;
         } catch (error) {
             logError(`Failed to create client with error: ${error.message}`);

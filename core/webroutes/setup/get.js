@@ -2,6 +2,7 @@
 const modulename = 'WebServer:SetupGet';
 const path = require('path');
 import logger from '@core/extras/console.js';
+import { convars, txEnv } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const { engineVersion } = require('../../extras/deployer');
 
@@ -29,14 +30,14 @@ export default async function SetupGet(ctx) {
         isReset: (globalConfig.serverName !== null),
         deployerEngineVersion: engineVersion,
         serverProfile: globals.info.serverProfile,
-        txDataPath: GlobalData.dataPath,
-        isZapHosting: GlobalData.isZapHosting,
+        txDataPath: txEnv.dataPath,
+        isZapHosting: convars.isZapHosting,
         windowsBatPath: null,
     };
 
-    if (GlobalData.osType == 'windows') {
-        const batFolder = path.resolve(GlobalData.fxServerPath, '..');
-        renderData.windowsBatPath  = path.join(batFolder, `start_${GlobalData.fxServerVersion}_${globals.info.serverProfile}.bat`);
+    if (txEnv.isWindows) {
+        const batFolder = path.resolve(txEnv.fxServerPath, '..');
+        renderData.windowsBatPath  = path.join(batFolder, `start_${txEnv.fxServerVersion}_${globals.info.serverProfile}.bat`);
     }
 
     return ctx.utils.render('standalone/setup', renderData);

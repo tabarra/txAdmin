@@ -20,6 +20,7 @@ const nanoid = customAlphabet(dict51, 20);
 
 const { setHttpCallback } = require('@citizenfx/http-wrapper');
 import logger from '@core/extras/console.js';
+import { convars, txEnv, verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const {requestAuth} = require('./requestAuthenticator');
 const ctxUtils = require('./ctxUtils.js');
@@ -87,7 +88,7 @@ export default class WebServer {
                     || error.code.startsWith('ECANCELED')
                 )
             ) {
-                if (GlobalData.verbose) {
+                if (verbose) {
                     logError(`Probably harmless error on ${ctx.path}`);
                     dir(error);
                 }
@@ -102,7 +103,7 @@ export default class WebServer {
         const timeoutLimit = 15 * 1000;
         const jsonLimit = '16MB';
         this.app.use(async (ctx, next) => {
-            ctx.set('Server', `txAdmin v${GlobalData.txAdminVersion}`);
+            ctx.set('Server', `txAdmin v${txEnv.txAdminVersion}`);
             let timer;
             const timeout = new Promise((_, reject) => {
                 timer = setTimeout(() => {
@@ -114,11 +115,11 @@ export default class WebServer {
                 await Promise.race([timeout, next()]);
                 clearTimeout(timer);
                 if (typeof ctx.body == 'undefined' || (typeof ctx.body == 'string' && !ctx.body.length)) {
-                    if (GlobalData.verbose) logWarn(`Route without output: ${ctx.path}`);
+                    if (verbose) logWarn(`Route without output: ${ctx.path}`);
                     return ctx.body = '[no output from route]';
                 }
             } catch (error) {
-                const prefix = `[txAdmin v${GlobalData.txAdminVersion}]`;
+                const prefix = `[txAdmin v${txEnv.txAdminVersion}]`;
                 const reqPath = (ctx.path.length > 100) ? `${ctx.path.slice(0, 97)}...` : ctx.path;
                 const methodName = (error.stack && error.stack[0] && error.stack[0].name) ? error.stack[0].name : 'anonym';
 
@@ -130,7 +131,7 @@ export default class WebServer {
                 //NOTE: not using HTTP logger endpoint anymore, FD3 only
                 if (error.type === 'entity.too.large') {
                     const desc = `Entity too large for: ${reqPath}`;
-                    if (GlobalData.verbose) logError(desc, methodName);
+                    if (verbose) logError(desc, methodName);
                     ctx.status = 413;
                     ctx.body = {error: desc};
                 } else if (ctx.state.timeout) {
@@ -140,12 +141,12 @@ export default class WebServer {
                     ctx.body = desc;
                 } else if (error.message === 'Malicious Path' || error.message === 'failed to decode') {
                     const desc = `${prefix} Malicious Path: ${reqPath}`;
-                    if (GlobalData.verbose) logError(desc, methodName);
+                    if (verbose) logError(desc, methodName);
                     ctx.status = 406;
                     ctx.body = desc;
                 } else if (error.message.match(/^Unexpected token .+ in JSON at position \d+$/)) {
                     const desc = `${prefix} Invalid JSON for: ${reqPath}`;
-                    if (GlobalData.verbose) logError(desc, methodName);
+                    if (verbose) logError(desc, methodName);
                     ctx.status = 400;
                     ctx.body = {error: desc};
                 } else {
@@ -154,14 +155,14 @@ export default class WebServer {
                                 + `Route: ${reqPath}\n`
                                 + 'Make sure your txAdmin is updated.';
                     logError(desc, methodName);
-                    if (GlobalData.verbose) dir(error);
+                    if (verbose) dir(error);
                     ctx.status = 500;
                     ctx.body = desc;
                 }
             }
         });
         //Setting up additional middlewares:
-        this.app.use(KoaServe(path.join(GlobalData.txAdminResourcePath, 'web/public'), {index: false, defer: false}));
+        this.app.use(KoaServe(path.join(txEnv.txAdminResourcePath, 'web/public'), {index: false, defer: false}));
         this.app.use(this.sessionInstance);
         this.app.use(KoaBodyParser({jsonLimit}));
 
@@ -172,7 +173,7 @@ export default class WebServer {
         this.app.use(async (ctx) => {
             if (typeof ctx._matchedRoute === 'undefined') {
                 ctx.status = 404;
-                if (GlobalData.verbose) logWarn(`Request 404 error: ${ctx.path}`);
+                if (verbose) logWarn(`Request 404 error: ${ctx.path}`);
                 return ctx.utils.render('standalone/404');
             }
         });
@@ -184,7 +185,7 @@ export default class WebServer {
     //Resetting lua comms token - called by fxRunner on spawnServer()
     resetToken() {
         this.luaComToken = nanoid();
-        if (GlobalData.verbose) log('Resetting luaComToken.');
+        if (verbose) log('Resetting luaComToken.');
     }
 
 
@@ -267,15 +268,15 @@ export default class WebServer {
             this.httpServer.on('error', listenErrorHandler);
 
             let iface;
-            if (GlobalData.forceInterface) {
-                logWarn(`Starting with interface ${GlobalData.forceInterface}.`);
+            if (convars.forceInterface) {
+                logWarn(`Starting with interface ${convars.forceInterface}.`);
                 logWarn('If the HTTP server doesn\'t start, this is probably the reason.');
-                iface = GlobalData.forceInterface;
+                iface = convars.forceInterface;
             } else {
                 iface = '0.0.0.0';
             }
 
-            this.httpServer.listen(GlobalData.txAdminPort, iface, async () => {
+            this.httpServer.listen(convars.txAdminPort, iface, async () => {
                 logOk(`Listening on ${iface}.`);
                 this.isListening = true;
             });

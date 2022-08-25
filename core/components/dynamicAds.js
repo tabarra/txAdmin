@@ -1,10 +1,11 @@
 //Requires
 const modulename = 'DynamicAds';
 const xss = require('xss');
-import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
-import got from '@core/extras/got.js';
 const defaultAds = require('../../dynamicAds.json');
+import { verbose } from '@core/globalData.js';
+import logger from '@core/extras/console.js';
+import got from '@core/extras/got.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper
 const cleanAds = (ads) => {
@@ -57,7 +58,7 @@ export default class DynamicAds {
                 };
             }
         } catch (error) {
-            if (GlobalData.verbose) logWarn(`Failed to retrieve dynamic ads with error: ${error.message}`);
+            if (verbose) logWarn(`Failed to retrieve dynamic ads with error: ${error.message}`);
         }
     }
 

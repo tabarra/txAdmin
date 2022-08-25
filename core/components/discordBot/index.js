@@ -2,6 +2,7 @@
 const modulename = 'DiscordBot';
 const Discord = require('@citizenfx/discord.js');
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
@@ -76,7 +77,7 @@ export default class DiscordBot {
             || this.client.status
             || !this.announceChannel
         ) {
-            if (GlobalData.verbose) logWarn('returning false, not ready yet', 'sendAnnouncement');
+            if (verbose) logWarn('returning false, not ready yet', 'sendAnnouncement');
             return false;
         }
 
@@ -118,7 +119,7 @@ export default class DiscordBot {
             logError(`Error from Discord.js client: ${error.message}`);
         });
         this.client.on('resume', () => {
-            if (GlobalData.verbose) logOk('Connection with Discord API server resumed');
+            if (verbose) logOk('Connection with Discord API server resumed');
             this.client.user.setActivity(globals.config.serverName, { type: 'WATCHING' });
         });
         this.client.on('debug', logDebug);
@@ -155,7 +156,7 @@ export default class DiscordBot {
             const ts = now();
             if (ts < expirationTime) {
                 const timeLeft = expirationTime - ts;
-                if (GlobalData.verbose) log(`Spam prevented for command "${commandName}".`);
+                if (verbose) log(`Spam prevented for command "${commandName}".`);
                 return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${commandName}\` command again.`);
             }
         }

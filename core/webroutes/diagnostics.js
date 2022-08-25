@@ -10,6 +10,7 @@ const Cache = require('../extras/dataCache');
 const helpers = require('../extras/helpers');
 import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
+import { verbose, txEnv } from '@core/globalData.js';
 
 const cache = new Cache(5);
 
@@ -88,7 +89,7 @@ async function getProcessesData() {
         });
     } catch (error) {
         logError('Error getting processes data.');
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
     }
 
     //Sort procList array
@@ -126,7 +127,7 @@ async function getFXServerData() {
         infoData = await got.get(requestOptions).json();
     } catch (error) {
         logWarn('Failed to get FXServer information.');
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         return {error: 'Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)'};
     }
 
@@ -148,7 +149,7 @@ async function getFXServerData() {
             statusColor: 'success',
             status: ' ONLINE ',
             version: infoData.server,
-            versionMismatch: (getBuild(infoData.server) !== GlobalData.fxServerVersion),
+            versionMismatch: (getBuild(infoData.server) !== txEnv.fxServerVersion),
             resources: infoData.resources.length,
             onesync: (infoData.vars && infoData.vars.onesync_enabled === 'true') ? 'enabled' : 'disabled',
             maxClients: (infoData.vars && infoData.vars.sv_maxClients) ? infoData.vars.sv_maxClients : '--',
@@ -156,7 +157,7 @@ async function getFXServerData() {
         };
     } catch (error) {
         logWarn('Failed to process FXServer information.');
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         return {error: 'Failed to process FXServer data. <br>Check the terminal for more information (if verbosity is enabled)'};
     }
 }
@@ -194,7 +195,7 @@ async function getHostData() {
         return hostData;
     } catch (error) {
         logError('Error getting Host data');
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         return {error: 'Failed to retrieve host data. <br>Check the terminal for more information (if verbosity is enabled)'};
     }
 }
@@ -243,7 +244,7 @@ async function gettxAdminData() {
         commandLine: (globals.fxRunner.config.commandLine && globals.fxRunner.config.commandLine.length)
             ? helpers.redactApiKeys(globals.fxRunner.config.commandLine)
             : '--',
-        fxServerPath: GlobalData.fxServerPath,
+        fxServerPath: txEnv.fxServerPath,
         serverDataPath: globals.fxRunner.config.serverDataPath,
         cfgPath: globals.fxRunner.config.cfgPath,
         fxServerHost: (globals.fxRunner.fxServerHost)

@@ -3,6 +3,7 @@ const path = require('node:path');
 const isLocalhost = require('is-localhost-ip');
 
 import logger from '@core/extras/console.js';
+import { convars, verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 /**
@@ -359,7 +360,7 @@ const parseRecursiveConfig = async (cfgInputString, cfgAbsolutePath, serverDataP
  * @returns {object}
  */
 const validateCommands = async (parsedCommands) => {
-    const zapPrefix = (GlobalData.isZapHosting) ? ' [ZAP-Hosting]' : '';
+    const zapPrefix = (convars.isZapHosting) ? ' [ZAP-Hosting]' : '';
     const checkedInterfaces = new Map();
 
     //To return
@@ -397,10 +398,10 @@ const validateCommands = async (parsedCommands) => {
 
         //Check sv_maxClients against ZAP config
         const isMaxClientsString = cmd.getSetForVariable('sv_maxclients');
-        if (GlobalData.deployerDefaults?.maxClients && isMaxClientsString) {
+        if (convars.deployerDefaults?.maxClients && isMaxClientsString) {
             const maxClients = parseInt(isMaxClientsString);
-            if (maxClients > GlobalData.deployerDefaults.maxClients) {
-                const msg = `Line ${cmd.line}:${zapPrefix} your 'sv_maxclients' SHOULD be <= ${GlobalData.deployerDefaults.maxClients}.`;
+            if (maxClients > convars.deployerDefaults.maxClients) {
+                const msg = `Line ${cmd.line}:${zapPrefix} your 'sv_maxclients' SHOULD be <= ${convars.deployerDefaults.maxClients}.`;
                 warnings.add(cmd.file, msg);
                 continue;
             }
@@ -445,8 +446,8 @@ const validateCommands = async (parsedCommands) => {
                 errors.add(cmd.file, msg);
                 continue;
             }
-            if (GlobalData.forceInterface && iface !== GlobalData.forceInterface) {
-                const msg = `Line ${cmd.line}:${zapPrefix} the '${cmd.command}' interface MUST be '${GlobalData.forceInterface}'.`;
+            if (convars.forceInterface && iface !== convars.forceInterface) {
+                const msg = `Line ${cmd.line}:${zapPrefix} the '${cmd.command}' interface MUST be '${convars.forceInterface}'.`;
                 errors.add(cmd.file, msg);
                 continue;
             }
@@ -458,13 +459,13 @@ const validateCommands = async (parsedCommands) => {
                 errors.add(cmd.file, msg);
                 continue;
             }
-            if (port === GlobalData.txAdminPort) {
+            if (port === convars.txAdminPort) {
                 const msg = `Line ${cmd.line}: the '${cmd.command}' port '${port}' is being used by txAdmin and CAN NOT be used for FXServer at the same time.`;
                 errors.add(cmd.file, msg);
                 continue;
             }
-            if (GlobalData.forceFXServerPort && port !== GlobalData.forceFXServerPort) {
-                const msg = `Line ${cmd.line}:${zapPrefix} the '${cmd.command}' port MUST be '${GlobalData.forceFXServerPort}'.`;
+            if (convars.forceFXServerPort && port !== convars.forceFXServerPort) {
+                const msg = `Line ${cmd.line}:${zapPrefix} the '${cmd.command}' port MUST be '${convars.forceFXServerPort}'.`;
                 errors.add(cmd.file, msg);
                 continue;
             }
@@ -497,8 +498,8 @@ const validateCommands = async (parsedCommands) => {
 const getConnectEndpoint = (endpoints) => {
     if (!Object.keys(endpoints).length) {
         let msg;
-        if (GlobalData.forceInterface && GlobalData.forceFXServerPort) {
-            const desidredEndpoint = `${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}`;
+        if (convars.forceInterface && convars.forceFXServerPort) {
+            const desidredEndpoint = `${convars.forceInterface}:${convars.forceFXServerPort}`;
             msg = `Please delete all \`endpoint_add_*\` lines and add the following to the start of the file:
 \t\`endpoint_add_tcp "${desidredEndpoint}"\`
 \t\`endpoint_add_udp "${desidredEndpoint}"\``;
@@ -565,7 +566,7 @@ const validateFixServerConfig = async (cfgPath, serverDataPath) => {
             logWarn(`Saving modified file '${targetCfgPath}'`);
             await fsp.writeFile(targetCfgPath, newCfg, 'utf8');
         } catch (error) {
-            if (GlobalData.verbose) logError(error);
+            if (verbose) logError(error);
             for (const [ln, reason] of actions) {
                 errors.add(targetCfgPath, `Please comment out line ${ln}: ${reason}`);
             }

@@ -9,6 +9,7 @@ const YAML = require('js-yaml');
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 import getOsDistro from '@core/extras/getOsDistro.js';
+import { txEnv, verbose } from '@core/globalData.js';
 const recipeEngine = require('./recipeEngine');
 
 //Helper functions
@@ -81,7 +82,7 @@ const parseValidateRecipe = (rawRecipe) => {
     try {
         recipe = YAML.load(rawRecipe, { schema: YAML.JSON_SCHEMA });
     } catch (error) {
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         throw new Error('invalid yaml');
     }
 
@@ -107,7 +108,7 @@ const parseValidateRecipe = (rawRecipe) => {
         outRecipe.onesync = onesync;
     }
     if (typeof recipe['$minFxVersion'] == 'number') {
-        if (recipe['$minFxVersion'] > GlobalData.fxServerVersion) throw new Error(`this recipe requires FXServer v${recipe['$minFxVersion']} or above`);
+        if (recipe['$minFxVersion'] > txEnv.fxServerVersion) throw new Error(`this recipe requires FXServer v${recipe['$minFxVersion']} or above`);
         outRecipe.fxserverMinVersion = recipe['$minFxVersion']; //useless for now
     }
     if (typeof recipe['$engine'] == 'number') {
@@ -136,7 +137,7 @@ const parseValidateRecipe = (rawRecipe) => {
     }
 
     //Output
-    if (GlobalData.verbose) dir(outRecipe);
+    if (verbose) dir(outRecipe);
     return outRecipe;
 };
 
@@ -172,7 +173,7 @@ class Deployer {
         try {
             this.recipe = parseValidateRecipe(impRecipe);
         } catch (error) {
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             throw new Error(`Recipe Error: ${error.message}`);
         }
     }
@@ -208,7 +209,7 @@ class Deployer {
         try {
             await fs.ensureDir(this.deployPath);
         } catch (error) {
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             throw new Error(`Failed to create ${this.deployPath} with error: ${error.message}`);
         }
 
@@ -290,7 +291,7 @@ class Deployer {
                 if (contextVariables.$step) {
                     msg += '\nDebug/Status: '
                         + JSON.stringify([
-                            GlobalData.txAdminVersion,
+                            txEnv.txAdminVersion,
                             await getOsDistro(),
                             contextVariables.$step
                         ]);
@@ -332,7 +333,7 @@ class Deployer {
         //Else: success :)
         this.log('Deploy finished and folder validated. All done!');
         this.step = 'configure';
-        if (GlobalData.osType === 'windows') {
+        if (txEnv.isWindows) {
             try {
                 await open(path.normalize(this.deployPath), { app: 'explorer' });
             } catch (error) { }

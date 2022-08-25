@@ -3,6 +3,7 @@ const modulename = 'PlayerlistGenerator';
 const fs = require('node:fs');
 import got from 'got'
 import logger from '@core/extras/console.js';
+import { convars } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
@@ -36,7 +37,7 @@ export default class PlayerlistGenerator {
         //Starting data
         this.indexes = [0, 1, 2, 3, 4, 5, 6, 7];
         this.playerlist = [];
-        const refreshFunc = (GlobalData.debugExternalSource)
+        const refreshFunc = (convars.debugExternalSource)
             ? this.refreshPlayersExternal.bind(this)
             : this.refreshPlayersStatic.bind(this);
 
@@ -49,7 +50,7 @@ export default class PlayerlistGenerator {
     //================================================================
     async refreshPlayersExternal() {
         try {
-            this.playerlist = await got(`http://${GlobalData.debugExternalSource}/players.json`).json();
+            this.playerlist = await got(`http://${convars.debugExternalSource}/players.json`).json();
         } catch (error) {
             logError(`External source failed: ${error.message}`);
         }

@@ -5,6 +5,7 @@ import open from 'open';
 import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import logger from '@core/extras/console.js';
+import { convars, txEnv } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger();
 
 
@@ -38,7 +39,7 @@ const getIPs = async () => {
 
 const getOSMessage = async () => {
     const serverMessage = [
-        `To be able to access txAdmin from the internet open port ${GlobalData.txAdminPort}`,
+        `To be able to access txAdmin from the internet open port ${convars.txAdminPort}`,
         'on your OS Firewall as well as in the hosting company.',
     ];
     const winWorkstationMessage = [
@@ -104,16 +105,16 @@ export const printBanner = async () => {
 
     //Addresses
     let addrs;
-    if (GlobalData.forceInterface == false || GlobalData.forceInterface == '0.0.0.0') {
+    if (convars.forceInterface == false || convars.forceInterface == '0.0.0.0') {
         addrs = [
-            (GlobalData.osType === 'linux') ? 'your-public-ip' : 'localhost',
+            (txEnv.isWindows) ? 'localhost' : 'your-public-ip',
         ];
         if (ipRes.value) {
             addrs.push(ipRes.value);
-            GlobalData.loopbackInterfaces.push(ipRes.value);
+            convars.loopbackInterfaces.push(ipRes.value);
         }
     } else {
-        addrs = [GlobalData.forceInterface];
+        addrs = [convars.forceInterface];
     }
 
     //Admin PIN
@@ -135,17 +136,17 @@ export const printBanner = async () => {
     };
     const boxLines = [
         'All ready! Please access:',
-        ...addrs.map((addr) => chalk.inverse(` http://${addr}:${GlobalData.txAdminPort}/ `)),
+        ...addrs.map((addr) => chalk.inverse(` http://${addr}:${convars.txAdminPort}/ `)),
         ...adminPinLines,
     ];
     printMultiline(boxen(boxLines.join('\n'), boxOptions), chalk.bold.bgGreen);
-    if (GlobalData.forceInterface == false) {
+    if (convars.forceInterface == false) {
         printMultiline(msgRes.value, chalk.bold.bgBlue);
     }
 
     //Opening page
-    if (GlobalData.osType === 'windows' && adminPinRes.value) {
-        open(`http://localhost:${GlobalData.txAdminPort}/auth#${adminPinRes.value}`).catch();
+    if (txEnv.isWindows && adminPinRes.value) {
+        open(`http://localhost:${convars.txAdminPort}/auth#${adminPinRes.value}`).catch();
     }
 
     //Starting server

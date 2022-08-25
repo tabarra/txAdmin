@@ -2,6 +2,7 @@
 const modulename = 'WebServer:DeployerStepper';
 const fs = require('fs-extra');
 import logger from '@core/extras/console.js';
+import { convars } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
@@ -44,15 +45,15 @@ export default async function DeployerStepper(ctx) {
     } else if (globals.deployer.step === 'input') {
         renderData.defaultLicenseKey = process.env.TXADMIN_DEFAULT_LICENSE || '';
         renderData.requireDBConfig = globals.deployer.recipe.requireDBConfig;
-        if (GlobalData.deployerDefaults) {
+        if (convars.deployerDefaults) {
             renderData.defaults = {
                 autofilled: true,
-                license: GlobalData.deployerDefaults.license || '',
-                mysqlHost: GlobalData.deployerDefaults.mysqlHost || 'localhost',
-                mysqlPort: GlobalData.deployerDefaults.mysqlPort || '3306',
-                mysqlUser: GlobalData.deployerDefaults.mysqlUser || 'root',
-                mysqlPassword: GlobalData.deployerDefaults.mysqlPassword || '',
-                mysqlDatabase: GlobalData.deployerDefaults.mysqlDatabase || globals.deployer.deploymentID,
+                license: convars.deployerDefaults.license || '',
+                mysqlHost: convars.deployerDefaults.mysqlHost || 'localhost',
+                mysqlPort: convars.deployerDefaults.mysqlPort || '3306',
+                mysqlUser: convars.deployerDefaults.mysqlUser || 'root',
+                mysqlPassword: convars.deployerDefaults.mysqlPassword || '',
+                mysqlDatabase: convars.deployerDefaults.mysqlDatabase || globals.deployer.deploymentID,
             };
         } else {
             renderData.defaults = {
@@ -88,7 +89,7 @@ export default async function DeployerStepper(ctx) {
 Make sure everything is correct in the recipe and try again.`;
             }
         } catch (error) {
-            if (GlobalData.verbose) dir(error);
+            if (convars.verbose) dir(error);
             renderData.serverCFG = errorMessage;
         }
     } else {

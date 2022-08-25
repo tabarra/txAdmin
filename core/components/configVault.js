@@ -3,6 +3,7 @@ const modulename = 'ConfigVault';
 const fs = require('fs');
 const cloneDeep = require('lodash/cloneDeep');
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -171,7 +172,7 @@ export default class ConfigVault {
                 out.global.language = 'pt';
             }
         } catch (error) {
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated!\nOriginal error: ${error.message}`);
         }
 
@@ -232,7 +233,7 @@ export default class ConfigVault {
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in templater
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
         } catch (error) {
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated.\nOriginal error: ${error.message}`);
         }
 

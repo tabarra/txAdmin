@@ -1,6 +1,7 @@
 //Requires
 const modulename = 'OutputHandler';
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
@@ -85,7 +86,7 @@ export default class OutputHandler {
                 }
             }
         } catch (error) {
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logError('Error processing FD3 stream output:');
                 dir(error);
             }

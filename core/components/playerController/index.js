@@ -4,6 +4,7 @@ const humanizeDuration = require('humanize-duration'); //FIXME: remove, this con
 const xss = require('../../extras/xss')(); //FIXME: same as above
 import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
+import { convars, verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 // eslint-disable-next-line no-unused-vars
 const { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } = require('./database.js');
@@ -71,7 +72,7 @@ export default class PlayerController {
         if (this.config.minSessionTime < 1 || this.config.minSessionTime > 60) throw new Error('The playerController.minSessionTime setting must be between 1 and 60 minutes.');
 
         //Running playerlist generator
-        if (GlobalData.isDevMode && GlobalData.debugPlayerlistGenerator) {
+        if (convars.isDevMode && convars.debugPlayerlistGenerator) {
             this.playerlistGenerator = new PlayerlistGenerator();
         }
 
@@ -79,7 +80,7 @@ export default class PlayerController {
         setInterval(() => {
             //Check if the database is ready
             if (this.db.obj === null) {
-                if (GlobalData.verbose) logWarn('Database still not ready for processing.');
+                if (verbose) logWarn('Database still not ready for processing.');
                 return;
             }
             this.processActive();
@@ -96,7 +97,7 @@ export default class PlayerController {
         try {
             globals.fxRunner.srvCmd(cmd);
         } catch (error) {
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
         }
     }
 
@@ -153,7 +154,7 @@ export default class PlayerController {
                     await this.db.obj.get('players')
                         .push(toDB)
                         .value();
-                    if (GlobalData.verbose) logOk(`Adding '${p.name}' to players database.`);
+                    if (verbose) logOk(`Adding '${p.name}' to players database.`);
 
                 //If it's time to update this player's play time
                 } else if (!p.isTmp && checkMinuteElapsed(sessionTime)) {
@@ -173,7 +174,7 @@ export default class PlayerController {
             });
         } catch (error) {
             logError(`Failed to process active players array with error: ${error.message}`);
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
         }
     }
 
@@ -199,7 +200,7 @@ export default class PlayerController {
             const p = await this.db.obj.get('players').find(filter).cloneDeep().value();
             return (typeof p === 'undefined') ? null : p;
         } catch (error) {
-            if (GlobalData.verbose) logError(`Failed to search for a player in the database with error: ${error.message}`);
+            if (verbose) logError(`Failed to search for a player in the database with error: ${error.message}`);
             return false;
         }
     }
@@ -225,7 +226,7 @@ export default class PlayerController {
                 .value();
         } catch (error) {
             const msg = `Failed to search for a registered action database with error: ${error.message}`;
-            if (GlobalData.verbose) logError(msg);
+            if (verbose) logError(msg);
             throw new Error(msg);
         }
     }
@@ -346,7 +347,7 @@ export default class PlayerController {
         } catch (error) {
             const msg = `Failed to check whitelist/blacklist: ${error.message}`;
             logError(msg);
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             return { allow: false, reason: msg };
         }
     }
@@ -418,7 +419,7 @@ export default class PlayerController {
         } catch (error) {
             let msg = `Failed to register event to database with message: ${error.message}`;
             logError(msg);
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             throw new Error(msg);
         }
     }
@@ -455,7 +456,7 @@ export default class PlayerController {
         } catch (error) {
             const msg = `Failed to revoke action with message: ${error.message}`;
             logError(msg);
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             throw new Error(msg);
         }
     }
@@ -543,7 +544,7 @@ export default class PlayerController {
 
             return true;
         } catch (error) {
-            if (GlobalData.verbose) logError(`Failed to search for a registered action database with error: ${error.message}`);
+            if (verbose) logError(`Failed to search for a registered action database with error: ${error.message}`);
             return false;
         }
     }
@@ -567,7 +568,7 @@ export default class PlayerController {
             return removed.length;
         } catch (error) {
             const msg = `Failed to clean database with error: ${error.message}`;
-            if (GlobalData.verbose) logError(msg);
+            if (verbose) logError(msg);
             throw new Error(msg);
         }
     }
@@ -593,7 +594,7 @@ export default class PlayerController {
                 };
             });
         } catch (error) {
-            if (GlobalData.verbose) logError(`Failed to generate playerlist with error: ${error.message}`);
+            if (verbose) logError(`Failed to generate playerlist with error: ${error.message}`);
             return false;
         }
     }
@@ -669,8 +670,8 @@ export default class PlayerController {
                 delete p.endpoint;
                 hbPlayers.set(p.license, p);
             }
-            if (GlobalData.verbose && invalids) logWarn(`HeartBeat playerlist contained ${invalids} invalid players that were removed.`);
-            if (GlobalData.verbose && duplicated) logWarn(`HeartBeat playerlist contained ${duplicated} duplicated players that were removed.`);
+            if (verbose && invalids) logWarn(`HeartBeat playerlist contained ${invalids} invalid players that were removed.`);
+            if (verbose && duplicated) logWarn(`HeartBeat playerlist contained ${duplicated} duplicated players that were removed.`);
 
 
             //Processing active players list, creating the removed list, creating new active list without removed players
@@ -747,7 +748,7 @@ export default class PlayerController {
             //Replacing the active playerlist
             this.activePlayers = newActivePlayers;
         } catch (error) {
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logError(`PlayerController failed to process HeartBeat with error: ${error.message}`);
                 dir(error);
             }

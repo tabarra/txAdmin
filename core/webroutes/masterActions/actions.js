@@ -5,6 +5,7 @@ const fs = require('fs-extra');
 const mysql = require('mysql2/promise');
 import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -156,7 +157,7 @@ async function handleImportBansFile(ctx, dbType) {
             imported++;
         }// end for()
     } catch (error) {
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         return ctx.utils.render('main/message', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});
     }
 
@@ -282,7 +283,7 @@ async function handleImportBansDBMS(ctx, dbType) {
             }
         }
     } catch (error) {
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         return ctx.utils.render('main/message', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});
     }
 

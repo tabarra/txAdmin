@@ -2,6 +2,7 @@
 const modulename = 'TimeSeries';
 const fs = require('fs-extra');
 import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
@@ -81,7 +82,7 @@ export default class TimeSeries {
         try {
             await fs.writeFile(this.file, JSON.stringify(this.log));
         } catch (error) {
-            if (GlobalData.verbose) logWarn('Error writing the player history log file.');
+            if (verbose) logWarn('Error writing the player history log file.');
         }
     }
 

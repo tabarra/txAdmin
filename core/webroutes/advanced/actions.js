@@ -4,6 +4,7 @@ const bytes = require('bytes');
 const humanizeDuration = require('humanize-duration');
 import got from '@core/extras/got.js';
 import logger from '@core/extras/console.js';
+import { setVerbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
@@ -38,7 +39,7 @@ export default async function AdvancedActions(ctx) {
 
     //Action: Change Verbosity
     if (action == 'change_verbosity') {
-        GlobalData.verbose = (parameter == 'true');
+        setVerbose(parameter == 'true');
         globals.fxRunner.resetConvars();
         return ctx.send({refresh:true});
     } else if (action == 'perform_magic') {

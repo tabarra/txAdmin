@@ -8,6 +8,7 @@ import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 import getOsDistro from '@core/extras/getOsDistro.js';
+import { convars, txEnv } from '@core/globalData.js';
 
 //Consts
 const maxAttempts = 10;
@@ -48,9 +49,9 @@ const printDiagnostics = async () => {
     logError(`Uptime: ${uptime}`);
     logError(`Entropy: ${entropy}`);
     logError(`Distro: ${osDistro}`);
-    logError(`txAdmin: ${GlobalData.txAdminVersion}`);
-    logError(`FXServer: ${GlobalData.fxServerVersion}`);
-    logError(`ZAP: ${GlobalData.isZapHosting}`);
+    logError(`txAdmin: ${txEnv.txAdminVersion}`);
+    logError(`FXServer: ${txEnv.fxServerVersion}`);
+    logError(`ZAP: ${convars.isZapHosting}`);
     logError(`Unique Test: secure ${secureStorage.size}/100, non-secure ${nonsecureStorage.size}/100`);
 };
 

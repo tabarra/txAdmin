@@ -4,6 +4,7 @@ const fs = require('fs').promises;
 const low = require('lowdb');
 const FileAsync = require('lowdb/adapters/FileAsync');
 import logger from '@core/extras/console.js';
+import { convars, verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const idGen = require('./idGenerator.js');
 
@@ -25,7 +26,7 @@ const ldbProdSerializer = {
     serialize: JSON.stringify,
     deserialize: JSON.parse,
 };
-const ldbSerializer = (!GlobalData.isDevMode) ? ldbProdSerializer : undefined;
+const ldbSerializer = (!convars.isDevMode) ? ldbProdSerializer : undefined;
 
 
 /**
@@ -186,10 +187,10 @@ class Database {
     async backupDatabase() {
         try {
             await fs.copyFile(this.dbPath, this.backupPath);
-            if (GlobalData.verbose) logOk('Database file backed up.');
+            if (verbose) logOk('Database file backed up.');
         } catch (error) {
             logError(`Failed to backup database file '${this.dbPath}'`);
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
         }
     }
 
@@ -203,7 +204,7 @@ class Database {
             throw new Error('unknown priority flag!');
         }
         if (flag > this.writePending) {
-            if (GlobalData.verbose) log(`writeFlag > ${['no', 'low', 'med', 'high'][flag]}`);
+            if (verbose) log(`writeFlag > ${['no', 'low', 'med', 'high'][flag]}`);
             this.writePending = flag;
         }
     }
@@ -225,13 +226,13 @@ class Database {
                 const timeElapsed = Date.now() - timeStart;
                 this.writePending = SAVE_STANDBY;
                 this.lastWrite = timeStart;
-                if (GlobalData.verbose) logOk(`DB file saved, took ${timeElapsed}ms.`);
+                if (verbose) logOk(`DB file saved, took ${timeElapsed}ms.`);
             } catch (error) {
                 logError(`Failed to save players database with error: ${error.message}`);
-                if (GlobalData.verbose) dir(error);
+                if (verbose) dir(error);
             }
         } else {
-            if (GlobalData.verbose) logOk('Skipping DB file save.');
+            if (verbose) logOk('Skipping DB file save.');
         }
     }
 } //Fim Database()
