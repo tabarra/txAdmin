@@ -218,7 +218,6 @@ end
 -- Broadcast admin message to all players
 -- This function is triggered by txaEvent
 local function handleAnnouncementEvent(eventData)
-    print('handleAnnouncementEvent')
     TriggerClientEvent("txAdmin:receiveAnnounce", -1, eventData.message, eventData.author)
     TriggerEvent('txaLogger:internalChatMessage', 'tx', "(Broadcast) "..eventData.author, eventData.message)
 end

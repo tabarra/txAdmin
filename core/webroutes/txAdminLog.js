@@ -2,7 +2,7 @@ const modulename = 'WebServer:txAdminLog';
 import dateFormat from 'dateformat';
 import xssInstancer from '@core/extras/xss.js';
 import logger from '@core/extras/console.js';
-const { dir, log, logOk, logWarn, logError } = logger(modulename);
+const { dir, log, logOk, logWarn, logError, getLog } = logger(modulename);
 const xss = xssInstancer();
 
 
