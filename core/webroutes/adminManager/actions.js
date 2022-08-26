@@ -247,7 +247,7 @@ async function handleEdit(ctx) {
     try {
         await globals.adminVault.editAdmin(name, null, citizenfxData, discordData, permissions);
         ctx.utils.logAction(`Editing user '${name}'.`);
-        return ctx.send({type: 'success', message: 'refresh'});
+        return ctx.send({type: 'success', refresh: true});
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
     }
@@ -287,7 +287,7 @@ async function handleDelete(ctx) {
     try {
         await globals.adminVault.deleteAdmin(name);
         ctx.utils.logAction(`Deleting user '${name}'.`);
-        return ctx.send({type: 'success', message: 'refresh'});
+        return ctx.send({type: 'success', refresh: true});
     } catch (error) {
         return ctx.send({type: 'danger', message: error.message});
     }

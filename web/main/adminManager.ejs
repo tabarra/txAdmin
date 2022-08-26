@@ -252,27 +252,24 @@
             return $.notify({ message: 'The Username is not long enough.' }, { type: 'warning' });
         }
         const notify = $.notify({ message: '<p class="text-center">Saving...</p>' }, {});
-        console.log('/adminManager/' + (isNewAdmin) ? 'add' : 'edit');
+        const action = (isNewAdmin) ? 'add' : 'edit';
 
         txAdminAPI({
             type: "POST",
-            url: `/adminManager/${(isNewAdmin) ? 'add' : 'edit'}`, 
+            url: `/adminManager/${action}`, 
             data: formData,
             dataType: 'json',
             success: function (data) {
-                if(data.message == 'refresh'){
-                    window.location.reload(true);
+                if (checkApiLogoutRefresh(data)) return;
+                if(data.type == 'showPassword'){
+                    notify.update('progress', 0);
+                    notify.update('type', 'success');
+                    notify.update('message', 'Saved!');
+                    $('#modAdmin').modal('hide');
+                    $('#modAdminPassword-pwd').val(data.password);
+                    $('#modAdminPassword').modal('show');
                 }else{
-                    if(data.type == 'showPassword'){
-                        notify.update('progress', 0);
-                        notify.update('type', 'success');
-                        notify.update('message', 'Saved!');
-                        $('#modAdmin').modal('hide');
-                        $('#modAdminPassword-pwd').val(data.password);
-                        $('#modAdminPassword').modal('show');
-                    }else{
-                        updateMarkdownNotification(data, notify);
-                    }
+                    updateMarkdownNotification(data, notify);
                 }
             },
             error: function (xmlhttprequest, textstatus, message) {
