@@ -6,7 +6,7 @@ import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData.js';
 // eslint-disable-next-line no-unused-vars
 import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database.js';
-import { genWhitelistID } from './idGenerator.js';
+import { genActionID, genWhitelistID } from './idGenerator.js';
 // import PlayerlistGenerator from './playerlistGenerator.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
@@ -396,7 +396,7 @@ export default class PlayerController {
 
         //Saves it to the database
         try {
-            const actionID = await idGen.genActionID(this.db.obj, type);
+            const actionID = await genActionID(this.db.obj, type);
             const toDB = {
                 id: actionID,
                 type,

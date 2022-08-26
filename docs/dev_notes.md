@@ -4,7 +4,7 @@ v4.17.0:
 - [x] migrate core to esbuild
 - [x] migrate menu to vite
 - [x] docs: new structure, building, developing
-- [ ] convert txAdmin to ESM
+- [x] convert txAdmin to ESM
 - [ ] add option to set the resource load max time
 - [ ] ask bubble to rm the cicd cache or add a `rm -rf` to the target folder
 
@@ -18,16 +18,6 @@ Optional:
 - [ ] add player id view permission + logging
 - [ ] playerlist remove rtl characters
 - [ ] create beta release action
-
-
-time npx esbuild ./core \
-    --bundle \
-    --outfile=/e/FiveM/BUILDS/5811/citizen/system_resources/monitor/core/index.js \
-    --platform=node \
-    --target=node16 \
-    --minify-whitespace \
-    --charset=utf8 \
-    --watch
 
 
 ```js

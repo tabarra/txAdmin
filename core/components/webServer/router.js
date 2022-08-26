@@ -3,7 +3,6 @@ import KoaRateLimit from 'koa-ratelimit';
 
 import * as webRoutes from '../../webroutes';
 import { requestAuth } from './requestAuthenticator';
-// dir(Object.keys(webRoutes.adminManager_get));
 
 
 /**
@@ -122,7 +121,7 @@ export default (config) => {
     router.post('/nui/player/:action', requestAuth('nui'), webRoutes.player_actions);
     router.get('/nui/start/:route?', requestAuth('nuiStart'), async (ctx, next) => {
         if (ctx.params.route === 'adminManager') {
-            return await webRoutes.adminManager.get(ctx, next);
+            return await webRoutes.adminManager_get(ctx, next);
         } else {
             return await webRoutes.serverLog(ctx, next);
         }

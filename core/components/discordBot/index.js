@@ -5,16 +5,9 @@ import { verbose } from '@core/globalData.js';
 import commands from './commands';
 const { dir, log, logOk, logWarn, logError, logDebug } = logger(modulename);
 
-//NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
-//FIXME:MARKER_REVIEW
-import { URLSearchParams } from 'url';
-if (typeof URLSearchParams === 'undefined') {
-    global.URLSearchParams = URLSearchParams;
-}
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
-
 
 export default class DiscordBot {
     constructor(config) {

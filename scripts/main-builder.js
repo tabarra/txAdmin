@@ -3,7 +3,6 @@ import path from 'node:path';
 import child_process from 'node:child_process';
 import chokidar from 'chokidar';
 import debounce from 'lodash/debounce.js';
-import TscWatchClient from 'tsc-watch/client.js';
 import esbuild from 'esbuild';
 
 import { licenseBanner, getFxsPaths } from './scripts-utils.js';
@@ -26,45 +25,6 @@ const copyStaticFiles = (targetPath, eventName) => {
         const destPath = path.join(targetPath, srcPath);
         fs.rmSync(destPath, { recursive: true, force: true });
         fs.cpSync(srcPath, destPath, { recursive: true });
-    }
-};
-
-
-/**
- * Bundles the core files
- * @param {String} destRootPath
- * @returns
- */
-const bundleCore = (destRootPath) => {
-    console.log('[BUNDLER] Started.');
-    try {
-        //NOTE: forcing esbuild to interpret the tsc output as cjs
-        fs.writeFileSync('./tmp_core_tsc/package.json', '{"type": "commonjs"}');
-        fs.copyFileSync('./core/tsconfig.json', './tmp_core_tsc/tsconfig.json');
-        
-        const { errors, _warnings } = esbuild.buildSync({
-            entryPoints: ['./dist_tmpcore/index.js'],
-            bundle: true,
-            outfile: path.join(destRootPath, 'core', 'index.js'),
-            platform: 'node',
-            target: 'node16',
-            minifyWhitespace: true,
-            charset: 'utf8',
-            banner: {
-                js: txLicenseBanner,
-            },
-        });
-        if (errors.length) {
-            console.log(`[BUNDLER] Failed with ${errors.length} errors.`);
-            return { success: false };
-        } else {
-            console.log('[BUNDLER] Finished.');
-            return { success: true };
-        }
-    } catch (error) {
-        return { success: false };
-    } finally {
-        fs.rmSync('./tmp_core_tsc/', { recursive: true, force: true });
     }
 };
 
@@ -155,11 +115,11 @@ const runDevTask = () => {
     try {
         ({ fxServerRootPath, fxsBinPath, monitorPath } = getFxsPaths(config.fxserverPath));
     } catch (error) {
-        console.error('Could not extract/validate the fxserver and monitor paths.');
+        console.error('[BUILDER] Could not extract/validate the fxserver and monitor paths.');
         console.error(error);
         process.exit(1);
     }
-    console.log(`Starting txAdmin Dev Builder for ${fxServerRootPath}`);
+    console.log(`[BUILDER] Starting txAdmin Dev Builder for ${fxServerRootPath}`);
 
     //Sync target path and start chokidar
     //We don't really care about the path, just remove everything and copy again
@@ -177,26 +137,36 @@ const runDevTask = () => {
     //Create txAdmin process runner
     const txInstance = new txAdminRunner(fxServerRootPath, fxsBinPath);
 
-    //Run tsc-watch
-    const tscWatcher = new TscWatchClient();
-    tscWatcher.on('started', () => {
-        txInstance.killServer();
+    //Transpile & bundle
+    //NOTE: "result" is {errors[], warnings[], stop()}
+    console.log('[BUILDER] Building core.');
+    esbuild.build({
+        entryPoints: ['./core'],
+        bundle: true,
+        outfile: path.join(monitorPath, 'core', 'index.js'),
+        platform: 'node',
+        target: 'node16',
+        charset: 'utf8',
+        //no minify, no banner
+        watch: {
+            onRebuild(error, result) {
+                if (error) {
+                    console.log(`[BUILDER] Failed with errors.`);
+                    txInstance.killServer();
+                } else {
+                    console.log('[BUILDER] Finished rebuild.');
+                    txInstance.killServer();
+                    txInstance.spawnServer();
+                }
+            },
+        },
+    }).then((result) => {
+        console.log('[BUILDER] Finished initial build.');
+        txInstance.spawnServer();
+    }).catch((error) => {
+        console.log('[BUILDER] Failed initial build.');
+        console.log('[BUILDER] You need to fix the error and restart the builder script entirely');
     });
-    tscWatcher.on('success', () => {
-        const { success } = bundleCore(monitorPath);
-        if (success) {
-            console.log('Publish task finished.');
-            txInstance.spawnServer();
-        }
-    });
-    tscWatcher.on('compile_errors', () => {
-        console.log('[BUILDER] Awaiting for the errors to be fixed.');
-    });
-    tscWatcher.start(
-        '--project', './core',
-        '--noClear',
-        '--pretty',
-    );
 };
 
 
@@ -208,32 +178,30 @@ const runPublishTask = () => {
     console.log('Starting txAdmin Prod Builder.');
     copyStaticFiles('./dist/', 'publish');
 
-    //Transpile core
-    const tscPath = path.resolve('node_modules', '.bin', 'tsc');
+    //Transpile & bundle core
     try {
-        child_process.execSync(
-            `${tscPath} --project core/tsconfig.json --listEmittedFiles --noEmitOnError --pretty`,
-            {
-                stdio: 'inherit',
-                env: { ...process.env, TERM: 'xterm-256color', FORCE_COLOR: 3 },
+        const { errors, _warnings } = esbuild.buildSync({
+            entryPoints: ['./core'],
+            bundle: true,
+            outfile: './dist/core/index.js',
+            platform: 'node',
+            target: 'node16',
+            minifyWhitespace: true,
+            charset: 'utf8',
+            banner: {
+                js: txLicenseBanner,
             },
-        );
-    } catch (error) {
-        console.error('[BUILDER] Failed to transpile core/');
-        console.error(error.message);
-        if (error.output) {
-            console.log(error.output.toString());
+        });
+        if (errors.length) {
+            console.log(`[BUNDLER] Failed with ${errors.length} errors.`);
+            process.exit(1);
         }
+    } catch (error) {
+        console.log('[BUNDLER] Errored out.');
+        console.dir(error);
         process.exit(1);
     }
-
-    //Bundle core
-    const { success } = bundleCore('./dist/');
-    if (success) {
-        console.log('Publish task finished.');
-    } else {
-        process.exit(1);
-    }
+    console.log('Publish task finished :)');
 };
 
 
