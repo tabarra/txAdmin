@@ -199,6 +199,14 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
     elseif event == 'wildAttack' then
         message = "triggered wild attack on " .. getLogPlayerName(data)
 
+    elseif event == 'showPlayerIDs' then
+        if type(data) ~= 'boolean' then return end
+        if data then
+            message = "turned show player IDs on"
+        else
+            message = "turned show player IDs off"
+        end
+
     --In case of unknown event
     else
         logger(source, 'DebugMessage', "unknown menu event "..event)

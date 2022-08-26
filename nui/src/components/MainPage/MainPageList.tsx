@@ -112,7 +112,7 @@ export const MainPageList: React.FC = () => {
   });
 
   //=============================================
-  const handlePlayermodeToggle = (targetMode) => {
+  const handlePlayermodeToggle = (targetMode: PlayerMode) => {
     if (targetMode === playerMode || targetMode === PlayerMode.DEFAULT) {
       setPlayerMode(PlayerMode.DEFAULT);
       fetchNui("playerModeChanged", PlayerMode.DEFAULT);
@@ -539,6 +539,7 @@ export const MainPageList: React.FC = () => {
       {
         title: t("nui_menu.page_main.player_ids.title"),
         label: t("nui_menu.page_main.player_ids.label"),
+        requiredPermission: "menu.viewids",
         icon: <Groups />,
         onSelect: handleTogglePlayerIds,
       },

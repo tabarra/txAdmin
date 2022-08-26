@@ -180,6 +180,15 @@ RegisterNetEvent('txAdmin:menu:healPlayer', function(id)
   TriggerEvent('txaLogger:menuEvent', src, "healPlayer", allow, id)
 end)
 
+RegisterNetEvent('txAdmin:menu:showPlayerIDs', function(enabled)
+  local src = source
+  local allow = PlayerHasTxPermission(src, 'menu.viewids')
+  TriggerEvent("txaLogger:menuEvent", src, "showPlayerIDs", allow, enabled)
+  if allow then
+    TriggerClientEvent('txAdmin:menu:showPlayerIDs', src, enabled)
+  end
+end)
+
 ---@param x number|nil
 ---@param y number|nil
 ---@param z number|nil

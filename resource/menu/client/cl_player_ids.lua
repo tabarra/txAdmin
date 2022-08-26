@@ -86,10 +86,10 @@ local function showGamerTags()
     end
 end
 
-local function togglePlayerIDsHandler()
+local function showPlayerIDs(enabled)
     if not menuIsAccessible then return end
 
-    isPlayerIDActive = not isPlayerIDActive
+    isPlayerIDActive = enabled
     if not isPlayerIDActive then
         sendSnackbarMessage('info', 'nui_menu.page_main.player_ids.alert_hide', true)
         -- Remove all gamer tags and clear out active table
@@ -99,6 +99,15 @@ local function togglePlayerIDsHandler()
     end
 
     debugPrint('Show Player IDs Status: ' .. tostring(isPlayerIDActive))
+end
+
+RegisterNetEvent('txAdmin:menu:showPlayerIDs', function(enabled)
+    debugPrint('Received showPlayerIDs event')
+    showPlayerIDs(enabled)
+end)
+
+local function togglePlayerIDsHandler()
+    TriggerServerEvent('txAdmin:menu:showPlayerIDs', not isPlayerIDActive)
 end
 
 RegisterNUICallback('togglePlayerIDs', function(_, cb)

@@ -45,6 +45,7 @@ export default class AdminVault {
 
             'menu.vehicle': 'Spawn / Fix Vehicles',
             'menu.clear_area': 'Reset world area',
+            'menu.viewids': 'View Player IDs in-game', //be able to see the ID of the players
             'players.message': 'Announcement / DM', //enable/disable the dm button on modal as well
             'players.whitelist': 'Whitelist',
             'players.warn': 'Warn',
