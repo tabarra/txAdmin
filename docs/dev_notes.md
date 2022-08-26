@@ -5,8 +5,9 @@ v4.17.0:
 - [x] migrate menu to vite
 - [x] docs: new structure, building, developing
 - [x] convert txAdmin to ESM
-- [ ] add option to set the resource load max time
-- [ ] ask bubble to rm the cicd cache or add a `rm -rf` to the target folder
+- [x] add option to set the resource load max time
+- [x] add player id view permission + logging
+- [x] ask bubble to rm the cicd cache or add a `rm -rf` to the target folder
 
 Optional:
 - [ ] add actionRevoked event (rewrite PR #612)
@@ -15,7 +16,6 @@ Optional:
 - [ ] add option to schedule a restart (single shot, non persistent)
 - [ ] stats: add recipe name + if ptero + random collisions
 - [ ] stats: jwe
-- [ ] add player id view permission + logging
 - [ ] playerlist remove rtl characters
 - [ ] create beta release action
 
