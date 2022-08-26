@@ -1,16 +1,15 @@
-//Requires
 const modulename = 'RecipeEngine';
-const { promisify } = require('util');
-const fs = require('fs-extra');
-const fsp = require('fs').promises; //starting to replace fse
-const path = require('path');
-const stream = require('stream');
-const StreamZip = require('node-stream-zip');
-const cloneDeep = require('lodash/cloneDeep');
-const escapeRegExp = require('lodash/escapeRegExp');
-const mysql = require('mysql2/promise');
-const got = require('./got');
-const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
+import { promisify } from 'node:util';
+import fse from 'fs-extra';
+import fsp from 'node:fs/promises';
+import path from 'node:path';
+import stream from 'node:stream';
+import StreamZip from 'node-stream-zip';
+import { cloneDeep, escapeRegExp }  from 'lodash-es';
+import mysql from 'mysql2/promise';
+import got from '@core/extras/got.js';
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 //Helper functions
@@ -60,7 +59,7 @@ const taskDownloadFile = async (options, basePath, deployerCtx) => {
 
     //Process and create target file/path
     const destPath = safePath(basePath, options.path);
-    await fs.outputFile(destPath, 'file save attempt, please ignore or remove');
+    await fse.outputFile(destPath, 'file save attempt, please ignore or remove');
 
     //Start file download and create write stream
     deployerCtx.$step = 'before stream';
@@ -75,7 +74,7 @@ const taskDownloadFile = async (options, basePath, deployerCtx) => {
     const pipeline = promisify(stream.pipeline);
     await pipeline(
         gotStream,
-        fs.createWriteStream(destPath),
+        fse.createWriteStream(destPath),
     );
     deployerCtx.$step = 'after stream';
 };
@@ -136,7 +135,7 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     const pipeline = promisify(stream.pipeline);
     await pipeline(
         gotStream,
-        fs.createWriteStream(tmpFilePath),
+        fse.createWriteStream(tmpFilePath),
     );
     deployerCtx.$step = 'after stream';
 
@@ -154,7 +153,7 @@ const taskDownloadGithub = async (options, basePath, deployerCtx) => {
     deployerCtx.$step = 'zip closed';
 
     //Removing temp path
-    await fs.remove(tmpFilePath);
+    await fse.remove(tmpFilePath);
     deployerCtx.$step = 'task finished';
 };
 
@@ -176,7 +175,7 @@ const taskRemovePath = async (options, basePath, deployerCtx) => {
     //NOTE: being extra safe about not deleting itself
     const cleanBasePath = pathCleanTrail(path.normalize(basePath));
     if (cleanBasePath == targetPath) throw new Error('cannot remove base folder');
-    await fs.remove(targetPath);
+    await fse.remove(targetPath);
 };
 
 
@@ -193,7 +192,7 @@ const taskEnsureDir = async (options, basePath, deployerCtx) => {
 
     //Process and create target file/path
     const destPath = safePath(basePath, options.path);
-    await fs.ensureDir(destPath);
+    await fse.ensureDir(destPath);
 };
 
 
@@ -248,7 +247,7 @@ const taskMovePath = async (options, basePath, deployerCtx) => {
 
     const srcPath = safePath(basePath, options.src);
     const destPath = safePath(basePath, options.dest);
-    await fs.move(srcPath, destPath, {
+    await fse.move(srcPath, destPath, {
         overwrite: (options.overwrite === 'true' || options.overwrite === true),
     });
 };
@@ -256,7 +255,7 @@ const taskMovePath = async (options, basePath, deployerCtx) => {
 
 /**
  * Copy a file or directory. The directory can have contents.
- * TODO: add a filter property and use a glob lib in the fs.copy filter function
+ * TODO: add a filter property and use a glob lib in the fse.copy filter function
  */
 const validatorCopyPath = (options) => {
     return (
@@ -269,7 +268,7 @@ const taskCopyPath = async (options, basePath, deployerCtx) => {
 
     const srcPath = safePath(basePath, options.src);
     const destPath = safePath(basePath, options.dest);
-    await fs.copy(srcPath, destPath, {
+    await fse.copy(srcPath, destPath, {
         overwrite: (typeof options.overwrite !== 'undefined' && (options.overwrite === 'true' || options.overwrite === true)),
     });
 };
@@ -290,9 +289,9 @@ const taskWriteFile = async (options, basePath, deployerCtx) => {
 
     const filePath = safePath(basePath, options.file);
     if (options.append === 'true' || options.append === true) {
-        await fs.appendFile(filePath, options.data);
+        await fse.appendFile(filePath, options.data);
     } else {
-        await fs.outputFile(filePath, options.data);
+        await fse.outputFile(filePath, options.data);
     }
 };
 
@@ -334,7 +333,7 @@ const taskReplaceString = async (options, basePath, deployerCtx) => {
     const fileList = (Array.isArray(options.file)) ? options.file : [options.file];
     for (let i = 0; i < fileList.length; i++) {
         const filePath = safePath(basePath, fileList[i]);
-        const original = await fs.readFile(filePath, 'utf8');
+        const original = await fse.readFile(filePath, 'utf8');
         let changed;
         if (typeof options.mode == 'undefined' || options.mode == 'template') {
             changed = original.replace(new RegExp(options.search, 'g'), replaceVars(options.replace, deployerCtx));
@@ -343,7 +342,7 @@ const taskReplaceString = async (options, basePath, deployerCtx) => {
         } else if (options.mode == 'literal') {
             changed = original.replace(new RegExp(options.search, 'g'), options.replace);
         }
-        await fs.writeFile(filePath, changed);
+        await fse.writeFile(filePath, changed);
     }
 };
 
@@ -396,7 +395,7 @@ const taskQueryDatabase = async (options, basePath, deployerCtx) => {
     let sql;
     if (options.file) {
         const filePath = safePath(basePath, options.file);
-        sql = await fs.readFile(filePath, 'utf8');
+        sql = await fse.readFile(filePath, 'utf8');
     } else {
         sql = options.query;
     }
@@ -414,7 +413,7 @@ const taskLoadVars = async (options, basePath, deployerCtx) => {
     if (!validatorLoadVars(options)) throw new Error('invalid options');
 
     const srcPath = safePath(basePath, options.src);
-    const rawData = await fs.readFile(srcPath, 'utf8');
+    const rawData = await fse.readFile(srcPath, 'utf8');
     const inData = JSON.parse(rawData);
     inData.dbConnection = undefined;
     Object.assign(deployerCtx, inData);
@@ -480,7 +479,7 @@ TODO:
 
 
 //Exports
-module.exports = {
+export default {
     download_file: {
         validate: validatorDownloadFile,
         run: taskDownloadFile,

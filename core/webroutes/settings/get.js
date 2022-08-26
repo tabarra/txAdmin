@@ -1,15 +1,16 @@
-//Requires
 const modulename = 'WebServer:SettingsGet';
-const cloneDeep = require('lodash/cloneDeep');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const { redactApiKeys } = require('../../extras/helpers');
+import { cloneDeep }  from 'lodash-es';
+import logger from '@core/extras/console.js';
+import { convars, txEnv } from '@core/globalData.js';
+import { redactApiKeys } from '../../extras/helpers';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);;
 
 
 /**
  * Returns the output page containing the live console
  * @param {object} ctx
  */
-module.exports = async function SettingsGet(ctx) {
+export default async function SettingsGet(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('settings.view', modulename)) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
@@ -25,8 +26,8 @@ module.exports = async function SettingsGet(ctx) {
         readOnly: !ctx.utils.checkPermission('settings.write', modulename, false),
         serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         activeTab: 'global',
-        isZapHosting: GlobalData.isZapHosting,
-        txDataPath: GlobalData.dataPath,
+        isZapHosting: convars.isZapHosting,
+        txDataPath: txEnv.dataPath,
     };
 
     if (renderData.readOnly) {

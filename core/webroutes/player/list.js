@@ -1,9 +1,12 @@
-//Requires
 const modulename = 'WebServer:PlayerList';
-const dateFormat = require('dateformat');
-const humanizeDuration = require('humanize-duration');
-const xss = require('../../extras/xss')();
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import dateFormat from 'dateformat';
+import humanizeDuration from 'humanize-duration';
+import xssInstancer from '@core/extras/xss.js';
+import consts from '@core/extras/consts.js';
+import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
+const xss = xssInstancer();
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -17,7 +20,7 @@ const now = () => { return Math.round(Date.now() / 1000); };
  *
  * @param {object} ctx
  */
-module.exports = async function PlayerList(ctx) {
+export default async function PlayerList(ctx) {
     //Prepare dbo
     const dbo = globals.playerController.getDB();
 
@@ -61,7 +64,7 @@ async function handleSearch(ctx, dbo) {
 
     try {
         //Getting valid identifiers
-        const joinedValidIDKeys = Object.keys(GlobalData.validIdentifiers).join('|');
+        const joinedValidIDKeys = Object.keys(consts.validIdentifiers).join('|');
         const idsRegex = new RegExp(`((${joinedValidIDKeys}):\\w+)`, 'g');
         const idsArray = [...searchString.matchAll(idsRegex)]
             .map((x) => x[0])
@@ -99,7 +102,7 @@ async function handleSearch(ctx, dbo) {
 
 
         //IF searching for an acition ID
-        } else if (GlobalData.regexActionID.test(searchString.toUpperCase())) {
+        } else if (consts.regexActionID.test(searchString.toUpperCase())) {
             const action = await dbo.get('actions')
                 .find({id: searchString.toUpperCase()})
                 .cloneDeep()
@@ -141,7 +144,7 @@ async function handleSearch(ctx, dbo) {
         //Give output
         return ctx.send(outData);
     } catch (error) {
-        if (GlobalData.verbose) {
+        if (verbose) {
             logError(`handleSearch failed with error: ${error.message}`);
             dir(error);
         }
@@ -250,7 +253,7 @@ async function getStats(dbo) {
         };
     } catch (error) {
         const msg = `getStats failed with error: ${error.message}`;
-        if (GlobalData.verbose) logError(msg);
+        if (verbose) logError(msg);
         return [];
     }
 }
@@ -293,7 +296,7 @@ async function getPendingWL(dbo, limit) {
         return lastWhitelistBlocks;
     } catch (error) {
         const msg = `getPendingWL failed with error: ${error.message}`;
-        if (GlobalData.verbose) logError(msg);
+        if (verbose) logError(msg);
         return [];
     }
 }
@@ -316,7 +319,7 @@ async function getLastActions(dbo, limit) {
         return await processActionList(lastActions);
     } catch (error) {
         const msg = `getLastActions failed with error: ${error.message}`;
-        if (GlobalData.verbose) logError(msg);
+        if (verbose) logError(msg);
         return [];
     }
 }
@@ -339,7 +342,7 @@ async function getLastPlayers(dbo, limit) {
         return await processPlayerList(lastPlayers);
     } catch (error) {
         const msg = `getLastPlayers failed with error: ${error.message}`;
-        if (GlobalData.verbose) logError(msg);
+        if (verbose) logError(msg);
         return [];
     }
 }

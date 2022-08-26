@@ -1,8 +1,9 @@
-//Requires
 const modulename = 'ConfigVault';
-const fs = require('fs');
-const cloneDeep = require('lodash/cloneDeep');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+import fs from 'node:fs';
+import { cloneDeep }  from 'lodash-es';
+import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -30,7 +31,7 @@ const deepFreeze = (obj) => {
     return obj;
 };
 
-module.exports = class ConfigVault {
+export default class ConfigVault {
     constructor(profilePath, serverProfile) {
         this.serverProfile = serverProfile;
         this.serverProfilePath = profilePath;
@@ -170,7 +171,7 @@ module.exports = class ConfigVault {
                 out.global.language = 'pt';
             }
         } catch (error) {
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated!\nOriginal error: ${error.message}`);
         }
 
@@ -231,7 +232,7 @@ module.exports = class ConfigVault {
             cfg.fxRunner.restartDelay = parseInt(cfg.fxRunner.restartDelay) || 1250; //not in templater
             cfg.fxRunner.quiet = (cfg.fxRunner.quiet === 'true' || cfg.fxRunner.quiet === true);
         } catch (error) {
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             throw new Error(`Malformed configuration file! Make sure your txAdmin is updated.\nOriginal error: ${error.message}`);
         }
 

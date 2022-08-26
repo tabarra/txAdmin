@@ -1,9 +1,10 @@
-//Requires
 const modulename = 'WebServer:PlayerModal';
-const cloneDeep = require('lodash/cloneDeep');
-const dateFormat = require('dateformat');
-const humanizeDuration = require('humanize-duration');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import { cloneDeep }  from 'lodash-es';
+import dateFormat from 'dateformat';
+import humanizeDuration from 'humanize-duration';
+import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -16,7 +17,7 @@ const now = () => { return Math.round(Date.now() / 1000); };
  *
  * @param {object} ctx
  */
-module.exports = async function PlayerModal(ctx) {
+export default async function PlayerModal(ctx) {
     //Sanity check
     if (typeof ctx.params.reference === 'undefined') {
         return ctx.utils.error(400, 'Invalid Request');
@@ -50,7 +51,7 @@ module.exports = async function PlayerModal(ctx) {
                 return out;
             });
         } catch (error) {
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logError('Error getting/processing player history');
                 dir(error);
             }
@@ -101,7 +102,7 @@ module.exports = async function PlayerModal(ctx) {
     //If player is active or in the database
     let playerData;
     if (activePlayer) {
-        if (GlobalData.verbose) dir(activePlayer); //DEBUG
+        if (verbose) dir(activePlayer); //DEBUG
         out.id = activePlayer.id;
         out.license = activePlayer.license;
         out.identifiers = activePlayer.identifiers;
@@ -115,7 +116,7 @@ module.exports = async function PlayerModal(ctx) {
         //TODO: when we start registering all associated identifiers, we could use that for the search
         let dbPlayer = await globals.playerController.getPlayer(reference);
         if (!dbPlayer) return ctx.send({type: 'offline', message: 'Player offline and not in database.'});
-        if (GlobalData.verbose) dir(dbPlayer); //DEBUG
+        if (verbose) dir(dbPlayer); //DEBUG
 
         out.id = false;
         out.license = reference;

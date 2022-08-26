@@ -1,51 +1,81 @@
-//Requires
 const modulename = 'Translator';
-const fs = require('fs');
-const path = require('path');
-const Polyglot = require('node-polyglot');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+import fs from 'node:fs';
+import path from 'node:path';
+import Polyglot from 'node-polyglot';
+import logger from '@core/extras/console.js';
+import { txEnv } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Statically requiring languages because of esbuild
-const languages = {
-    ar: require('../../locale/ar.json'),
-    bs: require('../../locale/bs.json'),
-    cs: require('../../locale/cs.json'),
-    da: require('../../locale/da.json'),
-    de: require('../../locale/de.json'),
-    el: require('../../locale/el.json'),
-    en: require('../../locale/en.json'),
-    es: require('../../locale/es.json'),
-    et: require('../../locale/et.json'),
-    fa: require('../../locale/fa.json'),
-    fi: require('../../locale/fi.json'),
-    fr: require('../../locale/fr.json'),
-    hu: require('../../locale/hu.json'),
-    it: require('../../locale/it.json'),
-    lt: require('../../locale/lt.json'),
-    lv: require('../../locale/lv.json'),
-    nl: require('../../locale/nl.json'),
-    no: require('../../locale/no.json'),
-    pl: require('../../locale/pl.json'),
-    pt: require('../../locale/pt.json'),
-    ro: require('../../locale/ro.json'),
-    ru: require('../../locale/ru.json'),
-    sl: require('../../locale/sl.json'),
-    sv: require('../../locale/sv.json'),
-    th: require('../../locale/th.json'),
-    tr: require('../../locale/tr.json'),
-    zh: require('../../locale/zh.json'),
+//FIXME: Merge with nui\src\utils\getLocale.ts into a shared folder?
+import lang_ar from "@locale/ar.json";
+import lang_bs from "@locale/bs.json";
+import lang_cs from "@locale/cs.json";
+import lang_da from "@locale/da.json";
+import lang_de from "@locale/de.json";
+import lang_el from "@locale/el.json";
+import lang_en from "@locale/en.json";
+import lang_es from "@locale/es.json";
+import lang_et from "@locale/et.json";
+import lang_fa from "@locale/fa.json";
+import lang_fi from "@locale/fi.json";
+import lang_fr from "@locale/fr.json";
+import lang_hu from "@locale/hu.json";
+import lang_it from "@locale/it.json";
+import lang_lt from "@locale/lt.json";
+import lang_lv from "@locale/lv.json";
+import lang_nl from "@locale/nl.json";
+import lang_no from "@locale/no.json";
+import lang_pl from "@locale/pl.json";
+import lang_pt from "@locale/pt.json";
+import lang_ro from "@locale/ro.json";
+import lang_ru from "@locale/ru.json";
+import lang_sl from "@locale/sl.json";
+import lang_sv from "@locale/sv.json";
+import lang_th from "@locale/th.json";
+import lang_tr from "@locale/tr.json";
+import lang_zh from "@locale/zh.json";
+
+const localeMap = {
+    ar: lang_ar,
+    bs: lang_bs,
+    cs: lang_cs,
+    da: lang_da,
+    de: lang_de,
+    el: lang_el,
+    en: lang_en,
+    es: lang_es,
+    et: lang_et,
+    fa: lang_fa,
+    fi: lang_fi,
+    fr: lang_fr,
+    hu: lang_hu,
+    it: lang_it,
+    lt: lang_lt,
+    lv: lang_lv,
+    nl: lang_nl,
+    no: lang_no,
+    pl: lang_pl,
+    pt: lang_pt,
+    ro: lang_ro,
+    ru: lang_ru,
+    sl: lang_sl,
+    sv: lang_sv,
+    th: lang_th,
+    tr: lang_tr,
+    zh: lang_zh,
 };
 
 /**
  * Small translation module built around Polyglot.js.
  * For the future, its probably a good idea to upgrade to i18next
  */
-module.exports = class Translator {
+export default class Translator {
     constructor() {
         // logOk('Started');
         this.language = globals.config.language;
         this.polyglot = null;
-        this.customLocalePath = path.join(GlobalData.dataPath, 'locale.json');
+        this.customLocalePath = path.join(txEnv.dataPath, 'locale.json');
 
         //Load language
         this.setupTranslator(true);
@@ -99,8 +129,8 @@ module.exports = class Translator {
      */
     getLanguagePhrases(lang) {
         //If its a known language
-        if (typeof languages[lang] === 'object') {
-            return languages[lang];
+        if (typeof localeMap[lang] === 'object') {
+            return localeMap[lang];
 
         //If its a custom language
         } else if (lang === 'custom') {

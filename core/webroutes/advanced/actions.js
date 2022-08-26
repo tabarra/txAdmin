@@ -1,9 +1,10 @@
-//Requires
 const modulename = 'WebServer:AdvancedActions';
-const bytes = require('bytes');
-const humanizeDuration = require('humanize-duration');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const got = require('../../extras/got');
+import bytes from 'bytes';
+import humanizeDuration from 'humanize-duration';
+import got from '@core/extras/got.js';
+import logger from '@core/extras/console.js';
+import { setVerbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -14,7 +15,7 @@ const now = () => { return Math.round(Date.now() / 1000); };
  *
  * @param {object} ctx
  */
-module.exports = async function AdvancedActions(ctx) {
+export default async function AdvancedActions(ctx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.action)
@@ -37,7 +38,7 @@ module.exports = async function AdvancedActions(ctx) {
 
     //Action: Change Verbosity
     if (action == 'change_verbosity') {
-        GlobalData.verbose = (parameter == 'true');
+        setVerbose(parameter == 'true');
         globals.fxRunner.resetConvars();
         return ctx.send({refresh:true});
     } else if (action == 'perform_magic') {

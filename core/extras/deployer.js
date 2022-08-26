@@ -1,13 +1,15 @@
-//Requires
 const modulename = 'Deployer';
-const path = require('path');
-const cloneDeep = require('lodash/cloneDeep');
-const dateFormat = require('dateformat');
-const fs = require('fs-extra');
-const open = require('open');
-const YAML = require('js-yaml');
-const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
-const recipeEngine = require('./recipeEngine');
+import path from 'path';
+import { cloneDeep }  from 'lodash-es';
+import dateFormat from 'dateformat'
+import fse from 'fs-extra';
+import open from 'open';
+import YAML from 'js-yaml';
+import logger from '@core/extras/console.js';
+import getOsDistro from '@core/extras/getOsDistro.js';
+import { txEnv, verbose } from '@core/globalData.js';
+import recipeEngine from './recipeEngine.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const getTimestamp = () => { return dateFormat(new Date(), 'HH:MM:ss'); };
@@ -16,8 +18,8 @@ const toDefault = (input, defVal) => { return (isUndefined(input)) ? defVal : in
 const canCreateFile = async (targetPath) => {
     try {
         const filePath = path.join(targetPath, '.empty');
-        await fs.outputFile(filePath, '#save_attempt_please_ignore');
-        await fs.remove(filePath);
+        await fse.outputFile(filePath, '#save_attempt_please_ignore');
+        await fse.remove(filePath);
         return true;
     } catch (error) {
         return false;
@@ -35,7 +37,7 @@ tasks:
 `;
 
 //Constants
-const engineVersion = 3;
+export const engineVersion = 3;
 
 
 /**
@@ -43,9 +45,9 @@ const engineVersion = 3;
  * FIXME: timeout to remove folders, or just autoremove them idk
  * @param {*} path
  */
-const validateTargetPath = async (deployPath) => {
-    if (await fs.pathExists(deployPath)) {
-        const pathFiles = await fs.readdir(deployPath);
+export const validateTargetPath = async (deployPath) => {
+    if (await fse.pathExists(deployPath)) {
+        const pathFiles = await fse.readdir(deployPath);
         if (pathFiles.some((x) => x !== '.empty')) {
             throw new Error('This folder is not empty!');
         } else {
@@ -57,7 +59,7 @@ const validateTargetPath = async (deployPath) => {
         }
     } else {
         if (await canCreateFile(deployPath)) {
-            await fs.remove(deployPath);
+            await fse.remove(deployPath);
             return 'Path didn\'t existed, we created one (then deleted it).';
         } else {
             throw new Error('Path doesn\'t exist, and we could not create it. Please check parent folder permissions.');
@@ -71,7 +73,7 @@ const validateTargetPath = async (deployPath) => {
  * TODO: use Joi for schema validaiton
  * @param {*} rawRecipe
  */
-const parseValidateRecipe = (rawRecipe) => {
+export const parseValidateRecipe = (rawRecipe) => {
     if (typeof rawRecipe !== 'string') throw new Error('not a string');
 
     //Loads YAML
@@ -79,7 +81,7 @@ const parseValidateRecipe = (rawRecipe) => {
     try {
         recipe = YAML.load(rawRecipe, { schema: YAML.JSON_SCHEMA });
     } catch (error) {
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         throw new Error('invalid yaml');
     }
 
@@ -105,7 +107,7 @@ const parseValidateRecipe = (rawRecipe) => {
         outRecipe.onesync = onesync;
     }
     if (typeof recipe['$minFxVersion'] == 'number') {
-        if (recipe['$minFxVersion'] > GlobalData.fxServerVersion) throw new Error(`this recipe requires FXServer v${recipe['$minFxVersion']} or above`);
+        if (recipe['$minFxVersion'] > txEnv.fxServerVersion) throw new Error(`this recipe requires FXServer v${recipe['$minFxVersion']} or above`);
         outRecipe.fxserverMinVersion = recipe['$minFxVersion']; //useless for now
     }
     if (typeof recipe['$engine'] == 'number') {
@@ -134,7 +136,7 @@ const parseValidateRecipe = (rawRecipe) => {
     }
 
     //Output
-    if (GlobalData.verbose) dir(outRecipe);
+    if (verbose) dir(outRecipe);
     return outRecipe;
 };
 
@@ -143,7 +145,7 @@ const parseValidateRecipe = (rawRecipe) => {
  * The deployer class is responsible for running the recipe and handling status and errors
  * TODO: log everything to deployPath/recipe.log
  */
-class Deployer {
+export class Deployer {
     /**
      * @param {string} originalRecipe
      * @param {string} deployPath
@@ -170,7 +172,7 @@ class Deployer {
         try {
             this.recipe = parseValidateRecipe(impRecipe);
         } catch (error) {
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             throw new Error(`Recipe Error: ${error.message}`);
         }
     }
@@ -204,9 +206,9 @@ class Deployer {
 
         //Ensure deployment path
         try {
-            await fs.ensureDir(this.deployPath);
+            await fse.ensureDir(this.deployPath);
         } catch (error) {
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             throw new Error(`Failed to create ${this.deployPath} with error: ${error.message}`);
         }
 
@@ -244,7 +246,7 @@ class Deployer {
         this.deployFailed = true;
         try {
             const filePath = path.join(this.deployPath, '_DEPLOY_FAILED_DO_NOT_USE');
-            await fs.outputFile(filePath, 'This deploy was failed, please do not use these files.');
+            await fse.outputFile(filePath, 'This deploy was failed, please do not use these files.');
         } catch (error) { }
     }
 
@@ -288,9 +290,8 @@ class Deployer {
                 if (contextVariables.$step) {
                     msg += '\nDebug/Status: '
                         + JSON.stringify([
-                            GlobalData.txAdminVersion,
-                            GlobalData.osType,
-                            GlobalData.osDistro,
+                            txEnv.txAdminVersion,
+                            await getOsDistro(),
                             contextVariables.$step
                         ]);
                 }
@@ -305,9 +306,9 @@ class Deployer {
 
         //Check deploy folder validity (resources + server.cfg)
         try {
-            if (!fs.existsSync(path.join(this.deployPath, 'resources'))) {
+            if (!fse.existsSync(path.join(this.deployPath, 'resources'))) {
                 throw new Error('this recipe didn\'t create a \'resources\' folder.');
-            } else if (!fs.existsSync(path.join(this.deployPath, 'server.cfg'))) {
+            } else if (!fse.existsSync(path.join(this.deployPath, 'server.cfg'))) {
                 throw new Error('this recipe didn\'t create a \'server.cfg\' file.');
             }
         } catch (error) {
@@ -331,18 +332,10 @@ class Deployer {
         //Else: success :)
         this.log('Deploy finished and folder validated. All done!');
         this.step = 'configure';
-        if (GlobalData.osType === 'windows') {
+        if (txEnv.isWindows) {
             try {
                 await open(path.normalize(this.deployPath), { app: 'explorer' });
             } catch (error) { }
         }
     }
-} //Fim Deployer()
-
-
-module.exports = {
-    Deployer,
-    validateTargetPath,
-    parseValidateRecipe,
-    engineVersion,
-};
+}

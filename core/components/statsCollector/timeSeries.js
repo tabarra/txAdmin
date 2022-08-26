@@ -1,7 +1,8 @@
-//Requires
 const modulename = 'TimeSeries';
-const fs = require('fs-extra');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import fse from 'fs-extra';
+import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -14,7 +15,7 @@ const now = () => { return Math.round(Date.now() / 1000); };
  * NOTE: Except for the constructor, this class will not return any errors,
  *       and should not be used to anything that requires data consistency.
  */
-module.exports = class TimeSeries {
+export default class TimeSeries {
     constructor(file, resolution, window) {
         if (isUndefined(file) || isUndefined(resolution) || isUndefined(window)) {
             throw new Error('All parameters must be defined');
@@ -27,10 +28,10 @@ module.exports = class TimeSeries {
         //Load previous data
         let rawFile;
         try {
-            rawFile = fs.readFileSync(file, 'utf8');
+            rawFile = fse.readFileSync(file, 'utf8');
         } catch (error) {
             try {
-                fs.writeFileSync(file, '[]');
+                fse.writeFileSync(file, '[]');
                 rawFile = '[]';
             } catch (error) {
                 throw new Error('Unable to create timeseries file.');
@@ -78,9 +79,9 @@ module.exports = class TimeSeries {
         if (this.log.length > this.maxEntries) this.log.shift();
 
         try {
-            await fs.writeFile(this.file, JSON.stringify(this.log));
+            await fse.writeFile(this.file, JSON.stringify(this.log));
         } catch (error) {
-            if (GlobalData.verbose) logWarn('Error writing the player history log file.');
+            if (verbose) logWarn('Error writing the player history log file.');
         }
     }
 

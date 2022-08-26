@@ -1,12 +1,15 @@
-//Requires
 const modulename = 'PlayerController';
-const humanizeDuration = require('humanize-duration'); //FIXME: remove, this controller is not the right place for interface stuff
-const xss = require('../../extras/xss')(); //FIXME: same as above
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import humanizeDuration from 'humanize-duration'; //FIXME: remove, this controller is not the right place for interface stuff
+import xssInstancer from '@core/extras/xss.js'; //FIXME: same as above
+import consts from '@core/extras/consts.js';
+import logger from '@core/extras/console.js';
+import { convars, verbose } from '@core/globalData.js';
 // eslint-disable-next-line no-unused-vars
-const { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } = require('./database.js');
-const idGen = require('./idGenerator.js');
-const PlayerlistGenerator = require('./playerlistGenerator.js');
+import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database.js';
+import { genActionID, genWhitelistID } from './idGenerator.js';
+// import PlayerlistGenerator from './playerlistGenerator.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
+const xss = xssInstancer();
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -59,7 +62,7 @@ const validActions = ['ban', 'warn', 'whitelist'];
  *      - name
  *      - tsLastAttempt
  */
-module.exports = class PlayerController {
+export default class PlayerController {
     constructor(config) {
         this.config = config;
         this.activePlayers = [];
@@ -69,7 +72,7 @@ module.exports = class PlayerController {
         if (this.config.minSessionTime < 1 || this.config.minSessionTime > 60) throw new Error('The playerController.minSessionTime setting must be between 1 and 60 minutes.');
 
         //Running playerlist generator
-        if (GlobalData.isDevMode && GlobalData.debugPlayerlistGenerator) {
+        if (convars.isDevMode && convars.debugPlayerlistGenerator) {
             this.playerlistGenerator = new PlayerlistGenerator();
         }
 
@@ -77,7 +80,7 @@ module.exports = class PlayerController {
         setInterval(() => {
             //Check if the database is ready
             if (this.db.obj === null) {
-                if (GlobalData.verbose) logWarn('Database still not ready for processing.');
+                if (verbose) logWarn('Database still not ready for processing.');
                 return;
             }
             this.processActive();
@@ -94,7 +97,7 @@ module.exports = class PlayerController {
         try {
             globals.fxRunner.srvCmd(cmd);
         } catch (error) {
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
         }
     }
 
@@ -151,7 +154,7 @@ module.exports = class PlayerController {
                     await this.db.obj.get('players')
                         .push(toDB)
                         .value();
-                    if (GlobalData.verbose) logOk(`Adding '${p.name}' to players database.`);
+                    if (verbose) logOk(`Adding '${p.name}' to players database.`);
 
                 //If it's time to update this player's play time
                 } else if (!p.isTmp && checkMinuteElapsed(sessionTime)) {
@@ -171,7 +174,7 @@ module.exports = class PlayerController {
             });
         } catch (error) {
             logError(`Failed to process active players array with error: ${error.message}`);
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
         }
     }
 
@@ -197,7 +200,7 @@ module.exports = class PlayerController {
             const p = await this.db.obj.get('players').find(filter).cloneDeep().value();
             return (typeof p === 'undefined') ? null : p;
         } catch (error) {
-            if (GlobalData.verbose) logError(`Failed to search for a player in the database with error: ${error.message}`);
+            if (verbose) logError(`Failed to search for a player in the database with error: ${error.message}`);
             return false;
         }
     }
@@ -223,7 +226,7 @@ module.exports = class PlayerController {
                 .value();
         } catch (error) {
             const msg = `Failed to search for a registered action database with error: ${error.message}`;
-            if (GlobalData.verbose) logError(msg);
+            if (verbose) logError(msg);
             throw new Error(msg);
         }
     }
@@ -259,7 +262,7 @@ module.exports = class PlayerController {
         if (typeof playerName !== 'string') throw new Error('playerName should be an string.');
         if (!Array.isArray(idArray)) throw new Error('Identifiers should be an array.');
         idArray = idArray.filter((id) => {
-            return Object.values(GlobalData.validIdentifiers).some((vf) => vf.test(id));
+            return Object.values(consts.validIdentifiers).some((vf) => vf.test(id));
         });
         if (idArray.length < 1) throw new Error('Identifiers array must contain at least 1 valid identifier.');
 
@@ -317,7 +320,7 @@ module.exports = class PlayerController {
                         pending.tsLastAttempt = now();
                         whitelistID = pending.id;
                     } else {
-                        whitelistID = await idGen.genWhitelistID(this.db.obj);
+                        whitelistID = await genWhitelistID(this.db.obj);
                         const toDB = {
                             id: whitelistID,
                             name: playerName,
@@ -329,7 +332,7 @@ module.exports = class PlayerController {
                     this.db.writeFlag(SAVE_PRIORITY_LOW);
 
                     //Clean rejection message
-                    const xssRejectMessage = require('../../extras/xss')({
+                    const xssRejectMessage = xssInstancer({
                         strong: [],
                         id: [],
                     });
@@ -344,7 +347,7 @@ module.exports = class PlayerController {
         } catch (error) {
             const msg = `Failed to check whitelist/blacklist: ${error.message}`;
             logError(msg);
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             return { allow: false, reason: msg };
         }
     }
@@ -374,7 +377,7 @@ module.exports = class PlayerController {
         if (Array.isArray(reference)) {
             if (!reference.length) throw new Error('You must send at least one identifier');
             const invalids = reference.filter((id) => {
-                return (typeof id !== 'string') || !Object.values(GlobalData.validIdentifiers).some((vf) => vf.test(id));
+                return (typeof id !== 'string') || !Object.values(consts.validIdentifiers).some((vf) => vf.test(id));
             });
             if (invalids.length) {
                 throw new Error('Invalid identifiers: ' + invalids.join(', '));
@@ -393,7 +396,7 @@ module.exports = class PlayerController {
 
         //Saves it to the database
         try {
-            const actionID = await idGen.genActionID(this.db.obj, type);
+            const actionID = await genActionID(this.db.obj, type);
             const toDB = {
                 id: actionID,
                 type,
@@ -416,7 +419,7 @@ module.exports = class PlayerController {
         } catch (error) {
             let msg = `Failed to register event to database with message: ${error.message}`;
             logError(msg);
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             throw new Error(msg);
         }
     }
@@ -453,7 +456,7 @@ module.exports = class PlayerController {
         } catch (error) {
             const msg = `Failed to revoke action with message: ${error.message}`;
             logError(msg);
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
             throw new Error(msg);
         }
     }
@@ -484,7 +487,7 @@ module.exports = class PlayerController {
             saveReference = [`license:${reference}`];
             const pending = await this.db.obj.get('pendingWL').find(pendingFilter).value();
             if (pending) playerName = pending.name;
-        } else if (GlobalData.regexWhitelistReqID.test(reference)) {
+        } else if (consts.regexWhitelistReqID.test(reference)) {
             pendingFilter = { id: reference };
             const pending = await this.db.obj.get('pendingWL').find(pendingFilter).value();
             if (!pending) throw new Error('Pending ID not found in database');
@@ -541,7 +544,7 @@ module.exports = class PlayerController {
 
             return true;
         } catch (error) {
-            if (GlobalData.verbose) logError(`Failed to search for a registered action database with error: ${error.message}`);
+            if (verbose) logError(`Failed to search for a registered action database with error: ${error.message}`);
             return false;
         }
     }
@@ -565,7 +568,7 @@ module.exports = class PlayerController {
             return removed.length;
         } catch (error) {
             const msg = `Failed to clean database with error: ${error.message}`;
-            if (GlobalData.verbose) logError(msg);
+            if (verbose) logError(msg);
             throw new Error(msg);
         }
     }
@@ -591,7 +594,7 @@ module.exports = class PlayerController {
                 };
             });
         } catch (error) {
-            if (GlobalData.verbose) logError(`Failed to generate playerlist with error: ${error.message}`);
+            if (verbose) logError(`Failed to generate playerlist with error: ${error.message}`);
             return false;
         }
     }
@@ -667,8 +670,8 @@ module.exports = class PlayerController {
                 delete p.endpoint;
                 hbPlayers.set(p.license, p);
             }
-            if (GlobalData.verbose && invalids) logWarn(`HeartBeat playerlist contained ${invalids} invalid players that were removed.`);
-            if (GlobalData.verbose && duplicated) logWarn(`HeartBeat playerlist contained ${duplicated} duplicated players that were removed.`);
+            if (verbose && invalids) logWarn(`HeartBeat playerlist contained ${invalids} invalid players that were removed.`);
+            if (verbose && duplicated) logWarn(`HeartBeat playerlist contained ${duplicated} duplicated players that were removed.`);
 
 
             //Processing active players list, creating the removed list, creating new active list without removed players
@@ -699,7 +702,7 @@ module.exports = class PlayerController {
                 if (!activePlayerLicenses.includes(player.license)) {
                     //Filter to only valid identifiers
                     player.identifiers = player.identifiers.filter((id) => {
-                        return Object.values(GlobalData.validIdentifiers).some((vf) => vf.test(id));
+                        return Object.values(consts.validIdentifiers).some((vf) => vf.test(id));
                     });
                     //Check if he is already on the database
                     const dbPlayer = await this.getPlayer(license);
@@ -745,7 +748,7 @@ module.exports = class PlayerController {
             //Replacing the active playerlist
             this.activePlayers = newActivePlayers;
         } catch (error) {
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logError(`PlayerController failed to process HeartBeat with error: ${error.message}`);
                 dir(error);
             }

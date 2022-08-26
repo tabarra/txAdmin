@@ -1,8 +1,9 @@
-//Requires
 const modulename = 'WebServer:PlayerActions';
-const humanizeDuration = require('humanize-duration');
-const xss = require('../../extras/xss')();
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import humanizeDuration from 'humanize-duration';
+import xssInstancer from '@core/extras/xss.js';
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
+const xss = xssInstancer();
 
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -36,7 +37,7 @@ function sendAlertOutput(ctx, toResp, header = 'Output:') {
  * @param {object} ctx
  * @param {object} sess
  */
-module.exports = async function PlayerActions(ctx) {
+export default async function PlayerActions(ctx) {
     //Sanity check
     if (anyUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');

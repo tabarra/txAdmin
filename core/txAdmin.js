@@ -1,9 +1,29 @@
-//Requires
-const fs = require('fs');
-const path = require('path');
-const slash = require('slash');
-const { dir, log, logOk, logWarn, logError } = require('./extras/console')(`v${GlobalData.txAdminVersion}`);
-const { printBanner } = require('./extras/banner');
+import fs from 'node:fs';
+import path from 'node:path';
+import slash from 'slash';
+
+import logger from '@core/extras/console';
+import { txEnv } from '@core/globalData.js';
+
+import { printBanner } from '@core/extras/banner';
+import setupProfile from '@core/extras/setupProfile';
+import updateChecker from '@core/extras/updateChecker';
+
+import AdminVault from '@core/components/adminVault';
+import ConfigVault from '@core/components/configVault';
+import DiscordBot from '@core/components/discordBot';
+import DynamicAds from '@core/components/dynamicAds';
+import FxRunner from '@core/components/fxRunner';
+import Logger from '@core/components/logger';
+import Monitor from '@core/components/monitor';
+import PlayerController from '@core/components/playerController';
+import ResourcesManager from '@core/components/resourcesManager';
+import StatsCollector from '@core/components/statsCollector';
+import Translator from '@core/components/translator';
+import WebServer from '@core/components/webServer';
+
+const { dir, log, logOk, logWarn, logError } = logger(`v${txEnv.txAdminVersion}`);
+
 
 //Helpers
 const cleanPath = (x) => { return slash(path.normalize(x)); };
@@ -84,17 +104,16 @@ global.globals = {
 /**
  * Main APP
  */
-module.exports = class txAdmin {
+export default class TxAdmin {
     constructor(serverProfile) {
         log(`Profile '${serverProfile}' starting...`);
         globals.info.serverProfile = serverProfile;
 
         //Check if the profile exists and call setup if it doesn't
-        const profilePath = cleanPath(path.join(GlobalData.dataPath, serverProfile));
+        const profilePath = cleanPath(path.join(txEnv.dataPath, serverProfile));
         if (!fs.existsSync(profilePath)) {
             try {
-                const SetupProfile = require('./extras/setupProfile.js');
-                SetupProfile(GlobalData.osType, GlobalData.fxServerPath, GlobalData.fxServerVersion, serverProfile, profilePath);
+                setupProfile(txEnv.osType, txEnv.fxServerPath, txEnv.fxServerVersion, serverProfile, profilePath);
             } catch (error) {
                 logError(`Failed to create profile '${serverProfile}' with error: ${error.message}`);
                 process.exit();
@@ -105,7 +124,6 @@ module.exports = class txAdmin {
         //Load Config Vault
         let profileConfig;
         try {
-            const ConfigVault = require('./components/configVault');
             globals.configVault = new ConfigVault(profilePath, serverProfile);
             profileConfig = globals.configVault.getAll();
             globals.config = profileConfig.global;
@@ -114,129 +132,41 @@ module.exports = class txAdmin {
         }
 
         //Start all modules
-        this.startAdminVault().catch((err) => {
-            HandleFatalError(err, 'AdminVault');
-        });
-        this.startDiscordBot(profileConfig.discordBot).catch((err) => {
-            HandleFatalError(err, 'DiscordBot');
-        });
-        this.startLogger(profileConfig.logger).catch((err) => {
-            HandleFatalError(err, 'Logger');
-        });
-        this.startTranslator().catch((err) => {
-            HandleFatalError(err, 'Translator');
-        });
-        this.startFXRunner(profileConfig.fxRunner).catch((err) => {
-            HandleFatalError(err, 'FXRunner');
-        });
-        this.startDynamicAds().catch((err) => {
-            HandleFatalError(err, 'DynamicAds');
-        });
-        this.startMonitor(profileConfig.monitor).catch((err) => {
-            HandleFatalError(err, 'Monitor');
-        });
-        this.startStatsCollector(profileConfig.statsCollector).catch((err) => {
-            HandleFatalError(err, 'StatsCollector');
-        });
-        this.startWebServer(profileConfig.webServer).catch((err) => {
-            HandleFatalError(err, 'WebServer');
-        });
-        this.startPlayerController(profileConfig.playerController).catch((err) => {
-            HandleFatalError(err, 'PlayerController');
-        });
-        this.startResourcesManager().catch((err) => {
-            HandleFatalError(err, 'ResourcesManager');
-        });
-
-        //Once they all finish loading, the function below will print the banner
-        printBanner();
-
         //NOTE: dependency order
         //  - translator before monitor
         //  - adminVault before webserver
         //  - logger before fxrunner
         //  - translator before fxrunner (for the locale string)
-        //  - authenticator before webserver
+        //  - adminVault before webserver
+        try {
+            globals.adminVault = new AdminVault();
+            globals.discordBot = new DiscordBot(profileConfig.discordBot);
+            globals.logger = new Logger(profileConfig.logger);
+            globals.translator = new Translator();
+            globals.fxRunner = new FxRunner(profileConfig.fxRunner);
+            globals.dynamicAds = new DynamicAds(profileConfig.dynamicAds);
+            globals.monitor = new Monitor(profileConfig.monitor);
+            globals.statsCollector = new StatsCollector(profileConfig.statsCollector);
+            globals.webServer = new WebServer(profileConfig.webServer);
+            globals.playerController = new PlayerController(profileConfig.playerController);
+            globals.resourcesManager = new ResourcesManager(profileConfig.resourcesManager);
+        } catch (err) {
+            HandleFatalError(err, 'Main Components');
+        }
+
+        //Once they all finish loading, the function below will print the banner
+        printBanner();
 
         //Run Update Checker every 15 minutes
-        const updateChecker = require('./extras/updateChecker');
         updateChecker();
         setInterval(updateChecker, 15 * 60 * 1000);
-    }
-
-
-    //==============================================================
-    async startAdminVault() {
-        const AdminVault = require('./components/adminVault');
-        globals.adminVault = new AdminVault();
-    }
-
-    //==============================================================
-    async startDiscordBot(config) {
-        const DiscordBot = require('./components/discordBot');
-        globals.discordBot = new DiscordBot(config);
-    }
-
-    //==============================================================
-    async startLogger(config) {
-        const Logger = require('./components/logger');
-        globals.logger = new Logger(config);
-    }
-
-    //==============================================================
-    async startTranslator() {
-        const Translator = require('./components/translator');
-        globals.translator = new Translator();
-    }
-
-    //==============================================================
-    async startFXRunner(config) {
-        const FXRunner = require('./components/fxRunner');
-        globals.fxRunner = new FXRunner(config);
-    }
-
-    //==============================================================
-    async startDynamicAds(config) {
-        const DynamicAds = require('./components/dynamicAds');
-        globals.dynamicAds = new DynamicAds(config);
-    }
-
-    //==============================================================
-    async startMonitor(config) {
-        const Monitor = require('./components/monitor');
-        globals.monitor = new Monitor(config);
-    }
-
-    //==============================================================
-    async startStatsCollector(config) {
-        const StatsCollector = require('./components/statsCollector');
-        globals.statsCollector = new StatsCollector(config);
-    }
-
-    //==============================================================
-    async startWebServer(config) {
-        const WebServer = require('./components/webServer');
-        globals.webServer = new WebServer(config);
-    }
-
-    //==============================================================
-    //NOTE: this component name might change
-    async startPlayerController(config) {
-        const PlayerController = require('./components/playerController');
-        globals.playerController = new PlayerController(config);
-    }
-
-    //==============================================================
-    async startResourcesManager(config) {
-        const startResourcesManager = require('./components/resourcesManager');
-        globals.resourcesManager = new startResourcesManager(config);
     }
 };
 
 
 //==============================================================
 function HandleFatalError(error, componentName) {
-    logError(`Error starting '${componentName}' module: ${error.message}`);
+    logError(`Error starting component '${componentName}': ${error.message}`);
     dir(error);
     process.exit(1);
 }

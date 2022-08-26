@@ -1,7 +1,8 @@
-//Requires
 const modulename = 'WebServer:Intercom';
-const cloneDeep = require('lodash/cloneDeep');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
+import { cloneDeep }  from 'lodash-es';
+import logger from '@core/extras/console.js';
+import { convars, txEnv } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -11,7 +12,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
  * Intercommunications endpoint
  * @param {object} ctx
  */
-module.exports = async function Intercom(ctx) {
+export default async function Intercom(ctx) {
     //Sanity check
     if (isUndefined(ctx.params.scope)) {
         return ctx.utils.error(400, 'Invalid Request');
@@ -30,9 +31,9 @@ module.exports = async function Intercom(ctx) {
                 // 6: added txStatsData.randIDFailures
                 // 7: changed web folder paths, which affect txStatsData.pageViews
                 '$statsVersion': 7,
-                isZapHosting: GlobalData.isZapHosting,
-                txAdminVersion: GlobalData.txAdminVersion,
-                txAdminIsDefaultPort: (GlobalData.txAdminPort == 40120),
+                isZapHosting: convars.isZapHosting,
+                txAdminVersion: txEnv.txAdminVersion,
+                txAdminIsDefaultPort: (convars.txAdminPort == 40120),
                 txAdminUptime: Math.round(process.uptime()),
                 fxServerUptime: globals.fxRunner.getUptime(),
                 discordBotStats: (globals.discordBot.config.enabled) ? globals.discordBot.usageStats : false,
@@ -45,7 +46,7 @@ module.exports = async function Intercom(ctx) {
             return ctx.send(JSON.stringify(outData, null, 2));
         } catch (error) {
             return ctx.send({
-                txAdminVersion: GlobalData.txAdminVersion,
+                txAdminVersion: txEnv.txAdminVersion,
                 success: false,
             });
         }
@@ -82,7 +83,7 @@ module.exports = async function Intercom(ctx) {
     }
 
     return ctx.send({
-        txAdminVersion: GlobalData.txAdminVersion,
+        txAdminVersion: txEnv.txAdminVersion,
         success: false,
     });
 };

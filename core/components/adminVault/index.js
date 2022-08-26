@@ -1,9 +1,11 @@
-//Requires
 const modulename = 'AdminVault';
-const fs = require('fs-extra');
-const cloneDeep = require('lodash/cloneDeep');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const CitizenFXProvider = require('./providers/CitizenFX');
+import fse from 'fs-extra';
+import { cloneDeep }  from 'lodash-es';
+
+import logger from '@core/extras/console.js';
+import { convars, txEnv, verbose } from '@core/globalData.js';
+import CitizenFXProvider from './providers/CitizenFX.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
 const migrateProviderIdentifiers = (providerName, providerData) => {
@@ -21,9 +23,9 @@ const migrateProviderIdentifiers = (providerName, providerData) => {
 };
 
 
-module.exports = class AdminVault {
+export default class AdminVault {
     constructor() {
-        this.adminsFile = `${GlobalData.dataPath}/admins.json`;
+        this.adminsFile = `${txEnv.dataPath}/admins.json`;
         this.admins = null;
         this.refreshRoutine = null;
         this.lastAdminFile = '';
@@ -73,19 +75,19 @@ module.exports = class AdminVault {
         //Check if admins file exists
         let adminFileExists;
         try {
-            adminFileExists = fs.existsSync(this.adminsFile);
+            adminFileExists = fse.existsSync(this.adminsFile);
         } catch (error) {
             throw new Error(`Failed to check presence of admin file with error: ${error.message}`);
         }
 
         //Printing PIN or starting loop
         if (!adminFileExists) {
-            if (!GlobalData.defaultMasterAccount) {
+            if (!convars.defaultMasterAccount) {
                 this.addMasterPin = (Math.random() * 10000).toFixed().padStart(4, '0');
                 this.admins = false;
             } else {
-                log(`Setting up master account '${GlobalData.defaultMasterAccount.name}'. The password is the same as in zap-hosting.com.`);
-                this.createAdminsFile(GlobalData.defaultMasterAccount.name, false, false, GlobalData.defaultMasterAccount.password_hash, false);
+                log(`Setting up master account '${convars.defaultMasterAccount.name}'. The password is the same as in zap-hosting.com.`);
+                this.createAdminsFile(convars.defaultMasterAccount.name, false, false, convars.defaultMasterAccount.password_hash, false);
             }
         } else {
             this.refreshAdmins(true);
@@ -141,12 +143,12 @@ module.exports = class AdminVault {
         //Saving admin file
         try {
             const json = JSON.stringify(this.admins, null, 2);
-            fs.writeFileSync(this.adminsFile, json, {encoding: 'utf8', flag: 'wx'});
+            fse.writeFileSync(this.adminsFile, json, {encoding: 'utf8', flag: 'wx'});
             this.setupRefreshRoutine();
             return true;
         } catch (error) {
             let message = `Failed to create '${this.adminsFile}' with error: ${error.message}`;
-            if (GlobalData.verbose) logError(message);
+            if (verbose) logError(message);
             throw new Error(message);
         }
     }
@@ -281,10 +283,10 @@ module.exports = class AdminVault {
         this.admins.push(admin);
         this.refreshOnlineAdmins().catch((e) => {});
         try {
-            await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
+            await fse.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
         } catch (error) {
-            if (GlobalData.verbose) logError(error.message);
+            if (verbose) logError(error.message);
             throw new Error(`Failed to save '${this.adminsFile}'`);
         }
     }
@@ -341,10 +343,10 @@ module.exports = class AdminVault {
         //Saving admin file
         this.refreshOnlineAdmins().catch((e) => {});
         try {
-            await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
+            await fse.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return (password !== null) ? this.admins[adminIndex].password_hash : true;
         } catch (error) {
-            if (GlobalData.verbose) logError(error.message);
+            if (verbose) logError(error.message);
             throw new Error(`Failed to save '${this.adminsFile}'`);
         }
     }
@@ -376,9 +378,9 @@ module.exports = class AdminVault {
         //Saving admin file
         this.refreshOnlineAdmins().catch((e) => {});
         try {
-            await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
+            await fse.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
         } catch (error) {
-            if (GlobalData.verbose) logError(error.message);
+            if (verbose) logError(error.message);
             throw new Error(`Failed to save '${this.adminsFile}'`);
         }
     }
@@ -408,10 +410,10 @@ module.exports = class AdminVault {
         //Saving admin file
         this.refreshOnlineAdmins().catch((e) => {});
         try {
-            await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
+            await fse.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
             return true;
         } catch (error) {
-            if (GlobalData.verbose) logError(error.message);
+            if (verbose) logError(error.message);
             throw new Error(`Failed to save '${this.adminsFile}'`);
         }
     }
@@ -435,9 +437,9 @@ module.exports = class AdminVault {
         };
 
         try {
-            raw = await fs.readFile(this.adminsFile, 'utf8');
+            raw = await fse.readFile(this.adminsFile, 'utf8');
             if (raw === this.lastAdminFile) {
-                if (GlobalData.verbose) log('Admin file didn\'t change, skipping.');
+                if (verbose) log('Admin file didn\'t change, skipping.');
                 return;
             }
             this.lastAdminFile = raw;
@@ -492,7 +494,7 @@ module.exports = class AdminVault {
         this.refreshOnlineAdmins().catch((e) => {});
         if (migrated) {
             try {
-                await fs.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
+                await fse.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
                 logOk('The admins.json file was migrated to a new version.');
             } catch (error) {
                 logError(`Failed to migrate admins.json with error: ${error.message}`);
@@ -525,7 +527,7 @@ module.exports = class AdminVault {
 
             return globals.fxRunner.sendEvent('adminsUpdated', onlineIDs);
         } catch (error) {
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logError('Failed to refreshOnlineAdmins() with error:');
                 dir(error);
             }

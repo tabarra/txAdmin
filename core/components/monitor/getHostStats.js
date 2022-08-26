@@ -1,14 +1,15 @@
-//Requires
 const modulename = 'Monitor:HostStatus';
-const os = require('os');
-const si = require('systeminformation');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import os from 'node:os';
+import si from 'systeminformation'
+import logger from '@core/extras/console.js';
+import { txEnv, verbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Const -hopefully
 const giga = 1024 * 1024 * 1024;
 const cpus = os.cpus();
 
-module.exports = async () => {
+export default async () => {
     const out = {
         memory: {usage: 0, used: 0, total: 0},
         cpu: {
@@ -21,15 +22,15 @@ module.exports = async () => {
     //Getting memory usage
     try {
         let free, total, used;
-        if (GlobalData.osType === 'linux') {
+        if (txEnv.isWindows) {
+            free = os.freemem() / giga;
+            total = os.totalmem() / giga;
+            used = total - free;
+        } else {
             const memoryData = await si.mem();
             free = memoryData.available / giga;
             total = memoryData.total / giga;
             used = memoryData.active / giga;
-        } else {
-            free = os.freemem() / giga;
-            total = os.totalmem() / giga;
-            used = total - free;
         }
         out.memory = {
             used,
@@ -37,7 +38,7 @@ module.exports = async () => {
             usage: Math.round((used / total) * 100),
         };
     } catch (error) {
-        if (GlobalData.verbose) {
+        if (verbose) {
             logError('Failed to get memory usage.');
             dir(error);
         }
@@ -48,7 +49,7 @@ module.exports = async () => {
         const loads = await si.currentLoad();
         out.cpu.usage = Math.round(loads.currentLoad);
     } catch (error) {
-        if (GlobalData.verbose) {
+        if (verbose) {
             logError('Failed to get CPU usage.');
             dir(error);
         }

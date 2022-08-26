@@ -1,16 +1,18 @@
 /* eslint-disable no-unused-vars */
-//Requires
 const modulename = 'WebServer:MasterActions:Action';
-const fs = require('fs-extra');
-const mysql = require('mysql2/promise');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import fse from 'fs-extra';
+import mysql from 'mysql2/promise';
+import consts from '@core/extras/consts.js';
+import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const now = () => { return Math.round(Date.now() / 1000); };
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const anyUndefined = (...args) => { return [...args].some((x) => (typeof x === 'undefined')); };
 const filterIdentifiers = (idArr) => idArr.filter((id) => {
-    return (typeof id == 'string') && Object.values(GlobalData.validIdentifiers).some((vf) => vf.test(id));
+    return (typeof id == 'string') && Object.values(consts.validIdentifiers).some((vf) => vf.test(id));
 });
 
 
@@ -18,7 +20,7 @@ const filterIdentifiers = (idArr) => idArr.filter((id) => {
  * Handle all the master actions... actions
  * @param {object} ctx
  */
-module.exports = async function MasterActionsAction(ctx) {
+export default async function MasterActionsAction(ctx) {
     //Sanity check
     if (isUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');
@@ -105,7 +107,7 @@ async function handleImportBansFile(ctx, dbType) {
     //Read bans database file
     let inBans;
     try {
-        const rawFile = await fs.readFile(banFilePath);
+        const rawFile = await fse.readFile(banFilePath);
         inBans = JSON.parse(rawFile);
     } catch (error) {
         return ctx.utils.render('main/message', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});
@@ -154,7 +156,7 @@ async function handleImportBansFile(ctx, dbType) {
             imported++;
         }// end for()
     } catch (error) {
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         return ctx.utils.render('main/message', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});
     }
 
@@ -280,7 +282,7 @@ async function handleImportBansDBMS(ctx, dbType) {
             }
         }
     } catch (error) {
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         return ctx.utils.render('main/message', {message: `<b>Failed to import bans with error:</b><br> ${error.message}`});
     }
 

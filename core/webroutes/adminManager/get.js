@@ -1,13 +1,13 @@
-//Requires
 const modulename = 'WebServer:AdminManagerGet';
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**
  * Returns the output page containing the admins.
  * @param {object} ctx
  */
-module.exports = async function AdminManagerGet(ctx) {
+export default async function AdminManagerGet(ctx) {
     //Prepare admin array
     const admins = globals.adminVault.getAdminsList().map((admin) => {
         let perms;

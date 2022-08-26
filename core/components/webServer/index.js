@@ -1,35 +1,40 @@
-//Requires
 const modulename = 'WebServer';
-const crypto = require('crypto');
-const path = require('path');
-const HttpClass  = require('http');
+import crypto from 'node:crypto';
+import path from 'node:path';
+import HttpClass from 'node:http';
 
-const Koa = require('koa');
-const KoaBodyParser = require('koa-bodyparser');
-const KoaServe = require('koa-static');
-const KoaSession = require('koa-session');
-const KoaSessionMemoryStoreClass = require('koa-session-memory');
+import Koa from 'koa';
+import KoaBodyParser from 'koa-bodyparser';
+import KoaServe from 'koa-static';
+import KoaSession from 'koa-session';
+import KoaSessionMemoryStoreClass from 'koa-session-memory';
 
-const SocketIO = require('socket.io');
-const SessionIO = require('koa-session-socketio');
-const WebSocket = require('./webSocket');
+import { Server as SocketIO } from 'socket.io';
 
-const { customAlphabet } = require('nanoid');
-const dict51 = require('nanoid-dictionary/nolookalikes');
+import SessionIO from 'koa-session-socketio';
+import WebSocket from './webSocket';
+
+import { customAlphabet } from 'nanoid';
+import dict51 from 'nanoid-dictionary/nolookalikes';
+
+import { setHttpCallback } from '@citizenfx/http-wrapper';
+import { convars, txEnv, verbose } from '@core/globalData.js';
+import { requestAuth } from './requestAuthenticator.js';
+import WebCtxUtils from './ctxUtils.js';
+import router from './router';
+import logger from '@core/extras/console.js';
+
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const nanoid = customAlphabet(dict51, 20);
 
-const { setHttpCallback } = require('@citizenfx/http-wrapper');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const {requestAuth} = require('./requestAuthenticator');
-const ctxUtils = require('./ctxUtils.js');
 
-
-module.exports = class WebServer {
+export default class WebServer {
     constructor(config) {
         this.config = config;
         this.luaComToken = nanoid();
         this.webSocket = null;
         this.isListening = false;
+        this.cfxUrl = null;
 
         //Generate cookie key
         const pathHash = crypto.createHash('shake256', { outputLength: 6 })
@@ -74,7 +79,7 @@ module.exports = class WebServer {
 
 
         //Setting up app
-        this.app.use(ctxUtils);
+        this.app.use(WebCtxUtils);
         this.app.on('error', (error, ctx) => {
             if (
                 typeof error.code == 'string'
@@ -85,7 +90,7 @@ module.exports = class WebServer {
                     || error.code.startsWith('ECANCELED')
                 )
             ) {
-                if (GlobalData.verbose) {
+                if (verbose) {
                     logError(`Probably harmless error on ${ctx.path}`);
                     dir(error);
                 }
@@ -100,7 +105,7 @@ module.exports = class WebServer {
         const timeoutLimit = 15 * 1000;
         const jsonLimit = '16MB';
         this.app.use(async (ctx, next) => {
-            ctx.set('Server', `txAdmin v${GlobalData.txAdminVersion}`);
+            ctx.set('Server', `txAdmin v${txEnv.txAdminVersion}`);
             let timer;
             const timeout = new Promise((_, reject) => {
                 timer = setTimeout(() => {
@@ -112,11 +117,11 @@ module.exports = class WebServer {
                 await Promise.race([timeout, next()]);
                 clearTimeout(timer);
                 if (typeof ctx.body == 'undefined' || (typeof ctx.body == 'string' && !ctx.body.length)) {
-                    if (GlobalData.verbose) logWarn(`Route without output: ${ctx.path}`);
+                    if (verbose) logWarn(`Route without output: ${ctx.path}`);
                     return ctx.body = '[no output from route]';
                 }
             } catch (error) {
-                const prefix = `[txAdmin v${GlobalData.txAdminVersion}]`;
+                const prefix = `[txAdmin v${txEnv.txAdminVersion}]`;
                 const reqPath = (ctx.path.length > 100) ? `${ctx.path.slice(0, 97)}...` : ctx.path;
                 const methodName = (error.stack && error.stack[0] && error.stack[0].name) ? error.stack[0].name : 'anonym';
 
@@ -128,9 +133,9 @@ module.exports = class WebServer {
                 //NOTE: not using HTTP logger endpoint anymore, FD3 only
                 if (error.type === 'entity.too.large') {
                     const desc = `Entity too large for: ${reqPath}`;
-                    if (GlobalData.verbose) logError(desc, methodName);
+                    if (verbose) logError(desc, methodName);
                     ctx.status = 413;
-                    ctx.body = {error: desc};
+                    ctx.body = { error: desc };
                 } else if (ctx.state.timeout) {
                     const desc = `${prefix} Route timed out: ${reqPath}`;
                     logError(desc, methodName);
@@ -138,39 +143,39 @@ module.exports = class WebServer {
                     ctx.body = desc;
                 } else if (error.message === 'Malicious Path' || error.message === 'failed to decode') {
                     const desc = `${prefix} Malicious Path: ${reqPath}`;
-                    if (GlobalData.verbose) logError(desc, methodName);
+                    if (verbose) logError(desc, methodName);
                     ctx.status = 406;
                     ctx.body = desc;
                 } else if (error.message.match(/^Unexpected token .+ in JSON at position \d+$/)) {
                     const desc = `${prefix} Invalid JSON for: ${reqPath}`;
-                    if (GlobalData.verbose) logError(desc, methodName);
+                    if (verbose) logError(desc, methodName);
                     ctx.status = 400;
-                    ctx.body = {error: desc};
+                    ctx.body = { error: desc };
                 } else {
                     const desc = `${prefix} Internal Error\n`
-                                + `Message: ${error.message}\n`
-                                + `Route: ${reqPath}\n`
-                                + 'Make sure your txAdmin is updated.';
+                        + `Message: ${error.message}\n`
+                        + `Route: ${reqPath}\n`
+                        + 'Make sure your txAdmin is updated.';
                     logError(desc, methodName);
-                    if (GlobalData.verbose) dir(error);
+                    if (verbose) dir(error);
                     ctx.status = 500;
                     ctx.body = desc;
                 }
             }
         });
         //Setting up additional middlewares:
-        this.app.use(KoaServe(path.join(GlobalData.txAdminResourcePath, 'web/public'), {index: false, defer: false}));
+        this.app.use(KoaServe(path.join(txEnv.txAdminResourcePath, 'web/public'), { index: false, defer: false }));
         this.app.use(this.sessionInstance);
-        this.app.use(KoaBodyParser({jsonLimit}));
+        this.app.use(KoaBodyParser({ jsonLimit }));
 
         //Setting up routes
-        this.router = require('./router')(this.config);
+        this.router = router(this.config);
         this.app.use(this.router.routes());
         this.app.use(this.router.allowedMethods());
         this.app.use(async (ctx) => {
             if (typeof ctx._matchedRoute === 'undefined') {
                 ctx.status = 404;
-                if (GlobalData.verbose) logWarn(`Request 404 error: ${ctx.path}`);
+                if (verbose) logWarn(`Request 404 error: ${ctx.path}`);
                 return ctx.utils.render('standalone/404');
             }
         });
@@ -182,14 +187,14 @@ module.exports = class WebServer {
     //Resetting lua comms token - called by fxRunner on spawnServer()
     resetToken() {
         this.luaComToken = nanoid();
-        if (GlobalData.verbose) log('Resetting luaComToken.');
+        if (verbose) log('Resetting luaComToken.');
     }
 
 
     //================================================================
     setupWebSocket() {
         //Start SocketIO
-        this.io = SocketIO(HttpClass.createServer(), { serveClient: false });
+        this.io = new SocketIO(HttpClass.createServer(), { serveClient: false });
         this.io.use(SessionIO(this.koaSessionKey, this.koaSessionMemoryStore));
         this.io.use(requestAuth('socket'));
 
@@ -206,7 +211,7 @@ module.exports = class WebServer {
 
     //================================================================
     httpCallbackHandler(source, req, res) {
-        //NOTE: setting the webpipe real ip is being done in ctxUtils
+        //NOTE: setting the webpipe real ip is being done in WebCtxUtils
         //Rewrite source IP if it comes from nucleus reverse proxy
         const ipsrcRegex = /^(?:[0-9]{1,3}\.){3}[0-9]{1,3}:\d{1,5}$/;
         if (source == 'citizenfx' && ipsrcRegex.test(req.headers['x-cfx-source-ip'])) {
@@ -221,7 +226,7 @@ module.exports = class WebServer {
             } else {
                 this.koaCallback(req, res);
             }
-        } catch (error) {}
+        } catch (error) { }
     }
 
 
@@ -231,7 +236,6 @@ module.exports = class WebServer {
         this.isListening = false;
 
         //Print cfx.re url... when available
-        //NOTE: perhaps open the URL automatically with the `open` library
         const validUrlRegex = /\.users\.cfx\.re$/i;
         const getUrlInterval = setInterval(() => {
             try {
@@ -239,10 +243,10 @@ module.exports = class WebServer {
                 if (validUrlRegex.test(urlConvar)) {
                     // logOk(`Alternative URL: ` + chalk.inverse(` https://${urlConvar}/ `));
                     logOk(`Cfx.re URL: https://${urlConvar}/`);
-                    GlobalData.cfxUrl = urlConvar;
+                    this.cfxUrl = urlConvar;
                     clearInterval(getUrlInterval);
                 }
-            } catch (error) {}
+            } catch (error) { }
         }, 500);
 
         //CitizenFX Callback
@@ -266,15 +270,15 @@ module.exports = class WebServer {
             this.httpServer.on('error', listenErrorHandler);
 
             let iface;
-            if (GlobalData.forceInterface) {
-                logWarn(`Starting with interface ${GlobalData.forceInterface}.`);
+            if (convars.forceInterface) {
+                logWarn(`Starting with interface ${convars.forceInterface}.`);
                 logWarn('If the HTTP server doesn\'t start, this is probably the reason.');
-                iface = GlobalData.forceInterface;
+                iface = convars.forceInterface;
             } else {
                 iface = '0.0.0.0';
             }
 
-            this.httpServer.listen(GlobalData.txAdminPort, iface, async () => {
+            this.httpServer.listen(convars.txAdminPort, iface, async () => {
                 logOk(`Listening on ${iface}.`);
                 this.isListening = true;
             });

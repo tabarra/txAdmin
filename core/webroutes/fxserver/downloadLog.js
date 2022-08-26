@@ -1,14 +1,14 @@
-//Requires
 const modulename = 'WebServer:FXServerDownloadLog';
-const fs = require('fs');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import fs from 'node:fs';
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**
  * Returns the console log file
  * @param {object} ctx
  */
-module.exports = async function FXServerDownloadLog(ctx) {
+export default async function FXServerDownloadLog(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('console.view', modulename)) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to download this log.'});

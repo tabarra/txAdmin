@@ -1,6 +1,7 @@
-//Requires
 const modulename = 'DiscordBot:cmd:addwl';
-const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
+import consts from '@core/extras/consts.js';
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 /**
  * Usage options:
@@ -8,7 +9,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../../extras/console'
  *  /addwl <license>
  *  /addwl <mention> ???
  */
-module.exports = {
+export default {
     description: 'Adds a players to the whitelist',
     cooldown: 5,
     async execute(message, args) {
@@ -55,7 +56,7 @@ module.exports = {
 
         //Check input validity
         if (
-            !GlobalData.regexWhitelistReqID.test(reference)
+            !consts.regexWhitelistReqID.test(reference)
             && !/[0-9A-Fa-f]{40}/.test(reference)
         ) {
             return await message.reply('The value inserted is not a valid Whitelist Request ID (R####) nor a license identifier.');

@@ -1,10 +1,10 @@
-const fs = require('fs');
-const path = require('path');
-const chalk = require('chalk');
-const { defaults, defaultsDeep, xor } = require('lodash');
+import fs from 'node:fs';
+import path from 'node:path';
+import chalk from 'chalk';
+import { defaults, defaultsDeep, xor }  from 'lodash-es';
 
 //Prepping
-const defaultLang = require('../locale/en.json');
+const defaultLang = JSON.parse(fs.readFileSync('./locale/en.json', 'utf8'));
 const langFiles = fs.readdirSync('./locale/', { withFileTypes: true })
     .filter((dirent) => !dirent.isDirectory() && dirent.name.endsWith('.json') && dirent.name !== 'en.json')
     .map((dirent) => dirent.name);

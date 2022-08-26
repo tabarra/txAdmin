@@ -1,8 +1,7 @@
-//Requires
 const modulename = 'WebServer:CFGEditorSave';
-const fs = require('fs-extra');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const { validateModifyServerConfig } = require('../../extras/fxsConfigHelper');
+import logger from '@core/extras/console.js';
+import { validateModifyServerConfig } from '@core/extras/fxsConfigHelper';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -12,7 +11,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
  * Saves the server.cfg
  * @param {object} ctx
  */
-module.exports = async function CFGEditorSave(ctx) {
+export default async function CFGEditorSave(ctx) {
     //Sanity check
     if (
         isUndefined(ctx.request.body.cfgData)

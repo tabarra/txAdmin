@@ -1,15 +1,15 @@
-//Requires
 const modulename = 'Logger';
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const AdminLogger = require('./handlers/admin');
-const FXServerLogger = require('./handlers/fxserver');
-const ServerLogger = require('./handlers/server');
-const { getLogSizes } = require('./loggerUtils');
+import AdminLogger from './handlers/admin';
+import FXServerLogger from './handlers/fxserver';
+import ServerLogger from './handlers/server';
+import { getLogSizes } from './loggerUtils.js'
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 // NOTE: to turn this into an universal class outside txAdmin() instance
 // when a txAdmin profile starts, it does universal.logger.start(profilename)
 // and then the logger can be called as universal.logger.profiles[profilename].fxserver
-module.exports = class Logger {
+export default class Logger {
     constructor(config) {
         //FIXME: move these to class fields as soon as eslint v8 drops
         this.admin = null;

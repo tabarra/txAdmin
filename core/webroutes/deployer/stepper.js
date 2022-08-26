@@ -1,14 +1,15 @@
-//Requires
 const modulename = 'WebServer:DeployerStepper';
-const fs = require('fs-extra');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import fse from 'fs-extra';
+import logger from '@core/extras/console.js';
+import { convars } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**
  * Returns the output page containing the deployer stepper page (all 3 stages)
  * @param {object} ctx
  */
-module.exports = async function DeployerStepper(ctx) {
+export default async function DeployerStepper(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
         return ctx.utils.render('main/message', { message: 'You need to be the admin master to use the deployer.' });
@@ -43,15 +44,15 @@ module.exports = async function DeployerStepper(ctx) {
     } else if (globals.deployer.step === 'input') {
         renderData.defaultLicenseKey = process.env.TXADMIN_DEFAULT_LICENSE || '';
         renderData.requireDBConfig = globals.deployer.recipe.requireDBConfig;
-        if (GlobalData.deployerDefaults) {
+        if (convars.deployerDefaults) {
             renderData.defaults = {
                 autofilled: true,
-                license: GlobalData.deployerDefaults.license || '',
-                mysqlHost: GlobalData.deployerDefaults.mysqlHost || 'localhost',
-                mysqlPort: GlobalData.deployerDefaults.mysqlPort || '3306',
-                mysqlUser: GlobalData.deployerDefaults.mysqlUser || 'root',
-                mysqlPassword: GlobalData.deployerDefaults.mysqlPassword || '',
-                mysqlDatabase: GlobalData.deployerDefaults.mysqlDatabase || globals.deployer.deploymentID,
+                license: convars.deployerDefaults.license || '',
+                mysqlHost: convars.deployerDefaults.mysqlHost || 'localhost',
+                mysqlPort: convars.deployerDefaults.mysqlPort || '3306',
+                mysqlUser: convars.deployerDefaults.mysqlUser || 'root',
+                mysqlPassword: convars.deployerDefaults.mysqlPassword || '',
+                mysqlDatabase: convars.deployerDefaults.mysqlDatabase || globals.deployer.deploymentID,
             };
         } else {
             renderData.defaults = {
@@ -79,7 +80,7 @@ module.exports = async function DeployerStepper(ctx) {
 # Please make sure everything is correct, or insert here the contents of the ./server.cfg
 # (╯°□°）╯︵ ┻━┻`;
         try {
-            renderData.serverCFG = await fs.readFile(`${globals.deployer.deployPath}/server.cfg`, 'utf8');
+            renderData.serverCFG = await fse.readFile(`${globals.deployer.deployPath}/server.cfg`, 'utf8');
             if (renderData.serverCFG == '#save_attempt_please_ignore' || !renderData.serverCFG.length) {
                 renderData.serverCFG = errorMessage;
             } else if (renderData.serverCFG.length > 10240) { //10kb
@@ -87,7 +88,7 @@ module.exports = async function DeployerStepper(ctx) {
 Make sure everything is correct in the recipe and try again.`;
             }
         } catch (error) {
-            if (GlobalData.verbose) dir(error);
+            if (convars.verbose) dir(error);
             renderData.serverCFG = errorMessage;
         }
     } else {

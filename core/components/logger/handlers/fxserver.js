@@ -1,9 +1,10 @@
-//Requires
 const modulename = 'Logger:FXServer';
-const bytes = require('bytes');
-const chalk = require('chalk');
-const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
-const { LoggerBase, separator } = require('../loggerUtils');
+import bytes from 'bytes';
+import chalk from 'chalk';
+import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
+import { LoggerBase, separator } from '../loggerUtils.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 //NOTE: There used to be a rule "\x0B-\x1F" that was replaced with "x0B-\x1A\x1C-\x1F" to allow the \x1B terminal escape character.
@@ -26,7 +27,7 @@ const markLines = (msg, type) => {
 };
 
 
-module.exports = class FXServerLogger extends LoggerBase {
+export default class FXServerLogger extends LoggerBase {
     constructor(basePath, lrProfileConfig) {
         const lrDefaultOptions = {
             path: basePath,
@@ -42,7 +43,7 @@ module.exports = class FXServerLogger extends LoggerBase {
         super(basePath, 'fxserver', lrDefaultOptions, lrProfileConfig);
         this.lrStream.on('rotated', (filename) => {
             this.lrStream.write(`\n${separator('Log Rotated')}\n`);
-            if (GlobalData.verbose) log(`Rotated file ${filename}`);
+            if (verbose) log(`Rotated file ${filename}`);
         });
 
 

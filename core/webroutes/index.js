@@ -1,71 +1,51 @@
-exports.dashboard = require('./dashboard.js');
-exports.diagnostics = require('./diagnostics.js');
-exports.intercom = require('./intercom.js');
-exports.liveConsole = require('./liveConsole.js');
-exports.resources = require('./resources.js');
-exports.status = require('./status.js');
-exports.chartData = require('./chartData.js');
-exports.txAdminLog = require('./txAdminLog.js');
+export { default as dashboard } from './dashboard.js';
+export { default as diagnostics } from './diagnostics.js';
+export { default as intercom } from './intercom.js';
+export { default as liveConsole } from './liveConsole.js';
+export { default as resources } from './resources.js';
+export { default as status } from './status.js';
+export { default as chartData } from './chartData.js';
+export { default as txAdminLog } from './txAdminLog.js';
 
-exports.auth = {
-    get: require('./authentication/get'),
-    addMaster: require('./authentication/addMaster'),
-    providerRedirect: require('./authentication/providerRedirect'),
-    providerCallback: require('./authentication/providerCallback'),
-    verifyPassword: require('./authentication/verifyPassword'),
-    changePassword: require('./authentication/changePassword'),
-    nui: require('./authentication/nui'),
-};
+export { default as auth_get } from './authentication/get';
+export { default as auth_addMaster } from './authentication/addMaster';
+export { default as auth_providerRedirect } from './authentication/providerRedirect';
+export { default as auth_providerCallback } from './authentication/providerCallback';
+export { default as auth_verifyPassword } from './authentication/verifyPassword';
+export { default as auth_changePassword } from './authentication/changePassword';
+export { default as auth_nui } from './authentication/nui';
 
-exports.adminManager = {
-    get: require('./adminManager/get'),
-    actions: require('./adminManager/actions'),
-};
+export { default as adminManager_get } from './adminManager/get';
+export { default as adminManager_actions } from './adminManager/actions';
 
-exports.cfgEditor = {
-    get: require('./cfgEditor/get'),
-    save: require('./cfgEditor/save'),
-};
+export { default as cfgEditor_get } from './cfgEditor/get';
+export { default as cfgEditor_save } from './cfgEditor/save';
 
-exports.deployer = {
-    stepper: require('./deployer/stepper'),
-    status: require('./deployer/status'),
-    actions: require('./deployer/actions'),
-};
+export { default as deployer_stepper } from './deployer/stepper';
+export { default as deployer_status } from './deployer/status';
+export { default as deployer_actions } from './deployer/actions';
 
-exports.settings = {
-    get: require('./settings/get'),
-    save: require('./settings/save'),
-};
+export { default as settings_get } from './settings/get';
+export { default as settings_save } from './settings/save';
 
-exports.masterActions = {
-    get: require('./masterActions/get'),
-    getBackup: require('./masterActions/getBackup'),
-    actions: require('./masterActions/actions'),
-};
+export { default as masterActions_get } from './masterActions/get';
+export { default as masterActions_getBackup } from './masterActions/getBackup';
+export { default as masterActions_actions } from './masterActions/actions';
 
-exports.setup = {
-    get: require('./setup/get'),
-    post: require('./setup/post'),
-};
+export { default as setup_get } from './setup/get';
+export { default as setup_post } from './setup/post';
 
-exports.fxserver = {
-    commands: require('./fxserver/commands'),
-    controls: require('./fxserver/controls'),
-    downloadLog: require('./fxserver/downloadLog'),
-};
+export { default as fxserver_commands } from './fxserver/commands';
+export { default as fxserver_controls } from './fxserver/controls';
+export { default as fxserver_downloadLog } from './fxserver/downloadLog';
+
+export { default as player_list } from './player/list';
+export { default as player_modal } from './player/modal';
+export { default as player_actions } from './player/actions';
+
+export { default as advanced_get } from './advanced/get';
+export { default as advanced_actions } from './advanced/actions';
 
 //FIXME: reorganizar TODAS rotas de logs, incluindo listagem e download
-exports.serverLog = require('./serverLog.js');
-exports.serverLogPartial = require('./serverLogPartial.js');
-
-exports.player = {
-    list: require('./player/list'),
-    modal: require('./player/modal'),
-    actions: require('./player/actions'),
-};
-
-exports.advanced = {
-    get: require('./advanced/get'),
-    actions: require('./advanced/actions'),
-};
+export { default as serverLog } from './serverLog.js';
+export { default as serverLogPartial } from './serverLogPartial.js';

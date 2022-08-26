@@ -1,6 +1,7 @@
-//Requires
 const modulename = 'OutputHandler';
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
 const anyUndefined = (...args) => { return [...args].some((x) => (typeof x === 'undefined')); };
@@ -14,7 +15,7 @@ const deferError = (m, t = 500) => {
 /**
  * FXServer output helper that mostly relays to other components.
  */
-module.exports = class OutputHandler {
+export default class OutputHandler {
     constructor() {
         this.enableCmdBuffer = false;
         this.cmdBuffer = '';
@@ -84,7 +85,7 @@ module.exports = class OutputHandler {
                 }
             }
         } catch (error) {
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logError('Error processing FD3 stream output:');
                 dir(error);
             }

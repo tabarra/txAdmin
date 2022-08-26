@@ -1,6 +1,6 @@
-//Requires
 const modulename = 'WebServer:AddMaster';
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -12,7 +12,7 @@ const returnJustMessage = (ctx, errorTitle, errorMessage) => {
  * Handles the Add Master flow
  * @param {object} ctx
  */
-module.exports = async function AddMaster(ctx) {
+export default async function AddMaster(ctx) {
     //Sanity check
     if (isUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');

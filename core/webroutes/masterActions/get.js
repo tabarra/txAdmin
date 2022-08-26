@@ -1,13 +1,13 @@
-//Requires
 const modulename = 'WebServer:MasterActions:Get';
-const path = require('path');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import path from 'path';
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 /**
  * Handles the rendering or delivery of master action resources
  * @param {object} ctx
  */
-module.exports = async function MasterActionsGet(ctx) {
+export default async function MasterActionsGet(ctx) {
     const isMasterAdmin = (ctx.utils.checkPermission('master', modulename, false));
     const disableActions = (isMasterAdmin && ctx.txVars.isWebInterface) ? '' : 'disabled';
     return ctx.utils.render('main/masterActions', {

@@ -1,15 +1,10 @@
-const got = require('got');
+import { convars, txEnv } from '@core/globalData.js';
+import got from 'got';
 
-//Make sure this file is not included before GlobalData is set
-//doing so would poison the configuration due to node's modules cache
-if (typeof GlobalData === 'undefined') {
-    throw new Error('cannot instantiate got before GlobalData is set.');
-}
-
-module.exports = got.extend({
+export default got.extend({
     timeout: 5000,
     headers: {
-        'User-Agent': `txAdmin ${GlobalData.txAdminVersion}`,
+        'User-Agent': `txAdmin ${txEnv.txAdminVersion}`,
     },
-    localAddress: GlobalData.forceInterface ? GlobalData.forceInterface : undefined,
+    localAddress: convars.forceInterface ? convars.forceInterface : undefined,
 });

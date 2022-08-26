@@ -1,11 +1,13 @@
-//Requires
 const modulename = 'AdminVault:CitizenFXProvider';
-const crypto  = require('crypto');
-const { Issuer, custom } = require('openid-client');
-const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
+import crypto from 'node:crypto'
+import { Issuer, custom } from 'openid-client';
+
+import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
-module.exports = class CitizenFXProvider {
+export default class CitizenFXProvider {
     constructor(config) {
         this.config = config;
         this.client = null;
@@ -34,7 +36,7 @@ module.exports = class CitizenFXProvider {
             custom.setHttpOptionsDefaults({
                 timeout: 10000,
             });
-            if (GlobalData.verbose) log('CitizenFX Provider configured.');
+            if (verbose) log('CitizenFX Provider configured.');
             this.ready = true;
         } catch (error) {
             logError(`Failed to create client with error: ${error.message}`);

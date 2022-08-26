@@ -1,12 +1,13 @@
-// Requires
 const modulename = 'Logger:Utils';
-const fsp = require('fs').promises;
-const path = require('path');
-const bytes = require('bytes');
-const dateFormat = require('dateformat');
-const rfs = require('rotating-file-stream');
-const { defaultsDeep, cloneDeep } = require('lodash');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import fsp from 'node:fs/promises';
+import path from 'node:path';
+import bytes from 'bytes';
+import dateFormat from 'dateformat';
+import rfs from 'rotating-file-stream';
+import { cloneDeep, defaultsDeep }  from 'lodash-es';
+import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**
@@ -14,7 +15,7 @@ const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(m
  * @param {String} basePath
  * @param {RegExp} filterRegex
  */
-module.exports.getLogSizes = async (basePath, filterRegex) => {
+export const getLogSizes = async (basePath, filterRegex) => {
     //Reading path
     const files = await fsp.readdir(basePath, {withFileTypes: true});
     const statOps = [];
@@ -47,7 +48,7 @@ module.exports.getLogSizes = async (basePath, filterRegex) => {
  * Default class for logger instances.
  * Implements log-rotate, listLogFiles() and getLogFile()
  */
-module.exports.LoggerBase = class LoggerBase {
+ export class LoggerBase {
     constructor(basePath, logName, lrDefaultOptions, lrProfileConfig = false) {
         //FIXME: move these to private class fields as soon as eslint v8 drops
         this.lrStream = null;
@@ -84,7 +85,7 @@ module.exports.LoggerBase = class LoggerBase {
         this.lrStream = rfs.createStream(filenameGenerator, lrOptions);
         this.lrStream.on('error', (error) => {
             if (error.code !== 'ERR_STREAM_DESTROYED') {
-                if (GlobalData.verbose) logError(error, logName);
+                if (verbose) logError(error, logName);
                 this.lrErrors++;
                 this.lrLastError = error.message;
             }
@@ -93,7 +94,7 @@ module.exports.LoggerBase = class LoggerBase {
 
     listLogFiles() {
         //FIXME: provavelmente mudar como isso de regex funfa
-        return module.exports.getLogSizes(this.basePath, this.logNameRegex);
+        return getLogSizes(this.basePath, this.logNameRegex);
     }
 
     getLogFile(fileName) {
@@ -106,7 +107,7 @@ module.exports.LoggerBase = class LoggerBase {
 /**
  * Generates a multiline separator string
  */
-module.exports.separator = (msg) => {
+ export const separator = (msg) => {
     const sepLine = '='.repeat(64);
     const timestamp = new Date().toLocaleString();
     return [

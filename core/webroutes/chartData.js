@@ -1,7 +1,7 @@
-//Requires
 const modulename = 'WebServer:ChartData';
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
-const Cache = require('../extras/dataCache');
+import Cache from '../extras/dataCache';
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 const caches = {
     svNetwork: new Cache(30),
@@ -14,7 +14,7 @@ const caches = {
  * Returns the output page containing the action log, and the console log
  * @param {object} ctx
  */
-module.exports = async function chartData(ctx) {
+export default async function chartData(ctx) {
     if (!Array.isArray(globals.statsCollector.perfSeries)) {
         return ctx.send({failReason: 'not_set'});
     }

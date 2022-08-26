@@ -1,10 +1,11 @@
-//Requires
 const modulename = 'StatsCollector';
-const fs = require('fs-extra');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const got = require('../../extras/got');
-const { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } = require('./statsUtils.js');
-// const TimeSeries = require('./timeSeries'); //NOTE: may still use for the player counter
+import fse from 'fs-extra';
+import logger from '@core/extras/console.js';
+import { convars, verbose } from '@core/globalData.js';
+import { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } from './statsUtils.js'
+import got from '@core/extras/got.js';
+// import TimeSeries from './timeSeries.js'; //NOTE: may still use for the player counter
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const getEpoch = (mod, ts = false) => {
@@ -14,7 +15,7 @@ const getEpoch = (mod, ts = false) => {
 };
 
 
-module.exports = class StatsCollector {
+export default class StatsCollector {
     constructor() {
         // this.playersTimeSeries = new TimeSeries(`${globals.info.serverProfilePath}/data/players.json`, 10, 60*60*24);
         this.hardConfigs = {
@@ -36,7 +37,7 @@ module.exports = class StatsCollector {
             try {
                 await this.collectPerformance();
             } catch (error) {
-                if (GlobalData.verbose) {
+                if (verbose) {
                     logError('Error while collecting fxserver performance data');
                     dir(error);
                 }
@@ -52,12 +53,12 @@ module.exports = class StatsCollector {
     async loadPerformanceHistory() {
         let rawFile = null;
         try {
-            rawFile = await fs.readFile(this.hardConfigs.heatmapDataFile, 'utf8');
+            rawFile = await fse.readFile(this.hardConfigs.heatmapDataFile, 'utf8');
         } catch (error) {}
 
         const setFile = async () => {
             try {
-                await fs.writeFile(this.hardConfigs.heatmapDataFile, '[]');
+                await fse.writeFile(this.hardConfigs.heatmapDataFile, '[]');
                 this.perfSeries = [];
             } catch (error) {
                 logError(`Unable to create stats_heatmapData_v1 with error: ${error.message}`);
@@ -137,12 +138,12 @@ module.exports = class StatsCollector {
             && getEpoch(cfg.resolution, lastSnap.ts) == getEpoch(cfg.resolution)
             && now - lastSnap.ts < cfg.resolution * 60 * 1000
         ) {
-            if (GlobalData.verbose) log('Skipping perf collection due to resolution');
+            if (verbose) log('Skipping perf collection due to resolution');
             return;
         }
 
         //Get performance data
-        const sourceURL = (GlobalData.debugExternalSource) ? GlobalData.debugExternalSource : globals.fxRunner.fxServerHost;
+        const sourceURL = (convars.debugExternalSource) ? convars.debugExternalSource : globals.fxRunner.fxServerHost;
         const currPerfRaw = await got(`http://${sourceURL}/perf/`).text();
         const currPerfData = parsePerf(currPerfRaw);
         if (
@@ -181,12 +182,12 @@ module.exports = class StatsCollector {
         //Push to cache and save it
         this.perfSeries.push(currSnapshot);
         try {
-            await fs.outputJSON(this.hardConfigs.heatmapDataFile, this.perfSeries);
-            if (GlobalData.verbose) {
+            await fse.outputJSON(this.hardConfigs.heatmapDataFile, this.perfSeries);
+            if (verbose) {
                 logOk(`Collected performance snapshot #${this.perfSeries.length}`);
             }
         } catch (error) {
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logWarn('Failed to write the performance history log file with error:');
                 dir(error);
             }

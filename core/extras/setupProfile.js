@@ -1,9 +1,9 @@
-//Requires
 const modulename = 'SetupProfile';
-const fs = require('fs-extra');
-const path = require('path');
-const chalk = require('chalk');
-const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
+import path from 'path';
+import fs from 'fs-extra';
+import chalk from 'chalk';
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
 const printDivider = () => { log('='.repeat(57)); };
@@ -34,7 +34,7 @@ const defaultConfig = {
 
 
 //================================================================
-module.exports = (osType, fxServerPath, fxServerVersion, serverProfile, profilePath) => {
+export default (osType, fxServerPath, fxServerVersion, serverProfile, profilePath) => {
     printDivider();
     //Sanity check presence of profile
     if (fs.existsSync(profilePath)) {

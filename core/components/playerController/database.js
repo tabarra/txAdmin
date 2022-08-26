@@ -1,18 +1,19 @@
-//Requires
 const modulename = 'Database';
-const fs = require('fs').promises;
-const low = require('lowdb');
-const FileAsync = require('lowdb/adapters/FileAsync');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const idGen = require('./idGenerator.js');
+import fsp from 'node:fs/promises';
+import low from 'lowdb';
+import FileAsync from 'lowdb/adapters/FileAsync'
+import logger from '@core/extras/console.js';
+import { convars, verbose } from '@core/globalData.js';
+import { genActionID } from './idGenerator.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 //Consts
+export const SAVE_PRIORITY_LOW = 1;
+export const SAVE_PRIORITY_MEDIUM = 2;
+export const SAVE_PRIORITY_HIGH = 3;
 const BACKUP_INTERVAL = 300e3;
 const SAVE_STANDBY = 0;
-const SAVE_PRIORITY_LOW = 1;
-const SAVE_PRIORITY_MEDIUM = 2;
-const SAVE_PRIORITY_HIGH = 3;
 const DATABASE_VERSION = 2;
 const SAVE_TIMES = [300e3, 58e3, 28e3, 13e3];
 // considering a 2 sec skew for the setInterval
@@ -24,7 +25,7 @@ const ldbProdSerializer = {
     serialize: JSON.stringify,
     deserialize: JSON.parse,
 };
-const ldbSerializer = (!GlobalData.isDevMode) ? ldbProdSerializer : undefined;
+const ldbSerializer = (!convars.isDevMode) ? ldbProdSerializer : undefined;
 
 
 /**
@@ -39,7 +40,7 @@ const ldbSerializer = (!GlobalData.isDevMode) ? ldbProdSerializer : undefined;
  * - execute `/usr/bin/time -v node test.js`
  * - do that with variation of updated lowdb and then using a json stream
  */
-class Database {
+export class Database {
     constructor(wipePendingWLOnStart) {
         this.dbPath = `${globals.info.serverProfilePath}/data/playersDB.json`;
         this.backupPath = `${globals.info.serverProfilePath}/data/playersDB.backup.json`;
@@ -72,7 +73,7 @@ class Database {
         } catch (errorMain) {
             logError('Your txAdmin player/actions database could not be loaded.');
             try {
-                await fs.copyFile(this.backupPath, this.dbPath);
+                await fsp.copyFile(this.backupPath, this.dbPath);
                 const adapterAsync = new FileAsync(this.dbPath, ldbSerializer);
                 dbo = await low(adapterAsync);
                 logWarn('The database file was restored with the automatic backup file.');
@@ -160,7 +161,7 @@ class Database {
             logWarn(`Actions to fix: ${actionsToFix.length}`);
             for (let i = 0; i < actionsToFix.length; i++) {
                 const action = actionsToFix[i];
-                action.id = await idGen.genActionID(actionIDStore, action.type);
+                action.id = await genActionID(actionIDStore, action.type);
                 actionIDStore.add(action.id);
             }
             await dbo.set('version', 2)
@@ -184,11 +185,11 @@ class Database {
      */
     async backupDatabase() {
         try {
-            await fs.copyFile(this.dbPath, this.backupPath);
-            if (GlobalData.verbose) logOk('Database file backed up.');
+            await fsp.copyFile(this.dbPath, this.backupPath);
+            if (verbose) logOk('Database file backed up.');
         } catch (error) {
             logError(`Failed to backup database file '${this.dbPath}'`);
-            if (GlobalData.verbose) dir(error);
+            if (verbose) dir(error);
         }
     }
 
@@ -202,7 +203,7 @@ class Database {
             throw new Error('unknown priority flag!');
         }
         if (flag > this.writePending) {
-            if (GlobalData.verbose) log(`writeFlag > ${['no', 'low', 'med', 'high'][flag]}`);
+            if (verbose) log(`writeFlag > ${['no', 'low', 'med', 'high'][flag]}`);
             this.writePending = flag;
         }
     }
@@ -224,21 +225,13 @@ class Database {
                 const timeElapsed = Date.now() - timeStart;
                 this.writePending = SAVE_STANDBY;
                 this.lastWrite = timeStart;
-                if (GlobalData.verbose) logOk(`DB file saved, took ${timeElapsed}ms.`);
+                if (verbose) logOk(`DB file saved, took ${timeElapsed}ms.`);
             } catch (error) {
                 logError(`Failed to save players database with error: ${error.message}`);
-                if (GlobalData.verbose) dir(error);
+                if (verbose) dir(error);
             }
         } else {
-            if (GlobalData.verbose) logOk('Skipping DB file save.');
+            if (verbose) logOk('Skipping DB file save.');
         }
     }
-} //Fim Database()
-
-
-module.exports = {
-    SAVE_PRIORITY_LOW,
-    SAVE_PRIORITY_MEDIUM,
-    SAVE_PRIORITY_HIGH,
-    Database,
-};
+}

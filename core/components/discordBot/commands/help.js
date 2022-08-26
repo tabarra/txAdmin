@@ -1,9 +1,9 @@
-//Requires
 const modulename = 'DiscordBot:cmd:help';
-const { MessageEmbed } = require('@citizenfx/discord.js');
-const { dir, log, logOk, logWarn, logError } = require('../../../extras/console')(modulename);
+import { MessageEmbed } from '@citizenfx/discord.js';
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
-module.exports = {
+export default {
     description: 'Prints a list of commands',
     async execute(message, args) {
         //Prepare description

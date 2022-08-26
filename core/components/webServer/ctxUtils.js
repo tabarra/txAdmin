@@ -1,18 +1,19 @@
-//Requires
 const modulename = 'WebCtxUtils';
-const fs = require('fs-extra');
-const ejs = require('ejs');
-const path = require('path');
-const chalk = require('chalk');
-const helpers = require('../../extras/helpers');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-
+import path from 'path';
+import fse from 'fs-extra';
+import ejs from 'ejs';
+import chalk from 'chalk';
+import * as helpers from '@core/extras/helpers.js';
+import consts from '@core/extras/consts.js';
+import logger from '@core/extras/console.js';
+import { convars, txEnv, verbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 const getRenderErrorText = (view, error, data) => {
     logError(`Error rendering ${view}.`);
-    if (GlobalData.verbose) dir(error);
+    if (verbose) dir(error);
     if (!isUndefined(data.discord) && !isUndefined(data.discord.token)) data.discord.token = '[redacted]';
     let out = '<pre>\n';
     out += `Error rendering '${view}'.\n`;
@@ -25,7 +26,7 @@ const getRenderErrorText = (view, error, data) => {
 };
 const getWebViewPath = (view) => {
     if (view.includes('..')) throw new Error('Path Traversal?');
-    return path.join(GlobalData.txAdminResourcePath, 'web', view + '.ejs');
+    return path.join(txEnv.txAdminResourcePath, 'web', view + '.ejs');
 };
 const getJavascriptConsts = (allConsts = []) => {
     return Object.entries(allConsts)
@@ -41,8 +42,8 @@ const THEME_DARK = 'theme--dark';
 const DEFAULT_AVATAR = 'img/default_avatar.png';
 
 function getEjsOptions(filePath) {
-    const webTemplateRoot = path.resolve(GlobalData.txAdminResourcePath, 'web')
-    const webCacheDir = path.resolve(GlobalData.txAdminResourcePath, 'web-cache', filePath)
+    const webTemplateRoot = path.resolve(txEnv.txAdminResourcePath, 'web')
+    const webCacheDir = path.resolve(txEnv.txAdminResourcePath, 'web-cache', filePath)
     return {
         cache: true,
         filename: webCacheDir,
@@ -61,9 +62,9 @@ function getEjsOptions(filePath) {
  * @returns {Promise<void>}
  */
 async function loadWebTemplate(name) {
-    if (GlobalData.isDevMode || !templateCache.has(name)) {
+    if (convars.isDevMode || !templateCache.has(name)) {
         try {
-            const rawTemplate = await fs.readFile(getWebViewPath(name), 'utf-8');
+            const rawTemplate = await fse.readFile(getWebViewPath(name), 'utf-8');
             const compiled = ejs.compile(rawTemplate, getEjsOptions(name + '.ejs'));
             templateCache.set(name, compiled);
         } catch (e) {
@@ -92,8 +93,8 @@ async function renderView(view, reqSess, data, txVars) {
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username) ? reqSess.auth.username : 'unknown user';
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture) ? reqSess.auth.picture : DEFAULT_AVATAR;
     data.isTempPassword = (reqSess && reqSess.auth && reqSess.auth.isTempPassword);
-    data.isLinux = (GlobalData.osType == 'linux');
-    data.showAdvanced = (GlobalData.isDevMode || GlobalData.verbose);
+    data.isLinux = !txEnv.isWindows;
+    data.showAdvanced = (convars.isDevMode || verbose);
     data.dynamicAd = txVars.isWebInterface && globals.dynamicAds.pick('main');
 
     let out;
@@ -113,7 +114,7 @@ async function renderView(view, reqSess, data, txVars) {
  * @param {string} message
  */
 async function renderLoginView(data, txVars) {
-    data.logoURL = GlobalData.loginPageLogo || 'img/txadmin.png';
+    data.logoURL = convars.loginPageLogo || 'img/txadmin.png';
     data.isMatrix = (Math.random() <= 0.05);
     data.ascii = helpers.txAdminASCII();
     data.message = data.message || '';
@@ -173,7 +174,7 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true) {
 
         //For master permission
         if (perm === 'master' && sess.auth.master !== true) {
-            if (GlobalData.verbose && printWarn) logWarn(`[${sess.auth.username}] Permission '${perm}' denied.`, fromCtx);
+            if (verbose && printWarn) logWarn(`[${sess.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
 
@@ -185,11 +186,11 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true) {
         ) {
             return true;
         } else {
-            if (GlobalData.verbose && printWarn) logWarn(`[${sess.auth.username}] Permission '${perm}' denied.`, fromCtx);
+            if (verbose && printWarn) logWarn(`[${sess.auth.username}] Permission '${perm}' denied.`, fromCtx);
             return false;
         }
     } catch (error) {
-        if (GlobalData.verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
+        if (verbose && typeof fromCtx === 'string') logWarn(`Error validating permission '${perm}' denied.`, fromCtx);
         return false;
     }
 }
@@ -197,7 +198,7 @@ function checkPermission(ctx, perm, fromCtx, printWarn = true) {
 //================================================================
 //================================================================
 //================================================================
-module.exports = async function WebCtxUtils(ctx, next) {
+export default async function WebCtxUtils(ctx, next) {
     //Prepare variables
     const isWebInterface = (typeof ctx.headers['x-txadmin-token'] !== 'string');
     ctx.txVars = {
@@ -224,14 +225,14 @@ module.exports = async function WebCtxUtils(ctx, next) {
         typeof ctx.headers['x-txadmin-identifiers'] === 'string'
         && typeof ctx.headers['x-txadmin-token'] === 'string'
         && ctx.headers['x-txadmin-token'] === globals.webServer.luaComToken
-        && GlobalData.loopbackInterfaces.includes(ctx.ip)
+        && convars.loopbackInterfaces.includes(ctx.ip)
     ) {
         const ipIdentifier = ctx.headers['x-txadmin-identifiers']
             .split(', ')
             .find((i) => i.startsWith('ip:'));
         if (typeof ipIdentifier === 'string') {
             const srcIP = ipIdentifier.substr(3);
-            if (GlobalData.regexValidIP.test(srcIP)) {
+            if (consts.regexValidIP.test(srcIP)) {
                 ctx.txVars.realIP = srcIP;
             }
         }
@@ -256,8 +257,8 @@ module.exports = async function WebCtxUtils(ctx, next) {
             serverProfile: globals.info.serverProfile,
             serverName: globals.config.serverName || globals.info.serverProfile,
             uiTheme: (ctx.cookies.get('txAdmin-darkMode') === 'true' || !isWebInterface) ? THEME_DARK : '',
-            fxServerVersion: (GlobalData.isZapHosting) ? `${GlobalData.fxServerVersion}/ZAP` : GlobalData.fxServerVersion,
-            txAdminVersion: GlobalData.txAdminVersion,
+            fxServerVersion: (convars.isZapHosting) ? `${txEnv.fxServerVersion}/ZAP` : txEnv.fxServerVersion,
+            txAdminVersion: txEnv.txAdminVersion,
             txaOutdated: globals.databus.updateChecker?.txadmin,
             fxsOutdated: globals.databus.updateChecker?.fxserver,
             jsInjection: getJavascriptConsts({

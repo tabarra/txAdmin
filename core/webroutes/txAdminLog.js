@@ -1,15 +1,16 @@
-//Requires
 const modulename = 'WebServer:txAdminLog';
-const dateFormat = require('dateformat');
-const xss = require('../extras/xss')();
-const { dir, log, logOk, logWarn, logError, getLog } = require('../extras/console')(modulename);
+import dateFormat from 'dateformat';
+import xssInstancer from '@core/extras/xss.js';
+import logger from '@core/extras/console.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
+const xss = xssInstancer();
 
 
 /**
  * Returns the output page containing the action log, and the console log
  * @param {object} ctx
  */
-module.exports = async function txAdminLog(ctx) {
+export default async function txAdminLog(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('txadmin.log.view', modulename)) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});

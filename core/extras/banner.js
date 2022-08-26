@@ -1,20 +1,12 @@
-//Requires
-const os = require('os');
-const boxen = require('boxen');
-const chalk = require('chalk');
-const open = require('open');
-const { dir, log, logOk, logWarn, logError } = require('./console')();
-const got = require('./got');
-const windowsReleaseAsync = require('./windowsReleaseAsync');
+import boxen from 'boxen';
+import chalk from 'chalk';
+import open from 'open';
 
-// const getTimeout = (timeoutLimit) => {
-//     let timer;
-//     return new Promise((_, reject) => {
-//         timer = setTimeout(() => {
-//             reject(new Error());
-//         }, timeoutLimit);
-//     });
-// }
+import got from '@core/extras/got.js';
+import getOsDistro from '@core/extras/getOsDistro.js';
+import logger from '@core/extras/console.js';
+import { convars, txEnv } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger();
 
 
 const printMultiline = (lines, color) => {
@@ -27,10 +19,12 @@ const printMultiline = (lines, color) => {
 const getIPs = async () => {
     const reqOptions = {timeout: 2500};
     const allOps = await Promise.allSettled([
+        // op.value.ip
         got('https://ip.seeip.org/json', reqOptions).json(),
         got('https://api.ipify.org/?format=json', reqOptions).json(),
         got('https://api.myip.com', reqOptions).json(),
-        // Promise.reject()
+
+        // op.value.query
         // got(`http://ip-api.com/json/`, reqOptions).json(),
         // got(`https://extreme-ip-lookup.com/json/`, reqOptions).json(),
     ]);
@@ -45,7 +39,7 @@ const getIPs = async () => {
 
 const getOSMessage = async () => {
     const serverMessage = [
-        `To be able to access txAdmin from the internet open port ${GlobalData.txAdminPort}`,
+        `To be able to access txAdmin from the internet open port ${convars.txAdminPort}`,
         'on your OS Firewall as well as in the hosting company.',
     ];
     const winWorkstationMessage = [
@@ -55,22 +49,10 @@ const getOSMessage = async () => {
         'We recommend renting a server from ' + chalk.inverse(' https://zap-hosting.com/txAdmin ') + '.',
     ];
 
-    if (GlobalData.osType == 'linux') {
-        GlobalData.osDistro = os.release();
-        return serverMessage;
-    } else {
-        try {
-            const distro = await windowsReleaseAsync();
-            GlobalData.osDistro = `Windows ${distro}`;
-            return (distro.toLowerCase().includes('server')) ? serverMessage : winWorkstationMessage;
-        } catch (error) {
-            if (GlobalData.verbose) {
-                logWarn(`Failed to detect windows version with error: ${error.message}`);
-                dir(error);
-            }
-            return serverMessage;
-        }
-    }
+    const distro = await getOsDistro();
+    return (distro && distro.includes('Linux') || distro.includes('Server'))
+     ? serverMessage
+     : winWorkstationMessage;
 };
 
 const awaitHttp = new Promise((resolve, reject) => {
@@ -113,7 +95,7 @@ const awaitMasterPin = new Promise((resolve, reject) => {
 });
 
 
-module.exports.printBanner = async () => {
+export const printBanner = async () => {
     const [ ipRes, msgRes, adminPinRes ] = await Promise.allSettled([
         getIPs(),
         getOSMessage(),
@@ -123,16 +105,16 @@ module.exports.printBanner = async () => {
 
     //Addresses
     let addrs;
-    if (GlobalData.forceInterface == false || GlobalData.forceInterface == '0.0.0.0') {
+    if (convars.forceInterface == false || convars.forceInterface == '0.0.0.0') {
         addrs = [
-            (GlobalData.osType === 'linux') ? 'your-public-ip' : 'localhost',
+            (txEnv.isWindows) ? 'localhost' : 'your-public-ip',
         ];
         if (ipRes.value) {
             addrs.push(ipRes.value);
-            GlobalData.loopbackInterfaces.push(ipRes.value);
+            convars.loopbackInterfaces.push(ipRes.value);
         }
     } else {
-        addrs = [GlobalData.forceInterface];
+        addrs = [convars.forceInterface];
     }
 
     //Admin PIN
@@ -154,17 +136,17 @@ module.exports.printBanner = async () => {
     };
     const boxLines = [
         'All ready! Please access:',
-        ...addrs.map((addr) => chalk.inverse(` http://${addr}:${GlobalData.txAdminPort}/ `)),
+        ...addrs.map((addr) => chalk.inverse(` http://${addr}:${convars.txAdminPort}/ `)),
         ...adminPinLines,
     ];
     printMultiline(boxen(boxLines.join('\n'), boxOptions), chalk.bold.bgGreen);
-    if (GlobalData.forceInterface == false) {
+    if (convars.forceInterface == false) {
         printMultiline(msgRes.value, chalk.bold.bgBlue);
     }
 
     //Opening page
-    if (GlobalData.osType === 'windows' && adminPinRes.value) {
-        open(`http://localhost:${GlobalData.txAdminPort}/auth#${adminPinRes.value}`).catch();
+    if (txEnv.isWindows && adminPinRes.value) {
+        open(`http://localhost:${convars.txAdminPort}/auth#${adminPinRes.value}`).catch();
     }
 
     //Starting server

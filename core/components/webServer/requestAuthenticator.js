@@ -1,12 +1,14 @@
 const modulename = 'WebServer:RequestAuthenticator';
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+import { convars, verbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**
  * Returns a session authenticator function
  * @param {string} epType endpoint type
  */
-const requestAuth = (epType) => {
+export const requestAuth = (epType) => {
     //Intercom auth function
     const intercomAuth = async (ctx, next) => {
         if (
@@ -24,7 +26,7 @@ const requestAuth = (epType) => {
         const {isValidAuth} = authLogic(ctx.session, true, epType);
 
         if (!isValidAuth) {
-            if (GlobalData.verbose) logWarn(`Invalid session auth: ${ctx.path}`, epType);
+            if (verbose) logWarn(`Invalid session auth: ${ctx.path}`, epType);
             ctx.session.auth = {};
             if (epType === 'web') {
                 return ctx.response.redirect('/auth?logout');
@@ -90,7 +92,7 @@ const requestAuth = (epType) => {
         } else {
             if (socket.session) socket.session.auth = {}; //a bit redundant but it wont hurt anyone
             socket.disconnect(0);
-            if (GlobalData.verbose) logWarn('Auth denied when creating session');
+            if (verbose) logWarn('Auth denied when creating session');
             next(new Error('Authentication Denied'));
         }
     };
@@ -120,7 +122,7 @@ const requestAuth = (epType) => {
  * @param {string} perm
  * @param {string} epType endpoint type
  */
-const authLogic = (sess, perm, epType) => {
+export const authLogic = (sess, perm, epType) => {
     let isValidAuth = false;
     let isValidPerm = false;
     if (
@@ -158,13 +160,13 @@ const authLogic = (sess, perm, epType) => {
                     ));
                 }
             } catch (error) {
-                if (GlobalData.verbose) {
+                if (verbose) {
                     logError('Error validating session data:', epType);
                     dir(error);
                 }
             }
         } else {
-            if (GlobalData.verbose) logWarn(`Expired session from ${sess.auth.username}`, epType);
+            if (verbose) logWarn(`Expired session from ${sess.auth.username}`, epType);
         }
     }
 
@@ -180,12 +182,12 @@ const authLogic = (sess, perm, epType) => {
 const nuiAuthLogic = (reqIP, reqHeader) => {
     // Check sus IPs
     if (
-        !GlobalData.loopbackInterfaces.includes(reqIP)
-        && !GlobalData.isZapHosting
+        !convars.loopbackInterfaces.includes(reqIP)
+        && !convars.isZapHosting
         && !globals.webServer.config.disableNuiSourceCheck
     ) {
-        if (GlobalData.verbose) {
-            logWarn(`NUI Auth Failed: reqIP "${reqIP}" not in ${JSON.stringify(GlobalData.loopbackInterfaces)}.`);
+        if (verbose) {
+            logWarn(`NUI Auth Failed: reqIP "${reqIP}" not in ${JSON.stringify(convars.loopbackInterfaces)}.`);
         }
         return {isValidAuth: false, rejectReason: 'Invalid Request: source'};
     }
@@ -200,7 +202,7 @@ const nuiAuthLogic = (reqIP, reqHeader) => {
 
     // Check token value
     if (reqHeader['x-txadmin-token'] !== globals.webServer.luaComToken) {
-        if (GlobalData.verbose) {
+        if (verbose) {
             logWarn(`NUI Auth Failed: token received ${reqHeader['x-txadmin-token']} !== expected ${globals.webServer.luaComToken}.`);
         }
         return {isValidAuth: false, rejectReason: 'Unauthorized: token value'};
@@ -219,7 +221,7 @@ const nuiAuthLogic = (reqIP, reqHeader) => {
     try {
         const admin = globals.adminVault.getAdminByIdentifiers(identifiers);
         if (!admin) {
-            if (GlobalData.verbose) {
+            if (verbose) {
                 logWarn(`NUI Auth Failed: no admin found with identifiers ${JSON.stringify(identifiers)}.`);
             }
             return {isValidAuth: false, rejectReason: 'Unauthorized: admin not found'};
@@ -227,14 +229,7 @@ const nuiAuthLogic = (reqIP, reqHeader) => {
         return {isValidAuth: true, admin};
     } catch (error) {
         logWarn(`Failed to authenticate NUI user with error: ${error.message}`);
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         return {isValidAuth: false, rejectReason: 'internal error'};
     }
-};
-
-
-//================================================================
-module.exports = {
-    requestAuth,
-    authLogic,
 };

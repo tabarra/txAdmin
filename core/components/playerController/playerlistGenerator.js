@@ -1,8 +1,9 @@
-//Requires
 const modulename = 'PlayerlistGenerator';
-const fs = require('node:fs');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const got = require('../../extras/got');
+import fs from 'node:fs';
+import got from 'got'
+import logger from '@core/extras/console.js';
+import { convars } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
 const randIndex = (arr) => Math.floor(Math.random() * arr.length);
@@ -17,13 +18,12 @@ const unDups = (arr) => arr.filter((v, i) => arr.indexOf(v) === i);
  *  - the json must contain something like 45+ players
  *  - enable this require in monitor component's constructor
  */
-module.exports = class PlayerlistGenerator {
+export default class PlayerlistGenerator {
     constructor() {
         throw new Error('Disabled, for now');
         //Configs
         const srcPath = './src/components/playerController/playerlist.ignore.json';
         this.config = {
-            // srcPlayerlist: require('./playerlist.ignore.json'),
             srcPlayerlist: JSON.parse(fs.readFileSync(srcPath)),
             // refreshInterval: 2*60*1000,
             refreshInterval: 10 * 1000,
@@ -35,7 +35,7 @@ module.exports = class PlayerlistGenerator {
         //Starting data
         this.indexes = [0, 1, 2, 3, 4, 5, 6, 7];
         this.playerlist = [];
-        const refreshFunc = (GlobalData.debugExternalSource)
+        const refreshFunc = (convars.debugExternalSource)
             ? this.refreshPlayersExternal.bind(this)
             : this.refreshPlayersStatic.bind(this);
 
@@ -48,7 +48,7 @@ module.exports = class PlayerlistGenerator {
     //================================================================
     async refreshPlayersExternal() {
         try {
-            this.playerlist = await got(`http://${GlobalData.debugExternalSource}/players.json`).json();
+            this.playerlist = await got(`http://${convars.debugExternalSource}/players.json`).json();
         } catch (error) {
             logError(`External source failed: ${error.message}`);
         }

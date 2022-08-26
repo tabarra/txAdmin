@@ -1,14 +1,14 @@
-//Requires
 const modulename = 'WebServer:CFGEditorGet';
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const { resolveCFGFilePath, readRawCFGFile } = require('../../extras/fxsConfigHelper');
+import logger from '@core/extras/console.js';
+import { resolveCFGFilePath, readRawCFGFile } from '@core/extras/fxsConfigHelper';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 /**
  * Returns the output page containing the server.cfg
  * @param {object} ctx
  */
-module.exports = async function CFGEditorGet(ctx) {
+export default async function CFGEditorGet(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('server.cfg.editor', modulename)) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});

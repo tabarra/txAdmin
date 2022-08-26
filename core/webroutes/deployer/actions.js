@@ -1,11 +1,13 @@
-//Requires
 const modulename = 'WebServer:DeployerActions';
-const path = require('path');
-const cloneDeep = require('lodash/cloneDeep');
-const mysql = require('mysql2/promise');
-const slash = require('slash');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const { validateModifyServerConfig } = require('../../extras/fxsConfigHelper');
+import path from 'path';
+import { cloneDeep }  from 'lodash-es';
+import slash from 'slash';
+import mysql from 'mysql2/promise'
+import consts from '@core/extras/consts.js';
+import logger from '@core/extras/console.js';
+import { txEnv, convars } from '@core/globalData.js';
+import { validateModifyServerConfig } from '../../extras/fxsConfigHelper';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -15,7 +17,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
  * Handle all the server control actions
  * @param {object} ctx
  */
-module.exports = async function DeployerActions(ctx) {
+export default async function DeployerActions(ctx) {
     //Sanity check
     if (isUndefined(ctx.params.action)) {
         return ctx.utils.error(400, 'Invalid Request');
@@ -87,8 +89,8 @@ async function handleSetVariables(ctx) {
 
     //Validating sv_licenseKey
     if (
-        !GlobalData.regexSvLicenseNew.test(userVars.svLicense)
-        && !GlobalData.regexSvLicenseOld.test(userVars.svLicense)
+        !consts.regexSvLicenseNew.test(userVars.svLicense)
+        && !consts.regexSvLicenseOld.test(userVars.svLicense)
     ) {
         return ctx.send({ type: 'danger', message: 'The Server License does not appear to be valid.' });
     }
@@ -113,7 +115,7 @@ async function handleSetVariables(ctx) {
         } catch (error) {
             const msgHeader = `<b>Database connection failed:</b> ${error.message}`;
             if (error.code == 'ECONNREFUSED') {
-                let specificError = (GlobalData.osType === 'windows')
+                let specificError = (txEnv.isWindows)
                     ? 'If you do not have a database installed, you can download and run XAMPP.'
                     : 'If you do not have a database installed, you must download and run MySQL or MariaDB.';
                 if (userVars.dbPort !== 3306) {
@@ -136,12 +138,12 @@ async function handleSetVariables(ctx) {
     }
 
     //Max Clients & Server Endpoints
-    userVars.maxClients = (GlobalData.deployerDefaults && GlobalData.deployerDefaults.maxClients) ? GlobalData.deployerDefaults.maxClients : 48;
-    if (GlobalData.forceInterface) {
+    userVars.maxClients = (convars.deployerDefaults && convars.deployerDefaults.maxClients) ? convars.deployerDefaults.maxClients : 48;
+    if (convars.forceInterface) {
         const suffix = '# zap-hosting: do not modify!';
         userVars.serverEndpoints = [
-            `endpoint_add_tcp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}" ${suffix}`,
-            `endpoint_add_udp "${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}" ${suffix}`,
+            `endpoint_add_tcp "${convars.forceInterface}:${convars.forceFXServerPort}" ${suffix}`,
+            `endpoint_add_udp "${convars.forceInterface}:${convars.forceFXServerPort}" ${suffix}`,
         ].join('\n');
     } else {
         userVars.serverEndpoints = [

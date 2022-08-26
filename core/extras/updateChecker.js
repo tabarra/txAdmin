@@ -1,8 +1,9 @@
-//Requires
 const modulename = 'WebServer:updateChecker';
-const got = require('./got');
-const semver = require('semver');
-const { dir, log, logOk, logWarn, logError } = require('./console')(modulename);
+import semver from 'semver';
+import got from '@core/extras/got.js';
+import logger from '@core/extras/console.js';
+import { txEnv, verbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
@@ -27,11 +28,11 @@ const now = () => { return Math.round(Date.now() / 1000); };
     if < critical, BIG WARNING
 */
 
-module.exports = async () => {
+export default async () => {
     let apiResponse;
     try {
         //perform request - cache busting every ~1.4h
-        const osTypeApiUrl = (GlobalData.osType == 'windows') ? 'win32' : 'linux';
+        const osTypeApiUrl = (txEnv.isWindows) ? 'win32' : 'linux';
         const cacheBuster = Math.floor(now() / 5e3);
         const reqUrl = `https://changelogs-live.fivem.net/api/changelog/versions/${osTypeApiUrl}/server?${cacheBuster}`;
         apiResponse = await got.get(reqUrl).json();
@@ -57,7 +58,7 @@ module.exports = async () => {
             throw new Error(`expected prop ${missing} not found in api response.`);
         }
     } catch (error) {
-        if (GlobalData.verbose) logWarn(`Failed to retrieve FXServer/txAdmin update data with error: ${error.message}`);
+        if (verbose) logWarn(`Failed to retrieve FXServer/txAdmin update data with error: ${error.message}`);
         if (globals.databus.updateChecker === null) globals.databus.updateChecker = false;
         return;
     }
@@ -65,12 +66,12 @@ module.exports = async () => {
     //Checking txAdmin version
     let txOutput = false;
     try {
-        const isOutdated = semver.lt(GlobalData.txAdminVersion, apiResponse.latest_txadmin);
+        const isOutdated = semver.lt(txEnv.txAdminVersion, apiResponse.latest_txadmin);
         if (isOutdated) {
             logError('This version of txAdmin is outdated.');
             logError('Please update as soon as possible.');
             logError('For more information: https://discord.gg/uAmsGa2');
-            const semverDiff = semver.diff(GlobalData.txAdminVersion, apiResponse.latest_txadmin);
+            const semverDiff = semver.diff(txEnv.txAdminVersion, apiResponse.latest_txadmin);
             txOutput = {
                 semverDiff,
                 latest: apiResponse.latest_txadmin,
@@ -79,43 +80,43 @@ module.exports = async () => {
         }
     } catch (error) {
         logWarn('Error checking for txAdmin updates. Enable verbosity for more information.');
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
     }
 
     //Checking FXServer version
     //FIXME: logic copied from dashboard webroute, adapt to new thing
     let fxsOutput = false;
     try {
-        if (GlobalData.fxServerVersion < apiResponse.critical) {
+        if (txEnv.fxServerVersion < apiResponse.critical) {
             fxsOutput = {
                 color: 'danger',
                 message: 'A critical update is available for FXServer, you should update now.',
             };
             if (apiResponse.critical > apiResponse.recommended) {
-                fxsOutput.subtext = `critical update ${GlobalData.fxServerVersion} ➤ ${apiResponse.critical}`;
+                fxsOutput.subtext = `critical update ${txEnv.fxServerVersion} ➤ ${apiResponse.critical}`;
                 fxsOutput.artifactsLink = apiResponse.critical_download;
             } else {
-                fxsOutput.subtext = `recommended update ${GlobalData.fxServerVersion} ➤ ${apiResponse.recommended}`;
+                fxsOutput.subtext = `recommended update ${txEnv.fxServerVersion} ➤ ${apiResponse.recommended}`;
                 fxsOutput.artifactsLink = apiResponse.recommended_download;
             }
-        } else if (GlobalData.fxServerVersion < apiResponse.recommended) {
+        } else if (txEnv.fxServerVersion < apiResponse.recommended) {
             fxsOutput = {
                 color: 'warning',
                 message: 'A recommended update is available for FXServer, you should update.',
-                subtext: `recommended update ${GlobalData.fxServerVersion} ➤ ${apiResponse.recommended}`,
+                subtext: `recommended update ${txEnv.fxServerVersion} ➤ ${apiResponse.recommended}`,
                 artifactsLink: apiResponse.recommended_download,
             };
-        } else if (GlobalData.fxServerVersion < apiResponse.optional) {
+        } else if (txEnv.fxServerVersion < apiResponse.optional) {
             fxsOutput = {
                 color: 'info',
                 message: 'An optional update is available for FXServer.',
-                subtext: `optional update ${GlobalData.fxServerVersion} ➤ ${apiResponse.optional}`,
+                subtext: `optional update ${txEnv.fxServerVersion} ➤ ${apiResponse.optional}`,
                 artifactsLink: apiResponse.optional_download,
             };
         }
     } catch (error) {
         logWarn('Error checking for FXServer updates. Enable verbosity for more information.');
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
     }
 
     //Output

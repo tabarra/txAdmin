@@ -1,12 +1,11 @@
-//Require
-const xssClass = require('xss');
+import xssClass from 'xss';
 
 
 /**
  * Returns a function with the passed whitelist parameter.
  * https://github.com/leizongmin/js-xss#whitelist
  */
-module.exports = (customWL = []) => {
+export default (customWL = []) => {
     const xss = new xssClass.FilterXSS({
         whiteList: customWL,
     });

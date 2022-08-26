@@ -1,13 +1,15 @@
-//Requires
 const modulename = 'WebServer:Diagnostics';
-const os = require('os');
-const bytes = require('bytes');
-const pidusageTree = require('pidusage-tree');
-const humanizeDuration = require('humanize-duration');
-const { dir, log, logOk, logWarn, logError } = require('../extras/console')(modulename);
-const Cache = require('../extras/dataCache');
-const helpers = require('../extras/helpers');
-const got = require('../extras/got');
+import os from 'node:os';
+import bytes from 'bytes';
+import pidusageTree from 'pidusage-tree';
+import humanizeDuration from 'humanize-duration';
+import logger from '@core/extras/console.js';
+import * as helpers from '@core/extras/helpers';
+import Cache from '../extras/dataCache';
+import got from '@core/extras/got.js';
+import getOsDistro from '@core/extras/getOsDistro.js';
+import { verbose, txEnv } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 const cache = new Cache(5);
 
@@ -16,7 +18,7 @@ const cache = new Cache(5);
  * Returns the output page containing the full report
  * @param {object} ctx
  */
-module.exports = async function Diagnostics(ctx) {
+export default async function Diagnostics(ctx) {
     const cachedData = cache.get();
     if (cachedData !== false) {
         cachedData.message = 'This page was cached in the last 5 seconds';
@@ -86,7 +88,7 @@ async function getProcessesData() {
         });
     } catch (error) {
         logError('Error getting processes data.');
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
     }
 
     //Sort procList array
@@ -124,7 +126,7 @@ async function getFXServerData() {
         infoData = await got.get(requestOptions).json();
     } catch (error) {
         logWarn('Failed to get FXServer information.');
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         return {error: 'Failed to retrieve FXServer data. <br>The server must be online for this operation. <br>Check the terminal for more information (if verbosity is enabled)'};
     }
 
@@ -146,7 +148,7 @@ async function getFXServerData() {
             statusColor: 'success',
             status: ' ONLINE ',
             version: infoData.server,
-            versionMismatch: (getBuild(infoData.server) !== GlobalData.fxServerVersion),
+            versionMismatch: (getBuild(infoData.server) !== txEnv.fxServerVersion),
             resources: infoData.resources.length,
             onesync: (infoData.vars && infoData.vars.onesync_enabled === 'true') ? 'enabled' : 'disabled',
             maxClients: (infoData.vars && infoData.vars.sv_maxClients) ? infoData.vars.sv_maxClients : '--',
@@ -154,7 +156,7 @@ async function getFXServerData() {
         };
     } catch (error) {
         logWarn('Failed to process FXServer information.');
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         return {error: 'Failed to process FXServer data. <br>Check the terminal for more information (if verbosity is enabled)'};
     }
 }
@@ -169,7 +171,7 @@ async function getHostData() {
         const userInfo = os.userInfo();
         const hostData = {
             nodeVersion: process.version,
-            osDistro: GlobalData.osDistro || GlobalData.osType,
+            osDistro: await getOsDistro(),
             username: `${userInfo.username}`,
             memory: 'not available',
             cpus: 'not available',
@@ -192,7 +194,7 @@ async function getHostData() {
         return hostData;
     } catch (error) {
         logError('Error getting Host data');
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         return {error: 'Failed to retrieve host data. <br>Check the terminal for more information (if verbosity is enabled)'};
     }
 }
@@ -213,7 +215,7 @@ async function gettxAdminData() {
     return {
         //Stats
         uptime: humanizeDuration(process.uptime() * 1000, humanizeOptions),
-        cfxUrl: (GlobalData.cfxUrl) ? `https://${GlobalData.cfxUrl}/` : '--',
+        cfxUrl: (globals.webServer.cfxUrl) ? `https://${globals.webServer.cfxUrl}/` : '--',
         banlistEnabled: controllerConfigs.onJoinCheckBan.toString(),
         whitelistEnabled: controllerConfigs.onJoinCheckWhitelist.toString(),
         httpCounterLog: httpCounter.log.join(', ') || '--',
@@ -241,7 +243,7 @@ async function gettxAdminData() {
         commandLine: (globals.fxRunner.config.commandLine && globals.fxRunner.config.commandLine.length)
             ? helpers.redactApiKeys(globals.fxRunner.config.commandLine)
             : '--',
-        fxServerPath: GlobalData.fxServerPath,
+        fxServerPath: txEnv.fxServerPath,
         serverDataPath: globals.fxRunner.config.serverDataPath,
         cfgPath: globals.fxRunner.config.cfgPath,
         fxServerHost: (globals.fxRunner.fxServerHost)

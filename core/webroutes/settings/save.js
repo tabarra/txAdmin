@@ -1,11 +1,11 @@
-//Requires
 const modulename = 'WebServer:SettingsSave';
-const fsp = require('fs/promises');
-const slash = require('slash');
-const path = require('path');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const { parseSchedule } = require('../../extras/helpers');
-const { resolveCFGFilePath } = require('../../extras/fxsConfigHelper');
+import fsp from 'node:fs/promises';
+import path from 'node:path';
+import slash from 'slash';
+import logger from '@core/extras/console.js';
+import { parseSchedule } from '@core/extras/helpers';
+import { resolveCFGFilePath } from '@core/extras/fxsConfigHelper';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 
 //Helper functions
@@ -16,7 +16,7 @@ const anyUndefined = (...args) => { return [...args].some((x) => (typeof x === '
  * Handle all the server control actions
  * @param {object} ctx
  */
-module.exports = async function SettingsSave(ctx) {
+export default async function SettingsSave(ctx) {
     //Sanity check
     if (isUndefined(ctx.params.scope)) {
         return ctx.utils.error(400, 'Invalid Request');

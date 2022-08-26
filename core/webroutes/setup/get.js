@@ -1,14 +1,15 @@
-//Requires
 const modulename = 'WebServer:SetupGet';
-const path = require('path');
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
-const { engineVersion } = require('../../extras/deployer');
+import path from 'path';
+import logger from '@core/extras/console.js';
+import { convars, txEnv } from '@core/globalData.js';
+import { engineVersion } from '../../extras/deployer';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 /**
  * Returns the output page containing the live console
  * @param {object} ctx
  */
-module.exports = async function SetupGet(ctx) {
+export default async function SetupGet(ctx) {
     //Check permissions
     if (!ctx.utils.checkPermission('master', modulename)) {
         return ctx.utils.render('main/message', {message: 'You need to be the admin master to use the setup page.'});
@@ -28,14 +29,14 @@ module.exports = async function SetupGet(ctx) {
         isReset: (globalConfig.serverName !== null),
         deployerEngineVersion: engineVersion,
         serverProfile: globals.info.serverProfile,
-        txDataPath: GlobalData.dataPath,
-        isZapHosting: GlobalData.isZapHosting,
+        txDataPath: txEnv.dataPath,
+        isZapHosting: convars.isZapHosting,
         windowsBatPath: null,
     };
 
-    if (GlobalData.osType == 'windows') {
-        const batFolder = path.resolve(GlobalData.fxServerPath, '..');
-        renderData.windowsBatPath  = path.join(batFolder, `start_${GlobalData.fxServerVersion}_${globals.info.serverProfile}.bat`);
+    if (txEnv.isWindows) {
+        const batFolder = path.resolve(txEnv.fxServerPath, '..');
+        renderData.windowsBatPath  = path.join(batFolder, `start_${txEnv.fxServerVersion}_${globals.info.serverProfile}.bat`);
     }
 
     return ctx.utils.render('standalone/setup', renderData);

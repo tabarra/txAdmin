@@ -1,18 +1,15 @@
-//Requires
 const modulename = 'DiscordBot';
-const Discord = require('@citizenfx/discord.js');
-const { dir, log, logOk, logWarn, logError, logDebug } = require('../../extras/console')(modulename);
+import Discord from '@citizenfx/discord.js'
+import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
+import commands from './commands';
+const { dir, log, logOk, logWarn, logError, logDebug } = logger(modulename);
 
-//NOTE: fix for the fact that fxserver (as of 2627) does not have URLSearchParams as part of the global scope
-if (typeof URLSearchParams === 'undefined') {
-    global.URLSearchParams = require('url').URLSearchParams;
-}
 
 //Helpers
 const now = () => { return Math.round(Date.now() / 1000); };
 
-
-module.exports = class DiscordBot {
+export default class DiscordBot {
     constructor(config) {
         this.config = config;
         this.client = null;
@@ -24,15 +21,15 @@ module.exports = class DiscordBot {
             txadmin: 0,
         };
 
-        //NOTE: setting them up statically due to webpack requirements
+        //NOTE: setting them up statically due to bundler requirements
         this.commands = new Map([
-            ['addwl', require('./commands/addwl.js')],
-            ['help', require('./commands/help.js')],
-            ['status', require('./commands/status.js')],
-            ['txadmin', require('./commands/txadmin.js')],
+            ['addwl', commands.addwl],
+            ['help', commands.help],
+            ['status', commands.status],
+            ['txadmin', commands.txadmin],
 
             //FIXME: first we need to have player ids in the players db
-            // ['info', require('./commands/info.js')],
+            // ['info', commands.info],
         ]);
         this.cooldowns = new Map();
 
@@ -75,7 +72,7 @@ module.exports = class DiscordBot {
             || this.client.status
             || !this.announceChannel
         ) {
-            if (GlobalData.verbose) logWarn('returning false, not ready yet', 'sendAnnouncement');
+            if (verbose) logWarn('returning false, not ready yet', 'sendAnnouncement');
             return false;
         }
 
@@ -117,7 +114,7 @@ module.exports = class DiscordBot {
             logError(`Error from Discord.js client: ${error.message}`);
         });
         this.client.on('resume', () => {
-            if (GlobalData.verbose) logOk('Connection with Discord API server resumed');
+            if (verbose) logOk('Connection with Discord API server resumed');
             this.client.user.setActivity(globals.config.serverName, { type: 'WATCHING' });
         });
         this.client.on('debug', logDebug);
@@ -154,7 +151,7 @@ module.exports = class DiscordBot {
             const ts = now();
             if (ts < expirationTime) {
                 const timeLeft = expirationTime - ts;
-                if (GlobalData.verbose) log(`Spam prevented for command "${commandName}".`);
+                if (verbose) log(`Spam prevented for command "${commandName}".`);
                 return message.reply(`please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${commandName}\` command again.`);
             }
         }

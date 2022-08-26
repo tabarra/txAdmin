@@ -1,6 +1,7 @@
-//Requires
 const modulename = 'WebServer:AuthVerify';
-const { dir, log, logOk, logWarn, logError } = require('../../extras/console')(modulename);
+import logger from '@core/extras/console.js';
+import { verbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
@@ -9,7 +10,7 @@ const isUndefined = (x) => { return (typeof x === 'undefined'); };
  * Verify login
  * @param {object} ctx
  */
-module.exports = async function AuthVerify(ctx) {
+export default async function AuthVerify(ctx) {
     if (isUndefined(ctx.request.body.username) || isUndefined(ctx.request.body.password)) {
         return ctx.response.redirect('/');
     }
@@ -47,7 +48,7 @@ module.exports = async function AuthVerify(ctx) {
         globals.databus.txStatsData.login.methods.password++;
     } catch (error) {
         logWarn(`Failed to authenticate ${ctx.request.body.username} with error: ${error.message}`);
-        if (GlobalData.verbose) dir(error);
+        if (verbose) dir(error);
         renderData.message = 'Error autenticating admin.';
         return ctx.utils.render('login', renderData);
     }

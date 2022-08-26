@@ -1,9 +1,10 @@
-const fsp = require('node:fs/promises');
-const path = require('node:path');
-const isLocalhost = require('is-localhost-ip');
+import fsp from 'node:fs/promises';
+import path from 'node:path';
+import isLocalhost from 'is-localhost-ip';
 
-//DEBUG
-const { dir, log, logOk, logWarn, logError } = require('./console')();
+import logger from '@core/extras/console.js';
+import { convars, verbose } from '@core/globalData.js';
+const { dir, log, logOk, logWarn, logError } = logger();
 
 /**
  * Detect the dominant newline character of a string.
@@ -120,7 +121,7 @@ class FilesInfoList {
  * Returns the first likely server.cfg given a server data path, or false
  * @param {string} serverDataPath
  */
-function findLikelyCFGPath(serverDataPath) {
+export const findLikelyCFGPath = (serverDataPath) => {
     const attempts = [
         'server.cfg',
         'server.cfg.txt',
@@ -148,7 +149,7 @@ function findLikelyCFGPath(serverDataPath) {
  * @param {string} serverDataPath
  * @returns {string} cfg file absolute path
  */
-const resolveCFGFilePath = (cfgPath, serverDataPath) => {
+export const resolveCFGFilePath = (cfgPath, serverDataPath) => {
     return (path.isAbsolute(cfgPath)) ? path.normalize(cfgPath) : path.resolve(serverDataPath, cfgPath);
 };
 
@@ -160,7 +161,7 @@ const resolveCFGFilePath = (cfgPath, serverDataPath) => {
  * @param {string} cfgFullPath
  * @returns {string} raw cfg file
  */
-const readRawCFGFile = async (cfgPath) => {
+export const readRawCFGFile = async (cfgPath) => {
     //Validating if the path is absolute
     if (!path.isAbsolute(cfgPath)) {
         throw new Error('File path must be absolute.');
@@ -193,7 +194,7 @@ const readRawCFGFile = async (cfgPath) => {
  * @param {string} input
  * @returns {array} array of commands
  */
-const readLineCommands = (input) => {
+export const readLineCommands = (input) => {
     let inQuote = false;
     let inEscape = false;
     const prevCommands = [];
@@ -262,7 +263,7 @@ const readLineCommands = (input) => {
     return prevCommands;
 };
 //NOTE: tests for the parser above
-// const chalk = require('chalk');
+// import chalk from 'chalk';
 // const testCommands = [
 //     ' \x1B ONE_ARG_WITH_SPACE "part1 part2"',
 //     'TWO_ARGS arg1 arg2',
@@ -300,7 +301,7 @@ const readLineCommands = (input) => {
  * @param {array} stack
  * @returns {object} recursive cfg structure
  */
-const parseRecursiveConfig = async (cfgInputString, cfgAbsolutePath, serverDataPath, stack) => {
+export const parseRecursiveConfig = async (cfgInputString, cfgAbsolutePath, serverDataPath, stack) => {
     if (typeof cfgInputString !== 'string' && cfgInputString !== null) {
         throw new Error('cfgInputString expected to be string or null');
     }
@@ -359,7 +360,7 @@ const parseRecursiveConfig = async (cfgInputString, cfgAbsolutePath, serverDataP
  * @returns {object}
  */
 const validateCommands = async (parsedCommands) => {
-    const zapPrefix = (GlobalData.isZapHosting) ? ' [ZAP-Hosting]' : '';
+    const zapPrefix = (convars.isZapHosting) ? ' [ZAP-Hosting]' : '';
     const checkedInterfaces = new Map();
 
     //To return
@@ -397,10 +398,10 @@ const validateCommands = async (parsedCommands) => {
 
         //Check sv_maxClients against ZAP config
         const isMaxClientsString = cmd.getSetForVariable('sv_maxclients');
-        if (GlobalData.deployerDefaults?.maxClients && isMaxClientsString) {
+        if (convars.deployerDefaults?.maxClients && isMaxClientsString) {
             const maxClients = parseInt(isMaxClientsString);
-            if (maxClients > GlobalData.deployerDefaults.maxClients) {
-                const msg = `Line ${cmd.line}:${zapPrefix} your 'sv_maxclients' SHOULD be <= ${GlobalData.deployerDefaults.maxClients}.`;
+            if (maxClients > convars.deployerDefaults.maxClients) {
+                const msg = `Line ${cmd.line}:${zapPrefix} your 'sv_maxclients' SHOULD be <= ${convars.deployerDefaults.maxClients}.`;
                 warnings.add(cmd.file, msg);
                 continue;
             }
@@ -445,8 +446,8 @@ const validateCommands = async (parsedCommands) => {
                 errors.add(cmd.file, msg);
                 continue;
             }
-            if (GlobalData.forceInterface && iface !== GlobalData.forceInterface) {
-                const msg = `Line ${cmd.line}:${zapPrefix} the '${cmd.command}' interface MUST be '${GlobalData.forceInterface}'.`;
+            if (convars.forceInterface && iface !== convars.forceInterface) {
+                const msg = `Line ${cmd.line}:${zapPrefix} the '${cmd.command}' interface MUST be '${convars.forceInterface}'.`;
                 errors.add(cmd.file, msg);
                 continue;
             }
@@ -458,13 +459,13 @@ const validateCommands = async (parsedCommands) => {
                 errors.add(cmd.file, msg);
                 continue;
             }
-            if (port === GlobalData.txAdminPort) {
+            if (port === convars.txAdminPort) {
                 const msg = `Line ${cmd.line}: the '${cmd.command}' port '${port}' is being used by txAdmin and CAN NOT be used for FXServer at the same time.`;
                 errors.add(cmd.file, msg);
                 continue;
             }
-            if (GlobalData.forceFXServerPort && port !== GlobalData.forceFXServerPort) {
-                const msg = `Line ${cmd.line}:${zapPrefix} the '${cmd.command}' port MUST be '${GlobalData.forceFXServerPort}'.`;
+            if (convars.forceFXServerPort && port !== convars.forceFXServerPort) {
+                const msg = `Line ${cmd.line}:${zapPrefix} the '${cmd.command}' port MUST be '${convars.forceFXServerPort}'.`;
                 errors.add(cmd.file, msg);
                 continue;
             }
@@ -497,8 +498,8 @@ const validateCommands = async (parsedCommands) => {
 const getConnectEndpoint = (endpoints) => {
     if (!Object.keys(endpoints).length) {
         let msg;
-        if (GlobalData.forceInterface && GlobalData.forceFXServerPort) {
-            const desidredEndpoint = `${GlobalData.forceInterface}:${GlobalData.forceFXServerPort}`;
+        if (convars.forceInterface && convars.forceFXServerPort) {
+            const desidredEndpoint = `${convars.forceInterface}:${convars.forceFXServerPort}`;
             msg = `Please delete all \`endpoint_add_*\` lines and add the following to the start of the file:
 \t\`endpoint_add_tcp "${desidredEndpoint}"\`
 \t\`endpoint_add_udp "${desidredEndpoint}"\``;
@@ -529,7 +530,7 @@ const getConnectEndpoint = (endpoints) => {
  * @param {string} serverDataPath
  * @returns {object} recursive cfg structure
  */
-const validateFixServerConfig = async (cfgPath, serverDataPath) => {
+export const validateFixServerConfig = async (cfgPath, serverDataPath) => {
     //Parsing fxserver config & going through each command
     const cfgAbsolutePath = resolveCFGFilePath(cfgPath, serverDataPath);
     const parsedCommands = await parseRecursiveConfig(null, cfgAbsolutePath, serverDataPath);
@@ -565,7 +566,7 @@ const validateFixServerConfig = async (cfgPath, serverDataPath) => {
             logWarn(`Saving modified file '${targetCfgPath}'`);
             await fsp.writeFile(targetCfgPath, newCfg, 'utf8');
         } catch (error) {
-            if (GlobalData.verbose) logError(error);
+            if (verbose) logError(error);
             for (const [ln, reason] of actions) {
                 errors.add(targetCfgPath, `Please comment out line ${ln}: ${reason}`);
             }
@@ -595,7 +596,7 @@ const validateFixServerConfig = async (cfgPath, serverDataPath) => {
  * @param {string} serverDataPath
  * @returns {object} recursive cfg structure
  */
-const validateModifyServerConfig = async (cfgInputString, cfgPath, serverDataPath) => {
+export const validateModifyServerConfig = async (cfgInputString, cfgPath, serverDataPath) => {
     if (typeof cfgInputString !== 'string') {
         throw new Error('cfgInputString expected to be string.');
     }
@@ -644,17 +645,6 @@ const validateModifyServerConfig = async (cfgInputString, cfgPath, serverDataPat
     cfgEditor CFGEditorSave:    validate string, save
     deployer handleSaveConfig:  validate string, save *
 */
-
-
-module.exports = {
-    findLikelyCFGPath,
-    resolveCFGFilePath,
-    readRawCFGFile,
-    readLineCommands,
-    parseRecursiveConfig,
-    validateFixServerConfig,
-    validateModifyServerConfig,
-};
 
 /*
 

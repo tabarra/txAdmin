@@ -1,6 +1,8 @@
-const util = require('util');
-const chalk = require('chalk');
-const colorize = require('json-colorizer');
+import util from 'node:util';
+import chalk from 'chalk';
+import colorize from 'json-colorizer';
+const verbose = false;
+
 const header = 'txAdmin';
 let logHistory = [];
 
@@ -68,7 +70,7 @@ function logError(msg = '', context = null) {
 }
 
 function logDebug(msg = '', context = null) {
-    if (!GlobalData.verbose) return;
+    if (!verbose) return;
     let conCtx = getConCtx(context);
     let histCtx = getHistCtx(context);
     console.log(chalk.bold.bgMagenta(`[${conCtx}]`) + ' ' + msg);
@@ -168,7 +170,7 @@ function getLog() {
 }
 
 //================================================================
-module.exports = (ctx) => {
+export default (ctx) => {
     const appendSubCtx = (sub) => {return (sub !== null) ? `${ctx}:${sub}` : ctx;};
     return {
         log: (x, subCtx = null) => log(x, appendSubCtx(subCtx)),
