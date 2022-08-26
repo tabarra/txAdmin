@@ -16,6 +16,7 @@ export default class Monitor {
 
         //Checking config validity
         if (this.config.cooldown < 15) throw new Error('The monitor.cooldown setting must be 15 seconds or higher.');
+        if (this.config.resourceStartingTolerance < 30) throw new Error('The monitor.resourceStartingTolerance setting must be 30 seconds or higher.');
         if (!Array.isArray(this.config.restarterScheduleWarnings)) throw new Error('The monitor.restarterScheduleWarnings must be an array.');
 
         //Hardcoded Configs
@@ -23,7 +24,6 @@ export default class Monitor {
         this.hardConfigs = {
             timeout: 1500,
             defaultWarningTimes: [30, 15, 10, 5, 4, 3, 2, 1],
-            // maxHBCooldownTolerance: 180, //FIXME: deprecate?
             healthCheck: {
                 failThreshold: 15,
                 failLimit: 300,
@@ -32,9 +32,6 @@ export default class Monitor {
                 failThreshold: 15,
                 failLimit: 60,
             },
-
-            //if a resource entered "starting" state in the last X seconds, don't restart during boot
-            resourceStartingTolerance: 90,
         };
 
         //Setting up
@@ -372,19 +369,11 @@ export default class Monitor {
         //Give a bit more time to the very very slow servers to come up
         //They usually start replying to healthchecks way before sending heartbeats
         //Only logWarn/skip if there is a resource start pending
-        // if (
-        //     anySuccessfulHeartBeat === false
-        //     && processUptime < this.hardConfigs.maxHBCooldownTolerance
-        //     && elapsedHealthCheck < this.hardConfigs.healthCheck.failLimit
-        // ) {
-        //     if (processUptime % 15 == 0) logWarn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
-        //     return;
-        // }
         const starting = globals.resourcesManager.tmpGetPendingStart();
         if (
             anySuccessfulHeartBeat === false
             && starting.elapsedSeconds !== null
-            && starting.elapsedSeconds < this.hardConfigs.resourceStartingTolerance
+            && starting.elapsedSeconds < this.config.resourceStartingTolerance
         ) {
             if (processUptime % 15 == 0) {
                 logWarn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
@@ -401,7 +390,7 @@ export default class Monitor {
             if (anySuccessfulHeartBeat === false) {
                 globals.databus.txStatsData.monitorStats.bootSeconds.push(false);
                 this.restartFXServer(
-                    `server failed to start within time limit - ${this.hardConfigs.resourceStartingTolerance}s max per resource, or ${this.hardConfigs.heartBeat.failLimit}s total`,
+                    `server failed to start within time limit - ${this.config.resourceStartingTolerance}s max per resource, or ${this.hardConfigs.heartBeat.failLimit}s total`,
                     globals.translator.t('restarter.start_timeout'),
                 );
             } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {

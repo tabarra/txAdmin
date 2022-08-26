@@ -242,7 +242,8 @@ async function handleMonitor(ctx) {
     if (
         isUndefined(ctx.request.body.restarterSchedule),
         isUndefined(ctx.request.body.disableChatWarnings),
-        isUndefined(ctx.request.body.restarterScheduleWarnings)
+        isUndefined(ctx.request.body.restarterScheduleWarnings), 
+        isUndefined(ctx.request.body.resourceStartingTolerance)
     ) {
         return ctx.utils.error(400, 'Invalid Request - missing parameters');
     }
@@ -252,6 +253,7 @@ async function handleMonitor(ctx) {
         restarterSchedule: ctx.request.body.restarterSchedule.split(',').map((x) => {return x.trim();}),
         restarterScheduleWarnings: ctx.request.body.restarterScheduleWarnings.split(',').map((x) => {return x.trim();}),
         disableChatWarnings: (ctx.request.body.disableChatWarnings === 'true'),
+        resourceStartingTolerance: ctx.request.body.resourceStartingTolerance,
     };
 
     //Validating restart times
@@ -300,6 +302,7 @@ async function handleMonitor(ctx) {
     newConfig.restarterSchedule = validRestartTimes;
     newConfig.restarterScheduleWarnings = validRestartWarningMinutes.sort((a, b) => b - a);
     newConfig.disableChatWarnings = cfg.disableChatWarnings;
+    newConfig.resourceStartingTolerance = cfg.resourceStartingTolerance;
     const saveStatus = globals.configVault.saveProfile('monitor', newConfig);
 
     //Sending output
