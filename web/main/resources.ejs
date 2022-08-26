@@ -24,6 +24,15 @@
                         <input type="checkbox" id="defResCheckbox" class="c-switch-input">
                         <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                     </label>
+
+                    <span class="form-text text-muted ml-2" style="margin-top: calc(0.3rem + 2px)">
+                        Stopped resources:
+                    </span>
+                    &nbsp;&nbsp;
+                    <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
+                        <input type="checkbox" id="stoppedResCheckbox" class="c-switch-input">
+                        <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
+                    </label>
                 </div>
             </div>
         </div>
@@ -211,18 +220,22 @@
             }
         });
         if(!filter.length){
-            setDefaultResourcesVisibility();
+            refreshResourceList();
         }
-
     }
 
     //============================================== Hide defaults
     $('#defResCheckbox').click(function () {
         window.localStorage.resourcesPageShowDefault = document.getElementById('defResCheckbox').checked;
-        setDefaultResourcesVisibility();
+        refreshResourceList();
     });
 
-    function setDefaultResourcesVisibility() {
+    $('#stoppedResCheckbox').click(function() {
+        window.localStorage.resourcesPageShowStopped = document.getElementById('stoppedResCheckbox').checked;
+        refreshResourceList();
+    })
+
+    function refreshResourceList() {
         if ($('#defResCheckbox').is(':checked')) {
             defaultResources.forEach(defRes => {
                 $(`#res-${defRes}`).show();
@@ -235,15 +248,25 @@
             })
         }
 
+        const onlyStopped = $('#stoppedResCheckbox').is(':checked')
         resGroupsJS.forEach(folder => {
             let hidden = 0;
+
             folder.resources.forEach(resource => {
                 if ($(`#res-${resource.divName}`).hasClass("defaultRes")) {
                     hidden++;
+                    return
+                }
+
+                if (onlyStopped && resource.status !== 'stopped') {
+                    $(`#res-${resource.divName}`).hide()
+                    hidden++;
+                } else {
+                    $(`#res-${resource.divName}`).show()
                 }
             });
 
-            if (folder.resources.length == hidden) {
+            if (folder.resources.length === hidden) {
                 $(`#resList-card-${folder.divName}`).hide();
             } else {
                 $(`#resList-card-${folder.divName}`).show();
@@ -252,11 +275,14 @@
     }
 
     $(function () {
-        if(typeof window.localStorage.resourcesPageShowDefault === 'string'){
-            document.getElementById('defResCheckbox').checked = (window.localStorage.resourcesPageShowDefault  === 'true');
-        }else{
+        if (typeof window.localStorage.resourcesPageShowDefault === 'string') {
+            document.getElementById('defResCheckbox').checked = (window.localStorage.resourcesPageShowDefault === 'true');
+        } else {
             window.localStorage.resourcesPageShowDefault = false;
         }
-        setDefaultResourcesVisibility();
+
+        document.getElementById('stoppedResCheckbox').checked = window.localStorage.resourcesPageShowStopped === 'true'
+
+        refreshResourceList();
     });
 </script>
