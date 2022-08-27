@@ -9,26 +9,26 @@
     <div class="col-md-7 mw-col6">
         <div class="card card-accent-info">
             <div class="card-header float-left">
-                <span style="font-size: large">All Resources</span>
+                <span class="h5">All Resources</span>
                 <button class="btn btn-sm btn-primary float-right" type="button" id="btnRefresh" <%= disableActions %>>
                     <i class="icon-refresh"></i> Reload & Refresh
                 </button>
-                <input class="form-control" type="text" name="resource" id="resourceInput" onkeyup="findResource()"
-                    placeholder="Find resource by name..." style="margin-top: 1em;">
-                <div class="row justify-content-center">
-                    <span class="form-text text-muted" style="margin-top: calc(0.3rem + 2px)">
+                <input class="form-control mt-3" type="text" name="resource" id="resourceInput" onkeyup="findResource()"
+                    placeholder="Find resource by name...">
+                <div class="row justify-content-center pt-2">
+                    <span class="form-text text-muted mr-1">
                         Default resources:
                     </span>
-                    &nbsp;&nbsp;
+
                     <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                         <input type="checkbox" id="defResCheckbox" class="c-switch-input">
                         <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
                     </label>
 
-                    <span class="form-text text-muted ml-2" style="margin-top: calc(0.3rem + 2px)">
+                    <span class="form-text text-muted ml-3">
                         Stopped resources:
                     </span>
-                    &nbsp;&nbsp;
+
                     <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
                         <input type="checkbox" id="stoppedResCheckbox" class="c-switch-input">
                         <span class="c-switch-slider" data-checked="On" data-unchecked="Off"></span>
