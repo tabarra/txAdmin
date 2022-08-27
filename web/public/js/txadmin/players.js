@@ -58,9 +58,9 @@ function addPlayer(player) {
 }
 
 function updatePlayer(player) {
-    let el = document.getElementById(`divPlayer${player.id}`);
+    const el = document.getElementById(`divPlayer${player.id}`);
 
-    let pingClass;
+    let pingClass = 'danger';
     player.ping = parseInt(player.ping);
     if (player.ping < 0) {
         pingClass = 'secondary';
@@ -69,8 +69,6 @@ function updatePlayer(player) {
         pingClass = 'success';
     } else if (player.ping < 100) {
         pingClass = 'warning';
-    } else {
-        pingClass = 'danger';
     }
 
     el.classList.remove('list-group-item-accent-secondary', 'list-group-item-accent-success', 'list-group-item-accent-warning', 'list-group-item-accent-danger');
@@ -78,7 +76,7 @@ function updatePlayer(player) {
     el.firstElementChild.classList.remove('text-secondary', 'text-success', 'text-warning', 'text-danger');
     const padSize = biggestPlayerID.toString().length + 2;
     el.firstElementChild.innerHTML = `[${player.id}]`.padStart(padSize, 'x').replace(/x/g, '&nbsp;');
-    el.lastElementChild.textContent = player.name;
+    el.lastElementChild.textContent = `${player.name}${player.isAdmin ? '🛡️' : ''}`;
     el.dataset['pname'] = player.name.toLowerCase();
 }
 
