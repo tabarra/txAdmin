@@ -149,7 +149,7 @@
 
 
     //============================================== Refresh List
-    $('#btnRefresh').click(function () {
+    $('#btnRefresh').click(() => {
         const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>' }, {});
         txAdminAPI({
             type: "POST",
@@ -225,12 +225,12 @@
     }
 
     //============================================== Hide defaults
-    $('#defResCheckbox').click(function () {
+    $('#defResCheckbox').click(() => {
         window.localStorage.resourcesPageShowDefault = document.getElementById('defResCheckbox').checked;
         refreshResourceList();
     });
 
-    $('#stoppedResCheckbox').click(function() {
+    $('#stoppedResCheckbox').click(() => {
         window.localStorage.resourcesPageShowStopped = document.getElementById('stoppedResCheckbox').checked;
         refreshResourceList();
     })
@@ -274,7 +274,7 @@
         });
     }
 
-    $(function () {
+    $(() => {
         if (typeof window.localStorage.resourcesPageShowDefault === 'string') {
             document.getElementById('defResCheckbox').checked = (window.localStorage.resourcesPageShowDefault === 'true');
         } else {
