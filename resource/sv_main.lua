@@ -94,7 +94,8 @@ function HTTPHeartBeat()
             id = player,
             identifiers = ids,
             name = GetPlayerName(player),
-            ping = GetPlayerPing(player)
+            ping = GetPlayerPing(player),
+            isAdmin = TX_ADMINS[player] ~= nil
         }
     end
 

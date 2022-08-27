@@ -591,6 +591,7 @@ export default class PlayerController {
                     name: p.name,
                     ping: p.ping,
                     identifiers: p.identifiers,
+                    isAdmin: p.isAdmin
                 };
             });
         } catch (error) {
@@ -686,6 +687,7 @@ export default class PlayerController {
                         {
                             id: hbPlayerData.id, //NOTE: possibly the solution to the double player issue?
                             ping: hbPlayerData.ping,
+                            isAdmin: hbPlayerData.isAdmin
                             // extraData: hbPlayerData.extraData //NOTE: reserve for RolePlay data from frameworks
                         },
                     );
