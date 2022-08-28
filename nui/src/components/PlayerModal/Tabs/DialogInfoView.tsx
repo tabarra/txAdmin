@@ -89,8 +89,7 @@ const DialogInfoView: React.FC = () => {
             onKeyPress={(e) => e.key === "Enter" && handleSaveNote}
             variant="outlined"
             multiline
-            rows={4}
-            maxRows={4}
+            rows={6}
             fullWidth
           />
           <Button
