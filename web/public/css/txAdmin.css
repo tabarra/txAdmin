@@ -420,3 +420,15 @@ pre.thin-scroll{
         opacity: 0;
     }
 }
+
+.res-switch {
+    width: 65px;
+}
+
+.res-switch .c-switch-input:checked~.c-switch-slider::before {
+    -webkit-transform:translateX(40px);
+    transform:translateX(40px)
+}
+.res-switch .c-switch-slider::after {
+    width: 65%;
+}
