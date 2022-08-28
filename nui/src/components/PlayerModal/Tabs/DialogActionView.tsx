@@ -30,9 +30,6 @@ const StyledDialogContent = styled(DialogContent)({
     columnGap: 10,
     rowGap: 10,
     paddingBottom: 15,
-    "& button": {
-      wordBreak: "break-all"
-    }
   },
   [`& .${classes.tooltipOverride}`]: {
     fontSize: 12,
