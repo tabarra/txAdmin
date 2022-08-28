@@ -9,6 +9,9 @@ v4.17.0:
 - [x] add player id view permission + logging
 - [x] ask bubble to rm the cicd cache or add a `rm -rf` to the target folder
 
+
+acelerar o fix do admin id
+
 Optional:
 - [ ] add actionRevoked event (rewrite PR #612)
 - [ ] rewrite the GET /status endpoint (close PR #440)
@@ -18,6 +21,8 @@ Optional:
 - [ ] stats: jwe
 - [ ] playerlist remove rtl characters
 - [ ] create beta release action
+
+
 
 
 ```js

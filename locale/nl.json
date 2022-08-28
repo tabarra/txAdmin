@@ -234,7 +234,7 @@
                         "go_to": "Ga naar",
                         "bring": "Breng",
                         "spectate": "Spectate",
-                        "toggle_freeze": "Schakel Freeze in/uit"
+                        "toggle_freeze": "Freeze aan/uit"
                     },
                     "notifications": {
                         "heal_player": "Speler aan het healen",
