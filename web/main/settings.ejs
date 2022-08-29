@@ -212,6 +212,25 @@
                     <!-- Restarter Tab -->
                     <div class="tab-pane fade <%= activeTab === 'monitor' ? 'active show' : '' %>" id="nav-monitor" role="tabpanel" aria-labelledby="nav-monitor-tab">
                         <div class="form-group row">
+                            <label for="frmMonitor-resourceStartingTolerance" class="col-sm-3 col-form-label">
+                                Resource Starting <br>
+                                Time Limit
+                            </label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="frmMonitor-resourceStartingTolerance" <%= readOnly ? 'disabled' : '' %>>
+                                    <option value="90" <%= monitor.resourceStartingTolerance === '90' ? 'selected' : '' %>>1.5 minutes (default)</option>
+                                    <option value="180" <%= monitor.resourceStartingTolerance === '180' ? 'selected' : '' %>>3 minutes</option>
+                                    <option value="300" <%= monitor.resourceStartingTolerance === '300' ? 'selected' : '' %>>5 minutes</option>
+                                    <option value="600" <%= monitor.resourceStartingTolerance === '600' ? 'selected' : '' %>>10 minutes</option>
+                                </select>
+                                <span class="form-text text-muted">
+                                    At server boot, how much time to wait for any single resource to start before restarting the server. <br>
+                                    <strong>Note:</strong> If you are getting <code>failed to start in time</code> errors, increase this value.
+                                </span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group row">
                             <label for="frmMonitor-restarterSchedule" class="col-sm-3 col-form-label">Scheduled Restarts</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" id="frmMonitor-restarterSchedule" value="<%= monitor.restarterSchedule || '' %>"
@@ -228,7 +247,7 @@
 
                         <div class="form-group row">
                             <label class="col-sm-3 col-form-label">
-                                Disable Chat Warnings
+                                Disable Announcements
                             </label>
                             <div class="col-sm-9">
                                 <label class="c-switch c-switch-label c-switch-pill c-switch-success fix-pill-form">
@@ -237,39 +256,7 @@
                                     <span class="c-switch-slider" data-checked="Yes" data-unchecked="No"></span>
                                 </label>
                                 <span class="form-text text-muted">
-                                    Check this if you want to disable broadcast chat warning messages in game before each scheduled restart.
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="frmMonitor-restarterScheduleWarnings" class="col-sm-3 col-form-label">Restart Warnings</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" id="frmMonitor-restarterScheduleWarnings" value="<%= monitor.restarterScheduleWarnings || '' %>"
-                                    placeholder="30, 15, 10, 5, 4, 3, 2, 1" <%= readOnly ? 'disabled' : '' %>>
-                                <span class="form-text text-muted">
-                                    Minutes before restarts to trigger chat warnings <br>
-                                    All the minutes must be between 1 and 360 minutes and be separated by commas. <br>
-                                    <strong>Note:</strong> This will also trigger the server event <code>txAdmin:events:scheduledRestart</code> <a href="https://github.com/tabarra/txAdmin/blob/master/docs/events.md" target="_blank" rel="noopener noreferrer">(docs)</a>
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <label for="frmMonitor-resourceStartingTolerance" class="col-sm-3 col-form-label">
-                                Resource Starting <br>
-                                Time Limit
-                            </label>
-                            <div class="col-sm-9">
-                                <select class="form-control" id="frmMonitor-resourceStartingTolerance" <%= readOnly ? 'disabled' : '' %>>
-                                    <option value="90" <%= monitor.resourceStartingTolerance === '90' ? 'selected' : '' %>>1.5 minutes (default)</option>
-                                    <option value="180" <%= monitor.resourceStartingTolerance === '180' ? 'selected' : '' %>>3 minutes</option>
-                                    <option value="300" <%= monitor.resourceStartingTolerance === '300' ? 'selected' : '' %>>5 minutes</option>
-                                    <option value="600" <%= monitor.resourceStartingTolerance === '600' ? 'selected' : '' %>>10 minutes</option>
-                                </select>
-                                <span class="form-text text-muted">
-                                    At server boot, how much time to wait for any single resource to start before restarting the server. <br>
-                                    <strong>Note:</strong> If you are getting <code>failed to start in time</code> errors, increase this value.
+                                    Check this if you want to disable broadcast warning messages in game before each scheduled restart.
                                 </span>
                             </div>
                         </div>

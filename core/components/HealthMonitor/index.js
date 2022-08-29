@@ -2,7 +2,6 @@ const modulename = 'HealthMonitor';
 import got from 'got'; //we want internal requests to have 127.0.0.1 src
 import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData.js';
-import * as helpers from '@core/extras/helpers.js';
 import getHostStats from './getHostStats';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -17,7 +16,6 @@ export default class HealthMonitor {
         //Checking config validity
         if (this.config.cooldown < 15) throw new Error('The monitor.cooldown setting must be 15 seconds or higher.');
         if (this.config.resourceStartingTolerance < 30) throw new Error('The monitor.resourceStartingTolerance setting must be 30 seconds or higher.');
-        if (!Array.isArray(this.config.restarterScheduleWarnings)) throw new Error('The monitor.restarterScheduleWarnings must be an array.');
 
         //Hardcoded Configs
         //NOTE: done mainly because the timeout/limit was never useful, and makes things more complicated
@@ -38,7 +36,6 @@ export default class HealthMonitor {
         this.hostStats = null;
         this.schedule = null;
         this.resetMonitorStats();
-        this.buildSchedule();
 
         //Cron functions
         setInterval(() => {
@@ -48,13 +45,9 @@ export default class HealthMonitor {
         setInterval(async () => {
             this.hostStats = await getHostStats();
         }, 5000);
-        setInterval(() => {
-            this.checkRestartSchedule();
-        }, 60 * 1000);
     }
 
 
-    //================================================================
     /**
      * Refresh Monitor configurations
      */
@@ -64,115 +57,6 @@ export default class HealthMonitor {
     }//Final refreshConfig()
 
 
-    //================================================================
-    /**
-     * Build schedule
-     */
-    buildSchedule() {
-        if (!Array.isArray(this.config.restarterSchedule) || !this.config.restarterSchedule.length) {
-            this.schedule = false;
-            return;
-        }
-
-        let getScheduleObj = (hour, minute, sub, sendMessage = false) => {
-            const time = new Date();
-            time.setHours(hour);
-            time.setMinutes(minute - sub);
-
-            const tOptions = {
-                smart_count: sub,
-                servername: globals.config.serverName,
-            };
-            return {
-                hour: time.getHours(),
-                minute: time.getMinutes(),
-                remaining: sub,
-                restart: false,
-                messages: (!sendMessage) ? false : {
-                    chat: globals.translator.t('restarter.schedule_warn', tOptions),
-                    discord: globals.translator.t('restarter.schedule_warn_discord', tOptions),
-                },
-            };
-        };
-
-        const times = helpers.parseSchedule(this.config.restarterSchedule);
-        const warnTimes = this.hardConfigs.defaultWarningTimes.concat(
-            this.config.restarterScheduleWarnings.filter(
-                (item) => this.hardConfigs.defaultWarningTimes.indexOf(item) < 0,
-            ),
-        ).sort((a, b) => b - a);
-
-        const schedule = [];
-        times.forEach((time) => {
-            try {
-                warnTimes.forEach((mins) => {
-                    schedule.push(getScheduleObj(time.hour, time.minute, mins, this.config.restarterScheduleWarnings.includes(mins)));
-                });
-                schedule.push({
-                    hour: time.hour,
-                    minute: time.minute,
-                    remaining: 0,
-                    restart: true,
-                    messages: false,
-                });
-            } catch (error) {
-                const timeJSON = JSON.stringify(time);
-                if (verbose) logWarn(`Error building restart schedule for time '${timeJSON}':\n ${error.message}`);
-            }
-        });
-
-        if (verbose) dir(schedule.map((el) => { return el.messages; }));
-        this.schedule = (schedule.length) ? schedule : false;
-    }
-
-
-    //================================================================
-    /**
-     * Check the restart schedule
-     */
-    checkRestartSchedule() {
-        if (!Array.isArray(this.schedule)) return;
-        if (globals.fxRunner.fxChild === null) return;
-
-        try {
-            //Check schedule for current time
-            //NOTE: returns only the first result, not necessarily the most important
-            // eg, when a restart message comes before a restart command
-            const currTime = new Date;
-            const action = this.schedule.find((time) => {
-                return (time.hour == currTime.getHours() && time.minute == currTime.getMinutes());
-            });
-            if (!action) return;
-
-            // Dispatch `txAdmin:events:scheduledRestart`
-            globals.fxRunner.sendEvent('scheduledRestart', {
-                secondsRemaining: action.remaining * 60,
-            });
-
-            //Perform scheduled action
-            if (action.restart === true) {
-                const currTimestamp = currTime.getHours().toString().padStart(2, '0') + ':' + currTime.getMinutes().toString().padStart(2, '0');
-                this.restartFXServer(
-                    `scheduled restart at ${currTimestamp}`,
-                    globals.translator.t('restarter.schedule_reason', { time: currTimestamp }),
-                );
-            } else if (action.messages) {
-                globals.discordBot.sendAnnouncement(action.messages.discord);
-                if (!this.config.disableChatWarnings) {
-                    // Dispatch `txAdmin:events:announcement`
-                    const cmdOk = globals.fxRunner.sendEvent('announcement', {
-                        author: 'txAdmin',
-                        message: action.messages.chat,
-                    });
-                }
-            }
-        } catch (error) {
-            if (verbose) dir(error);
-        }
-    }
-
-
-    //================================================================
     /**
      * Restart the FXServer and logs everything
      * @param {string} reasonInternal

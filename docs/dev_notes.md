@@ -17,7 +17,7 @@ Optional:
 - [ ] rewrite the GET /status endpoint (close PR #440)
 - [ ] add option to skip or add time to schedules restart
 - [ ] add option to schedule a restart (single shot, non persistent)
-- [ ] stats: add recipe name + if ptero + random collisions
+- [ ] stats: add recipe name + if ptero + random collisions + how many scheduled restart times
 - [ ] stats: jwe
 - [ ] playerlist remove rtl characters
 - [ ] create beta release action

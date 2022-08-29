@@ -16,6 +16,7 @@ import DynamicAds from '@core/components/DynamicAds';
 import FxRunner from '@core/components/FxRunner';
 import Logger from '@core/components/Logger';
 import HealthMonitor from '@core/components/HealthMonitor';
+import Scheduler from '@core/components/Scheduler';
 import PlayerController from '@core/components/PlayerController';
 import ResourcesManager from '@core/components/ResourcesManager';
 import StatsCollector from '@core/components/StatsCollector';
@@ -38,6 +39,7 @@ global.globals = {
     logger: null,
     dynamicAds: null,
     healthMonitor: null,
+    scheduler: null,
     statsCollector: null,
     translator: null,
     webServer: null,
@@ -146,6 +148,7 @@ export default class TxAdmin {
             globals.fxRunner = new FxRunner(profileConfig.fxRunner);
             globals.dynamicAds = new DynamicAds(profileConfig.dynamicAds);
             globals.healthMonitor = new HealthMonitor(profileConfig.monitor);
+            globals.scheduler = new Scheduler(profileConfig.monitor); //NOTE same opts as monitor, for now
             globals.statsCollector = new StatsCollector(profileConfig.statsCollector);
             globals.webServer = new WebServer(profileConfig.webServer);
             globals.playerController = new PlayerController(profileConfig.playerController);

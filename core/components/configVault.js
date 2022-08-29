@@ -120,8 +120,7 @@ export default class ConfigVault {
             };
             out.logger = toDefault(cfg.logger, {}); //not in template
             out.monitor = {
-                restarterSchedule: toDefault(cfg.monitor.restarterSchedule, null),
-                restarterScheduleWarnings: toDefault(cfg.monitor.restarterScheduleWarnings, [30, 15, 10, 5, 4, 3, 2, 1]), //not in template
+                restarterSchedule: toDefault(cfg.monitor.restarterSchedule, []),
                 cooldown: toDefault(cfg.monitor.cooldown, null), //not in template
                 resourceStartingTolerance: toDefault(cfg.monitor.resourceStartingTolerance, 120), //not in template
                 disableChatWarnings: toDefault(cfg.monitor.disableChatWarnings, null), //not in template
@@ -205,7 +204,6 @@ export default class ConfigVault {
 
             //Monitor
             cfg.monitor.restarterSchedule = cfg.monitor.restarterSchedule || [];
-            cfg.monitor.restarterScheduleWarnings = cfg.monitor.restarterScheduleWarnings || [30, 15, 10, 5, 4, 3, 2, 1];
             cfg.monitor.cooldown = parseInt(cfg.monitor.cooldown) || 60; //not in template - 45 > 60 > 90 -> 60 after fixing the "extra time" logic
             cfg.monitor.resourceStartingTolerance = parseInt(cfg.monitor.resourceStartingTolerance) || 120;
             cfg.monitor.disableChatWarnings = (cfg.monitor.disableChatWarnings === 'true' || cfg.monitor.disableChatWarnings === true);
