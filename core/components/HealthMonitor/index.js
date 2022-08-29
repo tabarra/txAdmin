@@ -1,4 +1,4 @@
-const modulename = 'Monitor';
+const modulename = 'HealthMonitor';
 import got from 'got'; //we want internal requests to have 127.0.0.1 src
 import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData.js';
@@ -10,7 +10,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const now = () => { return Math.round(Date.now() / 1000); };
 const isUndefined = (x) => { return (typeof x === 'undefined'); };
 
-export default class Monitor {
+export default class HealthMonitor {
     constructor(config) {
         this.config = config;
 
@@ -448,4 +448,4 @@ export default class Monitor {
             this.lastSuccessfulHTTPHeartBeat = tsNow;
         }
     }
-}; //Fim Monitor()
+};

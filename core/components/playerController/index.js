@@ -753,5 +753,5 @@ export default class PlayerController {
                 dir(error);
             }
         }
-    }//Fim processHeartBeat()
-}; //Fim PlayerController()
+    }
+};

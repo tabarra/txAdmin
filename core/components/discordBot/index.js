@@ -178,4 +178,4 @@ export default class DiscordBot {
     //     dir(testUser)
     //     dir(testUser.avatarURL)
     // }
-}; //Fim DiscordBot()
+};

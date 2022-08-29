@@ -77,7 +77,7 @@ export default class OutputHandler {
                 && data.resource === 'monitor'
             ) {
                 if (data.payload.type === 'txAdminHeartBeat') {
-                    globals.monitor.handleHeartBeat('fd3');
+                    globals.healthMonitor.handleHeartBeat('fd3');
                 } else if (data.payload.type === 'txAdminLogData') {
                     globals.logger.server.write(mutex, data.payload.logs);
                 } else if (data.payload.type === 'txAdminResourceStatus') {
@@ -105,4 +105,4 @@ export default class OutputHandler {
         //FIXME: deprecate this whenever
         if (this.enableCmdBuffer) this.cmdBuffer += data.replace(/\u001b[^m]*?m/g, '');
     }
-}; //Fim OutputHandler()
+};

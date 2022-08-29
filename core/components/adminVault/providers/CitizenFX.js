@@ -133,4 +133,4 @@ export default class CitizenFXProvider {
             picture: userInfo.picture,
         };
     }
-}; //Fim CitizenFXProvider()
+};

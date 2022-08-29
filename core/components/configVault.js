@@ -319,4 +319,4 @@ export default class ConfigVault {
             return false;
         }
     }
-}; //Fim ConfigVault()
+};

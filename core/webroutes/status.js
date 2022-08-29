@@ -53,7 +53,7 @@ function prepareServerStatus() {
     }
 
     //Server status
-    const monitorStatus = globals.monitor.currentStatus || '??';
+    const monitorStatus = globals.healthMonitor.currentStatus || '??';
     let monitorStatusClass;
     if (monitorStatus == 'ONLINE') {
         monitorStatusClass = 'success';
@@ -77,7 +77,7 @@ function prepareServerStatus() {
  * Returns the host's usage
  */
 function prepareHostData() {
-    const stats = globals.monitor.hostStats;
+    const stats = globals.healthMonitor.hostStats;
     if (!stats) {
         return {
             memory: {pct: 0, text: 'not available'},
@@ -116,16 +116,16 @@ function preparePlayersData() {
  */
 function prepareMetaData() {
     let favicon;
-    if (globals.monitor.currentStatus == 'ONLINE') {
+    if (globals.healthMonitor.currentStatus == 'ONLINE') {
         favicon = 'favicon_online';
-    } else if (globals.monitor.currentStatus == 'PARTIAL') {
+    } else if (globals.healthMonitor.currentStatus == 'PARTIAL') {
         favicon = 'favicon_partial';
     } else {
         favicon = 'favicon_offline';
     }
     return {
         favicon,
-        title: (globals.monitor.currentStatus == 'ONLINE')
+        title: (globals.healthMonitor.currentStatus == 'ONLINE')
             ? `(${globals.playerController.activePlayers.length}) txAdmin`
             : 'txAdmin',
     };

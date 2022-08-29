@@ -4,7 +4,7 @@ import path from 'node:path';
 import dateFormat from 'dateformat';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData.js';
-import { LoggerBase, separator } from '@core/components/logger/loggerUtils.js';
+import { LoggerBase, separator } from '@core/components/Logger/loggerUtils.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 

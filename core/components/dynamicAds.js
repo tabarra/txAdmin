@@ -86,4 +86,4 @@ export default class DynamicAds {
             throw new Error('unknown spot type');
         }
     }
-}; //Fim DynamicAds()
+};

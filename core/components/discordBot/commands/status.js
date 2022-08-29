@@ -12,7 +12,7 @@ export default {
         //Prepare message's MessageEmbed + template variables
         let replaces = {};
         let cardColor, cardTitle;
-        if (globals.monitor.currentStatus == 'ONLINE' || globals.monitor.currentStatus == 'PARTIAL') {
+        if (globals.healthMonitor.currentStatus == 'ONLINE' || globals.healthMonitor.currentStatus == 'PARTIAL') {
             cardColor = 0x74EE15;
             cardTitle = globals.translator.t('discord.status_online', {servername: globals.config.serverName});
             replaces.players = (Array.isArray(globals.playerController.activePlayers))

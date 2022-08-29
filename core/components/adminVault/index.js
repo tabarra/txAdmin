@@ -534,4 +534,4 @@ export default class AdminVault {
             }
         }
     }
-}; //Fim AdminVault()
+};

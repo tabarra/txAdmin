@@ -25,7 +25,7 @@ export default async function Intercom(ctx) {
     //Delegate to the specific scope functions
     if (scope == 'monitor') {
         try {
-            globals.monitor.handleHeartBeat('http', postData);
+            globals.healthMonitor.handleHeartBeat('http', postData);
             const extractData = {
                 //Changelog:
                 // 6: added txStatsData.randIDFailures

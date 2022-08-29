@@ -307,7 +307,7 @@ async function handleMonitor(ctx) {
 
     //Sending output
     if (saveStatus) {
-        globals.monitor.refreshConfig();
+        globals.healthMonitor.refreshConfig();
         ctx.utils.logAction('Changing monitor settings.');
         return ctx.send({type: 'success', message: '<strong>Monitor/Restarter configuration saved!</strong>'});
     } else {
