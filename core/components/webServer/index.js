@@ -235,14 +235,14 @@ export default class WebServer {
         //Just in case i want to re-execute this function
         this.isListening = false;
 
+        //FIXME: in update v4.18.0 we hid the cfx.re proxy url, if nobody complains deprecate the proxy entirely
         //Print cfx.re url... when available
         const validUrlRegex = /\.users\.cfx\.re$/i;
         const getUrlInterval = setInterval(() => {
             try {
                 const urlConvar = GetConvar('web_baseUrl', 'false');
                 if (validUrlRegex.test(urlConvar)) {
-                    // logOk(`Alternative URL: ` + chalk.inverse(` https://${urlConvar}/ `));
-                    logOk(`Cfx.re URL: https://${urlConvar}/`);
+                    // logOk(`Cfx.re URL: https://${urlConvar}/`);
                     this.cfxUrl = urlConvar;
                     clearInterval(getUrlInterval);
                 }
