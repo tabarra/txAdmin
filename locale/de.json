@@ -20,7 +20,7 @@
         "reject_permanent": "Du wurdest permanent von diesem Server gebannt.\nBann ID: %{id}.\nGrund: %{reason}.\nGebannt von: %{author}."
     },
     "server_actions": {
-        "restarting": "Server Restart (%{reason}).",
+        "restarting": "Server Neustart (%{reason}).",
         "restarting_discord": "**%{servername}** wird neu gestartet (%{reason}).",
         "stopping": "Server wird heruntergefahren (%{reason}).",
         "stopping_discord": "**%{servername}** wird heruntergefahren (%{reason}).",
@@ -147,20 +147,20 @@
             "announcement": {
                 "title": "Ankündigung schicken",
                 "label": "Ankündigung an alle Spieler schicken.",
-                "dialog_desc": "Enter the message you want to broadcast to all players.",
+                "dialog_desc": "Gebe die Nachricht ein, welche an alle Spieler gesendet werden soll.",
                 "dialog_placeholder": "Deine Ankündigung ...",
                 "dialog_success": "Versenden der Ankündigung!"
             },
             "clear_area": {
                 "title": "Weltbereich zurücksetzen",
-                "label": "Reset a specified world area to its default state",
+                "label": "Setze einen definierten Bereich in den Ursprungszustand zurück.",
                 "dialog_desc": "Bitte gib einen Radius (0-300) ein, in dem du alle Objekte zurücksetzen möchtest. Dadurch werden nicht serverseitig erzeugte Objekte gelöscht",
                 "dialog_success": "Zurücksetzen im Radius von %{radius}m",
                 "dialog_error": "Ungültiger Radius! Gib einen Radius zwischen 0 und 300 ein."
             },
             "player_ids": {
                 "title": "Spieler IDs (NameTags)",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                "label": "Schalte die Spieler-IDs (und weitere Informationen) über den Köpfen der Spieler ein oder aus.",
                 "alert_show": "Spieler IDs (NameTags) aktiviert.",
                 "alert_hide": "Spieler IDs (NameTags) deaktiviert."
             }
@@ -215,9 +215,9 @@
                         "success": "Deine DM wurde gesendet!"
                     },
                     "warn_dialog": {
-                        "title": "Warn",
+                        "title": "Verwarnen",
                         "description": "Was ist der Grund, diesen Spieler zu verwarnen?",
-                        "placeholder": "Reason...",
+                        "placeholder": "Grund...",
                         "success": "Der Spieler wurde verwarnt!"
                     },
                     "kick_dialog": {
