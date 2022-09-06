@@ -8,6 +8,7 @@
 // web
 
 import ar from "../../../locale/ar.json";
+import bg from "../../../locale/bg.json";
 import bs from "../../../locale/bs.json";
 import cs from "../../../locale/cs.json";
 import da from "../../../locale/da.json";
@@ -37,6 +38,7 @@ import zh from "../../../locale/zh.json";
 
 const localeMap = {
   ar,
+  bg,
   bs,
   cs,
   da,

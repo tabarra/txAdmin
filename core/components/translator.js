@@ -9,6 +9,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
 //Statically requiring languages because of esbuild
 //FIXME: Merge with nui\src\utils\getLocale.ts into a shared folder?
 import lang_ar from "@locale/ar.json";
+import lang_bg from "@locale/bg.json";
 import lang_bs from "@locale/bs.json";
 import lang_cs from "@locale/cs.json";
 import lang_da from "@locale/da.json";
@@ -38,6 +39,7 @@ import lang_zh from "@locale/zh.json";
 
 const localeMap = {
     ar: lang_ar,
+    bg: lang_bg,
     bs: lang_bs,
     cs: lang_cs,
     da: lang_da,
