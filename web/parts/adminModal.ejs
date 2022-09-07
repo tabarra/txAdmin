@@ -61,9 +61,12 @@
         <div class="col-sm-6">
             <% for (const [key, perm] of permsMenu.entries()) { %>
             <div class="form-check checkbox">
-                <input class="form-check-input permsCheckbox" id="modAdmin-permsMenu-<%= perm.id %>-<%= key %>" type="checkbox" name="modAdmin-permissions[]"
-                    value="<%= perm.id %>" <%= perm.checked %>>
-                <label class="form-check-label <%= perm.dangerous ? 'text-danger' : '' %>" for="modAdmin-permsMenu-<%= perm.id %>-<%= key %>"><%= perm.desc %></label>
+                <input class="form-check-input permsCheckbox" id="modAdmin-permsMenu-<%= perm.id %>-<%= key %>"
+                    type="checkbox" name="modAdmin-permissions[]" value="<%= perm.id %>" <%= perm.checked %>>
+                <label class="form-check-label <%= perm.dangerous ? 'text-danger' : '' %>" 
+                    for="modAdmin-permsMenu-<%= perm.id %>-<%= key %>" alt="sdfsdf sdf sdfsdfs">
+                    <%= perm.desc %>
+                </label>
             </div>
             <% } %>
         </div>

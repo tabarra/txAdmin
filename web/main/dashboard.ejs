@@ -217,8 +217,8 @@
                     type="button" id="ctrl-announce" <%= perms.commandMessage %>>Announcement</button>
                 <button onclick="controlCommand('kick_all')" class="btn btn-outline-dark btn-md mx-auto m-2"
                     type="button" id="ctrl-kick-all" <%= perms.commandKick %>>Kick All Players</button>
-                <button onclick="controlCommand('schedule_restart')" class="btn btn-outline-dark btn-md mx-auto m-2"
-                    type="button" id="ctrl-kick-all" <%= perms.commandKick %>>Schedule Restart</button>
+                <button class="btn btn-outline-dark btn-md mx-auto m-2"
+                    type="button" id="ctrl-schedule-restart" <%= perms.controls %>>Schedule Restart</button>
                 <% } %>
             </div>
         </div>
@@ -437,5 +437,25 @@
     }
     statusCard.nextRestartBtnEnable.onclick = () => {
         schedulerApiCall('setNextSkip', false);
+    }
+    document.getElementById('ctrl-schedule-restart').onclick = async () => {
+        const input = await txAdminPrompt({
+            modalColor: 'orange',
+            confirmBtnClass: 'btn-orange',
+            title: 'Schedule Restart',
+            description: 'Type in the time for the server to restart in the 24-hour format <code>HH:MM</code>.<br>\n<strong>Note:</strong> Make sure your schedule matches your server time and not your local time.', 
+            placeholder: '16:15'
+        });
+
+        const [hours, minutes] = input.split(':', 2).map(x => parseInt(x));
+        if (
+            typeof hours === 'undefined' || isNaN(hours) || hours < 0 || hours > 23
+            || typeof minutes === 'undefined' || isNaN(minutes) || minutes < 0 || minutes > 59
+        ){
+            $.notify({ message: 'invalid hours:minutes'}, {type: 'danger'});
+            return;
+        }
+
+        schedulerApiCall('setNextTempSchedule', input);
     }
 </script>

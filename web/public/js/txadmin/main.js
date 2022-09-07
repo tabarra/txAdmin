@@ -50,22 +50,28 @@ const updateStatusCard = (data) => {
         setNextRestartTimeClass('font-weight-light');
         statusCard.nextRestartTime.textContent = 'not scheduled';
     } else {
+        const tempFlag = (data.scheduler.nextIsTemp)? '(tmp)' : '';
         const relativeTime = msToTimeString(data.scheduler.nextRelativeMs);
+        const isLessThanMinute = data.scheduler.nextRelativeMs < 60_000;
+        if(isLessThanMinute){
+            statusCard.nextRestartTime.textContent = `right now ${tempFlag}`;
+            statusCard.nextRestartBtnCancel.classList.add('d-none');
+            statusCard.nextRestartBtnEnable.classList.add('d-none');
+        }else{
+            statusCard.nextRestartTime.textContent = `in ${relativeTime} ${tempFlag}`;
+        }
 
         if (data.scheduler.nextSkip) {
             setNextRestartTimeClass('text-muted');
-            statusCard.nextRestartTime.textContent = `in ${relativeTime}`;
-            statusCard.nextRestartBtnCancel.classList.add('d-none');
-            statusCard.nextRestartBtnEnable.classList.remove('d-none');
+            if(!isLessThanMinute) {
+                statusCard.nextRestartBtnCancel.classList.add('d-none');
+                statusCard.nextRestartBtnEnable.classList.remove('d-none');
+            }
         } else {
             setNextRestartTimeClass('text-warning');
-            statusCard.nextRestartBtnEnable.classList.add('d-none');
-            if(data.scheduler.nextRelativeMs < 60_000) {
-                statusCard.nextRestartBtnCancel.classList.add('d-none');
-                statusCard.nextRestartTime.textContent = 'right now';
-            }else{
-                statusCard.nextRestartTime.textContent = `in ${relativeTime}`;
+            if(!isLessThanMinute) {
                 statusCard.nextRestartBtnCancel.classList.remove('d-none');
+                statusCard.nextRestartBtnEnable.classList.add('d-none');
             }
         }
     }

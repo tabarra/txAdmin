@@ -65,11 +65,13 @@ export default class Scheduler {
             return {
                 nextRelativeMs: this.calculatedNextRestartMinuteFloorTs - thisMinuteTs,
                 nextSkip: this.nextSkip === this.calculatedNextRestartMinuteFloorTs,
+                nextIsTemp: !!this.nextTempSchedule,
             };
         } else {
             return {
                 nextRelativeMs: false,
                 nextSkip: false,
+                nextIsTemp: false,
             };
         }
     }
@@ -91,6 +93,9 @@ export default class Scheduler {
         } else {
             this.nextSkip = false;
         }
+
+        //This is needed to refresh this.calculatedNextRestartMinuteFloorTs
+        this.checkSchedule();
     }
 
 
@@ -103,9 +108,10 @@ export default class Scheduler {
         //Process input
         if (typeof timeString !== 'string') throw new Error(`expected string`);
         const [hours, minutes] = timeString.split(':', 2).map(x => parseInt(x));
-        if (isNaN(hours) || hours < 0 || hours > 23) throw new Error(`invalid hours`);
-        if (isNaN(minutes) || minutes < 0 || minutes > 23) throw new Error(`invalid minutes`);
+        if (typeof hours === 'undefined' || isNaN(hours) || hours < 0 || hours > 23) throw new Error(`invalid hours`);
+        if (typeof minutes === 'undefined' || isNaN(minutes) || minutes < 0 || minutes > 59) throw new Error(`invalid minutes`);
         const thisMinuteTs = new Date().setSeconds(0, 0);
+        const nextDate = new Date();
         let minuteFloorTs = nextDate.setHours(hours, minutes, 0, 0);
         if (minuteFloorTs < thisMinuteTs) {
             minuteFloorTs = nextDate.setHours(hours + 24, minutes, 0, 0);
@@ -116,7 +122,7 @@ export default class Scheduler {
             const parsed = parseSchedule(this.config.restarterSchedule);
             const nextSettingRestart = getNextScheduled(parsed);
             if (nextSettingRestart.minuteFloorTs < minuteFloorTs) {
-                throw new Error(`you already have one scheduled at ${nextSettingRestart.string}`);
+                throw new Error(`You already have one restart scheduled before that at ${nextSettingRestart.string}.`);
             }
         }
 
@@ -125,6 +131,9 @@ export default class Scheduler {
             string: hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0'),
             minuteFloorTs,
         };
+
+        //This is needed to refresh this.calculatedNextRestartMinuteFloorTs
+        this.checkSchedule();
     }
 
 
