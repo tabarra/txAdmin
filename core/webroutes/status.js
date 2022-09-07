@@ -27,9 +27,8 @@ export default async function GetStatus(ctx) {
  */
 function prepareServerStatus() {
     //Discord status
+    const discord = {};
     const discordClient = globals.discordBot.client;
-    let discordStatus;
-    let discordStatusClass;
     const discStatusCodes = [
         ['READY', 'success'],
         ['CONNECTING', 'warning'],
@@ -42,33 +41,39 @@ function prepareServerStatus() {
         ['RESUMING', 'warning'],
     ];
     if (discordClient == null) {
-        discordStatus = 'DISABLED';
-        discordStatusClass = 'secondary';
+        discord.status = 'DISABLED';
+        discord.class = 'secondary';
     } else if (discStatusCodes[discordClient.ws?.status]) {
-        discordStatus = discStatusCodes[discordClient.ws?.status][0];
-        discordStatusClass = discStatusCodes[discordClient.ws?.status][1];
+        discord.status = discStatusCodes[discordClient.ws?.status][0];
+        discord.class = discStatusCodes[discordClient.ws?.status][1];
     } else {
-        discordStatus = 'UNKNOWN';
-        discordStatusClass = 'danger';
+        discord.status = 'UNKNOWN';
+        discord.class = 'danger';
     }
 
     //Server status
-    const monitorStatus = globals.healthMonitor.currentStatus || '??';
-    let monitorStatusClass;
-    if (monitorStatus == 'ONLINE') {
-        monitorStatusClass = 'success';
-    } else if (monitorStatus == 'PARTIAL') {
-        monitorStatusClass = 'warning';
-    } else if (monitorStatus == 'OFFLINE') {
-        monitorStatusClass = 'danger';
+    const server = {
+        status: globals.healthMonitor.currentStatus || '??',
+        process: globals.fxRunner.getStatus(),
+    };
+    if (server.status == 'ONLINE') {
+        server.class = 'success';
+    } else if (server.status == 'PARTIAL') {
+        server.class = 'warning';
+    } else if (server.status == 'OFFLINE') {
+        server.class = 'danger';
     } else {
-        monitorStatusClass = 'dark';
+        server.class = 'dark';
     }
-    const processStatus = globals.fxRunner.getStatus();
 
-    return `Discord Bot Status: <span class="badge badge-${discordStatusClass}"> ${discordStatus} </span> <br>
-        Server Status: <span class="badge badge-${monitorStatusClass}"> ${monitorStatus} </span> <br>
-        Process Status: <span class="font-weight-light">${processStatus}</span>`;
+    //Scheduler status
+    const scheduler = globals.scheduler.getStatus();
+
+    return {
+        discord,
+        server,
+        scheduler
+    };
 }
 
 
@@ -113,6 +118,7 @@ function preparePlayersData() {
 //==============================================================
 /**
  * Returns the page metadata (title and icon)
+ * FIXME: deprecate
  */
 function prepareMetaData() {
     let favicon;

@@ -214,9 +214,11 @@
 
                 <% if (isWebInterface) { %>
                 <button onclick="controlCommand('admin_broadcast')" class="btn btn-outline-dark btn-md mx-auto m-2"
-                    type="button" id="ctrl-announce" <%= perms.commandMessage %>>Announcement</button> &nbsp;
+                    type="button" id="ctrl-announce" <%= perms.commandMessage %>>Announcement</button>
                 <button onclick="controlCommand('kick_all')" class="btn btn-outline-dark btn-md mx-auto m-2"
                     type="button" id="ctrl-kick-all" <%= perms.commandKick %>>Kick All Players</button>
+                <button onclick="controlCommand('schedule_restart')" class="btn btn-outline-dark btn-md mx-auto m-2"
+                    type="button" id="ctrl-kick-all" <%= perms.commandKick %>>Schedule Restart</button>
                 <% } %>
             </div>
         </div>
@@ -229,10 +231,19 @@
                 <h5 class="d-inline">Status Info</h5>
             </div>
             <div class="card-body" id="status-card">
-                <br>
-                <div class="text-center">
-                    Loading...
-                </div>
+                Discord Bot Status:
+                    <span class="badge badge-light" id="status-discord"> ?? </span> <br />
+                Server Status: 
+                    <span class="badge badge-light" id="status-server"> ?? </span>
+                    <span class="badge badge-light" id="status-serverProcess"> ?? </span> <br />
+                Next Restart:
+                    <span class="font-weight-light text-warnings" id="status-nextRestartTime"> not scheduled </span>
+                    <button class="btn btn-inline btn-warning d-none" type="button" id="status-nextRestartBtnCancel">
+                        Cancel
+                    </button>
+                    <button class="btn btn-inline btn-dark d-none" type="button" id="status-nextRestartBtnEnable">
+                        Enable
+                    </button>
             </div>
         </div>
     </div>
