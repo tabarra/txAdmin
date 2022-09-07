@@ -97,4 +97,4 @@ export default class TimeSeries {
 
         return outList;
     }
-}; //Fim TimeSeries()
+};

@@ -155,4 +155,4 @@ export default class WebSocket {
             }
         });
     }
-}; //Fim WebSocket()
+};

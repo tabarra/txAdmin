@@ -116,7 +116,7 @@ async function getFXServerData() {
     const requestOptions = {
         url: `http://${globals.fxRunner.fxServerHost}/info.json`,
         maxRedirects: 0,
-        timeout: globals.monitor.hardConfigs.timeout,
+        timeout: globals.healthMonitor.hardConfigs.timeout,
         retry: {limit: 0},
     };
 
@@ -179,7 +179,7 @@ async function getHostData() {
             error: false,
         };
 
-        const stats = globals.monitor.hostStats;
+        const stats = globals.healthMonitor.hostStats;
         if (stats) {
             hostData.memory = `${stats.memory.usage}% (${stats.memory.used.toFixed(2)}/${stats.memory.total.toFixed(2)} GB)`;
             hostData.cpus = `${stats.cpu.usage}% of ${stats.cpu.count}x ${stats.cpu.speed} MHz`;
@@ -238,8 +238,8 @@ async function gettxAdminData() {
         loggerStatusServer: globals.logger.server.getUsageStats(),
 
         //Settings
-        cooldown: globals.monitor.config.cooldown,
-        schedule: globals.monitor.config.restarterSchedule.join(', ') || '--',
+        cooldown: globals.healthMonitor.config.cooldown,
+        schedule: globals.healthMonitor.config.restarterSchedule.join(', ') || '--',
         commandLine: (globals.fxRunner.config.commandLine && globals.fxRunner.config.commandLine.length)
             ? helpers.redactApiKeys(globals.fxRunner.config.commandLine)
             : '--',

@@ -1,27 +1,36 @@
 # TODO:
-v4.17.0:
-- [x] reorganize folders
-- [x] migrate core to esbuild
-- [x] migrate menu to vite
-- [x] docs: new structure, building, developing
-- [x] convert txAdmin to ESM
-- [x] add option to set the resource load max time
-- [x] add player id view permission + logging
-- [x] ask bubble to rm the cicd cache or add a `rm -rf` to the target folder
+v4.18.0:
+- [x] add option to skip next schedules restart
+- [x] add option to schedule a restart (single shot, non persistent)
+- [ ] rewrite the GET /status endpoint (close PR #440)
+- [ ] fix HealthMonitor resource boot time limit
+- [ ] acquire file lock on admins.json as well as ALL TXADMIN FILES
 
-
-acelerar o fix do admin id
 
 Optional:
+- [ ] fix cfx.re login match by admin id
+- [ ] fix diagnostics page pidtree/pidusage
 - [ ] add actionRevoked event (rewrite PR #612)
-- [ ] rewrite the GET /status endpoint (close PR #440)
-- [ ] add option to skip or add time to schedules restart
-- [ ] add option to schedule a restart (single shot, non persistent)
-- [ ] stats: add recipe name + if ptero + random collisions
+- [ ] stats: add recipe name + if ptero + random collisions + how many scheduled restart times + drop zap/discord as login methods
 - [ ] stats: jwe
 - [ ] playerlist remove rtl characters
 - [ ] create beta release action
 
+
+server insights:
+- resource load times
+- resource streamed assets
+- http requests (grouped by resource, grouped by root domain or both?)
+- performance chart with ram usage
+- player count (loger window, maybe with some other data)
+- top players? 
+- map heatmap?!
+- something with server log events like chat messages, kills, leave reasons, etc?
+
+
+https://www.npmjs.com/search?q=effective%20domain
+https://www.npmjs.com/package/parse-domain
+https://www.npmjs.com/package/tldts
 
 
 

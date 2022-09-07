@@ -9,18 +9,19 @@ import { printBanner } from '@core/extras/banner';
 import setupProfile from '@core/extras/setupProfile';
 import updateChecker from '@core/extras/updateChecker';
 
-import AdminVault from '@core/components/adminVault';
-import ConfigVault from '@core/components/configVault';
-import DiscordBot from '@core/components/discordBot';
-import DynamicAds from '@core/components/dynamicAds';
-import FxRunner from '@core/components/fxRunner';
-import Logger from '@core/components/logger';
-import Monitor from '@core/components/monitor';
-import PlayerController from '@core/components/playerController';
-import ResourcesManager from '@core/components/resourcesManager';
-import StatsCollector from '@core/components/statsCollector';
-import Translator from '@core/components/translator';
-import WebServer from '@core/components/webServer';
+import AdminVault from '@core/components/AdminVault';
+import ConfigVault from '@core/components/ConfigVault';
+import DiscordBot from '@core/components/DiscordBot';
+import DynamicAds from '@core/components/DynamicAds';
+import FxRunner from '@core/components/FxRunner';
+import Logger from '@core/components/Logger';
+import HealthMonitor from '@core/components/HealthMonitor';
+import Scheduler from '@core/components/Scheduler';
+import PlayerController from '@core/components/PlayerController';
+import ResourcesManager from '@core/components/ResourcesManager';
+import StatsCollector from '@core/components/StatsCollector';
+import Translator from '@core/components/Translator';
+import WebServer from '@core/components/WebServer';
 
 const { dir, log, logOk, logWarn, logError } = logger(`v${txEnv.txAdminVersion}`);
 
@@ -37,7 +38,8 @@ global.globals = {
     fxRunner: null,
     logger: null,
     dynamicAds: null,
-    monitor: null,
+    healthMonitor: null,
+    scheduler: null,
     statsCollector: null,
     translator: null,
     webServer: null,
@@ -145,7 +147,8 @@ export default class TxAdmin {
             globals.translator = new Translator();
             globals.fxRunner = new FxRunner(profileConfig.fxRunner);
             globals.dynamicAds = new DynamicAds(profileConfig.dynamicAds);
-            globals.monitor = new Monitor(profileConfig.monitor);
+            globals.healthMonitor = new HealthMonitor(profileConfig.monitor);
+            globals.scheduler = new Scheduler(profileConfig.monitor); //NOTE same opts as monitor, for now
             globals.statsCollector = new StatsCollector(profileConfig.statsCollector);
             globals.webServer = new WebServer(profileConfig.webServer);
             globals.playerController = new PlayerController(profileConfig.playerController);

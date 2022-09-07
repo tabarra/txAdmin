@@ -38,6 +38,7 @@ export { default as setup_post } from './setup/post';
 export { default as fxserver_commands } from './fxserver/commands';
 export { default as fxserver_controls } from './fxserver/controls';
 export { default as fxserver_downloadLog } from './fxserver/downloadLog';
+export { default as fxserver_schedule } from './fxserver/schedule';
 
 export { default as player_list } from './player/list';
 export { default as player_modal } from './player/modal';

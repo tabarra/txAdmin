@@ -118,7 +118,7 @@ export default class Translator {
 
         //Rebuild Monitor's schedule with new text and refreshes fxserver convars
         try {
-            globals.monitor.buildSchedule();
+            globals.healthMonitor.buildSchedule();
             globals.fxRunner.resetConvars();
         } catch (error) {}
     }
@@ -167,4 +167,4 @@ export default class Translator {
             return key;
         }
     }
-}; //Fim Translator()
+};

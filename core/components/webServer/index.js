@@ -288,4 +288,4 @@ export default class WebServer {
             process.exit();
         }
     }
-}; //Fim WebServer()
+};

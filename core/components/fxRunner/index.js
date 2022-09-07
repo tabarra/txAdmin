@@ -192,7 +192,7 @@ export default class FXRunner {
         }
 
         //Reseting monitor stats
-        globals.monitor.resetMonitorStats();
+        globals.healthMonitor.resetMonitorStats();
 
         //Announcing
         if (announce === 'true' || announce === true) {
@@ -530,4 +530,4 @@ export default class FXRunner {
 
         return now() - curr.timestamps.start;
     }
-}; //Fim FXRunner()
+};

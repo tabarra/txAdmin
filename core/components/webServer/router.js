@@ -77,6 +77,7 @@ export default (config) => {
     router.get('/fxserver/controls/:action', requestAuth('api'), webRoutes.fxserver_controls); //FIXME: transform into post
     router.post('/fxserver/commands', requestAuth('web'), webRoutes.fxserver_commands);
     router.get('/fxserver/downloadLog', requestAuth('web'), webRoutes.fxserver_downloadLog);
+    router.post('/fxserver/schedule', requestAuth('web'), webRoutes.fxserver_schedule);
 
     //CFG Editor
     router.get('/cfgEditor', requestAuth('web'), webRoutes.cfgEditor_get);

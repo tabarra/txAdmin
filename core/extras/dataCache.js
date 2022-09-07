@@ -27,4 +27,4 @@ export default class Cache {
             return false;
         }
     }
-}; //Fim Cache()
+};

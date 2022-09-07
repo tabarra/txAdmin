@@ -2,6 +2,81 @@
 //================================================================
 //============================================== Dynamic Stats
 //================================================================
+const statusCard = {
+    self: document.getElementById('status-card'),
+    discord: document.getElementById('status-discord'),
+    server: document.getElementById('status-server'),
+    serverProcess: document.getElementById('status-serverProcess'),
+    nextRestartTime: document.getElementById('status-nextRestartTime'),
+    nextRestartBtnCancel: document.getElementById('status-nextRestartBtnCancel'),
+    nextRestartBtnEnable: document.getElementById('status-nextRestartBtnEnable'),
+};
+
+const setBadgeColor = (el, color) => {
+    const targetColorClass = `badge-${color}`;
+    if (!el.classList.contains(targetColorClass)) {
+        el.classList.remove('badge-primary', 'badge-secondary', 'badge-success', 'badge-danger', 'badge-warning', 'badge-info', 'badge-light', 'badge-dark');
+        el.classList.add(targetColorClass);
+    }
+};
+const setNextRestartTimeClass = (cssClass) => {
+    const el = statusCard.nextRestartTime;
+    if (!el.classList.contains(cssClass)) {
+        el.classList.remove('font-weight-light', 'text-warning', 'text-muted');
+        el.classList.add(cssClass);
+    }
+};
+const msToTimeString = (ms) => {
+    const hours = Math.floor(ms / 1000 / 60 / 60);
+    const minutes = Math.floor((ms / 1000 / 60 / 60 - hours) * 60);
+
+    let hStr, mStr;
+    if (hours) hStr = (hours === 1) ? `1 hour` : `${hours} hours`;
+    if (minutes) mStr = (minutes === 1) ? `1 minute` : `${minutes} minutes`;
+
+    return [hStr, mStr].filter(x => x).join(', ');
+};
+
+const updateStatusCard = (data) => {
+    if(!statusCard.self) return;
+
+    setBadgeColor(statusCard.discord, data.discord.class);
+    statusCard.discord.textContent = data.discord.status;
+    setBadgeColor(statusCard.server, data.server.class);
+    statusCard.server.textContent = data.server.status;
+    statusCard.serverProcess.textContent = data.server.process;
+
+    if (typeof data.scheduler.nextRelativeMs !== 'number') {
+        setNextRestartTimeClass('font-weight-light');
+        statusCard.nextRestartTime.textContent = 'not scheduled';
+    } else {
+        const tempFlag = (data.scheduler.nextIsTemp)? '(tmp)' : '';
+        const relativeTime = msToTimeString(data.scheduler.nextRelativeMs);
+        const isLessThanMinute = data.scheduler.nextRelativeMs < 60_000;
+        if(isLessThanMinute){
+            statusCard.nextRestartTime.textContent = `right now ${tempFlag}`;
+            statusCard.nextRestartBtnCancel.classList.add('d-none');
+            statusCard.nextRestartBtnEnable.classList.add('d-none');
+        }else{
+            statusCard.nextRestartTime.textContent = `in ${relativeTime} ${tempFlag}`;
+        }
+
+        if (data.scheduler.nextSkip) {
+            setNextRestartTimeClass('text-muted');
+            if(!isLessThanMinute) {
+                statusCard.nextRestartBtnCancel.classList.add('d-none');
+                statusCard.nextRestartBtnEnable.classList.remove('d-none');
+            }
+        } else {
+            setNextRestartTimeClass('text-warning');
+            if(!isLessThanMinute) {
+                statusCard.nextRestartBtnCancel.classList.remove('d-none');
+                statusCard.nextRestartBtnEnable.classList.add('d-none');
+            }
+        }
+    }
+};
+
 function refreshData() {
     const scope = (isWebInterface) ? 'web' : 'iframe';
     txAdminAPI({
@@ -10,7 +85,7 @@ function refreshData() {
         timeout: REQ_TIMEOUT_SHORT,
         success: function (data) {
             if (checkApiLogoutRefresh(data)) return;
-            $('#status-card').html(data.status);
+            updateStatusCard(data.status);
             if (isWebInterface) {
                 $('#hostusage-cpu-bar').attr('aria-valuenow', data.host.cpu.pct).css('width', data.host.cpu.pct + '%');
                 $('#hostusage-cpu-text').html(data.host.cpu.text);
