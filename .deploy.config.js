@@ -1,5 +1,5 @@
 export default {
-    fxserverPath: 'E:\\FiveM\\BUILDS\\5834\\fxserver.exe',
+    fxserverPath: 'E:\\FiveM\\BUILDS\\5848\\fxserver.exe',
     debouncerInterval: 250,
     txAdminArgs: [
         '+set', 'txAdminDevMode', 'true',

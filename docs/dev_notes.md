@@ -15,6 +15,7 @@ Optional:
 - [ ] stats: jwe
 - [ ] playerlist remove rtl characters
 - [ ] create beta release action
+- [ ] set nui/vite.config.ts > target > chrome103
 
 
 server insights:

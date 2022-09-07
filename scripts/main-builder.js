@@ -126,7 +126,7 @@ const runDevTask = () => {
     copyStaticFiles(monitorPath, 'init');
     const debouncedCopier = debounce(copyStaticFiles, config.debouncerInterval);
     const watcher = chokidar.watch(config.copy, {
-        awaitWriteFinish: true,
+        // awaitWriteFinish: true,
         persistent: true,
         ignoreInitial: true,
     });

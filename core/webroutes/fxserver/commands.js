@@ -20,7 +20,6 @@ export default async function FXServerCommands(ctx) {
         typeof ctx.request.body.action === 'undefined'
         || typeof ctx.request.body.parameter === 'undefined'
     ) {
-        logWarn('Invalid request!');
         return sendAlertOutput(ctx, 'Invalid request!');
     }
     let action = ctx.request.body.action;
