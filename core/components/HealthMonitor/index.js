@@ -53,7 +53,6 @@ export default class HealthMonitor {
      */
     refreshConfig() {
         this.config = globals.configVault.getScoped('monitor');
-        this.buildSchedule();
     }//Final refreshConfig()
 
 

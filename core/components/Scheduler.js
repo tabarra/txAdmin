@@ -1,5 +1,4 @@
 const modulename = 'Scheduler';
-import humanizeDuration from 'humanize-duration';
 import logger from '@core/extras/console.js';
 import { parseSchedule } from '@core/extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
@@ -7,23 +6,26 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
 //Helpers
 const scheduleWarnings = [30, 15, 10, 5, 4, 3, 2, 1];
 
-const processSchedule = (schedule) => {
-    const parsed = parseSchedule(schedule);
+/**
+ * Processes an array of HH:MM, gets the next timestamp (sorted by closest).
+ * When time matches, it will be dist: 0, distMins: 0, and nextTs likely in the past due to seconds and milliseconds being 0.
+ * @param {Array} schedule 
+ * @returns {Object} {string, minuteFloorTs}
+ */
+const getNextScheduled = (parsedSchedule) => {
     const thisMinuteTs = new Date().setSeconds(0, 0);
-
-    return parsed.map((t) => {
-        t.nextDate = new Date();
-        t.nextTs = t.nextDate.setHours(t.hour, t.minute, 0, 0);
-        if (t.nextTs < thisMinuteTs) {
-            t.nextTs = t.nextDate.setHours(t.hour + 24, t.minute, 0, 0);
+    const processed = parsedSchedule.map((t) => {
+        const nextDate = new Date();
+        let minuteFloorTs = nextDate.setHours(t.hours, t.minutes, 0, 0);
+        if (minuteFloorTs < thisMinuteTs) {
+            minuteFloorTs = nextDate.setHours(t.hours + 24, t.minutes, 0, 0);
         }
-        t.localeString = t.nextDate.toLocaleString();
-        t.dist = t.nextTs - thisMinuteTs;
-        t.distString = humanizeDuration(t.dist);
-        t.distMins = Math.floor(t.dist / 60_000);
-        t.timeString = t.hour.toString().padStart(2, '0') + ':' + t.minute.toString().padStart(2, '0');
-        return t;
-    }).sort((a, b) => a.nextTs - b.nextTs);
+        return {
+            string: t.string,
+            minuteFloorTs,
+        };
+    });
+    return processed.sort((a, b) => a.minuteFloorTs - b.minuteFloorTs)[0];
 };
 
 
@@ -31,7 +33,10 @@ export default class Scheduler {
     constructor(config) {
         this.config = config;
         this.nextSkip = false;
-        this.nextDelay = null;
+        this.nextTempSchedule = false;
+        this.calculatedNextRestartMinuteFloorTs = false;
+
+        // this.checkSchedule();//DEBUG
 
         //Cron Function 
         setInterval(() => {
@@ -39,12 +44,87 @@ export default class Scheduler {
         }, 60 * 1000);
     }
 
+
     /**
-     * Refresh Monitor configurations
+     * Refresh configs, resets skip and temp scheduled, runs checkSchedule.
      */
-     refreshConfig() {
+    refreshConfig() {
         this.config = globals.configVault.getScoped('monitor');
+        this.nextSkip = false;
+        this.nextTempSchedule = false;
         this.checkSchedule();
+    }
+
+    /**
+     * Returns the current status of scheduler
+     * NOTE: sending relative because server might have clock skew
+     */
+    getStatus() {
+        if (this.calculatedNextRestartMinuteFloorTs) {
+            const thisMinuteTs = new Date().setSeconds(0, 0);
+            return {
+                nextRelativeMs: this.calculatedNextRestartMinuteFloorTs - thisMinuteTs,
+                nextSkip: this.nextSkip,
+            };
+        } else {
+            return {
+                nextRelativeMs: false,
+                nextSkip: false,
+            };
+        }
+    }
+
+
+    /**
+     * Sets this.nextSkip.
+     * Cancel scheduled button -> setNextSkip(true)
+     * Enable scheduled button -> setNextSkip(false)
+     * @param {Boolean} enabled 
+     */
+    setNextSkip(enabled) {
+        if (enabled) {
+            if (this.nextTempSchedule) {
+                this.nextTempSchedule = false;
+            } else if (this.calculatedNextRestartMinuteFloorTs) {
+                this.nextSkip = true;
+            }
+        } else {
+            this.nextSkip = false;
+        }
+    }
+
+
+    /**
+     * Sets this.nextTempSchedule.
+     * The value MUST be before the next setting scheduled time.
+     * @param {String} timeString 
+     */
+    setSkip(timeString) {
+        //Process input
+        if (typeof timeString !== 'string') throw new Error(`expected string`);
+        const [hours, minutes] = timeString.split(':', 2).map(x => parseInt(x));
+        if (isNaN(hours) || hours < 0 || hours > 23) throw new Error(`invalid hours`);
+        if (isNaN(minutes) || minutes < 0 || minutes > 23) throw new Error(`invalid minutes`);
+        const thisMinuteTs = new Date().setSeconds(0, 0);
+        let minuteFloorTs = nextDate.setHours(hours, minutes, 0, 0);
+        if (minuteFloorTs < thisMinuteTs) {
+            minuteFloorTs = nextDate.setHours(hours + 24, minutes, 0, 0);
+        }
+
+        //Check validity
+        if (Array.isArray(this.config.restarterSchedule) && this.config.restarterSchedule.length) {
+            const parsed = parseSchedule(this.config.restarterSchedule);
+            const nextSettingRestart = getNextScheduled(parsed);
+            if (nextSettingRestart.minuteFloorTs < minuteFloorTs) {
+                throw new Error(`you already have one scheduled at ${nextSettingRestart.string}`);
+            }
+        }
+
+        // Set next temp schedule
+        this.nextTempSchedule = {
+            string: hours.toString().padStart(2, '0') + ':' + minutes.toString().padStart(2, '0'),
+            minuteFloorTs,
+        };
     }
 
 
@@ -52,22 +132,40 @@ export default class Scheduler {
      * Checks the schedule to see if it's time to announce or restart the server
      */
     async checkSchedule() {
-        if (!Array.isArray(this.config.restarterSchedule) || !this.config.restarterSchedule.length) return;
+        //Check settings and temp scheduled restart
+        let nextRestart;
+        if (this.nextTempSchedule) {
+            nextRestart = this.nextTempSchedule;
+        } else if (Array.isArray(this.config.restarterSchedule) && this.config.restarterSchedule.length) {
+            const parsed = parseSchedule(this.config.restarterSchedule);
+            nextRestart = getNextScheduled(parsed);
+        } else {
+            //nothing scheduled
+            this.calculatedNextRestartMinuteFloorTs = false;
+            return;
+        }
+        // dir(nextRestart); //DEBUG
 
-        const processed = processSchedule(this.config.restarterSchedule);
-        const nextRestart = processed[0];
+        //Setting calculated next, Calculating dist
+        this.calculatedNextRestartMinuteFloorTs = nextRestart.minuteFloorTs;
+        const thisMinuteTs = new Date().setSeconds(0, 0);
+        const nextDistMs = nextRestart.minuteFloorTs - thisMinuteTs;
+        const nextDistMins = Math.floor(nextDistMs / 60_000);
 
-        if (nextRestart.distMins === 0) {
+        //Checking if server restart or warning time
+        if (nextDistMins === 0) {
             //restart server
             this.restartFXServer(
-                `scheduled restart at ${nextRestart.timeString}`,
-                globals.translator.t('restarter.schedule_reason', { time: nextRestart.timeString }),
+                `scheduled restart at ${nextRestart.string}`,
+                globals.translator.t('restarter.schedule_reason', { time: nextRestart.string }),
             );
 
+            //reset next scheduled
+            this.nextTempSchedule = false;
 
-        } else if (scheduleWarnings.includes(nextRestart.distMins)) {
+        } else if (scheduleWarnings.includes(nextDistMins)) {
             const tOptions = {
-                smart_count: nextRestart.distMins,
+                smart_count: nextDistMins,
                 servername: globals.config.serverName,
             };
 
@@ -87,7 +185,7 @@ export default class Scheduler {
 
             //Dispatch `txAdmin:events:scheduledRestart` 
             globals.fxRunner.sendEvent('scheduledRestart', {
-                secondsRemaining: nextRestart.distMins * 60,
+                secondsRemaining: nextDistMins * 60,
             });
         }
     }
@@ -98,7 +196,7 @@ export default class Scheduler {
      * @param {string} reasonInternal
      * @param {string} reasonTranslated
      */
-     async restartFXServer(reasonInternal, reasonTranslated) {
+    async restartFXServer(reasonInternal, reasonTranslated) {
         //sanity check
         if (globals.fxRunner.fxChild === null) {
             logWarn('Server not started, no need to restart');

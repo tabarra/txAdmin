@@ -255,15 +255,14 @@ async function handleMonitor(ctx) {
     };
 
     //Validating restart times
-    let scheduleTimes = parseSchedule(cfg.restarterSchedule, false);
-    let invalidRestartTimes = [];
-    let validRestartTimes = [];
+    const scheduleTimes = parseSchedule(cfg.restarterSchedule, false);
+    const invalidRestartTimes = [];
+    const validRestartTimes = [];
     scheduleTimes.forEach((time) => {
         if (typeof time === 'string') {
             invalidRestartTimes.push(`"${time}"`);
         } else {
-            const cleanTime = time.hour.toString().padStart(2, '0') + ':' + time.minute.toString().padStart(2, '0');
-            validRestartTimes.push(cleanTime);
+            validRestartTimes.push(time.string);
         }
     });
     if (invalidRestartTimes.length) {
