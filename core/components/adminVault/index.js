@@ -38,7 +38,7 @@ export default class AdminVault {
             'settings.write': 'Settings: Change',
             'console.view': 'Console: View',
             'console.write': 'Console: Write',
-            'control.server': 'Start/Stop Server',
+            'control.server': 'Start/Stop Server + Scheduler',
             'commands.resources': 'Start/Stop Resources',
             'server.cfg.editor': 'Read/Write server.cfg',
             'txadmin.log.view': 'View txAdmin Log',

@@ -1,6 +1,7 @@
 const modulename = 'Scheduler';
 import logger from '@core/extras/console.js';
 import { parseSchedule } from '@core/extras/helpers';
+import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
@@ -35,8 +36,7 @@ export default class Scheduler {
         this.nextSkip = false;
         this.nextTempSchedule = false;
         this.calculatedNextRestartMinuteFloorTs = false;
-
-        // this.checkSchedule();//DEBUG
+        this.checkSchedule();
 
         //Cron Function 
         setInterval(() => {
@@ -64,7 +64,7 @@ export default class Scheduler {
             const thisMinuteTs = new Date().setSeconds(0, 0);
             return {
                 nextRelativeMs: this.calculatedNextRestartMinuteFloorTs - thisMinuteTs,
-                nextSkip: this.nextSkip,
+                nextSkip: this.nextSkip === this.calculatedNextRestartMinuteFloorTs,
             };
         } else {
             return {
@@ -86,7 +86,7 @@ export default class Scheduler {
             if (this.nextTempSchedule) {
                 this.nextTempSchedule = false;
             } else if (this.calculatedNextRestartMinuteFloorTs) {
-                this.nextSkip = true;
+                this.nextSkip = this.calculatedNextRestartMinuteFloorTs;
             }
         } else {
             this.nextSkip = false;
@@ -99,7 +99,7 @@ export default class Scheduler {
      * The value MUST be before the next setting scheduled time.
      * @param {String} timeString 
      */
-    setSkip(timeString) {
+    setNextTempSchedule(timeString) {
         //Process input
         if (typeof timeString !== 'string') throw new Error(`expected string`);
         const [hours, minutes] = timeString.split(':', 2).map(x => parseInt(x));
@@ -144,10 +144,15 @@ export default class Scheduler {
             this.calculatedNextRestartMinuteFloorTs = false;
             return;
         }
-        // dir(nextRestart); //DEBUG
-
-        //Setting calculated next, Calculating dist
         this.calculatedNextRestartMinuteFloorTs = nextRestart.minuteFloorTs;
+
+        //Checking if skipped
+        if (this.nextSkip === this.calculatedNextRestartMinuteFloorTs) {
+            if (verbose) log(`Skipping next scheduled restart`);
+            return;
+        }
+        
+        //Calculating dist
         const thisMinuteTs = new Date().setSeconds(0, 0);
         const nextDistMs = nextRestart.minuteFloorTs - thisMinuteTs;
         const nextDistMins = Math.floor(nextDistMs / 60_000);
