@@ -22,13 +22,18 @@ export default class HealthMonitor {
         this.hardConfigs = {
             timeout: 1500,
             defaultWarningTimes: [30, 15, 10, 5, 4, 3, 2, 1],
+
+            //HTTP GET /dynamic.json from txAdmin to sv_main.lua
             healthCheck: {
                 failThreshold: 15,
                 failLimit: 300,
             },
+
+            //HTTP POST /intercom/monitor from sv_main.lua to txAdmin
             heartBeat: {
                 failThreshold: 15,
                 failLimit: 60,
+                resStartedCooldown: 30, //wait for HB up to 30 seconds after last resource started
             },
         };
 
@@ -210,15 +215,6 @@ export default class HealthMonitor {
             return;
         }
 
-        //Log failure message
-        if (elapsedLastWarning >= 15) {
-            const msg = (healthCheckFailed)
-                ? `${timesPrefix} FXServer is not responding. (${this.lastHealthCheckErrorMessage})`
-                : `${timesPrefix} FXServer is not responding. (HB Failed)`;
-            this.lastStatusWarningMessage = currTimestamp;
-            logWarn(msg);
-        }
-
         //Check if fxChild is closed, in this case no need to wait the failure count
         const processStatus = globals.fxRunner.getStatus();
         if (processStatus == 'closed') {
@@ -228,6 +224,15 @@ export default class HealthMonitor {
                 globals.translator.t('restarter.crash_detected'),
             );
             return;
+        }
+
+        //Log failure message
+        if (elapsedLastWarning >= 15) {
+            const msg = (healthCheckFailed)
+                ? `${timesPrefix} FXServer is not responding. (${this.lastHealthCheckErrorMessage})`
+                : `${timesPrefix} FXServer is not responding. (HB Failed)`;
+            this.lastStatusWarningMessage = currTimestamp;
+            logWarn(msg);
         }
 
         //If http partial crash, warn 1 minute before
@@ -255,12 +260,25 @@ export default class HealthMonitor {
         const starting = globals.resourcesManager.tmpGetPendingStart();
         if (
             anySuccessfulHeartBeat === false
-            && starting.elapsedSeconds !== null
-            && starting.elapsedSeconds < this.config.resourceStartingTolerance
+            && starting.startingElapsedSecs !== null
+            && starting.startingElapsedSecs < this.config.resourceStartingTolerance
         ) {
             if (processUptime % 15 == 0) {
                 logWarn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
-                logWarn(`The server is currently starting ${starting.resname} (${starting.elapsedSeconds}s ago).`);
+                logWarn(`The server is currently starting ${starting.startingResName} (${starting.startingElapsedSecs}s ago).`);
+            }
+            return;
+        }
+
+        //Maybe it just finished loading the resources, but no HeartBeat yet
+        if(
+            anySuccessfulHeartBeat === false
+            && starting.lastStartElapsedSecs !== null
+            && starting.lastStartElapsedSecs < this.hardConfigs.heartBeat.resStartedCooldown
+        ){
+            if (processUptime % 15 == 0) {
+                logWarn(`Still waiting for the first HeartBeat. Process started ${processUptime}s ago.`);
+                logWarn(`No resource start pending, last resource started ${starting.lastStartElapsedSecs}s ago.`);
             }
             return;
         }
@@ -272,10 +290,26 @@ export default class HealthMonitor {
         ) {
             if (anySuccessfulHeartBeat === false) {
                 globals.databus.txStatsData.monitorStats.bootSeconds.push(false);
-                this.restartFXServer(
-                    `server failed to start within time limit - ${this.config.resourceStartingTolerance}s max per resource, or ${this.hardConfigs.heartBeat.failLimit}s total`,
-                    globals.translator.t('restarter.start_timeout'),
-                );
+
+                if(starting.startingElapsedSecs !== null){
+                    //Resource didn't finish starting (if res boot still active)
+                    this.restartFXServer(
+                        `resource "${starting.startingResName}" failed to start within the ${this.config.resourceStartingTolerance}s time limit`,
+                        globals.translator.t('restarter.start_timeout'),
+                    );
+                }else if(starting.lastStartElapsedSecs !== null){
+                    //Resources started, but last was above limit
+                    this.restartFXServer(
+                        `server failed to start within time limit - ${this.hardConfigs.heartBeat.resStartedCooldown}s after last resource started`,
+                        globals.translator.t('restarter.start_timeout'),
+                    );
+                }else{
+                    //No resource started starting, hb over limit
+                    this.restartFXServer(
+                        `server failed to start within time limit - ${this.hardConfigs.heartBeat.failLimit}s, no onResourceStarting received`,
+                        globals.translator.t('restarter.start_timeout'),
+                    );
+                }
             } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {
                 globals.databus.txStatsData.monitorStats.restartReasons.healthCheck++;
                 this.restartFXServer(

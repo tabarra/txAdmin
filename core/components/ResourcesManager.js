@@ -45,6 +45,7 @@ export default class DynamicAds {
     constructor() {
         this.activeStartingTime = null;
         this.activeStartingResource = null;
+        this.lastResourceStartTime = null;
     }
 
 
@@ -60,6 +61,7 @@ export default class DynamicAds {
         } else if (payload.event === 'onResourceStart') {
             this.activeStartingResource = null;
             this.activeStartingTime = null;
+            this.lastResourceStartTime = new Date();
         }
     }
 
@@ -77,11 +79,13 @@ export default class DynamicAds {
      * Handler for server restart
      */
     tmpGetPendingStart() {
+        const getSecondsDiff = (date) => {
+            return date !== null ? Math.round((new Date() - date) / 1000) : null;
+        }
         return {
-            resname: this.activeStartingResource,
-            elapsedSeconds: this.activeStartingTime !== null
-                ? Math.round((new Date() - this.activeStartingTime) / 1000)
-                : null,
+            startingResName: this.activeStartingResource,
+            startingElapsedSecs: getSecondsDiff(this.activeStartingTime),
+            lastStartElapsedSecs: getSecondsDiff(this.lastResourceStartTime),
         };
     }
 };

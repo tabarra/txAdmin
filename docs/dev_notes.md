@@ -4,7 +4,7 @@ v4.18.0:
 - [x] add option to schedule a restart (single shot, non persistent)
 - [x] rewrite the GET /status endpoint (close PR #440, Issue #405)
 - [x] change title+favicon handling in UI status updates (close PR #440, Issue #405)
-- [ ] fix HealthMonitor resource boot time limit
+- [x] fix HealthMonitor resource boot time limit
 - [ ] acquire file lock on admins.json as well as ALL TXADMIN FILES
 
 
@@ -19,22 +19,10 @@ Optional:
 - [ ] set nui/vite.config.ts > target > chrome103
 
 
-server insights:
-- resource load times
-- resource streamed assets
-- http requests (grouped by resource, grouped by root domain or both?)
-- performance chart with ram usage
-- player count (loger window, maybe with some other data)
-- top players? 
-- map heatmap?!
-- something with server log events like chat messages, kills, leave reasons, etc?
-
-
-https://www.npmjs.com/search?q=effective%20domain
-https://www.npmjs.com/package/parse-domain
-https://www.npmjs.com/package/tldts
-
-
+### Console Rewrite
+- [ ] Rewrite console logger module to be proxied to node:console
+- [ ] Move verbose to be part of the console (after the functional-ish change)
+- [ ] Remove the GlobalData from a bunch of files which include it just because of verbosity
 
 ```js
 console.log('aaa', {àa:true});
@@ -59,16 +47,10 @@ const console = consoleFactory(modulename)
 
 process.exit();
 ```
-remover lodash dep e ficar só com lodash-es?
 
-Move verbose to be part of the console (after the functional-ish change)
-and then remove the GlobalData from a bunch of files which include it just because of verbosity
 
-NOTE:
 
-https://medium.com/slackernoon/use-typescript-aliases-to-clean-up-your-import-statements-7210b7ec2af1
-nice ESM guide https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c
-https://github.com/sindresorhus/typescript-definition-style-guide
+NOTE: https://github.com/sindresorhus/typescript-definition-style-guide
 
 ## Client game print issue
 https://github.com/citizenfx/fivem/commit/cafd87148a9a47eb267c24c00ec15f96103d4257
@@ -81,11 +63,10 @@ Up next-ish:
     - [ ] Use `dotenv` or something to read FXServer's path from
     - [ ] Adapt `main-builder.js` to accept txAdmin convars
     - [ ] Update `development.md`
-- 'txaLogger:menuEvent' outros resources conseguem chamar?
+- [ ] checar se outros resources conseguem chamar 'txaLogger:menuEvent'?
 - [ ] add ram usage to perf chart?
 - [ ] dm via snackbar
 - [ ] wav for announcements
-- [ ] update `README.md`
 - [ ] replace `txaDropIdentifiers` with `txAdmin:events:playerBanned` hook
 - [ ] Migrate console log to new logger
 - [ ] Migrate all log routes
@@ -116,7 +97,20 @@ FIXME: quando o menu abrir, deveria voltar os list item pro default deles
 - começar a ler o ui_label dos manifests e usar na página de resources
 
 
+### Server Insights page ideas:
+- resource load times
+- resource streamed assets
+- http requests (grouped by resource, grouped by root domain or both?)
+- performance chart with ram usage
+- player count (loger window, maybe with some other data)
+- top players? 
+- map heatmap?!
+- something with server log events like chat messages, kills, leave reasons, etc?
 
+
+https://www.npmjs.com/search?q=effective%20domain
+https://www.npmjs.com/package/parse-domain
+https://www.npmjs.com/package/tldts
 
 ### txAdminAPI interface in base.js:
 - Create prop `pendingMessage` to replace `const notify = $.notify({ message: 'xxxxxx' }, {});`
