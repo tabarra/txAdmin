@@ -17,7 +17,7 @@ export default async function SettingsGet(ctx) {
     }
 
     const renderData = {
-        headerTitle: 'settings',
+        headerTitle: 'Settings',
         global: cleanRenderData(globals.configVault.getScopedStructure('global')),
         fxserver: cleanRenderData(globals.configVault.getScopedStructure('fxRunner')),
         playerController: cleanRenderData(globals.configVault.getScopedStructure('playerController')),

@@ -212,14 +212,12 @@
                     <%= perms.controls %>>STOP</button>
                 <br />
 
-                <% if (isWebInterface) { %>
                 <button onclick="controlCommand('admin_broadcast')" class="btn btn-outline-dark btn-md mx-auto m-2"
                     type="button" id="ctrl-announce" <%= perms.commandMessage %>>Announcement</button>
                 <button onclick="controlCommand('kick_all')" class="btn btn-outline-dark btn-md mx-auto m-2"
                     type="button" id="ctrl-kick-all" <%= perms.commandKick %>>Kick All Players</button>
                 <button class="btn btn-outline-dark btn-md mx-auto m-2"
                     type="button" id="ctrl-schedule-restart" <%= perms.controls %>>Schedule Restart</button>
-                <% } %>
             </div>
         </div>
     </div>
@@ -434,9 +432,11 @@
     }
     statusCard.nextRestartBtnCancel.onclick = () => {
         schedulerApiCall('setNextSkip', true);
+        statusCard.nextRestartBtnCancel.classList.add('d-none');
     }
     statusCard.nextRestartBtnEnable.onclick = () => {
         schedulerApiCall('setNextSkip', false);
+        statusCard.nextRestartBtnEnable.classList.add('d-none');
     }
     document.getElementById('ctrl-schedule-restart').onclick = async () => {
         const input = await txAdminPrompt({

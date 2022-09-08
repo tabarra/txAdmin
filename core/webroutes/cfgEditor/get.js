@@ -31,6 +31,7 @@ export default async function CFGEditorGet(ctx) {
     }
 
     return ctx.utils.render('main/cfgEditor', {
+        headerTitle: 'CFG Editor',
         rawFile,
         disableRestart: (ctx.utils.checkPermission('control.server', modulename, false)) ? '' : 'disabled',
     });

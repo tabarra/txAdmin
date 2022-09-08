@@ -22,6 +22,7 @@ export default async function Dashboard(ctx) {
 
     //Preparing render data
     const renderData = {
+        headerTitle: 'Dashboard',
         discordEvent: false,
         // discordEvent: {
         //     timestamp: 1645512230000,

@@ -10,11 +10,11 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  */
 export default async function GetStatus(ctx) {
     const out = {
-        status: prepareServerStatus(),
+        discord: prepareDiscordStatus(),
+        server: prepareServerStatus(),
     };
     if (ctx.params.scope === 'web') {
         out.host = prepareHostData();
-        out.meta = prepareMetaData();
         out.players = preparePlayersData();
     }
     return ctx.send(out);
@@ -23,13 +23,11 @@ export default async function GetStatus(ctx) {
 
 //==============================================================
 /**
- * Returns the fxserver's data
+ * Returns the Discord Bot data
  */
-function prepareServerStatus() {
-    //Discord status
-    const discord = {};
-    const discordClient = globals.discordBot.client;
-    const discStatusCodes = [
+function prepareDiscordStatus() {
+    const client = globals.discordBot.client;
+    const statusCodes = [
         ['READY', 'success'],
         ['CONNECTING', 'warning'],
         ['RECONNECTING', 'warning'],
@@ -40,40 +38,49 @@ function prepareServerStatus() {
         ['IDENTIFYING', 'warning'],
         ['RESUMING', 'warning'],
     ];
-    if (discordClient == null) {
-        discord.status = 'DISABLED';
-        discord.class = 'secondary';
-    } else if (discStatusCodes[discordClient.ws?.status]) {
-        discord.status = discStatusCodes[discordClient.ws?.status][0];
-        discord.class = discStatusCodes[discordClient.ws?.status][1];
-    } else {
-        discord.status = 'UNKNOWN';
-        discord.class = 'danger';
-    }
 
-    //Server status
-    const server = {
+    if (client == null) {
+        return {
+            status: 'DISABLED',
+            statusClass: 'secondary',
+        };
+    } else if (statusCodes[client.ws?.status]) {
+        return {
+            status: statusCodes[client.ws?.status][0],
+            statusClass: statusCodes[client.ws?.status][1],
+        };
+    } else {
+        return {
+            status: 'UNKNOWN',
+            statusClass: 'danger',
+        };
+    }
+}
+
+
+//==============================================================
+/**
+ * Returns the fxserver's data
+ */
+function prepareServerStatus() {
+    const out = {
         status: globals.healthMonitor.currentStatus || '??',
         process: globals.fxRunner.getStatus(),
+        name: globals.config.serverName,
+        scheduler: globals.scheduler.getStatus(),
     };
-    if (server.status == 'ONLINE') {
-        server.class = 'success';
-    } else if (server.status == 'PARTIAL') {
-        server.class = 'warning';
-    } else if (server.status == 'OFFLINE') {
-        server.class = 'danger';
+
+    if (out.status == 'ONLINE') {
+        out.statusClass = 'success';
+    } else if (out.status == 'PARTIAL') {
+        out.statusClass = 'warning';
+    } else if (out.status == 'OFFLINE') {
+        out.statusClass = 'danger';
     } else {
-        server.class = 'dark';
+        out.statusClass = 'dark';
     }
 
-    //Scheduler status
-    const scheduler = globals.scheduler.getStatus();
-
-    return {
-        discord,
-        server,
-        scheduler
-    };
+    return out;
 }
 
 
@@ -85,8 +92,8 @@ function prepareHostData() {
     const stats = globals.healthMonitor.hostStats;
     if (!stats) {
         return {
-            memory: {pct: 0, text: 'not available'},
-            cpu: {pct: 0, text: 'not available'},
+            memory: { pct: 0, text: 'not available' },
+            cpu: { pct: 0, text: 'not available' },
         };
     } else {
         return {
@@ -94,7 +101,7 @@ function prepareHostData() {
                 pct: stats.memory.usage,
                 text: `${stats.memory.usage}% (${stats.memory.used.toFixed(2)}/${stats.memory.total.toFixed(2)} GB)`,
             },
-            cpu:{
+            cpu: {
                 pct: stats.cpu.usage,
                 text: `${stats.cpu.usage}% of ${stats.cpu.count}x ${stats.cpu.speed} MHz`,
             },
@@ -112,27 +119,4 @@ function prepareHostData() {
  */
 function preparePlayersData() {
     return globals.playerController.getPlayerList();
-}
-
-
-//==============================================================
-/**
- * Returns the page metadata (title and icon)
- * FIXME: deprecate
- */
-function prepareMetaData() {
-    let favicon;
-    if (globals.healthMonitor.currentStatus == 'ONLINE') {
-        favicon = 'favicon_online';
-    } else if (globals.healthMonitor.currentStatus == 'PARTIAL') {
-        favicon = 'favicon_partial';
-    } else {
-        favicon = 'favicon_offline';
-    }
-    return {
-        favicon,
-        title: (globals.healthMonitor.currentStatus == 'ONLINE')
-            ? `(${globals.playerController.activePlayers.length}) txAdmin`
-            : 'txAdmin',
-    };
 }

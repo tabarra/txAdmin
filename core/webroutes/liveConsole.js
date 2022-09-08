@@ -14,7 +14,7 @@ export default async function LiveConsole(ctx) {
     }
 
     const renderData = {
-        headerTitle: 'Console',
+        headerTitle: 'Live Console',
         disableCommand: (ctx.utils.checkPermission('console.write', modulename, false)) ? 'autofocus' : 'disabled',
         disableAnnouncement: (ctx.utils.checkPermission('players.message', modulename, false)) ? '' : 'disabled',
         disableRestart: (ctx.utils.checkPermission('control.server', modulename, false)) ? '' : 'disabled',

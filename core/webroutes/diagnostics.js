@@ -27,7 +27,7 @@ export default async function Diagnostics(ctx) {
 
     const timeStart = Date.now();
     const data = {
-        headerTitle: 'Full Report',
+        headerTitle: 'Diagnostics',
         message: '',
     };
     [data.host, data.txadmin, data.fxserver, data.proccesses] = await Promise.all([

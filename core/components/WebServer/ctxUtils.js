@@ -88,7 +88,6 @@ async function loadWebTemplate(name) {
  * @param {string} data
  */
 async function renderView(view, reqSess, data, txVars) {
-    data.headerTitle = (!isUndefined(data.headerTitle)) ? `${data.headerTitle} - txAdmin` : 'txAdmin';
     data.adminIsMaster = (reqSess && reqSess.auth && reqSess.auth.username && reqSess.auth.master === true);
     data.adminUsername = (reqSess && reqSess.auth && reqSess.auth.username) ? reqSess.auth.username : 'unknown user';
     data.profilePicture = (reqSess && reqSess.auth && reqSess.auth.picture) ? reqSess.auth.picture : DEFAULT_AVATAR;
@@ -264,6 +263,7 @@ export default async function WebCtxUtils(ctx, next) {
             jsInjection: getJavascriptConsts({
                 isWebInterface: isWebInterface,
                 TX_BASE_PATH: (isWebInterface) ? '' : WEBPIPE_PATH,
+                PAGE_TITLE: data?.headerTitle ?? 'txAdmin',
             }),
         };
 

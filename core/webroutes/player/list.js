@@ -168,6 +168,7 @@ async function handleDefault(ctx, dbo) {
         players: 30,
     };
     const respData = {
+        headerTitle: 'Players',
         stats: await getStats(dbo),
         queryLimits,
         lastWhitelistBlocks: await getPendingWL(dbo, queryLimits.whitelist),

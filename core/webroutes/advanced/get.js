@@ -15,6 +15,7 @@ export default async function AdvancedGet(ctx) {
     }
 
     return ctx.utils.render('main/advanced', {
+        headerTitle: 'Advanced',
         verbosityEnabled: verbose,
     });
 };

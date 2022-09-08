@@ -2,6 +2,7 @@
 //================================================================
 //============================================== Dynamic Stats
 //================================================================
+const faviconEl = document.getElementById('favicon');
 const statusCard = {
     self: document.getElementById('status-card'),
     discord: document.getElementById('status-discord'),
@@ -37,22 +38,22 @@ const msToTimeString = (ms) => {
     return [hStr, mStr].filter(x => x).join(', ');
 };
 
-const updateStatusCard = (data) => {
+const updateStatusCard = (discordData, serverData) => {
     if(!statusCard.self) return;
 
-    setBadgeColor(statusCard.discord, data.discord.class);
-    statusCard.discord.textContent = data.discord.status;
-    setBadgeColor(statusCard.server, data.server.class);
-    statusCard.server.textContent = data.server.status;
-    statusCard.serverProcess.textContent = data.server.process;
+    setBadgeColor(statusCard.discord, discordData.statusClass);
+    statusCard.discord.textContent = discordData.status;
+    setBadgeColor(statusCard.server, serverData.statusClass);
+    statusCard.server.textContent = serverData.status;
+    statusCard.serverProcess.textContent = serverData.process;
 
-    if (typeof data.scheduler.nextRelativeMs !== 'number') {
+    if (typeof serverData.scheduler.nextRelativeMs !== 'number') {
         setNextRestartTimeClass('font-weight-light');
         statusCard.nextRestartTime.textContent = 'not scheduled';
     } else {
-        const tempFlag = (data.scheduler.nextIsTemp)? '(tmp)' : '';
-        const relativeTime = msToTimeString(data.scheduler.nextRelativeMs);
-        const isLessThanMinute = data.scheduler.nextRelativeMs < 60_000;
+        const tempFlag = (serverData.scheduler.nextIsTemp)? '(tmp)' : '';
+        const relativeTime = msToTimeString(serverData.scheduler.nextRelativeMs);
+        const isLessThanMinute = serverData.scheduler.nextRelativeMs < 60_000;
         if(isLessThanMinute){
             statusCard.nextRestartTime.textContent = `right now ${tempFlag}`;
             statusCard.nextRestartBtnCancel.classList.add('d-none');
@@ -61,7 +62,7 @@ const updateStatusCard = (data) => {
             statusCard.nextRestartTime.textContent = `in ${relativeTime} ${tempFlag}`;
         }
 
-        if (data.scheduler.nextSkip) {
+        if (serverData.scheduler.nextSkip) {
             setNextRestartTimeClass('text-muted');
             if(!isLessThanMinute) {
                 statusCard.nextRestartBtnCancel.classList.add('d-none');
@@ -77,6 +78,32 @@ const updateStatusCard = (data) => {
     }
 };
 
+const updatePageTitle = (serverStatusClass, serverName, playerCount) => {
+    if(!isWebInterface) return;
+    
+    const pageName = PAGE_TITLE || 'txAdmin';
+    document.title = `(${playerCount}) ${serverName} | ${pageName}`;
+
+    let iconType = 'default';
+    if (serverStatusClass === 'success') {
+        iconType = 'online';
+    } else if (serverStatusClass === 'warning') {
+        iconType = 'partial';
+    } else if (serverStatusClass === 'danger') {
+        iconType = 'offline';
+    }
+    faviconEl.href = `img/favicon_${iconType}.png`;
+};
+
+const updateHostStats = (hostData) => {
+    if(!isWebInterface) return;
+    
+    $('#hostusage-cpu-bar').attr('aria-valuenow', hostData.cpu.pct).css('width', hostData.cpu.pct + '%');
+    $('#hostusage-cpu-text').html(hostData.cpu.text);
+    $('#hostusage-memory-bar').attr('aria-valuenow', hostData.memory.pct).css('width', hostData.memory.pct + '%');
+    $('#hostusage-memory-text').html(hostData.memory.text);
+};
+
 function refreshData() {
     const scope = (isWebInterface) ? 'web' : 'iframe';
     txAdminAPI({
@@ -85,14 +112,10 @@ function refreshData() {
         timeout: REQ_TIMEOUT_SHORT,
         success: function (data) {
             if (checkApiLogoutRefresh(data)) return;
-            updateStatusCard(data.status);
+            updateStatusCard(data.discord, data.server);
             if (isWebInterface) {
-                $('#hostusage-cpu-bar').attr('aria-valuenow', data.host.cpu.pct).css('width', data.host.cpu.pct + '%');
-                $('#hostusage-cpu-text').html(data.host.cpu.text);
-                $('#hostusage-memory-bar').attr('aria-valuenow', data.host.memory.pct).css('width', data.host.memory.pct + '%');
-                $('#hostusage-memory-text').html(data.host.memory.text);
-                $('#favicon').attr('href', 'img/' + data.meta.favicon + '.png');
-                document.title = data.meta.title;
+                updatePageTitle(data.server.statusClass, data.server.name, data.players.length);
+                updateHostStats(data.host);
                 processPlayers(data.players);
             }
         },
@@ -103,14 +126,22 @@ function refreshData() {
             } else {
                 out = `Request error: ${textstatus}\n${message}`;
             }
-            $('#status-card').html(out.replace('\n', '\n<br>'));
+            setBadgeColor(statusCard.discord, 'light');
+            statusCard.discord.textContent = '--';
+            setBadgeColor(statusCard.server, 'light');
+            statusCard.server.textContent = '--';
+            statusCard.serverProcess.textContent = '--';
+            setNextRestartTimeClass('text-muted');
+            statusCard.nextRestartTime.textContent = '--';
+            statusCard.nextRestartBtnCancel.classList.add('d-none');
+            statusCard.nextRestartBtnEnable.classList.add('d-none');
             if (isWebInterface) {
                 $('#hostusage-cpu-bar').attr('aria-valuenow', 0).css('width', 0);
                 $('#hostusage-cpu-text').html('error');
                 $('#hostusage-memory-bar').attr('aria-valuenow', 0).css('width', 0);
                 $('#hostusage-memory-text').html('error');
-                $('#favicon').attr('href', 'img/favicon_offline.png');
                 document.title = 'ERROR - txAdmin';
+                faviconEl.href = `img/favicon_offline.png`;
                 processPlayers(out);
             }
         },

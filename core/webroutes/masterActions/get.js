@@ -11,6 +11,7 @@ export default async function MasterActionsGet(ctx) {
     const isMasterAdmin = (ctx.utils.checkPermission('master', modulename, false));
     const disableActions = (isMasterAdmin && ctx.txVars.isWebInterface) ? '' : 'disabled';
     return ctx.utils.render('main/masterActions', {
+        headerTitle: 'Master Actions',
         disableActions,
         isMasterAdmin,
         dbFilePathSuggestion: globals.fxRunner.config.serverDataPath

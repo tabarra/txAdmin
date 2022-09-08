@@ -2,7 +2,8 @@
 v4.18.0:
 - [x] add option to skip next schedules restart
 - [x] add option to schedule a restart (single shot, non persistent)
-- [ ] rewrite the GET /status endpoint (close PR #440)
+- [x] rewrite the GET /status endpoint (close PR #440, Issue #405)
+- [x] change title+favicon handling in UI status updates (close PR #440, Issue #405)
 - [ ] fix HealthMonitor resource boot time limit
 - [ ] acquire file lock on admins.json as well as ALL TXADMIN FILES
 
