@@ -6,6 +6,7 @@ v4.18.0:
 - [x] change title+favicon handling in UI status updates (close PR #440, Issue #405)
 - [x] fix HealthMonitor resource boot time limit
 - [x] prevent external modifications of admins.json
+- [x] update some packages
 
 
 Optional:
@@ -30,6 +31,7 @@ The Big Things before ts+react rewrite:
 - [ ] Rewrite console logger module to be proxied to node:console
 - [ ] Move verbose to be part of the console (after the functional-ish change)
 - [ ] Remove the GlobalData from a bunch of files which include it just because of verbosity
+- [ ] Upgrade chalk, drop the chalk.keyword thing
 
 ```js
 console.log('aaa', {àa:true});

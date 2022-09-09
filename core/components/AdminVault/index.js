@@ -474,7 +474,8 @@ export default class AdminVault {
         };
 
         try {
-            raw = await fse.readFile(this.adminsFile, 'utf8');
+            raw = await fsp.readFile(this.adminsFile, 'utf8');
+            this.adminsFileHash = createHash('sha1').update(raw).digest('hex');
             if (raw === this.lastAdminFile) {
                 if (verbose) log('Admin file didn\'t change, skipping.');
                 return;
