@@ -1,13 +1,13 @@
-name: Create Tagged Release
+name: Create Tagged Pre-Release
 
 on:
   push:
     tags:
-      - v*
+      - "v[0-9]+.[0-9]+.[0-9]+-**"
 
 jobs:
   build:
-    name: "Build Changelog & Release"
+    name: "Build Changelog & Pre-Release"
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -30,16 +30,16 @@ jobs:
       - name: Download all modules
         run: npm ci
 
-      - name: Build project
-        run: npm run build
+      - name: Build Pre-Release project
+        run: TX_PRERELEASE_BUILD=true npm run build
 
       - name: Compress build output with zip
         run: |
           cd dist && zip -r ../monitor.zip .
 
-      - name: Create and Upload Release
+      - name: Create and Upload Pre-Release
         uses: "marvinpinto/action-automatic-releases@v1.2.1"
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: false
+          prerelease: true
           files: monitor.zip

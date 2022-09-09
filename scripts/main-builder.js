@@ -11,6 +11,18 @@ const txLicenseBanner = licenseBanner();
 //FIXME: probably better to use .env with deploypath, sv_licensekey, etc
 import config from '../.deploy.config.js';
 
+/**
+ * Gets the pre-release expiration const to be defined by esbuild.
+ * @returns false | timestamp
+ */
+const getPreReleaseExpiration = () => {
+    if (process?.env?.TX_PRERELEASE_BUILD === 'true') {
+        return new Date().setUTCHours(24 * config.preReleaseExpirationDays, 0, 0, 0);
+    } else {
+        return false;
+    }
+};
+
 
 /**
  * Sync the files from local path to target path.
@@ -147,6 +159,9 @@ const runDevTask = () => {
         platform: 'node',
         target: 'node16',
         charset: 'utf8',
+        define: {
+            TX_PRERELEASE_BUILD_EXPIRATION: getPreReleaseExpiration(),
+        },
         //no minify, no banner
         watch: {
             onRebuild(error, result) {
@@ -188,6 +203,9 @@ const runPublishTask = () => {
             target: 'node16',
             minifyWhitespace: true,
             charset: 'utf8',
+            define: {
+                TX_PRERELEASE_BUILD_EXPIRATION: getPreReleaseExpiration(),
+            },
             banner: {
                 js: txLicenseBanner,
             },

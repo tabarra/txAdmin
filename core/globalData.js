@@ -49,7 +49,6 @@ if (osTypeVar == 'Windows_NT') {
     logDie(`OS type not supported: ${osTypeVar}`);
 }
 
-
 //Get resource name
 const resourceName = GetCurrentResourceName();
 
@@ -68,7 +67,6 @@ if (fxServerVersion === 9999) {
 } else if (fxServerVersion < minFXServerVersion) {
     logDie(`This version of FXServer is too outdated and NOT compatible with txAdmin, please update to artifact/build ${minFXServerVersion} or newer!`);
 }
-
 
 //Getting txAdmin version
 const txAdminVersion = GetResourceMetadata(resourceName, 'version');

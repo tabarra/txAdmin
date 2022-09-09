@@ -1,6 +1,7 @@
 export default {
     fxserverPath: 'E:\\FiveM\\BUILDS\\5848\\fxserver.exe',
     debouncerInterval: 250,
+    preReleaseExpirationDays: 21,
     txAdminArgs: [
         '+set', 'txAdminDevMode', 'true',
         // '+set', 'txAdminVerbose', 'true',

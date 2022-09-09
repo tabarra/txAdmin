@@ -1,6 +1,7 @@
 import TxAdmin from './txAdmin';
 import logger from '@core/extras/console';
 import { txEnv } from './globalData.js';
+import checkPreRelease from '@core/extras/checkPreRelease.js';
 const { dir, log, logOk, logWarn, logError, setTTYTitle } = logger();
 
 
@@ -16,10 +17,8 @@ if (!serverProfile.length) {
 }
 
 setTTYTitle(txEnv.txAdminVersion, serverProfile);
+checkPreRelease();
 new TxAdmin(serverProfile);
-// (async () => {
-//     const { default: TxAdmin } = await import('./txAdmin');
-// })();
 
 
 /**
