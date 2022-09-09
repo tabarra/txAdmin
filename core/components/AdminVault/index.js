@@ -1,10 +1,12 @@
 const modulename = 'AdminVault';
 import fse from 'fs-extra';
-import { cloneDeep }  from 'lodash-es';
+import fsp from 'node:fs/promises';
+import { cloneDeep } from 'lodash-es';
 
 import logger from '@core/extras/console.js';
 import { convars, txEnv, verbose } from '@core/globalData.js';
 import CitizenFXProvider from './providers/CitizenFX.js';
+import { createHash } from 'node:crypto';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
@@ -26,6 +28,7 @@ const migrateProviderIdentifiers = (providerName, providerData) => {
 export default class AdminVault {
     constructor() {
         this.adminsFile = `${txEnv.dataPath}/admins.json`;
+        this.adminsFileHash = null;
         this.admins = null;
         this.refreshRoutine = null;
         this.lastAdminFile = '';
@@ -91,7 +94,7 @@ export default class AdminVault {
                 this.createAdminsFile(convars.defaultMasterAccount.name, false, false, convars.defaultMasterAccount.password_hash, false);
             }
         } else {
-            this.refreshAdmins(true);
+            this.loadAdminsFile();
             this.setupRefreshRoutine();
         }
     }
@@ -103,7 +106,7 @@ export default class AdminVault {
      */
     setupRefreshRoutine() {
         this.refreshRoutine = setInterval(() => {
-            this.refreshAdmins();
+            this.checkAdminsFile();
         }, this.hardConfigs.refreshInterval);
     }
 
@@ -143,8 +146,9 @@ export default class AdminVault {
 
         //Saving admin file
         try {
-            const json = JSON.stringify(this.admins, null, 2);
-            fse.writeFileSync(this.adminsFile, json, {encoding: 'utf8', flag: 'wx'});
+            const jsonData = JSON.stringify(this.admins);
+            this.adminsFileHash = createHash('sha1').update(jsonData).digest('hex');
+            fse.writeFileSync(this.adminsFile, jsonData, { encoding: 'utf8', flag: 'wx' });
             this.setupRefreshRoutine();
             return true;
         } catch (error) {
@@ -236,6 +240,46 @@ export default class AdminVault {
 
     //================================================================
     /**
+     * Writes to storage the admins file
+     */
+    async writeAdminsFile() {
+        const jsonData = JSON.stringify(this.admins, null, 2);
+        this.adminsFileHash = createHash('sha1').update(jsonData).digest('hex');
+        await fsp.writeFile(this.adminsFile, jsonData, 'utf8');
+        return true;
+    }
+
+
+    //================================================================
+    /**
+     * Writes to storage the admins file
+     */
+    async checkAdminsFile() {
+        const restore = async () => {
+            try {
+                await this.writeAdminsFile();
+                logOk('Restored admins.json file.');
+            } catch (error) {
+                logError(`Failed to restore admins.json file: ${error.message}`);
+                if (verbose) dir(error);
+            }
+        }
+        try {
+            const jsonData = await fse.readFile(this.adminsFile, 'utf8');
+            const inboundHash = createHash('sha1').update(jsonData).digest('hex');
+            if (this.adminsFileHash !== inboundHash) {
+                logWarn('The admins.json file was modified or deleted by an external source, txAdmin will try to restore it.');
+                restore();
+            }
+        } catch (error) {
+            logError(`Cannot check admins file integrity: ${error.message}`);
+            restore();
+        }
+    }
+
+
+    //================================================================
+    /**
      * Add a new admin to the admins file
      * NOTE: I'm fully aware this coud be optimized. Leaving this way to improve readability and error verbosity
      * @param {string} name
@@ -282,13 +326,11 @@ export default class AdminVault {
 
         //Saving admin file
         this.admins.push(admin);
-        this.refreshOnlineAdmins().catch((e) => {});
+        this.refreshOnlineAdmins().catch((e) => { });
         try {
-            await fse.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
-            return true;
+            return await this.writeAdminsFile();
         } catch (error) {
-            if (verbose) logError(error.message);
-            throw new Error(`Failed to save '${this.adminsFile}'`);
+            throw new Error(`Failed to save admins.json with error: ${error.message}`);
         }
     }
 
@@ -342,13 +384,12 @@ export default class AdminVault {
         if (typeof permissions !== 'undefined') this.admins[adminIndex].permissions = permissions;
 
         //Saving admin file
-        this.refreshOnlineAdmins().catch((e) => {});
+        this.refreshOnlineAdmins().catch((e) => { });
         try {
-            await fse.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
+            await this.writeAdminsFile();
             return (password !== null) ? this.admins[adminIndex].password_hash : true;
         } catch (error) {
-            if (verbose) logError(error.message);
-            throw new Error(`Failed to save '${this.adminsFile}'`);
+            throw new Error(`Failed to save admins.json with error: ${error.message}`);
         }
     }
 
@@ -377,12 +418,11 @@ export default class AdminVault {
         this.admins[adminIndex].providers[provider].data = providerData;
 
         //Saving admin file
-        this.refreshOnlineAdmins().catch((e) => {});
+        this.refreshOnlineAdmins().catch((e) => { });
         try {
-            await fse.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
+            return await this.writeAdminsFile();
         } catch (error) {
-            if (verbose) logError(error.message);
-            throw new Error(`Failed to save '${this.adminsFile}'`);
+            throw new Error(`Failed to save admins.json with error: ${error.message}`);
         }
     }
 
@@ -409,32 +449,28 @@ export default class AdminVault {
         if (!found) throw new Error('Admin not found');
 
         //Saving admin file
-        this.refreshOnlineAdmins().catch((e) => {});
+        this.refreshOnlineAdmins().catch((e) => { });
         try {
-            await fse.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
-            return true;
+            return await this.writeAdminsFile();
         } catch (error) {
-            if (verbose) logError(error.message);
-            throw new Error(`Failed to save '${this.adminsFile}'`);
+            throw new Error(`Failed to save admins.json with error: ${error.message}`);
         }
     }
 
     //================================================================
     /**
-     * Refreshes the admins list
+     * Loads the admins.json file into the admins list
      * NOTE: The verbosity here is driving me insane.
      *       But still seems not to be enough for people that don't read the README.
      */
-    async refreshAdmins(isFirstTime = false) {
+    async loadAdminsFile() {
         let raw = null;
         let jsonData = null;
         let migrated = false;
 
         const callError = (x) => {
             logError(`Unable to load admins. (${x}, please read the documentation)`);
-            if (isFirstTime) process.exit();
-            this.admins = [];
-            return false;
+            process.exit(1);
         };
 
         try {
@@ -492,10 +528,10 @@ export default class AdminVault {
         }
 
         this.admins = jsonData;
-        this.refreshOnlineAdmins().catch((e) => {});
+        this.refreshOnlineAdmins().catch((e) => { });
         if (migrated) {
             try {
-                await fse.writeFile(this.adminsFile, JSON.stringify(this.admins, null, 2), 'utf8');
+                await this.writeAdminsFile();
                 logOk('The admins.json file was migrated to a new version.');
             } catch (error) {
                 logError(`Failed to migrate admins.json with error: ${error.message}`);

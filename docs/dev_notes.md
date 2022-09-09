@@ -5,7 +5,7 @@ v4.18.0:
 - [x] rewrite the GET /status endpoint (close PR #440, Issue #405)
 - [x] change title+favicon handling in UI status updates (close PR #440, Issue #405)
 - [x] fix HealthMonitor resource boot time limit
-- [ ] acquire file lock on admins.json as well as ALL TXADMIN FILES
+- [x] prevent external modifications of admins.json
 
 
 Optional:
@@ -17,6 +17,13 @@ Optional:
 - [ ] playerlist remove rtl characters
 - [ ] create beta release action
 - [ ] set nui/vite.config.ts > target > chrome103
+
+The Big Things before ts+react rewrite:
+- in-core playerlist state tracking
+- in-core resource state tracking
+- new proxy console util
+- new config (prepared for multiserver)
+- multiserver tx instance (backend only)
 
 
 ### Console Rewrite
@@ -292,7 +299,6 @@ To check of admin perm, just do `IsPlayerAceAllowed(src, 'txadmin.xxxxxx')`
 
 
 ### recipe engine todo:
-- checksum for downloaded files
 - remove_path accept array?
 - every X download_github wait some time - maybe check if ref or not, to be smarter
 - https://github.com/isomorphic-git/isomorphic-git
