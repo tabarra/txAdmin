@@ -1,5 +1,5 @@
 const modulename = 'DiscordBot';
-import Discord from '@citizenfx/discord.js'
+import Discord, { Intents } from '@citizenfx/discord.js'
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData.js';
 import commands from './commands';
@@ -96,8 +96,13 @@ export default class DiscordBot {
         }
 
         //Setup client
+        const clientIntents = new Intents([
+            Discord.Intents.FLAGS.GUILDS,
+            Discord.Intents.FLAGS.GUILD_MESSAGES,
+        ]);
+        clientIntents.add(15); //equivalent to MESSAGE_CONTENT, but our client is outdated.
         this.client = new Discord.Client({
-            intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES],
+            intents: clientIntents,
             autoReconnect: true,
         });
 

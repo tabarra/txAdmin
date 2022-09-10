@@ -7,13 +7,10 @@ v4.18.0:
 - [x] fix HealthMonitor resource boot time limit
 - [x] prevent external modifications of admins.json
 - [x] update some packages
-
-somehow backup the stashes
-add newDatabase to the docs folder (don't i have it anywhere else?!)
-re-clone folder
-merge dev into master, try to release rc again
-pagar contas
-check discord intent
+- [x] create beta release action
+- [x] temp disable process info
+- [x] fix perf chart labels (closes #661)
+- [x] fix discord message intent
 
 Optional:
 - [ ] fix cfx.re login match by admin id
@@ -22,7 +19,6 @@ Optional:
 - [ ] stats: add recipe name + if ptero + random collisions + how many scheduled restart times + drop zap/discord as login methods
 - [ ] stats: jwe
 - [ ] playerlist remove rtl characters
-- [ ] create beta release action
 - [ ] set nui/vite.config.ts > target > chrome103
 
 The Big Things before ts+react rewrite:
