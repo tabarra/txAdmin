@@ -159,10 +159,19 @@
                 "dialog_error": "Invalid radius input. Try again."
             },
             "player_ids": {
-                "title": "Toggle Player IDs",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
-                "alert_show": "Showing nearby player NetIDs.",
-                "alert_hide": "Hiding nearby player NetIDs."
+                "title": "Players IDs",
+                "above_head": {
+                    "name": "Over Head IDs",
+                    "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                    "alert_show": "Showing nearby player NetIDs.",
+                    "alert_hide": "Hiding nearby player NetIDs."
+                },
+                "map_blips": {
+                    "name": "Blips on map",
+                    "label": "Toggle players blips on map as well as their NetIDs.",
+                    "alert_show": "Showing players blips on map.",
+                    "alert_hide": "Hiding players blips on map."
+                }
             }
         },
         "page_players": {

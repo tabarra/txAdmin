@@ -93,6 +93,7 @@ CreateThread(function()
     TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:endSpectate')
     TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:openPlayersPage')
     TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:togglePlayerIDs')
+    TriggerEvent('chat:removeSuggestion', '/txAdmin:menu:togglePlayerMapBlips')
 
     --Convars
     TriggerEvent('chat:removeSuggestion', '/txAdmin-version')

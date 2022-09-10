@@ -104,7 +104,7 @@
                     "label": "Kopeerige praegused maailma koordinaadid"
                 }
             },
-            "vehicle":{
+            "vehicle": {
                 "title": "Masinad",
                 "onesync_error": "See suvand nõuab, et OneSync oleks serveri olemi haldamiseks sisse lülitatud",
                 "not_in_veh_error": "Te ei ole praegu sõidukis!",
@@ -160,9 +160,18 @@
             },
             "player_ids": {
                 "title": "Mängija ID sisse- ja väljalülitamine",
-                "label": "Lülitage mängija ID-de (ja muu teabe) kuvamine kõigi läheduses asuvate mängijate pea kohal",
-                "alert_show": "Kuvatakse lähedalasuvate mängijate NetID-d.",
-                "alert_hide": "Lähedal asuva mängija NetID-de peitmine."
+                "above_head": {
+                    "name": "Over Head IDs",
+                    "label": "Lülitage mängija ID-de (ja muu teabe) kuvamine kõigi läheduses asuvate mängijate pea kohal",
+                    "alert_show": "Kuvatakse lähedalasuvate mängijate NetID-d.",
+                    "alert_hide": "Lähedal asuva mängija NetID-de peitmine."
+                },
+                "map_blips": {
+                    "name": "Blips on map",
+                    "label": "Toggle players blips on map as well as their NetIDs.",
+                    "alert_show": "Showing players blips on map.",
+                    "alert_hide": "Hiding players blips on map."
+                }
             }
         },
         "page_players": {

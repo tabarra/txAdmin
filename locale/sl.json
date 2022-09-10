@@ -104,7 +104,7 @@
                     "label": "Kopiraj trenutne koordinate v odložišče"
                 }
             },
-            "vehicle":{
+            "vehicle": {
                 "title": "Vozila",
                 "onesync_error": "Ta možnost zahteva, da je OneSync vklopljen za ravnanje s »entity handling«",
                 "not_in_veh_error": "Trenutno nisi v vozilu!",
@@ -160,9 +160,18 @@
             },
             "player_ids": {
                 "title": "Prižgi IDje igralcev",
-                "label": "Prižgani IDji igralcev (in ostale informacije) nad glavo vseh bližnjih igralcev",
-                "alert_show": "IDji bližnjih igralcev vklopljeni.",
-                "alert_hide": "IDji bližnjih igralcev izklopljeni."
+                "above_head": {
+                    "name": "Over Head IDs",
+                    "label": "Prižgani IDji igralcev (in ostale informacije) nad glavo vseh bližnjih igralcev",
+                    "alert_show": "IDji bližnjih igralcev vklopljeni.",
+                    "alert_hide": "IDji bližnjih igralcev izklopljeni."
+                },
+                "map_blips": {
+                    "name": "Blips on map",
+                    "label": "Toggle players blips on map as well as their NetIDs.",
+                    "alert_show": "Showing players blips on map.",
+                    "alert_hide": "Hiding players blips on map."
+                }
             }
         },
         "page_players": {

@@ -189,6 +189,68 @@ RegisterNetEvent('txAdmin:menu:showPlayerIDs', function(enabled)
   end
 end)
 
+---Stores data needed for blips
+---@type { [serverID]: {coords: {x:number,y:number,z:number,h:number}, name: string, blipsEnabled: boolean, foundLastCheck: boolean} }
+local playerBlipsData = {}
+local BLIPS_REFRESH_TIMEOUT = 2000
+local intervalYieldLimit = 50
+
+RegisterNetEvent('txAdmin:menu:showPlayerMapBlips', function(enabled)
+  local src = source
+  local allow = PlayerHasTxPermission(src, 'menu.viewids')
+  if allow then
+    if type(playerBlipsData[tostring(src)]) == 'table' then
+      playerBlipsData[tostring(src)].blipsEnabled = not playerBlipsData[tostring(src)].blipsEnabled
+    else
+      playerBlipsData[tostring(src)] = {
+        blipsEnabled = true
+      }
+    end
+    TriggerEvent("txaLogger:menuEvent", src, "showPlayerMapBlips", allow, playerBlipsData[tostring(src)].blipsEnabled)
+    TriggerClientEvent('txAdmin:menu:refreshPlayerBlips', src, {}, playerBlipsData[tostring(src)].blipsEnabled)
+  end
+end)
+
+Citizen.CreateThread(function()
+  while true do
+    Citizen.Wait(BLIPS_REFRESH_TIMEOUT)
+    for yieldCounter, serverID in ipairs(GetPlayers()) do
+      local ping = GetPlayerPing(serverID)
+      if serverID and ping ~= nil and type(ping) == 'number' and ping > 1 then
+        local ped = GetPlayerPed(serverID)
+        local coords = GetEntityCoords(ped)
+        local h = GetEntityHeading(ped)
+        if type(playerBlipsData[tostring(serverID)]) ~= 'table' then
+          playerBlipsData[tostring(serverID)] = {}
+        end
+        playerBlipsData[tostring(serverID)].coords = {
+          x = math.floor(coords.x),
+          y = math.floor(coords.y),
+          z = math.floor(coords.z),
+          h = h
+        }
+        playerBlipsData[tostring(serverID)].name = GetPlayerName(serverID)
+        playerBlipsData[tostring(serverID)].foundLastCheck = true
+        if playerBlipsData[tostring(serverID)].blipsEnabled then
+          TriggerClientEvent('txAdmin:menu:refreshPlayerBlips', serverID, playerBlipsData)
+        end
+      end
+      -- Yield to prevent hitches
+      if yieldCounter % intervalYieldLimit == 0 then
+        Wait(0)
+      end
+    end
+    
+    for playerID, playerData in pairs(playerBlipsData) do
+      if playerData.foundLastCheck == true then
+          playerData.foundLastCheck = false
+      else
+        playerBlipsData[playerID] = nil
+      end
+    end
+  end
+end)
+
 ---@param x number|nil
 ---@param y number|nil
 ---@param z number|nil

@@ -160,9 +160,18 @@
             },
             "player_ids": {
                 "title": "Näytä pelaajien ID:t",
-                "label": "Näytä lähellä olevien pelaajien ID:t",
-                "alert_show": "Näytetään lähellä olevien pelaajien ID:t.",
-                "alert_hide": "Piilotetaan lähellä olevien pelaajien ID:t."
+                "above_head": {
+                    "name": "Over Head IDs",
+                    "label": "Näytä lähellä olevien pelaajien ID:t",
+                    "alert_show": "Näytetään lähellä olevien pelaajien ID:t.",
+                    "alert_hide": "Piilotetaan lähellä olevien pelaajien ID:t."
+                },
+                "map_blips": {
+                    "name": "Blips on map",
+                    "label": "Toggle players blips on map as well as their NetIDs.",
+                    "alert_show": "Showing players blips on map.",
+                    "alert_hide": "Hiding players blips on map."
+                }
             }
         },
         "page_players": {

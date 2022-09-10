@@ -160,9 +160,18 @@
             },
             "player_ids": {
                 "title": "Zapnout ID hráčů",
-                "label": "Zapnout ukazování ID hráčů (a další info) nad hlavou hráčů poblíž",
-                "alert_show": "Ukazuji ID hráčů poblíž.",
-                "alert_hide": "Skrývám ID hráčů poblíž."
+                "above_head": {
+                    "name": "Over Head IDs",
+                    "label": "Zapnout ukazování ID hráčů (a další info) nad hlavou hráčů poblíž",
+                    "alert_show": "Ukazuji ID hráčů poblíž.",
+                    "alert_hide": "Skrývám ID hráčů poblíž."
+                },
+                "map_blips": {
+                    "name": "Blips on map",
+                    "label": "Toggle players blips on map as well as their NetIDs.",
+                    "alert_show": "Showing players blips on map.",
+                    "alert_hide": "Hiding players blips on map."
+                }
             }
         },
         "page_players": {

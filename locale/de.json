@@ -160,9 +160,18 @@
             },
             "player_ids": {
                 "title": "Spieler IDs (NameTags)",
-                "label": "Schalte die Spieler-IDs (und weitere Informationen) über den Köpfen der Spieler ein oder aus.",
-                "alert_show": "Spieler IDs (NameTags) aktiviert.",
-                "alert_hide": "Spieler IDs (NameTags) deaktiviert."
+                "above_head": {
+                    "name": "Over Head IDs",
+                    "label": "Schalte die Spieler-IDs (und weitere Informationen) über den Köpfen der Spieler ein oder aus.",
+                    "alert_show": "Spieler IDs (NameTags) aktiviert.",
+                    "alert_hide": "Spieler IDs (NameTags) deaktiviert."
+                },
+                "map_blips": {
+                    "name": "Blips on map",
+                    "label": "Toggle players blips on map as well as their NetIDs.",
+                    "alert_show": "Showing players blips on map.",
+                    "alert_hide": "Hiding players blips on map."
+                }
             }
         },
         "page_players": {

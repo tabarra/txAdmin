@@ -160,9 +160,18 @@
             },
             "player_ids": {
                 "title": "สลับไอดีผู้เล่น",
-                "label": "สลับการแสดงไอดีผู้เล่น (และข้อมูลอื่นๆ) บริเวณส่วนเหนือหัวของผู้เล่นในระยะใกล้เคียงทั้งหมด",
-                "alert_show": "กำลังแสดงไอดีของผู้เล่นใกล้เคียง",
-                "alert_hide": "กำลังซ่อนไอดีของผู้เล่นใกล้เคียง"
+                "above_head": {
+                    "name": "Over Head IDs",
+                    "label": "สลับการแสดงไอดีผู้เล่น (และข้อมูลอื่นๆ) บริเวณส่วนเหนือหัวของผู้เล่นในระยะใกล้เคียงทั้งหมด",
+                    "alert_show": "กำลังแสดงไอดีของผู้เล่นใกล้เคียง",
+                    "alert_hide": "กำลังซ่อนไอดีของผู้เล่นใกล้เคียง"
+                },
+                "map_blips": {
+                    "name": "Blips on map",
+                    "label": "Toggle players blips on map as well as their NetIDs.",
+                    "alert_show": "Showing players blips on map.",
+                    "alert_hide": "Hiding players blips on map."
+                }
             }
         },
         "page_players": {

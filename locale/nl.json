@@ -160,9 +160,18 @@
             },
             "player_ids": {
                 "title": "Schakel Speler IDs in/uit",
-                "label": "Schakel het tonen van Speler IDs (en andere info) boven de hoofden van alle spelers in jouw buurt in.",
-                "alert_show": "Toon de NetIDs van spelers in jouw buurt.",
-                "alert_hide": "Verberg NetIDs van spelers in jouw buurt."
+                "above_head": {
+                    "name": "Over Head IDs",
+                    "label": "Schakel het tonen van Speler IDs (en andere info) boven de hoofden van alle spelers in jouw buurt in.",
+                    "alert_show": "Toon de NetIDs van spelers in jouw buurt.",
+                    "alert_hide": "Verberg NetIDs van spelers in jouw buurt."
+                },
+                "map_blips": {
+                    "name": "Blips on map",
+                    "label": "Toggle players blips on map as well as their NetIDs.",
+                    "alert_show": "Showing players blips on map.",
+                    "alert_hide": "Hiding players blips on map."
+                }
             }
         },
         "page_players": {

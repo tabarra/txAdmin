@@ -104,7 +104,7 @@
                     "label": "Копирай текущите координати."
                 }
             },
-            "vehicle":{
+            "vehicle": {
                 "title": "Автомобил",
                 "onesync_error": "Тази опция изисква 'OneSync' да е включен.",
                 "not_in_veh_error": "Не си в автомобил!",
@@ -160,9 +160,18 @@
             },
             "player_ids": {
                 "title": "Покзване на ID-та",
-                "label": "Показване на ID-та на играчи (и други неща) над главите на играчите.",
-                "alert_show": "Покзване на ID-та в близост.",
-                "alert_hide": "Скриване на ID-та в близост."
+                "above_head": {
+                    "name": "Over Head IDs",
+                    "label": "Показване на ID-та на играчи (и други неща) над главите на играчите.",
+                    "alert_show": "Покзване на ID-та в близост.",
+                    "alert_hide": "Скриване на ID-та в близост."
+                },
+                "map_blips": {
+                    "name": "Blips on map",
+                    "label": "Toggle players blips on map as well as their NetIDs.",
+                    "alert_show": "Showing players blips on map.",
+                    "alert_hide": "Hiding players blips on map."
+                }
             }
         },
         "page_players": {

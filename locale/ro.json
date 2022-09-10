@@ -160,9 +160,18 @@
             },
             "player_ids": {
                 "title": "Comută ID-urile jucătorilor",
-                "label": "Comutarea afișării ID-urilor jucătorilor deasupra capului tuturor jucătorilor din apropiere",
-                "alert_show": "Afișarea NetID-urilor jucătorilor din apropiere.",
-                "alert_hide": "Ascunderea NetID-urilor jucătorilor din apropiere."
+                "above_head": {
+                    "name": "Over Head IDs",
+                    "label": "Comutarea afișării ID-urilor jucătorilor deasupra capului tuturor jucătorilor din apropiere",
+                    "alert_show": "Afișarea NetID-urilor jucătorilor din apropiere.",
+                    "alert_hide": "Ascunderea NetID-urilor jucătorilor din apropiere."
+                },
+                "map_blips": {
+                    "name": "Blips on map",
+                    "label": "Toggle players blips on map as well as their NetIDs.",
+                    "alert_show": "Showing players blips on map.",
+                    "alert_hide": "Hiding players blips on map."
+                }
             }
         },
         "page_players": {

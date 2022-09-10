@@ -160,9 +160,18 @@
             },
             "player_ids": {
                 "title": "Toggle Player IDs",
-                "label": "Εναλλαγή εμφάνισης αναγνωριστικών παικτών (και άλλων πληροφοριών) πάνω από το κεφάλι όλων των κοντινών παικτών",
-                "alert_show": "Εμφάνιση NetIDs των κοντινών παικτών.",
-                "alert_hide": "Εξαφάνηση NetIDs των κοντινών παικτών."
+                "above_head": {
+                    "name": "Over Head IDs",
+                    "label": "Εναλλαγή εμφάνισης αναγνωριστικών παικτών (και άλλων πληροφοριών) πάνω από το κεφάλι όλων των κοντινών παικτών",
+                    "alert_show": "Εμφάνιση NetIDs των κοντινών παικτών.",
+                    "alert_hide": "Εξαφάνηση NetIDs των κοντινών παικτών."
+                },
+                "map_blips": {
+                    "name": "Blips on map",
+                    "label": "Toggle players blips on map as well as their NetIDs.",
+                    "alert_show": "Showing players blips on map.",
+                    "alert_hide": "Hiding players blips on map."
+                }
             }
         },
         "page_players": {

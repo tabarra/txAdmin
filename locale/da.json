@@ -160,9 +160,18 @@
             },
             "player_ids": {
                 "title": "Vælg spiller-id'er",
-                "label": "Skift visning af spiller-id'er (og anden info) over hovedet på alle nærliggende spillere",
-                "alert_show": "Viser nærliggende spillerens NetID'er.",
-                "alert_hide": "Skjuler afspillerens NetID'er i nærheden."
+                "above_head": {
+                    "name": "Over Head IDs",
+                    "label": "Skift visning af spiller-id'er (og anden info) over hovedet på alle nærliggende spillere",
+                    "alert_show": "Viser nærliggende spillerens NetID'er.",
+                    "alert_hide": "Skjuler afspillerens NetID'er i nærheden."
+                },
+                "map_blips": {
+                    "name": "Blips on map",
+                    "label": "Toggle players blips on map as well as their NetIDs.",
+                    "alert_show": "Showing players blips on map.",
+                    "alert_hide": "Hiding players blips on map."
+                }
             }
         },
         "page_players": {

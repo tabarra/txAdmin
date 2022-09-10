@@ -206,6 +206,13 @@ AddEventHandler('txaLogger:menuEvent', function(source, event, allowed, data)
         else
             message = "turned show player IDs off"
         end
+    elseif event == 'showPlayerMapBlips' then
+        if type(data) ~= 'boolean' then return end
+        if data then
+            message = "turned show player map blips on"
+        else
+            message = "turned show player map blips off"
+        end
 
     --In case of unknown event
     else

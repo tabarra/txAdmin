@@ -160,9 +160,18 @@
             },
             "player_ids": {
                 "title": "Altenar IDs de jugadores",
-                "label": "Alternar el mostrar los IDs de jugadores (y otra información) sobre la cabeza de los jugadores cercanos",
-                "alert_show": "Enseñado NetIDs de jugadores cercanos.",
-                "alert_hide": "Ocultando NetIDs de jugadores cercanos."
+                "above_head": {
+                    "name": "Over Head IDs",
+                    "label": "Alternar el mostrar los IDs de jugadores (y otra información) sobre la cabeza de los jugadores cercanos",
+                    "alert_show": "Enseñado NetIDs de jugadores cercanos.",
+                    "alert_hide": "Ocultando NetIDs de jugadores cercanos."
+                },
+                "map_blips": {
+                    "name": "Blips on map",
+                    "label": "Toggle players blips on map as well as their NetIDs.",
+                    "alert_show": "Showing players blips on map.",
+                    "alert_hide": "Hiding players blips on map."
+                }
             }
         },
         "page_players": {

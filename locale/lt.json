@@ -160,9 +160,18 @@
             },
             "player_ids": {
                 "title": "Žaidėjų ID rodymas",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
-                "alert_show": "Žaidėjų NetID rodomi.",
-                "alert_hide": "Žaidėjų NetID paslėpti."
+                "above_head": {
+                    "name": "Over Head IDs",
+                    "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                    "alert_show": "Žaidėjų NetID rodomi.",
+                    "alert_hide": "Žaidėjų NetID paslėpti."
+                },
+                "map_blips": {
+                    "name": "Blips on map",
+                    "label": "Toggle players blips on map as well as their NetIDs.",
+                    "alert_show": "Showing players blips on map.",
+                    "alert_hide": "Hiding players blips on map."
+                }
             }
         },
         "page_players": {

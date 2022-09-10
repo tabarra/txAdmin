@@ -77,6 +77,7 @@ RegisterNetEvent('txcl:setAdmin', function(username, perms, rejectReason)
     RegisterKeyMapping('txAdmin:menu:openPlayersPage', 'Menu: Open Players page', 'KEYBOARD', '')
     RegisterKeyMapping('txAdmin:menu:noClipToggle', 'Menu: Toggle NoClip', 'keyboard', '')
     RegisterKeyMapping('txAdmin:menu:togglePlayerIDs', 'Menu: Toggle Player IDs', 'KEYBOARD', '')
+    RegisterKeyMapping('txAdmin:menu:togglePlayerMapBlips', 'Menu: Toggle Player Map Blips', 'KEYBOARD', '')
     RegisterKeyMapping('txAdmin:menu:endSpectate', 'Menu: Exit spectate mode', 'keyboard', 'BACK')
   else
     print("^3[AUTH] rejected (" .. tostring(rejectReason) ..")")
