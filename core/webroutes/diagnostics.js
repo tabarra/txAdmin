@@ -34,7 +34,7 @@ export default async function Diagnostics(ctx) {
         getHostData(),
         gettxAdminData(),
         getFXServerData(),
-        getProcessesData(),
+        // getProcessesData(), FIXME: pidusageTree is bugged
     ]);
 
     const timeElapsed = Date.now() - timeStart;
