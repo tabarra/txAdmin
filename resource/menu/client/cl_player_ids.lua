@@ -136,10 +136,10 @@ local function refreshPlayerBlips(blipsData)
         SetBlipColour(blip, 2)
         SetBlipFlashes(blip, false)
         SetBlipRotation(blip, math.ceil(v.coords.h))
-        ShowNumberOnBlip(blip, playerId)
+        ShowNumberOnBlip(blip, tonumber(playerId % 100)) -- If blip number is above 100 it won't show anything
         ShowHeadingIndicatorOnBlip(blip, true)
         BeginTextCommandSetBlipName('STRING')
-        AddTextComponentString(v.name)
+        AddTextComponentString(('%s [%s]'):format(v.name, playerId))
         EndTextCommandSetBlipName(blip)
       end
 end
