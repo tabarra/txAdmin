@@ -4,27 +4,27 @@
         "humanizer_language": "hu"
     },
     "restarter": {
-        "start_timeout": "sikertelen indítás a megadott idő intervallumon belül",
+        "start_timeout": "sikertelen indítás a megadott időintervallumon belül",
         "crash_detected": "összeomlás észlelve",
         "hang_detected": "lefagyás észlelve",
         "partial_hang_warn": "Részleges lefagyás miatt a szerver 1 perc múlva újraindul. Kérjük, lépj ki.",
         "partial_hang_warn_discord": "Részleges lefagyás miatt, a **%{servername}** 1 perc múlva újraindul.",
         "schedule_reason": "Ütemezett újraindítás %{time}",
-        "schedule_warn": "A szerver ütemezett újraindítás miatt, %{smart_count} percen belül újraindul. Kérjük, lépj ki!. |||| A szerver ütemezetten újra indul %{smart_count} perc múlva.",
+        "schedule_warn": "A szerver ütemezett újraindítás miatt, %{smart_count} percen belül újraindul. Kérjük, lépj ki!. |||| A szerver ütemezetten újraindul %{smart_count} perc múlva.",
         "schedule_warn_discord": "A(z) **%{servername}** ütemezetten újraindul %{smart_count} perc múlva. |||| **%{servername}** ütemezetten újraindul %{smart_count} perc múlva."
     },
     "ban_messages": {
-        "kick_temporary": "(%{author}) Ki lettél tiltva a szerverről. Indok: \"%{reason}\". Lejár: %{expiration}.",
-        "kick_permanent": "(%{author}) Véglegesen ki lettél tiltva a szerverről. Indok: \"%{reason}\".",
+        "kick_temporary": "(%{author}) által kitiltásra kerültél a szerverről. Indok: \"%{reason}\". Lejár: %{expiration}.",
+        "kick_permanent": "(%{author}) által véglegesen kitiltásra kerültél a szerverről. Indok: \"%{reason}\".",
         "reject_temporary": "Ki lettél tiltva a szerverről.\nLejár: %{expiration}.\nBan ID: %{id}.\nIndok: %{reason}.\nKitiltó admin: %{author}.",
         "reject_permanent": "Véglegesen ki lettél tiltva a szerverről..\nBan ID: %{id}.\nIndok: %{reason}.\nKitiltó admin: %{author}."
     },
     "server_actions": {
-        "restarting": "Szerver újraindítása: (%{reason}).",
+        "restarting": "Szerver újraindul: (%{reason}).",
         "restarting_discord": "**%{servername}** újraindul (%{reason}).",
         "stopping": "A szerver leáll (%{reason}).",
         "stopping_discord": "**%{servername}**-t leállítják (%{reason}).",
-        "spawning_discord": "**%{servername}** indul."
+        "spawning_discord": "**%{servername}** elindul."
     },
     "discord": {
         "status_online": "**%{servername}** jelenleg **Elérhető**!",
@@ -33,11 +33,11 @@
     "nui_warning": {
         "title": "FIGYELMEZTETÉS",
         "warned_by": "Figyelmeztetett:",
-        "instruction": "Tartsd lenyomva a [SPACE]-t 10 másodpercig, hogy eltüntesd az üzenetet."
+        "instruction": "Tartsd lenyomva a [SZÓKÖZ]-t 10 másodpercig, hogy eltüntesd az üzenetet."
     },
     "nui_menu": {
         "misc": {
-            "help_message": "A txAdmin rendelkezik játékon belüli menüvel!\nGyorsgomb [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] Próbáld ki!",
+            "help_message": "A txAdmin játékon belüli menüvel rendelkezik!\nGyorsgomb [Game Settings > Key Bindings > FiveM > Open the txAdmin Menu] Próbáld ki!",
             "menu_not_allowed": "Az azonosítód nem egyezik a txAdminban található admin azonosítókkal.\nHa regisztrálva vagy txAdminban, bizonyosodj meg róla hogy el van mentve az Admin Managerben.",
             "no_perms": "Ehhez nincs engedélyed.",
             "unknown_error": "Ismeretlen hiba lépett fel.",
@@ -47,7 +47,7 @@
         },
         "frozen": {
             "froze_player": "Lefagyasztottad a játékost!",
-            "unfroze_player": "Feloldottad a fagyasztást a játékoson!",
+            "unfroze_player": "Kifagyasztottad a játékost!",
             "was_frozen": "Lefagyasztott egy szerveradmin!"
         },
         "common": {
@@ -59,7 +59,7 @@
         "page_main": {
             "tooltips": {
                 "tooltip_1": "%{key} a lapozáshoz és [NYILAK] a menüben való navigáláshoz",
-                "tooltip_2": "Néhány menü rendelkezik al-opcióval  melyek a bal és jobb nyíllal választható"
+                "tooltip_2": "Néhány menü rendelkezik al-opcióval melyek a bal és jobb nyíllal választhatóak ki"
             },
             "player_mode": {
                 "title": "Játékos mód",
@@ -81,7 +81,7 @@
             },
             "teleport": {
                 "title": "Teleportálás",
-                "generic_success": "Átléptél egy féreglyukon!",
+                "generic_success": "Sikeresen elteleportáltál!",
                 "waypoint": {
                     "title": "Úticél",
                     "label": "Teleportálás az úticélhoz",
@@ -147,20 +147,20 @@
             "announcement": {
                 "title": "Felhívás küldése",
                 "label": "Felhívás küldése minden elérhető játékosnak.",
-                "dialog_desc": "Enter the message you want to broadcast to all players.",
+                "dialog_desc": "Írd be az összes játékosnak küldendő üzenetet..",
                 "dialog_placeholder": "Felhívás...",
                 "dialog_success": "Felhívás elküldve."
             },
             "clear_area": {
                 "title": "Terület visszaállítása",
-                "label": "Reset a specified world area to its default state",
+                "label": "Egy megadott terület alapértelmezett állapotba állítása",
                 "dialog_desc": "Állítsd be a sugarát annak a területnek ahol az entitásokat visszaállítanád (0-300). A szerver oldali entitások nem kerülnek visszaállításra",
                 "dialog_success": "Terület visszaállítása %{radius}m sugárban",
                 "dialog_error": "Érvénytelen sugár bevitel. Próbáld újra."
             },
             "player_ids": {
                 "title": "ID mód váltása",
-                "label": "Toggle showing player IDs (and other info) above the head of all nearby players",
+                "label": "A közeli játékosok azonosítóinak (és egyéb információinak) a játékosok feje fölött történő megjelenítésének bekapcsolása",
                 "alert_show": "Közeli játékosok ID-jének mutatása.",
                 "alert_hide": "Közeli játékosok ID-jének elrejtése."
             }
@@ -178,7 +178,7 @@
                 "id": "ID",
                 "joined_first": "Legkorábbi csatlakozás",
                 "joined_last": "Legkésőbbi csatlakozás",
-                "closest": "Legközelebbi",
+                "closest": "Legkorábbi",
                 "farthest": "Legtávolabbi"
             },
             "card": {
@@ -206,7 +206,7 @@
                         "dm": "Privát üzenet",
                         "warn": "Figyelmeztetés",
                         "kick": "Kirúgás",
-                        "set_admin": "Admin adás"
+                        "set_admin": "Beállítás adminnak"
                     },
                     "dm_dialog": {
                         "title": "Közvetlen üzenet",
@@ -283,7 +283,7 @@
                 "permanent": "Végleges",
                 "custom": "Egyedi",
                 "helper_text": "Kérlek válassz időtartamot",
-                "submit": "Apply ban"
+                "submit": "Megerősítés"
             }
         }
     }
