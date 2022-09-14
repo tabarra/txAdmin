@@ -255,16 +255,7 @@ async function handleMonitor(ctx) {
     };
 
     //Validating restart times
-    const scheduleTimes = parseSchedule(cfg.restarterSchedule, false);
-    const invalidRestartTimes = [];
-    const validRestartTimes = [];
-    scheduleTimes.forEach((time) => {
-        if (typeof time === 'string') {
-            invalidRestartTimes.push(`"${time}"`);
-        } else {
-            validRestartTimes.push(time.string);
-        }
-    });
+    const { valid: validRestartTimes, invalid: invalidRestartTimes } = parseSchedule(cfg.restarterSchedule, false);
     if (invalidRestartTimes.length) {
         let message = '<strong>The following entries were not recognized as valid 24h times:</strong><br>';
         message += invalidRestartTimes.join('<br>\n');
@@ -273,7 +264,7 @@ async function handleMonitor(ctx) {
 
     //Preparing & saving config
     const newConfig = globals.configVault.getScopedStructure('monitor');
-    newConfig.restarterSchedule = validRestartTimes;
+    newConfig.restarterSchedule = validRestartTimes.map(t => t.string);
     newConfig.disableChatWarnings = cfg.disableChatWarnings;
     newConfig.resourceStartingTolerance = cfg.resourceStartingTolerance;
     const saveStatus = globals.configVault.saveProfile('monitor', newConfig);

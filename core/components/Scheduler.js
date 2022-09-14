@@ -119,8 +119,8 @@ export default class Scheduler {
 
         //Check validity
         if (Array.isArray(this.config.restarterSchedule) && this.config.restarterSchedule.length) {
-            const parsed = parseSchedule(this.config.restarterSchedule);
-            const nextSettingRestart = getNextScheduled(parsed);
+            const { valid } = parseSchedule(this.config.restarterSchedule);
+            const nextSettingRestart = getNextScheduled(valid);
             if (nextSettingRestart.minuteFloorTs < minuteFloorTs) {
                 throw new Error(`You already have one restart scheduled before that at ${nextSettingRestart.string}.`);
             }
@@ -146,8 +146,8 @@ export default class Scheduler {
         if (this.nextTempSchedule) {
             nextRestart = this.nextTempSchedule;
         } else if (Array.isArray(this.config.restarterSchedule) && this.config.restarterSchedule.length) {
-            const parsed = parseSchedule(this.config.restarterSchedule);
-            nextRestart = getNextScheduled(parsed);
+            const { valid } = parseSchedule(this.config.restarterSchedule);
+            nextRestart = getNextScheduled(valid);
         } else {
             //nothing scheduled
             this.calculatedNextRestartMinuteFloorTs = false;
@@ -160,7 +160,7 @@ export default class Scheduler {
             if (verbose) log(`Skipping next scheduled restart`);
             return;
         }
-        
+
         //Calculating dist
         const thisMinuteTs = new Date().setSeconds(0, 0);
         const nextDistMs = nextRestart.minuteFloorTs - thisMinuteTs;

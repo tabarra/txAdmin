@@ -21,26 +21,31 @@ export const txAdminASCII = () => {
 
 /**
  * Extracts hours and minutes from an string containing times
- * @param {Array} schedule
+ * @param {Array} scheduleTimes
  * @param {Boolean} filter default true
+ * @return {Object} {valid, invalid}
  */
-export const parseSchedule = (schedule, filter = true) => {
-    const out = [];
-    for (const time of schedule) {
-        if (!time.length) return;
+export const parseSchedule = (scheduleTimes) => {
+    const valid = [];
+    const invalid = [];
+    for (const timeInput of scheduleTimes) {
+        if (typeof timeInput !== 'string') continue;
+        const timeTrim = timeInput.trim();
+        if (!timeTrim.length) continue;
+
         const hmRegex = /^$|^([01]?[0-9]|2[0-3]):([0-5][0-9])$/gm; //need to set it insde the loop
-        const m = hmRegex.exec(time.trim());
+        const m = hmRegex.exec(timeTrim);
         if (m === null) {
-            if (!filter) out.push(time);
+            invalid.push(timeTrim);
         } else {
-            out.push({
+            valid.push({
                 string: m[1].padStart(2, '0') + ':' + m[2].padStart(2, '0'),
                 hours: parseInt(m[1]),
                 minutes: parseInt(m[2]),
             });
         }
     }
-    return out;
+    return {valid, invalid};
 }
 
 
