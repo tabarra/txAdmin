@@ -68,15 +68,27 @@ export default async () => {
     try {
         const isOutdated = semver.lt(txEnv.txAdminVersion, apiResponse.latest_txadmin);
         if (isOutdated) {
-            logError('This version of txAdmin is outdated.');
-            logError('Please update as soon as possible.');
-            logError('For more information: https://discord.gg/uAmsGa2');
             const semverDiff = semver.diff(txEnv.txAdminVersion, apiResponse.latest_txadmin);
-            txOutput = {
-                semverDiff,
-                latest: apiResponse.latest_txadmin,
-                color: (semverDiff === 'patch') ? 'warning' : 'danger',
-            };
+            if (semverDiff === 'patch') {
+                logWarn('This version of txAdmin is outdated.');
+                logWarn('A patch (bug fix) update is available for txAdmin.');
+                logWarn('If you are experiencing any kind of issue, please update now.');
+                logWarn('For more information: https://discord.gg/uAmsGa2');
+                txOutput = {
+                    semverDiff,
+                    latest: apiResponse.latest_txadmin,
+                    color: 'secondary',
+                };
+            } else {
+                logError('This version of txAdmin is outdated.');
+                logError('Please update as soon as possible.');
+                logError('For more information: https://discord.gg/uAmsGa2');
+                txOutput = {
+                    semverDiff,
+                    latest: apiResponse.latest_txadmin,
+                    color: 'danger',
+                };
+            }
         }
     } catch (error) {
         logWarn('Error checking for txAdmin updates. Enable verbosity for more information.');

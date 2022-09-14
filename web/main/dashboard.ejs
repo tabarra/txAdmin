@@ -116,21 +116,29 @@
 <% if (txaOutdated) { %>
     <div class="row justify-content-md-center">
         <div class="col-md-6 text-center">
-            <div class="alert alert-<%= txaOutdated.color %> border-<%= txaOutdated.color %>" role="alert">
+            <div class="alert alert-<%= txaOutdated.color %>" role="alert">
                 <h5 style="margin-bottom: 0px;">
                     <svg class="alert-title-icon" width="22" height="22">
                         <use href="img/coreui_icons.svg#cil-cloud-download"></use>
                     </svg>
-                    This version of txAdmin is outdated.
+                    <% if (txaOutdated.semverDiff === 'patch') { %>
+                        A patch (bug fix) update is available for txAdmin.
+                    <% } else{ %> 
+                        This version of txAdmin is outdated.
+                    <% } %>
                 </h5>
-                txAdmin v<%= txaOutdated.latest %> has been released.
-                Please update now, it is <i>very</i> easy!
-                <div class="event-footer">
-                    Support Discord:
-                    <a href="https://discord.gg/uAmsGa2" target="_blank" >
-                        <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
-                    </a>
-                </div>
+                <% if (txaOutdated.semverDiff === 'patch') { %>
+                    If you are experiencing any kind of issue, please update now.
+                <% } else{ %> 
+                    Version <%= txaOutdated.latest %> has been released bringing new features, bug fixes and improvements. <br>
+                    <div class="event-footer">
+                        Please update now. Support Discord:
+                        <a href="https://discord.gg/uAmsGa2" target="_blank" >
+                            <img src="https://discordapp.com/api/guilds/577993482761928734/widget.png?style=shield"></img>
+                        </a>
+                    </div>
+                <% } %>
+                
             </div>
         </div>
     </div>
