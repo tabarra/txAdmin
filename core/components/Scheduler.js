@@ -113,6 +113,9 @@ export default class Scheduler {
         const thisMinuteTs = new Date().setSeconds(0, 0);
         const nextDate = new Date();
         let minuteFloorTs = nextDate.setHours(hours, minutes, 0, 0);
+        if (minuteFloorTs === thisMinuteTs) {
+            throw new Error(`Due to the 1 minute precision of the restart scheduler, you cannot schedule a restart in the same minute.`);
+        }
         if (minuteFloorTs < thisMinuteTs) {
             minuteFloorTs = nextDate.setHours(hours + 24, minutes, 0, 0);
         }
