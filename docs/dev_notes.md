@@ -1,16 +1,44 @@
 # TODO:
 v4.18.0:
-- [x] add option to skip next schedules restart
-- [x] add option to schedule a restart (single shot, non persistent)
-- [x] rewrite the GET /status endpoint (close PR #440, Issue #405)
-- [x] change title+favicon handling in UI status updates (close PR #440, Issue #405)
-- [x] fix HealthMonitor resource boot time limit
-- [x] prevent external modifications of admins.json
-- [x] update some packages
-- [x] create beta release action
-- [x] temp disable process info
-- [x] fix perf chart labels (closes #661)
-- [x] fix discord message intent
+- [x] fix fxserver settings save issue
+- [x] clarify better the update notifications (path vs minor)
+- [x] fix(core): getOsDistro powershell detection + error handling
+
+
+https://media.discordapp.net/attachments/589106731376836608/1018227573420990564/unknown.png
+
+
+
+scheduled restart vazio = erro
+events for dynamic scheduled restarts
+
+teste:
+remover meu admin do sv zap
+dar join
+apertar f1 e ver se aparece a mensagem de perms
+
+```js
+//Resource didn't finish starting (if res boot still active)
+`resource "${starting.startingResName}" failed to start within the [120~600]s time limit`
+
+//Resources started, but no heartbeat whithin limit after that
+`server failed to start within time limit - 30s after last resource started`
+
+//No resource started starting, hb over limit
+`server failed to start within time limit - ${this.hardConfigs.heartBeat.failLimit}s, no onResourceStarting received`
+
+//Server started, but some time after it stopped replying http requests
+//elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit
+'server partial hang detected'
+
+//else
+'server hang detected'
+```
+
+https://cs.github.com/?scopeName=All+repos&scope=&q=repo%3Avercel%2Fnext.js+%40next%2Fenv
+https://github.com/vercel/next.js/blob/canary/packages/next-env/index.ts
+
+
 
 Optional:
 - [ ] fix cfx.re login match by admin id
@@ -165,6 +193,11 @@ tentar usar vite
 react-query usar 100%
 procurar alternativas pro react-router (wouter)
 https://auto-animate.formkit.com
+https://tanstack.com/virtual/v3
+
+For the tx ingame menu, replace actions grid with flexbox
+https://youtu.be/3elGSZSWTbM
+around 12:00
 
 
 ### Update Event + Rollout strategy

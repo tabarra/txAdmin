@@ -140,7 +140,7 @@ export const printBanner = async () => {
         ...adminPinLines,
     ];
     printMultiline(boxen(boxLines.join('\n'), boxOptions), chalk.bold.bgGreen);
-    if (convars.forceInterface == false) {
+    if (convars.forceInterface === false) {
         printMultiline(msgRes.value, chalk.bold.bgBlue);
     }
 
