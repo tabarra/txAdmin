@@ -264,7 +264,7 @@ export default class WebServer {
                 logError(`Failed to start HTTP server, port ${error.port} already in use.`);
                 logError('Maybe you already have another txAdmin running in this port.');
                 logError('If you want to run multiple txAdmin, check the documentation for the port convar.');
-                process.exit();
+                process.exit(1);
             };
             this.httpServer = HttpClass.createServer(this.httpCallbackHandler.bind(this, 'httpserver'));
             this.httpServer.on('error', listenErrorHandler);

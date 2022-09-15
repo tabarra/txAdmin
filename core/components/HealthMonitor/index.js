@@ -289,6 +289,7 @@ export default class HealthMonitor {
             || elapsedHeartBeat > this.hardConfigs.heartBeat.failLimit
         ) {
             if (anySuccessfulHeartBeat === false) {
+                //if server didn't fully start yet
                 globals.databus.txStatsData.monitorStats.bootSeconds.push(false);
 
                 if(starting.startingElapsedSecs !== null){
@@ -298,7 +299,7 @@ export default class HealthMonitor {
                         globals.translator.t('restarter.start_timeout'),
                     );
                 }else if(starting.lastStartElapsedSecs !== null){
-                    //Resources started, but last was above limit
+                    //Resources started, but no heartbeat whithin limit after that
                     this.restartFXServer(
                         `server failed to start within time limit - ${this.hardConfigs.heartBeat.resStartedCooldown}s after last resource started`,
                         globals.translator.t('restarter.start_timeout'),
@@ -311,6 +312,7 @@ export default class HealthMonitor {
                     );
                 }
             } else if (elapsedHealthCheck > this.hardConfigs.healthCheck.failLimit) {
+                //FIXME: se der hand tanto HB quanto HC, ele ainda sim cai nesse caso
                 globals.databus.txStatsData.monitorStats.restartReasons.healthCheck++;
                 this.restartFXServer(
                     'server partial hang detected',

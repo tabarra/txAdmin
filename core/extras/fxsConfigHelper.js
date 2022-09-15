@@ -313,7 +313,7 @@ export const parseRecursiveConfig = async (cfgInputString, cfgAbsolutePath, serv
     } else if (stack.length > MAX_DEPTH) {
         throw new Error(`cfg 'exec' command depth above ${MAX_DEPTH}`);
     } else if (stack.includes(cfgAbsolutePath)) {
-        throw new Error(`cfg cyclical 'exec' command detected to file ${cfgAbsolutePath}`);
+        throw new Error(`cfg cyclical 'exec' command detected to file ${cfgAbsolutePath}`); //should block
     }
     stack.push(cfgAbsolutePath);
 

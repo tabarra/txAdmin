@@ -4,7 +4,10 @@ v4.18.0:
 - [x] clarify better the update notifications (path vs minor)
 - [x] fix(core): getOsDistro powershell detection + error handling
 - [x] fix: fixed pidusage and enabled process stats in diagnostics page
+- [x] scheduler should deny scheduled restarts in the same minute
 
+
+- [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning
 
 https://media.discordapp.net/attachments/589106731376836608/1018227573420990564/unknown.png
 
