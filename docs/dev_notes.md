@@ -3,19 +3,19 @@ v4.18.0:
 - [x] fix fxserver settings save issue
 - [x] clarify better the update notifications (path vs minor)
 - [x] fix(core): getOsDistro powershell detection + error handling
+- [x] fix: fixed pidusage and enabled process stats in diagnostics page
 
 
 https://media.discordapp.net/attachments/589106731376836608/1018227573420990564/unknown.png
 
 
 
-scheduled restart vazio = erro
 events for dynamic scheduled restarts
 
 teste:
-remover meu admin do sv zap
-dar join
-apertar f1 e ver se aparece a mensagem de perms
+    remover meu admin do sv zap
+    dar join
+    apertar f1 e ver se aparece a mensagem de perms
 
 ```js
 //Resource didn't finish starting (if res boot still active)

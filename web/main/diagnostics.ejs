@@ -95,10 +95,18 @@
         <div class="card card-accent-info">
             <div class="card-header font-weight-bold">Processes:</div>
             <div class="card-body">
-                <div class="text-center">
-                    This card has been temporarily disabled due to a bug in an underlying library. <br>
-                    A fix is expected to be released for txAdmin v4.20. 
-                </div>
+                <% if (!proccesses.length) { %>
+                    Failed to retrieve processed data. <br>
+                    Check the terminal for more information (if verbosity is enabled)
+                <% } else { %>
+                    <% for (const process of proccesses) { %>
+                        <strong>Process:</strong> (<%= process.pid %>) <%= process.name %> <br>
+                        <strong>Parent:</strong> <%= process.ppid %> <br>
+                        <strong>Memory:</strong> <%= process.memory %> <br>
+                        <strong>CPU:</strong> <%= process.cpu %> <br>
+                        <br>
+                    <% } %>
+                <% } %>
             </div>
         </div>
 

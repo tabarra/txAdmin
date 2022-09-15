@@ -1,13 +1,13 @@
 const modulename = 'WebServer:Diagnostics';
 import os from 'node:os';
 import bytes from 'bytes';
-import pidusageTree from 'pidusage-tree';
 import humanizeDuration from 'humanize-duration';
 import logger from '@core/extras/console.js';
 import * as helpers from '@core/extras/helpers';
 import Cache from '../extras/dataCache';
 import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
+import pidUsageTree from '@core/extras/pidUsageTree.js';
 import { verbose, txEnv } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
@@ -34,7 +34,7 @@ export default async function Diagnostics(ctx) {
         getHostData(),
         gettxAdminData(),
         getFXServerData(),
-        // getProcessesData(), FIXME: pidusageTree is bugged
+        getProcessesData(),
     ]);
 
     const timeElapsed = Date.now() - timeStart;
@@ -54,7 +54,7 @@ export default async function Diagnostics(ctx) {
 async function getProcessesData() {
     const procList = [];
     try {
-        const processes = await pidusageTree(process.pid);
+        const processes = await pidUsageTree(process.pid);
 
         //NOTE: Cleaning invalid proccesses that might show up in Linux
         Object.keys(processes).forEach((pid) => {
@@ -87,7 +87,7 @@ async function getProcessesData() {
             });
         });
     } catch (error) {
-        logError('Error getting processes data.');
+        logError('Error getting processes tree usage data.');
         if (verbose) dir(error);
     }
 
