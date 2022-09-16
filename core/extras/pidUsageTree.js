@@ -3,5 +3,5 @@ import pidusage from 'pidusage';
 
 export default async (pid) => {
     const pids = await pidtree(pid);
-    return await pidusage(pids);
+    return await pidusage([pid, ...pids]);
 };
