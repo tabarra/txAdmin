@@ -3,7 +3,7 @@ import crypto from 'node:crypto'
 import { Issuer, custom } from 'openid-client';
 
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData.ts';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 

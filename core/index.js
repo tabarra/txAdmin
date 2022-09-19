@@ -1,6 +1,6 @@
 import TxAdmin from './txAdmin';
 import logger from '@core/extras/console';
-import { txEnv } from './globalData.js';
+import { txEnv } from './globalData.ts';
 import checkPreRelease from '@core/extras/checkPreRelease.js';
 const { dir, log, logOk, logWarn, logError, setTTYTitle } = logger();
 

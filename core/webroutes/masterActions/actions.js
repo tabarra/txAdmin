@@ -4,7 +4,7 @@ import fse from 'fs-extra';
 import mysql from 'mysql2/promise';
 import consts from '@core/extras/consts.js';
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData.ts';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions

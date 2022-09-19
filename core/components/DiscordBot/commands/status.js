@@ -2,7 +2,7 @@ const modulename = 'DiscordBot:cmd:status';
 import humanizeDuration from 'humanize-duration';
 import { MessageEmbed } from '@citizenfx/discord.js';
 import logger from '@core/extras/console.js';
-import { txEnv } from '@core/globalData.js';
+import { txEnv } from '@core/globalData.ts';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 export default {

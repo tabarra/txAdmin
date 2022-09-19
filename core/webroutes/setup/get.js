@@ -1,7 +1,7 @@
 const modulename = 'WebServer:SetupGet';
 import path from 'path';
 import logger from '@core/extras/console.js';
-import { convars, txEnv } from '@core/globalData.js';
+import { convars, txEnv } from '@core/globalData.ts';
 import { engineVersion } from '../../extras/deployer';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

@@ -3,7 +3,7 @@ import { cloneDeep }  from 'lodash-es';
 import dateFormat from 'dateformat';
 import humanizeDuration from 'humanize-duration';
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData.ts';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers

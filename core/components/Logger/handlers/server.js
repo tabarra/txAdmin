@@ -1,7 +1,7 @@
 /* eslint-disable padded-blocks */
 const modulename = 'Logger:Server';
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData.ts';
 import { LoggerBase, separator } from '../loggerUtils.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

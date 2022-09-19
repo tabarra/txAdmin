@@ -19,7 +19,7 @@ import { customAlphabet } from 'nanoid';
 import dict51 from 'nanoid-dictionary/nolookalikes';
 
 import { setHttpCallback } from '@citizenfx/http-wrapper';
-import { convars, txEnv, verbose } from '@core/globalData.js';
+import { convars, txEnv, verbose } from '@core/globalData.ts';
 import { requestAuth } from './requestAuthenticator.js';
 import WebCtxUtils from './ctxUtils.js';
 import router from './router';

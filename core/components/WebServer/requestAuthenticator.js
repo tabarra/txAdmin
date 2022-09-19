@@ -1,6 +1,6 @@
 const modulename = 'WebServer:RequestAuthenticator';
 import logger from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData.js';
+import { convars, verbose } from '@core/globalData.ts';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 

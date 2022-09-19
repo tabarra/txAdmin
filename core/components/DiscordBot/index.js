@@ -1,7 +1,7 @@
 const modulename = 'DiscordBot';
 import Discord, { Intents } from '@citizenfx/discord.js'
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.js';
+import { verbose } from '@core/globalData.ts';
 import commands from './commands';
 const { dir, log, logOk, logWarn, logError, logDebug } = logger(modulename);
 

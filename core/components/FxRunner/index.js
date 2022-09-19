@@ -7,7 +7,7 @@ import { parseArgsStringToArgv } from 'string-argv';
 import StreamValues from 'stream-json/streamers/StreamValues';
 
 import logger from '@core/extras/console.js';
-import { convars, txEnv, verbose } from '@core/globalData.js';
+import { convars, txEnv, verbose } from '@core/globalData.ts';
 import { validateFixServerConfig } from '@core/extras/fxsConfigHelper';
 import OutputHandler from './outputHandler';
 

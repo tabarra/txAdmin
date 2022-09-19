@@ -8,7 +8,7 @@ import Cache from '../extras/dataCache';
 import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import pidUsageTree from '@core/extras/pidUsageTree.js';
-import { verbose, txEnv } from '@core/globalData.js';
+import { verbose, txEnv } from '@core/globalData.ts';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 const cache = new Cache(5);

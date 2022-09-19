@@ -3,7 +3,7 @@ import path from 'node:path';
 import slash from 'slash';
 
 import logger from '@core/extras/console';
-import { txEnv } from '@core/globalData.js';
+import { txEnv } from '@core/globalData.ts';
 
 import { printBanner } from '@core/extras/banner';
 import setupProfile from '@core/extras/setupProfile';

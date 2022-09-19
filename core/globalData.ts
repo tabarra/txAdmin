@@ -10,12 +10,12 @@ const { dir, log, logOk, logWarn, logError } = logger();
 /**
  * Helpers
  */
-const cleanPath = (x) => { return slash(path.normalize(x)); };
-const logDie = (x) => {
+const cleanPath = (x: string) => { return slash(path.normalize(x)); };
+const logDie = (x: string) => {
     logError(x);
     process.exit(1);
 };
-const getBuild = (ver) => {
+const getBuild = (ver: any) => {
     try {
         const res = /v1\.0\.0\.(\d{4,5})\s*/.exec(ver);
         return parseInt(res[1]);
@@ -23,11 +23,11 @@ const getBuild = (ver) => {
         return 9999;
     }
 };
-const getConvarBool = (convarName) => {
+const getConvarBool = (convarName: string) => {
     const cvar = GetConvar(convarName, 'false').trim().toLowerCase();
     return ['true', '1', 'on'].includes(cvar);
 };
-const getConvarString = (convarName) => {
+const getConvarString = (convarName: string) => {
     const cvar = GetConvar(convarName, 'false').trim();
     return (cvar === 'false') ? false : cvar;
 };
@@ -69,7 +69,7 @@ if (fxServerVersion === 9999) {
 }
 
 //Getting txAdmin version
-const txAdminVersion = GetResourceMetadata(resourceName, 'version');
+const txAdminVersion = GetResourceMetadata(resourceName, 'version', 0);
 if (typeof txAdminVersion !== 'string' || txAdminVersion == 'null') {
     logDie('txAdmin version not set or in the wrong format');
 }
@@ -140,7 +140,7 @@ const loopbackInterfaces = ['::1', '127.0.0.1', '127.0.1.1'];
 if (fs.existsSync(zapCfgFile)) {
     log('Loading ZAP-Hosting configuration file.');
     try {
-        zapCfgData = JSON.parse(fs.readFileSync(zapCfgFile));
+        zapCfgData = JSON.parse(fs.readFileSync(zapCfgFile, 'utf8'));
         isZapHosting = true;
         forceInterface = zapCfgData.interface;
         forceFXServerPort = zapCfgData.fxServerPort;
@@ -227,6 +227,6 @@ export const convars = Object.freeze({
 //Verbosity can change during execution
 //FIXME: move this to console.js
 export let verbose = verboseConvar;
-export const setVerbose = (state) => {
+export const setVerbose = (state: boolean) => {
     verbose = !!state;
 }
