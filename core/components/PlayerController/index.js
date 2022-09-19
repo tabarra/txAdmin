@@ -1,7 +1,7 @@
 const modulename = 'PlayerController';
 import humanizeDuration from 'humanize-duration'; //FIXME: remove, this controller is not the right place for interface stuff
 import xssInstancer from '@core/extras/xss.js'; //FIXME: same as above
-import consts from '@core/extras/consts.js';
+import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData.ts';
 // eslint-disable-next-line no-unused-vars

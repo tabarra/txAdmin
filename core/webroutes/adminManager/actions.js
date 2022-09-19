@@ -2,7 +2,7 @@ const modulename = 'WebServer:AdminManagerActions';
 import { customAlphabet } from 'nanoid';
 import dict51 from 'nanoid-dictionary/nolookalikes'
 import got from '@core/extras/got.js';
-import consts from '@core/extras/consts.js';
+import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

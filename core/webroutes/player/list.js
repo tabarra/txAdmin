@@ -2,7 +2,7 @@ const modulename = 'WebServer:PlayerList';
 import dateFormat from 'dateformat';
 import humanizeDuration from 'humanize-duration';
 import xssInstancer from '@core/extras/xss.js';
-import consts from '@core/extras/consts.js';
+import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData.ts';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);

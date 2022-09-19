@@ -1,5 +1,5 @@
 const modulename = 'DiscordBot:cmd:addwl';
-import consts from '@core/extras/consts.js';
+import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

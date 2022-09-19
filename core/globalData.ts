@@ -18,6 +18,7 @@ const logDie = (x: string) => {
 const getBuild = (ver: any) => {
     try {
         const res = /v1\.0\.0\.(\d{4,5})\s*/.exec(ver);
+        // @ts-ignore: let it throw
         return parseInt(res[1]);
     } catch (error) {
         return 9999;
@@ -102,7 +103,7 @@ if (!txDataPathConvar) {
 try {
     if (!fs.existsSync(dataPath)) fs.mkdirSync(dataPath);
 } catch (error) {
-    logDie(`Failed to check or create '${dataPath}' with error: ${error.message}`);
+    logDie(`Failed to check or create '${dataPath}' with error: ${(error as Error).message}`);
 }
 
 //Check paths for non-ASCII characters
@@ -171,7 +172,7 @@ if (fs.existsSync(zapCfgFile)) {
 
         if (!isDevMode) fs.unlinkSync(zapCfgFile);
     } catch (error) {
-        logDie(`Failed to load with ZAP-Hosting configuration error: ${error.message}`);
+        logDie(`Failed to load with ZAP-Hosting configuration error: ${(error as Error).message}`);
     }
 } else {
     isZapHosting = false;

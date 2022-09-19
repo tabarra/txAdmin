@@ -4,7 +4,7 @@ import fse from 'fs-extra';
 import ejs from 'ejs';
 import chalk from 'chalk';
 import * as helpers from '@core/extras/helpers.js';
-import consts from '@core/extras/consts.js';
+import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
 import { convars, txEnv, verbose } from '@core/globalData.ts';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
