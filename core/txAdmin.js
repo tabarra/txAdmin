@@ -18,10 +18,11 @@ import Logger from '@core/components/Logger';
 import HealthMonitor from '@core/components/HealthMonitor';
 import Scheduler from '@core/components/Scheduler';
 import PlayerController from '@core/components/PlayerController';
-import ResourcesManager from '@core/components/ResourcesManager';
 import StatsCollector from '@core/components/StatsCollector';
 import Translator from '@core/components/Translator';
 import WebServer from '@core/components/WebServer';
+import ResourcesManager from '@core/components/ResourcesManager';
+import PlayerlistManager from '@core/components/PlayerlistManager';
 
 const { dir, log, logOk, logWarn, logError } = logger(`v${txEnv.txAdminVersion}`);
 
@@ -45,6 +46,7 @@ global.globals = {
     webServer: null,
     playerController: null,
     resourcesManager: null,
+    playerlistManager: null,
     config: null,
     deployer: null,
     info: {},
@@ -153,6 +155,7 @@ export default class TxAdmin {
             globals.webServer = new WebServer(profileConfig.webServer);
             globals.playerController = new PlayerController(profileConfig.playerController);
             globals.resourcesManager = new ResourcesManager(profileConfig.resourcesManager);
+            globals.playerlistManager = new PlayerlistManager();
         } catch (err) {
             HandleFatalError(err, 'Main Components');
         }

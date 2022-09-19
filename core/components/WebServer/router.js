@@ -1,3 +1,4 @@
+import { convars } from '@core/globalData';
 import Router from '@koa/router';
 import KoaRateLimit from 'koa-ratelimit';
 
@@ -42,7 +43,7 @@ export default (config) => {
         db: new Map(),
         max: 10,
         duration: 30 * 1000,
-        errorMessage: JSON.stringify({failReason: 'rate_limiter'}),
+        errorMessage: JSON.stringify({ failReason: 'rate_limiter' }),
         disableHeader: true,
         id: (ctx) => ctx.txVars.realIP,
     });
@@ -127,6 +128,12 @@ export default (config) => {
             return await webRoutes.serverLog(ctx, next);
         }
     });
+
+    //DevDebug routes - no auth
+    if (convars.isDevMode) {
+        router.get('/dev/:scope', webRoutes.dev_get);
+        router.post('/dev/:scope', webRoutes.dev_post);
+    };
 
     //Return router
     return router;

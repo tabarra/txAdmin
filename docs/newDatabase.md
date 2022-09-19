@@ -1,4 +1,7 @@
 NOTE: mesmo arquivo da pasta ~/Desktop/PROGRAMMING/txAdmin-newDatabase
+
+## FIXME: i just found out two players in the same server can have the same license, and doesn't seem to be just cl2, please investigate and check the logic below.
+
 ## New database schema:
 ```js
 //Every player that have been on the server over specific threshold (15m default) gets added to the database

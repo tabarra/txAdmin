@@ -5,6 +5,9 @@
 if GetConvar('txAdminServerMode', 'false') ~= 'true' then
     return
 end
+function logError(x)
+    print("^5[txAdminClient]^1 " .. x .. "^0")
+end
 local oneSyncConvar = GetConvar('onesync', 'off')
 local onesyncEnabled = oneSyncConvar == 'on' or oneSyncConvar == 'legacy'
 
@@ -108,13 +111,46 @@ end)
 
 
 --[[ Handle player Join or Leave ]]
-AddEventHandler('playerJoining', function()
-    local playerName = sub(GetPlayerName(source) or "unknown", 1, 75)
+AddEventHandler('playerJoining', function(srcString, _oldID)
+    -- sanity checking source
+    if source <= 0 then 
+        logError('playerJoining event with source '..json.encode(source))
+        return
+    end
+
+    local playerData = {
+        name = sub(GetPlayerName(source) or "unknown", 1, 75),
+        ids = GetPlayerIdentifiers(source),
+        hwids = GetPlayerTokens(source),
+    }
+    PrintStructuredTrace(json.encode({
+        type = 'txAdminPlayerlistEvent',
+        event = 'playerJoining',
+        id = source,
+        player = playerData
+    }))
+
+    -- relaying this info to all admins
     for adminID, _ in pairs(TX_ADMINS) do
-        TriggerClientEvent('txcl:updatePlayer', adminID, source, playerName)
+        TriggerClientEvent('txcl:updatePlayer', adminID, source, playerData.playerName)
     end
 end)
-AddEventHandler('playerDropped', function()
+
+AddEventHandler('playerDropped', function(reason)
+    -- sanity checking source
+    if source <= 0 then 
+        logError('playerDropped event with source '..json.encode(source))
+        return
+    end
+
+    PrintStructuredTrace(json.encode({
+        type = 'txAdminPlayerlistEvent',
+        event = 'playerDropped',
+        id = source,
+        reason = reason
+    }))
+
+    -- relaying this info to all admins
     for adminID, _ in pairs(TX_ADMINS) do
         TriggerClientEvent('txcl:updatePlayer', adminID, source, false)
     end

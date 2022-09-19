@@ -1,0 +1,143 @@
+<style>
+    body {
+        margin: 0;
+        font: monospace;
+        background-color: aliceblue;
+    }
+
+    #navbar {
+        width: 100%;
+        background-color: lightblue;
+        text-align: center;
+        padding: 0.5em;
+    }
+
+    .playersRow {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .playerCard {
+        display: flex;
+        flex-direction: column;
+        background-color: lightgoldenrodyellow;
+        padding: 1em;
+    }
+
+    .playerData {
+        width: 475px;
+        height: 200px;
+        border: 1px;
+        background-color: lightgrey;
+    }
+
+    .playerButtons {
+        text-align: center;
+        margin-top: 1em;
+    }
+
+</style>
+
+<body>
+    <div id="navbar">
+        <input type="number" name="" id="idCounter" value="1" />
+        <button onclick="navbar('restart')">Server Restart</button>
+        <button onclick="navbar('printPlayerlist')">Print Playerlist</button>
+    </div>
+    <div class="playersRow">
+        <div class="playerCard">
+            <textarea class="playerData" id="player1"></textarea>
+            <div class="playerButtons">
+                <button onclick="txAdminPlayerlistEvent('join', 1)">Join</button>
+                <button onclick="txAdminPlayerlistEvent('leave',1)">Leave</button>
+            </div>
+        </div>
+
+        <div class="playerCard">
+            <textarea class="playerData" id="player2"></textarea>
+            <div class="playerButtons">
+                <button onclick="txAdminPlayerlistEvent('join', 2)">Join</button>
+                <button onclick="txAdminPlayerlistEvent('leave',2)">Leave</button>
+            </div>
+        </div>
+
+    </div>
+</body>
+<script>
+    const el = (id) => document.getElementById(id);
+    const initialData1 = {
+        "name": "Tabarra",
+        "ids": [
+            "license:9b9fc300cc65d22ad3b536175a4d15c0e4933700",
+            "fivem:271816",
+            "ip:0.0.0.1"
+        ],
+        "hwids": []
+    };
+    const initialData2 = {
+        "name": "fulano",
+        "ids": [
+            "license:00000000000000000000000000000000deadbeef",
+            "fivem:123456",
+            "ip:0.0.0.0"
+        ],
+        "hwids": []
+    };
+    el('player1').textContent = JSON.stringify(initialData1, null, 2);
+    el('player2').textContent = JSON.stringify(initialData2, null, 2);
+
+
+    const sendPost = async (action, data) => {
+        const fetchResult = await fetch(
+            `http://localhost:40120/dev/${action}`,
+            {
+                method: "POST", // "GET/POST"
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+            }
+        );
+        return await fetchResult.json();
+    };
+
+
+    async function txAdminPlayerlistEvent(action, which) {
+        const pDataString = el(`player${which}`).value;
+        const playerId = parseInt(el('idCounter').value);
+        let eventData;
+
+        if(action === 'join'){
+            eventData = {
+                type: "txAdminPlayerlistEvent",
+                event: 'playerJoining',
+                id: playerId,
+                player: JSON.parse(pDataString),
+            }
+        }else if(action === 'leave'){
+            eventData = {
+                type: "txAdminPlayerlistEvent",
+                event: 'playerDropped',
+                id: playerId,
+                reason: 'tester',
+            }
+        }else{
+            throw new Error(`unknown action`);
+        }
+
+        try {
+            const resp = await sendPost('event', eventData);
+            console.log(resp);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async function navbar(action) {
+        try {
+            const resp = await sendPost(action);
+            console.log(resp);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+</script>

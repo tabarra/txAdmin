@@ -333,7 +333,6 @@ export default class HealthMonitor {
     handleHeartBeat(source, postData) {
         const tsNow = now();
         if (source === 'fd3') {
-            //Processing stats
             if (
                 this.lastSuccessfulHTTPHeartBeat
                 && tsNow - this.lastSuccessfulHTTPHeartBeat > 15
@@ -343,20 +342,6 @@ export default class HealthMonitor {
             }
             this.lastSuccessfulFD3HeartBeat = tsNow;
         } else if (source === 'http') {
-            //Sanity Check
-            if (!Array.isArray(postData.players)) {
-                if (verbose) logWarn('Received an invalid HeartBeat.');
-                return;
-            }
-
-            //Processing playerlist
-            const playerList = postData.players.map((player) => {
-                player.id = parseInt(player.id);
-                return player;
-            });
-            globals.playerController.processHeartBeat(playerList);
-
-            //Processing stats
             if (
                 this.lastSuccessfulFD3HeartBeat
                 && tsNow - this.lastSuccessfulFD3HeartBeat > 15

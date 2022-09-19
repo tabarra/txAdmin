@@ -84,24 +84,9 @@ end)
 
 -- HeartBeat functions
 function HTTPHeartBeat()
-    local curPlyData = {}
-    local players = GetPlayers()
-    for i = 1, #players do
-        local player = players[i]
-        local ids = GetPlayerIdentifiers(player)
-        -- using manual insertion instead of table.insert is faster
-        curPlyData[i] = {
-            id = player,
-            identifiers = ids,
-            name = GetPlayerName(player),
-            ping = GetPlayerPing(player)
-        }
-    end
-
     local url = "http://"..TX_LUACOMHOST.."/intercom/monitor"
     local exData = {
-        txAdminToken = TX_LUACOMTOKEN,
-        players = curPlyData
+        txAdminToken = TX_LUACOMTOKEN
     }
     PerformHttpRequest(url, function(httpCode, data, resultHeaders)
         local resp = tostring(data)

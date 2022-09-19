@@ -637,7 +637,8 @@ export default class PlayerController {
 
                 //Basic struct
                 if (
-                    typeof p !== 'object'
+                    p === null
+                    || typeof p !== 'object'
                     || typeof p.name !== 'string'
                     || typeof p.id !== 'number'
                     || typeof p.license !== 'undefined'

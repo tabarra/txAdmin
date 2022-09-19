@@ -80,8 +80,10 @@ export default class OutputHandler {
                     globals.healthMonitor.handleHeartBeat('fd3');
                 } else if (data.payload.type === 'txAdminLogData') {
                     globals.logger.server.write(mutex, data.payload.logs);
-                } else if (data.payload.type === 'txAdminResourceStatus') {
+                } else if (data.payload.type === 'txAdminResourceEvent') {
                     globals.resourcesManager.handleServerEvents(data.payload);
+                } else if (data.payload.type === 'txAdminPlayerlistEvent') {
+                    globals.playerlistManager.handleServerEvents(data.payload);
                 }
             }
         } catch (error) {

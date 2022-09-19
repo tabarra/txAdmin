@@ -41,7 +41,7 @@ NOTE Resource load scenarios knowledge base:
     - `onServerResourceStart` sourceRes
 */
 
-export default class DynamicAds {
+export default class ResourcesManager {
     constructor() {
         this.activeStartingTime = null;
         this.activeStartingResource = null;

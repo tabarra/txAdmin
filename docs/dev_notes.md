@@ -6,12 +6,10 @@ v4.18.0:
 - [x] fix: fixed pidusage and enabled process stats in diagnostics page
 - [x] scheduler should deny scheduled restarts in the same minute
 
-
+resolver mem leak no server log handler
 - [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning
 
 https://media.discordapp.net/attachments/589106731376836608/1018227573420990564/unknown.png
-
-
 
 events for dynamic scheduled restarts
 
@@ -19,6 +17,13 @@ teste:
     remover meu admin do sv zap
     dar join
     apertar f1 e ver se aparece a mensagem de perms
+
+
+Use the cleanPlayerName function for the menu display/search
+maybe put it in a shared folder or something
+
+
+
 
 ```js
 //Resource didn't finish starting (if res boot still active)
@@ -45,7 +50,6 @@ https://github.com/vercel/next.js/blob/canary/packages/next-env/index.ts
 
 Optional:
 - [ ] fix cfx.re login match by admin id
-- [ ] fix diagnostics page pidtree/pidusage
 - [ ] add actionRevoked event (rewrite PR #612)
 - [ ] stats: add recipe name + if ptero + random collisions + how many scheduled restart times + drop zap/discord as login methods
 - [ ] stats: jwe
@@ -147,6 +151,7 @@ FIXME: quando o menu abrir, deveria voltar os list item pro default deles
 - player count (loger window, maybe with some other data)
 - top players? 
 - map heatmap?!
+- player disconnect reasons
 - something with server log events like chat messages, kills, leave reasons, etc?
 
 

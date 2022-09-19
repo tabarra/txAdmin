@@ -50,3 +50,8 @@ export { default as advanced_actions } from './advanced/actions';
 //FIXME: reorganizar TODAS rotas de logs, incluindo listagem e download
 export { default as serverLog } from './serverLog.js';
 export { default as serverLogPartial } from './serverLogPartial.js';
+
+export {
+    get as dev_get,
+    post as dev_post
+} from './devDebug.js';

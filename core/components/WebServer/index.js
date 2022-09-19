@@ -8,6 +8,7 @@ import KoaBodyParser from 'koa-bodyparser';
 import KoaServe from 'koa-static';
 import KoaSession from 'koa-session';
 import KoaSessionMemoryStoreClass from 'koa-session-memory';
+import KoaCors from '@koa/cors';
 
 import { Server as SocketIO } from 'socket.io';
 
@@ -100,6 +101,11 @@ export default class WebServer {
                 dir(error);
             }
         });
+
+        //Disable CORS on dev mode
+        if(convars.isDevMode){
+            this.app.use(KoaCors());
+        }
 
         //Setting up timeout/error/no-output/413:
         const timeoutLimit = 15 * 1000;
