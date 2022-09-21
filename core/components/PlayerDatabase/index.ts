@@ -1,13 +1,13 @@
-const modulename = 'PlayerController';
+const modulename = 'PlayerDatabase';
 import humanizeDuration from 'humanize-duration'; //FIXME: remove, this controller is not the right place for interface stuff
 import xssInstancer from '@core/extras/xss.js'; //FIXME: same as above
 import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData.ts';
+import { convars, verbose } from '@core/globalData';
 // eslint-disable-next-line no-unused-vars
 import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database.js';
 import { genActionID, genWhitelistID } from './idGenerator.js';
-// import PlayerlistGenerator from './playerlistGenerator.js';
+import TxAdmin from '@core/txAdmin.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
 
@@ -17,16 +17,6 @@ const now = () => { return Math.round(Date.now() / 1000); };
 //Consts
 const validActions = ['ban', 'warn', 'whitelist'];
 
-
-/*
-    TODO:
-    Move the following to another file:
-    - getRegisteredActions
-    - registerAction
-    - revokeAction
-    - approveWhitelist
-    - checkPlayerJoin
-*/
 
 /**
  * Provide a central database for players, as well as assist with access control.
@@ -62,148 +52,82 @@ const validActions = ['ban', 'warn', 'whitelist'];
  *      - name
  *      - tsLastAttempt
  */
-export default class PlayerController {
-    constructor(config) {
-        this.config = config;
-        this.activePlayers = [];
+export type PlayerDbDataType = {
+    license: string;
+    name: string; //TODO: save displayName/pureName
+    playTime: number;
+    tsLastConnection: number;
+    tsJoined: number;
+    notes: {
+        text: string;
+        lastAdmin: string | null;
+        tsLastEdit: number | null;
+    };
+}
+type PlayerDbConfigType = {
+    onJoinCheckBan: boolean;
+    onJoinCheckWhitelist: boolean;
+    minSessionTime: number;
+    whitelistRejectionMessage: string;
+    wipePendingWLOnStart: boolean;
+}
+export default class PlayerDatabase {
+    db: Database;
+
+    constructor(
+        protected readonly txAdmin: TxAdmin,
+        public config: PlayerDbConfigType
+    ) {
         this.db = new Database(config.wipePendingWLOnStart);
-
-        //Config check
-        if (this.config.minSessionTime < 1 || this.config.minSessionTime > 60) throw new Error('The playerController.minSessionTime setting must be between 1 and 60 minutes.');
-
-        //Running playerlist generator
-        if (convars.isDevMode && convars.debugPlayerlistGenerator) {
-            this.playerlistGenerator = new PlayerlistGenerator();
-        }
-
-        //Cron functions
-        setInterval(() => {
-            //Check if the database is ready
-            if (this.db.obj === null) {
-                if (verbose) logWarn('Database still not ready for processing.');
-                return;
-            }
-            this.processActive();
-        }, 15 * 1000);
     }
-
-
-    /**
-     * Refresh PlayerController configurations
-     */
-    refreshConfig() {
-        this.config = globals.configVault.getScoped('playerController');
-        const cmd = 'txAdmin-checkPlayerJoin ' + (this.config.onJoinCheckBan || this.config.onJoinCheckWhitelist).toString();
-        try {
-            globals.fxRunner.srvCmd(cmd);
-        } catch (error) {
-            if (verbose) dir(error);
-        }
-    }
-
 
     /**
      * Returns the entire lowdb object. Please be careful with it :)
      *
-     * TODO: perhaps add a .cloneDeep()? Mighe cause some performance issues tho
+     * TODO: perhaps add a .cloneDeep()? Might cause some performance issues tho
      *
      * @returns {object} lodash database
      */
     getDB() {
+        throw new Error(`dev note: not validated yet`);
         return this.db.obj;
     }
 
 
     /**
-     * Processes the active players for playtime/sessiontime and sets to the database
-     *
-     * TODO: If this function is called multiple times within the first 15 seconds of an sessionTime minute,
-     *          it will keep adding playTime
-     *       Solution: keep an property for tsLastTimeIncremment, and wait for it to be >=60 before playtime++ and reset the ts
-     * NOTE: I'm only saving notes every  15 seconds or when the player disconnects.
+     * Searches for a player in the database by the license, returns null if not found or false in case of error
      */
-    async processActive() {
-        const checkMinuteElapsed = (time) => {
-            return time > 15 && time % 60 < 15;
-        };
-
-        try {
-            this.activePlayers.forEach(async (p) => {
-                const sessionTime = now() - p.tsConnected;
-
-                //If its time to add this player to the database
-                if (p.isTmp && sessionTime >= this.config.minSessionTime) {
-                    if (p.license == '3333333333333333333333deadbeef0000nosave') return; //DEBUG
-
-                    this.db.writeFlag(SAVE_PRIORITY_LOW);
-                    p.isTmp = false;
-                    p.playTime = Math.round(sessionTime / 60);
-                    p.notes = {
-                        text: '',
-                        lastAdmin: null,
-                        tsLastEdit: null,
-                    };
-                    const toDB = {
-                        license: p.license,
-                        name: p.name,
-                        playTime: p.playTime,
-                        tsJoined: p.tsJoined,
-                        tsLastConnection: p.tsConnected,
-                        notes: p.notes,
-                    };
-                    await this.db.obj.get('players')
-                        .push(toDB)
-                        .value();
-                    if (verbose) logOk(`Adding '${p.name}' to players database.`);
-
-                //If it's time to update this player's play time
-                } else if (!p.isTmp && checkMinuteElapsed(sessionTime)) {
-                    this.db.writeFlag(SAVE_PRIORITY_LOW);
-                    p.playTime += 1;
-                    await this.db.obj.get('players')
-                        .find({ license: p.license })
-                        .assign({
-                            name: p.name,
-                            playTime: p.playTime,
-                            notes: p.notes,
-                            tsLastConnection: p.tsConnected,
-                        })
-                        .value();
-                    // logOk(`Updating '${p.name}' in players database.`); //DEBUG
-                }
-            });
-        } catch (error) {
-            logError(`Failed to process active players array with error: ${error.message}`);
-            if (verbose) dir(error);
-        }
-    }
-
-
-    /**
-     * Searches for a player in the database by the license or id
-     * @param {string} reference
-     * @returns {object|null|false} object if player is found, null if not found, false if error occurs
-     */
-    async getPlayer(reference) {
-        //FIXME: REMINDER THAT LICENSE IS NOT UNIQUE IN THE SERVER
-        //Infering filter type
-        let filter;
-        if (/[0-9A-Fa-f]{40}/.test(reference)) {
-            filter = { license: reference };
-        } else if (/\d{1,6}/.test(reference)) {
-            filter = { id: parseInt(reference, 10) };
-        } else {
+    async getPlayer(license: string): Promise<PlayerDbDataType | null> {
+        if (!/[0-9A-Fa-f]{40}/.test(license)) {
             throw new Error('Invalid reference type');
         }
 
         //Performing search
-        try {
-            const p = await this.db.obj.get('players').find(filter).cloneDeep().value();
-            return (typeof p === 'undefined') ? null : p;
-        } catch (error) {
-            if (verbose) logError(`Failed to search for a player in the database with error: ${error.message}`);
-            return false;
-        }
+        const p = await this.db.obj.get('players').find({ license }).cloneDeep().value();
+        return (typeof p === 'undefined') ? null : p;
+    }
+
+
+    /**
+     * Register a player to the database
+     */
+    async registerPlayer(player: PlayerDbDataType) {
+        this.db.writeFlag(SAVE_PRIORITY_LOW);
+        await this.db.obj.get('players')
+            .push(player)
+            .value();
+    }
+
+
+    /**
+     * Updates a player setting assigning srcData props to the database player
+     */
+    async updatePlayer(license: string, srcData: Exclude<object, null>) {
+        this.db.writeFlag(SAVE_PRIORITY_LOW);
+        await this.db.obj.get('players')
+            .find({ license: license })
+            .assign(srcData)
+            .value();
     }
 
 
@@ -218,6 +142,7 @@ export default class PlayerController {
      * @returns {array|error} array of actions, or, throws on error
      */
     async getRegisteredActions(idArray, filter = {}) {
+        throw new Error(`not ready`);
         if (!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
         try {
             return await this.db.obj.get('actions')
@@ -245,6 +170,7 @@ export default class PlayerController {
      * @returns {object} {allow: bool, reason: string}, or throws on error
      */
     async checkPlayerJoin(idArray, playerName) {
+        throw new Error(`not ready`);
         //Check if required
         if (!this.config.onJoinCheckBan && !this.config.onJoinCheckWhitelist) {
             return { allow: true, reason: 'checks disabled' };
@@ -365,6 +291,7 @@ export default class PlayerController {
      * @returns {string} action ID, or throws if on error or ID not found
      */
     async registerAction(reference, type, author, reason = null, expiration = false, playerName = false) {
+        throw new Error(`not ready`);
         //FIXME: REMINDER THAT LICENSE IS NOT UNIQUE IN THE SERVER
         //Sanity check
         const timestamp = now();
@@ -435,6 +362,7 @@ export default class PlayerController {
      * @returns {string} null, error message string, or throws if something goes wrong
      */
     async revokeAction(action_id, author, allowedTypes = true) {
+        throw new Error(`not ready`);
         //FIXME: REMINDER THAT LICENSE IS NOT UNIQUE IN THE SERVER
         if (typeof action_id !== 'string' || !action_id.length) throw new Error('Invalid action_id.');
         if (typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
@@ -476,6 +404,7 @@ export default class PlayerController {
      * @returns {string} action ID, or throws if ID not found or error
      */
     async approveWhitelist(reference, author) {
+        throw new Error(`not ready`);
         //FIXME: REMINDER THAT LICENSE IS NOT UNIQUE IN THE SERVER
         //Sanity check & validation
         if (typeof reference !== 'string' || typeof author !== 'string') {
@@ -527,6 +456,8 @@ export default class PlayerController {
      * @returns {boolean}
      */
     async setPlayerNote(license, note, author) {
+        throw new Error(`not ready`);
+        //HACK isso agora vai dar commit imediatamente, target direto o banco
         //FIXME: REMINDER THAT LICENSE IS NOT UNIQUE IN THE SERVER
         try {
             //Search player
@@ -575,200 +506,6 @@ export default class PlayerController {
             const msg = `Failed to clean database with error: ${error.message}`;
             if (verbose) logError(msg);
             throw new Error(msg);
-        }
-    }
-
-
-    /**
-     * Returns a mostly /players.json compatible playerlist based on the activePlayers
-     *
-     * NOTE: ATM only used by the /status endpoint.
-     *       Let's try to use just clone(globals.playerController.activePlayers)
-     *
-     * @returns {array} array of player objects
-     */
-    getPlayerList() {
-        try {
-            return this.activePlayers.map((p) => {
-                return {
-                    license: p.license,
-                    id: p.id,
-                    name: p.name,
-                    ping: p.ping,
-                    identifiers: p.identifiers,
-                };
-            });
-        } catch (error) {
-            if (verbose) logError(`Failed to generate playerlist with error: ${error.message}`);
-            return false;
-        }
-    }
-
-
-    /**
-     * Processes the monitor heartbeat to update internal active playerlist.
-     * Macro view of this function:
-     *  -For all removed players = remove from this.activePlayers
-     *  -For all new players:
-     *      - search for them in the db
-     *      - add them to the active players containing:
-     *          - some prop to indicate if it's present in the database
-     *          - tsConnected
-     *
-     * NOTE:  This code was written this way to improve performance in exchange of readability
-     *           the ES6 gods might not like this..
-     * TODO: To prevent retaliation from the gods, consider making the activePlayers a Map instead of an Array.
-     *
-     * FIXME: I'm guaranteeing there are not two players with the same License, but not ID.
-     *
-     * NOTE: currently being called every 3 seconds
-     *
-     * @param {array} players
-     */
-    async processHeartBeat(players) {
-        //DEBUG: in case the player generator is enabled
-        if (this.playerlistGenerator) players = this.playerlistGenerator.playerlist;
-
-        players = [
-            {
-                id: 12,
-                ping: 123,
-                name: 'tabarra',
-                identifiers: [
-                    'license:da4e5c173b3ba97e7f201de0fcd44443db7d4844',
-                ]
-            }
-        ]
-
-        try {
-            //Sanity check
-            if (!Array.isArray(players)) throw new Error('expected array');
-
-            //Validate & filter players then extract ids and license
-            const hbPlayers = new Map();
-            let invalids = 0;
-            let duplicated = 0;
-            for (let i = 0; i < players.length; i++) {
-                const p = Object.assign({}, players[i]);
-
-                //Basic struct
-                if (
-                    p === null
-                    || typeof p !== 'object'
-                    || typeof p.name !== 'string'
-                    || typeof p.id !== 'number'
-                    || typeof p.license !== 'undefined'
-                    || !Array.isArray(p.identifiers)
-                    || !p.identifiers.length
-                ) {
-                    invalids++;
-                    continue;
-                }
-
-                //Extract license
-                for (let j = 0; j < p.identifiers.length; j++) {
-                    if (p.identifiers[j].length == 48 && p.identifiers[j].substring(0, 8) == 'license:') {
-                        p.license = p.identifiers[j].substring(8);
-                        break;
-                    }
-                }
-
-                //Check if license id exist and is not duplicated
-                if (typeof p.license !== 'string') {
-                    invalids++;
-                    continue;
-                }
-                if (hbPlayers.has(p.license)) {
-                    duplicated++;
-                    continue;
-                }
-
-                //Add to licenses list
-                delete p.endpoint;
-                hbPlayers.set(p.license, p);
-            }
-            if (verbose && invalids) logWarn(`HeartBeat playerlist contained ${invalids} invalid players that were removed.`);
-            if (verbose && duplicated) logWarn(`HeartBeat playerlist contained ${duplicated} duplicated players that were removed.`);
-
-
-            //Processing active players list, creating the removed list, creating new active list without removed players
-            const disconnectedPlayers = [];
-            const activePlayerLicenses = []; //Optimization only
-            const newActivePlayers = [];
-            for (let i = 0; i < this.activePlayers.length; i++) {
-                const hbPlayerData = hbPlayers.get(this.activePlayers[i].license);
-                if (hbPlayerData) {
-                    const updatedPlayer = Object.assign(
-                        this.activePlayers[i],
-                        {
-                            id: hbPlayerData.id, //NOTE: possibly the solution to the double player issue?
-                            ping: hbPlayerData.ping,
-                            // extraData: hbPlayerData.extraData //NOTE: reserve for RolePlay data from frameworks
-                        },
-                    );
-                    newActivePlayers.push(updatedPlayer);
-                    activePlayerLicenses.push(this.activePlayers[i].license);
-                } else {
-                    disconnectedPlayers.push(this.activePlayers[i]);
-                }
-            }
-
-            //Processing the new players
-            const tsNow = now();
-            for (const [license, player] of hbPlayers) {
-                //Make sure we are not adding the same user twice
-                if (!activePlayerLicenses.includes(player.license)) {
-                    //Filter to only valid identifiers
-                    player.identifiers = player.identifiers.filter((id) => {
-                        return Object.values(consts.validIdentifiers).some((vf) => vf.test(id));
-                    });
-                    //Check if he is already on the database
-                    const dbPlayer = await this.getPlayer(license);
-                    if (dbPlayer) {
-                        //TODO: create a AllAssocIds for the players, containing all intersecting identifiers
-                        const newPlayer = Object.assign({}, player, {
-                            tsJoined: dbPlayer.tsJoined,
-                            playTime: dbPlayer.playTime,
-                            tsConnected: tsNow,
-                            isTmp: false,
-                            notes: dbPlayer.notes,
-                        });
-                        newActivePlayers.push(newPlayer);
-                    } else {
-                        player.tsJoined = tsNow;
-                        player.tsConnected = tsNow;
-                        player.isTmp = true;
-                        newActivePlayers.push(player);
-                    }
-                }
-            }
-
-            //Committing disconnected players data
-            //NOTE: I'm only assigning the notes because that's currently the only thing that can change between saves.
-            if (disconnectedPlayers.length) this.db.writeFlag(SAVE_PRIORITY_LOW);
-            disconnectedPlayers.forEach(async (p) => {
-                try {
-                    //p.sessions.push({ts: now(), time: p.playTime})
-                    // some code here to save the p.playTime
-                    await this.db.obj.get('players')
-                        .find({ license: p.license })
-                        .assign({
-                            notes: p.notes,
-                        })
-                        .value();
-                } catch (error) {
-                    logError(`Failed to save the the following disconnected player to the database with error: ${error.message}`);
-                    dir(p);
-                }
-            });
-
-            //Replacing the active playerlist
-            this.activePlayers = newActivePlayers;
-        } catch (error) {
-            if (verbose) {
-                logError(`PlayerController failed to process HeartBeat with error: ${error.message}`);
-                dir(error);
-            }
         }
     }
 };

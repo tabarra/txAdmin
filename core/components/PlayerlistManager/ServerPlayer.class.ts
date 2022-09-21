@@ -1,5 +1,9 @@
 import consts from '@core/extras/consts';
 import { cleanPlayerName } from '@core/extras/shared';
+import { PlayerDbDataType } from '../PlayerDatabase/index.js';
+
+//Helpers
+const now = () => { return Math.round(Date.now() / 1000); };
 
 type PlayerDataType = {
     name: string,
@@ -7,17 +11,20 @@ type PlayerDataType = {
     hwids: string[],
 }
 
-export default class ActivePlayer {
+export default class ServerPlayer {
     netid: number;
     displayName: string;
     pureName: string;
     ids: string[] = [];
-    // hwids: string[] = [];
-    connected: boolean = true;
+    hwids: string[] = [];
     license: false | string = false; //extracted for convenience
 
-    constructor(playerId: number, playerData: PlayerDataType) {
-        this.netid = playerId;
+    tsConnected = now();
+    isConnected: boolean = true;
+    dbData: false | PlayerDbDataType = false;
+
+    constructor(netid: number, playerData: PlayerDataType) {
+        this.netid = netid;
         if (
             playerData === null
             || typeof playerData !== 'object'
@@ -52,6 +59,10 @@ export default class ActivePlayer {
     }
 
     disconnect() {
-        this.connected = false;
+        this.isConnected = false;
+    }
+
+    setDbData(dbData: PlayerDbDataType) {
+        this.dbData = dbData;
     }
 }

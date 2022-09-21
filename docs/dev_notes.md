@@ -6,6 +6,82 @@ v4.18.0:
 - [x] fix: fixed pidusage and enabled process stats in diagnostics page
 - [x] scheduler should deny scheduled restarts in the same minute
 
+
+v4.19.0
+- [ ] bot status "watching xx/yy players"
+
+
+// @ts-ignore: let it throw
+
+
+## PLANO:
+PlayerDatabase: já migrar pra algo mais próximo de um RPC
+- intercom passar a cuidar de checar se o player pode entrar ou não
+
+PlayerlistManager:
+- cuida do ciclo de vida do usuário, inclusive chamar o PlayerDatabase pra salvar player quando passar do minSessionTime
+- on join/leave, chamar métodos do PlayerDatabase
+
+
+Pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
+
+
+
+TODO: em ordem
+- pelo join/leave
+- increment player time
+/\ não fiz o update, não testei direito o create
+
+
+HACK: SHOWER DECISIONS:
+- já atualizar agora o lowdb pra já ir testando
+
+- `ServerPlayer.dbData` sempre ter uma cópia do registro do banco, no futuro não só será meio necessário, mas bom fazer dessa forma pq o banco vai ser fora do processo (mais desacoplado);
+- getPlayer tem que tomar cuidado pra retornar um clone, talvez até criar uma classe pra db data
+- getPlayer checar se da pra fazer `db.whatever.value().deepClone();`
+
+- PlayerlistManager sempre ter apenas a playerlist do server atual, `handleServerRestart()` literalmente dar um wipe na playlist
+- rota de get modal:
+    - split mutex_id
+    - mutex == fxChild.mutex?
+        - `PlayerlistManager.getPlayer(netid)`
+    - else
+        - serverlog.searchPlayerJoin(mutex_id)
+        - se encontrar: buscar esse player no banco
+        - se não: "player não encontrado, tente procurar no txData/blah/logs/serverlog.xxxxx.log"
+- dessa forma:
+    - matamos o memory leak
+    - ainda sim pela interface vai dar pra recuperar os players pra maioria dos casos
+    - trocamos muita complexidade das rotas internas por um pouco de complexidade apenas nessa rota
+
+- criar migration do banco pra converter name -> displayName + pureName
+
+
+
+
+
+
+- get player modal
+- actions
+- join+whitelist
+
+
+
+
+
+
+
+
+
+
+
+
+
+At the schedule restart thing, add a note saying what is the current server time
+
+https://bobbyhadz.com/blog/typescript-declare-global-variable
+
+
 resolver mem leak no server log handler
 - [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning
 

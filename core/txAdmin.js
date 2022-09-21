@@ -23,6 +23,7 @@ import Translator from '@core/components/Translator';
 import WebServer from '@core/components/WebServer';
 import ResourcesManager from '@core/components/ResourcesManager';
 import PlayerlistManager from '@core/components/PlayerlistManager';
+import PlayerDatabase from '@core/components/PlayerDatabase';
 
 const { dir, log, logOk, logWarn, logError } = logger(`v${txEnv.txAdminVersion}`);
 
@@ -47,6 +48,7 @@ global.globals = {
     playerController: null,
     resourcesManager: null,
     playerlistManager: null,
+    playerDatabase: null,
     config: null,
     deployer: null,
     info: {},
@@ -109,6 +111,21 @@ global.globals = {
  * Main APP
  */
 export default class TxAdmin {
+    adminVault;
+    discordBot;
+    logger;
+    translator;
+    fxRunner;
+    dynamicAds;
+    healthMonitor;
+    scheduler;
+    statsCollector;
+    webServer;
+    playerController;
+    resourcesManager;
+    playerlistManager;
+    playerDatabase;
+
     constructor(serverProfile) {
         log(`Profile '${serverProfile}' starting...`);
         globals.info.serverProfile = serverProfile;
@@ -131,33 +148,53 @@ export default class TxAdmin {
             globals.configVault = new ConfigVault(profilePath, serverProfile);
             profileConfig = globals.configVault.getAll();
             globals.config = profileConfig.global;
-        } catch (err) {
-            HandleFatalError(err, 'ConfigVault');
+        } catch (error) {
+            logError(`Error starting ConfigVault: ${error.message}`);
+            dir(error);
+            process.exit(1);
         }
 
         //Start all modules
         //NOTE: dependency order
-        //  - translator before monitor
+        //  - translator before healthMonitor (TODO: check if still necessary)
         //  - adminVault before webserver
         //  - logger before fxrunner
         //  - translator before fxrunner (for the locale string)
-        //  - adminVault before webserver
         try {
-            globals.adminVault = new AdminVault();
-            globals.discordBot = new DiscordBot(profileConfig.discordBot);
-            globals.logger = new Logger(profileConfig.logger);
-            globals.translator = new Translator();
-            globals.fxRunner = new FxRunner(profileConfig.fxRunner);
-            globals.dynamicAds = new DynamicAds(profileConfig.dynamicAds);
-            globals.healthMonitor = new HealthMonitor(profileConfig.monitor);
-            globals.scheduler = new Scheduler(profileConfig.monitor); //NOTE same opts as monitor, for now
-            globals.statsCollector = new StatsCollector(profileConfig.statsCollector);
-            globals.webServer = new WebServer(profileConfig.webServer);
-            globals.playerController = new PlayerController(profileConfig.playerController);
-            globals.resourcesManager = new ResourcesManager(profileConfig.resourcesManager);
-            globals.playerlistManager = new PlayerlistManager();
-        } catch (err) {
-            HandleFatalError(err, 'Main Components');
+            this.adminVault = new AdminVault();
+            this.discordBot = new DiscordBot(profileConfig.discordBot);
+            this.logger = new Logger(profileConfig.logger);
+            this.translator = new Translator();
+            this.fxRunner = new FxRunner(profileConfig.fxRunner);
+            this.dynamicAds = new DynamicAds(profileConfig.dynamicAds);
+            this.healthMonitor = new HealthMonitor(profileConfig.monitor);
+            this.scheduler = new Scheduler(profileConfig.monitor); //NOTE same opts as monitor, for now
+            this.statsCollector = new StatsCollector(profileConfig.statsCollector);
+            this.webServer = new WebServer(profileConfig.webServer);
+            this.playerController = new PlayerController(profileConfig.playerController);
+            this.resourcesManager = new ResourcesManager(profileConfig.resourcesManager);
+            this.playerlistManager = new PlayerlistManager(this, profileConfig.playerController);
+            this.playerDatabase = new PlayerDatabase(this, profileConfig.playerController);
+
+            //After the migration, delete this.
+            globals.adminVault = this.adminVault;
+            globals.discordBot = this.discordBot;
+            globals.logger = this.logger;
+            globals.translator = this.translator;
+            globals.fxRunner = this.fxRunner;
+            globals.dynamicAds = this.dynamicAds;
+            globals.healthMonitor = this.healthMonitor;
+            globals.scheduler = this.scheduler;
+            globals.statsCollector = this.statsCollector;
+            globals.webServer = this.webServer;
+            globals.playerController = this.playerController;
+            globals.resourcesManager = this.resourcesManager;
+            globals.playerlistManager = this.playerlistManager;
+            globals.playerDatabase = this.playerDatabase;
+        } catch (error) {
+            logError(`Error starting main components: ${error.message}`);
+            dir(error);
+            process.exit(1);
         }
 
         //Once they all finish loading, the function below will print the banner
@@ -168,11 +205,3 @@ export default class TxAdmin {
         setInterval(updateChecker, 15 * 60 * 1000);
     }
 };
-
-
-//==============================================================
-function HandleFatalError(error, componentName) {
-    logError(`Error starting component '${componentName}': ${error.message}`);
-    dir(error);
-    process.exit(1);
-}
