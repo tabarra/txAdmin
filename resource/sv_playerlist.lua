@@ -123,6 +123,20 @@ end)
 
 -- Handle getDetailedPlayerlist
 -- This event is only called when the menu "players" tab is opened, and every 5s while the tab is open
+-- DEBUG playerlist scroll test stuff
+-- math.randomseed(os.time())
+-- local fake_playerlist = {}
+-- local fake_admins = {1, 10, 21, 61, 91, 141, 281}
+-- local function getFakePlayer()
+--     return {
+--         name = 'fake'..tostring(math.random(999999)),
+--         health = 0,
+--         vType = math.random(8),
+--     }
+-- end
+-- for serverID=1, 500 do
+--     fake_playerlist[serverID] = getFakePlayer()
+-- end
 RegisterNetEvent('txsv:getDetailedPlayerlist', function()
     if TX_ADMINS[tostring(source)] == nil then
         debugPrint('Ignoring unauthenticated getDetailedPlayerlist() by ' .. source)
@@ -130,6 +144,7 @@ RegisterNetEvent('txsv:getDetailedPlayerlist', function()
     end
 
     local players = {}
+    --DEBUG replace TX_PLAYERLIST with fake_playerlist and playerData.health with math.random(150)
     for playerID, playerData in pairs(TX_PLAYERLIST) do
         players[#players + 1] = {tonumber(playerID), playerData.health, playerData.vType}
     end
@@ -137,6 +152,7 @@ RegisterNetEvent('txsv:getDetailedPlayerlist', function()
     for adminID, _ in pairs(TX_ADMINS) do
         admins[#admins + 1] = tonumber(adminID)
     end
+    --DEBUG replace admins with fake_admins
     TriggerClientEvent('txcl:setDetailedPlayerlist', source, players, admins)
 end)
 
@@ -145,6 +161,7 @@ end)
 -- Triggered by the server after admin auth
 function sendInitialPlayerlist(adminID)
     local payload = {}
+    --DEBUG replace TX_PLAYERLIST with fake_playerlist
     for playerID, playerData in pairs(TX_PLAYERLIST) do
         payload[#payload + 1] = {tonumber(playerID), playerData.name}
     end
