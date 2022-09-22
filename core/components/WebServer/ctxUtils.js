@@ -235,6 +235,16 @@ export default async function WebCtxUtils(ctx, next) {
                 ctx.txVars.realIP = srcIP;
             }
         }
+    } else {
+        if (convars.proxyAddresses[ctx.ip]) { // Check if remote address is a proxy
+            const srcIP = ctx.headers['x-txadmin-real-ip'] || false;
+
+            if (srcIP) {
+                if (consts.regexValidIP.test(srcIP)) {
+                    ctx.txVars.realIP = srcIP;
+                }
+            }
+        }
     }
 
     //Functions

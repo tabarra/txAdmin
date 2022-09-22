@@ -135,7 +135,7 @@ const debugExternalSource = getConvarString('txDebugExternalSource');
  */
 //Checking for ZAP Configuration file
 const zapCfgFile = path.join(dataPath, 'txAdminZapConfig.json');
-let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, defaultMasterAccount, deployerDefaults;
+let zapCfgData, isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, defaultMasterAccount, deployerDefaults, proxyAddresses;
 const loopbackInterfaces = ['::1', '127.0.0.1', '127.0.1.1'];
 if (fs.existsSync(zapCfgFile)) {
     log('Loading ZAP-Hosting configuration file.');
@@ -191,6 +191,20 @@ if (fs.existsSync(zapCfgFile)) {
         if (!/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(txAdminInterfaceConvar)) logDie('txAdminInterface is not valid.');
         forceInterface = txAdminInterfaceConvar;
     }
+
+    proxyAddresses = {}
+    let pAddresses = getConvarString('txAdminProxyAddresses');
+
+    if (typeof pAddresses == "string") {
+        pAddresses = pAddresses.split(",");
+
+        for (let i = 0; i < pAddresses.length; i++) {
+            let address = proxyAddresses[i].trim(); // Add support for CIDRs in the future.
+            if (/^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(address)) proxyAddresses[address] = true;
+        }
+
+        if (Object.keys(proxyAddresses).length === 0) logWarn('txAdminProxyAddresses is set but blank or not in a correct format');
+    }
 }
 if (verboseConvar) dir({ isZapHosting, forceInterface, forceFXServerPort, txAdminPort, loginPageLogo, deployerDefaults });
 
@@ -222,6 +236,7 @@ export const convars = Object.freeze({
     defaultMasterAccount,
     deployerDefaults,
     loopbackInterfaces,
+    proxyAddresses,
 });
 
 //Verbosity can change during execution
