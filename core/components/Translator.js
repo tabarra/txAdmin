@@ -74,7 +74,6 @@ const localeMap = {
  */
 export default class Translator {
     constructor() {
-        // logOk('Started');
         this.language = globals.config.language;
         this.polyglot = null;
         this.customLocalePath = path.join(txEnv.dataPath, 'locale.json');

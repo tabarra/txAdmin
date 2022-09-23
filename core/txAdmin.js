@@ -156,40 +156,52 @@ export default class TxAdmin {
 
         //Start all modules
         //NOTE: dependency order
-        //  - translator before healthMonitor (TODO: check if still necessary)
+        //  - translator before fxrunner (for the locale string)
+        //  - translator before scheduler (in case it tries to send translated msg immediately)
         //  - adminVault before webserver
         //  - logger before fxrunner
-        //  - translator before fxrunner (for the locale string)
+        //FIXME: After the migration, delete the globals.
         try {
             this.adminVault = new AdminVault();
-            this.discordBot = new DiscordBot(profileConfig.discordBot);
-            this.logger = new Logger(profileConfig.logger);
-            this.translator = new Translator();
-            this.fxRunner = new FxRunner(profileConfig.fxRunner);
-            this.dynamicAds = new DynamicAds(profileConfig.dynamicAds);
-            this.healthMonitor = new HealthMonitor(profileConfig.monitor);
-            this.scheduler = new Scheduler(profileConfig.monitor); //NOTE same opts as monitor, for now
-            this.statsCollector = new StatsCollector(profileConfig.statsCollector);
-            this.webServer = new WebServer(profileConfig.webServer);
-            this.playerController = new PlayerController(profileConfig.playerController);
-            this.resourcesManager = new ResourcesManager(profileConfig.resourcesManager);
-            this.playerlistManager = new PlayerlistManager(this, profileConfig.playerController);
-            this.playerDatabase = new PlayerDatabase(this, profileConfig.playerController);
-
-            //After the migration, delete this.
             globals.adminVault = this.adminVault;
+
+            this.discordBot = new DiscordBot(profileConfig.discordBot);
             globals.discordBot = this.discordBot;
+
+            this.logger = new Logger(profileConfig.logger);
             globals.logger = this.logger;
+
+            this.translator = new Translator();
             globals.translator = this.translator;
+
+            this.fxRunner = new FxRunner(profileConfig.fxRunner);
             globals.fxRunner = this.fxRunner;
+
+            this.dynamicAds = new DynamicAds(profileConfig.dynamicAds);
             globals.dynamicAds = this.dynamicAds;
+
+            this.healthMonitor = new HealthMonitor(profileConfig.monitor);
             globals.healthMonitor = this.healthMonitor;
+
+            this.scheduler = new Scheduler(profileConfig.monitor); //NOTE same opts as monitor, for now
             globals.scheduler = this.scheduler;
+
+            this.statsCollector = new StatsCollector(profileConfig.statsCollector);
             globals.statsCollector = this.statsCollector;
+
+            this.webServer = new WebServer(profileConfig.webServer);
             globals.webServer = this.webServer;
-            globals.playerController = this.playerController;
+
+            // this.playerController = new PlayerController(profileConfig.playerController);
+            // globals.playerController = this.playerController;
+
+            this.resourcesManager = new ResourcesManager(profileConfig.resourcesManager);
             globals.resourcesManager = this.resourcesManager;
+
+            this.playerlistManager = new PlayerlistManager(this, profileConfig.playerController);
             globals.playerlistManager = this.playerlistManager;
+
+            this.playerDatabase = new PlayerDatabase(this, profileConfig.playerController);
             globals.playerDatabase = this.playerDatabase;
         } catch (error) {
             logError(`Error starting main components: ${error.message}`);

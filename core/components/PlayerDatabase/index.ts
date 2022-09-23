@@ -6,7 +6,7 @@ import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData';
 // eslint-disable-next-line no-unused-vars
 import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database.js';
-import { genActionID, genWhitelistID } from './idGenerator.js';
+import { genActionID, genWhitelistID } from './idGenerator';
 import TxAdmin from '@core/txAdmin.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
@@ -73,11 +73,10 @@ type PlayerDbConfigType = {
 }
 export default class PlayerDatabase {
     db: Database;
+    readonly #txAdmin: typeof TxAdmin;
 
-    constructor(
-        protected readonly txAdmin: TxAdmin,
-        public config: PlayerDbConfigType
-    ) {
+    constructor(txAdmin: typeof TxAdmin, public config: PlayerDbConfigType) {
+        this.#txAdmin = txAdmin;
         this.db = new Database(config.wipePendingWLOnStart);
     }
 
@@ -88,7 +87,7 @@ export default class PlayerDatabase {
      *
      * @returns {object} lodash database
      */
-    getDB() {
+    getDb() {
         throw new Error(`dev note: not validated yet`);
         return this.db.obj;
     }
@@ -97,13 +96,16 @@ export default class PlayerDatabase {
     /**
      * Searches for a player in the database by the license, returns null if not found or false in case of error
      */
-    async getPlayer(license: string): Promise<PlayerDbDataType | null> {
+    getPlayerData(license: string): PlayerDbDataType | null {
         if (!/[0-9A-Fa-f]{40}/.test(license)) {
             throw new Error('Invalid reference type');
         }
 
         //Performing search
-        const p = await this.db.obj.get('players').find({ license }).cloneDeep().value();
+        const p = this.db.obj.get('players')
+            .find({ license })
+            .cloneDeep()
+            .value();
         return (typeof p === 'undefined') ? null : p;
     }
 
@@ -111,9 +113,9 @@ export default class PlayerDatabase {
     /**
      * Register a player to the database
      */
-    async registerPlayer(player: PlayerDbDataType) {
+    registerPlayer(player: PlayerDbDataType) {
         this.db.writeFlag(SAVE_PRIORITY_LOW);
-        await this.db.obj.get('players')
+        this.db.obj.get('players')
             .push(player)
             .value();
     }
@@ -122,11 +124,12 @@ export default class PlayerDatabase {
     /**
      * Updates a player setting assigning srcData props to the database player
      */
-    async updatePlayer(license: string, srcData: Exclude<object, null>) {
+    updatePlayer(license: string, srcData: Exclude<object, null>): PlayerDbDataType {
         this.db.writeFlag(SAVE_PRIORITY_LOW);
-        await this.db.obj.get('players')
-            .find({ license: license })
+        return this.db.obj.get('players')
+            .find({ license })
             .assign(srcData)
+            .cloneDeep()
             .value();
     }
 

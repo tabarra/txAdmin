@@ -6,7 +6,7 @@ import * as nanoidNonSecure from 'nanoid/non-secure';
 import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
-import { convars, txEnv } from '@core/globalData.ts';
+import { convars, txEnv } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Consts

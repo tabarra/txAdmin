@@ -44,7 +44,6 @@ const SHUTDOWN_NOTICE_DELAY = 5000;
 
 export default class FXRunner {
     constructor(config) {
-        // logOk('Started');
         this.config = config;
         this.spawnVariables = null;
         this.fxChild = null;
@@ -238,8 +237,8 @@ export default class FXRunner {
         this.fxChild.stdout.setEncoding('utf8');
 
         //Setting up event handlers
-        this.fxChild.on('close', function (code) {
-            logWarn(`>> [${pid}] FXServer Closed. (code ${code})`);
+        this.fxChild.on('close', function (_code) {
+            logWarn(`>> [${pid}] FXServer Closed.`);
             this.history[historyIndex].timestamps.close = now();
         }.bind(this));
         this.fxChild.on('disconnect', function () {

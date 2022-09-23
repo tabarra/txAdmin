@@ -110,7 +110,7 @@ export default class ServerLogger extends LoggerBase {
         for (let i = 0; i < data.length; i++) {
             // logError(`loop ${i}:`); dir(data[i]); //DEBUG
             try {
-                const {eventObject, eventString} = this.processEvent(mutex, data[i]);
+                const { eventObject, eventString } = this.processEvent(mutex, data[i]);
                 // dir({eventObject, eventString});
                 if (!eventObject || !eventString) {
                     if (verbose) {
@@ -139,6 +139,20 @@ export default class ServerLogger extends LoggerBase {
     }
 
     /**
+     * FIXME:
+     */
+    handlePlayerJoin() {
+        //????????
+    }
+
+    /**
+     * FIXME:
+     */
+    handlePlayerDrop() {
+        //????????
+    }
+
+    /**
      * Processes an event and returns both the string for log file, and object for the web ui
      * @param {String} mutex
      * @param {Object} eventData
@@ -147,18 +161,18 @@ export default class ServerLogger extends LoggerBase {
         //Get source + handle playerJoining
         let srcObject, srcString, eventMessage;
         if (eventData.src === 'tx') {
-            srcObject = {id: false, name: 'txAdmin'};
+            srcObject = { id: false, name: 'txAdmin' };
             srcString = 'txAdmin';
 
         } else if (typeof eventData.src === 0) {
-            srcObject = {id: false, name: 'CONSOLE'};
+            srcObject = { id: false, name: 'CONSOLE' };
             srcString = 'CONSOLE';
 
         } else if (typeof eventData.src === 'number' && eventData.src > 0) {
             const playerID = `${mutex}#${eventData.src}`;
             let playerData = this.cachedPlayers.get(playerID);
             if (playerData) {
-                srcObject = {id: playerID, name: playerData.name};
+                srcObject = { id: playerID, name: playerData.name };
                 srcString = `[${playerID}] ${playerData.name}`;
             } else {
                 if (eventData.type === 'playerJoining') {
@@ -166,11 +180,11 @@ export default class ServerLogger extends LoggerBase {
                         playerData = eventData.data;
                         playerData.ids = playerData.ids.filter((id) => !id.startsWith('ip:'));
                         this.cachedPlayers.set(playerID, playerData);
-                        srcObject = {id: playerID, name: playerData.name};
+                        srcObject = { id: playerID, name: playerData.name };
                         srcString = `[${playerID}] ${playerData.name}`;
                         eventMessage = `joined with identifiers [${playerData.ids.join('; ')}]`;
                     } else {
-                        srcObject = {id: false, name: 'UNKNOWN PLAYER'};
+                        srcObject = { id: false, name: 'UNKNOWN PLAYER' };
                         srcString = 'UNKNOWN PLAYER';
                         eventMessage = 'joined with unknown identifiers.';
                         if (verbose) {
@@ -179,7 +193,7 @@ export default class ServerLogger extends LoggerBase {
                         }
                     }
                 } else {
-                    srcObject = {id: false, name: 'UNKNOWN PLAYER'};
+                    srcObject = { id: false, name: 'UNKNOWN PLAYER' };
                     srcString = 'UNKNOWN PLAYER';
                     if (verbose) {
                         logWarn('Unknown numeric event source from object:');
@@ -189,7 +203,7 @@ export default class ServerLogger extends LoggerBase {
             }
 
         } else {
-            srcObject = {id: false, name: 'UNKNOWN'};
+            srcObject = { id: false, name: 'UNKNOWN' };
             srcString = 'UNKNOWN';
         }
 
@@ -283,11 +297,11 @@ export default class ServerLogger extends LoggerBase {
     readPartialOlder(timestamp, sliceLength) {
         const limitIndex = this.recentBuffer.findIndex((x) => x.ts >= timestamp);
 
-        //everything is older, return last few
         if (limitIndex === -1) {
+            //everything is older, return last few
             return this.recentBuffer.slice(-sliceLength);
-        //not everything is older
         } else {
+            //not everything is older
             return this.recentBuffer.slice(Math.max(0, limitIndex - sliceLength), limitIndex);
         }
     }

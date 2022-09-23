@@ -9,6 +9,7 @@ v4.18.0:
 
 v4.19.0
 - [ ] bot status "watching xx/yy players"
+- [ ] remover `Cfx.re URL` da pagina de diagnosticos
 
 
 // @ts-ignore: let it throw
@@ -28,48 +29,98 @@ Pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
 
 
 TODO: em ordem
-- pelo join/leave
+- player join/leave
 - increment player time
-/\ não fiz o update, não testei direito o create
+- get player modal
+- actions
+- join+whitelist
 
 
 HACK: SHOWER DECISIONS:
 - já atualizar agora o lowdb pra já ir testando
 
 - `ServerPlayer.dbData` sempre ter uma cópia do registro do banco, no futuro não só será meio necessário, mas bom fazer dessa forma pq o banco vai ser fora do processo (mais desacoplado);
-- getPlayer tem que tomar cuidado pra retornar um clone, talvez até criar uma classe pra db data
-- getPlayer checar se da pra fazer `db.whatever.value().deepClone();`
+- getPlayerData tem que tomar cuidado pra retornar um clone, talvez até criar uma classe pra db data
+- getPlayerData checar se da pra fazer `db.whatever.value().deepClone();`
 
 - PlayerlistManager sempre ter apenas a playerlist do server atual, `handleServerRestart()` literalmente dar um wipe na playlist
-- rota de get modal:
-    - split mutex_id
+- Fluxo de "resolve player" - usado por modal, mas tb para ban/warn/kick/etc:
+    - split mutex_id + license
     - mutex == fxChild.mutex?
         - `PlayerlistManager.getPlayer(netid)`
     - else
-        - serverlog.searchPlayerJoin(mutex_id)
-        - se encontrar: buscar esse player no banco
-        - se não: "player não encontrado, tente procurar no txData/blah/logs/serverlog.xxxxx.log"
+        - Se tiver licença: buscar esse player no banco
+        - Se não tiver licença ou não tiver no banco
+            - checar mutex_id no lru-cache
+            - serverlog.searchPlayerJoin(mutex_id)
+            - se encontrar: salvar name+ids no lru-cache
+            - se não: "player não encontrado, tente procurar no txData/blah/logs/serverlog.xxxxx.log"
 - dessa forma:
     - matamos o memory leak
     - ainda sim pela interface vai dar pra recuperar os players pra maioria dos casos
     - trocamos muita complexidade das rotas internas por um pouco de complexidade apenas nessa rota
+    - casos de load pro objeto:
+        - caso online: já existe objeto e já está com dbData
+        - caso na playerlist mas já desconectado: dados iniciais presentes, carregar player do banco
+        - caso do log: hidrata initial data (name, identifiers)
+        - caso no banco: busca por license instancia DatabasePlayer(dbData)
 
 - criar migration do banco pra converter name -> displayName + pureName
+- criar um backup pra todo migration
+
+
+## BasePlayer
+    - get history
+    - set note
+    - ban
+
+## ServerPlayer
+- constructor(netid, initialData)
+    - cadastrar no banco
+    - setar timer de update
+- kick/dm/warn actions
+
+## DatabasePlayer
+- constructor(dbData)
+    - seta name, ids
+- todas as ações exceto kick/dm/warn
+
+## LogPlayer
+- constructor(name, ids)
+    - seta name, ids
+- nenhuma ação exceto ban
 
 
 
+txadmin/core/playerlogic??
+- resolvePlayer.ts
+- BasePlayer.ts
+- PlayerClasses.ts (all 3)
 
 
 
-- get player modal
-- actions
-- join+whitelist
+```json
+
+{
+    "ts": 1663809240000,
+    "type": "playerJoining",
+    "src": {
+        "id": "4FmDe#1",
+        "name": "Tabarra"
+    },
+    "msg": "joined with identifiers [license:9b9fc300cc65d22ad3b536175a4d15c0e4933753; discord:272800190639898628; fivem:271816]"
+}
 
 
+{"ts":1663809240000,"type":"playerJoining","src":{"id":"4FmDe#1","name":"Tabarra"},"msg":"joined with identifiers [license:9b9fc300cc65d22ad3b536175a4d15c0e4933753; discord:272800190639898628; fivem:271816]"}
 
 
+{"ts":1663756211000,"type":"ChatMessage","src":{"id":false,"name":"txAdmin"},"msg":"((Broadcast) txAdmin): said \"This server is scheduled to restart in 30 minutes.\""}
+
+```
 
 
+HACK: jogar o timer de 1 minuto pra dentro do ServerPlayer
 
 
 
@@ -134,8 +185,9 @@ Optional:
 
 The Big Things before ts+react rewrite:
 - in-core playerlist state tracking
-- in-core resource state tracking
 - new proxy console util
+- global socket.io connection for playerlist + async responses
+- in-core resource state tracking
 - new config (prepared for multiserver)
 - multiserver tx instance (backend only)
 
@@ -149,9 +201,7 @@ The Big Things before ts+react rewrite:
 ```js
 console.log('aaa', {àa:true});
 const {Console} = require('node:console');
-// dir(Object.keys(imp))
-// imp.log({àa:true});
-const xxx = new Console({
+const ogConsole = new Console({
     stdout: process.stdout,
     stderr: process.stderr,
     colorMode: true,

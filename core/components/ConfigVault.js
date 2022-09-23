@@ -40,7 +40,6 @@ export default class ConfigVault {
         this.config = null;
 
         this.setupVault();
-        // logOk('Started');
     }
 
 

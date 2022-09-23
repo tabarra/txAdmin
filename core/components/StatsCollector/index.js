@@ -126,6 +126,7 @@ export default class StatsCollector {
         //Check pre-condition
         if (this.perfSeries === null) return;
         if (globals.fxRunner.fxChild === null) return;
+        if (globals.playerController === null) return;
 
         //Commom vars
         const now = Date.now();

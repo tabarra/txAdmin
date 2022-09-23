@@ -22,7 +22,7 @@ const now = () => { return Math.round(Date.now() / 1000); };
  */
 export default async function PlayerList(ctx) {
     //Prepare dbo
-    const dbo = globals.playerController.getDB();
+    const dbo = globals.playerController.getDb();
 
     //Delegate to the specific action handler
     if (ctx.request.query && ctx.request.query.search) {
