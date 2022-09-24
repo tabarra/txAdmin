@@ -66,7 +66,7 @@ export default class PlayerController {
     constructor(config) {
         this.config = config;
         this.activePlayers = [];
-        this.db = new Database(config.wipePendingWLOnStart);
+        // this.db = new Database(config.wipePendingWLOnStart);
 
         //Config check
         if (this.config.minSessionTime < 1 || this.config.minSessionTime > 60) throw new Error('The playerController.minSessionTime setting must be between 1 and 60 minutes.');
@@ -629,16 +629,16 @@ export default class PlayerController {
         //DEBUG: in case the player generator is enabled
         if (this.playerlistGenerator) players = this.playerlistGenerator.playerlist;
 
-        players = [
-            {
-                id: 12,
-                ping: 123,
-                name: 'tabarra',
-                identifiers: [
-                    'license:da4e5c173b3ba97e7f201de0fcd44443db7d4844',
-                ]
-            }
-        ]
+        // players = [
+        //     {
+        //         id: 12,
+        //         ping: 123,
+        //         name: 'tabarra',
+        //         identifiers: [
+        //             'license:da4e5c173b3ba97e7f201de0fcd44443db7d4844',
+        //         ]
+        //     }
+        // ]
 
         try {
             //Sanity check

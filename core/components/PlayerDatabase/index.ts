@@ -67,7 +67,6 @@ export type PlayerDbDataType = {
 type PlayerDbConfigType = {
     onJoinCheckBan: boolean;
     onJoinCheckWhitelist: boolean;
-    minSessionTime: number;
     whitelistRejectionMessage: string;
     wipePendingWLOnStart: boolean;
 }

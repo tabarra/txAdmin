@@ -31,22 +31,22 @@ export class BasePlayer {
     dbData: false | PlayerDbDataType = false;
     isConnected: boolean = false;
 
-    constructor(protected readonly dbInstance: PlayerDatabase) {}
+    constructor(protected readonly dbInstance: PlayerDatabase) { }
 
     protected mutateDadabase(srcData: Exclude<object, null>) {
-        if(!this.license) throw new Error(`cannot mutate database for a player that hasn o license`);
+        if (!this.license) throw new Error(`cannot mutate database for a player that hasn o license`);
         this.dbData = this.dbInstance.updatePlayer(this.license, srcData);
     }
 
-    async setNote() {
+    setNote() {
         //if dbData?
     }
 
-    async getHistory() {
+    getHistory() {
         //if any identifier
     }
 
-    async ban() {
+    ban() {
         //
     }
 }
@@ -65,6 +65,7 @@ type PlayerDataType = {
 export default class ServerPlayer extends BasePlayer {
     readonly netid: number;
     readonly tsConnected = now();
+    readonly #minuteCronInterval?: ReturnType<typeof setInterval>;
 
     constructor(netid: number, playerData: PlayerDataType, dbInstance: PlayerDatabase) {
         super(dbInstance);
@@ -102,65 +103,90 @@ export default class ServerPlayer extends BasePlayer {
         this.displayName = displayName;
         this.pureName = pureName;
 
-        this.loadDatabaseData();
 
-        //Cron functions
-        setInterval(() => {
-            if(!this.dbData) return;
-            try {
-                this.mutateDadabase({ playTime: this.dbData.playTime + 1 });
-            } catch (error) {
-                logWarn(`Failed to update playtime for player ${netid}: ${(error as Error).message}`);
-            }
-        }, 60_000);
+        //If this player is eligible to be on the database
+        if (this.license) {
+            this.#setupDatabaseData();
+            this.#minuteCronInterval = setInterval(this.#minuteCron.bind(this), 60_000);
+        }
     }
+
 
     /**
      * 
      */
-    async loadDatabaseData() {
-        if (!this.license) return;
+    #setupDatabaseData() {
+        if (!this.license || !this.isConnected) return;
 
-        //Make sure the database is ready - or wait 15 seconds
+        //Make sure the database is ready - this should be impossible
         if (!this.dbInstance.db.isReady) {
-            logError('aguardar banco')
-            await sleep(15_000);
-            if (!this.dbInstance.db.isReady) {
-                logError(`Players database not yet ready, cannot read db status for player id ${this.netid}.`);
-                return;
-            }
+            logError(`Players database not yet ready, cannot read db status for player id ${this.displayName}.`);
+            return;
         }
 
         //Check if player is already on the database
         try {
             const dbPlayer = this.dbInstance.getPlayerData(this.license);
             if (dbPlayer) {
+                //Updates database data
                 this.dbData = dbPlayer;
                 this.mutateDadabase({
                     name: this.displayName, //FIXME: displayName + pureName
-                    playTime: this.dbData.playTime,
                     tsLastConnection: this.tsConnected,
-                })
+                    //FIXME: add identifiers
+                });
+            } else {
+                //Register player to the database
+                const toRegister = {
+                    license: this.license,
+                    name: this.displayName, //FIXME: displayName + pureName
+                    playTime: 0,
+                    tsLastConnection: this.tsConnected,
+                    tsJoined: this.tsConnected,
+                    notes: {
+                        text: '',
+                        lastAdmin: null,
+                        tsLastEdit: null,
+                    },
+                };
+                this.dbInstance.registerPlayer(toRegister);
+                this.dbData = toRegister;
+                if (verbose) logOk(`Adding '${this.displayName}' to players database.`);
             }
         } catch (error) {
-            if (verbose) logError(`Failed to search for a player ${this.netid} in the database with error: ${(error as Error).message}`);
+            logError(`Failed to load/register player ${this.displayName} from/to the database with error: ${(error as Error).message}`);
         }
     }
 
+
+    /**
+     * 
+     */
+    #minuteCron() {
+        if (!this.dbData || !this.isConnected) return;
+        try {
+            this.mutateDadabase({ playTime: this.dbData.playTime + 1 });
+            logOk(`Updating '${this.displayName}' databse playTime.`);
+        } catch (error) {
+            logWarn(`Failed to update playtime for player ${this.displayName}: ${(error as Error).message}`);
+        }
+    }
+
+
+    /**
+     * 
+     */
     disconnect() {
         this.isConnected = false;
         this.dbData = false;
+        clearInterval(this.#minuteCronInterval);
     }
 
-    async warn() {
+
+    /**
+     * 
+     */
+    warn() {
         //
     }
-
-    // async kick() {
-    //     //
-    // }
-
-    // async sendDirectMessage() {
-    //     //
-    // }
 }
