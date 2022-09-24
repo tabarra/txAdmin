@@ -30,9 +30,13 @@ export default class PlayerlistManager {
 
 
     /**
-     * Handler for server restart
+     * Handler for server restart.
+     * We MUST do .disconnect() for all players to clear the timers.
      */
     handleServerStop() {
+        for (const player of this.playerlist) {
+            if(player) player.disconnect();
+        }
         this.playerlist = [];
     }
 

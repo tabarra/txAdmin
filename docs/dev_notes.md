@@ -10,6 +10,15 @@ v4.18.0:
 v4.19.0
 - [ ] bot status "watching xx/yy players"
 - [ ] remover `Cfx.re URL` da pagina de diagnosticos
+- [ ] Melhorar ou remover mensagem `[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg`
+- [ ] remove minSessionTime from everywhere
+- [ ] create daily cron to optimize database, maybe have a select box with 3 profiles + disabled?
+
+- [ ] com a migration do displayName/pureName também é possível deprecarmos `now()`, considerar alternative
+- [ ] criar migration do banco pra converter name -> displayName + pureName
+- [ ] criar um backup pra todo migration
+- [ ] checar se eu já coloquei pra salvar old identifiers - precisa estar na migration
+- [ ] checar o que acontece quando tiver mais de um plçayer com mesma license online
 
 
 // @ts-ignore: let it throw
@@ -29,11 +38,15 @@ Pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
 
 
 TODO: em ordem
-- player join/leave
-- increment player time
-- get player modal
-- actions
-- join+whitelist
+- [x] player join/leave
+- [x] increment player time
+- [x] fix web playerlist
+- [x] handle server restarts
+- [ ] send join/leave to log
+- [ ] resolve player function
+- [ ] get player modal
+- [ ] actions
+- [ ] join check + whitelist
 
 
 HACK: SHOWER DECISIONS:

@@ -1,5 +1,4 @@
 const modulename = 'Player';
-import { promisify } from 'util';
 import logger from '@core/extras/console.js';
 import consts from '@core/extras/consts';
 import PlayerDatabase, { PlayerDbDataType } from '@core/components/PlayerDatabase/index.js';
@@ -8,7 +7,6 @@ import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
-const sleep = promisify((d: number, f: Function) => setTimeout(f, d));
 const now = () => { return Math.round(Date.now() / 1000); };
 
 //DEBUG
