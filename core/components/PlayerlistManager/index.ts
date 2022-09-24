@@ -1,4 +1,5 @@
 const modulename = 'PlayerlistManager';
+import { cloneDeep } from 'lodash-es';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData';
 import TxAdmin from '@core/txAdmin.js';
@@ -33,6 +34,25 @@ export default class PlayerlistManager {
      */
     handleServerStop() {
         this.playerlist = [];
+    }
+
+
+    /**
+     * Returns a playerlist array with ServerPlayer data.
+     * The data is cloned to prevent pollution.
+     */
+    getPlayerList() {
+        return this.playerlist
+            .filter(p => p?.isConnected)
+            .map((p) => {
+                return cloneDeep({
+                    netid: p!.netid,
+                    displayName: p!.displayName,
+                    pureName: p!.pureName,
+                    ids: p!.ids,
+                    license: p!.license,
+                });
+            });
     }
 
 

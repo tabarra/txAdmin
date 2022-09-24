@@ -118,5 +118,10 @@ function prepareHostData() {
  *        Could be done via socket.io, and then playerlist changed would push update events
  */
 function preparePlayersData() {
-    return globals.playerController.getPlayerList();
+    try {
+        return globals.playerlistManager.getPlayerList();
+    } catch (error) {
+        if (verbose) logError(`Failed to generate playerlist with error: ${error.message}`);
+        return false;
+    }
 }

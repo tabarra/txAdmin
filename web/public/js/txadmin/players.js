@@ -13,7 +13,7 @@ const plistSearchElement = document.getElementById('plist-search');
 function applyPlayerlistFilter() {
     let search = plistSearchElement.value.toLowerCase();
     Array.from(playerlistElement.children).forEach((el) => {
-        if (el.id == 'playerlist-message') return;
+        if (el.id === 'playerlist-message') return;
         if (
             search == ''
             || (typeof el.dataset['pname'] == 'string' && el.dataset['pname'].includes(search))
@@ -44,42 +44,30 @@ if (plistSearchElement) plistSearchElement.addEventListener('input', function (e
 
 //Handle Remove, Add and Update playerlist
 function removePlayer(player) {
-    document.getElementById(`divPlayer${player.id}`).remove();
+    document.getElementById(`divPlayer${player.netid}`).remove();
 }
 
 function addPlayer(player) {
-    if (player.id > biggestPlayerID) biggestPlayerID = player.id;
+    if (player.netid > biggestPlayerID) biggestPlayerID = player.netid;
     let div = `<div class="list-group-item list-group-item-accent-secondary player text-truncate" 
-                onclick="showPlayer('${player.license}')" id="divPlayer${player.id}">
+                onclick="showPlayer('${player.netid}')" id="divPlayer${player.netid}">
                     <span class="pping"> ---- </span>
-                    <span class="pname">${xss(player.name)}</span>
+                    <span class="pname">${xss(player.displayName)}</span>
             </div>`;
     $('#playerlist').append(div);
 }
 
 function updatePlayer(player) {
-    let el = document.getElementById(`divPlayer${player.id}`);
-
-    let pingClass;
-    player.ping = parseInt(player.ping);
-    if (player.ping < 0) {
-        pingClass = 'secondary';
-        player.ping = '??';
-    } else if (player.ping < 60) {
-        pingClass = 'success';
-    } else if (player.ping < 100) {
-        pingClass = 'warning';
-    } else {
-        pingClass = 'danger';
-    }
+    let el = document.getElementById(`divPlayer${player.netid}`);
+    let pingClass = 'secondary'; //hardcoded, no more ping data
 
     el.classList.remove('list-group-item-accent-secondary', 'list-group-item-accent-success', 'list-group-item-accent-warning', 'list-group-item-accent-danger');
     el.classList.add('list-group-item-accent-' + pingClass);
     el.firstElementChild.classList.remove('text-secondary', 'text-success', 'text-warning', 'text-danger');
     const padSize = biggestPlayerID.toString().length + 2;
-    el.firstElementChild.innerHTML = `[${player.id}]`.padStart(padSize, 'x').replace(/x/g, '&nbsp;');
-    el.lastElementChild.textContent = player.name;
-    el.dataset['pname'] = player.name.toLowerCase();
+    el.firstElementChild.innerHTML = `[${player.netid}]`.padStart(padSize, 'x').replace(/x/g, '&nbsp;');
+    el.lastElementChild.textContent = player.displayName;
+    el.dataset['pname'] = player.pureName;
 }
 
 
@@ -103,15 +91,15 @@ function processPlayers(players) {
     let newPlayers, removedPlayers, updatedPlayers;
     try {
         newPlayers = players.filter((p) => {
-            return !cachedPlayers.filter((x) => x.id === p.id).length;
+            return !cachedPlayers.filter((x) => x.netid === p.netid).length;
         });
 
         removedPlayers = cachedPlayers.filter((p) => {
-            return !players.filter((x) => x.id === p.id).length;
+            return !players.filter((x) => x.netid === p.netid).length;
         });
 
         updatedPlayers = cachedPlayers.filter((p) => {
-            return players.filter((x) => x.id === p.id).length;
+            return players.filter((x) => x.netid === p.netid).length;
         });
     } catch (error) {
         console.log(`Failed to process the playerlist with message: ${error.message}`);
@@ -184,9 +172,9 @@ const modPlayer = {
 // Open Modal
 function showPlayer(license, altName = 'unknown', altIDs = '') {
     //Reset active player
-    modPlayer.curr.id = false;
+    modPlayer.curr.netid = false;
     modPlayer.curr.license = false;
-    modPlayer.curr.identifiers = false;
+    modPlayer.curr.ids = false;
 
     //Reset modal
     modPlayer.Message.innerHTML = SPINNER_HTML;
@@ -247,14 +235,14 @@ function showPlayer(license, altName = 'unknown', altIDs = '') {
                 msgHTML += 'Player Identifiers:<br>\n';
                 msgHTML += `<code>${xss(idsString)}</code>`;
                 modPlayer.Message.innerHTML = msgHTML;
-                modPlayer.curr.identifiers = idsArray;
+                modPlayer.curr.ids = idsArray;
                 modPlayer.Buttons.search.disabled = false;
                 return;
             }
-            modPlayer.curr.id = data.id;
+            modPlayer.curr.netid = data.netid;
             modPlayer.curr.license = data.license;
-            modPlayer.curr.identifiers = data.identifiers;
-            modPlayer.Title.innerText = (data.id) ? `[${data.id}] ${data.name}` : data.name;
+            modPlayer.curr.ids = data.ids;
+            modPlayer.Title.innerText = (data.netid) ? `[${data.netid}] ${data.displayName}` : data.displayName;
 
             modPlayer.Main.joinDate.innerText = data.joinDate;
             modPlayer.Main.playTime.innerText = data.playTime;
@@ -262,7 +250,7 @@ function showPlayer(license, altName = 'unknown', altIDs = '') {
             modPlayer.Main.notesLog.innerText = data.notesLog;
             modPlayer.Main.notes.disabled = data.isTmp;
             modPlayer.Main.notes.value = data.notes;
-            modPlayer.IDs.list.innerText = data.identifiers.join(',\n');
+            modPlayer.IDs.list.innerText = data.ids.join(',\n');
 
             if (!Array.isArray(data.actionHistory) || !data.actionHistory.length) {
                 modPlayer.History.list.innerHTML = '<h3 class="mx-auto pt-3 text-secondary">nothing here...</h3>';
@@ -347,8 +335,8 @@ modPlayer.Main.notes.addEventListener('keydown', (event) => {
 // Redirect to player search page
 function searchPlayer() {
     modPlayer.Modal.hide();
-    if (!modPlayer.curr.identifiers) return;
-    const idsString = modPlayer.curr.identifiers.join(';');
+    if (!modPlayer.curr.ids) return;
+    const idsString = modPlayer.curr.ids.join(';');
     if (window.location.pathname == TX_BASE_PATH + '/player/list') {
         searchInput.value = idsString;
         performSearch();
@@ -360,7 +348,7 @@ function searchPlayer() {
 
 // Message player
 async function messagePlayer() {
-    if (!modPlayer.curr.id) return;
+    if (!modPlayer.curr.netid) return;
     modPlayer.Modal.hide();
     const message = await txAdminPrompt({
         title: 'Direct Message',
@@ -371,7 +359,7 @@ async function messagePlayer() {
     const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
     let data = {
-        id: modPlayer.curr.id,
+        id: modPlayer.curr.netid,
         message: message.trim(),
     };
     txAdminAPI({
@@ -395,7 +383,7 @@ async function messagePlayer() {
 
 // Kick Player
 async function kickPlayer() {
-    if (modPlayer.curr.id == false) return;
+    if (modPlayer.curr.netid == false) return;
     modPlayer.Modal.hide();
     const reason = await txAdminPrompt({
         modalColor: 'red',
@@ -409,7 +397,7 @@ async function kickPlayer() {
     const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
     let data = {
-        id: modPlayer.curr.id,
+        id: modPlayer.curr.netid,
         reason: reason,
     };
     txAdminAPI({
@@ -434,7 +422,7 @@ async function kickPlayer() {
 
 //Warn Player
 async function warnPlayer() {
-    if (modPlayer.curr.id == false) return;
+    if (modPlayer.curr.netid == false) return;
     modPlayer.Modal.hide();
     const reason = await txAdminPrompt({
         modalColor: 'orange',
@@ -450,7 +438,7 @@ async function warnPlayer() {
     const notify = $.notify({ message: '<p class="text-center">Executing Command...</p>'}, {});
 
     let data = {
-        id: modPlayer.curr.id,
+        id: modPlayer.curr.netid,
         reason: reason,
     };
     txAdminAPI({
@@ -494,8 +482,8 @@ function banPlayer() {
     const data = {
         reason,
         duration,
-        reference: (modPlayer.curr.id !== false) ? modPlayer.curr.id : modPlayer.curr.identifiers,
-        // reference: modPlayer.curr.identifiers,
+        reference: (modPlayer.curr.netid !== false) ? modPlayer.curr.netid : modPlayer.curr.ids,
+        // reference: modPlayer.curr.ids,
     };
     txAdminAPI({
         type: 'POST',

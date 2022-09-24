@@ -108,6 +108,7 @@
         let eventData;
 
         if(action === 'join'){
+            el('idCounter').value = playerId + 1;
             eventData = {
                 type: "txAdminPlayerlistEvent",
                 event: 'playerJoining',
@@ -135,6 +136,9 @@
 
     async function navbar(action) {
         try {
+            if(action === 'restart'){
+                el('idCounter').value = 1;
+            }
             const resp = await sendPost(action);
             console.log(resp);
         } catch (error) {
