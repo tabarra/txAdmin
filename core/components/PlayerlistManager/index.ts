@@ -35,7 +35,7 @@ export default class PlayerlistManager {
      */
     handleServerStop() {
         for (const player of this.playerlist) {
-            if(player) player.disconnect();
+            if (player) player.disconnect();
         }
         this.playerlist = [];
     }
@@ -64,13 +64,19 @@ export default class PlayerlistManager {
      * Handler for all txAdminPlayerlistEvent structured trace events
      * @param {*} payload
      */
-    async handleServerEvents(payload: any) {
+    async handleServerEvents(payload: any, mutex: string) {
+        logError(`got handleServerEvents() with mutex ${mutex}`);
         if (payload.event === 'playerJoining') {
             try {
                 if (typeof payload.id !== 'number') throw new Error(`invalid player id`);
                 if (typeof this.playerlist[payload.id] !== 'undefined') throw new Error(`duplicated player id`);
                 this.playerlist[payload.id] = new ServerPlayer(payload.id, payload.player, this.#txAdmin.playerDatabase);
-                // this.#txAdmin.logger.server.handlePlayerJoin(); FIXME:
+                this.#txAdmin.logger.server.write([{
+                    type: 'playerJoining',
+                    src: payload.id,
+                    ts: Date.now(),
+                    data: { ids: this.playerlist[payload.id]!.ids }
+                }], mutex);
             } catch (error) {
                 if (verbose) logWarn(`playerJoining event error: ${(error as Error).message}`);
             }
@@ -80,7 +86,12 @@ export default class PlayerlistManager {
                 if (typeof payload.id !== 'number') throw new Error(`invalid player id`);
                 if (!(this.playerlist[payload.id] instanceof ServerPlayer)) throw new Error(`player id not found`);
                 this.playerlist[payload.id]!.disconnect();
-                // this.#txAdmin.logger.server.handlePlayerJoin(); FIXME:
+                this.#txAdmin.logger.server.write([{
+                    type: 'playerDropped',
+                    src: payload.id,
+                    ts: Date.now(),
+                    data: { reason: payload.reason }
+                }], mutex);
             } catch (error) {
                 if (verbose) logWarn(`playerDropped event error: ${(error as Error).message}`);
             }

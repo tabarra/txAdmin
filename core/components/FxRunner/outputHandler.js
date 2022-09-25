@@ -79,11 +79,11 @@ export default class OutputHandler {
                 if (data.payload.type === 'txAdminHeartBeat') {
                     globals.healthMonitor.handleHeartBeat('fd3');
                 } else if (data.payload.type === 'txAdminLogData') {
-                    globals.logger.server.write(mutex, data.payload.logs);
+                    globals.logger.server.write(data.payload.logs, mutex);
                 } else if (data.payload.type === 'txAdminResourceEvent') {
-                    globals.resourcesManager.handleServerEvents(data.payload);
+                    globals.resourcesManager.handleServerEvents(data.payload, mutex);
                 } else if (data.payload.type === 'txAdminPlayerlistEvent') {
-                    globals.playerlistManager.handleServerEvents(data.payload);
+                    globals.playerlistManager.handleServerEvents(data.payload, mutex);
                 }
             }
         } catch (error) {

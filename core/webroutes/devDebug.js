@@ -43,7 +43,7 @@ export const post = async (ctx) => {
 
     if (scope === 'event') {
         try {
-            globals.playerlistManager.handleServerEvents(ctx.request.body);
+            globals.playerlistManager.handleServerEvents(ctx.request.body, globals.fxRunner.currentMutex);
             return ctx.send({ success: true });
         } catch (error) {
             dir(error);

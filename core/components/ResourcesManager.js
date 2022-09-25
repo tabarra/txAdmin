@@ -51,9 +51,10 @@ export default class ResourcesManager {
 
     /**
      * Handler for all txAdminResourceStatus structured trace events
-     * @param {*} payload
+     * @param {object} payload
+     * @param {string} mutex
      */
-    handleServerEvents(payload) {
+    handleServerEvents(payload, mutex) {
         // log(`${payload.event}: ${payload.resource}`);
         if (payload.event === 'onResourceStarting') {
             this.activeStartingResource = payload.resource;

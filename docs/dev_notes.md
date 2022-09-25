@@ -19,6 +19,8 @@ v4.19.0
 - [ ] criar um backup pra todo migration
 - [ ] checar se eu já coloquei pra salvar old identifiers - precisa estar na migration
 - [ ] checar o que acontece quando tiver mais de um plçayer com mesma license online
+- [ ] server logger add events/min average
+- [ ] adaptar kick/dm - mas deixar fora do objeto player
 
 
 // @ts-ignore: let it throw
@@ -42,9 +44,9 @@ TODO: em ordem
 - [x] increment player time
 - [x] fix web playerlist
 - [x] handle server restarts
-- [ ] send join/leave to log
+- [x] send join/leave to log
 - [ ] resolve player function
-- [ ] get player modal
+- [ ] get player modal (log, playerlist, db players page)
 - [ ] actions
 - [ ] join check + whitelist
 
@@ -58,7 +60,7 @@ HACK: SHOWER DECISIONS:
 
 - PlayerlistManager sempre ter apenas a playerlist do server atual, `handleServerRestart()` literalmente dar um wipe na playlist
 - Fluxo de "resolve player" - usado por modal, mas tb para ban/warn/kick/etc:
-    - split mutex_id + license
+    - mutex, id, license via query params
     - mutex == fxChild.mutex?
         - `PlayerlistManager.getPlayer(netid)`
     - else
@@ -66,8 +68,10 @@ HACK: SHOWER DECISIONS:
         - Se não tiver licença ou não tiver no banco
             - checar mutex_id no lru-cache
             - serverlog.searchPlayerJoin(mutex_id)
+                - erro possível: "player não encontrado, tente procurar no txData/blah/logs/serverlog.xxxxx.log"
+                - erro possível: found, but no identifier
             - se encontrar: salvar name+ids no lru-cache
-            - se não: "player não encontrado, tente procurar no txData/blah/logs/serverlog.xxxxx.log"
+            - se não: printar erro do serverlog.searchPlayerJoin()
 - dessa forma:
     - matamos o memory leak
     - ainda sim pela interface vai dar pra recuperar os players pra maioria dos casos
@@ -78,9 +82,12 @@ HACK: SHOWER DECISIONS:
         - caso do log: hidrata initial data (name, identifiers)
         - caso no banco: busca por license instancia DatabasePlayer(dbData)
 
-- criar migration do banco pra converter name -> displayName + pureName
-- criar um backup pra todo migration
 
+
+- quando active player desconectar, remover dbData
+- quando modal puxar serverplayer, executar `serverPlayer.retrieveDbData()`
+- `retrieveDbData()` inicia timeout de 120s pra deletar o dbData
+- talvez as funções getHistory e setNote tentem buscar no banco... talvez uma flag de "isRegistered"?
 
 ## BasePlayer
     - get history
@@ -92,6 +99,7 @@ HACK: SHOWER DECISIONS:
     - cadastrar no banco
     - setar timer de update
 - kick/dm/warn actions
+- FIXME: kick/dm não deveria estar dentro da classe do player
 
 ## DatabasePlayer
 - constructor(dbData)
@@ -109,6 +117,9 @@ txadmin/core/playerlogic??
 - resolvePlayer.ts
 - BasePlayer.ts
 - PlayerClasses.ts (all 3)
+
+
+
 
 
 
@@ -133,13 +144,10 @@ txadmin/core/playerlogic??
 ```
 
 
-HACK: jogar o timer de 1 minuto pra dentro do ServerPlayer
 
 
 
-
-
-
+----------------------------------------------------
 
 At the schedule restart thing, add a note saying what is the current server time
 

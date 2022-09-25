@@ -21,8 +21,8 @@ export const cleanPlayerName = (original: string) => {
     if (!displayName.length) displayName = 'empty name';
     let pureName = displayName
         .normalize('NFKC')
-        .replace(/[^\p{Letter}\p{Number} ]/gu, ' ')
-        .replace(/\s+/g, ' ')
+        .replace(/[^\p{Letter}\p{Number} ]/gu, '')
+        .replace(/\s+/g, '')
         .toLocaleLowerCase()
         .trim();
     if (!pureName.length) pureName = 'empty name';
