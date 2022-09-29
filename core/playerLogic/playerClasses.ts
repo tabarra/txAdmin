@@ -21,8 +21,8 @@ const ogConsole = new Console({
  * 
  */
 export class BasePlayer {
-    displayName: string; //FIXME: fica aqui ou no serverplayer?
-    pureName: string; //FIXME: fica aqui ou no serverplayer?
+    displayName: string = 'unknown';
+    pureName: string = 'unknown';
     ids: string[] = [];
     hwids: string[] = [];
     license: false | string = false; //extracted for convenience
@@ -60,7 +60,7 @@ type PlayerDataType = {
 /**
  * 
  */
-export default class ServerPlayer extends BasePlayer {
+export class ServerPlayer extends BasePlayer {
     readonly netid: number;
     readonly tsConnected = now();
     readonly #minuteCronInterval?: ReturnType<typeof setInterval>;
@@ -186,5 +186,31 @@ export default class ServerPlayer extends BasePlayer {
      */
     warn() {
         //
+    }
+}
+
+
+/**
+ * 
+ */
+export class DatabasePlayer extends BasePlayer {
+    constructor(license: string, dbInstance: PlayerDatabase) {
+        super(dbInstance);
+        if (typeof license !== 'string') {
+            throw new Error(`invalid player license`);
+        }
+
+        //find db player
+        const dbPlayer = this.dbInstance.getPlayerData(license);
+        if (!dbPlayer) {
+            throw new Error(`player not found in database`);
+        }
+
+        //fill in data
+        this.dbData = dbPlayer;
+        this.displayName = dbPlayer.name; //FIXME: displayName + pureName
+        this.pureName = dbPlayer.name;  //FIXME: displayName + pureName
+        this.license = license;
+        // this.ids = dbPlayer.ids; //FIXME: add saved db identifiers
     }
 }

@@ -3,12 +3,8 @@ import { cloneDeep } from 'lodash-es';
 import logger from '@core/extras/console.js';
 import { verbose } from '@core/globalData';
 import TxAdmin from '@core/txAdmin.js';
-import ServerPlayer from '@core/playerLogic/playerClasses.js';
+import { ServerPlayer } from '@core/playerLogic/playerClasses.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
-
-
-//Helpers
-const now = () => { return Math.round(Date.now() / 1000); };
 
 
 type PlayerDatabaseConfigType = {
@@ -17,9 +13,18 @@ type PlayerDatabaseConfigType = {
     whitelistRejectionMessage: string;
     wipePendingWLOnStart: boolean;
 }
+/**
+ * The PlayerlistManager will store a ServerPlayer instance for all players that connected to the server.
+ * This class will also keep an array of ['mutex#id', license], to be used for searches from server log clicks.
+ * The licenseCache will contain only the licenses from last 50k disconnected players, which should be one entire
+ *  session for the q99.9 servers out there and weight around 4mb.
+ * The idea is: all players with license will be in the database, so storing only license is enough to find them.
+ */
 export default class PlayerlistManager {
     readonly #txAdmin: TxAdmin;
     playerlist: (ServerPlayer | undefined)[] = [];
+    licenseCache: [mutexid: string, license: string][] = [];
+    licenseCacheLimit = 50_000; //mutex+id+license * 50_000 = ~4mb
 
     constructor(
         txAdmin: TxAdmin,
@@ -30,13 +35,21 @@ export default class PlayerlistManager {
 
 
     /**
-     * Handler for server restart.
+     * Handler for server restart - it will kill all players and reset the licenseCache
      * We MUST do .disconnect() for all players to clear the timers.
+     * NOTE: it's ok for us to overfill then slice the licenseCache because it's at most ~4mb
      */
-    handleServerStop() {
+    handleServerStop(oldMutex: string) {
+        this.licenseCache = [];
         for (const player of this.playerlist) {
-            if (player) player.disconnect();
+            if (player) {
+                player.disconnect();
+                if (player.license) {
+                    this.licenseCache.push([`${oldMutex}#${player.netid}`, player.license]);
+                }
+            }
         }
+        this.licenseCache = this.licenseCache.slice(-this.licenseCacheLimit);
         this.playerlist = [];
     }
 
@@ -65,7 +78,6 @@ export default class PlayerlistManager {
      * @param {*} payload
      */
     async handleServerEvents(payload: any, mutex: string) {
-        logError(`got handleServerEvents() with mutex ${mutex}`);
         if (payload.event === 'playerJoining') {
             try {
                 if (typeof payload.id !== 'number') throw new Error(`invalid player id`);

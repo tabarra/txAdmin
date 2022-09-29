@@ -109,8 +109,8 @@ export default (config) => {
     */
 
     //Player routes
+    router.get('/player', requestAuth('api'), webRoutes.player_modal);
     router.get('/player/list', requestAuth('web'), webRoutes.player_list);
-    router.get('/player/:reference', requestAuth('api'), webRoutes.player_modal);
     router.post('/player/:action', requestAuth('api'), webRoutes.player_actions);
 
     //Index & generic

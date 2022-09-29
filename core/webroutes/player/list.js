@@ -22,7 +22,7 @@ const now = () => { return Math.round(Date.now() / 1000); };
  */
 export default async function PlayerList(ctx) {
     //Prepare dbo
-    const dbo = globals.playerController.getDb();
+    const dbo = globals.playerDatabase.getDb();
 
     //Delegate to the specific action handler
     if (ctx.request.query && ctx.request.query.search) {
@@ -161,7 +161,7 @@ async function handleSearch(ctx, dbo) {
  */
 async function handleDefault(ctx, dbo) {
     let timeStart = new Date();
-    const controllerConfigs = globals.playerController.config;
+    const controllerConfigs = globals.playerDatabase.config;
     const queryLimits = {
         whitelist: 15,
         actions: 20,
@@ -414,7 +414,9 @@ async function processActionList(list) {
 async function processPlayerList(list) {
     if (!list) return [];
 
-    const activeLicenses = globals.playerController.activePlayers.map((p) => p.license);
+    const activeLicenses = globals.playerlistManager.playerlist
+        .map((p) => p.license)
+        .filter(l => l);
     return list.map((p) => {
         return {
             name: p.name,

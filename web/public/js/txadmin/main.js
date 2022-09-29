@@ -116,7 +116,7 @@ function refreshData() {
             if (isWebInterface) {
                 updatePageTitle(data.server.statusClass, data.server.name, data.players.length);
                 updateHostStats(data.host);
-                processPlayers(data.players);
+                processPlayers(data.players, data.server.mutex);
             }
         },
         error: function (xmlhttprequest, textstatus, message) {

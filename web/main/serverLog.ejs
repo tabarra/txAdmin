@@ -461,7 +461,7 @@
                 sourceNode.textContent = event.src.name;
                 sourceNode.classList.add('e-src');
                 if(event.src.id) sourceNode.classList.add('e-src-player');
-                sourceNode.addEventListener('click', ()=>{ showPlayer(event.src.id.replace(/#/, '_')) });
+                sourceNode.addEventListener('click', ()=>{ showPlayerByMutexNetid(event.src.id.replace(/#/, '_')) });
                 lineElement.appendChild(sourceNode);
 
                 //Message

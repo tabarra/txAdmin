@@ -8,19 +8,32 @@ v4.18.0:
 
 
 v4.19.0
+- [x] player join/leave
+- [x] increment player time
+- [x] fix web playerlist
+- [x] handle server restarts
+- [x] send join/leave to log
+- [x] resolve player function
+- [ ] get player modal (log, playerlist, db players page)
+- [ ] fix player modal in nui menu
+- [ ] player db actions
+- [ ] join check + whitelist
+- [ ] checar pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
+- [ ] remove minSessionTime from everywhere
+- [ ] update lowdb
+- [ ] criar migration do banco pra converter name -> displayName + pureName
+- [ ] com a migration do displayName/pureName também é possível deprecarmos `now()`, considerar alternative
+- [ ] criar um backup pra todo migration
+- [ ] checar se eu já coloquei pra salvar old identifiers - precisa estar na migration
+- [ ] checar o que acontece quando tiver mais de um player com mesma license online
+- [ ] adaptar kick/dm - mas deixar fora do objeto player
+- [ ] server logger add events/min average
 - [ ] bot status "watching xx/yy players"
 - [ ] remover `Cfx.re URL` da pagina de diagnosticos
 - [ ] Melhorar ou remover mensagem `[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg`
-- [ ] remove minSessionTime from everywhere
 - [ ] create daily cron to optimize database, maybe have a select box with 3 profiles + disabled?
-
-- [ ] com a migration do displayName/pureName também é possível deprecarmos `now()`, considerar alternative
-- [ ] criar migration do banco pra converter name -> displayName + pureName
-- [ ] criar um backup pra todo migration
-- [ ] checar se eu já coloquei pra salvar old identifiers - precisa estar na migration
-- [ ] checar o que acontece quando tiver mais de um plçayer com mesma license online
-- [ ] server logger add events/min average
-- [ ] adaptar kick/dm - mas deixar fora do objeto player
+- [ ] txadmin log -> system log
+- [ ] tidy up the files, specially comments missing everywhere
 
 
 // @ts-ignore: let it throw
@@ -34,21 +47,6 @@ PlayerlistManager:
 - cuida do ciclo de vida do usuário, inclusive chamar o PlayerDatabase pra salvar player quando passar do minSessionTime
 - on join/leave, chamar métodos do PlayerDatabase
 
-
-Pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
-
-
-
-TODO: em ordem
-- [x] player join/leave
-- [x] increment player time
-- [x] fix web playerlist
-- [x] handle server restarts
-- [x] send join/leave to log
-- [ ] resolve player function
-- [ ] get player modal (log, playerlist, db players page)
-- [ ] actions
-- [ ] join check + whitelist
 
 
 HACK: SHOWER DECISIONS:
@@ -66,12 +64,7 @@ HACK: SHOWER DECISIONS:
     - else
         - Se tiver licença: buscar esse player no banco
         - Se não tiver licença ou não tiver no banco
-            - checar mutex_id no lru-cache
-            - serverlog.searchPlayerJoin(mutex_id)
-                - erro possível: "player não encontrado, tente procurar no txData/blah/logs/serverlog.xxxxx.log"
-                - erro possível: found, but no identifier
-            - se encontrar: salvar name+ids no lru-cache
-            - se não: printar erro do serverlog.searchPlayerJoin()
+            - erro: "player não encontrado no banco, provavelmente não tinha licença, tente procurar no txData/blah/logs/serverlog.xxxxx.log"
 - dessa forma:
     - matamos o memory leak
     - ainda sim pela interface vai dar pra recuperar os players pra maioria dos casos
@@ -79,9 +72,22 @@ HACK: SHOWER DECISIONS:
     - casos de load pro objeto:
         - caso online: já existe objeto e já está com dbData
         - caso na playerlist mas já desconectado: dados iniciais presentes, carregar player do banco
-        - caso do log: hidrata initial data (name, identifiers)
         - caso no banco: busca por license instancia DatabasePlayer(dbData)
 
+
+
+FIXME: ter um this.licenseCache = [[mutex#id: license]]
+on server restart, adicionar todos os players atuais no licenseCache
+depois dar licenseCache.slice(-5000(?))
+na busca:
+- se for o mutex atual, pegar da playerlist
+- se não, licenseCache.find(x => x[0] = 'mutex#id')
+- buscar license no banco
+
+------
+pegar os top servers
+e calcular max id / timestamp
+pra chegar na conclusão de qual o limite que precisamos nessa array
 
 
 - quando active player desconectar, remover dbData
@@ -98,27 +104,13 @@ HACK: SHOWER DECISIONS:
 - constructor(netid, initialData)
     - cadastrar no banco
     - setar timer de update
-- kick/dm/warn actions
-- FIXME: kick/dm não deveria estar dentro da classe do player
+- ações do BasePlayer
+- warn action
 
 ## DatabasePlayer
 - constructor(dbData)
     - seta name, ids
-- todas as ações exceto kick/dm/warn
-
-## LogPlayer
-- constructor(name, ids)
-    - seta name, ids
-- nenhuma ação exceto ban
-
-
-
-txadmin/core/playerlogic??
-- resolvePlayer.ts
-- BasePlayer.ts
-- PlayerClasses.ts (all 3)
-
-
+- ações do BasePlayer
 
 
 

@@ -64,6 +64,7 @@ function prepareDiscordStatus() {
  */
 function prepareServerStatus() {
     const out = {
+        mutex: globals.fxRunner?.currentMutex,
         status: globals.healthMonitor.currentStatus || '??',
         process: globals.fxRunner.getStatus(),
         name: globals.config.serverName,

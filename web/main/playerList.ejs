@@ -306,7 +306,7 @@
                                     <% for (const player of lastPlayers) { %>
                                         <!-- FIXME: fix logEntryClickableX and onclickX-->
                                         <div class="list-group-item list-group-item-accent-<%= player.color %> logEntry logEntryClickable">
-                                            <div class="d-flex w-100 justify-content-between" onclick="showPlayer('<%= player.license %>')">
+                                            <div class="d-flex w-100 justify-content-between" onclick="showPlayerByLicense('<%= player.license %>')">
                                                 <strong class="overflow-hidden"><%= player.name %></strong>
                                                 <small><%= player.joined %></small>
                                             </div>
@@ -573,7 +573,7 @@
         }else{
             const processed = players.map(p => `
                 <div class="list-group-item list-group-item-accent-${xss(p.color)} logEntry logEntryClickable">
-                    <div class="d-flex w-100 justify-content-between" onclick="showPlayer('${xss(p.license)}')"> 
+                    <div class="d-flex w-100 justify-content-between" onclick="showPlayerByLicense('${xss(p.license)}')"> 
                         <strong>${xss(p.name)}</strong>
                         <small>${xss(p.joined)}</small>
                     </div>

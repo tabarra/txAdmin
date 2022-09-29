@@ -51,6 +51,7 @@ export const post = async (ctx) => {
     
     }else if (scope === 'printPlayerlist') {
         ogConsole.dir(globals.playerlistManager.playerlist);
+        ogConsole.dir(globals.playerlistManager.licenseCache);
         return ctx.send({ success: true });
 
     } else {

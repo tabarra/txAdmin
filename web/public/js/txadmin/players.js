@@ -2,6 +2,7 @@
 //============================================== Playerlist
 //================================================================
 //Vars and elements
+let currServerMutex = false;
 let cachedPlayers = [];
 let biggestPlayerID = 0;
 const playerlistElement = document.getElementById('playerlist');
@@ -50,7 +51,7 @@ function removePlayer(player) {
 function addPlayer(player) {
     if (player.netid > biggestPlayerID) biggestPlayerID = player.netid;
     let div = `<div class="list-group-item list-group-item-accent-secondary player text-truncate" 
-                onclick="showPlayer('${player.netid}')" id="divPlayer${player.netid}">
+                onclick="showPlayerByMutexNetid('${currServerMutex}_${player.netid}')" id="divPlayer${player.netid}">
                     <span class="pping"> ---- </span>
                     <span class="pname">${xss(player.displayName)}</span>
             </div>`;
@@ -71,7 +72,7 @@ function updatePlayer(player) {
 }
 
 
-function processPlayers(players) {
+function processPlayers(players, mutex) {
     //If invalid playerlist or error message
     if (!Array.isArray(players)) {
         Array.from(playerlistElement.children).forEach((el) => el.hidden = true);
@@ -87,6 +88,7 @@ function processPlayers(players) {
     }
     plistMsgElement.hidden = true;
     applyPlayerlistFilter();
+    currServerMutex = mutex;
 
     let newPlayers, removedPlayers, updatedPlayers;
     try {
@@ -170,7 +172,16 @@ const modPlayer = {
 
 
 // Open Modal
-function showPlayer(license, altName = 'unknown', altIDs = '') {
+function showPlayerByMutexNetid(mutexNetid) {
+    const [mutex, netid] = mutexNetid.split(/[_#]/, 2);
+    const params = new URLSearchParams({mutex, netid});
+    return showPlayer(params.toString())
+}
+function showPlayerByLicense(license) {
+    const params = new URLSearchParams({license});
+    return showPlayer(params.toString())
+}
+function showPlayer(playerRef) {
     //Reset active player
     modPlayer.curr.netid = false;
     modPlayer.curr.license = false;
@@ -216,7 +227,7 @@ function showPlayer(license, altName = 'unknown', altIDs = '') {
 
     //Perform request
     txAdminAPI({
-        url: '/player/' + license,
+        url: `/player?${playerRef}`,
         type: 'GET',
         dataType: 'json',
         success: function (data) {
@@ -228,15 +239,10 @@ function showPlayer(license, altName = 'unknown', altIDs = '') {
                 modPlayer.Message.innerHTML = `<h4 class=text-danger>${xss(data.message)}</h4>`;
                 return;
             } else if (data.type == 'offline') {
-                modPlayer.Title.innerText = altName;
-                const idsArray = altIDs.split(';');
-                const idsString = idsArray.join(';\n');
-                let msgHTML = `<h4 class=text-danger>${xss(data.message)}</h4>\n`;
-                msgHTML += 'Player Identifiers:<br>\n';
-                msgHTML += `<code>${xss(idsString)}</code>`;
-                modPlayer.Message.innerHTML = msgHTML;
-                modPlayer.curr.ids = idsArray;
-                modPlayer.Buttons.search.disabled = false;
+                modPlayer.Title.innerText = 'Player not found';
+                modPlayer.Message.innerHTML = `<h4 class=text-danger>${xss(data.message)}</h4>`;
+                modPlayer.curr.ids = [];
+                modPlayer.Buttons.search.disabled = true;
                 return;
             }
             modPlayer.curr.netid = data.netid;
