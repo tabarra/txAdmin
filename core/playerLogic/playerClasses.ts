@@ -2,7 +2,7 @@ const modulename = 'Player';
 import logger from '@core/extras/console.js';
 import consts from '@core/extras/consts';
 import PlayerDatabase, { PlayerDbDataType } from '@core/components/PlayerDatabase/index.js';
-import { cleanPlayerName } from '@core/extras/shared';
+import cleanPlayerName from '@shared/cleanPlayerName';
 import { verbose } from '@core/globalData.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

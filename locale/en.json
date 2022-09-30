@@ -1,6 +1,6 @@
 {
     "$meta": {
-        "label": "English",
+        "label": "English (default)",
         "humanizer_language": "en"
     },
     "restarter": {

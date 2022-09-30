@@ -1,6 +1,6 @@
 import { useServerCtxValue } from "../state/server.state";
 import { useMemo } from "react";
-import { getLocale } from "../utils/getLocale";
+import localeMap from '@shared/localeMap';
 
 export const useLocale = () => {
   const serverCtx = useServerCtxValue();
@@ -9,9 +9,15 @@ export const useLocale = () => {
     if (
       serverCtx.locale === "custom" &&
       typeof serverCtx.localeData === "object"
-    )
+    ) {
       return serverCtx.localeData;
-
-    return getLocale(serverCtx.locale);
+    } else {
+      if (localeMap[serverCtx.locale]) {
+        return localeMap[serverCtx.locale];
+      } else {
+        console.log(`Unable to find a locale with code ${serverCtx.locale} in cache, using English`);
+        return localeMap.en;
+      }
+    }
   }, [serverCtx.locale, serverCtx.localeData]);
 };

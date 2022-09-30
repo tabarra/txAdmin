@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        /* Truncated compiler options to list only relevant options */
+        "declaration": true,
+        "declarationMap": true,
+        "composite": true,
+
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+
+        "rootDir": "../",
+        "baseUrl": "./",
+        "paths": {
+            "@locale/*": ["../locale/*"],
+        },
+    },
+    "include": ["../locale/*.json", "./*"],
+    "references": [] // * Any project that is referenced must itself have a `references` array (which may be empty).
+}

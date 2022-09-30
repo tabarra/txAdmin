@@ -2,6 +2,7 @@ const modulename = 'WebServer:SettingsGet';
 import { cloneDeep }  from 'lodash-es';
 import logger from '@core/extras/console.js';
 import { convars, txEnv } from '@core/globalData';
+import localeMap from '@shared/localeMap';
 import { redactApiKeys } from '../../extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);;
 
@@ -16,8 +17,14 @@ export default async function SettingsGet(ctx) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
     }
 
+    const locales = Object.keys(localeMap).map(code => {
+        return { code, label: localeMap[code].$meta.label };
+    });
+    locales.push({ code: 'custom', label: 'Custom (txData/locale.json)' });
+
     const renderData = {
         headerTitle: 'Settings',
+        locales,
         global: cleanRenderData(globals.configVault.getScopedStructure('global')),
         fxserver: cleanRenderData(globals.configVault.getScopedStructure('fxRunner')),
         playerController: cleanRenderData(globals.configVault.getScopedStructure('playerController')),

@@ -3,7 +3,7 @@
  * In case the name has no ascii characters, the pure name will be "empty name".
  * NOTE: this is not perfect, but took me two hours to arrive to this point.
  */
-export const cleanPlayerName = (original: string) => {
+export default (original: string) => {
     // \u0000-\u001F > C0 controls
     // \u007F-\u009F > delete + C1 controls
     // \u200B-\u200D\uFEFF > zero width spaces

@@ -65,37 +65,9 @@
                             </label>
                             <div class="col-sm-9">
                                 <select class="form-control" id="frmGlobal-language" <%= readOnly ? 'disabled' : '' %>>
-                                    <option value="en" <%= global.language === 'en' ? 'selected' : '' %>>English (default)</option>
-
-                                    <option value="ar" <%= global.language === 'ar' ? 'selected' : '' %>>Arabic</option>
-                                    <option value="bg" <%= global.language === 'bg' ? 'selected' : '' %>>Bulgarian</option>
-                                    <option value="bs" <%= global.language === 'bs' ? 'selected' : '' %>>Bosnian</option>
-                                    <option value="cs" <%= global.language === 'cs' ? 'selected' : '' %>>Czech</option>
-                                    <option value="da" <%= global.language === 'da' ? 'selected' : '' %>>Danish</option>
-                                    <option value="de" <%= global.language === 'de' ? 'selected' : '' %>>German</option>
-                                    <option value="el" <%= global.language === 'el' ? 'selected' : '' %>>Greek</option>
-                                    <option value="es" <%= global.language === 'es' ? 'selected' : '' %>>Spanish</option>
-                                    <option value="et" <%= global.language === 'et' ? 'selected' : '' %>>Estonian</option>
-                                    <option value="fa" <%= global.language === 'fa' ? 'selected' : '' %>>Farsi - Persian</option>
-                                    <option value="fi" <%= global.language === 'fi' ? 'selected' : '' %>>Finnish</option>
-                                    <option value="fr" <%= global.language === 'fr' ? 'selected' : '' %>>French</option>
-                                    <option value="hu" <%= global.language === 'hu' ? 'selected' : '' %>>Hungarian</option>
-                                    <option value="it" <%= global.language === 'it' ? 'selected' : '' %>>Italian</option>
-                                    <option value="lt" <%= global.language === 'lt' ? 'selected' : '' %>>Lithuanian</option>
-                                    <option value="lv" <%= global.language === 'lv' ? 'selected' : '' %>>Latvian</option>
-                                    <option value="nl" <%= global.language === 'nl' ? 'selected' : '' %>>Dutch</option>
-                                    <option value="no" <%= global.language === 'no' ? 'selected' : '' %>>Norwegian</option>
-                                    <option value="pl" <%= global.language === 'pl' ? 'selected' : '' %>>Polish</option>
-                                    <option value="pt" <%= global.language === 'pt' ? 'selected' : '' %>>Portuguese</option>
-                                    <option value="ro" <%= global.language === 'ro' ? 'selected' : '' %>>Romanian</option>
-                                    <option value="ru" <%= global.language === 'ru' ? 'selected' : '' %>>Russian</option>
-                                    <option value="sl" <%= global.language === 'sl' ? 'selected' : '' %>>Slovenian</option>
-                                    <option value="sv" <%= global.language === 'sv' ? 'selected' : '' %>>Swedish</option>
-                                    <option value="th" <%= global.language === 'th' ? 'selected' : '' %>>Thai</option>
-                                    <option value="tr" <%= global.language === 'tr' ? 'selected' : '' %>>Turkish</option>
-                                    <option value="zh" <%= global.language === 'zh' ? 'selected' : '' %>>Chinese</option>
-
-                                    <option value="custom" <%= global.language === 'custom' ? 'selected' : '' %>>Custom (txData/locale.json)</option>
+                                    <% for (const locale of locales) { %>
+                                        <option value="<%= locale.code %>" <%= global.language === locale.code ? 'selected' : '' %>><%= locale.label %></option>
+                                    <% } %>
                                 </select>
                                 <span class="form-text text-muted">
                                     The language to use on Chat/Discord messages. <br>
