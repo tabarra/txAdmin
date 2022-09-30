@@ -3,7 +3,7 @@ import path from 'node:path';
 import isLocalhost from 'is-localhost-ip';
 
 import logger from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData.ts';
+import { convars, verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger();
 
 /**

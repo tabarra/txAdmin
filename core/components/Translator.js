@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import Polyglot from 'node-polyglot';
 import logger from '@core/extras/console.js';
-import { txEnv } from '@core/globalData.ts';
+import { txEnv, verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Statically requiring languages because of esbuild

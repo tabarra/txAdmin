@@ -3,7 +3,7 @@ import bytes from 'bytes';
 import humanizeDuration from 'humanize-duration';
 import got from '@core/extras/got.js';
 import logger from '@core/extras/console.js';
-import { setVerbose } from '@core/globalData.ts';
+import { setVerbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions

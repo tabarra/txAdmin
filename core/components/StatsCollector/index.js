@@ -1,7 +1,7 @@
 const modulename = 'StatsCollector';
 import fse from 'fs-extra';
 import logger from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData.ts';
+import { convars, verbose } from '@core/globalData';
 import { parsePerf, diffPerfs, validatePerfThreadData, validatePerfCacheData } from './statsUtils.js'
 import got from '@core/extras/got.js';
 // import TimeSeries from './timeSeries.js'; //NOTE: may still use for the player counter

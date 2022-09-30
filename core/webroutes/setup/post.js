@@ -6,7 +6,7 @@ import { Deployer, validateTargetPath, parseValidateRecipe } from '@core/extras/
 import { validateFixServerConfig, findLikelyCFGPath } from '@core/extras/fxsConfigHelper';
 import got from '@core/extras/got.js';
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.ts';
+import { verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions

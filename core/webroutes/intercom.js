@@ -1,7 +1,7 @@
 const modulename = 'WebServer:Intercom';
 import { cloneDeep }  from 'lodash-es';
 import logger from '@core/extras/console.js';
-import { convars, txEnv } from '@core/globalData.ts';
+import { convars, txEnv } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions

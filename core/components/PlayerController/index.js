@@ -3,7 +3,7 @@ import humanizeDuration from 'humanize-duration'; //FIXME: remove, this controll
 import xssInstancer from '@core/extras/xss.js'; //FIXME: same as above
 import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData.ts';
+import { convars, verbose } from '@core/globalData';
 // eslint-disable-next-line no-unused-vars
 import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database.js';
 import { genActionID, genWhitelistID } from './idGenerator.js';

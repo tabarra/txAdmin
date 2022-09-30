@@ -5,7 +5,7 @@ import open from 'open';
 import got from '@core/extras/got.js';
 import getOsDistro from '@core/extras/getOsDistro.js';
 import logger from '@core/extras/console.js';
-import { convars, txEnv } from '@core/globalData.ts';
+import { convars, txEnv } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger();
 
 

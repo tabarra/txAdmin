@@ -4,7 +4,7 @@ import humanizeDuration from 'humanize-duration';
 import xssInstancer from '@core/extras/xss.js';
 import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.ts';
+import { verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
 

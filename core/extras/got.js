@@ -1,4 +1,4 @@
-import { convars, txEnv } from '@core/globalData.ts';
+import { convars, txEnv } from '@core/globalData';
 import got from 'got';
 
 export default got.extend({

@@ -1,7 +1,7 @@
 const modulename = 'HealthMonitor';
 import got from 'got'; //we want internal requests to have 127.0.0.1 src
 import logger from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData.ts';
+import { convars, verbose } from '@core/globalData';
 import getHostStats from './getHostStats';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

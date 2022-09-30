@@ -1,7 +1,7 @@
 const modulename = 'WebServer:DeployerStepper';
 import fse from 'fs-extra';
 import logger from '@core/extras/console.js';
-import { convars } from '@core/globalData.ts';
+import { convars } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 

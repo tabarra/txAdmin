@@ -3,7 +3,7 @@ import fsp from 'node:fs/promises';
 import low from 'lowdb';
 import FileAsync from 'lowdb/adapters/FileAsync'
 import logger from '@core/extras/console.js';
-import { convars, verbose } from '@core/globalData.ts';
+import { convars, verbose } from '@core/globalData';
 import { genActionID } from './idGenerator.js';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 

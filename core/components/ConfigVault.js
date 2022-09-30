@@ -2,7 +2,7 @@ const modulename = 'ConfigVault';
 import fs from 'node:fs';
 import { cloneDeep }  from 'lodash-es';
 import logger from '@core/extras/console.js';
-import { verbose } from '@core/globalData.ts';
+import { verbose } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helper functions

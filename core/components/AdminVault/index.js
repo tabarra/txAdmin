@@ -4,7 +4,7 @@ import fsp from 'node:fs/promises';
 import { cloneDeep } from 'lodash-es';
 
 import logger from '@core/extras/console.js';
-import { convars, txEnv, verbose } from '@core/globalData.ts';
+import { convars, txEnv, verbose } from '@core/globalData';
 import CitizenFXProvider from './providers/CitizenFX.js';
 import { createHash } from 'node:crypto';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);

@@ -1,7 +1,7 @@
 const modulename = 'WebServer:SettingsGet';
 import { cloneDeep }  from 'lodash-es';
 import logger from '@core/extras/console.js';
-import { convars, txEnv } from '@core/globalData.ts';
+import { convars, txEnv } from '@core/globalData';
 import { redactApiKeys } from '../../extras/helpers';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);;
 

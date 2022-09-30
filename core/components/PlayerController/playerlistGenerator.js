@@ -2,7 +2,7 @@ const modulename = 'PlayerlistGenerator';
 import fs from 'node:fs';
 import got from 'got'
 import logger from '@core/extras/console.js';
-import { convars } from '@core/globalData.ts';
+import { convars } from '@core/globalData';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
