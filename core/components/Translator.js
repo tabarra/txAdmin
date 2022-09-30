@@ -57,9 +57,10 @@ export default class Translator {
 
         //Rebuild Monitor's schedule with new text and refreshes fxserver convars
         try {
-            globals.healthMonitor.buildSchedule();
             globals.fxRunner.resetConvars();
-        } catch (error) {}
+        } catch (error) {
+            if (verbose) dir(error);
+        }
     }
 
 
@@ -69,12 +70,12 @@ export default class Translator {
      * @param {string} lang
      */
     getLanguagePhrases(lang) {
-        //If its a known language
         if (typeof localeMap[lang] === 'object') {
+            //If its a known language
             return localeMap[lang];
 
-        //If its a custom language
         } else if (lang === 'custom') {
+            //If its a custom language
             try {
                 return JSON.parse(fs.readFileSync(
                     this.customLocalePath,
@@ -84,8 +85,8 @@ export default class Translator {
                 throw new Error(`Failed to load '${this.customLocalePath}'. (${error.message})`);
             }
 
-        //If its an invalid language
         } else {
+            //If its an invalid language
             throw new Error('Language not found.');
         }
     }
