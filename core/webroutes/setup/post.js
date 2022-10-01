@@ -53,7 +53,7 @@ export default async function SetupPost(ctx) {
     const action = ctx.params.action;
 
     //Check permissions
-    if (!ctx.utils.checkPermission('all_permissions', modulename)) {
+    if (!ctx.utils.testPermission('all_permissions', modulename)) {
         return ctx.send({
             success: false,
             message: 'You need to be the admin master to use the setup page.',

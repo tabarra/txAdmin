@@ -25,7 +25,7 @@ export default async function DeployerActions(ctx) {
     const action = ctx.params.action;
 
     //Check permissions
-    if (!ctx.utils.checkPermission('master', modulename)) {
+    if (!ctx.utils.testPermission('master', modulename)) {
         return ctx.send({ success: false, refresh: true });
     }
 

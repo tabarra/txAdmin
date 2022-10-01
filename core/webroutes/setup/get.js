@@ -11,7 +11,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  */
 export default async function SetupGet(ctx) {
     //Check permissions
-    if (!ctx.utils.checkPermission('master', modulename)) {
+    if (!ctx.utils.hasPermission('master')) {
         return ctx.utils.render('main/message', {message: 'You need to be the admin master to use the setup page.'});
     }
 

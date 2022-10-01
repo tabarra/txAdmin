@@ -24,7 +24,7 @@ export default async function SettingsSave(ctx) {
     let scope = ctx.params.scope;
 
     //Check permissions
-    if (!ctx.utils.checkPermission('settings.write', modulename)) {
+    if (!ctx.utils.testPermission('settings.write', modulename)) {
         return ctx.send({
             type: 'danger',
             message: 'You don\'t have permission to execute this action.',

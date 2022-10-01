@@ -28,7 +28,7 @@ export default async function MasterActionsAction(ctx) {
     const action = ctx.params.action;
 
     //Check permissions
-    if (!ctx.utils.checkPermission('master', modulename)) {
+    if (!ctx.utils.testPermission('master', modulename)) {
         return ctx.utils.render('main/message', {message: 'Only the master account has permission to view/use this page.' });
     }
     if (!ctx.txVars.isWebInterface) {

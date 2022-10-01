@@ -177,9 +177,9 @@ async function handleDefault(ctx, dbo) {
         disableBans: !controllerConfigs.onJoinCheckBan,
         disableWhitelist: !controllerConfigs.onJoinCheckWhitelist,
         permsDisable: {
-            ban: !ctx.utils.checkPermission('players.ban', modulename, false),
-            warn: !ctx.utils.checkPermission('players.warn', modulename, false),
-            whitelist: !ctx.utils.checkPermission('players.whitelist', modulename, false),
+            ban: !ctx.utils.hasPermission('players.ban'),
+            warn: !ctx.utils.hasPermission('players.warn'),
+            whitelist: !ctx.utils.hasPermission('players.whitelist'),
         },
     };
 

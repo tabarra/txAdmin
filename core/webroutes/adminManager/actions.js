@@ -28,7 +28,7 @@ export default async function AdminManagerActions(ctx) {
     let action = ctx.params.action;
 
     //Check permissions
-    if (!ctx.utils.checkPermission('manage.admins', modulename)) {
+    if (!ctx.utils.testPermission('manage.admins', modulename)) {
         return ctx.send({
             type: 'danger',
             message: 'You don\'t have permission to execute this action.',

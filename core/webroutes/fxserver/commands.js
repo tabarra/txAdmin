@@ -193,7 +193,7 @@ async function sendAlertOutput(ctx, toResp) {
  * @param {string} perm
  */
 function ensurePermission(ctx, perm) {
-    if (ctx.utils.checkPermission(perm, modulename)) {
+    if (ctx.utils.testPermission(perm, modulename)) {
         return true;
     } else {
         ctx.send({

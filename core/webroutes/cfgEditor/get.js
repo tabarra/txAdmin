@@ -10,7 +10,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  */
 export default async function CFGEditorGet(ctx) {
     //Check permissions
-    if (!ctx.utils.checkPermission('server.cfg.editor', modulename)) {
+    if (!ctx.utils.hasPermission('server.cfg.editor')) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
     }
 
@@ -33,6 +33,6 @@ export default async function CFGEditorGet(ctx) {
     return ctx.utils.render('main/cfgEditor', {
         headerTitle: 'CFG Editor',
         rawFile,
-        disableRestart: (ctx.utils.checkPermission('control.server', modulename, false)) ? '' : 'disabled',
+        disableRestart: (ctx.utils.hasPermission('control.server')) ? '' : 'disabled',
     });
 };

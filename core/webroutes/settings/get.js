@@ -13,7 +13,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);;
  */
 export default async function SettingsGet(ctx) {
     //Check permissions
-    if (!ctx.utils.checkPermission('settings.view', modulename)) {
+    if (!ctx.utils.hasPermission('settings.view')) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
     }
 
@@ -30,7 +30,7 @@ export default async function SettingsGet(ctx) {
         playerController: cleanRenderData(globals.configVault.getScopedStructure('playerController')),
         monitor: cleanRenderData(globals.configVault.getScopedStructure('monitor')),
         discord: cleanRenderData(globals.configVault.getScopedStructure('discordBot')),
-        readOnly: !ctx.utils.checkPermission('settings.write', modulename, false),
+        readOnly: !ctx.utils.hasPermission('settings.write'),
         serverTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         activeTab: 'global',
         isZapHosting: convars.isZapHosting,

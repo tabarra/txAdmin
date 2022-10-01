@@ -13,7 +13,7 @@ const formatCommand = (cmd, ...params) => {
     return `${cmd} "` + [...params].map((c) => c.toString()).map(escape).join('" "') + '"';
 };
 function ensurePermission(ctx, perm) {
-    if (ctx.utils.checkPermission(perm, modulename)) {
+    if (ctx.utils.testPermission(perm, modulename)) {
         return true;
     } else {
         ctx.send({

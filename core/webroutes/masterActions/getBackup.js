@@ -11,7 +11,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  */
 export default async function MasterActionsGet(ctx) {
     //Check permissions
-    if (!ctx.utils.checkPermission('master', modulename)) {
+    if (!ctx.utils.testPermission('master', modulename)) {
         return ctx.utils.render('main/message', {message: 'Only the master account has permission to view/use this page.'});
     }
     if (!ctx.txVars.isWebInterface) {

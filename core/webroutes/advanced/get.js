@@ -10,7 +10,7 @@ const { dir, log, logOk, logWarn, logError } = logger(modulename);
  */
 export default async function AdvancedGet(ctx) {
     //Check permissions
-    if (!ctx.utils.checkPermission('all_permisisons', modulename)) {
+    if (!ctx.utils.hasPermission('all_permisisons')) {
         return ctx.utils.render('main/message', {message: 'You don\'t have permission to view this page.'});
     }
 
