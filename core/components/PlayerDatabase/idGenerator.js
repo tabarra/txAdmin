@@ -61,11 +61,11 @@ const printDiagnostics = async () => {
  * @param {String} lowdbTable
  * @returns {Boolean} if is unique
  */
-const checkUniqueness = async (storage, id, lowdbTable) => {
+const checkUniqueness = (storage, id, lowdbTable) => {
     if (storage instanceof Set) {
         return !storage.has(id);
     } else {
-        return !storage.get(lowdbTable).find({ id }).value();
+        return !storage.chain.get(lowdbTable).find({ id }).value();
     }
 };
 
@@ -74,19 +74,19 @@ const checkUniqueness = async (storage, id, lowdbTable) => {
  * @param {Set|Object} storage set or lowdb instance
  * @returns {String} id
  */
-export const genWhitelistID = async (storage) => {
+export const genWhitelistID = (storage) => {
     let attempts = 0;
     while (attempts < maxAttempts) {
         attempts++;
         if (attempts > 5) globals.databus.txStatsData.randIDFailures++;
         const randFunc = (attempts <= 5) ? nanoidSecure : nanoidNonSecure;
         const id = 'R' + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 4)();
-        if (await checkUniqueness(storage, id, 'pendingWL')) {
+        if (checkUniqueness(storage, id, 'pendingWL')) {
             return id;
         }
     }
 
-    await printDiagnostics();
+    printDiagnostics().catch();
     throw new Error(noIdErrorMessage);
 };
 
@@ -96,7 +96,7 @@ export const genWhitelistID = async (storage) => {
  * @param {String} actionType [warn, ban, whitelist]
  * @returns {String} id
  */
-export const genActionID = async (storage, actionType) => {
+export const genActionID = (storage, actionType) => {
     const actionPrefix = ((actionType == 'warn') ? 'a' : actionType[0]).toUpperCase();
     let attempts = 0;
     while (attempts < maxAttempts) {
@@ -107,11 +107,11 @@ export const genActionID = async (storage, actionType) => {
             + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 3)()
             + '-'
             + randFunc.customAlphabet(consts.noLookAlikesAlphabet, 4)();
-        if (await checkUniqueness(storage, id, 'actions')) {
+        if (checkUniqueness(storage, id, 'actions')) {
             return id;
         }
     }
 
-    await printDiagnostics();
+    printDiagnostics().catch();
     throw new Error(noIdErrorMessage);
 };

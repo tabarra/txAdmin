@@ -100,7 +100,7 @@ const awaitDatabase = new Promise((resolve, reject) => {
     let interval;
     const check = () => {
         counter++;
-        if (globals.playerDatabase && globals.playerDatabase.db.isReady) {
+        if (globals.playerDatabase && globals.playerDatabase.isReady) {
             clearInterval(interval);
             resolve(true);
         } else if (counter == tickLimit) {

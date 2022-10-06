@@ -5,9 +5,10 @@ import consts from '@core/extras/consts';
 import logger from '@core/extras/console.js';
 import { convars, verbose } from '@core/globalData';
 // eslint-disable-next-line no-unused-vars
-import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database.js';
+import { SAVE_PRIORITY_LOW, SAVE_PRIORITY_MEDIUM, SAVE_PRIORITY_HIGH, Database } from './database';
 import { genActionID, genWhitelistID } from './idGenerator';
 import TxAdmin from '@core/txAdmin.js';
+import { DatabaseActionType, DatabasePlayerType } from './databaseTypes';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 const xss = xssInstancer();
 
@@ -52,18 +53,6 @@ const validActions = ['ban', 'warn', 'whitelist'];
  *      - name
  *      - tsLastAttempt
  */
-export type PlayerDbDataType = {
-    license: string;
-    name: string; //TODO: save displayName/pureName
-    playTime: number;
-    tsLastConnection: number;
-    tsJoined: number;
-    notes: {
-        text: string;
-        lastAdmin: string | null;
-        tsLastEdit: number | null;
-    };
-}
 type PlayerDbConfigType = {
     onJoinCheckBan: boolean;
     onJoinCheckWhitelist: boolean;
@@ -71,37 +60,41 @@ type PlayerDbConfigType = {
     wipePendingWLOnStart: boolean;
 }
 export default class PlayerDatabase {
-    db: Database;
+    readonly #db: Database;
     readonly #txAdmin: typeof TxAdmin;
 
     constructor(txAdmin: typeof TxAdmin, public config: PlayerDbConfigType) {
         this.#txAdmin = txAdmin;
-        this.db = new Database(config.wipePendingWLOnStart);
+        this.#db = new Database(config.wipePendingWLOnStart);
+    }
+
+    get isReady(){
+        return this.#db.isReady;
     }
 
     /**
      * Returns the entire lowdb object. Please be careful with it :)
-     *
-     * TODO: perhaps add a .cloneDeep()? Might cause some performance issues tho
-     *
-     * @returns {object} lodash database
      */
     getDb() {
-        throw new Error(`dev note: not validated yet`);
-        return this.db.obj;
+        if(!this.#db.obj) throw new Error(`database not ready yet`);
+        // throw new Error(`dev note: not validated yet`);
+        //TODO: perhaps add a .cloneDeep()? Might cause some performance issues tho
+        //NOTE: for now used only in core\webroutes\player\list.js and advanced debug actions
+        return this.#db.obj;
     }
 
 
     /**
      * Searches for a player in the database by the license, returns null if not found or false in case of error
      */
-    getPlayerData(license: string): PlayerDbDataType | null {
+    getPlayerData(license: string): DatabasePlayerType | null {
+        if(!this.#db.obj) throw new Error(`database not ready yet`);
         if (!/[0-9A-Fa-f]{40}/.test(license)) {
             throw new Error('Invalid reference type');
         }
 
         //Performing search
-        const p = this.db.obj.get('players')
+        const p = this.#db.obj.chain.get('players')
             .find({ license })
             .cloneDeep()
             .value();
@@ -112,9 +105,10 @@ export default class PlayerDatabase {
     /**
      * Register a player to the database
      */
-    registerPlayer(player: PlayerDbDataType) {
-        this.db.writeFlag(SAVE_PRIORITY_LOW);
-        this.db.obj.get('players')
+    registerPlayer(player: DatabasePlayerType) {
+        if(!this.#db.obj) throw new Error(`database not ready yet`);
+        this.#db.writeFlag(SAVE_PRIORITY_LOW);
+        this.#db.obj.chain.get('players')
             .push(player)
             .value();
     }
@@ -123,9 +117,10 @@ export default class PlayerDatabase {
     /**
      * Updates a player setting assigning srcData props to the database player
      */
-    updatePlayer(license: string, srcData: Exclude<object, null>): PlayerDbDataType {
-        this.db.writeFlag(SAVE_PRIORITY_LOW);
-        return this.db.obj.get('players')
+    updatePlayer(license: string, srcData: Exclude<object, null>): DatabasePlayerType {
+        if(!this.#db.obj) throw new Error(`database not ready yet`);
+        this.#db.writeFlag(SAVE_PRIORITY_LOW);
+        return this.#db.obj.chain.get('players')
             .find({ license })
             .assign(srcData)
             .cloneDeep()
@@ -134,26 +129,25 @@ export default class PlayerDatabase {
 
 
     /**
-     * Searches for a registered action in the database by a list of identifiers and optional filters
+     * Searches for any registered action in the database by a list of identifiers and optional filters
      * Usage example: getRegisteredActions(['license:xxx'], {type: 'ban', revocation.timestamp: null})
-     *
-     * NOTE: I haven't actually benchmarked to make sure passing the filter first increases the performance
-     *
-     * @param {array} idArray identifiers array
-     * @param {object} filter lodash-compatible filter object
-     * @returns {array|error} array of actions, or, throws on error
+     * @param idArray identifiers array
+     * @param filter lodash-compatible filter object/function
      */
-    async getRegisteredActions(idArray, filter = {}) {
-        throw new Error(`not ready`);
+    getRegisteredActions(
+        idArray: string[],
+        filter: Exclude<object, null> | Function = {}
+    ): Promise<DatabaseActionType> {
+        if(!this.#db.obj) throw new Error(`database not ready yet`);
         if (!Array.isArray(idArray)) throw new Error('Identifiers should be an array');
         try {
-            return await this.db.obj.get('actions')
+            return this.#db.obj.chain.get('actions')
                 .filter(filter)
                 .filter((a) => idArray.some((fi) => a.identifiers.includes(fi)))
                 .cloneDeep()
                 .value();
         } catch (error) {
-            const msg = `Failed to search for a registered action database with error: ${error.message}`;
+            const msg = `Failed to search for a registered action database with error: ${(error as Error).message}`;
             if (verbose) logError(msg);
             throw new Error(msg);
         }
@@ -173,6 +167,7 @@ export default class PlayerDatabase {
      */
     async checkPlayerJoin(idArray, playerName) {
         throw new Error(`not ready`);
+        if(!this.#db.obj) throw new Error(`database not ready yet`);
         //Check if required
         if (!this.config.onJoinCheckBan && !this.config.onJoinCheckWhitelist) {
             return { allow: true, reason: 'checks disabled' };
@@ -242,23 +237,23 @@ export default class PlayerDatabase {
                     if (!license) return { allow: false, reason: 'the whitelist module requires a license identifier.' };
                     license = license.substring(8);
                     //Check for pending WL requests
-                    const pending = await this.db.obj.get('pendingWL').find({ license: license }).value();
+                    const pending = await this.#db.obj.chain.get('pendingWL').find({ license: license }).value();
                     let whitelistID;
                     if (pending) {
                         pending.name = playerName;
                         pending.tsLastAttempt = now();
                         whitelistID = pending.id;
                     } else {
-                        whitelistID = await genWhitelistID(this.db.obj);
+                        whitelistID = await genWhitelistID(this.#db.obj);
                         const toDB = {
                             id: whitelistID,
                             name: playerName,
                             license: license,
                             tsLastAttempt: now(),
                         };
-                        await this.db.obj.get('pendingWL').push(toDB).value();
+                        await this.#db.obj.chain.get('pendingWL').push(toDB).value();
                     }
-                    this.db.writeFlag(SAVE_PRIORITY_LOW);
+                    this.#db.writeFlag(SAVE_PRIORITY_LOW);
 
                     //Clean rejection message
                     const xssRejectMessage = xssInstancer({
@@ -294,6 +289,7 @@ export default class PlayerDatabase {
      */
     async registerAction(reference, type, author, reason = null, expiration = false, playerName = false) {
         throw new Error(`not ready`);
+        if(!this.#db.obj) throw new Error(`database not ready yet`);
         //FIXME: REMINDER THAT LICENSE IS NOT UNIQUE IN THE SERVER
         //Sanity check
         const timestamp = now();
@@ -327,7 +323,7 @@ export default class PlayerDatabase {
 
         //Saves it to the database
         try {
-            const actionID = await genActionID(this.db.obj, type);
+            const actionID = genActionID(this.#db.obj, type);
             const toDB = {
                 id: actionID,
                 type,
@@ -342,10 +338,10 @@ export default class PlayerDatabase {
                     author: null,
                 },
             };
-            await this.db.obj.get('actions')
+            await this.#db.obj.chain.get('actions')
                 .push(toDB)
                 .value();
-            this.db.writeFlag(SAVE_PRIORITY_HIGH);
+            this.#db.writeFlag(SAVE_PRIORITY_HIGH);
             return actionID;
         } catch (error) {
             let msg = `Failed to register event to database with message: ${error.message}`;
@@ -365,12 +361,13 @@ export default class PlayerDatabase {
      */
     async revokeAction(action_id, author, allowedTypes = true) {
         throw new Error(`not ready`);
+        if(!this.#db.obj) throw new Error(`database not ready yet`);
         //FIXME: REMINDER THAT LICENSE IS NOT UNIQUE IN THE SERVER
         if (typeof action_id !== 'string' || !action_id.length) throw new Error('Invalid action_id.');
         if (typeof author !== 'string' || !author.length) throw new Error('Invalid author.');
         if (allowedTypes !== true && !Array.isArray(allowedTypes)) throw new Error('Invalid allowedTypes.');
         try {
-            const action = await this.db.obj.get('actions')
+            const action = await this.#db.obj.chain.get('actions')
                 .find({ id: action_id })
                 .value();
             if (action) {
@@ -381,7 +378,7 @@ export default class PlayerDatabase {
                     timestamp: now(),
                     author,
                 };
-                this.db.writeFlag(SAVE_PRIORITY_HIGH);
+                this.#db.writeFlag(SAVE_PRIORITY_HIGH);
                 return null;
             } else {
                 return 'action not found';
@@ -407,6 +404,7 @@ export default class PlayerDatabase {
      */
     async approveWhitelist(reference, author) {
         throw new Error(`not ready`);
+        if(!this.#db.obj) throw new Error(`database not ready yet`);
         //FIXME: REMINDER THAT LICENSE IS NOT UNIQUE IN THE SERVER
         //Sanity check & validation
         if (typeof reference !== 'string' || typeof author !== 'string') {
@@ -420,11 +418,11 @@ export default class PlayerDatabase {
         if (/[0-9A-Fa-f]{40}/.test(reference)) {
             pendingFilter = { license: reference };
             saveReference = [`license:${reference}`];
-            const pending = await this.db.obj.get('pendingWL').find(pendingFilter).value();
+            const pending = await this.#db.obj.chain.get('pendingWL').find(pendingFilter).value();
             if (pending) playerName = pending.name;
         } else if (consts.regexWhitelistReqID.test(reference)) {
             pendingFilter = { id: reference };
-            const pending = await this.db.obj.get('pendingWL').find(pendingFilter).value();
+            const pending = await this.#db.obj.chain.get('pendingWL').find(pendingFilter).value();
             if (!pending) throw new Error('Pending ID not found in database');
             saveReference = [`license:${pending.license}`];
             playerName = pending.name;
@@ -435,11 +433,11 @@ export default class PlayerDatabase {
         //Register whitelist
         const actionID = await this.registerAction(saveReference, 'whitelist', author, null, false, playerName);
         if (!actionID) throw new Error('Failed to whitelist player');
-        this.db.writeFlag(SAVE_PRIORITY_HIGH);
+        this.#db.writeFlag(SAVE_PRIORITY_HIGH);
 
         //Remove from the pending list
         if (playerName) {
-            await this.db.obj.get('pendingWL').remove(pendingFilter).value();
+            await this.#db.obj.chain.get('pendingWL').remove(pendingFilter).value();
         }
 
         return actionID;
@@ -459,6 +457,7 @@ export default class PlayerDatabase {
      */
     async setPlayerNote(license, note, author) {
         throw new Error(`not ready`);
+        if(!this.#db.obj) throw new Error(`database not ready yet`);
         //HACK isso agora vai dar commit imediatamente, target direto o banco
         //FIXME: REMINDER THAT LICENSE IS NOT UNIQUE IN THE SERVER
         try {
@@ -468,7 +467,7 @@ export default class PlayerDatabase {
             if (ap) {
                 target = ap;
             } else {
-                let dbp = await this.db.obj.get('players').find({ license: license }).value();
+                let dbp = await this.#db.obj.chain.get('players').find({ license: license }).value();
                 if (!dbp) return false;
                 target = dbp;
             }
@@ -496,11 +495,12 @@ export default class PlayerDatabase {
      * @returns {number|error} number of removed items
      */
     async cleanDatabase(tableName, filterFunc) {
+        if(!this.#db.obj) throw new Error(`database not ready yet`);
         if (tableName !== 'players' && tableName !== 'actions') throw new Error('Unknown tableName.');
         if (typeof filterFunc !== 'function') throw new Error('filterFunc must be a function.');
 
         try {
-            const removed = await this.db.obj.get(tableName)
+            const removed = await this.#db.obj.chain.get(tableName)
                 .remove(filterFunc)
                 .value();
             return removed.length;
