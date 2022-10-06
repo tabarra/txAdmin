@@ -28,3 +28,34 @@ RegisterCommand('car', function(source, args, rawCommand)
     -- there is more code here, no need to edit
 end)
 ```
+
+## Example
+
+In this example, we will log EVERY command that gets executed trough the chat.
+
+Open `chat/cl_chat.lua` and go to line ~140 or search for `chatResult`.
+
+Replace it with this snippet:
+
+```lua
+    RegisterNUICallback('chatResult', function(data, cb)
+    chatInputActive = false
+    SetNuiFocus(false)
+
+    if not data.canceled then
+        local id = PlayerId()
+
+        --deprecated
+        local r, g, b = 0, 0x99, 255
+
+        if data.message:sub(1, 1) == '/' then
+            ExecuteCommand(data.message:sub(2))
+            TriggerServerEvent('txaLogger:CommandExecuted', data.message:gsub("%/", ""))
+        else
+            TriggerServerEvent('_chat:messageEntered', GetPlayerName(id), { r, g, b }, data.message, data.mode)
+        end
+    end
+
+    cb('ok')
+    end)
+```
