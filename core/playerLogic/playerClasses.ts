@@ -1,9 +1,10 @@
 const modulename = 'Player';
 import logger from '@core/extras/console.js';
 import consts from '@core/extras/consts';
-import PlayerDatabase, { PlayerDbDataType } from '@core/components/PlayerDatabase/index.js';
+import PlayerDatabase from '@core/components/PlayerDatabase/index.js';
 import cleanPlayerName from '@shared/cleanPlayerName';
 import { verbose } from '@core/globalData.js';
+import { DatabasePlayerType } from '@core/components/PlayerDatabase/databaseTypes';
 const { dir, log, logOk, logWarn, logError } = logger(modulename);
 
 //Helpers
@@ -26,7 +27,7 @@ export class BasePlayer {
     ids: string[] = [];
     hwids: string[] = [];
     license: false | string = false; //extracted for convenience
-    dbData: false | PlayerDbDataType = false;
+    dbData: false | DatabasePlayerType = false;
     isConnected: boolean = false;
 
     constructor(protected readonly dbInstance: PlayerDatabase) { }
@@ -40,6 +41,9 @@ export class BasePlayer {
         //if dbData?
     }
 
+    /**
+     * Returns all actions related to all available ids
+     */
     getHistory() {
         //if any identifier
     }
@@ -63,6 +67,7 @@ type PlayerDataType = {
 export class ServerPlayer extends BasePlayer {
     readonly netid: number;
     readonly tsConnected = now();
+    readonly isRegistered: boolean;
     readonly #minuteCronInterval?: ReturnType<typeof setInterval>;
 
     constructor(netid: number, playerData: PlayerDataType, dbInstance: PlayerDatabase) {
@@ -105,7 +110,10 @@ export class ServerPlayer extends BasePlayer {
         //If this player is eligible to be on the database
         if (this.license) {
             this.#setupDatabaseData();
+            this.isRegistered = !!this.dbData;
             this.#minuteCronInterval = setInterval(this.#minuteCron.bind(this), 60_000);
+        }else{
+            this.isRegistered = false;
         }
     }
 
@@ -117,7 +125,7 @@ export class ServerPlayer extends BasePlayer {
         if (!this.license || !this.isConnected) return;
 
         //Make sure the database is ready - this should be impossible
-        if (!this.dbInstance.db.isReady) {
+        if (!this.dbInstance.isReady) {
             logError(`Players database not yet ready, cannot read db status for player id ${this.displayName}.`);
             return;
         }
@@ -129,23 +137,24 @@ export class ServerPlayer extends BasePlayer {
                 //Updates database data
                 this.dbData = dbPlayer;
                 this.mutateDadabase({
-                    name: this.displayName, //FIXME: displayName + pureName
+                    displayName: this.displayName,
+                    pureName: this.pureName,
                     tsLastConnection: this.tsConnected,
-                    //FIXME: add identifiers
+                    ids: [
+                        ...dbPlayer.ids,
+                        ...this.ids.filter(id => !dbPlayer.ids.includes(id))
+                    ]
                 });
             } else {
                 //Register player to the database
                 const toRegister = {
                     license: this.license,
-                    name: this.displayName, //FIXME: displayName + pureName
+                    ids: this.ids,
+                    displayName: this.displayName,
+                    pureName: this.pureName,
                     playTime: 0,
                     tsLastConnection: this.tsConnected,
                     tsJoined: this.tsConnected,
-                    notes: {
-                        text: '',
-                        lastAdmin: null,
-                        tsLastEdit: null,
-                    },
                 };
                 this.dbInstance.registerPlayer(toRegister);
                 this.dbData = toRegister;
@@ -194,6 +203,8 @@ export class ServerPlayer extends BasePlayer {
  * 
  */
 export class DatabasePlayer extends BasePlayer {
+    readonly isRegistered = true; //no need to check because otherwise constructor throws
+
     constructor(license: string, dbInstance: PlayerDatabase) {
         super(dbInstance);
         if (typeof license !== 'string') {
@@ -208,9 +219,9 @@ export class DatabasePlayer extends BasePlayer {
 
         //fill in data
         this.dbData = dbPlayer;
-        this.displayName = dbPlayer.name; //FIXME: displayName + pureName
-        this.pureName = dbPlayer.name;  //FIXME: displayName + pureName
         this.license = license;
-        // this.ids = dbPlayer.ids; //FIXME: add saved db identifiers
+        this.ids = dbPlayer.ids;
+        this.displayName = dbPlayer.displayName;
+        this.pureName = dbPlayer.pureName; 
     }
 }

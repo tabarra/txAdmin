@@ -12,7 +12,7 @@ const now = () => { return Math.round(Date.now() / 1000); };
 /**
  * Handles the migration of the database
  */
-export default async (dbo, currVersion) => {
+export default async (dbo) => {
     if (dbo.data.version === DATABASE_VERSION) {
         return dbo;
     }
@@ -105,7 +105,7 @@ export default async (dbo, currVersion) => {
     }
 
     if (dbo.data.version !== DATABASE_VERSION) {
-        logError(`Your players database is on v${currVersion}, which is different from this version of txAdmin (v${DATABASE_VERSION}).`);
+        logError(`Your players database is on v${dbo.data.version}, which is different from this version of txAdmin (v${DATABASE_VERSION}).`);
         logError('Since there is currently no migration method ready for the migration, txAdmin will attempt to use it anyways.');
         logError('Please make sure your txAdmin is on the most updated version!');
         process.exit(1);

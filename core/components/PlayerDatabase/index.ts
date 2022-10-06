@@ -18,47 +18,24 @@ const now = () => { return Math.round(Date.now() / 1000); };
 //Consts
 const validActions = ['ban', 'warn', 'whitelist'];
 
+//DEBUG
+const { Console } = require('node:console');
+const ogConsole = new Console({
+    stdout: process.stdout,
+    stderr: process.stderr,
+    colorMode: true,
+});
 
-/**
- * Provide a central database for players, as well as assist with access control.
- *
- * FIXME: separate the player calls to another file somehow
- *
- * Database Structurure:
- *  - `players` table: index by license ID
- *      - license
- *      - name (overwrite on every update)
- *      - tsLastConnection  - Timestamp of the last connection
- *      - playTime - Online time counter in minutes
- *      - notes {
- *          text: string de tamanho máximo a ser definido,
- *          lastAdmin: username,
- *          tsLastEdit: timestamp,
- *      }
- *  - `actions`
- *      - id [X???-????]
- *      - identifiers [array]
- *      - playerName (player name, or false to imply it was performed on the identifiers only)
- *      - type [ban|warn|whitelist]
- *      - author (the admin name)
- *      - reason
- *      - timestamp
- *      - revocation: {
- *          timestamp: null,
- *          author: null,
- *      }
- *  - `pendingWL`
- *      - id [R####]
- *      - license
- *      - name
- *      - tsLastAttempt
- */
+
 type PlayerDbConfigType = {
     onJoinCheckBan: boolean;
     onJoinCheckWhitelist: boolean;
     whitelistRejectionMessage: string;
     wipePendingWLOnStart: boolean;
 }
+/**
+ * Provide a central database for players, as well as assist with access control.
+ */
 export default class PlayerDatabase {
     readonly #db: Database;
     readonly #txAdmin: typeof TxAdmin;

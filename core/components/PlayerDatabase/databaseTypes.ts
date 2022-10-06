@@ -28,7 +28,7 @@ export type DatabaseActionType = {
     };
 };
 export type DatabasePendingWLType = {
-    id: string;
+    id: string; //R####
     license: string;
     name: string;
     tsLastAttempt: number;

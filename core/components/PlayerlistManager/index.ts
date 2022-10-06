@@ -37,7 +37,7 @@ export default class PlayerlistManager {
     /**
      * Handler for server restart - it will kill all players and reset the licenseCache
      * We MUST do .disconnect() for all players to clear the timers.
-     * NOTE: it's ok for us to overfill then slice the licenseCache because it's at most ~4mb
+     * NOTE: it's ok for us to overfill before slicing the licenseCache because it's at most ~4mb
      */
     handleServerStop(oldMutex: string) {
         this.licenseCache = [];

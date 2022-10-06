@@ -5,12 +5,14 @@ NOTE: mesmo arquivo da pasta ~/Desktop/PROGRAMMING/txAdmin-newDatabase
 ## New database schema:
 ```js
 //Every player that have been on the server over specific threshold (15m default) gets added to the database
+//FIXME: minSessionTime doesn't exist anymore
+//FIXME: i think we can safely save the last 10 player names, but don't even need to use it for searches
 players: [{ 
     license: 'xxxxxxxxx',
     name: 'yyyyy',
     totalPlayTime: 205,
     joined: TS,
-    whitelisted?: TS, //ts instead of bool so we can have a feature to automatically remove WL after xxx days
+    whitelisted: TS, //ts instead of bool so we can have a feature to automatically remove WL after xxx days 
     notes?: {
         text: '',
         lastAdmin: 'null',

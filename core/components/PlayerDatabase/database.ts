@@ -126,13 +126,15 @@ export class Database {
                 process.exit();
             }
         }
-        dbo.chain = lodash.chain(dbo.data);
 
         //Setting up loaded database
         try {
             //If new database
             dbo.data ||= lodash.cloneDeep(defaultDatabase);
             await dbo.write();
+
+            //Need to chain after setting defaults
+            dbo.chain = lodash.chain(dbo.data);
 
             //If old database
             if (dbo.data.version !== DATABASE_VERSION) {
@@ -204,7 +206,7 @@ export class Database {
                 this.lastWrite = timeStart;
                 if (verbose) logOk(`DB file saved, took ${timeElapsed}ms.`);
             } catch (error) {
-                logError(`Failed to save players database with error: ${error.message}`);
+                logError(`Failed to save players database with error: ${(error as Error).message}`);
                 if (verbose) dir(error);
             }
         } else {
