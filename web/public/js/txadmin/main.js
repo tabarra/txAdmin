@@ -1,5 +1,17 @@
 /* eslint-disable no-unused-vars */
 //================================================================
+//================================================= Helper funcs
+//================================================================
+const msToDuration = humanizeDuration.humanizer({
+    round: true,
+});
+const msToShortDuration = humanizeDuration.humanizer({
+    round: true,
+    spacer: '',
+    language: 'shortEn',
+});
+
+//================================================================
 //============================================== Dynamic Stats
 //================================================================
 const faviconEl = document.getElementById('favicon');
@@ -27,16 +39,6 @@ const setNextRestartTimeClass = (cssClass) => {
         el.classList.add(cssClass);
     }
 };
-const msToTimeString = (ms) => {
-    const hours = Math.floor(ms / 1000 / 60 / 60);
-    const minutes = Math.floor((ms / 1000 / 60 / 60 - hours) * 60);
-
-    let hStr, mStr;
-    if (hours) hStr = (hours === 1) ? `1 hour` : `${hours} hours`;
-    if (minutes) mStr = (minutes === 1) ? `1 minute` : `${minutes} minutes`;
-
-    return [hStr, mStr].filter(x => x).join(', ');
-};
 
 const updateStatusCard = (discordData, serverData) => {
     if(!statusCard.self) return;
@@ -52,7 +54,7 @@ const updateStatusCard = (discordData, serverData) => {
         statusCard.nextRestartTime.textContent = 'not scheduled';
     } else {
         const tempFlag = (serverData.scheduler.nextIsTemp)? '(tmp)' : '';
-        const relativeTime = msToTimeString(serverData.scheduler.nextRelativeMs);
+        const relativeTime = msToDuration(serverData.scheduler.nextRelativeMs, {units: ['h', 'm']});
         const isLessThanMinute = serverData.scheduler.nextRelativeMs < 60_000;
         if(isLessThanMinute){
             statusCard.nextRestartTime.textContent = `right now ${tempFlag}`;

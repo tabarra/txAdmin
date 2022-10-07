@@ -1,99 +1,109 @@
 # TODO:
-v4.18.0:
-- [x] fix fxserver settings save issue
-- [x] clarify better the update notifications (path vs minor)
-- [x] fix(core): getOsDistro powershell detection + error handling
-- [x] fix: fixed pidusage and enabled process stats in diagnostics page
-- [x] scheduler should deny scheduled restarts in the same minute
-
-
-v4.19.0
 - [x] player join/leave
 - [x] increment player time
 - [x] fix web playerlist
 - [x] handle server restarts
 - [x] send join/leave to log
 - [x] resolve player function
+- [x] update lowdb
+- [x] make a backup before migrations
+- [x] create database migration:
+        - convert name -> displayName + pureName
+        - create array for old identifiers
+        - whitelist becomes a player prop, removes from actions
+        - remove empty notes
 - [ ] get player modal (log, playerlist, db players page)
 - [ ] fix player modal in nui menu
 - [ ] player db actions
 - [ ] join check + whitelist
 - [ ] checar pra onde vai aquele refreshConfig que seta a convar de checkPlayerJoin?
 - [ ] remove minSessionTime from everywhere
-- [ ] update lowdb
-- [ ] criar migration do banco pra converter name -> displayName + pureName
-- [ ] com a migration do displayName/pureName também é possível deprecarmos `now()`, considerar alternative
-- [ ] criar um backup pra todo migration
-- [ ] checar se eu já coloquei pra salvar old identifiers - precisa estar na migration
-- [ ] checar o que acontece quando tiver mais de um player com mesma license online
 - [ ] adaptar kick/dm - mas deixar fora do objeto player
+- [ ] deprecate cfx reverse proxy and remove `Cfx.re URL` from diagnostics.ejs
+- [ ] tidy up the files, specially comments missing everywhere
+- [ ] checar o que acontece quando tiver mais de um player com mesma license online
+- [ ] update master action > database cleanup (specially case for removing older whitelists) 
+- [ ] FIXME: dbData state issue when instantiating a DatabasePlayer while ServerPlayer exists for the same player.
+    - consider scenario where the player is on the server, and you search for it on the playerlist
+    - there will be 2 player.dbData, states that can be overwritten.
+    - potential solution is to always prioritize ServerPlayer on player resolver
+    - so even if no mutex/netid, if there is a ServerPlayer with the same license, return it instead of DatabasePlayer
+
+Maybe after v5:
 - [ ] server logger add events/min average
 - [ ] bot status "watching xx/yy players"
-- [ ] remover `Cfx.re URL` da pagina de diagnosticos
 - [ ] Melhorar ou remover mensagem `[txAdmin] You do not have at least 1 valid identifier. If you own this server, make sure sv_lan is disabled in your server.cfg`
 - [ ] create daily cron to optimize database, maybe have a select box with 3 profiles + disabled?
 - [ ] txadmin log -> system log
-- [ ] tidy up the files, specially comments missing everywhere
-
-
-// @ts-ignore: let it throw
-
-
-## PLANO:
-PlayerDatabase: já migrar pra algo mais próximo de um RPC
-- intercom passar a cuidar de checar se o player pode entrar ou não
-
-PlayerlistManager:
-- cuida do ciclo de vida do usuário, inclusive chamar o PlayerDatabase pra salvar player quando passar do minSessionTime
-- on join/leave, chamar métodos do PlayerDatabase
+- [ ] At the schedule restart input prompt, add a note saying what is the current server time
+- [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning
+- [ ] create events for dynamic scheduled restarts
 
 
 
-HACK: SHOWER DECISIONS:
-- já atualizar agora o lowdb pra já ir testando
 
-- `ServerPlayer.dbData` sempre ter uma cópia do registro do banco, no futuro não só será meio necessário, mas bom fazer dessa forma pq o banco vai ser fora do processo (mais desacoplado);
-- getPlayerData tem que tomar cuidado pra retornar um clone, talvez até criar uma classe pra db data
-- getPlayerData checar se da pra fazer `db.whatever.value().deepClone();`
-
-- PlayerlistManager sempre ter apenas a playerlist do server atual, `handleServerRestart()` literalmente dar um wipe na playlist
-- Fluxo de "resolve player" - usado por modal, mas tb para ban/warn/kick/etc:
-    - mutex, id, license via query params
-    - mutex == fxChild.mutex?
-        - `PlayerlistManager.getPlayer(netid)`
-    - else
-        - Se tiver licença: buscar esse player no banco
-        - Se não tiver licença ou não tiver no banco
-            - erro: "player não encontrado no banco, provavelmente não tinha licença, tente procurar no txData/blah/logs/serverlog.xxxxx.log"
-- dessa forma:
-    - matamos o memory leak
-    - ainda sim pela interface vai dar pra recuperar os players pra maioria dos casos
-    - trocamos muita complexidade das rotas internas por um pouco de complexidade apenas nessa rota
-    - casos de load pro objeto:
-        - caso online: já existe objeto e já está com dbData
-        - caso na playerlist mas já desconectado: dados iniciais presentes, carregar player do banco
-        - caso no banco: busca por license instancia DatabasePlayer(dbData)
-
-
-
-FIXME: ter um this.licenseCache = [[mutex#id: license]]
-on server restart, adicionar todos os players atuais no licenseCache
-depois dar licenseCache.slice(-5000(?))
-na busca:
-- se for o mutex atual, pegar da playerlist
-- se não, licenseCache.find(x => x[0] = 'mutex#id')
-- buscar license no banco
-
-------
-pegar os top servers
-e calcular max id / timestamp
-pra chegar na conclusão de qual o limite que precisamos nessa array
-
-
-- quando active player desconectar, remover dbData
-- quando modal puxar serverplayer, executar `serverPlayer.retrieveDbData()`
-- `retrieveDbData()` inicia timeout de 120s pra deletar o dbData
+# REFACTOR DEV:
+- `ServerPlayer.dbData`:
+    - The instantiated object requires a copy of the dbData, this is important now and will be even more when the database is out-of-process;
+    - for memory optimization:
+        - when player disconnects, remove dbData?
+        - when required we can do like a `serverPlayer.retrieveDbData()`, and start a 120s timeout to wipe `this.dbData`;
 - talvez as funções getHistory e setNote tentem buscar no banco... talvez uma flag de "isRegistered"?
+
+
+- New modal for both ServerPlayer and DatabasePlayers:
+    - In the player info tab:
+        - "xx bans and yy warns [view]"
+        - [ADD WL] / [REMOVE WL]
+    - History tab:
+        - all actions from all ids (curr or previous)
+        - must have the revoke button
+    - ban tab
+- This is a compromise, where you can still easily see if the player was banned on the first page, and still be able to revoke it without closing the modal. 
+- For that, we need to migrate whitelist actions to being a prop of the player, this is directly possible since whitelists are saved with the license identifier only.
+
+
+
+```ts
+//Required for the migration typescript code
+//FIXME: do I even need this?
+export type DatabaseV1Type = {
+    version: number,
+    players: {
+        license: string;
+        name: string;
+        tsLastConnection: number;
+        playTime: number;
+        tsJoined: number;
+        notes: {
+            text: string;
+            lastAdmin: string | null;
+            tsLastEdit: number | null;
+        };
+    }[],
+    actions: {
+        id: string;
+        identifiers: string[];
+        playerName: string | false; //false when it was based on identifiers only
+        type: 'ban' | 'warn' | 'whitelist';
+        author: string;
+        reason: string | null; //whitelists are saving it as null
+        timestamp: number;
+        expiration: number | false;
+        revocation: {
+            timestamp: number | null;
+            author: string | null;
+        };
+    }[],
+    pendingWL: {
+        id: string;
+        license: string;
+        name: string;
+        tsLastAttempt: number;
+    }[],
+};
+
+```
 
 ## BasePlayer
     - get history
@@ -141,27 +151,18 @@ pra chegar na conclusão de qual o limite que precisamos nessa array
 
 ----------------------------------------------------
 
-At the schedule restart thing, add a note saying what is the current server time
+
 
 https://bobbyhadz.com/blog/typescript-declare-global-variable
 
 
-resolver mem leak no server log handler
-- [ ] `cfg cyclical 'exec' command detected to file` should be blocking instead of warning
 
-https://media.discordapp.net/attachments/589106731376836608/1018227573420990564/unknown.png
 
-events for dynamic scheduled restarts
 
 teste:
     remover meu admin do sv zap
     dar join
     apertar f1 e ver se aparece a mensagem de perms
-
-
-Use the cleanPlayerName function for the menu display/search
-maybe put it in a shared folder or something
-
 
 
 
@@ -210,6 +211,7 @@ The Big Things before ts+react rewrite:
 - [ ] Move verbose to be part of the console (after the functional-ish change)
 - [ ] Remove the GlobalData from a bunch of files which include it just because of verbosity
 - [ ] Upgrade chalk, drop the chalk.keyword thing
+- [ ] Search for `node:console`, as i'm using it everywhere to test stuff
 
 ```js
 console.log('aaa', {àa:true});
